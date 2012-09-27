@@ -41,18 +41,38 @@ class Application extends AbstractSingleton
 	public function registerNamespaceAutoload()
 	{
 		$namespaces = array(
-			'Change' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Change' , 
+			'Change' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Change' ,
 			'Zend' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'ZendFramework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend',
 			'ZendOAuth' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'ZendOAuth' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'ZendOAuth',
 		);
-		
+	
 		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
-		
 		foreach ($namespaces as $namespace => $path)
-		{
+			{
 			$zendLoader  = new \Zend\Loader\StandardAutoloader();
 			$zendLoader->registerNamespace($namespace, $path);
 			$zendLoader->register();
-		}	
+		}
 	}
+	
+	/**
+	 * @var \Change\Mvc\Controller
+	 */
+	protected $controller;
+	
+	/**
+	 * @return \Change\Mvc\Controller
+	 */
+	public function getController()
+	{
+		return $this->controller;
+	}
+		
+	/**
+	 * @return \Change\Mvc\Controller
+	 */
+	public function setController($controller)
+	{
+		$this->controller = $controller;
+	}	
 }
