@@ -1,0 +1,15 @@
+{
+	"name": "RBSChange/Change",
+	"description": "RBS Change CMS & E-Commerce Platform",
+	"type": "rbschange-core",
+	"require": 
+  		{
+  			"php": ">=5.3.3"
+		},
+	"repositories": [
+            {
+                "type": "vcs",
+                "url": "http://github.com/franckstauffer/Change"
+            }
+        ]
+}
