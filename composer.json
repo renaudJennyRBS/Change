@@ -1,15 +1,36 @@
 {
-	"name": "RBSChange/Change",
+	"name": "rbschange/change",
 	"description": "RBS Change CMS & E-Commerce Platform",
 	"type": "rbschange-core",
+	"license":"AGPL-3.0",
+	"autoload": 
+	{
+		"psr-0": 
+		{
+			"\\Change\\" : "Change/"
+		}
+	},
 	"require": 
-  		{
-  			"php": ">=5.3.3"
+	{
+		"php": ">=5.3.3",
+		"composer/installers": "dev-rbschange",
+		"zendframework/zendframework": "2.0.2",
+		"zendframework/ZendOAuth": "2.0.1",
+		"rbschange/framework":"4.0.x-dev"
+	},
+	"repositories": 
+	[
+		{
+			"type": "vcs",
+			"url": "http://github.com/franckstauffer/installers"
 		},
-	"repositories": [
-            {
-                "type": "vcs",
-                "url": "http://github.com/franckstauffer/Change"
-            }
-        ]
+		{
+			"type": "vcs",
+		    "url": "git://github.com/zendframework/ZendOAuth.git"
+		}
+	],
+	"config":
+	{
+		"vendor-dir":"Libraries"
+	}
 }

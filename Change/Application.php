@@ -42,8 +42,8 @@ class Application extends AbstractSingleton
 	{
 		$namespaces = array(
 			'Change' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Change' ,
-			'Zend' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'ZendFramework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend',
-			'ZendOAuth' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'ZendOAuth' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'ZendOAuth',
+			'Zend' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend',
+			'ZendOAuth' => PROJECT_HOME  . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendoauth' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'ZendOAuth',
 		);
 	
 		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';

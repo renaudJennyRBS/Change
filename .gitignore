@@ -37,4 +37,6 @@ nbproject
 /xchrome_controller.php
 /xul_controller.php
 /Compilation
+/Libraries
 /composer.phar
+/composer.lock

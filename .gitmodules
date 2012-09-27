@@ -1,6 +1,0 @@
-[submodule "Libraries/ZendOAuth"]
-	path = Libraries/ZendOAuth
-	url = git://github.com/zendframework/ZendOAuth.git
-[submodule "Libraries/ZendFramework"]
-	path = Libraries/ZendFramework
-	url = git://github.com/zendframework/zf2.git
