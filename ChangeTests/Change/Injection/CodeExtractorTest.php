@@ -116,6 +116,11 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	
 	public function A()
 	{ 
+		$tutu = "tutu";
+		call_user_func(function($toto) use ($tutu)
+		{
+			return "titi";
+		});
 		return "I implement Alpha InterfaceA";	
 	}
 	
