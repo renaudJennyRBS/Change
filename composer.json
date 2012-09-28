@@ -3,6 +3,7 @@
 	"description": "RBS Change CMS & E-Commerce Platform",
 	"type": "rbschange-core",
 	"license":"AGPL-3.0",
+	"minimum-stabilityi":"dev",
 	"autoload": 
 	{
 		"psr-0": 
@@ -10,19 +11,62 @@
 			"\\Change\\" : "Change/"
 		}
 	},
+	"require-dev": 
+	{
+		"rbschange/travisconfig":"dev-master"
+	},
 	"require": 
 	{
 		"php": ">=5.3.3",
 		"composer/installers": "dev-rbschange",
 		"zendframework/zendframework": "2.0.2",
 		"zendframework/ZendOAuth": "2.0.1",
-		"rbschange/framework":"4.0.x-dev"
+		"rbschange/framework":"4.0.x-dev",
+		"rbschange/brand": "4.0.x-dev",
+		"rbschange/catalog": "4.0.x-dev",
+		"rbschange/comment": "4.0.x-dev",
+		"rbschange/compatibility": "4.0.x-dev",
+		"rbschange/contactcard": "4.0.x-dev",
+		"rbschange/customer": "4.0.x-dev",
+		"rbschange/dashboard": "4.0.x-dev",
+		"rbschange/filter": "4.0.x-dev",
+		"rbschange/form": "4.0.x-dev",
+		"rbschange/generic": "4.0.x-dev",
+		"rbschange/i18n": "4.0.x-dev",
+		"rbschange/list": "4.0.x-dev",
+		"rbschange/markergas": "4.0.x-dev",
+		"rbschange/media": "4.0.x-dev",
+		"rbschange/mysqlindexer": "4.0.x-dev",
+		"rbschange/notification": "4.0.x-dev",
+		"rbschange/order": "4.0.x-dev",
+		"rbschange/payment": "4.0.x-dev",
+		"rbschange/preferences": "4.0.x-dev",
+		"rbschange/richtext": "4.0.x-dev",
+		"rbschange/rss": "4.0.x-dev",
+		"rbschange/seo": "4.0.x-dev",
+		"rbschange/shipping": "4.0.x-dev",
+		"rbschange/skin": "4.0.x-dev",
+		"rbschange/solrsearch": "4.0.x-dev",
+		"rbschange/task": "4.0.x-dev",
+		"rbschange/theme": "4.0.x-dev",
+		"rbschange/uixul": "4.0.x-dev",
+		"rbschange/useractionlogger": "4.0.x-dev",
+		"rbschange/users": "4.0.x-dev",
+		"rbschange/videos": "4.0.x-dev",
+		"rbschange/website": "4.0.x-dev",
+		"rbschange/workflow": "4.0.x-dev",
+		"rbschange/zone": "4.0.x-dev",
+		"rbschange/defaulttheme": "4.0.x-dev"
 	},
 	"repositories": 
 	[
 		{
 			"type": "vcs",
 			"url": "http://github.com/franckstauffer/installers"
+		},
+		{
+			"type": "vcs",
+			"url": "http://github.com/franckstauffer/travisconfig"
 		},
 		{
 			"type": "vcs",

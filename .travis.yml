@@ -6,7 +6,11 @@ php:
 
 before_install:
  - curl -s https://getcomposer.org/installer | php -- --quiet
-
+ - php composer.phar install --dev
+ - mysql -e 'create database rbschangetest;'
+ - bash travisconfig/init.sh
+ - php framework/bin/change.php compile-autoload
+ - php framework/bin/change.php compile-config
 
 script:
  - cd ChangeTests/

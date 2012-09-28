@@ -40,5 +40,6 @@ nbproject
 /Libraries
 /composer.phar
 /composer.lock
+/travisconfig
 /listener.php
 /phpinfo.php
