@@ -40,3 +40,5 @@ nbproject
 /Libraries
 /composer.phar
 /composer.lock
+/listener.php
+/phpinfo.php

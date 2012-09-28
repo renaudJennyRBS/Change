@@ -236,7 +236,7 @@ class ClassInjection
 	 * 
 	 * @param array $info
 	 */
-	protected function completeInfo(array $info)
+	protected function completeInfo(array &$info)
 	{
 		if (!isset($info['path']))
 		{
@@ -261,12 +261,15 @@ class ClassInjection
 	public function compile()
 	{
 		$this->completeInfo($this->originalClassInfo);
-		foreach ($this->replacingClassInfos as $info)
+		$result = array('source' => array($this->originalClassInfo['name'] => $this->originalClassInfo));
+		foreach ($this->replacingClassInfos as &$info)
 		{
 			$this->completeInfo($info);
-		}		
-		$result = $this->processOriginalFile();
-		$result = array_merge($result, $this->processReplacingFile());
+			$result['source'][$info['name']] = $info;
+		}	
+		
+		$result['compiled'] = $this->processOriginalFile();
+		$result['compiled'] = array_merge($result['compiled'], $this->processReplacingFile());
 		return $result;
 	}
 }

@@ -92,7 +92,8 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCompile(\Change\Injection\ClassInjection $injection)
 	{
-		$result = $injection->compile();
+		$compilationResult = $injection->compile();	
+		$result = $compilationResult['compiled'];
 		$this->assertCount(5, $result);
 		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\A_injected0', $result);
 		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Beta\B', $result);
@@ -142,7 +143,8 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCompileNoNamespace(\Change\Injection\ClassInjection $injection)
 	{
-		$result = $injection->compile();
+		$compilationResult = $injection->compile();	
+		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
 		$this->assertArrayHasKey('\TestClass_injected0', $result);
 		$this->assertArrayHasKey('\InjectingClass', $result);
@@ -189,7 +191,8 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCompileMixed(\Change\Injection\ClassInjection $injection)
 	{
-		$result = $injection->compile();
+		$compilationResult = $injection->compile();	
+		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
 		$this->assertArrayHasKey('\TestClass2_injected0', $result);
 		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\InjectingTestClass2', $result);
@@ -235,7 +238,8 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCompileMixed2(\Change\Injection\ClassInjection $injection)
 	{
-		$result = $injection->compile();
+		$compilationResult = $injection->compile();	
+		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
 		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3_injected0', $result);
 		$this->assertArrayHasKey('\InjectingTestClass3', $result);
