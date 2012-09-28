@@ -383,6 +383,21 @@ class Controller
 	{
 		return $this->uri;
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getClientIp()
+	{
+		$ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
+		$remoteAddr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+		if (!empty($ip) && !empty($remoteAddr))
+		{
+			$ip .= ', ';
+		}
+		$ip .= $remoteAddr;
+		return $ip;
+	}
 		
 	/**
 	 * @param string $moduleName
