@@ -250,8 +250,11 @@ class CodeExtractor
 						}
 						break;
 					case T_USE;
-						$inUse = true;
-						$currentUse = '';
+						if (!$inClass)
+						{
+							$inUse = true;
+							$currentUse = '';
+						}
 						break;
 					case T_AS;
 						if ($inUse)
