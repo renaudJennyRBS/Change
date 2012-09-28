@@ -37,7 +37,7 @@ Example :
     
 ### Interfaces ###
 
-An interface should only be introduced when there are really needed - in general only if at least two classes sharing no code implementing it. In that case they should always be named `Interface` (using the correct namespace of course).
+An interface should only be introduced when there are really needed - in general only if at least two classes sharing no code implementing it. In that case their names must always start with "`Interface`".
 
  
     
