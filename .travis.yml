@@ -15,3 +15,7 @@ before_install:
 script:
  - cd ChangeTests/
  - phpunit Change/
+
+notifications:
+   email:
+       - noreply@rbschange.fr
