@@ -309,8 +309,7 @@ abstract class AbstractAction
 	 */
 	public final function getLang()
 	{
-		//TODO Old class Usage
-		return \RequestContext::getInstance()->getLang();
+		return \Change\I18n\I18nManager::getInstance()->getLang();
 	}
 
 	/**

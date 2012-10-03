@@ -24,7 +24,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * Document instances by id
-	 * @var array<integer, \f_persistentdocument_PersistentDocument> TODO Old class Usage
+	 * @var array<integer, \Change\Documents\AbstractDocument> TODO Old class Usage
 	 */
 	protected $m_documentInstances = array();
 	
@@ -45,7 +45,21 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	protected $m_newInstancesCounter = 0;
 	
-
+	/**
+	 * @var integer
+	 */
+	protected $transactionCount = 0;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $transactionDirty = false;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $m_inTransaction = false;
+	
 	/**
 	 * @return integer
 	 */
@@ -66,6 +80,174 @@ abstract class Provider extends \Change\AbstractSingleton
 		$connectionInfos = \Change\Application::getInstance()->getConfiguration()->getEntry('databases/default', array());
 		$this->connectionInfos = $connectionInfos;
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
+	}	
+	
+	public function __destruct()
+	{
+		if ($this->hasTransaction())
+		{
+			//TODO Old class Usage
+			\Framework::warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
+		}
+	}
+	
+	protected final function checkDirty()
+	{
+		if ($this->transactionDirty)
+		{
+			throw new \Exception('Transaction is dirty');
+		}
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function beginTransaction()
+	{
+		$this->checkDirty();
+		if ($this->transactionCount == 0)
+		{
+			$this->transactionCount++;
+			if ($this->m_inTransaction)
+			{
+				//TODO Old class Usage
+				\Framework::warn(get_class($this) . " while already in transaction");
+			}
+			else
+			{
+				$this->timers['bt'] = microtime(true);
+				$this->beginTransactionInternal();
+				$this->m_inTransaction = true;
+				//TODO Old class Usage
+				\indexer_IndexService::getInstance()->beginIndexTransaction();
+			}
+		}
+		else
+		{
+			//TODO Old class Usage
+			$embededTransaction = intval(\change_ConfigurationService::getInstance()->getConfigurationValue('databases/default/embededTransaction', '5'));
+			$this->transactionCount++;
+			if ($this->transactionCount > $embededTransaction)
+			{
+				//TODO Old class Usage
+				\Framework::warn('embeded transaction: ' . $this->transactionCount);
+			}
+		}
+	}
+	
+	/**
+	 * @param boolean $isolatedWrite make sense in the context of read-write separated database. Set to true if the next client request does not care about the data you wrote. It will then perform reads on read database.
+	 * @throws Exception if bad transaction count
+	 * @return void
+	 */
+	public function commit($isolatedWrite = false)
+	{
+		$this->checkDirty();
+		if ($this->transactionCount <= 0)
+		{
+			throw new \Exception('commit-bad-transaction-count ('.$this->transactionCount.')');
+		}
+		if ($this->transactionCount == 1)
+		{
+			if (!$this->m_inTransaction)
+			{
+				//TODO Old class Usage
+				\Framework::warn("PersistentProvider->commit() called while not in transaction");
+			}
+			else
+			{
+				$this->commitInternal();
+				$duration = round(microtime(true) - $this->timers['bt'], 4);
+				if ($duration > $this->timers['longTransaction'])
+				{
+					//TODO Old class Usage
+					\Framework::warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+				}
+				$this->m_inTransaction = false;
+				
+				$this->beginTransactionInternal();
+				//TODO Old class Usage
+				\indexer_IndexService::getInstance()->commitIndex();
+				$this->commitInternal();
+			}
+		}
+		$this->transactionCount--;
+	}
+	
+	/**
+	 * cancel transaction.
+	 * @param Exception $e
+	 * @throws BaseException('rollback-bad-transaction-count') if rollback called while no transaction
+	 * @throws \Change\Db\Exception\TransactionCancelledException on embeded transaction
+	 * @return Exception the given exception so it is easy to throw it
+	 */
+	public function rollBack($e = null)
+	{
+		//TODO Old class Usage
+		\Framework::warn('TransactionManager->rollBack called');
+		if ($this->transactionCount == 0)
+		{
+			\Framework::warn('TransactionManager->rollBack() => bad transaction count (no transaction)');
+			throw new \Exception('rollback-bad-transaction-count');
+		}
+		$this->transactionCount--;
+		
+		if (!$this->transactionDirty)
+		{
+			$this->transactionDirty = true;
+			if (!$this->m_inTransaction)
+			{
+				//TODO Old class Usage
+				\Framework::warn("PersistentProvider->rollBack() called while not in transaction");
+			}
+			else
+			{
+				$this->clearDocumentCache();
+				//TODO Old class Usage
+				\indexer_IndexService::getInstance()->rollBackIndex();
+				$this->rollBackInternal();
+				$this->m_inTransaction = false;
+			}
+		}
+		
+		if ($this->transactionCount == 0)
+		{
+			$this->transactionDirty = false;
+		}
+		else
+		{
+			if (!($e instanceof \Change\Db\Exception\TransactionCancelledException))
+			{
+				$e = new \Change\Db\Exception\TransactionCancelledException($e);
+			}
+			throw $e;
+		}
+		return ($e instanceof \Change\Db\Exception\TransactionCancelledException) ? $e->getPrevious() : $e;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function hasTransaction()
+	{
+		return $this->transactionCount > 0;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isTransactionDirty()
+	{
+		return $this->transactionDirty;
+	}
+	
+	/**
+	 * @deprecated
+	 * @return \Change\Db\Provider
+	 */
+	public function getPersistentProvider()
+	{
+		return $this;
 	}
 		
 	/**
@@ -123,7 +305,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param integer $documentId
-	 * @return f_persistentdocument_PersistentDocument
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function getFromCache($documentId)
 	{
@@ -131,7 +313,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	}
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $doc TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param string $lang
 	 * @return \f_persistentdocument_I18nPersistentDocument|NULL TODO Old class Usage
 	 */
@@ -154,7 +336,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param integer $documentId
-	 * @param f_persistentdocument_PersistentDocument $document TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @return void
 	 */
 	protected function putInCache($documentId, $document)
@@ -185,90 +367,17 @@ abstract class Provider extends \Change\AbstractSingleton
 		$this->m_i18nDocumentInstances = array();
 	}	
 	
-	/**
-	 * @var boolean
-	 */
-	protected $m_inTransaction = false;
-	
-	
-	/**
-	 * @return void
-	 */
-	public function beginTransaction()
-	{
-		if ($this->m_inTransaction)
-		{
-			//TODO Old class Usage
-			\Framework::warn("PersistentProvider->beginTransaction() while already in transaction");
-		}
-		else
-		{
-			$this->timers['bt'] = microtime(true);
-			$this->beginTransactionInternal();
-			$this->m_inTransaction = true;
-			//TODO Old class Usage
-			\indexer_IndexService::getInstance()->beginIndexTransaction();
-		}
-	}
 
 	/**
 	 * @return void
 	 */
 	protected abstract function beginTransactionInternal();
-	
-	/**
-	 * @return void
-	 */
-	public function commit()
-	{
-		if (!$this->m_inTransaction)
-		{
-			//TODO Old class Usage
-			\Framework::warn("PersistentProvider->commit() called while not in transaction");
-		}
-		else
-		{
-			$this->commitInternal();
-			$duration = round(microtime(true) - $this->timers['bt'], 4);
-			if ($duration > $this->timers['longTransaction'])
-			{
-				//TODO Old class Usage
-				\Framework::warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
-			}
-			$this->m_inTransaction = false;
-			
-			$this->beginTransactionInternal();
-			//TODO Old class Usage
-			\indexer_IndexService::getInstance()->commitIndex();
-			$this->commitInternal();
-		}
-	}
-	
+		
 	/**
 	 * @return void
 	 */	
 	protected abstract function commitInternal();
-	
-	/**
-	 * @return void
-	 */	
-	public function rollBack()
-	{
-		if (!$this->m_inTransaction)
-		{
-			//TODO Old class Usage
-			\Framework::warn("PersistentProvider->rollBack() called while not in transaction");
-		}
-		else
-		{
-			$this->clearDocumentCache();
-			//TODO Old class Usage
-			\indexer_IndexService::getInstance()->rollBackIndex();
-			$this->rollBackInternal();
-			$this->m_inTransaction = false;
-		}
-	}
-	
+		
 	/**
 	 * @return void
 	 */	
@@ -281,15 +390,14 @@ abstract class Provider extends \Change\AbstractSingleton
 	 * @param string $modelName
 	 * @param integer $treeId
 	 * @param array $I18nInfoArray
-	 * @return \f_persistentdocument_PersistentDocument TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function getDocumentInstanceWithModelName($id, $modelName, $treeId, $I18nInfoArray)
 	{
 		if (!$this->isInCache($id))
 		{
 			$className = $this->getDocumentClassFromModel($modelName);
-			//TODO Old class Usage
-			$i18nInfo = (count($I18nInfoArray) === 0) ? null : \I18nInfo::getInstanceFromArray($I18nInfoArray);
+			$i18nInfo = (count($I18nInfoArray) === 0) ? null : \Change\Documents\I18nInfo::getInstanceFromArray($I18nInfoArray);
 			$doc = new $className($id, $i18nInfo, $treeId);
 			$this->putInCache($id, $doc);
 			return $doc;
@@ -299,7 +407,7 @@ abstract class Provider extends \Change\AbstractSingleton
 		
 	/**
 	 * @param string $documentModelName
-	 * @return \f_persistentdocument_PersistentDocument TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	public function getNewDocumentInstance($documentModelName)
 	{
@@ -339,7 +447,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	/**
 	 * Return a instance of the document or null
 	 * @param integer $documentId
-	 * @return \f_persistentdocument_PersistentDocument|NULL TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument|NULL
 	 */
 	public abstract function getDocumentInstanceIfExist($documentId);
 	
@@ -348,14 +456,14 @@ abstract class Provider extends \Change\AbstractSingleton
 	 * @param integer $documentId
 	 * @param string $modelName
 	 * @param string $lang
-	 * @return \f_persistentdocument_PersistentDocument TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument
 	 * @throws Exception
 	 */
 	public abstract function getDocumentInstance($documentId, $modelName = null, $lang = null);
 	
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $document TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @return integer
 	 */
 	public function getCachedDocumentId($document)
@@ -371,7 +479,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param integer $cachedId
-	 * @return \f_persistentdocument_PersistentDocument TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument
 	 * @throws Exception
 	 */
 	public function getCachedDocumentById($cachedId)
@@ -397,10 +505,10 @@ abstract class Provider extends \Change\AbstractSingleton
 	}
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $document TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $modelName
 	 * @throws \Exception
-	 * @return \f_persistentdocument_PersistentDocument //TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function checkModelCompatibility($document, $modelName)
 	{
@@ -415,17 +523,17 @@ abstract class Provider extends \Change\AbstractSingleton
 	 * When we want to get a document, the data is not loaded. When we want to access to it,
 	 * this function is called for giving all data to the object.
 	 *
-	 * @param \f_persistentdocument_PersistentDocument $persistentDocument TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @throws Exception
 	 */
-	public abstract function loadDocument($persistentDocument);
+	public abstract function loadDocument($document);
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $doc TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $lang
 	 * @return \f_persistentdocument_I18PersistentDocument
 	 */
-	public abstract function getI18nDocument($doc, $lang, $isVo = false);
+	public abstract function getI18nDocument($document, $lang, $isVo = false);
 	
 	/**
 	 * @param string $propertyName
@@ -434,32 +542,32 @@ abstract class Provider extends \Change\AbstractSingleton
 	public abstract function getRelationId($propertyName);
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $document TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $propertyName
 	 */
 	public abstract function loadRelations($document, $propertyName);
 	
 
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $persistentDocument TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public abstract function insertDocument($persistentDocument);
+	public abstract function insertDocument($document);
 	
 	/**
 	 * Update a document.
-	 * @param \f_persistentdocument_PersistentDocument $persistentDocument TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public abstract function updateDocument($persistentDocument);
+	public abstract function updateDocument($document);
 
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $persistentDocument TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public abstract function deleteDocument($persistentDocument);
+	public abstract function deleteDocument($document);
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocument $document TODO Old class Usage
-	 * @param \f_persistentdocument_PersistentDocument $destDocument TODO Old class Usage
-	 * @return \f_persistentdocument_PersistentDocument the result of mutation (destDocument) TODO Old class Usage
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument $destDocument
+	 * @return \Change\Documents\AbstractDocument the result of mutation (destDocument)
 	 */
 	public abstract function mutate($document, $destDocument);
 
@@ -479,7 +587,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param \f_persistentdocument_criteria_Query $query TODO Old class Usage
-	 * @return \f_persistentdocument_PersistentDocument[] TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument[]
 	 */
 	public abstract function find($query);
 	
@@ -514,7 +622,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param f_persistentdocument_criteria_QueryIntersection $intersection TODO Old class Usage
-	 * @return f_persistentdocument_PersistentDocument[] TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument[]
 	 */
 	public function findIntersection($intersection)
 	{
@@ -658,7 +766,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param f_persistentdocument_criteria_QueryIntersection $union TODO Old class Usage
-	 * @return f_persistentdocument_PersistentDocument[] TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument[]
 	 */
 	public function findUnion($union)
 	{
@@ -708,7 +816,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	 * Helper for '$this->find($query)[0]'
 	 *
 	 * @param f_persistentdocument_criteria_Query $query
-	 * @return f_persistentdocument_PersistentDocument or null if no document was returned by find($query) TODO Old class Usage
+	 * @return \Change\Documents\AbstractDocument|null if no document was returned by find($query)
 	 */
 	public function findUnique($query)
 	{
@@ -1007,6 +1115,12 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	public abstract function translate($lcid, $id, $keyPath);
 
+	/**
+	 * Clear the translation table or a part of that
+	 * @param string $package Example: m.users
+	 */
+	public abstract function clearTranslationCache($package = null);
+	
 	/**
 	 * @param string $lcid
 	 * @param string $id

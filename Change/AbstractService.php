@@ -4,18 +4,10 @@ namespace Change;
 abstract class AbstractService extends AbstractSingleton
 {
 	/**
-	 * @return f_persistentdocument_PersistentProvider
+	 * @return \Change\Db\Provider
 	 */
-	protected function getPersistentProvider()
+	protected function getDbProvider()
 	{
-		return \f_persistentdocument_PersistentProvider::getInstance();
-	}
-	
-	/**
-	 * @return f_persistentdocument_TransactionManager
-	 */
-	protected function getTransactionManager()
-	{
-		return \f_persistentdocument_TransactionManager::getInstance();
+		return \Change\Db\Provider::getInstance();
 	}
 } 

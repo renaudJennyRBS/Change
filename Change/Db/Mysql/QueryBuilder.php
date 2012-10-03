@@ -489,8 +489,7 @@ class QueryBuilder
 		{
 			$table  = $model->getTableName() . $this->getI18nSuffix();
 			$localizedTableAlias = 'l'. $tableAlias;
-			//TODO Old class Usage
-			$lang  = \RequestContext::getInstance()->getLang();
+			$lang  = \Change\I18n\I18nManager::getInstance()->getLang();
 
 			$from = 'inner join ' . $table . ' ' . $localizedTableAlias . ' on '
 				. $tableAlias .'.document_id = ' . $localizedTableAlias .'.document_id and '
@@ -709,7 +708,7 @@ class QueryBuilder
 						{
 							$documentTableName = $sh->getDbNameByModel($projectionModel, true);
 							//TODO Old class Usage
-							$this->addWhere($documentalias.'.lang_i18n = \'' . \RequestContext::getInstance()->getLang() . '\'');
+							$this->addWhere($documentalias.'.lang_i18n = \'' . \Change\I18n\I18nManager::getInstance()->getLang() . '\'');
 						}
 						else
 						{
