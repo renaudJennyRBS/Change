@@ -409,36 +409,35 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		}
 		else
 		{
-			//TODO Old class Usage
 			switch ($buildProperty->getType())
 			{
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_STRING :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_STRING :
 					$dbSize = intval($buildProperty->getDbSize());
 					if ($dbSize <= 0 || $dbSize > 255) {$dbSize = 255;} 
 					$fp[] = "VARCHAR(" . $dbSize . ")";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_LONGSTRING :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_LONGSTRING :
 					$fp[] = "TEXT";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_XHTMLFRAGMENT :
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_BBCODE :
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_JSON :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_XHTMLFRAGMENT :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_BBCODE :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_JSON :
 					$fp[] = "MEDIUMTEXT";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_LOB :
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_OBJECT :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_LOB :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_OBJECT :
 					$fp[] = "MEDIUMBLOB";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_BOOLEAN :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_BOOLEAN :
 					$fp[] = "TINYINT(1) NOT NULL DEFAULT '0'";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_DATETIME :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DATETIME :
 					$fp[] = "DATETIME";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_DOUBLE :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOUBLE :
 					$fp[] = "DOUBLE";
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_DECIMAL :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DECIMAL :
 					$dbSize = $buildProperty->getDbSize();
 					if (!empty($dbSize) && strpos($dbSize, ','))
 					{
@@ -449,8 +448,8 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 						$fp[] = "DECIMAL(13,4)";
 					}
 					break;
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_INTEGER :
-				case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_DOCUMENTID :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
+				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTID :
 					$fp[] = "INT(11)";
 					break;
 			}

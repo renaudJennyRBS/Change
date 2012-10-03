@@ -12,24 +12,49 @@ class Statment extends \Change\Db\AbstractStatment
 	private $stmt;
 	
 	/**
+	 * @var \Change\Db\Mysql\Provider
+	 */
+	private $provider;
+	
+	/**
 	 * @var string
 	 */
 	private $errorMessage;
 	
+
 	/**
-	 * @param \PDO $pdo
+	 * @throws \Exception
+	 * @return \PDOStatement
+	 */
+	public function getPDOStatment()
+	{
+		if ($this->stmt === null)
+		{
+			$pdo = $this->provider->getDriver();
+			$this->stmt = $pdo->prepare($this->sql);  
+			if ($this->stmt === false)
+			{
+				$errorCode = $pdo->errorCode();
+				$this->errorMessage = "Driver ERROR Code (" . $errorCode . ") : " . var_export($pdo->errorInfo(), true);
+				throw new \Exception($this->errorMessage);
+			} 
+		}
+		elseif ($this->stmt === false)
+		{
+			$this->errorMessage = "Statment already closed.";
+			throw new \Exception($this->errorMessage);
+		}
+		return $this->stmt;
+	}
+	
+	/**
+	 * @param \Change\Db\Mysql\Provider $provider
 	 * @param string $sql
 	 * @param \Change\Db\StatmentParameter[] $parameters
 	 */
-	public function __construct($pdo, $sql, $parameters = null)
+	public function __construct($provider, $sql, $parameters = null)
 	{
-		$this->stmt = $pdo->prepare($sql);
-		if ($this->stmt === false)
-		{
-			$errorCode = $pdo->errorCode();
-			$this->errorMessage = "Driver ERROR Code (" . $errorCode . ") : " . var_export($pdo->errorInfo(), true);
-			throw new \Exception($this->errorMessage);
-		}
+		$this->provider = $provider;
 		parent::__construct($sql, $parameters);
 	}
 	
@@ -39,7 +64,7 @@ class Statment extends \Change\Db\AbstractStatment
 	 */
 	public function addParameter(\Change\Db\StatmentParameter $parameter)
 	{
-		$this->stmt->bindValue($parameter->getName(), $parameter->getValue(), $this->getStatmentType($parameter->getType()));
+		$this->getPDOStatment()->bindValue($parameter->getName(), $parameter->getValue(), $this->getStatmentType($parameter->getType()));
 		return $this;
 	}
 	
@@ -48,10 +73,11 @@ class Statment extends \Change\Db\AbstractStatment
 	 */
 	public function close()
 	{
-		if ($this->stmt !== false)
+		if ($this->stmt !== false && $this->stmt !== null)
 		{
 			$this->stmt->closeCursor();
 		}
+		$this->provider = null;
 		$this->stmt = false;
 	}
 	
@@ -62,7 +88,7 @@ class Statment extends \Change\Db\AbstractStatment
 	 */
 	public function bindValue($parameterName, $value, $type = null)
 	{
-		$this->stmt->bindValue($parameterName, $value, $this->getStatmentType($type));
+		$this->getPDOStatment()->bindValue($parameterName, $value, $this->getStatmentType($type));
 	}
 	
 	/**
@@ -76,7 +102,7 @@ class Statment extends \Change\Db\AbstractStatment
 		$name = ':p' . $propertyInfo->getName();
 		switch ($propertyInfo->getType())
 		{
-			case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_DATETIME :
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DATETIME :
 				if (empty($value))
 				{
 					$this->bindValue($name, null, \Change\Db\StatmentParameter::NIL);
@@ -90,10 +116,10 @@ class Statment extends \Change\Db\AbstractStatment
 					$this->bindValue($name, $value, \Change\Db\StatmentParameter::STR);
 				}
 				break;
-			case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_BOOLEAN :
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_BOOLEAN :
 				$this->bindValue($name, $value ? 1 : 0, \Change\Db\StatmentParameter::INT);
 				break;
-			case \f_persistentdocument_PersistentDocument::PROPERTYTYPE_INTEGER :
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
 				if ($value === null)
 				{
 					$this->bindValue($name, null, \Change\Db\StatmentParameter::NIL);
@@ -133,7 +159,8 @@ class Statment extends \Change\Db\AbstractStatment
 				}
 			}
 		}
-		if (!$this->stmt->execute() && $this->stmt->errorCode() != '00000')
+		$stmt = $this->getPDOStatment();
+		if (!$stmt->execute() && $this->stmt->errorCode() != '00000')
 		{
 			$errorCode = $this->stmt->errorCode();
 			$this->errorMessage = "Driver ERROR Code (" . $errorCode . ") : " . var_export($this->stmt->errorInfo(), true);

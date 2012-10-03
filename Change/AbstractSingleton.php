@@ -1,6 +1,8 @@
 <?php
 namespace Change;
-
+/**
+ * @name \Change\AbstractSingleton
+ */
 abstract class AbstractSingleton
 {
 	/**

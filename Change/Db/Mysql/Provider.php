@@ -262,7 +262,7 @@ class Provider extends \Change\Db\Provider
 	protected function prepareStatement($sql, $parameters = null)
 	{
 		$this->setCurrentStatment(null);
-		$stmt = new Statment($this->getDriver(), $sql, $parameters);
+		$stmt = new Statment($this, $sql, $parameters);
 		$this->setCurrentStatment($stmt);
 		return $stmt;
 	}
@@ -289,10 +289,9 @@ class Provider extends \Change\Db\Provider
 		}
 		else
 		{
-			$errorCode = $this->errorCode();
-			$msg = "Driver ERROR Code (". $this->errorCode() . ") : " . var_export($this->errorInfo(), true);
+			$msg = "Driver ERROR Code (". $this->errorCode() . ") : " . $this->errorInfo();
 		}
-		throw new \Exception($msg, $errorCode);
+		throw new \Exception($msg);
 	}
 	
 	public function getDocumentModelName($id)
@@ -365,7 +364,7 @@ class Provider extends \Change\Db\Provider
 	
 	/**
 	 * @param integer $documentId
-	 * @return f_persistentdocument_PersistentDocument|NULL
+	 * @return \Change\Documents\AbstractDocument|NULL
 	 */
 	protected function getDocumentInstanceInternal($documentId)
 	{
@@ -386,7 +385,7 @@ class Provider extends \Change\Db\Provider
 	 * When we want to get a document, the data is not loaded. When we want to access to it,
 	 * this function is called for giving all data to the object.
 	 *
-	 * @param f_persistentdocument_PersistentDocument $document
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @throws Exception
 	 */
 	public function loadDocument($document)
@@ -440,7 +439,7 @@ class Provider extends \Change\Db\Provider
 	/**
 	 * Initialize un document avec une ligne de resultat de la base de donnée
 	 *
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param array $dbresult contient statement->fetch(\PDO::FETCH_ASSOC)
 	 */
 	protected function initDocumentFromDb($persistentDocument, $dbresult)
@@ -459,12 +458,11 @@ class Provider extends \Change\Db\Provider
 			}
 		}
 		$persistentDocument->setDocumentProperties($dbresult);
-		//TODO Old class Usage
-		$persistentDocument->setDocumentPersistentState(\f_persistentdocument_PersistentDocument::PERSISTENTSTATE_LOADED);
+		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
 	}	
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $doc
+	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param string $lang
 	 * @return f_persistentdocument_I18PersistentDocument
 	 */
@@ -506,7 +504,7 @@ class Provider extends \Change\Db\Provider
 	}	
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $doc
+	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param string $lang
 	 * @param array $result or null
 	 * @return f_persistentdocument_I18nPersistentDocument
@@ -557,7 +555,7 @@ class Provider extends \Change\Db\Provider
 	}
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $document
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $propertyName
 	 */
 	public function loadRelations($document, $propertyName)
@@ -576,7 +574,7 @@ class Provider extends \Change\Db\Provider
 	
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
 	public function insertDocument($persistentDocument)
 	{
@@ -585,7 +583,7 @@ class Provider extends \Change\Db\Provider
 	}
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @return integer
 	 */
 	protected function getNewDocumentId($persistentDocument)
@@ -627,7 +625,7 @@ class Provider extends \Change\Db\Provider
 	
 	/**
 	 * @param integer $documentId
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
 	protected function insertDocumentInternal($documentId, $persistentDocument)
 	{
@@ -696,8 +694,7 @@ class Provider extends \Change\Db\Provider
 		$persistentDocument->updateId($documentId);
 		$this->saveRelations($persistentDocument, $dataRelations);
 	
-		//TODO Old class Usage
-		$persistentDocument->setDocumentPersistentState(\f_persistentdocument_PersistentDocument::PERSISTENTSTATE_LOADED);
+		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
 	
 		$this->putInCache($documentId, $persistentDocument);
 	}	
@@ -737,7 +734,7 @@ class Provider extends \Change\Db\Provider
 	
 	/**
 	 * Update a document.
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
 	public function updateDocument($persistentDocument)
 	{
@@ -825,13 +822,12 @@ class Provider extends \Change\Db\Provider
 		}
 	
 		$this->saveRelations($persistentDocument, $dataRelations);
-		//TODO Old class Usage
-		$persistentDocument->setDocumentPersistentState(\f_persistentdocument_PersistentDocument::PERSISTENTSTATE_LOADED);
+		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
 		$this->postUpdate($documentId, $persistentDocument);
 	}	
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param mixed[] $dataRelations
 	 */
 	private function saveRelations($persistentDocument, $dataRelations)
@@ -847,7 +843,7 @@ class Provider extends \Change\Db\Provider
 	
 	/**
 	 * 
-	 * @param f_persistentdocument_PersistentDocument $parentDocument
+	 * @param \Change\Documents\AbstractDocument $parentDocument
 	 * @param string $propertyName
 	 * @param mixed $relationValues
 	 */
@@ -1018,7 +1014,7 @@ class Provider extends \Change\Db\Provider
 	}
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param string $propertyName
 	 * @param integer[] $documentIds
 	 * @return integer[] 
@@ -1041,7 +1037,7 @@ class Provider extends \Change\Db\Provider
 		
 	/**
 	 * @param integer $documentId
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param boolean $clearCache
 	 */
 	protected function postUpdate($documentId, $persistentDocument, $clearCache = true)
@@ -1094,7 +1090,7 @@ class Provider extends \Change\Db\Provider
 	}
 	
 	/**
-	 * @param f_persistentdocument_PersistentDocument $persistentDocument
+	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
 	public function deleteDocument($persistentDocument)
 	{
@@ -1106,16 +1102,16 @@ class Provider extends \Change\Db\Provider
 		$deleteDocumentInstance = true;
 		if ($documentModel->isLocalized())
 		{
-			//TODO Old class Usage
-			$rc = \RequestContext::getInstance();
-			$contextLang = $rc->getLang();
+
+			$i18nm = \Change\I18n\I18nManager::getInstance();
+			$contextLang = $i18nm->getLang();
 			if (!$persistentDocument->isLangAvailable($contextLang))
 			{
 				//Le document n'existe pas dans la langue du context on ne fait rien
 				return;
 			}
 	
-			if ($rc->hasI18nSynchro())
+			if ($i18nm->hasI18nSynchro())
 			{
 				//Suppression de toute les versions de lang synchronisé
 				foreach ($this->getI18nSynchroStatus($documentId) as $stl => $stInfo)
@@ -1172,8 +1168,7 @@ class Provider extends \Change\Db\Provider
 			}
 			$this->clearUrlRewriting($documentId);
 	
-			//TODO Old class Usage
-			$persistentDocument->setDocumentPersistentState(\f_persistentdocument_PersistentDocument::PERSISTENTSTATE_DELETED);
+			$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_DELETED);
 	
 			if ($documentModel->hasCascadeDelete())
 			{
@@ -1196,17 +1191,15 @@ class Provider extends \Change\Db\Provider
 	}
 		
 	/**
-	 * @param f_persistentdocument_PersistentDocument $document
-	 * @param f_persistentdocument_PersistentDocument $destDocument
-	 * @return f_persistentdocument_PersistentDocument the result of mutation (destDocument)
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument $destDocument
+	 * @return \Change\Documents\AbstractDocument the result of mutation (destDocument)
 	 */
 	public function mutate($document, $destDocument)
 	{
-		//TODO Old class Usage
-		$tm = \f_persistentdocument_TransactionManager::getInstance();
 		try
 		{
-			$tm->beginTransaction();
+			$this->beginTransaction();
 			$id = $document->getId();
 			$sourceModel = $document->getPersistentModel();
 			$sourceModelName = $sourceModel->getName();
@@ -1266,12 +1259,12 @@ class Provider extends \Change\Db\Provider
 			$this->deleteFromCache($id);
 			$destDocument->copyMutateSource($document);
 			$this->putInCache($id, $destDocument);
-			$tm->commit();
+			$this->commit();
 			return $destDocument;
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
+			$this->rollBack($e);
 			// unrecoverable ...
 			throw $e;
 		}
@@ -1279,7 +1272,7 @@ class Provider extends \Change\Db\Provider
 
 	/**
 	 * @param f_persistentdocument_criteria_Query $query
-	 * @return f_persistentdocument_PersistentDocument[]
+	 * @return \Change\Documents\AbstractDocument[]
 	 */
 	public function find($query)
 	{

@@ -356,6 +356,20 @@ class Controller
 	}
 	
 	/**
+	 * @return string
+	 */
+	public function getUserAgentLanguage()
+	{
+		$lang = null;
+		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+		{
+			$lang = preg_split('/[,;]+/', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			$lang = strtolower(substr(trim($lang[0]), 0, 2));
+		}
+		return $lang;
+	}
+	
+	/**
 	 * @return boolean
 	 */
 	public function addNoCacheHeader()

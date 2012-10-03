@@ -20,8 +20,7 @@ class SqlMapping
 		if ($this->i18nfieldNames === null)
 		{
 			$array = array('lang_vo');
-			//TODO Old class Usage
-			foreach (\RequestContext::getInstance()->getSupportedLanguages() as $lang)
+			foreach (\Change\I18n\I18nManager::getInstance()->getSupportedLanguages() as $lang)
 			{
 				$array[] = 'label_'.$lang;
 			}

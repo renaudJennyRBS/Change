@@ -89,6 +89,7 @@ abstract class AbstractView
 		{
 			throw new \InvalidArgumentException('Invalid mimeContentType');
 		}
+		//TODO Old class Usage
 		\RequestContext::getInstance()->setMimeContentType($mimeContentType);
 		$this->mimeContentType = $mimeContentType;
 	}
@@ -217,7 +218,6 @@ abstract class AbstractView
 	 */
 	public function getLang()
 	{
-		//TODO Old class Usage
-		return \RequestContext::getInstance()->getLang();
+		return \Change\I18n\I18nManager::getInstance()->getLang();
 	}
 }
