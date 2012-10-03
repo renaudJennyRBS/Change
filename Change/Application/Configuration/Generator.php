@@ -474,8 +474,8 @@ class Generator
 			}
 			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
 		}
-		$filename = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'build', 'project', 'dev_defines.php'));
-		file_put_contents($filename, $content);
+		$path = \Change\Stdlib\Path::compilationPath('Config', 'dev_defines.php');
+		\Change\Stdlib\File::write($path, $content);
 	}
 	
 	/**
