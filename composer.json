@@ -8,7 +8,7 @@
 	{
 		"psr-0": 
 		{
-			"\\Change\\" : "Change/"
+			"Change" : "Change/"
 		}
 	},
 	"require-dev": 
@@ -56,7 +56,7 @@
 		"rbschange/website": "4.0.x-dev",
 		"rbschange/workflow": "4.0.x-dev",
 		"rbschange/zone": "4.0.x-dev",
-		"rbschange/defaulttheme": "4.0.x-dev"
+		"rbschange/default": "4.0.x-dev"
 	},
 	"repositories": 
 	[
