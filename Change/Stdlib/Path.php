@@ -1,9 +1,24 @@
 <?php
-
 namespace Change\Stdlib;
 
-abstract class Path
+/**
+ * @name \Change\Stdlib\Path
+ */
+class Path
 {
+	/**
+	 * @return string
+	 */
+	public static function appPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, PROJECT_HOME, 'App');
+		return static::buildPathFromComponents($args);
+	}
+	
+	/**
+	 * @return string
+	 */
 	public static function compilationPath()
 	{
 		$args = func_get_args();
@@ -11,12 +26,18 @@ abstract class Path
 		return static::buildPathFromComponents($args);
 	}
 	
+	/**
+	 * @return string
+	 */
 	public static function compilationPathFromComponents(array $pathComponents)
 	{
 		array_unshift($pathComponents, PROJECT_HOME, 'Compilation');
 		return static::buildPathFromComponents($pathComponents);
 	}
 	
+	/**
+	 * @return string
+	 */
 	public static function projectPath()
 	{
 		$args = func_get_args();
@@ -24,15 +45,18 @@ abstract class Path
 		return static::buildPathFromComponents($args);
 	}
 	
+	/**
+	 * @param string[] $pathComponents
+	 * @return string
+	 */
 	public static function buildPathFromComponents(array $pathComponents)
 	{
 		if (DIRECTORY_SEPARATOR !== '/' || substr($pathComponents[0], 0, strlen(DIRECTORY_SEPARATOR)) == DIRECTORY_SEPARATOR)
 		{
 			return implode(DIRECTORY_SEPARATOR, $pathComponents);
 		}
-		return DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, $pathComponents);
+		return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $pathComponents);
 	}
-	
 	static function normalizePath($path)
 	{
 		return (DIRECTORY_SEPARATOR === '/') ? $path : str_replace('/', DIRECTORY_SEPARATOR, $path);
@@ -45,7 +69,7 @@ abstract class Path
 	public static function buildRelativePath()
 	{
 		$args = func_get_args();
-		return join(DIRECTORY_SEPARATOR, $args);
+		return implode(DIRECTORY_SEPARATOR, $args);
 	}
 	
 	/**
@@ -56,7 +80,7 @@ abstract class Path
 	public static function buildPath()
 	{
 		$args = func_get_args();
-		return join(DIRECTORY_SEPARATOR, $args);
+		return implode(DIRECTORY_SEPARATOR, $args);
 	}
 	
 	/**
@@ -78,12 +102,10 @@ abstract class Path
 	{
 		if (DIRECTORY_SEPARATOR !== '/' || substr($args[0], 0, strlen(DIRECTORY_SEPARATOR)) == DIRECTORY_SEPARATOR)
 		{
-			return join(DIRECTORY_SEPARATOR, $args);
+			return implode(DIRECTORY_SEPARATOR, $args);
 		}
-		return DIRECTORY_SEPARATOR.join(DIRECTORY_SEPARATOR, $args);
+		return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $args);
 	}
-	
-	
 	
 	/**
 	 * For example: f_util_FileUtils::buildProjectPath('libs', 'icons')
@@ -135,7 +157,7 @@ abstract class Path
 	public static function buildChangeCachePath()
 	{
 		$args = func_get_args();
-		array_unshift($args, PROJECT_HOME, 'cache' , 'project');
+		array_unshift($args, PROJECT_HOME, 'cache', 'project');
 		return self::buildAbsolutePathFromArray($args);
 	}
 	
@@ -145,7 +167,7 @@ abstract class Path
 	public static function buildWebCachePath()
 	{
 		$args = func_get_args();
-		array_unshift($args, PROJECT_HOME, 'cache' , 'www');
+		array_unshift($args, PROJECT_HOME, 'cache', 'www');
 		return self::buildAbsolutePathFromArray($args);
 	}
 	

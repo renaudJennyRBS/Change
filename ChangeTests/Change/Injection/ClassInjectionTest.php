@@ -1,5 +1,4 @@
 <?php
-
 namespace ChangeTests\Change\Injection;
 
 class ClassInjectionTest extends \PHPUnit_Framework_TestCase
@@ -50,20 +49,17 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 		
-		$this->setExpectedException("\InvalidArgumentException", 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
+		$this->setExpectedException('\InvalidArgumentException', 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
 		$injection = new \Change\Injection\ClassInjection($originalInfoBad1, $replacingInfos);		
 		
-		$this->setExpectedException("\InvalidArgumentException", 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
+		$this->setExpectedException('\InvalidArgumentException', 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
 		$injection = new \Change\Injection\ClassInjection($originalInfoBad2, $replacingInfos);
 		
-		$this->setExpectedException("\InvalidArgumentException", 'all entries of the second argument of __construct must have at least on key "name" set to a fully-qualified class name');
+		$this->setExpectedException('\InvalidArgumentException', 'all entries of the second argument of __construct must have at least on key "name" set to a fully-qualified class name');
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfosBad1);
-		
-		
-		$this->setExpectedException("\InvalidArgumentException", 'all entries of the second argument of __construct must have at least on key "name" set to a fully-qualified class name');
+
+		$this->setExpectedException('\InvalidArgumentException', 'all entries of the second argument of __construct must have at least on key "name" set to a fully-qualified class name');
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfosBad2);
-		
-		
 	}
 	
 	public function testConstruct()

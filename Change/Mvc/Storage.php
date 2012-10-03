@@ -71,8 +71,7 @@ class Storage
 			$this->backuserSessionContainer = new \Zend\Session\Container('BACKOFFICE');
 			$this->frontuserSessionContainer = new \Zend\Session\Container('FRONTOFFICE');
 			$this->started = true;
-			//TODO Old class Usage
-			\change_LoggingService::getInstance()->registerSessionId($sessionManager->getId());
+			\Change\Application\LoggingManager::getInstance()->registerSessionId($sessionManager->getId());
 	
 			$currentKey =  $this->getSecureKey(); 
 			$md5 = $this->read('framework_SecureKey');
@@ -86,8 +85,7 @@ class Storage
 			{
 				$oldSessionId = $sessionManager->getId();
 				$sessionManager->regenerateId(true);
-				//TODO Old class Usage
-				\change_LoggingService::getInstance()->registerSessionId($sessionManager->getId());		
+				\Change\Application\LoggingManager::getInstance()->registerSessionId($sessionManager->getId());		
 				$this->sessionIdChanged($oldSessionId);
 				
 			}
@@ -96,8 +94,7 @@ class Storage
 				$oldSessionId = $sessionManager->getId();
 				$sessionManager->regenerateId(false);
 				$this->write('framework_SecurePort', $_SERVER["SERVER_PORT"]);
-				//TODO Old class Usage
-				\change_LoggingService::getInstance()->registerSessionId($sessionManager->getId());
+				\Change\Application\LoggingManager::getInstance()->registerSessionId($sessionManager->getId());
 				$this->sessionIdChanged($oldSessionId);	
 			}				
 		}
@@ -108,7 +105,7 @@ class Storage
 	}
 	
 	/**
-	 * 
+	 * Close session.
 	 */
 	protected function stopSession()
 	{

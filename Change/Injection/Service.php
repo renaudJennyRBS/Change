@@ -9,6 +9,7 @@ namespace Change\Injection;
 class Service extends \Change\AbstractSingleton
 {	
 	/**
+	 * @param array $oldInfo
 	 * @return void
 	 */
 	public function compile($oldInfo = null)
@@ -19,23 +20,11 @@ class Service extends \Change\AbstractSingleton
 			$oldInfo = $this->loadInfos();
 		}
 		
-		/*
-		foreach (Framework::getConfigurationValue('injection/document', array()) as $originalModelName => $replacingModelName)
-		{
-			$docInject = new change_DocumentInjection($originalModelName, $replacingModelName);
-			if (!$checkValidity || ($checkValidity && $docInject->isValid()))
-			{
-				$newInjectionInfos = array_merge($newInjectionInfos, $docInject->generate());
-				$returnValue[$originalModelName] = $replacingModelName;
-			}
-		}
-
-		*/
 		$compiledFileNames = array();
 		$compiledDir = \Change\Stdlib\Path::compilationPath('Injection');
 		
-		//TODO Old class Usage
-		foreach (\Framework::getConfigurationValue('injection/class', array()) as $originalClassName => $classNames)
+		$injectionArray = unserialize(\Change\Stdlib\File::read(\Change\Stdlib\Path::compilationPath('Config', 'injection.ser')));
+		foreach ($injectionArray as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);
 				

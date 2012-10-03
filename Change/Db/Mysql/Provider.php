@@ -292,7 +292,7 @@ class Provider extends \Change\Db\Provider
 			$errorCode = $this->errorCode();
 			$msg = "Driver ERROR Code (". $this->errorCode() . ") : " . var_export($this->errorInfo(), true);
 		}
-		throw new \Exception($errorCode, $msg);
+		throw new \Exception($msg, $errorCode);
 	}
 	
 	public function getDocumentModelName($id)

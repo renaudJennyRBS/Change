@@ -46,9 +46,9 @@ class Controller
 		$uri = new \Zend\Uri\Http();
 		if (isset($_SERVER['HTTP_HOST']))
 		{
-			//TODO Old class Usage
-			$httpsMarker = \Framework::getConfigurationValue('general/https-request-marker', 'HTTPS');
-			$httpsMarkerValue = \Framework::getConfigurationValue('general/https-request-marker-value', 'on');
+			$configuration = \Change\Application::getInstance()->getConfiguration();
+			$httpsMarker = $configuration->getEntry('general/https-request-marker', 'HTTPS');
+			$httpsMarkerValue = $configuration->getEntry('general/https-request-marker-value', 'on');
 			
 			$scheme = (isset($_SERVER[$httpsMarker]) && ($_SERVER[$httpsMarker] === $httpsMarkerValue)) ? 'https' : 'http';
 			$uri->setScheme($scheme);

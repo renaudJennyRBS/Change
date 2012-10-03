@@ -63,11 +63,10 @@ abstract class Provider extends \Change\AbstractSingleton
 	protected function __construct()
 	{
 		parent::__construct();
-		//TODO Old class Usage
-		$connectionInfos = \Framework::getConfigurationValue('databases/default', array());
+		$connectionInfos = \Change\Application::getInstance()->getConfiguration()->getEntry('databases/default', array());
 		$this->connectionInfos = $connectionInfos;
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
-	}	
+	}
 		
 	/**
 	 * @return array
