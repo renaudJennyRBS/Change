@@ -21,27 +21,34 @@ class ModulesInfosCompiler
 			{
 				continue;
 			}
-			foreach ($arrayCompiler->getConfigurationArray($module) as $moduleName => $moduleInfos)
+			foreach ($node->childNodes as $subNode)
 			{
-				if (is_array($moduleInfos))
+				if ($subNode->nodeType !== XML_ELEMENT_NODE)
 				{
-					$infos = array('version' => null, 'visible' => true, 'category' => null, 'icon' => 'package', 'usetopic' => false);
-					foreach ($moduleInfos as $key => $value)
+					continue;
+				}
+				$moduleName = $subNode->localName;
+				$infos = array('version' => null, 'visible' => true, 'category' => null, 'icon' => 'package', 'usetopic' => false);
+				
+				foreach ($subNode->childNodes as $valueNode)
+				{
+					if ($subNode->nodeType !== XML_ELEMENT_NODE)
 					{
-						switch ($key)
-						{
-							case 'category' :
-							case 'icon' :
-							case 'version' :
-								$infos[$key] = $value;
-								break;
-							case 'visible' :
-								$infos[$key] = ($value !== 'false');
-								break;
-							case 'usetopic' :
-								$infos[$key] = ($value === 'true');
-								break;
-						}
+						continue;
+					}
+					switch ($valueNode->localName)
+					{
+						case 'category' :
+						case 'icon' :
+						case 'version' :
+							$infos[$valueNode->localName] = $valueNode->textContent;
+							break;
+						case 'visible' :
+							$infos[$valueNode->localName] = ($valueNode->textContent !== 'false');
+							break;
+						case 'usetopic' :
+							$infos[$valueNode->localName] = ($valueNode->textContent === 'true');
+							break;
 					}
 					$modulesInfos[$moduleName] = $infos;
 				}
