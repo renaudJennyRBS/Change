@@ -75,4 +75,64 @@ class Application extends AbstractSingleton
 	{
 		$this->controller = $controller;
 	}	
+		
+	/**
+	 * @var \Change\Application\Configuration
+	 */
+	protected $configuration;
+	
+	/**
+	 * Initialize the application.
+	 */
+	public function loadConfiguration()
+	{
+		$compiledFile = \Change\Stdlib\Path::compilationPath('Config', 'project.php');
+		$this->setConfiguration(new \Change\Application\Configuration($compiledFile));
+	}
+	
+	/**
+	 * @return \Change\Application\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+	
+	/**
+	 * @param \Change\Application\Configuration $configuration
+	 */
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getProfile()
+	{
+		if (file_exists(PROJECT_HOME . '/profile'))
+		{
+			$profile = trim(file_get_contents(PROJECT_HOME . '/profile'));
+		}
+		else
+		{
+			$profile = 'default';
+		}
+		return $profile;
+	}
+	
+	/**
+	 * @see project config and DEVELOPMENT_MODE constant
+	 * @return boolean
+	 */
+	public static function inDevelopmentMode()
+	{
+		if (!defined('DEVELOPMENT_MODE'))
+		{
+			// TODO old class
+			\f_util_ProcessUtils::printBackTrace();
+		}
+		return DEVELOPMENT_MODE;
+	}
 }

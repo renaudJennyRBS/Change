@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<config>
+		<modules>
+			<catalog>
+				<entry name="currentBillingAreaStrategyClass">sample_BillingAreaSelectorStrategy</entry>
+				<modulesCatalogProductSuggestionFeeder>
+					<entry name="1">catalog_SameShelvesProductFeeder</entry>
+					<entry name="2">catalog_SameBrandProductFeeder</entry>
+				</modulesCatalogProductSuggestionFeeder>
+			</catalog>
+			<website>
+				<sample>
+					<entry name="defaultPageTemplate">default/sidebarpage</entry>
+					<entry name="defaultNosidebarTemplate">montheme/nosidebarpageecomsample</entry>
+					<entry name="defaultHomeTemplate">default/nosidebarpage</entry>
+					<entry name="defaultPopinTemplate">default/popin</entry>
+				</sample>
+				<entry name="highlighter">website_MinimalHighlighter</entry>
+				<entry name="forms-use-qtip-help">true</entry>
+				<entry name="forms-use-qtip-error">false</entry>
+			</website>
+		</modules>
+		<browsers>
+			<frontoffice>
+				<ie>
+					<version name="0">8.0</version>
+					<version name="1">9.0</version>
+					<version name="2">10.0</version>
+				</ie>
+				<firefox>
+					<version name="0">14.0</version>
+				</firefox>
+			</frontoffice>
+		</browsers>
+	</config>
+</project>
