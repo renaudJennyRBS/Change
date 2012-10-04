@@ -43,7 +43,7 @@ class ClassInjection
 		{
 			if (!isset($info['name']) || $info['name'][0] != '\\')
 			{
-				throw new \InvalidArgumentException('all entries of the second argument of __construct must have at least on key "name" set to a fully-qualified class name');
+				throw new \InvalidArgumentException('all entries of the second argument of __construct must have at least one key "name" set to a fully-qualified class name');
 			}
 		}
 		$this->replacingClassInfos = $rInfos;

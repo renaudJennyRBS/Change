@@ -8,15 +8,21 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	
 	public function testBadConstruct()
 	{
-		$url = realpath(__DIR__) . '/TestAssets/thisfiledoesnotexist.php';
+		$path = realpath(__DIR__) . '/TestAssets/thisfiledoesnotexist.php';
 		$this->setExpectedException('RuntimeException');
-		$extractor = new \Change\Injection\CodeExtractor($url);
+		$extractor = new \Change\Injection\CodeExtractor($path);
+	}
+	
+	public function testBadConstruct2()
+	{
+		$this->setExpectedException('InvalidArgumentException');
+		$extractor = new \Change\Injection\CodeExtractor(array());
 	}
 	
 	public function testConstruct()
 	{
-		$url = realpath(__DIR__) . '/TestAssets/ComplexPhpFile.php';
-		return new \Change\Injection\CodeExtractor($url);
+		$path = realpath(__DIR__) . '/TestAssets/ComplexPhpFile.php';
+		return new \Change\Injection\CodeExtractor($path);
 	}
 	
 	/**
