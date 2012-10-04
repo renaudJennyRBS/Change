@@ -11,26 +11,26 @@ class CodeExtractor
 	
 	/**
 	 * 
-	 * @param unknown_type $url
+	 * @param string $path
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct($url)
+	public function __construct($path)
 	{
 		$content = null;
-		if (is_string($url))
+		if (is_string($path))
 		{
 			\Zend\Stdlib\ErrorHandler::start();
-			$content = file_get_contents($url);
+			$content = file_get_contents($path);
 			$error = \Zend\Stdlib\ErrorHandler::stop();
 			if ($content === false || $error)
 			{
-				throw new \RuntimeException('Cannot open ' . $url . ' for reading', 0, $error);
+				throw new \RuntimeException('Cannot open ' . $path . ' for reading', 0, $error);
 			}
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Argument must be a valid URL');
+			throw new \InvalidArgumentException('Argument must be a string representing a valid filesystem path');
 		}
 		$this->extractionResult = $this->extract($content);
 	}
