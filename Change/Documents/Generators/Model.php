@@ -22,11 +22,6 @@ class Model
 	protected $properties = array();
 	
 	/**
-	 * @var \Change\Documents\Generators\ChildrenProperty[]
-	 */
-	protected $childrenProperties = array();
-	
-	/**
 	 * @var \Change\Documents\Generators\SerializedProperty[]
 	 */	
 	protected $serializedproperties = array();
@@ -45,6 +40,11 @@ class Model
 	 * @var string
 	 */	
 	protected $extend;
+	
+	/**
+	 * @var string
+	 */
+	protected $dbMapping;
 	
 	/**
 	 * @var boolean
@@ -149,16 +149,14 @@ class Model
 						case 'serializedproperties':
 							$this->importSerializedProperties($xmlSectionNode);
 							break;
-						case 'children':
-							$this->importChildrenProperties($xmlSectionNode);
-							break;
 						case 'workflow':
 							$this->importWorkflow($xmlSectionNode);
 							break;
 						case 'statuses':
 							$this->importPublicationStatus($xmlSectionNode);
 							break;
-							
+						default:
+							echo "Deprecated section: " . $xmlSectionNode->localName . " in " . $this->moduleName . '/' . $this->documentName, PHP_EOL;	
 					}
 				}
 			}
@@ -185,6 +183,13 @@ class Model
 			{
 				case "extend":
 					$this->extend = (trim($value) !== '') ? trim($value) : null;
+					break;
+				case "inject":
+					$this->inject = ($value === 'true');
+					break;
+				case "table-name": //DEPRECATED
+				case "db-mapping":
+					$this->dbMapping = $value;
 					break;
 				case "localized":
 					$this->localized = ($value === 'true');
@@ -214,11 +219,7 @@ class Model
 					$this->usePublicationDates = ($value === 'true');
 					break;
 				case "xsi:schemaLocation":
-				case "table-name":
 					// just ignore it
-					break;
-				case "inject":
-					$this->inject = ($value === 'true');
 					break;
 				default:
 					throw new \Exception('Invalid document attribute ' . $name . ' = ' . $value);
@@ -258,23 +259,7 @@ class Model
 			}
 		}
 	}
-	
-	/**
-	 * @param \DOMElement $childrenPropertiesElement
-	 */
-	protected function importChildrenProperties($childrenPropertiesElement)
-	{
-		foreach ($childrenPropertiesElement->childNodes as $xmlProperty)
-		{
-			if ($xmlProperty->nodeName == "child")
-			{
-				$property = new ChildrenProperty();
-				$property->initialize($xmlProperty);
-				$this->childrenProperties[$property->getName()] = $property;
-			}
-		}
-	}
-	
+		
 	/**
 	 * @param \DOMElement $workflowElement
 	 */
@@ -286,6 +271,21 @@ class Model
 		{
 			$this->useCorrection = true;
 		}
+	}
+	
+	public function getWorkflowStartTask()
+	{
+		if ($this->workflow)
+		{
+			$startTask = $this->workflow->getStartTask();
+			return empty($startTask) ? null : $startTask;
+		}
+		return null;
+	}
+	
+	public function getWorkflowParameters()
+	{
+		return ($this->workflow) ? $this->workflow->getParameters() : null;
 	}
 	
 	/**
@@ -322,6 +322,14 @@ class Model
 	{
 		return $this->inverseProperties;
 	}
+	
+	/**
+	 * @param \Change\Documents\Generators\InverseProperty $inverseProperty
+	 */
+	public function addInverseProperty($inverseProperty)
+	{
+		return $this->inverseProperties[$inverseProperty->getName()] = $inverseProperty;
+	}	
 	/**
 	 * @return string
 	 */
@@ -329,7 +337,15 @@ class Model
 	{
 		return $this->extend;
 	}
-
+	
+	/**
+	 * @return string
+	 */
+	public function getDbMapping()
+	{
+		return $this->dbMapping;
+	}
+	
 	/**
 	 * @return boolean
 	 */
@@ -474,50 +490,166 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getPHPNameSpace()
+	public function getNameSpace()
 	{
-		return 'ChangeCompilation\Modules\\' . ucfirst($this->getModuleName()) .'\Documents';
+		return implode('\\', array('ChangeCompilation', 'Modules',  ucfirst($this->getModuleName()), 'Documents'));
 	}
 	
 	/**
-	 * @return string
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * return boolean
 	 */
-	public function getPHPModelClassName($addNameSpace = false)
+	public function getLocalizedByAncestors($ancestors)
 	{
-		$cn = ucfirst($this->getDocumentName()) . 'Model';
-		return ($addNameSpace) ? '\\' . $this->getPHPNameSpace() . '\\' . $cn : $cn;
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if ($model->getLocalized())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
-	 * @return string
+	 * @param boolean $localized
 	 */
-	public function getPHPDocumentClassName($addNameSpace = false)
+	public function setLocalized($localized)
 	{
-		$cn = ucfirst($this->getDocumentName());
-		return ($addNameSpace) ? '\\' . $this->getPHPNameSpace() . '\\' . $cn : $cn;
+		$this->localized = ($localized == true);
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * return boolean
+	 */
+	public function getUseCorrectionByAncestors($ancestors)
+	{
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if ($model->getUseCorrection())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
-	 * @return string
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * return boolean
 	 */
-	public function getPHPDocumentBaseClassName($addNameSpace = false)
+	public function getHasSerializedPropertiesByAncestors($ancestors)
 	{
-		$cn = ucfirst($this->getDocumentName()) . 'Base';
-		return ($addNameSpace) ? '\\' . $this->getPHPNameSpace() . '\\' . $cn : $cn;
-	}
-	
-	public function evaluatePreservedPropertiesNames()
-	{
-		return array_map(function($property) {return $property->getName();}, array_filter($this->properties, function($property) {return $property->getPreserveOldValue();}));	
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if (count($model->getSerializedproperties()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Compiler $compiler
-	 * @return string
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * @param string $name
+	 * @return \Change\Documents\Generators\Property|NULL
 	 */
-	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler)
+	public function getPropertyByAncestors($ancestors, $name)
 	{
-		return '';
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			$properties = $model->getProperties();
+			if (isset($properties[$name]))
+			{
+				return $properties[$name];
+			}
+		}
+		return null;
 	}
 	
+	/**
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * @param string $name
+	 * @return \Change\Documents\Generators\Property|NULL
+	 */
+	public function getDocumentTypeByAncestors($ancestors, $name)
+	{
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			$properties = $model->getProperties();
+			if (isset($properties[$name]))
+			{
+				/* @var $p \Change\Documents\Generators\Property */
+				$p = $properties[$name];
+				if ($p->getDocumentType())
+				{
+					return $p->getDocumentType();
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * @param string $name
+	 * @return \Change\Documents\Generators\Property|NULL
+	 */
+	public function getSerialisedPropertyByAncestors($ancestors, $name)
+	{
+		foreach ($ancestors as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			$properties = $model->getSerializedproperties();
+			if (isset($properties[$name]))
+			{
+				return $properties[$name];
+			}
+		}
+		return null;
+	}
+	
+	public function addCorrectionProperties()
+	{
+		$p = Property::getNewCorrectionIdProperty();
+		$this->properties[$p->getName()] = $p;
+		
+		$p = Property::getNewCorrectionOfIdProperty();
+		$this->properties[$p->getName()] = $p;
+	}
+	
+	public function addS18sProperty()
+	{
+		$p = Property::getNewS18sProperty();
+		$this->properties[$p->getName()] = $p;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 */
+	public function makeLocalised($ancestors)
+	{
+		foreach (array('label', 'publicationstatus', 'correctionid') as $name)
+		{
+			if (isset($this->properties[$name]))
+			{
+				$p = $this->properties[$name];
+				$p->makeLocalized();
+			}
+			elseif (($ap = $this->getPropertyByAncestors($ancestors, $name)) !== null)
+			{
+				$p = Property::getNamedProperty($name);
+				$p->makeLocalized();
+				$p->setOverride(true);
+				$this->properties[$name] = $p;
+			}
+		}
+	}
 }

@@ -9,11 +9,12 @@ class Property
 	protected $name;
 	protected $type = \Change\Documents\AbstractDocument::PROPERTYTYPE_STRING;
 	protected $documentType = null;
+	protected $relationName = null;
 	protected $required = false;
 	protected $minOccurs = 0;
 	protected $maxOccurs = 1;
 	protected $dbMapping;
-	protected $dbTable;
+
 	protected $cascadeDelete = false;
 	protected $treeNode = false;
 	protected $isDocument = false;
@@ -53,6 +54,14 @@ class Property
 	}
 	
 	/**
+	 * @return string|NULL
+	 */
+	public function getRelationName()
+	{
+		return $this->relationName;
+	}	
+	
+	/**
 	 * @return boolean
 	 */
 	public function getTreeNode()
@@ -79,16 +88,6 @@ class Property
 		return $this->dbMapping;
 	}
 
-	/**
-	 * Returns the database table name.
-	 *
-	 * @return string
-	 */
-	public function getDbTable()
-	{
-		return $this->dbTable;
-	}
-	
 	/**
 	 * @return integer
 	 */
@@ -425,6 +424,17 @@ class Property
 		$this->documentType = $documentType;
 		return $this;
 	}
+	
+	
+	/**
+	 * @param string $relationName
+	 * @return \Change\Documents\Property
+	 */
+	public function setRelationName($relationName)
+	{
+		$this->relationName = $relationName;
+		return $this;
+	}
 
 	/**
 	 * @param string $dbMapping
@@ -433,16 +443,6 @@ class Property
 	public function setDbMapping($dbMapping)
 	{
 		$this->dbMapping = $dbMapping;
-		return $this;
-	}
-
-	/**
-	 * @param string $dbTable
-	 * @return \Change\Documents\Property
-	 */
-	public function setDbTable($dbTable)
-	{
-		$this->dbTable = $dbTable;
 		return $this;
 	}
 
