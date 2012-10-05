@@ -161,8 +161,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			}
 			catch (\Exception $e)
 			{
-				//TODO Old class Usage
-				\Framework::warn($e->getMessage());
+				\Change\Application\LoggingManager::getInstance()->warn($e->getMessage());
 			}
 		}
 	}

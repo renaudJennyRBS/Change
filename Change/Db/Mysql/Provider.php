@@ -340,8 +340,7 @@ class Provider extends \Change\Db\Provider
 	{
 		if (!is_numeric($documentId) || $documentId <= 0)
 		{
-			//TODO Old class Usage
-			throw new \BaseException('Invalid document id: ' . $documentId, 'f.exception.errors.invalid-document-id', array('id' => $documentId));
+			throw new \Exception('Invalid document id: ' . $documentId);
 		}
 		
 		$documentId = intval($documentId);
@@ -354,8 +353,7 @@ class Provider extends \Change\Db\Provider
 			$document = $this->getDocumentInstanceInternal($documentId);
 			if ($document === null)
 			{
-				//TODO Old class Usage
-				throw new \BaseException('Document "' . $documentId .'" not found', 'f.exception.errors.object-not-found', array('id' => $documentId));
+				throw new \Exception('Document "' . $documentId .'" not found');
 			}
 		}
 		return $this->checkModelCompatibility($document, $modelName);
@@ -2610,10 +2608,9 @@ class Provider extends \Change\Db\Provider
 				}
 			}
 		}
-		catch (\IllegalArgumentException $e) //TODO Old class Usage
+		catch (\InvalidArgumentException $e)
 		{
-			//TODO Old class Usage
-			\Framework::error($e->getMessage());
+			\Change\Application\LoggingManager::getInstance()->error($e->getMessage());
 			$acl->getDocumentService()->delete($acl);
 		}
 	}	

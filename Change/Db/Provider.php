@@ -24,7 +24,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * Document instances by id
-	 * @var array<integer, \Change\Documents\AbstractDocument> TODO Old class Usage
+	 * @var array<integer, \Change\Documents\AbstractDocument>
 	 */
 	protected $m_documentInstances = array();
 	
@@ -86,8 +86,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	{
 		if ($this->hasTransaction())
 		{
-			//TODO Old class Usage
-			\Framework::warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
+			\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
 		}
 	}
 	
@@ -110,8 +109,8 @@ abstract class Provider extends \Change\AbstractSingleton
 			$this->transactionCount++;
 			if ($this->m_inTransaction)
 			{
-				//TODO Old class Usage
-				\Framework::warn(get_class($this) . " while already in transaction");
+
+				\Change\Application\LoggingManager::getInstance()->warn(get_class($this) . " while already in transaction");
 			}
 			else
 			{
@@ -124,13 +123,11 @@ abstract class Provider extends \Change\AbstractSingleton
 		}
 		else
 		{
-			//TODO Old class Usage
-			$embededTransaction = intval(\change_ConfigurationService::getInstance()->getConfigurationValue('databases/default/embededTransaction', '5'));
+			$embededTransaction = intval(\Change\Application::getInstance()->getConfiguration()->getEntry('databases/default/embededTransaction', '5'));
 			$this->transactionCount++;
 			if ($this->transactionCount > $embededTransaction)
 			{
-				//TODO Old class Usage
-				\Framework::warn('embeded transaction: ' . $this->transactionCount);
+				\Change\Application\LoggingManager::getInstance()->warn('embeded transaction: ' . $this->transactionCount);
 			}
 		}
 	}
@@ -151,8 +148,7 @@ abstract class Provider extends \Change\AbstractSingleton
 		{
 			if (!$this->m_inTransaction)
 			{
-				//TODO Old class Usage
-				\Framework::warn("PersistentProvider->commit() called while not in transaction");
+				\Change\Application\LoggingManager::getInstance()->warn("PersistentProvider->commit() called while not in transaction");
 			}
 			else
 			{
@@ -160,11 +156,9 @@ abstract class Provider extends \Change\AbstractSingleton
 				$duration = round(microtime(true) - $this->timers['bt'], 4);
 				if ($duration > $this->timers['longTransaction'])
 				{
-					//TODO Old class Usage
-					\Framework::warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+					\Change\Application\LoggingManager::getInstance()->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
 				}
-				$this->m_inTransaction = false;
-				
+				$this->m_inTransaction = false;		
 				$this->beginTransactionInternal();
 				//TODO Old class Usage
 				\indexer_IndexService::getInstance()->commitIndex();
@@ -183,11 +177,10 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	public function rollBack($e = null)
 	{
-		//TODO Old class Usage
-		\Framework::warn('TransactionManager->rollBack called');
+		\Change\Application\LoggingManager::getInstance()->warn('TransactionManager->rollBack called');
 		if ($this->transactionCount == 0)
 		{
-			\Framework::warn('TransactionManager->rollBack() => bad transaction count (no transaction)');
+			\Change\Application\LoggingManager::getInstance()->warn('TransactionManager->rollBack() => bad transaction count (no transaction)');
 			throw new \Exception('rollback-bad-transaction-count');
 		}
 		$this->transactionCount--;
@@ -197,8 +190,7 @@ abstract class Provider extends \Change\AbstractSingleton
 			$this->transactionDirty = true;
 			if (!$this->m_inTransaction)
 			{
-				//TODO Old class Usage
-				\Framework::warn("PersistentProvider->rollBack() called while not in transaction");
+				\Change\Application\LoggingManager::getInstance()->warn("PersistentProvider->rollBack() called while not in transaction");
 			}
 			else
 			{
@@ -831,8 +823,7 @@ abstract class Provider extends \Change\AbstractSingleton
 		{
 			if ($nbDocs > 1)
 			{
-				//TODO Old class Usage
-				\Framework::warn(get_class($this).'->findUnique() called while find() returned more than 1 results');
+				\Change\Application\LoggingManager::getInstance()->warn(get_class($this).'->findUnique() called while find() returned more than 1 results');
 			}
 			return $docs[0];
 		}

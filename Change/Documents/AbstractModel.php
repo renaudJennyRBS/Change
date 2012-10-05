@@ -184,7 +184,7 @@ abstract class AbstractModel
 	 * @param string $modelName
 	 * @return boolean
 	 */
-	public final function isModelCompatible($modelName)
+	public function isModelCompatible($modelName)
 	{
 		switch ($modelName)
 		{
@@ -213,7 +213,7 @@ abstract class AbstractModel
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public final function getPropertiesInfos()
+	public function getPropertiesInfos()
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		return $this->m_properties;
@@ -222,7 +222,7 @@ abstract class AbstractModel
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public final function getLocalizedPropertiesInfos()
+	public function getLocalizedPropertiesInfos()
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		$result = array();
@@ -238,7 +238,7 @@ abstract class AbstractModel
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */	
-	public final function getVisiblePropertiesInfos()
+	public function getVisiblePropertiesInfos()
 	{
 		return array_diff_key($this->getEditablePropertiesInfos(), 
 				array_flip(\Change\Documents\DocumentHelper::getSystemPropertyNames()));
@@ -248,7 +248,7 @@ abstract class AbstractModel
 	 * @param string $propertyName
 	 * @return \Change\Documents\Property
 	 */
-	public final function getProperty($propertyName)
+	public function getProperty($propertyName)
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		if (isset($this->m_properties[$propertyName]))
@@ -266,7 +266,7 @@ abstract class AbstractModel
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public final function getSerializedPropertiesInfos()
+	public function getSerializedPropertiesInfos()
 	{
 		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
 		return $this->m_serialisedproperties;
@@ -276,7 +276,7 @@ abstract class AbstractModel
 	 * @param string $propertyName
 	 * @return \Change\Documents\Property
 	 */	
-	public final function getSerializedProperty($propertyName)
+	public function getSerializedProperty($propertyName)
 	{
 		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
 		if (isset($this->m_serialisedproperties[$propertyName]))
@@ -289,7 +289,7 @@ abstract class AbstractModel
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */	
-	public final function getEditablePropertiesInfos()
+	public function getEditablePropertiesInfos()
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
@@ -300,7 +300,7 @@ abstract class AbstractModel
 	 * @param string $propertyName
 	 * @return \Change\Documents\Property
 	 */	
-	public final function getEditableProperty($propertyName)
+	public function getEditableProperty($propertyName)
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		if (isset($this->m_properties[$propertyName]))
@@ -321,7 +321,7 @@ abstract class AbstractModel
 	/**
 	 * @return \Change\Documents\Property[]
 	 */
-	public final function getIndexedPropertiesInfos()
+	public function getIndexedPropertiesInfos()
 	{
 		$result = array();
 		foreach ($this->getEditablePropertiesInfos() as $propertyName => $property) 
@@ -432,7 +432,10 @@ abstract class AbstractModel
 		return array_values($componentNames);
 	}
 	
-	public final function hasCascadeDelete()
+	/**
+	 * @return boolean
+	 */
+	public function hasCascadeDelete()
 	{
 		foreach ($this->getPropertiesInfos() as $name => $info)
 		{
@@ -452,7 +455,7 @@ abstract class AbstractModel
 	/**
 	 * @return \Change\Documents\Property[]
 	 */
-	public final function getInverseProperties()
+	public function getInverseProperties()
 	{
 		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
 		return $this->m_invertProperties;
@@ -462,7 +465,7 @@ abstract class AbstractModel
 	 * @param string $name
 	 * @return boolean
 	 */
-	public final function hasInverseProperty($name)
+	public function hasInverseProperty($name)
 	{
 		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
 		return isset($this->m_invertProperties[$name]);
@@ -472,7 +475,7 @@ abstract class AbstractModel
 	 * @param string $name
 	 * @return \Change\Documents\Property|null
 	 */
-	public final function getInverseProperty($name)
+	public function getInverseProperty($name)
 	{
 		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
 		if (isset($this->m_invertProperties[$name]))
@@ -485,7 +488,7 @@ abstract class AbstractModel
 	/**
 	 * @return string[]
 	 */
-	public final function getPreservedPropertiesNames()
+	public function getPreservedPropertiesNames()
 	{
 		return $this->m_preservedPropertiesNames;
 	}
@@ -494,7 +497,7 @@ abstract class AbstractModel
 	 * @param string $name
 	 * @return boolean
 	 */
-	public final function isPreservedProperty($name)
+	public function isPreservedProperty($name)
 	{
 		return isset($this->m_preservedPropertiesNames[$name]);
 	}
@@ -503,7 +506,7 @@ abstract class AbstractModel
 	 * @param string $propertyName
 	 * @return boolean
 	 */
-	function hasProperty($propertyName)
+	public function hasProperty($propertyName)
 	{
 		return $this->isProperty($propertyName);
 	}
@@ -512,27 +515,42 @@ abstract class AbstractModel
 	 * Return if the document has 2 special properties (correctionid, correctionofid)
 	 * @return boolean
 	 */
-	abstract public function useCorrection();
+	public function useCorrection()
+	{
+		return false;
+	}
 
 	/**
 	 * @return boolean
 	 */
-	abstract public function hasWorkflow();
+	public function hasWorkflow()
+	{
+		return false;
+	}
 
 	/**
 	 * @return string
 	 */
-	abstract public function getWorkflowStartTask();
-
+	public function getWorkflowStartTask()
+	{
+		return null;
+	}
+	
 	/**
 	 * @return array<String, String>
 	 */
-	abstract public function getWorkflowParameters();
+	public function getWorkflowParameters()
+	{
+		return array();
+	}
 
 	/**
 	 * @return boolean
 	 */
-	abstract public function usePublicationDates();
+	public function usePublicationDates()
+	{
+		return true;
+	}
 		
 	/**
 	 * @return string
