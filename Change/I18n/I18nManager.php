@@ -197,9 +197,7 @@ class I18nManager extends \Change\AbstractSingleton
 	protected function loadI18nSynchroConfiguration()
 	{
 		$this->m_i18n_synchro = false;
-		
-		//TODO Old class Usage
-		$data = \Framework::getConfigurationValue('i18nsynchro', null);
+		$data = \Change\Application::getInstance()->getConfiguration()->getEntry('i18nsynchro', null);
 		
 		if (is_array($data) && count($data))
 		{
@@ -478,7 +476,7 @@ class I18nManager extends \Change\AbstractSingleton
 		if ($this->LCID_BY_LANG === null)
 		{
 			//TODO Old class Usage
-			$this->LCID_BY_LANG = \Framework::getConfiguration('i18n');
+			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n', array());
 		}
 		
 		if (!isset($this->LCID_BY_LANG[$langCode]))
@@ -504,7 +502,7 @@ class I18nManager extends \Change\AbstractSingleton
 		if ($this->LCID_BY_LANG === null)
 		{
 			//TODO Old class Usage
-			$this->LCID_BY_LANG = \Framework::getConfiguration('i18n');
+			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n', array());
 		}
 		
 		$code = array_search($lcid, $this->LCID_BY_LANG);
@@ -579,8 +577,7 @@ class I18nManager extends \Change\AbstractSingleton
 			}
 			return $content;
 		}
-		//TODO Old class Usage
-		\Framework::warn('Invalid Key ' . $cleanKey);
+		\Change\Application\LoggingManager::getInstance()->warn('Invalid Key ' . $cleanKey);
 		return null;
 	}
 	
@@ -660,8 +657,7 @@ class I18nManager extends \Change\AbstractSingleton
 				}
 				else
 				{
-					//TODO Old class Usage
-					\Framework::warn(__METHOD__ . ' Invalid formatter ' . $formatter);
+					\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
 				}
 			}
 		}
@@ -866,12 +862,10 @@ class I18nManager extends \Change\AbstractSingleton
 	 */
 	protected function logKeyNotFound($key, $lang)
 	{
-		//TODO Old class Usage
-		if (\Framework::inDevelopmentMode())
+		if (\Change\Application::getInstance()->inDevelopmentMode())
 		{
 			$stringLine = $lang . '/' . $key;
-			//TODO Old class Usage
-			\change_LoggingService::getInstance()->namedLog($stringLine, 'keynotfound');
+			\Change\Application\LoggingManager::getInstance()->namedLog($stringLine, 'keynotfound');
 		}
 	}
 	

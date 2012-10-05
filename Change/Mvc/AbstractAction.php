@@ -160,8 +160,7 @@ abstract class AbstractAction
 	 */
 	protected function getDocumentServiceByDocId($docId)
 	{
-		//TODO Old class Usage
-		$document = \DocumentHelper::getDocumentInstanceIfExists($docId);
+		$document = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($docId);
 		return $document ? $document->getDocumentService() : null;
 	}
 
@@ -189,8 +188,7 @@ abstract class AbstractAction
 	{
 		$moduleName = $this->getModuleName();
 		$actionName = strtolower($this->getActionName());
-		//TODO Old class Usage
-		if ($document instanceof \f_persistentdocument_PersistentDocument)
+		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
 			$actionName .= '.' . strtolower($document->getPersistentModel()->getDocumentName());
 		}
@@ -279,8 +277,7 @@ abstract class AbstractAction
 	 */
 	protected function getDocumentInstanceFromRequest($request)
 	{
-		//TODO Old class Usage
-		return \DocumentHelper::getDocumentInstance($this->getDocumentIdFromRequest($request));
+		return \Change\Documents\DocumentHelper::getDocumentInstance($this->getDocumentIdFromRequest($request));
 	}
 
 
@@ -296,8 +293,7 @@ abstract class AbstractAction
 		$docIds = $this->getDocumentIdArrayFromRequest($request);
 		foreach ($docIds as $docId)
 		{
-			//TODO Old class Usage
-			$docs[] = \DocumentHelper::getDocumentInstance($docId);
+			$docs[] = \Change\Documents\DocumentHelper::getDocumentInstance($docId);
 		}
 		return $docs;
 	}
@@ -391,8 +387,7 @@ abstract class AbstractAction
 		$secureAction = "modules_" . $this->getModuleName() . "." . $this->getActionName();
 		if ($this->isDocumentAction())
 		{
-			//TODO Old class Usage
-			$secureAction .= '.' . \DocumentHelper::getDocumentInstance($documentId)->getPersistentModel()->getDocumentName();
+			$secureAction .= '.' . \Change\Documents\DocumentHelper::getDocumentInstance($documentId)->getPersistentModel()->getDocumentName();
 		}
 		return $secureAction;
 	}
