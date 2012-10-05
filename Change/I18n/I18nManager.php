@@ -1,5 +1,7 @@
 <?php
 namespace Change\I18n;
+use \Change\DB\Provider;
+use \Change\Application\LoggingManager;
 
 /**
  * @name \Change\I18n\I18nManager
@@ -40,9 +42,12 @@ class I18nManager extends \Change\AbstractSingleton
 	 * @var array
 	 */
 	protected $m_i18n_synchro = null;
+	
+	
 	protected function __construct()
 	{
 		$this->ignoreTransform = array('TEXT' => 'raw', 'HTML' => 'html');
+		
 		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc', 
 			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace', 
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
@@ -66,14 +71,6 @@ class I18nManager extends \Change\AbstractSingleton
 		}
 		
 		$this->m_lang = $this->getDefaultLang();
-	}
-	
-	/**
-	 * @return \Change\Db\Provider
-	 */
-	protected function getDbProvider()
-	{
-		return \Change\Db\Provider::getInstance();
 	}
 	
 	/**
@@ -261,11 +258,10 @@ class I18nManager extends \Change\AbstractSingleton
 	{
 		if ($this->hasI18nSynchro())
 		{
-			//TODO Old class Usage
-			$d = \DocumentHelper::getDocumentInstanceIfExists($documentId);
+			$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
 			if ($d && $d->getPersistentModel()->isLocalized())
 			{
-				$this->getDbProvider()->setI18nSynchroStatus($d->getId(), $d->getLang(), self::SYNCHRO_MODIFIED, null);
+				Provider::getInstance()->setI18nSynchroStatus($d->getId(), $d->getLang(), self::SYNCHRO_MODIFIED, null);
 			}
 		}
 	}
@@ -278,13 +274,12 @@ class I18nManager extends \Change\AbstractSingleton
 	{
 		if ($this->hasI18nSynchro())
 		{
-			//TODO Old class Usage
-			$d = \DocumentHelper::getDocumentInstanceIfExists($documentId);
+			$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
 			if ($d && $d->getPersistentModel()->isLocalized())
 			{
 				foreach ($d->getI18nInfo()->getLangs() as $lang)
 				{
-					$this->getDbProvider()->setI18nSynchroStatus($d->getId(), $lang, self::SYNCHRO_MODIFIED, null);
+					Provider::getInstance()->setI18nSynchroStatus($d->getId(), $lang, self::SYNCHRO_MODIFIED, null);
 				}
 			}
 		}
@@ -297,7 +292,7 @@ class I18nManager extends \Change\AbstractSingleton
 	{
 		if ($this->hasI18nSynchro())
 		{
-			return $this->getDbProvider()->getI18nSynchroIds();
+			return Provider::getInstance()->getI18nSynchroIds();
 		}
 		return array();
 	}
@@ -326,7 +321,7 @@ class I18nManager extends \Change\AbstractSingleton
 			if ($this->hasI18nSynchro())
 			{
 				$result['config'] = $this->getI18nSynchro();
-				$data = $this->getDbProvider()->getI18nSynchroStatus($document->getId());
+				$data = Provider::getInstance()->getI18nSynchroStatus($document->getId());
 				$result['states'] = $data;
 				foreach ($document->getI18nInfo()->getLangs() as $lang)
 				{
@@ -356,8 +351,7 @@ class I18nManager extends \Change\AbstractSingleton
 			//No synchro configured
 			return false;
 		}
-		//TODO Old class Usage
-		$d = \DocumentHelper::getDocumentInstanceIfExists($documentId);
+		$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
 		if ($d === null)
 		{
 			//Invalid document
@@ -371,7 +365,7 @@ class I18nManager extends \Change\AbstractSingleton
 			return false;
 		}
 	
-		$dbp = $this->getDbProvider();
+		$dbp = Provider::getInstance();
 		try
 		{
 			$dbp->beginTransaction();
@@ -418,7 +412,7 @@ class I18nManager extends \Change\AbstractSingleton
 									}
 									elseif (isset($datas[$lang]))
 									{
-										$this->getDbProvider()->setI18nSynchroStatus($documentId, $lang, self::SYNCHRO_VALID, null);
+										Provider::getInstance()->setI18nSynchroStatus($documentId, $lang, self::SYNCHRO_VALID, null);
 									}
 	
 									$this->popLang();
@@ -475,7 +469,6 @@ class I18nManager extends \Change\AbstractSingleton
 	{
 		if ($this->LCID_BY_LANG === null)
 		{
-			//TODO Old class Usage
 			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n', array());
 		}
 		
@@ -501,7 +494,6 @@ class I18nManager extends \Change\AbstractSingleton
 	{
 		if ($this->LCID_BY_LANG === null)
 		{
-			//TODO Old class Usage
 			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n', array());
 		}
 		
@@ -569,7 +561,7 @@ class I18nManager extends \Change\AbstractSingleton
 		if ($keyPath !== false)
 		{
 			$lcid = $this->getLCID($lang);
-			list ($content, ) = $this->getDbProvider()->translate($lcid, $id, $keyPath);
+			list ($content, ) = Provider::getInstance()->translate($lcid, $id, $keyPath);
 			
 			if ($content === null)
 			{
@@ -577,7 +569,7 @@ class I18nManager extends \Change\AbstractSingleton
 			}
 			return $content;
 		}
-		\Change\Application\LoggingManager::getInstance()->warn('Invalid Key ' . $cleanKey);
+		LoggingManager::getInstance()->warn('Invalid Key ' . $cleanKey);
 		return null;
 	}
 	
@@ -618,7 +610,7 @@ class I18nManager extends \Change\AbstractSingleton
 		if ($keyPath !== false)
 		{
 			$lcid = $this->getLCID($lang);
-			list ($content, $format) = $this->getDbProvider()->translate($lcid, $id, $keyPath);
+			list ($content, $format) = Provider::getInstance()->translate($lcid, $id, $keyPath);
 			if ($content === null)
 			{
 				$this->logKeyNotFound($keyPath . '.' . $id, $lcid);
@@ -657,7 +649,7 @@ class I18nManager extends \Change\AbstractSingleton
 				}
 				else
 				{
-					\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
+					LoggingManager::getInstance()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
 				}
 			}
 		}
@@ -742,7 +734,7 @@ class I18nManager extends \Change\AbstractSingleton
 	 */
 	public function getPackageNames()
 	{
-		return $this->getDbProvider()->getPackageNames();
+		return Provider::getInstance()->getPackageNames();
 	}
 	
 	/**
@@ -750,7 +742,7 @@ class I18nManager extends \Change\AbstractSingleton
 	 */
 	public function getUserEditedPackageNames()
 	{
-		return $this->getDbProvider()->getUserEditedPackageNames();
+		return Provider::getInstance()->getUserEditedPackageNames();
 	}
 	
 	/**
@@ -760,7 +752,7 @@ class I18nManager extends \Change\AbstractSingleton
 	 */
 	public function getPackageContent($keyPath)
 	{
-		$result = $this->getDbProvider()->getPackageData($keyPath);
+		$result = Provider::getInstance()->getPackageData($keyPath);
 		$contents = array();
 		foreach ($result as $row)
 		{
@@ -805,7 +797,7 @@ class I18nManager extends \Change\AbstractSingleton
 	protected function processDatabase($keyPath, $entities)
 	{
 		$keyPath = strtolower($keyPath);	
-		$provider = $this->getDbProvider();
+		$provider = Provider::getInstance();
 		$lcids = array();
 		foreach ($this->getSupportedLanguages() as $lang)
 		{
@@ -839,7 +831,7 @@ class I18nManager extends \Change\AbstractSingleton
 	
 	public function deleteUserEditedKey($lcid, $id, $keyPath)
 	{
-		$this->getDbProvider()->deleteI18nKey($keyPath, $id, $lcid);
+		Provider::getInstance()->deleteI18nKey($keyPath, $id, $lcid);
 	}
 	
 	/**
@@ -852,7 +844,7 @@ class I18nManager extends \Change\AbstractSingleton
 	 */
 	public function updateKey($lcid, $id, $keyPath, $content, $format, $userEdited = false)
 	{
-		$this->getDbProvider()->addTranslate($lcid, $id, $keyPath, $content, $userEdited ? 1 : 0, $format, true);
+		Provider::getInstance()->addTranslate($lcid, $id, $keyPath, $content, $userEdited ? 1 : 0, $format, true);
 	}
 	
 
@@ -865,7 +857,7 @@ class I18nManager extends \Change\AbstractSingleton
 		if (\Change\Application::getInstance()->inDevelopmentMode())
 		{
 			$stringLine = $lang . '/' . $key;
-			\Change\Application\LoggingManager::getInstance()->namedLog($stringLine, 'keynotfound');
+			LoggingManager::getInstance()->namedLog($stringLine, 'keynotfound');
 		}
 	}
 	
