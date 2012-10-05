@@ -23,7 +23,6 @@ class ModelClass
 		array_shift($nsParts); //Remove regitered namespace part
 		$nsParts[] = $this->getClassName($model) . '.php';
 		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
-		echo $path, PHP_EOL;
 		\Change\Stdlib\File::write($path, $code);
 		return true;
 	}
@@ -282,7 +281,7 @@ class ModelClass
 	public function getIcon()
 	{
 		return '. $this->escapePHPValue($model->getIcon()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if (!$model->getInject())
@@ -310,7 +309,7 @@ class ModelClass
 	public function getDocumentName()
 	{
 		return '. $this->escapePHPValue($model->getDocumentName()).';
-	}';
+	}'. PHP_EOL;
 			
 		}		
 		
@@ -323,7 +322,7 @@ class ModelClass
 	public function isLocalized()
 	{
 		return '. $this->escapePHPValue($model->getLocalized()).';
-	}';
+	}'. PHP_EOL;
 		}		
 
 		if ($model->getHasUrl() !== null)
@@ -335,7 +334,7 @@ class ModelClass
 	public function hasURL()
 	{
 		return '. $this->escapePHPValue($model->getHasUrl()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if ($model->getUseRewriteUrl() !== null)
@@ -347,7 +346,7 @@ class ModelClass
 	public function useRewriteURL()
 	{
 		return '. $this->escapePHPValue($model->getUseRewriteUrl()).' && $this->hasURL();
-	}';
+	}'. PHP_EOL;
 		}		
 		
 		if ($model->getIndexable() !== null)
@@ -359,7 +358,7 @@ class ModelClass
 	public function isIndexable()
 	{
 		return '. $this->escapePHPValue($model->getIndexable()).' && $this->hasURL();
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if ($model->getBackofficeIndexable() !== null)
@@ -371,7 +370,7 @@ class ModelClass
 	public function isBackofficeIndexable()
 	{
 		return '. $this->escapePHPValue($model->getBackofficeIndexable()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if ($model->getUsePublicationDates() !== null)
@@ -383,7 +382,7 @@ class ModelClass
 	public function usePublicationDates()
 	{
 		return '. $this->escapePHPValue($model->getUsePublicationDates()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if ($model->getStatus() !== null)
@@ -395,7 +394,7 @@ class ModelClass
 	public function getDefaultStatus()
 	{
 		return '. $this->escapePHPValue($model->getStatus()).';
-	}';
+	}'. PHP_EOL;
 		}						
 		return $code . PHP_EOL;
 	}
@@ -417,7 +416,7 @@ class ModelClass
 	public function useCorrection()
 	{
 		return CHANGE_USE_CORRECTION && '. $this->escapePHPValue($model->getUseCorrection()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		if ($model->getWorkflowStartTask() !== null)
@@ -437,7 +436,7 @@ class ModelClass
 	public function getWorkflowStartTask()
 	{
 		return '. $this->escapePHPValue($model->getWorkflowStartTask()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		
@@ -450,7 +449,7 @@ class ModelClass
 	public function getWorkflowParameters()
 	{
 		return '. $this->escapePHPValue($model->getWorkflowParameters()).';
-	}';
+	}'. PHP_EOL;
 		}
 		
 		return $code . PHP_EOL;		

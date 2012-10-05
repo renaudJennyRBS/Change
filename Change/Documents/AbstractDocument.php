@@ -12,24 +12,33 @@ abstract class AbstractDocument
 	const PERSISTENTSTATE_MODIFIED = 4;
 	const PERSISTENTSTATE_DELETED = 5;
 	
-	
 	const PROPERTYTYPE_BOOLEAN = 'Boolean';
 	const PROPERTYTYPE_INTEGER = 'Integer';
-	const PROPERTYTYPE_DOUBLE = 'Double';
+	const PROPERTYTYPE_FLOAT = 'Float';
+	const PROPERTYTYPE_DECIMAL = 'Decimal';
+	
 	const PROPERTYTYPE_DATETIME = 'DateTime';
+	const PROPERTYTYPE_DATE = 'Date';
+	
 	const PROPERTYTYPE_STRING = 'String';
 	const PROPERTYTYPE_LOB = 'Lob';
 	const PROPERTYTYPE_LONGSTRING = 'LongString';
 	const PROPERTYTYPE_XHTMLFRAGMENT = 'XHTMLFragment';
-	
+	const PROPERTYTYPE_BBCODE = 'BBCode';
+
+	const PROPERTYTYPE_DOCUMENTID = 'DocumentId';
 	const PROPERTYTYPE_DOCUMENT = 'Document';
 	const PROPERTYTYPE_DOCUMENTARRAY = 'DocumentArray';
 	
-	const PROPERTYTYPE_DECIMAL = 'Decimal';
 	const PROPERTYTYPE_JSON = 'JSON';
-	const PROPERTYTYPE_BBCODE = 'BBCode';
 	const PROPERTYTYPE_OBJECT = 'Object';
-	const PROPERTYTYPE_DOCUMENTID = 'DocumentId';
+	
+	/**
+	 * @deprecated use PROPERTYTYPE_FLOAT
+	 */
+	const PROPERTYTYPE_DOUBLE = 'Double';
+	
+	
 
 	const STATUS_DRAFT = 'DRAFT';
 	const STATUS_CORRECTION = 'CORRECTION';
