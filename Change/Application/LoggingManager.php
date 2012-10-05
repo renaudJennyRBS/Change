@@ -7,11 +7,16 @@ namespace Change\Application;
 class LoggingManager extends \Change\AbstractSingleton
 {
 	/**
+	 * @var integer
+	 */
+	protected $priority;
+	
+	/**
 	 * @return string (DEBUG, INFO, NOTICE, WARN, ERR, ALERT, EMERG)
 	 */
 	public function getLevel()
 	{
-		return LOGGING_LEVEL;
+		return \Change\Application::getInstance()->getConfiguration()->getEntry('logging/level');
 	}
 	
 	/**
@@ -19,7 +24,31 @@ class LoggingManager extends \Change\AbstractSingleton
 	 */
 	public function getPriority()
 	{
-		return LOGGING_PRIORITY;
+		if ($this->priority === null)
+		{
+			switch ($this->getLevel())
+			{
+				case 'ALERT' :
+					$this->priority = 1;
+					break;
+				case 'ERR' :
+					$this->priority = 3;
+					break;
+				case 'NOTICE' :
+					$this->priority = 5;
+					break;
+				case 'DEBUG' :
+					$this->priority = 7;
+					break;
+				case 'INFO' :
+					$this->priority = 6;
+					break;
+				default :
+					$this->priority = 4;
+					break;
+			}
+		}
+		return $this->priority;
 	}
 	
 	/**

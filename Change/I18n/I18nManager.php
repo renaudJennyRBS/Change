@@ -1,6 +1,6 @@
 <?php
 namespace Change\I18n;
-use \Change\DB\Provider;
+use \Change\Db\Provider;
 use \Change\Application\LoggingManager;
 
 /**

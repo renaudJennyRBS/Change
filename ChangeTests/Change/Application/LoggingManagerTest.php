@@ -5,18 +5,25 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 {
 	public function testGetLevel()
 	{
-		if (!defined('LOGGING_LEVEL'))
-		{
-			define('LOGGING_LEVEL', 'WARN');
-		}
-		$this->assertEquals(LOGGING_LEVEL, \Change\Application\LoggingManager::getInstance()->getLevel());
+		$application = \Change\Application::getInstance();
+		$application->loadConfiguration();
+		$config = $application->getConfiguration();
+		
+		$config->addVolatileEntry('logging/level', 'ALERT');
+		$this->assertEquals('ALERT', \Change\Application\LoggingManager::getInstance()->getLevel());
+		$config->addVolatileEntry('logging/level', 'ERR');
+		$this->assertEquals('ERR', \Change\Application\LoggingManager::getInstance()->getLevel());
+		
+		return $config;
 	}
-	public function testGetPriority()
+	
+	/**
+	 * @depends testGetLevel
+	 */
+	public function testGetPriority(\Change\Application\Configuration $config)
 	{
-		if (!defined('LOGGING_PRIORITY'))
-		{
-			define('LOGGING_PRIORITY', 2);
-		}
-		$this->assertEquals(LOGGING_PRIORITY, \Change\Application\LoggingManager::getInstance()->getPriority());
+		$config->addVolatileEntry('logging/level', 'DEBUG');
+		$this->assertEquals('DEBUG', \Change\Application\LoggingManager::getInstance()->getLevel());
+		$this->assertEquals(7, \Change\Application\LoggingManager::getInstance()->getPriority());
 	}
 }

@@ -141,6 +141,16 @@ class Generator
 			}
 		}
 		
+		// Merge framework's install.xml file.
+		$filePath = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'framework', 'install.xml'));
+		$tmpDom = new \DOMDocument('1.0', 'utf-8');
+		$tmpDom->load($filePath);
+		$tmpNode = $tmpDom->documentElement;
+		if ($tmpNode && $tmpNode->hasAttribute('version'))
+		{
+			$this->setDefine($dom, 'CHANGE_VERSION', $tmpNode->getAttribute('version'));
+		}
+		
 		// Merge modules' install.xml files.
 		foreach (glob(implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'modules', '*', 'install.xml'))) as $filePath)
 		{
@@ -183,37 +193,30 @@ class Generator
 		}
 		
 		$logLevelNode = $this->getOrCreateNode($dom, array('project', 'config', 'logging', "entry[@name='level']"));
-		$logLevel = 'WARN'; 
-		$logPriority = 4; 
 		switch ($logLevelNode->textContent)
 		{
 			case 'EXCEPTION' :
 			case 'ALERT' :
 				$logLevel = 'ALERT';
-				$logPriority = 1;
 				break;
 			case 'ERROR' :
 			case 'ERR' :
 				$logLevel = 'ERR';
-				$logPriority = 3;
 				break;
 			case 'NOTICE' :
 				$logLevel = 'NOTICE';
-				$logPriority = 5;
 				break;
 			case 'DEBUG' :
 				$logLevel = 'DEBUG';
-				$logPriority = 7;
 				break;
 			case 'INFO' :
 				$logLevel = 'INFO';
-				$logPriority = 6;
 				break;
 			default :
+				$logLevel = 'WARN';
 				break;
 		}
-		$this->setDefine($dom, 'LOGGING_LEVEL', $logLevel);
-		$this->setDefine($dom, 'LOGGING_PRIORITY', $logPriority);
+		$this->setNodeValue($logLevelNode, $logLevel);
 		
 		foreach (array('TMP_PATH' => true, 'DEFAULT_HOST' => true, 'PROJECT_ID' => true, 'CHANGE_COMMAND' => false, 
 			'DOCUMENT_ROOT' => false, 'PROJECT_LICENSE' => false, 'FAKE_EMAIL' => false, 'PHP_CLI_PATH' => true, 
