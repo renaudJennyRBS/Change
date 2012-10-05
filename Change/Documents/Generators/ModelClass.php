@@ -7,37 +7,116 @@ namespace Change\Documents\Generators;
 class ModelClass
 {
 	/**
+	 * @var \Change\Documents\Generators\Compiler
+	 */
+	protected $compiler;
+	
+	/**
+	 * @param \Change\Documents\Generators\Compiler $compiler
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return boolean
+	 */	
+	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
+	{
+		$code = $this->getPHPCode($compiler, $model);
+		$nsParts = explode('\\', $model->getNameSpace());
+		array_shift($nsParts); //Remove regitered namespace part
+		$nsParts[] = $this->getClassName($model) . '.php';
+		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
+		echo $path, PHP_EOL;
+		\Change\Stdlib\File::write($path, $code);
+		return true;
+	}
+		
+	/**
 	 * @param \Change\Documents\Generators\Compiler $compiler
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
 	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
 	{
-		return '';
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	public function getPHPModelCode($model)
-	{
-		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getPHPNameSpace() . ';' . PHP_EOL;
-		$pm = $this->getParent($model);
-		$extend = $pm ? $pm->getPHPModelClassName(true) : '\f_persistentdocument_PersistentDocumentModel';
-		$code .= 'class ' . $model->getPHPModelClassName() . ' extends ' . $extend . PHP_EOL;
+		$this->compiler = $compiler;
+		
+		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getNameSpace() . ';' . PHP_EOL;
+		$pm = $compiler->getParent($model);
+		$extend = $pm ? $this->getClassName($pm, true) : '\Change\Documents\AbstractModel';
+		$code .= 'class ' . $this->getClassName($model) . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
-		$code .= $this->getPHPModelConstructor($model);
+		$code .= $this->getConstructor($model);
 		if (count($model->getProperties()))
 		{
-			$code .= $this->getPHPModelLoadProperties($model);
+			$code .= $this->getLoadProperties($model);
 		}
 		if (count($model->getSerializedproperties()))
 		{
-			$code .= $this->getPHPModelLoadSerialisedProperties($model);
+			$code .= $this->getLoadSerialisedProperties($model);
 		}
+		if (count($model->getInverseProperties()))
+		{
+			$code .= $this->getLoadInverseProperties($model);
+		}
+		$code .= $this->getOthersFunctions($model);
+		
+		$code .= $this->getWorkflowFunctions($model);
+		
 		$code .= '}'. PHP_EOL;
+		
+		$this->compiler = null;
 		return $code;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param string $className
+	 * @return string
+	 */
+	protected function addNameSpace($model, $className)
+	{
+		return '\\' . $model->getNameSpace() . '\\' . $className;
+	}
+	
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	protected function escapePHPValue($value, $removeSpace = true)
+	{
+		if ($removeSpace)
+		{
+			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
+		}
+		return var_export($value, true);
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param boolean $withNameSpace
+	 * @return string
+	 */
+	protected function getClassName($model, $withNameSpace = false)
+	{
+		$cn = ucfirst($model->getDocumentName()) . 'Model';
+		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param boolean $withNameSpace
+	 * @return string
+	 */
+	protected function getServiceClassName($model, $withNameSpace = false)
+	{
+		$cn = ucfirst($model->getDocumentName()) . 'Service';
+		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
+	}
+		
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return array
+	 */
+	public function evaluatePreservedPropertiesNames($model)
+	{
+		return array_map(function($property) {return $property->getName();}, array_filter($model->getProperties(), function($property) {return $property->getPreserveOldValue();}));
 	}
 	
 	
@@ -45,25 +124,28 @@ class ModelClass
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
-	protected function getPHPModelConstructor($model)
+	protected function getConstructor($model)
 	{
 		$code = '
 	protected function __construct()
 	{
 		parent::__construct();'. PHP_EOL;
-		if ($model->getExtend())
-		{
-			$code .= '		$this->m_preservedPropertiesNames = array_merge($this->m_preservedPropertiesNames, ' . $this->getPHPEscape($model->evaluatePreservedPropertiesNames()) . ');'. PHP_EOL;
-			if (!$model->getInject())
-			{
-				$code .= '		$this->m_parentName = ' . $this->getPHPEscape($model->getExtend()) . ';'. PHP_EOL;
-			}
+		if ($model->getExtend() && !$model->getInject())
+		{	
+			$code .= '		$this->m_parentName = ' . $this->escapePHPValue($model->getExtend()) . ';'. PHP_EOL;
+			$code .= '		$this->m_ancestorsNames[] = ' . $this->escapePHPValue($model->getExtend()) . ';'. PHP_EOL;
 		}
-		elseif (!$model->getInject())
+		
+		$childrenNames = array_keys($this->compiler->getDescendants($model, true));
+		if (count($childrenNames))
 		{
-			$code .= '		$this->m_preservedPropertiesNames = ' . $this->getPHPEscape($model->evaluatePreservedPropertiesNames()) . ';'. PHP_EOL;
-			$code .= '		$this->m_childrenNames = ' . $this->getPHPEscape(array_keys($this->getDescendants($model))) . ';'. PHP_EOL;
+			$code .= '		$this->m_childrenNames = ' . $this->escapePHPValue($childrenNames) . ';'. PHP_EOL;
 		}
+		$preservedPropertiesNames = $this->evaluatePreservedPropertiesNames($model);
+		if (count($preservedPropertiesNames))
+		{
+			$code .= '		$this->m_preservedPropertiesNames = array_merge($this->m_preservedPropertiesNames, ' . $this->escapePHPValue($preservedPropertiesNames) . ');'. PHP_EOL;
+		}	
 		$code .= '	}'. PHP_EOL;
 		return $code;
 	}
@@ -72,7 +154,7 @@ class ModelClass
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
-	protected function getPHPModelLoadProperties($model)
+	protected function getLoadProperties($model)
 	{
 		$code = '
 	protected function loadProperties()
@@ -81,20 +163,28 @@ class ModelClass
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$code .= '		$p = new \PropertyInfo('.$this->getPHPEscape($property->getName()).', '.$this->getPHPEscape($property->getType()).');'. PHP_EOL;
-			$code .= '		$this->m_properties['.$this->getPHPEscape($property->getName()).'] = $p';
-			if ($property->getRequired() !== null) {$code .= '->setRequired('.$this->getPHPEscape($property->getRequired()).')';}
-			if ($property->getMinOccurs() !== null) {$code .= '->setMinOccurs('.$this->getPHPEscape($property->getMinOccurs()).')';}
-			if ($property->getMaxOccurs() !== null) {$code .= '->setMaxOccurs('.$this->getPHPEscape($property->getMaxOccurs()).')';}
-			if ($property->getDocumentType() !== null) {$code .= '->setDocumentType('.$this->getPHPEscape($property->getDocumentType()).')';}
-			if ($property->getCascadeDelete() !== null) {$code .= '->setCascadeDelete('.$this->getPHPEscape($property->getCascadeDelete()).')';}
-			if ($property->getTreeNode() !== null) {$code .= '->setTreeNode('.$this->getPHPEscape($property->getTreeNode()).')';}
-			if ($property->getDefaultValue() !== null) {$code .= '->setDefaultValue('.$this->getPHPEscape($property->getDefaultValue(), false).')';}
-			if ($property->getLocalized() !== null) {$code .= '->setLocalized('.$this->getPHPEscape($property->getLocalized()).')';}
-			if ($property->getIndexed() !== null) {$code .= '->setIndexed('.$this->getPHPEscape($property->getIndexed()).')';}
-			if ($property->getFromList() !== null) {$code .= '->setFromList('.$this->getPHPEscape($property->getFromList()).')';}
-			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$code .= '->setConstraints('.$this->getPHPEscape($property->getConstraintArray()).')';}
-			$code .= ';'. PHP_EOL;
+			$affects = array();
+			if ($property->getRequired() !== null) {$affects[] = '->setRequired('.$this->escapePHPValue($property->getRequired()).')';}
+			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
+			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
+			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}
+			if ($property->getCascadeDelete() !== null) {$affects[] = '->setCascadeDelete('.$this->escapePHPValue($property->getCascadeDelete()).')';}
+			if ($property->getTreeNode() !== null) {$affects[] = '->setTreeNode('.$this->escapePHPValue($property->getTreeNode()).')';}
+			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultValue(), false).')';}
+			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
+			if ($property->getIndexed() !== null) {$affects[] = '->setIndexed('.$this->escapePHPValue($property->getIndexed()).')';}
+			if ($property->getFromList() !== null) {$affects[] = '->setFromList('.$this->escapePHPValue($property->getFromList()).')';}
+			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
+				
+			$escapeName = $this->escapePHPValue($property->getName());
+			if (!$property->getOverride())
+			{
+				$code .= '		$this->m_properties['.$escapeName.'] = new \Change\Documents\Property('.$escapeName.', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+			}
+			if (count($affects))
+			{
+				$code .= '		$this->m_properties['.$escapeName.']' . implode('', $affects) . ';'. PHP_EOL;
+			}
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;
@@ -105,7 +195,7 @@ class ModelClass
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
-	protected function getPHPModelLoadSerialisedProperties($model)
+	protected function getLoadSerialisedProperties($model)
 	{
 		$code = '
 	protected function loadSerialisedProperties()
@@ -114,18 +204,27 @@ class ModelClass
 		foreach ($model->getSerializedproperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			$code .= '		$p = new \PropertyInfo('.$this->getPHPEscape($property->getName()).', '.$this->getPHPEscape($property->getType()).');'. PHP_EOL;
-			$code .= '		$this->m_serialisedproperties['.$this->getPHPEscape($property->getName()).'] = $p';
-			if ($property->getRequired() !== null) {$code .= '->setRequired('.$this->getPHPEscape($property->getRequired()).')';}
-			if ($property->getMinOccurs() !== null) {$code .= '->setMinOccurs('.$this->getPHPEscape($property->getMinOccurs()).')';}
-			if ($property->getMaxOccurs() !== null) {$code .= '->setMaxOccurs('.$this->getPHPEscape($property->getMaxOccurs()).')';}
-			if ($property->getDocumentType() !== null) {$code .= '->setDocumentType('.$this->getPHPEscape($property->getDocumentType()).')';}
-			if ($property->getDefaultValue() !== null) {$code .= '->setDefaultValue('.$this->getPHPEscape($property->getDefaultValue(), false).')';}
-			if ($property->getLocalized() !== null) {$code .= '->setLocalized('.$this->getPHPEscape($property->getLocalized()).')';}
-			if ($property->getIndexed() !== null) {$code .= '->setIndexed('.$this->getPHPEscape($property->getIndexed()).')';}
-			if ($property->getFromList() !== null) {$code .= '->setFromList('.$this->getPHPEscape($property->getFromList()).')';}
-			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$code .= '->setConstraints('.$this->getPHPEscape($property->getConstraintArray()).')';}
-			$code .= ';'. PHP_EOL;
+			$affects = array();
+			if ($property->getRequired() !== null) {$affects[] = '->setRequired('.$this->escapePHPValue($property->getRequired()).')';}
+			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
+			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
+			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}
+			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultValue(), false).')';}
+			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
+			if ($property->getIndexed() !== null) {$affects[] = '->setIndexed('.$this->escapePHPValue($property->getIndexed()).')';}
+			if ($property->getFromList() !== null) {$affects[] = '->setFromList('.$this->escapePHPValue($property->getFromList()).')';}
+			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
+				
+
+			$escapeName = $this->escapePHPValue($property->getName());
+			if (!$property->getOverride())
+			{
+				$code .= '		$this->m_serialisedproperties['.$escapeName.'] = new \Change\Documents\Property('.$escapeName.', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+			}
+			if (count($affects))
+			{
+				$code .= '		$this->m_serialisedproperties['.$escapeName.']' . implode('', $affects) . ';'. PHP_EOL;
+			}
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;
@@ -136,7 +235,7 @@ class ModelClass
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
-	protected function getPHPModelLoadInverseProperties($model)
+	protected function getLoadInverseProperties($model)
 	{
 		$code = '
 	protected function loadInvertProperties()
@@ -144,16 +243,216 @@ class ModelClass
 		parent::loadInvertProperties();'. PHP_EOL;
 		foreach ($model->getInverseProperties() as $property)
 		{
-			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			$code .= '		$p = new \PropertyInfo('.$this->getPHPEscape($property->getName()).', '.$this->getPHPEscape($property->getType()).');'. PHP_EOL;
-			$code .= '		$this->m_invertProperties['.$this->getPHPEscape($property->getName()).'] = $p';
-			if ($property->getRequired() !== null) {$code .= '->setRequired('.$this->getPHPEscape($property->getRequired()).')';}
-			if ($property->getMinOccurs() !== null) {$code .= '->setMinOccurs('.$this->getPHPEscape($property->getMinOccurs()).')';}
-			if ($property->getMaxOccurs() !== null) {$code .= '->setMaxOccurs('.$this->getPHPEscape($property->getMaxOccurs()).')';}
-			if ($property->getDocumentType() !== null) {$code .= '->setDocumentType('.$this->getPHPEscape($property->getDocumentType()).')';}
-			$code .= ';'. PHP_EOL;
+			/* @var $property \Change\Documents\Generators\InverseProperty */
+			$affects = array();
+			if ($property->getRequired() !== null) {$affects[] = '->setRequired('.$this->escapePHPValue($property->getRequired()).')';}
+			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
+			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
+			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}		
+			if ($property->getSrcName() !== null) {$affects[] = '->setRelationName('.$this->escapePHPValue($property->getSrcName()).')';}	
+			
+			$escapeName = $this->escapePHPValue($property->getName());
+			if (!$property->getOverride())
+			{
+				$code .= '		$this->m_invertProperties['.$escapeName.'] = new \Change\Documents\Property('.$escapeName.', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+			}
+			if (count($affects))
+			{
+				$code .= '		$this->m_invertProperties['.$escapeName.']' . implode('', $affects) . ';'. PHP_EOL;
+			}
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return string
+	 */	
+	protected function getOthersFunctions($model)
+	{	
+		$code = '';
+		
+		if ($model->getIcon())
+		{
+			$code .= '
+	/**
+	 * @return string
+	 */
+	public function getIcon()
+	{
+		return '. $this->escapePHPValue($model->getIcon()).';
+	}';
+		}
+		
+		if (!$model->getInject())
+		{
+			$code .= '
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return '. $this->escapePHPValue($model->getFullName()).';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getModuleName()
+	{
+		return '. $this->escapePHPValue($model->getModuleName()).';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDocumentName()
+	{
+		return '. $this->escapePHPValue($model->getDocumentName()).';
+	}';
+			
+		}		
+		
+		if ($model->getLocalized() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function isLocalized()
+	{
+		return '. $this->escapePHPValue($model->getLocalized()).';
+	}';
+		}		
+
+		if ($model->getHasUrl() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function hasURL()
+	{
+		return '. $this->escapePHPValue($model->getHasUrl()).';
+	}';
+		}
+		
+		if ($model->getUseRewriteUrl() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function useRewriteURL()
+	{
+		return '. $this->escapePHPValue($model->getUseRewriteUrl()).' && $this->hasURL();
+	}';
+		}		
+		
+		if ($model->getIndexable() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function isIndexable()
+	{
+		return '. $this->escapePHPValue($model->getIndexable()).' && $this->hasURL();
+	}';
+		}
+		
+		if ($model->getBackofficeIndexable() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function isBackofficeIndexable()
+	{
+		return '. $this->escapePHPValue($model->getBackofficeIndexable()).';
+	}';
+		}
+		
+		if ($model->getUsePublicationDates() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function usePublicationDates()
+	{
+		return '. $this->escapePHPValue($model->getUsePublicationDates()).';
+	}';
+		}
+		
+		if ($model->getStatus() !== null)
+		{
+			$code .= '
+	/**
+	 * @return string
+	 */
+	public function getDefaultStatus()
+	{
+		return '. $this->escapePHPValue($model->getStatus()).';
+	}';
+		}						
+		return $code . PHP_EOL;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return string
+	 */
+	protected function getWorkflowFunctions($model)
+	{
+		$code = '';
+		
+		if ($model->getUseCorrection() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function useCorrection()
+	{
+		return CHANGE_USE_CORRECTION && '. $this->escapePHPValue($model->getUseCorrection()).';
+	}';
+		}
+		
+		if ($model->getWorkflowStartTask() !== null)
+		{
+			$code .= '
+	/**
+	 * @return boolean
+	 */
+	public function hasWorkflow()
+	{
+		return CHANGE_USE_CORRECTION && CHANGE_USE_WORKFLOW;
+	}
+		
+	/**
+	 * @return string
+	 */
+	public function getWorkflowStartTask()
+	{
+		return '. $this->escapePHPValue($model->getWorkflowStartTask()).';
+	}';
+		}
+		
+		
+		if ($model->getWorkflowParameters() !== null)
+		{
+			$code .= '
+	/**
+	 * @return array
+	 */
+	public function getWorkflowParameters()
+	{
+		return '. $this->escapePHPValue($model->getWorkflowParameters()).';
+	}';
+		}
+		
+		return $code . PHP_EOL;		
 	}
 }

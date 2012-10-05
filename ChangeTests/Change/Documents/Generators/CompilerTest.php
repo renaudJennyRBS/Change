@@ -49,5 +49,14 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 		$result = $compiler->getAncestors($m);
 		$this->assertArrayHasKey('modules_media/file', $result);
 		$this->assertArrayHasKey('modules_media/media', $result);
+		return $compiler;
+	}
+	
+	/**
+	 * @depends testLoadProjectDocuments
+	 */	
+	public function testSaveModelsPHPCode(\Change\Documents\Generators\Compiler $compiler)
+	{
+		$compiler->saveModelsPHPCode();
 	}
 }

@@ -19,7 +19,7 @@ class Property
 	 * @var string
 	 */	
 	protected $type;
-
+	
 	/**
 	 * @var string
 	 */
@@ -94,6 +94,12 @@ class Property
 	 * @var array
 	 */
 	protected $constraintArray;
+	
+	/**
+	 * Setted on Compilation 
+	 * @var boolean
+	 */
+	protected $cmpOverride = false;
 	
 
 	/**
@@ -373,5 +379,70 @@ class Property
 				$this->constraintArray['maxSize'] = $params;
 			}
 		}
+	}
+	
+	/**
+	 * @param boolean $override
+	 */
+	public function setOverride($override)
+	{
+		$this->cmpOverride = ($override == true);
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getOverride()
+	{
+		return $this->cmpOverride;
+	}
+	
+	public function makeLocalized()
+	{
+		$this->localized = true;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public static function getNewCorrectionIdProperty()
+	{
+		$property = new static();
+		$property->cascadeDelete = false;
+		$property->name = 'correctionid';
+		$property->type = 'Integer';
+		return $property;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public static function getNewCorrectionOfIdProperty()
+	{
+		$property = new static();
+		$property->name = 'correctionofid';
+		$property->type = 'Integer';
+		return $property;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public static function getNewS18sProperty()
+	{
+		$property = new static();
+		$property->name = 's18s';
+		$property->type = 'Lob';
+		return $property;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public static function getNamedProperty($name)
+	{
+		$property = new static();
+		$property->name = $name;
+		return $property;
 	}
 }

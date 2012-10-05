@@ -11,6 +11,8 @@ class Compiler
 	 */
 	protected $models = array();
 	
+	protected $modelNamesByExtendLevel = array();
+	
 	/**
 	 * @var string
 	 */
@@ -54,6 +56,7 @@ class Compiler
 		}
 		
 		$this->checkExtends();
+		$this->buildDependencies();
 	}
 	
 	/**
@@ -93,12 +96,86 @@ class Compiler
 				throw new \Exception('Invalid Injection on ' . $model->getFullName() . ' document.');
 			}
 		}
-		
+		$this->modelNamesByExtendLevel = array();
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$this->getAncestors($model);
+			$ancestors = $this->getAncestors($model);
+			$this->modelNamesByExtendLevel[count($ancestors)][] = $model->getFullName(); 
 		}
+		ksort($this->modelNamesByExtendLevel);
+	}
+	
+	/**
+	 * 
+	 */
+	public function buildDependencies()
+	{
+		$injectedModelNames = array_flip($this->injection);
+		foreach ($this->modelNamesByExtendLevel as $lvl => $modelNames)
+		{
+			foreach ($modelNames as $modelName)
+			{
+				$model = $this->getModelByFullName($modelName);
+				if ($model->getInject()) //Check Injection
+				{
+					if (count($this->getChildren($model)))
+					{
+						throw new \Exception('Injected Model ' . $model->getFullName() . ' has children.');
+					}
+				}
+				
+				$ancestors =  array_reverse($this->getAncestors($model));
+				if ($model->getUseCorrection())
+				{
+					if (!$model->getUseCorrectionByAncestors($ancestors))
+					{
+						$model->addCorrectionProperties();
+					}
+				}
+				
+				if (count($model->getSerializedproperties()))
+				{
+					if (!$model->getHasSerializedPropertiesByAncestors($ancestors))
+					{
+						$model->addS18sProperty();
+					}
+				}
+				
+				foreach ($model->getProperties() as $property)
+				{
+					$ap = $model->getPropertyByAncestors($ancestors, $property->getName());
+					if ($ap)
+					{
+						$property->setOverride(true);
+					}
+					
+					/* @var $property \Change\Documents\Generators\Property */
+					if ($property->getInverse())
+					{
+						$docType = ($property->getDocumentType()) ? $property->getDocumentType() : $model->getDocumentTypeByAncestors($ancestors, $property->getName());
+						$im = $this->getModelByFullName($docType);
+						if (!$im)
+						{
+							throw new \Exception('Inverse Property on unknow Model ' . $property->getDocumentType() . ' (' . $model->getFullName() . '::' . $property->getName() . ')');
+						}
+						$ip = new InverseProperty($property, $model);
+						$model->addInverseProperty($ip);
+					}
+					
+					if ($property->getLocalized())
+					{
+						$model->setLocalized(true);
+					}
+				}
+				
+				if ($model->getLocalized())
+				{
+					$model->makeLocalised($ancestors);
+				}
+			}
+		}
+
 	}
 	
 	public function getModelByFullName($fullName)
@@ -160,12 +237,17 @@ class Compiler
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return \Change\Documents\Generators\Model[]
 	 */
-	public function getDescendants($model)
+	public function getDescendants($model, $excludeInjected = false)
 	{
-		$result = $this->getChildren($model);
-		foreach ($result as $cm)
+		$result = array();
+		foreach ($this->getChildren($model) as $name => $cm)
 		{
 			/* @var $cm \Change\Documents\Generators\Model */
+			if ($excludeInjected && $cm->getInject())
+			{
+				continue;
+			}
+			$result[$name] = $cm;
 			$dm = $this->getDescendants($cm);
 			if (count($dm))
 			{
@@ -174,17 +256,14 @@ class Compiler
 		}
 		return $result;
 	}
-		
-	/**
-	 * @param mixed $value
-	 * @return string
-	 */
-	protected function escapePHPValue($value, $removeSpace = true)
+			
+	
+	public function saveModelsPHPCode()
 	{
-		if ($removeSpace)
+		foreach ($this->models as $model)
 		{
-			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
+			$generator = new ModelClass();
+			$generator->savePHPCode($this, $model);
 		}
-		return var_export($value, true);
 	}
 }
