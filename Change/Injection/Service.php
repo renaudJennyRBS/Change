@@ -50,6 +50,7 @@ class Service extends \Change\AbstractSingleton
 		$dir = new \DirectoryIterator($compiledDir);
 		foreach ($dir as $fileInfo)
 		{
+			/* @var $fileInfo \SplFileInfo */
 			if (!$fileInfo->isDot() && !in_array($fileInfo->getFilename(), $compiledFileNames))
 			{
 				unlink($fileInfo->getPathname());

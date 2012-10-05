@@ -156,7 +156,8 @@ class Model
 							$this->importPublicationStatus($xmlSectionNode);
 							break;
 						default:
-							echo "Deprecated section: " . $xmlSectionNode->localName . " in " . $this->moduleName . '/' . $this->documentName, PHP_EOL;	
+							//TODO: don't use echo directly 
+							//echo "Deprecated section: " . $xmlSectionNode->localName . " in " . $this->moduleName . '/' . $this->documentName, PHP_EOL;	
 					}
 				}
 			}
