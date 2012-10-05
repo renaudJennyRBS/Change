@@ -29,15 +29,6 @@ class Path
 	/**
 	 * @return string
 	 */
-	public static function compilationPathFromComponents(array $pathComponents)
-	{
-		array_unshift($pathComponents, PROJECT_HOME, 'Compilation');
-		return static::buildPathFromComponents($pathComponents);
-	}
-	
-	/**
-	 * @return string
-	 */
 	public static function projectPath()
 	{
 		$args = func_get_args();
@@ -57,7 +48,13 @@ class Path
 		}
 		return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $pathComponents);
 	}
-	static function normalizePath($path)
+	
+	/**
+	 * 
+	 * @param string $path
+	 * @return string
+	 */
+	public static function normalizePath($path)
 	{
 		return (DIRECTORY_SEPARATOR === '/') ? $path : str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
