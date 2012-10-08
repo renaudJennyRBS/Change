@@ -1173,7 +1173,7 @@ class QueryBuilder
 		elseif ($criterion instanceof \f_persistentdocument_criteria_NextSiblingOfExpression) //TODO Old class Usage
 		{
 			$docId = $criterion->getDocumentId();
-			$document = Provider::getInstance()->getDocumentInstance($docId);
+			$document = \Change\Db\Provider::getInstance()->getDocumentInstance($docId);
 			$treeId = $document->getTreeId();
 			if (!$treeId)
 			{
@@ -1194,7 +1194,7 @@ class QueryBuilder
 		elseif ($criterion instanceof \f_persistentdocument_criteria_PreviousSiblingOfExpression) //TODO Old class Usage
 		{
 			$docId = $criterion->getDocumentId();
-			$document = Provider::getInstance()->getDocumentInstance($docId);
+			$document = \Change\Db\Provider::getInstance()->getDocumentInstance($docId);
 			$treeId = $document->getTreeId();
 			if (!$treeId)
 			{
@@ -1215,7 +1215,7 @@ class QueryBuilder
 		elseif ($criterion instanceof \f_persistentdocument_criteria_SiblingOfExpression)  //TODO Old class Usage
 		{
 			$docId = $criterion->getDocumentId();
-			$document = Provider::getInstance()->getDocumentInstance($docId);
+			$document = \Change\Db\Provider::getInstance()->getDocumentInstance($docId);
 			$treeId = $document->getTreeId();
 			if (!$treeId)
 			{

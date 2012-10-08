@@ -483,15 +483,16 @@ class Generator
 	
 	/**
 	 * Do not use it directly. Prefer using \Change\Application\Configuration::addPersistentEntry().
-	 * @param array $path
+	 * @param array $pathArray
 	 * @param string $entryName
 	 * @param string $value
 	 * @return string The old value or false if the operation failed.
 	 */
-	public function addPersistentEntry($path, $entryName, $value)
+	public function addPersistentEntry($pathArray, $entryName, $value)
 	{
+		array_unshift($pathArray, 'project');
 		$pathArray[] = "*[@name='" . $entryName . "']";
-		
+	
 		$configProjectPath = \Change\Stdlib\Path::appPath('Config', 'project.xml');
 		if (!is_readable($configProjectPath))
 		{
