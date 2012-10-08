@@ -1,8 +1,8 @@
 <?php
-namespace Change\Application\Configuration;
+namespace Change\Configuration;
 
 /**
- * @name \Change\Application\Configuration\Generator
+ * @name \Change\Configuration\Generator
  */
 class Generator
 {
@@ -18,13 +18,13 @@ class Generator
 		$configs = $this->compileConfigs($dom);
 		
 		// Save compiled file.
-		$content = "<?php\n// \\Change\\Application\\Configuration::setDefineArray PART // \n";
+		$content = "<?php\n// \\Change\\Configuration\\Configuration::setDefineArray PART // \n";
 		$content .= '$configuration->setDefineArray(' . var_export($defines, true) . ");\n\n";
 		if ($defines['DEVELOPMENT_MODE'])
 		{
 			$this->buildDevelopmentDefineFile($defines);
 		}
-		$content .= "// \\Change\\Application\\Configuration::setConfigArray PART // \n";
+		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
 		\Change\Stdlib\File::write(\Change\Stdlib\Path::compilationPath('Config', 'project.php'), $content);
 				
@@ -98,20 +98,20 @@ class Generator
 	
 	/**
 	 * @param \DOMElement $node
-	 * @return \Change\Application\Configuration\Generator 
+	 * @return \Change\Configuration\Generator 
 	 */
 	public function getCompiler($node)
 	{
 		switch ($node->localName)
 		{
 			case 'modulesinfos' :
-				return new \Change\Application\Configuration\ModulesInfosCompiler();
+				return new \Change\Configuration\ModulesInfosCompiler();
 			case 'oauth' :
-				return new \Change\Application\Configuration\OauthCompiler();
+				return new \Change\Configuration\OauthCompiler();
 			case 'injection' :
-				return new \Change\Application\Configuration\InjectionCompiler();
+				return new \Change\Configuration\InjectionCompiler();
 			default :
-				return new \Change\Application\Configuration\ArrayCompiler();
+				return new \Change\Configuration\ArrayCompiler();
 		}
 	}
 	
@@ -482,7 +482,7 @@ class Generator
 	}
 	
 	/**
-	 * Do not use it directly. Prefer using \Change\Application\Configuration::addPersistentEntry().
+	 * Do not use it directly. Prefer using \Change\Configuration\Configuration::addPersistentEntry().
 	 * @param array $pathArray
 	 * @param string $entryName
 	 * @param string $value

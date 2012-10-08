@@ -117,7 +117,6 @@
 		<injection>
 			<class>
 				<entry name="f_DataCacheService">f_DataCacheFileService</entry>
-				<entry name="\Change\Db\Provider">\Change\Db\Mysql\Provider</entry>
 			</class>
 		</injection>
 		
@@ -147,6 +146,7 @@
 		<!-- DATABASES -->
 		<databases>
 			<default>
+				<entry name="dbprovider">\Change\Db\Mysql\Provider</entry>
 				<!--entry name="user">root</entry-->
 				<!--entry name="password"></entry-->
 				<!--entry name="database">rbschange</entry-->
