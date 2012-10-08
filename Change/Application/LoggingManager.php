@@ -6,6 +6,12 @@ namespace Change\Application;
  */
 class LoggingManager extends \Change\AbstractSingleton
 {
+	protected function __contruct()
+	{
+		$this->getLoggerByName('application');
+		$this->getLoggerByName('phperror');
+	}
+	
 	/**
 	 * @var integer
 	 */

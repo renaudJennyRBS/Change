@@ -160,9 +160,9 @@ class Configuration
 			return false;
 		}
 		
-		$this->addVolatileEntry($path, $value);
+		$this->addVolatileEntry($path . '/' . $entryName, $value);
 		$generator = new \Change\Application\Configuration\Generator();
-		return $generator->addPersistentEntry($path, $entryName, $value);
+		return $generator->addPersistentEntry($pathArray, $entryName, $value);
 	}
 	
 	/**

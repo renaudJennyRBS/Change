@@ -177,10 +177,10 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	public function rollBack($e = null)
 	{
-		\Change\Application\LoggingManager::getInstance()->warn('TransactionManager->rollBack called');
+		\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack called');
 		if ($this->transactionCount == 0)
 		{
-			\Change\Application\LoggingManager::getInstance()->warn('TransactionManager->rollBack() => bad transaction count (no transaction)');
+			\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack() => bad transaction count (no transaction)');
 			throw new \Exception('rollback-bad-transaction-count');
 		}
 		$this->transactionCount--;
@@ -190,7 +190,7 @@ abstract class Provider extends \Change\AbstractSingleton
 			$this->transactionDirty = true;
 			if (!$this->m_inTransaction)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn("PersistentProvider->rollBack() called while not in transaction");
+				\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack() called while not in transaction');
 			}
 			else
 			{

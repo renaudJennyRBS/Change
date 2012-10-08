@@ -104,7 +104,7 @@ class ModelManager extends \Change\AbstractSingleton
 	 * If no child is available for model, key does not exists in returned array
 	 * @return array array('modules_moduleA/doc1' => array('modules_moduleA/doc2', ...), ...)
 	 */
-	public static function getChildrenModelNames($modelName = null)
+	public function getChildrenModelNames($modelName = null)
 	{
 		if ($this->modelChildren === null)
 		{
