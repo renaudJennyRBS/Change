@@ -5,7 +5,7 @@ namespace Change\Db\Mysql;
  * @name \Change\Db\Mysql\Provider
  * @method \Change\Db\Mysql\Provider getInstance()
  */
-class Provider extends \Change\Db\Provider
+class DbProvider extends \Change\Db\DbProvider
 {	
 	/**
 	 * @var \Change\Db\Mysql\Statment
@@ -1280,7 +1280,7 @@ class Provider extends \Change\Db\Provider
 			//TODO Old class Usage
 			$query->setProjection(\Projections::this());
 		}
-		$queryBuilder = new QueryBuilder($query);
+		$queryBuilder = new QueryBuilder($query, $this->getSqlMapping());
 		$params = $queryBuilder->getParams();
 		$queryStr = $queryBuilder->getQueryString();
 		
@@ -2610,7 +2610,7 @@ class Provider extends \Change\Db\Provider
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			\Change\Application\LoggingManager::getInstance()->error($e->getMessage());
+			$this->logging->error($e->getMessage());
 			$acl->getDocumentService()->delete($acl);
 		}
 	}	

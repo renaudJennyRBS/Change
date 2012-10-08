@@ -2,10 +2,10 @@
 namespace Change\Db;
 
 /**
- * @name \Change\Db\Provider
- * @method \Change\Db\Provider getInstance()
+ * @name \Change\Db\DbProvider
+ * @method \Change\Db\DbProvider getInstance()
  */
-abstract class Provider extends \Change\AbstractSingleton
+abstract class DbProvider
 {	
 	/**
 	 * @var integer
@@ -61,6 +61,16 @@ abstract class Provider extends \Change\AbstractSingleton
 	protected $m_inTransaction = false;
 	
 	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+	
+	public static function getInstance()
+	{
+		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+	}
+	
+	/**
 	 * @return integer
 	 */
 	public function getId()
@@ -73,12 +83,18 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	public abstract function getType();
 	
-	
-	protected function __construct()
+	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
-		parent::__construct();
-		$connectionInfos = \Change\Application::getInstance()->getConfiguration()->getEntry('databases/default', array());
+		$connectionInfos = $config->getEntry('databases/default', array());
+		$className = $connectionInfos['dbprovider'];
+		return new $className($connectionInfos, $logging);
+	}
+	
+	public function __construct(array $connectionInfos, \Change\Logging\Logging $logging)
+	{
+		//$connectionInfos = \Change\Application::getInstance()->getConfiguration()->getEntry('databases/default', array());
 		$this->connectionInfos = $connectionInfos;
+		$this->logging = $logging;
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
 	}	
 	
@@ -86,7 +102,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	{
 		if ($this->hasTransaction())
 		{
-			\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
+			$this->logging->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
 		}
 	}
 	
@@ -110,7 +126,7 @@ abstract class Provider extends \Change\AbstractSingleton
 			if ($this->m_inTransaction)
 			{
 
-				\Change\Application\LoggingManager::getInstance()->warn(get_class($this) . " while already in transaction");
+				$this->logging->warn(get_class($this) . " while already in transaction");
 			}
 			else
 			{
@@ -127,7 +143,7 @@ abstract class Provider extends \Change\AbstractSingleton
 			$this->transactionCount++;
 			if ($this->transactionCount > $embededTransaction)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn('embeded transaction: ' . $this->transactionCount);
+				$this->logging->warn('embeded transaction: ' . $this->transactionCount);
 			}
 		}
 	}
@@ -148,7 +164,7 @@ abstract class Provider extends \Change\AbstractSingleton
 		{
 			if (!$this->m_inTransaction)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn("PersistentProvider->commit() called while not in transaction");
+				$this->logging->warn("PersistentProvider->commit() called while not in transaction");
 			}
 			else
 			{
@@ -156,7 +172,7 @@ abstract class Provider extends \Change\AbstractSingleton
 				$duration = round(microtime(true) - $this->timers['bt'], 4);
 				if ($duration > $this->timers['longTransaction'])
 				{
-					\Change\Application\LoggingManager::getInstance()->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+					$this->logging->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
 				}
 				$this->m_inTransaction = false;		
 				$this->beginTransactionInternal();
@@ -177,10 +193,10 @@ abstract class Provider extends \Change\AbstractSingleton
 	 */
 	public function rollBack($e = null)
 	{
-		\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack called');
+		$this->logging->warn('Provider->rollBack called');
 		if ($this->transactionCount == 0)
 		{
-			\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack() => bad transaction count (no transaction)');
+			$this->logging->warn('Provider->rollBack() => bad transaction count (no transaction)');
 			throw new \Exception('rollback-bad-transaction-count');
 		}
 		$this->transactionCount--;
@@ -190,7 +206,7 @@ abstract class Provider extends \Change\AbstractSingleton
 			$this->transactionDirty = true;
 			if (!$this->m_inTransaction)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn('Provider->rollBack() called while not in transaction');
+				$this->logging->warn("Provider->rollBack() called while not in transaction");
 			}
 			else
 			{
@@ -235,7 +251,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @deprecated
-	 * @return \Change\Db\Provider
+	 * @return \Change\Db\DbProvider
 	 */
 	public function getPersistentProvider()
 	{
@@ -274,7 +290,7 @@ abstract class Provider extends \Change\AbstractSingleton
 	
 	/**
 	 * @param boolean $useDocumentCache
-	 * @return \Change\Db\Provider
+	 * @return \Change\Db\DbProvider
 	 */
 	public abstract function setDocumentCache($useDocumentCache);
 
@@ -823,7 +839,7 @@ abstract class Provider extends \Change\AbstractSingleton
 		{
 			if ($nbDocs > 1)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn(get_class($this).'->findUnique() called while find() returned more than 1 results');
+				$this->logging->warn(get_class($this).'->findUnique() called while find() returned more than 1 results');
 			}
 			return $docs[0];
 		}

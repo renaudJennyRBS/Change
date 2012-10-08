@@ -146,7 +146,7 @@
 		<!-- DATABASES -->
 		<databases>
 			<default>
-				<entry name="dbprovider">\Change\Db\Mysql\Provider</entry>
+				<entry name="dbprovider">\Change\Db\Mysql\DbProvider</entry>
 				<!--entry name="user">root</entry-->
 				<!--entry name="password"></entry-->
 				<!--entry name="database">rbschange</entry-->

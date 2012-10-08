@@ -74,7 +74,7 @@ class DocumentHelper
 	 */
 	public static function getDocumentInstance($id, $modelName = null)
 	{
-		return \Change\Db\Provider::getInstance()->getDocumentInstance($id, $modelName);
+		return \Change\Db\DbProvider::getInstance()->getDocumentInstance($id, $modelName);
 	}
 
 	/**
@@ -89,7 +89,7 @@ class DocumentHelper
 		{
 			return null;
 		}
-		return \Change\Db\Provider::getInstance()->getDocumentInstanceIfExist($id);
+		return \Change\Db\DbProvider::getInstance()->getDocumentInstanceIfExist($id);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ class DocumentHelper
 		if (is_array($documentIds))
 		{
 			return array_map(function($id) {
-				return \Change\Db\Provider::getInstance()->getDocumentInstance($id);
+				return \Change\Db\DbProvider::getInstance()->getDocumentInstance($id);
 			}, $documentIds);
 		}
 		return array();
@@ -263,7 +263,7 @@ class DocumentHelper
 	 */
 	public static function setPropertiesTo($properties, $document, $uiValues = false)
 	{
-		$provider = \Change\Db\Provider::getInstance();
+		$provider = \Change\Db\DbProvider::getInstance();
 		$model = $document->getPersistentModel();
 
 		foreach ($properties as $propertyName => $propertyValue)
@@ -312,7 +312,7 @@ class DocumentHelper
 							}
 							else
 							{
-								\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' Invalid value for ' . get_class($document) . '->' . $methodName);
+								\Change\Application::getInstance()->getApplicationServices()->getLogging()->warn(__METHOD__ . ' Invalid value for ' . get_class($document) . '->' . $methodName);
 							}
 						}
 					}
@@ -331,7 +331,7 @@ class DocumentHelper
 					}
 					else
 					{
-						\Change\Application\LoggingManager::getInstance()->warn(__METHOD__ . ' Invalid value for ' . get_class($document) . '->' . $methodName);
+						\Change\Application::getInstance()->getApplicationServices()->getLogging()->warn(__METHOD__ . ' Invalid value for ' . get_class($document) . '->' . $methodName);
 					}
 				}
 				else
@@ -407,7 +407,7 @@ class DocumentHelper
 				}
 				catch (\Exception $e)
 				{
-					\Change\Application\LoggingManager::getInstance()->exception($e);
+					\Change\Application::getInstance()->getApplicationServices()->getLogging()->exception($e);
 				}
 			}
 			else if (strlen($modelItem) > 0 && $modelItem[0] == '!')

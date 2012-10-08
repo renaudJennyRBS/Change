@@ -1,10 +1,10 @@
 <?php
-namespace Change\Application;
+namespace Change\Logging;
 
 /**
- * @method \Change\Application\LoggingManager getInstance()
+ * @name \Change\Logging\Logging
  */
-class LoggingManager extends \Change\AbstractSingleton
+class Logging extends \Change\AbstractSingleton
 {
 	protected function __contruct()
 	{
@@ -13,16 +13,39 @@ class LoggingManager extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+	
+	/**
 	 * @var integer
 	 */
 	protected $priority;
 	
 	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public static function getInstance()
+	{
+		return \Change\Application::getInstance()->getApplicationServices()->getLogging();
+	}
+	
+
+	/**
+	 * 
+	 * @param \Change\Configuration\Configuration $config
+	 */
+	public function __construct(\Change\Configuration\Configuration $config)
+	{
+		$this->configuration = $config;
+	}
+
+	/**
 	 * @return string (DEBUG, INFO, NOTICE, WARN, ERR, ALERT, EMERG)
 	 */
 	public function getLevel()
 	{
-		return \Change\Application::getInstance()->getConfiguration()->getEntry('logging/level');
+		return $this->configuration->getEntry('logging/level');
 	}
 	
 	/**
@@ -105,11 +128,10 @@ class LoggingManager extends \Change\AbstractSingleton
 	 */
 	protected function getCreateWriterMethodName($loggerName)
 	{
-		$configuration = \Change\Application::getInstance()->getConfiguration();
-		$writerType = $configuration->getEntry('logging/writers/' . $loggerName, null);
+		$writerType = $this->configuration->getEntry('logging/writers/' . $loggerName, null);
 		if ($writerType === null)
 		{
-			$writerType = $configuration->getEntry('logging/writers/default', 'stream');
+			$writerType = $this->configuration->getEntry('logging/writers/default', 'stream');
 		}
 		$methodName = 'create' . ucfirst(strtolower($writerType)) . 'Writer';
 		if (method_exists($this, $methodName))

@@ -7,6 +7,11 @@ namespace Change\Db\Mysql;
 class SchemaManager implements \Change\Db\InterfaceSchemaManager
 {
 	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+	
+	/**
 	 * @var array
 	 */
 	protected $connectionInfos;
@@ -371,7 +376,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	protected function getRelationId($propertyName)
 	{
-		return  \Change\Db\Provider::getInstance()->getRelationId($propertyName);
+		return  \Change\Db\DbProvider::getInstance()->getRelationId($propertyName);
 	}
 	
 	/**

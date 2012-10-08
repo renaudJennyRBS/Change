@@ -37,15 +37,17 @@ class QueryBuilder
 
 	protected $firstResult = 0;
 	protected $maxResults = -1;
+	
+	protected $sqlMapping;
 
 	/**
 	 * @param f_persistentdocument_criteria_ExecutableQuery $query
 	 */
-	public function __construct($query)
+	public function __construct($query, $mapping)
 	{
 		$model = $query->getDocumentModel();
 		$this->pushModel($model);
-		
+		$this->sqlMapping = $mapping;	
 		if ($model !== null)
 		{
 			$this->setFirstResult($query->getFirstResult());
@@ -302,7 +304,7 @@ class QueryBuilder
 	 */
 	protected function getSqlMapping()
 	{
-		return \Change\Db\Provider::getInstance()->getSqlMapping();
+		return $this->sqlMapping;
 	}
 
 	/**
@@ -1103,7 +1105,7 @@ class QueryBuilder
 		{
 			$docId = $criterion->getDocumentId();
 			//TODO Old class Usage
-			$document = \Change\Db\Provider::getInstance()->getDocumentInstance($docId);
+			$document = \Change\Db\DbProvider::getInstance()->getDocumentInstance($docId);
 			$treeId = $document->getTreeId();
 			if (!$treeId)
 			{
@@ -1136,7 +1138,7 @@ class QueryBuilder
 		elseif ($criterion instanceof \f_persistentdocument_criteria_DescendentOfExpression)  //TODO Old class Usage
 		{
 			$docId = $criterion->getDocumentId();
-			$document = \Change\Db\Provider::getInstance()->getDocumentInstance($docId);
+			$document = \Change\Db\DbProvider::getInstance()->getDocumentInstance($docId);
 			$treeId = $document->getTreeId();
 			if (!$treeId)
 			{
