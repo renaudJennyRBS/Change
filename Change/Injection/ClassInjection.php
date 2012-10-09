@@ -5,6 +5,7 @@ namespace Change\Injection;
 class ClassInjection
 {
 	const REPLACED_CLASS_SUFFIX = '_injected';
+	const REPLACING_CLASS_SUFFIX = '_injecting';
 	
 	/**
 	 * @var array
@@ -176,8 +177,8 @@ class ClassInjection
 			$usesString = implode(PHP_EOL, $usesArray);
 			
 			/**
-			 * We generate a first class, which is identical to the replacing class (same namespace, same name)
-			 * excepted that it extends the renamed version of the class it previously extended.
+			 * We generate a first class, which is identical to the replacing class 
+			 * except for the name and that it extends the renamed version of the class it previously extended.
 			 */
 			
 			$fullClassName = $this->buildFullClassName($class->getNamespace(), $class->getName());
@@ -185,6 +186,9 @@ class ClassInjection
 			{
 				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should  contain class ' . $replacingClassInfo['name']);
 			}
+			// Append suffix to this class
+			$fullClassName .=  self::REPLACING_CLASS_SUFFIX;
+			$class->setName($class->getName() . self::REPLACING_CLASS_SUFFIX);
 			
 			$components = explode('\\', $fullClassName);
 			$fileName = implode('_', $components);
