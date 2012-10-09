@@ -1,6 +1,6 @@
 <?php
 namespace Change\I18n;
-use \Change\Application\Logging;
+use \Change\Logging\Logging;
 
 /**
  * @name \Change\I18n\I18nManager
@@ -430,7 +430,7 @@ class I18nManager
 									}
 									elseif (isset($datas[$lang]))
 									{
-										Provider::getInstance()->setI18nSynchroStatus($documentId, $lang, self::SYNCHRO_VALID, null);
+										$this->dbProvider->setI18nSynchroStatus($documentId, $lang, self::SYNCHRO_VALID, null);
 									}
 	
 									$this->popLang();
@@ -778,60 +778,6 @@ class I18nManager
 				'useredited' => $row['useredited'] == "1", 'format' => $row['format']);
 		}
 		return $contents;
-	}
-	
-	protected function applyEntitiesI18nSynchro(&$entities)
-	{
-		$syncConf = $this->getI18nSynchro();
-		if (count($syncConf) === 0) {return;}
-		foreach ($syncConf as $to => $froms)
-		{
-			$toLCID = $this->getLCID($to);
-			foreach ($froms as $from)
-			{
-				$fromLCID = $this->getLCID($from);
-				if (isset($entities[$fromLCID]))
-				{
-					if (!isset($entities[$toLCID]))
-					{
-						$entities[$toLCID] = array();
-					}
-					foreach ($entities[$fromLCID] as $id => $data)
-					{
-						if (!isset($entities[$toLCID][$id]))
-						{
-							$entities[$toLCID][$id] = $data;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * @param string $keyPath
-	 * @param array $entities
-	 */
-	protected function processDatabase($keyPath, $entities)
-	{
-		$keyPath = strtolower($keyPath);	
-		$lcids = array();
-		foreach ($this->getSupportedLanguages() as $lang)
-		{
-			$lcids[$this->getLCID($lang)] = $lang;
-		}
-		foreach ($entities as $lcid => $infos)
-		{
-			if (! isset($lcids[$lcid]))
-			{
-				continue;
-			}
-			foreach ($infos as $id => $entityInfos)
-			{
-				list($content, $format) = $entityInfos;
-				$this->dbProvider->addTranslate($lcid, strtolower($id), $keyPath, $content, 0, $format, false);
-			}
-		}
 	}
 	
 	/**
