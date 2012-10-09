@@ -6,13 +6,12 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 	public function testGetLevel()
 	{
 		$application = \Change\Application::getInstance();
-		$application->loadConfiguration();
-		$config = $application->getConfiguration();
+		$config = $application->getApplicationServices()->getConfiguration();
 		
 		$config->addVolatileEntry('logging/level', 'ALERT');
-		$this->assertEquals('ALERT', \Change\Application\LoggingManager::getInstance()->getLevel());
+		$this->assertEquals('ALERT', $application->getApplicationServices()->getLogging()->getLevel());
 		$config->addVolatileEntry('logging/level', 'ERR');
-		$this->assertEquals('ERR', \Change\Application\LoggingManager::getInstance()->getLevel());
+		$this->assertEquals('ERR', $application->getApplicationServices()->getLogging()->getLevel());
 		
 		return $config;
 	}
@@ -20,10 +19,11 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testGetLevel
 	 */
-	public function testGetPriority(\Change\Application\Configuration $config)
+	public function testGetPriority(\Change\Configuration\Configuration $config)
 	{
+		$application = \Change\Application::getInstance();
 		$config->addVolatileEntry('logging/level', 'DEBUG');
-		$this->assertEquals('DEBUG', \Change\Application\LoggingManager::getInstance()->getLevel());
-		$this->assertEquals(7, \Change\Application\LoggingManager::getInstance()->getPriority());
+		$this->assertEquals('DEBUG', $application->getApplicationServices()->getLogging()->getLevel());
+		$this->assertEquals(7, $application->getApplicationServices()->getLogging()->getPriority());
 	}
 }
