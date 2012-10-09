@@ -166,7 +166,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			}
 			catch (\Exception $e)
 			{
-				\Change\Application\LoggingManager::getInstance()->warn($e->getMessage());
+				$this->loggin->warn($e->getMessage());
 			}
 		}
 	}

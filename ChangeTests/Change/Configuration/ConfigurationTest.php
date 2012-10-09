@@ -148,7 +148,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		// Test on nonexistent file.
 		$nonexistentPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'nonexistent.php';
 		$config = new \Change\Configuration\Configuration();
-		$this->setExpectedException("\RuntimeException");
+		$this->setExpectedException('\RuntimeException');
 		$config->load($nonexistentPath);
 	}
 }
