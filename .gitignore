@@ -43,4 +43,5 @@ nbproject
 /travisconfig
 /listener.php
 /phpinfo.php
-/App
+/App/Config
+/App/Modules
