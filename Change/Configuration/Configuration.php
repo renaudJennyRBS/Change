@@ -55,7 +55,7 @@ class Configuration
 			$this->compiledFile = $compiledFile;
 			if (!$this->isCompiled())
 			{
-				throw new \Exception("Could not find $compiledFile. You must compile your configuration.");
+				throw new \RuntimeException("Could not find $compiledFile. You must compile your configuration.");
 			}
 			$configuration = $this;
 			include $compiledFile;
