@@ -1,8 +1,8 @@
 <?php
-namespace Change\Application\Configuration;
+namespace Change\Configuration;
 
 /**
- * @name \Change\Application\Configuration\OauthCompiler
+ * @name \Change\Configuration\OauthCompiler
  */
 class OauthCompiler
 {

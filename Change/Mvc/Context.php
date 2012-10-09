@@ -70,7 +70,7 @@ class Context
 		{
 			$this->controller = $controller;
 			$this->request = new Request();
-			$this->storage = new Storage();
+			$this->storage = new Storage(\Change\Application::getInstance()->getApplicationServices()->getLogging());
 			$this->user = new User();
 				
 			$this->request->initialize($this);

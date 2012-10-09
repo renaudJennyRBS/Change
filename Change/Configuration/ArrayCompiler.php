@@ -1,8 +1,8 @@
 <?php
-namespace Change\Application\Configuration;
+namespace Change\Configuration;
 
 /**
- * @name \Change\Application\Configuration\ArrayCompiler
+ * @name \Change\Configuration\ArrayCompiler
  */
 class ArrayCompiler
 {

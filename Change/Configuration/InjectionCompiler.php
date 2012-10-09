@@ -1,8 +1,8 @@
 <?php
-namespace Change\Application\Configuration;
+namespace Change\Configuration;
 
 /**
- * @name \Change\Application\Configuration\InjectionCompiler
+ * @name \Change\Configuration\InjectionCompiler
  */
 class InjectionCompiler
 {

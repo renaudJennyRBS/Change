@@ -1,11 +1,11 @@
 <?php
-// \Change\Application\Configuration::setDefineArray PART //
+// \Change\Configuration\Configuration::setDefineArray PART //
 $this->setDefineArray(array (
 	'CHANGE_RELEASE' => 4,
 	'LOGGING_LEVEL' => 'INFO',
 ));
 
-// \Change\Application\Configuration::setConfigArray PART //
+// \Change\Configuration\Configuration::setConfigArray PART //
 $this->setConfigArray(array (
 	'general' =>
 	array (

@@ -5,8 +5,7 @@ namespace Change\Db;
  * @name \Change\Db\InterfaceSchemaManager
  */
 interface InterfaceSchemaManager
-{
-	
+{	
 	/**
 	 * @return boolean
 	 */

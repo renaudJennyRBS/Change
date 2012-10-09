@@ -387,7 +387,7 @@ abstract class AbstractDocument
 	{
 		if ($this->i18nVoObject === null)
 		{
-			$this->i18nVoObject = $this->getProvider()->getI18nDocument($this, $this->getLang(), true);
+			$this->i18nVoObject = $this->getDbProvider()->getI18nDocument($this, $this->getLang(), true);
 		}
 		return $this->i18nVoObject;
 	}
@@ -426,7 +426,7 @@ abstract class AbstractDocument
 		{
 			return $this->getI18nVoObject();
 		}
-		return $this->getProvider()->getI18nDocument($this, $lang);
+		return $this->getDbProvider()->getI18nDocument($this, $lang);
 	}
 
 	/**
@@ -905,11 +905,20 @@ abstract class AbstractDocument
 	}
 
 	/**
-	 * @return \Change\Db\Provider
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+	}
+	
+	/**
+	 * TODO: remove
+	 * @deprecated
 	 */
 	public function getProvider()
 	{
-		return \Change\Db\Provider::getInstance();
+		return $this->getDbProvider();
 	}
 	
 	/**
@@ -1093,7 +1102,7 @@ abstract class AbstractDocument
 	 */
 	protected final function loadDocument()
 	{
-		$this->getProvider()->loadDocument($this);
+		$this->getDbProvider()->loadDocument($this);
 	}
 
 

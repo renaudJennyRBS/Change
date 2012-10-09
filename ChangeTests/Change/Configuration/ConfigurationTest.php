@@ -1,11 +1,11 @@
 <?php
-namespace Tests\Change\Application;
+namespace Tests\Change\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConfigGetters()
 	{
-		$config = new \Change\Application\Configuration();
+		$config = new \Change\Configuration\Configuration();
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 6, 
 			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'));
 		$config->setConfigArray($entries);
@@ -16,7 +16,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConfigGetters
 	 */
-	public function testHasEntry(\Change\Application\Configuration $config)
+	public function testHasEntry(\Change\Configuration\Configuration $config)
 	{
 		// Existing keys.
 		$this->assertTrue($config->hasEntry('key1'));
@@ -30,7 +30,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConfigGetters
 	 */
-	public function testGetEntry(\Change\Application\Configuration $config)
+	public function testGetEntry(\Change\Configuration\Configuration $config)
 	{
 		// Existing keys.
 		$this->assertEquals('value1', $config->getEntry('key1'));
@@ -49,7 +49,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAddVolatileEntry()
 	{
-		$config = new \Change\Application\Configuration();
+		$config = new \Change\Configuration\Configuration();
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 
 			'complexEntry1' => array('entry11' => 'Test11', 'entry12' => 'Test12'), 
 			'complexEntry2' => array(
@@ -117,7 +117,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testApplyDefines()
 	{
-		$config = new \Tests\Change\Application\Configuration();
+		$config = new \Tests\Change\Configuration\Configuration();
 		$config->setDefineArray(array('UNE_CONSTANTE' => 'une valeur', 'ONE_CONSTANT' => 'a value'));
 		
 		$this->assertFalse(defined('ONE_CONSTANT'));
@@ -136,7 +136,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		
 		// Test on valid file.
 		$existingPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project.php';
-		$config = new \Change\Application\Configuration();
+		$config = new \Change\Configuration\Configuration();
 		$config->load($existingPath);
 		$expectedArray = array(
 			'general' => array('projectName' => 'RBS CHANGE 4.0', 'server-ip' => '127.0.0.1', 'phase' => 'development'), 
@@ -147,22 +147,16 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		
 		// Test on nonexistent file.
 		$nonexistentPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'nonexistent.php';
-		$config = new \Change\Application\Configuration();
-		try
-		{
-			$config->load($nonexistentPath);
-			$this->fail('The expected exception was not thrown.');
-		}
-		catch (\Exception $expected)
-		{
-		}
+		$config = new \Change\Configuration\Configuration();
+		$this->setExpectedException("\RuntimeException");
+		$config->load($nonexistentPath);
 	}
 }
 
 /**
  * Make some protected methods public for test.
  */
-class Configuration extends \Change\Application\Configuration
+class Configuration extends \Change\Configuration\Configuration
 {
 	/**
 	 * Setup constants.

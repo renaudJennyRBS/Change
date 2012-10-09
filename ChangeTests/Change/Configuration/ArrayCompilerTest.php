@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Change\Application\Configuration;
+namespace Tests\Change\Configuration\Configuration;
 
 class ArrayCompilerTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class ArrayCompilerTest extends \PHPUnit_Framework_TestCase
 		$xpath = new \DOMXpath($dom);
 		$nodeList = $xpath->query('/project/config');
 		
-		$compiler = new \Change\Application\Configuration\ArrayCompiler();
+		$compiler = new \Change\Configuration\ArrayCompiler();
 		$array = $compiler->getConfigurationArray($nodeList->item(0));
 		
 		$this->assertCount(2, $array['config']['modules']);

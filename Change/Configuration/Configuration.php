@@ -1,8 +1,8 @@
 <?php
-namespace Change\Application;
+namespace Change\Configuration;
 
 /**
- * @name \Change\Application\Configuration
+ * @name \Change\Configuration\Configuration
  */
 class Configuration
 {
@@ -55,7 +55,7 @@ class Configuration
 			$this->compiledFile = $compiledFile;
 			if (!$this->isCompiled())
 			{
-				throw new \Exception("Could not find $compiledFile. You must compile your configuration.");
+				throw new \RuntimeException("Could not find $compiledFile. You must compile your configuration.");
 			}
 			$configuration = $this;
 			include $compiledFile;
@@ -161,7 +161,7 @@ class Configuration
 		}
 		
 		$this->addVolatileEntry($path . '/' . $entryName, $value);
-		$generator = new \Change\Application\Configuration\Generator();
+		$generator = new \Change\Configuration\Generator();
 		return $generator->addPersistentEntry($pathArray, $entryName, $value);
 	}
 	
