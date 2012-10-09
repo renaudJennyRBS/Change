@@ -186,7 +186,8 @@ class Application extends AbstractSingleton
 		}
 		if (self::inDevelopmentMode())
 		{
-			\Change\Injection\Service::getInstance()->update();
+			$injection = new \Change\Injection\Injection();
+			$injection->update();
 		}
 		$this->registerInjectionAutoload();
 	}

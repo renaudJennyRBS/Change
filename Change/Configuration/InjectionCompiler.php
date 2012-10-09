@@ -26,8 +26,8 @@ class InjectionCompiler
 		
 		\Change\Stdlib\File::write(\Change\Stdlib\Path::compilationPath('Config', 'injection.ser'), serialize($classInjection));
 		
-		\Change\Injection\Service::getInstance()->compile();
-		
+		$injection = new \Change\Injection\Injection();
+		$injection->compile();		
 		return array();
 	}
 }

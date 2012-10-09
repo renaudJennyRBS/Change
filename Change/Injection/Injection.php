@@ -3,10 +3,9 @@
 namespace Change\Injection;
 
 /**
- * @name \Change\Injection\Service
- * @method \Change\Injection\Service getInstance()
+ * @name \Change\Injection\Injection
  */
-class Service extends \Change\AbstractSingleton
+class Injection
 {	
 	/**
 	 * @param array $oldInfo
@@ -63,6 +62,12 @@ class Service extends \Change\AbstractSingleton
 		}
 	}
 	
+	/**
+	 * 
+	 * @param string $className
+	 * @param array $oldInfo
+	 * @return string
+	 */
 	private function buildClassInfo($className, $oldInfo)
 	{
 		if ($className[0] !== '\\')
@@ -92,6 +97,11 @@ class Service extends \Change\AbstractSingleton
 		return array();
 	}
 	
+	/**
+	 * Save injection to file
+	 * 
+	 * @param array $infos
+	 */
 	protected function saveInfos($infos)
 	{
 		$path = \Change\Stdlib\Path::compilationPath('Injection', 'info.ser');	
