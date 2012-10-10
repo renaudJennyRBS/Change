@@ -6,8 +6,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	public function testConfigGetters()
 	{
 		$config = new \Change\Configuration\Configuration();
-		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 6, 
-			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'));
+		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => '6', 
+			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'), 
+			'booleans' => array('v1' => 'true', 'v2' => 'false', 'v3' => 'toto', 'v4' => 'TRUE', 'v5' => '1'));
 		$config->setConfigArray($entries);
 		$this->assertEquals($entries, $config->getConfigArray());
 		return $config;
@@ -25,6 +26,21 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		// Nonexistent keys.
 		$this->assertFalse($config->hasEntry('nonexistentKey'));
 		$this->assertFalse($config->hasEntry('2levels/nonexistentKey'));
+	}
+	
+	/**
+	 * @depends testConfigGetters
+	 */
+	public function testGetBooleanEntry(\Change\Configuration\Configuration $config)
+	{
+		// Valid entries.
+		$this->assertEquals(true, $config->getBooleanEntry('booleans/v1'));
+		$this->assertEquals(false, $config->getBooleanEntry('booleans/v2'));
+		
+		// All other values returns false.
+		$this->assertEquals(false, $config->getBooleanEntry('booleans/v3'));
+		$this->assertEquals(false, $config->getBooleanEntry('booleans/v4'));
+		$this->assertEquals(false, $config->getBooleanEntry('booleans/v5'));
 	}
 	
 	/**
