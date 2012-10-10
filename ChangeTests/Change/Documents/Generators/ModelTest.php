@@ -31,10 +31,10 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse($model->getIndexable());
 		$this->assertFalse($model->getUseCorrection());
 		$this->assertNull($model->getExtend());
-		$this->assertFalse($model->getLocalized());
-		$this->assertFalse($model->getInject());
-		
+		$this->assertNull($model->getLocalized());
+		$this->assertFalse($model->getInject());		
 		$this->assertCount(13, $model->getProperties());
+		
 		return $model;
 	}
 	
@@ -42,15 +42,25 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 	 * @depends testSetXmlDocument
 	 */
 	public function testApplyDefault(\Change\Documents\Generators\Model $defaultmodel)
-	{
+	{	
+		$model2 = new \Change\Documents\Generators\Model('testing', 'test');
 		
-		$model2 = new \Change\Documents\Generators\Model('website', 'page');
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/page.xml');
+		$doc->load(__DIR__ . '/TestAssets/TestType.xml');
 		$model2->setXmlDocument($doc);
-
-		$this->assertCount(18, $model2->getProperties());
+		$this->assertCount(16, $model2->getProperties());
+		
 		$model2->applyDefault($defaultmodel);
-		$this->assertCount(28, $model2->getProperties());	
+		$this->assertCount(29, $model2->getProperties());	
+	}
+	
+	public function testNormalize()
+	{
+		$model = new \Change\Documents\Generators\Model('testing', 'test');
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->load(__DIR__ . '/TestAssets/TestNormalize.xml');
+		$model->setXmlDocument($doc);
+		$this->assertTrue($model->getLocalized());
+		$model->normalize();
 	}
 }

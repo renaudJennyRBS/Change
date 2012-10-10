@@ -7,6 +7,11 @@ use \Change\Logging\Logging;
  */
 class I18nManager
 {
+	const SYNCHRO_MODIFIED = 'MODIFIED';
+	const SYNCHRO_VALID = 'VALID';
+	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
+	
+	
 	protected $LCID_BY_LANG = null;
 	protected $ignoreTransform;
 	protected $transformers;
@@ -265,10 +270,6 @@ class I18nManager
 	{
 		return $this->hasI18nSynchro() ? $this->m_i18n_synchro : array();
 	}
-	
-	const SYNCHRO_MODIFIED = 'MODIFIED';
-	const SYNCHRO_VALID = 'VALID';
-	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
 	
 	/**
 	 * @param integer $documentId

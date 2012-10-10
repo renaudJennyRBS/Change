@@ -351,6 +351,14 @@ class Property
 		return $this;
 	}
 	
+	/**
+	 * @return boolean
+	 */
+	public function hasConstraints()
+	{
+		return is_array($this->constraintArray) && count($this->constraintArray);
+	}
+	
 	/**	
 	 * Returns the constraints defined for the property.
 	 *

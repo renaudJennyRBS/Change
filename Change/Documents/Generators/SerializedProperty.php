@@ -6,6 +6,16 @@ namespace Change\Documents\Generators;
  */
 class SerializedProperty extends Property
 {
-	
+	/**
+	 * @param DOMElement $xmlElement
+	 */
+	public function initialize($xmlElement)
+	{
+		parent::initialize($xmlElement);
+		if ($this->getLocalized())
+		{
+			throw new \Exception('Unable to localize "'.$this->getName().'" serialized property');
+		}
+	}
 }
 

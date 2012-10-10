@@ -102,6 +102,11 @@ class Model
 	protected $status;
 	
 	/**
+	 * @var boolean
+	 */
+	protected $cmpLocalized;
+		
+	/**
 	 * @param string $moduleName
 	 * @param string $documentName
 	 */
@@ -164,6 +169,26 @@ class Model
 		}
 	}
 	
+	public function normalize()
+	{
+		foreach ($this->properties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\Property */
+			$property->normalize();
+			
+		}
+		foreach ($this->serializedproperties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\SerializedProperty */
+			$property->normalize();
+		}
+		foreach ($this->inverseProperties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\InverseProperty */
+			$property->normalize();
+		}	
+	}
+	
 	/**
 	 * @param \DOMElement $xmlElement
 	 */
@@ -191,9 +216,6 @@ class Model
 				case "table-name": //DEPRECATED
 				case "db-mapping":
 					$this->dbMapping = $value;
-					break;
-				case "localized":
-					$this->localized = ($value === 'true');
 					break;
 				case "icon":
 					$this->icon = $value;
@@ -223,7 +245,7 @@ class Model
 					// just ignore it
 					break;
 				default:
-					throw new \Exception('Invalid document attribute ' . $name . ' = ' . $value);
+					throw new \Exception( $this->getFullName() . ' has invalid attribute ' . $name . ' = ' . $value);
 					break;
 			}
 		}
@@ -240,7 +262,32 @@ class Model
 			{
 				$property = new Property();
 				$property->initialize($xmlProperty);
+				if (isset($this->properties[$property->getName()]))
+				{
+					throw new \Exception($this->getFullName() . ' has duplicat property name: ' . $property->getName());
+				}
 				$this->properties[$property->getName()] = $property;
+				if ($property->getLocalized())
+				{
+					$this->setLocalized(true);
+				}
+			}
+		}
+		
+		if (isset($this->properties['publicationstatus']))
+		{
+			/* @var $property Property */
+			$property = $this->properties['publicationstatus'];
+			if ($property->getDefaultValue() !== null)
+			{
+				if (in_array($property->getDefaultValue(), array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW')))
+				{
+					$this->status = $property->getDefaultValue();
+				}
+				else
+				{
+					throw new \Exception($this->getFullName() . ' has invalid publication status: ' . $property->getDefaultValue());
+				}
 			}
 		}
 	}
@@ -256,6 +303,10 @@ class Model
 			{
 				$property = new SerializedProperty();
 				$property->initialize($xmlProperty);
+				if (isset($this->serializedproperties[$property->getName()]))
+				{
+					throw new \Exception($this->getFullName() . ' has duplicat serialized property name: ' . $property->getName());
+				}
 				$this->serializedproperties[$property->getName()] = $property;
 			}
 		}
@@ -440,6 +491,10 @@ class Model
 	 */
 	public function applyDefault(Model $defaultModel)
 	{
+		if ($this->getExtend() !== null)
+		{
+			throw new \Exception('Unable to apply default values on: ' . $this->getExtend());
+		}
 		if ($this->icon === null) {$this->icon = $defaultModel->getIcon();}
 		if ($this->hasUrl === null) {$this->hasUrl = $defaultModel->getHasUrl();}
 		if ($this->useRewriteUrl === null) {$this->useRewriteUrl = $defaultModel->getUseRewriteUrl();}
@@ -634,23 +689,40 @@ class Model
 	
 	/**
 	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 * @param boolean $localized;
 	 */
-	public function makeLocalised($ancestors)
+	public function makeLocalized($ancestors, $localized)
 	{
 		foreach (array('label', 'publicationstatus', 'correctionid') as $name)
 		{
 			if (isset($this->properties[$name]))
 			{
 				$p = $this->properties[$name];
-				$p->makeLocalized();
+				$p->makeLocalized($localized);
 			}
 			elseif (($ap = $this->getPropertyByAncestors($ancestors, $name)) !== null)
 			{
 				$p = Property::getNamedProperty($name);
-				$p->makeLocalized();
-				$p->setOverride(true);
+				$p->makeLocalized($localized);
+				$p->setOverride(true, $ap->getType());
 				$this->properties[$name] = $p;
 			}
 		}
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getCmpLocalized()
+	{
+		return $this->cmpLocalized;
+	}
+
+	/**
+	 * @param boolean $cmpLocalized
+	 */
+	public function setCmpLocalized($cmpLocalized)
+	{
+		$this->cmpLocalized = $cmpLocalized;
 	}
 }
