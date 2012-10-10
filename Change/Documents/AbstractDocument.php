@@ -43,7 +43,7 @@ abstract class AbstractDocument
 	const STATUS_DRAFT = 'DRAFT';
 	const STATUS_CORRECTION = 'CORRECTION';
 	const STATUS_ACTIVE = 'ACTIVE';
-	const STATUS_PUBLISHED = 'PUBLICATED';
+	const STATUS_PUBLISHED = 'PUBLISHED';
 	const STATUS_DEACTIVATED = 'DEACTIVATED';
 	const STATUS_FILED = 'FILED';
 	const STATUS_DEPRECATED = 'DEPRECATED';
@@ -191,6 +191,14 @@ abstract class AbstractDocument
 		return array("\0".__CLASS__."\0m_id", "\0".__CLASS__."\0m_treeId",
 		 "\0".__CLASS__."\0m_i18nInfo", "\0".__CLASS__."\0m_persistentState",
 		 "\0".__CLASS__."\0i18nVoObject");
+	}
+	
+	/**
+	 * @return string[]
+	 */
+	public function __sleep()
+	{
+		return $this->__getSerializedPropertyNames();
 	}
 
 	/**
@@ -818,6 +826,36 @@ abstract class AbstractDocument
 	public function isValid()
 	{
 		$this->propertiesErrors = null;
+		$this->isLabelValid();
+		return !$this->hasPropertiesErrors();
+	}
+	
+	/**
+	 * @return boolean
+	 */	
+	protected function isLabelValid()
+	{
+		if ($this->isNew() || $this->isPropertyModified('label'))
+		{
+			$prop = $this->getPersistentModel()->getProperty('label');
+			$value = $this->getLabel();
+			if ($value === null || $value === '') {
+				if (!$prop->isRequired()) {return true;}			
+				$this->addPropertyErrors('label', \LocaleService::getInstance()->trans('f.constraints.isempty', array('ucf'))); //TODO Old class Usage
+				return false;
+			}
+			if ($prop->hasConstraints())
+			{
+				foreach ($prop->getConstraintArray() as $name => $params) {
+					$params += array('documentId' => $this->getId());
+					$c = \change_Constraints::getByName($name, $params); //TODO Old class Usage
+					if (!$c->isValid($value)) {
+						$this->addPropertyErrors('label', \change_Constraints::formatMessages($c)); //TODO Old class Usage
+						return false;
+					}
+				}
+			}
+		}
 		return true;
 	}
 
@@ -1269,7 +1307,7 @@ abstract class AbstractDocument
 	 */
 	public final function isPublished()
 	{
-		return 'PUBLICATED' == $this->getPublicationstatus();
+		return self::STATUS_PUBLISHED === $this->getPublicationstatus();
 	}
 
 

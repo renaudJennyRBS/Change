@@ -52,17 +52,10 @@ abstract class AbstractModel
 	const BASE_MODEL = 'modules_generic/document';
 	
 	
-	protected function __construct()
+	public function __construct()
 	{
 	}
 	
-	/**
-	 * @return \Change\Documents\AbstractModel
-	 */
-	public static function getNewInstance()
-	{
-		return new static();
-	}
 	
 	/**
 	 * @return string For example: generic

@@ -7,7 +7,7 @@ namespace Change\Documents;
  */
 class ModelManager extends \Change\AbstractSingleton
 {
-	protected $publicationStatuses = array('DRAFT','CORRECTION','ACTIVE','PUBLICATED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW');
+	protected $publicationStatuses = array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW');
 	
 	protected $documentModels = array();
 	
@@ -15,7 +15,7 @@ class ModelManager extends \Change\AbstractSingleton
 	
 	/**
 	 * List of Publication status:
-	 * DRAFT, CORRECTION, ACTIVE, PUBLICATED, DEACTIVATED, FILED, DEPRECATED, TRASH, WORKFLOW
+	 * DRAFT, CORRECTION, ACTIVE, PUBLISHED, DEACTIVATED, FILED, DEPRECATED, TRASH, WORKFLOW
 	 * @return string[]
 	 */
 	public function getPublicationStatuses()
@@ -44,7 +44,7 @@ class ModelManager extends \Change\AbstractSingleton
 			$className = $this->getModelClassName($modelName);
 			if ($className)
 			{
-				$this->documentModels[$modelName] = call_user_func(array($className, 'getNewInstance'));
+				$this->documentModels[$modelName] = new $className();
 			}
 			else
 			{

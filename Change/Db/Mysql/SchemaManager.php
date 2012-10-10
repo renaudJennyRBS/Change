@@ -398,7 +398,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		$fp = array('`' . $dbName . $localizedSuffix . '`');
 		if ($dbName === 'document_publicationstatus')
 		{
-			$fp[] = "ENUM('DRAFT', 'CORRECTION', 'ACTIVE', 'PUBLICATED', 'DEACTIVATED', 'FILED', 'DEPRECATED', 'TRASH', 'WORKFLOW') NULL DEFAULT NULL";
+			$fp[] = "ENUM('DRAFT', 'CORRECTION', 'ACTIVE', 'PUBLISHED', 'DEACTIVATED', 'FILED', 'DEPRECATED', 'TRASH', 'WORKFLOW') NULL DEFAULT NULL";
 		}
 		elseif ($buildProperty->isDocument())
 		{
