@@ -415,7 +415,7 @@ class ModelClass
 	 */
 	public function useCorrection()
 	{
-		return CHANGE_USE_CORRECTION && '. $this->escapePHPValue($model->getUseCorrection()).';
+		return '. ($model->getUseCorrection() ? 'CHANGE_USE_CORRECTION' : 'false').';
 	}'. PHP_EOL;
 		}
 		
@@ -448,7 +448,7 @@ class ModelClass
 	 */
 	public function getWorkflowParameters()
 	{
-		return '. $this->escapePHPValue($model->getWorkflowParameters()).';
+		return '. $this->escapePHPValue($model->getWorkflowParameters(), false).';
 	}'. PHP_EOL;
 		}
 		

@@ -56,6 +56,7 @@ class Compiler
 		}
 		
 		$this->checkExtends();
+		
 		$this->buildDependencies();
 	}
 	
@@ -117,18 +118,33 @@ class Compiler
 			foreach ($modelNames as $modelName)
 			{
 				$model = $this->getModelByFullName($modelName);
-				if ($model->getInject()) //Check Injection
+				$ancestors =  $this->getAncestors($model);
+				if ($lvl === 0)
 				{
-					if (count($this->getChildren($model)))
+					$model->setCmpLocalized($model->getLocalized() == true);
+					$ancestors = array();
+					$parentLocalized = false;
+				}
+				else
+				{
+					if ($model->getInject()) //Check Injection
 					{
-						throw new \Exception('Injected Model ' . $model->getFullName() . ' has children.');
+						if (count($this->getChildren($model)))
+						{
+							throw new \Exception('Injected Model ' . $model->getFullName() . ' has children.');
+						}
+					}
+					$pm = $this->getModelByFullName($model->getExtend());
+					$parentLocalized = $pm->getCmpLocalized();
+					if ($model->getLocalized() === null)
+					{
+						$model->setCmpLocalized($pm->getCmpLocalized());
 					}
 				}
 				
-				$ancestors =  array_reverse($this->getAncestors($model));
 				if ($model->getUseCorrection())
 				{
-					if (!$model->getUseCorrectionByAncestors($ancestors))
+					if ($model->getPropertyByAncestors($ancestors, 'correctionid') === null)
 					{
 						$model->addCorrectionProperties();
 					}
@@ -136,21 +152,31 @@ class Compiler
 				
 				if (count($model->getSerializedproperties()))
 				{
-					if (!$model->getHasSerializedPropertiesByAncestors($ancestors))
+					if ($model->getPropertyByAncestors($ancestors, 's18s') === null)
 					{
 						$model->addS18sProperty();
 					}
 				}
 				
+				if ($parentLocalized !== $model->getCmpLocalized())
+				{
+					$model->makeLocalized($ancestors, $model->getCmpLocalized());
+				}
+				
 				foreach ($model->getProperties() as $property)
 				{
+					/* @var $property \Change\Documents\Generators\Property */
 					$ap = $model->getPropertyByAncestors($ancestors, $property->getName());
 					if ($ap)
 					{
-						$property->setOverride(true);
+						$property->setOverride(true, $ap->getType());
+						$property->normalize();
 					}
-					
-					/* @var $property \Change\Documents\Generators\Property */
+					else
+					{
+						$property->setOverride(false, null);
+					}
+	
 					if ($property->getInverse())
 					{
 						$docType = ($property->getDocumentType()) ? $property->getDocumentType() : $model->getDocumentTypeByAncestors($ancestors, $property->getName());
@@ -162,22 +188,16 @@ class Compiler
 						$ip = new InverseProperty($property, $model);
 						$model->addInverseProperty($ip);
 					}
-					
-					if ($property->getLocalized())
-					{
-						$model->setLocalized(true);
-					}
-				}
-				
-				if ($model->getLocalized())
-				{
-					$model->makeLocalised($ancestors);
 				}
 			}
 		}
 
 	}
 	
+	/**
+	 * @param string $fullName
+	 * @return \Change\Documents\Generators\Model|null
+	 */
 	public function getModelByFullName($fullName)
 	{
 		return isset($this->models[$fullName]) ? $this->models[$fullName] : null;
@@ -262,8 +282,18 @@ class Compiler
 	{
 		foreach ($this->models as $model)
 		{
+			/* @var $model \Change\Documents\Generators\Model */
 			$generator = new ModelClass();
 			$generator->savePHPCode($this, $model);
+			
+			$generator = new AbstractDocumentClass();
+			$generator->savePHPCode($this, $model);
+			
+			if ($model->getLocalized())
+			{
+				$generator = new DocumentI18nClass();
+				$generator->savePHPCode($this, $model);
+			}
 		}
 	}
 }

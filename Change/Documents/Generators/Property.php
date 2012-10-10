@@ -6,9 +6,14 @@ namespace Change\Documents\Generators;
  */
 class Property
 {
-	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Double', 'Decimal',
-				'DateTime', 'LongString', 'XHTMLFragment', 'Lob', 'BBCode', 'JSON', 'Object',
+	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Float', 'Decimal',
+				'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
 				'DocumentId', 'Document', 'DocumentArray');
+	
+	protected static $DEPRECATED_TYPE = array('Double' => 'Float', 'XHTMLFragment' => 'RichText', 'BBCode' => 'RichText');
+	
+	protected static $RESERVED_PROPERTY_NAMES = array('DbProvider', 'Path', 'DocumentModelName', 'PersistentModel', 'DocumentService', 'I18nInfo', 
+		'OldValue', 'OldValues', 'S18s', 'Correctionofid', 'Correctionid', 'Meta');
 	
 	/**
 	 * @var string
@@ -115,12 +120,17 @@ class Property
 			switch ($name)
 			{
 				case "name":
+					if (in_array(ucfirst($value), self::$RESERVED_PROPERTY_NAMES))
+					{
+						throw new \Exception('Invalid property Name => ' . $value);
+					}
 					$this->name = $value;
 					break;
 				case "type":
+					if (isset(self::$DEPRECATED_TYPE[$value])) {$value = self::$DEPRECATED_TYPE[$value];} //TODO Compatibility Check
 					if (!in_array($value, static::$TYPES))
 					{
-						throw new \Exception('Invalid property Type ' . $name . ' => ' . $value);
+						throw new \Exception('Invalid property Type => ' . $value);
 					}
 					else
 					{
@@ -180,6 +190,11 @@ class Property
 					throw new \Exception('Invalid property attribute ' . $name . ' = ' . $value);
 					break;
 			}
+		}
+		
+		if ($this->getName() === null)
+		{
+			throw new \Exception('Property Name can not be null');
 		}
 
 		foreach ($xmlElement->childNodes as $node)
@@ -363,6 +378,11 @@ class Property
 	 */
 	public function updateDefaultBy(\Change\Documents\Generators\Property $property)
 	{
+		if ($property->getType() !== null && $property->getType() != $this->getType())
+		{
+			throw new \Exception('Invalid property type redefinition');
+		}
+		
 		if ($property->getDefaultValue() !== null) {$this->defaultValue = $property->getDefaultValue();}
 		if ($property->getLocalized() !== null) {$this->localized = $property->getLocalized();}
 		if (is_array($property->getConstraintArray())) {$this->constraintArray = $property->getConstraintArray();}
@@ -383,10 +403,23 @@ class Property
 	
 	/**
 	 * @param boolean $override
+	 * @param string $baseType
 	 */
-	public function setOverride($override)
+	public function setOverride($override, $baseType)
 	{
-		$this->cmpOverride = ($override == true);
+		if ($override)
+		{
+			$this->cmpOverride = true;
+			if ($baseType === null)
+			{
+				throw new \Exception('Invalid Override base type');
+			}
+			$this->type = $baseType;
+		}
+		else
+		{
+			$this->cmpOverride = false;
+		}
 	}
 	
 	/**
@@ -397,11 +430,40 @@ class Property
 		return $this->cmpOverride;
 	}
 	
-	public function makeLocalized()
+	/**
+	 * @param boolean $localized
+	 */
+	public function makeLocalized($localized)
 	{
-		$this->localized = true;
+		$this->localized = $localized;
 	}
 	
+	public function getDefaultPhpValue()
+	{
+		$val = $this->getDefaultValue();
+		if ($val !== null)
+		{
+			if ($this->getType() === 'Boolean')
+			{
+				return $val === 'true';
+			}
+			if ($this->getType() === 'Integer' || $this->getType() === 'DocumentId')
+			{
+				return intval($val);
+			}
+			if ($this->getType() === 'Float' || $this->getType() === 'Decimal')
+			{
+				return floatval($val);
+			}
+		}
+		return $val;
+	}
+	
+	public function normalize()
+	{
+		
+	}
+
 	/**
 	 * @return \Change\Documents\Generators\Property
 	 */
