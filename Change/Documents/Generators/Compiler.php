@@ -32,7 +32,7 @@ class Compiler
 	
 	public function loadProjectDocuments()
 	{
-		$pathFilter = \Change\Stdlib\Path::buildModulesPath('*', 'persistentdocument', '*.xml');
+		$pathFilter = \Change\Stdlib\Path::projectPath('modules', '*', 'persistentdocument', '*.xml');
 		$fileNames = glob($pathFilter);
 		foreach ($fileNames as $fileName)
 		{
