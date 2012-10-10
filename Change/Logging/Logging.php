@@ -6,12 +6,6 @@ namespace Change\Logging;
  */
 class Logging extends \Change\AbstractSingleton
 {
-	protected function __contruct()
-	{
-		$this->getLoggerByName('application');
-		$this->getLoggerByName('phperror');
-	}
-	
 	/**
 	 * @var \Change\Configuration\Configuration
 	 */
@@ -30,9 +24,7 @@ class Logging extends \Change\AbstractSingleton
 		return \Change\Application::getInstance()->getApplicationServices()->getLogging();
 	}
 	
-
 	/**
-	 * 
 	 * @param \Change\Configuration\Configuration $config
 	 */
 	public function __construct(\Change\Configuration\Configuration $config)
@@ -81,6 +73,21 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @param $priority integer
+	 */
+	public function setPriority($priority)
+	{
+		if (is_int($priority) && $priority >= 1 && $priority <= 7)
+		{
+			$this->priority = $priority;
+		}
+		else
+		{
+			$this->priority = null;
+		}
+	}
+	
+	/**
 	 * @var \Zend\Log\Logger[]
 	 */
 	protected $loggers = array();
@@ -105,7 +112,7 @@ class Logging extends \Change\AbstractSingleton
 	protected function createStreamWriter($name)
 	{
 		$directory = ($name == 'application' || $name == 'phperror') ? 'project' : 'other';
-		$filePath = \Change\Stdlib\Path::buildProjectPath('log', $directory, $name . '.log');
+		$filePath = \Change\Stdlib\Path::projectPath('log', $directory, $name . '.log');
 		if (!file_exists($filePath))
 		{
 			\Change\Stdlib\File::mkdir(dirname($filePath));

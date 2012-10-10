@@ -64,8 +64,26 @@ class Configuration
 	}
 	
 	/**
-	 * @param string $path			
-	 * @param string $defaultValue			
+	 * @param string $path 
+	 * @return boolean
+	 */
+	public function hasEntry($path)
+	{
+		$current = $this->config;
+		foreach (explode('/', $path) as $part)
+		{
+			if (!isset($current[$part]))
+			{
+				return false;
+			}
+			$current = $current[$part];
+		}
+		return true;
+	}
+	
+	/**
+	 * @param string $path
+	 * @param string $defaultValue
 	 * @return mixed | null
 	 */
 	public function getEntry($path, $defaultValue = null)
@@ -83,21 +101,13 @@ class Configuration
 	}
 	
 	/**
-	 * @param string $path 
-	 * @return boolean	  	
+	 * @param string $path
+	 * @param string $defaultValue
+	 * @return boolean
 	 */
-	public function hasEntry($path)
+	public function getBooleanEntry($path, $defaultValue = null)
 	{
-		$current = $this->config;
-		foreach (explode('/', $path) as $part)
-		{
-			if (!isset($current[$part]))
-			{
-				return false;
-			}
-			$current = $current[$part];
-		}
-		return true;
+		return $this->getEntry($path, $defaultValue) === 'true';
 	}
 	
 	/**
