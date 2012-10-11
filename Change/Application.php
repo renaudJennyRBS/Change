@@ -271,6 +271,10 @@ class Application
 	 */
 	public function getBootstrapConfig()
 	{
+		if (!file_exists(PROJECT_HOME . '/change.json'))
+		{
+			throw new \RuntimeException('No change.json file at the root of your project');
+		}
 		return json_decode(file_get_contents(PROJECT_HOME . '/change.json'), true);
 	}
 	
