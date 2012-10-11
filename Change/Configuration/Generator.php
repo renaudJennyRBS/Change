@@ -240,6 +240,10 @@ class Generator
 	 */
 	protected function setDefine($dom, $name, $value)
 	{
+		if (is_bool($value))
+		{
+			$value = $value ? 'true' : 'false';
+		}
 		$this->getOrCreateNode($dom, array('project', 'defines', "define[@name='$name']"), $value);
 	}
 	
