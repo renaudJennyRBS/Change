@@ -7,26 +7,37 @@ namespace Change\Configuration;
 class Generator
 {
 	/**
-	 * @param array $changeProperties
+	 * The application we compile the config for
+	 * 
+	 * @var \Change\Application 
+	 */
+	protected $application;
+	
+	public function __construct(\Change\Application $application)
+	{
+		$this->application = $application;
+	}
+	
+	/**
 	 * @return array old and current configuration
 	 */
-	public function compile($changeProperties)
+	public function compile()
 	{
 		// Compile new config and defines.
-		$dom = $this->mergeConfigurationFiles($changeProperties);
+		$dom = $this->mergeConfigurationFiles($this->application->getBootstrapConfig());
 		$defines = $this->compileDefines($dom);
 		$configs = $this->compileConfigs($dom);
 		
 		// Save compiled file.
 		$content = "<?php\n// \\Change\\Configuration\\Configuration::setDefineArray PART // \n";
 		$content .= '$configuration->setDefineArray(' . var_export($defines, true) . ");\n\n";
-		if ($defines['DEVELOPMENT_MODE'])
+		if (isset($defines['DEVELOPMENT_MODE']) && $defines['DEVELOPMENT_MODE'])
 		{
 			$this->buildDevelopmentDefineFile($defines);
 		}
 		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
-		\Change\Stdlib\File::write(\Change\Stdlib\Path::compilationPath('Config', 'project.php'), $content);
+		\Change\Stdlib\File::write($this->application->getCompiledConfigurationPath(), $content);
 				
 		return array("config" => $configs, "defines" => $defines);
 	}
@@ -141,16 +152,6 @@ class Generator
 			}
 		}
 		
-		// Merge framework's install.xml file.
-		$filePath = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'framework', 'install.xml'));
-		$tmpDom = new \DOMDocument('1.0', 'utf-8');
-		$tmpDom->load($filePath);
-		$tmpNode = $tmpDom->documentElement;
-		if ($tmpNode && $tmpNode->hasAttribute('version'))
-		{
-			$this->setDefine($dom, 'CHANGE_VERSION', $tmpNode->getAttribute('version'));
-		}
-		
 		// Merge modules' install.xml files.
 		foreach (glob(implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'modules', '*', 'install.xml'))) as $filePath)
 		{
@@ -162,15 +163,12 @@ class Generator
 		}
 		
 		// Merge project specific config files.
-		$filePath = \Change\Stdlib\Path::appPath('Config', 'project.xml');
-		if (is_readable($filePath))
+		foreach ($this->application->getProjectConfigurationPaths() as $filePath)
 		{
-			$this->mergeProjectFile($dom, $filePath);
-		}
-		$filePath = \Change\Stdlib\Path::appPath('Config', 'project.' . \Change\Application::getInstance()->getProfile() . '.xml');
-		if (is_readable($filePath))
-		{
-			$this->mergeProjectFile($dom, $filePath);
+			if (is_readable($filePath))
+			{
+				$this->mergeProjectFile($dom, $filePath);
+			}
 		}
 		
 		// Merge change.properties.
@@ -220,7 +218,7 @@ class Generator
 		
 		foreach (array('TMP_PATH' => true, 'DEFAULT_HOST' => true, 'PROJECT_ID' => true, 'CHANGE_COMMAND' => false, 
 			'DOCUMENT_ROOT' => false, 'PROJECT_LICENSE' => false, 'FAKE_EMAIL' => false, 'PHP_CLI_PATH' => true, 
-			'DEVELOPMENT_MODE' => false) as $constName => $required)
+			'DEVELOPMENT_MODE' => true) as $constName => $required)
 		{
 			if (isset($changeProperties[$constName]))
 			{

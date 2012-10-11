@@ -5,7 +5,6 @@ namespace ChangeTests\Change;
  */
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {	
-	
 	public function run(\PHPUnit_Framework_TestResult $result = NULL)
 	{
 		$this->setPreserveGlobalState(false);

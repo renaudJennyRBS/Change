@@ -10,11 +10,9 @@ class Bootstrap
 		
 		// TODO: generate "compatibility application services 
 		
-		// Load configuration
-		$app->getConfiguration();
 		if (!defined('FRAMEWORK_VERSION'))
 		{
-			define('FRAMEWORK_VERSION', CHANGE_VERSION);
+			define('FRAMEWORK_VERSION', $app->getVersion());
 		}
 		
 		\Framework::registerChangeAutoload();
