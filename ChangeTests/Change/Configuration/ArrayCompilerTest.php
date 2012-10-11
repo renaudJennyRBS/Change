@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Change\Configuration\Configuration;
+namespace ChangeTests\Change\Configuration\Configuration;
 
 class ArrayCompilerTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,11 +1,17 @@
 <?php
-namespace Tests\Change\Configuration;
+namespace ChangeTests\Change\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
+	public function run(\PHPUnit_Framework_TestResult $result = NULL)
+	{
+		$this->setPreserveGlobalState(false);
+		return parent::run($result);
+	}
+	
 	public function testConfigGetters()
 	{
-		$config = new \Change\Configuration\Configuration();
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => '6', 
 			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'), 
 			'booleans' => array('v1' => 'true', 'v2' => 'false', 'v3' => 'toto', 'v4' => 'TRUE', 'v5' => '1'));
@@ -65,7 +71,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAddVolatileEntry()
 	{
-		$config = new \Change\Configuration\Configuration();
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 
 			'complexEntry1' => array('entry11' => 'Test11', 'entry12' => 'Test12'), 
 			'complexEntry2' => array(
@@ -133,7 +139,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testApplyDefines()
 	{
-		$config = new \Tests\Change\Configuration\Configuration();
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration(\Change\Application::getInstance());
 		$config->setDefineArray(array('UNE_CONSTANTE' => 'une valeur', 'ONE_CONSTANT' => 'a value'));
 		
 		$this->assertFalse(defined('ONE_CONSTANT'));
@@ -144,41 +150,22 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	
 	/**
 	 * Test the loading of a compiled project.php file.
-	 */
+	 * @runInSeparateProcess
+s	 */
 	public function testLoad()
-	{
-		$this->assertFalse(defined('CHANGE_RELEASE'));
-		$this->assertFalse(defined('LOGGING_LEVEL'));
+	{		
+		require_once dirname(dirname(__DIR__)) . '/Bootstrap.php';
+		$this->assertFalse(defined('TEST_1'));
+		$this->assertFalse(defined('TEST_2'));
 		
 		// Test on valid file.
-		$existingPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project.php';
-		$config = new \Change\Configuration\Configuration();
-		$config->load($existingPath);
+ 		$config = new \Change\Configuration\Configuration(new \ChangeTests\Change\Configuration\TestAssets\Application());
 		$expectedArray = array(
 			'general' => array('projectName' => 'RBS CHANGE 4.0', 'server-ip' => '127.0.0.1', 'phase' => 'development'), 
 			'logging' => array('level' => 'WARN', 'writers' => array('default' => 'stream')));
 		$this->assertEquals($expectedArray, $config->getConfigArray());
-		$this->assertEquals(CHANGE_RELEASE, 4);
-		$this->assertEquals(LOGGING_LEVEL, 'INFO');
-		
-		// Test on nonexistent file.
-		$nonexistentPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'nonexistent.php';
-		$config = new \Change\Configuration\Configuration();
-		$this->setExpectedException('\RuntimeException');
-		$config->load($nonexistentPath);
+		$this->assertEquals(TEST_1, 4);
+		$this->assertEquals(TEST_2, 'INFO');
 	}
 }
 
-/**
- * Make some protected methods public for test.
- */
-class Configuration extends \Change\Configuration\Configuration
-{
-	/**
-	 * Setup constants.
-	 */
-	public function applyDefines()
-	{
-		parent::applyDefines();
-	}
-}

@@ -1,11 +1,11 @@
 <?php
-namespace Tests\Change\Configuration;
+namespace ChangeTests\Change\Configuration;
 
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
 	public function testInitDomDocument()
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		
 		$filePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project1.xml';
 		$dom = $generator->initDomDocument($filePath);
@@ -40,7 +40,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testMergeProjectFile(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		
 		$filePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project2.xml';
 		$generator->mergeProjectFile($dom, $filePath);
@@ -71,7 +71,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testMergeModuleFile(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		$xpath = new \DOMXpath($dom);
 		
 		$filePath = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'module1.xml';
@@ -116,7 +116,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testMergeInstallFile(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		$xpath = new \DOMXpath($dom);
 		
 		$this->assertEquals(0, $xpath->query("/project/config/modulesinfos/website/version")->length);
@@ -133,7 +133,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetNodeValue(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		$xpath = new \DOMXpath($dom);
 		
 		$this->assertEquals(1, $xpath->query("/project/config/browsers/frontoffice/firefox/version")->length);
@@ -152,7 +152,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetDefine(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		$xpath = new \DOMXpath($dom);
 		
 		$this->assertEquals(0, $xpath->query("/project/defines/define")->length);
@@ -182,7 +182,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCompileDefines(\DOMDocument $dom)
 	{
-		$generator = new \Tests\Change\Configuration\Generator();
+		$generator = new \ChangeTests\Change\Configuration\Generator(\Change\Application::getInstance());
 		
 		$defines = $generator->compileDefines($dom);
 		

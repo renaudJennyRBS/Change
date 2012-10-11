@@ -86,6 +86,11 @@ abstract class DbProvider
 	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
 		$connectionInfos = $config->getEntry('databases/default', array());
+		// TODO: proper configuration validation
+		if (!isset($connectionInfos['dbprovider']))
+		{
+			throw new \RuntimeException('Missing or incomplete database configuration');
+		}
 		$className = $connectionInfos['dbprovider'];
 		return new $className($connectionInfos, $logging);
 	}

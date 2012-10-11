@@ -1,8 +1,8 @@
 <?php
 // \Change\Configuration\Configuration::setDefineArray PART //
 $this->setDefineArray(array (
-	'CHANGE_RELEASE' => 4,
-	'LOGGING_LEVEL' => 'INFO',
+	'TEST_1' => 4,
+	'TEST_2' => 'INFO',
 ));
 
 // \Change\Configuration\Configuration::setConfigArray PART //

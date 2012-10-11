@@ -7,16 +7,24 @@ namespace Change\Configuration;
 class Configuration
 {
 	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+	
+	/**
 	 * @var string
 	 */
 	protected $compiledFile;
-	
+
 	/**
-	 * @param string $compiledFile
+	 * Build the configuration for the given Change Application 
+	 * @param \Change\Application $application
 	 */
-	public function __construct($compiledFile = null)
+	public function __construct(\Change\Application $application)
 	{
-		$this->load($compiledFile);
+		$this->application = $application;
+		$this->compiledFile = $application->getCompiledConfigurationPath();
+		$this->load();
 	}
 	
 	/**
@@ -40,27 +48,22 @@ class Configuration
 	}
 	
 	/**
-	 * Load the configuration, using the php file auto compiled in Compilation/Config.
-	 * 
-	 * @param string $compiledFile
+	 * Load the configuration, using the php file auto compiled in Compilation/Config. 
+	 * If no compiled config, load the bootstrap config.
 	 */
-	public function load($compiledFile)
+	protected function load()
 	{
 		// If specific environnement add a dot to complet in path file
 		$this->config = array();
 		$this->defines = array();
-		
-		if ($compiledFile)
+		if (!$this->isCompiled())
 		{
-			$this->compiledFile = $compiledFile;
-			if (!$this->isCompiled())
-			{
-				throw new \RuntimeException("Could not find $compiledFile. You must compile your configuration.");
-			}
-			$configuration = $this;
-			include $compiledFile;
-			$this->applyDefines();
+			$generator = new \Change\Configuration\Generator($this->application);
+			$generator->compile();
 		}
+		$configuration = $this;
+		include $this->compiledFile;
+		$this->applyDefines();
 	}
 	
 	/**

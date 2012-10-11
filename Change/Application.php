@@ -2,21 +2,53 @@
 
 namespace Change;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'AbstractSingleton.php';
-
 /**
  *
  * @method \Change\Application getInstance()
  */
-class Application extends AbstractSingleton
+class Application
 {
+	const CHANGE_VERSION = "4.0";
+	
+	/**
+	 * @var \Change\Application
+	 */
+	protected static $sharedInstance;
+	
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
 	protected $applicationServices;
 	
 	/**
-	 * Injection-base autoload if you want injection to work, this should be the
+	 * @var bool
+	 */
+	protected $started = false;
+
+	/**
+	 * Returns the shared application
+	 * 
+	 * @return \Change\Application
+	 */
+	public static function getInstance()
+	{
+		if (static::$sharedInstance === null)
+		{
+			static::$sharedInstance = new static();
+		}
+		return static::$sharedInstance;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getVersion()
+	{
+		return self::CHANGE_VERSION;
+	}
+	
+	/**
+	 * Injection-based autoload if you want injection to work, this should be the
 	 * last autoload coming from RBS Change you should register
 	 * (it gets prepended to the autoload stack).
 	 */
@@ -161,7 +193,7 @@ class Application extends AbstractSingleton
 			
 			'instance' => array(
 				'Change\Configuration\Configuration' => array(
-					'parameters' => array('compiledFile' => \Change\Stdlib\Path::compilationPath('Config', 'project.php'))), 
+					'parameters' => array('application' => $this)), 
 				'Change\I18n\I18nManager' => array('injections' => array('Change\Configuration\Configuration', 'Change\Db\DbProvider')), 
 				'Change\Db\DbProvider' => array('injections' => array('Change\Configuration\Configuration', 'Change\Logging\Logging')),
 				'Change\Logging\Logging' => array('injections' => array('Change\Configuration\Configuration'))
@@ -172,24 +204,78 @@ class Application extends AbstractSingleton
 	/**
 	 * Call this to start application!
 	 */
-	public function start()
+	public function start($bootStrapClass = null)
 	{
-		$this->registerNamespaceAutoload();
-		$bootStrapFilePath = \Change\Stdlib\Path::appPath('Bootstrap.php');
-		if (file_exists($bootStrapFilePath))
+		if (!$this->started())
 		{
-			require_once $bootStrapFilePath;
-			if (class_exists('\App\Bootstrap', false))
+			$this->registerNamespaceAutoload();
+			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{
-				\App\Bootstrap::main($this);
+				call_user_func(array($bootStrapClass, 'main'), $this);
 			}
+			else
+			{
+				$bootStrapFilePath = \Change\Stdlib\Path::appPath('Bootstrap.php');
+				if (file_exists($bootStrapFilePath))
+				{
+					require_once $bootStrapFilePath;
+					if (class_exists('\App\Bootstrap', false))
+					{
+						\App\Bootstrap::main($this);
+					}
+				}
+			}
+			//$this->getApplicationServices()->getConfiguration();
+			if (self::inDevelopmentMode())
+			{
+				$injection = new \Change\Injection\Injection();
+				$injection->update();
+			}
+			$this->registerInjectionAutoload();
+			$this->started = true;
 		}
-		if (self::inDevelopmentMode())
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function started()
+	{
+		return $this->started;
+	}
+	
+	/**
+	 * Path where the compiled configuration should be stored
+	 *
+	 * @return string
+	 */
+	public function getCompiledConfigurationPath()
+	{
+		return \Change\Stdlib\Path::compilationPath('Config', 'project.php');
+	}
+	
+	/**
+	 * Paths of the (potential) XML configuration files
+	 *
+	 * @return string[]
+	 */
+	public function getProjectConfigurationPaths()
+	{
+		return array(\Change\Stdlib\Path::appPath('Config', 'project.xml'), \Change\Stdlib\Path::appPath('Config', 'project.' .$this->getProfile() . '.xml'));
+	}
+	
+	/**
+	 * This returns the parsed content of the change.json default configuration file
+	 *
+	 * @return array
+	 */
+	public function getBootstrapConfig()
+	{
+		if (!file_exists(PROJECT_HOME . '/change.json'))
 		{
-			$injection = new \Change\Injection\Injection();
-			$injection->update();
+			throw new \RuntimeException('No change.json file at the root of your project');
 		}
-		$this->registerInjectionAutoload();
+		return json_decode(file_get_contents(PROJECT_HOME . '/change.json'), true);
 	}
 	
 	/**
@@ -199,11 +285,6 @@ class Application extends AbstractSingleton
 	 */
 	public static function inDevelopmentMode()
 	{
-		if (!defined('DEVELOPMENT_MODE'))
-		{
-			// TODO old class
-			\f_util_ProcessUtils::printBackTrace();
-		}
-		return DEVELOPMENT_MODE;
+		return defined('DEVELOPMENT_MODE') ? DEVELOPMENT_MODE : false;
 	}
 }

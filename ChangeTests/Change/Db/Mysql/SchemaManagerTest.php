@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Db\Mysql;
+namespace ChangeTests\Db\Mysql;
 
 class SqlMappingTest extends \PHPUnit_Framework_TestCase
 {
