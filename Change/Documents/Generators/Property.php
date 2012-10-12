@@ -89,12 +89,7 @@ class Property
 	 * @var boolean
 	 */
 	protected $inverse;
-	
-	/**
-	 * @var boolean
-	 */	
-	protected $preserveOldValue;
-	
+		
 	/**
 	 * @var array
 	 */
@@ -183,8 +178,7 @@ class Property
 				case "inverse":
 					$this->inverse = ($value === 'true');
 					break;
-				case "preserve-old-value":
-					$this->preserveOldValue = ($value === 'true');
+				case "preserve-old-value": //DEPRECATED
 					break;
 				default:
 					throw new \Exception('Invalid property attribute ' . $name . ' = ' . $value);
@@ -358,14 +352,6 @@ class Property
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function getPreserveOldValue()
-	{
-		return $this->preserveOldValue;
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getConstraintArray()
@@ -405,16 +391,11 @@ class Property
 	 * @param boolean $override
 	 * @param string $baseType
 	 */
-	public function setOverride($override, $baseType)
+	public function setOverride($override)
 	{
 		if ($override)
 		{
 			$this->cmpOverride = true;
-			if ($baseType === null)
-			{
-				throw new \Exception('Invalid Override base type');
-			}
-			$this->type = $baseType;
 		}
 		else
 		{
@@ -459,9 +440,83 @@ class Property
 		return $val;
 	}
 	
-	public function normalize()
+	/**
+	 * 
+	 * @param \Change\Documents\Generators\Property[] $ancestors
+	 */
+	public function validate($ancestors)
 	{
+		if (count($ancestors))
+		{
+			$this->setOverride(true);		
+			/* @var $ap \Change\Documents\Generators\Property */
+			$ap = end($ancestors);
+			if ($this->type !== null && $this->type !== $ap->getType())
+			{
+				throw new \Exception('Invalid inherited property Type:' . $this->type . ' -> ' . $ap->getType());
+			}
+			$this->type = $ap->getType();
+		}
+		else
+		{
+			$this->setOverride(false);
+		}
 		
+		if ($this->getType() === null)
+		{
+			throw new \Exception('No type defined on Property: ' .  $this->name);
+		}
+		
+		$hasRelation = ($this->getType() === 'Document' || $this->getType() === 'DocumentArray');
+		
+		if (!$hasRelation && $this->getTreeNode() !== null)
+		{
+			throw new \Exception('Invalid TreeNode property attribute on :' . $this->name);
+		}
+		
+		if (!$hasRelation && $this->getInverse() !== null)
+		{
+			throw new \Exception('Invalid Inverse property attribute on :' . $this->name);
+		}
+		
+		if ($hasRelation && $this->getLocalized() !== null)
+		{
+			throw new \Exception('Invalid localized property attribute on :' . $this->name);
+		}
+		
+		if ($this->getLocalized() === false)
+		{
+			foreach ($ancestors as $ap)
+			{
+				/* @var $ap \Change\Documents\Generators\Property */
+				if ($ap->getLocalized())
+				{
+					throw new \Exception('Invalid localized property value on :' . $this->name);
+				}
+			}
+		}
+		
+		if ($hasRelation && $this->getInverse() && $this->getDocumentType() === null)
+		{
+			foreach (array_reverse($ancestors) as $ap)
+			{
+				/* @var $ap \Change\Documents\Generators\Property */
+				if ($ap->getDocumentType())
+				{
+					$this->documentType = $ap->getDocumentType();
+					break;
+				}
+			}
+			if ($this->getDocumentType() === null)
+			{
+				throw new \Exception('Invalid inverse Document type property attribute on :' . $this->name);
+			}
+		}
+		
+		if ($this->getType() !== 'String' && $this->getType() !== 'Decimal' && $this->getDbSize() !== null)
+		{
+			throw new \Exception('Invalid db-size property attribute on :' . $this->name);
+		}
 	}
 
 	/**
@@ -470,7 +525,6 @@ class Property
 	public static function getNewCorrectionIdProperty()
 	{
 		$property = new static();
-		$property->cascadeDelete = false;
 		$property->name = 'correctionid';
 		$property->type = 'Integer';
 		return $property;

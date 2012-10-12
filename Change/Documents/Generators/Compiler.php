@@ -25,47 +25,33 @@ class Compiler
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->load(__DIR__ . '/Assets/document.xml');
-		$model = new \Change\Documents\Generators\Model(null, null);
+		$model = new \Change\Documents\Generators\Model(null, null, null);
 		$model->setXmlDocument($doc);
 		return $model;
 	}
 	
-	public function loadProjectDocuments()
-	{
-		$pathFilter = \Change\Stdlib\Path::projectPath('modules', '*', 'persistentdocument', '*.xml');
-		$fileNames = glob($pathFilter);
-		foreach ($fileNames as $fileName)
-		{
-			$documentName = basename($fileName, '.xml');
-			$moduleName = basename(dirname(dirname($fileName)));
-			$doc = new \DOMDocument('1.0', 'utf-8');
-			if ($doc->load($fileName))
-			{
-				$model = new \Change\Documents\Generators\Model($moduleName, $documentName);
-				$model->setXmlDocument($doc);
-				if ($model->getExtend() === null)
-				{
-					$model->applyDefault($this->getDefaultModel());
-				}
-				$this->addModel($model);
-			}
-			else
-			{
-				throw new \Exception('Unable to load document definition : ' . $fileName);
-			}
-		}
-		
-		$this->checkExtends();
-		
-		$this->buildDependencies();
-	}
-	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
+	 * @param string $vendor
+	 * @param string $moduleName
+	 * @param string $documentName
+	 * @param string $definitionPath
+	 * @return \Change\Documents\Generators\Model
+	 * @throws \Exception
 	 */
-	public function addModel(\Change\Documents\Generators\Model $model)
+	public function loadDocument($vendor, $moduleName, $documentName, $definitionPath)
 	{
-		$this->models[$model->getFullName()] = $model;
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		if (is_readable($definitionPath) && $doc->load($definitionPath))
+		{
+			$model = new \Change\Documents\Generators\Model($vendor, $moduleName, $documentName);
+			$model->setXmlDocument($doc);
+			$this->addModel($model);
+		}
+		else
+		{
+			throw new \Exception('Unable to load document definition : ' . $definitionPath);
+		}
+		return $model;
 	}
 	
 	/**
@@ -73,37 +59,48 @@ class Compiler
 	 */
 	public function checkExtends()
 	{
+		$this->injection = array();
+		
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
+			$modelName = $model->getFullName();
 			if ($model->getExtend())
 			{
-				if (!isset($this->models[$model->getExtend()]))
+				$extendName = $this->cleanModelName($model->getExtend());
+				if ($this->getModelByFullName($extendName) === null)
 				{
-					throw new \Exception('Document ' . $model->getFullName() . ' extend unknow ' . $model->getExtend(). ' document.');
+					throw new \Exception('Document ' . $modelName . ' extend unknow ' . $extendName. ' document.');
 				}
 				
 				if ($model->getInject())
 				{
-					if (isset($this->injection[$model->getExtend()]))
+					if (isset($this->injection[$extendName]))
 					{
-						throw new \Exception('Duplicate Injection on ' . $model->getFullName() . ' for ' . $model->getExtend(). ' Already Injected by ' . $this->injection[$model->getExtend()]);
+						throw new \Exception('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $this->injection[$extendName]);
 					}
-					$this->injection[$model->getExtend()] = $model->getFullName();
+					$this->injection[$extendName] = $modelName;
 				}
 			}
 			elseif ($model->getInject())
 			{
-				throw new \Exception('Invalid Injection on ' . $model->getFullName() . ' document.');
+				throw new \Exception('Invalid Injection on ' . $modelName . ' document.');
+			}
+			else
+			{
+				$model->applyDefault($this->getDefaultModel());
 			}
 		}
+		
 		$this->modelNamesByExtendLevel = array();
+		
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$ancestors = $this->getAncestors($model);
-			$this->modelNamesByExtendLevel[count($ancestors)][] = $model->getFullName(); 
+			$this->modelNamesByExtendLevel[count($ancestors)][] = $this->cleanModelName($model->getFullName()); 
 		}
+		
 		ksort($this->modelNamesByExtendLevel);
 	}
 	
@@ -112,86 +109,49 @@ class Compiler
 	 */
 	public function buildDependencies()
 	{
-		$injectedModelNames = array_flip($this->injection);
+		$this->checkExtends();
 		foreach ($this->modelNamesByExtendLevel as $lvl => $modelNames)
 		{
 			foreach ($modelNames as $modelName)
 			{
-				$model = $this->getModelByFullName($modelName);
+				$model = $this->getModelByFullName($modelName);			
+				if ($model->getInject()) //Check Injection
+				{
+					if (count($this->getChildren($model)))
+					{
+						throw new \Exception('Injected Model ' . $modelName . ' has children.');
+					}
+				}
 				$ancestors =  $this->getAncestors($model);
-				if ($lvl === 0)
-				{
-					$model->setCmpLocalized($model->getLocalized() == true);
-					$ancestors = array();
-					$parentLocalized = false;
-				}
-				else
-				{
-					if ($model->getInject()) //Check Injection
-					{
-						if (count($this->getChildren($model)))
-						{
-							throw new \Exception('Injected Model ' . $model->getFullName() . ' has children.');
-						}
-					}
-					$pm = $this->getModelByFullName($model->getExtend());
-					$parentLocalized = $pm->getCmpLocalized();
-					if ($model->getLocalized() === null)
-					{
-						$model->setCmpLocalized($pm->getCmpLocalized());
-					}
-				}
+				$model->validate($ancestors);
 				
-				if ($model->getUseCorrection())
-				{
-					if ($model->getPropertyByAncestors($ancestors, 'correctionid') === null)
-					{
-						$model->addCorrectionProperties();
-					}
-				}
-				
-				if (count($model->getSerializedproperties()))
-				{
-					if ($model->getPropertyByAncestors($ancestors, 's18s') === null)
-					{
-						$model->addS18sProperty();
-					}
-				}
-				
-				if ($parentLocalized !== $model->getCmpLocalized())
-				{
-					$model->makeLocalized($ancestors, $model->getCmpLocalized());
-				}
-				
+				//Add Inverse Properties
 				foreach ($model->getProperties() as $property)
 				{
 					/* @var $property \Change\Documents\Generators\Property */
-					$ap = $model->getPropertyByAncestors($ancestors, $property->getName());
-					if ($ap)
-					{
-						$property->setOverride(true, $ap->getType());
-						$property->normalize();
-					}
-					else
-					{
-						$property->setOverride(false, null);
-					}
-	
 					if ($property->getInverse())
 					{
-						$docType = ($property->getDocumentType()) ? $property->getDocumentType() : $model->getDocumentTypeByAncestors($ancestors, $property->getName());
+						$docType = $property->getDocumentType();
 						$im = $this->getModelByFullName($docType);
 						if (!$im)
 						{
-							throw new \Exception('Inverse Property on unknow Model ' . $property->getDocumentType() . ' (' . $model->getFullName() . '::' . $property->getName() . ')');
+							throw new \Exception('Inverse Property on unknow Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')');
 						}
 						$ip = new InverseProperty($property, $model);
-						$model->addInverseProperty($ip);
+						$im->addInverseProperty($ip);
 					}
 				}
 			}
 		}
-
+	}
+	
+	/**
+	 * @param string $name
+	 * @return string
+	 */
+	public function cleanModelName($name)
+	{
+		return strtolower(str_replace(array('/', 'modules_'), array('_', 'Change_'), $name));
 	}
 	
 	/**
@@ -200,7 +160,16 @@ class Compiler
 	 */
 	public function getModelByFullName($fullName)
 	{
-		return isset($this->models[$fullName]) ? $this->models[$fullName] : null;
+		$name = $this->cleanModelName($fullName);
+		return isset($this->models[$name]) ? $this->models[$name] : null;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 */
+	public function addModel(\Change\Documents\Generators\Model $model)
+	{
+		$this->models[$this->cleanModelName($model->getFullName())] = $model;
 	}
 	
 	/**
@@ -223,14 +192,25 @@ class Compiler
 	 */	
 	public function getAncestors($model)
 	{
+		$childModelName = $model->getFullName();
 		$result = array();
 		while (($model = $this->getParent($model)) !== null)
 		{
-			if (isset($result[$model->getFullName()]))
+			$modelName = $model->getFullName();
+			if (isset($this->injection[$modelName]))
 			{
-				throw new \Exception('Recursion On ' . $model->getFullName() . ' document.');
+				$injectionName = $this->injection[$modelName];
+				if ($childModelName != $injectionName)
+				{
+					$result[$injectionName] = $this->getModelByFullName($injectionName);
+				}
 			}
-			$result[$model->getFullName()] = $model;
+			if (isset($result[$modelName]))
+			{
+				throw new \Exception('Recursion on ' . $modelName . ' document.');
+			}
+			
+			$result[$modelName] = $model;
 		}
 		return array_reverse($result, true);
 	}
@@ -245,7 +225,8 @@ class Compiler
 		foreach ($this->models as $cm)
 		{
 			/* @var $cm \Change\Documents\Generators\Model */
-			if ($cm->getExtend() === $model->getFullName())
+			$cmp = $cm->getExtend() ? $this->getModelByFullName($cm->getExtend()) : null;
+			if ($cmp === $model)
 			{
 				$result[$cm->getFullName()] = $cm;
 			}

@@ -26,12 +26,7 @@ abstract class AbstractModel
 	 * @var string[]
 	 */
 	protected  $m_propertiesNames;
-	
-	/**
-	 * @var string[]
-	 */
-	protected  $m_preservedPropertiesNames = array();
-	
+		
 	/**
 	 * @var string[]
 	 */
@@ -56,6 +51,10 @@ abstract class AbstractModel
 	{
 	}
 	
+	/**
+	 * @return string For example: Change
+	 */
+	abstract public function getVendorName();
 	
 	/**
 	 * @return string For example: generic
@@ -476,23 +475,6 @@ abstract class AbstractModel
 			return $this->m_invertProperties[$name];
 		}
 		return null;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	public function getPreservedPropertiesNames()
-	{
-		return $this->m_preservedPropertiesNames;
-	}
-
-	/**
-	 * @param string $name
-	 * @return boolean
-	 */
-	public function isPreservedProperty($name)
-	{
-		return isset($this->m_preservedPropertiesNames[$name]);
 	}
 
 	/**

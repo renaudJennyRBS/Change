@@ -1,0 +1,24 @@
+<?php
+namespace ChangeTests\Documents\Generators;
+
+/**
+ * @name \ChangeTests\Documents\Generators\DocumentI18nClassTest
+ */
+class DocumentI18nClassTest extends \PHPUnit_Framework_TestCase
+{
+	public function testAllType()
+	{
+		$compiler = new \Change\Documents\Generators\Compiler();
+		$definitionPath = __DIR__ . '/TestAssets/TestGeneration.xml';
+		$model = $compiler->loadDocument('change', 'testing', 'generation', $definitionPath);
+		$compiler->buildDependencies();
+		
+		$generator = new \Change\Documents\Generators\DocumentI18nClass();
+		$code = $generator->getPHPCode($compiler, $model);
+		
+		//file_put_contents($definitionPath . '.i18n.php', $code);
+		$expected = file_get_contents($definitionPath . '.i18n.php');
+				
+		$this->assertEquals($expected, $code);
+	}
+}

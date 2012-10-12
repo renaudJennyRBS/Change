@@ -34,12 +34,13 @@ class DocumentI18nClass
 	 */
 	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
 	{
-		if (!$model->getCmpLocalized())
+		if (!$model->getCmpLocalized() && !$model->getLocalized())
 		{
+			die('jkfgjhfgsjgjdgh');
 			return null;
 		}
 		$this->compiler = $compiler;
-		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getNameSpace() . ';' . PHP_EOL;
+		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\\' . $model->getNameSpace() . ';' . PHP_EOL;
 		$code .= 'class ' . $this->getClassName($model) . ' extends ' . $this->getParentClassName($model) . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$properties = $this->getI18nProperties($model);
@@ -117,7 +118,7 @@ class DocumentI18nClass
 	 */
 	protected function addNameSpace($model, $className)
 	{
-		return '\\' . $model->getNameSpace() . '\\' . $className;
+		return '\Compilation\\' . $model->getNameSpace() . '\\' . $className;
 	}
 	
 	/**
@@ -313,16 +314,9 @@ class DocumentI18nClass
 			$code .= '		if ($modified)
 		{
 			if (!array_key_exists('.$escapeName.', $this->modifiedProperties))
-			{'. PHP_EOL;
-			if ($property->getPreserveOldValue())
 			{
-				$code .= '				$this->modifiedProperties['.$escapeName.'] = '.$memberName.';'. PHP_EOL;
+				$this->modifiedProperties['.$escapeName.'] = '.$memberName.';
 			}
-			else
-			{
-				$code .= '				$this->modifiedProperties['.$escapeName.'] = null;'. PHP_EOL;
-			}
-			$code .= '			}
 			'.$memberName.' = '.$varName.';
 			$this->m_modified = true;
 			return true;
@@ -336,10 +330,8 @@ class DocumentI18nClass
 	public function get'.$accesSuffix.'()
 	{
 		return '.$memberName.';
-	}'. PHP_EOL;
-			if ($property->getPreserveOldValue())
-			{
-				$code .='
+	}
+			
 	/**
 	 * @return '.$commentType.'|NULL
 	 */
@@ -347,9 +339,7 @@ class DocumentI18nClass
 	{
 		return array_key_exists('.$escapeName.', $this->modifiedProperties) ? $this->modifiedProperties['.$escapeName.'] : null;
 	}'. PHP_EOL;
-				
-			}
-		}	
+		}
 		return $code;
 	}
 	
