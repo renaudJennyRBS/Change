@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/1.0 http://www.rbschange.fr/schema/persistentdocument-4.0.xsd" 
+	model-version="4.0" icon="test" indexable="true">
+	<properties>
+		<property name="bool1" type="Boolean"/>
+		<property name="int1" type="Integer" required="true"/>
+		<property name="float1" type="Float"/>
+		<property name="decimal1" type="Decimal"/>
+		<property name="date1" type="Date"/>
+		<property name="datetime1" type="DateTime"/>
+		<property name="string1" type="String" db-size="50" localized="true"/>
+		<property name="longstring1" type="LongString"/>
+		<property name="xml1" type="XML"/>
+		<property name="lob1" type="Lob"/>
+		<property name="richtext1" type="RichText" localized="true" />
+		<property name="json1" type="JSON"/>
+		<property name="object1" type="Object"/>
+		<property name="documentid1" type="DocumentId" />
+		<property name="document1" type="Document" document-type="change_testing_generation" cascade-delete="true" inverse="true"/>
+		<property name="documentarray1" type="DocumentArray" />
+	</properties>
+	
+	<serializedproperties>
+		<property name="bool2" type="Boolean"/>
+		<property name="int2" type="Integer" />
+		<property name="float2" type="Float"  required="true"/>
+		<property name="decimal2" type="Decimal"/>
+		<property name="date2" type="Date"/>
+		<property name="datetime2" type="DateTime"/>
+		<property name="string2" type="String">
+			<constraint name="minSize" min="10"/>
+			<constraint name="maxSize" min="500"/>
+		</property>
+		<property name="longstring2" type="LongString"/>
+		<property name="xml2" type="XML"/>
+		<property name="lob2" type="Lob"/>
+		<property name="richtext2" type="RichText"/>
+		<property name="json2" type="JSON"/>
+		<property name="object2" type="Object"/>
+		<property name="documentid2" type="DocumentId" />	
+	</serializedproperties>
+	
+	<workflow start-task="start">
+		<parameter name="p1">TEST</parameter>
+	</workflow>
+</document>

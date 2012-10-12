@@ -9,6 +9,11 @@ class Model
 	/**
 	 * @var string
 	 */
+	protected $vendor;
+	
+	/**
+	 * @var string
+	 */
 	protected $moduleName;
 	
 	/**
@@ -105,19 +110,33 @@ class Model
 	 * @var boolean
 	 */
 	protected $cmpLocalized;
+	
+	/**
+	 * @var string[]
+	 */
+	protected $cmpPropNames = array();
 		
 	/**
+	 * @param string $vendor
 	 * @param string $moduleName
 	 * @param string $documentName
 	 */
-	public function __construct($moduleName, $documentName)	
+	public function __construct($vendor, $moduleName, $documentName)	
 	{
+		$this->vendor = $vendor;
 		$this->moduleName = $moduleName;
 		$this->documentName = $documentName;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getVendor()
+	{
+		return $this->vendor;
+	}
 	
 	/**
-
 	 * @return string
 	 */
 	public function getModuleName()
@@ -169,24 +188,82 @@ class Model
 		}
 	}
 	
-	public function normalize()
+	/**
+	 * @param \Change\Documents\Generators\Model[] $ancestors
+	 */
+	public function validate($ancestors)
 	{
+		/* @var $pm \Change\Documents\Generators\Model */
+		$pm = count($ancestors) ? end($ancestors) : null;
+		if ($pm)
+		{
+			$parentLocalized = $pm->getCmpLocalized();
+			$this->cmpPropNames = $pm->getCmpPropNames();
+		}
+		else
+		{
+			$parentLocalized = false;
+			$this->cmpPropNames = array();
+		}
+		
+		if ($this->getLocalized() === null)
+		{
+			$this->cmpLocalized = $parentLocalized;
+		}
+	
+		if ($this->getUseCorrection())
+		{
+			if (count($this->getPropertyAncestors($ancestors, 'correctionid')) === 0)
+			{
+				$this->addCorrectionProperties();
+			}
+		}
+		
+		if (count($this->getSerializedproperties()))
+		{
+			if (count($this->getPropertyAncestors($ancestors, 's18s')) === 0)
+			{
+				$this->addS18sProperty();
+			}
+		}
+		
+		if ($parentLocalized !== $this->getCmpLocalized())
+		{
+			$localize = $this->getCmpLocalized() != null ?  $this->getCmpLocalized() : $this->getLocalized();
+			$this->makeLocalized($ancestors, $localize);
+		}
+		
 		foreach ($this->properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$property->normalize();
-			
+			$name = $property->getName();
+			$pancestors = $this->getPropertyAncestors($ancestors, $name);
+			$property->validate($pancestors);
+			if (!$property->getOverride())
+			{
+				if (in_array($name, $this->cmpPropNames))
+				{
+					throw new \Exception($this->getFullName() . ' has duplicate property: ' . $name);
+				}
+				$this->cmpPropNames[] = $name;
+			}
 		}
+		
 		foreach ($this->serializedproperties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			$property->normalize();
+			$name = $property->getName();
+			$pancestors = $this->getSerialisedPropertyAncestors($ancestors, $name);
+			$property->validate($pancestors);
+			if (!$property->getOverride())
+			{
+				if (in_array($name, $this->cmpPropNames))
+				{
+					throw new \Exception($this->getFullName() . ' has duplicate serialized property: ' . $name);
+				}
+				$this->cmpPropNames[] = $name;
+			}
 		}
-		foreach ($this->inverseProperties as $property)
-		{
-			/* @var $property \Change\Documents\Generators\InverseProperty */
-			$property->normalize();
-		}	
 	}
 	
 	/**
@@ -358,6 +435,14 @@ class Model
 	{
 		return $this->properties;
 	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public function getPropertyByName($name)
+	{
+		return isset($this->properties[$name]) ? $this->properties[$name] : null;
+	}
 
 	/**
 	 * @return \Change\Documents\Generators\SerializedProperty[]
@@ -368,11 +453,27 @@ class Model
 	}
 	
 	/**
+	 * @return \Change\Documents\Generators\SerializedProperty
+	 */
+	public function getSerializedPropertyByName($name)
+	{
+		return isset($this->serializedproperties[$name]) ? $this->serializedproperties[$name] : null;
+	}
+	
+	/**
 	 * @return \Change\Documents\Generators\InverseProperty[]
 	 */
 	public function getInverseProperties()
 	{
 		return $this->inverseProperties;
+	}
+
+	/**
+	 * @return \Change\Documents\Generators\InverseProperty
+	 */
+	public function getInversePropertyByName($name)
+	{
+		return isset($this->inverseProperties[$name]) ? $this->inverseProperties[$name] : null;
 	}
 	
 	/**
@@ -382,6 +483,8 @@ class Model
 	{
 		return $this->inverseProperties[$inverseProperty->getName()] = $inverseProperty;
 	}	
+	
+	
 	/**
 	 * @return string
 	 */
@@ -532,7 +635,7 @@ class Model
 	 */
 	public function getFullName()
 	{
-		return 'modules_' . $this->moduleName . '/' . $this->documentName;
+		return strtolower($this->vendor . '_' . $this->moduleName . '_' . $this->documentName);
 	}
 	
 	/**
@@ -548,26 +651,9 @@ class Model
 	 */
 	public function getNameSpace()
 	{
-		return implode('\\', array('ChangeCompilation', 'Modules',  ucfirst($this->getModuleName()), 'Documents'));
+		return implode('\\', array(ucfirst($this->getVendor()),  ucfirst($this->getModuleName()), 'Documents'));
 	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * return boolean
-	 */
-	public function getLocalizedByAncestors($ancestors)
-	{
-		foreach ($ancestors as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			if ($model->getLocalized())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
+		
 	/**
 	 * @param boolean $localized
 	 */
@@ -575,101 +661,45 @@ class Model
 	{
 		$this->localized = ($localized == true);
 	}
-
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * return boolean
-	 */
-	public function getUseCorrectionByAncestors($ancestors)
-	{
-		foreach ($ancestors as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			if ($model->getUseCorrection())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * return boolean
-	 */
-	public function getHasSerializedPropertiesByAncestors($ancestors)
-	{
-		foreach ($ancestors as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			if (count($model->getSerializedproperties()))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	/**
 	 * @param \Change\Documents\Generators\Model[] $ancestors
 	 * @param string $name
-	 * @return \Change\Documents\Generators\Property|NULL
+	 * @return \Change\Documents\Generators\Property[]
 	 */
-	public function getPropertyByAncestors($ancestors, $name)
+	public function getPropertyAncestors($ancestors, $name)
 	{
+		$result = array();
 		foreach ($ancestors as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$properties = $model->getProperties();
 			if (isset($properties[$name]))
 			{
-				return $properties[$name];
+				$result[] =  $properties[$name];
 			}
 		}
-		return null;
+		return $result;
 	}
 	
 	/**
 	 * @param \Change\Documents\Generators\Model[] $ancestors
 	 * @param string $name
-	 * @return \Change\Documents\Generators\Property|NULL
+	 * @return \Change\Documents\Generators\SerializedProperty[]
 	 */
-	public function getDocumentTypeByAncestors($ancestors, $name)
+	public function getSerialisedPropertyAncestors($ancestors, $name)
 	{
-		foreach ($ancestors as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			$properties = $model->getProperties();
-			if (isset($properties[$name]))
-			{
-				/* @var $p \Change\Documents\Generators\Property */
-				$p = $properties[$name];
-				if ($p->getDocumentType())
-				{
-					return $p->getDocumentType();
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * @param string $name
-	 * @return \Change\Documents\Generators\Property|NULL
-	 */
-	public function getSerialisedPropertyByAncestors($ancestors, $name)
-	{
+		$result = array();
 		foreach ($ancestors as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$properties = $model->getSerializedproperties();
 			if (isset($properties[$name]))
 			{
-				return $properties[$name];
+				$result[] = $properties[$name];
 			}
 		}
-		return null;
+		return $result;
 	}
 	
 	public function addCorrectionProperties()
@@ -691,7 +721,7 @@ class Model
 	 * @param \Change\Documents\Generators\Model[] $ancestors
 	 * @param boolean $localized;
 	 */
-	public function makeLocalized($ancestors, $localized)
+	protected function makeLocalized($ancestors, $localized)
 	{
 		foreach (array('label', 'publicationstatus', 'correctionid') as $name)
 		{
@@ -700,12 +730,16 @@ class Model
 				$p = $this->properties[$name];
 				$p->makeLocalized($localized);
 			}
-			elseif (($ap = $this->getPropertyByAncestors($ancestors, $name)) !== null)
+			else
 			{
-				$p = Property::getNamedProperty($name);
-				$p->makeLocalized($localized);
-				$p->setOverride(true, $ap->getType());
-				$this->properties[$name] = $p;
+				$pAnsestors = $this->getPropertyAncestors($ancestors, $name);
+				if (count($pAnsestors))
+				{
+					$p = Property::getNamedProperty($name);
+					$p->makeLocalized($localized);
+					$p->validate($pAnsestors);
+					$this->properties[$name] = $p;
+				}
 			}
 		}
 	}
@@ -717,12 +751,12 @@ class Model
 	{
 		return $this->cmpLocalized;
 	}
-
+	
 	/**
-	 * @param boolean $cmpLocalized
+	 * @return string[]
 	 */
-	public function setCmpLocalized($cmpLocalized)
+	public function getCmpPropNames()
 	{
-		$this->cmpLocalized = $cmpLocalized;
+		return $this->cmpPropNames;
 	}
 }

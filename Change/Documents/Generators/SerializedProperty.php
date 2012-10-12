@@ -5,17 +5,23 @@ namespace Change\Documents\Generators;
  * @name \Change\Documents\Generators\SerializedProperty
  */
 class SerializedProperty extends Property
-{
+{	
 	/**
-	 * @param DOMElement $xmlElement
+	 * @param \Change\Documents\Generators\SerializedProperty[] $ancestors
 	 */
-	public function initialize($xmlElement)
+	public function validate($ancestors)
 	{
-		parent::initialize($xmlElement);
-		if ($this->getLocalized())
+		if ($this->getLocalized() !== null)
 		{
-			throw new \Exception('Unable to localize "'.$this->getName().'" serialized property');
+			throw new \Exception('Invalid localized attribute on "'.$this->getName().'" serialized property');
 		}
+		
+		$hasRelation = ($this->getType() === 'Document' || $this->getType() === 'DocumentArray');
+		if ($hasRelation)
+		{
+			throw new \Exception('Invalid type attribute on "'.$this->getName().'" serialized property');
+		}
+		parent::validate($ancestors);
 	}
 }
 

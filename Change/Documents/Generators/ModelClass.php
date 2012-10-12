@@ -36,7 +36,7 @@ class ModelClass
 	{
 		$this->compiler = $compiler;
 		
-		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getNameSpace() . ';' . PHP_EOL;
+		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\\' . $model->getNameSpace() . ';' . PHP_EOL;
 		$pm = $compiler->getParent($model);
 		$extend = $pm ? $this->getClassName($pm, true) : '\Change\Documents\AbstractModel';
 		$code .= 'class ' . $this->getClassName($model) . ' extends ' . $extend . PHP_EOL;
@@ -71,7 +71,7 @@ class ModelClass
 	 */
 	protected function addNameSpace($model, $className)
 	{
-		return '\\' . $model->getNameSpace() . '\\' . $className;
+		return '\Compilation\\' . $model->getNameSpace() . '\\' . $className;
 	}
 	
 	/**
@@ -108,17 +108,7 @@ class ModelClass
 		$cn = ucfirst($model->getDocumentName()) . 'Service';
 		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
 	}
-		
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return array
-	 */
-	public function evaluatePreservedPropertiesNames($model)
-	{
-		return array_map(function($property) {return $property->getName();}, array_filter($model->getProperties(), function($property) {return $property->getPreserveOldValue();}));
-	}
-	
-	
+			
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
@@ -140,11 +130,6 @@ class ModelClass
 		{
 			$code .= '		$this->m_childrenNames = ' . $this->escapePHPValue($childrenNames) . ';'. PHP_EOL;
 		}
-		$preservedPropertiesNames = $this->evaluatePreservedPropertiesNames($model);
-		if (count($preservedPropertiesNames))
-		{
-			$code .= '		$this->m_preservedPropertiesNames = array_merge($this->m_preservedPropertiesNames, ' . $this->escapePHPValue($preservedPropertiesNames) . ');'. PHP_EOL;
-		}	
 		$code .= '	}'. PHP_EOL;
 		return $code;
 	}
@@ -295,6 +280,16 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getFullName()).';
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getVendorName()
+	{
+		return '. $this->escapePHPValue($model->getVendor()).';
+	}
+			
+
 	/**
 	 * @return string
 	 */
@@ -442,13 +437,18 @@ class ModelClass
 		
 		if ($model->getWorkflowParameters() !== null)
 		{
+			$wps = array();
+			foreach ($model->getWorkflowParameters() as $name => $value)
+			{
+				$wps[] = $this->escapePHPValue($name) . ' => ' . $this->escapePHPValue($value, false);
+			}
 			$code .= '
 	/**
 	 * @return array
 	 */
 	public function getWorkflowParameters()
 	{
-		return '. $this->escapePHPValue($model->getWorkflowParameters(), false).';
+		return array('. implode(', ', $wps).');
 	}'. PHP_EOL;
 		}
 		
