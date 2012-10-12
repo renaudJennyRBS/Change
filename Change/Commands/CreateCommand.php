@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateCommand extends \Change\Application\Console\AbstractCommand
+class CreateCommand extends \Change\Application\Console\ChangeCommand
 {
 	/**
 	 *
@@ -24,7 +24,7 @@ class CreateCommand extends \Change\Application\Console\AbstractCommand
 	protected function configure()
 	{
 		$this->setDescription('Create an empty console command')
-		->addArgument('package', InputArgument::REQUIRED, 'name of the package (vendor/module or core)')
+		->addArgument('package', InputArgument::REQUIRED, 'name of the package (vendor/module or change)')
 		->addArgument('cmdname', InputArgument::REQUIRED, 'name of the command (e.g. my-cmd)');
 	}
 	
@@ -44,7 +44,7 @@ class CreateCommand extends \Change\Application\Console\AbstractCommand
 			throw new \InvalidArgumentException('Command name should be a lowercase dash separated string');
 		}
 		$package = $input->getArgument('package');
-		$valid = ($package === 'core');
+		$valid = ($package === 'change');
 		if (!$valid)
 		{
 			$parts = explode('/', $package);
@@ -59,7 +59,7 @@ class CreateCommand extends \Change\Application\Console\AbstractCommand
 		
 		if (!$valid)
 		{
-			throw new \InvalidArgumentException('Package name should be of the form vendor/module or core or package not installed');
+			throw new \InvalidArgumentException('Package name should be of the form vendor/module or change or package not installed');
 		}
 	}
 
@@ -73,9 +73,9 @@ class CreateCommand extends \Change\Application\Console\AbstractCommand
 	{
 		$className = implode('', array_map('ucfirst', explode('-', $input->getArgument('cmdname'))));
 		$package = $input->getArgument('package');
-		if ($package === 'core')
+		if ($package === 'change')
 		{
-			$namespace = '\\Change\\Commands';
+			$namespace = 'Change\\Commands';
 			$commandDir = \Change\Stdlib\Path::projectPath('Change', 'Commands');
 		}
 		else
@@ -85,7 +85,7 @@ class CreateCommand extends \Change\Application\Console\AbstractCommand
 			}, explode('/', $package));
 			if ($vendor == 'App')
 			{
-				$namespace = '\\App\\Modules\\' . $module . '\\Commands';
+				$namespace = 'App\\Modules\\' . $module . '\\Commands';
 				$commandDir = \Change\Stdlib\Path::appPath('Modules', $module , 'Commands');
 			}
 			else
