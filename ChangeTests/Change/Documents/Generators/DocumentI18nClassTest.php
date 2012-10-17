@@ -16,8 +16,8 @@ class DocumentI18nClassTest extends \PHPUnit_Framework_TestCase
 		$generator = new \Change\Documents\Generators\DocumentI18nClass();
 		$code = $generator->getPHPCode($compiler, $model);
 		
-		//file_put_contents($definitionPath . '.i18n.php', $code);
-		$expected = file_get_contents($definitionPath . '.i18n.php');
+		//file_put_contents($definitionPath . '.i18n.php.expected', $code);
+		$expected = file_get_contents($definitionPath . '.i18n.php.expected');
 				
 		$this->assertEquals($expected, $code);
 	}

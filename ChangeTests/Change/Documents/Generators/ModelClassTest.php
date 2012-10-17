@@ -16,8 +16,8 @@ class ModelClassTest extends \PHPUnit_Framework_TestCase
 		$generator = new \Change\Documents\Generators\ModelClass();	
 		$code = $generator->getPHPCode($compiler, $model);
 		
-		//file_put_contents($definitionPath . '.model.php', $code);
-		$expected = file_get_contents($definitionPath . '.model.php');
+		//file_put_contents($definitionPath . '.model.php.expected', $code);
+		$expected = file_get_contents($definitionPath . '.model.php.expected');
 		
 		$this->assertEquals($expected, $code);
 	}

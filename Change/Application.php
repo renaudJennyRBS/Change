@@ -3,7 +3,7 @@
 namespace Change;
 
 /**
- *
+ * @name \Change\Application
  * @method \Change\Application getInstance()
  */
 class Application
@@ -19,6 +19,11 @@ class Application
 	 * @var \Change\Application\ApplicationServices
 	 */
 	protected $applicationServices;
+		
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $documentServices;
 	
 	/**
 	 * @var bool
@@ -72,6 +77,7 @@ class Application
 	public function registerNamespaceAutoload()
 	{
 		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change', 
+			'Compilation' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation',
 			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend', 
 			'ZendOAuth' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendoauth' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'ZendOAuth');
 		
@@ -109,7 +115,6 @@ class Application
 	}
 	
 	/**
-	 *
 	 * @return \Change\Configuration\Configuration
 	 */
 	public function getConfiguration()
@@ -165,40 +170,70 @@ class Application
 		}
 		return $this->applicationServices;
 	}
-	
+		
 	/**
 	 *
 	 * @return \Change\Application\ApplicationServices
 	 */
 	public function defaultApplicationServices()
 	{
-		$applicationServices = new \Change\Application\ApplicationServices();
+		$dl = new \Zend\Di\DefinitionList(array());
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Configuration\Configuration');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+		$dl->addDefinition($cl);
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true));
+		$dl->addDefinition($cl);
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
+		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
+			->addMethod('newInstance', true)
+				->addMethodParameter('newInstance', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+				->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
+		$dl->addDefinition($cl);
+
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+		$dl->addDefinition($cl);		
+		
+		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
-		$applicationServices->configure(new \Zend\Di\Config(array(
-			'definition' => array(
-				'class' => array('Change\Configuration\Configuration' => array(), 
-					'Change\I18n\I18nManager' => array('__construct' => array(
-						'config' => array('type' => 'Change\Configuration\Configuration', 'required' => true),
-						'dbProvider' => array('type' => 'Change\Db\DbProvider', 'required' => true))), 
-					'Change\Db\DbProvider' => array(
-						'newInstance' => array(
-							'config' => array('type' => 'Change\Configuration\Configuration', 'required' => true),
-							'logging' => array('type' => 'Change\Logging\Logging', 'required' => true),
-							), 
-						'instantiator' => array('Change\Db\DbProvider', 'newInstance')),
-					'Change\Logging\Logging' => array('__construct' => array(
-						'config' => array('type' => 'Change\Configuration\Configuration', 'required' => true)))
-					)
-				), 
-			
-			'instance' => array(
-				'Change\Configuration\Configuration' => array(
-					'parameters' => array('application' => $this)), 
-				'Change\I18n\I18nManager' => array('injections' => array('Change\Configuration\Configuration', 'Change\Db\DbProvider')), 
-				'Change\Db\DbProvider' => array('injections' => array('Change\Configuration\Configuration', 'Change\Logging\Logging')),
-				'Change\Logging\Logging' => array('injections' => array('Change\Configuration\Configuration'))
-			))));
+		
+		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
+		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
+		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
+		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
+		
 		return $applicationServices;
+	}
+	
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+	
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		if (!$this->documentServices)
+		{
+			$this->setDocumentServices(new \Change\Documents\DocumentServices($this->getApplicationServices()));
+		}
+		return $this->documentServices;
 	}
 	
 	/**

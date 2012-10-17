@@ -1,8 +1,6 @@
 <?php
 namespace Change\Documents\Generators;
 
-use Zend\Code\Scanner\DirectoryScanner;
-
 /**
  * @name \Change\Documents\Generators\AbstractDocumentClass
  */
@@ -22,7 +20,6 @@ class AbstractDocumentClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		array_shift($nsParts); //Remove regitered namespace part
 		$nsParts[] = $this->getClassName($model) . '.php';
 		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
 		\Change\Stdlib\File::write($path, $code);
@@ -73,7 +70,20 @@ class AbstractDocumentClass
 				$code .= $this->getPropertyAccessors($model, $property);
 			}
 		}
-			
+		
+		foreach ($model->getSerializedproperties() as $property)
+		{
+			/* @var $property \Change\Documents\Generators\SerializedProperty */
+			if ($property->getOverride()) {continue;}
+			$code .= $this->getSerializedPropertyAccessors($model, $property);
+		}
+		
+		foreach ($model->getInverseProperties() as $property)
+		{
+			/* @var $property \Change\Documents\Generators\InverseProperty */
+			$code .= $this->getInvertPropertyDocumentAccessors($model, $property);
+		}
+		
 		$code .= $this->getSetDefaultValues($model);
 		if (!$model->getInject())
 		{
@@ -349,13 +359,23 @@ class AbstractDocumentClass
 				$lines[] = '		$this->set' . ucfirst($property->getName()) . 'Internal(' . $this->escapePHPValue($property->getDefaultPhpValue(), false). ');';
 			}
 		}
+		
+		foreach ($model->getSerializedproperties() as $property)
+		{
+			/* @var $property \Change\Documents\Generators\SerializedProperty */
+			if ($property->getDefaultValue() !== null && in_array($property->getName(), $names))
+			{
+				$lines[] = '		$this->set' . ucfirst($property->getName()) . 'Internal(' . $this->escapePHPValue($property->getDefaultPhpValue(), false). ');';
+			}
+		}
 		$code = '
 	/**
 	 * @return void
 	 */
 	protected function setDefaultValues()
-	{' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL;
-	$code .= '	}' . PHP_EOL;
+	{' . PHP_EOL . implode(PHP_EOL, $lines);
+	$code .= '
+	}' . PHP_EOL;
 	
 		return $code;
 	}
@@ -417,10 +437,17 @@ class AbstractDocumentClass
 	}'.PHP_EOL;
 			
 		}
+		
+		$cascadeDelete = array();
+		
 		foreach ($properties as $property)
 		{
-			$name = $property->getName();
 			/* @var $property \Change\Documents\Generators\Property */
+			$name = $property->getName();
+			if ($property->getCascadeDelete())
+			{
+				$cascadeDelete[] = $property;
+			}
 			if ($property->getType() === 'DocumentArray')
 			{
 				$get[] = '        if ($loadAll) {$this->checkLoaded'.ucfirst($name).'();}';
@@ -475,6 +502,10 @@ class AbstractDocumentClass
 		}						
 	}' . PHP_EOL;
 		
+		if (count($cascadeDelete))
+		{
+			$code .= $this->getCascadeDeleteDocumentAccessors($model, $cascadeDelete);
+		}
 		return $code;
 	}
 	
@@ -796,14 +827,84 @@ class AbstractDocumentClass
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
+	protected function getSerializedPropertyAccessors($model, $property)
+	{
+		$code = '';
+		$name = $property->getName();
+		$en = $this->escapePHPValue($name);
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		$code .= '
+	/**
+	 * @return '.$ct.'
+	 */
+	public function get'.$un.'()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('.$en.');
+	}
+		
+	/**
+	 * @return '.$ct.'|NULL
+	 */
+	public function get'.$un.'OldValue()
+	{
+		return $this->getOldValue('.$en.');
+	}
+		
+	/**
+	 * @param '.$ct.' $val
+	 */
+	public function set'.$un.'($val)
+	{
+		$this->checkLoaded();'.PHP_EOL;
+		$code .= '		if ($this->set'.$un.'Internal($val))
+		{
+			$this->propertyUpdated('.$en.');
+		}
+	}'.PHP_EOL;
+	
+		$code .= '
+	protected function set'.$un.'Internal($val)
+	{
+		$oVal = $this->getS18sProperty('.$en.');'.PHP_EOL;
+		$code .= '		' . $this->buildValConverter($property) . ';'.PHP_EOL;
+		if ($property->getType() === 'Float' || $property->getType() === 'Decimal')
+		{
+			$code .= '		$modified = (abs(floatval($oVal) - $val) > 0.0001);'.PHP_EOL;
+		}
+		else
+		{
+			$code .= '		$modified = ($oVal !== $val);'.PHP_EOL;
+		}
+	
+		$code .= '		if ($modified)
+		{
+			$this->setOldValue('.$en.', $oVal);
+			$this->setS18sProperty('.$en.', $val);
+			return true;
+		}
+		return false;
+	}'.PHP_EOL;
+	
+		$code .= $this->getPropertyExtraGetters($model, $property);
+		return $code;
+	}
+
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 * @return string
+	 */
 	protected function getPropertyExtraGetters($model, $property)
 	{
 		$code = '';
 		$name = $property->getName();
-		$mn = '$this->m_' . $name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
+		$modelGetter = ($property instanceof SerializedProperty) ? 'getSerializedProperty' : 'getProperty';
 	
 		if ($property->getType() === 'DateTime')
 		{
@@ -923,28 +1024,28 @@ class AbstractDocumentClass
 	public function get'.$un.'Instance()
 	{
 		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->get'.$un.'());
-	}'.PHP_EOL;
-		}
-		
-		if ($property->getFromList())
-		{
-			$code .= '
+	}
+			
 	/**
 	 * @return string
 	 */
 	public function get'.$un.'Label()
 	{
-		$list = \list_ListService::getInstance()->getByListId('.$this->escapePHPValue($property->getFromList()).');
-		if ($list === null)
+		$prop = $this->getPersistentModel()->'.$modelGetter.'('.$en.');
+		if ($prop && $prop->getFromList())
 		{
-			return null;
+			$list = \list_ListService::getInstance()->getByListId($prop->getFromList());
+			if ($list === null)
+			{
+				return null;
+			}
+			$listItem = $list->getItemByValue($this->get'.$un.'());
+			if ($listItem === null)
+			{
+				return null;
+			}
+			return $listItem->getLabel();
 		}
-		$listItem = $list->getItemByValue($this->get'.$un.'());
-		if ($listItem === null)
-		{
-			return null;
-		}
-		return $listItem->getLabel();
 	}
 	
 	/**
@@ -956,9 +1057,124 @@ class AbstractDocumentClass
 		return $label ? \f_util_HtmlUtils::textToHtml($label) : null;
 	}'.PHP_EOL;
 		}
-	
 		return $code;
 	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property[] $properties
+	 * @return string
+	 */
+	protected function getCascadeDeleteDocumentAccessors($model, $properties)
+	{
+		$pre = array();
+		$post = array();
+		foreach ($properties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\Property */
+			$name = $property->getName();
+			$un = ucfirst($name);
+			$en = $this->escapePHPValue($name);
+			if ($property->getType()  === 'DocumentArray')
+			{
+				$pre[] = '		$this->checkLoaded'.$un.'();';
+				$post[] = '		$items = $this->get'.$un.'Array();
+		foreach ($items as $item) {$item->delete();}';
+			}
+			else
+			{
+				$post[] = '		$item = $this->get'.$un.'();
+		if (null !== $item)
+		{
+			$item->delete();
+		}';
+			}
+		}
+		
+		$code = '
+	public function preCascadeDelete()
+	{
+		parent::preCascadeDelete();'.PHP_EOL;
+		$code .= implode(PHP_EOL, $pre);
+		$code .='
+	}
+			
+	public function postCascadeDelete()
+	{'.PHP_EOL;
+		$code .= implode(PHP_EOL, $post);
+		$code .= '
+		parent::postCascadeDelete();
+	}'.PHP_EOL;
+		
+		return $code;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\InverseProperty $property
+	 * @return string
+	 */
+	protected function getInvertPropertyDocumentAccessors($model, $property)
+	{
+		$name = $property->getName();
+		$dt = $this->escapePHPValue($property->getDocumentType());
+		$rn = $this->escapePHPValue($property->getSrcName());
+		$en = $this->escapePHPValue($name);
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		
+		$code = '	
+	/**
+	 * @return '.$ct.'[]
+	 */
+	public function get'.$un.'ArrayInverse($offset = 0, $nbDocuments = -1)
+	{
+		$query = $this->getDbProvider()->createQuery('.$dt.')
+			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
+			->addOrder(\Order::asc(\'label\'))
+			->setFirstResult($offset)->setMaxResults($nbDocuments);
+		return $query->find();
+	}
+
+	/**
+	 * @return '.$ct.'[]
+	 */
+	public function getPublished'.$un.'ArrayInverse($offset = 0, $nbDocuments = -1)
+	{
+		$query = $this->getDbProvider()->createQuery('.$dt.')
+			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
+			->add(\Restrictions::published())
+			->addOrder(\Order::asc(\'label\'))
+			->setFirstResult($offset)->setMaxResults($nbDocuments);
+		return $query->find();
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get'.$un.'CountInverse()
+	{
+		$query = $this->getDbProvider()->createQuery('.$dt.')
+			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
+			->setProjection(\Projections::rowCount(\'rows\'));
+		$result = $query->find();
+		return intval($result[0][\'rows\']);
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getPublished'.$un.'CountInverse()
+	{
+		$query = $this->getDbProvider()->createQuery('.$dt.')
+			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
+			->add(\Restrictions::published())
+			->setProjection(\Projections::rowCount(\'rows\'));
+		$result = $query->find();
+		return intval($result[0][\'rows\']);
+	}'.PHP_EOL;		
+		return $code;
+	}	
 	
 	/**
 	 * @param \Change\Documents\Generators\Model $model

@@ -718,6 +718,16 @@ class Model
 	}
 	
 	/**
+	 * @param \Change\Documents\Generators\Model $extendModel
+	 */
+	public function applyInjection($extendModel)
+	{
+		$tmpName = $extendModel->getExtend();
+		$extendModel->extend = $this->getFullName();
+		$this->extend = $tmpName;
+	}
+	
+	/**
 	 * @param \Change\Documents\Generators\Model[] $ancestors
 	 * @param boolean $localized;
 	 */

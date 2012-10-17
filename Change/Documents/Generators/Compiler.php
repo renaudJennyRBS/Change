@@ -65,14 +65,15 @@ class Compiler
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$modelName = $model->getFullName();
+			
 			if ($model->getExtend())
 			{
-				$extendName = $this->cleanModelName($model->getExtend());
-				if ($this->getModelByFullName($extendName) === null)
+				$extModel = $this->getModelByFullName($model->getExtend());
+				if ($extModel === null)
 				{
-					throw new \Exception('Document ' . $modelName . ' extend unknow ' . $extendName. ' document.');
+					throw new \Exception('Document ' . $modelName . ' extend unknow ' . $model->getExtend(). ' document.');
 				}
-				
+				$extendName = $extModel->getFullName();				
 				if ($model->getInject())
 				{
 					if (isset($this->injection[$extendName]))
@@ -80,15 +81,12 @@ class Compiler
 						throw new \Exception('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $this->injection[$extendName]);
 					}
 					$this->injection[$extendName] = $modelName;
+					$model->applyInjection($extModel);
 				}
 			}
 			elseif ($model->getInject())
 			{
 				throw new \Exception('Invalid Injection on ' . $modelName . ' document.');
-			}
-			else
-			{
-				$model->applyDefault($this->getDefaultModel());
 			}
 		}
 		
@@ -97,8 +95,12 @@ class Compiler
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$ancestors = $this->getAncestors($model);
-			$this->modelNamesByExtendLevel[count($ancestors)][] = $this->cleanModelName($model->getFullName()); 
+			$nbAncestor = count($this->getAncestors($model));
+			$this->modelNamesByExtendLevel[$nbAncestor][] = $this->cleanModelName($model->getFullName()); 
+			if ($nbAncestor === 0)
+			{
+				$model->applyDefault($this->getDefaultModel());
+			}
 		}
 		
 		ksort($this->modelNamesByExtendLevel);
@@ -115,13 +117,6 @@ class Compiler
 			foreach ($modelNames as $modelName)
 			{
 				$model = $this->getModelByFullName($modelName);			
-				if ($model->getInject()) //Check Injection
-				{
-					if (count($this->getChildren($model)))
-					{
-						throw new \Exception('Injected Model ' . $modelName . ' has children.');
-					}
-				}
 				$ancestors =  $this->getAncestors($model);
 				$model->validate($ancestors);
 				
@@ -192,24 +187,14 @@ class Compiler
 	 */	
 	public function getAncestors($model)
 	{
-		$childModelName = $model->getFullName();
 		$result = array();
 		while (($model = $this->getParent($model)) !== null)
 		{
 			$modelName = $model->getFullName();
-			if (isset($this->injection[$modelName]))
-			{
-				$injectionName = $this->injection[$modelName];
-				if ($childModelName != $injectionName)
-				{
-					$result[$injectionName] = $this->getModelByFullName($injectionName);
-				}
-			}
 			if (isset($result[$modelName]))
 			{
 				throw new \Exception('Recursion on ' . $modelName . ' document.');
 			}
-			
 			$result[$modelName] = $model;
 		}
 		return array_reverse($result, true);
@@ -275,6 +260,12 @@ class Compiler
 				$generator = new DocumentI18nClass();
 				$generator->savePHPCode($this, $model);
 			}
+			
+			$generator = new AbstractServiceClass();
+			$generator->savePHPCode($this, $model);
 		}
+		
+		$generator = new AbstractDocumentServicesClass();
+		$generator->savePHPCode($this, $this->models);
 	}
 }

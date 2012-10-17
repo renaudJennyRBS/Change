@@ -193,6 +193,22 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		}						
 	}
 
+	public function preCascadeDelete()
+	{
+		parent::preCascadeDelete();
+
+	}
+			
+	public function postCascadeDelete()
+	{
+		$item = $this->getDocument1();
+		if (null !== $item)
+		{
+			$item->delete();
+		}
+		parent::postCascadeDelete();
+	}
+
 	/**
 	 * @return boolean
 	 */
@@ -1024,6 +1040,37 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	public function getAuthoridInstance()
 	{
 		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getAuthorid());
+	}
+			
+	/**
+	 * @return string
+	 */
+	public function getAuthoridLabel()
+	{
+		$prop = $this->getPersistentModel()->getProperty('authorid');
+		if ($prop && $prop->getFromList())
+		{
+			$list = \list_ListService::getInstance()->getByListId($prop->getFromList());
+			if ($list === null)
+			{
+				return null;
+			}
+			$listItem = $list->getItemByValue($this->getAuthorid());
+			if ($listItem === null)
+			{
+				return null;
+			}
+			return $listItem->getLabel();
+		}
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getAuthoridLabelAsHtml()
+	{
+		$label = $this->getAuthoridLabel();
+		return $label ? \f_util_HtmlUtils::textToHtml($label) : null;
 	}
 
 	/**
@@ -2149,6 +2196,37 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid1());
 	}
+			
+	/**
+	 * @return string
+	 */
+	public function getDocumentid1Label()
+	{
+		$prop = $this->getPersistentModel()->getProperty('documentid1');
+		if ($prop && $prop->getFromList())
+		{
+			$list = \list_ListService::getInstance()->getByListId($prop->getFromList());
+			if ($list === null)
+			{
+				return null;
+			}
+			$listItem = $list->getItemByValue($this->getDocumentid1());
+			if ($listItem === null)
+			{
+				return null;
+			}
+			return $listItem->getLabel();
+		}
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDocumentid1LabelAsHtml()
+	{
+		$label = $this->getDocumentid1Label();
+		return $label ? \f_util_HtmlUtils::textToHtml($label) : null;
+	}
 	
 	/**
 	 * @return integer
@@ -2537,6 +2615,796 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getBool2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('bool2');
+	}
+		
+	/**
+	 * @return boolean|NULL
+	 */
+	public function getBool2OldValue()
+	{
+		return $this->getOldValue('bool2');
+	}
+		
+	/**
+	 * @param boolean $val
+	 */
+	public function setBool2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setBool2Internal($val))
+		{
+			$this->propertyUpdated('bool2');
+		}
+	}
+
+	protected function setBool2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('bool2');
+		$val = ($val === null) ? $val : (bool)$val;
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('bool2', $oVal);
+			$this->setS18sProperty('bool2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getInt2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('int2');
+	}
+		
+	/**
+	 * @return integer|NULL
+	 */
+	public function getInt2OldValue()
+	{
+		return $this->getOldValue('int2');
+	}
+		
+	/**
+	 * @param integer $val
+	 */
+	public function setInt2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setInt2Internal($val))
+		{
+			$this->propertyUpdated('int2');
+		}
+	}
+
+	protected function setInt2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('int2');
+		$val = ($val === null) ? $val : intval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('int2', $oVal);
+			$this->setS18sProperty('int2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getFloat2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('float2');
+	}
+		
+	/**
+	 * @return float|NULL
+	 */
+	public function getFloat2OldValue()
+	{
+		return $this->getOldValue('float2');
+	}
+		
+	/**
+	 * @param float $val
+	 */
+	public function setFloat2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setFloat2Internal($val))
+		{
+			$this->propertyUpdated('float2');
+		}
+	}
+
+	protected function setFloat2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('float2');
+		$val = ($val === null) ? $val : floatval($val);
+		$modified = (abs(floatval($oVal) - $val) > 0.0001);
+		if ($modified)
+		{
+			$this->setOldValue('float2', $oVal);
+			$this->setS18sProperty('float2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getDecimal2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('decimal2');
+	}
+		
+	/**
+	 * @return float|NULL
+	 */
+	public function getDecimal2OldValue()
+	{
+		return $this->getOldValue('decimal2');
+	}
+		
+	/**
+	 * @param float $val
+	 */
+	public function setDecimal2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setDecimal2Internal($val))
+		{
+			$this->propertyUpdated('decimal2');
+		}
+	}
+
+	protected function setDecimal2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('decimal2');
+		$val = ($val === null) ? $val : floatval($val);
+		$modified = (abs(floatval($oVal) - $val) > 0.0001);
+		if ($modified)
+		{
+			$this->setOldValue('decimal2', $oVal);
+			$this->setS18sProperty('decimal2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDate2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('date2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getDate2OldValue()
+	{
+		return $this->getOldValue('date2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setDate2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setDate2Internal($val))
+		{
+			$this->propertyUpdated('date2');
+		}
+	}
+
+	protected function setDate2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('date2');
+		$val = ($val === null) ? $val : ($val instanceof \date_Calendar) ? \date_Formatter::format($val, \date_Formatter::SQL_DATE_FORMAT) : is_long($val) ? date(\date_Formatter::SQL_DATE_FORMAT, $val) : $val;
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('date2', $oVal);
+			$this->setS18sProperty('date2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDatetime2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('datetime2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getDatetime2OldValue()
+	{
+		return $this->getOldValue('datetime2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setDatetime2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setDatetime2Internal($val))
+		{
+			$this->propertyUpdated('datetime2');
+		}
+	}
+
+	protected function setDatetime2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('datetime2');
+		$val = ($val === null) ? $val : ($val instanceof \date_Calendar) ? \date_Formatter::format($val, \date_Formatter::SQL_DATE_FORMAT) : is_long($val) ? date(\date_Formatter::SQL_DATE_FORMAT, $val) : $val;
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('datetime2', $oVal);
+			$this->setS18sProperty('datetime2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $val
+	 * @return void
+	 */
+	public function setUIDatetime2($val)
+	{
+		$this->setDatetime2(\date_Converter::convertDateToGMT($val));
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getUIDatetime2()
+	{
+		return \date_Converter::convertDateToLocal($this->getDatetime2());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getString2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('string2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getString2OldValue()
+	{
+		return $this->getOldValue('string2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setString2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setString2Internal($val))
+		{
+			$this->propertyUpdated('string2');
+		}
+	}
+
+	protected function setString2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('string2');
+		$val = $val === null ? val : strval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('string2', $oVal);
+			$this->setS18sProperty('string2', $val);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getString2AsHtml()
+	{
+		return \f_util_HtmlUtils::textToHtml($this->getString2());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLongstring2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('longstring2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getLongstring2OldValue()
+	{
+		return $this->getOldValue('longstring2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setLongstring2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setLongstring2Internal($val))
+		{
+			$this->propertyUpdated('longstring2');
+		}
+	}
+
+	protected function setLongstring2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('longstring2');
+		$val = $val === null ? val : strval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('longstring2', $oVal);
+			$this->setS18sProperty('longstring2', $val);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getLongstring2AsHtml()
+	{
+		return \f_util_HtmlUtils::textToHtml($this->getLongstring2());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getXml2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('xml2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getXml2OldValue()
+	{
+		return $this->getOldValue('xml2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setXml2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setXml2Internal($val))
+		{
+			$this->propertyUpdated('xml2');
+		}
+	}
+
+	protected function setXml2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('xml2');
+		$val = $val === null ? val : strval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('xml2', $oVal);
+			$this->setS18sProperty('xml2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return \DOMDocument
+	 */
+	public function getXml2DOMDocument()
+	{
+		$document = new \DOMDocument("1.0", "UTF-8");
+		if ($this->getXml2() !== null) {$document->loadXML($this->getXml2());}
+		return $document;
+	}
+		
+	/**
+	 * @param \DOMDocument $document
+	 */
+	public function setXml2DOMDocument($document)
+	{
+		 $this->setXml2($document && $document->documentElement ? $document->saveXML() : null);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLob2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('lob2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getLob2OldValue()
+	{
+		return $this->getOldValue('lob2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setLob2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setLob2Internal($val))
+		{
+			$this->propertyUpdated('lob2');
+		}
+	}
+
+	protected function setLob2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('lob2');
+		$val = $val === null ? val : strval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('lob2', $oVal);
+			$this->setS18sProperty('lob2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRichtext2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('richtext2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getRichtext2OldValue()
+	{
+		return $this->getOldValue('richtext2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setRichtext2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setRichtext2Internal($val))
+		{
+			$this->propertyUpdated('richtext2');
+		}
+	}
+
+	protected function setRichtext2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('richtext2');
+		$val = $val === null ? val : strval($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('richtext2', $oVal);
+			$this->setS18sProperty('richtext2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRichtext2AsHtml()
+	{
+		//TODO old XHTMLFragment and BBCode
+		return \f_util_HtmlUtils::renderHtmlFragment($this->getRichtext2());
+		//$parser = new \website_BBCodeParser();
+		//return $parser->convertXmlToHtml($this->getRichtext2());
+	}
+			
+	/**
+	 * @param string $val
+	 * @return void
+	 */
+	public function setRichtext2AsBBCode($val)
+	{
+		$parser = new \website_BBCodeParser();
+		$this->setRichtext2($parser->convertBBCodeToXml($val, $parser->getModuleProfile()));
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getRichtext2AsBBCode()
+	{
+		$parser = new \website_BBCodeParser();
+		return $parser->convertXmlToBBCode($this->getRichtext2());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getJson2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('json2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getJson2OldValue()
+	{
+		return $this->getOldValue('json2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setJson2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setJson2Internal($val))
+		{
+			$this->propertyUpdated('json2');
+		}
+	}
+
+	protected function setJson2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('json2');
+		$val = ($val === null || is_string($val)) ? $val : \JsonService::getInstance()->encode($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('json2', $oVal);
+			$this->setS18sProperty('json2', $val);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getDecodedJson2()
+	{
+		$val = $this->getJson2();
+		return $val === null ? $val : \JsonService::getInstance()->decode($val);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getObject2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('object2');
+	}
+		
+	/**
+	 * @return string|NULL
+	 */
+	public function getObject2OldValue()
+	{
+		return $this->getOldValue('object2');
+	}
+		
+	/**
+	 * @param string $val
+	 */
+	public function setObject2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setObject2Internal($val))
+		{
+			$this->propertyUpdated('object2');
+		}
+	}
+
+	protected function setObject2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('object2');
+		$val = ($val === null || is_string($val)) ? $val : serialize($val);
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('object2', $oVal);
+			$this->setS18sProperty('object2', $val);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getDecodedObject2()
+	{
+		$val = $this->getObject2();
+		return $val === null ? $val : unserialize($val);
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getDocumentid2()
+	{
+		$this->checkLoaded();
+		return $this->getS18sProperty('documentid2');
+	}
+		
+	/**
+	 * @return integer|NULL
+	 */
+	public function getDocumentid2OldValue()
+	{
+		return $this->getOldValue('documentid2');
+	}
+		
+	/**
+	 * @param integer $val
+	 */
+	public function setDocumentid2($val)
+	{
+		$this->checkLoaded();
+		if ($this->setDocumentid2Internal($val))
+		{
+			$this->propertyUpdated('documentid2');
+		}
+	}
+
+	protected function setDocumentid2Internal($val)
+	{
+		$oVal = $this->getS18sProperty('documentid2');
+		$val = ($val === null) ? $val : ($val instanceof \Change\Documents\AbstractDocument) ? $val->getId() : intval($val) > 0 ? intval($val) : null;
+		$modified = ($oVal !== $val);
+		if ($modified)
+		{
+			$this->setOldValue('documentid2', $oVal);
+			$this->setS18sProperty('documentid2', $val);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument|NULL
+	 */
+	public function getDocumentid2Instance()
+	{
+		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid2());
+	}
+			
+	/**
+	 * @return string
+	 */
+	public function getDocumentid2Label()
+	{
+		$prop = $this->getPersistentModel()->getSerializedProperty('documentid2');
+		if ($prop && $prop->getFromList())
+		{
+			$list = \list_ListService::getInstance()->getByListId($prop->getFromList());
+			if ($list === null)
+			{
+				return null;
+			}
+			$listItem = $list->getItemByValue($this->getDocumentid2());
+			if ($listItem === null)
+			{
+				return null;
+			}
+			return $listItem->getLabel();
+		}
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDocumentid2LabelAsHtml()
+	{
+		$label = $this->getDocumentid2Label();
+		return $label ? \f_util_HtmlUtils::textToHtml($label) : null;
+	}
+	
+	/**
+	 * @return \Change\Testing\Documents\Generation[]
+	 */
+	public function getGenerationArrayInverse($offset = 0, $nbDocuments = -1)
+	{
+		$query = $this->getDbProvider()->createQuery('change_testing_generation')
+			->add(\Restrictions::eq('document1', $this)) //TODO Old class Usage
+			->addOrder(\Order::asc('label'))
+			->setFirstResult($offset)->setMaxResults($nbDocuments);
+		return $query->find();
+	}
+
+	/**
+	 * @return \Change\Testing\Documents\Generation[]
+	 */
+	public function getPublishedGenerationArrayInverse($offset = 0, $nbDocuments = -1)
+	{
+		$query = $this->getDbProvider()->createQuery('change_testing_generation')
+			->add(\Restrictions::eq('document1', $this)) //TODO Old class Usage
+			->add(\Restrictions::published())
+			->addOrder(\Order::asc('label'))
+			->setFirstResult($offset)->setMaxResults($nbDocuments);
+		return $query->find();
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getGenerationCountInverse()
+	{
+		$query = $this->getDbProvider()->createQuery('change_testing_generation')
+			->add(\Restrictions::eq('document1', $this)) //TODO Old class Usage
+			->setProjection(\Projections::rowCount('rows'));
+		$result = $query->find();
+		return intval($result[0]['rows']);
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getPublishedGenerationCountInverse()
+	{
+		$query = $this->getDbProvider()->createQuery('change_testing_generation')
+			->add(\Restrictions::eq('document1', $this)) //TODO Old class Usage
+			->add(\Restrictions::published())
+			->setProjection(\Projections::rowCount('rows'));
+		$result = $query->find();
+		return intval($result[0]['rows']);
 	}
 
 	/**

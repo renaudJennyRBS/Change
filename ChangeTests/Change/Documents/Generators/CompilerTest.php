@@ -86,14 +86,20 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	
 		
 		$compiler->buildDependencies();
-		$this->assertCount(15, $m1->getProperties());
-		$this->assertCount(1, $m1->getSerializedproperties());
-		$this->assertCount(16, $m1->getCmpPropNames());
-		
-		$this->assertCount(1, $m3->getProperties());
+		$this->assertNull($m3->getExtend());
+		$this->assertCount(15, $m3->getProperties());
 		$this->assertCount(1, $m3->getSerializedproperties());
-		$this->assertCount(18, $m3->getCmpPropNames());
-
+		$this->assertCount(16, $m3->getCmpPropNames());		
+		
+		
+		
+		$this->assertEquals('change_testing_inject3', $m1->getExtend());
+		$this->assertCount(1, $m1->getProperties());
+		$this->assertCount(1, $m1->getSerializedproperties());
+		$this->assertCount(18, $m1->getCmpPropNames());
+		
+		
+		$this->assertEquals('change_testing_inject1', $m2->getExtend());
 		$this->assertCount(1, $m2->getProperties());
 		$this->assertCount(1, $m2->getSerializedproperties());
 		$this->assertCount(19, $m2->getCmpPropNames());
