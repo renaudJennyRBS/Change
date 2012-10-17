@@ -150,22 +150,72 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	
 	/**
 	 * Test the loading of a compiled project.php file.
-	 * @runInSeparateProcess
 s	 */
 	public function testLoad()
 	{		
-		require_once dirname(dirname(__DIR__)) . '/Bootstrap.php';
-		$this->assertFalse(defined('TEST_1'));
-		$this->assertFalse(defined('TEST_2'));
-		
 		// Test on valid file.
- 		$config = new \Change\Configuration\Configuration(new \ChangeTests\Change\Configuration\TestAssets\Application());
+		$application = new \Change\Application();
+		// Mock compiled config path
+ 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, __DIR__ . '/TestAssets/project.php');
 		$expectedArray = array(
 			'general' => array('projectName' => 'RBS CHANGE 4.0', 'server-ip' => '127.0.0.1', 'phase' => 'development'), 
 			'logging' => array('level' => 'WARN', 'writers' => array('default' => 'stream')));
 		$this->assertEquals($expectedArray, $config->getConfigArray());
+
 		$this->assertEquals(TEST_1, 4);
 		$this->assertEquals(TEST_2, 'INFO');
+	}
+	
+	public function testCompileOnLoad()
+	{
+
+		$application = new \Change\Application();
+		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.xml";
+		if (file_exists($compiledFilePath))
+		{
+			unlink($compiledFilePath);
+		}
+		if (file_exists($sourceConfigFile))
+		{
+			unlink($sourceConfigFile);
+		}
+		copy(__DIR__ .'/TestAssets/project1.xml', $sourceConfigFile);
+		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
+		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
+		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$config->clear();
+		$this->assertFalse($config->isCompiled());
+		$config->load();
+		$this->assertTrue($config->isCompiled());
+	}
+	
+	
+	public function testAddPersistentEntry()
+	{
+		$application = new \Change\Application();
+		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.xml";
+		if (file_exists($compiledFilePath))
+		{
+			unlink($compiledFilePath);
+		}
+		if (file_exists($sourceConfigFile))
+		{
+			unlink($sourceConfigFile);
+		}
+		copy(__DIR__ .'/TestAssets/project1.xml', $sourceConfigFile);
+		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
+		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
+		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$this->assertTrue($config->isCompiled());
+		$result = $config->addPersistentEntry('mypath', 'myentry', 'value');
+		$this->assertEmpty($result);
+		$config->clear();
+		$newConfig = new \Change\Configuration\Configuration($application);
+		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
 	}
 }
 

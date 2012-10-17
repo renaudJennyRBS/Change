@@ -7,15 +7,31 @@ namespace Change\Configuration;
 class Generator
 {
 	/**
-	 * The application we compile the config for
-	 * 
-	 * @var \Change\Application 
+	 * @var array
 	 */
-	protected $application;
+	protected $bootstrapConfig;
 	
-	public function __construct(\Change\Application $application)
+	/**
+	 * @var array
+	 */
+	protected $configurationFiles;
+	
+	/**
+	 * @var string
+	 */
+	protected $compiledConfigPath;
+	
+	/**
+	 * @var string
+	 */
+	protected $compiledDefinesPath;
+	
+	public function __construct(array $bootstrapConfig, array $configurationFiles, $compiledConfigPath, $compiledDefinesPath)
 	{
-		$this->application = $application;
+		$this->bootstrapConfig = $bootstrapConfig;
+		$this->configurationFiles = $configurationFiles;
+		$this->compiledConfigPath = $compiledConfigPath;
+		$this->compiledDefinesPath = $compiledDefinesPath;
 	}
 	
 	/**
@@ -24,7 +40,7 @@ class Generator
 	public function compile()
 	{
 		// Compile new config and defines.
-		$dom = $this->mergeConfigurationFiles($this->application->getBootstrapConfig());
+		$dom = $this->mergeConfigurationFiles($this->bootstrapConfig);
 		$defines = $this->compileDefines($dom);
 		$configs = $this->compileConfigs($dom);
 		
@@ -37,8 +53,7 @@ class Generator
 		}
 		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
-		\Change\Stdlib\File::write($this->application->getCompiledConfigurationPath(), $content);
-				
+		\Change\Stdlib\File::write($this->compiledConfigPath, $content);
 		return array("config" => $configs, "defines" => $defines);
 	}
 	
@@ -163,7 +178,7 @@ class Generator
 		}
 		
 		// Merge project specific config files.
-		foreach ($this->application->getProjectConfigurationPaths() as $filePath)
+		foreach ($this->configurationFiles as $filePath)
 		{
 			if (is_readable($filePath))
 			{
@@ -479,8 +494,7 @@ class Generator
 			}
 			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
 		}
-		$path = \Change\Stdlib\Path::compilationPath('Config', 'dev_defines.php');
-		\Change\Stdlib\File::write($path, $content);
+		\Change\Stdlib\File::write($this->compiledDefinesPath, $content);
 	}
 	
 	/**
@@ -494,11 +508,15 @@ class Generator
 	{
 		array_unshift($pathArray, 'project');
 		$pathArray[] = "*[@name='" . $entryName . "']";
-	
-		$configProjectPath = \Change\Stdlib\Path::appPath('Config', 'project.xml');
+		// base config
+		if (count($this->configurationFiles) == 0)
+		{
+			throw new \RuntimeException('No project configuration file found');
+		}
+		$configProjectPath = $this->configurationFiles[0]; 
 		if (!is_readable($configProjectPath))
 		{
-			return false;
+			throw new \RuntimeException('Config path is not readable');
 		}		
 		$dom = new \DOMDocument('1.0', 'utf-8');
 		$dom->formatOutput = true;
@@ -507,7 +525,7 @@ class Generator
 		$dom->formatOutput = true;
 		if ($dom->documentElement == null)
 		{
-			return false;
+			throw new \RuntimeException('Invalid xml file ' . $configProjectPath);
 		}
 		
 		$node = $this->getOrCreateNode($dom, $pathArray);

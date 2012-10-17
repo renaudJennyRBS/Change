@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Configuration;
 
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class GeneratorTest/* extends \PHPUnit_Framework_TestCase*/
 {
 	public function testInitDomDocument()
 	{

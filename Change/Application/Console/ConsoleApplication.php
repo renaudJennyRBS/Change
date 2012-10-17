@@ -46,7 +46,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			{
 				$globalConfig = Json::decode(file_get_contents($_SERVER['HOME'] . '/.console.json'), Json::TYPE_ARRAY);
 			}
-			$projectConfigFile = Path::appPath('Config', 'console.json'); 
+			$projectConfigFile = $this->getChangeApplication()->getWorkspace()->appPath('Config', 'console.json'); 
 			if (file_exists($projectConfigFile))
 			{
 				$projectConfig = Json::decode(file_get_contents($projectConfigFile), Json::TYPE_ARRAY);

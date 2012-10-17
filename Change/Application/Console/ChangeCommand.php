@@ -63,6 +63,7 @@ class ChangeCommand extends Command
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
+		parent::initialize($input, $output);
 		$devMode = $input->getOption('dev') || $this->getChangeApplication()->inDevelopmentMode();
 		if ($this->isDevCommand() && !$devMode)
 		{

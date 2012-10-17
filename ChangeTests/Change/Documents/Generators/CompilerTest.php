@@ -23,13 +23,12 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 		
 	}
 	
-	public function testloadDocument()
+	public function testLoadDocument()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler();
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
 		$model = $compiler->loadDocument('Change', 'test', 'test1', $definitionPath);
 		$this->assertEquals('change_test_test1', $model->getFullName());
-		
 		$this->setExpectedException('\Exception', 'Unable to load document definition');
 		$compiler->loadDocument('Change', 'test', 'test1',  __DIR__ . '/TestAssets/notfound');
 	}

@@ -58,4 +58,24 @@ class File
 		}
 		return $content;
 	}
+	
+	/**
+	 * remove a directory (and sub-directories) on filesystem
+	 * @param $directoryPath the directory to remove
+	 */
+	public static function rmdir($directoryPath, $onlyContent = false)
+	{
+		if (is_dir($directoryPath))
+		{
+			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
+			{
+				@unlink($file);
+				if (is_dir($file)) {rmdir($file);}
+			}
+			if (!$onlyContent)
+			{
+				rmdir($directoryPath);
+			}
+		}
+	}
 }

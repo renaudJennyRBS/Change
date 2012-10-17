@@ -89,4 +89,39 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		require_once dirname(realpath(__DIR__)) . '/Bootstrap.php';
 		$this->assertEquals('default', \Change\Application::getInstance()->getProfile());
 	}
+
+	public function testGetBootstrapConfiguration()
+	{
+		$app = new \Change\Application();
+		$app->getBootstrapConfiguration();
+	}
+	
+	public function testGetConfiguration()
+	{
+		$app = new \Change\Application();
+		$this->assertEquals($app->getApplicationServices()->getConfiguration(), $app->getConfiguration());
+	}
+	
+	public function testGetWorkspace()
+	{
+		$app = new \Change\Application();
+		$this->assertEquals($app->getApplicationServices()->getWorkspace(), $app->getWorkspace());
+	}
+	
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testStartWithBootstrapClass()
+	{
+		if (!defined('PROJECT_HOME'))
+		{
+			define('PROJECT_HOME', dirname(dirname(realpath(__DIR__))));
+		}
+		require_once PROJECT_HOME . '/Change/Application.php';
+		$app = new \Change\Application();
+		$this->assertFalse(defined('TESTBOOTSTRAP_OK'));
+		require_once __DIR__ . '/TestAssets/TestBootstrap.php';
+		$app->start('\ChangeTests\Change\TestAssets\TestBootstrap');
+		$this->assertTrue(defined('TESTBOOTSTRAP_OK'));
+	}
 }

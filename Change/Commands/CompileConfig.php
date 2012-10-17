@@ -27,8 +27,9 @@ class CompileConfig extends \Change\Application\Console\ChangeCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$output->writeln('<info>Compiling configuration...</info>');
-		$generator = new \Change\Configuration\Generator($this->getChangeApplication());
-		$generator->compile();
+		$config = new \Change\Configuration\Configuration($this->getChangeApplication());
+		$config->clear();
+		$config->load();
 		$output->writeln('<info>Done !</info>');
 	}
 }
