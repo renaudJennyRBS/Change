@@ -38,8 +38,6 @@ abstract class AbstractDocument
 	 */
 	const PROPERTYTYPE_DOUBLE = 'Double';
 	
-	
-
 	const STATUS_DRAFT = 'DRAFT';
 	const STATUS_CORRECTION = 'CORRECTION';
 	const STATUS_ACTIVE = 'ACTIVE';
@@ -50,7 +48,14 @@ abstract class AbstractDocument
 	const STATUS_TRASH = 'TRASH';
 	const STATUS_WORKFLOW = 'WORKFLOW';
 	
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */	
+	protected $documentManager;
 	
+	/**
+	 * @var string
+	 */
 	private $m_persistentState;
 
 	/**
@@ -64,16 +69,9 @@ abstract class AbstractDocument
 	private $m_treeId;
 	
 	/**
-	 * @var integer
-	 */
-	private $m_providerId;
-	
-	/**
-	 * @var I18nInfo
+	 * @var \Change\Documents\I18nInfo
 	 */
 	private $m_i18nInfo;
-
-
 
 	/**
 	 * @var array
@@ -172,6 +170,22 @@ abstract class AbstractDocument
 				$this->modifiedPropertyValues = array();
 			}
 		}
+	}
+	
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 */
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	{
+		$this->documentManager = $documentManager;
+	}
+	
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->documentManager;
 	}
 	
 	/**
@@ -942,32 +956,8 @@ abstract class AbstractDocument
 	{
 	}
 
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	public function getDbProvider()
-	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-	}
-	
-	/**
-	 * TODO: remove
-	 * @deprecated
-	 */
-	public function getProvider()
-	{
-		return $this->getDbProvider();
-	}
-	
-	/**
-	 * set providerId
-	 * @param string $providerId
-	 */
-	function setProviderId($providerId)
-	{
-		$this->m_providerId = $providerId;
-	}
 
+		
 	protected function checkLoaded()
 	{
 		if ($this->m_persistentState === self::PERSISTENTSTATE_INITIALIZED)
@@ -1495,5 +1485,23 @@ abstract class AbstractDocument
 				$this->m_metas = array();
 			}
 		}
+	}
+	
+	//MIGRATION COMPATIBILITY
+	
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	public function getProvider()
+	{
+		return $this->getDbProvider();
 	}
 }

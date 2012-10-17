@@ -20,7 +20,6 @@ class DocumentI18nClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		array_shift($nsParts); //Remove regitered namespace part
 		$nsParts[] = $this->getClassName($model) . '.php';
 		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
 		\Change\Stdlib\File::write($path, $code);
@@ -36,7 +35,6 @@ class DocumentI18nClass
 	{
 		if (!$model->getCmpLocalized() && !$model->getLocalized())
 		{
-			die('jkfgjhfgsjgjdgh');
 			return null;
 		}
 		$this->compiler = $compiler;

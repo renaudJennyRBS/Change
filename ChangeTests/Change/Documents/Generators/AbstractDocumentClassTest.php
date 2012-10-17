@@ -16,8 +16,8 @@ class AbstractDocumentClassTest extends \PHPUnit_Framework_TestCase
 		$generator = new \Change\Documents\Generators\AbstractDocumentClass();
 		$code = $generator->getPHPCode($compiler, $model);
 		
-		//file_put_contents($definitionPath . '.doc.php', $code);
-		$expected = file_get_contents($definitionPath . '.doc.php');
+		//file_put_contents($definitionPath . '.doc.php.expected', $code);
+		$expected = file_get_contents($definitionPath . '.doc.php.expected');
 				
 		$this->assertEquals($expected, $code);
 	}

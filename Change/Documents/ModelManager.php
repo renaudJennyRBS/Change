@@ -5,13 +5,17 @@ namespace Change\Documents;
  * @name \Change\Documents\ModelManager
  * @method \Change\Documents\ModelManager getInstance()
  */
-class ModelManager extends \Change\AbstractSingleton
+class ModelManager
 {
+	/**
+	 * @var string[]
+	 */
 	protected $publicationStatuses = array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW');
 	
+	/**
+	 * @var \Change\Documents\AbstractModel[]
+	 */
 	protected $documentModels = array();
-	
-	protected $modelChildren;
 	
 	/**
 	 * List of Publication status:
@@ -21,16 +25,6 @@ class ModelManager extends \Change\AbstractSingleton
 	public function getPublicationStatuses()
 	{
 		return $this->publicationStatuses;
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @return string
-	 */
-	public function composeModelName($moduleName, $documentName)
-	{
-		return 'modules_' . $moduleName . '/' .$documentName;
 	}
 	
 	/**
@@ -60,67 +54,16 @@ class ModelManager extends \Change\AbstractSingleton
 	 */
 	protected function getModelClassName($modelName)
 	{
-		list ($package, $documentName) = explode('/', $modelName);
-		list ($packageType, $moduleName) = explode('_', $package);
-		if ($packageType != 'modules' || empty($moduleName) || empty($documentName))
+		$parts = explode('_', $modelName);
+		if (count($parts) === 3)
 		{
-			return null;
-		}
-		$className = $moduleName .'_persistentdocument_'.$documentName.'model';
-		if (class_exists($className))
-		{
-			return $className;
-		}
-		return null;
-	}
-	
-	/**
-	 * @return \Change\Documents\AbstractModel[]
-	 */
-	public function getModels()
-	{
-		$this->documentModels = array();
-		foreach ($this->getModelNamesByModules() as $modelNames)
-		{
-			foreach ($modelNames as $modelName)
+			list($vendor, $moduleName, $documentName) = $parts;
+			$className = 'Compilation\\' . ucfirst($vendor) . '\\' . ucfirst($moduleName) .'\\Documents\\' . ucfirst($documentName) . 'Model';
+			if (class_exists($className))
 			{
-				$model = $this->getModelByName($modelName);
+				return $className;
 			}
 		}
-		return $this->documentModels;
-	}
-	
-	/**
-	 * returns an array of the type : array('moduleA' => array('modules_moduleA/doc1', ...), ...);
-	 * @return array
-	 */
-	public function getModelNamesByModules()
-	{
-		//TODO Old class Usage
-		return unserialize(file_get_contents(\f_util_FileUtils::buildChangeBuildPath('documentmodels.php')));
-	}
-	
-	/**
-	 * If no child is available for model, key does not exists in returned array
-	 * @return array array('modules_moduleA/doc1' => array('modules_moduleA/doc2', ...), ...)
-	 */
-	public function getChildrenModelNames($modelName = null)
-	{
-		if ($this->modelChildren === null)
-		{
-			//TODO Old class Usage
-			$this->modelChildren = unserialize(file_get_contents(\f_util_FileUtils::buildChangeBuildPath('documentmodelschildren.php')));
-		}
-		
-		if ($modelName === null)
-		{
-			return $this->modelChildren;
-		}
-		
-		if (isset($this->modelChildren[$modelName]))
-		{
-			return $this->modelChildren[$modelName];
-		}	
-		return array();
+		return null;
 	}
 }

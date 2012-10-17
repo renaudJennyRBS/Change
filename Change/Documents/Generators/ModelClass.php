@@ -20,7 +20,6 @@ class ModelClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		array_shift($nsParts); //Remove regitered namespace part
 		$nsParts[] = $this->getClassName($model) . '.php';
 		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
 		\Change\Stdlib\File::write($path, $code);
@@ -116,7 +115,7 @@ class ModelClass
 	protected function getConstructor($model)
 	{
 		$code = '
-	protected function __construct()
+	public function __construct()
 	{
 		parent::__construct();'. PHP_EOL;
 		if ($model->getExtend() && !$model->getInject())
@@ -410,7 +409,7 @@ class ModelClass
 	 */
 	public function useCorrection()
 	{
-		return '. ($model->getUseCorrection() ? 'CHANGE_USE_CORRECTION' : 'false').';
+		return '. $this->escapePHPValue($model->getUseCorrection()).';
 	}'. PHP_EOL;
 		}
 		
@@ -422,7 +421,7 @@ class ModelClass
 	 */
 	public function hasWorkflow()
 	{
-		return CHANGE_USE_CORRECTION && CHANGE_USE_WORKFLOW;
+		return '. $this->escapePHPValue(($model->getWorkflowStartTask() == true)).';
 	}
 		
 	/**

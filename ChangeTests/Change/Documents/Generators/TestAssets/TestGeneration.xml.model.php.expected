@@ -3,7 +3,7 @@ namespace Compilation\Change\Testing\Documents;
 class GenerationModel extends \Change\Documents\AbstractModel
 {
 
-	protected function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 	}
@@ -190,7 +190,7 @@ class GenerationModel extends \Change\Documents\AbstractModel
 	 */
 	public function useCorrection()
 	{
-		return CHANGE_USE_CORRECTION;
+		return true;
 	}
 
 	/**
@@ -198,7 +198,7 @@ class GenerationModel extends \Change\Documents\AbstractModel
 	 */
 	public function hasWorkflow()
 	{
-		return CHANGE_USE_CORRECTION && CHANGE_USE_WORKFLOW;
+		return true;
 	}
 		
 	/**
