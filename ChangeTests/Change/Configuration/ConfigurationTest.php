@@ -214,7 +214,7 @@ s	 */
 		$result = $config->addPersistentEntry('mypath', 'myentry', 'value');
 		$this->assertEmpty($result);
 		$config->clear();
-		$newConfig = new \Change\Configuration\Configuration($application);
+		$newConfig = new  \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
 	}
 }
