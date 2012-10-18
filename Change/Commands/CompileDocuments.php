@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CompileDocuments extends \Change\Application\Console\AbstractCommand
+class CompileDocuments extends \Change\Application\Console\ChangeCommand
 {	
 	/**
 	 */
@@ -25,20 +25,19 @@ class CompileDocuments extends \Change\Application\Console\AbstractCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		/* @var $application \Change\Application\ConsoleApplication */
-		$application = $this->getApplication();
 		$output->writeln('<info>Compiling Documents...</info>');
 		$compiler = new \Change\Documents\Generators\Compiler();
 		$paths = array();
-		if (is_dir(implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'Plugins', 'Modules'))))
+		$workspace = $this->getChangeApplication()->getWorkspace();
+		if (is_dir($workspace->pluginsModulesPath()))
 		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'Plugins', 'Modules', '*', '*', 'Documents', 'Assets', '*.xml'));
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
 			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
 		}
 		
-		if (is_dir(implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'App', 'Modules'))))
+		if (is_dir($workspace->projectModulesPath()))
 		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'App', 'Modules', '*', '*', 'Documents', 'Assets', '*.xml'));
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
 			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
 		}
 		
