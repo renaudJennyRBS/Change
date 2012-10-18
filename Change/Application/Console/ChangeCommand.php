@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractCommand extends Command
+class ChangeCommand extends Command
 {
 	/**
 	 * @var \Change\Application
@@ -16,6 +16,9 @@ abstract class AbstractCommand extends Command
 	protected $changeApplication;
 	
 	/**
+	 * Get the Change Application instance managed by the console tool
+	 * 
+	 * @api
 	 * @throws \RuntimeException
 	 * @return \Change\Application
 	 */
@@ -23,7 +26,7 @@ abstract class AbstractCommand extends Command
 	{
 		if (!($this->changeApplication instanceof \Change\Application))
 		{
-			throw new \RuntimeException('No Change Application Associated with this command');
+			throw new \RuntimeException('No Change application Associated with this command');
 		}
 		return $this->changeApplication;
 	}
@@ -37,6 +40,10 @@ abstract class AbstractCommand extends Command
 	}
 	
 	/**
+	 * Override to allow command only in developer mode 
+	 * (DEVELOPMENT_MODE=true or forced with --dev)
+	 * 
+	 * @api
 	 * @return boolean
 	 */
 	public function isDevCommand()
@@ -45,6 +52,10 @@ abstract class AbstractCommand extends Command
 	}
 	
 	/**
+	 * Override this method for complex argument validation.
+	 * You always call the parent implementation.
+	 * 
+	 * @api 
 	 * @param InputInterface $input        	
 	 * @param OutputInterface $output        	
 	 * @throws Exception
@@ -52,6 +63,7 @@ abstract class AbstractCommand extends Command
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
+		parent::initialize($input, $output);
 		$devMode = $input->getOption('dev') || $this->getChangeApplication()->inDevelopmentMode();
 		if ($this->isDevCommand() && !$devMode)
 		{

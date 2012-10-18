@@ -1,20 +1,17 @@
 <?php
 namespace Change\Configuration;
 
+use \Zend\Stdlib\ErrorHandler;
+
 /**
  * @name \Change\Configuration\Configuration
  */
 class Configuration
-{
+{	
 	/**
 	 * @var \Change\Application
 	 */
 	protected $application;
-	
-	/**
-	 * @var string
-	 */
-	protected $compiledFile;
 
 	/**
 	 * Build the configuration for the given Change Application 
@@ -23,7 +20,6 @@ class Configuration
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;
-		$this->compiledFile = $application->getCompiledConfigurationPath();
 		$this->load();
 	}
 	
@@ -44,25 +40,40 @@ class Configuration
 	 */
 	public function isCompiled()
 	{
-		return is_file($this->compiledFile);
+		return file_exists($this->getCompiledConfigPath()); 
 	}
 	
+	/**
+	 * @return string
+	 */
+	protected function getCompiledConfigPath()
+	{
+		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'project.php');
+	}
+	
+	/**
+	 * @return string
+	 */
+	protected function getCompiledDefinesPath()
+	{
+		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'dev_defines.php');
+	}
+		
 	/**
 	 * Load the configuration, using the php file auto compiled in Compilation/Config. 
 	 * If no compiled config, load the bootstrap config.
 	 */
-	protected function load()
+	public function load()
 	{
 		// If specific environnement add a dot to complet in path file
 		$this->config = array();
 		$this->defines = array();
 		if (!$this->isCompiled())
 		{
-			$generator = new \Change\Configuration\Generator($this->application);
-			$generator->compile();
+			$this->getGenerator()->compile();
 		}
 		$configuration = $this;
-		include $this->compiledFile;
+		include $this->getCompiledConfigPath();
 		$this->applyDefines();
 	}
 	
@@ -149,16 +160,20 @@ class Configuration
 	}
 	
 	/**
+	 * Add an entry in the first configuration file returned by \Change\Application::getProjectConfigurationPaths.
+	 * 
+	 * @api
+	 * 
 	 * @param string $path
 	 * @param string $entryName
 	 * @param string $value
-	 * @return string | false The old value or false if the operation failed.
+	 * @return string The old value
 	 */
 	public function addPersistentEntry($path, $entryName, $value)
 	{
 		if (empty($entryName) || ($value !== null && !is_string($value)))
 		{
-			return false;
+			throw new \InvalidArgumentException("Value should be a string and entry name non empty (value = $value, entryName = $entryName)");
 		}
 		$pathArray = array('config');
 		foreach (explode('/', $path) as $index => $name)
@@ -170,12 +185,11 @@ class Configuration
 		}
 		if (count($pathArray) < 2)
 		{
-			return false;
+			throw new \InvalidArgumentException('Path must be at least 2-level deep');
 		}
 		
 		$this->addVolatileEntry($path . '/' . $entryName, $value);
-		$generator = new \Change\Configuration\Generator();
-		return $generator->addPersistentEntry($pathArray, $entryName, $value);
+		return $this->getGenerator()->addPersistentEntry($pathArray, $entryName, $value);
 	}
 	
 	/**
@@ -229,5 +243,30 @@ class Configuration
 				define($name, $value);
 			}
 		}
+	}
+	
+	/**
+	 * Clears the config
+	 * @api
+	 */
+	public function clear()
+	{
+		if (file_exists($this->getCompiledConfigPath()))
+		{
+			ErrorHandler::start();
+			unlink($this->getCompiledConfigPath());
+			ErrorHandler::stop(true);
+		}
+		$this->config = array();
+		$this->defines = array();
+	}
+	
+	protected function getGenerator()
+	{
+		$configFiles = $this->application->getApplicationServices()->getWorkspace()->getProjectConfigurationPaths();
+		$bootstrapConfig = $this->application->getBootstrapConfiguration();
+		$compiledConfigPath = $this->getCompiledConfigPath();
+		$compiledDefinesPath = $this->getCompiledDefinesPath();
+		return new \Change\Configuration\Generator($bootstrapConfig, $configFiles, $compiledConfigPath, $compiledConfigPath);
 	}
 }

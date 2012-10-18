@@ -2,6 +2,8 @@
 
 namespace Change;
 
+use Zend\Json\Json;
+
 /**
  * @name \Change\Application
  * @method \Change\Application getInstance()
@@ -115,35 +117,15 @@ class Application
 	}
 	
 	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	public function getConfiguration()
-	{
-		return $this->getApplicationServices()->getConfiguration();
-	}
-	
-	/**
-	 *
-	 * @param \Change\Configuration\Configuration $configuration        	
-	 */
-	public function setConfiguration($configuration)
-	{
-		$this->configuration = $configuration;
-	}
-	
-	/**
 	 *
 	 * @return string
 	 */
 	public function getProfile()
 	{
+		$profile = 'default';
 		if (file_exists(PROJECT_HOME . '/profile'))
 		{
 			$profile = trim(file_get_contents(PROJECT_HOME . '/profile'));
-		}
-		else
-		{
-			$profile = 'default';
 		}
 		return $profile;
 	}
@@ -205,14 +187,22 @@ class Application
 				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
 		$dl->addDefinition($cl);		
 		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Workspace');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+		$dl->addDefinition($cl);
+		
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
 		
+		$im->setParameters('Change\Workspace', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
 		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
 		
+
 		return $applicationServices;
 	}
 	
@@ -234,6 +224,27 @@ class Application
 			$this->setDocumentServices(new \Change\Documents\DocumentServices($this->getApplicationServices()));
 		}
 		return $this->documentServices;
+	}
+	/**
+	 * Shortcut for application services workspace
+	 * 
+	 * @api
+	 * @return \Change\Workspace
+	 */
+	public function getWorkspace()
+	{
+		return $this->getApplicationServices()->getWorkspace();
+	}
+	
+	/**
+	 * Shortcut for application services configuration
+	 *
+	 * @api
+	 * @return \Change\Configuration\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->getApplicationServices()->getConfiguration();
 	}
 	
 	/**
@@ -280,37 +291,20 @@ class Application
 	}
 	
 	/**
-	 * Path where the compiled configuration should be stored
-	 *
-	 * @return string
-	 */
-	public function getCompiledConfigurationPath()
-	{
-		return \Change\Stdlib\Path::compilationPath('Config', 'project.php');
-	}
-	
-	/**
-	 * Paths of the (potential) XML configuration files
-	 *
-	 * @return string[]
-	 */
-	public function getProjectConfigurationPaths()
-	{
-		return array(\Change\Stdlib\Path::appPath('Config', 'project.xml'), \Change\Stdlib\Path::appPath('Config', 'project.' .$this->getProfile() . '.xml'));
-	}
-	
-	/**
 	 * This returns the parsed content of the change.json default configuration file
 	 *
 	 * @return array
 	 */
-	public function getBootstrapConfig()
+	public function getBootstrapConfiguration()
 	{
-		if (!file_exists(PROJECT_HOME . '/change.json'))
+		$bootstrapConfigPath = $this->getApplicationServices()->getWorkspace()->getBootstrapConfigurationPath();
+		// @codeCoverageIgnoreStart
+		if (!file_exists($bootstrapConfigPath))
 		{
 			throw new \RuntimeException('No change.json file at the root of your project');
 		}
-		return json_decode(file_get_contents(PROJECT_HOME . '/change.json'), true);
+		// @codeCoverageIgnoreEnd
+		return Json::decode(file_get_contents($bootstrapConfigPath), Json::TYPE_ARRAY);
 	}
 	
 	/**

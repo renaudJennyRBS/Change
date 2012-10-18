@@ -8,13 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CompileConfig extends \Change\Application\Console\AbstractCommand
+class CompileConfig extends \Change\Application\Console\ChangeCommand
 {	
 	/**
 	 */
 	protected function configure()
 	{
-		$this->setDescription('Compile XML configuration files');
+		$this->setDescription('Compile configuration files')
+		->setHelp('This commands compiles the application\'s configuration files into a PHP file.' );
 	}
 	
 	/**
@@ -25,11 +26,10 @@ class CompileConfig extends \Change\Application\Console\AbstractCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		/* @var $application \Change\Application\ConsoleApplication */
-		$application = $this->getApplication();
 		$output->writeln('<info>Compiling configuration...</info>');
-		$generator = new \Change\Configuration\Generator($this->getChangeApplication());
-		$generator->compile();
+		$config = new \Change\Configuration\Configuration($this->getChangeApplication());
+		$config->clear();
+		$config->load();
 		$output->writeln('<info>Done !</info>');
 	}
 }

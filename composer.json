@@ -15,7 +15,8 @@
 	{
 		"rbschange/travisconfig":"dev-master",
 		"symfony/console": ">=v2.1.0",
-		"symfony/finder": ">=v2.1.0"
+		"symfony/finder": ">=v2.1.0",
+		"symfony/process": ">=v2.1.0"
 	},
 	"require": 
 	{

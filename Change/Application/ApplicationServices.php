@@ -35,4 +35,12 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Configuration\Configuration');
 	}
+	
+	/**
+	 * @return \Change\Workspace
+	 */
+	public function getWorkspace()
+	{
+		return $this->get('Change\Workspace');
+	}
 }
