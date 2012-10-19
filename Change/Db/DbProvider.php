@@ -308,19 +308,21 @@ abstract class DbProvider
 	}
 	
 	/**
+	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
 	 * @param integer $documentId
 	 * @return boolean
 	 */
-	protected function isInCache($documentId)
+	public function isInCache($documentId)
 	{
 		return isset($this->m_documentInstances[intval($documentId)]);
 	}
 	
 	/**
+	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
 	 * @param integer $documentId
 	 * @return \Change\Documents\AbstractDocument
 	 */
-	protected function getFromCache($documentId)
+	public function getFromCache($documentId)
 	{
 		return $this->m_documentInstances[intval($documentId)];
 	}
@@ -397,6 +399,7 @@ abstract class DbProvider
 	protected abstract function rollBackInternal();	
 	
 	/**
+	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
 	 * Return a instance of the document[@id = $id and @modelName = $modelName]
 	 *
 	 * @param integer $id
@@ -405,7 +408,7 @@ abstract class DbProvider
 	 * @param array $I18nInfoArray
 	 * @return \Change\Documents\AbstractDocument
 	 */
-	protected function getDocumentInstanceWithModelName($id, $modelName, $treeId, $I18nInfoArray)
+	public function getDocumentInstanceWithModelName($id, $modelName, $treeId, $I18nInfoArray)
 	{
 		if (!$this->isInCache($id))
 		{
@@ -583,273 +586,6 @@ abstract class DbProvider
 	 * @return \Change\Documents\AbstractDocument the result of mutation (destDocument)
 	 */
 	public abstract function mutate($document, $destDocument);
-
-	/**
-	 * @param string $documentModelName
-	 * @return f_persistentdocument_criteria_Query TODO Old class Usage
-	 */
-	public function createQuery($documentModelName = null, $includeChildren = true)
-	{
-		$query = new \f_persistentdocument_criteria_QueryImpl();
-		if (!is_null($documentModelName))
-		{
-			$query->setDocumentModelName($documentModelName, $includeChildren);
-		}
-		return $query;
-	}
-	
-	/**
-	 * @param \f_persistentdocument_criteria_Query $query TODO Old class Usage
-	 * @return \Change\Documents\AbstractDocument[]
-	 */
-	public abstract function find($query);
-	
-	/**
-	 * If the query has some projection, retrieve one of them into a dedicated array
-	 * @param \f_persistentdocument_criteria_Query $query TODO Old class Usage
-	 * @param string $columnName the name of the projection
-	 * @return mixed[]
-	*/
-	public function findColumn($query, $columnName)
-	{
-		if (!$query->hasProjectionDeep())
-		{
-			throw new \Exception("Could not find column if there is no projection");
-		}
-		$rows = $this->find($query);
-		if (count($rows) == 0)
-		{
-			return $rows;
-		}
-		$result = array();
-		if (!array_key_exists($columnName, $rows[0]))
-		{
-			throw new \Exception("Column $columnName not found in query");
-		}
-		foreach ($rows as $row)
-		{
-			$result[] = $row[$columnName];
-		}
-		return $result;
-	}
-	
-	/**
-	 * @param f_persistentdocument_criteria_QueryIntersection $intersection TODO Old class Usage
-	 * @return \Change\Documents\AbstractDocument[]
-	 */
-	public function findIntersection($intersection)
-	{
-		$ids = $this->findIntersectionIds($intersection);
-		if (count($ids) == 0)
-		{
-			return array();
-		}
-		//TODO Old class Usage
-		return $this->find($this->createQuery($intersection->getDocumentModel()->getName())->add(\Restrictions::in("id", $ids)));
-	}
-	
-	/**
-	 * @param f_persistentdocument_criteria_QueryIntersection $intersection TODO Old class Usage
-	 * @return integer[]
-	 */
-	public function findIntersectionIds($intersection)
-	{
-		// TODO: merge queries that are "mergeable"
-		// TODO: here we may have queries on different compatible models. Restrict queries to
-		//		 the most specific model to reduce the number of returned ids to intersect?
-		$idRows = null;
-		foreach ($intersection->getQueries() as $groupedQuery)
-		{
-			if (method_exists($groupedQuery, 'getIds'))
-			{
-				$ids = $groupedQuery->getIds();
-				$result = array();
-				foreach ($ids as $id)
-				{
-					$result[] = array("id" => $id);
-				}
-			}
-			else
-			{
-				$this->addIdProjectionIfNeeded($groupedQuery);
-				$result = $groupedQuery->find();
-			}
-			if ($idRows === null)
-			{
-				$idRows = $result;
-			}
-			else
-			{
-				$idRows = array_uintersect($idRows, $result, array($this, "compareRows"));
-			}
-		}
-	
-		return array_map(array($this, "getIdFromRow"), $idRows);
-	}
-	
-	private function compareRows($row1, $row2)
-	{
-		return (int)$row1["id"] - (int)$row2["id"];
-	}
-	
-	private function getIdFromRow($row)
-	{
-		return $row["id"];
-	}
-	
-	protected function addIdProjectionIfNeeded($groupedQuery)
-	{
-		$hasIdProjection = false;
-		$hasThisProjection = false;
-		$newProjections = array();
-		if ($groupedQuery->hasProjection())
-		{
-			foreach ($groupedQuery->getProjection() as $projection)
-			{
-				//TODO Old class Usage
-				if ($projection instanceof \f_persistentdocument_criteria_ThisProjection)
-				{
-					// FIXME: remove other documentProjections ... ?
-					$hasThisProjection = true;
-					continue;
-				}
-				//TODO Old class Usage
-				if ($projection instanceof \f_persistentdocument_criteria_PropertyProjection)
-				{
-					if ($projection->getAs() == "id")
-					{
-						$hasIdProjection = true;
-						// continue; // FIXME .. ?
-					}
-				}
-				$newProjections[] = $projection;
-			}
-		}
-		elseif ($groupedQuery->hasHavingCriterion() && !$groupedQuery->hasProjection())
-		{
-			// implicit this projection
-			$hasThisProjection = true;
-		}
-	
-		if (!$hasIdProjection)
-		{
-			if ($hasThisProjection || $groupedQuery->hasHavingCriterion())
-			{
-				//TODO Old class Usage
-				$newProjections[] = \Projections::groupProperty("id");
-			}
-			else
-			{
-				//TODO Old class Usage
-				$newProjections[] = \Projections::property("id");
-			}
-		}
-		$groupedQuery->setProjectionArray($newProjections);
-	}
-	
-	/**
-	 * @param f_persistentdocument_criteria_QueryUnion $union TODO Old class Usage
-	 * @return integer[]
-	 */
-	public function findUnionIds($union)
-	{
-		// TODO: use UNION SQL operator
-		$idRows = array();
-		foreach ($union->getQueries() as $groupedQuery)
-		{
-			if (method_exists($groupedQuery, 'getIds'))
-			{
-				$ids = $groupedQuery->getIds();
-				$newIdRows = array();
-				foreach ($ids as $id)
-				{
-					$newIdRows[] = array("id" => $id);
-				}
-			}
-			else
-			{
-				$this->addIdProjectionIfNeeded($groupedQuery);
-				$newIdRows = $groupedQuery->find();
-			}
-			$idRows = array_merge($idRows, $newIdRows);
-		}
-	
-		return array_unique(array_map(array($this, "getIdFromRow"), $idRows));
-	}
-	
-	/**
-	 * @param f_persistentdocument_criteria_QueryIntersection $union TODO Old class Usage
-	 * @return \Change\Documents\AbstractDocument[]
-	 */
-	public function findUnion($union)
-	{
-		$ids = $this->findUnionIds($union);
-		if (count($ids) == 0)
-		{
-			return array();
-		}
-		//TODO Old class Usage
-		return $this->find($this->createQuery($union->getDocumentModel()->getName())->add(\Restrictions::in("id", $ids)));
-	}
-	
-	/**
-	 * Transform result
-	 *
-	 * @param array<array<String, mixed>> $rows
-	 * @param f_persistentdocument_criteria_ExecutableQuery $query TODO Old class Usage
-	 * @return array<mixed>
-	 */
-	protected function fetchProjection($rows, $query)
-	{
-		$names = $query->getDocumentProjections();
-		$namesCount = count($names);
-		if ($namesCount > 0)
-		{
-			$result = array();
-			$i18nFieldNames = $this->getI18nFieldNames();
-			foreach ($rows as $row)
-			{
-				foreach ($names as $name)
-				{
-					$i18NInfos = array();
-					foreach ($i18nFieldNames as $i18nFieldName)
-					{
-						$i18NInfos[$i18nFieldName] = $row[$name. '_' . $i18nFieldName];
-					}
-					$row[$name] = $this->getDocumentInstanceWithModelName(intval($row[$name.'_id']), $row[$name.'_model'], $row[$name.'_treeid'], $i18NInfos);
-				}
-				$result[] = $row;
-			}
-			return $result;
-		}
-		return $rows;
-	}
-	
-	/**
-	 * Helper for '$this->find($query)[0]'
-	 *
-	 * @param f_persistentdocument_criteria_Query $query
-	 * @return \Change\Documents\AbstractDocument|null if no document was returned by find($query)
-	 */
-	public function findUnique($query)
-	{
-		if ($query->getMaxResults() != 1)
-		{
-			$query->setMaxResults(2);
-		}
-	
-		$docs = $this->find($query);
-		$nbDocs = count($docs);
-		if ($nbDocs > 0)
-		{
-			if ($nbDocs > 1)
-			{
-				$this->logging->warn(get_class($this).'->findUnique() called while find() returned more than 1 results');
-			}
-			return $docs[0];
-		}
-		return null;
-	}
 	
 	//
 	// Tree Methods à usage du treeService

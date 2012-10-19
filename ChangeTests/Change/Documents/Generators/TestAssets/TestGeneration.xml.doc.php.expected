@@ -1039,7 +1039,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	 */
 	public function getAuthoridInstance()
 	{
-		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getAuthorid());
+		return \DocumentHelper::getDocumentInstanceIfExists($this->getAuthorid()); //TODO Old class Usage
 	}
 			
 	/**
@@ -2194,7 +2194,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	 */
 	public function getDocumentid1Instance()
 	{
-		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid1());
+		return \DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid1()); //TODO Old class Usage
 	}
 			
 	/**
@@ -3323,7 +3323,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	 */
 	public function getDocumentid2Instance()
 	{
-		return \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid2());
+		return \DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid2()); //TODO Old class Usage
 	}
 			
 	/**

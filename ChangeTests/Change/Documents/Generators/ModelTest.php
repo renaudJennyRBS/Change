@@ -6,6 +6,14 @@ namespace ChangeTests\Documents\Generators;
  */
 class ModelTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return \Change\Application::getInstance();
+	}
+	
 	public function testConstruct()
 	{
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
@@ -57,7 +65,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 	
 	public function testValidate()
 	{
-		$cmp = new \Change\Documents\Generators\Compiler();
+		$cmp = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test');
 		
 		$this->assertEquals('change_testing_test', $model->getFullName());

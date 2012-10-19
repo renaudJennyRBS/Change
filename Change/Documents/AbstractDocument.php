@@ -1496,12 +1496,4 @@ abstract class AbstractDocument
 	{
 		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
 	}
-	
-	/**
-	 * @deprecated
-	 */
-	public function getProvider()
-	{
-		return $this->getDbProvider();
-	}
 }

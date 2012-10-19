@@ -278,7 +278,7 @@ class I18nManager
 	{
 		if ($this->hasI18nSynchro())
 		{
-			$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
+			$d = \DocumentHelper::getDocumentInstanceIfExists($documentId); //TODO Old class Usage
 			if ($d && $d->getPersistentModel()->isLocalized())
 			{
 				$this->dbProvider->setI18nSynchroStatus($d->getId(), $d->getLang(), self::SYNCHRO_MODIFIED, null);
@@ -294,7 +294,7 @@ class I18nManager
 	{
 		if ($this->hasI18nSynchro())
 		{
-			$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
+			$d = \DocumentHelper::getDocumentInstanceIfExists($documentId); //TODO Old class Usage
 			if ($d && $d->getPersistentModel()->isLocalized())
 			{
 				foreach ($d->getI18nInfo()->getLangs() as $lang)
@@ -371,7 +371,7 @@ class I18nManager
 			//No synchro configured
 			return false;
 		}
-		$d = \Change\Documents\DocumentHelper::getDocumentInstanceIfExists($documentId);
+		$d = \DocumentHelper::getDocumentInstanceIfExists($documentId); //TODO Old class Usage
 		if ($d === null)
 		{
 			//Invalid document

@@ -2,9 +2,9 @@
 namespace ChangeTests\Documents\Generators;
 
 /**
- * @name \ChangeTests\Documents\Generators\AbstractDocumentServicesClassTest
+ * @name \ChangeTests\Documents\Generators\SchemaClassTest
  */
-class AbstractDocumentServicesClassTest extends \PHPUnit_Framework_TestCase
+class SchemaClassTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @return \Change\Application
@@ -25,11 +25,11 @@ class AbstractDocumentServicesClassTest extends \PHPUnit_Framework_TestCase
 		$compiler->buildDependencies();
 		
 		
-		$generator = new \Change\Documents\Generators\AbstractDocumentServicesClass();
-		$code = $generator->getPHPCode($compiler, $models);
+		$generator = new \Change\Documents\Generators\SchemaClass();
+		$code = $generator->getPHPCode($compiler, $this->getApplication()->getApplicationServices()->getDbProvider()->getSchemaManager());
 		
-		//file_put_contents(__DIR__ . '/TestAssets/AbstractDocumentServicesTest.php.expected', $code);
-		$expected = file_get_contents(__DIR__ . '/TestAssets/AbstractDocumentServicesTest.php.expected');
+		//file_put_contents(__DIR__ . '/TestAssets/SchemaClassTest.php.expected', $code);
+		$expected = file_get_contents(__DIR__ . '/TestAssets/SchemaClassTest.php.expected');
 				
 		$this->assertEquals($expected, $code);
 	}

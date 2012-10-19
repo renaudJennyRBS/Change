@@ -13,6 +13,13 @@ class ModelManager
 	protected $publicationStatuses = array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW');
 	
 	/**
+	 * @var string[]
+	 */	
+	protected $systemPropertyNames = array('id', 'model', 'author', 'authorid',
+		'creationdate','modificationdate','publicationstatus', 'correctionofid', 'correctionid',
+		'lang','metastring','modelversion','documentversion', 'si18n');
+	
+	/**
 	 * @var \Change\Documents\AbstractModel[]
 	 */
 	protected $documentModels = array();
@@ -28,6 +35,14 @@ class ModelManager
 	}
 	
 	/**
+	 * @return string[]
+	 */
+	public function getSystemPropertyNames()
+	{
+		return $this->systemPropertyNames;
+	}
+	
+	/**
 	 * @param string $modelName
 	 * @return \Change\Documents\AbstractModel|null
 	 */
@@ -38,7 +53,9 @@ class ModelManager
 			$className = $this->getModelClassName($modelName);
 			if ($className)
 			{
-				$this->documentModels[$modelName] = new $className();
+				/* @var $model \Change\Documents\AbstractModel */
+				$model = new $className();
+				$this->documentModels[$modelName] = $model;
 			}
 			else
 			{

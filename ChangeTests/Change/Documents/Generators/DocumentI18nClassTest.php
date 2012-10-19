@@ -6,9 +6,17 @@ namespace ChangeTests\Documents\Generators;
  */
 class DocumentI18nClassTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return \Change\Application::getInstance();
+	}
+	
 	public function testAllType()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$definitionPath = __DIR__ . '/TestAssets/TestGeneration.xml';
 		$model = $compiler->loadDocument('change', 'testing', 'generation', $definitionPath);
 		$compiler->buildDependencies();

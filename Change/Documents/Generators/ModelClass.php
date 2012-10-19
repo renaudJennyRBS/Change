@@ -14,15 +14,16 @@ class ModelClass
 	/**
 	 * @param \Change\Documents\Generators\Compiler $compiler
 	 * @param \Change\Documents\Generators\Model $model
+	 * @param string $compilationPath
 	 * @return boolean
 	 */	
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
+	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
 		$nsParts[] = $this->getClassName($model) . '.php';
-		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
-		\Change\Stdlib\File::write($path, $code);
+		array_unshift($nsParts, $compilationPath);
+		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
 	}
 		

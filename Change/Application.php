@@ -221,6 +221,10 @@ class Application
 	{
 		if (!$this->documentServices)
 		{
+			if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
+			{
+				throw new \RuntimeException('Documents are not compiled.');
+			}
 			$this->setDocumentServices(new \Change\Documents\DocumentServices($this->getApplicationServices()));
 		}
 		return $this->documentServices;

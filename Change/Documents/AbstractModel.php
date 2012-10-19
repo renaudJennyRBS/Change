@@ -225,15 +225,14 @@ abstract class AbstractModel
 		}
 		return $result;
 	}
-	
-	
+		
 	/**
 	 * @return array<string, \Change\Documents\Property>
 	 */	
 	public function getVisiblePropertiesInfos()
 	{
-		return array_diff_key($this->getEditablePropertiesInfos(), 
-				array_flip(\Change\Documents\DocumentHelper::getSystemPropertyNames()));
+		$sysProps = \Change\Application::getInstance()->getDocumentServices()->getModelManager()->getSystemPropertyNames();
+		return array_diff_key($this->getEditablePropertiesInfos(), array_flip($sysProps));
 	}
 
 	/**

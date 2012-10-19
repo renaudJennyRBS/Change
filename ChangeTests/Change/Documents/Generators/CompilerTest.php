@@ -6,9 +6,17 @@ namespace ChangeTests\Documents;
  */
 class CompilerTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return \Change\Application::getInstance();
+	}
+	
 	public function testConstruct()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		return $compiler;
 	}
 
@@ -20,12 +28,11 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 		$defaultModel = $compiler->getDefaultModel();
 		$defModel = $compiler->getDefaultModel();
 		$this->assertCount(13, $defModel->getProperties());
-		
 	}
 	
 	public function testLoadDocument()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
 		$model = $compiler->loadDocument('Change', 'test', 'test1', $definitionPath);
 		$this->assertEquals('change_test_test1', $model->getFullName());
@@ -35,7 +42,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	
 	public function testCheckExtends()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$m1 = $compiler->loadDocument('change', 'testing', 'inject1',  __DIR__ . '/TestAssets/TestValidateInject1.xml');
 		$m2 = $compiler->loadDocument('change', 'testing', 'inject2',  __DIR__ . '/TestAssets/TestValidateInject2.xml');
 		
@@ -78,7 +85,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	
 	public function testBuildDependenciesInjection()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$m1 = $compiler->loadDocument('change', 'testing', 'inject1',  __DIR__ . '/TestAssets/TestValidateInject1.xml');
 		$m2 = $compiler->loadDocument('change', 'testing', 'inject2',  __DIR__ . '/TestAssets/TestValidateInject2.xml');
 		$m3 = $compiler->loadDocument('change', 'testing', 'inject3',  __DIR__ . '/TestAssets/TestValidateInject3.xml');
@@ -107,7 +114,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	
 	public function testBuildDependenciesRelation()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$m1 = $compiler->loadDocument('change', 'testing', 'rel1',  __DIR__ . '/TestAssets/TestRel1.xml');
 		$m2 = $compiler->loadDocument('change', 'testing', 'rel2',  __DIR__ . '/TestAssets/TestRel2.xml');
 		$this->assertCount(1, $m1->getProperties());

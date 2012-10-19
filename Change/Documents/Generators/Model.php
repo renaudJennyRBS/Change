@@ -725,6 +725,11 @@ class Model
 		$tmpName = $extendModel->getExtend();
 		$extendModel->extend = $this->getFullName();
 		$this->extend = $tmpName;
+		if ($this->extend === null && $extendModel->getLocalized())
+		{
+			$this->setLocalized(true);
+			$this->makeLocalized(array(), true);
+		}
 	}
 	
 	/**

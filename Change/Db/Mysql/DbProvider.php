@@ -2,7 +2,7 @@
 namespace Change\Db\Mysql;
 
 /**
- * @name \Change\Db\Mysql\Provider
+ * @name \Change\Db\Mysql\DbProvider
  * @method \Change\Db\Mysql\Provider getInstance()
  */
 class DbProvider extends \Change\Db\DbProvider
@@ -122,7 +122,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @param array<String, String> $connectionInfos
 	 * @return \PDO
 	 */
-	protected function getConnection($connectionInfos)
+	public function getConnection($connectionInfos)
 	{
 		$protocol = 'mysql';
 		$dsnOptions = array();
@@ -151,9 +151,11 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 	
 		$dsn = $protocol.':'.join(';', $dsnOptions);
-
+		
 		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'") ;
 		$pdo = new \PDO($dsn, $username, $password, $options);	
+		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		
 		return $pdo;
 	}
 	
@@ -217,7 +219,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		if ($this->schemaManager === null)
 		{
-			$this->schemaManager = new SchemaManager($this->connectionInfos);
+			$this->schemaManager = new SchemaManager($this);
 		}
 		return $this->schemaManager;
 	}	
@@ -259,7 +261,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @param \Change\Db\StatmentParameter[] $parameters
 	 * @return \Change\Db\Mysql\Statment
 	 */
-	protected function prepareStatement($sql, $parameters = null)
+	public function prepareStatement($sql, $parameters = null)
 	{
 		$this->setCurrentStatment(null);
 		$stmt = new Statment($this, $sql, $parameters);
@@ -435,12 +437,13 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 	
 	/**
+	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
 	 * Initialize un document avec une ligne de resultat de la base de donnée
 	 *
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param array $dbresult contient statement->fetch(\PDO::FETCH_ASSOC)
 	 */
-	protected function initDocumentFromDb($persistentDocument, $dbresult)
+	public function initDocumentFromDb($persistentDocument, $dbresult)
 	{
 		$documentModel = $persistentDocument->getPersistentModel();
 		$dbresult['id'] = intval($persistentDocument->getId());
@@ -1268,70 +1271,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 	}	
 
-	/**
-	 * @param f_persistentdocument_criteria_Query $query
-	 * @return \Change\Documents\AbstractDocument[]
-	 */
-	public function find($query)
-	{
-		if ($query->hasHavingCriterion() && !$query->hasProjection())
-		{
-			// implicit this projection
-			//TODO Old class Usage
-			$query->setProjection(\Projections::this());
-		}
-		$queryBuilder = new QueryBuilder($query, $this->getSqlMapping());
-		$params = $queryBuilder->getParams();
-		$queryStr = $queryBuilder->getQueryString();
-		
-		$statement = $this->prepareStatement($queryStr);
-		// N.B.: we must check if errorCode is a real error code since execute()
-		// can return false for correct executions !
-		if ($statement->execute($params) === false && $statement->getErrorMessage() !== null)
-		{
-			throw new \Exception("Error while executing :[$queryStr]" . " ". var_export($params, true) .':' . $statement->getErrorMessage());
-		}
-		$rows = $statement->fetchAll(\PDO::FETCH_ASSOC);
-	
-		if (!$query->hasProjectionDeep())
-		{
-			$docs = array();
-			$fetchMode = $query->getFetchMode();
-			if ($fetchMode === \QueryConstants::FETCH_MODE_LAZY) //TODO Old class Usage
-			{
-				foreach ($rows as $row)
-				{
-					$docs[] = $this->getDocumentInstanceWithModelName(intval($row['document_id']), $row['document_model'], $row['treeid'], $row);
-				}
-			}
-			elseif ($fetchMode === \QueryConstants::FETCH_MODE_DIRECT) //TODO Old class Usage
-			{
-				$isLocalized = $query->getDocumentModel()->isLocalized();
-				foreach ($rows as $row)
-				{
-					$document = null;
-					$documentId = intval($row['document_id']);
-					if (!$this->isInCache($documentId))
-					{
-						$document = $this->getDocumentInstanceWithModelName($documentId, $row['document_model'], $row['treeid'], $row);
-						$this->initDocumentFromDb($document, $row);
-					}
-					else
-					{
-						$document = $this->getFromCache($documentId);
-					}
-	
-					$docs[] = $document;
-				}
-			}
-	
-			return $docs;
-		}
-		else
-		{
-			return $this->fetchProjection($rows, $query);
-		}
-	}	
+
 	
 	//
 	// Tree Methods à usage du treeService

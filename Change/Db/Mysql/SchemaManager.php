@@ -12,9 +12,9 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	protected $logging;
 	
 	/**
-	 * @var array
+	 * @var \Change\Db\Mysql\DbProvider
 	 */
-	protected $connectionInfos;
+	protected $dbProvider;
 	
 	/**
 	 * @var \PDO
@@ -22,11 +22,11 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	protected $pdo;
 	
 	/**
-	 * @param array $connectionInfos
+	 * @param \Change\Db\Mysql\DbProvider $dbProvider
 	 */
-	public function __construct($connectionInfos)
+	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider)
 	{
-		$this->connectionInfos = $connectionInfos;
+		$this->dbProvider = $dbProvider;
 	}
 	
 	/**
@@ -36,11 +36,11 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	{
 		if ($this->pdo === null)
 		{
-			$this->pdo = $this->getConnection($this->connectionInfos);
+			$this->pdo = $this->dbProvider->getConnection($this->dbProvider->getConnectionInfos());
 		}
 		return $this->pdo;
 	}
-	
+
 	/**
 	 * @param string query
 	 * @return \PDOStatement
@@ -52,39 +52,12 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	}
 	
 	/**
-	 * @param array<String, String> $connectionInfos
-	 * @return \PDO
+	 * @return string|NULL
 	 */
-	private function getConnection($connectionInfos)
+	public function getName()
 	{
-		$dsnOptions = array();
-		$connectionInfos = array_merge(
-				array('unix_socket' => null, 'host' => 'localhost', 'port' => 3306, 'user' => null, 
-						'password' => null, 'database' => null), $connectionInfos);
-		
-		if (isset($connectionInfos['unix_socket']))
-		{
-			$dsnOptions[] = 'unix_socket=' . $connectionInfos['unix_socket'];
-		}
-		else
-		{
-			$dsnOptions[] = 'host=' . (isset($connectionInfos['host']) ? $connectionInfos['host'] : 'localhost');
-			$dsnOptions[] = 'port=' . (isset($connectionInfos['port']) ? $connectionInfos['port'] : '3306');
-		}
-		if (isset($connectionInfos['database']))
-		{
-			$dsnOptions[] = 'dbname=' . $connectionInfos['database'];
-		}
-		
-		$dsn = 'mysql:' . join(';', $dsnOptions);
-		
-		$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-		$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
-		
-		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
-		$pdo = new \PDO($dsn, $username, $password, $options);
-		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		return $pdo;
+		$ci = $this->dbProvider->getConnectionInfos();
+		return is_array($ci) && isset($ci['database']) ? $ci['database'] : null;
 	}
 	
 	/**
@@ -94,27 +67,16 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	{
 		try
 		{
-			$pdo = $this->getConnection($this->connectionInfos);	
+			$this->dbProvider->getConnection($this->dbProvider->getConnectionInfos());
 		}
 		catch (\PDOException $e)
 		{
+			\Change\Application::getInstance()->getApplicationServices()->getLogging()->exception($e);
 			return false;
 		}
 		return true;
 	}
-	
-	/**
-	 * @throws \Exception on error
-	 */
-	function createDB()
-	{
-		$connectionInfos = $this->connectionInfos;
-		$database = $connectionInfos['database'];
-		unset($connectionInfos['database']);
-		$pdo = $this->getConnection($connectionInfos);
-		$pdo->exec("CREATE DATABASE IF NOT EXISTS `$database`");
-	}
-	
+		
 	/**
 	 * @param string $sql
 	 * @return integer the number of affected rows
@@ -177,21 +139,51 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	public function getTables()
 	{
 		$tables = array();
+		$sql = "SELECT `TABLE_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = '".$this->getName()."'";
 		$stmt = $this->query("SHOW TABLES");
 		return $stmt->fetchAll(\PDO::FETCH_COLUMN);
 	}
 	
 	/**
 	 * @param string $tableName
+	 * @return \Change\Db\Schema\TableDefinition
 	 */
-	function getTableFields($tableName)
+	public function getTableDefinition($tableName)
 	{
-		$infos = array();
-		foreach ($this->query('SHOW FULL COLUMNS FROM `' . $tableName . '`')->fetchAll(\PDO::FETCH_ASSOC) as $row)
+		$tableDef = new \Change\Db\Schema\TableDefinition($tableName);
+		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `COLUMN_TYPE`, `DATA_TYPE` FROM `information_schema`.`COLUMNS` 
+    WHERE `TABLE_SCHEMA` = '".$this->getName()."' AND `TABLE_NAME` = '".$tableName."'";
+		$statment = $this->query($sql);	
+		foreach ($statment->fetchAll(\PDO::FETCH_NUM) as $row)
 		{
-			$infos[$row["Field"]] = $row;
+			$name = $row[0];
+			$defaultValue = $row[1];
+			$nullable = $row[2] === 'YES';
+			$type = $row[3];
+			$typeData = $row[3] != $row[4] ? $row[4] : null;
+			$tableDef->addField(new \Change\Db\Schema\FieldDefinition($name, $type, $typeData, $nullable, $defaultValue));
 		}
-		return $infos;
+		$statment->closeCursor();
+		if ($tableDef->isValid())
+		{
+			$sql = "SELECT C.`CONSTRAINT_NAME`, C.`CONSTRAINT_TYPE`, F.`COLUMN_NAME` FROM `information_schema`.`TABLE_CONSTRAINTS` AS C  
+INNER JOIN `information_schema`.`KEY_COLUMN_USAGE` AS F ON F.`TABLE_SCHEMA` = C.`TABLE_SCHEMA` AND F.`TABLE_NAME` = C.`TABLE_NAME` AND C.`CONSTRAINT_NAME` = F.`CONSTRAINT_NAME`
+WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableName."' ORDER BY C.`CONSTRAINT_NAME`, F.`ORDINAL_POSITION`";
+			$statment = $this->query($sql);
+			$k = null;
+			foreach ($statment->fetchAll(\PDO::FETCH_NUM) as $row)
+			{
+				if ($k === null || $k->getName() !== $row[0])
+				{
+					$k = new \Change\Db\Schema\KeyDefinition();
+					$tableDef->addKey($k);
+					$k->setName($row[0]);
+					$k->setPrimary($row[1] === 'PRIMARY KEY');
+				}
+				$k->addField($tableDef->getField($row[2]));
+			}
+		}
+		return $tableDef;
 	}
 
 	/**
@@ -200,8 +192,9 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function addLang($lang)
 	{
-		$infos = $this->getTableFields("f_document");
-		if (!isset($infos["label_".$lang]))
+		$infos = $this->getTableDefinition('f_document');
+		$fName = 'label_'.$lang;
+		if ($infos->getField($fName) === null)
 		{
 			$sql = "ALTER TABLE `f_document` ADD `label_$lang` VARCHAR(255) NULL";
 			$this->execute($sql);
@@ -211,363 +204,13 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	}
 	
 	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @param boolean $apply
-	 * @return string the SQL statements that where executed
-	 */
-	function dropModelTables($moduleName, $documentName, $apply = true)
-	{
-		//TODO Old class Usage
-		$documentModel = \f_persistentdocument_PersistentDocumentModel::getInstance($moduleName, $documentName);
-		$tableName = $documentModel->getTableName();
-		$sqls = array();
-		$sqls[] = 'DROP TABLE IF EXISTS `' . $tableName . '`';
-		if ($documentModel->isLocalized())
-		{
-			$tableName = $documentModel->getTableName() . $this->getI18nSuffix();
-			$sqls[] = 'DROP TABLE IF EXISTS `' . $tableName . '`';
-		}
-		$script = implode(';'.PHP_EOL, $sqls);
-		if ($apply)
-		{
-			$this->executeBatch($script);
-		}
-		return $script;
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @param \generator_PersistentProperty $property TODO Old class Usage
-	 * @param boolean $apply
-	 * @return string the SQL statements that where executed
-	 */
-	function addProperty($moduleName, $documentName, $property, $apply = true)
-	{
-		//TODO Old class Usage
-		$documentModel = \f_persistentdocument_PersistentDocumentModel::getInstance($moduleName, $documentName);
-		$sqls = array();
-		
-		$tableName = $documentModel->getTableName();
-		$columnName = $property->getDbName();
-		$infos = $this->getTableFields($tableName);
-		if (!isset($infos[$columnName]))
-		{
-			$sqls[] = "ALTER TABLE `" . $tableName . "` ADD COLUMN " . $this->generateSQLField($property);
-		}
-		else
-		{
-			$sqls[] = "ALTER TABLE `" . $tableName . "` MODIFY COLUMN " .  $this->generateSQLField($property);
-		}
-		
-		if ($property->isLocalized())
-		{
-			$i18nInfos = $this->getTableFields($tableName . '_i18n');
-			$i18nColumnName = $property->getDbName() . '_i18n';
-			if (!isset($i18nInfos[$i18nColumnName]))
-			{
-				$sqls[] = "ALTER TABLE `" . $tableName . $this->getI18nSuffix() . "` ADD COLUMN " . $this->generateSQLField($property, true);
-			}
-			else
-			{
-				$sqls[] = "ALTER TABLE `" . $tableName . $this->getI18nSuffix() . "` MODIFY " . $this->generateSQLField($property, true);
-			}
-		}
-		$script = implode(';'.PHP_EOL, $sqls);
-		if ($apply)
-		{
-			$this->executeBatch($script);
-		}
-		return $script;
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @param \generator_PersistentProperty $oldProperty TODO Old class Usage
-	 * @param boolean $apply
-	 * @return string the SQL statements that where executed
-	 */
-	function delProperty($moduleName, $documentName, $oldProperty, $apply = true)
-	{
-		//TODO Old class Usage
-		$documentModel = \f_persistentdocument_PersistentDocumentModel::getInstance($moduleName, $documentName);
-		$sqls = array();
-		$sqls[] = "ALTER TABLE `" . $documentModel->getTableName() . "` DROP COLUMN `" . $oldProperty->getDbName() . "`";
-		if ($oldProperty->isLocalized())
-		{
-			$sqls[] = "ALTER TABLE `" . $documentModel->getTableName() . "_i18n` DROP COLUMN `" . $oldProperty->getDbName() . "_i18n`";
-		}
-		
-		if ($oldProperty->isDocument())
-		{
-			$oldRelationId = $this->getRelationId($oldProperty->getName());			
-			$modelNames = array("'" . $documentModel->getName() . "'");
-			if ($documentModel->hasChildren())
-			{
-				foreach ($documentModel->getChildrenNames() as $childName)
-				{
-					$modelNames = "'" . $childName . "'";
-				}
-			}
-			$sqls[] = "DELETE FROM `f_relation` WHERE relation_id = $oldRelationId AND document_model_id1 IN (" . implode(", ", $modelNames) . ")";
-		}
-		
-		$script = implode(';'.PHP_EOL, $sqls);
-		if ($apply)
-		{
-			$this->executeBatch($script);
-		}
-		return $script;
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @param \generator_PersistentProperty $oldProperty TODO Old class Usage
-	 * @param \generator_PersistentProperty $newProperty TODO Old class Usage
-	 * @param boolean $apply
-	 * @return string the SQL statements that where executed
-	 */
-	function renameProperty($moduleName, $documentName, $oldProperty, $newProperty, $apply = true)
-	{
-		//TODO Old class Usage
-		$documentModel = \f_persistentdocument_PersistentDocumentModel::getInstance($moduleName, $documentName);
-		$sqls = array();
-		$oldDbMapping = $oldProperty->getDbName();
-		$oldPropertyName = $oldProperty->getName();
-		$sqls[] = "ALTER TABLE `" . $documentModel->getTableName() . "` CHANGE COLUMN `" . $oldDbMapping . "` " . $this->generateSQLField($newProperty);
-		
-		if ($oldProperty->isLocalized())
-		{
-			$sqls[] = "ALTER TABLE `" . $documentModel->getTableName() . "_i18n` CHANGE COLUMN `" . $oldDbMapping . "_i18n` " . $this->generateSQLField($newProperty, true);
-		}
-		
-		if ($oldProperty->isDocument())
-		{
-			$oldRelationId = $this->getRelationId($oldProperty->getName());
-			$newRelationId = $this->getRelationId($newProperty->getName());
-			
-			$modelNames = array("'" . $documentModel->getName() . "'");
-			if ($documentModel->hasChildren())
-			{
-				foreach ($documentModel->getChildrenNames() as $childName)
-				{
-					$modelNames[] = "'" . $childName . "'";
-				}
-			}
-		
-			$sqls[] = "UPDATE `f_relation` SET relation_name = '" . $newProperty->getName() . "', relation_id = " .$newRelationId.
-				 " WHERE document_model_id1 IN (" . implode(", ", $modelNames) . ") AND relation_id = " . $oldRelationId;
-		}
-		
-		$script = implode(';'.PHP_EOL, $sqls);
-		if ($apply)
-		{
-			$this->executeBatch($script);
-		}
-		return $script;
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @return integer
-	 */
-	protected function getRelationId($propertyName)
-	{
-		return  \Change\Db\DbProvider::getInstance()->getRelationId($propertyName);
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getSQLScriptSufixName()
-	{
-		return '.mysql.sql';
-	}
-	
-	/**
-	 * @param \generator_PersistentProperty $buildProperty TODO Old class Usage
-	 * @return string
-	 */
-	public function generateSQLField($buildProperty, $localizedField = false)
-	{
-		$localizedSuffix = $localizedField ? '_i18n' : '';
-		$dbName = $buildProperty->getDbName();
-		$fp = array('`' . $dbName . $localizedSuffix . '`');
-		if ($dbName === 'document_publicationstatus')
-		{
-			$fp[] = "ENUM('DRAFT', 'CORRECTION', 'ACTIVE', 'PUBLISHED', 'DEACTIVATED', 'FILED', 'DEPRECATED', 'TRASH', 'WORKFLOW') NULL DEFAULT NULL";
-		}
-		elseif ($buildProperty->isDocument())
-		{
-			if ($buildProperty->isArray())
-			{
-				$fp[] = "INT(11) DEFAULT '0'";
-			}
-			else
-			{
-				$fp[] = "INT(11) DEFAULT NULL";
-			}
-		}
-		else
-		{
-			switch ($buildProperty->getType())
-			{
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_STRING :
-					$dbSize = intval($buildProperty->getDbSize());
-					if ($dbSize <= 0 || $dbSize > 255) {$dbSize = 255;} 
-					$fp[] = "VARCHAR(" . $dbSize . ")";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_LONGSTRING :
-					$fp[] = "TEXT";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_XHTMLFRAGMENT :
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_BBCODE :
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_JSON :
-					$fp[] = "MEDIUMTEXT";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_LOB :
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_OBJECT :
-					$fp[] = "MEDIUMBLOB";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_BOOLEAN :
-					$fp[] = "TINYINT(1) NOT NULL DEFAULT '0'";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DATETIME :
-					$fp[] = "DATETIME";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOUBLE :
-					$fp[] = "DOUBLE";
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DECIMAL :
-					$dbSize = $buildProperty->getDbSize();
-					if (!empty($dbSize) && strpos($dbSize, ','))
-					{
-						$fp[] = "DECIMAL(" . $dbSize . ")";
-					}
-					else
-					{
-						$fp[] = "DECIMAL(13,4)";
-					}
-					break;
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
-				case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTID :
-					$fp[] = "INT(11)";
-					break;
-			}
-		}
-		return implode(' ', $fp);
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @param string $dbMapping
-	 * @return string
-	 */
-	public function generateSQLModelTableName($moduleName, $documentName, $dbMapping = null)
-	{
-		if (!empty($dbMapping))
-		{
-			return $dbMapping;
-		}
-		return strtolower("m_". $moduleName ."_doc_" . $documentName);
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @param string $dbMapping
-	 */
-	public function generateSQLModelFieldName($propertyName, $dbMapping = null)
-	{
-		if (!empty($dbMapping))
-		{
-			return $dbMapping;
-		}
-		return strtolower($propertyName);
-	}
-		
-	/**
-	 * @param \generator_PersistentModel $buildModel TODO Old class Usage
-	 * @return string
-	 */
-	public function generateSQLModel($buildModel)
-	{
-		$sql = array();
-		$fields = $buildModel->getTableField();
-		if (count($fields))
-		{
-			if ($buildModel->hasParentModel())
-			{
-				foreach ($fields as $property)
-				{
-					$sql[] = 'ALTER TABLE `' . $buildModel->getTableName() . '` ADD ';
-					$sql[] = $this->generateSQLField($property);
-					$sql[] = ';' .PHP_EOL;
-				}
-			}
-			else
-			{
-				$sql = array('CREATE TABLE IF NOT EXISTS `' . $buildModel->getTableName() . '` (');
-				$sql[] = '`document_id` INT(11) NOT NULL DEFAULT \'0\',' . PHP_EOL;
-				$sql[] = '`document_model` VARCHAR(50) NOT NULL DEFAULT \'\',' . PHP_EOL;
-				foreach ($fields as $property)
-				{
-					$sql[] = $this->generateSQLField($property) . ',' . PHP_EOL;
-				}
-				$sql[] = 'PRIMARY KEY  (`document_id`)) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-				$sql[] = ';' .PHP_EOL;
-			}
-		}
-		return implode('', $sql);
-	}
-	
-	/**
-	 * @param \generator_PersistentModel $buildModel //TODO Old class Usage
-	 * @return string
-	 */
-	public function generateSQLI18nModel($buildModel)
-	{
-		$sql = array();
-		$fields = $buildModel->getTableI18nField();
-		if (count($fields))
-		{
-			if ($buildModel->hasParentModel())
-			{
-				foreach ($fields as $property)
-				{
-					$sql[] = 'ALTER TABLE `' . $buildModel->getTableName() . '_i18n` ADD ';
-					$sql[] = $this->generateSQLField($property, true);
-					$sql[] = ';' .PHP_EOL;
-				}
-			}
-			else
-			{
-				$sql = array('CREATE TABLE IF NOT EXISTS `' . $buildModel->getTableName() . '_i18n` (');
-				$sql[] = '`document_id` INT(11) NOT NULL DEFAULT \'0\',' . PHP_EOL;
-				$sql[] = '`lang_i18n` VARCHAR(2) NOT NULL DEFAULT \'fr\',' . PHP_EOL;
-				foreach ($fields as $property)
-				{
-					$sql[] = $this->generateSQLField($property, true) . ',' . PHP_EOL;
-				}
-				$sql[] = 'PRIMARY KEY  (`document_id`, `lang_i18n`)) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-				$sql[] = ';' .PHP_EOL;
-			}
-		}
-		return implode('', $sql);
-	}
-	
-	
-	/**
 	 * @param integer $treeId
 	 * @return string the SQL statements that where executed
 	 */
 	public function createTreeTable($treeId)
 	{
 		$dropSQL = $this->dropTreeTable($treeId);
-		$sql = 'CREATE TABLE IF NOT EXISTS `f_tree_'. $treeId .'` ( 
+		$sql = 'CREATE TABLE IF NOT EXISTS `f_tree_'. $treeId .'` (
 			`document_id` int(11) NOT NULL default \'0\',
 			`parent_id` int(11) NOT NULL default \'0\',
 			`node_order` int(11) NOT NULL default \'0\',
@@ -578,11 +221,11 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			UNIQUE KEY `tree_node` (`parent_id`, `node_order`),
 			UNIQUE KEY `descendant` (`node_level`,`node_order`,`node_path`)
 			) ENGINE=InnoDB CHARACTER SET latin1 COLLATE latin1_general_ci';
-		
+	
 		$this->execute($sql);
 		return $dropSQL . $sql . ';' . PHP_EOL;
 	}
-
+	
 	/**
 	 * @param integer $treeId
 	 * @return string the SQL statements that where executed
@@ -592,5 +235,127 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		$sql = 'DROP TABLE IF EXISTS `f_tree_'. $treeId .'`';
 		$this->execute($sql);
 		return $sql . ';' . PHP_EOL;
+	}
+	
+	/**
+	 * @param string $documentName
+	 * @return string
+	 */
+	public function getDocumentTableName($documentName)
+	{
+		return $this->dbProvider->getSqlMapping()->getDocumentTableName($documentName);
+	}
+	
+	/**
+	 * @param string $documentTableName
+	 * @return string
+	 */
+	public function getDocumentI18nTableName($documentTableName)
+	{
+		return $this->dbProvider->getSqlMapping()->getDocumentI18nTableName($documentTableName);
+	}	
+	
+	
+	/**
+	 * @param string $propertyName
+	 * @return string
+	 */
+	public function getDocumentFieldName($propertyName)
+	{
+		return $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
+	}	
+	
+	
+	/**
+	 * @param string $propertyName
+	 * @return string
+	 */
+	public function getDocumentI18nFieldName($propertyName)
+	{
+		return $this->dbProvider->getSqlMapping()->getDocumentI18nFieldName($propertyName);
+	}	
+	
+	/**
+	 * @param string $propertyName
+	 * @param boolean $localized
+	 * @param string $propertyType
+	 * @param string $propertyDbSize
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function getDocumentFieldDefinition($propertyName, $localized, $propertyType, $propertyDbSize)
+	{
+		$fn = $localized ? $this->getDocumentI18nFieldName($propertyName) : $this->getDocumentFieldName($propertyName);
+		$typeData = null;
+		$nullable = true;
+		$defaultValue = null;
+		
+		if ($fn === 'document_publicationstatus')
+		{
+			$type = "enum";
+			$typeData = "enum('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW')";
+		}
+		else
+		{
+			switch ($propertyType)
+			{
+				case 'Document' :
+					$type = "int";
+					$typeData = "int(11)";
+					break;
+				case 'DocumentArray' :
+					$type = "int";
+					$typeData = "int(11)";
+					$defaultValue = "0";
+					break;
+				case 'String' :
+					$dbSize = intval($propertyDbSize);
+					if ($dbSize <= 0 || $dbSize > 255) {$dbSize = 255;}
+					$type = "varchar";
+					$typeData = "varchar(" . $dbSize . ")";
+					break;
+				case 'LongString' :
+					$type = "text";
+					break;
+				case 'XML' :
+				case 'RichText' :
+				case 'JSON' :
+					$type = "mediumtext";
+					break;
+				case 'Lob' :
+				case 'Object' :
+					$type = "mediumblob";
+					break;
+				case 'Boolean' :
+					$type = "tinyint";
+					$typeData = "tinyint(1)";
+					$nullable = false;
+					$defaultValue = '0';
+					break;
+				case 'Date' :
+				case 'DateTime' :
+					$type = "datetime";
+					break;
+				case 'Float' :
+					$type = "double";
+					break;
+				case 'Decimal' :
+					$type = "decimal";
+					if (!empty($propertyDbSize) && strpos($propertyDbSize, ','))
+					{
+						$typeData = "decimal(" . $propertyDbSize . ")";
+					}
+					else
+					{
+						$typeData = "decimal(13,4)";
+					}
+					break;
+				case 'Integer' :
+				case 'DocumentId' :
+					$type = "int";
+					$typeData = "int(11)";
+					break;
+			}
+		}	
+		return new \Change\Db\Schema\FieldDefinition($fn, $type, $typeData, $nullable, $defaultValue);
 	}
 }

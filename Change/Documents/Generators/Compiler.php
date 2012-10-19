@@ -19,6 +19,17 @@ class Compiler
 	protected $injection = array();
 	
 	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+	
+	
+	public function __construct(\Change\Application $application)
+	{
+		$this->application = $application;
+	}
+	
+	/**
 	 * @return \Change\Documents\Generators\Model
 	 */
 	public function getDefaultModel()
@@ -242,30 +253,60 @@ class Compiler
 		}
 		return $result;
 	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Model[]
+	 */
+	public function getModels()
+	{
+		return $this->models;
+	}
 			
+	/**
+	 * @return \Change\Documents\Generators\Model[]
+	 */
+	public function getModelsByLevel($level = 0)
+	{
+		$models = array();
+		if (isset($this->modelNamesByExtendLevel[$level]))
+		{
+			$models = array();
+			foreach ($this->modelNamesByExtendLevel[$level] as $fullName)
+			{
+				$models[] = $this->getModelByFullName($fullName);
+			}
+		}
+		return $models;
+	}
+	
 	
 	public function saveModelsPHPCode()
 	{
+		$compilationPath = $this->application->getWorkspace()->compilationPath();
+		
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$generator = new ModelClass();
-			$generator->savePHPCode($this, $model);
+			$generator->savePHPCode($this, $model, $compilationPath);
 			
 			$generator = new AbstractDocumentClass();
-			$generator->savePHPCode($this, $model);
+			$generator->savePHPCode($this, $model, $compilationPath);
 			
 			if ($model->getLocalized())
 			{
 				$generator = new DocumentI18nClass();
-				$generator->savePHPCode($this, $model);
+				$generator->savePHPCode($this, $model, $compilationPath);
 			}
 			
 			$generator = new AbstractServiceClass();
-			$generator->savePHPCode($this, $model);
+			$generator->savePHPCode($this, $model, $compilationPath);
 		}
 		
 		$generator = new AbstractDocumentServicesClass();
-		$generator->savePHPCode($this, $this->models);
+		$generator->savePHPCode($this, $this->models, $compilationPath);
+		
+		$generator = new SchemaClass();
+		$generator->savePHPCode($this, $this->application->getApplicationServices()->getDbProvider()->getSchemaManager(), $compilationPath);
 	}
 }

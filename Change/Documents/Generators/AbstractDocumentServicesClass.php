@@ -14,14 +14,15 @@ class AbstractDocumentServicesClass
 	/**
 	 * @param \Change\Documents\Generators\Compiler $compiler
 	 * @param \Change\Documents\Generators\Model[] $models
+	 * @param string $compilationPath
 	 * @return boolean
 	 */
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, $models)
+	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, $models, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $models);
 		$nsParts = array('Change', 'Documents','AbstractDocumentServices.php');
-		$path  = \Change\Stdlib\Path::compilationPath(implode(DIRECTORY_SEPARATOR, $nsParts));
-		\Change\Stdlib\File::write($path, $code);
+		array_unshift($nsParts, $compilationPath);
+		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
 	}
 	
