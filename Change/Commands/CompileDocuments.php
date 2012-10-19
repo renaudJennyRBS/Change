@@ -26,7 +26,7 @@ class CompileDocuments extends \Change\Application\Console\ChangeCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$output->writeln('<info>Compiling Documents...</info>');
-		$compiler = new \Change\Documents\Generators\Compiler();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getChangeApplication());
 		$paths = array();
 		$workspace = $this->getChangeApplication()->getWorkspace();
 		if (is_dir($workspace->pluginsModulesPath()))

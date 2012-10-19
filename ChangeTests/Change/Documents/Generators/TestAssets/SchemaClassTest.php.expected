@@ -1,0 +1,46 @@
+<?php
+namespace Compilation\Change\Documents\Schema;
+class Schema
+{
+	/**
+	 * @var \Change\Db\Schema\TableDefinition[]
+	 */
+	protected $tables;
+			
+	/**
+	 * @return \Change\Db\Schema\TableDefinition[]
+	 */
+	public function getTables()
+	{
+		$this->tables;
+	}
+			
+	public function __construct()
+	{
+		$id = new \Change\Db\Schema\FieldDefinition('document_id', 'int', 'int(11)', false, '0');
+		$model = new \Change\Db\Schema\FieldDefinition('document_model', 'varchar', 'varchar(50)', false, '');
+		$i18nLang = new \Change\Db\Schema\FieldDefinition('lang_i18n', 'varchar', 'varchar(2)', false, 'fr');
+
+		$table = new \Change\Db\Schema\TableDefinition('change_testing_doc_inject1');
+		$table->addField($id)->addField($model);
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_label', 'varchar', 'varchar(255)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_author', 'varchar', 'varchar(100)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_authorid', 'int', 'int(11)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_creationdate', 'datetime', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_modificationdate', 'datetime', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_publicationstatus', 'enum', 'enum(\'DRAFT\',\'CORRECTION\',\'ACTIVE\',\'PUBLISHED\',\'DEACTIVATED\',\'FILED\',\'DEPRECATED\',\'TRASH\',\'WORKFLOW\')', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_lang', 'varchar', 'varchar(2)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_modelversion', 'varchar', 'varchar(20)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_version', 'int', 'int(11)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_startpublicationdate', 'datetime', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_endpublicationdate', 'datetime', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_metas', 'mediumblob', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('string4', 'varchar', 'varchar(255)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('document_s18s', 'mediumblob', NULL, true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('string1', 'varchar', 'varchar(255)', true, NULL));
+		$table->addField(new \Change\Db\Schema\FieldDefinition('string2', 'varchar', 'varchar(255)', true, NULL));
+		$pk = new \Change\Db\Schema\KeyDefinition();
+		$table->addKey($pk->setPrimary(true)->addField($id));
+		$tables[] = $table;
+	}
+}
