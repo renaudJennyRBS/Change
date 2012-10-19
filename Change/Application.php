@@ -31,7 +31,7 @@ class Application
 	 * @var bool
 	 */
 	protected $started = false;
-
+	
 	/**
 	 * Returns the shared application
 	 * 
@@ -61,7 +61,7 @@ class Application
 	 */
 	public function registerInjectionAutoload()
 	{
-		$basePath = \Change\Stdlib\Path::compilationPath('Injection');
+		$basePath = $this->getWorkspace()->compilationPath('Injection');
 		spl_autoload_register(function ($className) use($basePath)
 		{
 			$phpFileName = str_replace('\\', '_', $className) . '.php';
@@ -80,18 +80,25 @@ class Application
 	{
 		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change', 
 			'Compilation' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation',
-			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend', 
-			'ZendOAuth' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendoauth' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'ZendOAuth');
+			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend');
 		
 		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
+		$zendLoader = new \Zend\Loader\StandardAutoloader();
 		foreach ($namespaces as $namespace => $path)
 		{
-			$zendLoader = new \Zend\Loader\StandardAutoloader();
 			$zendLoader->registerNamespace($namespace, $path);
-			$zendLoader->register();
 		}
+		$zendLoader->register();
+		
+		$zendLoader = new \Zend\Loader\StandardAutoloader();
+		// Register additional packages autoload
+		foreach ($this->getApplicationServices()->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
+		{
+			$zendLoader->registerNamespace($namespace, $path);
+		}
+		$zendLoader->register();
 	}
-	
+		
 	/**
 	 *
 	 * @var \Change\Mvc\Controller
@@ -193,10 +200,17 @@ class Application
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Application\PackageManager');
+		$cl->setInstantiator('__construct')
+		->addMethod('__construct', true)
+		->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+		$dl->addDefinition($cl);
+		
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
 		
 		$im->setParameters('Change\Workspace', array('application' => $this));
+		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
@@ -258,6 +272,12 @@ class Application
 	{
 		if (!$this->started())
 		{
+			// @codeCoverageIgnoreStart
+			if (!defined('PROJECT_HOME'))
+			{
+				define('PROJECT_HOME', dirname(__DIR__));
+			}
+			// @codeCoverageIgnoreEnd
 			$this->registerNamespaceAutoload();
 			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{

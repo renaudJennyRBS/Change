@@ -58,6 +58,14 @@ class WorkspaceTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConstruct
 	 */
+	public function testLibrariesPath(Workspace $workspace)
+	{
+		$this->assertEquals(PROJECT_HOME . '/Libraries/Dir1/Dir2/Dir3/File.php', $workspace->librariesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+	
+	/**
+	 * @depends testConstruct
+	 */
 	public function testGetBootstrapConfigurationPath(Workspace $workspace)
 	{
 		$this->assertEquals(PROJECT_HOME . '/change.json', $workspace->getBootstrapConfigurationPath());

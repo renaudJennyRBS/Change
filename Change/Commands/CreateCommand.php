@@ -52,7 +52,8 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 			{
 				$vendor = ucfirst(strtolower($parts[0]));
 				$module = ucfirst(strtolower($parts[1]));
-				$pathToTest = ($vendor == 'App') ? \Change\Stdlib\Path::appPath('Modules', $module) : \Change\Stdlib\Path::projectPath('Plugins', 'Modules', $vendor, $module);
+				$pathToTest = ($vendor == 'Project') ? \Change\Stdlib\Path::appPath('Modules', $module) : \Change\Stdlib\Path::projectPath('Plugins', 'Modules', $vendor, $module);
+				echo $pathToTest, PHP_EOL;
 				$valid = is_dir($pathToTest);
 			}
 		}
@@ -73,7 +74,7 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 	{
 		$className = implode('', array_map('ucfirst', explode('-', $input->getArgument('cmdname'))));
 		$package = $input->getArgument('package');
-		if ($package === 'change')
+		if (strtolower($package) === 'change')
 		{
 			$namespace = 'Change\\Commands';
 			$commandDir = \Change\Stdlib\Path::projectPath('Change', 'Commands');
@@ -83,9 +84,9 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 			list($vendor, $module) = array_map(function($var){
 				return ucfirst(strtolower($var));
 			}, explode('/', $package));
-			if ($vendor == 'App')
+			if ($vendor == 'Project')
 			{
-				$namespace = 'App\\Modules\\' . $module . '\\Commands';
+				$namespace = 'Project\\' . $module . '\\Commands';
 				$commandDir = \Change\Stdlib\Path::appPath('Modules', $module , 'Commands');
 			}
 			else

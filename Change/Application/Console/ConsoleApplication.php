@@ -77,7 +77,9 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		$dirs = $finder->depth("== 1")->directories()->in(PROJECT_HOME . '/App/Modules/')->name('Commands');
 		foreach ($dirs as $dir)
 		{
-			$this->registerCommandsInDir($dir, 'project');
+			$pathComponents = explode(DIRECTORY_SEPARATOR, $dir->getPath());
+			$moduleName = array_pop($pathComponents);
+			$this->registerCommandsInDir($dir, 'project', '\\Project\\' . ucfirst(strtolower($moduleName)) . '\\Commands');
 		}
 		
 		$finder = new Finder();
@@ -90,7 +92,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 				$pathComponents = explode(DIRECTORY_SEPARATOR, $commandDir->getPath());
 				$moduleName = array_pop($pathComponents);
 				$vendorName = array_pop($pathComponents);
-				$this->registerCommandsInDir($commandDir, strtolower($vendorName) . '-' . strtolower($moduleName), '\\' . $vendorName . '\\' . $moduleName . '\\' . 'Commands');
+				$this->registerCommandsInDir($commandDir, strtolower($vendorName) . '-' . strtolower($moduleName), '\\' . $vendorName . '\\' . $moduleName . '\\Commands');
 			}
 		}
 		

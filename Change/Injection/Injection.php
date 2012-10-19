@@ -8,6 +8,16 @@ namespace Change\Injection;
 class Injection
 {	
 	/**
+	 * @var  \Change\Application 
+	 */
+	protected $application;
+	
+	public function __construct()
+	{
+		$this->application = \Change\Application::getInstance();
+	}
+	
+	/**
 	 * @param array $oldInfo
 	 * @return void
 	 */
@@ -20,9 +30,13 @@ class Injection
 		}
 		
 		$compiledFileNames = array();
-		$compiledDir = \Change\Stdlib\Path::compilationPath('Injection');
-		
-		$injectionArray = unserialize(\Change\Stdlib\File::read(\Change\Stdlib\Path::compilationPath('Config', 'injection.ser')));
+		$compiledDir = $this->application->getWorkspace()->compilationPath('Injection');//\Change\Stdlib\Path::compilationPath('Injection');
+		$injectionInfoFile = $this->application->getWorkspace()->compilationPath('Config', 'injection.ser');
+		$injectionArray = array();
+		if (file_exists($injectionInfoFile))
+		{
+			$injectionArray = unserialize(\Change\Stdlib\File::read(\Change\Stdlib\Path::compilationPath('Config', 'injection.ser')));
+		}
 		foreach ($injectionArray as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);
