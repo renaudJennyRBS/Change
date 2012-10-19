@@ -90,6 +90,19 @@ class Workspace
 	}
 	
 	/**
+	 * Build a path relative to the "Libraries" folder
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function librariesPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, $this->librariesBase());
+		return $this->buildPathFromComponents($args);
+	}
+	
+	/**
 	 * Build a path relative to the project's modules folder (App/Modules/)
 	 * 
 	 * @api
@@ -152,5 +165,13 @@ class Workspace
 	protected function appBase()
 	{
 		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'App';
+	}
+	
+	/**
+	 * @return string
+	 */
+	protected function librariesBase()
+	{
+		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries';
 	}
 }

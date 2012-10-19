@@ -43,4 +43,12 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Workspace');
 	}
+
+	/**
+	 * @return \Change\Application\PackageManager
+	 */
+	public function getPackageManager()
+	{
+		return $this->get('Change\Application\PackageManager');
+	}
 }
