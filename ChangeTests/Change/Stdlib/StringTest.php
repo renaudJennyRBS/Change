@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Stdlib;
 
-class FileTest extends \PHPUnit_Framework_TestCase
+class StringTest extends \PHPUnit_Framework_TestCase
 {
 	public function testToLower()
 	{
