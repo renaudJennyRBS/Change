@@ -6,17 +6,26 @@ namespace Change\Injection;
  * @name \Change\Injection\Injection
  */
 class Injection
-{	
+{
 	/**
-	 * @var  \Change\Application 
+	 * @var  \Change\Application
 	 */
 	protected $application;
-	
-	public function __construct()
+
+	public function __construct(\Change\Application $application)
 	{
-		$this->application = \Change\Application::getInstance();
+		$this->application = $application;
 	}
-	
+
+	/**
+	 *
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onConfigurationRefreshed(\Zend\EventManager\Event $event)
+	{
+		$this->compile();
+	}
+
 	/**
 	 * @param array $oldInfo
 	 * @return void
@@ -28,19 +37,14 @@ class Injection
 		{
 			$oldInfo = $this->loadInfos();
 		}
-		
+
 		$compiledFileNames = array();
-		$compiledDir = $this->application->getWorkspace()->compilationPath('Injection');//\Change\Stdlib\Path::compilationPath('Injection');
-		$injectionInfoFile = $this->application->getWorkspace()->compilationPath('Config', 'injection.ser');
-		$injectionArray = array();
-		if (file_exists($injectionInfoFile))
-		{
-			$injectionArray = unserialize(\Change\Stdlib\File::read(\Change\Stdlib\Path::compilationPath('Config', 'injection.ser')));
-		}
+		$compiledDir = $this->application->getWorkspace()->compilationPath('Injection');
+		$injectionArray = $this->application->getConfiguration()->getEntry('injection/class');
 		foreach ($injectionArray as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);
-				
+
 			$replacingClassInfos = array();
 			foreach (explode(',', $classNames) as $className)
 			{
@@ -48,10 +52,10 @@ class Injection
 				if (empty($className)) {continue;}
 				$replacingClassInfos[] = $this->buildClassInfo($className, $oldInfo);
 			}
-				
+
 			if (count($replacingClassInfos) === 0) {continue;}
-			$injection = new ClassInjection($originalClassInfo, $replacingClassInfos);	
-			$result = $injection->compile();	
+			$injection = new ClassInjection($originalClassInfo, $replacingClassInfos);
+			$result = $injection->compile();
 			foreach ($result['compiled'] as $infos)
 			{
 				$compiledFileNames[] = basename($infos['path']);
@@ -59,7 +63,7 @@ class Injection
 			}
 			$newInjectionInfos = array_merge($newInjectionInfos, $result['source']);
 		}
-		
+
 		$dir = new \DirectoryIterator($compiledDir);
 		foreach ($dir as $fileInfo)
 		{
@@ -69,15 +73,15 @@ class Injection
 				unlink($fileInfo->getPathname());
 			}
 		}
-		
+
 		if (count($newInjectionInfos))
 		{
 			$this->saveInfos($newInjectionInfos);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $className
 	 * @param array $oldInfo
 	 * @return string
@@ -95,7 +99,7 @@ class Injection
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Get the array containing all the injection related informations
 	 *
@@ -110,19 +114,19 @@ class Injection
 		}
 		return array();
 	}
-	
+
 	/**
 	 * Save injection to file
-	 * 
+	 *
 	 * @param array $infos
 	 */
 	protected function saveInfos($infos)
 	{
-		$path = \Change\Stdlib\Path::compilationPath('Injection', 'info.ser');	
+		$path = \Change\Stdlib\Path::compilationPath('Injection', 'info.ser');
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, serialize($infos));
-	}	
-	
+	}
+
 	/**
 	 * This method will update the injection only if needed.
 	 */
@@ -142,5 +146,5 @@ class Injection
 				}
 			}
 		}
-	}	
+	}
 }

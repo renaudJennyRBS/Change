@@ -6,35 +6,40 @@ use Zend\Json\Json;
 
 /**
  * @name \Change\Application
- * @method \Change\Application getInstance()
  */
 class Application
 {
 	const CHANGE_VERSION = "4.0";
-	
+
 	/**
 	 * @var \Change\Application
 	 */
 	protected static $sharedInstance;
-	
+
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
 	protected $applicationServices;
-		
+
 	/**
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
-	
+
 	/**
 	 * @var bool
 	 */
 	protected $started = false;
-	
+
+	/**
+	 *
+	 * @var \Zend\EventManager\EventManager
+	 */
+	protected $eventManager;
+
 	/**
 	 * Returns the shared application
-	 * 
+	 *
 	 * @return \Change\Application
 	 */
 	public static function getInstance()
@@ -45,7 +50,7 @@ class Application
 		}
 		return static::$sharedInstance;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -53,7 +58,7 @@ class Application
 	{
 		return self::CHANGE_VERSION;
 	}
-	
+
 	/**
 	 * Injection-based autoload if you want injection to work, this should be the
 	 * last autoload coming from RBS Change you should register
@@ -72,16 +77,16 @@ class Application
 			}
 		}, true, true);
 	}
-	
+
 	/**
 	 * Namespace-based autoloading
 	 */
 	public function registerNamespaceAutoload()
 	{
-		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change', 
+		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change',
 			'Compilation' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation',
 			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend');
-		
+
 		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
 		$zendLoader = new \Zend\Loader\StandardAutoloader();
 		foreach ($namespaces as $namespace => $path)
@@ -89,7 +94,7 @@ class Application
 			$zendLoader->registerNamespace($namespace, $path);
 		}
 		$zendLoader->register();
-		
+
 		$zendLoader = new \Zend\Loader\StandardAutoloader();
 		// Register additional packages autoload
 		foreach ($this->getApplicationServices()->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
@@ -98,13 +103,21 @@ class Application
 		}
 		$zendLoader->register();
 	}
-		
+
+	/**
+	 * Register application-level listeners
+	 */
+	public function registerListeners()
+	{
+		$this->getEventManager()->attach(\Change\Configuration\Configuration::CONFIGURATION_REFRESHED_EVENT, array(new \Change\Injection\Injection($this), 'onConfigurationRefreshed'));
+	}
+
 	/**
 	 *
 	 * @var \Change\Mvc\Controller
 	 */
 	protected $controller;
-	
+
 	/**
 	 *
 	 * @return \Change\Mvc\Controller
@@ -113,7 +126,7 @@ class Application
 	{
 		return $this->controller;
 	}
-	
+
 	/**
 	 *
 	 * @return \Change\Mvc\Controller
@@ -122,7 +135,7 @@ class Application
 	{
 		$this->controller = $controller;
 	}
-	
+
 	/**
 	 *
 	 * @return string
@@ -136,17 +149,17 @@ class Application
 		}
 		return $profile;
 	}
-	
+
 	/**
-	 * Set the application services DiC 
-	 * 
-	 * @param \Change\Application\ApplicationServices $applicationServices        	
+	 * Set the application services DiC
+	 *
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
 	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 	}
-	
+
 	/**
 	 *
 	 * @return \Change\Application\ApplicationServices
@@ -159,7 +172,7 @@ class Application
 		}
 		return $this->applicationServices;
 	}
-		
+
 	/**
 	 *
 	 * @return \Change\Application\ApplicationServices
@@ -172,13 +185,13 @@ class Application
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
-		
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true));
 		$dl->addDefinition($cl);
-		
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
 		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
 			->addMethod('newInstance', true)
@@ -186,40 +199,40 @@ class Application
 				->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
 
-		
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
 				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
-		$dl->addDefinition($cl);		
-		
+		$dl->addDefinition($cl);
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Workspace');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
-		
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Application\PackageManager');
 		$cl->setInstantiator('__construct')
 		->addMethod('__construct', true)
 		->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
-		
+
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
-		
+
 		$im->setParameters('Change\Workspace', array('application' => $this));
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
 		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
-		
+
 
 		return $applicationServices;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 */
@@ -227,7 +240,7 @@ class Application
 	{
 		$this->documentServices = $documentServices;
 	}
-	
+
 	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
@@ -245,7 +258,7 @@ class Application
 	}
 	/**
 	 * Shortcut for application services workspace
-	 * 
+	 *
 	 * @api
 	 * @return \Change\Workspace
 	 */
@@ -253,7 +266,7 @@ class Application
 	{
 		return $this->getApplicationServices()->getWorkspace();
 	}
-	
+
 	/**
 	 * Shortcut for application services configuration
 	 *
@@ -264,7 +277,7 @@ class Application
 	{
 		return $this->getApplicationServices()->getConfiguration();
 	}
-	
+
 	/**
 	 * Call this to start application!
 	 */
@@ -298,14 +311,15 @@ class Application
 			//$this->getApplicationServices()->getConfiguration();
 			if (self::inDevelopmentMode())
 			{
-				$injection = new \Change\Injection\Injection();
+				$injection = new \Change\Injection\Injection($this);
 				$injection->update();
 			}
 			$this->registerInjectionAutoload();
+			$this->registerListeners();
 			$this->started = true;
 		}
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -313,24 +327,7 @@ class Application
 	{
 		return $this->started;
 	}
-	
-	/**
-	 * This returns the parsed content of the change.json default configuration file
-	 *
-	 * @return array
-	 */
-	public function getBootstrapConfiguration()
-	{
-		$bootstrapConfigPath = $this->getApplicationServices()->getWorkspace()->getBootstrapConfigurationPath();
-		// @codeCoverageIgnoreStart
-		if (!file_exists($bootstrapConfigPath))
-		{
-			throw new \RuntimeException('No change.json file at the root of your project');
-		}
-		// @codeCoverageIgnoreEnd
-		return Json::decode(file_get_contents($bootstrapConfigPath), Json::TYPE_ARRAY);
-	}
-	
+
 	/**
 	 *
 	 * @see project config and DEVELOPMENT_MODE constant
@@ -339,5 +336,20 @@ class Application
 	public static function inDevelopmentMode()
 	{
 		return defined('DEVELOPMENT_MODE') ? DEVELOPMENT_MODE : false;
+	}
+
+	public function getEventManager()
+	{
+		if ($this->eventManager === null)
+		{
+			$this->setEventManager(new \Zend\EventManager\EventManager());
+		}
+		return $this->eventManager;
+	}
+
+	public function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
+	{
+		$eventManager->setIdentifiers(array(get_called_class()));
+		$this->eventManager = $eventManager;
 	}
 }

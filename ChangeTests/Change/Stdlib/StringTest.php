@@ -40,4 +40,16 @@ class StringTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals("étçétç!", \Change\Stdlib\String::shorten("étçétçétçétçétçétç", 7, "!"));
 	}
+
+	public function testRandom()
+	{
+		$trial1 = \Change\Stdlib\String::random(255);
+		$trial2 = \Change\Stdlib\String::random(255);
+		// If this test fails, you might be really lucky or facing a bug ;)
+		$this->assertNotEquals($trial2, $trial1);
+
+		$string = \Change\Stdlib\String::random(42);
+		$this->assertEquals(42, \Change\Stdlib\String::length($string));
+
+	}
 }

@@ -2,19 +2,22 @@
 namespace Change\Configuration;
 
 use \Zend\Stdlib\ErrorHandler;
+use Zend\Json\Json;
 
 /**
  * @name \Change\Configuration\Configuration
  */
 class Configuration
-{	
+{
+	const CONFIGURATION_REFRESHED_EVENT = "\Change\Configuration\Configuration::refresh";
+
 	/**
 	 * @var \Change\Application
 	 */
 	protected $application;
 
 	/**
-	 * Build the configuration for the given Change Application 
+	 * Build the configuration for the given Change Application
 	 * @param \Change\Application $application
 	 */
 	public function __construct(\Change\Application $application)
@@ -22,27 +25,56 @@ class Configuration
 		$this->application = $application;
 		$this->load();
 	}
-	
+
 	/**
 	 * The compiled project config.
-	 * 
+	 *
 	 * @var array
 	 */
-	private $config = null;
-	
+	protected $config = null;
+
 	/**
 	 * @var array
 	 */
-	private $defines = null;
-	
+	protected $define = null;
+
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $loaded = false;
+
 	/**
 	 * @return boolean
 	 */
-	public function isCompiled()
+	protected function isCompiled()
 	{
-		return file_exists($this->getCompiledConfigPath()); 
+		return file_exists($this->getCompiledConfigPath());
 	}
-	
+
+	/**
+	 */
+	protected function compile()
+	{
+		// Compile new config and defines.
+		$config = $this->mergeJsonConfigurations();
+		$configs = $config['config'];
+		$defines = $this->fixDefinesArray($config['defines']);
+		// Save compiled file.
+		$content = "<?php\n// \\Change\\Configuration\\Configuration::setDefineArray PART // \n";
+		$content .= '$configuration->setDefineArray(' . var_export($defines, true) . ");\n\n";
+		if (isset($defines['DEVELOPMENT_MODE']) && $defines['DEVELOPMENT_MODE'])
+		{
+			$this->buildDevelopmentDefineFile($defines);
+		}
+		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
+		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
+		\Change\Stdlib\File::write($this->getCompiledConfigPath(), $content);
+		return array("config" => $configs, "defines" => $defines);
+	}
+
+
+
 	/**
 	 * @return string
 	 */
@@ -50,7 +82,7 @@ class Configuration
 	{
 		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'project.php');
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -58,31 +90,35 @@ class Configuration
 	{
 		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'dev_defines.php');
 	}
-		
+
 	/**
-	 * Load the configuration, using the php file auto compiled in Compilation/Config. 
-	 * If no compiled config, load the bootstrap config.
+	 * Load the configuration, using the php file auto compiled in Compilation/Config.
 	 */
-	public function load()
+	protected function load()
 	{
 		// If specific environnement add a dot to complet in path file
 		$this->config = array();
-		$this->defines = array();
+		$this->define = array();
 		if (!$this->isCompiled())
 		{
-			$this->getGenerator()->compile();
+			$this->compile();
 		}
 		$configuration = $this;
 		include $this->getCompiledConfigPath();
 		$this->applyDefines();
+		$this->loaded = true;
 	}
-	
+
 	/**
-	 * @param string $path 
+	 * @param string $path
 	 * @return boolean
 	 */
 	public function hasEntry($path)
 	{
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
 		$current = $this->config;
 		foreach (explode('/', $path) as $part)
 		{
@@ -94,7 +130,7 @@ class Configuration
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param string $path
 	 * @param string $defaultValue
@@ -102,6 +138,10 @@ class Configuration
 	 */
 	public function getEntry($path, $defaultValue = null)
 	{
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
 		$current = $this->config;
 		foreach (explode('/', $path) as $part)
 		{
@@ -113,17 +153,7 @@ class Configuration
 		}
 		return $current;
 	}
-	
-	/**
-	 * @param string $path
-	 * @param string $defaultValue
-	 * @return boolean
-	 */
-	public function getBooleanEntry($path, $defaultValue = null)
-	{
-		return $this->getEntry($path, $defaultValue) === 'true';
-	}
-	
+
 	/**
 	 * @param string $path
 	 * @param string $value
@@ -131,6 +161,10 @@ class Configuration
 	 */
 	public function addVolatileEntry($path, $value)
 	{
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
 		$sections = array();
 		foreach (explode('/', $path) as $name)
 		{
@@ -143,7 +177,7 @@ class Configuration
 		{
 			return false;
 		}
-	
+
 		$config = array();
 		$sections = array_reverse($sections);
 		foreach ($sections as $section)
@@ -154,16 +188,16 @@ class Configuration
 			}
 			$config = array($section => $config);
 		}
-	
+
 		$this->config = \Zend\Stdlib\ArrayUtils::merge($this->config, $config);
 		return true;
 	}
-	
+
 	/**
 	 * Add an entry in the first configuration file returned by \Change\Application::getProjectConfigurationPaths.
-	 * 
+	 *
 	 * @api
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $entryName
 	 * @param string $value
@@ -171,35 +205,64 @@ class Configuration
 	 */
 	public function addPersistentEntry($path, $entryName, $value)
 	{
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
+		// base config
+		$configFiles = $this->application->getWorkspace()->getProjectConfigurationPaths();
+		if (count($configFiles) == 0)
+		{
+			throw new \RuntimeException('No project configuration file found');
+		}
+		$configProjectPath = $configFiles[0];
+		if (!is_readable($configProjectPath))
+		{
+			throw new \RuntimeException('Config path is not readable');
+		}
+
 		if (empty($entryName) || ($value !== null && !is_string($value)))
 		{
 			throw new \InvalidArgumentException("Value should be a string and entry name non empty (value = $value, entryName = $entryName)");
 		}
-		$pathArray = array('config');
-		foreach (explode('/', $path) as $index => $name)
+		$configData = \Change\Stdlib\File::read($configProjectPath);
+		$overridableConfig = Json::decode($configData, Json::TYPE_ARRAY);
+
+		$entry = array('config' => array());
+		$item = &$entry['config'];
+		foreach (explode('/', $path) as $name)
 		{
-			if (trim($name) != '')
+			$trimmedName = trim($name);
+			if ($trimmedName != '')
 			{
-				$pathArray[] = trim($name);
+				if (!isset($item[$trimmedName]))
+				{
+					$item[$trimmedName] = array();
+				}
+				$item = &$item[$trimmedName];
 			}
 		}
-		if (count($pathArray) < 2)
-		{
-			throw new \InvalidArgumentException('Path must be at least 2-level deep');
-		}
-		
-		$this->addVolatileEntry($path . '/' . $entryName, $value);
-		return $this->getGenerator()->addPersistentEntry($pathArray, $entryName, $value);
+		$item[$entryName] = $value;
+		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, $entry);
+		\Change\Stdlib\File::write($configProjectPath, Json::encode($mergedConfig));
+		$oldValue = $this->getEntry($path);
+		$this->clear();
+		$this->load();
+		return $oldValue;
 	}
-	
+
 	/**
 	 * @return array
 	 */
 	public function getConfigArray()
 	{
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
 		return $this->config;
 	}
-	
+
 	/**
 	 * @param array $config
 	 */
@@ -208,28 +271,33 @@ class Configuration
 		$this->config = $config;
 	}
 
+
 	/**
 	 * @return array
 	 */
 	public function getDefineArray()
 	{
-		return $this->defines;
+		if (!$this->loaded)
+		{
+			$this->load();
+		}
+		return $this->define;
 	}
-	
+
 	/**
 	 * @param array $defines
 	 */
 	public function setDefineArray($defines)
 	{
-		$this->defines = $defines;
+		$this->define = $defines;
 	}
-	
+
 	/**
 	 * Setup constants.
 	 */
 	protected function applyDefines()
 	{
-		foreach ($this->defines as $name => $value)
+		foreach ($this->define as $name => $value)
 		{
 			if (!defined($name))
 			{
@@ -244,12 +312,118 @@ class Configuration
 			}
 		}
 	}
-	
+
+	/**
+	 *
+	 * @throws \RuntimeException
+	 * @return string
+	 */
+	protected function mergeJsonConfigurations()
+	{
+		$configData = \Change\Stdlib\File::read(implode(DIRECTORY_SEPARATOR, array(__DIR__, 'Assets', 'project.json')));
+		$config = Json::decode($configData, Json::TYPE_ARRAY);
+
+		foreach ($this->application->getWorkspace()->getProjectConfigurationPaths() as $path)
+		{
+			$data = \Change\Stdlib\File::read($path);
+			$projectConfig = Json::decode($data, Json::TYPE_ARRAY);
+			$config = \Zend\Stdlib\ArrayUtils::merge($config, $projectConfig);
+		}
+
+		switch ($config['config']['logging']['level'])
+		{
+			case 'EXCEPTION' :
+			case 'ALERT' :
+				$logLevel = 'ALERT';
+				break;
+			case 'ERROR' :
+			case 'ERR' :
+				$logLevel = 'ERR';
+				break;
+			case 'NOTICE' :
+				$logLevel = 'NOTICE';
+				break;
+			case 'DEBUG' :
+				$logLevel = 'DEBUG';
+				break;
+			case 'INFO' :
+				$logLevel = 'INFO';
+				break;
+			default :
+				$logLevel = 'WARN';
+				break;
+		}
+		$config['config']['logging']['level'] = $logLevel;
+		foreach (array('TMP_PATH' , 'DEFAULT_HOST', 'PROJECT_ID', 'PHP_CLI_PATH', 'DEVELOPMENT_MODE') as $requiredConfigEntry)
+		{
+			if (!isset($config['defines'][$requiredConfigEntry]))
+			{
+				throw new \RuntimeException('Please define ' . $requiredConfigEntry . ' in your profile configuration file');
+			}
+		}
+		return $config;
+	}
+
+	/**
+	 * @param array $configDefineArray
+	 * @return array
+	 */
+	protected function fixDefinesArray($configDefineArray)
+	{
+		foreach ($configDefineArray as $name => $value)
+		{
+			if (is_string($value))
+			{
+				// Match PROJECT_HOME . DIRECTORY_SEPARATOR . 'config'
+				// Or CHANGE_CONFIG_DIR . 'toto'
+				// But not Fred's Directory
+				if (preg_match('/^(([A-Z][A-Z_0-9]+)|(\'[^\']*\'))(\s*\.\s*(([A-Z][A-Z_0-9]+)|(\'[^\']*\')))+$/', $value))
+				{
+					$configDefineArray[$name] = 'return ' . $value . ';';
+				}
+				elseif ($value === 'true')
+				{
+					$configDefineArray[$name] = true;
+				}
+				elseif ($value === 'false')
+				{
+					$configDefineArray[$name] = false;
+				}
+				elseif (is_numeric($value))
+				{
+					$configDefineArray[$name] = floatval($value);
+				}
+			}
+		}
+		return $configDefineArray;
+	}
+
+	/**
+	 * @param array $defineArray
+	 */
+	protected function buildDevelopmentDefineFile($defineArray)
+	{
+		$content = "<?php // For IDE completion only //" . PHP_EOL;
+		$content .= "throw new Exception('Do not include this file');" . PHP_EOL;
+		foreach ($defineArray as $key => $value)
+		{
+			$defval = var_export($value, true);
+			if (is_string($value))
+			{
+				if (strpos($value, 'return ') === 0 && substr($value, -1) === ';')
+				{
+					$defval = substr($value, 7, strlen($value) - 8);
+				}
+			}
+			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
+		}
+		\Change\Stdlib\File::write($this->getCompiledDefinesPath(), $content);
+	}
+
 	/**
 	 * Clears the config
-	 * @api
 	 */
-	public function clear()
+	protected function clear()
 	{
 		if (file_exists($this->getCompiledConfigPath()))
 		{
@@ -258,15 +432,22 @@ class Configuration
 			ErrorHandler::stop(true);
 		}
 		$this->config = array();
-		$this->defines = array();
+		$this->define = array();
+		$this->loaded = false;
 	}
-	
-	protected function getGenerator()
+
+	/**
+	 * Refresh compiled configuration informations - raises a CONFIGURATION_REFRESHED_EVENT event
+	 *
+	 * @api
+	 */
+	public function refresh()
 	{
-		$configFiles = $this->application->getApplicationServices()->getWorkspace()->getProjectConfigurationPaths();
-		$bootstrapConfig = $this->application->getBootstrapConfiguration();
-		$compiledConfigPath = $this->getCompiledConfigPath();
-		$compiledDefinesPath = $this->getCompiledDefinesPath();
-		return new \Change\Configuration\Generator($bootstrapConfig, $configFiles, $compiledConfigPath, $compiledConfigPath);
+		$oldDefine = $this->define;
+		$oldConfig = $this->config;
+		$this->clear();
+		$this->load();
+		$this->application->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
 	}
+
 }
