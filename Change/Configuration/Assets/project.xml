@@ -2,10 +2,7 @@
 <project>
 	<defines>		
 		<define name="CHANGE_RELEASE">4.0</define>
-		
-		<define name="SUPPORTED_LANGUAGES">fr en</define>
-		<define name="UI_SUPPORTED_LANGUAGES">fr en</define>
-		
+				
 		<define name="CHANGE_USE_CORRECTION">true</define>
 		<define name="CHANGE_USE_WORKFLOW">true</define>	
 		
@@ -50,15 +47,24 @@
 			</writers>
 		</logging>
 		<i18n>
-			<entry name="en">en_GB</entry>
+			<entry name="supported-languages">fr,en</entry>
+			<lcids>
+				<entry name="en">en_GB</entry>
+			</lcids>
+			<synchro>
+				<!--
+				<keys>
+					<entry name="en">fr</entry>
+				</keys>
+				-->
+				<!--
+				<documents>
+					<entry name="en">fr</entry>
+				</documents>
+				-->
+			</synchro>
 		</i18n>
 		
-		<!-- 
-		<i18nsynchro>
-			<entry name="en">fr</entry>
-		</i18nsynchro>
-		 -->
-		 
 		<oauth>
 			<!-- 
 			<entry name="consumer">aaa#bbb</entry>
@@ -80,7 +86,6 @@
 		<http>
 			<entry name="adapter">\Zend\Http\Client\Adapter\Curl</entry>
 		</http>
-		
 		
 		<!-- 
 		<mongoDB>
@@ -171,13 +176,13 @@
 		
 		<autoload>
 			<!-- Zend-based namespace loading
-				<namespaces>
-				</namespaces>
-			 -->
-			 <!-- Include Path based autoload
-			 <paths>
-			 </paths>
-			 -->
+			<namespaces>
+			</namespaces>
+			-->
+			<!-- Include Path based autoload
+			<paths>
+			</paths>
+			-->
 		</autoload>
 		
 		<tal>
@@ -185,7 +190,6 @@
 				<entry name="trans">f_TalesI18n</entry>
 				<entry name="transdata">f_TalesI18n</entry>
 				<entry name="transui">f_TalesI18n</entry>
-				
 				<entry name="date">f_TalesDate</entry>
 				<entry name="datetime">f_TalesDate</entry>
 			</prefix>
@@ -221,8 +225,8 @@
 		<browsers>
 			<backoffice>
 				<firefox>
-					<version name="0">12.0</version>
-					<version name="1">13.0</version>
+					<entry name="0">12.0</entry>
+					<entry name="1">13.0</entry>
 				</firefox>
 			</backoffice>
 		</browsers>

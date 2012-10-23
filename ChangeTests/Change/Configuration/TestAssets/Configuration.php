@@ -1,5 +1,4 @@
 <?php
-
 namespace ChangeTests\Change\Configuration\TestAssets;
 
 /**

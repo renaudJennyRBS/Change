@@ -55,7 +55,7 @@ class I18nInfo
 
 	public function getLabel()
 	{
-		return $this->getLabelByLang(\Change\I18n\I18nManager::getInstance()->getLang());
+		return $this->getLabelByLang(\Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang());
 	}
 
 	public function getLabels()
@@ -65,7 +65,7 @@ class I18nInfo
 
 	public function isContextLangAvailable()
 	{
-		$contextLang = \Change\I18n\I18nManager::getInstance()->getLang();
+		$contextLang = \Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang();
 		return ($contextLang == $this->vo) || ($this->hasLabel($contextLang));
 	}
 
