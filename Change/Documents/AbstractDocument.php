@@ -383,7 +383,7 @@ abstract class AbstractDocument
 	 */
 	protected final function getContextLang()
 	{
-		return \Change\I18n\I18nManager::getInstance()->getLang();
+		return \Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang();
 	}
 
 	/**
