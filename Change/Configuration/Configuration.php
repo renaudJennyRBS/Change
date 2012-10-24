@@ -39,12 +39,6 @@ class Configuration
 	protected $define = null;
 
 	/**
-	 *
-	 * @var boolean
-	 */
-	protected $loaded = false;
-
-	/**
 	 * @return boolean
 	 */
 	protected function isCompiled()
@@ -106,7 +100,6 @@ class Configuration
 		$configuration = $this;
 		include $this->getCompiledConfigPath();
 		$this->applyDefines();
-		$this->loaded = true;
 	}
 
 	/**
@@ -115,10 +108,6 @@ class Configuration
 	 */
 	public function hasEntry($path)
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		$current = $this->config;
 		foreach (explode('/', $path) as $part)
 		{
@@ -138,10 +127,6 @@ class Configuration
 	 */
 	public function getEntry($path, $defaultValue = null)
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		$current = $this->config;
 		foreach (explode('/', $path) as $part)
 		{
@@ -161,10 +146,6 @@ class Configuration
 	 */
 	public function addVolatileEntry($path, $value)
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		$sections = array();
 		foreach (explode('/', $path) as $name)
 		{
@@ -205,21 +186,9 @@ class Configuration
 	 */
 	public function addPersistentEntry($path, $entryName, $value)
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		// base config
 		$configFiles = $this->application->getWorkspace()->getProjectConfigurationPaths();
-		if (count($configFiles) == 0)
-		{
-			throw new \RuntimeException('No project configuration file found');
-		}
 		$configProjectPath = $configFiles[0];
-		if (!is_readable($configProjectPath))
-		{
-			throw new \RuntimeException('Config path is not readable');
-		}
 
 		if (empty($entryName) || ($value !== null && !is_string($value)))
 		{
@@ -256,10 +225,6 @@ class Configuration
 	 */
 	public function getConfigArray()
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		return $this->config;
 	}
 
@@ -277,10 +242,6 @@ class Configuration
 	 */
 	public function getDefineArray()
 	{
-		if (!$this->loaded)
-		{
-			$this->load();
-		}
 		return $this->define;
 	}
 
@@ -433,7 +394,6 @@ class Configuration
 		}
 		$this->config = array();
 		$this->define = array();
-		$this->loaded = false;
 	}
 
 	/**
@@ -447,7 +407,7 @@ class Configuration
 		$oldConfig = $this->config;
 		$this->clear();
 		$this->load();
-		$this->application->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
+		$this->application->getApplicationServices()->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
 	}
 
 }

@@ -10,57 +10,57 @@ class I18nManager
 	const SYNCHRO_MODIFIED = 'MODIFIED';
 	const SYNCHRO_VALID = 'VALID';
 	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
-	
+
 	/**
 	 * @var array
 	 */
 	protected $LCID_BY_LANG = null;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $ignoreTransform;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $transformers;
-	
+
 	/**
 	 * @var string[] two lower-cased letters codes, ex: "fr"
 	 */
 	protected $m_workLang = array();
-		
+
 	/**
 	 * @var string two lower-cased letters code, ex: "fr"
 	 */
 	protected $m_ui_lang;
-	
+
 	/**
 	 * @var string[] two lower-cased letters codes, ex: "fr"
 	 */
 	protected $m_supportedLanguages = array();
-		
+
 	/**
 	 * @var array
 	 */
 	protected $m_i18n_documents_synchro = null;
-		
+
 	/**
 	 * @var array
 	 */
 	protected $m_i18n_keys_synchro = null;
-	
+
 	/**
 	 * @var \Change\Configuration\Configuration
 	 */
 	protected $configuration;
-	
+
 	/**
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;
-	
+
 	/**
 	 * @param \Change\Configuration\Configuration $config
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -70,14 +70,14 @@ class I18nManager
 		$this->configuration = $config;
 		$this->dbProvider = $dbProvider;
 		$this->ignoreTransform = array('TEXT' => 'raw', 'HTML' => 'html');
-		
-		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc', 
-			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace', 
+
+		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc',
+			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace',
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
-		
-		$this->m_supportedLanguages = explode(',', $config->getEntry('i18n/supported-languages', 'fr'));
+
+		$this->m_supportedLanguages = $config->getEntry('i18n/supported-languages', array('fr'));
 	}
-	
+
 	/**
 	 * Get all supported language codes.
 	 * @api
@@ -87,7 +87,7 @@ class I18nManager
 	{
 		return $this->m_supportedLanguages;
 	}
-	
+
 	/**
 	 * Get the default language code.
 	 * @api
@@ -97,7 +97,7 @@ class I18nManager
 	{
 		return $this->m_supportedLanguages[0];
 	}
-	
+
 	/**
 	 * Get the UI language code.
 	 * @api
@@ -113,7 +113,7 @@ class I18nManager
 		}
 		return $this->m_ui_lang;
 	}
-	
+
 	/**
 	 * Set the interface language code.
 	 * @api
@@ -128,7 +128,7 @@ class I18nManager
 		}
 		$this->m_ui_lang = $lang;
 	}
-	
+
 	/**
 	 * Get the current language code.
 	 * @api
@@ -145,7 +145,7 @@ class I18nManager
 			return $this->getUILang();
 		}
 	}
-	
+
 	/**
 	 * Push a new working language code.
 	 * @api
@@ -160,7 +160,7 @@ class I18nManager
 		}
 		array_push($this->m_workLang, $lang);
 	}
-	
+
 	/**
 	 * Pop the last working language code.
 	 * @api
@@ -181,7 +181,7 @@ class I18nManager
 			throw $exception;
 		}
 	}
-	
+
 	/**
 	 * Get the lang stack size.
 	 * @api
@@ -191,18 +191,18 @@ class I18nManager
 	{
 		return count($this->m_workLang);
 	}
-	
+
 	/**
-	 * Loads the i18n synchro configuration. 
+	 * Loads the i18n synchro configuration.
 	 */
 	protected function loadI18nSynchroConfiguration()
 	{
-		$data = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n/synchro/documents', null);
+		$data = $this->configuration->getEntry('i18n/synchro/documents', null);
 		$this->m_i18n_documents_synchro = $this->cleanI18nSynchroConfiguration($data);
-		$data = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n/synchro/keys', null);
+		$data = $this->configuration->getEntry('i18n/synchro/keys', null);
 		$this->m_i18n_keys_synchro = $this->cleanI18nSynchroConfiguration($data);
 	}
-	
+
 	/**
 	 * Clean i18n synchro configuration.
 	 * @see loadI18nSynchroConfiguration()
@@ -225,14 +225,14 @@ class I18nManager
 						{
 							$fromLangs[] = $fromLang;
 						}
-					}						
+					}
 					if (count($fromLangs))
 					{
 						$result[$lang] = $fromLangs;
 					}
 				}
 			}
-				
+
 			if (count($result))
 			{
 				return $result;
@@ -240,7 +240,7 @@ class I18nManager
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -252,7 +252,7 @@ class I18nManager
 		}
 		return $this->m_i18n_documents_synchro !== false;
 	}
-	
+
 	/**
 	 * @return array string : string[]
 	 */
@@ -260,7 +260,7 @@ class I18nManager
 	{
 		return $this->hasI18nDocumentsSynchro() ? $this->m_i18n_documents_synchro : array();
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -272,7 +272,7 @@ class I18nManager
 		}
 		return $this->m_i18n_keys_synchro !== false;
 	}
-	
+
 	/**
 	 * @return array string : string[]
 	 */
@@ -280,7 +280,7 @@ class I18nManager
 	{
 		return $this->hasI18nKeysSynchro() ? $this->m_i18n_keys_synchro : array();
 	}
-	
+
 	/**
 	 * @param integer $documentId
 	 */
@@ -295,7 +295,7 @@ class I18nManager
 			}
 		}
 	}
-	
+
 	/**
 	 * @param integer $documentId
 	 */
@@ -313,7 +313,7 @@ class I18nManager
 			}
 		}
 	}
-	
+
 	/**
 	 * @return integer[]
 	 */
@@ -325,7 +325,7 @@ class I18nManager
 		}
 		return array();
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return array
@@ -368,7 +368,7 @@ class I18nManager
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @param integer $documentId
 	 * @return boolean
@@ -386,19 +386,19 @@ class I18nManager
 			// Invalid document.
 			return false;
 		}
-	
+
 		$pm = $d->getPersistentModel();
 		if (!$pm->isLocalized())
 		{
 			// Not applicable on this document.
 			return false;
 		}
-	
+
 		try
 		{
 			$this->dbProvider->beginTransaction();
 			$ds = $d->getDocumentService();
-	
+
 			$synchroConfig = $ds->getI18nSynchroConfig($d, $this->getI18nDocumentsSynchro());
 			if (count($synchroConfig))
 			{
@@ -416,7 +416,7 @@ class I18nManager
 				{
 					$datas[$d->getLang()] = array('status' => self::SYNCHRO_MODIFIED, 'from' => null);
 				}
-	
+
 				foreach ($synchroConfig as $lang => $fromLangs)
 				{
 					if (!isset($datas[$lang]) || $datas[$lang]['status'] === self::SYNCHRO_SYNCHRONIZED)
@@ -429,7 +429,7 @@ class I18nManager
 								try
 								{
 									$this->pushLang($fromLang);
-	
+
 									if ($ds->synchronizeI18nProperties($d, $from, $to))
 									{
 										$this->dbProvider->setI18nSynchro($pm, $to);
@@ -442,7 +442,7 @@ class I18nManager
 									{
 										$this->dbProvider->setI18nSynchroStatus($documentId, $lang, self::SYNCHRO_VALID, null);
 									}
-	
+
 									$this->popLang();
 								}
 								catch (\Exception $e)
@@ -454,7 +454,7 @@ class I18nManager
 						}
 					}
 				}
-	
+
 				foreach ($datas as $lang => $synchroInfos)
 				{
 					if ($synchroInfos['status'] === self::SYNCHRO_MODIFIED)
@@ -480,7 +480,7 @@ class I18nManager
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -488,7 +488,7 @@ class I18nManager
 	{
 		return count($this->m_supportedLanguages) > 1;
 	}
-	
+
 	/**
 	 * Converts a two characters lang code to a LCID.
 	 * @api
@@ -499,9 +499,9 @@ class I18nManager
 	{
 		if ($this->LCID_BY_LANG === null)
 		{
-			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n/lcids', array());
+			$this->LCID_BY_LANG = $this->configuration->getEntry('i18n/lcids', array());
 		}
-		
+
 		if (!isset($this->LCID_BY_LANG[$langCode]))
 		{
 			if (strlen($langCode) === 2)
@@ -515,7 +515,7 @@ class I18nManager
 		}
 		return $this->LCID_BY_LANG[$langCode];
 	}
-	
+
 	/**
 	 * Converts a LCID to a two characters lang code.
 	 * @api
@@ -526,9 +526,9 @@ class I18nManager
 	{
 		if ($this->LCID_BY_LANG === null)
 		{
-			$this->LCID_BY_LANG = \Change\Application::getInstance()->getConfiguration()->getEntry('i18n/lcids', array());
+			$this->LCID_BY_LANG = $this->configuration->getEntry('i18n/lcids', array());
 		}
-		
+
 		$code = array_search($lcid, $this->LCID_BY_LANG);
 		if ($code === false)
 		{
@@ -536,7 +536,7 @@ class I18nManager
 		}
 		return $code;
 	}
-		
+
 	/**
 	 * For example: transData('f.boolean.true')
 	 * @api
@@ -549,7 +549,7 @@ class I18nManager
 	{
 		return $this->formatKey($this->getLang(), $cleanKey, $formatters, $replacements);
 	}
-	
+
 	/**
 	 * For example: trans('f.boolean.true')
 	 * @api
@@ -562,7 +562,7 @@ class I18nManager
 	{
 		return $this->formatKey($this->getUILang(), $cleanKey, $formatters, $replacements);
 	}
-	
+
 	/**
 	 * For example: formatKey('fr', 'f.boolean.true')
 	 * @api
@@ -583,7 +583,7 @@ class I18nManager
 		{
 			$preparedKey = new \Change\I18n\PreparedKey($cleanKey, $formatters, $replacements);
 		}
-		
+
 		if ($preparedKey->isValid())
 		{
 			$lcid = $this->getLCID($lang);
@@ -596,10 +596,9 @@ class I18nManager
 		}
 		else
 		{
-			$content = $preparedKey->getKey();
-			$format = 'TEXT';
+			return $preparedKey->getRawValue();
 		}
-		
+
 		if ($preparedKey->hasReplacements())
 		{
 			$search = array();
@@ -611,7 +610,7 @@ class I18nManager
 			}
 			$content = str_replace($search, $replace, $content);
 		}
-		
+
 		if ($preparedKey->hasFormatters())
 		{
 			foreach ($preparedKey->getFormatters() as $formatter)
@@ -622,7 +621,8 @@ class I18nManager
 				}
 				if (isset($this->transformers[$formatter]))
 				{
-					$content = $this->{$this->transformers[$formatter]}($content, $lang);
+					$content = call_user_func(array($this, $this->transformers[$formatter]), $content, $lang);
+					//echo "<br/>", $this->transformers[$formatter], "=>", $formatter, " => ", $content , "<br/>";
 				}
 				else
 				{
@@ -632,7 +632,7 @@ class I18nManager
 		}
 		return $content;
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @return string
@@ -657,7 +657,7 @@ class I18nManager
 		}
 		return $text;
 	}
-	
+
 	/**
 	 * @param string $transString
 	 * @return \Change\I18n\PreparedKey
@@ -694,7 +694,7 @@ class I18nManager
 		}
 		return new \Change\I18n\PreparedKey($parts[0], $formatters, $replacements);
 	}
-	
+
 	/**
 	 * @return array [baseKey => nbLocales]
 	 */
@@ -702,7 +702,7 @@ class I18nManager
 	{
 		return $this->dbProvider->getPackageNames();
 	}
-	
+
 	/**
 	 * @return array [baseKey => nbLocales]
 	 */
@@ -710,7 +710,7 @@ class I18nManager
 	{
 		return $this->dbProvider->getUserEditedPackageNames();
 	}
-	
+
 	/**
 	 *
 	 * @param string $keyPath
@@ -727,7 +727,7 @@ class I18nManager
 		}
 		return $contents;
 	}
-	
+
 	/**
 	 * @param string $lcid exemple fr_FR
 	 * @param string $id
@@ -739,7 +739,7 @@ class I18nManager
 	{
 		$this->updateKey($lcid, $id, $keyPath, $content, $format, true);
 	}
-	
+
 	/**
 	 * @param string $lcid
 	 * @param string $id
@@ -749,7 +749,7 @@ class I18nManager
 	{
 		$this->dbProvider->deleteI18nKey($keyPath, $id, $lcid);
 	}
-	
+
 	/**
 	 * @param string $lcid exemple fr_FR
 	 * @param string $id
@@ -762,7 +762,7 @@ class I18nManager
 	{
 		$this->dbProvider->addTranslate($lcid, $id, $keyPath, $content, $userEdited ? 1 : 0, $format, true);
 	}
-	
+
 	/**
 	 * @param string $key
 	 * @param string $lang
@@ -775,7 +775,7 @@ class I18nManager
 			Logging::getInstance()->namedLog($stringLine, 'keynotfound');
 		}
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -785,7 +785,7 @@ class I18nManager
 	{
 		return $text . ($lang == 'fr' ? ' :' : ':');
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -795,7 +795,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toUpper($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -805,7 +805,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::ucfirst($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -815,7 +815,7 @@ class I18nManager
 	{
 		return mb_convert_case($text, MB_CASE_TITLE, "UTF-8");
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -825,7 +825,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toLower($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -836,7 +836,7 @@ class I18nManager
 		return str_replace(array("\\", "\t", "\n", "\"", "'"),
 			array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -846,7 +846,7 @@ class I18nManager
 	{
 		return nl2br(htmlspecialchars($text, ENT_COMPAT, 'UTF-8'));
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -857,7 +857,7 @@ class I18nManager
 		//TODO Old class Usage
 		return \f_util_HtmlUtils::htmlToText($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -865,10 +865,9 @@ class I18nManager
 	 */
 	public function transformAttr($text, $lang)
 	{
-		//TODO Old class Usage
 		return \f_util_HtmlUtils::textToAttribute($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang
@@ -878,7 +877,7 @@ class I18nManager
 	{
 		return ' ' . $text . ' ';
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $lang

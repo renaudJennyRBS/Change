@@ -3,6 +3,8 @@ namespace ChangeTests\Change\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
+	public $listenerCalled = false;
+
 	public function run(\PHPUnit_Framework_TestResult $result = NULL)
 	{
 		$this->setPreserveGlobalState(false);
@@ -201,6 +203,51 @@ s	 */
 		$config->clear();
 		$newConfig = new  \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
+	}
+
+	public function testAddPersistentEntryBadCall()
+	{
+
+		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
+		if (file_exists($compiledFilePath))
+		{
+			unlink($compiledFilePath);
+		}
+		if (file_exists($sourceConfigFile))
+		{
+			unlink($sourceConfigFile);
+		}
+		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
+		$application = new \Change\Application();
+		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
+		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
+		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
+
+
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$this->assertTrue($config->isCompiled());
+		$this->setExpectedException("\InvalidArgumentException");
+		$result = $config->addPersistentEntry('mypath', null, 'value');
+	}
+
+	public function testGetDefineArray()
+	{
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
+		$a = array('toto' => 'tutu');
+		$config->setDefineArray($a);
+		$this->assertEquals($a, $config->getDefineArray());
+	}
+
+	public function onRefreshListener()
+	{
+
+	}
+
+	public function testRefresh()
+	{
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
+		$config->refresh();
 	}
 }
 

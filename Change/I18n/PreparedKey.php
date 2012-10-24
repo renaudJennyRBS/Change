@@ -7,20 +7,25 @@ namespace Change\I18n;
 class PreparedKey
 {
 	/**
+	 * @var string
+	 */
+	protected $rawValue;
+
+	/**
 	 * @var string[]
 	 */
 	protected $keyParts;
-	
+
 	/**
 	 * @var string[]
 	 */
 	protected $formatters;
-	
+
 	/**
 	 * @var array<string => string>
 	 */
 	protected $replacements;
-	
+
 	/**
 	 * @param string $key
 	 * @param string[] $formatters
@@ -32,7 +37,7 @@ class PreparedKey
 		$this->formatters = $formatters;
 		$this->replacements = $replacements;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -40,13 +45,14 @@ class PreparedKey
 	{
 		return implode('.', $this->keyParts);
 	}
-	
+
 	/**
 	 * @param string $key
 	 */
 	public function setKey($key)
 	{
-		$this->keyParts = explode('.', strtolower(trim($key)));
+		$this->rawValue = $key;
+		$this->keyParts = explode('.', \Change\Stdlib\String::toLower(trim($key)));
 		switch ($this->keyParts[0])
 		{
 			case 'framework' :
@@ -60,7 +66,7 @@ class PreparedKey
 				break;
 		}
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -68,7 +74,7 @@ class PreparedKey
 	{
 		return count($this->keyParts) >= 3 && in_array($this->keyParts[0], array('f', 'm', 't'));
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -80,7 +86,7 @@ class PreparedKey
 		}
 		return implode('.', array_slice($this->keyParts, 0, -1));
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -92,7 +98,7 @@ class PreparedKey
 		}
 		return end($this->keyParts);
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -100,7 +106,7 @@ class PreparedKey
 	{
 		return count($this->formatters) > 0;
 	}
-	
+
 	/**
 	 * @return string[]
 	 */
@@ -108,7 +114,7 @@ class PreparedKey
 	{
 		return $this->formatters;
 	}
-	
+
 	/**
 	 * @param string[] $formatters
 	 */
@@ -116,7 +122,7 @@ class PreparedKey
 	{
 		$this->formatters = $formatters;
 	}
-	
+
 	/**
 	 * @param string $formatter
 	 */
@@ -127,7 +133,7 @@ class PreparedKey
 			$this->formatters[] = $formatter;
 		}
 	}
-	
+
 	/**
 	 * @param string $key
 	 * @param string $value
@@ -144,7 +150,7 @@ class PreparedKey
 	{
 		return count($this->replacements) > 0;
 	}
-	
+
 	/**
 	 * @return array<string => string>
 	 */
@@ -152,7 +158,7 @@ class PreparedKey
 	{
 		return $this->replacements;
 	}
-	
+
 	/**
 	 * @param array<string => string> $replacements
 	 */
@@ -160,7 +166,7 @@ class PreparedKey
 	{
 		$this->replacements = $replacements;
 	}
-		
+
 	/**
 	 * @param string $key
 	 * @param string $value
@@ -169,7 +175,7 @@ class PreparedKey
 	{
 		$this->replacements[$key] = $value;
 	}
-	
+
 	/**
 	 * @param string $key
 	 * @param string $value
@@ -177,5 +183,13 @@ class PreparedKey
 	public function mergeReplacements($replacements)
 	{
 		$this->replacements = array_merge($this->replacements, $replacements);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRawValue()
+	{
+		return $this->rawValue;
 	}
 }

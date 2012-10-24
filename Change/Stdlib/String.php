@@ -16,7 +16,7 @@ class String
 	{
 		return mb_strlen($string, "UTF-8");
 	}
-	
+
 	/**
 	 * UTF8-safe strtolower.
 	 * @api
@@ -27,7 +27,7 @@ class String
 	{
 		return mb_strtolower($string, "UTF-8");
 	}
-	
+
 	/**
 	 * UTF8-safe strtoupper.
 	 * @api
@@ -38,7 +38,7 @@ class String
 	{
 		return mb_strtoupper($string, "UTF-8");
 	}
-	
+
 	/**
 	 * UTF8-safe ucfirst.
 	 * @api
@@ -49,7 +49,7 @@ class String
 	{
 		return self::toUpper(self::subString($string, 0, 1)) . self::subString($string, 1);
 	}
-	
+
 	/**
 	 * UTF8-safe Sub string.
 	 * @api
@@ -66,7 +66,7 @@ class String
 		}
 		return mb_substr($string, $start, $length, "UTF-8");
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $string

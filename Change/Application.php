@@ -109,7 +109,7 @@ class Application
 	 */
 	public function registerListeners()
 	{
-		$this->getEventManager()->attach(\Change\Configuration\Configuration::CONFIGURATION_REFRESHED_EVENT, array(new \Change\Injection\Injection($this), 'onConfigurationRefreshed'));
+		$this->getApplicationServices()->getEventManager()->attach(\Change\Configuration\Configuration::CONFIGURATION_REFRESHED_EVENT, array(new \Change\Injection\Injection($this), 'onConfigurationRefreshed'));
 	}
 
 	/**
@@ -186,6 +186,12 @@ class Application
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 
+		$cl = new \Zend\Di\Definition\ClassDefinition('Zend\EventManager\EventManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'identifiers', array());
+		$dl->addDefinition($cl);
+
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
@@ -223,12 +229,12 @@ class Application
 		$im = $applicationServices->instanceManager();
 
 		$im->setParameters('Change\Workspace', array('application' => $this));
+		$im->setParameters('Zend\EventManager\EventManager', array());
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
 		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
-
 
 		return $applicationServices;
 	}
@@ -336,20 +342,5 @@ class Application
 	public static function inDevelopmentMode()
 	{
 		return defined('DEVELOPMENT_MODE') ? DEVELOPMENT_MODE : false;
-	}
-
-	public function getEventManager()
-	{
-		if ($this->eventManager === null)
-		{
-			$this->setEventManager(new \Zend\EventManager\EventManager());
-		}
-		return $this->eventManager;
-	}
-
-	public function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
-	{
-		$eventManager->setIdentifiers(array(get_called_class()));
-		$this->eventManager = $eventManager;
 	}
 }
