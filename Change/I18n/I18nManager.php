@@ -1,6 +1,5 @@
 <?php
 namespace Change\I18n;
-use \Change\Logging\Logging;
 
 /**
  * @name \Change\I18n\I18nManager
@@ -626,7 +625,7 @@ class I18nManager
 				}
 				else
 				{
-					Logging::getInstance()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
+					\Change\Application::getInstance()->getApplicationServices()->getLogging()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
 				}
 			}
 		}
@@ -692,7 +691,7 @@ class I18nManager
 				$formatters[] = $data;
 			}
 		}
-		return new \Change\I18n\PreparedKey($parts[0], $formatters, $replacements);
+		return new \Change\I18n\PreparedKey(trim($parts[0]), $formatters, $replacements);
 	}
 	
 	/**
@@ -769,10 +768,11 @@ class I18nManager
 	 */
 	protected function logKeyNotFound($key, $lang)
 	{
-		if (\Change\Application::getInstance()->inDevelopmentMode())
+		$application = \Change\Application::getInstance();
+		if ($application->inDevelopmentMode())
 		{
 			$stringLine = $lang . '/' . $key;
-			Logging::getInstance()->namedLog($stringLine, 'keynotfound');
+			$application->getApplicationServices()->getLogging()->namedLog($stringLine, 'keynotfound');
 		}
 	}
 	

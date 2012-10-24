@@ -17,14 +17,6 @@ class Logging extends \Change\AbstractSingleton
 	protected $priority;
 	
 	/**
-	 * @return \Change\Logging\Logging
-	 */
-	public static function getInstance()
-	{
-		return \Change\Application::getInstance()->getApplicationServices()->getLogging();
-	}
-	
-	/**
 	 * @param \Change\Configuration\Configuration $config
 	 */
 	public function __construct(\Change\Configuration\Configuration $config)
@@ -181,6 +173,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function debug($message)
@@ -189,6 +182,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function info($message)
@@ -197,6 +191,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function warn($message)
@@ -205,6 +200,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function error($message)
@@ -213,14 +209,16 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param Exception $e
 	 */
 	public function exception($e)
 	{
-		$this->getLoggerByName('application')->alert(get_class($e) . ': ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+		$this->getLoggerByName('application')->alert(get_class($e) . ': ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
 	}
 	
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function fatal($message)
@@ -229,6 +227,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	public function deprecated($message)
@@ -305,7 +304,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$errfile = $exception->getFile();
 		$errline = $exception->getLine();
-		$message = '[' . get_class($exception) . '] ' . $exception->getMessage() . ' in file (' . $errfile . ') line ' . $errline . "\n" . $exception->getTraceAsString();
+		$message = '[' . get_class($exception) . '] ' . $exception->getMessage() . ' in file (' . $errfile . ') line ' . $errline . PHP_EOL . $exception->getTraceAsString();
 		$this->phperror($message);
 		echo $message . PHP_EOL;
 	}
@@ -319,6 +318,7 @@ class Logging extends \Change\AbstractSingleton
 	}
 	
 	/**
+	 * @api
 	 * @param string $stringLine
 	 * @param string $logName
 	 */
