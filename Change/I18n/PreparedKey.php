@@ -7,9 +7,19 @@ namespace Change\I18n;
 class PreparedKey
 {
 	/**
-	 * @var string[]
+	 * @var string
 	 */
-	protected $keyParts;
+	protected $key;
+
+	/**
+	 * @var string
+	 */
+	protected $path;
+
+	/**
+	 * @var string
+	 */
+	protected $id;
 	
 	/**
 	 * @var string[]
@@ -38,7 +48,7 @@ class PreparedKey
 	 */
 	public function getKey()
 	{
-		return implode('.', $this->keyParts);
+		return $this->isValid() ? $this->path . '.' . $this->id : $this->key;
 	}
 	
 	/**
@@ -46,19 +56,9 @@ class PreparedKey
 	 */
 	public function setKey($key)
 	{
-		$this->keyParts = explode('.', strtolower(trim($key)));
-		switch ($this->keyParts[0])
-		{
-			case 'framework' :
-				$this->keyParts[0] = 'f';
-				break;
-			case 'modules' :
-				$this->keyParts[0] = 'm';
-				break;
-			case 'themes' :
-				$this->keyParts[0] = 't';
-				break;
-		}
+		$this->key = $key;
+		$this->path = null;
+		$this->id = null;
 	}
 	
 	/**
@@ -66,31 +66,50 @@ class PreparedKey
 	 */
 	public function isValid()
 	{
-		return count($this->keyParts) >= 3 && in_array($this->keyParts[0], array('f', 'm', 't'));
+		if ($this->path === null)
+		{
+			$key = \Change\Stdlib\String::toLower($this->key);
+			if (preg_match('/^(m|modules|f|framework|t|themes)\.[a-z0-9]+(\.[a-z0-9-]+)+$/', $key))
+			{
+				$parts = explode('.', $key);
+				switch ($parts[0])
+				{
+					case 'framework' :
+						$parts[0] = 'f';
+						break;
+					case 'modules' :
+						$parts[0] = 'm';
+						break;
+					case 'themes' :
+						$parts[0] = 't';
+						break;
+				}
+				$this->path = implode('.', array_slice($parts, 0, -1));
+				$this->id = end($parts);
+			}
+			else
+			{
+				$this->path = false;
+				$this->id = false;
+			}
+		}
+		return $this->path !== false;
 	}
 	
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getPath()
 	{
-		if (!$this->isValid())
-		{
-			return false;
-		}
-		return implode('.', array_slice($this->keyParts, 0, -1));
+		return $this->isValid() ? $this->path : null;
 	}
 	
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getId()
 	{
-		if (count($this->keyParts) < 3)
-		{
-			return false;
-		}
-		return end($this->keyParts);
+		return $this->isValid() ? $this->id : null;
 	}
 	
 	/**
