@@ -1,4 +1,5 @@
  <?php
+
 /**
  * Set error reporting to the level to which Zend Framework code must comply.
  */
@@ -8,7 +9,9 @@ if (!defined('PROJECT_HOME'))
 	define('PROJECT_HOME', dirname(realpath(__DIR__)));
 }
 require_once PROJECT_HOME . '/Change/Application.php';
-\Change\Application::getInstance()->registerNamespaceAutoload();
+$application = \Change\Application::getInstance();
+$application->registerNamespaceAutoload();
 $zendLoader  = new \Zend\Loader\StandardAutoloader();
 $zendLoader->registerNamespace('ChangeTests', realpath(__DIR__) .'/');
 $zendLoader->register();
+$application->getApplicationServices()->instanceManager()->addSharedInstance(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($application), "Change\Workspace");

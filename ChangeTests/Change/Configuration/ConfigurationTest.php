@@ -174,7 +174,7 @@ s	 */
 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
 		$config->clear();
 		$this->assertFalse($config->isCompiled());
-		$config->load();
+		$config->refresh();
 		$this->assertTrue($config->isCompiled());
 	}
 

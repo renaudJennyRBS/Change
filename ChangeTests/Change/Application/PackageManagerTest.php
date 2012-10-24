@@ -33,4 +33,13 @@ class PackageManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($pathMethod->invoke($pm));
 	}
 
+	public function testGetRegisteredAutoloads()
+	{
+		$pm = \Change\Application::getInstance()->getApplicationServices()->getPackageManager();
+		$autoloads = $pm->getRegisteredAutoloads();
+		$this->assertArrayHasKey("Zend\\", $autoloads);
+		$this->assertArrayHasKey("Change\\Website\\", $autoloads);
+		$this->assertArrayHasKey("Project\\Test\\", $autoloads);
+
+	}
 }

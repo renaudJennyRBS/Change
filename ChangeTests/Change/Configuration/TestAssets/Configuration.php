@@ -40,11 +40,6 @@ class Configuration extends \Change\Configuration\Configuration
 		return parent::clear();
 	}
 
-	public function load()
-	{
-		return parent::load();
-	}
-
 
 	public function isCompiled()
 	{

@@ -23,7 +23,14 @@ class Configuration
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;
-		$this->load();
+		if ($this->isCompiled())
+		{
+			$this->load();
+		}
+		else
+		{
+			$this->refresh();
+		}
 	}
 
 	/**
@@ -93,10 +100,6 @@ class Configuration
 		// If specific environnement add a dot to complet in path file
 		$this->config = array();
 		$this->define = array();
-		if (!$this->isCompiled())
-		{
-			$this->compile();
-		}
 		$configuration = $this;
 		include $this->getCompiledConfigPath();
 		$this->applyDefines();
@@ -215,8 +218,7 @@ class Configuration
 		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, $entry);
 		\Change\Stdlib\File::write($configProjectPath, Json::encode($mergedConfig));
 		$oldValue = $this->getEntry($path);
-		$this->clear();
-		$this->load();
+		$this->refresh();
 		return $oldValue;
 	}
 
@@ -264,10 +266,13 @@ class Configuration
 			{
 				if (is_string($value))
 				{
+					// @codeCoverageIgnoreStart
+					// TODO: should this be removed ?
 					if (strpos($value, 'return ') === 0 && substr($value, -1) === ';')
 					{
 						$value = eval($value);
 					}
+					// @codeCoverageIgnoreEnd
 				}
 				define($name, $value);
 			}
@@ -293,6 +298,7 @@ class Configuration
 
 		switch ($config['config']['logging']['level'])
 		{
+			// @codeCoverageIgnoreStart
 			case 'EXCEPTION' :
 			case 'ALERT' :
 				$logLevel = 'ALERT';
@@ -313,19 +319,24 @@ class Configuration
 			default :
 				$logLevel = 'WARN';
 				break;
+			// @codeCoverageIgnoreEnd
+
 		}
 		$config['config']['logging']['level'] = $logLevel;
 		foreach (array('TMP_PATH' , 'DEFAULT_HOST', 'PROJECT_ID', 'PHP_CLI_PATH', 'DEVELOPMENT_MODE') as $requiredConfigEntry)
 		{
 			if (!isset($config['defines'][$requiredConfigEntry]))
 			{
+				// @codeCoverageIgnoreStart
 				throw new \RuntimeException('Please define ' . $requiredConfigEntry . ' in your profile configuration file');
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		return $config;
 	}
 
 	/**
+	 * TODO : check if the method is still necessary
 	 * @param array $configDefineArray
 	 * @return array
 	 */
@@ -338,22 +349,13 @@ class Configuration
 				// Match PROJECT_HOME . DIRECTORY_SEPARATOR . 'config'
 				// Or CHANGE_CONFIG_DIR . 'toto'
 				// But not Fred's Directory
+				// @codeCoverageIgnoreStart
 				if (preg_match('/^(([A-Z][A-Z_0-9]+)|(\'[^\']*\'))(\s*\.\s*(([A-Z][A-Z_0-9]+)|(\'[^\']*\')))+$/', $value))
 				{
 					$configDefineArray[$name] = 'return ' . $value . ';';
+
 				}
-				elseif ($value === 'true')
-				{
-					$configDefineArray[$name] = true;
-				}
-				elseif ($value === 'false')
-				{
-					$configDefineArray[$name] = false;
-				}
-				elseif (is_numeric($value))
-				{
-					$configDefineArray[$name] = floatval($value);
-				}
+				// @codeCoverageIgnoreEnd
 			}
 		}
 		return $configDefineArray;
@@ -371,10 +373,12 @@ class Configuration
 			$defval = var_export($value, true);
 			if (is_string($value))
 			{
+				// @codeCoverageIgnoreStart
 				if (strpos($value, 'return ') === 0 && substr($value, -1) === ';')
 				{
 					$defval = substr($value, 7, strlen($value) - 8);
 				}
+				// @codeCoverageIgnoreEnd
 			}
 			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
 		}
@@ -406,6 +410,7 @@ class Configuration
 		$oldDefine = $this->define;
 		$oldConfig = $this->config;
 		$this->clear();
+		$this->compile();
 		$this->load();
 		$this->application->getApplicationServices()->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
 	}

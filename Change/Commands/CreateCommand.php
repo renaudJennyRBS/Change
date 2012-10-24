@@ -27,11 +27,11 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 		->addArgument('package', InputArgument::REQUIRED, 'name of the package (vendor/module or change)')
 		->addArgument('cmdname', InputArgument::REQUIRED, 'name of the command (e.g. my-cmd)');
 	}
-	
+
 	/**
 	 *
-	 * @param InputInterface $input        	
-	 * @param OutputInterface $output        	
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
 	 * @throws \RuntimeException
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
@@ -52,12 +52,12 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 			{
 				$vendor = ucfirst(strtolower($parts[0]));
 				$module = ucfirst(strtolower($parts[1]));
-				$pathToTest = ($vendor == 'Project') ? \Change\Stdlib\Path::appPath('Modules', $module) : \Change\Stdlib\Path::projectPath('Plugins', 'Modules', $vendor, $module);
+				$pathToTest = ($vendor == 'Project') ? $this->getChangeApplication()->getWorkspace()->appPath('Modules', $module) : $this->getChangeApplication()->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module);
 				echo $pathToTest, PHP_EOL;
 				$valid = is_dir($pathToTest);
 			}
 		}
-		
+
 		if (!$valid)
 		{
 			throw new \InvalidArgumentException('Package name should be of the form vendor/module or change or package not installed');
@@ -66,8 +66,8 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 
 	/**
 	 *
-	 * @param InputInterface $input        	
-	 * @param OutputInterface $output        	
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
 	 * @throws \LogicException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
@@ -77,7 +77,7 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 		if (strtolower($package) === 'change')
 		{
 			$namespace = 'Change\\Commands';
-			$commandDir = \Change\Stdlib\Path::projectPath('Change', 'Commands');
+			$commandDir = $this->getChangeApplication()->getWorkspace()->projectPath('Change', 'Commands');
 		}
 		else
 		{
@@ -87,12 +87,12 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 			if ($vendor == 'Project')
 			{
 				$namespace = 'Project\\' . $module . '\\Commands';
-				$commandDir = \Change\Stdlib\Path::appPath('Modules', $module , 'Commands');
+				$commandDir = $this->getChangeApplication()->getWorkspace()->appPath('Modules', $module , 'Commands');
 			}
 			else
 			{
 				$namespace = $vendor . '\\' . $module . '\\Commands';
-				$commandDir = \Change\Stdlib\Path::projectPath('Plugins', 'Modules', $vendor, $module, 'Commands');
+				$commandDir = $this->getChangeApplication()->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module, 'Commands');
 			}
 		}
 		$content = file_get_contents(__DIR__ . '/Assets/CommandTemplate.tpl');

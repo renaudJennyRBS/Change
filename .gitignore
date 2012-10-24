@@ -47,3 +47,4 @@ nbproject
 /App/Modules
 .psr-0.ser
 test*
+/ChangeTests/UnitTestWorkspace/Compilation/

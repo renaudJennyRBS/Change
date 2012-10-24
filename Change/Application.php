@@ -298,13 +298,14 @@ class Application
 			}
 			// @codeCoverageIgnoreEnd
 			$this->registerNamespaceAutoload();
+			$this->registerListeners();
 			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{
 				call_user_func(array($bootStrapClass, 'main'), $this);
 			}
 			else
 			{
-				$bootStrapFilePath = \Change\Stdlib\Path::appPath('Bootstrap.php');
+				$bootStrapFilePath = $this->getWorkspace()->appPath('Bootstrap.php');
 				if (file_exists($bootStrapFilePath))
 				{
 					require_once $bootStrapFilePath;
@@ -321,7 +322,6 @@ class Application
 				$injection->update();
 			}
 			$this->registerInjectionAutoload();
-			$this->registerListeners();
 			$this->started = true;
 		}
 	}
