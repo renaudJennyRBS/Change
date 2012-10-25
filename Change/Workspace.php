@@ -53,8 +53,21 @@ class Workspace
 	}
 
 	/**
-	 * Build a path relative to the "Compilation" folder
+	 * Build a path relative to the "Change" folder
 	 *
+	 * @api
+	 * @return string
+	 */
+	public function changePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, $this->changeBase());
+		return $this->buildPathFromComponents($args);
+	}
+	
+	/**
+	 * Build a path relative to the "Compilation" folder 
+	 * 
 	 * @api
 	 * @return string
 	 */
@@ -148,6 +161,14 @@ class Workspace
 		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation';
 	}
 
+	/**
+	 * @return string
+	 */
+	protected function changeBase()
+	{
+		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change';
+	}
+	
 	/**
 	 * @return string
 	 */

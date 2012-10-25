@@ -15,6 +15,16 @@ class I18nInfo
 	 * @var array For example: array("fr" => "fr label")
 	 */
 	private $labels = array();
+	
+	
+	public function __construct($vo = null, $label = null)
+	{
+		if ($vo !== null) 
+		{
+			$this->vo = $vo;
+			$this->labels[$vo] = $label;
+		}
+	}
 
 	public function setVo($lang)
 	{
