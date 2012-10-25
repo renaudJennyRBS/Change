@@ -355,7 +355,15 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 					$typeData = "int(11)";
 					break;
 			}
-		}	
+		}
 		return new \Change\Db\Schema\FieldDefinition($fn, $type, $typeData, $nullable, $defaultValue);
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getSysDocumentTableName()
+	{
+		return 'f_document';
 	}
 }

@@ -632,13 +632,12 @@ class AbstractDocumentClass
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENT :
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTARRAY :
 				$docType = $property->getDocumentType() ? $this->compiler->cleanModelName($property->getDocumentType()) : null;	
-				if ($docType === null || $docType == $this->compiler->cleanModelName(\Change\Documents\AbstractModel::BASE_MODEL))
+				if ($docType === null)
 				{
 					return '\Change\Documents\AbstractDocument';
 				}
 				else
 				{
-					
 					list ($vendor, $moduleName, $docName) = explode('_', $docType);
 					return $this->getFinalClassNameByCode($vendor, $moduleName, $docName);
 				}

@@ -128,8 +128,6 @@ class Property
 		return $this->localized;
 	}
 	
-	
-
 	/**
 	 * @return string [none], property, description
 	 */
@@ -226,11 +224,11 @@ class Property
 		switch ($this->type)
 		{
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_LOB:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_BBCODE:
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_XML:
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_JSON:
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_OBJECT:
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_LONGSTRING:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_XHTMLFRAGMENT:
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_RICHTEXT:
 				return true;
 			default:
 				return false;

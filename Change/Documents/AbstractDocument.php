@@ -21,22 +21,18 @@ abstract class AbstractDocument
 	const PROPERTYTYPE_DATE = 'Date';
 	
 	const PROPERTYTYPE_STRING = 'String';
-	const PROPERTYTYPE_LOB = 'Lob';
-	const PROPERTYTYPE_LONGSTRING = 'LongString';
-	const PROPERTYTYPE_XHTMLFRAGMENT = 'XHTMLFragment';
-	const PROPERTYTYPE_BBCODE = 'BBCode';
 
+	const PROPERTYTYPE_LONGSTRING = 'LongString';
+	const PROPERTYTYPE_XML = 'XML';
+	const PROPERTYTYPE_RICHTEXT = 'RichText';
+	const PROPERTYTYPE_JSON = 'JSON';
+
+	const PROPERTYTYPE_LOB = 'Lob';
+	const PROPERTYTYPE_OBJECT = 'Object';
+		
 	const PROPERTYTYPE_DOCUMENTID = 'DocumentId';
 	const PROPERTYTYPE_DOCUMENT = 'Document';
 	const PROPERTYTYPE_DOCUMENTARRAY = 'DocumentArray';
-	
-	const PROPERTYTYPE_JSON = 'JSON';
-	const PROPERTYTYPE_OBJECT = 'Object';
-	
-	/**
-	 * @deprecated use PROPERTYTYPE_FLOAT
-	 */
-	const PROPERTYTYPE_DOUBLE = 'Double';
 	
 	const STATUS_DRAFT = 'DRAFT';
 	const STATUS_CORRECTION = 'CORRECTION';
@@ -49,9 +45,14 @@ abstract class AbstractDocument
 	const STATUS_WORKFLOW = 'WORKFLOW';
 	
 	/**
-	 * @var \Change\Documents\DocumentManager
+	 * @var \Change\Documents\DocumentServices
 	 */	
-	protected $documentManager;
+	protected $documentServices;
+	
+	/**
+	 * @var \Change\Documents\AbstractModel
+	 */
+	protected $model;
 	
 	/**
 	 * @var string
@@ -119,23 +120,6 @@ abstract class AbstractDocument
 	private $i18nVoObject;
 
 	/**
-	 * get Document Model name
-	 *
-	 * @return string 'modules_<module_name>/<document_name>'
-	 */
-	abstract public function getDocumentModelName();
-
-	/**
-	 * @return \f_persistentdocument_DocumentService
-	 */
-	abstract public function getDocumentService();
-
-	/**
-	 * @return \f_persistentdocument_PersistentDocumentModel
-	 */
-	abstract public function getPersistentModel();
-
-	/**
 	 * @param integer $id
 	 * @param I18nInfo $i18nInfo
 	 * @param integer $treeId
@@ -173,21 +157,14 @@ abstract class AbstractDocument
 	}
 	
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Documents\DocumentServices $documentServices
 	 */
-	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	public function initialize(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
 	{
-		$this->documentManager = $documentManager;
+		$this->documentServices = $documentServices;
+		$this->model = $model;
 	}
-	
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function getDocumentManager()
-	{
-		return $this->documentManager;
-	}
-	
+		
 	/**
 	 * Revert document properties values from PersistentDocumentArray to integer before
 	 * to serialize documents for cache storage. Empty here, called by child classes.
@@ -291,6 +268,8 @@ abstract class AbstractDocument
 	 */
 	public function __destruct()
 	{
+		$this->documentServices = null;
+		$this->model = null;
 		$this->m_i18nInfo = null;
 		$this->i18nVoObject = null;
 		$this->validationErrors = null;
