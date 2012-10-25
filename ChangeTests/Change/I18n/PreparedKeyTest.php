@@ -49,7 +49,14 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('t.default.templates.tpl1', $key->getKey());
 		
 		$key->setKey('framework.date.default-format');
-		$this->assertEquals('f.date.default-format', $key->getKey());		
+		$this->assertEquals('f.date.default-format', $key->getKey());
+
+		// Invalid keys are not modified.
+		$key->setKey(' framework.date.Default-Format');
+		$this->assertEquals(' framework.date.Default-Format', $key->getKey());
+		
+		$key->setKey('C\'est l\'ÉTÉ. Ça va chauffer !');
+		$this->assertEquals('C\'est l\'ÉTÉ. Ça va chauffer !', $key->getKey());
 	}
 	
 	/**
@@ -100,8 +107,8 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 		$key->setKey('t.default');
 		$this->assertEquals('t.default', $key->getKey());
 		$this->assertFalse($key->isValid());
-		$this->assertFalse($key->getPath());
-		$this->assertFalse($key->getId());
+		$this->assertNull($key->getPath());
+		$this->assertNull($key->getId());
 	}
 	
 	// Methods on transaformers.

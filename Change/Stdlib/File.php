@@ -8,6 +8,7 @@ class File
 {
 	/**
 	 * Create dynamically a directory (and sub-directories) on filesystem.
+	 * @api
 	 * @param string $directoryPath the directory to create
 	 * @throws \RuntimeException
 	 */
@@ -26,6 +27,30 @@ class File
 	}
 	
 	/**
+	 * Remove a directory (and its contents) from the filesystem.
+	 * @api
+	 * @param string $directoryPath the directory to remove
+	 * @param boolean $onlyContent
+	 */
+	public static function rmdir($directoryPath, $onlyContent = false)
+	{
+		if (is_dir($directoryPath))
+		{
+			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
+			{
+				@unlink($file);
+				if (is_dir($file)) {rmdir($file);}
+			}
+			if (!$onlyContent)
+			{
+				rmdir($directoryPath);
+			}
+		}
+	}
+	
+	/**
+	 * Write a file. If the target directory doesn't exist, it is created.
+	 * @api
 	 * @param string $path
 	 * @param string $content
 	 * @throws \RuntimeException
@@ -43,6 +68,8 @@ class File
 	}
 	
 	/**
+	 * Read a file.
+	 * @api
 	 * @param string $path
 	 * @return string
 	 * @throws \RuntimeException if file could not be read
@@ -57,25 +84,5 @@ class File
 			throw new \RuntimeException("Could not read $path", null, $exception);
 		}
 		return $content;
-	}
-	
-	/**
-	 * remove a directory (and sub-directories) on filesystem
-	 * @param $directoryPath the directory to remove
-	 */
-	public static function rmdir($directoryPath, $onlyContent = false)
-	{
-		if (is_dir($directoryPath))
-		{
-			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
-			{
-				@unlink($file);
-				if (is_dir($file)) {rmdir($file);}
-			}
-			if (!$onlyContent)
-			{
-				rmdir($directoryPath);
-			}
-		}
 	}
 }
