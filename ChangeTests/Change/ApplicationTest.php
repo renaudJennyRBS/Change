@@ -4,7 +4,7 @@ namespace ChangeTests\Change;
 /**
  */
 class ApplicationTest extends \PHPUnit_Framework_TestCase
-{	
+{
 	public function run(\PHPUnit_Framework_TestResult $result = NULL)
 	{
 		$this->setPreserveGlobalState(false);
@@ -29,7 +29,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
-	
+
 	/**
 	 * @runInSeparateProcess
 	 */
@@ -37,8 +37,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	{
 		require_once dirname(realpath(__DIR__)) . '/Bootstrap.php';
 		\Change\Application::getInstance()->registerNamespaceAutoload();
-		
-		$originalInfo = array(	
+
+		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
 			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
 		);
@@ -54,7 +54,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
 		$this->assertEquals($instance->test(), 'InjectingClass');
 	}
-	
+
 	/**
 	 * @runInSeparateProcess
 	 */
@@ -80,7 +80,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
-	
+
 	/**
 	 * @runInSeparateProcess
 	 */
@@ -90,24 +90,19 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('default', \Change\Application::getInstance()->getProfile());
 	}
 
-	public function testGetBootstrapConfiguration()
-	{
-		$app = new \Change\Application();
-		$app->getBootstrapConfiguration();
-	}
-	
+
 	public function testGetConfiguration()
 	{
 		$app = new \Change\Application();
 		$this->assertEquals($app->getApplicationServices()->getConfiguration(), $app->getConfiguration());
 	}
-	
+
 	public function testGetWorkspace()
 	{
 		$app = new \Change\Application();
 		$this->assertEquals($app->getApplicationServices()->getWorkspace(), $app->getWorkspace());
 	}
-	
+
 	/**
 	 * @runInSeparateProcess
 	 */

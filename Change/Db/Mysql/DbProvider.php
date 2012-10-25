@@ -6,17 +6,17 @@ namespace Change\Db\Mysql;
  * @method \Change\Db\Mysql\Provider getInstance()
  */
 class DbProvider extends \Change\Db\DbProvider
-{	
+{
 	/**
 	 * @var \Change\Db\Mysql\Statment
 	 */
 	protected $currentStatment = null;
-	
+
 	/**
 	 * @var \Change\Db\Mysql\SqlMapping
-	 */	
+	 */
 	protected $sqlMapping;
-	
+
 	/**
 	 * @return \Change\Db\Mysql\SqlMapping
 	 */
@@ -28,7 +28,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $this->sqlMapping;
 	}
-		
+
 	/**
 	 * @return string[]
 	 */
@@ -36,7 +36,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->getSqlMapping()->getI18nFieldNames();
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -44,7 +44,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->getSqlMapping()->getI18nSuffix();
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -52,12 +52,12 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return 'mysql';
 	}
-	
+
 	/**
 	 * @var \PDO instance provided by PDODatabase
 	 */
 	private $m_driver = null;
-	
+
 	/**
 	 * @param \PDO $driver
 	 */
@@ -69,7 +69,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$duration = microtime(true) - $this->timers['init'];
 		}
 	}
-	
+
 	/**
 	 * @return \PDO
 	 */
@@ -80,10 +80,10 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->m_driver = $this->getConnection($this->connectionInfos);
 			register_shutdown_function(array($this, "closeConnection"));
 		}
-	
+
 		return $this->m_driver;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -91,7 +91,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->getDriver()->errorCode();
 	}
-	
+
 	/**
 	 * @return array("sqlstate" => ..., "errorcode" => ..., "errormessage" => ...)
 	 */
@@ -100,7 +100,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$errorInfo = $this->getDriver()->errorInfo();
 		return array("sqlstate" => $errorInfo[0], "errorcode" => $errorInfo[1], "errormessage" => $errorInfo[2]);
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -108,7 +108,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return print_r($this->getDriver()->errorInfo(), true);
 	}
-	
+
 	/**
 	 * @param string $tableName
 	 * @return integer
@@ -117,7 +117,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->getDriver()->lastInsertId();
 	}
-			
+
 	/**
 	 * @param array<String, String> $connectionInfos
 	 * @return \PDO
@@ -126,13 +126,13 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$protocol = 'mysql';
 		$dsnOptions = array();
-	
+
 		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
 		$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
 		$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-	
+
 		$dsn = $protocol.':';
-	
+
 		if ($database !== null)
 		{
 			$dsnOptions[] = 'dbname='.$database;
@@ -149,16 +149,16 @@ class DbProvider extends \Change\Db\DbProvider
 			$port = isset($connectionInfos['port']) ? $connectionInfos['port'] : 3306;
 			$dsnOptions[] = 'port='.$port;
 		}
-	
+
 		$dsn = $protocol.':'.join(';', $dsnOptions);
-		
+
 		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'") ;
-		$pdo = new \PDO($dsn, $username, $password, $options);	
+		$pdo = new \PDO($dsn, $username, $password, $options);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		
+
 		return $pdo;
 	}
-	
+
 	/**
 	 * @param \Change\Db\Mysql\Statment $statment|null
 	 */
@@ -171,7 +171,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$this->currentStatment = $statment;
 	}
-		
+
 	/**
 	 * @return boolean
 	 */
@@ -196,7 +196,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->setCurrentStatment(null);
 		$this->setDriver(null);
 	}
-	
+
 	/**
 	 * @param string $sql
 	 * @param \Change\Db\StatmentParameter[] $parameters
@@ -211,7 +211,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @var \Change\Db\Mysql\SchemaManager
 	 */
 	protected $schemaManager = null;
-	
+
 	/**
 	 * @return \Change\Db\Mysql\SchemaManager
 	 */
@@ -222,9 +222,9 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->schemaManager = new SchemaManager($this);
 		}
 		return $this->schemaManager;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * @param boolean $useDocumentCache
 	 * @return \Change\Db\Mysql\Provider
@@ -237,25 +237,25 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $this;
 	}
-	
+
 	protected function beginTransactionInternal()
 	{
 		$this->setCurrentStatment(null);
 		$this->getDriver()->beginTransaction();
 	}
-	
+
 	protected function commitInternal()
 	{
 		$this->setCurrentStatment(null);
 		$this->getDriver()->commit();
 	}
-	
+
 	protected function rollBackInternal()
 	{
 		$this->getDriver()->rollBack();
-	}	
-	
-	
+	}
+
+
 	/**
 	 * @param string $sql
 	 * @param \Change\Db\StatmentParameter[] $parameters
@@ -268,7 +268,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->setCurrentStatment($stmt);
 		return $stmt;
 	}
-	
+
 	/**
 	 * @param Statment $stmt
 	 */
@@ -279,7 +279,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->showError($stmt);
 		}
 	}
-		
+
 	/**
 	 * @param Statment $statement
 	 */
@@ -295,7 +295,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		throw new \Exception($msg);
 	}
-	
+
 	public function getDocumentModelName($id)
 	{
 		if (!is_numeric($id) || $id <= 0)
@@ -307,7 +307,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return $this->getFromCache($documentId)->getDocumentModelName();
 		}
-		
+
 		$sql = 'SELECT `document_model` FROM `f_document` WHERE `document_id` = :document_id';
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
@@ -318,8 +318,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return $results[0]['document_model'];
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @see f_persistentdocument_PersistentProvider::getDocumentInstanceIfExist()
 	 */
@@ -329,7 +329,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return null;
 		}
-		
+
 		$documentId = intval($documentId);
 		if ($this->isInCache($documentId))
 		{
@@ -337,14 +337,14 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $this->getDocumentInstanceInternal($documentId);
 	}
-	
+
 	public function getDocumentInstance($documentId, $modelName = null, $lang = null)
 	{
 		if (!is_numeric($documentId) || $documentId <= 0)
 		{
 			throw new \Exception('Invalid document id: ' . $documentId);
 		}
-		
+
 		$documentId = intval($documentId);
 		if ($this->isInCache($documentId))
 		{
@@ -359,9 +359,9 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 		}
 		return $this->checkModelCompatibility($document, $modelName);
-	}	
-	
-	
+	}
+
+
 	/**
 	 * @param integer $documentId
 	 * @return \Change\Documents\AbstractDocument|NULL
@@ -371,7 +371,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = 'SELECT `document_model`, `treeid`, `' . implode('`, `', $this->getI18nFieldNames()) . '` FROM `f_document` WHERE `document_id` = :document_id';
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
-		$this->executeStatement($stmt);	
+		$this->executeStatement($stmt);
 		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		if (!$result)
@@ -380,7 +380,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $this->getDocumentInstanceWithModelName($documentId, $result['document_model'], $result['treeid'], $result);
 	}
-	
+
 	/**
 	 * When we want to get a document, the data is not loaded. When we want to access to it,
 	 * this function is called for giving all data to the object.
@@ -392,7 +392,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$sh = $this->getSqlMapping();
 		$documentId = $document->getId();
-		$model = $document->getPersistentModel();	
+		$model = $document->getPersistentModel();
 		$table = $sh->getDbNameByModel($model);
 		$fields = array();
 		$i18nTable = null;
@@ -408,12 +408,12 @@ class DbProvider extends \Change\Db\DbProvider
 			{
 				$fields[] = $sh->escapeName($sh->getDbNameByProperty($propertyInfos), 'd', $propertyName);
 			}
-		}	
+		}
 		$sql = 'SELECT ' .implode(', ', $fields). ' FROM '. $sh->escapeName($table, null, 'd');
 		if ($i18nTable)
 		{
 			$sql .= ' INNER JOIN '. $sh->escapeName($i18nTable, null, 'i'). ' USING(`document_id`)';
-		}	
+		}
 		$sql .=  ' WHERE `d`.`document_id` = :document_id';
 		if ($i18nTable)
 		{
@@ -422,10 +422,10 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
-	
+
 		if ($result)
 		{
 			$this->initDocumentFromDb($document, $result);
@@ -435,7 +435,7 @@ class DbProvider extends \Change\Db\DbProvider
 			throw new \Exception(get_class($this).'->loadDocument : could not load document[@id = '.$document->getId().']');
 		}
 	}
-	
+
 	/**
 	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
 	 * Initialize un document avec une ligne de resultat de la base de donnée
@@ -447,7 +447,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$documentModel = $persistentDocument->getPersistentModel();
 		$dbresult['id'] = intval($persistentDocument->getId());
-	
+
 		if ($documentModel->isLocalized())
 		{
 			//Utilisé pour initialiser l'entrée du cache
@@ -460,8 +460,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$persistentDocument->setDocumentProperties($dbresult);
 		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
-	}	
-	
+	}
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param string $lang
@@ -490,20 +490,20 @@ class DbProvider extends \Change\Db\DbProvider
 					$fields[] = $sh->escapeName($sh->getDbNameByProperty($propertyInfos), 'i', $propertyName);
 				}
 			}
-			
+
 			$sql = 'SELECT ' .implode(', ', $fields). ' FROM '.$sh->escapeName($table, null, 'i') . ' WHERE `i`.`document_id` = :document_id  AND `i`.`lang_i18n` = :lang';
 			$stmt = $this->prepareStatement($sql);
 			$stmt->bindValue(':document_id', $doc->getId(), \PDO::PARAM_INT);
 			$stmt->bindValue(':lang', $lang, \PDO::PARAM_STR);
-			
+
 			$this->executeStatement($stmt);
 			$result = $stmt->fetch(\PDO::FETCH_ASSOC);
 			$stmt->closeCursor();
 			return $this->buildI18nDocument($doc, $lang, ($result != false) ? $result : null);
 		}
 		return $this->buildI18nDocument($doc, $lang, null);
-	}	
-	
+	}
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param string $lang
@@ -514,10 +514,10 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$documentId = intval($doc->getId());
 		$model = $doc->getPersistentModel();
-	
+
 		$className = $this->getI18nDocumentClassFromModel($model->getName());
 		$i18nDoc = new $className($documentId, $lang, $result === null);
-	
+
 		/* @var $i18nDoc f_persistentdocument_I18nPersistentDocument */
 		if ($result !== null)
 		{
@@ -529,8 +529,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$this->m_i18nDocumentInstances[$documentId][$lang] = $i18nDoc;
 		return $i18nDoc;
-	}	
-	
+	}
+
 	/**
 	 * @param string $propertyName
 	 * @return integer
@@ -554,7 +554,7 @@ class DbProvider extends \Change\Db\DbProvider
 			return intval($this->getLastInsertId('f_relationname'));
 		}
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $propertyName
@@ -564,7 +564,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$masterDocId = $document->getId();
 		//TODO Old class Usage
 		$relId = \RelationService::getInstance()->getRelationId($propertyName);
-	
+
 		$stmt = $this->prepareStatement('SELECT `relation_id2` AS `id` FROM `f_relation` WHERE `relation_id1` = :relation_id1 AND `relation_id` = :relation_id ORDER BY `relation_order`');
 		$stmt->bindValue(':relation_id1', $masterDocId, \PDO::PARAM_INT);
 		$stmt->bindValue(':relation_id', $relId, \PDO::PARAM_INT);
@@ -572,8 +572,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$result = $stmt->fetchAll(\PDO::FETCH_NUM);
 		return array_map(function($row) {return intval($row[0]);}, $result);
 	}
-	
-	
+
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
@@ -582,7 +582,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$documentId = $this->getNewDocumentId($persistentDocument);
 		$this->insertDocumentInternal($documentId, $persistentDocument);
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @return integer
@@ -603,17 +603,17 @@ class DbProvider extends \Change\Db\DbProvider
 				$value  = isset($documentLangs[$i18nFieldName]) ? $documentLangs[$i18nFieldName] : NULL;
 				$stmt->bindValue(':'.$i18nFieldName, $value, \PDO::PARAM_STR);
 			}
-	
+
 			$this->executeStatement($stmt);
 			$documentId = $this->getLastInsertId($persistentDocument->getPersistentModel()->getTableName());
 		}
 		else
 		{
-			$sql = 'INSERT INTO f_document (document_id, document_model, '. implode(', ', $i18nFieldNames) .') VALUES (:document_id, :document_model, :'. implode(', :', $i18nFieldNames) .')';			
+			$sql = 'INSERT INTO f_document (document_id, document_model, '. implode(', ', $i18nFieldNames) .') VALUES (:document_id, :document_model, :'. implode(', :', $i18nFieldNames) .')';
 			$stmt = $this->prepareStatement($sql);
 			$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 			$stmt->bindValue(':document_model', $documentModel, \PDO::PARAM_STR);
-	
+
 			foreach ($i18nFieldNames as $i18nFieldName)
 			{
 				$value  = isset($documentLangs[$i18nFieldName]) ? $documentLangs[$i18nFieldName] : NULL;
@@ -622,8 +622,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->executeStatement($stmt);
 		}
 		return $documentId;
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
@@ -633,16 +633,16 @@ class DbProvider extends \Change\Db\DbProvider
 		$documentModel = $persistentDocument->getPersistentModel();
 		$sh = $this->getSqlMapping();
 		$table = $sh->getDbNameByModel($documentModel);
-		
+
 		$propertiesInfo = $documentModel->getPropertiesInfos();
 		$properties = $persistentDocument->getDocumentProperties();
-	
+
 		$tmpId = $properties['id'];
 		$properties['id'] = $documentId;
 		$this->setCachedRelation($tmpId, $documentId);
-		
+
 		$properties['model'] = $persistentDocument->getDocumentModelName();
-	
+
 		if ($documentModel->isLocalized())
 		{
 			$this->m_i18nDocumentInstances[$documentId] = array();
@@ -660,7 +660,7 @@ class DbProvider extends \Change\Db\DbProvider
 				unset($this->m_i18nDocumentInstances[$tmpId]);
 			}
 		}
-	
+
 		$fieldsName = array('`document_id`', '`document_model`');
 		$parameters = array(':document_id', ':document_model');
 
@@ -674,32 +674,32 @@ class DbProvider extends \Change\Db\DbProvider
 			$dbName = $sh->getDbNameByProperty($propertyInfo, false);
 			$fieldsName[$propertyName] = $sh->escapeName($dbName);
 			$parameters[$propertyName] = $sh->escapeParameterName($propertyName);
-	
+
 			if (is_array($properties[$propertyName]) && $propertyInfo->isDocument())
 			{
 				$properties[$propertyName] = $this->cascadeSaveDocumentArray($persistentDocument, $propertyName, $properties[$propertyName]);
 			}
 		}
-	
-		$sql = 'INSERT INTO `'.$table.'` (' . implode(', ', $fieldsName) .') VALUES (' . implode(', ', $parameters) .')';	
+
+		$sql = 'INSERT INTO `'.$table.'` (' . implode(', ', $fieldsName) .') VALUES (' . implode(', ', $parameters) .')';
 		$stmt = $this->prepareStatement($sql);
-	
+
 		$dataRelations = array();
-	
+
 		$stmt->bindValue(':document_id', $properties['id'], \PDO::PARAM_INT);
 		$stmt->bindValue(':document_model', $properties['model'], \PDO::PARAM_STR);
 		$this->buildRelationDataAndBindValues($dataRelations, $propertiesInfo, $properties, $stmt);
-	
+
 		$this->executeStatement($stmt);
-	
+
 		$persistentDocument->updateId($documentId);
 		$this->saveRelations($persistentDocument, $dataRelations);
-	
+
 		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
-	
+
 		$this->putInCache($documentId, $persistentDocument);
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_I18nPersistentDocument $i18nDocument
 	 * @param f_persistentdocument_PersistentDocumentModel $documentModel
@@ -708,7 +708,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$sh = $this->getSqlMapping();
 		$table = $sh->getDbNameByModel($documentModel, true);
-	
+
 		$fieldsName = array('`document_id`', '`lang_i18n`');
 		$parameters = array(':id', ':lang');
 		$properties = $i18nDocument->getDocumentProperties();
@@ -719,7 +719,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$fieldsName[$propertyName] = $sh->escapeName($dbName);
 			$parameters[$propertyName] = $sh->escapeParameterName($propertyName);
 		}
-		
+
 		$sql = 'INSERT INTO `'.$table.'` (' . implode(', ', $fieldsName) .') VALUES (' . implode(', ', $parameters) .')';
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':id', $i18nDocument->getId(), \PDO::PARAM_INT);
@@ -731,8 +731,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$this->setI18nSynchroStatus($i18nDocument->getId(), $i18nDocument->getLang(), 'MODIFIED');
 		$i18nDocument->setIsPersisted();
-	}	
-	
+	}
+
 	/**
 	 * Update a document.
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
@@ -766,19 +766,19 @@ class DbProvider extends \Change\Db\DbProvider
 				}
 			}
 		}
-	
+
 		if ($persistentDocument->isI18InfoModified())
 		{
 			//echo "I18INfo modified";
 			// Update i18n information, only if modified
 			$documentLangs = $persistentDocument->getI18nInfo()->toPersistentProviderArray();
-			
+
 			$sqlFields = array();
 			foreach ($this->getI18nFieldNames() as $i18nFieldName)
 			{
 				$sqlFields[] = $i18nFieldName . ' = :' .$i18nFieldName;
 			}
-			
+
 			$sql = 'UPDATE f_document SET ' . implode(', ', $sqlFields) . ' WHERE (document_id = :document_id)';
 			$stmt = $this->prepareStatement($sql);
 			foreach ($this->getI18nFieldNames() as $i18nFieldName)
@@ -786,23 +786,23 @@ class DbProvider extends \Change\Db\DbProvider
 				$value = isset($documentLangs[$i18nFieldName]) ? $documentLangs[$i18nFieldName] : NULL;
 				$stmt->bindValue(':'.$i18nFieldName, $value, \PDO::PARAM_STR);
 			}
-	
+
 			$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
 		}
-	
+
 		$propertiesInfo = $documentModel->getPropertiesInfos();
 		$properties = $persistentDocument->getDocumentProperties(false);
 		$mapping = array();
 		$lobParameters = array();
-		
+
 		foreach ($properties as $propertyName => $propertyValue)
 		{
 			if ($propertyName == 'id' || $propertyName == 'model' || !$persistentDocument->isPropertyModified($propertyName))
 			{
 				continue;
 			}
-	
+
 			$propertyInfo = $propertiesInfo[$propertyName];
 			$mapping[$propertyName] = $sh->escapeName($sh->getDbNameByProperty($propertyInfo, false)) . " = " .  $sh->escapeParameterName($propertyName);
 			if ($propertyInfo->isDocument() && is_array($propertyValue))
@@ -810,9 +810,9 @@ class DbProvider extends \Change\Db\DbProvider
 				$properties[$propertyName] = $this->cascadeSaveDocumentArray($persistentDocument, $propertyName, $propertyValue);
 			}
 		}
-	
+
 		$dataRelations = array();
-		
+
 		if (count($mapping))
 		{
 			$sql = 'UPDATE '. $sh->escapeName($sh->getDbNameByModel($documentModel)) . ' SET ' . implode(', ', $mapping) . ' WHERE (`document_id` = :document_id)';
@@ -821,12 +821,12 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
 		}
-	
+
 		$this->saveRelations($persistentDocument, $dataRelations);
 		$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_LOADED);
 		$this->postUpdate($documentId, $persistentDocument);
-	}	
-	
+	}
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param mixed[] $dataRelations
@@ -841,9 +841,9 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param \Change\Documents\AbstractDocument $parentDocument
 	 * @param string $propertyName
 	 * @param mixed $relationValues
@@ -854,7 +854,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$masterDocType = $parentDocument->getDocumentModelName();
 		//TODO Old class Usage
 		$relId = \RelationService::getInstance()->getRelationId($propertyName);
-		
+
 		//Recuperation des nouvelles relations
 
 		if ($relationValues === null || (is_array($relationValues) && count($relationValues) === 0))
@@ -871,10 +871,10 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif (!is_array($relationValues))
 		{
 			$relationValues = array($relationValues);
-		}		
-		
+		}
+
 		//Recuperations des anciens document_id / order
-		$oldIds = array();		
+		$oldIds = array();
 		$stmt = $this->prepareStatement('SELECT `relation_id2` AS doc_id, `relation_order` AS doc_order FROM `f_relation` WHERE `relation_id1` = :relation_id1 AND `relation_id` = :relation_id');
 		$stmt->bindValue(':relation_id1', $masterDocId, \PDO::PARAM_INT);
 		$stmt->bindValue(':relation_id', $relId, \PDO::PARAM_INT);
@@ -883,7 +883,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$oldIds[$row[0]] = $row[1];
 		}
-		
+
 		$oldCount = count($oldIds);
 		$updateOrder = false;
 		$order = 0;
@@ -920,7 +920,7 @@ class DbProvider extends \Change\Db\DbProvider
 				$stmt->bindValue(':relation_id1', $masterDocId, \PDO::PARAM_INT);
 				$stmt->bindValue(':relation_id2', $subDocId, \PDO::PARAM_INT);
 				$stmt->bindValue(':relation_order', $relOrder, \PDO::PARAM_INT);
-	
+
 				$stmt->bindValue(':relation_name', $propertyName, \PDO::PARAM_STR);
 				$stmt->bindValue(':document_model_id1', $masterDocType, \PDO::PARAM_STR);
 				$stmt->bindValue(':document_model_id2', $subDocType, \PDO::PARAM_STR);
@@ -929,7 +929,7 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 			$order++;
 		}
-	
+
 		if (count($oldIds) > 0)
 		{
 			//Delete old relation;
@@ -942,7 +942,7 @@ class DbProvider extends \Change\Db\DbProvider
 				$this->executeStatement($stmt);
 			}
 		}
-	
+
 		if ($updateOrder)
 		{
 			$stmt = $this->prepareStatement('UPDATE `f_relation` SET relation_order = -relation_order - 1 WHERE `relation_id1` = :relation_id1 AND `relation_id` = :relation_id AND relation_order < 0');
@@ -951,7 +951,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->executeStatement($stmt);
 		}
 	}
-	
+
 	/**
 	 * @param array $dataRelations
 	 * @param array $propertiesInfo
@@ -984,7 +984,7 @@ class DbProvider extends \Change\Db\DbProvider
 					{
 						$stmt->bindPropertyValue($propertyInfo, is_array($propertyValue) ? count($propertyValue) : intval($propertyValue));
 					}
-					
+
 					if (is_array($propertyValue))
 					{
 						$dataRelations[$propertyName] = $propertyValue;
@@ -1000,7 +1000,7 @@ class DbProvider extends \Change\Db\DbProvider
 					{
 						$stmt->bindPropertyValue($propertyInfo, intval($propertyValue) > 0 ? intval($propertyValue) : null);
 					}
-					
+
 					if (intval($propertyValue) > 0)
 					{
 						$dataRelations[$propertyName] = intval($propertyValue);
@@ -1013,29 +1013,29 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 		}
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 * @param string $propertyName
 	 * @param integer[] $documentIds
-	 * @return integer[] 
+	 * @return integer[]
 	 */
 	private function cascadeSaveDocumentArray($persistentDocument, $propertyName, $documentIds)
 	{
 		$self = $this;
 		$ids =  array_map(function ($documentId) use ($self) {
 			$subDoc = $self->getCachedDocumentById($documentId);
-			if ($subDoc->isNew() || $subDoc->isModified()) 
+			if ($subDoc->isNew() || $subDoc->isModified())
 			{
 				$subDoc->save();
 			}
 			return $subDoc->getId();
 		}, $documentIds);
-		
+
 		$persistentDocument->setDocumentProperties(array($propertyName => $ids));
 		return $ids;
 	}
-		
+
 	/**
 	 * @param integer $documentId
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
@@ -1044,8 +1044,8 @@ class DbProvider extends \Change\Db\DbProvider
 	protected function postUpdate($documentId, $persistentDocument, $clearCache = true)
 	{
 		$this->putInCache($documentId, $persistentDocument);
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_I18nPersistentDocument $i18nDocument
 	 * @param f_persistentdocument_PersistentDocumentModel $documentModel
@@ -1056,18 +1056,18 @@ class DbProvider extends \Change\Db\DbProvider
 		$i18nSuffix = $this->getI18nSuffix();
 		$table = $sh->getDbNameByModel($documentModel, true);
 		$properties = $i18nDocument->getDocumentProperties();
-	
+
 		$mapping = array();
-	
+
 		foreach ($properties as $propertyName => $propertyValue)
 		{
 			if (!$i18nDocument->isPropertyModified($propertyName))
 			{
 				continue;
 			}
-	
+
 			$propertyInfo = $documentModel->getProperty($propertyName);
-	
+
 			if ($propertyInfo->isDocument())
 			{
 				// this should not be possible
@@ -1086,10 +1086,10 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$this->setI18nSynchroStatus($i18nDocument->getId(), $i18nDocument->getLang(), 'MODIFIED');
 		$i18nDocument->setIsPersisted();
-	
+
 		$this->m_i18nDocumentInstances[$i18nDocument->getId()][$i18nDocument->getLang()] = $i18nDocument;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $persistentDocument
 	 */
@@ -1097,9 +1097,9 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$documentId = $persistentDocument->getId();
 		$lang = $persistentDocument->getLang();
-	
+
 		$documentModel = $persistentDocument->getPersistentModel();
-	
+
 		$deleteDocumentInstance = true;
 		if ($documentModel->isLocalized())
 		{
@@ -1111,7 +1111,7 @@ class DbProvider extends \Change\Db\DbProvider
 				//Le document n'existe pas dans la langue du context on ne fait rien
 				return;
 			}
-	
+
 			if ($i18nm->hasI18nSynchro())
 			{
 				//Suppression de toute les versions de lang synchronisé
@@ -1126,16 +1126,16 @@ class DbProvider extends \Change\Db\DbProvider
 					}
 				}
 			}
-				
+
 			$langCount = $persistentDocument->removeContextLang();
 			$deleteDocumentInstance = ($langCount == 0);
-				
+
 			//On supprime physiquement la traduction
-				
+
 			$i18nDocument = $this->getI18nDocument($persistentDocument, $contextLang);
 			$this->deleteI18nDocument($i18nDocument, $documentModel);
 		}
-	
+
 		if (!$deleteDocumentInstance)
 		{
 			//Election d'une nouvelle VO
@@ -1148,13 +1148,13 @@ class DbProvider extends \Change\Db\DbProvider
 			{
 				$persistentDocument->preCascadeDelete();
 			}
-	
+
 			$table = $documentModel->getTableName();
 			$sql = 'DELETE FROM `f_document` WHERE (`document_id` = :document_id)';
 			$stmt = $this->prepareStatement($sql);
 			$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
-	
+
 			$deletedrow = $stmt->rowCount();
 			if ($deletedrow != 0)
 			{
@@ -1162,24 +1162,24 @@ class DbProvider extends \Change\Db\DbProvider
 				$stmt = $this->prepareStatement($sql);
 				$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 				$this->executeStatement($stmt);
-	
+
 				$stmt = $this->prepareStatement('DELETE FROM `f_relation` WHERE `relation_id1` = :relation_id1');
 				$stmt->bindValue(':relation_id1', $documentId, \PDO::PARAM_INT);
 				$this->executeStatement($stmt);
 			}
 			$this->clearUrlRewriting($documentId);
-	
+
 			$persistentDocument->setDocumentPersistentState(\Change\Documents\AbstractDocument::PERSISTENTSTATE_DELETED);
-	
+
 			if ($documentModel->hasCascadeDelete())
 			{
 				$persistentDocument->postCascadeDelete();
 			}
-	
+
 			$this->deleteFromCache($documentId);
 		}
 	}
-	
+
 	protected function deleteI18nDocument($i18nDocument, $documentModel)
 	{
 		$table = $documentModel->getTableName() . $this->getI18nSuffix();
@@ -1190,7 +1190,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->deleteI18nSynchroStatus($i18nDocument->getId(), $i18nDocument->getLang());
 		unset($this->m_i18nDocumentInstances[$i18nDocument->getId()][$i18nDocument->getLang()]);
 	}
-		
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Documents\AbstractDocument $destDocument
@@ -1206,33 +1206,33 @@ class DbProvider extends \Change\Db\DbProvider
 			$sourceModelName = $sourceModel->getName();
 			$destModel = $destDocument->getPersistentModel();
 			$destModelName = $destModel->getName();
-	
+
 			if ($sourceModel->getTableName() != $destModel->getTableName())
 			{
 				//TODO Old class Usage
 				throw new \IllegalOperationException('Unable to mutate document ' . $document->toString() . ' to ' . $destDocument->__toString());
 			}
-	
+
 			// Update model name in f_framework table
 			$stmt = $this->prepareStatement('UPDATE `f_document` SET `document_model` = :destmodelname WHERE `document_id` = :id AND `document_model` = :sourcemodelname');
 			$stmt->bindValue(':destmodelname', $destModelName, \PDO::PARAM_STR);
 			$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 			$stmt->bindValue(':sourcemodelname', $sourceModelName, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
-	
+
 			// Update model name in f_relation table
 			$stmt = $this->prepareStatement('UPDATE `f_relation` SET `document_model_id1` = :destmodelname WHERE `relation_id1` = :id AND `document_model_id1` = :sourcemodelname');
 			$stmt->bindValue(':destmodelname', $destModelName, \PDO::PARAM_STR);
 			$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 			$stmt->bindValue(':sourcemodelname', $sourceModelName, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
-				
+
 			$stmt = $this->prepareStatement('UPDATE `f_relation` SET `document_model_id2` = :destmodelname WHERE `relation_id2` = :id AND `document_model_id1` = :sourcemodelname');
 			$stmt->bindValue(':destmodelname', $destModelName, \PDO::PARAM_STR);
 			$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 			$stmt->bindValue(':sourcemodelname', $sourceModelName, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
-	
+
 			// Update model name in document table
 			$tableName = $sourceModel->getTableName();
 			$stmt = $this->prepareStatement('UPDATE `'.$tableName.'` SET `document_model` = :destmodelname WHERE `document_id` = :id AND `document_model` = :sourcemodelname');
@@ -1240,7 +1240,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 			$stmt->bindValue(':sourcemodelname', $sourceModelName, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
-	
+
 			// Delete i18n cache information
 			if ($sourceModel->isLocalized())
 			{
@@ -1256,7 +1256,7 @@ class DbProvider extends \Change\Db\DbProvider
 					}
 				}
 			}
-	
+
 			$this->deleteFromCache($id);
 			$destDocument->copyMutateSource($document);
 			$this->putInCache($id, $destDocument);
@@ -1269,14 +1269,14 @@ class DbProvider extends \Change\Db\DbProvider
 			// unrecoverable ...
 			throw $e;
 		}
-	}	
+	}
 
 
-	
+
 	//
 	// Tree Methods à usage du treeService
 	//
-	
+
 	/**
 	* @param integer $documentId
 	* @param integer $treeId
@@ -1288,14 +1288,14 @@ class DbProvider extends \Change\Db\DbProvider
 		. ' WHERE document_id = :document_id');
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-		
+
 		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		if (!$result) {return null;}
 		$result['tree_id'] = $treeId;
 		return $result;
 	}
-	
+
 	/**
 	 * @param integer[] $documentsId
 	 * @param integer $treeId
@@ -1306,13 +1306,13 @@ class DbProvider extends \Change\Db\DbProvider
 		$result = array();
 		$documentCount = count($documentsId);
 		if ($documentCount === 0) {return $result;}
-		
+
 		$params = array();
 		for($i = 0; $i < $documentCount; $i++) {$params[] = ':p' . $i;}
-		
+
 		$sql = 'SELECT document_id, parent_id, node_order, node_level, node_path, children_count FROM f_tree_'.$treeId
 			. ' WHERE document_id in (' . implode(', ', $params) . ')';
-		
+
 		$stmt = $this->prepareStatement($sql);
 		for($i = 0; $i < $documentCount; $i++)
 		{
@@ -1326,8 +1326,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $node
 	 * @return array<document_id, tree_id, parent_id, node_order, node_level, node_path, children_count>
@@ -1341,7 +1341,7 @@ class DbProvider extends \Change\Db\DbProvider
 		. ' WHERE parent_id = :parent_id ORDER BY node_order');
 		$stmt->bindValue(':parent_id', $node->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		while (($row = $stmt->fetch(\PDO::FETCH_ASSOC)) != false)
 		{
 			$row['tree_id'] = $treeId;
@@ -1349,7 +1349,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
+	}
 
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $node
@@ -1358,19 +1358,19 @@ class DbProvider extends \Change\Db\DbProvider
 	public function getDescendantsNodesInfo($node, $deep = -1)
 	{
 		if ($deep === 1) {return $this->getChildrenNodesInfo($node);}
-	
+
 		$result = array();
 		$treeId = $node->getTreeId();
 		$maxlvl = $node->getLevel() + ($deep < 1 ? 1000 :  $deep);
-		$stmt = $this->prepareStatement('SELECT t.document_id, parent_id, node_order, node_level, node_path, children_count, d.document_model' 
+		$stmt = $this->prepareStatement('SELECT t.document_id, parent_id, node_order, node_level, node_path, children_count, d.document_model'
 		. ' FROM f_tree_'.$treeId. ' AS t INNER JOIN f_document AS d ON t.document_id = d.document_id'
 		. '	WHERE node_level > :min_level AND node_level <= :max_level AND node_path like :node_path ORDER BY node_level, node_order');
-		
+
 		$stmt->bindValue(':min_level', $node->getLevel(), \PDO::PARAM_INT);
 		$stmt->bindValue(':max_level', $maxlvl, \PDO::PARAM_INT);
 		$stmt->bindValue(':node_path', $node->getPath() . $node->getId() . '/%', \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
-	
+
 		while (($row = $stmt->fetch(\PDO::FETCH_ASSOC)) != false)
 		{
 			$row['tree_id'] = $treeId;
@@ -1378,8 +1378,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $node
 	 * @return integer[]
@@ -1388,7 +1388,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$result = array();
 		if (!$node->hasChildren()) {return $result;}
-			
+
 		$stmt = $this->prepareStatement('SELECT document_id FROM f_tree_'.$node->getTreeId().' WHERE parent_id = :parent_id ORDER BY node_order');
 		$stmt->bindValue(':parent_id', $node->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
@@ -1398,8 +1398,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $node
 	 * @return integer[]
@@ -1408,7 +1408,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$result = array();
 		if (!$node->hasChildren()) {return $result;}
-			
+
 		$stmt = $this->prepareStatement('SELECT document_id FROM f_tree_'.$node->getTreeId(). ' WHERE node_level > :node_level AND node_path like :node_path');
 		$stmt->bindValue(':node_level', $node->getLevel(), \PDO::PARAM_INT);
 		$stmt->bindValue(':node_path', $node->getPath() . $node->getId() . '/%', \PDO::PARAM_STR);
@@ -1419,8 +1419,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * Suppression de tout l'arbre
 	 * @param f_persistentdocument_PersistentTreeNode $rootNode
@@ -1431,21 +1431,21 @@ class DbProvider extends \Change\Db\DbProvider
 		$ids = $this->getDescendantsId($rootNode);
 		if (count($ids) === 0) return $ids;
 		$treeId = $rootNode->getId();
-	
+
 		$stmt = $this->prepareStatement('UPDATE f_document SET treeid = NULL WHERE treeid = :treeid AND document_id <> :document_id');
 		$stmt->bindValue(':treeid', $treeId , \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id', $treeId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		$stmt = $this->prepareStatement('DELETE FROM f_tree_'.$treeId);
 		$this->executeStatement($stmt);
-	
+
 		//Update node information
 		$rootNode->setEmpty();
 		$this->insertNode($rootNode);
 		return $ids;
-	}	
-	
+	}
+
 	/**
 	 * Ajoute un nouveau noeud
 	 * @param f_persistentdocument_PersistentTreeNode $node
@@ -1461,19 +1461,19 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':node_path', $node->getPath(), \PDO::PARAM_STR);
 		$stmt->bindValue(':children_count', $node->getChildCount(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		$stmt = $this->prepareStatement('UPDATE f_document SET treeid = :treeid WHERE document_id = :document_id');
 		$stmt->bindValue(':treeid', $node->getTreeId(), \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id', $node->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		if ($this->isInCache($node->getId()))
 		{
 			$document = $this->getFromCache($node->getId());
 			$document->setProviderTreeId($node->getTreeId());
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $parentNode
 	 * @param f_persistentdocument_PersistentTreeNode[] $nodes
@@ -1484,9 +1484,9 @@ class DbProvider extends \Change\Db\DbProvider
 		$treeId = $parentNode->getTreeId();
 		$params = array();
 		for($i = 0; $i < $countIds; $i++) {$params[] = ':p' . $i;}
-		
+
 		$sql = 'UPDATE f_tree_'.$treeId . ' SET node_order = - node_order - 1 WHERE document_id in (' . implode(', ', $params) . ')';
-		
+
 		$stmt = $this->prepareStatement($sql);
 		foreach ($nodes as $i => $node)
 		{
@@ -1500,7 +1500,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':document_id', $node->getId() , \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
 		}
-	}	
+	}
 
 	/**
 	 * @param integer $treeId
@@ -1510,7 +1510,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return 'UPDATE f_tree_'.$treeId . ' SET children_count = children_count + :offest WHERE document_id = :document_id';
 	}
-	
+
 	/**
 	 * @param integer $treeId
 	 * @param integer $offset
@@ -1520,7 +1520,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return 'UPDATE f_tree_'.$treeId . ' SET node_order = node_order + :offest WHERE parent_id = :parent_id AND node_order >= :node_order order by node_order'. ($offset < 0 ? ' asc' : ' desc');
 	}
-	
+
 	/**
 	 * Supression d'un noeud
 	 * @param f_persistentdocument_PersistentTreeNode $treeNode
@@ -1531,12 +1531,12 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':treeid', null, \PDO::PARAM_NULL);
 		$stmt->bindValue(':document_id', $treeNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-			
+
 		$sql = 'DELETE FROM f_tree_'.$treeNode->getTreeId() . ' WHERE document_id = :document_id';
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $treeNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		if ($treeNode->getParentId())
 		{
 			//Mise à jour du nombre de fils
@@ -1544,7 +1544,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':offest', -1, \PDO::PARAM_INT);
 			$stmt->bindValue(':document_id',$treeNode->getParentId(), \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
-	
+
 			//Mise à jour de l'ordre des fils
 			$stmt = $this->prepareStatement($this->updateChildrenOrderQuery($treeNode->getTreeId(), -1));
 			$stmt->bindValue(':offest', -1, \PDO::PARAM_INT);
@@ -1552,8 +1552,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':node_order',$treeNode->getIndex(), \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Supression d'une arboresence
 	 * @param f_persistentdocument_PersistentTreeNode $treeNode
@@ -1572,19 +1572,19 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':node_level', $treeNode->getLevel(), \PDO::PARAM_INT);
 			$stmt->bindValue(':node_path', $path, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
-	
+
 			$sql = 'DELETE FROM f_tree_'.$treeNode->getTreeId() . ' WHERE node_level > :node_level AND node_path like :node_path';
 			$stmt = $this->prepareStatement($sql);
 			$stmt->bindValue(':node_level', $treeNode->getLevel(), \PDO::PARAM_INT);
 			$stmt->bindValue(':node_path', $path, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
 		}
-	
+
 		$ids[] = $treeNode->getId();
 		$this->deleteEmptyNode($treeNode);
 		return $ids;
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $parentNode
 	 * @param f_persistentdocument_PersistentTreeNode $childNode
@@ -1596,14 +1596,14 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':offest', 1, \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id', $parentNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		//Insertion du noeud
 		$this->insertNode($childNode);
-	
+
 		//Mise à jour du parent en memoire
 		$parentNode->addChild($childNode);
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentTreeNode $parentNode
 	 * @param f_persistentdocument_PersistentTreeNode $childNode
@@ -1615,17 +1615,17 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':offest', 1, \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id',$parentNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		//Mise à jour de l'ordre des fils
 		$stmt = $this->prepareStatement($this->updateChildrenOrderQuery($childNode->getTreeId(), 1));
 		$stmt->bindValue(':offest', 1, \PDO::PARAM_INT);
 		$stmt->bindValue(':parent_id', $parentNode->getId(), \PDO::PARAM_INT);
 		$stmt->bindValue(':node_order', $childNode->getIndex(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		//Insertion du noeud
 		$this->insertNode($childNode);
-	
+
 		//Mise à jour du parent en memoire
 		$parentNode->insertChildAt($childNode);
 	}
@@ -1646,14 +1646,14 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$result = array();
 		}
-	
+
 		$result[] = $movedNode->getId();
 		$destPath = $destNode->getPath() . $destNode->getId() . '/';
 		$originalPath = $movedNode->getPath();
-	
+
 		$lvlOffset = $destNode->getLevel() - $parentNode->getLevel();
 		$orderdest = $destNode->getChildCount();
-	
+
 		$stmt = $this->prepareStatement('UPDATE f_tree_'.$movedNode->getTreeId()
 		. ' SET parent_id = :parent_id, node_order = :node_order, node_level = node_level + :offestlvl, node_path = :node_path'
 		. ' WHERE document_id = :document_id');
@@ -1663,27 +1663,27 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':node_path', $destPath, \PDO::PARAM_STR);
 		$stmt->bindValue(':document_id', $movedNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		//Mise à jour du nombre de fils destination
 		$stmt = $this->prepareStatement($this->updateChildenCountQuery($destNode->getTreeId()));
 		$stmt->bindValue(':offest', 1, \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id',$destNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
-	
+
+
 		//Mise à jour du nombre de fils depart
 		$stmt = $this->prepareStatement($this->updateChildenCountQuery($parentNode->getTreeId()));
 		$stmt->bindValue(':offest', -1, \PDO::PARAM_INT);
 		$stmt->bindValue(':document_id',$parentNode->getId(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		//Mise à jour de l'ordre des fils de fils depart
 		$stmt = $this->prepareStatement($this->updateChildrenOrderQuery($parentNode->getTreeId(), -1));
 		$stmt->bindValue(':offest', -1, \PDO::PARAM_INT);
 		$stmt->bindValue(':parent_id', $parentNode->getId(), \PDO::PARAM_INT);
 		$stmt->bindValue(':node_order', $movedNode->getIndex(), \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		if ($movedNode->hasChildren())
 		{
 			$originalPath .= $movedNode->getId() .'/';
@@ -1698,7 +1698,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':node_path', $originalPath.'%', \PDO::PARAM_INT);
 			$this->executeStatement($stmt);
 		}
-	
+
 		$parentNode->removeChild($movedNode);
 		$movedNode->moveTo($destNode);
 		return $result;
@@ -1724,17 +1724,17 @@ class DbProvider extends \Change\Db\DbProvider
 		if (!is_null($documentId2)) { $where[] = 'relation_id2 = :relation_id2'; }
 		if (!is_null($documentModel2)) { $where[] = 'document_model_id2 = :document_model_id2'; }
 		if (!is_null($relationId)) { $where[] = 'relation_id = :relation_id'; }
-		
+
 		$stmt = $this->prepareStatement('SELECT * FROM f_relation WHERE ' . join(' AND ', $where) . ' ORDER BY relation_order ASC');
-	
+
 		if (!is_null($documentId1)) { $stmt->bindValue(':relation_id1', $documentId1, \PDO::PARAM_INT); }
 		if (!is_null($documentModel1)) { $stmt->bindValue(':document_model_id1', $documentModel1, \PDO::PARAM_STR); }
 		if (!is_null($documentId2))  { $stmt->bindValue(':relation_id2', $documentId2, \PDO::PARAM_INT); }
 		if (!is_null($documentModel2)) { $stmt->bindValue(':document_model_id2', $documentModel2, \PDO::PARAM_STR); }
 		if (!is_null($relationId)) { $stmt->bindValue(':relation_id', $relationId, \PDO::PARAM_INT); }
-	
+
 		$this->executeStatement($stmt);
-	
+
 		$references = array();
 		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $result)
 		{
@@ -1743,10 +1743,10 @@ class DbProvider extends \Change\Db\DbProvider
 				$result['relation_id1'], $result['document_model_id1'], $result['relation_id2'], $result['document_model_id2'],
 				'CHILD', $result['relation_name'], $result['relation_order']);
 		}
-	
+
 		return $references;
 	}
-			
+
 	/**
 	 * @param string $value
 	 * @param string $settingName
@@ -1760,8 +1760,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		return count($results) === 1 ? $results[0]['package'] : null;
-	}	
-	
+	}
+
 	/**
 	 * @param string $packageName
 	 * @param string $settingName
@@ -1777,8 +1777,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		return count($results) === 1 ? $results[0]['value'] : null;
-	}	
-	
+	}
+
 	/**
 	 * @param string $packageName
 	 * @param string $settingName
@@ -1792,7 +1792,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':name', $settingName, \PDO::PARAM_STR);
 		$stmt->bindValue(':userid', $userId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		if ($value !== null)
 		{
 			$stmt = $this->prepareStatement('INSERT INTO `f_settings` (`package`, `name`, `userid`, `value`) VALUES (:package, :name, :userid, :value)');
@@ -1802,12 +1802,12 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':value', $value, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
 		}
-	}	
-	
+	}
+
 	// -------------------------------------------------------------------------
 	// TAGS STUFF
 	// -------------------------------------------------------------------------
-	
+
 	/**
 	 * Return the tags affected to the document with ID $documentId.
 	 * @internal use by TagService
@@ -1819,7 +1819,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt = $this->prepareStatement('SELECT tag FROM f_tags WHERE id = :id');
 		$stmt->bindValue(':id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		$tags = array();
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($results) > 0)
@@ -1831,7 +1831,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $tags;
 	}
-	
+
 	/**
 	 * @return array<tag => array<id>>
 	 */
@@ -1846,7 +1846,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $allTags;
 	}
-	
+
 	/**
 	 * @internal use by TagService
 	 * @param string $tag
@@ -1857,7 +1857,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt = $this->prepareStatement('SELECT id FROM f_tags WHERE tag = :tag');
 		$stmt->bindValue(':tag', $tag, \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
-	
+
 		$ids = array();
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($results) > 0)
@@ -1868,8 +1868,8 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 		}
 		return $ids;
-	}	
-	
+	}
+
 	/**
 	 * @internal use by TagService
 	 *
@@ -1881,11 +1881,11 @@ class DbProvider extends \Change\Db\DbProvider
 	public function hasTags($documentId, $tags, $allTagsRequired)
 	{
 		$sql = 'SELECT count(*) nbtags FROM f_tags WHERE id = :id AND tag IN (\'' . implode("', '", $tags) . '\')';
-	
+
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	
+
 		$nb = 0;
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($results) > 0)
@@ -1897,8 +1897,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return true;
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @internal use by TagService
 	 * @param integer $documentId
@@ -1910,7 +1910,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt = $this->prepareStatement('SELECT id FROM f_tags WHERE id = :id AND tag = :tag');
 		$stmt->bindValue(':id', $documentId, \PDO::PARAM_INT);
 		$stmt->bindValue(':tag', $tag, \PDO::PARAM_STR);
-	
+
 		$this->executeStatement($stmt);
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($results) > 0)
@@ -1918,8 +1918,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return true;
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @internal use by TagService
 	 * @param integer $documentId
@@ -1931,11 +1931,11 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt = $this->prepareStatement('DELETE FROM f_tags WHERE id = :id AND tag = :tag');
 		$stmt->bindValue(':id', $documentId, \PDO::PARAM_INT);
 		$stmt->bindValue(':tag', $tag, \PDO::PARAM_STR);
-	
+
 		$this->executeStatement($stmt);
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Adds the tag $tag tag to the document with ID $documentId.
 	 * @internal use by TagService
@@ -1946,10 +1946,10 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$stmt = $this->prepareStatement('INSERT INTO f_tags (id, tag) VALUES (:id, :tag)');
 		$stmt->bindValue(':id', $documentId, \PDO::PARAM_INT);
-		$stmt->bindValue(':tag', $tag, \PDO::PARAM_STR);	
+		$stmt->bindValue(':tag', $tag, \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
-	}	
-	
+	}
+
 	/**
 	 * Return a translated text or null
 	 * @param string $lcid
@@ -1972,8 +1972,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return array($content, $results[0]['format']);
 		}
 		return array(null, null);
-	}	
-	
+	}
+
 	/**
 	 * Clear the translation table or a part of that
 	 *
@@ -1991,8 +1991,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt = $this->prepareStatement($sql);
 		$this->executeStatement($stmt);
-	}	
-	
+	}
+
 	/**
 	 * @param string $lcid
 	 * @param string $id
@@ -2035,8 +2035,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':format', $format, \PDO::PARAM_STR);
 			$this->executeStatement($stmt);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @return array
 	 */
@@ -2123,7 +2123,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = "INSERT INTO `f_i18n` (`document_id`, `document_lang`, `synchro_status`, `synchro_from`)
 			VALUES (:document_id, :document_lang, :synchro_status, :synchro_from)
 			ON DUPLICATE KEY UPDATE `synchro_status` = VALUES(`synchro_status`), `synchro_from` = VALUES(`synchro_from`)";
-	
+
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $id, \PDO::PARAM_INT);
 		$stmt->bindValue(':document_lang', $lang, \PDO::PARAM_STR);
@@ -2155,20 +2155,20 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	/**
 	 * @return integer[]
 	 */
 	public function getI18nSynchroIds()
 	{
 		$sql = "SELECT DISTINCT `document_id` FROM `f_i18n` WHERE `synchro_status` = 'MODIFIED' LIMIT 0, 100";
-	
+
 		$stmt = $this->prepareStatement($sql);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_COLUMN);
-	}	
-	
+	}
+
 	/**
 	 * @param f_persistentdocument_PersistentDocumentModel $pm
 	 * @param integer $id
@@ -2188,7 +2188,7 @@ class DbProvider extends \Change\Db\DbProvider
 				$fields[] =  $sh->escapeName($sh->getDbNameByProperty($propertyInfo, true), null, $key);
 			}
 		}
-	
+
 		$sql =  "SELECT ". implode(', ', $fields)." FROM ".$tableName." WHERE document_id = :document_id and lang_i18n = :lang";
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
@@ -2196,10 +2196,10 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$fromResult = $stmt->fetch(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
-	
+
 		$from = new $className($documentId, $fromLang, false);
 		$from->setDocumentProperties($fromResult);
-	
+
 		$sql =  "SELECT `document_publicationstatus_i18n` AS `publicationstatus` FROM ".$tableName." WHERE document_id = :document_id and lang_i18n = :lang";
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
@@ -2215,10 +2215,10 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$to = new $className($documentId, $lang, $isNew);
 		$to->setDocumentProperties($fromResult);
-	
+
 		return array($from, $to);
 	}
-	
+
 	/**
 	 * @param f_persistentdocument_PersistentDocumentModel $pm
 	 * @param f_persistentdocument_I18nPersistentDocument $to
@@ -2230,19 +2230,19 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = "select * from ".$tableName." where document_id = :document_id and lang_i18n = :lang";
 		$id = $to->getId();
 		$lang = $to->getLang();
-	
+
 		$sqlInsert = array('`document_id`', '`lang_i18n`');
 		$sqlValues =  array(':document_id' => $id, ':lang_i18n' => $lang);
 		$sqlUpdate = array();
-	
+
 		foreach ($to->getDocumentProperties() as $propertyName => $value)
 		{
 			$property = $pm->getProperty($propertyName);
-			$fieldName = $sh->getDbNameByProperty($property, true);		
+			$fieldName = $sh->getDbNameByProperty($property, true);
 
 			$fn = $sh->escapeName($fieldName);
 			$pn = $sh->escapeParameterName($propertyName);
-			
+
 			if ($propertyName === 'publicationstatus')
 			{
 				$sqlInsert[] = $fn;
@@ -2258,7 +2258,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = 'INSERT INTO `'.$tableName.'` (' . implode(', ', $sqlInsert) .
 		') VALUES (' . implode(', ', array_keys($sqlValues)) .
 		') ON DUPLICATE KEY UPDATE' . implode(', ', $sqlUpdate);
-	
+
 		$stmt = $this->prepareStatement($sql);
 		foreach ($sqlValues as $bn => $value)
 		{
@@ -2266,7 +2266,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$this->executeStatement($stmt);
 		$this->m_i18nDocumentInstances[$id] = array();
-	
+
 		$sql = 'UPDATE `f_document` SET `label_' . $lang . '` = :label  WHERE (document_id = :document_id)';
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':label', $sqlValues[$sh->escapeParameterName('label')], \PDO::PARAM_STR);
@@ -2274,7 +2274,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		$this->deleteFromCache($id);
 	}
-	
+
 	/**
 	 * @param integer $id
 	 * @param string|null $lang
@@ -2286,7 +2286,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$sql .= " AND `document_lang` = :document_lang";
 		}
-	
+
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':document_id', $id, \PDO::PARAM_INT);
 		if ($lang !== null)
@@ -2295,8 +2295,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @return array<<nb_rules, website_id, website_lang>>
@@ -2308,8 +2308,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -2321,14 +2321,14 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = "SELECT rule_id, origine, modulename, actionname, document_id, website_lang, website_id, from_url, to_url, redirect_type
 			FROM f_url_rules WHERE document_id = :document_id AND website_lang = :website_lang AND website_id = :website_id";
 		$stmt = $this->prepareStatement($sql);
-	
+
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$stmt->bindValue(':website_lang', $lang, \PDO::PARAM_STR);
 		$stmt->bindValue(':website_id', $websiteId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -2343,8 +2343,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':website_id', $websiteId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
-	}	
-	
+	}
+
 	/**
 	 * @param string $moduleName
 	 * @param string $actionName
@@ -2358,8 +2358,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':actionname', $actionName, \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}	
-	
+	}
+
 	/**
 	 * @param string $moduleName
 	 * @param string $actionName
@@ -2372,15 +2372,15 @@ class DbProvider extends \Change\Db\DbProvider
 		$sql = "SELECT rule_id, origine, modulename, actionname, document_id, website_lang, website_id, from_url, to_url, redirect_type
 			FROM f_url_rules WHERE modulename = :modulename AND actionname = :actionname AND website_lang = :website_lang AND website_id = :website_id";
 		$stmt = $this->prepareStatement($sql);
-	
+
 		$stmt->bindValue(':modulename', $moduleName, \PDO::PARAM_STR);
 		$stmt->bindValue(':actionname', $actionName, \PDO::PARAM_STR);
 		$stmt->bindValue(':website_lang', $lang, \PDO::PARAM_STR);
 		$stmt->bindValue(':website_id', $websiteId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}	
-	
+	}
+
 	/**
 	 * @param string $moduleName
 	 * @param string $actionName
@@ -2397,9 +2397,9 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':website_id', $websiteId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
-	
-	}	
-	
+
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -2420,8 +2420,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return $results[0]['from_url'];
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -2434,8 +2434,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':lang', $lang, \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -2460,8 +2460,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':actionname', $actionName, \PDO::PARAM_STR);
 		$stmt->bindValue(':origine', $origine, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @return integer count deleted rules
@@ -2472,8 +2472,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
-	}	
-	
+	}
+
 	/**
 	 * @param string $url
 	 * @param integer $websiteId
@@ -2493,9 +2493,9 @@ class DbProvider extends \Change\Db\DbProvider
 			return $results[0];
 		}
 		return null;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * @param string $url
 	 * @param integer $websiteId
@@ -2513,8 +2513,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return $results[0];
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Compile a user/groupAcl in f_permission_compiled.
 	 *
@@ -2525,7 +2525,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$accessorId = $acl->getAccessorId();
 		$nodeId = $acl->getDocumentId();
 		$role = $acl->getRole();
-	
+
 		//TODO Old class Usage
 		$roleService = \change_PermissionService::getRoleServiceByRole($role);
 		if ($roleService === null)
@@ -2553,8 +2553,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->logging->error($e->getMessage());
 			$acl->getDocumentService()->delete($acl);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Remove all compiled acls for node $nodeId
 	 *
@@ -2575,8 +2575,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$stmt->bindValue(':permission', $packageName . '%');
 		}
 		$this->executeStatement($stmt);
-	}	
-	
+	}
+
 	/**
 	 * Permissions defined on $nodeId predicate
 	 *
@@ -2589,8 +2589,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':nodeId', $nodeId);
 		$this->executeStatement($stmt);
 		return $stmt->fetchColumn()>0;
-	}	
-	
+	}
+
 	/**
 	 * Permissions defined on $nodeId for $package predicate
 	 *
@@ -2605,8 +2605,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':permission', $packageName .'%');
 		$this->executeStatement($stmt);
 		return $stmt->fetchColumn()>0;
-	}	
-	
+	}
+
 	/**
 	 * Checks the existence of a permission on a node for an array of accessors.
 	 *
@@ -2622,8 +2622,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':nodeId', $node);
 		$this->executeStatement($stmt);
 		return $stmt->fetchColumn() > 0;
-	}	
-	
+	}
+
 	/**
 	 * @param string $permission
 	 * @param integer $nodeId
@@ -2641,7 +2641,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$result[] = intval($row['accessor_id']);
 		}
 		return $result;
-	}	
+	}
 
 	/**
 	 * @param array<Integer> $accessorIds
@@ -2660,14 +2660,14 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $result;
 	}
-	
-	
+
+
 	public function clearAllPermissions()
 	{
 		$stmt = $this->prepareStatement('TRUNCATE TABLE f_permission_compiled');
 		$this->executeStatement($stmt);
-	}	
-	
+	}
+
 	/**
 	 * Get the permission "Definition" points for tree $packageName (ex: modules_website).
 	 *
@@ -2686,7 +2686,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @param string $url
 	 * @return f_persistentdocument_I18PersistentDocument[]|null
@@ -2695,7 +2695,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$stmt = $this->prepareStatement('SELECT document_id, lang_i18n FROM m_website_doc_website_i18n WHERE url_i18n = :url');
 		$stmt->bindValue(':url', $url, \PDO::PARAM_STR);
-	
+
 		$this->executeStatement($stmt);
 		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($results) > 0)
@@ -2711,8 +2711,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$ret = null;
 		}
 		return $ret;
-	}	
-	
+	}
+
 	/**
 	 * @param string $blockName
 	 * @param array<String> $specs
@@ -2722,7 +2722,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$deleteStmt = $this->prepareStatement('DELETE FROM f_simplecache_registration WHERE cache_id = :cacheId');
 		$deleteStmt->bindValue(':cacheId', $cacheId, \PDO::PARAM_STR);
 		$this->executeStatement($deleteStmt);
-	
+
 		if (is_array($specs) && count($specs))
 		{
 			$registerQuery = 'INSERT INTO f_simplecache_registration VALUES (:pattern, :cacheId)';
@@ -2734,8 +2734,8 @@ class DbProvider extends \Change\Db\DbProvider
 				$this->executeStatement($stmt);
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param string $pattern
 	 */
@@ -2751,7 +2751,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $blockNames;
 	}
-	
+
 	/**
 	 * @param string $date_entry
 	 * @param integer $userId
@@ -2774,8 +2774,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':info', $serializedInfo, \PDO::PARAM_STR);
 		$this->executeStatement($stmt);
 		return intval($this->getLastInsertId('f_user_action_entry'));
-	}	
-	
+	}
+
 	/**
 	 * @param integer $userId
 	 * @param string $moduleName
@@ -2798,8 +2798,8 @@ class DbProvider extends \Change\Db\DbProvider
 			return intval($result['countentry']);
 		}
 		return 0;
-	}	
-	
+	}
+
 	/**
 	 * @param integer $userId
 	 * @param string $moduleName
@@ -2822,8 +2822,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		return $result;
-	}	
-	
+	}
+
 	protected function getUserActionEntryQuery($userId, $moduleName, $actionName, $documentId, $rowIndex, $rowCount, $sortOnField, $sortDirection)
 	{
 		if ($rowIndex === null)
@@ -2854,8 +2854,8 @@ class DbProvider extends \Change\Db\DbProvider
 			$sql .= " ORDER BY uac.entry_id " . $sortDirection;
 		}
 		return $sql . " LIMIT " . intval($rowIndex) .", " . intval($rowCount);
-	}	
-	
+	}
+
 	/**
 	 * @param string $fieldName (document | module | action | [user])
 	 * @return array<array<distinctvalue => VALUE>>
@@ -2870,13 +2870,13 @@ class DbProvider extends \Change\Db\DbProvider
 			default: $sqlName = 'user_id'; break;
 		}
 		$sql = 'SELECT '.$sqlName.' as distinctvalue FROM f_user_action_entry GROUP BY '.$sqlName;
-		
+
 		$stmt = $this->prepareStatement($sql);
 		$this->executeStatement($stmt);
 		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		return $result;
-	}	
+	}
 
 	/**
 	 * @param string $date
@@ -2892,10 +2892,10 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$sql = 'DELETE FROM f_user_action_entry WHERE entry_date < :entry_date';
 		}
-	
+
 		$stmt = $this->prepareStatement($sql);
 		$stmt->bindValue(':entry_date', $date, \PDO::PARAM_STR);
-	
+
 		if ($moduleName !== null)
 		{
 			$stmt->bindValue(':module_name', $moduleName, \PDO::PARAM_STR);
@@ -2903,7 +2903,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
 	}
-	
+
 	/**
 	 * @param integer $documentId
 	 * @param array<status, lastupdate>
@@ -2921,7 +2921,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return array(null, null);
 	}
-		
+
 	/**
 	 * @param integer $documentId
 	 * @param string $newStatus
@@ -2938,7 +2938,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return array($newStatus, null);
 		}
-	
+
 		if (is_array($result))
 		{
 			$updatestmt = $this->prepareStatement("UPDATE `f_indexing` SET `indexing_status` = :indexing_status, `lastupdate` = :lastupdate WHERE `document_id` = :document_id");
@@ -2947,8 +2947,8 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$updatestmt = $this->prepareStatement("INSERT INTO `f_indexing` (`indexing_status`, `lastupdate`, `document_id`) VALUES (:indexing_status, :lastupdate, :document_id)");
 		}
-	
-		if ($lastUpdate === null) 
+
+		if ($lastUpdate === null)
 		{
 			//TODO Old class Usage
 			$lastUpdate = \date_Calendar::getInstance()->toString();
@@ -2958,8 +2958,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$updatestmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($updatestmt);
 		return array($newStatus, $lastUpdate);
-	}	
-	
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @return boolean
@@ -2970,8 +2970,8 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':document_id', $documentId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->rowCount() == 1;
-	}	
-	
+	}
+
 	/**
 	 * @return integer
 	 */
@@ -2981,7 +2981,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
 	}
-	
+
 	/**
 	 * @return array<indexing_status =>, nb_document =>, max_id>
 	 */
@@ -2992,7 +2992,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
 		return $result;
-	}	
+	}
 
 	/**
 	 * @return array<max_id => integer >
@@ -3025,9 +3025,9 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $result;
 	}
-	
+
 	//DEPRECATED
-	
+
 	/**
 	 * @deprecated
 	 */
@@ -3041,7 +3041,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $previousValue;
 	}
-	
+
 	/**
 	 * @deprecated use createNewStatment
 	 */

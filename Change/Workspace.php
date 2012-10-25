@@ -3,7 +3,7 @@
 namespace Change;
 
 class Workspace
-{	
+{
 	/**
 	 * @var \Change\Application
 	 */
@@ -16,43 +16,32 @@ class Workspace
 	{
 		$this->application = $application;
 	}
-	
+
 	/**
 	 * Get all the project-level config files paths, in the correct order
-	 * 
+	 *
 	 * @api
 	 * @return array string
 	 */
 	public function getProjectConfigurationPaths()
 	{
 		$result = array();
-		$globalConfigFile = $this->appPath('Config', 'project.xml');
+		$globalConfigFile = $this->appPath('Config', 'project.json');
 		if (file_exists($globalConfigFile))
 		{
 			$result[] = $globalConfigFile;
 		}
-		$profileConfigFile = $this->appPath('Config', 'project.' . $this->application->getProfile() . '.xml');
+		$profileConfigFile = $this->appPath('Config', 'project.' . $this->application->getProfile() . '.json');
 		if (file_exists($profileConfigFile))
 		{
 			$result[] = $profileConfigFile;
 		}
 		return $result;
 	}
-	
-	/**
-	 * Get the bootstrap JSON config file path
-	 * 
-	 * @api
-	 * @return string
-	 */
-	public function getBootstrapConfigurationPath()
-	{
-		return $this->projectPath('change.json');	
-	}
 
 	/**
-	 * Build a path relative to the "App" folder 
-	 * 
+	 * Build a path relative to the "App" folder
+	 *
 	 * @api
 	 * @return string
 	 */
@@ -62,10 +51,10 @@ class Workspace
 		array_unshift($args, $this->appBase());
 		return $this->buildPathFromComponents($args);
 	}
-	
+
 	/**
-	 * Build a path relative to the "Compilation" folder 
-	 * 
+	 * Build a path relative to the "Compilation" folder
+	 *
 	 * @api
 	 * @return string
 	 */
@@ -75,10 +64,10 @@ class Workspace
 		array_unshift($args, $this->compilationBase());
 		return $this->buildPathFromComponents($args);
 	}
-	
+
 	/**
-	 * Build a path relative to the "Project" folder 
-	 * 
+	 * Build a path relative to the "Project" folder
+	 *
 	 * @api
 	 * @return string
 	 */
@@ -88,7 +77,7 @@ class Workspace
 		array_unshift($args, $this->projectBase());
 		return $this->buildPathFromComponents($args);
 	}
-	
+
 	/**
 	 * Build a path relative to the "Libraries" folder
 	 *
@@ -101,12 +90,12 @@ class Workspace
 		array_unshift($args, $this->librariesBase());
 		return $this->buildPathFromComponents($args);
 	}
-	
+
 	/**
 	 * Build a path relative to the project's modules folder (App/Modules/)
-	 * 
+	 *
 	 * @api
-	 * @return string 
+	 * @return string
 	 */
 	public function projectModulesPath()
 	{
@@ -114,7 +103,7 @@ class Workspace
 		array_unshift($args, 'Modules');
 		return call_user_func_array(array($this, 'appPath'), $args);
 	}
-	
+
 	/**
 	 * Build a path relative to the plugins modules folder (Plugins/Modules/)
 	 *
@@ -127,7 +116,7 @@ class Workspace
 		array_unshift($args, 'Plugins', 'Modules');
 		return call_user_func_array(array($this, 'projectPath'), $args);
 	}
-	
+
 	/**
 	 * @param string[] $pathComponents
 	 * @return string
@@ -142,7 +131,7 @@ class Workspace
 		return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $pathComponents);
 		// @codeCoverageIgnoreEnd
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -150,7 +139,7 @@ class Workspace
 	{
 		return PROJECT_HOME;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -158,7 +147,7 @@ class Workspace
 	{
 		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation';
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -166,7 +155,7 @@ class Workspace
 	{
 		return PROJECT_HOME . DIRECTORY_SEPARATOR . 'App';
 	}
-	
+
 	/**
 	 * @return string
 	 */
