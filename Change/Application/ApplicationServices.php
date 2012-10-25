@@ -3,7 +3,7 @@
 namespace Change\Application;
 
 class ApplicationServices extends \Zend\Di\Di
-{	
+{
 	/**
 	 * @return \Change\Db\DbProvider
 	 */
@@ -11,7 +11,7 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Db\DbProvider');
 	}
-	
+
 	/**
 	 * @return \Change\I18n\I18nManager
 	 */
@@ -19,7 +19,7 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\I18n\I18nManager');
 	}
-	
+
 	/**
 	 * @return \Change\Logging\Logging
 	 */
@@ -27,7 +27,7 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Logging\Logging');
 	}
-	
+
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
@@ -35,7 +35,7 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Configuration\Configuration');
 	}
-	
+
 	/**
 	 * @return \Change\Workspace
 	 */
@@ -50,5 +50,13 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getPackageManager()
 	{
 		return $this->get('Change\Application\PackageManager');
+	}
+
+	/**
+	 * @return \Zend\EventManager\EventManager
+	 */
+	public function getEventManager()
+	{
+		return $this->get('Zend\EventManager\EventManager');
 	}
 }

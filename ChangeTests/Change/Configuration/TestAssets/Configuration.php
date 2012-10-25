@@ -23,9 +23,9 @@ class Configuration extends \Change\Configuration\Configuration
 	{
 		parent::applyDefines();
 	}
-	
+
 	protected $compiledConfiguration;
-	
+
 	public function getCompiledConfigPath()
 	{
 		if ($this->compiledConfiguration)
@@ -33,5 +33,17 @@ class Configuration extends \Change\Configuration\Configuration
 			return $this->compiledConfiguration;
 		}
 		return parent::getCompiledConfigPath();
-	}	
+	}
+
+	public function clear()
+	{
+		return parent::clear();
+	}
+
+
+	public function isCompiled()
+	{
+		return parent::isCompiled();
+	}
+
 }

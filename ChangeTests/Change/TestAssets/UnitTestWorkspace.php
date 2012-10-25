@@ -8,7 +8,7 @@ class UnitTestWorkspace extends \Change\Workspace
 	{
 		\Change\Stdlib\File::rmdir(PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation', true);
 	}
-	
+
 	/**
 	 *
 	 * @return string
@@ -17,7 +17,7 @@ class UnitTestWorkspace extends \Change\Workspace
 	{
 		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/App';
 	}
-	
+
 	/**
 	 *
 	 * @return string
@@ -26,15 +26,5 @@ class UnitTestWorkspace extends \Change\Workspace
 	{
 		// TODO Auto-generated method stub
 		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation';
-	}
-	
-	/**
-	 *
-	 * @return string
-	 */
-	protected function projectBase()
-	{
-		// TODO Auto-generated method stub
-		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace';
 	}
 }

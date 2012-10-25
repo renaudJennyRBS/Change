@@ -45,3 +45,6 @@ nbproject
 /phpinfo.php
 /App/Config
 /App/Modules
+.psr-0.ser
+test*
+/ChangeTests/UnitTestWorkspace/Compilation/

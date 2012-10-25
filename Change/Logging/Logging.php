@@ -10,13 +10,13 @@ class Logging extends \Change\AbstractSingleton
 	 * @var \Change\Configuration\Configuration
 	 */
 	protected $configuration;
-	
+
 	/**
 	 * @var integer
 	 */
 	protected $priority;
-	
-	/**
+
+	/** 
 	 * @param \Change\Configuration\Configuration $config
 	 */
 	public function __construct(\Change\Configuration\Configuration $config)
@@ -31,7 +31,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		return $this->configuration->getEntry('logging/level');
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -63,7 +63,7 @@ class Logging extends \Change\AbstractSingleton
 		}
 		return $this->priority;
 	}
-	
+
 	/**
 	 * @param $priority integer
 	 */
@@ -78,12 +78,12 @@ class Logging extends \Change\AbstractSingleton
 			$this->priority = null;
 		}
 	}
-	
+
 	/**
 	 * @var \Zend\Log\Logger[]
 	 */
 	protected $loggers = array();
-	
+
 	/**
 	 * @param string $name
 	 * @return \Zend\Log\Logger
@@ -96,7 +96,7 @@ class Logging extends \Change\AbstractSingleton
 		}
 		return $this->loggers[$name];
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @return \Zend\Log\Logger\AbstractWriter
@@ -104,14 +104,14 @@ class Logging extends \Change\AbstractSingleton
 	protected function createStreamWriter($name)
 	{
 		$directory = ($name == 'application' || $name == 'phperror') ? 'project' : 'other';
-		$filePath = \Change\Stdlib\Path::projectPath('log', $directory, $name . '.log');
+		$filePath = \Change\Application::getInstance()->getWorkspace()->projectPath('log', $directory, $name . '.log');
 		if (!file_exists($filePath))
 		{
 			\Change\Stdlib\File::mkdir(dirname($filePath));
 		}
 		return new \Zend\Log\Writer\Stream($filePath);
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @return \Zend\Log\Logger\AbstractWriter
@@ -120,7 +120,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		return new \Zend\Log\Writer\Syslog();
 	}
-	
+
 	/**
 	 * @param string $loggerName
 	 * @return string
@@ -139,7 +139,7 @@ class Logging extends \Change\AbstractSingleton
 		}
 		return 'createStreamWriter';
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @return \Zend\Log\Logger
@@ -162,7 +162,7 @@ class Logging extends \Change\AbstractSingleton
 		$logger->addWriter($writer);
 		return $logger;
 	}
-	
+
 	/**
 	 * @param integer $id
 	 */
@@ -171,7 +171,7 @@ class Logging extends \Change\AbstractSingleton
 		// TODO
 		//$this->getLoggerByName('application')->setEventItem('sessionId' , '(' . $id . ')');
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $message
@@ -180,7 +180,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('application')->debug($message);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $message
@@ -189,7 +189,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('application')->info($message);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $message
@@ -198,7 +198,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('application')->warn($message);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $message
@@ -207,7 +207,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('application')->err($message);
 	}
-	
+
 	/**
 	 * @api
 	 * @param Exception $e
@@ -216,7 +216,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('application')->alert(get_class($e) . ': ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString());
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $message
@@ -237,28 +237,28 @@ class Logging extends \Change\AbstractSingleton
 			trigger_error($message, E_USER_DEPRECATED);
 		}
 	}
-	
+
 	/**
 	 * @var array
 	 */
 	protected $errortype;
-	
+
 	/**
 	 * @return void
 	 */
 	public function registerErrorHandler()
 	{
 		ini_set('display_errors', 0);
-		
-		$this->errortype = array(E_ERROR => 'E_ERROR', E_WARNING => 'E_WARNING', E_PARSE => 'E_PARSE', E_NOTICE => 'E_NOTICE', 
-			E_CORE_ERROR => 'E_CORE_ERROR', E_CORE_WARNING => 'E_CORE_WARNING', E_COMPILE_ERROR => 'E_COMPILE_ERROR', 
-			E_COMPILE_WARNING => 'E_COMPILE_WARNING', E_USER_ERROR => 'E_USER_ERROR', E_USER_WARNING => 'E_USER_WARNING', 
-			E_USER_NOTICE => 'E_USER_NOTICE', E_STRICT => 'E_STRICT', E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR', 
+
+		$this->errortype = array(E_ERROR => 'E_ERROR', E_WARNING => 'E_WARNING', E_PARSE => 'E_PARSE', E_NOTICE => 'E_NOTICE',
+			E_CORE_ERROR => 'E_CORE_ERROR', E_CORE_WARNING => 'E_CORE_WARNING', E_COMPILE_ERROR => 'E_COMPILE_ERROR',
+			E_COMPILE_WARNING => 'E_COMPILE_WARNING', E_USER_ERROR => 'E_USER_ERROR', E_USER_WARNING => 'E_USER_WARNING',
+			E_USER_NOTICE => 'E_USER_NOTICE', E_STRICT => 'E_STRICT', E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
 			E_DEPRECATED => 'E_DEPRECATED', E_USER_DEPRECATED => 'E_USER_DEPRECATED');
 		\Zend\Log\Logger::registerErrorHandler($this->getLoggerByName('phperror'));
 		\Zend\Log\Logger::registerExceptionHandler($this->getLoggerByName('phperror'));
 	}
-	
+
 	/**
 	 * @param integer $errno
 	 * @param string $errstr
@@ -296,7 +296,7 @@ class Logging extends \Change\AbstractSingleton
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param Exception $exception
 	 */
@@ -308,7 +308,7 @@ class Logging extends \Change\AbstractSingleton
 		$this->phperror($message);
 		echo $message . PHP_EOL;
 	}
-	
+
 	/**
 	 * @param string $message
 	 */
@@ -316,7 +316,7 @@ class Logging extends \Change\AbstractSingleton
 	{
 		$this->getLoggerByName('phperror')->log($this->getPriority(), $message, $extra);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $stringLine

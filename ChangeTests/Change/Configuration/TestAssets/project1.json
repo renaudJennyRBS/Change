@@ -1,0 +1,41 @@
+{
+	"defines":{
+		"TMP_PATH": "/tmp",
+		"DEFAULT_HOST": "www.rbschange.fr",
+		"PROJECT_ID": "test",
+		"PHP_CLI_PATH": "php",
+		"DEVELOPMENT_MODE": "true"
+	},
+	"config":{
+		"modules":{
+			"catalog":{
+				"currentBillingAreaStrategyClass":"sample_BillingAreaSelectorStrategy"
+			},
+			"website":{
+				"sample":{
+					"defaultPageTemplate":"default\/sidebarpageecomsample",
+					"defaultNosidebarTemplate":"default\/nosidebarpageecomsample",
+					"defaultHomeTemplate":"default\/nosidebarpageecomsample",
+					"defaultPopinTemplate":"default\/popin"
+				}
+			}
+		},
+		"browsers":{
+			"frontoffice":{
+				"ie":{
+					"version":9
+				},
+				"firefox":{
+					"version":12
+				}
+			}
+		},
+		"tal":{
+			"prefix":{
+				"alternateclass":"website_TalesAlternateClass",
+				"url":"website_TalesUrl",
+				"tagurl":"website_TalesUrl"
+			}
+		}
+	}
+}

@@ -7,7 +7,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		return \Change\Application::getInstance()->getApplicationServices()->getI18nManager();
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -17,12 +17,12 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$configPath = __DIR__ . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project1.php';
 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $configPath);
 		$manager = new \Change\I18n\I18nManager($config, $application->getApplicationServices()->getDbProvider());
-		
+
 		$this->assertEquals(array('fr', 'en', 'it', 'es'), $manager->getSupportedLanguages());
-		
+
 		return $manager;
 	}
-	
+
 	/**
 	 * @depends testGetSupportedLanguages
 	 */
@@ -30,7 +30,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals('fr', $manager->getDefaultLang());
 	}
-	
+
 	/**
 	 * @depends testGetSupportedLanguages
 	 */
@@ -40,7 +40,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('it_IT', $manager->getLCID('it'));
 		$this->assertEquals('en_GB', $manager->getLCID('en'));
 	}
-	
+
 	/**
 	 * @depends testGetSupportedLanguages
 	 */
@@ -52,7 +52,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests for: 
+	 * Tests for:
 	 *  - getUILang
 	 *  - setUILang
 	 * @depends testGetSupportedLanguages
@@ -62,15 +62,15 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		// TODO: Test lang from session.
 		// If no UI lang is set, use the default one.
 		$this->assertEquals($manager->getDefaultLang(), $manager->getUILang());
-		
+
 		// Set/get supported languages.
 		$manager->setUILang('it');
 		$this->assertEquals('it', $manager->getUILang());
 		$manager->setUILang('en');
 		$this->assertEquals('en', $manager->getUILang());
-		
+
 		// Setting an unsupported language.
-		try 
+		try
 		{
 			$manager->setUILang('kl');
 			$this->fail('A InvalidArgumentException should be thrown.');
@@ -94,7 +94,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		// The is no default value.
 		$this->assertEquals(0, $manager->getLangStackSize());
 		$this->assertEquals($manager->getUILang(), $manager->getLang());
-		
+
 		// Push/pop supported languages.
 		$manager->pushLang('it');
 		$this->assertEquals(1, $manager->getLangStackSize());
@@ -108,9 +108,9 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$manager->popLang();
 		$this->assertEquals(0, $manager->getLangStackSize());
 		$this->assertEquals($manager->getUILang(), $manager->getLang());
-		
+
 		// Pop from an empty stack.
-		try 
+		try
 		{
 			$manager->popLang();
 			$this->fail('A LogicException should be thrown.');
@@ -120,7 +120,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 			$this->assertEquals(0, $manager->getLangStackSize());
 			$this->assertEquals($manager->getUILang(), $manager->getLang());
 		}
-		
+
 		// Push not spported language.
 		try
 		{
@@ -133,7 +133,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 			$this->assertEquals($manager->getUILang(), $manager->getLang());
 		}
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -143,14 +143,23 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('m.website.fo.test', $preparedKey->getKey());
 		$this->assertEquals(array('ucf', 'attr'), $preparedKey->getFormatters());
 		$this->assertEquals(array('toto' => 'titi'), $preparedKey->getReplacements());
-		
+
 		// Keys and formatters are lower cased and spaces are cleaned.
 		$preparedKey = $manager->prepareKeyFromTransString(' m.Website.Fo.test ,uCf , toTo= titI , aTTr');
 		$this->assertEquals('m.website.fo.test', $preparedKey->getKey());
 		$this->assertEquals(array('ucf', 'attr'), $preparedKey->getFormatters());
 		$this->assertEquals(array('toTo' => 'titI'), $preparedKey->getReplacements());
 	}
-	
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testTranslateNoKey(\Change\I18n\I18nManager $manager)
+	{
+		$a = "çé Té tutu";
+		$this->assertEquals($a, $manager->trans($a));
+	}
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -159,7 +168,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test :', $manager->transformLab('test', 'fr'));
 		$this->assertEquals('test:', $manager->transformLab('test', 'en'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -169,7 +178,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('TEST', $manager->transformUc('tEsT', 'fr'));
 		$this->assertEquals('ÉTÉ ÇA', $manager->transformUc('été ça', 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -179,7 +188,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('TEsT', $manager->transformUcf('tEsT', 'fr'));
 		$this->assertEquals('Été ça', $manager->transformUcf('été ça', 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -189,7 +198,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('Test', $manager->transformUcw('tEsT', 'fr'));
 		$this->assertEquals('Été Ça', $manager->transformUcw('été ça', 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -199,7 +208,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test', $manager->transformLc('tEsT', 'fr'));
 		$this->assertEquals('été ça été', $manager->transformLc('été ça Été', 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -208,7 +217,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test \"test\"', $manager->transformJs('test "test"', 'fr'));
 		$this->assertEquals('tEsT \t \n \\\'test\\\' \\\\', $manager->transformJs("tEsT \t \n 'test' \\", 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -216,7 +225,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals("test <br />\n &lt;em&gt;toto&lt;/em&gt; &quot;test&quot;", $manager->transformHtml("test \n <em>toto</em> \"test\"", 'fr'));
 	}
-	
+
 	// TODO
 	/**
 	 * @depends testConstruct
@@ -225,7 +234,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals("...", $manager->transformText("...", 'fr'));
 	}*/
-	
+
 	// TODO
 	/**
 	 * @depends testConstruct
@@ -234,7 +243,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals("...", $manager->transformAttr("...", 'fr'));
 	}*/
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -243,7 +252,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(" test 3 ", $manager->transformSpace("test 3", 'fr'));
 		$this->assertEquals(" ... ", $manager->transformSpace("...", 'fr'));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */

@@ -4,7 +4,7 @@ namespace ChangeTests\Change\Stdlib;
 class FileTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMkdir()
-	{		
+	{
 		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . __METHOD__ . DIRECTORY_SEPARATOR .  'Test';
 		// Cleanup dir
 		$components = explode(DIRECTORY_SEPARATOR, $path);
@@ -18,7 +18,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->setExpectedException('\RuntimeException', 'Could not create directory');
 		\Change\Stdlib\File::mkdir(__FILE__);
 	}
-	
+
 	public function testWrite()
 	{
 		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR .  'testWrite' . DIRECTORY_SEPARATOR .  'test.txt';
@@ -31,7 +31,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		\Change\Stdlib\File::write(__DIR__, 'test');
 		return $path;
 	}
-	
+
 	/**
 	 * @depends testWrite
 	 */
@@ -41,5 +41,24 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test', \Change\Stdlib\File::read($path));
 		$this->setExpectedException('\RuntimeException', 'Could not read');
 		\Change\Stdlib\File::read(__DIR__ . DIRECTORY_SEPARATOR . 'aazeazeazeazeazeaze');
+	}
+
+	/**
+	 * @depends testMkdir
+	 */
+	public function testRmdir()
+	{
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'Toto' . DIRECTORY_SEPARATOR . 'Tutu';
+		\Change\Stdlib\File::mkdir($path);
+		$this->assertTrue(is_dir($path));
+		\Change\Stdlib\File::rmdir(dirname($path));
+		$this->assertFalse(is_dir($path));
+		$this->assertFalse(is_dir(dirname($path)));
+
+		\Change\Stdlib\File::mkdir($path);
+		$this->assertTrue(is_dir($path));
+		\Change\Stdlib\File::rmdir(dirname($path), true);
+		$this->assertFalse(is_dir($path));
+		$this->assertTrue(is_dir(dirname($path)));
 	}
 }
