@@ -39,7 +39,5 @@ class PackageManagerTest extends \PHPUnit_Framework_TestCase
 		$autoloads = $pm->getRegisteredAutoloads();
 		$this->assertArrayHasKey("Zend\\", $autoloads);
 		$this->assertArrayHasKey("Change\\Website\\", $autoloads);
-		$this->assertArrayHasKey("Project\\Test\\", $autoloads);
-
 	}
 }
