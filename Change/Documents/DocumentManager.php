@@ -8,15 +8,14 @@ class DocumentManager
 {
 	
 	/**
-	 * @var \Change\Documents\ModelManager
+	 * @var \Change\Documents\DocumentServices
 	 */
-	protected $modelManager;
+	protected $documentServices;
 	
 	/**
-	 * @var \Change\Db\DbProvider
+	 * @var \Change\Application\ApplicationServices
 	 */
-	protected $dbProvider;	
-	
+	protected $applicationServices;	
 	
 	/**
 	 * Document instances by id
@@ -42,13 +41,29 @@ class DocumentManager
 	
 	
 	/**
-	 * @param \Change\Documents\ModelManager $modelManager
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
-	public function __construct(\Change\Documents\ModelManager $modelManager, \Change\Db\DbProvider $dbProvider)
+	public function __construct(\Change\Documents\DocumentServices $documentServices, \Change\Application\ApplicationServices $applicationServices)
 	{
-		$this->modelManager = $modelManager;
-		$this->dbProvider = $dbProvider;
+		$this->documentServices = $documentServices;
+		$this->applicationServices = $applicationServices;
+	}
+	
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->applicationServices->getDbProvider();
+	}
+	
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->documentServices->getModelManager();
 	}
 	
 	/**
@@ -57,16 +72,27 @@ class DocumentManager
 	 */
 	public function getNewDocumentInstance($modelName)
 	{
+		$model = $this->getModelManager()->getModelByName($modelName);
+		if ($model === null)
+		{
+			throw new \InvalidArgumentException('Invalid model name (' . $modelName . ')');
+		}
 		$this->newInstancesCounter--;
-		$className = $this->getDocumentClassFromModel($modelName);
-		return new $className($this->newInstancesCounter);
+		$className = $this->getDocumentClassFromModel($model);
+
+		$i18nInfo = new I18nInfo($this->applicationServices->getI18nManager()->getLang());
+		/* @var $newDocument \Change\Documents\AbstractDocument */
+		$newDocument = new $className($this->newInstancesCounter, $i18nInfo, null);
+		$newDocument->initialize($this->documentServices, $model);
+		return $newDocument;
 	}
 	
 	/**
 	 * @param integer $documentId
+	 * @param \Change\Documents\AbstractModel $model
 	 * @return \Change\Documents\AbstractDocument|null
 	 */
-	public function getDocumentInstance($documentId)
+	public function getDocumentInstance($documentId, $model = null)
 	{
 		$id = intval($documentId);
 		if ($id > 0)
@@ -75,11 +101,21 @@ class DocumentManager
 			{
 				return $this->getFromCache($id);
 			}
-			$document = $this->dbProvider->getDocumentInstanceIfExist($documentId);
-			if ($document !== null)
+			
+			$constructorInfos = $this->getDbProvider()->getDocumentConstructorInfos($id, $model);
+			if ($constructorInfos !== null)
 			{
+				list ($realModelName, $lang, $label, $treeId) = $constructorInfos;
+				$realModel = $this->getModelManager()->getModelByName($realModelName);				
+				$className = $this->getDocumentClassFromModel($realModel);
+				/* @var $document \Change\Documents\AbstractDocument */
+				$i18nInfo = new I18nInfo($lang, $label);
+				$document = new $className($id, $i18nInfo, $treeId);
+				$document->initialize($this->documentServices, $realModel);
+				
 				$this->putInCache($id, $document);
 			}
+			
 			return $document;
 		}
 		return null;
@@ -91,7 +127,7 @@ class DocumentManager
 	public function loadDocumentInstance($document)
 	{
 		$documentId = $document->getId();
-		$this->dbProvider->loadDocument($document);
+		$this->getDbProvider()->loadDocument($document);
 	}
 	
 	/**
@@ -102,11 +138,11 @@ class DocumentManager
 		$documentId = $document->getId();
 		if ($documentId < 0)
 		{
-			$this->dbProvider->insertDocument($document);
+			$this->getDbProvider()->insertDocument($document);
 		}
 		else
 		{
-			$this->dbProvider->updateDocument($document);
+			$this->getDbProvider()->updateDocument($document);
 		}
 	}
 	
@@ -121,7 +157,7 @@ class DocumentManager
 		$i18ndoc = $this->getI18nDocumentFromCache($documentId, $lang);
 		if ($i18ndoc === null)
 		{
-			$i18ndoc = $this->dbProvider->getI18nDocument($document, $lang);
+			$i18ndoc = $this->getDbProvider()->getI18nDocument($document, $lang);
 			if ($i18ndoc === null)
 			{
 				$i18nClassName = $this->getI18nDocumentClassFromModel($document->getDocumentModelName());
@@ -247,26 +283,20 @@ class DocumentManager
 	}
 		
 	/**
-	 * @param string $modelName
+	 * @param \Change\Documents\AbstractModel $model
 	 * @return string
 	 */
-	protected function getDocumentClassFromModel($modelName)
+	protected function getDocumentClassFromModel($model)
 	{
-		$model = $this->modelManager->getModelByName($modelName);
-		if ($model === null)
-		{
-			throw new \InvalidArgumentException('Invalid model name:' . $modelName);
-		}
 		return ucfirst($model->getVendorName()) . '\\' . ucfirst($model->getModuleName()) . '\\Documents\\' . ucfirst(ucfirst($model->getDocumentName()));
 	}
 		
 	/**
-	 * Return the I18n persistent document class name from the document model name
-	 * @param string $modelName
+	 * @param \Change\Documents\AbstractModel $model
 	 * @return string
 	 */
-	protected function getI18nDocumentClassFromModel($modelName)
+	protected function getI18nDocumentClassFromModel($model)
 	{
-		return $this->getDocumentClassFromModel($modelName).'I18n';
+		return $this->getDocumentClassFromModel($model).'I18n';
 	}
 }

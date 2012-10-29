@@ -44,7 +44,7 @@ abstract class AbstractModel
 	protected  $m_parentName;
 	
 
-	const BASE_MODEL = 'modules_generic/document';
+
 	
 	
 	public function __construct()
@@ -170,22 +170,6 @@ abstract class AbstractModel
 	public function isBackofficeIndexable()
 	{
 		return true;
-	}
-	
-	/**
-	 * @param string $modelName
-	 * @return boolean
-	 */
-	public function isModelCompatible($modelName)
-	{
-		switch ($modelName)
-		{
-			case self::BASE_MODEL:
-			case $this->getName():
-				return true;			
-			default: 
-				return in_array($modelName, $this->getAncestorModelNames());
-		}
 	}
 	
 	/**

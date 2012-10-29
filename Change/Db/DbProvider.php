@@ -23,29 +23,6 @@ abstract class DbProvider
 	protected $timers;
 	
 	/**
-	 * Document instances by id
-	 * @var array<integer, \Change\Documents\AbstractDocument>
-	 */
-	protected $m_documentInstances = array();
-	
-	/**
-	 * I18nDocument instances by id
-	 * @var array<integer, \f_persistentdocument_I18nPersistentDocument> TODO Old class Usage
-	*/
-	protected $m_i18nDocumentInstances = array();
-	
-	/**
-	 * @var array
-	 */
-	protected $m_tmpRelation = array();
-	
-	/**
-	 * Temporay identifier for new persistent document
-	 * @var Integer
-	 */
-	protected $m_newInstancesCounter = 0;
-	
-	/**
 	 * @var integer
 	 */
 	protected $transactionCount = 0;
@@ -86,7 +63,6 @@ abstract class DbProvider
 	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
 		$connectionInfos = $config->getEntry('databases/default', array());
-		// TODO: proper configuration validation
 		if (!isset($connectionInfos['dbprovider']))
 		{
 			throw new \RuntimeException('Missing or incomplete database configuration');
@@ -97,7 +73,6 @@ abstract class DbProvider
 	
 	public function __construct(array $connectionInfos, \Change\Logging\Logging $logging)
 	{
-		//$connectionInfos = \Change\Application::getInstance()->getConfiguration()->getEntry('databases/default', array());
 		$this->connectionInfos = $connectionInfos;
 		$this->logging = $logging;
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
@@ -253,15 +228,6 @@ abstract class DbProvider
 	{
 		return $this->transactionDirty;
 	}
-	
-	/**
-	 * @deprecated
-	 * @return \Change\Db\DbProvider
-	 */
-	public function getPersistentProvider()
-	{
-		return $this;
-	}
 		
 	/**
 	 * @return array
@@ -270,11 +236,6 @@ abstract class DbProvider
 	{
 		return $this->connectionInfos;
 	}	
-	
-	/**
-	 * @return boolean
-	 */
-	public abstract function checkConnection();
 	
 	/**
 	 * @return void
@@ -294,96 +255,6 @@ abstract class DbProvider
 	public abstract function getSchemaManager();	
 	
 	/**
-	 * @param boolean $useDocumentCache
-	 * @return \Change\Db\DbProvider
-	 */
-	public abstract function setDocumentCache($useDocumentCache);
-
-	/**
-	 * @return void
-	 */
-	public function reset()
-	{
-		$this->clearDocumentCache();
-	}
-	
-	/**
-	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
-	 * @param integer $documentId
-	 * @return boolean
-	 */
-	public function isInCache($documentId)
-	{
-		return isset($this->m_documentInstances[intval($documentId)]);
-	}
-	
-	/**
-	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
-	 * @param integer $documentId
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function getFromCache($documentId)
-	{
-		return $this->m_documentInstances[intval($documentId)];
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $doc
-	 * @param string $lang
-	 * @return \f_persistentdocument_I18nPersistentDocument|NULL TODO Old class Usage
-	 */
-	protected function getI18nDocumentFromCache($doc, $lang)
-	{
-		$docId = intval($doc->getId());
-		if (isset($this->m_i18nDocumentInstances[$docId]))
-		{
-			if (isset($this->m_i18nDocumentInstances[$docId][$lang]))
-			{
-				return $this->m_i18nDocumentInstances[$docId][$lang];
-			}
-		}
-		else
-		{
-			$this->m_i18nDocumentInstances[$docId] = array();
-		}
-		return null;
-	}
-	
-	/**
-	 * @param integer $documentId
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @return void
-	 */
-	protected function putInCache($documentId, $document)
-	{
-		$documentId = intval($documentId);
-		$this->m_documentInstances[$documentId] = $document;
-		if ($document->getPersistentModel()->isLocalized() && $document->getRawI18nVoObject() !== null)
-		{
-			$this->m_i18nDocumentInstances[$documentId][$document->getLang()] = $document->getRawI18nVoObject();
-		}
-	}
-	
-	/**
-	 * @param integer $documentId
-	 * @return void
-	 */
-	protected function deleteFromCache($documentId)
-	{
-		unset($this->m_documentInstances[$documentId]);	
-	}	
-	
-	/**
-	 * @return void
-	 */
-	protected function clearDocumentCache()
-	{
-		$this->m_documentInstances = array();
-		$this->m_i18nDocumentInstances = array();
-	}	
-	
-
-	/**
 	 * @return void
 	 */
 	protected abstract function beginTransactionInternal();
@@ -397,195 +268,12 @@ abstract class DbProvider
 	 * @return void
 	 */	
 	protected abstract function rollBackInternal();	
-	
-	/**
-	 * FIXME Public for compatibility with f_persistentdocument_PersistentProvider
-	 * Return a instance of the document[@id = $id and @modelName = $modelName]
-	 *
-	 * @param integer $id
-	 * @param string $modelName
-	 * @param integer $treeId
-	 * @param array $I18nInfoArray
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function getDocumentInstanceWithModelName($id, $modelName, $treeId, $I18nInfoArray)
-	{
-		if (!$this->isInCache($id))
-		{
-			$className = $this->getDocumentClassFromModel($modelName);
-			$i18nInfo = (count($I18nInfoArray) === 0) ? null : \Change\Documents\I18nInfo::getInstanceFromArray($I18nInfoArray);
-			$doc = new $className($id, $i18nInfo, $treeId);
-			$this->putInCache($id, $doc);
-			return $doc;
-		}
-		return $this->getFromCache($id);
-	}
 		
-	/**
-	 * @param string $documentModelName
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function getNewDocumentInstance($documentModelName)
-	{
-		$this->m_newInstancesCounter--;
-		$className = $this->getDocumentClassFromModel($documentModelName);
-		return new $className($this->m_newInstancesCounter);
-	}
-	
-	/**
-	 * Return the persistent document class name from the document model name
-	 * @param string $modelName
-	 * @return string
-	 */
-	protected function getDocumentClassFromModel($modelName)
-	{
-		//TODO Old class Usage
-		return \f_persistentdocument_PersistentDocumentModel::getInstanceFromDocumentModelName($modelName)->getDocumentClassName();
-	}
-	
-	/**
-	 * Return the I18n persistent document class name from the document model name
-	 * @param string $modelName
-	 * @return string
-	 */
-	protected function getI18nDocumentClassFromModel($modelName)
-	{
-		return $this->getDocumentClassFromModel($modelName).'I18n';
-	}
-		
-	/**
-	 * Return the model name of the document or false
-	 * @param integer $id
-	 * @return string|false
-	 */
-	public abstract function getDocumentModelName($id);
-	
-	/**
-	 * Return a instance of the document or null
-	 * @param integer $documentId
-	 * @return \Change\Documents\AbstractDocument|NULL
-	 */
-	public abstract function getDocumentInstanceIfExist($documentId);
-	
-	/**
-	 * Return a instance of the document or Exception if the document not found
-	 * @param integer $documentId
-	 * @param string $modelName
-	 * @param string $lang
-	 * @return \Change\Documents\AbstractDocument
-	 * @throws Exception
-	 */
-	public abstract function getDocumentInstance($documentId, $modelName = null, $lang = null);
-	
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @return integer
-	 */
-	public function getCachedDocumentId($document)
-	{
-		$id = $document->getId();
-		if ($id < 0) 
-		{
-			$this->putInCache($id, $document);
-			$this->m_tmpRelation[$id] = $id;
-		}
-		return $id;
-	}
-	
-	/**
-	 * @param integer $cachedId
-	 * @return \Change\Documents\AbstractDocument
-	 * @throws Exception
-	 */
-	public function getCachedDocumentById($cachedId)
-	{
-		if ($cachedId < 0)
-		{
-			$id = isset($this->m_tmpRelation[$cachedId]) ? $this->m_tmpRelation[$cachedId] : $cachedId;
-			if ($this->isInCache($id))
-			{
-				return $this->getFromCache($id);
-			}
-			throw new \Exception('document ' . $cachedId . '/'. $id . ' is not in memory');
-		}
-		return $this->getDocumentInstance($cachedId);
-	}
-	
-	protected function setCachedRelation($cachedId, $documentId)
-	{
-		if (isset($this->m_tmpRelation[$cachedId]))
-		{
-			$this->m_tmpRelation[$cachedId] = $documentId;
-		}
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $modelName
-	 * @throws \Exception
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	protected function checkModelCompatibility($document, $modelName)
-	{
-		if ($modelName !== null && !$document->getPersistentModel()->isModelCompatible($modelName))
-		{
-			throw new \Exception('document ' . $document->getId() . ' is a ' . $document->getDocumentModelName() . ' but not a ' . $modelName);
-		}
-		return $document;
-	}
-	
-	/**
-	 * When we want to get a document, the data is not loaded. When we want to access to it,
-	 * this function is called for giving all data to the object.
-	 *
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @throws Exception
-	 */
-	public abstract function loadDocument($document);
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $lang
-	 * @return \f_persistentdocument_I18PersistentDocument
-	 */
-	public abstract function getI18nDocument($document, $lang, $isVo = false);
-	
 	/**
 	 * @param string $propertyName
 	 * @return integer
 	 */
 	public abstract function getRelationId($propertyName);
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $propertyName
-	 */
-	public abstract function loadRelations($document, $propertyName);
-	
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public abstract function insertDocument($document);
-	
-	/**
-	 * Update a document.
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public abstract function updateDocument($document);
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public abstract function deleteDocument($document);
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractDocument $destDocument
-	 * @return \Change\Documents\AbstractDocument the result of mutation (destDocument)
-	 */
-	public abstract function mutate($document, $destDocument);
 	
 	//
 	// Tree Methods à usage du treeService
@@ -930,20 +618,6 @@ abstract class DbProvider
 	public abstract function getI18nSynchroIds();
 	
 	/**
-	 * @param \f_persistentdocument_PersistentDocumentModel $pm TODO Old class Usage
-	 * @param integer $id
-	 * @param string $lang
-	 * @param string $fromLang
-	*/
-	public abstract function prepareI18nSynchro($pm, $documentId, $lang, $fromLang);
-	
-	/**
-	 * @param \f_persistentdocument_PersistentDocumentModel $pm TODO Old class Usage
-	 * @param \f_persistentdocument_I18nPersistentDocument $to TODO Old class Usage
-	*/
-	public abstract function setI18nSynchro($pm, $to);
-	
-	/**
 	 * @param integer $id
 	 * @param string|null $lang
 	*/
@@ -1119,13 +793,6 @@ abstract class DbProvider
 	 * @return Array<Integer>
 	 */
 	public abstract function getPermissionDefinitionPoints($packageName);
-
-	/**
-	 * @param string $url
-	 * @return \f_persistentdocument_I18PersistentDocument[]|null TODO Old class Usage
-	 */
-	public abstract function getI18nWebsitesFromUrl($url);
-
 
 	/**
 	 * @param string $blockName
