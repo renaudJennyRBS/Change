@@ -6,16 +6,15 @@ namespace Change\Documents;
  */
 class DocumentManager
 {
-	
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-	
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
-	protected $applicationServices;	
+	protected $applicationServices;
+	
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
 	
 	/**
 	 * Document instances by id
@@ -39,15 +38,14 @@ class DocumentManager
 	 */
 	protected $newInstancesCounter = 0;
 	
-	
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Documents\ModelManager $modelManager
 	 */
-	public function __construct(\Change\Documents\DocumentServices $documentServices, \Change\Application\ApplicationServices $applicationServices)
+	public function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\ModelManager $modelManager)
 	{
-		$this->documentServices = $documentServices;
 		$this->applicationServices = $applicationServices;
+		$this->modelManager = $modelManager;
 	}
 	
 	/**
@@ -59,11 +57,19 @@ class DocumentManager
 	}
 	
 	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->applicationServices->getI18nManager();
+	}
+	
+	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	protected function getModelManager()
 	{
-		return $this->documentServices->getModelManager();
+		return $this->modelManager;
 	}
 	
 	/**
@@ -80,7 +86,7 @@ class DocumentManager
 		$this->newInstancesCounter--;
 		$className = $this->getDocumentClassFromModel($model);
 
-		$i18nInfo = new I18nInfo($this->applicationServices->getI18nManager()->getLang());
+		$i18nInfo = new I18nInfo($this->getLang());
 		/* @var $newDocument \Change\Documents\AbstractDocument */
 		$newDocument = new $className($this->newInstancesCounter, $i18nInfo, null);
 		$newDocument->initialize($this->documentServices, $model);
@@ -298,5 +304,75 @@ class DocumentManager
 	protected function getI18nDocumentClassFromModel($model)
 	{
 		return $this->getDocumentClassFromModel($model).'I18n';
+	}
+	
+	// Working lang.
+	
+	/**
+	 * @var string[] two lower-cased letters codes, ex: "fr"
+	 */
+	protected $langStack = array();
+	
+	/**
+	 * Get the current language code.
+	 * @api
+	 * @return string two lower-cased letters code, ex: "fr"
+	*/
+	public function getLang()
+	{
+		if (count($this->langStack) > 0)
+		{
+			return end($this->langStack);
+		}
+		else
+		{
+			return $this->getI18nManager()->getLang();
+		}
+	}
+	
+	/**
+	 * Push a new working language code.
+	 * @api
+	 * @throws \InvalidArgumentException
+	 * @param string $lang two lower-cased letters code, ex: "fr"
+	 */
+	public function pushLang($lang)
+	{
+		if (!in_array($lang, $this->getI18nManager()->getSupportedLanguages()))
+		{
+			throw new \InvalidArgumentException('Not supported language: ' . $lang);
+		}
+		array_push($this->langStack, $lang);
+	}
+	
+	/**
+	 * Pop the last working language code.
+	 * @api
+	 * @throws \LogicException if there is no lang to pop
+	 * @throws \Exception if provided
+	 * @param \Exception $exception
+	 */
+	public function popLang($exception = null)
+	{
+		// FIXME: what if the exception was raized by pushLang (and so no lang was pushed)?
+		if ($this->getLangStackSize() === 0)
+		{
+			throw new \LogicException('No language to pop.');
+		}
+		array_pop($this->langStack);
+		if ($exception !== null)
+		{
+			throw $exception;
+		}
+	}
+	
+	/**
+	 * Get the lang stack size.
+	 * @api
+	 * @return integer
+	 */
+	public function getLangStackSize()
+	{
+		return count($this->langStack);
 	}
 }

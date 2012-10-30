@@ -9,11 +9,6 @@ class PreparedKey
 	/**
 	 * @var string
 	 */
-	protected $rawValue;
-
-	/**
-	 * @var string
-	 */
 	protected $key;
 
 	/**
@@ -51,6 +46,14 @@ class PreparedKey
 	/**
 	 * @return string
 	 */
+	public function getRawValue()
+	{
+		return $this->key;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getKey()
 	{
 		return $this->isValid() ? $this->path . '.' . $this->id : $this->key;
@@ -61,7 +64,6 @@ class PreparedKey
 	 */
 	public function setKey($key)
 	{
-		$this->rawValue = $key;
 		$this->key = $key;
 		$this->path = null;
 		$this->id = null;
@@ -75,21 +77,9 @@ class PreparedKey
 		if ($this->path === null)
 		{
 			$key = \Change\Stdlib\String::toLower($this->key);
-			if (preg_match('/^(m|modules|f|framework|t|themes)\.[a-z0-9]+(\.[a-z0-9-]+)+$/', $key))
+			if (preg_match('/^(c|m|t)\.[a-z0-9]+(\.[a-z0-9-]+)+$/', $key))
 			{
 				$parts = explode('.', $key);
-				switch ($parts[0])
-				{
-					case 'framework' :
-						$parts[0] = 'f';
-						break;
-					case 'modules' :
-						$parts[0] = 'm';
-						break;
-					case 'themes' :
-						$parts[0] = 't';
-						break;
-				}
 				$this->path = implode('.', array_slice($parts, 0, -1));
 				$this->id = end($parts);
 			}
@@ -202,13 +192,5 @@ class PreparedKey
 	public function mergeReplacements($replacements)
 	{
 		$this->replacements = array_merge($this->replacements, $replacements);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRawValue()
-	{
-		return $this->rawValue;
 	}
 }

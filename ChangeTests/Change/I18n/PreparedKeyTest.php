@@ -32,28 +32,18 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 	public function testGetSetKey()
 	{
 		$key = new \Change\I18n\PreparedKey('');
+		$key->setKey('c.date.default-format');
+		$this->assertEquals('c.date.default-format', $key->getKey());
+		
 		$key->setKey('m.website.fo.test');
 		$this->assertEquals('m.website.fo.test', $key->getKey());
 	
 		$key->setKey('t.default.templates.tpl1');
 		$this->assertEquals('t.default.templates.tpl1', $key->getKey());
 	
-		$key->setKey('f.date.default-format');
-		$this->assertEquals('f.date.default-format', $key->getKey());
-		
-		// Test package type conversion.
-		$key = new \Change\I18n\PreparedKey('modules.website.fo.test');
-		$this->assertEquals('m.website.fo.test', $key->getKey());
-		
-		$key->setKey('themes.default.templates.tpl1');
-		$this->assertEquals('t.default.templates.tpl1', $key->getKey());
-		
-		$key->setKey('framework.date.default-format');
-		$this->assertEquals('f.date.default-format', $key->getKey());
-
 		// Invalid keys are not modified.
-		$key->setKey(' framework.date.Default-Format');
-		$this->assertEquals(' framework.date.Default-Format', $key->getKey());
+		$key->setKey(' c.date.Default-Format');
+		$this->assertEquals(' c.date.Default-Format', $key->getKey());
 		
 		$key->setKey('C\'est l\'ÉTÉ. Ça va chauffer !');
 		$this->assertEquals('C\'est l\'ÉTÉ. Ça va chauffer !', $key->getKey());
@@ -68,9 +58,9 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 		
 		// Minimum 3 parts.
 		$key->setKey('m');
-		$this->assertFalse($key->isValid());				
+		$this->assertFalse($key->isValid());
 		$key->setKey('m.website');
-		$this->assertFalse($key->isValid());				
+		$this->assertFalse($key->isValid());
 		$key->setKey('m.website.test');
 		$this->assertTrue($key->isValid());
 		$key->setKey('m.website.fo.test');
@@ -81,7 +71,7 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse($key->isValid());
 		$key->setKey('t.website.test');
 		$this->assertTrue($key->isValid());
-		$key->setKey('f.website.test');
+		$key->setKey('c.website.test');
 		$this->assertTrue($key->isValid());
 		$key->setKey('v.website.test');
 		$this->assertFalse($key->isValid());

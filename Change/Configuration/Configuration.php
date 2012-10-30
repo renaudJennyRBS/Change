@@ -9,7 +9,7 @@ use Zend\Json\Json;
  */
 class Configuration
 {
-	const CONFIGURATION_REFRESHED_EVENT = "\Change\Configuration\Configuration::refresh";
+	const CONFIGURATION_REFRESHED_EVENT = '\Change\Configuration\Configuration::refresh';
 
 	/**
 	 * @var \Change\Application

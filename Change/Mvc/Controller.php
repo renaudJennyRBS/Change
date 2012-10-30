@@ -27,8 +27,17 @@ class Controller
 	 */
 	protected $uri;
 	
-	public function __construct()
+	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+	
+	/**
+	 * @param \Change\Application $application
+	 */
+	public function __construct(\Change\Application $application)
 	{
+		$this->application = $application;
 		$this->initialize();
 	}
 
@@ -39,7 +48,6 @@ class Controller
 		$this->initialiseUri();
 		register_shutdown_function(array($this, 'shutdown'));
 	}
-	
 	
 	protected function initialiseUri()
 	{
@@ -265,7 +273,7 @@ class Controller
 			}
 			$this->actionStack->addEntry($actionInstance);
 			
-			$method = $this->getRequest()->getMethod();								
+			$method = $this->getRequest()->getMethod();
 			if (($actionInstance->getRequestMethods() & $method) != $method)
 			{
 				$viewName = $actionInstance->getDefaultView();
@@ -287,7 +295,7 @@ class Controller
 	
 				if (is_array($viewName))
 				{
-					list ($moduleName, $viewName) = $viewName;		
+					list ($moduleName, $viewName) = $viewName;
 				} 
 				else
 				{
@@ -424,7 +432,7 @@ class Controller
 		$requestParametersNames = $request->getParameterNames();
 		if (is_array($parameters))
 		{
-			$urlParam = $parameters;	
+			$urlParam = $parameters;
 		}	
 		else
 		{
@@ -441,7 +449,7 @@ class Controller
 		$urlParam['module'] = $moduleName;
 		$urlParam['action'] = $actionName;
 		
-		$url = $this->generateRedirectUrl($urlParam);				
+		$url = $this->generateRedirectUrl($urlParam);
 		$this->redirectToUrl($url);
 	}
 	
@@ -455,16 +463,16 @@ class Controller
 		{
 			header('Location: ' . $url);
 		}
-		echo '<html><head><meta http-equiv="refresh" content="',$delay,';url=', $url, '"/></head></html>';		
-		exit(0);	
+		echo '<html><head><meta http-equiv="refresh" content="',$delay,';url=', $url, '"/></head></html>';
+		exit(0);
 	}
-		
+	
 	/**
 	 * @param array $urlParams
 	 */
 	protected function generateRedirectUrl($urlParams)
 	{
 		//TODO Old class Usage
-		return \LinkHelper::getParametrizedLink($urlParams)->getUrl();		
+		return \LinkHelper::getParametrizedLink($urlParams)->getUrl();
 	}
 }

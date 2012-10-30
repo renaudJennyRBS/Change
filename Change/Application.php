@@ -114,30 +114,6 @@ class Application
 
 	/**
 	 *
-	 * @var \Change\Mvc\Controller
-	 */
-	protected $controller;
-
-	/**
-	 *
-	 * @return \Change\Mvc\Controller
-	 */
-	public function getController()
-	{
-		return $this->controller;
-	}
-
-	/**
-	 *
-	 * @return \Change\Mvc\Controller
-	 */
-	public function setController($controller)
-	{
-		$this->controller = $controller;
-	}
-
-	/**
-	 *
 	 * @return string
 	 */
 	public function getProfile()
@@ -221,8 +197,14 @@ class Application
 
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Application\PackageManager');
 		$cl->setInstantiator('__construct')
-		->addMethod('__construct', true)
-		->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+		$dl->addDefinition($cl);
+
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Mvc\Controller');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
@@ -231,6 +213,7 @@ class Application
 		$im->setParameters('Change\Workspace', array('application' => $this));
 		$im->setParameters('Zend\EventManager\EventManager', array());
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
+		$im->setParameters('Change\Mvc\Controller', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));

@@ -6,26 +6,22 @@ namespace Change\Mvc;
  */
 class Storage
 {
-	
 	/**
 	 * @var \Change\Mvc\Context
 	 */
 	private $context = null;
 	
 	/**
-	 *
 	 * @var \Zend\Session\Container 
 	 */
 	private $changeSessionContainer;
 	
 	/**
-	 *
 	 * @var \Zend\Session\Container  
 	 */
 	private $backuserSessionContainer;
 	
 	/**
-	 *
 	 * @var \Zend\Session\Container  
 	 */
 	private $frontuserSessionContainer;
@@ -71,6 +67,9 @@ class Storage
 		}
 	}
 	
+	/**
+	 * Start session.
+	 */
 	protected function startSession()
 	{
 		if (isset($_SERVER["SERVER_ADDR"]))
@@ -86,21 +85,19 @@ class Storage
 			$this->started = true;
 			$this->logging->registerSessionId($sessionManager->getId());
 	
-			$currentKey =  $this->getSecureKey(); 
+			$currentKey =  $this->getSecureKey();
 			$md5 = $this->read('framework_SecureKey');
 			if ($md5 === null)
 			{
 				$this->write('framework_SecureKey', $currentKey);
 				$this->write('framework_SecurePort', $_SERVER["SERVER_PORT"]);
-				
 			} 
 			else if ($md5 !== $currentKey)
 			{
 				$oldSessionId = $sessionManager->getId();
 				$sessionManager->regenerateId(true);
-				$this->logging->registerSessionId($sessionManager->getId());		
+				$this->logging->registerSessionId($sessionManager->getId());
 				$this->sessionIdChanged($oldSessionId);
-				
 			}
 			else if ($this->read('framework_SecurePort') !== $_SERVER["SERVER_PORT"])
 			{
@@ -108,8 +105,8 @@ class Storage
 				$sessionManager->regenerateId(false);
 				$this->write('framework_SecurePort', $_SERVER["SERVER_PORT"]);
 				$this->logging->registerSessionId($sessionManager->getId());
-				$this->sessionIdChanged($oldSessionId);	
-			}				
+				$this->sessionIdChanged($oldSessionId);
+			}
 		}
 		else
 		{

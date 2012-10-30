@@ -1,7 +1,9 @@
 <?php
-
 namespace Change;
 
+/**
+ * @name \Change\Application\Workspace
+ */
 class Workspace
 {
 	/**

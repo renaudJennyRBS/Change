@@ -1,12 +1,8 @@
 <?php
-
 namespace Tests\Change\Mvc;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
-	
-	/**
-	 */
 	protected function setUp()
 	{
 		spl_autoload_register(array($this, "fakeAutoload"));
@@ -14,7 +10,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 		\Framework::registerChangeAutoload();
 	}
 	
-	
+	/**
+	 * @param string $className
+	 * @return boolean
+	 */
 	public function fakeAutoload($className)
 	{
 		if ($className === 'Change\Fakemodule\Actions\Fakeaction' || $className === 'Change\Fakemodule\Actions\Fakesecureaction')
@@ -40,10 +39,13 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 		return false;
 	}
 	
-	
+	/**
+	 * @return \Change\Mvc\Controller
+	 */
 	public function testConstruct()
 	{
-		$controller = new \Change\Mvc\Controller();
+		$application = \Change\Application::getInstance();
+		$controller = new \Change\Mvc\Controller($application);
 		$this->assertInstanceOf('\Change\Mvc\Context', $controller->getContext());
 		$this->assertInstanceOf('\Change\Mvc\Request', $controller->getRequest());
 		$this->assertInstanceOf('\Change\Mvc\User', $controller->getUser());
@@ -91,6 +93,5 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 		$controller->forward('fakemodule', 'Fakeactionnotfound');
 		$result = ob_get_clean();
 		$this->assertEquals('Website\Error404', $result);
-
 	}
 }
