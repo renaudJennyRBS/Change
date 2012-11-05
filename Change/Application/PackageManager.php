@@ -13,22 +13,25 @@ class PackageManager
 	 * @var \Change\Application
 	 */
 	protected $application;
-	
+
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;
 	}
-	
+
 	/**
 	 * Clear all PackageManager related class
-	 * 
+	 *
 	 * @api
 	 */
 	public function clearCache()
 	{
 		$this->clearPsr0Cache();
 	}
-	
+
+	/**
+	 * Clear PSR-0
+	 */
 	protected function clearPsr0Cache()
 	{
 		$path = $this->getPsr0CachePath();
@@ -39,10 +42,10 @@ class PackageManager
 			ErrorHandler::stop(true);
 		}
 	}
-	
+
 	/**
 	 * Path to the PSR-0 Cache Path
-	 * 
+	 *
 	 * @api
 	 * @return string
 	 */
@@ -50,10 +53,10 @@ class PackageManager
 	{
 		return $this->application->getWorkspace()->projectPath('.psr-0.ser');
 	}
-	
+
 	/**
 	 * Return the list of PSR-0 compatible autload registered by installed packages
-	 * 
+	 *
 	 * @array
 	 */
 	public function getRegisteredAutoloads()
@@ -67,7 +70,7 @@ class PackageManager
 			foreach(\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$namespaces = array_merge($namespaces, $this->parseComposerFile($filePath, true));
-			}	
+			}
 			// Plugin Modules
 			$pluginsModulesPattern = $this->application->getWorkspace()->pluginsModulesPath('*', '*', 'composer.json');
 			foreach(\Zend\Stdlib\Glob::glob($pluginsModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
@@ -92,9 +95,9 @@ class PackageManager
 		}
 		return \Zend\Serializer\Serializer::unserialize(file_get_contents($path));
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $filePath path to the composer.json file
 	 * @param boolean $appendNamespacePath
 	 * @return array

@@ -78,13 +78,9 @@ class Application
 		}, true, true);
 	}
 
-	/**
-	 * Namespace-based autoloading
-	 */
-	public function registerNamespaceAutoload()
+	public function registerCoreAutoload()
 	{
 		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change',
-			'Compilation' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation',
 			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend');
 
 		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
@@ -94,7 +90,21 @@ class Application
 			$zendLoader->registerNamespace($namespace, $path);
 		}
 		$zendLoader->register();
+	}
 
+	/**
+	 * Register autoload for compiled code
+	 */
+	public function registerCompilationAutoload()
+	{
+		// Register the compilation namespace
+		$zendLoader = new \Zend\Loader\StandardAutoloader();
+		$zendLoader->registerNamespace('Compilation', $this->getWorkspace()->compilationPath());
+		$zendLoader->register();
+	}
+
+	public function registerPackagesAutoload()
+	{
 		$zendLoader = new \Zend\Loader\StandardAutoloader();
 		// Register additional packages autoload
 		foreach ($this->getApplicationServices()->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
@@ -102,6 +112,17 @@ class Application
 			$zendLoader->registerNamespace($namespace, $path);
 		}
 		$zendLoader->register();
+	}
+
+	/**
+	 * Namespace-based autoloading
+	 */
+	public function registerNamespaceAutoload()
+	{
+		$this->registerCoreAutoload();
+		$this->registerCompilationAutoload();
+		$this->registerPackagesAutoload();
+		
 	}
 
 	/**

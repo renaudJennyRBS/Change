@@ -3,6 +3,40 @@ namespace ChangeTests\Change\Documents;
 
 class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 {
+	public function setUp()
+	{
+		// TODO - this code should be moved elsewhere and factored with the one contained in the compile-document command
+		$compiler = new \Change\Documents\Generators\Compiler(\Change\Application::getInstance());
+		$paths = array();
+		$workspace = \Change\Application::getInstance()->getWorkspace();
+		if (is_dir($workspace->pluginsModulesPath()))
+		{
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
+			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
+		}
+
+		if (is_dir($workspace->projectModulesPath()))
+		{
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
+			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
+		}
+
+		$nbModels = 0;
+		foreach ($paths as $definitionPath)
+		{
+			$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
+			$count = count($parts);
+			$documentName = basename($parts[$count - 1], '.xml');
+			$moduleName = $parts[$count - 4];
+			$vendor = $parts[$count - 5];
+			$compiler->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
+			$nbModels++;
+		}
+
+		$compiler->buildDependencies();
+		$compiler->saveModelsPHPCode();
+	}
+
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */

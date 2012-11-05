@@ -3,9 +3,7 @@
 namespace Change\Application\Console;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ChangeCommand extends Command
@@ -14,10 +12,10 @@ class ChangeCommand extends Command
 	 * @var \Change\Application
 	 */
 	protected $changeApplication;
-	
+
 	/**
 	 * Get the Change Application instance managed by the console tool
-	 * 
+	 *
 	 * @api
 	 * @throws \RuntimeException
 	 * @return \Change\Application
@@ -30,7 +28,7 @@ class ChangeCommand extends Command
 		}
 		return $this->changeApplication;
 	}
-	
+
 	/**
 	 * @param \Change\Application $app
 	 */
@@ -38,11 +36,11 @@ class ChangeCommand extends Command
 	{
 		$this->changeApplication = $app;
 	}
-	
+
 	/**
-	 * Override to allow command only in developer mode 
+	 * Override to allow command only in developer mode
 	 * (DEVELOPMENT_MODE=true or forced with --dev)
-	 * 
+	 *
 	 * @api
 	 * @return boolean
 	 */
@@ -50,14 +48,14 @@ class ChangeCommand extends Command
 	{
 		return false;
 	}
-	
+
 	/**
 	 * Override this method for complex argument validation.
 	 * You always call the parent implementation.
-	 * 
-	 * @api 
-	 * @param InputInterface $input        	
-	 * @param OutputInterface $output        	
+	 *
+	 * @api
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
 	 * @throws Exception
 	 * @return mixed number
 	 */

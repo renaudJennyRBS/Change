@@ -10,8 +10,10 @@ if (!defined('PROJECT_HOME'))
 }
 require_once PROJECT_HOME . '/Change/Application.php';
 $application = \Change\Application::getInstance();
-$application->registerNamespaceAutoload();
+$application->registerCoreAutoload();
 $zendLoader  = new \Zend\Loader\StandardAutoloader();
 $zendLoader->registerNamespace('ChangeTests', realpath(__DIR__) .'/');
 $zendLoader->register();
 $application->getApplicationServices()->instanceManager()->addSharedInstance(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($application), 'Change\Workspace');
+$application->registerCompilationAutoload();
+$application->registerPackagesAutoload();
