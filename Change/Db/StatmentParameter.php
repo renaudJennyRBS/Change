@@ -28,7 +28,11 @@ class StatmentParameter
 	 */
 	protected $type;
 
-	
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @param string $type
+	 */
 	public function __construct($name, $value = null, $type = self::STR)
 	{
 		$this->name = $name;

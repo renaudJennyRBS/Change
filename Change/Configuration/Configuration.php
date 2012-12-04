@@ -54,6 +54,7 @@ class Configuration
 	}
 
 	/**
+	 * @return array
 	 */
 	protected function compile()
 	{
@@ -73,8 +74,6 @@ class Configuration
 		\Change\Stdlib\File::write($this->getCompiledConfigPath(), $content);
 		return array("config" => $configs, "defines" => $defines);
 	}
-
-
 
 	/**
 	 * @return string
@@ -181,7 +180,6 @@ class Configuration
 	 * Add an entry in the first configuration file returned by \Change\Application::getProjectConfigurationPaths.
 	 *
 	 * @api
-	 *
 	 * @param string $path
 	 * @param string $entryName
 	 * @param string $value
@@ -237,7 +235,6 @@ class Configuration
 	{
 		$this->config = $config;
 	}
-
 
 	/**
 	 * @return array
@@ -336,7 +333,7 @@ class Configuration
 	}
 
 	/**
-	 * TODO : check if the method is still necessary
+	 * TODO: check if the method is still necessary
 	 * @param array $configDefineArray
 	 * @return array
 	 */
@@ -353,7 +350,6 @@ class Configuration
 				if (preg_match('/^(([A-Z][A-Z_0-9]+)|(\'[^\']*\'))(\s*\.\s*(([A-Z][A-Z_0-9]+)|(\'[^\']*\')))+$/', $value))
 				{
 					$configDefineArray[$name] = 'return ' . $value . ';';
-
 				}
 				// @codeCoverageIgnoreEnd
 			}
@@ -414,5 +410,4 @@ class Configuration
 		$this->load();
 		$this->application->getApplicationServices()->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
 	}
-
 }

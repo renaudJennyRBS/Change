@@ -91,9 +91,9 @@ class AbstractDocumentClass
 			$code .= $this->getNoneInjectedFunctions($model);
 		}
 		
-		$code .= '}'. PHP_EOL;		
+		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
-		return $code;	
+		return $code;
 	}
 	
 	/**
@@ -272,7 +272,7 @@ class AbstractDocumentClass
     {'. PHP_EOL . implode(PHP_EOL, $destruct). PHP_EOL .'
         parent::__destruct();
     }'. PHP_EOL;
-		}			
+		}
 
 		if ($model->getLocalized() !== null)
 		{
@@ -382,7 +382,6 @@ class AbstractDocumentClass
 		return $code;
 	}
 	
-	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property[] $properties
@@ -485,7 +484,7 @@ class AbstractDocumentClass
 		$code .= '
 		return $propertyBag;
 	}
-			
+	
 	/**
 	 * @param array<String, mixed> $lang
 	 * @return void
@@ -501,7 +500,7 @@ class AbstractDocumentClass
 		
 		$code .= '
 			}
-		}						
+		}
 	}' . PHP_EOL;
 		
 		if (count($cascadeDelete))
@@ -526,7 +525,7 @@ class AbstractDocumentClass
 			$name = $property->getName();
 			$validates[] = '		$this->is'.ucfirst($name).'Valid();';
 			$code .= $this->generatePropertyValidateFunction($model, $property);
-		}	
+		}
 		$code .= '
 	/**
 	 * @return boolean
@@ -537,7 +536,7 @@ class AbstractDocumentClass
 		$code .= implode(PHP_EOL, $validates);
 		$code .= '	
 	}' . PHP_EOL;
-		return $code;		
+		return $code;
 	}
 
 	/**
@@ -702,7 +701,7 @@ class AbstractDocumentClass
 		$mn = '$this->m_' . $name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
-		$un = ucfirst($name);			
+		$un = ucfirst($name);
 		$code .= '
 	/**
 	 * @return '.$ct.'
@@ -712,7 +711,7 @@ class AbstractDocumentClass
 		$this->checkLoaded();
 		return '.$mn.';
 	}
-			
+	
 	/**
 	 * @return '.$ct.'|NULL
 	 */
@@ -720,7 +719,7 @@ class AbstractDocumentClass
 	{
 		return $this->getOldValue('.$en.');
 	}
-			
+	
 	/**
 	 * @param '.$ct.' $val
 	 */
@@ -970,7 +969,7 @@ class AbstractDocumentClass
 	{
 		return \f_util_HtmlUtils::textToHtml($this->get'.$un.'());
 	}'.PHP_EOL;
-		}		
+		}
 		elseif ($property->getType() === 'XML')
 		{
 			$code .= '
@@ -1026,7 +1025,7 @@ class AbstractDocumentClass
 	{
 		return \DocumentHelper::getDocumentInstanceIfExists($this->get'.$un.'()); //TODO Old class Usage
 	}
-			
+	
 	/**
 	 * @return string
 	 */
@@ -1099,7 +1098,7 @@ class AbstractDocumentClass
 		$code .= implode(PHP_EOL, $pre);
 		$code .='
 	}
-			
+	
 	public function postCascadeDelete()
 	{'.PHP_EOL;
 		$code .= implode(PHP_EOL, $post);
@@ -1173,9 +1172,9 @@ class AbstractDocumentClass
 			->setProjection(\Projections::rowCount(\'rows\'));
 		$result = $query->find();
 		return intval($result[0][\'rows\']);
-	}'.PHP_EOL;		
+	}'.PHP_EOL;
 		return $code;
-	}	
+	}
 	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -1198,7 +1197,7 @@ class AbstractDocumentClass
 	{
 		return $this->getOldValue('.$en.');
 	}
-			
+	
 	/**
 	 * @param '.$ct.' $newValue
 	 */
@@ -1261,7 +1260,7 @@ class AbstractDocumentClass
 		}
 		return array();
 	}
-					
+	
 	protected function checkLoaded'.$un.'()
 	{
 		$this->checkLoaded();
@@ -1457,7 +1456,7 @@ class AbstractDocumentClass
 	 */
 	public function getIndexof'.$un.'($value)
 	{
-		if ($value instanceof \Change\Documents\AbstractDocument) 
+		if ($value instanceof \Change\Documents\AbstractDocument)
 		{
 			$this->checkLoaded'.$un.'();
 			$valueId = $this->getProvider()->getCachedDocumentId($value);

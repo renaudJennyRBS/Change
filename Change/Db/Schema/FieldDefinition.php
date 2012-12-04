@@ -1,9 +1,8 @@
 <?php
 namespace Change\Db\Schema;
 
-/** 
+/**
  * @name \Change\Db\Schema\FieldDefinition
- * 
  */
 class FieldDefinition
 {
@@ -47,7 +46,6 @@ class FieldDefinition
 		$this->nullable = $nullable;
 		$this->defaultValue = $defaultValue;
 	}
-	
 	
 	/**
 	 * @return string
@@ -138,5 +136,4 @@ class FieldDefinition
 		$this->nullable = ($nullable == true);
 		return $this;
 	}
-	
 }

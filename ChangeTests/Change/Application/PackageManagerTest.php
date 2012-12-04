@@ -1,12 +1,9 @@
 <?php
-
 namespace ChangeTests\Change\Application;
 
 class PackageManagerTest extends \PHPUnit_Framework_TestCase
 {
-
 	/**
-	 *
 	 * @return \ReflectionMethod
 	 */
 	protected function getMethod($name)

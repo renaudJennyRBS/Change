@@ -431,7 +431,6 @@ class Property
 		return $this;
 	}
 	
-	
 	/**
 	 * @param string $relationName
 	 * @return \Change\Documents\Property

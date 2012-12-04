@@ -6,7 +6,6 @@ namespace Change\Db\Mysql;
  */
 class SqlMapping
 {
-	
 	/**
 	 * @var string[]
 	 */
@@ -55,7 +54,7 @@ class SqlMapping
 	{
 		return $documentTableName . $this->getI18nSuffix();
 	}
-		
+	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return string
@@ -64,7 +63,7 @@ class SqlMapping
 	{
 		$names = $model->getAncestorModelNames();
 		return (count($names)) ? $this->getDocumentTableName($names[0]->getName()) : $this->getDocumentTableName($model->getName());
-	}	
+	}
 	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
@@ -75,7 +74,6 @@ class SqlMapping
 		$documentTableName = $this->getDocumentTableNameByModel($model);
 		return $this->getDocumentI18nTableName($documentTableName);
 	}
-
 	
 	/**
 	 * @param string $propertyName
@@ -112,8 +110,8 @@ class SqlMapping
 			case 'correctionid':
 				return 'document_' . $pn;
 		}
-		return $pn;		
-	}	
+		return $pn;
+	}
 	
 	/**
 	 * @param \Change\Documents\Property $property
@@ -151,7 +149,7 @@ class SqlMapping
 				return 'document_' . $pn . $this->getI18nSuffix();
 		}
 		return $pn . $this->getI18nSuffix();
-	}	
+	}
 	
 	/**
 	 * @param \Change\Documents\Property $property
@@ -183,9 +181,7 @@ class SqlMapping
 	{
 		return ':p' . $name;
 	}
-
 	
-		
 	/**
 	 * @deprecated
 	 */
@@ -202,13 +198,13 @@ class SqlMapping
 			case 'lang':
 				return $l ? 'lang_i18n' : 'document_lang';
 			case 'correctionofid':
-				return 'document_correctionofid';	
+				return 'document_correctionofid';
 			case 'documentversion':
 				return 'document_version';
 			case 'metastring':
 				return 'document_metas';
 			case 's18s':
-				return 'document_s18s';			
+				return 'document_s18s';
 			case 'label':
 			case 'author':
 			case 'authorid':

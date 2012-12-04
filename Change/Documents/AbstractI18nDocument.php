@@ -31,10 +31,11 @@ abstract class AbstractI18nDocument
 	 */	
 	protected $label;
 	
-	
+	/**
+	 * @var array
+	 */
 	protected $modifiedProperties = array();
 
-	
 	/**
 	 * @param integer $documentId
 	 * @param string $lang
@@ -47,6 +48,9 @@ abstract class AbstractI18nDocument
 		$this->isNew = $isNew;
 	}
 	
+	/**
+	 * @param array $modifiedProperties
+	 */
 	public function setModifiedProperties($modifiedProperties = array())
 	{
 		$this->modifiedProperties = $modifiedProperties;
@@ -101,6 +105,9 @@ abstract class AbstractI18nDocument
 		return $this->isModified;
 	}
 	
+	/**
+	 * @return void
+	 */
 	public function setIsPersisted()
 	{
 		$this->isNew = false;
@@ -119,7 +126,7 @@ abstract class AbstractI18nDocument
 		
 	/**
 	 * @param string $label
-	 * @return void
+	 * @return boolean
 	 */
 	public function setLabel($label)
 	{
@@ -167,16 +174,15 @@ abstract class AbstractI18nDocument
 	}
 	
 	 /**
-     * @internal For framework internal usage only
-     * @param array<string, mixed> $propertyBag
-     * @return void
-     */
-    public function setDocumentProperties($propertyBag)
+	 * @internal For framework internal usage only
+	 * @param array<string, mixed> $propertyBag
+	 */
+	public function setDocumentProperties($propertyBag)
 	{
 		if (isset($propertyBag['label']))
 		{
 			$this->label = $propertyBag['label'];
-		}		
+		}
 	}
 	
 	/**

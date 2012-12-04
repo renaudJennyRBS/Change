@@ -152,7 +152,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$propertyBag['s18s'] = $this->m_s18s;
 		return $propertyBag;
 	}
-			
+	
 	/**
 	 * @param array<String, mixed> $lang
 	 * @return void
@@ -190,7 +190,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 				case 'correctionofid' : $this->m_correctionofid = (null === $propertyValue) ? null : intval($propertyValue); break;
 				case 's18s' : $this->m_s18s = $propertyValue; break;
 			}
-		}						
+		}
 	}
 
 	public function preCascadeDelete()
@@ -198,7 +198,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		parent::preCascadeDelete();
 
 	}
-			
+	
 	public function postCascadeDelete()
 	{
 		$item = $this->getDocument1();
@@ -950,7 +950,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_author;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -958,7 +958,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('author');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1000,7 +1000,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_authorid;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */
@@ -1008,7 +1008,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('authorid');
 	}
-			
+	
 	/**
 	 * @param integer $val
 	 */
@@ -1041,7 +1041,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return \DocumentHelper::getDocumentInstanceIfExists($this->getAuthorid()); //TODO Old class Usage
 	}
-			
+	
 	/**
 	 * @return string
 	 */
@@ -1081,7 +1081,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_creationdate;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1089,7 +1089,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('creationdate');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1140,7 +1140,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_modificationdate;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1148,7 +1148,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('modificationdate');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1252,7 +1252,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_modelversion;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1260,7 +1260,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('modelversion');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1302,7 +1302,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_documentversion;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */
@@ -1310,7 +1310,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('documentversion');
 	}
-			
+	
 	/**
 	 * @param integer $val
 	 */
@@ -1344,7 +1344,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_startpublicationdate;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1352,7 +1352,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('startpublicationdate');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1403,7 +1403,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_endpublicationdate;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1411,7 +1411,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('endpublicationdate');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1462,7 +1462,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_metastring;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1470,7 +1470,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('metastring');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1504,7 +1504,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_bool1;
 	}
-			
+	
 	/**
 	 * @return boolean|NULL
 	 */
@@ -1512,7 +1512,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('bool1');
 	}
-			
+	
 	/**
 	 * @param boolean $val
 	 */
@@ -1546,7 +1546,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_int1;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */
@@ -1554,7 +1554,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('int1');
 	}
-			
+	
 	/**
 	 * @param integer $val
 	 */
@@ -1588,7 +1588,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_float1;
 	}
-			
+	
 	/**
 	 * @return float|NULL
 	 */
@@ -1596,7 +1596,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('float1');
 	}
-			
+	
 	/**
 	 * @param float $val
 	 */
@@ -1630,7 +1630,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_decimal1;
 	}
-			
+	
 	/**
 	 * @return float|NULL
 	 */
@@ -1638,7 +1638,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('decimal1');
 	}
-			
+	
 	/**
 	 * @param float $val
 	 */
@@ -1672,7 +1672,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_date1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1680,7 +1680,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('date1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1714,7 +1714,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_datetime1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1722,7 +1722,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('datetime1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1826,7 +1826,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_longstring1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1834,7 +1834,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('longstring1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1876,7 +1876,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_xml1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1884,7 +1884,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('xml1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -1936,7 +1936,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_lob1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -1944,7 +1944,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('lob1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -2053,7 +2053,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_json1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -2061,7 +2061,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('json1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -2104,7 +2104,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_object1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -2112,7 +2112,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('object1');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -2155,7 +2155,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_documentid1;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */
@@ -2163,7 +2163,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('documentid1');
 	}
-			
+	
 	/**
 	 * @param integer $val
 	 */
@@ -2196,7 +2196,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return \DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid1()); //TODO Old class Usage
 	}
-			
+	
 	/**
 	 * @return string
 	 */
@@ -2235,7 +2235,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('document1');
 	}
-			
+	
 	/**
 	 * @param \Change\Testing\Documents\Generation $newValue
 	 */
@@ -2281,7 +2281,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		}
 		return array();
 	}
-					
+	
 	protected function checkLoadedDocumentarray1()
 	{
 		$this->checkLoaded();
@@ -2477,7 +2477,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	 */
 	public function getIndexofDocumentarray1($value)
 	{
-		if ($value instanceof \Change\Documents\AbstractDocument) 
+		if ($value instanceof \Change\Documents\AbstractDocument)
 		{
 			$this->checkLoadedDocumentarray1();
 			$valueId = $this->getProvider()->getCachedDocumentId($value);
@@ -2540,7 +2540,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_correctionofid;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */
@@ -2548,7 +2548,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('correctionofid');
 	}
-			
+	
 	/**
 	 * @param integer $val
 	 */
@@ -2582,7 +2582,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 		$this->checkLoaded();
 		return $this->m_s18s;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -2590,7 +2590,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return $this->getOldValue('s18s');
 	}
-			
+	
 	/**
 	 * @param string $val
 	 */
@@ -3325,7 +3325,7 @@ abstract class AbstractGeneration extends \Change\Documents\AbstractDocument
 	{
 		return \DocumentHelper::getDocumentInstanceIfExists($this->getDocumentid2()); //TODO Old class Usage
 	}
-			
+	
 	/**
 	 * @return string
 	 */

@@ -1,9 +1,8 @@
 <?php
 namespace Change\Db\Schema;
 
-/** 
+/**
  * @name \Change\Db\Schema\TableDefinition
- * 
  */
 class TableDefinition
 {
@@ -27,7 +26,6 @@ class TableDefinition
 	{
 		$this->name = $name;
 	}
-	
 	
 	/**
 	 * @return string
@@ -99,7 +97,7 @@ class TableDefinition
 	{
 		$this->fields[$field->getName()] = $field;
 		return $this;
-	}	
+	}
 
 	/**
 	 * @param \Change\Db\Schema\KeyDefinition $key

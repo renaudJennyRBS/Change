@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Injection;
 
+/**
+ * @name \Change\Injection\CodeExtractor
+ */
 class CodeExtractor
 {
 	/**

@@ -19,7 +19,6 @@ class User
 	 */
 	protected $userNamespace = self::FRONTEND_NAMESPACE;
 
-	
 	/**
 	 * @var \Change\Mvc\Context
 	 */
@@ -47,6 +46,8 @@ class User
 		$this->context = $context;
 	}
 	
+	/**
+	 */
 	public function shutdown()
 	{	
 		$this->context = null;

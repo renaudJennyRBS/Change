@@ -72,13 +72,15 @@ class Context
 			$this->request = new Request();
 			$this->storage = new Storage(\Change\Application::getInstance()->getApplicationServices()->getLogging());
 			$this->user = new User();
-				
+			
 			$this->request->initialize($this);
 			$this->storage->initialize($this);
 			$this->user->initialize($this);
 		}
 	}
 	
+	/**
+	 */
 	public function shutdown()
 	{
 		$this->user->shutdown();

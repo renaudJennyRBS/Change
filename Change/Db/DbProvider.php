@@ -42,6 +42,9 @@ abstract class DbProvider
 	 */
 	protected $logging;
 	
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
 	public static function getInstance()
 	{
 		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
@@ -60,6 +63,12 @@ abstract class DbProvider
 	 */
 	public abstract function getType();
 	
+	/**
+	 * @param \Change\Configuration\Configuration $config
+	 * @param \Change\Logging\Logging $logging
+	 * @throws \RuntimeException
+	 * @return \Change\Db\DbProvider
+	 */
 	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
 		$connectionInfos = $config->getEntry('databases/default', array());
@@ -71,6 +80,10 @@ abstract class DbProvider
 		return new $className($connectionInfos, $logging);
 	}
 	
+	/**
+	 * @param array $connectionInfos
+	 * @param \Change\Logging\Logging $logging
+	 */
 	public function __construct(array $connectionInfos, \Change\Logging\Logging $logging)
 	{
 		$this->connectionInfos = $connectionInfos;
@@ -86,6 +99,9 @@ abstract class DbProvider
 		}
 	}
 	
+	/**
+	 * @throws \Exception
+	 */
 	protected final function checkDirty()
 	{
 		if ($this->transactionDirty)
@@ -165,9 +181,9 @@ abstract class DbProvider
 	}
 	
 	/**
-	 * cancel transaction.
-	 * @param Exception $e
-	 * @throws BaseException('rollback-bad-transaction-count') if rollback called while no transaction
+	 * Cancel transaction.
+	 * @param \Exception $e
+	 * @throws \BaseException('rollback-bad-transaction-count') if rollback called while no transaction
 	 * @throws \Change\Db\Exception\TransactionCancelledException on embeded transaction
 	 * @return Exception the given exception so it is easy to throw it
 	 */
@@ -228,14 +244,14 @@ abstract class DbProvider
 	{
 		return $this->transactionDirty;
 	}
-		
+	
 	/**
 	 * @return array
 	 */
 	public function getConnectionInfos()
 	{
 		return $this->connectionInfos;
-	}	
+	}
 	
 	/**
 	 * @return void
@@ -252,23 +268,23 @@ abstract class DbProvider
 	/**
 	 * @return \Change\Db\InterfaceSchemaManager
 	 */
-	public abstract function getSchemaManager();	
+	public abstract function getSchemaManager();
 	
 	/**
 	 * @return void
 	 */
 	protected abstract function beginTransactionInternal();
-		
+	
 	/**
 	 * @return void
-	 */	
+	 */
 	protected abstract function commitInternal();
-		
+	
 	/**
 	 * @return void
-	 */	
+	 */
 	protected abstract function rollBackInternal();	
-		
+	
 	/**
 	 * @param string $propertyName
 	 * @return integer
@@ -299,7 +315,6 @@ abstract class DbProvider
 	 */
 	public abstract function getChildrenNodesInfo($node);
 
-
 	/**
 	 * @param \f_persistentdocument_PersistentTreeNode $node TODO Old class Usage
 	 * @return array<document_id, tree_id, parent_id, node_order, node_level, node_path, children_count>
@@ -312,13 +327,11 @@ abstract class DbProvider
 	 */
 	public abstract function getChildrenId($node);
 
-
 	/**
 	 * @param \f_persistentdocument_PersistentTreeNode $node TODO Old class Usage
 	 * @return integer[]
 	 */
 	public abstract function getDescendantsId($node);
-
 
 	/**
 	 * @param \f_persistentdocument_PersistentTreeNode $rootNode TODO Old class Usage
@@ -355,7 +368,6 @@ abstract class DbProvider
 	 */
 	public abstract function deleteEmptyNode($treeNode);
 
-
 	/**
 	 * Supression d'une arboresence
 	 * @param \f_persistentdocument_PersistentTreeNode $treeNode TODO Old class Usage
@@ -383,7 +395,6 @@ abstract class DbProvider
 	 */
 	public abstract function moveNode($parentNode, $movedNode, $destNode);
 
-
 	// Relation
 	
 	/**
@@ -396,7 +407,6 @@ abstract class DbProvider
 	 * @return \f_persistentdocument_PersistentRelation[] TODO Old class Usage
 	 */
 	protected abstract function getRelations($type = null, $documentId1 = null, $documentId2 = null, $name = null, $documentModel1 = null, $documentModel2 = null);
-	
 	
 	/**
 	 * @param integer $masterDocumentId
@@ -436,7 +446,7 @@ abstract class DbProvider
 			return true;
 		}
 		return false;
-	}	
+	}
 
 	/**
 	 * @param string $packageName
@@ -471,7 +481,6 @@ abstract class DbProvider
 	 */
 	public abstract function setUserSettingValue($packageName, $settingName, $userId, $value);
 	
-
 	/**
 	 * @param string $packageName
 	 * @param string $settingName
@@ -481,7 +490,6 @@ abstract class DbProvider
 	{
 		$this->setUserSettingValue($packageName, $settingName, 0, $value);
 	}
-
 
 	// -------------------------------------------------------------------------
 	// TAGS STUFF
@@ -533,7 +541,6 @@ abstract class DbProvider
 	 */
 	public abstract function removeTag($documentId, $tag);
 
-
 	/**
 	 * Adds the tag $tag tag to the document with ID $documentId.
 	 * @internal use by TagService
@@ -567,19 +574,17 @@ abstract class DbProvider
 	 * @param boolean $forceUpdate
 	 */
 	public abstract function addTranslate($lcid, $id, $keyPath, $content, $useredited, $format = 'TEXT', $forceUpdate = false);
-		
+	
 	/**
 	 * @return array
 	 */
 	public abstract function getPackageNames();
 
-		
 	/**
 	 * @return array
 	 */
 	public abstract function getUserEditedPackageNames();
 	
-
 	/**
 	 * @param string $keyPath
 	 * @return array['id' => string, 'lang' => string, 'content' => string, 'useredited' => integer, 'format' => string]
@@ -622,7 +627,7 @@ abstract class DbProvider
 	 * @param string|null $lang
 	*/
 	public abstract function deleteI18nSynchroStatus($id, $lang = null);
-		
+	
 	/**
 	 * @param integer $documentId
 	 * @return array<<nb_rules, website_id, website_lang>>
@@ -659,7 +664,6 @@ abstract class DbProvider
 	 * @return array<<rule_id, origine, modulename, actionname, document_id, website_lang, website_id, from_url, to_url, redirect_type>>
 	 */
 	public abstract function getUrlRewritingAction($moduleName, $actionName, $lang, $websiteId);
-
 	
 	/**
 	 * @param string $moduleName
@@ -668,7 +672,6 @@ abstract class DbProvider
 	 * @param integer $websiteId
 	 */
 	public abstract function deleteUrlRewritingAction($moduleName, $actionName, $lang, $websiteId);
-	
 	
 	/**
 	 * @param integer $documentId
@@ -704,7 +707,6 @@ abstract class DbProvider
 	 */
 	public abstract function clearUrlRewriting($documentId);
 	
-	
 	/**
 	 * @param string $url
 	 * @param integer $websiteId
@@ -739,7 +741,6 @@ abstract class DbProvider
 	 */
 	public abstract function removeACLForNode($nodeId, $packageName = null);
 
-
 	/**
 	 * Permissions defined on $nodeId predicate
 	 *
@@ -767,7 +768,6 @@ abstract class DbProvider
 	 */
 	public abstract function checkCompiledPermission($accessors, $perm, $node);
 
-
 	/**
 	 * @param string $permission
 	 * @param integer $nodeId
@@ -775,15 +775,16 @@ abstract class DbProvider
 	 */
 	public abstract function getAccessorsByPermissionForNode($permission, $nodeId);
 
-
 	/**
 	 * @param array<Integer> $accessorIds
 	 * @param integer $nodeId
 	 * @return array<String>
 	 */
 	public abstract function getPermissionsForUserByNode($accessorIds, $nodeId);
-
-
+	
+	/**
+	 * Clear all permissions.
+	 */
 	public abstract function clearAllPermissions();
 	
 	/**
@@ -845,13 +846,11 @@ abstract class DbProvider
 	 */
 	public abstract function getDistinctLogEntry($fieldName);
 
-
 	/**
 	 * @param string $date
 	 * @param string|null $moduleName
 	 */
 	public abstract function deleteUserActionEntries($date, $moduleName = null);
-	
 	
 	// Indexing function
 	
@@ -873,7 +872,6 @@ abstract class DbProvider
 	 * @return boolean
 	 */
 	public abstract function deleteIndexingDocumentStatus($documentId);
-
 	
 	/**
 	 * @return integer
@@ -896,5 +894,4 @@ abstract class DbProvider
 	 * @param integer[]
 	 */
 	public abstract function getIndexingDocuments($maxDocumentId, $chunkSize = 100);
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Change\Commands;
 
 use Zend\Json\Json;
@@ -7,6 +6,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @name \Change\Commands\ConvertXmlConfig
+ */
 class ConvertXmlConfig extends \Change\Application\Console\ChangeCommand
 {
 	/**
@@ -18,7 +20,6 @@ class ConvertXmlConfig extends \Change\Application\Console\ChangeCommand
 	}
 
 	/**
-	 *
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @throws \LogicException

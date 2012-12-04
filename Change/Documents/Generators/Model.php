@@ -28,7 +28,7 @@ class Model
 	
 	/**
 	 * @var \Change\Documents\Generators\SerializedProperty[]
-	 */	
+	 */
 	protected $serializedproperties = array();
 	
 	/**
@@ -43,7 +43,7 @@ class Model
 
 	/**
 	 * @var string
-	 */	
+	 */
 	protected $extend;
 	
 	/**
@@ -53,7 +53,7 @@ class Model
 	
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $localized;
 	
 	/**
@@ -63,22 +63,22 @@ class Model
 	
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $hasUrl;
 	
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $useRewriteUrl;
 	
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $indexable;
 	
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $backofficeIndexable;
 	
 	/**
@@ -115,7 +115,7 @@ class Model
 	 * @var string[]
 	 */
 	protected $cmpPropNames = array();
-		
+	
 	/**
 	 * @param string $vendor
 	 * @param string $moduleName
@@ -151,7 +151,7 @@ class Model
 	{
 		return $this->documentName;
 	}
-		
+	
 	/**
 	 * @param \DOMDocument $domDocument
 	 */
@@ -368,7 +368,7 @@ class Model
 			}
 		}
 	}
-		
+	
 	/**
 	 * @param \DOMElement $serializedPropertiesElement
 	 */
@@ -388,7 +388,7 @@ class Model
 			}
 		}
 	}
-		
+	
 	/**
 	 * @param \DOMElement $workflowElement
 	 */
@@ -482,8 +482,7 @@ class Model
 	public function addInverseProperty($inverseProperty)
 	{
 		return $this->inverseProperties[$inverseProperty->getName()] = $inverseProperty;
-	}	
-	
+	}
 	
 	/**
 	 * @return string
@@ -653,7 +652,7 @@ class Model
 	{
 		return implode('\\', array(ucfirst($this->getVendor()),  ucfirst($this->getModuleName()), 'Documents'));
 	}
-		
+	
 	/**
 	 * @param boolean $localized
 	 */
@@ -676,7 +675,7 @@ class Model
 			$properties = $model->getProperties();
 			if (isset($properties[$name]))
 			{
-				$result[] =  $properties[$name];
+				$result[] = $properties[$name];
 			}
 		}
 		return $result;

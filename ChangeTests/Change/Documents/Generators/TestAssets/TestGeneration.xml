@@ -24,7 +24,7 @@
 	<serializedproperties>
 		<property name="bool2" type="Boolean"/>
 		<property name="int2" type="Integer" />
-		<property name="float2" type="Float"  required="true"/>
+		<property name="float2" type="Float" required="true"/>
 		<property name="decimal2" type="Decimal"/>
 		<property name="date2" type="Date"/>
 		<property name="datetime2" type="DateTime"/>

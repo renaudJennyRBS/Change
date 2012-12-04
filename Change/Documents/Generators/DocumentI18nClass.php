@@ -47,7 +47,7 @@ class DocumentI18nClass
 		{
 			$code .= $this->getMembers($model, $properties);
 			$code .= $this->getSetDocumentProperties($model, $properties);
-			$code .= $this->getGetDocumentProperties($model, $properties);		
+			$code .= $this->getGetDocumentProperties($model, $properties);
 			$code .= $this->getMembersAccessors($model, $properties);
 		}
 		$code .= $this->getSetDefaultValues($model);
@@ -157,8 +157,7 @@ class DocumentI18nClass
 			{
 				return $this->getClassName($model, true);
 			}
-			
-		}	
+		}
 		return '\Change\Documents\AbstractI18nDocument';
 	}
 	
@@ -322,7 +321,7 @@ class DocumentI18nClass
 		}
 		return false;
 	}
-				
+	
 	/**
 	 * @return '.$commentType.'
 	 */
@@ -330,7 +329,7 @@ class DocumentI18nClass
 	{
 		return '.$memberName.';
 	}
-			
+	
 	/**
 	 * @return '.$commentType.'|NULL
 	 */
@@ -356,10 +355,10 @@ class DocumentI18nClass
 				return 'float';
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
 			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTID :
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENT :					
+			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENT :
 				return 'integer';
 			default:
 				return 'string';
 		}
-	}	
+	}
 }

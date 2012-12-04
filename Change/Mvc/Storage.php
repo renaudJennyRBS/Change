@@ -225,7 +225,6 @@ class Storage
 		return $this->removeForContainer($key, $this->getUserSessionContainer());
 	}
 
-
 	/**
 	 * @param string $key
 	 * @param Mixed $data
@@ -273,21 +272,24 @@ class Storage
 	}
 	
 	/**
-	 * @return Array 
+	 * @return array 
 	 */
 	public function readAll()
 	{
 		return $this->readAllForContainer($this->getChangeSessionContainer());
 	}
-		
+	
 	/**
-	 * @return Array 
+	 * @return array 
 	 */
 	public function readAllForUser()
 	{
 		return $this->readAllForContainer($this->getUserSessionContainer());
 	}
 	
+	/**
+	 * Clear the gobal session.
+	 */
 	public function clear()
 	{
 		$container = $this->getChangeSessionContainer();
@@ -300,6 +302,9 @@ class Storage
 		}
 	}
 	
+	/**
+	 * Clear the user session.
+	 */
 	public function clearForUser()
 	{
 		$container = $this->getUserSessionContainer();
@@ -312,6 +317,8 @@ class Storage
 		}
 	}
 	
+	/**
+	 */
 	public function shutdown()
 	{
 		$this->stopSession();

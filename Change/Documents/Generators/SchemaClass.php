@@ -11,7 +11,6 @@ class SchemaClass
 	 */
 	protected $compiler;
 	
-	
 	/**
 	 * @var \Change\Db\InterfaceSchemaManager
 	 */
@@ -55,13 +54,13 @@ class Schema
 	{
 		$this->tables;
 	}
-			
+	
 	public function __construct()
 	{
 		$id = new \Change\Db\Schema\FieldDefinition(\'document_id\', \'int\', \'int(11)\', false, \'0\');
 		$model = new \Change\Db\Schema\FieldDefinition(\'document_model\', \'varchar\', \'varchar(50)\', false, \'\');
 		$i18nLang = new \Change\Db\Schema\FieldDefinition(\'lang_i18n\', \'varchar\', \'varchar(2)\', false, \'fr\');'. PHP_EOL;
-				
+		
 		foreach ($this->compiler->getModelsByLevel(0) as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
@@ -117,8 +116,8 @@ class Schema
 			/* @var $dm \Change\Documents\Generators\Model */
 			$lines = array_merge($lines, $this->generateFieldsDef($dm, false));
 		}
-		$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';		
-		$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id));';		
+		$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
+		$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id));';
 		$lines[] = '		$tables[] = $table;';
 		
 		if ($model->getCmpLocalized() || $model->getLocalized())
@@ -163,6 +162,5 @@ class Schema
 			$lines[] = '		$table->addField(new \Change\Db\Schema\FieldDefinition('.$name.', '.$type.', '.$typeData.', '.$nullable.', '.$defaultValue.'));';
 		}
 		return $lines;
-	}	
-	
+	}
 }

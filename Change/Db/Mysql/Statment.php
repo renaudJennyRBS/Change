@@ -31,13 +31,13 @@ class Statment extends \Change\Db\AbstractStatment
 		if ($this->stmt === null)
 		{
 			$pdo = $this->provider->getDriver();
-			$this->stmt = $pdo->prepare($this->sql);  
+			$this->stmt = $pdo->prepare($this->sql);
 			if ($this->stmt === false)
 			{
 				$errorCode = $pdo->errorCode();
 				$this->errorMessage = "Driver ERROR Code (" . $errorCode . ") : " . var_export($pdo->errorInfo(), true);
 				throw new \Exception($this->errorMessage);
-			} 
+			}
 		}
 		elseif ($this->stmt === false)
 		{
@@ -146,7 +146,7 @@ class Statment extends \Change\Db\AbstractStatment
 	/**
 	 * @param \Change\Db\StatmentParameter[] $parameters
 	 * @return boolean
-	 */	
+	 */
 	public function execute($parameters = null)
 	{
 		if (is_array($parameters))
@@ -171,17 +171,16 @@ class Statment extends \Change\Db\AbstractStatment
 	
 	/**
 	 * @return string|null
-	 */	
+	 */
 	public function getErrorMessage()
 	{
 		return $this->errorMessage;
 	}
 	
-	
 	/**
 	 * @param string $mode \Change\Db\AbstractStatment::FETCH_*
 	 * @return array|false
-	 */	
+	 */
 	public function fetch($mode)
 	{
 		return $this->stmt->fetch($this->getStatmentFetchMode($mode));
@@ -224,7 +223,7 @@ class Statment extends \Change\Db\AbstractStatment
 	 * @return integer
 	 */
 	private function getStatmentType($type)
-	{		
+	{
 		switch ($type)
 		{
 			case \PDO::PARAM_INT:

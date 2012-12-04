@@ -24,12 +24,12 @@ class DocumentManager
 	
 	/**
 	 * @var array<integer, \Change\Documents\AbstractI18nDocument>
-	*/
+	 */
 	protected $i18nDocumentInstances = array();
 	
 	/**
 	 * @var array
-	*/
+	 */
 	protected $tmpRelationIds = array();
 	
 	/**
@@ -174,7 +174,6 @@ class DocumentManager
 		return $i18nDoc;
 	}
 	
-	
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return integer
@@ -287,7 +286,7 @@ class DocumentManager
 	{
 		$this->documentInstances[$documentId] = $document;
 	}
-		
+	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return string
@@ -296,7 +295,7 @@ class DocumentManager
 	{
 		return ucfirst($model->getVendorName()) . '\\' . ucfirst($model->getModuleName()) . '\\Documents\\' . ucfirst(ucfirst($model->getDocumentName()));
 	}
-		
+	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return string

@@ -24,13 +24,12 @@ class SchemaClassTest extends \PHPUnit_Framework_TestCase
 		$models[] = $compiler->loadDocument('change', 'testing', 'inject3',  __DIR__ . '/TestAssets/TestValidateInject3.xml');
 		$compiler->buildDependencies();
 		
-		
 		$generator = new \Change\Documents\Generators\SchemaClass();
 		$code = $generator->getPHPCode($compiler, $this->getApplication()->getApplicationServices()->getDbProvider()->getSchemaManager());
 		
 		//file_put_contents(__DIR__ . '/TestAssets/SchemaClassTest.php.expected', $code);
 		$expected = file_get_contents(__DIR__ . '/TestAssets/SchemaClassTest.php.expected');
-				
+		
 		$this->assertEquals($expected, $code);
 	}
 }

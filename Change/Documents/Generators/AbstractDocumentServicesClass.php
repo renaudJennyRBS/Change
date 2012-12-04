@@ -49,7 +49,7 @@ class AbstractDocumentServicesClass
 		$code .= '{'. PHP_EOL;
 		
 		$code .= $this->getDefaultCode($rm);
-		$code .= '}'. PHP_EOL;		
+		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
 		return $code;	
 	}
@@ -113,7 +113,7 @@ class AbstractDocumentServicesClass
 		$dl->addDefinition($cl);';
 		}	
 		$code .= '
-			
+		
 		parent::__construct($dl);
 		$params = array(\'applicationServices\' => $applicationServices, \'documentServices\' => $this);
 
@@ -124,7 +124,7 @@ class AbstractDocumentServicesClass
 			$cn = $this->escapePHPValue($this->getFinalClassName($model));
 			$an = $this->escapePHPValue($model->getFullName());
 			$code .= '		$im->addAlias('.$an.', '.$cn.', $params);'. PHP_EOL;
-		}	
+		}
 		$code .= '
 	}'. PHP_EOL;
 		
@@ -149,7 +149,7 @@ class AbstractDocumentServicesClass
 	{
 		return $this->get('.$an.');
 	}'. PHP_EOL;
-		}		
+		}
 		
 		return $code;
 	}

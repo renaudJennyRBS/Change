@@ -26,7 +26,7 @@ class DocumentI18nClassTest extends \PHPUnit_Framework_TestCase
 		
 		//file_put_contents($definitionPath . '.i18n.php.expected', $code);
 		$expected = file_get_contents($definitionPath . '.i18n.php.expected');
-				
+		
 		$this->assertEquals($expected, $code);
 	}
 }

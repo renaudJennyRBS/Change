@@ -1,5 +1,4 @@
 <?php
-
 namespace Change\Application;
 
 use Change\Application\Package\Package;
@@ -7,6 +6,9 @@ use Zend\Stdlib\ErrorHandler;
 use Zend\Json\Json;
 use Zend\Loader\StandardAutoloader;
 
+/**
+ * @name Change\Application\PackageManager
+ */
 class PackageManager
 {
 	/**
@@ -14,6 +16,9 @@ class PackageManager
 	 */
 	protected $application;
 
+	/**
+	 * @param \Change\Application $application
+	 */
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;

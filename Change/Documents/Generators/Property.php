@@ -7,8 +7,8 @@ namespace Change\Documents\Generators;
 class Property
 {
 	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Float', 'Decimal',
-				'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
-				'DocumentId', 'Document', 'DocumentArray');
+		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
+		'DocumentId', 'Document', 'DocumentArray');
 	
 	protected static $DEPRECATED_TYPE = array('Double' => 'Float', 'XHTMLFragment' => 'RichText', 'BBCode' => 'RichText');
 	
@@ -38,7 +38,7 @@ class Property
 	/**
 	 * @var string
 	 */	
-	protected $fromList;	
+	protected $fromList;
 	
 	/**
 	 * @var boolean
@@ -83,7 +83,7 @@ class Property
 	/**
 	 * @var boolean
 	 */
-	protected $localized;	
+	protected $localized;
 	
 	/**
 	 * @var boolean
@@ -101,7 +101,6 @@ class Property
 	 */
 	protected $cmpOverride = false;
 	
-
 	/**
 	 * @param DOMElement $xmlElement
 	 */
@@ -374,6 +373,9 @@ class Property
 		if (is_array($property->getConstraintArray())) {$this->constraintArray = $property->getConstraintArray();}
 	}
 	
+	/**
+	 * Set default constraints in the property.
+	 */
 	public function setDefaultConstraints()
 	{
 		if ($this->type == 'String' && $this->dbSize !== null)
@@ -419,6 +421,9 @@ class Property
 		$this->localized = $localized;
 	}
 	
+	/**
+	 * @return boolean|number|string
+	 */
 	public function getDefaultPhpValue()
 	{
 		$val = $this->getDefaultValue();
@@ -448,7 +453,7 @@ class Property
 	{
 		if (count($ancestors))
 		{
-			$this->setOverride(true);		
+			$this->setOverride(true);
 			/* @var $ap \Change\Documents\Generators\Property */
 			$ap = end($ancestors);
 			if ($this->type !== null && $this->type !== $ap->getType())

@@ -90,7 +90,7 @@ abstract class AbstractDocument
 	private $m_documentInverse;
 
 	/**
-	 * @var Boolean
+	 * @var boolean
 	 */
 	private $is_i18InfoModified = false;
 
@@ -100,7 +100,7 @@ abstract class AbstractDocument
 	private $insertInTree = true;
 
 	/**
-	 * @var Integer
+	 * @var integer
 	 */
 	private $_parentNodeId;
 
@@ -110,7 +110,7 @@ abstract class AbstractDocument
 	private $m_metas;
 	
 	/**
-	 * @var Boolean
+	 * @var boolean
 	 */
 	private $metasModified = false;
 
@@ -237,11 +237,17 @@ abstract class AbstractDocument
 		$this->insertInTree = $insertInTree;
 	}
 
+	/**
+	 * @param integer $parentNodeId
+	 */
 	public final function setParentNodeId($parentNodeId)
 	{
 		$this->_parentNodeId = $parentNodeId;
 	}
 
+	/**
+	 * @return integer
+	 */
 	public final function getParentNodeId()
 	{
 		return $this->_parentNodeId;
@@ -461,7 +467,7 @@ abstract class AbstractDocument
 
 	/**
 	 * @internal ONLY for PersistentProvider usage
-	 * @return unknown
+	 * @return integer
 	 */
 	public function getDocumentPersistentState()
 	{
@@ -470,7 +476,7 @@ abstract class AbstractDocument
 
 	/**
 	 * @internal ONLY for PersistentProvider usage
-	 * @param unknown_type $newValue
+	 * @param integer $newValue
 	 */
 	public function setDocumentPersistentState($newValue)
 	{
@@ -530,7 +536,7 @@ abstract class AbstractDocument
 
 	/**
 	 * @internal ONLY for PersistentProvider usage
-	 * @param int $id
+	 * @param integer $id
 	 */
 	function updateId($id)
 	{
@@ -539,7 +545,7 @@ abstract class AbstractDocument
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param array<String> $propertyNames
+	 * @param string[] $propertyNames
 	 * @param boolean $mergeArrayProperties
 	 */
 	public function mergeWith($document, $propertyNames, $mergeArrayProperties = false)
@@ -704,7 +710,7 @@ abstract class AbstractDocument
 	 * By default, this method returns the label property value.
 	 * @return string
 	 */
-	function getTreeNodeLabel()
+	public function getTreeNodeLabel()
 	{
 		return $this->getDocumentService()->getTreeNodeLabel($this);
 	}
@@ -780,6 +786,7 @@ abstract class AbstractDocument
 
 	/**
 	 * Save PersistentDocument in database.
+	 * @param integer $parentNodeId
 	 */
 	public final function save($parentNodeId = null)
 	{
@@ -789,7 +796,7 @@ abstract class AbstractDocument
 	/**
 	 * persist only metastring field in database
 	 */
-	function saveMeta()
+	public function saveMeta()
 	{
 		$this->getDocumentService()->saveMeta($this);
 	}
@@ -810,6 +817,9 @@ abstract class AbstractDocument
 		$this->getDocumentService()->activate($this->getId());
 	}
 
+	/**
+	 * @var array
+	 */
 	private $propertiesErrors;
 	
 	/**
@@ -899,6 +909,9 @@ abstract class AbstractDocument
 		}
 	}	
 	
+	/**
+	 * @param string $propertyName
+	 */
 	public function clearPropertyErrors($propertyName = null)
 	{
 		if ($propertyName === null)
@@ -935,8 +948,6 @@ abstract class AbstractDocument
 	{
 	}
 
-
-		
 	protected function checkLoaded()
 	{
 		if ($this->m_persistentState === self::PERSISTENTSTATE_INITIALIZED)
@@ -1010,6 +1021,9 @@ abstract class AbstractDocument
 		$this->modifiedPropertyValues = $oldValues;
 	}
 
+	/**
+	 * @param string $propertyName
+	 */
 	protected final function propertyUpdated($propertyName)
 	{
 		if ($this->getDocumentPersistentState() == self::PERSISTENTSTATE_LOADED)
@@ -1043,7 +1057,7 @@ abstract class AbstractDocument
 	}
 
 	/**
-	 * @return array<String>
+	 * @return string[]
 	 */
 	public function getModifiedPropertyNames()
 	{
@@ -1051,7 +1065,7 @@ abstract class AbstractDocument
 	}
 
 	/**
-	 * @param array<String> $modifiedPropertyNames
+	 * @param string[] $modifiedPropertyNames
 	 */
 	public function setModifiedPropertyNames($modifiedPropertyNames = array())
 	{
@@ -1111,7 +1125,6 @@ abstract class AbstractDocument
 	{
 		$this->getDbProvider()->loadDocument($this);
 	}
-
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $sourceDocument
@@ -1278,7 +1291,6 @@ abstract class AbstractDocument
 	{
 		return self::STATUS_PUBLISHED === $this->getPublicationstatus();
 	}
-
 
 	// Metadata management
 

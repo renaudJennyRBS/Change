@@ -14,17 +14,17 @@ class Request
 	/**
 	 * @var integer
 	 */
-	const POST = 4;	
+	const POST = 4;
 	
 	/**
 	 * @var integer
 	 */
-	const PUT = 8;	
+	const PUT = 8;
 	
 	/**
 	 * @var integer
 	 */
-	const DELETE = 16;	
+	const DELETE = 16;
 	
 	/**
 	 * @var string
@@ -34,12 +34,12 @@ class Request
 	/**
 	 * @var array
 	 */
-	protected $errors	 = array();
+	protected $errors = array();
 	
 	/**
 	 * @var string
 	 */
-	protected $method	 = null;	
+	protected $method = null;
 	
 	/**
 	 * @var array
@@ -121,7 +121,7 @@ class Request
 	{
 		$this->parameters = array_merge($this->parameters, $parameters);
 	}
-			
+	
 	/**
 	 * @param string $name
 	 * @return string|NULL
@@ -176,7 +176,7 @@ class Request
 			unset($this->errors[$name]);
 			return $retval;
 		}
-		return null;	
+		return null;
 	}
 		
 	/**
@@ -187,14 +187,14 @@ class Request
 	{
 		$this->errors[$name] = $message;
 	}
-		
+	
 	/**
 	 * @param array $errors
 	 */
 	public function setErrors($errors)
 	{
 		$this->errors = array_merge($this->errors, $errors);
-	}	
+	}
 	
 	/**
 	 * @return integer|NULL change_Request::[GET | POST | PUT | DELETE]
@@ -224,7 +224,7 @@ class Request
 	 * @param array $parameters
 	 */
 	public function initialize($context, $parameters = null)
-	{		
+	{
 		if (isset($_SERVER['REQUEST_METHOD']))
 		{
 			$this->setParameters($_GET);
@@ -244,7 +244,7 @@ class Request
 					$this->setMethod(self::GET);
 					break;
 			}
-		} 
+		}
 		else
 		{
 			$this->setMethod(self::GET);
@@ -260,6 +260,8 @@ class Request
 		}
 	}
 	
+	/**
+	 */
 	public function shutdown()
 	{
 		$this->clearParameters();
@@ -282,7 +284,7 @@ class Request
 	}
 
    /**
-	 * set a module parameter.
+	 * Set a module parameter.
 	 * @param string $moduleName The module name.
 	 * @param string $paramName The parameter name.
 	 * @param mixed $paramValue
@@ -321,7 +323,6 @@ class Request
 	{
 		return $this->getParameter($moduleName."Param");
 	}
-	
 	
 	/**
 	 * Set a cookie.

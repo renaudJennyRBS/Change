@@ -5,8 +5,7 @@ namespace Change\Db;
  * @name \Change\Db\InterfaceSchemaManager
  */
 interface InterfaceSchemaManager
-{	
-	
+{
 	/**
 	 * @return string|NULL
 	 */
@@ -30,7 +29,7 @@ interface InterfaceSchemaManager
 	 * @throws Exception on error
 	 */
 	function executeBatch($script, $throwOnError = false);
-			
+	
 	/**
 	 * @throws Exception on error
 	 */
@@ -39,14 +38,14 @@ interface InterfaceSchemaManager
 	/**
 	 * @return string[]
 	 */
-	function getTables();	
+	function getTables();
 	
 	/**
 	 * @param string $tableName
 	 * @return \Change\Db\Schema\TableDefinition
 	 */
 	public function getTableDefinition($tableName);
-			
+	
 	/**
 	 * @param string $lang
 	 * @return boolean

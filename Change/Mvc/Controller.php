@@ -22,7 +22,6 @@ class Controller
 	protected $actionStack;
 	
 	/**
-	 * 
 	 * @var \Zend\Uri\UriInterface
 	 */
 	protected $uri;
@@ -41,6 +40,9 @@ class Controller
 		$this->initialize();
 	}
 
+	/**
+	 * @return void
+	 */
 	protected function initialize()
 	{
 		$this->actionStack = new ActionStack();
@@ -49,6 +51,8 @@ class Controller
 		register_shutdown_function(array($this, 'shutdown'));
 	}
 	
+	/**
+	 */
 	protected function initialiseUri()
 	{
 		$uri = new \Zend\Uri\Http();
@@ -89,13 +93,13 @@ class Controller
 		$this->uri = $uri;
 	}
 	
-	
+	/**
+	 */
 	protected function loadContext()
 	{
 		$this->context = new Context($this);
 	}
 	
-
 	/**
 	 * @return void
 	 */
@@ -124,9 +128,11 @@ class Controller
 	{
 		return $this->actionStack->getLastEntry();
 	}
-		
+	
+	/**
+	 */
 	public function dispatch()
-	{		
+	{
 		$moduleName = $this->getRequest()->getParameter('module');
 		if ($moduleName == null)
 		{
@@ -148,9 +154,9 @@ class Controller
 				$actionName = 'Error404';
 			}
 		}
-		// make the first request
+		// Make the first request.
 		$this->forward($moduleName, $actionName);
-	}	
+	}
 	
 	/**
 	 * @param string $moduleName
@@ -164,7 +170,6 @@ class Controller
 	}
 	
 	/**
-	 * 
 	 * @param string $moduleName
 	 * @param string $actionName
 	 */
@@ -260,10 +265,10 @@ class Controller
 			return $this->forward('website', 'Error404');
 		}
 		
-		// initialize the action
+		// Initialize the action.
 		if ($actionInstance->initialize($this->context))
 		{	
-			// create a new filter chain		
+			// Create a new filter chain.
 			if ($actionInstance->isSecure())
 			{
 				if (!$this->getUser()->isAuthenticated())
@@ -292,11 +297,10 @@ class Controller
 
 			if ($viewName != AbstractView::NONE)
 			{
-	
 				if (is_array($viewName))
 				{
 					list ($moduleName, $viewName) = $viewName;
-				} 
+				}
 				else
 				{
 					$viewName = $actionName . $viewName;
@@ -420,7 +424,7 @@ class Controller
 		$ip .= $remoteAddr;
 		return $ip;
 	}
-		
+	
 	/**
 	 * @param string $moduleName
 	 * @param string $actionName
@@ -433,7 +437,7 @@ class Controller
 		if (is_array($parameters))
 		{
 			$urlParam = $parameters;
-		}	
+		}
 		else
 		{
 			$urlParam = array();

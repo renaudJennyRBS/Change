@@ -1,5 +1,4 @@
 <?php
-
 namespace Change\Injection;
 
 /**
@@ -12,6 +11,9 @@ class Injection
 	 */
 	protected $application;
 
+	/**
+	 * @param \Change\Application $application
+	 */
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;
@@ -81,7 +83,6 @@ class Injection
 	}
 
 	/**
-	 *
 	 * @param string $className
 	 * @param array $oldInfo
 	 * @return string

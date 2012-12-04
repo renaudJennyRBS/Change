@@ -11,6 +11,9 @@ class Compiler
 	 */
 	protected $models = array();
 	
+	/**
+	 * @var array
+	 */
 	protected $modelNamesByExtendLevel = array();
 	
 	/**
@@ -23,7 +26,9 @@ class Compiler
 	 */
 	protected $application;
 	
-	
+	/**
+	 * @param \Change\Application $application
+	 */
 	public function __construct(\Change\Application $application)
 	{
 		$this->application = $application;
@@ -84,7 +89,7 @@ class Compiler
 				{
 					throw new \Exception('Document ' . $modelName . ' extend unknow ' . $model->getExtend(). ' document.');
 				}
-				$extendName = $extModel->getFullName();				
+				$extendName = $extModel->getFullName();
 				if ($model->getInject())
 				{
 					if (isset($this->injection[$extendName]))
@@ -127,7 +132,7 @@ class Compiler
 		{
 			foreach ($modelNames as $modelName)
 			{
-				$model = $this->getModelByFullName($modelName);			
+				$model = $this->getModelByFullName($modelName);
 				$ancestors =  $this->getAncestors($model);
 				$model->validate($ancestors);
 				
@@ -261,7 +266,7 @@ class Compiler
 	{
 		return $this->models;
 	}
-			
+	
 	/**
 	 * @return \Change\Documents\Generators\Model[]
 	 */
