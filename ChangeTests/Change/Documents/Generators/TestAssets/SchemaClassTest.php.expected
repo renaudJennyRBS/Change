@@ -14,7 +14,7 @@ class Schema
 	{
 		$this->tables;
 	}
-			
+	
 	public function __construct()
 	{
 		$id = new \Change\Db\Schema\FieldDefinition('document_id', 'int', 'int(11)', false, '0');

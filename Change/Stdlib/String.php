@@ -14,7 +14,7 @@ class String
 	 */
 	public static function length($string)
 	{
-		return mb_strlen($string, "UTF-8");
+		return mb_strlen($string, 'UTF-8');
 	}
 
 	/**
@@ -25,7 +25,7 @@ class String
 	 */
 	public static function toLower($string)
 	{
-		return mb_strtolower($string, "UTF-8");
+		return mb_strtolower($string, 'UTF-8');
 	}
 
 	/**
@@ -36,7 +36,7 @@ class String
 	 */
 	public static function toUpper($string)
 	{
-		return mb_strtoupper($string, "UTF-8");
+		return mb_strtoupper($string, 'UTF-8');
 	}
 
 	/**
@@ -64,7 +64,7 @@ class String
 		{
 			$length = self::length($string);
 		}
-		return mb_substr($string, $start, $length, "UTF-8");
+		return mb_substr($string, $start, $length, 'UTF-8');
 	}
 
 	/**
@@ -84,18 +84,18 @@ class String
 	}
 
 	/**
-	 * Aim of this function is to return an easy memorisable string
+	 * Aim of this function is to return an easily memorisable string
 	 * It's usefull for random password generation for example
 	 *
-	 * @param  int	 Length of the random string
+	 * @param  int Length of the random string
 	 * @param  boolean Indicate if return string is case sensitive
 	 * @return string  Random string
 	 */
 	public static function random($length = 8, $caseSensitive = true)
 	{
-		$randomString = "";
-		$consons  = array("b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "z", "bl", "br", "cl", "cr", "ch", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "qu", "sl", "sr");
-		$vowels = array("a", "e", "i", "o", "u", "ae", "ai", "au", "eu", "ia", "io", "iu", "oa", "oi", "ou", "ua", "ue", "ui");
+		$randomString = '';
+		$consons  = array('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'z', 'bl', 'br', 'cl', 'cr', 'ch', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'qu', 'sl', 'sr');
+		$vowels = array('a', 'e', 'i', 'o', 'u', 'ae', 'ai', 'au', 'eu', 'ia', 'io', 'iu', 'oa', 'oi', 'ou', 'ua', 'ue', 'ui');
 
 		if ($caseSensitive == true)
 		{

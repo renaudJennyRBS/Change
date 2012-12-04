@@ -253,8 +253,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	public function getDocumentI18nTableName($documentTableName)
 	{
 		return $this->dbProvider->getSqlMapping()->getDocumentI18nTableName($documentTableName);
-	}	
-	
+	}
 	
 	/**
 	 * @param string $propertyName
@@ -263,8 +262,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	public function getDocumentFieldName($propertyName)
 	{
 		return $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
-	}	
-	
+	}
 	
 	/**
 	 * @param string $propertyName
@@ -273,7 +271,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	public function getDocumentI18nFieldName($propertyName)
 	{
 		return $this->dbProvider->getSqlMapping()->getDocumentI18nFieldName($propertyName);
-	}	
+	}
 	
 	/**
 	 * @param string $propertyName

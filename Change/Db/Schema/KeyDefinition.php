@@ -3,7 +3,6 @@ namespace Change\Db\Schema;
 
 /** 
  * @name \Change\Db\Schema\KeyDefinition
- * 
  */
 class KeyDefinition
 {

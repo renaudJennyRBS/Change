@@ -1,11 +1,11 @@
 <?php
 namespace Change\Documents;
+
 /**
  * @name \Change\Documents\TreeManager
  */
 class TreeManager
 {
-
 	/**
 	 * @var \Change\Documents\DocumentServices
 	 */
@@ -182,6 +182,9 @@ class TreeManager
 		$this->treeNodes[intval($node->getDocumentId())] = $node;
 	}
 	
+	/**
+	 * Clears the tree node cache.
+	 */
 	protected function clearCachedTreeNodes()
 	{
 		$this->treeNodes = array();

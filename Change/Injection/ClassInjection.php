@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Injection;
 
+/**
+ * @name \Change\Injection\ClassInjection
+ */
 class ClassInjection
 {
 	const REPLACED_CLASS_SUFFIX = '_injected';

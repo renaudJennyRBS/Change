@@ -6,7 +6,6 @@ namespace Change\Documents;
  */
 abstract class AbstractModel
 {
-		
 	/**
 	 * @var \Change\Documents\Property[]
 	 */
@@ -21,17 +20,16 @@ abstract class AbstractModel
 	 * @var \Change\Documents\Property[]
 	 */
 	protected  $m_serialisedproperties;
-		
+	
 	/**
 	 * @var string[]
 	 */
 	protected  $m_propertiesNames;
-		
+	
 	/**
 	 * @var string[]
 	 */
 	protected  $m_childrenNames;
-	
 	
 	/**
 	 * @var string[]
@@ -42,10 +40,6 @@ abstract class AbstractModel
 	 * @var string
 	 */
 	protected  $m_parentName;
-	
-
-
-	
 	
 	public function __construct()
 	{
@@ -146,7 +140,6 @@ abstract class AbstractModel
 		return $this->m_ancestorsNames;
 	}
 	
-	
 	/**
 	 * @return string[]
 	 */
@@ -154,7 +147,7 @@ abstract class AbstractModel
 	{
 		$amn = $this->getAncestorModelNames();
 		return (count($amn)) ? $amn[0] : $this->getName();
-	}	
+	}
 
 	/**
 	 * @return boolean
@@ -180,7 +173,9 @@ abstract class AbstractModel
 		return 'DRAFT';
 	}
 
-
+	/**
+	 * @return void
+	 */
 	protected function loadProperties()
 	{
 		$this->m_properties = array();
@@ -209,10 +204,10 @@ abstract class AbstractModel
 		}
 		return $result;
 	}
-		
+	
 	/**
 	 * @return array<string, \Change\Documents\Property>
-	 */	
+	 */
 	public function getVisiblePropertiesInfos()
 	{
 		$sysProps = \Change\Application::getInstance()->getDocumentServices()->getModelManager()->getSystemPropertyNames();
@@ -250,7 +245,7 @@ abstract class AbstractModel
 	/**
 	 * @param string $propertyName
 	 * @return \Change\Documents\Property
-	 */	
+	 */
 	public function getSerializedProperty($propertyName)
 	{
 		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
@@ -259,22 +254,22 @@ abstract class AbstractModel
 			return $this->m_serialisedproperties[$propertyName];
 		}
 		return null;
-	}	
+	}
 	
 	/**
 	 * @return array<string, \Change\Documents\Property>
-	 */	
+	 */
 	public function getEditablePropertiesInfos()
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
 		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
 		return array_merge($this->m_properties, $this->m_serialisedproperties);
-	}	
-		
+	}
+	
 	/**
 	 * @param string $propertyName
 	 * @return \Change\Documents\Property
-	 */	
+	 */
 	public function getEditableProperty($propertyName)
 	{
 		if ($this->m_properties === null){$this->loadProperties();}
@@ -291,7 +286,7 @@ abstract class AbstractModel
 		}
 		
 		return null;
-	}	
+	}
 
 	/**
 	 * @return \Change\Documents\Property[]
@@ -422,6 +417,9 @@ abstract class AbstractModel
 		return false;
 	}
 
+	/**
+	 * @return void
+	 */
 	protected function loadInvertProperties()
 	{
 		$this->m_invertProperties = array();
@@ -509,7 +507,7 @@ abstract class AbstractModel
 	{
 		return true;
 	}
-		
+	
 	/**
 	 * @return string
 	 */

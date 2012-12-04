@@ -1,10 +1,12 @@
 <?php
-
 namespace Change\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @name \Change\Commands\RefreshConfig
+ */
 class RefreshConfig extends \Change\Application\Console\ChangeCommand
 {
 	/**

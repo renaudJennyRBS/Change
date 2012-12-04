@@ -224,8 +224,8 @@ class DbProvider extends \Change\Db\DbProvider
 	protected function rollBackInternal()
 	{
 		$this->getDriver()->rollBack();
-	}	
-		
+	}
+	
 	/**
 	 * @param string $sql
 	 * @param \Change\Db\StatmentParameter[] $parameters
@@ -249,7 +249,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->showError($stmt);
 		}
 	}
-		
+	
 	/**
 	 * @param Statment $statement
 	 */
@@ -1308,7 +1308,6 @@ class DbProvider extends \Change\Db\DbProvider
 		$stmt->bindValue(':website_id', $websiteId, \PDO::PARAM_INT);
 		$this->executeStatement($stmt);
 		return $stmt->rowCount();
-
 	}
 
 	/**
@@ -1405,7 +1404,6 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return null;
 	}
-
 
 	/**
 	 * @param string $url
@@ -1572,7 +1570,9 @@ class DbProvider extends \Change\Db\DbProvider
 		return $result;
 	}
 
-
+	/**
+	 * Clear all permissions.
+	 */
 	public function clearAllPermissions()
 	{
 		$stmt = $this->prepareStatement('TRUNCATE TABLE f_permission_compiled');

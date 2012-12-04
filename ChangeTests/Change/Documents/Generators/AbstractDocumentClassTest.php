@@ -26,7 +26,7 @@ class AbstractDocumentClassTest extends \PHPUnit_Framework_TestCase
 		
 		//file_put_contents($definitionPath . '.doc.php.expected', $code);
 		$expected = file_get_contents($definitionPath . '.doc.php.expected');
-				
+		
 		$this->assertEquals($expected, $code);
 	}
 }

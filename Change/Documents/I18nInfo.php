@@ -16,7 +16,10 @@ class I18nInfo
 	 */
 	private $labels = array();
 	
-	
+	/**
+	 * @param string $vo
+	 * @param string $label
+	 */
 	public function __construct($vo = null, $label = null)
 	{
 		if ($vo !== null) 
@@ -26,21 +29,34 @@ class I18nInfo
 		}
 	}
 
+	/**
+	 * @param string $lang
+	 */
 	public function setVo($lang)
 	{
 		$this->vo = $lang;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getVo()
 	{
 		return $this->vo;
 	}
 
+	/**
+	 * @param string $lang
+	 * @param string $label
+	 */
 	public function setLabel($lang, $label)
 	{
 		$this->labels[$lang] = $label;
 	}
 
+	/**
+	 * @param string $lang
+	 */
 	public function removeLabel($lang)
 	{
 		if ($this->hasLabel($lang))
@@ -49,6 +65,9 @@ class I18nInfo
 		}
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getVoLabel()
 	{
 		if (is_null($this->vo) || !$this->hasLabel($this->vo))
@@ -58,32 +77,52 @@ class I18nInfo
 		return $this->labels[$this->vo];
 	}
 
+	/**
+	 * @param string $label
+	 */
 	public function setVoLabel($label)
 	{
 		$this->setLabel($this->vo, $label);
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getLabel()
 	{
 		return $this->getLabelByLang(\Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang());
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getLabels()
 	{
 		return $this->labels;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isContextLangAvailable()
 	{
 		$contextLang = \Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang();
 		return ($contextLang == $this->vo) || ($this->hasLabel($contextLang));
 	}
 
+	/**
+	 * @param string $lang
+	 * @return boolean
+	 */
 	public function isLangAvailable($lang)
 	{
 		return ($lang == $this->vo) || ($this->hasLabel($lang));
 	}
 
+	/**
+	 * @param string $lang
+	 * @return string|null
+	 */
 	private function getLabelByLang($lang)
 	{
 		if ($this->hasLabel($lang))
@@ -93,6 +132,10 @@ class I18nInfo
 		return $this->getVoLabel();
 	}
 
+	/**
+	 * @param string $lang
+	 * @return boolean
+	 */
 	private function hasLabel($lang)
 	{
 		if (is_null($this->labels) || !array_key_exists($lang, $this->labels))
@@ -102,6 +145,9 @@ class I18nInfo
 		return true;
 	}
 
+	/**
+	 * @return multitype:string |multitype:
+	 */
 	public function getLangs()
 	{
 		$langs = array($this->vo);

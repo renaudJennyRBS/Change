@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Application;
 
+/**
+ * @name \Change\Application\ApplicationServices
+ */
 class ApplicationServices extends \Zend\Di\Di
 {
 	/**

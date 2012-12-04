@@ -1,5 +1,4 @@
 <?php
-
 namespace Change\Application\Console;
 
 use Zend\Json\Json;
@@ -13,6 +12,9 @@ use Symfony\Component\Finder\Glob;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @name \Change\Application\Console\ConsoleApplication
+ */
 class ConsoleApplication extends \Symfony\Component\Console\Application
 {
 	/**
@@ -200,7 +202,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	protected function getDefaultInputDefinition()
 	{
 		$definition = parent::getDefaultInputDefinition();
-		$definition->addOption(new InputOption('--dev',           '-d', InputOption::VALUE_NONE, 'Force developer mode'));
+		$definition->addOption(new InputOption('--dev', '-d', InputOption::VALUE_NONE, 'Force developer mode'));
 		return $definition;
 	}
 }

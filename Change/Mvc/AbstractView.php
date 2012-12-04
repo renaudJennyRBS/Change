@@ -20,7 +20,9 @@ abstract class AbstractView
 	 */
 	protected $context;
 	
-	
+	/**
+	 * @var string
+	 */
 	protected $moduleName;
 	
 	/**
@@ -33,7 +35,6 @@ abstract class AbstractView
 	 */
 	protected $mimeContentType = null;
 
-	
 	/**
 	 * @return \TemplateObject
 	 */
@@ -78,7 +79,6 @@ abstract class AbstractView
 	 */
 	abstract protected function _execute($context, $request);
 
-	
 	/**
 	 * @param string $mimeContentType
 	 * @throws IllegalArgumentException
@@ -119,6 +119,9 @@ abstract class AbstractView
 		return $this->engine;
 	}
 
+	/**
+	 * Clear all attributes.
+	 */
 	public function clearAttributes()
 	{
 		$this->attributes = array();
@@ -185,6 +188,9 @@ abstract class AbstractView
 		return array_keys($this->attributes);
 	}
 
+	/**
+	 * @return NULL
+	 */
 	public function render()
 	{
 		$request = $this->getContext()->getRequest();
@@ -195,7 +201,9 @@ abstract class AbstractView
 		return null;
 	}
 
-
+	/**
+	 * Send HTTP headers.
+	 */
 	protected function sendHttpHeaders()
 	{
 		$this->getContext()->getController()->addNoCacheHeader();

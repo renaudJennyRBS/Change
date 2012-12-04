@@ -39,7 +39,7 @@ class AbstractServiceClass
 		$code .= 'abstract class ' . $this->getClassName($model) . ' extends ' . $this->getExtendClassName($model) . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$code .= $this->getDefaultCode($model);
-		$code .= '}'. PHP_EOL;		
+		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
 		return $code;	
 	}
@@ -131,10 +131,10 @@ class AbstractServiceClass
 		$code = '
 	/**
 	 * @return string
-	 */			
+	 */
 	public function getModelName()
 	{
-		return '.$this->escapePHPValue($model->getFullName()).';	
+		return '.$this->escapePHPValue($model->getFullName()).';
 	}'. PHP_EOL;
 		return $code;
 	}

@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Injection\Extractor;
 
+/**
+ * @name \Change\Injection\Extractor\ExtractedNamespace
+ */
 class ExtractedNamespace
 {
 	/**

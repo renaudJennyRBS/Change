@@ -61,7 +61,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 		}
 		return false;
 	}
-				
+	
 	/**
 	 * @return string
 	 */
@@ -69,7 +69,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 	{
 		return $this->m_publicationstatus;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -97,7 +97,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 		}
 		return false;
 	}
-				
+	
 	/**
 	 * @return string
 	 */
@@ -105,7 +105,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 	{
 		return $this->m_string1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -133,7 +133,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 		}
 		return false;
 	}
-				
+	
 	/**
 	 * @return string
 	 */
@@ -141,7 +141,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 	{
 		return $this->m_richtext1;
 	}
-			
+	
 	/**
 	 * @return string|NULL
 	 */
@@ -169,7 +169,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 		}
 		return false;
 	}
-				
+	
 	/**
 	 * @return integer
 	 */
@@ -177,7 +177,7 @@ class GenerationI18n extends \Change\Documents\AbstractI18nDocument
 	{
 		return $this->m_correctionid;
 	}
-			
+	
 	/**
 	 * @return integer|NULL
 	 */

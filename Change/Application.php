@@ -1,5 +1,4 @@
 <?php
-
 namespace Change;
 
 use Zend\Json\Json;
@@ -32,7 +31,6 @@ class Application
 	protected $started = false;
 
 	/**
-	 *
 	 * @var \Zend\EventManager\EventManager
 	 */
 	protected $eventManager;
@@ -78,6 +76,9 @@ class Application
 		}, true, true);
 	}
 
+	/**
+	 * Registers the core autoload.
+	 */
 	public function registerCoreAutoload()
 	{
 		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change',
@@ -93,7 +94,7 @@ class Application
 	}
 
 	/**
-	 * Register autoload for compiled code
+	 * Register autoload for compiled code.
 	 */
 	public function registerCompilationAutoload()
 	{
@@ -103,6 +104,9 @@ class Application
 		$zendLoader->register();
 	}
 
+	/**
+	 * Register autoload for packages
+	 */
 	public function registerPackagesAutoload()
 	{
 		$zendLoader = new \Zend\Loader\StandardAutoloader();
@@ -266,6 +270,7 @@ class Application
 		}
 		return $this->documentServices;
 	}
+	
 	/**
 	 * Shortcut for application services workspace
 	 *

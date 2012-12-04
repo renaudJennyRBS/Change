@@ -51,7 +51,6 @@ class TreeNode
 	 */
 	protected $children;
 	
-	
 	/**
 	 * @param \Change\Documents\TreeManager $treeManager
 	 * @param integer $treeId
@@ -188,5 +187,4 @@ class TreeNode
 	{
 		$this->children = $children;
 	}
-
 }

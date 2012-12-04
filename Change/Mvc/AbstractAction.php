@@ -56,7 +56,6 @@ abstract class AbstractAction
 		return $this->context;
 	}
 	
-	
 	/**
 	 * @return string
 	 */
@@ -64,7 +63,7 @@ abstract class AbstractAction
 	{
 		return AbstractView::INPUT;
 	}
-		
+	
 	/**
 	 * @return string
 	 */
@@ -139,11 +138,19 @@ abstract class AbstractAction
 		header('Content-Type: '.$contentType);
 	}
 	
+	/**
+	 * @param string $contentLength
+	 */
 	protected function setContentLength($contentLength)
 	{
 		header('Content-Length: '.$contentLength);
 	}
 	
+	/**
+	 * @param string $content
+	 * @param string $contentType
+	 * @return NULL
+	 */
 	protected function outputBinary($content, $contentType)
 	{
 		$this->setContentType($contentType);
@@ -206,7 +213,6 @@ abstract class AbstractAction
 
 	}
 
-
 	/**
 	 * Returns an array of the documents IDs received by this action.
 	 *
@@ -222,7 +228,7 @@ abstract class AbstractAction
 		if (is_string($docIds) && intval($docIds) == $docIds)
 		{
 			$docIds = array(intval($docIds));
-		}		
+		}
 		elseif (is_int($docIds)) 
 		{
 			$docIds = array($docIds);
@@ -244,7 +250,6 @@ abstract class AbstractAction
 		return $docIds;
 	}
 
-
 	/**
 	 * Returns the document ID received by this action.
 	 *
@@ -265,7 +270,6 @@ abstract class AbstractAction
 		return null;
 	}
 
-
 	/**
 	 * Returns the document instance received by this action.
 	 *
@@ -279,7 +283,6 @@ abstract class AbstractAction
 	{
 		return \DocumentHelper::getDocumentInstance($this->getDocumentIdFromRequest($request)); //TODO Old class Usage
 	}
-
 
 	/**
 	 * Returns an array of document instances from the IDs received in the request.
@@ -317,7 +320,6 @@ abstract class AbstractAction
 	{
 		return Request::POST | Request::GET | Request::PUT |  Request::DELETE;
 	}
-
 
 	/**
 	 * All generic actions are secured: they can't be executed from a
@@ -369,7 +371,7 @@ abstract class AbstractAction
 								return false;
 							}
 						}
-					}	
+					}
 				}
 			}
 		}
@@ -402,6 +404,9 @@ abstract class AbstractAction
 		return false;
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getSecureNodeIds()
 	{
 		return $this->getDocumentIdArrayFromRequest($this->getContext()->getRequest());
@@ -420,7 +425,10 @@ abstract class AbstractAction
 		//TODO Old class Usage
 		throw new \BaseException($message, 'modules.'. $this->getModuleName() . '.errors.' . ucfirst($message));
 	}
-			
+	
+	/**
+	 * @return void
+	 */
 	public function shutdown()
 	{
 		$this->context = null;

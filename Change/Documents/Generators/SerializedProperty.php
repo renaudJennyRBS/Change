@@ -5,7 +5,7 @@ namespace Change\Documents\Generators;
  * @name \Change\Documents\Generators\SerializedProperty
  */
 class SerializedProperty extends Property
-{	
+{
 	/**
 	 * @param \Change\Documents\Generators\SerializedProperty[] $ancestors
 	 */
@@ -24,4 +24,3 @@ class SerializedProperty extends Property
 		parent::validate($ancestors);
 	}
 }
-

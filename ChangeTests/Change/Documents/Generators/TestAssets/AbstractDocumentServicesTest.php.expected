@@ -20,7 +20,7 @@ abstract class AbstractDocumentServices extends \Zend\Di\Di
 				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
 				->addMethodParameter('__construct', 'documentServices', array('type' => 'Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
-			
+		
 		parent::__construct($dl);
 		$params = array('applicationServices' => $applicationServices, 'documentServices' => $this);
 

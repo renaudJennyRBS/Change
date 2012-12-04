@@ -730,8 +730,7 @@ class I18nManager
 	 */
 	public function transformJs($text, $lang)
 	{
-		return str_replace(array("\\", "\t", "\n", "\"", "'"),
-			array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
+		return str_replace(array("\\", "\t", "\n", "\"", "'"), array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
 	}
 
 	/**

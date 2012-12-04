@@ -1,15 +1,16 @@
 <?php
-
 namespace Change\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @name \Change\Commands\CreateCommand
+ */
 class CreateCommand extends \Change\Application\Console\ChangeCommand
 {
 	/**
-	 *
 	 * @return boolean
 	 */
 	public function isDevCommand()

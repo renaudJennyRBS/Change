@@ -6,6 +6,9 @@ namespace Change\Mvc;
  */
 class ActionStack
 {
+	/**
+	 * @var array
+	 */
 	private $stack = array();
 
 	/**

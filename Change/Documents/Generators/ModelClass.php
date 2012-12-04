@@ -214,7 +214,6 @@ class ModelClass
 		return $code;
 	}
 	
-	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
@@ -280,7 +279,6 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getFullName()).';
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -288,8 +286,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue($model->getVendor()).';
 	}
-			
-
+	
 	/**
 	 * @return string
 	 */
@@ -305,8 +302,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue($model->getDocumentName()).';
 	}'. PHP_EOL;
-			
-		}		
+		}
 		
 		if ($model->getLocalized() !== null)
 		{
@@ -318,7 +314,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue($model->getLocalized()).';
 	}'. PHP_EOL;
-		}		
+		}
 
 		if ($model->getHasUrl() !== null)
 		{
@@ -342,7 +338,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue($model->getUseRewriteUrl()).' && $this->hasURL();
 	}'. PHP_EOL;
-		}		
+		}
 		
 		if ($model->getIndexable() !== null)
 		{
@@ -390,7 +386,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue($model->getStatus()).';
 	}'. PHP_EOL;
-		}						
+		}
 		return $code . PHP_EOL;
 	}
 	
@@ -424,7 +420,7 @@ class ModelClass
 	{
 		return '. $this->escapePHPValue(($model->getWorkflowStartTask() == true)).';
 	}
-		
+	
 	/**
 	 * @return string
 	 */
@@ -433,7 +429,6 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getWorkflowStartTask()).';
 	}'. PHP_EOL;
 		}
-		
 		
 		if ($model->getWorkflowParameters() !== null)
 		{
@@ -452,6 +447,6 @@ class ModelClass
 	}'. PHP_EOL;
 		}
 		
-		return $code . PHP_EOL;		
+		return $code . PHP_EOL;
 	}
 }

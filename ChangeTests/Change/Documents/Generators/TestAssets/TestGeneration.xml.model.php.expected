@@ -102,7 +102,6 @@ class GenerationModel extends \Change\Documents\AbstractModel
 		return 'change_testing_generation';
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -110,8 +109,7 @@ class GenerationModel extends \Change\Documents\AbstractModel
 	{
 		return 'change';
 	}
-			
-
+	
 	/**
 	 * @return string
 	 */
@@ -200,7 +198,7 @@ class GenerationModel extends \Change\Documents\AbstractModel
 	{
 		return true;
 	}
-		
+	
 	/**
 	 * @return string
 	 */

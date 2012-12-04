@@ -13,7 +13,7 @@ class AbstractDocumentServicesClassTest extends \PHPUnit_Framework_TestCase
 	{
 		return \Change\Application::getInstance();
 	}
-		
+	
 	public function testAllType()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
@@ -24,13 +24,12 @@ class AbstractDocumentServicesClassTest extends \PHPUnit_Framework_TestCase
 		$models[] = $compiler->loadDocument('change', 'testing', 'inject3',  __DIR__ . '/TestAssets/TestValidateInject3.xml');
 		$compiler->buildDependencies();
 		
-		
 		$generator = new \Change\Documents\Generators\AbstractDocumentServicesClass();
 		$code = $generator->getPHPCode($compiler, $models);
 		
 		//file_put_contents(__DIR__ . '/TestAssets/AbstractDocumentServicesTest.php.expected', $code);
 		$expected = file_get_contents(__DIR__ . '/TestAssets/AbstractDocumentServicesTest.php.expected');
-				
+		
 		$this->assertEquals($expected, $code);
 	}
 }
