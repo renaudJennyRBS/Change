@@ -22,7 +22,7 @@
 	{
 		"php": ">=5.3.3",
 		"composer/installers": "dev-rbschange",
-		"zendframework/zendframework": "2.0.2",
+		"zendframework/zendframework": "2.0.5",
 		"zendframework/ZendOAuth": "2.0.1",
 		"rbschange/framework":"4.0.x-dev",
 		"rbschange/brand": "4.0.x-dev",
