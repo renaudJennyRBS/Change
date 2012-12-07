@@ -331,7 +331,7 @@ class Application
 					}
 				}
 			}
-			//$this->getApplicationServices()->getConfiguration();
+			
 			if (self::inDevelopmentMode())
 			{
 				$injection = new \Change\Injection\Injection($this);

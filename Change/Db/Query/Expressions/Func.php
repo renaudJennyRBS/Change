@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Func
+ */
 class Func extends AbstractExpression
 {
 	/**
@@ -13,7 +15,11 @@ class Func extends AbstractExpression
 	 * @var array
 	 */
 	protected $arguments;
-
+	
+	/**
+	 * @param string $functionName
+	 * @param array $arguments
+	 */
 	public function __construct($functionName = null, $arguments = null)
 	{
 		$this->functionName = $functionName;
@@ -27,7 +33,7 @@ class Func extends AbstractExpression
 	{
 		return $this->functionName;
 	}
-
+	
 	/**
 	 * @param string $functionName
 	 */
@@ -35,29 +41,29 @@ class Func extends AbstractExpression
 	{
 		$this->functionName = $functionName;
 	}
-
+	
 	/**
-	 * @return multitype:
+	 * @return array
 	 */
 	public function getArguments()
 	{
 		return $this->arguments;
 	}
-
+	
 	/**
-	 * @param multitype: $arguments
+	 * @param array $arguments
 	 */
 	public function setArguments($arguments)
 	{
 		$this->arguments = $arguments;
 	}
-
+	
 	/**
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		$argsString = array_map(function(\Change\Db\Query\Expressions\AbstractExpression $element){
+		$argsString = array_map(function (\Change\Db\Query\Expressions\AbstractExpression $element) {
 			return $element->toSQL92String();
 		}, $this->getArguments());
 		return $this->getFunctionName() . '(' . implode(',', $argsString) . ')';

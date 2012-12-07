@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Clauses;
 
+/**
+ * @name \Change\Db\Query\Clauses\FromClause
+ */
 class FromClause extends AbstractClause
 {
 	/**
@@ -14,6 +16,9 @@ class FromClause extends AbstractClause
 	 */
 	protected $joins = array();
 	
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
+	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $tableExpression = null)
 	{
 		$this->setTableExpression($tableExpression);
@@ -26,7 +31,7 @@ class FromClause extends AbstractClause
 	{
 		return $this->tableExpression;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Table $tableExpression
 	 */
@@ -42,7 +47,7 @@ class FromClause extends AbstractClause
 	{
 		return $this->joins;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\Join $joins
 	 */
@@ -58,13 +63,14 @@ class FromClause extends AbstractClause
 	{
 		$this->joins[] = $join;
 	}
-
+	
 	/**
+	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		$from =  'FROM ' . $this->getTableExpression()->toSQL92String();
-		$joins = implode(' ', array_map(function(\Change\Db\Query\Expressions\Join $join){
+		$from = 'FROM ' . $this->getTableExpression()->toSQL92String();
+		$joins = implode(' ', array_map(function (\Change\Db\Query\Expressions\Join $join) {
 			return $join->toSQL92String();
 		}, $this->getJoins()));
 		return \Change\Stdlib\String::isEmpty($joins) ? $from : $from . ' ' . $joins;

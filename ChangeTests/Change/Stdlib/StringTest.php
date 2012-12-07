@@ -25,7 +25,6 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals("Alphabet", \Change\Stdlib\String::ucfirst("alphabet"));
 	}
 
-
 	public function testSubstring()
 	{
 		$this->assertEquals("étç", \Change\Stdlib\String::subString("abcdétçefgh", 4, 3));
@@ -51,5 +50,28 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		$string = \Change\Stdlib\String::random(42);
 		$this->assertEquals(42, \Change\Stdlib\String::length($string));
 
+	}
+
+	public function testIsEmpty()
+	{
+		// Empty strings.
+		$this->assertTrue(\Change\Stdlib\String::isEmpty(null));
+		$this->assertTrue(\Change\Stdlib\String::isEmpty(''));
+		$this->assertTrue(\Change\Stdlib\String::isEmpty(' '));
+		$this->assertTrue(\Change\Stdlib\String::isEmpty('		'));
+		$this->assertTrue(\Change\Stdlib\String::isEmpty("	\n\n	"));
+		
+		// Not empty strings.
+		$this->assertFalse(\Change\Stdlib\String::isEmpty('test'));
+		$this->assertFalse(\Change\Stdlib\String::isEmpty('1'));
+			
+		// Strings-compatible values.
+		$this->assertFalse(\Change\Stdlib\String::isEmpty(0));
+		$this->assertFalse(\Change\Stdlib\String::isEmpty(125));
+		$this->assertFalse(\Change\Stdlib\String::isEmpty(1.25));
+			
+		// String-incompatible values.
+		$this->assertTrue(\Change\Stdlib\String::isEmpty(array()));
+		$this->assertTrue(\Change\Stdlib\String::isEmpty(array('test')));
 	}
 }

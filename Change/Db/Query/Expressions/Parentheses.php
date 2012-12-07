@@ -1,6 +1,9 @@
 <?php
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Parentheses
+ */
 class Parentheses extends \Change\Db\Query\Expressions\AbstractExpression
 {
 	/**
@@ -8,6 +11,9 @@ class Parentheses extends \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	protected $expression;
 	
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
+	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $expression)
 	{
 		$this->setExpression($expression);
@@ -20,7 +26,7 @@ class Parentheses extends \Change\Db\Query\Expressions\AbstractExpression
 	{
 		return $this->expression;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 */
@@ -28,8 +34,9 @@ class Parentheses extends \Change\Db\Query\Expressions\AbstractExpression
 	{
 		$this->expression = $expression;
 	}
-
+	
 	/**
+	 * @return string
 	 */
 	public function toSQL92String()
 	{

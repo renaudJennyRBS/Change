@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Column
+ */
 class Column extends AbstractExpression
 {
 	/**
@@ -35,7 +37,7 @@ class Column extends AbstractExpression
 	{
 		return $this->tableOrIdentifier;
 	}
-
+	
 	/**
 	 * @return \Change\Db\Query\Expressions\Identifier
 	 */
@@ -43,7 +45,7 @@ class Column extends AbstractExpression
 	{
 		return $this->columnName;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier
 	 */
@@ -51,7 +53,7 @@ class Column extends AbstractExpression
 	{
 		$this->tableOrIdentifier = $tableOrIdentifier;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\Identifier $columnName
 	 */
@@ -59,7 +61,7 @@ class Column extends AbstractExpression
 	{
 		$this->columnName = $columnName;
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -72,6 +74,6 @@ class Column extends AbstractExpression
 		{
 			$table = $tableOrIdentifier->toSQL92String();
 		}
-		return \Change\Stdlib\String::isEmpty($table) ? $columnName : $table . '.' . $columnName; 
+		return \Change\Stdlib\String::isEmpty($table) ? $columnName : $table . '.' . $columnName;
 	}
 }

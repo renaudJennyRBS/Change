@@ -1,11 +1,13 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
-abstract class AbstractOperation extends AbstractExpression 
+/**
+ * @name \Change\Db\Query\Expressions\AbstractOperation
+ */
+abstract class AbstractOperation extends AbstractExpression
 {
 	/**
-	 * @var String
+	 * @var string
 	 */
 	protected $operator;
 	
@@ -16,7 +18,7 @@ abstract class AbstractOperation extends AbstractExpression
 	{
 		return $this->operator;
 	}
-
+	
 	/**
 	 * @param string $operator
 	 */

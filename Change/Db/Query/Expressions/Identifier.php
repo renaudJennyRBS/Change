@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Identifier
+ */
 class Identifier extends AbstractExpression
 {
 	/**
@@ -10,8 +12,7 @@ class Identifier extends AbstractExpression
 	protected $parts = array();
 	
 	/**
-	 * @param \Change\Db\Query\Objects\Table $table
-	 * @param string $columnName
+	 * @param array $parts
 	 */
 	public function __construct($parts = array())
 	{
@@ -23,7 +24,7 @@ class Identifier extends AbstractExpression
 	 */
 	public function toSQL92String()
 	{
-		return implode('.', array_map(function($part){
+		return implode('.', array_map(function ($part) {
 			return '"' . $part . '"';
 		}, $this->parts));
 	}

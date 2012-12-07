@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Raw
+ */
 class Raw extends AbstractExpression
 {
 	/**
@@ -9,9 +11,12 @@ class Raw extends AbstractExpression
 	 */
 	protected $value;
 	
-	public function __construct($string = null)
+	/**
+	 * @param mixed $value
+	 */
+	public function __construct($value = null)
 	{
-		$this->value = $string;
+		$this->value = $value;
 	}
 	
 	/**
@@ -21,7 +26,7 @@ class Raw extends AbstractExpression
 	{
 		return $this->value;
 	}
-
+	
 	/**
 	 * @param mixed $value
 	 */
@@ -29,8 +34,9 @@ class Raw extends AbstractExpression
 	{
 		$this->value = $value;
 	}
-
+	
 	/**
+	 * @return string
 	 */
 	public function toSQL92String()
 	{

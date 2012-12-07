@@ -1,13 +1,15 @@
 <?php
-
 namespace Change\Db\Query\Clauses;
 
 use Change\Db\Query\InterfaceSQLFragment;
 
+/**
+ * @name \Change\Db\Query\Clauses\AbstractClause
+ */
 abstract class AbstractClause implements \Change\Db\Query\InterfaceSQLFragment
 {
 	/**
-	 * SQL Specific vendor options
+	 * SQL Specific vendor options.
 	 * 
 	 * @api 
 	 * @var array

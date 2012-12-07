@@ -1,11 +1,13 @@
 <?php
-
 namespace Change\Db\Query;
 
+/**
+ * @name \Change\Db\Query\AbstractQuery
+ */
 abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 {
 	/**
-	 * DB Provider instance the query will be executed with 
+	 * DB Provider instance the query will be executed with.
 	 * 
 	 * @var \Change\Db\DbProvider
 	 */
@@ -30,7 +32,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Get the query's parameters list
+	 * Get the query's parameters list.
 	 * 
 	 * @api
 	 * @return array
@@ -41,7 +43,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Set the query's parameters list
+	 * Set the query's parameters list.
 	 * 
 	 * @api
 	 * @param array $parameters
@@ -52,7 +54,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Declare a new query parameter 
+	 * Declare a new query parameter.
 	 * 
 	 * @api
 	 * @param string $parameter
@@ -65,11 +67,12 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Bind a value to an existing parameter
+	 * Bind a value to an existing parameter.
 	 * 
 	 * @api
 	 * @param string $parameterName
 	 * @param string $value
+	 * @return \Change\Db\Query\AbstractQuery
 	 */
 	public function bindParameter($parameterName, $value)
 	{
@@ -82,7 +85,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Convert query to a SQL string
+	 * Convert query to a SQL string.
 	 * 
 	 * @param callable $callable
 	 * @return string
@@ -97,7 +100,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Get the provider the query is bound to
+	 * Get the provider the query is bound to.
 	 * 
 	 * @api 
 	 * @return \Change\Db\DbProvider
@@ -106,9 +109,9 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		return $this->dbProvider;
 	}
-
+	
 	/**
-	 * Set the provider the query is bound to
+	 * Set the provider the query is bound to.
 	 * 
 	 * @api
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -117,9 +120,11 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		$this->dbProvider = $dbProvider;
 	}
-
+	
 	/**
-	 * SQL-92 representation of the query (mostly for tests)
+	 * SQL-92 representation of the query (mostly for tests).
+	 * 
+	 * @return string
 	 */
 	abstract public function toSQL92String();
 }

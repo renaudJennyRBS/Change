@@ -1,10 +1,12 @@
 <?php
-
 namespace Change\Db\Query\Predicates;
 
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
 
+/**
+ * @name \Change\Db\Query\Predicates\IsNull
+ */
 class Like extends BinaryOperation implements InterfacePredicate
 {
 	const ANYWHERE = 0;
@@ -28,7 +30,7 @@ class Like extends BinaryOperation implements InterfacePredicate
 	 * @param integer $matchMode
 	 * @param boolean $caseSensitive
 	 */
-	public function __construct(AbstractExpression $lhs, AbstractExpression $rhs,  $matchMode = self::ANYWHERE, $caseSensitive = false)
+	public function __construct(AbstractExpression $lhs, AbstractExpression $rhs, $matchMode = self::ANYWHERE, $caseSensitive = false)
 	{
 		$this->setLeftHandExpression($lhs);
 		$this->setRightHandExpression($rhs);
@@ -51,19 +53,19 @@ class Like extends BinaryOperation implements InterfacePredicate
 	{
 		switch ($this->matchMode)
 		{
-			case self::BEGIN;
+			case self::BEGIN :
 				$rhs = "%s%%";
 				break;
-			case self::END;
+			case self::END :
 				$rhs = "%%%s";
 				break;
-			case self::ANYWHERE;
+			case self::ANYWHERE :
 				$rhs = "%%%s%%";
 				break;
-			default:
+			default :
 				$rhs = "%s";
 		}
 		$rhs = sprintf($rhs, $this->getRightHandExpression()->pseudoQueryString());
-		return $this->getLeftHandExpression()->pseudoQueryString(). ' '  . $this->getOperator() . ' ' . $rhs;
+		return $this->getLeftHandExpression()->pseudoQueryString() . ' ' . $this->getOperator() . ' ' . $rhs;
 	}
 }

@@ -1,9 +1,11 @@
 <?php
-
 namespace Change\Db\Query\Clauses;
 
 use Change\Db\Query\Clauses\AbstractClause;
 
+/**
+ * @name \Change\Db\Query\Clauses\OrderByClause
+ */
 class OrderByClause extends AbstractClause
 {
 	/**
@@ -11,6 +13,9 @@ class OrderByClause extends AbstractClause
 	 */
 	protected $expressionList;
 	
+	/**
+	 * @param \Change\Db\Query\Expressions\ExpressionList $expressionList
+	 */
 	public function __construct(\Change\Db\Query\Expressions\ExpressionList $expressionList = null)
 	{
 		$this->setExpressionList($expressionList);
@@ -23,7 +28,7 @@ class OrderByClause extends AbstractClause
 	{
 		return $this->expressionList;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\ExpressionList $expressionList
 	 */
@@ -33,7 +38,6 @@ class OrderByClause extends AbstractClause
 	}
 	
 	/**
-	 * 
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 */
 	public function addExpression($expression)
@@ -46,7 +50,10 @@ class OrderByClause extends AbstractClause
 		}
 		$list->add($expression);
 	}
-
+	
+	/**
+	 * @return string
+	 */
 	public function toSQL92String()
 	{
 		return 'ORDER BY ' . $this->getExpressionList()->toSQL92String();

@@ -137,13 +137,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Test the loading of a compiled project.php file.
-s	 */
+	 */
 	public function testLoad()
 	{
 		// Test on valid file.
 		$application = new \Change\Application();
 		// Mock compiled config path
- 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, __DIR__ . '/TestAssets/project.php');
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, __DIR__ . '/TestAssets/project.php');
 		$expectedArray = array(
 			'general' => array('projectName' => 'RBS CHANGE 4.0', 'server-ip' => '127.0.0.1', 'phase' => 'development'),
 			'logging' => array('level' => 'WARN', 'writers' => array('default' => 'stream')));
@@ -155,7 +155,6 @@ s	 */
 
 	public function testCompileOnLoad()
 	{
-
 		$application = new \Change\Application();
 		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
@@ -177,7 +176,6 @@ s	 */
 		$config->refresh();
 		$this->assertTrue($config->isCompiled());
 	}
-
 
 	public function testAddPersistentEntry()
 	{
@@ -227,7 +225,7 @@ s	 */
 
 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
 		$this->assertTrue($config->isCompiled());
-		$this->setExpectedException("\InvalidArgumentException");
+		$this->setExpectedException('\InvalidArgumentException');
 		$result = $config->addPersistentEntry('mypath', null, 'value');
 	}
 
@@ -250,4 +248,3 @@ s	 */
 		$config->refresh();
 	}
 }
-

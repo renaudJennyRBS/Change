@@ -19,6 +19,25 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		\Change\Stdlib\File::mkdir(__FILE__);
 	}
 
+	/**
+	 * @depends testMkdir
+	 */
+	public function testRmdir()
+	{
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'Toto' . DIRECTORY_SEPARATOR . 'Tutu';
+		\Change\Stdlib\File::mkdir($path);
+		$this->assertTrue(is_dir($path));
+		\Change\Stdlib\File::rmdir(dirname($path));
+		$this->assertFalse(is_dir($path));
+		$this->assertFalse(is_dir(dirname($path)));
+
+		\Change\Stdlib\File::mkdir($path);
+		$this->assertTrue(is_dir($path));
+		\Change\Stdlib\File::rmdir(dirname($path), true);
+		$this->assertFalse(is_dir($path));
+		$this->assertTrue(is_dir(dirname($path)));
+	}
+
 	public function testWrite()
 	{
 		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR .  'testWrite' . DIRECTORY_SEPARATOR .  'test.txt';
@@ -41,24 +60,5 @@ class FileTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('test', \Change\Stdlib\File::read($path));
 		$this->setExpectedException('\RuntimeException', 'Could not read');
 		\Change\Stdlib\File::read(__DIR__ . DIRECTORY_SEPARATOR . 'aazeazeazeazeazeaze');
-	}
-
-	/**
-	 * @depends testMkdir
-	 */
-	public function testRmdir()
-	{
-		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'Toto' . DIRECTORY_SEPARATOR . 'Tutu';
-		\Change\Stdlib\File::mkdir($path);
-		$this->assertTrue(is_dir($path));
-		\Change\Stdlib\File::rmdir(dirname($path));
-		$this->assertFalse(is_dir($path));
-		$this->assertFalse(is_dir(dirname($path)));
-
-		\Change\Stdlib\File::mkdir($path);
-		$this->assertTrue(is_dir($path));
-		\Change\Stdlib\File::rmdir(dirname($path), true);
-		$this->assertFalse(is_dir($path));
-		$this->assertTrue(is_dir(dirname($path)));
 	}
 }

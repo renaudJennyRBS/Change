@@ -1,13 +1,15 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
 use Change\Db\Query\InterfaceSQLFragment;
 
+/**
+ * @name \Change\Db\Query\Expressions\Join
+ */
 class Join extends AbstractExpression
 {
 	const CROSS_JOIN = 1;
-	const INNER_JOIN = 2;	
+	const INNER_JOIN = 2;
 	const LEFT_OUTER_JOIN = 4;
 	const RIGHT_OUTER_JOIN = 8;
 	const FULL_OUTER_JOIN = 16;
@@ -23,17 +25,22 @@ class Join extends AbstractExpression
 	protected $tableExpression;
 	
 	/**
-	 * @var  \Change\Db\Query\Expressions\AbstractExpression
+	 * @var \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	protected $specification;
-
+	
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
+	 * @param interger $type
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $specification
+	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $tableExpression, $type = self::CROSS_JOIN, $specification = null)
 	{
 		$this->setTableExpression($tableExpression);
 		$this->setType($type);
 		$this->setSpecification($specification);
 	}
-
+	
 	/**
 	 * @return \Change\Db\Query\Expressions\AbstractExpression
 	 */
@@ -51,7 +58,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Objects\interger
+	 * @return interger
 	 */
 	public function getType()
 	{
@@ -59,7 +66,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\Objects\interger $joinType
+	 * @param interger $joinType
 	 */
 	public function setType($joinType)
 	{
@@ -119,10 +126,10 @@ class Join extends AbstractExpression
 	{
 		$this->tableExpression = $joinedTable;
 	}
-
+	
 	/**
-	 *
-	 * @param unknown_type $callable        	
+	 * @throws \RuntimeException
+	 * @return string
 	 */
 	public function toSQL92String()
 	{
@@ -131,7 +138,7 @@ class Join extends AbstractExpression
 		{
 			throw new \RuntimeException('A joined table is required');
 		}
-		$parts =  array();
+		$parts = array();
 		if ($this->isNatural())
 		{
 			$parts[] = 'NATURAL';
@@ -150,7 +157,7 @@ class Join extends AbstractExpression
 					$parts[] = 'FULL OUTER JOIN';
 					break;
 				case self::INNER_JOIN :
-				default:
+				default :
 					$parts[] = 'INNER JOIN';
 					break;
 			}

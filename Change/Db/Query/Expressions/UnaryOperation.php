@@ -1,14 +1,20 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Table
+ */
 class UnaryOperation extends AbstractOperation
 {
 	/**
 	 * @var \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	protected $expression;
-
+	
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
+	 * @param string $operator
+	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $expression = null, $operator = null)
 	{
 		$this->expression = $expression;
@@ -22,7 +28,7 @@ class UnaryOperation extends AbstractOperation
 	{
 		return $this->expression;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 */
