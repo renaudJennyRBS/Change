@@ -120,4 +120,13 @@ class String
 
 		return substr($randomString, 0, $length);
 	}
+	
+	/**
+	 * @param string $string
+	 * @return boolean
+	 */
+	public static function isEmpty($string)
+	{
+		return $string === null || (!is_array($string) && strlen(trim($string))) == 0;
+	}
 }

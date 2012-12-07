@@ -69,4 +69,12 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Mvc\Controller');
 	}
+	
+	/**
+	 * @return \Change\Db\Query\Builder
+	 */
+	public function getQueryBuilder()
+	{
+		return $this->newInstance('Change\Db\Query\Builder', array(), false);
+	}
 }

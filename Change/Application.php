@@ -231,10 +231,17 @@ class Application
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\Builder');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+			->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+		$dl->addDefinition($cl);
 
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
 
+		$im->setParameters('Change\Db\Query\Builder', array());
 		$im->setParameters('Change\Workspace', array('application' => $this));
 		$im->setParameters('Zend\EventManager\EventManager', array());
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
@@ -243,7 +250,7 @@ class Application
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
 		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
-
+		$im->setInjections('Change\Db\Query\Builder', array('Change\Db\DbProvider'));
 		return $applicationServices;
 	}
 
