@@ -1,9 +1,11 @@
 <?php
-
 namespace Change\Db\Query\Clauses;
 
 use Change\Db\Query\Clauses\AbstractClause;
 
+/**
+ * @name \Change\Db\Query\Clauses\WhereClause
+ */
 class WhereClause extends AbstractClause
 {
 	/**
@@ -11,6 +13,9 @@ class WhereClause extends AbstractClause
 	 */
 	protected $predicate;
 	
+	/**
+	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
+	 */
 	public function __construct(\Change\Db\Query\Predicates\InterfacePredicate $predicate = null)
 	{
 		if ($predicate) $this->setPredicate($predicate);
@@ -23,7 +28,7 @@ class WhereClause extends AbstractClause
 	{
 		return $this->predicate;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
 	 */
@@ -31,7 +36,10 @@ class WhereClause extends AbstractClause
 	{
 		$this->predicate = $predicate;
 	}
-
+	
+	/**
+	 * @return string
+	 */
 	public function toSQL92String()
 	{
 		return 'WHERE ' . $this->getPredicate()->toSQL92String();

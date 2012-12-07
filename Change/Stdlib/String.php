@@ -122,6 +122,7 @@ class String
 	}
 	
 	/**
+	 * @api
 	 * @param string $string
 	 * @return boolean
 	 */

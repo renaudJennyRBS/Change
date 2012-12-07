@@ -1,9 +1,11 @@
 <?php
-
 namespace Change\Db\Query;
 
+/**
+ * @name \Change\Db\Query\SelectQuery
+ */
 class SelectQuery extends \Change\Db\Query\AbstractQuery
-{	
+{
 	/**
 	 * @var \Change\Db\Query\Clauses\SelectClause
 	 */
@@ -16,7 +18,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	{
 		return $this->selectClause;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Clauses\SelectClause $selectClause
 	 */

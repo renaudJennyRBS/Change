@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Table
+ */
 class Table extends AbstractExpression
 {
 	/**
@@ -20,8 +22,8 @@ class Table extends AbstractExpression
 	protected $alias;
 	
 	/**
-	 * @param string $tableName
-	 * @param string $alias
+	 * @param string $name
+	 * @param string $database
 	 */
 	public function __construct($name, $database = null)
 	{
@@ -36,7 +38,7 @@ class Table extends AbstractExpression
 	{
 		return $this->name;
 	}
-
+	
 	/**
 	 * @param string $tableName
 	 */
@@ -52,7 +54,7 @@ class Table extends AbstractExpression
 	{
 		return $this->database;
 	}
-
+	
 	/**
 	 * @param string $database
 	 */

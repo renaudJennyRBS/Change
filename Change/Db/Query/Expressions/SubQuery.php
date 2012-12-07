@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Raw
+ */
 class SubQuery extends AbstractExpression
 {
 	/**
@@ -9,6 +11,9 @@ class SubQuery extends AbstractExpression
 	 */
 	protected $subQuery;
 	
+	/**
+	 * @param \Change\Db\Query\SelectQuery $subQuery
+	 */
 	public function __construct(\Change\Db\Query\SelectQuery $subQuery = null)
 	{
 		$this->subQuery = $subQuery;
@@ -23,7 +28,7 @@ class SubQuery extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\SelectQuery $subQuery        	
+	 * @param \Change\Db\Query\SelectQuery $subQuery
 	 */
 	public function setSubQuery($subQuery)
 	{

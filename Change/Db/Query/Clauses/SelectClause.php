@@ -1,9 +1,11 @@
 <?php
-
 namespace Change\Db\Query\Clauses;
 
 use Change\Db\Query\Clauses\AbstractClause;
 
+/**
+ * @name \Change\Db\Query\Clauses\SelectClause
+ */
 class SelectClause extends AbstractClause
 {
 	const QUANTIFIER_DISTINCT = 'DISTINCT';
@@ -48,13 +50,20 @@ class SelectClause extends AbstractClause
 	 */
 	protected $groupByClause;
 	
-	public function __construct(
-		\Change\Db\Query\Expressions\ExpressionList $list = null,
-		\Change\Db\Query\Clauses\FromClause $from = null,
-		\Change\Db\Query\Clauses\WhereClause $where = null,
-		\Change\Db\Query\Clauses\HavingClause $having = null,
-		\Change\Db\Query\Clauses\OrderByClause $order = null,
-		\Change\Db\Query\Clauses\GroupByClause $group = null)
+	/**
+	 * @param \Change\Db\Query\Expressions\ExpressionList $list
+	 * @param \Change\Db\Query\Clauses\FromClause $from
+	 * @param \Change\Db\Query\Clauses\WhereClause $where
+	 * @param \Change\Db\Query\Clauses\HavingClause $having
+	 * @param \Change\Db\Query\Clauses\OrderByClause $order
+	 * @param \Change\Db\Query\Clauses\GroupByClause $group
+	 */
+	public function __construct(Change\Db\Query\Expressions\ExpressionList $list = null,
+		Change\Db\Query\Clauses\FromClause $from = null,
+		Change\Db\Query\Clauses\WhereClause $where = null,
+		Change\Db\Query\Clauses\HavingClause $having = null,
+		Change\Db\Query\Clauses\OrderByClause $order = null,
+		Change\Db\Query\Clauses\GroupByClause $group = null)
 	{
 		if ($list) $this->setSelectList($list);
 		if ($from) $this->setFromClause($from);
@@ -65,7 +74,6 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
 	 * @return \Change\Db\Query\Clauses\FromClause
 	 */
 	public function getFromClause()
@@ -74,8 +82,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Clauses\FromClause $fromClause        	
+	 * @param \Change\Db\Query\Clauses\FromClause $fromClause
 	 */
 	public function setFromClause(\Change\Db\Query\Clauses\FromClause $fromClause)
 	{
@@ -83,7 +90,6 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
 	 * @return \Change\Db\Query\Clauses\WhereClause
 	 */
 	public function getWhereClause()
@@ -92,8 +98,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause        	
+	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
 	 */
 	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
 	{
@@ -101,7 +106,6 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
 	 * @return \Change\Db\Query\Clauses\HavingClause
 	 */
 	public function getHavingClause()
@@ -110,8 +114,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Clauses\HavingClause $havingClause        	
+	 * @param \Change\Db\Query\Clauses\HavingClause $havingClause
 	 */
 	public function setHavingClause(\Change\Db\Query\Clauses\HavingClause $havingClause)
 	{
@@ -119,7 +122,6 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
 	 * @return \Change\Db\Query\Clauses\OrderByClause
 	 */
 	public function getOrderByClause()
@@ -128,8 +130,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Clauses\OrderByClause $orderByClause        	
+	 * @param \Change\Db\Query\Clauses\OrderByClause $orderByClause
 	 */
 	public function setOrderByClause(\Change\Db\Query\Clauses\OrderByClause $orderByClause)
 	{
@@ -146,8 +147,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause        	
+	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause
 	 */
 	public function setGroupByClause(\Change\Db\Query\Clauses\GroupByClause $groupByClause)
 	{
@@ -163,8 +163,7 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Expressions\ExpressionList $expression       	
+	 * @param \Change\Db\Query\Expressions\ExpressionList $expression
 	 */
 	public function setSelectList($expression)
 	{
@@ -172,7 +171,6 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
-	 * 
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 */
 	public function addSelect($expression)
@@ -187,7 +185,7 @@ class SelectClause extends AbstractClause
 	{
 		return $this->quantifier;
 	}
-
+	
 	/**
 	 * @param string $quantifier
 	 */
@@ -195,7 +193,7 @@ class SelectClause extends AbstractClause
 	{
 		$this->quantifier = $quantifier;
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -211,7 +209,7 @@ class SelectClause extends AbstractClause
 		{
 			$selectList = new \Change\Db\Query\Expressions\AllColumns();
 		}
-	
+		
 		$parts[] = $selectList->toSQL92String();
 		
 		$fromClause = $this->getFromClause();
@@ -231,7 +229,6 @@ class SelectClause extends AbstractClause
 			$parts[] = $groupByClause->toSQL92String();
 		}
 		
-
 		$orderByClause = $this->getOrderByClause();
 		if ($orderByClause)
 		{

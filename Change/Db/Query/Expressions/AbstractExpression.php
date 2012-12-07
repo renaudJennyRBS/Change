@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\AbstractExpression
+ */
 abstract class AbstractExpression implements \Change\Db\Query\InterfaceSQLFragment
 {
 	/**
@@ -17,5 +19,8 @@ abstract class AbstractExpression implements \Change\Db\Query\InterfaceSQLFragme
 		return $this->toSQL92String();
 	}
 	
+	/**
+	 * @return string
+	 */
 	abstract public function toSQL92String();
 }

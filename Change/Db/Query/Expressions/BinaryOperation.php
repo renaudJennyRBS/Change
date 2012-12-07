@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\BinaryOperation
+ */
 class BinaryOperation extends AbstractOperation
 {
 	/**
@@ -14,7 +16,12 @@ class BinaryOperation extends AbstractOperation
 	 */
 	protected $rightHandExpression;
 	
-	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $lhs = null,\Change\Db\Query\Expressions\AbstractExpression $rhs = null, $operator = null)
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $rhs
+	 * @param string $operator
+	 */
+	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $lhs = null, \Change\Db\Query\Expressions\AbstractExpression $rhs = null, $operator = null)
 	{
 		$this->setLeftHandExpression($lhs);
 		$this->setRightHandExpression($rhs);
@@ -28,7 +35,7 @@ class BinaryOperation extends AbstractOperation
 	{
 		return $this->leftHandExpression;
 	}
-
+	
 	/**
 	 * @return \Change\Db\Query\Expressions\AbstractExpression
 	 */
@@ -44,7 +51,7 @@ class BinaryOperation extends AbstractOperation
 	{
 		$this->leftHandExpression = $leftHandExpression;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $rightHandExpression
 	 */
@@ -52,12 +59,12 @@ class BinaryOperation extends AbstractOperation
 	{
 		$this->rightHandExpression = $rightHandExpression;
 	}
-
+	
 	/**
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		return $this->getLeftHandExpression()->toSQL92String(). ' '  . $this->getOperator() . ' ' . $this->getRightHandExpression()->toSQL92String();
+		return $this->getLeftHandExpression()->toSQL92String() . ' ' . $this->getOperator() . ' ' . $this->getRightHandExpression()->toSQL92String();
 	}
 }

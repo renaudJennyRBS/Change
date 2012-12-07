@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query;
 
+/**
+ * @name \Change\Db\Query\InterfaceSQLFragment
+ */
 interface InterfaceSQLFragment
 {
 	/**

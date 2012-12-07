@@ -1,7 +1,9 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Raw
+ */
 class String extends AbstractExpression
 {
 	/**
@@ -9,6 +11,9 @@ class String extends AbstractExpression
 	 */
 	protected $string;
 	
+	/**
+	 * @param unknown_type $string
+	 */
 	public function __construct($string = null)
 	{
 		$this->string = $string;
@@ -21,7 +26,7 @@ class String extends AbstractExpression
 	{
 		return $this->string;
 	}
-
+	
 	/**
 	 * @param string $string
 	 */
@@ -29,8 +34,9 @@ class String extends AbstractExpression
 	{
 		$this->string = $string;
 	}
-
+	
 	/**
+	 * @return string
 	 */
 	public function toSQL92String()
 	{

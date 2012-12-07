@@ -1,16 +1,17 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\OrderingSpecification
+ */
 class OrderingSpecification extends UnaryOperation
 {
 	const ASC = 'ASC';
 	const DESC = 'DESC';
 	
 	/**
-	 *
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $lhs        	
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $rhs        	
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
+	 * @param string $directionOperator
 	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $expression, $directionOperator = self::ASC)
 	{
@@ -18,14 +19,10 @@ class OrderingSpecification extends UnaryOperation
 	}
 	
 	/**
-	 *
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		return $this->getExpression()->toSQL92String()  . ' ' . $this->getOperator();
+		return $this->getExpression()->toSQL92String() . ' ' . $this->getOperator();
 	}
-
-	
-	
 }

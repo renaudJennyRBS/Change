@@ -1,14 +1,19 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
-class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression 
+/**
+ * @name \Change\Db\Query\Expressions\Column
+ */
+class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 {
 	/** 
-	 * @var Change\Db\Query\Expressions\AbstractExpression[]
+	 * @var \Change\Db\Query\Expressions\AbstractExpression[]
 	 */
 	protected $list;
 	
+	/**
+	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $list
+	 */
 	public function __construct($list = null)
 	{
 		$this->setList($list);
@@ -21,7 +26,7 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 	{
 		return $this->list;
 	}
-
+	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $list
 	 */
@@ -41,12 +46,12 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 	}
 	
 	/**
+	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		return implode(', ', array_map(function(\Change\Db\Query\Expressions\AbstractExpression $item){
+		return implode(', ', array_map(function (\Change\Db\Query\Expressions\AbstractExpression $item) {
 			return $item->toSQL92String();
 		}, $this->getList()));
 	}
-
 }

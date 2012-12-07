@@ -1,23 +1,24 @@
 <?php
-
 namespace Change\Db\Query\Expressions;
 
+/**
+ * @name \Change\Db\Query\Expressions\Parameter
+ */
 class Parameter extends AbstractExpression
 {
 	/**
-	 * @var array
+	 * @var string
 	 */
 	protected $parameter;
-
+	
 	/**
-	 * @param \Change\Db\Query\Objects\Table $table
-	 * @param string $columnName
+	 * @param string $parameter
 	 */
 	public function __construct($parameter = null)
 	{
 		$this->parameter = $parameter;
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -25,7 +26,7 @@ class Parameter extends AbstractExpression
 	{
 		return $this->parameter;
 	}
-
+	
 	/**
 	 * @param string $parameter
 	 */
@@ -33,7 +34,7 @@ class Parameter extends AbstractExpression
 	{
 		$this->parameter = $parameter;
 	}
-
+	
 	/**
 	 * @return string
 	 */

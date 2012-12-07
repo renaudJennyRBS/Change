@@ -18,22 +18,22 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 	{
 		if ($className === 'Change\Fakemodule\Actions\Fakeaction' || $className === 'Change\Fakemodule\Actions\Fakesecureaction')
 		{
-			require_once  __DIR__ . '/TestAssets/Fakeaction.php';
+			require_once __DIR__ . '/TestAssets/Fakeaction.php';
 			return true;
 		}
 		elseif ($className === 'Change\Fakemodule\Views\Fakeview')
 		{
-			require_once  __DIR__ . '/TestAssets/Fakeview.php';
+			require_once __DIR__ . '/TestAssets/Fakeview.php';
 			return true;
 		}
 		elseif ($className === 'Change\Website\Actions\Error404')
 		{
-			require_once  __DIR__ . '/TestAssets/ForwardAction.php';
+			require_once __DIR__ . '/TestAssets/ForwardAction.php';
 			return true;
 		}
 		elseif ($className === 'Change\Users\Actions\Login')
 		{
-			require_once  __DIR__ . '/TestAssets/ForwardAction.php';
+			require_once __DIR__ . '/TestAssets/ForwardAction.php';
 			return true;
 		}
 		return false;
@@ -63,7 +63,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($controller->actionExists('fakemodule', 'Fakesecureaction'));
 		return $controller;
 	}
-
+	
 	/**
 	 * @depends testActionExists
 	 */
@@ -83,7 +83,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 		$controller->forward('fakemodule', 'Fakeaction');
 		$result = ob_get_clean();
 		$this->assertEquals('Fakemodule\Fakeaction', $result);
-
+		
 		ob_start();
 		$controller->forward('fakemodule', 'Fakesecureaction');
 		$result = ob_get_clean();

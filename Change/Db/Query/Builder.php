@@ -3,6 +3,9 @@ namespace Change\Db\Query;
 
 use Zend\Db\Sql\Expression;
 
+/**
+ * @name \Change\Db\Query\Builder
+ */
 class Builder
 {
 	/**
@@ -18,7 +21,7 @@ class Builder
 	
 	/**
 	 * If you are looking to get a builder instance, please get it from
-	 * the application services which will properly inject the correct DB provider for you
+	 * the application services which will properly inject the correct DB provider for you.
 	 * 
 	 * @param \Change\Db\DbProvider $dbProvider
 	 */
@@ -43,7 +46,7 @@ class Builder
 		$this->query = new SelectQuery($this->dbProvider);
 		$selectClause = new \Change\Db\Query\Clauses\SelectClause();
 		$builder = $this;
-		$normalizedArgs = $this->normalizeValue(func_get_args(), function($item) use ($builder){
+		$normalizedArgs = $this->normalizeValue(func_get_args(), function ($item) use($builder) {
 			return $builder->column(strval($item));
 		});
 		if (count($normalizedArgs) > 0)
@@ -82,14 +85,14 @@ class Builder
 	 * @api
 	 * @see Builder::table()
 	 * @see Builder::alias()
-	 * @param string | \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Alias
+	 * @param string | \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Alias $table
 	 * @return \Change\Db\Query\Builder
 	 */
 	public function from($table)
 	{
 		if (is_string($table))
 		{
-			$tableExpression = $this->table($tableNameOrTableObject);
+			$tableExpression = $this->table($table);
 		}
 		elseif ($table instanceof \Change\Db\Query\Expressions\Table || $table instanceof \Change\Db\Query\Expressions\Alias)
 		{
@@ -156,7 +159,7 @@ class Builder
 	 */
 	public function innerJoin(\Change\Db\Query\Expressions\AbstractExpression $tableExpression, $joinCondition = null)
 	{
-		$join = new \Change\Db\Query\Expressions\Join($tableExpression, \Change\Db\Query\Expressions\Join::INNER_JOIN, $this->processJoinCondition($joinCondition));	
+		$join = new \Change\Db\Query\Expressions\Join($tableExpression, \Change\Db\Query\Expressions\Join::INNER_JOIN, $this->processJoinCondition($joinCondition));
 		$this->query->getSelectClause()->getFromClause()->addJoin($join);
 		return $this;
 	}
@@ -210,7 +213,7 @@ class Builder
 		$joinExpr = null;
 		if ($joinCondition instanceof \Change\Db\Query\Predicates\InterfacePredicate)
 		{
-			$joinExpr =  new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
+			$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
 		}
 		elseif ($joinCondition instanceof \Change\Db\Query\Expressions\Column || $joinCondition instanceof \Change\Db\Query\Expressions\ExpressionList)
 		{
@@ -219,9 +222,7 @@ class Builder
 		return $joinExpr;
 	}
 	
-	
 	/**
-	 * 
 	 * @param string $name
 	 * @param array $args
 	 */
@@ -233,7 +234,6 @@ class Builder
 	}
 	
 	/**
-	 * 
 	 * @api
 	 * @return \Change\Db\Query\Expressions\Func
 	 */
@@ -287,10 +287,9 @@ class Builder
 		return new Expressions\Alias($lhs, $rhs);
 	}
 	
-	
 	/**
 	 * Build an identifier string (eg: `test` on MySQL) which can be passed
-	 * for instance as the second argument of the alias method
+	 * for instance as the second argument of the alias method.
 	 * 
 	 * @api
 	 * @param string $tableName
@@ -313,7 +312,6 @@ class Builder
 	}
 	
 	/**
-	 *
 	 * @param numeric $number
 	 * @return \Change\Db\Query\Expressions\Numeric
 	 */
@@ -323,8 +321,7 @@ class Builder
 	}
 	
 	/**
-	 * 
-	 * @param unknown_type $string
+	 * @param string $string
 	 * @return \Change\Db\Query\Expressions\String
 	 */
 	public function string($string)
@@ -405,7 +402,7 @@ class Builder
 	 * Add a predicate to the existing where clause in "OR" mode
 	 * 
 	 * @api
-	 * @param  \Change\Db\Query\Predicates\InterfacePredicate $predicate
+	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
 	 * @return \Change\Db\Query\Builder
 	 */
 	public function orWhere(\Change\Db\Query\Predicates\InterfacePredicate $predicate)
@@ -488,7 +485,7 @@ class Builder
 	}
 	
 	/**
-	 * For internal use only
+	 * For internal use only.
 	 * 
 	 * @param  \Change\Db\Query\AbstractExpression $object
 	 * @return \Change\Db\Query\Expressions\Raw|\Change\Db\Query\Expressions\AbstractExpression
@@ -497,16 +494,16 @@ class Builder
 	{
 		if ($converter == null)
 		{
-			$converter = function($item){
-				return  new \Change\Db\Query\Expressions\Raw(strval($item));
+			$converter = function ($item) {
+				return new \Change\Db\Query\Expressions\Raw(strval($item));
 			};
 		}
 		if (is_array($object))
 		{
 			$builder = $this;
-			return array_map(function($item) use ($builder, $converter){
-					return $builder->normalizeValue($item, $converter);
-				}, $object);
+			return array_map(function ($item) use($builder, $converter) {
+				return $builder->normalizeValue($item, $converter);
+			}, $object);
 		}
 		if (!($object instanceof \Change\Db\Query\Expressions\AbstractExpression))
 		{
