@@ -29,8 +29,6 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 	{
 		$output->writeln('<info>Generate database Schema...</info>');
 		
-		
-		
 		$dbp = $this->getChangeApplication()->getApplicationServices()->getDbProvider();
 		$schemaManager = $dbp->getSchemaManager();
 		
@@ -59,9 +57,20 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 		foreach ($paths as $path)
 		{
 			$sql = file_get_contents($path);
+			echo $path;
 			//$output->writeln('<info>generate !</info>');
 			//$schemaManager->execute($sql);
 		}	
+		
+		if (class_exists('Compilation\Change\Documents\Schema'))
+		{
+			$documentSchema = new \Compilation\Change\Documents\Schema();
+			foreach ($documentSchema->getTables() as $tableDef)
+			{
+				/* @var $tableDef \Change\Db\Schema\TableDefinition */
+				$schemaManager->createOrAlter($tableDef);
+			}
+		}
 		$output->writeln('<info>generated !</info>');
 	}
 }

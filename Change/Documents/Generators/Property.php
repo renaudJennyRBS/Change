@@ -10,11 +10,22 @@ class Property
 		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
 		'DocumentId', 'Document', 'DocumentArray');
 	
-	protected static $DEPRECATED_TYPE = array('Double' => 'Float', 'XHTMLFragment' => 'RichText', 'BBCode' => 'RichText');
+	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treeid', 'meta', 'volcid', 'lcid',
+			'creationdate', 'modificationdate', 'deleteddate',
+			'authorname', 'authorid', 'documentversion',
+			'publicationstatus', 'startpublication', 'endpublication',
+			'correctionofid', 'versionofid');
 	
-	protected static $RESERVED_PROPERTY_NAMES = array('DbProvider', 'Path', 'DocumentModelName', 'PersistentModel', 'DocumentService', 'I18nInfo', 
-		'OldValue', 'OldValues', 'S18s', 'Correctionofid', 'Correctionid', 'Meta');
+	/**
+	 * @var \Change\Documents\Generators\Property
+	 */
+	protected $parent;
 	
+	/**
+	 * @var \Change\Documents\Generators\Model
+	 */
+	protected $model;
+		
 	/**
 	 * @var string
 	 */
@@ -64,42 +75,30 @@ class Property
 	 * @var integer
 	 */	
 	protected $maxOccurs;
-	
-	/**
-	 * @var string
-	 */
-	protected $dbMapping;
-		
+			
 	/**
 	 * @var string
 	 */	
 	protected $dbSize;
 
-	/**
-	 * @var boolean
-	 */
-	protected $treeNode;
 
 	/**
 	 * @var boolean
 	 */
 	protected $localized;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $inverse;
 		
 	/**
 	 * @var array
 	 */
 	protected $constraintArray;
 	
-	/**
-	 * Setted on Compilation 
-	 * @var boolean
-	 */
-	protected $cmpOverride = false;
+	
+	public function __construct(\Change\Documents\Generators\Model $model, $name = null, $type = null)
+	{
+		$this->model = $model;
+		$this->name = $name;
+		$this->type = $type;
+	}
 	
 	/**
 	 * @param DOMElement $xmlElement
@@ -110,18 +109,21 @@ class Property
 		{
 			$name = $attribute->nodeName;
 			$value = $attribute->nodeValue;
-
+			$tv = trim($value);
+			if ($tv == '' || $tv != $value)
+			{
+				throw new \Exception('Invalid empty or spaced attribute value for ' . $name);
+			}	
 			switch ($name)
 			{
 				case "name":
-					if (in_array(ucfirst($value), self::$RESERVED_PROPERTY_NAMES))
+					if (in_array(strtolower($value), self::$RESERVED_PROPERTY_NAMES))
 					{
 						throw new \Exception('Invalid property Name => ' . $value);
 					}
 					$this->name = $value;
 					break;
 				case "type":
-					if (isset(self::$DEPRECATED_TYPE[$value])) {$value = self::$DEPRECATED_TYPE[$value];} //TODO Compatibility Check
 					if (!in_array($value, static::$TYPES))
 					{
 						throw new \Exception('Invalid property Type => ' . $value);
@@ -135,13 +137,13 @@ class Property
 					$this->documentType = $value;
 					break;	
 				case "indexed":
-					if ($value == 'description' || $value == 'property')
+					if ($value == 'description' || $value == 'property' || $value == 'none')
 					{
 						$this->indexed = $value;
 					}
 					else
 					{
-						$this->indexed = 'none';
+						throw new \Exception('Invalid indexed attribute value ' . $name . ' = ' . $value);
 					}
 					break;
 				case "from-list":
@@ -162,22 +164,11 @@ class Property
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
 					break;
-				case "db-mapping":
-					$this->dbMapping = $value;
-					break;
 				case "db-size":
 					$this->dbSize = $value;
 					break;
-				case "tree-node":
-					$this->treeNode = ($value === 'true');
-					break;
 				case "localized":
 					$this->localized = ($value === 'true');
-					break;
-				case "inverse":
-					$this->inverse = ($value === 'true');
-					break;
-				case "preserve-old-value": //DEPRECATED
 					break;
 				default:
 					throw new \Exception('Invalid property attribute ' . $name . ' = ' . $value);
@@ -188,6 +179,11 @@ class Property
 		if ($this->getName() === null)
 		{
 			throw new \Exception('Property Name can not be null');
+		}
+		
+		if ($this->localized === false || $this->required === false)
+		{
+			throw new \Exception('Invalid attribute value true expected');
 		}
 
 		foreach ($xmlElement->childNodes as $node)
@@ -217,8 +213,11 @@ class Property
 				}
 				if ($name)
 				{
-					if ($this->constraintArray === null) {$this->constraintArray = array();}
 					$this->constraintArray[$name] = $params;
+				}
+				else
+				{
+					throw new \Exception('Invalid constraint name');
 				}
 			}
 			elseif ($node->nodeType == XML_ELEMENT_NODE)
@@ -226,8 +225,53 @@ class Property
 				throw new \Exception('Invalid property children node ' . $this->getName() . ' -> ' . $node->nodeName);
 			}
 		}
-		
-		$this->setDefaultConstraints();
+	}
+	
+	/**
+	 * 
+	 * @return \Change\Documents\Generators\Model
+	 */
+	public function getModel()
+	{
+		return $this->model;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+	
+	/**
+	 * @param \Change\Documents\Generators\Property $parent
+	 */
+	public function setParent($parent)
+	{
+		$this->parent = $parent;
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property[]
+	 */
+	public function getAncestors()
+	{
+		if ($this->parent)
+		{
+			$ancestors = $this->parent->getAncestors();
+			$ancestors[] = $this->parent;
+			return $ancestors;
+		}
+		return array();
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Property
+	 */
+	public function getRoot()
+	{
+		return ($this->parent) ? $this->parent->getRoot() : $this;
 	}
 	
 	/**
@@ -313,25 +357,9 @@ class Property
 	/**
 	 * @return string
 	 */
-	public function getDbMapping()
-	{
-		return $this->dbMapping;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function getDbSize()
 	{
 		return $this->dbSize;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getTreeNode()
-	{
-		return $this->treeNode;
 	}
 
 	/**
@@ -343,34 +371,11 @@ class Property
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function getInverse()
-	{
-		return $this->inverse;
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getConstraintArray()
 	{
 		return $this->constraintArray;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Property $property
-	 */
-	public function updateDefaultBy(\Change\Documents\Generators\Property $property)
-	{
-		if ($property->getType() !== null && $property->getType() != $this->getType())
-		{
-			throw new \Exception('Invalid property type redefinition');
-		}
-		
-		if ($property->getDefaultValue() !== null) {$this->defaultValue = $property->getDefaultValue();}
-		if ($property->getLocalized() !== null) {$this->localized = $property->getLocalized();}
-		if (is_array($property->getConstraintArray())) {$this->constraintArray = $property->getConstraintArray();}
 	}
 	
 	/**
@@ -390,27 +395,39 @@ class Property
 	}
 	
 	/**
-	 * @param boolean $override
-	 * @param string $baseType
+	 * @return string
 	 */
-	public function setOverride($override)
+	public function getComputedType()
 	{
-		if ($override)
-		{
-			$this->cmpOverride = true;
-		}
-		else
-		{
-			$this->cmpOverride = false;
-		}
+		return $this->getRoot()->getType();
 	}
 	
 	/**
-	 * @return boolean
+	 * @return integer
 	 */
-	public function getOverride()
+	public function getComputedMinOccurs()
 	{
-		return $this->cmpOverride;
+		$p = $this;
+		while ($p)
+		{
+			if ($p->getMinOccurs() !== null) {return $p->getMinOccurs();}
+			$p = $p->getParent();
+		}
+		return 0;
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getComputedMaxOccurs()
+	{
+		$p = $this;
+		while ($p)
+		{
+			if ($p->getMaxOccurs() !== null) {return $p->getMaxOccurs();}
+			$p = $p->getParent();
+		}
+		return -1;
 	}
 	
 	/**
@@ -419,6 +436,191 @@ class Property
 	public function makeLocalized($localized)
 	{
 		$this->localized = $localized;
+	}
+		
+	/**
+	 * @param string $string
+	 */
+	public function setDefaultValue($string)
+	{
+		$this->defaultValue = $string;
+	}
+	
+	/**
+	 * @throws \Exception
+	 */
+	public function validate()
+	{		
+		if ($this->minOccurs === 0 || $this->minOccurs === 1)
+		{
+			throw new \Exception('Invalid min-occurs attribute on ' . $this->model . ':' . $this->name);
+		}
+			
+		switch ($this->name)
+		{
+			case 'label':
+				if ($this->type !== null)
+				{
+					$this->type = 'String';
+					$this->dbSize = 255;
+				}
+				break;
+			case 'voLCID':
+			case 'LCID':
+					$this->type = 'String';
+					$this->dbSize = 10;
+					break;
+			case 'creationDate':
+			case 'modificationDate':
+			case 'deletedDate':
+				$this->type = 'DateTime';
+				break;
+			case 'authorName':
+				$this->type = 'String';
+				$this->defaultValue = 'Anonymous';
+				break;
+			case 'authorId':
+				$this->type = 'DocumentId';
+				$this->documentType = 'Change_Users_User';
+				break;
+			case 'documentVersion':
+				$this->type = 'Integer';
+				$this->defaultValue = '0';
+				break;
+			case 'publicationStatus':
+				$this->type = 'String';
+				$this->defaultValue = 'DRAFT';
+				break;
+			case 'startPublication':
+				$this->type = 'DateTime';
+				break;
+			case 'endPublication':
+				$this->type = 'DateTime';
+				break;
+			case 'correctionOfId':
+				$this->type = 'DocumentId';
+				$this->documentType = $this->model->getName();
+				break;
+			case 'versionOfId':
+				$this->type = 'DocumentId';
+				$this->documentType = $this->model->getName();
+				break;
+		}
+		$this->setDefaultConstraints();
+	}
+	
+	/**
+	 * @throws \Exception
+	 */
+	public function validateInheritance()
+	{
+		$pm = $this->getModel()->getParent();
+		while ($pm)
+		{
+			$p = $pm->getPropertyByName($this->name);
+			if ($p)
+			{
+				$this->setParent($p);
+				break;
+			}
+			$pm = $pm->getParent();
+		}
+		
+		if ($this->getParent() === null && $this->type === null)
+		{
+			$this->type = 'String';
+			$this->dbSize = 255;
+			$this->setDefaultConstraints();
+		}
+		elseif ($this->getParent() !== null && $this->type !== null)
+		{
+			throw new \Exception('Invalid type redefinition attribute on ' . $this->model . ':' . $this->name);
+		}
+		
+		$ancestors = $this->getAncestors();
+		if ($this->model->checkLocalized())
+		{
+			if ($this->localized)
+			{
+				foreach ($ancestors as $property)
+				{
+					/* @var $property \Change\Documents\Generators\Property */
+					if ($property->getLocalized())
+					{
+						throw new \Exception('Invalid localized attribute on ' . $this->model . ':' . $this->name);
+					}
+				}
+			}
+			
+			switch ($this->name)
+			{
+				case 'voLCID':
+				case 'correctionOfId':
+				case 'versionOfId':			
+					$this->makeLocalized(null);
+					break;					
+				case 'LCID':
+				case 'creationDate':
+				case 'modificationDate':
+				case 'deletedDate':
+					
+				case 'label':
+				case 'authorName':
+				case 'authorId':
+				case 'documentVersion':
+					
+				case 'publicationStatus':
+				case 'startPublication':
+				case 'endPublication':
+
+					$this->makeLocalized(true);
+			}
+		}
+		elseif ($this->localized !== null)
+		{
+			throw new \Exception('Invalid localized attribute on ' . $this->model . ':' . $this->name);
+		}
+		
+		$type = $this->getComputedType();
+		if ($type !== 'DocumentArray')
+		{
+			if ($this->minOccurs !== null)
+			{
+				throw new \Exception('Invalid min-occurs attribute on ' . $this->model . ':' . $this->name);
+			}
+			if ($this->maxOccurs !== null)
+			{
+				throw new \Exception('Invalid max-occurs attribute on ' . $this->model . ':' . $this->name);
+			}
+		}
+		else
+		{
+			$mi = $this->getComputedMinOccurs();
+			$ma = $this->getComputedMaxOccurs();
+			
+			if ($mi < 0)
+			{
+				throw new \Exception('Invalid min-occurs attribute value on ' . $this->model . ':' . $this->name);
+			}
+			
+			if ($ma < -1 || $ma == 0)
+			{
+				throw new \Exception('Invalid max-occurs attribute value on ' . $this->model . ':' . $this->name);
+			}
+			elseif ($ma != -1 && $ma < $mi)
+			{
+				throw new \Exception('Invalid min-occurs max-occurs attribute value on ' . $this->model . ':' . $this->name);
+			}
+		}
+	}
+		
+	/**
+	 * @return boolean
+	 */
+	public function hasRelation()
+	{
+		$type = $this->getRoot()->getType();
+		return ($type === 'Document' || $type === 'DocumentArray' || $type === 'DocumentId');
 	}
 	
 	/**
@@ -429,141 +631,20 @@ class Property
 		$val = $this->getDefaultValue();
 		if ($val !== null)
 		{
-			if ($this->getType() === 'Boolean')
+			$type = $this->getRoot()->getType();
+			if ($type === 'Boolean')
 			{
 				return $val === 'true';
 			}
-			if ($this->getType() === 'Integer' || $this->getType() === 'DocumentId')
+			if ($type === 'Integer' || $type === 'DocumentId')
 			{
 				return intval($val);
 			}
-			if ($this->getType() === 'Float' || $this->getType() === 'Decimal')
+			if ($type === 'Float' || $type === 'Decimal')
 			{
 				return floatval($val);
 			}
 		}
 		return $val;
-	}
-	
-	/**
-	 * 
-	 * @param \Change\Documents\Generators\Property[] $ancestors
-	 */
-	public function validate($ancestors)
-	{
-		if (count($ancestors))
-		{
-			$this->setOverride(true);
-			/* @var $ap \Change\Documents\Generators\Property */
-			$ap = end($ancestors);
-			if ($this->type !== null && $this->type !== $ap->getType())
-			{
-				throw new \Exception('Invalid inherited property Type:' . $this->type . ' -> ' . $ap->getType());
-			}
-			$this->type = $ap->getType();
-		}
-		else
-		{
-			$this->setOverride(false);
-		}
-		
-		if ($this->getType() === null)
-		{
-			throw new \Exception('No type defined on Property: ' .  $this->name);
-		}
-		
-		$hasRelation = ($this->getType() === 'Document' || $this->getType() === 'DocumentArray');
-		
-		if (!$hasRelation && $this->getTreeNode() !== null)
-		{
-			throw new \Exception('Invalid TreeNode property attribute on :' . $this->name);
-		}
-		
-		if (!$hasRelation && $this->getInverse() !== null)
-		{
-			throw new \Exception('Invalid Inverse property attribute on :' . $this->name);
-		}
-		
-		if ($hasRelation && $this->getLocalized() !== null)
-		{
-			throw new \Exception('Invalid localized property attribute on :' . $this->name);
-		}
-		
-		if ($this->getLocalized() === false)
-		{
-			foreach ($ancestors as $ap)
-			{
-				/* @var $ap \Change\Documents\Generators\Property */
-				if ($ap->getLocalized())
-				{
-					throw new \Exception('Invalid localized property value on :' . $this->name);
-				}
-			}
-		}
-		
-		if ($hasRelation && $this->getInverse() && $this->getDocumentType() === null)
-		{
-			foreach (array_reverse($ancestors) as $ap)
-			{
-				/* @var $ap \Change\Documents\Generators\Property */
-				if ($ap->getDocumentType())
-				{
-					$this->documentType = $ap->getDocumentType();
-					break;
-				}
-			}
-			if ($this->getDocumentType() === null)
-			{
-				throw new \Exception('Invalid inverse Document type property attribute on :' . $this->name);
-			}
-		}
-		
-		if ($this->getType() !== 'String' && $this->getType() !== 'Decimal' && $this->getDbSize() !== null)
-		{
-			throw new \Exception('Invalid db-size property attribute on :' . $this->name);
-		}
-	}
-
-	/**
-	 * @return \Change\Documents\Generators\Property
-	 */
-	public static function getNewCorrectionIdProperty()
-	{
-		$property = new static();
-		$property->name = 'correctionid';
-		$property->type = 'Integer';
-		return $property;
-	}
-	
-	/**
-	 * @return \Change\Documents\Generators\Property
-	 */
-	public static function getNewCorrectionOfIdProperty()
-	{
-		$property = new static();
-		$property->name = 'correctionofid';
-		$property->type = 'Integer';
-		return $property;
-	}
-	
-	/**
-	 * @return \Change\Documents\Generators\Property
-	 */
-	public static function getNewS18sProperty()
-	{
-		$property = new static();
-		$property->name = 's18s';
-		$property->type = 'Lob';
-		return $property;
-	}
-	
-	/**
-	 * @return \Change\Documents\Generators\Property
-	 */
-	public static function getNamedProperty($name)
-	{
-		$property = new static();
-		$property->name = $name;
-		return $property;
 	}
 }

@@ -5,12 +5,7 @@ namespace Change\Db\Mysql;
  * @name \Change\Db\Mysql\SchemaManager
  */
 class SchemaManager implements \Change\Db\InterfaceSchemaManager
-{
-	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging;
-	
+{	
 	/**
 	 * @var \Change\Db\Mysql\DbProvider
 	 */
@@ -187,23 +182,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	}
 
 	/**
-	 * @param string $lang
-	 * @return boolean
-	 */
-	public function addLang($lang)
-	{
-		$infos = $this->getTableDefinition('f_document');
-		$fName = 'label_'.$lang;
-		if ($infos->getField($fName) === null)
-		{
-			$sql = "ALTER TABLE `f_document` ADD `label_$lang` VARCHAR(255) NULL";
-			$this->execute($sql);
-			return true;
-		}
-		return false;
-	}
-	
-	/**
 	 * @param integer $treeId
 	 * @return string the SQL statements that where executed
 	 */
@@ -237,6 +215,8 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		return $sql . ';' . PHP_EOL;
 	}
 	
+	
+	
 	/**
 	 * @param string $documentName
 	 * @return string
@@ -247,12 +227,12 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	}
 	
 	/**
-	 * @param string $documentTableName
+	 * @param string $documentName
 	 * @return string
 	 */
-	public function getDocumentI18nTableName($documentTableName)
+	public function getDocumentI18nTableName($documentName)
 	{
-		return $this->dbProvider->getSqlMapping()->getDocumentI18nTableName($documentTableName);
+		return $this->dbProvider->getSqlMapping()->getDocumentI18nTableName($documentName);
 	}
 	
 	/**
@@ -264,33 +244,24 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		return $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
 	}
 	
-	/**
-	 * @param string $propertyName
-	 * @return string
-	 */
-	public function getDocumentI18nFieldName($propertyName)
-	{
-		return $this->dbProvider->getSqlMapping()->getDocumentI18nFieldName($propertyName);
-	}
 	
 	/**
 	 * @param string $propertyName
-	 * @param boolean $localized
 	 * @param string $propertyType
 	 * @param string $propertyDbSize
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function getDocumentFieldDefinition($propertyName, $localized, $propertyType, $propertyDbSize)
+	public function getDocumentFieldDefinition($propertyName, $propertyType, $propertyDbSize)
 	{
-		$fn = $localized ? $this->getDocumentI18nFieldName($propertyName) : $this->getDocumentFieldName($propertyName);
+		$fn = $this->getDocumentFieldName($propertyName);
 		$typeData = null;
 		$nullable = true;
 		$defaultValue = null;
 		
-		if ($fn === 'document_publicationstatus')
+		if ($propertyName === 'publicationStatus')
 		{
 			$type = "enum";
-			$typeData = "enum('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW')";
+			$typeData = "enum('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'INVALID', 'DEACTIVATED', 'FILED')";
 		}
 		else
 		{
@@ -358,10 +329,34 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	}
 	
 	/**
-	 * @return string
+	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
 	 */
-	public function getSysDocumentTableName()
+	public function createOrAlter($tableDefinition)
 	{
-		return 'f_document';
+		$sql = 'CREATE TABLE IF NOT EXISTS `'.$tableDefinition->getName().'` (';
+		
+		$parts = array();
+		foreach ($tableDefinition->getFields() as $field)
+		{
+			/* @var $field \Change\Db\Schema\FieldDefinition */
+			$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
+			$parts[] = '`'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : ' DEFAULT NULL');
+		}
+		foreach ($tableDefinition->getKeys() as $key)
+		{
+			/* @var $key \Change\Db\Schema\KeyDefinition */
+			if ($key->getPrimary())
+			{
+				$kf = array();
+				foreach ($key->getFields() as $kfield)
+				{
+					/* @var $kfield \Change\Db\Schema\FieldDefinition */
+					$kf[] = '`'.$kfield->getName().'`';
+				}
+				$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
+			}
+		}		
+		$sql .= implode(', ', $parts)  . ') ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+		$this->execute($sql);
 	}
 }

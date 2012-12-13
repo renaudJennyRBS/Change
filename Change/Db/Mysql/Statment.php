@@ -102,7 +102,7 @@ class Statment extends \Change\Db\AbstractStatment
 		$name = ':p' . $propertyInfo->getName();
 		switch ($propertyInfo->getType())
 		{
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DATETIME :
+			case \Change\Documents\Property::TYPE_DATETIME:
 				if (empty($value))
 				{
 					$this->bindValue($name, null, \Change\Db\StatmentParameter::NIL);
@@ -116,10 +116,10 @@ class Statment extends \Change\Db\AbstractStatment
 					$this->bindValue($name, $value, \Change\Db\StatmentParameter::STR);
 				}
 				break;
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_BOOLEAN :
+			case \Change\Documents\Property::TYPE_BOOLEAN :
 				$this->bindValue($name, $value ? 1 : 0, \Change\Db\StatmentParameter::INT);
 				break;
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
+			case \Change\Documents\Property::TYPE_INTEGER :
 				if ($value === null)
 				{
 					$this->bindValue($name, null, \Change\Db\StatmentParameter::NIL);
@@ -238,7 +238,7 @@ class Statment extends \Change\Db\AbstractStatment
 			case \Change\Db\StatmentParameter::STR :
 			case \Change\Db\StatmentParameter::DATE :
 			case \Change\Db\StatmentParameter::LOB :
-			case \Change\Db\StatmentParameter::NUM :
+			case \Change\Db\StatmentParameter::FLOAT :
 				return \PDO::PARAM_STR;
 		}
 		return \PDO::PARAM_STR;

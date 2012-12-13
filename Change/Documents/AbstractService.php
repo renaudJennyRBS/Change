@@ -24,5 +24,5 @@ abstract class AbstractService
 	{
 		$this->applicationServices = $applicationServices;
 		$this->documentServices = $documentServices;
-	}
+	}	
 }

@@ -9,90 +9,105 @@ abstract class AbstractModel
 	/**
 	 * @var \Change\Documents\Property[]
 	 */
-	protected  $m_properties;
+	protected $properties;
 	
 	/**
 	 * @var \Change\Documents\Property[]
 	 */
-	protected  $m_invertProperties;
-	
-	/**
-	 * @var \Change\Documents\Property[]
-	 */
-	protected  $m_serialisedproperties;
+	protected $inverseProperties;
 	
 	/**
 	 * @var string[]
 	 */
-	protected  $m_propertiesNames;
+	protected $descendantsNames = array();
 	
 	/**
 	 * @var string[]
 	 */
-	protected  $m_childrenNames;
+	protected $ancestorsNames = array();
 	
 	/**
-	 * @var string[]
+	 * @var \Change\Documents\ModelManager
 	 */
-	protected  $m_ancestorsNames = array();
+	protected $modelManager;
 	
 	/**
 	 * @var string
 	 */
-	protected  $m_parentName;
+	protected $vendorName;
 	
-	public function __construct()
+	/**
+	 * @var string
+	 */
+	protected $shortModuleName;
+	
+	/**
+	 * @var string
+	 */
+	protected $shortName;
+	
+	/**
+	 * @var string
+	 */
+	protected $injectedBy;
+	
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 */
+	public function __construct(\Change\Documents\ModelManager $modelManager)
 	{
+		$this->modelManager = $modelManager;
+		$this->loadProperties();
+		$this->loadInverseProperties();
 	}
 	
 	/**
+	 * @api
 	 * @return string For example: Change
 	 */
-	abstract public function getVendorName();
-	
-	/**
-	 * @return string For example: generic
-	 */
-	abstract public function getModuleName();
-	
-	/**
-	 * @return string For example: folder
-	*/
-	abstract public function getDocumentName();
-	
-	/**
-	 * @return string
-	 */
-	public function getIcon()
+	public function getVendorName()
 	{
-		return 'document';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLabelKey()
-	{
-		return 'm.' . $this->getModuleName() . '.document.'. $this->getDocumentName().'.document-name';
+		return $this->vendorName;
 	}
 	
 	/**
-	 * @return string
+	 * @api
+	 * @return string For example: Generic
 	 */
-	public function getLabel()
+	public function getShortModuleName()
 	{
-		return \Change\I18n\I18nManager::getInstance()->trans($this->getLabelKey(), array('ucf'));
+		return $this->shortModuleName;
 	}
-
+	
 	/**
-	 * @return string For example: modules_generic/folder
+	 * @api
+	 * @return string For example: Folder
+	 */
+	public function getShortName()
+	{
+		return $this->shortName;
+	}
+	
+	/**
+	 * @api
+	 * @return string For example: Change_Generic
+	 */
+	public function getModuleName()
+	{
+		return $this->getVendorName() . '_' . $this->getShortModuleName();
+	}
+	
+	/**
+	 * @api
+	 * @return string For example: Change_Generic_Folder
 	 */
 	public function getName()
 	{
-		return 'modules_' . $this->getModuleName() . '/' . $this->getDocumentName();
+		return $this->getVendorName() . '_' . $this->getShortModuleName() . '_' . $this->getShortName();
 	}
-
+	
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isLocalized()
@@ -101,63 +116,16 @@ abstract class AbstractModel
 	}
 	
 	/**
+	 * @api
 	 * @return boolean
 	 */
-	public function hasChildren()
-	{
-		return $this->m_childrenNames !== null;
-	}
-	
-	/**
-	 * @return string[]|NULL
-	 */
-	public function getChildrenNames()
-	{
-		return $this->m_childrenNames;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function hasParent()
-	{
-		return $this->m_parentName !== null;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getParentName()
-	{
-		return $this->m_parentName;
-	}
-	
-	/**
-	 * @return string[]
-	 */
-	public function getAncestorModelNames()
-	{
-		return $this->m_ancestorsNames;
-	}
-	
-	/**
-	 * @return string[]
-	 */
-	public function getRootModelName()
-	{
-		$amn = $this->getAncestorModelNames();
-		return (count($amn)) ? $amn[0] : $this->getName();
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isIndexable()
+	public function isFrontofficeIndexable()
 	{
 		return false;
 	}
 	
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isBackofficeIndexable()
@@ -166,11 +134,116 @@ abstract class AbstractModel
 	}
 	
 	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isIndexable()
+	{
+		return $this->isBackofficeIndexable() || $this->isFrontofficeIndexable();
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isEditable()
+	{
+		return false;
+	}
+		
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isPublishable()
+	{
+		return false;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function useCorrection()
+	{
+		return false;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function useVersion()
+	{
+		return false;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasDescendants()
+	{
+		return count($this->descendantsNames) > 0;
+	}
+	
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getDescendantsNames()
+	{
+		return $this->descendantsNames;
+	}
+
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getInjectedBy()
+	{
+		return $this->injectedBy;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasParent()
+	{
+		return count($this->ancestorsNames) > 0;
+	}
+	
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getParentName()
+	{
+		if ($this->hasParent())
+		{
+			return $this->ancestorsNames[count($this->ancestorsNames) -1];
+		}
+		return null;
+	}
+	
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getAncestorsNames()
+	{
+		return $this->ancestorsNames;
+	}
+	
+	/**
+	 * @api
 	 * @return string
 	 */
-	public function getDefaultStatus()
+	public function getRootName()
 	{
-		return 'DRAFT';
+		$amn = $this->getAncestorsNames();
+		return (count($amn)) ? $amn[0] : $this->getName();
 	}
 
 	/**
@@ -178,125 +251,72 @@ abstract class AbstractModel
 	 */
 	protected function loadProperties()
 	{
-		$this->m_properties = array();
+		$this->properties = array();
+		$p = $this->properties['id'] = new \Change\Documents\Property('id', 'Integer');
+		$p->setRequired(true);
+		
+		$p = $this->properties['model'] = new \Change\Documents\Property('model', 'String');
+		$p->setRequired(true)->setDefaultValue($this->getName());
 	}
 	
 	/**
+	 * @api
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public function getPropertiesInfos()
+	public function getProperties()
 	{
-		if ($this->m_properties === null){$this->loadProperties();}
-		return $this->m_properties;
+		return $this->properties;
 	}
 	
 	/**
+	 * @api
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public function getLocalizedPropertiesInfos()
+	public function getLocalizedProperties()
 	{
-		if ($this->m_properties === null){$this->loadProperties();}
 		$result = array();
-		foreach ($this->m_properties as $name => $propertInfo)
+		foreach ($this->properties as $name => $property)
 		{
-			/* @var $propertInfo PropertyInfo */
-			if ($propertInfo->getLocalized()) {$result[$name] = $propertInfo;}
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized()) {$result[$name] = $property;}
 		}
 		return $result;
 	}
 	
 	/**
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getVisiblePropertiesInfos()
-	{
-		$sysProps = \Change\Application::getInstance()->getDocumentServices()->getModelManager()->getSystemPropertyNames();
-		return array_diff_key($this->getEditablePropertiesInfos(), array_flip($sysProps));
-	}
-
-	/**
+	 * @api
 	 * @param string $propertyName
-	 * @return \Change\Documents\Property
+	 * @return boolean
+	 */
+	public function hasProperty($propertyName)
+	{
+		return isset($this->properties[$propertyName]);
+	}
+	
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return \Change\Documents\Property|null
 	 */
 	public function getProperty($propertyName)
 	{
-		if ($this->m_properties === null){$this->loadProperties();}
-		if (isset($this->m_properties[$propertyName]))
+		if ($this->hasProperty($propertyName))
 		{
-			return $this->m_properties[$propertyName];
+			return $this->properties[$propertyName];
 		}
 		return null;
 	}
 	
-	protected function loadSerialisedProperties()
-	{
-		$this->m_serialisedproperties = array();
-	}
-	
 	/**
+	 * @api
 	 * @return array<string, \Change\Documents\Property>
 	 */
-	public function getSerializedPropertiesInfos()
-	{
-		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
-		return $this->m_serialisedproperties;
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @return \Change\Documents\Property
-	 */
-	public function getSerializedProperty($propertyName)
-	{
-		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
-		if (isset($this->m_serialisedproperties[$propertyName]))
-		{
-			return $this->m_serialisedproperties[$propertyName];
-		}
-		return null;
-	}
-	
-	/**
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getEditablePropertiesInfos()
-	{
-		if ($this->m_properties === null){$this->loadProperties();}
-		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
-		return array_merge($this->m_properties, $this->m_serialisedproperties);
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @return \Change\Documents\Property
-	 */
-	public function getEditableProperty($propertyName)
-	{
-		if ($this->m_properties === null){$this->loadProperties();}
-		if (isset($this->m_properties[$propertyName]))
-		{
-			return $this->m_properties[$propertyName];
-		} 
-		
-	
-		if ($this->m_serialisedproperties === null) {$this->loadSerialisedProperties();}
-		if (isset($this->m_serialisedproperties[$propertyName]))
-		{
-			return $this->m_serialisedproperties[$propertyName];
-		}
-		
-		return null;
-	}
-
-	/**
-	 * @return \Change\Documents\Property[]
-	 */
-	public function getIndexedPropertiesInfos()
+	public function getIndexedProperties()
 	{
 		$result = array();
-		foreach ($this->getEditablePropertiesInfos() as $propertyName => $property) 
+		foreach ($this->getProperties() as $propertyName => $property) 
 		{
-			/* @var $property PropertyInfo */
+			/* @var $property \Change\Documents\Property */
 			if ($property->isIndexed())
 			{
 				$result[$propertyName] = $property;
@@ -306,110 +326,24 @@ abstract class AbstractModel
 	}
 
 	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isTreeNodeProperty($propertyName)
-	{
-		$property = $this->getProperty($propertyName);
-		return is_null($property) ? false : $property->isTreeNode();
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isDocumentProperty($propertyName)
-	{
-		$property = $this->getProperty($propertyName);
-		return is_null($property) ? false : $property->isDocument();
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isArrayProperty($propertyName)
-	{
-		$property = $this->getProperty($propertyName);
-		return is_null($property) ? false : $property->isArray();
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isUniqueProperty($propertyName)
-	{
-		$property = $this->getProperty($propertyName);
-		return is_null($property) ? false : $property->isUnique();
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isProperty($propertyName)
-	{
-		$property = $this->getProperty($propertyName);
-		return is_null($property) ? false : true;
-	}
-
-	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getPropertiesNames()
 	{
-		if ($this->m_propertiesNames === null)
-		{
-			$this->m_propertiesNames = array();
-			foreach ($this->getPropertiesInfos() as $name => $infos)
-			{
-				if ($name != 'id' && $name != 'model')
-				{
-					$this->m_propertiesNames[] = $name;
-				}
-			}
-		}
-		return $this->m_propertiesNames;
-	}
-
-	/**
-	 * @param string $type
-	 * @return string[]
-	 */
-	public function findTreePropertiesNamesByType($type)
-	{
-		$componentNames = array();
-		foreach ($this->getPropertiesInfos() as $name => $infos)
-		{
-			if ($infos->isTreeNode() && $infos->isDocument() && $infos->acceptType($type))
-			{
-				$componentNames[] = $name;
-			}
-		}
-
-		foreach ($this->getInverseProperties() as $name => $infos)
-		{
-			/* @var $infos PropertyInfo */
-			if ($infos->getTreeNode() && $infos->isDocument() && $infos->acceptType($type))
-			{
-				// The most specific is suposed to be the last one.
-				// Cf generator_PersistentModel::generatePhpModel().
-				$componentNames[$infos->getDbTable() . '.' . $infos->getDbMapping()] = $name;
-			}
-		}
-		return array_values($componentNames);
+		return array_keys($this->properties);
 	}
 	
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function hasCascadeDelete()
 	{
-		foreach ($this->getPropertiesInfos() as $name => $info)
+		foreach ($this->getProperties() as $property)
 		{
-			if ($info->isCascadeDelete())
+			/* @var $property \Change\Documents\Property */
+			if ($property->getCascadeDelete())
 			{
 				return true;
 			}
@@ -420,92 +354,60 @@ abstract class AbstractModel
 	/**
 	 * @return void
 	 */
-	protected function loadInvertProperties()
+	protected function loadInverseProperties()
 	{
-		$this->m_invertProperties = array();
+		$this->inverseProperties = array();
 	}
 
 	/**
-	 * @return \Change\Documents\Property[]
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
 	 */
 	public function getInverseProperties()
 	{
-		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
-		return $this->m_invertProperties;
+		return $this->inverseProperties;
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @return boolean
 	 */
 	public function hasInverseProperty($name)
 	{
-		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
-		return isset($this->m_invertProperties[$name]);
+		return isset($this->inverseProperties[$name]);
 	}
 
 	/**
+	 * @api
 	 * @param string $name
 	 * @return \Change\Documents\Property|null
 	 */
 	public function getInverseProperty($name)
 	{
-		if ($this->m_invertProperties === null) {$this->loadInvertProperties();}
-		if (isset($this->m_invertProperties[$name]))
+		if ($this->hasInverseProperty($name))
 		{
-			return $this->m_invertProperties[$name];
+			return $this->inverseProperties[$name];
 		}
 		return null;
 	}
 
 	/**
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function hasProperty($propertyName)
-	{
-		return $this->isProperty($propertyName);
-	}
-
-	/**
-	 * Return if the document has 2 special properties (correctionid, correctionofid)
-	 * @return boolean
-	 */
-	public function useCorrection()
-	{
-		return false;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasWorkflow()
-	{
-		return false;
-	}
-
-	/**
+	 * @api
 	 * @return string
 	 */
-	public function getWorkflowStartTask()
+	public function getIcon()
 	{
-		return null;
+		return 'document';
 	}
 	
 	/**
-	 * @return array<String, String>
+	 * @api
+	 * @return string
 	 */
-	public function getWorkflowParameters()
+	public function getLabelKey()
 	{
-		return array();
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function usePublicationDates()
-	{
-		return true;
+		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.'. $this->getShortName().'.document-name');
 	}
 	
 	/**

@@ -68,25 +68,6 @@ class AbstractDocumentServicesClass
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getFinalClassName($model)
-	{
-		return $this->getFinalClassNameByCode($model->getVendor(), $model->getModuleName(), $model->getDocumentName());
-	}
-
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @return string
-	 */
-	protected function getFinalClassNameByCode($vendor, $moduleName, $documentName)
-	{
-		return  ucfirst($vendor).'\\' .  ucfirst($moduleName) . '\Documents\\' . ucfirst($documentName) . 'Service';
-	}
-	
-	/**
 	 * @param \Change\Documents\Generators\Model[] $models
 	 * @return string
 	 */
@@ -104,7 +85,7 @@ class AbstractDocumentServicesClass
 		foreach ($models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$cn = $this->escapePHPValue($this->getFinalClassName($model));
+			$cn = $this->escapePHPValue($model->getServiceClassName());
 			$code .= '
 		$cl = new \Zend\Di\Definition\ClassDefinition('.$cn.');
 			$cl->setInstantiator(\'__construct\')->addMethod(\'__construct\', true)
@@ -121,8 +102,8 @@ class AbstractDocumentServicesClass
 		foreach ($models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$cn = $this->escapePHPValue($this->getFinalClassName($model));
-			$an = $this->escapePHPValue($model->getFullName());
+			$cn = $this->escapePHPValue($model->getServiceClassName());
+			$an = $this->escapePHPValue($model->getName());
 			$code .= '		$im->addAlias('.$an.', '.$cn.', $params);'. PHP_EOL;
 		}
 		$code .= '
@@ -131,15 +112,15 @@ class AbstractDocumentServicesClass
 		foreach ($models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$cn = '\\' . $this->getFinalClassName($model);
-			$an = $this->escapePHPValue($model->getFullName());
+			$cn = $model->getServiceClassName();
+			$an = $this->escapePHPValue($model->getName());
 			if ($model->getVendor() === 'Change')
 			{
-				$fn = 'get' . ucfirst($model->getModuleName()) . ucfirst($model->getDocumentName());
+				$fn = 'get' . ucfirst($model->getShortModuleName()) . ucfirst($model->getShortName());
 			}
 			else
 			{
-				$fn = 'get' . ucfirst($model->getVendor()) . ucfirst($model->getModuleName()) . ucfirst($model->getDocumentName());
+				$fn = 'get' . ucfirst($model->getVendor()) . ucfirst($model->getShortModuleName()) . ucfirst($model->getShortName());
 			}
 			$code .= '
 	/**

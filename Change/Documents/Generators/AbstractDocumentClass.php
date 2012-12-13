@@ -21,7 +21,7 @@ class AbstractDocumentClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		$nsParts[] = $this->getClassName($model) . '.php';
+		$nsParts[] = $model->getShortAbstractDocumentClassName() . '.php';
 		array_unshift($nsParts, $compilationPath);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
@@ -35,76 +35,79 @@ class AbstractDocumentClass
 	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
 	{
 		$this->compiler = $compiler;
-		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\\' . $model->getNameSpace() . ';' . PHP_EOL;
-		$code .= 'abstract class ' . $this->getClassName($model) . ' extends ' . $this->getExtendClassName($model) . PHP_EOL;
+		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
+		if (!$model->getInject())
+		{
+			$code .= '/**
+ * @name ' . $model->getDocumentClassName() . '
+ * @method ' . $model->getServiceClassName() . ' getDocumentService()
+ * @method ' . $model->getModelClassName() . ' getDocumentModel()
+ */'.PHP_EOL;	
+		}
+		
+		$extendModel = $model->getExtendModel();
+		$extend = $extendModel ? $extendModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
+		
+		$interfaces = array();
+		
+		// implements , 
+		if ($model->getLocalized()) {$interfaces[] = '\Change\Documents\Interfaces\Localizable';}
+		if ($model->getEditable()) {$interfaces[] = '\Change\Documents\Interfaces\Editable';}
+		if ($model->getPublishable()) {$interfaces[] = '\Change\Documents\Interfaces\Publishable';}
+		if ($model->getUseCorrection()) {$interfaces[] = '\Change\Documents\Interfaces\Correction';}
+		if ($model->getUseVersion()) {$interfaces[] = '\Change\Documents\Interfaces\Versionable';}
+		
+		if (count($interfaces))
+		{
+			$extend .= ' implements ' . implode(', ', $interfaces);
+		}
+		
+		$code .= 'abstract class ' . $model->getShortAbstractDocumentClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$properties = $this->getMemberProperties($model);
+		
 		if (count($properties))
 		{
 			$code .= $this->getMembers($model, $properties);
 			$code .= $this->getDbProviderFunctions($model, $properties);
 			$code .= $this->getValidateFunctions($model, $properties);
-		}
-		
-		foreach ($model->getProperties() as $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getOverride() || $property->getName() === 'id' 
-				|| $property->getName() === 'label'|| $property->getName() === 'lang')
+			
+			foreach ($properties as $property)
 			{
-				continue;
-			}
-			if ($property->getType() === 'DocumentArray')
-			{
-				$code .= $this->getPropertyDocumentArrayAccessors($model, $property);
-			}
-			elseif ($property->getType() === 'Document')
-			{
-				$code .= $this->getPropertyDocumentAccessors($model, $property);
-			}
-			elseif ($property->getLocalized())
-			{
-				$code .= $this->getPropertyLocalizedAccessors($model, $property);
-			}
-			else
-			{
-				$code .= $this->getPropertyAccessors($model, $property);
+				/* @var $property \Change\Documents\Generators\Property */
+				if ($property->getType() === 'DocumentArray')
+				{
+					$code .= $this->getPropertyDocumentArrayAccessors($model, $property);
+				}
+				elseif ($property->getType() === 'Document')
+				{
+					$code .= $this->getPropertyDocumentAccessors($model, $property);
+				}
+				elseif ($property->getLocalized())
+				{
+					$code .= $this->getPropertyLocalizedAccessors($model, $property);
+				}
+				else
+				{
+					$code .= $this->getPropertyAccessors($model, $property);
+				}
 			}
 		}
 		
-		foreach ($model->getSerializedproperties() as $property)
-		{
-			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			if ($property->getOverride()) {continue;}
-			$code .= $this->getSerializedPropertyAccessors($model, $property);
-		}
 		
-		foreach ($model->getInverseProperties() as $property)
-		{
-			/* @var $property \Change\Documents\Generators\InverseProperty */
-			$code .= $this->getInvertPropertyDocumentAccessors($model, $property);
-		}
 		
 		$code .= $this->getSetDefaultValues($model);
-		if (!$model->getInject())
-		{
-			$code .= $this->getNoneInjectedFunctions($model);
-		}
 		
+		if ($model->getLocalized())
+		{
+			$code .= $this->getLocalizableInterface($model);
+		}
+
 		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
 		return $code;
 	}
 	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param string $className
-	 * @return string
-	 */
-	protected function addNameSpace($model, $className)
-	{
-		return '\Compilation\\' . $model->getNameSpace() . '\\' . $className;
-	}
 	
 	/**
 	 * @param mixed $value
@@ -118,123 +121,67 @@ class AbstractDocumentClass
 		}
 		return var_export($value, true);
 	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param boolean $withNameSpace
-	 * @return string
-	 */
-	protected function getClassName($model, $withNameSpace = false)
-	{
-		$cn = 'Abstract' .ucfirst($model->getDocumentName());
-		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getExtendClassName($model)
-	{
-		if ($model->getExtend())
-		{
-			$pm = $this->compiler->getModelByFullName($model->getExtend());
-			return $this->getFinalClassName($pm);
-		}
-		return '\Change\Documents\AbstractDocument';
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getFinalClassName($model)
-	{
-		return $this->getFinalClassNameByCode($model->getVendor(), $model->getModuleName(), $model->getDocumentName());
-	}
 
 	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @return string
-	 */
-	protected function getFinalClassNameByCode($vendor, $moduleName, $documentName)
-	{
-		//TODO Old class Usage
-		$oldName = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME, 'modules', $moduleName, 'persistentdocument', $documentName . '.class.php'));
-		if (is_file($oldName))
-		{
-			return '\\' . $moduleName. '_persistentdocument_' . $documentName;
-		}
-		return '\\'. ucfirst($vendor).'\\' .  ucfirst($moduleName) . '\Documents\\' . ucfirst($documentName);
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param boolean $withNameSpace
-	 * @return string
-	 */
-	protected function getModelClassName($model, $withNameSpace = false)
-	{
-		$cn = ucfirst($model->getDocumentName()) . 'Model';
-		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
-	}
-	
-	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
-	protected function getFinalServiceClassName($model)
+	protected function getLocalizableInterface($model)
 	{
-		$cn = ucfirst($model->getDocumentName()) . 'Service';
-		return '\\'. ucfirst($model->getVendor()). '\\' .  ucfirst($model->getModuleName()) . '\Documents\\' .$cn;
+		$class = $model->getDocumentI18nClassName();
+		$code = '
+
+	/**
+	 * @var '.$class.'[]
+	 */
+	protected $i18nPartArray = array();
+	 	
+	/**
+	 * @param string $LCID
+	 * @return '.$class.'|null
+	 */
+	public function getI18nPart($LCID)
+	{
+	 	return isset($this->i18nPartArray[$LCID]) ? $this->i18nPartArray[$LCID] : null;
+	}
+	 				
+	/**
+	 * @return '.$class.'
+	 */
+	public function getCurrentI18nPart()
+	{
+	 	$LCID = $this->getDocumentManager()->getLCID();
+	 	$i18nPart = $this->getI18nPart($LCID);
+	 	if ($i18nPart === null)
+	 	{
+	 		$i18nPart = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
+	 		$this->i18nPartArray[$LCID] = $i18nPart;
+	 	}
+		return $i18nPart;
+	}'. PHP_EOL;
+		
+		return $code;
 	}
 	
+
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return \Change\Documents\Generators\Property[]
 	 */
 	protected function getMemberProperties($model)
-	{
-		$defined = array_diff($this->getAllMemberProperties($model), array('id', 'label', 'lang'));		
+	{	
 		$properties = array();
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if (!$property->getOverride() && in_array($property->getName(), $defined))
+			if (!$property->getParent())
 			{
 				$properties[$property->getName()] = $property;
 			}
 		}
 		return $properties;
 	}
-	
-	
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string[]
-	 */	
-	protected function getAllMemberProperties($model)
-	{
-		$models = $this->compiler->getAncestors($model);
-		$models[] = $model;
-		$names = array();
-		foreach ($models as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			foreach ($model->getProperties() as $property)
-			{
-				/* @var $property \Change\Documents\Generators\Property */
-				if (!$property->getOverride() && !$property->getLocalized())
-				{
-					$names[] = $property->getName();
-				}
-			}
-		}
-		return $names;
-	}
-	
+		
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property[] $properties
@@ -243,143 +190,48 @@ class AbstractDocumentClass
 	protected function getMembers($model, $properties)
 	{
 		$code = '';
-		$sleep = array();
-		$destruct = array();
-		$baseSleep = "\0Compilation\\" . $model->getNameSpace() . "\\" . $this->getClassName($model) . "\0m_";
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
 			if ($property->getLocalized())
 			{
 				continue;
-			}
-			$code .= '	private $m_'.$property->getName().';'. PHP_EOL;
-			$sleep[] = substr($this->escapePHPValue($baseSleep . $property->getName(), false), 5);
-			$destruct[] = '		$this->m_'.$property->getName().' = null;';
-		}
-		if (count($sleep))
-		{
-			$code .= '
-    /**
-     * @return string[]
-     */
-	public function __getSerializedPropertyNames()
-	{
-		return array_merge(parent::__getSerializedPropertyNames(), array('.implode(',', $sleep).'));
-	}
-
-    public function __destruct()
-    {'. PHP_EOL . implode(PHP_EOL, $destruct). PHP_EOL .'
-        parent::__destruct();
-    }'. PHP_EOL;
-		}
-
-		if ($model->getLocalized() !== null)
-		{
-			$code .= '
-	/**
-	 * @return boolean
-	 */
-	public function isLocalized()
-	{
-		return '.$this->escapePHPValue($model->getLocalized()).';
-	}'. PHP_EOL;
+			}	
+			$code .= '	private $'.$property->getName().';'. PHP_EOL;
 		}
 		return $code;
 	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */	
-	protected function getNoneInjectedFunctions($model)
-	{
-		$docClassName = $this->getFinalClassName($model);
-		$modelClassName = $this->getModelClassName($model);
-		$serviceClassName = $this->getFinalServiceClassName($model);
-		$code = ' 
-	/**
-	 * @return ' . $docClassName . '
-	 */
-	public static function getNewInstance()
-	{
-		return ' . $serviceClassName . '::getInstance()->getNewDocumentInstance();
-	}
-	
-	/**
-	 * @return ' . $docClassName . '
-	 */
-	public static function getInstanceById($documentId)
-	{
-		return ' . $serviceClassName . '::getInstance()->getDocumentInstance($documentId, '.$this->escapePHPValue($model->getFullName()).');
-	}
 		
-	/**
-	 * @return ' . $modelClassName . '
-	 */
-	public function getPersistentModel()
-	{
-		return \Change\Documents\ModelManager::getInstance()->getModelByName($this->getDocumentModelName());
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDocumentModelName()
-	{
-		return '.$this->escapePHPValue($model->getFullName()).';
-	}
-	
-	/**
-	 * @return ' . $serviceClassName . '
-	 */
-	public function getDocumentService()
-	{
-		return ' . $serviceClassName . '::getInstance();
-	}' . PHP_EOL;
-		
-		return $code;
-	}
-	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string
 	 */
 	protected function getSetDefaultValues($model)
 	{
-		$names = $this->getAllMemberProperties($model);
 		$lines = array();
-		if ($model->getExtend())
-		{
-			$lines[] = '		parent::setDefaultValues();';
-		}
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getDefaultValue() !== null && in_array($property->getName(), $names))
+			if ($property->getDefaultValue() !== null)
 			{
 				$lines[] = '		$this->set' . ucfirst($property->getName()) . 'Internal(' . $this->escapePHPValue($property->getDefaultPhpValue(), false). ');';
 			}
 		}
-		
-		foreach ($model->getSerializedproperties() as $property)
+		if (count($lines))
 		{
-			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			if ($property->getDefaultValue() !== null && in_array($property->getName(), $names))
-			{
-				$lines[] = '		$this->set' . ucfirst($property->getName()) . 'Internal(' . $this->escapePHPValue($property->getDefaultPhpValue(), false). ');';
-			}
-		}
-		$code = '
+			$lines[] = '		parent::setDefaultValues();';
+			$code = '
 	/**
 	 * @return void
 	 */
 	protected function setDefaultValues()
 	{' . PHP_EOL . implode(PHP_EOL, $lines);
-	$code .= '
+			$code .= '
 	}' . PHP_EOL;
-	
-		return $code;
+			
+			return $code;
+		}
+		return '';
 	}
 	
 	/**
@@ -392,68 +244,18 @@ class AbstractDocumentClass
 		$code = '';
 		$get = array();	
 		$set = array();
-		if (isset($properties['s18s']))
-		{
-			$get[] = '		$this->serializeS18s();';
-			$code .= '
-	private $m_s18sArray;
-	
-	protected function serializeS18s()
-	{
-		if ($this->m_s18sArray !== null)
-		{
-			$this->setS18s(serialize($this->m_s18sArray));
-			$this->m_s18sArray = null;
-		}
-	}
-	
-	protected function unserializeS18s()
-	{
-		$string = $this->getS18s();
-		if ($string === null)
-		{
-			$this->m_s18sArray = array();
-		}
-		else
-		{
-			$this->m_s18sArray = unserialize($string);
-		}
-	}
-	
-	protected function getS18sProperty($name)
-	{
-		if ($this->m_s18sArray === null) {$this->unserializeS18s();}
-		if (isset($this->m_s18sArray[$name]))
-		{
-			return $this->m_s18sArray[$name];
-		}
-		return null;
-	}
-	
-	protected function setS18sProperty($name, $value)
-	{
-		if ($this->m_s18sArray === null) {$this->unserializeS18s();}
-		$this->m_s18sArray[$name] = $value;
-		$this->propertyUpdated(\'s18s\');
-	}'.PHP_EOL;
-			
-		}
-		
-		$cascadeDelete = array();
-		
 		foreach ($properties as $property)
 		{
+			if ($property->getLocalized())
+			{
+				continue;
+			}
+			
 			/* @var $property \Change\Documents\Generators\Property */
 			$name = $property->getName();
-			if ($property->getCascadeDelete())
-			{
-				$cascadeDelete[] = $property;
-			}
-			if ($property->getType() === 'DocumentArray')
-			{
-				$get[] = '        if ($loadAll) {$this->checkLoaded'.ucfirst($name).'();}';
-			}
-			$get[] = '		$propertyBag['.$this->escapePHPValue($name).'] = $this->m_'.$name.';';
+			$get[] = '		$propertyBag['.$this->escapePHPValue($name).'] = $this->'.$name.';';
+			
+			
 			if ($property->getType() === 'Boolean')
 			{
 				$sv = '(null === $propertyValue) ? null : (bool)$propertyValue'; 
@@ -466,20 +268,24 @@ class AbstractDocumentClass
 			{
 				$sv = '(null === $propertyValue) ? null : floatval($propertyValue)';
 			}
+			elseif ($property->getType() === 'DocumentArray')
+			{
+				$sv = '(null === $propertyValue) ? 0 : intval($propertyValue)';
+			}
 			else
 			{
 				$sv = '$propertyValue';
 			}
-			$set[] = '				case '.$this->escapePHPValue($name).' : $this->m_'.$name.' = '.$sv.'; break;';
-		}		
+			$set[] = '				case '.$this->escapePHPValue($name).' : $this->'.$name.' = '.$sv.'; break;';
+		}
+				
 		$code .= '
 	/**
-	 * @param boolean $loadAll if all data must be retrieved (by default)
-	 * @return array<String, mixed>
+	 * @return array
 	 */
-	public function getDocumentProperties($loadAll = true)
+	public function getDocumentProperties()
 	{
-		$propertyBag = parent::getDocumentProperties($loadAll);' . PHP_EOL;
+		$propertyBag = parent::getDocumentProperties();' . PHP_EOL;
 		$code .= implode(PHP_EOL, $get);
 		$code .= '
 		return $propertyBag;
@@ -496,17 +302,11 @@ class AbstractDocumentClass
 		{
 			switch ($propertyName)
 			{' . PHP_EOL;
-		$code .= implode(PHP_EOL, $set);
-		
+		$code .= implode(PHP_EOL, $set);		
 		$code .= '
 			}
 		}
 	}' . PHP_EOL;
-		
-		if (count($cascadeDelete))
-		{
-			$code .= $this->getCascadeDeleteDocumentAccessors($model, $cascadeDelete);
-		}
 		return $code;
 	}
 	
@@ -528,11 +328,11 @@ class AbstractDocumentClass
 		}
 		$code .= '
 	/**
-	 * @return boolean
+	 * @return void
 	 */
-	public function isValid()
+	public function validateProperties()
 	{
-		parent::isValid();' . PHP_EOL;
+		parent::validateProperties();' . PHP_EOL;
 		$code .= implode(PHP_EOL, $validates);
 		$code .= '	
 	}' . PHP_EOL;
@@ -557,23 +357,23 @@ class AbstractDocumentClass
 	 */
 	public function is'.$uName.'Valid()
 	{
-		if ($this->isNew() || $this->isPropertyModified('.$eName.'))
+		if ($this->persistentStateIsNew() || $this->isPropertyModified('.$eName.'))
 		{
-			$prop = $this->getPersistentModel()->getProperty('.$eName.');
+			$prop = $this->getDocumentModel()->getProperty('.$eName.');
 			$value = $this->get'.$uName.'Count();
 			if ($value === 0) {
 				if (!$prop->isRequired()) {return true;}
-				$this->addPropertyErrors('.$eName.', \LocaleService::getInstance()->trans(\'f.constraints.isempty\', array(\'ucf\'))); //TODO Old class Usage
+				$this->addPropertyErrors('.$eName.', new \Change\I18n\PreparedKey(\'f.constraints.isempty\', array(\'ucf\')));
 				return false;
 			}
 			elseif ($prop->getMaxOccurs() > 1 && value > $prop->getMaxOccurs()) {
 				$args = array(\'maxOccurs\' => $prop->getMaxOccurs());
-				$this->addPropertyErrors('.$eName.', \LocaleService::getInstance()->trans(\'f.constraints.maxoccurs\', array(\'ucf\'), array($args))); //TODO Old class Usage
+				$this->addPropertyErrors('.$eName.', new \Change\I18n\PreparedKey(\'f.constraints.maxoccurs\', array(\'ucf\'), array($args)));
 				return false;
 			}
 			elseif ($prop->getMinOccurs() > 1 && value < $prop->getMinOccurs()) {
 				$args = array(\'minOccurs\' => $prop->getMinOccurs());
-				$this->addPropertyErrors('.$eName.', \LocaleService::getInstance()->trans(\'f.constraints.minoccurs\', array(\'ucf\'), array($args))); //TODO Old class Usage
+				$this->addPropertyErrors('.$eName.', new \Change\I18n\PreparedKey(\'f.constraints.minoccurs\', array(\'ucf\'), array($args)));
 				return false;
 			}
 		}
@@ -588,13 +388,13 @@ class AbstractDocumentClass
 	 */
 	public function is'.$uName.'Valid()
 	{
-		if ($this->isNew() || $this->isPropertyModified('.$eName.'))
+		if ($this->persistentStateIsNew() || $this->isPropertyModified('.$eName.'))
 		{
-			$prop = $this->getPersistentModel()->getProperty('.$eName.');
+			$prop = $this->getDocumentModel()->getProperty('.$eName.');
 			$value = $this->get'.$uName.'();
 			if ($value === null || $value === \'\') {
 				if (!$prop->isRequired()) {return true;}
-				$this->addPropertyErrors('.$eName.', \LocaleService::getInstance()->trans(\'f.constraints.isempty\', array(\'ucf\'))); //TODO Old class Usage
+				$this->addPropertyErrors('.$eName.', new \Change\I18n\PreparedKey(\'f.constraints.isempty\', array(\'ucf\')));
 				return false;
 			}
 			elseif ($prop->hasConstraints()) {
@@ -618,27 +418,25 @@ class AbstractDocumentClass
 	 */
 	public function getCommentaryType($property)
 	{
-		switch ($property->getType())
+		switch ($property->getComputedType())
 		{
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_BOOLEAN :
+			case 'Boolean' :
 				return 'boolean';
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_FLOAT :
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DECIMAL :
+			case 'Float' :
+			case 'Decimal' :
 				return 'float';
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER :
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTID :
+			case 'Integer' :
+			case 'DocumentId' :
 				return 'integer';
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENT :
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTARRAY :
-				$docType = $property->getDocumentType() ? $this->compiler->cleanModelName($property->getDocumentType()) : null;	
-				if ($docType === null)
+			case 'Document' :
+			case 'DocumentArray' :
+				if ($property->getDocumentType() === null)
 				{
 					return '\Change\Documents\AbstractDocument';
 				}
 				else
 				{
-					list ($vendor, $moduleName, $docName) = explode('_', $docType);
-					return $this->getFinalClassNameByCode($vendor, $moduleName, $docName);
+					return $this->compiler->getModelByName($property->getDocumentType())->getDocumentClassName();
 				}
 			default:
 				return 'string';
@@ -649,43 +447,43 @@ class AbstractDocumentClass
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */	
-	protected function buildValConverter($property)
+	protected function buildValConverter($property, $var)
 	{
 		if ($property->getType() === 'DateTime' || $property->getType() === 'Date')
 		{
-			return '$val = ($val === null) ? $val : ($val instanceof \date_Calendar) ? \date_Formatter::format($val, \date_Formatter::SQL_DATE_FORMAT) : is_long($val) ? date(\date_Formatter::SQL_DATE_FORMAT, $val) : $val';
+			return ''.$var.' = ('.$var.' === null) ? '.$var.' : ('.$var.' instanceof \date_Calendar) ? \date_Formatter::format('.$var.', \date_Formatter::SQL_DATE_FORMAT) : is_long('.$var.') ? date(\date_Formatter::SQL_DATE_FORMAT, '.$var.') : '.$var.'';
 		}
 		elseif ($property->getType() === 'Boolean')
 		{
-			return '$val = ($val === null) ? $val : (bool)$val';
+			return ''.$var.' = ('.$var.' === null) ? '.$var.' : (bool)'.$var.'';
 		}
 		elseif ($property->getType() === 'Integer')
 		{
-			return '$val = ($val === null) ? $val : intval($val)';
+			return ''.$var.' = ('.$var.' === null) ? '.$var.' : intval('.$var.')';
 		}
 		elseif ($property->getType() === 'Float' || $property->getType() === 'Decimal')
 		{
-			return '$val = ($val === null) ? $val : floatval($val)';
+			return ''.$var.' = ('.$var.' === null) ? '.$var.' : floatval('.$var.')';
 		}
 		elseif ($property->getType() === 'DocumentId')
 		{
-			return '$val = ($val === null) ? $val : ($val instanceof \Change\Documents\AbstractDocument) ? $val->getId() : intval($val) > 0 ? intval($val) : null';
+			return ''.$var.' = ('.$var.' === null) ? '.$var.' : ('.$var.' instanceof \Change\Documents\AbstractDocument) ? '.$var.'->getId() : intval('.$var.') > 0 ? intval('.$var.') : null';
 		}
 		elseif ($property->getType() === 'JSON')
 		{
-			return '$val = ($val === null || is_string($val)) ? $val : \JsonService::getInstance()->encode($val)';
+			return ''.$var.' = ('.$var.' === null || is_string('.$var.')) ? '.$var.' : \JsonService::getInstance()->encode('.$var.')';
 		}
 		elseif ($property->getType() === 'Object')
 		{
-			return '$val = ($val === null || is_string($val)) ? $val : serialize($val)';
+			return ''.$var.' = ('.$var.' === null || is_string('.$var.')) ? '.$var.' : serialize('.$var.')';
 		}
 		elseif ($property->getType() === 'Document' || $property->getType() === 'DocumentArray')
 		{
-			return '$val = $val === null || !($val instanceof \Change\Documents\AbstractDocument)) ? null : $val->getId()';
+			return ''.$var.' = '.$var.' === null || !('.$var.' instanceof \Change\Documents\AbstractDocument)) ? null : '.$var.'->getId()';
 		}
 		else
 		{
-			return '$val = $val === null ? val : strval($val)';
+			return ''.$var.' = '.$var.' === null ? '.$var.' : strval('.$var.')';
 		}
 	}
 		
@@ -698,7 +496,8 @@ class AbstractDocumentClass
 	{
 		$code = '';
 		$name = $property->getName();
-		$mn = '$this->m_' . $name;
+		$var = '$'.$name;
+		$mn = '$this->' . $name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
@@ -717,42 +516,41 @@ class AbstractDocumentClass
 	 */
 	public function get'.$un.'OldValue()
 	{
-		return $this->getOldValue('.$en.');
+		return $this->getOldPropertyValue('.$en.');
 	}
 	
 	/**
-	 * @param '.$ct.' $val
+	 * @param '.$ct.' '.$var.'
 	 */
-	public function set'.$un.'($val)
+	public function set'.$un.'('.$var.')
 	{
 		$this->checkLoaded();'.PHP_EOL;
-		if ($name === 's18s') {$code .= '		$this->m_s18sArray = null;'.PHP_EOL;}
-		$code .= '		if ($this->set'.$un.'Internal($val))
-		{
-			$this->propertyUpdated('.$en.');
-		}
+		$code .= '		' . $this->buildValConverter($property, $var) . ';'.PHP_EOL;
+		$code .= '		$this->set'.$un.'Internal('.$var.');
 	}'.PHP_EOL;
 		
 		$code .= '
-	protected function set'.$un.'Internal($val)
-	{'.PHP_EOL;
-		$code .= '		' . $this->buildValConverter($property) . ';'.PHP_EOL;	
+	protected function set'.$un.'Internal('.$var.')
+	{
+		$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';'.PHP_EOL;
 		if ($property->getType() === 'Float' || $property->getType() === 'Decimal')
 		{
-			$code .= '		$modified = (abs(floatval('.$mn.') - $val) > 0.0001);'.PHP_EOL;
+			$code .= '		$modified = (abs(floatval($oldVal) - '.$var.') > 0.0001);'.PHP_EOL;
 		}
 		else
 		{
-			$code .= '		$modified = ('.$mn.' !== $val);'.PHP_EOL;
+			$code .= '		$modified = ($oldVal !== '.$var.');'.PHP_EOL;
 		}
 		
 		$code .= '		if ($modified)
 		{
-			$this->setOldValue('.$en.', '.$mn.');
-			'.$mn.' = $val;
-			return true;
+			$this->setOldPropertyValue('.$en.', $oldVal);
+			'.$mn.' = '.$var.';
 		}
-		return false;
+		elseif($this->isPropertyModified('.$en.'))
+		{
+			$this->removeOldPropertyValue('.$en.');
+		}
 	}'.PHP_EOL;
 		
 		$code .= $this->getPropertyExtraGetters($model, $property);
@@ -768,7 +566,7 @@ class AbstractDocumentClass
 	{
 		$code = '';
 		$name = $property->getName();
-		$mn = '$this->m_' . $name;
+		$var = '$'.$name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
@@ -778,119 +576,30 @@ class AbstractDocumentClass
 	 */
 	public function get'.$un.'()
 	{
-		$this->checkLoaded();
-		return $this->getI18nObject()->get'.$un.'();
+		$i18nPart = $this->getCurrentI18nPart();
+		return $i18nPart->get'.$un.'();
 	}
-
+			
 	/**
-	 * @return '.$ct.'
+	 * @param '.$ct.' '.$var.'
 	 */
-	public function getVo'.$un.'()
+	public function set'.$un.'('.$var.')
 	{
-		$this->checkLoaded();
-		return $this->getI18nVoObject()->get'.$un.'();
-	}
-
-	/**
-	 * @param string $lang
-	 * @return '.$ct.'
-	 */
-	public function get'.$un.'ForLang($lang)
-	{
-		$this->checkLoaded();
-		return $this->getI18nObject($lang)->get'.$un.'();
-	}
+		$i18nPart = $this->getCurrentI18nPart();
+		$i18nPart->set'.$un.'('.$var.');
+	} 
 			
 	/**
 	 * @return '.$ct.'|NULL
 	 */
 	public function get'.$un.'OldValue()
 	{
-		return $this->getOldValue('.$en.', $this->getI18nObject()->getLang());
-	}
-			
-	protected function set'.$un.'Internal($val)
-	{'.PHP_EOL;
-		$code .= '		' . $this->buildValConverter($property) . ';'.PHP_EOL;	
-		$code .= '		$i18nObject = $this->getI18nObject();'.PHP_EOL;	
-		$code .= '		$modified = $i18nObject->set'.$un.'($val);'.PHP_EOL;
-		$code .= '		if ($modified) {$this->setOldValue('.$en.', $i18nObject->get'.$un.'OldValue(), $i18nObject->getLang());}'.PHP_EOL;
-		$code .= '		return $modified;
+		return $this->getCurrentI18nPart()->get'.$un.'OldValue();
 	}'.PHP_EOL;
 		
 		$code .= $this->getPropertyExtraGetters($model, $property);
 		return $code;
 	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param \Change\Documents\Generators\Property $property
-	 * @return string
-	 */
-	protected function getSerializedPropertyAccessors($model, $property)
-	{
-		$code = '';
-		$name = $property->getName();
-		$en = $this->escapePHPValue($name);
-		$ct = $this->getCommentaryType($property);
-		$un = ucfirst($name);
-		$code .= '
-	/**
-	 * @return '.$ct.'
-	 */
-	public function get'.$un.'()
-	{
-		$this->checkLoaded();
-		return $this->getS18sProperty('.$en.');
-	}
-		
-	/**
-	 * @return '.$ct.'|NULL
-	 */
-	public function get'.$un.'OldValue()
-	{
-		return $this->getOldValue('.$en.');
-	}
-		
-	/**
-	 * @param '.$ct.' $val
-	 */
-	public function set'.$un.'($val)
-	{
-		$this->checkLoaded();'.PHP_EOL;
-		$code .= '		if ($this->set'.$un.'Internal($val))
-		{
-			$this->propertyUpdated('.$en.');
-		}
-	}'.PHP_EOL;
-	
-		$code .= '
-	protected function set'.$un.'Internal($val)
-	{
-		$oVal = $this->getS18sProperty('.$en.');'.PHP_EOL;
-		$code .= '		' . $this->buildValConverter($property) . ';'.PHP_EOL;
-		if ($property->getType() === 'Float' || $property->getType() === 'Decimal')
-		{
-			$code .= '		$modified = (abs(floatval($oVal) - $val) > 0.0001);'.PHP_EOL;
-		}
-		else
-		{
-			$code .= '		$modified = ($oVal !== $val);'.PHP_EOL;
-		}
-	
-		$code .= '		if ($modified)
-		{
-			$this->setOldValue('.$en.', $oVal);
-			$this->setS18sProperty('.$en.', $val);
-			return true;
-		}
-		return false;
-	}'.PHP_EOL;
-	
-		$code .= $this->getPropertyExtraGetters($model, $property);
-		return $code;
-	}
-
 	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -901,76 +610,13 @@ class AbstractDocumentClass
 	{
 		$code = '';
 		$name = $property->getName();
+		$var = '$'.$name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
-		$modelGetter = ($property instanceof SerializedProperty) ? 'getSerializedProperty' : 'getProperty';
+		$modelGetter =  'getProperty';
 	
-		if ($property->getType() === 'DateTime')
-		{
-			$code .= '
-	/**
-	 * @param string $val
-	 * @return void
-	 */
-	public function setUI'.$un.'($val)
-	{
-		$this->set'.$un.'(\date_Converter::convertDateToGMT($val));
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getUI'.$un.'()
-	{
-		return \date_Converter::convertDateToLocal($this->get'.$un.'());
-	}'.PHP_EOL;
-		}
-		elseif ($property->getType() === 'RichText')
-		{
-			$code .= '
-	/**
-	 * @return string
-	 */
-	public function get'.$un.'AsHtml()
-	{
-		//TODO old XHTMLFragment and BBCode
-		return \f_util_HtmlUtils::renderHtmlFragment($this->get'.$un.'());
-		//$parser = new \website_BBCodeParser();
-		//return $parser->convertXmlToHtml($this->get'.$un.'());
-	}
-			
-	/**
-	 * @param string $val
-	 * @return void
-	 */
-	public function set'.$un.'AsBBCode($val)
-	{
-		$parser = new \website_BBCodeParser();
-		$this->set'.$un.'($parser->convertBBCodeToXml($val, $parser->getModuleProfile()));
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function get'.$un.'AsBBCode()
-	{
-		$parser = new \website_BBCodeParser();
-		return $parser->convertXmlToBBCode($this->get'.$un.'());
-	}'.PHP_EOL;
-		}
-		elseif ($property->getType() === 'LongString' || $property->getType() === 'String')
-		{
-			$code .= '	
-	/**
-	 * @return string
-	 */
-	public function get'.$un.'AsHtml()
-	{
-		return \f_util_HtmlUtils::textToHtml($this->get'.$un.'());
-	}'.PHP_EOL;
-		}
-		elseif ($property->getType() === 'XML')
+		if ($property->getType() === 'XML')
 		{
 			$code .= '
 	/**
@@ -999,8 +645,8 @@ class AbstractDocumentClass
 	 */
 	public function getDecoded'.$un.'()
 	{
-		$val = $this->get'.$un.'();
-		return $val === null ? $val : \JsonService::getInstance()->decode($val);
+		'.$var.' = $this->get'.$un.'();
+		return '.$var.' === null ? '.$var.' : json_decode('.$var.', true);
 	}'.PHP_EOL;
 		}
 		elseif ($property->getType() === 'Object')
@@ -1011,8 +657,8 @@ class AbstractDocumentClass
 	 */
 	public function getDecoded'.$un.'()
 	{
-		$val = $this->get'.$un.'();
-		return $val === null ? $val : unserialize($val);
+		'.$var.' = $this->get'.$un.'();
+		return '.$var.' === null ? '.$var.' : unserialize('.$var.');
 	}'.PHP_EOL;
 		}
 		elseif ($property->getType() === 'DocumentId')
@@ -1023,159 +669,12 @@ class AbstractDocumentClass
 	 */
 	public function get'.$un.'Instance()
 	{
-		return \DocumentHelper::getDocumentInstanceIfExists($this->get'.$un.'()); //TODO Old class Usage
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function get'.$un.'Label()
-	{
-		$prop = $this->getPersistentModel()->'.$modelGetter.'('.$en.');
-		if ($prop && $prop->getFromList())
-		{
-			$list = \list_ListService::getInstance()->getByListId($prop->getFromList());
-			if ($list === null)
-			{
-				return null;
-			}
-			$listItem = $list->getItemByValue($this->get'.$un.'());
-			if ($listItem === null)
-			{
-				return null;
-			}
-			return $listItem->getLabel();
-		}
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function get'.$un.'LabelAsHtml()
-	{
-		$label = $this->get'.$un.'Label();
-		return $label ? \f_util_HtmlUtils::textToHtml($label) : null;
+		return $this->getDocumentManager()->getDocumentInstance($this->get'.$un.'());
 	}'.PHP_EOL;
 		}
 		return $code;
 	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param \Change\Documents\Generators\Property[] $properties
-	 * @return string
-	 */
-	protected function getCascadeDeleteDocumentAccessors($model, $properties)
-	{
-		$pre = array();
-		$post = array();
-		foreach ($properties as $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			$name = $property->getName();
-			$un = ucfirst($name);
-			$en = $this->escapePHPValue($name);
-			if ($property->getType()  === 'DocumentArray')
-			{
-				$pre[] = '		$this->checkLoaded'.$un.'();';
-				$post[] = '		$items = $this->get'.$un.'Array();
-		foreach ($items as $item) {$item->delete();}';
-			}
-			else
-			{
-				$post[] = '		$item = $this->get'.$un.'();
-		if (null !== $item)
-		{
-			$item->delete();
-		}';
-			}
-		}
 		
-		$code = '
-	public function preCascadeDelete()
-	{
-		parent::preCascadeDelete();'.PHP_EOL;
-		$code .= implode(PHP_EOL, $pre);
-		$code .='
-	}
-	
-	public function postCascadeDelete()
-	{'.PHP_EOL;
-		$code .= implode(PHP_EOL, $post);
-		$code .= '
-		parent::postCascadeDelete();
-	}'.PHP_EOL;
-		
-		return $code;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param \Change\Documents\Generators\InverseProperty $property
-	 * @return string
-	 */
-	protected function getInvertPropertyDocumentAccessors($model, $property)
-	{
-		$name = $property->getName();
-		$dt = $this->escapePHPValue($property->getDocumentType());
-		$rn = $this->escapePHPValue($property->getSrcName());
-		$en = $this->escapePHPValue($name);
-		$ct = $this->getCommentaryType($property);
-		$un = ucfirst($name);
-		
-		$code = '	
-	/**
-	 * @return '.$ct.'[]
-	 */
-	public function get'.$un.'ArrayInverse($offset = 0, $nbDocuments = -1)
-	{
-		$query = $this->getDbProvider()->createQuery('.$dt.')
-			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
-			->addOrder(\Order::asc(\'label\'))
-			->setFirstResult($offset)->setMaxResults($nbDocuments);
-		return $query->find();
-	}
-
-	/**
-	 * @return '.$ct.'[]
-	 */
-	public function getPublished'.$un.'ArrayInverse($offset = 0, $nbDocuments = -1)
-	{
-		$query = $this->getDbProvider()->createQuery('.$dt.')
-			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
-			->add(\Restrictions::published())
-			->addOrder(\Order::asc(\'label\'))
-			->setFirstResult($offset)->setMaxResults($nbDocuments);
-		return $query->find();
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function get'.$un.'CountInverse()
-	{
-		$query = $this->getDbProvider()->createQuery('.$dt.')
-			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
-			->setProjection(\Projections::rowCount(\'rows\'));
-		$result = $query->find();
-		return intval($result[0][\'rows\']);
-	}
-	
-	/**
-	 * @return integer
-	 */
-	public function getPublished'.$un.'CountInverse()
-	{
-		$query = $this->getDbProvider()->createQuery('.$dt.')
-			->add(\Restrictions::eq('.$rn.', $this)) //TODO Old class Usage
-			->add(\Restrictions::published())
-			->setProjection(\Projections::rowCount(\'rows\'));
-		$result = $query->find();
-		return intval($result[0][\'rows\']);
-	}'.PHP_EOL;
-		return $code;
-	}
-	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property $property
@@ -1185,7 +684,8 @@ class AbstractDocumentClass
 	{
 		$code = '';
 		$name = $property->getName();
-		$mn = '$this->m_' . $name;
+		$mn = '$this->' . $name;
+		$var = '$'.$name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
@@ -1195,21 +695,25 @@ class AbstractDocumentClass
 	 */
 	public function get'.$un.'OldValueId()
 	{
-		return $this->getOldValue('.$en.');
+		return $this->getOldPropertyValue('.$en.');
 	}
 	
 	/**
-	 * @param '.$ct.' $newValue
+	 * @param '.$ct.' '.$var.'
 	 */
-	public function set'.$un.'($newValue)
+	public function set'.$un.'('.$var.')
 	{
 		$this->checkLoaded();
-		$newId = ($newValue instanceof \Change\Documents\AbstractDocument) ? $this->getProvider()->getCachedDocumentId($newValue) : null;
-		if ('.$mn.' != $newId)
+		$newId = ('.$var.' instanceof \Change\Documents\AbstractDocument) ? $this->getDocumentManager()->initializeRelationDocumentId('.$var.') : null;
+		$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';
+		if ($oldVal !== $newId)
 		{
-			$this->setOldValue('.$en.', '.$mn.');
+			$this->setOldPropertyValue('.$en.', $oldVal);
 			'.$mn.' = $newId;
-			$this->propertyUpdated('.$en.');
+		}
+		elseif ($this->isPropertyModified('.$en.'))
+		{
+			$this->removeOldPropertyValue('.$en.');
 		}
 	}
 
@@ -1228,7 +732,7 @@ class AbstractDocumentClass
 	public function get'.$un.'()
 	{
 		$this->checkLoaded();
-		return ('.$mn.') ? $this->getProvider()->getCachedDocumentById('.$mn.') : null;
+		return ('.$mn.') ? $this->getDocumentManager()->getRelationDocument('.$mn.') : null;
 	}' . PHP_EOL;
 		
 		return $code;
@@ -1243,7 +747,8 @@ class AbstractDocumentClass
 	{
 		$code = '';
 		$name = $property->getName();
-		$mn = '$this->m_' . $name;
+		$var = '$'.$name;
+		$mn = '$this->' . $name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
@@ -1253,12 +758,8 @@ class AbstractDocumentClass
 	 */
 	public function get'.$un.'OldValueIds()
 	{
-		$result = $this->getOldValue('.$en.');
-		if (is_array($result))
-		{
-			return $result;
-		}
-		return array();
+		$result = $this->getOldPropertyValue('.$en.');
+		return (is_array($result)) ? $result : array();
 	}
 	
 	protected function checkLoaded'.$un.'()
@@ -1266,9 +767,9 @@ class AbstractDocumentClass
 		$this->checkLoaded();
 		if (!is_array('.$mn.'))
 		{
-			if ($this->getDocumentPersistentState() != self::PERSISTENTSTATE_NEW)
+			if ($this->getPersistentState() != static::PERSISTENTSTATE_NEW)
 			{
-				'.$mn.' = $this->getProvider()->loadRelations($this, '.$en.');
+				'.$mn.' = $this->getDocumentManager()->getPropertyDocumentIds($this, '.$en.');
 			}
 			else
 			{
@@ -1276,32 +777,47 @@ class AbstractDocumentClass
 			}
 		}
 	}
+	
+	/**
+	 * @param '.$ct.' '.$var.'
+	 */
+	public function add'.$un.'('.$var.')
+	{
+		$this->set'.$un.'(-1, '.$var.');
+	}	
 
 	/**
 	 * @param integer $index
-	 * @param '.$ct.' $newValue
+	 * @param '.$ct.' '.$var.'
 	 */
-	public function set'.$un.'($index, $newValue)
+	public function set'.$un.'($index, '.$var.')
 	{
-		if ($newValue instanceof \Change\Documents\AbstractDocument)
+		if ('.$var.' instanceof \Change\Documents\AbstractDocument)
 		{
-			$newId = $this->getProvider()->getCachedDocumentId($newValue); 
-			$index = intval($index);
 			$this->checkLoaded'.$un.'();
+			$newId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');			
 			if (!in_array($newId, '.$mn.'))
 			{
-				$this->setOldValue('.$en.', '.$mn.');
+				$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';
+				$index = intval($index);
 				if ($index < 0 || $index > count('.$mn.'))
 				{
 					$index = count('.$mn.');
 				}
-				'.$mn.'[$index] = $newId;
-				$this->propertyUpdated('.$en.');
-			}
+				'.$mn.'[$index] = $newId;		
+				if ($oldVal != '.$mn.')
+				{
+					$this->setOldPropertyValue('.$en.', $oldVal);
+				}
+				elseif ($this->isPropertyModified('.$en.'))
+				{
+					$this->removeOldPropertyValue('.$en.');
+				}
+			}	
 		}
 		else
 		{
-			throw new \Exception(__METHOD__. \': document can not be null\');
+			throw new \Exception(__METHOD__. \': Invalid document\');
 		}
 	}
 
@@ -1313,60 +829,56 @@ class AbstractDocumentClass
 		if (is_array($newValueArray))
 		{
 			$this->checkLoaded'.$un.'();
-			$newValueIds = array(); $dbp = $this->getProvider();
-			array_walk($newValueArray, function ($newValue, $index) use (&$newValueIds, $dbp) {
-				$newValueIds[] = $dbp->getCachedDocumentId($newValue);
+			$newValueIds = array(); 
+			$dm = $this->getDocumentManager();
+			array_walk($newValueArray, function ($newValue, $index) use (&$newValueIds, $dm) {
+				if ($newValue instanceof \Change\Documents\AbstractDocument)
+				{
+					$newValueIds[] = $dm->initializeRelationDocumentId($newValue);
+				}
+				else
+				{
+					throw new \Exception(__METHOD__. \': Invalid document\');
+				}
 			});
-			if ('.$mn.' != $newValueIds)
+			$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';	
+			if ($oldVal != $newValueIds)
 			{
-				$this->setOldValue('.$en.', '.$mn.');
+				$this->setOldPropertyValue('.$en.', $oldVal);
 				'.$mn.' = $newValueIds;
-				$this->propertyUpdated('.$en.');
 			}
-		}
-		else
-		{
-			throw new \Exception(\'Invalid type of document array\');
-		}
-	}
-
-	/**
-	 * @param '.$ct.' $newValue
-	 */
-	public function add'.$un.'($newValue)
-	{
-		if ($newValue instanceof \Change\Documents\AbstractDocument)
-		{ 
-			$newId = $this->getProvider()->getCachedDocumentId($newValue);
-			$this->checkLoaded'.$un.'();
-			if (!in_array($newId, '.$mn.'))
+			elseif ($this->isPropertyModified('.$en.'))
 			{
-				$this->setOldValue('.$en.', '.$mn.');
-				'.$mn.'[] = $newId;
-				$this->propertyUpdated('.$en.');
+				$this->removeOldPropertyValue('.$en.');
 			}
 		}
 		else
 		{
-			throw new \Exception(__METHOD__. \': document can not be null\');
+			throw new \Exception(\'Invalid array\');
 		}
 	}
 
 	/**
-	 * @param '.$ct.' $value
+	 * @param '.$ct.' '.$var.'
 	 */
-	public function remove'.$un.'($value)
+	public function remove'.$un.'('.$var.')
 	{
 		$this->checkLoaded'.$un.'();
-		if ($value instanceof \Change\Documents\AbstractDocument)
+		if ('.$var.' instanceof \Change\Documents\AbstractDocument)
 		{
-			$valueId = $value->getId();
-			$index = array_search($valueId, '.$mn.');
-			if ($index !== false)
+			$valueId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');
+			if (in_array($valueId, '.$mn.'))
 			{
-				$this->setOldValue('.$en.', '.$mn.');
+				$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';
 				unset('.$mn.'[$index]);
-				$this->propertyUpdated('.$en.');
+				if ($oldVal != '.$mn.')
+				{
+					$this->setOldPropertyValue('.$en.', $oldVal);
+				}
+				elseif ($this->isPropertyModified('.$en.'))
+				{
+					$this->removeOldPropertyValue('.$en.');
+				}
 			}
 		}
 	}
@@ -1379,9 +891,16 @@ class AbstractDocumentClass
 		$this->checkLoaded'.$un.'();
 		if (isset('.$mn.'[$index]))
 		{
-			$this->setOldValue('.$en.', '.$mn.');
+			$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';
 			unset('.$mn.'[$index]);
-			$this->propertyUpdated('.$en.');
+			if ($oldVal != '.$mn.')
+			{
+				$this->setOldPropertyValue('.$en.', $oldVal);
+			}
+			elseif ($this->isPropertyModified('.$en.'))
+			{
+				$this->removeOldPropertyValue('.$en.');
+			}
 		}
 	}
 
@@ -1390,9 +909,16 @@ class AbstractDocumentClass
 		$this->checkLoaded'.$un.'();
 		if (count('.$mn.'))
 		{
-			$this->setOldValue('.$en.', '.$mn.');
+			$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';
 			'.$mn.' = array();
-			$this->propertyUpdated('.$en.');
+			if ($oldVal != '.$mn.')
+			{
+				$this->setOldPropertyValue('.$en.', $oldVal);
+			}
+			elseif ($this->isPropertyModified('.$en.'))
+			{
+				$this->removeOldPropertyValue('.$en.');
+			}
 		}
 	}
 
@@ -1403,7 +929,7 @@ class AbstractDocumentClass
 	public function get'.$un.'($index)
 	{
 		$this->checkLoaded'.$un.'();
-		return isset('.$mn.'[$index]) ?  $this->getProvider()->getCachedDocumentById('.$mn.'[$index]) : null;
+		return isset('.$mn.'[$index]) ?  $this->getDocumentManager()->getRelationDocument('.$mn.'[$index]) : null;
 	}
 	
 	/**
@@ -1421,49 +947,28 @@ class AbstractDocumentClass
 	public function get'.$un.'Array()
 	{
 		$this->checkLoaded'.$un.'();
-		$documents = array(); $dbp = $this->getProvider();
-		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dbp) {
-			$documents[] = $dbp->getCachedDocumentById($documentId);
+		$documents = array(); 
+		$dm = $this->getDocumentManager();
+		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dm) {
+			$documents[] = $dm->getRelationDocument($documentId);
 		});
 		return $documents;
 	}
 
 	/**
-	 * @return '.$ct.'[]
-	 */
-	public function getPublished'.$un.'Array()
-	{
-		$this->checkLoaded'.$un.'();
-		$documents = array(); $dbp = $this->getProvider();
-		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dbp) {
-			$document = $dbp->getCachedDocumentById($documentId);
-			if ($document->isPublished()) {$documents[] = $document;}
-		});
-		return $documents;
-	}
-
-	/**
+	 * @param '.$ct.' '.$var.'
 	 * @return integer
 	 */
-	public function getPublished'.$un.'Count()
+	public function getIndexof'.$un.'('.$var.')
 	{
-		return count($this->getPublished'.$un.'Array());
-	}
-
-	/**
-	 * @param '.$ct.' $value
-	 * @return integer
-	 */
-	public function getIndexof'.$un.'($value)
-	{
-		if ($value instanceof \Change\Documents\AbstractDocument)
+		if ('.$var.' instanceof \Change\Documents\AbstractDocument)
 		{
 			$this->checkLoaded'.$un.'();
-			$valueId = $this->getProvider()->getCachedDocumentId($value);
+			$valueId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');
 			$index = array_search($valueId, '.$mn.');
 			return $index !== false ? $index : -1;
 		}
-		throw new \Exception(__METHOD__. \': document can not be null\');
+		throw new \Exception(__METHOD__. \': Invalid document\');
 	}' . PHP_EOL;
 		return $code;
 	}

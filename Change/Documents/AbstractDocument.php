@@ -5,183 +5,92 @@ namespace Change\Documents;
  * @name \Change\Documents\AbstractDocument
  */
 abstract class AbstractDocument
-{
+{	
 	const PERSISTENTSTATE_NEW = 0;
+	
 	const PERSISTENTSTATE_INITIALIZED = 2;
+	
 	const PERSISTENTSTATE_LOADED = 3;
 	const PERSISTENTSTATE_MODIFIED = 4;
+	
 	const PERSISTENTSTATE_DELETED = 5;
 	
-	const PROPERTYTYPE_BOOLEAN = 'Boolean';
-	const PROPERTYTYPE_INTEGER = 'Integer';
-	const PROPERTYTYPE_FLOAT = 'Float';
-	const PROPERTYTYPE_DECIMAL = 'Decimal';
-	
-	const PROPERTYTYPE_DATETIME = 'DateTime';
-	const PROPERTYTYPE_DATE = 'Date';
-	
-	const PROPERTYTYPE_STRING = 'String';
-
-	const PROPERTYTYPE_LONGSTRING = 'LongString';
-	const PROPERTYTYPE_XML = 'XML';
-	const PROPERTYTYPE_RICHTEXT = 'RichText';
-	const PROPERTYTYPE_JSON = 'JSON';
-
-	const PROPERTYTYPE_LOB = 'Lob';
-	const PROPERTYTYPE_OBJECT = 'Object';
-		
-	const PROPERTYTYPE_DOCUMENTID = 'DocumentId';
-	const PROPERTYTYPE_DOCUMENT = 'Document';
-	const PROPERTYTYPE_DOCUMENTARRAY = 'DocumentArray';
-	
-	const STATUS_DRAFT = 'DRAFT';
-	const STATUS_CORRECTION = 'CORRECTION';
-	const STATUS_ACTIVE = 'ACTIVE';
-	const STATUS_PUBLISHED = 'PUBLISHED';
-	const STATUS_DEACTIVATED = 'DEACTIVATED';
-	const STATUS_FILED = 'FILED';
-	const STATUS_DEPRECATED = 'DEPRECATED';
-	const STATUS_TRASH = 'TRASH';
-	const STATUS_WORKFLOW = 'WORKFLOW';
-	
 	/**
-	 * @var \Change\Documents\DocumentServices
-	 */	
-	protected $documentServices;
-	
-	/**
-	 * @var \Change\Documents\AbstractModel
+	 * @var integer
 	 */
-	protected $model;
+	private $persistentState;
+
+	/**
+	 * @var integer
+	 */
+	private $id = 0;
 	
 	/**
 	 * @var string
 	 */
-	private $m_persistentState;
-
-	/**
-	 * @var integer
-	 */
-	private $m_id = 0;
+	private $documentModelName;
 	
 	/**
 	 * @var integer
 	 */
-	private $m_treeId;
+	private $treeId;
 	
-	/**
-	 * @var \Change\Documents\I18nInfo
-	 */
-	private $m_i18nInfo;
-
 	/**
 	 * @var array
 	 */
 	private $modifiedProperties = array();
 
 	/**
-	 * @var array
-	 */
-	private $modifiedPropertyValues = array();
-
-	/**
-	 * @var array<Integer, \Change\Documents\AbstractDocument>
-	 */
-	private $m_documentInverse;
-
-	/**
-	 * @var boolean
-	 */
-	private $is_i18InfoModified = false;
-
-	/**
-	 * @var If something indicates it wants to insert the document in tree, is it possible ?
-	 */
-	private $insertInTree = true;
-
-	/**
-	 * @var integer
-	 */
-	private $_parentNodeId;
-
-	/**
 	 * @var array<String,String|String[]>
 	 */
-	private $m_metas;
+	private $metas;
 	
 	/**
 	 * @var boolean
 	 */
-	private $metasModified = false;
+	private $modifiedMetas = false;
+	
+	/**
+	 * @var array
+	 */
+	private $propertiesErrors;
+	
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+	
+	/**
+	 * @var \Change\Documents\AbstractModel
+	 */
+	protected $documentModel;
+	
+	/**
+	 * @var \Change\Documents\AbstractService
+	 */
+	protected $documentService;
 
 	/**
-	 * @var f_persistentdocument_I18nPersistentDocument
+	 * @param \Change\Documents\DocumentManager $manager
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Documents\AbstractService $service
 	 */
-	private $i18nVoObject;
-
-	/**
-	 * @param integer $id
-	 * @param I18nInfo $i18nInfo
-	 * @param integer $treeId
-	 */
-	public function __construct($id = 0, $i18nInfo = null, $treeId = null)
+	public function __construct(\Change\Documents\DocumentManager $manager, \Change\Documents\AbstractModel $model, \Change\Documents\AbstractService $service)
 	{
-		$this->m_id = intval($id);
-		if ($treeId !== null)
-		{
-			$this->m_treeId = intval($treeId);
-		}
-		
-		if (is_null($i18nInfo))
-		{
-			$i18nInfo = new I18nInfo();
-			$i18nInfo->setVo($this->getContextLang());
-		}
-
-		$this->m_i18nInfo = $i18nInfo;
-
-		if ($id > 0)
-		{
-			$this->setDocumentPersistentState(self::PERSISTENTSTATE_INITIALIZED);
-		}
-		else
-		{
-			$this->setDocumentPersistentState(self::PERSISTENTSTATE_NEW);
-			$this->setDefaultValues();
-			if (count($this->modifiedProperties) > 0)
-			{
-				$this->modifiedProperties = array();
-				$this->modifiedPropertyValues = array();
-			}
-		}
+		$this->setDocumentContext($manager, $model, $service);
 	}
 	
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $manager
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Documents\AbstractService $service
 	 */
-	public function initialize(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
+	public function setDocumentContext(\Change\Documents\DocumentManager $manager, \Change\Documents\AbstractModel $model, \Change\Documents\AbstractService $service)
 	{
-		$this->documentServices = $documentServices;
-		$this->model = $model;
-	}
-		
-	/**
-	 * Revert document properties values from PersistentDocumentArray to integer before
-	 * to serialize documents for cache storage. Empty here, called by child classes.
-	 */
-	protected function __cleanDocumentPropertiesForSleep()
-	{
-		// nothing
-	}
-	
-	/**
-	 * @return string[] the property names to be serialized. Other properties will be ignored 
-	 */
-	protected function __getSerializedPropertyNames()
-	{
-		return array("\0".__CLASS__."\0m_id", "\0".__CLASS__."\0m_treeId",
-		 "\0".__CLASS__."\0m_i18nInfo", "\0".__CLASS__."\0m_persistentState",
-		 "\0".__CLASS__."\0i18nVoObject");
+		$this->documentManager = $manager;
+		$this->documentModel = $model;
+		$this->documentModelName = $model->getName();
+		$this->documentService = $service;
 	}
 	
 	/**
@@ -189,688 +98,202 @@ abstract class AbstractDocument
 	 */
 	public function __sleep()
 	{
-		return $this->__getSerializedPropertyNames();
-	}
-
-	/**
-	 * Used by provider where document inserted in tree
-	 * @param integer $treeId or null
-	 */
-	public function setProviderTreeId($treeId)
-	{
-		$this->m_treeId = $treeId;
+		return array("\0".__CLASS__."\0id", "\0".__CLASS__."\0documentModelName");
 	}
 	
 	/**
-	 * @return integer the count of available langs, after deleting
 	 */
-	public function removeContextLang()
+	public function __wakeup()
 	{
-		$this->is_i18InfoModified = true;
-		$contextLang = $this->getContextLang();
-
-		$this->getI18nInfo()->removeLabel($contextLang);
-		//Si on supprime la vo on réattribut la vo a la premiere traduction dispo
-		$labels = $this->getI18nInfo()->getLabels();
-		$labelCount = count($labels);
-		if ($labelCount > 0 && $this->getLang() == $contextLang)
-		{
-			$lang = key($labels);
-			if ($lang != $contextLang)
-			{
-				foreach ($this->getPersistentModel()->getPropertiesInfos() as $name => $property)
-				{
-					$this->propertyUpdated($name);
-				}
-				$this->setLang($lang);
-			}
-		}
-
-		return $labelCount;
+		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postUnserialze($this);
 	}
 
 	/**
-	 * @param boolean $insertInTree
+	 * @api
+	 * @return \Change\Documents\DocumentManager
 	 */
-	public function setInsertInTree($insertInTree)
+	public function getDocumentManager()
 	{
-		$this->insertInTree = $insertInTree;
+		return $this->documentManager;
+	}
+	
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public function getDocumentModel()
+	{
+		return $this->documentModel;
+	}
+	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getDocumentModelName()
+	{
+		return $this->documentModelName;
+	}
+	
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractService
+	 */
+	public function getDocumentService()
+	{
+		return $this->documentService;
+	}
+	
+	/**
+	 * @param integer $id
+	 * @param integer $persistentState
+	 * @param integer|null $treeId
+	 */
+	public function initialize($id, $persistentState, $treeId)
+	{
+		$this->id = intval($id);
+		$this->setPersistentState($persistentState);
+		$this->setTreeId($treeId);
 	}
 
 	/**
-	 * @param integer $parentNodeId
+	 * @param integer|null $treeId
 	 */
-	public final function setParentNodeId($parentNodeId)
+	public function setTreeId($treeId)
 	{
-		$this->_parentNodeId = $parentNodeId;
+		$this->treeId = ($treeId !== null) ? intval($treeId) : null;
 	}
-
+	
 	/**
-	 * @return integer
-	 */
-	public final function getParentNodeId()
-	{
-		return $this->_parentNodeId;
-	}
-
-	/**
-	 * @return integer or NULL
+	 * @api
+	 * @return integer|null
 	 */
 	public function getTreeId()
 	{
-		return $this->m_treeId;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function canInsertInTree()
-	{
-		return $this->insertInTree;
+		return $this->treeId;
 	}
 
 	/**
-	 * @return void
-	 */
-	public function __destruct()
-	{
-		$this->documentServices = null;
-		$this->model = null;
-		$this->m_i18nInfo = null;
-		$this->i18nVoObject = null;
-		$this->validationErrors = null;
-		$this->modifiedProperties = null;
-		$this->modifiedPropertyValues = null;
-		$this->m_documentInverse = null;
-		$this->m_metas = null;
-	}
-
-	/**
-	 * @return void
-	 */
-	private function setIsPersisted()
-	{
-		$this->modifiedProperties = array();
-		$this->modifiedPropertyValues = array();
-		$this->is_i18InfoModified = false;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	protected final function addDocumentInverse($document)
-	{
-		$this->checkLoaded();
-
-		if (is_null($this->m_documentInverse))
-		{
-			$this->m_documentInverse = array();
-		}
-
-		$this->m_documentInverse[$document->getId()] = $document;
-		$this->propertyUpdated('documentinverse');
-	}
-
-	/**
-	 * @return void
-	 */
-	public final function saveDocumentsInverse()
-	{
-		if (!is_null($this->m_documentInverse))
-		{
-			foreach ($this->m_documentInverse as $documentId =>$document)
-			{
-				if ($document->isModified())
-				{
-					$document->save();
-				}
-			}
-			$this->m_documentInverse = null;
-		}
-	}
-
-	/**
-	 * Set the default properties value
+	 * Set the default properties value for new document
 	 */
 	protected function setDefaultValues()
 	{
-	}
-
-	/**
-	 * @return string the parent node label | null
-	 */
-	function getParentNodeLabel()
-	{
-		//TODO Old class Usage
-		$parentDocument = \TreeService::getInstance()->getParentDocument($this);
-		if ($parentDocument === null)
-		{
-			return null;
-		}
-		return $parentDocument->getLabel();
-	}
-
-	/**
-	 * @return string the path of the document, ie all the ancestors labels separated by '/' | null
-	 */
-	function getPath()
-	{
-		$path = $this->getDocumentService()->getPathOf($this, '/');
-		if (empty($path))
-		{
-			return null;
-		}
-		return $path;
-	}
-
-	/**
-	 * @return string
-	 */
-	protected final function getContextLang()
-	{
-		return \Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getLang();
-	}
-
-	/**
-	 * @return \Change\Documents\I18nInfo
-	 */
-	public final function getI18nInfo()
-	{
-		return $this->m_i18nInfo;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isLocalized()
-	{
-		return false;
-	}
-
-	/**
-	 * @return f_persistentdocument_I18nPersistentDocument
-	 */
-	protected function getI18nVoObject()
-	{
-		if ($this->i18nVoObject === null)
-		{
-			$this->i18nVoObject = $this->getDbProvider()->getI18nDocument($this, $this->getLang(), true);
-		}
-		return $this->i18nVoObject;
+		$this->modifiedProperties = array();
+		$this->persistentState = self::PERSISTENTSTATE_NEW;
 	}
 	
 	/**
-	 * For the use of PersistentProvider
-	 * @return f_persistentdocument_I18nPersistentDocument
-	 */
-	public function getRawI18nVoObject()
-	{
-		return $this->i18nVoObject;
-	}
-
-	/**
-	 * @internal For PersistentProvider usage only
-	 * @param f_persistentdocument_I18nPersistentDocument $i18VoObject
-	 * @return void
-	 */
-	public function setI18nVoObject($i18nVoObject)
-	{
-		$this->i18nVoObject = $i18nVoObject;
-	}
-
-	/**
-	 * @param string $lang null for the current context lang
-	 * @return f_persistentdocument_I18nPersistentDocument
-	 */
-	protected function getI18nObject($lang = null)
-	{
-		if ($lang === null)
-		{
-			$lang = $this->getContextLang();
-		}
-
-		if ($lang === $this->getLang())
-		{
-			return $this->getI18nVoObject();
-		}
-		return $this->getDbProvider()->getI18nDocument($this, $lang);
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isContextLangAvailable()
-	{
-		if (!$this->isLocalized())
-		{
-			return true;
-		}
-
-		return $this->getI18nInfo()->isContextLangAvailable();
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isLangAvailable($lang)
-	{
-		if (!$this->isLocalized())
-		{
-			return true;
-		}
-		return $this->getI18nInfo()->isLangAvailable($lang);
-	}
-
-	//
-	// Methodes de gestion de la persistance du document
-	//
-
-	/**
-	 * @internal ONLY for PersistentProvider usage
 	 * @return integer
 	 */
-	public function getDocumentPersistentState()
+	public function getPersistentState()
 	{
-		return $this->m_persistentState;
+		return $this->persistentState;
 	}
 
 	/**
-	 * @internal ONLY for PersistentProvider usage
 	 * @param integer $newValue
 	 */
-	public function setDocumentPersistentState($newValue)
+	public function setPersistentState($newValue)
 	{
-		$newValue = intval($newValue);
-		if ($newValue < self::PERSISTENTSTATE_NEW  || $newValue > self::PERSISTENTSTATE_DELETED)
+		$oldState = $this->persistentState;
+		switch ($newValue) 
 		{
-			$newValue = self::PERSISTENTSTATE_NEW;
+			case self::PERSISTENTSTATE_NEW:
+			case self::PERSISTENTSTATE_INITIALIZED:
+			case self::PERSISTENTSTATE_LOADED:
+			case self::PERSISTENTSTATE_MODIFIED:
+			case self::PERSISTENTSTATE_DELETED:
+				$this->persistentState = intval($newValue);
+				break;
 		}
-		if ($newValue !== $this->m_persistentState)
-		{
-			$this->m_persistentState = $newValue;
-			switch ($this->m_persistentState)
-			{
-				case self::PERSISTENTSTATE_LOADED:
-					$this->setIsPersisted();
-					break;
-				case self::PERSISTENTSTATE_MODIFIED:
-					break;
-			}
-		}
+		return $oldState;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function persistentStateIsNew()
+	{
+		return $this->persistentState === self::PERSISTENTSTATE_NEW;
 	}
 
 	/**
-	 * @internal ONLY for PersistentProvider usage
-	 * @param boolean $loadAll if all data must be retrieved (by default)
 	 * @return array
 	 */
-	public function getDocumentProperties($loadAll = true)
+	public function getDocumentProperties()
 	{
 		$propertyBag = array();
-		$propertyBag['id'] = $this->m_id;
+		$propertyBag['id'] = $this->id;
 		$propertyBag['model'] = $this->getDocumentModelName();
-		$propertyBag['lang'] = $this->getI18nInfo()->getVo();
-		$propertyBag['label'] = $this->getI18nInfo()->getVoLabel();
 		return $propertyBag;
 	}
 
 	/**
-	 * @internal ONLY for PersistentProvider usage
 	 * @param array $propertyBag
 	 */
 	public function setDocumentProperties($propertyBag)
 	{
 		if (array_key_exists('id', $propertyBag))
 		{
-			$this->m_id = intval($propertyBag['id']);
-		}
-		if (array_key_exists('lang', $propertyBag))
-		{
-			$this->getI18nInfo()->setVo($propertyBag['lang']);
-		}
-		if (array_key_exists('label', $propertyBag))
-		{
-			$this->getI18nInfo()->setVoLabel($propertyBag['label']);
+			$this->id = intval($propertyBag['id']);
 		}
 	}
 
 	/**
-	 * @internal ONLY for PersistentProvider usage
-	 * @param integer $id
-	 */
-	function updateId($id)
-	{
-		$this->m_id = intval($id);
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string[] $propertyNames
-	 * @param boolean $mergeArrayProperties
-	 */
-	public function mergeWith($document, $propertyNames, $mergeArrayProperties = false)
-	{
-		$this->checkLoaded();
-
-		$selfProperties = $this->getDocumentProperties();
-		$newProperties = $document->getDocumentProperties();
-		foreach ($propertyNames as $propertyName)
-		{
-			$selfValues = $selfProperties[$propertyName];
-			$newValues = $newProperties[$propertyName];
-			if (is_array($selfValues))
-			{
-				if ($mergeArrayProperties)
-				{
-					$selfValues = array_unique(array_merge($selfValues, $newValues));
-				}
-				else
-				{
-					$selfValues = $newValues;
-				}
-			}
-			else
-			{
-				$selfValues = $newValues;
-			}
-			$selfProperties[$propertyName] = $selfValues;
-		}
-		$this->setDocumentProperties($selfProperties);
-		if ($this->getPersistentModel()->isLocalized())
-		{
-			$this->getI18nVoObject()->setDocumentProperties($selfProperties);
-		}
-		if (self::PERSISTENTSTATE_LOADED == $this->getDocumentPersistentState())
-		{
-			$this->setDocumentPersistentState(self::PERSISTENTSTATE_MODIFIED);
-		}
-	}
-
-	//
-	// Gestion des données du document
-	//
-
-	/**
-	 * Obtient l'id du document
-	 *
+	 * @api
 	 * @return integer
 	 */
 	public function getId()
 	{
-		return $this->m_id;
-	}
-
-	/**
-	 * @return string
-	 */
-	public final function getLang()
-	{
-		return $this->getI18nInfo()->getVo();
-	}
-
-	/**
-	 * @param string $lang
-	 * @return void
-	 */
-	public final function setLang($lang)
-	{
-		$oldLang = $this->getI18nInfo()->getVo();
-		if ($oldLang != $lang)
-		{
-			$this->checkLoaded();
-			$this->getI18nInfo()->setVo($lang);
-			$this->propertyUpdated('lang');
-			$this->is_i18InfoModified = true;
-			$this->i18nVoObject = null;
-		}
-	}
-
-	/**
-	 * @param string $label
-	 * @return void
-	 */
-	public function setLabel($label)
-	{
-		$this->checkLoaded();
-		if ($this->setLabelInternal($label))
-		{
-			$this->propertyUpdated('label');
-		}
-	}
-
-	/**
-	 * @return boolean
-	 */
-	protected function setLabelInternal($label)
-	{
-		$label = $label === null ? null : strval($label);
-		
-		if ($this->isLocalized())
-		{
-			$labels = $this->getI18nInfo()->getLabels();
-			$lang = $this->getContextLang();
-			$oldLabel = isset($labels[$lang]) ? $labels[$lang] : null;
-			if ($oldLabel !== $label)
-			{
-				$this->is_i18InfoModified = true;
-				$this->getI18nInfo()->setLabel($lang, $label);
-				$this->getI18nObject($lang)->setLabel($label);
-				return true;
-			}
-		}
-		else
-		{
-			$oldLablel = $this->getI18nInfo()->getVoLabel();
-			if ($oldLablel !== $label)
-			{
-				$this->is_i18InfoModified = true;
-				$this->getI18nInfo()->setVoLabel($label);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isI18InfoModified()
-	{
-		return $this->is_i18InfoModified;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLabel()
-	{
-		if ($this->isLocalized())
-		{
-			$labels = $this->getI18nInfo()->getLabels();
-			$lang = $this->getContextLang();
-			return isset($labels[$lang]) ? $labels[$lang] : null;
-		}
-		else
-		{
-			return $this->getI18nInfo()->getVoLabel();
-		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLabelAsHtml()
-	{
-		//TODO Old class Usage
-		return \f_util_HtmlUtils::textToHtml($this->getLabel());
-	}
-
-	/**
-	 * Define the label of the tree node of the document.
-	 * By default, this method returns the label property value.
-	 * @return string
-	 */
-	public function getTreeNodeLabel()
-	{
-		return $this->getDocumentService()->getTreeNodeLabel($this);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getNavigationLabel()
-	{
-		return $this->getDocumentService()->getNavigationLabel($this);
+		return $this->id;
 	}
 	
-	/**
-	 * @return string
-	 */
-	public function getNavigationLabelAsHtml()
-	{
-		//TODO Old class Usage
-		return \f_util_HtmlUtils::textToHtml($this->getNavigationLabel());
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getVoLabel()
-	{
-		return $this->getI18nInfo()->getVoLabel();
-	}
-
-	/**
-	 * @param string $lang
-	 * @return string
-	 */
-	public function getLabelForLang($lang)
-	{
-		if ($this->isLocalized())
-		{
-			return $this->getI18nObject($lang)->getLabel();
-		}
-		else
-		{
-			return $this->getI18nInfo()->getVoLabel();
-		}
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function hasCorrection()
-	{
-		return $this->getPersistentModel()->useCorrection() && $this->getCorrectionid() > 0;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isCorrection()
-	{
-		return $this->getPersistentModel()->useCorrection() && $this->getCorrectionofid() > 0;
-	}
-
 	/**
 	 * @return void
 	 */
-	public final function load()
+	protected final function loadDocument()
 	{
-		if ($this->getDocumentPersistentState() == self::PERSISTENTSTATE_INITIALIZED ||
-		$this->getDocumentPersistentState() == self::PERSISTENTSTATE_MODIFIED)
+		$this->documentManager->loadDocument($this);
+	}
+	
+	protected function checkLoaded()
+	{
+		if ($this->persistentState === self::PERSISTENTSTATE_INITIALIZED)
 		{
 			$this->loadDocument();
 		}
 	}
 
 	/**
-	 * Save PersistentDocument in database.
-	 * @param integer $parentNodeId
+	 * @api
 	 */
-	public final function save($parentNodeId = null)
+	public final function save()
 	{
-		$this->getDocumentService()->save($this, $parentNodeId);
+		$this->documentService->save($this);
 	}
-
-	/**
-	 * persist only metastring field in database
-	 */
-	public function saveMeta()
-	{
-		$this->getDocumentService()->saveMeta($this);
-	}
-
-	/**
-	 * @return void
-	 */
-	public final function deactivate()
-	{
-		$this->getDocumentService()->deactivate($this->getId());
-	}
-
-	/**
-	 * @return void
-	 */
-	public final function activate()
-	{
-		$this->getDocumentService()->activate($this->getId());
-	}
-
-	/**
-	 * @var array
-	 */
-	private $propertiesErrors;
 	
 	/**
+	 * Overrided by compiled document class
+	 */
+	protected function validateProperties()
+	{
+		
+	}
+	
+	/**
+	 * @api
 	 * validate document and return boolean result
 	 * @return boolean
 	 */
 	public function isValid()
 	{
 		$this->propertiesErrors = null;
-		$this->isLabelValid();
+		$this->validateProperties();
 		return !$this->hasPropertiesErrors();
 	}
 	
 	/**
-	 * @return boolean
-	 */	
-	protected function isLabelValid()
-	{
-		if ($this->isNew() || $this->isPropertyModified('label'))
-		{
-			$prop = $this->getPersistentModel()->getProperty('label');
-			$value = $this->getLabel();
-			if ($value === null || $value === '') {
-				if (!$prop->isRequired()) {return true;}			
-				$this->addPropertyErrors('label', \LocaleService::getInstance()->trans('f.constraints.isempty', array('ucf'))); //TODO Old class Usage
-				return false;
-			}
-			if ($prop->hasConstraints())
-			{
-				foreach ($prop->getConstraintArray() as $name => $params) {
-					$params += array('documentId' => $this->getId());
-					$c = \change_Constraints::getByName($name, $params); //TODO Old class Usage
-					if (!$c->isValid($value)) {
-						$this->addPropertyErrors('label', \change_Constraints::formatMessages($c)); //TODO Old class Usage
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasPropertiesErrors()
-	{
-		return is_array($this->propertiesErrors) && count($this->propertiesErrors);
-	}
-	
-	/**
+	 * @api
 	 * @return array<propertyName => string[]>
 	 */
 	public function getPropertiesErrors()
@@ -883,15 +306,19 @@ abstract class AbstractDocument
 	}
 	
 	/**
+	 * @return boolean
+	 */
+	protected function hasPropertiesErrors()
+	{
+		return is_array($this->propertiesErrors) && count($this->propertiesErrors);
+	}
+	
+	/**
 	 * @param string $propertyName
 	 * @param string[] $errors
 	 */
-	public function addPropertyErrors($propertyName, $errors)
-	{
-		if (is_string($errors))
-		{
-			$errors = array($errors);
-		}
+	protected function addPropertyErrors($propertyName, $errors)
+	{		
 		if (is_array($errors) && count($errors))
 		{
 			if (!$this->hasPropertiesErrors())
@@ -912,7 +339,7 @@ abstract class AbstractDocument
 	/**
 	 * @param string $propertyName
 	 */
-	public function clearPropertyErrors($propertyName = null)
+	protected function clearPropertyErrors($propertyName = null)
 	{
 		if ($propertyName === null)
 		{
@@ -924,139 +351,43 @@ abstract class AbstractDocument
 		}
 	}
 	
+	
+		
 	/**
-	 * delete PersistentDocument in Database
+	 * @param string $propertyName
+	 * @param mixed $value
 	 */
-	public final function delete()
+	protected function setOldPropertyValue($propertyName, $value)
 	{
-		$this->getDocumentService()->delete($this);
-	}
-
-	/**
-	 * Load relations items
-	 * @internal Only for PersistentProvider usage
-	 */
-	public function preCascadeDelete()
-	{
-	}
-
-	/**
-	 * Delete relations items
-	 * @internal Only for PersistentProvider usage
-	 */
-	public function postCascadeDelete()
-	{
-	}
-
-	protected function checkLoaded()
-	{
-		if ($this->m_persistentState === self::PERSISTENTSTATE_INITIALIZED)
+		if (!array_key_exists($propertyName, $this->modifiedProperties))
 		{
-			$this->loadDocument();
+			$this->modifiedProperties[$propertyName] = $value;
 		}
-
-		return $this->getDocumentPersistentState() != self::PERSISTENTSTATE_INITIALIZED;
 	}
 	
 	/**
-	 * @param string $name
-	 * @param mixed $value
-	 * @param string $lang
-	 */
-	protected final function setOldValue($name, $value, $lang = null)
-	{
-		if ($lang !== null)
-		{
-			if (!isset($this->modifiedPropertyValues[$name]))
-			{
-				$this->modifiedPropertyValues[$name] = array($lang => $value);
-			}
-			elseif (!array_key_exists($lang, $this->modifiedPropertyValues[$name]))
-			{
-				$this->modifiedPropertyValues[$name][$lang] = $value;
-			}
-		}
-		elseif (!array_key_exists($name, $this->modifiedPropertyValues))
-		{
-			$this->modifiedPropertyValues[$name] = $value;
-		}
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $lang
-	 * @return mixed
-	 */
-	protected final function getOldValue($name, $lang = null)
-	{
-		if ($lang !== null)
-		{
-			if (isset($this->modifiedPropertyValues[$name]) && array_key_exists($lang, $this->modifiedPropertyValues[$name]))
-			{
-				return $this->modifiedPropertyValues[$name][$lang];
-			}
-		}
-		elseif (array_key_exists($name, $this->modifiedPropertyValues))
-		{
-			return $this->modifiedPropertyValues[$name];
-		}
-		return null;
-	}
-
-	/**
-	 * @internal used by DocumentService only
-	 * @return array<String => mixed>
-	 */
-	public final function getOldValues()
-	{
-		return $this->modifiedPropertyValues;
-	}
-
-	/**
-	 * @internal used by DocumentService only
-	 * @param array<String => mixed> $oldValues
-	 */
-	public final function setOldValues($oldValues = array())
-	{
-		$this->modifiedPropertyValues = $oldValues;
-	}
-
-	/**
-	 * @param string $propertyName
-	 */
-	protected final function propertyUpdated($propertyName)
-	{
-		if ($this->getDocumentPersistentState() == self::PERSISTENTSTATE_LOADED)
-		{
-			$this->setDocumentPersistentState(self::PERSISTENTSTATE_MODIFIED);
-		}
-		if (!array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			$this->modifiedProperties[$propertyName] = true;
-		}
-		$this->propertyChanged($propertyName);
-	}
-
-	/**
-	 * Called everytime a property has changed.
-	 *
-	 * @param string $propertyName Name of the property that has changed.
-	 */
-	protected function propertyChanged($propertyName)
-	{
-
-	}
-
-	/**
+	 * @api
 	 * @param string $propertyName
 	 * @return boolean
 	 */
 	public function isPropertyModified($propertyName)
 	{
-		return isset($this->modifiedProperties[$propertyName]);
+		return array_key_exists($propertyName, $this->modifiedProperties);
 	}
-
+	
 	/**
+	 * @param string $propertyName
+	 */
+	protected function removeOldPropertyValue($propertyName)
+	{
+		if (array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			unset($this->modifiedProperties[$propertyName]);
+		}
+	}
+	
+	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getModifiedPropertyNames()
@@ -1065,19 +396,39 @@ abstract class AbstractDocument
 	}
 
 	/**
-	 * @param string[] $modifiedPropertyNames
+	 * @api
+	 * @param string $propertyName
+	 * @return mixed
 	 */
-	public function setModifiedPropertyNames($modifiedPropertyNames = array())
+	public function getOldPropertyValue($propertyName)
 	{
-		$this->modifiedProperties = array();
-		foreach ($modifiedPropertyNames as $name)
+		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
-			$this->modifiedProperties[$name] = true;
+			return $this->modifiedProperties[$propertyName];
 		}
-		$this->is_i18InfoModified = isset($this->modifiedProperties["lang"]) || isset($this->modifiedProperties["label"]);
+		return null;
 	}
 
 	/**
+	 * @api
+	 * @return array<string => mixed>
+	 */
+	public function getOldPropertyValues()
+	{
+		return $this->modifiedProperties;
+	}
+
+	/**
+	 * Called everytime a property has changed.
+	 * @param string $propertyName Name of the property that has changed.
+	 */
+	protected function propertyChanged($propertyName)
+	{
+
+	}
+
+	/**
+	 * @api
 	 * @param \Change\Documents\AbstractDocument $b
 	 * @return boolean
 	 */
@@ -1093,398 +444,117 @@ abstract class AbstractDocument
 	{
 		return $this->getDocumentModelName().' '.$this->getId();
 	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isNew()
-	{
-		return self::PERSISTENTSTATE_NEW === $this->m_persistentState;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isModified()
-	{
-		return self::PERSISTENTSTATE_MODIFIED === $this->m_persistentState;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isDeleted()
-	{
-		return self::PERSISTENTSTATE_DELETED === $this->m_persistentState;
-	}
-
-	/**
-	 * @return void
-	 */
-	protected final function loadDocument()
-	{
-		$this->getDbProvider()->loadDocument($this);
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $sourceDocument
-	 */
-	function copyMutateSource($sourceDocument)
-	{
-		$this->m_id = $sourceDocument->m_id;
-		$this->m_i18nInfo = $sourceDocument->m_i18nInfo;
-		$this->m_treeId = $sourceDocument->m_treeId;
-		$this->setDocumentPersistentState(self::PERSISTENTSTATE_MODIFIED);
-		unset($this->modifiedProperties['documentversion']);
-	}
-
-	/**
-	 * @param boolean $recursive
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function duplicate($recursive = false)
-	{
-		$duplicate = $this->getDocumentService()->getNewDocumentInstance();
-		$this->transfertProperties($duplicate, $recursive, true);
-		return $duplicate;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param boolean $copyToVo
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function copyPropertiesTo($document, $copyToVo = true)
-	{
-		$this->transfertProperties($document, false, $copyToVo);
-		return $document;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param array<String> $propertiesNames
-	 * @param boolean $copyToVo
-	 * @return \Change\Documents\AbstractDocument
-	 */
-	public function copyPropertiesListTo($document, $propertiesNames, $copyToVo = true)
-	{
-		$model = $this->getPersistentModel();
-		$destModel = $document->getPersistentModel();
-
-		if ($copyToVo)
-		{
-			$contextLang = $this->getContextLang();
-			$document->setLang($contextLang);
-			$document->setLabel($this->getLabel());
-		}
-
-		//Local copy of properties
-		foreach ($propertiesNames as $propertyName)
-		{
-			//System property ignored
-			if ($propertyName == 'id' || $propertyName == 'model' || $propertyName == 'lang')
-			{
-				continue;
-			}
-			$propertyInfo = $model->getProperty($propertyName);
-
-			//Invalid source or destination property Ignored
-			if (is_null($propertyInfo) || is_null($destModel->getProperty($propertyName)))
-			{
-				continue;
-			}
-
-			$this->transfertProperty($propertyInfo, $document, false);
-		}
-		return $document;
-	}
-
-	/**
-	 * Copy properties values for the current context lang to the document
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param boolean $transfertToVo
-	 * @param boolean $recursive
-	 */
-	private function transfertProperties($document, $recursive = false, $transfertToVo = true)
-	{
-		$model = $this->getPersistentModel();
-		$destModel = $document->getPersistentModel();
-
-		if ($transfertToVo)
-		{
-			$contextLang = $this->getContextLang();
-			$document->setLang($contextLang);
-			$document->setLabel($this->getLabel());
-		}
-
-		//Local copy of properties
-		$properties = $model->getPropertiesInfos();
-		foreach ($properties as $propertyName => $propertyInfo)
-		{
-			//System property ignored
-			if ($propertyName == 'id' || $propertyName == 'model' || $propertyName == 'lang' || $propertyName == 'documentversion')
-			{
-				continue;
-			}
-
-			//Invalid destination property Ignored
-			if (is_null($destModel->getProperty($propertyName)))
-			{
-				continue;
-			}
-
-			$this->transfertProperty($propertyInfo, $document, $recursive);
-		}
-	}
-
-	/**
-	 * @param PropertyInfo $propertyInfo
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param boolean $recursive
-	 */
-	private function transfertProperty($propertyInfo, $document, $recursive)
-	{
-		$propertyName = ucfirst($propertyInfo->getName());
-
-		if (!$propertyInfo->isDocument())
-		{
-			$value = $this->{'get'.$propertyName}();
-			$document->{'set'.$propertyName}($value);
-		}
-		else
-		{
-			if (!$propertyInfo->isArray())
-			{
-				$value = $this->{'get'.$propertyName}();
-				if (!is_null($value) && $recursive)
-				{
-					$document->{'set'.$propertyName}($value->duplicate($recursive));
-				}
-				else
-				{
-					$document->{'set'.$propertyName}($value);
-				}
-			}
-			else
-			{
-				$document->{'removeAll'.$propertyName}();
-				foreach ($this->{'get'.$propertyName.'Array'}() as $value)
-				{
-					if ($recursive)
-					{
-						$document->{'add'.$propertyName}($value->duplicate($recursive));
-
-					}
-					else
-					{
-						$document->{'add'.$propertyName}($value);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @return boolean true if the document is published
-	 */
-	public final function isPublished()
-	{
-		return self::STATUS_PUBLISHED === $this->getPublicationstatus();
-	}
-
+		
 	// Metadata management
 
 	/**
+	 * @api
+	 */
+	public function saveMetas()
+	{
+		if ($this->modifiedMetas)
+		{
+			$this->documentManager->saveMetas($this, $this->metas);
+			$this->modifiedMetas = false;
+		}
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedMetas()
+	{
+		return $this->modifiedMetas;
+	}
+		
+	/**
+	 * 
+	 */
+	protected function checkMetasLoaded()
+	{
+		if ($this->metas === null)
+		{
+			$this->metas = $this->documentManager->loadMetas($this);
+			$this->modifiedMetas = false;
+		}
+	}
+	
+	/**
+	 * @api
 	 * @param string $name
 	 * @return boolean
 	 */
 	public function hasMeta($name)
 	{
-		$this->initMetas();
-		return isset($this->m_metas[$name]);
+		$this->checkMetasLoaded();
+		return isset($this->metas[$name]);
 	}
 
 	/**
+	 * @api
 	 * @param string $name
-	 * @return string[]
-	 */
-	public function getMetaMultiple($name)
-	{
-		$this->initMetas();
-		return isset($this->m_metas[$name]) ? $this->m_metas[$name] : array();
-	}
-
-	/**
-	 * @param string $name
-	 * @return string
+	 * @return mixed
 	 */
 	public function getMeta($name)
 	{
-		$this->initMetas();
-		return isset($this->m_metas[$name]) ? $this->m_metas[$name] : null;
+		$this->checkMetasLoaded();
+		return isset($this->metas[$name]) ? $this->metas[$name] : null;
 	}
 
 	/**
+	 * @api
 	 * @param string $name
-	 * @param string|String[] $value
+	 * @param mixed|null $value
 	 */
 	public function setMeta($name, $value)
 	{
-		$this->initMetas();
+		$this->checkMetasLoaded();
 		if ($value === null)
 		{
-			unset($this->m_metas[$name]);
-		}
-		else
-		{
-			$this->m_metas[$name] = $value;
-		}
-		$this->metasModified = true;
-	}
-
-	/**
-	 * @param string $name
-	 * @param string[] $values
-	 * @throws \Exception
-	 */
-	public function setMetaMultiple($name, $values)
-	{
-		$this->initMetas();
-		if ($values === null)
-		{
-			unset($this->m_metas[$name]);
-		}
-		elseif (!is_array($values))
-		{
-			throw new \Exception(__METHOD__.": bad argument. ".var_export($values, true)." is not an array.");
-		}
-		$this->m_metas[$name] = $values;
-		$this->metasModified = true;
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $value
-	 * @throws \Exception
-	 */
-	public function addMetaValue($name, $value)
-	{
-		$this->initMetas();
-		if (!isset($this->m_metas[$name]))
-		{
-			$this->m_metas[$name] = array();
-		}
-		elseif (!is_array($this->m_metas[$name]))
-		{
-			throw new \Exception("Try to add meta value ($value) for a mono-valued metadata ($name) on document ".$this->m_id);
-		}
-		$this->m_metas[$name][] = $value;
-		$this->metasModified = true;
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $value
-	 * @return boolean if value was founded
-	 * @throws \Exception
-	 */
-	public function hasMetaValue($name, $value)
-	{
-		$this->initMetas();
-		if (!isset($this->m_metas[$name]))
-		{
-			return false;
-		}
-		$values = $this->m_metas[$name];
-		if (!is_array($values))
-		{
-			throw new \Exception("Asked for hasMetaValue ($value) for a mono-valued metadata ($name) on document ".$this->m_id);
-		}
-		return array_search($value, $values) !== false;
-	}
-
-	/**
-	 * Remove a value from a multi-valued meta
-	 * @param string $name
-	 * @param string $value
-	 * @return boolean true if meta value was founded
-	 * @throws \Exception
-	 */
-	public function removeMetaValue($name, $value)
-	{
-		$this->initMetas();
-		if (!isset($this->m_metas[$name]))
-		{
-			return false;
-		}
-		$values = $this->m_metas[$name];
-		if (!is_array($values))
-		{
-			throw new \Exception("Try to remove a meta value ($value) for a mono-valued metadata ($name) on document ".$this->m_id);
-		}
-		$key = array_search($value, $values);
-		if ($key === false)
-		{
-			return false;
-		}
-		unset($values[$key]);
-		if (count($values) == 0)
-		{
-			unset($this->m_metas[$name]);
-		}
-		else
-		{
-			$this->m_metas[$name] = $values;
-		}
-		$this->metasModified = true;
-		return true;
-	}
-
-	/**
-	 * Fill metastring field if some meta was modified (ie. call to one of the setMetaXX() methods)
-	 */
-	public function applyMetas()
-	{
-		if ($this->metasModified)
-		{
-			if (!is_array($this->m_metas) || (count($this->m_metas) == 0))
+			if (isset($this->metas[$name]))
 			{
-				$this->setMetastring(null);
+				unset($this->metas[$name]);
+				$this->modifiedMetas = true;
 			}
-			else
-			{
-				$this->setMetastring(serialize($this->m_metas));
-			}
-			$this->metasModified = false;
 		}
-	}
-
-	/**
-	 * Make sure $this->metas is initialized properly
-	 */
-	private function initMetas()
-	{
-		if ($this->m_metas === null)
+		elseif ($this->metas[$name] != $value)
 		{
-			$metaString = $this->getMetastring();
-			if ($metaString !== null)
-			{
-				$this->m_metas = unserialize($metaString);
-			}
-			else
-			{
-				$this->m_metas = array();
-			}
+			$this->metas[$name] = $value;
+			$this->modifiedMetas = true;
 		}
 	}
 	
-	//MIGRATION COMPATIBILITY
+	// Generic Method
 	
 	/**
-	 * @return \Change\Db\DbProvider
+	 * @return string
 	 */
-	public function getDbProvider()
-	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-	}
+	abstract public function getCreationDate();
+	
+	/**
+	 * @param string $creationDate
+	 */
+	abstract public function setCreationDate($creationDate);
+	
+	
+	/**
+	 * @return string
+	 */
+	abstract public function getModificationDate();
+	
+	/**
+	 * @param string $modificationDate
+	 */
+	abstract public function setModificationDate($modificationDate);
+	
+	/**
+	 * @return string
+	*/
+	abstract public function getDeletedDate();
+	
+	/**
+	 * @param string $deletedDate
+	 */
+	abstract public function setDeletedDate($deletedDate);
 }

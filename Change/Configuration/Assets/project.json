@@ -1,8 +1,6 @@
 {
 	"defines":{
 		"CHANGE_RELEASE":4,
-		"SUPPORTED_LANGUAGES":"fr en",
-		"UI_SUPPORTED_LANGUAGES":"fr en",
 		"CHANGE_USE_CORRECTION":true,
 		"CHANGE_USE_WORKFLOW":true,
 		"DEFAULT_UI_PROTOCOL":"http",

@@ -18,8 +18,48 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 	{
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->assertEquals('change', $model->getVendor());
-		$this->assertEquals('generic', $model->getModuleName());
-		$this->assertEquals('document', $model->getDocumentName());
+		$this->assertEquals('generic', $model->getShortModuleName());
+		$this->assertEquals('document', $model->getShortName());
+		$this->assertEquals('change_generic_document', $model->getName());
+		
+		$this->assertNull($model->getParent());
+		$this->assertNull($model->getExtendModel());
+		$this->assertCount(0, $model->getProperties());
+		$this->assertCount(0, $model->getInverseProperties());
+		$this->assertNull($model->getExtend());
+		$this->assertNull($model->getInject());
+		$this->assertNull($model->getLocalized());
+		$this->assertNull($model->getIcon());
+		$this->assertNull($model->getHasUrl());
+		$this->assertNull($model->getFrontofficeIndexable());
+		$this->assertNull($model->getBackofficeIndexable());
+		$this->assertNull($model->getPublishable());
+		$this->assertNull($model->getUseCorrection());
+		$this->assertNull($model->getUseVersion());
+		$this->assertNull($model->getEditable());
+		$this->assertEquals('Compilation\change\generic\Documents', $model->getCompilationNameSpace());
+		$this->assertEquals('change\generic\Documents', $model->getNameSpace());
+		
+		$this->assertEquals('documentModel', $model->getShortModelClassName());
+		$this->assertEquals('\Compilation\change\generic\Documents\documentModel', $model->getModelClassName());
+		
+		$this->assertEquals('Abstractdocument', $model->getShortAbstractDocumentClassName());
+		$this->assertEquals('\Compilation\change\generic\Documents\Abstractdocument', $model->getAbstractDocumentClassName());
+		
+		$this->assertEquals('document', $model->getShortDocumentClassName());
+		$this->assertEquals('\change\generic\Documents\document', $model->getDocumentClassName());
+		
+		$this->assertEquals('documentI18n', $model->getShortDocumentI18nClassName());
+		$this->assertEquals('\Compilation\change\generic\Documents\documentI18n', $model->getDocumentI18nClassName());
+		
+		$this->assertEquals('AbstractdocumentService', $model->getShortAbstractServiceClassName());
+		$this->assertEquals('\Compilation\change\generic\Documents\AbstractdocumentService', $model->getAbstractServiceClassName());
+		
+		$this->assertEquals('documentService', $model->getShortServiceClassName());
+		$this->assertEquals('\change\generic\Documents\documentService', $model->getServiceClassName());
+		
+		
+		
 		return $model;
 	}
 	
@@ -29,167 +69,180 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 	public function testSetXmlDocument(\Change\Documents\Generators\Model $model)
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/document.xml');
-		
+		$doc->loadXML('<document icon="icon" has-url="true"
+			frontoffice-indexable="true" backoffice-indexable="true" editable="true" publishable="true" 
+			use-version="true" localized="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http">
+	<properties>
+		<property name="test" />
+	</properties>
+</document>');
 		$model->setXmlDocument($doc);
-		$this->assertEquals('4.0', $model->getModelVersion());
-		$this->assertEquals('document', $model->getIcon());
-		$this->assertTrue($model->getHasUrl());
-		$this->assertTrue($model->getUsePublicationDates());
-		$this->assertTrue($model->getBackofficeIndexable());
-		$this->assertFalse($model->getIndexable());
-		$this->assertFalse($model->getUseCorrection());
-		$this->assertNull($model->getExtend());
-		$this->assertNull($model->getLocalized());
-		$this->assertFalse($model->getInject());		
-		$this->assertCount(13, $model->getProperties());
+		$this->assertCount(1, $model->getProperties());
 		
-		return $model;
+		$model->validate();
+		$this->assertCount(15, $model->getProperties());
+				
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('test'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('creationDate'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('modificationDate'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('deletedDate'));
+		
+		$this->assertTrue($model->getLocalized());
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('voLCID'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('LCID'));
+		
+		$this->assertTrue($model->getEditable());
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('label'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('authorName'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('authorId'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('documentVersion'));
+		
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('publicationStatus'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('startPublication'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('endPublication'));
+		
+		$this->assertTrue($model->getUseCorrection());
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('correctionOfId'));
+
+		$this->assertTrue($model->getUseVersion());
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('versionOfId'));
+		$this->assertCount(0, $model->getAncestors());
+		
+		$model2 = new \Change\Documents\Generators\Model('change', 'generic', 'documentext');
+		$doc->loadXML('<document extend="change_generic_document" inject="true">
+	<properties>
+		<property name="test" default-value="essai" />
+	</properties>
+</document>');
+		$model2->setXmlDocument($doc);
+		$model2->setExtendModel($model);
+		$model2->setParent($model);
+		$this->assertTrue($model2->getInject());
+		$this->assertEquals("change_generic_document", $model2->getExtend());
+		$this->assertEquals($model, $model2->getExtendModel());
+		$this->assertEquals($model, $model2->getParent());
+		
+		$this->assertCount(1, $model2->getAncestors());
+		
+		return $model2;
 	}
 	
 	/**
 	 * @depends testSetXmlDocument
-	 */
-	public function testApplyDefault(\Change\Documents\Generators\Model $defaultmodel)
-	{	
-		$model2 = new \Change\Documents\Generators\Model('change', 'testing', 'test');
+	 */	
+	public function testValidateInheritance(\Change\Documents\Generators\Model $model)
+	{
+		$pm = $model->getParent();
+		$pm->validateInheritance();
 		
+		$model->validateInheritance();
+		
+		$this->assertNull($model->getLocalized());
+		$this->assertTrue($model->checkLocalized());
+		
+		$this->assertNull($model->getUseCorrection());
+		$this->assertTrue($model->checkAncestorUseCorrection());
+		
+		$this->assertNull($model->getUseVersion());
+		$this->assertTrue($model->checkAncestorUseVersion());
+		
+		$this->assertNull($pm->getPropertyByName('test')->getDefaultValue());
+		$this->assertEquals('essai', $model->getPropertyByName('test')->getDefaultValue());
+		
+		$this->assertEquals($pm->getPropertyByName('test'), $model->getPropertyByName('test')->getParent());
+	}
+	
+	
+	public function testInvalidDocumentNode()
+	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestType.xml');
-		$model2->setXmlDocument($doc);
-		$this->assertCount(16, $model2->getProperties());
-		
-		$model2->applyDefault($defaultmodel);
-		$this->assertCount(29, $model2->getProperties());	
+		$doc->loadXML('<documents>
+	<properties>
+		<property name="test" />
+	</properties>
+</documents>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid document element name');
+		$model->setXmlDocument($doc);
+	}
+	
+	public function testInvalidEmptyAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document test="" > </document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid empty attribute value');
+		$model->setXmlDocument($doc);
+	}
+
+	public function testInvalidAttributeName()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document test="test" > </document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid attribute name');
+		$model->setXmlDocument($doc);
+	}
+	
+	public function testInvalidTrueAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document localized="false" > </document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid attribute value true');
+		$model->setXmlDocument($doc);
+	}
+	
+	public function testInvalidPropertiesNode()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document><property name="test" /></document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid properties node name');
+		$model->setXmlDocument($doc);
+	}
+	
+	public function testInvalidPropertyNode()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document><properties><prop name="test" /></properties></document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Invalid property node name');
+		$model->setXmlDocument($doc);
+	}
+	
+	public function testInvalidDuplicatePropertyNode()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<document><properties><property name="test" /><property name="test" /></properties></document>');
+	
+		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
+		$this->setExpectedException('\Exception', 'Duplicate property name');
+		$model->setXmlDocument($doc);
 	}
 	
 	public function testValidate()
 	{
 		$cmp = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test');
-		
-		$this->assertEquals('change_testing_test', $model->getFullName());
-		
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidate.xml');
-		$this->assertNull($model->getLocalized());
-		$model->setXmlDocument($doc);
-		$this->assertCount(2, $model->getProperties());
-		$this->assertTrue($model->getLocalized());
-		$model->applyDefault($cmp->getDefaultModel());
-		$props = $model->getProperties();
-		$this->assertCount(15, $props);
-		$lp = $model->getPropertyByName('label');
-		
-		$this->assertNull($lp->getLocalized());
-		$model->validate(array());
-		
-		$props = $model->getProperties();
-		$this->assertCount(17, $props);
-		
-		$lp = $model->getPropertyByName('label');
-		$this->assertTrue($lp->getLocalized());
-		
-		$sp =  $model->getPropertyByName('publicationstatus');
-		$this->assertTrue($sp->getLocalized());
-		
-		$cp = $model->getPropertyByName('correctionid');
-		$this->assertTrue($cp->getLocalized());
-		
-		$cp = $model->getPropertyByName('correctionofid');
-		$this->assertNull($cp->getLocalized());
-		
-		$expected = array ( 'id', 'label', 'author', 'authorid', 'creationdate', 'modificationdate',
-		'publicationstatus', 'lang', 'modelversion', 'documentversion', 'startpublicationdate',
-		'endpublicationdate', 'metastring', 'string1', 'string2', 'correctionid', 'correctionofid');
-		
-		$this->assertEquals($expected, $model->getCmpPropNames());
-		
-		return $model;
-	}
-	
-	/**
-	 *  @depends testValidate
-	 */
-	public function testValidate2(\Change\Documents\Generators\Model $baseModel)
-	{
-		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test2');
-		$this->assertEquals('change_testing_test2', $model->getFullName());
-		
-		
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidate2.xml');
-		$this->assertNull($model->getLocalized());
-		$model->setXmlDocument($doc);
-		$this->assertEquals('change_testing_test', $model->getExtend());
-		
-		$this->assertCount(3, $model->getProperties());
-		$this->assertCount(2, $model->getSerializedproperties());
-		
-		$model->validate(array($baseModel));
-		$this->assertCount(21, $model->getCmpPropNames());
-		$this->assertFalse($model->getPropertyByName('s18s')->getOverride());
-		$this->assertTrue($model->getPropertyByName('string1')->getOverride());
-		$this->assertFalse($model->getPropertyByName('int1')->getOverride());
-		
-		$this->assertFalse($model->getSerializedPropertyByName('string3')->getOverride());
-	}
-	
-	/**
-	 *  @depends testValidate
-	 */
-	public function testValidate3(\Change\Documents\Generators\Model $baseModel)
-	{
-		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test2');
-		$this->assertEquals('change_testing_test2', $model->getFullName());
-		
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidate3.xml');
-		$this->assertNull($model->getLocalized());
-		$model->setXmlDocument($doc);
-		$this->assertEquals('change_testing_test', $model->getExtend());
-		$model->validate(array($baseModel));
-		$this->assertCount(19, $model->getCmpPropNames());
-		$this->assertEquals('change_testing_test', $model->getPropertyByName('test')->getDocumentType());
-		$this->assertEquals('change_testing_test2', $model->getPropertyByName('test2')->getDocumentType());
-	}
+		$doc->loadXML('<?xml version="1.0" encoding="UTF-8"?>
+<document icon="test">
+	<properties>
+		<property name="string1" type="String" localized="true" />
+		<property name="string2" type="String" />
+	</properties>
+</document>');
 
-	/**
-	 *  
-	 */
-	public function testValidateInjection()
-	{
-		$model = new \Change\Documents\Generators\Model('change', 'testing', 'inject1');
-		$this->assertEquals('change_testing_inject1', $model->getFullName());
-	
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidateInject1.xml');
 		$model->setXmlDocument($doc);
-		$this->assertNull($model->getExtend());
-		$model->validate(array());
-		
-		$this->assertCount(3, $model->getCmpPropNames());
-		
-		$modelInject = new \Change\Documents\Generators\Model('change', 'testing', 'inject3');
-		$this->assertEquals('change_testing_inject3', $modelInject->getFullName());
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidateInject3.xml');
-		$modelInject->setXmlDocument($doc);
-		$this->assertEquals('change_testing_inject1', $modelInject->getExtend());
-		$this->assertTrue($modelInject->getInject());
-		$modelInject->validate(array($model));
-		$this->assertCount(5, $modelInject->getCmpPropNames());
-		
-		
-		$modelExt = new \Change\Documents\Generators\Model('change', 'testing', 'inject2');
-		$this->assertEquals('change_testing_inject2', $modelExt->getFullName());
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->load(__DIR__ . '/TestAssets/TestValidateInject2.xml');
-		$modelExt->setXmlDocument($doc);
-		$this->assertEquals('change_testing_inject1', $modelExt->getExtend());
-		$this->assertNull($modelExt->getInject());
-		$modelExt->validate(array($model, $modelInject));
-		$this->assertCount(6, $modelExt->getCmpPropNames());
-		
+		$model->validate();
+		$this->assertCount(5, $model->getProperties());
+		$this->assertNull($model->getLocalized());
 	}
 }

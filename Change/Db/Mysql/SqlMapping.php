@@ -7,28 +7,6 @@ namespace Change\Db\Mysql;
 class SqlMapping
 {
 	/**
-	 * @var string[]
-	 */
-	protected $i18nfieldNames;
-	
-	/**
-	 * @return string[]
-	 */
-	public function getI18nFieldNames()
-	{
-		if ($this->i18nfieldNames === null)
-		{
-			$array = array('lang_vo');
-			foreach (\Change\Application::getInstance()->getApplicationServices()->getI18nManager()->getSupportedLanguages() as $lang)
-			{
-				$array[] = 'label_'.$lang;
-			}
-			$this->i18nfieldNames = $array;
-		}
-		return $this->i18nfieldNames;
-	}
-	
-	/**
 	 * @return string
 	 */
 	public function getI18nSuffix()
@@ -47,34 +25,14 @@ class SqlMapping
 	}
 	
 	/**
-	 * @param string $documentTableName
+	 * @param string $documentName
 	 * @return string
 	 */
-	public function getDocumentI18nTableName($documentTableName)
+	public function getDocumentI18nTableName($documentName)
 	{
-		return $documentTableName . $this->getI18nSuffix();
+		return $this->getDocumentTableName($documentName) . $this->getI18nSuffix();
 	}
-	
-	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return string
-	 */
-	public function getDocumentTableNameByModel($model)
-	{
-		$names = $model->getAncestorModelNames();
-		return (count($names)) ? $this->getDocumentTableName($names[0]->getName()) : $this->getDocumentTableName($model->getName());
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return string
-	 */
-	public function getDocumentI18nTableNameByModel($model)
-	{
-		$documentTableName = $this->getDocumentTableNameByModel($model);
-		return $this->getDocumentI18nTableName($documentTableName);
-	}
-	
+		
 	/**
 	 * @param string $propertyName
 	 * @return string
@@ -88,79 +46,10 @@ class SqlMapping
 				return 'document_id';
 			case 'model':
 				return 'document_model';
-			case 'lang':
-				return 'document_lang';
-			case 'correctionofid':
-				return 'document_correctionofid';
-			case 'documentversion':
-				return 'document_version';
-			case 'metastring':
-				return 'document_metas';
-			case 's18s':
-				return 'document_s18s';
-			case 'label':
-			case 'author':
-			case 'authorid':
-			case 'creationdate':
-			case 'modificationdate':
-			case 'publicationstatus':
-			case 'modelversion':
-			case 'startpublicationdate':
-			case 'endpublicationdate':
-			case 'correctionid':
-				return 'document_' . $pn;
 		}
 		return $pn;
 	}
-	
-	/**
-	 * @param \Change\Documents\Property $property
-	 * @return string
-	 */
-	public function getDocumentFieldNameByProperty($property)
-	{
-		$propertyName = $property->getDbMapping() ? $property->getDbMapping() : $property->getName();
-		return $this->getDocumentFieldName($propertyName);
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return string
-	 */
-	public function getDocumentI18nFieldName($propertyName)
-	{
-		$pn = strtolower($propertyName);
-		switch ($pn)
-		{
-			case 'id':
-				return 'document_id';
-			case 'lang':
-				return 'lang_i18n';
-			case 'label':
-			case 'author':
-			case 'authorid':
-			case 'creationdate':
-			case 'modificationdate':
-			case 'publicationstatus':
-			case 'modelversion':
-			case 'startpublicationdate':
-			case 'endpublicationdate':
-			case 'correctionid':
-				return 'document_' . $pn . $this->getI18nSuffix();
-		}
-		return $pn . $this->getI18nSuffix();
-	}
-	
-	/**
-	 * @param \Change\Documents\Property $property
-	 * @return string
-	 */
-	public function getDocumentI18nFieldNameByProperty($property)
-	{
-		$propertyName = $property->getDbMapping() ? $property->getDbMapping() : $property->getName();
-		return $this->getDocumentI18nFieldName($propertyName);
-	}
-
+		
 	/**
 	 * @param string $name
 	 * @param string $nameSpace
@@ -183,57 +72,80 @@ class SqlMapping
 	}
 	
 	/**
-	 * @deprecated
+	 * @return string
 	 */
-	public function getDbNameByProperty($property, $localised = null)
+	public function getDocumentIndexTableName()
 	{
-		$l = $localised === null ? $property->getLocalized() : $localised;
-		$pn = strtolower($property->getName());
-		switch ($pn)
-		{
-			case 'id':
-				return 'document_id';
-			case 'model':
-				return 'document_model';
-			case 'lang':
-				return $l ? 'lang_i18n' : 'document_lang';
-			case 'correctionofid':
-				return 'document_correctionofid';
-			case 'documentversion':
-				return 'document_version';
-			case 'metastring':
-				return 'document_metas';
-			case 's18s':
-				return 'document_s18s';
-			case 'label':
-			case 'author':
-			case 'authorid':
-			case 'creationdate':
-			case 'modificationdate':
-			case 'publicationstatus':
-			case 'modelversion':
-			case 'startpublicationdate':
-			case 'endpublicationdate':
-			case 'correctionid':
-				return $l ? 'document_' . $pn . '_i18n' : 'document_' . $pn ;
-		}
-		$l = $localised === null ? $property->getLocalized() : $localised;
-		if ($property->getDbMapping()) {$pn = $property->getDbMapping();}
-		return $l ? $pn . '_i18n' : $pn;
-	} 
+		return 'f_document';
+	}
 	
 	/**
-	 * @deprecated
+	 * @return string
 	 */
-	public function getDbNameByModel($model, $localised = false)
+	public function getRelationTableName()
 	{
-		if ($localised)
-		{
-			return $model->getTableName() . '_i18n';
-		}
-		else
-		{
-			return $model->getTableName();
-		}
+		return 'f_relation';
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getRelationNameTableName()
+	{
+		return 'f_relationname';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getLocaleTableName()
+	{
+		return 'f_locale';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getSettingTableName()
+	{
+		return 'f_settings';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getTagsTableName()
+	{
+		return 'f_tags';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getURLRulesTableName()
+	{
+		return 'f_url_rules';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getIndexingStateTableName()
+	{
+		return 'f_indexing';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getI18nSynchroStateTableName()
+	{
+		return 'f_i18n';
+	}	
+	
+	public function getCompiledPermissionTableName()
+	{
+		return 'f_permission_compiled';
+	}	
+	
 }

@@ -1,0 +1,27 @@
+{
+	"defines":{
+		"CHANGECRON_EXECUTION":"console",
+		"TMP_PATH": "/tmp",
+		"DEFAULT_HOST": "site40.inthausechange.fr",
+		"PROJECT_ID": "site40_ssxb",
+		"PHP_CLI_PATH": "/usr/bin/php",
+		"DEVELOPMENT_MODE": true,
+		"RELEASE_DEVELOPEMENT": true,
+		"DOCUMENT_ROOT":"/home/change/projects/site40/www",
+		"FAKE_EMAIL":"eric.hauswald@rbs.fr",
+		"PROJECT_LICENSE":"C4-56395-4F75CDD4401ED",
+		"CHANGE_COMMAND":"php bin/change.phar"
+	},
+	"config":{
+		"databases":{
+			"default":{
+				"user":"root",
+				"password":"change",
+				"database":"test40",
+				"host":"127.0.0.1",
+				"port":3306,
+				"longTransaction":5
+			}
+		}
+	}
+}

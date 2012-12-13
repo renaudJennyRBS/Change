@@ -14,12 +14,22 @@ class Model
 	/**
 	 * @var string
 	 */
-	protected $moduleName;
+	protected $shortModuleName;
 	
 	/**
 	 * @var string
 	 */
-	protected $documentName;
+	protected $shortName;
+	
+	/**
+	 * @var \Change\Documents\Generators\Model
+	 */
+	protected $parent;
+	
+	/**
+	 * @var \Change\Documents\Generators\Model
+	 */
+	protected $extendModel;
 	
 	/**
 	 * @var \Change\Documents\Generators\Property[]
@@ -27,30 +37,20 @@ class Model
 	protected $properties = array();
 	
 	/**
-	 * @var \Change\Documents\Generators\SerializedProperty[]
-	 */
-	protected $serializedproperties = array();
-	
-	/**
 	 * @var \Change\Documents\Generators\InverseProperty[]
 	 */
 	protected $inverseProperties = array();	
 	
-	/**
-	 * @var \Change\Documents\Generators\Workflow
-	 */
-	protected $workflow;
-
 	/**
 	 * @var string
 	 */
 	protected $extend;
 	
 	/**
-	 * @var string
+	 * @var boolean
 	 */
-	protected $dbMapping;
-	
+	protected $inject;
+
 	/**
 	 * @var boolean
 	 */
@@ -69,12 +69,7 @@ class Model
 	/**
 	 * @var boolean
 	 */
-	protected $useRewriteUrl;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $indexable;
+	protected $frontofficeIndexable;
 	
 	/**
 	 * @var boolean
@@ -82,9 +77,9 @@ class Model
 	protected $backofficeIndexable;
 	
 	/**
-	 * @var string
+	 * @var boolean
 	 */
-	protected $modelVersion;
+	protected $publishable;
 	
 	/**
 	 * @var boolean
@@ -94,40 +89,25 @@ class Model
 	/**
 	 * @var boolean
 	 */
-	protected $usePublicationDates;
+	protected $useVersion;
 	
 	/**
 	 * @var boolean
 	 */
-	protected $inject;
-	
-	/**
-	 * @var string
-	 */
-	protected $status;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $cmpLocalized;
-	
-	/**
-	 * @var string[]
-	 */
-	protected $cmpPropNames = array();
-	
+	protected $editable;
+		
 	/**
 	 * @param string $vendor
-	 * @param string $moduleName
-	 * @param string $documentName
+	 * @param string $shortModuleName
+	 * @param string $shortName
 	 */
-	public function __construct($vendor, $moduleName, $documentName)	
+	public function __construct($vendor, $shortModuleName, $shortName)	
 	{
 		$this->vendor = $vendor;
-		$this->moduleName = $moduleName;
-		$this->documentName = $documentName;
+		$this->shortModuleName = $shortModuleName;
+		$this->shortName = $shortName;
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -139,17 +119,25 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getModuleName()
+	public function getShortModuleName()
 	{
-		return $this->moduleName;
+		return $this->shortModuleName;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getDocumentName()
+	public function getShortName()
 	{
-		return $this->documentName;
+		return $this->shortName;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->vendor . '_' . $this->shortModuleName . '_' . $this->shortName;
 	}
 	
 	/**
@@ -170,98 +158,10 @@ class Model
 						case 'properties':
 							$this->importProperties($xmlSectionNode);
 							break;
-						case 'serializedproperties':
-							$this->importSerializedProperties($xmlSectionNode);
-							break;
-						case 'workflow':
-							$this->importWorkflow($xmlSectionNode);
-							break;
-						case 'statuses':
-							$this->importPublicationStatus($xmlSectionNode);
-							break;
 						default:
-							//TODO: don't use echo directly 
-							//echo "Deprecated section: " . $xmlSectionNode->localName . " in " . $this->moduleName . '/' . $this->documentName, PHP_EOL;	
+							throw new \Exception('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName);	
 					}
 				}
-			}
-		}
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 */
-	public function validate($ancestors)
-	{
-		/* @var $pm \Change\Documents\Generators\Model */
-		$pm = count($ancestors) ? end($ancestors) : null;
-		if ($pm)
-		{
-			$parentLocalized = $pm->getCmpLocalized();
-			$this->cmpPropNames = $pm->getCmpPropNames();
-		}
-		else
-		{
-			$parentLocalized = false;
-			$this->cmpPropNames = array();
-		}
-		
-		if ($this->getLocalized() === null)
-		{
-			$this->cmpLocalized = $parentLocalized;
-		}
-	
-		if ($this->getUseCorrection())
-		{
-			if (count($this->getPropertyAncestors($ancestors, 'correctionid')) === 0)
-			{
-				$this->addCorrectionProperties();
-			}
-		}
-		
-		if (count($this->getSerializedproperties()))
-		{
-			if (count($this->getPropertyAncestors($ancestors, 's18s')) === 0)
-			{
-				$this->addS18sProperty();
-			}
-		}
-		
-		if ($parentLocalized !== $this->getCmpLocalized())
-		{
-			$localize = $this->getCmpLocalized() != null ?  $this->getCmpLocalized() : $this->getLocalized();
-			$this->makeLocalized($ancestors, $localize);
-		}
-		
-		foreach ($this->properties as $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			$name = $property->getName();
-			$pancestors = $this->getPropertyAncestors($ancestors, $name);
-			$property->validate($pancestors);
-			if (!$property->getOverride())
-			{
-				if (in_array($name, $this->cmpPropNames))
-				{
-					throw new \Exception($this->getFullName() . ' has duplicate property: ' . $name);
-				}
-				$this->cmpPropNames[] = $name;
-			}
-		}
-		
-		foreach ($this->serializedproperties as $property)
-		{
-			/* @var $property \Change\Documents\Generators\SerializedProperty */
-			$name = $property->getName();
-			$pancestors = $this->getSerialisedPropertyAncestors($ancestors, $name);
-			$property->validate($pancestors);
-			if (!$property->getOverride())
-			{
-				if (in_array($name, $this->cmpPropNames))
-				{
-					throw new \Exception($this->getFullName() . ' has duplicate serialized property: ' . $name);
-				}
-				$this->cmpPropNames[] = $name;
 			}
 		}
 	}
@@ -273,26 +173,26 @@ class Model
 	{
 		if ($xmlElement->localName !== 'document')
 		{
-			throw new \Exception('Invalid document element name');
+			throw new \Exception('Invalid document element name ' . $this);
 			return;
 		}
-		
+	
 		foreach($xmlElement->attributes as $attribute)
 		{
 			$name = $attribute->nodeName;
 			$value = $attribute->nodeValue;
-			
+			$tv = trim($value);
+			if ($tv == '' || $tv != $value)
+			{
+				throw new \Exception('Invalid empty attribute value for ' . $this . ' ' . $name);
+			}	
 			switch ($name)
 			{
 				case "extend":
-					$this->extend = (trim($value) !== '') ? trim($value) : null;
+					$this->extend = $value;
 					break;
 				case "inject":
 					$this->inject = ($value === 'true');
-					break;
-				case "table-name": //DEPRECATED
-				case "db-mapping":
-					$this->dbMapping = $value;
 					break;
 				case "icon":
 					$this->icon = $value;
@@ -300,31 +200,39 @@ class Model
 				case "has-url":
 					$this->hasUrl = ($value === 'true');
 					break;
-				case "use-rewrite-url":
-					$this->useRewriteUrl = ($value === 'true');
-					break;
-				case "indexable":
-					$this->indexable = ($value === 'true');
+				case "frontoffice-indexable":
+					$this->frontofficeIndexable = ($value === 'true');
 					break;
 				case "backoffice-indexable":
 					$this->backofficeIndexable = ($value === 'true');
 					break;
-				case "model-version":
-					$this->modelVersion = $value;
+				case "editable":
+					$this->editable = ($value === 'true');
+					break;
+				case "publishable":
+					$this->publishable = ($value === 'true');
 					break;
 				case "use-correction":
 					$this->useCorrection = ($value === 'true');
 					break;
-				case "use-publication-dates":
-					$this->usePublicationDates = ($value === 'true');
+				case "use-version":
+					$this->useVersion = ($value === 'true');
+					break;
+				case "localized":
+					$this->localized = ($value === 'true');
 					break;
 				case "xsi:schemaLocation":
 					// just ignore it
 					break;
 				default:
-					throw new \Exception( $this->getFullName() . ' has invalid attribute ' . $name . ' = ' . $value);
+					throw new \Exception('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value);
 					break;
 			}
+		}
+		
+		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->inject === false)
+		{
+			throw new \Exception('Invalid attribute value true expected');
 		}
 	}
 	
@@ -335,99 +243,212 @@ class Model
 	{
 		foreach ($propertiesElement->childNodes as $xmlProperty)
 		{
-			if ($xmlProperty->nodeName == "property")
+			if ($xmlProperty->nodeType === XML_ELEMENT_NODE)
 			{
-				$property = new Property();
-				$property->initialize($xmlProperty);
-				if (isset($this->properties[$property->getName()]))
+				if ($xmlProperty->nodeName == "property")
 				{
-					throw new \Exception($this->getFullName() . ' has duplicat property name: ' . $property->getName());
-				}
-				$this->properties[$property->getName()] = $property;
-				if ($property->getLocalized())
-				{
-					$this->setLocalized(true);
-				}
-			}
-		}
-		
-		if (isset($this->properties['publicationstatus']))
-		{
-			/* @var $property Property */
-			$property = $this->properties['publicationstatus'];
-			if ($property->getDefaultValue() !== null)
-			{
-				if (in_array($property->getDefaultValue(), array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW')))
-				{
-					$this->status = $property->getDefaultValue();
+					$property = new Property($this);
+					$property->initialize($xmlProperty);
+					if (isset($this->properties[$property->getName()]))
+					{
+						throw new \Exception('Duplicate property name ' . $this. '::'. $property->getName());
+					}
+					$this->properties[$property->getName()] = $property;
 				}
 				else
 				{
-					throw new \Exception($this->getFullName() . ' has invalid publication status: ' . $property->getDefaultValue());
+					throw new \Exception('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName);
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * @param \DOMElement $serializedPropertiesElement
+	 * @throws \Exception
 	 */
-	protected function importSerializedProperties($serializedPropertiesElement)
+	public function validate()
 	{
-		foreach ($serializedPropertiesElement->childNodes as $xmlProperty)
+		if ($this->extend)
 		{
-			if ($xmlProperty->nodeName == "property")
+			if ($this->localized !== null)
 			{
-				$property = new SerializedProperty();
-				$property->initialize($xmlProperty);
-				if (isset($this->serializedproperties[$property->getName()]))
+				throw new \Exception('Invalid localized attribute ' . $this);
+			}
+			if ($this->inject)
+			{
+				if ($this->publishable)
 				{
-					throw new \Exception($this->getFullName() . ' has duplicat serialized property name: ' . $property->getName());
+					throw new \Exception('inject ' .$this . ' as invalid publishable attribute');
 				}
-				$this->serializedproperties[$property->getName()] = $property;
+				if ($this->useVersion)
+				{
+					throw new \Exception('inject ' .$this . ' as invalid use-version attribute');
+				}
+				if ($this->useCorrection)
+				{
+					throw new \Exception('inject ' .$this . ' as invalid use-correction attribute');
+				}
 			}
 		}
+		else
+		{
+			if ($this->inject)
+			{
+				throw new \Exception('Invalid inject attribute ' . $this);
+			}
+			
+			$creationDate = new Property($this, 'creationDate', 'DateTime');
+			$this->properties[$creationDate->getName()] = $creationDate;
+			
+			$modificationDate = new Property($this, 'modificationDate', 'DateTime');
+			$this->properties[$modificationDate->getName()] = $modificationDate;
+			
+			$deletedDate = new Property($this, 'deletedDate', 'DateTime');
+			$this->properties[$deletedDate->getName()] = $deletedDate;
+			
+			if ($this->localized)
+			{
+				$property = new Property($this, 'voLCID', 'String');
+				$this->properties[$property->getName()] = $property;
+				
+				$property = new Property($this, 'LCID', 'String');
+				$this->properties[$property->getName()] = $property;
+			}
+		}
+		
+		if ($this->editable)
+		{
+			if (!isset($this->properties['label']))
+			{
+				$property = new Property($this, 'label', 'String');
+				$this->properties[$property->getName()] = $property;
+			}
+			
+			$property = new Property($this, 'authorName', 'String');
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'authorId', 'DocumentId');
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'documentVersion', 'Integer');
+			$this->properties[$property->getName()] = $property;
+
+		}
+		
+		if ($this->publishable)
+		{
+			$property = new Property($this, 'publicationStatus', 'String');
+			$this->properties[$property->getName()] = $property;
+			
+			$creationDate = new Property($this, 'startPublication', 'DateTime');
+			$this->properties[$creationDate->getName()] = $creationDate;
+			
+			$property = new Property($this, 'endPublication', 'DateTime');
+			$this->properties[$property->getName()] = $property;
+						
+			if ($this->useCorrection === null)
+			{
+				$this->useCorrection = true;
+			}
+		}
+		
+		if ($this->useCorrection)
+		{
+			$property = new Property($this, 'correctionOfId', 'DocumentId');
+			$this->properties[$property->getName()] = $property;
+		}
+		
+		if ($this->useVersion)
+		{
+			$property = new Property($this, 'versionOfId', 'DocumentId');
+			$this->properties[$property->getName()] = $property;
+		}
+			
+		foreach ($this->properties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\Property */
+			$property->validate();
+		}
 	}
+	
 	
 	/**
-	 * @param \DOMElement $workflowElement
+	 * @throws \Exception
 	 */
-	protected function importWorkflow($workflowElement)
+	public function validateInheritance()
 	{
-		$this->workflow = new Workflow();
-		$this->workflow->initialize($workflowElement);
-		if ($this->workflow->getStartTask())
+		if ($this->getUseCorrection() !== null)
 		{
-			$this->useCorrection = true;
+			if ($this->checkAncestorUseCorrection())
+			{
+				throw new \Exception($this . ' as duplicate use-correction attribute');
+			}
+		}
+		
+		if ($this->getUseVersion() !== null)
+		{
+			if ($this->checkAncestorUseVersion())
+			{
+				throw new \Exception('Duplicate use-version attribute on ' . $this);
+			}
+		}
+		
+		if ($this->getPublishable() !== null)
+		{
+			if ($this->checkAncestorPublishable())
+			{
+				throw new \Exception('Duplicate publishable attribute on ' . $this);
+			}
+		}
+		
+		if (!$this->getPublishable() && !$this->checkAncestorPublishable())
+		{
+			if ($this->getUseCorrection())
+			{
+				throw new \Exception('Invalid usage of use-correction attribute on ' . $this);
+			}
+		}
+		
+		foreach ($this->properties as $property)
+		{
+			/* @var $property \Change\Documents\Generators\Property */
+			$property->validateInheritance();
 		}
 	}
 	
-	public function getWorkflowStartTask()
-	{
-		if ($this->workflow)
-		{
-			$startTask = $this->workflow->getStartTask();
-			return empty($startTask) ? null : $startTask;
-		}
-		return null;
-	}
-	
-	public function getWorkflowParameters()
-	{
-		return ($this->workflow) ? $this->workflow->getParameters() : null;
-	}
 	
 	/**
-	 * @param \DOMElement $statusElement
+	 * @return \Change\Documents\Generators\Model
 	 */
-	protected function importPublicationStatus($statusElement)
+	public function getExtendModel()
 	{
-		if ($statusElement->hasAttribute('default'))
-		{
-			$this->status = $statusElement->getAttribute('default');
-		}
+		return $this->extendModel;
 	}
-	
+
+	/**
+	 * @param \Change\Documents\Generators\Model $extendModel
+	 */
+	public function setExtendModel($extendModel)
+	{
+		$this->extendModel = $extendModel;
+	}
+
+	/**
+	 * @return \Change\Documents\Generators\Model
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model $parent
+	 */
+	public function setParent($parent)
+	{
+		$this->parent = $parent;
+	}
+
 	/**
 	 * @return \Change\Documents\Generators\Property[]
 	 */
@@ -443,21 +464,23 @@ class Model
 	{
 		return isset($this->properties[$name]) ? $this->properties[$name] : null;
 	}
-
-	/**
-	 * @return \Change\Documents\Generators\SerializedProperty[]
-	 */
-	public function getSerializedproperties()
-	{
-		return $this->serializedproperties;
-	}
 	
 	/**
-	 * @return \Change\Documents\Generators\SerializedProperty
+	 * @return \Change\Documents\Generators\Property[]
 	 */
-	public function getSerializedPropertyByName($name)
+	public function getAncestorsPropertyByName($name)
 	{
-		return isset($this->serializedproperties[$name]) ? $this->serializedproperties[$name] : null;
+		if ($this->parent)
+		{
+			$properties = $this->parent->getAncestorsPropertyByName($name);
+			$prop = $this->parent->getPropertyByName($name);
+			if ($prop)
+			{
+				$properties[] = $prop;
+			}
+			return $properties;
+		}
+		return array();
 	}
 	
 	/**
@@ -493,12 +516,12 @@ class Model
 	}
 	
 	/**
-	 * @return string
+	 * @return boolean
 	 */
-	public function getDbMapping()
+	public function getInject()
 	{
-		return $this->dbMapping;
-	}
+		return $this->inject;
+	}	
 	
 	/**
 	 * @return boolean
@@ -527,17 +550,9 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function getUseRewriteUrl()
+	public function getFrontofficeIndexable()
 	{
-		return $this->useRewriteUrl;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getIndexable()
-	{
-		return $this->indexable;
+		return $this->frontofficeIndexable;
 	}
 
 	/**
@@ -547,13 +562,22 @@ class Model
 	{
 		return $this->backofficeIndexable;
 	}
+	
+	
+	/**
+	 * @return boolean
+	 */
+	public function getPublishable()
+	{
+		return $this->publishable;
+	}
 
 	/**
-	 * @return string
+	 * @return boolean
 	 */
-	public function getModelVersion()
+	public function getEditable()
 	{
-		return $this->modelVersion;
+		return $this->editable;
 	}
 
 	/**
@@ -567,92 +591,19 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function getUsePublicationDates()
+	public function getUseVersion()
 	{
-		return $this->usePublicationDates;
+		return $this->useVersion;
 	}
 
-	/**
-	 * @return boolean
-	 */
-	public function getInject()
-	{
-		return $this->inject;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getStatus()
-	{
-		return $this->status;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $defaultModel
-	 */
-	public function applyDefault(Model $defaultModel)
-	{
-		if ($this->getExtend() !== null)
-		{
-			throw new \Exception('Unable to apply default values on: ' . $this->getExtend());
-		}
-		if ($this->icon === null) {$this->icon = $defaultModel->getIcon();}
-		if ($this->hasUrl === null) {$this->hasUrl = $defaultModel->getHasUrl();}
-		if ($this->useRewriteUrl === null) {$this->useRewriteUrl = $defaultModel->getUseRewriteUrl();}
-		if ($this->indexable === null) {$this->indexable = $defaultModel->getIndexable();}
-		if ($this->backofficeIndexable === null) {$this->backofficeIndexable = $defaultModel->getBackofficeIndexable();}
-		if ($this->modelVersion === null) {$this->modelVersion = $defaultModel->getModelVersion();}
-		if ($this->useCorrection === null) {$this->useCorrection = $defaultModel->getUseCorrection();}
-		if ($this->usePublicationDates === null) {$this->usePublicationDates = $defaultModel->getUsePublicationDates();}
-		if ($this->inject === null) {$this->inject = $defaultModel->getInject();}
-		if ($this->status === null) {$this->status = $defaultModel->getStatus();}
-		if ($this->localized === null) {$this->localized = $defaultModel->getLocalized();}
-		
-		$newProperties = $this->properties;
-		$this->properties = array();
-		foreach ($defaultModel->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			if (isset($newProperties[$name]))
-			{
-				$property->updateDefaultBy($newProperties[$name]);
-				unset($newProperties[$name]);
-			}
-			$this->properties[$name] = $property; 
-		}
-		
-		foreach ($newProperties as $name => $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			$this->properties[$name] = $property; 
-		}
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getFullName()
-	{
-		return strtolower($this->vendor . '_' . $this->moduleName . '_' . $this->documentName);
-	}
-	
 	/**
 	 * @return string
 	 */
 	public function __toString()
 	{
-		return $this->getFullName();
+		return $this->getName();
 	}
-	
-	/**
-	 * @return string
-	 */
-	public function getNameSpace()
-	{
-		return implode('\\', array(ucfirst($this->getVendor()),  ucfirst($this->getModuleName()), 'Documents'));
-	}
-	
+		
 	/**
 	 * @param boolean $localized
 	 */
@@ -662,98 +613,62 @@ class Model
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * @param string $name
-	 * @return \Change\Documents\Generators\Property[]
+	 * @return \Change\Documents\Generators\Model[]
 	 */
-	public function getPropertyAncestors($ancestors, $name)
+	public function getAncestors()
 	{
-		$result = array();
-		foreach ($ancestors as $model)
+		if ($this->parent)
+		{
+			$ancestors = $this->parent->getAncestors();
+			$ancestors[] = $this->parent;
+			return $ancestors;
+		}
+		return array();
+	}
+	
+	/**
+	 * @return \Change\Documents\Generators\Model
+	 */
+	public function getRoot()
+	{
+		return ($this->parent) ? $this->parent->getRoot() : $this;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function checkLocalized()
+	{
+		return $this->getRoot()->getLocalized();
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function checkAncestorPublishable()
+	{
+		foreach ($this->getAncestors() as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$properties = $model->getProperties();
-			if (isset($properties[$name]))
+			if ($model->getPublishable())
 			{
-				$result[] = $properties[$name];
+				return true;
 			}
 		}
-		return $result;
+		return false;
 	}
-	
+
 	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * @param string $name
-	 * @return \Change\Documents\Generators\SerializedProperty[]
+	 * @return boolean
 	 */
-	public function getSerialisedPropertyAncestors($ancestors, $name)
+	public function checkAncestorUseCorrection()
 	{
-		$result = array();
-		foreach ($ancestors as $model)
+		foreach ($this->getAncestors() as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			$properties = $model->getSerializedproperties();
-			if (isset($properties[$name]))
+			if ($model->getUseCorrection())
 			{
-				$result[] = $properties[$name];
-			}
-		}
-		return $result;
-	}
-	
-	public function addCorrectionProperties()
-	{
-		$p = Property::getNewCorrectionIdProperty();
-		$this->properties[$p->getName()] = $p;
-		
-		$p = Property::getNewCorrectionOfIdProperty();
-		$this->properties[$p->getName()] = $p;
-	}
-	
-	public function addS18sProperty()
-	{
-		$p = Property::getNewS18sProperty();
-		$this->properties[$p->getName()] = $p;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $extendModel
-	 */
-	public function applyInjection($extendModel)
-	{
-		$tmpName = $extendModel->getExtend();
-		$extendModel->extend = $this->getFullName();
-		$this->extend = $tmpName;
-		if ($this->extend === null && $extendModel->getLocalized())
-		{
-			$this->setLocalized(true);
-			$this->makeLocalized(array(), true);
-		}
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model[] $ancestors
-	 * @param boolean $localized;
-	 */
-	protected function makeLocalized($ancestors, $localized)
-	{
-		foreach (array('label', 'publicationstatus', 'correctionid') as $name)
-		{
-			if (isset($this->properties[$name]))
-			{
-				$p = $this->properties[$name];
-				$p->makeLocalized($localized);
-			}
-			else
-			{
-				$pAnsestors = $this->getPropertyAncestors($ancestors, $name);
-				if (count($pAnsestors))
-				{
-					$p = Property::getNamedProperty($name);
-					$p->makeLocalized($localized);
-					$p->validate($pAnsestors);
-					$this->properties[$name] = $p;
-				}
+				return true;
 			}
 		}
 	}
@@ -761,16 +676,153 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function getCmpLocalized()
+	public function checkAncestorUseVersion()
 	{
-		return $this->cmpLocalized;
+		foreach ($this->getAncestors() as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if ($model->getUseVersion())
+			{
+				return true;
+			}
+		}
 	}
 	
 	/**
-	 * @return string[]
+	 * @return string
 	 */
-	public function getCmpPropNames()
+	public function getNameSpace()
 	{
-		return $this->cmpPropNames;
+		return implode('\\', array($this->getVendor(),  $this->getShortModuleName(), 'Documents'));
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getCompilationNameSpace()
+	{
+		return implode('\\', array('Compilation', $this->getVendor(),  $this->getShortModuleName(), 'Documents'));
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getShortModelClassName()
+	{
+		return $this->getShortName().'Model';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getModelClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getModelClassName();
+		}
+		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortModelClassName();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getShortAbstractDocumentClassName()
+	{
+		return 'Abstract' . $this->getShortName();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAbstractDocumentClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getAbstractDocumentClassName();
+		}
+		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortAbstractDocumentClassName();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getShortDocumentClassName()
+	{
+		return $this->getShortName();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDocumentClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getDocumentClassName();
+		}
+		return '\\'. $this->getNameSpace() . '\\' . $this->getShortDocumentClassName();
+	}
+	
+	
+	/**
+	 * @return string
+	 */
+	public function getShortDocumentI18nClassName()
+	{
+		return $this->getShortName().'I18n';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getDocumentI18nClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getDocumentI18nClassName();
+		}
+		return '\\'. $this->getCompilationNameSpace(). '\\' . $this->getShortDocumentI18nClassName();
+	}	
+	
+	
+	/**
+	 * @return string
+	 */
+	public function getShortAbstractServiceClassName()
+	{
+		return 'Abstract' . $this->getShortName() . 'Service';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getAbstractServiceClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getAbstractServiceClassName();
+		}
+		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortAbstractServiceClassName();
+	}	
+	
+	/**
+	 * @return string
+	 */
+	public function getShortServiceClassName()
+	{
+		return $this->getShortName() . 'Service';
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getServiceClassName()
+	{
+		if ($this->getInject())
+		{
+			return $this->getParent()->getServiceClassName();
+		}
+		return '\\'. $this->getNameSpace() . '\\' . $this->getShortServiceClassName();
 	}
 }

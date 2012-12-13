@@ -14,13 +14,13 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
 			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
 		}
-
+	
 		if (is_dir($workspace->projectModulesPath()))
 		{
 			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
 			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
 		}
-
+	
 		$nbModels = 0;
 		foreach ($paths as $definitionPath)
 		{
@@ -32,11 +32,12 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 			$compiler->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
 			$nbModels++;
 		}
-
-		$compiler->buildDependencies();
+	
+		$compiler->buildTree();
+		$compiler->validateInheritance();
 		$compiler->saveModelsPHPCode();
 	}
-
+	
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
@@ -60,7 +61,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $configPath);
 		$i18nManger = new \Change\I18n\I18nManager($config, $application->getApplicationServices()->getDbProvider());
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($i18nManger, 'Change\I18n\I18nManager');
-		$manager = new \Change\Documents\DocumentManager($application->getApplicationServices(), $application->getDocumentServices()->getModelManager());
+		$manager = new \Change\Documents\DocumentManager($application->getApplicationServices(), $application->getDocumentServices());
 		
 		// There is no default value.
 		$this->assertEquals(0, $manager->getLangStackSize());

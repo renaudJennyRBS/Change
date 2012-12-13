@@ -2,26 +2,50 @@
 namespace Change\Documents;
 
 /**
+ * @api
  * @name \Change\Documents\Property
  */
 class Property
 {
+	const TYPE_BOOLEAN = 'Boolean';
+	const TYPE_INTEGER = 'Integer';
+	const TYPE_FLOAT = 'Float';
+	const TYPE_DECIMAL = 'Decimal';
+	
+	const TYPE_DATETIME = 'DateTime';
+	const TYPE_DATE = 'Date';
+	
+	const TYPE_STRING = 'String';
+	
+	const TYPE_LONGSTRING = 'LongString';
+	const TYPE_XML = 'XML';
+	
+	const TYPE_RICHTEXT = 'RichText';
+	const TYPE_JSON = 'JSON';
+	
+	const TYPE_LOB = 'Lob';
+	const TYPE_OBJECT = 'Object';
+	
+	const TYPE_DOCUMENTID = 'DocumentId';
+	const TYPE_DOCUMENT = 'Document';
+	const TYPE_DOCUMENTARRAY = 'DocumentArray';
+	
+	
 	protected $name;
-	protected $type = \Change\Documents\AbstractDocument::PROPERTYTYPE_STRING;
+	protected $type = self::TYPE_STRING;
 	protected $documentType = null;
-	protected $relationName = null;
+	
 	protected $required = false;
 	protected $minOccurs = 0;
 	protected $maxOccurs = 1;
-	protected $dbMapping;
 
 	protected $cascadeDelete = false;
-	protected $treeNode = false;
-	protected $isDocument = false;
+	
 	protected $defaultValue;
 	protected $constraintArray;
 	protected $localized = false;
 	protected $indexed = 'none'; //none, property, description
+	
 	protected $fromList;
 
 	/**
@@ -38,6 +62,7 @@ class Property
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getName()
@@ -46,6 +71,7 @@ class Property
 	}
 	
 	/**
+	 * @api
 	 * @return string|NULL
 	 */
 	public function getDocumentType()
@@ -54,22 +80,7 @@ class Property
 	}
 	
 	/**
-	 * @return string|NULL
-	 */
-	public function getRelationName()
-	{
-		return $this->relationName;
-	}	
-	
-	/**
-	 * @return boolean
-	 */
-	public function getTreeNode()
-	{
-		return $this->treeNode;
-	}
-
-	/**
+	 * @api
 	 * @return string
 	 */
 	public function getType()
@@ -77,17 +88,6 @@ class Property
 		return $this->type;
 	}
 	
-	/**
-	 * Returns the name of the field that represents this property into the
-	 * database table.
-	 *
-	 * @return string
-	 */
-	public function getDbMapping()
-	{
-		return $this->dbMapping;
-	}
-
 	/**
 	 * @return integer
 	 */
@@ -144,50 +144,6 @@ class Property
 		return $this->indexed != 'none';
 	}
 
-	/**
-	 * @return f_persistentdocument_PersistentDocumentModel|NULL
-	 */
-	public function getPersistentModel()
-	{
-		if ($this->documentType)
-		{
-			//TODO Old class Usage
-			return \f_persistentdocument_PersistentDocumentModel::getInstanceFromDocumentModelName($this->documentType);
-		}
-		return null;
-	}
-		
-
-	/**
-	 * Returns the type of subdocuments with the slash replaced by an underscore
-	 * for use on the backoffice side.
-	 *
-	 * @return string|NULL
-	 */
-	public function getTypeForBackofficeWidgets()
-	{
-		if ($this->documentType)
-		{
-			//TODO Old class Usage
-			return \f_persistentdocument_PersistentDocumentModel::convertModelNameToBackoffice($this->documentType);
-		}
-		return null;
-	}
-
-	/**
-	 * Indicates whether the document property accepts documents of type $type.
-	 *
-	 * @return boolean
-	 */
-	public function acceptType($type)
-	{
-		if ($this->documentType)
-		{
-			//TODO Old class Usage
-			return \f_persistentdocument_PersistentDocumentModel::getInstanceFromDocumentModelName($type)->isModelCompatible($this->documentType);
-		}
-		return false;
-	}
 
 	/**
 	 * Indicates whether the document property accepts all types of document.
@@ -198,8 +154,7 @@ class Property
 	{
 		if ($this->isDocument())
 		{
-			//TODO Old class Usage
-			return $this->documentType === \f_persistentdocument_PersistentDocumentModel::BASE_MODEL;
+			return $this->documentType === null;
 		}
 		return false;
 	}
@@ -211,7 +166,7 @@ class Property
 	 */
 	public function isString()
 	{
-		return $this->type === \Change\Documents\AbstractDocument::PROPERTYTYPE_STRING;
+		return $this->type === self::TYPE_STRING;
 	}
 
 	/**
@@ -223,12 +178,12 @@ class Property
 	{
 		switch ($this->type)
 		{
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_LOB:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_XML:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_JSON:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_OBJECT:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_LONGSTRING:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_RICHTEXT:
+			case self::TYPE_LOB:
+			case self::TYPE_XML:
+			case self::TYPE_JSON:
+			case self::TYPE_OBJECT:
+			case self::TYPE_LONGSTRING:
+			case self::TYPE_RICHTEXT:
 				return true;
 			default:
 				return false;
@@ -244,9 +199,9 @@ class Property
 	{
 		switch ($this->type)
 		{
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_INTEGER:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DECIMAL:
-			case \Change\Documents\AbstractDocument::PROPERTYTYPE_DOUBLE:
+			case self::TYPE_INTEGER:
+			case self::TYPE_DECIMAL:
+			case self::TYPE_DOUBLE:
 				return true;
 			default:
 				return false;
@@ -260,7 +215,7 @@ class Property
 	 */
 	public function isDocument()
 	{
-		return $this->isDocument;
+		return ($this->type === self::TYPE_DOCUMENT || $this->type === self::TYPE_DOCUMENTARRAY);;
 	}
 
 	/**
@@ -373,7 +328,22 @@ class Property
 	 */
 	public function setConstraintArray($constraintArray)
 	{
-		$this->constraintArray = is_array($constraintArray) ? $constraintArray : null;
+		if (is_array($constraintArray))
+		{
+			if (is_array($this->constraintArray))
+			{
+				$this->constraintArray = array_merge($this->constraintArray, $constraintArray);
+			}
+			else
+			{
+				$this->constraintArray = $constraintArray;
+			}
+			
+		}
+		else
+		{
+			$this->constraintArray = null;
+		}
 		return $this;
 	}
 
@@ -406,21 +376,9 @@ class Property
 	public function setType($type)
 	{
 		$this->type = $type;
-		$this->isDocument = ($this->type === \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENT || 
-			$this->type === \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTARRAY);
-		
-		if ($this->maxOccurs === 1 && $this->type === \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTARRAY)
-		{
-			$this->setMaxOccurs(-1);
-		}
-		if ($this->documentType === null && ($this->isDocument || $this->type === \Change\Documents\AbstractDocument::PROPERTYTYPE_DOCUMENTID))
-		{
-			//TODO Old class Usage
-			$this->setDocumentType(\f_persistentdocument_PersistentDocumentModel::BASE_MODEL);
-		}	
 		return $this;
 	}
-	
+		
 	/**
 	 * @param string $documentType
 	 * @return \Change\Documents\Property
@@ -431,26 +389,6 @@ class Property
 		return $this;
 	}
 	
-	/**
-	 * @param string $relationName
-	 * @return \Change\Documents\Property
-	 */
-	public function setRelationName($relationName)
-	{
-		$this->relationName = $relationName;
-		return $this;
-	}
-
-	/**
-	 * @param string $dbMapping
-	 * @return \Change\Documents\Property
-	 */
-	public function setDbMapping($dbMapping)
-	{
-		$this->dbMapping = $dbMapping;
-		return $this;
-	}
-
 	/**
 	 * @param boolean $cascadeDelete
 	 * @return \Change\Documents\Property
@@ -498,6 +436,28 @@ class Property
 	public function setTreeNode($treeNode)
 	{
 		$this->treeNode = $treeNode;
+		return $this;
+	}
+	
+	/**
+	 * @api
+	 * @return \Change\Documents\Property
+	 */
+	public function normalize()
+	{
+		if ($this->type !== self::TYPE_DOCUMENTARRAY)
+		{
+			$this->setMaxOccurs(1);
+		}
+		elseif ($this->maxOccurs <= 1)
+		{
+			$this->setMaxOccurs(-1);
+		}
+	
+		if ($this->documentType !== null && !$this->isDocument() && $this->type !== self::TYPE_DOCUMENTID)
+		{
+			$this->documentType = null;
+		}
 		return $this;
 	}
 }

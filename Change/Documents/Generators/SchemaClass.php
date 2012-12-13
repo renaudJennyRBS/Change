@@ -39,27 +39,27 @@ class SchemaClass
 		$this->compiler = $compiler;
 		$this->schemaManager = $schemaManager;
 		$code = '<'. '?php
-namespace Compilation\\Change\\Documents\\Schema;
+namespace Compilation\\Change\\Documents;
 class Schema
 {
 	/**
 	 * @var \Change\Db\Schema\TableDefinition[]
 	 */
-	protected $tables;
+	protected $tables = array();
 			
 	/**
 	 * @return \Change\Db\Schema\TableDefinition[]
 	 */
 	public function getTables()
 	{
-		$this->tables;
+		return $this->tables;
 	}
 	
 	public function __construct()
 	{
 		$id = new \Change\Db\Schema\FieldDefinition(\'document_id\', \'int\', \'int(11)\', false, \'0\');
 		$model = new \Change\Db\Schema\FieldDefinition(\'document_model\', \'varchar\', \'varchar(50)\', false, \'\');
-		$i18nLang = new \Change\Db\Schema\FieldDefinition(\'lang_i18n\', \'varchar\', \'varchar(2)\', false, \'fr\');'. PHP_EOL;
+		$lcid = new \Change\Db\Schema\FieldDefinition(\'lcid\', \'varchar\', \'varchar(10)\', true, NULL);'. PHP_EOL;
 		
 		foreach ($this->compiler->getModelsByLevel(0) as $model)
 		{
@@ -97,15 +97,8 @@ class Schema
 	 */
 	protected function generateTableDef($model, $descendants)
 	{ 
-		if ($model->getInject())
-		{
-			$om = reset($descendants);
-			$tn = $om->getDbMapping() ? $om->getDbMapping() : $this->schemaManager->getDocumentTableName($om->getFullName());
-		}
-		else
-		{
-			$tn = $model->getDbMapping() ? $model->getDbMapping() : $this->schemaManager->getDocumentTableName($model->getFullName());
-		}
+		$tn = $this->schemaManager->getDocumentTableName($model->getName());
+
 		$lines = array();
 		$lines[] = '';
 		$lines[] = '		$table = new \Change\Db\Schema\TableDefinition('.$this->escapePHPValue($tn).');';
@@ -118,14 +111,14 @@ class Schema
 		}
 		$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
 		$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id));';
-		$lines[] = '		$tables[] = $table;';
+		$lines[] = '		$this->tables[] = $table;';
 		
-		if ($model->getCmpLocalized() || $model->getLocalized())
+		if ($model->checkLocalized())
 		{
 			$lines[] = '';
-			$tn = $this->schemaManager->getDocumentI18nTableName($tn);
+			$tn = $this->schemaManager->getDocumentI18nTableName($model->getName());
 			$lines[] = '		$table = new \Change\Db\Schema\TableDefinition('.$this->escapePHPValue($tn).');';
-			$lines[] = '		$table->addField($id)->addField($i18nLang);';
+			$lines[] = '		$table->addField($id)->addField($lcid);';
 			$lines = array_merge($lines, $this->generateFieldsDef($model, true));
 			foreach ($descendants as $dm)
 			{
@@ -133,8 +126,8 @@ class Schema
 				$lines = array_merge($lines, $this->generateFieldsDef($dm, true));
 			}
 			$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
-			$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id)->addField($i18nLang));';
-			$lines[] = '		$tables[] = $table;';
+			$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id)->addField($lcid));';
+			$lines[] = '		$this->tables[] = $table;';
 		}
 		return implode(PHP_EOL, $lines);
 	}
@@ -150,10 +143,13 @@ class Schema
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$pl = $property->getLocalized() == true;
-			if ($property->getName() === 'id' || $property->getOverride() || $localized != $pl) {continue;}
-			$pn = $property->getDbMapping() ? $property->getDbMapping() : $property->getName();
-			$def =  $this->schemaManager->getDocumentFieldDefinition($pn, $pl, $property->getType(), $property->getDbSize());
+			if ($property->getParent() !== null || $property->getLocalized() != $localized)
+			{
+				continue;
+			}
+
+			$pn = $property->getName();
+			$def =  $this->schemaManager->getDocumentFieldDefinition($pn, $property->getType(), $property->getDbSize());
 			$name = $this->escapePHPValue($def->getName());
 			$type = $this->escapePHPValue($def->getType());
 			$typeData = $this->escapePHPValue($def->getTypeData());

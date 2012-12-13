@@ -9,27 +9,17 @@ abstract class AbstractI18nDocument
 	/**
 	 * @var integer
 	 */
-	protected $documentId;
+	private $id;
 	
 	/**
-	 * @var string
+	 * @var integer
 	 */
-	protected $lang;
-	
+	private $persistentState;
+
 	/**
-	 * @var boolean
+	 * @var \Change\Documents\DocumentManager
 	 */
-	protected $isNew;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $isModified = false;	
-	
-	/**
-	 * @var string
-	 */	
-	protected $label;
+	protected $documentManager;
 	
 	/**
 	 * @var array
@@ -37,15 +27,74 @@ abstract class AbstractI18nDocument
 	protected $modifiedProperties = array();
 
 	/**
-	 * @param integer $documentId
-	 * @param string $lang
-	 * @param boolean $isNew
+	 * @param \Change\Documents\DocumentManager $manager
 	 */
-	public function __construct($documentId, $lang, $isNew)
+	public function __construct(\Change\Documents\DocumentManager $manager)
 	{
-		$this->documentId = $documentId;
-		$this->lang = $lang;
-		$this->isNew = $isNew;
+		$this->setDocumentContext($manager);
+	}
+	
+	/**
+	 * @param \Change\Documents\DocumentManager $manager
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Documents\AbstractService $service
+	 */
+	public function setDocumentContext(\Change\Documents\DocumentManager $manager)
+	{
+		$this->documentManager = $manager;
+	}
+	
+	/**
+	 * @return string[]
+	 */
+	public function __sleep()
+	{
+		return array("\0".__CLASS__."\0id");
+	}
+	
+	/**
+	 */
+	public function __wakeup()
+	{
+		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postI18nUnserialze($this);
+	}
+	
+	/**
+	 * @param integer $id
+	 * @param string $lcid
+	 * @param integer $persistentState
+	 */
+	public function initialize($id, $lcid, $persistentState)
+	{
+		$this->id = intval($id);
+		$this->setLCID($lcid);
+		$this->persistentState = $this->setPersistentState($persistentState);
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getPersistentState()
+	{
+		return $this->persistentState;
+	}
+	
+	/**
+	 * @param integer $newValue
+	 */
+	public function setPersistentState($newValue)
+	{
+		$oldState = $this->persistentState;
+		switch ($newValue)
+		{
+			case AbstractDocument::PERSISTENTSTATE_NEW:
+			case AbstractDocument::PERSISTENTSTATE_LOADED:
+			case AbstractDocument::PERSISTENTSTATE_MODIFIED:
+			case AbstractDocument::PERSISTENTSTATE_DELETED:
+				$this->persistentState = intval($newValue);
+				break;
+		}
+		return $oldState;
 	}
 	
 	/**
@@ -70,85 +119,47 @@ abstract class AbstractI18nDocument
 	 */
 	public function getId()
 	{
-		return $this->documentId;
-	}
-	
-	/**
-	 * @param integer $documentId
-	 */
-	public function setId($documentId)
-	{
-		$this->documentId = $documentId;
+		return $this->id;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getLang()
-	{
-		return $this->lang;
-	}
+	abstract public function getLCID();
 	
+	/**
+	 * @param string $LCID
+	*/
+	abstract public function setLCID($LCID);
+			
 	/**
 	 * @return boolean
 	 */
-	public function isNew()
+	public function persistentStateIsNew()
 	{
-		return $this->isNew;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isModified()
-	{
-		return $this->isModified;
-	}
-	
-	/**
-	 * @return void
-	 */
-	public function setIsPersisted()
-	{
-		$this->isNew = false;
-		$this->setModifiedProperties();
-	}
-	
-	/**
-	 * @param integer $documentId
-	 * @param f_persistentdocument_I18nPersistentDocument $sourceDocument
-	 */
-	public function copyMutateSource($documentId, $sourceDocument)
-	{
-		$this->documentId = $documentId;
-		$this->isNew = false;
+		return $this->persistentState === AbstractDocument::PERSISTENTSTATE_NEW;
 	}
 		
 	/**
-	 * @param string $label
-	 * @return boolean
+	 * @api
+	 * @return array<string => mixed>
 	 */
-	public function setLabel($label)
+	public function getOldPropertyValues()
 	{
-		if ($this->label !== $label)
-		{
-			$this->label = $label;
-			$this->modifiedProperties['label'] = $this->label;
-			$this->isModified = true;
-			return true;
-		}
-		return false;
+		return $this->modifiedProperties;
 	}
 	
 	/**
-	 * @return string
+	 * @api
+	 * @return string[]
 	 */
-	public function getLabel()
+	public function getModifiedPropertyNames()
 	{
-		return $this->label;
+		return array_keys($this->modifiedProperties);
 	}
 	
 	/**
+	 * @api
 	 * @param string $propertyName
 	 * @return boolean
 	 */
@@ -158,11 +169,40 @@ abstract class AbstractI18nDocument
 	}
 	
 	/**
-	 * @return array
+	 * @param string $propertyName
+	 * @param mixed $value
 	 */
-	public function getPreserveOldValues()
+	protected function setOldPropertyValue($propertyName, $value)
 	{
-		return $this->modifiedProperties;
+		if (!array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			$this->modifiedProperties[$propertyName] = $value;
+		}
+	}
+	
+	/**
+	 * @param string $propertyName
+	 */
+	protected function removeOldPropertyValue($propertyName)
+	{
+		if (array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			unset($this->modifiedProperties[$propertyName]);
+		}
+	}
+	
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return mixed
+	 */
+	public function getOldPropertyValue($propertyName)
+	{
+		if (array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			return $this->modifiedProperties[$propertyName];
+		}
+		return null;
 	}
 	
 	/**
@@ -170,7 +210,8 @@ abstract class AbstractI18nDocument
 	 */
 	public function setDefaultValues()
 	{
-		$this->setModifiedProperties();
+		$this->modifiedProperties = array();
+		$this->persistentState = AbstractDocument::PERSISTENTSTATE_NEW;
 	}
 	
 	 /**
@@ -179,20 +220,53 @@ abstract class AbstractI18nDocument
 	 */
 	public function setDocumentProperties($propertyBag)
 	{
-		if (isset($propertyBag['label']))
+		if (array_key_exists('id', $propertyBag))
 		{
-			$this->label = $propertyBag['label'];
+			$this->id = intval($propertyBag['id']);
 		}
 	}
 	
 	/**
-	 * @internal For framework internal usage only
 	 * @return array<String, mixed>
 	 */
 	public function getDocumentProperties()
 	{
 		$propertyBag = array();
-		$propertyBag['label'] = $this->label;
+		$propertyBag['id'] = $this->id;
+		
 		return $propertyBag;
 	}
+	
+	// Generic Method
+	
+	/**
+	 * @return string
+	 */
+	abstract public function getCreationDate();
+	
+	/**
+	 * @param string $creationDate
+	*/
+	abstract public function setCreationDate($creationDate);
+	
+	
+	/**
+	 * @return string
+	*/
+	abstract public function getModificationDate();
+	
+	/**
+	 * @param string $modificationDate
+	*/
+	abstract public function setModificationDate($modificationDate);
+	
+	/**
+	 * @return string
+	*/
+	abstract public function getDeletedDate();
+	
+	/**
+	 * @param string $deletedDate
+	*/
+	abstract public function setDeletedDate($deletedDate);
 }
