@@ -45,13 +45,7 @@ interface InterfaceSchemaManager
 	 * @return \Change\Db\Schema\TableDefinition
 	 */
 	public function getTableDefinition($tableName);
-	
-	/**
-	 * @param string $lang
-	 * @return boolean
-	 */
-	public function addLang($lang);
-	
+
 	/**
 	 * @param integer $treeId
 	 * @return string the SQL statements that where executed
@@ -71,17 +65,27 @@ interface InterfaceSchemaManager
 	public function getDocumentTableName($documentName);
 	
 	/**
-	 * @param string $documentTableName
+	 * @param string $documentName
 	 * @return string
 	 */
-	public function getDocumentI18nTableName($documentTableName);
+	public function getDocumentI18nTableName($documentName);
 	
 	/**
 	 * @param string $propertyName
-	 * @param boolean $localized
+	 * @return string
+	 */
+	public function getDocumentFieldName($propertyName);
+	
+	/**
+	 * @param string $propertyName
 	 * @param string $propertyType
 	 * @param string $propertyDbSize
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function getDocumentFieldDefinition($propertyName, $localized, $propertyType, $propertyDbSize);
+	public function getDocumentFieldDefinition($propertyName, $propertyType, $propertyDbSize);
+	
+	/**
+	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
+	 */
+	public function createOrAlter($tableDefinition);
 }

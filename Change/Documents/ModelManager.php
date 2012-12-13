@@ -7,40 +7,12 @@ namespace Change\Documents;
  */
 class ModelManager
 {
-	/**
-	 * @var string[]
-	 */
-	protected $publicationStatuses = array('DRAFT','CORRECTION','ACTIVE','PUBLISHED','DEACTIVATED','FILED','DEPRECATED','TRASH','WORKFLOW');
-	
-	/**
-	 * @var string[]
-	 */	
-	protected $systemPropertyNames = array('id', 'model', 'author', 'authorid',
-		'creationdate','modificationdate','publicationstatus', 'correctionofid', 'correctionid',
-		'lang','metastring','modelversion','documentversion', 'si18n');
 	
 	/**
 	 * @var \Change\Documents\AbstractModel[]
 	 */
 	protected $documentModels = array();
 	
-	/**
-	 * List of Publication status:
-	 * DRAFT, CORRECTION, ACTIVE, PUBLISHED, DEACTIVATED, FILED, DEPRECATED, TRASH, WORKFLOW
-	 * @return string[]
-	 */
-	public function getPublicationStatuses()
-	{
-		return $this->publicationStatuses;
-	}
-	
-	/**
-	 * @return string[]
-	 */
-	public function getSystemPropertyNames()
-	{
-		return $this->systemPropertyNames;
-	}
 	
 	/**
 	 * @param string $modelName
@@ -54,7 +26,7 @@ class ModelManager
 			if ($className)
 			{
 				/* @var $model \Change\Documents\AbstractModel */
-				$model = new $className();
+				$model = new $className($this);
 				$this->documentModels[$modelName] = $model;
 			}
 			else
@@ -75,7 +47,7 @@ class ModelManager
 		if (count($parts) === 3)
 		{
 			list($vendor, $moduleName, $documentName) = $parts;
-			$className = 'Compilation\\' . ucfirst($vendor) . '\\' . ucfirst($moduleName) .'\\Documents\\' . ucfirst($documentName) . 'Model';
+			$className = 'Compilation\\' . $vendor . '\\' . $moduleName .'\\Documents\\' . $documentName.'Model';
 			if (class_exists($className))
 			{
 				return $className;

@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document xmlns="http://www.rbs.fr/schema/change-document/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/1.0 http://www.rbschange.fr/schema/persistentdocument-4.0.xsd" 
-	model-version="4.0" icon="test" indexable="true">
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
+	icon="test" frontoffice-indexable="true" backoffice-indexable="false"
+	localized="true" publishable="true" use-version="true" editable="true" has-url="true" >
 	<properties>
 		<property name="bool1" type="Boolean"/>
-		<property name="int1" type="Integer" />
+		<property name="int1" type="Integer">
+			<constraint name="min" min="5"/>
+			<constraint name="max" max="10"/>
+		</property>
 		<property name="float1" type="Float"/>
-		<property name="decimal1" type="Decimal"/>
+		<property name="decimal1" type="Decimal" />
 		<property name="date1" type="Date"/>
 		<property name="datetime1" type="DateTime"/>
 		<property name="string1" type="String"/>
-		<property name="longstring1" type="LongString"/>
-		<property name="xml1" type="XML"/>
-		<property name="lob1" type="Lob"/>
-		<property name="richtext1" type="RichText"/>
+		<property name="longstring1" type="LongString"  localized="true"/>
+		<property name="xml1" type="XML" localized="true"/>
+		<property name="lob1" type="Lob" />
+		<property name="richtext1" type="RichText" localized="true"/>
 		<property name="json1" type="JSON"/>
 		<property name="object1" type="Object"/>
-		<property name="documentid1" type="DocumentId" />
-		<property name="document1" type="Document" />
-		<property name="documentarray1" type="DocumentArray" />
+		<property name="documentid1" type="DocumentId"  document-type="Change_Test_TestType" />
+		<property name="document1" type="Document" document-type="Change_Test_TestType" />
+		<property name="documentarray1" type="DocumentArray" document-type="Change_Test_TestType" />
 	</properties>
 </document>

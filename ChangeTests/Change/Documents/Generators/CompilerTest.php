@@ -17,25 +17,17 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	public function testConstruct()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
-		return $compiler;
-	}
-
-	/**
-	 * @depends testConstruct
-	 */	
-	public function testGetDefaultModel(\Change\Documents\Generators\Compiler $compiler)
-	{
-		$defaultModel = $compiler->getDefaultModel();
-		$defModel = $compiler->getDefaultModel();
-		$this->assertCount(13, $defModel->getProperties());
+		$this->assertCount(0, $compiler->getModels());
 	}
 	
 	public function testLoadDocument()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
-		$model = $compiler->loadDocument('Change', 'test', 'test1', $definitionPath);
-		$this->assertEquals('change_test_test1', $model->getFullName());
+		$model = $compiler->loadDocument('Change', 'Test', 'TestType', $definitionPath);
+		$this->assertEquals('Change_Test_TestType', $model->getName());
+		$this->assertCount(1, $compiler->getModels());
+		
 		$this->setExpectedException('\Exception', 'Unable to load document definition');
 		$compiler->loadDocument('Change', 'test', 'test1',  __DIR__ . '/TestAssets/notfound');
 	}
@@ -43,93 +35,50 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 	public function testCheckExtends()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
-		$m1 = $compiler->loadDocument('change', 'testing', 'inject1',  __DIR__ . '/TestAssets/TestValidateInject1.xml');
-		$m2 = $compiler->loadDocument('change', 'testing', 'inject2',  __DIR__ . '/TestAssets/TestValidateInject2.xml');
 		
-		$this->assertEquals($m1, $compiler->getModelByFullName('change_testing_inject1'));
+		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
+		$m1 = $compiler->loadDocument('Change', 'Test', 'TestType', $definitionPath);
 		
-		$this->assertEquals($m1, $compiler->getModelByFullName('Change_Testing_Inject1'));
-		
-		$this->assertEquals($m2, $compiler->getModelByFullName('Change_Testing_Inject2'));
-		
-		$this->assertCount(0, $m1->getCmpPropNames());
-		$this->assertCount(1, $m1->getProperties());
-		$this->assertCount(1, $m1->getSerializedproperties());
-		
-		$compiler->checkExtends();
-		$this->assertCount(14, $m1->getProperties());
-		$this->assertCount(1, $m1->getSerializedproperties());
-		
-		$this->assertCount(1, $m2->getProperties());
-		$this->assertCount(1, $m2->getSerializedproperties());
-		return $compiler;
-	}
-	
-	/**
-	 * @depends testCheckExtends
-	 */
-	public function testBuildDependencies(\Change\Documents\Generators\Compiler $compiler)
-	{
-		$compiler->buildDependencies();
-		$m1 = $compiler->getModelByFullName('modules_testing_inject1');
-		$m2 = $compiler->getModelByFullName('Change_Testing_Inject2');
-		
-		$this->assertCount(15, $m1->getProperties());
-		$this->assertCount(1, $m1->getSerializedproperties());
-		$this->assertCount(16, $m1->getCmpPropNames());
-		
-		$this->assertCount(1, $m2->getProperties());
-		$this->assertCount(1, $m2->getSerializedproperties());	
-		$this->assertCount(18, $m2->getCmpPropNames());
-	}
-	
-	public function testBuildDependenciesInjection()
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
-		$m1 = $compiler->loadDocument('change', 'testing', 'inject1',  __DIR__ . '/TestAssets/TestValidateInject1.xml');
-		$m2 = $compiler->loadDocument('change', 'testing', 'inject2',  __DIR__ . '/TestAssets/TestValidateInject2.xml');
-		$m3 = $compiler->loadDocument('change', 'testing', 'inject3',  __DIR__ . '/TestAssets/TestValidateInject3.xml');
-	
-		
-		$compiler->buildDependencies();
-		$this->assertNull($m3->getExtend());
-		$this->assertCount(15, $m3->getProperties());
-		$this->assertCount(1, $m3->getSerializedproperties());
-		$this->assertCount(16, $m3->getCmpPropNames());		
+		$definitionPath = __DIR__ . '/TestAssets/TestTypeExt.xml';
+		$m2 = $compiler->loadDocument('Change', 'Test', 'TestTypeExt', $definitionPath);
 		
 		
+		$definitionPath = __DIR__ . '/TestAssets/TestTypeInj.xml';
+		$m3 = $compiler->loadDocument('Change', 'Test', 'TestTypeInj', $definitionPath);
 		
-		$this->assertEquals('change_testing_inject3', $m1->getExtend());
-		$this->assertCount(1, $m1->getProperties());
-		$this->assertCount(1, $m1->getSerializedproperties());
-		$this->assertCount(18, $m1->getCmpPropNames());
+		$this->assertCount(3, $compiler->getModels());
+		$this->assertCount(0, $compiler->getModelsByLevel(0));
+
+		$userModel = new \Change\Documents\Generators\Model('Change', 'Users', 'User');
+		$compiler->addModel($userModel);
+		
+		$compiler->buildTree();
+		$compiler->validateInheritance();
 		
 		
-		$this->assertEquals('change_testing_inject1', $m2->getExtend());
-		$this->assertCount(1, $m2->getProperties());
-		$this->assertCount(1, $m2->getSerializedproperties());
-		$this->assertCount(19, $m2->getCmpPropNames());
-		$this->assertTrue($m2->getSerializedPropertyByName('int1')->getOverride());
-	}
-	
-	public function testBuildDependenciesRelation()
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
-		$m1 = $compiler->loadDocument('change', 'testing', 'rel1',  __DIR__ . '/TestAssets/TestRel1.xml');
-		$m2 = $compiler->loadDocument('change', 'testing', 'rel2',  __DIR__ . '/TestAssets/TestRel2.xml');
-		$this->assertCount(1, $m1->getProperties());
-		$this->assertCount(0, $m1->getInverseProperties());
+
 		
-		$this->assertCount(1, $m2->getProperties());
-		$this->assertCount(0, $m2->getInverseProperties());
+		$this->assertCount(2, $compiler->getModelsByLevel(0));
+		$this->assertCount(1, $compiler->getModelsByLevel(1));
+		$this->assertCount(1, $compiler->getModelsByLevel(2));
 		
-		$compiler->buildDependencies();
-		$this->assertCount(1, $m1->getInverseProperties());
+		$p1 = $m1->getPropertyByName('int1');
+		$this->assertCount(0, $p1->getAncestors());
 		
-		$this->assertCount(1, $m2->getInverseProperties());
-		$ip1 = $m2->getInversePropertyByName('rel1');
-		$this->assertNotNull($ip1);
-		$this->assertEquals('r2', $ip1->getSrcName());
-		$this->assertEquals('change_testing_rel1', $ip1->getDocumentType());
+		$p2 = $m2->getPropertyByName('int1');
+		$this->assertCount(2, $p2->getAncestors());
+		
+		$p3 = $m3->getPropertyByName('int1');
+		$this->assertCount(1, $p3->getAncestors());
+		
+		
+		$compiler->saveModelsPHPCode();
+		
+		$compilationPath = $this->getApplication()->getWorkspace()->compilationPath();
+		$commonPath  = $compilationPath . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $m1->getNameSpace()). DIRECTORY_SEPARATOR;
+		$this->assertFileExists($commonPath . $m2->getShortModelClassName() . '.php');
+		$this->assertFileExists($commonPath . $m2->getShortAbstractDocumentClassName() . '.php');
+		$this->assertFileExists($commonPath . $m2->getShortAbstractServiceClassName() . '.php');
+		$this->assertFileExists($commonPath . $m2->getShortDocumentI18nClassName() . '.php');
 	}
 }

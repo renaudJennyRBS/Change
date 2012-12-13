@@ -12,20 +12,16 @@ class DocumentManager
 	protected $applicationServices;
 	
 	/**
-	 * @var \Change\Documents\ModelManager
+	 * @var \Change\Documents\DocumentServices
 	 */
-	protected $modelManager;
+	protected $documentServices;
+	
 	
 	/**
 	 * Document instances by id
 	 * @var array<integer, \Change\Documents\AbstractDocument>
 	 */
 	protected $documentInstances = array();
-	
-	/**
-	 * @var array<integer, \Change\Documents\AbstractI18nDocument>
-	 */
-	protected $i18nDocumentInstances = array();
 	
 	/**
 	 * @var array
@@ -42,11 +38,20 @@ class DocumentManager
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\ModelManager $modelManager
 	 */
-	public function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\ModelManager $modelManager)
+	public function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\DocumentServices $documentServices)
 	{
 		$this->applicationServices = $applicationServices;
-		$this->modelManager = $modelManager;
+		$this->documentServices = $documentServices;
 	}
+	
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	protected function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+	
 	
 	/**
 	 * @return \Change\Db\DbProvider
@@ -69,28 +74,176 @@ class DocumentManager
 	 */
 	protected function getModelManager()
 	{
-		return $this->modelManager;
+		return $this->getDocumentServices()->getModelManager();
 	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function postUnserialze(\Change\Documents\AbstractDocument $document)
+	{
+		throw new \LogicException('not implemented');
+		//$document->setDocumentContext($this, $model, $service)
+	}
+
+	/**
+	 * @param  \Change\Documents\AbstractI18nDocument $i18nDocument
+	 */
+	public function postI18nUnserialze(\Change\Documents\AbstractI18nDocument $i18nDocument)
+	{
+		throw new \LogicException('not implemented');
+		//$documentI18n->setDocumentContext($this);
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function loadDocument(\Change\Documents\AbstractDocument $document)
+	{
+		$model = $document->getDocumentModel();
+		$fieldMapping = $this->getFieldMapping($model, false);
+
+		$propertyBag = $this->getDbProvider()->getDocumentProperties($document->getId(), $model->getRootName(), $fieldMapping);
+		if ($propertyBag)
+		{
+			$document->setDocumentProperties($propertyBag);
+			$document->setPersistentState(AbstractDocument::PERSISTENTSTATE_LOADED);
+		}
+		else
+		{
+			$document->setPersistentState(AbstractDocument::PERSISTENTSTATE_NEW);
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return array()
+	 */
+	public function loadMetas(\Change\Documents\AbstractDocument $document)
+	{
+		throw new \LogicException('not implemented');
+		return array();
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param array $metas
+	 */
+	public function saveMetas(\Change\Documents\AbstractDocument $document, $metas)
+	{
+		throw new \LogicException('not implemented');
+	}
+	
+	/**
+	 * 
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param string $propertyName
+	 * @return integer[]
+	 */
+	public function getPropertyDocumentIds(\Change\Documents\AbstractDocument $document, $propertyName)
+	{
+		throw new \LogicException('not implemented');
+		return array();
+	}
+	
 	
 	/**
 	 * @param string $modelName
 	 * @return \Change\Documents\AbstractDocument
 	 */
-	public function getNewDocumentInstance($modelName)
+	public function getNewDocumentInstanceByModelName($modelName)
 	{
 		$model = $this->getModelManager()->getModelByName($modelName);
 		if ($model === null)
 		{
 			throw new \InvalidArgumentException('Invalid model name (' . $modelName . ')');
 		}
+		return $this->getNewDocumentInstanceByModel($model);
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getNewDocumentInstanceByModel(\Change\Documents\AbstractModel $model)
+	{
+		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
-		$className = $this->getDocumentClassFromModel($model);
-
-		$i18nInfo = new I18nInfo($this->getLang());
-		/* @var $newDocument \Change\Documents\AbstractDocument */
-		$newDocument = new $className($this->newInstancesCounter, $i18nInfo, null);
-		$newDocument->initialize($this->documentServices, $model);
+		$newDocument->initialize($this->newInstancesCounter, AbstractDocument::PERSISTENTSTATE_NEW);
 		return $newDocument;
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	protected function createNewDocumentInstance(\Change\Documents\AbstractModel $model)
+	{
+		$service = $this->getDocumentServices()->get($model->getName());
+		$className = $this->getDocumentClassFromModel($model);	
+		/* @var $newDocument \Change\Documents\AbstractDocument */
+		return new $className($this, $model, $service);
+	}
+	
+	
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Documents\AbstractI18nDocument
+	 */
+	protected function createNewI18nDocumentInstance(\Change\Documents\AbstractModel $model)
+	{
+		$className = $this->getI18nDocumentClassFromModel($model);
+		/* @var $newDocument \Change\Documents\AbstractDocument */
+		return new $className($this);
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param string $LCID
+	 * @return \Change\Documents\AbstractI18nDocument
+	 */
+	public function getI18nDocumentInstanceByDocument(\Change\Documents\AbstractDocument $document, $LCID)
+	{
+		$i18nPart = $this->createNewI18nDocumentInstance($document->getDocumentModel());
+		$i18nPart->initialize($document->getId(), $LCID, AbstractDocument::PERSISTENTSTATE_NEW);
+		if (!$document->persistentStateIsNew())
+		{
+			$fieldMapping = $this->getFieldMapping($document->getDocumentModel(), true);
+			$propertyBag = $this->getDbProvider()->getI18nDocumentProperties($document->getId(), $LCID, $document->getDocumentModel()->getRootName(), $fieldMapping);
+			if ($propertyBag)
+			{
+				
+				$i18nPart->setDocumentProperties($propertyBag);
+				if ($i18nPart->getDeletedDate())
+				{
+					$i18nPart->setPersistentState(AbstractDocument::PERSISTENTSTATE_DELETED);
+				}
+				else
+				{
+					$i18nPart->setPersistentState(AbstractDocument::PERSISTENTSTATE_LOADED);
+				}
+			}
+		}
+		return $i18nPart;
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param boolean $localised
+	 */
+	protected function getFieldMapping(\Change\Documents\AbstractModel $model, $localised)
+	{
+		$sm = $this->getDbProvider()->getSchemaManager();
+		$mapping = array();
+		foreach ($model->getProperties() as $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized() == $localised)
+			{
+				$mapping[$property->getName()] = $sm->getDocumentFieldName($property->getName());
+			}
+		}
+		return $mapping;
 	}
 	
 	/**
@@ -98,7 +251,7 @@ class DocumentManager
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return \Change\Documents\AbstractDocument|null
 	 */
-	public function getDocumentInstance($documentId, $model = null)
+	public function getDocumentInstance($documentId, \Change\Documents\AbstractModel $model = null)
 	{
 		$id = intval($documentId);
 		if ($id > 0)
@@ -108,72 +261,29 @@ class DocumentManager
 				return $this->getFromCache($id);
 			}
 			
-			$constructorInfos = $this->getDbProvider()->getDocumentConstructorInfos($id, $model);
+			$rootModelname = ($model) ? $model->getRootName() : null;
+			
+			$constructorInfos = $this->getDbProvider()->getDocumentInitializeInfos($id, $rootModelname);
 			if ($constructorInfos !== null)
 			{
-				list ($realModelName, $lang, $label, $treeId) = $constructorInfos;
-				$realModel = $this->getModelManager()->getModelByName($realModelName);				
-				$className = $this->getDocumentClassFromModel($realModel);
-				/* @var $document \Change\Documents\AbstractDocument */
-				$i18nInfo = new I18nInfo($lang, $label);
-				$document = new $className($id, $i18nInfo, $treeId);
-				$document->initialize($this->documentServices, $realModel);
-				
-				$this->putInCache($id, $document);
+				list ($modelName, $treeId) = $constructorInfos;
+				$documentModel = $this->getModelManager()->getModelByName($modelName);
+				if ($documentModel !== null)
+				{
+					$document = $this->createNewDocumentInstance($documentModel);
+					$document->initialize($id, AbstractDocument::PERSISTENTSTATE_INITIALIZED, $treeId);
+					$this->putInCache($id, $document);
+					return $document;
+				}
+				else
+				{
+					$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
+				}
 			}
-			
-			return $document;
 		}
 		return null;
 	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public function loadDocumentInstance($document)
-	{
-		$documentId = $document->getId();
-		$this->getDbProvider()->loadDocument($document);
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public function saveDocumentInstance($document)
-	{
-		$documentId = $document->getId();
-		if ($documentId < 0)
-		{
-			$this->getDbProvider()->insertDocument($document);
-		}
-		else
-		{
-			$this->getDbProvider()->updateDocument($document);
-		}
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $lang
-	 * @return \Change\Documents\AbstractI18nDocument
-	 */
-	public function getI18nDocumentInstance($document, $lang)
-	{
-		$documentId = $document->getId();
-		$i18ndoc = $this->getI18nDocumentFromCache($documentId, $lang);
-		if ($i18ndoc === null)
-		{
-			$i18ndoc = $this->getDbProvider()->getI18nDocument($document, $lang);
-			if ($i18ndoc === null)
-			{
-				$i18nClassName = $this->getI18nDocumentClassFromModel($document->getDocumentModelName());
-				$i18nDoc = new $i18nClassName($documentId, $lang, true);
-			}
-			$this->i18nDocumentInstances[$documentId][$lang] = $i18nDoc;
-		}
-		return $i18nDoc;
-	}
-	
+		
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return integer
@@ -255,28 +365,7 @@ class DocumentManager
 	{
 		return $this->documentInstances[intval($documentId)];
 	}
-	
-	/**
-	 * @param integer $documentId
-	 * @param string $lang
-	 * @return \Change\Documents\AbstractI18nDocument|NULL
-	 */
-	protected function getI18nDocumentFromCache($documentId, $lang)
-	{
-		if (isset($this->i18nDocumentInstances[$documentId]))
-		{
-			if (isset($this->i18nDocumentInstances[$documentId][$lang]))
-			{
-				return $this->i18nDocumentInstances[$documentId][$lang];
-			}
-		}
-		else
-		{
-			$this->i18nDocumentInstances[$documentId] = array();
-		}
-		return null;
-	}
-	
+		
 	/**
 	 * @param integer $documentId
 	 * @param \Change\Documents\AbstractDocument $document
@@ -293,7 +382,7 @@ class DocumentManager
 	 */
 	protected function getDocumentClassFromModel($model)
 	{
-		return ucfirst($model->getVendorName()) . '\\' . ucfirst($model->getModuleName()) . '\\Documents\\' . ucfirst(ucfirst($model->getDocumentName()));
+		return '\\' . implode('\\', array($model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName()));
 	}
 	
 	/**
@@ -302,7 +391,7 @@ class DocumentManager
 	 */
 	protected function getI18nDocumentClassFromModel($model)
 	{
-		return $this->getDocumentClassFromModel($model).'I18n';
+		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName().'I18n'));
 	}
 	
 	// Working lang.
@@ -327,6 +416,16 @@ class DocumentManager
 		{
 			return $this->getI18nManager()->getLang();
 		}
+	}
+	
+	/**
+	 * Get the current lcid.
+	 * @api
+	 * @return string ex: "en_GB" or "fr_FR"
+	 */
+	public function getLCID()
+	{
+		return $this->getI18nManager()->getLCID($this->getLang());
 	}
 	
 	/**

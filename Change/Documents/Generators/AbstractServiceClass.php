@@ -21,7 +21,7 @@ class AbstractServiceClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		$nsParts[] = $this->getClassName($model) . '.php';
+		$nsParts[] = $model->getShortAbstractServiceClassName() . '.php';
 		array_unshift($nsParts, $compilationPath);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
@@ -35,23 +35,25 @@ class AbstractServiceClass
 	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model)
 	{
 		$this->compiler = $compiler;
-		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\\' . $model->getNameSpace() . ';' . PHP_EOL;
-		$code .= 'abstract class ' . $this->getClassName($model) . ' extends ' . $this->getExtendClassName($model) . PHP_EOL;
+		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
+		
+		$extendModel = '';
+		if ($model->getExtend())
+		{
+			$pm = $this->compiler->getModelByName($model->getExtend());
+			$extend =  $model->getServiceClassName();
+		}
+		else
+		{
+			$extend = '\Change\Documents\AbstractService';
+		}
+		
+		$code .= 'abstract class ' . $model->getShortAbstractServiceClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$code .= $this->getDefaultCode($model);
 		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
 		return $code;	
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param string $className
-	 * @return string
-	 */
-	protected function addNameSpace($model, $className)
-	{
-		return '\Compilation\\' . $model->getNameSpace() . '\\' . $className;
 	}
 	
 	/**
@@ -67,60 +69,7 @@ class AbstractServiceClass
 		return var_export($value, true);
 	}
 	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param boolean $withNameSpace
-	 * @return string
-	 */
-	protected function getClassName($model, $withNameSpace = false)
-	{
-		$cn = 'Abstract' .ucfirst($model->getDocumentName()) . 'Service';
-		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getExtendClassName($model)
-	{
-		if ($model->getExtend())
-		{
-			$pm = $this->compiler->getModelByFullName($model->getExtend());
-			return $this->getFinalClassName($pm);
-		}
-		return '\Change\Documents\AbstractService';
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getFinalClassName($model)
-	{
-		return $this->getFinalClassNameByCode($model->getVendor(), $model->getModuleName(), $model->getDocumentName());
-	}
 
-	/**
-	 * @param string $moduleName
-	 * @param string $documentName
-	 * @return string
-	 */
-	protected function getFinalClassNameByCode($vendor, $moduleName, $documentName)
-	{
-		return '\\'. ucfirst($vendor).'\\' .  ucfirst($moduleName) . '\Documents\\' . ucfirst($documentName) . 'Service';
-	}
-	
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param boolean $withNameSpace
-	 * @return string
-	 */
-	protected function getModelClassName($model, $withNameSpace = false)
-	{
-		$cn = ucfirst($model->getDocumentName()) . 'Model';
-		return ($withNameSpace) ? $this->addNameSpace($model, $cn) :  $cn;
-	}
 	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -128,14 +77,29 @@ class AbstractServiceClass
 	 */
 	protected function getDefaultCode($model)
 	{
+		$docClassName = $model->getDocumentClassName();
+		
 		$code = '
+	/**
+	 * @param '.$docClassName.' $document
+	 * @return string
+	 */
+	public function save('.$docClassName.' $document)
+	{
+		throw new \LogicException(\'not implemented\');
+	}'. PHP_EOL;
+		
+		if (!$model->getInject())
+		{
+		$code .= '
 	/**
 	 * @return string
 	 */
 	public function getModelName()
 	{
-		return '.$this->escapePHPValue($model->getFullName()).';
+		return '.$this->escapePHPValue($model->getName()).';
 	}'. PHP_EOL;
+		}
 		return $code;
 	}
 }

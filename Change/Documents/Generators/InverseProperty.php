@@ -4,42 +4,52 @@ namespace Change\Documents\Generators;
 /**
  * @name \Change\Documents\Generators\InverseProperty
  */
-class InverseProperty extends Property
+class InverseProperty
 {
-	/**
-	 * @var string
-	 */
-	protected $srcName;
 	
 	/**
-	 * 
-	 * @param \Change\Documents\Generators\Property $property
-	 * @param \Change\Documents\Generators\Model $model
+	 * @var \Change\Documents\Generators\Model
 	 */
-	public function __construct($property, $model)
+	protected $model;
+		
+	/**
+	 * @var \Change\Documents\Generators\Property
+	 */
+	protected $relatedProperty;
+		
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 */
+	public function __construct(\Change\Documents\Generators\Model $model, \Change\Documents\Generators\Property $property)
 	{
-		$this->name = $model->getDocumentName();
-		$this->srcName = $property->getName();
-		$this->type = $property->getType();
-		$this->documentType = $model->getFullName();
-		$this->required = $property->getRequired();
-		$this->minOccurs = $property->getMinOccurs();
-		$this->maxOccurs = $property->getMaxOccurs();
+		$this->model = $model;
+		$this->relatedProperty = $property;
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getSrcName()
+	public function getName()
 	{
-		return $this->srcName;
+		$model = ($this->relatedProperty->getModel()->getInject()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
+		return $model->getVendor() . $model->getShortModuleName(). $model->getShortName().ucfirst($this->relatedProperty->getName());
 	}
 
 	/**
-	 * @param string $srcName
+	 * @return string
 	 */
-	public function setSrcName($srcName)
+	public function getRelatedDocumentName()
 	{
-		$this->srcName = $srcName;
+		$model = ($this->relatedProperty->getModel()->getInject()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
+		return $model->getName();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRelatedPropertyName()
+	{
+		return $this->relatedProperty->getName();
 	}
 }

@@ -55,7 +55,9 @@ class CompileDocuments extends \Change\Application\Console\ChangeCommand
 			$nbModels++;
 		}
 		
-		$compiler->buildDependencies();
+		$compiler->buildTree();
+		
+		$compiler->validateInheritance();
 		
 		$compiler->saveModelsPHPCode();
 		

@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document xmlns="http://www.rbs.fr/schema/change-document/1.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/1.0 http://www.rbschange.fr/schema/persistentdocument-4.0.xsd" 
-	model-version="4.0" icon="page" indexable="true">
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"	
+	icon="page" editable="true" localized="true" publishable="true" use-version="true" frontoffice-indexable="true" has-url="true">
 	<properties>
-		<property name="startpublicationdate" localized="true" />
-		<property name="endpublicationdate" localized="true" />
-		<property name="publicationstatus" localized="true" />
 		<property name="navigationtitle" type="String" localized="true" db-size="80" />
 		<property name="metatitle" type="LongString" localized="true" />
 		<property name="description" type="LongString" localized="true" />
@@ -15,20 +11,15 @@
 		<property name="indexingstatus" type="Boolean" default-value="true" />
 		<property name="template" type="String" indexed="none" required="true" />
 		<property name="content" type="XML" localized="true" indexed="description" />
-		<property name="skin" type="Document" document-type="modules_skin/skin" />
+		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
+		<property name="skin" type="Document" document-type="modules_skin/skin" />  
+		-->
 		<property name="navigationVisibility" type="Integer" from-list="modules_website/navigationvisibility" default-value="1" localized="true" required="true" />
 		<property name="isIndexPage" type="Boolean" default-value="false" />
 		<property name="isHomePage" type="Boolean" default-value="false" />
 		<property name="advancedreferencing" type="RichText" localized="true" />
 		<property name="isorphan" type="Boolean" default-value="false" />
 		<property name="usehttps" type="Boolean" default-value="false" />
-	</properties>
-	<serializedproperties>
 		<property name="isIndexPageForSubTopics" type="Boolean" default-value="false" />
-	</serializedproperties>
-	<workflow start-task="VALIDATIONPAGE">
-		<parameter name="AFFECT_TASKS_TO_SUPER_ADMIN">true</parameter>
-		<parameter name="NOTIFICATION_ACTIVATION">modules_website/sendactivatetoauthor</parameter>
-		<parameter name="NOTIFICATION_ERROR">modules_website/sendcanceltoauthor</parameter>
-	</workflow>
+	</properties>
 </document>

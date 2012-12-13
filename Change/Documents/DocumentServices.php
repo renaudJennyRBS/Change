@@ -28,20 +28,13 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
-				->addMethodParameter('__construct', 'modelManager', array('type' => 'Change\Documents\ModelManager', 'required' => true));
+				->addMethodParameter('__construct', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
 		
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\DocumentI18nSynchronizer');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
-				->addMethodParameter('__construct', 'documentManager', array('type' => 'Change\Documents\DocumentManager', 'required' => true));
-		$dl->addDefinition($cl);
-		
+
 		parent::__construct($dl, $applicationServices);
-		
-		$this->instanceManager()->setInjections('Change\Documents\DocumentManager', array('Change\Documents\ModelManager'));
-		$this->instanceManager()->setInjections('Change\Documents\DocumentI18nSynchronizer', array('Change\Documents\DocumentManager'));
+		$im = $this->instanceManager();
+		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $this->applicationServices, 'documentServices' => $this));
 	}
 	
 	/**
@@ -58,13 +51,5 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	public function getDocumentManager()
 	{
 		return $this->get('Change\Documents\DocumentManager', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
-	}
-	
-	/**
-	 * @return \Change\Documents\DocumentI18nSynchronizer
-	 */
-	public function getDocumentI18nSynchronizer()
-	{
-		return $this->get('Change\Documents\DocumentI18nSynchronizer', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
 	}
 }
