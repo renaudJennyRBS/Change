@@ -220,12 +220,20 @@ abstract class AbstractView
 	}
 
 	/**
-	 * Returns the current lang.
-	 *
+	 * \Change\Application\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return \Change\Application::getInstance()->getApplicationServices();
+	}
+	
+	/**
+	 * Returns the LCID.
+	 * @api
 	 * @return string
 	 */
-	public function getLang()
+	public final function getLCID()
 	{
-		return \Change\I18n\I18nManager::getInstance()->getLang();
+		return $this->getApplicationServices()->getI18nManager()->getLCID();
 	}
 }

@@ -1,8 +1,6 @@
 <?php
 namespace Change\Db\Query;
 
-use Zend\Db\Sql\Expression;
-
 /**
  * @name \Change\Db\Query\Builder
  */
@@ -76,7 +74,7 @@ class Builder
 	 */
 	public function distinct()
 	{
-		$this->query()->getSelectClause()->setQuantifier(\Change\Db\Query\Clauses\SelectClause::QUANTIFIER_DISTINCT);
+		$this->query->getSelectClause()->setQuantifier(\Change\Db\Query\Clauses\SelectClause::QUANTIFIER_DISTINCT);
 		return $this;
 	}
 	
@@ -109,7 +107,7 @@ class Builder
 		}
 		$fromClause = new Clauses\FromClause();
 		$fromClause->setTableExpression($tableExpression);
-		$this->query->getSelectClause()->setFromClause($fromClause);
+		$this->query->setFromClause($fromClause);
 		return $this;
 	}
 	
@@ -131,11 +129,11 @@ class Builder
 		{
 			throw new \LogicException('Call select() before trying to call addSelectColumn');
 		}
-		$selectClause = $this->query()->getSelectClause();
+		$selectClause = $this->query->getSelectClause();
 		if ($selectClause === null)
 		{
 			$selectClause = new \Change\Db\Query\Clauses\SelectClause();
-			$this->query()->setSelectClause($selectClause);
+			$this->query->setSelectClause($selectClause);
 		}
 		$selectClause->addSelect($expression);
 		return $this;
@@ -148,7 +146,7 @@ class Builder
 	public function where(\Change\Db\Query\Predicates\InterfacePredicate $predicate)
 	{
 		$whereClause = new \Change\Db\Query\Clauses\WhereClause($predicate);
-		$this->query()->getSelectClause()->setWhereClause($whereClause);
+		$this->query->setWhereClause($whereClause);
 		return $this;
 	}
 	
@@ -160,7 +158,7 @@ class Builder
 	public function innerJoin(\Change\Db\Query\Expressions\AbstractExpression $tableExpression, $joinCondition = null)
 	{
 		$join = new \Change\Db\Query\Expressions\Join($tableExpression, \Change\Db\Query\Expressions\Join::INNER_JOIN, $this->processJoinCondition($joinCondition));
-		$this->query->getSelectClause()->getFromClause()->addJoin($join);
+		$this->query->getFromClause()->addJoin($join);
 		return $this;
 	}
 	
@@ -373,11 +371,11 @@ class Builder
 	 */
 	protected function addOrder(\Change\Db\Query\Expressions\AbstractExpression $expression, $direction)
 	{
-		$orderByClause = $this->query->getSelectClause()->getOrderByClause();
+		$orderByClause = $this->query->getOrderByClause();
 		if ($orderByClause === null)
 		{
 			$orderByClause = new \Change\Db\Query\Clauses\OrderByClause();
-			$this->query->getSelectClause()->setOrderByClause($orderByClause);
+			$this->query->setOrderByClause($orderByClause);
 		}
 		$orderByClause->addExpression(new \Change\Db\Query\Expressions\OrderingSpecification($expression, $direction));
 	}
@@ -388,11 +386,11 @@ class Builder
 	 */
 	public function group(\Change\Db\Query\Expressions\AbstractExpression $expression)
 	{
-		$groupByClause = $this->query->getSelectClause()->getGroupByClause();
+		$groupByClause = $this->query->getGroupByClause();
 		if ($groupByClause === null)
 		{
 			$groupByClause = new \Change\Db\Query\Clauses\GroupByClause();
-			$this->query->getSelectClause()->setGroupByClause($groupByClause);
+			$this->query->setGroupByClause($groupByClause);
 		}
 		$groupByClause->addExpression($expression);
 		return $this;
@@ -407,7 +405,7 @@ class Builder
 	 */
 	public function orWhere(\Change\Db\Query\Predicates\InterfacePredicate $predicate)
 	{
-		$existingWhereClause = $this->query()->getSelectClause()->getWhereClause();
+		$existingWhereClause = $this->query->getWhereClause();
 		if ($existingWhereClause === null)
 		{
 			$this->where($predicate);
@@ -429,7 +427,7 @@ class Builder
 	 */
 	public function andWhere(\Change\Db\Query\Predicates\InterfacePredicate $predicate)
 	{
-		$existingWhereClause = $this->query()->getSelectClause()->getWhereClause();
+		$existingWhereClause = $this->query->getWhereClause();
 		if ($existingWhereClause === null)
 		{
 			$this->where($predicate);

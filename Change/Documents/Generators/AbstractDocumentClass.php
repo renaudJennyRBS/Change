@@ -144,6 +144,14 @@ class AbstractDocumentClass
 	{
 	 	return isset($this->i18nPartArray[$LCID]) ? $this->i18nPartArray[$LCID] : null;
 	}
+	 	
+	/**
+	 * @return string
+	 */
+	public function getCurrentLCID()
+	{
+		return $this->getDocumentManager()->getLCID();
+	}
 	 				
 	/**
 	 * @return '.$class.'
@@ -381,8 +389,42 @@ class AbstractDocumentClass
 	}' . PHP_EOL;
 			return $code;
 		}
-		
-		$code = '
+		elseif($property->getLocalized())
+		{
+			$code = '
+	/**
+	 * @return boolean
+	 */
+	public function is'.$uName.'Valid()
+	{
+		$i18nPart = $this->getCurrentI18nPart();	
+		if ($i18nPart->persistentStateIsNew() || $i18nPart->isPropertyModified('.$eName.'))
+		{
+			$prop = $this->getDocumentModel()->getProperty('.$eName.');
+			$value = $i18nPart->get'.$uName.'();
+			if ($value === null || $value === \'\') {
+				if (!$prop->isRequired()) {return true;}
+				$this->addPropertyErrors('.$eName.', new \Change\I18n\PreparedKey(\'f.constraints.isempty\', array(\'ucf\')));
+				return false;
+			}
+			elseif ($prop->hasConstraints()) {
+				foreach ($prop->getConstraintArray() as $name => $params) {
+					$params += array(\'documentId\' => $this->getId());
+					$c = \change_Constraints::getByName($name, $params); //TODO Old class Usage
+					if (!$c->isValid($value)) {
+						$this->addPropertyErrors('.$eName.', \change_Constraints::formatMessages($c)); //TODO Old class Usage
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}' . PHP_EOL;
+			return $code;			
+		}
+		else
+		{
+			$code = '
 	/**
 	 * @return boolean
 	 */
@@ -410,7 +452,8 @@ class AbstractDocumentClass
 		}
 		return true;
 	}' . PHP_EOL;
-		return $code;
+			return $code;
+		}
 	}
 	
 	/**

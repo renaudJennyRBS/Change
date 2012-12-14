@@ -18,7 +18,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $configPath);
 		$manager = new \Change\I18n\I18nManager($config, $application->getApplicationServices()->getDbProvider());
 
-		$this->assertEquals(array('fr', 'en', 'it', 'es'), $manager->getSupportedLanguages());
+		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());
 
 		return $manager;
 	}
@@ -28,27 +28,37 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetDefaultLang(\Change\I18n\I18nManager $manager)
 	{
-		$this->assertEquals('fr', $manager->getDefaultLang());
+		$this->assertEquals('fr_FR', $manager->getDefaultLCID());
 	}
 
 	/**
 	 * @depends testGetSupportedLanguages
 	 */
-	public function testGetLCID(\Change\I18n\I18nManager $manager)
+	public function testGetLangByLCID(\Change\I18n\I18nManager $manager)
 	{
-		$this->assertEquals('fr_FR', $manager->getLCID('fr'));
-		$this->assertEquals('it_IT', $manager->getLCID('it'));
-		$this->assertEquals('en_GB', $manager->getLCID('en'));
+		$this->assertEquals('fr', $manager->getLangByLCID('fr_FR'));
+		$this->assertEquals('us', $manager->getLangByLCID('en_US'));
+		$this->assertEquals('xx', $manager->getLangByLCID('xx_XX'));
+		try
+		{
+			$manager->getLangByLCID('fr');
+			$this->fail('A InvalidArgumentException should be thrown.');
+		}
+		catch (\InvalidArgumentException $e)
+		{
+			$this->assertEquals('Invalid LCID: fr', $e->getMessage());
+		}
 	}
 
 	/**
 	 * @depends testGetSupportedLanguages
 	 */
-	public function testGetCode(\Change\I18n\I18nManager $manager)
+	public function testGetLCIDByLang(\Change\I18n\I18nManager $manager)
 	{
-		$this->assertEquals('fr', $manager->getCode('fr_FR'));
-		$this->assertEquals('it', $manager->getCode('it_IT'));
-		$this->assertEquals('en', $manager->getCode('en_GB'));
+		$this->assertEquals('fr_FR', $manager->getLCIDByLang('fr'));
+		$this->assertEquals('en_GB', $manager->getLCIDByLang('en'));
+		$this->assertEquals('en_US', $manager->getLCIDByLang('us'));
+
 	}
 
 	/**
@@ -61,23 +71,23 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		// TODO: Test lang from session.
 		// If no UI lang is set, use the default one.
-		$this->assertEquals($manager->getDefaultLang(), $manager->getLang());
+		$this->assertEquals($manager->getDefaultLCID(), $manager->getLCID());
 
 		// Set/get supported languages.
-		$manager->setLang('it');
-		$this->assertEquals('it', $manager->getLang());
-		$manager->setLang('en');
-		$this->assertEquals('en', $manager->getLang());
+		$manager->setLCID('it_IT');
+		$this->assertEquals('it_IT', $manager->getLCID());
+		$manager->setLCID('en_GB');
+		$this->assertEquals('en_GB', $manager->getLCID());
 
 		// Setting an unsupported language.
 		try
 		{
-			$manager->setLang('kl');
+			$manager->setLCID('kl_KL');
 			$this->fail('A InvalidArgumentException should be thrown.');
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			// It's OK.
+			$this->assertEquals('Not supported language: kl_KL', $e->getMessage());
 		}
 	}
 

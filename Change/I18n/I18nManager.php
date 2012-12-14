@@ -13,7 +13,7 @@ class I18nManager
 	/**
 	 * @var array
 	 */
-	protected $LCID_BY_LANG = null;
+	protected $langMap = null;
 
 	/**
 	 * @var array
@@ -26,24 +26,24 @@ class I18nManager
 	protected $transformers;
 
 	/**
-	 * @var string two lower-cased letters code, ex: "fr"
+	 * @var string, ex: "fr_FR"
 	 */
-	protected $uilang;
+	protected $uiLCID;
 
 	/**
-	 * @var string[] two lower-cased letters codes, ex: "fr"
+	 * @var string[] ex: "fr_FR"
 	 */
-	protected $m_supportedLanguages = array();
-
-	/**
-	 * @var array
-	 */
-	protected $m_i18n_documents_synchro = null;
+	protected $supportedLCIDs = array();
 
 	/**
 	 * @var array
 	 */
-	protected $m_i18n_keys_synchro = null;
+	protected $i18nDocumentsSynchro = null;
+
+	/**
+	 * @var array
+	 */
+	protected $i18nKeysSynchro = null;
 
 	/**
 	 * @var \Change\Configuration\Configuration
@@ -69,7 +69,7 @@ class I18nManager
 			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace',
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
 
-		$this->m_supportedLanguages = $config->getEntry('i18n/supported-languages', array('fr'));
+		$this->supportedLCIDs = $config->getEntry('i18n/supported-lcids', array('fr_FR'));
 	}
 	
 	/**
@@ -81,53 +81,60 @@ class I18nManager
 	}
 
 	/**
-	 * Get all supported language codes.
+	 * Get all supported LCIDs.
 	 * @api
-	 * @return string[] two lower-cased letters codes, ex: "fr"
+	 * @return string[] , ex: "fr_FR"
 	 */
-	public function getSupportedLanguages()
+	public function getSupportedLCIDs()
 	{
-		return $this->m_supportedLanguages;
+		return $this->supportedLCIDs;
 	}
 
 	/**
-	 * Get the default language code.
+	 * Get the default LCID.
 	 * @api
-	 * @return string two lower-cased letters code, ex: "fr"
+	 * @return string two lower-cased letters code, ex: "fr_FR"
 	 */
-	public function getDefaultLang()
+	public function getDefaultLCID()
 	{
-		return $this->m_supportedLanguages[0];
+		return $this->supportedLCIDs[0];
 	}
 
 	/**
-	 * Get the UI language code.
+	 * Get the UI LCID.
 	 * @api
-	 * @return string two lower-cased letters code, ex: "fr"
+	 * @return string two lower-cased letters code, ex: "fr_FR"
 	 */
-	public function getLang()
+	public function getLCID()
 	{
-		if ($this->uilang === null)
+		if ($this->uiLCID === null)
 		{
-			$uilang = $this->getController()->getStorage()->readForUser('uilang');
-			$this->setLang($uilang ? $uilang : $this->getDefaultLang());
+			$uilang = $this->getController()->getStorage()->readForUser('uiLCID');
+			if ($uilang && in_array($uilang, $this->getSupportedLCIDs()))
+			{
+				$this->setLCID($uilang);
+			}
+			else
+			{
+				$this->setLCID($this->getDefaultLCID());
+			}
 		}
-		return $this->uilang;
+		return $this->uiLCID;
 	}
 
 	/**
-	 * Set the UI language code.
+	 * Set the UI LCID.
 	 * @api
 	 * @throws \InvalidArgumentException if the lang is not supported
-	 * @param string $lang two lower-cased letters code, ex: "fr"
+	 * @param string $LCID ex: "fr_FR"
 	 */
-	public function setLang($lang)
+	public function setLCID($LCID)
 	{
-		if (!in_array($lang, $this->getSupportedLanguages()))
+		if (!in_array($LCID, $this->getSupportedLCIDs()))
 		{
-			throw new \InvalidArgumentException('Not supported language: ' . $lang);
+			throw new \InvalidArgumentException('Not supported language: ' . $LCID);
 		}
-		$this->uilang = $lang;
+		$this->uiLCID = $LCID;
 	}
 
 	/**
@@ -136,9 +143,9 @@ class I18nManager
 	protected function loadI18nSynchroConfiguration()
 	{
 		$data = $this->configuration->getEntry('i18n/synchro/documents', null);
-		$this->m_i18n_documents_synchro = $this->cleanI18nSynchroConfiguration($data);
+		$this->i18nDocumentsSynchro = $this->cleanI18nSynchroConfiguration($data);
 		$data = $this->configuration->getEntry('i18n/synchro/keys', null);
-		$this->m_i18n_keys_synchro = $this->cleanI18nSynchroConfiguration($data);
+		$this->i18nKeysSynchro = $this->cleanI18nSynchroConfiguration($data);
 	}
 
 	/**
@@ -151,15 +158,15 @@ class I18nManager
 		$result = array();
 		if (is_array($data) && count($data))
 		{
-			$langs = $this->getSupportedLanguages();
-			foreach ($data as $lang => $froms)
+			$LCIDs = $this->getSupportedLCIDs();
+			foreach ($data as $LCID => $froms)
 			{
-				if (in_array($lang, $langs))
+				if (in_array($LCID, $LCIDs))
 				{
-					$fromLangs = array_intersect($froms, $langs);
+					$fromLangs = array_intersect($froms, $LCIDs);
 					if (count($fromLangs))
 					{
-						$result[$lang] = $fromLangs;
+						$result[$LCID] = $fromLangs;
 					}
 				}
 			}
@@ -177,11 +184,11 @@ class I18nManager
 	 */
 	public function hasI18nDocumentsSynchro()
 	{
-		if ($this->m_i18n_documents_synchro === null)
+		if ($this->i18nDocumentsSynchro === null)
 		{
 			$this->loadI18nSynchroConfiguration();
 		}
-		return $this->m_i18n_documents_synchro !== false;
+		return $this->i18nDocumentsSynchro !== false;
 	}
 
 	/**
@@ -189,7 +196,7 @@ class I18nManager
 	 */
 	public function getI18nDocumentsSynchro()
 	{
-		return $this->hasI18nDocumentsSynchro() ? $this->m_i18n_documents_synchro : array();
+		return $this->hasI18nDocumentsSynchro() ? $this->i18nDocumentsSynchro : array();
 	}
 
 	/**
@@ -197,11 +204,11 @@ class I18nManager
 	 */
 	public function hasI18nKeysSynchro()
 	{
-		if ($this->m_i18n_keys_synchro === null)
+		if ($this->i18nKeysSynchro === null)
 		{
 			$this->loadI18nSynchroConfiguration();
 		}
-		return $this->m_i18n_keys_synchro !== false;
+		return $this->i18nKeysSynchro !== false;
 	}
 
 	/**
@@ -209,7 +216,7 @@ class I18nManager
 	 */
 	public function getI18nKeysSynchro()
 	{
-		return $this->hasI18nKeysSynchro() ? $this->m_i18n_keys_synchro : array();
+		return $this->hasI18nKeysSynchro() ? $this->i18nKeysSynchro : array();
 	}
 
 	/**
@@ -217,55 +224,64 @@ class I18nManager
 	 */
 	public function isMultiLangEnabled()
 	{
-		return count($this->m_supportedLanguages) > 1;
+		return count($this->supportedLCIDs) > 1;
 	}
 
 	/**
 	 * Converts a two characters lang code to a LCID.
 	 * @api
-	 * @param string $langCode
+	 * @param string $lang
 	 * @return string
 	 */
-	public function getLCID($langCode)
+	public function getLCIDByLang($lang)
 	{
-		if ($this->LCID_BY_LANG === null)
+		if ($this->langMap === null)
 		{
-			$this->LCID_BY_LANG = $this->configuration->getEntry('i18n/lcids', array());
+			$this->langMap = $this->configuration->getEntry('i18n/langs', array());
 		}
-
-		if (!isset($this->LCID_BY_LANG[$langCode]))
+		
+		$supportedLang = array_search($lang, $this->langMap);
+		if ($supportedLang === false)
 		{
-			if (strlen($langCode) === 2)
+			foreach ($this->getSupportedLCIDs() as $LCID)
 			{
-				$this->LCID_BY_LANG[$langCode] = strtolower($langCode) . '_' . strtoupper($langCode);
+				if (strpos($LCID, $lang) === 0)
+				{
+					$this->langMap[$LCID] = $lang;
+					return $LCID;
+				}
 			}
-			else
-			{
-				$this->LCID_BY_LANG[$langCode] = strtolower($langCode);
-			}
+			return strtolower($lang) . '_' . strtoupper($lang);
 		}
-		return $this->LCID_BY_LANG[$langCode];
+		return $supportedLang;
 	}
 
 	/**
 	 * Converts a LCID to a two characters lang code.
 	 * @api
-	 * @param string $lcid
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function getCode($lcid)
+	public function getLangByLCID($LCID)
 	{
-		if ($this->LCID_BY_LANG === null)
+		if ($this->langMap === null)
 		{
-			$this->LCID_BY_LANG = $this->configuration->getEntry('i18n/lcids', array());
+			$this->langMap = $this->configuration->getEntry('i18n/langs', array());
 		}
 
-		$code = array_search($lcid, $this->LCID_BY_LANG);
-		if ($code === false)
+		if (!isset($this->langMap[$LCID]))
 		{
-			return substr($lcid, 0, 2);
+			if (strlen($LCID) === 5)
+			{
+				$this->langMap[$LCID] = strtolower(substr($LCID, 0, 2));
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Invalid LCID: ' . $LCID);
+			}
+			
 		}
-		return $code;
+		return $this->langMap[$LCID];
 	}
 
 	/**
@@ -278,18 +294,18 @@ class I18nManager
 	 */
 	public function trans($cleanKey, $formatters = array(), $replacements = array())
 	{
-		return $this->formatKey($this->getLang(), $cleanKey, $formatters, $replacements);
+		return $this->formatKey($this->getLCID(), $cleanKey, $formatters, $replacements);
 	}
 
 	/**
-	 * For example: formatKey('fr', 'f.boolean.true')
+	 * For example: formatKey('fr_FR', 'f.boolean.true')
 	 * @api
-	 * @param string $lang
+	 * @param string $LCID
 	 * @param string | \Change\I18n\PreparedKey $cleanKey
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
 	 * @param array $replacements
 	 */
-	public function formatKey($lang, $cleanKey, $formatters = array(), $replacements = array())
+	public function formatKey($LCID, $cleanKey, $formatters = array(), $replacements = array())
 	{
 		if ($cleanKey instanceof \Change\I18n\PreparedKey)
 		{
@@ -304,13 +320,12 @@ class I18nManager
 
 		if ($preparedKey->isValid())
 		{
-			$lcid = $this->getLCID($lang);
-			list ($content, $format) = $this->dbProvider->translate($lcid, $preparedKey->getId(), $preparedKey->getPath());
+			list ($content, $format) = $this->dbProvider->translate($LCID, $preparedKey->getId(), $preparedKey->getPath());
 			if ($content !== null)
 			{
-				return $this->formatText($lang, $content, $format, $preparedKey->getFormatters(), $preparedKey->getReplacements());
+				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(), $preparedKey->getReplacements());
 			}
-			$this->logKeyNotFound($preparedKey->getKey(), $lcid);
+			$this->logKeyNotFound($preparedKey->getKey(), $LCID);
 			return $preparedKey->getKey();
 		}
 		else
@@ -320,15 +335,15 @@ class I18nManager
 	}
 	
 	/**
-	 * For example: formatText('fr', 'My text.')
+	 * For example: formatText('fr_FR', 'My text.')
 	 * @api
-	 * @param string $lang
+	 * @param string $LCID
 	 * @param string $text
 	 * @param string $format 'TEXT' or 'HTML'
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
 	 * @param array $replacements
 	 */
-	public function formatText($lang, $text, $format = 'TEXT', $formatters = array(), $replacements = array())
+	public function formatText($LCID, $text, $format = 'TEXT', $formatters = array(), $replacements = array())
 	{
 		if (count($replacements))
 		{
@@ -352,7 +367,7 @@ class I18nManager
 				}
 				if (isset($this->transformers[$formatter]))
 				{
-					$text = call_user_func(array($this, $this->transformers[$formatter]), $text, $lang);
+					$text = call_user_func(array($this, $this->transformers[$formatter]), $text, $LCID);
 				}
 				else
 				{
@@ -381,8 +396,7 @@ class I18nManager
 			{
 				$search[] = $infos[0];
 				// TODO: transdata?
-				$lang = ($infos[1] === 'transdata') ? $this->getLang() : $this->getLang();
-				$replace[] = $this->formatKey($lang, $this->prepareKeyFromTransString($infos[2]));
+				$replace[] = $this->formatKey($this->getLCID(), $this->prepareKeyFromTransString($infos[2]));
 			}
 			$text = str_replace($search, $replace, $text);
 		}
@@ -428,14 +442,14 @@ class I18nManager
 
 	/**
 	 * @param string $key
-	 * @param string $lang
+	 * @param string $lcid
 	 */
-	protected function logKeyNotFound($key, $lang)
+	protected function logKeyNotFound($key, $lcid)
 	{
 		$application = \Change\Application::getInstance();
 		if ($application->inDevelopmentMode())
 		{
-			$stringLine = $lang . '/' . $key;
+			$stringLine = $lcid . '/' . $key;
 			$application->getApplicationServices()->getLogging()->namedLog($stringLine, 'keynotfound');
 		}
 	}
@@ -461,46 +475,46 @@ class I18nManager
 	
 	/**
 	 * @api
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function getDateFormat($lang)
+	public function getDateFormat($LCID)
 	{
-		if (!isset($this->profile['date'][$lang]))
+		if (!isset($this->profile['date'][$LCID]))
 		{
 			$prefs = $this->getProfileValues();
 			if ($prefs !== null && isset($prefs['dateformat']))
 			{
-				$this->profile['date'][$lang] = $prefs['dateformat'];
+				$this->profile['date'][$LCID] = $prefs['dateformat'];
 			}
 			else
 			{
-				$this->profile['date'][$lang] = $this->formatKey($lang, 'c.date.default-date-format');
+				$this->profile['date'][$LCID] = $this->formatKey($LCID, 'c.date.default-date-format');
 			}
 		}
-		return $this->profile['date'][$lang];
+		return $this->profile['date'][$LCID];
 	}
 	
 	/**
 	 * @api
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function getDateTimeFormat($lang)
+	public function getDateTimeFormat($LCID)
 	{
-		if (!isset($this->profile['datetime'][$lang]))
+		if (!isset($this->profile['datetime'][$LCID]))
 		{
 			$prefs = $this->getProfileValues();
 			if ($prefs !== null && isset($prefs['datetimeformat']))
 			{
-				$this->profile['datetime'][$lang] = $prefs['datetimeformat'];
+				$this->profile['datetime'][$LCID] = $prefs['datetimeformat'];
 			}
 			else
 			{
-				$this->profile['datetime'][$lang] = $this->formatKey($lang, 'c.date.default-datetime-format');
+				$this->profile['datetime'][$LCID] = $this->formatKey($LCID, 'c.date.default-datetime-format');
 			}
 		}
-		return $this->profile['datetime'][$lang];
+		return $this->profile['datetime'][$LCID];
 	}
 	
 	/**
@@ -531,8 +545,8 @@ class I18nManager
 	 */
 	public function transDate(\DateTime $gmtDate)
 	{
-		$lang = $this->getLang();
-		return $this->formatDate($lang, $gmtDate, $this->getDateFormat($lang));
+		$LCID = $this->getLCID();
+		return $this->formatDate($LCID, $gmtDate, $this->getDateFormat($LCID));
 	}
 	
 	/**
@@ -542,26 +556,25 @@ class I18nManager
 	 */
 	public function transDateTime(\DateTime $gmtDate)
 	{
-		$lang = $this->getLang();
-		return $this->formatDate($lang, $gmtDate, $this->getDateTimeFormat($lang));
+		$LCID = $this->getLCID();
+		return $this->formatDate($LCID, $gmtDate, $this->getDateTimeFormat($LCID));
 	}
 	
 	/**
 	 * Format a date. The format parameter 
 	 * @api
-	 * @param string $lang
+	 * @param string $LCID
 	 * @param \DateTime $date
 	 * @param string $format
 	 * @param \DateTimeZone $timeZone
 	 */
-	public function formatDate($lang, \DateTime $gmtDate, $format, $timeZone = null)
+	public function formatDate($LCID, \DateTime $gmtDate, $format, $timeZone = null)
 	{
 		if (!$timeZone)
 		{
 			$timeZone = $this->getTimeZone();
 		}
-		$lcid = $this->getLCID($lang);
-		$datefmt = new \IntlDateFormatter($lcid, null, null, $timeZone->getName(), \IntlDateFormatter::GREGORIAN, $format);
+		$datefmt = new \IntlDateFormatter($LCID, null, null, $timeZone->getName(), \IntlDateFormatter::GREGORIAN, $format);
 		return $datefmt->format($this->toLocalDateTime($gmtDate));
 	}
 	
@@ -607,80 +620,80 @@ class I18nManager
 	
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformLab($text, $lang)
+	public function transformLab($text, $LCID)
 	{
-		return $text . ($lang == 'fr' ? ' :' : ':');
+		return $text . (substr($LCID, 0, 2) === 'fr' ? ' :' : ':');
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformUc($text, $lang)
+	public function transformUc($text, $LCID)
 	{
 		return \Change\Stdlib\String::toUpper($text);
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformUcf($text, $lang)
+	public function transformUcf($text, $LCID)
 	{
 		return \Change\Stdlib\String::ucfirst($text);
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformUcw($text, $lang)
+	public function transformUcw($text, $LCID)
 	{
 		return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformLc($text, $lang)
+	public function transformLc($text, $LCID)
 	{
 		return \Change\Stdlib\String::toLower($text);
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformJs($text, $lang)
+	public function transformJs($text, $LCID)
 	{
 		return str_replace(array("\\", "\t", "\n", "\"", "'"), array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformHtml($text, $lang)
+	public function transformHtml($text, $LCID)
 	{
 		return nl2br(htmlspecialchars($text, ENT_COMPAT, 'UTF-8'));
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformText($text, $lang)
+	public function transformText($text, $LCID)
 	{
 		//TODO Old class Usage
 		return \f_util_HtmlUtils::htmlToText($text);
@@ -688,10 +701,10 @@ class I18nManager
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformAttr($text, $lang)
+	public function transformAttr($text, $LCID)
 	{
 		//TODO Old class Usage
 		return \f_util_HtmlUtils::textToAttribute($text);
@@ -699,20 +712,20 @@ class I18nManager
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformSpace($text, $lang)
+	public function transformSpace($text, $LCID)
 	{
 		return ' ' . $text . ' ';
 	}
 
 	/**
 	 * @param string $text
-	 * @param string $lang
+	 * @param string $LCID
 	 * @return string
 	 */
-	public function transformEtc($text, $lang)
+	public function transformEtc($text, $LCID)
 	{
 		return $text . '...';
 	}
