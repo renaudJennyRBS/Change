@@ -28,9 +28,9 @@
 			"level":"WARN"
 		},
 		"i18n":{
-			"supported-languages":["fr", "en"],
-			"lcids":{
-				"en":"en_GB"
+			"supported-lcids":["fr_FR", "en_GB"],
+			"langs":{
+				"en_GB":"en"
 			},
 			"synchro":{
 			}

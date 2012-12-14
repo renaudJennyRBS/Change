@@ -56,6 +56,8 @@ abstract class AbstractAction
 		return $this->context;
 	}
 	
+	
+	
 	/**
 	 * @return string
 	 */
@@ -78,6 +80,24 @@ abstract class AbstractAction
 	public function validate()
 	{	
 		return true;
+	}
+	
+	/**
+	 * \Change\Application\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return \Change\Application::getInstance()->getApplicationServices();
+	}
+	
+	/**
+	 * Returns the LCID.
+	 * @api
+	 * @return string
+	 */
+	public final function getLCID()
+	{
+		return $this->getApplicationServices()->getI18nManager()->getLCID();
 	}
 	
 	/**
@@ -300,16 +320,8 @@ abstract class AbstractAction
 		}
 		return $docs;
 	}
+	
 
-	/**
-	 * Returns the current lang.
-	 *
-	 * @return string
-	 */
-	public final function getLang()
-	{
-		return \Change\I18n\I18nManager::getInstance()->getLang();
-	}
 
 	/**
 	 * Returns the HTTP methods available for this action.

@@ -262,6 +262,10 @@ class Controller
 		}
 		else
 		{
+			if ($moduleName === 'website' && $actionName === 'Error404')
+			{
+				throw new \Exception('Action '. $moduleName .'/' . $actionName . ' not found');
+			}
 			return $this->forward('website', 'Error404');
 		}
 		

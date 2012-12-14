@@ -397,26 +397,9 @@ class DocumentManager
 	// Working lang.
 	
 	/**
-	 * @var string[] two lower-cased letters codes, ex: "fr"
+	 * @var string[] ex: "en_GB" or "fr_FR"
 	 */
-	protected $langStack = array();
-	
-	/**
-	 * Get the current language code.
-	 * @api
-	 * @return string two lower-cased letters code, ex: "fr"
-	*/
-	public function getLang()
-	{
-		if (count($this->langStack) > 0)
-		{
-			return end($this->langStack);
-		}
-		else
-		{
-			return $this->getI18nManager()->getLang();
-		}
-	}
+	protected $LCIDStack = array();
 	
 	/**
 	 * Get the current lcid.
@@ -425,22 +408,30 @@ class DocumentManager
 	 */
 	public function getLCID()
 	{
-		return $this->getI18nManager()->getLCID($this->getLang());
+
+		if (count($this->LCIDStack) > 0)
+		{
+			return end($this->LCIDStack);
+		}
+		else
+		{
+			return $this->getI18nManager()->getLCID();
+		}
 	}
 	
 	/**
 	 * Push a new working language code.
 	 * @api
 	 * @throws \InvalidArgumentException
-	 * @param string $lang two lower-cased letters code, ex: "fr"
+	 * @param string $LCID ex: "fr_FR"
 	 */
-	public function pushLang($lang)
+	public function pushLCID($LCID)
 	{
-		if (!in_array($lang, $this->getI18nManager()->getSupportedLanguages()))
+		if (!in_array($LCID, $this->getI18nManager()->getSupportedLCIDs()))
 		{
-			throw new \InvalidArgumentException('Not supported language: ' . $lang);
+			throw new \InvalidArgumentException('Not supported LCID: ' . $LCID);
 		}
-		array_push($this->langStack, $lang);
+		array_push($this->LCIDStack, $LCID);
 	}
 	
 	/**
@@ -450,14 +441,14 @@ class DocumentManager
 	 * @throws \Exception if provided
 	 * @param \Exception $exception
 	 */
-	public function popLang($exception = null)
+	public function popLCID($exception = null)
 	{
-		// FIXME: what if the exception was raized by pushLang (and so no lang was pushed)?
-		if ($this->getLangStackSize() === 0)
+		// FIXME: what if the exception was raized by pushLCID (and so no lang was pushed)?
+		if ($this->getLCIDStackSize() === 0)
 		{
 			throw new \LogicException('No language to pop.');
 		}
-		array_pop($this->langStack);
+		array_pop($this->LCIDStack);
 		if ($exception !== null)
 		{
 			throw $exception;
@@ -469,8 +460,8 @@ class DocumentManager
 	 * @api
 	 * @return integer
 	 */
-	public function getLangStackSize()
+	public function getLCIDStackSize()
 	{
-		return count($this->langStack);
+		return count($this->LCIDStack);
 	}
 }

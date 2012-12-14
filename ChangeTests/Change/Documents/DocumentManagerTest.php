@@ -48,10 +48,10 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Tests for:
-	 *  - getLangStackSize
-	 *  - getLang
-	 *  - pushLang
-	 *  - popLang
+	 *  - getLCIDStackSize
+	 *  - getLCID
+	 *  - pushLCID
+	 *  - popLCID
 	 * @depends testConstruct
 	 */
 	public function testLangStack()
@@ -64,45 +64,45 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$manager = new \Change\Documents\DocumentManager($application->getApplicationServices(), $application->getDocumentServices());
 		
 		// There is no default value.
-		$this->assertEquals(0, $manager->getLangStackSize());
-		$this->assertEquals($i18nManger->getLang(), $manager->getLang());
+		$this->assertEquals(0, $manager->getLCIDStackSize());
+		$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());
 
 		// Push/pop supported languages.
-		$manager->pushLang('it');
-		$this->assertEquals(1, $manager->getLangStackSize());
-		$this->assertEquals('it', $manager->getLang());
-		$manager->pushLang('en');
-		$this->assertEquals(2, $manager->getLangStackSize());
-		$this->assertEquals('en', $manager->getLang());
-		$manager->popLang();
-		$this->assertEquals(1, $manager->getLangStackSize());
-		$this->assertEquals('it', $manager->getLang());
-		$manager->popLang();
-		$this->assertEquals(0, $manager->getLangStackSize());
-		$this->assertEquals($i18nManger->getLang(), $manager->getLang());
+		$manager->pushLCID('it_IT');
+		$this->assertEquals(1, $manager->getLCIDStackSize());
+		$this->assertEquals('it_IT', $manager->getLCID());
+		$manager->pushLCID('en_GB');
+		$this->assertEquals(2, $manager->getLCIDStackSize());
+		$this->assertEquals('en_GB', $manager->getLCID());
+		$manager->popLCID();
+		$this->assertEquals(1, $manager->getLCIDStackSize());
+		$this->assertEquals('it_IT', $manager->getLCID());
+		$manager->popLCID();
+		$this->assertEquals(0, $manager->getLCIDStackSize());
+		$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());
 
 		// Pop from an empty stack.
 		try
 		{
-			$manager->popLang();
+			$manager->popLCID();
 			$this->fail('A LogicException should be thrown.');
 		}
 		catch (\LogicException $e)
 		{
-			$this->assertEquals(0, $manager->getLangStackSize());
-			$this->assertEquals($i18nManger->getLang(), $manager->getLang());
+			$this->assertEquals(0, $manager->getLCIDStackSize());
+			$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());
 		}
 
 		// Push not spported language.
 		try
 		{
-			$manager->pushLang('kl');
+			$manager->pushLCID('kl');
 			$this->fail('A InvalidArgumentException should be thrown.');
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			$this->assertEquals(0, $manager->getLangStackSize());
-			$this->assertEquals($i18nManger->getLang(), $manager->getLang());
+			$this->assertEquals(0, $manager->getLCIDStackSize());
+			$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());
 		}
 	}
 }
