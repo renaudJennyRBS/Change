@@ -22,7 +22,7 @@
 	{
 		"php": ">=5.3.3",
 		"composer/installers": "dev-rbschange",
-		"zendframework/zendframework": "2.0.5",
+		"zendframework/zendframework": "2.0.6",
 		"zendframework/ZendOAuth": "2.0.1",
 		"rbschange/framework":"4.0.x-dev",
 		"rbschange/brand": "4.0.x-dev",
@@ -65,11 +65,11 @@
 	[
 		{
 			"type": "vcs",
-			"url": "http://github.com/franckstauffer/installers"
+			"url": "git://github.com/franckstauffer/installers"
 		},
 		{
 			"type": "vcs",
-			"url": "http://github.com/franckstauffer/travisconfig"
+			"url": "git://github.com/franckstauffer/travisconfig"
 		},
 		{
 			"type": "vcs",
