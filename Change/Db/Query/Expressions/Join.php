@@ -52,7 +52,7 @@ class Join extends AbstractExpression
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinSpecification
 	 */
-	public function setSpecification($joinSpecification)
+	public function setSpecification(AbstractExpression $joinSpecification = null)
 	{
 		$this->specification = $joinSpecification;
 	}
@@ -66,11 +66,22 @@ class Join extends AbstractExpression
 	}
 	
 	/**
+	 * @throws \InvalidArgumentException
 	 * @param interger $joinType
 	 */
 	public function setType($joinType)
 	{
-		$this->joinType = $joinType;
+		switch ($joinType) 
+		{
+			case self::CROSS_JOIN:
+			case self::INNER_JOIN:
+			case self::LEFT_OUTER_JOIN:
+			case self::RIGHT_OUTER_JOIN:
+			case self::FULL_OUTER_JOIN:
+				$this->joinType = $joinType;
+				return;
+		}
+		throw new \InvalidArgumentException('Argument 1 must be a valid const');
 	}
 	
 	/**
@@ -112,7 +123,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	public function getTableExpression()
 	{
@@ -120,24 +131,19 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\Expressions\Table $joinedTable
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinedTable
 	 */
-	public function setTableExpression($joinedTable)
+	public function setTableExpression(\Change\Db\Query\Expressions\AbstractExpression $joinedTable)
 	{
 		$this->tableExpression = $joinedTable;
 	}
 	
 	/**
-	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
 		$joinedTable = $this->getTableExpression();
-		if (!$joinedTable)
-		{
-			throw new \RuntimeException('A joined table is required');
-		}
 		$parts = array();
 		if ($this->isNatural())
 		{
@@ -166,11 +172,11 @@ class Join extends AbstractExpression
 		{
 			$parts[] = 'CROSS JOIN';
 		}
-		$parts[] = $joinedTable->toSQLString();
+		$parts[] = $joinedTable->toSQL92String();
 		if (!$this->isNatural())
 		{
 			$joinSpecification = $this->getSpecification();
-			$parts[] = $joinSpecification->toSQLString();
+			$parts[] = $joinSpecification->toSQL92String();
 		}
 		return implode(' ', $parts);
 	}

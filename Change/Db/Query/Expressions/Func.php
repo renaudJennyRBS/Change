@@ -18,15 +18,16 @@ class Func extends AbstractExpression
 	
 	/**
 	 * @param string $functionName
-	 * @param array $arguments
+	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $arguments
 	 */
-	public function __construct($functionName = null, $arguments = null)
+	public function __construct($functionName = null, $arguments = array())
 	{
-		$this->functionName = $functionName;
-		$this->arguments = $arguments;
+		$this->setFunctionName($functionName);
+		$this->setArguments($arguments);
 	}
 	
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getFunctionName()
@@ -35,15 +36,17 @@ class Func extends AbstractExpression
 	}
 	
 	/**
+	 * @api
 	 * @param string $functionName
 	 */
 	public function setFunctionName($functionName)
 	{
-		$this->functionName = $functionName;
+		$this->functionName = is_null($functionName) ? null : strval($functionName);
 	}
 	
 	/**
-	 * @return array
+	 * @api
+	 * @return \Change\Db\Query\Expressions\AbstractExpression[]
 	 */
 	public function getArguments()
 	{
@@ -51,11 +54,35 @@ class Func extends AbstractExpression
 	}
 	
 	/**
-	 * @param array $arguments
+	 * @api
+	 * @throws \InvalidArgumentException
+	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $arguments
 	 */
-	public function setArguments($arguments)
+	public function setArguments($arguments = array())
 	{
-		$this->arguments = $arguments;
+		if (!is_array($arguments))
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a Array');
+		}
+		if (count($arguments))
+		{
+			$this->arguments = array_map(function(AbstractExpression $item) {return $item;}, $arguments);
+		}
+		else
+		{
+			$this->arguments = array();
+		}
+	}
+	
+	/**
+	 * @api
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $argument
+	 * @return \Change\Db\Query\Expressions\Func
+	 */
+	public function addArgument(\Change\Db\Query\Expressions\AbstractExpression $argument)
+	{
+		$this->arguments[] = $argument;
+		return $this;
 	}
 	
 	/**
@@ -63,9 +90,9 @@ class Func extends AbstractExpression
 	 */
 	public function toSQL92String()
 	{
-		$argsString = array_map(function (\Change\Db\Query\Expressions\AbstractExpression $element) {
+		$argsString = array_map(function (AbstractExpression $element) {
 			return $element->toSQL92String();
 		}, $this->getArguments());
-		return $this->getFunctionName() . '(' . implode(',', $argsString) . ')';
+		return $this->getFunctionName() . '(' . implode(', ', $argsString) . ')';
 	}
 }

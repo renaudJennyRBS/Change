@@ -320,9 +320,16 @@ class I18nManager
 
 		if ($preparedKey->isValid())
 		{
-			list ($content, $format) = $this->dbProvider->translate($LCID, $preparedKey->getId(), $preparedKey->getPath());
-			if ($content !== null)
+			$q = $this->getTranslateQuery();
+			$q->bindParameter('lang', $LCID)
+				->bindParameter('id', $preparedKey->getId())
+				->bindParameter('key_path', $preparedKey->getPath());
+			
+			$result = $q->getResults(function ($result) {return array_shift($result);});
+			if ($result)
 			{
+				$content = strval($result['content']);
+				$format = $result['format'];
 				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(), $preparedKey->getReplacements());
 			}
 			$this->logKeyNotFound($preparedKey->getKey(), $LCID);
@@ -332,6 +339,30 @@ class I18nManager
 		{
 			return $preparedKey->getKey();
 		}
+	}
+	
+	/**
+	 * @var \Change\Db\Query\SelectQuery
+	 */
+	protected $translateQuery;
+	
+	/**
+	 * @return \Change\Db\Query\SelectQuery
+	 */
+	protected function getTranslateQuery()
+	{
+		if ($this->translateQuery === null)
+		{
+			$qb = $this->dbProvider->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->translateQuery = $qb->select('content', 'format')->from('f_locale')
+				->where($fb->logicAnd(
+					$fb->eq($fb->column('lang'), $fb->parameter('lang', $qb)),
+					$fb->eq($fb->column('id'), $fb->numericParameter('id', $qb)),
+					$fb->eq($fb->column('key_path'), $fb->parameter('key_path', $qb))
+					))->query();
+		}
+		return $this->translateQuery;
 	}
 	
 	/**

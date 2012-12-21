@@ -1,19 +1,11 @@
 <?php
-namespace Change\Db\Mysql;
+namespace Change\Db;
 
 /**
- * @name \Change\Db\Mysql\SqlMapping
+ * @name \Change\Db\SqlMapping
  */
 class SqlMapping
-{
-	/**
-	 * @return string
-	 */
-	public function getI18nSuffix()
-	{
-		return '_i18n';
-	}
-	
+{	
 	/**
 	 * @param string $documentName
 	 * @return string
@@ -30,7 +22,7 @@ class SqlMapping
 	 */
 	public function getDocumentI18nTableName($documentName)
 	{
-		return $this->getDocumentTableName($documentName) . $this->getI18nSuffix();
+		return $this->getDocumentTableName($documentName) . '_i18n';
 	}
 		
 	/**
@@ -50,27 +42,6 @@ class SqlMapping
 		return $pn;
 	}
 		
-	/**
-	 * @param string $name
-	 * @param string $nameSpace
-	 * @param string $alias
-	 * @return string
-	 */
-	public function escapeName($name, $nameSpace = null, $alias = null)
-	{
-		$sql = ($nameSpace ? '`' . $nameSpace . '`.`' : '`') . $name . '`';
-		return ($alias) ?  $sql . ' AS `' . $alias . '`' : $sql;
-	}
-	
-	/**
-	 * @param string $name
-	 * @return string
-	 */
-	public function escapeParameterName($name)
-	{
-		return ':p' . $name;
-	}
-	
 	/**
 	 * @return string
 	 */
@@ -146,6 +117,5 @@ class SqlMapping
 	public function getCompiledPermissionTableName()
 	{
 		return 'f_permission_compiled';
-	}	
-	
+	}
 }

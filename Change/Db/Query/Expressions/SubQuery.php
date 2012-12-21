@@ -14,7 +14,7 @@ class SubQuery extends AbstractExpression
 	/**
 	 * @param \Change\Db\Query\SelectQuery $subQuery
 	 */
-	public function __construct(\Change\Db\Query\SelectQuery $subQuery = null)
+	public function __construct(\Change\Db\Query\SelectQuery $subQuery)
 	{
 		$this->subQuery = $subQuery;
 	}
@@ -30,7 +30,7 @@ class SubQuery extends AbstractExpression
 	/**
 	 * @param \Change\Db\Query\SelectQuery $subQuery
 	 */
-	public function setSubQuery($subQuery)
+	public function setSubQuery(\Change\Db\Query\SelectQuery $subQuery)
 	{
 		$this->subQuery = $subQuery;
 	}

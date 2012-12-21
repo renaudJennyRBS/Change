@@ -96,14 +96,81 @@ class DocumentManager
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Db\Query\SelectQuery
+	 */
+	protected function loadDocumentPropertiesQuery(\Change\Documents\AbstractModel $model)
+	{
+		$key = 'Load_' . $model->getName();
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$sqlmap = $dbp->getSqlMapping();
+			$qb = $dbp->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+
+			$docTable = $sqlmap->getDocumentTableName($model->getRootName());
+			$qb->select()->from($docTable)->where($fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)));
+
+			foreach ($model->getProperties() as $property)
+			{
+				/* @var $property \Change\Documents\Property */
+				if (!$property->getLocalized())
+				{
+					$qb->addColumn($fb->alias($fb->column($sqlmap->getDocumentFieldName($property->getName())), $property->getName()));
+				}
+			}
+			$this->staticQueries[$key] = $qb->query();
+		}
+		return $this->staticQueries[$key];
+	}
+	
+	/**
+	 * 
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Db\Query\SelectQuery
+	 */
+	protected function loadDocumentI18nPropertiesQuery(\Change\Documents\AbstractModel $model)
+	{
+		$key = 'LoadI18n_' . $model->getName();
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$sqlmap = $dbp->getSqlMapping();
+			$qb = $dbp->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+	
+			$docTable = $sqlmap->getDocumentI18nTableName($model->getRootName());
+			$qb->select()->from($docTable)
+				->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)),
+						$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb))
+					)
+				);
+	
+			foreach ($model->getProperties() as $property)
+			{
+				/* @var $property \Change\Documents\Property */
+				if ($property->getLocalized())
+				{
+					$qb->addColumn($fb->alias($fb->column($sqlmap->getDocumentFieldName($property->getName())), $property->getName()));
+				}
+			}
+			$this->staticQueries[$key] = $qb->query();
+		}
+		return $this->staticQueries[$key];
+	}
+	
+	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 */
 	public function loadDocument(\Change\Documents\AbstractDocument $document)
-	{
-		$model = $document->getDocumentModel();
-		$fieldMapping = $this->getFieldMapping($model, false);
-
-		$propertyBag = $this->getDbProvider()->getDocumentProperties($document->getId(), $model->getRootName(), $fieldMapping);
+	{		
+		$q = $this->loadDocumentPropertiesQuery($document->getDocumentModel());
+		$q->bindParameter('id', $document->getId());
+		
+		$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
 		if ($propertyBag)
 		{
 			$document->setDocumentProperties($propertyBag);
@@ -208,11 +275,12 @@ class DocumentManager
 		$i18nPart->initialize($document->getId(), $LCID, AbstractDocument::PERSISTENTSTATE_NEW);
 		if (!$document->persistentStateIsNew())
 		{
-			$fieldMapping = $this->getFieldMapping($document->getDocumentModel(), true);
-			$propertyBag = $this->getDbProvider()->getI18nDocumentProperties($document->getId(), $LCID, $document->getDocumentModel()->getRootName(), $fieldMapping);
+			$q = $this->loadDocumentI18nPropertiesQuery($document->getDocumentModel());
+			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);
+			
+			$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
 			if ($propertyBag)
 			{
-				
 				$i18nPart->setDocumentProperties($propertyBag);
 				if ($i18nPart->getDeletedDate())
 				{
@@ -226,24 +294,40 @@ class DocumentManager
 		}
 		return $i18nPart;
 	}
+		
+	protected $staticQueries = array();
 	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
-	 * @param boolean $localised
+	 * @return \Change\Db\Query\SelectQuery
 	 */
-	protected function getFieldMapping(\Change\Documents\AbstractModel $model, $localised)
+	protected function getDocumentInfosQuery(\Change\Documents\AbstractModel $model = null)
 	{
-		$sm = $this->getDbProvider()->getSchemaManager();
-		$mapping = array();
-		foreach ($model->getProperties() as $property)
+		$key = 'Infos_' . ($model ? $model->getRootName() : 'std');
+		if (!isset($this->staticQueries[$key]))
 		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getLocalized() == $localised)
+			$ft = $this->getDbProvider()->getSqlMapping()->getDocumentIndexTableName();
+			$qb = $this->getDbProvider()->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+				
+			if ($model)
 			{
-				$mapping[$property->getName()] = $sm->getDocumentFieldName($property->getName());
+				$dt = $this->getDbProvider()->getSqlMapping()->getDocumentTableName($model->getRootName());
+				$this->staticQueries[$key] = $qb->select($fb->column('document_model', 'd'), $fb->column('treeid', 'f'))
+				->from($fb->alias($fb->table($dt), 'd'))
+				->innerJoin($fb->alias($fb->table($ft), 'f'), $fb->column('document_id'))
+				->where($fb->logicAnd($fb->eq($fb->column('document_id', 'd'), $fb->numericParameter('id', $qb))))
+				->query();
+			}
+			else
+			{
+				$this->staticQueries[$key] = $qb->select('document_model', 'treeid')
+				->from($ft)
+				->where($fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)))
+				->query();
 			}
 		}
-		return $mapping;
+		return $this->staticQueries[$key];
 	}
 	
 	/**
@@ -261,12 +345,14 @@ class DocumentManager
 				return $this->getFromCache($id);
 			}
 			
-			$rootModelname = ($model) ? $model->getRootName() : null;
-			
-			$constructorInfos = $this->getDbProvider()->getDocumentInitializeInfos($id, $rootModelname);
-			if ($constructorInfos !== null)
+			$query = $this->getDocumentInfosQuery($model);
+			$query->bindParameter('id', $id);
+				
+			$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
+			if ($constructorInfos)
 			{
-				list ($modelName, $treeId) = $constructorInfos;
+				$modelName = $constructorInfos['document_model'];
+				$treeId = $constructorInfos['treeid'];
 				$documentModel = $this->getModelManager()->getModelByName($modelName);
 				if ($documentModel !== null)
 				{

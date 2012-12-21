@@ -12,25 +12,21 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	protected $selectClause;
 	
 	/**
-	 *
 	 * @var \Change\Db\Query\Clauses\FromClause
 	 */
 	protected $fromClause;
 	
 	/**
-	 *
 	 * @var \Change\Db\Query\Clauses\WhereClause
 	 */
 	protected $whereClause;
 	
 	/**
-	 *
 	 * @var \Change\Db\Query\Clauses\HavingClause
 	 */
 	protected $havingClause;
 	
 	/**
-	 *
 	 * @var \Change\Db\Query\Clauses\OrderByClause
 	 */
 	protected $orderByClause;
@@ -41,7 +37,22 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	protected $groupByClause;
 	
 	/**
-	 * @return \Change\Db\Query\Clauses\SelectClause
+	 * @var \Change\Db\Query\Clauses\CollateClause
+	 */
+	protected $collateClause;
+	
+	/**
+	 * @var integer
+	 */
+	protected $startIndex;
+	
+	/**
+	 * @var integer
+	 */
+	protected $maxResults;
+	
+	/**
+	 * @return \Change\Db\Query\Clauses\SelectClause|null
 	 */
 	public function getSelectClause()
 	{
@@ -51,7 +62,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	/**
 	 * @param \Change\Db\Query\Clauses\SelectClause $selectClause
 	 */
-	public function setSelectClause($selectClause)
+	public function setSelectClause(\Change\Db\Query\Clauses\SelectClause $selectClause)
 	{
 		$this->selectClause = $selectClause;
 	}
@@ -89,6 +100,23 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 *
+	 * @return \Change\Db\Query\Clauses\GroupByClause
+	 */
+	public function getGroupByClause()
+	{
+		return $this->groupByClause;
+	}
+	
+	/**
+	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause
+	 */
+	public function setGroupByClause(\Change\Db\Query\Clauses\GroupByClause $groupByClause)
+	{
+		$this->groupByClause = $groupByClause;
+	}
+	
+	/**
 	 * @return \Change\Db\Query\Clauses\HavingClause
 	 */
 	public function getHavingClause()
@@ -121,20 +149,31 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
-	 *
-	 * @return \Change\Db\Query\Clauses\GroupByClause
+	 * @return \Change\Db\Query\Clauses\CollateClause
 	 */
-	public function getGroupByClause()
+	public function getCollateClause()
 	{
-		return $this->groupByClause;
+		return $this->collateClause;
 	}
-	
+
 	/**
-	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause
+	 * @param \Change\Db\Query\Clauses\CollateClause $collateClause
 	 */
-	public function setGroupByClause(\Change\Db\Query\Clauses\GroupByClause $groupByClause)
+	public function setCollateClause(\Change\Db\Query\Clauses\CollateClause $collateClause)
 	{
-		$this->groupByClause = $groupByClause;
+		$this->collateClause = $collateClause;
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
+	public function checkCompile()
+	{
+		if ($this->selectClause === null)
+		{
+			throw new \RuntimeException('SelectClause can not be null');
+		}
 	}
 	
 	/**
@@ -142,6 +181,8 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	 */
 	public function toSQL92String()
 	{
+		$this->checkCompile();
+		
 		$parts = array($this->selectClause->toSQL92String());
 		
 		$fromClause = $this->getFromClause();
@@ -161,12 +202,75 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 			$parts[] = $groupByClause->toSQL92String();
 		}
 		
+		$havingClause = $this->getHavingClause();
+		if ($havingClause)
+		{
+			$parts[] = $havingClause->toSQL92String();
+		}
+		
 		$orderByClause = $this->getOrderByClause();
 		if ($orderByClause)
 		{
 			$parts[] = $orderByClause->toSQL92String();
 		}
 		
+		$collateClause = $this->getCollateClause();
+		if ($collateClause)
+		{
+			$parts[] = $collateClause->toSQL92String();
+		}
+				
 		return implode(' ', $parts);
+	}
+	
+	/**
+	 * @return integer|null
+	 */
+	public function getStartIndex()
+	{
+		return $this->startIndex;
+	}
+	
+	/**
+	 * @return integer|null
+	 */
+	public function getMaxResults()
+	{
+		return $this->maxResults;
+	}
+	
+	/**
+	 * @param integer|null $startIndex
+	 */
+	public function setStartIndex($startIndex)
+	{
+		$this->startIndex = $startIndex;
+	}
+	
+	/**
+	 * @api
+	 * @param integer|null $maxResults
+	 */
+	public function setMaxResults($maxResults)
+	{
+		$this->maxResults = $maxResults;
+	}
+	
+	/**
+	 * @api
+	 * @param \Closure|array $converter
+	 * @return multitype:
+	 */
+	public function getResults($converter = null)
+	{
+		$results = $this->dbProvider->getQueryResultsArray($this);	
+		if ($converter === null)
+		{
+			return $results;
+		}
+		else
+		{
+			return call_user_func($converter, $results);
+		}
 	}
 }

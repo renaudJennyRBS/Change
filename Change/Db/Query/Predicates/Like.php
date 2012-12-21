@@ -1,13 +1,20 @@
 <?php
 namespace Change\Db\Query\Predicates;
 
+use Change\Db\Query\Expressions\Func;
+
+use Change\Db\Query\Expressions\ExpressionList;
+
+use Change\Db\Query\Expressions\String;
+
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
+use Change\Db\Query\Expressions\Concat;
 
 /**
- * @name \Change\Db\Query\Predicates\IsNull
+ * @name \Change\Db\Query\Predicates\Like
  */
-class Like extends BinaryOperation implements InterfacePredicate
+class Like extends BinaryPredicate
 {
 	const ANYWHERE = 0;
 	const BEGIN = 1;
@@ -30,42 +37,85 @@ class Like extends BinaryOperation implements InterfacePredicate
 	 * @param integer $matchMode
 	 * @param boolean $caseSensitive
 	 */
-	public function __construct(AbstractExpression $lhs, AbstractExpression $rhs, $matchMode = self::ANYWHERE, $caseSensitive = false)
+	public function __construct(AbstractExpression $lhs = null, AbstractExpression $rhs = null, $matchMode = self::ANYWHERE, $caseSensitive = false)
 	{
-		$this->setLeftHandExpression($lhs);
-		$this->setRightHandExpression($rhs);
-		$this->matchMode = $matchMode;
-		$this->caseSensitive = $caseSensitive;
-		if ($this->caseSensitive)
+		parent::__construct($lhs, $rhs);
+		$this->setMatchMode($matchMode);
+		
+		//This method update operator
+		$this->setCaseSensitive($caseSensitive);
+	}
+	
+	/**
+	 * @return number
+	 */
+	public function getMatchMode()
+	{
+		return $this->matchMode;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getCaseSensitive()
+	{
+		return $this->caseSensitive;
+	}
+	
+	/**
+	 * @throws \InvalidArgumentException
+	 * @param number $matchMode
+	 */
+	public function setMatchMode($matchMode)
+	{
+		switch ($matchMode) 
 		{
-			$this->setOperator('LIKE BINARY');
+			case self::ANYWHERE:
+			case self::BEGIN:
+			case self::END:
+			case self::EXACT:
+				$this->matchMode = $matchMode;
+				return;
 		}
-		else
+		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+	}
+	
+	/**
+	 * @param boolean $caseSensitive
+	 */
+	public function setCaseSensitive($caseSensitive)
+	{
+		$this->caseSensitive = ($caseSensitive == true);
+		$this->setOperator(($this->caseSensitive) ? 'LIKE BINARY' : 'LIKE');
+	}
+		
+	public function getCompletedRightHandExpression()
+	{
+		$arguments = array($this->getRightHandExpression());
+		switch ($this->matchMode)
 		{
-			$this->setOperator('LIKE');
+			case self::BEGIN :
+				array_push($arguments, new String("%"));
+				break;
+			case self::END :
+				array_unshift($arguments, new String("%"));
+				break;
+			case self::ANYWHERE :
+				array_push($arguments, new String("%"));
+				array_unshift($arguments, new String("%"));
+				break;
+			default:
+				return $this->getRightHandExpression();
 		}
+		return new Concat($arguments);
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function pseudoQueryString()
+	public function toSQL92String()
 	{
-		switch ($this->matchMode)
-		{
-			case self::BEGIN :
-				$rhs = "%s%%";
-				break;
-			case self::END :
-				$rhs = "%%%s";
-				break;
-			case self::ANYWHERE :
-				$rhs = "%%%s%%";
-				break;
-			default :
-				$rhs = "%s";
-		}
-		$rhs = sprintf($rhs, $this->getRightHandExpression()->pseudoQueryString());
-		return $this->getLeftHandExpression()->pseudoQueryString() . ' ' . $this->getOperator() . ' ' . $rhs;
+		$rhe = $this->getCompletedRightHandExpression();
+		return $this->getLeftHandExpression()->toSQL92String() . ' ' . $this->getOperator() . ' ' . $rhe->toSQL92String();
 	}
 }

@@ -1,8 +1,6 @@
 <?php
 namespace Change\Db\Query\Clauses;
 
-use Change\Db\Query\InterfaceSQLFragment;
-
 /**
  * @name \Change\Db\Query\Clauses\AbstractClause
  */
@@ -15,6 +13,12 @@ abstract class AbstractClause implements \Change\Db\Query\InterfaceSQLFragment
 	 * @var array
 	 */
 	protected $options;
+	
+	/**
+	 * @api
+	 * @var string
+	 */
+	protected $name;
 	
 	/**
 	 * @return array
@@ -33,15 +37,19 @@ abstract class AbstractClause implements \Change\Db\Query\InterfaceSQLFragment
 	}	
 	
 	/**
-	 * @param callable $callable
 	 * @return string
 	 */
-	public function toSQLString($callable = null)
+	public function getName()
 	{
-		if ($callable)
-		{
-			return call_user_func($callable, $this);
-		}
-		return $this->toSQL92String();
+		return $this->name;
 	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
 }

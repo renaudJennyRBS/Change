@@ -35,7 +35,7 @@ abstract class DbProvider
 	/**
 	 * @var boolean
 	 */
-	protected $m_inTransaction = false;
+	protected $inTransaction = false;
 	
 	/**
 	 * @var \Change\Logging\Logging
@@ -43,13 +43,10 @@ abstract class DbProvider
 	protected $logging;
 	
 	/**
-	 * @return \Change\Db\DbProvider
+	 * @var \Change\Db\SqlMapping
 	 */
-	public static function getInstance()
-	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-	}
-	
+	protected $sqlMapping;
+		
 	/**
 	 * @return integer
 	 */
@@ -119,7 +116,7 @@ abstract class DbProvider
 		if ($this->transactionCount == 0)
 		{
 			$this->transactionCount++;
-			if ($this->m_inTransaction)
+			if ($this->inTransaction)
 			{
 
 				$this->logging->warn(get_class($this) . " while already in transaction");
@@ -128,7 +125,7 @@ abstract class DbProvider
 			{
 				$this->timers['bt'] = microtime(true);
 				$this->beginTransactionInternal();
-				$this->m_inTransaction = true;
+				$this->inTransaction = true;
 				//TODO Old class Usage
 				\indexer_IndexService::getInstance()->beginIndexTransaction();
 			}
@@ -158,7 +155,7 @@ abstract class DbProvider
 		}
 		if ($this->transactionCount == 1)
 		{
-			if (!$this->m_inTransaction)
+			if (!$this->inTransaction)
 			{
 				$this->logging->warn("PersistentProvider->commit() called while not in transaction");
 			}
@@ -170,7 +167,7 @@ abstract class DbProvider
 				{
 					$this->logging->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
 				}
-				$this->m_inTransaction = false;		
+				$this->inTransaction = false;		
 				$this->beginTransactionInternal();
 				//TODO Old class Usage
 				\indexer_IndexService::getInstance()->commitIndex();
@@ -200,7 +197,7 @@ abstract class DbProvider
 		if (!$this->transactionDirty)
 		{
 			$this->transactionDirty = true;
-			if (!$this->m_inTransaction)
+			if (!$this->inTransaction)
 			{
 				$this->logging->warn("Provider->rollBack() called while not in transaction");
 			}
@@ -210,7 +207,7 @@ abstract class DbProvider
 				//TODO Old class Usage
 				\indexer_IndexService::getInstance()->rollBackIndex();
 				$this->rollBackInternal();
-				$this->m_inTransaction = false;
+				$this->inTransaction = false;
 			}
 		}
 		
@@ -259,16 +256,21 @@ abstract class DbProvider
 	public abstract function closeConnection();
 	
 	/**
-	 * @param string $sql
-	 * @param \Change\Db\StatmentParameter[] $parameters
-	 * @return \Change\Db\AbstractStatment
-	 */
-	public abstract function createNewStatment($sql, $parameters = null);
-
-	/**
 	 * @return \Change\Db\InterfaceSchemaManager
 	 */
 	public abstract function getSchemaManager();
+		
+	/**
+	 * @return \Change\Db\SqlMapping
+	 */
+	public function getSqlMapping()
+	{
+		if ($this->sqlMapping === null)
+		{
+			$this->sqlMapping = new SqlMapping();
+		}
+		return $this->sqlMapping;
+	}
 	
 	/**
 	 * @return void
@@ -285,38 +287,42 @@ abstract class DbProvider
 	 */
 	protected abstract function rollBackInternal();
 	
-	
 	/**
-	 * Return a translated text or null
-	 * @param string $lcid
-	 * @param string $id
-	 * @param string $keyPath
-	 * @return array[$content, $format]
+	 * @return \Change\Db\Query\Builder
 	 */
-	public abstract function translate($lcid, $id, $keyPath);
-	
+	public function getNewQueryBuilder()
+	{
+		return new \Change\Db\Query\Builder($this);
+	}
 	
 	/**
-	 * @param integer $documentId
-	 * @param string $rootModelName
-	 * @return array<modelName, treeId>|null
+	 * @api
+	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
+	 * @return string
 	 */
-	public abstract function getDocumentInitializeInfos($documentId, $rootModelName = null);
+	public function buildSQLFragment(\Change\Db\Query\InterfaceSQLFragment $fragment)
+	{
+		return $fragment->toSQL92String();
+	}
 	
 	/**
-	 * @param integer $documentId
-	 * @param string $rootModelName
-	 * @param array<propertyName => fieldName> $fieldMapping
+	 * @param \Change\Db\Query\SelectQuery $selectQuery
 	 * @return array
 	 */
-	public abstract function getDocumentProperties($documentId, $rootModelName, $fieldMapping);
+	public abstract function getQueryResultsArray(\Change\Db\Query\SelectQuery $selectQuery);
+	
 	
 	/**
-	 * @param integer $documentId
-	 * @param string $LCID
-	 * @param string $rootModelName
-	 * @param array<propertyName => fieldName> $fieldMapping
-	 * @return array
+	 * @return \Change\Db\Query\StatmentBuilder
 	 */
-	public abstract function getI18nDocumentProperties($documentId, $LCID, $rootModelName, $fieldMapping);
+	public function getNewStatmentBuilder()
+	{
+		return new \Change\Db\Query\StatmentBuilder($this);
+	}
+	
+	/**
+	 * @return \Change\Db\Query\StatmentBuilder
+	 * @return integer
+	 */
+	public abstract function executeQuery(\Change\Db\Query\AbstractQuery $query);
 }

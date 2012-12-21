@@ -27,7 +27,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSelect(\Change\Db\Query\Builder $qb)
 	{
-		$this->assertNull($qb->query());
+		try 
+		{
+			$qb->query();
+			$this->fail('A LogicException should be thrown.');
+		}
+		catch (\LogicException $e)
+		{
+			$this->assertTrue(true);
+		}
 		$qb->select('c1');
 		$this->assertInstanceOf('\Change\Db\Query\SelectQuery', $qb->query());
 		return $qb;
@@ -39,7 +47,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAddColumn(\Change\Db\Query\Builder $qb)
 	{
-		$qb->addColumn($qb->column('c2', 't1'));
+		$fb = $qb->getFragmentBuilder();
+		$qb->addColumn($fb->column('c2', 't1'));
 		$this->assertEquals('SELECT "c1", "t1"."c2"', $qb->query()->toSQL92String());
 		$qb->addColumn('c3');
 		$this->assertEquals('SELECT "c1", "t1"."c2", "c3"', $qb->query()->toSQL92String());

@@ -16,8 +16,37 @@ class Identifier extends AbstractExpression
 	 */
 	public function __construct($parts = array())
 	{
-		$this->parts = $parts;
+		$this->setParts($parts);
 	}
+	
+	/**
+	 * @return string[]
+	 */
+	public function getParts()
+	{
+		return $this->parts;
+	}
+	
+	/**
+	 * @throws \InvalidArgumentException
+	 * @param string[] $parts
+	 */
+	public function setParts($parts)
+	{
+		if (!is_array($parts))
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a Array');
+		}
+		$this->parts = array();
+		foreach ($parts as $value)
+		{
+			$part = trim(strval($value));
+			if ($part !== '')
+			{
+				$this->parts[] = $part;
+			}
+		}
+	}	
 	
 	/**
 	 * @return string
