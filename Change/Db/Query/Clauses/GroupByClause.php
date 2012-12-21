@@ -75,6 +75,7 @@ class GroupByClause extends AbstractClause
 	 */
 	public function toSQL92String()
 	{
+		$this->checkCompile();
 		return 'GROUP BY ' . $this->getExpressionList()->toSQL92String();
 	}
 }
