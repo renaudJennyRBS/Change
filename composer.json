@@ -3,7 +3,7 @@
 	"description": "RBS Change CMS & E-Commerce Platform",
 	"type": "rbschange-core",
 	"license":"AGPL-3.0",
-	"minimum-stabilityi":"dev",
+	"minimum-stability":"dev",
 	"autoload": 
 	{
 		"psr-0": 
