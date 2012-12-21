@@ -14,7 +14,7 @@ class SelectClause extends AbstractClause
 	/**
 	 * @var string
 	 */
-	protected $quantifier;
+	protected $quantifier = self::QUANTIFIER_ALL; 
 	
 	/**	  
 	 * @var \Change\Db\Query\Expressions\ExpressionList
@@ -24,12 +24,14 @@ class SelectClause extends AbstractClause
 	/**
 	 * @param \Change\Db\Query\Expressions\ExpressionList $list
 	 */
-	public function __construct(Change\Db\Query\Expressions\ExpressionList $list = null)
+	public function __construct(\Change\Db\Query\Expressions\ExpressionList $list = null)
 	{
-		if ($list) $this->setSelectList($list);
+		$this->setName('SELECT');
+		$this->setSelectList($list ? $list : new \Change\Db\Query\Expressions\ExpressionList());
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Expressions\ExpressionList
 	 */
 	public function getSelectList()
@@ -38,23 +40,23 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\ExpressionList $expression
 	 */
-	public function setSelectList($expression)
+	public function setSelectList(\Change\Db\Query\Expressions\ExpressionList $expression)
 	{
 		$this->selectList = $expression;
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
+	 * @return \Change\Db\Query\Clauses\SelectClause
 	 */
-	public function addSelect($expression)
+	public function addSelect(\Change\Db\Query\Expressions\AbstractExpression $expression)
 	{
-		if ($this->selectList === null)
-		{
-			$this->selectList = new \Change\Db\Query\Expressions\ExpressionList();
-		}
 		$this->selectList->add($expression);
+		return $this;
 	}
 	
 	/**
@@ -66,11 +68,19 @@ class SelectClause extends AbstractClause
 	}
 	
 	/**
+	 * @throws \InvalidArgumentException
 	 * @param string $quantifier
 	 */
 	public function setQuantifier($quantifier)
 	{
-		$this->quantifier = $quantifier;
+		switch ($quantifier) 
+		{
+			case self::QUANTIFIER_DISTINCT:
+			case self::QUANTIFIER_ALL:
+				$this->quantifier = $quantifier;
+				return;
+		}
+		throw new \InvalidArgumentException('Argument 1 must be a valid const');
 	}
 	
 	/**
@@ -78,15 +88,15 @@ class SelectClause extends AbstractClause
 	 */
 	public function toSQL92String()
 	{
-		$parts = array('SELECT');
+		$parts = array($this->getName());
 		if ($this->getQuantifier() === self::QUANTIFIER_DISTINCT)
 		{
 			$parts[] = self::QUANTIFIER_DISTINCT;
 		}
 		$selectList = $this->getSelectList();
-		if ($selectList === null)
+		if ($selectList->count() === 0)
 		{
-			$selectList = new \Change\Db\Query\Expressions\AllColumns();
+			$selectList->add(new \Change\Db\Query\Expressions\AllColumns());
 		}
 		
 		$parts[] = $selectList->toSQL92String();

@@ -5,7 +5,7 @@ namespace Change\Db\Query\Expressions;
  * @name \Change\Db\Query\Expressions\AbstractOperation
  */
 abstract class AbstractOperation extends AbstractExpression
-{
+{	
 	/**
 	 * @var string
 	 */

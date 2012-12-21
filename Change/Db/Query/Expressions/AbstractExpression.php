@@ -7,20 +7,26 @@ namespace Change\Db\Query\Expressions;
 abstract class AbstractExpression implements \Change\Db\Query\InterfaceSQLFragment
 {
 	/**
-	 * @param callable $callable
-	 * @return string
+	 * SQL Specific vendor options.
+	 *
+	 * @api
+	 * @var array
 	 */
-	public function toSQLString($callable = null)
+	protected $options;
+	
+	/**
+	 * @return array
+	 */
+	public function getOptions()
 	{
-		if ($callable)
-		{
-			return call_user_func($callable, $this);
-		}
-		return $this->toSQL92String();
+		return $this->options;
 	}
 	
 	/**
-	 * @return string
+	 * @param array $options
 	 */
-	abstract public function toSQL92String();
+	public function setOptions($options)
+	{
+		$this->options = $options;
+	}
 }

@@ -4,7 +4,7 @@ namespace Change\Db\Query\Expressions;
 /**
  * @name \Change\Db\Query\Expressions\Column
  */
-class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
+class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression implements \Countable
 {
 	/** 
 	 * @var \Change\Db\Query\Expressions\AbstractExpression[]
@@ -14,7 +14,7 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $list
 	 */
-	public function __construct($list = null)
+	public function __construct($list = array())
 	{
 		$this->setList($list);
 	}
@@ -30,19 +30,31 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $list
 	 */
-	public function setList($list)
+	public function setList($list = array())
 	{
-		$this->list = $list;
+		if (!is_array($list))
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a Array');
+		}
+		$this->list = array_map(function (AbstractExpression $item) {return $item;}, $list);
 	}
 	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Expressions\ExpressionList
 	 */
-	public function add(\Change\Db\Query\Expressions\AbstractExpression $expression)
+	public function add(AbstractExpression $expression)
 	{
 		$this->list[] = $expression;
 		return $this;
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function count()
+	{
+		return count($this->list);
 	}
 	
 	/**
@@ -50,7 +62,7 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	public function toSQL92String()
 	{
-		return implode(', ', array_map(function (\Change\Db\Query\Expressions\AbstractExpression $item) {
+		return implode(', ', array_map(function (AbstractExpression $item) {
 			return $item->toSQL92String();
 		}, $this->getList()));
 	}

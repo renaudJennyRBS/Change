@@ -19,10 +19,28 @@ class OrderingSpecification extends UnaryOperation
 	}
 	
 	/**
+	 * @throws \InvalidArgumentException
+	 * @param string $operator
+	 */
+	public function setOperator($operator)
+	{
+		switch ($operator) 
+		{
+			case self::ASC:
+			case self::DESC:
+				parent::setOperator($operator);
+				return;
+		}
+		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+	}
+	
+	/**
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
 		return $this->getExpression()->toSQL92String() . ' ' . $this->getOperator();
 	}
+	
+
 }

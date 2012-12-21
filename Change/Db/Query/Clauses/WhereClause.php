@@ -18,7 +18,11 @@ class WhereClause extends AbstractClause
 	 */
 	public function __construct(\Change\Db\Query\Predicates\InterfacePredicate $predicate = null)
 	{
-		if ($predicate) $this->setPredicate($predicate);
+		$this->setName('WHERE');
+		if ($predicate) 
+		{
+			$this->setPredicate($predicate);
+		}
 	}
 	
 	/**
@@ -42,6 +46,10 @@ class WhereClause extends AbstractClause
 	 */
 	public function toSQL92String()
 	{
-		return 'WHERE ' . $this->getPredicate()->toSQL92String();
+		if ($this->predicate)
+		{
+			return 'WHERE ' . $this->getPredicate()->toSQL92String();
+		}
+		return '';
 	}
 }

@@ -5,7 +5,7 @@ namespace Change\Db\Query\Expressions;
  * @name \Change\Db\Query\Expressions\BinaryOperation
  */
 class BinaryOperation extends AbstractOperation
-{
+{	
 	/**
 	 * @var \Change\Db\Query\Expressions\AbstractExpression
 	 */
@@ -23,13 +23,13 @@ class BinaryOperation extends AbstractOperation
 	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $lhs = null, \Change\Db\Query\Expressions\AbstractExpression $rhs = null, $operator = null)
 	{
-		$this->setLeftHandExpression($lhs);
-		$this->setRightHandExpression($rhs);
+		if ($lhs) {$this->setLeftHandExpression($lhs);}
+		if ($rhs) {$this->setRightHandExpression($rhs);}
 		$this->setOperator($operator);
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\AbstractExpression
+	 * @return \Change\Db\Query\Expressions\AbstractExpression|null
 	 */
 	public function getLeftHandExpression()
 	{
@@ -37,7 +37,7 @@ class BinaryOperation extends AbstractOperation
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\AbstractExpression
+	 * @return \Change\Db\Query\Expressions\AbstractExpression|null
 	 */
 	public function getRightHandExpression()
 	{
@@ -47,7 +47,7 @@ class BinaryOperation extends AbstractOperation
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $leftHandExpression
 	 */
-	public function setLeftHandExpression($leftHandExpression)
+	public function setLeftHandExpression(\Change\Db\Query\Expressions\AbstractExpression $leftHandExpression)
 	{
 		$this->leftHandExpression = $leftHandExpression;
 	}
@@ -55,16 +55,21 @@ class BinaryOperation extends AbstractOperation
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $rightHandExpression
 	 */
-	public function setRightHandExpression($rightHandExpression)
+	public function setRightHandExpression(\Change\Db\Query\Expressions\AbstractExpression $rightHandExpression)
 	{
 		$this->rightHandExpression = $rightHandExpression;
 	}
 	
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
+		if ($this->getLeftHandExpression() === null || $this->getRightHandExpression() === null)
+		{
+			throw new \RuntimeException('LeftHandExpression and RightHandExpression can not be null');
+		}
 		return $this->getLeftHandExpression()->toSQL92String() . ' ' . $this->getOperator() . ' ' . $this->getRightHandExpression()->toSQL92String();
 	}
 }

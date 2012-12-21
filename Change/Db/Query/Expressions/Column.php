@@ -17,17 +17,13 @@ class Column extends AbstractExpression
 	protected $columnName;
 	
 	/**
-	 * @param string | \Change\Db\Query\Expressions\Identifier $columnName
+	 * @param \Change\Db\Query\Expressions\Identifier $columnName
 	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier $tableOrIdentifier
 	 */
-	public function __construct($columnName = null, $tableOrIdentifier = null)
+	public function __construct(\Change\Db\Query\Expressions\Identifier $columnName, $tableOrIdentifier = null)
 	{
-		$this->tableOrIdentifier = $tableOrIdentifier;
-		if (is_string($columnName))
-		{
-			$columnName = new \Change\Db\Query\Expressions\Identifier(array($columnName));
-		}
-		$this->columnName = $columnName;
+		$this->setColumnName($columnName);
+		$this->setTableOrIdentifier($tableOrIdentifier);
 	}
 	
 	/**
@@ -47,11 +43,19 @@ class Column extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier
+	 * @throws \InvalidArgumentException
+	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier | null
 	 */
-	public function setTableOrIdentifier($tableOrIdentifier)
+	public function setTableOrIdentifier($tableOrIdentifier = null)
 	{
-		$this->tableOrIdentifier = $tableOrIdentifier;
+		if ($tableOrIdentifier === null || $tableOrIdentifier instanceof Table || $tableOrIdentifier instanceof Identifier)
+		{
+			$this->tableOrIdentifier = $tableOrIdentifier;
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a Expressions\Table | Expressions\Identifier');
+		}
 	}
 	
 	/**
@@ -69,11 +73,7 @@ class Column extends AbstractExpression
 	{
 		$columnName = $this->getColumnName()->toSQL92String();
 		$tableOrIdentifier = $this->getTableOrIdentifier();
-		$table = null;
-		if ($tableOrIdentifier)
-		{
-			$table = $tableOrIdentifier->toSQL92String();
-		}
+		$table =  ($tableOrIdentifier) ? $tableOrIdentifier->toSQL92String() : null;
 		return \Change\Stdlib\String::isEmpty($table) ? $columnName : $table . '.' . $columnName;
 	}
 }

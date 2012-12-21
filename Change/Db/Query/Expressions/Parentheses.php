@@ -40,6 +40,6 @@ class Parentheses extends \Change\Db\Query\Expressions\AbstractExpression
 	 */
 	public function toSQL92String()
 	{
-		return '( ' . $this->getExpression()->toSQL92String() . ')';
+		return '(' . $this->getExpression()->toSQL92String() . ')';
 	}
 }

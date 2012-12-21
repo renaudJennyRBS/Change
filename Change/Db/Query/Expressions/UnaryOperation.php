@@ -17,12 +17,12 @@ class UnaryOperation extends AbstractOperation
 	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $expression = null, $operator = null)
 	{
-		$this->expression = $expression;
-		$this->operator = $operator;
+		if ($expression) {$this->setExpression($expression);}
+		$this->setOperator($operator);
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\AbstractExpression
+	 * @return \Change\Db\Query\Expressions\AbstractExpression|null
 	 */
 	public function getExpression()
 	{
@@ -32,16 +32,21 @@ class UnaryOperation extends AbstractOperation
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 */
-	public function setExpression($expression)
+	public function setExpression(\Change\Db\Query\Expressions\AbstractExpression $expression)
 	{
 		$this->expression = $expression;
 	}
 	
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
+		if ($this->getExpression() === null)
+		{
+			throw new \RuntimeException('Expression can not be null');
+		}
 		return $this->getOperator() . ' ' . $this->getExpression()->toSQL92String();
 	}
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Change\Db\Query;
 
+use Zend\Code\Exception\BadMethodCallException;
+
 /**
  * @name \Change\Db\Query\AbstractQuery
  */
@@ -13,6 +15,20 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	 */
 	protected $dbProvider;
 	
+	
+	/**
+	 * @var string
+	 */
+	protected $cachedSql;
+	
+	/**
+	 * SQL Specific vendor options.
+	 *
+	 * @api
+	 * @var array
+	 */
+	protected $options;
+		
 	/**
 	 * @var array
 	 */
@@ -21,7 +37,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	/**
 	 * @var array
 	 */
-	protected $parametersValue;
+	protected $parametersValue = array();
 	
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -35,7 +51,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	 * Get the query's parameters list.
 	 * 
 	 * @api
-	 * @return array
+	 * @return \Change\Db\Query\Expressions\Parameter[]
 	 */
 	public function getParameters()
 	{
@@ -46,23 +62,36 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	 * Set the query's parameters list.
 	 * 
 	 * @api
-	 * @param array $parameters
+	 * @param \Change\Db\Query\Expressions\Parameter[] $parameters
 	 */
 	public function setParameters($parameters)
 	{
-		$this->parameters = $parameters;
+		$this->parameters = array();
+		if (is_array($parameters))
+		{
+			foreach ($parameters as $parameter)
+			{
+				$this->addParameter($parameter);
+			}
+		}
 	}
 	
 	/**
 	 * Declare a new query parameter.
 	 * 
 	 * @api
-	 * @param string $parameter
+	 * @throws \RuntimeException
+	 * @param \Change\Db\Query\Expressions\Parameter $parameter
 	 * @return \Change\Db\Query\AbstractQuery
 	 */
-	public function addParameter($parameter)
+	public function addParameter(\Change\Db\Query\Expressions\Parameter $parameter)
 	{
-		$this->parameters[] = $parameter;
+		$parameterName = $parameter->getName();
+		if (isset($this->parameters[$parameterName]))
+		{
+			throw new \RuntimeException('Parameter ' . $parameterName . ' already exist');
+		}
+		$this->parameters[$parameterName] = $parameter;
 		return $this;
 	}
 	
@@ -70,13 +99,14 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	 * Bind a value to an existing parameter.
 	 * 
 	 * @api
+	 * @throws \RuntimeException
 	 * @param string $parameterName
-	 * @param string $value
+	 * @param mixed $value
 	 * @return \Change\Db\Query\AbstractQuery
 	 */
 	public function bindParameter($parameterName, $value)
 	{
-		if (!isset($this->parameters[$parameterName]))
+		if (!isset($parameterName, $this->parameters))
 		{
 			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist');
 		}
@@ -85,18 +115,36 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	}
 	
 	/**
-	 * Convert query to a SQL string.
-	 * 
-	 * @param callable $callable
-	 * @return string
+	 * @api
+	 * @throws \RuntimeException
+	 * @param string $parameterName
+	 * @return mixed
 	 */
-	public function toSQLString($callable = null)
+	public function getParameterValue($parameterName)
 	{
-		if ($callable)
+		if (!isset($parameterName, $this->parameters))
 		{
-			return call_user_func($callable, $this);
+			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist');
 		}
-		return $this->toSQL92String();
+		return isset($this->parametersValue[$parameterName]) ? $this->parametersValue[$parameterName] : null;
+	}	
+	
+	/**
+	 * @api
+	 * @return array
+	 */
+	public function getOptions()
+	{
+		return $this->options;
+	}
+	
+	/**
+	 * @api
+	 * @param array $options
+	 */
+	public function setOptions($options)
+	{
+		$this->options = $options;
 	}
 	
 	/**
@@ -121,10 +169,27 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 		$this->dbProvider = $dbProvider;
 	}
 	
+
+	/**
+	 * @return string
+	 */
+	public function getCachedSql()
+	{
+		return $this->cachedSql;
+	}
+	
+	/**
+	 * @param string $cachedSql
+	 */
+	public function setCachedSql($cachedSql)
+	{
+		$this->cachedSql = $cachedSql;
+	}
+	
 	/**
 	 * SQL-92 representation of the query (mostly for tests).
 	 * 
 	 * @return string
 	 */
-	abstract public function toSQL92String();
+	abstract public function toSQL92String();	
 }
