@@ -46,30 +46,24 @@ class I18nManager
 	protected $i18nKeysSynchro = null;
 
 	/**
-	 * @var \Change\Configuration\Configuration
+	 * @var \Change\Application
 	 */
-	protected $configuration;
+	protected $application;
+
 
 	/**
-	 * @var \Change\Db\DbProvider
+	 * @param \Change\Application $application
 	 */
-	protected $dbProvider;
-
-	/**
-	 * @param \Change\Configuration\Configuration $config
-	 * @param \Change\Db\DbProvider $dbProvider
-	 */
-	public function __construct(\Change\Configuration\Configuration $config, \Change\Db\DbProvider $dbProvider)
+	public function __construct(\Change\Application $application)
 	{
-		$this->configuration = $config;
-		$this->dbProvider = $dbProvider;
+		$this->application = $application;
 		$this->ignoreTransform = array('TEXT' => 'raw', 'HTML' => 'html');
 
 		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc',
 			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace',
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
 
-		$this->supportedLCIDs = $config->getEntry('i18n/supported-lcids', array('fr_FR'));
+		$this->supportedLCIDs = $this->getConfiguration()->getEntry('i18n/supported-lcids', array('fr_FR'));
 	}
 	
 	/**
@@ -77,7 +71,15 @@ class I18nManager
 	 */
 	protected function getController()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getController();
+		return $this->application->getApplicationServices()->getController();
+	}
+	
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->application->getApplicationServices()->getConfiguration();
 	}
 
 	/**
@@ -142,9 +144,9 @@ class I18nManager
 	 */
 	protected function loadI18nSynchroConfiguration()
 	{
-		$data = $this->configuration->getEntry('i18n/synchro/documents', null);
+		$data = $this->getConfiguration()->getEntry('i18n/synchro/documents', null);
 		$this->i18nDocumentsSynchro = $this->cleanI18nSynchroConfiguration($data);
-		$data = $this->configuration->getEntry('i18n/synchro/keys', null);
+		$data = $this->getConfiguration()->getEntry('i18n/synchro/keys', null);
 		$this->i18nKeysSynchro = $this->cleanI18nSynchroConfiguration($data);
 	}
 
@@ -237,7 +239,7 @@ class I18nManager
 	{
 		if ($this->langMap === null)
 		{
-			$this->langMap = $this->configuration->getEntry('i18n/langs', array());
+			$this->langMap = $this->getConfiguration()->getEntry('i18n/langs', array());
 		}
 		
 		$supportedLang = array_search($lang, $this->langMap);
@@ -266,7 +268,7 @@ class I18nManager
 	{
 		if ($this->langMap === null)
 		{
-			$this->langMap = $this->configuration->getEntry('i18n/langs', array());
+			$this->langMap = $this->getConfiguration()->getEntry('i18n/langs', array());
 		}
 
 		if (!isset($this->langMap[$LCID]))
@@ -353,7 +355,7 @@ class I18nManager
 	{
 		if ($this->translateQuery === null)
 		{
-			$qb = $this->dbProvider->getNewQueryBuilder();
+			$qb = $this->application->getApplicationServices()->getQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$this->translateQuery = $qb->select('content', 'format')->from('f_locale')
 				->where($fb->logicAnd(

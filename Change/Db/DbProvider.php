@@ -288,14 +288,6 @@ abstract class DbProvider
 	protected abstract function rollBackInternal();
 	
 	/**
-	 * @return \Change\Db\Query\Builder
-	 */
-	public function getNewQueryBuilder()
-	{
-		return new \Change\Db\Query\Builder($this);
-	}
-	
-	/**
 	 * @api
 	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
 	 * @return string
@@ -310,16 +302,7 @@ abstract class DbProvider
 	 * @return array
 	 */
 	public abstract function getQueryResultsArray(\Change\Db\Query\SelectQuery $selectQuery);
-	
-	
-	/**
-	 * @return \Change\Db\Query\StatmentBuilder
-	 */
-	public function getNewStatmentBuilder()
-	{
-		return new \Change\Db\Query\StatmentBuilder($this);
-	}
-	
+		
 	/**
 	 * @return \Change\Db\Query\StatmentBuilder
 	 * @return integer

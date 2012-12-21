@@ -77,4 +77,12 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->newInstance('Change\Db\Query\Builder', array(), false);
 	}
+	
+	/**
+	 * @return \Change\Db\Query\StatmentBuilder
+	 */
+	public function getStatmentBuilder()
+	{
+		return $this->newInstance('Change\Db\Query\StatmentBuilder', array(), false);
+	}
 }

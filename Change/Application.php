@@ -210,8 +210,7 @@ class Application
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
-				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Workspace');
@@ -237,6 +236,12 @@ class Application
 			->addMethod('__construct', true)
 			->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
 		$dl->addDefinition($cl);
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\StatmentBuilder');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+		$dl->addDefinition($cl);
 
 		$applicationServices = new \Change\Application\ApplicationServices($dl);
 		$im = $applicationServices->instanceManager();
@@ -246,11 +251,12 @@ class Application
 		$im->setParameters('Zend\EventManager\EventManager', array());
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Mvc\Controller', array('application' => $this));
+		$im->setParameters('Change\I18n\I18nManager', array('application' => $this));
 		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
-		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));
-		$im->setInjections('Change\I18n\I18nManager', array('Change\Configuration\Configuration', 'Change\Db\DbProvider'));
+		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));		
 		$im->setInjections('Change\Db\Query\Builder', array('Change\Db\DbProvider'));
+		$im->setInjections('Change\Db\Query\StatmentBuilder', array('Change\Db\DbProvider'));
 		return $applicationServices;
 	}
 

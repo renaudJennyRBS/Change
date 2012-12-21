@@ -62,6 +62,14 @@ class DocumentManager
 	}
 	
 	/**
+	 * @return \Change\Db\Query\Builder
+	 */
+	protected function getNewQueryBuilder()
+	{
+		return $this->applicationServices->getQueryBuilder();
+	}
+	
+	/**
 	 * @return \Change\I18n\I18nManager
 	 */
 	protected function getI18nManager()
@@ -106,7 +114,7 @@ class DocumentManager
 		{
 			$dbp = $this->getDbProvider();
 			$sqlmap = $dbp->getSqlMapping();
-			$qb = $dbp->getNewQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 
 			$docTable = $sqlmap->getDocumentTableName($model->getRootName());
@@ -137,7 +145,7 @@ class DocumentManager
 		{
 			$dbp = $this->getDbProvider();
 			$sqlmap = $dbp->getSqlMapping();
-			$qb = $dbp->getNewQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 	
 			$docTable = $sqlmap->getDocumentI18nTableName($model->getRootName());
@@ -307,7 +315,7 @@ class DocumentManager
 		if (!isset($this->staticQueries[$key]))
 		{
 			$ft = $this->getDbProvider()->getSqlMapping()->getDocumentIndexTableName();
-			$qb = $this->getDbProvider()->getNewQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 				
 			if ($model)
