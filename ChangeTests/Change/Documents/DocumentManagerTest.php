@@ -57,9 +57,14 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	public function testLangStack()
 	{
 		$application = \Change\Application::getInstance();
-		$configPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'I18n' . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project1.php';
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $configPath);
-		$i18nManger = new \Change\I18n\I18nManager($config, $application->getApplicationServices()->getDbProvider());
+		$config = $application->getApplicationServices()->getConfiguration();
+		$config->addVolatileEntry('i18n/supported-lcids' , null);
+		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		
+		$config->addVolatileEntry('i18n/langs' , null);
+		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
+		
+		$i18nManger = new \Change\I18n\I18nManager($application);		
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($i18nManger, 'Change\I18n\I18nManager');
 		$manager = new \Change\Documents\DocumentManager($application->getApplicationServices(), $application->getDocumentServices());
 		

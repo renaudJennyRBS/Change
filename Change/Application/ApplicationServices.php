@@ -79,10 +79,10 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 	
 	/**
-	 * @return \Change\Db\Query\StatmentBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
-	public function getStatmentBuilder()
+	public function getStatementBuilder()
 	{
-		return $this->newInstance('Change\Db\Query\StatmentBuilder', array(), false);
+		return $this->newInstance('Change\Db\Query\StatementBuilder', array(), false);
 	}
 }

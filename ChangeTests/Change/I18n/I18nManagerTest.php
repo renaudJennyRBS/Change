@@ -14,9 +14,14 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	public function testGetSupportedLanguages()
 	{
 		$application = \Change\Application::getInstance();
-		$configPath = __DIR__ . DIRECTORY_SEPARATOR . 'TestAssets' . DIRECTORY_SEPARATOR . 'project1.php';
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $configPath);
-		$manager = new \Change\I18n\I18nManager($config, $application->getApplicationServices()->getDbProvider());
+		$config = $application->getApplicationServices()->getConfiguration();
+		$config->addVolatileEntry('i18n/supported-lcids' , null);
+		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		
+		$config->addVolatileEntry('i18n/langs' , null);
+		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
+		
+		$manager = new \Change\I18n\I18nManager($application);
 
 		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());
 

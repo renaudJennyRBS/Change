@@ -237,7 +237,7 @@ class Application
 			->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
 		$dl->addDefinition($cl);
 		
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\StatmentBuilder');
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\StatementBuilder');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
@@ -256,7 +256,7 @@ class Application
 		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
 		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));		
 		$im->setInjections('Change\Db\Query\Builder', array('Change\Db\DbProvider'));
-		$im->setInjections('Change\Db\Query\StatmentBuilder', array('Change\Db\DbProvider'));
+		$im->setInjections('Change\Db\Query\StatementBuilder', array('Change\Db\DbProvider'));
 		return $applicationServices;
 	}
 
