@@ -304,7 +304,7 @@ abstract class DbProvider
 	public abstract function getQueryResultsArray(\Change\Db\Query\SelectQuery $selectQuery);
 		
 	/**
-	 * @return \Change\Db\Query\StatmentBuilder
+	 * @param \Change\Db\Query\AbstractQuery $query
 	 * @return integer
 	 */
 	public abstract function executeQuery(\Change\Db\Query\AbstractQuery $query);

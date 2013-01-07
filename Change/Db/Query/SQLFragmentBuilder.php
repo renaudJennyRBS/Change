@@ -216,7 +216,7 @@ class SQLFragmentBuilder
 	{
 		if ($queryOrBuilder instanceof \Change\Db\Query\AbstractQuery
 			|| $queryOrBuilder instanceof \Change\Db\Query\Builder
-			|| $queryOrBuilder instanceof \Change\Db\Query\StatmentBuilder)
+			|| $queryOrBuilder instanceof \Change\Db\Query\StatementBuilder)
 		{
 			$queryOrBuilder->addParameter($parameter);
 		}

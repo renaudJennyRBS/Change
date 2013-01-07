@@ -154,7 +154,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 		
 	/**
-	 * @param Statment $statement
+	 * @param Statement $statement
 	 */
 	protected function showError($statement = null)
 	{
@@ -524,7 +524,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 	
 	/**
-	 * @return \Change\Db\Query\StatmentBuilder
+	 * @param \Change\Db\Query\AbstractQuery $query
 	 * @return integer
 	 */
 	public function executeQuery(\Change\Db\Query\AbstractQuery $query)
