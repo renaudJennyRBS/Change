@@ -40,6 +40,7 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 		
 		$workspace = $this->getChangeApplication()->getWorkspace();
 		$pattern = $workspace->changePath($relativePath, '*.sql');
+		
 		$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
 		
 		if (is_dir($workspace->pluginsModulesPath()))
@@ -50,16 +51,15 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 		
 		if (is_dir($workspace->projectModulesPath()))
 		{
-			$pattern = $workspace->projectModulesPath('*', '*', $relativePath, '*.xml');
+			$pattern = $workspace->projectModulesPath('*', '*', $relativePath, '*.sql');
 			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
 		}
 		
 		foreach ($paths as $path)
 		{
 			$sql = file_get_contents($path);
-			echo $path;
-			//$output->writeln('<info>generate !</info>');
-			//$schemaManager->execute($sql);
+			$output->writeln('<info>generate : ' . $path .'</info>');
+			$schemaManager->execute($sql);
 		}	
 		
 		if (class_exists('Compilation\Change\Documents\Schema'))

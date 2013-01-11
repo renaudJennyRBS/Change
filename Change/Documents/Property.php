@@ -287,7 +287,7 @@ class Property
 	/* Information de présentation */
 
 	/**
-	 * @return string
+	 * @return mixed
 	 */
 	public function getDefaultValue()
 	{
@@ -295,7 +295,7 @@ class Property
 	}
 
 	/**
-	 * @param string $value
+	 * @param mixed $value
 	 * @return \Change\Documents\Property
 	 */
 	public function setDefaultValue($value)
@@ -459,5 +459,43 @@ class Property
 			$this->documentType = null;
 		}
 		return $this;
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return mixed
+	 */
+	public function getValue($document)
+	{
+		if ($this->name === 'model')
+		{
+			$getter = 'getDocumentModelName';
+		}
+		else
+		{
+			$getter = 'get' . ucfirst($this->name);
+			if ($this->type === self::TYPE_DOCUMENTARRAY)
+			{
+				$getter .= 'Array';
+			}
+		}
+		return call_user_func(array($document, $getter));
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param mixed $value
+	 */
+	public function setValue($document, $value)
+	{
+		if ($this->name !== 'id' && $this->name !== 'model')
+		{
+			$setter = 'set' . ucfirst($this->name);
+			if ($this->type === self::TYPE_DOCUMENTARRAY)
+			{
+				$setter .= 'Array';
+			}
+			call_user_func(array($document, $setter), $value);
+		}
 	}
 }

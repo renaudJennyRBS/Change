@@ -7,30 +7,25 @@ class StringTest extends \PHPUnit_Framework_TestCase
 	public function testConstruct()
 	{
 		$i = new \Change\Db\Query\Expressions\String();
-		$this->assertNull($i->getString());
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Value', $i);
+		$this->assertEquals(\Change\Db\ScalarType::STRING, $i->getScalarType());
 
 		$i = new \Change\Db\Query\Expressions\String('test');
-		$this->assertEquals('test', $i->getString());
+		$this->assertEquals('test', $i->getValue());
 		return $i;
 	}
 	
 	/**
 	 * @depends testConstruct
 	 */
-	public function testString(\Change\Db\Query\Expressions\String $i)
-	{
-		$i->setString('Value');
-		$this->assertEquals('Value', $i->getString());
-		return $i;
-	}
-
-	/**
-	 * @depends testString
-	 */
 	public function testToSQL92String(\Change\Db\Query\Expressions\String $i)
 	{
-		$this->assertEquals("'Value'", $i->toSQL92String());
-		$i->setString(null);
-		$this->assertEquals("''", $i->toSQL92String());
+		$this->assertEquals("'test'", $i->toSQL92String());
+		
+		$i->setValue(null);
+		$this->assertEquals("NULL", $i->toSQL92String());
+		
+		$i->setValue("t'est");
+		$this->assertEquals("'t\\'est'", $i->toSQL92String());
 	}
 }

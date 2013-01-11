@@ -288,6 +288,12 @@ abstract class DbProvider
 	protected abstract function rollBackInternal();
 	
 	/**
+	 * @param string $tableName
+	 * @return integer
+	 */
+	public abstract function getLastInsertId($tableName);
+	
+	/**
 	 * @api
 	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
 	 * @return string
@@ -308,4 +314,19 @@ abstract class DbProvider
 	 * @return integer
 	 */
 	public abstract function executeQuery(\Change\Db\Query\AbstractQuery $query);
+	
+	/**
+	 * @param mixed $value
+	 * @param integer $scalarType \Change\Db\ScalarType::*
+	 * @return mixed
+	 */
+	public abstract function phpToDB($value, $scalarType);
+	
+	/**
+	 * @param mixed $value
+	 * @param integer $scalarType \Change\Db\ScalarType::*
+	 * @return mixed
+	 */
+	public abstract function dbToPhp($value, $scalarType);
+		
 }

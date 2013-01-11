@@ -3,6 +3,7 @@
 namespace ChangeTests\Change\Db\Query\Expressions;
 
 use Change\Db\Query\Expressions\Parameter;
+use Change\Db\ScalarType;
 
 class ParameterTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,14 +11,15 @@ class ParameterTest extends \PHPUnit_Framework_TestCase
 	{
 		$i = new Parameter('test');
 		$this->assertEquals('test', $i->getName());
-		$this->assertEquals(Parameter::STRING, $i->getType());
+		$this->assertEquals(ScalarType::STRING, $i->getType());
 	}
 	
 	
 	public function testType()
 	{
 		$i = new Parameter('test');
-		foreach (array(Parameter::STRING, Parameter::NUMERIC, Parameter::DATETIME, Parameter::LOB) as $value)
+		foreach (array(ScalarType::STRING, ScalarType::BOOLEAN, ScalarType::DATETIME, 
+			ScalarType::LOB, ScalarType::TEXT, ScalarType::DECIMAL, ScalarType::INTEGER) as $value)
 		{
 			$i->setType($value);
 			$this->assertEquals($value, $i->getType());

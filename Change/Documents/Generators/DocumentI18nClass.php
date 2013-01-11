@@ -56,11 +56,9 @@ class DocumentI18nClass
 		if (count($properties))
 		{
 			$code .= $this->getMembers($model, $properties);
-			$code .= $this->getDbProviderFunctions($model, $properties);
 			$code .= $this->getMembersAccessors($model, $properties);
 		}
-		$code .= $this->getSetDefaultValues($model);
-				
+	
 		if (isset($properties['LCID']))
 		{
 			$code .= ' 
@@ -119,77 +117,15 @@ class DocumentI18nClass
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$code .= '	private $'.$property->getName().';'. PHP_EOL;
+			$code .= '
+	/**
+	 * @var '.$this->getCommentaryMemberType($property).'
+	 */	
+	private $'.$property->getName().';'. PHP_EOL;
 		}
 		return $code;
 	}
 
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @param \Change\Documents\Generators\Property[] $properties
-	 * @return string
-	 */
-	protected function getDbProviderFunctions($model, $properties)
-	{
-		$code = '';
-		$get = array();
-		$set = array();
-		foreach ($properties as $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			$name = $property->getName();
-			$get[] = '		$propertyBag['.$this->escapePHPValue($name).'] = $this->'.$name.';';
-				
-			if ($property->getType() === 'Boolean')
-			{
-				$sv = '(null === $propertyValue) ? null : (bool)$propertyValue';
-			}
-			elseif ($property->getType() === 'Integer' || $property->getType() === 'DocumentId')
-			{
-				$sv = '(null === $propertyValue) ? null : intval($propertyValue)';
-			}
-			elseif ($property->getType() === 'Float' || $property->getType() === 'Decimal')
-			{
-				$sv = '(null === $propertyValue) ? null : floatval($propertyValue)';
-			}
-			else
-			{
-				$sv = '$propertyValue';
-			}
-			$set[] = '				case '.$this->escapePHPValue($name).' : $this->'.$name.' = '.$sv.'; break;';
-		}
-	
-		$code .= '
-	/**
-	 * @return array
-	 */
-	public function getDocumentProperties()
-	{
-		$propertyBag = parent::getDocumentProperties();' . PHP_EOL;
-		$code .= implode(PHP_EOL, $get);
-		$code .= '
-		return $propertyBag;
-	}
-	
-	/**
-	 * @param array<String, mixed> $lang
-	 * @return void
-	 */
-	public function setDocumentProperties($propertyBag)
-	{
-		parent::setDocumentProperties($propertyBag);
-		foreach ($propertyBag as $propertyName => $propertyValue)
-		{
-			switch ($propertyName)
-			{' . PHP_EOL;
-		$code .= implode(PHP_EOL, $set);
-		$code .= '
-			}
-		}
-	}' . PHP_EOL;
-		return $code;
-	}
-	
 	protected function getMembersAccessors($model, $properties)
 	{
 		$code = '';
@@ -199,6 +135,50 @@ class DocumentI18nClass
 			$code .= $this->getPropertyAccessors($model, $property);
 		}
 		return $code;
+	}
+	
+	/**
+	 * @param string $oldVarName
+	 * @param string $newVarName
+	 * @param string $type
+	 * @return string
+	 */
+	protected function buildEqualsProperty($oldVarName, $newVarName, $type)
+	{
+		if ($type === 'Float' || $type === 'Decimal')
+		{
+			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') =< 0.0001';
+		}
+		elseif ($type === 'Date' || $type === 'DateTime')
+		{
+			return $oldVarName . ' == ' . $newVarName;
+		}
+		else
+		{
+			return $oldVarName . ' === ' . $newVarName;
+		}
+	}
+	
+	/**
+	 * @param string $oldVarName
+	 * @param string $newVarName
+	 * @param string $type
+	 * @return string
+	 */
+	protected function buildNotEqualsProperty($oldVarName, $newVarName, $type)
+	{
+		if ($type === 'Float' || $type === 'Decimal')
+		{
+			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') > 0.0001';
+		}
+		elseif ($type === 'Date' || $type === 'DateTime')
+		{
+			return $oldVarName . ' != ' . $newVarName;
+		}
+		else
+		{
+			return $oldVarName . ' !== ' . $newVarName;
+		}
 	}
 
 	/**
@@ -234,111 +214,86 @@ class DocumentI18nClass
 	
 	/**
 	 * @param '.$ct.' '.$var.'
+	 * @return boolean
 	 */
 	public function set'.$un.'('.$var.')
-	{'.PHP_EOL;
-		$code .= '		' . $this->buildValConverter($property, $var) . ';'.PHP_EOL;
-		$code .= '		$oldVal = $this->isPropertyModified('.$en.') ? $this->getOldPropertyValue('.$en.') : '.$mn.';'.PHP_EOL;
-		if ($property->getType() === 'Float' || $property->getType() === 'Decimal')
+	{
+		' . $this->buildValConverter($property, $var) . ';
+		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
 		{
-			$code .= '		$modified = (abs(floatval($oldVal) - '.$var.') > 0.0001);'.PHP_EOL;
-		}
-		else
-		{
-			$code .= '		$modified = ($oldVal !== '.$var.');'.PHP_EOL;
-		}
-	
-		$code .= '		if ($modified)
-		{
-			$this->setOldPropertyValue('.$en.', $oldVal);
 			'.$mn.' = '.$var.';
 		}
-		elseif ($this->isPropertyModified('.$en.'))
+		elseif ('. $this->buildNotEqualsProperty($mn, $var, $property->getType()).')
 		{
-			$this->removeOldPropertyValue('.$en.');
+			if ($this->isPropertyModified('.$en.'))
+			{
+				$loadedVal = $this->getOldPropertyValue('.$en.');
+				if ('. $this->buildEqualsProperty('$loadedVal', $var, $property->getType()).')
+				{
+					$this->removeOldPropertyValue('.$en.');
+				}
+			}
+			else
+			{
+				$this->setOldPropertyValue('.$en.', '.$mn.');
+			}
+			'.$mn.' = '.$var.';
+			return true;
 		}
+		return false;
 	}'.PHP_EOL;		
 		return $code;
 	}
 	
 	/**
 	 * @param \Change\Documents\Generators\Property $property
-	 * @param string $var
+	 * @param string $varName
 	 * @return string
 	 */
-	protected function buildValConverter($property, $var)
+	protected function buildValConverter($property, $varName)
 	{
-		if ($property->getType() === 'DateTime' || $property->getType() === 'Date')
+		if ($property->getType() === 'DateTime')
 		{
-			return ''.$var.' = ('.$var.' === null) ? '.$var.' : ('.$var.' instanceof \date_Calendar) ? \date_Formatter::format('.$var.', \date_Formatter::SQL_DATE_FORMAT) : is_long('.$var.') ? date(\date_Formatter::SQL_DATE_FORMAT, '.$var.') : '.$var.'';
+			return $varName.' = is_string('.$varName.') ? new \DateTime('.$varName.', new \DateTimeZone(\'UTC\')): (('.$varName.' instanceof \DateTime) ? '.$varName.' : null)';
+		}
+		elseif ($property->getType() === 'Date')
+		{
+			return $varName.' = is_string('.$varName.') ? new \DateTime('.$varName.', new \DateTimeZone(\'UTC\')) : '.$varName.'; '.$varName.' = ('.$varName.' instanceof \DateTime) ? \DateTime::createFromFormat(\'Y-m-d\', '.$varName.'->format(\'Y-m-d\'), new \DateTimeZone(\'UTC\'))->setTime(0, 0) : null';
 		}
 		elseif ($property->getType() === 'Boolean')
 		{
-			return ''.$var.' = ('.$var.' === null) ? '.$var.' : (bool)'.$var.'';
+			return $varName.' = ('.$varName.' === null) ? '.$varName.' : (bool)'.$varName.'';
 		}
 		elseif ($property->getType() === 'Integer')
 		{
-			return ''.$var.' = ('.$var.' === null) ? '.$var.' : intval('.$var.')';
+			return $varName.' = ('.$varName.' === null) ? '.$varName.' : intval('.$varName.')';
 		}
 		elseif ($property->getType() === 'Float' || $property->getType() === 'Decimal')
 		{
-			return ''.$var.' = ('.$var.' === null) ? '.$var.' : floatval('.$var.')';
+			return $varName.' = ('.$varName.' === null) ? '.$varName.' : floatval('.$varName.')';
 		}
 		elseif ($property->getType() === 'DocumentId')
 		{
-			return ''.$var.' = ('.$var.' === null) ? '.$var.' : ('.$var.' instanceof \Change\Documents\AbstractDocument) ? '.$var.'->getId() : intval('.$var.') > 0 ? intval('.$var.') : null';
+			return $varName.' = ('.$varName.' === null) ? '.$varName.' : ('.$varName.' instanceof \Change\Documents\AbstractDocument) ? '.$varName.'->getId() : intval('.$varName.') > 0 ? intval('.$varName.') : null';
 		}
 		elseif ($property->getType() === 'JSON')
 		{
-			return ''.$var.' = ('.$var.' === null || is_string('.$var.')) ? '.$var.' : \JsonService::getInstance()->encode('.$var.')';
+			return $varName.' = ('.$varName.' === null || is_string('.$varName.')) ? '.$varName.' : json_encode('.$varName.')';
 		}
 		elseif ($property->getType() === 'Object')
 		{
-			return ''.$var.' = ('.$var.' === null || is_string('.$var.')) ? '.$var.' : serialize('.$var.')';
+			return $varName.' = ('.$varName.' === null || is_string('.$varName.')) ? '.$varName.' : serialize('.$varName.')';
 		}
 		elseif ($property->getType() === 'Document' || $property->getType() === 'DocumentArray')
 		{
-			return ''.$var.' = '.$var.' === null || !('.$var.' instanceof \Change\Documents\AbstractDocument)) ? null : '.$var.'->getId()';
+			return $varName.' = '.$varName.' === null || !('.$varName.' instanceof \Change\Documents\AbstractDocument)) ? null : '.$varName.'->getId()';
 		}
 		else
 		{
-			return ''.$var.' = '.$var.' === null ? '.$var.' : strval('.$var.')';
+			return $varName.' = '.$varName.' === null ? '.$varName.' : strval('.$varName.')';
 		}
 	}
-			
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getSetDefaultValues($model)
-	{
-		$affects = array();
-		foreach ($model->getProperties() as $property)
-		{
-			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getLocalized() && $property->getDefaultValue() !== null)
-			{
-				$affects[] = '		$this->set' . ucfirst($property->getName()) . '(' . $this->escapePHPValue($property->getDefaultPhpValue(), false). ');';
-			}
-		}
-	
-		if (count($affects) === 0)
-		{
-			return null;
-		}
-	
-		$code = '
-	/**
-	 * @return void
-	 */
-	public function setDefaultValues()
-	{'. PHP_EOL;
-		$code .= implode(PHP_EOL, $affects). PHP_EOL;
-		$code .= '		parent::setDefaultValues();
-	}'. PHP_EOL;
-		return $code;
-	}
-	
+
 	/**
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
@@ -355,6 +310,9 @@ class DocumentI18nClass
 			case 'Integer' :
 			case 'DocumentId' :
 				return 'integer';
+			case 'Date' :
+			case 'DateTime' :
+				return '\DateTime';
 			case 'Document' :
 			case 'DocumentArray' :
 				if ($property->getDocumentType() === null)
@@ -365,6 +323,31 @@ class DocumentI18nClass
 				{
 					return $this->compiler->getModelByName($property->getDocumentType())->getDocumentClassName();
 				}
+			default:
+				return 'string';
+		}
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getCommentaryMemberType($property)
+	{
+		switch ($property->getType())
+		{
+			case 'Boolean' :
+				return 'boolean';
+			case 'Float' :
+			case 'Decimal' :
+				return 'float';
+			case 'Integer' :
+			case 'DocumentId' :
+			case 'Document' :
+			case 'DocumentArray' :
+				return 'integer';
+			case 'Date' :
+			case 'DateTime' :
+				return '\DateTime';
 			default:
 				return 'string';
 		}

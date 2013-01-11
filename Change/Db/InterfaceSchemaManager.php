@@ -47,35 +47,17 @@ interface InterfaceSchemaManager
 	public function getTableDefinition($tableName);
 
 	/**
-	 * @param integer $treeId
+	 * @param string $treeName
 	 * @return string the SQL statements that where executed
 	 */
-	public function createTreeTable($treeId);
+	public function createTreeTable($treeName);
 	
 	/**
-	 * @param integer $treeId
+	 * @param string $treeName
 	 * @return string the SQL statements that where executed
 	 */
-	public function dropTreeTable($treeId);
-		
-	/**
-	 * @param string $documentName
-	 * @return string
-	 */
-	public function getDocumentTableName($documentName);
-	
-	/**
-	 * @param string $documentName
-	 * @return string
-	 */
-	public function getDocumentI18nTableName($documentName);
-	
-	/**
-	 * @param string $propertyName
-	 * @return string
-	 */
-	public function getDocumentFieldName($propertyName);
-	
+	public function dropTreeTable($treeName);
+			
 	/**
 	 * @param string $propertyName
 	 * @param string $propertyType

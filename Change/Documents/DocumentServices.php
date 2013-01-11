@@ -31,10 +31,25 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 				->addMethodParameter('__construct', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
 		
-
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\TreeManager');
+		$cl->setInstantiator('__construct')
+		->addMethod('__construct', true)
+		->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
+		->addMethodParameter('__construct', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
+		$dl->addDefinition($cl);
+		
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\Constraints\ConstraintsManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true));
+		$dl->addDefinition($cl);
+		
 		parent::__construct($dl, $applicationServices);
 		$im = $this->instanceManager();
 		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $this->applicationServices, 'documentServices' => $this));
+		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $this->applicationServices, 'documentServices' => $this));
+		
+		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $this->applicationServices));
 	}
 	
 	/**
@@ -51,5 +66,21 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	public function getDocumentManager()
 	{
 		return $this->get('Change\Documents\DocumentManager', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
+	}
+	
+	/**
+	 * @return \Change\Documents\TreeManager
+	 */
+	public function getTreeManager()
+	{
+		return $this->get('Change\Documents\TreeManager', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
+	}
+	
+	/**
+	 * @return \Change\Documents\Constraints\ConstraintsManager
+	 */
+	public function getConstraintsManager()
+	{
+		return $this->get('Change\Documents\Constraints\ConstraintsManager', array('applicationServices' => $this->applicationServices));
 	}
 }

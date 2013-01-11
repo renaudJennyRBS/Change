@@ -5,20 +5,11 @@ namespace Change\Documents;
  * @name \Change\Documents\AbstractDocument
  */
 abstract class AbstractDocument
-{	
-	const PERSISTENTSTATE_NEW = 0;
-	
-	const PERSISTENTSTATE_INITIALIZED = 2;
-	
-	const PERSISTENTSTATE_LOADED = 3;
-	const PERSISTENTSTATE_MODIFIED = 4;
-	
-	const PERSISTENTSTATE_DELETED = 5;
-	
+{		
 	/**
 	 * @var integer
 	 */
-	private $persistentState;
+	private $persistentState = DocumentManager::STATE_NEW;
 
 	/**
 	 * @var integer
@@ -31,9 +22,9 @@ abstract class AbstractDocument
 	private $documentModelName;
 	
 	/**
-	 * @var integer
+	 * @var string
 	 */
-	private $treeId;
+	private $treeName;
 	
 	/**
 	 * @var array
@@ -147,43 +138,54 @@ abstract class AbstractDocument
 	/**
 	 * @param integer $id
 	 * @param integer $persistentState
-	 * @param integer|null $treeId
+	 * @param string|null $treeName
 	 */
-	public function initialize($id, $persistentState, $treeId)
+	public function initialize($id, $persistentState, $treeName = null)
 	{
 		$this->id = intval($id);
 		$this->setPersistentState($persistentState);
-		$this->setTreeId($treeId);
+		if ($treeName !== null)
+		{
+			$this->setTreeName($treeName);
+		}
 	}
 
 	/**
-	 * @param integer|null $treeId
+	 * @param string|null $treeName
 	 */
-	public function setTreeId($treeId)
+	public function setTreeName($treeName)
 	{
-		$this->treeId = ($treeId !== null) ? intval($treeId) : null;
+		$this->treeName = ($treeName !== null) ? strval($treeName) : null;
 	}
 	
 	/**
 	 * @api
-	 * @return integer|null
+	 * @return string|null
 	 */
-	public function getTreeId()
+	public function getTreeName()
 	{
-		return $this->treeId;
+		return $this->treeName;
 	}
 
 	/**
-	 * Set the default properties value for new document
+	 * @param \Change\Documents\AbstractModel $documentModel
 	 */
-	protected function setDefaultValues()
+	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
 	{
-		$this->modifiedProperties = array();
-		$this->persistentState = self::PERSISTENTSTATE_NEW;
+		$this->persistentState = DocumentManager::STATE_NEW;
+		foreach ($documentModel->getProperties() as $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if (!$property->getLocalized() && $property->getDefaultValue() !== null)
+			{
+				$property->setValue($this, $property->getDefaultValue());
+			}
+		}
+		$this->clearModifiedProperties();
 	}
 	
 	/**
-	 * @return integer
+	 * @return integer \Change\Documents\DocumentManager::STATE_*
 	 */
 	public function getPersistentState()
 	{
@@ -191,54 +193,28 @@ abstract class AbstractDocument
 	}
 
 	/**
-	 * @param integer $newValue
+	 * @param integer $newValue \Change\Documents\DocumentManager::STATE_*
+	 * @return integer oldState
 	 */
 	public function setPersistentState($newValue)
 	{
 		$oldState = $this->persistentState;
 		switch ($newValue) 
 		{
-			case self::PERSISTENTSTATE_NEW:
-			case self::PERSISTENTSTATE_INITIALIZED:
-			case self::PERSISTENTSTATE_LOADED:
-			case self::PERSISTENTSTATE_MODIFIED:
-			case self::PERSISTENTSTATE_DELETED:
-				$this->persistentState = intval($newValue);
+			case DocumentManager::STATE_LOADED:
+				$this->clearModifiedProperties();
+			case DocumentManager::STATE_NEW:
+			case DocumentManager::STATE_INITIALIZED:
+			case DocumentManager::STATE_LOADING:	
+			case DocumentManager::STATE_DELETING:
+			case DocumentManager::STATE_DELETED:
+			case DocumentManager::STATE_SAVING:
+				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
 	}
 	
-	/**
-	 * @return boolean
-	 */
-	public function persistentStateIsNew()
-	{
-		return $this->persistentState === self::PERSISTENTSTATE_NEW;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getDocumentProperties()
-	{
-		$propertyBag = array();
-		$propertyBag['id'] = $this->id;
-		$propertyBag['model'] = $this->getDocumentModelName();
-		return $propertyBag;
-	}
-
-	/**
-	 * @param array $propertyBag
-	 */
-	public function setDocumentProperties($propertyBag)
-	{
-		if (array_key_exists('id', $propertyBag))
-		{
-			$this->id = intval($propertyBag['id']);
-		}
-	}
-
 	/**
 	 * @api
 	 * @return integer
@@ -258,7 +234,7 @@ abstract class AbstractDocument
 	
 	protected function checkLoaded()
 	{
-		if ($this->persistentState === self::PERSISTENTSTATE_INITIALIZED)
+		if ($this->persistentState === DocumentManager::STATE_INITIALIZED)
 		{
 			$this->loadDocument();
 		}
@@ -277,7 +253,85 @@ abstract class AbstractDocument
 	 */
 	protected function validateProperties()
 	{
-		
+		foreach ($this->documentModel->getProperties() as $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized())
+			{
+				$i18nPart = $this->getCurrentI18nPart();
+				/* @var $i18nPart \Change\Documents\AbstractI18nDocument */
+				if ($i18nPart->getPersistentState() == DocumentManager::STATE_NEW || $i18nPart->isPropertyModified($property->getName()))
+				{
+					$this->validatePropertyValue($property);
+				}
+			}
+			else
+			{
+				if ($this->getPersistentState() == DocumentManager::STATE_NEW || $this->isPropertyModified($property->getName()))
+				{
+					$this->validatePropertyValue($property);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\Property $property
+	 * @return boolean
+	 */
+	protected function validatePropertyValue($property)
+	{
+		$value = $property->getValue($this);
+		if ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+		{
+			$nbValue = count($value);
+			if ($nbValue === 0)
+			{
+				if (!$property->isRequired())
+				{
+					return true;
+				}
+				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.isempty', array('ucf')));
+				return false;
+			}
+			elseif ($property->getMaxOccurs() > 1 && $nbValue > $property->getMaxOccurs())
+			{
+				$args = array('maxOccurs' => $property->getMaxOccurs());
+				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.maxoccurs', array('ucf'), array($args)));
+				return false;
+			}
+			elseif ($property->getMinOccurs() > 1 && $nbValue < $property->getMinOccurs())
+			{
+				$args = array('minOccurs' => $property->getMinOccurs());
+				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.minoccurs', array('ucf'), array($args)));
+				return false;
+			}
+			
+		} 
+		elseif ($value === null || $value === '') 
+		{
+			if (!$property->isRequired()) 
+			{	
+				return true;
+			}
+			$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.isempty', array('ucf')));
+			return false;
+		}
+		elseif ($property->hasConstraints()) 
+		{
+			$constraintManager = $this->documentService->getConstraintsManager();
+			foreach ($property->getConstraintArray() as $name => $params) 
+			{
+				$params += array('documentId' => $this->getId());
+				$c = $constraintManager->getByName($name, $params);
+				if (!$c->isValid($value)) 
+				{
+					$this->addPropertyErrors($property->getName(), $c->getMessages());
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -315,23 +369,28 @@ abstract class AbstractDocument
 	
 	/**
 	 * @param string $propertyName
+	 * @param string $error
+	 */
+	protected function addPropertyError($propertyName, $error)
+	{
+		if ($error !== null)
+		{
+			$this->propertiesErrors[$propertyName][] = $error;
+		}
+	}
+	
+	/**
+	 * @param string $propertyName
 	 * @param string[] $errors
 	 */
 	protected function addPropertyErrors($propertyName, $errors)
 	{		
 		if (is_array($errors) && count($errors))
 		{
-			if (!$this->hasPropertiesErrors())
+			foreach ($errors as $error)
 			{
-				$this->propertiesErrors = array($propertyName => $errors);
-			}
-			elseif (isset($this->propertiesErrors[$propertyName]))
-			{
-				$this->propertiesErrors[$propertyName] = array_merge($this->propertiesErrors[$propertyName], $errors);
-			}
-			else
-			{
-				$this->propertiesErrors[$propertyName] = $errors;
+				/* @var $error string */
+				$this->addPropertyError($propertyName, $error);
 			}
 		}
 	}	
@@ -351,7 +410,22 @@ abstract class AbstractDocument
 		}
 	}
 	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		return count($this->modifiedProperties) > 0;
+	}
 	
+	/**
+	 * @api
+	 */
+	protected function clearModifiedProperties()
+	{
+		$this->modifiedProperties = array();
+	}
 		
 	/**
 	 * @param string $propertyName
@@ -424,7 +498,7 @@ abstract class AbstractDocument
 	 */
 	protected function propertyChanged($propertyName)
 	{
-
+		$this->documentService->propertyChanged($this, $propertyName);
 	}
 
 	/**
@@ -460,6 +534,18 @@ abstract class AbstractDocument
 	}
 	
 	/**
+	 *
+	 */
+	protected function checkMetasLoaded()
+	{
+		if ($this->metas === null)
+		{
+			$this->metas = $this->documentManager->loadMetas($this);
+			$this->modifiedMetas = false;
+		}
+	}
+	
+	/**
 	 * @api
 	 * @return boolean
 	 */
@@ -469,14 +555,34 @@ abstract class AbstractDocument
 	}
 		
 	/**
-	 * 
+	 * @api
+	 * @return array
 	 */
-	protected function checkMetasLoaded()
+	public function getMetas()
 	{
-		if ($this->metas === null)
+		$this->checkMetasLoaded();
+		return $this->metas;
+	}
+	
+	/**
+	 * @api
+	 * @param array $metas
+	 */
+	public function setMetas($metas)
+	{
+		$this->checkMetasLoaded();
+		if (count($this->metas))
 		{
-			$this->metas = $this->documentManager->loadMetas($this);
-			$this->modifiedMetas = false;
+			$this->metas = array();
+			$this->modifiedMetas = true;
+		}
+		if (is_array($metas))
+		{
+			foreach ($metas as $name => $value)
+			{
+				$this->metas[$name] = $value;
+			}
+			$this->modifiedMetas = true;
 		}
 	}
 	
@@ -518,7 +624,7 @@ abstract class AbstractDocument
 				$this->modifiedMetas = true;
 			}
 		}
-		elseif ($this->metas[$name] != $value)
+		elseif (!isset($this->metas[$name]) || $this->metas[$name] != $value)
 		{
 			$this->metas[$name] = $value;
 			$this->modifiedMetas = true;
@@ -528,33 +634,32 @@ abstract class AbstractDocument
 	// Generic Method
 	
 	/**
-	 * @return string
+	 * @return \DateTime
 	 */
 	abstract public function getCreationDate();
 	
 	/**
-	 * @param string $creationDate
+	 * @param \DateTime $creationDate
 	 */
 	abstract public function setCreationDate($creationDate);
 	
-	
 	/**
-	 * @return string
+	 * @return \DateTime
 	 */
 	abstract public function getModificationDate();
 	
 	/**
-	 * @param string $modificationDate
+	 * @param \DateTime $modificationDate
 	 */
 	abstract public function setModificationDate($modificationDate);
 	
 	/**
-	 * @return string
+	 * @return \DateTime|null
 	*/
 	abstract public function getDeletedDate();
 	
 	/**
-	 * @param string $deletedDate
+	 * @param \DateTime|null $deletedDate
 	 */
 	abstract public function setDeletedDate($deletedDate);
 }

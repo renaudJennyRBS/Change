@@ -5,15 +5,23 @@ use Change\Db\Query\SQLFragmentBuilder;
 
 class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * @return \Change\Db\Query\SQLFragmentBuilder
+	 */
+	protected function getNewSQLFragmentBuilder()
+	{
+		return new SQLFragmentBuilder(new \Change\Db\SqlMapping());
+	}
+	
 	public function testConstruct()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$this->assertTrue(true);
 	}	
 	
 	public function testFunc()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$func = $fb->func('test', new \Change\Db\Query\Expressions\Raw('raw'));
 		
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Func', $func);
@@ -25,7 +33,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 
 	public function testSum()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$func = $fb->sum('test', 'test2');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Func', $func);
@@ -41,7 +49,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testTable()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->table('test', 'db');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Table', $frag);
@@ -51,7 +59,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testColumn()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->column('test', 'table');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Column', $frag);
@@ -63,7 +71,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testIdentifier()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->identifier('test', 'table');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Identifier', $frag);
 		$this->assertEquals(array('test', 'table'), $frag->getParts());
@@ -71,7 +79,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testAlias()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$ident = $fb->identifier('test', 'table');
 		$frag = $fb->alias($ident, 'alias');
 	
@@ -92,33 +100,34 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testParameter()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		
 		$frag = $fb->parameter('test');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', $frag);
 		$this->assertEquals('test', $frag->getName());
-		$this->assertEquals(\Change\Db\Query\Expressions\Parameter::STRING, $frag->getType());
+		$this->assertEquals(\Change\Db\ScalarType::STRING, $frag->getType());
 		
 		
-		$frag = $fb->numericParameter('test');
+		$frag = $fb->integerParameter('test');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', $frag);
 		$this->assertEquals('test', $frag->getName());
-		$this->assertEquals(\Change\Db\Query\Expressions\Parameter::NUMERIC, $frag->getType());
+		$this->assertEquals(\Change\Db\ScalarType::INTEGER, $frag->getType());
 		
 		$frag = $fb->dateTimeparameter('test');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', $frag);
 		$this->assertEquals('test', $frag->getName());
-		$this->assertEquals(\Change\Db\Query\Expressions\Parameter::DATETIME, $frag->getType());
+		$this->assertEquals(\Change\Db\ScalarType::DATETIME, $frag->getType());
 			
-		$frag = $fb->lobParameter('test');
+		
+		$frag = $fb->typedParameter('test', \Change\Db\ScalarType::LOB);
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', $frag);
 		$this->assertEquals('test', $frag->getName());
-		$this->assertEquals(\Change\Db\Query\Expressions\Parameter::LOB, $frag->getType());
+		$this->assertEquals(\Change\Db\ScalarType::LOB, $frag->getType());
 	}
 	
 	public function testNumber()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->number(5);
 	
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Numeric', $frag);
@@ -127,16 +136,16 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testString()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->string('test');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\String', $frag);
-		$this->assertEquals('test', $frag->getString());
+		$this->assertEquals('test', $frag->getValue());
 	}
 	
 	public function testExpressionList()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->expressionList($fb->identifier('test'));
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\ExpressionList', $frag);
 		$this->assertCount(1, $frag->getList());
@@ -144,7 +153,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testSubQuery()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$q  = new \Change\Db\Query\SelectQuery(\Change\Application::getInstance()->getApplicationServices()->getDbProvider());
 		$frag = $fb->subQuery($q);
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\SubQuery', $frag);
@@ -152,7 +161,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testEq()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->eq('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('=', $frag->getOperator());
@@ -160,7 +169,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testNeq()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->neq('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('<>', $frag->getOperator());
@@ -169,7 +178,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testGt()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->gt('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('>', $frag->getOperator());
@@ -177,7 +186,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testGte()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->gte('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('>=', $frag->getOperator());
@@ -185,7 +194,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testLt()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->lt('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('<', $frag->getOperator());
@@ -193,7 +202,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testLte()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->lte('a', 'b');
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\BinaryPredicate', $frag);
 		$this->assertEquals('<=', $frag->getOperator());
@@ -202,7 +211,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testLike()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->like('a', 'b', \Change\Db\Query\Predicates\Like::BEGIN, true);
 		
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\Like', $frag);
@@ -212,7 +221,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testIsNull()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->isNull('a');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\UnaryPredicate', $frag);
@@ -221,7 +230,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testIsNotNull()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->isNotNull('a');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\UnaryPredicate', $frag);
@@ -230,7 +239,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testLogicAnd()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->logicAnd('a', 'b');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\Conjunction', $frag);
@@ -239,7 +248,7 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 	
 	public function testLogicOr()
 	{
-		$fb = new SQLFragmentBuilder();
+		$fb = $this->getNewSQLFragmentBuilder();
 		$frag = $fb->logicOr('a', 'b', 'c');
 	
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\Disjunction', $frag);

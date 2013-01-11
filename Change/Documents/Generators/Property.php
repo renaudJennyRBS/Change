@@ -10,7 +10,7 @@ class Property
 		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
 		'DocumentId', 'Document', 'DocumentArray');
 	
-	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treeid', 'meta', 'volcid', 'lcid',
+	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'volcid', 'lcid',
 			'creationdate', 'modificationdate', 'deleteddate',
 			'authorname', 'authorid', 'documentversion',
 			'publicationstatus', 'startpublication', 'endpublication',
@@ -463,15 +463,18 @@ class Property
 				{
 					$this->type = 'String';
 					$this->dbSize = 255;
+					$this->required = true;
 				}
 				break;
 			case 'voLCID':
 			case 'LCID':
 					$this->type = 'String';
 					$this->dbSize = 10;
+					$this->required = true;
 					break;
 			case 'creationDate':
 			case 'modificationDate':
+				$this->required = true;
 			case 'deletedDate':
 				$this->type = 'DateTime';
 				break;
@@ -486,10 +489,12 @@ class Property
 			case 'documentVersion':
 				$this->type = 'Integer';
 				$this->defaultValue = '0';
+				$this->required = true;
 				break;
 			case 'publicationStatus':
 				$this->type = 'String';
 				$this->defaultValue = 'DRAFT';
+				$this->required = true;
 				break;
 			case 'startPublication':
 				$this->type = 'DateTime';

@@ -7,25 +7,51 @@ namespace Change\Db;
 class SqlMapping
 {	
 	/**
-	 * @param string $documentName
+	 * @api
+	 * @param string $rootDocumentName
 	 * @return string
 	 */
-	public function getDocumentTableName($documentName)
+	public function getDocumentTableName($rootDocumentName)
 	{
-		list($vendor, $module, $name) = explode('_', strtolower($documentName));
+		list($vendor, $module, $name) = explode('_', strtolower($rootDocumentName));
 		return $vendor . '_' . $module . '_doc_' . $name;
 	}
 	
+	
 	/**
-	 * @param string $documentName
+	 * @api
+	 * @param string $rootDocumentName
 	 * @return string
 	 */
-	public function getDocumentI18nTableName($documentName)
+	public function getDocumentRelationTableName($rootDocumentName)
 	{
-		return $this->getDocumentTableName($documentName) . '_i18n';
+		list($vendor, $module, $name) = explode('_', strtolower($rootDocumentName));
+		return $vendor . '_' . $module . '_rel_' . $name;
+	}
+	
+	/**
+	 * @api
+	 * @param string $rootDocumentName
+	 * @return string
+	 */
+	public function getDocumentI18nTableName($rootDocumentName)
+	{
+		return $this->getDocumentTableName($rootDocumentName) . '_i18n';
+	}
+	
+	/**
+	 * @api
+	 * @param string $moduleName
+	 * @return string
+	 */
+	public function getTreeTableName($moduleName)
+	{
+		list($vendor, $module) = explode('_', strtolower($moduleName));
+		return $vendor . '_' . $module . '_tree';
 	}
 		
 	/**
+	 * @api
 	 * @param string $propertyName
 	 * @return string
 	 */
@@ -38,32 +64,64 @@ class SqlMapping
 				return 'document_id';
 			case 'model':
 				return 'document_model';
+			case 'treename':
+				return 'tree_name';
 		}
 		return $pn;
 	}
+	
+	/**
+	 * @api
+	 * @param string $propertyType \Change\Documents\Property::TYPE_*
+	 * @return integer \Change\Db\ScalarType::*
+	 */
+	public function getDbScalarType($propertyType)
+	{
+		switch ($propertyType)
+		{
+			case \Change\Documents\Property::TYPE_DOCUMENTARRAY:
+			case \Change\Documents\Property::TYPE_DOCUMENT:
+			case \Change\Documents\Property::TYPE_DOCUMENTID:
+			case \Change\Documents\Property::TYPE_INTEGER:
+				return \Change\Db\ScalarType::INTEGER;
+	
+			case \Change\Documents\Property::TYPE_BOOLEAN:
+				return \Change\Db\ScalarType::BOOLEAN;
+	
+			case \Change\Documents\Property::TYPE_DATE:
+			case \Change\Documents\Property::TYPE_DATETIME:
+				return \Change\Db\ScalarType::DATETIME;
+	
+			case \Change\Documents\Property::TYPE_FLOAT:
+			case \Change\Documents\Property::TYPE_DECIMAL:
+				return \Change\Db\ScalarType::DECIMAL;
+	
+			case \Change\Documents\Property::TYPE_JSON:
+			case \Change\Documents\Property::TYPE_LONGSTRING:
+			case \Change\Documents\Property::TYPE_RICHTEXT:
+			case \Change\Documents\Property::TYPE_XML:
+				return \Change\Db\ScalarType::TEXT;
+	
+			case \Change\Documents\Property::TYPE_LOB:
+			case \Change\Documents\Property::TYPE_OBJECT:
+				return \Change\Db\ScalarType::LOB;
+		}
+		return \Change\Db\ScalarType::STRING;
+	}
 		
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getDocumentIndexTableName()
 	{
-		return 'f_document';
+		return 'change_document';
 	}
 	
-	/**
-	 * @return string
-	 */
-	public function getRelationTableName()
-	{
-		return 'f_relation';
-	}
 	
-	/**
-	 * @return string
-	 */
-	public function getRelationNameTableName()
+	public function getDocumentMetasTableName()
 	{
-		return 'f_relationname';
+		return 'change_document_metas';
 	}
 	
 	/**

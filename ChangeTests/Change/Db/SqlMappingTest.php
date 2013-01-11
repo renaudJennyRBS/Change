@@ -23,10 +23,9 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertEquals('testname', $sqlMapping->getDocumentFieldName('testName'));
 		
-		$this->assertEquals('f_document', $sqlMapping->getDocumentIndexTableName());
-		$this->assertEquals('f_relation', $sqlMapping->getRelationTableName());
-		$this->assertEquals('f_relationname', $sqlMapping->getRelationNameTableName());
-		
+		$this->assertEquals('change_document', $sqlMapping->getDocumentIndexTableName());
+		$this->assertEquals('change_document_metas', $sqlMapping->getDocumentMetasTableName());
+
 		$this->assertEquals('f_locale', $sqlMapping->getLocaleTableName());
 		$this->assertEquals('f_settings', $sqlMapping->getSettingTableName());
 		$this->assertEquals('f_tags', $sqlMapping->getTagsTableName());

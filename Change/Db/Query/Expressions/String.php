@@ -4,42 +4,14 @@ namespace Change\Db\Query\Expressions;
 /**
  * @name \Change\Db\Query\Expressions\Raw
  */
-class String extends AbstractExpression
+class String extends \Change\Db\Query\Expressions\Value
 {
-	/**
-	 * @var string
-	 */
-	protected $string;
-	
-	/**
-	 * @param unknown_type $string
-	 */
-	public function __construct($string = null)
-	{
-		$this->string = $string;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getString()
-	{
-		return $this->string;
-	}
 	
 	/**
 	 * @param string $string
 	 */
-	public function setString($string)
+	public function __construct($string = null)
 	{
-		$this->string = $string;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function toSQL92String()
-	{
-		return "'" . $this->string . "'";
+		parent::__construct($string, \Change\Db\ScalarType::STRING);
 	}
 }

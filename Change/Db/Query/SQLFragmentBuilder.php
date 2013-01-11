@@ -26,6 +26,19 @@ use Change\Db\Query\Predicates\Like;
 class SQLFragmentBuilder
 {	
 	/**
+	 * @var \Change\Db\SqlMapping
+	 */
+	protected $sqlMapping;
+	
+	/**
+	 * @param \Change\Db\SqlMapping $sqlMapping
+	 */
+	public function __construct(\Change\Db\SqlMapping $sqlMapping)
+	{
+		$this->sqlMapping = $sqlMapping;
+	}
+	
+	/**
 	 * @api
 	 * @param string $name
 	 * @param array $args
@@ -146,13 +159,31 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
+	 * Assume a string parameter
 	 * @param string $parameterName
 	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
 	public function parameter($parameterName, $queryOrBuilder = null)
 	{
-		$p = new Parameter($parameterName, Parameter::STRING);
+		$p = new Parameter($parameterName);
+		if ($queryOrBuilder !== null)
+		{
+			$this->bindParameter($p, $queryOrBuilder);
+		}
+		return $p;
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @param string $scalarType \Change\Db\ScalarType::*
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
+	 * @return \Change\Db\Query\Expressions\Parameter
+	 */
+	public function typedParameter($parameterName, $scalarType, $queryOrBuilder = null)
+	{
+		$p = new Parameter($parameterName, $scalarType);
 		if ($queryOrBuilder !== null)
 		{
 			$this->bindParameter($p, $queryOrBuilder);
@@ -166,9 +197,9 @@ class SQLFragmentBuilder
 	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
-	public function numericParameter($parameterName, $queryOrBuilder = null)
+	public function integerParameter($parameterName, $queryOrBuilder = null)
 	{
-		$p = new Parameter($parameterName, Parameter::NUMERIC);
+		$p = new Parameter($parameterName, \Change\Db\ScalarType::INTEGER);
 		if ($queryOrBuilder !== null)
 		{
 			$this->bindParameter($p, $queryOrBuilder);
@@ -184,23 +215,7 @@ class SQLFragmentBuilder
 	 */
 	public function dateTimeparameter($parameterName, $queryOrBuilder = null)
 	{
-		$p = new Parameter($parameterName, Parameter::DATETIME);
-		if ($queryOrBuilder !== null)
-		{
-			$this->bindParameter($p, $queryOrBuilder);
-		}
-		return $p;
-	}
-	
-	/**
-	 * @api
-	 * @param string $parameterName
-	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
-	 * @return \Change\Db\Query\Expressions\Parameter
-	 */
-	public function lobParameter($parameterName, $queryOrBuilder = null)
-	{
-		$p = new Parameter($parameterName, Parameter::LOB);
+		$p = new Parameter($parameterName, \Change\Db\ScalarType::DATETIME);
 		if ($queryOrBuilder !== null)
 		{
 			$this->bindParameter($p, $queryOrBuilder);
@@ -403,8 +418,85 @@ class SQLFragmentBuilder
 	}
 	
 	/**
+	 * @api
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentIndexTable()
+	{
+		return $this->table($this->sqlMapping->getDocumentIndexTableName());
+	}
+	
+	/**
+	 * @api
+	 * @param string $rootDocumentName
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentTable($rootDocumentName)
+	{
+		return $this->table($this->sqlMapping->getDocumentTableName($rootDocumentName));
+	}
+	
+	/**
+	 * @api
+	 * @param string $rootDocumentName
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentI18nTable($rootDocumentName)
+	{
+		return $this->table($this->sqlMapping->getDocumentI18nTableName($rootDocumentName));
+	}
+	
+	/**
+	 * @api
+	 * @param string $rootDocumentName
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentRelationTable($rootDocumentName)
+	{
+		return $this->table($this->sqlMapping->getDocumentRelationTableName($rootDocumentName));
+	}
+	
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier | string $tableOrIdentifier
+	 * @return \Change\Db\Query\Expressions\Column
+	 */
+	public function getDocumentColumn($propertyName, $tableOrIdentifier = null)
+	{
+		return $this->column($this->sqlMapping->getDocumentFieldName($propertyName), $tableOrIdentifier); 
+	}
+	
+	/**
+	 * @api
+	 * @param string $moduleName
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getTreeTable($moduleName)
+	{
+		return $this->table($this->sqlMapping->getTreeTableName($moduleName));
+	}
+		
+	/**
+	 * @api
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentMetasTable()
+	{
+		return $this->table($this->sqlMapping->getDocumentMetasTableName());
+	}	
+	
+	/**
+	 * @api
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getLocaleTable()
+	{
+		return $this->table($this->sqlMapping->getLocaleTableName());
+	}
+	
+	/**
 	 * For internal use only.
-	 *
 	 * @param  \Change\Db\Query\AbstractExpression $object
 	 * @return \Change\Db\Query\Expressions\Raw|\Change\Db\Query\Expressions\AbstractExpression
 	 */
@@ -429,4 +521,6 @@ class SQLFragmentBuilder
 		}
 		return $object;
 	}
+	
+	
 }

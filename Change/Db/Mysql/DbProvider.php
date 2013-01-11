@@ -168,6 +168,15 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		throw new \Exception($msg);
 	}
+	
+	/**
+	 * @param string $tableName
+	 * @return integer
+	 */
+	public function getLastInsertId($tableName)
+	{
+		return intval($this->getDriver()->lastInsertId($tableName));
+	}
 
 	/**
 	 * @api
@@ -285,19 +294,38 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 			return implode(' ', $parts);
 		}
-		elseif ($fragment instanceof \Change\Db\Query\Expressions\String)
+		elseif ($fragment instanceof \Change\Db\Query\Expressions\Value)
 		{
-			return $this->getDriver()->quote($fragment->getString());
+			$v = $fragment->getValue();
+			if ($v === null)
+			{
+				return 'NULL';
+			}		
+			switch ($fragment->getScalarType()) 
+			{
+				case \Change\Db\ScalarType::BOOLEAN:
+					return ($v) ? '1' : '0';
+				case \Change\Db\ScalarType::INTEGER:
+					return strval(intval($v));
+				case \Change\Db\ScalarType::DECIMAL:
+					return strval(floatval($v));
+				case \Change\Db\ScalarType::DATETIME:
+					if ($v instanceof \DateTime)
+					{
+						$v->setTimezone(new \DateTimeZone('UTC'));
+						$v = $v->format('Y-m-d H:i:s');
+					}
+			}
+			return $this->getDriver()->quote($v);
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Parameter)
 		{
-			return $fragment->toSQL92String();
+			return ':' . $fragment->getName();
 		}
 		elseif ($fragment instanceof \Change\Db\Query\AbstractQuery)
 		{
 			return $this->buildQuery($fragment);
 		}
-
 		elseif ($fragment instanceof \Change\Db\Query\Clauses\AbstractClause)
 		{
 			return $this->buildAbstractClause($fragment);
@@ -516,7 +544,7 @@ class DbProvider extends \Change\Db\DbProvider
 		foreach ($selectQuery->getParameters() as $parameter)
 		{
 			/* @var $parameter \Change\Db\Query\Expressions\Parameter */
-			$value = $selectQuery->getParameterValue($parameter->getName());
+			$value = $this->phpToDB($selectQuery->getParameterValue($parameter->getName()), $parameter->getType());
 			$statment->bindValue($this->buildSQLFragment($parameter), $value);
 		}
 		$statment->execute();
@@ -538,11 +566,9 @@ class DbProvider extends \Change\Db\DbProvider
 		$statment = $this->prepareStatement($query->getCachedSql());
 		foreach ($query->getParameters() as $parameter)
 		{
-			/* @var $parameter \Change\Db\Query\Expressions\Parameter */
-			
-			$value = $query->getParameterValue($parameter->getName());
-			
-			echo $parameter->getName(), ' = ' , $value, PHP_EOL;
+			/* @var $parameter \Change\Db\Query\Expressions\Parameter */			
+			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());		
+			echo $parameter->getName(), ' = ' , var_export($value, true), PHP_EOL;
 			$statment->bindValue($this->buildSQLFragment($parameter), $value);
 		}
 		$statment->execute();
@@ -565,4 +591,72 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$stmt->execute();
 	}
+	
+	/**
+	 * @param mixed $value
+	 * @param integer $scalarType \Change\Db\ScalarType::*
+	 * @return mixed
+	 */
+	public function phpToDB($value, $scalarType)
+	{
+		switch ($scalarType) 
+		{
+			case \Change\Db\ScalarType::BOOLEAN:
+				return ($value) ? 1 : 0;
+			case \Change\Db\ScalarType::INTEGER:
+				if ($value !== null)
+				{
+					return intval($value);
+				}
+				break;
+			case \Change\Db\ScalarType::DECIMAL:
+				if ($value !== null)
+				{
+					return floatval($value);
+				}
+				break;
+			case \Change\Db\ScalarType::DATETIME:
+				if ($value instanceof \DateTime)
+				{
+					$value->setTimezone(new \DateTimeZone('UTC'));
+					return $value->format('Y-m-d H:i:s');
+				}
+				break;
+		}
+		return $value;
+	}
+	
+	/**
+	 * @param mixed $value
+	 * @param integer $scalarType \Change\Db\ScalarType::*
+	 * @return mixed
+	 */
+	public function dbToPhp($value, $scalarType)
+	{
+		switch ($scalarType)
+		{
+			case \Change\Db\ScalarType::BOOLEAN:
+				return ($value == '1');
+			case \Change\Db\ScalarType::INTEGER:
+				if ($value !== null)
+				{
+					return intval($value);
+				}
+				break;
+			case \Change\Db\ScalarType::DECIMAL:
+				if ($value !== null)
+				{
+					return floatval($value);
+				}
+				break;
+			case \Change\Db\ScalarType::DATETIME:
+				if ($value !== null)
+				{
+					return \DateTime::createFromFormat('Y-m-d H:i:s', $value, new \DateTimeZone('UTC'));
+				}
+				break;
+		}
+		return $value;
+	}
+	
 }

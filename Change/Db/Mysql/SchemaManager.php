@@ -146,7 +146,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	public function getTableDefinition($tableName)
 	{
 		$tableDef = new \Change\Db\Schema\TableDefinition($tableName);
-		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `COLUMN_TYPE`, `DATA_TYPE` FROM `information_schema`.`COLUMNS` 
+		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `DATA_TYPE`, `COLUMN_TYPE` FROM `information_schema`.`COLUMNS` 
     WHERE `TABLE_SCHEMA` = '".$this->getName()."' AND `TABLE_NAME` = '".$tableName."'";
 		$statment = $this->query($sql);	
 		foreach ($statment->fetchAll(\PDO::FETCH_NUM) as $row)
@@ -182,13 +182,13 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	}
 
 	/**
-	 * @param integer $treeId
+	 * @param string $treeName
 	 * @return string the SQL statements that where executed
 	 */
-	public function createTreeTable($treeId)
+	public function createTreeTable($treeName)
 	{
-		$dropSQL = $this->dropTreeTable($treeId);
-		$sql = 'CREATE TABLE IF NOT EXISTS `f_tree_'. $treeId .'` (
+		$tn = $this->dbProvider->getSqlMapping()->getTreeTableName($treeName);
+		$sql = 'CREATE TABLE IF NOT EXISTS `'. $tn .'` (
 			`document_id` int(11) NOT NULL default \'0\',
 			`parent_id` int(11) NOT NULL default \'0\',
 			`node_order` int(11) NOT NULL default \'0\',
@@ -201,50 +201,21 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 			) ENGINE=InnoDB CHARACTER SET latin1 COLLATE latin1_general_ci';
 	
 		$this->execute($sql);
-		return $dropSQL . $sql . ';' . PHP_EOL;
-	}
-	
-	/**
-	 * @param integer $treeId
-	 * @return string the SQL statements that where executed
-	 */
-	public function dropTreeTable($treeId)
-	{
-		$sql = 'DROP TABLE IF EXISTS `f_tree_'. $treeId .'`';
-		$this->execute($sql);
 		return $sql . ';' . PHP_EOL;
 	}
 	
-	
-	
 	/**
-	 * @param string $documentName
-	 * @return string
+	 * @param string $treeName
+	 * @return string the SQL statements that where executed
 	 */
-	public function getDocumentTableName($documentName)
+	public function dropTreeTable($treeName)
 	{
-		return $this->dbProvider->getSqlMapping()->getDocumentTableName($documentName);
+		$tn = $this->dbProvider->getSqlMapping()->getTreeTableName($treeName);
+		$sql = 'DROP TABLE IF EXISTS `'. $tn .'`';
+		$this->execute($sql);
+		return $sql . ';' . PHP_EOL;
 	}
-	
-	/**
-	 * @param string $documentName
-	 * @return string
-	 */
-	public function getDocumentI18nTableName($documentName)
-	{
-		return $this->dbProvider->getSqlMapping()->getDocumentI18nTableName($documentName);
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @return string
-	 */
-	public function getDocumentFieldName($propertyName)
-	{
-		return $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
-	}
-	
-	
+			
 	/**
 	 * @param string $propertyName
 	 * @param string $propertyType
@@ -253,7 +224,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function getDocumentFieldDefinition($propertyName, $propertyType, $propertyDbSize)
 	{
-		$fn = $this->getDocumentFieldName($propertyName);
+		$fn = $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
 		$typeData = null;
 		$nullable = true;
 		$defaultValue = null;
@@ -333,30 +304,56 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function createOrAlter($tableDefinition)
 	{
-		$sql = 'CREATE TABLE IF NOT EXISTS `'.$tableDefinition->getName().'` (';
-		
-		$parts = array();
-		foreach ($tableDefinition->getFields() as $field)
+		$oldDef = $this->getTableDefinition($tableDefinition->getName());
+		if ($oldDef->isValid())
 		{
-			/* @var $field \Change\Db\Schema\FieldDefinition */
-			$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
-			$parts[] = '`'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : ' DEFAULT NULL');
-		}
-		foreach ($tableDefinition->getKeys() as $key)
-		{
-			/* @var $key \Change\Db\Schema\KeyDefinition */
-			if ($key->getPrimary())
+			foreach ($tableDefinition->getFields() as $field)
 			{
-				$kf = array();
-				foreach ($key->getFields() as $kfield)
+				/* @var $field \Change\Db\Schema\FieldDefinition */
+				$oldField = $oldDef->getField($field->getName());
+				if ($oldField)
 				{
-					/* @var $kfield \Change\Db\Schema\FieldDefinition */
-					$kf[] = '`'.$kfield->getName().'`';
+					if ($field->getType() === 'enum' && $field->getTypeData() != $oldField->getTypeData())
+					{
+						$sql = 'ALTER TABLE `'.$tableDefinition->getName().'` CHANGE `'.$field->getName().'` `'.$field->getName().'` '. $field->getTypeData() . ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
+						$this->execute($sql);
+					}
 				}
-				$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
+				else
+				{
+					$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
+					$sql = 'ALTER TABLE  `'.$tableDefinition->getName().'` ADD `'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
+					$this->execute($sql);
+				}
 			}
-		}		
-		$sql .= implode(', ', $parts)  . ') ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-		$this->execute($sql);
+		}
+		else
+		{
+			$sql = 'CREATE TABLE `'.$tableDefinition->getName().'` (';
+			
+			$parts = array();
+			foreach ($tableDefinition->getFields() as $field)
+			{
+				/* @var $field \Change\Db\Schema\FieldDefinition */
+				$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
+				$parts[] = '`'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
+			}
+			foreach ($tableDefinition->getKeys() as $key)
+			{
+				/* @var $key \Change\Db\Schema\KeyDefinition */
+				if ($key->getPrimary())
+				{
+					$kf = array();
+					foreach ($key->getFields() as $kfield)
+					{
+						/* @var $kfield \Change\Db\Schema\FieldDefinition */
+						$kf[] = '`'.$kfield->getName().'`';
+					}
+					$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
+				}
+			}		
+			$sql .= implode(', ', $parts)  . ') ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+			$this->execute($sql);
+		}
 	}
 }

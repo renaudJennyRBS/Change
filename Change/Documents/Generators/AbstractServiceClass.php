@@ -82,11 +82,10 @@ class AbstractServiceClass
 		$code = '
 	/**
 	 * @param '.$docClassName.' $document
-	 * @return string
 	 */
-	public function save('.$docClassName.' $document)
+	public function save($document)
 	{
-		throw new \LogicException(\'not implemented\');
+		parent::save($document);
 	}'. PHP_EOL;
 		
 		if (!$model->getInject())

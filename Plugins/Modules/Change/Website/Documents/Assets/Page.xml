@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"	
 	icon="page" editable="true" localized="true" publishable="true" use-version="true" frontoffice-indexable="true" has-url="true">
 	<properties>
-		<property name="navigationtitle" type="String" localized="true" db-size="80" />
+		<property name="navigationtitle" type="String" localized="true" db-size="80" required="true" />
 		<property name="metatitle" type="LongString" localized="true" />
 		<property name="description" type="LongString" localized="true" />
 		<property name="keywords" type="LongString" localized="true" />
@@ -21,5 +21,11 @@
 		<property name="isorphan" type="Boolean" default-value="false" />
 		<property name="usehttps" type="Boolean" default-value="false" />
 		<property name="isIndexPageForSubTopics" type="Boolean" default-value="false" />
+		
+		<property name="testSimpleDoc" type="Document" document-type="Change_Website_Page" />
+		
+		<property name="testMultiDoc" type="DocumentArray" document-type="Change_Website_Page" />
+		
+		<property name="testMultiFolder" type="DocumentArray" document-type="Change_Generic_Folder" />
 	</properties>
 </document>
