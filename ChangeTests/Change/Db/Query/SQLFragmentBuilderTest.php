@@ -254,4 +254,47 @@ class SQLFragmentBuilderTest extends \PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\Disjunction', $frag);
 		$this->assertCount(3, $frag->getArguments());
 	}
+	
+	public function testIn()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->in('a', 'b', 'c');
+		$this->assertFalse($frag->getNot());
+		$this->assertInstanceOf('\Change\Db\Query\Predicates\In', $frag);
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\ExpressionList', $frag->getRightHandExpression());	
+		$this->assertCount(2, $frag->getRightHandExpression()->getList());
+		
+		$q  = new \Change\Db\Query\SelectQuery(\Change\Application::getInstance()->getApplicationServices()->getDbProvider());
+		$frag = $fb->in('a', $fb->subQuery($q));
+		$this->assertInstanceOf('\Change\Db\Query\Predicates\In', $frag);
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Subquery', $frag->getRightHandExpression());
+	}
+	
+	public function testNotIn()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->notIn('a', 'b');
+		$this->assertTrue($frag->getNot());
+		$this->assertInstanceOf('\Change\Db\Query\Predicates\In', $frag);
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\ExpressionList', $frag->getRightHandExpression());
+		$this->assertCount(1, $frag->getRightHandExpression()->getList());
+	}
+	
+	public function testAddition()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->addition('a', 'b');
+		$this->assertEquals('+', $frag->getOperator());
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getLeftHandExpression());
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getRightHandExpression());
+	}
+	
+	public function testSubtraction()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->subtraction('a', 'b');
+		$this->assertEquals('-', $frag->getOperator());
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getLeftHandExpression());
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getRightHandExpression());
+	}
 }

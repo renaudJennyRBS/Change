@@ -2,7 +2,6 @@
 namespace Change\Db\Query;
 
 use Change\Db\Query\Expressions\Assignment;
-
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\AbstractOperation;
 use Change\Db\Query\Expressions\Func;
@@ -19,6 +18,7 @@ use Change\Db\Query\Expressions\Raw;
 use Change\Db\Query\Predicates\UnaryPredicate;
 use Change\Db\Query\Predicates\BinaryPredicate;
 use Change\Db\Query\Predicates\Like;
+use Change\Db\Query\Predicates\In;
 
 /**
  * @name \Change\Db\Query\SQLFragmentBuilder
@@ -370,6 +370,73 @@ class SQLFragmentBuilder
 		$lhs = $this->normalizeValue($lhs);
 		$rhs = $this->normalizeValue($rhs);
 		return new Like($lhs, $rhs, $matchMode, ($caseSensitive == true));
+	}
+	
+	/**
+	 * @api
+	 * @param string | \Change\Db\Query\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\AbstractExpression $rhs1
+	 * @param string | \Change\Db\Query\AbstractExpression $_
+	 * @return \Change\Db\Query\Predicates\In
+	 */
+	public function in($lhs, $rhs1)
+	{
+		$lhs = $this->normalizeValue($lhs);
+		$rhs1 = $this->normalizeValue($rhs1);
+		if ($rhs1 instanceof \Change\Db\Query\SelectQuery)
+		{
+			$rhs = $this->subQuery($rhs1);
+		}
+		elseif ($rhs1 instanceof \Change\Db\Query\Expressions\Subquery || $rhs1 instanceof \Change\Db\Query\Expressions\ExpressionList)
+		{
+			$rhs = $rhs1;
+		}
+		else
+		{
+			$items = func_get_args();
+			$r = array_shift($items);
+			$rhs = new ExpressionList($this->normalizeValue($items));	
+		}
+		return new In($lhs, $rhs);
+	}
+	
+	/**
+	 * @api
+	 * @param string | \Change\Db\Query\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @return \Change\Db\Query\Predicates\In
+	 */
+	public function notIn($lhs, $rhs)
+	{
+		$pre = $this->in($lhs, $rhs);
+		$pre->setNot(true);
+		return $pre;
+	}
+	
+	/**
+	 * @api
+	 * @param string | \Change\Db\Query\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @return \Change\Db\Query\Expressions\BinaryOperation
+	 */
+	public function addition($lhs, $rhs)
+	{
+		$lhs = $this->normalizeValue($lhs);
+		$rhs = $this->normalizeValue($rhs);
+		return new \Change\Db\Query\Expressions\BinaryOperation($lhs, $rhs, '+');
+	}
+	
+	/**
+	 * @api
+	 * @param string | \Change\Db\Query\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @return \Change\Db\Query\Expressions\BinaryOperation
+	 */
+	public function subtraction($lhs, $rhs)
+	{
+		$lhs = $this->normalizeValue($lhs);
+		$rhs = $this->normalizeValue($rhs);
+		return new \Change\Db\Query\Expressions\BinaryOperation($lhs, $rhs, '-');
 	}
 	
 	

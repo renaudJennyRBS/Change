@@ -61,6 +61,32 @@ class BinaryOperationTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('operator', $i->getOperator());
 	}
 	
+	public function testCheckCompile()
+	{
+		$exp = new \Change\Db\Query\Expressions\Raw('Exp');
+		$i = new \Change\Db\Query\Expressions\BinaryOperation();
+		try
+		{
+			$i->checkCompile();
+			$this->fail('Invalid Left Hand Expression');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid Left Hand Expression', $e->getMessage());
+		}
+		
+		$i->setLeftHandExpression($exp);
+		try
+		{
+			$i->checkCompile();
+			$this->fail('Invalid Right Hand Expression');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid Right Hand Expression', $e->getMessage());
+		}
+	}
+	
 	public function testToSQL92String()
 	{
 		$rightHandExpression = new \Change\Db\Query\Expressions\Raw('RightHandExpression');
@@ -68,17 +94,5 @@ class BinaryOperationTest extends \PHPUnit_Framework_TestCase
 		
 		$i = new \Change\Db\Query\Expressions\BinaryOperation($leftHandExpression, $rightHandExpression, 'operator');
 		$this->assertEquals('LeftHandExpression operator RightHandExpression', $i->toSQL92String());
-		
-
-		$i = new \Change\Db\Query\Expressions\BinaryOperation();
-		try
-		{
-			$i->toSQL92String();
-			$this->fail('LeftHandExpression and RightHandExpression can not be null');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertStringStartsWith('LeftHandExpression and RightHandExpression', $e->getMessage());
-		}
 	}
 }
