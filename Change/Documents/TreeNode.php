@@ -49,7 +49,7 @@ class TreeNode
 	/**
 	 * @var integer[]
 	 */
-	protected $children;
+	protected $childrenIds;
 	
 	/**
 	 * @param \Change\Documents\TreeManager $treeManager
@@ -119,9 +119,9 @@ class TreeNode
 	/**
 	 * @return \Change\Documents\integer[]|null
 	 */
-	public function getChildren()
+	public function getChildrenIds()
 	{
-		return $this->children;
+		return $this->childrenIds;
 	}
 
 	/**
@@ -181,11 +181,11 @@ class TreeNode
 	}
 
 	/**
-	 * @param \Change\Documents\integer[] $children
+	 * @param \Change\Documents\integer[] $childrenIds
 	 */
-	public function setChildren($children)
+	public function setChildrenIds($childrenIds)
 	{
-		$this->children = $children;
+		$this->childrenIds = $childrenIds;
 	}
 	
 	/**
@@ -202,6 +202,14 @@ class TreeNode
 	public function getDocument()
 	{
 		return $this->treeManager->getDocumentManager()->getDocumentInstance($this->documentId);
+	}
+	
+	/**
+	 * @return \Change\Documents\TreeNode[]
+	 */
+	public function getChildren()
+	{
+		return $this->treeManager->getChildrenNode($this);
 	}
 	
 	/**

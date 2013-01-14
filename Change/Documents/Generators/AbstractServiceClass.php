@@ -48,6 +48,16 @@ class AbstractServiceClass
 			$extend = '\Change\Documents\AbstractService';
 		}
 		
+		if (!$model->getInject())
+		{
+		$code .= '/**
+ * @name ' . $model->getAbstractServiceClassName() . '
+ * @method ' . $model->getDocumentClassName() . ' getNewDocumentInstance()
+ * @method ' . $model->getModelClassName() . ' getDocumentModel()
+ * @method ' . $model->getDocumentClassName() . ' getDocumentInstance($documentId)
+ */' . PHP_EOL;
+		}
+		
 		$code .= 'abstract class ' . $model->getShortAbstractServiceClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$code .= $this->getDefaultCode($model);
@@ -92,7 +102,7 @@ class AbstractServiceClass
 		{
 		$code .= '
 	/**
-	 * @return string
+	 * @return string ' .$model->getName(). '
 	 */
 	public function getModelName()
 	{

@@ -61,15 +61,28 @@ class BinaryOperation extends AbstractOperation
 	}
 	
 	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
+	public function checkCompile()
+	{
+		if (!($this->getLeftHandExpression() instanceof \Change\Db\Query\InterfaceSQLFragment))
+		{
+			throw new \RuntimeException('Invalid Left Hand Expression');
+		}
+		elseif (!($this->getRightHandExpression() instanceof \Change\Db\Query\InterfaceSQLFragment))
+		{
+			throw new \RuntimeException('Invalid Right Hand Expression');
+		}
+	}
+	
+	/**
 	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function toSQL92String()
 	{
-		if ($this->getLeftHandExpression() === null || $this->getRightHandExpression() === null)
-		{
-			throw new \RuntimeException('LeftHandExpression and RightHandExpression can not be null');
-		}
+		$this->checkCompile();
 		return $this->getLeftHandExpression()->toSQL92String() . ' ' . $this->getOperator() . ' ' . $this->getRightHandExpression()->toSQL92String();
 	}
 }

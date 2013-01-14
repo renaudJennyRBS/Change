@@ -196,8 +196,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 			`node_path` varchar(255) collate latin1_general_ci NOT NULL default \'/\',
 			`children_count` int(11) NOT NULL default \'0\',
 			PRIMARY KEY (`document_id`),
-			UNIQUE KEY `tree_node` (`parent_id`, `node_order`),
-			UNIQUE KEY `descendant` (`node_level`,`node_order`,`node_path`)
+			INDEX `tree_node` (`parent_id`, `node_order`)
 			) ENGINE=InnoDB CHARACTER SET latin1 COLLATE latin1_general_ci';
 	
 		$this->execute($sql);

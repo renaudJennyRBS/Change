@@ -232,6 +232,13 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Predicates\Like)
 		{
+			$fragment->checkCompile();
+			$rhe = $fragment->getCompletedRightHandExpression();
+			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($rhe);
+		}
+		elseif ($fragment instanceof \Change\Db\Query\Predicates\In)
+		{
+			$fragment->checkCompile();
 			$rhe = $fragment->getCompletedRightHandExpression();
 			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($rhe);
 		}
@@ -321,6 +328,10 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Parameter)
 		{
 			return ':' . $fragment->getName();
+		}
+		elseif ($fragment instanceof \Change\Db\Query\Expressions\SubQuery)
+		{
+			return '(' . $this->buildQuery($fragment->getSubQuery()) . ')';
 		}
 		elseif ($fragment instanceof \Change\Db\Query\AbstractQuery)
 		{
