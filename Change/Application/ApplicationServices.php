@@ -37,6 +37,14 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Configuration\Configuration');
 	}
+	
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	public function getTransactionManager()
+	{
+		return $this->get('Change\Transaction\TransactionManager');
+	}
 
 	/**
 	 * @return \Change\Workspace
@@ -55,11 +63,11 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return \Change\Events\EventManager
 	 */
 	public function getEventManager()
 	{
-		return $this->get('Zend\EventManager\EventManager');
+		return $this->get('Change\Events\EventManager');
 	}
 
 	/**

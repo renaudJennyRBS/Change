@@ -320,9 +320,10 @@ abstract class AbstractDocument
 		elseif ($property->hasConstraints()) 
 		{
 			$constraintManager = $this->documentService->getConstraintsManager();
+			$defaultParams =  array('documentId' => $this->getId(), 'modelName' => $this->getDocumentModelName(), 'propertyName' => $property->getName());
 			foreach ($property->getConstraintArray() as $name => $params) 
 			{
-				$params += array('documentId' => $this->getId());
+				$params += $defaultParams;
 				$c = $constraintManager->getByName($name, $params);
 				if (!$c->isValid($value)) 
 				{

@@ -157,6 +157,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	{
 		$application = new \Change\Application();
 		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
 		if (file_exists($compiledFilePath))
 		{
@@ -166,21 +167,26 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		{
 			unlink($sourceConfigFile);
 		}
+		if (file_exists($compiledDefinePath))
+		{
+			unlink($compiledDefinePath);
+		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
 		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
 		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
-		$config->clear();
-		$this->assertFalse($config->isCompiled());
-		$config->refresh();
-		$this->assertTrue($config->isCompiled());
+ 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
+ 		$config->clear();
+ 		$this->assertFalse($config->isCompiled());
+ 		$config->refresh();
+ 		$this->assertTrue($config->isCompiled());
 	}
 
 	public function testAddPersistentEntry()
 	{
 		$application = new \Change\Application();
 		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
 		if (file_exists($compiledFilePath))
 		{
@@ -190,16 +196,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		{
 			unlink($sourceConfigFile);
 		}
+		if (file_exists($compiledDefinePath))
+		{
+			unlink($compiledDefinePath);
+		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
 		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
 		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
 		$this->assertTrue($config->isCompiled());
 		$result = $config->addPersistentEntry('mypath', 'myentry', 'value');
 		$this->assertEmpty($result);
 		$config->clear();
-		$newConfig = new  \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$newConfig = new  \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
 	}
 
@@ -207,6 +217,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
+		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
 		if (file_exists($compiledFilePath))
 		{
@@ -216,6 +227,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		{
 			unlink($sourceConfigFile);
 		}
+		if (file_exists($compiledDefinePath))
+		{
+			unlink($compiledDefinePath);
+		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
 		$application = new \Change\Application();
 		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
@@ -223,7 +238,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
 
 
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath);
+		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
 		$this->assertTrue($config->isCompiled());
 		$this->setExpectedException('\InvalidArgumentException');
 		$result = $config->addPersistentEntry('mypath', null, 'value');
@@ -236,12 +251,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$config->setDefineArray($a);
 		$this->assertEquals($a, $config->getDefineArray());
 	}
-
-	public function onRefreshListener()
-	{
-
-	}
-
+	
 	public function testRefresh()
 	{
 		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());

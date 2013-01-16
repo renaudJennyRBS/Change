@@ -69,6 +69,11 @@
 				"dbprovider":"\\Change\\Db\\Mysql\\DbProvider"
 			}
 		},
+		"events":{
+			"registrationclasses":{
+				"Change":"\\Change\\Events\\DefaultRegistration"
+			}
+		},
 		"pdf":{
 			"user":"pdfUser",
 			"password":"pdfPassword",

@@ -9,9 +9,10 @@ class Configuration extends \Change\Configuration\Configuration
 	/**
 	 * @param \Change\Application $application
 	 */
-	public function __construct(\Change\Application $application, $compiledConfigPath = null)
+	public function __construct(\Change\Application $application, $compiledConfigPath = null, $compiledDefinesPath = null)
 	{
-		$this->compiledConfiguration = $compiledConfigPath;
+		$this->compiledConfigurationPath = $compiledConfigPath;
+		$this->compiledDefinesPath = $compiledDefinesPath;
 		// TODO Auto-generated method stub
 		parent::__construct($application);
 	}
@@ -24,15 +25,26 @@ class Configuration extends \Change\Configuration\Configuration
 		parent::applyDefines();
 	}
 
-	protected $compiledConfiguration;
+	protected $compiledConfigurationPath;
+	
+	protected $compiledDefinesPath;
 
 	public function getCompiledConfigPath()
 	{
-		if ($this->compiledConfiguration)
+		if ($this->compiledConfigurationPath)
 		{
-			return $this->compiledConfiguration;
+			return $this->compiledConfigurationPath;
 		}
 		return parent::getCompiledConfigPath();
+	}
+	
+	public function getCompiledDefinesPath()
+	{
+		if ($this->compiledDefinesPath)
+		{
+			return $this->compiledDefinesPath;
+		}
+		return parent::getCompiledDefinesPath();
 	}
 
 	public function clear()

@@ -31,11 +31,6 @@ class Application
 	protected $started = false;
 
 	/**
-	 * @var \Zend\EventManager\EventManager
-	 */
-	protected $eventManager;
-
-	/**
 	 * Returns the shared application
 	 *
 	 * @return \Change\Application
@@ -130,14 +125,6 @@ class Application
 	}
 
 	/**
-	 * Register application-level listeners
-	 */
-	public function registerListeners()
-	{
-		$this->getApplicationServices()->getEventManager()->attach(\Change\Configuration\Configuration::CONFIGURATION_REFRESHED_EVENT, array(new \Change\Injection\Injection($this), 'onConfigurationRefreshed'));
-	}
-
-	/**
 	 *
 	 * @return string
 	 */
@@ -175,7 +162,6 @@ class Application
 	}
 
 	/**
-	 *
 	 * @return \Change\Application\ApplicationServices
 	 */
 	public function defaultApplicationServices()
@@ -187,10 +173,10 @@ class Application
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 
-		$cl = new \Zend\Di\Definition\ClassDefinition('Zend\EventManager\EventManager');
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Events\EventManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'identifiers', array());
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
@@ -206,7 +192,12 @@ class Application
 				->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
 
-
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Transaction\TransactionManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
+		$dl->addDefinition($cl);
+				
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
@@ -248,7 +239,8 @@ class Application
 
 		$im->setParameters('Change\Db\Query\Builder', array());
 		$im->setParameters('Change\Workspace', array('application' => $this));
-		$im->setParameters('Zend\EventManager\EventManager', array());
+		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $this));
+		$im->setParameters('Change\Events\EventManager', array('application' => $this));
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Mvc\Controller', array('application' => $this));
 		$im->setParameters('Change\I18n\I18nManager', array('application' => $this));
@@ -320,7 +312,6 @@ class Application
 			}
 			// @codeCoverageIgnoreEnd
 			$this->registerNamespaceAutoload();
-			$this->registerListeners();
 			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{
 				call_user_func(array($bootStrapClass, 'main'), $this);
@@ -340,7 +331,7 @@ class Application
 			
 			if (self::inDevelopmentMode())
 			{
-				$injection = new \Change\Injection\Injection($this);
+				$injection = new \Change\Injection\Injection($this->getConfiguration(), $this->getWorkspace());
 				$injection->update();
 			}
 			$this->registerInjectionAutoload();

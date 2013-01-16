@@ -1,8 +1,6 @@
 <?php
 namespace Change\Documents;
 
-use Zend\Code\Reflection\Exception\BadMethodCallException;
-
 /**
  * @name \Change\Documents\AbstractService
  */
@@ -79,7 +77,7 @@ abstract class AbstractService
 	 */
 	public function propertyChanged($document, $propertyName)
 	{
-		echo $document , ' -> ' , $propertyName, PHP_EOL;
+		
  	}
 	
 	/**
@@ -89,28 +87,38 @@ abstract class AbstractService
 	{
 		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
-			$isNew = ($document->getPersistentState() == DocumentManager::STATE_NEW);
-			if ($document instanceof \Change\Documents\Interfaces\Localizable)
+			try
 			{
-				if ($isNew)
+				$this->applicationServices->getTransactionManager()->begin();
+
+				$isNew = ($document->getPersistentState() == DocumentManager::STATE_NEW);
+				if ($document instanceof \Change\Documents\Interfaces\Localizable)
 				{
-					$this->insertLocalized($document);
+					if ($isNew)
+					{
+						$this->insertLocalized($document);
+					}
+					else
+					{
+						$this->updateLocalized($document);
+					}
 				}
 				else
 				{
-					$this->updateLocalized($document);
+					if ($isNew)
+					{
+						$this->insert($document);
+					}
+					else
+					{
+						$this->update($document);
+					}
 				}
+				$this->applicationServices->getTransactionManager()->commit();
 			}
-			else
+			catch (\Exception $e)
 			{
-				if ($isNew)
-				{
-					$this->insert($document);
-				}
-				else
-				{
-					$this->update($document);
-				}
+				throw $this->applicationServices->getTransactionManager()->rollBack($e);
 			}
 		}
 		else
@@ -122,7 +130,6 @@ abstract class AbstractService
 	protected function insert(\Change\Documents\AbstractDocument $document)
 	{
 		$dm = $document->getDocumentManager();
-		$this->applicationServices->getDbProvider()->beginTransaction();
 		if ($document->isValid())
 		{
 			$dm->affectId($document);
@@ -131,15 +138,13 @@ abstract class AbstractService
 		}
 		else
 		{
-			var_export($document->getPropertiesErrors());
+			throw new \LogicException('Document is not valid');
 		}
-		$this->applicationServices->getDbProvider()->commit();
 	}
 	
 	protected function update(\Change\Documents\AbstractDocument $document)
 	{
 		$dm = $document->getDocumentManager();
-		$this->applicationServices->getDbProvider()->beginTransaction();
 		if ($document->isValid())
 		{
 			if ($document->hasModifiedProperties())
@@ -150,9 +155,8 @@ abstract class AbstractService
 		}
 		else
 		{
-			var_export($document->getPropertiesErrors());
+			throw new \LogicException('Document is not valid');
 		}
-		$this->applicationServices->getDbProvider()->commit();
 	}
 	
 	protected function insertLocalized(\Change\Documents\AbstractDocument $document)
@@ -160,22 +164,27 @@ abstract class AbstractService
 		$dm = $document->getDocumentManager();
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{	
-			$this->applicationServices->getDbProvider()->beginTransaction();
 			if ($document->getVoLCID() === null) {$document->setVoLCID($dm->getLCID());}
-			$dm->pushLCID($document->getVoLCID());
-			if ($document->isValid())
+			try 
 			{
-				$dm->affectId($document);
-				$document->setModificationDate(new \DateTime());
-				$dm->insertDocument($document);
-				$dm->insertI18nDocument($document, $document->getCurrentI18nPart());
-			}
-			else
+				$dm->pushLCID($document->getVoLCID());
+				if ($document->isValid())
+				{
+					$dm->affectId($document);
+					$document->setModificationDate(new \DateTime());
+					$dm->insertDocument($document);
+					$dm->insertI18nDocument($document, $document->getCurrentI18nPart());
+				}
+				else
+				{
+					throw new \LogicException('Document is not valid');
+				}
+				$dm->popLCID();
+			} 
+			catch (\Exception $e)
 			{
-				var_export($document->getPropertiesErrors());
+				$dm->popLCID($e);
 			}
-			$dm->popLCID();
-			$this->applicationServices->getDbProvider()->commit();	
 		}
 	}
 	
@@ -184,24 +193,29 @@ abstract class AbstractService
 		$dm = $document->getDocumentManager();
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$this->applicationServices->getDbProvider()->beginTransaction();
 			$dm->pushLCID($document->getVoLCID());
-			if ($document->isValid())
+			try
 			{
-				$i18nPart = $document->getCurrentI18nPart();
-				if ($document->hasModifiedProperties() || $i18nPart->hasModifiedProperties())
+				if ($document->isValid())
 				{
-					$document->setModificationDate(new \DateTime());
+					$i18nPart = $document->getCurrentI18nPart();
+					if ($document->hasModifiedProperties() || $i18nPart->hasModifiedProperties())
+					{
+						$document->setModificationDate(new \DateTime());
+					}
+					$dm->updateDocument($document);
+					$dm->updateI18nDocument($document, $i18nPart);
 				}
-				$dm->updateDocument($document);
-				$dm->updateI18nDocument($document, $i18nPart);
+				else
+				{
+					throw new \LogicException('Document is not valid');
+				}
+				$dm->popLCID();
 			}
-			else
+			catch (\Exception $e)
 			{
-				var_export($document->getPropertiesErrors());
+				$dm->popLCID($e);
 			}
-			$dm->popLCID();
-			$this->applicationServices->getDbProvider()->commit();
 		}
 	}
 }

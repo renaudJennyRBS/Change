@@ -17,6 +17,11 @@ class DbProvider extends \Change\Db\DbProvider
 	 */
 	private $m_driver = null;
 	
+	/**
+	 * @var boolean
+	 */
+	protected $inTransaction = false;
+	
 	
 	/**
 	 * @return string
@@ -138,19 +143,58 @@ class DbProvider extends \Change\Db\DbProvider
 		return $this->schemaManager;
 	}	
 	
-	protected function beginTransactionInternal()
+	/**
+	 * @return boolean
+	 */
+	public function inTransaction()
 	{
-		$this->getDriver()->beginTransaction();
+		return $this->inTransaction;
 	}
 	
-	protected function commitInternal()
+	public function beginTransaction()
 	{
-		$this->getDriver()->commit();
+		if ($this->inTransaction())
+		{
+			$this->logging->warn(get_class($this) . " while already in transaction");
+		}
+		else
+		{
+			$this->timers['bt'] = microtime(true);
+			$this->inTransaction = true;
+			$this->getDriver()->beginTransaction();
+		}
 	}
 	
-	protected function rollBackInternal()
+	public function commit()
 	{
-		$this->getDriver()->rollBack();
+		if (!$this->inTransaction())
+		{
+			$this->logging->warn(__METHOD__ . " called while not in transaction");
+		}
+		else
+		{
+			$this->getDriver()->commit();
+			$duration = round(microtime(true) - $this->timers['bt'], 4);
+			if ($duration > $this->timers['longTransaction'])
+			{
+				$this->logging->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+			}
+			$this->inTransaction = false;
+			
+		}
+	}
+	
+	public function rollBack()
+	{
+		if (!$this->inTransaction())
+		{
+			$this->logging->warn(__METHOD__ . " called while not in transaction");
+		}
+		else
+		{
+			$this->inTransaction = false;
+			$this->getDriver()->rollBack();
+		}
 	}
 		
 	/**

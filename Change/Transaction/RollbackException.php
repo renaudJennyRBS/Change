@@ -1,10 +1,10 @@
 <?php
-namespace Change\Db\Exception;
+namespace Change\Transaction;
 
 /**
- * @name \Change\Db\Exception\TransactionCancelledException
+ * @name \Change\Transaction\RollbackException
  */
-class TransactionCancelledException extends \Exception
+class RollbackException extends \Exception
 {
 	/**
 	 * @param Exception $previous

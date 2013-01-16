@@ -568,54 +568,66 @@ class TreeManager
 	{
 		if ($node->getChildrenCount())
 		{
-			$treeName = $node->getTreeName();	
-					
-			$key = 'deleteChildrenTreeNameQuery_' . $treeName;
-			if (!isset($this->staticQueries[$key]))
+			$transactionManager = $this->applicationServices->getTransactionManager();
+			try
 			{
-				$qb = $this->applicationServices->getQueryBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$pathParam = $fb->parameter('path');
-				$qb->select('document_id')->from($fb->getTreeTable($treeName))
-					->where($fb->like($fb->column('node_path'), $pathParam, \Change\Db\Query\Predicates\Like::BEGIN));
-				$subQuery = $qb->query();
+				$transactionManager->begin();
 				
-				$qb = $this->applicationServices->getStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->update($fb->getDocumentIndexTable())
+				$treeName = $node->getTreeName();
+					
+				$key = 'deleteChildrenTreeNameQuery_' . $treeName;
+				if (!isset($this->staticQueries[$key]))
+				{
+					$qb = $this->applicationServices->getQueryBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$pathParam = $fb->parameter('path');
+					$qb->select('document_id')->from($fb->getTreeTable($treeName))
+					->where($fb->like($fb->column('node_path'), $pathParam, \Change\Db\Query\Predicates\Like::BEGIN));
+					$subQuery = $qb->query();
+				
+					$qb = $this->applicationServices->getStatementBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->update($fb->getDocumentIndexTable())
 					->assign($fb->getDocumentColumn('treeName'), $fb->parameter('treeName', $qb))
 					->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
-				$qb->addParameter($pathParam);
-				$this->staticQueries[$key] = $qb->updateQuery();
-			}
-			/* @var $q \Change\Db\Query\UpdateQuery */
-			$q = $this->staticQueries[$key];
-			$q->bindParameter('treeName', null);
-			$q->bindParameter('path', $node->getPath() . $node->getDocumentId() . '/');
-			$q->execute();
-			
-			
-			$key = 'deleteChildrenQuery_' . $treeName;
-			if (!isset($this->staticQueries[$key]))
-			{
-				$qb = $this->applicationServices->getStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->getTreeTable($treeName))
+					$qb->addParameter($pathParam);
+					$this->staticQueries[$key] = $qb->updateQuery();
+				}
+				/* @var $q \Change\Db\Query\UpdateQuery */
+				$q = $this->staticQueries[$key];
+				$q->bindParameter('treeName', null);
+				$q->bindParameter('path', $node->getPath() . $node->getDocumentId() . '/');
+				$q->execute();
+					
+					
+				$key = 'deleteChildrenQuery_' . $treeName;
+				if (!isset($this->staticQueries[$key]))
+				{
+					$qb = $this->applicationServices->getStatementBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->delete($fb->getTreeTable($treeName))
 					->where($fb->like($fb->column('node_path'), $fb->parameter('path', $qb), \Change\Db\Query\Predicates\Like::BEGIN));
-				$this->staticQueries[$key] = $qb->deleteQuery();
+					$this->staticQueries[$key] = $qb->deleteQuery();
+				}
+				/* @var $q \Change\Db\Query\DeleteQuery */
+				$q = $this->staticQueries[$key];
+				$q->bindParameter('path', $node->getPath() . $node->getDocumentId() . '/');
+				$q->execute();
+					
+					
+				$q = $this->getUpdateChildrenCountQuery($treeName);
+				$q->bindParameter('childrenCount', 0);
+				$q->bindParameter('id', $node->getDocumentId());
+				$q->execute();
+					
+				$this->clearCachedTreeNodes();	
+				$transactionManager->commit();
+			} 
+			catch (\Exception $e) 
+			{
+				$this->clearCachedTreeNodes();
+				throw $transactionManager->rollBack($e);
 			}
-			/* @var $q \Change\Db\Query\DeleteQuery */
-			$q = $this->staticQueries[$key];
-			$q->bindParameter('path', $node->getPath() . $node->getDocumentId() . '/');
-			$q->execute();
-			
-			
-			$q = $this->getUpdateChildrenCountQuery($treeName);
-			$q->bindParameter('childrenCount', 0);
-			$q->bindParameter('id', $node->getDocumentId());
-			$q->execute();	
-			
-			$this->clearCachedTreeNodes();
 		}
 	}
 	

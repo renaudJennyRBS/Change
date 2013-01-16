@@ -18,7 +18,6 @@ class RefreshConfig extends \Change\Application\Console\ChangeCommand
 	}
 
 	/**
-	 *
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @throws \LogicException
