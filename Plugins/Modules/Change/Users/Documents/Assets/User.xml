@@ -14,10 +14,14 @@
 		<property name="login" type="String" required="true">
 			<constraint name="login" />
 		</property>
-		<property name="passwordmd5" type="String" indexed="none" db-size="50" required="true" />
+		<property name="passwordmd5" type="String" indexed="none" required="true">
+			<constraint name="maxSize" max="50" />
+		</property>
 		<property name="groups" type="DocumentArray" document-type="Change_Users_Group" />
 		<property name="lastlogin" type="DateTime" />
 		<property name="lastping" type="DateTime" />
-		<property name="changepasswordkey" type="String" db-size="50" indexed="none" />
+		<property name="changepasswordkey" type="String" indexed="none">
+			<constraint name="maxSize" max="50" />
+		</property>
 	</properties>
 </document>

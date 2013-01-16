@@ -6,26 +6,25 @@ namespace Change\Injection;
  */
 class Injection
 {
+	
 	/**
-	 * @var  \Change\Application
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $application;
-
+	protected $configuration;
+	
 	/**
-	 * @param \Change\Application $application
+	 * @var \Change\Workspace
 	 */
-	public function __construct(\Change\Application $application)
+	protected $workspace;
+	
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @param \Change\Workspace $workspace
+	 */
+	public function __construct(\Change\Configuration\Configuration $configuration, \Change\Workspace $workspace)
 	{
-		$this->application = $application;
-	}
-
-	/**
-	 *
-	 * @param \Zend\EventManager\Event $event
-	 */
-	public function onConfigurationRefreshed(\Zend\EventManager\Event $event)
-	{
-		$this->compile();
+		$this->configuration = $configuration;
+		$this->workspace = $workspace;
 	}
 
 	/**
@@ -41,8 +40,8 @@ class Injection
 		}
 
 		$compiledFileNames = array();
-		$compiledDir = $this->application->getWorkspace()->compilationPath('Injection');
-		$injectionArray = $this->application->getConfiguration()->getEntry('injection/class');
+		$compiledDir = $this->workspace->compilationPath('Injection');
+		$injectionArray = $this->configuration->getEntry('injection/class');
 		foreach ($injectionArray as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);

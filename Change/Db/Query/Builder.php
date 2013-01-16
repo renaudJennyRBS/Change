@@ -12,8 +12,7 @@ class Builder
 	protected $query;
 	
 	/**
-	 * 
-	 * @var \Change\Db\Query
+	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;
 	
@@ -31,7 +30,7 @@ class Builder
 	public function __construct(\Change\Db\DbProvider $dbProvider)
 	{
 		$this->dbProvider = $dbProvider;
-		$this->fragmentBuilder = new \Change\Db\Query\SQLFragmentBuilder();
+		$this->fragmentBuilder = new \Change\Db\Query\SQLFragmentBuilder($dbProvider->getSqlMapping());
 	}
 	
 	/**
@@ -50,6 +49,15 @@ class Builder
 	public function getFragmentBuilder()
 	{
 		return $this->fragmentBuilder;
+	}
+	
+	/**
+	 * @api
+	 * @return \Change\Db\SqlMapping
+	 */
+	public function getSqlMapping()
+	{
+		return $this->dbProvider->getSqlMapping();
 	}
 	
 	/**

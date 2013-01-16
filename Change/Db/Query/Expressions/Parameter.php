@@ -5,19 +5,14 @@ namespace Change\Db\Query\Expressions;
  * @name \Change\Db\Query\Expressions\Parameter
  */
 class Parameter extends AbstractExpression
-{	
-	const STRING = 1;
-	const NUMERIC = 2;
-	const DATETIME = 4;
-	const LOB = 8;
-	
+{		
 	/**
 	 * @var string
 	 */
 	protected $name;
 	
 	/**
-	 * @var integer
+	 * @var integer \Change\Db\ScalarType::*
 	 */
 	protected $type;
 	
@@ -25,7 +20,7 @@ class Parameter extends AbstractExpression
 	 * @param string $parameter
 	 * @param integer $type
 	 */
-	public function __construct($name, $type = self::STRING)
+	public function __construct($name, $type = \Change\Db\ScalarType::STRING)
 	{
 		$this->setName($name);
 		$this->setType($type);
@@ -48,7 +43,7 @@ class Parameter extends AbstractExpression
 	}
 	
 	/**
-	 * @return integer
+	 * @return integer \Change\Db\ScalarType::*
 	 */
 	public function getType()
 	{
@@ -57,16 +52,19 @@ class Parameter extends AbstractExpression
 
 	/**
 	 * @throws \InvalidArgumentException
-	 * @param integer $type
+	 * @param integer $type \Change\Db\ScalarType::*
 	 */
 	public function setType($type)
 	{
 		switch ($type) 
 		{
-			case static::STRING:
-			case static::NUMERIC:
-			case static::DATETIME:
-			case static::LOB:
+			case \Change\Db\ScalarType::STRING:
+			case \Change\Db\ScalarType::BOOLEAN:
+			case \Change\Db\ScalarType::DATETIME:
+			case \Change\Db\ScalarType::DECIMAL:
+			case \Change\Db\ScalarType::INTEGER:
+			case \Change\Db\ScalarType::LOB:
+			case \Change\Db\ScalarType::TEXT:
 				$this->type = $type;
 				return;
 		}

@@ -316,6 +316,6 @@ class Compiler
 		$generator->savePHPCode($this, $this->models, $compilationPath);
 		
 		$generator = new SchemaClass();
-		$generator->savePHPCode($this, $this->application->getApplicationServices()->getDbProvider()->getSchemaManager(), $compilationPath);
+		$generator->savePHPCode($this, $this->application->getApplicationServices()->getDbProvider(), $compilationPath);
 	}
 }

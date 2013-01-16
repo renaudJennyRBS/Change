@@ -135,10 +135,9 @@ class ModelClass
 			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
 			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}
 			if ($property->getCascadeDelete() !== null) {$affects[] = '->setCascadeDelete('.$this->escapePHPValue($property->getCascadeDelete()).')';}
-			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultValue(), false).')';}
+			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultPhpValue(), false).')';}
 			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
 			if ($property->getIndexed() !== null) {$affects[] = '->setIndexed('.$this->escapePHPValue($property->getIndexed()).')';}
-			if ($property->getFromList() !== null) {$affects[] = '->setFromList('.$this->escapePHPValue($property->getFromList()).')';}
 			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
 
 			if (count($affects))
@@ -160,11 +159,11 @@ class ModelClass
 	protected function loadInvertProperties()
 	{
 		parent::loadInvertProperties();'. PHP_EOL;
-		foreach ($model->getInverseProperties() as $property)
+		foreach ($model->getInverseProperties() as $inverseProperty)
 		{
-			/* @var $property \Change\Documents\Generators\InverseProperty */
-			$code .= '		$p = $this->m_invertProperties['.$this->escapePHPValue($property->getName()).'] = new \Change\Documents\Property('.$this->escapePHPValue($property->getName()).');'. PHP_EOL;
-			$code .= '		$p->setRelatedDocumentType('.$this->escapePHPValue($property->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($property->getRelatedPropertyName()).');'. PHP_EOL;
+			/* @var $inverseProperty \Change\Documents\Generators\InverseProperty */
+			$code .= '		$p = $this->m_invertProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = new \Change\Documents\Property('.$this->escapePHPValue($inverseProperty->getName()).', '.$this->escapePHPValue($inverseProperty->getRelatedType()).');'. PHP_EOL;
+			$code .= '		$p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;

@@ -357,10 +357,10 @@ class I18nManager
 		{
 			$qb = $this->application->getApplicationServices()->getQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			$this->translateQuery = $qb->select('content', 'format')->from('f_locale')
+			$this->translateQuery = $qb->select('content', 'format')->from($fb->getLocaleTable())
 				->where($fb->logicAnd(
 					$fb->eq($fb->column('lang'), $fb->parameter('lang', $qb)),
-					$fb->eq($fb->column('id'), $fb->numericParameter('id', $qb)),
+					$fb->eq($fb->column('id'), $fb->parameter('id', $qb)),
 					$fb->eq($fb->column('key_path'), $fb->parameter('key_path', $qb))
 					))->query();
 		}

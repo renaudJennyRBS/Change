@@ -298,9 +298,11 @@ class Model
 			}
 			
 			$creationDate = new Property($this, 'creationDate', 'DateTime');
+			$creationDate->setDefaultValue('now');
 			$this->properties[$creationDate->getName()] = $creationDate;
 			
 			$modificationDate = new Property($this, 'modificationDate', 'DateTime');
+			$modificationDate->setDefaultValue('now');
 			$this->properties[$modificationDate->getName()] = $modificationDate;
 			
 			$deletedDate = new Property($this, 'deletedDate', 'DateTime');

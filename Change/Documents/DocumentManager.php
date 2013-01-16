@@ -6,6 +6,19 @@ namespace Change\Documents;
  */
 class DocumentManager
 {
+	const STATE_NEW = 0;
+	const STATE_INITIALIZED = 1;
+	
+	const STATE_LOADING = 2;
+	
+	const STATE_LOADED = 3;
+	
+	const STATE_SAVING = 4;
+	
+	const STATE_DELETING = 5;
+	
+	const STATE_DELETED = 6;	
+	
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
@@ -70,6 +83,14 @@ class DocumentManager
 	}
 	
 	/**
+	 * @return \Change\Db\Query\StatementBuilder
+	 */
+	protected function getNewStatementBuilder()
+	{
+		return $this->applicationServices->getStatementBuilder();
+	}
+	
+	/**
 	 * @return \Change\I18n\I18nManager
 	 */
 	protected function getI18nManager()
@@ -90,8 +111,25 @@ class DocumentManager
 	 */
 	public function postUnserialze(\Change\Documents\AbstractDocument $document)
 	{
-		throw new \LogicException('not implemented');
-		//$document->setDocumentContext($this, $model, $service)
+		$model = $this->getModelManager()->getModelByName($document->getDocumentModelName());
+		$service = $this->getDocumentServices()->get($model->getName());
+		$document->setDocumentContext($this, $model, $service);
+		
+		$query = $this->getDocumentInfosQuery($model);
+		$query->bindParameter('id', $document->getId());
+		
+		$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
+		if ($constructorInfos)
+		{
+			$treeName = $constructorInfos['treeName'];
+			$document->initialize($document->getId(), static::STATE_INITIALIZED, $treeName);
+		}
+		else
+		{
+			$document->initialize($document->getId(), static::STATE_DELETED, null);
+			//Set deleted date after initialize for localized document
+			$document->setDeletedDate('now');
+		}
 	}
 
 	/**
@@ -99,8 +137,8 @@ class DocumentManager
 	 */
 	public function postI18nUnserialze(\Change\Documents\AbstractI18nDocument $i18nDocument)
 	{
-		throw new \LogicException('not implemented');
-		//$documentI18n->setDocumentContext($this);
+		//TODO 
+		$i18nDocument->setDocumentContext($this);
 	}
 
 	/**
@@ -118,7 +156,7 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 
 			$docTable = $sqlmap->getDocumentTableName($model->getRootName());
-			$qb->select()->from($docTable)->where($fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)));
+			$qb->select()->from($docTable)->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)));
 
 			foreach ($model->getProperties() as $property)
 			{
@@ -152,7 +190,7 @@ class DocumentManager
 			$qb->select()->from($docTable)
 				->where(
 					$fb->logicAnd(
-						$fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)),
+						$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
 						$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb))
 					)
 				);
@@ -175,18 +213,28 @@ class DocumentManager
 	 */
 	public function loadDocument(\Change\Documents\AbstractDocument $document)
 	{		
+		$document->setPersistentState(static::STATE_LOADING);
+		$model = $document->getDocumentModel();
 		$q = $this->loadDocumentPropertiesQuery($document->getDocumentModel());
 		$q->bindParameter('id', $document->getId());
 		
 		$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
 		if ($propertyBag)
 		{
-			$document->setDocumentProperties($propertyBag);
-			$document->setPersistentState(AbstractDocument::PERSISTENTSTATE_LOADED);
+			$dbp = $this->getDbProvider();
+			$sqlmap = $dbp->getSqlMapping();
+			foreach ($propertyBag as $propertyName => $dbValue)
+			{
+				if (($property = $model->getProperty($propertyName)) !== null)
+				{
+					$property->setValue($document, $dbp->dbToPhp($dbValue, $sqlmap->getDbScalarType($property->getType())));
+				}
+			}
+			$document->setPersistentState(static::STATE_LOADED);
 		}
 		else
 		{
-			$document->setPersistentState(AbstractDocument::PERSISTENTSTATE_NEW);
+			$document->setPersistentState(static::STATE_DELETED);
 		}
 	}
 	
@@ -196,8 +244,339 @@ class DocumentManager
 	 */
 	public function loadMetas(\Change\Documents\AbstractDocument $document)
 	{
-		throw new \LogicException('not implemented');
+		$key = 'Load_Metas';
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			
+			$this->staticQueries[$key] = $qb->select('metas')->from($fb->getDocumentMetasTable())
+				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
+				->query();
+		}
+		/* @var $query \Change\Db\Query\SelectQuery */
+		$query = $this->staticQueries[$key];
+		$query->bindParameter('id', $document->getId());
+		$row = $query->getResults(function($rows) {return array_shift($rows);});
+		if ($row !== null && $row['metas'])
+		{
+			return json_decode($row['metas'], true);
+		}
 		return array();
+	}
+		
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return integer
+	 */
+	public function affectId(\Change\Documents\AbstractDocument $document)
+	{
+		$dbp = $this->getDbProvider();
+		$sqlmap = $dbp->getSqlMapping();
+		$qb = $this->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+		
+		$ft = $sqlmap->getDocumentIndexTableName();
+		$qb->insert($ft);
+		$iq = $qb->insertQuery();
+		
+		if ($document->getId() > 0)
+		{
+			$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('id')));
+			$qb->addValue($fb->integerParameter('id', $qb));
+			$iq->bindParameter('id', $document->getId());
+		}
+		
+		$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('model')));
+		$qb->addValue($fb->parameter('model', $qb));
+		$iq->bindParameter('model', $document->getDocumentModelName());
+		
+		$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('treeName')));
+		$qb->addValue($fb->parameter('treeName', $qb));
+		$iq->bindParameter('treeName', $document->getTreeName());
+
+		$iq->execute();
+		if ($document->getId() > 0)
+		{
+			$id = $document->getId();
+		}
+		else
+		{
+			$id = $dbp->getLastInsertId($ft);
+			$this->updateTemporaryRelationId($document->getId(), $id);
+			$document->initialize($id, $document->getPersistentState(), $document->getTreeName());
+		}
+		return $id;
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function insertDocument(\Change\Documents\AbstractDocument $document)
+	{
+		if ($document->getId() <= 0)
+		{
+			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId());
+		}
+		elseif ($document->getPersistentState() != static::STATE_NEW)
+		{
+			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState());
+		}
+		
+		$document->setPersistentState(static::STATE_SAVING);
+		
+		$dbp = $this->getDbProvider();
+		$sqlmap = $dbp->getSqlMapping();
+		$qb = $this->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+
+		$model = $document->getDocumentModel();		
+		$docTable = $sqlmap->getDocumentTableName($model->getRootName());
+		$relations = array();
+		
+		$qb->insert($docTable);
+		$iq = $qb->insertQuery();
+		foreach ($model->getProperties() as $name => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if (!$property->getLocalized())
+			{
+				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
+				{
+					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
+				}
+				$dbType = $sqlmap->getDbScalarType($property->getType());
+				$qb->addColumn($fb->column($sqlmap->getDocumentFieldName($name)));
+				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
+				$iq->bindParameter($name, $property->getValue($document));
+			}
+		}
+		$iq->execute();		
+		foreach ($relations as $name => $ids)
+		{
+			if (count($ids))
+			{
+				$this->insertRelation($document, $model, $name, $ids);
+			}
+		}
+		
+		$document->setPersistentState(static::STATE_LOADED);
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param string $name
+	 */
+	protected function deleteRelation($document, $model, $name)
+	{
+		$key = 'Rel_Del' . $model->getRootName();
+	
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->getDocumentRelationTable($model->getRootName()));
+			$qb->where(
+				$fb->logicAnd(
+					$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
+					$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
+				)
+			);
+			$this->staticQueries[$key] = $qb->deleteQuery();
+		}
+	
+		/* @var $query \Change\Db\Query\DeleteQuery */
+		$query = $this->staticQueries[$key];
+		$query->bindParameter('id', $document->getId());
+		$query->bindParameter('relname', $name);
+		$query->execute();
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param string $name
+	 * @param integer[] $ids
+	 */
+	protected function insertRelation($document, $model, $name, $ids)
+	{
+		$key = 'Rel_Ins' . $model->getRootName();
+		
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->insert($fb->getDocumentRelationTable($model->getRootName()), 'document_id', 'relname', 'relorder', 'relatedid');
+			$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb), $fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
+			$this->staticQueries[$key] = $qb->insertQuery();
+		}
+		/* @var $query \Change\Db\Query\InsertQuery */
+		$query = $this->staticQueries[$key];
+		$query->bindParameter('id', $document->getId());
+		$query->bindParameter('relname', $name);
+		foreach ($ids as $order => $relatedid)
+		{
+			$query->bindParameter('order', $order);
+			$query->bindParameter('relatedid', $relatedid);
+			$query->execute();
+		}
+	}
+		
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 */
+	public function insertI18nDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractI18nDocument $i18nPart)
+	{
+		if ($document->getId() <= 0)
+		{
+			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId());
+		}
+		elseif ($i18nPart->getPersistentState() != static::STATE_NEW)
+		{
+			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $i18nPart->getPersistentState());
+		}
+		if ($i18nPart->getId() !== $document->getId())
+		{
+			$i18nPart->initialize($document->getId(), $i18nPart->getLCID(), static::STATE_NEW);
+		}
+		$i18nPart->setPersistentState(static::STATE_SAVING);
+		
+		$dbp = $this->getDbProvider();
+		$sqlmap = $dbp->getSqlMapping();
+		$qb = $this->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+	
+		$model = $document->getDocumentModel();
+		$docTable = $sqlmap->getDocumentI18nTableName($model->getRootName());
+	
+		$qb->insert($docTable);
+		$iq = $qb->insertQuery();
+		foreach ($model->getProperties() as $name => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized() || $name === 'id')
+			{
+				$dbType = $sqlmap->getDbScalarType($property->getType());
+				$qb->addColumn($fb->column($sqlmap->getDocumentFieldName($name)));
+				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
+				$iq->bindParameter($name, $property->getValue($document));
+			}
+		}
+	
+		$iq->execute();
+		$document->setPersistentState(static::STATE_LOADED);
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function updateDocument(\Change\Documents\AbstractDocument $document)
+	{
+		if ($document->getPersistentState() != static::STATE_LOADED)
+		{
+			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState());
+		}
+		
+		$document->setPersistentState(static::STATE_SAVING);
+		
+		$dbp = $this->getDbProvider();
+		$sqlmap = $dbp->getSqlMapping();
+		$qb = $this->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$model = $document->getDocumentModel();
+
+		$docTable = $sqlmap->getDocumentTableName($model->getRootName());
+		
+		$qb->update($docTable);
+		$iq = $qb->updateQuery();
+		$execute = false;
+		$relations = array();
+		
+		foreach ($model->getProperties() as $name => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($document->isPropertyModified($name) && !$property->getLocalized())
+			{
+				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
+				{
+					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
+				}
+				$dbType = $sqlmap->getDbScalarType($property->getType());
+				$qb->assign($fb->column($sqlmap->getDocumentFieldName($name)), $fb->typedParameter($name, $dbType, $qb));
+				$iq->bindParameter($name, $property->getValue($document));
+				$execute = true;
+			}
+		}
+		
+		if ($execute)
+		{
+			$qb->where($fb->eq($fb->column($sqlmap->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)));
+			$iq->bindParameter('id', $document->getId());
+			$iq->execute();	
+
+			foreach ($relations as $name => $ids)
+			{
+				$this->deleteRelation($document, $model, $name);
+				if (count($ids))
+				{
+					$this->insertRelation($document, $model, $name, $ids);
+				}
+			}
+		}
+		$document->setPersistentState(static::STATE_LOADED);
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function updateI18nDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractI18nDocument $i18nPart)
+	{
+		if ($i18nPart->getPersistentState() != static::STATE_LOADED)
+		{
+			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $i18nPart->getPersistentState());
+		}
+		if ($i18nPart->getId() !== $document->getId())
+		{
+			$i18nPart->initialize($document->getId(), $i18nPart->getLCID(), static::STATE_LOADED);
+		}
+		
+		$i18nPart->setPersistentState(static::STATE_SAVING);
+		
+		$dbp = $this->getDbProvider();
+		$sqlmap = $dbp->getSqlMapping();
+		$qb = $this->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$model = $document->getDocumentModel();
+
+		$qb->update($sqlmap->getDocumentI18nTableName($model->getRootName()));
+		$iq = $qb->updateQuery();
+		$execute = false;
+		
+		foreach ($model->getProperties() as $name => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($i18nPart->isPropertyModified($name) && $property->getLocalized())
+			{
+				$dbType = $sqlmap->getDbScalarType($property->getType());
+				$qb->assign($fb->column($sqlmap->getDocumentFieldName($name)), $fb->typedParameter($name, $dbType, $qb));
+				$iq->bindParameter($name, $property->getValue($i18nPart));
+				$execute = true;
+			}
+		}
+	
+		if ($execute)
+		{
+			$qb->where($fb->eq($fb->column($sqlmap->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)));
+			$iq->bindParameter('id', $i18nPart->getId());
+			$iq->execute();	
+		}
+		
+		$i18nPart->setPersistentState(static::STATE_LOADED);
 	}
 	
 	/**
@@ -206,7 +585,44 @@ class DocumentManager
 	 */
 	public function saveMetas(\Change\Documents\AbstractDocument $document, $metas)
 	{
-		throw new \LogicException('not implemented');
+		$key = 'Delete_Metas';
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			
+			$this->staticQueries[$key] = $qb->delete($fb->getDocumentMetasTable())
+				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
+				->deleteQuery();
+		}
+		/* @var $deleteQuery \Change\Db\Query\DeleteQuery */
+		$deleteQuery = $this->staticQueries[$key];
+		$deleteQuery->bindParameter('id', $document->getId());
+		$deleteQuery->execute();
+		if (!is_array($metas) || count($metas) == 0)
+		{
+			return;
+		}
+		
+		
+		$key = 'Insert_Metas';
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+				
+			$this->staticQueries[$key] = $qb->insert($fb->getDocumentMetasTable(), 'document_id', 'metas', 'lastupdate')
+				->addValues($fb->integerParameter('id', $qb), $fb->typedParameter('metas', \Change\Db\ScalarType::TEXT, $qb), $fb->dateTimeparameter('lastupdate', $qb))
+				->insertQuery();
+		}
+		/* @var $insertQuery \Change\Db\Query\InsertQuery */
+		$insertQuery = $this->staticQueries[$key];
+		$insertQuery->bindParameter('id', $document->getId());
+		$insertQuery->bindParameter('metas', json_encode($metas));
+		$insertQuery->bindParameter('lastupdate', new \DateTime());
+		$insertQuery->execute();
 	}
 	
 	/**
@@ -217,8 +633,29 @@ class DocumentManager
 	 */
 	public function getPropertyDocumentIds(\Change\Documents\AbstractDocument $document, $propertyName)
 	{
-		throw new \LogicException('not implemented');
-		return array();
+		$model = $document->getDocumentModel();
+		$key = 'Rel_' . $model->getRootName();
+		
+		if (!isset($this->staticQueries[$key]))
+		{
+			$dbp = $this->getDbProvider();
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->alias($fb->column('relatedid'), 'id'))->from($fb->getDocumentRelationTable($model->getRootName()))
+				->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
+						$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
+					))
+				->orderAsc($fb->column('relorder'));
+			$this->staticQueries[$key] = $qb->query();
+		}
+		/* @var $query \Change\Db\Query\SelectQuery */
+		$query = $this->staticQueries[$key];
+		$query->bindParameter('id', $document->getId());
+		$query->bindParameter('relname', $propertyName);
+		$result = $query->getResults(function ($rows) {return array_map(function ($row) {return $row['id'];}, $rows);});
+		return $result;
 	}
 	
 	
@@ -244,7 +681,8 @@ class DocumentManager
 	{
 		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
-		$newDocument->initialize($this->newInstancesCounter, AbstractDocument::PERSISTENTSTATE_NEW);
+		$newDocument->initialize($this->newInstancesCounter, static::STATE_NEW, null);
+		$newDocument->setDefaultValues($model);
 		return $newDocument;
 	}
 	
@@ -279,26 +717,43 @@ class DocumentManager
 	 */
 	public function getI18nDocumentInstanceByDocument(\Change\Documents\AbstractDocument $document, $LCID)
 	{
-		$i18nPart = $this->createNewI18nDocumentInstance($document->getDocumentModel());
-		$i18nPart->initialize($document->getId(), $LCID, AbstractDocument::PERSISTENTSTATE_NEW);
-		if (!$document->persistentStateIsNew())
+		$model = $document->getDocumentModel();
+		$i18nPart = $this->createNewI18nDocumentInstance($model);
+		$i18nPart->initialize($document->getId(), $LCID, static::STATE_NEW);
+		
+		if ($document->getPersistentState() != static::STATE_NEW)
 		{
+			$i18nPart->setPersistentState(static::STATE_LOADING);
 			$q = $this->loadDocumentI18nPropertiesQuery($document->getDocumentModel());
-			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);
-			
+			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);		
 			$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
 			if ($propertyBag)
 			{
-				$i18nPart->setDocumentProperties($propertyBag);
-				if ($i18nPart->getDeletedDate())
+				$dbp = $this->getDbProvider();
+				$sqlmap = $dbp->getSqlMapping();
+				foreach ($propertyBag as $propertyName => $dbValue)
 				{
-					$i18nPart->setPersistentState(AbstractDocument::PERSISTENTSTATE_DELETED);
+					if (($property = $model->getProperty($propertyName)) !== null)
+					{
+						$propVal =  $dbp->dbToPhp($dbValue, $sqlmap->getDbScalarType($property->getType()));
+						$property->setValue($i18nPart, $propVal);
+					}
 				}
-				else
-				{
-					$i18nPart->setPersistentState(AbstractDocument::PERSISTENTSTATE_LOADED);
-				}
+				$i18nPart->setPersistentState(static::STATE_LOADED);
 			}
+			elseif ($document->getPersistentState() == static::STATE_DELETED)
+			{
+				$i18nPart->setPersistentState(static::STATE_DELETED);
+			}
+			else
+			{
+				$i18nPart->setPersistentState(static::STATE_NEW);
+				$i18nPart->setDefaultValues($model);
+			}
+		}
+		else
+		{
+			$i18nPart->setDefaultValues($model);
 		}
 		return $i18nPart;
 	}
@@ -321,17 +776,17 @@ class DocumentManager
 			if ($model)
 			{
 				$dt = $this->getDbProvider()->getSqlMapping()->getDocumentTableName($model->getRootName());
-				$this->staticQueries[$key] = $qb->select($fb->column('document_model', 'd'), $fb->column('treeid', 'f'))
+				$this->staticQueries[$key] = $qb->select($fb->column('document_model', 'd'), $fb->alias($fb->column('tree_name', 'f'), 'treeName'))
 				->from($fb->alias($fb->table($dt), 'd'))
 				->innerJoin($fb->alias($fb->table($ft), 'f'), $fb->column('document_id'))
-				->where($fb->logicAnd($fb->eq($fb->column('document_id', 'd'), $fb->numericParameter('id', $qb))))
+				->where($fb->logicAnd($fb->eq($fb->column('document_id', 'd'), $fb->integerParameter('id', $qb))))
 				->query();
 			}
 			else
 			{
-				$this->staticQueries[$key] = $qb->select('document_model', 'treeid')
+				$this->staticQueries[$key] = $qb->select('document_model', $fb->alias($fb->column('tree_name'), 'treeName'))
 				->from($ft)
-				->where($fb->eq($fb->column('document_id'), $fb->numericParameter('id', $qb)))
+				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
 				->query();
 			}
 		}
@@ -360,12 +815,12 @@ class DocumentManager
 			if ($constructorInfos)
 			{
 				$modelName = $constructorInfos['document_model'];
-				$treeId = $constructorInfos['treeid'];
+				$treeName = $constructorInfos['treeName'];
 				$documentModel = $this->getModelManager()->getModelByName($modelName);
 				if ($documentModel !== null)
 				{
 					$document = $this->createNewDocumentInstance($documentModel);
-					$document->initialize($id, AbstractDocument::PERSISTENTSTATE_INITIALIZED, $treeId);
+					$document->initialize($id, static::STATE_INITIALIZED, $treeName);
 					$this->putInCache($id, $document);
 					return $document;
 				}

@@ -4,35 +4,14 @@ namespace Change\Db\Query\Expressions;
 /**
  * @name \Change\Db\Query\Expressions\Numeric
  */
-class Numeric extends AbstractExpression
+class Numeric extends \Change\Db\Query\Expressions\Value
 {
-	/**
-	 * @var number
-	 */
-	protected $value;
-	
 	/**
 	 * @param number $value
 	 */
 	public function __construct($value = null)
 	{
-		$this->value = $value;
-	}
-	
-	/**
-	 * @return number
-	 */
-	public function getValue()
-	{
-		return $this->value;
-	}
-	
-	/**
-	 * @param number $value
-	 */
-	public function setValue($value)
-	{
-		$this->value = $value;
+		parent::__construct($value, \Change\Db\ScalarType::DECIMAL);
 	}
 	
 	/**
@@ -40,6 +19,10 @@ class Numeric extends AbstractExpression
 	 */
 	public function toSQL92String()
 	{
-		return strval($this->value);
+		if ($this->value === null)
+		{
+			return 'NULL';
+		}
+		return strval(floatval($this->value));
 	}
 }

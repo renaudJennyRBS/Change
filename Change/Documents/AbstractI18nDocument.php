@@ -14,7 +14,7 @@ abstract class AbstractI18nDocument
 	/**
 	 * @var integer
 	 */
-	private $persistentState;
+	private $persistentState = DocumentManager::STATE_NEW;
 
 	/**
 	 * @var \Change\Documents\DocumentManager
@@ -62,7 +62,7 @@ abstract class AbstractI18nDocument
 	/**
 	 * @param integer $id
 	 * @param string $lcid
-	 * @param integer $persistentState
+	 * @param integer $persistentState DocumentManager::STATE_*
 	 */
 	public function initialize($id, $lcid, $persistentState)
 	{
@@ -72,7 +72,7 @@ abstract class AbstractI18nDocument
 	}
 	
 	/**
-	 * @return integer
+	 * @return integer DocumentManager::STATE_*
 	 */
 	public function getPersistentState()
 	{
@@ -80,18 +80,21 @@ abstract class AbstractI18nDocument
 	}
 	
 	/**
-	 * @param integer $newValue
+	 * @param integer $newValue DocumentManager::STATE_*
 	 */
 	public function setPersistentState($newValue)
 	{
 		$oldState = $this->persistentState;
 		switch ($newValue)
 		{
-			case AbstractDocument::PERSISTENTSTATE_NEW:
-			case AbstractDocument::PERSISTENTSTATE_LOADED:
-			case AbstractDocument::PERSISTENTSTATE_MODIFIED:
-			case AbstractDocument::PERSISTENTSTATE_DELETED:
-				$this->persistentState = intval($newValue);
+			case DocumentManager::STATE_LOADED:
+				$this->clearModifiedProperties();
+			case DocumentManager::STATE_NEW:
+			case DocumentManager::STATE_LOADING:
+			case DocumentManager::STATE_DELETING:
+			case DocumentManager::STATE_DELETED:
+			case DocumentManager::STATE_SAVING:
+				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
@@ -121,25 +124,7 @@ abstract class AbstractI18nDocument
 	{
 		return $this->id;
 	}
-	
-	/**
-	 * @return string
-	 */
-	abstract public function getLCID();
-	
-	/**
-	 * @param string $LCID
-	*/
-	abstract public function setLCID($LCID);
-			
-	/**
-	 * @return boolean
-	 */
-	public function persistentStateIsNew()
-	{
-		return $this->persistentState === AbstractDocument::PERSISTENTSTATE_NEW;
-	}
-		
+					
 	/**
 	 * @api
 	 * @return array<string => mixed>
@@ -156,6 +141,23 @@ abstract class AbstractI18nDocument
 	public function getModifiedPropertyNames()
 	{
 		return array_keys($this->modifiedProperties);
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		return count($this->modifiedProperties) > 0;
+	}
+	
+	/**
+	 * @api
+	 */
+	protected function clearModifiedProperties()
+	{
+		$this->modifiedProperties = array();
 	}
 	
 	/**
@@ -206,35 +208,21 @@ abstract class AbstractI18nDocument
 	}
 	
 	/**
-	 * @return void
+	 * @api
+	 * @param \Change\Documents\AbstractModel $documentModel
 	 */
-	public function setDefaultValues()
+	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
 	{
-		$this->modifiedProperties = array();
-		$this->persistentState = AbstractDocument::PERSISTENTSTATE_NEW;
-	}
-	
-	 /**
-	 * @internal For framework internal usage only
-	 * @param array<string, mixed> $propertyBag
-	 */
-	public function setDocumentProperties($propertyBag)
-	{
-		if (array_key_exists('id', $propertyBag))
+		$this->persistentState = DocumentManager::STATE_NEW;
+		foreach ($documentModel->getProperties() as $property)
 		{
-			$this->id = intval($propertyBag['id']);
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized() && $property->getDefaultValue() !== null)
+			{
+				$property->setValue($this, $property->getDefaultValue());
+			}
 		}
-	}
-	
-	/**
-	 * @return array<String, mixed>
-	 */
-	public function getDocumentProperties()
-	{
-		$propertyBag = array();
-		$propertyBag['id'] = $this->id;
-		
-		return $propertyBag;
+		$this->clearModifiedProperties();
 	}
 	
 	// Generic Method
@@ -242,31 +230,40 @@ abstract class AbstractI18nDocument
 	/**
 	 * @return string
 	 */
+	abstract public function getLCID();
+	
+	/**
+	 * @param string $LCID
+	 */
+	abstract public function setLCID($LCID);
+	
+	/**
+	 * @return \DateTime
+	 */
 	abstract public function getCreationDate();
 	
 	/**
-	 * @param string $creationDate
+	  * @param \DateTime $creationDate
 	*/
 	abstract public function setCreationDate($creationDate);
 	
-	
 	/**
-	 * @return string
-	*/
+	 * @return \DateTime
+	 */
 	abstract public function getModificationDate();
 	
 	/**
-	 * @param string $modificationDate
+	 * @param \DateTime $modificationDate
 	*/
 	abstract public function setModificationDate($modificationDate);
 	
 	/**
-	 * @return string
-	*/
+	 * @return \DateTime|null
+	 */
 	abstract public function getDeletedDate();
 	
 	/**
-	 * @param string $deletedDate
-	*/
+	 * @param \DateTime|null $deletedDate
+	 */
 	abstract public function setDeletedDate($deletedDate);
 }

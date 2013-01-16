@@ -24,6 +24,9 @@ class NumericTest extends \PHPUnit_Framework_TestCase
 	{
 		$i = new \Change\Db\Query\Expressions\Numeric();
 		$i->setValue('Value');
-		$this->assertEquals('Value', $i->toSQL92String());
+		$this->assertEquals('0', $i->toSQL92String());
+		
+		$i->setValue('3.3');
+		$this->assertEquals('3.3', $i->toSQL92String());
 	}
 }

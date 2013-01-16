@@ -28,7 +28,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function getSQLFragmentBuilder()
 	{
-		return new \Change\Db\Query\SQLFragmentBuilder();
+		return new \Change\Db\Query\SQLFragmentBuilder($this->getDbProvider()->getSqlMapping());
 	}
 	
 	public function testConstruct()

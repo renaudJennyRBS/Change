@@ -9,7 +9,6 @@ use Zend\Json\Json;
  */
 class Configuration
 {
-	const CONFIGURATION_REFRESHED_EVENT = '\Change\Configuration\Configuration::refresh';
 
 	/**
 	 * @var \Change\Application
@@ -71,6 +70,7 @@ class Configuration
 		}
 		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
+		
 		\Change\Stdlib\File::write($this->getCompiledConfigPath(), $content);
 		return array("config" => $configs, "defines" => $defines);
 	}
@@ -397,17 +397,17 @@ class Configuration
 	}
 
 	/**
-	 * Refresh compiled configuration informations - raises a CONFIGURATION_REFRESHED_EVENT event
+	 * Refresh compiled configuration informations
 	 *
 	 * @api
 	 */
 	public function refresh()
 	{
-		$oldDefine = $this->define;
-		$oldConfig = $this->config;
 		$this->clear();
-		$this->compile();
-		$this->load();
-		$this->application->getApplicationServices()->getEventManager()->trigger(self::CONFIGURATION_REFRESHED_EVENT, $this, array('oldDefineArray' => $oldDefine, 'oldConfigArray' => $oldConfig));
+ 		$this->compile();
+ 		$this->load();
+		
+ 		$injection = new \Change\Injection\Injection($this, $this->application->getWorkspace());
+ 		$injection->compile();
 	}
 }
