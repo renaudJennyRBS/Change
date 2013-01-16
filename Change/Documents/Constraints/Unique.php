@@ -11,17 +11,17 @@ class Unique extends \Zend\Validator\AbstractValidator
 	/**
 	 * @var string
 	 */
-	protected $_modelName;
+	protected $modelName;
 
 	/**
 	 * @var string
 	 */
-	protected $_propertyName;
+	protected $propertyName;
 	
 	 /**
 	 * @var integer
 	 */
-	protected $_documentId = 0;
+	protected $documentId = 0;
 	
  	/**
 	 * @param array $params <modelName => modelName, propertyName => propertyName, [documentId => documentId]>
@@ -29,82 +29,98 @@ class Unique extends \Zend\Validator\AbstractValidator
 	public function __construct($params = array())
 	{
 		$this->messageTemplates = array(self::NOTUNIQUE => self::NOTUNIQUE);
-		$this->messageVariables = array('propertyName' => '_propertyName');
+		$this->messageVariables = array('propertyName' => 'propertyName');
 		parent::__construct($params);
-		if (isset($params['modelName']))
-		{
-			$this->_modelName = $params['modelName'];
-		}
-		if (isset($params['propertyName']))
-		{
-			$this->_propertyName = $params['propertyName'];
-		}
-		if (isset($params['documentId']) && intval($params['documentId']) > 0)
-		{
-			$this->_documentId = intval($params['documentId']);
-		}
 	}
 	
+	/**
+	 * @return string
+	 */
+	public function getModelName()
+	{
+		return $this->modelName;
+	}
+
+	/**
+	 * @param string $modelName
+	 */
+	public function setModelName($modelName)
+	{
+		$this->modelName = $modelName;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPropertyName()
+	{
+		return $this->propertyName;
+	}
+
+	/**
+	 * @param string $propertyName
+	 */
+	public function setPropertyName($propertyName)
+	{
+		$this->propertyName = $propertyName;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getDocumentId()
+	{
+		return $this->documentId;
+	}
+
+	/**
+	 * @param integer $documentId
+	 */
+	public function setDocumentId($documentId)
+	{
+		$this->documentId = $documentId;
+	}
+
 	/**
 	 * @param  mixed $value
 	 * @return boolean
 	 */
 	public function isValid($value)
 	{
-		if (empty($this->_modelName) || empty($this->_propertyName))
+		$modelName = $this->getModelName();
+		$model = \Change\Application::getInstance()->getDocumentServices()->getModelManager()->getModelByName($modelName);
+		if ($model === null)
 		{
-			throw new \Exception('Invalid configuration');
+			throw new \InvalidArgumentException('Invalid document model name:' . $modelName);
 		}
 		
-		throw new \LogicException('not implemented');
-		
-		/*
-		if (f_util_StringUtils::isEmpty($value)) {$value = null;}
-		$model = f_persistentdocument_PersistentDocumentModel::getInstanceFromDocumentModelName($this->_modelName);
-		$property = $model->getProperty($this->_propertyName);
+		$property = $model->getProperty($this->getPropertyName());
 		if ($property === null)
 		{
-			throw new Exception('Invalid property '. $this->_propertyName . ' for document '. $this->_modelName);
-		}
+			throw new \InvalidArgumentException('Invalid property name:' . $modelName . '::' . $this->getPropertyName());
+		}	
+
+		$qb = \Change\Application::getInstance()->getApplicationServices()->getQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
 		
-		$this->setValue($value);
+		$query = $qb->select($fb->getDocumentColumn('id'))
+			->from($property->getLocalized() ? $fb->getDocumentI18nTable($model->getRootName()) : $fb->getDocumentTable($model->getRootName()))
+			->where(
+				$fb->logicAnd(
+					$fb->neq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
+					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value', $qb))
+				)
+			)->query();
 		
-		$ds = $model->getDocumentService();
-		$query = $ds->createQuery()->setProjection(Projections::property('id', 'id'))->setMaxResults(1);
-		
-		if ($property->isDocument())
-		{
-			if ($value === null)
-			{
-				$query->add(Restrictions::isEmpty($property->getName()));	
-			}
-			elseif ($value instanceof f_persistentdocument_PersistentDocument) 
-			{
-				$query->add(Restrictions::eq($property->getName(), $value));
-			}
-			else
-			{
-				$query->add(Restrictions::eq($property->getName() . '.id', intval($value)));
-			}
-		}
-		else
-		{
-			if ($value === null)
-			{
-				$query->add(Restrictions::isNull($property->getName()));
-			}	
-			else
-			{
-				$query->add(Restrictions::eq($property->getName(), $value));
-			}
-		}
-		$row = $query->findUnique();
-		if ($row !== null && intval($row['id']) != $this->_documentId)
+		$query->setMaxResults(1);
+		$query->bindParameter('id', $this->getDocumentId());
+		$query->bindParameter('value', $value);
+		$rows = $query->getResults();
+		if (count($rows))
 		{
 			$this->error(self::NOTUNIQUE);
 			return false;
 		}
-		*/
 		return true;
 	}	
 }

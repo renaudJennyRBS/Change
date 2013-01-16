@@ -1,6 +1,6 @@
 {
 	"name": "rbschange/website",
-	"description": "RBS Change Catalog module",
+	"description": "RBS Change Website module",
 	"type": "rbschange-module",
 	"license":"AGPL-3.0",
 	"autoload": {

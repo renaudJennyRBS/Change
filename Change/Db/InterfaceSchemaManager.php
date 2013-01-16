@@ -61,10 +61,10 @@ interface InterfaceSchemaManager
 	/**
 	 * @param string $propertyName
 	 * @param string $propertyType
-	 * @param string $propertyDbSize
+	 * @param string $typeSize
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function getDocumentFieldDefinition($propertyName, $propertyType, $propertyDbSize);
+	public function getDocumentFieldDefinition($propertyName, $propertyType, $typeSize);
 	
 	/**
 	 * @param \Change\Db\Schema\TableDefinition $tableDefinition

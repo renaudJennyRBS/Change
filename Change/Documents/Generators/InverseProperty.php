@@ -35,6 +35,14 @@ class InverseProperty
 		$model = ($this->relatedProperty->getModel()->getInject()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
 		return $model->getVendor() . $model->getShortModuleName(). $model->getShortName().ucfirst($this->relatedProperty->getName());
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getRelatedType()
+	{
+		return $this->relatedProperty->getComputedType();
+	}
 
 	/**
 	 * @return string

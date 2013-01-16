@@ -3,6 +3,9 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
 	icon="users" has-url="false" editable="true">
 	<properties>
-		<property name="securitylevel" type="String" db-size="25" from-list="modules_users/securitylevel" default-value="medium" />
+		<property name="securitylevel" type="String" default-value="medium">
+			<constraint name="enum" fromList="modules_users/securitylevel" />
+			<constraint name="maxSize" max="25" />
+		</property>
 	</properties>
 </document>

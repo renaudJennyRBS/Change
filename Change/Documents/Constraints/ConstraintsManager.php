@@ -34,7 +34,9 @@ class ConstraintsManager
 		$this->defaultConstraint = array(
 			'domain' => '\Change\Documents\Constraints\Domain',
 			'emails' => '\Change\Documents\Constraints\Emails',
-			'url' => '\Change\Documents\Constraints\Url');
+			'url' => '\Change\Documents\Constraints\Url',
+			'unique' => '\Change\Documents\Constraints\Unique',
+			'enum' => '\Change\Documents\Constraints\Enum');
 	}
 	
 	/**
@@ -44,6 +46,7 @@ class ConstraintsManager
 	 */
 	public function getByName($name, $params = array())
 	{
+
 		if (method_exists($this, $name))
 		{
 			return call_user_func(array($this, $name), $params);
@@ -54,6 +57,12 @@ class ConstraintsManager
 			return new $className($params);
 		}
 		throw new \InvalidArgumentException('Constraint '. $name . ' not found');
+	}
+	
+	
+	public function registerConstraint($name, $class)
+	{
+		$this->defaultConstraint[$name] = $class;
 	}
 	
 
@@ -86,59 +95,30 @@ class ConstraintsManager
 		return new Emails($params);
 	}	
 	
-	
-	
 	/**
-	 * @param array $params <max => maxLength || parameter => maxLength>
+	 * @param array $params <max => maxLength>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */
 	public function maxSize($params = array())
 	{		
-		if (isset($params['parameter'])) 
-		{
-			$params['max'] = intval($params['parameter']);
-		}
 		return new \Zend\Validator\StringLength($params);
 	}	
 	
 	/**
-	 * @param array $params <min => minLength || parameter => minLength>
+	 * @param array $params <min => minLength>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */
 	public function minSize($params = array())
 	{		
-		if (isset($params['parameter'])) 
-		{
-			$params['min'] = intval($params['parameter']);
-		}
 		return new \Zend\Validator\StringLength($params);
-	}
-
-	/**
-	 * @param array $params <modelName => modelName, propertyName => propertyName, [documentId => documentId]>
-	 * @return \Zend\Validator\ValidatorInterface
-	 */
-	public function unique($params = array())
-	{
-		return new Unique($params);	
 	}
 	
 	/**
-	 * @param array $params <pattern => pattern, [message => message] || parameter => pattern#message>
+	 * @param array $params <pattern => pattern, [message => message]>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */	
 	public function matches($params = array())
 	{
-		if (isset($params['parameter']) && is_string($params['parameter']))
-		{
-			$pattern = $params['parameter'];
-			if (($splitIndex = strpos($pattern, '#')) !== false)
-			{
-				$params['message'] = substr($pattern, $splitIndex + 1);
-				$pattern = substr($pattern, 0, $splitIndex);
-			}
-			$params['pattern'] = '#' . $pattern . '#';
-		}
 		$c = new \Zend\Validator\Regex($params);
 		if (isset($params['message']) && is_string($params['message']))
 		{
@@ -148,44 +128,29 @@ class ConstraintsManager
 	}
 	
 	/**
-	 * @param array $params <min => min || parameter => min>
+	 * @param array $params <min => min>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */	
 	public function min($params = array())
 	{
-		if (isset($params['parameter']))
-		{
-			$params['min'] = $params['parameter'];
-		}
 		return new Min($params);
 	}
 
 	/**
-	 * @param array $params <max => max || parameter => max>
+	 * @param array $params <max => max>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */	
 	public function max($params = array())
 	{
-		if (isset($params['parameter']))
-		{
-			$params['max'] = $params['parameter'];
-		}
 		return new Max($params);
 	}
 
 	/**
-	 * @param array $params <min => min, max => max, [inclusive => inclusive] || parameter => min..max>
+	 * @param array $params <min => min, max => max, [inclusive => inclusive]>
 	 * @return \Zend\Validator\ValidatorInterface
 	 */	
 	public function range($params = array())
 	{
-		if (isset($params['parameter']))
-		{
-			list($min, $max) = explode('..', $params['parameter']);
-			$params['min'] = $min;
-			$params['max'] = $max;
-			$params['inclusive'] = true;
-		}
 		return new \Zend\Validator\Between($params);
 	}
 	

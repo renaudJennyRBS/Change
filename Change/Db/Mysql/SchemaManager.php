@@ -218,10 +218,10 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	/**
 	 * @param string $propertyName
 	 * @param string $propertyType
-	 * @param string $propertyDbSize
+	 * @param string $typeSize
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function getDocumentFieldDefinition($propertyName, $propertyType, $propertyDbSize)
+	public function getDocumentFieldDefinition($propertyName, $propertyType, $typeSize)
 	{
 		$fn = $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
 		$typeData = null;
@@ -247,10 +247,10 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 					$defaultValue = "0";
 					break;
 				case 'String' :
-					$dbSize = intval($propertyDbSize);
-					if ($dbSize <= 0 || $dbSize > 255) {$dbSize = 255;}
+					$stringSize = intval($typeSize);
+					if ($stringSize <= 0 || $stringSize > 255) {$stringSize = 255;}
 					$type = "varchar";
-					$typeData = "varchar(" . $dbSize . ")";
+					$typeData = "varchar(" . $stringSize . ")";
 					break;
 				case 'LongString' :
 					$type = "text";
@@ -279,9 +279,9 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 					break;
 				case 'Decimal' :
 					$type = "decimal";
-					if (!empty($propertyDbSize) && strpos($propertyDbSize, ','))
+					if (!empty($typeSize) && strpos($typeSize, ','))
 					{
-						$typeData = "decimal(" . $propertyDbSize . ")";
+						$typeData = "decimal(" . $typeSize . ")";
 					}
 					else
 					{

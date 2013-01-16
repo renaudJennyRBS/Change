@@ -46,8 +46,6 @@ class Property
 	protected $localized = false;
 	protected $indexed = 'none'; //none, property, description
 	
-	protected $fromList;
-
 	/**
 	 * @param string $name
 	 * @param string $type
@@ -104,14 +102,6 @@ class Property
 		return $this->maxOccurs;
 	}
 
-	/**
-	 * @return string | null
-	 */
-	public function getFromList()
-	{
-		return $this->fromList;
-	}	
-	
 	/**
 	 * @return boolean
 	 */
@@ -409,16 +399,6 @@ class Property
 		return $this;
 	}
 
-	/**
-	 * @param string $fromList
-	 * @return \Change\Documents\Property
-	 */
-	public function setFromList($fromList)
-	{
-		$this->fromList = $fromList;
-		return $this;
-	}
-	
 	/**
 	 * @param boolean $bool
 	 * @return \Change\Documents\Property

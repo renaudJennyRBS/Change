@@ -58,16 +58,30 @@
 	
 	<xs:complexType name="constraint">
 		<xs:attribute name="name" use="required" type="xs:string" />
-		<xs:attribute name="parameter" use="optional" type="xs:string" />
+				
+		<xs:attribute name="min" use="optional" type="xs:double">
+			<xs:annotation>
+				<xs:documentation source="description"> use by 'min', 'minSize' and 'range' constraint</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		
-		<xs:attribute name="min" use="optional" type="xs:double" />
-		<xs:attribute name="max" use="optional" type="xs:double" />
+		<xs:attribute name="max" use="optional" type="xs:double">
+			<xs:annotation>
+				<xs:documentation source="description"> use by 'max', 'maxSize' and 'range' constraint</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		
 		<xs:attribute name="inclusive" use="optional" type="xs:boolean">
 			<xs:annotation>
 				<xs:documentation source="description"> use by 'range' constraint</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>		
+		
+		<xs:attribute name="fromList" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation source="description"> use by 'enum' constraint</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>	
 		
 		<xs:attribute name="modelName" use="optional" type="documentModel">
 			<xs:annotation>
@@ -123,14 +137,12 @@
 									<xs:attribute name="name" use="required" type="xs:string" />
 									<xs:attribute name="type" use="optional" type="propertyType" default="String" />
 									<xs:attribute name="document-type" type="documentModel" />
-									<xs:attribute name="indexed" type="indexTarget" default="none" />
-									<xs:attribute name="from-list" type="xs:string" />			
+									<xs:attribute name="indexed" type="indexTarget" default="none" />		
 									<xs:attribute name="cascade-delete" type="xs:boolean" default="false" />
 									<xs:attribute name="default-value" type="xs:string" />
 									<xs:attribute name="required" type="xs:boolean" default="true" />
 									<xs:attribute name="min-occurs" type="xs:int" default="2" />
 									<xs:attribute name="max-occurs" type="xs:int" default="10" />	
-									<xs:attribute name="db-size" type="xs:string" />
 									<xs:attribute name="localized" type="xs:boolean" default="true" />
 								</xs:complexType>
 							</xs:element>

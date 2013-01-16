@@ -17,14 +17,12 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(-1, $p->getComputedMaxOccurs());
 		$this->assertNull($p->getDocumentType());
 		$this->assertNull($p->getIndexed());
-		$this->assertNull($p->getFromList());
 		$this->assertNull($p->getCascadeDelete());
 		$this->assertNull($p->getDefaultValue());
 		$this->assertNull($p->getDefaultPhpValue());
 		$this->assertNull($p->getRequired());
 		$this->assertNull($p->getMinOccurs());
 		$this->assertNull($p->getMaxOccurs());
-		$this->assertNull($p->getDbSize());
 		$this->assertNull($p->getLocalized());
 		$this->assertNull($p->getConstraintArray());
 		$this->assertNull($p->getParent());
@@ -138,9 +136,9 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<property name="test" type="Integer" document-type="vendor_module_name" 
-				indexed="description" from-list="list" required="true"
+				indexed="description" required="true"
 				cascade-delete="true" default-value="5"
-				min-occurs="5" max-occurs="10" db-size="8" localized="true"
+				min-occurs="5" max-occurs="10" localized="true"
 				><constraint name="min" min="5" /></property>');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
@@ -151,14 +149,12 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(10, $p->getComputedMaxOccurs());
 		$this->assertEquals('vendor_module_name', $p->getDocumentType());
 		$this->assertEquals('description', $p->getIndexed());
-		$this->assertEquals('list', $p->getFromList());
 		$this->assertTrue($p->getCascadeDelete());
 		$this->assertEquals('5', $p->getDefaultValue());
 		$this->assertEquals(5, $p->getDefaultPhpValue());
 		$this->assertTrue($p->getRequired());
 		$this->assertEquals(5, $p->getMinOccurs());
 		$this->assertEquals(10, $p->getMaxOccurs());
-		$this->assertEquals('8', $p->getDbSize());
 		$this->assertTrue($p->getLocalized());
 		$ca = $p->getConstraintArray();
 		$this->assertEquals(array('min' => array('min' => '5')), $ca);
@@ -168,12 +164,10 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	public function testSetDefaultConstraints()
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="String" db-size="8"><constraint name="min" min="5" /></property>');
+		$doc->loadXML('<property name="test" type="String"><constraint name="min" min="5" /><constraint name="maxSize" max="8" /></property>');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
 		$p->initialize($doc->documentElement);
-		$this->assertEquals(array('min' => array('min' => '5')), $p->getConstraintArray());
-		
 		$p->setDefaultConstraints();
 		$this->assertEquals(array('min' => array('min' => '5'),'maxSize' => array('max' => '8')), $p->getConstraintArray());
 	}
@@ -195,18 +189,18 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'label' , 'Integer');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
-		$this->assertEquals(255, $p->getDbSize());
+		$ca = $p->getConstraintArray();
+		$this->assertEquals(array('maxSize' => array('max' => 255)), $p->getConstraintArray());
 		
 		$p = new \Change\Documents\Generators\Property($model, 'voLCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
-		$this->assertEquals(10, $p->getDbSize());
-		$this->assertEquals(array('maxSize' => array('max' => '10')), $p->getConstraintArray());
+		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
 				
 		$p = new \Change\Documents\Generators\Property($model, 'LCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
-		$this->assertEquals(10, $p->getDbSize());
+		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
 		
 		$p = new \Change\Documents\Generators\Property($model, 'deletedDate');
 		$p->validate();
@@ -224,6 +218,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('Anonymous', $p->getDefaultValue());
+		$this->assertEquals(array('maxSize' => array('max' => 100)), $p->getConstraintArray());
 		
 		$p = new \Change\Documents\Generators\Property($model, 'authorId');
 		$p->validate();

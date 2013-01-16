@@ -54,7 +54,7 @@ class AbstractServiceClass
  * @name ' . $model->getAbstractServiceClassName() . '
  * @method ' . $model->getDocumentClassName() . ' getNewDocumentInstance()
  * @method ' . $model->getModelClassName() . ' getDocumentModel()
- * @method ' . $model->getDocumentClassName() . ' getDocumentInstance($documentId)
+ * @method ' . $model->getDocumentClassName() . ' getDocumentInstance() getDocumentInstance(integer $documentId)
  */' . PHP_EOL;
 		}
 		

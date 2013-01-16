@@ -45,4 +45,5 @@
 	<key id="notdigits">'%value%' ne doit contenir que des chiffres</key>
 	<key id="domaininvalid">'%value%' n'est pas un nom de domaine valide.</key>
 	<key id="urlinvalid">'%value%' n'est pas une URL valide.</key>
+	<key id="notinlist">'%value%' n'est pas une valeur autorisée.</key>
 </i18n>

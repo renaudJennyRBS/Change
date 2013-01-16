@@ -47,11 +47,6 @@ class Property
 	protected $indexed;
 	
 	/**
-	 * @var string
-	 */	
-	protected $fromList;
-	
-	/**
 	 * @var boolean
 	 */
 	protected $cascadeDelete;
@@ -76,12 +71,6 @@ class Property
 	 */	
 	protected $maxOccurs;
 			
-	/**
-	 * @var string
-	 */	
-	protected $dbSize;
-
-
 	/**
 	 * @var boolean
 	 */
@@ -146,9 +135,6 @@ class Property
 						throw new \Exception('Invalid indexed attribute value ' . $name . ' = ' . $value);
 					}
 					break;
-				case "from-list":
-					$this->fromList = $value;
-					break;
 				case "cascade-delete":
 					$this->cascadeDelete = ($value === 'true');
 					break;
@@ -163,9 +149,6 @@ class Property
 					break;
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
-					break;
-				case "db-size":
-					$this->dbSize = $value;
 					break;
 				case "localized":
 					$this->localized = ($value === 'true');
@@ -307,14 +290,6 @@ class Property
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getFromList()
-	{
-		return $this->fromList;
-	}
-
-	/**
 	 * @return boolean
 	 */
 	public function getCascadeDelete()
@@ -355,14 +330,6 @@ class Property
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getDbSize()
-	{
-		return $this->dbSize;
-	}
-
-	/**
 	 * @return boolean
 	 */
 	public function getLocalized()
@@ -378,21 +345,7 @@ class Property
 		return $this->constraintArray;
 	}
 	
-	/**
-	 * Set default constraints in the property.
-	 */
-	public function setDefaultConstraints()
-	{
-		if ($this->type == 'String' && $this->dbSize !== null)
-		{
-			$params = array('max' => intval($this->dbSize));
-			if ($this->constraintArray === null) {$this->constraintArray = array();}
-			if (!isset($this->constraintArray['maxSize']))
-			{
-				$this->constraintArray['maxSize'] = $params;
-			}
-		}
-	}
+
 	
 	/**
 	 * @return string
@@ -462,14 +415,13 @@ class Property
 				if ($this->type !== null)
 				{
 					$this->type = 'String';
-					$this->dbSize = 255;
 					$this->required = true;
 				}
 				break;
 			case 'voLCID':
 			case 'LCID':
 					$this->type = 'String';
-					$this->dbSize = 10;
+					$this->constraintArray['maxSize'] = array('max' => 10);
 					$this->required = true;
 					break;
 			case 'creationDate':
@@ -481,6 +433,7 @@ class Property
 			case 'authorName':
 				$this->type = 'String';
 				$this->defaultValue = 'Anonymous';
+				$this->constraintArray['maxSize'] = array('max' => 100);
 				break;
 			case 'authorId':
 				$this->type = 'DocumentId';
@@ -534,7 +487,6 @@ class Property
 		if ($this->getParent() === null && $this->type === null)
 		{
 			$this->type = 'String';
-			$this->dbSize = 255;
 			$this->setDefaultConstraints();
 		}
 		elseif ($this->getParent() !== null && $this->type !== null)
@@ -615,6 +567,20 @@ class Property
 			elseif ($ma != -1 && $ma < $mi)
 			{
 				throw new \Exception('Invalid min-occurs max-occurs attribute value on ' . $this->model . ':' . $this->name);
+			}
+		}
+	}
+	
+	/**
+	 * Set default constraints in the property.
+	 */
+	public function setDefaultConstraints()
+	{
+		if ($this->type === 'String')
+		{
+			if ($this->constraintArray === null || !isset($this->constraintArray['maxSize']))
+			{
+				$this->constraintArray['maxSize'] = array('max' => 255);
 			}
 		}
 	}

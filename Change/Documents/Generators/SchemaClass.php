@@ -200,9 +200,18 @@ class Schema
 			{
 				continue;
 			}
-
 			$pn = $property->getName();
-			$def =  $this->schemaManager->getDocumentFieldDefinition($pn, $property->getType(), $property->getDbSize());
+			$ca = $property->getConstraintArray();
+			if ($property->getType() === 'String')
+			{
+				$typeSize = isset($ca['maxSize']['max']) ? $ca['maxSize']['max'] : 255;
+			}
+			else
+			{
+				$typeSize = null;
+			}
+			
+			$def =  $this->schemaManager->getDocumentFieldDefinition($pn, $property->getType(), $typeSize);
 			$lines[] = '		$table->addField(' . $this->generateNewFieldDef($def) .');';
 		}
 		return $lines;
