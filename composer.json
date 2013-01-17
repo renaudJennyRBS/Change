@@ -32,24 +32,29 @@
 		"rbschange/contactcard": "4.0.x-dev",
 		"rbschange/customer": "4.0.x-dev",
 		"rbschange/dashboard": "4.0.x-dev",
+		"rbschange/event": "4.0.x-dev",
 		"rbschange/filter": "4.0.x-dev",
 		"rbschange/form": "4.0.x-dev",
+		"rbschange/forums": "4.0.x-dev",
 		"rbschange/generic": "4.0.x-dev",
 		"rbschange/i18n": "4.0.x-dev",
 		"rbschange/list": "4.0.x-dev",
 		"rbschange/markergas": "4.0.x-dev",
 		"rbschange/media": "4.0.x-dev",
 		"rbschange/mysqlindexer": "4.0.x-dev",
+		"rbschange/mysqlnotif": "4.0.x-dev",
 		"rbschange/notification": "4.0.x-dev",
 		"rbschange/order": "4.0.x-dev",
 		"rbschange/payment": "4.0.x-dev",
 		"rbschange/preferences": "4.0.x-dev",
 		"rbschange/richtext": "4.0.x-dev",
 		"rbschange/rss": "4.0.x-dev",
+		"rbschange/sample": "4.0.x-dev",
 		"rbschange/seo": "4.0.x-dev",
 		"rbschange/shipping": "4.0.x-dev",
 		"rbschange/skin": "4.0.x-dev",
 		"rbschange/solrsearch": "4.0.x-dev",
+		"rbschange/statictext": "4.0.x-dev",
 		"rbschange/task": "4.0.x-dev",
 		"rbschange/theme": "4.0.x-dev",
 		"rbschange/uixul": "4.0.x-dev",
@@ -65,11 +70,11 @@
 	[
 		{
 			"type": "vcs",
-			"url": "git://github.com/franckstauffer/installers"
+			"url": "git://github.com/RBSChange/installers.git"
 		},
 		{
 			"type": "vcs",
-			"url": "git://github.com/franckstauffer/travisconfig"
+			"url": "git://github.com/RBSChange/travisconfig.git"
 		},
 		{
 			"type": "vcs",

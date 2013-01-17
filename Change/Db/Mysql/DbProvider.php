@@ -622,8 +622,8 @@ class DbProvider extends \Change\Db\DbProvider
 		foreach ($query->getParameters() as $parameter)
 		{
 			/* @var $parameter \Change\Db\Query\Expressions\Parameter */			
-			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());		
-			echo $parameter->getName(), ' = ' , var_export($value, true), PHP_EOL;
+			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());	
+			$this->logging->info($parameter->getName(). ' = ' . var_export($value, true));
 			$statment->bindValue($this->buildSQLFragment($parameter), $value);
 		}
 		$statment->execute();
