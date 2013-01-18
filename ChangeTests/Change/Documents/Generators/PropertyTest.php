@@ -38,7 +38,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name="" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid empty or spaced');
+		$this->setExpectedException('\RuntimeException', 'Invalid empty or spaced');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -48,7 +48,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name=" test" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid empty or spaced');
+		$this->setExpectedException('\RuntimeException', 'Invalid empty or spaced');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -58,7 +58,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name="id" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid property Name');
+		$this->setExpectedException('\RuntimeException', 'Invalid property Name');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -68,7 +68,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property type="id" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid property Type');
+		$this->setExpectedException('\RuntimeException', 'Invalid property Type');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -78,7 +78,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property invalid="id" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid property attribute');
+		$this->setExpectedException('\RuntimeException', 'Invalid property attribute');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -88,7 +88,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property indexed="id" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid indexed attribute value');
+		$this->setExpectedException('\RuntimeException', 'Invalid indexed attribute value');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -98,7 +98,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Property Name can not be null');
+		$this->setExpectedException('\RuntimeException', 'Property Name can not be null');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -108,7 +108,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name="test"><test /></property>');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid property children node');
+		$this->setExpectedException('\RuntimeException', 'Invalid property children node');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -118,7 +118,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name="test"><constraint /></property>');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid constraint name');
+		$this->setExpectedException('\RuntimeException', 'Invalid constraint name');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -128,7 +128,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<property name="test" localized="false" />');
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\Exception', 'Invalid attribute value true');
+		$this->setExpectedException('\RuntimeException', 'Invalid attribute value true');
 		$p->initialize($doc->documentElement);
 	}
 	
@@ -179,7 +179,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$p = new \Change\Documents\Generators\Property($model);
 		$p->initialize($doc->documentElement);
-		$this->setExpectedException('\Exception', 'Invalid min-occurs attribute');
+		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute');
 		$p->validate();
 	}
 	
@@ -263,7 +263,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p2 = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p2->setParent($p);
 		
-		$this->setExpectedException('\Exception', 'Invalid type redefinition');
+		$this->setExpectedException('\RuntimeException', 'Invalid type redefinition');
 		$p2->validateInheritance();
 	}
 	
@@ -278,7 +278,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p2->makeLocalized(true);
 		$p2->setParent($p);
 	
-		$this->setExpectedException('\Exception', 'Invalid localized attribute');
+		$this->setExpectedException('\RuntimeException', 'Invalid localized attribute');
 		$p2->validateInheritance();
 	}
 	
@@ -289,7 +289,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->makeLocalized(true);
 	
-		$this->setExpectedException('\Exception', 'Invalid localized attribute');
+		$this->setExpectedException('\RuntimeException', 'Invalid localized attribute');
 		$p->validateInheritance();
 	}
 	
@@ -302,7 +302,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->initialize($doc->documentElement);
 	
-		$this->setExpectedException('\Exception', 'Invalid min-occurs attribute on');
+		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute on');
 		$p->validateInheritance();
 	}
 	
@@ -315,7 +315,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->initialize($doc->documentElement);
 	
-		$this->setExpectedException('\Exception', 'Invalid min-occurs attribute value');
+		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute value');
 		$p->validateInheritance();
 	}
 	
@@ -328,7 +328,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->initialize($doc->documentElement);
 	
-		$this->setExpectedException('\Exception', 'Invalid max-occurs attribute on');
+		$this->setExpectedException('\RuntimeException', 'Invalid max-occurs attribute on');
 		$p->validateInheritance();
 	}
 	
@@ -341,7 +341,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->initialize($doc->documentElement);
 	
-		$this->setExpectedException('\Exception', 'Invalid max-occurs attribute value');
+		$this->setExpectedException('\RuntimeException', 'Invalid max-occurs attribute value');
 		$p->validateInheritance();
 	}
 	
@@ -354,7 +354,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
 		$p->initialize($doc->documentElement);
 	
-		$this->setExpectedException('\Exception', 'Invalid min-occurs max-occurs');
+		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs max-occurs');
 		$p->validateInheritance();
 	}
 	

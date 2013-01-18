@@ -58,6 +58,16 @@ class DocumentManager
 	}
 	
 	/**
+	 * Cleanup all documents instance
+	 */
+	public function reset()
+	{
+		$this->documentInstances = array();
+		$this->tmpRelationIds =  array();
+		$this->newInstancesCounter = 0;
+	}
+	
+	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
 	protected function getDocumentServices()
@@ -126,7 +136,7 @@ class DocumentManager
 		}
 		else
 		{
-			$document->initialize($document->getId(), static::STATE_DELETED, null);
+			$document->initialize($document->getId(), static::STATE_DELETED);
 			//Set deleted date after initialize for localized document
 			$document->setDeletedDate('now');
 		}
@@ -303,10 +313,17 @@ class DocumentManager
 		}
 		else
 		{
+			$tmpId = $document->getId();
 			$id = $dbp->getLastInsertId($ft);
-			$this->updateTemporaryRelationId($document->getId(), $id);
-			$document->initialize($id, $document->getPersistentState(), $document->getTreeName());
+			if (isset($this->tmpRelationIds[$tmpId]))
+			{
+				unset($this->documentInstances[$tmpId]);
+				$this->tmpRelationIds[$tmpId] = $id;
+			}
+			$document->initialize($id);
 		}
+		
+		$this->putInCache($id, $document);
 		return $id;
 	}
 	
@@ -400,29 +417,40 @@ class DocumentManager
 	 * @param \Change\Documents\AbstractModel $model
 	 * @param string $name
 	 * @param integer[] $ids
+	 * @throws \RuntimeException
 	 */
 	protected function insertRelation($document, $model, $name, $ids)
 	{
-		$key = 'Rel_Ins' . $model->getRootName();
-		
-		if (!isset($this->staticQueries[$key]))
+		$idsToSave = array();
+		foreach ($ids as $id)
 		{
-			$dbp = $this->getDbProvider();
-			$qb = $this->getNewStatementBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$qb->insert($fb->getDocumentRelationTable($model->getRootName()), 'document_id', 'relname', 'relorder', 'relatedid');
-			$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb), $fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
-			$this->staticQueries[$key] = $qb->insertQuery();
+			if ($id === null) {continue;}
+			$idsToSave[] = $this->resolveRelationDocumentId($id);
 		}
-		/* @var $query \Change\Db\Query\InsertQuery */
-		$query = $this->staticQueries[$key];
-		$query->bindParameter('id', $document->getId());
-		$query->bindParameter('relname', $name);
-		foreach ($ids as $order => $relatedid)
+		
+		if (count($idsToSave))
 		{
-			$query->bindParameter('order', $order);
-			$query->bindParameter('relatedid', $relatedid);
-			$query->execute();
+			$key = 'Rel_Ins' . $model->getRootName();
+			
+			if (!isset($this->staticQueries[$key]))
+			{
+				$dbp = $this->getDbProvider();
+				$qb = $this->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->insert($fb->getDocumentRelationTable($model->getRootName()), 'document_id', 'relname', 'relorder', 'relatedid');
+				$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb), $fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
+				$this->staticQueries[$key] = $qb->insertQuery();
+			}
+			/* @var $query \Change\Db\Query\InsertQuery */
+			$query = $this->staticQueries[$key];
+			$query->bindParameter('id', $document->getId());
+			$query->bindParameter('relname', $name);
+			foreach ($idsToSave as $order => $relatedid)
+			{
+				$query->bindParameter('order', $order);
+				$query->bindParameter('relatedid', $relatedid);
+				$query->execute();
+			}
 		}
 	}
 		
@@ -469,7 +497,7 @@ class DocumentManager
 		}
 	
 		$iq->execute();
-		$document->setPersistentState(static::STATE_LOADED);
+		$i18nPart->setPersistentState(static::STATE_LOADED);
 	}
 	
 	/**
@@ -681,7 +709,7 @@ class DocumentManager
 	{
 		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
-		$newDocument->initialize($this->newInstancesCounter, static::STATE_NEW, null);
+		$newDocument->initialize($this->newInstancesCounter, static::STATE_NEW);
 		$newDocument->setDefaultValues($model);
 		return $newDocument;
 	}
@@ -801,13 +829,21 @@ class DocumentManager
 	public function getDocumentInstance($documentId, \Change\Documents\AbstractModel $model = null)
 	{
 		$id = intval($documentId);
-		if ($id > 0)
+		if ($this->isInCache($id))
 		{
-			if ($this->isInCache($id))
+			$document = $this->getFromCache($id);
+			if ($document && $model)
 			{
-				return $this->getFromCache($id);
+				if ($document->getDocumentModelName() !== $model->getName() && !in_array($model->getName(), $document->getDocumentModel()->getAncestorsNames()))
+				{
+					$this->applicationServices->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $document->getDocumentModelName() . ', ' . $model->getName() .  ' Expected');
+					return null;
+				}
 			}
-			
+			return $document;
+		}
+		elseif ($id > 0)
+		{
 			$query = $this->getDocumentInfosQuery($model);
 			$query->bindParameter('id', $id);
 				
@@ -851,51 +887,38 @@ class DocumentManager
 	/**
 	 * @param integer $documentId
 	 * @return integer
-	 * @throws Exception
+	 * @throws \RuntimeException
 	 */
 	public function resolveRelationDocumentId($documentId)
 	{
-		if ($documentId < 0)
+		$id = intval($documentId);
+		if ($id < 0)
 		{
-			$documentId = isset($this->tmpRelationIds[$documentId]) ? $this->tmpRelationIds[$documentId] : $documentId;
-			if (!$this->isInCache($documentId))
+			$id = isset($this->tmpRelationIds[$id]) ? $this->tmpRelationIds[$id] : $id;
+			if (!$this->isInCache($id))
 			{
-				throw new \Exception('document ' . $documentId . ' not found');
+				throw new \RuntimeException('Cached document ' . $id . ' not found');
 			}
 		}
-		return intval($documentId);
+		return $id;
 	}
 	
 	/**
 	 * @param integer $documentId
 	 * @return \Change\Documents\AbstractDocument
-	 * @throws Exception
+	 * @throws \RuntimeException
 	 */
 	public function getRelationDocument($documentId)
 	{
-		if ($documentId < 0)
+		$id = intval(isset($this->tmpRelationIds[$documentId]) ? $this->tmpRelationIds[$documentId] : $documentId);
+		$document = $this->getDocumentInstance($id);
+		if ($id < 0 && $document === null)
 		{
-			$id = intval(isset($this->tmpRelationIds[$documentId]) ? $this->tmpRelationIds[$documentId] : $documentId);
-			if ($this->isInCache($id))
-			{
-				return $this->getFromCache($id);
-			}
-			throw new \Exception('document ' . $documentId . '/'. $id . ' not found');
+			throw new \RuntimeException('Cached document ' . $id . ' not found');
 		}
-		return $this->getDocumentInstance($documentId);
+		return $document;
 	}
 	
-	/**
-	 * @param integer $tmpId
-	 * @param integer $documentId
-	 */
-	protected function updateTemporaryRelationId($tmpId, $documentId)
-	{
-		if (isset($this->tmpRelationIds[$tmpId]))
-		{
-			$this->tmpRelationIds[$tmpId] = $documentId;
-		}
-	}	
 	
 	/**
 	 * @param integer $documentId
@@ -957,7 +980,6 @@ class DocumentManager
 	 */
 	public function getLCID()
 	{
-
 		if (count($this->LCIDStack) > 0)
 		{
 			return end($this->LCIDStack);

@@ -163,7 +163,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 </documents>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid document element name');
+		$this->setExpectedException('\RuntimeException', 'Invalid document element name');
 		$model->setXmlDocument($doc);
 	}
 	
@@ -173,7 +173,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document test="" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid empty attribute value');
+		$this->setExpectedException('\RuntimeException', 'Invalid empty attribute value');
 		$model->setXmlDocument($doc);
 	}
 
@@ -183,7 +183,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document test="test" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid attribute name');
+		$this->setExpectedException('\RuntimeException', 'Invalid attribute name');
 		$model->setXmlDocument($doc);
 	}
 	
@@ -193,7 +193,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document localized="false" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid attribute value true');
+		$this->setExpectedException('\RuntimeException', 'Invalid attribute value true');
 		$model->setXmlDocument($doc);
 	}
 	
@@ -203,7 +203,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document><property name="test" /></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid properties node name');
+		$this->setExpectedException('\RuntimeException', 'Invalid properties node name');
 		$model->setXmlDocument($doc);
 	}
 	
@@ -213,7 +213,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document><properties><prop name="test" /></properties></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Invalid property node name');
+		$this->setExpectedException('\RuntimeException', 'Invalid property node name');
 		$model->setXmlDocument($doc);
 	}
 	
@@ -223,7 +223,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$doc->loadXML('<document><properties><property name="test" /><property name="test" /></properties></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\Exception', 'Duplicate property name');
+		$this->setExpectedException('\RuntimeException', 'Duplicate property name');
 		$model->setXmlDocument($doc);
 	}
 	

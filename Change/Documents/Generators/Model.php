@@ -159,7 +159,7 @@ class Model
 							$this->importProperties($xmlSectionNode);
 							break;
 						default:
-							throw new \Exception('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName);	
+							throw new \RuntimeException('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName);	
 					}
 				}
 			}
@@ -173,7 +173,7 @@ class Model
 	{
 		if ($xmlElement->localName !== 'document')
 		{
-			throw new \Exception('Invalid document element name ' . $this);
+			throw new \RuntimeException('Invalid document element name ' . $this);
 			return;
 		}
 	
@@ -184,7 +184,7 @@ class Model
 			$tv = trim($value);
 			if ($tv == '' || $tv != $value)
 			{
-				throw new \Exception('Invalid empty attribute value for ' . $this . ' ' . $name);
+				throw new \RuntimeException('Invalid empty attribute value for ' . $this . ' ' . $name);
 			}	
 			switch ($name)
 			{
@@ -225,14 +225,14 @@ class Model
 					// just ignore it
 					break;
 				default:
-					throw new \Exception('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value);
+					throw new \RuntimeException('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value);
 					break;
 			}
 		}
 		
 		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->inject === false)
 		{
-			throw new \Exception('Invalid attribute value true expected');
+			throw new \RuntimeException('Invalid attribute value true expected');
 		}
 	}
 	
@@ -251,13 +251,13 @@ class Model
 					$property->initialize($xmlProperty);
 					if (isset($this->properties[$property->getName()]))
 					{
-						throw new \Exception('Duplicate property name ' . $this. '::'. $property->getName());
+						throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName());
 					}
 					$this->properties[$property->getName()] = $property;
 				}
 				else
 				{
-					throw new \Exception('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName);
+					throw new \RuntimeException('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName);
 				}
 			}
 		}
@@ -272,21 +272,21 @@ class Model
 		{
 			if ($this->localized !== null)
 			{
-				throw new \Exception('Invalid localized attribute ' . $this);
+				throw new \RuntimeException('Invalid localized attribute ' . $this);
 			}
 			if ($this->inject)
 			{
 				if ($this->publishable)
 				{
-					throw new \Exception('inject ' .$this . ' as invalid publishable attribute');
+					throw new \RuntimeException('inject ' .$this . ' as invalid publishable attribute');
 				}
 				if ($this->useVersion)
 				{
-					throw new \Exception('inject ' .$this . ' as invalid use-version attribute');
+					throw new \RuntimeException('inject ' .$this . ' as invalid use-version attribute');
 				}
 				if ($this->useCorrection)
 				{
-					throw new \Exception('inject ' .$this . ' as invalid use-correction attribute');
+					throw new \RuntimeException('inject ' .$this . ' as invalid use-correction attribute');
 				}
 			}
 		}
@@ -294,7 +294,7 @@ class Model
 		{
 			if ($this->inject)
 			{
-				throw new \Exception('Invalid inject attribute ' . $this);
+				throw new \RuntimeException('Invalid inject attribute ' . $this);
 			}
 			
 			$creationDate = new Property($this, 'creationDate', 'DateTime');
@@ -383,7 +383,7 @@ class Model
 		{
 			if ($this->checkAncestorUseCorrection())
 			{
-				throw new \Exception($this . ' as duplicate use-correction attribute');
+				throw new \RuntimeException($this . ' as duplicate use-correction attribute');
 			}
 		}
 		
@@ -391,7 +391,7 @@ class Model
 		{
 			if ($this->checkAncestorUseVersion())
 			{
-				throw new \Exception('Duplicate use-version attribute on ' . $this);
+				throw new \RuntimeException('Duplicate use-version attribute on ' . $this);
 			}
 		}
 		
@@ -399,7 +399,7 @@ class Model
 		{
 			if ($this->checkAncestorPublishable())
 			{
-				throw new \Exception('Duplicate publishable attribute on ' . $this);
+				throw new \RuntimeException('Duplicate publishable attribute on ' . $this);
 			}
 		}
 		
@@ -407,7 +407,7 @@ class Model
 		{
 			if ($this->getUseCorrection())
 			{
-				throw new \Exception('Invalid usage of use-correction attribute on ' . $this);
+				throw new \RuntimeException('Invalid usage of use-correction attribute on ' . $this);
 			}
 		}
 		
