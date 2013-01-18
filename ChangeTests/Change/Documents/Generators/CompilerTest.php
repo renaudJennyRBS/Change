@@ -28,7 +28,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('Change_Test_TestType', $model->getName());
 		$this->assertCount(1, $compiler->getModels());
 		
-		$this->setExpectedException('\Exception', 'Unable to load document definition');
+		$this->setExpectedException('\RuntimeException', 'Unable to load document definition');
 		$compiler->loadDocument('Change', 'test', 'test1',  __DIR__ . '/TestAssets/notfound');
 	}
 	

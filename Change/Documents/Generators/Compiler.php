@@ -48,7 +48,7 @@ class Compiler
 		}
 		else
 		{
-			throw new \Exception('Unable to load document definition : ' . $definitionPath);
+			throw new \RuntimeException('Unable to load document definition : ' . $definitionPath);
 		}
 		return $model;
 	}
