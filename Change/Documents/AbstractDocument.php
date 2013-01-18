@@ -98,7 +98,7 @@ abstract class AbstractDocument
 	{
 		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postUnserialze($this);
 	}
-
+	
 	/**
 	 * @api
 	 * @return \Change\Documents\DocumentManager
@@ -140,10 +140,13 @@ abstract class AbstractDocument
 	 * @param integer $persistentState
 	 * @param string|null $treeName
 	 */
-	public function initialize($id, $persistentState, $treeName = null)
+	public function initialize($id, $persistentState = null, $treeName = null)
 	{
 		$this->id = intval($id);
-		$this->setPersistentState($persistentState);
+		if ($persistentState!== null)
+		{
+			$this->setPersistentState($persistentState);
+		}
 		if ($treeName !== null)
 		{
 			$this->setTreeName($treeName);
