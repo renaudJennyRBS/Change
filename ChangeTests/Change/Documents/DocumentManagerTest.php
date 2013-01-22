@@ -79,8 +79,8 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	
 	public static function tearDownAfterClass()
 	{
-  		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-  		$dbp->getSchemaManager()->clearDB();
+   		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+   		$dbp->getSchemaManager()->clearDB();
 	}
 	
 	/**
@@ -89,7 +89,9 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testConstruct()
 	{
-		return \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$manager = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$manager->reset();
+		return $manager;
 	}
 	
 	/**
@@ -98,15 +100,15 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetNewDocumentInstance(DocumentManager $manager)
 	{
-		$document = $manager->getNewDocumentInstanceByModelName('Change_Generic_Folder');
-		$this->assertInstanceOf('\Change\Generic\Documents\Folder', $document);
+		$document = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $document);
 		$this->assertEquals(-1, $document->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
 		$model = $document->getDocumentModel();
 		
 		$document2 = $manager->getNewDocumentInstanceByModel($model);
-		$this->assertInstanceOf('\Change\Generic\Documents\Folder', $document2);
+		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $document2);
 		$this->assertEquals(-2, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
 		
@@ -117,39 +119,28 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 * @depends testGetNewDocumentInstance
 	 * @param \Change\Documents\DocumentManager $manager
 	 */
-	public function testAffectId(DocumentManager $manager)
+	public function testDocument(DocumentManager $manager)
 	{
-		$document = $manager->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$document = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
 		$this->assertLessThan(0, $document->getId());
 		$manager->affectId($document);
 		$this->assertGreaterThan(0, $document->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
 		$definedId = $document->getId() + 10;
-		$document2 = $manager->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$document2 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
 		$this->assertLessThan(0, $document2->getId());
 		$document2->initialize($definedId);
 		$manager->affectId($document2);
 		$this->assertEquals($definedId, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
 		
-		$document3 = $manager->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$document3 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
 		$this->assertLessThan(0, $document3->getId());
 		$manager->affectId($document3);
 		$this->assertEquals($definedId + 1, $document3->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document3->getPersistentState());
 		
-		return array($manager, $document, $document2, $document3);
-	}	
-	
-	/**
-	 * @depends testAffectId
-	 */
-	public function testInsertDocument($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Documents\AbstractDocument */
-		list($manager, $document, $document2, $document3) = $array;
 		$manager->insertDocument($document);
 		$this->assertEquals(DocumentManager::STATE_LOADED, $document->getPersistentState());
 		
@@ -158,35 +149,15 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		
 		$manager->insertDocument($document3);
 		$this->assertEquals(DocumentManager::STATE_LOADED, $document3->getPersistentState());
-		
-		return array($manager, $document);
-	}
-	
-	/**
-	 * @depends testInsertDocument
-	 */
-	public function testUpdateDocument($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Generic\Documents\Folder */
-		list($manager, $document) = $array;
-		$document->setLabel('Document Label');
-		$this->assertTrue($document->isPropertyModified('label'));
+			
+		$manager->deleteDocument($document2);
+		$this->assertEquals(DocumentManager::STATE_DELETED, $document2->getPersistentState());
+			
+		$document->setPStr('Document Label');
+		$this->assertTrue($document->isPropertyModified('pStr'));
 		
 		$manager->updateDocument($document);
-		$this->assertFalse($document->isPropertyModified('label'));
-		
-		return $array;
-	}
-	
-	/**
-	 * @depends testUpdateDocument
-	 */
-	public function testGetDocumentInstance($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Generic\Documents\Folder */
-		list($manager, $document) = $array;
+		$this->assertFalse($document->isPropertyModified('pStr'));
 		
 		$cachedDoc = $manager->getDocumentInstance($document->getId());
 		$this->assertTrue($cachedDoc === $document);
@@ -195,56 +166,21 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$manager->reset();
 		$newDoc1 = $manager->getDocumentInstance($document->getId());
 		$this->assertTrue($newDoc1 !== $document);
-		$this->assertInstanceOf('\Change\Generic\Documents\Folder', $newDoc1);
+		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $newDoc1);
 		$this->assertEquals($document->getId(), $newDoc1->getId());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $newDoc1->getPersistentState());
+			
+		$manager->loadDocument($newDoc1);
+		$this->assertEquals(DocumentManager::STATE_LOADED, $newDoc1->getPersistentState());
+		$this->assertEquals('Document Label', $newDoc1->getPStr());
 		
-		return array($manager, $newDoc1);
-	}
-	
-	/**
-	 * @depends testGetDocumentInstance
-	 */
-	public function testLoadDocument($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Generic\Documents\Folder */
-		list($manager, $document) = $array;
-	
-		$manager->loadDocument($document);
-		$this->assertEquals(DocumentManager::STATE_LOADED, $document->getPersistentState());
-		$this->assertEquals('Document Label', $document->getLabel());
-		
-		return $array;
-	}
-	
-	/**
-	 * @depends testLoadDocument
-	 */	
-	public function testMetas($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Generic\Documents\Folder */
-		list($manager, $document) = $array;
 		$metas = array('k1' => 'v1', 'k2' => array(45, 46, 50));
-		$manager->saveMetas($document, $metas);
+		$manager->saveMetas($newDoc1, $metas);
 		
-		$metasLoaded = $manager->loadMetas($document);
+		$metasLoaded = $manager->loadMetas($newDoc1);
 		$this->assertEquals($metas, $metasLoaded);
-		
-		return $array;
-	}
-
-	/**
-	 * @depends testMetas
-	 */	
-	public function testRelations($array)
-	{
-		/* @var $manager \Change\Documents\DocumentManager */
-		/* @var $document \Change\Generic\Documents\Folder */
-		list($manager, $document) = $array;
-		
-		$newDoc = $manager->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+				
+		$newDoc = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
 		$tmpId = $newDoc->getId();
 		$manager->initializeRelationDocumentId($newDoc);
 		
@@ -288,44 +224,49 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $manager
-	 * @depends testRelations
+	 * @depends testDocument
 	 */
 	public function testI18nDocument(DocumentManager $manager)
 	{
-		$page = $manager->getNewDocumentInstanceByModelName('Change_Website_Page');
-		$pageI18nPartFr = $manager->getI18nDocumentInstanceByDocument($page, 'fr_FR');
+		$localized = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
+		$localizedI18nPartFr = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
 		
-		/* @var $pageI18nPartFr \Compilation\Change\Website\Documents\PageI18n */
-		$tmpId = $page->getId();
-		$this->assertNotNull($pageI18nPartFr);
-		$this->assertEquals($tmpId, $pageI18nPartFr->getId());
-		$this->assertEquals('fr_FR', $pageI18nPartFr->getLCID());
-		$this->assertEquals(DocumentManager::STATE_NEW, $pageI18nPartFr->getPersistentState());
+		/* @var $localizedI18nPartFr \Compilation\Change\Tests\Documents\LocalizedI18n */
+		$tmpId = $localized->getId();
+		$this->assertNotNull($localizedI18nPartFr);
+		$this->assertEquals($tmpId, $localizedI18nPartFr->getId());
+		$this->assertEquals('fr_FR', $localizedI18nPartFr->getLCID());
+		$this->assertEquals(DocumentManager::STATE_NEW, $localizedI18nPartFr->getPersistentState());
 		
-		$manager->affectId($page);
-		$manager->insertDocument($page);
-		$this->assertEquals(DocumentManager::STATE_LOADED, $page->getPersistentState());
+		$manager->affectId($localized);
+		$manager->insertDocument($localized);
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localized->getPersistentState());
 		
-		$this->assertNotEquals($tmpId, $page->getId());
+		$this->assertNotEquals($tmpId, $localized->getId());
 		
-		$manager->insertI18nDocument($page, $pageI18nPartFr);
-		$this->assertEquals($page->getId(), $pageI18nPartFr->getId());
-		$this->assertEquals(DocumentManager::STATE_LOADED, $pageI18nPartFr->getPersistentState());
+		$manager->insertI18nDocument($localized, $localizedI18nPartFr);
+		$this->assertEquals($localized->getId(), $localizedI18nPartFr->getId());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedI18nPartFr->getPersistentState());
 		
+		$localizedI18nPartFr->setPLStr('Localized Label');
+		$this->assertTrue($localizedI18nPartFr->isPropertyModified('pLStr'));
+		$manager->updateI18nDocument($localized, $localizedI18nPartFr);
+		$this->assertFalse($localizedI18nPartFr->isPropertyModified('pLStr'));
 		
-		$pageI18nPartFr->setLabel('Page Label');
-		$this->assertTrue($pageI18nPartFr->isPropertyModified('label'));
-		$manager->updateI18nDocument($page, $pageI18nPartFr);
-		$this->assertFalse($pageI18nPartFr->isPropertyModified('label'));
+		$loaded = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
+		$this->assertNotSame($loaded, $localizedI18nPartFr);
 		
-		$loaded = $manager->getI18nDocumentInstanceByDocument($page, 'fr_FR');
-		$this->assertNotSame($loaded, $pageI18nPartFr);
-		
-		$this->assertEquals($page->getId(), $loaded->getId());
+		$this->assertEquals($localized->getId(), $loaded->getId());
 		$this->assertEquals('fr_FR', $loaded->getLCID());
-		$this->assertEquals('Page Label', $loaded->getLabel());
+		$this->assertEquals('Localized Label', $loaded->getPLStr());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $loaded->getPersistentState());
 		
+		$manager->deleteDocument($localized);
+		$manager->deleteI18nDocuments($localized);
+		
+		$deleted = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
+		$this->assertEquals(DocumentManager::STATE_DELETED, $deleted->getPersistentState());
+
 		return $manager;
 	}
 	
@@ -335,25 +276,25 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testPropertyDocumentIds(DocumentManager $manager)
 	{
-		$g1 = $manager->getNewDocumentInstanceByModelName('Change_Users_Group');
-		$g2 = $manager->getNewDocumentInstanceByModelName('Change_Users_Group');
+		$sd1 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
+		$sd2 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
 		
-		$user = $manager->getNewDocumentInstanceByModelName('Change_Users_User');
-		/* @var $user \Change\Users\Documents\User */
-		$user->addGroups($g1);
-		$user->addGroups($g2);
+		$basic = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		/* @var $basic \Change\Tests\Documents\Basic */
+		$basic->addPDocArr($sd1);
+		$basic->addPDocArr($sd2);
 		
-		$manager->affectId($g1);
-		$manager->insertDocument($g1);
+		$manager->affectId($sd1);
+		$manager->insertDocument($sd1);
 
-		$manager->affectId($g2);
-		$manager->insertDocument($g2);
+		$manager->affectId($sd2);
+		$manager->insertDocument($sd2);
 		
-		$manager->affectId($user);
-		$manager->insertDocument($user);
+		$manager->affectId($basic);
+		$manager->insertDocument($basic);
 		
-		$ids = $manager->getPropertyDocumentIds($user, 'groups');
-		$this->assertEquals(array($g1->getId(), $g2->getId()), $ids);
+		$ids = $manager->getPropertyDocumentIds($basic, 'pDocArr');
+		$this->assertEquals(array($sd1->getId(), $sd2->getId()), $ids);
 	}
 
 

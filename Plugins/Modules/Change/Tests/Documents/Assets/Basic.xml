@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 file:///Z:/projects/site40/Change/Documents/Assets/document.xsd" 
+	icon="test" backoffice-indexable="false" has-url="false">
+	<properties>
+		<property name="pStr" type="String" required="true"/>
+		<property name="pBool" type="Boolean" />
+		<property name="pInt" type="Integer" />
+		<property name="pFloat" type="Float" />
+		<property name="pDec" type="Decimal" />
+		<property name="pDa" type="Date" />
+		<property name="pDaTi" type="DateTime" />
+		<property name="pText" type="LongString" />
+		<property name="pJson" type="JSON" />
+		<property name="pXml" type="XML" />
+		<property name="pRt" type="RichText" />
+		<property name="plob" type="Lob" />
+		<property name="pObj" type="Object" />
+		
+		<property name="pDocId" type="DocumentId" />
+		
+		<property name="pDocInst" type="Document" document-type="Change_Tests_Localized" />
+		<property name="pDocArr" type="DocumentArray" document-type="Change_Tests_Localized"/>
+	</properties>
+</document>

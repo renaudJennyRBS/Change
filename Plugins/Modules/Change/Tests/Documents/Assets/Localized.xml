@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 file:///Z:/projects/site40/Change/Documents/Assets/document.xsd" 
+	icon="test" backoffice-indexable="false" has-url="false" localized="true">
+	<properties>
+		<property name="pStr" type="String" required="true"/>
+		<property name="pBool" type="Boolean" />
+		<property name="pInt" type="Integer" />
+		<property name="pFloat" type="Float" />
+		<property name="pDec" type="Decimal" />
+		
+		<property name="pDa" type="Date" />
+		<property name="pDaTi" type="DateTime" />
+		<property name="pText" type="LongString" />
+		<property name="pJson" type="JSON" />
+		<property name="pXml" type="XML" />
+		<property name="pRt" type="RichText" />
+		<property name="plob" type="Lob" />
+		<property name="pObj" type="Object" />
+	
+		<property name="pDocId" type="DocumentId" />	
+		<property name="pDocInst" type="Document" document-type="Change_Tests_Basic" />
+		<property name="pDocArr" type="DocumentArray" document-type="Change_Tests_Basic"/>
+			
+		<property name="pLStr" type="String" required="true" localized="true" />
+		<property name="pLBool" type="Boolean" localized="true" />
+		<property name="pLInt" type="Integer"  localized="true" />
+		<property name="pLFloat" type="Float"  localized="true" />
+		<property name="pLDec" type="Decimal"  localized="true" />
+		
+		<property name="pLDa" type="Date"  localized="true" />
+		<property name="pLDaTi" type="DateTime"  localized="true" />
+		<property name="pLText" type="LongString"  localized="true" />
+		<property name="pLJson" type="JSON"  localized="true" />
+		<property name="pLXml" type="XML"  localized="true" />
+		<property name="pLRt" type="RichText"  localized="true" />
+		<property name="pLlob" type="Lob"  localized="true" />
+		<property name="pLObj" type="Object"  localized="true" />
+		
+		<property name="pLDocId" type="DocumentId"  localized="true" />
+	</properties>
+</document>

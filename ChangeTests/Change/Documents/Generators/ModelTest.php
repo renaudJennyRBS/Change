@@ -80,12 +80,12 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(1, $model->getProperties());
 		
 		$model->validate();
-		$this->assertCount(15, $model->getProperties());
+		$this->assertCount(14, $model->getProperties());
 				
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('test'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('creationDate'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('modificationDate'));
-		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('deletedDate'));
+
 		
 		$this->assertTrue($model->getLocalized());
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('voLCID'));
@@ -242,7 +242,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 
 		$model->setXmlDocument($doc);
 		$model->validate();
-		$this->assertCount(5, $model->getProperties());
+		$this->assertCount(4, $model->getProperties());
 		$this->assertNull($model->getLocalized());
 	}
 }

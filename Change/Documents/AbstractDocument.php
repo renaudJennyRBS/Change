@@ -1,6 +1,12 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Correction;
+use Change\Documents\Interfaces\Publishable;
+use Change\Documents\Interfaces\Versionable;
+
 /**
  * @name \Change\Documents\AbstractDocument
  */
@@ -169,6 +175,25 @@ abstract class AbstractDocument
 	{
 		return $this->treeName;
 	}
+	
+	/**
+	 * @api
+	 */
+	public function reset()
+	{
+		$this->modifiedProperties = array();
+		$this->metas = null;
+		$this->modifiedMetas = false;
+		$this->propertiesErrors = null;
+		if ($this->persistentState === DocumentManager::STATE_LOADED)
+		{
+			$this->persistentState = DocumentManager::STATE_INITIALIZED;
+		}
+		elseif($this->persistentState === DocumentManager::STATE_NEW)
+		{
+			$this->setDefaultValues($this->documentModel);
+		}
+	}
 
 	/**
 	 * @param \Change\Documents\AbstractModel $documentModel
@@ -209,13 +234,32 @@ abstract class AbstractDocument
 			case DocumentManager::STATE_NEW:
 			case DocumentManager::STATE_INITIALIZED:
 			case DocumentManager::STATE_LOADING:	
-			case DocumentManager::STATE_DELETING:
 			case DocumentManager::STATE_DELETED:
 			case DocumentManager::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isDeleted()
+	{
+		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
+		return $ps === DocumentManager::STATE_DELETED;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isNew()
+	{
+		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
+		return $ps === DocumentManager::STATE_NEW;
 	}
 	
 	/**
@@ -227,28 +271,54 @@ abstract class AbstractDocument
 		return $this->id;
 	}
 	
-	/**
-	 * @return void
-	 */
-	protected final function loadDocument()
-	{
-		$this->documentManager->loadDocument($this);
-	}
+	
 	
 	protected function checkLoaded()
 	{
 		if ($this->persistentState === DocumentManager::STATE_INITIALIZED)
 		{
-			$this->loadDocument();
+			$this->documentManager->loadDocument($this);
 		}
 	}
 
 	/**
 	 * @api
 	 */
-	public final function save()
+	public function save()
 	{
-		$this->documentService->save($this);
+		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
+		if ($ps === DocumentManager::STATE_NEW)
+		{
+			$this->create();
+		}
+		else
+		{
+			$this->update();
+		}
+	}
+	
+	/**
+	 * @api
+	 */
+	public function create()
+	{
+		$this->getDocumentService()->create($this);
+	}
+	
+	/**
+	 * @api
+	 */
+	public function update()
+	{
+		$this->getDocumentService()->update($this);
+	}
+	
+	/**
+	 * @api
+	 */
+	public function delete()
+	{
+		$this->getDocumentService()->delete($this);
 	}
 	
 	/**
@@ -420,7 +490,72 @@ abstract class AbstractDocument
 	 */
 	public function hasModifiedProperties()
 	{
+		if ($this instanceof Localizable)
+		{
+			return count($this->modifiedProperties) > 0 || $this->getCurrentI18nPart()->hasModifiedProperties();
+		}
 		return count($this->modifiedProperties) > 0;
+	}
+	
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return boolean
+	 */
+	public function isPropertyModified($propertyName)
+	{
+		$property = $this->getDocumentModel()->getProperty($propertyName);
+		if ($property && $property->getLocalized() && $this instanceof Localizable)
+		{
+			return $this->getCurrentI18nPart()->isPropertyModified($propertyName);
+		}
+		return array_key_exists($propertyName, $this->modifiedProperties);
+	}
+	
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getModifiedPropertyNames()
+	{
+		if ($this instanceof Localizable)
+		{
+			$props = array_merge($this->modifiedProperties, $this->getCurrentI18nPart()->getModifiedPropertyNames());
+			return array_keys($props);
+		}
+		return array_keys($this->modifiedProperties);
+	}
+	
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return mixed
+	 */
+	public function getOldPropertyValue($propertyName)
+	{
+		$property = $this->getDocumentModel()->getProperty($propertyName);
+		if ($property && $property->getLocalized() && $this instanceof Localizable)
+		{
+			return $this->getCurrentI18nPart()->getOldPropertyValue($propertyName);
+		}
+		if (array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			return $this->modifiedProperties[$propertyName];
+		}
+		return null;
+	}
+	
+	/**
+	 * @api
+	 * @return array<string => mixed>
+	 */
+	public function getOldPropertyValues()
+	{
+		if ($this instanceof Localizable)
+		{
+			return array_merge($this->modifiedProperties, $this->getCurrentI18nPart()->getOldPropertyValues());
+		}
+		return $this->modifiedProperties;
 	}
 	
 	/**
@@ -444,16 +579,6 @@ abstract class AbstractDocument
 	}
 	
 	/**
-	 * @api
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isPropertyModified($propertyName)
-	{
-		return array_key_exists($propertyName, $this->modifiedProperties);
-	}
-	
-	/**
 	 * @param string $propertyName
 	 */
 	protected function removeOldPropertyValue($propertyName)
@@ -464,38 +589,6 @@ abstract class AbstractDocument
 		}
 	}
 	
-	/**
-	 * @api
-	 * @return string[]
-	 */
-	public function getModifiedPropertyNames()
-	{
-		return array_keys($this->modifiedProperties);
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 * @return mixed
-	 */
-	public function getOldPropertyValue($propertyName)
-	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			return $this->modifiedProperties[$propertyName];
-		}
-		return null;
-	}
-
-	/**
-	 * @api
-	 * @return array<string => mixed>
-	 */
-	public function getOldPropertyValues()
-	{
-		return $this->modifiedProperties;
-	}
-
 	/**
 	 * Called everytime a property has changed.
 	 * @param string $propertyName Name of the property that has changed.
@@ -532,7 +625,7 @@ abstract class AbstractDocument
 	{
 		if ($this->modifiedMetas)
 		{
-			$this->documentManager->saveMetas($this, $this->metas);
+			$this->documentService->saveMetas($this, $this->metas);
 			$this->modifiedMetas = false;
 		}
 	}
@@ -656,14 +749,4 @@ abstract class AbstractDocument
 	 * @param \DateTime $modificationDate
 	 */
 	abstract public function setModificationDate($modificationDate);
-	
-	/**
-	 * @return \DateTime|null
-	*/
-	abstract public function getDeletedDate();
-	
-	/**
-	 * @param \DateTime|null $deletedDate
-	 */
-	abstract public function setDeletedDate($deletedDate);
 }

@@ -124,11 +124,34 @@ class AbstractDocumentClass
 	{
 		$class = $model->getDocumentI18nClassName();
 		$code = '
-
 	/**
 	 * @var '.$class.'[]
 	 */
 	protected $i18nPartArray = array();
+	
+	/**
+	 * @var string[]
+	 */
+	protected $LCIDArray;
+	
+	/**
+	 * @param string[]
+	 */
+	public function getLCIDArray()
+	{
+		if ($this->LCIDArray === null)
+		{
+			$this->LCIDArray = $this->getDocumentManager()->getI18nDocumentLCIDArray($this);
+		}
+		foreach ($this->i18nPartArray as $LCID => $i18nPart)
+		{
+			if (!in_array($LCID, $this->LCIDArray) && $i18nPart->getPersistentState() === \Change\Documents\DocumentManager::STATE_LOADED)
+			{
+				$this->LCIDArray[] = $LCID;
+			}
+		}
+		return $this->LCIDArray;
+	}
 	 	
 	/**
 	 * @param string $LCID
@@ -136,30 +159,57 @@ class AbstractDocumentClass
 	 */
 	public function getI18nPart($LCID)
 	{
-	 	return isset($this->i18nPartArray[$LCID]) ? $this->i18nPartArray[$LCID] : null;
+		if (isset($this->i18nPartArray[$LCID]))
+		{
+			return $this->i18nPartArray[$LCID];
+		}
+		$LCIDArray = $this->getLCIDArray();
+		if (in_array($LCID, $LCIDArray))
+		{
+			$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
+			return $this->i18nPartArray[$LCID];
+		}
+	 	return null;
 	}
 	 	
 	/**
-	 * @return string
+	 * @param '.$class.'|null $i18nPart
 	 */
-	public function getCurrentLCID()
+	public function deleteI18nPart($i18nPart = null)
 	{
-		return $this->getDocumentManager()->getLCID();
+		if ($i18nPart === null)
+		{
+			foreach ($this->i18nPartArray as $LCID => $i18nPart)
+			{
+				$i18nPart->setPersistentState(\Change\Documents\DocumentManager::STATE_DELETED);
+			}
+	 		$this->LCIDArray = array();
+		}
+		elseif ($i18nPart instanceof '.$class.')
+		{
+			$LCID = $i18nPart->getLCID();
+			if ($this->i18nPartArray[$LCID] === $i18nPart)
+			{
+				$i18nPart->setPersistentState(\Change\Documents\DocumentManager::STATE_DELETED);
+				if ($this->LCIDArray !== null)
+				{
+					$this->LCIDArray = array_values(array_diff($this->LCIDArray, array($LCID)));
+				}
+			}
+		}
 	}
-	 				
+	 		 				
 	/**
 	 * @return '.$class.'
 	 */
 	public function getCurrentI18nPart()
 	{
 	 	$LCID = $this->getDocumentManager()->getLCID();
-	 	$i18nPart = $this->getI18nPart($LCID);
-	 	if ($i18nPart === null)
+	 	if (!isset($this->i18nPartArray[$LCID]))
 	 	{
-	 		$i18nPart = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
-	 		$this->i18nPartArray[$LCID] = $i18nPart;
+	 		$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
 	 	}
-		return $i18nPart;
+	 	return $this->i18nPartArray[$LCID];
 	}'. PHP_EOL;
 		
 		return $code;
@@ -191,6 +241,11 @@ class AbstractDocumentClass
 	 */
 	protected function getMembers($model, $properties)
 	{
+		$resetProperties = array();
+		if ($model->getLocalized())
+		{
+			$resetProperties[] = '		$this->getCurrentI18nPart()->reset($this->documentModel);';
+		}
 		$code = '';
 		foreach ($properties as $property)
 		{
@@ -198,13 +253,24 @@ class AbstractDocumentClass
 			if ($property->getLocalized())
 			{
 				continue;
-			}	
+			}
+			$resetProperties[] = '		$this->'.$property->getName().' = null;';
 			$code .= '
 	/**
 	 * @var '.$this->getCommentaryMemberType($property).'
 	 */	
 	private $'.$property->getName().';'. PHP_EOL;
 		}
+		
+		$code .= '		
+	/**
+	 * @api
+	 */
+	public function reset()
+	{
+		parent::reset();' . PHP_EOL. implode(PHP_EOL, $resetProperties).'
+	}'.PHP_EOL;
+
 		return $code;
 	}
 			
@@ -326,7 +392,7 @@ class AbstractDocumentClass
 	{
 		if ($type === 'Float' || $type === 'Decimal')
 		{
-			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') =< 0.0001';
+			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') <= 0.0001';
 		}
 		elseif ($type === 'Date' || $type === 'DateTime')
 		{

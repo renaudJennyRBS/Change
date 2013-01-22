@@ -91,13 +91,30 @@ abstract class AbstractI18nDocument
 				$this->clearModifiedProperties();
 			case DocumentManager::STATE_NEW:
 			case DocumentManager::STATE_LOADING:
-			case DocumentManager::STATE_DELETING:
 			case DocumentManager::STATE_DELETED:
 			case DocumentManager::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isDeleted()
+	{
+		return $this->persistentState === DocumentManager::STATE_DELETED;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isNew()
+	{
+		return $this->persistentState === DocumentManager::STATE_NEW;
 	}
 	
 	/**
@@ -225,45 +242,58 @@ abstract class AbstractI18nDocument
 		$this->clearModifiedProperties();
 	}
 	
+	/**
+	 * @api
+	 * @param \Change\Documents\AbstractModel $documentModel
+	 */
+	public function reset(\Change\Documents\AbstractModel $documentModel)
+	{
+		$this->modifiedProperties = array();
+		if ($this->persistentState === DocumentManager::STATE_LOADED)
+		{
+			$this->persistentState = DocumentManager::STATE_INITIALIZED;
+		}
+		elseif($this->persistentState === DocumentManager::STATE_NEW)
+		{
+			$this->setDefaultValues($documentModel);
+		}
+	}
+	
 	// Generic Method
 	
 	/**
+	 * @api
 	 * @return string
 	 */
 	abstract public function getLCID();
 	
 	/**
+	 * @api
 	 * @param string $LCID
 	 */
 	abstract public function setLCID($LCID);
 	
 	/**
+	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getCreationDate();
 	
 	/**
-	  * @param \DateTime $creationDate
-	*/
+	 * @api
+	 * @param \DateTime $creationDate
+	 */
 	abstract public function setCreationDate($creationDate);
 	
 	/**
+	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getModificationDate();
 	
 	/**
+	 * @api
 	 * @param \DateTime $modificationDate
-	*/
+	 */
 	abstract public function setModificationDate($modificationDate);
-	
-	/**
-	 * @return \DateTime|null
-	 */
-	abstract public function getDeletedDate();
-	
-	/**
-	 * @param \DateTime|null $deletedDate
-	 */
-	abstract public function setDeletedDate($deletedDate);
 }

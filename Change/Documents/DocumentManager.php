@@ -6,16 +6,15 @@ namespace Change\Documents;
  */
 class DocumentManager
 {
-	const STATE_NEW = 0;
-	const STATE_INITIALIZED = 1;
+	const STATE_NEW = 1;
 	
-	const STATE_LOADING = 2;
+	const STATE_INITIALIZED = 2;
 	
-	const STATE_LOADED = 3;
+	const STATE_LOADING = 3;
 	
-	const STATE_SAVING = 4;
+	const STATE_LOADED = 4;
 	
-	const STATE_DELETING = 5;
+	const STATE_SAVING = 5;
 	
 	const STATE_DELETED = 6;	
 	
@@ -28,6 +27,11 @@ class DocumentManager
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
+	
+	/**
+	 * @var array
+	 */
+	protected $cachedQueries = array();
 	
 	
 	/**
@@ -125,7 +129,19 @@ class DocumentManager
 		$service = $this->getDocumentServices()->get($model->getName());
 		$document->setDocumentContext($this, $model, $service);
 		
-		$query = $this->getDocumentInfosQuery($model);
+		$key = 'Infos_' .  $model->getRootName();
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->cachedQueries[$key] = $qb->select($fb->getDocumentColumn('model', 'd'), $fb->alias($fb->getDocumentColumn('treeName', 'f'), 'treeName'))
+			->from($fb->alias($fb->table($fb->getDocumentTable($model->getRootName())), 'd'))
+			->innerJoin($fb->alias($fb->getDocumentIndexTable(), 'f'), $fb->getDocumentColumn('id'))
+			->where($fb->logicAnd($fb->eq($fb->getDocumentColumn('id', 'd'), $fb->integerParameter('id', $qb))))
+			->query();
+			
+		}
+		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
 		
 		$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
@@ -137,8 +153,6 @@ class DocumentManager
 		else
 		{
 			$document->initialize($document->getId(), static::STATE_DELETED);
-			//Set deleted date after initialize for localized document
-			$document->setDeletedDate('now');
 		}
 	}
 
@@ -152,22 +166,21 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Db\Query\SelectQuery
+	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	protected function loadDocumentPropertiesQuery(\Change\Documents\AbstractModel $model)
-	{
+	public function loadDocument(\Change\Documents\AbstractDocument $document)
+	{		
+		$document->setPersistentState(static::STATE_LOADING);
+		$model = $document->getDocumentModel();
+		
 		$key = 'Load_' . $model->getName();
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
-			$dbp = $this->getDbProvider();
-			$sqlmap = $dbp->getSqlMapping();
 			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-
-			$docTable = $sqlmap->getDocumentTableName($model->getRootName());
-			$qb->select()->from($docTable)->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)));
-
+			$sqlmap = $qb->getSqlMapping();
+			$qb->select()->from($fb->getDocumentTable($model->getRootName()))->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+		
 			foreach ($model->getProperties() as $property)
 			{
 				/* @var $property \Change\Documents\Property */
@@ -176,59 +189,13 @@ class DocumentManager
 					$qb->addColumn($fb->alias($fb->column($sqlmap->getDocumentFieldName($property->getName())), $property->getName()));
 				}
 			}
-			$this->staticQueries[$key] = $qb->query();
+			$this->cachedQueries[$key] = $qb->query();
 		}
-		return $this->staticQueries[$key];
-	}
-	
-	/**
-	 * 
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Db\Query\SelectQuery
-	 */
-	protected function loadDocumentI18nPropertiesQuery(\Change\Documents\AbstractModel $model)
-	{
-		$key = 'LoadI18n_' . $model->getName();
-		if (!isset($this->staticQueries[$key]))
-		{
-			$dbp = $this->getDbProvider();
-			$sqlmap = $dbp->getSqlMapping();
-			$qb = $this->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-	
-			$docTable = $sqlmap->getDocumentI18nTableName($model->getRootName());
-			$qb->select()->from($docTable)
-				->where(
-					$fb->logicAnd(
-						$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
-						$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb))
-					)
-				);
-	
-			foreach ($model->getProperties() as $property)
-			{
-				/* @var $property \Change\Documents\Property */
-				if ($property->getLocalized())
-				{
-					$qb->addColumn($fb->alias($fb->column($sqlmap->getDocumentFieldName($property->getName())), $property->getName()));
-				}
-			}
-			$this->staticQueries[$key] = $qb->query();
-		}
-		return $this->staticQueries[$key];
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public function loadDocument(\Change\Documents\AbstractDocument $document)
-	{		
-		$document->setPersistentState(static::STATE_LOADING);
-		$model = $document->getDocumentModel();
-		$q = $this->loadDocumentPropertiesQuery($document->getDocumentModel());
-		$q->bindParameter('id', $document->getId());
+		/* @var $q \Change\Db\Query\SelectQuery */
+		$sq = $this->cachedQueries[$key];
+		$sq->bindParameter('id', $document->getId());
 		
-		$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
+		$propertyBag = $sq->getResults(function ($results) {return array_shift($results);});
 		if ($propertyBag)
 		{
 			$dbp = $this->getDbProvider();
@@ -255,18 +222,18 @@ class DocumentManager
 	public function loadMetas(\Change\Documents\AbstractDocument $document)
 	{
 		$key = 'Load_Metas';
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
 			$dbp = $this->getDbProvider();
 			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			
-			$this->staticQueries[$key] = $qb->select('metas')->from($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
+			$this->cachedQueries[$key] = $qb->select('metas')->from($fb->getDocumentMetasTable())
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
 				->query();
 		}
 		/* @var $query \Change\Db\Query\SelectQuery */
-		$query = $this->staticQueries[$key];
+		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
 		$row = $query->getResults(function($rows) {return array_shift($rows);});
 		if ($row !== null && $row['metas'])
@@ -283,26 +250,26 @@ class DocumentManager
 	public function affectId(\Change\Documents\AbstractDocument $document)
 	{
 		$dbp = $this->getDbProvider();
-		$sqlmap = $dbp->getSqlMapping();
+		
 		$qb = $this->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
-		
-		$ft = $sqlmap->getDocumentIndexTableName();
-		$qb->insert($ft);
+		$sqlmap = $dbp->getSqlMapping();
+		$dt = $fb->getDocumentIndexTable();
+		$qb->insert($dt);
 		$iq = $qb->insertQuery();
 		
 		if ($document->getId() > 0)
 		{
-			$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('id')));
+			$qb->addColumn($fb->getDocumentColumn('id'));
 			$qb->addValue($fb->integerParameter('id', $qb));
 			$iq->bindParameter('id', $document->getId());
 		}
 		
-		$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('model')));
+		$qb->addColumn($fb->getDocumentColumn('model'));
 		$qb->addValue($fb->parameter('model', $qb));
 		$iq->bindParameter('model', $document->getDocumentModelName());
 		
-		$qb->addColumn($fb->column($sqlmap->getDocumentFieldName('treeName')));
+		$qb->addColumn($fb->getDocumentColumn('treeName'));
 		$qb->addValue($fb->parameter('treeName', $qb));
 		$iq->bindParameter('treeName', $document->getTreeName());
 
@@ -314,7 +281,7 @@ class DocumentManager
 		else
 		{
 			$tmpId = $document->getId();
-			$id = $dbp->getLastInsertId($ft);
+			$id = $dbp->getLastInsertId($dt->getName());
 			if (isset($this->tmpRelationIds[$tmpId]))
 			{
 				unset($this->documentInstances[$tmpId]);
@@ -342,17 +309,15 @@ class DocumentManager
 		}
 		
 		$document->setPersistentState(static::STATE_SAVING);
-		
-		$dbp = $this->getDbProvider();
-		$sqlmap = $dbp->getSqlMapping();
+				
 		$qb = $this->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
-
+		$sqlmap = $qb->getSqlMapping();
 		$model = $document->getDocumentModel();		
-		$docTable = $sqlmap->getDocumentTableName($model->getRootName());
+
 		$relations = array();
-		
-		$qb->insert($docTable);
+	
+		$qb->insert($fb->getDocumentTable($model->getRootName()));
 		$iq = $qb->insertQuery();
 		foreach ($model->getProperties() as $name => $property)
 		{
@@ -364,7 +329,7 @@ class DocumentManager
 					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
 				}
 				$dbType = $sqlmap->getDbScalarType($property->getType());
-				$qb->addColumn($fb->column($sqlmap->getDocumentFieldName($name)));
+				$qb->addColumn($fb->getDocumentColumn($name));
 				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
 				$iq->bindParameter($name, $property->getValue($document));
 			}
@@ -390,23 +355,22 @@ class DocumentManager
 	{
 		$key = 'Rel_Del' . $model->getRootName();
 	
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
-			$dbp = $this->getDbProvider();
 			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getDocumentRelationTable($model->getRootName()));
 			$qb->where(
 				$fb->logicAnd(
-					$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
+					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
 					$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
 				)
 			);
-			$this->staticQueries[$key] = $qb->deleteQuery();
+			$this->cachedQueries[$key] = $qb->deleteQuery();
 		}
 	
 		/* @var $query \Change\Db\Query\DeleteQuery */
-		$query = $this->staticQueries[$key];
+		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
 		$query->bindParameter('relname', $name);
 		$query->execute();
@@ -432,17 +396,17 @@ class DocumentManager
 		{
 			$key = 'Rel_Ins' . $model->getRootName();
 			
-			if (!isset($this->staticQueries[$key]))
+			if (!isset($this->cachedQueries[$key]))
 			{
-				$dbp = $this->getDbProvider();
 				$qb = $this->getNewStatementBuilder();
 				$fb = $qb->getFragmentBuilder();
-				$qb->insert($fb->getDocumentRelationTable($model->getRootName()), 'document_id', 'relname', 'relorder', 'relatedid');
-				$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb), $fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
-				$this->staticQueries[$key] = $qb->insertQuery();
+				$qb->insert($fb->getDocumentRelationTable($model->getRootName()), $fb->getDocumentColumn('id'), 'relname', 'relorder', 'relatedid');
+				$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb), 
+					$fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
+				$this->cachedQueries[$key] = $qb->insertQuery();
 			}
 			/* @var $query \Change\Db\Query\InsertQuery */
-			$query = $this->staticQueries[$key];
+			$query = $this->cachedQueries[$key];
 			$query->bindParameter('id', $document->getId());
 			$query->bindParameter('relname', $name);
 			foreach ($idsToSave as $order => $relatedid)
@@ -474,15 +438,12 @@ class DocumentManager
 		}
 		$i18nPart->setPersistentState(static::STATE_SAVING);
 		
-		$dbp = $this->getDbProvider();
-		$sqlmap = $dbp->getSqlMapping();
 		$qb = $this->getNewStatementBuilder();
+		$sqlmap = $qb->getSqlMapping();
 		$fb = $qb->getFragmentBuilder();
-	
-		$model = $document->getDocumentModel();
-		$docTable = $sqlmap->getDocumentI18nTableName($model->getRootName());
-	
-		$qb->insert($docTable);
+		
+		$model = $document->getDocumentModel();	
+		$qb->insert($fb->getDocumentI18nTable($model->getRootName()));
 		$iq = $qb->insertQuery();
 		foreach ($model->getProperties() as $name => $property)
 		{
@@ -490,7 +451,7 @@ class DocumentManager
 			if ($property->getLocalized() || $name === 'id')
 			{
 				$dbType = $sqlmap->getDbScalarType($property->getType());
-				$qb->addColumn($fb->column($sqlmap->getDocumentFieldName($name)));
+				$qb->addColumn($fb->getDocumentColumn($name));
 				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
 				$iq->bindParameter($name, $property->getValue($document));
 			}
@@ -512,15 +473,12 @@ class DocumentManager
 		
 		$document->setPersistentState(static::STATE_SAVING);
 		
-		$dbp = $this->getDbProvider();
-		$sqlmap = $dbp->getSqlMapping();
 		$qb = $this->getNewStatementBuilder();
+		$sqlmap = $qb->getSqlMapping();
 		$fb = $qb->getFragmentBuilder();
 		$model = $document->getDocumentModel();
-
-		$docTable = $sqlmap->getDocumentTableName($model->getRootName());
 		
-		$qb->update($docTable);
+		$qb->update($fb->getDocumentTable($model->getRootName()));
 		$iq = $qb->updateQuery();
 		$execute = false;
 		$relations = array();
@@ -535,7 +493,7 @@ class DocumentManager
 					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
 				}
 				$dbType = $sqlmap->getDbScalarType($property->getType());
-				$qb->assign($fb->column($sqlmap->getDocumentFieldName($name)), $fb->typedParameter($name, $dbType, $qb));
+				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
 				$iq->bindParameter($name, $property->getValue($document));
 				$execute = true;
 			}
@@ -575,9 +533,8 @@ class DocumentManager
 		
 		$i18nPart->setPersistentState(static::STATE_SAVING);
 		
-		$dbp = $this->getDbProvider();
-		$sqlmap = $dbp->getSqlMapping();
 		$qb = $this->getNewStatementBuilder();
+		$sqlmap = $qb->getSqlMapping();
 		$fb = $qb->getFragmentBuilder();
 		$model = $document->getDocumentModel();
 
@@ -591,7 +548,7 @@ class DocumentManager
 			if ($i18nPart->isPropertyModified($name) && $property->getLocalized())
 			{
 				$dbType = $sqlmap->getDbScalarType($property->getType());
-				$qb->assign($fb->column($sqlmap->getDocumentFieldName($name)), $fb->typedParameter($name, $dbType, $qb));
+				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
 				$iq->bindParameter($name, $property->getValue($i18nPart));
 				$execute = true;
 			}
@@ -614,18 +571,17 @@ class DocumentManager
 	public function saveMetas(\Change\Documents\AbstractDocument $document, $metas)
 	{
 		$key = 'Delete_Metas';
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
-			$dbp = $this->getDbProvider();
 			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			
-			$this->staticQueries[$key] = $qb->delete($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
+			$this->cachedQueries[$key] = $qb->delete($fb->getDocumentMetasTable())
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
 				->deleteQuery();
 		}
 		/* @var $deleteQuery \Change\Db\Query\DeleteQuery */
-		$deleteQuery = $this->staticQueries[$key];
+		$deleteQuery = $this->cachedQueries[$key];
 		$deleteQuery->bindParameter('id', $document->getId());
 		$deleteQuery->execute();
 		if (!is_array($metas) || count($metas) == 0)
@@ -635,18 +591,17 @@ class DocumentManager
 		
 		
 		$key = 'Insert_Metas';
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
-			$dbp = $this->getDbProvider();
 			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 				
-			$this->staticQueries[$key] = $qb->insert($fb->getDocumentMetasTable(), 'document_id', 'metas', 'lastupdate')
+			$this->cachedQueries[$key] = $qb->insert($fb->getDocumentMetasTable(), $fb->getDocumentColumn('id'), 'metas', 'lastupdate')
 				->addValues($fb->integerParameter('id', $qb), $fb->typedParameter('metas', \Change\Db\ScalarType::TEXT, $qb), $fb->dateTimeparameter('lastupdate', $qb))
 				->insertQuery();
 		}
 		/* @var $insertQuery \Change\Db\Query\InsertQuery */
-		$insertQuery = $this->staticQueries[$key];
+		$insertQuery = $this->cachedQueries[$key];
 		$insertQuery->bindParameter('id', $document->getId());
 		$insertQuery->bindParameter('metas', json_encode($metas));
 		$insertQuery->bindParameter('lastupdate', new \DateTime());
@@ -664,22 +619,21 @@ class DocumentManager
 		$model = $document->getDocumentModel();
 		$key = 'Rel_' . $model->getRootName();
 		
-		if (!isset($this->staticQueries[$key]))
+		if (!isset($this->cachedQueries[$key]))
 		{
-			$dbp = $this->getDbProvider();
 			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->alias($fb->column('relatedid'), 'id'))->from($fb->getDocumentRelationTable($model->getRootName()))
 				->where(
 					$fb->logicAnd(
-						$fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)),
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
 						$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
 					))
 				->orderAsc($fb->column('relorder'));
-			$this->staticQueries[$key] = $qb->query();
+			$this->cachedQueries[$key] = $qb->query();
 		}
 		/* @var $query \Change\Db\Query\SelectQuery */
-		$query = $this->staticQueries[$key];
+		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
 		$query->bindParameter('relname', $propertyName);
 		$result = $query->getResults(function ($rows) {return array_map(function ($row) {return $row['id'];}, $rows);});
@@ -752,7 +706,38 @@ class DocumentManager
 		if ($document->getPersistentState() != static::STATE_NEW)
 		{
 			$i18nPart->setPersistentState(static::STATE_LOADING);
-			$q = $this->loadDocumentI18nPropertiesQuery($document->getDocumentModel());
+			$key = 'LoadI18n_' . $model->getName();
+			if (!isset($this->cachedQueries[$key]))
+			{
+				
+				$qb = $this->getNewQueryBuilder();
+				$fb = $qb->getFragmentBuilder();
+			
+				$qb->select()->from($fb->getDocumentI18nTable($model->getRootName()));
+				
+				foreach ($model->getProperties() as $property)
+				{
+					/* @var $property \Change\Documents\Property */
+					if ($property->getLocalized())
+					{
+						$qb->addColumn($fb->alias($fb->getDocumentColumn($property->getName()), $property->getName()));
+					}
+				}
+				
+				$qb->where(
+						$fb->logicAnd(
+							$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
+							$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb)
+							)
+						)
+					);
+		
+				$this->cachedQueries[$key] = $qb->query();
+			}
+			
+			/* @var $q \Change\Db\Query\SelectQuery */
+			$q = $this->cachedQueries[$key];
+			
 			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);		
 			$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
 			if ($propertyBag)
@@ -785,42 +770,41 @@ class DocumentManager
 		}
 		return $i18nPart;
 	}
-		
-	protected $staticQueries = array();
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Db\Query\SelectQuery
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return string[]
 	 */
-	protected function getDocumentInfosQuery(\Change\Documents\AbstractModel $model = null)
+	public function getI18nDocumentLCIDArray(\Change\Documents\AbstractDocument $document)
 	{
-		$key = 'Infos_' . ($model ? $model->getRootName() : 'std');
-		if (!isset($this->staticQueries[$key]))
+		if ($document->getId() <= 0)
 		{
-			$ft = $this->getDbProvider()->getSqlMapping()->getDocumentIndexTableName();
-			$qb = $this->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-				
-			if ($model)
-			{
-				$dt = $this->getDbProvider()->getSqlMapping()->getDocumentTableName($model->getRootName());
-				$this->staticQueries[$key] = $qb->select($fb->column('document_model', 'd'), $fb->alias($fb->column('tree_name', 'f'), 'treeName'))
-				->from($fb->alias($fb->table($dt), 'd'))
-				->innerJoin($fb->alias($fb->table($ft), 'f'), $fb->column('document_id'))
-				->where($fb->logicAnd($fb->eq($fb->column('document_id', 'd'), $fb->integerParameter('id', $qb))))
-				->query();
-			}
-			else
-			{
-				$this->staticQueries[$key] = $qb->select('document_model', $fb->alias($fb->column('tree_name'), 'treeName'))
-				->from($ft)
-				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('id', $qb)))
-				->query();
-			}
+			return array();
 		}
-		return $this->staticQueries[$key];
+		
+		$model = $document->getDocumentModel();
+		$key = 'LCIDs_' . $model->getRootName();
+		
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();	
+			$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('LCID'), 'lc'))
+				->from($fb->getDocumentI18nTable($model->getRootName()))
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+				->query();
+		}
+		
+		/* @var $q \Change\Db\Query\SelectQuery */
+		$q = $this->cachedQueries[$key];
+		$q->bindParameter('id', $document->getId());
+		$rows = $q->getResults();
+		return array_map(function ($row) {return $row['lc'];}, $rows);
 	}
+		
+
 	
+
 	/**
 	 * @param integer $documentId
 	 * @param \Change\Documents\AbstractModel $model
@@ -844,13 +828,38 @@ class DocumentManager
 		}
 		elseif ($id > 0)
 		{
-			$query = $this->getDocumentInfosQuery($model);
+			$key = 'Infos_' . ($model ? $model->getRootName() : 'std');
+			if (!isset($this->cachedQueries[$key]))
+			{
+				$qb = $this->getNewQueryBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$ft = $fb->getDocumentIndexTable();
+							
+				if ($model)
+				{
+					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model', 'd'), 'model'), $fb->alias($fb->getDocumentColumn('treeName', 'f'), 'treeName'))
+					->from($fb->alias($fb->getDocumentTable($model->getRootName()), 'd'))
+					->innerJoin($fb->alias($ft, 'f'), $fb->getDocumentColumn('id'))
+					->where($fb->logicAnd($fb->eq($fb->getDocumentColumn('id', 'd'), $fb->integerParameter('id', $qb))))
+					->query();
+				}
+				else
+				{
+					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'), $fb->alias($fb->getDocumentColumn('treeName'), 'treeName'))
+					->from($ft)
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+					->query();
+				}
+			}
+			/* @var $query \Change\Db\Query\SelectQuery */
+			$query =  $this->cachedQueries[$key];
+		
 			$query->bindParameter('id', $id);
 				
 			$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
 			if ($constructorInfos)
 			{
-				$modelName = $constructorInfos['document_model'];
+				$modelName = $constructorInfos['model'];
 				$treeName = $constructorInfos['treeName'];
 				$documentModel = $this->getModelManager()->getModelByName($modelName);
 				if ($documentModel !== null)
@@ -964,6 +973,92 @@ class DocumentManager
 	protected function getI18nDocumentClassFromModel($model)
 	{
 		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName().'I18n'));
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param array $backupData
+	 */
+	public function insertDocumentBackup(\Change\Documents\AbstractDocument $document, array $backupData)
+	{
+		$key = 'insertDocumentBackup';
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->cachedQueries[$key] = $qb->insert($fb->getDocumentDeletedTable(), $fb->getDocumentColumn('id'), $fb->getDocumentColumn('model'), 'deletiondate', 'datas')
+				->addValues($fb->integerParameter('id', $qb), $fb->parameter('model', $qb), $fb->dateTimeparameter('deletiondate', $qb), 
+				$fb->typedParameter('datas', \Change\Db\ScalarType::TEXT, $qb))->insertQuery();
+		}
+		
+		$iq = $this->cachedQueries[$key];
+		/* @var $iq \Change\Db\Query\InsertQuery */
+		$iq->bindParameter('id', $document->getId());
+		$iq->bindParameter('model', $document->getDocumentModelName());
+		$iq->bindParameter('deletiondate', new \DateTime());
+		$iq->bindParameter('datas', json_encode($backupData));
+		return $iq->execute();
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function deleteDocument(\Change\Documents\AbstractDocument $document)
+	{
+		if ($document->getPersistentState() != static::STATE_LOADED)
+		{
+			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState());
+		}
+		$model = $document->getDocumentModel();
+		$key = 'delete_' . $model->getRootName();
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->cachedQueries[$key] = $qb->delete($fb->getDocumentTable($model->getRootName()))
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+			    ->deleteQuery();
+		}
+	
+		$dq = $this->cachedQueries[$key];
+		
+		/* @var $dq \Change\Db\Query\DeleteQuery */
+		$dq->bindParameter('id', $document->getId());
+		$rowCount = $dq->execute();
+		$document->setPersistentState(static::STATE_DELETED);
+	}
+	
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function deleteI18nDocuments(\Change\Documents\AbstractDocument $document)
+	{
+		if ($document->getPersistentState() != static::STATE_DELETED)
+		{
+			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState());
+		}
+		
+		$model = $document->getDocumentModel();
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$key = 'deleteI18n_' . $model->getRootName();
+			if (!isset($this->cachedQueries[$key]))
+			{
+				$qb = $this->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$this->cachedQueries[$key] = $qb->delete($fb->getDocumentI18nTable($model->getRootName()))
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+				    ->deleteQuery();
+			}
+		
+			$dq = $this->cachedQueries[$key];
+			
+			/* @var $dq \Change\Db\Query\DeleteQuery */
+			$dq->bindParameter('id', $document->getId());
+			$rowCount = $dq->execute();		
+			$document->deleteI18nPart();
+		}
 	}
 	
 	// Working lang.
