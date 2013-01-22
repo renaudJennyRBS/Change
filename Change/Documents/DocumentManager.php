@@ -1001,6 +1001,38 @@ class DocumentManager
 	}
 	
 	/**
+	 * @param integer $documentId
+	 * @return array|null
+	 */
+	public function getBackupData($documentId)
+	{
+		$key = 'getBackupData';
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'), 'deletiondate', 'datas')
+				->from($fb->getDocumentDeletedTable())
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+				->query();
+		}
+	
+		$sq = $this->cachedQueries[$key];
+		/* @var $sq \Change\Db\Query\SelectQuery */
+		$sq->bindParameter('id', $documentId);
+		$row = $sq->getFirstResult(function($row) use ($sq) {return $sq->convertRow($row, array('deletiondate' => \Change\Db\ScalarType::DATETIME));});
+		if ($row !== null)
+		{
+			$datas = json_decode($row['datas'], true);
+			$datas['id'] = intval($documentId);
+			$datas['model'] = $row['model'];
+			$datas['deletiondate'] = $row['deletiondate'];
+			return $datas;
+		}
+		return null;
+	}	
+	
+	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 */
 	public function deleteDocument(\Change\Documents\AbstractDocument $document)

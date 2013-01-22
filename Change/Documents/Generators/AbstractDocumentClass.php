@@ -210,6 +210,76 @@ class AbstractDocumentClass
 	 		$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
 	 	}
 	 	return $this->i18nPartArray[$LCID];
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isDeleted()
+	{
+		return $this->getCurrentI18nPart()->isDeleted();
+	}			
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isNew()
+	{
+		return $this->getCurrentI18nPart()->isNew();
+	}
+			
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		return parent::hasModifiedProperties() || $this->getCurrentI18nPart()->hasModifiedProperties();
+	}
+			
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return boolean
+	 */
+	public function isPropertyModified($propertyName)
+	{
+		return parent::isPropertyModified($propertyName) || $this->getCurrentI18nPart()->isPropertyModified($propertyName);
+	}
+			
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getModifiedPropertyNames()
+	{
+		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentI18nPart()->getModifiedPropertyNames());
+	}
+			
+	/**
+	 * @api
+	 * @param string $propertyName
+	 * @return mixed
+	 */
+	public function getOldPropertyValue($propertyName)
+	{
+		$i18nPart = $this->getCurrentI18nPart();
+		if ($i18nPart->isPropertyModified($propertyName))
+		{
+			return $i18nPart->getOldPropertyValue($propertyName);
+		}
+		return parent::getOldPropertyValue($propertyName);
+	}
+			
+	/**
+	 * @api
+	 * @return array<string => mixed>
+	 */
+	public function getOldPropertyValues()
+	{
+		return array_merge(parent::getOldPropertyValues(), $this->getCurrentI18nPart()->getOldPropertyValues());
 	}'. PHP_EOL;
 		
 		return $code;

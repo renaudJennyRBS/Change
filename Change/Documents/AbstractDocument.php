@@ -248,8 +248,7 @@ abstract class AbstractDocument
 	 */
 	public function isDeleted()
 	{
-		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
-		return $ps === DocumentManager::STATE_DELETED;
+		return $this->persistentState === DocumentManager::STATE_DELETED;
 	}
 	
 	/**
@@ -258,8 +257,7 @@ abstract class AbstractDocument
 	 */
 	public function isNew()
 	{
-		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
-		return $ps === DocumentManager::STATE_NEW;
+		return $this->persistentState === DocumentManager::STATE_NEW;
 	}
 	
 	/**
@@ -286,8 +284,7 @@ abstract class AbstractDocument
 	 */
 	public function save()
 	{
-		$ps = ($this instanceof Localizable) ? $this->getCurrentI18nPart()->getPersistentState() : $this->getPersistentState();
-		if ($ps === DocumentManager::STATE_NEW)
+		if ($this->isNew())
 		{
 			$this->create();
 		}
@@ -490,10 +487,6 @@ abstract class AbstractDocument
 	 */
 	public function hasModifiedProperties()
 	{
-		if ($this instanceof Localizable)
-		{
-			return count($this->modifiedProperties) > 0 || $this->getCurrentI18nPart()->hasModifiedProperties();
-		}
 		return count($this->modifiedProperties) > 0;
 	}
 	
@@ -504,11 +497,6 @@ abstract class AbstractDocument
 	 */
 	public function isPropertyModified($propertyName)
 	{
-		$property = $this->getDocumentModel()->getProperty($propertyName);
-		if ($property && $property->getLocalized() && $this instanceof Localizable)
-		{
-			return $this->getCurrentI18nPart()->isPropertyModified($propertyName);
-		}
 		return array_key_exists($propertyName, $this->modifiedProperties);
 	}
 	
@@ -518,11 +506,6 @@ abstract class AbstractDocument
 	 */
 	public function getModifiedPropertyNames()
 	{
-		if ($this instanceof Localizable)
-		{
-			$props = array_merge($this->modifiedProperties, $this->getCurrentI18nPart()->getModifiedPropertyNames());
-			return array_keys($props);
-		}
 		return array_keys($this->modifiedProperties);
 	}
 	
@@ -533,11 +516,6 @@ abstract class AbstractDocument
 	 */
 	public function getOldPropertyValue($propertyName)
 	{
-		$property = $this->getDocumentModel()->getProperty($propertyName);
-		if ($property && $property->getLocalized() && $this instanceof Localizable)
-		{
-			return $this->getCurrentI18nPart()->getOldPropertyValue($propertyName);
-		}
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
 			return $this->modifiedProperties[$propertyName];
@@ -551,10 +529,6 @@ abstract class AbstractDocument
 	 */
 	public function getOldPropertyValues()
 	{
-		if ($this instanceof Localizable)
-		{
-			return array_merge($this->modifiedProperties, $this->getCurrentI18nPart()->getOldPropertyValues());
-		}
 		return $this->modifiedProperties;
 	}
 	

@@ -292,6 +292,10 @@ abstract class AbstractService
 			{
 				$datas[$propertyName] = array($val->getId(), $val->getDocumentModelName());
 			}
+			elseif ($val instanceof \DateTime)
+			{
+				$datas[$propertyName] = $val->format('c');
+			}
 			elseif (is_array($val))
 			{
 				foreach ($val as $doc)

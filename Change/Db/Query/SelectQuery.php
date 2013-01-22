@@ -258,19 +258,73 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Closure|array $converter
-	 * @return multitype:
+	 * @param \Closure|array $rowsConverter
+	 * @return array rows
 	 */
-	public function getResults($converter = null)
+	public function getResults($rowsConverter = null)
 	{
 		$results = $this->dbProvider->getQueryResultsArray($this);	
-		if ($converter === null)
+		return ($rowsConverter === null) ? $results : call_user_func($rowsConverter, $results);
+	}
+	
+	/**
+	 * @api
+	 * @param \Closure|array $rowConverter
+	 * @return array row
+	 */
+	public function getFirstResult($rowConverter = null)
+	{
+		$this->maxResults = 1;
+		$rows = $this->getResults(null);
+		if (count($rows))
 		{
-			return $results;
+			return ($rowConverter === null) ? $rows[0] :  call_user_func($rowConverter, $rows[0]);
 		}
-		else
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param array $results
+	 * @param array $scalarTypes
+	 * @return array
+	 */
+	public function convertRows($results, $scalarTypes = array())
+	{
+		if (is_array($results))
 		{
-			return call_user_func($converter, $results);
+			$rowConverter = $this;
+			return array_map(function($row) use ($rowConverter, $scalarTypes) {return $rowConverter->convertRow($row, $scalarTypes);}, $results);
 		}
+		return null;
+	}
+	
+	/**
+	 * @param array $row
+	 * @param array $scalarTypes
+	 * @return array
+	 */
+	public function convertRow($row, $scalarTypes = array())
+	{
+		if (is_array($row))
+		{
+			$result = array();
+			foreach ($row as $name => $dbValue)
+			{
+				$result[$name] = (isset($scalarTypes[$name])) ?  $this->getValue($dbValue, $scalarTypes[$name]) : $dbValue;
+			}
+			return $result;
+		}
+		return null;
+	}
+	
+	/**
+	 * @param mixed $dbValue
+	 * @param integer $scalarType \Change\Db\ScalarType::*
+	 * @return mixed
+	 */
+	public function getValue($dbValue, $scalarType = \Change\Db\ScalarType::STRING)
+	{
+		return $this->dbProvider->dbToPhp($dbValue, $scalarType);
 	}
 }

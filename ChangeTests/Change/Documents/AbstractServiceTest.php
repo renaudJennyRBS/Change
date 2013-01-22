@@ -80,8 +80,8 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 	
 	public static function tearDownAfterClass()
 	{
-//   		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-//   		$dbp->getSchemaManager()->clearDB();
+   		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+   		$dbp->getSchemaManager()->clearDB();
 	}
 	
 	/**

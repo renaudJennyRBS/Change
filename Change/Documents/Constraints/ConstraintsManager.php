@@ -33,7 +33,6 @@ class ConstraintsManager
 		
 		$this->defaultConstraint = array(
 			'domain' => '\Change\Documents\Constraints\Domain',
-			'emails' => '\Change\Documents\Constraints\Emails',
 			'url' => '\Change\Documents\Constraints\Url',
 			'unique' => '\Change\Documents\Constraints\Unique',
 			'enum' => '\Change\Documents\Constraints\Enum');
@@ -46,23 +45,48 @@ class ConstraintsManager
 	 */
 	public function getByName($name, $params = array())
 	{
-
-		if (method_exists($this, $name))
-		{
-			return call_user_func(array($this, $name), $params);
-		}
-		elseif (isset($this->defaultConstraint[$name]))
+		if ($this->hasDefaultConstraint($name))
 		{
 			$className = $this->defaultConstraint[$name];
-			return new $className($params);
+			if (class_exists($className))
+			{
+				$constraint = new $className($params);
+				if ($constraint instanceof \Zend\Validator\ValidatorInterface)
+				{
+					return $constraint;
+				}
+			}
+			
+		}
+		elseif (method_exists($this, $name))
+		{
+			$constraint = call_user_func(array($this, $name), $params);
+			if ($constraint instanceof \Zend\Validator\ValidatorInterface)
+			{
+				return $constraint;
+			}
 		}
 		throw new \InvalidArgumentException('Constraint '. $name . ' not found');
 	}
 	
-	
+	/**
+	 * @api 
+	 * @param string $name
+	 * @param string $class
+	 */
 	public function registerConstraint($name, $class)
 	{
 		$this->defaultConstraint[$name] = $class;
+	}
+	
+	/**
+	 * @api 
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function hasDefaultConstraint($name)
+	{
+		return isset($this->defaultConstraint[$name]);
 	}
 	
 
