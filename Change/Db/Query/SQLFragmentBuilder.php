@@ -495,6 +495,15 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getDocumentDeletedTable()
+	{
+		return $this->table($this->sqlMapping->getDocumentDeletedTable());
+	}
+	
+	/**
+	 * @api
 	 * @param string $rootDocumentName
 	 * @return \Change\Db\Query\Expressions\Table
 	 */

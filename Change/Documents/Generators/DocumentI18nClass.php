@@ -113,16 +113,32 @@ class DocumentI18nClass
 	 */	
 	protected function getMembers($model, $properties)
 	{
+		$resetProperties = array();
 		$code = '';
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
+			if ($property->getName() !== 'LCID')
+			{
+				$resetProperties[] = '		$this->'.$property->getName().' = null;';
+			}
 			$code .= '
 	/**
 	 * @var '.$this->getCommentaryMemberType($property).'
 	 */	
 	private $'.$property->getName().';'. PHP_EOL;
 		}
+		
+		$code .= '
+	/**
+	 * @api
+	 * @param \Change\Documents\AbstractModel $documentModel
+	 */
+	public function reset(\Change\Documents\AbstractModel $documentModel)
+	{
+		parent::reset($documentModel);' . PHP_EOL. implode(PHP_EOL, $resetProperties).'
+	}'.PHP_EOL;
+		
 		return $code;
 	}
 
@@ -147,7 +163,7 @@ class DocumentI18nClass
 	{
 		if ($type === 'Float' || $type === 'Decimal')
 		{
-			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') =< 0.0001';
+			return 'abs(floatval('.$oldVarName.') - '.$newVarName.') <= 0.0001';
 		}
 		elseif ($type === 'Date' || $type === 'DateTime')
 		{

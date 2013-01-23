@@ -77,132 +77,107 @@ abstract class AbstractService
 	 */
 	public function propertyChanged($document, $propertyName)
 	{
-		
- 	}
+	}
 	
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public function save($document)
+	public function create(\Change\Documents\AbstractDocument $document)
 	{
-		if ($document instanceof \Change\Documents\AbstractDocument)
+		$dm = $document->getDocumentManager();
+		$tm = $this->applicationServices->getTransactionManager();
+		$persistentState = $document->getPersistentState();
+		try
 		{
-			try
+			$tm->begin();
+			if ($document instanceof \Change\Documents\Interfaces\Localizable)
 			{
-				$this->applicationServices->getTransactionManager()->begin();
-
-				$isNew = ($document->getPersistentState() == DocumentManager::STATE_NEW);
-				if ($document instanceof \Change\Documents\Interfaces\Localizable)
+				$i18nPart = $document->getCurrentI18nPart();
+				if ($i18nPart->getPersistentState() !== DocumentManager::STATE_NEW)
 				{
-					if ($isNew)
-					{
-						$this->insertLocalized($document);
-					}
-					else
-					{
-						$this->updateLocalized($document);
-					}
+					throw new \LogicException('Document is not new');
 				}
-				else
+				if ($i18nPart->getCreationDate() === null)
 				{
-					if ($isNew)
-					{
-						$this->insert($document);
-					}
-					else
-					{
-						$this->update($document);
-					}
+					$i18nPart->setCreationDate(new \DateTime());
 				}
-				$this->applicationServices->getTransactionManager()->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $this->applicationServices->getTransactionManager()->rollBack($e);
-			}
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Invalid document');
-		}
-	}
-	
-	protected function insert(\Change\Documents\AbstractDocument $document)
-	{
-		$dm = $document->getDocumentManager();
-		if ($document->isValid())
-		{
-			$dm->affectId($document);
-			$document->setModificationDate(new \DateTime());
-			$dm->insertDocument($document);
-		}
-		else
-		{
-			throw new \LogicException('Document is not valid');
-		}
-	}
-	
-	protected function update(\Change\Documents\AbstractDocument $document)
-	{
-		$dm = $document->getDocumentManager();
-		if ($document->isValid())
-		{
-			if ($document->hasModifiedProperties())
-			{
-				$document->setModificationDate(new \DateTime());
-			}
-			$dm->updateDocument($document);
-		}
-		else
-		{
-			throw new \LogicException('Document is not valid');
-		}
-	}
-	
-	protected function insertLocalized(\Change\Documents\AbstractDocument $document)
-	{
-		$dm = $document->getDocumentManager();
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{	
-			if ($document->getVoLCID() === null) {$document->setVoLCID($dm->getLCID());}
-			try 
-			{
-				$dm->pushLCID($document->getVoLCID());
+				$i18nPart->setModificationDate(new \DateTime());
+				if ($persistentState === DocumentManager::STATE_NEW)
+				{
+					$document->setVoLCID($dm->getLCID());
+				}
+				
 				if ($document->isValid())
 				{
-					$dm->affectId($document);
-					$document->setModificationDate(new \DateTime());
-					$dm->insertDocument($document);
-					$dm->insertI18nDocument($document, $document->getCurrentI18nPart());
+					if ($persistentState === DocumentManager::STATE_NEW)
+					{
+						$dm->affectId($document);
+						$dm->insertDocument($document);
+					}
+					elseif ($persistentState === DocumentManager::STATE_LOADED)
+					{
+						$dm->updateDocument($document);
+					}
+					
+					$dm->insertI18nDocument($document, $i18nPart);
 				}
 				else
 				{
 					throw new \LogicException('Document is not valid');
 				}
-				$dm->popLCID();
-			} 
-			catch (\Exception $e)
-			{
-				$dm->popLCID($e);
 			}
+			elseif ($persistentState === DocumentManager::STATE_NEW)
+			{
+				if ($document->getCreationDate() === null)
+				{
+					$document->setCreationDate(new \DateTime());
+				}
+				$document->setModificationDate(new \DateTime());
+				if ($document->isValid())
+				{
+					$dm->affectId($document);
+					$dm->insertDocument($document);
+				}
+				else
+				{
+					throw new \LogicException('Document is not valid');
+				}
+			}
+			else
+			{
+				throw new \LogicException('Document is not new');
+			}
+			
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
 		}
 	}
 	
-	protected function updateLocalized(\Change\Documents\AbstractDocument $document)
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function update(\Change\Documents\AbstractDocument $document)
 	{
 		$dm = $document->getDocumentManager();
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		$tm = $this->applicationServices->getTransactionManager();
+		$persistentState = $document->getPersistentState();
+		try
 		{
-			$dm->pushLCID($document->getVoLCID());
-			try
+			$tm->begin();
+			
+			if ($document instanceof \Change\Documents\Interfaces\Localizable)
 			{
+				$i18nPart = $document->getCurrentI18nPart();
+				if ($i18nPart->getPersistentState() === DocumentManager::STATE_NEW)
+				{
+					throw new \LogicException('Document is new');
+				}
+				$i18nPart->setModificationDate(new \DateTime());
 				if ($document->isValid())
 				{
-					$i18nPart = $document->getCurrentI18nPart();
-					if ($document->hasModifiedProperties() || $i18nPart->hasModifiedProperties())
-					{
-						$document->setModificationDate(new \DateTime());
-					}
 					$dm->updateDocument($document);
 					$dm->updateI18nDocument($document, $i18nPart);
 				}
@@ -210,12 +185,149 @@ abstract class AbstractService
 				{
 					throw new \LogicException('Document is not valid');
 				}
-				$dm->popLCID();
 			}
-			catch (\Exception $e)
+			elseif ($persistentState !== DocumentManager::STATE_NEW)
 			{
-				$dm->popLCID($e);
+				$document->setModificationDate(new \DateTime());
+				if ($document->isValid())
+				{
+					$dm->updateDocument($document);
+				}
+				else
+				{
+					throw new \LogicException('Document is not valid');
+				}
+			}
+			else
+			{
+				throw new \LogicException('Document is new');
+			}
+			
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param array $metas
+	 */
+	public function saveMetas($document, $metas)
+	{
+		if ($document instanceof \Change\Documents\AbstractDocument)
+		{
+			$document->getDocumentManager()->saveMetas($document, $metas);
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function delete(\Change\Documents\AbstractDocument $document)
+	{
+		$dm = $document->getDocumentManager();
+		$tm = $this->applicationServices->getTransactionManager();
+		$persistentState = $document->getPersistentState();
+		if ($persistentState === DocumentManager::STATE_DELETED)
+		{
+			return;
+		}
+		
+		try
+		{
+			$tm->begin();
+			$backupData = $this->generateBackupData($document);
+			if (is_array($backupData) && count($backupData))
+			{
+				$dm->insertDocumentBackup($document, $backupData);
+			}
+			
+			if ($persistentState === DocumentManager::STATE_LOADED)
+			{
+				$dm->deleteDocument($document);
+				
+				if ($document instanceof \Change\Documents\Interfaces\Localizable)
+				{
+					$dm->deleteI18nDocuments($document);
+				}
+			}
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function generateBackupData($document)
+	{
+		$datas = array();
+		$datas['metas'] = $document->getMetas();
+		if ($document->getTreeName())
+		{
+			$node = $this->documentServices->getTreeManager()->getNodeByDocument($document);
+			if ($node)
+			{
+				$datas['treeName'] = array($document->getTreeName(), $node->getParentId());
 			}
 		}
+		
+		$localized = array();
+		foreach ($document->getDocumentModel()->getProperties() as $propertyName => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($property->getLocalized())
+			{
+				$localized[$propertyName] = $property;
+				continue;
+			}
+			$val = $property->getValue($document);
+			if ($val instanceof \Change\Documents\AbstractDocument)
+			{
+				$datas[$propertyName] = array($val->getId(), $val->getDocumentModelName());
+			}
+			elseif ($val instanceof \DateTime)
+			{
+				$datas[$propertyName] = $val->format('c');
+			}
+			elseif (is_array($val))
+			{
+				foreach ($val as $doc)
+				{
+					if ($doc instanceof \Change\Documents\AbstractDocument)
+					{
+						$datas[$propertyName][] = array($doc->getId(), $doc->getDocumentModelName());
+					}
+				}
+			}
+			else
+			{
+				$datas[$propertyName] = $val;
+			}
+		}
+		
+		if (count($localized) && $document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$datas['LCID'] = array();
+			$dm = $document->getDocumentManager();
+			foreach ($document->getLCIDArray() as $LCID)
+			{
+				$dm->pushLCID($LCID);
+				$datas['LCID'][$LCID] = array();
+				foreach ($localized as $propertyName => $property)
+				{
+					/* @var $property \Change\Documents\Property */
+					$datas['LCID'][$LCID][$propertyName] = $property->getValue($document);
+				}
+				$dm->popLCID();
+			}
+		}
+		return $datas;
 	}
 }

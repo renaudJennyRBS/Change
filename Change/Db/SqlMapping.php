@@ -118,11 +118,25 @@ class SqlMapping
 		return 'change_document';
 	}
 	
-	
+	/**
+	 * @api
+	 * @return string
+	 */
 	public function getDocumentMetasTableName()
 	{
 		return 'change_document_metas';
 	}
+	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getDocumentDeletedTable()
+	{
+		return 'change_document_deleted';
+	}
+	
+	
 	
 	/**
 	 * @return string

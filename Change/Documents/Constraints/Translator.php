@@ -12,7 +12,6 @@ class Translator extends \Zend\I18n\Translator\Translator
 	 */
 	protected $i18nManager;
 	
-	
 	/**
 	 * @return \Change\I18n\I18nManager
 	 */

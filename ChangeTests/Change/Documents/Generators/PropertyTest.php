@@ -202,10 +202,6 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'deletedDate');
-		$p->validate();
-		$this->assertEquals('DateTime', $p->getType());
-
 		$p = new \Change\Documents\Generators\Property($model, 'creationDate');
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
@@ -370,7 +366,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 			$this->assertNull($p->getLocalized());
 		}
 		
-		foreach (array('LCID', 'creationDate', 'modificationDate', 'deletedDate', 'label', 'authorName', 'authorId',
+		foreach (array('LCID', 'creationDate', 'modificationDate', 'label', 'authorName', 'authorId',
 			'documentVersion', 'publicationStatus', 'startPublication', 'endPublication') as $propertyName)
 		{
 			$p2 = new \Change\Documents\Generators\Property($model, $propertyName);

@@ -18,6 +18,16 @@ interface Localizable
 	public function setVoLCID($val);
 
 	/**
+	 * @param string[]
+	 */
+	public function getLCIDArray();
+	
+	/**
+	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 */
+	public function deleteI18nPart($i18nPart = null);
+	
+	/**
 	 * @param string $LCID
 	 * @return \Change\Documents\AbstractI18nDocument|null
 	 */

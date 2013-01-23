@@ -305,9 +305,6 @@ class Model
 			$modificationDate->setDefaultValue('now');
 			$this->properties[$modificationDate->getName()] = $modificationDate;
 			
-			$deletedDate = new Property($this, 'deletedDate', 'DateTime');
-			$this->properties[$deletedDate->getName()] = $deletedDate;
-			
 			if ($this->localized)
 			{
 				$property = new Property($this, 'voLCID', 'String');

@@ -11,7 +11,7 @@ class Property
 		'DocumentId', 'Document', 'DocumentArray');
 	
 	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'volcid', 'lcid',
-			'creationdate', 'modificationdate', 'deleteddate',
+			'creationdate', 'modificationdate',
 			'authorname', 'authorid', 'documentversion',
 			'publicationstatus', 'startpublication', 'endpublication',
 			'correctionofid', 'versionofid');
@@ -420,15 +420,14 @@ class Property
 				break;
 			case 'voLCID':
 			case 'LCID':
-					$this->type = 'String';
-					$this->constraintArray['maxSize'] = array('max' => 10);
-					$this->required = true;
-					break;
+				$this->type = 'String';
+				$this->constraintArray['maxSize'] = array('max' => 10);
+				$this->required = true;
+				break;
 			case 'creationDate':
 			case 'modificationDate':
-				$this->required = true;
-			case 'deletedDate':
 				$this->type = 'DateTime';
+				$this->required = true;
 				break;
 			case 'authorName':
 				$this->type = 'String';
@@ -519,8 +518,7 @@ class Property
 				case 'LCID':
 				case 'creationDate':
 				case 'modificationDate':
-				case 'deletedDate':
-					
+
 				case 'label':
 				case 'authorName':
 				case 'authorId':
