@@ -1,6 +1,10 @@
 <?php
 namespace Change\Db\Mysql;
 
+use Change\Db\Schema\TableDefinition;
+use Change\Db\Schema\FieldDefinition;
+use Change\Db\Schema\KeyDefinition;
+
 /**
  * @name \Change\Db\Mysql\SchemaManager
  */
@@ -12,18 +16,62 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	protected $dbProvider;
 	
 	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $loggin;
+	
+	/**
 	 * @var \PDO
 	 */
 	protected $pdo;
 	
 	/**
+	 * @var string[]
+	 */
+	protected $tables;
+	
+	
+	/**
 	 * @param \Change\Db\Mysql\DbProvider $dbProvider
 	 */
-	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider)
+	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider, \Change\Logging\Logging $loggin)
+	{
+		$this->setDbProvider($dbProvider);
+		$this->setLoggin($loggin);
+	}
+	
+	/**
+	 * @return \Change\Db\Mysql\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Db\Mysql\DbProvider $dbProvider
+	 */
+	public function setDbProvider(\Change\Db\Mysql\DbProvider $dbProvider)
 	{
 		$this->dbProvider = $dbProvider;
 	}
-	
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public function getLoggin()
+	{
+		return $this->loggin;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $loggin
+	 */
+	public function setLoggin(\Change\Logging\Logging $loggin)
+	{
+		$this->loggin = $loggin;
+	}
+
 	/**
 	 * @return \PDO
 	 */
@@ -79,6 +127,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function execute($sql)
 	{
+		$this->loggin->info(__METHOD__ . ': ' . $sql);
 		return $this->getDriver()->exec($sql);
 	}
 
@@ -96,17 +145,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			{
 				continue;
 			}
-			try
-			{
-				$this->getDriver()->exec($sql);
-			}
-			catch (\Exception $e)
-			{
-				if ($e->getCode() != '42S21' && $throwOnError) //Duplicate column
-				{
-					throw $e;
-				}
-			}
+			$this->getDriver()->exec($sql);
 		}		
 	}
 	
@@ -115,7 +154,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function clearDB()
 	{
-		foreach ($this->getTables() as $table)
+		foreach ($this->getTableNames() as $table)
 		{
 			try
 			{
@@ -126,40 +165,114 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 				$this->loggin->warn($e->getMessage());
 			}
 		}
+		$this->tables = null;
 	}
 	
 	/**
 	 * @return string[]
 	 */
-	public function getTables()
+	public function getTableNames()
 	{
-		$tables = array();
-		$sql = "SELECT `TABLE_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = '".$this->getName()."'";
-		$stmt = $this->query("SHOW TABLES");
-		return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+		if ($this->tables === null)
+		{
+			$sql = "SELECT `TABLE_NAME` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA` = '".$this->getName()."'";
+			$stmt = $this->query($sql);
+			$this->tables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+		}
+		return $this->tables;
 	}
 	
 	/**
 	 * @param string $tableName
-	 * @return \Change\Db\Schema\TableDefinition
+	 * @return \Change\Db\Schema\TableDefinition|null
 	 */
 	public function getTableDefinition($tableName)
 	{
-		$tableDef = new \Change\Db\Schema\TableDefinition($tableName);
-		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `DATA_TYPE`, `COLUMN_TYPE` FROM `information_schema`.`COLUMNS` 
-    WHERE `TABLE_SCHEMA` = '".$this->getName()."' AND `TABLE_NAME` = '".$tableName."'";
+		$tableDef = null;
+		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `DATA_TYPE`, `COLUMN_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `NUMERIC_PRECISION`, `NUMERIC_SCALE`, `EXTRA` FROM `information_schema`.`COLUMNS` 
+			WHERE `TABLE_SCHEMA` = '".$this->getName()."' AND `TABLE_NAME` = '".$tableName."' ORDER BY `ORDINAL_POSITION`";
 		$statment = $this->query($sql);	
 		foreach ($statment->fetchAll(\PDO::FETCH_NUM) as $row)
 		{
-			$name = $row[0];
-			$defaultValue = $row[1];
-			$nullable = $row[2] === 'YES';
-			$type = $row[3];
-			$typeData = $row[3] != $row[4] ? $row[4] : null;
-			$tableDef->addField(new \Change\Db\Schema\FieldDefinition($name, $type, $typeData, $nullable, $defaultValue));
+			if ($tableDef === null) 
+			{
+				$tableDef = new TableDefinition($tableName);
+			}
+			list($name, $defaultValue, $nullable, $dataType, $ctype, $maxLength, $precision, $scale, $extra) = $row;
+			$fd = new FieldDefinition($name);
+			switch ($dataType) 
+			{
+				case 'int':
+				case 'bigint':
+				case 'smallint':
+					$type = FieldDefinition::INTEGER;
+					break;
+				case 'tinyint':
+					$type = FieldDefinition::SMALLINT;
+					break;
+				case 'double':
+				case 'float':
+					$type = FieldDefinition::FLOAT;
+					break;
+				case 'decimal':
+					$type = FieldDefinition::DECIMAL;
+					break;
+				case 'datetime':
+					$type = FieldDefinition::DATE;
+					break;
+				case 'timestamp':
+					$type = FieldDefinition::TIMESTAMP;
+					break;
+				case 'varchar':
+					$type = FieldDefinition::VARCHAR;
+					break;
+				case 'char':
+					$type = FieldDefinition::CHAR;
+					break;
+				case 'enum':
+					$type = FieldDefinition::ENUM;
+					$values = explode('\',\'', substr($ctype, 6, strlen($ctype) - 8));
+					$fd->setOption('VALUES', $values);
+					break;
+				case 'mediumblob':
+				case 'blob':
+				case 'longblob':
+					$type = FieldDefinition::LOB;
+					break;
+				case 'mediumtext':
+				case 'text':
+				case 'longtext':
+					$type = FieldDefinition::TEXT;
+					break;	
+				default:
+					$type = FieldDefinition::LOB;
+					break;
+			}
+			$fd->setType($type);
+			if ($precision !== null)
+			{
+				$fd->setPrecision($precision);
+			}
+			if ($scale !== null)
+			{
+				$fd->setScale($scale);
+			}
+			if ($maxLength !== null) 
+			{
+				$fd->setLength($maxLength);
+			}
+			$fd->setNullable($nullable === 'YES');
+			$fd->setDefaultValue($defaultValue);
+			if ($extra === 'auto_increment')
+			{
+				$fd->setAutoNumber(true);
+			}
+			
+			$tableDef->addField($fd);
 		}
 		$statment->closeCursor();
-		if ($tableDef->isValid())
+		
+		if ($tableDef)
 		{
 			$sql = "SELECT C.`CONSTRAINT_NAME`, C.`CONSTRAINT_TYPE`, F.`COLUMN_NAME` FROM `information_schema`.`TABLE_CONSTRAINTS` AS C  
 INNER JOIN `information_schema`.`KEY_COLUMN_USAGE` AS F ON F.`TABLE_SCHEMA` = C.`TABLE_SCHEMA` AND F.`TABLE_NAME` = C.`TABLE_NAME` AND C.`CONSTRAINT_NAME` = F.`CONSTRAINT_NAME`
@@ -173,186 +286,391 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 					$k = new \Change\Db\Schema\KeyDefinition();
 					$tableDef->addKey($k);
 					$k->setName($row[0]);
-					$k->setPrimary($row[1] === 'PRIMARY KEY');
+					if ($row[1] === 'PRIMARY KEY')
+					{
+						$k->setType(\Change\Db\Schema\KeyDefinition::PRIMARY);
+					}
+					elseif ($row[1] === 'UNIQUE')
+					{
+						$k->setType(\Change\Db\Schema\KeyDefinition::UNIQUE);
+					}
+					else
+					{
+						$k->setType(\Change\Db\Schema\KeyDefinition::INDEX);
+					}
 				}
 				$k->addField($tableDef->getField($row[2]));
 			}
 		}
+		
 		return $tableDef;
+	}
+	
+	/**
+	 * @param string $tableName
+	 * @return \Change\Db\Schema\TableDefinition
+	 */
+	public function newTableDefinition($tableName)
+	{
+		$td = new TableDefinition($tableName);
+		$td->setOptions(array('ENGINE' => 'InnoDB', 'CHARSET' => 'utf8', 'COLLATION' => 'utf8_unicode_ci'));
+		return $td;
 	}
 
 	/**
-	 * @param string $treeName
-	 * @return string the SQL statements that where executed
-	 */
-	public function createTreeTable($treeName)
-	{
-		$tn = $this->dbProvider->getSqlMapping()->getTreeTableName($treeName);
-		$sql = 'CREATE TABLE IF NOT EXISTS `'. $tn .'` (
-			`document_id` int(11) NOT NULL default \'0\',
-			`parent_id` int(11) NOT NULL default \'0\',
-			`node_order` int(11) NOT NULL default \'0\',
-			`node_level` int(11) NOT NULL default \'0\',
-			`node_path` varchar(255) collate latin1_general_ci NOT NULL default \'/\',
-			`children_count` int(11) NOT NULL default \'0\',
-			PRIMARY KEY (`document_id`),
-			INDEX `tree_node` (`parent_id`, `node_order`)
-			) ENGINE=InnoDB CHARACTER SET latin1 COLLATE latin1_general_ci';
-	
-		$this->execute($sql);
-		return $sql . ';' . PHP_EOL;
-	}
-	
-	/**
-	 * @param string $treeName
-	 * @return string the SQL statements that where executed
-	 */
-	public function dropTreeTable($treeName)
-	{
-		$tn = $this->dbProvider->getSqlMapping()->getTreeTableName($treeName);
-		$sql = 'DROP TABLE IF EXISTS `'. $tn .'`';
-		$this->execute($sql);
-		return $sql . ';' . PHP_EOL;
-	}
-			
-	/**
-	 * @param string $propertyName
-	 * @param string $propertyType
-	 * @param string $typeSize
+	 * @param string $name
+	 * @param array $enumValues
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function getDocumentFieldDefinition($propertyName, $propertyType, $typeSize)
+	public function newEnumFieldDefinition($name, array $enumValues)
 	{
-		$fn = $this->dbProvider->getSqlMapping()->getDocumentFieldName($propertyName);
-		$typeData = null;
-		$nullable = true;
-		$defaultValue = null;
-		
-		if ($propertyName === 'publicationStatus')
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::ENUM);
+		$fd->setOption('VALUES', $enumValues);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @param integer $length
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newCharFieldDefinition($name, $length = 255)
+	{
+		$fd = new FieldDefinition($name);
+		$length = max(1, intval($length));
+		if ($length > 255)
 		{
-			$type = "enum";
-			$typeData = "enum('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'INVALID', 'DEACTIVATED', 'FILED')";
+			$fd->setType(FieldDefinition::TEXT);
+			$length = 16777215;
 		}
 		else
 		{
-			switch ($propertyType)
+			$fd->setType(FieldDefinition::CHAR);
+			
+		}
+		$fd->setLength($length);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @param integer $length
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newVarCharFieldDefinition($name, $length = 255)
+	{
+		$fd = new FieldDefinition($name);
+		$length = max(1, intval($length));
+		if ($length > 255)
+		{
+			$fd->setType(FieldDefinition::TEXT);
+			$length = 16777215;
+		}
+		else
+		{
+			$fd->setType(FieldDefinition::VARCHAR);
+		}
+		$fd->setLength($length);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @param array $enumValues
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newNumericFieldDefinition($name, $precision = 13, $scale = 4)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::DECIMAL);
+		$fd->setPrecision($precision);
+		$fd->setScale($scale);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newBooleanFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::SMALLINT);
+		$fd->setPrecision(3);
+		$fd->setScale(0);
+		$fd->setNullable(false);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newIntegerFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::INTEGER);
+		$fd->setPrecision(10);
+		$fd->setScale(0);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newFloatFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::FLOAT);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newLobFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::LOB);
+		$fd->setLength(16777215);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newTextFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::TEXT);
+		$fd->setLength(16777215);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newDateFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::DATE);
+		return $fd;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newTimeStampFieldDefinition($name)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::TIMESTAMP);
+		$fd->setDefaultValue('CURRENT_TIMESTAMP');
+		$fd->setNullable(false);
+		return $fd;
+	}
+
+	/**
+	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
+	 * @return string SQL definition
+	 */
+	public function createOrAlterTable(\Change\Db\Schema\TableDefinition $tableDefinition)
+	{
+		if (in_array($tableDefinition->getName(), $this->getTableNames()))
+		{
+			$oldDef = $this->getTableDefinition($tableDefinition->getName());
+			if ($oldDef)
 			{
-				case 'Document' :
-					$type = "int";
-					$typeData = "int(11)";
-					break;
-				case 'DocumentArray' :
-					$type = "int";
-					$typeData = "int(11)";
-					$defaultValue = "0";
-					break;
-				case 'String' :
-					$stringSize = intval($typeSize);
-					if ($stringSize <= 0 || $stringSize > 255) {$stringSize = 255;}
-					$type = "varchar";
-					$typeData = "varchar(" . $stringSize . ")";
-					break;
-				case 'LongString' :
-					$type = "text";
-					break;
-				case 'XML' :
-				case 'RichText' :
-				case 'JSON' :
-					$type = "mediumtext";
-					break;
-				case 'Lob' :
-				case 'Object' :
-					$type = "mediumblob";
-					break;
-				case 'Boolean' :
-					$type = "tinyint";
-					$typeData = "tinyint(1)";
-					$nullable = false;
-					$defaultValue = '0';
-					break;
-				case 'Date' :
-				case 'DateTime' :
-					$type = "datetime";
-					break;
-				case 'Float' :
-					$type = "double";
-					break;
-				case 'Decimal' :
-					$type = "decimal";
-					if (!empty($typeSize) && strpos($typeSize, ','))
-					{
-						$typeData = "decimal(" . $typeSize . ")";
-					}
-					else
-					{
-						$typeData = "decimal(13,4)";
-					}
-					break;
-				case 'Integer' :
-				case 'DocumentId' :
-					$type = "int";
-					$typeData = "int(11)";
-					break;
+				return $this->alterTable($tableDefinition, $oldDef);
 			}
 		}
-		return new \Change\Db\Schema\FieldDefinition($fn, $type, $typeData, $nullable, $defaultValue);
+		return $this->createTable($tableDefinition);
+	}
+	
+	/**
+	 * @param FieldDefinition $fieldDefinition
+	 * @return string
+	 */
+	protected function generateColumnType(FieldDefinition $fieldDefinition)
+	{
+		switch ($fieldDefinition->getType())
+		{
+			case FieldDefinition::CHAR:
+				$type = 'char('.$fieldDefinition->getLength().')';
+				break;
+			case FieldDefinition::VARCHAR:
+				$type = 'varchar('.$fieldDefinition->getLength().')';
+				break;
+			case FieldDefinition::DATE:
+				$type = 'datetime';
+				break;
+			case FieldDefinition::TIMESTAMP:
+				$type = 'timestamp';
+				break;
+			case FieldDefinition::DECIMAL:
+				$type = 'decimal('.$fieldDefinition->getPrecision(). ','. $fieldDefinition->getScale().')';
+				break;
+			case FieldDefinition::ENUM:
+				$values = $fieldDefinition->getOption('VALUES');
+				if (!is_array($values) || count($values) == 0)
+				{
+					throw new \RuntimeException('Invalid Enum Values');
+				}
+				$type = 'enum(\''.implode('\',\'', $values).'\')';
+				break;
+			case FieldDefinition::FLOAT:
+				$type = 'double';
+				break;
+			case FieldDefinition::INTEGER:
+				$type = 'int(11)';
+				break;
+			case FieldDefinition::SMALLINT:
+				$type = 'tinyint(1)';
+				break;
+			case FieldDefinition::LOB:
+				$type = 'mediumblob';
+				break;
+			case FieldDefinition::TEXT:
+				$type = 'mediumtext';
+				break;
+			default:
+				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType());
+				break;
+		}
+	
+		if (!$fieldDefinition->getNullable())
+		{
+			$type .= ' NOT NULL';
+		}
+	
+		if ($fieldDefinition->getDefaultValue() !== null)
+		{
+			if ($fieldDefinition->getDefaultValue() === 'CURRENT_TIMESTAMP')
+			{
+				$type .= ' DEFAULT CURRENT_TIMESTAMP';
+			}
+			else
+			{
+				$type .= ' DEFAULT \'' . $fieldDefinition->getDefaultValue() . '\'';
+			}
+		}
+		else if ($fieldDefinition->getAutoNumber())
+		{
+			$type .= ' auto_increment';
+		}
+		return $type;
 	}
 	
 	/**
 	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
+	 * @param \Change\Db\Schema\TableDefinition $oldDef
+	 * @return string SQL definition
 	 */
-	public function createOrAlter($tableDefinition)
+	public function alterTable(\Change\Db\Schema\TableDefinition $tableDefinition, \Change\Db\Schema\TableDefinition $oldDef)
 	{
-		$oldDef = $this->getTableDefinition($tableDefinition->getName());
-		if ($oldDef->isValid())
+		$sqls = array();
+		foreach ($tableDefinition->getFields() as $field)
 		{
-			foreach ($tableDefinition->getFields() as $field)
+			/* @var $field \Change\Db\Schema\FieldDefinition */
+			$oldField = $oldDef->getField($field->getName());
+			$type = $this->generateColumnType($field);
+			if ($oldField)
 			{
-				/* @var $field \Change\Db\Schema\FieldDefinition */
-				$oldField = $oldDef->getField($field->getName());
-				if ($oldField)
+				$oldType = $this->generateColumnType($oldField);
+				if ($type != $oldType)
 				{
-					if ($field->getType() === 'enum' && $field->getTypeData() != $oldField->getTypeData())
-					{
-						$sql = 'ALTER TABLE `'.$tableDefinition->getName().'` CHANGE `'.$field->getName().'` `'.$field->getName().'` '. $field->getTypeData() . ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
-						$this->execute($sql);
-					}
-				}
-				else
-				{
-					$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
-					$sql = 'ALTER TABLE  `'.$tableDefinition->getName().'` ADD `'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
+					$sql = 'ALTER TABLE `'.$tableDefinition->getName().'` CHANGE `'.$field->getName().'` `'.$field->getName().'` '.$type;
+					$sqls[] = $sql;
 					$this->execute($sql);
 				}
 			}
-		}
-		else
-		{
-			$sql = 'CREATE TABLE `'.$tableDefinition->getName().'` (';
-			
-			$parts = array();
-			foreach ($tableDefinition->getFields() as $field)
+			else
 			{
-				/* @var $field \Change\Db\Schema\FieldDefinition */
-				$type = $field->getTypeData() !== null ? $field->getTypeData() : $field->getType();
-				$parts[] = '`'.$field->getName().'` '.$type.  ($field->getNullable() ? ' NULL' : ' NOT NULL') . ($field->getDefaultValue() !== null ? ' DEFAULT \'' . $field->getDefaultValue() . '\'' : '');
+				$sql = 'ALTER TABLE  `'.$tableDefinition->getName().'` ADD `'.$field->getName().'` '.$type;
+				$sqls[] = $sql;
+				$this->execute($sql);
 			}
-			foreach ($tableDefinition->getKeys() as $key)
-			{
-				/* @var $key \Change\Db\Schema\KeyDefinition */
-				if ($key->getPrimary())
-				{
-					$kf = array();
-					foreach ($key->getFields() as $kfield)
-					{
-						/* @var $kfield \Change\Db\Schema\FieldDefinition */
-						$kf[] = '`'.$kfield->getName().'`';
-					}
-					$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
-				}
-			}		
-			$sql .= implode(', ', $parts)  . ') ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-			$this->execute($sql);
 		}
+		return implode(';'.PHP_EOL, $sqls);
+	}
+	
+	/**
+	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
+	 * @return string SQL definition
+	 */
+	public function createTable(\Change\Db\Schema\TableDefinition $tableDefinition)
+	{
+		$sql = 'CREATE TABLE `'.$tableDefinition->getName().'` (';	
+		$parts = array();
+		foreach ($tableDefinition->getFields() as $field)
+		{
+			/* @var $field \Change\Db\Schema\FieldDefinition */
+			
+			$type = $this->generateColumnType($field);
+			$parts[] = '`'.$field->getName().'` '. $type;
+		}
+		foreach ($tableDefinition->getKeys() as $key)
+		{
+			/* @var $key \Change\Db\Schema\KeyDefinition */
+			$kf = array();
+			foreach ($key->getFields() as $kfield)
+			{
+				/* @var $kfield \Change\Db\Schema\FieldDefinition */
+				$kf[] = '`'.$kfield->getName().'`';
+			}
+			
+			if ($key->isPrimary())
+			{
+				$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
+			}
+			elseif ($key->isUnique())
+			{
+				$parts[] = 'UNIQUE KEY `'.$key->getName().'` (' . implode(', ', $kf) . ')';
+			}
+			else
+			{
+				$parts[] = 'INDEX `'.$key->getName().'` (' . implode(', ', $kf) . ')';
+			}
+			
+		}
+		$engine = $tableDefinition->getOption('ENGINE');
+		if ($engine) {$engine = ' ENGINE= ' .$engine;}
+		
+		$startAuto = $tableDefinition->getOption('AUTONUMBER');
+		if ($startAuto) {$startAuto = ' AUTO_INCREMENT='.$startAuto;}
+		
+		$charset = $tableDefinition->getOption('CHARSET');
+		if ($charset) {$charset = ' CHARACTER SET '.$charset;}
+		
+		$collation = $tableDefinition->getOption('COLLATION');
+		if ($collation) {$collation = ' COLLATE '.$collation;}
+				
+		$sql .= implode(', ', $parts)  . ')' . $engine . $startAuto . $charset. $collation;
+		$this->execute($sql);	
+		if (is_array($this->tables) && !in_array($tableDefinition->getName(), $this->tables))
+		{
+			$this->tables[] = $tableDefinition->getName();
+		}
+		return $sql;
+	}
+	
+	/**
+	 * @param \Change\Db\Schema\TableDefinition $tableDefinition
+	 * @return string SQL definition
+	 */
+	public function dropTable(\Change\Db\Schema\TableDefinition $tableDefinition)
+	{
+		$sql = 'DROP TABLE IF EXISTS `'. $tableDefinition->getName() .'`';
+		if (is_array($this->tables))
+		{
+			$this->tables = array_values(array_diff($this->tables, array($tableDefinition->getName())));
+		}		
+		$this->execute($sql);
+		return $sql;
 	}
 }

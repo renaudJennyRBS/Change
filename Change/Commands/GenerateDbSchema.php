@@ -27,50 +27,16 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$output->writeln('<info>Generate database Schema...</info>');
-		
-		$dbp = $this->getChangeApplication()->getApplicationServices()->getDbProvider();
-		$schemaManager = $dbp->getSchemaManager();
-		
-		if (!$schemaManager->check())
+		$generator = new \Change\Db\Schema\Generator($this->getChangeApplication()->getWorkspace(), $this->getChangeApplication()->getApplicationServices()->getDbProvider());
+		try 
 		{
-			$output->writeln('<info>unable to connect to database: '.$schemaManager->getName().'</info>');
+			$output->writeln('<info>Generate database Schema...</info>');
+			$generator->generate();
+			$output->writeln('<info>generated !</info>');
+		} 
+		catch (\Exception $e )
+		{
+			$output->writeln('<info>'. $e->getMessage().'</info>');
 		}
-		$relativePath = 'Db' . DIRECTORY_SEPARATOR . ucfirst($dbp->getType()) . DIRECTORY_SEPARATOR . 'Assets';
-		
-		$workspace = $this->getChangeApplication()->getWorkspace();
-		$pattern = $workspace->changePath($relativePath, '*.sql');
-		
-		$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-		
-		if (is_dir($workspace->pluginsModulesPath()))
-		{
-			$pattern = $workspace->pluginsModulesPath('*', '*', $relativePath, '*.sql');
-			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
-		}
-		
-		if (is_dir($workspace->projectModulesPath()))
-		{
-			$pattern = $workspace->projectModulesPath('*', '*', $relativePath, '*.sql');
-			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
-		}
-		
-		foreach ($paths as $path)
-		{
-			$sql = file_get_contents($path);
-			$output->writeln('<info>generate : ' . $path .'</info>');
-			$schemaManager->execute($sql);
-		}	
-		
-		if (class_exists('Compilation\Change\Documents\Schema'))
-		{
-			$documentSchema = new \Compilation\Change\Documents\Schema();
-			foreach ($documentSchema->getTables() as $tableDef)
-			{
-				/* @var $tableDef \Change\Db\Schema\TableDefinition */
-				$schemaManager->createOrAlter($tableDef);
-			}
-		}
-		$output->writeln('<info>generated !</info>');
 	}
 }

@@ -58,18 +58,6 @@ class DocumentI18nClass
 			$code .= $this->getMembers($model, $properties);
 			$code .= $this->getMembersAccessors($model, $properties);
 		}
-	
-		if (isset($properties['LCID']))
-		{
-			$code .= ' 
-	/**
-	 * @return string[]
-	 */
-	public function __sleep()
-	{
-		return array_merge(parent::__sleep(), array("\0".__CLASS__."\0LCID"));
-	}'.PHP_EOL;
-		}
 		
 		$code .= '}'. PHP_EOL;		
 		$this->compiler = null;

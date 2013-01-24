@@ -12,29 +12,7 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	protected function compileDocuments(\Change\Application $application)
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$paths = array();
-		$workspace = $application->getWorkspace();
-		if (is_dir($workspace->pluginsModulesPath()))
-		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), 'Change', '*', 'Documents', 'Assets', '*.xml'));
-			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
-		}
-	
-		$nbModels = 0;
-		foreach ($paths as $definitionPath)
-		{
-			$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-			$count = count($parts);
-			$documentName = basename($parts[$count - 1], '.xml');
-			$moduleName = $parts[$count - 4];
-			$vendor = $parts[$count - 5];
-			$compiler->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
-			$nbModels++;
-		}
-	
-		$compiler->buildTree();
-		$compiler->validateInheritance();
-		$compiler->saveModelsPHPCode();
+		$compiler->generate();
 	}
 	
 	/**
@@ -42,33 +20,8 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function generateDbSchema(\Change\Application $application)
 	{
-		$dbp = $application->getApplicationServices()->getDbProvider();
-		$schemaManager = $dbp->getSchemaManager();
-	
-		if (!$schemaManager->check())
-		{
-			throw new \RuntimeException('unable to connect to database:' . $schemaManager->getName());
-		}
-		$relativePath = 'Db' . DIRECTORY_SEPARATOR . ucfirst($dbp->getType()) . DIRECTORY_SEPARATOR . 'Assets';
-	
-		$workspace = $application->getWorkspace();
-		$pattern = $workspace->changePath($relativePath, '*.sql');
-	
-		$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-	
-		foreach ($paths as $path)
-		{
-			$sql = file_get_contents($path);
-			$schemaManager->execute($sql);
-		}
-	
-		$documentSchema = new \Compilation\Change\Documents\Schema();
-		foreach ($documentSchema->getTables() as $tableDef)
-		{
-			/* @var $tableDef \Change\Db\Schema\TableDefinition */
-			$schemaManager->createOrAlter($tableDef);
-		}
-	
+		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $application->getApplicationServices()->getDbProvider());
+		$generator->generate();
 	}
 	
 	public static function tearDownAfterClass()

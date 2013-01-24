@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 file:///Z:/projects/site40/Change/Documents/Assets/document.xsd" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd" 
 	icon="test" backoffice-indexable="false" has-url="false" localized="true">
 	<properties>
 		<property name="pStr" type="String" required="true"/>

@@ -27,7 +27,7 @@ class SchemaClass
 	 * @param string $compilationPath
 	 * @return boolean
 	 */
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Db\DbProvider $dbProvider, $compilationPath)
+	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler,\Change\Db\DbProvider $dbProvider, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $dbProvider);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, array($compilationPath, 'Change', 'Documents', 'Schema.php')), $code);
@@ -39,63 +39,52 @@ class SchemaClass
 	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return string
 	 */
-	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Db\DbProvider $dbProvider)
+	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler,\Change\Db\DbProvider $dbProvider)
 	{
 		$this->compiler = $compiler;
 		$this->schemaManager = $dbProvider->getSchemaManager();
 		$this->sqlMapping = $dbProvider->getSqlMapping();
 		
-		$defId =  $this->schemaManager->getDocumentFieldDefinition('id', 'Integer', null);
-		$defId->setNullable(false)->setDefaultValue('0');
-		
-		$defModel =  $this->schemaManager->getDocumentFieldDefinition('model', 'String', 50);
-		$defModel->setNullable(false)->setDefaultValue('');
-
-		$defLCID =  $this->schemaManager->getDocumentFieldDefinition('lcid', 'String', 10);
-		$defLCID->setNullable(false);
-		
-
-		
-		$defRelOrder = $this->schemaManager->getDocumentFieldDefinition('relorder', 'Integer', null);
-		$defRelOrder->setNullable(false)->setDefaultValue('0');
-		
-		$defRelatedId = $this->schemaManager->getDocumentFieldDefinition('relatedId', 'Integer', null);
-		$defRelatedId->setNullable(false)->setDefaultValue('0');
-		
-		$code = '<'. '?php
+		$code = '<' . '?php
 namespace Compilation\\Change\\Documents;
-class Schema
+		
+/**
+ * @name \\Compilation\\Change\\Documents\\Schema
+ */
+class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 {
 	/**
 	 * @var \Change\Db\Schema\TableDefinition[]
 	 */
-	protected $tables = array();
-			
+	protected $tables;
+		
 	/**
 	 * @return \Change\Db\Schema\TableDefinition[]
 	 */
 	public function getTables()
 	{
-		return $this->tables;
-	}
-	
-	public function __construct()
-	{
-		$id = '.$this->generateNewFieldDef($defId).';
-		$model = '.$this->generateNewFieldDef($defModel).';
-		$lcid = '.$this->generateNewFieldDef($defLCID).';
-		$relOrder = '.$this->generateNewFieldDef($defRelOrder).';
-		$relatedId = '.$this->generateNewFieldDef($defRelatedId).';'. PHP_EOL;
+		if ($this->tables === null)
+		{
+			$schemaManager = $this->getSchemaManager();
+			$idDef = $schemaManager->newIntegerFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('id')).')->setDefaultValue(\'0\')->setNullable(false);
+			$modelDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('model')).', 50)->setDefaultValue(\'\')->setNullable(false);
+			$lcidDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('LCID')).', 10)->setDefaultValue(\'\')->setNullable(false);
+		
+			$relOrderDef = $schemaManager->newIntegerFieldDefinition(\'relorder\')->setDefaultValue(\'0\')->setNullable(false);
+			$relatedIdDef = $schemaManager->newIntegerFieldDefinition(\'relatedid\')->setDefaultValue(\'0\')->setNullable(false);' . PHP_EOL;
 		
 		foreach ($this->compiler->getModelsByLevel(0) as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$descendants = $this->compiler->getDescendants($model);
 			$code .= $this->generateTableDef($model, $descendants);
-		}	
+		}
+		
 		$code .= '
+		}
+		return $this->tables;
 	}
-}'. PHP_EOL;
+}' . PHP_EOL;
 		
 		$this->compiler = null;
 		$this->schemaManager = null;
@@ -115,6 +104,8 @@ class Schema
 		return var_export($value, true);
 	}
 	
+
+	
 	/**
 	 * 
 	 * @param \Change\Documents\Generators\Model $model
@@ -122,37 +113,44 @@ class Schema
 	 * @return string
 	 */
 	protected function generateTableDef($model, $descendants)
-	{ 
-		$tn = $this->sqlMapping->getDocumentTableName($model->getName());
+	{
+		$lines = array('');
+		$tnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentTableName($model->getName()));
+		$lines[] = '			$this->tables['.$tnEsc.'] = $schemaManager->newTableDefinition('.$tnEsc.')';
+		$lines[] = '				->addField($idDef)->addField($modelDef)';
 
-		$lines = array('', '');
-		$lines[] = '		$table = new \Change\Db\Schema\TableDefinition('.$this->escapePHPValue($tn).');';
-		$lines[] = '		$table->addField($id)->addField($model);';
-		$lines = array_merge($lines, $this->generateFieldsDef($model, false));
+		foreach ($this->addDefFields($model, false) as $line)
+		{
+			$lines[] = '				->addField(' . $line .')';
+		}
+
 		foreach ($descendants as $dm)
 		{
-			/* @var $dm \Change\Documents\Generators\Model */
-			$lines = array_merge($lines, $this->generateFieldsDef($dm, false));
+			foreach ($this->addDefFields($dm, false) as $line)
+			{
+				$lines[] = '				->addField(' . $line .')';
+			}
 		}
-		$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
-		$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id));';
-		$lines[] = '		$this->tables[] = $table;';
-		
+		$lines[] = '				->addKey($this->newPrimaryKey()->addField($idDef));';
+
 		if ($model->checkLocalized())
 		{
-			$lines[] = '';
-			$tn = $this->sqlMapping->getDocumentI18nTableName($model->getName());
-			$lines[] = '		$table = new \Change\Db\Schema\TableDefinition('.$this->escapePHPValue($tn).');';
-			$lines[] = '		$table->addField($id)->addField($lcid);';
-			$lines = array_merge($lines, $this->generateFieldsDef($model, true));
+			$tnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentI18nTableName($model->getName()));
+			$lines[] = '			$this->tables['.$tnEsc.'] = $schemaManager->newTableDefinition('.$tnEsc.')';
+			$lines[] = '				->addField($idDef)->addField($lcidDef)';						
+			foreach ($this->addDefFields($model, true) as $line)
+			{
+				$lines[] = '				->addField(' . $line .')';
+			}
+	
 			foreach ($descendants as $dm)
 			{
-				/* @var $dm \Change\Documents\Generators\Model */
-				$lines = array_merge($lines, $this->generateFieldsDef($dm, true));
+				foreach ($this->addDefFields($dm, true) as $line)
+				{
+					$lines[] = '				->addField(' . $line .')';
+				}
 			}
-			$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
-			$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id)->addField($lcid));';
-			$lines[] = '		$this->tables[] = $table;';
+			$lines[] = '				->addKey($this->newPrimaryKey()->addField($idDef)->addField($lcidDef));';
 		}
 		
 		$relNames = array();
@@ -164,23 +162,22 @@ class Schema
 				/* @var $p \Change\Documents\Generators\Property */
 				if ($p->getType() === 'DocumentArray')
 				{
-					$relNames[] = $this->escapePHPValue($p->getName());
+					$relNames[] = $p->getName();
 				}
 			}
 		}
 		
 		if (count($relNames))
 		{
-			$lines[] = '';
-			$tn = $this->sqlMapping->getDocumentRelationTableName($model->getName());
-			$typeData = 'enum(' . implode(',', array_unique($relNames)). ')';
-			$defRelName =  new \Change\Db\Schema\FieldDefinition('relname', 'enum', $typeData, true, null);	
-			$lines[] = '		$relName = '.$this->generateNewFieldDef($defRelName).';';
-			$lines[] = '		$table = new \Change\Db\Schema\TableDefinition('.$this->escapePHPValue($tn).');';
-			$lines[] = '		$table->addField($id)->addField($relName)->addField($relOrder)->addField($relatedId);';
-			$lines[] = '		$pk = new \Change\Db\Schema\KeyDefinition();';
-			$lines[] = '		$table->addKey($pk->setPrimary(true)->addField($id)->addField($relName)->addField($relOrder));';
-			$lines[] = '		$this->tables[] = $table;';
+			$relNames = array_values(array_unique($relNames));
+			$lines[] = '			$relNames = '.$this->escapePHPValue($relNames).';';
+			$lines[] = '			$relNameDef = $schemaManager->newEnumFieldDefinition(\'relname\', $relNames)->setDefaultValue($relNames[0])->setNullable(false);';
+
+			
+			$tnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentRelationTableName($model->getName()));
+			$lines[] = '			$this->tables['.$tnEsc.'] = $schemaManager->newTableDefinition('.$tnEsc.')';
+			$lines[] = '				->addField($idDef)->addField($relNameDef)->addField($relOrderDef)->addField($relatedIdDef)';
+			$lines[] = '				->addKey($this->newPrimaryKey()->addField($idDef)->addField($relNameDef)->addField($relOrderDef));';			
 		}
 		return implode(PHP_EOL, $lines);
 	}
@@ -190,44 +187,74 @@ class Schema
 	 * @param boolean $localized
 	 * @return string[]
 	 */
-	protected function generateFieldsDef($model, $localized)
+	protected function addDefFields($model, $localized)
 	{
-		$lines = array();
-		foreach ($model->getProperties() as $property)
+		$fields = array();
+		foreach ($model->getProperties() as $propertyName => $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
 			if ($property->getParent() !== null || $property->getLocalized() != $localized)
 			{
 				continue;
 			}
-			$pn = $property->getName();
-			$ca = $property->getConstraintArray();
-			if ($property->getType() === 'String')
+			elseif ($localized && $propertyName === 'LCID')
 			{
-				$typeSize = isset($ca['maxSize']['max']) ? $ca['maxSize']['max'] : 255;
+				continue;
+			}
+				
+			$fnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentFieldName($propertyName));
+				
+			if ($propertyName === 'publicationStatus')
+			{
+				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'INVALID\',\'DEACTIVATED\',\'FILED\'))';
 			}
 			else
 			{
-				$typeSize = null;
+				$propertyType = $property->getType();
+				switch ($propertyType)
+				{
+					case 'Document' :
+					case 'Integer' :
+					case 'DocumentId' :
+						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.')';
+						break;
+					case 'DocumentArray' :
+						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.')->setDefaultValue(\'0\')';
+						break;
+					case 'String' :
+						$ca = $property->getConstraintArray();
+						$length = (is_array($ca) && isset($ca['maxSize']['max'])) ? intval($ca['maxSize']['max']) : 255;
+						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '.$length.')';
+						break;
+					case 'LongString' :
+					case 'XML' :
+					case 'RichText' :
+					case 'JSON' :
+						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', 16777215)';
+						break;
+					case 'Lob' :
+					case 'Object' :
+						$fd = '$schemaManager->newLobFieldDefinition('.$fnEsc.')';
+						break;
+					case 'Boolean' :
+						$fd = '$schemaManager->newBooleanFieldDefinition('.$fnEsc.')->setDefaultValue(\'0\')';
+						break;
+					case 'Date' :
+					case 'DateTime' :
+						$fd = '$schemaManager->newDateFieldDefinition('.$fnEsc.')';
+						break;
+					case 'Float' :
+						$fd = '$schemaManager->newFloatFieldDefinition('.$fnEsc.')';
+						break;
+					case 'Decimal' :
+						$fd = '$schemaManager->newNumericFieldDefinition('.$fnEsc.', 13, 4)';
+						break;
+					default:
+						throw new \RuntimeException('Invalid property type: ' . $propertyType);
+				}
 			}
-			
-			$def =  $this->schemaManager->getDocumentFieldDefinition($pn, $property->getType(), $typeSize);
-			$lines[] = '		$table->addField(' . $this->generateNewFieldDef($def) .');';
+			$fields[] = $fd;
 		}
-		return $lines;
-	}
-	
-	/**
-	 * @param \Change\Db\Schema\FieldDefinition $def
-	 * @return string
-	 */
-	protected function generateNewFieldDef($def)
-	{
-		$name = $this->escapePHPValue($def->getName());
-		$type = $this->escapePHPValue($def->getType());
-		$typeData = $this->escapePHPValue($def->getTypeData());
-		$nullable = $this->escapePHPValue($def->getNullable());
-		$defaultValue = $this->escapePHPValue($def->getDefaultValue());
-		return 'new \Change\Db\Schema\FieldDefinition('.$name.', '.$type.', '.$typeData.', '.$nullable.', '.$defaultValue.')';
+		return $fields;
 	}
 }

@@ -138,12 +138,13 @@
 									<xs:attribute name="type" use="optional" type="propertyType" default="String" />
 									<xs:attribute name="document-type" type="documentModel" />
 									<xs:attribute name="indexed" type="indexTarget" default="none" />		
-									<xs:attribute name="cascade-delete" type="xs:boolean" default="false" />
+									<xs:attribute name="cascade-delete" type="xs:boolean" default="true" />
 									<xs:attribute name="default-value" type="xs:string" />
 									<xs:attribute name="required" type="xs:boolean" default="true" />
 									<xs:attribute name="min-occurs" type="xs:int" default="2" />
 									<xs:attribute name="max-occurs" type="xs:int" default="10" />	
 									<xs:attribute name="localized" type="xs:boolean" default="true" />
+									<xs:attribute name="has-correction" type="xs:boolean" default="true" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
@@ -162,7 +163,6 @@
 			<xs:attribute name="localized" type="xs:boolean" default="true" />
 			<xs:attribute name="editable" type="xs:boolean" default="true" />
 			<xs:attribute name="publishable" type="xs:boolean" default="true" />
-			<xs:attribute name="use-correction" type="xs:boolean" default="false" />
 			<xs:attribute name="use-version" type="xs:boolean" default="true" />
 		</xs:complexType>
 	</xs:element>

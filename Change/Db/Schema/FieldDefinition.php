@@ -5,46 +5,56 @@ namespace Change\Db\Schema;
  * @name \Change\Db\Schema\FieldDefinition
  */
 class FieldDefinition
-{
+{	
+	const CHAR = 0;
+	const VARCHAR  = 1;
+	
+	const INTEGER  = 2;
+	const SMALLINT = 3;
+	
+	const DECIMAL = 4;
+	const FLOAT = 5;
+	
+	const DATE = 6;
+	const TIMESTAMP = 7;
+	
+	const ENUM = 8;
+	
+	const LOB = 9;
+	
+	const TEXT = 10;
+	
+	/**
+	 * @var array
+	 */
+	protected $options = array();
+	
 	/**
 	 * @var string
 	 */
 	protected $name;
 	
 	/**
-	 * @var string
+	 * @var integer
 	 */
-	protected $type;
+	protected $type = self::VARCHAR;
 	
 	/**
 	 * @var string
 	 */
-	protected $typeData;
-	
-	/**
-	 * @var string
-	 */
-	protected $defaultValue;
+	protected $defaultValue = null;
 
 	/**
 	 * @var boolean
 	 */
-	protected $nullable;
+	protected $nullable = true;
 	
 	/**
 	 * @param string $name
-	 * @param string $type
-	 * @param string $typeData
-	 * @param boolean $nullable
-	 * @param string $defaultValue
 	 */
-	public function __construct($name, $type, $typeData = null, $nullable = true, $defaultValue = null)
+	public function __construct($name)
 	{
 		$this->name = $name;
-		$this->type = $type;
-		$this->typeData = $typeData;
-		$this->nullable = $nullable;
-		$this->defaultValue = $defaultValue;
 	}
 	
 	/**
@@ -54,39 +64,7 @@ class FieldDefinition
 	{
 		return $this->name;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTypeData()
-	{
-		return $this->typeData;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDefaultValue()
-	{
-		return $this->defaultValue;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getNullable()
-	{
-		return $this->nullable;
-	}
-
+	
 	/**
 	 * @param string $name
 	 * @return \Change\Db\Schema\FieldDefinition
@@ -96,9 +74,18 @@ class FieldDefinition
 		$this->name = $name;
 		return $this;
 	}
+	
 
 	/**
-	 * @param string $type
+	 * @return integer FieldDefinition::*
+	 */
+	public function getType()
+	{
+		return $this->type;
+	}
+	
+	/**
+	 * @param integer $type FieldDefinition::*
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
 	public function setType($type)
@@ -108,15 +95,13 @@ class FieldDefinition
 	}
 
 	/**
-	 * @param string $typeData
-	 * @return \Change\Db\Schema\FieldDefinition
+	 * @return string
 	 */
-	public function setTypeData($typeData)
+	public function getDefaultValue()
 	{
-		$this->typeData = $typeData;
-		return $this;
+		return $this->defaultValue;
 	}
-
+	
 	/**
 	 * @param string $defaultValue
 	 * @return \Change\Db\Schema\FieldDefinition
@@ -128,6 +113,14 @@ class FieldDefinition
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function getNullable()
+	{
+		return $this->nullable;
+	}
+
+	/**
 	 * @param boolean $nullable
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
@@ -135,5 +128,158 @@ class FieldDefinition
 	{
 		$this->nullable = ($nullable == true);
 		return $this;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getOptions()
+	{
+		return $this->options;
+	}
+	
+	/**
+	 * @param array $options
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOptions($options)
+	{
+		$this->options = is_array($options) ? $options :  array();
+		return $this;
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOption($name, $value)
+	{
+		if ($value === null)
+		{
+			unset($this->options[$name]);
+		}
+		else
+		{
+			$this->options[$name] = $value;
+		}
+		return $this;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getOption($name)
+	{
+		return isset($this->options[$name]) ? $this->options[$name] : null;
+	}
+	
+	/**
+	 * @param integer $length
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setLength($length)
+	{
+		$this->setOption('LENGTH', intval($length));
+		return $this;
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getLength()
+	{
+		return intval($this->getOption('LENGTH'));
+	}
+	
+	/**
+	 * @param string $charset
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setCharset($charset)
+	{
+		$this->setOption('CHARSET', $charset);
+		return $this;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getCharset()
+	{
+		return $this->getOption('CHARSET');
+	}
+	
+	/**
+	 * @param string $collation
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setCollation($collation)
+	{
+		$this->setOption('COLLATION', $collation);
+		return $this;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getCollation()
+	{
+		return $this->getOption('COLLATION');
+	}
+	
+	/**
+	 * @param boolean $autoNumber
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setAutoNumber($autoNumber)
+	{
+		$this->setOption('AUTONUMBER', ($autoNumber == true));
+		return $this;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getAutoNumber()
+	{
+		return $this->getOption('AUTONUMBER') === true;
+	}
+	
+	/**
+	 * @param integer $precision
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setPrecision($precision)
+	{
+		$this->setOption('PRECISION', intval($precision));
+		return $this;
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getPrecision()
+	{
+		return intval($this->getOption('PRECISION'));
+	}
+	
+	/**
+	 * @param integer $scale
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setScale($scale)
+	{
+		$this->setOption('SCALE', intval($scale));
+		return $this;
+	}
+	
+	/**
+	 * @return integer
+	 */
+	public function getScale()
+	{
+		return intval($this->getOption('SCALE'));
 	}
 }

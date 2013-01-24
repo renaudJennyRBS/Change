@@ -80,12 +80,7 @@ class Model
 	 * @var boolean
 	 */
 	protected $publishable;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $useCorrection;
-	
+		
 	/**
 	 * @var boolean
 	 */
@@ -212,9 +207,6 @@ class Model
 				case "publishable":
 					$this->publishable = ($value === 'true');
 					break;
-				case "use-correction":
-					$this->useCorrection = ($value === 'true');
-					break;
 				case "use-version":
 					$this->useVersion = ($value === 'true');
 					break;
@@ -284,10 +276,6 @@ class Model
 				{
 					throw new \RuntimeException('inject ' .$this . ' as invalid use-version attribute');
 				}
-				if ($this->useCorrection)
-				{
-					throw new \RuntimeException('inject ' .$this . ' as invalid use-correction attribute');
-				}
 			}
 		}
 		else
@@ -344,17 +332,6 @@ class Model
 			
 			$property = new Property($this, 'endPublication', 'DateTime');
 			$this->properties[$property->getName()] = $property;
-						
-			if ($this->useCorrection === null)
-			{
-				$this->useCorrection = true;
-			}
-		}
-		
-		if ($this->useCorrection)
-		{
-			$property = new Property($this, 'correctionOfId', 'DocumentId');
-			$this->properties[$property->getName()] = $property;
 		}
 		
 		if ($this->useVersion)
@@ -375,15 +352,7 @@ class Model
 	 * @throws \Exception
 	 */
 	public function validateInheritance()
-	{
-		if ($this->getUseCorrection() !== null)
-		{
-			if ($this->checkAncestorUseCorrection())
-			{
-				throw new \RuntimeException($this . ' as duplicate use-correction attribute');
-			}
-		}
-		
+	{	
 		if ($this->getUseVersion() !== null)
 		{
 			if ($this->checkAncestorUseVersion())
@@ -397,14 +366,6 @@ class Model
 			if ($this->checkAncestorPublishable())
 			{
 				throw new \RuntimeException('Duplicate publishable attribute on ' . $this);
-			}
-		}
-		
-		if (!$this->getPublishable() && !$this->checkAncestorPublishable())
-		{
-			if ($this->getUseCorrection())
-			{
-				throw new \RuntimeException('Invalid usage of use-correction attribute on ' . $this);
 			}
 		}
 		
@@ -582,14 +543,6 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function getUseCorrection()
-	{
-		return $this->useCorrection;
-	}
-
-	/**
-	 * @return boolean
-	 */
 	public function getUseVersion()
 	{
 		return $this->useVersion;
@@ -656,22 +609,7 @@ class Model
 		}
 		return false;
 	}
-
-	/**
-	 * @return boolean
-	 */
-	public function checkAncestorUseCorrection()
-	{
-		foreach ($this->getAncestors() as $model)
-		{
-			/* @var $model \Change\Documents\Generators\Model */
-			if ($model->getUseCorrection())
-			{
-				return true;
-			}
-		}
-	}
-	
+		
 	/**
 	 * @return boolean
 	 */

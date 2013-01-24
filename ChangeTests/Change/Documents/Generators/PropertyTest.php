@@ -239,11 +239,6 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'correctionOfId');
-		$p->validate();
-		$this->assertEquals('DocumentId', $p->getType());
-		$this->assertEquals('vendor_module_name', $p->getDocumentType());
-		
 		$p = new \Change\Documents\Generators\Property($model, 'versionOfId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
@@ -358,7 +353,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	{
 		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
 		$model->setLocalized(true);
-		foreach (array('voLCID', 'correctionOfId', 'versionOfId') as $propertyName)
+		foreach (array('voLCID', 'versionOfId') as $propertyName)
 		{
 			$p = new \Change\Documents\Generators\Property($model, $propertyName);
 			$p->makeLocalized(true);

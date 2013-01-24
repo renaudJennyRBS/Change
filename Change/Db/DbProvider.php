@@ -3,7 +3,6 @@ namespace Change\Db;
 
 /**
  * @name \Change\Db\DbProvider
- * @method \Change\Db\DbProvider getInstance()
  */
 abstract class DbProvider
 {	
@@ -69,10 +68,26 @@ abstract class DbProvider
 	public function __construct(array $connectionInfos, \Change\Logging\Logging $logging)
 	{
 		$this->connectionInfos = $connectionInfos;
-		$this->logging = $logging;
+		$this->setLogging($logging);
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
 	}	
 	
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 */
+	public function setLogging(\Change\Logging\Logging $logging)
+	{
+		$this->logging = $logging;
+	}
+
 	public function __destruct()
 	{
 		if ($this->inTransaction())

@@ -318,4 +318,39 @@ class Compiler
 		$generator = new SchemaClass();
 		$generator->savePHPCode($this, $this->application->getApplicationServices()->getDbProvider(), $compilationPath);
 	}
+	
+	public function generate()
+	{
+		$paths = array();
+		$workspace = $this->application->getWorkspace();
+		if (is_dir($workspace->pluginsModulesPath()))
+		{
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
+			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
+		}
+		
+		if (is_dir($workspace->projectModulesPath()))
+		{
+			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
+			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
+		}
+		
+		$nbModels = 0;
+		foreach ($paths as $definitionPath)
+		{
+			$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
+			$count = count($parts);
+			$documentName = basename($parts[$count - 1], '.xml');
+			$moduleName = $parts[$count - 4];
+			$vendor = $parts[$count - 5];
+			$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
+			$nbModels++;
+		}
+		
+		$this->buildTree();
+		
+		$this->validateInheritance();
+		
+		$this->saveModelsPHPCode();
+	}
 }
