@@ -1,6 +1,9 @@
 <?php
 namespace ChangeTests\Documents\Generators;
 
+use Change\Documents\Generators\Property;
+use Change\Documents\Generators\Model;
+
 /**
  * @name \ChangeTests\Documents\Generators\PropertyTest
  */
@@ -8,8 +11,8 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConstruct()
 	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'name', 'String');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model, 'name', 'String');
 		$this->assertEquals('name', $p->getName());
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('String', $p->getComputedType());
@@ -31,133 +34,327 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(0,  $p->getAncestors());
 		$this->assertFalse($p->hasRelation());
 	}
-
-	public function testEmptyAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid empty or spaced');
-		$p->initialize($doc->documentElement);
-	}
-	
-	public function testSpacedAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name=" test" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid empty or spaced');
-		$p->initialize($doc->documentElement);
-	}
-	
-	public function testReservedName()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="id" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid property Name');
-		$p->initialize($doc->documentElement);
-	}
-	
-	public function testInvalidType()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property type="id" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid property Type');
-		$p->initialize($doc->documentElement);
-	}
 	
 	public function testInvalidAttribute()
 	{
+		$model = new Model('vendor', 'module', 'name');
+		
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<property invalid="id" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid property attribute');
-		$p->initialize($doc->documentElement);
+	
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid property attribute');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid property attribute', $e->getMessage());
+		}
 	}
 	
-	public function testInvalidIndexedAttribute()
+	public function testInvalidAttributeValue()
 	{
+		$model = new Model('vendor', 'module', 'name');
+		
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property indexed="id" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid indexed attribute value');
-		$p->initialize($doc->documentElement);
+		$doc->loadXML('<property name="" />');
+		try 
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid empty or spaced');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid empty or spaced', $e->getMessage());
+		}
+		
+		$doc->loadXML('<property name=" test" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid empty or spaced');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid empty or spaced', $e->getMessage());
+		}
 	}
-	
-	public function testNullName()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Property Name can not be null');
-		$p->initialize($doc->documentElement);
-	}
-	
+
 	public function testInvalidChildrenNode()
 	{
+		$model = new Model('vendor', 'module', 'name');
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<property name="test"><test /></property>');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid property children node');
-		$p->initialize($doc->documentElement);
+		
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid property children node');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid property children node', $e->getMessage());
+		}
 	}
 	
-	public function testInvalidConstraintName()
+	public function testNameAttribute()
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test"><constraint /></property>');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid constraint name');
-		$p->initialize($doc->documentElement);
-	}
-	
-	public function testInvalidTrueValue()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" localized="false" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$this->setExpectedException('\RuntimeException', 'Invalid attribute value true');
-		$p->initialize($doc->documentElement);
-	}
-	
-	public function testInitialize()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="Integer" document-type="vendor_module_name" 
-				indexed="description" required="true"
-				cascade-delete="true" default-value="5"
-				min-occurs="5" max-occurs="10" localized="true"
-				><constraint name="min" min="5" /></property>');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
+		$doc->loadXML('<property name="test" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
 		$p->initialize($doc->documentElement);
 		$this->assertEquals('test', $p->getName());
-		$this->assertEquals('Integer', $p->getType());
-		$this->assertEquals(5, $p->getComputedMinOccurs());
-		$this->assertEquals(10, $p->getComputedMaxOccurs());
-		$this->assertEquals('vendor_module_name', $p->getDocumentType());
-		$this->assertEquals('description', $p->getIndexed());
-		$this->assertTrue($p->getCascadeDelete());
-		$this->assertEquals('5', $p->getDefaultValue());
-		$this->assertEquals(5, $p->getDefaultPhpValue());
+		
+		$reservedNames = Property::getReservedPropertyNames();
+		$this->assertGreaterThan(1, count($reservedNames));
+		
+		$doc->loadXML('<property name="'.$reservedNames[0].'" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid property Name');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid name attribute value', $e->getMessage());
+		}
+		
+		
+		$doc->loadXML('<property />');
+		try
+		{
+			
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Property Name can not be null');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Property Name can not be null', $e->getMessage());
+		}
+	}
+	
+	public function testTypeAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" type="String" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals('String', $p->getType());
+		
+		$doc->loadXML('<property name="test" type="string"/>');
+		
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid property Type');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid type attribute value', $e->getMessage());
+		}
+	}
+	
+	public function testDocumentTypeAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" document-type="Change_Tests_Basic" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals('Change_Tests_Basic', $p->getDocumentType());
+	}
+		
+	public function testIndexedAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" indexed="none" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals('none', $p->getIndexed());
+		
+		$doc->loadXML('<property name="test" indexed="string"/>');
+		
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid indexed attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid indexed attribute value', $e->getMessage());
+		}		
+	}
+
+	public function testCascadeDeleteAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" cascade-delete="true" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals(true, $p->getCascadeDelete());
+		
+		$doc->loadXML('<property name="test" cascade-delete="True" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid cascade-delete attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid cascade-delete attribute value', $e->getMessage());
+		}	
+	}
+	
+	public function testDefaultValueAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" default-value="test" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals('test', $p->getDefaultValue());
+	}	
+	
+	public function testRequiredAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" required="true" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
 		$this->assertTrue($p->getRequired());
-		$this->assertEquals(5, $p->getMinOccurs());
-		$this->assertEquals(10, $p->getMaxOccurs());
+		
+		$doc->loadXML('<property name="test" required="false" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid required attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid required attribute value', $e->getMessage());
+		}
+	}
+
+	public function testMinOccursAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" min-occurs="2" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals(2, $p->getMinOccurs());
+	
+		$doc->loadXML('<property name="test" min-occurs="0" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid min-occurs attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid min-occurs attribute value', $e->getMessage());
+		}
+	}
+	
+	public function testMaxOccursAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" max-occurs="2" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertEquals(2, $p->getMaxOccurs());
+	
+		$doc->loadXML('<property name="test" max-occurs="0" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid max-occurs attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid max-occurs attribute value', $e->getMessage());
+		}
+	}
+	
+	public function testLocalizedAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" localized="true" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
 		$this->assertTrue($p->getLocalized());
+	
+		$doc->loadXML('<property name="test" localized="false" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid localized attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid localized attribute value', $e->getMessage());
+		}
+	}
+		
+	public function testConstraintNode()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test"><constraint name="minSize" min="5" /></property>');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
 		$ca = $p->getConstraintArray();
-		$this->assertEquals(array('min' => array('min' => '5')), $ca);
+		$this->assertCount(1, $ca);
+		$this->assertArrayHasKey('minSize', $ca);
+		$this->assertCount(1, $ca['minSize']);
+		$this->assertArrayHasKey('min', $ca['minSize']);
+		$this->assertEquals(5, $ca['minSize']['min']);
+	}
+	
+
+	public function testHasRelation()
+	{
+		$model = new Model('vendor', 'module', 'name');
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" type="Document" />');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertTrue($p->hasRelation());
+		
+		$doc->loadXML('<property name="test" type="DocumentArray" />');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertTrue($p->hasRelation());
+		
+		$doc->loadXML('<property name="test" type="DocumentId" />');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertTrue($p->hasRelation());
+		
+		$doc->loadXML('<property name="test" type="String" />');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
 		$this->assertFalse($p->hasRelation());
 	}
 	
@@ -165,224 +362,103 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<property name="test" type="String"><constraint name="min" min="5" /><constraint name="maxSize" max="8" /></property>');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
 		$p->initialize($doc->documentElement);
 		$p->setDefaultConstraints();
 		$this->assertEquals(array('min' => array('min' => '5'),'maxSize' => array('max' => '8')), $p->getConstraintArray());
 	}
 	
-	public function testInvalidMinOccurs()
+	public function testValidate()
 	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="String" min-occurs="1" />');
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model);
-		$p->initialize($doc->documentElement);
-		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute');
-		$p->validate();
-	}
-	
-	public function testPredefinedPropertyType()
-	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'label' , 'Integer');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model, 'label' , 'Integer');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
+		$this->assertTrue($p->getRequired());
 		$ca = $p->getConstraintArray();
 		$this->assertEquals(array('maxSize' => array('max' => 255)), $p->getConstraintArray());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'voLCID');
+		$p = new Property($model, 'voLCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
+		$this->assertTrue($p->getRequired());
 		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
 				
-		$p = new \Change\Documents\Generators\Property($model, 'LCID');
+		$p = new Property($model, 'LCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
+		$this->assertTrue($p->getRequired());
 		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'creationDate');
+		$p = new Property($model, 'creationDate');
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
+		$this->assertTrue($p->getRequired());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'modificationDate');
+		$p = new Property($model, 'modificationDate');
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
+		$this->assertTrue($p->getRequired());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'authorName');
+		$p = new Property($model, 'authorName');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('Anonymous', $p->getDefaultValue());
 		$this->assertEquals(array('maxSize' => array('max' => 100)), $p->getConstraintArray());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'authorId');
+		$p = new Property($model, 'authorId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
 		$this->assertEquals('Change_Users_User', $p->getDocumentType());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'documentVersion');
+		$p = new Property($model, 'documentVersion');
 		$p->validate();
 		$this->assertEquals('Integer', $p->getType());
 		$this->assertEquals('0', $p->getDefaultValue());
+		$this->assertTrue($p->getRequired());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'publicationStatus');
+		$p = new Property($model, 'publicationStatus');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('DRAFT', $p->getDefaultValue());
+		$this->assertTrue($p->getRequired());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'startPublication');
+		$p = new Property($model, 'startPublication');
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'endPublication');
+		$p = new Property($model, 'endPublication');
 		$p->validate();
 		$this->assertEquals('DateTime', $p->getType());
 		
-		$p = new \Change\Documents\Generators\Property($model, 'versionOfId');
+		$p = new Property($model, 'versionOfId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
 		$this->assertEquals('vendor_module_name', $p->getDocumentType());
 	}
-		
-	public function testInvalidTypeRedeclaration()
-	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');		
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-
-		
-		$p2 = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p2->setParent($p);
-		
-		$this->setExpectedException('\RuntimeException', 'Invalid type redefinition');
-		$p2->validateInheritance();
-	}
-	
-	public function testInvalidLocalizedRedeclaration()
-	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$model->setLocalized(true);
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->makeLocalized(true);
-	
-		$p2 = new \Change\Documents\Generators\Property($model, 'str');
-		$p2->makeLocalized(true);
-		$p2->setParent($p);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid localized attribute');
-		$p2->validateInheritance();
-	}
-	
-	public function testInvalidLocalizedDeclaration()
-	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->makeLocalized(true);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid localized attribute');
-		$p->validateInheritance();
-	}
-	
-	public function testInvalidMinOccurs2()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="String" min-occurs="2" />');
-	
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->initialize($doc->documentElement);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute on');
-		$p->validateInheritance();
-	}
-	
-	public function testInvalidMinOccurs3()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="DocumentArray" min-occurs="-1" />');
-
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->initialize($doc->documentElement);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs attribute value');
-		$p->validateInheritance();
-	}
-	
-	public function testInvalidMaxOccurs()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="String" max-occurs="0" />');
-	
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->initialize($doc->documentElement);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid max-occurs attribute on');
-		$p->validateInheritance();
-	}
-	
-	public function testInvalidMaxOccurs2()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="DocumentArray" max-occurs="0" />');
-	
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->initialize($doc->documentElement);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid max-occurs attribute value');
-		$p->validateInheritance();
-	}
-	
-	public function testInvalidMinMaxOccurs()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="DocumentArray"  min-occurs="6" max-occurs="5" />');
-	
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$p = new \Change\Documents\Generators\Property($model, 'str', 'String');
-		$p->initialize($doc->documentElement);
-	
-		$this->setExpectedException('\RuntimeException', 'Invalid min-occurs max-occurs');
-		$p->validateInheritance();
-	}
 	
 	public function testValidateInheritance()
 	{
-		$model = new \Change\Documents\Generators\Model('vendor', 'module', 'name');
-		$model->setLocalized(true);
-		foreach (array('voLCID', 'versionOfId') as $propertyName)
-		{
-			$p = new \Change\Documents\Generators\Property($model, $propertyName);
-			$p->makeLocalized(true);
-			$p->validateInheritance();
-			$this->assertNull($p->getLocalized());
-		}
+		$modelParent = new Model('vendor', 'module', 'modelParent');
 		
-		foreach (array('LCID', 'creationDate', 'modificationDate', 'label', 'authorName', 'authorId',
-			'documentVersion', 'publicationStatus', 'startPublication', 'endPublication') as $propertyName)
-		{
-			$p2 = new \Change\Documents\Generators\Property($model, $propertyName);
-			$p2->makeLocalized(null);
-			$p2->validateInheritance();
-			$this->assertTrue($p2->getLocalized());
-		}
-		
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" type="Boolean" default-value="true"  />');
-		$p = new \Change\Documents\Generators\Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals('true', $p->getDefaultValue());
-		$this->assertTrue($p->getDefaultPhpValue()) ;
+		$model = new Model('vendor', 'module', 'model');
+		$model->setParent($modelParent);
 		
 		
-		$doc->loadXML('<property name="test" type="Float" default-value="3.333" />');
-		$p = new \Change\Documents\Generators\Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals('3.333', $p->getDefaultValue());
-		$this->assertFalse(is_string($p->getDefaultPhpValue()));
-		$this->assertTrue(is_float($p->getDefaultPhpValue()));
+		$p = new Property($modelParent, 'test1');
+		$modelParent->addProperty($p);
+		
+		$p->validateInheritance();
+		$this->assertEquals('String', $p->getType());
+		
+
+		$p2 = new Property($model, 'test1');
+		$model->addProperty($p2);
+		$p2->validateInheritance();
+		$this->assertNull($p2->getType());
+		$this->assertSame($p, $p2->getParent());
+		$this->assertEquals('String', $p2->getComputedType());
+
 	}
 }
