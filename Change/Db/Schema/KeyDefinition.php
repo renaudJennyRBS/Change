@@ -6,15 +6,26 @@ namespace Change\Db\Schema;
  */
 class KeyDefinition
 {
+	const PRIMARY = 'PRIMARY';
+	
+	const UNIQUE = 'UNIQUE';
+	
+	const INDEX = 'INDEX';
+	
+	/**
+	 * @var string
+	 */
+	protected $type = self::INDEX;
+	
+	/**
+	 * @var array
+	 */
+	protected $options = array();	
+	
 	/**
 	 * @var string
 	 */
 	protected $name;
-	
-	/**
-	 * @var boolean
-	 */
-	protected $primary;	
 	
 	/**
 	 * @var \Change\Db\Schema\FieldDefinition[]
@@ -24,27 +35,80 @@ class KeyDefinition
 	/**
 	 * @return string
 	 */
+	public function getType()
+	{
+		return $this->type;
+	}
+
+	/**
+	 * @param string $type
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setType($type)
+	{
+		if ($type === static::PRIMARY || $type === static::UNIQUE)
+		{
+			$this->type = $type;
+		}
+		else
+		{
+			$this->type = static::INDEX;
+		}
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getOptions()
+	{
+		return $this->options;
+	}
+
+	/**
+	 * @param array $options
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOptions($options)
+	{
+		$this->options = is_array($options) ? $options :  array();
+		return $this;
+	}
+	
+	/**
+	 * @param array $options
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOption($name, $value)
+	{
+		if ($value === null)
+		{
+			unset($this->options[$name]);
+		}
+		else
+		{
+			$this->options[$name] = $value;
+		}
+		return $this;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getOption($name)
+	{
+		return isset($this->options[$name]) ? $this->options[$name] : null;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getName()
 	{
 		return $this->name;
 	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getPrimary()
-	{
-		return $this->primary;
-	}
-
-	/**
-	 * @return \Change\Db\Schema\FieldDefinition[]
-	 */
-	public function getFields()
-	{
-		return $this->fields;
-	}
-
+	
 	/**
 	 * @param string $name
 	 * @return \Change\Db\Schema\KeyDefinition
@@ -54,15 +118,37 @@ class KeyDefinition
 		$this->name = $name;
 		return $this;
 	}
-
+	
 	/**
-	 * @param boolean $primary
-	 * @return \Change\Db\Schema\KeyDefinition
+	 * @return boolean
 	 */
-	public function setPrimary($primary)
+	public function isPrimary()
 	{
-		$this->primary = $primary;
-		return $this;
+		return $this->type === static::PRIMARY;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isUnique()
+	{
+		return $this->type === static::UNIQUE;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isIndex()
+	{
+		return $this->type === static::INDEX;
+	}
+	
+	/**
+	 * @return \Change\Db\Schema\FieldDefinition[]
+	 */
+	public function getFields()
+	{
+		return $this->fields;
 	}
 
 	/**

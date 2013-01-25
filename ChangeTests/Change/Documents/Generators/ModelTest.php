@@ -34,7 +34,6 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$this->assertNull($model->getFrontofficeIndexable());
 		$this->assertNull($model->getBackofficeIndexable());
 		$this->assertNull($model->getPublishable());
-		$this->assertNull($model->getUseCorrection());
 		$this->assertNull($model->getUseVersion());
 		$this->assertNull($model->getEditable());
 		$this->assertEquals('Compilation\change\generic\Documents', $model->getCompilationNameSpace());
@@ -80,7 +79,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(1, $model->getProperties());
 		
 		$model->validate();
-		$this->assertCount(14, $model->getProperties());
+		$this->assertCount(13, $model->getProperties());
 				
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('test'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('creationDate'));
@@ -101,9 +100,6 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('startPublication'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('endPublication'));
 		
-		$this->assertTrue($model->getUseCorrection());
-		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('correctionOfId'));
-
 		$this->assertTrue($model->getUseVersion());
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('versionOfId'));
 		$this->assertCount(0, $model->getAncestors());
@@ -139,9 +135,6 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertNull($model->getLocalized());
 		$this->assertTrue($model->checkLocalized());
-		
-		$this->assertNull($model->getUseCorrection());
-		$this->assertTrue($model->checkAncestorUseCorrection());
 		
 		$this->assertNull($model->getUseVersion());
 		$this->assertTrue($model->checkAncestorUseVersion());

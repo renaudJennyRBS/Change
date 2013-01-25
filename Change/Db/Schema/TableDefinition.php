@@ -21,6 +21,11 @@ class TableDefinition
 	 */
 	protected $keys = array();
 	
+	/**
+	 * @var array
+	 */
+	protected $options = array();
+	
 	
 	public function __construct($name)
 	{
@@ -124,5 +129,86 @@ class TableDefinition
 	public function getField($name)
 	{
 		return isset($this->fields[$name]) ? $this->fields[$name] : null;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getOptions()
+	{
+		return $this->options;
+	}
+	
+	/**
+	 * @param array $options
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOptions($options)
+	{
+		$this->options = is_array($options) ? $options :  array();
+		return $this;
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return \Change\Db\Schema\KeyDefinition
+	 */
+	public function setOption($name, $value)
+	{
+		if ($value === null)
+		{
+			unset($this->options[$name]);
+		}
+		else
+		{
+			$this->options[$name] = $value;
+		}
+		return $this;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getOption($name)
+	{
+		return isset($this->options[$name]) ? $this->options[$name] : null;
+	}
+	
+	/**
+	 * @param string $charset
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setCharset($charset)
+	{
+		$this->setOption('CHARSET', $charset);
+		return $this;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getCharset()
+	{
+		return $this->getOption('CHARSET');
+	}
+	
+	/**
+	 * @param string $collation
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function setCollation($collation)
+	{
+		$this->setOption('COLLATION', $collation);
+		return $this;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getCollation()
+	{
+		return $this->getOption('COLLATION');
 	}
 }

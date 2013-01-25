@@ -4,7 +4,7 @@ namespace Change\Documents;
 /**
  * @name \Change\Documents\AbstractI18nDocument
  */
-abstract class AbstractI18nDocument
+abstract class AbstractI18nDocument implements \Serializable
 {
 	/**
 	 * @var integer
@@ -45,17 +45,19 @@ abstract class AbstractI18nDocument
 	}
 	
 	/**
-	 * @return string[]
+	 * @return string
 	 */
-	public function __sleep()
+	public function serialize()
 	{
-		return array("\0".__CLASS__."\0id");
+		return $this->id . ' ' . $this->getLCID();
 	}
 	
 	/**
+	 * @param string $serialized
 	 */
-	public function __wakeup()
+	public function unserialize($serialized)
 	{
+		list($this->id, $LCID) = explode(' ', $serialized);
 		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postI18nUnserialze($this);
 	}
 	

@@ -306,7 +306,6 @@ class Logging extends \Change\AbstractSingleton
 		$errline = $exception->getLine();
 		$message = '[' . get_class($exception) . '] ' . $exception->getMessage() . ' in file (' . $errfile . ') line ' . $errline . PHP_EOL . $exception->getTraceAsString();
 		$this->phperror($message);
-		echo $message . PHP_EOL;
 	}
 
 	/**

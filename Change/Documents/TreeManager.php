@@ -43,12 +43,41 @@ class TreeManager
 	{
 		if (is_string($moduleName) && count(explode('_', $moduleName)) == 2)
 		{
-			$this->applicationServices->getDbProvider()->getSchemaManager()->createTreeTable($moduleName);
+			$dbp = $this->applicationServices->getDbProvider();
+			$dbp->getSchemaManager()->createOrAlterTable($this->buildTableDefinition($moduleName));
 		}
 		else
 		{
 			throw new \InvalidArgumentException('Invalid Tree Name: ' . $moduleName);
 		}
+	}
+	
+	/**
+	 * @param string $moduleName
+	 * @return \Change\Db\Schema\TableDefinition
+	 */
+	protected function buildTableDefinition($moduleName)
+	{
+		$dbp = $this->applicationServices->getDbProvider();	
+		$tableDef = new \Change\Db\Schema\TableDefinition($dbp->getSqlMapping()->getTreeTableName($moduleName));
+		$schemaManager = $dbp->getSchemaManager();
+		$tableDef->addField($schemaManager->getIntegerFieldDefinition('document_id')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->getIntegerFieldDefinition('parent_id')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->getIntegerFieldDefinition('node_order')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->getIntegerFieldDefinition('node_level')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->getVarCharFieldDefinition('node_path')->setNullable(false)->setDefaultValue(''));
+		$tableDef->addField($schemaManager->getIntegerFieldDefinition('children_count')->setNullable(false)->setDefaultValue('0'));
+		$pk = new \Change\Db\Schema\KeyDefinition();
+		$pk->setType(\Change\Db\Schema\KeyDefinition::PRIMARY);
+		$pk->addField($tableDef->getField('document_id'));	
+		$tableDef->addKey($pk);
+		$index = new \Change\Db\Schema\KeyDefinition();
+		$index->setType(\Change\Db\Schema\KeyDefinition::INDEX);
+		$index->setName('tree_node');
+		$index->addField($tableDef->getField('parent_id'));
+		$index->addField($tableDef->getField('node_order'));
+		$tableDef->addKey($index);	
+		return $tableDef;
 	}
 	
 	/**

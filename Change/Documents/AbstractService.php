@@ -323,7 +323,15 @@ abstract class AbstractService
 				foreach ($localized as $propertyName => $property)
 				{
 					/* @var $property \Change\Documents\Property */
-					$datas['LCID'][$LCID][$propertyName] = $property->getValue($document);
+					$val = $property->getValue($document);
+					if ($val instanceof \DateTime)
+					{
+						$datas[$propertyName] = $val->format('c');
+					}
+					else
+					{
+						$datas['LCID'][$LCID][$propertyName] = $val;
+					}
 				}
 				$dm->popLCID();
 			}

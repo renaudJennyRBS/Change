@@ -52,7 +52,6 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 				$vendor = ucfirst(strtolower($parts[0]));
 				$module = ucfirst(strtolower($parts[1]));
 				$pathToTest = ($vendor == 'Project') ? $this->getChangeApplication()->getWorkspace()->appPath('Modules', $module) : $this->getChangeApplication()->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module);
-				echo $pathToTest, PHP_EOL;
 				$valid = is_dir($pathToTest);
 			}
 		}

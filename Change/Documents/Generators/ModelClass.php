@@ -267,20 +267,7 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getEditable()).';
 	}'. PHP_EOL;
 		}
-	
-		if ($model->getUseCorrection() !== null)
-		{
-			$code .= '
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function useCorrection()
-	{
-		return '. $this->escapePHPValue($model->getUseCorrection()).';
-	}'. PHP_EOL;
-		}
-		
+			
 		if ($model->getUseVersion() !== null)
 		{
 			$code .= '

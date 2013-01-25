@@ -54,7 +54,6 @@ class AbstractDocumentClass
 		if ($model->getLocalized()) {$interfaces[] = '\Change\Documents\Interfaces\Localizable';}
 		if ($model->getEditable()) {$interfaces[] = '\Change\Documents\Interfaces\Editable';}
 		if ($model->getPublishable()) {$interfaces[] = '\Change\Documents\Interfaces\Publishable';}
-		if ($model->getUseCorrection()) {$interfaces[] = '\Change\Documents\Interfaces\Correction';}
 		if ($model->getUseVersion()) {$interfaces[] = '\Change\Documents\Interfaces\Versionable';}
 		
 		if (count($interfaces))
@@ -523,7 +522,7 @@ class AbstractDocumentClass
 	}
 	
 	/**
-	 * @return '.$ct.'|NULL
+	 * @return '.$ct.'|null
 	 */
 	public function get'.$un.'OldValue()
 	{
@@ -604,7 +603,7 @@ class AbstractDocumentClass
 	} 
 			
 	/**
-	 * @return '.$ct.'|NULL
+	 * @return '.$ct.'|null
 	 */
 	public function get'.$un.'OldValue()
 	{
@@ -679,7 +678,7 @@ class AbstractDocumentClass
 		{
 			$code .= '
 	/**
-	 * @return \Change\Documents\AbstractDocument|NULL
+	 * @return \Change\Documents\AbstractDocument|null
 	 */
 	public function get'.$un.'Instance()
 	{
@@ -703,6 +702,7 @@ class AbstractDocumentClass
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
+		
 		$code .= '	
 	/**
 	 * @return integer
@@ -715,12 +715,16 @@ class AbstractDocumentClass
 	/**
 	 * @param '.$ct.' '.$var.'
 	 */
-	public function set'.$un.'('.$var.')
+	public function set'.$un.'('.$var.' = null)
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			'.$mn.' = '.$var.' === null ? null : intval('.$var.');
 			return;
+		}
+		if ('.$var.' !== null && !('.$var.' instanceof '.$ct.'))
+		{
+			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an '.$ct.'\');
 		}
 		$this->checkLoaded();
 		$newId = ('.$var.' instanceof \Change\Documents\AbstractDocument) ? $this->getDocumentManager()->initializeRelationDocumentId('.$var.') : null;
@@ -757,7 +761,7 @@ class AbstractDocumentClass
 	}
 	
 	/**
-	 * @return '.$ct.'
+	 * @return '.$ct.'|null
 	 */
 	public function get'.$un.'()
 	{
@@ -811,81 +815,90 @@ class AbstractDocumentClass
 			}
 		}
 	}
-	
-	/**
-	 * @param '.$ct.' '.$var.'
-	 */
-	public function add'.$un.'('.$var.')
-	{
-		$this->set'.$un.'(-1, '.$var.');
-	}	
 
 	/**
-	 * @param integer $index
-	 * @param '.$ct.' '.$var.'
+	 * @return '.$ct.'[]
 	 */
-	public function set'.$un.'($index, '.$var.')
+	public function get'.$un.'()
 	{
-		if ('.$var.' instanceof \Change\Documents\AbstractDocument)
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
 		{
-			$this->checkLoaded'.$un.'();
-			$newId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');		
-			if (!in_array($newId, '.$mn.'))
-			{
-				$newValueIds = '.$mn.'; 
-				$index = intval($index);
-				if ($index < 0 || $index > count($newValueIds))
-				{
-					$index = count($newValueIds);
-				}
-				$newValueIds[$index] = $newId;		
-				$this->setInternal'.$un.'Ids($newValueIds);
-			}	
+			return is_array('.$mn.') ? count('.$mn.') : '.$mn.';
 		}
-		else
-		{
-			throw new \Exception(__METHOD__. \': Invalid document\');
-		}
+		$this->checkLoaded'.$un.'();
+		$documents = array(); 
+		$dm = $this->getDocumentManager();
+		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dm) {
+			$documents[] = $dm->getRelationDocument($documentId);
+		});
+		return $documents;
 	}
 
 	/**
 	 * @param '.$ct.'[] $newValueArray
 	 */
-	public function set'.$un.'Array($newValueArray)
+	public function set'.$un.'($newValueArray)
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			'.$mn.' = intval($newValueArray);
 			return;
 		}
-		if (is_array($newValueArray))
+		if (!is_array($newValueArray))
 		{
-			$this->checkLoaded'.$un.'();
-			$newValueIds = array(); 
-			$dm = $this->getDocumentManager();
-			array_walk($newValueArray, function ($newValue, $index) use (&$newValueIds, $dm) {
-				if ($newValue instanceof \Change\Documents\AbstractDocument)
-				{
-					$newValueIds[] = $dm->initializeRelationDocumentId($newValue);
-				}
-				else
-				{
-					throw new \Exception(__METHOD__. \': Invalid document\');
-				}
-			});
-				
+			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an array\');
+		}
+		$this->checkLoaded'.$un.'();
+		$newValueIds = array(); 
+		$dm = $this->getDocumentManager();
+		array_walk($newValueArray, function ($newValue, $index) use (&$newValueIds, $dm) {
+			if ($newValue instanceof '.$ct.')
+			{
+				$newValueIds[] = $dm->initializeRelationDocumentId($newValue);
+			}
+			else
+			{
+				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an '.$ct.'[]\');
+			}
+		});
+			
+		$this->setInternal'.$un.'Ids($newValueIds);
+	}
+			
+			
+	/**
+	 * @param '.$ct.' '.$var.'
+	 */
+	public function add'.$un.'('.$ct.' '.$var.')
+	{
+		$this->set'.$un.'AtIndex('.$var.', -1);
+	}	
+
+	/**
+	 * @param '.$ct.' '.$var.'
+	 * @param integer $index
+	 */
+	public function set'.$un.'AtIndex('.$ct.' '.$var.', $index = 0)
+	{
+		$this->checkLoaded'.$un.'();
+		$newId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');		
+		if (!in_array($newId, '.$mn.'))
+		{
+			$newValueIds = '.$mn.'; 
+			$index = intval($index);
+			if ($index < 0 || $index > count($newValueIds))
+			{
+				$index = count($newValueIds);
+			}
+			$newValueIds[$index] = $newId;		
 			$this->setInternal'.$un.'Ids($newValueIds);
-		}
-		else
-		{
-			throw new \Exception(\'Invalid array\');
-		}
+		}	
 	}
 
 	/**
 	 * @param '.$ct.' '.$var.'
 	 */
-	public function remove'.$un.'('.$var.')
+	public function remove'.$un.'('.$ct.' '.$var.')
 	{
 		$index = $this->getIndexof'.$un.'('.$var.');
 		if ($index !== -1)
@@ -944,9 +957,9 @@ class AbstractDocumentClass
 
 	/**
 	 * @param integer $index
-	 * @return '.$ct.'
+	 * @return '.$ct.'|null
 	 */
-	public function get'.$un.'($index)
+	public function get'.$un.'ByIndex($index)
 	{
 		$this->checkLoaded'.$un.'();
 		return isset('.$mn.'[$index]) ?  $this->getDocumentManager()->getRelationDocument('.$mn.'[$index]) : null;
@@ -962,37 +975,15 @@ class AbstractDocumentClass
 	}
 
 	/**
-	 * @return '.$ct.'[]
-	 */
-	public function get'.$un.'Array()
-	{
-		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
-		{
-			return is_array('.$mn.') ? count('.$mn.') : '.$mn.';
-		}
-		$this->checkLoaded'.$un.'();
-		$documents = array(); 
-		$dm = $this->getDocumentManager();
-		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dm) {
-			$documents[] = $dm->getRelationDocument($documentId);
-		});
-		return $documents;
-	}
-
-	/**
 	 * @param '.$ct.' '.$var.'
 	 * @return integer
 	 */
-	public function getIndexof'.$un.'('.$var.')
+	public function getIndexof'.$un.'('.$ct.' '.$var.')
 	{
-		if ('.$var.' instanceof \Change\Documents\AbstractDocument)
-		{
-			$this->checkLoaded'.$un.'();
-			$valueId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');
-			$index = array_search($valueId, '.$mn.');
-			return $index !== false ? $index : -1;
-		}
-		throw new \Exception(__METHOD__. \': Invalid document\');
+		$this->checkLoaded'.$un.'();
+		$valueId = $this->getDocumentManager()->initializeRelationDocumentId('.$var.');
+		$index = array_search($valueId, '.$mn.');
+		return $index !== false ? $index : -1;
 	}' . PHP_EOL;
 		return $code;
 	}

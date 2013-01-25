@@ -164,15 +164,6 @@ abstract class AbstractModel
 	 * @api
 	 * @return boolean
 	 */
-	public function useCorrection()
-	{
-		return false;
-	}
-	
-	/**
-	 * @api
-	 * @return boolean
-	 */
 	public function useVersion()
 	{
 		return false;

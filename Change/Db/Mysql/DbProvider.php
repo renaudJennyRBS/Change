@@ -138,7 +138,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		if ($this->schemaManager === null)
 		{
-			$this->schemaManager = new SchemaManager($this);
+			$this->schemaManager = new SchemaManager($this, $this->logging);
 		}
 		return $this->schemaManager;
 	}	

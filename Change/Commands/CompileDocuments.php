@@ -20,7 +20,6 @@ class CompileDocuments extends \Change\Application\Console\ChangeCommand
 	}
 	
 	/**
-	 *
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @throws \LogicException
@@ -29,38 +28,8 @@ class CompileDocuments extends \Change\Application\Console\ChangeCommand
 	{
 		$output->writeln('<info>Compiling Documents...</info>');
 		$compiler = new \Change\Documents\Generators\Compiler($this->getChangeApplication());
-		$paths = array();
-		$workspace = $this->getChangeApplication()->getWorkspace();
-		if (is_dir($workspace->pluginsModulesPath()))
-		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
-			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
-		}
-		
-		if (is_dir($workspace->projectModulesPath()))
-		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
-			$paths = array_merge($paths, \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT));
-		}
-		
-		$nbModels = 0;
-		foreach ($paths as $definitionPath)
-		{
-			$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-			$count = count($parts);
-			$documentName = basename($parts[$count - 1], '.xml');
-			$moduleName = $parts[$count - 4];
-			$vendor = $parts[$count - 5];
-			$compiler->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
-			$nbModels++;
-		}
-		
-		$compiler->buildTree();
-		
-		$compiler->validateInheritance();
-		
-		$compiler->saveModelsPHPCode();
-		
+		$compiler->generate();
+		$nbModels = count($compiler->getModels());
 		$output->writeln('<info>' .$nbModels. ' compiled !</info>');
 	}
 }

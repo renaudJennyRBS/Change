@@ -3,14 +3,13 @@ namespace Change\Documents;
 
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Publishable;
 use Change\Documents\Interfaces\Versionable;
 
 /**
  * @name \Change\Documents\AbstractDocument
  */
-abstract class AbstractDocument
+abstract class AbstractDocument implements \Serializable
 {		
 	/**
 	 * @var integer
@@ -91,17 +90,19 @@ abstract class AbstractDocument
 	}
 	
 	/**
-	 * @return string[]
+	 * @return string
 	 */
-	public function __sleep()
+	public function serialize()
 	{
-		return array("\0".__CLASS__."\0id", "\0".__CLASS__."\0documentModelName");
+		return $this->id . ' '. $this->documentModelName;
 	}
 	
 	/**
+	 * @param string $serialized
 	 */
-	public function __wakeup()
+	public function unserialize($serialized)
 	{
+		list($this->id, $this->documentModelName) = explode(' ', $serialized);
 		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postUnserialze($this);
 	}
 	

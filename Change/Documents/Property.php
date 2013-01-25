@@ -454,10 +454,6 @@ class Property
 		else
 		{
 			$getter = 'get' . ucfirst($this->name);
-			if ($this->type === self::TYPE_DOCUMENTARRAY)
-			{
-				$getter .= 'Array';
-			}
 		}
 		return call_user_func(array($document, $getter));
 	}
@@ -471,10 +467,6 @@ class Property
 		if ($this->name !== 'id' && $this->name !== 'model')
 		{
 			$setter = 'set' . ucfirst($this->name);
-			if ($this->type === self::TYPE_DOCUMENTARRAY)
-			{
-				$setter .= 'Array';
-			}
 			call_user_func(array($document, $setter), $value);
 		}
 	}
