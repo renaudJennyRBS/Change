@@ -16,6 +16,12 @@ class Property
 			'publicationstatus', 'startpublication', 'endpublication',
 			'correctionofid', 'versionofid');
 	
+	protected static $RESERVED_PROPERTY_METHODS = array('get{Name}', 'set{Name}', 'get{Name}OldValue', 
+		'get{Name}DOMDocument', 'set{Name}DOMDocument', 'getDecoded{Name}', 'get{Name}Instance', 
+		'get{Name}OldValueId', 'get{Name}Id', 
+		'get{Name}OldValueIds', 'add{Name}', 'set{Name}AtIndex', 'remove{Name}', 'remove{Name}ByIndex', 
+		'removeAll{Name}', 'get{Name}ByIndex', 'get{Name}Ids', 'getIndexof{Name}');
+	
 	/**
 	 * @var \Change\Documents\Generators\Property
 	 */
@@ -81,7 +87,23 @@ class Property
 	 */
 	protected $constraintArray;
 	
+	/**
+	 * @return string[]
+	 */
+	public static function getReservedPropertyNames()
+	{
+		return static::$RESERVED_PROPERTY_NAMES;
+	}
 	
+	/**
+	 * @return string[]
+	 */
+	public static function getValidPropertyTypes()
+	{
+		return static::$TYPES;
+	}
+	
+
 	public function __construct(\Change\Documents\Generators\Model $model, $name = null, $type = null)
 	{
 		$this->model = $model;
@@ -108,14 +130,14 @@ class Property
 				case "name":
 					if (in_array(strtolower($value), self::$RESERVED_PROPERTY_NAMES))
 					{
-						throw new \RuntimeException('Invalid property Name => ' . $value);
+						throw new \RuntimeException('Invalid name attribute value: ' . $value);
 					}
 					$this->name = $value;
 					break;
 				case "type":
 					if (!in_array($value, static::$TYPES))
 					{
-						throw new \RuntimeException('Invalid property Type => ' . $value);
+						throw new \RuntimeException('Invalid type attribute value: ' . $value);
 					}
 					else
 					{
@@ -132,26 +154,55 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid indexed attribute value ' . $name . ' = ' . $value);
+						throw new \RuntimeException('Invalid indexed attribute value: '. $value);
 					}
 					break;
 				case "cascade-delete":
-					$this->cascadeDelete = ($value === 'true');
+					if ($value === 'true' || $value === 'false')
+					{
+						$this->cascadeDelete = ($value === 'true');
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid cascade-delete attribute value: '. $value);
+					}
 					break;
 				case "default-value":
 					$this->defaultValue = $value;
 					break;
 				case "required":
-					$this->required = ($value === 'true');
+					if ($value === 'true')
+					{
+						$this->required = ($value === 'true');
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid required attribute value: '. $value);
+					}
 					break;
 				case "min-occurs":
 					$this->minOccurs = intval($value);
+					if ($this->minOccurs <= 1)
+					{
+						throw new \RuntimeException('Invalid min-occurs attribute value: '. $value);
+					}
 					break;
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
+					if ($this->maxOccurs != -1 && $this->maxOccurs < 1)
+					{
+						throw new \RuntimeException('Invalid max-occurs attribute value: '. $value);
+					}
 					break;
 				case "localized":
-					$this->localized = ($value === 'true');
+					if ($value === 'true')
+					{
+						$this->localized = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid localized attribute value: '. $value);
+					}
 					break;
 				default:
 					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value);
@@ -162,11 +213,6 @@ class Property
 		if ($this->getName() === null)
 		{
 			throw new \RuntimeException('Property Name can not be null');
-		}
-		
-		if ($this->localized === false || $this->required === false)
-		{
-			throw new \RuntimeException('Invalid attribute value true expected');
 		}
 
 		foreach ($xmlElement->childNodes as $node)
@@ -345,8 +391,6 @@ class Property
 		return $this->constraintArray;
 	}
 	
-
-	
 	/**
 	 * @return string
 	 */
@@ -403,12 +447,7 @@ class Property
 	 * @throws \Exception
 	 */
 	public function validate()
-	{		
-		if ($this->minOccurs === 0 || $this->minOccurs === 1)
-		{
-			throw new \RuntimeException('Invalid min-occurs attribute on ' . $this->model . ':' . $this->name);
-		}
-			
+	{					
 		switch ($this->name)
 		{
 			case 'label':
@@ -454,10 +493,6 @@ class Property
 			case 'endPublication':
 				$this->type = 'DateTime';
 				break;
-			case 'correctionOfId':
-				$this->type = 'DocumentId';
-				$this->documentType = $this->model->getName();
-				break;
 			case 'versionOfId':
 				$this->type = 'DocumentId';
 				$this->documentType = $this->model->getName();
@@ -482,32 +517,27 @@ class Property
 			}
 			$pm = $pm->getParent();
 		}
+		$parentProp = $this->getParent();
 		
-		if ($this->getParent() === null && $this->type === null)
+		if ($parentProp === null)
 		{
-			$this->type = 'String';
-			$this->setDefaultConstraints();
+			if ($this->type === null)
+			{
+				$this->type = 'String';
+				$this->setDefaultConstraints();
+			}
 		}
-		elseif ($this->getParent() !== null && $this->type !== null)
+		else
 		{
-			throw new \RuntimeException('Invalid type redefinition attribute on ' . $this->model . ':' . $this->name);
+			if ($this->type !== null || $this->localized !== null)
+			{
+				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this);
+			}
 		}
 		
 		$ancestors = $this->getAncestors();
 		if ($this->model->checkLocalized())
 		{
-			if ($this->localized)
-			{
-				foreach ($ancestors as $property)
-				{
-					/* @var $property \Change\Documents\Generators\Property */
-					if ($property->getLocalized())
-					{
-						throw new \RuntimeException('Invalid localized attribute on ' . $this->model . ':' . $this->name);
-					}
-				}
-			}
-			
 			switch ($this->name)
 			{
 				case 'voLCID':
@@ -527,13 +557,12 @@ class Property
 				case 'publicationStatus':
 				case 'startPublication':
 				case 'endPublication':
-
 					$this->makeLocalized(true);
 			}
 		}
 		elseif ($this->localized !== null)
 		{
-			throw new \RuntimeException('Invalid localized attribute on ' . $this->model . ':' . $this->name);
+			throw new \RuntimeException('Invalid localized attribute on ' . $this);
 		}
 		
 		$type = $this->getComputedType();
@@ -541,30 +570,20 @@ class Property
 		{
 			if ($this->minOccurs !== null)
 			{
-				throw new \RuntimeException('Invalid min-occurs attribute on ' . $this->model . ':' . $this->name);
+				throw new \RuntimeException('Invalid min-occurs attribute on ' . $this);
 			}
 			if ($this->maxOccurs !== null)
 			{
-				throw new \RuntimeException('Invalid max-occurs attribute on ' . $this->model . ':' . $this->name);
+				throw new \RuntimeException('Invalid max-occurs attribute on ' . $this);
 			}
 		}
 		else
 		{
 			$mi = $this->getComputedMinOccurs();
 			$ma = $this->getComputedMaxOccurs();
-			
-			if ($mi < 0)
+			if ($ma != -1 && $ma < $mi)
 			{
-				throw new \RuntimeException('Invalid min-occurs attribute value on ' . $this->model . ':' . $this->name);
-			}
-			
-			if ($ma < -1 || $ma == 0)
-			{
-				throw new \RuntimeException('Invalid max-occurs attribute value on ' . $this->model . ':' . $this->name);
-			}
-			elseif ($ma != -1 && $ma < $mi)
-			{
-				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this->model . ':' . $this->name);
+				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this);
 			}
 		}
 	}
@@ -615,5 +634,13 @@ class Property
 			}
 		}
 		return $val;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->model . '::' . $this->getName();
 	}
 }

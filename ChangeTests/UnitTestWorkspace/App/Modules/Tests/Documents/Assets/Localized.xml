@@ -19,8 +19,8 @@
 		<property name="pObj" type="Object" />
 	
 		<property name="pDocId" type="DocumentId" />	
-		<property name="pDocInst" type="Document" document-type="Change_Tests_Basic" />
-		<property name="pDocArr" type="DocumentArray" document-type="Change_Tests_Basic"/>
+		<property name="pDocInst" type="Document" document-type="Project_Tests_Basic" />
+		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_Basic"/>
 			
 		<property name="pLStr" type="String" required="true" localized="true" />
 		<property name="pLBool" type="Boolean" localized="true" />

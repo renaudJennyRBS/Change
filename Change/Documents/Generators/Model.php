@@ -241,11 +241,7 @@ class Model
 				{
 					$property = new Property($this);
 					$property->initialize($xmlProperty);
-					if (isset($this->properties[$property->getName()]))
-					{
-						throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName());
-					}
-					$this->properties[$property->getName()] = $property;
+					$this->addProperty($property);
 				}
 				else
 				{
@@ -253,6 +249,18 @@ class Model
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @param Property $property
+	 */
+	public function addProperty(Property $property)
+	{
+		if (isset($this->properties[$property->getName()]))
+		{
+			throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName());
+		}
+		$this->properties[$property->getName()] = $property;
 	}
 
 	/**

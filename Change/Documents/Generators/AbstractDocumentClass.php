@@ -727,7 +727,7 @@ class AbstractDocumentClass
 			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an '.$ct.'\');
 		}
 		$this->checkLoaded();
-		$newId = ('.$var.' instanceof \Change\Documents\AbstractDocument) ? $this->getDocumentManager()->initializeRelationDocumentId('.$var.') : null;
+		$newId = ('.$var.' !== null) ? $this->getDocumentManager()->initializeRelationDocumentId('.$var.') : null;
 		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
 		{
 			'.$mn.' = $newId;
@@ -897,18 +897,21 @@ class AbstractDocumentClass
 
 	/**
 	 * @param '.$ct.' '.$var.'
+	 * @return boolean
 	 */
 	public function remove'.$un.'('.$ct.' '.$var.')
 	{
 		$index = $this->getIndexof'.$un.'('.$var.');
 		if ($index !== -1)
 		{
-			$this->remove'.$un.'ByIndex($index);
+			return $this->remove'.$un.'ByIndex($index);
 		}
+		return false;
 	}
 
 	/**
 	 * @param integer $index
+	 * @return boolean
 	 */
 	public function remove'.$un.'ByIndex($index)
 	{
@@ -918,7 +921,9 @@ class AbstractDocumentClass
 			$newValueIds = '.$mn.';
 			unset($newValueIds[$index]);	
 			$this->setInternal'.$un.'Ids($newValueIds);
+			return true;
 		}
+		return false;
 	}
 
 	public function removeAll'.$un.'()
