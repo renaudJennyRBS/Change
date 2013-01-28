@@ -56,7 +56,7 @@ class PackageManager
 	 */
 	protected function getPsr0CachePath()
 	{
-		return $this->application->getWorkspace()->projectPath('.psr-0.ser');
+		return $this->application->getWorkspace()->tmpPath('.psr-0.ser');
 	}
 
 	/**
@@ -96,7 +96,7 @@ class PackageManager
 				$moduleName = ucfirst(strtolower($parts[$partsCount-1]));
 				$namespaces['Project\\' . $moduleName . '\\'] = $modulePath;
 			}
-			file_put_contents($path, \Zend\Serializer\Serializer::serialize($namespaces));
+			\Change\Stdlib\File::write($path, \Zend\Serializer\Serializer::serialize($namespaces));
 		}
 		return \Zend\Serializer\Serializer::unserialize(file_get_contents($path));
 	}

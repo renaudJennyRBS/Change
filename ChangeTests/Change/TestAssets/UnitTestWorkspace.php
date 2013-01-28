@@ -7,6 +7,7 @@ class UnitTestWorkspace extends \Change\Workspace
 	public function clear()
 	{
 		\Change\Stdlib\File::rmdir(PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation', true);
+		\Change\Stdlib\File::rmdir(PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/tmp', true);
 	}
 
 	/**
@@ -27,4 +28,17 @@ class UnitTestWorkspace extends \Change\Workspace
 		// TODO Auto-generated method stub
 		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation';
 	}
+	
+	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function tmpPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'ChangeTests', 'UnitTestWorkspace', 'tmp');
+		return call_user_func_array(array($this, 'projectPath'), $args);
+	}
+	
 }

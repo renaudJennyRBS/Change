@@ -131,6 +131,28 @@ class Workspace
 		array_unshift($args, 'Plugins', 'Modules');
 		return call_user_func_array(array($this, 'projectPath'), $args);
 	}
+	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function tmpPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'tmp');
+		return call_user_func_array(array($this, 'projectPath'), $args);
+	}
+	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function cachePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'cache');
+		return call_user_func_array(array($this, 'tmpPath'), $args);
+	}
 
 	/**
 	 * @param string[] $pathComponents

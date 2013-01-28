@@ -53,15 +53,15 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetNewDocumentInstance(DocumentManager $manager)
 	{
-		$document = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $document);
+		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $document);
 		$this->assertEquals(-1, $document->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
 		$model = $document->getDocumentModel();
 		
 		$document2 = $manager->getNewDocumentInstanceByModel($model);
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $document2);
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $document2);
 		$this->assertEquals(-2, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
 		
@@ -74,21 +74,21 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testDocument(DocumentManager $manager)
 	{
-		$document = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document->getId());
 		$manager->affectId($document);
 		$this->assertGreaterThan(0, $document->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
 		$definedId = $document->getId() + 10;
-		$document2 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		$document2 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document2->getId());
 		$document2->initialize($definedId);
 		$manager->affectId($document2);
 		$this->assertEquals($definedId, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
 		
-		$document3 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		$document3 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document3->getId());
 		$manager->affectId($document3);
 		$this->assertEquals($definedId + 1, $document3->getId());
@@ -119,7 +119,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$manager->reset();
 		$newDoc1 = $manager->getDocumentInstance($document->getId());
 		$this->assertTrue($newDoc1 !== $document);
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $newDoc1);
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $newDoc1);
 		$this->assertEquals($document->getId(), $newDoc1->getId());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $newDoc1->getPersistentState());
 			
@@ -133,7 +133,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$metasLoaded = $manager->loadMetas($newDoc1);
 		$this->assertEquals($metas, $metasLoaded);
 				
-		$newDoc = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
+		$newDoc = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$tmpId = $newDoc->getId();
 		$manager->initializeRelationDocumentId($newDoc);
 		
@@ -181,10 +181,10 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testI18nDocument(DocumentManager $manager)
 	{
-		$localized = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
+		$localized = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedI18nPartFr = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
 		
-		/* @var $localizedI18nPartFr \Compilation\Change\Tests\Documents\LocalizedI18n */
+		/* @var $localizedI18nPartFr \Compilation\Project\Tests\Documents\LocalizedI18n */
 		$tmpId = $localized->getId();
 		$this->assertNotNull($localizedI18nPartFr);
 		$this->assertEquals($tmpId, $localizedI18nPartFr->getId());
@@ -229,11 +229,11 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testPropertyDocumentIds(DocumentManager $manager)
 	{
-		$sd1 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
-		$sd2 = $manager->getNewDocumentInstanceByModelName('Change_Tests_Localized');
+		$sd1 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$sd2 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		
-		$basic = $manager->getNewDocumentInstanceByModelName('Change_Tests_Basic');
-		/* @var $basic \Change\Tests\Documents\Basic */
+		$basic = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		/* @var $basic \Project\Tests\Documents\Basic */
 		$basic->addPDocArr($sd1);
 		$basic->addPDocArr($sd2);
 		

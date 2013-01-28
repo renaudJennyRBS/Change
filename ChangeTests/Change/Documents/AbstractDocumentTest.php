@@ -42,10 +42,10 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getTestsBasic();
+		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsBasic();
 		$basicDoc = $testsBasicService->getNewDocumentInstance();
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $basicDoc);
-		$this->assertEquals('Change_Tests_Basic', $basicDoc->getDocumentModelName());
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
+		$this->assertEquals('Project_Tests_Basic', $basicDoc->getDocumentModelName());
 		
 		$this->assertEquals(DocumentManager::STATE_NEW, $basicDoc->getPersistentState());
 		$this->assertLessThan(0 , $basicDoc->getId());
@@ -112,7 +112,7 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 		$basicDoc->getDocumentManager()->reset();
 		
 		$basicDoc2 = $testsBasicService->getDocumentInstance($documentId);
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $basicDoc2);
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		$this->assertNotSame($basicDoc, $basicDoc2);
 		

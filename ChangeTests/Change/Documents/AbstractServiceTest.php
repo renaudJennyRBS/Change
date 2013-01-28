@@ -42,12 +42,12 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getTestsBasic();
-		$this->assertInstanceOf('\Change\Tests\Documents\BasicService', $testsBasicService);
-		$this->assertEquals('Change_Tests_Basic', $testsBasicService->getModelName());
+		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsBasic();
+		$this->assertInstanceOf('\Project\Tests\Documents\BasicService', $testsBasicService);
+		$this->assertEquals('Project_Tests_Basic', $testsBasicService->getModelName());
 		
 		$basicDoc = $testsBasicService->getNewDocumentInstance();
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $basicDoc);
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
 		
 		$basicDoc->setPStr('Basic 1');
 		$basicDoc->setCreationDate(null);
@@ -71,7 +71,7 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 		$basicDoc->getDocumentManager()->reset();
 		
 		$basicDoc2 = $testsBasicService->getDocumentInstance($basicDoc->getId());
-		$this->assertInstanceOf('\Change\Tests\Documents\Basic', $basicDoc2);
+		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
 		$this->assertNotSame($basicDoc, $basicDoc2);
 		$this->assertEquals($basicDoc2->getId(), $basicDoc->getId());
 		
@@ -119,13 +119,13 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 		$dm = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
 		
 		$dm->pushLCID('fr_FR');
-		$testsLocalizedService = \Change\Application::getInstance()->getDocumentServices()->getTestsLocalized();
+		$testsLocalizedService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsLocalized();
 		
-		$this->assertInstanceOf('\Change\Tests\Documents\LocalizedService', $testsLocalizedService);
-		$this->assertEquals('Change_Tests_Localized', $testsLocalizedService->getModelName());
+		$this->assertInstanceOf('\Project\Tests\Documents\LocalizedService', $testsLocalizedService);
+		$this->assertEquals('Project_Tests_Localized', $testsLocalizedService->getModelName());
 	
 		$localizedDoc = $testsLocalizedService->getNewDocumentInstance();
-		$this->assertInstanceOf('\Change\Tests\Documents\Localized', $localizedDoc);
+		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $localizedDoc);
 	
 		$localizedDoc->setPStr('Basic 1');
 		$localizedDoc->setPLStr('Localized 1 FR');
@@ -155,7 +155,7 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 		$basicDoc2 = $testsLocalizedService->getDocumentInstance($localizedDoc->getId());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		
-		$this->assertInstanceOf('\Change\Tests\Documents\Localized', $basicDoc2);
+		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $basicDoc2);
 		$this->assertNotSame($localizedDoc, $basicDoc2);
 		$this->assertEquals($basicDoc2->getId(), $localizedDoc->getId());
 		$this->assertCount(1, $basicDoc2->getLCIDArray());
