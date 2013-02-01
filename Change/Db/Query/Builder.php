@@ -29,10 +29,28 @@ class Builder
 	 */
 	public function __construct(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->dbProvider = $dbProvider;
+		$this->setDbProvider($dbProvider);
 		$this->fragmentBuilder = new \Change\Db\Query\SQLFragmentBuilder($dbProvider->getSqlMapping());
 	}
 	
+	/**
+	 * @api
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Db\DbProvider $dbProvider
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+	}
+
 	/**
 	 * @api
 	 * Explicitely reset the builder (which will destroy the current query).

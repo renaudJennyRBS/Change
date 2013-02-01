@@ -282,49 +282,4 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 		}
 		return null;
 	}
-	
-	/**
-	 * 
-	 * @param array $results
-	 * @param array $scalarTypes
-	 * @return array
-	 */
-	public function convertRows($results, $scalarTypes = array())
-	{
-		if (is_array($results))
-		{
-			$rowConverter = $this;
-			return array_map(function($row) use ($rowConverter, $scalarTypes) {return $rowConverter->convertRow($row, $scalarTypes);}, $results);
-		}
-		return null;
-	}
-	
-	/**
-	 * @param array $row
-	 * @param array $scalarTypes
-	 * @return array
-	 */
-	public function convertRow($row, $scalarTypes = array())
-	{
-		if (is_array($row))
-		{
-			$result = array();
-			foreach ($row as $name => $dbValue)
-			{
-				$result[$name] = (isset($scalarTypes[$name])) ?  $this->getValue($dbValue, $scalarTypes[$name]) : $dbValue;
-			}
-			return $result;
-		}
-		return null;
-	}
-	
-	/**
-	 * @param mixed $dbValue
-	 * @param integer $scalarType \Change\Db\ScalarType::*
-	 * @return mixed
-	 */
-	public function getValue($dbValue, $scalarType = \Change\Db\ScalarType::STRING)
-	{
-		return $this->dbProvider->dbToPhp($dbValue, $scalarType);
-	}
 }
