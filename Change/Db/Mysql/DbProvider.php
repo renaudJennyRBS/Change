@@ -198,22 +198,6 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 		
 	/**
-	 * @param Statement $statement
-	 */
-	protected function showError($statement = null)
-	{
-		if ($statement !== null)
-		{
-			$msg = $statement->getErrorMessage();
-		}
-		else
-		{
-			$msg = "Driver ERROR Code (". $this->errorCode() . ") : " . $this->errorInfo();
-		}
-		throw new \Exception($msg);
-	}
-	
-	/**
 	 * @param string $tableName
 	 * @return integer
 	 */
@@ -226,7 +210,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @api
 	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
 	 * @return string
-	*/
+	 */
 	public function buildSQLFragment(\Change\Db\Query\InterfaceSQLFragment $fragment)
 	{
 		if ($fragment instanceof \Change\Db\Query\Expressions\Table) 
