@@ -1,11 +1,6 @@
 <?php
 namespace Change\Documents;
 
-use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Publishable;
-use Change\Documents\Interfaces\Versionable;
-
 /**
  * @name \Change\Documents\AbstractDocument
  */
@@ -50,6 +45,11 @@ abstract class AbstractDocument implements \Serializable
 	 * @var array
 	 */
 	private $propertiesErrors;
+	
+	/**
+	 * @var array
+	 */
+	protected $corrections;
 	
 	/**
 	 * @var \Change\Documents\DocumentManager
@@ -186,6 +186,7 @@ abstract class AbstractDocument implements \Serializable
 		$this->metas = null;
 		$this->modifiedMetas = false;
 		$this->propertiesErrors = null;
+		$this->corrections = null;
 		if ($this->persistentState === DocumentManager::STATE_LOADED)
 		{
 			$this->persistentState = DocumentManager::STATE_INITIALIZED;
@@ -379,7 +380,7 @@ abstract class AbstractDocument implements \Serializable
 			}
 			
 		} 
-		elseif ($value === null || $value === '') 
+		elseif ($value === null || $value === '')
 		{
 			if (!$property->isRequired()) 
 			{	
@@ -481,14 +482,41 @@ abstract class AbstractDocument implements \Serializable
 			unset($this->propertiesErrors[$propertyName]);
 		}
 	}
-	
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasNonLocalizedModifiedProperties()
+	{
+		return count($this->modifiedProperties) > 0;
+	}
+
 	/**
 	 * @api
 	 * @return boolean
 	 */
 	public function hasModifiedProperties()
 	{
-		return count($this->modifiedProperties) > 0;
+		return $this->hasNonLocalizedModifiedProperties();
+	}
+
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getNonLocalizedModifiedPropertyNames()
+	{
+		return array_keys($this->modifiedProperties);
+	}
+
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getModifiedPropertyNames()
+	{
+		return $this->getNonLocalizedModifiedPropertyNames();
 	}
 	
 	/**
@@ -500,22 +528,12 @@ abstract class AbstractDocument implements \Serializable
 	{
 		return array_key_exists($propertyName, $this->modifiedProperties);
 	}
-	
+
 	/**
-	 * @api
-	 * @return string[]
-	 */
-	public function getModifiedPropertyNames()
-	{
-		return array_keys($this->modifiedProperties);
-	}
-	
-	/**
-	 * @api
 	 * @param string $propertyName
 	 * @return mixed
 	 */
-	public function getOldPropertyValue($propertyName)
+	protected function getOldPropertyValue($propertyName)
 	{
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
@@ -523,16 +541,7 @@ abstract class AbstractDocument implements \Serializable
 		}
 		return null;
 	}
-	
-	/**
-	 * @api
-	 * @return array<string => mixed>
-	 */
-	public function getOldPropertyValues()
-	{
-		return $this->modifiedProperties;
-	}
-	
+
 	/**
 	 * @api
 	 */
@@ -554,18 +563,19 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
+	 * @api
 	 * @param string $propertyName
 	 */
-	protected function removeOldPropertyValue($propertyName)
+	public function removeOldPropertyValue($propertyName)
 	{
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
 			unset($this->modifiedProperties[$propertyName]);
 		}
 	}
-	
+
 	/**
-	 * Called everytime a property has changed.
+	 * Called every time a property has changed.
 	 * @param string $propertyName Name of the property that has changed.
 	 */
 	protected function propertyChanged($propertyName)
@@ -701,6 +711,91 @@ abstract class AbstractDocument implements \Serializable
 			$this->metas[$name] = $value;
 			$this->modifiedMetas = true;
 		}
+	}
+	
+	// Correction Method
+	
+	/**
+	 * @return \Change\Documents\Correction[]
+	 */
+	protected function getCorrections()
+	{
+		if ($this->corrections === null)
+		{
+			$this->setCorrections($this->documentManager->loadCorrections($this));
+		}
+		return $this->corrections;
+	}
+
+	/**
+	 * @param \Change\Documents\Correction[]|null $corrections
+	 */
+	protected function setCorrections($corrections = null)
+	{
+		if (is_array($corrections))
+		{
+			$this->corrections = array();
+			foreach ($corrections as $correction)
+			{
+				if ($correction instanceof Correction)
+				{
+					$key = $correction->getLcid();
+					if ($key === null) {$key = Correction::NULL_LCID_KEY;}
+					$this->corrections[$key] = $correction;
+				}
+			}
+		}
+		else
+		{
+			$this->corrections = null;
+		}
+	}
+	
+	/**
+	 * @param \Change\Documents\Correction $correction
+	 */
+	protected function addCorrection(Correction $correction)
+	{
+		$key = $correction->getLcid();
+		if ($key === null) {$key = Correction::NULL_LCID_KEY;}
+		$this->corrections[$key] = $correction;
+	}
+	
+	/**
+	 * @param \Change\Documents\Correction $correction
+	 */
+	public function removeCorrection(Correction $correction)
+	{
+		if (is_array($this->corrections))
+		{
+			$key = $correction->getLcid();
+			if ($key === null) {$key = Correction::NULL_LCID_KEY;}
+			unset($this->corrections[$key]);
+		}
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function hasCorrection()
+	{
+		$corrections = $this->getCorrections();
+		return isset($corrections[Correction::NULL_LCID_KEY]);
+	}	
+	
+	/**
+	 * @return \Change\Documents\Correction
+	 */
+	public function getCorrection()
+	{
+		$corrections = $this->getCorrections();
+		if (!isset($corrections[Correction::NULL_LCID_KEY]))
+		{
+			$correction = $this->documentManager->getNewCorrectionInstance($this, null);
+			$this->addCorrection($correction);
+			return $correction;
+		}
+		return $corrections[Correction::NULL_LCID_KEY];
 	}
 	
 	// Generic Method

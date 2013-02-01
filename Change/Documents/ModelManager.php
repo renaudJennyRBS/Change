@@ -7,12 +7,10 @@ namespace Change\Documents;
  */
 class ModelManager
 {
-	
 	/**
 	 * @var \Change\Documents\AbstractModel[]
 	 */
 	protected $documentModels = array();
-	
 	
 	/**
 	 * @param string $modelName

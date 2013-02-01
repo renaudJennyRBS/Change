@@ -1,6 +1,8 @@
 <?php
 namespace Change\Documents;
 
+use Change\Db\Query\ResultsConverter;
+
 /**
  * @name \Change\Documents\DocumentManager
  */
@@ -125,10 +127,9 @@ class DocumentManager
 	 */
 	public function postUnserialze(\Change\Documents\AbstractDocument $document)
 	{
-		$model = $this->getModelManager()->getModelByName($document->getDocumentModelName());
+		$model = $this->getModelManager()->getModelByName($document->getDocumentModelName());		
 		$service = $this->getDocumentServices()->get($model->getName());
-		$document->setDocumentContext($this, $model, $service);
-		
+		$document->setDocumentContext($this, $model, $service);	
 		$key = 'Infos_' .  $model->getRootName();
 		if (!isset($this->cachedQueries[$key]))
 		{
@@ -141,10 +142,11 @@ class DocumentManager
 			->query();
 			
 		}
+		/* @var $query \Change\Db\Query\SelectQuery */
 		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
 		
-		$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
+		$constructorInfos = $query->getFirstResult();
 		if ($constructorInfos)
 		{
 			$treeName = $constructorInfos['treeName'];
@@ -191,14 +193,14 @@ class DocumentManager
 			}
 			$this->cachedQueries[$key] = $qb->query();
 		}
-		/* @var $q \Change\Db\Query\SelectQuery */
+		/* @var $sq \Change\Db\Query\SelectQuery */
 		$sq = $this->cachedQueries[$key];
 		$sq->bindParameter('id', $document->getId());
 		
-		$propertyBag = $sq->getResults(function ($results) {return array_shift($results);});
+		$propertyBag = $sq->getFirstResult();
 		if ($propertyBag)
 		{
-			$dbp = $this->getDbProvider();
+			$dbp = $sq->getDbProvider();
 			$sqlmap = $dbp->getSqlMapping();
 			foreach ($propertyBag as $propertyName => $dbValue)
 			{
@@ -235,7 +237,7 @@ class DocumentManager
 		/* @var $query \Change\Db\Query\SelectQuery */
 		$query = $this->cachedQueries[$key];
 		$query->bindParameter('id', $document->getId());
-		$row = $query->getResults(function($rows) {return array_shift($rows);});
+		$row = $query->getFirstResult();
 		if ($row !== null && $row['metas'])
 		{
 			return json_decode($row['metas'], true);
@@ -483,10 +485,10 @@ class DocumentManager
 		$execute = false;
 		$relations = array();
 		
-		foreach ($model->getProperties() as $name => $property)
+		foreach ($model->getNonLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			if ($document->isPropertyModified($name) && !$property->getLocalized())
+			if ($document->isPropertyModified($name))
 			{
 				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
 				{
@@ -542,10 +544,10 @@ class DocumentManager
 		$iq = $qb->updateQuery();
 		$execute = false;
 		
-		foreach ($model->getProperties() as $name => $property)
+		foreach ($model->getLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			if ($i18nPart->isPropertyModified($name) && $property->getLocalized())
+			if ($i18nPart->isPropertyModified($name))
 			{
 				$dbType = $sqlmap->getDbScalarType($property->getType());
 				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
@@ -739,10 +741,10 @@ class DocumentManager
 			$q = $this->cachedQueries[$key];
 			
 			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);		
-			$propertyBag = $q->getResults(function ($results) {return array_shift($results);});
+			$propertyBag = $q->getFirstResult();
 			if ($propertyBag)
 			{
-				$dbp = $this->getDbProvider();
+				$dbp = $q->getDbProvider();
 				$sqlmap = $dbp->getSqlMapping();
 				foreach ($propertyBag as $propertyName => $dbValue)
 				{
@@ -802,9 +804,6 @@ class DocumentManager
 		return array_map(function ($row) {return $row['lc'];}, $rows);
 	}
 		
-
-	
-
 	/**
 	 * @param integer $documentId
 	 * @param \Change\Documents\AbstractModel $model
@@ -856,7 +855,7 @@ class DocumentManager
 		
 			$query->bindParameter('id', $id);
 				
-			$constructorInfos = $query->getResults(function($results) {return array_shift($results);});
+			$constructorInfos = $query->getFirstResult();
 			if ($constructorInfos)
 			{
 				$modelName = $constructorInfos['model'];
@@ -1020,7 +1019,11 @@ class DocumentManager
 		$sq = $this->cachedQueries[$key];
 		/* @var $sq \Change\Db\Query\SelectQuery */
 		$sq->bindParameter('id', $documentId);
-		$row = $sq->getFirstResult(function($row) use ($sq) {return $sq->convertRow($row, array('deletiondate' => \Change\Db\ScalarType::DATETIME));});
+			
+		$resConv = new ResultsConverter($sq->getDbProvider(), array('datas' => \Change\Db\ScalarType::TEXT, 
+			'deletiondate' => \Change\Db\ScalarType::DATETIME));
+		
+		$row = $sq->getFirstResult(array($resConv, 'convertRow'));
 		if ($row !== null)
 		{
 			$datas = json_decode($row['datas'], true);
@@ -1091,6 +1094,160 @@ class DocumentManager
 			$rowCount = $dq->execute();		
 			$document->deleteI18nPart();
 		}
+	}
+	
+	/**
+	 * @param integer $documentId
+	 * @param string|null $LCID
+	 * @return \Change\Documents\Correction
+	 */
+	protected function createNewCorrectionInstance($documentId, $LCID = null)
+	{
+		$correction = new Correction($this, $documentId, $LCID);
+		return $correction;
+	}
+	
+	/**
+	 * @throws \InvalidArgumentException
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param string $LCID
+	 * @return \Change\Documents\Correction|null
+	 */
+	public function getNewCorrectionInstance(\Change\Documents\AbstractDocument $document, $LCID = null)
+	{
+		$model = $document->getDocumentModel();
+		if (!$model->useCorrection())
+		{
+			throw new \InvalidArgumentException('Invalid document argument.');
+		}
+		if (($model->isLocalized() && $LCID === null) || (!$model->isLocalized() && $LCID !== null))
+		{
+			throw new \InvalidArgumentException('Invalid LCID argument.');
+		}
+		
+		if (($document instanceof \Change\Documents\Interfaces\Localizable) && ($LCID != $document->getVoLCID())) 
+		{
+			$cprop = $model->getLocalizedPropertiesWithCorrection();
+		}
+		else
+		{
+			$cprop = $model->getPropertiesWithCorrection();
+		}
+		if (count($cprop) > 0)
+		{
+			$correction = $this->createNewCorrectionInstance($document->getId(), $LCID);
+			$correction->setCreationDate(new \DateTime());
+			$correction->setPropertiesNames(array_keys($cprop));
+			$correction->setStatus(Correction::STATUS_DRAFT);
+			return $correction;
+		}
+		return null;
+	}
+	
+	/**
+	 * @throws \InvalidArgumentException
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return \Change\Documents\Correction[]
+	 */
+	public function loadCorrections(\Change\Documents\AbstractDocument $document)
+	{
+		if (!$document->getDocumentModel()->useCorrection())
+		{
+			throw new \InvalidArgumentException('Invalid document argument.');
+		}
+
+		$key = 'loadCorrections';
+		if (!isset($this->cachedQueries[$key]))
+		{
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$this->cachedQueries[$key] = $qb->select('correction_id', 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
+				->from($qb->getSqlMapping()->getDocumentCorrectionTable())
+				->where(
+					$fb->logicAnd(
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
+						$fb->neq($fb->column('status'), $fb->string('FILED'))
+					)
+				)
+				->query();
+		}
+		/* @var $sq \Change\Db\Query\SelectQuery */
+		$sq = $this->cachedQueries[$key];
+		$sq->bindParameter('id', $document->getId());
+		$resConv = new ResultsConverter($sq->getDbProvider(), array('correction_id' => \Change\Db\ScalarType::INTEGER, 
+			'creationdate' => \Change\Db\ScalarType::DATETIME, 
+			'publicationdate' => \Change\Db\ScalarType::DATETIME, 
+			'datas' => \Change\Db\ScalarType::LOB));
+		$rows = $sq->getResults(array($resConv, 'convertRows'));
+		$results = array();
+		foreach ($rows as $row)
+		{
+			$correction = $this->createNewCorrectionInstance($document->getId(), $row['lcid']);
+			$correction->setId($row['correction_id']);
+			$correction->setStatus($row['status']);
+			$correction->setCreationDate($row['creationdate']);
+			$correction->setPublicationDate($row['publicationdate']);
+			$correction->setDatas($row['datas'] ? unserialize($row['datas']) : array());
+			$correction->setModified(false);
+			$results[] = $correction;
+		}
+		return $results;
+	}
+	
+	/**
+	 * @param \Change\Documents\Correction $correction
+	 */
+	public function saveCorrection(\Change\Documents\Correction $correction)
+	{
+		if ($correction->getId() !== null)
+		{
+			$key = 'updateCorrection';
+			if (!isset($this->cachedQueries[$key]))
+			{
+				$qb = $this->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$this->cachedQueries[$key] = $qb->update($qb->getSqlMapping()->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status', $qb))
+				->assign('publicationdate', $fb->dateTimeparameter('publicationdate', $qb))
+				->assign('datas', $fb->typedParameter('datas', \Change\Db\ScalarType::LOB, $qb))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id', $qb)))
+				->updateQuery();
+			}
+			/* @var $uq \Change\Db\Query\UpdateQuery */
+			$uq = $this->cachedQueries[$key];
+			$uq->bindParameter('status', $correction->getStatus());
+			$uq->bindParameter('publicationdate', $correction->getPublicationDate());
+			$uq->bindParameter('datas', serialize($correction->getDatas()));
+			$uq->bindParameter('id', $correction->getId());
+			$uq->execute();
+		}
+		else
+		{
+			$key = 'insertCorrection';
+			if (!isset($this->cachedQueries[$key]))
+			{
+				$qb = $this->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$this->cachedQueries[$key] = $qb->insert($qb->getSqlMapping()->getDocumentCorrectionTable())
+					->addColumns($fb->getDocumentColumn('id'), 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
+					->addValues($fb->integerParameter('id', $qb), $fb->parameter('lcid', $qb), $fb->parameter('status', $qb),
+						$fb->dateTimeparameter('creationdate', $qb), $fb->dateTimeparameter('publicationdate', $qb),
+						$fb->typedParameter('datas', \Change\Db\ScalarType::LOB, $qb))
+					->insertQuery();
+			}
+			
+			/* @var $iq \Change\Db\Query\InsertQuery */
+			$iq = $this->cachedQueries[$key];
+			$iq->bindParameter('id', $correction->getDocumentId());
+			$iq->bindParameter('lcid', $correction->getLcid());
+			$iq->bindParameter('status', $correction->getStatus());
+			$iq->bindParameter('creationdate', $correction->getCreationDate());
+			$iq->bindParameter('publicationdate', $correction->getPublicationDate());
+			$iq->bindParameter('datas', serialize($correction->getDatas()));
+			$iq->execute();
+			$correction->setId($iq->getDbProvider()->getLastInsertId($qb->getSqlMapping()->getDocumentCorrectionTable()));
+		}
+		$correction->setModified(false);
 	}
 	
 	// Working lang.

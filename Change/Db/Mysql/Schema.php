@@ -39,8 +39,23 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			$this->tables['change_document_deleted'] = $schemaManager->newTableDefinition('change_document_deleted')
 			->addField($idDef)->addField($modelDef)
 			->addField($schemaManager->newTimeStampFieldDefinition('deletiondate'))
-			->addField($schemaManager->newVarCharFieldDefinition('datas', 16777215))
+			->addField($schemaManager->newTextFieldDefinition('datas'))
 			->addKey($this->newPrimaryKey()->addField($idDef));
+			
+			$correctionId = $schemaManager->newIntegerFieldDefinition('correction_id')->setNullable(false)->setAutoNumber(true);
+			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', 10)->setNullable(true);
+			$status = $schemaManager->newEnumFieldDefinition('status', array('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'FILED'))->setNullable(false)->setDefaultValue('DRAFT');
+			$this->tables['change_document_correction'] = $schemaManager->newTableDefinition('change_document_correction')
+			->addField($correctionId)
+			->addField($idDef)
+			->addField($lcid)
+			->addField($status)
+			->addField($schemaManager->newTimeStampFieldDefinition('creationdate'))
+			->addField($schemaManager->newDateFieldDefinition('publicationdate'))
+			->addField($schemaManager->newLobFieldDefinition('datas'))
+			->addKey($this->newPrimaryKey()->addField($correctionId))
+			->addKey($this->newIndexKey()->setName('document')->addField($idDef)->addField($status)->addField($lcid))
+			->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

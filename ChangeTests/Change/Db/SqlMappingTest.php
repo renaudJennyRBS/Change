@@ -3,6 +3,7 @@ namespace ChangeTests\Db;
 
 class SqlMappingTest extends \PHPUnit_Framework_TestCase
 {
+	
 	public function testConstruct()
 	{
 		$sqlMapping = new \Change\Db\SqlMapping();
@@ -25,6 +26,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertEquals('change_document', $sqlMapping->getDocumentIndexTableName());
 		$this->assertEquals('change_document_metas', $sqlMapping->getDocumentMetasTableName());
+		$this->assertEquals('change_document_deleted', $sqlMapping->getDocumentDeletedTable());
 
 		$this->assertEquals('f_locale', $sqlMapping->getLocaleTableName());
 		$this->assertEquals('f_settings', $sqlMapping->getSettingTableName());

@@ -228,16 +228,25 @@ class AbstractDocumentClass
 	{
 		return $this->getCurrentI18nPart()->isNew();
 	}
-			
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasLocalizedModifiedProperties()
+	{
+		return $this->getCurrentI18nPart()->hasModifiedProperties();
+	}
+
 	/**
 	 * @api
 	 * @return boolean
 	 */
 	public function hasModifiedProperties()
 	{
-		return parent::hasModifiedProperties() || $this->getCurrentI18nPart()->hasModifiedProperties();
+		return $this->hasNonLocalizedModifiedProperties() || $this->hasLocalizedModifiedProperties();
 	}
-			
+
 	/**
 	 * @api
 	 * @param string $propertyName
@@ -247,40 +256,67 @@ class AbstractDocumentClass
 	{
 		return parent::isPropertyModified($propertyName) || $this->getCurrentI18nPart()->isPropertyModified($propertyName);
 	}
-			
+
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getLocalizedModifiedPropertyNames()
+	{
+		return $this->getCurrentI18nPart()->getModifiedPropertyNames();
+	}
+
 	/**
 	 * @api
 	 * @return string[]
 	 */
 	public function getModifiedPropertyNames()
 	{
-		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentI18nPart()->getModifiedPropertyNames());
+		return array_merge($this->getNonLocalizedModifiedPropertyNames(), $this->getLocalizedModifiedPropertyNames());
 	}
-			
+
 	/**
 	 * @api
 	 * @param string $propertyName
-	 * @return mixed
 	 */
-	public function getOldPropertyValue($propertyName)
+	public function removeOldPropertyValue($propertyName)
 	{
 		$i18nPart = $this->getCurrentI18nPart();
 		if ($i18nPart->isPropertyModified($propertyName))
 		{
-			return $i18nPart->getOldPropertyValue($propertyName);
+			$i18nPart->removeOldPropertyValue($propertyName);
 		}
-		return parent::getOldPropertyValue($propertyName);
+		else
+		{
+			parent::removeOldPropertyValue($propertyName);
+		}
 	}
-			
+
 	/**
 	 * @api
-	 * @return array<string => mixed>
+	 * @return \Change\Documents\Correction
 	 */
-	public function getOldPropertyValues()
+	public function getCorrection($LCID = null)
 	{
-		return array_merge(parent::getOldPropertyValues(), $this->getCurrentI18nPart()->getOldPropertyValues());
+		$key = ($LCID === null)?  $this->getVoLCID() : $LCID;
+		$corrections = $this->getCorrections();
+		if (!isset($corrections[$key]))
+		{
+			$correction = $this->documentManager->getNewCorrectionInstance($this, $key);
+			$this->addCorrection($correction);
+			return $correction;
+		}
+		return $corrections[$key];
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Documents\Correction
+	 */
+	public function getLocalizedCorrection()
+	{
+		return $this->getCorrection($this->getLCID());
 	}'. PHP_EOL;
-		
 		return $code;
 	}
 	
@@ -705,13 +741,22 @@ class AbstractDocumentClass
 		
 		$code .= '	
 	/**
-	 * @return integer
+	 * @return integer|null
 	 */
 	public function get'.$un.'OldValueId()
 	{
 		return $this->getOldPropertyValue('.$en.');
 	}
 	
+	/**
+	 * @return '.$ct.'|null
+	 */
+	public function get'.$un.'OldValue()
+	{
+		$oldId = $this->get'.$un.'OldValueId();
+		return ($oldId !== null) ? $this->getDocumentManager()->getDocumentInstance($oldId) : null;
+	}
+			
 	/**
 	 * @param '.$ct.' '.$var.'
 	 */
@@ -791,15 +836,6 @@ class AbstractDocumentClass
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
 		$code .= '
-	/**
-	 * @return integer[]
-	 */
-	public function get'.$un.'OldValueIds()
-	{
-		$result = $this->getOldPropertyValue('.$en.');
-		return (is_array($result)) ? $result : array();
-	}
-	
 	protected function checkLoaded'.$un.'()
 	{
 		$this->checkLoaded();
@@ -815,6 +851,24 @@ class AbstractDocumentClass
 			}
 		}
 	}
+					
+	/**
+	 * @return integer[]
+	 */
+	public function get'.$un.'OldValueIds()
+	{
+		$result = $this->getOldPropertyValue('.$en.');
+		return (is_array($result)) ? $result : array();
+	}
+						
+	/**
+	 * @return '.$ct.'[]
+	 */
+	public function get'.$un.'OldValue()
+	{
+		$dm = $this->getDocumentManager();
+		return array_map(function ($documentId) use ($dm) {return $dm->getDocumentInstance($documentId);}, $this->get'.$un.'OldValueIds());
+	}
 
 	/**
 	 * @return '.$ct.'[]
@@ -826,12 +880,8 @@ class AbstractDocumentClass
 			return is_array('.$mn.') ? count('.$mn.') : '.$mn.';
 		}
 		$this->checkLoaded'.$un.'();
-		$documents = array(); 
 		$dm = $this->getDocumentManager();
-		array_walk('.$mn.', function ($documentId, $index) use (&$documents, $dm) {
-			$documents[] = $dm->getRelationDocument($documentId);
-		});
-		return $documents;
+		return array_map(function ($documentId) use ($dm) {return $dm->getRelationDocument($documentId);}, '.$mn.');
 	}
 
 	/**
@@ -849,19 +899,18 @@ class AbstractDocumentClass
 			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an array\');
 		}
 		$this->checkLoaded'.$un.'();
-		$newValueIds = array(); 
+
 		$dm = $this->getDocumentManager();
-		array_walk($newValueArray, function ($newValue, $index) use (&$newValueIds, $dm) {
+		$newValueIds = array_map(function($newValue) use ($dm) {
 			if ($newValue instanceof '.$ct.')
 			{
-				$newValueIds[] = $dm->initializeRelationDocumentId($newValue);
+				return $dm->initializeRelationDocumentId($newValue);
 			}
 			else
 			{
 				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an '.$ct.'[]\');
 			}
-		});
-			
+		}, $newValueArray);			
 		$this->setInternal'.$un.'Ids($newValueIds);
 	}
 			

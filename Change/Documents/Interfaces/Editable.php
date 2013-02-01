@@ -43,6 +43,11 @@ interface Editable
 	public function getDocumentVersion();
 	
 	/**
+	 * @return integer
+	 */
+	public function getDocumentVersionOldValue();
+	
+	/**
 	 * @param integer $documentVersion
 	 */
 	public function setDocumentVersion($documentVersion);
