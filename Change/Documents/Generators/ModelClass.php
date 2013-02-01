@@ -138,6 +138,7 @@ class ModelClass
 			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultPhpValue(), false).')';}
 			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
 			if ($property->getIndexed() !== null) {$affects[] = '->setIndexed('.$this->escapePHPValue($property->getIndexed()).')';}
+			if ($property->getHasCorrection() !== null) {$affects[] = '->setHasCorrection('.$this->escapePHPValue($property->getHasCorrection()).')';}
 			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
 
 			if (count($affects))
@@ -190,7 +191,7 @@ class ModelClass
 	}'. PHP_EOL;
 		}
 		
-		if ($model->getLocalized() !== null)
+		if ($model->getLocalized())
 		{
 			$code .= '
 	/**
@@ -199,9 +200,23 @@ class ModelClass
 	 */
 	public function isLocalized()
 	{
-		return '. $this->escapePHPValue($model->getLocalized()).';
+		return true;
 	}'. PHP_EOL;
 		}
+		
+		if ($model->checkHasCorrection())
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function useCorrection()
+	{
+		return true;
+	}'. PHP_EOL;
+		}
+				
 
 		if ($model->getHasUrl() !== null)
 		{

@@ -44,6 +44,7 @@ class Property
 	protected $defaultValue;
 	protected $constraintArray;
 	protected $localized = false;
+	protected $hasCorrection = false;
 	protected $indexed = 'none'; //none, property, description
 	
 	/**
@@ -116,6 +117,14 @@ class Property
 	public function getLocalized()
 	{
 		return $this->localized;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getHasCorrection()
+	{
+		return $this->hasCorrection;
 	}
 	
 	/**
@@ -410,6 +419,16 @@ class Property
 	}
 	
 	/**
+	 * @param boolean $bool
+	 * @return \Change\Documents\Property
+	 */
+	public function setHasCorrection($bool)
+	{
+		$this->hasCorrection = $bool ? true : false;
+		return $this;
+	}
+	
+	/**
 	 * @param mixed $treeNode
 	 * @return \Change\Documents\Property
 	 */
@@ -454,6 +473,27 @@ class Property
 		else
 		{
 			$getter = 'get' . ucfirst($this->name);
+		}
+		return call_user_func(array($document, $getter));
+	}
+	
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return mixed
+	 */
+	public function getOldValue($document)
+	{
+		if ($this->name === 'id')
+		{
+			$getter = 'getId';
+		}
+		elseif ($this->name === 'model')
+		{
+			$getter = 'getDocumentModelName';
+		}
+		else
+		{
+			$getter = 'get' . ucfirst($this->name).'OldValue';
 		}
 		return call_user_func(array($document, $getter));
 	}

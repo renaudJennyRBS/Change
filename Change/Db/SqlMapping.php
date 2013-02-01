@@ -136,7 +136,14 @@ class SqlMapping
 		return 'change_document_deleted';
 	}
 	
-	
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getDocumentCorrectionTable()
+	{
+		return 'change_document_correction';
+	}	
 	
 	/**
 	 * @return string

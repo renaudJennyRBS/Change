@@ -98,7 +98,6 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($basicDoc->hasModifiedProperties());
 		$this->assertCount(2, $basicDoc->getModifiedPropertyNames());
 		
-		$this->assertCount(2, $basicDoc->getOldPropertyValues());
 		$this->assertNull($basicDoc->getPDecOldValue());
 		$this->assertEquals('string', $basicDoc->getPStrOldValue());
 		

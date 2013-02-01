@@ -173,6 +173,15 @@ abstract class AbstractModel
 	 * @api
 	 * @return boolean
 	 */
+	public function useCorrection()
+	{
+		return false;
+	}
+	
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function hasDescendants()
 	{
 		return count($this->descendantsNames) > 0;
@@ -265,13 +274,60 @@ abstract class AbstractModel
 	 */
 	public function getLocalizedProperties()
 	{
-		$result = array();
-		foreach ($this->properties as $name => $property)
+		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getLocalized();});
+	}
+	
+	/**
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
+	 */
+	public function getNonLocalizedProperties()
+	{
+		if ($this->isLocalized())
 		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getLocalized()) {$result[$name] = $property;}
+			return array_filter($this->properties, function(\Change\Documents\Property $property) {return !$property->getLocalized();});
 		}
-		return $result;
+		return $this->properties;
+	}
+	
+	/**
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
+	 */
+	public function getPropertiesWithCorrection()
+	{
+		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getHasCorrection();});
+	}
+	
+	/**
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
+	 */
+	public function getLocalizedPropertiesWithCorrection()
+	{
+		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getLocalized() && $property->getHasCorrection();});
+	}
+
+	/**
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
+	 */
+	public function getNonLocalizedPropertiesWithCorrection()
+	{
+		if ($this->isLocalized())
+		{
+			return array_filter($this->properties, function(\Change\Documents\Property $property) {return !$property->getLocalized() && $property->getHasCorrection();});
+		}
+		return $this->properties;
+	}
+	
+	/**
+	 * @api
+	 * @return array<string, \Change\Documents\Property>
+	 */
+	public function getIndexedProperties()
+	{
+		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->isIndexed();});
 	}
 	
 	/**
@@ -298,24 +354,6 @@ abstract class AbstractModel
 		return null;
 	}
 	
-	/**
-	 * @api
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getIndexedProperties()
-	{
-		$result = array();
-		foreach ($this->getProperties() as $propertyName => $property) 
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->isIndexed())
-			{
-				$result[$propertyName] = $property;
-			}
-		}
-		return $result;
-	}
-
 	/**
 	 * @api
 	 * @return string[]

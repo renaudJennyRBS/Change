@@ -143,16 +143,7 @@ abstract class AbstractI18nDocument implements \Serializable
 	{
 		return $this->id;
 	}
-					
-	/**
-	 * @api
-	 * @return array<string => mixed>
-	 */
-	public function getOldPropertyValues()
-	{
-		return $this->modifiedProperties;
-	}
-	
+						
 	/**
 	 * @api
 	 * @return string[]
@@ -202,9 +193,10 @@ abstract class AbstractI18nDocument implements \Serializable
 	}
 	
 	/**
+	 * @api
 	 * @param string $propertyName
 	 */
-	protected function removeOldPropertyValue($propertyName)
+	public function removeOldPropertyValue($propertyName)
 	{
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
@@ -213,11 +205,10 @@ abstract class AbstractI18nDocument implements \Serializable
 	}
 	
 	/**
-	 * @api
 	 * @param string $propertyName
 	 * @return mixed
 	 */
-	public function getOldPropertyValue($propertyName)
+	protected function getOldPropertyValue($propertyName)
 	{
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{

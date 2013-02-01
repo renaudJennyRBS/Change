@@ -605,6 +605,22 @@ class Model
 	/**
 	 * @return boolean
 	 */
+	public function checkHasCorrection()
+	{
+		foreach ($this->properties as $property)
+		{
+			if ($property->getHasCorrection())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * @return boolean
+	 */
 	public function checkAncestorPublishable()
 	{
 		foreach ($this->getAncestors() as $model)

@@ -327,7 +327,7 @@ class I18nManager
 				->bindParameter('id', $preparedKey->getId())
 				->bindParameter('key_path', $preparedKey->getPath());
 			
-			$result = $q->getResults(function ($result) {return array_shift($result);});
+			$result = $q->getFirstResult();
 			if ($result)
 			{
 				$content = strval($result['content']);

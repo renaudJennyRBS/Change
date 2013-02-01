@@ -127,7 +127,7 @@ class TreeManager
 		{
 			$q = $this->getNodeInfoQuery($document->getTreeName());
 			$q->bindParameter('id', $document->getId());
-			$nodeInfo = $q->getResults(function($rows) {return array_shift($rows);});
+			$nodeInfo = $q->getFirstResult();
 			if ($nodeInfo)
 			{
 				$node = $this->getNewNode($document->getTreeName());
@@ -172,15 +172,18 @@ class TreeManager
 		{
 			$q = $this->getTreeNameQuery();
 			$q->bindParameter('id', $documentId);
-			$treeName = $q->getResults(function($rows) {$row = array_shift($rows); return $row ? $row['treeName'] : null;});
-			
+			$result = $q->getFirstResult();
+			if ($result)
+			{
+				$treeName = $result['treeName'];
+			}
 		}
 		
 		if ($treeName !== null)
 		{
 			$q = $this->getNodeInfoQuery($treeName);
 			$q->bindParameter('id', $documentId);
-			$nodeInfo = $q->getResults(function($rows) {return array_shift($rows);});
+			$nodeInfo = $q->getFirstResult();
 			if ($nodeInfo)
 			{
 				$node = $this->getNewNode($treeName);
@@ -244,7 +247,7 @@ class TreeManager
 					{
 						$q = $this->getNodeInfoQuery($node->getTreeName());
 						$q->bindParameter('id', $documentId);
-						$nodeInfo = $q->getResults(function($rows) {return array_shift($rows);});
+						$nodeInfo = $q->getFirstResult();
 						if ($nodeInfo)
 						{
 							$subNode = $this->getNewNode($node->getTreeName());

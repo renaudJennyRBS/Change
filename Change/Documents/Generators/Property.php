@@ -81,6 +81,11 @@ class Property
 	 * @var boolean
 	 */
 	protected $localized;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $hasCorrection;
 		
 	/**
 	 * @var array
@@ -204,6 +209,16 @@ class Property
 						throw new \RuntimeException('Invalid localized attribute value: '. $value);
 					}
 					break;
+				case "has-correction":
+					if ($value === 'true')
+					{
+						$this->hasCorrection = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid has-correction attribute value: '. $value);
+					}
+					break;									
 				default:
 					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value);
 					break;
@@ -382,6 +397,14 @@ class Property
 	{
 		return $this->localized;
 	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function getHasCorrection()
+	{
+		return $this->hasCorrection;
+	}
 
 	/**
 	 * @return array
@@ -529,7 +552,7 @@ class Property
 		}
 		else
 		{
-			if ($this->type !== null || $this->localized !== null)
+			if ($this->type !== null || $this->localized !== null || $this->hasCorrection !== null)
 			{
 				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this);
 			}
@@ -610,7 +633,7 @@ class Property
 		$type = $this->getRoot()->getType();
 		return ($type === 'Document' || $type === 'DocumentArray' || $type === 'DocumentId');
 	}
-	
+		
 	/**
 	 * @return boolean|number|string
 	 */
