@@ -154,10 +154,6 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function clearDB()
 	{
-		if (!$this->getDbProvider()->getApplication()->inDevelopmentMode())
-		{
-			throw new \RuntimeException('You are not in development mode');
-		}
 		foreach ($this->getTableNames() as $table)
 		{
 			try
