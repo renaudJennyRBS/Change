@@ -18,7 +18,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	/**
 	 * @var \Change\Logging\Logging
 	 */
-	protected $loggin;
+	protected $logging;
 	
 	/**
 	 * @var \PDO
@@ -34,10 +34,10 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	/**
 	 * @param \Change\Db\Mysql\DbProvider $dbProvider
 	 */
-	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider, \Change\Logging\Logging $loggin)
+	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider, \Change\Logging\Logging $logging)
 	{
 		$this->setDbProvider($dbProvider);
-		$this->setLoggin($loggin);
+		$this->setLogging($logging);
 	}
 	
 	/**
@@ -59,17 +59,17 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	/**
 	 * @return \Change\Logging\Logging
 	 */
-	public function getLoggin()
+	public function getLogging()
 	{
-		return $this->loggin;
+		return $this->logging;
 	}
 
 	/**
-	 * @param \Change\Logging\Logging $loggin
+	 * @param \Change\Logging\Logging $logging
 	 */
-	public function setLoggin(\Change\Logging\Logging $loggin)
+	public function setLogging(\Change\Logging\Logging $logging)
 	{
-		$this->loggin = $loggin;
+		$this->logging = $logging;
 	}
 
 	/**
@@ -127,7 +127,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function execute($sql)
 	{
-		$this->loggin->info(__METHOD__ . ': ' . $sql);
+		$this->logging->info(__METHOD__ . ': ' . $sql);
 		return $this->getDriver()->exec($sql);
 	}
 
@@ -162,7 +162,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			}
 			catch (\Exception $e)
 			{
-				$this->loggin->warn($e->getMessage());
+				$this->logging->warn($e->getMessage());
 			}
 		}
 		$this->tables = null;
