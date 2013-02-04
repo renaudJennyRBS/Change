@@ -30,28 +30,13 @@ class ApplicationServices extends \Zend\Di\Di
 		return $this->get('Change\Logging\Logging');
 	}
 
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	public function getConfiguration()
-	{
-		return $this->get('Change\Configuration\Configuration');
-	}
-	
+
 	/**
 	 * @return \Change\Transaction\TransactionManager
 	 */
 	public function getTransactionManager()
 	{
 		return $this->get('Change\Transaction\TransactionManager');
-	}
-
-	/**
-	 * @return \Change\Workspace
-	 */
-	public function getWorkspace()
-	{
-		return $this->get('Change\Workspace');
 	}
 
 	/**

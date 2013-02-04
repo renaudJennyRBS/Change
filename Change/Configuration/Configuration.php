@@ -9,27 +9,31 @@ use Zend\Json\Json;
  */
 class Configuration
 {
-
+	protected $configurationFiles = array();
 	/**
-	 * @var \Change\Application
+	 * @param $configurationFiles
+	 * @param array|null $config
 	 */
-	protected $application;
-
-	/**
-	 * Build the configuration for the given Change Application
-	 * @param \Change\Application $application
-	 */
-	public function __construct(\Change\Application $application)
+	public function __construct(array $configurationFiles, $config = null)
 	{
-		$this->application = $application;
-		if ($this->isCompiled())
+		if (count($configurationFiles) == 0)
 		{
-			$this->load();
+			throw new \InvalidArgumentException('$configurationFiles must have at least one entry');
+		}
+		$this->configurationFiles = $configurationFiles;
+		if (is_array($config))
+		{
+			if (!isset($cachedConfig['config']) || !isset($cachedConfig['defines']))
+			{
+				throw new \InvalidArgumentException('$config has to be an array with "config" and "define" keys set');
+			}
 		}
 		else
 		{
-			$this->refresh();
+ 			$config = $this->mergeJsonConfigurations();
 		}
+		$this->setConfigArray($config['config']);
+		$this->setDefineArray($config['defines']);
 	}
 
 	/**
@@ -37,30 +41,22 @@ class Configuration
 	 *
 	 * @var array
 	 */
-	protected $config = null;
+	protected $config = array();
 
 	/**
 	 * @var array
 	 */
-	protected $define = null;
+	protected $define = array();
 
-	/**
-	 * @return boolean
-	 */
-	protected function isCompiled()
-	{
-		return file_exists($this->getCompiledConfigPath());
-	}
 
 	/**
 	 * @return array
 	 */
-	protected function compile()
+	protected function writeToCache()
 	{
+		$configs = $this->getConfigArray();
 		// Compile new config and defines.
-		$config = $this->mergeJsonConfigurations();
-		$configs = $config['config'];
-		$defines = $this->fixDefinesArray($config['defines']);
+		$defines = $this->fixDefinesArray($this->getDefineArray());
 		// Save compiled file.
 		$content = "<?php\n// \\Change\\Configuration\\Configuration::setDefineArray PART // \n";
 		$content .= '$configuration->setDefineArray(' . var_export($defines, true) . ");\n\n";
@@ -71,37 +67,16 @@ class Configuration
 		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
 		
-		\Change\Stdlib\File::write($this->getCompiledConfigPath(), $content);
+		\Change\Stdlib\File::write($this->getCachedConfigPath(), $content);
 		return array("config" => $configs, "defines" => $defines);
 	}
 
 	/**
 	 * @return string
 	 */
-	protected function getCompiledConfigPath()
+	protected function getDevDefinesPath()
 	{
-		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'project.php');
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getCompiledDefinesPath()
-	{
-		return $this->application->getApplicationServices()->getWorkspace()->compilationPath('Config', 'dev_defines.php');
-	}
-
-	/**
-	 * Load the configuration, using the php file auto compiled in Compilation/Config.
-	 */
-	protected function load()
-	{
-		// If specific environnement add a dot to complet in path file
-		$this->config = array();
-		$this->define = array();
-		$configuration = $this;
-		include $this->getCompiledConfigPath();
-		$this->applyDefines();
+		return $this->getApplication()->getWorkspace()->compilationPath('Config', 'dev_defines.php');
 	}
 
 	/**
@@ -129,7 +104,7 @@ class Configuration
 	 */
 	public function getEntry($path, $defaultValue = null)
 	{
-		$current = $this->config;
+		$current = $this->getConfigArray();
 		foreach (explode('/', $path) as $part)
 		{
 			if (!isset($current[$part]))
@@ -188,8 +163,7 @@ class Configuration
 	public function addPersistentEntry($path, $entryName, $value)
 	{
 		// base config
-		$configFiles = $this->application->getWorkspace()->getProjectConfigurationPaths();
-		$configProjectPath = $configFiles[0];
+		$configProjectPath = $this->configurationFiles[0];
 
 		if (empty($entryName) || ($value !== null && !is_string($value)))
 		{
@@ -213,10 +187,10 @@ class Configuration
 			}
 		}
 		$item[$entryName] = $value;
+		$oldValue = $this->getEntry($path);
+		$this->setConfigArray(\Zend\Stdlib\ArrayUtils::merge($this->getConfigArray(), $entry['config']));
 		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, $entry);
 		\Change\Stdlib\File::write($configProjectPath, Json::encode($mergedConfig));
-		$oldValue = $this->getEntry($path);
-		$this->refresh();
 		return $oldValue;
 	}
 
@@ -250,6 +224,7 @@ class Configuration
 	public function setDefineArray($defines)
 	{
 		$this->define = $defines;
+		$this->applyDefines();
 	}
 
 	/**
@@ -286,7 +261,7 @@ class Configuration
 		$configData = \Change\Stdlib\File::read(implode(DIRECTORY_SEPARATOR, array(__DIR__, 'Assets', 'project.json')));
 		$config = Json::decode($configData, Json::TYPE_ARRAY);
 
-		foreach ($this->application->getWorkspace()->getProjectConfigurationPaths() as $path)
+		foreach ($this->configurationFiles as $path)
 		{
 			$data = \Change\Stdlib\File::read($path);
 			$projectConfig = Json::decode($data, Json::TYPE_ARRAY);
@@ -378,36 +353,6 @@ class Configuration
 			}
 			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
 		}
-		\Change\Stdlib\File::write($this->getCompiledDefinesPath(), $content);
-	}
-
-	/**
-	 * Clears the config
-	 */
-	protected function clear()
-	{
-		if (file_exists($this->getCompiledConfigPath()))
-		{
-			ErrorHandler::start();
-			unlink($this->getCompiledConfigPath());
-			ErrorHandler::stop(true);
-		}
-		$this->config = array();
-		$this->define = array();
-	}
-
-	/**
-	 * Refresh compiled configuration informations
-	 *
-	 * @api
-	 */
-	public function refresh()
-	{
-		$this->clear();
- 		$this->compile();
- 		$this->load();
-		
- 		$injection = new \Change\Injection\Injection($this, $this->application->getWorkspace());
- 		$injection->compile();
+		\Change\Stdlib\File::write($this->getDevDefinesPath(), $content);
 	}
 }

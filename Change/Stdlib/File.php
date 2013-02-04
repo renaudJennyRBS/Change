@@ -38,8 +38,16 @@ class File
 		{
 			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
 			{
-				@unlink($file);
-				if (is_dir($file)) {rmdir($file);}
+				\Zend\Stdlib\ErrorHandler::start();
+				if (is_dir($file))
+				{
+					rmdir($file);
+				}
+				else
+				{
+					unlink($file);
+				}
+				\Zend\Stdlib\ErrorHandler::stop(true);
 			}
 			if (!$onlyContent)
 			{

@@ -39,7 +39,7 @@ class EventManager extends \Zend\EventManager\EventManager
 
 	protected function registerConfiguredListeners()
 	{
-		$classes = $this->application->getApplicationServices()->getConfiguration()->getEntry('events/registrationclasses', array());
+		$classes = $this->application->getConfiguration()->getEntry('events/registrationclasses', array());
 		foreach ($classes as $className)
 		{
 			if (class_exists($className))

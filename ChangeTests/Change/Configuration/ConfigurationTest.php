@@ -13,7 +13,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
 	public function testConfigGetters()
 	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => '6',
 			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'),
 			'booleans' => array('v1' => 'true', 'v2' => 'false', 'v3' => 'toto', 'v4' => 'TRUE', 'v5' => '1'));
@@ -58,7 +58,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAddVolatileEntry()
 	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
 		$entries = array('key1' => 'value1', 'key2' => 'value2',
 			'complexEntry1' => array('entry11' => 'Test11', 'entry12' => 'Test12'),
 			'complexEntry2' => array(
@@ -126,135 +126,51 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testApplyDefines()
 	{
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration(\Change\Application::getInstance());
-		$config->setDefineArray(array('UNE_CONSTANTE' => 'une valeur', 'ONE_CONSTANT' => 'a value'));
-
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
 		$this->assertFalse(defined('ONE_CONSTANT'));
-		$config->applyDefines();
+		$config->setDefineArray(array('UNE_CONSTANTE' => 'une valeur', 'ONE_CONSTANT' => 'a value'));
 		$this->assertTrue(defined('ONE_CONSTANT'));
 		$this->assertEquals('a value', ONE_CONSTANT);
 	}
 
-	/**
-	 * Test the loading of a compiled project.php file.
-	 */
-	public function testLoad()
-	{
-		// Test on valid file.
-		$application = new \Change\Application();
-		// Mock compiled config path
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, __DIR__ . '/TestAssets/project.php');
-		$expectedArray = array(
-			'general' => array('projectName' => 'RBS CHANGE 4.0', 'server-ip' => '127.0.0.1', 'phase' => 'development'),
-			'logging' => array('level' => 'WARN', 'writers' => array('default' => 'stream')));
-		$this->assertEquals($expectedArray, $config->getConfigArray());
 
-		$this->assertEquals(TEST_1, 4);
-		$this->assertEquals(TEST_2, 'INFO');
-	}
-
-	public function testCompileOnLoad()
-	{
-		$application = new \Change\Application();
-		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
-		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
-		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
-		if (file_exists($compiledFilePath))
-		{
-			unlink($compiledFilePath);
-		}
-		if (file_exists($sourceConfigFile))
-		{
-			unlink($sourceConfigFile);
-		}
-		if (file_exists($compiledDefinePath))
-		{
-			unlink($compiledDefinePath);
-		}
-		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
-		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
-		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
-		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
- 		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
- 		$config->clear();
- 		$this->assertFalse($config->isCompiled());
- 		$config->refresh();
- 		$this->assertTrue($config->isCompiled());
-	}
 
 	public function testAddPersistentEntry()
 	{
-		$application = new \Change\Application();
-		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
-		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
-		if (file_exists($compiledFilePath))
-		{
-			unlink($compiledFilePath);
-		}
 		if (file_exists($sourceConfigFile))
 		{
 			unlink($sourceConfigFile);
 		}
-		if (file_exists($compiledDefinePath))
-		{
-			unlink($compiledDefinePath);
-		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
-		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
-		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
-		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
-		$this->assertTrue($config->isCompiled());
+		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
 		$result = $config->addPersistentEntry('mypath', 'myentry', 'value');
 		$this->assertEmpty($result);
-		$config->clear();
-		$newConfig = new  \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
+		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
 	}
 
 	public function testAddPersistentEntryBadCall()
 	{
 
-		$compiledFilePath = "/tmp/testAddPersistentEntry_config.php";
-		$compiledDefinePath = "/tmp/testAddPersistentEntry_dev_config.php";
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
-		if (file_exists($compiledFilePath))
-		{
-			unlink($compiledFilePath);
-		}
 		if (file_exists($sourceConfigFile))
 		{
 			unlink($sourceConfigFile);
 		}
-		if (file_exists($compiledDefinePath))
-		{
-			unlink($compiledDefinePath);
-		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
-		$application = new \Change\Application();
-		$mockWorkspace = $this->getMock('\Change\Workspace', array('getProjectConfigurationPaths'), array($application));
-		$mockWorkspace->expects($this->any())->method('getProjectConfigurationPaths')->will($this->returnValue(array($sourceConfigFile)));
-		$application->getApplicationServices()->instanceManager()->addSharedInstance($mockWorkspace, 'Change\Workspace');
 
-
-		$config = new \ChangeTests\Change\Configuration\TestAssets\Configuration($application, $compiledFilePath, $compiledDefinePath);
-		$this->assertTrue($config->isCompiled());
+		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->setExpectedException('\InvalidArgumentException');
 		$result = $config->addPersistentEntry('mypath', null, 'value');
 	}
 
 	public function testGetDefineArray()
 	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
+		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
 		$a = array('toto' => 'tutu');
 		$config->setDefineArray($a);
 		$this->assertEquals($a, $config->getDefineArray());
 	}
-	
-	public function testRefresh()
-	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance());
-		$config->refresh();
-	}
+
 }
