@@ -318,7 +318,7 @@ abstract class AbstractModel
 		{
 			return array_filter($this->properties, function(\Change\Documents\Property $property) {return !$property->getLocalized() && $property->getHasCorrection();});
 		}
-		return $this->properties;
+		return $this->getPropertiesWithCorrection();
 	}
 	
 	/**
@@ -390,7 +390,7 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\Property>
+	 * @return array<string, \Change\Documents\InverseProperty>
 	 */
 	public function getInverseProperties()
 	{
@@ -410,7 +410,7 @@ abstract class AbstractModel
 	/**
 	 * @api
 	 * @param string $name
-	 * @return \Change\Documents\Property|null
+	 * @return \Change\Documents\InverseProperty|null
 	 */
 	public function getInverseProperty($name)
 	{
