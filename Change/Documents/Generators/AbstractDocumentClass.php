@@ -134,7 +134,7 @@ class AbstractDocumentClass
 	protected $LCIDArray;
 	
 	/**
-	 * @param string[]
+	 * @return string[]
 	 */
 	public function getLCIDArray()
 	{
