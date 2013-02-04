@@ -6,7 +6,7 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 	public function testGetLevel()
 	{
 		$application = \Change\Application::getInstance();
-		$config = $application->getApplicationServices()->getConfiguration();
+		$config = $application->getConfiguration();
 		$logging = $application->getApplicationServices()->getLogging();
 		
 		$config->addVolatileEntry('logging/level', 'ALERT');
@@ -23,7 +23,7 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 	public function testGetAndSetPriority()
 	{
 		$application = \Change\Application::getInstance();
-		$config = $application->getApplicationServices()->getConfiguration();
+		$config = $application->getConfiguration();
 		$logging = $application->getApplicationServices()->getLogging();		
 		$config->addVolatileEntry('logging/level', 'DEBUG');
 		

@@ -56,11 +56,11 @@ class PackageManager
 	 */
 	protected function getPsr0CachePath()
 	{
-		return $this->application->getWorkspace()->tmpPath('.psr-0.ser');
+		return $this->application->getWorkspace()->cachePath('.psr-0.ser');
 	}
 
 	/**
-	 * Return the list of PSR-0 compatible autload registered by installed packages
+	 * Return the list of PSR-0 compatible autolooad registered by installed packages
 	 *
 	 * @array
 	 */
@@ -72,19 +72,19 @@ class PackageManager
 			$namespaces = array();
 			// Libraries
 			$librariesPattern = $this->application->getWorkspace()->librariesPath('*', '*', 'composer.json');
-			foreach (\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
+			foreach(\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$namespaces = array_merge($namespaces, $this->parseComposerFile($filePath, true));
 			}
 			// Plugin Modules
 			$pluginsModulesPattern = $this->application->getWorkspace()->pluginsModulesPath('*', '*', 'composer.json');
-			foreach (\Zend\Stdlib\Glob::glob($pluginsModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
+			foreach(\Zend\Stdlib\Glob::glob($pluginsModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $filePath);
 				$partsCount = count($parts);
-				$normalizedVendor = ucfirst(strtolower($parts[$partsCount - 3]));
-				$normalizedName = ucfirst(strtolower($parts[$partsCount - 2]));
-				$namespace = $normalizedVendor . '\\' . $normalizedName . '\\';
+				$normalizedVendor = ucfirst(strtolower($parts[$partsCount-3]));
+				$normalizedName = ucfirst(strtolower($parts[$partsCount-2]));
+				$namespace =  $normalizedVendor . '\\' . $normalizedName . '\\';
 				$namespaces = array_merge($namespaces, array($namespace => dirname($filePath)), $this->parseComposerFile($filePath));
 			}
 			// Project modules
@@ -93,7 +93,7 @@ class PackageManager
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $modulePath);
 				$partsCount = count($parts);
-				$moduleName = ucfirst(strtolower($parts[$partsCount - 1]));
+				$moduleName = ucfirst(strtolower($parts[$partsCount-1]));
 				$namespaces['Project\\' . $moduleName . '\\'] = $modulePath;
 			}
 			\Change\Stdlib\File::write($path, \Zend\Serializer\Serializer::serialize($namespaces));
@@ -114,10 +114,9 @@ class PackageManager
 		if (isset($composer['autoload']) && isset($composer['autoload']['psr-0']))
 		{
 			$basePath = dirname($filePath);
-			$namespaces = $composer['autoload']['psr-0'];
-			array_walk($namespaces, function (&$item, $key) use ($basePath, $appendNamespacePath)
-			{
-				$item = $basePath . DIRECTORY_SEPARATOR . $item;
+			$namespaces =  $composer['autoload']['psr-0'];
+			array_walk($namespaces, function(&$item, $key) use ($basePath, $appendNamespacePath){
+				$item =  $basePath . DIRECTORY_SEPARATOR  . $item;
 				if ($appendNamespacePath)
 				{
 					$item .= DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $key);

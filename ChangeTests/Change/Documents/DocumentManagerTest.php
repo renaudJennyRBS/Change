@@ -261,7 +261,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	public function testLangStack()
 	{
 		$application = \Change\Application::getInstance();
-		$config = $application->getApplicationServices()->getConfiguration();
+		$config = $application->getConfiguration();
 		$config->addVolatileEntry('i18n/supported-lcids' , null);
 		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		

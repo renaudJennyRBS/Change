@@ -79,7 +79,7 @@ class I18nManager
 	 */
 	protected function getConfiguration()
 	{
-		return $this->application->getApplicationServices()->getConfiguration();
+		return $this->application->getConfiguration();
 	}
 
 	/**

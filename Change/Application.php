@@ -11,6 +11,16 @@ class Application
 	const CHANGE_VERSION = "4.0";
 
 	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+
+	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
 	 * @var \Change\Application
 	 */
 	protected static $sharedInstance;
@@ -167,11 +177,6 @@ class Application
 	public function defaultApplicationServices()
 	{
 		$dl = new \Zend\Di\DefinitionList(array());
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Configuration\Configuration');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
 
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Events\EventManager');
 		$cl->setInstantiator('__construct')
@@ -199,12 +204,6 @@ class Application
 		$dl->addDefinition($cl);
 				
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Workspace');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
@@ -238,15 +237,16 @@ class Application
 		$im = $applicationServices->instanceManager();
 
 		$im->setParameters('Change\Db\Query\Builder', array());
-		$im->setParameters('Change\Workspace', array('application' => $this));
+
 		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $this));
 		$im->setParameters('Change\Events\EventManager', array('application' => $this));
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
 		$im->setParameters('Change\Mvc\Controller', array('application' => $this));
 		$im->setParameters('Change\I18n\I18nManager', array('application' => $this));
-		$im->setParameters('Change\Configuration\Configuration', array('application' => $this));
-		$im->setInjections('Change\Logging\Logging', array('Change\Configuration\Configuration'));
-		$im->setInjections('Change\Db\DbProvider', array('Change\Configuration\Configuration', 'Change\Logging\Logging'));		
+		$im->setParameters('Change\Db\DbProvider', array('config' => $this->getConfiguration()));
+		$im->setParameters('Change\Db\DbProvider', array('application' => $this));
+		$im->setParameters('Change\Logging\Logging', array('config' => $this->getConfiguration()));
+		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
 		$im->setInjections('Change\Db\Query\Builder', array('Change\Db\DbProvider'));
 		$im->setInjections('Change\Db\Query\StatementBuilder', array('Change\Db\DbProvider'));
 		return $applicationServices;
@@ -277,25 +277,46 @@ class Application
 	}
 	
 	/**
-	 * Shortcut for application services workspace
 	 *
 	 * @api
 	 * @return \Change\Workspace
 	 */
 	public function getWorkspace()
 	{
-		return $this->getApplicationServices()->getWorkspace();
+		if (!$this->workspace)
+		{
+			$this->workspace = new \Change\Workspace();
+		}
+		return $this->workspace;
 	}
 
 	/**
-	 * Shortcut for application services configuration
-	 *
+	 * @param Workspace $workspace
+	 */
+	public function setWorkspace(\Change\Workspace $workspace)
+	{
+		$this->workspace = $workspace;
+	}
+
+	/**
 	 * @api
 	 * @return \Change\Configuration\Configuration
 	 */
 	public function getConfiguration()
 	{
-		return $this->getApplicationServices()->getConfiguration();
+		if ($this->configuration === null)
+		{
+			$this->configuration = new \Change\Configuration\Configuration($this->getProjectConfigurationPaths());
+		}
+		return $this->configuration;
+	}
+
+	/**
+	 * @param Configuration\Configuration $configuration
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
 	}
 
 	/**
@@ -318,7 +339,7 @@ class Application
 			}
 			else
 			{
-				$bootStrapFilePath = $this->getWorkspace()->appPath('Bootstrap.php');
+				$bootStrapFilePath = $this->getWorkspace()->appPath('OldBootstrap.php');
 				if (file_exists($bootStrapFilePath))
 				{
 					require_once $bootStrapFilePath;
@@ -345,6 +366,37 @@ class Application
 	public function started()
 	{
 		return $this->started;
+	}
+
+	/**
+	 * Clear cached files (config, ...)
+	 * @api
+	 */
+	public function clearCache()
+	{
+		\Change\Stdlib\File::rmdir($this->getWorkspace()->cachePath());
+	}
+
+	/**
+	 * Get all the project-level config files paths, in the correct order
+	 *
+	 * @api
+	 * @return array string
+	 */
+	public function getProjectConfigurationPaths()
+	{
+		$result = array();
+		$globalConfigFile = $this->getWorkspace()->appPath('Config', 'project.json');
+		if (file_exists($globalConfigFile))
+		{
+			$result[] = $globalConfigFile;
+		}
+		$profileConfigFile = $this->getWorkspace()->appPath('Config', 'project.' . $this->getProfile() . '.json');
+		if (file_exists($profileConfigFile))
+		{
+			$result[] = $profileConfigFile;
+		}
+		return $result;
 	}
 
 	/**

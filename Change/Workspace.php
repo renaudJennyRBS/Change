@@ -7,41 +7,6 @@ namespace Change;
 class Workspace
 {
 	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
-
-	/**
-	 * @param \Change\Application $application
-	 */
-	public function __construct(\Change\Application $application)
-	{
-		$this->application = $application;
-	}
-
-	/**
-	 * Get all the project-level config files paths, in the correct order
-	 *
-	 * @api
-	 * @return array string
-	 */
-	public function getProjectConfigurationPaths()
-	{
-		$result = array();
-		$globalConfigFile = $this->appPath('Config', 'project.json');
-		if (file_exists($globalConfigFile))
-		{
-			$result[] = $globalConfigFile;
-		}
-		$profileConfigFile = $this->appPath('Config', 'project.' . $this->application->getProfile() . '.json');
-		if (file_exists($profileConfigFile))
-		{
-			$result[] = $profileConfigFile;
-		}
-		return $result;
-	}
-
-	/**
 	 * Build a path relative to the "App" folder
 	 *
 	 * @api

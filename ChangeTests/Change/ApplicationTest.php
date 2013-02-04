@@ -94,14 +94,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testGetConfiguration()
 	{
 		$app = new \Change\Application();
-		$app->getApplicationServices()->instanceManager()->addSharedInstance(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($app), 'Change\Workspace');		
-		$this->assertEquals($app->getApplicationServices()->getConfiguration(), $app->getConfiguration());
+		$app->setWorkspace(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($app));
+		$this->assertInstanceOf('\Change\Configuration\Configuration', $app->getConfiguration());
 	}
 
 	public function testGetWorkspace()
 	{
 		$app = new \Change\Application();
-		$this->assertEquals($app->getApplicationServices()->getWorkspace(), $app->getWorkspace());
+		$this->assertInstanceOf('\Change\Workspace', $app->getWorkspace());
 	}
 
 	/**

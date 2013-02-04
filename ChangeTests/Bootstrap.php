@@ -14,6 +14,7 @@ $application->registerCoreAutoload();
 $zendLoader  = new \Zend\Loader\StandardAutoloader();
 $zendLoader->registerNamespace('ChangeTests', realpath(__DIR__) .'/');
 $zendLoader->register();
-$application->getApplicationServices()->instanceManager()->addSharedInstance(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($application), 'Change\Workspace');
+$application->setWorkspace(new \ChangeTests\Change\TestAssets\UnitTestWorkspace());
 $application->registerCompilationAutoload();
 $application->registerPackagesAutoload();
+$application->clearCache();
