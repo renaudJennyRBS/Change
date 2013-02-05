@@ -54,14 +54,6 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		return $this->get('Change\Events\EventManager');
 	}
-
-	/**
-	 * @return \Change\Mvc\Controller
-	 */
-	public function getController()
-	{
-		return $this->get('Change\Mvc\Controller');
-	}
 	
 	/**
 	 * @return \Change\Db\Query\Builder

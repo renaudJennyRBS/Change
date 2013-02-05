@@ -1,5 +1,4 @@
 <?php
-
 namespace #namespace#;
 
 use Symfony\Component\Console\Command\Command;
@@ -8,6 +7,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @name \#namespace#\#className#
+ */
 class #className# extends \Change\Application\Console\ChangeCommand
 {
 	/**
@@ -18,7 +20,6 @@ class #className# extends \Change\Application\Console\ChangeCommand
 	}
 
 	/**
-	 *
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @throws \LogicException

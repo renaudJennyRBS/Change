@@ -21,7 +21,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	 * @var array
 	 */
 	protected $configuration;
-
+	
 	/**
 	 * @var \Change\Application
 	 */
@@ -34,7 +34,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	{
 		return $this->changeApplication;
 	}
-
+	
 	/**
 	 * @return array
 	 */
@@ -48,7 +48,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			{
 				$globalConfig = Json::decode(file_get_contents($_SERVER['HOME'] . '/.console.json'), Json::TYPE_ARRAY);
 			}
-			$projectConfigFile = $this->getChangeApplication()->getWorkspace()->appPath('Config', 'console.json'); 
+			$projectConfigFile = $this->getChangeApplication()->getWorkspace()->appPath('Config', 'console.json');
 			if (file_exists($projectConfigFile))
 			{
 				$projectConfig = Json::decode(file_get_contents($projectConfigFile), Json::TYPE_ARRAY);
@@ -57,7 +57,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		}
 		return $this->configuration;
 	}
-
+	
 	/**
 	 * @param \Change\Application $changeApplication
 	 */
@@ -65,7 +65,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	{
 		$this->changeApplication = $changeApplication;
 	}
-
+	
 	/**
 	 * Registers all the commands
 	 */
@@ -99,9 +99,8 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		}
 		
 		$this->registerCommandGroups();
-		
 	}
-
+	
 	/**
 	 * @throws \RuntimeException
 	 */
@@ -115,19 +114,19 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			$application = $this;
 			$command->addOption('--isolation', null, InputOption::VALUE_NONE, 'Run commands in separate processes');
 			$command->addOption('--ignore-errors', null, InputOption::VALUE_NONE, 'Ignore subcommand error');
-			$command->setCode(function(InputInterface $input, OutputInterface $output) use ($commandNames, $application){
-		
+			$command->setCode(function(InputInterface $input, OutputInterface $output) use ($commandNames, $application) {
+				
 				$style = new OutputFormatterStyle('yellow', null, array('bold'));
 				$output->getFormatter()->setStyle('strong', $style);
-				foreach($commandNames as $commandName)
+				foreach ($commandNames as $commandName)
 				{
 					$output->writeln("");
 					$output->writeln("<strong>Executing command $commandName</strong>");
 					$output->writeln("");
 					if ($input->getOption('isolation'))
 					{
-						$process = new Process(PHP_CLI_PATH . ' ' . $_SERVER['argv'][0] . " $commandName ". ($input->getOption('dev') ? '--dev' : ''));
-						$process->run(function ($type, $buffer) use ($output) {
+						$process = new Process(PHP_CLI_PATH . ' ' . $_SERVER['argv'][0] . " $commandName " . ($input->getOption('dev') ? '--dev' : ''));
+						$process->run(function($type, $buffer) use ($output) {
 							$output->write($buffer, false, OutputInterface::OUTPUT_RAW);
 						});
 					}
@@ -166,13 +165,13 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			{
 				$namespace = str_replace(DIRECTORY_SEPARATOR, '\\', substr($file->getPath(), strlen(PROJECT_HOME)));
 			}
-			$commandClassName = $namespace .  '\\' . $shortClassName;
+			$commandClassName = $namespace . '\\' . $shortClassName;
 			if (class_exists($commandClassName))
 			{
 				$commandName = strtolower($shortClassName[0] . preg_replace('/([A-Z])/', '-${0}', substr($shortClassName, 1)));
 				if ($group)
 				{
-					$commandName =  $group . ':' . $commandName;  
+					$commandName = $group . ':' . $commandName;
 				}
 				/* @var $command \Change\Application\Console\ChangeCommand */
 				$command = new $commandClassName($commandName);

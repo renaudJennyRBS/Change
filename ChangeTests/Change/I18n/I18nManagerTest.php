@@ -74,7 +74,6 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSetLang(\Change\I18n\I18nManager $manager)
 	{
-		// TODO: Test lang from session.
 		// If no UI lang is set, use the default one.
 		$this->assertEquals($manager->getDefaultLCID(), $manager->getLCID());
 
@@ -134,32 +133,31 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testProfile(\Change\I18n\I18nManager $manager)
 	{
-		// TODO: needs sessions...
-// 		$storage = \Change\Application::getInstance()->getApplicationServices()->getController()->getStorage();
+		// If no values set, use the default ones.
+		$this->assertEquals(DEFAULT_TIMEZONE, $manager->getTimeZone()->getName());
+		// TODO needs database
+		/*foreach (array('fr_FR', 'en_GB') as $lang)
+		{
+			$this->assertEquals($manager->formatKey($lang, 'c.date.default-date-format'), $manager->getDateFormat($lang));
+			$this->assertEquals($manager->formatKey($lang, 'c.date.default-datetime-format'), $manager->getDateTimeFormat($lang));
+		}*/
 		
-// 		// If values are set in the session, these values are returned.
-// 		$profile = array('dateformat' => 'test', 'datetimeformat' => 'toto', 'timezone' => '1');
-// 		$storage->writeForUser('profilesvalues', $profile);
-// 		$manager->resetProfile();
+		// If values are set, these values are returned.
+		$manager->setDateFormat('test');
+		$this->assertEquals('test', $manager->getDateFormat('fr_FR'));
+		$this->assertEquals('test', $manager->getDateFormat('en_GB'));
 		
-// 		$this->assertEquals('test', $manager->getDateFormat('fr'));
-// 		$this->assertEquals('toto', $manager->getDateTimeFormat('fr'));
-// 		$this->assertEquals('1', $manager->getTimeZone());
+		$manager->setDateTimeFormat('toto');
+		$this->assertEquals('toto', $manager->getDateTimeFormat('fr_FR'));
+		$this->assertEquals('toto', $manager->getDateTimeFormat('en_GB'));
 		
-// 		// Else...
-// 		$profile = null;
-// 		$storage->writeForUser('profilesvalues', $profile);
-		
-// 		$manager->resetProfile();
-// 		// TODO: needs database.
-// 		/*foreach (array('fr', 'en') as $lang)
-// 		{
-// 			$this->assertEquals($manager->formatKey($lang, 'c.date.default-date-format'), $manager->getDateFormat($lang));
-// 			$this->assertEquals($manager->formatKey($lang, 'c.date.default-datetime-format'), $manager->getDateTimeFormat($lang));
-// 		}*/
-// 		$this->assertEquals(DEFAULT_TIMEZONE, $manager->getTimeZone()->getName());
+		$manager->setTimeZone('Asia/Tokyo'); // Time zone may be set by code...
+		$this->assertEquals('Asia/Tokyo', $manager->getTimeZone()->getName());
+		$manager->setTimeZone(new \DateTimeZone('America/New_York')); // ... or by DateTimeZone instance.
+		$this->assertEquals('America/New_York', $manager->getTimeZone()->getName());
 		
 		// Admitted time zone for following tests.
+		$manager->setTimeZone('Europe/Paris');
 		$this->assertEquals('Europe/Paris', $manager->getTimeZone()->getName());
 		return $manager;
 	}
