@@ -132,6 +132,15 @@ abstract class AbstractModel
 	{
 		return true;
 	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasUrl()
+	{
+		return false;
+	}
 	
 	/**
 	 * @api
@@ -168,7 +177,7 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean

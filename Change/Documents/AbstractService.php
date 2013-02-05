@@ -258,7 +258,7 @@ abstract class AbstractService
 					$document->removeOldPropertyValue($propertyName);
 				}
 			}
-			
+
 			if ($document->hasModifiedProperties()) 
 			{
 				$document->setModificationDate(new \DateTime());
@@ -392,10 +392,11 @@ abstract class AbstractService
 			$this->applyCorrectionInternal($document, $correction);
 		}
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Documents\Correction $correction
+	 * @throws \Exception
 	 */
 	protected function applyCorrectionInternal($document, $correction)
 	{
@@ -408,7 +409,7 @@ abstract class AbstractService
 				$property->setValue($document, $correction->getPropertyValue($propertyName));
 				if ($document->isPropertyModified($propertyName))
 				{
-					$oldValue = $property->getOldValue($propertyName);
+					$oldValue = $property->getOldValue($document);
 					$correction->setPropertyValue($propertyName, $oldValue);
 				}
 				else

@@ -194,7 +194,20 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getIcon()).';
 	}'. PHP_EOL;
 		}
-		
+
+		if ($model->getHasUrl())
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasUrl()
+	{
+		return '. $this->escapePHPValue($model->getHasUrl()).';
+	}'. PHP_EOL;
+		}
+
 		if ($model->getLocalized())
 		{
 			$code .= '
