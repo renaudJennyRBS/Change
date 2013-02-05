@@ -294,6 +294,19 @@ class AbstractDocumentClass
 
 	/**
 	 * @api
+	 * @param string $LCID
+	 * @return boolean
+	 */
+	public function hasCorrection($LCID = null)
+	{
+		$corrections = $this->getCorrections();
+		$key = ($LCID === null)?  $this->getVoLCID() : $LCID;
+		return isset($corrections[$key]);
+	}
+
+	/**
+	 * @api
+	 * @param string $LCID
 	 * @return \Change\Documents\Correction
 	 */
 	public function getCorrection($LCID = null)
@@ -349,7 +362,7 @@ class AbstractDocumentClass
 		$resetProperties = array();
 		if ($model->getLocalized())
 		{
-			$resetProperties[] = '		$this->getCurrentI18nPart()->reset($this->documentModel);';
+			$resetProperties[] = '		unset($this->i18nPartArray[$this->getDocumentManager()->getLCID()]);';
 		}
 		$code = '';
 		foreach ($properties as $property)

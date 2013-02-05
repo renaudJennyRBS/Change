@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd"
+          icon="correction" backoffice-indexable="false" localized="true" publishable="true" editable="true">
+    <properties>
+        <property name="label">
+            <constraint name="maxSize" max="40" />
+        </property>
+        <property name="str1" type="String"/>
+        <property name="str2" type="String" has-correction="true"/>
+
+        <property name="str3" type="String" localized="true"/>
+        <property name="str4" type="String" localized="true" has-correction="true"/>
+
+        <property name="docs1" type="DocumentArray" document-type="Project_Tests_Basic" max-occurs="2"/>
+        <property name="docs2" type="DocumentArray" document-type="Project_Tests_Basic" has-correction="true"/>
+    </properties>
+</document>
