@@ -15,10 +15,10 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	{
 		$application = \Change\Application::getInstance();
 		$config = $application->getConfiguration();
-		$config->addVolatileEntry('i18n/supported-lcids' , null);
+		$config->addVolatileEntry('i18n/supported-lcids', null);
 		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		
-		$config->addVolatileEntry('i18n/langs' , null);
+		$config->addVolatileEntry('i18n/langs', null);
 		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
 		
 		$manager = new \Change\I18n\I18nManager($application);
@@ -134,7 +134,8 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	public function testProfile(\Change\I18n\I18nManager $manager)
 	{
 		// If no values set, use the default ones.
-		$this->assertEquals(DEFAULT_TIMEZONE, $manager->getTimeZone()->getName());
+		$config = \Change\Application::getInstance()->getConfiguration();
+		$this->assertEquals($config->getEntry('i18n/default-timezone'), $manager->getTimeZone()->getName());
 		// TODO needs database
 		/*foreach (array('fr_FR', 'en_GB') as $lang)
 		{

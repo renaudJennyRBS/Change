@@ -343,7 +343,7 @@ class Application
 				}
 			}
 			
-			if (self::inDevelopmentMode())
+			if ($this->inDevelopmentMode())
 			{
 				$injection = new \Change\Injection\Injection($this->getConfiguration(), $this->getWorkspace());
 				$injection->update();
@@ -393,12 +393,11 @@ class Application
 	}
 
 	/**
-	 *
-	 * @see project config and DEVELOPMENT_MODE constant
+	 * @see project config
 	 * @return boolean
 	 */
-	public static function inDevelopmentMode()
+	public function inDevelopmentMode()
 	{
-		return defined('DEVELOPMENT_MODE') ? DEVELOPMENT_MODE : false;
+		return $this->getConfiguration()->getEntry('general/development-mode', false);
 	}
 }

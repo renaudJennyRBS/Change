@@ -121,20 +121,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry25'));
 	}
 
-	/**
-	 * Test the constants setup.
-	 */
-	public function testApplyDefines()
-	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
-		$this->assertFalse(defined('ONE_CONSTANT'));
-		$config->setDefineArray(array('UNE_CONSTANTE' => 'une valeur', 'ONE_CONSTANT' => 'a value'));
-		$this->assertTrue(defined('ONE_CONSTANT'));
-		$this->assertEquals('a value', ONE_CONSTANT);
-	}
-
-
-
 	public function testAddPersistentEntry()
 	{
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
@@ -152,7 +138,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
 	public function testAddPersistentEntryBadCall()
 	{
-
 		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
 		if (file_exists($sourceConfigFile))
 		{
@@ -164,13 +149,4 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$this->setExpectedException('\InvalidArgumentException');
 		$result = $config->addPersistentEntry('mypath', null, 'value');
 	}
-
-	public function testGetDefineArray()
-	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
-		$a = array('toto' => 'tutu');
-		$config->setDefineArray($a);
-		$this->assertEquals($a, $config->getDefineArray());
-	}
-
 }

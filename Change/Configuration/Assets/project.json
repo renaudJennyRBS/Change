@@ -1,26 +1,6 @@
 {
-	"defines":{
-		"CHANGE_RELEASE":4,
-		"CHANGE_USE_CORRECTION":true,
-		"CHANGE_USE_WORKFLOW":true,
-		"DEFAULT_UI_PROTOCOL":"http",
-		"DEFAULT_TIMEZONE":"Europe\/Paris",
-		"RICHTEXT_PRESERVE_H1_TAGS":false,
-		"DISABLE_BLOCK_CACHE":false,
-		"DISABLE_DATACACHE":false,
-		"CHANGE_CACHE_MAX_TIME":3600,
-		"SECURE_SESSION_BY_IP":false,
-		"CHANGECRON_EXECUTION":"http"
-	},
 	"config":{
-		"general":{
-			"projectName":"RBS CHANGE 4.0",
-			"server-ip":"127.0.0.1",
-			"selfRequestProxy":"127.0.0.1:80",
-			"https-request-marker":"HTTPS",
-			"https-request-marker-value":"on",
-			"phase":"production"
-		},
+		"general":{},
 		"logging":{
 			"writers":{
 				"default":"stream"
@@ -32,37 +12,11 @@
 			"langs":{
 				"en_GB":"en"
 			},
-			"synchro":{
-			}
-		},
-		"oauth":"",
-		"charts":{
-			"googleChartProvider":"http:\/\/chart.apis.google.com\/chart"
-		},
-		"documentcache":{
-			"ttl":86400
-		},
-		"http":{
-			"adapter":"\\Zend\\Http\\Client\\Adapter\\Curl"
+			"default-timezone":"Europe\/Paris",
+			"synchro":{}
 		},
 		"injection":{
-			"class":{
-				"f_DataCacheService":"f_DataCacheFileService"
-			}
-		},
-		"modules":{
-			"uixul":{
-				"disableRichtextTtoolbarButtons":{
-					"ruby":true
-				}
-			}
-		},
-		"mail":{
-			"type":"Smtp",
-			"host":"localhost",
-			"port":25,
-			"username":"",
-			"password":""
+			"class":{}
 		},
 		"databases":{
 			"default":{
@@ -72,44 +26,6 @@
 		"events":{
 			"registrationclasses":{
 				"Change":"\\Change\\Events\\DefaultRegistration"
-			}
-		},
-		"pdf":{
-			"user":"pdfUser",
-			"password":"pdfPassword",
-			"customer":"pdfCustomer"
-		},
-		"nodes":"",
-		"autoload":"",
-		"tal":{
-			"prefix":{
-				"trans":"f_TalesI18n",
-				"transdata":"f_TalesI18n",
-				"transui":"f_TalesI18n",
-				"date":"f_TalesDate",
-				"datetime":"f_TalesDate"
-			}
-		},
-		"bench":{
-			"enabled":false
-		},
-		"solr":{
-			"schemaVersion":"3.0.3",
-			"clientId":"change4",
-			"url":"http:\/\/127.0.0.1:8983\/solr",
-			"batch_mode":true,
-			"request_method":"GET",
-			"disable_commit":false,
-			"disable_document_cache":false
-		},
-		"browsers":{
-			"backoffice":{
-				"firefox":{
-					"version":[
-						12,
-						13
-					]
-				}
 			}
 		}
 	}

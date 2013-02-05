@@ -6,7 +6,6 @@ namespace Change\Db\Mysql;
  */
 class DbProvider extends \Change\Db\DbProvider
 {
-
 	/**
 	 * @var \Change\Db\Mysql\SchemaManager
 	 */
@@ -21,7 +20,6 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @var boolean
 	 */
 	protected $inTransaction = false;
-	
 	
 	/**
 	 * @return string
@@ -42,7 +40,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$duration = microtime(true) - $this->timers['init'];
 		}
 	}
-
+	
 	/**
 	 * @return \PDO
 	 */
@@ -53,10 +51,9 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->m_driver = $this->getConnection($this->connectionInfos);
 			register_shutdown_function(array($this, "closeConnection"));
 		}
-
 		return $this->m_driver;
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -64,7 +61,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->getDriver()->errorCode();
 	}
-
+	
 	/**
 	 * @return array("sqlstate" => ..., "errorcode" => ..., "errormessage" => ...)
 	 */
@@ -73,7 +70,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$errorInfo = $this->getDriver()->errorInfo();
 		return array("sqlstate" => $errorInfo[0], "errorcode" => $errorInfo[1], "errormessage" => $errorInfo[2]);
 	}
-
+	
 	/**
 	 * @return string
 	 */
@@ -81,7 +78,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return print_r($this->getDriver()->errorInfo(), true);
 	}
-
+	
 	/**
 	 * @param array<String, String> $connectionInfos
 	 * @return \PDO
@@ -90,39 +87,39 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$protocol = 'mysql';
 		$dsnOptions = array();
-
+		
 		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
 		$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
 		$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-
-		$dsn = $protocol.':';
-
+		
+		$dsn = $protocol . ':';
+		
 		if ($database !== null)
 		{
-			$dsnOptions[] = 'dbname='.$database;
+			$dsnOptions[] = 'dbname=' . $database;
 		}
 		$unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
 		if ($unix_socket != null)
 		{
-			$dsnOptions[] = 'unix_socket='.$unix_socket;
+			$dsnOptions[] = 'unix_socket=' . $unix_socket;
 		}
 		else
 		{
 			$host = isset($connectionInfos['host']) ? $connectionInfos['host'] : 'localhost';
-			$dsnOptions[] = 'host='.$host;
+			$dsnOptions[] = 'host=' . $host;
 			$port = isset($connectionInfos['port']) ? $connectionInfos['port'] : 3306;
-			$dsnOptions[] = 'port='.$port;
+			$dsnOptions[] = 'port=' . $port;
 		}
-
-		$dsn = $protocol.':'.join(';', $dsnOptions);
-
+		
+		$dsn = $protocol . ':' . join(';', $dsnOptions);
+		
 		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
 		$pdo = new \PDO($dsn, $username, $password, $options);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
+		
 		return $pdo;
 	}
-
+	
 	/**
 	 * @return void
 	 */
@@ -130,7 +127,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		$this->setDriver(null);
 	}
-
+	
 	/**
 	 * @return \Change\Db\Mysql\SchemaManager
 	 */
@@ -141,7 +138,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->schemaManager = new SchemaManager($this, $this->logging);
 		}
 		return $this->schemaManager;
-	}	
+	}
 	
 	/**
 	 * @return boolean
@@ -151,6 +148,8 @@ class DbProvider extends \Change\Db\DbProvider
 		return $this->inTransaction;
 	}
 	
+	/**
+	 */
 	public function beginTransaction()
 	{
 		if ($this->inTransaction())
@@ -165,6 +164,8 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 	}
 	
+	/**
+	 */
 	public function commit()
 	{
 		if (!$this->inTransaction())
@@ -177,13 +178,14 @@ class DbProvider extends \Change\Db\DbProvider
 			$duration = round(microtime(true) - $this->timers['bt'], 4);
 			if ($duration > $this->timers['longTransaction'])
 			{
-				$this->logging->warn('Long Transaction detected '.  number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+				$this->logging->warn('Long Transaction detected ' . number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
 			}
 			$this->inTransaction = false;
-			
 		}
 	}
 	
+	/**
+	 */
 	public function rollBack()
 	{
 		if (!$this->inTransaction())
@@ -196,7 +198,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$this->getDriver()->rollBack();
 		}
 	}
-		
+	
 	/**
 	 * @param string $tableName
 	 * @return integer
@@ -205,7 +207,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return intval($this->getDriver()->lastInsertId($tableName));
 	}
-
+	
 	/**
 	 * @api
 	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
@@ -213,7 +215,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 */
 	public function buildSQLFragment(\Change\Db\Query\InterfaceSQLFragment $fragment)
 	{
-		if ($fragment instanceof \Change\Db\Query\Expressions\Table) 
+		if ($fragment instanceof \Change\Db\Query\Expressions\Table)
 		{
 			$identifierParts = array();
 			$dbName = $fragment->getDatabase();
@@ -225,20 +227,21 @@ class DbProvider extends \Change\Db\DbProvider
 			$identifierParts[] = '`' . $tableName . '`';
 			return implode('.', $identifierParts);
 		}
-		elseif ($fragment instanceof \Change\Db\Query\Expressions\Column) 
+		elseif ($fragment instanceof \Change\Db\Query\Expressions\Column)
 		{
 			$columnName = $this->buildSQLFragment($fragment->getColumnName());
 			$tableOrIdentifier = $fragment->getTableOrIdentifier();
 			$table = ($tableOrIdentifier) ? $this->buildSQLFragment($tableOrIdentifier) : null;
-			return empty($table) ? $columnName : $table . '.' . $columnName;			
+			return empty($table) ? $columnName : $table . '.' . $columnName;
 		}
-		elseif ($fragment instanceof \Change\Db\Query\Expressions\Parentheses) 
+		elseif ($fragment instanceof \Change\Db\Query\Expressions\Parentheses)
 		{
 			return '(' . $this->buildSQLFragment($fragment->getExpression()) . ')';
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Identifier)
 		{
-			return implode('.', array_map(function ($part) {
+			return implode('.', array_map(function ($part)
+			{
 				return '`' . $part . '`';
 			}, $fragment->getParts()));
 		}
@@ -285,7 +288,7 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\UnaryOperation)
 		{
 			return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
-		}	
+		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Join)
 		{
 			$joinedTable = $fragment->getTableExpression();
@@ -335,16 +338,16 @@ class DbProvider extends \Change\Db\DbProvider
 			if ($v === null)
 			{
 				return 'NULL';
-			}		
-			switch ($fragment->getScalarType()) 
+			}
+			switch ($fragment->getScalarType())
 			{
-				case \Change\Db\ScalarType::BOOLEAN:
+				case \Change\Db\ScalarType::BOOLEAN :
 					return ($v) ? '1' : '0';
-				case \Change\Db\ScalarType::INTEGER:
+				case \Change\Db\ScalarType::INTEGER :
 					return strval(intval($v));
-				case \Change\Db\ScalarType::DECIMAL:
+				case \Change\Db\ScalarType::DECIMAL :
 					return strval(floatval($v));
-				case \Change\Db\ScalarType::DATETIME:
+				case \Change\Db\ScalarType::DATETIME :
 					if ($v instanceof \DateTime)
 					{
 						$v->setTimezone(new \DateTimeZone('UTC'));
@@ -369,7 +372,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return $this->buildAbstractClause($fragment);
 		}
-		$this->logging->info( __METHOD__ . '(' . get_class($fragment). ') not implemted');
+		$this->logging->info(__METHOD__ . '(' . get_class($fragment) . ') not implemted');
 		return parent::buildSQLFragment($fragment);
 	}
 	
@@ -405,21 +408,21 @@ class DbProvider extends \Change\Db\DbProvider
 			$whereClause = $query->getWhereClause();
 			if ($whereClause)
 			{
-				$parts[] =  $this->buildAbstractClause($whereClause);
+				$parts[] = $this->buildAbstractClause($whereClause);
 			}
-				
+			
 			$groupByClause = $query->getGroupByClause();
 			if ($groupByClause)
 			{
-				$parts[] =  $this->buildAbstractClause($groupByClause);
+				$parts[] = $this->buildAbstractClause($groupByClause);
 			}
 			
 			$havingClause = $query->getHavingClause();
 			if ($havingClause)
 			{
-				$parts[] =  $this->buildAbstractClause($havingClause);
+				$parts[] = $this->buildAbstractClause($havingClause);
 			}
-				
+			
 			$orderByClause = $query->getOrderByClause();
 			if ($orderByClause)
 			{
@@ -436,12 +439,12 @@ class DbProvider extends \Change\Db\DbProvider
 				}
 				$parts[] = strval(max(1, $query->getMaxResults()));
 			}
-				
+			
 			return implode(' ', $parts);
 		}
 		elseif ($query instanceof \Change\Db\Query\InsertQuery)
 		{
-			$query->checkCompile();	
+			$query->checkCompile();
 			$parts = array($this->buildAbstractClause($query->getInsertClause()));
 			if ($query->getValuesClause() !== null)
 			{
@@ -456,7 +459,8 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($query instanceof \Change\Db\Query\UpdateQuery)
 		{
 			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getUpdateClause()), $this->buildAbstractClause($query->getSetClause()));
+			$parts = array($this->buildAbstractClause($query->getUpdateClause()), 
+				$this->buildAbstractClause($query->getSetClause()));
 			if ($query->getWhereClause() !== null)
 			{
 				$parts[] = $this->buildAbstractClause($query->getWhereClause());
@@ -466,7 +470,8 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($query instanceof \Change\Db\Query\DeleteQuery)
 		{
 			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getDeleteClause()), $this->buildAbstractClause($query->getFromClause()));
+			$parts = array($this->buildAbstractClause($query->getDeleteClause()), 
+				$this->buildAbstractClause($query->getFromClause()));
 			if ($query->getWhereClause() !== null)
 			{
 				$parts[] = $this->buildAbstractClause($query->getWhereClause());
@@ -474,7 +479,7 @@ class DbProvider extends \Change\Db\DbProvider
 			return implode(' ', $parts);
 		}
 		
-		$this->logging->info( __METHOD__ . '(' . get_class($query). ') not implemted');
+		$this->logging->info(__METHOD__ . '(' . get_class($query) . ') not implemted');
 		return parent::buildSQLFragment($query);
 	}
 	
@@ -504,7 +509,7 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($clause instanceof \Change\Db\Query\Clauses\FromClause)
 		{
 			$clause->checkCompile();
-			$parts = array($clause->getName(),  $this->buildSQLFragment($clause->getTableExpression()));
+			$parts = array($clause->getName(), $this->buildSQLFragment($clause->getTableExpression()));
 			$parts[] = implode(' ', $this->buildSQLFragmentArray($clause->getJoins()));
 			return implode(' ', $parts);
 		}
@@ -537,7 +542,8 @@ class DbProvider extends \Change\Db\DbProvider
 			if (count($columns))
 			{
 				$compiler = $this;
-				$insert .= ' (' . implode(', ', array_map(function ($column) use ($compiler) {
+				$insert .= ' (' . implode(', ', array_map(function ($column) use($compiler)
+				{
 					return $compiler->buildSQLFragment($column);
 				}, $columns)) . ')';
 			}
@@ -546,7 +552,7 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($clause instanceof \Change\Db\Query\Clauses\ValuesClause)
 		{
 			$clause->checkCompile();
-			return 'VALUES ('. $this->buildSQLFragment($clause->getValuesList()) . ')';
+			return 'VALUES (' . $this->buildSQLFragment($clause->getValuesList()) . ')';
 		}
 		elseif ($clause instanceof \Change\Db\Query\Clauses\UpdateClause)
 		{
@@ -556,17 +562,17 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($clause instanceof \Change\Db\Query\Clauses\SetClause)
 		{
 			$clause->checkCompile();
-			return 'SET '. $this->buildSQLFragment($clause->getSetList());
+			return 'SET ' . $this->buildSQLFragment($clause->getSetList());
 		}
 		elseif ($clause instanceof \Change\Db\Query\Clauses\DeleteClause)
 		{
 			return 'DELETE';
 		}
 		
-		$this->logging->info( __METHOD__ . '(' . get_class($clause). ') not implemted');
+		$this->logging->info(__METHOD__ . '(' . get_class($clause) . ') not implemted');
 		return parent::buildSQLFragment($clause);
 	}
-		
+	
 	/**
 	 * @param \Change\Db\Query\SelectQuery $selectQuery
 	 * @return array
@@ -578,7 +584,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$selectQuery->setCachedSql($this->buildQuery($selectQuery));
 			$this->logging->info(__METHOD__ . ': ' . $selectQuery->getCachedSql());
 		}
-			
+		
 		$statment = $this->prepareStatement($selectQuery->getCachedSql());
 		foreach ($selectQuery->getParameters() as $parameter)
 		{
@@ -601,13 +607,13 @@ class DbProvider extends \Change\Db\DbProvider
 			$query->setCachedSql($this->buildQuery($query));
 			$this->logging->info(__METHOD__ . ': ' . $query->getCachedSql());
 		}
-			
+		
 		$statment = $this->prepareStatement($query->getCachedSql());
 		foreach ($query->getParameters() as $parameter)
 		{
-			/* @var $parameter \Change\Db\Query\Expressions\Parameter */			
-			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());	
-			$this->logging->info($parameter->getName(). ' = ' . var_export($value, true));
+			/* @var $parameter \Change\Db\Query\Expressions\Parameter */
+			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());
+			$this->logging->info($parameter->getName() . ' = ' . var_export($value, true));
 			$statment->bindValue($this->buildSQLFragment($parameter), $value);
 		}
 		$statment->execute();
@@ -638,23 +644,23 @@ class DbProvider extends \Change\Db\DbProvider
 	 */
 	public function phpToDB($value, $scalarType)
 	{
-		switch ($scalarType) 
+		switch ($scalarType)
 		{
-			case \Change\Db\ScalarType::BOOLEAN:
+			case \Change\Db\ScalarType::BOOLEAN :
 				return ($value) ? 1 : 0;
-			case \Change\Db\ScalarType::INTEGER:
+			case \Change\Db\ScalarType::INTEGER :
 				if ($value !== null)
 				{
 					return intval($value);
 				}
 				break;
-			case \Change\Db\ScalarType::DECIMAL:
+			case \Change\Db\ScalarType::DECIMAL :
 				if ($value !== null)
 				{
 					return floatval($value);
 				}
 				break;
-			case \Change\Db\ScalarType::DATETIME:
+			case \Change\Db\ScalarType::DATETIME :
 				if ($value instanceof \DateTime)
 				{
 					$value->setTimezone(new \DateTimeZone('UTC'));
@@ -674,21 +680,21 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		switch ($scalarType)
 		{
-			case \Change\Db\ScalarType::BOOLEAN:
+			case \Change\Db\ScalarType::BOOLEAN :
 				return ($value == '1');
-			case \Change\Db\ScalarType::INTEGER:
+			case \Change\Db\ScalarType::INTEGER :
 				if ($value !== null)
 				{
 					return intval($value);
 				}
 				break;
-			case \Change\Db\ScalarType::DECIMAL:
+			case \Change\Db\ScalarType::DECIMAL :
 				if ($value !== null)
 				{
 					return floatval($value);
 				}
 				break;
-			case \Change\Db\ScalarType::DATETIME:
+			case \Change\Db\ScalarType::DATETIME :
 				if ($value !== null)
 				{
 					return \DateTime::createFromFormat('Y-m-d H:i:s', $value, new \DateTimeZone('UTC'));
@@ -697,5 +703,4 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $value;
 	}
-	
 }

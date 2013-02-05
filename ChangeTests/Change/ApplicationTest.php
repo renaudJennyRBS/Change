@@ -1,6 +1,6 @@
 <?php
-
 namespace ChangeTests\Change;
+
 /**
  */
 class ApplicationTest extends \PHPUnit_Framework_TestCase

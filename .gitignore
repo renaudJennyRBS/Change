@@ -48,3 +48,4 @@ nbproject
 .psr-0.ser
 test*
 /ChangeTests/UnitTestWorkspace/Compilation/
+/App/OldBootstrap.php

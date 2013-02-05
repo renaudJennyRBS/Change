@@ -1,12 +1,9 @@
 {
-	"defines":{
-		"TMP_PATH": "/tmp",
-		"DEFAULT_HOST": "www.rbschange.fr",
-		"PROJECT_ID": "test",
-		"PHP_CLI_PATH": "php",
-		"DEVELOPMENT_MODE": "true"
-	},
 	"config":{
+		"general":{
+			"php-cli-path":"php",
+			"development-mode":true
+		},
 		"modules":{
 			"catalog":{
 				"currentBillingAreaStrategyClass":"sample_BillingAreaSelectorStrategy"
