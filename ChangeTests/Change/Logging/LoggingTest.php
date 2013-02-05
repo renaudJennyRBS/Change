@@ -1,11 +1,11 @@
 <?php
 namespace Tests\Change\Logging;
 
-class LoggingManagerTest extends \PHPUnit_Framework_TestCase
+class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testGetLevel()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$logging = $application->getApplicationServices()->getLogging();
 		
@@ -22,7 +22,7 @@ class LoggingManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetAndSetPriority()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$logging = $application->getApplicationServices()->getLogging();		
 		$config->addVolatileEntry('logging/level', 'DEBUG');

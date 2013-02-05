@@ -9,12 +9,13 @@ if (!defined('PROJECT_HOME'))
 	define('PROJECT_HOME', dirname(realpath(__DIR__)));
 }
 require_once PROJECT_HOME . '/Change/Application.php';
-$application = \Change\Application::getInstance();
+require_once 'Change/TestAssets/Application.php';
+
+$application = new \ChangeTests\Change\TestAssets\Application();
 $application->registerCoreAutoload();
 $zendLoader  = new \Zend\Loader\StandardAutoloader();
 $zendLoader->registerNamespace('ChangeTests', realpath(__DIR__) .'/');
 $zendLoader->register();
-$application->setWorkspace(new \ChangeTests\Change\TestAssets\UnitTestWorkspace());
 $application->registerCompilationAutoload();
 $application->registerPackagesAutoload();
 $application->clearCache();

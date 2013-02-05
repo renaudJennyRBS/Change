@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Documents;
 
-class DocumentServicesTest extends \PHPUnit_Framework_TestCase
+class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @param \Change\Application $application
@@ -17,9 +17,9 @@ class DocumentServicesTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testInitialize()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
-		$documentsServices = \Change\Application::getInstance()->getDocumentServices();
+		$documentsServices = $application->getDocumentServices();
 		$this->assertInstanceOf('\Change\Documents\DocumentServices', $documentsServices);
 		return $documentsServices;
 	}

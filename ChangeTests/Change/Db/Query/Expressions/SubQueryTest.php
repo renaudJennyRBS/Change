@@ -2,7 +2,7 @@
 
 namespace ChangeTests\Change\Db\Query\Expressions;
 
-class SubQueryTest extends \PHPUnit_Framework_TestCase
+class SubQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	
 	/**
@@ -10,7 +10,7 @@ class SubQueryTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function getDbProvider()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		return $this->getApplication()->getApplicationServices()->getDbProvider();
 	}
 	
 	/**

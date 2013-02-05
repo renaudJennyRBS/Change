@@ -17,8 +17,18 @@ class Unique extends \Zend\Validator\AbstractValidator
 	 * @var string
 	 */
 	protected $propertyName;
-	
-	 /**
+
+	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $documentServices;
+
+	/**
 	 * @var integer
 	 */
 	protected $documentId = 0;
@@ -82,13 +92,45 @@ class Unique extends \Zend\Validator\AbstractValidator
 	}
 
 	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	public function setApplicationServices($applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices($documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
+	/**
 	 * @param  mixed $value
 	 * @return boolean
 	 */
 	public function isValid($value)
 	{
 		$modelName = $this->getModelName();
-		$model = \Change\Application::getInstance()->getDocumentServices()->getModelManager()->getModelByName($modelName);
+		$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
 		if ($model === null)
 		{
 			throw new \InvalidArgumentException('Invalid document model name:' . $modelName);
@@ -100,7 +142,7 @@ class Unique extends \Zend\Validator\AbstractValidator
 			throw new \InvalidArgumentException('Invalid property name:' . $modelName . '::' . $this->getPropertyName());
 		}	
 
-		$qb = \Change\Application::getInstance()->getApplicationServices()->getQueryBuilder();
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		
 		$query = $qb->select($fb->getDocumentColumn('id'))

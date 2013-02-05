@@ -24,7 +24,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Application\PackageManager', array('workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\I18n\I18nManager', array('configuration' => $application->getConfiguration()));
 		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
-		$im->setParameters('Change\Logging\Logging', array('config' => $application->getConfiguration()));
+		$im->setParameters('Change\Logging\Logging', array('config' => $application->getConfiguration(), 'workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\Transaction\TransactionManager', array('configuration' => $application->getConfiguration()));
 
 		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
@@ -51,8 +51,10 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true));
+			->addMethod('setConfiguration', true)
+				->addMethodParameter('setConfiguration', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+			->addMethod('setWorkspace', true)
+				->addMethodParameter('setWorkspace', 'workspace', array('type' => 'Change\Workspace', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 

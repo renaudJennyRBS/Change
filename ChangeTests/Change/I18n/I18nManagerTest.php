@@ -1,11 +1,11 @@
 <?php
 namespace ChangeTests\Change\I18n;
 
-class I18nManagerTest extends \PHPUnit_Framework_TestCase
+class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getI18nManager();
+		return $this->getApplication()->getApplicationServices()->getI18nManager();
 	}
 
 	/**
@@ -13,7 +13,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSupportedLanguages()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$config->addVolatileEntry('i18n/supported-lcids', null);
 		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));

@@ -46,20 +46,6 @@ class Application
 	protected $started = false;
 
 	/**
-	 * Returns the shared application
-	 *
-	 * @return \Change\Application
-	 */
-	public static function getInstance()
-	{
-		if (static::$sharedInstance === null)
-		{
-			static::$sharedInstance = new static();
-		}
-		return static::$sharedInstance;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getVersion()

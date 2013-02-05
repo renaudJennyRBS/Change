@@ -2,16 +2,14 @@
 
 namespace ChangeTests\Change\Db\Query;
 
-class StatementBuilderTest extends \PHPUnit_Framework_TestCase
+class StatementBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	protected function getNewStatementBuilder()
 	{
-		$app = \Change\Application::getInstance();
-		$app->start();
-		return new \Change\Db\Query\StatementBuilder($app->getApplicationServices()->getDbProvider());
+		return new \Change\Db\Query\StatementBuilder($this->getApplication()->getApplicationServices()->getDbProvider());
 	}
 	
 	public function testConstruct()

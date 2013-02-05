@@ -4,17 +4,8 @@ namespace ChangeTests\Documents\Constraints;
 /**
  * @name \ChangeTests\Documents\Constraints\ConstraintsManagerTest
  */
-class ConstraintsManagerTest extends \PHPUnit_Framework_TestCase
-{	
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return \Change\Application::getInstance();
-	}
-	
-	
+class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
+{
 	public function testConstruct()
 	{
 		$constraintsManager = $this->getApplication()->getDocumentServices()->getConstraintsManager();

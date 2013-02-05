@@ -4,16 +4,8 @@ namespace ChangeTests\Documents\Generators;
 /**
  * @name \ChangeTests\Documents\Generators\ModelTest
  */
-class ModelTest extends \PHPUnit_Framework_TestCase
+class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return \Change\Application::getInstance();
-	}
-	
 	public function testConstruct()
 	{
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');

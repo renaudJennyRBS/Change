@@ -4,14 +4,14 @@ namespace ChangeTests\Change\Db\Query;
 
 use Change\Db\Query\SelectQuery;
 
-class SelectQueryTest extends \PHPUnit_Framework_TestCase
+class SelectQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @return \Change\Db\DbProvider
 	 */
 	protected function getDbProvider()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		return $this->getApplication()->getApplicationServices()->getDbProvider();
 	}
 	
 	/**

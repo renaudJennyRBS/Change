@@ -3,7 +3,7 @@ namespace ChangeTests\Change\Documents;
 
 use Change\Documents\DocumentManager;
 
-class DocumentManagerTest extends \PHPUnit_Framework_TestCase
+class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * Simulate compile-document command
@@ -25,15 +25,15 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	
 	public function testInitializeDB()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
 		$this->generateDbSchema($application);
 	}
 	
 	public static function tearDownAfterClass()
 	{
-   		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-   		$dbp->getSchemaManager()->clearDB();
+		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp->getSchemaManager()->clearDB();
 	}
 	
 	/**
@@ -42,7 +42,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testConstruct()
 	{
-		$manager = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplication()->getDocumentServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}
@@ -260,7 +260,7 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testLangStack()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$config->addVolatileEntry('i18n/supported-lcids' , null);
 		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));

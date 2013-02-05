@@ -4,16 +4,8 @@ namespace ChangeTests\Documents;
 /**
  * @name \ChangeTests\Documents\Generators\CompilerTest
  */
-class CompilerTest extends \PHPUnit_Framework_TestCase
+class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return \Change\Application::getInstance();
-	}
-	
 	public function testConstruct()
 	{
 		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());

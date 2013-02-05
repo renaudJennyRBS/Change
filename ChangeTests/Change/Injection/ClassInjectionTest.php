@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Injection;
 
-class ClassInjectionTest extends \PHPUnit_Framework_TestCase
+class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testBadArgsConstruct()
 	{
@@ -103,7 +103,7 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
-		
+		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
 	
@@ -155,6 +155,7 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
 	
@@ -203,6 +204,7 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
 	
@@ -250,6 +252,7 @@ class ClassInjectionTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
 	

@@ -4,7 +4,7 @@ namespace ChangeTests\Change\Documents;
 use Change\Documents\AbstractModel;
 use Change\Documents\ModelManager;
 
-class AbstractModelTest extends \PHPUnit_Framework_TestCase
+class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @param \Change\Application $application
@@ -20,9 +20,9 @@ class AbstractModelTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testInitializeDB()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
-		return \Change\Application::getInstance()->getDocumentServices()->getModelManager();
+		return $this->getApplication()->getDocumentServices()->getModelManager();
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Documents;
 
-class ModelManagerTest extends \PHPUnit_Framework_TestCase
+class ModelManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @param \Change\Application $application
@@ -17,9 +17,9 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testInitialize()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
-		$modelManager = \Change\Application::getInstance()->getDocumentServices()->getModelManager();
+		$modelManager = $application->getDocumentServices()->getModelManager();
 		$this->assertInstanceOf('\Change\Documents\ModelManager', $modelManager);
 		return $modelManager;
 	}

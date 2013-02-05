@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Configuration;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public $listenerCalled = false;
 
@@ -13,7 +13,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
 	public function testConfigGetters()
 	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
+		$config = new \Change\Configuration\Configuration($this->getApplication()->getProjectConfigurationPaths());
 		$entries = array('key1' => 'value1', 'key2' => 'value2', 'key3' => '6',
 			'2levels' => array('sub-key1' => 'toto', 'sub-key2' => 'titi'),
 			'booleans' => array('v1' => 'true', 'v2' => 'false', 'v3' => 'toto', 'v4' => 'TRUE', 'v5' => '1'));
@@ -58,7 +58,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testAddVolatileEntry()
 	{
-		$config = new \Change\Configuration\Configuration(\Change\Application::getInstance()->getProjectConfigurationPaths());
+		$config = new \Change\Configuration\Configuration($this->getApplication()->getProjectConfigurationPaths());
 		$entries = array('key1' => 'value1', 'key2' => 'value2',
 			'complexEntry1' => array('entry11' => 'Test11', 'entry12' => 'Test12'),
 			'complexEntry2' => array(
@@ -120,6 +120,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('newValue24', $config->getEntry('complexEntry2/contents/entry24'));
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry25'));
 	}
+
 
 	public function testAddPersistentEntry()
 	{

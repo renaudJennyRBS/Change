@@ -4,7 +4,7 @@ namespace ChangeTests\Change\Documents;
 use Change\Documents\AbstractService;
 use Change\Documents\DocumentManager;
 
-class AbstractServiceTest extends \PHPUnit_Framework_TestCase
+class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * Simulate compile-document command
@@ -26,15 +26,15 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 	
 	public function testInitializeDB()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
 		$this->generateDbSchema($application);
 	}
 	
 	public static function tearDownAfterClass()
 	{
-   		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
-   		$dbp->getSchemaManager()->clearDB();
+		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp->getSchemaManager()->clearDB();
 	}
 	
 	/**
@@ -42,7 +42,7 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
 		$this->assertInstanceOf('\Project\Tests\Documents\BasicService', $testsBasicService);
 		$this->assertEquals('Project_Tests_Basic', $testsBasicService->getModelName());
 		
@@ -116,10 +116,10 @@ class AbstractServiceTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testLocalized()
 	{
-		$dm = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
 		
 		$dm->pushLCID('fr_FR');
-		$testsLocalizedService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsLocalized();
+		$testsLocalizedService = $this->getApplication()->getDocumentServices()->getProjectTestsLocalized();
 		
 		$this->assertInstanceOf('\Project\Tests\Documents\LocalizedService', $testsLocalizedService);
 		$this->assertEquals('Project_Tests_Localized', $testsLocalizedService->getModelName());
