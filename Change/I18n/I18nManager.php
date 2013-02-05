@@ -61,32 +61,76 @@ class I18nManager
 	protected $i18nKeysSynchro = null;
 
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $application;
-
+	protected $configuration;
 
 	/**
-	 * @param \Change\Application $application
+	 * @var \Change\Logging\Logging
 	 */
-	public function __construct(\Change\Application $application)
+	protected $logging;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	public function __construct()
 	{
-		$this->application = $application;
 		$this->ignoreTransform = array('TEXT' => 'raw', 'HTML' => 'html');
 
 		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc',
 			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace',
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
-
-		$this->supportedLCIDs = $this->getConfiguration()->getEntry('i18n/supported-lcids', array('fr_FR'));
 	}
-	
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+		$this->supportedLCIDs = $this->configuration->getEntry('i18n/supported-lcids', array('fr_FR'));
+	}
+
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
-	protected function getConfiguration()
+	public function getConfiguration()
 	{
-		return $this->application->getConfiguration();
+		return $this->configuration;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 */
+	public function setLogging(\Change\Logging\Logging $logging)
+	{
+		$this->logging = $logging;
+	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
 	}
 
 	/**
@@ -354,7 +398,7 @@ class I18nManager
 	{
 		if ($this->translateQuery === null)
 		{
-			$qb = $this->application->getApplicationServices()->getQueryBuilder();
+			$qb = $this->getDbProvider()->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$this->translateQuery = $qb->select('content', 'format')->from($fb->getLocaleTable())
 				->where($fb->logicAnd(
@@ -403,7 +447,7 @@ class I18nManager
 				}
 				else
 				{
-					\Change\Application::getInstance()->getApplicationServices()->getLogging()->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
+					$this->logging->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
 				}
 			}
 		}
@@ -478,12 +522,8 @@ class I18nManager
 	 */
 	protected function logKeyNotFound($key, $lcid)
 	{
-		$application = \Change\Application::getInstance();
-		if ($application->inDevelopmentMode())
-		{
-			$stringLine = $lcid . '/' . $key;
-			$application->getApplicationServices()->getLogging()->namedLog($stringLine, 'keynotfound');
-		}
+		$stringLine = $lcid . '/' . $key;
+		$this->logging->namedLog($stringLine, 'keynotfound');
 	}
 	
 	// Dates.

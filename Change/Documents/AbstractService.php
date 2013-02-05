@@ -17,7 +17,7 @@ abstract class AbstractService
 	protected $applicationServices;
 	
 	/**
-	 * \Change\Documents\DocumentServices
+	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
 	
@@ -35,6 +35,38 @@ abstract class AbstractService
 	 * @return string
 	 */
 	public abstract function getModelName();
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
 	
 	/**
 	 * @api

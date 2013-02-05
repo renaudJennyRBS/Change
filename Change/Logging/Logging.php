@@ -12,16 +12,45 @@ class Logging
 	protected $configuration;
 
 	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
 	 * @var integer
 	 */
 	protected $priority;
 
-	/** 
-	 * @param \Change\Configuration\Configuration $config
+	/**
+	 * @param \Change\Workspace $workspace
 	 */
-	public function __construct(\Change\Configuration\Configuration $config)
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		$this->configuration = $config;
+		$this->workspace = $workspace;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	public function getWorkspace()
+	{
+		return $this->workspace;
+	}
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
 	}
 
 	/**
@@ -104,7 +133,7 @@ class Logging
 	protected function createStreamWriter($name)
 	{
 		$directory = ($name == 'application' || $name == 'phperror') ? 'project' : 'other';
-		$filePath = \Change\Application::getInstance()->getWorkspace()->projectPath('log', $directory, $name . '.log');
+		$filePath = $this->getWorkspace()->projectPath('log', $directory, $name . '.log');
 		if (!file_exists($filePath))
 		{
 			\Change\Stdlib\File::mkdir(dirname($filePath));
@@ -232,7 +261,7 @@ class Logging
 	 */
 	public function deprecated($message)
 	{
-		if (\Change\Application::getInstance()->inDevelopmentMode())
+		if ($this->getConfiguration()->getEntry('general/development-mode'))
 		{
 			trigger_error($message, E_USER_DEPRECATED);
 		}
@@ -279,7 +308,7 @@ class Logging
 				die($message . PHP_EOL);
 				break;
 			default :
-				if (\Change\Application::getInstance()->inDevelopmentMode())
+				if ($this->getConfiguration()->getEntry('general/development-mode'))
 				{
 					if ($errno === E_USER_DEPRECATED)
 					{

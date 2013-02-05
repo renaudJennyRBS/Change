@@ -46,6 +46,6 @@ nbproject
 /App/Config
 /App/Modules
 .psr-0.ser
-test*
+./test*
 /ChangeTests/UnitTestWorkspace/Compilation/
 /App/OldBootstrap.php

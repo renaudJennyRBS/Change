@@ -5,7 +5,7 @@ use Change\Documents\DocumentManager;
 use Change\Documents\Interfaces\Publishable;
 use Change\Documents\Correction;
 
-class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
+class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * Simulate compile-document command
@@ -27,13 +27,13 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	
 	public static function tearDownAfterClass()
 	{
-		$dbp = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 	}
 		
 	public function testInitializeDB()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$this->compileDocuments($application);
 		$this->generateDbSchema($application);
 	}
@@ -43,7 +43,7 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
 		$basicDoc = $testsBasicService->getNewDocumentInstance();
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
 		$this->assertEquals('Project_Tests_Basic', $basicDoc->getDocumentModelName());
@@ -137,8 +137,8 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	public function testLocalized()
 	{
 		/* @var $testsLocalizedService \Project\Tests\Documents\LocalizedService */
-		$testsLocalizedService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsLocalized();
-		$dm = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$testsLocalizedService = $this->getApplication()->getDocumentServices()->getProjectTestsLocalized();
+		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
 
 		$localizedDoc = $testsLocalizedService->getNewDocumentInstance();
 		$dm->pushLCID('fr_FR');
@@ -286,8 +286,8 @@ class AbstractDocumentTest extends \PHPUnit_Framework_TestCase
 	public function testCorrection()
 	{
 		/* @var $testsCorrectionService \Project\Tests\Documents\CorrectionService */
-		$testsCorrectionService = \Change\Application::getInstance()->getDocumentServices()->getProjectTestsCorrection();
-		$dm = \Change\Application::getInstance()->getDocumentServices()->getDocumentManager();
+		$testsCorrectionService = $this->getApplication()->getDocumentServices()->getProjectTestsCorrection();
+		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
 
 		$c1 = $testsCorrectionService->getNewDocumentInstance();
 

@@ -47,20 +47,6 @@ class Configuration
 	 */
 	protected $define = array();
 
-	/**
-	 * @return array
-	 */
-	protected function writeToCache()
-	{
-		$configs = $this->getConfigArray();
-		
-		// Save compiled file.
-		$content .= "<?php\n// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
-		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
-		
-		\Change\Stdlib\File::write($this->getCachedConfigPath(), $content);
-		return array("config" => $configs);
-	}
 
 	/**
 	 * @param string $path
@@ -236,7 +222,6 @@ class Configuration
 
 		}
 		$config['config']['logging']['level'] = $logLevel;
-		var_export($config);
 		foreach (array('php-cli-path', 'development-mode') as $requiredConfigEntry)
 		{
 			if (!isset($config['config']['general'][$requiredConfigEntry]))

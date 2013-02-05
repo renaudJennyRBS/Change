@@ -32,6 +32,11 @@ class ClassInjection
 	protected $injectionIndex = 0;
 
 	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
 	 * @param array $originalClassInfo
 	 * @param array $replacingClassInfo
 	 */
@@ -50,6 +55,22 @@ class ClassInjection
 			}
 		}
 		$this->replacingClassInfos = $rInfos;
+	}
+
+	/**
+	 * @param \Change\Workspace $workspace
+	 */
+	public function setWorkspace(\Change\Workspace $workspace)
+	{
+		$this->workspace = $workspace;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	public function getWorkspace()
+	{
+		return $this->workspace;
 	}
 
 	/**
@@ -103,7 +124,7 @@ class ClassInjection
 		$fullClassName = $this->buildFullClassName($class->getNamespace(), $class->getName());
 		$components = explode('\\', $fullClassName);
 		$fileName = implode('_', $components);
-		$path = \Change\Application::getInstance()->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+		$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
 		\Change\Stdlib\File::mkdir(dirname($path));
 
 		$contentParts = array('<?php');
@@ -194,7 +215,7 @@ class ClassInjection
 
 			$components = explode('\\', $fullClassName);
 			$fileName = implode('_', $components);
-			$path = \Change\Application::getInstance()->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+			$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
 			\Change\Stdlib\File::mkdir(dirname($path));
 
 			$contentParts = array('<?php');
@@ -222,7 +243,7 @@ class ClassInjection
 
 			$components = explode('\\', $fullClassName);
 			$fileName = implode('_', $components);
-			$path = \Change\Application::getInstance()->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+			$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
 			\Change\Stdlib\File::mkdir(dirname($path));
 
 			$contentParts = array('<?php');

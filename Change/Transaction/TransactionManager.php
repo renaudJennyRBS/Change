@@ -7,9 +7,9 @@ namespace Change\Transaction;
 class TransactionManager extends \Exception
 {
 	/**
-	 * @var \Change\Application 
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $application;
+	protected $dbProvider;
 	
 	/**
 	 * @var integer
@@ -20,13 +20,13 @@ class TransactionManager extends \Exception
 	 * @var boolean
 	 */
 	protected $dirty = false;
-	
+
 	/**
-	 * @param \Change\Application $application
+	 * @param \Change\Db\DbProvider $provider
 	 */
-	public function __construct(\Change\Application $application)
+	public function __construct(\Change\Db\DbProvider $provider)
 	{
-		$this->application = $application;	
+		$this->dbProvider = $provider;
 	}
 	
 	/**
@@ -58,7 +58,7 @@ class TransactionManager extends \Exception
 	 */
 	protected function getDbProvider()
 	{
-		return $this->application->getApplicationServices()->getDbProvider();
+		return $this->dbProvider;
 	}
 	
 	public function begin()

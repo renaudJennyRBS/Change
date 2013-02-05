@@ -1,11 +1,11 @@
 <?php
 namespace ChangeTests\Change\I18n;
 
-class I18nManagerTest extends \PHPUnit_Framework_TestCase
+class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getI18nManager();
+		return $this->getApplication()->getApplicationServices()->getI18nManager();
 	}
 
 	/**
@@ -13,7 +13,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetSupportedLanguages()
 	{
-		$application = \Change\Application::getInstance();
+		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$config->addVolatileEntry('i18n/supported-lcids', null);
 		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
@@ -21,7 +21,10 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$config->addVolatileEntry('i18n/langs', null);
 		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
 		
-		$manager = new \Change\I18n\I18nManager($application);
+		$manager = new \Change\I18n\I18nManager();
+		$manager->setDbProvider($application->getApplicationServices()->getDbProvider());
+		$manager->setLogging($application->getApplicationServices()->getLogging());
+		$manager->setConfiguration($application->getConfiguration());
 
 		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());
 
@@ -134,7 +137,7 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 	public function testProfile(\Change\I18n\I18nManager $manager)
 	{
 		// If no values set, use the default ones.
-		$config = \Change\Application::getInstance()->getConfiguration();
+		$config = $this->getApplication()->getConfiguration();
 		$this->assertEquals($config->getEntry('i18n/default-timezone'), $manager->getTimeZone()->getName());
 		// TODO needs database
 		/*foreach (array('fr_FR', 'en_GB') as $lang)

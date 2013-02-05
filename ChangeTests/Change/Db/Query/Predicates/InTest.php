@@ -3,7 +3,7 @@ namespace ChangeTests\Change\Db\Query\Predicates;
 
 use Change\Db\Query\Predicates\In;
 
-class InTest extends \PHPUnit_Framework_TestCase
+class InTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
@@ -63,7 +63,7 @@ class InTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function getDbProvider()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		return $this->getApplication()->getApplicationServices()->getDbProvider();
 	}
 	
 	public function testToSQL92String()

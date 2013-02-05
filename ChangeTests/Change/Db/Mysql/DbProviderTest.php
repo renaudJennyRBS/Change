@@ -4,12 +4,12 @@ namespace ChangeTests\Change\Db\Mysql;
 use Change\Db\Mysql\DbProvider;
 use Change\Db\ScalarType;
 
-class DbProviderTest extends \PHPUnit_Framework_TestCase
+class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
 	public function testGetInstance()
 	{
-		$provider = \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
 		/* @var $provider \Change\Db\Mysql\DbProvider */
 		$this->assertInstanceOf('\Change\Db\Mysql\DbProvider', $provider);
 		

@@ -114,7 +114,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		}
 		catch (\PDOException $e)
 		{
-			\Change\Application::getInstance()->getApplicationServices()->getLogging()->exception($e);
+			$this->getLogging()->exception($e);
 			return false;
 		}
 		return true;

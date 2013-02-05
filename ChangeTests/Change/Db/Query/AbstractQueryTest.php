@@ -13,14 +13,14 @@ class FakeAbstractQuery extends \Change\Db\Query\AbstractQuery
 }
 
 
-class AbstractQueryTest extends \PHPUnit_Framework_TestCase
+class AbstractQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
 	 * @return \Change\Db\DbProvider
 	 */
 	protected function getDbProvider()
 	{
-		return \Change\Application::getInstance()->getApplicationServices()->getDbProvider();
+		return $this->getApplication()->getApplicationServices()->getDbProvider();
 	}
 	
 	/**

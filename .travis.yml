@@ -10,8 +10,6 @@ before_install:
  - php composer.phar install --dev --no-interaction 
  - mysql -e 'create database rbschangetest;'
  - bash travisconfig/init.sh
- - php framework/bin/change.php compile-autoload
- - php framework/bin/change.php compile-config
 
 script:
  - cd ChangeTests/

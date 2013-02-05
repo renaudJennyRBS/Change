@@ -95,7 +95,7 @@ class DocumentManager
 	 */
 	protected function getNewQueryBuilder()
 	{
-		return $this->applicationServices->getQueryBuilder();
+		return $this->applicationServices->getDbProvider()->getNewQueryBuilder();
 	}
 	
 	/**
@@ -103,7 +103,7 @@ class DocumentManager
 	 */
 	protected function getNewStatementBuilder()
 	{
-		return $this->applicationServices->getStatementBuilder();
+		return $this->applicationServices->getDbProvider()->getNewStatementBuilder();
 	}
 	
 	/**

@@ -56,6 +56,7 @@ class Injection
 
 			if (count($replacingClassInfos) === 0) {continue;}
 			$injection = new ClassInjection($originalClassInfo, $replacingClassInfos);
+			$injection->setWorkspace($this->workspace);
 			$result = $injection->compile();
 			foreach ($result['compiled'] as $infos)
 			{
@@ -107,7 +108,7 @@ class Injection
 	 */
 	protected function loadInfos()
 	{
-		$path = \Change\Application::getInstance()->getWorkspace()->compilationPath('Injection', 'info.ser');
+		$path = $this->workspace->compilationPath('Injection', 'info.ser');
 		if (file_exists($path))
 		{
 			return unserialize(file_get_contents($path));
@@ -122,7 +123,7 @@ class Injection
 	 */
 	protected function saveInfos($infos)
 	{
-		$path = \Change\Application::getInstance()->getWorkspace()->compilationPath('Injection', 'info.ser');
+		$path = $this->workspace->compilationPath('Injection', 'info.ser');
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, serialize($infos));
 	}

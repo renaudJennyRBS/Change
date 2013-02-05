@@ -392,7 +392,11 @@ abstract class AbstractDocument implements \Serializable
 		elseif ($property->hasConstraints()) 
 		{
 			$constraintManager = $this->documentService->getConstraintsManager();
-			$defaultParams =  array('documentId' => $this->getId(), 'modelName' => $this->getDocumentModelName(), 'propertyName' => $property->getName());
+			$defaultParams =  array('documentId' => $this->getId(),
+									'modelName' => $this->getDocumentModelName(),
+									'propertyName' => $property->getName(),
+									'applicationServices' => $this->documentService->getApplicationServices(),
+									'documentServices' => $this->documentService->getDocumentServices());
 			foreach ($property->getConstraintArray() as $name => $params) 
 			{
 				$params += $defaultParams;

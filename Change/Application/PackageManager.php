@@ -12,16 +12,16 @@ use Zend\Loader\StandardAutoloader;
 class PackageManager
 {
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Workspace
 	 */
-	protected $application;
+	protected $workspace;
 
 	/**
-	 * @param \Change\Application $application
+	 * @param \Change\Workspace $workspace
 	 */
-	public function __construct(\Change\Application $application)
+	public function __construct(\Change\Workspace $workspace)
 	{
-		$this->application = $application;
+		$this->workspace = $workspace;
 	}
 
 	/**
@@ -56,7 +56,7 @@ class PackageManager
 	 */
 	protected function getPsr0CachePath()
 	{
-		return $this->application->getWorkspace()->cachePath('.psr-0.ser');
+		return $this->workspace->cachePath('.psr-0.ser');
 	}
 
 	/**
@@ -71,13 +71,13 @@ class PackageManager
 		{
 			$namespaces = array();
 			// Libraries
-			$librariesPattern = $this->application->getWorkspace()->librariesPath('*', '*', 'composer.json');
+			$librariesPattern = $this->workspace->librariesPath('*', '*', 'composer.json');
 			foreach(\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$namespaces = array_merge($namespaces, $this->parseComposerFile($filePath, true));
 			}
 			// Plugin Modules
-			$pluginsModulesPattern = $this->application->getWorkspace()->pluginsModulesPath('*', '*', 'composer.json');
+			$pluginsModulesPattern = $this->workspace->pluginsModulesPath('*', '*', 'composer.json');
 			foreach(\Zend\Stdlib\Glob::glob($pluginsModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $filePath);
@@ -88,7 +88,7 @@ class PackageManager
 				$namespaces = array_merge($namespaces, array($namespace => dirname($filePath)), $this->parseComposerFile($filePath));
 			}
 			// Project modules
-			$projectModulesPattern = $this->application->getWorkspace()->projectModulesPath('*');
+			$projectModulesPattern = $this->workspace->projectModulesPath('*');
 			foreach (\Zend\Stdlib\Glob::glob($projectModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $modulePath)
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $modulePath);

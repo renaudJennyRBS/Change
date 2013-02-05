@@ -2,21 +2,17 @@
 
 namespace ChangeTests\Change\Db\Query;
 
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		$app = \Change\Application::getInstance();
-		$app->start();
-		$instance = new \Change\Db\Query\Builder($app->getApplicationServices()->getDbProvider());
+		$instance = new \Change\Db\Query\Builder($this->getApplication()->getApplicationServices()->getDbProvider());
 		$this->assertTrue(true);
 	}
 	
 	public function testGetFromApplicationServices()
 	{
-		$app = \Change\Application::getInstance();
-		$app->start();
-		$qb = $app->getApplicationServices()->getQueryBuilder();
+		$qb = $this->getApplication()->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$this->assertInstanceOf('\Change\Db\Query\Builder', $qb);
 		return $qb;
 	}

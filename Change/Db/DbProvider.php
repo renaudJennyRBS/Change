@@ -70,7 +70,23 @@ abstract class DbProvider
 		$this->connectionInfos = $connectionInfos;
 		$this->setLogging($logging);
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
-	}	
+	}
+
+	/**
+	 * @return \Change\Db\Query\Builder
+	 */
+	public function getNewQueryBuilder()
+	{
+		return new \Change\Db\Query\Builder($this);
+	}
+
+	/**
+	 * @return \Change\Db\Query\StatementBuilder
+	 */
+	public function getNewStatementBuilder()
+	{
+		return new \Change\Db\Query\StatementBuilder($this);
+	}
 	
 	/**
 	 * @return \Change\Logging\Logging

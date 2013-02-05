@@ -24,7 +24,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertFalse(class_exists('\ZendOAuth\OAuth'));
 		$this->assertFalse(class_exists('\Change\Stdlib\File'));
 		require_once PROJECT_HOME . '/Change/Application.php';
-		\Change\Application::getInstance()->registerNamespaceAutoload();
+		$application = new \Change\Application();
+		$application->registerNamespaceAutoload();
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
 		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
@@ -35,8 +36,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRegisterInjectionAutoload()
 	{
-		require_once dirname(realpath(__DIR__)) . '/Bootstrap.php';
-		\Change\Application::getInstance()->registerNamespaceAutoload();
+		if (!defined('PROJECT_HOME'))
+		{
+			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
+		}
+		require_once PROJECT_HOME . '/Change/Application.php';
+		require_once 'TestAssets/Application.php';
+
+		$application = new \ChangeTests\Change\TestAssets\Application();
+		$application->registerCoreAutoload();
+		$application->registerNamespaceAutoload();
 
 		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
@@ -48,8 +57,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
 			),
 		);
-		\Change\Application::getInstance()->registerInjectionAutoload(true);
+		$application->registerInjectionAutoload(true);
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection->setWorkspace($application->getWorkspace());
 		$injection->compile();
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
 		$this->assertEquals($instance->test(), 'InjectingClass');
@@ -60,8 +70,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testStart()
 	{
-		require_once dirname(realpath(__DIR__)) . '/Bootstrap.php';
-		\Change\Application::getInstance()->start();
+		if (!defined('PROJECT_HOME'))
+		{
+			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
+		}
+		require_once PROJECT_HOME . '/Change/Application.php';
+		require_once 'TestAssets/Application.php';
+
+		$application = new \ChangeTests\Change\TestAssets\Application();
+		$application->registerCoreAutoload();
+		$application->registerNamespaceAutoload();
+		$application->start();
 		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
 			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
@@ -73,6 +92,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 			),
 		);
 		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection->setWorkspace($application->getWorkspace());
 		$injection->compile();
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
 		$this->assertEquals($instance->test(), 'InjectingClass');
@@ -86,21 +106,40 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetProfile()
 	{
-		require_once dirname(realpath(__DIR__)) . '/Bootstrap.php';
-		$this->assertEquals('default', \Change\Application::getInstance()->getProfile());
+		if (!defined('PROJECT_HOME'))
+		{
+			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
+		}
+		require_once PROJECT_HOME . '/Change/Application.php';
+		require_once 'TestAssets/Application.php';
+
+		$application = new \ChangeTests\Change\TestAssets\Application();
+		$application->registerCoreAutoload();
+		$application->registerNamespaceAutoload();
+
+		$originalInfo = array(
+			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
+			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
+		);
+		$replacingInfos = 	array(
+			array(
+				'name' => '\ChangeTests\Change\TestAssets\InjectingClass',
+				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
+			),
+		);
+		$this->assertEquals('default', $application->getProfile());
 	}
 
 
 	public function testGetConfiguration()
 	{
-		$app = new \Change\Application();
-		$app->setWorkspace(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($app));
+		$app = new \ChangeTests\Change\TestAssets\Application();
 		$this->assertInstanceOf('\Change\Configuration\Configuration', $app->getConfiguration());
 	}
 
 	public function testGetWorkspace()
 	{
-		$app = new \Change\Application();
+		$app = new \ChangeTests\Change\TestAssets\Application();
 		$this->assertInstanceOf('\Change\Workspace', $app->getWorkspace());
 	}
 
@@ -111,13 +150,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	{
 		if (!defined('PROJECT_HOME'))
 		{
-			define('PROJECT_HOME', dirname(dirname(realpath(__DIR__))));
+			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
 		}
 		require_once PROJECT_HOME . '/Change/Application.php';
-		$app = new \Change\Application();
+		require_once 'TestAssets/Application.php';
+
+		$application = new \ChangeTests\Change\TestAssets\Application();
+		$application->registerCoreAutoload();
+
 		$this->assertFalse(defined('TESTBOOTSTRAP_OK'));
 		require_once __DIR__ . '/TestAssets/TestBootstrap.php';
-		$app->start('\ChangeTests\Change\TestAssets\TestBootstrap');
+		$application->start('\ChangeTests\Change\TestAssets\TestBootstrap');
 		$this->assertTrue(defined('TESTBOOTSTRAP_OK'));
 	}
 }
