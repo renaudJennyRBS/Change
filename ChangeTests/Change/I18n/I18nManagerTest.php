@@ -137,7 +137,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testProfile(\Change\I18n\I18nManager $manager)
 	{
 		// If no values set, use the default ones.
-		$config = \Change\Application::getInstance()->getConfiguration();
+		$config = $this->getApplication()->getConfiguration();
 		$this->assertEquals($config->getEntry('i18n/default-timezone'), $manager->getTimeZone()->getName());
 		// TODO needs database
 		/*foreach (array('fr_FR', 'en_GB') as $lang)

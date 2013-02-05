@@ -133,14 +133,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetConfiguration()
 	{
-		$app = new \Change\Application();
-		$app->setWorkspace(new \ChangeTests\Change\TestAssets\UnitTestWorkspace($app));
+		$app = new \ChangeTests\Change\TestAssets\Application();
 		$this->assertInstanceOf('\Change\Configuration\Configuration', $app->getConfiguration());
 	}
 
 	public function testGetWorkspace()
 	{
-		$app = new \Change\Application();
+		$app = new \ChangeTests\Change\TestAssets\Application();
 		$this->assertInstanceOf('\Change\Workspace', $app->getWorkspace());
 	}
 
@@ -151,13 +150,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	{
 		if (!defined('PROJECT_HOME'))
 		{
-			define('PROJECT_HOME', dirname(dirname(realpath(__DIR__))));
+			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
 		}
 		require_once PROJECT_HOME . '/Change/Application.php';
-		$app = new \Change\Application();
+		require_once 'TestAssets/Application.php';
+
+		$application = new \ChangeTests\Change\TestAssets\Application();
+		$application->registerCoreAutoload();
+
 		$this->assertFalse(defined('TESTBOOTSTRAP_OK'));
 		require_once __DIR__ . '/TestAssets/TestBootstrap.php';
-		$app->start('\ChangeTests\Change\TestAssets\TestBootstrap');
+		$application->start('\ChangeTests\Change\TestAssets\TestBootstrap');
 		$this->assertTrue(defined('TESTBOOTSTRAP_OK'));
 	}
 }
