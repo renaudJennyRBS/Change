@@ -23,9 +23,9 @@ class Configuration
 		$this->configurationFiles = $configurationFiles;
 		if (is_array($config))
 		{
-			if (!isset($cachedConfig['config']) || !isset($cachedConfig['defines']))
+			if (!isset($cachedConfig['config']))
 			{
-				throw new \InvalidArgumentException('$config has to be an array with "config" and "define" keys set');
+				throw new \InvalidArgumentException('$config has to be an array with "config" keys set');
 			}
 		}
 		else
@@ -33,7 +33,6 @@ class Configuration
  			$config = $this->mergeJsonConfigurations();
 		}
 		$this->setConfigArray($config['config']);
-		$this->setDefineArray($config['defines']);
 	}
 
 	/**
@@ -48,35 +47,19 @@ class Configuration
 	 */
 	protected $define = array();
 
-
 	/**
 	 * @return array
 	 */
 	protected function writeToCache()
 	{
 		$configs = $this->getConfigArray();
-		// Compile new config and defines.
-		$defines = $this->fixDefinesArray($this->getDefineArray());
+		
 		// Save compiled file.
-		$content = "<?php\n// \\Change\\Configuration\\Configuration::setDefineArray PART // \n";
-		$content .= '$configuration->setDefineArray(' . var_export($defines, true) . ");\n\n";
-		if (isset($defines['DEVELOPMENT_MODE']) && $defines['DEVELOPMENT_MODE'])
-		{
-			$this->buildDevelopmentDefineFile($defines);
-		}
-		$content .= "// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
+		$content .= "<?php\n// \\Change\\Configuration\\Configuration::setConfigArray PART // \n";
 		$content .= '$configuration->setConfigArray(' . var_export($configs, true) . ');';
 		
 		\Change\Stdlib\File::write($this->getCachedConfigPath(), $content);
-		return array("config" => $configs, "defines" => $defines);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getDevDefinesPath()
-	{
-		return $this->getApplication()->getWorkspace()->compilationPath('Config', 'dev_defines.php');
+		return array("config" => $configs);
 	}
 
 	/**
@@ -211,48 +194,6 @@ class Configuration
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getDefineArray()
-	{
-		return $this->define;
-	}
-
-	/**
-	 * @param array $defines
-	 */
-	public function setDefineArray($defines)
-	{
-		$this->define = $defines;
-		$this->applyDefines();
-	}
-
-	/**
-	 * Setup constants.
-	 */
-	protected function applyDefines()
-	{
-		foreach ($this->define as $name => $value)
-		{
-			if (!defined($name))
-			{
-				if (is_string($value))
-				{
-					// @codeCoverageIgnoreStart
-					// TODO: should this be removed ?
-					if (strpos($value, 'return ') === 0 && substr($value, -1) === ';')
-					{
-						$value = eval($value);
-					}
-					// @codeCoverageIgnoreEnd
-				}
-				define($name, $value);
-			}
-		}
-	}
-
-	/**
-	 *
 	 * @throws \RuntimeException
 	 * @return string
 	 */
@@ -295,64 +236,16 @@ class Configuration
 
 		}
 		$config['config']['logging']['level'] = $logLevel;
-		foreach (array('TMP_PATH' , 'DEFAULT_HOST', 'PROJECT_ID', 'PHP_CLI_PATH', 'DEVELOPMENT_MODE') as $requiredConfigEntry)
+		var_export($config);
+		foreach (array('php-cli-path', 'development-mode') as $requiredConfigEntry)
 		{
-			if (!isset($config['defines'][$requiredConfigEntry]))
+			if (!isset($config['config']['general'][$requiredConfigEntry]))
 			{
 				// @codeCoverageIgnoreStart
-				throw new \RuntimeException('Please define ' . $requiredConfigEntry . ' in your profile configuration file');
+				throw new \RuntimeException('Please define config/general/' . $requiredConfigEntry . ' in your profile configuration file');
 				// @codeCoverageIgnoreEnd
 			}
 		}
 		return $config;
-	}
-
-	/**
-	 * TODO: check if the method is still necessary
-	 * @param array $configDefineArray
-	 * @return array
-	 */
-	protected function fixDefinesArray($configDefineArray)
-	{
-		foreach ($configDefineArray as $name => $value)
-		{
-			if (is_string($value))
-			{
-				// Match PROJECT_HOME . DIRECTORY_SEPARATOR . 'config'
-				// Or CHANGE_CONFIG_DIR . 'toto'
-				// But not Fred's Directory
-				// @codeCoverageIgnoreStart
-				if (preg_match('/^(([A-Z][A-Z_0-9]+)|(\'[^\']*\'))(\s*\.\s*(([A-Z][A-Z_0-9]+)|(\'[^\']*\')))+$/', $value))
-				{
-					$configDefineArray[$name] = 'return ' . $value . ';';
-				}
-				// @codeCoverageIgnoreEnd
-			}
-		}
-		return $configDefineArray;
-	}
-
-	/**
-	 * @param array $defineArray
-	 */
-	protected function buildDevelopmentDefineFile($defineArray)
-	{
-		$content = "<?php // For IDE completion only //" . PHP_EOL;
-		$content .= "throw new Exception('Do not include this file');" . PHP_EOL;
-		foreach ($defineArray as $key => $value)
-		{
-			$defval = var_export($value, true);
-			if (is_string($value))
-			{
-				// @codeCoverageIgnoreStart
-				if (strpos($value, 'return ') === 0 && substr($value, -1) === ';')
-				{
-					$defval = substr($value, 7, strlen($value) - 8);
-				}
-				// @codeCoverageIgnoreEnd
-			}
-			$content .= "define('" . $key . "', " . $defval . ");" . PHP_EOL;
-		}
-		\Change\Stdlib\File::write($this->getDevDefinesPath(), $content);
 	}
 }

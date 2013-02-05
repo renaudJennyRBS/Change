@@ -544,7 +544,7 @@ class I18nManager
 		{
 			return $this->uiTimeZone;
 		}
-		return new \DateTimeZone(DEFAULT_TIMEZONE);
+		return new \DateTimeZone($this->getConfiguration()->getEntry('i18n/default-timezone'));
 	}
 	
 	/**
