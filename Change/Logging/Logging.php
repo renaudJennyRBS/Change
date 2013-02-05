@@ -4,7 +4,7 @@ namespace Change\Logging;
 /**
  * @name \Change\Logging\Logging
  */
-class Logging extends \Change\AbstractSingleton
+class Logging
 {
 	/**
 	 * @var \Change\Configuration\Configuration

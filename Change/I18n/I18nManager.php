@@ -26,7 +26,7 @@ class I18nManager
 	protected $transformers;
 
 	/**
-	 * @var string, ex: "fr_FR"
+	 * @var string ex: "fr_FR"
 	 */
 	protected $uiLCID;
 
@@ -35,6 +35,21 @@ class I18nManager
 	 */
 	protected $supportedLCIDs = array();
 
+	/**
+	 * @var string
+	 */
+	protected $uiDateFormat;
+
+	/**
+	 * @var string
+	 */
+	protected $uiDateTimeFormat;
+
+	/**
+	 * @var string
+	 */
+	protected $uiTimeZone;
+	
 	/**
 	 * @var array
 	 */
@@ -64,14 +79,6 @@ class I18nManager
 			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
 
 		$this->supportedLCIDs = $this->getConfiguration()->getEntry('i18n/supported-lcids', array('fr_FR'));
-	}
-	
-	/**
-	 * @return \Change\Mvc\Controller
-	 */
-	protected function getController()
-	{
-		return $this->application->getApplicationServices()->getController();
 	}
 	
 	/**
@@ -111,15 +118,7 @@ class I18nManager
 	{
 		if ($this->uiLCID === null)
 		{
-			$uilang = $this->getController()->getStorage()->readForUser('uiLCID');
-			if ($uilang && in_array($uilang, $this->getSupportedLCIDs()))
-			{
-				$this->setLCID($uilang);
-			}
-			else
-			{
-				$this->setLCID($this->getDefaultLCID());
-			}
+			$this->setLCID($this->getDefaultLCID());
 		}
 		return $this->uiLCID;
 	}
@@ -488,24 +487,7 @@ class I18nManager
 	}
 	
 	// Dates.
-	
-	/**
-	 * Resets the profile values.
-	 */
-	public function resetProfile()
-	{
-		$this->profile = array('date' => array(), 'datetime' => array(), 'timezone' => null);
-	}
-	
-	/**
-	 * @return array
-	 */
-	protected function getProfileValues()
-	{
-		$pref = $this->getController()->getStorage()->readForUser('profilesvalues');
-		return is_array($pref) ? $pref : array();
-	}
-	
+
 	/**
 	 * @api
 	 * @param string $LCID
@@ -513,19 +495,20 @@ class I18nManager
 	 */
 	public function getDateFormat($LCID)
 	{
-		if (!isset($this->profile['date'][$LCID]))
+		if ($this->uiDateFormat)
 		{
-			$prefs = $this->getProfileValues();
-			if ($prefs !== null && isset($prefs['dateformat']))
-			{
-				$this->profile['date'][$LCID] = $prefs['dateformat'];
-			}
-			else
-			{
-				$this->profile['date'][$LCID] = $this->formatKey($LCID, 'c.date.default-date-format');
-			}
+			return $this->uiDateFormat;
 		}
-		return $this->profile['date'][$LCID];
+		return $this->formatKey($LCID, 'c.date.default-date-format');
+	}
+	
+	/**
+	 * @api
+	 * @param string $dateFormat
+	 */
+	public function setDateFormat($dateFormat)
+	{
+		$this->uiDateFormat = $dateFormat;
 	}
 	
 	/**
@@ -535,19 +518,20 @@ class I18nManager
 	 */
 	public function getDateTimeFormat($LCID)
 	{
-		if (!isset($this->profile['datetime'][$LCID]))
+		if ($this->uiDateTimeFormat)
 		{
-			$prefs = $this->getProfileValues();
-			if ($prefs !== null && isset($prefs['datetimeformat']))
-			{
-				$this->profile['datetime'][$LCID] = $prefs['datetimeformat'];
-			}
-			else
-			{
-				$this->profile['datetime'][$LCID] = $this->formatKey($LCID, 'c.date.default-datetime-format');
-			}
+			return $this->uiDateTimeFormat;
 		}
-		return $this->profile['datetime'][$LCID];
+		return $this->formatKey($LCID, 'c.date.default-datetime-format');
+	}
+	
+	/**
+	 * @api
+	 * @param string $uiDateTimeFormat
+	 */
+	public function setDateTimeFormat($dateTimeFormat)
+	{
+		$this->uiDateTimeFormat = $dateTimeFormat;
 	}
 	
 	/**
@@ -556,19 +540,24 @@ class I18nManager
 	 */
 	public function getTimeZone()
 	{
-		if (!isset($this->profile['timezone']))
+		if ($this->uiTimeZone)
 		{
-			$prefs = $this->getProfileValues();
-			if ($prefs !== null && isset($prefs['timezone']) && !empty($prefs['timezone']))
-			{
-				$this->profile['timezone'] = $prefs['timezone'];
-			}
-			else
-			{
-				$this->profile['timezone'] = DEFAULT_TIMEZONE;
-			}
+			return $this->uiTimeZone;
 		}
-		return new \DateTimeZone($this->profile['timezone']);
+		return new \DateTimeZone(DEFAULT_TIMEZONE);
+	}
+	
+	/**
+	 * @api
+	 * @param \DateTimeZone|string $timeZone
+	 */
+	public function setTimeZone($timeZone)
+	{
+		if (!($timeZone instanceof \DateTimeZone))
+		{
+			$timeZone = new \DateTimeZone($timeZone);
+		}
+		$this->uiTimeZone = $timeZone;
 	}
 	
 	/**

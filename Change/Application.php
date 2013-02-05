@@ -214,12 +214,6 @@ class Application
 			->addMethod('__construct', true)
 				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Mvc\Controller');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
 		
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\Builder');
 		$cl->setInstantiator('__construct')
@@ -241,7 +235,6 @@ class Application
 		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $this));
 		$im->setParameters('Change\Events\EventManager', array('application' => $this));
 		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
-		$im->setParameters('Change\Mvc\Controller', array('application' => $this));
 		$im->setParameters('Change\I18n\I18nManager', array('application' => $this));
 		$im->setParameters('Change\Db\DbProvider', array('config' => $this->getConfiguration()));
 		$im->setParameters('Change\Db\DbProvider', array('application' => $this));

@@ -116,7 +116,7 @@ class DbProvider extends \Change\Db\DbProvider
 
 		$dsn = $protocol.':'.join(';', $dsnOptions);
 
-		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'") ;
+		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
 		$pdo = new \PDO($dsn, $username, $password, $options);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
