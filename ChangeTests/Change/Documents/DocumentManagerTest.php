@@ -268,7 +268,11 @@ class DocumentManagerTest extends \PHPUnit_Framework_TestCase
 		$config->addVolatileEntry('i18n/langs' , null);
 		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
 		
-		$i18nManger = new \Change\I18n\I18nManager($application);		
+		$i18nManger = new \Change\I18n\I18nManager();
+		$i18nManger->setDbProvider($application->getApplicationServices()->getDbProvider());
+		$i18nManger->setLogging($application->getApplicationServices()->getLogging());
+		$i18nManger->setConfiguration($application->getConfiguration());
+
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($i18nManger, 'Change\I18n\I18nManager');
 		$manager = new DocumentManager($application->getApplicationServices(), $application->getDocumentServices());
 		

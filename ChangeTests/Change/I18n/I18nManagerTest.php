@@ -21,7 +21,10 @@ class I18nManagerTest extends \PHPUnit_Framework_TestCase
 		$config->addVolatileEntry('i18n/langs', null);
 		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
 		
-		$manager = new \Change\I18n\I18nManager($application);
+		$manager = new \Change\I18n\I18nManager();
+		$manager->setDbProvider($application->getApplicationServices()->getDbProvider());
+		$manager->setLogging($application->getApplicationServices()->getLogging());
+		$manager->setConfiguration($application->getConfiguration());
 
 		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());
 

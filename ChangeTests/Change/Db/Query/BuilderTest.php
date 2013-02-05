@@ -16,7 +16,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 	{
 		$app = \Change\Application::getInstance();
 		$app->start();
-		$qb = $app->getApplicationServices()->getQueryBuilder();
+		$qb = $app->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$this->assertInstanceOf('\Change\Db\Query\Builder', $qb);
 		return $qb;
 	}

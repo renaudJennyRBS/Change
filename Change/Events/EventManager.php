@@ -7,39 +7,23 @@ namespace Change\Events;
 class EventManager extends \Zend\EventManager\EventManager
 {		
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $application;
+	protected $configuration;
 	
 	/**
 	 * @param \Change\Application $application
 	 */
-	public function __construct(\Change\Application $application)
+	public function __construct(\Change\Configuration\Configuration $configuration)
 	{
-		$this->setApplication($application);
-		parent::__construct();		
+		$this->configuration = $configuration;
+		parent::__construct();
 		$this->registerConfiguredListeners();
-	}
-	
-	/**
-	 * @return \Change\Application
-	 */
-	public function getApplication()
-	{
-		return $this->application;
-	}
-
-	/**
-	 * @param \Change\Application $application
-	 */
-	public function setApplication(\Change\Application $application)
-	{
-		$this->application = $application;
 	}
 
 	protected function registerConfiguredListeners()
 	{
-		$classes = $this->application->getConfiguration()->getEntry('events/registrationclasses', array());
+		$classes = $this->configuration->getEntry('events/registrationclasses', array());
 		foreach ($classes as $className)
 		{
 			if (class_exists($className))

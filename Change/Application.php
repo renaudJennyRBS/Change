@@ -21,6 +21,11 @@ class Application
 	protected $workspace;
 
 	/**
+	 * @var \Change\Application\PackageManager
+	 */
+	protected $packageManager;
+
+	/**
 	 * @var \Change\Application
 	 */
 	protected static $sharedInstance;
@@ -116,7 +121,7 @@ class Application
 	{
 		$zendLoader = new \Zend\Loader\StandardAutoloader();
 		// Register additional packages autoload
-		foreach ($this->getApplicationServices()->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
+		foreach ($this->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
 		{
 			$zendLoader->registerNamespace($namespace, $path);
 		}
@@ -166,83 +171,9 @@ class Application
 	{
 		if (!$this->applicationServices)
 		{
-			$this->setApplicationServices($this->defaultApplicationServices());
+			$this->applicationServices  = new \Change\Application\ApplicationServices($this);
 		}
 		return $this->applicationServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function defaultApplicationServices()
-	{
-		$dl = new \Zend\Di\DefinitionList(array());
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Events\EventManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Logging\Logging');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
-		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
-			->addMethod('newInstance', true)
-				->addMethodParameter('newInstance', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
-				->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Transaction\TransactionManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
-				
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Application\PackageManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'application', array('type' => 'Change\Application', 'required' => true));
-		$dl->addDefinition($cl);
-		
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\Builder');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
-		$dl->addDefinition($cl);
-		
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\Query\StatementBuilder');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
-		$dl->addDefinition($cl);
-
-		$applicationServices = new \Change\Application\ApplicationServices($dl);
-		$im = $applicationServices->instanceManager();
-
-		$im->setParameters('Change\Db\Query\Builder', array());
-
-		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $this));
-		$im->setParameters('Change\Events\EventManager', array('application' => $this));
-		$im->setParameters('Change\Application\PackageManager', array('application' => $this));
-		$im->setParameters('Change\I18n\I18nManager', array('application' => $this));
-		$im->setParameters('Change\Db\DbProvider', array('config' => $this->getConfiguration()));
-		$im->setParameters('Change\Db\DbProvider', array('application' => $this));
-		$im->setParameters('Change\Logging\Logging', array('config' => $this->getConfiguration()));
-		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
-		$im->setInjections('Change\Db\Query\Builder', array('Change\Db\DbProvider'));
-		$im->setInjections('Change\Db\Query\StatementBuilder', array('Change\Db\DbProvider'));
-		return $applicationServices;
 	}
 
 	/**
@@ -270,7 +201,6 @@ class Application
 	}
 	
 	/**
-	 *
 	 * @api
 	 * @return \Change\Workspace
 	 */
@@ -303,6 +233,27 @@ class Application
 		}
 		return $this->configuration;
 	}
+
+	/**
+	 * @param \Change\Application\PackageManager $packageManager
+	 */
+	public function setPackageManager($packageManager)
+	{
+		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * @return \Change\Application\PackageManager
+	 */
+	public function getPackageManager()
+	{
+		if ($this->packageManager === null)
+		{
+			$this->packageManager = new \Change\Application\PackageManager($this->getWorkspace());
+		}
+		return $this->packageManager;
+	}
+
 
 	/**
 	 * @param Configuration\Configuration $configuration

@@ -16,7 +16,7 @@ class PackageManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testBuildCache()
 	{
-		$pm = \Change\Application::getInstance()->getApplicationServices()->getPackageManager();
+		$pm = \Change\Application::getInstance()->getPackageManager();
 		$pm->getRegisteredAutoloads();
 		$pathMethod = $this->getMethod("getPsr0CachePath");
 		$this->assertFileExists($pathMethod->invoke($pm));
@@ -24,7 +24,7 @@ class PackageManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testClearCache()
 	{
-		$pm = \Change\Application::getInstance()->getApplicationServices()->getPackageManager();
+		$pm = \Change\Application::getInstance()->getPackageManager();
 		$pm->clearCache();
 		$pathMethod = $this->getMethod("getPsr0CachePath");
 		$this->assertFileNotExists($pathMethod->invoke($pm));
@@ -32,7 +32,7 @@ class PackageManagerTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetRegisteredAutoloads()
 	{
-		$pm = \Change\Application::getInstance()->getApplicationServices()->getPackageManager();
+		$pm = \Change\Application::getInstance()->getPackageManager();
 		$autoloads = $pm->getRegisteredAutoloads();
 		$this->assertArrayHasKey("Zend\\", $autoloads);
 		$this->assertArrayHasKey("Change\\Website\\", $autoloads);
