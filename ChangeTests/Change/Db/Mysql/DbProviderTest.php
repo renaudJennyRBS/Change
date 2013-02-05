@@ -73,6 +73,19 @@ class DbProviderTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertSame($dbval, $provider->phpToDB($dt, ScalarType::DATETIME));
 		$this->assertEquals($dt, $provider->dbToPhp($dbval, ScalarType::DATETIME));
+		return $provider;
 	}
-	
+
+	/**
+	 * @depends testValues
+	 */
+	public function testGetLastInsertId(DbProvider $provider)
+	{
+		$pdo = $provider->getDriver();
+		$pdo->exec('DROP TABLE IF EXISTS `test_auto_number`');
+		$pdo->exec('CREATE TABLE `test_auto_number` (`auto` int(11) NOT NULL AUTO_INCREMENT, `test` int(11) NOT NULL, PRIMARY KEY (`auto`)) ENGINE=InnoDB AUTO_INCREMENT=5000');
+		$pdo->exec('INSERT INTO `test_auto_number` (`auto`, `test`) VALUES (NULL, \'2\')');
+		$auto = $provider->getLastInsertId('test_auto_number');
+		$this->assertEquals(5000, $auto);
+	}
 }

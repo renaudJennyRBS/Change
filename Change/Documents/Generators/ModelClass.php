@@ -39,7 +39,11 @@ class ModelClass
 		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
 		$extendModel = $model->getExtendModel();
 		$extend = $extendModel ? $extendModel->getModelClassName() : '\Change\Documents\AbstractModel';
-		$code .= 'class ' . $model->getShortModelClassName() . ' extends ' . $extend . PHP_EOL;
+		$code .= '
+/**
+ * @name '.$model->getModelClassName().'
+ */
+ class ' . $model->getShortModelClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
 		$code .= $this->getConstructor($model);
 		if (count($model->getProperties()))
@@ -157,13 +161,13 @@ class ModelClass
 	protected function getLoadInverseProperties($model)
 	{
 		$code = '
-	protected function loadInvertProperties()
+	protected function loadInverseProperties()
 	{
-		parent::loadInvertProperties();'. PHP_EOL;
+		parent::loadInverseProperties();'. PHP_EOL;
 		foreach ($model->getInverseProperties() as $inverseProperty)
 		{
 			/* @var $inverseProperty \Change\Documents\Generators\InverseProperty */
-			$code .= '		$p = $this->m_invertProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = new \Change\Documents\Property('.$this->escapePHPValue($inverseProperty->getName()).', '.$this->escapePHPValue($inverseProperty->getRelatedType()).');'. PHP_EOL;
+			$code .= '		$p = $this->inverseProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = new \Change\Documents\InverseProperty('.$this->escapePHPValue($inverseProperty->getName()).');'. PHP_EOL;
 			$code .= '		$p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
 		}
 		$code .= '	}'. PHP_EOL;
@@ -190,7 +194,20 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getIcon()).';
 	}'. PHP_EOL;
 		}
-		
+
+		if ($model->getHasUrl())
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasUrl()
+	{
+		return '. $this->escapePHPValue($model->getHasUrl()).';
+	}'. PHP_EOL;
+		}
+
 		if ($model->getLocalized())
 		{
 			$code .= '

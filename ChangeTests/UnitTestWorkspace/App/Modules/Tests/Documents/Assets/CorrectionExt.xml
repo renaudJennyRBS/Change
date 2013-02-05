@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd"
+          icon="correctionext" extend="Project_Tests_Correction">
+    <properties>
+        <property name="label">
+            <constraint name="maxSize" max="80" />
+        </property>
+        <property name="strext1" type="String" />
+        <property name="strext2" type="String" has-correction="true" />
+
+        <property name="strext3" type="String" localized="true"/>
+        <property name="strext4" type="String" localized="true" has-correction="true"/>
+
+        <property name="docs3" type="DocumentArray" document-type="Project_Tests_Localized" max-occurs="5" />
+    </properties>
+</document>
