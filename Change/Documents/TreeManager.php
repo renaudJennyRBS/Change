@@ -84,12 +84,12 @@ class TreeManager
 		$dbp = $this->applicationServices->getDbProvider();	
 		$tableDef = new \Change\Db\Schema\TableDefinition($dbp->getSqlMapping()->getTreeTableName($moduleName));
 		$schemaManager = $dbp->getSchemaManager();
-		$tableDef->addField($schemaManager->getIntegerFieldDefinition('document_id')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->getIntegerFieldDefinition('parent_id')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->getIntegerFieldDefinition('node_order')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->getIntegerFieldDefinition('node_level')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->getVarCharFieldDefinition('node_path')->setNullable(false)->setDefaultValue(''));
-		$tableDef->addField($schemaManager->getIntegerFieldDefinition('children_count')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->newIntegerFieldDefinition('parent_id')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->newIntegerFieldDefinition('node_order')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->newIntegerFieldDefinition('node_level')->setNullable(false)->setDefaultValue('0'));
+		$tableDef->addField($schemaManager->newVarCharFieldDefinition('node_path')->setNullable(false)->setDefaultValue(''));
+		$tableDef->addField($schemaManager->newIntegerFieldDefinition('children_count')->setNullable(false)->setDefaultValue('0'));
 		$pk = new \Change\Db\Schema\KeyDefinition();
 		$pk->setType(\Change\Db\Schema\KeyDefinition::PRIMARY);
 		$pk->addField($tableDef->getField('document_id'));	
@@ -110,14 +110,33 @@ class TreeManager
 	{
 		return $this->documentServices->getDocumentManager();
 	}
-	
+
+
+	/**
+	 * @return \Change\Db\Query\Builder
+	 */
+	protected function getNewQueryBuilder()
+	{
+		return $this->applicationServices->getDbProvider()->getNewQueryBuilder();
+	}
+
+	/**
+	 * @return \Change\Db\Query\StatementBuilder
+	 */
+	protected function getNewStatementBuilder()
+	{
+		return $this->applicationServices->getDbProvider()->getNewStatementBuilder();
+	}
+
 	/**
 	 * @param string $treeName
 	 * @return \Change\Documents\TreeNode
 	 */
 	protected function getNewNode($treeName)
 	{
-		return new \Change\Documents\TreeNode($this, $treeName);
+		$node  = new \Change\Documents\TreeNode($treeName);
+		$node->setTreeManager($this);
+		return $node;
 	}
 	
 	/**
@@ -129,7 +148,7 @@ class TreeManager
 		$key = 'NodeInfoQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select('document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count')
 				->from($fb->getTreeTable($treeName))
@@ -159,7 +178,36 @@ class TreeManager
 		}
 		return $node;
 	}
-	
+
+	/**
+	 *
+	 * @param string $treeName
+	 * @return \Change\Documents\TreeNode|NULL
+	 */
+	public function getRootNode($treeName)
+	{
+		$key = 'RootNodeInfoQuery_' . $treeName;
+		if (!isset($this->staticQueries[$key]))
+		{
+			$qb = $this->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->select('document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count')
+				->from($fb->getTreeTable($treeName))
+				->where($fb->logicAnd($fb->eq($fb->column('parent_id'), $fb->number(0)), $fb->eq($fb->column('node_level'), $fb->number(0))));
+			$this->staticQueries[$key] = $qb->query();
+		}
+		/* @var $sq \Change\Db\Query\SelectQuery */
+		$sq = $this->staticQueries[$key];
+		$nodeInfo = $sq->getFirstResult();
+		if ($nodeInfo)
+		{
+			$node = $this->getNewNode($treeName);
+			$this->populateNode($node, $nodeInfo);
+			return $node;
+		}
+		return null;
+	}
+
 	/**
 	 * @return \Change\Db\Query\SelectQuery
 	 */
@@ -168,7 +216,7 @@ class TreeManager
 		$key = 'TreeNameQuery';
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->alias($fb->getDocumentColumn('treeName'), 'treeName'))
 				->from($fb->getDocumentIndexTable())
@@ -226,7 +274,7 @@ class TreeManager
 		$key = 'NodeChildrenQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select('document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count')
 				->from($fb->getTreeTable($treeName))
@@ -324,7 +372,7 @@ class TreeManager
 		$key = 'DescendantNodesQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getQueryBuilder();
+			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select('document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count')
 				->from($fb->getTreeTable($treeName))
@@ -370,7 +418,7 @@ class TreeManager
 		$key = 'InsertNodeQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getStatementBuilder();
+			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->getTreeTable($treeName), 'document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count')
 				->addValues(
@@ -393,7 +441,7 @@ class TreeManager
 		$key = 'UpdateTreeNameQuery';
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getStatementBuilder();
+			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->getDocumentIndexTable())
 			->assign($fb->getDocumentColumn('treeName'), $fb->parameter('treeName', $qb))
@@ -412,7 +460,7 @@ class TreeManager
 		$key = 'DeleteNodeQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getStatementBuilder();
+			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getTreeTable($treeName))
 				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
@@ -432,7 +480,7 @@ class TreeManager
 		$key = 'UpdateOrderByOffsetQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getStatementBuilder();
+			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$orderColumn = $fb->column('node_order');
 			$qb->update($fb->getTreeTable($treeName))
@@ -455,7 +503,7 @@ class TreeManager
 		$key = 'UpdateChildrenCountQuery_' . $treeName;
 		if (!isset($this->staticQueries[$key]))
 		{
-			$qb = $this->applicationServices->getStatementBuilder();
+			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$childrenCountColumn = $fb->column('children_count');
 			$qb->update($fb->getTreeTable($treeName))
@@ -465,11 +513,13 @@ class TreeManager
 		}
 		return $this->staticQueries[$key];
 	}
-	
-	
+
+
 	/**
-	 * @throws \RuntimeException
 	 * @param \Change\Documents\AbstractDocument $document
+	 * @param string $treeName
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 * @return \Change\Documents\TreeNode
 	 */
 	public function insertRootNode(\Change\Documents\AbstractDocument $document, $treeName)
@@ -500,11 +550,13 @@ class TreeManager
 		}
 		throw new \RuntimeException('Unable to insert root node: ' .$document->getId() . ' in tree '. $treeName);	
 	}
-	
+
 	/**
 	 * @param \Change\Documents\TreeNode $parentNode
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Documents\TreeNode $beforeNode
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 * @return \Change\Documents\TreeNode
 	 */
 	public function insertNode(\Change\Documents\TreeNode $parentNode, \Change\Documents\AbstractDocument $document, \Change\Documents\TreeNode $beforeNode = null)
@@ -555,6 +607,7 @@ class TreeManager
 		$q->bindParameter('childrenCount', count($children) + 1);
 		$q->bindParameter('id', $parentNode->getDocumentId());
 		$q->execute();
+
 		
 		$document->setTreeName($treeName);
 		$q2 = $this->getUpdateTreeNameQuery();
@@ -564,6 +617,8 @@ class TreeManager
 		$node = $this->getNodeByDocument($document);
 		if ($node)
 		{
+			$parentNode->setChildrenIds(null);
+			$parentNode->setChildrenCount(count($children) + 1);
 			return $node;
 		}
 		throw new \RuntimeException('Unable to insert node: ' .$document->getId() . ' in tree '. $treeName);		
@@ -574,7 +629,6 @@ class TreeManager
 	 */
 	public function deleteDocumentNode(\Change\Documents\AbstractDocument $document)
 	{
-		$this->clearCachedTreeNodes();
 		$node = $this->getNodeByDocument($document);
 		if ($node)
 		{
@@ -595,6 +649,7 @@ class TreeManager
 			$q2->bindParameter('treeName', null);
 			$q2->bindParameter('id', $document->getId());
 			$q2->execute();
+			$document->setTreeName(null);
 			
 			$q = $this->getDeleteNodeQuery($treeName);
 			$q->bindParameter('id', $node->getDocumentId());
@@ -612,12 +667,16 @@ class TreeManager
 				$q->bindParameter('childrenCount', count($children) -1);
 				$q->bindParameter('id', $parentNode->getDocumentId());
 				$q->execute();
+
+				$parentNode->setChildrenCount(count($children) -1);
+				$parentNode->setChildrenIds(null);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param \Change\Documents\TreeNode $node
+	 * @throws \Exception
 	 */
 	public function deleteChildrenNodes(\Change\Documents\TreeNode $node)
 	{
@@ -633,14 +692,14 @@ class TreeManager
 				$key = 'deleteChildrenTreeNameQuery_' . $treeName;
 				if (!isset($this->staticQueries[$key]))
 				{
-					$qb = $this->applicationServices->getQueryBuilder();
+					$qb = $this->getNewQueryBuilder();
 					$fb = $qb->getFragmentBuilder();
 					$pathParam = $fb->parameter('path');
 					$qb->select('document_id')->from($fb->getTreeTable($treeName))
 					->where($fb->like($fb->column('node_path'), $pathParam, \Change\Db\Query\Predicates\Like::BEGIN));
 					$subQuery = $qb->query();
 				
-					$qb = $this->applicationServices->getStatementBuilder();
+					$qb = $this->getNewStatementBuilder();
 					$fb = $qb->getFragmentBuilder();
 					$qb->update($fb->getDocumentIndexTable())
 					->assign($fb->getDocumentColumn('treeName'), $fb->parameter('treeName', $qb))
@@ -658,7 +717,7 @@ class TreeManager
 				$key = 'deleteChildrenQuery_' . $treeName;
 				if (!isset($this->staticQueries[$key]))
 				{
-					$qb = $this->applicationServices->getStatementBuilder();
+					$qb = $this->getNewStatementBuilder();
 					$fb = $qb->getFragmentBuilder();
 					$qb->delete($fb->getTreeTable($treeName))
 					->where($fb->like($fb->column('node_path'), $fb->parameter('path', $qb), \Change\Db\Query\Predicates\Like::BEGIN));
@@ -674,7 +733,10 @@ class TreeManager
 				$q->bindParameter('childrenCount', 0);
 				$q->bindParameter('id', $node->getDocumentId());
 				$q->execute();
-					
+
+				$node->setChildrenCount(0);
+				$node->setChildrenIds(null);
+
 				$this->clearCachedTreeNodes();	
 				$transactionManager->commit();
 			} 
@@ -685,24 +747,32 @@ class TreeManager
 			}
 		}
 	}
-	
+
 	/**
 	 * @param \Change\Documents\TreeNode $movedNode
 	 * @param \Change\Documents\TreeNode $parentNode
 	 * @param \Change\Documents\TreeNode $beforeNode
+	 * @throws \LogicException
 	 */
 	public function moveNode(\Change\Documents\TreeNode $movedNode, \Change\Documents\TreeNode $parentNode, \Change\Documents\TreeNode $beforeNode = null)
 	{
 		$this->clearCachedTreeNodes();
-		throw new \LogicException('Not implemeted');
+		throw new \LogicException('Not implemented');
 	}
-		
 
+	/**
+	 * @api
+	 * @return void
+	 */
+	public function reset()
+	{
+		$this->clearCachedTreeNodes();
+	}
 	/**
 	 * @param \Change\Documents\TreeNode $node
 	 * @param array $nodeInfo <'document_id', 'parent_id', 'node_order', 'node_level', 'node_path', 'children_count'>
 	 */
-	protected function populateNode($node, $nodeInfo)
+	protected function populateNode(\Change\Documents\TreeNode $node, $nodeInfo)
 	{
 		$node->setDocumentId(intval($nodeInfo['document_id']));
 		$node->setParentId(intval($nodeInfo['parent_id']));
@@ -712,7 +782,7 @@ class TreeManager
 		$node->setChildrenCount(intval($nodeInfo['children_count']));
 		$this->setCachedTreeNode($node);
 	}
-	
+
 	/**
 	 * @param integer $documentId
 	 * @return \Change\Documents\TreeNode|NULL
