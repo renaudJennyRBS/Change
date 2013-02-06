@@ -23,6 +23,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstruct
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testDefaultConstraint($constraintsManager)
 	{
@@ -41,6 +42,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testDefaultConstraint
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testGetByName($constraintsManager)
 	{
@@ -79,6 +81,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testGetByName
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testEmail($constraintsManager)
 	{
@@ -104,6 +107,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testEmail
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testEmails($constraintsManager)
 	{
@@ -124,6 +128,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testEmails
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testInteger($constraintsManager)
 	{
@@ -143,6 +148,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testInteger
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testMatches($constraintsManager)
 	{
@@ -162,6 +168,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testMatches
 	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function testRange($constraintsManager)
 	{

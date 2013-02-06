@@ -239,7 +239,7 @@ class Logging
 
 	/**
 	 * @api
-	 * @param Exception $e
+	 * @param \Exception $e
 	 */
 	public function exception($e)
 	{

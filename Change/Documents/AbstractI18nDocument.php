@@ -31,34 +31,41 @@ abstract class AbstractI18nDocument implements \Serializable
 	 */
 	public function __construct(\Change\Documents\DocumentManager $manager)
 	{
-		$this->setDocumentContext($manager);
+		$this->setDocumentManager($manager);
 	}
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $manager
-	 * @param \Change\Documents\AbstractModel $model
-	 * @param \Change\Documents\AbstractService $service
 	 */
-	public function setDocumentContext(\Change\Documents\DocumentManager $manager)
+	public function setDocumentManager(\Change\Documents\DocumentManager $manager)
 	{
 		$this->documentManager = $manager;
 	}
-	
+
 	/**
-	 * @return string
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * This class is not serializable
+	 * @return null
 	 */
 	public function serialize()
 	{
-		return $this->id . ' ' . $this->getLCID();
+		return null;
 	}
-	
+
 	/**
 	 * @param string $serialized
+	 * @return void
 	 */
 	public function unserialize($serialized)
 	{
-		list($this->id, $LCID) = explode(' ', $serialized);
-		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postI18nUnserialze($this);
+		return;
 	}
 	
 	/**
