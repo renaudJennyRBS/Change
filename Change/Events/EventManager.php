@@ -10,16 +10,33 @@ class EventManager extends \Zend\EventManager\EventManager
 	 * @var \Change\Configuration\Configuration
 	 */
 	protected $configuration;
-	
+
 	/**
-	 * @param \Change\Application $application
+	 * @param \Change\Configuration\Configuration $configuration
 	 */
 	public function __construct(\Change\Configuration\Configuration $configuration)
 	{
-		$this->configuration = $configuration;
+		$this->setConfiguration($configuration);
 		parent::__construct();
 		$this->registerConfiguredListeners();
 	}
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
 
 	protected function registerConfiguredListeners()
 	{

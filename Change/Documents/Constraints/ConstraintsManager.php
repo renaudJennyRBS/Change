@@ -5,7 +5,12 @@ namespace Change\Documents\Constraints;
  * @name \Change\Documents\Constraints\ConstraintsManager
  */
 class ConstraintsManager
-{	
+{
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $documentServices;
+
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
@@ -15,28 +20,60 @@ class ConstraintsManager
 	 * @var array
 	 */
 	protected $defaultConstraint;
-	
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function __construct(\Change\Application\ApplicationServices $applicationServices)
+
+	public function __construct()
 	{
-		$this->applicationServices = $applicationServices;
-		
-		if (\Zend\Validator\AbstractValidator::getDefaultTranslatorTextDomain() !== 'c.constraints')
-		{
-			\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain('c.constraints');
-			$t = Translator::factory(array());
-			$t->setI18nManager($this->applicationServices->getI18nManager());
-			\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
-		}
-		
 		$this->defaultConstraint = array(
 			'domain' => '\Change\Documents\Constraints\Domain',
 			'url' => '\Change\Documents\Constraints\Url',
 			'unique' => '\Change\Documents\Constraints\Unique',
 			'enum' => '\Change\Documents\Constraints\Enum');
 	}
+
+	protected function registerDefaultTranslator()
+	{
+		if (\Zend\Validator\AbstractValidator::getDefaultTranslatorTextDomain() !== 'c.constraints')
+		{
+			\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain('c.constraints');
+			$t = Translator::factory(array());
+			$t->setI18nManager($this->getApplicationServices()->getI18nManager());
+			\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+		}
+	}
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+		$this->registerDefaultTranslator();
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
 	
 	/**
 	 * @param string $name

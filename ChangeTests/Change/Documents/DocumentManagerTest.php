@@ -274,8 +274,10 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$i18nManger->setConfiguration($application->getConfiguration());
 
 		$application->getApplicationServices()->instanceManager()->addSharedInstance($i18nManger, 'Change\I18n\I18nManager');
-		$manager = new DocumentManager($application->getApplicationServices(), $application->getDocumentServices());
-		
+		$manager = new DocumentManager();
+		$manager->setApplicationServices($application->getApplicationServices());
+		$manager->setDocumentServices($application->getDocumentServices());
+
 		// There is no default value.
 		$this->assertEquals(0, $manager->getLCIDStackSize());
 		$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());

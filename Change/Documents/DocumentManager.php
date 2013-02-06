@@ -48,21 +48,44 @@ class DocumentManager
 	protected $tmpRelationIds = array();
 	
 	/**
-	 * Temporay identifier for new persistent document
+	 * Temporary identifier for new persistent document
 	 * @var integer
 	 */
 	protected $newInstancesCounter = 0;
-	
+
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\ModelManager $modelManager
 	 */
-	public function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\DocumentServices $documentServices)
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
 		$this->documentServices = $documentServices;
 	}
-	
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
+
 	/**
 	 * Cleanup all documents instance
 	 */
@@ -73,13 +96,7 @@ class DocumentManager
 		$this->newInstancesCounter = 0;
 	}
 	
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	protected function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
+
 	
 	
 	/**
@@ -111,7 +128,7 @@ class DocumentManager
 	 */
 	protected function getI18nManager()
 	{
-		return $this->applicationServices->getI18nManager();
+		return $this->getApplicationServices()->getI18nManager();
 	}
 	
 	/**

@@ -17,7 +17,7 @@ class TreeManager
 	protected $applicationServices;
 	
 	/**
-	 * @var Change\Documents\TreeNode[]
+	 * @var \Change\Documents\TreeNode[]
 	 */
 	protected $treeNodes = array();
 	
@@ -25,19 +25,42 @@ class TreeManager
 	 * @var \Change\Db\Query\AbstractQuery[]
 	 */
 	protected $staticQueries = array();
-	
+
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
-	public function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\DocumentServices $documentServices)
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
 	{
-		$this->documentServices = $documentServices;
 		$this->applicationServices = $applicationServices;
 	}
-	
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
 	/**
 	 * @param string $moduleName
+	 * @throws \InvalidArgumentException
 	 */
 	public function createTree($moduleName)
 	{
