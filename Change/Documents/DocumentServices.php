@@ -6,50 +6,80 @@ namespace Change\Documents;
  */
 class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentServices
 {
-	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-	
+
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
 	public function __construct(\Change\Application\ApplicationServices $applicationServices)
 	{
-		$this->applicationServices = $applicationServices;
-	
 		$dl = new \Zend\Di\DefinitionList(array());
 		
+		$this->registerModelManager($dl);
+
+		$this->registerDocumentManager($dl);
+
+		$this->registerTreeManager($dl);
+
+		$this->registerConstraintsManager($dl);
+
+		parent::__construct($dl, $applicationServices);
+
+		$im = $this->instanceManager();
+		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
+		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
+		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
+	}
+
+	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerModelManager($dl)
+	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\ModelManager');
 		$cl->setInstantiator('__construct');
 		$dl->addDefinition($cl);
-		
+	}
+
+	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerDocumentManager($dl)
+	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\DocumentManager');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
-				->addMethodParameter('__construct', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
+			->addMethod('setApplicationServices', true)
+				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
+			->addMethod('setDocumentServices', true)
+				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
-		
+	}
+
+	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerTreeManager($dl)
+	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\TreeManager');
 		$cl->setInstantiator('__construct')
-		->addMethod('__construct', true)
-		->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
-		->addMethodParameter('__construct', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
+			->addMethod('setApplicationServices', true)
+				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
+			->addMethod('setDocumentServices', true)
+				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
-		
+	}
+
+	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerConstraintsManager($dl)
+	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\Constraints\ConstraintsManager');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-				->addMethodParameter('__construct', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true));
+			->addMethod('setApplicationServices', true)
+				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
+			->addMethod('setDocumentServices', true)
+				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
-		
-		parent::__construct($dl, $applicationServices);
-		$im = $this->instanceManager();
-		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $this->applicationServices, 'documentServices' => $this));
-		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $this->applicationServices, 'documentServices' => $this));
-		
-		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $this->applicationServices));
 	}
 	
 	/**
@@ -65,7 +95,7 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	 */
 	public function getDocumentManager()
 	{
-		return $this->get('Change\Documents\DocumentManager', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
+		return $this->get('Change\Documents\DocumentManager');
 	}
 	
 	/**
@@ -73,7 +103,7 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	 */
 	public function getTreeManager()
 	{
-		return $this->get('Change\Documents\TreeManager', array('applicationServices' => $this->applicationServices, 'documentServices' => $this));
+		return $this->get('Change\Documents\TreeManager');
 	}
 	
 	/**
@@ -81,6 +111,6 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	 */
 	public function getConstraintsManager()
 	{
-		return $this->get('Change\Documents\Constraints\ConstraintsManager', array('applicationServices' => $this->applicationServices));
+		return $this->get('Change\Documents\Constraints\ConstraintsManager');
 	}
 }

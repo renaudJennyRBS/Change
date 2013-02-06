@@ -20,17 +20,7 @@ abstract class AbstractService
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
-	
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function __construct(\Change\Application\ApplicationServices $applicationServices, DocumentServices $documentServices)
-	{
-		$this->applicationServices = $applicationServices;
-		$this->documentServices = $documentServices;
-	}
-	
+
 	/**
 	 * @return string
 	 */

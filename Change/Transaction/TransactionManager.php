@@ -26,9 +26,25 @@ class TransactionManager extends \Exception
 	 */
 	public function __construct(\Change\Db\DbProvider $provider)
 	{
-		$this->dbProvider = $provider;
+		$this->setDbProvider($provider);
 	}
-	
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
 	/**
 	 * @return boolean
 	 */
@@ -53,13 +69,7 @@ class TransactionManager extends \Exception
 		return $this->count;
 	}
 	
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->dbProvider;
-	}
+
 	
 	public function begin()
 	{

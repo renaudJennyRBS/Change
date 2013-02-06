@@ -44,18 +44,21 @@ class AbstractDocumentServicesClass
 		}
 		
 		$this->compiler = $compiler;
-		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\Change\Documents;' . PHP_EOL;
-		$code .= 'abstract class AbstractDocumentServices extends \Zend\Di\Di' . PHP_EOL;
-		$code .= '{'. PHP_EOL;
-		
+		$code = '<'. '?php' . PHP_EOL . 'namespace Compilation\Change\Documents;
+/**
+ * @name \Compilation\Change\Documents\AbstractDocumentServices
+ */
+abstract class AbstractDocumentServices extends \Zend\Di\Di
+{'. PHP_EOL;
 		$code .= $this->getDefaultCode($rm);
 		$code .= '}'. PHP_EOL;
 		$this->compiler = null;
 		return $code;	
 	}
-	
+
 	/**
 	 * @param mixed $value
+	 * @param bool $removeSpace
 	 * @return string
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
@@ -88,9 +91,11 @@ class AbstractDocumentServicesClass
 			$cn = $this->escapePHPValue($model->getServiceClassName());
 			$code .= '
 		$cl = new \Zend\Di\Definition\ClassDefinition('.$cn.');
-			$cl->setInstantiator(\'__construct\')->addMethod(\'__construct\', true)
-				->addMethodParameter(\'__construct\', \'applicationServices\', array(\'type\' => \'Change\\Application\\ApplicationServices\', \'required\' => true))
-				->addMethodParameter(\'__construct\', \'documentServices\', array(\'type\' => \'Change\\Documents\\DocumentServices\', \'required\' => true));
+		$cl->setInstantiator(\'__construct\')
+			->addMethod(\'setApplicationServices\', true)
+				->addMethodParameter(\'setApplicationServices\', \'applicationServices\', array(\'type\' => \'Change\Application\ApplicationServices\', \'required\' => true))
+			->addMethod(\'setDocumentServices\', true)
+				->addMethodParameter(\'setDocumentServices\', \'documentServices\', array(\'type\' => \'\Change\Documents\DocumentServices\', \'required\' => true));
 		$dl->addDefinition($cl);';
 		}	
 		$code .= '
