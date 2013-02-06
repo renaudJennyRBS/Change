@@ -88,24 +88,25 @@ abstract class AbstractDocument implements \Serializable
 		$this->documentModelName = $model->getName();
 		$this->documentService = $service;
 	}
-	
+
 	/**
-	 * @return string
+	 * This class is not serializable
+	 * @return null
 	 */
 	public function serialize()
 	{
-		return $this->id . ' '. $this->documentModelName;
+		return null;
 	}
-	
+
 	/**
 	 * @param string $serialized
+	 * @return void
 	 */
 	public function unserialize($serialized)
 	{
-		list($this->id, $this->documentModelName) = explode(' ', $serialized);
-		\Change\Application::getInstance()->getDocumentServices()->getDocumentManager()->postUnserialze($this);
+		return;
 	}
-	
+
 	/**
 	 * @api
 	 * @return \Change\Documents\DocumentManager

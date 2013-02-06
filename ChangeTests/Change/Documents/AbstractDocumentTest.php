@@ -37,9 +37,20 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->compileDocuments($application);
 		$this->generateDbSchema($application);
 	}
-	
+
 	/**
 	 * @depends testInitializeDB
+	 */
+	public function testSerialize()
+	{
+		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$basicDoc = $testsBasicService->getNewDocumentInstance();
+		$str = serialize($basicDoc);
+		$this->assertEquals(serialize(null), $str);
+	}
+
+	/**
+	 * @depends testSerialize
 	 */
 	public function testBasic()
 	{

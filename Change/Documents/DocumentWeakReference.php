@@ -14,39 +14,66 @@ class DocumentWeakReference implements \Serializable
 	/**
 	 * @var string
 	 */
-	private $documentModelName;
+	private $modelName;
 	
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public function __construct(\Change\Documents\AbstractDocument $document)
+	public function __construct(AbstractDocument $document)
 	{
 		$this->id = $document->getId();
-		$this->documentModelName = $document->getDocumentModelName();
+		$this->modelName = $document->getDocumentModelName();
 	}
-	
+
 	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return \Change\Documents\AbstractDocument|null
 	 */
-	public function getDocument(\Change\Documents\DocumentManager $documentManager)
+	public function getDocument(DocumentManager $documentManager)
 	{
-		return $documentManager->getDocumentInstance($this->id, $this->documentModelName);
+		if ($this->modelName)
+		{
+			$model = $documentManager->getModelManager()->getModelByName($this->modelName);
+			if ($model !== null)
+			{
+				return $documentManager->getDocumentInstance($this->id, $model);
+			}
+			return null;
+		}
+		return $documentManager->getDocumentInstance($this->id);
 	}
-	
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getModelName()
+	{
+		return $this->modelName;
+	}
+
 	/**
 	 * @return string
 	 */
 	public function serialize()
 	{
-		return $this->id . ' '. $this->documentModelName;
+		return $this->id . ' '. $this->modelName;
 	}
 
 	/**
 	 * @param string $serialized
+	 * @return mixed|void
 	 */
 	public function unserialize($serialized)
 	{
-		list($this->id, $this->documentModelName) = explode(' ', $serialized);
+		list($this->id, $this->modelName) = explode(' ', $serialized);
 	}
 	
 	/**
@@ -54,6 +81,6 @@ class DocumentWeakReference implements \Serializable
 	 */
 	public function __toString()
 	{
-		return 'WeakReference: ' . $this->id. ', '. $this->documentModelName;
+		return 'WeakReference: ' . $this->id. ', '. $this->modelName;
 	}
 }

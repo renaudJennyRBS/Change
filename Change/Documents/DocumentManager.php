@@ -117,54 +117,9 @@ class DocumentManager
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
-	protected function getModelManager()
+	public function getModelManager()
 	{
 		return $this->getDocumentServices()->getModelManager();
-	}
-	
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 */
-	public function postUnserialze(\Change\Documents\AbstractDocument $document)
-	{
-		$model = $this->getModelManager()->getModelByName($document->getDocumentModelName());		
-		$service = $this->getDocumentServices()->get($model->getName());
-		$document->setDocumentContext($this, $model, $service);	
-		$key = 'Infos_' .  $model->getRootName();
-		if (!isset($this->cachedQueries[$key]))
-		{
-			$qb = $this->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$this->cachedQueries[$key] = $qb->select($fb->getDocumentColumn('model', 'd'), $fb->alias($fb->getDocumentColumn('treeName', 'f'), 'treeName'))
-			->from($fb->alias($fb->table($fb->getDocumentTable($model->getRootName())), 'd'))
-			->innerJoin($fb->alias($fb->getDocumentIndexTable(), 'f'), $fb->getDocumentColumn('id'))
-			->where($fb->logicAnd($fb->eq($fb->getDocumentColumn('id', 'd'), $fb->integerParameter('id', $qb))))
-			->query();
-			
-		}
-		/* @var $query \Change\Db\Query\SelectQuery */
-		$query = $this->cachedQueries[$key];
-		$query->bindParameter('id', $document->getId());
-		
-		$constructorInfos = $query->getFirstResult();
-		if ($constructorInfos)
-		{
-			$treeName = $constructorInfos['treeName'];
-			$document->initialize($document->getId(), static::STATE_INITIALIZED, $treeName);
-		}
-		else
-		{
-			$document->initialize($document->getId(), static::STATE_DELETED);
-		}
-	}
-
-	/**
-	 * @param  \Change\Documents\AbstractI18nDocument $i18nDocument
-	 */
-	public function postI18nUnserialze(\Change\Documents\AbstractI18nDocument $i18nDocument)
-	{
-		//TODO 
-		$i18nDocument->setDocumentContext($this);
 	}
 
 	/**
@@ -884,9 +839,9 @@ class DocumentManager
 	public function initializeRelationDocumentId($document)
 	{
 		$id = $document->getId();
+		$this->putInCache($id, $document);
 		if ($id < 0)
 		{
-			$this->putInCache($id, $document);
 			$this->tmpRelationIds[$id] = $id;
 		}
 		return $id;
