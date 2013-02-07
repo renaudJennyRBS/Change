@@ -4,6 +4,7 @@
           icon="correction" backoffice-indexable="false" localized="true" publishable="true" editable="true">
     <properties>
         <property name="label">
+            <dboptions length="40" />
             <constraint name="maxSize" max="40" />
         </property>
         <property name="str1" type="String"/>

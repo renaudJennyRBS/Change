@@ -4,6 +4,7 @@
           icon="correctionext" extend="Project_Tests_Correction">
     <properties>
         <property name="label">
+            <dboptions length="80" />
             <constraint name="maxSize" max="80" />
         </property>
         <property name="strext1" type="String" />

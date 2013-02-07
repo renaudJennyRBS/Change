@@ -20,11 +20,11 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 		{
 			$schemaManager = $this->getSchemaManager();
 			$idDef = $schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setAutoNumber(true);
-			$modelDef = $schemaManager->newVarCharFieldDefinition('document_model', 50)->setDefaultValue('')->setNullable(false);
+			$modelDef = $schemaManager->newVarCharFieldDefinition('document_model', array('length' => 50))->setDefaultValue('')->setNullable(false);
 			
 			$this->tables['change_document'] = $schemaManager->newTableDefinition('change_document')
 				->addField($idDef)->addField($modelDef)
-				->addField($schemaManager->newVarCharFieldDefinition('tree_name', 50))
+				->addField($schemaManager->newVarCharFieldDefinition('tree_name', array('length' => 50)))
 				->addKey($this->newPrimaryKey()->addField($idDef))
 				->setOption('AUTONUMBER', 100000);
 			
@@ -32,7 +32,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			
 			$this->tables['change_document_metas'] = $schemaManager->newTableDefinition('change_document_metas')
 			->addField($idDef)
-			->addField($schemaManager->newVarCharFieldDefinition('metas', 16777215))
+			->addField($schemaManager->newTextFieldDefinition('metas'))
 			->addField($schemaManager->newTimeStampFieldDefinition('lastupdate'))
 			->addKey($this->newPrimaryKey()->addField($idDef));
 			
@@ -43,8 +43,8 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			->addKey($this->newPrimaryKey()->addField($idDef));
 			
 			$correctionId = $schemaManager->newIntegerFieldDefinition('correction_id')->setNullable(false)->setAutoNumber(true);
-			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', 10)->setNullable(true);
-			$status = $schemaManager->newEnumFieldDefinition('status', array('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'FILED'))->setNullable(false)->setDefaultValue('DRAFT');
+			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(true);
+			$status = $schemaManager->newEnumFieldDefinition('status', array('VALUES' => array('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'FILED')))->setNullable(false)->setDefaultValue('DRAFT');
 			$this->tables['change_document_correction'] = $schemaManager->newTableDefinition('change_document_correction')
 			->addField($correctionId)
 			->addField($idDef)
