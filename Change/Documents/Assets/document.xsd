@@ -55,6 +55,24 @@
 			<xs:enumeration value="description" />
 		</xs:restriction>
 	</xs:simpleType>
+
+    <xs:complexType name="dbOptions">
+        <xs:attribute name="length" use="optional" type="xs:integer" default="255">
+            <xs:annotation>
+                <xs:documentation source="description"> use by 'String' property</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="precision" use="optional" type="xs:integer" default="13">
+            <xs:annotation>
+                <xs:documentation source="description"> use by 'Decimal' property</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="scale" use="optional" type="xs:integer" default="4">
+            <xs:annotation>
+                <xs:documentation source="description"> use by 'Decimal' property</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
 	
 	<xs:complexType name="constraint">
 		<xs:attribute name="name" use="required" type="xs:string" />
@@ -131,8 +149,9 @@
 						<xs:sequence>
 							<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="unbounded" />
+                                    <xs:sequence>
+                                        <xs:element name="dboptions" type="dbOptions" minOccurs="0" maxOccurs="1" />
+										<xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="10" />
 									</xs:sequence>
 									<xs:attribute name="name" use="required" type="xs:string" />
 									<xs:attribute name="type" use="optional" type="propertyType" default="String" />

@@ -67,8 +67,8 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		{
 			$schemaManager = $this->getSchemaManager();
 			$idDef = $schemaManager->newIntegerFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('id')).')->setDefaultValue(\'0\')->setNullable(false);
-			$modelDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('model')).', 50)->setDefaultValue(\'\')->setNullable(false);
-			$lcidDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('LCID')).', 10)->setDefaultValue(\'\')->setNullable(false);
+			$modelDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('model')).', array(\'length\' => 50))->setDefaultValue(\'\')->setNullable(false);
+			$lcidDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('LCID')).', array(\'length\' => 10))->setDefaultValue(\'\')->setNullable(false);
 		
 			$relOrderDef = $schemaManager->newIntegerFieldDefinition(\'relorder\')->setDefaultValue(\'0\')->setNullable(false);
 			$relatedIdDef = $schemaManager->newIntegerFieldDefinition(\'relatedid\')->setDefaultValue(\'0\')->setNullable(false);' . PHP_EOL;
@@ -77,6 +77,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$descendants = $this->compiler->getDescendants($model);
+			$this->completeDbOptions($model, $descendants, $this->schemaManager);
 			$code .= $this->generateTableDef($model, $descendants);
 		}
 		
@@ -90,9 +91,54 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		$this->schemaManager = null;
 		return $code;
 	}
-	
+
 	/**
-	 * @param mixed $value
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Model[] $descendants
+	 */
+	protected function completeDbOptions($model, $descendants)
+	{
+		$schemaManager = $this->schemaManager;
+		$sqlMapping = $this->sqlMapping;
+
+		foreach ($model->getProperties() as $propertyName => $property)
+		{
+			/* @var $property \Change\Documents\Generators\Property */
+			if ($property->getDbOptions() !== null)
+			{
+				$type = $property->getComputedType();
+				$dbType = $sqlMapping->getDbScalarType($type);
+				$property->setDbOptions($schemaManager->getFieldDbOptions($dbType, $property->getDbOptions()));
+			}
+		}
+
+		foreach($descendants as $model)
+		{
+			foreach ($model->getProperties() as $propertyName => $property)
+			{
+				/* @var $property \Change\Documents\Generators\Property */
+				if ($property->getDbOptions() !== null)
+				{
+					$type = $property->getComputedType();
+					$dbType = $sqlMapping->getDbScalarType($type);
+					$dbOptions = $schemaManager->getFieldDbOptions($dbType, $property->getDbOptions());
+					if ($property->getParent() === null)
+					{
+						$property->setDbOptions($dbOptions);
+					}
+					else
+					{
+						$property = $property->getRoot();
+						$property->setDbOptions($schemaManager->getFieldDbOptions($dbType, $dbOptions, $property->getDbOptions()));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param string $value
+	 * @param bool $removeSpace
 	 * @return string
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
@@ -103,11 +149,8 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		}
 		return var_export($value, true);
 	}
-	
 
-	
 	/**
-	 * 
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Model[] $descendants
 	 * @return string
@@ -170,8 +213,8 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		if (count($relNames))
 		{
 			$relNames = array_values(array_unique($relNames));
-			$lines[] = '			$relNames = '.$this->escapePHPValue($relNames).';';
-			$lines[] = '			$relNameDef = $schemaManager->newEnumFieldDefinition(\'relname\', $relNames)->setDefaultValue($relNames[0])->setNullable(false);';
+			$lines[] = '			$relNames ='.$this->escapePHPValue($relNames).';';
+			$lines[] = '			$relNameDef = $schemaManager->newEnumFieldDefinition(\'relname\', array(\'VALUES\' => $relNames))->setDefaultValue($relNames[0])->setNullable(false);';
 
 			
 			$tnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentRelationTableName($model->getName()));
@@ -206,48 +249,47 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 				
 			if ($propertyName === 'publicationStatus')
 			{
-				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'INVALID\',\'DEACTIVATED\',\'FILED\'))';
+				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'VALUES\' => array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'INVALID\',\'DEACTIVATED\',\'FILED\')))';
 			}
 			else
 			{
 				$propertyType = $property->getType();
+				$dbOptionsEsc = $this->escapePHPValue($property->getDbOptions());
 				switch ($propertyType)
 				{
 					case 'Document' :
 					case 'Integer' :
 					case 'DocumentId' :
-						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.')';
+						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'DocumentArray' :
-						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.')->setDefaultValue(\'0\')';
+						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')->setDefaultValue(\'0\')';
 						break;
 					case 'String' :
-						$ca = $property->getConstraintArray();
-						$length = (is_array($ca) && isset($ca['maxSize']['max'])) ? intval($ca['maxSize']['max']) : 255;
-						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '.$length.')';
+						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'LongString' :
 					case 'XML' :
 					case 'RichText' :
 					case 'JSON' :
-						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', 16777215)';
+						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Lob' :
 					case 'Object' :
-						$fd = '$schemaManager->newLobFieldDefinition('.$fnEsc.')';
+						$fd = '$schemaManager->newLobFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Boolean' :
-						$fd = '$schemaManager->newBooleanFieldDefinition('.$fnEsc.')->setDefaultValue(\'0\')';
+						$fd = '$schemaManager->newBooleanFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')->setDefaultValue(\'0\')';
 						break;
 					case 'Date' :
 					case 'DateTime' :
-						$fd = '$schemaManager->newDateFieldDefinition('.$fnEsc.')';
+						$fd = '$schemaManager->newDateFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Float' :
-						$fd = '$schemaManager->newFloatFieldDefinition('.$fnEsc.')';
+						$fd = '$schemaManager->newFloatFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Decimal' :
-						$fd = '$schemaManager->newNumericFieldDefinition('.$fnEsc.', 13, 4)';
+						$fd = '$schemaManager->newNumericFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					default:
 						throw new \RuntimeException('Invalid property type: ' . $propertyType);

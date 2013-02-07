@@ -91,6 +91,11 @@ class Property
 	 * @var array
 	 */
 	protected $constraintArray;
+
+	/**
+	 * @var array
+	 */
+	protected $dbOptions;
 	
 	/**
 	 * @return string[]
@@ -107,22 +112,28 @@ class Property
 	{
 		return static::$TYPES;
 	}
-	
 
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param string $name
+	 * @param string $type
+	 */
 	public function __construct(\Change\Documents\Generators\Model $model, $name = null, $type = null)
 	{
 		$this->model = $model;
 		$this->name = $name;
 		$this->type = $type;
 	}
-	
+
 	/**
-	 * @param DOMElement $xmlElement
+	 * @param \DOMElement $xmlElement
+	 * @throws \RuntimeException
 	 */
 	public function initialize($xmlElement)
 	{
 		foreach($xmlElement->attributes as $attribute)
 		{
+			/* @var $attribute \DOMNode */
 			$name = $attribute->nodeName;
 			$value = $attribute->nodeValue;
 			$tv = trim($value);
@@ -262,6 +273,18 @@ class Property
 				else
 				{
 					throw new \RuntimeException('Invalid constraint name');
+				}
+			}
+			elseif ($node->nodeName == 'dboptions')
+			{
+				if ($this->dbOptions === null)
+				{
+					$this->dbOptions = array();
+				}
+				foreach ($node->attributes as $attr)
+				{
+					/* @var $attr \DOMAttr */
+					$this->dbOptions[$attr->name] = $attr->value;
 				}
 			}
 			elseif ($node->nodeType == XML_ELEMENT_NODE)
@@ -412,6 +435,22 @@ class Property
 	public function getConstraintArray()
 	{
 		return $this->constraintArray;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function getDbOptions()
+	{
+		return $this->dbOptions;
+	}
+
+	/**
+	 * @param array|null $dbOptions
+	 */
+	public function setDbOptions($dbOptions)
+	{
+		$this->dbOptions = $dbOptions;
 	}
 	
 	/**
@@ -624,13 +663,13 @@ class Property
 			}
 		}
 	}
-		
+
 	/**
 	 * @return boolean
 	 */
 	public function hasRelation()
 	{
-		$type = $this->getRoot()->getType();
+		$type = $this->getComputedType();
 		return ($type === 'Document' || $type === 'DocumentArray' || $type === 'DocumentId');
 	}
 		
@@ -642,7 +681,7 @@ class Property
 		$val = $this->getDefaultValue();
 		if ($val !== null)
 		{
-			$type = $this->getRoot()->getType();
+			$type = $this->getComputedType();
 			if ($type === 'Boolean')
 			{
 				return $val === 'true';

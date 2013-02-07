@@ -194,7 +194,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		$statment = $this->query($sql);	
 		foreach ($statment->fetchAll(\PDO::FETCH_NUM) as $row)
 		{
-			if ($tableDef === null) 
+			if ($tableDef === null)
 			{
 				$tableDef = new TableDefinition($tableName);
 			}
@@ -257,7 +257,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			{
 				$fd->setScale($scale);
 			}
-			if ($maxLength !== null) 
+			if ($maxLength !== null)
 			{
 				$fd->setLength($maxLength);
 			}
@@ -318,144 +318,218 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	}
 
 	/**
+	 * @param integer $scalarType
+	 * @param array $fieldDbOptions
+	 * @param array $defaultDbOptions
+	 * @throws \InvalidArgumentException
+	 * @return array
+	 */
+	public function getFieldDbOptions($scalarType, array $fieldDbOptions = null, array $defaultDbOptions = null)
+	{
+		switch ($scalarType)
+		{
+			case \Change\Db\ScalarType::STRING:
+				if (!isset($fieldDbOptions['length']))
+				{
+					$fieldDbOptions['length'] = ($defaultDbOptions === null) ? 255 : intval($defaultDbOptions['length']);
+				}
+				else
+				{
+					$fieldDbOptions['length'] = intval($fieldDbOptions['length']);
+				}
+				return $fieldDbOptions;
+
+			case \Change\Db\ScalarType::TEXT:
+			case \Change\Db\ScalarType::LOB:
+				if (!isset($fieldDbOptions['length']))
+				{
+					$fieldDbOptions['length'] = 16777215;
+				}
+				else
+				{
+					$fieldDbOptions['length'] = intval($fieldDbOptions['length']);
+				}
+				return $fieldDbOptions;
+			case \Change\Db\ScalarType::DECIMAL:
+				if (!isset($fieldDbOptions['precision']))
+				{
+					$fieldDbOptions['precision'] = ($defaultDbOptions === null) ? 13 : intval($defaultDbOptions['precision']);
+				}
+				else
+				{
+					$fieldDbOptions['precision'] = intval($fieldDbOptions['precision']);
+				}
+				if (!isset($fieldDbOptions['scale']))
+				{
+					$fieldDbOptions['scale'] = ($defaultDbOptions === null) ? 4 : intval($defaultDbOptions['scale']);
+				}
+				else
+				{
+					$fieldDbOptions['scale'] = intval($fieldDbOptions['scale']);
+				}
+				return $fieldDbOptions;
+
+			case \Change\Db\ScalarType::BOOLEAN:
+			case \Change\Db\ScalarType::INTEGER:
+				if (!isset($fieldDbOptions['precision']))
+				{
+					$def = $scalarType === \Change\Db\ScalarType::BOOLEAN ? 3 : 10;
+					$fieldDbOptions['precision'] = ($defaultDbOptions === null) ? $def : intval($defaultDbOptions['precision']);
+				}
+				$fieldDbOptions['scale'] = 0;
+				return $fieldDbOptions;
+
+			case \Change\Db\ScalarType::DATETIME:
+				if (!is_array($fieldDbOptions))
+				{
+					$fieldDbOptions = is_array($defaultDbOptions) ? $defaultDbOptions : array();
+				}
+				return $fieldDbOptions;
+
+			default:
+				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType);
+		}
+	}
+
+	/**
 	 * @param string $name
-	 * @param array $enumValues
+	 * @param array $dbOptions
+	 * @throws \InvalidArgumentException
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newEnumFieldDefinition($name, array $enumValues)
+	public function newEnumFieldDefinition($name, array $dbOptions)
 	{
+		if (!isset($dbOptions['VALUES']) || !is_array($dbOptions['VALUES']) || count($dbOptions['VALUES']) == 0)
+		{
+			throw new \InvalidArgumentException('Invalid Enum values');
+		}
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::ENUM);
-		$fd->setOption('VALUES', $enumValues);
+		$fd->setOption('VALUES', $dbOptions['VALUES']);
 		return $fd;
 	}
-	
+
 	/**
 	 * @param string $name
-	 * @param integer $length
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newCharFieldDefinition($name, $length = 255)
+	public function newCharFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
-		$length = max(1, intval($length));
-		if ($length > 255)
-		{
-			$fd->setType(FieldDefinition::TEXT);
-			$length = 16777215;
-		}
-		else
-		{
-			$fd->setType(FieldDefinition::CHAR);
-			
-		}
-		$fd->setLength($length);
+		$fd->setType(FieldDefinition::CHAR);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::STRING, $dbOptions);
+		$fd->setLength($dbOptions['length']);
 		return $fd;
 	}
 	
 	/**
 	 * @param string $name
-	 * @param integer $length
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newVarCharFieldDefinition($name, $length = 255)
+	public function newVarCharFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
-		$length = max(1, intval($length));
-		if ($length > 255)
-		{
-			$fd->setType(FieldDefinition::TEXT);
-			$length = 16777215;
-		}
-		else
-		{
-			$fd->setType(FieldDefinition::VARCHAR);
-		}
-		$fd->setLength($length);
+		$fd->setType(FieldDefinition::VARCHAR);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::STRING, $dbOptions);
+		$fd->setLength($dbOptions['length']);
 		return $fd;
 	}
-	
+
 	/**
 	 * @param string $name
-	 * @param array $enumValues
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newNumericFieldDefinition($name, $precision = 13, $scale = 4)
+	public function newNumericFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::DECIMAL);
-		$fd->setPrecision($precision);
-		$fd->setScale($scale);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::DECIMAL, $dbOptions);
+		$fd->setPrecision($dbOptions['precision']);
+		$fd->setScale($dbOptions['scale']);
 		return $fd;
 	}
 	
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newBooleanFieldDefinition($name)
+	public function newBooleanFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::SMALLINT);
-		$fd->setPrecision(3);
-		$fd->setScale(0);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::BOOLEAN, $dbOptions);
+		$fd->setPrecision($dbOptions['precision']);
+		$fd->setScale($dbOptions['scale']);
 		$fd->setNullable(false);
 		return $fd;
 	}
 	
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newIntegerFieldDefinition($name)
+	public function newIntegerFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::INTEGER);
-		$fd->setPrecision(10);
-		$fd->setScale(0);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::INTEGER, $dbOptions);
+		$fd->setPrecision($dbOptions['precision']);
+		$fd->setScale($dbOptions['scale']);
 		return $fd;
 	}
 	
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newFloatFieldDefinition($name)
+	public function newFloatFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::FLOAT);
 		return $fd;
 	}
-	
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newLobFieldDefinition($name)
-	{
-		$fd = new FieldDefinition($name);
-		$fd->setType(FieldDefinition::LOB);
-		$fd->setLength(16777215);
-		return $fd;
-	}
-	
-	/**
-	 * @param string $name
-	 * @return \Change\Db\Schema\FieldDefinition
-	 */
-	public function newTextFieldDefinition($name)
+	public function newTextFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::TEXT);
-		$fd->setLength(16777215);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::TEXT, $dbOptions);
+		$fd->setLength($dbOptions['length']);
 		return $fd;
 	}
+
+	/**
+	 * @param string $name
+	 * @param array $dbOptions
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newLobFieldDefinition($name, array $dbOptions = null)
+	{
+		$fd = new FieldDefinition($name);
+		$fd->setType(FieldDefinition::LOB);
+		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::LOB, $dbOptions);
+		$fd->setLength($dbOptions['length']);
+		return $fd;
+	}
+
 	
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newDateFieldDefinition($name)
+	public function newDateFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::DATE);
@@ -464,9 +538,10 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newTimeStampFieldDefinition($name)
+	public function newTimeStampFieldDefinition($name, array $dbOptions = null)
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::TIMESTAMP);

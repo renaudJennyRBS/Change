@@ -331,7 +331,19 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertArrayHasKey('min', $ca['minSize']);
 		$this->assertEquals(5, $ca['minSize']['min']);
 	}
-	
+
+	public function testDbOptionsNode()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test"><dboptions length="80" /></property>');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$opts = $p->getDbOptions();
+		$this->assertCount(1, $opts);
+		$this->assertArrayHasKey('length', $opts);
+		$this->assertEquals(80, $opts['length']);
+	}
 
 	public function testHasRelation()
 	{

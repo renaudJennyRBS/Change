@@ -45,6 +45,15 @@ interface InterfaceSchemaManager
 	 * @return \Change\Db\Schema\TableDefinition|null
 	 */
 	public function getTableDefinition($tableName);
+
+	/**
+	 * @param integer $scalarType
+	 * @param array $fieldDbOptions
+	 * @param array $defaultDbOptions
+	 * @throws \InvalidArgumentException
+	 * @return array
+	 */
+	public function getFieldDbOptions($scalarType, array $fieldDbOptions = null, array $defaultDbOptions = null);
 	
 	
 	/**
@@ -52,76 +61,84 @@ interface InterfaceSchemaManager
 	 * @return \Change\Db\Schema\TableDefinition
 	 */
 	public function newTableDefinition($tableName);
-	
+
 	/**
 	 * @param string $name
-	 * @param array $enumValues
+	 * @param array $dbOptions
+	 * @throws \InvalidArgumentException
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newEnumFieldDefinition($name, array $enumValues);
+	public function newEnumFieldDefinition($name, array $dbOptions);
 	
 	/**
 	 * @param string $name
-	 * @param integer $length
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newCharFieldDefinition($name, $length = 255);
-	
+	public function newCharFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
-	 * @param integer $length
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newVarCharFieldDefinition($name, $length = 255);
+	public function newVarCharFieldDefinition($name, array $dbOptions = null);
 	
 	/**
 	 * @param string $name
-	 * @param array $enumValues
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newNumericFieldDefinition($name, $precision = 13, $scale = 4);
-	
+	public function newNumericFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newBooleanFieldDefinition($name);
-	
+	public function newBooleanFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newIntegerFieldDefinition($name);
-	
+	public function newIntegerFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newFloatFieldDefinition($name);
-	
+	public function newFloatFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
-	 * @return \Change\Db\Schema\FieldDefinition
-	 */	
-	public function newTextFieldDefinition($name);
-	
-	/**
-	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newLobFieldDefinition($name);
-	
+	public function newTextFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newDateFieldDefinition($name);
-	
+	public function newLobFieldDefinition($name, array $dbOptions = null);
+
 	/**
 	 * @param string $name
+	 * @param array $dbOptions
 	 * @return \Change\Db\Schema\FieldDefinition
 	 */
-	public function newTimeStampFieldDefinition($name);
+	public function newDateFieldDefinition($name, array $dbOptions = null);
+
+	/**
+	 * @param string $name
+	 * @param array $dbOptions
+	 * @return \Change\Db\Schema\FieldDefinition
+	 */
+	public function newTimeStampFieldDefinition($name, array $dbOptions = null);
 			
 	/**
 	 * @param \Change\Db\Schema\TableDefinition $tableDefinition

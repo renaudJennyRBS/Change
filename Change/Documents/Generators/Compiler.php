@@ -339,9 +339,7 @@ class Compiler
 				$nbModels++;
 			}
 		}
-		
 
-		
 		if (is_dir($workspace->projectModulesPath()))
 		{
 			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'Documents', 'Assets', '*.xml'));
