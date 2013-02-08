@@ -37,20 +37,12 @@ class Generator
 		}
 		$dbType = ucfirst($dbProvider->getType());
 		
-		$dbSchemaClass = 'Change\\Db\\'.$dbType.'\\Schema';
-		if (class_exists($dbSchemaClass))
+		$dbSchema = $schemaManager->getSystemSchema();
+		if ($dbSchema instanceof \Change\Db\Schema\SchemaDefinition)
 		{
-			$dbSchema = new $dbSchemaClass($schemaManager);
-			if ($dbSchema instanceof \Change\Db\Schema\SchemaDefinition)
-			{
-				$dbSchema->generate();
-			}
-			else
-			{
-				throw new \RuntimeException('Class '.$dbSchemaClass.' must be a instance of : \Change\Db\Schema\SchemaDefinition');
-			}
+			$dbSchema->generate();
 		}
-		
+
 		//@TODO Check Modules Specific Schema
 		//$workspace = $this->workspace;
 		

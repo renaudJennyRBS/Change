@@ -52,7 +52,8 @@ abstract class DbProvider
 	 */
 	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
-		$connectionInfos = $config->getEntry('databases/default', array());
+		$section = $config->getEntry('databases/use', 'default');
+		$connectionInfos = $config->getEntry('databases/' . $section, array());
 		if (!isset($connectionInfos['dbprovider']))
 		{
 			throw new \RuntimeException('Missing or incomplete database configuration');
@@ -70,6 +71,23 @@ abstract class DbProvider
 		$this->connectionInfos = $connectionInfos;
 		$this->setLogging($logging);
 		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getConnectionInfos()
+	{
+		return $this->connectionInfos;
+	}
+
+	/**
+	 * @param array $connectionInfos
+	 */
+	public function setConnectionInfos($connectionInfos)
+	{
+		$this->connectionInfos = $connectionInfos;
 	}
 
 	/**
@@ -111,15 +129,7 @@ abstract class DbProvider
 			$this->logging->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
 		}
 	}
-	
-	/**
-	 * @return array
-	 */
-	public function getConnectionInfos()
-	{
-		return $this->connectionInfos;
-	}
-	
+
 	/**
 	 * @return void
 	 */

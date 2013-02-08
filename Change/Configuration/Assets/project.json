@@ -19,8 +19,12 @@
 			"class":{}
 		},
 		"databases":{
+			"use": "default",
 			"default":{
 				"dbprovider":"\\Change\\Db\\Mysql\\DbProvider"
+			},
+			"sqlite":{
+				"dbprovider":"\\Change\\Db\\SQLite\\DbProvider"
 			}
 		},
 		"events":{

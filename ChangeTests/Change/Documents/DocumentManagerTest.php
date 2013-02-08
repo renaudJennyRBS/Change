@@ -50,6 +50,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstruct
 	 * @param \Change\Documents\DocumentManager $manager
+	 * @return \Change\Documents\DocumentManager
 	 */
 	public function testGetNewDocumentInstance(DocumentManager $manager)
 	{
@@ -71,6 +72,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testGetNewDocumentInstance
 	 * @param \Change\Documents\DocumentManager $manager
+	 * @return \Change\Documents\DocumentManager
 	 */
 	public function testDocument(DocumentManager $manager)
 	{
@@ -177,6 +179,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $manager
+	 * @return \Change\Documents\DocumentManager
 	 * @depends testDocument
 	 */
 	public function testI18nDocument(DocumentManager $manager)

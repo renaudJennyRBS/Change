@@ -1,19 +1,25 @@
 <?php
-namespace ChangeTests\Change\Db\Mysql;
+namespace ChangeTests\Change\Db\SQLite;
 
-use Change\Db\Mysql\DbProvider;
+use Change\Db\SQLite\DbProvider;
 use Change\Db\ScalarType;
 
 class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testGetInstance()
 	{
-		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
-
-		/* @var $provider \Change\Db\Mysql\DbProvider */
-		$this->assertInstanceOf('\Change\Db\Mysql\DbProvider', $provider);
+		$app = $this->getApplication();
+		$connectionInfos = array('');
 		
-		$this->assertEquals('mysql', $provider->getType());
+		$connectionInfos['database'] = $app->getWorkspace()->appPath('TestSQLite.db');
+		$connectionInfos['longTransaction'] = 5;
+
+		$provider = new \Change\Db\SQLite\DbProvider($connectionInfos, $app->getApplicationServices()->getLogging());
+
+		/* @var $provider \Change\Db\SQLite\DbProvider */
+		$this->assertInstanceOf('\Change\Db\SQLite\DbProvider', $provider);
+		
+		$this->assertEquals('sqlite', $provider->getType());
 		$this->assertNull($provider->getId());
 		
 		$pdo = $provider->getDriver();
@@ -21,14 +27,12 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$pdo->exec('INVALID SQL');
 			$this->fail('Invalid PDO Exception');
-			
 		}
 		catch (\PDOException $e)
 		{
-			$this->assertStringStartsWith('SQLSTATE', $e->getMessage());
-			$this->assertEquals('42000', $e->getCode());
+			$this->assertEquals('HY000', $e->getCode());
 		}
-		
+
 		return $provider;
 	}
 	
@@ -69,10 +73,10 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertSame(false, $provider->dbToPhp(0, ScalarType::BOOLEAN));
 		
 		$dt = new \DateTime('now', new \DateTimeZone('UTC'));
-		$dbval =  $dt->format('Y-m-d H:i:s');
+		$dbVal =  $dt->format('Y-m-d H:i:s');
 		
-		$this->assertSame($dbval, $provider->phpToDB($dt, ScalarType::DATETIME));
-		$this->assertEquals($dt, $provider->dbToPhp($dbval, ScalarType::DATETIME));
+		$this->assertSame($dbVal, $provider->phpToDB($dt, ScalarType::DATETIME));
+		$this->assertEquals($dt, $provider->dbToPhp($dbVal, ScalarType::DATETIME));
 		return $provider;
 	}
 
@@ -82,10 +86,11 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetLastInsertId(DbProvider $provider)
 	{
 		$pdo = $provider->getDriver();
-		$pdo->exec('DROP TABLE IF EXISTS `test_auto_number`');
-		$pdo->exec('CREATE TABLE `test_auto_number` (`auto` int(11) NOT NULL AUTO_INCREMENT, `test` int(11) NOT NULL, PRIMARY KEY (`auto`)) ENGINE=InnoDB AUTO_INCREMENT=5000');
-		$pdo->exec('INSERT INTO `test_auto_number` (`auto`, `test`) VALUES (NULL, \'2\')');
+		$pdo->exec("DROP TABLE IF EXISTS [test_auto_number]");
+		$pdo->exec("CREATE TABLE [test_auto_number] ([auto] INTEGER PRIMARY KEY AUTOINCREMENT, [test] int(11) NOT NULL)");
+		$pdo->exec("INSERT INTO [sqlite_sequence] ([name], [seq]) VALUES('test_auto_number', 5000)");
+		$pdo->exec("INSERT INTO [test_auto_number] ([test]) VALUES(2)");
 		$auto = $provider->getLastInsertId('test_auto_number');
-		$this->assertEquals(5000, $auto);
+		$this->assertEquals(5001, $auto);
 	}
 }

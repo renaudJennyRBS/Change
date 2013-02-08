@@ -1,17 +1,17 @@
 <?php
-namespace Change\Db\Mysql;
+namespace Change\Db\SQLite;
 
 use Change\Db\Schema\TableDefinition;
 use Change\Db\Schema\FieldDefinition;
 use Change\Db\Schema\KeyDefinition;
 
 /**
- * @name \Change\Db\Mysql\SchemaManager
+ * @name \Change\Db\SQLite\SchemaManager
  */
 class SchemaManager implements \Change\Db\InterfaceSchemaManager
 {	
 	/**
-	 * @var \Change\Db\Mysql\DbProvider
+	 * @var \Change\Db\SQLite\DbProvider
 	 */
 	protected $dbProvider;
 	
@@ -30,19 +30,18 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	protected $tables;
 
-
 	/**
-	 * @param \Change\Db\Mysql\DbProvider $dbProvider
+	 * @param \Change\Db\SQLite\DbProvider $dbProvider
 	 * @param \Change\Logging\Logging $logging
 	 */
-	public function __construct(\Change\Db\Mysql\DbProvider $dbProvider, \Change\Logging\Logging $logging)
+	public function __construct(\Change\Db\SQLite\DbProvider $dbProvider, \Change\Logging\Logging $logging)
 	{
 		$this->setDbProvider($dbProvider);
 		$this->setLogging($logging);
 	}
 	
 	/**
-	 * @return \Change\Db\Mysql\DbProvider
+	 * @return \Change\Db\SQLite\DbProvider
 	 */
 	public function getDbProvider()
 	{
@@ -50,9 +49,9 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	}
 
 	/**
-	 * @param \Change\Db\Mysql\DbProvider $dbProvider
+	 * @param \Change\Db\SQLite\DbProvider $dbProvider
 	 */
-	public function setDbProvider(\Change\Db\Mysql\DbProvider $dbProvider)
+	public function setDbProvider(\Change\Db\SQLite\DbProvider $dbProvider)
 	{
 		$this->dbProvider = $dbProvider;
 	}
@@ -159,12 +158,21 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		{
 			try
 			{
-				$this->execute('DROP TABLE `' . $table . '`');
+				$this->execute('DROP TABLE [' . $table . ']');
 			}
 			catch (\Exception $e)
 			{
 				$this->logging->warn($e->getMessage());
 			}
+		}
+		//Clean All Sequence
+		try
+		{
+			$this->execute('DELETE FROM [sqlite_sequence]');
+		}
+		catch (\Exception $e)
+		{
+			$this->logging->warn($e->getMessage());
 		}
 		$this->tables = null;
 	}
@@ -176,7 +184,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	{
 		if ($this->tables === null)
 		{
-			$sql = "SELECT `TABLE_NAME` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA` = '".$this->getName()."'";
+			$sql = "SELECT [name] FROM [sqlite_master] WHERE [type] = 'table' AND [name] NOT LIKE 'sqlite_%'";
 			$stmt = $this->query($sql);
 			$this->tables = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 		}
@@ -190,8 +198,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	public function getTableDefinition($tableName)
 	{
 		$tableDef = null;
-		$sql = "SELECT `COLUMN_NAME`, `COLUMN_DEFAULT`, `IS_NULLABLE`, `DATA_TYPE`, `COLUMN_TYPE`, `CHARACTER_MAXIMUM_LENGTH`, `NUMERIC_PRECISION`, `NUMERIC_SCALE`, `EXTRA` FROM `information_schema`.`COLUMNS` 
-			WHERE `TABLE_SCHEMA` = '".$this->getName()."' AND `TABLE_NAME` = '".$tableName."' ORDER BY `ORDINAL_POSITION`";
+		$sql = "PRAGMA table_info([".$tableName."])";
 		$statement = $this->query($sql);
 		foreach ($statement->fetchAll(\PDO::FETCH_NUM) as $row)
 		{
@@ -199,29 +206,38 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			{
 				$tableDef = new TableDefinition($tableName);
 			}
-			list($name, $defaultValue, $nullable, $dataType, $ctype, $maxLength, $precision, $scale, $extra) = $row;
+			list( , $name, $rawType, $notnull, $default_value, $pk) = $row;
 			$fd = new FieldDefinition($name);
-			switch ($dataType) 
+			if (preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/', $rawType, $matches))
+			{
+				$dataType = strtolower($matches[1]);
+				$size = isset($matches[2]) ? $matches[2] : null;
+			}
+			else
+			{
+				$dataType = strtolower($rawType);
+				$size = null;
+			}
+
+			switch ($dataType)
 			{
 				case 'int':
-				case 'bigint':
-				case 'smallint':
+				case 'integer':
 					$type = FieldDefinition::INTEGER;
 					break;
 				case 'tinyint':
 					$type = FieldDefinition::SMALLINT;
 					break;
-				case 'double':
 				case 'float':
 					$type = FieldDefinition::FLOAT;
 					break;
 				case 'decimal':
 					$type = FieldDefinition::DECIMAL;
 					break;
-				case 'datetime':
+				case 'chardate':
 					$type = FieldDefinition::DATE;
 					break;
-				case 'timestamp':
+				case 'chartimestamp':
 					$type = FieldDefinition::TIMESTAMP;
 					break;
 				case 'varchar':
@@ -230,19 +246,10 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 				case 'char':
 					$type = FieldDefinition::CHAR;
 					break;
-				case 'enum':
-					$type = FieldDefinition::ENUM;
-					$values = explode('\',\'', substr($ctype, 6, strlen($ctype) - 8));
-					$fd->setOption('VALUES', $values);
-					break;
-				case 'mediumblob':
 				case 'blob':
-				case 'longblob':
 					$type = FieldDefinition::LOB;
 					break;
-				case 'mediumtext':
 				case 'text':
-				case 'longtext':
 					$type = FieldDefinition::TEXT;
 					break;	
 				default:
@@ -250,62 +257,28 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 					break;
 			}
 			$fd->setType($type);
-			if ($precision !== null)
+			if ($size)
 			{
-				$fd->setPrecision($precision);
+				$sp = explode($size, ',');
+				$fd->setPrecision(intval($sp[0]));
+				$fd->setScale(isset($sp[1])? intval($sp[1]) : null);
 			}
-			if ($scale !== null)
-			{
-				$fd->setScale($scale);
-			}
-			if ($maxLength !== null)
-			{
-				$fd->setLength($maxLength);
-			}
-			$fd->setNullable($nullable === 'YES');
-			$fd->setDefaultValue($defaultValue);
-			if ($extra === 'auto_increment')
+			$fd->setNullable($notnull == '0');
+			$fd->setDefaultValue($default_value);
+			if ($type === FieldDefinition::INTEGER && $pk == '1')
 			{
 				$fd->setAutoNumber(true);
 			}
-			
 			$tableDef->addField($fd);
-		}
-		$statement->closeCursor();
-		
-		if ($tableDef)
-		{
-			$sql = "SELECT C.`CONSTRAINT_NAME`, C.`CONSTRAINT_TYPE`, F.`COLUMN_NAME` FROM `information_schema`.`TABLE_CONSTRAINTS` AS C  
-INNER JOIN `information_schema`.`KEY_COLUMN_USAGE` AS F ON F.`TABLE_SCHEMA` = C.`TABLE_SCHEMA` AND F.`TABLE_NAME` = C.`TABLE_NAME` AND C.`CONSTRAINT_NAME` = F.`CONSTRAINT_NAME`
-WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableName."' ORDER BY C.`CONSTRAINT_NAME`, F.`ORDINAL_POSITION`";
-			$statement = $this->query($sql);
-
-			/* @var $k \Change\Db\Schema\KeyDefinition */
-			$k = null;
-			foreach ($statement->fetchAll(\PDO::FETCH_NUM) as $row)
+			if ($pk == '1')
 			{
-				if ($k === null || $k->getName() !== $row[0])
-				{
-					$k = new \Change\Db\Schema\KeyDefinition();
-					$tableDef->addKey($k);
-					$k->setName($row[0]);
-					if ($row[1] === 'PRIMARY KEY')
-					{
-						$k->setType(\Change\Db\Schema\KeyDefinition::PRIMARY);
-					}
-					elseif ($row[1] === 'UNIQUE')
-					{
-						$k->setType(\Change\Db\Schema\KeyDefinition::UNIQUE);
-					}
-					else
-					{
-						$k->setType(\Change\Db\Schema\KeyDefinition::INDEX);
-					}
-				}
-				$k->addField($tableDef->getField($row[2]));
+				$k = new \Change\Db\Schema\KeyDefinition();
+				$tableDef->addKey($k);
+				$k->setType(\Change\Db\Schema\KeyDefinition::PRIMARY);
+				$k->addField($fd);
 			}
 		}
-		
+		$statement->closeCursor();
 		return $tableDef;
 	}
 	
@@ -316,7 +289,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	public function newTableDefinition($tableName)
 	{
 		$td = new TableDefinition($tableName);
-		$td->setOptions(array('ENGINE' => 'InnoDB', 'CHARSET' => 'utf8', 'COLLATION' => 'utf8_unicode_ci'));
 		return $td;
 	}
 
@@ -335,18 +307,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				if (!isset($fieldDbOptions['length']))
 				{
 					$fieldDbOptions['length'] = ($defaultDbOptions === null) ? 255 : intval($defaultDbOptions['length']);
-				}
-				else
-				{
-					$fieldDbOptions['length'] = intval($fieldDbOptions['length']);
-				}
-				return $fieldDbOptions;
-
-			case \Change\Db\ScalarType::TEXT:
-			case \Change\Db\ScalarType::LOB:
-				if (!isset($fieldDbOptions['length']))
-				{
-					$fieldDbOptions['length'] = 16777215;
 				}
 				else
 				{
@@ -376,19 +336,19 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 			case \Change\Db\ScalarType::INTEGER:
 				if (!isset($fieldDbOptions['precision']))
 				{
-					$def = $scalarType === \Change\Db\ScalarType::BOOLEAN ? 3 : 10;
+					$def = $scalarType === \Change\Db\ScalarType::BOOLEAN ? 1 : 11;
 					$fieldDbOptions['precision'] = ($defaultDbOptions === null) ? $def : intval($defaultDbOptions['precision']);
 				}
-				$fieldDbOptions['scale'] = 0;
 				return $fieldDbOptions;
 
+			case \Change\Db\ScalarType::TEXT:
+			case \Change\Db\ScalarType::LOB:
 			case \Change\Db\ScalarType::DATETIME:
 				if (!is_array($fieldDbOptions))
 				{
 					$fieldDbOptions = is_array($defaultDbOptions) ? $defaultDbOptions : array();
 				}
 				return $fieldDbOptions;
-
 			default:
 				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType);
 		}
@@ -466,7 +426,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		$fd->setType(FieldDefinition::SMALLINT);
 		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::BOOLEAN, $dbOptions);
 		$fd->setPrecision($dbOptions['precision']);
-		$fd->setScale($dbOptions['scale']);
 		$fd->setNullable(false);
 		return $fd;
 	}
@@ -482,7 +441,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		$fd->setType(FieldDefinition::INTEGER);
 		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::INTEGER, $dbOptions);
 		$fd->setPrecision($dbOptions['precision']);
-		$fd->setScale($dbOptions['scale']);
 		return $fd;
 	}
 	
@@ -507,8 +465,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::TEXT);
-		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::TEXT, $dbOptions);
-		$fd->setLength($dbOptions['length']);
 		return $fd;
 	}
 
@@ -521,8 +477,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	{
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::LOB);
-		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::LOB, $dbOptions);
-		$fd->setLength($dbOptions['length']);
 		return $fd;
 	}
 
@@ -586,47 +540,46 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				$type = 'varchar('.$fieldDefinition->getLength().')';
 				break;
 			case FieldDefinition::DATE:
-				$type = 'datetime';
+				$type = 'chardate';
 				break;
 			case FieldDefinition::TIMESTAMP:
-				$type = 'timestamp';
+				$type = 'chartimestamp';
 				break;
 			case FieldDefinition::DECIMAL:
 				$type = 'decimal('.$fieldDefinition->getPrecision(). ','. $fieldDefinition->getScale().')';
 				break;
 			case FieldDefinition::ENUM:
-				$values = $fieldDefinition->getOption('VALUES');
-				if (!is_array($values) || count($values) == 0)
-				{
-					throw new \RuntimeException('Invalid Enum Values');
-				}
-				$type = 'enum(\''.implode('\',\'', $values).'\')';
+				$type = 'varchar(1000)';
 				break;
 			case FieldDefinition::FLOAT:
 				$type = 'double';
 				break;
 			case FieldDefinition::INTEGER:
-				$type = 'int(11)';
+				$type = $fieldDefinition->getAutoNumber() ? 'INTEGER' : 'int(11)';
 				break;
 			case FieldDefinition::SMALLINT:
 				$type = 'tinyint(1)';
 				break;
 			case FieldDefinition::LOB:
-				$type = 'mediumblob';
+				$type = 'blob';
 				break;
 			case FieldDefinition::TEXT:
-				$type = 'mediumtext';
+				$type = 'text';
 				break;
 			default:
 				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType());
 				break;
 		}
-	
-		if (!$fieldDefinition->getNullable())
+
+		if ($fieldDefinition->getAutoNumber())
+		{
+			$type .= ' PRIMARY KEY AUTOINCREMENT';
+		}
+		elseif (!$fieldDefinition->getNullable())
 		{
 			$type .= ' NOT NULL';
 		}
-	
+
 		if ($fieldDefinition->getDefaultValue() !== null)
 		{
 			if ($fieldDefinition->getDefaultValue() === 'CURRENT_TIMESTAMP')
@@ -635,12 +588,8 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 			}
 			else
 			{
-				$type .= ' DEFAULT \'' . $fieldDefinition->getDefaultValue() . '\'';
+				$type .= ' DEFAULT ' . var_export($fieldDefinition->getDefaultValue(), true);
 			}
-		}
-		else if ($fieldDefinition->getAutoNumber())
-		{
-			$type .= ' auto_increment';
 		}
 		return $type;
 	}
@@ -652,30 +601,20 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function alterTable(\Change\Db\Schema\TableDefinition $tableDefinition, \Change\Db\Schema\TableDefinition $oldDef)
 	{
-		$sqls = array();
+		$sqlParts = array();
 		foreach ($tableDefinition->getFields() as $field)
 		{
 			/* @var $field \Change\Db\Schema\FieldDefinition */
 			$oldField = $oldDef->getField($field->getName());
-			$type = $this->generateColumnType($field);
-			if ($oldField)
+			if (!$oldField)
 			{
-				$oldType = $this->generateColumnType($oldField);
-				if ($type != $oldType)
-				{
-					$sql = 'ALTER TABLE `'.$tableDefinition->getName().'` CHANGE `'.$field->getName().'` `'.$field->getName().'` '.$type;
-					$sqls[] = $sql;
-					$this->execute($sql);
-				}
-			}
-			else
-			{
-				$sql = 'ALTER TABLE  `'.$tableDefinition->getName().'` ADD `'.$field->getName().'` '.$type;
-				$sqls[] = $sql;
+				$type = $this->generateColumnType($field);
+				$sql = 'ALTER TABLE ['.$tableDefinition->getName().'] ADD ['.$field->getName().'] '. $type;
+				$sqlParts[] = $sql;
 				$this->execute($sql);
 			}
 		}
-		return implode(';'.PHP_EOL, $sqls);
+		return implode(';'.PHP_EOL, $sqlParts);
 	}
 	
 	/**
@@ -684,56 +623,72 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function createTable(\Change\Db\Schema\TableDefinition $tableDefinition)
 	{
-		$sql = 'CREATE TABLE `'.$tableDefinition->getName().'` (';	
+		$sql = 'CREATE TABLE ['.$tableDefinition->getName().'] (';
 		$parts = array();
+		$indexParts = array();
 		foreach ($tableDefinition->getFields() as $field)
 		{
 			/* @var $field \Change\Db\Schema\FieldDefinition */
 			
 			$type = $this->generateColumnType($field);
-			$parts[] = '`'.$field->getName().'` '. $type;
+			$parts[] = '['.$field->getName().'] '. $type;
 		}
+
 		foreach ($tableDefinition->getKeys() as $key)
 		{
 			/* @var $key \Change\Db\Schema\KeyDefinition */
 			$kf = array();
-			foreach ($key->getFields() as $kfield)
+			$fields = $key->getFields();
+			if (count($fields))
 			{
-				/* @var $kfield \Change\Db\Schema\FieldDefinition */
-				$kf[] = '`'.$kfield->getName().'`';
+				$autoNumber = false;
+				foreach ($fields as $keyField)
+				{
+					/* @var $keyField \Change\Db\Schema\FieldDefinition */
+					$kf[] = '['.$keyField->getName().']';
+					$autoNumber = $keyField->getAutoNumber();
+				}
+
+				if ($key->isPrimary())
+				{
+					if (!$autoNumber)
+					{
+						$parts[] = 'PRIMARY KEY (' . implode(', ', $kf) . ')';
+					}
+				}
+				elseif ($key->isUnique())
+				{
+					$parts[] = 'CONSTRAINT ['.$key->getName().'] UNIQUE (' . implode(', ', $kf) . ')';
+				}
+				elseif ($key->isIndex())
+				{
+					$indexParts[] = 'CREATE INDEX ['.$key->getName().'] ON ['.$tableDefinition->getName().'] (' . implode(', ', $kf) . ')';
+				}
 			}
-			
-			if ($key->isPrimary())
-			{
-				$parts[] = 'PRIMARY KEY  (' . implode(', ', $kf) . ')';
-			}
-			elseif ($key->isUnique())
-			{
-				$parts[] = 'UNIQUE KEY `'.$key->getName().'` (' . implode(', ', $kf) . ')';
-			}
-			else
-			{
-				$parts[] = 'INDEX `'.$key->getName().'` (' . implode(', ', $kf) . ')';
-			}
-			
 		}
-		$engine = $tableDefinition->getOption('ENGINE');
-		if ($engine) {$engine = ' ENGINE= ' .$engine;}
-		
-		$startAuto = $tableDefinition->getOption('AUTONUMBER');
-		if ($startAuto) {$startAuto = ' AUTO_INCREMENT='.$startAuto;}
-		
-		$charset = $tableDefinition->getOption('CHARSET');
-		if ($charset) {$charset = ' CHARACTER SET '.$charset;}
-		
-		$collation = $tableDefinition->getOption('COLLATION');
-		if ($collation) {$collation = ' COLLATE '.$collation;}
-				
-		$sql .= implode(', ', $parts)  . ')' . $engine . $startAuto . $charset. $collation;
-		$this->execute($sql);	
+
+		$sql .= implode(', ', $parts)  . ')';
+		$this->execute($sql);
 		if (is_array($this->tables) && !in_array($tableDefinition->getName(), $this->tables))
 		{
 			$this->tables[] = $tableDefinition->getName();
+		}
+
+		if (count($indexParts))
+		{
+			foreach ($indexParts as $indexSql)
+			{
+				$this->execute($indexSql);
+				$sql .= ";" . PHP_EOL . $indexSql;
+			}
+		}
+
+		$startAuto = $tableDefinition->getOption('AUTONUMBER');
+		if ($startAuto && $startAuto > 1)
+		{
+			$seqSql = "INSERT INTO [sqlite_sequence] ([name], [seq]) VALUES('".$tableDefinition->getName()."', ".$startAuto.")";
+			$this->execute($seqSql);
+			$sql .= ";" . PHP_EOL . $seqSql;
 		}
 		return $sql;
 	}
@@ -744,7 +699,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function dropTable(\Change\Db\Schema\TableDefinition $tableDefinition)
 	{
-		$sql = 'DROP TABLE IF EXISTS `'. $tableDefinition->getName() .'`';
+		$sql = 'DROP TABLE IF EXISTS ['. $tableDefinition->getName() .']';
 		if (is_array($this->tables))
 		{
 			$this->tables = array_values(array_diff($this->tables, array($tableDefinition->getName())));
@@ -758,6 +713,6 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	 */
 	public function getSystemSchema()
 	{
-		return new \Change\Db\Mysql\Schema($this);
+		return new \Change\Db\SQLite\Schema($this);
 	}
 }

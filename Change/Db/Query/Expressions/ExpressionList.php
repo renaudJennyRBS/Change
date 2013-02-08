@@ -26,9 +26,11 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression imp
 	{
 		return $this->list;
 	}
-	
+
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression[] $list
+	 * @throws \InvalidArgumentException
+	 * @return void
 	 */
 	public function setList($list = array())
 	{
