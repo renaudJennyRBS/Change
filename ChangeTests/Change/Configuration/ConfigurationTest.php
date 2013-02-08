@@ -71,8 +71,8 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('value2', $config->getEntry('key2'));
 		$this->assertEquals(null, $config->getEntry('key3'));
 
-		$config->addVolatileEntry('key1', 'newValue1');
-		$config->addVolatileEntry('key3', 'newValue3');
+		$this->assertFalse($config->addVolatileEntry('key1', 'newValue1'));
+		$this->assertFalse($config->addVolatileEntry('key3', 'newValue3'));
 		$this->assertEquals('value1', $config->getEntry('key1'));
 		$this->assertEquals('value2', $config->getEntry('key2'));
 		$this->assertEquals(null, $config->getEntry('key3'));
@@ -82,8 +82,8 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Test12', $config->getEntry('complexEntry1/entry12'));
 		$this->assertEquals(null, $config->getEntry('complexEntry1/entry13'));
 
-		$config->addVolatileEntry('complexEntry1/entry11', 'newValue1');
-		$config->addVolatileEntry('complexEntry1/entry13', 'newValue3');
+		$this->assertTrue($config->addVolatileEntry('complexEntry1/entry11', 'newValue1'));
+		$this->assertTrue($config->addVolatileEntry('complexEntry1/entry13', 'newValue3'));
 		$this->assertEquals('newValue1', $config->getEntry('complexEntry1/entry11'));
 		$this->assertEquals('Test12', $config->getEntry('complexEntry1/entry12'));
 		$this->assertEquals('newValue3', $config->getEntry('complexEntry1/entry13'));
@@ -95,7 +95,7 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(null, $config->getEntry('complexEntry3/contents/entry33'));
 
 		$entry3 = array('entry31' => 'newValue31', 'entry32' => 'newValue32');
-		$config->addVolatileEntry('complexEntry3/contents', $entry3);
+		$this->assertTrue($config->addVolatileEntry('complexEntry3/contents', $entry3));
 		$this->assertEquals(array('contents' => $entry3), $config->getEntry('complexEntry3'));
 		$this->assertEquals($entry3, $config->getEntry('complexEntry3/contents'));
 		$this->assertEquals('newValue31', $config->getEntry('complexEntry3/contents/entry31'));
@@ -110,8 +110,8 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry24'));
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry25'));
 
-		$config->addVolatileEntry('complexEntry2/contents', array('entry21' => 'newValue21',
-			'entry23' => array('entry231' => 'newValue231', 'entry233' => 'newValue233'), 'entry24' => 'newValue24'));
+		$this->assertTrue($config->addVolatileEntry('complexEntry2/contents', array('entry21' => 'newValue21',
+			'entry23' => array('entry231' => 'newValue231', 'entry233' => 'newValue233'), 'entry24' => 'newValue24')));
 		$this->assertEquals('newValue21', $config->getEntry('complexEntry2/contents/entry21'));
 		$this->assertEquals('Test22', $config->getEntry('complexEntry2/contents/entry22'));
 		$this->assertEquals('newValue231', $config->getEntry('complexEntry2/contents/entry23/entry231'));
@@ -120,7 +120,6 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('newValue24', $config->getEntry('complexEntry2/contents/entry24'));
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry25'));
 	}
-
 
 	public function testAddPersistentEntry()
 	{
@@ -131,23 +130,25 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
 		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
-		$result = $config->addPersistentEntry('mypath', 'myentry', 'value');
-		$this->assertEmpty($result);
+		$this->assertNull($config->getEntry('mypath/myentry'));
+		$this->assertTrue($config->addPersistentEntry('mypath/myentry', 'value'));
+		$this->assertEquals('value', $config->getEntry('mypath/myentry'));
 		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
-	}
-
-	public function testAddPersistentEntryBadCall()
-	{
-		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
-		if (file_exists($sourceConfigFile))
-		{
-			unlink($sourceConfigFile);
-		}
-		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
-
-		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
-		$this->setExpectedException('\InvalidArgumentException');
-		$result = $config->addPersistentEntry('mypath', null, 'value');
+		
+		// Giving an invalid path just returns false.
+		$this->assertNull($newConfig->getEntry('invalidpath'));
+		$this->assertFalse($config->addPersistentEntry('invalidpath', 'value'));
+		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
+		$this->assertNull($newConfig->getEntry('invalidpath'));
+		
+		// Boolean and integer types values are correctly preserved.
+		$this->assertNull($newConfig->getEntry('mypath/integer'));
+		$this->assertNull($newConfig->getEntry('mypath/boolean'));
+		$this->assertTrue($config->addPersistentEntry('mypath/integer', 155));
+		$this->assertTrue($config->addPersistentEntry('mypath/boolean', true));
+		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
+		$this->assertTrue(155 === $newConfig->getEntry('mypath/integer'));
+		$this->assertTrue(true === $newConfig->getEntry('mypath/boolean'));
 	}
 }
