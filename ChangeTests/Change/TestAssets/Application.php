@@ -7,6 +7,9 @@ namespace ChangeTests\Change\TestAssets;
  */
 class Application extends \Change\Application
 {
+	/**
+	 * @return \Change\Workspace
+	 */
 	public function getWorkspace()
 	{
 		if (!$this->workspace)

@@ -386,9 +386,9 @@ class I18nManager
 		}
 		
 		$definitionCollection->load();
-		if ($definitionCollection->hasKey($id))
+		if ($definitionCollection->hasDefinitionKey($id))
 		{
-			return $definitionCollection->getKey($id);
+			return $definitionCollection->getDefinitionKey($id);
 		}
 		else
 		{
@@ -583,7 +583,6 @@ class I18nManager
 	
 	// Dates.
 	
-
 	/**
 	 * @api
 	 * @param string $LCID
