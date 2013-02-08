@@ -9,42 +9,42 @@ class I18nManager
 	const SYNCHRO_MODIFIED = 'MODIFIED';
 	const SYNCHRO_VALID = 'VALID';
 	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
-
+	
 	/**
 	 * @var array
 	 */
 	protected $langMap = null;
-
+	
 	/**
 	 * @var array
 	 */
 	protected $ignoreTransform;
-
+	
 	/**
 	 * @var array
 	 */
 	protected $transformers;
-
+	
 	/**
 	 * @var string ex: "fr_FR"
 	 */
 	protected $uiLCID;
-
+	
 	/**
 	 * @var string[] ex: "fr_FR"
 	 */
 	protected $supportedLCIDs = array();
-
+	
 	/**
 	 * @var string
 	 */
 	protected $uiDateFormat;
-
+	
 	/**
 	 * @var string
 	 */
 	protected $uiDateTimeFormat;
-
+	
 	/**
 	 * @var string
 	 */
@@ -54,36 +54,48 @@ class I18nManager
 	 * @var array
 	 */
 	protected $i18nDocumentsSynchro = null;
-
+	
 	/**
 	 * @var array
 	 */
-	protected $i18nKeysSynchro = null;
-
+	protected $i18nSynchro = null;
+	
 	/**
 	 * @var \Change\Configuration\Configuration
 	 */
 	protected $configuration;
-
+	
+	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+	
 	/**
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging;
-
+	
 	/**
-	 * @var \Change\Db\DbProvider
+	 * @var array<string, string>
 	 */
-	protected $dbProvider;
-
+	protected $packageList;
+	
+	/**
+	 * @var \Change\I18n\DefinitionCollection[]
+	 */
+	protected $definitionCollections = array();
+	
+	/**
+	 */
 	public function __construct()
 	{
-		$this->ignoreTransform = array('TEXT' => 'raw', 'HTML' => 'html');
-
-		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 'lc' => 'transformLc',
-			'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 'attr' => 'transformAttr', 'space' => 'transformSpace',
-			'etc' => 'transformEtc', 'ucw' => 'transformUcw');
+		$this->ignoreTransform = array(DefinitionKey::TEXT => 'raw', DefinitionKey::HTML => 'html');
+		
+		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 
+			'lc' => 'transformLc', 'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 
+			'attr' => 'transformAttr', 'space' => 'transformSpace', 'etc' => 'transformEtc', 'ucw' => 'transformUcw');
 	}
-
+	
 	/**
 	 * @param \Change\Configuration\Configuration $configuration
 	 */
@@ -92,7 +104,7 @@ class I18nManager
 		$this->configuration = $configuration;
 		$this->supportedLCIDs = $this->configuration->getEntry('i18n/supported-lcids', array('fr_FR'));
 	}
-
+	
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
@@ -100,7 +112,23 @@ class I18nManager
 	{
 		return $this->configuration;
 	}
-
+	
+	/**
+	 * @param \Change\Workspace $workspace
+	 */
+	public function setWorkspace(\Change\Workspace $workspace)
+	{
+		$this->workspace = $workspace;
+	}
+	
+	/**
+	 * @return \Change\Workspace
+	 */
+	public function getWorkspace()
+	{
+		return $this->workspace;
+	}
+	
 	/**
 	 * @param \Change\Logging\Logging $logging
 	 */
@@ -108,7 +136,7 @@ class I18nManager
 	{
 		$this->logging = $logging;
 	}
-
+	
 	/**
 	 * @return \Change\Logging\Logging
 	 */
@@ -116,23 +144,7 @@ class I18nManager
 	{
 		return $this->logging;
 	}
-
-	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
-	{
-		$this->dbProvider = $dbProvider;
-	}
-
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	public function getDbProvider()
-	{
-		return $this->dbProvider;
-	}
-
+	
 	/**
 	 * Get all supported LCIDs.
 	 * @api
@@ -142,7 +154,15 @@ class I18nManager
 	{
 		return $this->supportedLCIDs;
 	}
-
+	
+	/**
+	 * @return boolean
+	 */
+	public function supportMultipleLCIDs()
+	{
+		return count($this->supportedLCIDs) > 1;
+	}
+	
 	/**
 	 * Get the default LCID.
 	 * @api
@@ -152,7 +172,7 @@ class I18nManager
 	{
 		return $this->supportedLCIDs[0];
 	}
-
+	
 	/**
 	 * Get the UI LCID.
 	 * @api
@@ -166,7 +186,7 @@ class I18nManager
 		}
 		return $this->uiLCID;
 	}
-
+	
 	/**
 	 * Set the UI LCID.
 	 * @api
@@ -181,18 +201,16 @@ class I18nManager
 		}
 		$this->uiLCID = $LCID;
 	}
-
+	
 	/**
 	 * Loads the i18n synchro configuration.
 	 */
 	protected function loadI18nSynchroConfiguration()
 	{
-		$data = $this->getConfiguration()->getEntry('i18n/synchro/documents', null);
-		$this->i18nDocumentsSynchro = $this->cleanI18nSynchroConfiguration($data);
 		$data = $this->getConfiguration()->getEntry('i18n/synchro/keys', null);
-		$this->i18nKeysSynchro = $this->cleanI18nSynchroConfiguration($data);
+		$this->i18nSynchro = $this->cleanI18nSynchroConfiguration($data);
 	}
-
+	
 	/**
 	 * Clean i18n synchro configuration.
 	 * @see loadI18nSynchroConfiguration()
@@ -215,7 +233,7 @@ class I18nManager
 					}
 				}
 			}
-
+			
 			if (count($result))
 			{
 				return $result;
@@ -223,84 +241,27 @@ class I18nManager
 		}
 		return false;
 	}
-
+	
 	/**
 	 * @return boolean
 	 */
-	public function hasI18nDocumentsSynchro()
+	public function hasI18nSynchro()
 	{
-		if ($this->i18nDocumentsSynchro === null)
+		if ($this->i18nSynchro === null)
 		{
 			$this->loadI18nSynchroConfiguration();
 		}
-		return $this->i18nDocumentsSynchro !== false;
+		return $this->i18nSynchro !== false;
 	}
-
+	
 	/**
 	 * @return array string : string[]
 	 */
-	public function getI18nDocumentsSynchro()
+	public function getI18nSynchro()
 	{
-		return $this->hasI18nDocumentsSynchro() ? $this->i18nDocumentsSynchro : array();
+		return $this->hasI18nSynchro() ? $this->i18nSynchro : array();
 	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasI18nKeysSynchro()
-	{
-		if ($this->i18nKeysSynchro === null)
-		{
-			$this->loadI18nSynchroConfiguration();
-		}
-		return $this->i18nKeysSynchro !== false;
-	}
-
-	/**
-	 * @return array string : string[]
-	 */
-	public function getI18nKeysSynchro()
-	{
-		return $this->hasI18nKeysSynchro() ? $this->i18nKeysSynchro : array();
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isMultiLangEnabled()
-	{
-		return count($this->supportedLCIDs) > 1;
-	}
-
-	/**
-	 * Converts a two characters lang code to a LCID.
-	 * @api
-	 * @param string $lang
-	 * @return string
-	 */
-	public function getLCIDByLang($lang)
-	{
-		if ($this->langMap === null)
-		{
-			$this->langMap = $this->getConfiguration()->getEntry('i18n/langs', array());
-		}
-		
-		$supportedLang = array_search($lang, $this->langMap);
-		if ($supportedLang === false)
-		{
-			foreach ($this->getSupportedLCIDs() as $LCID)
-			{
-				if (strpos($LCID, $lang) === 0)
-				{
-					$this->langMap[$LCID] = $lang;
-					return $LCID;
-				}
-			}
-			return strtolower($lang) . '_' . strtoupper($lang);
-		}
-		return $supportedLang;
-	}
-
+	
 	/**
 	 * Converts a LCID to a two characters lang code.
 	 * @api
@@ -313,7 +274,7 @@ class I18nManager
 		{
 			$this->langMap = $this->getConfiguration()->getEntry('i18n/langs', array());
 		}
-
+		
 		if (!isset($this->langMap[$LCID]))
 		{
 			if (strlen($LCID) === 5)
@@ -324,11 +285,10 @@ class I18nManager
 			{
 				throw new \InvalidArgumentException('Invalid LCID: ' . $LCID);
 			}
-			
 		}
 		return $this->langMap[$LCID];
 	}
-
+	
 	/**
 	 * For example: trans('f.boolean.true')
 	 * @api
@@ -341,7 +301,7 @@ class I18nManager
 	{
 		return $this->formatKey($this->getLCID(), $cleanKey, $formatters, $replacements);
 	}
-
+	
 	/**
 	 * For example: formatKey('fr_FR', 'f.boolean.true')
 	 * @api
@@ -362,52 +322,172 @@ class I18nManager
 		{
 			$preparedKey = new \Change\I18n\PreparedKey($cleanKey, $formatters, $replacements);
 		}
-
+		
+		$textKey = $preparedKey->getKey();
 		if ($preparedKey->isValid())
 		{
-			$q = $this->getTranslateQuery();
-			$q->bindParameter('lang', $LCID)
-				->bindParameter('id', $preparedKey->getId())
-				->bindParameter('key_path', $preparedKey->getPath());
-			
-			$result = $q->getFirstResult();
-			if ($result)
+			$parts = explode('.', $textKey);
+			$definitionKey = $this->getDefinitionKey($LCID, array_slice($parts, 0, -1), end($parts));
+			if ($definitionKey)
 			{
-				$content = strval($result['content']);
-				$format = $result['format'];
+				$content = strval($definitionKey->getText());
+				$format = $definitionKey->getFormat();
 				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(), $preparedKey->getReplacements());
 			}
-			$this->logKeyNotFound($preparedKey->getKey(), $LCID);
-			return $preparedKey->getKey();
+			$this->logKeyNotFound($textKey, $LCID);
 		}
-		else
+		return $textKey;
+	}
+
+	/**
+	 * @param string $LCID
+	 * @param string[] $pathParts
+	 * @param string $id
+	 * @return \Change\I18n\DefinitionKey | null
+	 */
+	public function getDefinitionKey($LCID, $pathParts, $id)
+	{
+		$key = $this->doGetDefinitionKey($LCID, $pathParts, $id);
+		if ($key)
 		{
-			return $preparedKey->getKey();
+			return $key;
 		}
+		
+		if ($this->hasI18nSynchro())
+		{
+			$synchro = $this->getI18nSynchro();
+			if (isset($synchro[$LCID]))
+			{
+				foreach ($synchro[$LCID] as $referenceLCID)
+				{
+					$key = $this->doGetDefinitionKey($referenceLCID, $pathParts, $id);
+					if ($key)
+					{
+						return $key;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
-	 * @var \Change\Db\Query\SelectQuery
+	 * @param string $LCID
+	 * @param string[] $pathParts
+	 * @param string $id
+	 * @return \Change\I18n\DefinitionKey | null
 	 */
-	protected $translateQuery;
+	protected function doGetDefinitionKey($LCID, $pathParts, $id)
+	{
+		$definitionCollection = $this->getDefinitionCollection($LCID, $pathParts);
+		if ($definitionCollection === null)
+		{
+			return null;
+		}
+		
+		$definitionCollection->load();
+		if ($definitionCollection->hasKey($id))
+		{
+			return $definitionCollection->getKey($id);
+		}
+		else
+		{
+			foreach (array_reverse($definitionCollection->getIncludesPaths()) as $includePath)
+			{
+				$includeParts = explode('.', $includePath);
+				$definitionKey = $this->getDefinitionKey($LCID, $includeParts, $id);
+				if ($definitionKey !== null)
+				{
+					return $definitionKey;
+				}
+			}
+		}
+		return null;
+	}
 	
 	/**
-	 * @return \Change\Db\Query\SelectQuery
+	 * @param string $LCID
+	 * @param string[] $pathParts
+	 * @return \Change\I18n\DefinitionCollection | null 
 	 */
-	protected function getTranslateQuery()
+	public function getDefinitionCollection($LCID, $pathParts)
 	{
-		if ($this->translateQuery === null)
+		$collectionPath = $this->getCollectionPath($pathParts);
+		if ($collectionPath === null)
 		{
-			$qb = $this->getDbProvider()->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$this->translateQuery = $qb->select('content', 'format')->from($fb->getLocaleTable())
-				->where($fb->logicAnd(
-					$fb->eq($fb->column('lang'), $fb->parameter('lang', $qb)),
-					$fb->eq($fb->column('id'), $fb->parameter('id', $qb)),
-					$fb->eq($fb->column('key_path'), $fb->parameter('key_path', $qb))
-					))->query();
+			return null;
 		}
-		return $this->translateQuery;
+		if (!file_exists($collectionPath))
+		{
+			return null;
+		}
+		
+		$code = implode('.', $pathParts) . '-' . $LCID;
+		if (!array_key_exists($collectionPath, $this->definitionCollections))
+		{
+			$this->definitionCollections[$code] = new \Change\I18n\DefinitionCollection($LCID, $collectionPath);
+		}
+		return $this->definitionCollections[$code];
+	}
+	
+	/**
+	 * @param string[]
+	 * @return string
+	 */
+	protected function getCollectionPath($pathParts)
+	{
+		if ($this->packageList === null)
+		{
+			$workspace = $this->getWorkspace();
+			$this->packageList = array();
+			
+			// Core.
+			$this->packageList['c'] = $this->workspace->changePath('I18n', 'Assets');
+			
+			// Modules.
+			if (is_dir($workspace->pluginsModulesPath()))
+			{
+				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'I18n', 'Assets'));
+				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $path)
+				{
+					$parts = explode(DIRECTORY_SEPARATOR, $path);
+					$count = count($parts);
+					$this->packageList[strtolower('m.' . $parts[$count - 4] . '.' . $parts[$count - 3])] = $path;
+				}
+			}
+			if (is_dir($workspace->projectModulesPath()))
+			{
+				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'I18n', 'Assets'));
+				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $path)
+				{
+					$parts = explode(DIRECTORY_SEPARATOR, $path);
+					$count = count($parts);
+					$this->packageList[strtolower('m.project.' . $parts[$count - 3])] = $path;
+				}
+			}
+				
+			// Themes.
+			// TODO
+		}
+		
+		$collectionPath = null;
+		switch ($pathParts[0])
+		{
+			case 'c':
+				$collectionPath = $this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 1));
+				break;
+			case 'm':
+			case 't':
+				if (isset($this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]]))
+				{
+					$packagePath = $this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]];
+					$collectionPath = $packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 3));
+				}
+				break;
+			case 'default':
+				break;
+		}
+		return $collectionPath;
 	}
 	
 	/**
@@ -419,7 +499,7 @@ class I18nManager
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
 	 * @param array $replacements
 	 */
-	public function formatText($LCID, $text, $format = 'TEXT', $formatters = array(), $replacements = array())
+	public function formatText($LCID, $text, $format = DefinitionKey::TEXT, $formatters = array(), $replacements = array())
 	{
 		if (count($replacements))
 		{
@@ -450,31 +530,6 @@ class I18nManager
 					$this->logging->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
 				}
 			}
-		}
-		return $text;
-	}
-
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public function translateText($text)
-	{
-		if (empty($text))
-		{
-			return $text;
-		}
-		if (preg_match_all('/\$\{(trans|transui|transdata):([^}]*)\}/', $text, $matches, PREG_SET_ORDER))
-		{
-			$search = array();
-			$replace = array();
-			foreach ($matches as $infos)
-			{
-				$search[] = $infos[0];
-				// TODO: transdata?
-				$replace[] = $this->formatKey($this->getLCID(), $this->prepareKeyFromTransString($infos[2]));
-			}
-			$text = str_replace($search, $replace, $text);
 		}
 		return $text;
 	}
@@ -527,6 +582,7 @@ class I18nManager
 	}
 	
 	// Dates.
+	
 
 	/**
 	 * @api
@@ -677,7 +733,7 @@ class I18nManager
 	{
 		return $localDate->setTimezone($this->getTimeZone());
 	}
-
+	
 	// Transformers.
 	
 	/**
@@ -689,7 +745,7 @@ class I18nManager
 	{
 		return $text . (substr($LCID, 0, 2) === 'fr' ? ' :' : ':');
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -699,7 +755,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toUpper($text);
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -709,7 +765,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::ucfirst($text);
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -719,7 +775,7 @@ class I18nManager
 	{
 		return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -729,7 +785,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toLower($text);
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -739,7 +795,7 @@ class I18nManager
 	{
 		return str_replace(array("\\", "\t", "\n", "\"", "'"), array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -749,7 +805,7 @@ class I18nManager
 	{
 		return nl2br(htmlspecialchars($text, ENT_COMPAT, 'UTF-8'));
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -757,10 +813,20 @@ class I18nManager
 	 */
 	public function transformText($text, $LCID)
 	{
-		//TODO Old class Usage
-		return \f_util_HtmlUtils::htmlToText($text);
+		if ($text === null)
+		{
+			return '';
+		}		
+		$text = str_replace(array('</div>', '</p>', '</li>', '</h1>', '</h2>', '</h3>', '</h4>', '</h5>', '</h6>', '</tr>'), PHP_EOL, $text);
+		$text = str_replace(array('</td>', '</th>'), "\t", $text);
+		$text = preg_replace('/<li[^>]*>/', ' * ', $text);
+		$text = preg_replace('/<br[^>]*>/', PHP_EOL, $text);
+		$text = preg_replace('/<hr[^>]*>/', "------".PHP_EOL, $text);
+		$text = preg_replace(array('/<a[^>]+href="([^"]+)"[^>]*>([^<]+)<\/a>/i', '/<img[^>]+alt="([^"]+)"[^>]*\/>/i'), array('$2 [$1]', PHP_EOL."[$1]".PHP_EOL), $text);
+		$text = trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
+		return $text;
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -768,10 +834,9 @@ class I18nManager
 	 */
 	public function transformAttr($text, $LCID)
 	{
-		//TODO Old class Usage
-		return \f_util_HtmlUtils::textToAttribute($text);
+		return htmlspecialchars(str_replace(array("\t", "\n"), array("&#09;", "&#10;"), $text), ENT_COMPAT, 'UTF-8');
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -781,7 +846,7 @@ class I18nManager
 	{
 		return ' ' . $text . ' ';
 	}
-
+	
 	/**
 	 * @param string $text
 	 * @param string $LCID

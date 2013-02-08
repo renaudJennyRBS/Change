@@ -22,14 +22,14 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$im->setParameters('Change\Events\EventManager', array('configuration' => $application->getConfiguration()));
 		$im->setParameters('Change\Application\PackageManager', array('workspace' => $application->getWorkspace()));
-		$im->setParameters('Change\I18n\I18nManager', array('configuration' => $application->getConfiguration()));
+		$im->setParameters('Change\I18n\I18nManager', array('configuration' => $application->getConfiguration(), 'workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
 		$im->setParameters('Change\Logging\Logging', array('config' => $application->getConfiguration(), 'workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\Transaction\TransactionManager', array('configuration' => $application->getConfiguration()));
 
 		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
 		$im->setInjections('Change\Transaction\TransactionManager', array('Change\Db\DbProvider'));
-		$im->setInjections('Change\I18n\I18nManager',  array('Change\Logging\Logging', 'Change\Db\DbProvider'));
+		$im->setInjections('Change\I18n\I18nManager',  array('Change\Logging\Logging'));
 	}
 
 	/**
@@ -93,10 +93,10 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethod('__construct', true)
 			->addMethod('setConfiguration')
 				->addMethodParameter('setConfiguration', 'configuration', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+			->addMethod('setWorkspace')
+				->addMethodParameter('setWorkspace', 'workspace', array('type' => 'Change\Workspace', 'required' => true))
 			->addMethod('setLogging')
-				->addMethodParameter('setLogging', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true))
-			->addMethod('setDbProvider')
-				->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+				->addMethodParameter('setLogging', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 

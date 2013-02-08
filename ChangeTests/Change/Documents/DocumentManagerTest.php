@@ -269,7 +269,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
 		
 		$i18nManger = new \Change\I18n\I18nManager();
-		$i18nManger->setDbProvider($application->getApplicationServices()->getDbProvider());
+		$i18nManger->setWorkspace($application->getWorkspace());
 		$i18nManger->setLogging($application->getApplicationServices()->getLogging());
 		$i18nManger->setConfiguration($application->getConfiguration());
 
