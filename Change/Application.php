@@ -122,7 +122,6 @@ class Application
 		$this->registerCoreAutoload();
 		$this->registerCompilationAutoload();
 		$this->registerPackagesAutoload();
-		
 	}
 
 	/**
@@ -239,7 +238,6 @@ class Application
 		}
 		return $this->packageManager;
 	}
-
 
 	/**
 	 * @param Configuration\Configuration $configuration
