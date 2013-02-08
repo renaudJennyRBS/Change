@@ -26,8 +26,9 @@ class SchemaDefinition
 	{
 		return $this->schemaManager;
 	}
-	
+
 	/**
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
 	 * @return \Change\Db\InterfaceSchemaManager
 	 */
 	public function setSchemaManager(\Change\Db\InterfaceSchemaManager $schemaManager)

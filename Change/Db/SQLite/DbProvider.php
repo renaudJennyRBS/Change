@@ -1,13 +1,13 @@
 <?php
-namespace Change\Db\Mysql;
+namespace Change\Db\SQLite;
 
 /**
- * @name \Change\Db\Mysql\DbProvider
+ * @name \Change\Db\SQLite\DbProvider
  */
 class DbProvider extends \Change\Db\DbProvider
 {
 	/**
-	 * @var \Change\Db\Mysql\SchemaManager
+	 * @var \Change\Db\SQLite\SchemaManager
 	 */
 	protected $schemaManager = null;
 	
@@ -26,7 +26,7 @@ class DbProvider extends \Change\Db\DbProvider
 	 */
 	public function getType()
 	{
-		return 'mysql';
+		return 'sqlite';
 	}
 	
 	/**
@@ -54,68 +54,18 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $this->m_driver;
 	}
-	
-	/**
-	 * @return string
-	 */
-	protected function errorCode()
-	{
-		return $this->getDriver()->errorCode();
-	}
-	
-	/**
-	 * @return array("sqlstate" => ..., "errorcode" => ..., "errormessage" => ...)
-	 */
-	protected function getErrorParameters()
-	{
-		$errorInfo = $this->getDriver()->errorInfo();
-		return array("sqlstate" => $errorInfo[0], "errorcode" => $errorInfo[1], "errormessage" => $errorInfo[2]);
-	}
-	
-	/**
-	 * @return string
-	 */
-	protected function errorInfo()
-	{
-		return print_r($this->getDriver()->errorInfo(), true);
-	}
-	
+
 	/**
 	 * @param array<String, String> $connectionInfos
 	 * @return \PDO
 	 */
 	public function getConnection($connectionInfos)
 	{
-		$protocol = 'mysql';
-		$dsnOptions = array();
-		
-		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
-		$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
-		$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-
-		if ($database !== null)
-		{
-			$dsnOptions[] = 'dbname=' . $database;
-		}
-		$unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
-		if ($unix_socket != null)
-		{
-			$dsnOptions[] = 'unix_socket=' . $unix_socket;
-		}
-		else
-		{
-			$host = isset($connectionInfos['host']) ? $connectionInfos['host'] : 'localhost';
-			$dsnOptions[] = 'host=' . $host;
-			$port = isset($connectionInfos['port']) ? $connectionInfos['port'] : 3306;
-			$dsnOptions[] = 'port=' . $port;
-		}
-		
-		$dsn = $protocol . ':' . implode(';', $dsnOptions);
-		
-		$options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'");
-		$pdo = new \PDO($dsn, $username, $password, $options);
+		$protocol = 'sqlite';
+		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : ':memory:';
+		$dsn = $protocol . ':' .$database;
+		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		
 		return $pdo;
 	}
 	
@@ -128,7 +78,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 	
 	/**
-	 * @return \Change\Db\Mysql\SchemaManager
+	 * @return \Change\Db\SQLite\SchemaManager
 	 */
 	public function getSchemaManager()
 	{
@@ -222,9 +172,9 @@ class DbProvider extends \Change\Db\DbProvider
 			$tableName = $fragment->getName();
 			if (!empty($dbName))
 			{
-				$identifierParts[] = '`' . $dbName . '`';
+				$identifierParts[] = '[' . $dbName . ']';
 			}
-			$identifierParts[] = '`' . $tableName . '`';
+			$identifierParts[] = '[' . $tableName . ']';
 			return implode('.', $identifierParts);
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Column)
@@ -242,12 +192,12 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return implode('.', array_map(function ($part)
 			{
-				return '`' . $part . '`';
+				return '[' . $part . ']';
 			}, $fragment->getParts()));
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\Concat)
 		{
-			return 'CONCAT(' . implode(', ', $this->buildSQLFragmentArray($fragment->getList())) . ')';
+			return implode(' || ', $this->buildSQLFragmentArray($fragment->getList()));
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Expressions\ExpressionList)
 		{
@@ -309,10 +259,10 @@ class DbProvider extends \Change\Db\DbProvider
 						$parts[] = 'LEFT OUTER JOIN';
 						break;
 					case \Change\Db\Query\Expressions\Join::RIGHT_OUTER_JOIN :
-						$parts[] = 'RIGHT OUTER JOIN';
+						throw new \RuntimeException('RIGHT OUTER JOIN Is not supported');
 						break;
 					case \Change\Db\Query\Expressions\Join::FULL_OUTER_JOIN :
-						$parts[] = 'FULL OUTER JOIN';
+						throw new \RuntimeException('FULL OUTER JOIN Is not supported');
 						break;
 					case \Change\Db\Query\Expressions\Join::INNER_JOIN :
 					default :
@@ -431,13 +381,12 @@ class DbProvider extends \Change\Db\DbProvider
 			
 			if ($query->getMaxResults())
 			{
-				
 				$parts[] = 'LIMIT';
+				$parts[] = strval(max(1, $query->getMaxResults()));
 				if ($query->getStartIndex())
 				{
-					$parts[] = strval(max(0, $query->getStartIndex())) . ',';
+					$parts[] = ',' . strval(max(0, $query->getStartIndex()));
 				}
-				$parts[] = strval(max(1, $query->getMaxResults()));
 			}
 			
 			return implode(' ', $parts);
@@ -479,7 +428,7 @@ class DbProvider extends \Change\Db\DbProvider
 			return implode(' ', $parts);
 		}
 		
-		$this->logging->info(__METHOD__ . '(' . get_class($query) . ') not implemted');
+		$this->logging->info(__METHOD__ . '(' . get_class($query) . ') not implemented');
 		return parent::buildSQLFragment($query);
 	}
 	

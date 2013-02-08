@@ -158,4 +158,9 @@ interface InterfaceSchemaManager
 	 * @return string SQL definition
 	 */
 	public function alterTable(\Change\Db\Schema\TableDefinition $tableDefinition, \Change\Db\Schema\TableDefinition $oldDef);
+
+	/**
+	 * @return \Change\Db\Schema\SchemaDefinition
+	 */
+	public function getSystemSchema();
 }
