@@ -28,8 +28,6 @@ class UnitTestWorkspace extends \Change\Workspace
 		// TODO Auto-generated method stub
 		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation';
 	}
-	
-	
 	/**
 	 * @api
 	 * @return string
@@ -40,5 +38,4 @@ class UnitTestWorkspace extends \Change\Workspace
 		array_unshift($args, 'ChangeTests', 'UnitTestWorkspace', 'tmp');
 		return call_user_func_array(array($this, 'projectPath'), $args);
 	}
-	
 }
