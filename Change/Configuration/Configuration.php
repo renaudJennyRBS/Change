@@ -47,11 +47,7 @@ class Configuration
 	protected $config = array();
 	
 	/**
-	 * @var array
-	 */
-	protected $define = array();
-	
-	/**
+	 * @api
 	 * @param string $path
 	 * @return boolean
 	 */
@@ -70,6 +66,7 @@ class Configuration
 	}
 	
 	/**
+	 * @api
 	 * @param string $path
 	 * @param string $defaultValue
 	 * @return mixed | null

@@ -117,7 +117,7 @@ class DefinitionCollection
 	 * @param string $id
 	 * @return boolean
 	 */
-	public function hasKey($id)
+	public function hasDefinitionKey($id)
 	{
 		return isset($this->definitionKeys[$id]);
 	}
@@ -126,7 +126,7 @@ class DefinitionCollection
 	 * @param string $id
 	 * @return \Change\I18n\DefinitionKey|null
 	 */
-	public function getKey($id)
+	public function getDefinitionKey($id)
 	{
 		return isset($this->definitionKeys[$id]) ? $this->definitionKeys[$id] : null;
 	}
