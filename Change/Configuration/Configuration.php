@@ -25,18 +25,11 @@ class Configuration
 			throw new \InvalidArgumentException('$configurationFiles must have at least one entry');
 		}
 		$this->configurationFiles = $configurationFiles;
-		if (is_array($config))
-		{
-			if (!isset($cachedConfig['config']))
-			{
-				throw new \InvalidArgumentException('$config has to be an array with "config" keys set');
-			}
-		}
-		else
+		if (!is_array($config))
 		{
 			$config = $this->mergeJsonConfigurations();
 		}
-		$this->setConfigArray($config['config']);
+		$this->setConfigArray($config);
 	}
 	
 	/**
@@ -122,7 +115,7 @@ class Configuration
 		// Base config.
 		$configProjectPath = $this->configurationFiles[0];
 		$overridableConfig = Json::decode(\Change\Stdlib\File::read($configProjectPath), Json::TYPE_ARRAY);
-		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, array('config' => $update));
+		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, $update);
 		\Change\Stdlib\File::write($configProjectPath, Json::encode($mergedConfig));
 		
 		// Update loaded config.
@@ -144,8 +137,8 @@ class Configuration
 		}
 		$entryName = array_pop($parts);
 		
-		$entry = array('config' => array());
-		$item = &$entry['config'];
+		$entry = array();
+		$item = &$entry;
 		foreach ($parts as $name)
 		{
 			$trimmedName = trim($name);
@@ -159,7 +152,7 @@ class Configuration
 			}
 		}
 		$item[$entryName] = $value;
-		return $entry['config'];
+		return $entry;
 	}
 	
 	/**
@@ -194,7 +187,7 @@ class Configuration
 			$config = \Zend\Stdlib\ArrayUtils::merge($config, $projectConfig);
 		}
 		
-		switch ($config['config']['logging']['level'])
+		switch ($config['Change']['Logging']['level'])
 		{
 			// @codeCoverageIgnoreStart
 			case 'EXCEPTION' :
@@ -219,17 +212,7 @@ class Configuration
 				break;
 			// @codeCoverageIgnoreEnd
 		}
-		$config['config']['logging']['level'] = $logLevel;
-		
-		foreach (array('php-cli-path', 'development-mode') as $requiredConfigEntry)
-		{
-			if (!isset($config['config']['general'][$requiredConfigEntry]))
-			{
-				// @codeCoverageIgnoreStart
-				throw new \RuntimeException('Please define config/general/' . $requiredConfigEntry . ' in your profile configuration file');
-				// @codeCoverageIgnoreEnd
-			}
-		}
+		$config['Change']['Logging']['level'] = $logLevel;
 		return $config;
 	}
 }

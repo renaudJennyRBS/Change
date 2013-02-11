@@ -102,7 +102,7 @@ class I18nManager
 	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
 		$this->configuration = $configuration;
-		$this->supportedLCIDs = $this->configuration->getEntry('i18n/supported-lcids', array('fr_FR'));
+		$this->supportedLCIDs = $this->configuration->getEntry('Change/I18n/supported-lcids', array('fr_FR'));
 	}
 	
 	/**
@@ -207,7 +207,7 @@ class I18nManager
 	 */
 	protected function loadI18nSynchroConfiguration()
 	{
-		$data = $this->getConfiguration()->getEntry('i18n/synchro/keys', null);
+		$data = $this->getConfiguration()->getEntry('Change/I18n/synchro/keys', null);
 		$this->i18nSynchro = $this->cleanI18nSynchroConfiguration($data);
 	}
 	
@@ -272,7 +272,7 @@ class I18nManager
 	{
 		if ($this->langMap === null)
 		{
-			$this->langMap = $this->getConfiguration()->getEntry('i18n/langs', array());
+			$this->langMap = $this->getConfiguration()->getEntry('Change/I18n/langs', array());
 		}
 		
 		if (!isset($this->langMap[$LCID]))
@@ -639,7 +639,7 @@ class I18nManager
 		{
 			return $this->uiTimeZone;
 		}
-		return new \DateTimeZone($this->getConfiguration()->getEntry('i18n/default-timezone'));
+		return new \DateTimeZone($this->getConfiguration()->getEntry('Change/I18n/default-timezone'));
 	}
 	
 	/**

@@ -9,9 +9,9 @@ class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$config = $application->getConfiguration();
 		$logging = $application->getApplicationServices()->getLogging();
 		
-		$config->addVolatileEntry('logging/level', 'ALERT');
+		$config->addVolatileEntry('Change/Logging/level', 'ALERT');
 		$this->assertEquals('ALERT', $logging->getLevel());
-		$config->addVolatileEntry('logging/level', 'ERR');
+		$config->addVolatileEntry('Change/Logging/level', 'ERR');
 		$this->assertEquals('ERR', $logging->getLevel());
 		
 		return $logging;
@@ -24,8 +24,8 @@ class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$logging = $application->getApplicationServices()->getLogging();		
-		$config->addVolatileEntry('logging/level', 'DEBUG');
+		$logging = $application->getApplicationServices()->getLogging();
+		$config->addVolatileEntry('Change/Logging/level', 'DEBUG');
 		
 		// Setting valid value is OK.
 		$logging->setPriority(5);
@@ -34,18 +34,18 @@ class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(2, $logging->getPriority());
 		
 		// Setting null calculate the value.
-		$config->addVolatileEntry('logging/level', 'DEBUG');
+		$config->addVolatileEntry('Change/Logging/level', 'DEBUG');
 		$logging->setPriority(null);
 		$this->assertEquals(7, $logging->getPriority());
-		$config->addVolatileEntry('logging/level', 'ERR');
+		$config->addVolatileEntry('Change/Logging/level', 'ERR');
 		$logging->setPriority(null);
 		$this->assertEquals(3, $logging->getPriority());
 		
 		// Setting invalid value reset it to calculated one.
-		$config->addVolatileEntry('logging/level', 'NOTICE');
+		$config->addVolatileEntry('Change/Logging/level', 'NOTICE');
 		$logging->setPriority(15);
 		$this->assertEquals(5, $logging->getPriority());
-		$config->addVolatileEntry('logging/level', 'INFO');
+		$config->addVolatileEntry('Change/Logging/level', 'INFO');
 		$logging->setPriority('toto');
 		$this->assertEquals(6, $logging->getPriority());
 	}

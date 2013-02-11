@@ -125,7 +125,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 					$output->writeln("");
 					if ($input->getOption('isolation'))
 					{
-						$process = new Process($this->getConfiguration()->getEntry('general/php-cli-path') . ' ' . $_SERVER['argv'][0] . " $commandName " . ($input->getOption('dev') ? '--dev' : ''));
+						$process = new Process($this->getConfiguration()->getEntry('Change/Application/php-cli-path') . ' ' . $_SERVER['argv'][0] . " $commandName " . ($input->getOption('dev') ? '--dev' : ''));
 						$process->run(function($type, $buffer) use ($output) {
 							$output->write($buffer, false, OutputInterface::OUTPUT_RAW);
 						});

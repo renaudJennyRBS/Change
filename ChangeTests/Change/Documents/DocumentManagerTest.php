@@ -265,11 +265,11 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$config->addVolatileEntry('i18n/supported-lcids' , null);
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids' , null);
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		
-		$config->addVolatileEntry('i18n/langs' , null);
-		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
+		$config->addVolatileEntry('Change/I18n/langs' , null);
+		$config->addVolatileEntry('Change/I18n/langs', array('en_US' => 'us'));
 		
 		$i18nManger = new \Change\I18n\I18nManager();
 		$i18nManger->setWorkspace($application->getWorkspace());

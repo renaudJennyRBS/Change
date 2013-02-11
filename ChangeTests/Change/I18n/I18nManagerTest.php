@@ -15,11 +15,11 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$config->addVolatileEntry('i18n/supported-lcids', null);
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', null);
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		
-		$config->addVolatileEntry('i18n/langs', null);
-		$config->addVolatileEntry('i18n/langs', array('en_US' => 'us'));
+		$config->addVolatileEntry('Change/I18n/langs', null);
+		$config->addVolatileEntry('Change/I18n/langs', array('en_US' => 'us'));
 		
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setWorkspace($application->getWorkspace());
@@ -39,22 +39,22 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		
-		$config->addVolatileEntry('i18n/supported-lcids', null);
+		$config->addVolatileEntry('Change/I18n/supported-lcids', null);
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->supportMultipleLCIDs());
 		
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->supportMultipleLCIDs());
 
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->supportMultipleLCIDs());
 
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->supportMultipleLCIDs());
@@ -67,24 +67,24 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$config->addVolatileEntry('i18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		$configArray = $config->getConfigArray();
 		
-		$config->addVolatileEntry('i18n/synchro/keys', array());
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array());
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->hasI18nSynchro());
 		$this->assertEquals(array(), $manager->getI18nSynchro());
 		
 		$config->setConfigArray($configArray);
-		$config->addVolatileEntry('i18n/synchro/keys', array('en_GB' => array('fr_FR')));
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR')));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
 		$this->assertEquals(array('en_GB' => array('fr_FR')), $manager->getI18nSynchro());
 		
 		$config->setConfigArray($configArray);
-		$config->addVolatileEntry('i18n/synchro/keys', array('en_GB' => array('fr_FR'), 'en_US' => array('en_GB', 'fr_FR')));
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR'), 'en_US' => array('en_GB', 'fr_FR')));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
@@ -92,7 +92,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		// Unsupported LCIDs are ignored
 		$config->setConfigArray($configArray);
-		$config->addVolatileEntry('i18n/synchro/keys', array('en_GB' => array('fr_FR', 'kl_KL'), 'to_TO' => array('fr_FR')));
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR', 'kl_KL'), 'to_TO' => array('fr_FR')));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
@@ -276,8 +276,8 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('plop en a.aa', $manager->formatKey('en_GB', 'm.project.tests.a.aa.plop'));
 		$this->assertEquals('m.project.tests.a.aa.plop', $manager->formatKey('en_US', 'm.project.tests.a.aa.plop'));
 		
-		$config->addVolatileEntry('i18n/supported-lcids', array('en_US'));
-		$config->addVolatileEntry('i18n/synchro/keys', array('en_US' => array('en_GB')));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('en_US'));
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_US' => array('en_GB')));
 		$syncManager = new \Change\I18n\I18nManager();
 		$syncManager->setConfiguration($config);
 		$syncManager->setWorkspace($manager->getWorkspace());
@@ -343,7 +343,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		// If no values set, use the default ones.
 		$config = $this->getApplication()->getConfiguration();
-		$this->assertEquals($config->getEntry('i18n/default-timezone'), $manager->getTimeZone()->getName());
+		$this->assertEquals($config->getEntry('Change/I18n/default-timezone'), $manager->getTimeZone()->getName());
 		foreach (array('fr_FR', 'en_GB') as $lang)
 		{
 			$this->assertEquals($manager->formatKey($lang, 'c.date.default-date-format'), $manager->getDateFormat($lang));

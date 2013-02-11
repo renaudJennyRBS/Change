@@ -52,8 +52,8 @@ abstract class DbProvider
 	 */
 	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
 	{
-		$section = $config->getEntry('databases/use', 'default');
-		$connectionInfos = $config->getEntry('databases/' . $section, array());
+		$section = $config->getEntry('Change/Db/use', 'default');
+		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
 		if (!isset($connectionInfos['dbprovider']))
 		{
 			throw new \RuntimeException('Missing or incomplete database configuration');
