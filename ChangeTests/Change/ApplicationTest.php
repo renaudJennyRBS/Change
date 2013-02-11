@@ -127,7 +127,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
 			),
 		);
-		$this->assertEquals('default', $application->getProfile());
 	}
 
 

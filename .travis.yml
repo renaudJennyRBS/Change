@@ -9,11 +9,12 @@ before_install:
  - curl -s https://getcomposer.org/installer | php -- --quiet
  - php composer.phar install --dev --no-interaction 
  - mysql -e 'create database rbschangetest;'
- - bash travisconfig/init.sh
+ - bash ChangeTests/travisconfig/init.sh
 
 script:
  - cd ChangeTests/
- - phpunit Change/
+ - phpunit --configuration phpunit.xml.dist
+ - phpunit --configuration phpunit.xml.sqlite.dist
 
 notifications:
    email:
