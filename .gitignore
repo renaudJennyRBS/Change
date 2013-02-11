@@ -49,3 +49,4 @@ nbproject
 ./test*
 /ChangeTests/UnitTestWorkspace/Compilation/
 /App/OldBootstrap.php
+/change.xml

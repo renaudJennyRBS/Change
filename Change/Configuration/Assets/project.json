@@ -1,13 +1,16 @@
 {
-	"config":{
-		"general":{},
-		"logging":{
+	"Change":{
+		"Application":{
+			"php-cli-path":"php",
+			"development-mode":false
+		},
+		"Logging":{
 			"writers":{
 				"default":"stream"
 			},
 			"level":"WARN"
 		},
-		"i18n":{
+		"I18n":{
 			"supported-lcids":["fr_FR", "en_GB"],
 			"langs":{
 				"en_GB":"en"
@@ -15,19 +18,27 @@
 			"default-timezone":"Europe\/Paris",
 			"synchro":{}
 		},
-		"injection":{
+		"Injection":{
 			"class":{}
 		},
-		"databases":{
+		"Db":{
 			"use": "default",
 			"default":{
-				"dbprovider":"\\Change\\Db\\Mysql\\DbProvider"
+				"dbprovider":"\\Change\\Db\\Mysql\\DbProvider",
+				"user":null,
+				"password":null,
+				"database":null,
+				"host":"127.0.0.1",
+				"port":3306,
+				"unix_socket":null,
+				"longTransaction":5
 			},
 			"sqlite":{
-				"dbprovider":"\\Change\\Db\\SQLite\\DbProvider"
+				"dbprovider":"\\Change\\Db\\SQLite\\DbProvider",
+				"database":null
 			}
 		},
-		"events":{
+		"Events":{
 			"registrationclasses":{
 				"Change":"\\Change\\Events\\DefaultRegistration"
 			}

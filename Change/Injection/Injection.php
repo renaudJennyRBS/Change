@@ -41,7 +41,7 @@ class Injection
 
 		$compiledFileNames = array();
 		$compiledDir = $this->workspace->compilationPath('Injection');
-		$injectionArray = $this->configuration->getEntry('injection/class');
+		$injectionArray = $this->configuration->getEntry('Change/Injection/class');
 		foreach ($injectionArray as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);

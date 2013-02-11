@@ -92,10 +92,14 @@ class DbProvider extends \Change\Db\DbProvider
 		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
 		$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
 		$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-
+		
 		if ($database !== null)
 		{
 			$dsnOptions[] = 'dbname=' . $database;
+		}
+		else
+		{
+			throw new \RuntimeException('database not defined!');
 		}
 		$unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
 		if ($unix_socket != null)

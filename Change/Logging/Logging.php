@@ -58,7 +58,7 @@ class Logging
 	 */
 	public function getLevel()
 	{
-		return $this->configuration->getEntry('logging/level');
+		return $this->configuration->getEntry('Change/Logging/level');
 	}
 
 	/**
@@ -156,10 +156,10 @@ class Logging
 	 */
 	protected function getCreateWriterMethodName($loggerName)
 	{
-		$writerType = $this->configuration->getEntry('logging/writers/' . $loggerName, null);
+		$writerType = $this->configuration->getEntry('Change/Logging/writers/' . $loggerName, null);
 		if ($writerType === null)
 		{
-			$writerType = $this->configuration->getEntry('logging/writers/default', 'stream');
+			$writerType = $this->configuration->getEntry('Change/Logging/writers/default', 'stream');
 		}
 		$methodName = 'create' . ucfirst(strtolower($writerType)) . 'Writer';
 		if (method_exists($this, $methodName))
@@ -261,7 +261,7 @@ class Logging
 	 */
 	public function deprecated($message)
 	{
-		if ($this->getConfiguration()->getEntry('general/development-mode'))
+		if ($this->getConfiguration()->getEntry('Change/Application/development-mode'))
 		{
 			trigger_error($message, E_USER_DEPRECATED);
 		}
@@ -308,7 +308,7 @@ class Logging
 				die($message . PHP_EOL);
 				break;
 			default :
-				if ($this->getConfiguration()->getEntry('general/development-mode'))
+				if ($this->getConfiguration()->getEntry('Change/Application/development-mode'))
 				{
 					if ($errno === E_USER_DEPRECATED)
 					{

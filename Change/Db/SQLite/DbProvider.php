@@ -62,8 +62,11 @@ class DbProvider extends \Change\Db\DbProvider
 	public function getConnection($connectionInfos)
 	{
 		$protocol = 'sqlite';
-		$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : ':memory:';
-		$dsn = $protocol . ':' .$database;
+		if (!isset($connectionInfos['database']))
+		{
+			throw new \RuntimeException('database not defined!');
+		}
+		$dsn = $protocol . ':' .$connectionInfos['database'];
 		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		return $pdo;
