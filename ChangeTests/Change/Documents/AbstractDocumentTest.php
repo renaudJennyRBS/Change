@@ -166,7 +166,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $localizedDoc->getPropertiesErrors());
 
 		$this->assertEquals('fr_FR', $localizedDoc->getLCID());
-		$this->assertNull($localizedDoc->getVoLCID());
+		$this->assertNull($localizedDoc->getRefLCID());
 
 		$this->assertNull($localizedDoc->getPStr());
 		$this->assertNull($localizedDoc->getPStrOldValue());
@@ -182,7 +182,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(3, $localizedDoc->getPropertiesErrors());
 		$this->assertArrayHasKey('pStr', $localizedDoc->getPropertiesErrors());
 		$this->assertArrayHasKey('pLStr', $localizedDoc->getPropertiesErrors());
-		$this->assertArrayHasKey('voLCID', $localizedDoc->getPropertiesErrors());
+		$this->assertArrayHasKey('refLCID', $localizedDoc->getPropertiesErrors());
 
 		$localizedDoc->setPStr('string');
 		$this->assertEquals('string', $localizedDoc->getPStr());
@@ -192,7 +192,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string FR', $localizedDoc->getPLStr());
 		$this->assertNull($localizedDoc->getPLStrOldValue());
 
-		$localizedDoc->setVoLCID('fr_FR');
+		$localizedDoc->setRefLCID('fr_FR');
 		$localizedDoc->setPInt(50);
 		$localizedDoc->setPFloat(0.03);
 

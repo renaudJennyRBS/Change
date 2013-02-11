@@ -112,7 +112,7 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(17, $modelLocalized->getLocalizedProperties());
 		$this->assertCount(19, $modelLocalized->getNonLocalizedProperties());
 
-		$this->assertArrayHasKey('voLCID', $modelLocalized->getNonLocalizedProperties());
+		$this->assertArrayHasKey('refLCID', $modelLocalized->getNonLocalizedProperties());
 		$this->assertArrayHasKey('LCID', $modelLocalized->getLocalizedProperties());
 		$this->assertArrayHasKey('creationDate', $modelLocalized->getLocalizedProperties());
 		return $modelManager;

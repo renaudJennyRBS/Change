@@ -391,7 +391,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$ca = $p->getConstraintArray();
 		$this->assertEquals(array('maxSize' => array('max' => 255)), $p->getConstraintArray());
 		
-		$p = new Property($model, 'voLCID');
+		$p = new Property($model, 'refLCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertTrue($p->getRequired());

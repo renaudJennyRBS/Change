@@ -303,7 +303,7 @@ class Model
 			
 			if ($this->localized)
 			{
-				$property = new Property($this, 'voLCID', 'String');
+				$property = new Property($this, 'refLCID', 'String');
 				$this->properties[$property->getName()] = $property;
 				
 				$property = new Property($this, 'LCID', 'String');

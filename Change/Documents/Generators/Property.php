@@ -10,11 +10,10 @@ class Property
 		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
 		'DocumentId', 'Document', 'DocumentArray');
 	
-	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'volcid', 'lcid',
+	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
 			'creationdate', 'modificationdate',
 			'authorname', 'authorid', 'documentversion',
-			'publicationstatus', 'startpublication', 'endpublication',
-			'correctionofid', 'versionofid');
+			'publicationstatus', 'startpublication', 'endpublication', 'versionofid');
 	
 	protected static $RESERVED_PROPERTY_METHODS = array('get{Name}', 'set{Name}', 'get{Name}OldValue', 
 		'get{Name}DOMDocument', 'set{Name}DOMDocument', 'getDecoded{Name}', 'get{Name}Instance', 
@@ -519,7 +518,7 @@ class Property
 					$this->required = true;
 				}
 				break;
-			case 'voLCID':
+			case 'refLCID':
 			case 'LCID':
 				$this->type = 'String';
 				$this->constraintArray['maxSize'] = array('max' => 10);
@@ -602,8 +601,7 @@ class Property
 		{
 			switch ($this->name)
 			{
-				case 'voLCID':
-				case 'correctionOfId':
+				case 'refLCID':
 				case 'versionOfId':			
 					$this->makeLocalized(null);
 					break;					

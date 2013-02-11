@@ -136,7 +136,7 @@ abstract class AbstractService
 			}
 			if ($document->getPersistentState() === DocumentManager::STATE_NEW)
 			{
-				$document->setVoLCID($i18nPart->getLCID());
+				$document->setRefLCID($i18nPart->getLCID());
 			}
 		}
 		else
@@ -323,7 +323,7 @@ abstract class AbstractService
 		
 		$values = array();
 		
-		$nonLocalizedKey = ($document instanceof Localizable) ? $document->getVoLCID() : Correction::NULL_LCID_KEY;	
+		$nonLocalizedKey = ($document instanceof Localizable) ? $document->getRefLCID() : Correction::NULL_LCID_KEY;
 			
 		foreach ($document->getDocumentModel()->getPropertiesWithCorrection() as $propertyName => $property)
 		{

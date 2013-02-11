@@ -300,7 +300,7 @@ class AbstractDocumentClass
 	public function hasCorrection($LCID = null)
 	{
 		$corrections = $this->getCorrections();
-		$key = ($LCID === null)?  $this->getVoLCID() : $LCID;
+		$key = ($LCID === null)?  $this->getRefLCID() : $LCID;
 		return isset($corrections[$key]);
 	}
 
@@ -311,7 +311,7 @@ class AbstractDocumentClass
 	 */
 	public function getCorrection($LCID = null)
 	{
-		$key = ($LCID === null)?  $this->getVoLCID() : $LCID;
+		$key = ($LCID === null)?  $this->getRefLCID() : $LCID;
 		$corrections = $this->getCorrections();
 		if (!isset($corrections[$key]))
 		{

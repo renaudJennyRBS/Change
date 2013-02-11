@@ -79,7 +79,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		
 		$this->assertTrue($model->getLocalized());
-		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('voLCID'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('refLCID'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('LCID'));
 		
 		$this->assertTrue($model->getEditable());
