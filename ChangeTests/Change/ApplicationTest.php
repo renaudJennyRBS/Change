@@ -21,13 +21,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
 		}
 		$this->assertFalse(class_exists('\Zend\Stdlib\ErrorHandler'));
-		$this->assertFalse(class_exists('\ZendOAuth\OAuth'));
+		//$this->assertFalse(class_exists('\ZendOAuth\OAuth'));
 		$this->assertFalse(class_exists('\Change\Stdlib\File'));
 		require_once PROJECT_HOME . '/Change/Application.php';
 		$application = new \Change\Application();
 		$application->registerNamespaceAutoload();
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
-		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
+		//$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
 
@@ -97,7 +97,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
 		$this->assertEquals($instance->test(), 'InjectingClass');
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
-		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
+		//$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
 
