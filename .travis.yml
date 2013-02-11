@@ -6,8 +6,10 @@ php:
   - 5.5
 
 before_install:
- - curl -s https://getcomposer.org/installer | php -- --quiet
- - php composer.phar install --no-interaction
+ - wget "https://packages.zendframework.com/releases/ZendFramework-2.1.1/ZendFramework-minimal-2.1.1.tgz"
+ - tar -zxf ZendFramework-minimal-2.1.1.tgz
+ - mkdir -p Libraries/zendframework
+ - mv ZendFramework-minimal-2.1.1 Libraries/zendframework/zendframework
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
 
