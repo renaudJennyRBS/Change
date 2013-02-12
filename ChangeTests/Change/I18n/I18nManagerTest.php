@@ -34,7 +34,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstruct
 	 */
-	public function testSupportMultipleLCIDs()
+	public function testSupportsMultipleLCIDs()
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
@@ -42,22 +42,22 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$config->addVolatileEntry('Change/I18n/supported-lcids', null);
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
-		$this->assertFalse($manager->supportMultipleLCIDs());
+		$this->assertFalse($manager->supportsMultipleLCIDs());
 		
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
-		$this->assertFalse($manager->supportMultipleLCIDs());
+		$this->assertFalse($manager->supportsMultipleLCIDs());
 
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
-		$this->assertTrue($manager->supportMultipleLCIDs());
+		$this->assertTrue($manager->supportsMultipleLCIDs());
 
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setConfiguration($config);
-		$this->assertTrue($manager->supportMultipleLCIDs());
+		$this->assertTrue($manager->supportsMultipleLCIDs());
 	}
 
 	/**

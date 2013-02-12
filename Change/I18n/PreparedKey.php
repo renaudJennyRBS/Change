@@ -2,6 +2,7 @@
 namespace Change\I18n;
 
 /**
+ * @api
  * @name \Change\I18n\PreparedKey
  */
 class PreparedKey
@@ -32,6 +33,7 @@ class PreparedKey
 	protected $replacements;
 
 	/**
+	 * @api
 	 * @param string $key
 	 * @param string[] $formatters
 	 * @param array<string => string> $replacements
@@ -52,6 +54,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getKey()
@@ -60,6 +63,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string $key
 	 */
 	public function setKey($key)
@@ -70,6 +74,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isValid()
@@ -93,6 +98,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getPath()
@@ -101,6 +107,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getId()
@@ -109,6 +116,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function hasFormatters()
@@ -117,6 +125,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getFormatters()
@@ -125,6 +134,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string[] $formatters
 	 */
 	public function setFormatters($formatters)
@@ -133,6 +143,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string $formatter
 	 */
 	public function addFormatter($formatter)
@@ -144,6 +155,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string $key
 	 * @param string $value
 	 */
@@ -153,6 +165,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function hasReplacements()
@@ -161,6 +174,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @return array<string => string>
 	 */
 	public function getReplacements()
@@ -169,6 +183,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param array<string => string> $replacements
 	 */
 	public function setReplacements($replacements)
@@ -177,6 +192,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string $key
 	 * @param string $value
 	 */
@@ -186,6 +202,7 @@ class PreparedKey
 	}
 
 	/**
+	 * @api
 	 * @param string $key
 	 * @param string $value
 	 */

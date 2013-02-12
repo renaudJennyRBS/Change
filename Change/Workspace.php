@@ -2,7 +2,7 @@
 namespace Change;
 
 /**
- * @name \Change\Application\Workspace
+ * @name \Change\Workspace
  */
 class Workspace
 {
