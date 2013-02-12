@@ -4,13 +4,13 @@ namespace Change\Db\Query;
 use Zend\Code\Exception\BadMethodCallException;
 
 /**
+ * @api
  * @name \Change\Db\Query\AbstractQuery
  */
 abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 {
 	/**
 	 * DB Provider instance the query will be executed with.
-	 * 
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;

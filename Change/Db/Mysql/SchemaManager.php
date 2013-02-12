@@ -155,15 +155,19 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function clearDB()
 	{
-		foreach ($this->getTableNames() as $table)
+		$tables = $this->getTableNames();
+		if (count($tables))
 		{
-			try
+			foreach ($this->getTableNames() as $table)
 			{
-				$this->execute('DROP TABLE `' . $table . '`');
-			}
-			catch (\Exception $e)
-			{
-				$this->logging->warn($e->getMessage());
+				try
+				{
+					$this->execute('DROP TABLE `' . $table . '`');
+				}
+				catch (\Exception $e)
+				{
+					$this->logging->warn($e->getMessage());
+				}
 			}
 		}
 		$this->tables = null;
@@ -468,6 +472,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		$fd->setPrecision($dbOptions['precision']);
 		$fd->setScale($dbOptions['scale']);
 		$fd->setNullable(false);
+		$fd->setDefaultValue(0);
 		return $fd;
 	}
 	

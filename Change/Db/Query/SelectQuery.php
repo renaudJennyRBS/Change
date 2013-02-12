@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\SelectQuery
  */
 class SelectQuery extends \Change\Db\Query\AbstractQuery
@@ -52,6 +53,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	protected $maxResults;
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\SelectClause|null
 	 */
 	public function getSelectClause()
@@ -60,6 +62,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\SelectClause $selectClause
 	 */
 	public function setSelectClause(\Change\Db\Query\Clauses\SelectClause $selectClause)
@@ -68,6 +71,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\FromClause
 	 */
 	public function getFromClause()
@@ -76,6 +80,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\FromClause $fromClause
 	 */
 	public function setFromClause(\Change\Db\Query\Clauses\FromClause $fromClause)
@@ -84,6 +89,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\WhereClause
 	 */
 	public function getWhereClause()
@@ -92,6 +98,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
 	 */
 	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
@@ -100,7 +107,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
-	 *
+	 * @api
 	 * @return \Change\Db\Query\Clauses\GroupByClause
 	 */
 	public function getGroupByClause()
@@ -109,6 +116,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause
 	 */
 	public function setGroupByClause(\Change\Db\Query\Clauses\GroupByClause $groupByClause)
@@ -117,6 +125,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\HavingClause
 	 */
 	public function getHavingClause()
@@ -125,6 +134,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\HavingClause $havingClause
 	 */
 	public function setHavingClause(\Change\Db\Query\Clauses\HavingClause $havingClause)
@@ -133,6 +143,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\OrderByClause
 	 */
 	public function getOrderByClause()
@@ -141,6 +152,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\OrderByClause $orderByClause
 	 */
 	public function setOrderByClause(\Change\Db\Query\Clauses\OrderByClause $orderByClause)
@@ -149,6 +161,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\CollateClause
 	 */
 	public function getCollateClause()
@@ -157,6 +170,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\CollateClause $collateClause
 	 */
 	public function setCollateClause(\Change\Db\Query\Clauses\CollateClause $collateClause)
@@ -177,6 +191,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	}
 	
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function toSQL92String()
@@ -222,31 +237,25 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 				
 		return implode(' ', $parts);
 	}
-	
+
 	/**
-	 * @return integer|null
-	 */
-	public function getStartIndex()
-	{
-		return $this->startIndex;
-	}
-	
-	/**
-	 * @return integer|null
-	 */
-	public function getMaxResults()
-	{
-		return $this->maxResults;
-	}
-	
-	/**
+	 * @api
 	 * @param integer|null $startIndex
 	 */
 	public function setStartIndex($startIndex)
 	{
 		$this->startIndex = $startIndex;
 	}
-	
+
+	/**
+	 * @api
+	 * @return integer|null
+	 */
+	public function getStartIndex()
+	{
+		return $this->startIndex;
+	}
+
 	/**
 	 * @api
 	 * @param integer|null $maxResults
@@ -255,7 +264,16 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	{
 		$this->maxResults = $maxResults;
 	}
-	
+
+	/**
+	 * @api
+	 * @return integer|null
+	 */
+	public function getMaxResults()
+	{
+		return $this->maxResults;
+	}
+
 	/**
 	 * @api
 	 * @param \Closure|array $rowsConverter

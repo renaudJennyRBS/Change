@@ -51,6 +51,7 @@ class SqlMapping
 	}
 		
 	/**
+	 * Convert Property name in table field name
 	 * @api
 	 * @param string $propertyName
 	 * @return string
@@ -71,9 +72,10 @@ class SqlMapping
 	}
 	
 	/**
+	 * Convert \Change\Documents\Property::TYPE_* in \Change\Db\ScalarType::*
 	 * @api
 	 * @param string $propertyType \Change\Documents\Property::TYPE_*
-	 * @return integer \Change\Db\ScalarType::*
+	 * @return integer
 	 */
 	public function getDbScalarType($propertyType)
 	{
@@ -143,58 +145,5 @@ class SqlMapping
 	public function getDocumentCorrectionTable()
 	{
 		return 'change_document_correction';
-	}	
-	
-	/**
-	 * @return string
-	 */
-	public function getLocaleTableName()
-	{
-		return 'f_locale';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getSettingTableName()
-	{
-		return 'f_settings';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getTagsTableName()
-	{
-		return 'f_tags';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getURLRulesTableName()
-	{
-		return 'f_url_rules';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getIndexingStateTableName()
-	{
-		return 'f_indexing';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getI18nSynchroStateTableName()
-	{
-		return 'f_i18n';
-	}	
-	
-	public function getCompiledPermissionTableName()
-	{
-		return 'f_permission_compiled';
 	}
 }

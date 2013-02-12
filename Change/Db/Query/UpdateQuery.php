@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\UpdateQuery
  */
 class UpdateQuery extends \Change\Db\Query\AbstractQuery
@@ -22,6 +23,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	protected $whereClause;
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\UpdateClause|null
 	 */
 	public function getUpdateClause()
@@ -30,6 +32,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\SetClause|null
 	 */
 	public function getSetClause()
@@ -38,6 +41,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\WhereClause|null
 	 */
 	public function getWhereClause()
@@ -46,6 +50,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\UpdateClause $updateClause
 	 */
 	public function setUpdateClause(\Change\Db\Query\Clauses\UpdateClause $updateClause)
@@ -54,6 +59,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\SetClause $setClause
 	 */
 	public function setSetClause(\Change\Db\Query\Clauses\SetClause $setClause)
@@ -62,6 +68,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
 	 */
 	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
@@ -86,6 +93,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function toSQL92String()

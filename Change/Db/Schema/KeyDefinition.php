@@ -74,9 +74,10 @@ class KeyDefinition
 		$this->options = is_array($options) ? $options :  array();
 		return $this;
 	}
-	
+
 	/**
-	 * @param array $options
+	 * @param string $name
+	 * @param mixed $value
 	 * @return \Change\Db\Schema\KeyDefinition
 	 */
 	public function setOption($name, $value)

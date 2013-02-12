@@ -19,6 +19,12 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->markTestSkipped('The SQLite DbProvider is not configured.');
 		}
+
+		$connectionInfos = $provider->getConnectionInfos();
+		if (!isset($connectionInfos['database']))
+		{
+			$this->markTestSkipped('The SQLite database not defined!');
+		}
 	}
 
 	public function testGetInstance()

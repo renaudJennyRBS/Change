@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\ResultsConverter
  */
 class ResultsConverter
@@ -15,8 +16,11 @@ class ResultsConverter
 	 * @var array
 	 */
 	protected $fieldsTypes;
-	
-	
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param array $fieldsTypes
+	 */
 	public function __construct(\Change\Db\DbProvider $dbProvider, array $fieldsTypes)
 	{
 		$this->dbProvider = $dbProvider;
@@ -25,6 +29,7 @@ class ResultsConverter
 	
 	
 	/**
+	 * @api
 	 * @param array $results
 	 * @return array
 	 */
@@ -43,6 +48,7 @@ class ResultsConverter
 	}
 	
 	/**
+	 * @api
 	 * @param array $row
 	 * @return array
 	 */
@@ -62,6 +68,7 @@ class ResultsConverter
 	}
 	
 	/**
+	 * @api
 	 * @param mixed $dbValue
 	 * @param integer $scalarType \Change\Db\ScalarType::*
 	 * @return mixed

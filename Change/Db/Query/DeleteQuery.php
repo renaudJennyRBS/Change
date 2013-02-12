@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\DeleteQuery
  */
 class DeleteQuery extends \Change\Db\Query\AbstractQuery
@@ -22,6 +23,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	protected $whereClause;
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\DeleteClause|null
 	 */
 	public function getDeleteClause()
@@ -30,6 +32,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\DeleteClause $deleteClause
 	 */
 	public function setDeleteClause(\Change\Db\Query\Clauses\DeleteClause $deleteClause)
@@ -38,6 +41,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\FromClause|null
 	 */
 	public function getFromClause()
@@ -46,6 +50,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\FromClause $fromClause
 	 */
 	public function setFromClause(\Change\Db\Query\Clauses\FromClause $fromClause)
@@ -54,6 +59,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\WhereClause|null
 	 */
 	public function getWhereClause()
@@ -62,6 +68,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
 	 */
 	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
@@ -86,6 +93,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	}
 		
 	/**
+	 * @api
 	 * @throws \RuntimeException
 	 * @return string
 	 */

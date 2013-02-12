@@ -154,25 +154,29 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function clearDB()
 	{
-		foreach ($this->getTableNames() as $table)
+		$tables = $this->getTableNames();
+		if (count($tables))
 		{
+			foreach ($tables as $table)
+			{
+				try
+				{
+					$this->execute('DROP TABLE [' . $table . ']');
+				}
+				catch (\Exception $e)
+				{
+					$this->logging->warn($e->getMessage());
+				}
+			}
+			//Clean All Sequence
 			try
 			{
-				$this->execute('DROP TABLE [' . $table . ']');
+				$this->execute('DELETE FROM [sqlite_sequence]');
 			}
 			catch (\Exception $e)
 			{
 				$this->logging->warn($e->getMessage());
 			}
-		}
-		//Clean All Sequence
-		try
-		{
-			$this->execute('DELETE FROM [sqlite_sequence]');
-		}
-		catch (\Exception $e)
-		{
-			$this->logging->warn($e->getMessage());
 		}
 		$this->tables = null;
 	}
@@ -229,6 +233,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 					$type = FieldDefinition::SMALLINT;
 					break;
 				case 'float':
+				case 'double':
 					$type = FieldDefinition::FLOAT;
 					break;
 				case 'decimal':
@@ -242,9 +247,13 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 					break;
 				case 'varchar':
 					$type = FieldDefinition::VARCHAR;
+					$fd->setLength(intval($size));
+					$size = null;
 					break;
 				case 'char':
 					$type = FieldDefinition::CHAR;
+					$fd->setLength(intval($size));
+					$size = null;
 					break;
 				case 'blob':
 					$type = FieldDefinition::LOB;
@@ -259,7 +268,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 			$fd->setType($type);
 			if ($size)
 			{
-				$sp = explode($size, ',');
+				$sp = explode(',', $size);
 				$fd->setPrecision(intval($sp[0]));
 				$fd->setScale(isset($sp[1])? intval($sp[1]) : null);
 			}
@@ -427,6 +436,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		$dbOptions = $this->getFieldDbOptions(\Change\Db\ScalarType::BOOLEAN, $dbOptions);
 		$fd->setPrecision($dbOptions['precision']);
 		$fd->setNullable(false);
+		$fd->setDefaultValue(0);
 		return $fd;
 	}
 	
