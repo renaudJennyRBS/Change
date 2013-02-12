@@ -125,20 +125,6 @@ class Application
 	}
 
 	/**
-	 *
-	 * @return string
-	 */
-	public function getProfile()
-	{
-		$profile = 'default';
-		if (file_exists(PROJECT_HOME . '/profile'))
-		{
-			$profile = trim(file_get_contents(PROJECT_HOME . '/profile'));
-		}
-		return $profile;
-	}
-
-	/**
 	 * Set the application services DiC
 	 *
 	 * @param \Change\Application\ApplicationServices $applicationServices
@@ -313,16 +299,19 @@ class Application
 	 */
 	public function getProjectConfigurationPaths()
 	{
+		$workspace = $this->getWorkspace();
 		$result = array();
-		$globalConfigFile = $this->getWorkspace()->appPath('Config', 'project.json');
+		$globalConfigFile = $workspace->appPath('Config', 'project.json');
 		if (file_exists($globalConfigFile))
 		{
 			$result[] = $globalConfigFile;
 		}
-		$profileConfigFile = $this->getWorkspace()->appPath('Config', 'project.' . $this->getProfile() . '.json');
-		if (file_exists($profileConfigFile))
+
+		//@TODO Fix instance config file name
+		$instanceConfigFile = $workspace->appPath('Config', 'project.default.json');
+		if (file_exists($instanceConfigFile))
 		{
-			$result[] = $profileConfigFile;
+			$result[] = $instanceConfigFile;
 		}
 		return $result;
 	}

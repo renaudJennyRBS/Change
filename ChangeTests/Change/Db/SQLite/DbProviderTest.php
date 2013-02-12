@@ -6,15 +6,24 @@ use Change\Db\ScalarType;
 
 class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+
+	protected function setUp()
+	{
+		if (!in_array('sqlite', \PDO::getAvailableDrivers()))
+		{
+			$this->markTestSkipped('PDO SQLite is not installed.');
+		}
+
+		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		if (!($provider instanceof DbProvider))
+		{
+			$this->markTestSkipped('The SQLite DbProvider is not configured.');
+		}
+	}
+
 	public function testGetInstance()
 	{
-		$app = $this->getApplication();
-		$connectionInfos = array('');
-		
-		$connectionInfos['database'] = $app->getWorkspace()->appPath('TestSQLite.db');
-		$connectionInfos['longTransaction'] = 5;
-
-		$provider = new \Change\Db\SQLite\DbProvider($connectionInfos, $app->getApplicationServices()->getLogging());
+		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
 
 		/* @var $provider \Change\Db\SQLite\DbProvider */
 		$this->assertInstanceOf('\Change\Db\SQLite\DbProvider', $provider);

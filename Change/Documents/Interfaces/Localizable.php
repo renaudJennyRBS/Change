@@ -11,13 +11,13 @@ interface Localizable
 	 * @api
 	 * @return string
 	 */
-	public function getVoLCID();
+	public function getRefLCID();
 		
 	/**
 	 * @api
 	 * @param string $val
 	 */
-	public function setVoLCID($val);
+	public function setRefLCID($val);
 
 	/**
 	 * @api

@@ -6,6 +6,20 @@ use Change\Db\ScalarType;
 
 class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	protected function setUp()
+	{
+		if (!in_array('mysql', \PDO::getAvailableDrivers()))
+		{
+			$this->markTestSkipped('PDO Mysql is not installed.');
+		}
+
+		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		if (!($provider instanceof DbProvider))
+		{
+			$this->markTestSkipped('The Mysql DbProvider is not configured.');
+		}
+	}
+
 	public function testGetInstance()
 	{
 		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();

@@ -1,8 +1,10 @@
 <?php
-
 namespace ChangeTests\Change\TestAssets;
 
-class UnitTestWorkspace extends \Change\Workspace
+/**
+ * @name \ChangeTests\Change\TestAssets\Workspace
+ */
+class Workspace extends \Change\Workspace
 {
 	public function clear()
 	{

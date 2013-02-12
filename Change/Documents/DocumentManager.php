@@ -1097,7 +1097,7 @@ class DocumentManager
 			throw new \InvalidArgumentException('Invalid LCID argument.');
 		}
 		
-		if (($document instanceof \Change\Documents\Interfaces\Localizable) && ($LCID != $document->getVoLCID())) 
+		if (($document instanceof \Change\Documents\Interfaces\Localizable) && ($LCID != $document->getRefLCID()))
 		{
 			$cprop = $model->getLocalizedPropertiesWithCorrection();
 		}

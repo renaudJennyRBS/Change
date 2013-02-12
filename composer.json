@@ -3,7 +3,6 @@
 	"description": "RBS Change CMS & E-Commerce Platform",
 	"type": "rbschange-core",
 	"license":"AGPL-3.0",
-	"minimum-stability":"dev",
 	"autoload":
 	{
 		"psr-0":
@@ -11,35 +10,11 @@
 			"Change" : "."
 		}
 	},
-	"require-dev":
-	{
-		"rbschange/travisconfig":"dev-master",
-		"symfony/console": ">=v2.1.0",
-		"symfony/finder": ">=v2.1.0",
-		"symfony/process": ">=v2.1.0"
-	},
 	"require":
 	{
 		"php": ">=5.3.3",
-		"composer/installers": "dev-rbschange",
-		"zendframework/zendframework": "2.1.0",
-		"zendframework/ZendOAuth": "2.0.1"
+		"zendframework/zendframework": "2.1.1"
 	},
-	"repositories":
-	[
-		{
-			"type": "vcs",
-			"url": "git://github.com/RBSChange/installers.git"
-		},
-		{
-			"type": "vcs",
-			"url": "git://github.com/RBSChange/travisconfig.git"
-		},
-		{
-			"type": "vcs",
-			"url": "git://github.com/zendframework/ZendOAuth.git"
-		}
-	],
 	"config":
 	{
 		"vendor-dir":"Libraries"

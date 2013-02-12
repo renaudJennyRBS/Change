@@ -14,7 +14,7 @@ class Application extends \Change\Application
 	{
 		if (!$this->workspace)
 		{
-			$this->workspace = new \ChangeTests\Change\TestAssets\UnitTestWorkspace();
+			$this->workspace = new \ChangeTests\Change\TestAssets\Workspace();
 		}
 		return $this->workspace;
 	}
@@ -25,5 +25,25 @@ class Application extends \Change\Application
 		$zendLoader  = new \Zend\Loader\StandardAutoloader();
 		$zendLoader->registerNamespace('ChangeTests', dirname(dirname(__DIR__)));
 		$zendLoader->register();
+	}
+
+	/**
+	 * Get all the project-level config files paths, in the correct order
+	 *
+	 * @api
+	 * @return array string
+	 */
+	public function getProjectConfigurationPaths()
+	{
+		$result = parent::getProjectConfigurationPaths();
+		if (isset($_ENV['TestConfigFile']) && $_ENV['TestConfigFile'] != '')
+		{
+			$testConfigFile = $this->getWorkspace()->appPath('Config', $_ENV['TestConfigFile']);
+			if (file_exists($testConfigFile))
+			{
+				$result[] = $testConfigFile;
+			}
+		}
+		return $result;
 	}
 }
