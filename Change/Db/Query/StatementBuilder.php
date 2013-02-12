@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\StatementBuilder
  */
 class StatementBuilder
@@ -33,7 +34,7 @@ class StatementBuilder
 	
 	/**
 	 * @api
-	 * Explicitely reset the builder (which will destroy the current query).
+	 * Explicitly reset the builder (which will destroy the current query).
 	 */
 	public function reset()
 	{
@@ -41,6 +42,7 @@ class StatementBuilder
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\SQLFragmentBuilder
 	 */
 	public function getFragmentBuilder()
@@ -91,6 +93,7 @@ class StatementBuilder
 	}
 	
 	/**
+	 * @api
 	 * @throws \LogicException
 	 * @return \Change\Db\Query\InsertQuery
 	 */
@@ -116,8 +119,8 @@ class StatementBuilder
 		{
 			$this->reset();
 		}
-		$insertQyery = new InsertQuery($this->dbProvider);
-		$this->query = $insertQyery;
+		$insertQuery = new InsertQuery($this->dbProvider);
+		$this->query = $insertQuery;
 		
 		$columns = func_get_args();
 		array_shift($columns);
@@ -132,7 +135,7 @@ class StatementBuilder
 			if ($table instanceof \Change\Db\Query\Expressions\Table)
 			{
 				$insertClause = new \Change\Db\Query\Clauses\InsertClause($table);
-				$insertQyery->setInsertClause($insertClause);
+				$insertQuery->setInsertClause($insertClause);
 			}
 		}
 				
@@ -153,7 +156,7 @@ class StatementBuilder
 	 * @api
 	 * @param \Change\Db\Query\Expressions\Column|string $column1 [optional]
 	 * @param \Change\Db\Query\Expressions\Column|string $_ [optional]
-	 * @return Change\Db\Query\StatementBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function addColumns()
 	{
@@ -170,7 +173,7 @@ class StatementBuilder
 	 * @api
 	 * @param \Change\Db\Query\Expressions\Column|string $column
 	 * @throws \LogicException
-	 * @return Change\Db\Query\StatementBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function addColumn($column)
 	{
@@ -195,7 +198,7 @@ class StatementBuilder
 	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $column1 [optional]
 	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $_ [optional]
 	 * @throws \LogicException
-	 * @return Change\Db\Query\StatementBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function addValues()
 	{
@@ -212,7 +215,7 @@ class StatementBuilder
 	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $expression
 	 * @throws \LogicException
-	 * @return Change\Db\Query\StatementBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function addValue($expression)
 	{
@@ -231,6 +234,7 @@ class StatementBuilder
 	}
 	
 	/**
+	 * @api
 	 * @throws \LogicException
 	 * @return \Change\Db\Query\UpdateQuery
 	 */
@@ -277,7 +281,7 @@ class StatementBuilder
 	 * @param \Change\Db\Query\Expressions\Column|string $column
 	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $expression
 	 * @throws \LogicException
-	 * @return Change\Db\Query\StatementBuilder
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function assign($column, $expression)
 	{
@@ -300,6 +304,7 @@ class StatementBuilder
 	}
 	
 	/**
+	 * @api
 	 * @throws \LogicException
 	 * @return \Change\Db\Query\DeleteQuery
 	 */
@@ -341,9 +346,11 @@ class StatementBuilder
 		}
 		return $this;
 	}
-	
+
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
+	 * @throws \LogicException
 	 * @return \Change\Db\Query\StatementBuilder
 	 */
 	public function where(\Change\Db\Query\Predicates\InterfacePredicate $predicate)

@@ -3,7 +3,6 @@ namespace Change\Db\Query;
 
 use Change\Db\Query\Expressions\Assignment;
 use Change\Db\Query\Expressions\AbstractExpression;
-use Change\Db\Query\Expressions\AbstractOperation;
 use Change\Db\Query\Expressions\Func;
 use Change\Db\Query\Expressions\Table;
 use Change\Db\Query\Expressions\Identifier;
@@ -21,6 +20,7 @@ use Change\Db\Query\Predicates\Like;
 use Change\Db\Query\Predicates\In;
 
 /**
+ * @api
  * @name \Change\Db\Query\SQLFragmentBuilder
  */
 class SQLFragmentBuilder
@@ -37,11 +37,11 @@ class SQLFragmentBuilder
 	{
 		$this->sqlMapping = $sqlMapping;
 	}
-	
+
 	/**
+	 * Build a function argument after $name assumed as function arguments
 	 * @api
 	 * @param string $name
-	 * @param array $args
 	 * @return \Change\Db\Query\Expressions\Func
 	 */
 	public function func($name)
@@ -110,8 +110,8 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @throws \InvalidArgumentException
-	 * @param \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs (if string assume identifier)
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs (if string assume identifier)
 	 * @return \Change\Db\Query\Expressions\Alias
 	 */
 	public function alias(AbstractExpression $lhs, $rhs)
@@ -130,8 +130,8 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @throws \InvalidArgumentException
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs (if string assume identifier)
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs (if string assume string)
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs (if string assume identifier)
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs (if string assume string)
 	 * @return \Change\Db\Query\Expressions\Assignment
 	 */
 	public function assignment($lhs, $rhs)
@@ -222,10 +222,11 @@ class SQLFragmentBuilder
 		}
 		return $p;
 	}
-	
+
 	/**
 	 * @param \Change\Db\Query\Expressions\Parameter $parameter
 	 * @param mixed $queryOrBuilder
+	 * @throws \InvalidArgumentException
 	 */
 	protected function bindParameter($parameter, $queryOrBuilder)
 	{
@@ -282,8 +283,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function eq($lhs, $rhs)
@@ -295,8 +296,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function neq($lhs, $rhs)
@@ -308,8 +309,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function gt($lhs, $rhs)
@@ -321,8 +322,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function gte($lhs, $rhs)
@@ -334,8 +335,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function lt($lhs, $rhs)
@@ -347,8 +348,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
 	 */
 	public function lte($lhs, $rhs)
@@ -357,12 +358,14 @@ class SQLFragmentBuilder
 		$rhs = $this->normalizeValue($rhs);
 		return new BinaryPredicate($lhs, $rhs, BinaryPredicate::LESSTHANOREQUAL);
 	}
-	
-	
+
+
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
+	 * @param integer $matchMode
+	 * @param bool $caseSensitive
 	 * @return \Change\Db\Query\Predicates\Like
 	 */
 	public function like($lhs, $rhs, $matchMode = Like::ANYWHERE, $caseSensitive = false)
@@ -374,9 +377,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs1
-	 * @param string | \Change\Db\Query\AbstractExpression $_
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs1
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $_
 	 * @return \Change\Db\Query\Predicates\In
 	 */
 	public function in($lhs, $rhs1)
@@ -402,8 +405,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Predicates\In
 	 */
 	public function notIn($lhs, $rhs)
@@ -415,8 +418,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Expressions\BinaryOperation
 	 */
 	public function addition($lhs, $rhs)
@@ -428,8 +431,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\AbstractExpression $rhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
 	 * @return \Change\Db\Query\Expressions\BinaryOperation
 	 */
 	public function subtraction($lhs, $rhs)
@@ -442,7 +445,7 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $expression
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Predicates\UnaryPredicate
 	 */
 	public function isNull($expression)
@@ -453,7 +456,7 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\AbstractExpression $expression
+	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Predicates\UnaryPredicate
 	 */
 	public function isNotNull($expression)
@@ -560,20 +563,13 @@ class SQLFragmentBuilder
 	public function getDocumentMetasTable()
 	{
 		return $this->table($this->sqlMapping->getDocumentMetasTableName());
-	}	
-	
-	/**
-	 * @api
-	 * @return \Change\Db\Query\Expressions\Table
-	 */
-	public function getLocaleTable()
-	{
-		return $this->table($this->sqlMapping->getLocaleTableName());
 	}
-	
+
 	/**
 	 * For internal use only.
-	 * @param  \Change\Db\Query\AbstractExpression $object
+	 * @param  \Change\Db\Query\Expressions\AbstractExpression $object
+	 * @param null $converter
+	 * @throws \InvalidArgumentException
 	 * @return \Change\Db\Query\Expressions\Raw|\Change\Db\Query\Expressions\AbstractExpression
 	 */
 	public function normalizeValue($object, $converter = null)
@@ -593,10 +589,15 @@ class SQLFragmentBuilder
 		}
 		if (!($object instanceof AbstractExpression))
 		{
-			return call_user_func($converter, $object);
+			if (is_callable($converter))
+			{
+				return call_user_func($converter, $object);
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Argument 2 is not valid \Closure');
+			}
 		}
 		return $object;
 	}
-	
-	
 }

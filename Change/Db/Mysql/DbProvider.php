@@ -79,9 +79,10 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return print_r($this->getDriver()->errorInfo(), true);
 	}
-	
+
 	/**
-	 * @param array<String, String> $connectionInfos
+	 * @param array $connectionInfos
+	 * @throws \RuntimeException
 	 * @return \PDO
 	 */
 	public function getConnection($connectionInfos)

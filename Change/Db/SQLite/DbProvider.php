@@ -56,7 +56,8 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 
 	/**
-	 * @param array<String, String> $connectionInfos
+	 * @param array $connectionInfos
+	 * @throws \RuntimeException
 	 * @return \PDO
 	 */
 	public function getConnection($connectionInfos)

@@ -18,6 +18,11 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->markTestSkipped('The Mysql DbProvider is not configured.');
 		}
+		$connectionInfos = $provider->getConnectionInfos();
+		if (!isset($connectionInfos['database']))
+		{
+			$this->markTestSkipped('The Mysql database not defined!');
+		}
 	}
 
 	public function testGetInstance()

@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\InsertQuery
  */
 class InsertQuery extends \Change\Db\Query\AbstractQuery
@@ -23,6 +24,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	
 	
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\InsertClause|null
 	 */
 	public function getInsertClause()
@@ -31,6 +33,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\Clauses\ValuesClause|null
 	 */
 	public function getValuesClause()
@@ -39,6 +42,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\Query\SelectQuery|null
 	 */
 	public function getSelectQuery()
@@ -47,6 +51,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\InsertClause $insertClause
 	 */
 	public function setInsertClause(\Change\Db\Query\Clauses\InsertClause $insertClause)
@@ -55,6 +60,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Clauses\ValuesClause $valuesClause
 	 */
 	public function setValuesClause(\Change\Db\Query\Clauses\ValuesClause $valuesClause)
@@ -63,6 +69,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\SelectQuery $selectQuery
 	 */
 	public function setSelectQuery(\Change\Db\Query\SelectQuery $selectQuery)
@@ -91,6 +98,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function toSQL92String()

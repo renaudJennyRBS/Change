@@ -2,6 +2,7 @@
 namespace Change\Db\Query;
 
 /**
+ * @api
  * @name \Change\Db\Query\Builder
  */
 class Builder
@@ -53,7 +54,7 @@ class Builder
 
 	/**
 	 * @api
-	 * Explicitely reset the builder (which will destroy the current query).
+	 * Explicitly reset the builder (which will destroy the current query).
 	 */
 	public function reset()
 	{
@@ -121,7 +122,7 @@ class Builder
 	}
 		
 	/**
-	 * Build a "SELECT DISCTINCT ..." query.
+	 * Build a "SELECT DISTINCT ..." query.
 	 * 
 	 * @api
 	 * @return \Change\Db\Query\Builder
@@ -164,6 +165,7 @@ class Builder
 
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
 	 * @return \Change\Db\Query\Builder
 	 */
@@ -175,6 +177,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param  \Change\Db\Query\Expressions\AbstractExpression $tableExpression
 	 * @param  \Change\Db\Query\Expressions\AbstractExpression $joinCondition
 	 * @return \Change\Db\Query\Builder
@@ -187,6 +190,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinCondition
 	 * @return \Change\Db\Query\Builder
@@ -199,6 +203,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinCondition
 	 * @return \Change\Db\Query\Builder
@@ -211,6 +216,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinCondition
 	 * @return \Change\Db\Query\Builder
@@ -223,6 +229,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
 	 * @return \Change\Db\Query\Builder
 	 */
@@ -253,6 +260,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Builder
 	 */
@@ -263,6 +271,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Builder
 	 */
@@ -271,9 +280,10 @@ class Builder
 		$this->addOrder($expression, \Change\Db\Query\Expressions\OrderingSpecification::DESC);
 		return $this;
 	}
-	
+
 	/**
-	 * @param \Change\Db\Query\Expressions\ExpressionList $list
+	 * @api
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @param string $direction
 	 */
 	protected function addOrder(\Change\Db\Query\Expressions\AbstractExpression $expression, $direction)
@@ -288,6 +298,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $expression
 	 * @return \Change\Db\Query\Builder
 	 */
@@ -370,6 +381,7 @@ class Builder
 	}
 	
 	/**
+	 * @api
 	 * @throws \LogicException
 	 * @return \Change\Db\Query\SelectQuery
 	 */
