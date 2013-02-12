@@ -2,6 +2,7 @@
 namespace Change\Stdlib;
 
 /**
+ * @api
  * @name \Change\Stdlib\File
  */
 class File

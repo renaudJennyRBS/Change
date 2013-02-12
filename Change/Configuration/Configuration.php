@@ -5,6 +5,7 @@ use \Zend\Stdlib\ErrorHandler;
 use Zend\Json\Json;
 
 /**
+ * @api
  * @name \Change\Configuration\Configuration
  */
 class Configuration

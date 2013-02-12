@@ -2,6 +2,7 @@
 namespace Change\Logging;
 
 /**
+ * @api
  * @name \Change\Logging\Logging
  */
 class Logging
@@ -193,15 +194,6 @@ class Logging
 	}
 
 	/**
-	 * @param integer $id
-	 */
-	public function registerSessionId($id)
-	{
-		// TODO
-		//$this->getLoggerByName('application')->setEventItem('sessionId' , '(' . $id . ')');
-	}
-
-	/**
 	 * @api
 	 * @param string $message
 	 */
@@ -338,6 +330,7 @@ class Logging
 	}
 
 	/**
+	 * @api
 	 * @param string $message
 	 */
 	protected function phperror($message, $extra = array())

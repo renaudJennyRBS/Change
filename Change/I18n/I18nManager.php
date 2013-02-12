@@ -2,6 +2,7 @@
 namespace Change\I18n;
 
 /**
+ * @api
  * @name \Change\I18n\I18nManager
  */
 class I18nManager
@@ -156,9 +157,10 @@ class I18nManager
 	}
 	
 	/**
+	 * @api
 	 * @return boolean
 	 */
-	public function supportMultipleLCIDs()
+	public function supportsMultipleLCIDs()
 	{
 		return count($this->supportedLCIDs) > 1;
 	}
@@ -264,7 +266,6 @@ class I18nManager
 	
 	/**
 	 * Converts a LCID to a two characters lang code.
-	 * @api
 	 * @param string $LCID
 	 * @return string
 	 */
