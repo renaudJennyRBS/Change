@@ -30,6 +30,11 @@ class Like extends BinaryPredicate
 	 * @var boolean
 	 */
 	protected $caseSensitive;
+
+	/**
+	 * @var string
+	 */
+	protected $wildCard = '%';
 	
 	/**
 	 * @param AbstractExpression $lhs
@@ -45,15 +50,16 @@ class Like extends BinaryPredicate
 		//This method update operator
 		$this->setCaseSensitive($caseSensitive);
 	}
-	
+
 	/**
-	 * @return number
+	 * @param boolean $caseSensitive
 	 */
-	public function getMatchMode()
+	public function setCaseSensitive($caseSensitive)
 	{
-		return $this->matchMode;
+		$this->caseSensitive = ($caseSensitive == true);
+		$this->setOperator(($this->caseSensitive) ? 'LIKE BINARY' : 'LIKE');
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -61,14 +67,14 @@ class Like extends BinaryPredicate
 	{
 		return $this->caseSensitive;
 	}
-	
+
 	/**
 	 * @throws \InvalidArgumentException
 	 * @param number $matchMode
 	 */
 	public function setMatchMode($matchMode)
 	{
-		switch ($matchMode) 
+		switch ($matchMode)
 		{
 			case self::ANYWHERE:
 			case self::BEGIN:
@@ -79,30 +85,45 @@ class Like extends BinaryPredicate
 		}
 		throw new \InvalidArgumentException('Argument 1 must be a valid const');
 	}
-	
+
 	/**
-	 * @param boolean $caseSensitive
+	 * @return number
 	 */
-	public function setCaseSensitive($caseSensitive)
+	public function getMatchMode()
 	{
-		$this->caseSensitive = ($caseSensitive == true);
-		$this->setOperator(($this->caseSensitive) ? 'LIKE BINARY' : 'LIKE');
+		return $this->matchMode;
 	}
-		
+
+	/**
+	 * @param string $wildCard
+	 */
+	public function setWildCard($wildCard)
+	{
+		$this->wildCard = $wildCard;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getWildCard()
+	{
+		return $this->wildCard;
+	}
+
 	public function getCompletedRightHandExpression()
 	{
 		$arguments = array($this->getRightHandExpression());
 		switch ($this->matchMode)
 		{
 			case self::BEGIN :
-				array_push($arguments, new String("%"));
+				array_push($arguments, new String($this->wildCard));
 				break;
 			case self::END :
-				array_unshift($arguments, new String("%"));
+				array_unshift($arguments, new String($this->wildCard));
 				break;
 			case self::ANYWHERE :
-				array_push($arguments, new String("%"));
-				array_unshift($arguments, new String("%"));
+				array_push($arguments, new String($this->wildCard));
+				array_unshift($arguments, new String($this->wildCard));
 				break;
 			default:
 				return $this->getRightHandExpression();

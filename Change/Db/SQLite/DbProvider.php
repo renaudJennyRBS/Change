@@ -218,8 +218,14 @@ class DbProvider extends \Change\Db\DbProvider
 		elseif ($fragment instanceof \Change\Db\Query\Predicates\Like)
 		{
 			$fragment->checkCompile();
+			if ($fragment->getCaseSensitive())
+			{
+				$fragment->setOperator('GLOB');
+				$fragment->setWildCard('*');
+			}
+
 			$rhe = $fragment->getCompletedRightHandExpression();
-			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($rhe);
+			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' '.$fragment->getOperator().' ' . $this->buildSQLFragment($rhe);
 		}
 		elseif ($fragment instanceof \Change\Db\Query\Predicates\In)
 		{
@@ -389,7 +395,7 @@ class DbProvider extends \Change\Db\DbProvider
 				$parts[] = strval(max(1, $query->getMaxResults()));
 				if ($query->getStartIndex())
 				{
-					$parts[] = ',' . strval(max(0, $query->getStartIndex()));
+					$parts[] = ' OFFSET ' . strval(max(0, $query->getStartIndex()));
 				}
 			}
 			
@@ -451,11 +457,11 @@ class DbProvider extends \Change\Db\DbProvider
 				$parts[] = \Change\Db\Query\Clauses\SelectClause::QUANTIFIER_DISTINCT;
 			}
 			$selectList = $clause->getSelectList();
-			if ($selectList === null)
+			if ($selectList === null || $selectList->count() == 0)
 			{
 				$selectList = new \Change\Db\Query\Expressions\AllColumns();
 			}
-			
+
 			$parts[] = $this->buildSQLFragment($selectList);
 			return implode(' ', $parts);
 		}

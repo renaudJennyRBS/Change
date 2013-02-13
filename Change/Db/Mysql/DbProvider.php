@@ -503,7 +503,7 @@ class DbProvider extends \Change\Db\DbProvider
 				$parts[] = \Change\Db\Query\Clauses\SelectClause::QUANTIFIER_DISTINCT;
 			}
 			$selectList = $clause->getSelectList();
-			if ($selectList === null)
+			if ($selectList === null || $selectList->count() == 0)
 			{
 				$selectList = new \Change\Db\Query\Expressions\AllColumns();
 			}
