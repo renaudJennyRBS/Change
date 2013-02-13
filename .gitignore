@@ -24,6 +24,7 @@ nbproject
 /securemedia/
 /themes/
 /www/
+/tmp/
 /profile
 /install.xml
 /change.properties
@@ -50,3 +51,4 @@ nbproject
 /ChangeTests/UnitTestWorkspace/Compilation/
 /App/OldBootstrap.php
 /change.xml
+/tests/
