@@ -168,15 +168,6 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 					$this->logging->warn($e->getMessage());
 				}
 			}
-			//Clean All Sequence
-			try
-			{
-				$this->execute('DELETE FROM [sqlite_sequence]');
-			}
-			catch (\Exception $e)
-			{
-				$this->logging->warn($e->getMessage());
-			}
 		}
 		$this->tables = null;
 	}
@@ -672,7 +663,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 				}
 				elseif ($key->isIndex())
 				{
-					$indexParts[] = 'CREATE INDEX ['.$key->getName().'] ON ['.$tableDefinition->getName().'] (' . implode(', ', $kf) . ')';
+					$indexParts[] = 'CREATE INDEX ['.$tableDefinition->getName() . '_' . $key->getName().'] ON ['.$tableDefinition->getName().'] (' . implode(', ', $kf) . ')';
 				}
 			}
 		}
@@ -696,6 +687,10 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		$startAuto = $tableDefinition->getOption('AUTONUMBER');
 		if ($startAuto && $startAuto > 1)
 		{
+			$seqSql = "DELETE FROM [sqlite_sequence] WHERE [name] = '".$tableDefinition->getName()."'";
+			$this->execute($seqSql);
+			$sql .= ";" . PHP_EOL . $seqSql;
+
 			$seqSql = "INSERT INTO [sqlite_sequence] ([name], [seq]) VALUES('".$tableDefinition->getName()."', ".$startAuto.")";
 			$this->execute($seqSql);
 			$sql .= ";" . PHP_EOL . $seqSql;
