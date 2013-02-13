@@ -13,6 +13,7 @@ use Change\Db\Query\Expressions\Concat;
 
 /**
  * @name \Change\Db\Query\Predicates\In
+ * @api
  */
 class In extends BinaryPredicate
 {

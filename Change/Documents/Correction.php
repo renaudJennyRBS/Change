@@ -3,6 +3,7 @@ namespace Change\Documents;
 
 /**
  * @name \Change\Documents\Correction
+ * @api
  */
 class Correction
 {

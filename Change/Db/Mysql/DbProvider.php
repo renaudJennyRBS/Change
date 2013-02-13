@@ -3,6 +3,7 @@ namespace Change\Db\Mysql;
 
 /**
  * @name \Change\Db\Mysql\DbProvider
+ * @api
  */
 class DbProvider extends \Change\Db\DbProvider
 {

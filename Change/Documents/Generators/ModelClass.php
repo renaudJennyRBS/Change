@@ -3,6 +3,7 @@ namespace Change\Documents\Generators;
 
 /**
  * @name \Change\Documents\Generators\ModelClass
+ * @api
  */
 class ModelClass
 {

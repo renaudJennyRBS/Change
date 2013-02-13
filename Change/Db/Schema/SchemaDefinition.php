@@ -3,6 +3,7 @@ namespace Change\Db\Schema;
 
 /**
  * @name \Change\Db\Schema\SchemaDefinition
+ * @api
  */
 class SchemaDefinition
 {

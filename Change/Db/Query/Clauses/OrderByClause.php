@@ -5,6 +5,7 @@ use Change\Db\Query\Clauses\AbstractClause;
 
 /**
  * @name \Change\Db\Query\Clauses\OrderByClause
+ * @api
  */
 class OrderByClause extends AbstractClause
 {

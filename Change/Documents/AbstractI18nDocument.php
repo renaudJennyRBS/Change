@@ -3,6 +3,7 @@ namespace Change\Documents;
 
 /**
  * @name \Change\Documents\AbstractI18nDocument
+ * @api
  */
 abstract class AbstractI18nDocument implements \Serializable
 {

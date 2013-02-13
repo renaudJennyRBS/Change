@@ -3,6 +3,7 @@ namespace Change\Documents;
 
 /**
  * @name \Change\Documents\AbstractModel
+ * @api
  */
 abstract class AbstractModel
 {

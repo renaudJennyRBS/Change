@@ -3,6 +3,7 @@ namespace Change\Db\Query\Clauses;
 
 /**
  * @name \Change\Db\Query\Clauses\UpdateClause
+ * @api
  */
 class UpdateClause extends AbstractClause
 {

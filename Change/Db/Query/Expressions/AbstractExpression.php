@@ -3,6 +3,7 @@ namespace Change\Db\Query\Expressions;
 
 /**
  * @name \Change\Db\Query\Expressions\AbstractExpression
+ * @api
  */
 abstract class AbstractExpression implements \Change\Db\Query\InterfaceSQLFragment
 {

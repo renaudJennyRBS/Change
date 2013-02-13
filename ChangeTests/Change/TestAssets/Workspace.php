@@ -3,6 +3,7 @@ namespace ChangeTests\Change\TestAssets;
 
 /**
  * @name \ChangeTests\Change\TestAssets\Workspace
+ * @api
  */
 class Workspace extends \Change\Workspace
 {

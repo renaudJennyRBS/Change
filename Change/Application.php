@@ -5,6 +5,7 @@ use Zend\Json\Json;
 
 /**
  * @name \Change\Application
+ * @api
  */
 class Application
 {

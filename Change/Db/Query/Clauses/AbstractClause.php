@@ -3,6 +3,7 @@ namespace Change\Db\Query\Clauses;
 
 /**
  * @name \Change\Db\Query\Clauses\AbstractClause
+ * @api
  */
 abstract class AbstractClause implements \Change\Db\Query\InterfaceSQLFragment
 {

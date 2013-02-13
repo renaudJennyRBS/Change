@@ -7,6 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @name \Change\Application\Console\ChangeCommand
+ * @api
  */
 class ChangeCommand extends Command
 {

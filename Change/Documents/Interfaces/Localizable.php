@@ -3,6 +3,7 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Localizable
+ * @api
  */
 interface Localizable
 {

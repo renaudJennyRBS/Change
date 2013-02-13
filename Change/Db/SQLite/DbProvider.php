@@ -3,6 +3,7 @@ namespace Change\Db\SQLite;
 
 /**
  * @name \Change\Db\SQLite\DbProvider
+ * @api
  */
 class DbProvider extends \Change\Db\DbProvider
 {

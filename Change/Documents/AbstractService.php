@@ -8,6 +8,7 @@ use Change\Documents\Interfaces\Versionable;
 
 /**
  * @name \Change\Documents\AbstractService
+ * @api
  */
 abstract class AbstractService
 {

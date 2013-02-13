@@ -5,6 +5,7 @@ use Change\Db\Query\InterfaceSQLFragment;
 
 /**
  * @name \Change\Db\Query\Expressions\Join
+ * @api
  */
 class Join extends AbstractExpression
 {
