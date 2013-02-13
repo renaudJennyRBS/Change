@@ -5,6 +5,7 @@ use Change\Db\Query\Clauses\AbstractClause;
 
 /**
  * @name \Change\Db\Query\Clauses\SetClause
+ * @api
  */
 class SetClause extends AbstractClause
 {	

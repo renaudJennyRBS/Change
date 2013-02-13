@@ -8,6 +8,7 @@ use Zend\Loader\StandardAutoloader;
 
 /**
  * @name Change\Application\PackageManager
+ * @api
  */
 class PackageManager
 {

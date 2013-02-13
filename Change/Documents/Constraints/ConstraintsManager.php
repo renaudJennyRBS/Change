@@ -3,6 +3,7 @@ namespace Change\Documents\Constraints;
 
 /**
  * @name \Change\Documents\Constraints\ConstraintsManager
+ * @api
  */
 class ConstraintsManager
 {

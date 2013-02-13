@@ -3,6 +3,7 @@ namespace Change\Db\Query\Expressions;
 
 /**
  * @name \Change\Db\Query\Expressions\Func
+ * @api
  */
 class Func extends AbstractExpression
 {

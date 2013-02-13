@@ -3,6 +3,7 @@ namespace Change\Documents\Generators;
 
 /**
  * @name \Change\Documents\Generators\AbstractDocumentClass
+ * @api
  */
 class AbstractDocumentClass
 {

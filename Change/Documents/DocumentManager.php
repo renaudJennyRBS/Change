@@ -5,6 +5,7 @@ use Change\Db\Query\ResultsConverter;
 
 /**
  * @name \Change\Documents\DocumentManager
+ * @api
  */
 class DocumentManager
 {

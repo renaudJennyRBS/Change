@@ -3,6 +3,7 @@ namespace Change;
 
 /**
  * @name \Change\Workspace
+ * @api
  */
 class Workspace
 {

@@ -3,6 +3,7 @@ namespace Change\Db;
 
 /**
  * @name \Change\Db\DbProvider
+ * @api
  */
 abstract class DbProvider
 {	

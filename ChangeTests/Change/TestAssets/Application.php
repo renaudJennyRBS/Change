@@ -4,6 +4,7 @@ namespace ChangeTests\Change\TestAssets;
 
 /**
  * @name \ChangeTests\Change\TestAssets\Application
+ * @api
  */
 class Application extends \Change\Application
 {

@@ -3,6 +3,7 @@ namespace Change\Documents\Generators;
 
 /**
  * @name \Change\Documents\Generators\DocumentI18nClass
+ * @api
  */
 class DocumentI18nClass
 {
