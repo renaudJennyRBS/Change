@@ -4,22 +4,14 @@ namespace ChangeTests\Change\Documents;
 class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @param \Change\Application $application
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-
-	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
 	public function testInitialize()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$documentsServices = $application->getDocumentServices();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+
+		$documentsServices = $this->getDocumentServices();
 		$this->assertInstanceOf('\Change\Documents\DocumentServices', $documentsServices);
 		return $documentsServices;
 	}

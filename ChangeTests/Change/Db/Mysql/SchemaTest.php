@@ -13,7 +13,7 @@ class SchemaTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->markTestSkipped('PDO Mysql is not installed.');
 		}
 
-		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		$provider = $this->getApplicationServices()->getDbProvider();
 		if (!($provider instanceof DbProvider))
 		{
 			$this->markTestSkipped('The Mysql DbProvider is not configured.');
@@ -28,7 +28,7 @@ class SchemaTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testGetInstance()
 	{
-		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		$provider = $this->getApplicationServices()->getDbProvider();
 		$schema = new Schema($provider->getSchemaManager());
 		
 		$this->assertCount(4, $schema->getTables());

@@ -5,7 +5,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		return $this->getApplication()->getApplicationServices()->getI18nManager();
+		return $this->getApplicationServices()->getI18nManager();
 	}
 
 	/**
@@ -23,7 +23,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$manager = new \Change\I18n\I18nManager();
 		$manager->setWorkspace($application->getWorkspace());
-		$manager->setLogging($application->getApplicationServices()->getLogging());
+		$manager->setLogging($this->getApplicationServices()->getLogging());
 		$manager->setConfiguration($config);
 
 		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());

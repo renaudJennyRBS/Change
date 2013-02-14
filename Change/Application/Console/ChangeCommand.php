@@ -17,6 +17,25 @@ class ChangeCommand extends Command
 	protected $changeApplication;
 
 	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $changeApplicationServices;
+
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $changeDocumentServices;
+
+	/**
+	 * @param \Change\Application $application
+	 */
+	public function setChangeApplication(\Change\Application $application)
+	{
+		$this->changeApplication = $application;
+	}
+
+
+	/**
 	 * Get the Change Application instance managed by the console tool
 	 *
 	 * @api
@@ -33,11 +52,48 @@ class ChangeCommand extends Command
 	}
 
 	/**
-	 * @param \Change\Application $app
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
-	public function setChangeApplication(\Change\Application $app)
+	public function setChangeApplicationServices(\Change\Application\ApplicationServices $applicationServices)
 	{
-		$this->changeApplication = $app;
+		$this->changeApplicationServices = $applicationServices;
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getChangeApplicationServices()
+	{
+		if ($this->changeApplicationServices === null)
+		{
+			$this->changeApplicationServices = new \Change\Application\ApplicationServices($this->getChangeApplication());
+		}
+		return $this->changeApplicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setChangeDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->changeDocumentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getChangeDocumentServices()
+	{
+		if ($this->changeDocumentServices === null)
+		{
+			if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
+			{
+				throw new \RuntimeException('Documents are not compiled.');
+			}
+			$this->changeDocumentServices =  new \Change\Documents\DocumentServices($this->getChangeApplicationServices());
+		}
+		return $this->changeDocumentServices;
 	}
 
 	/**
@@ -68,7 +124,7 @@ class ChangeCommand extends Command
 		$devMode = $input->getOption('dev') || $this->getChangeApplication()->inDevelopmentMode();
 		if ($this->isDevCommand() && !$devMode)
 		{
-			throw new \RuntimeException("This is a developper command, you can only run it in developer mode");
+			throw new \RuntimeException("This is a developer command, you can only run it in developer mode");
 		}
 	}
 }

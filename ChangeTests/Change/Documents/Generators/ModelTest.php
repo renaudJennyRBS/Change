@@ -214,7 +214,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	
 	public function testValidate()
 	{
-		$cmp = new \Change\Documents\Generators\Compiler($this->getApplication());
+		$cmp = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test');
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<?xml version="1.0" encoding="UTF-8"?>

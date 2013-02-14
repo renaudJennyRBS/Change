@@ -6,34 +6,18 @@ use Change\Documents\DocumentManager;
 
 class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * Simulate compile-document command
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-	
-	/**
-	 * Simulate generate-db-schema command
-	 */
-	protected function generateDbSchema(\Change\Application $application)
-	{
-		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $application->getApplicationServices()->getDbProvider());
-		$generator->generate();
-	}
-	
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$this->generateDbSchema($application);
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+
+		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
+		$generator->generate();
 	}
 	
 	public static function tearDownAfterClass()
 	{
-		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 	}
 	
@@ -42,7 +26,7 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 		$this->assertInstanceOf('\Project\Tests\Documents\BasicService', $testsBasicService);
 		$this->assertEquals('Project_Tests_Basic', $testsBasicService->getModelName());
 		
@@ -116,10 +100,10 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testLocalized()
 	{
-		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
+		$dm = $this->getDocumentServices()->getDocumentManager();
 		
 		$dm->pushLCID('fr_FR');
-		$testsLocalizedService = $this->getApplication()->getDocumentServices()->getProjectTestsLocalized();
+		$testsLocalizedService = $this->getDocumentServices()->getProjectTestsLocalized();
 		
 		$this->assertInstanceOf('\Project\Tests\Documents\LocalizedService', $testsLocalizedService);
 		$this->assertEquals('Project_Tests_Localized', $testsLocalizedService->getModelName());

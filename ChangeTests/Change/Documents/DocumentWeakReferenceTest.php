@@ -5,8 +5,7 @@ class DocumentWeakReferenceTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$compiler = new \Change\Documents\Generators\Compiler($application);
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 		$compiler->generate();
 	}
 
@@ -16,7 +15,7 @@ class DocumentWeakReferenceTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testSerialize()
 	{
 		/* @var $testsBasicService\Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 
 		$document = $testsBasicService->getInstanceRo5001();
 		$manager = $document->getDocumentManager();

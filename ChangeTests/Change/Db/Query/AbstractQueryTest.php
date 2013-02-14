@@ -20,7 +20,7 @@ class AbstractQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getDbProvider()
 	{
-		return $this->getApplication()->getApplicationServices()->getDbProvider();
+		return $this->getApplicationServices()->getDbProvider();
 	}
 	
 	/**

@@ -15,7 +15,7 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->markTestSkipped('PDO SQLite is not installed.');
 		}
 
-		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		$provider = $this->getApplicationServices()->getDbProvider();
 		if (!($provider instanceof DbProvider))
 		{
 			$this->markTestSkipped('The SQLite DbProvider is not configured.');
@@ -33,7 +33,7 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testGetInstance()
 	{
-		$provider = $this->getApplication()->getApplicationServices()->getDbProvider();
+		$provider = $this->getApplicationServices()->getDbProvider();
 
 		$schemaManager = $provider->getSchemaManager();
 		$schemaManager->clearDB();

@@ -6,13 +6,13 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		$instance = new \Change\Db\Query\Builder($this->getApplication()->getApplicationServices()->getDbProvider());
+		$instance = new \Change\Db\Query\Builder($this->getApplicationServices()->getDbProvider());
 		$this->assertTrue(true);
 	}
 	
 	public function testGetFromApplicationServices()
 	{
-		$qb = $this->getApplication()->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$this->assertInstanceOf('\Change\Db\Query\Builder', $qb);
 		return $qb;
 	}
