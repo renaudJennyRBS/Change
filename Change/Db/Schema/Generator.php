@@ -35,8 +35,7 @@ class Generator
 		{
 			throw new \RuntimeException('unable to connect to database: '.$schemaManager->getName());
 		}
-		$dbType = ucfirst($dbProvider->getType());
-		
+
 		$dbSchema = $schemaManager->getSystemSchema();
 		if ($dbSchema instanceof \Change\Db\Schema\SchemaDefinition)
 		{

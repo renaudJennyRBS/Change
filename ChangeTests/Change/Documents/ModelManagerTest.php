@@ -4,22 +4,14 @@ namespace ChangeTests\Change\Documents;
 class ModelManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @param \Change\Application $application
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-
-	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function testInitialize()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$modelManager = $application->getDocumentServices()->getModelManager();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+
+		$modelManager = $this->getDocumentServices()->getModelManager();
 		$this->assertInstanceOf('\Change\Documents\ModelManager', $modelManager);
 		return $modelManager;
 	}

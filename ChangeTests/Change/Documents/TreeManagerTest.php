@@ -7,27 +7,9 @@ namespace ChangeTests\Change\Documents;
  */
 class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * Simulate compile-document command
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-
-	/**
-	 * Simulate generate-db-schema command
-	 */
-	protected function generateDbSchema(\Change\Application $application)
-	{
-		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $application->getApplicationServices()->getDbProvider());
-		$generator->generate();
-	}
-
 	public static function tearDownAfterClass()
 	{
-		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 	}
 
@@ -36,11 +18,13 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$this->generateDbSchema($application);
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
 
-		$treeManager = $application->getDocumentServices()->getTreeManager();
+		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
+		$generator->generate();
+
+		$treeManager = $this->getDocumentServices()->getTreeManager();
 
 		return $treeManager;
 	}
@@ -55,7 +39,7 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$treeManager->createTree('Project_Tests');
 
 		/* @var $testsBasicService \Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 
 		$doc = $testsBasicService->getNewDocumentInstance();
 		$doc->setPStr('root Node');

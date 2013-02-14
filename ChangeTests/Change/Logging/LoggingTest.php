@@ -7,7 +7,7 @@ class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$logging = $application->getApplicationServices()->getLogging();
+		$logging = $this->getApplicationServices()->getLogging();
 		
 		$config->addVolatileEntry('Change/Logging/level', 'ALERT');
 		$this->assertEquals('ALERT', $logging->getLevel());
@@ -24,7 +24,7 @@ class LoggingManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$logging = $application->getApplicationServices()->getLogging();
+		$logging = $this->getApplicationServices()->getLogging();
 		$config->addVolatileEntry('Change/Logging/level', 'DEBUG');
 		
 		// Setting valid value is OK.

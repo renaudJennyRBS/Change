@@ -5,34 +5,18 @@ use Change\Documents\DocumentManager;
 
 class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * Simulate compile-document command
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-	
-	/**
-	 * Simulate generate-db-schema command
-	 */
-	protected function generateDbSchema(\Change\Application $application)
-	{
-		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $application->getApplicationServices()->getDbProvider());
-		$generator->generate();
-	}
-	
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$this->generateDbSchema($application);
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+
+		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
+		$generator->generate();
 	}
 	
 	public static function tearDownAfterClass()
 	{
-		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 	}
 	
@@ -42,7 +26,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testConstruct()
 	{
-		$manager = $this->getApplication()->getDocumentServices()->getDocumentManager();
+		$manager = $this->getDocumentServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}
@@ -270,16 +254,11 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$config->addVolatileEntry('Change/I18n/langs' , null);
 		$config->addVolatileEntry('Change/I18n/langs', array('en_US' => 'us'));
-		
-		$i18nManger = new \Change\I18n\I18nManager();
-		$i18nManger->setWorkspace($application->getWorkspace());
-		$i18nManger->setLogging($application->getApplicationServices()->getLogging());
-		$i18nManger->setConfiguration($application->getConfiguration());
 
-		$application->getApplicationServices()->instanceManager()->addSharedInstance($i18nManger, 'Change\I18n\I18nManager');
+		$i18nManger = $this->getApplicationServices()->getI18nManager();
 		$manager = new DocumentManager();
-		$manager->setApplicationServices($application->getApplicationServices());
-		$manager->setDocumentServices($application->getDocumentServices());
+		$manager->setApplicationServices($this->getApplicationServices());
+		$manager->setDocumentServices($this->getDocumentServices());
 
 		// There is no default value.
 		$this->assertEquals(0, $manager->getLCIDStackSize());

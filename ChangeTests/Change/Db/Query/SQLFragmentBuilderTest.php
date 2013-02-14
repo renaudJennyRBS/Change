@@ -154,7 +154,7 @@ class SQLFragmentBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testSubQuery()
 	{
 		$fb = $this->getNewSQLFragmentBuilder();
-		$q  = new \Change\Db\Query\SelectQuery($this->getApplication()->getApplicationServices()->getDbProvider());
+		$q  = new \Change\Db\Query\SelectQuery($this->getApplicationServices()->getDbProvider());
 		$frag = $fb->subQuery($q);
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\SubQuery', $frag);
 	}
@@ -264,7 +264,7 @@ class SQLFragmentBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\ExpressionList', $frag->getRightHandExpression());	
 		$this->assertCount(2, $frag->getRightHandExpression()->getList());
 		
-		$q  = new \Change\Db\Query\SelectQuery($this->getApplication()->getApplicationServices()->getDbProvider());
+		$q  = new \Change\Db\Query\SelectQuery($this->getApplicationServices()->getDbProvider());
 		$frag = $fb->in('a', $fb->subQuery($q));
 		$this->assertInstanceOf('\Change\Db\Query\Predicates\In', $frag);
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Subquery', $frag->getRightHandExpression());

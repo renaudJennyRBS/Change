@@ -7,35 +7,20 @@ use Change\Documents\Correction;
 
 class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * Simulate compile-document command
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-	
-	/**
-	 * Simulate generate-db-schema command
-	 */
-	protected function generateDbSchema(\Change\Application $application)
-	{
-		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $application->getApplicationServices()->getDbProvider());
-		$generator->generate();
-	}
-	
+
 	public static function tearDownAfterClass()
 	{
-		$dbp = self::getNewApplication()->getApplicationServices()->getDbProvider();
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 	}
 		
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		$this->generateDbSchema($application);
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+
+		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
+		$generator->generate();
 	}
 
 	/**
@@ -43,7 +28,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testSerialize()
 	{
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 		$basicDoc = $testsBasicService->getNewDocumentInstance();
 		$str = serialize($basicDoc);
 		$this->assertEquals(serialize(null), $str);
@@ -54,7 +39,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testBasic()
 	{
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		/* @var $testsBasicService \Project\Tests\Documents\BasicService */
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 		$basicDoc = $testsBasicService->getNewDocumentInstance();
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
 		$this->assertEquals('Project_Tests_Basic', $basicDoc->getDocumentModelName());
@@ -148,8 +134,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testLocalized()
 	{
 		/* @var $testsLocalizedService \Project\Tests\Documents\LocalizedService */
-		$testsLocalizedService = $this->getApplication()->getDocumentServices()->getProjectTestsLocalized();
-		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
+		$testsLocalizedService = $this->getDocumentServices()->getProjectTestsLocalized();
+		$dm = $this->getDocumentServices()->getDocumentManager();
 
 		$localizedDoc = $testsLocalizedService->getNewDocumentInstance();
 		$dm->pushLCID('fr_FR');
@@ -297,8 +283,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testCorrection()
 	{
 		/* @var $testsCorrectionService \Project\Tests\Documents\CorrectionService */
-		$testsCorrectionService = $this->getApplication()->getDocumentServices()->getProjectTestsCorrection();
-		$dm = $this->getApplication()->getDocumentServices()->getDocumentManager();
+		$testsCorrectionService = $this->getDocumentServices()->getProjectTestsCorrection();
+		$dm = $this->getDocumentServices()->getDocumentManager();
 
 		$c1 = $testsCorrectionService->getNewDocumentInstance();
 

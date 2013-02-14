@@ -20,14 +20,13 @@ class GenerateDbSchema extends \Change\Application\Console\ChangeCommand
 	}
 	
 	/**
-	 *
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @throws \LogicException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$generator = new \Change\Db\Schema\Generator($this->getChangeApplication()->getWorkspace(), $this->getChangeApplication()->getApplicationServices()->getDbProvider());
+		$generator = new \Change\Db\Schema\Generator($this->getChangeApplication()->getWorkspace(), $this->getChangeApplicationServices()->getDbProvider());
 		try 
 		{
 			$output->writeln('<info>Generate database Schema...</info>');

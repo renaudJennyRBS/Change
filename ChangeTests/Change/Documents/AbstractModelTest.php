@@ -7,22 +7,13 @@ use Change\Documents\ModelManager;
 class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @param \Change\Application $application
-	 */
-	protected function compileDocuments(\Change\Application $application)
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($application);
-		$compiler->generate();
-	}
-
-	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function testInitializeDB()
 	{
-		$application = $this->getApplication();
-		$this->compileDocuments($application);
-		return $this->getApplication()->getDocumentServices()->getModelManager();
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
+		return $this->getDocumentServices()->getModelManager();
 	}
 
 	/**

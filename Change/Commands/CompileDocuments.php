@@ -27,7 +27,7 @@ class CompileDocuments extends \Change\Application\Console\ChangeCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$output->writeln('<info>Compiling Documents...</info>');
-		$compiler = new \Change\Documents\Generators\Compiler($this->getChangeApplication());
+		$compiler = new \Change\Documents\Generators\Compiler($this->getChangeApplication(), $this->getChangeApplicationServices());
 		$compiler->generate();
 		$nbModels = count($compiler->getModels());
 		$output->writeln('<info>' .$nbModels. ' compiled !</info>');

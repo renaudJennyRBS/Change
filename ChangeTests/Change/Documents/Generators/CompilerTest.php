@@ -8,13 +8,13 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 		$this->assertCount(0, $compiler->getModels());
 	}
 	
 	public function testLoadDocument()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
 		$model = $compiler->loadDocument('Change', 'Test', 'TestType', $definitionPath);
 		$this->assertEquals('Change_Test_TestType', $model->getName());
@@ -26,7 +26,7 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 	
 	public function testCheckExtends()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication());
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 		
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
 		$m1 = $compiler->loadDocument('Change', 'Test', 'TestType', $definitionPath);

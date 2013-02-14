@@ -9,7 +9,7 @@ class StatementBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewStatementBuilder()
 	{
-		return new \Change\Db\Query\StatementBuilder($this->getApplication()->getApplicationServices()->getDbProvider());
+		return new \Change\Db\Query\StatementBuilder($this->getApplicationServices()->getDbProvider());
 	}
 	
 	public function testConstruct()

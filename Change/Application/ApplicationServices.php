@@ -2,6 +2,7 @@
 namespace Change\Application;
 
 /**
+ * @api
  * @name \Change\Application\ApplicationServices
  */
 class ApplicationServices extends \Zend\Di\Di
@@ -10,7 +11,6 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$dl = new \Zend\Di\DefinitionList(array());
 
-		$this->registerEventManager($dl);
 		$this->registerLogging($dl);
 		$this->registerDbProvider($dl);
 		$this->registerTransactionManager($dl);
@@ -20,7 +20,6 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$im = $this->instanceManager();
 
-		$im->setParameters('Change\Events\EventManager', array('configuration' => $application->getConfiguration()));
 		$im->setParameters('Change\Application\PackageManager', array('workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\I18n\I18nManager', array('configuration' => $application->getConfiguration(), 'workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
@@ -30,18 +29,6 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
 		$im->setInjections('Change\Transaction\TransactionManager', array('Change\Db\DbProvider'));
 		$im->setInjections('Change\I18n\I18nManager',  array('Change\Logging\Logging'));
-	}
-
-	/**
-	 * @param \Zend\Di\DefinitionList $dl
-	 */
-	protected function registerEventManager($dl)
-	{
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Events\EventManager');
-		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethodParameter('__construct', 'configuration', array('type' => 'Change\Configuration\Configuration', 'required' => true));
-		$dl->addDefinition($cl);
 	}
 
 	/**
@@ -101,6 +88,7 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Db\DbProvider
 	 */
 	public function getDbProvider()
@@ -109,6 +97,7 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @api
 	 * @return \Change\I18n\I18nManager
 	 */
 	public function getI18nManager()
@@ -117,6 +106,7 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Logging\Logging
 	 */
 	public function getLogging()
@@ -124,28 +114,12 @@ class ApplicationServices extends \Zend\Di\Di
 		return $this->get('Change\Logging\Logging');
 	}
 
-
 	/**
+	 * @api
 	 * @return \Change\Transaction\TransactionManager
 	 */
 	public function getTransactionManager()
 	{
 		return $this->get('Change\Transaction\TransactionManager');
-	}
-
-	/**
-	 * @return \Change\Application\PackageManager
-	 */
-	public function getPackageManager()
-	{
-		return $this->get('Change\Application\PackageManager');
-	}
-
-	/**
-	 * @return \Change\Events\EventManager
-	 */
-	public function getEventManager()
-	{
-		return $this->get('Change\Events\EventManager');
 	}
 }

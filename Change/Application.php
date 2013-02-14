@@ -27,19 +27,14 @@ class Application
 	protected $packageManager;
 
 	/**
+	 * @var \Change\Events\EventManager
+	 */
+	protected $eventManager;
+
+	/**
 	 * @var \Change\Application
 	 */
 	protected static $sharedInstance;
-
-	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
 
 	/**
 	 * @var bool
@@ -126,50 +121,11 @@ class Application
 	}
 
 	/**
-	 * Set the application services DiC
-	 *
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param Workspace $workspace
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 *
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		if (!$this->applicationServices)
-		{
-			$this->applicationServices  = new \Change\Application\ApplicationServices($this);
-		}
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		if (!$this->documentServices)
-		{
-			if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
-			{
-				throw new \RuntimeException('Documents are not compiled.');
-			}
-			$this->setDocumentServices(new \Change\Documents\DocumentServices($this->getApplicationServices()));
-		}
-		return $this->documentServices;
+		$this->workspace = $workspace;
 	}
 	
 	/**
@@ -186,11 +142,11 @@ class Application
 	}
 
 	/**
-	 * @param Workspace $workspace
+	 * @param Configuration\Configuration $configuration
 	 */
-	public function setWorkspace(\Change\Workspace $workspace)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->workspace = $workspace;
+		$this->configuration = $configuration;
 	}
 
 	/**
@@ -215,6 +171,7 @@ class Application
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Application\PackageManager
 	 */
 	public function getPackageManager()
@@ -227,14 +184,28 @@ class Application
 	}
 
 	/**
-	 * @param Configuration\Configuration $configuration
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	public function setEventManager(\Change\Events\EventManager $eventManager)
 	{
-		$this->configuration = $configuration;
+		$this->eventManager = $eventManager;
 	}
 
 	/**
+	 * @api
+	 * @return \Change\Events\EventManager
+	 */
+	public function getEventManager()
+	{
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = new \Change\Events\EventManager($this->getConfiguration());
+		}
+		return $this->eventManager;
+	}
+
+	/**
+	 * @api
 	 * Call this to start application!
 	 */
 	public function start($bootStrapClass = null)
@@ -276,6 +247,7 @@ class Application
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function started()
@@ -318,6 +290,7 @@ class Application
 	}
 
 	/**
+	 * @api
 	 * @see project config
 	 * @return boolean
 	 */

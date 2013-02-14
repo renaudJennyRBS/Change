@@ -6,14 +6,12 @@ namespace ChangeTests\Change\Documents;
  */
 class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @param \Change\Application $application
-	 */
-	protected function compileDocuments(\Change\Application $application)
+
+	protected function compileDocuments()
 	{
 		if (!class_exists('\Compilation\Project\Tests\Documents\AbstractBasic'))
 		{
-			$compiler = new \Change\Documents\Generators\Compiler($application);
+			$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
 			$compiler->generate();
 		}
 	}
@@ -57,12 +55,12 @@ class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testDocumentProperty()
 	{
-		$this->compileDocuments($this->getApplication());
+		$this->compileDocuments();
 		$node = new \Change\Documents\TreeNode('Project_Tests');
-		$node->setTreeManager($this->getApplication()->getDocumentServices()->getTreeManager());
+		$node->setTreeManager($this->getDocumentServices()->getTreeManager());
 
 		/* @var $testsBasicService \Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getApplication()->getDocumentServices()->getProjectTestsBasic();
+		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
 
 		$doc = $testsBasicService->getInstanceRo5001();
 

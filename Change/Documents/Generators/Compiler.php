@@ -20,22 +20,29 @@ class Compiler
 	 * @var \Change\Application
 	 */
 	protected $application;
-	
+
+	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices;
+
 	/**
 	 * @param \Change\Application $application
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
-	public function __construct(\Change\Application $application)
+	public function __construct(\Change\Application $application, \Change\Application\ApplicationServices $applicationServices)
 	{
 		$this->application = $application;
+		$this->applicationServices = $applicationServices;
 	}
-	
+
 	/**
 	 * @param string $vendor
 	 * @param string $moduleName
 	 * @param string $documentName
 	 * @param string $definitionPath
+	 * @throws \RuntimeException
 	 * @return \Change\Documents\Generators\Model
-	 * @throws \Exception
 	 */
 	public function loadDocument($vendor, $moduleName, $documentName, $definitionPath)
 	{
@@ -75,7 +82,7 @@ class Compiler
 				$extModel = $this->getModelByName($extendName);
 				if ($extModel === null)
 				{
-					throw new \Exception('Document ' . $modelName . ' extend unknow ' . $model->getExtend(). ' document.');
+					throw new \Exception('Document ' . $modelName . ' extend unknown ' . $model->getExtend(). ' document.');
 				}
 				$model->setExtendModel($extModel);
 				$model->setParent($extModel);
@@ -149,7 +156,7 @@ class Compiler
 							$im = $this->getModelByName($docType);
 							if (!$im)
 							{
-								throw new \Exception('Inverse Property on unknow Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')');
+								throw new \Exception('Inverse Property on unknown Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')');
 							}
 							$ip = new InverseProperty($im, $property);
 							$im->addInverseProperty($ip);
@@ -238,9 +245,10 @@ class Compiler
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\Generators\Model $model
+	 * @param boolean $excludeInjected
 	 * @return \Change\Documents\Generators\Model[]
 	 */
 	public function getDescendants($model, $excludeInjected = false)
@@ -270,8 +278,9 @@ class Compiler
 	{
 		return $this->models;
 	}
-	
+
 	/**
+	 * @param integer $level
 	 * @return \Change\Documents\Generators\Model[]
 	 */
 	public function getModelsByLevel($level = 0)
@@ -316,7 +325,7 @@ class Compiler
 		$generator->savePHPCode($this, $this->models, $compilationPath);
 		
 		$generator = new SchemaClass();
-		$generator->savePHPCode($this, $this->application->getApplicationServices()->getDbProvider(), $compilationPath);
+		$generator->savePHPCode($this, $this->applicationServices->getDbProvider(), $compilationPath);
 	}
 	
 	public function generate()
