@@ -1255,7 +1255,7 @@ class DocumentManager
 	 */
 	public function pushLCID($LCID)
 	{
-		if (!in_array($LCID, $this->getI18nManager()->getSupportedLCIDs()))
+		if (!$this->getI18nManager()->isSupportedLCID($LCID))
 		{
 			throw new \InvalidArgumentException('Not supported LCID: ' . $LCID);
 		}

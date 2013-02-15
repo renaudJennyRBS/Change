@@ -155,6 +155,16 @@ class I18nManager
 	{
 		return $this->supportedLCIDs;
 	}
+
+	/**
+	 * @api
+	 * @param string $LCID
+	 * @return boolean
+	 */
+	public function isSupportedLCID($LCID)
+	{
+		return ($LCID && in_array($LCID, $this->getSupportedLCIDs()));
+	}
 	
 	/**
 	 * @api

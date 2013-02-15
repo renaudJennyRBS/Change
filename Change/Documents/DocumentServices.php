@@ -113,4 +113,15 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	{
 		return $this->get('Change\Documents\Constraints\ConstraintsManager');
 	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Documents\AbstractService
+	 */
+	public function getByModel(\Change\Documents\AbstractModel $model)
+	{
+		/* @var $service \Change\Documents\AbstractService */
+		$service = $this->get($model->getName());
+		return $service;
+	}
 }
