@@ -99,9 +99,15 @@
 			<xs:annotation>
 				<xs:documentation source="description"> use by 'enum' constraint</xs:documentation>
 			</xs:annotation>
-		</xs:attribute>	
-		
-		<xs:attribute name="modelName" use="optional" type="documentModel">
+		</xs:attribute>
+
+        <xs:attribute name="values" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description"> use by 'enum' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="modelName" use="optional" type="documentModel">
 			<xs:annotation>
 				<xs:documentation source="description"> use by 'unique' constraint</xs:documentation>
 			</xs:annotation>

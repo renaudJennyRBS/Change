@@ -161,7 +161,7 @@ class SQLFragmentBuilder
 	 * @api
 	 * Assume a string parameter
 	 * @param string $parameterName
-	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder|\Change\Db\Query\StatementBuilder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
 	public function parameter($parameterName, $queryOrBuilder = null)
@@ -178,7 +178,7 @@ class SQLFragmentBuilder
 	 * @api
 	 * @param string $parameterName
 	 * @param string $scalarType \Change\Db\ScalarType::*
-	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder|\Change\Db\Query\StatementBuilder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
 	public function typedParameter($parameterName, $scalarType, $queryOrBuilder = null)
@@ -194,7 +194,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $parameterName
-	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder|\Change\Db\Query\StatementBuilder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
 	public function integerParameter($parameterName, $queryOrBuilder = null)
@@ -210,10 +210,10 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $parameterName
-	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder $queryOrBuilder
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder|\Change\Db\Query\StatementBuilder $queryOrBuilder
 	 * @return \Change\Db\Query\Expressions\Parameter
 	 */
-	public function dateTimeparameter($parameterName, $queryOrBuilder = null)
+	public function dateTimeParameter($parameterName, $queryOrBuilder = null)
 	{
 		$p = new Parameter($parameterName, \Change\Db\ScalarType::DATETIME);
 		if ($queryOrBuilder !== null)
@@ -225,7 +225,7 @@ class SQLFragmentBuilder
 
 	/**
 	 * @param \Change\Db\Query\Expressions\Parameter $parameter
-	 * @param mixed $queryOrBuilder
+	 * @param \Change\Db\Query\AbstractQuery|\Change\Db\Query\Builder|\Change\Db\Query\StatementBuilder $queryOrBuilder
 	 * @throws \InvalidArgumentException
 	 */
 	protected function bindParameter($parameter, $queryOrBuilder)
@@ -274,7 +274,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param \Change\Db\Query\SelectQuery $selectQuery
-	 * @return \Change\Db\Query\Expressions\Subquery
+	 * @return \Change\Db\Query\Expressions\SubQuery
 	 */
 	public function subQuery(\Change\Db\Query\SelectQuery $selectQuery)
 	{

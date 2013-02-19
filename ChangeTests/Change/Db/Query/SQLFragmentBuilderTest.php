@@ -113,7 +113,7 @@ class SQLFragmentBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('test', $frag->getName());
 		$this->assertEquals(\Change\Db\ScalarType::INTEGER, $frag->getType());
 		
-		$frag = $fb->dateTimeparameter('test');
+		$frag = $fb->dateTimeParameter('test');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', $frag);
 		$this->assertEquals('test', $frag->getName());
 		$this->assertEquals(\Change\Db\ScalarType::DATETIME, $frag->getType());

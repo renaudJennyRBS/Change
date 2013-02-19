@@ -523,8 +523,8 @@ abstract class AbstractService
 			{
 				$dm->insertDocumentBackup($document, $backupData);
 			}
-			
-			if ($persistentState === DocumentManager::STATE_LOADED)
+
+			if ($persistentState === DocumentManager::STATE_INITIALIZED || $persistentState === DocumentManager::STATE_LOADED)
 			{
 				$dm->deleteDocument($document);
 				

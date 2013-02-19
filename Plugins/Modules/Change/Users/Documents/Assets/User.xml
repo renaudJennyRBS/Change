@@ -4,7 +4,7 @@
 	icon="user-frontoffice" editable="true" publishable="true" >
 	<properties>
 		<property name="label">
-			<constraint name="pseudonym" />
+			<!-- constraint name="pseudonym" /-->
 		</property>
 		<property name="email" type="String" required="true">
 			<constraint name="email" />
@@ -12,7 +12,7 @@
 		<property name="isroot" type="Boolean" default-value="false" />
 		<property name="issudoer" type="Boolean" default-value="false" />
 		<property name="login" type="String" required="true">
-			<constraint name="login" />
+			<!--constraint name="login" /-->
 		</property>
 		<property name="passwordmd5" type="String" indexed="none" required="true">
 			<constraint name="maxSize" max="50" />

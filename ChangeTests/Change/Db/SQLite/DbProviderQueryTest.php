@@ -61,7 +61,7 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
 			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
 			$fb->parameter('f5', $sb),
-			$fb->dateTimeparameter('f6', $sb)
+			$fb->dateTimeParameter('f6', $sb)
 		)->insertQuery();
 
 		$iq->bindParameter('id', 5);
@@ -117,7 +117,7 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
 			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
 			$fb->parameter('f5', $sb),
-			$fb->dateTimeparameter('f6', $sb)
+			$fb->dateTimeParameter('f6', $sb)
 		)->insertQuery();
 
 		$iq->bindParameter('id', 50);

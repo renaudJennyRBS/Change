@@ -30,6 +30,12 @@ interface Localizable
 	 * @param string[]
 	 */
 	public function getLCIDArray();
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
+	public function deleteLocalized();
 	
 	/**
 	 * @api

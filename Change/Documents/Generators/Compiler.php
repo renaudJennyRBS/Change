@@ -301,6 +301,9 @@ class Compiler
 	public function saveModelsPHPCode()
 	{
 		$compilationPath = $this->application->getWorkspace()->compilationPath();
+
+		$generator = new ModelsNamesClass();
+		$generator->savePHPCode($this, $this->models, $compilationPath);
 		
 		foreach ($this->models as $model)
 		{

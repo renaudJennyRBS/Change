@@ -510,4 +510,12 @@ class Property
 			call_user_func(array($document, $setter), $value);
 		}
 	}
+
+	/**
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->name . '('.$this->type.')';
+	}
 }
