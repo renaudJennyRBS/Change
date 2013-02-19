@@ -2,6 +2,7 @@
 namespace Change\Http\Rest;
 
 use Zend\Http\Response as HttpResponse;
+use Change\Http\Rest\Result\ErrorResult;
 
 /**
  * @name \Change\Http\Rest\Controller
@@ -15,8 +16,8 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function registerDefaultListeners($eventManager)
 	{
-		$eventManager->attach(\Change\Http\Event::EVENT_EXCEPTION, array($this, 'onException'));
-		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'));
+		$eventManager->attach(\Change\Http\Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
+		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
 
 	/**
@@ -83,7 +84,7 @@ class Controller extends \Change\Http\Controller
 
 	/**
 	 * @param \Exception $exception
-	 * @return \Change\Http\Rest\ErrorResult
+	 * @return \Change\Http\Rest\Result\ErrorResult
 	 */
 	protected function generateErrorException(\Exception $exception)
 	{
@@ -100,6 +101,8 @@ class Controller extends \Change\Http\Controller
 		if ($result instanceof \Change\Http\Result)
 		{
 			$response = $event->getController()->createResponse();
+			$response->getHeaders()->addHeaders($result->getHeaders());
+
 			$response->setStatusCode($result->getHttpStatusCode());
 			$event->setResponse($response);
 

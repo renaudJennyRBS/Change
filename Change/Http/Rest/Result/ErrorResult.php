@@ -1,8 +1,8 @@
 <?php
-namespace Change\Http\Rest;
+namespace Change\Http\Rest\Result;
 
 /**
- * @name \Change\Http\Rest\ErrorResult
+ * @name \Change\Http\Rest\Result\ErrorResult
  */
 class ErrorResult extends \Change\Http\Result
 {

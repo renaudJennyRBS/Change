@@ -49,91 +49,63 @@ class Resolver extends \Change\Http\ActionResolver
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$event->setParam('modelName', $modelName);
-
 			$documentServices = $event->getDocumentServices();
 			$model = $documentServices->getModelManager()->getModelByName($modelName);
 			if ($model instanceof \Change\Documents\AbstractModel)
 			{
-				$method = $event->getRequest()->getMethod();
-				$isDirectory = $event->getParam('isDirectory', false);
-				if (isset($resourceParts[3]))
+				if (isset($resourceParts[3]) && is_numeric($resourceParts[3]))
 				{
-					if (is_numeric($resourceParts[3]))
-					{
-						$event->setParam('documentId', intval($resourceParts[3]));
-					}
-					else
-					{
-						//Invalid DocumentId
-						return;
-					}
-
-
+					$event->setParam('documentId', intval($resourceParts[3]));
 					if (isset($resourceParts[4]))
 					{
-						if ($model->isLocalized() && $event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4]))
+						if ($event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4]))
 						{
 							$event->setParam('LCID', $resourceParts[4]);
 						}
 						else
 						{
-							//Invalid LCID
 							return;
 						}
 					}
-
-					if (!$isDirectory)
+					else
 					{
-						if ($method === 'GET')
-						{
-							$action = new \Change\Http\Rest\Actions\GetDocument();
-							$event->setAction(function($event) use($action) {$action->execute($event);});
-							return;
-						}
-
-						if ($method === 'PUT')
-						{
-							$action = new \Change\Http\Rest\Actions\UpdateDocument();
-							$event->setAction(array($action, 'execute'));
-							return;
-						}
-
-						if ($method === 'POST' && $model->isLocalized() && !$event->getParam('LCID'))
+						if ($event->getRequest()->getMethod() === 'POST' && $model->isLocalized() && !$event->getParam('isDirectory'))
 						{
 							$action = new \Change\Http\Rest\Actions\CreateI18nDocument();
 							$event->setAction(function($event) use($action) {$action->execute($event);});
 							return;
 						}
 
-						if ($method === 'DELETE' && $event->getParam('LCID'))
-						{
-							$action = new \Change\Http\Rest\Actions\DeleteI18nDocument();
-							$event->setAction(function($event) use($action) {$action->execute($event);});
-							return;
-						}
+					}
+					if ()
 
-						if ($method === 'DELETE' && !$event->getParam('LCID'))
+						if ($event->getRequest()->getMethod() === 'GET' && !$event->getParam('isDirectory'))
 						{
-							$action = new \Change\Http\Rest\Actions\DeleteDocument();
+							$action = new \Change\Http\Rest\Actions\GetDocument();
 							$event->setAction(function($event) use($action) {$action->execute($event);});
-							return;
+						}
+						elseif ($event->getRequest()->getMethod() === 'PUT' && !$event->getParam('isDirectory'))
+						{
+							$action = new \Change\Http\Rest\Actions\UpdateDocument();
+							$event->setAction(array($action, 'execute'));
+						}
+						else
+						{
+
 						}
 					}
 				}
-				elseif ($isDirectory)
+				elseif (count($resourceParts) == 3 && $event->getParam('isDirectory'))
 				{
-					if ($method === 'POST')
+					if ($event->getRequest()->getMethod() === 'POST')
 					{
 						$action = new \Change\Http\Rest\Actions\CreateDocument();
 						$event->setAction(function($event) use($action) {$action->execute($event);});
-						return;
 					}
-
-					if ($method === 'GET')
+					elseif ($event->getRequest()->getMethod() === 'GET')
 					{
 						$action = new \Change\Http\Rest\Actions\GetDocumentModelCollection();
 						$event->setAction(function($event) use($action) {$action->execute($event);});
-						return;
 					}
 				}
 			}

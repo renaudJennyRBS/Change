@@ -52,7 +52,7 @@ class UrlManager
 			$pathInfo = implode('/', array_filter($pathInfo, function ($path) {return (is_string($path) && strlen($path)) || is_numeric($path);}));
 		}
 
-		if (is_string($pathInfo) && $pathInfo[0] !== '/')
+		if (is_string($pathInfo) && ($pathInfo === '' ||$pathInfo[0] !== '/'))
 		{
 			$pathInfo = '/'.$pathInfo;
 		}

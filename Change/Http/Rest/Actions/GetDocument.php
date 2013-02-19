@@ -2,6 +2,7 @@
 namespace Change\Http\Rest\Actions;
 
 use Zend\Http\Response as HttpResponse;
+use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\GetDocument
@@ -9,6 +10,7 @@ use Zend\Http\Response as HttpResponse;
 class GetDocument
 {
 	/**
+	 * Use Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 */
 	public function execute($event)
@@ -65,15 +67,14 @@ class GetDocument
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @return \Change\Http\Rest\DocumentResult
+	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $document)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\DocumentResult();
-		$documentLink = new \Change\Http\Rest\DocumentLink($document);
-
-		$links = array($documentLink->toSelfLinkArray($urlManager));
+		$result = new \Change\Http\Rest\Result\DocumentResult();
+		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
+		$result->addLink($documentLink);
 
 		$model = $document->getDocumentModel();
 
@@ -81,29 +82,8 @@ class GetDocument
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			$value = $property->getValue($document);
-			if ($value instanceof \DateTime)
-			{
-				$properties[$name] = $value->format(\DateTime::ISO8601);
-			}
-			elseif ($value instanceof \Change\Documents\AbstractDocument)
-			{
-				$dl = new \Change\Http\Rest\DocumentLink($value);
-				$properties[$name] = $dl->toPropertyLinkArray($urlManager);
-			}
-			elseif (is_array($value))
-			{
-				foreach ($value as $doc)
-				{
-					/* @var $doc \Change\Documents\AbstractDocument */
-					$dl = new \Change\Http\Rest\DocumentLink($doc);
-					$properties[$name][] = $dl->toPropertyLinkArray($urlManager);
-				}
-			}
-			else
-			{
-				$properties[$name] = $value;
-			}
+			$c = new PropertyConverter($document, $property, $urlManager);
+			$properties[$name] = $c->getRestValue();
 		}
 
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
@@ -111,13 +91,12 @@ class GetDocument
 			$i18n = array();
 			foreach ($document->getLCIDArray() as $tmpLCID)
 			{
-				$documentLink->setLCID($tmpLCID);
-				$i18n[$tmpLCID] = $urlManager->getByPathInfo($documentLink->getPathInfo())->toString();
+				$LCIDLink = clone($documentLink);
+				$LCIDLink->setLCID($tmpLCID);
+				$i18n[$tmpLCID] = $urlManager->getByPathInfo($LCIDLink->getPathInfo())->toString();
 			}
 			$result->setI18n($i18n);
 		}
-
-		$result->setLinks($links);
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 		$event->setResult($result);

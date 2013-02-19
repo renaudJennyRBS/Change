@@ -7,7 +7,7 @@ $application->start();
 
 $controller = new \Change\Http\Rest\Controller($application);
 $controller->setActionResolver(new \Change\Http\Rest\Resolver());
-$request = new \Change\Http\Request();
+$request = new \Change\Http\Rest\Request();
 
 $response = $controller->handle($request);
 
