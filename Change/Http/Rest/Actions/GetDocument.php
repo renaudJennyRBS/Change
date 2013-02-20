@@ -73,6 +73,8 @@ class GetDocument
 	{
 		$urlManager = $event->getUrlManager();
 		$result = new \Change\Http\Rest\Result\DocumentResult();
+		$result->setHeaderLastModified($document->getModificationDate());
+
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
 
@@ -93,7 +95,7 @@ class GetDocument
 			{
 				$LCIDLink = clone($documentLink);
 				$LCIDLink->setLCID($tmpLCID);
-				$i18n[$tmpLCID] = $urlManager->getByPathInfo($LCIDLink->getPathInfo())->toString();
+				$i18n[$tmpLCID] = $LCIDLink->href();
 			}
 			$result->setI18n($i18n);
 		}

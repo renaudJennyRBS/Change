@@ -107,7 +107,7 @@ class Link
 	 */
 	public function href()
 	{
-		return $this->urlManager->getByPathInfo($this->getPathInfo())->setQuery($this->getQuery())->toString();
+		return $this->urlManager->getByPathInfo($this->getPathInfo())->setQuery($this->getQuery())->normalize()->toString();
 	}
 
 	/**

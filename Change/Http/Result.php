@@ -99,10 +99,23 @@ class Result
 		$this->removeHeader('Last-Modified');
 		if ($lastModified)
 		{
-			$lastModified = new \Zend\Http\Header\LastModified();
-			$lastModified->setDate($lastModified);
-			$this->getHeaders()->addHeader($lastModified);
+			$header = new \Zend\Http\Header\LastModified();
+			$header->setDate($lastModified);
+			$this->getHeaders()->addHeader($header);
 		}
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getHeaderLastModified()
+	{
+		$header = $this->getHeaders()->get('Last-Modified');
+		if ($header instanceof \Zend\Http\Header\LastModified)
+		{
+			return $header->date();
+		}
+		return null;
 	}
 
 	/**

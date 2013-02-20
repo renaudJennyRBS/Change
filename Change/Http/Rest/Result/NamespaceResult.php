@@ -7,24 +7,33 @@ namespace Change\Http\Rest\Result;
 class NamespaceResult extends \Change\Http\Result
 {
 	/**
-	 * @var array
+	 * @var \Change\Http\Rest\Result\Links
 	 */
-	protected $links = array();
+	protected $links;
+
 
 	public function __construct()
 	{
+		$this->links = new Links();
 	}
 
 	/**
-	 * @param array $links
+	 * @param array|\Change\Http\Rest\Result\Links $links
 	 */
 	public function setLinks($links)
 	{
-		$this->links = $links;
+		if ($links instanceof Links)
+		{
+			$this->links = $links;
+		}
+		elseif (is_array($links))
+		{
+			$this->links->exchangeArray($links);
+		}
 	}
 
 	/**
-	 * @return array
+	 * @return \Change\Http\Rest\Result\Links
 	 */
 	public function getLinks()
 	{
@@ -40,13 +49,19 @@ class NamespaceResult extends \Change\Http\Result
 	}
 
 	/**
+	 * @param string $rel
+	 * @param string|array|\Change\Http\Rest\Result\Link $link
+	 */
+	public function addRelLink($rel, $link)
+	{
+		$this->links[$rel] = $link;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function toArray()
 	{
-		$links = array_map(function($item) {
-			return ($item instanceof \Change\Http\Rest\Result\Link) ? $item->toArray() : $item;
-		}, $this->getLinks());
-		return array('links' => $links);
+		return array('links' => $this->links->toArray());
 	}
 }

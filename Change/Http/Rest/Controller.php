@@ -106,6 +106,17 @@ class Controller extends \Change\Http\Controller
 			$response->setStatusCode($result->getHttpStatusCode());
 			$event->setResponse($response);
 
+			if ($response->getStatusCode() === HttpResponse::STATUS_CODE_200)
+			{
+				$lastModified = $result->getHeaderLastModified();
+				$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
+				if ($lastModified && $ifModifiedSince && $lastModified <= $ifModifiedSince)
+				{
+					$response->setStatusCode(HttpResponse::STATUS_CODE_304);
+					return;
+				}
+			}
+
 			$callable = array($result, 'toArray');
 			if (is_callable($callable))
 			{

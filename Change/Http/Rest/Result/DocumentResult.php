@@ -12,9 +12,9 @@ class DocumentResult extends \Change\Http\Result
 	protected $properties = array();
 
 	/**
-	 * @var array
+	 * @var Links
 	 */
-	protected $links = array();
+	protected $links;
 
 	/**
 	 * @var array
@@ -24,18 +24,26 @@ class DocumentResult extends \Change\Http\Result
 
 	public function __construct()
 	{
+		$this->links = new Links();
 	}
 
 	/**
-	 * @param array $links
+	 * @param array|\Change\Http\Rest\Result\Links $links
 	 */
 	public function setLinks($links)
 	{
-		$this->links = $links;
+		if ($links instanceof Links)
+		{
+			$this->links = $links;
+		}
+		elseif (is_array($links))
+		{
+			$this->links->exchangeArray($links);
+		}
 	}
 
 	/**
-	 * @return array
+	 * @return \Change\Http\Rest\Result\Links
 	 */
 	public function getLinks()
 	{
@@ -43,11 +51,29 @@ class DocumentResult extends \Change\Http\Result
 	}
 
 	/**
-	 * @param array|\Change\Http\Rest\Result\Link $link
+	 * @param string $rel
+	 * @return array|false
+	 */
+	public function getRelLinks($rel)
+	{
+		return $this->links[$rel];
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\Link|array $link
 	 */
 	public function addLink($link)
 	{
 		$this->links[] = $link;
+	}
+
+	/**
+	 * @param string $rel
+	 * @param string|array|\Change\Http\Rest\Result\Link $link
+	 */
+	public function addRelLink($rel, $link)
+	{
+		$this->links[$rel] = $link;
 	}
 
 	/**
@@ -114,11 +140,10 @@ class DocumentResult extends \Change\Http\Result
 
 		$array =  array('properties' => $properties);
 
-		if (count($this->getLinks()))
+		$links = $this->getLinks();
+		if ($links->count())
 		{
-			$array['links'] = array_map(function($item) {
-				return ($item instanceof \Change\Http\Rest\Result\Link) ? $item->toArray() : $item;
-			}, $this->getLinks());
+			$array['links'] = $links->toArray();
 		}
 
 		if (count($this->getI18n()))

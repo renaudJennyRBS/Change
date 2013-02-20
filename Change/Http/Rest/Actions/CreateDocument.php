@@ -106,15 +106,12 @@ class CreateDocument
 			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
 			{
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-
-				foreach ($result->getLinks() as $link)
+				$selfLinks = $result->getLinks()->getByRel('self');
+				if ($selfLinks && $selfLinks[0] instanceof \Change\Http\Rest\Result\DocumentLink)
 				{
-					if (($link instanceof \Change\Http\Rest\Result\DocumentLink) && ($link->getRel() === 'self'))
-					{
-						$href = $link->href();
+						$href = $selfLinks[0]->href();
 						$result->setHeaderLocation($href);
 						$result->setHeaderContentLocation($href);
-					}
 				}
 			}
 		}
