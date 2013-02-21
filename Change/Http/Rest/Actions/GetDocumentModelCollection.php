@@ -25,6 +25,21 @@ class GetDocumentModelCollection
 	}
 
 	/**
+	 * @param \Change\Http\Rest\Result\CollectionResult $result
+	 * @return array
+	 */
+	protected function buildQueryArray($result)
+	{
+		$array = array('limit' => $result->getLimit(), 'offset' => $result->getOffset());
+		if ($result->getSort())
+		{
+			$array['sort'] = $result->getSort();
+			$array['desc'] = ($result->getDesc()) ? 'true' : 'false';
+		}
+		return $array;
+	}
+
+	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return \Change\Http\Rest\Result\DocumentResult
@@ -41,15 +56,28 @@ class GetDocumentModelCollection
 		{
 			$result->setLimit(intval($limit));
 		}
+		if (($sort = $event->getRequest()->getQuery('sort')) !== null)
+		{
+			$result->setSort($sort);
+		}
+
+		if (($desc = $event->getRequest()->getQuery('desc')) !== null)
+		{
+			$result->setDesc($desc);
+		}
+
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
-		$selfLink->setQuery(array('limit' => $result->getLimit(), 'offset' => $result->getOffset()));
+		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);
 
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
+
+		$table = $fb->getDocumentTable($model->getRootName());
+
 		$sc = $qb->select()
 				->addColumn($fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count'))
-				->from($fb->getDocumentTable($model->getRootName()))->query();
+				->from($table)->query();
 		$row = $sc->getFirstResult();
 		if ($row && $row['count'])
 		{
@@ -60,7 +88,9 @@ class GetDocumentModelCollection
 		{
 			$prevLink = clone($selfLink);
 			$prevOffset = max(0, $result->getOffset() - $result->getLimit());
-			$prevLink->setQuery(array('limit' => $result->getLimit(), 'offset' => $prevOffset));
+			$query = $this->buildQueryArray($result);
+			$query['offset'] = $prevOffset;
+			$prevLink->setQuery($query);
 			$prevLink->setRel('prev');
 			$result->addLink($prevLink);
 		}
@@ -71,15 +101,53 @@ class GetDocumentModelCollection
 			{
 				$nextLink = clone($selfLink);
 				$nextOffset = min($result->getOffset() + $result->getLimit(), $result->getCount() - 1);
-				$nextLink->setQuery(array('limit' => $result->getLimit(), 'offset' => $nextOffset));
+				$query = $this->buildQueryArray($result);
+				$query['offset'] = $nextOffset;
+				$nextLink->setQuery($query);
 				$nextLink->setRel('next');
 				$result->addLink($nextLink);
 			}
 
-			$sc = $qb->select()
-				->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'))
-				->addColumn($fb->alias($fb->getDocumentColumn('model'), 'model'))
-				->from($fb->getDocumentTable($model->getRootName()))->query();
+			$qb->select()
+				->addColumn($fb->alias($fb->getDocumentColumn('id', $table), 'id'))
+				->addColumn($fb->alias($fb->getDocumentColumn('model', $table), 'model'))
+				->from($table);
+
+			if ($result->getSort() && ($property = $model->getProperty($result->getSort())) !== null)
+			{
+				if ($property->getLocalized())
+				{
+					$LCID = $event->getApplicationServices()->getI18nManager()->getLCID();
+					$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
+
+					$qb->leftJoin($i18nTable,
+						$fb->logicAnd(
+							$fb->eq($fb->getDocumentColumn('id', $table), $fb->getDocumentColumn('id', $i18nTable)),
+							$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $fb->string($LCID))
+						)
+					);
+				}
+
+				if ($property->getName() == 'id' || $property->getName() == 'model')
+				{
+					$orderColumn = $fb->column($property->getName());
+				}
+				else
+				{
+					$orderColumn = $fb->getDocumentColumn($property->getName());
+				}
+
+				if ($result->getDesc())
+				{
+					$qb->orderDesc($orderColumn);
+				}
+				else
+				{
+					$qb->orderAsc($orderColumn);
+				}
+			}
+
+			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
 			$collection = new \Change\Documents\DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());

@@ -26,6 +26,18 @@ class CollectionResult extends \Change\Http\Result
 	 */
 	protected $limit = 10;
 
+
+	/**
+	 * @var string
+	 */
+	protected $sort = 'id';
+
+
+	/**
+	 * @var boolean
+	 */
+	protected $desc = false;
+
 	/**
 	 * @var integer
 	 */
@@ -159,6 +171,43 @@ class CollectionResult extends \Change\Http\Result
 	}
 
 	/**
+	 * @param boolean $desc
+	 */
+	public function setDesc($desc)
+	{
+		if (is_string($desc))
+		{
+			$desc = ($desc == 'true' || $desc == '1');
+		}
+		$this->desc = ($desc == true);
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getDesc()
+	{
+		return $this->desc;
+	}
+
+	/**
+	 * @param string $sort
+	 */
+	public function setSort($sort)
+	{
+		$this->sort = $sort;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSort()
+	{
+		return $this->sort;
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function toArray()
@@ -167,7 +216,9 @@ class CollectionResult extends \Change\Http\Result
 			return (is_object($item) && is_callable(array($item, 'toArray'))) ? $item->toArray() : $item;
 		}, $this->getResources());
 
-		$array =  array('pagination' => array('count' => $this->getCount(), 'offset' => $this->getOffset(), 'limit' => $this->getLimit()),
+		$array =  array('pagination' =>
+			array('count' => $this->getCount(), 'offset' => $this->getOffset(), 'limit' => $this->getLimit(),
+				'sort' => $this->getSort(), 'desc' => $this->getDesc()),
 			'resources' => $resources);
 
 		$links = $this->getLinks();
