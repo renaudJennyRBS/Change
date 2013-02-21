@@ -48,6 +48,11 @@ class Event extends \Zend\EventManager\Event
 	protected $response;
 
 	/**
+	 * @var string
+	 */
+	protected $LCID;
+
+	/**
 	 * @return \Change\Http\Controller|null
 	 */
 	public function getController()
@@ -121,6 +126,27 @@ class Event extends \Zend\EventManager\Event
 	public function getUrlManager()
 	{
 		return $this->urlManager;
+	}
+
+	/**
+	 * @param string $LCID
+	 */
+	public function setLCID($LCID)
+	{
+		$this->LCID = $LCID;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return string
+	 */
+	public function getLCID()
+	{
+		if (!$this->LCID)
+		{
+			throw new \RuntimeException('LCID not defined', 70002);
+		}
+		return $this->LCID;
 	}
 
 	/**

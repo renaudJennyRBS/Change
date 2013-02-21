@@ -21,7 +21,7 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param $request
+	 * @param \Change\Http\Request $request
 	 * @return \Change\Http\Event
 	 */
 	protected function createEvent($request)
@@ -29,7 +29,50 @@ class Controller extends \Change\Http\Controller
 		$event = parent::createEvent($request);
 		$event->setApplicationServices(new \Change\Application\ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new \Change\Documents\DocumentServices($event->getApplicationServices()));
+
+		$header = $request->getHeader('Accept-Language');
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$event->setLCID($this->findLCID($header, $i18nManager));
+
 		return $event;
+	}
+
+	/**
+	 * @param \Zend\Http\Header\HeaderInterface $header
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return string
+	 */
+	protected function findLCID($header, $i18nManager)
+	{
+		$LCID = null;
+		if ($header instanceof \Zend\Http\Header\AcceptLanguage)
+		{
+			foreach ($header->getPrioritized() as $part)
+			{
+				/* @var $part \Zend\Http\Header\Accept\FieldValuePart\LanguageFieldValuePart */
+				$language = $part->getLanguage();
+
+				if (strlen($language) === 2)
+				{
+					$testLCID = strtolower($language) . '_' . strtoupper($language);
+				}
+				elseif (strlen($language) === 5)
+				{
+					$testLCID = strtolower(substr($language, 0, 2)) . '_' . strtoupper(substr($language, 3, 2));
+				}
+				else
+				{
+					continue;
+				}
+
+				if ($i18nManager->isSupportedLCID($testLCID))
+				{
+					$LCID = $testLCID;
+					break;
+				}
+			}
+		}
+		return $LCID ? $LCID : $i18nManager->getDefaultLCID();
 	}
 
 	/**
