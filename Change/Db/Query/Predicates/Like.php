@@ -83,7 +83,7 @@ class Like extends BinaryPredicate
 				$this->matchMode = $matchMode;
 				return;
 		}
-		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+		throw new \InvalidArgumentException('Argument 1 must be a valid const', 42027);
 	}
 
 	/**

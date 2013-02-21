@@ -60,7 +60,7 @@ class SetClause extends AbstractClause
 	{
 		if (!$this->getSetList()->count())
 		{
-			throw new \RuntimeException('Values can not be empty');
+			throw new \RuntimeException('Values can not be empty', 42028);
 		}
 	}
 		

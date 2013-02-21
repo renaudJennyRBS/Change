@@ -122,7 +122,7 @@ class SQLFragmentBuilder
 		}
 		if (!($rhs instanceof AbstractExpression))
 		{
-			throw new \InvalidArgumentException('Could not convert argument 2 to an Expression');
+			throw new \InvalidArgumentException('Could not convert argument 2 to an Expression', 42012);
 		}
 		return new Alias($lhs, $rhs);
 	}
@@ -142,7 +142,7 @@ class SQLFragmentBuilder
 		}
 		if (!($lhs instanceof AbstractExpression))
 		{
-			throw new \InvalidArgumentException('Could not convert argument 1 to an Expression');
+			throw new \InvalidArgumentException('Could not convert argument 1 to an Expression', 42013);
 		}
 		
 		if (is_string($rhs))
@@ -151,7 +151,7 @@ class SQLFragmentBuilder
 		}
 		if (!($rhs instanceof AbstractExpression))
 		{
-			throw new \InvalidArgumentException('Could not convert argument 2 to an Expression');
+			throw new \InvalidArgumentException('Could not convert argument 2 to an Expression', 42012);
 		}
 		
 		return new Assignment($lhs, $rhs);
@@ -238,7 +238,7 @@ class SQLFragmentBuilder
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid Query or Builder');
+			throw new \InvalidArgumentException('Argument 2 must be a valid Query or Builder', 42014);
 		}
 	}
 	
@@ -595,7 +595,7 @@ class SQLFragmentBuilder
 			}
 			else
 			{
-				throw new \InvalidArgumentException('Argument 2 is not valid \Closure');
+				throw new \InvalidArgumentException('Argument 2 is not valid \Closure', 42015);
 			}
 		}
 		return $object;

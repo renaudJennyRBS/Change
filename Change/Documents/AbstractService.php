@@ -97,7 +97,7 @@ abstract class AbstractService
 		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($documentId, $this->getDocumentModel());
 		if ($document === null)
 		{
-			throw new \InvalidArgumentException('Document id: ' . $documentId . ' not found');
+			throw new \InvalidArgumentException('Document id: ' . $documentId . ' not found', 51000);
 		}
 		return $document;
 	}
@@ -133,7 +133,7 @@ abstract class AbstractService
 		{
 			if ($i18nPart->getPersistentState() !== DocumentManager::STATE_NEW)
 			{
-				throw new \LogicException('Document is not new');
+				throw new \LogicException('Document is not new', 51001);
 			}
 			if ($document->getPersistentState() === DocumentManager::STATE_NEW)
 			{
@@ -144,7 +144,7 @@ abstract class AbstractService
 		{
 			if ($document->getPersistentState() !== DocumentManager::STATE_NEW)
 			{
-				throw new \LogicException('Document is not new');
+				throw new \LogicException('Document is not new', 51001);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ abstract class AbstractService
 
 		if (!$document->isValid())
 		{
-			throw new \LogicException('Document is not valid');
+			throw new \LogicException('Document is not valid', 52000);
 		}
 
 		$dm = $document->getDocumentManager();
@@ -208,14 +208,14 @@ abstract class AbstractService
 		{
 			if ($i18nPart->getPersistentState() === DocumentManager::STATE_NEW)
 			{
-				throw new \LogicException('Document is new');
+				throw new \LogicException('Document is new', 51002);
 			}
 		}
 		else
 		{
 			if ($document->getPersistentState() === DocumentManager::STATE_NEW)
 			{
-				throw new \LogicException('Document is new');
+				throw new \LogicException('Document is new', 51002);
 			}
 		}
 	}
@@ -243,7 +243,7 @@ abstract class AbstractService
 			$oldVersion = $document->getDocumentVersionOldValue();
 			if ($oldVersion !== null)
 			{
-				throw new \LogicException('Invalid Document Version: ' . $document->getDocumentVersion() .  ' > ' . $oldVersion);
+				throw new \LogicException('Invalid Document Version: ' . $document->getDocumentVersion() .  ' > ' . $oldVersion, 52001);
 			}
 			$document->setDocumentVersion($document->getDocumentVersion() + 1);
 		}
@@ -253,7 +253,7 @@ abstract class AbstractService
 		/* @var $document \Change\Documents\AbstractDocument */
 		if (!$document->isValid())
 		{
-			throw new \LogicException('Document is not valid');
+			throw new \LogicException('Document is not valid', 52000);
 		}
 		
 		if ($document->getDocumentModel()->useCorrection())
@@ -332,7 +332,7 @@ abstract class AbstractService
 			{
 				if ($publicationStatus === Publishable::STATUS_VALIDATION)
 				{
-					throw new \LogicException('Unable to create correction for document in VALIDATION state');
+					throw new \LogicException('Unable to create correction for document in VALIDATION state', 51003);
 				}
 				
 				/* @var $property \Change\Documents\Property */
@@ -353,7 +353,7 @@ abstract class AbstractService
 			$correction = ($LCID === $nonLocalizedKey) ? $document->getCorrection() : $document->getLocalizedCorrection();
 			if ($correction->getStatus() === Correction::STATUS_VALIDATION)
 			{
-				throw new \LogicException('Unable to update correction in VALIDATION state');
+				throw new \LogicException('Unable to update correction in VALIDATION state', 51004);
 			}
 			
 			if ($publicationStatus === null)
@@ -380,12 +380,12 @@ abstract class AbstractService
 	{
 		if ($document->getId() != $correction->getDocumentId() || $correction->getStatus() != Correction::STATUS_PUBLISHABLE)
 		{
-			throw new \InvalidArgumentException('Correction '. $correction .  ' not applicable to Document ' . $document);
+			throw new \InvalidArgumentException('Correction '. $correction .  ' not applicable to Document ' . $document, 51005);
 		}
 	
 		if ($correction->getPublicationDate() != null && $correction->getPublicationDate() > new \DateTime())
 		{
-			throw new \InvalidArgumentException('Correction '. $correction .  ' not publishable');
+			throw new \InvalidArgumentException('Correction '. $correction .  ' not publishable', 51006);
 		}
 	
 		if ($correction->getLcid() !== null)
@@ -396,7 +396,7 @@ abstract class AbstractService
 				$dm->pushLCID($correction->getLcid());
 				if ($document->hasModifiedProperties())
 				{
-					throw new \InvalidArgumentException('Document '. $document .  ' is already modified');
+					throw new \InvalidArgumentException('Document '. $document .  ' is already modified', 51007);
 				}
 				$this->applyCorrectionInternal($document, $correction);
 				$dm->popLCID();
@@ -410,7 +410,7 @@ abstract class AbstractService
 		{
 			if ($document->hasModifiedProperties())
 			{
-				throw new \InvalidArgumentException('Document '. $document .  ' is already modified');
+				throw new \InvalidArgumentException('Document '. $document .  ' is already modified', 51007);
 			}				
 			$this->applyCorrectionInternal($document, $correction);
 		}

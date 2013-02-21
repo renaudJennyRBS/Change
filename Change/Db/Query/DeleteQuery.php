@@ -84,11 +84,11 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	{
 		if ($this->deleteClause === null)
 		{
-			throw new \RuntimeException('DeleteClause can not be null');
+			throw new \RuntimeException('DeleteClause can not be null', 42006);
 		}		
 		if ($this->fromClause === null)
 		{
-			throw new \RuntimeException('FromClause can not be null');
+			throw new \RuntimeException('FromClause can not be null', 42007);
 		}
 	}
 		

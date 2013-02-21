@@ -57,7 +57,7 @@ abstract class DbProvider
 		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
 		if (!isset($connectionInfos['dbprovider']))
 		{
-			throw new \RuntimeException('Missing or incomplete database configuration');
+			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
 		}
 		$className = $connectionInfos['dbprovider'];
 		return new $className($connectionInfos, $logging);

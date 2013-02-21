@@ -85,15 +85,15 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 	{
 		if ($this->insertClause === null)
 		{
-			throw new \RuntimeException('InsertClause can not be null');
+			throw new \RuntimeException('InsertClause can not be null', 42008);
 		}		
 		if ($this->valuesClause === null && $this->selectQuery === null)
 		{
-			throw new \RuntimeException('ValuesClause or SelectQuery should be not null');
+			throw new \RuntimeException('ValuesClause or SelectQuery should be not null', 42009);
 		}
 		if ($this->valuesClause !== null && $this->selectQuery !== null)
 		{
-			throw new \RuntimeException('ValuesClause or SelectQuery should be null');
+			throw new \RuntimeException('ValuesClause or SelectQuery should be null', 42010);
 		}
 	}
 

@@ -55,7 +55,7 @@ class Compiler
 		}
 		else
 		{
-			throw new \RuntimeException('Unable to load document definition : ' . $definitionPath);
+			throw new \RuntimeException('Unable to load document definition : ' . $definitionPath, 54001);
 		}
 		return $model;
 	}
@@ -82,7 +82,7 @@ class Compiler
 				$extModel = $this->getModelByName($extendName);
 				if ($extModel === null)
 				{
-					throw new \Exception('Document ' . $modelName . ' extend unknown ' . $model->getExtend(). ' document.');
+					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtend(), 54002);
 				}
 				$model->setExtendModel($extModel);
 				$model->setParent($extModel);
@@ -90,14 +90,14 @@ class Compiler
 				{
 					if (isset($injectionArray[$extendName]))
 					{
-						throw new \Exception('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $injectionArray[$extendName]);
+						throw new \RuntimeException('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $injectionArray[$extendName], 54003);
 					}
 					$injectionArray[$extendName] = $model;
 				}
 			}
 			elseif ($model->getInject())
 			{
-				throw new \Exception('Invalid Injection on ' . $modelName . ' document.');
+				throw new \RuntimeException('Invalid Injection on ' . $modelName, 54004);
 			}
 		}
 		
@@ -111,7 +111,7 @@ class Compiler
 				
 				if (in_array($extModel, $injectionArray))
 				{
-					throw new \Exception($model . ' extends a injecting model ' . $extendName);
+					throw new \RuntimeException($model . ' extends a injecting model ' . $extendName, 54005);
 				}
 				
 				if (isset($injectionArray[$extendName]) && $injectionArray[$extendName] !== $model)
@@ -156,7 +156,7 @@ class Compiler
 							$im = $this->getModelByName($docType);
 							if (!$im)
 							{
-								throw new \Exception('Inverse Property on unknown Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')');
+								throw new \RuntimeException('Inverse Property on unknown Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')', 54006);
 							}
 							$ip = new InverseProperty($im, $property);
 							$im->addInverseProperty($ip);
@@ -220,7 +220,7 @@ class Compiler
 			$modelName = $model->getName();
 			if (isset($result[$modelName]))
 			{
-				throw new \Exception('Recursion on ' . $modelName . ' document.');
+				throw new \RuntimeException('Recursion on ' . $modelName, 54007);
 			}
 			$result[$modelName] = $model;
 		}

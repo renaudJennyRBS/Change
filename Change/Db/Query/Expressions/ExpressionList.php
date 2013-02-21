@@ -36,7 +36,7 @@ class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression imp
 	{
 		if (!is_array($list))
 		{
-			throw new \InvalidArgumentException('Argument 1 must be a Array');
+			throw new \InvalidArgumentException('Argument 1 must be a Array', 42033);
 		}
 		$this->list = array_map(function (AbstractExpression $item) {return $item;}, $list);
 	}

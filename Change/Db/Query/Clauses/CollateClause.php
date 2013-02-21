@@ -49,7 +49,7 @@ class CollateClause extends AbstractClause
 	{
 		if ($this->getExpression() === null)
 		{
-			throw new \RuntimeException('Expression can not be null');
+			throw new \RuntimeException('Expression can not be null', 42023);
 		}
 		return 'COLLATE ' . $this->getExpression()->toSQL92String();
 	}

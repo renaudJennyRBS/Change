@@ -78,7 +78,7 @@ class StatementBuilder
 	{
 		if ($this->query === null)
 		{
-			throw new \LogicException('Query not initialized');
+			throw new \LogicException('Query not initialized', 42016);
 		}
 		if (is_string($parameter))
 		{
@@ -86,7 +86,7 @@ class StatementBuilder
 		}
 		if (!($parameter instanceof \Change\Db\Query\Expressions\Parameter))
 		{
-			throw new \InvalidArgumentException('argument must be a string or a \Change\Db\Query\Expressions\Parameter');
+			throw new \InvalidArgumentException('argument must be a string or a \Change\Db\Query\Expressions\Parameter', 42004);
 		}
 		$this->query->addParameter($parameter);
 		return $this;
@@ -103,7 +103,7 @@ class StatementBuilder
 		{
 			return $this->query;
 		}	
-		throw new \LogicException('Call insert() before');
+		throw new \LogicException('Call insert() before', 42017);
 	}
 	
 	/**
@@ -245,7 +245,7 @@ class StatementBuilder
 			return $this->query;
 		}
 	
-		throw new \LogicException('Call update() before');
+		throw new \LogicException('Call update() before', 42018);
 	}
 	
 	/**
@@ -315,7 +315,7 @@ class StatementBuilder
 			return $this->query;
 		}
 	
-		throw new \LogicException('Call delete() before');
+		throw new \LogicException('Call delete() before', 42019);
 	}
 	
 	/**
@@ -362,6 +362,6 @@ class StatementBuilder
 			$validQuery->setWhereClause($whereClause);
 			return $this;
 		}
-		throw new \LogicException('Call update() or delete() before');
+		throw new \LogicException('Call update() or delete() before', 42020);
 	}
 }

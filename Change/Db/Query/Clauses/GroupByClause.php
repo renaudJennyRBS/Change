@@ -66,7 +66,7 @@ class GroupByClause extends AbstractClause
 	{
 		if ($this->getExpressionList() === null)
 		{
-			throw new \RuntimeException('ExpressionList can not be null');
+			throw new \RuntimeException('ExpressionList can not be null', 42025);
 		}
 	}
 	

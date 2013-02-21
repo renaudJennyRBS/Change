@@ -138,21 +138,21 @@ class Property
 			$tv = trim($value);
 			if ($tv == '' || $tv != $value)
 			{
-				throw new \RuntimeException('Invalid empty or spaced attribute value for ' . $name);
+				throw new \RuntimeException('Invalid empty or spaced attribute value for ' . $name, 54021);
 			}	
 			switch ($name)
 			{
 				case "name":
 					if (in_array(strtolower($value), self::$RESERVED_PROPERTY_NAMES))
 					{
-						throw new \RuntimeException('Invalid name attribute value: ' . $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					$this->name = $value;
 					break;
 				case "type":
 					if (!in_array($value, static::$TYPES))
 					{
-						throw new \RuntimeException('Invalid type attribute value: ' . $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					else
 					{
@@ -169,7 +169,7 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid indexed attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "cascade-delete":
@@ -179,7 +179,7 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid cascade-delete attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "default-value":
@@ -192,21 +192,21 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid required attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "min-occurs":
 					$this->minOccurs = intval($value);
 					if ($this->minOccurs <= 1)
 					{
-						throw new \RuntimeException('Invalid min-occurs attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
 					if ($this->maxOccurs != -1 && $this->maxOccurs < 1)
 					{
-						throw new \RuntimeException('Invalid max-occurs attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "localized":
@@ -216,7 +216,7 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid localized attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "has-correction":
@@ -226,18 +226,18 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid has-correction attribute value: '. $value);
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;									
 				default:
-					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value);
+					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value, 54023);
 					break;
 			}
 		}
 		
 		if ($this->getName() === null)
 		{
-			throw new \RuntimeException('Property Name can not be null');
+			throw new \RuntimeException('Property Name can not be null', 54024);
 		}
 
 		foreach ($xmlElement->childNodes as $node)
@@ -271,7 +271,7 @@ class Property
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid constraint name');
+					throw new \RuntimeException('Constraint Name can not be null', 54025);
 				}
 			}
 			elseif ($node->nodeName == 'dboptions')
@@ -288,7 +288,7 @@ class Property
 			}
 			elseif ($node->nodeType == XML_ELEMENT_NODE)
 			{
-				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> ' . $node->nodeName);
+				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> ' . $node->nodeName, 54026);
 			}
 		}
 	}
@@ -592,7 +592,7 @@ class Property
 		{
 			if ($this->type !== null || $this->localized !== null || $this->hasCorrection !== null)
 			{
-				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this);
+				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this, 54027);
 			}
 		}
 		
@@ -622,7 +622,7 @@ class Property
 		}
 		elseif ($this->localized !== null)
 		{
-			throw new \RuntimeException('Invalid localized attribute on ' . $this);
+			throw new \RuntimeException('Invalid localized attribute on ' . $this, 54028);
 		}
 		
 		$type = $this->getComputedType();
@@ -630,11 +630,11 @@ class Property
 		{
 			if ($this->minOccurs !== null)
 			{
-				throw new \RuntimeException('Invalid min-occurs attribute on ' . $this);
+				throw new \RuntimeException('Invalid min-occurs attribute on ' . $this, 54028);
 			}
 			if ($this->maxOccurs !== null)
 			{
-				throw new \RuntimeException('Invalid max-occurs attribute on ' . $this);
+				throw new \RuntimeException('Invalid max-occurs attribute on ' . $this, 54028);
 			}
 		}
 		else
@@ -643,7 +643,7 @@ class Property
 			$ma = $this->getComputedMaxOccurs();
 			if ($ma != -1 && $ma < $mi)
 			{
-				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this);
+				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this, 54028);
 			}
 		}
 	}

@@ -122,7 +122,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			$this->assertEquals('Invalid LCID: fr', $e->getMessage());
+			$this->assertEquals('Not supported LCID: fr', $e->getMessage());
 		}
 	}
 
@@ -148,7 +148,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			$this->assertEquals('Not supported language: kl_KL', $e->getMessage());
+			$this->assertEquals('Not supported LCID: kl_KL', $e->getMessage());
 		}
 	}
 

@@ -192,7 +192,7 @@ class AbstractDocumentClass
 		$i18nPart = $this->getCurrentI18nPart();
 		if ($i18nPart->getLCID() == $this->getRefLCID())
 		{
-			throw new \RuntimeException(\'Unable to delete refLCID: \' .  $this->getRefLCID());
+			throw new \RuntimeException(\'Unable to delete refLCID: \' .  $this->getRefLCID(), 51014);
 		}
 
 		if ($i18nPart->getPersistentState() === \Change\Documents\DocumentManager::STATE_LOADED)
@@ -827,7 +827,7 @@ class AbstractDocumentClass
 		}
 		if (' . $var . ' !== null && !(' . $var . ' instanceof ' . $ct . '))
 		{
-			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '\');
+			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '\', 52005);
 		}
 		$this->checkLoaded();
 		$newId = (' . $var . ' !== null) ? $this->getDocumentManager()->initializeRelationDocumentId(' . $var . ') : null;
@@ -954,7 +954,7 @@ class AbstractDocumentClass
 		}
 		if (!is_array($newValueArray))
 		{
-			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an array\');
+			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an array\', 52005);
 		}
 		$this->checkLoaded' . $un . '();
 
@@ -966,7 +966,7 @@ class AbstractDocumentClass
 			}
 			else
 			{
-				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '[]\');
+				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '[]\', 52005);
 			}
 		}, $newValueArray);			
 		$this->setInternal' . $un . 'Ids($newValueIds);

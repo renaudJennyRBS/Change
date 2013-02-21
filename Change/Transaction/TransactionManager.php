@@ -90,7 +90,7 @@ class TransactionManager extends \Exception
 		$this->checkDirty();
 		if ($this->count <= 0)
 		{
-			throw new \LogicException('Commit bad transaction count ('.$this->count.')');
+			throw new \LogicException('Commit bad transaction count ('.$this->count.')', 121000);
 		}	
 		if ($this->count == 1)
 		{
@@ -113,7 +113,7 @@ class TransactionManager extends \Exception
 	{
 		if ($this->count == 0)
 		{
-			throw new \LogicException('Rollback bad transaction count');
+			throw new \LogicException('Rollback bad transaction count', 121001);
 		}
 		$this->count--;
 		
@@ -145,7 +145,7 @@ class TransactionManager extends \Exception
 	{
 		if ($this->dirty)
 		{
-			throw new \LogicException('Transaction is dirty');
+			throw new \LogicException('Transaction is dirty', 121002);
 		}
 	}
 	

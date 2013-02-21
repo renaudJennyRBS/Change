@@ -60,7 +60,7 @@ class ValuesClause extends AbstractClause
 	{
 		if (!$this->getValuesList()->count())
 		{
-			throw new \RuntimeException('ValuesList can not be empty');
+			throw new \RuntimeException('ValuesList can not be empty', 42029);
 		}
 	}
 		

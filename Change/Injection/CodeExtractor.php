@@ -27,12 +27,12 @@ class CodeExtractor
 			$error = \Zend\Stdlib\ErrorHandler::stop();
 			if ($content === false || $error)
 			{
-				throw new \RuntimeException('Cannot open ' . $path . ' for reading', 0, $error);
+				throw new \RuntimeException('Cannot open ' . $path . ' for reading', 90005, $error);
 			}
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Argument must be a string representing a valid filesystem path');
+			throw new \InvalidArgumentException('Argument must be a string representing a valid filesystem path', 90006);
 		}
 		$this->extractionResult = $this->extract($content);
 	}

@@ -66,7 +66,7 @@ class DbProvider extends \Change\Db\DbProvider
 		$protocol = 'sqlite';
 		if (!isset($connectionInfos['database']))
 		{
-			throw new \RuntimeException('database not defined!');
+			throw new \RuntimeException('Database not defined', 31001);
 		}
 		$dsn = $protocol . ':' .$connectionInfos['database'];
 		$pdo = new \PDO($dsn);
@@ -255,7 +255,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$joinedTable = $fragment->getTableExpression();
 			if (!$joinedTable)
 			{
-				throw new \RuntimeException('A joined table is required');
+				throw new \RuntimeException('A joined table is required', 42002);
 			}
 			$parts = array();
 			if ($fragment->isNatural())
@@ -270,10 +270,10 @@ class DbProvider extends \Change\Db\DbProvider
 						$parts[] = 'LEFT OUTER JOIN';
 						break;
 					case \Change\Db\Query\Expressions\Join::RIGHT_OUTER_JOIN :
-						throw new \RuntimeException('RIGHT OUTER JOIN Is not supported');
+						throw new \RuntimeException('RIGHT OUTER JOIN Is not supported', 42038);
 						break;
 					case \Change\Db\Query\Expressions\Join::FULL_OUTER_JOIN :
-						throw new \RuntimeException('FULL OUTER JOIN Is not supported');
+						throw new \RuntimeException('FULL OUTER JOIN Is not supported', 42039);
 						break;
 					case \Change\Db\Query\Expressions\Join::INNER_JOIN :
 					default :

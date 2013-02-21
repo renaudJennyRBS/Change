@@ -133,13 +133,13 @@ class Unique extends \Zend\Validator\AbstractValidator
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
 		if ($model === null)
 		{
-			throw new \InvalidArgumentException('Invalid document model name:' . $modelName);
+			throw new \InvalidArgumentException('Invalid document model name: ' . $modelName, 52003);
 		}
 		
 		$property = $model->getProperty($this->getPropertyName());
 		if ($property === null)
 		{
-			throw new \InvalidArgumentException('Invalid property name:' . $modelName . '::' . $this->getPropertyName());
+			throw new \InvalidArgumentException('Invalid property name: ' . $modelName . '::' . $this->getPropertyName(), 52004);
 		}	
 
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();

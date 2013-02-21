@@ -40,7 +40,7 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 		$validator = new \Zend\Validator\Regex('#^([a-z]+-{1})*[a-z]+$#');
 		if (!$validator->isValid($cmdName))
 		{
-			throw new \InvalidArgumentException('Command name should be a lowercase dash separated string');
+			throw new \InvalidArgumentException('Command name should be a lowercase dash separated string', 21002);
 		}
 		$package = $input->getArgument('package');
 		$valid = ($package === 'change');
@@ -58,7 +58,7 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 
 		if (!$valid)
 		{
-			throw new \InvalidArgumentException('Package name should be of the form vendor/module or change or package not installed');
+			throw new \InvalidArgumentException('Package name should be of the form vendor/module or change or package not installed', 21003);
 		}
 	}
 
@@ -98,7 +98,7 @@ class CreateCommand extends \Change\Application\Console\ChangeCommand
 		$filePath = $commandDir . DIRECTORY_SEPARATOR . $className . '.php' ;
 		if (file_exists($filePath))
 		{
-			throw new \RuntimeException('File already exists at path ' . $filePath);
+			throw new \RuntimeException('File already exists at path ' . $filePath, 22000);
 		}
 		\Change\Stdlib\File::write($commandDir . DIRECTORY_SEPARATOR . $className . '.php' , $content);
 	}

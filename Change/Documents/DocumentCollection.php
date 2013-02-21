@@ -130,7 +130,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Value must be null or \Change\Documents\AbstractDocument');
+			throw new \InvalidArgumentException('Argument 1 must be null or \Change\Documents\AbstractDocument', 50001);
 		}
 	}
 	

@@ -84,11 +84,11 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	{
 		if ($this->updateClause === null)
 		{
-			throw new \RuntimeException('UpdateClause can not be null');
+			throw new \RuntimeException('UpdateClause can not be null', 42021);
 		}		
 		if ($this->setClause === null)
 		{
-			throw new \RuntimeException('SetClause can not be null');
+			throw new \RuntimeException('SetClause can not be null', 42022);
 		}
 	}
 

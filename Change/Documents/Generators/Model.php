@@ -154,7 +154,7 @@ class Model
 							$this->importProperties($xmlSectionNode);
 							break;
 						default:
-							throw new \RuntimeException('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName);	
+							throw new \RuntimeException('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName, 54008);
 					}
 				}
 			}
@@ -168,7 +168,7 @@ class Model
 	{
 		if ($xmlElement->localName !== 'document')
 		{
-			throw new \RuntimeException('Invalid document element name ' . $this);
+			throw new \RuntimeException('Invalid document element name ' . $this, 54009);
 			return;
 		}
 	
@@ -179,7 +179,7 @@ class Model
 			$tv = trim($value);
 			if ($tv == '' || $tv != $value)
 			{
-				throw new \RuntimeException('Invalid empty attribute value for ' . $this . ' ' . $name);
+				throw new \RuntimeException('Invalid empty attribute value for ' . $this . ' ' . $name, 54010);
 			}	
 			switch ($name)
 			{
@@ -217,14 +217,14 @@ class Model
 					// just ignore it
 					break;
 				default:
-					throw new \RuntimeException('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value);
+					throw new \RuntimeException('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value, 54011);
 					break;
 			}
 		}
 		
 		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->inject === false)
 		{
-			throw new \RuntimeException('Invalid attribute value true expected');
+			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
 	}
 	
@@ -245,7 +245,7 @@ class Model
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName);
+					throw new \RuntimeException('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName, 54013);
 				}
 			}
 		}
@@ -258,7 +258,7 @@ class Model
 	{
 		if (isset($this->properties[$property->getName()]))
 		{
-			throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName());
+			throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName(), 54014);
 		}
 		$this->properties[$property->getName()] = $property;
 	}
@@ -272,17 +272,17 @@ class Model
 		{
 			if ($this->localized !== null)
 			{
-				throw new \RuntimeException('Invalid localized attribute ' . $this);
+				throw new \RuntimeException('Invalid localized attribute ' . $this, 54015);
 			}
 			if ($this->inject)
 			{
 				if ($this->publishable)
 				{
-					throw new \RuntimeException('inject ' .$this . ' as invalid publishable attribute');
+					throw new \RuntimeException('inject ' .$this . ' as invalid publishable attribute', 54016);
 				}
 				if ($this->useVersion)
 				{
-					throw new \RuntimeException('inject ' .$this . ' as invalid use-version attribute');
+					throw new \RuntimeException('inject ' .$this . ' as invalid use-version attribute', 54017);
 				}
 			}
 		}
@@ -290,7 +290,7 @@ class Model
 		{
 			if ($this->inject)
 			{
-				throw new \RuntimeException('Invalid inject attribute ' . $this);
+				throw new \RuntimeException('Invalid inject attribute ' . $this, 54018);
 			}
 			
 			$creationDate = new Property($this, 'creationDate', 'DateTime');
@@ -365,7 +365,7 @@ class Model
 		{
 			if ($this->checkAncestorUseVersion())
 			{
-				throw new \RuntimeException('Duplicate use-version attribute on ' . $this);
+				throw new \RuntimeException('Duplicate use-version attribute on ' . $this, 54019);
 			}
 		}
 		
@@ -373,7 +373,7 @@ class Model
 		{
 			if ($this->checkAncestorPublishable())
 			{
-				throw new \RuntimeException('Duplicate publishable attribute on ' . $this);
+				throw new \RuntimeException('Duplicate publishable attribute on ' . $this, 54020);
 			}
 		}
 		

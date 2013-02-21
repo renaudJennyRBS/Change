@@ -69,11 +69,11 @@ class BinaryOperation extends AbstractOperation
 	{
 		if (!($this->getLeftHandExpression() instanceof \Change\Db\Query\InterfaceSQLFragment))
 		{
-			throw new \RuntimeException('Invalid Left Hand Expression');
+			throw new \RuntimeException('Invalid Left Hand Expression', 42030);
 		}
 		elseif (!($this->getRightHandExpression() instanceof \Change\Db\Query\InterfaceSQLFragment))
 		{
-			throw new \RuntimeException('Invalid Right Hand Expression');
+			throw new \RuntimeException('Invalid Right Hand Expression', 42031);
 		}
 	}
 	

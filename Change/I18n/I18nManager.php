@@ -209,7 +209,7 @@ class I18nManager
 	{
 		if (!in_array($LCID, $this->getSupportedLCIDs()))
 		{
-			throw new \InvalidArgumentException('Not supported language: ' . $LCID);
+			throw new \InvalidArgumentException('Not supported LCID: ' . $LCID, 80000);
 		}
 		$this->uiLCID = $LCID;
 	}
@@ -294,7 +294,7 @@ class I18nManager
 			}
 			else
 			{
-				throw new \InvalidArgumentException('Invalid LCID: ' . $LCID);
+				throw new \InvalidArgumentException('Not supported LCID: ' . $LCID, 80000);
 			}
 		}
 		return $this->langMap[$LCID];

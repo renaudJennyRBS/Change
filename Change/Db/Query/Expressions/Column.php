@@ -54,7 +54,7 @@ class Column extends AbstractExpression
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Argument 1 must be a Expressions\Table | Expressions\Identifier');
+			throw new \InvalidArgumentException('Argument 1 must be a Expressions\Table or Expressions\Identifier', 42032);
 		}
 	}
 	

@@ -35,7 +35,7 @@ class Identifier extends AbstractExpression
 	{
 		if (!is_array($parts))
 		{
-			throw new \InvalidArgumentException('Argument 1 must be a Array');
+			throw new \InvalidArgumentException('Argument 1 must be a Array', 42033);
 		}
 		$this->parts = array();
 		foreach ($parts as $value)

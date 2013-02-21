@@ -31,7 +31,7 @@ class OrderingSpecification extends UnaryOperation
 				parent::setOperator($operator);
 				return;
 		}
-		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+		throw new \InvalidArgumentException('Argument 1 must be a valid const', 42027);
 	}
 	
 	/**

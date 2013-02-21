@@ -86,7 +86,7 @@ class Enum extends \Zend\Validator\AbstractValidator
 		if (is_string($fromList))
 		{
 			//@TODO Implement this when Change/list module is ready.
-			throw new \LogicException('fromList Enum constraint Not implemented');
+			throw new \LogicException('Not implemented', 10001);
 			$this->error(self::NOTINLIST);
 			return false;
 		}
