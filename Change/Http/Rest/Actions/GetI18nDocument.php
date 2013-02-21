@@ -5,12 +5,12 @@ use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
 /**
- * @name \Change\Http\Rest\Actions\GetDocument
+ * @name \Change\Http\Rest\Actions\GetI18nDocument
  */
-class GetDocument
+class GetI18nDocument
 {
 	/**
-	 * Use Required Event Params: documentId, modelName
+	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
 	 */
@@ -20,6 +20,12 @@ class GetDocument
 		if (!$documentId)
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
+		}
+
+		$LCID = $event->getParam('LCID');
+		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
+		{
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 		}
 
 		$modelName = $event->getParam('modelName');
@@ -36,28 +42,25 @@ class GetDocument
 			//Document Not Found
 			return;
 		}
-		elseif ($document instanceof \Change\Documents\Interfaces\Localizable)
+		elseif(!($document instanceof \Change\Documents\Interfaces\Localizable))
 		{
-			$event->setParam('LCID', $document->getRefLCID());
-			$setI18nDocument = new GetI18nDocument();
-
-			$setI18nDocument->execute($event);
-			$result = $event->getResult();
-			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
-			{
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_303);
-				$selfLinks = $result->getLinks()->getByRel('self');
-				if ($selfLinks && $selfLinks[0] instanceof \Change\Http\Rest\Result\DocumentLink)
-				{
-					$href = $selfLinks[0]->href();
-					$result->setHeaderLocation($href);
-					$result->setHeaderContentLocation($href);
-				}
-			}
-			return;
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 		}
 
-		$this->generateResult($event, $document);
+		/* @var $document \Change\Documents\AbstractDocument */
+		$documentManager = $document->getDocumentManager();
+		try
+		{
+			$documentManager->pushLCID($LCID);
+
+			$this->generateResult($event, $document);
+
+			$document->getDocumentManager()->popLCID();
+		}
+		catch (\Exception $e)
+		{
+			$document->getDocumentManager()->popLCID($e);
+		}
 	}
 
 	/**
@@ -83,6 +86,18 @@ class GetDocument
 			$c = new PropertyConverter($document, $property, $urlManager);
 			$properties[$name] = $c->getRestValue();
 		}
+
+		/* @var $document \Change\Documents\Interfaces\Localizable */
+
+		$i18n = array();
+		foreach ($document->getLCIDArray() as $tmpLCID)
+		{
+			$LCIDLink = clone($documentLink);
+			$LCIDLink->setLCID($tmpLCID);
+			$i18n[$tmpLCID] = $LCIDLink->href();
+		}
+		$result->setI18n($i18n);
+
 
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);

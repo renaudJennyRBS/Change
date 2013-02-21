@@ -117,14 +117,4 @@ class Result
 		}
 		return null;
 	}
-
-	/**
-	 * @param string $location
-	 * @param integer $httpStatusCode
-	 */
-	public function setHeaderRedirect($location, $httpStatusCode = Response::STATUS_CODE_301)
-	{
-		$this->setHeaderLocation($location);
-		$this->setHttpStatusCode($httpStatusCode);
-	}
 }

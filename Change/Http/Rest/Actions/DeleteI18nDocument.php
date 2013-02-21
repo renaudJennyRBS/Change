@@ -10,60 +10,62 @@ use Change\Http\Rest\PropertyConverter;
 class DeleteI18nDocument
 {
 	/**
-	 * Use Event Params: documentId, modelName, LCID
+	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{
 		$documentId = $event->getParam('documentId');
 		if (!$documentId)
 		{
-			return;
+			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
 
 		$LCID = $event->getParam('LCID');
-		if (!$LCID)
+		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
-			return;
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 		}
 
 		$modelName = $event->getParam('modelName');
-		if ($modelName)
-		{
-			$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
-			if (!$model || !$model->isLocalized())
-			{
-				return;
-			}
-		}
-		else
-		{
-			return;
-		}
+		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		if (!$model)
+		{
+			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
+		}
 
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if (!$document)
 		{
-			$documentManager->pushLCID($LCID);
-
-			try
-			{
-
-				$document->deleteLocalized();
-				$result = new \Change\Http\Result();
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
-				$event->setResult($result);
-			}
-			catch (\Exception $e)
-			{
-				$msg = $document . '('. $LCID .'): '. $e->getMessage();
-				$errorResult = new \Change\Http\Rest\Result\ErrorResult('DELETE-ERROR', $msg);
-				$event->setResult($errorResult);
-			}
-
-			$documentManager->popLCID();
+			//Document Not Found
+			return;
 		}
+		elseif(!($document instanceof \Change\Documents\Interfaces\Localizable))
+		{
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
+		}
+
+		/* @var $document \Change\Documents\AbstractDocument */
+		$documentManager = $document->getDocumentManager();
+		$documentManager->pushLCID($LCID);
+
+		try
+		{
+			$document->deleteLocalized();
+			$result = new \Change\Http\Result();
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
+			$event->setResult($result);
+		}
+		catch (\Exception $e)
+		{
+			$msg = $document . '('. $LCID .'): '. $e->getMessage();
+			$errorResult = new \Change\Http\Rest\Result\ErrorResult('DELETE-ERROR', $msg);
+			$event->setResult($errorResult);
+		}
+
+		$documentManager->popLCID();
 	}
+
 }

@@ -53,7 +53,7 @@ class PropertyConverter
 	{
 		if ($this->urlManager === null)
 		{
-			throw new \RuntimeException('UrlManager is not set');
+			throw new \RuntimeException('UrlManager is not set', 70000);
 		}
 		return $this->urlManager;
 	}
@@ -77,7 +77,7 @@ class PropertyConverter
 				}
 				elseif ($value !== null)
 				{
-					throw new \RuntimeException('Invalid Property value');
+					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENT:
@@ -87,7 +87,7 @@ class PropertyConverter
 				}
 				elseif ($value !== null)
 				{
-					throw new \RuntimeException('Invalid Property value');
+					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENTARRAY:
@@ -97,14 +97,14 @@ class PropertyConverter
 					$restValue = array_map(function($doc) use ($urlManager) {
 						if (!($doc instanceof AbstractDocument))
 						{
-							throw new \RuntimeException('Invalid Property value');
+							throw new \RuntimeException('Invalid Property value', 70001);
 						}
 						return new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
 					}, $value);
 				}
 				elseif ($value !== null)
 				{
-					throw new \RuntimeException('Invalid Property value');
+					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			default:
@@ -125,66 +125,66 @@ class PropertyConverter
 	}
 
 	/**
-	 * @param mixed $jsonValue
+	 * @param mixed $restValue
 	 * @return mixed
 	 * @throws \RuntimeException
 	 */
-	protected function convertToPropertyValue($jsonValue)
+	protected function convertToPropertyValue($restValue)
 	{
 		$value = null;
 		switch ($this->property->getType())
 		{
 			case Property::TYPE_DATE:
 			case Property::TYPE_DATETIME:
-				if (is_string($jsonValue))
+				if (is_string($restValue))
 				{
-					$value = \DateTime::createFromFormat(\DateTime::ISO8601, $jsonValue);
+					$value = \DateTime::createFromFormat(\DateTime::ISO8601, $restValue);
 					if ($value === false)
 					{
-						throw new \RuntimeException('Invalid Property value');
+						throw new \RuntimeException('Invalid Property value', 70001);
 					}
 				}
-				elseif ($jsonValue !== null)
+				elseif ($restValue !== null)
 				{
-					throw new \RuntimeException('Invalid Property value');
+					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 
 			case Property::TYPE_DOCUMENT:
-				if ($jsonValue !== null)
+				if ($restValue !== null)
 				{
-					$value = $this->document->getDocumentManager()->getDocumentInstance($jsonValue);
+					$value = $this->document->getDocumentManager()->getDocumentInstance($restValue);
 					if ($value === null)
 					{
-						throw new \RuntimeException('Invalid Property value');
+						throw new \RuntimeException('Invalid Property value', 70001);
 					}
 				}
 				break;
 
 			case Property::TYPE_DOCUMENTARRAY:
-				if (is_array($jsonValue))
+				if (is_array($restValue))
 				{
 					$documentManager = $this->document->getDocumentManager();
 					$value = array_map(function($id) use ($documentManager) {
 						$doc = $documentManager->getDocumentInstance($id);
 						if ($doc === null)
 						{
-							throw new \RuntimeException('Invalid Property value');
+							throw new \RuntimeException('Invalid Property value', 70001);
 						}
 						return $doc;
-					}, $jsonValue);
+					}, $restValue);
 				}
-				elseif ($jsonValue === null)
+				elseif ($restValue === null)
 				{
 					$value = array();
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid Property value');
+					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			default:
-				$value = $jsonValue;
+				$value = $restValue;
 				break;
 		}
 		return $value;

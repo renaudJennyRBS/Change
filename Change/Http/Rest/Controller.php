@@ -50,6 +50,7 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function getDefaultResponse($event)
 	{
+
 		$response = $this->createResponse();
 		$response->setStatusCode(HttpResponse::STATUS_CODE_500);
 		$content = array('code' => 'ERROR-GENERIC', 'message' => 'Generic error');
@@ -62,10 +63,13 @@ class Controller extends \Change\Http\Controller
 	 */
 	public function onException($event)
 	{
-		if (!($event->getResult() instanceof ErrorResult))
+		/* @var $exception \Exception */
+		$exception = $event->getParam('Exception');
+		$result = $event->getResult();
+
+		if (!($result instanceof ErrorResult))
 		{
-			/* @var $exception \Exception */
-			$error = $this->generateErrorException($event->getParam('Exception'));
+			$error = new ErrorResult($exception);
 			if ($event->getResult() instanceof \Change\Http\Result)
 			{
 				$result = $event->getResult();
@@ -80,16 +84,6 @@ class Controller extends \Change\Http\Controller
 			$event->setResult($error);
 			$event->setResponse(null);
 		}
-	}
-
-	/**
-	 * @param \Exception $exception
-	 * @return \Change\Http\Rest\Result\ErrorResult
-	 */
-	protected function generateErrorException(\Exception $exception)
-	{
-		$code = $exception->getCode() ? 'EXCEPTION-' . $exception->getCode() : 'EXCEPTION';
-		return new ErrorResult($code, $exception->getMessage());
 	}
 
 	/**

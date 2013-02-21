@@ -5,53 +5,67 @@ use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
 /**
- * @name \Change\Http\Rest\Actions\CreateDocument
+ * @name \Change\Http\Rest\Actions\UpdateDocument
  */
-class CreateDocument
+class UpdateI18nDocument
 {
 	/**
-	 * Use Required Event Params: modelName
+	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{
+		$documentId = $event->getParam('documentId');
+		if (!$documentId)
+		{
+			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
+		}
+
+		$LCID = $event->getParam('LCID');
+		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
+		{
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
+		}
+
 		$modelName = $event->getParam('modelName');
 		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
-		$document = $event->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		if (!$document)
+		{
+			//Document Not Found
+			return;
+		}
+		elseif(!($document instanceof \Change\Documents\Interfaces\Localizable))
+		{
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
+		}
 
 		$properties = $event->getRequest()->getPost()->toArray();
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if (isset($properties['LCID']) && $properties['LCID'] != $LCID)
 		{
-			$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : null;
-			if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
-			{
-				$supported = implode(', ', $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs());
-				$errorResult = new \Change\Http\Rest\Result\ErrorResult('INVALID-REFLCID', 'Invalid refLCID property ('.$supported.'): ' . $LCID);
-				$event->setResult($errorResult);
-				return;
-			}
-			$event->setParam('LCID', $LCID);
-		}
-		else
-		{
-			$LCID = null;
+			$exception = new \RuntimeException('Invalid Parameter: LCID', 71000);
+			$exception->httpStatusCode = HttpResponse::STATUS_CODE_400;
+			throw $exception;
 		}
 
-		if ($LCID)
+		/* @var $document \Change\Documents\AbstractDocument */
+		$documentManager = $document->getDocumentManager();
+		try
 		{
-			$document->getDocumentManager()->pushLCID($LCID);
-			$this->create($event, $document, $properties);
+			$documentManager->pushLCID($LCID);
+			$this->update($event, $document, $properties);
 			$document->getDocumentManager()->popLCID();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->create($event, $document, $properties);
+			$document->getDocumentManager()->popLCID($e);
 		}
 	}
 
@@ -60,7 +74,7 @@ class CreateDocument
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param array $properties
 	 */
-	protected function create($event, $document, $properties)
+	protected function update($event, $document, $properties)
 	{
 		$urlManager = $event->getUrlManager();
 		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
@@ -85,22 +99,14 @@ class CreateDocument
 
 		try
 		{
-			$document->create();
-			$event->setParam('documentId', $document->getId());
+			$document->update();
 
-			$getDocument = new GetDocument();
+			$getDocument = new GetI18nDocument();
 			$getDocument->execute($event);
 			$result = $event->getResult();
 			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
 			{
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-				$selfLinks = $result->getLinks()->getByRel('self');
-				if ($selfLinks && $selfLinks[0] instanceof \Change\Http\Rest\Result\DocumentLink)
-				{
-						$href = $selfLinks[0]->href();
-						$result->setHeaderLocation($href);
-						$result->setHeaderContentLocation($href);
-				}
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			}
 		}
 		catch (\Exception $e)
@@ -110,7 +116,7 @@ class CreateDocument
 			{
 				$msg .= " (" . implode(', ', array_keys($document->getPropertiesErrors())) . ")";
 			}
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('CREATE-ERROR', $msg);
+			$errorResult = new \Change\Http\Rest\Result\ErrorResult('UPDATE-ERROR', $msg);
 			$event->setResult($errorResult);
 			return;
 		}

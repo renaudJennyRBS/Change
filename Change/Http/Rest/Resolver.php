@@ -68,12 +68,36 @@ class Resolver extends \Change\Http\ActionResolver
 						return;
 					}
 
-
+					//Localized Document
 					if (isset($resourceParts[4]))
 					{
 						if ($model->isLocalized() && $event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4]))
 						{
 							$event->setParam('LCID', $resourceParts[4]);
+
+							if (!$isDirectory)
+							{
+								if ($method === 'GET')
+								{
+									$action = new \Change\Http\Rest\Actions\GetI18nDocument();
+									$event->setAction(function($event) use($action) {$action->execute($event);});
+									return;
+								}
+
+								if ($method === 'PUT')
+								{
+									$action = new \Change\Http\Rest\Actions\UpdateI18nDocument();
+									$event->setAction(array($action, 'execute'));
+									return;
+								}
+
+								if ($method === 'DELETE')
+								{
+									$action = new \Change\Http\Rest\Actions\DeleteI18nDocument();
+									$event->setAction(function($event) use($action) {$action->execute($event);});
+									return;
+								}
+							}
 						}
 						else
 						{
@@ -84,6 +108,13 @@ class Resolver extends \Change\Http\ActionResolver
 
 					if (!$isDirectory)
 					{
+						if ($method === 'POST' && $model->isLocalized())
+						{
+							$action = new \Change\Http\Rest\Actions\CreateI18nDocument();
+							$event->setAction(function($event) use($action) {$action->execute($event);});
+							return;
+						}
+
 						if ($method === 'GET')
 						{
 							$action = new \Change\Http\Rest\Actions\GetDocument();
@@ -98,21 +129,7 @@ class Resolver extends \Change\Http\ActionResolver
 							return;
 						}
 
-						if ($method === 'POST' && $model->isLocalized() && !$event->getParam('LCID'))
-						{
-							$action = new \Change\Http\Rest\Actions\CreateI18nDocument();
-							$event->setAction(function($event) use($action) {$action->execute($event);});
-							return;
-						}
-
-						if ($method === 'DELETE' && $event->getParam('LCID'))
-						{
-							$action = new \Change\Http\Rest\Actions\DeleteI18nDocument();
-							$event->setAction(function($event) use($action) {$action->execute($event);});
-							return;
-						}
-
-						if ($method === 'DELETE' && !$event->getParam('LCID'))
+						if ($method === 'DELETE')
 						{
 							$action = new \Change\Http\Rest\Actions\DeleteDocument();
 							$event->setAction(function($event) use($action) {$action->execute($event);});

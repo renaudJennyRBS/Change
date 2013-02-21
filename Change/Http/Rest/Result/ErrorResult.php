@@ -6,9 +6,28 @@ namespace Change\Http\Rest\Result;
  */
 class ErrorResult extends \Change\Http\Result
 {
-	public function __construct($errorCode = null, $errorMessage = null)
+	/**
+	 * @param string|\Exception $errorCode
+	 * @param string $errorMessage
+	 * @param integer $httpStatusCode
+	 */
+	public function __construct($errorCode = null, $errorMessage = null, $httpStatusCode = \Zend\Http\Response::STATUS_CODE_500)
 	{
-		$this->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+		if ($errorCode instanceof \Exception)
+		{
+			if ($errorMessage === null)
+			{
+				$errorMessage = $errorCode->getMessage();
+			}
+
+			if (isset($errorCode->httpStatusCode))
+			{
+				$httpStatusCode = $errorCode->httpStatusCode;
+			}
+			$errorCode = $errorCode->getCode() ? 'EXCEPTION-' . $errorCode->getCode() : 'EXCEPTION';
+		}
+
+		$this->setHttpStatusCode($httpStatusCode);
 		$this->errorCode = $errorCode;
 		$this->errorMessage = $errorMessage;
 	}

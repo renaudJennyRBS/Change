@@ -193,6 +193,8 @@ class Controller
 		{
 			$event->setParam('Exception', $exception);
 			$eventManager->trigger(Event::EVENT_EXCEPTION, $this, $event);
+
+			$this->doSendResponse($eventManager, $event);
 		}
 		catch (\Exception $e)
 		{

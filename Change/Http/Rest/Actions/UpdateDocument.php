@@ -94,9 +94,19 @@ class UpdateDocument
 		{
 			$document->update();
 
+			$getDocument = new GetDocument();
+			$getDocument->execute($event);
+			$result = $event->getResult();
+			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+			}
+
+			/*
 			$result = new \Change\Http\Result();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 			$event->setResult($result);
+			*/
 		}
 		catch (\Exception $e)
 		{

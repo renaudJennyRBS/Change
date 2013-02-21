@@ -10,34 +10,30 @@ use Change\Http\Rest\PropertyConverter;
 class DeleteDocument
 {
 	/**
-	 * Use Event Params: documentId, modelName
+	 * Use Required Event Params: documentId, modelName
 	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{
 		$documentId = $event->getParam('documentId');
 		if (!$documentId)
 		{
-			return;
+			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
 
 		$modelName = $event->getParam('modelName');
-		if ($modelName)
+		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+
+		if (!$model)
 		{
-			$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
-			if (!$model)
-			{
-				return;
-			}
-		}
-		else
-		{
-			return;
+			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
+			//Document Not Found
 			return;
 		}
 
