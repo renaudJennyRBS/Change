@@ -226,7 +226,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 * \Change\Documents\DocumentManager::STATE_*
+	 * Persistent state list: \Change\Documents\DocumentManager::STATE_*
+	 * @api
 	 * @return integer
 	 */
 	public function getPersistentState()
@@ -235,7 +236,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 
 	/**
-	 *  \Change\Documents\DocumentManager::STATE_*
+	 * Persistent state list: \Change\Documents\DocumentManager::STATE_*
+	 * @api
 	 * @param integer $newValue
 	 * @return integer oldState
 	 */
@@ -437,6 +439,7 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	protected function hasPropertiesErrors()
@@ -620,7 +623,7 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 *
+	 * @return void
 	 */
 	protected function checkMetasLoaded()
 	{
