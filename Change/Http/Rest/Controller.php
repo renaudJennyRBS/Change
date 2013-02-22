@@ -44,7 +44,6 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function findLCID($header, $i18nManager)
 	{
-		$LCID = null;
 		if ($header instanceof \Zend\Http\Header\AcceptLanguage)
 		{
 			foreach ($header->getPrioritized() as $part)
@@ -67,12 +66,13 @@ class Controller extends \Change\Http\Controller
 
 				if ($i18nManager->isSupportedLCID($testLCID))
 				{
-					$LCID = $testLCID;
+					$i18nManager->setLCID($testLCID);
 					break;
 				}
 			}
 		}
-		return $LCID ? $LCID : $i18nManager->getDefaultLCID();
+
+		return $i18nManager->getLCID();
 	}
 
 	/**
