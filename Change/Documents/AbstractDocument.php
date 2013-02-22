@@ -76,6 +76,13 @@ abstract class AbstractDocument implements \Serializable
 	{
 		$this->setDocumentContext($manager, $model, $service);
 	}
+
+	public function __destruct()
+	{
+		unset($this->documentManager);
+		unset($this->documentModel);
+		unset($this->documentService);
+	}
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $manager
@@ -151,6 +158,7 @@ abstract class AbstractDocument implements \Serializable
 	 */
 	public function initialize($id, $persistentState = null, $treeName = null)
 	{
+		$oldId = $this->id;
 		$this->id = intval($id);
 		if ($persistentState!== null)
 		{
@@ -160,6 +168,7 @@ abstract class AbstractDocument implements \Serializable
 		{
 			$this->setTreeName($treeName);
 		}
+		$this->documentManager->reference($this, $oldId);
 	}
 
 	/**
@@ -781,27 +790,31 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
+	 * @param string $LCID
 	 * @return boolean
 	 */
-	public function hasCorrection()
+	public function hasCorrection($LCID = null)
 	{
+		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
 		$corrections = $this->getCorrections();
-		return isset($corrections[Correction::NULL_LCID_KEY]);
+		return isset($corrections[$key]);
 	}	
 	
 	/**
+	 * @param string $LCID
 	 * @return \Change\Documents\Correction
 	 */
-	public function getCorrection()
+	public function getCorrection($LCID = null)
 	{
+		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
 		$corrections = $this->getCorrections();
-		if (!isset($corrections[Correction::NULL_LCID_KEY]))
+		if (!isset($corrections[$key]))
 		{
-			$correction = $this->documentManager->getNewCorrectionInstance($this, null);
+			$correction = $this->documentManager->getNewCorrectionInstance($this, $LCID);
 			$this->addCorrection($correction);
 			return $correction;
 		}
-		return $corrections[Correction::NULL_LCID_KEY];
+		return $corrections[$key];
 	}
 	
 	// Generic Method

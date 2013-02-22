@@ -592,12 +592,12 @@ abstract class AbstractService
 				$datas[$propertyName] = $val;
 			}
 		}
-		
+
+		$dm = $document->getDocumentManager();
 		if (count($localized) && $document instanceof Localizable)
 		{
 			$datas['LCID'] = array();
-			$dm = $document->getDocumentManager();
-			foreach ($document->getLCIDArray() as $LCID)
+			foreach ($document->getLocalizableFunctions()->getLCIDArray() as $LCID)
 			{
 				$dm->pushLCID($LCID);
 				$datas['LCID'][$LCID] = array();

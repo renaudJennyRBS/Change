@@ -137,108 +137,28 @@ class AbstractDocumentClass
 		$class = $model->getDocumentI18nClassName();
 		$code = '
 	/**
-	 * @var ' . $class . '[]
+	 * @var \Change\Documents\LocalizableFunctions
 	 */
-	protected $i18nPartArray = array();
-	
-	/**
-	 * @var string[]
-	 */
-	protected $LCIDArray;
-	
-	/**
-	 * @return string[]
-	 */
-	public function getLCIDArray()
-	{
-		if ($this->LCIDArray === null)
-		{
-			$this->LCIDArray = $this->getDocumentManager()->getI18nDocumentLCIDArray($this);
-		}
-		foreach ($this->i18nPartArray as $LCID => $i18nPart)
-		{
-			if (!in_array($LCID, $this->LCIDArray) && $i18nPart->getPersistentState() === \Change\Documents\DocumentManager::STATE_LOADED)
-			{
-				$this->LCIDArray[] = $LCID;
-			}
-		}
-		return $this->LCIDArray;
-	}
-	 	
-	/**
-	 * @param string $LCID
-	 * @return ' . $class . '|null
-	 */
-	public function getI18nPart($LCID)
-	{
-		if (isset($this->i18nPartArray[$LCID]))
-		{
-			return $this->i18nPartArray[$LCID];
-		}
-		$LCIDArray = $this->getLCIDArray();
-		if (in_array($LCID, $LCIDArray))
-		{
-			$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
-			return $this->i18nPartArray[$LCID];
-		}
-	 	return null;
-	}
+	protected $localizableFunctions;
 
 	/**
-	 * @throws \RuntimeException
+	 * @return \Change\Documents\LocalizableFunctions
 	 */
-	public function deleteLocalized()
+	public function getLocalizableFunctions()
 	{
-		$i18nPart = $this->getCurrentI18nPart();
-		if ($i18nPart->getLCID() == $this->getRefLCID())
+		if ($this->localizableFunctions === null)
 		{
-			throw new \RuntimeException(\'Unable to delete refLCID: \' .  $this->getRefLCID(), 51014);
+			$this->localizableFunctions = new \Change\Documents\LocalizableFunctions($this);
 		}
-
-		if ($i18nPart->getPersistentState() === \Change\Documents\DocumentManager::STATE_LOADED)
-		{
-			$this->getDocumentManager()->deleteI18nDocument($this, $i18nPart);
-		}
+		return $this->localizableFunctions;
 	}
 
-	/**
-	 * @param ' . $class . '|null $i18nPart
-	 */
-	public function deleteI18nPart($i18nPart = null)
-	{
-		if ($i18nPart === null)
-		{
-			foreach ($this->i18nPartArray as $LCID => $i18nPart)
-			{
-				$i18nPart->setPersistentState(\Change\Documents\DocumentManager::STATE_DELETED);
-			}
-	 		$this->LCIDArray = array();
-		}
-		elseif ($i18nPart instanceof ' . $class . ')
-		{
-			$LCID = $i18nPart->getLCID();
-			if ($this->i18nPartArray[$LCID] === $i18nPart)
-			{
-				$i18nPart->setPersistentState(\Change\Documents\DocumentManager::STATE_DELETED);
-				if ($this->LCIDArray !== null)
-				{
-					$this->LCIDArray = array_values(array_diff($this->LCIDArray, array($LCID)));
-				}
-			}
-		}
-	}
-	 		 				
 	/**
 	 * @return ' . $class . '
 	 */
 	public function getCurrentI18nPart()
 	{
-	 	$LCID = $this->getDocumentManager()->getLCID();
-	 	if (!isset($this->i18nPartArray[$LCID]))
-	 	{
-	 		$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this, $LCID);
-	 	}
-	 	return $this->i18nPartArray[$LCID];
+	 	return $this->getLocalizableFunctions()->getCurrent();
 	}
 
 	/**
@@ -248,7 +168,7 @@ class AbstractDocumentClass
 	public function isDeleted()
 	{
 		return $this->getCurrentI18nPart()->isDeleted();
-	}			
+	}
 
 	/**
 	 * @api
@@ -263,18 +183,9 @@ class AbstractDocumentClass
 	 * @api
 	 * @return boolean
 	 */
-	public function hasLocalizedModifiedProperties()
-	{
-		return $this->getCurrentI18nPart()->hasModifiedProperties();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
 	public function hasModifiedProperties()
 	{
-		return $this->hasNonLocalizedModifiedProperties() || $this->hasLocalizedModifiedProperties();
+		return parent::hasModifiedProperties() || $this->getCurrentI18nPart()->hasModifiedProperties();
 	}
 
 	/**
@@ -291,18 +202,9 @@ class AbstractDocumentClass
 	 * @api
 	 * @return string[]
 	 */
-	public function getLocalizedModifiedPropertyNames()
-	{
-		return $this->getCurrentI18nPart()->getModifiedPropertyNames();
-	}
-
-	/**
-	 * @api
-	 * @return string[]
-	 */
 	public function getModifiedPropertyNames()
 	{
-		return array_merge($this->getNonLocalizedModifiedPropertyNames(), $this->getLocalizedModifiedPropertyNames());
+		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentI18nPart()->getModifiedPropertyNames());
 	}
 
 	/**
@@ -329,9 +231,7 @@ class AbstractDocumentClass
 	 */
 	public function hasCorrection($LCID = null)
 	{
-		$corrections = $this->getCorrections();
-		$key = ($LCID === null)?  $this->getRefLCID() : $LCID;
-		return isset($corrections[$key]);
+		return parent::hasCorrection(($LCID === null) ?  $this->getRefLCID() : $LCID);
 	}
 
 	/**
@@ -341,24 +241,7 @@ class AbstractDocumentClass
 	 */
 	public function getCorrection($LCID = null)
 	{
-		$key = ($LCID === null)?  $this->getRefLCID() : $LCID;
-		$corrections = $this->getCorrections();
-		if (!isset($corrections[$key]))
-		{
-			$correction = $this->documentManager->getNewCorrectionInstance($this, $key);
-			$this->addCorrection($correction);
-			return $correction;
-		}
-		return $corrections[$key];
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Documents\Correction
-	 */
-	public function getLocalizedCorrection()
-	{
-		return $this->getCorrection($this->getLCID());
+		return parent::getCorrection(($LCID === null)? $this->getRefLCID() : $LCID);
 	}' . PHP_EOL;
 		return $code;
 	}
@@ -392,7 +275,7 @@ class AbstractDocumentClass
 		$resetProperties = array();
 		if ($model->getLocalized())
 		{
-			$resetProperties[] = '		unset($this->i18nPartArray[$this->getDocumentManager()->getLCID()]);';
+			$resetProperties[] = '		$this->getLocalizableFunctions()->reset();';
 		}
 		$code = '';
 		foreach ($properties as $property)
@@ -423,6 +306,7 @@ class AbstractDocumentClass
 	}
 
 	/**
+	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
 	public function getCommentaryType($property)
@@ -457,6 +341,7 @@ class AbstractDocumentClass
 
 
 	/**
+	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
 	public function getCommentaryMemberType($property)
@@ -830,7 +715,7 @@ class AbstractDocumentClass
 			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '\', 52005);
 		}
 		$this->checkLoaded();
-		$newId = (' . $var . ' !== null) ? $this->getDocumentManager()->initializeRelationDocumentId(' . $var . ') : null;
+		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : null;
 		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
 		{
 			' . $mn . ' = $newId;
@@ -873,7 +758,7 @@ class AbstractDocumentClass
 			return ' . $mn . ';
 		}
 		$this->checkLoaded();
-		return (' . $mn . ') ? $this->getDocumentManager()->getRelationDocument(' . $mn . ') : null;
+		return (' . $mn . ') ? $this->getDocumentManager()->getDocumentInstance(' . $mn . ') : null;
 	}' . PHP_EOL;
 
 		return $code;
@@ -939,11 +824,22 @@ class AbstractDocumentClass
 		}
 		$this->checkLoaded' . $un . '();
 		$dm = $this->getDocumentManager();
-		return array_map(function ($documentId) use ($dm) {return $dm->getRelationDocument($documentId);}, ' . $mn . ');
+		$documents = array();
+		foreach(' . $mn . ' as $documentId)
+		{
+			$document = $dm->getDocumentInstance($documentId);
+			if ($document instanceof ' . $ct . ')
+			{
+				$documents[] = $document;
+			}
+		}
+		return $documents;
 	}
 
 	/**
 	 * @param ' . $ct . '[] $newValueArray
+	 * @throws \InvalidArgumentException
+	 * @return void
 	 */
 	public function set' . $un . '($newValueArray)
 	{
@@ -958,11 +854,10 @@ class AbstractDocumentClass
 		}
 		$this->checkLoaded' . $un . '();
 
-		$dm = $this->getDocumentManager();
-		$newValueIds = array_map(function($newValue) use ($dm) {
+		$newValueIds = array_map(function($newValue) {
 			if ($newValue instanceof ' . $ct . ')
 			{
-				return $dm->initializeRelationDocumentId($newValue);
+				return $newValue->getId();
 			}
 			else
 			{
@@ -988,7 +883,7 @@ class AbstractDocumentClass
 	public function set' . $un . 'AtIndex(' . $ct . ' ' . $var . ', $index = 0)
 	{
 		$this->checkLoaded' . $un . '();
-		$newId = $this->getDocumentManager()->initializeRelationDocumentId(' . $var . ');
+		$newId = ' . $var . '->getId();
 		if (!in_array($newId, ' . $mn . '))
 		{
 			$newValueIds = ' . $mn . ';
@@ -1074,7 +969,7 @@ class AbstractDocumentClass
 	public function get' . $un . 'ByIndex($index)
 	{
 		$this->checkLoaded' . $un . '();
-		return isset(' . $mn . '[$index]) ?  $this->getDocumentManager()->getRelationDocument(' . $mn . '[$index]) : null;
+		return isset(' . $mn . '[$index]) ?  $this->getDocumentManager()->getDocumentInstance(' . $mn . '[$index]) : null;
 	}
 	
 	/**
@@ -1093,7 +988,7 @@ class AbstractDocumentClass
 	public function getIndexof' . $un . '(' . $ct . ' ' . $var . ')
 	{
 		$this->checkLoaded' . $un . '();
-		$valueId = $this->getDocumentManager()->initializeRelationDocumentId(' . $var . ');
+		$valueId = ' . $var . '->getId();
 		$index = array_search($valueId, ' . $mn . ');
 		return $index !== false ? $index : -1;
 	}' . PHP_EOL;

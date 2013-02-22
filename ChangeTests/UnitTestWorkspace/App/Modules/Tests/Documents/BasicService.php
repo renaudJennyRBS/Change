@@ -13,7 +13,6 @@ class BasicService extends \Compilation\Project\Tests\Documents\AbstractBasicSer
 		$doc = $this->getNewDocumentInstance();
 		$doc->setPStr('lab 5001');
 		$doc->initialize(5001, \Change\Documents\DocumentManager::STATE_LOADED);
-		$doc->getDocumentManager()->initializeRelationDocumentId($doc);
 		return $doc;
 	}
 }

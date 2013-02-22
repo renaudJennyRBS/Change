@@ -9,6 +9,18 @@ interface Localizable
 {
 	/**
 	 * @api
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
+	 * @api
+	 * @param string $val
+	 */
+	public function setRefLCID($val);
+
+	/**
+	 * @api
 	 * @return string
 	 */
 	public function getRefLCID();
@@ -18,53 +30,16 @@ interface Localizable
 	 * @return string
 	 */
 	public function getLCID();
-		
-	/**
-	 * @api
-	 * @param string $val
-	 */
-	public function setRefLCID($val);
 
 	/**
 	 * @api
-	 * @param string[]
+	 * @return \Change\Documents\LocalizableFunctions
 	 */
-	public function getLCIDArray();
+	public function getLocalizableFunctions();
 
-	/**
-	 * @api
-	 * @throws \RuntimeException
-	 */
-	public function deleteLocalized();
-	
-	/**
-	 * @api
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
-	 */
-	public function deleteI18nPart($i18nPart = null);
-	
-	/**
-	 * @api
-	 * @param string $LCID
-	 * @return \Change\Documents\AbstractI18nDocument|null
-	 */
-	public function getI18nPart($LCID);
-		
 	/**
 	 * @api
 	 * @return \Change\Documents\AbstractI18nDocument
 	 */
 	public function getCurrentI18nPart();
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasLocalizedModifiedProperties();
-
-	/**
-	 * @api
-	 * @return string[]
-	 */
-	public function getLocalizedModifiedPropertyNames();
 }

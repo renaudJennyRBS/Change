@@ -125,6 +125,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string 2', $datas['pStr']);
 		$this->assertArrayHasKey('deletiondate', $datas);
 		$this->assertInstanceOf('\DateTime', $datas['deletiondate']);
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 
 
@@ -275,6 +277,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string FR 2', $datas['LCID']['fr_FR']['pLStr']);
 		$this->assertEquals('string EN', $datas['LCID']['en_GB']['pLStr']);
 		$dm->popLCID();
+
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 
 	/**
@@ -346,5 +351,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str4 v2', $c1->getStr4());
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 }

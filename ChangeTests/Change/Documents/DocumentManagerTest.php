@@ -121,42 +121,17 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				
 		$newDoc = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$tmpId = $newDoc->getId();
-		$manager->initializeRelationDocumentId($newDoc);
-		
-		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
 
-		$this->assertEquals($tmpId, $manager->resolveRelationDocumentId($tmpId));
-		try 
-		{
-			$manager->resolveRelationDocumentId(-5000);
-			$this->fail('Cached document -5000 not found');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals('Cached document -5000 not found', $e->getMessage());
-		}
-		
-		$this->assertEquals(1, $manager->resolveRelationDocumentId(1));
-		
-		$this->assertSame($newDoc, $manager->getRelationDocument($tmpId));
-		try
-		{
-			$manager->getRelationDocument(-5000);
-			$this->fail('Cached document -5000 not found');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals('Cached document -5000 not found', $e->getMessage());
-		}
-		
-		$this->assertNull($manager->getRelationDocument(1));
-		
+		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
+		$this->assertNull($manager->getDocumentInstance(-5000));
+
 		$manager->affectId($newDoc);
 		
 		$finalId = $newDoc->getId();
 		$this->assertNotEquals($tmpId, $finalId);
-		$this->assertEquals($finalId, $manager->resolveRelationDocumentId($tmpId));
-		$this->assertSame($newDoc, $manager->getRelationDocument($tmpId));
+
+		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
+		$this->assertSame($newDoc, $manager->getDocumentInstance($finalId));
 		
 		return $manager;
 	}
