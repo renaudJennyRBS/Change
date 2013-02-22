@@ -45,7 +45,7 @@ class UnaryOperation extends AbstractOperation
 	{
 		if ($this->getExpression() === null)
 		{
-			throw new \RuntimeException('Expression can not be null');
+			throw new \RuntimeException('Expression can not be null', 42023);
 		}
 		return $this->getOperator() . ' ' . $this->getExpression()->toSQL92String();
 	}

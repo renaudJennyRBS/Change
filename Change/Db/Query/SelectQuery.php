@@ -186,7 +186,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	{
 		if ($this->selectClause === null)
 		{
-			throw new \RuntimeException('SelectClause can not be null');
+			throw new \RuntimeException('SelectClause can not be null', 42011);
 		}
 	}
 	

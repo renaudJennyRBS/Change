@@ -64,7 +64,7 @@ class ExtractedClass
 		$trimmedBody = trim($body);
 		if (substr($trimmedBody, 0, 1) != '{' || substr($trimmedBody, -1, 1) != '}')
 		{
-			throw new \InvalidArgumentException('body should start with an open brace and end with a closing brace');
+			throw new \InvalidArgumentException('body should start with an open brace and end with a closing brace', 90007);
 		}
 		$this->body = $body;
 	}
@@ -156,12 +156,12 @@ class ExtractedClass
 	{
 		if (empty($this->body))
 		{
-			throw new \RuntimeException('this class has no body');
+			throw new \RuntimeException('this class has no body', 90008);
 		}
 		
 		if (empty($this->name))
 		{
-			throw new \RuntimeException('this class has no name');
+			throw new \RuntimeException('this class has no name', 90009);
 		}
 		
 		$classDeclarationParts = array();

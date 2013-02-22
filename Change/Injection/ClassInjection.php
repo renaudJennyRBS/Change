@@ -44,14 +44,14 @@ class ClassInjection
 	{
 		if (!isset($oInfo['name']) || $oInfo['name'][0] != '\\')
 		{
-			throw new \InvalidArgumentException('first argument of __construct must have at least the key "name" set to a fully-qualified class name');
+			throw new \InvalidArgumentException('first argument of __construct must have at least the key "name" set to a fully-qualified class name', 90000);
 		}
 		$this->originalClassInfo = $oInfo;
 		foreach ($rInfos as $info)
 		{
 			if (!isset($info['name']) || $info['name'][0] != '\\')
 			{
-				throw new \InvalidArgumentException('all entries of the second argument of __construct must have at least one key "name" set to a fully-qualified class name');
+				throw new \InvalidArgumentException('all entries of the second argument of __construct must have at least one key "name" set to a fully-qualified class name', 90001);
 			}
 		}
 		$this->replacingClassInfos = $rInfos;
@@ -90,7 +90,7 @@ class ClassInjection
 		$namespaces = $originalExtractor->getNamespaces();
 		if (count($namespaces) != 1)
 		{
-			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one namespace');
+			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one namespace', 90002);
 		}
 
 		/* @var $namespace \Change\Injection\Extractor\ExtractedNamespace */
@@ -100,7 +100,7 @@ class ClassInjection
 		$classes = $namespace->getDeclaredClasses();
 		if (count($classes) != 1)
 		{
-			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one class');
+			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one class', 90003);
 		}
 		/* @var $class \Change\Injection\Extractor\ExtractedClass */
 		$this->originalExtractedClass = $classes[0];
@@ -115,7 +115,7 @@ class ClassInjection
 
 		if ($this->buildFullClassName($this->originalExtractedClass->getNamespace(), $this->originalExtractedClass->getName()) != $this->originalClassInfo['name'])
 		{
-			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should  contain class ' . $this->originalClassInfo['name']);
+			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should  contain class ' . $this->originalClassInfo['name'], 90004);
 		}
 
 		$class = clone $this->originalExtractedClass;
@@ -175,7 +175,7 @@ class ClassInjection
 			$namespaces = $replacingExtractor->getNamespaces();
 			if (count($namespaces) != 1)
 			{
-				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one namespace');
+				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one namespace', 90002);
 			}
 
 			/* @var $namespace \Change\Injection\Extractor\ExtractedNamespace */
@@ -185,7 +185,7 @@ class ClassInjection
 			$classes = $namespace->getDeclaredClasses();
 			if (count($classes) != 1)
 			{
-				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one class');
+				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one class', 90003);
 			}
 			/* @var $class \Change\Injection\Extractor\ExtractedClass */
 			$class = $classes[0];
@@ -207,7 +207,7 @@ class ClassInjection
 			$fullClassName = $this->buildFullClassName($class->getNamespace(), $class->getName());
 			if ($fullClassName != $replacingClassInfo['name'])
 			{
-				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should  contain class ' . $replacingClassInfo['name']);
+				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should  contain class ' . $replacingClassInfo['name'], 90004);
 			}
 			// Append suffix to this class
 			$fullClassName .=  self::REPLACING_CLASS_SUFFIX;

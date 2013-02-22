@@ -394,7 +394,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				return $fieldDbOptions;
 
 			default:
-				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType);
+				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType, 41000);
 		}
 	}
 
@@ -408,7 +408,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 	{
 		if (!isset($dbOptions['VALUES']) || !is_array($dbOptions['VALUES']) || count($dbOptions['VALUES']) == 0)
 		{
-			throw new \InvalidArgumentException('Invalid Enum values');
+			throw new \InvalidArgumentException('Invalid Enum values', 41001);
 		}
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::ENUM);
@@ -603,7 +603,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				$values = $fieldDefinition->getOption('VALUES');
 				if (!is_array($values) || count($values) == 0)
 				{
-					throw new \RuntimeException('Invalid Enum Values');
+					throw new \RuntimeException('Invalid Enum Values', 41001);
 				}
 				$type = 'enum(\''.implode('\',\'', $values).'\')';
 				break;
@@ -623,7 +623,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				$type = 'mediumtext';
 				break;
 			default:
-				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType());
+				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType(), 41002);
 				break;
 		}
 	

@@ -53,7 +53,7 @@ class Conjunction extends \Change\Db\Query\Expressions\AbstractExpression implem
 	{
 		if (!count($this->arguments))
 		{
-			throw new \RuntimeException('Arguments can not be empty');
+			throw new \RuntimeException('Arguments can not be empty', 42034);
 		}
 		return '(' . implode(' AND ', array_map(function(\Change\Db\Query\InterfaceSQLFragment $item) {
 			return $item->toSQL92String();

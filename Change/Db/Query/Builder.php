@@ -154,7 +154,7 @@ class Builder
 		}
 		else
 		{
-			throw new \InvalidArgumentException('first argument must be a string, a \Change\Db\Query\Expressions\Table, or a \Change\Db\Query\Expressions\Alias');
+			throw new \InvalidArgumentException('first argument must be a string, a \Change\Db\Query\Expressions\Table, or a \Change\Db\Query\Expressions\Alias', 42003);
 		}
 		$fromClause = new Clauses\FromClause();
 		$fromClause->setTableExpression($tableExpression);
@@ -373,7 +373,7 @@ class Builder
 		}
 		if (!($parameter instanceof \Change\Db\Query\Expressions\Parameter))
 		{
-			throw new \InvalidArgumentException('argument must be a string or a \Change\Db\Query\Expressions\Parameter');
+			throw new \InvalidArgumentException('argument must be a string or a \Change\Db\Query\Expressions\Parameter', 42004);
 		}
 		
 		$this->query()->addParameter($parameter);
@@ -389,7 +389,7 @@ class Builder
 	{
 		if ($this->query === null)
 		{
-			throw new \LogicException('Call select() before');
+			throw new \LogicException('Call select() before', 42005);
 		}
 		return $this->query;
 	}

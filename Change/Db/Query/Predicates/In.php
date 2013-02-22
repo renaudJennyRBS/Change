@@ -64,7 +64,7 @@ class In extends BinaryPredicate
 		{
 			if ($rhe->count() == 0)
 			{
-				throw new \RuntimeException('Right Hand Expression must be a ExpressionList with one element or more');
+				throw new \RuntimeException('Right Hand Expression must be a ExpressionList with one element or more', 42035);
 			}
 			return;
 		}
@@ -74,11 +74,11 @@ class In extends BinaryPredicate
 			$subQuery->checkCompile();
 			if ($subQuery->getSelectClause()->getSelectList()->count() != 1)
 			{
-				throw new \RuntimeException('Right Hand Expression must be a Subquery with one element in select clause');
+				throw new \RuntimeException('Right Hand Expression must be a SubQuery with one element in select clause', 42036);
 			}
 			return;
 		}
-		throw new \RuntimeException('Right Hand Expression must be a Subquery or ExpressionList');
+		throw new \RuntimeException('Right Hand Expression must be a SubQuery or ExpressionList',42037);
 	}
 
 	/**

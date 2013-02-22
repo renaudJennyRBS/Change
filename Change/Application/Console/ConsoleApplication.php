@@ -137,7 +137,9 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 						$returnCode = $command->run($subCommandInput, $output);
 						if ($returnCode && !$this->getOption('ignore-errors'))
 						{
-							throw new \RuntimeException('Command ' . $commandName . ' failed', $returnCode);
+							$e = new \RuntimeException('Command ' . $commandName . ' failed', 20000);
+							$e->returnCode = $returnCode;
+							throw $e;
 						}
 					}
 				}

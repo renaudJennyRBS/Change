@@ -292,7 +292,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 						$fd = '$schemaManager->newNumericFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					default:
-						throw new \RuntimeException('Invalid property type: ' . $propertyType);
+						throw new \RuntimeException('Invalid property type: ' . $propertyType, 54029);
 				}
 			}
 			$fields[] = $fd;

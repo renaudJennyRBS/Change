@@ -76,7 +76,7 @@ class FromClause extends AbstractClause
 	{
 		if ($this->getTableExpression() === null)
 		{
-			throw new \RuntimeException('TableExpression can not be null');
+			throw new \RuntimeException('TableExpression can not be null', 42024);
 		}
 	}
 	

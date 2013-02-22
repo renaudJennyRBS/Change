@@ -46,7 +46,7 @@ class ChangeCommand extends Command
 	{
 		if (!($this->changeApplication instanceof \Change\Application))
 		{
-			throw new \RuntimeException('No Change application Associated with this command');
+			throw new \RuntimeException('No Change application Associated with this command', 10000);
 		}
 		return $this->changeApplication;
 	}
@@ -89,7 +89,7 @@ class ChangeCommand extends Command
 		{
 			if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
 			{
-				throw new \RuntimeException('Documents are not compiled.');
+				throw new \RuntimeException('Documents are not compiled', 54000);
 			}
 			$this->changeDocumentServices =  new \Change\Documents\DocumentServices($this->getChangeApplicationServices());
 		}
@@ -124,7 +124,7 @@ class ChangeCommand extends Command
 		$devMode = $input->getOption('dev') || $this->getChangeApplication()->inDevelopmentMode();
 		if ($this->isDevCommand() && !$devMode)
 		{
-			throw new \RuntimeException("This is a developer command, you can only run it in developer mode");
+			throw new \RuntimeException("This is a developer command, you can only run it in developer mode", 21000);
 		}
 	}
 }

@@ -13,11 +13,11 @@ class RollbackException extends \Exception
 	{
 		if ($previous !== null)
 		{
-			parent::__construct("Transaction cancelled: ". $previous->getMessage(), null, $previous);
+			parent::__construct("Transaction cancelled: ". $previous->getMessage(), 120000, $previous);
 		}
 		else
 		{
-			parent::__construct("Transaction cancelled (unknown cause)");
+			parent::__construct("Transaction cancelled: Unknown cause", 120000);
 		}
 	}
 }

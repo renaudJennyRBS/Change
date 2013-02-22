@@ -101,7 +101,7 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		else
 		{
-			throw new \RuntimeException('database not defined!');
+			throw new \RuntimeException('Database not defined', 31001);
 		}
 		$unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
 		if ($unix_socket != null)
@@ -300,7 +300,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$joinedTable = $fragment->getTableExpression();
 			if (!$joinedTable)
 			{
-				throw new \RuntimeException('A joined table is required');
+				throw new \RuntimeException('A joined table is required', 42002);
 			}
 			$parts = array();
 			if ($fragment->isNatural())

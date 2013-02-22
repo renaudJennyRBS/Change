@@ -11,7 +11,7 @@
 		<property name="keywords" type="LongString" localized="true" />
 		<property name="robotsmeta" type="String" default-value="index,follow" indexed="none">
 			<constraint name="maxSize" max="20" />
-			<constraint name="enum" fromList="modules_website/robotsmeta" />
+			<!-- constraint name="enum" fromList="modules_website/robotsmeta" /-->
 		</property>
 		<property name="indexingstatus" type="Boolean" default-value="true" />
 		<property name="template" type="String" indexed="none" required="true" />
@@ -20,7 +20,7 @@
 		<property name="skin" type="Document" document-type="modules_skin/skin" />  
 		-->
 		<property name="navigationVisibility" type="Integer" default-value="1" localized="true" required="true">
-			<constraint name="enum" fromList="modules_website/navigationvisibility" />
+			<!-- constraint name="enum" fromList="modules_website/navigationvisibility" /-->
 		</property>
 		<property name="isIndexPage" type="Boolean" default-value="false" />
 		<property name="isHomePage" type="Boolean" default-value="false" />

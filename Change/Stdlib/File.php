@@ -22,7 +22,7 @@ class File
 			$exception = \Zend\Stdlib\ErrorHandler::stop();
 			if ($result === false || $exception)
 			{
-				throw new \RuntimeException("Could not create directory $directoryPath", null, $exception);
+				throw new \RuntimeException("Could not create directory $directoryPath", 110000, $exception);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ class File
 		$exception = \Zend\Stdlib\ErrorHandler::stop();
 		if ($result === false || $exception)
 		{
-			throw new \RuntimeException("Could not write file $path", null, $exception);
+			throw new \RuntimeException("Could not write file $path", 110001, $exception);
 		}
 	}
 	
@@ -90,7 +90,7 @@ class File
 		$exception = \Zend\Stdlib\ErrorHandler::stop();
 		if ($content === false || $exception)
 		{
-			throw new \RuntimeException("Could not read $path", null, $exception);
+			throw new \RuntimeException("Could not read $path", 110002, $exception);
 		}
 		return $content;
 	}

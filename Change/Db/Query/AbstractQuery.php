@@ -89,7 +89,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 		$parameterName = $parameter->getName();
 		if (isset($this->parameters[$parameterName]))
 		{
-			throw new \RuntimeException('Parameter ' . $parameterName . ' already exist');
+			throw new \RuntimeException('Parameter ' . $parameterName . ' already exist', 42000);
 		}
 		$this->parameters[$parameterName] = $parameter;
 		return $this;
@@ -108,7 +108,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		if (!isset($parameterName, $this->parameters))
 		{
-			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist');
+			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist', 42001);
 		}
 		$this->parametersValue[$parameterName] = $value;
 		return $this;
@@ -124,7 +124,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		if (!isset($parameterName, $this->parameters))
 		{
-			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist');
+			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist', 42001);
 		}
 		return isset($this->parametersValue[$parameterName]) ? $this->parametersValue[$parameterName] : null;
 	}	

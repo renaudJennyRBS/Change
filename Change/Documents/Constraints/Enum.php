@@ -13,6 +13,11 @@ class Enum extends \Zend\Validator\AbstractValidator
 	 */
 	protected $fromList;
 
+	/**
+	 * @var string
+	 */
+	protected $values;
+
  	/**
 	 * @param array $params <fromList => modelName>
 	 */   
@@ -39,16 +44,49 @@ class Enum extends \Zend\Validator\AbstractValidator
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getValues()
+	{
+		return $this->values;
+	}
+
+	/**
+	 * @param string $values
+	 */
+	public function setValues($values)
+	{
+		$this->values = $values;
+	}
+
+	/**
 	 * @param  mixed $value
+	 * @throws \LogicException
 	 * @return boolean
 	 */
 	public function isValid($value)
 	{
-		$fromList = $this->getFromList();
-		//TODO Load Change_List_List by code and check if contains $valuevalue
-
-		if (false)
+		$values = $this->getValues();
+		$checkVal = trim($value);
+		if (is_string($values) && $values !== '')
 		{
+			foreach (explode(',', $values) as $enumValue)
+			{
+				if (trim($enumValue) === $checkVal)
+				{
+					return true;
+				}
+			}
+
+			$this->error(self::NOTINLIST);
+			return false;
+		}
+
+		$fromList = $this->getFromList();
+		if (is_string($fromList))
+		{
+			//@TODO Implement this when Change/list module is ready.
+			throw new \LogicException('Not implemented', 10001);
 			$this->error(self::NOTINLIST);
 			return false;
 		}

@@ -14,16 +14,17 @@ class Configuration
 	 * @var string[]
 	 */
 	protected $configurationFiles = array();
-	
+
 	/**
-	 * @param $configurationFiles
+	 * @param array $configurationFiles
 	 * @param array|null $config
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct(array $configurationFiles, $config = null)
 	{
 		if (count($configurationFiles) == 0)
 		{
-			throw new \InvalidArgumentException('$configurationFiles must have at least one entry');
+			throw new \InvalidArgumentException('$configurationFiles must have at least one entry', 30000);
 		}
 		$this->configurationFiles = $configurationFiles;
 		if (!is_array($config))

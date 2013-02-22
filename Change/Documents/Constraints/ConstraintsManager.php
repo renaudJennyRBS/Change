@@ -104,7 +104,7 @@ class ConstraintsManager
 				return $constraint;
 			}
 		}
-		throw new \InvalidArgumentException('Constraint '. $name . ' not found');
+		throw new \InvalidArgumentException('Constraint '. $name . ' not found', 52002);
 	}
 	
 	/**

@@ -68,7 +68,7 @@ class Parameter extends AbstractExpression
 				$this->type = $type;
 				return;
 		}
-		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+		throw new \InvalidArgumentException('Argument 1 must be a valid const', 42027);
 	}
 
 	/**

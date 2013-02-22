@@ -7,12 +7,17 @@ namespace Change\Documents\Interfaces;
  */
 interface Localizable
 {
-
 	/**
 	 * @api
 	 * @return string
 	 */
 	public function getRefLCID();
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getLCID();
 		
 	/**
 	 * @api
@@ -25,6 +30,12 @@ interface Localizable
 	 * @param string[]
 	 */
 	public function getLCIDArray();
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
+	public function deleteLocalized();
 	
 	/**
 	 * @api

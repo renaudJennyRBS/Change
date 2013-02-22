@@ -82,7 +82,7 @@ class Join extends AbstractExpression
 				$this->joinType = $joinType;
 				return;
 		}
-		throw new \InvalidArgumentException('Argument 1 must be a valid const');
+		throw new \InvalidArgumentException('Argument 1 must be a valid const', 42027);
 	}
 	
 	/**

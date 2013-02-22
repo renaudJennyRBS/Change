@@ -155,6 +155,16 @@ class I18nManager
 	{
 		return $this->supportedLCIDs;
 	}
+
+	/**
+	 * @api
+	 * @param string $LCID
+	 * @return boolean
+	 */
+	public function isSupportedLCID($LCID)
+	{
+		return ($LCID && in_array($LCID, $this->getSupportedLCIDs()));
+	}
 	
 	/**
 	 * @api
@@ -199,7 +209,7 @@ class I18nManager
 	{
 		if (!in_array($LCID, $this->getSupportedLCIDs()))
 		{
-			throw new \InvalidArgumentException('Not supported language: ' . $LCID);
+			throw new \InvalidArgumentException('Not supported LCID: ' . $LCID, 80000);
 		}
 		$this->uiLCID = $LCID;
 	}
@@ -284,7 +294,7 @@ class I18nManager
 			}
 			else
 			{
-				throw new \InvalidArgumentException('Invalid LCID: ' . $LCID);
+				throw new \InvalidArgumentException('Not supported LCID: ' . $LCID, 80000);
 			}
 		}
 		return $this->langMap[$LCID];

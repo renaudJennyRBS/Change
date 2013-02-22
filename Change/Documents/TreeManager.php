@@ -72,7 +72,7 @@ class TreeManager
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Invalid Tree Name: ' . $moduleName);
+			throw new \InvalidArgumentException('Invalid Tree Name: ' . $moduleName, 41003);
 		}
 	}
 	
@@ -527,7 +527,7 @@ class TreeManager
 	{
 		if ($document->getTreeName())
 		{
-			throw new \InvalidArgumentException('Document is already in tree: ' . $document->getTreeName());
+			throw new \InvalidArgumentException('Document is already in tree: ' . $document->getTreeName(), 53000);
 		}
 		$q = $this->getInsertNodeQuery($treeName);
 		$q->bindParameter('documentId', $document->getId());
@@ -549,7 +549,7 @@ class TreeManager
 				return $rootNode;
 			}
 		}
-		throw new \RuntimeException('Unable to insert root node: ' .$document->getId() . ' in tree '. $treeName);	
+		throw new \RuntimeException('Unable to insert root node: ' .$document->getId() . ' in tree '. $treeName, 53001);
 	}
 
 	/**
@@ -564,7 +564,7 @@ class TreeManager
 	{
 		if ($document->getTreeName())
 		{
-			throw new \InvalidArgumentException('Invalid document Tree Name: ' . $document->getTreeName());
+			throw new \InvalidArgumentException('Document is already in tree: ' . $document->getTreeName(), 53000);
 		}
 		$treeName = $parentNode->getTreeName();
 		$children = $this->getChildrenNode($parentNode);
@@ -622,7 +622,7 @@ class TreeManager
 			$parentNode->setChildrenCount(count($children) + 1);
 			return $node;
 		}
-		throw new \RuntimeException('Unable to insert node: ' .$document->getId() . ' in tree '. $treeName);		
+		throw new \RuntimeException('Unable to insert node: ' .$document->getId() . ' in tree '. $treeName, 53002);
 	}
 	
 	/**
@@ -758,7 +758,7 @@ class TreeManager
 	public function moveNode(\Change\Documents\TreeNode $movedNode, \Change\Documents\TreeNode $parentNode, \Change\Documents\TreeNode $beforeNode = null)
 	{
 		$this->clearCachedTreeNodes();
-		throw new \LogicException('Not implemented');
+		throw new \LogicException('Not implemented', 10001);
 	}
 
 	/**

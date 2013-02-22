@@ -350,7 +350,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 				}
 				return $fieldDbOptions;
 			default:
-				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType);
+				throw new \InvalidArgumentException('Invalid Field type: ' . $scalarType, 41000);
 		}
 	}
 
@@ -364,7 +364,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	{
 		if (!isset($dbOptions['VALUES']) || !is_array($dbOptions['VALUES']) || count($dbOptions['VALUES']) == 0)
 		{
-			throw new \InvalidArgumentException('Invalid Enum values');
+			throw new \InvalidArgumentException('Invalid Enum values', 41001);
 		}
 		$fd = new FieldDefinition($name);
 		$fd->setType(FieldDefinition::ENUM);
@@ -568,7 +568,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 				$type = 'text';
 				break;
 			default:
-				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType());
+				throw new \RuntimeException('Invalid Field Definition type: ' . $fieldDefinition->getType(), 41002);
 				break;
 		}
 

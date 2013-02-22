@@ -45,7 +45,7 @@ class UpdateClause extends AbstractClause
 	{
 		if ($this->getTable() === null)
 		{
-			throw new \RuntimeException('Table can not be null');
+			throw new \RuntimeException('Table can not be null', 42026);
 		}
 	}
 

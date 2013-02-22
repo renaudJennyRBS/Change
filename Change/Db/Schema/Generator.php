@@ -33,7 +33,7 @@ class Generator
 
 		if (!$schemaManager->check())
 		{
-			throw new \RuntimeException('unable to connect to database: '.$schemaManager->getName());
+			throw new \RuntimeException('unable to connect to database: '.$schemaManager->getName(), 40000);
 		}
 
 		$dbSchema = $schemaManager->getSystemSchema();
@@ -52,10 +52,6 @@ class Generator
 			if ($documentSchema instanceof \Change\Db\Schema\SchemaDefinition)
 			{
 				$documentSchema->generate();
-			}
-			else
-			{
-				throw new \RuntimeException('Class \Compilation\Change\Documents\Schema must be a instance of : \Change\Db\Schema\SchemaDefinition');
 			}
 		}
 	}

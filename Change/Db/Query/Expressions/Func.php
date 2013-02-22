@@ -63,7 +63,7 @@ class Func extends AbstractExpression
 	{
 		if (!is_array($arguments))
 		{
-			throw new \InvalidArgumentException('Argument 1 must be a Array');
+			throw new \InvalidArgumentException('Argument 1 must be a Array', 42033);
 		}
 		if (count($arguments))
 		{
