@@ -39,7 +39,7 @@ interface Localizable
 
 	/**
 	 * @api
-	 * @return \Change\Documents\AbstractI18nDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	public function getCurrentI18nPart();
+	public function getCurrentLocalizedPart();
 }

@@ -134,7 +134,7 @@ class AbstractDocumentClass
 	 */
 	protected function getLocalizableInterface($model)
 	{
-		$class = $model->getDocumentI18nClassName();
+		$class = $model->getDocumentLocalizedClassName();
 		$code = '
 	/**
 	 * @var \Change\Documents\LocalizableFunctions
@@ -156,7 +156,7 @@ class AbstractDocumentClass
 	/**
 	 * @return ' . $class . '
 	 */
-	public function getCurrentI18nPart()
+	public function getCurrentLocalizedPart()
 	{
 	 	return $this->getLocalizableFunctions()->getCurrent();
 	}
@@ -167,7 +167,7 @@ class AbstractDocumentClass
 	 */
 	public function isDeleted()
 	{
-		return $this->getCurrentI18nPart()->isDeleted();
+		return $this->getCurrentLocalizedPart()->isDeleted();
 	}
 
 	/**
@@ -176,7 +176,7 @@ class AbstractDocumentClass
 	 */
 	public function isNew()
 	{
-		return $this->getCurrentI18nPart()->isNew();
+		return $this->getCurrentLocalizedPart()->isNew();
 	}
 
 	/**
@@ -185,7 +185,7 @@ class AbstractDocumentClass
 	 */
 	public function hasModifiedProperties()
 	{
-		return parent::hasModifiedProperties() || $this->getCurrentI18nPart()->hasModifiedProperties();
+		return parent::hasModifiedProperties() || $this->getCurrentLocalizedPart()->hasModifiedProperties();
 	}
 
 	/**
@@ -195,7 +195,7 @@ class AbstractDocumentClass
 	 */
 	public function isPropertyModified($propertyName)
 	{
-		return parent::isPropertyModified($propertyName) || $this->getCurrentI18nPart()->isPropertyModified($propertyName);
+		return parent::isPropertyModified($propertyName) || $this->getCurrentLocalizedPart()->isPropertyModified($propertyName);
 	}
 
 	/**
@@ -204,7 +204,7 @@ class AbstractDocumentClass
 	 */
 	public function getModifiedPropertyNames()
 	{
-		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentI18nPart()->getModifiedPropertyNames());
+		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentLocalizedPart()->getModifiedPropertyNames());
 	}
 
 	/**
@@ -213,10 +213,10 @@ class AbstractDocumentClass
 	 */
 	public function removeOldPropertyValue($propertyName)
 	{
-		$i18nPart = $this->getCurrentI18nPart();
-		if ($i18nPart->isPropertyModified($propertyName))
+		$localizedPart = $this->getCurrentLocalizedPart();
+		if ($localizedPart->isPropertyModified($propertyName))
 		{
-			$i18nPart->removeOldPropertyValue($propertyName);
+			$localizedPart->removeOldPropertyValue($propertyName);
 		}
 		else
 		{
@@ -549,8 +549,8 @@ class AbstractDocumentClass
 	 */
 	public function get' . $un . '()
 	{
-		$i18nPart = $this->getCurrentI18nPart();
-		return $i18nPart->get' . $un . '();
+		$localizedPart = $this->getCurrentLocalizedPart();
+		return $localizedPart->get' . $un . '();
 	}
 
 	/**
@@ -558,7 +558,7 @@ class AbstractDocumentClass
 	 */
 	public function get' . $un . 'OldValue()
 	{
-		return $this->getCurrentI18nPart()->get' . $un . 'OldValue();
+		return $this->getCurrentLocalizedPart()->get' . $un . 'OldValue();
 	}';
 
 		if ($name === 'LCID')
@@ -582,8 +582,8 @@ class AbstractDocumentClass
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
-		$i18nPart = $this->getCurrentI18nPart();
-		if ($i18nPart->set' . $un . '(' . $var . '))
+		$localizedPart = $this->getCurrentLocalizedPart();
+		if ($localizedPart->set' . $un . '(' . $var . '))
 		{
 			$this->propertyChanged(' . $en . ');
 		}

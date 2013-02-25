@@ -53,9 +53,9 @@ class LocalizableFunctions
 	}
 	
 	/**
-	 * @var \Change\Documents\AbstractI18nDocument[]
+	 * @var \Change\Documents\AbstractLocalizedDocument[]
 	 */
-	protected $i18nPartArray = array();
+	protected $localizedPartArray = array();
 
 	/**
 	 * @var string[]
@@ -98,11 +98,11 @@ class LocalizableFunctions
 	{
 		if ($this->LCIDArray === null)
 		{
-			$this->LCIDArray = $this->getDocumentManager()->getI18nDocumentLCIDArray($this->getDocument());
+			$this->LCIDArray = $this->getDocumentManager()->getLocalizedDocumentLCIDArray($this->getDocument());
 		}
-		foreach ($this->i18nPartArray as $LCID => $i18nPart)
+		foreach ($this->localizedPartArray as $LCID => $localizedPart)
 		{
-			if (!in_array($LCID, $this->LCIDArray) && $i18nPart->getPersistentState() === DocumentManager::STATE_LOADED)
+			if (!in_array($LCID, $this->LCIDArray) && $localizedPart->getPersistentState() === DocumentManager::STATE_LOADED)
 			{
 				$this->LCIDArray[] = $LCID;
 			}
@@ -113,19 +113,19 @@ class LocalizableFunctions
 	/**
 	 * @api
 	 * @param string $LCID
-	 * @return \Change\Documents\AbstractI18nDocument|null
+	 * @return \Change\Documents\AbstractLocalizedDocument|null
 	 */
-	public function getI18nPart($LCID)
+	public function getLocalizedPart($LCID)
 	{
-		if (isset($this->i18nPartArray[$LCID]))
+		if (isset($this->localizedPartArray[$LCID]))
 		{
-			return $this->i18nPartArray[$LCID];
+			return $this->localizedPartArray[$LCID];
 		}
 		$LCIDArray = $this->getLCIDArray();
 		if (in_array($LCID, $LCIDArray))
 		{
-			$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this->getDocument(), $LCID);
-			return $this->i18nPartArray[$LCID];
+			$this->localizedPartArray[$LCID] = $this->getDocumentManager()->getLocalizedDocumentInstanceByDocument($this->getDocument(), $LCID);
+			return $this->localizedPartArray[$LCID];
 		}
 		return null;
 	}
@@ -136,30 +136,30 @@ class LocalizableFunctions
 	 */
 	public function delete()
 	{
-		$i18nPart = $this->getCurrent();
-		if ($i18nPart->getLCID() == $this->getRefLCID())
+		$localizedPart = $this->getCurrent();
+		if ($localizedPart->getLCID() == $this->getRefLCID())
 		{
 			throw new \RuntimeException('Unable to delete refLCID: ' .  $this->getRefLCID(), 51014);
 		}
 
-		if ($i18nPart->getPersistentState() === DocumentManager::STATE_LOADED)
+		if ($localizedPart->getPersistentState() === DocumentManager::STATE_LOADED)
 		{
-			$this->getDocumentManager()->deleteI18nDocument($this->getDocument(), $i18nPart);
+			$this->getDocumentManager()->deleteLocalizedDocument($this->getDocument(), $localizedPart);
 		}
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Documents\AbstractI18nDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
 	public function getCurrent()
 	{
 	 	$LCID = $this->getDocumentManager()->getLCID();
-	 	if (!isset($this->i18nPartArray[$LCID]))
+	 	if (!isset($this->localizedPartArray[$LCID]))
 	 	{
-	 		$this->i18nPartArray[$LCID] = $this->getDocumentManager()->getI18nDocumentInstanceByDocument($this->getDocument(), $LCID);
+	 		$this->localizedPartArray[$LCID] = $this->getDocumentManager()->getLocalizedDocumentInstanceByDocument($this->getDocument(), $LCID);
 	 	}
-	 	return $this->i18nPartArray[$LCID];
+	 	return $this->localizedPartArray[$LCID];
 	}
 
 	/**
@@ -191,24 +191,24 @@ class LocalizableFunctions
 
 	/**
 	 * For Internal dialog with DocumentManager
-	 * @param \Change\Documents\AbstractI18nDocument|null $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument|null $localizedPart
 	 */
-	public function unsetI18nPart(\Change\Documents\AbstractI18nDocument $i18nPart = null)
+	public function unsetLocalizedPart(\Change\Documents\AbstractLocalizedDocument $localizedPart = null)
 	{
-		if ($i18nPart === null)
+		if ($localizedPart === null)
 		{
-			foreach ($this->i18nPartArray as $LCID => $i18nPart)
+			foreach ($this->localizedPartArray as $LCID => $localizedPart)
 			{
-				$i18nPart->setPersistentState(DocumentManager::STATE_DELETED);
+				$localizedPart->setPersistentState(DocumentManager::STATE_DELETED);
 			}
 			$this->LCIDArray = array();
 		}
 		else
 		{
-			$LCID = $i18nPart->getLCID();
-			if ($this->i18nPartArray[$LCID] === $i18nPart)
+			$LCID = $localizedPart->getLCID();
+			if ($this->localizedPartArray[$LCID] === $localizedPart)
 			{
-				$i18nPart->setPersistentState(DocumentManager::STATE_DELETED);
+				$localizedPart->setPersistentState(DocumentManager::STATE_DELETED);
 				if ($this->LCIDArray !== null)
 				{
 					$this->LCIDArray = array_values(array_diff($this->LCIDArray, array($LCID)));
@@ -223,6 +223,6 @@ class LocalizableFunctions
 	public function reset()
 	{
 		$LCID = $this->getLCID();
-		unset($this->i18nPartArray[$LCID]);
+		unset($this->localizedPartArray[$LCID]);
 	}
 }

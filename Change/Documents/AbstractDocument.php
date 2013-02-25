@@ -226,7 +226,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 * @return integer \Change\Documents\DocumentManager::STATE_*
+	 * \Change\Documents\DocumentManager::STATE_*
+	 * @return integer
 	 */
 	public function getPersistentState()
 	{
@@ -234,7 +235,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 
 	/**
-	 * @param integer $newValue \Change\Documents\DocumentManager::STATE_*
+	 *  \Change\Documents\DocumentManager::STATE_*
+	 * @param integer $newValue
 	 * @return integer oldState
 	 */
 	public function setPersistentState($newValue)
@@ -332,28 +334,15 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 * Overrided by compiled document class
+	 * Override by compiled document class
 	 */
 	protected function validateProperties()
 	{
-		foreach ($this->documentModel->getProperties() as $property)
+		foreach ($this->documentModel->getProperties() as $propertyName => $property)
 		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getLocalized())
+			if ($this->isNew() || $this->isPropertyModified($propertyName))
 			{
-				$i18nPart = $this->getCurrentI18nPart();
-				/* @var $i18nPart \Change\Documents\AbstractI18nDocument */
-				if ($i18nPart->getPersistentState() == DocumentManager::STATE_NEW || $i18nPart->isPropertyModified($property->getName()))
-				{
-					$this->validatePropertyValue($property);
-				}
-			}
-			else
-			{
-				if ($this->getPersistentState() == DocumentManager::STATE_NEW || $this->isPropertyModified($property->getName()))
-				{
-					$this->validatePropertyValue($property);
-				}
+				$this->validatePropertyValue($property);
 			}
 		}
 	}

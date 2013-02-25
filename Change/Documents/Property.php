@@ -461,7 +461,7 @@ class Property
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractI18nDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractLocalizedDocument $document
 	 * @return mixed
 	 */
 	public function getValue($document)
@@ -499,7 +499,7 @@ class Property
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractI18nDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractLocalizedDocument $document
 	 * @param mixed $value
 	 */
 	public function setValue($document, $value)

@@ -144,7 +144,7 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($basicDoc2->getId(), $localizedDoc->getId());
 		$this->assertCount(1, $basicDoc2->getLocalizableFunctions()->getLCIDArray());
 		
-		$basicI18nFR = $basicDoc2->getCurrentI18nPart();
+		$basicI18nFR = $basicDoc2->getCurrentLocalizedPart();
 		$this->assertEquals(DocumentManager::STATE_LOADED, $basicI18nFR->getPersistentState());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		
@@ -177,7 +177,7 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$dm->pushLCID('en_GB');
 		$basicDoc2->setPLStr('Localized 1 GB');
-		$basicI18nGB = $basicDoc2->getCurrentI18nPart();
+		$basicI18nGB = $basicDoc2->getCurrentLocalizedPart();
 		$this->assertEquals(DocumentManager::STATE_NEW, $basicI18nGB->getPersistentState());
 		
 		$testsLocalizedService->create($basicDoc2);	

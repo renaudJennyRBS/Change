@@ -406,24 +406,24 @@ class DocumentManager
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
-	public function insertI18nDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractI18nDocument $i18nPart)
+	public function insertLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
 		if ($document->getId() <= 0)
 		{
 			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId(), 51008);
 		}
-		elseif ($i18nPart->getPersistentState() != static::STATE_NEW)
+		elseif ($localizedPart->getPersistentState() != static::STATE_NEW)
 		{
-			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $i18nPart->getPersistentState(), 51010);
+			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
 		}
-		if ($i18nPart->getId() !== $document->getId())
+		if ($localizedPart->getId() !== $document->getId())
 		{
-			$i18nPart->initialize($document->getId(), $i18nPart->getLCID(), static::STATE_NEW);
+			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_NEW);
 		}
-		$i18nPart->setPersistentState(static::STATE_SAVING);
+		$localizedPart->setPersistentState(static::STATE_SAVING);
 		
 		$qb = $this->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
@@ -445,7 +445,7 @@ class DocumentManager
 		}
 	
 		$iq->execute();
-		$i18nPart->setPersistentState(static::STATE_LOADED);
+		$localizedPart->setPersistentState(static::STATE_LOADED);
 	}
 
 	/**
@@ -507,21 +507,21 @@ class DocumentManager
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
-	public function updateI18nDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractI18nDocument $i18nPart)
+	public function updateLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
-		if ($i18nPart->getPersistentState() != static::STATE_LOADED)
+		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
 		{
-			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $i18nPart->getPersistentState(), 51010);
+			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
 		}
-		if ($i18nPart->getId() !== $document->getId())
+		if ($localizedPart->getId() !== $document->getId())
 		{
-			$i18nPart->initialize($document->getId(), $i18nPart->getLCID(), static::STATE_LOADED);
+			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_LOADED);
 		}
 		
-		$i18nPart->setPersistentState(static::STATE_SAVING);
+		$localizedPart->setPersistentState(static::STATE_SAVING);
 		
 		$qb = $this->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
@@ -535,11 +535,11 @@ class DocumentManager
 		foreach ($model->getLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			if ($i18nPart->isPropertyModified($name))
+			if ($localizedPart->isPropertyModified($name))
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
 				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($i18nPart));
+				$iq->bindParameter($name, $property->getValue($localizedPart));
 				$execute = true;
 			}
 		}
@@ -553,12 +553,12 @@ class DocumentManager
 				)
 
 			);
-			$iq->bindParameter('id', $i18nPart->getId());
-			$iq->bindParameter('LCID', $i18nPart->getLCID());
+			$iq->bindParameter('id', $localizedPart->getId());
+			$iq->bindParameter('LCID', $localizedPart->getLCID());
 			$iq->execute();	
 		}
 		
-		$i18nPart->setPersistentState(static::STATE_LOADED);
+		$localizedPart->setPersistentState(static::STATE_LOADED);
 	}
 	
 	/**
@@ -681,30 +681,29 @@ class DocumentManager
 	
 	/**
 	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Documents\AbstractI18nDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	protected function createNewI18nDocumentInstance(\Change\Documents\AbstractModel $model)
+	protected function createNewLocalizedDocumentInstance(\Change\Documents\AbstractModel $model)
 	{
-		$className = $this->getI18nDocumentClassFromModel($model);
-		/* @var $newDocument \Change\Documents\AbstractDocument */
+		$className = $this->getLocalizedDocumentClassFromModel($model);
 		return new $className($this);
 	}
 	
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $LCID
-	 * @return \Change\Documents\AbstractI18nDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	public function getI18nDocumentInstanceByDocument(\Change\Documents\AbstractDocument $document, $LCID)
+	public function getLocalizedDocumentInstanceByDocument(\Change\Documents\AbstractDocument $document, $LCID)
 	{
 		$model = $document->getDocumentModel();
-		$i18nPart = $this->createNewI18nDocumentInstance($model);
-		$i18nPart->initialize($document->getId(), $LCID, static::STATE_NEW);
+		$localizedPart = $this->createNewLocalizedDocumentInstance($model);
+		$localizedPart->initialize($document->getId(), $LCID, static::STATE_NEW);
 		
 		if ($document->getPersistentState() != static::STATE_NEW)
 		{
-			$i18nPart->setPersistentState(static::STATE_LOADING);
-			$key = 'LoadI18n_' . $model->getName();
+			$localizedPart->setPersistentState(static::STATE_LOADING);
+			$key = 'LoadLocalized_' . $model->getName();
 			if (!isset($this->cachedQueries[$key]))
 			{
 				
@@ -747,33 +746,33 @@ class DocumentManager
 					if (($property = $model->getProperty($propertyName)) !== null)
 					{
 						$propVal =  $dbp->dbToPhp($dbValue, $sqlMapping->getDbScalarType($property->getType()));
-						$property->setValue($i18nPart, $propVal);
+						$property->setValue($localizedPart, $propVal);
 					}
 				}
-				$i18nPart->setPersistentState(static::STATE_LOADED);
+				$localizedPart->setPersistentState(static::STATE_LOADED);
 			}
 			elseif ($document->getPersistentState() == static::STATE_DELETED)
 			{
-				$i18nPart->setPersistentState(static::STATE_DELETED);
+				$localizedPart->setPersistentState(static::STATE_DELETED);
 			}
 			else
 			{
-				$i18nPart->setPersistentState(static::STATE_NEW);
-				$i18nPart->setDefaultValues($model);
+				$localizedPart->setPersistentState(static::STATE_NEW);
+				$localizedPart->setDefaultValues($model);
 			}
 		}
 		else
 		{
-			$i18nPart->setDefaultValues($model);
+			$localizedPart->setDefaultValues($model);
 		}
-		return $i18nPart;
+		return $localizedPart;
 	}
 	
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return string[]
 	 */
-	public function getI18nDocumentLCIDArray(\Change\Documents\AbstractDocument $document)
+	public function getLocalizedDocumentLCIDArray(\Change\Documents\AbstractDocument $document)
 	{
 		if ($document->getId() <= 0)
 		{
@@ -914,9 +913,9 @@ class DocumentManager
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return string
 	 */
-	protected function getI18nDocumentClassFromModel($model)
+	protected function getLocalizedDocumentClassFromModel($model)
 	{
-		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName().'I18n'));
+		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents', 'Localized' . $model->getShortName()));
 	}
 	
 	/**
@@ -1018,7 +1017,7 @@ class DocumentManager
 	 * @return integer|boolean
 	 * @throws \InvalidArgumentException
 	 */
-	public function deleteI18nDocuments(\Change\Documents\AbstractDocument $document)
+	public function deleteLocalizedDocuments(\Change\Documents\AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_DELETED)
 		{
@@ -1029,7 +1028,7 @@ class DocumentManager
 		$rowCount = false;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$key = 'deleteI18n_' . $model->getRootName();
+			$key = 'deleteLocalized_' . $model->getRootName();
 			if (!isset($this->cachedQueries[$key]))
 			{
 				$qb = $this->getNewStatementBuilder();
@@ -1044,29 +1043,29 @@ class DocumentManager
 			/* @var $dq \Change\Db\Query\DeleteQuery */
 			$dq->bindParameter('id', $document->getId());
 			$rowCount = $dq->execute();		
-			$document->getLocalizableFunctions()->unsetI18nPart();
+			$document->getLocalizableFunctions()->unsetLocalizedPart();
 		}
 		return $rowCount;
 	}
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @return integer|boolean
 	 * @throws \InvalidArgumentException
 	 */
-	public function deleteI18nDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractI18nDocument $i18nPart)
+	public function deleteLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
-		if ($i18nPart->getPersistentState() != static::STATE_LOADED)
+		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
 		{
-			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $i18nPart->getPersistentState(), 51010);
+			throw new \InvalidArgumentException('Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
 		}
 
 		$model = $document->getDocumentModel();
 		$rowCount = false;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$key = 'deleteOneI18n_' . $model->getRootName();
+			$key = 'deleteOneLocalized_' . $model->getRootName();
 			if (!isset($this->cachedQueries[$key]))
 			{
 				$qb = $this->getNewStatementBuilder();
@@ -1084,11 +1083,11 @@ class DocumentManager
 
 			/* @var $dq \Change\Db\Query\DeleteQuery */
 			$dq->bindParameter('id', $document->getId());
-			$dq->bindParameter('LCID', $i18nPart->getLCID());
+			$dq->bindParameter('LCID', $localizedPart->getLCID());
 
 			$rowCount = $dq->execute();
 
-			$document->getLocalizableFunctions()->unsetI18nPart($i18nPart);
+			$document->getLocalizableFunctions()->unsetLocalizedPart($localizedPart);
 		}
 		return $rowCount;
 	}
