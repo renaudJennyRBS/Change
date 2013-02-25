@@ -43,7 +43,7 @@ class LocalizableFunctions
 	}
 
 	/**
-	 * @return \Change\Documents\AbstractDocument
+	 * @return \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable
 	 */
 	protected function getDocument()
 	{

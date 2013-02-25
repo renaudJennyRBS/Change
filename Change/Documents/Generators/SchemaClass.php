@@ -249,7 +249,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 				
 			if ($propertyName === 'publicationStatus')
 			{
-				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'VALUES\' => array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'INVALID\',\'DEACTIVATED\',\'FILED\')))';
+				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'VALUES\' => array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'UNPUBLISHABLE\',\'DEACTIVATED\',\'FILED\')))';
 			}
 			else
 			{

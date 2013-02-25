@@ -109,6 +109,11 @@ class AbstractDocumentClass
 			$code .= $this->getLocalizableInterface($model);
 		}
 
+		if ($model->getPublishable())
+		{
+			$code .= $this->getPublishableInterface($model);
+		}
+
 		$code .= '}' . PHP_EOL;
 		$this->compiler = null;
 		return $code;
@@ -117,6 +122,7 @@ class AbstractDocumentClass
 
 	/**
 	 * @param mixed $value
+	 * @param boolean $removeSpace
 	 * @return string
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
@@ -126,6 +132,34 @@ class AbstractDocumentClass
 			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
 		}
 		return var_export($value, true);
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return string
+	 */
+	protected function getPublishableInterface($model)
+	{
+		$code = '
+	/**
+	 * @var \Change\Documents\PublishableFunctions
+	 */
+	protected $publishableFunctions;
+
+	/**
+	 * @api
+	 * @return \Change\Documents\PublishableFunctions
+	 */
+	public function getPublishableFunctions()
+	{
+		if ($this->publishableFunctions === null)
+		{
+			$this->publishableFunctions = new \Change\Documents\PublishableFunctions($this);
+		}
+		return $this->publishableFunctions;
+	}' . PHP_EOL;
+
+		return $code;
 	}
 
 	/**

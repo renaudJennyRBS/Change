@@ -12,39 +12,57 @@ interface Publishable
 	
 	const STATUS_PUBLISHABLE = 'PUBLISHABLE';
 	
-	const STATUS_INVALID = 'INVALID';
+	const STATUS_UNPUBLISHABLE = 'UNPUBLISHABLE';
 	
 	const STATUS_DEACTIVATED = 'DEACTIVATED';
 	
 	const STATUS_FILED = 'FILED';
-	
+
 	/**
+	 * @api
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
+	 * @api
 	 * @return string
 	 */
 	public function getPublicationStatus();
 	
 	/**
+	 * @api
 	 * @param string $publicationStatus
 	 */
 	public function setPublicationStatus($publicationStatus);
 	
 	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getStartPublication();
 		
 	/**
+	 * @api
 	 * @param string|null $startPublication
 	 */
 	public function setStartPublication($startPublication);
 	
 	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getEndPublication();
 	
 	/**
+	 * @api
 	 * @param string|null $endPublication
 	 */
-	public function setEndPublication($endPublication);	
+	public function setEndPublication($endPublication);
+
+	/**
+	 * @api
+	 * @return \Change\Documents\PublishableFunctions
+	 */
+	public function getPublishableFunctions();
 }
