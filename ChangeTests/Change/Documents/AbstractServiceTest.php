@@ -142,9 +142,9 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $basicDoc2);
 		$this->assertNotSame($localizedDoc, $basicDoc2);
 		$this->assertEquals($basicDoc2->getId(), $localizedDoc->getId());
-		$this->assertCount(1, $basicDoc2->getLCIDArray());
+		$this->assertCount(1, $basicDoc2->getLocalizableFunctions()->getLCIDArray());
 		
-		$basicI18nFR = $basicDoc2->getCurrentI18nPart();
+		$basicI18nFR = $basicDoc2->getCurrentLocalizedPart();
 		$this->assertEquals(DocumentManager::STATE_LOADED, $basicI18nFR->getPersistentState());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		
@@ -177,14 +177,14 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$dm->pushLCID('en_GB');
 		$basicDoc2->setPLStr('Localized 1 GB');
-		$basicI18nGB = $basicDoc2->getCurrentI18nPart();
+		$basicI18nGB = $basicDoc2->getCurrentLocalizedPart();
 		$this->assertEquals(DocumentManager::STATE_NEW, $basicI18nGB->getPersistentState());
 		
 		$testsLocalizedService->create($basicDoc2);	
 		$this->assertEquals(DocumentManager::STATE_LOADED, $basicI18nGB->getPersistentState());
 		$dm->popLCID();
 
-		$this->assertCount(2, $basicDoc2->getLCIDArray());
+		$this->assertCount(2, $basicDoc2->getLocalizableFunctions()->getLCIDArray());
 	
 		$backup = $testsLocalizedService->generateBackupData($basicDoc2);
 		$this->assertArrayHasKey('metas', $backup);
@@ -203,7 +203,7 @@ class AbstractServiceTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_DELETED, $basicDoc2->getPersistentState());
 		$this->assertEquals(DocumentManager::STATE_DELETED, $basicI18nGB->getPersistentState());
 		$this->assertEquals(DocumentManager::STATE_DELETED, $basicI18nFR->getPersistentState());
-		$this->assertCount(0, $basicDoc2->getLCIDArray());
+		$this->assertCount(0, $basicDoc2->getLocalizableFunctions()->getLCIDArray());
 	}
 	
 }

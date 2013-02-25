@@ -90,7 +90,7 @@ class GetI18nDocument
 		/* @var $document \Change\Documents\Interfaces\Localizable */
 
 		$i18n = array();
-		foreach ($document->getLCIDArray() as $tmpLCID)
+		foreach ($document->getLocalizableFunctions()->getLCIDArray() as $tmpLCID)
 		{
 			$LCIDLink = clone($documentLink);
 			$LCIDLink->setLCID($tmpLCID);

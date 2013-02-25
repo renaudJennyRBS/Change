@@ -121,42 +121,17 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				
 		$newDoc = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$tmpId = $newDoc->getId();
-		$manager->initializeRelationDocumentId($newDoc);
-		
-		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
 
-		$this->assertEquals($tmpId, $manager->resolveRelationDocumentId($tmpId));
-		try 
-		{
-			$manager->resolveRelationDocumentId(-5000);
-			$this->fail('Cached document -5000 not found');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals('Cached document -5000 not found', $e->getMessage());
-		}
-		
-		$this->assertEquals(1, $manager->resolveRelationDocumentId(1));
-		
-		$this->assertSame($newDoc, $manager->getRelationDocument($tmpId));
-		try
-		{
-			$manager->getRelationDocument(-5000);
-			$this->fail('Cached document -5000 not found');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals('Cached document -5000 not found', $e->getMessage());
-		}
-		
-		$this->assertNull($manager->getRelationDocument(1));
-		
+		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
+		$this->assertNull($manager->getDocumentInstance(-5000));
+
 		$manager->affectId($newDoc);
 		
 		$finalId = $newDoc->getId();
 		$this->assertNotEquals($tmpId, $finalId);
-		$this->assertEquals($finalId, $manager->resolveRelationDocumentId($tmpId));
-		$this->assertSame($newDoc, $manager->getRelationDocument($tmpId));
+
+		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
+		$this->assertSame($newDoc, $manager->getDocumentInstance($finalId));
 		
 		return $manager;
 	}
@@ -169,7 +144,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testI18nDocument(DocumentManager $manager)
 	{
 		$localized = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-		$localizedI18nPartFr = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
+		$localizedI18nPartFr = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
 		
 		/* @var $localizedI18nPartFr \Compilation\Project\Tests\Documents\LocalizedI18n */
 		$tmpId = $localized->getId();
@@ -184,16 +159,16 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$this->assertNotEquals($tmpId, $localized->getId());
 		
-		$manager->insertI18nDocument($localized, $localizedI18nPartFr);
+		$manager->insertLocalizedDocument($localized, $localizedI18nPartFr);
 		$this->assertEquals($localized->getId(), $localizedI18nPartFr->getId());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedI18nPartFr->getPersistentState());
 		
 		$localizedI18nPartFr->setPLStr('Localized Label');
 		$this->assertTrue($localizedI18nPartFr->isPropertyModified('pLStr'));
-		$manager->updateI18nDocument($localized, $localizedI18nPartFr);
+		$manager->updateLocalizedDocument($localized, $localizedI18nPartFr);
 		$this->assertFalse($localizedI18nPartFr->isPropertyModified('pLStr'));
 		
-		$loaded = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
+		$loaded = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
 		$this->assertNotSame($loaded, $localizedI18nPartFr);
 		
 		$this->assertEquals($localized->getId(), $loaded->getId());
@@ -202,9 +177,9 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_LOADED, $loaded->getPersistentState());
 		
 		$manager->deleteDocument($localized);
-		$manager->deleteI18nDocuments($localized);
+		$manager->deleteLocalizedDocuments($localized);
 		
-		$deleted = $manager->getI18nDocumentInstanceByDocument($localized, 'fr_FR');
+		$deleted = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
 		$this->assertEquals(DocumentManager::STATE_DELETED, $deleted->getPersistentState());
 
 		return $manager;

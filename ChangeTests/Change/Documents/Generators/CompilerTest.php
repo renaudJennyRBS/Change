@@ -71,6 +71,6 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFileExists($commonPath . $m2->getShortModelClassName() . '.php');
 		$this->assertFileExists($commonPath . $m2->getShortAbstractDocumentClassName() . '.php');
 		$this->assertFileExists($commonPath . $m2->getShortAbstractServiceClassName() . '.php');
-		$this->assertFileExists($commonPath . $m2->getShortDocumentI18nClassName() . '.php');
+		$this->assertFileExists($commonPath . $m2->getShortDocumentLocalizedClassName() . '.php');
 	}
 }

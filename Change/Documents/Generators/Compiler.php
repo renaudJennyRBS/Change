@@ -316,7 +316,7 @@ class Compiler
 			
 			if ($model->checkLocalized())
 			{
-				$generator = new DocumentI18nClass();
+				$generator = new DocumentLocalizedClass();
 				$generator->savePHPCode($this, $model, $compilationPath);
 			}
 			

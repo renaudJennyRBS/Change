@@ -125,6 +125,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string 2', $datas['pStr']);
 		$this->assertArrayHasKey('deletiondate', $datas);
 		$this->assertInstanceOf('\DateTime', $datas['deletiondate']);
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 
 
@@ -226,25 +228,25 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$dm->pushLCID('en_GB');
 		$this->assertEquals('en_GB', $localizedDoc->getLCID());
-		$this->assertEquals(DocumentManager::STATE_NEW, $localizedDoc->getCurrentI18nPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_NEW, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 
 		$this->assertNull($localizedDoc->getPLStr());
 		$localizedDoc->setPLStr('string EN');
 
 		$localizedDoc->create();
 
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentI18nPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 
 		$dm->popLCID();
 
 		$dm->pushLCID('fr_FR');
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentI18nPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 		$this->assertEquals('fr_FR', $localizedDoc->getLCID());
 		$this->assertEquals('string FR 2', $localizedDoc->getPLStr());
 		$dm->popLCID();
 
 		$dm->pushLCID('en_GB');
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentI18nPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 		$this->assertEquals('en_GB', $localizedDoc->getLCID());
 		$this->assertEquals('string EN', $localizedDoc->getPLStr());
 		$dm->popLCID();
@@ -275,6 +277,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string FR 2', $datas['LCID']['fr_FR']['pLStr']);
 		$this->assertEquals('string EN', $datas['LCID']['en_GB']['pLStr']);
 		$dm->popLCID();
+
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 
 	/**
@@ -300,7 +305,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1Id = $c1->getId();
 		$this->assertGreaterThan(0, $c1Id);
 		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getPersistentState());
-		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getCurrentI18nPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getCurrentLocalizedPart()->getPersistentState());
 
 		$c1->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$this->assertTrue($c1->isPropertyModified('publicationStatus'));
@@ -346,5 +351,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str4 v2', $c1->getStr4());
+
+		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 }

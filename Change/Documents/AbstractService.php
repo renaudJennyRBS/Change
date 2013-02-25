@@ -124,20 +124,20 @@ abstract class AbstractService
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \LogicException
 	 */
-	protected function checkCreatePersistentState($document, $i18nPart = null)
+	protected function checkCreatePersistentState($document, $localizedPart = null)
 	{
-		if ($i18nPart)
+		if ($localizedPart)
 		{
-			if ($i18nPart->getPersistentState() !== DocumentManager::STATE_NEW)
+			if ($localizedPart->getPersistentState() !== DocumentManager::STATE_NEW)
 			{
 				throw new \LogicException('Document is not new', 51001);
 			}
 			if ($document->getPersistentState() === DocumentManager::STATE_NEW)
 			{
-				$document->setRefLCID($i18nPart->getLCID());
+				$document->setRefLCID($localizedPart->getLCID());
 			}
 		}
 		else
@@ -157,8 +157,8 @@ abstract class AbstractService
 	 */
 	public function create(AbstractDocument $document)
 	{
-		$i18nPart = ($document instanceof Localizable) ? $document->getCurrentI18nPart() : null;
-		$this->checkCreatePersistentState($document, $i18nPart);
+		$localizedPart = ($document instanceof Localizable) ? $document->getCurrentLocalizedPart() : null;
+		$this->checkCreatePersistentState($document, $localizedPart);
 
 		if ($document->getCreationDate() === null)
 		{
@@ -184,9 +184,9 @@ abstract class AbstractService
 				$dm->affectId($document);
 				$dm->insertDocument($document);
 			}
-			if ($i18nPart)
+			if ($localizedPart)
 			{
-				$dm->insertI18nDocument($document, $i18nPart);
+				$dm->insertLocalizedDocument($document, $localizedPart);
 			}
 
 			$tm->commit();
@@ -199,14 +199,14 @@ abstract class AbstractService
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \LogicException
 	 */
-	protected function checkUpdatePersistentState($document, $i18nPart = null)
+	protected function checkUpdatePersistentState($document, $localizedPart = null)
 	{
-		if ($i18nPart)
+		if ($localizedPart)
 		{
-			if ($i18nPart->getPersistentState() === DocumentManager::STATE_NEW)
+			if ($localizedPart->getPersistentState() === DocumentManager::STATE_NEW)
 			{
 				throw new \LogicException('Document is new', 51002);
 			}
@@ -228,8 +228,8 @@ abstract class AbstractService
 	 */
 	public function update(AbstractDocument $document)
 	{
-		$i18nPart = ($document instanceof Localizable) ? $document->getCurrentI18nPart() : null;
-		$this->checkUpdatePersistentState($document, $i18nPart);
+		$localizedPart = ($document instanceof Localizable) ? $document->getCurrentLocalizedPart() : null;
+		$this->checkUpdatePersistentState($document, $localizedPart);
 		
 		if ($document->getModificationDate() === null)
 		{
@@ -258,7 +258,7 @@ abstract class AbstractService
 		
 		if ($document->getDocumentModel()->useCorrection())
 		{
-			$corrections = $this->populateCorrections($document, $i18nPart, $publicationStatus);
+			$corrections = $this->populateCorrections($document, $localizedPart, $publicationStatus);
 		}
 		else
 		{
@@ -293,10 +293,10 @@ abstract class AbstractService
 				
 				if ($document instanceof Localizable)
 				{
-					$i18nPart = $document->getCurrentI18nPart();
-					if ($i18nPart->hasModifiedProperties())
+					$localizedPart = $document->getCurrentLocalizedPart();
+					if ($localizedPart->hasModifiedProperties())
 					{
-						$dm->updateI18nDocument($document, $i18nPart);
+						$dm->updateLocalizedDocument($document, $localizedPart);
 					}
 				}
 			}
@@ -311,11 +311,11 @@ abstract class AbstractService
 	/**
 	 * @throws \LogicException
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractI18nDocument $i18nPart
+	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @param string $publicationStatus
 	 * @return \Change\Documents\Correction[]
 	 */
-	protected function populateCorrections($document, $i18nPart, $publicationStatus)
+	protected function populateCorrections($document, $localizedPart, $publicationStatus)
 	{
 		if ($publicationStatus === Publishable::STATUS_DRAFT)
 		{
@@ -338,7 +338,7 @@ abstract class AbstractService
 				/* @var $property \Change\Documents\Property */
 				if ($property->getLocalized())
 				{
-					$values[$i18nPart->getLCID()][$propertyName] = $property->getValue($i18nPart);
+					$values[$localizedPart->getLCID()][$propertyName] = $property->getValue($localizedPart);
 				}
 				else
 				{
@@ -468,10 +468,10 @@ abstract class AbstractService
 			
 			if ($document instanceof Localizable)
 			{
-				$i18nPart = $document->getCurrentI18nPart();
-				if ($i18nPart->hasModifiedProperties())
+				$localizedPart = $document->getCurrentLocalizedPart();
+				if ($localizedPart->hasModifiedProperties())
 				{
-					$dm->updateI18nDocument($document, $i18nPart);
+					$dm->updateLocalizedDocument($document, $localizedPart);
 				}
 			}
 
@@ -530,7 +530,7 @@ abstract class AbstractService
 				
 				if ($document instanceof Localizable)
 				{
-					$dm->deleteI18nDocuments($document);
+					$dm->deleteLocalizedDocuments($document);
 				}
 			}
 			$tm->commit();
@@ -592,12 +592,12 @@ abstract class AbstractService
 				$datas[$propertyName] = $val;
 			}
 		}
-		
+
+		$dm = $document->getDocumentManager();
 		if (count($localized) && $document instanceof Localizable)
 		{
 			$datas['LCID'] = array();
-			$dm = $document->getDocumentManager();
-			foreach ($document->getLCIDArray() as $LCID)
+			foreach ($document->getLocalizableFunctions()->getLCIDArray() as $LCID)
 			{
 				$dm->pushLCID($LCID);
 				$datas['LCID'][$LCID] = array();

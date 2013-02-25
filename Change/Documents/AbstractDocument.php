@@ -76,6 +76,13 @@ abstract class AbstractDocument implements \Serializable
 	{
 		$this->setDocumentContext($manager, $model, $service);
 	}
+
+	public function __destruct()
+	{
+		unset($this->documentManager);
+		unset($this->documentModel);
+		unset($this->documentService);
+	}
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $manager
@@ -151,6 +158,7 @@ abstract class AbstractDocument implements \Serializable
 	 */
 	public function initialize($id, $persistentState = null, $treeName = null)
 	{
+		$oldId = $this->id;
 		$this->id = intval($id);
 		if ($persistentState!== null)
 		{
@@ -160,6 +168,7 @@ abstract class AbstractDocument implements \Serializable
 		{
 			$this->setTreeName($treeName);
 		}
+		$this->documentManager->reference($this, $oldId);
 	}
 
 	/**
@@ -217,7 +226,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 * @return integer \Change\Documents\DocumentManager::STATE_*
+	 * \Change\Documents\DocumentManager::STATE_*
+	 * @return integer
 	 */
 	public function getPersistentState()
 	{
@@ -225,7 +235,8 @@ abstract class AbstractDocument implements \Serializable
 	}
 
 	/**
-	 * @param integer $newValue \Change\Documents\DocumentManager::STATE_*
+	 *  \Change\Documents\DocumentManager::STATE_*
+	 * @param integer $newValue
 	 * @return integer oldState
 	 */
 	public function setPersistentState($newValue)
@@ -323,28 +334,15 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
-	 * Overrided by compiled document class
+	 * Override by compiled document class
 	 */
 	protected function validateProperties()
 	{
-		foreach ($this->documentModel->getProperties() as $property)
+		foreach ($this->documentModel->getProperties() as $propertyName => $property)
 		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getLocalized())
+			if ($this->isNew() || $this->isPropertyModified($propertyName))
 			{
-				$i18nPart = $this->getCurrentI18nPart();
-				/* @var $i18nPart \Change\Documents\AbstractI18nDocument */
-				if ($i18nPart->getPersistentState() == DocumentManager::STATE_NEW || $i18nPart->isPropertyModified($property->getName()))
-				{
-					$this->validatePropertyValue($property);
-				}
-			}
-			else
-			{
-				if ($this->getPersistentState() == DocumentManager::STATE_NEW || $this->isPropertyModified($property->getName()))
-				{
-					$this->validatePropertyValue($property);
-				}
+				$this->validatePropertyValue($property);
 			}
 		}
 	}
@@ -781,27 +779,31 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	/**
+	 * @param string $LCID
 	 * @return boolean
 	 */
-	public function hasCorrection()
+	public function hasCorrection($LCID = null)
 	{
+		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
 		$corrections = $this->getCorrections();
-		return isset($corrections[Correction::NULL_LCID_KEY]);
+		return isset($corrections[$key]);
 	}	
 	
 	/**
+	 * @param string $LCID
 	 * @return \Change\Documents\Correction
 	 */
-	public function getCorrection()
+	public function getCorrection($LCID = null)
 	{
+		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
 		$corrections = $this->getCorrections();
-		if (!isset($corrections[Correction::NULL_LCID_KEY]))
+		if (!isset($corrections[$key]))
 		{
-			$correction = $this->documentManager->getNewCorrectionInstance($this, null);
+			$correction = $this->documentManager->getNewCorrectionInstance($this, $LCID);
 			$this->addCorrection($correction);
 			return $correction;
 		}
-		return $corrections[Correction::NULL_LCID_KEY];
+		return $corrections[$key];
 	}
 	
 	// Generic Method

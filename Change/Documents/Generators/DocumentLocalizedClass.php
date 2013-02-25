@@ -2,10 +2,10 @@
 namespace Change\Documents\Generators;
 
 /**
- * @name \Change\Documents\Generators\DocumentI18nClass
+ * @name \Change\Documents\Generators\DocumentLocalizedClass
  * @api
  */
-class DocumentI18nClass
+class DocumentLocalizedClass
 {
 	/**
 	 * @var \Change\Documents\Generators\Compiler
@@ -22,7 +22,7 @@ class DocumentI18nClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		$nsParts[] = $model->getShortDocumentI18nClassName() . '.php';
+		$nsParts[] = $model->getShortDocumentLocalizedClassName() . '.php';
 		array_unshift($nsParts, $compilationPath);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
@@ -44,16 +44,16 @@ class DocumentI18nClass
 		
 		if ($model->getExtend() !== null)
 		{
-			$extend = $model->getExtendModel()->getDocumentI18nClassName();
+			$extend = $model->getExtendModel()->getDocumentLocalizedClassName();
 		}
 		else
 		{
-			$extend = '\Change\Documents\AbstractI18nDocument';
+			$extend = '\Change\Documents\AbstractLocalizedDocument';
 		}
 		
-		$code .= 'class ' . $model->getShortDocumentI18nClassName() . ' extends ' . $extend . PHP_EOL;
+		$code .= 'class ' . $model->getShortDocumentLocalizedClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{'. PHP_EOL;
-		$properties = $this->getI18nProperties($model);
+		$properties = $this->getLocalizedProperties($model);
 		if (count($properties))
 		{
 			$code .= $this->getMembers($model, $properties);
@@ -67,8 +67,9 @@ class DocumentI18nClass
 	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
+	 * @return \Change\Documents\Generators\Property[]
 	 */
-	protected function getI18nProperties($model)
+	protected function getLocalizedProperties($model)
 	{		
 		$properties = array();
 		foreach ($model->getProperties() as $property)

@@ -2,10 +2,10 @@
 namespace Change\Documents;
 
 /**
- * @name \Change\Documents\AbstractI18nDocument
+ * @name \Change\Documents\AbstractLocalizedDocument
  * @api
  */
-abstract class AbstractI18nDocument implements \Serializable
+abstract class AbstractLocalizedDocument implements \Serializable
 {
 	/**
 	 * @var integer
@@ -82,7 +82,8 @@ abstract class AbstractI18nDocument implements \Serializable
 	}
 	
 	/**
-	 * @return integer DocumentManager::STATE_*
+	 * \Change\Documents\DocumentManager::STATE_*
+	 * @return integer
 	 */
 	public function getPersistentState()
 	{
@@ -90,7 +91,9 @@ abstract class AbstractI18nDocument implements \Serializable
 	}
 	
 	/**
-	 * @param integer $newValue DocumentManager::STATE_*
+	 * \Change\Documents\DocumentManager::STATE_*
+	 * @param integer $newValue
+	 * @return integer
 	 */
 	public function setPersistentState($newValue)
 	{
@@ -133,7 +136,6 @@ abstract class AbstractI18nDocument implements \Serializable
 	public function setModifiedProperties($modifiedProperties = array())
 	{
 		$this->modifiedProperties = $modifiedProperties;
-		$this->isModified = count($modifiedProperties) > 0;
 	}
 	
 	/**

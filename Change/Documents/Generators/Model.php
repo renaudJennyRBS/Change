@@ -134,9 +134,10 @@ class Model
 	{
 		return $this->vendor . '_' . $this->shortModuleName . '_' . $this->shortName;
 	}
-	
+
 	/**
 	 * @param \DOMDocument $domDocument
+	 * @throws \RuntimeException
 	 */
 	public function setXmlDocument($domDocument)
 	{
@@ -160,9 +161,10 @@ class Model
 			}
 		}
 	}
-	
+
 	/**
 	 * @param \DOMElement $xmlElement
+	 * @throws \RuntimeException
 	 */
 	protected function importAttributes($xmlElement)
 	{
@@ -227,9 +229,10 @@ class Model
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
 	}
-	
+
 	/**
 	 * @param \DOMElement $propertiesElement
+	 * @throws \RuntimeException
 	 */
 	protected function importProperties($propertiesElement)
 	{
@@ -250,9 +253,10 @@ class Model
 			}
 		}
 	}
-	
+
 	/**
 	 * @param Property $property
+	 * @throws \RuntimeException
 	 */
 	public function addProperty(Property $property)
 	{
@@ -729,21 +733,21 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getShortDocumentI18nClassName()
+	public function getShortDocumentLocalizedClassName()
 	{
-		return $this->getShortName().'I18n';
+		return 'Localized' . $this->getShortName();
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getDocumentI18nClassName()
+	public function getDocumentLocalizedClassName()
 	{
 		if ($this->getInject())
 		{
-			return $this->getParent()->getDocumentI18nClassName();
+			return $this->getParent()->getDocumentLocalizedClassName();
 		}
-		return '\\'. $this->getCompilationNameSpace(). '\\' . $this->getShortDocumentI18nClassName();
+		return '\\'. $this->getCompilationNameSpace(). '\\' . $this->getShortDocumentLocalizedClassName();
 	}	
 	
 	
