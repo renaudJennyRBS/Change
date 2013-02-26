@@ -2,14 +2,12 @@
 namespace Change\Http\Rest\Actions;
 
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
- * @name \Change\Http\Rest\Actions\StartValidation
+ * @name \Change\Http\Rest\Actions\Activate
  */
-class StartValidation
+class Activate
 {
-
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
@@ -28,6 +26,7 @@ class StartValidation
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
+
 		return $document;
 	}
 
@@ -50,12 +49,13 @@ class StartValidation
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
+
 		if ($LCID)
 		{
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				$this->doStartValidation($event, $document);
+				$this->doActivate($event, $document);
 				$documentManager->popLCID();
 			}
 			catch (\Exception $e)
@@ -65,21 +65,22 @@ class StartValidation
 		}
 		else
 		{
-			$this->doStartValidation($event, $document);
+			$this->doActivate($event, $document);
 		}
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\Interfaces\Publishable $document
+	 * @param  $document
 	 * @throws \Exception
 	 */
-	protected function doStartValidation($event, $document)
+	protected function doActivate($event, $document)
 	{
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->startValidation();
+			$document->getPublishableFunctions()->activate();
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

@@ -10,7 +10,11 @@ class Resolver extends \Change\Http\ActionResolver
 
 	function __construct()
 	{
-		$this->resourceActionClasses = array('startValidation' => '\Change\Http\Rest\Actions\StartValidation');
+		$this->resourceActionClasses = array(
+			'startValidation' => '\Change\Http\Rest\Actions\StartValidation',
+			'startPublication' => '\Change\Http\Rest\Actions\StartPublication',
+			'deactivate' => '\Change\Http\Rest\Actions\Deactivate',
+			'activate' => '\Change\Http\Rest\Actions\Activate');
 	}
 
 	/**

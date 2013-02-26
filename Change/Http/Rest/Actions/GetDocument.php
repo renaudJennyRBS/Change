@@ -104,12 +104,32 @@ class GetDocument
 	 */
 	protected function addActions($result, $document, $urlManager)
 	{
-		$l = new DocumentActionLink($urlManager, $document, 'update');
-		$l->setMethod(\Zend\Http\Request::METHOD_PUT);
-		$result->addAction($l);
+		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		{
+			$pf = $document->getPublishableFunctions();
+			if ($pf->canStartValidation())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
+				$result->addAction($l);
+			}
 
-		$l = new DocumentActionLink($urlManager, $document, 'delete');
-		$l->setMethod(\Zend\Http\Request::METHOD_DELETE);
-		$result->addAction($l);
+			if ($pf->canStartPublication())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
+				$result->addAction($l);
+			}
+
+			if ($pf->canActivate())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'activate');
+				$result->addAction($l);
+			}
+
+			if ($pf->canDeactivate())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
+				$result->addAction($l);
+			}
+		}
 	}
 }

@@ -117,4 +117,29 @@ class Result
 		}
 		return null;
 	}
+
+	/**
+	 * @param string|null $etag
+	 */
+	public function setHeaderEtag($etag)
+	{
+		$this->removeHeader('Etag');
+		if ($etag)
+		{
+			$this->getHeaders()->addHeaderLine('Etag', $etag);
+		}
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getHeaderEtag()
+	{
+		$header = $this->getHeaders()->get('Etag');
+		if ($header instanceof \Zend\Http\Header\Etag)
+		{
+			return $header->getFieldValue();
+		}
+		return null;
+	}
 }

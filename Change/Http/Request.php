@@ -16,6 +16,12 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 	 */
 	protected $ifModifiedSince;
 
+
+	/**
+	 * @var string
+	 */
+	protected $ifNoneMatch;
+
 	/**
 	 * @param string $path
 	 */
@@ -48,12 +54,28 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 		return $this->ifModifiedSince;
 	}
 
+	/**
+	 * @param string|null $ifNoneMatch
+	 */
+	public function setIfNoneMatch($ifNoneMatch)
+	{
+		$this->ifNoneMatch = $ifNoneMatch;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getIfNoneMatch()
+	{
+		return $this->ifNoneMatch;
+	}
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->processPath();
 		$this->processIfModifiedSince();
+		$this->processIfNoneMatch();
 	}
 
 	protected function processPath()
@@ -86,6 +108,34 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 		if ($header instanceof \Zend\Http\Header\IfModifiedSince)
 		{
 			$this->setIfModifiedSince($header->date());
+		}
+	}
+
+	/**
+	 * If-None-Match: 08298d00806e9f37d1764a1948ea1edf
+	 * Accept Apache Rule :
+	 * RewriteCond	%{HTTP:If-None-Match} !=""
+	 * RewriteRule .* - [E=HTTP_IF_NONE_MATCH:%{HTTP:If-None-Match}]
+	 */
+	protected function processIfNoneMatch()
+	{
+		if (!isset($this->serverParams['HTTP_IF_NONE_MATCH']))
+		{
+			// This seems to be the only way to get the Authorization header on Apache
+			if (function_exists('apache_request_headers'))
+			{
+				$apacheRequestHeaders = apache_request_headers();
+				if (isset($apacheRequestHeaders['If-None-Match']))
+				{
+					$this->getHeaders()->addHeaders(array('If-None-Match' => $apacheRequestHeaders['If-None-Match']));
+				}
+			}
+		}
+
+		$header = $this->getHeader('If-None-Match');
+		if ($header instanceof \Zend\Http\Header\IfNoneMatch)
+		{
+			$this->setIfNoneMatch($header->getFieldValue());
 		}
 	}
 }

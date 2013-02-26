@@ -5,9 +5,9 @@ use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
 /**
- * @name \Change\Http\Rest\Actions\StartValidation
+ * @name \Change\Http\Rest\Actions\StartPublication
  */
-class StartValidation
+class StartPublication
 {
 
 	/**
@@ -28,6 +28,7 @@ class StartValidation
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
+		
 		return $document;
 	}
 
@@ -40,7 +41,7 @@ class StartValidation
 	{
 		$document = $this->getDocument($event);
 		$documentManager = $document->getDocumentManager();
-
+		
 		$LCID = null;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
@@ -50,12 +51,13 @@ class StartValidation
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
+
 		if ($LCID)
 		{
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				$this->doStartValidation($event, $document);
+				$this->doStartPublication($event, $document);
 				$documentManager->popLCID();
 			}
 			catch (\Exception $e)
@@ -65,21 +67,22 @@ class StartValidation
 		}
 		else
 		{
-			$this->doStartValidation($event, $document);
+			$this->doStartPublication($event, $document);
 		}
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\Interfaces\Publishable $document
+	 * @param  $document
 	 * @throws \Exception
 	 */
-	protected function doStartValidation($event, $document)
+	protected function doStartPublication($event, $document)
 	{
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->startValidation();
+			$document->getPublishableFunctions()->startPublication();
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

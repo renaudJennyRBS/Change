@@ -109,7 +109,6 @@ class GetLocalizedDocument
 		return $result;
 	}
 
-
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentResult $result
 	 * @param \Change\Documents\AbstractDocument $document
@@ -117,32 +116,32 @@ class GetLocalizedDocument
 	 */
 	protected function addActions($result, $document, $urlManager)
 	{
-		$l = new DocumentLink($urlManager, $document);
-		$l->setRel('update');
-		$l->setMethod(\Zend\Http\Request::METHOD_PUT);
-		$result->addAction($l);
-
-		$l = new DocumentLink($urlManager, $document);
-		$l->setRel('delete');
-		$l->setMethod(\Zend\Http\Request::METHOD_DELETE);
-		$result->addAction($l);
-
-		$l = new DocumentLink($urlManager, $document);
-		$l->setRel('deleteAll');
-		$l->setLCID(null);
-		$l->setMethod(\Zend\Http\Request::METHOD_DELETE);
-		$result->addAction($l);
-
-		$l = new DocumentLink($urlManager, $document);
-		$l->setRel('createLocalized');
-		$l->setLCID(null);
-		$l->setMethod(\Zend\Http\Request::METHOD_POST);
-		$result->addAction($l);
-
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$l = new DocumentActionLink($urlManager, $document, 'startValidation');
-			$result->addAction($l);
+			$pf = $document->getPublishableFunctions();
+			if ($pf->canStartValidation())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
+				$result->addAction($l);
+			}
+
+			if ($pf->canStartPublication())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
+				$result->addAction($l);
+			}
+
+			if ($pf->canActivate())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'activate');
+				$result->addAction($l);
+			}
+
+			if ($pf->canDeactivate())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
+				$result->addAction($l);
+			}
 		}
 	}
 }
