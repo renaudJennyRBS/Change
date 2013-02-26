@@ -3,11 +3,12 @@ namespace Change\Http\Rest\Actions;
 
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
+use Change\Documents\Interfaces\Localizable;
 
 /**
- * @name \Change\Http\Rest\Actions\CreateI18nDocument
+ * @name \Change\Http\Rest\Actions\CreateLocalizedDocument
  */
-class CreateI18nDocument
+class CreateLocalizedDocument
 {
 	/**
 	 * Use Required Event Params: documentId, modelName
@@ -16,46 +17,45 @@ class CreateI18nDocument
 	 */
 	public function execute($event)
 	{
-		$documentId = $event->getParam('documentId');
-		if (!$documentId)
-		{
-			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
-		}
-
 		$modelName = $event->getParam('modelName');
 		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
-		if (!$model)
+		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
+		$documentId = intval($event->getParam('documentId'));
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
-		if (!$document)
+		if (!$document || !($document instanceof Localizable))
 		{
-			//Document Not Found
-			return;
+			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
 
 		$properties = $event->getRequest()->getPost()->toArray();
-
 		$LCID = isset($properties['LCID']) ? strval($properties['LCID']) : null;
 		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
-			$msg = $document->getDocumentModel(). ' Invalid LCID: ' . $LCID;
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('CREATE-ERROR', $msg);
+			$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
+			$errorResult = new \Change\Http\Rest\Result\ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
+			$errorResult->addDataValue('value', $LCID);
+			$errorResult->addDataValue('supported-LCID', $supported);
 			$event->setResult($errorResult);
 			return;
 		}
 
 		$document->getDocumentManager()->pushLCID($LCID);
+
 		if ($document->isNew())
 		{
 			$this->create($event, $document, $properties);
 		}
 		else
 		{
-			$msg = $document->getDocumentModel(). ' already exist in LCID: ' . $LCID;
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('CREATE-ERROR', $msg);
+			$definedLCIDArray = $document->getLocalizableFunctions()->getLCIDArray();
+			$supported = array_values(array_diff($event->getApplicationServices()->getI18nManager()->getSupportedLCIDs(), $definedLCIDArray));
+			$errorResult = new \Change\Http\Rest\Result\ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
+			$errorResult->addDataValue('value', $LCID);
+			$errorResult->addDataValue('supported-LCID', $supported);
 			$event->setResult($errorResult);
 		}
 		$document->getDocumentManager()->popLCID();
@@ -72,21 +72,22 @@ class CreateI18nDocument
 		$urlManager = $event->getUrlManager();
 		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
 		{
-			try
+			/* @var $property \Change\Documents\Property */
+			if (array_key_exists($name, $properties))
 			{
-				/* @var $property \Change\Documents\Property */
-				if (array_key_exists($name, $properties))
+				try
 				{
 					$c = new PropertyConverter($document, $property, $urlManager);
 					$c->setPropertyValue($properties[$name]);
 				}
-			}
-			catch (\Exception $e)
-			{
-				$msg = $document->getDocumentModel() . '::' . $property . ': '. $e->getMessage();
-				$errorResult = new \Change\Http\Rest\Result\ErrorResult('POPULATE-ERROR', $msg);
-				$event->setResult($errorResult);
-				return;
+				catch (\Exception $e)
+				{
+					$errorResult = new \Change\Http\Rest\Result\ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
+					$errorResult->setData(array('name' => $name, 'value' => $properties[$name], 'type' => $property->getType()));
+					$errorResult->addDataValue('document-type', $property->getDocumentType());
+					$event->setResult($errorResult);
+					return;
+				}
 			}
 		}
 

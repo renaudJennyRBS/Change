@@ -19,7 +19,7 @@ class GetDocumentModelCollection
 		$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
 		if (!$model)
 		{
-			return;
+			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 		$this->generateResult($event, $model);
 	}

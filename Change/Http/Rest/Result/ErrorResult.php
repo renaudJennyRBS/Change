@@ -6,6 +6,23 @@ namespace Change\Http\Rest\Result;
  */
 class ErrorResult extends \Change\Http\Result
 {
+
+	/**
+	 * @var string
+	 */
+	protected $errorCode;
+
+	/**
+	 * @var string
+	 */
+	protected $errorMessage;
+
+	/**
+	 * @var array
+	 */
+	protected $data;
+
+
 	/**
 	 * @param string|\Exception $errorCode
 	 * @param string $errorMessage
@@ -32,15 +49,7 @@ class ErrorResult extends \Change\Http\Result
 		$this->errorMessage = $errorMessage;
 	}
 
-	/**
-	 * @var string
-	 */
-	protected $errorCode;
 
-	/**
-	 * @var string
-	 */
-	protected $errorMessage;
 
 	/**
 	 * @param string $errorCode
@@ -75,10 +84,54 @@ class ErrorResult extends \Change\Http\Result
 	}
 
 	/**
+	 * @param array $data
+	 */
+	public function setData(array $data = null)
+	{
+		$this->data = $data;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getData()
+	{
+		return $this->data;
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return \Change\Http\Rest\Result\ErrorResult
+	 */
+	public function addDataValue($name, $value)
+	{
+		if (is_string($name))
+		{
+			if ($this->data === null) {$this->data = array();}
+			if ($value === null)
+			{
+				unset($this->data[$name]);
+			}
+			else
+			{
+				$this->data[$name] = $value;
+			}
+		}
+		return $this;
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function toArray()
 	{
-		return array('code' => $this->getErrorCode(), 'message' => $this->getErrorMessage());
+		$array = array('code' => $this->getErrorCode(), 'message' => $this->getErrorMessage());
+		if (is_array($this->data) && count($this->data))
+		{
+			$array['data'] = $this->data;
+		}
+		return $array;
 	}
 }

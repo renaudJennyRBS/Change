@@ -16,41 +16,33 @@ class DeleteDocument
 	 */
 	public function execute($event)
 	{
-		$documentId = $event->getParam('documentId');
-		if (!$documentId)
-		{
-			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
-		}
+		$document = $this->getDocument($event);
+		$document->delete();
+		$result = new \Change\Http\Result();
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
+		$event->setResult($result);
+	}
 
+	/**
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	protected function getDocument($event)
+	{
 		$modelName = $event->getParam('modelName');
 		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
-
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
+		$documentId = intval($event->getParam('documentId'));
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
-			//Document Not Found
-			return;
+			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
-
-		try
-		{
-			$document->delete();
-			$result = new \Change\Http\Result();
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
-			$event->setResult($result);
-		}
-		catch (\Exception $e)
-		{
-			$msg = $document . ': '. $e->getMessage();
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('DELETE-ERROR', $msg);
-			$event->setResult($errorResult);
-			return;
-		}
-
+		return $document;
 	}
 }

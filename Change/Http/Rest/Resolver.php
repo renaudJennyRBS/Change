@@ -6,6 +6,21 @@ namespace Change\Http\Rest;
  */
 class Resolver extends \Change\Http\ActionResolver
 {
+	protected $resourceActionClasses = array();
+
+	function __construct()
+	{
+		$this->resourceActionClasses = array('startValidation' => '\Change\Http\Rest\Actions\StartValidation');
+	}
+
+	/**
+	 * @param $actionName
+	 * @param $class
+	 */
+	public function registerActionClass($actionName, $class)
+	{
+		$this->resourceActionClasses[$actionName] = $class;
+	}
 	/**
 	 * @param \Change\Http\Event $event
 	 * @return void
@@ -27,6 +42,9 @@ class Resolver extends \Change\Http\ActionResolver
 			{
 				case 'resources' :
 					$this->resources($event, array_slice($nameSpaces, 1), $request->getMethod());
+					break;
+				case 'resourcesactions' :
+					$this->resourcesactions($event, array_slice($nameSpaces, 1), $request->getMethod());
 					break;
 			}
 		}
@@ -60,7 +78,17 @@ class Resolver extends \Change\Http\ActionResolver
 				{
 					if (is_numeric($resourceParts[3]))
 					{
-						$event->setParam('documentId', intval($resourceParts[3]));
+						$documentId = intval($resourceParts[3]);
+						$document = $documentServices->getDocumentManager()->getDocumentInstance($documentId, $model);
+						if ($document instanceof \Change\Documents\AbstractDocument)
+						{
+							$event->setParam('documentId', $document->getId());
+						}
+						else
+						{
+							//Document Not found
+							return;
+						}
 					}
 					else
 					{
@@ -77,26 +105,30 @@ class Resolver extends \Change\Http\ActionResolver
 
 							if (!$isDirectory)
 							{
-								if ($method === 'GET')
+								if ($method === Request::METHOD_GET)
 								{
-									$action = new \Change\Http\Rest\Actions\GetI18nDocument();
+									$action = new \Change\Http\Rest\Actions\GetLocalizedDocument();
 									$event->setAction(function($event) use($action) {$action->execute($event);});
 									return;
 								}
 
-								if ($method === 'PUT')
+								if ($method === Request::METHOD_PUT)
 								{
-									$action = new \Change\Http\Rest\Actions\UpdateI18nDocument();
-									$event->setAction(array($action, 'execute'));
-									return;
-								}
-
-								if ($method === 'DELETE')
-								{
-									$action = new \Change\Http\Rest\Actions\DeleteI18nDocument();
+									$action = new \Change\Http\Rest\Actions\UpdateLocalizedDocument();
 									$event->setAction(function($event) use($action) {$action->execute($event);});
 									return;
 								}
+
+								if ($method === Request::METHOD_DELETE)
+								{
+									$action = new \Change\Http\Rest\Actions\DeleteLocalizedDocument();
+									$event->setAction(function($event) use($action) {$action->execute($event);});
+									return;
+								}
+
+								$result = $this->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
+								$event->setResult($result);
+								return;
 							}
 						}
 						else
@@ -110,7 +142,7 @@ class Resolver extends \Change\Http\ActionResolver
 					{
 						if ($method === 'POST' && $model->isLocalized())
 						{
-							$action = new \Change\Http\Rest\Actions\CreateI18nDocument();
+							$action = new \Change\Http\Rest\Actions\CreateLocalizedDocument();
 							$event->setAction(function($event) use($action) {$action->execute($event);});
 							return;
 						}
@@ -125,7 +157,7 @@ class Resolver extends \Change\Http\ActionResolver
 						if ($method === 'PUT')
 						{
 							$action = new \Change\Http\Rest\Actions\UpdateDocument();
-							$event->setAction(array($action, 'execute'));
+							$event->setAction(function($event) use($action) {$action->execute($event);});
 							return;
 						}
 
@@ -139,23 +171,106 @@ class Resolver extends \Change\Http\ActionResolver
 				}
 				elseif ($isDirectory)
 				{
-					if ($method === 'POST')
+					if ($method === Request::METHOD_POST)
 					{
 						$action = new \Change\Http\Rest\Actions\CreateDocument();
 						$event->setAction(function($event) use($action) {$action->execute($event);});
 						return;
 					}
 
-					if ($method === 'GET')
+					if ($method === Request::METHOD_GET)
 					{
 						$action = new \Change\Http\Rest\Actions\GetDocumentModelCollection();
 						$event->setAction(function($event) use($action) {$action->execute($event);});
 						return;
 					}
+
+					$result = $this->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
+					$event->setResult($result);
+					return;
 				}
 			}
 		}
 	}
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @param array $resourceParts
+	 * @param $method
+	 * @return void
+	 */
+	protected function resourcesactions($event, $resourceParts, $method)
+	{
+		$nbParts = count($resourceParts);
+		if ($nbParts == 2 || $nbParts == 3)
+		{
+			$actionName = $resourceParts[0];
+			if (!isset($this->resourceActionClasses[$actionName]))
+			{
+				//Action not found
+				return;
+			}
+			$actionClass = $this->resourceActionClasses[$actionName];
+			if (!class_exists($actionClass))
+			{
+				//Action Class not found
+				return;
+			}
+			$instance = new $actionClass();
+			if (!is_callable(array($instance, 'execute')))
+			{
+				//Callable Not found
+				return;
+			}
+
+			$documentId = intval($resourceParts[1]);
+			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+			if ($document === null)
+			{
+				//Document not found
+				return;
+			}
+			$event->setParam('documentId', $document->getId());
+
+			$LCID = isset($resourceParts[2]) ? $resourceParts[2] : null;
+			if ($LCID)
+			{
+				if (!$document->getDocumentModel()->isLocalized() || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
+				{
+					//Invalid LCID
+					return;
+				}
+				$event->setParam('LCID', $LCID);
+			}
+			else
+			{
+				if ($document->getDocumentModel()->isLocalized())
+				{
+					//Invalid LCID
+					return;
+				}
+			}
+			$event->setParam('resourcesActionName', $actionName);
+			$event->setAction(function($event) use($instance) {$instance->execute($event);});
+			return;
+		}
+	}
+
+	/**
+	 * @param string $notAllowed
+	 * @param string[] $allow
+	 * @return Result\ErrorResult
+	 */
+	protected function buildNotAllowedError($notAllowed, array $allow)
+	{
+		$msg = 'Method not allowed: ' . $notAllowed;
+		$result = new \Change\Http\Rest\Result\ErrorResult('METHOD-ERROR', $msg, \Zend\Http\Response::STATUS_CODE_405);
+		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
+		$result->getHeaders()->addHeader($header);
+		$result->addDataValue('allow', $allow);
+		return $result;
+	}
+
 
 	/**
 	 * @param string $namespace
@@ -188,7 +303,13 @@ class Resolver extends \Change\Http\ActionResolver
 			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resources'), 'resources');
 			$result->addLink($link);
 			$event->setResult($result);
+
+			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resourcesactions'), 'resourcesactions');
+			$result->addLink($link);
+			$event->setResult($result);
+			return;
 		}
+
 		$names = explode('.', $namespace);
 		if ($names[0] === 'resources')
 		{
@@ -228,6 +349,19 @@ class Resolver extends \Change\Http\ActionResolver
 					}
 					$event->setResult($result);
 				}
+			}
+		}
+		elseif ($names[0] === 'resourcesactions')
+		{
+			if (!isset($names[1]))
+			{
+				foreach ($this->resourceActionClasses as $actionName => $class)
+				{
+					$ns = $namespace .'.'. $actionName;
+					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+					$result->addLink($link);
+				}
+				$event->setResult($result);
 			}
 		}
 	}

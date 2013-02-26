@@ -52,18 +52,40 @@ class PublishableFunctions
 		return $document;
 	}
 
+	/**
+	 * @api
+	 * @return string new Publication Status
+	 * @throws \RuntimeException
+	 */
 	public function startValidation()
 	{
 		$document = $this->getDocument();
+		if ($document->getPublicationStatus() != Publishable::STATUS_DRAFT)
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
 		$document->setPublicationStatus(Publishable::STATUS_VALIDATION);
 		$document->update();
+
+		return $document->getPublicationStatus();
 	}
 
+	/**
+	 * @api
+	 * @return string new Publication Status
+	 * @throws \RuntimeException
+	 */
 	public function startPublication()
 	{
 		$document = $this->getDocument();
+		if ($document->getPublicationStatus() != Publishable::STATUS_VALIDATION)
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
 		$document->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$document->update();
+		return $document->getPublicationStatus();
 	}
 
 	public function deactivate()
