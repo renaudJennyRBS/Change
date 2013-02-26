@@ -36,7 +36,7 @@ class Result
 	}
 
 	/**
-	 * @param  Headers $headers
+	 * @param Headers $headers
 	 */
 	public function setHeaders(Headers $headers)
 	{

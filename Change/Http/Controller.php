@@ -175,6 +175,7 @@ class Controller
 		}
 		catch (\Exception $exception)
 		{
+			$event->setParam('Exception', $exception);
 			if ($event->getApplicationServices())
 			{
 				$event->getApplicationServices()->getLogging()->exception($exception);
