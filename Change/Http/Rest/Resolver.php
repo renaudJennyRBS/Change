@@ -14,7 +14,8 @@ class Resolver extends \Change\Http\ActionResolver
 			'startValidation' => '\Change\Http\Rest\Actions\StartValidation',
 			'startPublication' => '\Change\Http\Rest\Actions\StartPublication',
 			'deactivate' => '\Change\Http\Rest\Actions\Deactivate',
-			'activate' => '\Change\Http\Rest\Actions\Activate');
+			'activate' => '\Change\Http\Rest\Actions\Activate',
+			'getCorrection' => '\Change\Http\Rest\Actions\GetCorrection');
 	}
 
 	/**

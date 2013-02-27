@@ -1132,7 +1132,6 @@ class DocumentManager
 		if (count($properties) > 0)
 		{
 			$correction = $this->createNewCorrectionInstance($document->getId(), $LCID);
-			$correction->setCreationDate(new \DateTime());
 			$correction->setPropertiesNames(array_keys($properties));
 			$correction->setStatus(Correction::STATUS_DRAFT);
 			return $correction;

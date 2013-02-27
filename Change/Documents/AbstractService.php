@@ -282,7 +282,7 @@ abstract class AbstractService
 				}
 			}
 
-			if ($document->hasModifiedProperties()) 
+			if ($document->hasModifiedProperties() || count($corrections))
 			{
 				$document->setModificationDate(new \DateTime());
 				
@@ -350,7 +350,7 @@ abstract class AbstractService
 		$corrections = array();
 		foreach ($values as $LCID => $cValues)
 		{
-			$correction = ($LCID === $nonLocalizedKey) ? $document->getCorrection() : $document->getLocalizedCorrection();
+			$correction = $document->getCorrection(($LCID === Correction::NULL_LCID_KEY) ? null : $LCID);
 			if ($correction->getStatus() === Correction::STATUS_VALIDATION)
 			{
 				throw new \LogicException('Unable to update correction in VALIDATION state', 51004);

@@ -104,6 +104,15 @@ class GetDocument
 	 */
 	protected function addActions($result, $document, $urlManager)
 	{
+		if ($document->getDocumentModel()->useCorrection())
+		{
+			if ($document->hasCorrection())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$result->addAction($l);
+			}
+		}
+
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
 			$pf = $document->getPublishableFunctions();

@@ -88,6 +88,7 @@ class UpdateLocalizedDocument
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param array $properties
+	 * @throws \Exception
 	 */
 	protected function update($event, $document, $properties)
 	{

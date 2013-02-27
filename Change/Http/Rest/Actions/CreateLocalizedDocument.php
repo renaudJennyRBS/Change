@@ -115,14 +115,27 @@ class CreateLocalizedDocument
 		}
 		catch (\Exception $e)
 		{
-			$msg = $document->getDocumentModel(). ': '. $e->getMessage();
-			if (count($document->getPropertiesErrors()))
+			$code = $e->getCode();
+			if ($code && $code >= 52000 && $code < 53000)
 			{
-				$msg .= " (" . implode(', ', array_keys($document->getPropertiesErrors())) . ")";
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$errorResult = new \Change\Http\Rest\Result\ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
+				if (count($errors = $document->getPropertiesErrors()) > 0)
+				{
+					$pe = array();
+					foreach ($errors as $propertyName => $errorsMsg)
+					{
+						foreach ($errorsMsg as $errorMsg)
+						{
+							$pe[$propertyName][] = $i18nManager->trans($errorMsg);
+						}
+					}
+					$errorResult->addDataValue('properties-errors', $pe);
+				}
+				$event->setResult($errorResult);
+				return;
 			}
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('CREATE-ERROR', $msg);
-			$event->setResult($errorResult);
-			return;
+			throw $e;
 		}
 	}
 }
