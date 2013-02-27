@@ -36,7 +36,7 @@ class Result
 	}
 
 	/**
-	 * @param  Headers $headers
+	 * @param Headers $headers
 	 */
 	public function setHeaders(Headers $headers)
 	{
@@ -114,6 +114,31 @@ class Result
 		if ($header instanceof \Zend\Http\Header\LastModified)
 		{
 			return $header->date();
+		}
+		return null;
+	}
+
+	/**
+	 * @param string|null $etag
+	 */
+	public function setHeaderEtag($etag)
+	{
+		$this->removeHeader('Etag');
+		if ($etag)
+		{
+			$this->getHeaders()->addHeaderLine('Etag', $etag);
+		}
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getHeaderEtag()
+	{
+		$header = $this->getHeaders()->get('Etag');
+		if ($header instanceof \Zend\Http\Header\Etag)
+		{
+			return $header->getFieldValue();
 		}
 		return null;
 	}

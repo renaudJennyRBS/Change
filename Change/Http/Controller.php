@@ -175,6 +175,7 @@ class Controller
 		}
 		catch (\Exception $exception)
 		{
+			$event->setParam('Exception', $exception);
 			if ($event->getApplicationServices())
 			{
 				$event->getApplicationServices()->getLogging()->exception($exception);
@@ -206,6 +207,7 @@ class Controller
 	}
 
 
+
 	/**
 	 * @param \Zend\EventManager\EventManager $eventManager
 	 * @return void
@@ -230,6 +232,33 @@ class Controller
 		}
 		$event->setUrlManager(new UrlManager($request->getUri(), $script));
 		return $event;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Request $request
+	 * @param \Change\Http\Result $result
+	 * @return boolean
+	 */
+	public function resultNotModified(\Change\Http\Request $request, $result)
+	{
+		if (($result instanceof \Change\Http\Result) && ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_200))
+		{
+			$etag = $result->getHeaderEtag();
+			$ifNoneMatch = $request->getIfNoneMatch();
+			if ($etag && $ifNoneMatch && $etag == $ifNoneMatch)
+			{
+				return true;
+			}
+
+			$lastModified = $result->getHeaderLastModified();
+			$ifModifiedSince = $request->getIfModifiedSince();
+			if ($lastModified && $ifModifiedSince && $lastModified <= $ifModifiedSince)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

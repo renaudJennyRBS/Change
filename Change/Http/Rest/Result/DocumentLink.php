@@ -33,12 +33,12 @@ class DocumentLink extends Link
 	/**
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $mode
+	 * @param string $action
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $mode = self::MODE_LINK)
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action = self::MODE_LINK)
 	{
 		$this->document = $document;
-		$this->mode = $mode;
+		$this->mode = $action;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
 			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();

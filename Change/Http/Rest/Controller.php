@@ -119,8 +119,9 @@ class Controller extends \Change\Http\Controller
 				$error->setHttpStatusCode($result->getHttpStatusCode());
 				if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
 				{
-					$error->setErrorCode('NOT_FOUND');
-					$error->setErrorMessage($event->getRequest()->getPath());
+					$error->setErrorCode('PATH-NOT-FOUND');
+					$error->setErrorMessage('Unable to resolve path');
+					$error->addDataValue('path', $event->getRequest()->getPath());
 				}
 			}
 
@@ -143,15 +144,9 @@ class Controller extends \Change\Http\Controller
 			$response->setStatusCode($result->getHttpStatusCode());
 			$event->setResponse($response);
 
-			if ($response->getStatusCode() === HttpResponse::STATUS_CODE_200)
+			if ($this->resultNotModified($event->getRequest(), $result))
 			{
-				$lastModified = $result->getHeaderLastModified();
-				$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
-				if ($lastModified && $ifModifiedSince && $lastModified <= $ifModifiedSince)
-				{
-					$response->setStatusCode(HttpResponse::STATUS_CODE_304);
-					return;
-				}
+				$response->setStatusCode(HttpResponse::STATUS_CODE_304);
 			}
 
 			$callable = array($result, 'toArray');
@@ -162,7 +157,8 @@ class Controller extends \Change\Http\Controller
 			}
 			elseif ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
 			{
-				$error = new ErrorResult('NOT_FOUND', $event->getRequest()->getPath());
+				$error = new ErrorResult('PATH-NOT-FOUND', 'Unable to resolve path', HttpResponse::STATUS_CODE_404);
+				$error->addDataValue('path', $event->getRequest()->getPath());
 				$response->setContent(json_encode($error->toArray()));
 			}
 		}

@@ -58,6 +58,7 @@ class PropertyConverter
 		return $this->urlManager;
 	}
 
+
 	/**
 	 * @return mixed
 	 * @throws \RuntimeException
@@ -65,50 +66,61 @@ class PropertyConverter
 	public function getRestValue()
 	{
 		$value = $this->property->getValue($this->document);
+		return $this->convertToRestValue($value);
+	}
+
+	/**
+	 * @param mixed $propertyValue
+	 * @return mixed
+	 * @throws \RuntimeException
+	 */
+	public function convertToRestValue($propertyValue)
+	{
 		$restValue = null;
 
 		switch ($this->property->getType())
 		{
 			case Property::TYPE_DATE:
 			case Property::TYPE_DATETIME:
-				if ($value instanceof \DateTime)
+				if ($propertyValue instanceof \DateTime)
 				{
-					$restValue = $value->format(\DateTime::ISO8601);
+					$restValue = $propertyValue->format(\DateTime::ISO8601);
 				}
-				elseif ($value !== null)
+				elseif ($propertyValue !== null)
 				{
 					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENT:
-				if ($value instanceof AbstractDocument)
+				if ($propertyValue instanceof AbstractDocument)
 				{
-					$restValue = new DocumentLink($this->getUrlManager(), $value, DocumentLink::MODE_PROPERTY);
+					$restValue = new DocumentLink($this->getUrlManager(), $propertyValue, DocumentLink::MODE_PROPERTY);
 				}
-				elseif ($value !== null)
+				elseif ($propertyValue !== null)
 				{
 					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENTARRAY:
-				if (is_array($value))
+				if (is_array($propertyValue))
 				{
 					$urlManager = $this->getUrlManager();
-					$restValue = array_map(function($doc) use ($urlManager) {
+					$restValue = array_map(function ($doc) use ($urlManager)
+					{
 						if (!($doc instanceof AbstractDocument))
 						{
 							throw new \RuntimeException('Invalid Property value', 70001);
 						}
 						return new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
-					}, $value);
+					}, $propertyValue);
 				}
-				elseif ($value !== null)
+				elseif ($propertyValue !== null)
 				{
 					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
 			default:
-				$restValue = $value;
+				$restValue = $propertyValue;
 				break;
 		}
 		return $restValue;
@@ -129,7 +141,7 @@ class PropertyConverter
 	 * @return mixed
 	 * @throws \RuntimeException
 	 */
-	protected function convertToPropertyValue($restValue)
+	public function convertToPropertyValue($restValue)
 	{
 		$value = null;
 		switch ($this->property->getType())

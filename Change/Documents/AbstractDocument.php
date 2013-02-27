@@ -512,18 +512,9 @@ abstract class AbstractDocument implements \Serializable
 	 * @api
 	 * @return string[]
 	 */
-	public function getNonLocalizedModifiedPropertyNames()
-	{
-		return array_keys($this->modifiedProperties);
-	}
-
-	/**
-	 * @api
-	 * @return string[]
-	 */
 	public function getModifiedPropertyNames()
 	{
-		return $this->getNonLocalizedModifiedPropertyNames();
+		return array_keys($this->modifiedProperties);
 	}
 	
 	/**

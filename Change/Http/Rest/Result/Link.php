@@ -27,6 +27,11 @@ class Link
 	protected $query;
 
 	/**
+	 * @var string
+	 */
+	protected $method;
+
+	/**
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param null $pathInfo
 	 * @param string $rel
@@ -103,6 +108,22 @@ class Link
 	}
 
 	/**
+	 * @param string $method
+	 */
+	public function setMethod($method)
+	{
+		$this->method = $method;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMethod()
+	{
+		return $this->method;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function href()
@@ -115,6 +136,11 @@ class Link
 	 */
 	public function toArray()
 	{
-		return array('rel' => $this->getRel(), 'href' => $this->href());
+		$array = array('rel' => $this->getRel(), 'href' => $this->href());
+		if ($this->getMethod())
+		{
+			$array['method'] = $this->getMethod();
+		}
+		return $array;
 	}
 }

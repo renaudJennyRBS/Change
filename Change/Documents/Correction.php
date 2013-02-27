@@ -69,6 +69,7 @@ class Correction
 		$this->documentManager = $documentManager;
 		$this->documentId = $documentId;
 		$this->lcid = $lcid;
+		$this->setCreationDate(new \DateTime());
 	}
 	
 	/**
@@ -81,12 +82,23 @@ class Correction
 	
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return \Change\Documents\DocumentManager
 	 */
 	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
 	{
 		return $this->documentManager = $documentManager;
 	}
-	
+
+
+	/**
+	 * @api
+	 * @param integer $id
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+	}
+
 	/**
 	 * @api
 	 * @return integer
@@ -97,6 +109,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @return integer
 	 */
 	public function getDocumentId()
@@ -105,14 +118,7 @@ class Correction
 	}
 
 	/**
-	 * @param number $id
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-	}
-
-	/**
+	 * @api
 	 * @return string
 	 */
 	public function getLcid()
@@ -121,6 +127,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function getModified()
@@ -129,6 +136,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @param boolean $modified
 	 */
 	public function setModified($modified)
@@ -137,6 +145,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getStatus()
@@ -145,6 +154,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @param string $status
 	 */
 	public function setStatus($status)
@@ -162,6 +172,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @return \DateTime
 	 */
 	public function getCreationDate()
@@ -170,6 +181,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @param \DateTime $creationDate
 	 */
 	public function setCreationDate(\DateTime $creationDate)
@@ -178,7 +190,8 @@ class Correction
 	}
 
 	/**
-	 * @return \DateTime
+	 * @api
+	 * @return \DateTime|null
 	 */
 	public function getPublicationDate()
 	{
@@ -186,6 +199,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @param \DateTime $publicationDate
 	 */
 	public function setPublicationDate(\DateTime $publicationDate = null)
@@ -195,6 +209,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @return array
 	 */
 	public function getDatas()
@@ -203,6 +218,7 @@ class Correction
 	}
 
 	/**
+	 * @api
 	 * @param array $datas
 	 */
 	public function setDatas($datas)
@@ -211,6 +227,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string[] $names
 	 */
 	public function setPropertiesNames(array $names)
@@ -219,6 +236,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getPropertiesNames()
@@ -227,6 +245,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @return boolean
 	 */
@@ -236,6 +255,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @return boolean
 	 */
@@ -245,7 +265,7 @@ class Correction
 	}
 	
 	/**
-	 * @param string $name
+	 * @api
 	 * @return array[]
 	 */
 	public function getModifiedProperties()
@@ -262,6 +282,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @return mixed
 	 */
@@ -291,6 +312,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @param mixed $value
 	 */
@@ -312,6 +334,7 @@ class Correction
 	}
 	
 	/**
+	 * @api
 	 * @param string $name
 	 * @return boolean
 	 */

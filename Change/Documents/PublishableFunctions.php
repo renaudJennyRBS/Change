@@ -52,29 +52,104 @@ class PublishableFunctions
 		return $document;
 	}
 
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function canStartValidation()
+	{
+		$document = $this->getDocument();
+		return ($document->getPublicationStatus() == Publishable::STATUS_DRAFT);
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
 	public function startValidation()
 	{
+		if (!$this->canStartValidation())
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
 		$document = $this->getDocument();
 		$document->setPublicationStatus(Publishable::STATUS_VALIDATION);
 		$document->update();
 	}
 
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function canStartPublication()
+	{
+		$document = $this->getDocument();
+		return ($document->getPublicationStatus() == Publishable::STATUS_VALIDATION);
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
 	public function startPublication()
 	{
+		if (!$this->canStartPublication())
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
 		$document = $this->getDocument();
 		$document->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$document->update();
 	}
 
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function canDeactivate()
+	{
+		$document = $this->getDocument();
+		return ($document->getPublicationStatus() == Publishable::STATUS_PUBLISHABLE);
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
 	public function deactivate()
 	{
+		if (!$this->canDeactivate())
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
 		$document = $this->getDocument();
 		$document->setPublicationStatus(Publishable::STATUS_DEACTIVATED);
 		$document->update();
 	}
 
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function canActivate()
+	{
+		$document = $this->getDocument();
+		return ($document->getPublicationStatus() == Publishable::STATUS_DEACTIVATED);
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 */
 	public function activate()
 	{
+		if (!$this->canActivate())
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
 		$document = $this->getDocument();
 		$document->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$document->update();
