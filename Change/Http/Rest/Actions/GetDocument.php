@@ -67,6 +67,36 @@ class GetDocument
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return null|string
+	 */
+	protected function buildEtag($document)
+	{
+		$parts = array();
+
+		if ($document instanceof \Change\Documents\Interfaces\Editable)
+		{
+			$parts[] = $document->getDocumentVersion();
+		}
+
+		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		{
+			$parts[] = $document->getPublicationStatus();
+		}
+
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
+		}
+		if (count($parts))
+		{
+			return md5(implode(',', $parts));
+		}
+		return null;
+	}
+
+
+	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return \Change\Http\Rest\Result\DocumentResult
@@ -76,6 +106,7 @@ class GetDocument
 		$urlManager = $event->getUrlManager();
 		$result = new \Change\Http\Rest\Result\DocumentResult();
 		$result->setHeaderLastModified($document->getModificationDate());
+		$result->setHeaderEtag($this->buildEtag($document));
 
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
