@@ -24,7 +24,7 @@ class StartValidation
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
 
-		if ($document->isNew() || !($document instanceof \Change\Documents\Interfaces\Publishable))
+		if (!($document instanceof \Change\Documents\Interfaces\Publishable))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
@@ -55,6 +55,10 @@ class StartValidation
 			try
 			{
 				$documentManager->pushLCID($LCID);
+				if ($document->isNew())
+				{
+					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
+				}
 				$this->doStartValidation($event, $document);
 				$documentManager->popLCID();
 			}

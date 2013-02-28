@@ -41,7 +41,7 @@ interface Editable
 	 * @return integer
 	 */
 	public function getDocumentVersion();
-	
+
 	/**
 	 * @return integer
 	 */
@@ -51,4 +51,9 @@ interface Editable
 	 * @param integer $documentVersion
 	 */
 	public function setDocumentVersion($documentVersion);
+
+	/**
+	 * @return integer
+	 */
+	public function nextDocumentVersion();
 }

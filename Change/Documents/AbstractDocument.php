@@ -48,9 +48,9 @@ abstract class AbstractDocument implements \Serializable
 	private $propertiesErrors;
 	
 	/**
-	 * @var array
+	 * @var \Change\Documents\CorrectionFunctions
 	 */
-	protected $corrections;
+	protected $correctionFunctions;
 	
 	/**
 	 * @var \Change\Documents\DocumentManager
@@ -197,7 +197,8 @@ abstract class AbstractDocument implements \Serializable
 		$this->metas = null;
 		$this->modifiedMetas = false;
 		$this->propertiesErrors = null;
-		$this->corrections = null;
+		$this->correctionFunctions = null;
+
 		if ($this->persistentState === DocumentManager::STATE_LOADED)
 		{
 			$this->persistentState = DocumentManager::STATE_INITIALIZED;
@@ -712,94 +713,19 @@ abstract class AbstractDocument implements \Serializable
 	}
 	
 	// Correction Method
-	
-	/**
-	 * @return \Change\Documents\Correction[]
-	 */
-	protected function getCorrections()
-	{
-		if ($this->corrections === null)
-		{
-			$this->setCorrections($this->documentManager->loadCorrections($this));
-		}
-		return $this->corrections;
-	}
 
 	/**
-	 * @param \Change\Documents\Correction[]|null $corrections
+	 * @return \Change\Documents\CorrectionFunctions
 	 */
-	protected function setCorrections($corrections = null)
+	public function getCorrectionFunctions()
 	{
-		if (is_array($corrections))
+		if ($this->correctionFunctions === null)
 		{
-			$this->corrections = array();
-			foreach ($corrections as $correction)
-			{
-				if ($correction instanceof Correction)
-				{
-					$key = $correction->getLcid();
-					if ($key === null) {$key = Correction::NULL_LCID_KEY;}
-					$this->corrections[$key] = $correction;
-				}
-			}
+			$this->correctionFunctions = new CorrectionFunctions($this);
 		}
-		else
-		{
-			$this->corrections = null;
-		}
+		return $this->correctionFunctions;
 	}
-	
-	/**
-	 * @param \Change\Documents\Correction $correction
-	 */
-	protected function addCorrection(Correction $correction)
-	{
-		$key = $correction->getLcid();
-		if ($key === null) {$key = Correction::NULL_LCID_KEY;}
-		$this->corrections[$key] = $correction;
-	}
-	
-	/**
-	 * @param \Change\Documents\Correction $correction
-	 */
-	public function removeCorrection(Correction $correction)
-	{
-		if (is_array($this->corrections))
-		{
-			$key = $correction->getLcid();
-			if ($key === null) {$key = Correction::NULL_LCID_KEY;}
-			unset($this->corrections[$key]);
-		}
-	}
-	
-	/**
-	 * @param string $LCID
-	 * @return boolean
-	 */
-	public function hasCorrection($LCID = null)
-	{
-		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
-		$corrections = $this->getCorrections();
-		return isset($corrections[$key]);
-	}	
-	
-	/**
-	 * @param string $LCID
-	 * @return \Change\Documents\Correction
-	 */
-	public function getCorrection($LCID = null)
-	{
-		$key = ($LCID === null) ? Correction::NULL_LCID_KEY : $LCID;
-		$corrections = $this->getCorrections();
-		if (!isset($corrections[$key]))
-		{
-			$correction = $this->documentManager->getNewCorrectionInstance($this, $LCID);
-			$this->addCorrection($correction);
-			return $correction;
-		}
-		return $corrections[$key];
-	}
-	
+
 	// Generic Method
 	
 	/**

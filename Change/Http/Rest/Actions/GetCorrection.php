@@ -55,9 +55,9 @@ class GetCorrection
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				if ($document->hasCorrection($LCID))
+				if ($document->getCorrectionFunctions()->hasCorrection())
 				{
-					$this->doGetCorrection($event, $document, $document->getCorrection($LCID));
+					$this->doGetCorrection($event, $document, $document->getCorrectionFunctions()->getCorrection());
 				}
 				$documentManager->popLCID();
 			}
@@ -68,9 +68,9 @@ class GetCorrection
 		}
 		else
 		{
-			if ($document->hasCorrection())
+			if ($document->getCorrectionFunctions()->hasCorrection())
 			{
-				$correction = $document->getCorrection();
+				$correction = $document->getCorrectionFunctions()->getCorrection();
 				$this->doGetCorrection($event, $document, $correction);
 			}
 		}
@@ -85,36 +85,48 @@ class GetCorrection
 	protected function doGetCorrection($event, $document, $correction)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\Result\DocumentResult();
+		$result = new \Change\Http\Rest\Result\DocumentCorrectionResult();
 
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
 		$documentLink->setRel('resource');
 		$result->addLink($documentLink);
 
 		$model = $document->getDocumentModel();
+		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(), 'propertiesNames' => array());
+		$properties = array();
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$localizedOnly = $document->getRefLCID() != $correction->getLCID();
+		}
+		else
+		{
+			$localizedOnly = false;
+		}
 
-		$properties = array('__correction' => array('id' => $correction->getId(), 'status' => $correction->getStatus(), 'propertiesNames' => array()));
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			$c = new PropertyConverter($document, $property, $urlManager);
-			if ($correction->isModifiedProperty($name))
+			if ($property->getLocalized() || !$localizedOnly)
 			{
-				$properties['__correction']['propertiesNames'][] = $name;
-				$properties[$name] = $c->convertToRestValue($correction->getPropertyValue($name));
-			}
-			else
-			{
-				$properties[$name] = $c->getRestValue();
+				$c = new PropertyConverter($document, $property, $urlManager);
+				if ($correction->isModifiedProperty($name))
+				{
+					$correctionInfos['propertiesNames'][] = $name;
+					$properties[$name] = $c->convertToRestValue($correction->getPropertyValue($name));
+				}
+				else
+				{
+					$properties[$name] = $c->getRestValue();
+				}
 			}
 
 			if ($name === 'creationDate')
 			{
-				$properties['__correction']['creationDate'] = $c->convertToRestValue($correction->getCreationDate());
-				$properties['__correction']['publicationDate'] = $c->convertToRestValue($correction->getPublicationDate());
+				$correctionInfos['creationDate'] = $c->convertToRestValue($correction->getCreationDate());
+				$correctionInfos['publicationDate'] = $c->convertToRestValue($correction->getPublicationDate());
 			}
 		}
-
+		$result->setCorrectionInfos($correctionInfos);
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 		$event->setResult($result);

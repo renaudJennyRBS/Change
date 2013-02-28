@@ -300,7 +300,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->setStr3('Str3');
 		$c1->setStr4('Str4');
 		$c1->create();
-		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
 
 		$c1Id = $c1->getId();
 		$this->assertGreaterThan(0, $c1Id);
@@ -310,7 +310,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$this->assertTrue($c1->isPropertyModified('publicationStatus'));
 		$c1->update();
-		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
 
 		$c1->setStr1('Str1 v2');
 		$c1->setStr2('Str2 v2');
@@ -321,7 +321,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->update();
 
 		$this->assertFalse($c1->hasModifiedProperties());
-		$this->assertTrue($c1->hasCorrection());
+		$this->assertTrue($c1->getCorrectionFunctions()->hasCorrection());
 		$this->assertEquals('Str1 v2', $c1->getStr1());
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getStr3());
@@ -333,9 +333,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Str2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getStr3());
 		$this->assertEquals('Str4', $c1->getStr4());
-		$this->assertTrue($c1->hasCorrection());
+		$this->assertTrue($c1->getCorrectionFunctions()->hasCorrection());
 
-		$corr = $c1->getCorrection();
+		$corr = $c1->getCorrectionFunctions()->getCorrection();
 		$this->assertEquals('Str2 v2', $corr->getPropertyValue('str2'));
 		$this->assertEquals('Str4 v2', $corr->getPropertyValue('str4'));
 		$this->assertEquals(Correction::STATUS_DRAFT, $corr->getStatus());
@@ -343,7 +343,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$corr->setStatus(Correction::STATUS_PUBLISHABLE);
 		$dm->saveCorrection($corr);
 
-		$c1->getDocumentService()->applyCorrection($c1, $corr);
+		$c1->getCorrectionFunctions()->publish();
 
 		$this->assertEquals(Correction::STATUS_FILED, $corr->getStatus());
 		$this->assertEquals('Str2', $corr->getPropertyValue('str2'));
@@ -351,6 +351,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str4 v2', $c1->getStr4());
+		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
 
 		$this->getDocumentServices()->getDocumentManager()->reset();
 	}

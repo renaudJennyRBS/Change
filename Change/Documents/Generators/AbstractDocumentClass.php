@@ -114,6 +114,11 @@ class AbstractDocumentClass
 			$code .= $this->getPublishableInterface($model);
 		}
 
+		if ($model->getEditable())
+		{
+			$code .= $this->getEditableInterface($model);
+		}
+
 		$code .= '}' . PHP_EOL;
 		$this->compiler = null;
 		return $code;
@@ -132,6 +137,27 @@ class AbstractDocumentClass
 			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
 		}
 		return var_export($value, true);
+	}
+
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return string
+	 */
+	protected function getEditableInterface($model)
+	{
+		$code = '
+	/**
+	 * @return integer
+	 */
+	public function nextDocumentVersion()
+	{
+		$next = max(0, $this->getDocumentVersion()) + 1;
+		$this->setDocumentVersion($next);
+		return $next;
+	}' . PHP_EOL;
+
+		return $code;
 	}
 
 	/**
@@ -256,26 +282,6 @@ class AbstractDocumentClass
 		{
 			parent::removeOldPropertyValue($propertyName);
 		}
-	}
-
-	/**
-	 * @api
-	 * @param string $LCID
-	 * @return boolean
-	 */
-	public function hasCorrection($LCID = null)
-	{
-		return parent::hasCorrection(($LCID === null) ?  $this->getRefLCID() : $LCID);
-	}
-
-	/**
-	 * @api
-	 * @param string $LCID
-	 * @return \Change\Documents\Correction
-	 */
-	public function getCorrection($LCID = null)
-	{
-		return parent::getCorrection(($LCID === null)? $this->getRefLCID() : $LCID);
 	}' . PHP_EOL;
 		return $code;
 	}
