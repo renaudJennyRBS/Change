@@ -25,9 +25,9 @@ class Correction
 	protected $documentId;
 	
 	/**
-	 * @var string
+	 * @var string|null;
 	 */
-	protected $lcid;
+	protected $LCID;
 	
 	/**
 	 * @var string
@@ -62,13 +62,13 @@ class Correction
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param integer $documentId
-	 * @param string $lcid
+	 * @param string $LCID
 	 */
-	public function __construct(\Change\Documents\DocumentManager $documentManager, $documentId, $lcid = null)
+	public function __construct(\Change\Documents\DocumentManager $documentManager, $documentId, $LCID = null)
 	{
 		$this->documentManager = $documentManager;
 		$this->documentId = $documentId;
-		$this->lcid = $lcid;
+		$this->LCID = $LCID;
 		$this->setCreationDate(new \DateTime());
 	}
 	
@@ -101,7 +101,7 @@ class Correction
 
 	/**
 	 * @api
-	 * @return integer
+	 * @return integer|null
 	 */
 	public function getId()
 	{
@@ -119,11 +119,11 @@ class Correction
 
 	/**
 	 * @api
-	 * @return string
+	 * @return string|null
 	 */
-	public function getLcid()
+	public function getLCID()
 	{
-		return $this->lcid;
+		return $this->LCID;
 	}
 
 	/**

@@ -3,6 +3,7 @@ namespace Change\Http\Rest\Actions;
 
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\Link;
 /**
  * @name \Change\Http\Rest\Actions\GetDocumentModelCollection
@@ -196,6 +197,16 @@ class GetDocumentModelCollection
 		{
 			$documentLink->setProperty($model->getProperty('refLCID'));
 			$documentLink->setProperty($model->getProperty('LCID'));
+		}
+
+		if ($model->useCorrection())
+		{
+			$cf = $document->getCorrectionFunctions();
+			if ($cf->hasCorrection())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$documentLink->setProperty('actions', array($l));
+			}
 		}
 
 		if ($documentLink->getLCID())

@@ -348,10 +348,12 @@ abstract class AbstractService
 		}
 		
 		$corrections = array();
-		foreach ($values as $LCID => $cValues)
+		foreach ($values as $key => $cValues)
 		{
-			$correction = $document->getCorrection(($LCID === Correction::NULL_LCID_KEY) ? null : $LCID);
-			if ($correction->getStatus() === Correction::STATUS_VALIDATION)
+			$LCID = ($key === Correction::NULL_LCID_KEY) ? null : $key;
+			$correction = $document->getCorrectionFunctions()->getCorrectionForLCID($LCID);
+
+			if (!$correction || ($correction->getStatus() === Correction::STATUS_VALIDATION))
 			{
 				throw new \LogicException('Unable to update correction in VALIDATION state', 51004);
 			}
@@ -369,124 +371,7 @@ abstract class AbstractService
 		
 		return array_values($corrections);
 	}
-	
-	/**
-	 * @api
-	 * @throws \InvalidArgumentException
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\Correction $correction
-	 */
-	public function applyCorrection(AbstractDocument $document, Correction $correction)
-	{
-		if ($document->getId() != $correction->getDocumentId() || $correction->getStatus() != Correction::STATUS_PUBLISHABLE)
-		{
-			throw new \InvalidArgumentException('Correction '. $correction .  ' not applicable to Document ' . $document, 51005);
-		}
-	
-		if ($correction->getPublicationDate() != null && $correction->getPublicationDate() > new \DateTime())
-		{
-			throw new \InvalidArgumentException('Correction '. $correction .  ' not publishable', 51006);
-		}
-	
-		if ($correction->getLcid() !== null)
-		{
-			$dm = $document->getDocumentManager();
-			try
-			{
-				$dm->pushLCID($correction->getLcid());
-				if ($document->hasModifiedProperties())
-				{
-					throw new \InvalidArgumentException('Document '. $document .  ' is already modified', 51007);
-				}
-				$this->applyCorrectionInternal($document, $correction);
-				$dm->popLCID();
-			}
-			catch (\Exception $e)
-			{
-				$dm->popLCID($e);
-			}
-		}
-		else
-		{
-			if ($document->hasModifiedProperties())
-			{
-				throw new \InvalidArgumentException('Document '. $document .  ' is already modified', 51007);
-			}				
-			$this->applyCorrectionInternal($document, $correction);
-		}
-	}
 
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\Correction $correction
-	 * @throws \Exception
-	 */
-	protected function applyCorrectionInternal($document, $correction)
-	{
-		$model = $document->getDocumentModel();
-		foreach ($model->getProperties() as $propertyName => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($correction->isModifiedProperty($propertyName))
-			{
-				$property->setValue($document, $correction->getPropertyValue($propertyName));
-				if ($document->isPropertyModified($propertyName))
-				{
-					$oldValue = $property->getOldValue($document);
-					$correction->setPropertyValue($propertyName, $oldValue);
-				}
-				else
-				{
-					$correction->unsetPropertyValue($propertyName);
-				}
-			}
-		}
-	
-		if ($document->hasModifiedProperties())
-		{
-			$document->setModificationDate(new \DateTime());
-			if ($document instanceof Editable)
-			{
-				$document->setDocumentVersion($document->getDocumentVersion() + 1);
-			}
-		}
-		
-		$correction->setStatus(Correction::STATUS_FILED);
-		$correction->setPublicationDate(new \DateTime());
-			
-		$dm = $document->getDocumentManager();
-		$tm = $this->applicationServices->getTransactionManager();
-			
-		try
-		{
-			$tm->begin();
-			
-			if ($document->hasNonLocalizedModifiedProperties())
-			{
-				$dm->updateDocument($document);
-			}
-			
-			if ($document instanceof Localizable)
-			{
-				$localizedPart = $document->getCurrentLocalizedPart();
-				if ($localizedPart->hasModifiedProperties())
-				{
-					$dm->updateLocalizedDocument($document, $localizedPart);
-				}
-			}
-
-			$dm->saveCorrection($correction);
-			
-			$document->removeCorrection($correction);
-
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
-	}
-	
 	/**
 	 * @api
 	 * @param \Change\Documents\AbstractDocument $document

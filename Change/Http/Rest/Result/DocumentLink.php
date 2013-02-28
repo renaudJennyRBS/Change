@@ -163,6 +163,7 @@ class DocumentLink extends Link
 		{
 			$result['hreflang'] = $this->LCID;
 		}
+
 		if ($this->mode === static::MODE_PROPERTY)
 		{
 			$result = array('id' => $this->getId(), 'model' => $this->getModelName(), 'link' => $result);
@@ -170,10 +171,39 @@ class DocumentLink extends Link
 			{
 				foreach ($this->properties as $name => $value)
 				{
-					$result[$name] = (is_object($value) && is_callable(array($value, 'toArray'))) ? $value->toArray() : $value;
+					$result[$name] = $this->convertToArray($value);
 				}
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	protected function convertToArray($value)
+	{
+		if (is_array($value))
+		{
+			$result = array();
+			foreach ($value as $k => $v)
+			{
+				$result[$k] = $this->convertToArray($v);
+			}
+			return $result;
+		}
+		elseif (is_object($value))
+		{
+			if (is_callable(array($value, 'toArray')))
+			{
+				return $value->toArray();
+			}
+			else
+			{
+				return get_object_vars($value);
+			}
+		}
+		return $value;
 	}
 }

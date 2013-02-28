@@ -55,9 +55,9 @@ class GetCorrection
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				if ($document->hasCorrection($LCID))
+				if ($document->getCorrectionFunctions()->hasCorrection())
 				{
-					$this->doGetCorrection($event, $document, $document->getCorrection($LCID));
+					$this->doGetCorrection($event, $document, $document->getCorrectionFunctions()->getCorrection());
 				}
 				$documentManager->popLCID();
 			}
@@ -68,9 +68,9 @@ class GetCorrection
 		}
 		else
 		{
-			if ($document->hasCorrection())
+			if ($document->getCorrectionFunctions()->hasCorrection())
 			{
-				$correction = $document->getCorrection();
+				$correction = $document->getCorrectionFunctions()->getCorrection();
 				$this->doGetCorrection($event, $document, $correction);
 			}
 		}

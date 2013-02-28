@@ -137,7 +137,7 @@ class GetDocument
 	{
 		if ($document->getDocumentModel()->useCorrection())
 		{
-			if ($document->hasCorrection())
+			if ($document->getCorrectionFunctions()->hasCorrection())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$result->addAction($l);

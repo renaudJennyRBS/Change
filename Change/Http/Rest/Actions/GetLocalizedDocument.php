@@ -151,7 +151,7 @@ class GetLocalizedDocument
 	{
 		if ($document->getDocumentModel()->useCorrection())
 		{
-			if ($document->hasCorrection($LCID))
+			if ($document->getCorrectionFunctions()->hasCorrection())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$result->addAction($l);

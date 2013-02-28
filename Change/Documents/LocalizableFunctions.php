@@ -181,15 +181,6 @@ class LocalizableFunctions
 	}
 
 	/**
-	 * @api
-	 * @return \Change\Documents\Correction
-	 */
-	public function getCorrection()
-	{
-		return $this->getDocument()->getCorrection($this->getLCID());
-	}
-
-	/**
 	 * For Internal dialog with DocumentManager
 	 * @param \Change\Documents\AbstractLocalizedDocument|null $localizedPart
 	 */

@@ -1145,6 +1145,7 @@ class DocumentManager
 		{
 			$properties = $model->getPropertiesWithCorrection();
 		}
+
 		if (count($properties) > 0)
 		{
 			$correction = $this->createNewCorrectionInstance($document->getId(), $LCID);
@@ -1250,7 +1251,7 @@ class DocumentManager
 			/* @var $iq \Change\Db\Query\InsertQuery */
 			$iq = $this->cachedQueries[$key];
 			$iq->bindParameter('id', $correction->getDocumentId());
-			$iq->bindParameter('lcid', $correction->getLcid());
+			$iq->bindParameter('lcid', $correction->getLCID());
 			$iq->bindParameter('status', $correction->getStatus());
 			$iq->bindParameter('creationdate', $correction->getCreationDate());
 			$iq->bindParameter('publicationdate', $correction->getPublicationDate());

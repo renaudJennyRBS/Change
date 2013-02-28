@@ -282,7 +282,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 	public function getResults($rowsConverter = null)
 	{
 		$results = $this->dbProvider->getQueryResultsArray($this);	
-		return ($rowsConverter === null) ? $results : call_user_func($rowsConverter, $results);
+		return is_callable($rowsConverter) ? call_user_func($rowsConverter, $results) : $results;
 	}
 	
 	/**
@@ -296,7 +296,7 @@ class SelectQuery extends \Change\Db\Query\AbstractQuery
 		$rows = $this->getResults(null);
 		if (count($rows))
 		{
-			return ($rowConverter === null) ? $rows[0] :  call_user_func($rowConverter, $rows[0]);
+			return is_callable($rowConverter) ? call_user_func($rowConverter, $rows[0]) : $rows[0];
 		}
 		return null;
 	}

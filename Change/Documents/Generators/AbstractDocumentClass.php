@@ -282,26 +282,6 @@ class AbstractDocumentClass
 		{
 			parent::removeOldPropertyValue($propertyName);
 		}
-	}
-
-	/**
-	 * @api
-	 * @param string $LCID
-	 * @return boolean
-	 */
-	public function hasCorrection($LCID = null)
-	{
-		return parent::hasCorrection(($LCID === null) ?  $this->getRefLCID() : $LCID);
-	}
-
-	/**
-	 * @api
-	 * @param string $LCID
-	 * @return \Change\Documents\Correction
-	 */
-	public function getCorrection($LCID = null)
-	{
-		return parent::getCorrection(($LCID === null)? $this->getRefLCID() : $LCID);
 	}' . PHP_EOL;
 		return $code;
 	}
