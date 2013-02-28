@@ -47,6 +47,7 @@ class CreateLocalizedDocument
 
 		if ($document->isNew())
 		{
+			$event->setParam('LCID', $LCID);
 			$this->create($event, $document, $properties);
 		}
 		else
@@ -65,6 +66,7 @@ class CreateLocalizedDocument
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param array $properties
+	 * @throws \Exception
 	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function create($event, $document, $properties)
@@ -94,22 +96,20 @@ class CreateLocalizedDocument
 		try
 		{
 			$document->create();
-			$getDocument = new GetDocument();
+
+			$getDocument = new GetLocalizedDocument();
 			$getDocument->execute($event);
 
 			$result = $event->getResult();
 			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
 			{
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-
-				foreach ($result->getLinks() as $link)
+				$selfLinks = $result->getLinks()->getByRel('self');
+				if ($selfLinks && $selfLinks[0] instanceof \Change\Http\Rest\Result\DocumentLink)
 				{
-					if ($link instanceof \Change\Http\Rest\Result\DocumentLink && $link->getRel() === 'self')
-					{
-						$href = $link->href();
-						$result->setHeaderLocation($href);
-						$result->setHeaderContentLocation($href);
-					}
+					$href = $selfLinks[0]->href();
+					$result->setHeaderLocation($href);
+					$result->setHeaderContentLocation($href);
 				}
 			}
 		}
