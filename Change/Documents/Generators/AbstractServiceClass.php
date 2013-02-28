@@ -78,9 +78,7 @@ class AbstractServiceClass
 		}
 		return var_export($value, true);
 	}
-	
 
-	
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string

@@ -123,7 +123,7 @@ abstract class AbstractService
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \LogicException
 	 */
@@ -245,7 +245,7 @@ abstract class AbstractService
 			{
 				throw new \LogicException('Invalid Document Version: ' . $document->getDocumentVersion() .  ' > ' . $oldVersion, 52001);
 			}
-			$document->setDocumentVersion($document->getDocumentVersion() + 1);
+			$document->nextDocumentVersion();
 		}
 		
 		$publicationStatus = ($document instanceof Publishable) ? $document->getPublicationStatus() : null;
