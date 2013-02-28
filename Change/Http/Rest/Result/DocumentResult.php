@@ -180,22 +180,7 @@ class DocumentResult extends \Change\Http\Result
 	{
 		$array =  array();
 
-		$properties = array();
-		foreach ($this->getProperties() as $name => $value)
-		{
-			if (is_object($value) && is_callable(array($value, 'toArray')))
-			{
-				$value = $value->toArray();
-			}
-			elseif(is_array($value))
-			{
-				$value = array_map(function($item) {
-					return (is_object($item) && is_callable(array($item, 'toArray'))) ? $item->toArray() : $item;
-				}, $value);
-			}
-			$properties[$name] = $value;
-		}
-		$array['properties'] = $properties;
+		$array['properties'] = $this->convertToArray($this->getProperties());
 
 		$links = $this->getLinks();
 		if ($links->count())
@@ -214,5 +199,34 @@ class DocumentResult extends \Change\Http\Result
 			$array['i18n'] = $this->getI18n();
 		}
 		return $array;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	protected function convertToArray($value)
+	{
+		if (is_array($value))
+		{
+			$result = array();
+			foreach ($value as $k => $v)
+			{
+				$result[$k] = $this->convertToArray($v);
+			}
+			return $result;
+		}
+		elseif (is_object($value))
+		{
+			if (is_callable(array($value, 'toArray')))
+			{
+				return $value->toArray();
+			}
+			else
+			{
+				return get_object_vars($value);
+			}
+		}
+		return $value;
 	}
 }
