@@ -223,6 +223,7 @@ abstract class AbstractService
 	/**
 	 * @api
 	 * @param \Change\Documents\AbstractDocument $document
+	 * @throws \RuntimeException
 	 * @throws \LogicException
 	 * @throws \Exception
 	 */
@@ -243,9 +244,8 @@ abstract class AbstractService
 			$oldVersion = $document->getDocumentVersionOldValue();
 			if ($oldVersion !== null)
 			{
-				throw new \LogicException('Invalid Document Version: ' . $document->getDocumentVersion() .  ' > ' . $oldVersion, 52001);
+				throw new \RuntimeException('Invalid Document Version: ' . $document->getDocumentVersion() .  ' != ' . $oldVersion, 52001);
 			}
-			$document->nextDocumentVersion();
 		}
 		
 		$publicationStatus = ($document instanceof Publishable) ? $document->getPublicationStatus() : null;
@@ -258,7 +258,7 @@ abstract class AbstractService
 		
 		if ($document->getDocumentModel()->useCorrection())
 		{
-			$corrections = $this->populateCorrections($document, $localizedPart, $publicationStatus);
+			$corrections = $document->getCorrectionFunctions()->extractCorrections();
 		}
 		else
 		{
@@ -271,20 +271,25 @@ abstract class AbstractService
 		try
 		{
 			$tm->begin();
-			
-			foreach ($corrections as $correction)
+			if (count($corrections))
 			{
-				/* @var $correction \Change\Documents\Correction */
-				$dm->saveCorrection($correction);
-				foreach ($correction->getPropertiesNames() as $propertyName)
+				$cleanUpPropertiesNames = array();
+				foreach ($corrections as $correction)
+				{
+					/* @var $correction \Change\Documents\Correction */
+					$document->getCorrectionFunctions()->save($correction);
+					$cleanUpPropertiesNames = array_merge($cleanUpPropertiesNames, $correction->getPropertiesNames());
+				}
+
+				foreach (array_unique($cleanUpPropertiesNames) as $propertyName)
 				{
 					$document->removeOldPropertyValue($propertyName);
 				}
 			}
-
 			if ($document->hasModifiedProperties() || count($corrections))
 			{
 				$document->setModificationDate(new \DateTime());
+				if ($document instanceof Editable) {$document->nextDocumentVersion();}
 				
 				if ($document->hasNonLocalizedModifiedProperties())
 				{
@@ -306,70 +311,6 @@ abstract class AbstractService
 		{
 			throw $tm->rollBack($e);
 		}
-	}
-	
-	/**
-	 * @throws \LogicException
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @param string $publicationStatus
-	 * @return \Change\Documents\Correction[]
-	 */
-	protected function populateCorrections($document, $localizedPart, $publicationStatus)
-	{
-		if ($publicationStatus === Publishable::STATUS_DRAFT)
-		{
-			return array();
-		}
-		
-		$values = array();
-		
-		$nonLocalizedKey = ($document instanceof Localizable) ? $document->getRefLCID() : Correction::NULL_LCID_KEY;
-			
-		foreach ($document->getDocumentModel()->getPropertiesWithCorrection() as $propertyName => $property)
-		{
-			if ($document->isPropertyModified($propertyName))
-			{
-				if ($publicationStatus === Publishable::STATUS_VALIDATION)
-				{
-					throw new \LogicException('Unable to create correction for document in VALIDATION state', 51003);
-				}
-				
-				/* @var $property \Change\Documents\Property */
-				if ($property->getLocalized())
-				{
-					$values[$localizedPart->getLCID()][$propertyName] = $property->getValue($localizedPart);
-				}
-				else
-				{
-					$values[$nonLocalizedKey][$propertyName] = $property->getValue($document);
-				}
-			}
-		}
-		
-		$corrections = array();
-		foreach ($values as $key => $cValues)
-		{
-			$LCID = ($key === Correction::NULL_LCID_KEY) ? null : $key;
-			$correction = $document->getCorrectionFunctions()->getCorrectionForLCID($LCID);
-
-			if (!$correction || ($correction->getStatus() === Correction::STATUS_VALIDATION))
-			{
-				throw new \LogicException('Unable to update correction in VALIDATION state', 51004);
-			}
-			
-			if ($publicationStatus === null)
-			{
-				$correction->setStatus(Correction::STATUS_PUBLISHABLE);
-			}
-			foreach ($cValues as $name => $value)
-			{
-				$correction->setPropertyValue($name, $value);
-			}
-			$corrections[$LCID] = $correction;
-		}
-		
-		return array_values($corrections);
 	}
 
 	/**

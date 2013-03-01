@@ -1,6 +1,10 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Publishable;
+
 /**
  * @api
  * @name \Change\Documents\PublishableFunctions
@@ -95,46 +99,45 @@ class CorrectionFunctions
 
 	/**
 	 * @api
-	 * @param $LCID
+	 * @param string $key
+	 * @param string|boolean $LCID
 	 * @return \Change\Documents\Correction|null
 	 */
-	public function getCorrectionForLCID($LCID)
+	protected function getCorrectionForKey($key, $LCID = false)
 	{
-		if (!$this->useCorrection())
-		{
-			return null;
-		}
-
 		if (!is_array($this->corrections))
 		{
 			$this->findCorrection();
 		}
-		$key = $this->getKey($LCID);
+		$correction = null;
 
-		if (!isset($this->corrections[$key]))
+		if (isset($this->corrections[$key]))
+		{
+			if ($this->corrections[$key] instanceof Correction)
+			{
+				$correction = $this->corrections[$key];
+			}
+			elseif (is_int($this->corrections[$key]))
+			{
+				$correction = $this->getGetCorrectionInstance($this->corrections[$key]);
+				if ($correction)
+				{
+					$this->addCorrection($correction);
+				}
+				else
+				{
+					unset($this->corrections[$key]);
+				}
+			}
+		}
+
+		if ($correction === null && $LCID !== false)
 		{
 			$correction = $this->getNewCorrectionInstance($LCID);
-			if ($correction)
-			{
-				$this->addCorrection($correction);
-			}
-			return $correction;
-		}
-		elseif(is_int($this->corrections[$key]))
-		{
-			$correction = $this->getGetCorrectionInstance($this->corrections[$key]);
-			if ($correction)
-			{
-				$this->addCorrection($correction);
-			}
-			return $correction;
-		}
-		elseif ($this->corrections[$key] instanceof Correction)
-		{
-			return $this->corrections[$key];
+			$this->addCorrection($correction);
 		}
 
-		return null;
+		return $correction;
 	}
 
 	/**
@@ -156,10 +159,7 @@ class CorrectionFunctions
 			if (!isset($this->corrections[$key]))
 			{
 				$correction = $this->getNewCorrectionInstance($LCID);
-				if ($correction)
-				{
-					$this->addCorrection($correction);
-				}
+				$this->addCorrection($correction);
 				return $correction;
 			}
 			elseif(is_int($this->corrections[$key]))
@@ -180,32 +180,170 @@ class CorrectionFunctions
 	}
 
 	/**
-	 * Save current correction
 	 * @api
+	 * @throws \LogicException
+	 * @return \Change\Documents\Correction[]
 	 */
-	public function save()
+	public function extractCorrections()
+	{
+		if (!$this->useCorrection())
+		{
+			return array();
+		}
+
+		$document = $this->getDocument();
+		$publicationStatus = ($document instanceof Publishable) ? $document->getPublicationStatus() : null;
+		if ($publicationStatus === Publishable::STATUS_DRAFT)
+		{
+			return array();
+		}
+
+		if ($document instanceof Localizable)
+		{
+			$localizedKey =  $document->getLCID();
+			$nonLocalizedKey = $document->getRefLCID();
+		}
+		else
+		{
+			$localizedKey = null;
+			$nonLocalizedKey = $this->getKey($localizedKey);
+		}
+
+		$modifiedValues = array();
+		$unmodifiedValues = array();
+
+		//Collect Properties With Correction
+		foreach ($document->getDocumentModel()->getPropertiesWithCorrection() as $propertyName => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			if ($document->isPropertyModified($propertyName))
+			{
+				if ($publicationStatus === Publishable::STATUS_VALIDATION)
+				{
+					throw new \LogicException('Unable to create correction for document in VALIDATION state', 51003);
+				}
+
+				if ($property->getLocalized())
+				{
+					$modifiedValues[$localizedKey][$propertyName] = $property->getValue($document);
+				}
+				else
+				{
+					$modifiedValues[$nonLocalizedKey][$propertyName] = $property->getValue($document);
+				}
+			}
+			else
+			{
+				if ($property->getLocalized())
+				{
+					$unmodifiedValues[$localizedKey][] = $propertyName;
+				}
+				else
+				{
+					$unmodifiedValues[$nonLocalizedKey][] = $propertyName;
+				}
+			}
+		}
+
+		$corrections = array();
+
+		//Apply Modified Properties
+		foreach ($modifiedValues as $key => $cValues)
+		{
+			$LCID = ($key === Correction::NULL_LCID_KEY) ? null : $key;
+			$correction = $this->getCorrectionForKey($key, $LCID);
+			if ($correction->getStatus() === Correction::STATUS_VALIDATION)
+			{
+				throw new \LogicException('Unable to update correction in VALIDATION state', 51004);
+			}
+
+			if ($publicationStatus === null)
+			{
+				$correction->setStatus(Correction::STATUS_PUBLISHABLE);
+			}
+
+			foreach ($cValues as $name => $value)
+			{
+				$correction->setPropertyValue($name, $value);
+			}
+
+			$corrections[$key] = $correction;
+		}
+
+		//Cleanup none modified Properties
+		foreach ($unmodifiedValues as $key => $propertiesNames)
+		{
+			$correction =  $this->getCorrectionForKey($key);
+			if (!$correction)
+			{
+				continue;
+			}
+			if (!isset($corrections[$key]))
+			{
+				$corrections[$key] = $correction;
+			}
+
+			foreach ($propertiesNames as $name)
+			{
+				if ($correction->isModifiedProperty($name))
+				{
+					if ($correction->getStatus() === Correction::STATUS_VALIDATION)
+					{
+						throw new \LogicException('Unable to update correction in VALIDATION state', 51004);
+					}
+					$correction->unsetPropertyValue($name);
+				}
+			}
+
+			if (!$correction->hasModifiedProperties())
+			{
+				$correction->setStatus(Correction::STATUS_FILED);
+			}
+		}
+
+		return array_values($corrections);
+	}
+
+	/**
+	 * @api
+	 * @param Correction $correction
+	 * @throws \RuntimeException
+	 */
+	public function save(Correction $correction = null)
 	{
 		if ($this->useCorrection())
 		{
-			$key = $this->getKey($this->getCurrentLCID());
-			if (isset($this->corrections[$key]))
+			if ($correction === null)
 			{
-				$correction = $this->corrections[$key];
-				if ($correction instanceof Correction)
+				$key = $this->getKey($this->getCurrentLCID());
+				if (isset($this->corrections[$key]))
 				{
-					if ($correction->getId() !== null)
-					{
-						$this->updateCorrection($correction);
-					}
-					else
-					{
-						$this->insertCorrection($correction);
-					}
+					$correction = $this->corrections[$key];
+				}
+			}
+			else
+			{
+				if ($correction->getDocumentId() != $this->documentId)
+				{
+					throw new \RuntimeException('Correction ' . $correction . ' not applicable to Document ' . $this->getDocument(), 51005);
+				}
+				$key =  $this->getKey($correction->getLCID());
+			}
 
-					if ($correction->getStatus() === Correction::STATUS_FILED)
-					{
-						unset($this->corrections[$key]);
-					}
+			if ($correction instanceof Correction)
+			{
+				if ($correction->getId() !== null)
+				{
+					$this->updateCorrection($correction);
+				}
+				elseif ($correction->getStatus() !== Correction::STATUS_FILED)
+				{
+					$this->insertCorrection($correction);
+				}
+
+				if ($correction->getStatus() === Correction::STATUS_FILED)
+				{
+					unset($this->corrections[$key]);
 				}
 			}
 		}
@@ -308,13 +446,14 @@ class CorrectionFunctions
 
 	/**
 	 * @param string $LCID
-	 * @return \Change\Documents\Correction|null
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\Correction
 	 */
 	protected function getNewCorrectionInstance($LCID = null)
 	{
 		$document = $this->getDocument();
 		$model = $document->getDocumentModel();
-		if (($document instanceof \Change\Documents\Interfaces\Localizable) && ($LCID != $document->getRefLCID()))
+		if (($document instanceof Localizable) && ($LCID != $document->getRefLCID()))
 		{
 			$properties = $model->getLocalizedPropertiesWithCorrection();
 		}
@@ -330,7 +469,8 @@ class CorrectionFunctions
 			$correction->setStatus(Correction::STATUS_DRAFT);
 			return $correction;
 		}
-		return null;
+
+		throw new \RuntimeException('Correction with no property not applicable to Document ' . $document, 51005);
 	}
 	
 	protected static $cachedQueries = array();

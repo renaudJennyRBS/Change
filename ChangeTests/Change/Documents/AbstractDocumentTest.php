@@ -341,7 +341,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(Correction::STATUS_DRAFT, $corr->getStatus());
 
 		$corr->setStatus(Correction::STATUS_PUBLISHABLE);
-		$dm->saveCorrection($corr);
+		$c1->getCorrectionFunctions()->save($corr);
 
 		$c1->getCorrectionFunctions()->publish();
 
