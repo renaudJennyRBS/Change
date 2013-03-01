@@ -346,6 +346,36 @@ class Correction
 			$this->modified = true;
 		}
 	}
+
+	/**
+	 * @api
+	 */
+	public function clearProperties()
+	{
+		foreach ($this->getPropertiesNames() as $name)
+		{
+			if (array_key_exists($name, $this->datas))
+			{
+				unset($this->datas[$name]);
+				$this->modified = true;
+			}
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		foreach ($this->getPropertiesNames() as $name)
+		{
+			if (array_key_exists($name, $this->datas))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * @return string

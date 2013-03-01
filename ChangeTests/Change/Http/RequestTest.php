@@ -67,4 +67,17 @@ class RequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($request->getIfNoneMatch());
 		return $request;
 	}
+
+	/**
+	 * @depends testIfNoneMatch
+	 * @param Request $request
+	 * @return Request
+	 */
+	public function testLCID($request)
+	{
+		$this->assertNull($request->getLCID());
+		$request->setLCID('fr_FR');
+		$this->assertEquals('fr_FR', $request->getLCID());
+		return $request;
+	}
 }

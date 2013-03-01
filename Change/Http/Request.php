@@ -16,11 +16,15 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 	 */
 	protected $ifModifiedSince;
 
-
 	/**
 	 * @var string
 	 */
 	protected $ifNoneMatch;
+
+	/**
+	 * @var string
+	 */
+	protected $LCID;
 
 	/**
 	 * @param string $path
@@ -68,6 +72,23 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 	public function getIfNoneMatch()
 	{
 		return $this->ifNoneMatch;
+	}
+
+	/**
+	 * @param string $LCID
+	 */
+	public function setLCID($LCID)
+	{
+		$this->LCID = $LCID;
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getLCID()
+	{
+		return $this->LCID;
 	}
 
 	public function __construct()
@@ -137,5 +158,42 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 		{
 			$this->setIfNoneMatch($header->getFieldValue());
 		}
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 */
+	public function populateLCIDByHeader(\Change\I18n\I18nManager $i18nManager)
+	{
+		$header = $this->getHeader('Accept-Language');
+		if ($header instanceof \Zend\Http\Header\AcceptLanguage)
+		{
+			foreach ($header->getPrioritized() as $part)
+			{
+				/* @var $part \Zend\Http\Header\Accept\FieldValuePart\LanguageFieldValuePart */
+				$language = $part->getLanguage();
+
+				if (strlen($language) === 2)
+				{
+					$testLCID = strtolower($language) . '_' . strtoupper($language);
+				}
+				elseif (strlen($language) === 5)
+				{
+					$testLCID = strtolower(substr($language, 0, 2)) . '_' . strtoupper(substr($language, 3, 2));
+				}
+				else
+				{
+					continue;
+				}
+
+				if ($i18nManager->isSupportedLCID($testLCID))
+				{
+					$i18nManager->setLCID($testLCID);
+					break;
+				}
+			}
+		}
+
+		$this->setLCID($i18nManager->getLCID());
 	}
 }

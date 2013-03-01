@@ -94,28 +94,6 @@ class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param \Change\Http\Event $event
 	 * @return \Change\Http\Event
 	 */
-	public function testLCID($event)
-	{
-		try
-		{
-			$event->getLCID();
-			$this->fail('RuntimeException 70002 expected');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals(70002, $e->getCode());
-		}
-
-		$event->setLCID('fr_FR');
-		$this->assertEquals('fr_FR', $event->getLCID());
-		return $event;
-	}
-
-	/**
-	 * @depends testLCID
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Event
-	 */
 	public function testAction($event)
 	{
 		$this->assertNull($event->getAction());
