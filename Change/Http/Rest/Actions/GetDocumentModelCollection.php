@@ -118,7 +118,7 @@ class GetDocumentModelCollection
 			{
 				if ($property->getLocalized())
 				{
-					$LCID = $event->getLCID();
+					$LCID = $event->getRequest()->getLCID();
 					$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
 
 					$qb->leftJoin($i18nTable,
