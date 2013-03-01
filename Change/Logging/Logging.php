@@ -118,7 +118,16 @@ class Logging
 	 * @param string $name
 	 * @return \Zend\Log\Logger
 	 */
-	protected function getLoggerByName($name = 'application')
+	public function setLoggerByName($name, $logger)
+	{
+		$this->loggers[$name] = $logger;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return \Zend\Log\Logger
+	 */
+	public function getLoggerByName($name = 'application')
 	{
 		if (!isset($this->loggers[$name]))
 		{

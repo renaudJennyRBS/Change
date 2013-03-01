@@ -64,14 +64,46 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		// Not empty strings.
 		$this->assertFalse(\Change\Stdlib\String::isEmpty('test'));
 		$this->assertFalse(\Change\Stdlib\String::isEmpty('1'));
-			
+		
 		// Strings-compatible values.
 		$this->assertFalse(\Change\Stdlib\String::isEmpty(0));
 		$this->assertFalse(\Change\Stdlib\String::isEmpty(125));
 		$this->assertFalse(\Change\Stdlib\String::isEmpty(1.25));
-			
+		
 		// String-incompatible values.
 		$this->assertTrue(\Change\Stdlib\String::isEmpty(array()));
 		$this->assertTrue(\Change\Stdlib\String::isEmpty(array('test')));
+	}
+	
+	public function testBeginsWith()
+	{
+		$this->assertTrue(\Change\Stdlib\String::beginsWith('testing string', 'test'));
+		$this->assertFalse(\Change\Stdlib\String::beginsWith('testing string', 'rest'));
+		$this->assertTrue(\Change\Stdlib\String::beginsWith('testing string', 'testing string'));
+		$this->assertFalse(\Change\Stdlib\String::beginsWith('testing string', 'testing string 123'));
+		
+		// Should work with UTF-8 characters.
+		$this->assertTrue(\Change\Stdlib\String::beginsWith('chaîne de test', 'chaîn'));
+		$this->assertFalse(\Change\Stdlib\String::beginsWith('chaîne de test', 'chain'));
+		$this->assertFalse(\Change\Stdlib\String::beginsWith('chaîne de test', 'thaîn'));
+		$this->assertTrue(\Change\Stdlib\String::beginsWith('chaîne de test', 'chaîne de test'));
+		$this->assertFalse(\Change\Stdlib\String::beginsWith('chaîne de test', 'chaîne de test 123'));
+	}
+	
+	public function testEndsWith()
+	{
+		$this->assertTrue(\Change\Stdlib\String::endsWith('testing string', 'ring'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('testing string', 'rind'));
+		$this->assertTrue(\Change\Stdlib\String::endsWith('testing string', 'testing string'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('testing string', 'testing string 123'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('testing string', '123 testing string'));
+		
+		// Should work with UTF-8 characters.
+		$this->assertTrue(\Change\Stdlib\String::endsWith('on a testé', 'esté'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', 'este'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', 'est'));
+		$this->assertTrue(\Change\Stdlib\String::endsWith('on a testé', 'on a testé'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', 'on a testé 123'));
+		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', '123 on a testé'));
 	}
 }

@@ -111,7 +111,6 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testEmails($constraintsManager)
 	{
-	
 		$constraint = $constraintsManager->getByName('emails');
 		$this->assertTrue($constraint->isValid('noreplay@rbschange.fr'));
 		$this->assertTrue($constraint->isValid('noreplay@rbschange.fr, admin@rbschange.fr'));
@@ -132,7 +131,6 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInteger($constraintsManager)
 	{
-	
 		$constraint = $constraintsManager->getByName('integer');
 		$this->assertTrue($constraint->isValid('5'));
 
@@ -185,12 +183,10 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('notBetween', $messages);
 		$this->assertStringStartsWith('c.constraints.', $messages['notBetween']);
 		
-		
 		$constraint = $constraintsManager->getByName('range', array('min' => 5, 'max' => 10, 'inclusive' => false));
 		$this->assertFalse($constraint->isValid('5'));
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('notBetweenStrict', $messages);
-		
 		
 		return $constraintsManager;
 	}

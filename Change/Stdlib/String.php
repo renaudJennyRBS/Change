@@ -98,7 +98,7 @@ class String
 			'cl', 'cr', 'ch', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'qu', 'sl', 'sr');
 		$vowels = array('a', 'e', 'i', 'o', 'u', 'ae', 'ai', 'au', 'eu', 'ia', 'io', 'iu', 'oa', 'oi', 'ou', 'ua', 'ue', 'ui');
 		
-		if ($caseSensitive == true)
+		if ($caseSensitive)
 		{
 			// Add upper conson to consons' array
 			foreach ($consons as $conson)
@@ -130,5 +130,39 @@ class String
 	public static function isEmpty($string)
 	{
 		return $string === null || (!is_array($string) && strlen(trim($string))) == 0;
+	}
+	
+	/**
+	 * @api
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param boolean $caseSensitive
+	 * @return boolean
+	 */
+	public static function endsWith($haystack, $needle, $caseSensitive = true)
+	{
+		$len = self::length($needle);
+		if ($caseSensitive)
+		{
+			return self::subString($haystack, -$len, $len) == $needle;
+		}
+		return self::toLower(self::subString($haystack, -$len, $len)) === self::toLower($needle);
+	}
+	
+	/**
+	 * @api
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param boolean $caseSensitive
+	 * @return boolean
+	 */
+	public static function beginsWith($haystack, $needle, $caseSensitive = true)
+	{
+		$len = self::length($needle);
+		if ($caseSensitive)
+		{
+			return self::subString($haystack, 0, $len) == $needle;
+		}
+		return self::toLower(self::subString($haystack, 0, $len)) === self::toLower($needle);
 	}
 }
