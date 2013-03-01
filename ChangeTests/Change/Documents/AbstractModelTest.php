@@ -38,18 +38,20 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($modelBasic->useVersion());
 		$this->assertFalse($modelBasic->useCorrection());
 		$this->assertFalse($modelBasic->hasDescendants());
+		$this->assertTrue($modelBasic->useTree());
 		$this->assertCount(0, $modelBasic->getDescendantsNames());
 		$this->assertNull($modelBasic->getInjectedBy());
 		$this->assertFalse($modelBasic->hasParent());
 		$this->assertNull($modelBasic->getParentName());
 		$this->assertCount(0, $modelBasic->getAncestorsNames());
 		$this->assertEquals('Project_Tests_Basic', $modelBasic->getRootName());
+		$this->assertEquals('Project_Tests', $modelBasic->getTreeName());
 
-		$this->assertCount(20, $modelBasic->getProperties());
+		$this->assertCount(21, $modelBasic->getProperties());
 		$this->assertArrayHasKey('pStr', $modelBasic->getProperties());
 
 		$this->assertCount(0, $modelBasic->getLocalizedProperties());
-		$this->assertCount(20, $modelBasic->getNonLocalizedProperties());
+		$this->assertCount(21, $modelBasic->getNonLocalizedProperties());
 		$this->assertCount(0, $modelBasic->getPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getLocalizedPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getNonLocalizedPropertiesWithCorrection());
@@ -64,7 +66,7 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('pStr', $property->getName());
 
 		$names = $modelBasic->getPropertiesNames();
-		$this->assertCount(20, $names);
+		$this->assertCount(21, $names);
 		$this->assertContains('id', $names);
 		$this->assertContains('model', $names);
 		$this->assertContains('creationDate', $names);

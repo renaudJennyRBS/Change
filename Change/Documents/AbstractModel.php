@@ -46,6 +46,11 @@ abstract class AbstractModel
 	 * @var string
 	 */
 	protected $shortName;
+
+	/**
+	 * @var string|boolean
+	 */
+	protected $treeName = false;
 	
 	/**
 	 * @var string
@@ -187,7 +192,25 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function useTree()
+	{
+		return $this->treeName !== false;
+	}
+
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getTreeName()
+	{
+		return is_string($this->treeName) ? $this->treeName : null;
+	}
+
 	/**
 	 * @api
 	 * @return boolean
@@ -255,6 +278,8 @@ abstract class AbstractModel
 		$amn = $this->getAncestorsNames();
 		return (count($amn)) ? $amn[0] : $this->getName();
 	}
+
+
 
 	/**
 	 * @return void

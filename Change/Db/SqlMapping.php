@@ -66,8 +66,6 @@ class SqlMapping
 				return 'document_id';
 			case 'model':
 				return 'document_model';
-			case 'treename':
-				return 'tree_name';
 		}
 		return $pn;
 	}

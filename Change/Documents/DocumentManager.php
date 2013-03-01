@@ -246,10 +246,6 @@ class DocumentManager
 		$qb->addColumn($fb->getDocumentColumn('model'));
 		$qb->addValue($fb->parameter('model', $qb));
 		$iq->bindParameter('model', $document->getDocumentModelName());
-		
-		$qb->addColumn($fb->getDocumentColumn('treeName'));
-		$qb->addValue($fb->parameter('treeName', $qb));
-		$iq->bindParameter('treeName', $document->getTreeName());
 
 		$iq->execute();
 		if ($document->getId() > 0)
@@ -827,45 +823,45 @@ class DocumentManager
 			{
 				$qb = $this->getNewQueryBuilder();
 				$fb = $qb->getFragmentBuilder();
-				$ft = $fb->getDocumentIndexTable();
-							
+
 				if ($model)
 				{
-					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model', 'd'), 'model'), $fb->alias($fb->getDocumentColumn('treeName', 'f'), 'treeName'))
-					->from($fb->alias($fb->getDocumentTable($model->getRootName()), 'd'))
-					->innerJoin($fb->alias($ft, 'f'), $fb->getDocumentColumn('id'))
-					->where($fb->logicAnd($fb->eq($fb->getDocumentColumn('id', 'd'), $fb->integerParameter('id', $qb))))
+					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentTable($model->getRootName()))
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
 					->query();
 				}
 				else
 				{
-					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'), $fb->alias($fb->getDocumentColumn('treeName'), 'treeName'))
-					->from($ft)
+					$this->cachedQueries[$key] = $qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentIndexTable())
 					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
 					->query();
 				}
 			}
 			/* @var $query \Change\Db\Query\SelectQuery */
 			$query =  $this->cachedQueries[$key];
-		
 			$query->bindParameter('id', $id);
 				
 			$constructorInfos = $query->getFirstResult();
 			if ($constructorInfos)
 			{
 				$modelName = $constructorInfos['model'];
-				$treeName = $constructorInfos['treeName'];
 				$documentModel = $this->getModelManager()->getModelByName($modelName);
 				if ($documentModel !== null)
 				{
 					$document = $this->createNewDocumentInstance($documentModel);
-					$document->initialize($id, static::STATE_INITIALIZED, $treeName);
+					$document->initialize($id, static::STATE_INITIALIZED);
 					return $document;
 				}
 				else
 				{
 					$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
 				}
+			}
+			else
+			{
+				$this->applicationServices->getLogging()->info('Document id ' . $id . ' not found');
 			}
 		}
 		return null;

@@ -1,194 +1,208 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<xs:schema elementFormDefault="qualified" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="http://www.rbs.fr/schema/change-document/4.0" xmlns="http://www.rbs.fr/schema/change-document/4.0">
+<xs:schema elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.rbs.fr/schema/change-document/4.0"
+           xmlns="http://www.rbs.fr/schema/change-document/4.0">
 
-	<!--
-		This file is published on http://www.rbschange.fr/schema/4.0/document.xsd
-	-->
+    <!--
+        This file is published on http://www.rbschange.fr/schema/4.0/document.xsd
+    -->
 
-	<xs:simpleType name="propertyType">
-		<xs:annotation>
-			<xs:documentation source="version">4.0</xs:documentation>
-			<xs:documentation source="description">
-				A property type : String | Boolean | Integer | Float | Decimal |
-				Date | DateTime | LongString | XML | Lob | RichText | JSON | Object
-				DocumentId | Document | DocumentArray
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:NMTOKEN">
-			<xs:enumeration value="String" />
-			<xs:enumeration value="Boolean" />
-			<xs:enumeration value="Integer" />
-			<xs:enumeration value="Float" />
-			<xs:enumeration value="Decimal" />
-			<xs:enumeration value="Date" />
-			<xs:enumeration value="DateTime" />
-			<xs:enumeration value="LongString" />
-			<xs:enumeration value="XML" />
-			<xs:enumeration value="Lob" />
-			<xs:enumeration value="RichText" />
-			<xs:enumeration value="JSON" />
-			<xs:enumeration value="Object" />
-			<xs:enumeration value="DocumentId" />
-			<xs:enumeration value="Document" />
-			<xs:enumeration value="DocumentArray" />
-		</xs:restriction>
-	</xs:simpleType>
+    <xs:simpleType name="propertyType">
+        <xs:annotation>
+            <xs:documentation source="version">4.0</xs:documentation>
+            <xs:documentation source="description">
+                A property type : String | Boolean | Integer | Float | Decimal |
+                Date | DateTime | LongString | XML | Lob | RichText | JSON | Object
+                DocumentId | Document | DocumentArray
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="String"/>
+            <xs:enumeration value="Boolean"/>
+            <xs:enumeration value="Integer"/>
+            <xs:enumeration value="Float"/>
+            <xs:enumeration value="Decimal"/>
+            <xs:enumeration value="Date"/>
+            <xs:enumeration value="DateTime"/>
+            <xs:enumeration value="LongString"/>
+            <xs:enumeration value="XML"/>
+            <xs:enumeration value="Lob"/>
+            <xs:enumeration value="RichText"/>
+            <xs:enumeration value="JSON"/>
+            <xs:enumeration value="Object"/>
+            <xs:enumeration value="DocumentId"/>
+            <xs:enumeration value="Document"/>
+            <xs:enumeration value="DocumentArray"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-	<xs:simpleType name="documentModel">
-		<xs:annotation>
-			<xs:documentation source="version">4.0</xs:documentation>
-			<xs:documentation source="description">
-				a document model name : [A-Z][A-Za-z]+_[A-Z][A-Za-z]+_[A-Z][A-Za-z]+
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="[A-Z][A-Za-z]+_[A-Z][A-Za-z]+_[A-Z][A-Za-z]+" />
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="indexTarget">
-		<xs:restriction base="xs:NMTOKEN">
-			<xs:enumeration value="none" />
-			<xs:enumeration value="property" />
-			<xs:enumeration value="description" />
-		</xs:restriction>
-	</xs:simpleType>
+    <xs:simpleType name="documentModel">
+        <xs:annotation>
+            <xs:documentation source="version">4.0</xs:documentation>
+            <xs:documentation source="description">
+                a document model name : [A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="treeName">
+        <xs:annotation>
+            <xs:documentation source="version">4.0</xs:documentation>
+            <xs:documentation source="description">
+                a tree name : ([A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+)|(false)|(true)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+)|(false)|(true)"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="indexTarget">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="property"/>
+            <xs:enumeration value="description"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="dbOptions">
         <xs:attribute name="length" use="optional" type="xs:integer" default="255">
             <xs:annotation>
-                <xs:documentation source="description"> use by 'String' property</xs:documentation>
+                <xs:documentation source="description">use by 'String' property</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="precision" use="optional" type="xs:integer" default="13">
             <xs:annotation>
-                <xs:documentation source="description"> use by 'Decimal' property</xs:documentation>
+                <xs:documentation source="description">use by 'Decimal' property</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="scale" use="optional" type="xs:integer" default="4">
             <xs:annotation>
-                <xs:documentation source="description"> use by 'Decimal' property</xs:documentation>
+                <xs:documentation source="description">use by 'Decimal' property</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-	
-	<xs:complexType name="constraint">
-		<xs:attribute name="name" use="required" type="xs:string" />
-				
-		<xs:attribute name="min" use="optional" type="xs:double">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'min', 'minSize' and 'range' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		
-		<xs:attribute name="max" use="optional" type="xs:double">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'max', 'maxSize' and 'range' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		
-		<xs:attribute name="inclusive" use="optional" type="xs:boolean">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'range' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>		
-		
-		<xs:attribute name="fromList" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'enum' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
+
+    <xs:complexType name="constraint">
+        <xs:attribute name="name" use="required" type="xs:string"/>
+
+        <xs:attribute name="min" use="optional" type="xs:double">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'min', 'minSize' and 'range' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="max" use="optional" type="xs:double">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'max', 'maxSize' and 'range' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="inclusive" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'range' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="fromList" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'enum' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
         <xs:attribute name="values" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation source="description"> use by 'enum' constraint</xs:documentation>
+                <xs:documentation source="description">use by 'enum' constraint</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="modelName" use="optional" type="documentModel">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'unique' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>		
-		<xs:attribute name="propertyName" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'unique' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>		
-		<xs:attribute name="documentId" use="optional" type="xs:unsignedLong">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'unique' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>	
-				
-		<xs:attribute name="pattern" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'matches' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>		
-		<xs:attribute name="message" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'matches' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		
-		<xs:attribute name="allow" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation source="description"> use by 'hostname' constraint</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>		
-	</xs:complexType>
+            <xs:annotation>
+                <xs:documentation source="description">use by 'unique' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="propertyName" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'unique' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="documentId" use="optional" type="xs:unsignedLong">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'unique' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
-	<xs:element name="document">
-		<xs:annotation>
-			<xs:documentation source="version">4.0</xs:documentation>
-			<xs:documentation source="description">
-				The document element is the root element.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:all>
-				<xs:element name="properties" minOccurs="0" maxOccurs="1">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
-								<xs:complexType>
+        <xs:attribute name="pattern" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'matches' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="message" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'matches' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="allow" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation source="description">use by 'hostname' constraint</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="document">
+        <xs:annotation>
+            <xs:documentation source="version">4.0</xs:documentation>
+            <xs:documentation source="description">
+                The document element is the root element.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="properties" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element name="dboptions" type="dbOptions" minOccurs="0" maxOccurs="1" />
-										<xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="10" />
-									</xs:sequence>
-									<xs:attribute name="name" use="required" type="xs:string" />
-									<xs:attribute name="type" use="optional" type="propertyType" default="String" />
-									<xs:attribute name="document-type" type="documentModel" />
-									<xs:attribute name="indexed" type="indexTarget" default="none" />		
-									<xs:attribute name="cascade-delete" type="xs:boolean" default="true" />
-									<xs:attribute name="default-value" type="xs:string" />
-									<xs:attribute name="required" type="xs:boolean" default="true" />
-									<xs:attribute name="min-occurs" type="xs:int" default="2" />
-									<xs:attribute name="max-occurs" type="xs:int" default="10" />	
-									<xs:attribute name="localized" type="xs:boolean" default="true" />
-									<xs:attribute name="has-correction" type="xs:boolean" default="true" />
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-			</xs:all>
-			<xs:attribute name="icon" type="xs:string" />
+                                        <xs:element name="dboptions" type="dbOptions" minOccurs="0" maxOccurs="1"/>
+                                        <xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="10"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="name" use="required" type="xs:string"/>
+                                    <xs:attribute name="type" use="optional" type="propertyType" default="String"/>
+                                    <xs:attribute name="document-type" type="documentModel"/>
+                                    <xs:attribute name="indexed" type="indexTarget" default="none"/>
+                                    <xs:attribute name="cascade-delete" type="xs:boolean" default="true"/>
+                                    <xs:attribute name="default-value" type="xs:string"/>
+                                    <xs:attribute name="required" type="xs:boolean" default="true"/>
+                                    <xs:attribute name="min-occurs" type="xs:int" default="2"/>
+                                    <xs:attribute name="max-occurs" type="xs:int" default="10"/>
+                                    <xs:attribute name="localized" type="xs:boolean" default="true"/>
+                                    <xs:attribute name="has-correction" type="xs:boolean" default="true"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+            <xs:attribute name="icon" type="xs:string"/>
 
-			<xs:attribute name="has-url" type="xs:boolean" default="true" />
-			<xs:attribute name="frontoffice-indexable" type="xs:boolean" default="true" />
-			<xs:attribute name="backoffice-indexable" type="xs:boolean" default="false" />
-						
-			<xs:attribute name="extend" type="documentModel" />
-			<xs:attribute name="inject" type="xs:boolean" default="true" />
-			
-			<xs:attribute name="localized" type="xs:boolean" default="true" />
-			<xs:attribute name="editable" type="xs:boolean" default="true" />
-			<xs:attribute name="publishable" type="xs:boolean" default="true" />
-			<xs:attribute name="use-version" type="xs:boolean" default="true" />
-		</xs:complexType>
-	</xs:element>
+            <xs:attribute name="has-url" type="xs:boolean" default="true"/>
+            <xs:attribute name="frontoffice-indexable" type="xs:boolean" default="true"/>
+            <xs:attribute name="backoffice-indexable" type="xs:boolean" default="false"/>
+
+            <xs:attribute name="extend" type="documentModel"/>
+            <xs:attribute name="inject" type="xs:boolean" default="true"/>
+
+            <xs:attribute name="localized" type="xs:boolean" default="true"/>
+            <xs:attribute name="editable" type="xs:boolean" default="true"/>
+            <xs:attribute name="publishable" type="xs:boolean" default="true"/>
+            <xs:attribute name="use-version" type="xs:boolean" default="true"/>
+            <xs:attribute name="tree-name" type="treeName" default="true"/>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>

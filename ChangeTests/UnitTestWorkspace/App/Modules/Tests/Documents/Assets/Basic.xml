@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd" 
-	icon="test" backoffice-indexable="false">
+	icon="test" backoffice-indexable="false" tree-name="Project_Tests">
 	<properties>
 		<property name="pStr" type="String" required="true"/>
 		<property name="pBool" type="Boolean" />
