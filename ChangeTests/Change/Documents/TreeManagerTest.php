@@ -143,7 +143,7 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(1, $rootNode->getChildrenCount());
 
 		$treeManager->deleteChildrenNodes($rootNode);
-		$this->assertEquals('Project_Tests', $doc1->getTreeName());
+		$this->assertNull($doc1->getTreeName());
 
 		$dm->reset();
 

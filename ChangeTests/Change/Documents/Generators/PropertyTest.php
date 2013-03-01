@@ -395,13 +395,13 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertTrue($p->getRequired());
-		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
+		$this->assertEquals(array('maxSize' => array('max' => 5)), $p->getConstraintArray());
 				
 		$p = new Property($model, 'LCID');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertTrue($p->getRequired());
-		$this->assertEquals(array('maxSize' => array('max' => 10)), $p->getConstraintArray());
+		$this->assertEquals(array('maxSize' => array('max' => 5)), $p->getConstraintArray());
 		
 		$p = new Property($model, 'creationDate');
 		$p->validate();
@@ -448,6 +448,12 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
 		$this->assertEquals('vendor_module_name', $p->getDocumentType());
+
+
+		$p = new Property($model, 'treeName');
+		$p->validate();
+		$this->assertEquals('String', $p->getType());
+		$this->assertEquals(array('maxSize' => array('max' => 50)), $p->getConstraintArray());
 	}
 	
 	public function testValidateInheritance()

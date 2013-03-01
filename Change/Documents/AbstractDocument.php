@@ -21,12 +21,7 @@ abstract class AbstractDocument implements \Serializable
 	 * @var string
 	 */
 	private $documentModelName;
-	
-	/**
-	 * @var string
-	 */
-	private $treeName;
-	
+
 	/**
 	 * @var array
 	 */
@@ -154,9 +149,8 @@ abstract class AbstractDocument implements \Serializable
 	/**
 	 * @param integer $id
 	 * @param integer $persistentState
-	 * @param string|null $treeName
 	 */
-	public function initialize($id, $persistentState = null, $treeName = null)
+	public function initialize($id, $persistentState = null)
 	{
 		$oldId = $this->id;
 		$this->id = intval($id);
@@ -164,30 +158,9 @@ abstract class AbstractDocument implements \Serializable
 		{
 			$this->setPersistentState($persistentState);
 		}
-		if ($treeName !== null)
-		{
-			$this->setTreeName($treeName);
-		}
 		$this->documentManager->reference($this, $oldId);
 	}
 
-	/**
-	 * @param string|null $treeName
-	 */
-	public function setTreeName($treeName)
-	{
-		$this->treeName = ($treeName !== null) ? strval($treeName) : null;
-	}
-	
-	/**
-	 * @api
-	 * @return string|null
-	 */
-	public function getTreeName()
-	{
-		return $this->treeName;
-	}
-	
 	/**
 	 * @api
 	 */
@@ -727,23 +700,44 @@ abstract class AbstractDocument implements \Serializable
 	}
 
 	// Generic Method
+
+	/**
+	 * @param string|null $treeName
+	 */
+	public function setTreeName($treeName)
+	{
+		return;
+	}
+
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getTreeName()
+	{
+		return null;
+	}
 	
 	/**
+	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getCreationDate();
 	
 	/**
+	 * @api
 	 * @param \DateTime $creationDate
 	 */
 	abstract public function setCreationDate($creationDate);
 	
 	/**
+	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getModificationDate();
 	
 	/**
+	 * @api
 	 * @param \DateTime $modificationDate
 	 */
 	abstract public function setModificationDate($modificationDate);

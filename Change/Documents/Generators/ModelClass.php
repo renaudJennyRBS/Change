@@ -106,6 +106,11 @@ class ModelClass
 		{
 			$code .= '		$this->injectedBy = ' . $this->escapePHPValue($model->getName()) . ';'. PHP_EOL;
 		}
+
+		if ($model->getTreeName() !== null)
+		{
+			$code .= '		$this->treeName = ' . $this->escapePHPValue($model->getTreeName()) . ';'. PHP_EOL;
+		}
 		
 		$code .= '	}'. PHP_EOL;
 		return $code;

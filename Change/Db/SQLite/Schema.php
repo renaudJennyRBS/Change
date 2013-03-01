@@ -24,7 +24,6 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			
 			$this->tables['change_document'] = $schemaManager->newTableDefinition('change_document')
 				->addField($idDef)->addField($modelDef)
-				->addField($schemaManager->newVarCharFieldDefinition('tree_name', array('length' => 50)))
 				->addKey($this->newPrimaryKey()->addField($idDef))
 				->setOption('AUTONUMBER', 100000);
 			

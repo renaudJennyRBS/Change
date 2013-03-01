@@ -249,7 +249,7 @@ class TreeNode
 	}
 
 	/**
-	 * @param integer[] $childrenIds
+	 * @param integer[]|null $childrenIds
 	 */
 	public function setChildrenIds($childrenIds)
 	{

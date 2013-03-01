@@ -20,6 +20,11 @@ class Model
 	 * @var string
 	 */
 	protected $shortName;
+
+	/**
+	 * @var string
+	 */
+	protected $treeName;
 	
 	/**
 	 * @var \Change\Documents\Generators\Model
@@ -215,6 +220,24 @@ class Model
 				case "localized":
 					$this->localized = ($value === 'true');
 					break;
+				case "tree-name":
+					if ($value === 'false')
+					{
+						$this->treeName = false;
+					}
+					elseif ($value === 'true')
+					{
+						$this->treeName = true;
+					}
+					else
+					{
+						if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
+						{
+							throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						}
+						$this->treeName = $value;
+					}
+					break;
 				case "xsi:schemaLocation":
 					// just ignore it
 					break;
@@ -268,10 +291,14 @@ class Model
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \RuntimeException
 	 */
 	public function validate()
 	{
+		if (strlen($this->getName()) > 50)
+		{
+			throw new \RuntimeException('Invalid document element name ' . $this .' too long', 54009);
+		}
 		if ($this->extend)
 		{
 			if ($this->localized !== null)
@@ -380,6 +407,27 @@ class Model
 				throw new \RuntimeException('Duplicate publishable attribute on ' . $this, 54020);
 			}
 		}
+
+		if ($this->getTreeName())
+		{
+			$addProperty = true;
+			foreach ($this->getAncestors() as $am)
+			{
+				/* @var $am \Change\Documents\Generators\Model */
+				if ($am->getPropertyByName('treeName'))
+				{
+					$addProperty = false;
+					break;
+				}
+			}
+
+			if ($addProperty)
+			{
+				$property = new Property($this, 'treeName', 'String');
+				$property->validate();
+				$this->properties[$property->getName()] = $property;
+			}
+		}
 		
 		foreach ($this->properties as $property)
 		{
@@ -430,7 +478,7 @@ class Model
 	}
 	
 	/**
-	 * @return \Change\Documents\Generators\Property
+	 * @return \Change\Documents\Generators\Property|null
 	 */
 	public function getPropertyByName($name)
 	{
@@ -478,7 +526,15 @@ class Model
 	{
 		return $this->inverseProperties[$inverseProperty->getName()] = $inverseProperty;
 	}
-	
+
+	/**
+	 * @return string
+	 */
+	public function getTreeName()
+	{
+		return $this->treeName;
+	}
+
 	/**
 	 * @return string
 	 */

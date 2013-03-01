@@ -51,7 +51,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals('document_id', $sqlMapping->getDocumentFieldName('id'));
 		$this->assertEquals('document_model', $sqlMapping->getDocumentFieldName('model'));
-		$this->assertEquals('tree_name', $sqlMapping->getDocumentFieldName('treeName'));
+		$this->assertEquals('treename', $sqlMapping->getDocumentFieldName('treeName'));
 
 		$this->assertEquals('test_name', $sqlMapping->getDocumentFieldName('test_Name'));
 		$this->assertEquals('test_name', $sqlMapping->getDocumentFieldName('TEST_NAME'));

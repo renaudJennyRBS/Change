@@ -160,6 +160,10 @@ class Property
 					}
 					break;
 				case "document-type":
+					if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
+					{
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+					}
 					$this->documentType = $value;
 					break;	
 				case "indexed":
@@ -228,7 +232,7 @@ class Property
 					{
 						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
-					break;									
+					break;
 				default:
 					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value, 54023);
 					break;
@@ -489,7 +493,7 @@ class Property
 	}
 	
 	/**
-	 * @param boolean $localized
+	 * @param boolean|null $localized
 	 */
 	public function makeLocalized($localized)
 	{
@@ -508,7 +512,7 @@ class Property
 	 * @throws \Exception
 	 */
 	public function validate()
-	{					
+	{
 		switch ($this->name)
 		{
 			case 'label':
@@ -521,7 +525,8 @@ class Property
 			case 'refLCID':
 			case 'LCID':
 				$this->type = 'String';
-				$this->constraintArray['maxSize'] = array('max' => 10);
+				$this->constraintArray['maxSize'] = array('max' => 5);
+				$this->dbOptions['length'] = 5;
 				$this->required = true;
 				break;
 			case 'creationDate':
@@ -557,6 +562,11 @@ class Property
 			case 'versionOfId':
 				$this->type = 'DocumentId';
 				$this->documentType = $this->model->getName();
+				break;
+			case 'treeName':
+				$this->type = 'String';
+				$this->constraintArray['maxSize'] = array('max' => 50);
+				$this->dbOptions['length'] = 50;
 				break;
 		}
 		$this->setDefaultConstraints();
@@ -602,7 +612,8 @@ class Property
 			switch ($this->name)
 			{
 				case 'refLCID':
-				case 'versionOfId':			
+				case 'versionOfId':
+				case 'treeName':
 					$this->makeLocalized(null);
 					break;					
 				case 'LCID':

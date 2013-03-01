@@ -68,7 +68,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 			$schemaManager = $this->getSchemaManager();
 			$idDef = $schemaManager->newIntegerFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('id')).')->setDefaultValue(\'0\')->setNullable(false);
 			$modelDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('model')).', array(\'length\' => 50))->setDefaultValue(\'\')->setNullable(false);
-			$lcidDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('LCID')).', array(\'length\' => 10))->setDefaultValue(\'\')->setNullable(false);
+			$lcidDef = $schemaManager->newVarCharFieldDefinition('.$this->escapePHPValue($this->sqlMapping->getDocumentFieldName('LCID')).', array(\'length\' => 5))->setDefaultValue(\'\')->setNullable(false);
 		
 			$relOrderDef = $schemaManager->newIntegerFieldDefinition(\'relorder\')->setDefaultValue(\'0\')->setNullable(false);
 			$relatedIdDef = $schemaManager->newIntegerFieldDefinition(\'relatedid\')->setDefaultValue(\'0\')->setNullable(false);' . PHP_EOL;
@@ -80,7 +80,31 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 			$this->completeDbOptions($model, $descendants, $this->schemaManager);
 			$code .= $this->generateTableDef($model, $descendants);
 		}
-		
+
+		$treeNames = array();
+		foreach ($this->compiler->getModels() as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if (is_string($treeName = $model->getTreeName()))
+			{
+				if (!in_array($treeName, $treeNames))
+				{
+					$treeNames[] = $treeName;
+					$tnEsc = $this->escapePHPValue($this->sqlMapping->getTreeTableName($treeName));
+					$code .=	'
+			$this->tables['.$tnEsc.'] = $tableDef = $schemaManager->newTableDefinition('.$tnEsc.')
+				->addField($schemaManager->newIntegerFieldDefinition(\'document_id\')->setNullable(false)->setDefaultValue(\'0\'))
+				->addField($schemaManager->newIntegerFieldDefinition(\'parent_id\')->setNullable(false)->setDefaultValue(\'0\'))
+				->addField($schemaManager->newIntegerFieldDefinition(\'node_order\')->setNullable(false)->setDefaultValue(\'0\'))
+				->addField($schemaManager->newIntegerFieldDefinition(\'node_level\')->setNullable(false)->setDefaultValue(\'0\'))
+				->addField($schemaManager->newVarCharFieldDefinition(\'node_path\')->setNullable(false)->setDefaultValue(\'\'))
+				->addField($schemaManager->newIntegerFieldDefinition(\'children_count\')->setNullable(false)->setDefaultValue(\'0\'));
+			$tableDef->addKey($this->newPrimaryKey()->addField($tableDef->getField(\'document_id\')));
+			$tableDef->addKey($this->newIndexKey()->setName(\'tree_node\')->addField($tableDef->getField(\'parent_id\'))->addField($tableDef->getField(\'node_order\')));'.PHP_EOL;
+				}
+			}
+		}
+
 		$code .= '
 		}
 		return $this->tables;

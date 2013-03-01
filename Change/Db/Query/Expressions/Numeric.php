@@ -7,7 +7,7 @@ namespace Change\Db\Query\Expressions;
 class Numeric extends \Change\Db\Query\Expressions\Value
 {
 	/**
-	 * @param number $value
+	 * @param integer|float $value
 	 */
 	public function __construct($value = null)
 	{

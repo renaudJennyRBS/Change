@@ -244,7 +244,7 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param numeric $number
+	 * @param integer|float $number
 	 * @return \Change\Db\Query\Expressions\Numeric
 	 */
 	public function number($number)

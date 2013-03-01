@@ -435,7 +435,9 @@ abstract class AbstractService
 	{
 		$datas = array();
 		$datas['metas'] = $document->getMetas();
-		if ($document->getTreeName())
+		$model = $document->getDocumentModel();
+
+		if ($model->useTree() && $document->getTreeName())
 		{
 			$node = $this->documentServices->getTreeManager()->getNodeByDocument($document);
 			if ($node)
@@ -445,7 +447,7 @@ abstract class AbstractService
 		}
 		
 		$localized = array();
-		foreach ($document->getDocumentModel()->getProperties() as $propertyName => $property)
+		foreach ($model->getProperties() as $propertyName => $property)
 		{
 			/* @var $property \Change\Documents\Property */
 			if ($property->getLocalized())
