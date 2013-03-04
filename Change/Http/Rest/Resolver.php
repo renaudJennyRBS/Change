@@ -19,6 +19,14 @@ class Resolver extends \Change\Http\ActionResolver
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getResourceActionClasses()
+	{
+		return $this->resourceActionClasses;
+	}
+
+	/**
 	 * @param $actionName
 	 * @param $class
 	 */
@@ -39,6 +47,11 @@ class Resolver extends \Change\Http\ActionResolver
 			array_pop($nameSpaces);
 			$event->setParam('isDirectory', true);
 		}
+		else
+		{
+			$event->setParam('isDirectory', false);
+		}
+
 		$event->setParam('namespace', implode('.', $nameSpaces));
 
 		if (count($nameSpaces) !== 0)
@@ -54,9 +67,18 @@ class Resolver extends \Change\Http\ActionResolver
 			}
 		}
 
-		if ($event->getAction() === null && $event->getParam('isDirectory') &&  $request->getMethod() === 'GET')
+		if ($event->getAction() === null && $event->getParam('isDirectory'))
 		{
-			$event->setAction(array($this, 'discoverNameSpace'));
+			if ($request->getMethod() === 'GET')
+			{
+				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$event->setAction(function($event) use($action) {$action->execute($event);});
+				return;
+			}
+
+			$result = $this->buildNotAllowedError($request->getMethod(), array(Request::METHOD_GET));
+			$event->setResult($result);
+			return;
 		}
 	}
 
@@ -71,12 +93,11 @@ class Resolver extends \Change\Http\ActionResolver
 		if (count($resourceParts) >= 3)
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
-			$event->setParam('modelName', $modelName);
-
 			$documentServices = $event->getDocumentServices();
 			$model = $documentServices->getModelManager()->getModelByName($modelName);
 			if ($model instanceof \Change\Documents\AbstractModel)
 			{
+				$event->setParam('modelName', $modelName);
 				$method = $event->getRequest()->getMethod();
 				$isDirectory = $event->getParam('isDirectory', false);
 				if (isset($resourceParts[3]))
@@ -207,6 +228,7 @@ class Resolver extends \Change\Http\ActionResolver
 	protected function resourcesactions($event, $resourceParts, $method)
 	{
 		$nbParts = count($resourceParts);
+
 		if ($nbParts == 2 || $nbParts == 3)
 		{
 			$actionName = $resourceParts[0];
@@ -274,100 +296,5 @@ class Resolver extends \Change\Http\ActionResolver
 		$result->getHeaders()->addHeader($header);
 		$result->addDataValue('allow', $allow);
 		return $result;
-	}
-
-
-	/**
-	 * @param string $namespace
-	 * @return string
-	 */
-	protected function generatePathInfoByNamespace($namespace)
-	{
-		if (empty($namespace))
-		{
-			return '/';
-		}
-		return '/' . str_replace('.', '/', $namespace) . '/';
-	}
-
-	/**
-	 * Use Event Params: namespace
-	 * @param \Change\Http\Event $event
-	 */
-	public function discoverNameSpace($event)
-	{
-		$namespace = $event->getParam('namespace');
-		$result = new \Change\Http\Rest\Result\NamespaceResult();
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
-
-		$urlManager = $event->getUrlManager();
-		$selfLink = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($namespace));
-		$result->addLink($selfLink);
-		if ($namespace === '')
-		{
-			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resources'), 'resources');
-			$result->addLink($link);
-			$event->setResult($result);
-
-			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resourcesactions'), 'resourcesactions');
-			$result->addLink($link);
-			$event->setResult($result);
-			return;
-		}
-
-		$names = explode('.', $namespace);
-		if ($names[0] === 'resources')
-		{
-			if (!isset($names[1]))
-			{
-				$vendors = $event->getDocumentServices()->getModelManager()->getVendors();
-				foreach ($vendors as $vendor)
-				{
-					$ns = $namespace .'.'. $vendor;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
-					$result->addLink($link);
-				}
-				$event->setResult($result);
-			}
-			elseif (!isset($names[2]))
-			{
-				$vendor = $names[1];
-				$modules = $event->getDocumentServices()->getModelManager()->getShortModulesNames($vendor);
-				foreach ($modules as $module)
-				{
-					$ns = $namespace .'.'. $module;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
-					$result->addLink($link);
-				}
-				$event->setResult($result);
-			}
-			elseif (!isset($names[3]))
-			{
-				$documents = $event->getDocumentServices()->getModelManager()->getShortDocumentsNames($names[1], $names[2]);
-				if ($documents)
-				{
-					foreach ($documents as $document)
-					{
-						$ns = $namespace .'.'. $document;
-						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
-						$result->addLink($link);
-					}
-					$event->setResult($result);
-				}
-			}
-		}
-		elseif ($names[0] === 'resourcesactions')
-		{
-			if (!isset($names[1]))
-			{
-				foreach ($this->resourceActionClasses as $actionName => $class)
-				{
-					$ns = $namespace .'.'. $actionName;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
-					$result->addLink($link);
-				}
-				$event->setResult($result);
-			}
-		}
 	}
 }
