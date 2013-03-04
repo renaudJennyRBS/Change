@@ -73,6 +73,8 @@ class Resolver extends \Change\Http\ActionResolver
 		{
 			if ($request->getMethod() === 'GET')
 			{
+				$event->setParam('Resolver', $this);
+
 				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
 				return;
