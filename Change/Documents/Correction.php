@@ -130,9 +130,18 @@ class Correction
 	 * @api
 	 * @return boolean
 	 */
-	public function getModified()
+	public function isModified()
 	{
 		return $this->modified;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isNew()
+	{
+		return ($this->id === null);
 	}
 
 	/**
