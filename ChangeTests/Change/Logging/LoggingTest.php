@@ -83,6 +83,23 @@ class LoggingTest extends \ChangeTests\Change\TestAssets\TestCase
 		$logging->setLoggerByName('toto', $logger);
 		$this->assertEquals($logger, $logging->getLoggerByName('toto'));
 		
+		// Logger automatic creation.
+		$config = $logging->getConfiguration();
+		
+		$logging->setLoggerByName('test', null);
+		$this->assertNull($config->getEntry('Change/Logging/writers/test'));
+		$this->assertEquals('stream', $config->getEntry('Change/Logging/writers/default'));
+		$logger = $logging->getLoggerByName('test');
+		$writers = $logger->getWriters()->toArray();
+		$this->assertInstanceOf('\Zend\Log\Writer\Stream', $writers[0]);
+		
+		$logging->setLoggerByName('test', null);
+		$config->addVolatileEntry('Change/Logging/writers/test', 'syslog');
+		$this->assertEquals('syslog', $config->getEntry('Change/Logging/writers/test'));
+		$logger = $logging->getLoggerByName('test');
+		$writers = $logger->getWriters()->toArray();
+		$this->assertInstanceOf('\Zend\Log\Writer\Syslog', $writers[0]);
+		
 		return $logging;
 	}
 	
