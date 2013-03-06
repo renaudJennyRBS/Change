@@ -24,7 +24,7 @@ class LocalizableFunctions
 	 */
 	public function __construct(\Change\Documents\AbstractDocument $document)
 	{
-		$this->documentManager = $document->getDocumentManager();
+		$this->documentManager = $document->getDocumentServices()->getDocumentManager();
 		$this->documentId = $document->getId();
 	}
 

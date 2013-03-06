@@ -1,11 +1,13 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Events\Event as DocumentEvent;
+
 /**
  * @name \Change\Documents\AbstractDocument
  * @api
  */
-abstract class AbstractDocument implements \Serializable
+abstract class AbstractDocument implements \Serializable, \Zend\EventManager\EventsCapableInterface
 {		
 	/**
 	 * @var integer
@@ -36,60 +38,53 @@ abstract class AbstractDocument implements \Serializable
 	 * @var boolean
 	 */
 	private $modifiedMetas = false;
-	
-	/**
-	 * @var array
-	 */
-	private $propertiesErrors;
-	
+
 	/**
 	 * @var \Change\Documents\CorrectionFunctions
 	 */
 	protected $correctionFunctions;
-	
-	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-	
+
 	/**
 	 * @var \Change\Documents\AbstractModel
 	 */
 	protected $documentModel;
 	
 	/**
-	 * @var \Change\Documents\AbstractService
+	 * @var \Change\Documents\DocumentServices
 	 */
-	protected $documentService;
+	protected $documentServices;
 
 	/**
-	 * @param \Change\Documents\DocumentManager $manager
-	 * @param \Change\Documents\AbstractModel $model
-	 * @param \Change\Documents\AbstractService $service
+	 * @var \Zend\EventManager\EventManager
 	 */
-	public function __construct(\Change\Documents\DocumentManager $manager, \Change\Documents\AbstractModel $model, \Change\Documents\AbstractService $service)
+	protected $eventManager;
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\AbstractModel $model
+	 */
+	public function __construct(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
 	{
-		$this->setDocumentContext($manager, $model, $service);
+		$this->setDocumentContext($documentServices, $model);
 	}
 
 	public function __destruct()
 	{
-		unset($this->documentManager);
+		unset($this->documentServices);
 		unset($this->documentModel);
-		unset($this->documentService);
 	}
-	
+
 	/**
-	 * @param \Change\Documents\DocumentManager $manager
+	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Documents\AbstractModel $model
-	 * @param \Change\Documents\AbstractService $service
+	 * @return void
 	 */
-	public function setDocumentContext(\Change\Documents\DocumentManager $manager, \Change\Documents\AbstractModel $model, \Change\Documents\AbstractService $service)
+	public function setDocumentContext(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
 	{
-		$this->documentManager = $manager;
+		$this->documentServices = $documentServices;
 		$this->documentModel = $model;
 		$this->documentModelName = $model->getName();
-		$this->documentService = $service;
+
 	}
 
 	/**
@@ -112,13 +107,13 @@ abstract class AbstractDocument implements \Serializable
 
 	/**
 	 * @api
-	 * @return \Change\Documents\DocumentManager
+	 * @return \Change\Documents\DocumentServices
 	 */
-	public function getDocumentManager()
+	public function getDocumentServices()
 	{
-		return $this->documentManager;
+		return $this->documentServices;
 	}
-	
+
 	/**
 	 * @api
 	 * @return \Change\Documents\AbstractModel
@@ -136,16 +131,34 @@ abstract class AbstractDocument implements \Serializable
 	{
 		return $this->documentModelName;
 	}
-	
+
 	/**
+	 * Retrieve the event manager
 	 * @api
-	 * @return \Change\Documents\AbstractService
+	 * @return \Zend\EventManager\EventManagerInterface
 	 */
-	public function getDocumentService()
+	public function getEventManager()
 	{
-		return $this->documentService;
+		if ($this->eventManager === null)
+		{
+			$model = $this->getDocumentModel();
+			$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
+			$eventManager = new \Zend\EventManager\EventManager($identifiers);
+			$eventManager->setSharedManager($this->getDocumentManager()->getApplicationServices()->getApplication()->getSharedEventManager());
+			$eventManager->setEventClass('\Change\Documents\Events\Event');
+			$this->eventManager = $eventManager;
+		}
+		return $this->eventManager;
 	}
-	
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->documentServices->getDocumentManager();
+	}
+
 	/**
 	 * @param integer $id
 	 * @param integer $persistentState
@@ -158,7 +171,7 @@ abstract class AbstractDocument implements \Serializable
 		{
 			$this->setPersistentState($persistentState);
 		}
-		$this->documentManager->reference($this, $oldId);
+		$this->getDocumentManager()->reference($this, $oldId);
 	}
 
 	/**
@@ -169,7 +182,6 @@ abstract class AbstractDocument implements \Serializable
 		$this->modifiedProperties = array();
 		$this->metas = null;
 		$this->modifiedMetas = false;
-		$this->propertiesErrors = null;
 		$this->correctionFunctions = null;
 
 		if ($this->persistentState === DocumentManager::STATE_LOADED)
@@ -259,14 +271,12 @@ abstract class AbstractDocument implements \Serializable
 	{
 		return $this->id;
 	}
-	
-	
-	
+
 	protected function checkLoaded()
 	{
 		if ($this->persistentState === DocumentManager::STATE_INITIALIZED)
 		{
-			$this->documentManager->loadDocument($this);
+			$this->getDocumentManager()->loadDocument($this);
 		}
 	}
 
@@ -290,7 +300,53 @@ abstract class AbstractDocument implements \Serializable
 	 */
 	public function create()
 	{
-		$this->getDocumentService()->create($this);
+		if (!$this->isNew())
+		{
+			throw new \RuntimeException('Document is not new', 51001);
+		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_CREATE, $this);
+		$this->getEventManager()->trigger($event);
+
+		$propertiesErrors = $event->getParam('propertiesErrors');
+		if (is_array($propertiesErrors) && count($propertiesErrors))
+		{
+			$e = new \RuntimeException('Document is not valid', 52000);
+			$e->propertiesErrors = $propertiesErrors;
+			throw $e;
+		}
+
+		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$this->doCreate();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doCreate()
+	{
+		$dm = $this->getDocumentManager();
+
+		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
+		{
+			$dm->affectId($this);
+			$dm->insertDocument($this);
+		}
+
+		if ($this instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$dm->insertLocalizedDocument($this, $this->getCurrentLocalizedPart());
+		}
 	}
 	
 	/**
@@ -298,169 +354,142 @@ abstract class AbstractDocument implements \Serializable
 	 */
 	public function update()
 	{
-		$this->getDocumentService()->update($this);
+		if ($this->isNew())
+		{
+			throw new \RuntimeException('Document is new', 51002);
+		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATE, $this);
+		$this->getEventManager()->trigger($event);
+
+		$propertiesErrors = $event->getParam('propertiesErrors');
+		if (is_array($propertiesErrors) && count($propertiesErrors))
+		{
+			$e = new \RuntimeException('Document is not valid', 52000);
+			$e->propertiesErrors = $propertiesErrors;
+			throw $e;
+		}
+
+		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$this->doUpdate();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
 	}
-	
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doUpdate()
+	{
+		if ($this->getDocumentModel()->useCorrection())
+		{
+			$corrections = $this->getCorrectionFunctions()->extractCorrections();
+		}
+		else
+		{
+			$corrections = array();
+		}
+
+		$dm = $this->getDocumentManager();
+		if (count($corrections))
+		{
+			$cleanUpPropertiesNames = array();
+			foreach ($corrections as $correction)
+			{
+				/* @var $correction \Change\Documents\Correction */
+				$this->getCorrectionFunctions()->save($correction);
+				$cleanUpPropertiesNames = array_merge($cleanUpPropertiesNames, $correction->getPropertiesNames());
+			}
+
+			foreach (array_unique($cleanUpPropertiesNames) as $propertyName)
+			{
+				$this->removeOldPropertyValue($propertyName);
+			}
+
+		}
+
+		if ($this->hasModifiedProperties() || count($corrections))
+		{
+			$this->setModificationDate(new \DateTime());
+			if ($this instanceof \Change\Documents\Interfaces\Editable)
+			{
+				$this->nextDocumentVersion();
+			}
+
+			if ($this->hasNonLocalizedModifiedProperties())
+			{
+				$dm->updateDocument($this);
+			}
+
+			if ($this instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				$localizedPart = $this->getCurrentLocalizedPart();
+				if ($localizedPart->hasModifiedProperties())
+				{
+					$dm->updateLocalizedDocument($this, $localizedPart);
+				}
+			}
+		}
+	}
+
 	/**
 	 * @api
 	 */
 	public function delete()
 	{
-		$this->getDocumentService()->delete($this);
-	}
-	
-	/**
-	 * Override by compiled document class
-	 */
-	protected function validateProperties()
-	{
-		foreach ($this->documentModel->getProperties() as $propertyName => $property)
+		//Already deleted
+		if ($this->getPersistentState() === DocumentManager::STATE_DELETED)
 		{
-			if ($this->isNew() || $this->isPropertyModified($propertyName))
+			return;
+		}
+
+		if ($this->isNew())
+		{
+			throw new \RuntimeException('Document is new', 51002);
+		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_DELETE, $this);
+		$this->getEventManager()->trigger($event);
+
+		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$backupData = $event->getParam('backupData');
+			if (is_array($backupData) && count($backupData))
 			{
-				$this->validatePropertyValue($property);
+				$this->getDocumentManager()->insertDocumentBackup($this, $backupData);
 			}
+
+			$this->doDelete();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
 		}
 	}
-	
+
 	/**
-	 * @param \Change\Documents\Property $property
-	 * @return boolean
+	 * @throws \Exception
 	 */
-	protected function validatePropertyValue($property)
+	protected function doDelete()
 	{
-		$value = $property->getValue($this);
-		if ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+
+		$dm = $this->getDocumentManager();
+		$dm->deleteDocument($this);
+		if ($this instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$nbValue = count($value);
-			if ($nbValue === 0)
-			{
-				if (!$property->isRequired())
-				{
-					return true;
-				}
-				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.isempty', array('ucf')));
-				return false;
-			}
-			elseif ($property->getMaxOccurs() > 1 && $nbValue > $property->getMaxOccurs())
-			{
-				$args = array('maxOccurs' => $property->getMaxOccurs());
-				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.maxoccurs', array('ucf'), array($args)));
-				return false;
-			}
-			elseif ($property->getMinOccurs() > 1 && $nbValue < $property->getMinOccurs())
-			{
-				$args = array('minOccurs' => $property->getMinOccurs());
-				$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.minoccurs', array('ucf'), array($args)));
-				return false;
-			}
-			
-		} 
-		elseif ($value === null || $value === '')
-		{
-			if (!$property->isRequired()) 
-			{	
-				return true;
-			}
-			$this->addPropertyError($property->getName(), new \Change\I18n\PreparedKey('c.constraints.isempty', array('ucf')));
-			return false;
-		}
-		elseif ($property->hasConstraints()) 
-		{
-			$constraintManager = $this->documentService->getConstraintsManager();
-			$defaultParams =  array('documentId' => $this->getId(),
-									'modelName' => $this->getDocumentModelName(),
-									'propertyName' => $property->getName(),
-									'applicationServices' => $this->documentService->getApplicationServices(),
-									'documentServices' => $this->documentService->getDocumentServices());
-			foreach ($property->getConstraintArray() as $name => $params) 
-			{
-				$params += $defaultParams;
-				$c = $constraintManager->getByName($name, $params);
-				if (!$c->isValid($value)) 
-				{
-					$this->addPropertyErrors($property->getName(), $c->getMessages());
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * @api
-	 * validate document and return boolean result
-	 * @return boolean
-	 */
-	public function isValid()
-	{
-		$this->propertiesErrors = null;
-		$this->validateProperties();
-		return !$this->hasPropertiesErrors();
-	}
-	
-	/**
-	 * @api
-	 * @return array<propertyName => string[]>
-	 */
-	public function getPropertiesErrors()
-	{
-		if ($this->hasPropertiesErrors())
-		{
-			return $this->propertiesErrors;
-		}
-		return array();
-	}
-	
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	protected function hasPropertiesErrors()
-	{
-		return is_array($this->propertiesErrors) && count($this->propertiesErrors);
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @param string $error
-	 */
-	protected function addPropertyError($propertyName, $error)
-	{
-		if ($error !== null)
-		{
-			$this->propertiesErrors[$propertyName][] = $error;
-		}
-	}
-	
-	/**
-	 * @param string $propertyName
-	 * @param string[] $errors
-	 */
-	protected function addPropertyErrors($propertyName, $errors)
-	{		
-		if (is_array($errors) && count($errors))
-		{
-			foreach ($errors as $error)
-			{
-				/* @var $error string */
-				$this->addPropertyError($propertyName, $error);
-			}
-		}
-	}	
-	
-	/**
-	 * @param string $propertyName
-	 */
-	protected function clearPropertyErrors($propertyName = null)
-	{
-		if ($propertyName === null)
-		{
-			$this->propertiesErrors = null;
-		}
-		elseif (is_array($this->propertiesErrors) && isset($this->propertiesErrors[$propertyName]))
-		{
-			unset($this->propertiesErrors[$propertyName]);
+			$dm->deleteLocalizedDocuments($this);
 		}
 	}
 
@@ -552,7 +581,7 @@ abstract class AbstractDocument implements \Serializable
 	 */
 	protected function propertyChanged($propertyName)
 	{
-		$this->documentService->propertyChanged($this, $propertyName);
+
 	}
 
 	/**
@@ -582,7 +611,7 @@ abstract class AbstractDocument implements \Serializable
 	{
 		if ($this->modifiedMetas)
 		{
-			$this->documentService->saveMetas($this, $this->metas);
+			$this->getDocumentManager()->saveMetas($this, $this->metas);
 			$this->modifiedMetas = false;
 		}
 	}
@@ -594,7 +623,7 @@ abstract class AbstractDocument implements \Serializable
 	{
 		if ($this->metas === null)
 		{
-			$this->metas = $this->documentManager->loadMetas($this);
+			$this->metas = $this->getDocumentManager()->loadMetas($this);
 			$this->modifiedMetas = false;
 		}
 	}

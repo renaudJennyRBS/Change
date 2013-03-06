@@ -174,7 +174,7 @@ class GetDocumentModelCollection
 	{
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentManager()->pushLCID($documentLink->getLCID());
+			$document->getDocumentServices()->getDocumentManager()->pushLCID($documentLink->getLCID());
 		}
 
 		$model = $document->getDocumentModel();
@@ -211,7 +211,7 @@ class GetDocumentModelCollection
 
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentManager()->popLCID();
+			$document->getDocumentServices()->getDocumentManager()->popLCID();
 		}
 		return $documentLink;
 	}

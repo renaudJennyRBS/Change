@@ -47,9 +47,10 @@ class CreateDocument
 
 		if ($LCID)
 		{
-			$document->getDocumentManager()->pushLCID($LCID);
+			$documentManager = $document->getDocumentServices()->getDocumentManager();
+			$documentManager->pushLCID($LCID);
 			$this->create($event, $document, $properties);
-			$document->getDocumentManager()->popLCID();
+			$documentManager->popLCID();
 		}
 		else
 		{

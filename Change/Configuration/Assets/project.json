@@ -39,8 +39,8 @@
 			}
 		},
 		"Events":{
-			"registrationclasses":{
-				"Change":"\\Change\\Events\\DefaultRegistration"
+			"ListenerAggregateClasses":{
+				"Change":"\\Change\\Events\\DefaultSharedListenerAggregate"
 			}
 		}
 	}

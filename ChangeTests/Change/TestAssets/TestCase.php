@@ -31,10 +31,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected static function getNewDocumentServices(\Change\Application\ApplicationServices $applicationServices)
 	{
-		if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
-		{
-			throw new \RuntimeException('Documents are not compiled.');
-		}
 		return new \Change\Documents\DocumentServices($applicationServices);
 	}
 

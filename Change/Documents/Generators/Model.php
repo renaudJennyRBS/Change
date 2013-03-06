@@ -804,46 +804,5 @@ class Model
 			return $this->getParent()->getDocumentLocalizedClassName();
 		}
 		return '\\'. $this->getCompilationNameSpace(). '\\' . $this->getShortDocumentLocalizedClassName();
-	}	
-	
-	
-	/**
-	 * @return string
-	 */
-	public function getShortAbstractServiceClassName()
-	{
-		return 'Abstract' . $this->getShortName() . 'Service';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getAbstractServiceClassName()
-	{
-		if ($this->getInject())
-		{
-			return $this->getParent()->getAbstractServiceClassName();
-		}
-		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortAbstractServiceClassName();
-	}	
-	
-	/**
-	 * @return string
-	 */
-	public function getShortServiceClassName()
-	{
-		return $this->getShortName() . 'Service';
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getServiceClassName()
-	{
-		if ($this->getInject())
-		{
-			return $this->getParent()->getServiceClassName();
-		}
-		return '\\'. $this->getNameSpace() . '\\' . $this->getShortServiceClassName();
 	}
 }

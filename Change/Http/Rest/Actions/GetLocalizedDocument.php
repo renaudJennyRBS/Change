@@ -51,18 +51,18 @@ class GetLocalizedDocument
 		}
 		$document = $this->getDocument($event);
 
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		try
 		{
 			$documentManager->pushLCID($LCID);
 
 			$this->generateResult($event, $document, $LCID);
 
-			$document->getDocumentManager()->popLCID();
+			$documentManager->popLCID();
 		}
 		catch (\Exception $e)
 		{
-			$document->getDocumentManager()->popLCID($e);
+			$documentManager->popLCID($e);
 		}
 	}
 

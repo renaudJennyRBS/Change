@@ -43,7 +43,8 @@ class CreateLocalizedDocument
 			return;
 		}
 
-		$document->getDocumentManager()->pushLCID($LCID);
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager->pushLCID($LCID);
 
 		if ($document->isNew())
 		{
@@ -59,7 +60,7 @@ class CreateLocalizedDocument
 			$errorResult->addDataValue('supported-LCID', $supported);
 			$event->setResult($errorResult);
 		}
-		$document->getDocumentManager()->popLCID();
+		$documentManager->popLCID();
 	}
 
 	/**

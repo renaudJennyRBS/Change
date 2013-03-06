@@ -8,11 +8,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testInitialize()
 	{
-		if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
-		{
-			$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-			$compiler->generate();
-		}
+		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler->generate();
 	}
 
 	/**
@@ -43,6 +40,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('test', $resolver->getResourceActionClasses());
 
 		$application = $this->getApplication();
+
 		$event = new \Change\Http\Event();
 		$event->setRequest(new \ChangeTests\Change\Http\Rest\TestAssets\Request());
 		$event->getRequest()->setMethod(\Zend\Http\Request::METHOD_GET);
@@ -166,11 +164,11 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
-		/* @var $tbs \Project\Tests\Documents\BasicService */
-		$tbs = $event->getDocumentServices()->getProjectTestsBasic();
-		$document = $tbs->getInstanceRo5001();
+		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5001($event->getDocumentServices());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
+
+
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
@@ -226,9 +224,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
-		/* @var $tbs \Project\Tests\Documents\LocalizedService */
-		$tbs = $event->getDocumentServices()->getProjectTestsLocalized();
-		$document = $tbs->getInstanceRo5002();
+		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5002($event->getDocumentServices());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
 		$resolver->resolve($event);
@@ -302,9 +298,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($event->getAction());
 
 
-		/* @var $tbs \Project\Tests\Documents\BasicService */
-		$tbs = $event->getDocumentServices()->getProjectTestsBasic();
-		$document = $tbs->getInstanceRo5001();
+		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5001($this->getDocumentServices());
 
 		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
 		$resolver->resolve($event);
@@ -314,9 +308,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertTrue(is_callable($event->getAction()));
 
 
-		/* @var $tbs \Project\Tests\Documents\LocalizedService */
-		$tbs = $event->getDocumentServices()->getProjectTestsLocalized();
-		$document = $tbs->getInstanceRo5002();
+		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5002($this->getDocumentServices());
 
 		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
 		$resolver->resolve($event);

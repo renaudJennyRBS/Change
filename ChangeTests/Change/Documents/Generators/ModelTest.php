@@ -42,12 +42,6 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$this->assertEquals('Localizeddocument', $model->getShortDocumentLocalizedClassName());
 		$this->assertEquals('\Compilation\change\generic\Documents\Localizeddocument', $model->getDocumentLocalizedClassName());
-		
-		$this->assertEquals('AbstractdocumentService', $model->getShortAbstractServiceClassName());
-		$this->assertEquals('\Compilation\change\generic\Documents\AbstractdocumentService', $model->getAbstractServiceClassName());
-		
-		$this->assertEquals('documentService', $model->getShortServiceClassName());
-		$this->assertEquals('\change\generic\Documents\documentService', $model->getServiceClassName());
 
 		return $model;
 	}

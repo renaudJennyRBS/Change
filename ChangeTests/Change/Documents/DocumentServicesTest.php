@@ -13,21 +13,13 @@ class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$documentsServices = $this->getDocumentServices();
 		$this->assertInstanceOf('\Change\Documents\DocumentServices', $documentsServices);
-		return $documentsServices;
-	}
+		$this->assertSame($this->getApplicationServices(), $documentsServices->getApplicationServices());
 
-	/**
-	 * @depends testInitialize
-	 * @param \Change\Documents\DocumentServices $documentsServices
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function testGetModelByName($documentsServices)
-	{
-		$this->assertTrue(method_exists($documentsServices, 'getProjectTestsBasic'));
-		$this->assertTrue(is_callable(array($documentsServices, 'getProjectTestsBasic')));
+		$this->assertInstanceOf('\Change\Documents\ModelManager', $documentsServices->getModelManager());
+		$this->assertInstanceOf('\Change\Documents\DocumentManager', $documentsServices->getDocumentManager());
+		$this->assertInstanceOf('\Change\Documents\TreeManager', $documentsServices->getTreeManager());
 
-		$service = $documentsServices->getProjectTestsBasic();
-		$this->assertInstanceOf('\Project\Tests\Documents\BasicService', $service);
+		$this->assertInstanceOf('\Change\Documents\Constraints\ConstraintsManager', $documentsServices->getConstraintsManager());
 
 		return $documentsServices;
 	}

@@ -28,8 +28,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testSerialize()
 	{
-		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
-		$basicDoc = $testsBasicService->getNewDocumentInstance();
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$str = serialize($basicDoc);
 		$this->assertEquals(serialize(null), $str);
 	}
@@ -39,9 +39,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testBasic()
 	{
-		/* @var $testsBasicService \Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
-		$basicDoc = $testsBasicService->getNewDocumentInstance();
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
 		$this->assertEquals('Project_Tests_Basic', $basicDoc->getDocumentModelName());
 		
@@ -51,17 +50,21 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($basicDoc->isDeleted());
 		$this->assertFalse($basicDoc->hasModifiedProperties());
 		$this->assertFalse($basicDoc->hasModifiedMetas());
-		$this->assertCount(0, $basicDoc->getPropertiesErrors());
+
 		
 		$this->assertNull($basicDoc->getPStr());
 		$this->assertNull($basicDoc->getPStrOldValue());
 		
 		$this->assertInstanceOf('\DateTime', $basicDoc->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $basicDoc->getModificationDate());
-		
-		$this->assertFalse($basicDoc->isValid());
-		$this->assertCount(1, $basicDoc->getPropertiesErrors());
-		$this->assertArrayHasKey('pStr', $basicDoc->getPropertiesErrors());
+
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$validation = new \Change\Documents\Events\ValidateListener();
+		$validation->onValidate($event);
+		$errors = $event->getParam('propertiesErrors');
+
+		$this->assertCount(1, $errors);
+		$this->assertArrayHasKey('pStr', $errors);
 		
 		$basicDoc->setPStr('string');
 		$this->assertEquals('string', $basicDoc->getPStr());
@@ -69,9 +72,10 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$basicDoc->setPInt(50);
 		$basicDoc->setPFloat(0.03);
-		
-		$this->assertTrue($basicDoc->isValid());
-		$this->assertCount(0, $basicDoc->getPropertiesErrors());
+
+		$validation->onValidate($event);
+		$errors = $event->getParam('propertiesErrors');
+		$this->assertNull($errors);
 		$this->assertFalse($basicDoc->hasModifiedProperties());
 		
 		$basicDoc->save();
@@ -106,9 +110,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('8.7', $basicDoc->getPDec());
 		
 		$documentId = $basicDoc->getId();
-		$basicDoc->getDocumentManager()->reset();
-		
-		$basicDoc2 = $testsBasicService->getDocumentInstance($documentId);
+		$this->getDocumentServices()->getDocumentManager()->reset();
+
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		$this->assertNotSame($basicDoc, $basicDoc2);
@@ -120,7 +126,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_DELETED, $basicDoc2->getPersistentState());
 		$this->assertTrue($basicDoc2->isDeleted());
 		
-		$datas = $basicDoc2->getDocumentManager()->getBackupData($documentId);
+		$datas = $this->getDocumentServices()->getDocumentManager()->getBackupData($documentId);
 		$this->assertArrayHasKey('pStr', $datas);
 		$this->assertEquals('string 2', $datas['pStr']);
 		$this->assertArrayHasKey('deletiondate', $datas);
@@ -135,11 +141,12 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testLocalized()
 	{
-		/* @var $testsLocalizedService \Project\Tests\Documents\LocalizedService */
-		$testsLocalizedService = $this->getDocumentServices()->getProjectTestsLocalized();
+
 		$dm = $this->getDocumentServices()->getDocumentManager();
 
-		$localizedDoc = $testsLocalizedService->getNewDocumentInstance();
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
+		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+
 		$dm->pushLCID('fr_FR');
 
 		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $localizedDoc);
@@ -151,7 +158,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($localizedDoc->isDeleted());
 		$this->assertFalse($localizedDoc->hasModifiedProperties());
 		$this->assertFalse($localizedDoc->hasModifiedMetas());
-		$this->assertCount(0, $localizedDoc->getPropertiesErrors());
+
 
 		$this->assertEquals('fr_FR', $localizedDoc->getLCID());
 		$this->assertNull($localizedDoc->getRefLCID());
@@ -165,12 +172,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\DateTime', $localizedDoc->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $localizedDoc->getModificationDate());
 
-		$this->assertFalse($localizedDoc->isValid());
 
-		$this->assertCount(3, $localizedDoc->getPropertiesErrors());
-		$this->assertArrayHasKey('pStr', $localizedDoc->getPropertiesErrors());
-		$this->assertArrayHasKey('pLStr', $localizedDoc->getPropertiesErrors());
-		$this->assertArrayHasKey('refLCID', $localizedDoc->getPropertiesErrors());
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $localizedDoc);
+		$validation = new \Change\Documents\Events\ValidateListener();
+		$validation->onValidate($event);
+		$errors = $event->getParam('propertiesErrors');
+
+		$this->assertCount(2, $errors);
+		$this->assertArrayHasKey('pStr', $errors);
+		$this->assertArrayHasKey('pLStr', $errors);
 
 		$localizedDoc->setPStr('string');
 		$this->assertEquals('string', $localizedDoc->getPStr());
@@ -184,8 +194,10 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedDoc->setPInt(50);
 		$localizedDoc->setPFloat(0.03);
 
-		$this->assertTrue($localizedDoc->isValid());
-		$this->assertCount(0, $localizedDoc->getPropertiesErrors());
+		$validation->onValidate($event);
+		$errors = $event->getParam('propertiesErrors');
+
+		$this->assertNull($errors);
 		$this->assertFalse($localizedDoc->hasModifiedProperties());
 
 		$localizedDoc->save();
@@ -254,7 +266,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$dm->reset();
 
 		$dm->pushLCID('en_GB');
-		$localizedDoc2 = $testsLocalizedService->getDocumentInstance($documentId);
+		$localizedDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
 		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $localizedDoc2);
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $localizedDoc2->getPersistentState());
 		$this->assertNotSame($localizedDoc, $localizedDoc2);
@@ -266,7 +278,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_DELETED, $localizedDoc2->getPersistentState());
 		$this->assertTrue($localizedDoc2->isDeleted());
 
-		$datas = $localizedDoc2->getDocumentManager()->getBackupData($documentId);
+		$datas = $this->getDocumentServices()->getDocumentManager()->getBackupData($documentId);
 
 		$this->assertArrayHasKey('pStr', $datas);
 		$this->assertEquals('string', $datas['pStr']);
@@ -287,11 +299,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testCorrection()
 	{
-		/* @var $testsCorrectionService \Project\Tests\Documents\CorrectionService */
-		$testsCorrectionService = $this->getDocumentServices()->getProjectTestsCorrection();
-		$dm = $this->getDocumentServices()->getDocumentManager();
-
-		$c1 = $testsCorrectionService->getNewDocumentInstance();
+		/* @var $c1 \Project\Tests\Documents\Correction */
+		$c1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Correction');
 
 		$c1->setLabel('c1');
 		$c1->setPublicationStatus(Publishable::STATUS_DRAFT);

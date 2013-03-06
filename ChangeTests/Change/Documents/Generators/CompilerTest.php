@@ -46,10 +46,7 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$compiler->buildTree();
 		$compiler->validateInheritance();
-		
-		
 
-		
 		$this->assertCount(2, $compiler->getModelsByLevel(0));
 		$this->assertCount(1, $compiler->getModelsByLevel(1));
 		$this->assertCount(1, $compiler->getModelsByLevel(2));
@@ -70,7 +67,6 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$commonPath  = $compilationPath . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $m1->getNameSpace()). DIRECTORY_SEPARATOR;
 		$this->assertFileExists($commonPath . $m2->getShortModelClassName() . '.php');
 		$this->assertFileExists($commonPath . $m2->getShortAbstractDocumentClassName() . '.php');
-		$this->assertFileExists($commonPath . $m2->getShortAbstractServiceClassName() . '.php');
 		$this->assertFileExists($commonPath . $m2->getShortDocumentLocalizedClassName() . '.php');
 	}
 }

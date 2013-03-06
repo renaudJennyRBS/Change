@@ -87,10 +87,6 @@ class ChangeCommand extends Command
 	{
 		if ($this->changeDocumentServices === null)
 		{
-			if (!class_exists('Compilation\Change\Documents\AbstractDocumentServices'))
-			{
-				throw new \RuntimeException('Documents are not compiled', 54000);
-			}
 			$this->changeDocumentServices =  new \Change\Documents\DocumentServices($this->getChangeApplicationServices());
 		}
 		return $this->changeDocumentServices;

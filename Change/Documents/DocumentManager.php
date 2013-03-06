@@ -401,7 +401,7 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
@@ -502,7 +502,7 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
@@ -668,10 +668,9 @@ class DocumentManager
 	 */
 	protected function createNewDocumentInstance(\Change\Documents\AbstractModel $model)
 	{
-		$service = $this->getDocumentServices()->get($model->getName());
 		$className = $this->getDocumentClassFromModel($model);	
 		/* @var $newDocument \Change\Documents\AbstractDocument */
-		return new $className($this, $model, $service);
+		return new $className($this->getDocumentServices(), $model);
 	}
 	
 	
@@ -1025,7 +1024,7 @@ class DocumentManager
 
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @return integer|boolean
 	 * @throws \InvalidArgumentException
 	 */

@@ -72,7 +72,7 @@ class StartCorrectionPublication
 
 		if ($LCID)
 		{
-			$documentManager = $document->getDocumentManager();
+			$documentManager = $document->getDocumentServices()->getDocumentManager();
 			try
 			{
 

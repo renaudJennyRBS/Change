@@ -38,7 +38,7 @@ class StartCorrectionValidation
 			return;
 		}
 
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		$LCID = null;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{

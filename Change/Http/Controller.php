@@ -6,7 +6,7 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Change\Http\Controller
  */
-class Controller
+class Controller implements \Zend\EventManager\EventManagerAwareInterface
 {
 	/**
 	 * @var \Change\Application
@@ -38,7 +38,6 @@ class Controller
 	public function setApplication(\Change\Application $application)
 	{
 		$this->application = $application;
-		$this->setEventManager($application->getEventManager());
 	}
 
 	/**
@@ -50,12 +49,12 @@ class Controller
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Zend\EventManager\EventManager|\Zend\EventManager\EventManagerInterface $eventManager
+	 * @return void
 	 */
-	public function setEventManager(\Zend\EventManager\EventManager $eventManager)
+	public function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
 	{
 		$this->eventManager = $eventManager;
-		$this->registerDefaultListeners($eventManager);
 	}
 
 	/**
@@ -63,6 +62,13 @@ class Controller
 	 */
 	public function getEventManager()
 	{
+		if ($this->eventManager === null)
+		{
+			$eventManager = new \Zend\EventManager\EventManager('Http');
+			$eventManager->setSharedManager($this->application->getSharedEventManager());
+			$this->registerDefaultListeners($eventManager);
+			$this->setEventManager($eventManager);
+		}
 		return $this->eventManager;
 	}
 
@@ -209,7 +215,7 @@ class Controller
 
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 * @return void
 	 */
 	protected function registerDefaultListeners($eventManager)

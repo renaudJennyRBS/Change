@@ -4,14 +4,21 @@ namespace Change\Documents;
 /**
  * @name \Change\Documents\DocumentServices
  */
-class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentServices
+class DocumentServices extends \Zend\Di\Di
 {
+
+	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices;
 
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */
 	public function __construct(\Change\Application\ApplicationServices $applicationServices)
 	{
+		$this->applicationServices = $applicationServices;
+
 		$dl = new \Zend\Di\DefinitionList(array());
 		
 		$this->registerModelManager($dl);
@@ -22,7 +29,7 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 
 		$this->registerConstraintsManager($dl);
 
-		parent::__construct($dl, $applicationServices);
+		parent::__construct($dl);
 
 		$im = $this->instanceManager();
 		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
@@ -81,8 +88,18 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
 		$dl->addDefinition($cl);
 	}
-	
+
 	/**
+	 * @api
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @api
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function getModelManager()
@@ -99,6 +116,7 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Documents\TreeManager
 	 */
 	public function getTreeManager()
@@ -107,21 +125,11 @@ class DocumentServices extends \Compilation\Change\Documents\AbstractDocumentSer
 	}
 	
 	/**
+	 * @api
 	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
 	public function getConstraintsManager()
 	{
 		return $this->get('Change\Documents\Constraints\ConstraintsManager');
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Documents\AbstractService
-	 */
-	public function getByModel(\Change\Documents\AbstractModel $model)
-	{
-		/* @var $service \Change\Documents\AbstractService */
-		$service = $this->get($model->getName());
-		return $service;
 	}
 }

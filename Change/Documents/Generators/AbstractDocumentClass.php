@@ -41,7 +41,6 @@ class AbstractDocumentClass
 		{
 			$code .= '/**
  * @name ' . $model->getDocumentClassName() . '
- * @method ' . $model->getServiceClassName() . ' getDocumentService()
  * @method ' . $model->getModelClassName() . ' getDocumentModel()
  */' . PHP_EOL;
 		}
