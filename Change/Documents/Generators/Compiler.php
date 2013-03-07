@@ -311,7 +311,7 @@ class Compiler
 			$generator = new ModelClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
 			
-			$generator = new AbstractDocumentClass();
+			$generator = new BaseDocumentClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
 			
 			if ($model->checkLocalized())

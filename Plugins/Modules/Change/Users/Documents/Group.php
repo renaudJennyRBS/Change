@@ -1,7 +1,7 @@
 <?php
 namespace Change\Users\Documents;
 
-class Group extends \Compilation\Change\Users\Documents\AbstractGroup
+class Group extends \Compilation\Change\Users\Documents\Group
 {
 
 }
