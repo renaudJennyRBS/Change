@@ -25,12 +25,15 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 		$identifiers = array('Documents');
 
 		$callBack = function($event) {
-			(new \Change\Documents\Events\ValidateListener())->onValidate($event);
+			$l = new \Change\Documents\Events\ValidateListener();
+			$l->onValidate($event);
 		};
+
 		$events->attach($identifiers, array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), $callBack, 5);
 
 		$callBack = function($event) {
-			(new \Change\Documents\Events\DeleteListener())->onDelete($event);
+			$l = new \Change\Documents\Events\DeleteListener();
+			$l->onDelete($event);
 		};
 		$events->attach($identifiers, DocumentEvent::EVENT_DELETE, $callBack, 5);
 	}
