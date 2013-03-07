@@ -7,8 +7,18 @@ namespace Change\Application;
  */
 class ApplicationServices extends \Zend\Di\Di
 {
+	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+
+	/**
+	 * @param \Change\Application $application
+	 */
 	public function __construct(\Change\Application $application)
 	{
+		$this->application = $application;
+
 		$dl = new \Zend\Di\DefinitionList(array());
 
 		$this->registerLogging($dl);
@@ -85,6 +95,16 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethod('setLogging')
 				->addMethodParameter('setLogging', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
+	}
+
+
+	/**
+	 * @api
+	 * @return \Change\Application
+	 */
+	public function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**

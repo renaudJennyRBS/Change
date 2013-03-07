@@ -11,11 +11,12 @@ class Controller extends \Change\Http\Controller
 {
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 * @return void
 	 */
 	protected function registerDefaultListeners($eventManager)
 	{
+		$eventManager->addIdentifiers('Http.Rest');
 		$eventManager->attach(\Change\Http\Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
 		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}

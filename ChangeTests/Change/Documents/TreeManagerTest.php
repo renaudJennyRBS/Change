@@ -38,10 +38,9 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$treeManager->createTree('Project_Tests');
 
-		/* @var $testsBasicService \Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
+		/* @var $doc \Project\Tests\Documents\Basic */
+		$doc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
-		$doc = $testsBasicService->getNewDocumentInstance();
 		$doc->setPStr('root Node');
 		$doc->save();
 		$this->assertNull($doc->getTreeName());
@@ -61,7 +60,9 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(0, $tn->getChildrenCount());
 		$this->assertEquals($rootId, $tn->getDocumentId());
 
-		$doc1 = $testsBasicService->getNewDocumentInstance();
+		/* @var $doc1 \Project\Tests\Documents\Basic */
+		$doc1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
 		$doc1->setPStr('Node 1');
 		$doc1->save();
 
@@ -77,8 +78,9 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(0, $tn1->getChildrenCount());
 		$this->assertEquals($doc1->getId(), $tn1->getDocumentId());
 
+		/* @var $doc2 \Project\Tests\Documents\Basic */
+		$doc2 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
-		$doc2 = $testsBasicService->getNewDocumentInstance();
 		$doc2->setPStr('Node 2');
 		$doc2->save();
 

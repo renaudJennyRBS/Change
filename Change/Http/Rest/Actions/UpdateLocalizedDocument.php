@@ -60,7 +60,7 @@ class UpdateLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		try
 		{
 			$documentManager->pushLCID($LCID);
@@ -76,11 +76,11 @@ class UpdateLocalizedDocument
 				$errorResult->addDataValue('supported-LCID', $supported);
 				$event->setResult($errorResult);
 			}
-			$document->getDocumentManager()->popLCID();
+			$documentManager->popLCID();
 		}
 		catch (\Exception $e)
 		{
-			$document->getDocumentManager()->popLCID($e);
+			$documentManager->popLCID($e);
 		}
 	}
 

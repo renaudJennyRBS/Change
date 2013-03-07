@@ -75,10 +75,11 @@ class ConstraintsManager
 		return $this->documentServices;
 	}
 
-	
+
 	/**
 	 * @param string $name
 	 * @param array $params
+	 * @throws \InvalidArgumentException
 	 * @return \Zend\Validator\ValidatorInterface
 	 */
 	public function getByName($name, $params = array())
@@ -94,14 +95,18 @@ class ConstraintsManager
 					return $constraint;
 				}
 			}
-			
 		}
-		elseif (method_exists($this, $name))
+		else
 		{
-			$constraint = call_user_func(array($this, $name), $params);
-			if ($constraint instanceof \Zend\Validator\ValidatorInterface)
+			$parts = explode('.', $name);
+			$caller = array($this, array_shift($parts) . implode('', array_map('ucfirst', $parts)));
+			if (is_callable($caller))
 			{
-				return $constraint;
+				$constraint = call_user_func($caller, $params);
+				if ($constraint instanceof \Zend\Validator\ValidatorInterface)
+				{
+					return $constraint;
+				}
 			}
 		}
 		throw new \InvalidArgumentException('Constraint '. $name . ' not found', 52002);

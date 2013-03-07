@@ -2,18 +2,17 @@
 namespace Change\Http\Rest\Actions;
 
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
- * @name \Change\Http\Rest\Actions\StartPublication
+ * @name \Change\Http\Rest\Actions\StartCorrectionValidation
  */
-class StartPublication
+class StartCorrectionValidation
 {
 
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function getDocument($event)
 	{
@@ -23,12 +22,6 @@ class StartPublication
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
-
-		if (!($document instanceof \Change\Documents\Interfaces\Publishable))
-		{
-			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
-		}
-		
 		return $document;
 	}
 
@@ -40,8 +33,12 @@ class StartPublication
 	public function execute($event)
 	{
 		$document = $this->getDocument($event);
+		if (!($document->getDocumentModel()->useCorrection()))
+		{
+			return;
+		}
+
 		$documentManager = $document->getDocumentServices()->getDocumentManager();
-		
 		$LCID = null;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
@@ -50,6 +47,20 @@ class StartPublication
 			{
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
+		}
+
+		$publicationDate = $event->getRequest()->getQuery('publicationDate');
+		if ($publicationDate)
+		{
+			$publicationDate = \DateTime::createFromFormat(\DateTime::ISO8601, strval($publicationDate));
+			if ($publicationDate === false)
+			{
+				throw new \RuntimeException('Invalid Parameter: publicationDate', 71000);
+			}
+		}
+		else
+		{
+			$publicationDate = null;
 		}
 
 		if ($LCID)
@@ -61,7 +72,7 @@ class StartPublication
 				{
 					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 				}
-				$this->doStartPublication($event, $document);
+				$this->doStartValidation($event, $document, $publicationDate);
 				$documentManager->popLCID();
 			}
 			catch (\Exception $e)
@@ -71,33 +82,31 @@ class StartPublication
 		}
 		else
 		{
-			$this->doStartPublication($event, $document);
+			$this->doStartValidation($event, $document, $publicationDate);
 		}
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\Interfaces\Publishable $document
-	 * @param  $document
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \DateTime $publicationDate
 	 * @throws \Exception
 	 */
-	protected function doStartPublication($event, $document)
+	protected function doStartValidation($event, $document, $publicationDate)
 	{
-		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->startPublication();
-			$result = new \Change\Http\Rest\Result\ArrayResult();
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-
-			$l = new \Change\Http\Rest\Result\DocumentLink($event->getUrlManager(), $document);
-			$l->setRel('resource');
-
-			$result->setArray(array('link' => $l->toArray(), 'data' =>
-			array('old-publication-status' => $oldStatus, 'new-publication-status' => $document->getPublicationStatus())));
-
-			$event->setResult($result);
-
+			$correction = $document->getCorrectionFunctions()->startValidation($publicationDate);
+			if ($correction)
+			{
+				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+				$l = new \Change\Http\Rest\Result\DocumentLink($event->getUrlManager(), $document);
+				$l->setRel('resource');
+				$result->setArray(array('link' => $l->toArray(),
+					'data' => array('correction-id' => $correction->getId(),'correction-status' => $correction->getStatus())));
+				$event->setResult($result);
+			}
 		}
 		catch (\Exception $e)
 		{
@@ -105,7 +114,6 @@ class StartPublication
 			if ($code && $code == 55000)
 			{
 				$errorResult = new \Change\Http\Rest\Result\ErrorResult('PUBLICATION-ERROR', 'Invalid Publication status', HttpResponse::STATUS_CODE_409);
-				$errorResult->addDataValue('old-publication-status', $oldStatus);
 				$event->setResult($errorResult);
 				return;
 			}

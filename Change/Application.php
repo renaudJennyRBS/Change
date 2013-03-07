@@ -1,8 +1,6 @@
 <?php
 namespace Change;
 
-use Zend\Json\Json;
-
 /**
  * @name \Change\Application
  * @api
@@ -27,9 +25,9 @@ class Application
 	protected $packageManager;
 
 	/**
-	 * @var \Change\Events\EventManager
+	 * @var \Change\Events\SharedEventManager
 	 */
-	protected $eventManager;
+	protected $sharedEventManager;
 
 	/**
 	 * @var \Change\Application
@@ -184,24 +182,25 @@ class Application
 	}
 
 	/**
-	 * @param \Change\Events\EventManager $eventManager
+	 * @param \Change\Events\SharedEventManager $eventManager
 	 */
-	public function setEventManager(\Change\Events\EventManager $eventManager)
+	public function setSharedEventManager(\Change\Events\SharedEventManager $eventManager)
 	{
-		$this->eventManager = $eventManager;
+		$this->sharedEventManager = $eventManager;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Events\EventManager
+	 * @return \Change\Events\SharedEventManager
 	 */
-	public function getEventManager()
+	public function getSharedEventManager()
 	{
-		if ($this->eventManager === null)
+		if ($this->sharedEventManager === null)
 		{
-			$this->eventManager = new \Change\Events\EventManager($this->getConfiguration());
+			$this->sharedEventManager = new \Change\Events\SharedEventManager();
+			$this->sharedEventManager->attachConfiguredListeners($this->getConfiguration());
 		}
-		return $this->eventManager;
+		return $this->sharedEventManager;
 	}
 
 	/**

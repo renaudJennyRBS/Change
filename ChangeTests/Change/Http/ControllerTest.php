@@ -14,10 +14,10 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$application = $this->getApplication();
 		$controller = new Controller($application);
 		$this->assertSame($application, $controller->getApplication());
-		$this->assertSame($application->getEventManager(), $controller->getEventManager());
-
+		$this->assertInstanceOf('\Zend\EventManager\EventManager', $controller->getEventManager());
+		$this->assertSame($application->getSharedEventManager(), $controller->getEventManager()->getSharedManager());
+		$this->assertSame(array('Http'), $controller->getEventManager()->getIdentifiers());
 		return $controller;
-
 	}
 
 	/**

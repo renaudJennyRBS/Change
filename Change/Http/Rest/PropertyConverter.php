@@ -165,7 +165,7 @@ class PropertyConverter
 			case Property::TYPE_DOCUMENT:
 				if ($restValue !== null)
 				{
-					$value = $this->document->getDocumentManager()->getDocumentInstance($restValue);
+					$value = $this->document->getDocumentServices()->getDocumentManager()->getDocumentInstance($restValue);
 					if ($value === null)
 					{
 						throw new \RuntimeException('Invalid Property value', 70001);
@@ -176,7 +176,7 @@ class PropertyConverter
 			case Property::TYPE_DOCUMENTARRAY:
 				if (is_array($restValue))
 				{
-					$documentManager = $this->document->getDocumentManager();
+					$documentManager = $this->document->getDocumentServices()->getDocumentManager();
 					$value = array_map(function($id) use ($documentManager) {
 						$doc = $documentManager->getDocumentInstance($id);
 						if ($doc === null)

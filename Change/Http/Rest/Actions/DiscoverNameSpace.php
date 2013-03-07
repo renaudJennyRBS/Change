@@ -10,7 +10,7 @@ class DiscoverNameSpace
 {
 
 	/**
-	 * Use Event Params: namespace
+	 * Use Event Params: namespace, Resolver
 	 * @param \Change\Http\Event $event
 	 */
 	public function execute($event)
@@ -79,7 +79,10 @@ class DiscoverNameSpace
 		{
 			if (!isset($names[1]))
 			{
-				foreach ($this->resourceActionClasses as $actionName => $class)
+				/* @var $resolver \Change\Http\Rest\Resolver */
+				$resolver = $event->getParam('Resolver');
+
+				foreach ($resolver->getResourceActionClasses() as $actionName => $class)
 				{
 					$ns = $namespace .'.'. $actionName;
 					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);

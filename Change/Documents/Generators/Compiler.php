@@ -319,14 +319,8 @@ class Compiler
 				$generator = new DocumentLocalizedClass();
 				$generator->savePHPCode($this, $model, $compilationPath);
 			}
-			
-			$generator = new AbstractServiceClass();
-			$generator->savePHPCode($this, $model, $compilationPath);
 		}
-		
-		$generator = new AbstractDocumentServicesClass();
-		$generator->savePHPCode($this, $this->models, $compilationPath);
-		
+
 		$generator = new SchemaClass();
 		$generator->savePHPCode($this, $this->applicationServices->getDbProvider(), $compilationPath);
 	}

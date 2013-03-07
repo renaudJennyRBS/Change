@@ -51,28 +51,34 @@ class GetLocalizedDocument
 		}
 		$document = $this->getDocument($event);
 
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		try
 		{
 			$documentManager->pushLCID($LCID);
 
 			$this->generateResult($event, $document, $LCID);
 
-			$document->getDocumentManager()->popLCID();
+			$documentManager->popLCID();
 		}
 		catch (\Exception $e)
 		{
-			$document->getDocumentManager()->popLCID($e);
+			$documentManager->popLCID($e);
 		}
 	}
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Logging\Logging $logging
 	 * @return null|string
 	 */
-	protected function buildEtag($document)
+	protected function buildEtag($document, \Change\Logging\Logging $logging = null)
 	{
-		$parts = array();
+		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601));
+
+		if ($document->getDocumentModel()->useCorrection() && $document->getCorrectionFunctions()->hasCorrection())
+		{
+			$parts[] = $document->getCorrectionFunctions()->getCorrection()->getStatus();
+		}
 
 		if ($document instanceof \Change\Documents\Interfaces\Editable)
 		{
@@ -88,8 +94,13 @@ class GetLocalizedDocument
 		{
 			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
 		}
+
 		if (count($parts))
 		{
+			if ($logging)
+			{
+				$logging->info('ETAG BUILD INFO: ' . implode(',', $parts));
+			}
 			return md5(implode(',', $parts));
 		}
 		return null;
@@ -104,9 +115,10 @@ class GetLocalizedDocument
 	protected function generateResult($event, $document, $LCID)
 	{
 		$urlManager = $event->getUrlManager();
+
 		$result = new \Change\Http\Rest\Result\DocumentResult();
-		$result->setHeaderLastModified($document->getModificationDate());
-		$result->setHeaderEtag($this->buildEtag($document));
+		//$result->setHeaderLastModified($document->getModificationDate());
+		$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
 
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
@@ -153,8 +165,23 @@ class GetLocalizedDocument
 		{
 			if ($document->getCorrectionFunctions()->hasCorrection())
 			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$result->addAction($l);
+				$correction = $document->getCorrectionFunctions()->getCorrection();
+				if ($correction)
+				{
+					$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+					$result->addAction($l);
+
+					if ($correction->getStatus() === \Change\Documents\Correction::STATUS_DRAFT)
+					{
+						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
+						$result->addAction($l);
+					}
+					elseif ($correction->getStatus() === \Change\Documents\Correction::STATUS_VALIDATION)
+					{
+						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
+						$result->addAction($l);
+					}
+				}
 			}
 		}
 

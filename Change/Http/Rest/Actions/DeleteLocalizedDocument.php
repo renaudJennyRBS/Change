@@ -47,7 +47,7 @@ class DeleteLocalizedDocument
 		}
 
 		$document = $this->getDocument($event);
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 
 		try
 		{

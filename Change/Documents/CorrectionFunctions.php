@@ -36,7 +36,7 @@ class CorrectionFunctions
 	 */
 	public function __construct(\Change\Documents\AbstractDocument $document)
 	{
-		$this->documentManager = $document->getDocumentManager();
+		$this->documentManager = $document->getDocumentServices()->getDocumentManager();
 		$this->documentId = $document->getId();
 		if ($document->getDocumentModel()->useCorrection())
 		{
@@ -119,7 +119,7 @@ class CorrectionFunctions
 			}
 			elseif (is_int($this->corrections[$key]))
 			{
-				$correction = $this->getGetCorrectionInstance($this->corrections[$key]);
+				$correction = $this->getCorrectionInstance($this->corrections[$key]);
 				if ($correction)
 				{
 					$this->addCorrection($correction);
@@ -164,7 +164,7 @@ class CorrectionFunctions
 			}
 			elseif(is_int($this->corrections[$key]))
 			{
-				$correction = $this->getGetCorrectionInstance($this->corrections[$key]);
+				$correction = $this->getCorrectionInstance($this->corrections[$key]);
 				if ($correction)
 				{
 					$this->addCorrection($correction);
@@ -315,7 +315,7 @@ class CorrectionFunctions
 		{
 			if ($correction === null)
 			{
-				$key = $this->getKey($this->getCurrentLCID());
+				$key = $this->getCurrentKey();
 				if (isset($this->corrections[$key]))
 				{
 					$correction = $this->corrections[$key];
@@ -332,7 +332,7 @@ class CorrectionFunctions
 
 			if ($correction instanceof Correction)
 			{
-				if ($correction->getId() !== null)
+				if (!$correction->isNew())
 				{
 					$this->updateCorrection($correction);
 				}
@@ -364,7 +364,7 @@ class CorrectionFunctions
 
 		$correction = $this->getCorrection();
 
-		if ($correction && $correction->getId() !== null)
+		if ($correction && !$correction->isNew())
 		{
 			if ($document->hasModifiedProperties())
 			{
@@ -436,6 +436,14 @@ class CorrectionFunctions
 	}
 
 	/**
+	 * @return string
+	 */
+	protected function getCurrentKey()
+	{
+		return $this->getKey($this->getCurrentLCID());
+	}
+
+	/**
 	 * @param string|null $LCID
 	 * @return \Change\Documents\Correction
 	 */
@@ -495,7 +503,7 @@ class CorrectionFunctions
 	 * @param integer $correctionId
 	 * @return \Change\Documents\Correction|null
 	 */
-	protected function getGetCorrectionInstance($correctionId)
+	protected function getCorrectionInstance($correctionId)
 	{
 		$key = 'loadCorrection';
 		if (!isset(static::$cachedQueries[$key]))
@@ -691,6 +699,33 @@ class CorrectionFunctions
 	}
 
 	/**
+	 * @param \Change\Documents\Correction $correction
+	 */
+	protected function updateCorrectionStatus($correction)
+	{
+		$key = 'updateCorrectionStatus';
+		if (!isset(static::$cachedQueries[$key]))
+		{
+			$qb = $this->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			static::$cachedQueries[$key] = $qb->update($qb->getSqlMapping()->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status', $qb))
+				->assign('publicationdate', $fb->dateTimeParameter('publicationdate', $qb))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id', $qb)))
+				->updateQuery();
+		}
+
+		/* @var $uq \Change\Db\Query\UpdateQuery */
+		$uq = static::$cachedQueries[$key];
+		$uq->bindParameter('status', $correction->getStatus());
+		$uq->bindParameter('publicationdate', $correction->getPublicationDate());
+		$uq->bindParameter('id', $correction->getId());
+		$uq->execute();
+
+		$correction->setModified(false);
+	}
+
+	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Documents\Correction $correction
 	 * @throws \Exception
@@ -737,5 +772,84 @@ class CorrectionFunctions
 		{
 			throw $tm->rollBack($e);
 		}
+	}
+
+	/**
+	 * @api
+	 * @param \DateTime $publicationDate
+	 * @return \Change\Documents\Correction|null
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 */
+	public function startValidation(\DateTime $publicationDate = null)
+	{
+		$correction = $this->getCorrectionForKey($this->getCurrentKey());
+		if ($correction === null)
+		{
+			return null;
+		}
+
+		if ($correction->getStatus() != Correction::STATUS_DRAFT)
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
+		$tm = $this->getDocumentManager()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$correction->setPublicationDate($publicationDate);
+			$correction->setStatus(Correction::STATUS_VALIDATION);
+
+			$this->updateCorrectionStatus($correction);
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		return $correction;
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 * @return \Change\Documents\Correction|null
+	 */
+	public function startPublication()
+	{
+		$correction = $this->getCorrectionForKey($this->getCurrentKey());
+		if ($correction === null)
+		{
+			return null;
+		}
+
+		if ($correction->getStatus() != Correction::STATUS_VALIDATION)
+		{
+			throw new \RuntimeException('Invalid Publication status', 55000);
+		}
+
+		$tm = $this->getDocumentManager()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			if ($correction->getPublicationDate() === null)
+			{
+				$correction->setPublicationDate(new \DateTime());
+			}
+			$correction->setStatus(Correction::STATUS_PUBLISHABLE);
+
+			$this->updateCorrectionStatus($correction);
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		return $correction;
 	}
 }

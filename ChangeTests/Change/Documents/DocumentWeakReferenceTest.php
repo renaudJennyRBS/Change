@@ -14,11 +14,9 @@ class DocumentWeakReferenceTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testSerialize()
 	{
-		/* @var $testsBasicService\Project\Tests\Documents\BasicService */
-		$testsBasicService = $this->getDocumentServices()->getProjectTestsBasic();
-
-		$document = $testsBasicService->getInstanceRo5001();
-		$manager = $document->getDocumentManager();
+		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
+		$document = $mi->getInstanceRo5001($this->getDocumentServices());
+		$manager = $this->getDocumentServices()->getDocumentManager();
 
 		$id = $document->getId();
 		$wr = new \Change\Documents\DocumentWeakReference($document);

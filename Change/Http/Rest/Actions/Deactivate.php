@@ -38,7 +38,7 @@ class Deactivate
 	public function execute($event)
 	{
 		$document = $this->getDocument($event);
-		$documentManager = $document->getDocumentManager();
+		$documentManager = $document->getDocumentServices()->getDocumentManager();
 
 		$LCID = null;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)

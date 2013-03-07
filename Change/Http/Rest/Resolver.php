@@ -15,7 +15,9 @@ class Resolver extends \Change\Http\ActionResolver
 			'startPublication' => '\Change\Http\Rest\Actions\StartPublication',
 			'deactivate' => '\Change\Http\Rest\Actions\Deactivate',
 			'activate' => '\Change\Http\Rest\Actions\Activate',
-			'getCorrection' => '\Change\Http\Rest\Actions\GetCorrection');
+			'getCorrection' => '\Change\Http\Rest\Actions\GetCorrection',
+			'startCorrectionValidation' => '\Change\Http\Rest\Actions\StartCorrectionValidation',
+			'startCorrectionPublication' => '\Change\Http\Rest\Actions\StartCorrectionPublication');
 	}
 
 	/**
@@ -71,6 +73,8 @@ class Resolver extends \Change\Http\ActionResolver
 		{
 			if ($request->getMethod() === 'GET')
 			{
+				$event->setParam('Resolver', $this);
+
 				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
 				return;

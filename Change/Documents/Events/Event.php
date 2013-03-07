@@ -1,0 +1,26 @@
+<?php
+namespace Change\Documents\Events;
+
+/**
+ * @name \Change\Documents\Events\Event
+ */
+class Event extends \Zend\EventManager\Event
+{
+	const EVENT_CREATE      = 'documents.create';
+	const EVENT_UPDATE       = 'documents.update';
+	const EVENT_DELETE       = 'documents.delete';
+
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		if ($this->getTarget() instanceof \Change\Documents\AbstractDocument)
+		{
+			return $this->getTarget();
+		}
+		throw new \RuntimeException('Invalid document instance', 50000);
+	}
+}

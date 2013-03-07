@@ -10,11 +10,12 @@ class Controller extends \Change\Http\Controller
 {
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 * @return void
 	 */
 	protected function registerDefaultListeners($eventManager)
 	{
+		$eventManager->addIdentifiers('Http.Web');
 		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'));
 	}
 
