@@ -59,7 +59,8 @@ class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 		$node = new \Change\Documents\TreeNode('Project_Tests');
 		$node->setTreeManager($this->getDocumentServices()->getTreeManager());
 
-		$doc = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5001($this->getDocumentServices());
+		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
+		$doc = $mi->getInstanceRo5001($this->getDocumentServices());
 		$node->setDocumentId(5001);
 		$doc2 = $node->getDocument();
 		$this->assertSame($doc, $doc2);

@@ -164,7 +164,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
-		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5001($event->getDocumentServices());
+		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
+		$document = $mi->getInstanceRo5001($event->getDocumentServices());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
 
@@ -224,7 +225,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
-		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5002($event->getDocumentServices());
+		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
+		$document = $mi->getInstanceRo5002($event->getDocumentServices());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
 		$resolver->resolve($event);
@@ -297,8 +299,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$resolver->resolve($event);
 		$this->assertNull($event->getAction());
 
-
-		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5001($this->getDocumentServices());
+		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
+		$document = $mi->getInstanceRo5001($this->getDocumentServices());
 
 		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
 		$resolver->resolve($event);
@@ -308,7 +310,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertTrue(is_callable($event->getAction()));
 
 
-		$document = (new \ChangeTests\Change\Documents\TestAssets\MemoryInstance())->getInstanceRo5002($this->getDocumentServices());
+		$document = $mi->getInstanceRo5002($this->getDocumentServices());
 
 		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
 		$resolver->resolve($event);
