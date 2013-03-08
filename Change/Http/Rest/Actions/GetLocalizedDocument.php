@@ -5,6 +5,7 @@ use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\TreeNodeLink;
 
 /**
  * @name \Change\Http\Rest\Actions\GetLocalizedDocument
@@ -73,7 +74,7 @@ class GetLocalizedDocument
 	 */
 	protected function buildEtag($document, \Change\Logging\Logging $logging = null)
 	{
-		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601));
+		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
 
 		if ($document->getDocumentModel()->useCorrection() && $document->getCorrectionFunctions()->hasCorrection())
 		{
@@ -95,15 +96,11 @@ class GetLocalizedDocument
 			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
 		}
 
-		if (count($parts))
+		if ($logging)
 		{
-			if ($logging)
-			{
-				$logging->info('ETAG BUILD INFO: ' . implode(',', $parts));
-			}
-			return md5(implode(',', $parts));
+			$logging->info('ETAG BUILD INFO: ' . implode(',', $parts));
 		}
-		return null;
+		return md5(implode(',', $parts));
 	}
 
 	/**
@@ -122,6 +119,16 @@ class GetLocalizedDocument
 
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
+		if ($document->getTreeName())
+		{
+			$tn = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
+			if ($tn)
+			{
+				$l = new TreeNodeLink($urlManager, $tn, TreeNodeLink::MODE_LINK);
+				$l->setRel('node');
+				$result->addLink($l);
+			}
+		}
 
 		$model = $document->getDocumentModel();
 

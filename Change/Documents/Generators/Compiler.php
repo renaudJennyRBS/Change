@@ -304,7 +304,10 @@ class Compiler
 
 		$generator = new ModelsNamesClass();
 		$generator->savePHPCode($this, $this->models, $compilationPath);
-		
+
+		$generator = new TreeNamesClass();
+		$generator->savePHPCode($this, $this->models, $compilationPath);
+
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */

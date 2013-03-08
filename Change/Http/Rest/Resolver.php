@@ -66,6 +66,9 @@ class Resolver extends \Change\Http\ActionResolver
 				case 'resourcesactions' :
 					$this->resourcesactions($event, array_slice($nameSpaces, 1), $request->getMethod());
 					break;
+				case 'resourcestree' :
+					$this->resourcestree($event, array_slice($nameSpaces, 1), $request->getMethod());
+					break;
 			}
 		}
 
@@ -216,6 +219,99 @@ class Resolver extends \Change\Http\ActionResolver
 					}
 
 					$result = $this->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
+					$event->setResult($result);
+					return;
+				}
+			}
+		}
+	}
+	/**
+	 * @param \Change\Http\Event $event
+	 * @param array $resourceParts
+	 * @param $method
+	 * @return void
+	 */
+	protected function resourcestree($event, $resourceParts, $method)
+	{
+		if (count($resourceParts) >= 2)
+		{
+			$vendor = array_shift($resourceParts);
+			$shortModuleName = array_shift($resourceParts);
+			$treeName = $vendor . '_' . $shortModuleName;
+			$documentServices = $event->getDocumentServices();
+			if ($documentServices->getTreeManager()->hasTreeName($treeName))
+			{
+				$event->setParam('treeName', $treeName);
+				$pathIds = array();
+				while(($nodeId = array_shift($resourceParts)) !== null)
+				{
+					if (is_numeric($nodeId))
+					{
+						$pathIds[] = intval($nodeId);
+					}
+					else
+					{
+						return;
+					}
+				}
+				$event->setParam('pathIds', $pathIds);
+				$method = $event->getRequest()->getMethod();
+
+				if ($event->getParam('isDirectory', false))
+				{
+					if ($method === Request::METHOD_POST)
+					{
+						$action = function($event) {
+							$action = new \Change\Http\Rest\Actions\CreateTreeNode();
+							$action->execute($event);
+						};
+						$event->setAction($action);
+						return;
+					}
+					elseif ($method === Request::METHOD_GET)
+					{
+						$action = function($event) {
+							$action = new \Change\Http\Rest\Actions\GetTreeNodeCollection();
+							$action->execute($event);
+						};
+						$event->setAction($action);
+						return;
+					}
+
+					$result = $this->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
+					$event->setResult($result);
+					return;
+				}
+				elseif (count($pathIds))
+				{
+					if ($method === Request::METHOD_GET)
+					{
+						$action = function($event) {
+							$action = new \Change\Http\Rest\Actions\GetTreeNode();
+							$action->execute($event);
+						};
+						$event->setAction($action);
+						return;
+					}
+					elseif ($method === Request::METHOD_PUT)
+					{
+						$action = function($event) {
+							$action = new \Change\Http\Rest\Actions\UpdateTreeNode();
+							$action->execute($event);
+						};
+						$event->setAction($action);
+						return;
+					}
+					elseif ($method === Request::METHOD_DELETE)
+					{
+						$action = function($event) {
+							$action = new \Change\Http\Rest\Actions\DeleteTreeNode();
+							$action->execute($event);
+						};
+						$event->setAction($action);
+						return;
+					}
+					$result = $this->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
 					$event->setResult($result);
 					return;
 				}

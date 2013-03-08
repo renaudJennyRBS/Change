@@ -1,0 +1,77 @@
+<?php
+namespace Change\Http\Rest\Result;
+
+/**
+ * @name \Change\Http\Rest\Result\TreeNodeLink
+ */
+class TreeNodeLink extends Link
+{
+	const MODE_LINK = 'link';
+	const MODE_PROPERTY = 'property';
+
+	/**
+	 * @var string
+	 */
+	protected $mode;
+
+	/**
+	 * @var \Change\Documents\TreeNode
+	 */
+	protected $treeNode;
+
+	/**
+	 * @var DocumentLink
+	 */
+	protected $documentLink;
+
+	/**
+	 * @return \Change\Http\Rest\Result\DocumentLink
+	 */
+	public function getDocumentLink()
+	{
+		return $this->documentLink;
+	}
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @param \Change\Documents\TreeNode $treeNode
+	 * @param string $mode
+	 */
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\TreeNode $treeNode, $mode = self::MODE_PROPERTY)
+	{
+		$this->treeNode = $treeNode;
+		$this->mode = $mode;
+		if ($mode === static::MODE_PROPERTY)
+		{
+			$this->documentLink = new DocumentLink($urlManager, $treeNode->getDocument(), DocumentLink::MODE_PROPERTY);
+		}
+		parent::__construct($urlManager, $this->buildPathInfo());
+	}
+
+
+	protected function buildPathInfo()
+	{
+		list($vendor, $shortModuleName) = explode('_', $this->treeNode->getTreeName());
+		$path = 'resourcestree/' . $vendor . '/' . $shortModuleName .  $this->treeNode->getPath() . $this->treeNode->getDocumentId();
+		return $path;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		if ($this->mode === static::MODE_PROPERTY)
+		{
+			$treeNode = $this->treeNode;
+			$result = array('id' => $treeNode->getDocumentId(),
+				'childrenCount' => $treeNode->getChildrenCount(),
+				'level' => $treeNode->getLevel(),
+				'nodeOrder' => $treeNode->getPosition());
+			$result['link'] = parent::toArray();
+			$result['document'] = $this->documentLink->toArray();
+			return $result;
+		}
+		return parent::toArray();
+	}
+}

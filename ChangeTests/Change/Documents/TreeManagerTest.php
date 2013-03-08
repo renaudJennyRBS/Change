@@ -34,9 +34,21 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param \Change\Documents\TreeManager $treeManager
 	 * @return \Change\Documents\TreeManager
 	 */
+	public function testTreeNames(\Change\Documents\TreeManager $treeManager)
+	{
+		$treeNames = $treeManager->getTreeNames();
+		$this->assertContains('Project_Tests', $treeNames);
+		return $treeManager;
+	}
+
+	/**
+	 * @depends testTreeNames
+	 * @param \Change\Documents\TreeManager $treeManager
+	 * @return \Change\Documents\TreeManager
+	 */
 	public function testCreate(\Change\Documents\TreeManager $treeManager)
 	{
-		$treeManager->createTree('Project_Tests');
+		//$treeManager->createTree('Project_Tests');
 
 		/* @var $doc \Project\Tests\Documents\Basic */
 		$doc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
