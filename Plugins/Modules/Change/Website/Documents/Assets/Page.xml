@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"	
-	icon="page" editable="true" localized="true" publishable="true" use-version="true" frontoffice-indexable="true" has-url="true" tree-name="Change_Website">
+	icon="page" editable="true" localized="true" publishable="true" use-version="true">
 	<properties>
         <property name="label" has-correction="true" />
-		<property name="navigationtitle" type="String" localized="true" required="true" has-correction="true">
-			<constraint name="maxSize" max="80" />
-		</property>
-		<property name="metatitle" type="LongString" localized="true" has-correction="true" />
-		<property name="description" type="LongString" localized="true" has-correction="true" />
-		<property name="keywords" type="LongString" localized="true" has-correction="true" />
-		<property name="robotsmeta" type="String" default-value="index,follow" indexed="none" has-correction="true">
-			<constraint name="maxSize" max="20" />
-			<!-- constraint name="enum" fromList="modules_website/robotsmeta" /-->
-		</property>
-		<property name="indexingstatus" type="Boolean" default-value="true"/>
-		<property name="template" type="String" indexed="none" required="true" has-correction="true" />
-		<property name="content" type="XML" localized="true" indexed="description" has-correction="true"/>
-		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
-		<property name="skin" type="Document" document-type="modules_skin/skin" />  
-		-->
-		<property name="navigationVisibility" type="Integer" default-value="1" localized="true" required="true">
-			<!-- constraint name="enum" fromList="modules_website/navigationvisibility" /-->
-		</property>
-		<property name="isIndexPage" type="Boolean" default-value="false" />
-		<property name="isHomePage" type="Boolean" default-value="false" />
-		<property name="advancedreferencing" type="RichText" localized="true" has-correction="true" />
-		<property name="isorphan" type="Boolean" default-value="false" />
-		<property name="usehttps" type="Boolean" default-value="false" />
-		<property name="isIndexPageForSubTopics" type="Boolean" default-value="false" />
+        <property name="website" type="Document" document-type="Change_Website_Website" required="true" />
+
+        <property name="templateName" type="String" indexed="none" required="true" localized="true" has-correction="true" />
+		<property name="editableContent" type="XML" localized="true" has-correction="true"/>
+
+        <!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
+        <property name="skin" type="Document" document-type="Change_Skin_Skin" />
+        -->
 	</properties>
 </document>
