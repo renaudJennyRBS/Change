@@ -1,7 +1,10 @@
 <?php
 namespace Project\Tests\Documents;
 
-class Correction extends \Compilation\Project\Tests\Documents\AbstractCorrection
+/**
+ * @name \Project\Tests\Documents\Correction
+ */
+class Correction extends \Compilation\Project\Tests\Documents\Correction
 {
 
 }

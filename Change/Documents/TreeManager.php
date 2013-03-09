@@ -16,7 +16,12 @@ class TreeManager
 	 * @var \Change\Application\ApplicationServices
 	 */
 	protected $applicationServices;
-	
+
+	/**
+	 * @var \ArrayObject|null
+	 */
+	protected $treeNames;
+
 	/**
 	 * @var \Change\Documents\TreeNode[]
 	 */
@@ -60,51 +65,6 @@ class TreeManager
 	}
 
 	/**
-	 * @param string $moduleName
-	 * @throws \InvalidArgumentException
-	 */
-	public function createTree($moduleName)
-	{
-		if (is_string($moduleName) && count(explode('_', $moduleName)) == 2)
-		{
-			$dbp = $this->applicationServices->getDbProvider();
-			$dbp->getSchemaManager()->createOrAlterTable($this->buildTableDefinition($moduleName));
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Invalid Tree Name: ' . $moduleName, 41003);
-		}
-	}
-	
-	/**
-	 * @param string $moduleName
-	 * @return \Change\Db\Schema\TableDefinition
-	 */
-	protected function buildTableDefinition($moduleName)
-	{
-		$dbp = $this->applicationServices->getDbProvider();
-		$tableDef = new \Change\Db\Schema\TableDefinition($dbp->getSqlMapping()->getTreeTableName($moduleName));
-		$schemaManager = $dbp->getSchemaManager();
-		$tableDef->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->newIntegerFieldDefinition('parent_id')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->newIntegerFieldDefinition('node_order')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->newIntegerFieldDefinition('node_level')->setNullable(false)->setDefaultValue('0'));
-		$tableDef->addField($schemaManager->newVarCharFieldDefinition('node_path')->setNullable(false)->setDefaultValue(''));
-		$tableDef->addField($schemaManager->newIntegerFieldDefinition('children_count')->setNullable(false)->setDefaultValue('0'));
-
-		$pk = new \Change\Db\Schema\KeyDefinition();
-		$pk->setType(\Change\Db\Schema\KeyDefinition::PRIMARY)->addField($tableDef->getField('document_id'));
-		$tableDef->addKey($pk);
-
-		$index = new \Change\Db\Schema\KeyDefinition();
-		$index->setType(\Change\Db\Schema\KeyDefinition::INDEX)
-			->setName('tree_node')->addField($tableDef->getField('parent_id'))->addField($tableDef->getField('node_order'));
-		$tableDef->addKey($index);
-
-		return $tableDef;
-	}
-	
-	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
 	public function getDocumentManager()
@@ -128,6 +88,7 @@ class TreeManager
 	{
 		return $this->applicationServices->getDbProvider()->getNewStatementBuilder();
 	}
+
 
 	/**
 	 * @param string $treeName
@@ -158,7 +119,38 @@ class TreeManager
 		}
 		return $this->staticQueries[$key];
 	}
-	
+
+
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getTreeNames()
+	{
+		if ($this->treeNames === null)
+		{
+			if (class_exists('\Compilation\Change\Documents\TreeNames'))
+			{
+				$this->treeNames = new \Compilation\Change\Documents\TreeNames();
+			}
+			else
+			{
+				return array();
+			}
+		}
+		return $this->treeNames->getArrayCopy();
+	}
+
+	/**
+	 * @api
+	 * @param $treeName
+	 * @return boolean
+	 */
+	public function hasTreeName($treeName)
+	{
+		return in_array($treeName, $this->getTreeNames());
+	}
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return \Change\Documents\TreeNode|NULL
@@ -507,12 +499,17 @@ class TreeManager
 	{
 		if (!$document->getDocumentModel()->useTree())
 		{
-			throw new \InvalidArgumentException('Document do not use tree : ' . $document, 53003);
+			throw new \InvalidArgumentException('Document do not use tree: ' . $document, 53003);
 		}
 
 		if ($document->getTreeName())
 		{
 			throw new \InvalidArgumentException('Document is already in tree: ' . $document->getTreeName(), 53000);
+		}
+
+		if (!$this->hasTreeName($treeName))
+		{
+			throw new \InvalidArgumentException('Invalid tree name: ' . $treeName, 53004);
 		}
 
 		$q = $this->getInsertNodeQuery($treeName);
@@ -779,6 +776,7 @@ class TreeManager
 	 */
 	public function reset()
 	{
+		$this->treeNames = null;
 		$this->clearCachedTreeNodes();
 	}
 	/**

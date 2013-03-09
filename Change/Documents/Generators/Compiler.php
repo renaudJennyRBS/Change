@@ -304,14 +304,17 @@ class Compiler
 
 		$generator = new ModelsNamesClass();
 		$generator->savePHPCode($this, $this->models, $compilationPath);
-		
+
+		$generator = new TreeNamesClass();
+		$generator->savePHPCode($this, $this->models, $compilationPath);
+
 		foreach ($this->models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			$generator = new ModelClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
 			
-			$generator = new AbstractDocumentClass();
+			$generator = new BaseDocumentClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
 			
 			if ($model->checkLocalized())

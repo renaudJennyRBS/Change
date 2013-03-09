@@ -34,8 +34,8 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('documentModel', $model->getShortModelClassName());
 		$this->assertEquals('\Compilation\change\generic\Documents\documentModel', $model->getModelClassName());
 		
-		$this->assertEquals('Abstractdocument', $model->getShortAbstractDocumentClassName());
-		$this->assertEquals('\Compilation\change\generic\Documents\Abstractdocument', $model->getAbstractDocumentClassName());
+		$this->assertEquals('document', $model->getShortBaseDocumentClassName());
+		$this->assertEquals('\Compilation\change\generic\Documents\document', $model->getBaseDocumentClassName());
 		
 		$this->assertEquals('document', $model->getShortDocumentClassName());
 		$this->assertEquals('\change\generic\Documents\document', $model->getDocumentClassName());

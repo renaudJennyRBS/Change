@@ -66,7 +66,7 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$compilationPath = $this->getApplication()->getWorkspace()->compilationPath();
 		$commonPath  = $compilationPath . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $m1->getNameSpace()). DIRECTORY_SEPARATOR;
 		$this->assertFileExists($commonPath . $m2->getShortModelClassName() . '.php');
-		$this->assertFileExists($commonPath . $m2->getShortAbstractDocumentClassName() . '.php');
+		$this->assertFileExists($commonPath . $m2->getShortBaseDocumentClassName() . '.php');
 		$this->assertFileExists($commonPath . $m2->getShortDocumentLocalizedClassName() . '.php');
 	}
 }

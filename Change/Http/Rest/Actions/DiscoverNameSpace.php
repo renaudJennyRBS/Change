@@ -24,13 +24,12 @@ class DiscoverNameSpace
 		$result->addLink($selfLink);
 		if ($namespace === '')
 		{
-			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resources'), 'resources');
-			$result->addLink($link);
-			$event->setResult($result);
-
-			$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace('resourcesactions'), 'resourcesactions');
-			$result->addLink($link);
-			$event->setResult($result);
+			foreach (array('resources', 'resourcesactions', 'resourcestree') as $name)
+			{
+				$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($name), $name);
+				$result->addLink($link);
+				$event->setResult($result);
+			}
 			return;
 		}
 
@@ -87,6 +86,44 @@ class DiscoverNameSpace
 					$ns = $namespace .'.'. $actionName;
 					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 					$result->addLink($link);
+				}
+				$event->setResult($result);
+			}
+		}
+		elseif ($names[0] === 'resourcestree')
+		{
+			if (!isset($names[1]))
+			{
+				$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+				$vendors = array();
+				foreach ($treeNames as $treeName)
+				{
+					list($vendor, ) = explode('_', $treeName);
+					if (!array_key_exists($vendor, $vendors))
+					{
+						$ns = $namespace .'.'. $vendor;
+						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+						$result->addLink($link);
+						$vendors[$vendor] = true;
+					}
+				}
+				$event->setResult($result);
+			}
+			elseif (!isset($names[2]))
+			{
+				$vendor = $names[1];
+				$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+				$shortModulesNames = array();
+				foreach ($treeNames as $treeName)
+				{
+					list($vendorTree, $shortModuleName) = explode('_', $treeName);
+					if ($vendorTree === $vendor && !array_key_exists($shortModuleName, $shortModulesNames))
+					{
+						$ns = $namespace .'.'. $shortModuleName;
+						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+						$result->addLink($link);
+						$shortModulesNames[$shortModuleName] = true;
+					}
 				}
 				$event->setResult($result);
 			}

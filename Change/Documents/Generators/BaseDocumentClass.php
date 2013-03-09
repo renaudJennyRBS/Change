@@ -2,10 +2,10 @@
 namespace Change\Documents\Generators;
 
 /**
- * @name \Change\Documents\Generators\AbstractDocumentClass
+ * @name \Change\Documents\Generators\BaseDocumentClass
  * @api
  */
-class AbstractDocumentClass
+class BaseDocumentClass
 {
 	/**
 	 * @var \Change\Documents\Generators\Compiler
@@ -22,7 +22,7 @@ class AbstractDocumentClass
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
-		$nsParts[] = $model->getShortAbstractDocumentClassName() . '.php';
+		$nsParts[] = $model->getShortBaseDocumentClassName() . '.php';
 		array_unshift($nsParts, $compilationPath);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
@@ -40,7 +40,7 @@ class AbstractDocumentClass
 		if (!$model->getInject())
 		{
 			$code .= '/**
- * @name ' . $model->getDocumentClassName() . '
+ * @name ' . $model->getBaseDocumentClassName() . '
  * @method ' . $model->getModelClassName() . ' getDocumentModel()
  */' . PHP_EOL;
 		}
@@ -73,7 +73,7 @@ class AbstractDocumentClass
 			$extend .= ' implements ' . implode(', ', $interfaces);
 		}
 
-		$code .= 'abstract class ' . $model->getShortAbstractDocumentClassName() . ' extends ' . $extend . PHP_EOL;
+		$code .= 'class ' . $model->getShortBaseDocumentClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{' . PHP_EOL;
 		$properties = $this->getMemberProperties($model);
 

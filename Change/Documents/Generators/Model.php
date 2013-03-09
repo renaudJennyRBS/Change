@@ -748,21 +748,21 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getShortAbstractDocumentClassName()
+	public function getShortBaseDocumentClassName()
 	{
-		return 'Abstract' . $this->getShortName();
+		return $this->getShortName();
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getAbstractDocumentClassName()
+	public function getBaseDocumentClassName()
 	{
 		if ($this->getInject())
 		{
-			return $this->getParent()->getAbstractDocumentClassName();
+			return $this->getParent()->getBaseDocumentClassName();
 		}
-		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortAbstractDocumentClassName();
+		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortBaseDocumentClassName();
 	}
 	
 	/**
