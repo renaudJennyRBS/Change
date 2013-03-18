@@ -142,4 +142,12 @@ class Result
 		}
 		return null;
 	}
+
+	/**
+	 * @return string
+	 */
+	function __toString()
+	{
+		return '';
+	}
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+    extend="Change_Website_Page" frontoffice-indexable="true" has-url="true" tree-name="Change_Website" editable="true">
+	<properties>
+        <property name="label" has-correction="true" />
+        <property name="pathPart" type="String" localized="true" has-correction="true" />
+		<property name="navigationTitle" type="String" localized="true" required="true" has-correction="true">
+            <dboptions length="100" />
+			<constraint name="maxSize" max="80" />
+		</property>
+
+		<property name="metaTitle" type="LongString" localized="true" has-correction="true" />
+		<property name="description" type="LongString" localized="true" has-correction="true" />
+		<property name="keywords" type="LongString" localized="true" has-correction="true" />
+
+		<property name="robotsMeta" type="String" default-value="index,follow" indexed="none">
+            <dboptions length="20" />
+		</property>
+	</properties>
+</document>

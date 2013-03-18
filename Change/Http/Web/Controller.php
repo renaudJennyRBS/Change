@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Web;
 
+use Change\Application\ApplicationServices;
+use Change\Documents\DocumentServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -16,7 +18,7 @@ class Controller extends \Change\Http\Controller
 	protected function registerDefaultListeners($eventManager)
 	{
 		$eventManager->addIdentifiers('Http.Web');
-		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'));
+		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'));
 	}
 
 	/**
@@ -26,8 +28,8 @@ class Controller extends \Change\Http\Controller
 	protected function createEvent($request)
 	{
 		$event = parent::createEvent($request);
-		$event->setApplicationServices(new \Change\Application\ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new \Change\Documents\DocumentServices($event->getApplicationServices()));
+		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
+		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 		return $event;
 	}
 
@@ -52,6 +54,16 @@ class Controller extends \Change\Http\Controller
 		{
 			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
+			$response->getHeaders()->addHeaders($result->getHeaders());
+			$callable = array($result, 'toHtml');
+			if (is_callable($callable))
+			{
+				$response->setContent(call_user_func($callable));
+			}
+			else
+			{
+				$response->setContent(strval($result));
+			}
 			$event->setResponse($response);
 		}
 	}
