@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
@@ -38,7 +39,7 @@ class DeleteTreeNode
 		}
 		$treeManager->deleteDocumentNode($node->getDocument());
 
-		$result = new \Change\Http\Result();
+		$result = new Result();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 		$event->setResult($result);
 	}

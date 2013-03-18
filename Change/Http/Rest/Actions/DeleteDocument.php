@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
@@ -17,8 +18,13 @@ class DeleteDocument
 	public function execute($event)
 	{
 		$document = $this->getDocument($event);
+		if ($document)
+		{
+			//Document Not Found
+			return;
+		}
 		$document->delete();
-		$result = new \Change\Http\Result();
+		$result = new Result();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 		$event->setResult($result);
 	}
@@ -26,7 +32,7 @@ class DeleteDocument
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument
+	 * @return \Change\Documents\AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -41,7 +47,7 @@ class DeleteDocument
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
-			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
+			return null;
 		}
 		return $document;
 	}

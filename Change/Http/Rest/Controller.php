@@ -1,6 +1,10 @@
 <?php
 namespace Change\Http\Rest;
 
+use Change\Application\ApplicationServices;
+use Change\Documents\DocumentServices;
+use Change\Http\Event;
+use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\ErrorResult;
 
@@ -17,13 +21,13 @@ class Controller extends \Change\Http\Controller
 	protected function registerDefaultListeners($eventManager)
 	{
 		$eventManager->addIdentifiers('Http.Rest');
-		$eventManager->attach(\Change\Http\Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
-		$eventManager->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
+		$eventManager->attach(Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
+		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
 
 	/**
 	 * @param \Change\Http\Request $request
-	 * @return \Change\Http\Event
+	 * @return Event
 	 */
 	protected function createEvent($request)
 	{
@@ -33,12 +37,12 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
-	protected function initializeEvent(\Change\Http\Event $event)
+	protected function initializeEvent(Event $event)
 	{
-		$event->setApplicationServices(new \Change\Application\ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new \Change\Documents\DocumentServices($event->getApplicationServices()));
+		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
+		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
@@ -58,7 +62,7 @@ class Controller extends \Change\Http\Controller
 
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 * @return \Zend\Http\PhpEnvironment\Response
 	 */
 	protected function getDefaultResponse($event)
@@ -72,7 +76,7 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
 	public function onException($event)
 	{
@@ -83,7 +87,7 @@ class Controller extends \Change\Http\Controller
 		if (!($result instanceof ErrorResult))
 		{
 			$error = new ErrorResult($exception);
-			if ($event->getResult() instanceof \Change\Http\Result)
+			if ($event->getResult() instanceof Result)
 			{
 				$result = $event->getResult();
 				$error->setHttpStatusCode($result->getHttpStatusCode());
@@ -101,12 +105,12 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
 	public function onDefaultJsonResponse($event)
 	{
 		$result = $event->getResult();
-		if ($result instanceof \Change\Http\Result)
+		if ($result instanceof Result)
 		{
 			$response = $event->getController()->createResponse();
 			$response->getHeaders()->addHeaders($result->getHeaders());

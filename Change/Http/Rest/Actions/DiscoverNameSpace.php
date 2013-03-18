@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\Result\NamespaceResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -16,17 +18,17 @@ class DiscoverNameSpace
 	public function execute($event)
 	{
 		$namespace = $event->getParam('namespace');
-		$result = new \Change\Http\Rest\Result\NamespaceResult();
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		$result = new NamespaceResult();
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 		$urlManager = $event->getUrlManager();
-		$selfLink = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($namespace));
+		$selfLink = new Link($urlManager, $this->generatePathInfoByNamespace($namespace));
 		$result->addLink($selfLink);
 		if ($namespace === '')
 		{
 			foreach (array('resources', 'resourcesactions', 'resourcestree') as $name)
 			{
-				$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($name), $name);
+				$link = new Link($urlManager, $this->generatePathInfoByNamespace($name), $name);
 				$result->addLink($link);
 				$event->setResult($result);
 			}
@@ -42,7 +44,7 @@ class DiscoverNameSpace
 				foreach ($vendors as $vendor)
 				{
 					$ns = $namespace .'.'. $vendor;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+					$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 					$result->addLink($link);
 				}
 				$event->setResult($result);
@@ -54,7 +56,7 @@ class DiscoverNameSpace
 				foreach ($modules as $module)
 				{
 					$ns = $namespace .'.'. $module;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+					$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 					$result->addLink($link);
 				}
 				$event->setResult($result);
@@ -67,7 +69,7 @@ class DiscoverNameSpace
 					foreach ($documents as $document)
 					{
 						$ns = $namespace .'.'. $document;
-						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+						$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 						$result->addLink($link);
 					}
 					$event->setResult($result);
@@ -84,7 +86,7 @@ class DiscoverNameSpace
 				foreach ($resolver->getResourceActionClasses() as $actionName => $class)
 				{
 					$ns = $namespace .'.'. $actionName;
-					$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+					$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 					$result->addLink($link);
 				}
 				$event->setResult($result);
@@ -102,7 +104,7 @@ class DiscoverNameSpace
 					if (!array_key_exists($vendor, $vendors))
 					{
 						$ns = $namespace .'.'. $vendor;
-						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+						$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 						$result->addLink($link);
 						$vendors[$vendor] = true;
 					}
@@ -120,7 +122,7 @@ class DiscoverNameSpace
 					if ($vendorTree === $vendor && !array_key_exists($shortModuleName, $shortModulesNames))
 					{
 						$ns = $namespace .'.'. $shortModuleName;
-						$link = new \Change\Http\Rest\Result\Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
+						$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 						$result->addLink($link);
 						$shortModulesNames[$shortModuleName] = true;
 					}

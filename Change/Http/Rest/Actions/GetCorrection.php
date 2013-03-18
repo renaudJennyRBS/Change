@@ -1,6 +1,9 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Http\Rest\Result\DocumentCorrectionResult;
+use Change\Http\Rest\Result\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
@@ -13,7 +16,7 @@ class GetCorrection
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument
+	 * @return \Change\Documents\AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -21,7 +24,7 @@ class GetCorrection
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
 		if (!$document)
 		{
-			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
+			return null;
 		}
 
 		if (!$document->getDocumentModel()->useCorrection())
@@ -39,10 +42,16 @@ class GetCorrection
 	public function execute($event)
 	{
 		$document = $this->getDocument($event);
+		if (!$document)
+		{
+			//Document Not Found
+			return;
+		}
+
 		$documentManager = $document->getDocumentServices()->getDocumentManager();
 
 		$LCID = null;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$LCID = $event->getParam('LCID');
 			if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
@@ -85,16 +94,16 @@ class GetCorrection
 	protected function doGetCorrection($event, $document, $correction)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\Result\DocumentCorrectionResult();
+		$result = new DocumentCorrectionResult();
 
-		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
+		$documentLink = new DocumentLink($urlManager, $document);
 		$documentLink->setRel('resource');
 		$result->addLink($documentLink);
 
 		$model = $document->getDocumentModel();
 		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(), 'propertiesNames' => array());
 		$properties = array();
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$localizedOnly = $document->getRefLCID() != $correction->getLCID();
 		}
@@ -118,17 +127,17 @@ class GetCorrection
 				{
 					$properties[$name] = $c->getRestValue();
 				}
-			}
 
-			if ($name === 'creationDate')
-			{
-				$correctionInfos['creationDate'] = $c->convertToRestValue($correction->getCreationDate());
-				$correctionInfos['publicationDate'] = $c->convertToRestValue($correction->getPublicationDate());
+				if ($name === 'creationDate')
+				{
+					$correctionInfos['creationDate'] = $c->convertToRestValue($correction->getCreationDate());
+					$correctionInfos['publicationDate'] = $c->convertToRestValue($correction->getPublicationDate());
+				}
 			}
 		}
 		$result->setCorrectionInfos($correctionInfos);
 		$result->setProperties($properties);
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 	}
 }

@@ -1,8 +1,9 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\DeleteLocalizedDocument
@@ -12,7 +13,7 @@ class DeleteLocalizedDocument
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\Interfaces\Localizable|\Change\Documents\AbstractDocument
+	 * @return Localizable|\Change\Documents\AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -25,7 +26,12 @@ class DeleteLocalizedDocument
 
 		$documentId = intval($event->getParam('documentId'));
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
-		if (!$document || !($document instanceof \Change\Documents\Interfaces\Localizable))
+		if (!$document)
+		{
+			return null;
+		}
+
+		if (!($document instanceof Localizable))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
@@ -47,14 +53,22 @@ class DeleteLocalizedDocument
 		}
 
 		$document = $this->getDocument($event);
+		if (!$document)
+		{
+			//Document Not Found
+			return;
+		}
+
 		$documentManager = $document->getDocumentServices()->getDocumentManager();
 
 		try
 		{
 			$documentManager->pushLCID($LCID);
+
+			/* @var $document Localizable */
 			$document->getLocalizableFunctions()->delete();
 
-			$result = new \Change\Http\Result();
+			$result = new Result();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 			$event->setResult($result);
 

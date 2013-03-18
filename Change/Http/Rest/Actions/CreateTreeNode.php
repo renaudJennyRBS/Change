@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\Result\TreeNodeResult;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
@@ -35,7 +37,7 @@ class CreateTreeNode
 		$document = isset($properties['id']) ? $documentServices->getDocumentManager()->getDocumentInstance(intval($properties['id'])) : null;
 		if (!$document)
 		{
-			$errorResult = new \Change\Http\Rest\Result\ErrorResult('DOCUMENT-NOT-FOUND', 'Document not found', HttpResponse::STATUS_CODE_409);
+			$errorResult = new ErrorResult('DOCUMENT-NOT-FOUND', 'Document not found', HttpResponse::STATUS_CODE_409);
 			$errorResult->addDataValue('value', isset($properties['id']) ? intval($properties['id']) : null);
 			$event->setResult($errorResult);
 			return;
@@ -48,7 +50,7 @@ class CreateTreeNode
 			$node = $treeManager->getRootNode($treeName);
 			if ($node)
 			{
-				$errorResult = new \Change\Http\Rest\Result\ErrorResult('DUPLICATE-ROOT-NODE', 'Root node already defined', HttpResponse::STATUS_CODE_409);
+				$errorResult = new ErrorResult('DUPLICATE-ROOT-NODE', 'Root node already defined', HttpResponse::STATUS_CODE_409);
 				$errorResult->addDataValue('value', $node->getDocumentId());
 				$event->setResult($errorResult);
 				return;
@@ -74,7 +76,7 @@ class CreateTreeNode
 		$getTreeNode = new GetTreeNode();
 		$getTreeNode->execute($event);
 		$result = $event->getResult();
-		if ($result instanceof \Change\Http\Rest\Result\TreeNodeResult)
+		if ($result instanceof TreeNodeResult)
 		{
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
 			$selfLinks = $result->getLinks()->getByRel('self');
