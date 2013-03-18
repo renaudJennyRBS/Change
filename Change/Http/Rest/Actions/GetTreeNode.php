@@ -1,6 +1,12 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\Result\TreeNodeResult;
+use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
@@ -45,12 +51,12 @@ class GetTreeNode
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\TreeNode $node
-	 * @return \Change\Http\Rest\Result\TreeNodeResult
+	 * @return TreeNodeResult
 	 */
 	protected function generateResult($event, $node)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\Result\TreeNodeResult();
+		$result = new TreeNodeResult();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 
@@ -88,11 +94,11 @@ class GetTreeNode
 
 	/**
 	 * @param DocumentLink $documentLink
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param AbstractDocument $document
+	 * @param UrlManager $urlManager
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, \Change\Documents\AbstractDocument $document, \Change\Http\UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
 	{
 		if ($documentLink->getLCID())
 		{
@@ -104,18 +110,18 @@ class GetTreeNode
 		$documentLink->setProperty($model->getProperty('creationDate'));
 		$documentLink->setProperty($model->getProperty('modificationDate'));
 
-		if ($document instanceof \Change\Documents\Interfaces\Editable)
+		if ($document instanceof Editable)
 		{
 			$documentLink->setProperty($model->getProperty('label'));
 			$documentLink->setProperty($model->getProperty('documentVersion'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($document instanceof Publishable)
 		{
 			$documentLink->setProperty($model->getProperty('publicationStatus'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$documentLink->setProperty($model->getProperty('refLCID'));
 			$documentLink->setProperty($model->getProperty('LCID'));

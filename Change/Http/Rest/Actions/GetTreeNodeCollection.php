@@ -1,6 +1,12 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\Result\CollectionResult;
+use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
@@ -66,7 +72,7 @@ class GetTreeNodeCollection
 	protected function generateResult($event, $parentNode, $nodes)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$result = new CollectionResult();
 		if (($offset = $event->getRequest()->getQuery('offset')) !== null)
 		{
 			$result->setOffset(intval($offset));
@@ -94,19 +100,19 @@ class GetTreeNodeCollection
 		foreach ($nodes as $node)
 		{
 			/* @var $node \Change\Documents\TreeNode */;
-			$t = new \Change\Http\Rest\Result\TreeNodeLink($urlManager, $node);
+			$t = new TreeNodeLink($urlManager, $node);
 			$document = $node->getDocument();
 			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
 			$result->addResource($t);
 		}
 
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 		return $result;
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\CollectionResult $result
+	 * @param CollectionResult $result
 	 * @return array
 	 */
 	protected function buildQueryArray($result)
@@ -117,11 +123,11 @@ class GetTreeNodeCollection
 
 	/**
 	 * @param DocumentLink $documentLink
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param AbstractDocument $document
+	 * @param UrlManager $urlManager
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, \Change\Documents\AbstractDocument $document, \Change\Http\UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
 	{
 		if ($documentLink->getLCID())
 		{
@@ -133,18 +139,18 @@ class GetTreeNodeCollection
 		$documentLink->setProperty($model->getProperty('creationDate'));
 		$documentLink->setProperty($model->getProperty('modificationDate'));
 
-		if ($document instanceof \Change\Documents\Interfaces\Editable)
+		if ($document instanceof Editable)
 		{
 			$documentLink->setProperty($model->getProperty('label'));
 			$documentLink->setProperty($model->getProperty('documentVersion'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($document instanceof Publishable)
 		{
 			$documentLink->setProperty($model->getProperty('publicationStatus'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$documentLink->setProperty($model->getProperty('refLCID'));
 			$documentLink->setProperty($model->getProperty('LCID'));

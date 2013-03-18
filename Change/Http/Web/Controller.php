@@ -4,6 +4,7 @@ namespace Change\Http\Web;
 use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
 use Zend\Http\Response as HttpResponse;
+use Change\Http\Event;
 
 /**
  * @name \Change\Http\Web\Controller

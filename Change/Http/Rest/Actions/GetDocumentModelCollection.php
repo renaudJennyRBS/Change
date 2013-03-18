@@ -1,6 +1,13 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\DocumentCollection;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\Result\CollectionResult;
+use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentActionLink;
@@ -13,6 +20,7 @@ class GetDocumentModelCollection
 	/**
 	 * Use Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{
@@ -26,7 +34,7 @@ class GetDocumentModelCollection
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\CollectionResult $result
+	 * @param CollectionResult $result
 	 * @return array
 	 */
 	protected function buildQueryArray($result)
@@ -48,7 +56,7 @@ class GetDocumentModelCollection
 	protected function generateResult($event, $model)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$result = new CollectionResult();
 		if (($offset = $event->getRequest()->getQuery('offset')) !== null)
 		{
 			$result->setOffset(intval($offset));
@@ -76,9 +84,19 @@ class GetDocumentModelCollection
 
 		$table = $fb->getDocumentTable($model->getRootName());
 
-		$sc = $qb->select()
-				->addColumn($fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count'))
-				->from($table)->query();
+		$qb->select()->addColumn($fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count'))
+				->from($table);
+
+		if ($model->hasDescendants())
+		{
+			$qb->where($fb->in($fb->getDocumentColumn('model'), $model->getName(), $model->getDescendantsNames()));
+		}
+		else
+		{
+			$qb->where($fb->eq($fb->getDocumentColumn('model'), $fb->string($model->getName())));
+		}
+
+		$sc	= $qb->query();
 		$row = $sc->getFirstResult();
 		if ($row && $row['count'])
 		{
@@ -113,6 +131,15 @@ class GetDocumentModelCollection
 				->addColumn($fb->alias($fb->getDocumentColumn('id', $table), 'id'))
 				->addColumn($fb->alias($fb->getDocumentColumn('model', $table), 'model'))
 				->from($table);
+
+			if ($model->hasDescendants())
+			{
+				$qb->where($fb->in($fb->getDocumentColumn('model'), $model->getName(), $model->getDescendantsNames()));
+			}
+			else
+			{
+				$qb->where($fb->eq($fb->getDocumentColumn('model'), $fb->string($model->getName())));
+			}
 
 			if ($result->getSort() && ($property = $model->getProperty($result->getSort())) !== null)
 			{
@@ -151,7 +178,7 @@ class GetDocumentModelCollection
 			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
-			$collection = new \Change\Documents\DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
+			$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
 			foreach ($collection as $document)
 			{
 				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
@@ -159,18 +186,18 @@ class GetDocumentModelCollection
 			}
 		}
 
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 		return $result;
 	}
 
 	/**
 	 * @param DocumentLink $documentLink
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param AbstractDocument $document
+	 * @param UrlManager $urlManager
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, \Change\Documents\AbstractDocument $document, \Change\Http\UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
 	{
 		if ($documentLink->getLCID())
 		{
@@ -182,18 +209,18 @@ class GetDocumentModelCollection
 		$documentLink->setProperty($model->getProperty('creationDate'));
 		$documentLink->setProperty($model->getProperty('modificationDate'));
 
-		if ($document instanceof \Change\Documents\Interfaces\Editable)
+		if ($document instanceof Editable)
 		{
 			$documentLink->setProperty($model->getProperty('label'));
 			$documentLink->setProperty($model->getProperty('documentVersion'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($document instanceof Publishable)
 		{
 			$documentLink->setProperty($model->getProperty('publicationStatus'));
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$documentLink->setProperty($model->getProperty('refLCID'));
 			$documentLink->setProperty($model->getProperty('LCID'));

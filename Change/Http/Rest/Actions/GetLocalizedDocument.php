@@ -1,6 +1,12 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Correction;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\Result\DocumentResult;
+use Change\Logging\Logging;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;
@@ -16,7 +22,7 @@ class GetLocalizedDocument
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\Interfaces\Localizable|\Change\Documents\AbstractDocument
+	 * @return Localizable|\Change\Documents\AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -29,7 +35,12 @@ class GetLocalizedDocument
 
 		$documentId = intval($event->getParam('documentId'));
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
-		if (!$document || !($document instanceof \Change\Documents\Interfaces\Localizable))
+		if (!$document)
+		{
+			return null;
+		}
+
+		if (!($document instanceof Localizable))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
@@ -44,13 +55,17 @@ class GetLocalizedDocument
 	 */
 	public function execute($event)
 	{
-
 		$LCID = $event->getParam('LCID');
 		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
 			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 		}
 		$document = $this->getDocument($event);
+		if ($document === null)
+		{
+			//Document Not Found
+			return;
+		}
 
 		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		try
@@ -69,10 +84,10 @@ class GetLocalizedDocument
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Logging\Logging $logging
+	 * @param Logging $logging
 	 * @return null|string
 	 */
-	protected function buildEtag($document, \Change\Logging\Logging $logging = null)
+	protected function buildEtag($document, Logging $logging = null)
 	{
 		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
 
@@ -81,17 +96,17 @@ class GetLocalizedDocument
 			$parts[] = $document->getCorrectionFunctions()->getCorrection()->getStatus();
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Editable)
+		if ($document instanceof Editable)
 		{
 			$parts[] = $document->getDocumentVersion();
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($document instanceof Publishable)
 		{
 			$parts[] = $document->getPublicationStatus();
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		if ($document instanceof Localizable)
 		{
 			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
 		}
@@ -105,19 +120,18 @@ class GetLocalizedDocument
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\Interfaces\Localizable | \Change\Documents\AbstractDocument  $document
+	 * @param Localizable | \Change\Documents\AbstractDocument  $document
 	 * @param string $LCID
-	 * @return \Change\Http\Rest\Result\DocumentResult
+	 * @return DocumentResult
 	 */
 	protected function generateResult($event, $document, $LCID)
 	{
 		$urlManager = $event->getUrlManager();
 
-		$result = new \Change\Http\Rest\Result\DocumentResult();
-		//$result->setHeaderLastModified($document->getModificationDate());
+		$result = new DocumentResult();
 		$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
 
-		$documentLink = new \Change\Http\Rest\Result\DocumentLink($urlManager, $document);
+		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
 		if ($document->getTreeName())
 		{
@@ -146,7 +160,7 @@ class GetLocalizedDocument
 
 		$i18n = array();
 
-		/* @var $document \Change\Documents\Interfaces\Localizable */
+		/* @var $document Localizable */
 		foreach ($document->getLocalizableFunctions()->getLCIDArray() as $tmpLCID)
 		{
 			$LCIDLink = clone($documentLink);
@@ -155,13 +169,13 @@ class GetLocalizedDocument
 		}
 		$result->setI18n($i18n);
 
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 		return $result;
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $result
+	 * @param DocumentResult $result
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param string $LCID
@@ -178,12 +192,12 @@ class GetLocalizedDocument
 					$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 					$result->addAction($l);
 
-					if ($correction->getStatus() === \Change\Documents\Correction::STATUS_DRAFT)
+					if ($correction->getStatus() === Correction::STATUS_DRAFT)
 					{
 						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
 						$result->addAction($l);
 					}
-					elseif ($correction->getStatus() === \Change\Documents\Correction::STATUS_VALIDATION)
+					elseif ($correction->getStatus() === Correction::STATUS_VALIDATION)
 					{
 						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
 						$result->addAction($l);
@@ -192,9 +206,11 @@ class GetLocalizedDocument
 			}
 		}
 
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($document instanceof Publishable)
 		{
 			$pf = $document->getPublishableFunctions();
+
+			/* @var $document \Change\Documents\AbstractDocument */
 			if ($pf->canStartValidation())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'startValidation');

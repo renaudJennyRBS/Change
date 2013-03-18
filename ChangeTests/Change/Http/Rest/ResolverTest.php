@@ -2,6 +2,7 @@
 namespace ChangeTests\Change\Http\Rest;
 
 use Change\Http\Rest\Resolver;
+use Zend\Http\Request;
 
 class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -18,7 +19,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param string $method
 	 * @return void
 	 */
-	protected function resetEvent(\Change\Http\Event $event, $path = null, $method = \Zend\Http\Request::METHOD_GET)
+	protected function resetEvent(\Change\Http\Event $event, $path = null, $method = Request::METHOD_GET)
 	{
 		$event->setAction(null);
 		$event->setResult(null);
@@ -43,7 +44,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$event = new \Change\Http\Event();
 		$event->setRequest(new \ChangeTests\Change\Http\Rest\TestAssets\Request());
-		$event->getRequest()->setMethod(\Zend\Http\Request::METHOD_GET);
+		$event->getRequest()->setMethod(Request::METHOD_GET);
 
 		$event->setUrlManager(new \ChangeTests\Change\Http\Rest\TestAssets\UrlManager());
 		$event->setTarget(new \Change\Http\Rest\Controller($application));
@@ -124,14 +125,14 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertTrue(is_callable($event->getAction()));
 
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/', \Zend\Http\Request::METHOD_PUT);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/', Request::METHOD_PUT);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/', \Zend\Http\Request::METHOD_DELETE);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/', Request::METHOD_DELETE);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
@@ -151,50 +152,55 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$resolver = new Resolver();
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/', \Zend\Http\Request::METHOD_POST);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/', Request::METHOD_POST);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/-3', \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
+
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/3', Request::METHOD_POST);
+		$resolver->resolve($event);
+		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
+		$this->assertEquals($event->getParam('documentId'), 3);
+		$this->assertTrue(is_callable($event->getAction()));
+
 
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
 		$document = $mi->getInstanceRo5001($event->getDocumentServices());
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
-
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), Request::METHOD_GET);
 
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
-		$this->assertNull($event->getParam('documentId'));
-		$this->assertFalse(is_callable($event->getAction()));
+		$this->assertEquals($document->getId(), $event->getParam('documentId'));
+		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId() . '/fr_FR', \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId() . '/fr_FR', Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), \Zend\Http\Request::METHOD_PUT);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), Request::METHOD_PUT);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), \Zend\Http\Request::METHOD_DELETE);
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), Request::METHOD_DELETE);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
@@ -212,14 +218,14 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$resolver = new Resolver();
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/', \Zend\Http\Request::METHOD_POST);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/', Request::METHOD_POST);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/-3', \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
@@ -228,57 +234,57 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
 		$document = $mi->getInstanceRo5002($event->getDocumentServices());
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/zz_ZZ', \Zend\Http\Request::METHOD_GET);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/zz_ZZ', Request::METHOD_GET);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_POST);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_POST);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', \Zend\Http\Request::METHOD_POST);
-		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
-		$this->assertEquals($document->getId(), $event->getParam('documentId'));
-		$this->assertFalse(is_callable($event->getAction()));
-
-
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_PUT);
-		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
-		$this->assertEquals($document->getId(), $event->getParam('documentId'));
-		$this->assertTrue(is_callable($event->getAction()));
-
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', \Zend\Http\Request::METHOD_PUT);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', Request::METHOD_POST);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), \Zend\Http\Request::METHOD_DELETE);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_PUT);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));
 		$this->assertTrue(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', \Zend\Http\Request::METHOD_DELETE);
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', Request::METHOD_PUT);
+		$resolver->resolve($event);
+		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
+		$this->assertEquals($document->getId(), $event->getParam('documentId'));
+		$this->assertTrue(is_callable($event->getAction()));
+
+
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_DELETE);
+		$resolver->resolve($event);
+		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
+		$this->assertEquals($document->getId(), $event->getParam('documentId'));
+		$this->assertTrue(is_callable($event->getAction()));
+
+		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/fr_FR', Request::METHOD_DELETE);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
 		$this->assertEquals($document->getId(), $event->getParam('documentId'));

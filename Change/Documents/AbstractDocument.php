@@ -451,7 +451,7 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 			return;
 		}
 
-		if ($this->isNew())
+		if ($this->getPersistentState() === DocumentManager::STATE_NEW )
 		{
 			throw new \RuntimeException('Document is new', 51002);
 		}
