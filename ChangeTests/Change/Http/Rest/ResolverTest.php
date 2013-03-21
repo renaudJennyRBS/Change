@@ -66,7 +66,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->resetEvent($event, '');
 		$resolver->resolve($event);
 		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertEquals('', $event->getParam('namespace', 'fail'));
+		$this->assertEquals('fail', $event->getParam('namespace', 'fail'));
 		$this->assertFalse($event->getParam('isDirectory'));
 
 		$this->resetEvent($event, '/');

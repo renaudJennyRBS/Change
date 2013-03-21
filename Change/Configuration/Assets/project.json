@@ -40,8 +40,21 @@
 		},
 		"Events":{
 			"ListenerAggregateClasses":{
-				"Change":"\\Change\\Events\\DefaultSharedListenerAggregate"
+				"Change":"\\Change\\Events\\DefaultSharedListenerAggregate",
+                "Rest":"\\Change\\Http\\Rest\\OAuth\\SharedListenerAggregate"
 			}
-		}
+		},
+        "Http":{
+            "Rest":{
+                "OAuth":{
+                    "consumerKey":"TODO_SET_CONSUMER_KEY",
+                    "consumerSecret":"TODO_SET_CONSUMER_SECRET",
+                    "timestampMaxOffset":60,
+                    "tokenAccessValidity":"P10Y",
+                    "tokenRequestValidity":"P1D",
+                    "allowAnonymous":true
+                }
+            }
+        }
 	}
 }

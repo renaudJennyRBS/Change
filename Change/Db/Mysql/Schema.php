@@ -55,6 +55,26 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			->addKey($this->newPrimaryKey()->addField($correctionId))
 			->addKey($this->newIndexKey()->setName('document')->addField($idDef)->addField($status)->addField($lcid))
 			->setOption('AUTONUMBER', 1);
+
+			$tokenId = $schemaManager->newIntegerFieldDefinition('token_id')->setNullable(false)->setAutoNumber(true);
+			$token = $schemaManager->newVarCharFieldDefinition('token', array('length' => 64))->setNullable(false);
+			$this->tables['change_oauth'] = $schemaManager->newTableDefinition('change_oauth')
+				->addField($tokenId)
+				->addField($token)
+				->addField($schemaManager->newVarCharFieldDefinition('token_secret', array('length' => 64))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('consumer_key', array('length' => 64))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('consumer_secret', array('length' => 64))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('realm', array('length' => 128))->setNullable(false))
+				->addField($schemaManager->newEnumFieldDefinition('token_type', array('VALUES' => array('request', 'access')))->setNullable(false)->setDefaultValue('request'))
+				->addField($schemaManager->newTimeStampFieldDefinition('creation_date'))
+				->addField($schemaManager->newDateFieldDefinition('validity_date'))
+				->addField($schemaManager->newVarCharFieldDefinition('callback', array('length' => 255))->setNullable(false)->setDefaultValue('oob'))
+				->addField($schemaManager->newVarCharFieldDefinition('verifier', array('length' => 20))->setNullable(true))
+				->addField($schemaManager->newBooleanFieldDefinition('authorized')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newIntegerFieldDefinition('accessor_id'))
+				->addKey($this->newPrimaryKey()->addField($tokenId))
+				->addKey($this->newUniqueKey()->setName('token')->addField($token))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

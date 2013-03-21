@@ -1,16 +1,14 @@
 <?php
-namespace Change\Events;
+namespace Change\Http\Rest\OAuth;
 
 use Zend\EventManager\SharedListenerAggregateInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-
-use Change\Documents\Events\Event as DocumentEvent;
 use Change\Http\Event as HttpEvent;
 
 /**
- * @name \Change\Events\DefaultSharedListenerAggregate
+ * @name \Change\Http\Rest\OAuth\SharedListenerAggregate
  */
-class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
+class SharedListenerAggregate implements SharedListenerAggregateInterface
 {
 	/**
 	 * Attach one or more listeners
@@ -22,21 +20,19 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$identifiers = array('Documents');
+		$identifiers = array('Http.Rest');
+		$callBack = function($event) {
+			$l = new AuthenticationListener();
+			$l->onRequest($event);
+		};
+		$events->attach($identifiers, array(HttpEvent::EVENT_REQUEST), $callBack, 5);
 
 		$callBack = function($event) {
-			$l = new \Change\Documents\Events\ValidateListener();
-			$l->onValidate($event);
+			$l = new AuthenticationListener();
+			$l->onResponse($event);
 		};
 
-		$events->attach($identifiers, array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), $callBack, 5);
-
-		$callBack = function($event) {
-			$l = new \Change\Documents\Events\DeleteListener();
-			$l->onDelete($event);
-		};
-
-		$events->attach($identifiers, DocumentEvent::EVENT_DELETE, $callBack, 5);
+		$events->attach($identifiers, array(HttpEvent::EVENT_RESPONSE), $callBack, 10);
 	}
 
 	/**

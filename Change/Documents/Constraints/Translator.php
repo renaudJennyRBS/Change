@@ -34,9 +34,10 @@ class Translator extends \Zend\I18n\Translator\Translator
 	 * @param  string $message
 	 * @param  string $locale
 	 * @param  string $textDomain
+	 * @param  boolean     $returnPluralRule
 	 * @return string|null
 	 */
-	protected function getTranslatedMessage($message, $locale = null, $textDomain = 'default')
+	protected function getTranslatedMessage($message, $locale = null, $textDomain = 'default', $returnPluralRule = false)
 	{
 		if (strpos($message, ' ') === false)
 		{

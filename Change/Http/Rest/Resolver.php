@@ -67,9 +67,6 @@ class Resolver extends ActionResolver
 		{
 			$event->setParam('isDirectory', false);
 		}
-
-		$event->setParam('namespace', implode('.', $nameSpaces));
-
 		if (count($nameSpaces) !== 0)
 		{
 			switch ($nameSpaces[0])
@@ -93,8 +90,8 @@ class Resolver extends ActionResolver
 		{
 			if ($request->getMethod() === 'GET')
 			{
+				$event->setParam('namespace', implode('.', $nameSpaces));
 				$event->setParam('Resolver', $this);
-
 				$action = new DiscoverNameSpace();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
 				return;

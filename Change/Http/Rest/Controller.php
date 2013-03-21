@@ -67,7 +67,6 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function getDefaultResponse($event)
 	{
-
 		$response = $this->createResponse();
 		$response->setStatusCode(HttpResponse::STATUS_CODE_500);
 		$content = array('code' => 'ERROR-GENERIC', 'message' => 'Generic error');

@@ -3,11 +3,18 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"	
 	icon="website" editable="true" extend="Change_Website_Section">
 	<properties>
-        <property name="hostName" type="String" localized="true" />
-        <property name="port" type="Integer" localized="true" />
+		<property name="hostName" type="String" localized="true">
+			<dboptions length="128" />
+		</property>
 
-    <!-- TODO UNCOMMENT THIS AFTER MEDIA MODULE IMPLEMENTATION
-    <property name="icon" type="Document" document-type="Change_Media_Image" />
+		<property name="port" type="Integer" localized="true" />
+
+		<property name="scriptName" type="String" localized="true">
+			<dboptions length="64" />
+			</property>
+
+	<!-- TODO UNCOMMENT THIS AFTER MEDIA MODULE IMPLEMENTATION
+	<property name="icon" type="Document" document-type="Change_Media_Image" />
 	-->
-    </properties>
+	</properties>
 </document>
