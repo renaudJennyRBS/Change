@@ -9,7 +9,7 @@ before_install:
  - wget "https://packages.zendframework.com/releases/ZendFramework-2.1.4/ZendFramework-minimal-2.1.4.tgz"
  - tar -zxf ZendFramework-minimal-2.1.4.tgz
  - mkdir -p Libraries/zendframework
- - mv ZendFramework-minimal-2.1.1 Libraries/zendframework/zendframework
+ - mv ZendFramework-minimal-2.1.4 Libraries/zendframework/zendframework
  - wget "http://packages.zendframework.com/composer/ZendOAuth-2.0.1.zip"
  - unzip ZendOAuth-2.0.1.zip -d Libraries/zendframework/zendoauth
  - mysql -e 'create database rbschangetest;'
