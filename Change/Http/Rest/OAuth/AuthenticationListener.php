@@ -197,7 +197,7 @@ class AuthenticationListener
 		{
 			if ($authorization['oauth_consumer_key'] !== $this->getDefaultConsumerKey())
 			{
-				throw new \RuntimeException('Invalid OAuth Consumer Key: ' . $authorization['oauth_consumer_key'], 9999999);
+				throw new \RuntimeException('Invalid OAuth Consumer Key: ' . $authorization['oauth_consumer_key'], 72001);
 			}
 			$this->checkTimestamp($authorization['oauth_timestamp']);
 
@@ -228,12 +228,12 @@ class AuthenticationListener
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid Signature', 9999999);
+				throw new \RuntimeException('Invalid Signature', 72000);
 			}
 		}
 		else
 		{
-			throw new \RuntimeException('Invalid OAuth Authorization', 9999999);
+			throw new \RuntimeException('Invalid OAuth Authorization', 72002);
 		}
 	}
 
@@ -337,22 +337,22 @@ class AuthenticationListener
 					}
 					else
 					{
-						throw new \RuntimeException('Unable to create Token', 9999999);
+						throw new \RuntimeException('Unable to create Token', 72003);
 					}
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid Signature', 9999999);
+					throw new \RuntimeException('Invalid Signature', 72000);
 				}
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 9999999);
+				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
 		}
 		else
 		{
-			throw new \RuntimeException('Invalid OAuth Authorization', 9999999);
+			throw new \RuntimeException('Invalid OAuth Authorization', 72002);
 		}
 	}
 
@@ -373,7 +373,7 @@ class AuthenticationListener
 			$storeOAuth->importFromArray($authorization);
 			if (!$storeOAuth->getToken())
 			{
-				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 9999999);
+				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
 
 			$this->checkTimestamp($authorization['oauth_timestamp']);
@@ -394,17 +394,17 @@ class AuthenticationListener
 				else
 				{
 					$event->getApplicationServices()->getLogging()->fatal($signature . '  --  ' . $authorization['oauth_signature']);
-					throw new \RuntimeException('Invalid Signature', 9999999);
+					throw new \RuntimeException('Invalid Signature', 72000);
 				}
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 9999999);
+				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
 		}
 		elseif (!$this->getAllowAnonymous())
 		{
-			throw new \RuntimeException('Invalid OAuth Authorization', 9999999);
+			throw new \RuntimeException('Invalid OAuth Authorization', 72002);
 		}
 	}
 
@@ -418,7 +418,7 @@ class AuthenticationListener
 		$delay = abs(time() - $timestamp);
 		if ($delay > $this->getTimestampMaxOffset())
 		{
-			throw new \RuntimeException('Invalid Timestamp: ' . $delay, 9999999);
+			throw new \RuntimeException('Invalid Timestamp: ' . $delay, 72005);
 		}
 	}
 
