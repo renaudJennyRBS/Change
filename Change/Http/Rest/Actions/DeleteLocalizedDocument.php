@@ -53,7 +53,7 @@ class DeleteLocalizedDocument
 		}
 
 		$document = $this->getDocument($event);
-		if (!$document)
+		if ($document === null)
 		{
 			//Document Not Found
 			return;

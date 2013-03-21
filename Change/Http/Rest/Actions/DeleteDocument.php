@@ -18,7 +18,7 @@ class DeleteDocument
 	public function execute($event)
 	{
 		$document = $this->getDocument($event);
-		if ($document)
+		if ($document === null)
 		{
 			//Document Not Found
 			return;

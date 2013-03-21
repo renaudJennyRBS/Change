@@ -8,21 +8,34 @@ use Zend\Stdlib\Parameters;
  */
 class Request extends \Change\Http\Request
 {
-
 	public function __construct()
 	{
 		parent::__construct();
 		if (in_array($this->getMethod(), array('PUT', 'POST')))
 		{
-			if ($this->getHeader('Content-Type') == 'application/json' && $this->getHeader('Content-length') > 0);
+			try
 			{
-				$string = file_get_contents('php://input');
-				$data = json_decode($string, true);
-				if (JSON_ERROR_NONE === json_last_error())
+				$h = $this->getHeaders('Content-Type');
+			}
+			catch (\Exception $e)
+			{
+				//Header not found
+				return;
+			}
+
+			if ($h && ($h instanceof \Zend\Http\Header\ContentType))
+			{
+				if (strpos($h->getFieldValue(), 'application/json') === 0)
 				{
-					if (is_array($data))
+					$string = file_get_contents('php://input');
+
+					$data = json_decode($string, true);
+					if (JSON_ERROR_NONE === json_last_error())
 					{
-						$this->setPost(new Parameters($data));
+						if (is_array($data))
+						{
+							$this->setPost(new Parameters($data));
+						}
 					}
 				}
 			}

@@ -31,7 +31,7 @@ class SchemaTest extends \ChangeTests\Change\TestAssets\TestCase
 		$provider = $this->getApplicationServices()->getDbProvider();
 		$schema = new Schema($provider->getSchemaManager());
 		
-		$this->assertCount(4, $schema->getTables());
+		$this->assertCount(5, $schema->getTables());
 
 		$schema->generate();
 	}

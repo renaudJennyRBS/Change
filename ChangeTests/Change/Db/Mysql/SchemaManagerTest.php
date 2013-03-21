@@ -53,7 +53,7 @@ class SchemaManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$systemSchema = $schemaManager->getSystemSchema();
 		$this->assertInstanceOf('\Change\Db\Schema\SchemaDefinition', $systemSchema);
 		$systemSchema->generate();
-		$this->assertCount(4, $schemaManager->getTableNames());
+		$this->assertCount(5, $schemaManager->getTableNames());
 		return $schemaManager;
 	}
 

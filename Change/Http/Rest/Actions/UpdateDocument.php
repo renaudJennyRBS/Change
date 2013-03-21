@@ -20,6 +20,7 @@ class UpdateDocument
 	 */
 	protected function getDocument($event)
 	{
+
 		$modelName = $event->getParam('modelName');
 		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model)
@@ -57,7 +58,6 @@ class UpdateDocument
 			$updateLocalizedDocument->execute($event);
 			return;
 		}
-
 		$properties = $event->getRequest()->getPost()->toArray();
 		$this->update($event, $document, $properties);
 	}

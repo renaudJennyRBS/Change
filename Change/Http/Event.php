@@ -28,6 +28,11 @@ class Event extends \Zend\EventManager\Event
 	protected $request;
 
 	/**
+	 * @var \Change\Http\AuthenticationInterface|null
+	 */
+	protected $authentication;
+
+	/**
 	 * @var \Change\Http\UrlManager
 	 */
 	protected $urlManager;
@@ -105,6 +110,22 @@ class Event extends \Zend\EventManager\Event
 	public function getRequest()
 	{
 		return $this->request;
+	}
+
+	/**
+	 * @param \Change\Http\AuthenticationInterface|null $authentication
+	 */
+	public function setAuthentication($authentication)
+	{
+		$this->authentication = $authentication;
+	}
+
+	/**
+	 * @return \Change\Http\AuthenticationInterface|null
+	 */
+	public function getAuthentication()
+	{
+		return $this->authentication;
 	}
 
 	/**

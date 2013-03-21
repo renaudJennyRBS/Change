@@ -56,6 +56,24 @@ class PublishableFunctions
 	 * @api
 	 * @return boolean
 	 */
+	public function published()
+	{
+		$document = $this->getDocument();
+		if (Publishable::STATUS_PUBLISHABLE === $document->getPublicationStatus())
+		{
+			$st = $document->getStartPublication();
+			$ep = $document->getEndPublication();
+			$now = new \DateTime();
+			return (null === $st || $st <= $now) && (null === $ep || $now < $ep);
+		}
+		return false;
+	}
+
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function canStartValidation()
 	{
 		$document = $this->getDocument();

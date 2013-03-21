@@ -104,6 +104,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 		try
 		{
 			$this->doSendRequest($eventManager, $event);
+
 			if (!($event->getResult() instanceof Result))
 			{
 				$this->getActionResolver()->resolve($event);
@@ -114,16 +115,17 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 				if (is_callable($action))
 				{
-					call_user_func($action, $event);
+					if ($this->checkAcl($event))
+					{
+						call_user_func($action, $event);
+					}
 				}
 
 				$this->doSendResult($eventManager, $event);
 
 				if (!($event->getResult() instanceof Result))
 				{
-					$notFound = new Result();
-					$notFound->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
-					$event->setResult($notFound);
+					$this->notFound($event);
 				}
 			}
 
@@ -143,37 +145,119 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
+	 * @return boolean
 	 */
-	protected function doSendRequest($eventManager, \Change\Http\Event $event)
+	protected function checkAcl(Event $event)
+	{
+		if (null !== ($authentication = $event->getAuthentication()))
+		{
+			$privilege = $event->getParam('privilege');
+			if ($privilege)
+			{
+				if (!$authentication->isAuthenticated())
+				{
+					$this->unauthorized($event);
+					return false;
+				}
+				else
+				{
+					$resource = $event->getParam('resource');
+					if (!$authentication->getAcl()->hasPrivilege($resource, $privilege))
+					{
+						$this->forbidden($event);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Event $event
+	 * @return \Change\Http\Result
+	 */
+	public function notFound($event)
+	{
+		$notFound = new Result();
+		$notFound->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
+		$event->setResult($notFound);
+		return $notFound;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Event $event
+	 * @return \Change\Http\Result
+	 */
+	public function unauthorized(Event $event)
+	{
+		$unauthorized = new Result();
+		$unauthorized->setHttpStatusCode(HttpResponse::STATUS_CODE_401);
+		$event->setResult($unauthorized);
+		return $unauthorized;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Event $event
+	 * @return \Change\Http\Result
+	 */
+	public function forbidden(Event $event)
+	{
+		$forbidden = new Result();
+		$forbidden->setHttpStatusCode(HttpResponse::STATUS_CODE_403);
+		$event->setResult($forbidden);
+		return $forbidden;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Event $event
+	 * @return \Change\Http\Result
+	 */
+	public function error($event)
+	{
+		$error = new Result();
+		$error->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
+		$event->setResult($error);
+		return $error;
+	}
+
+	/**
+	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param Event $event
+	 */
+	protected function doSendRequest($eventManager, Event $event)
 	{
 		$eventManager->trigger(Event::EVENT_REQUEST, $this, $event);
 	}
 
 	/**
 	 * @param \Zend\EventManager\EventManager $eventManager
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
-	protected function doSendAction($eventManager, \Change\Http\Event $event)
+	protected function doSendAction($eventManager, Event $event)
 	{
 		$eventManager->trigger(Event::EVENT_ACTION, $this, $event);
 	}
 
 	/**
 	 * @param \Zend\EventManager\EventManager $eventManager
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
-	protected function doSendResult($eventManager, \Change\Http\Event $event)
+	protected function doSendResult($eventManager, Event $event)
 	{
 		$eventManager->trigger(Event::EVENT_RESULT, $this, $event);
 	}
 
 	/**
 	 * @param \Zend\EventManager\EventManager $eventManager
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
-	protected function doSendResponse($eventManager, \Change\Http\Event $event)
+	protected function doSendResponse($eventManager, Event $event)
 	{
 		try
 		{
@@ -191,7 +275,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @param \Zend\EventManager\EventManager $eventManager
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 * @param \Exception $exception
 	 */
 	protected function doSendException($eventManager, $event, $exception)
@@ -212,8 +296,6 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 		}
 	}
 
-
-
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 * @return void
@@ -224,12 +306,12 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Change\Http\Request $request
-	 * @return \Change\Http\Event
+	 * @param Request $request
+	 * @return Event
 	 */
 	protected function createEvent($request)
 	{
-		$event = new \Change\Http\Event();
+		$event = new Event();
 		$event->setRequest($request);
 		$script = $request->getServer('SCRIPT_NAME');
 		if (strpos($request->getRequestUri(), $script) !== 0)
@@ -242,13 +324,13 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @param \Change\Http\Request $request
-	 * @param \Change\Http\Result $result
+	 * @param Request $request
+	 * @param Result $result
 	 * @return boolean
 	 */
-	public function resultNotModified(\Change\Http\Request $request, $result)
+	public function resultNotModified(Request $request, $result)
 	{
-		if (($result instanceof \Change\Http\Result) && ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_200))
+		if (($result instanceof Result) && ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_200))
 		{
 			$etag = $result->getHeaderEtag();
 			$ifNoneMatch = $request->getIfNoneMatch();
@@ -277,13 +359,15 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 * @return \Zend\Http\PhpEnvironment\Response
 	 */
 	protected function getDefaultResponse($event)
 	{
+		$result = $this->error($event);
 		$response = $this->createResponse();
-		$response->setStatusCode(HttpResponse::STATUS_CODE_500);
+		$response->setStatusCode($result->getHttpStatusCode());
+		$response->setHeaders($result->getHeaders());
 		return $response;
 	}
 }
