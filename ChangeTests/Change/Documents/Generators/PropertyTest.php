@@ -133,11 +133,11 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 			
 			$p = new Property($model);
 			$p->initialize($doc->documentElement);
-			$this->fail('Property Name can not be null');
+			$this->fail('Property name can not be null');
 		}
 		catch (\RuntimeException $e)
 		{
-			$this->assertStringStartsWith('Property Name can not be null', $e->getMessage());
+			$this->assertStringStartsWith('Property name can not be null', $e->getMessage());
 		}
 	}
 	

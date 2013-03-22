@@ -79,6 +79,15 @@ class GetDocumentModelCollection
 		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);
 
+
+		if ($model->isStateless())
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+			$result->setCount(0);
+			$event->setResult($result);
+			return $result;
+		}
+
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 

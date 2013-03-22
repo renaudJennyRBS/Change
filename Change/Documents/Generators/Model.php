@@ -22,6 +22,11 @@ class Model
 	protected $shortName;
 
 	/**
+	 * @var boolean
+	 */
+	protected $stateless;
+
+	/**
 	 * @var string
 	 */
 	protected $treeName;
@@ -37,12 +42,12 @@ class Model
 	protected $extendModel;
 	
 	/**
-	 * @var \Change\Documents\Generators\Property[]
+	 * @var Property
 	 */
 	protected $properties = array();
 	
 	/**
-	 * @var \Change\Documents\Generators\InverseProperty[]
+	 * @var InverseProperty
 	 */
 	protected $inverseProperties = array();	
 	
@@ -190,6 +195,16 @@ class Model
 			}	
 			switch ($name)
 			{
+				case "stateless":
+					if ($value === 'true')
+					{
+						$this->stateless = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+					}
+					break;
 				case "extend":
 					$this->extend = $value;
 					break;
@@ -250,6 +265,20 @@ class Model
 		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->inject === false)
 		{
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
+		}
+
+		if ($this->stateless)
+		{
+			if ($this->backofficeIndexable !== null)
+			{
+				$this->backofficeIndexable = false;
+			}
+
+			if  ($this->extend || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
+				|| $this->localized || $this->editable || $this->publishable || $this->useVersion)
+			{
+				throw new \RuntimeException('Property stateless can not be applicable', 54024);
+			}
 		}
 	}
 
@@ -381,7 +410,7 @@ class Model
 			
 		foreach ($this->properties as $property)
 		{
-			/* @var $property \Change\Documents\Generators\Property */
+			/* @var $property Property */
 			$property->validate();
 		}
 	}
@@ -431,7 +460,7 @@ class Model
 		
 		foreach ($this->properties as $property)
 		{
-			/* @var $property \Change\Documents\Generators\Property */
+			/* @var $property Property */
 			$property->validateInheritance();
 		}
 	}
@@ -470,23 +499,25 @@ class Model
 	}
 
 	/**
-	 * @return \Change\Documents\Generators\Property[]
+	 * @return Property
 	 */
 	public function getProperties()
 	{
 		return $this->properties;
 	}
-	
+
 	/**
-	 * @return \Change\Documents\Generators\Property|null
+	 * @param string $name
+	 * @return Property|null
 	 */
 	public function getPropertyByName($name)
 	{
 		return isset($this->properties[$name]) ? $this->properties[$name] : null;
 	}
-	
+
 	/**
-	 * @return \Change\Documents\Generators\Property[]
+	 * @param string $name
+	 * @return Property
 	 */
 	public function getAncestorsPropertyByName($name)
 	{
@@ -504,7 +535,7 @@ class Model
 	}
 	
 	/**
-	 * @return \Change\Documents\Generators\InverseProperty[]
+	 * @return InverseProperty
 	 */
 	public function getInverseProperties()
 	{
@@ -512,7 +543,8 @@ class Model
 	}
 
 	/**
-	 * @return \Change\Documents\Generators\InverseProperty
+	 * @param string $name
+	 * @return InverseProperty
 	 */
 	public function getInversePropertyByName($name)
 	{
@@ -520,12 +552,22 @@ class Model
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\InverseProperty $inverseProperty
+	 * @param InverseProperty $inverseProperty
+	 * @return \Change\Documents\Generators\InverseProperty
 	 */
 	public function addInverseProperty($inverseProperty)
 	{
 		return $this->inverseProperties[$inverseProperty->getName()] = $inverseProperty;
 	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getStateless()
+	{
+		return $this->stateless;
+	}
+
 
 	/**
 	 * @return string
@@ -659,7 +701,15 @@ class Model
 	 */
 	public function checkLocalized()
 	{
-		return $this->getRoot()->getLocalized();
+		return $this->getRoot()->getLocalized() == true;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function checkStateless()
+	{
+		return $this->getRoot()->getStateless() == true;
 	}
 	
 	/**
@@ -693,6 +743,8 @@ class Model
 		}
 		return false;
 	}
+
+
 		
 	/**
 	 * @return boolean

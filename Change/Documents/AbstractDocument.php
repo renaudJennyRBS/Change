@@ -2,12 +2,16 @@
 namespace Change\Documents;
 
 use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventsCapableInterface;
 
 /**
  * @name \Change\Documents\AbstractDocument
  * @api
  */
-abstract class AbstractDocument implements \Serializable, \Zend\EventManager\EventsCapableInterface
+abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 {		
 	/**
 	 * @var integer
@@ -45,25 +49,25 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	protected $correctionFunctions;
 
 	/**
-	 * @var \Change\Documents\AbstractModel
+	 * @var AbstractModel
 	 */
 	protected $documentModel;
 	
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var DocumentServices
 	 */
 	protected $documentServices;
 
 	/**
-	 * @var \Zend\EventManager\EventManager
+	 * @var EventManager
 	 */
 	protected $eventManager;
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param DocumentServices $documentServices
+	 * @param AbstractModel $model
 	 */
-	public function __construct(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
+	public function __construct(DocumentServices $documentServices, AbstractModel $model)
 	{
 		$this->setDocumentContext($documentServices, $model);
 	}
@@ -75,11 +79,11 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param DocumentServices $documentServices
+	 * @param AbstractModel $model
 	 * @return void
 	 */
-	public function setDocumentContext(\Change\Documents\DocumentServices $documentServices, \Change\Documents\AbstractModel $model)
+	public function setDocumentContext(DocumentServices $documentServices, AbstractModel $model)
 	{
 		$this->documentServices = $documentServices;
 		$this->documentModel = $model;
@@ -107,7 +111,7 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 
 	/**
 	 * @api
-	 * @return \Change\Documents\DocumentServices
+	 * @return DocumentServices
 	 */
 	public function getDocumentServices()
 	{
@@ -116,7 +120,7 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 
 	/**
 	 * @api
-	 * @return \Change\Documents\AbstractModel
+	 * @return AbstractModel
 	 */
 	public function getDocumentModel()
 	{
@@ -143,8 +147,8 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 		{
 			$model = $this->getDocumentModel();
 			$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
-			$eventManager = new \Zend\EventManager\EventManager($identifiers);
-			$eventManager->setSharedManager($this->getDocumentManager()->getApplicationServices()->getApplication()->getSharedEventManager());
+			$eventManager = new EventManager($identifiers);
+			$eventManager->setSharedManager($this->getApplicationServices()->getApplication()->getSharedEventManager());
 			$eventManager->setEventClass('\Change\Documents\Events\Event');
 			$this->eventManager = $eventManager;
 		}
@@ -157,6 +161,14 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	public function getDocumentManager()
 	{
 		return $this->documentServices->getDocumentManager();
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->documentServices->getApplicationServices();
 	}
 
 	/**
@@ -195,9 +207,9 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractModel $documentModel
+	 * @param AbstractModel $documentModel
 	 */
-	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
+	public function setDefaultValues(AbstractModel $documentModel)
 	{
 		$this->persistentState = DocumentManager::STATE_NEW;
 		foreach ($documentModel->getProperties() as $property)
@@ -272,11 +284,40 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 		return $this->id;
 	}
 
-	protected function checkLoaded()
+	/**
+	 * Load properties
+	 * @api
+	 */
+	public function load()
 	{
 		if ($this->persistentState === DocumentManager::STATE_INITIALIZED)
 		{
-			$this->getDocumentManager()->loadDocument($this);
+			if ($this->documentModel->isStateless())
+			{
+				$callable = array($this, 'doLoadStateless');
+				if (is_callable($callable))
+				{
+					call_user_func($callable);
+				}
+			}
+			else
+			{
+				$this->doLoad();
+			}
+		}
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doLoad()
+	{
+		$this->getDocumentManager()->loadDocument($this);
+		$callable = array($this, 'onLoad');
+		if (is_callable($callable))
+		{
+			call_user_func($callable);
 		}
 	}
 
@@ -304,7 +345,11 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 		{
 			throw new \RuntimeException('Document is not new', 51001);
 		}
-
+		$callable = array($this, 'onCreate');
+		if (is_callable($callable))
+		{
+			call_user_func($callable);
+		}
 		$event = new DocumentEvent(DocumentEvent::EVENT_CREATE, $this);
 		$this->getEventManager()->trigger($event);
 
@@ -316,11 +361,22 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 			throw $e;
 		}
 
-		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$this->doCreate();
+			if ($this->documentModel->isStateless())
+			{
+				$callable = array($this, 'doCreateStateless');
+				if (is_callable($callable))
+				{
+					call_user_func($callable);
+				}
+			}
+			else
+			{
+				$this->doCreate();
+			}
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -336,14 +392,13 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	protected function doCreate()
 	{
 		$dm = $this->getDocumentManager();
-
 		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
 		{
 			$dm->affectId($this);
 			$dm->insertDocument($this);
 		}
 
-		if ($this instanceof \Change\Documents\Interfaces\Localizable)
+		if ($this instanceof Localizable)
 		{
 			$dm->insertLocalizedDocument($this, $this->getCurrentLocalizedPart());
 		}
@@ -359,6 +414,11 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 			throw new \RuntimeException('Document is new', 51002);
 		}
 
+		$callable = array($this, 'onUpdate');
+		if (is_callable($callable))
+		{
+			call_user_func($callable);
+		}
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATE, $this);
 		$this->getEventManager()->trigger($event);
 
@@ -370,11 +430,22 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 			throw $e;
 		}
 
-		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$this->doUpdate();
+			if ($this->documentModel->isStateless())
+			{
+				$callable = array($this, 'doUpdateStateless');
+				if (is_callable($callable))
+				{
+					call_user_func($callable);
+				}
+			}
+			else
+			{
+				$this->doUpdate();
+			}
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -419,7 +490,7 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 		if ($this->hasModifiedProperties() || count($corrections))
 		{
 			$this->setModificationDate(new \DateTime());
-			if ($this instanceof \Change\Documents\Interfaces\Editable)
+			if ($this instanceof Editable)
 			{
 				$this->nextDocumentVersion();
 			}
@@ -429,7 +500,7 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 				$dm->updateDocument($this);
 			}
 
-			if ($this instanceof \Change\Documents\Interfaces\Localizable)
+			if ($this instanceof Localizable)
 			{
 				$localizedPart = $this->getCurrentLocalizedPart();
 				if ($localizedPart->hasModifiedProperties())
@@ -456,21 +527,43 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 			throw new \RuntimeException('Document is new', 51002);
 		}
 
+		$callable = array($this, 'onDelete');
+		if (is_callable($callable))
+		{
+			call_user_func($callable);
+		}
 		$event = new DocumentEvent(DocumentEvent::EVENT_DELETE, $this);
 		$this->getEventManager()->trigger($event);
 
-		$tm = $this->getDocumentServices()->getApplicationServices()->getTransactionManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-
-			$backupData = $event->getParam('backupData');
-			if (is_array($backupData) && count($backupData))
+			if ($this->documentModel->isStateless())
 			{
-				$this->getDocumentManager()->insertDocumentBackup($this, $backupData);
+				$callable = array($this, 'doDeleteStateless');
+				if (is_callable($callable))
+				{
+					call_user_func($callable);
+				}
 			}
-
-			$this->doDelete();
+			else
+			{
+				$backupData = $event->getParam('backupData');
+				if (is_array($backupData) && count($backupData))
+				{
+					try
+					{
+						$this->getDocumentManager()->insertDocumentBackup($this, $backupData);
+					}
+					catch (\Exception $e)
+					{
+						//Unable to backup document
+						$this->documentServices->getApplicationServices()->getLogging()->exception($e);
+					}
+				}
+				$this->doDelete();
+			}
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -484,10 +577,9 @@ abstract class AbstractDocument implements \Serializable, \Zend\EventManager\Eve
 	 */
 	protected function doDelete()
 	{
-
 		$dm = $this->getDocumentManager();
 		$dm->deleteDocument($this);
-		if ($this instanceof \Change\Documents\Interfaces\Localizable)
+		if ($this instanceof Localizable)
 		{
 			$dm->deleteLocalizedDocuments($this);
 		}

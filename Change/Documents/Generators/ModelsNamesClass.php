@@ -7,17 +7,17 @@ namespace Change\Documents\Generators;
 class ModelsNamesClass
 {
 	/**
-	 * @var \Change\Documents\Generators\Compiler
+	 * @var Compiler
 	 */
 	protected $compiler;
 
 	/**
-	 * @param \Change\Documents\Generators\Compiler $compiler
+	 * @param Compiler $compiler
 	 * @param \Change\Documents\Generators\Model[] $models
 	 * @param string $compilationPath
 	 * @return boolean
 	 */
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, $models, $compilationPath)
+	public function savePHPCode(Compiler $compiler, $models, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $models);
 		$nsParts = array('Change', 'Documents','ModelsNames.php');
@@ -36,11 +36,11 @@ class ModelsNamesClass
 	}
 
 	/**
-	 * @param \Change\Documents\Generators\Compiler $compiler
+	 * @param Compiler $compiler
 	 * @param \Change\Documents\Generators\Model[] $models
 	 * @return string
 	 */
-	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler, $models)
+	public function getPHPCode(Compiler $compiler, $models)
 	{
 		$rm = array();
 		foreach ($models as $model)

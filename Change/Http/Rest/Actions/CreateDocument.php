@@ -120,7 +120,7 @@ class CreateDocument
 
 		try
 		{
-			$redirect = $event->getParam('documentId') === null;
+			$redirect = $event->getParam('documentId') === null && !$document->getDocumentModel()->isStateless();
 			$document->create();
 			$event->setParam('documentId', $document->getId());
 

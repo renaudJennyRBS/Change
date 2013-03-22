@@ -38,7 +38,12 @@ class Event extends \Zend\EventManager\Event
 	protected $urlManager;
 
 	/**
-	 * @var \Closure
+	 * @var callable|null
+	 */
+	protected $authorization;
+
+	/**
+	 * @var callable|null
 	 */
 	protected $action;
 
@@ -145,7 +150,23 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Closure|null $action
+	 * @param callable|null $authorization
+	 */
+	public function setAuthorization($authorization)
+	{
+		$this->authorization = $authorization;
+	}
+
+	/**
+	 * @return callable|null
+	 */
+	public function getAuthorization()
+	{
+		return $this->authorization;
+	}
+
+	/**
+	 * @param callable|null $action
 	 */
 	public function setAction($action)
 	{
@@ -153,7 +174,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @return \Closure|null
+	 * @return callable|null
 	 */
 	public function getAction()
 	{

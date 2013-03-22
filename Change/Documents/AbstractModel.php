@@ -28,7 +28,7 @@ abstract class AbstractModel
 	protected $ancestorsNames = array();
 	
 	/**
-	 * @var \Change\Documents\ModelManager
+	 * @var ModelManager
 	 */
 	protected $modelManager;
 	
@@ -51,16 +51,16 @@ abstract class AbstractModel
 	 * @var string|boolean
 	 */
 	protected $treeName = false;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $injectedBy;
 	
 	/**
-	 * @param \Change\Documents\ModelManager $modelManager
+	 * @param ModelManager $modelManager
 	 */
-	public function __construct(\Change\Documents\ModelManager $modelManager)
+	public function __construct(ModelManager $modelManager)
 	{
 		$this->modelManager = $modelManager;
 		$this->loadProperties();
@@ -110,6 +110,15 @@ abstract class AbstractModel
 	public function getName()
 	{
 		return $this->getVendorName() . '_' . $this->getShortModuleName() . '_' . $this->getShortName();
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isStateless()
+	{
+		return false;
 	}
 	
 	/**

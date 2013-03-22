@@ -1,7 +1,9 @@
 <?php
 namespace Change\Documents\Events;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\Interfaces\Localizable;
 
 /**
  * @name \Change\Documents\Events\DeleteListener
@@ -17,14 +19,16 @@ class DeleteListener
 		if ($event instanceof DocumentEvent)
 		{
 			$document = $event->getDocument();
-
-			$backupData = $this->generateBackupData($document);
-			$event->setParam('backupData', count($backupData) ? $backupData : null);
+			if (!$document->getDocumentModel()->isStateless())
+			{
+				$backupData = $this->generateBackupData($document);
+				$event->setParam('backupData', count($backupData) ? $backupData : null);
+			}
 		}
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return array
 	 */
 	protected function generateBackupData($document)
@@ -52,7 +56,7 @@ class DeleteListener
 				continue;
 			}
 			$val = $property->getValue($document);
-			if ($val instanceof \Change\Documents\AbstractDocument)
+			if ($val instanceof AbstractDocument)
 			{
 				$datas[$propertyName] = array($val->getId(), $val->getDocumentModelName());
 			}
@@ -64,7 +68,7 @@ class DeleteListener
 			{
 				foreach ($val as $doc)
 				{
-					if ($doc instanceof \Change\Documents\AbstractDocument)
+					if ($doc instanceof AbstractDocument)
 					{
 						$datas[$propertyName][] = array($doc->getId(), $doc->getDocumentModelName());
 					}
@@ -78,7 +82,7 @@ class DeleteListener
 
 		$dm = $document->getDocumentServices()->getDocumentManager();
 
-		if (count($localized) && $document instanceof \Change\Documents\Interfaces\Localizable)
+		if (count($localized) && $document instanceof Localizable)
 		{
 			$datas['LCID'] = array();
 			foreach ($document->getLocalizableFunctions()->getLCIDArray() as $LCID)

@@ -42,14 +42,14 @@ class Compiler
 	 * @param string $documentName
 	 * @param string $definitionPath
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\Generators\Model
+	 * @return Model
 	 */
 	public function loadDocument($vendor, $moduleName, $documentName, $definitionPath)
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		if (is_readable($definitionPath) && $doc->load($definitionPath))
 		{
-			$model = new \Change\Documents\Generators\Model($vendor, $moduleName, $documentName);
+			$model = new Model($vendor, $moduleName, $documentName);
 			$model->setXmlDocument($doc);
 			$this->addModel($model);
 		}
@@ -69,14 +69,13 @@ class Compiler
 		foreach ($this->models as $model)
 		{
 			
-			/* @var $model \Change\Documents\Generators\Model */
+			/* @var $model Model */
 			
 			$model->validate();
 			
 			$modelName = $model->getName();
 			$extendName = $model->getExtend();
-			
-			
+
 			if ($extendName)
 			{
 				$extModel = $this->getModelByName($extendName);
@@ -103,7 +102,7 @@ class Compiler
 		
 		foreach ($this->models as $model)
 		{
-			/* @var $model \Change\Documents\Generators\Model */
+			/* @var $model Model */
 			$extModel = $model->getExtendModel();
 			if ($extModel)
 			{
@@ -124,7 +123,7 @@ class Compiler
 		$this->modelNamesByExtendLevel = array();
 		foreach ($this->models as $model)
 		{
-			/* @var $model \Change\Documents\Generators\Model */
+			/* @var $model Model */
 			$nbAncestor = count($model->getAncestors());
 			$this->modelNamesByExtendLevel[$nbAncestor][] = $model->getName(); 
 		}		
@@ -143,12 +142,17 @@ class Compiler
 				$model = $this->getModelByName($modelName);
 				
 				$model->validateInheritance();
-				
+
+				if ($model->checkStateless())
+				{
+					continue;
+				}
+
 				//Add Inverse Properties
 				foreach ($model->getProperties() as $property)
 				{
 					/* @var $property \Change\Documents\Generators\Property */
-					if ($property->hasRelation())
+					if (!$property->getStateless() && $property->hasRelation())
 					{
 						$docType = $property->getDocumentType();
 						if ($docType)
@@ -178,7 +182,7 @@ class Compiler
 	
 	/**
 	 * @param string $fullName
-	 * @return \Change\Documents\Generators\Model|null
+	 * @return Model|null
 	 */
 	public function getModelByName($fullName)
 	{
@@ -187,16 +191,16 @@ class Compiler
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
+	 * @param Model $model
 	 */
-	public function addModel(\Change\Documents\Generators\Model $model)
+	public function addModel(Model $model)
 	{
 		$this->models[$this->cleanModelName($model->getName())] = $model;
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return \Change\Documents\Generators\Model|null
+	 * @param Model $model
+	 * @return Model|null
 	 */
 	public function getParent($model)
 	{
@@ -208,8 +212,8 @@ class Compiler
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return \Change\Documents\Generators\Model[]
+	 * @param Model $model
+	 * @return Model
 	 * @throws \Exception
 	 */	
 	public function getAncestors($model)
@@ -228,15 +232,15 @@ class Compiler
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return \Change\Documents\Generators\Model[]
+	 * @param Model $model
+	 * @return Model
 	 */
 	public function getChildren($model)
 	{
 		$result = array();
 		foreach ($this->models as $cm)
 		{
-			/* @var $cm \Change\Documents\Generators\Model */
+			/* @var $cm Model */
 			$cmp = $cm->getExtend() ? $this->getModelByName($cm->getExtend()) : null;
 			if ($cmp === $model)
 			{
@@ -247,16 +251,16 @@ class Compiler
 	}
 
 	/**
-	 * @param \Change\Documents\Generators\Model $model
+	 * @param Model $model
 	 * @param boolean $excludeInjected
-	 * @return \Change\Documents\Generators\Model[]
+	 * @return Model
 	 */
 	public function getDescendants($model, $excludeInjected = false)
 	{
 		$result = array();
 		foreach ($this->getChildren($model) as $name => $cm)
 		{
-			/* @var $cm \Change\Documents\Generators\Model */
+			/* @var $cm Model */
 			if ($excludeInjected && $cm->getInject())
 			{
 				continue;
@@ -272,7 +276,7 @@ class Compiler
 	}
 	
 	/**
-	 * @return \Change\Documents\Generators\Model[]
+	 * @return Model
 	 */
 	public function getModels()
 	{
@@ -281,7 +285,7 @@ class Compiler
 
 	/**
 	 * @param integer $level
-	 * @return \Change\Documents\Generators\Model[]
+	 * @return Model
 	 */
 	public function getModelsByLevel($level = 0)
 	{
@@ -310,7 +314,7 @@ class Compiler
 
 		foreach ($this->models as $model)
 		{
-			/* @var $model \Change\Documents\Generators\Model */
+			/* @var $model Model */
 			$generator = new ModelClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
 			

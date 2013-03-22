@@ -27,7 +27,7 @@ class DocumentManager
 	protected $applicationServices;
 	
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var DocumentServices
 	 */
 	protected $documentServices;
 	
@@ -71,15 +71,15 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param DocumentServices $documentServices
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setDocumentServices(DocumentServices $documentServices)
 	{
 		$this->documentServices = $documentServices;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices
+	 * @return DocumentServices
 	 */
 	public function getDocumentServices()
 	{
@@ -144,9 +144,9 @@ class DocumentManager
 
 	/**
 	 * @api
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 */
-	public function loadDocument(\Change\Documents\AbstractDocument $document)
+	public function loadDocument(AbstractDocument $document)
 	{		
 		$document->setPersistentState(static::STATE_LOADING);
 		$model = $document->getDocumentModel();
@@ -162,6 +162,7 @@ class DocumentManager
 			foreach ($model->getProperties() as $property)
 			{
 				/* @var $property \Change\Documents\Property */
+				if ($property->getStateless()) {continue;}
 				if (!$property->getLocalized())
 				{
 					$qb->addColumn($fb->alias($fb->column($sqlMapping->getDocumentFieldName($property->getName())), $property->getName()));
@@ -195,10 +196,10 @@ class DocumentManager
 	
 	/**
 	 * @api
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return array()
 	 */
-	public function loadMetas(\Change\Documents\AbstractDocument $document)
+	public function loadMetas(AbstractDocument $document)
 	{
 		$key = 'Load_Metas';
 		if (!isset($this->cachedQueries[$key]))
@@ -223,10 +224,10 @@ class DocumentManager
 		
 	/**
 	 * @api
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return integer
 	 */
-	public function affectId(\Change\Documents\AbstractDocument $document)
+	public function affectId(AbstractDocument $document)
 	{
 		$dbp = $this->getDbProvider();
 		
@@ -267,10 +268,10 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @throws \InvalidArgumentException
 	 */
-	public function insertDocument(\Change\Documents\AbstractDocument $document)
+	public function insertDocument(AbstractDocument $document)
 	{
 		if ($document->getId() <= 0)
 		{
@@ -295,6 +296,7 @@ class DocumentManager
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
+			if ($property->getStateless()) {continue;}
 			if (!$property->getLocalized())
 			{
 				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
@@ -320,8 +322,8 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param AbstractDocument $document
+	 * @param AbstractModel $model
 	 * @param string $name
 	 */
 	protected function deleteRelation($document, $model, $name)
@@ -350,8 +352,8 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param AbstractDocument $document
+	 * @param AbstractModel $model
 	 * @param string $name
 	 * @param integer[] $ids
 	 * @throws \RuntimeException
@@ -401,11 +403,11 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
+	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
-	public function insertLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
+	public function insertLocalizedDocument(AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
 		if ($document->getId() <= 0)
 		{
@@ -431,6 +433,7 @@ class DocumentManager
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
+			if ($property->getStateless()) {continue;}
 			if ($property->getLocalized() || $name === 'id')
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
@@ -445,10 +448,10 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @throws \InvalidArgumentException
 	 */
-	public function updateDocument(\Change\Documents\AbstractDocument $document)
+	public function updateDocument(AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_LOADED)
 		{
@@ -470,6 +473,7 @@ class DocumentManager
 		foreach ($model->getNonLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
+			if ($property->getStateless()) {continue;}
 			if ($document->isPropertyModified($name))
 			{
 				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
@@ -502,11 +506,11 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
+	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @throws \InvalidArgumentException
 	 */
-	public function updateLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
+	public function updateLocalizedDocument(AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
 		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
 		{
@@ -531,6 +535,7 @@ class DocumentManager
 		foreach ($model->getLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
+			if ($property->getStateless()) {continue;}
 			if ($localizedPart->isPropertyModified($name))
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
@@ -558,10 +563,10 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param array $metas
 	 */
-	public function saveMetas(\Change\Documents\AbstractDocument $document, $metas)
+	public function saveMetas(AbstractDocument $document, $metas)
 	{
 		$key = 'Delete_Metas';
 		if (!isset($this->cachedQueries[$key]))
@@ -603,11 +608,11 @@ class DocumentManager
 	
 	/**
 	 * 
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param string $propertyName
 	 * @return integer[]
 	 */
-	public function getPropertyDocumentIds(\Change\Documents\AbstractDocument $document, $propertyName)
+	public function getPropertyDocumentIds(AbstractDocument $document, $propertyName)
 	{
 		$model = $document->getDocumentModel();
 		$key = 'Rel_' . $model->getRootName();
@@ -637,7 +642,7 @@ class DocumentManager
 	/**
 	 * @param string $modelName
 	 * @throws \InvalidArgumentException
-	 * @return \Change\Documents\AbstractDocument
+	 * @return AbstractDocument
 	 */
 	public function getNewDocumentInstanceByModelName($modelName)
 	{
@@ -650,10 +655,10 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Documents\AbstractDocument
+	 * @param AbstractModel $model
+	 * @return AbstractDocument
 	 */
-	public function getNewDocumentInstanceByModel(\Change\Documents\AbstractModel $model)
+	public function getNewDocumentInstanceByModel(AbstractModel $model)
 	{
 		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
@@ -663,33 +668,33 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Documents\AbstractDocument
+	 * @param AbstractModel $model
+	 * @return AbstractDocument
 	 */
-	protected function createNewDocumentInstance(\Change\Documents\AbstractModel $model)
+	protected function createNewDocumentInstance(AbstractModel $model)
 	{
 		$className = $this->getDocumentClassFromModel($model);	
-		/* @var $newDocument \Change\Documents\AbstractDocument */
+		/* @var $newDocument AbstractDocument */
 		return new $className($this->getDocumentServices(), $model);
 	}
 	
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param AbstractModel $model
 	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	protected function createNewLocalizedDocumentInstance(\Change\Documents\AbstractModel $model)
+	protected function createNewLocalizedDocumentInstance(AbstractModel $model)
 	{
 		$className = $this->getLocalizedDocumentClassFromModel($model);
 		return new $className($this);
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param string $LCID
 	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	public function getLocalizedDocumentInstanceByDocument(\Change\Documents\AbstractDocument $document, $LCID)
+	public function getLocalizedDocumentInstanceByDocument(AbstractDocument $document, $LCID)
 	{
 		$model = $document->getDocumentModel();
 		$localizedPart = $this->createNewLocalizedDocumentInstance($model);
@@ -710,6 +715,7 @@ class DocumentManager
 				foreach ($model->getProperties() as $property)
 				{
 					/* @var $property \Change\Documents\Property */
+					if ($property->getStateless()) {continue;}
 					if ($property->getLocalized())
 					{
 						$qb->addColumn($fb->alias($fb->getDocumentColumn($property->getName()), $property->getName()));
@@ -764,10 +770,10 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return string[]
 	 */
-	public function getLocalizedDocumentLCIDArray(\Change\Documents\AbstractDocument $document)
+	public function getLocalizedDocumentLCIDArray(AbstractDocument $document)
 	{
 		if ($document->getId() <= 0)
 		{
@@ -796,10 +802,10 @@ class DocumentManager
 		
 	/**
 	 * @param integer $documentId
-	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @param AbstractModel $model
+	 * @return AbstractDocument|null
 	 */
-	public function getDocumentInstance($documentId, \Change\Documents\AbstractModel $model = null)
+	public function getDocumentInstance($documentId, AbstractModel $model = null)
 	{
 		$id = intval($documentId);
 		$document = $this->getFromCache($id);
@@ -817,6 +823,14 @@ class DocumentManager
 		}
 		elseif ($id > 0)
 		{
+			if ($model && $model->isStateless())
+			{
+				$document = $this->createNewDocumentInstance($model);
+				$document->initialize($id, static::STATE_INITIALIZED);
+				$document->load();
+				return $document;
+			}
+
 			$key = 'Infos_' . ($model ? $model->getRootName() : 'std');
 			if (!isset($this->cachedQueries[$key]))
 			{
@@ -867,10 +881,10 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param integer|null $oldId
 	 */
-	public function reference(\Change\Documents\AbstractDocument $document, $oldId)
+	public function reference(AbstractDocument $document, $oldId)
 	{
 		$documentId = $document->getId();
 		if ($oldId !== 0 && $documentId !== $oldId)
@@ -883,7 +897,7 @@ class DocumentManager
 
 	/**
 	 * @param integer $documentId
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return AbstractDocument|null
 	 */
 	protected function getFromCache($documentId)
 	{
@@ -896,7 +910,7 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param AbstractModel $model
 	 * @return string
 	 */
 	protected function getDocumentClassFromModel($model)
@@ -905,7 +919,7 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractModel $model
+	 * @param AbstractModel $model
 	 * @return string
 	 */
 	protected function getLocalizedDocumentClassFromModel($model)
@@ -914,11 +928,11 @@ class DocumentManager
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param array $backupData
 	 * @return integer
 	 */
-	public function insertDocumentBackup(\Change\Documents\AbstractDocument $document, array $backupData)
+	public function insertDocumentBackup(AbstractDocument $document, array $backupData)
 	{
 		$key = 'insertDocumentBackup';
 		if (!isset($this->cachedQueries[$key]))
@@ -976,11 +990,11 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return integer
 	 * @throws \InvalidArgumentException
 	 */
-	public function deleteDocument(\Change\Documents\AbstractDocument $document)
+	public function deleteDocument(AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_LOADED)
 		{
@@ -1024,11 +1038,11 @@ class DocumentManager
 
 
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable $document
+	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
 	 * @return integer|boolean
 	 * @throws \InvalidArgumentException
 	 */
-	public function deleteLocalizedDocuments(\Change\Documents\AbstractDocument $document)
+	public function deleteLocalizedDocuments(AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_DELETED)
 		{
@@ -1060,12 +1074,12 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
 	 * @return integer|boolean
 	 * @throws \InvalidArgumentException
 	 */
-	public function deleteLocalizedDocument(\Change\Documents\AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
+	public function deleteLocalizedDocument(AbstractDocument $document, \Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
 		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
 		{

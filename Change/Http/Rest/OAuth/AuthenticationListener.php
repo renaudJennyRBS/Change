@@ -315,13 +315,12 @@ class AuthenticationListener
 					$finalStoreOAuth->setType(StoredOAuth::TYPE_ACCESS);
 					$finalStoreOAuth->setId(null);
 					$finalStoreOAuth->setVerifier(null);
-					$finalStoreOAuth->setCallback(null);
+					$finalStoreOAuth->setCallback('oob');
 
 					$validityDate = new \DateTime();
 					$finalStoreOAuth->setValidityDate($validityDate->add(new \DateInterval($this->getTokenAccessValidity())));
 					$finalStoreOAuth->setToken($this->generateKey(true));
 					$finalStoreOAuth->setTokenSecret($this->generateKey());
-
 					$this->insertToken($finalStoreOAuth, $dbProvider);
 					if ($finalStoreOAuth->getId())
 					{
@@ -393,7 +392,6 @@ class AuthenticationListener
 				}
 				else
 				{
-					$event->getApplicationServices()->getLogging()->fatal($signature . '  --  ' . $authorization['oauth_signature']);
 					throw new \RuntimeException('Invalid Signature', 72000);
 				}
 			}
