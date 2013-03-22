@@ -1,13 +1,15 @@
 <?php
 namespace Change\Documents\Generators;
 
+use Change\Db\DbProvider;
+
 /**
  * @name \Change\Documents\Generators\SchemaClass
  */
 class SchemaClass
 {
 	/**
-	 * @var \Change\Documents\Generators\Compiler
+	 * @var Compiler
 	 */
 	protected $compiler;
 	
@@ -22,12 +24,12 @@ class SchemaClass
 	protected $sqlMapping;
 	
 	/**
-	 * @param \Change\Documents\Generators\Compiler $compiler
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param Compiler $compiler
+	 * @param DbProvider $dbProvider
 	 * @param string $compilationPath
 	 * @return boolean
 	 */
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler,\Change\Db\DbProvider $dbProvider, $compilationPath)
+	public function savePHPCode(Compiler $compiler, DbProvider $dbProvider, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $dbProvider);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, array($compilationPath, 'Change', 'Documents', 'Schema.php')), $code);
@@ -35,11 +37,11 @@ class SchemaClass
 	}
 	
 	/**
-	 * @param \Change\Documents\Generators\Compiler $compiler
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param Compiler $compiler
+	 * @param DbProvider $dbProvider
 	 * @return string
 	 */
-	public function getPHPCode(\Change\Documents\Generators\Compiler $compiler,\Change\Db\DbProvider $dbProvider)
+	public function getPHPCode(Compiler $compiler, DbProvider $dbProvider)
 	{
 		$this->compiler = $compiler;
 		$this->schemaManager = $dbProvider->getSchemaManager();
@@ -76,6 +78,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		foreach ($this->compiler->getModelsByLevel(0) as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
+			if ($model->getStateless()) {continue;}
 			$descendants = $this->compiler->getDescendants($model);
 			$this->completeDbOptions($model, $descendants, $this->schemaManager);
 			$code .= $this->generateTableDef($model, $descendants);
@@ -260,7 +263,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		foreach ($model->getProperties() as $propertyName => $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getParent() !== null || $property->getLocalized() != $localized)
+			if ($property->getParent() !== null || $property->getStateless() || $property->getLocalized() != $localized)
 			{
 				continue;
 			}

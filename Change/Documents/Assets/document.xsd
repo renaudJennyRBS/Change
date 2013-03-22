@@ -183,6 +183,9 @@
                                     <xs:attribute name="max-occurs" type="xs:int" default="10"/>
                                     <xs:attribute name="localized" type="xs:boolean" default="true"/>
                                     <xs:attribute name="has-correction" type="xs:boolean" default="true"/>
+
+                                    <!-- stateless exclude: cascade-delete, has-correction. -->
+                                    <xs:attribute name="stateless" type="xs:boolean" default="true"/>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
@@ -203,6 +206,10 @@
             <xs:attribute name="publishable" type="xs:boolean" default="true"/>
             <xs:attribute name="use-version" type="xs:boolean" default="true"/>
             <xs:attribute name="tree-name" type="treeName" default="true"/>
+
+            <!-- stateless exclude: extend, inject, has-url, frontoffice-indexable, backoffice-indexable,
+                    localized, editable, publishable, use-version. -->
+            <xs:attribute name="stateless" type="xs:boolean" default="true"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

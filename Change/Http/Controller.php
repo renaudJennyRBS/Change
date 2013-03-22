@@ -1,47 +1,52 @@
 <?php
 namespace Change\Http;
 
+use Change\Application;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Change\Http\Controller
  */
-class Controller implements \Zend\EventManager\EventManagerAwareInterface
+class Controller implements EventManagerAwareInterface
 {
 	/**
-	 * @var \Change\Application
+	 * @var Application
 	 */
 	protected $application;
 
 	/**
-	 * @var \Change\Http\ActionResolver
+	 * @var ActionResolver
 	 */
 	protected $actionResolver;
 
 
 	/**
-	 * @var \Zend\EventManager\EventManager
+	 * @var EventManager
 	 */
 	protected $eventManager;
 
 	/**
-	 * @param \Change\Application $application
+	 * @param Application $application
 	 */
-	function __construct(\Change\Application $application)
+	function __construct(Application $application)
 	{
 		$this->setApplication($application);
 	}
 
 	/**
-	 * @param \Change\Application $application
+	 * @param Application $application
 	 */
-	public function setApplication(\Change\Application $application)
+	public function setApplication(Application $application)
 	{
 		$this->application = $application;
 	}
 
 	/**
-	 * @return \Change\Application
+	 * @return Application
 	 */
 	public function getApplication()
 	{
@@ -49,22 +54,22 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager|\Zend\EventManager\EventManagerInterface $eventManager
+	 * @param EventManager|EventManagerInterface $eventManager
 	 * @return void
 	 */
-	public function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
+	public function setEventManager(EventManagerInterface $eventManager)
 	{
 		$this->eventManager = $eventManager;
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return EventManager
 	 */
 	public function getEventManager()
 	{
 		if ($this->eventManager === null)
 		{
-			$eventManager = new \Zend\EventManager\EventManager('Http');
+			$eventManager = new EventManager('Http');
 			$eventManager->setSharedManager($this->application->getSharedEventManager());
 			$this->registerDefaultListeners($eventManager);
 			$this->setEventManager($eventManager);
@@ -73,21 +78,21 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Change\Http\ActionResolver $actionResolver
+	 * @param ActionResolver $actionResolver
 	 */
-	public function setActionResolver(\Change\Http\ActionResolver $actionResolver)
+	public function setActionResolver(ActionResolver $actionResolver)
 	{
 		$this->actionResolver = $actionResolver;
 	}
 
 	/**
-	 * @return \Change\Http\ActionResolver
+	 * @return ActionResolver
 	 */
 	public function getActionResolver()
 	{
 		if ($this->actionResolver === null)
 		{
-			$this->actionResolver = new \Change\Http\ActionResolver();
+			$this->actionResolver = new ActionResolver();
 		}
 		return $this->actionResolver;
 	}
@@ -95,7 +100,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	/**
 	 * @param Request $request
 	 * @throws \RuntimeException
-	 * @return \Zend\Http\PhpEnvironment\Response
+	 * @return Response
 	 */
 	public function handle(Request $request)
 	{
@@ -111,11 +116,12 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 				$this->doSendAction($eventManager, $event);
 
+
 				$action = $event->getAction();
 
 				if (is_callable($action))
 				{
-					if ($this->checkAcl($event))
+					if ($this->checkAuthorization($event))
 					{
 						call_user_func($action, $event);
 					}
@@ -136,7 +142,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 			$this->doSendException($eventManager, $event, $exception);
 		}
 
-		if ($event->getResponse() instanceof \Zend\Http\PhpEnvironment\Response)
+		if ($event->getResponse() instanceof Response)
 		{
 			return $event->getResponse();
 		}
@@ -148,27 +154,29 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	 * @param Event $event
 	 * @return boolean
 	 */
-	protected function checkAcl(Event $event)
+	protected function checkAuthorization(Event $event)
 	{
-		if (null !== ($authentication = $event->getAuthentication()))
+		$authorization = $event->getAuthorization();
+		if (is_callable($authorization))
 		{
-			$privilege = $event->getParam('privilege');
-			if ($privilege)
+			try
 			{
-				if (!$authentication->isAuthenticated())
+				$authorized = call_user_func($authorization, $event);
+			}
+			catch (\Exception $e)
+			{
+				$authorized = false;
+			}
+
+			if (!$authorized)
+			{
+				if ($this->isAuthenticated($event))
 				{
-					$this->unauthorized($event);
+					$this->forbidden($event);
 					return false;
 				}
-				else
-				{
-					$resource = $event->getParam('resource');
-					if (!$authentication->getAcl()->hasPrivilege($resource, $privilege))
-					{
-						$this->forbidden($event);
-						return false;
-					}
-				}
+				$this->unauthorized($event);
+				return false;
 			}
 		}
 		return true;
@@ -176,8 +184,8 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Result
+	 * @param Event $event
+	 * @return Result
 	 */
 	public function notFound($event)
 	{
@@ -189,8 +197,18 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Result
+	 * @param Event $event
+	 * @return boolean
+	 */
+	public function isAuthenticated(Event $event)
+	{
+		return ($authentication = $event->getAuthentication()) !== null && $authentication->isAuthenticated();
+	}
+
+	/**
+	 * @api
+	 * @param Event $event
+	 * @return Result
 	 */
 	public function unauthorized(Event $event)
 	{
@@ -202,8 +220,8 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Result
+	 * @param Event $event
+	 * @return Result
 	 */
 	public function forbidden(Event $event)
 	{
@@ -215,8 +233,8 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Result
+	 * @param Event $event
+	 * @return Result
 	 */
 	public function error($event)
 	{
@@ -227,7 +245,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
 	protected function doSendRequest($eventManager, Event $event)
@@ -236,7 +254,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
 	protected function doSendAction($eventManager, Event $event)
@@ -245,7 +263,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
 	protected function doSendResult($eventManager, Event $event)
@@ -254,7 +272,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
 	protected function doSendResponse($eventManager, Event $event)
@@ -274,7 +292,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 * @param \Exception $exception
 	 */
@@ -297,7 +315,7 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 * @param EventManagerInterface $eventManager
 	 * @return void
 	 */
 	protected function registerDefaultListeners($eventManager)
@@ -351,16 +369,16 @@ class Controller implements \Zend\EventManager\EventManagerAwareInterface
 
 	/**
 	 * @api
-	 * @return \Zend\Http\PhpEnvironment\Response
+	 * @return Response
 	 */
 	public function createResponse()
 	{
-		return new \Zend\Http\PhpEnvironment\Response();
+		return new Response();
 	}
 
 	/**
 	 * @param Event $event
-	 * @return \Zend\Http\PhpEnvironment\Response
+	 * @return Response
 	 */
 	protected function getDefaultResponse($event)
 	{

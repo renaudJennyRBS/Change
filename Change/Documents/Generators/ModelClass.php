@@ -140,6 +140,7 @@ class ModelClass
 			}
 			 
 			$affects = array();
+			if ($property->getStateless() !== null) {$affects[] = '->setStateless('.$this->escapePHPValue($property->getStateless()).')';}
 			if ($property->getRequired() !== null) {$affects[] = '->setRequired('.$this->escapePHPValue($property->getRequired()).')';}
 			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
 			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
@@ -201,6 +202,19 @@ class ModelClass
 	}'. PHP_EOL;
 		}
 
+		if ($model->getStateless())
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isStateless()
+	{
+		return true;
+	}'. PHP_EOL;
+		}
+
 		if ($model->getLocalized())
 		{
 			$code .= '
@@ -226,7 +240,6 @@ class ModelClass
 		return true;
 	}'. PHP_EOL;
 		}
-				
 
 		if ($model->getHasUrl() !== null)
 		{
@@ -305,7 +318,6 @@ class ModelClass
 		return '. $this->escapePHPValue($model->getUseVersion()).';
 	}'. PHP_EOL;
 		}
-		
 		return $code . PHP_EOL;
 	}
 }

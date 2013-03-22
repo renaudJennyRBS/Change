@@ -123,8 +123,10 @@ class GetDocument
 		$urlManager = $event->getUrlManager();
 
 		$result = new DocumentResult();
-		$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
-
+		if (!$document->getDocumentModel()->isStateless())
+		{
+			$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
+		}
 		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
 		if ($document->getTreeName())

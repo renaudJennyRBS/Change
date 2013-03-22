@@ -29,22 +29,70 @@ class Property
 	const TYPE_DOCUMENTID = 'DocumentId';
 	const TYPE_DOCUMENT = 'Document';
 	const TYPE_DOCUMENTARRAY = 'DocumentArray';
-	
-	
+
+	/**
+	 * @var string
+	 */
 	protected $name;
+
+	/**
+	 * @var string
+	 */
 	protected $type = self::TYPE_STRING;
+
+	/**
+	 * @var boolean
+	 */
+	protected $stateless = false;
+
+	/**
+	 * @var string|null
+	 */
 	protected $documentType = null;
-	
+
+	/**
+	 * @var boolean
+	 */
 	protected $required = false;
+
+	/**
+	 * @var integer
+	 */
 	protected $minOccurs = 0;
+
+	/**
+	 * @var integer
+	 */
 	protected $maxOccurs = 1;
 
+	/**
+	 * @var boolean
+	 */
 	protected $cascadeDelete = false;
-	
+
+	/**
+	 * @var mixed|null
+	 */
 	protected $defaultValue;
+
+	/**
+	 * @var array|null
+	 */
 	protected $constraintArray;
+
+	/**
+	 * @var boolean
+	 */
 	protected $localized = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $hasCorrection = false;
+
+	/**
+	 * @var string
+	 */
 	protected $indexed = 'none'; //none, property, description
 	
 	/**
@@ -85,6 +133,15 @@ class Property
 	public function getType()
 	{
 		return $this->type;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function getStateless()
+	{
+		return $this->stateless;
 	}
 	
 	/**
@@ -219,7 +276,7 @@ class Property
 
 	/**
 	 * @param integer $value
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setMinOccurs($value)
 	{
@@ -229,7 +286,7 @@ class Property
 
 	/**
 	 * @param integer $value
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setMaxOccurs($value)
 	{
@@ -255,7 +312,7 @@ class Property
 	
 	/**
 	 * @param boolean $value
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setRequired($value)
 	{
@@ -295,7 +352,7 @@ class Property
 
 	/**
 	 * @param mixed $value
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setDefaultValue($value)
 	{
@@ -323,7 +380,7 @@ class Property
 	
 	/**
 	 * @param array $constraintArray
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setConstraintArray($constraintArray)
 	{
@@ -360,7 +417,7 @@ class Property
 	
 	/**
 	 * @param string $name
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setName($name)
 	{
@@ -370,17 +427,29 @@ class Property
 
 	/**
 	 * @param string $type
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
+
+	/**
+	 * @param boolean $stateless
+	 * @return $this
+	 */
+	public function setStateless($stateless)
+	{
+		$this->stateless = $stateless;
+		return $this;
+	}
+
+
 		
 	/**
 	 * @param string $documentType
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setDocumentType($documentType)
 	{
@@ -390,7 +459,7 @@ class Property
 	
 	/**
 	 * @param boolean $cascadeDelete
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setCascadeDelete($cascadeDelete)
 	{
@@ -400,7 +469,7 @@ class Property
 
 	/**
 	 * @param string $indexed
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setIndexed($indexed)
 	{
@@ -410,7 +479,7 @@ class Property
 
 	/**
 	 * @param boolean $bool
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setLocalized($bool)
 	{
@@ -420,7 +489,7 @@ class Property
 	
 	/**
 	 * @param boolean $bool
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setHasCorrection($bool)
 	{
@@ -430,7 +499,7 @@ class Property
 	
 	/**
 	 * @param mixed $treeNode
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function setTreeNode($treeNode)
 	{
@@ -440,7 +509,7 @@ class Property
 	
 	/**
 	 * @api
-	 * @return \Change\Documents\Property
+	 * @return $this
 	 */
 	public function normalize()
 	{
@@ -461,7 +530,7 @@ class Property
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractLocalizedDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable|\Change\Documents\AbstractLocalizedDocument $document
 	 * @return mixed
 	 */
 	public function getValue($document)

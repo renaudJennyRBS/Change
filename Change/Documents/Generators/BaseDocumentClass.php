@@ -73,18 +73,26 @@ class BaseDocumentClass
 			$extend .= ' implements ' . implode(', ', $interfaces);
 		}
 
-		$code .= 'class ' . $model->getShortBaseDocumentClassName() . ' extends ' . $extend . PHP_EOL;
+		$code .= 'abstract class ' . $model->getShortBaseDocumentClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{' . PHP_EOL;
 		$properties = $this->getMemberProperties($model);
 
+
 		if (count($properties))
 		{
-			$code .= $this->getMembers($model, $properties);
+			if (!$model->checkStateless())
+			{
+				$code .= $this->getMembers($model, $properties);
+			}
 
 			foreach ($properties as $property)
 			{
 				/* @var $property \Change\Documents\Generators\Property */
-				if ($property->getType() === 'DocumentArray')
+				if ($property->getStateless() || $model->checkStateless())
+				{
+					$code .= $this->getPropertyStatelessCode($model, $property);
+				}
+				elseif ($property->getType() === 'DocumentArray')
 				{
 					$code .= $this->getPropertyDocumentArrayAccessors($model, $property);
 				}
@@ -320,7 +328,7 @@ class BaseDocumentClass
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getLocalized())
+			if ($property->getLocalized() || $property->getStateless())
 			{
 				continue;
 			}
@@ -519,7 +527,7 @@ class BaseDocumentClass
 	 */
 	public function get' . $un . '()
 	{
-		$this->checkLoaded();
+		$this->load();
 		return ' . $mn . ';
 	}
 	
@@ -542,7 +550,7 @@ class BaseDocumentClass
 			' . $mn . ' = ' . $var . ';
 			return;
 		}
-		$this->checkLoaded();
+		$this->load();
 		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
 		{
 			' . $mn . ' = ' . $var . ';
@@ -568,6 +576,8 @@ class BaseDocumentClass
 		$code .= $this->getPropertyExtraGetters($model, $property);
 		return $code;
 	}
+
+
 
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -637,15 +647,77 @@ class BaseDocumentClass
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
+	protected function getPropertyStatelessCode($model, $property)
+	{
+		if (in_array($property->getName(), array('creationDate', 'modificationDate')))
+		{
+			return '';
+		}
+		$code = array();
+		$name = $property->getName();
+		$var = '$' . $name;
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		$code[] = '
+	/**
+	 * @return ' . $ct . '
+	 */
+	abstract public function get' . $un . '();
+
+	/**
+	 * @param ' . $ct . ' ' . $var . '
+	 */
+	abstract public function set' . $un . '(' . $var . ');';
+
+		if ($property->getType() === 'Document')
+		{
+			$code[] = '
+	/**
+	 * @return integer|null
+	 */
+	public function get' . $un . 'Id()
+	{
+		' . $var . ' = $this->get' . $un . '();
+		return ' . $var . ' instanceof \Change\Documents\AbstractDocument ? ' . $var . '->getId() : null;
+	}';
+		}
+		elseif ($property->getType() === 'DocumentArray')
+		{
+			$code[] = '
+	/**
+	 * @return integer[]
+	 */
+	public function get' . $un . 'Ids()
+	{
+		$result = array();
+		' . $var . ' = $this->get' . $un . '();
+		if (is_array(' . $var . '))
+		{
+			foreach (' . $var . ' as $o)
+			{
+				if ($o instanceof \Change\Documents\AbstractDocument) {$result[] = $o->getId();}
+			}
+		}
+		return $result;
+	}';
+		}
+
+		$code[] = $this->getPropertyExtraGetters($model, $property);
+		return implode(PHP_EOL, $code);
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 * @return string
+	 */
 	protected function getPropertyExtraGetters($model, $property)
 	{
 		$code = '';
 		$name = $property->getName();
 		$var = '$' . $name;
-		$en = $this->escapePHPValue($name);
-		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
-		$modelGetter = 'getProperty';
+		$ct = $this->getCommentaryType($property);
 
 		if ($property->getType() === 'XML')
 		{
@@ -696,7 +768,7 @@ class BaseDocumentClass
 		{
 			$code .= '
 	/**
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return ' . $ct . '|null
 	 */
 	public function get' . $un . 'Instance()
 	{
@@ -753,7 +825,7 @@ class BaseDocumentClass
 		{
 			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '\', 52005);
 		}
-		$this->checkLoaded();
+		$this->load();
 		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : null;
 		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
 		{
@@ -783,7 +855,7 @@ class BaseDocumentClass
 	 */
 	public function get' . $un . 'Id()
 	{
-		$this->checkLoaded();
+		$this->load();
 		return ' . $mn . ';
 	}
 	
@@ -796,7 +868,7 @@ class BaseDocumentClass
 		{
 			return ' . $mn . ';
 		}
-		$this->checkLoaded();
+		$this->load();
 		return (' . $mn . ') ? $this->getDocumentManager()->getDocumentInstance(' . $mn . ') : null;
 	}' . PHP_EOL;
 
@@ -820,7 +892,7 @@ class BaseDocumentClass
 		$code .= '
 	protected function checkLoaded' . $un . '()
 	{
-		$this->checkLoaded();
+		$this->load();
 		if (!is_array(' . $mn . '))
 		{
 			if (' . $mn . ')

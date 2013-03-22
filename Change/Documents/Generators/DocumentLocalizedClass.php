@@ -75,7 +75,7 @@ class DocumentLocalizedClass
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getParent() == null && $property->getLocalized())
+			if ($property->getParent() == null && !$property->getStateless() && $property->getLocalized())
 			{
 				$properties[$property->getName()] = $property;
 			}

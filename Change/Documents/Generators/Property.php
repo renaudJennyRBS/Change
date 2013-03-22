@@ -27,7 +27,7 @@ class Property
 	protected $parent;
 	
 	/**
-	 * @var \Change\Documents\Generators\Model
+	 * @var Model
 	 */
 	protected $model;
 		
@@ -40,6 +40,11 @@ class Property
 	 * @var string
 	 */	
 	protected $type;
+
+	/**
+	 * @var boolean
+	 */
+	protected $stateless;
 	
 	/**
 	 * @var string
@@ -113,11 +118,11 @@ class Property
 	}
 
 	/**
-	 * @param \Change\Documents\Generators\Model $model
+	 * @param Model $model
 	 * @param string $name
 	 * @param string $type
 	 */
-	public function __construct(\Change\Documents\Generators\Model $model, $name = null, $type = null)
+	public function __construct(Model $model, $name = null, $type = null)
 	{
 		$this->model = $model;
 		$this->name = $name;
@@ -159,6 +164,16 @@ class Property
 						$this->type = $value;
 					}
 					break;
+				case "stateless":
+					if ($value === 'true')
+					{
+						$this->stateless = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+					}
+					break;
 				case "document-type":
 					if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
 					{
@@ -192,7 +207,7 @@ class Property
 				case "required":
 					if ($value === 'true')
 					{
-						$this->required = ($value === 'true');
+						$this->required = true;
 					}
 					else
 					{
@@ -241,7 +256,12 @@ class Property
 		
 		if ($this->getName() === null)
 		{
-			throw new \RuntimeException('Property Name can not be null', 54024);
+			throw new \RuntimeException('Property name can not be null', 54024);
+		}
+
+		if ($this->stateless && ($this->cascadeDelete || $this->hasCorrection))
+		{
+			throw new \RuntimeException('Property stateless can not be applicable', 54024);
 		}
 
 		foreach ($xmlElement->childNodes as $node)
@@ -278,7 +298,7 @@ class Property
 					throw new \RuntimeException('Constraint Name can not be null', 54025);
 				}
 			}
-			elseif ($node->nodeName == 'dboptions')
+			elseif ($node->nodeName == 'dboptions' && !$this->stateless)
 			{
 				if ($this->dbOptions === null)
 				{
@@ -299,7 +319,7 @@ class Property
 	
 	/**
 	 * 
-	 * @return \Change\Documents\Generators\Model
+	 * @return Model
 	 */
 	public function getModel()
 	{
@@ -358,6 +378,14 @@ class Property
 	public function getType()
 	{
 		return $this->type;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getStateless()
+	{
+		return $this->stateless;
 	}
 
 	/**
@@ -604,8 +632,13 @@ class Property
 			{
 				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this, 54027);
 			}
+
+			if ($this->stateless)
+			{
+				throw new \RuntimeException('Invalid stateless attribute on ' . $this, 54028);
+			}
 		}
-		
+
 		$ancestors = $this->getAncestors();
 		if ($this->model->checkLocalized())
 		{

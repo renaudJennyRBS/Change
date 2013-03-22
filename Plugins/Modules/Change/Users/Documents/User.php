@@ -14,7 +14,9 @@ class User extends \Compilation\Change\Users\Documents\User
 	 */
 	protected function encodePassword($password)
 	{
-		return md5($this->getEmail() . '-' . $password);
+		$cfg = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
+		$salt = $cfg->getEntry('Change/Users/salt');
+		return md5($salt . '-' . $password);
 	}
 
 	/**
@@ -24,5 +26,27 @@ class User extends \Compilation\Change\Users\Documents\User
 	public function checkPassword($password)
 	{
 		return $this->getPasswordmd5() === $this->encodePassword($password);
+	}
+
+	/**
+	 * @var string
+	 */
+	protected $password;
+
+	/**
+	 * @return string
+	 */
+	public function getPassword()
+	{
+		return $this->password;
+	}
+
+	/**
+	 * @param string $password
+	 */
+	public function setPassword($password)
+	{
+		$this->password = $password;
+		$this->setPasswordmd5($this->encodePassword($password));
 	}
 }
