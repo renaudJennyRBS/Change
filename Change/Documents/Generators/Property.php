@@ -605,7 +605,8 @@ class Property
 	 */
 	public function validateInheritance()
 	{
-		$pm = $this->getModel()->getParent();
+		$model = $this->getModel();
+		$pm = $model->getParent();
 		while ($pm)
 		{
 			$p = $pm->getPropertyByName($this->name);
@@ -617,7 +618,12 @@ class Property
 			$pm = $pm->getParent();
 		}
 		$parentProp = $this->getParent();
-		
+
+		if ($this->stateless && ($model->checkStateless() || $parentProp))
+		{
+			throw new \RuntimeException('Invalid stateless attribute on ' . $this, 54028);
+		}
+
 		if ($parentProp === null)
 		{
 			if ($this->type === null)
@@ -632,15 +638,10 @@ class Property
 			{
 				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this, 54027);
 			}
-
-			if ($this->stateless)
-			{
-				throw new \RuntimeException('Invalid stateless attribute on ' . $this, 54028);
-			}
 		}
 
 		$ancestors = $this->getAncestors();
-		if ($this->model->checkLocalized())
+		if ($model->checkLocalized())
 		{
 			switch ($this->name)
 			{
