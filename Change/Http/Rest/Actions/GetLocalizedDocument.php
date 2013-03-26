@@ -127,10 +127,7 @@ class GetLocalizedDocument
 	protected function generateResult($event, $document, $LCID)
 	{
 		$urlManager = $event->getUrlManager();
-
 		$result = new DocumentResult();
-		$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
-
 		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
 		if ($document->getTreeName())
@@ -168,8 +165,23 @@ class GetLocalizedDocument
 			$i18n[$tmpLCID] = $LCIDLink->href();
 		}
 		$result->setI18n($i18n);
-
-		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+		$currentUrl = $urlManager->getSelf()->normalize()->toString();
+		if (($href = $documentLink->href()) != $currentUrl)
+		{
+			$statusCode = HttpResponse::STATUS_CODE_301;
+			$result->setHttpStatusCode($statusCode);
+			$result->setHeaderLocation($href);
+			$result->setHeaderContentLocation($href);
+		}
+		else
+		{
+			/* @var $document \Change\Documents\AbstractDocument */
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+			if (!$document->getDocumentModel()->isStateless())
+			{
+				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
+			}
+		}
 		$event->setResult($result);
 		return $result;
 	}

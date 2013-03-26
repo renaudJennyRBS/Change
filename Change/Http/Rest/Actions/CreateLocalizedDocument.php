@@ -131,25 +131,16 @@ class CreateLocalizedDocument
 
 		try
 		{
-			$redirect = $event->getParam('LCID') === null;
 			$document->create();
 			$event->setParam('LCID', $document->getLCID());
 
-			$getDocument = new GetLocalizedDocument();
-			$getDocument->execute($event);
-			if ($redirect && (($result = $event->getResult()) instanceof DocumentResult))
+			$getLocalizedDocument = new GetLocalizedDocument();
+			$getLocalizedDocument->execute($event);
+
+			$result = $event->getResult();
+			if ($result instanceof DocumentResult)
 			{
-				/* @var $result DocumentResult */
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-				$selfLinks = $result->getLinks()->getByRel('self');
-				if ($selfLinks && $selfLinks[0] instanceof DocumentLink)
-				{
-					/* @var $sl DocumentLink */
-					$sl = $selfLinks[0];
-					$href = $sl->href();
-					$result->setHeaderLocation($href);
-					$result->setHeaderContentLocation($href);
-				}
 			}
 		}
 		catch (\Exception $e)

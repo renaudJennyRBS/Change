@@ -117,7 +117,7 @@ class SQLFragmentBuilder
 	 * @api
 	 * @throws \InvalidArgumentException
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs (if string assume identifier)
+	 * @param string | \Change\Db\Query\Expressions\Identifier $rhs (if string assume identifier)
 	 * @return \Change\Db\Query\Expressions\Alias
 	 */
 	public function alias(AbstractExpression $lhs, $rhs)
@@ -126,9 +126,9 @@ class SQLFragmentBuilder
 		{
 			$rhs = $this->identifier($rhs);
 		}
-		if (!($rhs instanceof AbstractExpression))
+		if (!($rhs instanceof Identifier))
 		{
-			throw new \InvalidArgumentException('Could not convert argument 2 to an Expression', 42012);
+			throw new \InvalidArgumentException('Could not convert argument 2 to an Identifier', 42012);
 		}
 		return new Alias($lhs, $rhs);
 	}

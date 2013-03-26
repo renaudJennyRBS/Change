@@ -132,14 +132,8 @@ class UpdateLocalizedDocument
 		try
 		{
 			$document->update();
-
 			$getDocument = new GetLocalizedDocument();
 			$getDocument->execute($event);
-			$result = $event->getResult();
-			if ($result instanceof DocumentResult)
-			{
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-			}
 		}
 		catch (\Exception $e)
 		{
@@ -166,7 +160,5 @@ class UpdateLocalizedDocument
 			}
 			throw $e;
 		}
-
-
 	}
 }

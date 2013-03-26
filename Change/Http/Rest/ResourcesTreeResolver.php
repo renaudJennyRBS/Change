@@ -5,6 +5,7 @@ use Change\Http\Rest\Actions\CreateTreeNode;
 use Change\Http\Rest\Actions\DeleteTreeNode;
 use Change\Http\Rest\Actions\GetTreeNode;
 use Change\Http\Rest\Actions\GetTreeNodeCollection;
+use Change\Http\Rest\Actions\GetTreeNodeAncestors;
 use Change\Http\Rest\Actions\UpdateTreeNode;
 
 /**
@@ -43,16 +44,29 @@ class ResourcesTreeResolver
 			{
 				$event->setParam('treeName', $treeName);
 				$pathIds = array();
+
 				while(($nodeId = array_shift($resourceParts)) !== null)
 				{
 					if (is_numeric($nodeId))
 					{
 						$pathIds[] = intval($nodeId);
 					}
-					else
+					elseif ($nodeId == 'ancestors' && $event->getParam('isDirectory') && count($resourceParts) === 0)
 					{
+						$event->setParam('pathIds', $pathIds);
+						$action = function($event) {
+							$action = new GetTreeNodeAncestors();
+							$action->execute($event);
+						};
+						$event->setAction($action);
 						return;
 					}
+					else
+					{
+						//Invalid TreeNode Ids Path
+						return;
+					}
+
 				}
 				$event->setParam('pathIds', $pathIds);
 

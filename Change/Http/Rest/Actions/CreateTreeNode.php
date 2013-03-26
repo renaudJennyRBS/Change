@@ -75,17 +75,11 @@ class CreateTreeNode
 
 		$getTreeNode = new GetTreeNode();
 		$getTreeNode->execute($event);
+
 		$result = $event->getResult();
 		if ($result instanceof TreeNodeResult)
 		{
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-			$selfLinks = $result->getLinks()->getByRel('self');
-			if ($selfLinks && $selfLinks[0] instanceof TreeNodeLink)
-			{
-				$href = $selfLinks[0]->href();
-				$result->setHeaderLocation($href);
-				$result->setHeaderContentLocation($href);
-			}
 		}
 	}
 }

@@ -13,9 +13,9 @@ use Change\Http\Rest\Result\TreeNodeLink;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\Link;
 /**
- * @name \Change\Http\Rest\Actions\GetTreeNodeCollection
+ * @name \Change\Http\Rest\Actions\GetTreeNodeAncestors
  */
-class GetTreeNodeCollection
+class GetTreeNodeAncestors
 {
 	/**
 	 * Use Event Params: treeName, pathIds
@@ -39,37 +39,38 @@ class GetTreeNodeCollection
 			throw new \RuntimeException('Invalid Parameter: pathIds', 71000);
 		}
 
-		$parentNode = null;
-		$nodes = array();
+		$currentNode = null;
+		$ancestorNodes = null;
 		if (!count($pathIds))
 		{
 
-			$node = $treeManager->getRootNode($treeName);
-			if ($node)
+			$currentNode = $treeManager->getRootNode($treeName);
+			if (!$currentNode)
 			{
-				$nodes[] = $node;
+				return;
 			}
+			$ancestorNodes = array();
 		}
 		else
 		{
 			$nodeId = end($pathIds);
-			$parentNode = $treeManager->getNodeById($nodeId, $treeName);
-			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
+			$currentNode = $treeManager->getNodeById($nodeId, $treeName);
+			if (!$currentNode || (($currentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
 			{
 				return;
 			}
-			$nodes = $treeManager->getChildrenNode($parentNode);
+			$ancestorNodes = $treeManager->getAncestorNodes($currentNode);
 		}
-		$this->generateResult($event, $parentNode, $nodes);
+		$this->generateResult($event, $currentNode, $ancestorNodes);
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\TreeNode|null $parentNode
+	 * @param \Change\Documents\TreeNode|null $currentNode
 	 * @param \Change\Documents\TreeNode[]$nodes
 	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
-	protected function generateResult($event, $parentNode, $nodes)
+	protected function generateResult($event, $currentNode, $nodes)
 	{
 		$urlManager = $event->getUrlManager();
 		$result = new CollectionResult();
@@ -81,7 +82,7 @@ class GetTreeNodeCollection
 		{
 			$result->setLimit(intval($limit));
 		}
-		$result->setSort('nodeOrder');
+		$result->setSort('nodeLevel');
 
 		$result->setCount(count($nodes));
 		//TODO Add pagination
@@ -90,17 +91,9 @@ class GetTreeNodeCollection
 		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);
 
-		if ($parentNode)
-		{
-			$pnl = new TreeNodeLink($urlManager, $parentNode, TreeNodeLink::MODE_LINK);
-			$pnl->setRel('node');
-			$result->addLink($pnl);
-
-			$anl = clone($pnl);
-			$anl->setPathInfo($pnl->getPathInfo() . '/ancestors/');
-			$anl->setRel('ancestors');
-			$result->addLink($anl);
-		}
+		$pnl = new TreeNodeLink($urlManager, $currentNode, TreeNodeLink::MODE_LINK);
+		$pnl->setRel('node');
+		$result->addLink($pnl);
 
 		foreach ($nodes as $node)
 		{

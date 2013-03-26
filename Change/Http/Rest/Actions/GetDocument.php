@@ -53,26 +53,17 @@ class GetDocument
 		if ($document instanceof Localizable)
 		{
 			$event->setParam('LCID', $document->getRefLCID());
-			$setI18nDocument = new GetLocalizedDocument();
-			$setI18nDocument->execute($event);
-			$result = $event->getResult();
+			$getLocalizedDocument = new GetLocalizedDocument();
+			$getLocalizedDocument->execute($event);
 
+			$result = $event->getResult();
 			if ($result instanceof DocumentResult)
 			{
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_303);
-				$selfLinks = $result->getLinks()->getByRel('self');
-				if ($selfLinks && $selfLinks[0] instanceof DocumentLink)
-				{
-					/* @var $sl DocumentLink */
-					$sl = $selfLinks[0];
-					$href = $sl->href();
-					$result->setHeaderLocation($href);
-					$result->setHeaderContentLocation($href);
-				}
 			}
+
 			return;
 		}
-
 		$this->generateResult($event, $document);
 	}
 
@@ -123,12 +114,9 @@ class GetDocument
 		$urlManager = $event->getUrlManager();
 
 		$result = new DocumentResult();
-		if (!$document->getDocumentModel()->isStateless())
-		{
-			$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
-		}
 		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
+
 		if ($document->getTreeName())
 		{
 			$tn = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
@@ -151,8 +139,22 @@ class GetDocument
 		}
 
 		$result->setProperties($properties);
+		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		$this->addActions($result, $document, $urlManager);
-		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+		if (($href = $documentLink->href()) != $currentUrl)
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_301);
+			$result->setHeaderLocation($href);
+			$result->setHeaderContentLocation($href);
+		}
+		else
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+			if (!$document->getDocumentModel()->isStateless())
+			{
+				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
+			}
+		}
 		$event->setResult($result);
 		return $result;
 	}
