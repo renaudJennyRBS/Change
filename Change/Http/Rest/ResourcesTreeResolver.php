@@ -54,6 +54,7 @@ class ResourcesTreeResolver
 					elseif ($nodeId == 'ancestors' && $event->getParam('isDirectory') && count($resourceParts) === 0)
 					{
 						$event->setParam('pathIds', $pathIds);
+						$this->resolver->setAuthorisation($event, end($pathIds), $treeName . '.ancestors');
 						$action = function($event) {
 							$action = new GetTreeNodeAncestors();
 							$action->execute($event);
@@ -69,11 +70,14 @@ class ResourcesTreeResolver
 
 				}
 				$event->setParam('pathIds', $pathIds);
+				$resource = end($pathIds);
+				if (!$resource) {$resource = $treeName;}
 
 				if ($event->getParam('isDirectory', false))
 				{
 					if ($method === Request::METHOD_POST)
 					{
+						$this->resolver->setAuthorisation($event, $resource, $treeName . '.createNode');
 						$action = function($event) {
 							$action = new CreateTreeNode();
 							$action->execute($event);
@@ -83,6 +87,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_GET)
 					{
+						$this->resolver->setAuthorisation($event, $resource, $treeName . '.children');
 						$action = function($event) {
 							$action = new GetTreeNodeCollection();
 							$action->execute($event);
@@ -99,6 +104,7 @@ class ResourcesTreeResolver
 				{
 					if ($method === Request::METHOD_GET)
 					{
+						$this->resolver->setAuthorisation($event, $resource, $treeName . '.loadNode');
 						$action = function($event) {
 							$action = new GetTreeNode();
 							$action->execute($event);
@@ -108,6 +114,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_PUT)
 					{
+						$this->resolver->setAuthorisation($event, $resource, $treeName . '.updateNode');
 						$action = function($event) {
 							$action = new UpdateTreeNode();
 							$action->execute($event);
@@ -117,6 +124,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_DELETE)
 					{
+						$this->resolver->setAuthorisation($event, $resource, $treeName . '.deleteNode');
 						$action = function($event) {
 							$action = new DeleteTreeNode();
 							$action->execute($event);

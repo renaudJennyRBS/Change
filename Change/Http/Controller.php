@@ -116,6 +116,7 @@ class Controller implements EventManagerAwareInterface
 
 				$this->doSendAction($eventManager, $event);
 
+				$this->validateAuthentication($event);
 
 				$action = $event->getAction();
 
@@ -152,6 +153,26 @@ class Controller implements EventManagerAwareInterface
 
 	/**
 	 * @param Event $event
+	 */
+	protected function validateAuthentication($event)
+	{
+		if (!($event->getAuthentication() instanceof AuthenticationInterface))
+		{
+			$authentication = new AnonymousAuthentication();
+			$event->setAuthentication($authentication);
+		}
+
+		if (!($event->getAcl() instanceof AclInterface))
+		{
+			$configurationAcl = new ConfigurationAcl($event->getAuthentication());
+			$allowAnonymous = $this->application->getConfiguration()->getEntry('Change/Http/allowAnonymous', true);
+			$configurationAcl->setAllowAnonymous($allowAnonymous);
+			$event->setAcl($configurationAcl);
+		}
+	}
+
+	/**
+	 * @param Event $event
 	 * @return boolean
 	 */
 	protected function checkAuthorization(Event $event)
@@ -170,7 +191,7 @@ class Controller implements EventManagerAwareInterface
 
 			if (!$authorized)
 			{
-				if ($this->isAuthenticated($event))
+				if ($event->getAuthentication()->isAuthenticated())
 				{
 					$this->forbidden($event);
 					return false;
@@ -179,6 +200,7 @@ class Controller implements EventManagerAwareInterface
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -193,16 +215,6 @@ class Controller implements EventManagerAwareInterface
 		$notFound->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
 		$event->setResult($notFound);
 		return $notFound;
-	}
-
-	/**
-	 * @api
-	 * @param Event $event
-	 * @return boolean
-	 */
-	public function isAuthenticated(Event $event)
-	{
-		return ($authentication = $event->getAuthentication()) !== null && $authentication->isAuthenticated();
 	}
 
 	/**
