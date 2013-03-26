@@ -15,9 +15,4 @@ interface AuthenticationInterface
 	 * @return mixed|null
 	 */
 	public function getIdentity();
-
-	/**
-	 * @return AclInterface
-	 */
-	public function getAcl();
 }

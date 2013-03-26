@@ -85,15 +85,6 @@ class AuthenticationListener
 	}
 
 	/**
-	 * Default true set in Change/Http/Rest/OAuth/allowAnonymous
-	 * @return boolean
-	 */
-	protected function getAllowAnonymous()
-	{
-		return isset($this->config['allowAnonymous']) ? $this->config['allowAnonymous'] : true;
-	}
-
-	/**
 	 * @param HttpEvent $event
 	 */
 	public function onRequest($event)
@@ -399,10 +390,6 @@ class AuthenticationListener
 			{
 				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
-		}
-		elseif (!$this->getAllowAnonymous())
-		{
-			throw new \RuntimeException('Invalid OAuth Authorization', 72002);
 		}
 	}
 

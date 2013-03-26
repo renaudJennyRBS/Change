@@ -3,6 +3,7 @@ namespace Change\Http\Rest;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
+use Change\Http\Event;
 use Change\Http\Rest\Actions\CreateDocument;
 use Change\Http\Rest\Actions\CreateLocalizedDocument;
 use Change\Http\Rest\Actions\DeleteDocument;
@@ -33,7 +34,7 @@ class ResourcesResolver
 
 	/**
 	 * Set event Params: modelName, documentId, LCID
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 * @param array $resourceParts
 	 * @param $method
 	 * @return void
@@ -50,7 +51,12 @@ class ResourcesResolver
 				return;
 			}
 			$event->setParam('documentId', $documentId);
-			$event->setParam('modelName', $document->getDocumentModelName());
+
+			$modelName = $document->getDocumentModelName();
+			$event->setParam('modelName', $modelName);
+
+			$privilege = $modelName . '.load';
+			$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
 			if ($document->getDocumentModel()->isLocalized())
 			{
@@ -113,6 +119,9 @@ class ResourcesResolver
 							{
 								if ($method === Request::METHOD_POST)
 								{
+									$privilege = $modelName . '.create';
+									$this->resolver->setAuthorisation($event, $modelName, $privilege);
+
 									$action = function($event) {
 										$action = new CreateLocalizedDocument();
 										$action->execute($event);
@@ -123,6 +132,9 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_GET)
 								{
+									$privilege = $modelName . '.load';
+									$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 									$action = function($event) {
 										$action = new GetLocalizedDocument();
 										$action->execute($event);
@@ -133,6 +145,9 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_PUT)
 								{
+									$privilege = $modelName . '.updateLocalized';
+									$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 									$action = function($event) {
 										$action = new UpdateLocalizedDocument();
 										$action->execute($event);
@@ -143,6 +158,9 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_DELETE)
 								{
+									$privilege = $modelName . '.deleteLocalized';
+									$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 									$action = function($event) {
 										$action = new DeleteLocalizedDocument();
 										$action->execute($event);
@@ -167,6 +185,9 @@ class ResourcesResolver
 					{
 						if ($method === 'POST')
 						{
+							$privilege = $modelName . '.create';
+							$this->resolver->setAuthorisation($event, $modelName, $privilege);
+
 							if ($model->isLocalized())
 							{
 								$action = function($event) {
@@ -187,6 +208,9 @@ class ResourcesResolver
 
 						if ($method === 'GET')
 						{
+							$privilege = $modelName . '.load';
+							$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 							$action = function($event) {
 								$action = new GetDocument();
 								$action->execute($event);
@@ -197,6 +221,9 @@ class ResourcesResolver
 
 						if ($method === 'PUT')
 						{
+							$privilege = $modelName . '.update';
+							$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 							$action = function($event) {
 								$action = new UpdateDocument();
 								$action->execute($event);
@@ -207,6 +234,9 @@ class ResourcesResolver
 
 						if ($method === 'DELETE')
 						{
+							$privilege = $modelName . '.delete';
+							$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
 							$action = function($event) {
 								$action = new DeleteDocument();
 								$action->execute($event);
@@ -220,6 +250,9 @@ class ResourcesResolver
 				{
 					if ($method === Request::METHOD_POST)
 					{
+						$privilege = $modelName . 'create';
+						$this->resolver->setAuthorisation($event, $modelName, $privilege);
+
 						$action = function($event) {
 							$action = new CreateDocument();
 							$action->execute($event);
@@ -230,6 +263,9 @@ class ResourcesResolver
 
 					if ($method === Request::METHOD_GET)
 					{
+						$privilege = $modelName . '.collection';
+						$this->resolver->setAuthorisation($event, $modelName, $privilege);
+
 						$action = function($event) {
 							$action = new GetDocumentModelCollection();
 							$action->execute($event);

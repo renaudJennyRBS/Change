@@ -33,6 +33,11 @@ class Event extends \Zend\EventManager\Event
 	protected $authentication;
 
 	/**
+	 * @var \Change\Http\AclInterface
+	 */
+	protected $acl;
+
+	/**
 	 * @var \Change\Http\UrlManager
 	 */
 	protected $urlManager;
@@ -58,6 +63,7 @@ class Event extends \Zend\EventManager\Event
 	protected $response;
 
 	/**
+	 * @api
 	 * @return \Change\Http\Controller|null
 	 */
 	public function getController()
@@ -78,6 +84,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Application\ApplicationServices|null
 	 */
 	public function getApplicationServices()
@@ -94,6 +101,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Documents\DocumentServices|null
 	 */
 	public function getDocumentServices()
@@ -110,6 +118,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Http\Request
 	 */
 	public function getRequest()
@@ -126,11 +135,29 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Http\AuthenticationInterface|null
 	 */
 	public function getAuthentication()
 	{
 		return $this->authentication;
+	}
+
+	/**
+	 * @param \Change\Http\AclInterface $acl
+	 */
+	public function setAcl($acl)
+	{
+		$this->acl = $acl;
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Http\AclInterface
+	 */
+	public function getAcl()
+	{
+		return $this->acl;
 	}
 
 	/**
@@ -142,6 +169,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Http\UrlManager
 	 */
 	public function getUrlManager()
@@ -150,6 +178,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @param callable|null $authorization
 	 */
 	public function setAuthorization($authorization)
@@ -158,6 +187,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return callable|null
 	 */
 	public function getAuthorization()
@@ -166,6 +196,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @param callable|null $action
 	 */
 	public function setAction($action)
@@ -174,6 +205,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return callable|null
 	 */
 	public function getAction()
@@ -182,6 +214,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Http\Result $result
 	 */
 	public function setResult($result)
@@ -190,6 +223,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Http\Result
 	 */
 	public function getResult()
@@ -198,6 +232,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @param \Zend\Http\PhpEnvironment\Response|null $response
 	 */
 	public function setResponse($response)
@@ -206,6 +241,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @api
 	 * @return \Zend\Http\PhpEnvironment\Response|Null
 	 */
 	public function getResponse()

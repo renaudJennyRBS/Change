@@ -16,11 +16,6 @@ class Authentication implements AuthenticationInterface
 	protected $storedOAuth;
 
 	/**
-	 * @var Acl
-	 */
-	protected $acl;
-
-	/**
 	 * @param \Change\Http\Rest\OAuth\StoredOAuth $storedOAuth
 	 */
 	public function setStoredOAuth(StoredOAuth $storedOAuth = null)
@@ -54,25 +49,5 @@ class Authentication implements AuthenticationInterface
 			return $this->storedOAuth->getAccessorId();
 		}
 		return null;
-	}
-
-	/**
-	 * @param \Change\Http\Rest\OAuth\Acl $acl
-	 */
-	public function setAcl($acl)
-	{
-		$this->acl = $acl;
-	}
-
-	/**
-	 * @return AclInterface
-	 */
-	public function getAcl()
-	{
-		if ($this->acl === null)
-		{
-			$this->acl = new Acl($this);
-		}
-		return $this->acl;
 	}
 }

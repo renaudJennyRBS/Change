@@ -45,7 +45,7 @@ class Resolver extends ActionResolver
 
 	/**
 	 * Set Event params: namespace, isDirectory
-	 * @param Event|\Change\Http\Rest\Event $event
+	 * @param Event $event
 	 * @return void
 	 */
 	public function resolve(Event $event)
@@ -116,5 +116,21 @@ class Resolver extends ActionResolver
 		$result->getHeaders()->addHeader($header);
 		$result->addDataValue('allow', $allow);
 		return $result;
+	}
+
+	/**
+	 * @param Event $event
+	 * @param mixed $resource
+	 * @param string $privilege
+	 */
+	public function setAuthorisation($event, $resource, $privilege)
+	{
+		$authorisation = function(Event $event) use ($resource, $privilege)
+		{
+			$hasPrivilege = $event->getAcl()->hasPrivilege($resource, $privilege);
+			$event->getApplicationServices()->getLogging()->info('hasPrivilege(' . var_export($resource, true) . ', '.  var_export($privilege, true).'): ' . var_export($hasPrivilege, true));
+			return $hasPrivilege;
+		};
+		$event->setAuthorization($authorisation);
 	}
 }
