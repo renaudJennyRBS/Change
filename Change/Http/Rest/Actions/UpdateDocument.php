@@ -98,12 +98,6 @@ class UpdateDocument
 
 			$getDocument = new GetDocument();
 			$getDocument->execute($event);
-			$result = $event->getResult();
-			if ($result instanceof DocumentResult)
-			{
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-			}
-
 		}
 		catch (\Exception $e)
 		{

@@ -1,10 +1,12 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Http\Result;
+
 /**
  * @name \Change\Http\Rest\Result\DocumentResult
  */
-class DocumentResult extends \Change\Http\Result
+class DocumentResult extends Result
 {
 	/**
 	 * @var array

@@ -23,7 +23,7 @@
 
 		<property name="passwordHash" type="String" indexed="none" />
 
-        <property name="HashMethod" type="String" indexed="none">
+        <property name="hashMethod" type="String" indexed="none">
             <dboptions length="20" />
         </property>
 

@@ -40,7 +40,40 @@ class ResourcesResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if (count($resourceParts) >= 3)
+		if (count($resourceParts) === 1 && is_numeric($resourceParts[0]) && $method === Request::METHOD_GET)
+		{
+			$documentId = intval($resourceParts[0]);
+			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+			if ($document === null)
+			{
+				//Document not found
+				return;
+			}
+			$event->setParam('documentId', $documentId);
+			$event->setParam('modelName', $document->getDocumentModelName());
+
+			if ($document->getDocumentModel()->isLocalized())
+			{
+				$event->setParam('LCID', $document->getRefLCID());
+				$action = function($event) {
+					$action = new GetLocalizedDocument();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+			else
+			{
+				$action = function($event) {
+					$action = new GetDocument();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+		}
+		else if (count($resourceParts) >= 3)
+
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$documentServices = $event->getDocumentServices();

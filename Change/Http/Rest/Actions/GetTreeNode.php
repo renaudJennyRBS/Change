@@ -72,21 +72,29 @@ class GetTreeNode
 		$this->addResourceItemInfos($dl, $document, $urlManager);
 		$result->setProperty('document', $dl);
 
-		$t = new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_LINK);
-		$result->addLink($t);
+		$treeNodeLink = new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_LINK);
+		$result->addLink($treeNodeLink);
 		if ($node->getChildrenCount())
 		{
-			$cl = clone($t);
-			$cl->setPathInfo($t->getPathInfo() . '/');
+			$cl = clone($treeNodeLink);
+			$cl->setPathInfo($treeNodeLink->getPathInfo() . '/');
 			$cl->setRel('children');
 			$result->addLink($cl);
 		}
 		if ($node->getParentId())
 		{
-			$pn = $node->getTreeManager()->getNodeById($node->getParentId(), $node->getTreeName());
-			$pnl = new TreeNodeLink($urlManager, $pn, TreeNodeLink::MODE_LINK);
-			$pnl->setRel('parent');
+			$pnl = clone($treeNodeLink);
+			$pnl->setPathInfo($treeNodeLink->getPathInfo() . '/ancestors/');
+			$pnl->setRel('ancestors');
 			$result->addLink($pnl);
+		}
+
+		$currentUrl = $urlManager->getSelf()->normalize()->toString();
+		if (($href = $treeNodeLink->href()) != $currentUrl)
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_301);
+			$result->setHeaderLocation($href);
+			$result->setHeaderContentLocation($href);
 		}
 		$event->setResult($result);
 	}
