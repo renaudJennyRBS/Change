@@ -204,4 +204,12 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return count($this->entries);
 	}
+
+	/**
+	 * return integer[]
+	 */
+	public function ids()
+	{
+		return array_map(function($row) {return $row[0];}, $this->entries);
+	}
 }
