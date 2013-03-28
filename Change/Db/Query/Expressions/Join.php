@@ -16,7 +16,7 @@ class Join extends AbstractExpression
 	const FULL_OUTER_JOIN = 16;
 	
 	/**
-	 * @var interger
+	 * @var integer
 	 */
 	protected $joinType;
 	
@@ -32,7 +32,7 @@ class Join extends AbstractExpression
 	
 	/**
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
-	 * @param interger $type
+	 * @param integer $type
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $specification
 	 */
 	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $tableExpression, $type = self::CROSS_JOIN, $specification = null)

@@ -1,6 +1,7 @@
 <?php
 namespace Change\Db\Query;
 
+use Change\Db\Query\InterfaceSQLFragment;
 use Change\Db\Query\Expressions\Assignment;
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
@@ -606,6 +607,7 @@ class SQLFragmentBuilder
 				return new Raw(strval($item));
 			};
 		}
+
 		if (is_array($object))
 		{
 			$builder = $this;
@@ -613,6 +615,7 @@ class SQLFragmentBuilder
 				return $builder->normalizeValue($item, $converter);
 			}, $object);
 		}
+
 		if (!($object instanceof AbstractExpression))
 		{
 			if (is_callable($converter))
