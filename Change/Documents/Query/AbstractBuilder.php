@@ -51,12 +51,22 @@ abstract class AbstractBuilder
 	 */
 	protected $predicateBuilder;
 
+
+	/**
+	 * @param AbstractModel $model
+	 */
+	function __construct(AbstractModel $model)
+	{
+		$this->setModel($model);
+		$this->setTableAliasName('_t' . $this->getMaster()->getNextAliasCounter());
+	}
+
 	/**
 	 * @param AbstractModel $model
 	 * @return $this
 	 * @throws \InvalidArgumentException
 	 */
-	public function setModel(AbstractModel $model)
+	protected function setModel(AbstractModel $model)
 	{
 		if ($model->isStateless())
 		{
@@ -168,11 +178,14 @@ abstract class AbstractBuilder
 	/**
 	 * @param string $tableAliasName
 	 * @param Join $join
+	 * @throws \InvalidArgumentException
 	 * @return $this
 	 */
-	public function addJoin($tableAliasName, $join)
+	public function addJoin($tableAliasName, Join $join)
 	{
 		$this->joinArray[$tableAliasName] = $join;
+
+
 		return $this;
 	}
 
@@ -272,7 +285,7 @@ abstract class AbstractBuilder
 	public function getPropertyModelBuilder($propertyName, $modelName, $modelPropertyName)
 	{
 		$property = $this->getValidProperty($propertyName);
-		if ($property === null || $property->getStateless())
+		if ($property === null || $property->getStateless() || $property->getLocalized())
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid Property', 999999);
 		}
@@ -284,7 +297,7 @@ abstract class AbstractBuilder
 		}
 
 		$modelProperty = $model->getProperty(($modelPropertyName instanceof Property) ? $modelPropertyName->getName() : $modelPropertyName);
-		if ( $modelProperty === null ||  $modelProperty->getStateless())
+		if ( $modelProperty === null ||  $modelProperty->getStateless() || $modelProperty->getLocalized())
 		{
 			throw new \InvalidArgumentException('Argument 3 must be a valid Property', 999999);
 		}
@@ -346,6 +359,14 @@ abstract class AbstractBuilder
 	 * @param mixed $value
 	 */
 	abstract public function setValuedParameter(Parameter $parameter, $value);
+
+
+	/**
+	 * @param string|Property $propertyName
+	 * @param boolean $asc
+	 * @return $this
+	 */
+	abstract public function addOrder($propertyName, $asc = true);
 
 	/**
 	 * @api
@@ -424,7 +445,7 @@ abstract class AbstractBuilder
 		$property = $this->getValidProperty($propertyName);
 		if (null === $property || $property->getStateless())
 		{
-			throw new \InvalidArgumentException('Argument 1 must by a valid property', 999999);
+			throw new \InvalidArgumentException('Argument 1 must be a valid property', 999999);
 		}
 		$tableName = ($property->getLocalized()) ? $this->getLocalizedTableAliasName() : $this->getTableAliasName();
 		return $this->getFragmentBuilder()->getDocumentColumn($property->getName(), $tableName);
@@ -482,7 +503,7 @@ abstract class AbstractBuilder
 		}
 		else
 		{
-			throw new \InvalidArgumentException('Argument 2 must by a valid type', 999999);
+			throw new \InvalidArgumentException('Argument 2 must be a valid type', 999999);
 		}
 
 		$name = '_p' . $this->getMaster()->getNextAliasCounter();
@@ -618,7 +639,7 @@ abstract class AbstractBuilder
 	 */
 	public function published()
 	{
-		return $this->getPredicateBuilder()->published($propertyName);
+		return $this->getPredicateBuilder()->published();
 	}
 
 	/**
@@ -631,5 +652,53 @@ abstract class AbstractBuilder
 	public function childOf($node, $propertyName = 'id')
 	{
 		return $this->getPredicateBuilder()->childOf($node, $propertyName);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::descendantOf
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function descendantOf($node, $propertyName = 'id')
+	{
+		return $this->getPredicateBuilder()->descendantOf($node, $propertyName);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function ancestorOf($node, $propertyName = 'id')
+	{
+		return $this->getPredicateBuilder()->ancestorOf($node, $propertyName);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function nextSiblingOf($node, $propertyName = 'id')
+	{
+		return $this->getPredicateBuilder()->nextSiblingOf($node, $propertyName);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::previousSiblingOf
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function previousSiblingOf($node, $propertyName = 'id')
+	{
+		return $this->getPredicateBuilder()->previousSiblingOf($node, $propertyName);
 	}
 }

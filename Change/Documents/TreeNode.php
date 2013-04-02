@@ -132,6 +132,32 @@ class TreeNode
 
 	/**
 	 * @api
+	 * @return string
+	 */
+	public function getFullPath()
+	{
+		return $this->path . $this->documentId . '/';
+	}
+
+	/**
+	 * @api
+	 * @return integer[]
+	 */
+	public function getAncestorIds()
+	{
+		$ancestorIds = array();
+		foreach (explode('/', $this->getPath()) as $id)
+		{
+			if ($id != '')
+			{
+				$ancestorIds[] = intval($id);
+			}
+		}
+		return $ancestorIds;
+	}
+
+	/**
+	 * @api
 	 * @return integer
 	 */
 	public function getChildrenCount()
