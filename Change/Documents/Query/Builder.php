@@ -2,6 +2,7 @@
 namespace Change\Documents\Query;
 
 use Change\Db\DbProvider;
+use Change\Db\Query\InterfaceSQLFragment;
 use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Predicates\Conjunction;
 use Change\Db\Query\Expressions\Parameter;
@@ -47,15 +48,29 @@ class Builder extends AbstractBuilder
 
 
 	/**
-	 * @param DocumentServices $documentServices
-	 * @param AbstractModel $model
+	 * @var array
 	 */
-	function __construct(DocumentServices $documentServices, AbstractModel $model)
+	protected $orderArray;
+
+	/**
+	 * @param DocumentServices $documentServices
+	 * @param AbstractModel|string $model
+	 * @throws \InvalidArgumentException
+	 */
+	function __construct(DocumentServices $documentServices, $model)
 	{
 		$this->setDocumentServices($documentServices);
-		$this->setModel($model);
-		$this->setTableAliasName('_t' . $this->getNextAliasCounter());
+		if (is_string($model))
+		{
+			$model = $this->getDocumentServices()->getModelManager()->getModelByName($model);
+		}
+		if (!($model instanceof AbstractModel))
+		{
+			throw new \InvalidArgumentException('Argument 2 must by a valid \Change\Documents\AbstractModel', 999999);
+		}
+		parent::__construct($model);
 	}
+
 
 	/**
 	 * @return integer
@@ -151,9 +166,9 @@ class Builder extends AbstractBuilder
 		$dqb = $this->getDbQueryBuilder();
 		$dqb->select();
 		$this->populateQueryBuilder($dqb);
+		$this->setQueryOrders($dqb);
 		$this->setQueryParameters($dqb->query());
 		return $dqb;
-
 	}
 
 	/**
@@ -185,6 +200,30 @@ class Builder extends AbstractBuilder
 			throw new \InvalidArgumentException('Argument 1 must by duplicate parameter name', 999999);
 		}
 		$this->parameters[$name]= array($parameter, $value);
+	}
+
+	/**
+	 * @param string|Property $propertyName
+	 * @param boolean $asc
+	 * @param ChildBuilder $childBuilder
+	 * @return $this
+	 */
+	public function addOrder($propertyName, $asc = true, ChildBuilder $childBuilder = null)
+	{
+		if ($propertyName instanceof InterfaceSQLFragment)
+		{
+			$column = $propertyName;
+		}
+		elseif ($childBuilder !== null)
+		{
+			$column = $childBuilder->getColumn($propertyName);
+		}
+		else
+		{
+			$column = $this->getColumn($propertyName);
+		}
+
+		$this->orderArray[] = array($column, $asc);
 	}
 
 
@@ -261,6 +300,27 @@ class Builder extends AbstractBuilder
 			$qb->where($predicate);
 		}
 	}
+	/**
+	 * @param \Change\Db\Query\Builder $qb
+	 */
+	protected function setQueryOrders($qb)
+	{
+		if (is_array($this->orderArray) && count($this->orderArray))
+		{
+			foreach ($this->orderArray as $orderInfo)
+			{
+				list($expression, $asc ) = $orderInfo;
+				if ($asc)
+				{
+					$qb->orderAsc($expression);
+				}
+				else
+				{
+					$qb->orderDesc($expression);
+				}
+			}
+		}
+	}
 
 	/**
 	 * @param \Change\Db\Query\SelectQuery $query
@@ -285,7 +345,7 @@ class Builder extends AbstractBuilder
 		$qb = $this->getDbQueryBuilder();
 		$this->addDocumentColumns($qb);
 		$this->populateQueryBuilder($qb);
-
+		$this->setQueryOrders($qb);
 		$sc = $qb->query();
 		$this->setQueryParameters($sc);
 		$row = $sc->getFirstResult();
@@ -310,6 +370,7 @@ class Builder extends AbstractBuilder
 		$qb = $this->getDbQueryBuilder();
 		$this->addDocumentColumns($qb);
 		$this->populateQueryBuilder($qb);
+		$this->setQueryOrders($qb);
 		$sc = $qb->query();
 		$this->setQueryParameters($sc);
 		if ($maxResults)

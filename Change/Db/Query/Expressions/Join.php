@@ -21,21 +21,21 @@ class Join extends AbstractExpression
 	protected $joinType;
 	
 	/**
-	 * @var \Change\Db\Query\Expressions\AbstractExpression
+	 * @var AbstractExpression
 	 */
 	protected $tableExpression;
 	
 	/**
-	 * @var \Change\Db\Query\Expressions\AbstractExpression
+	 * @var AbstractExpression
 	 */
 	protected $specification;
 	
 	/**
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $tableExpression
+	 * @param AbstractExpression $tableExpression
 	 * @param integer $type
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $specification
+	 * @param AbstractExpression $specification
 	 */
-	public function __construct(\Change\Db\Query\Expressions\AbstractExpression $tableExpression, $type = self::CROSS_JOIN, $specification = null)
+	public function __construct(AbstractExpression $tableExpression, $type = self::CROSS_JOIN, $specification = null)
 	{
 		$this->setTableExpression($tableExpression);
 		$this->setType($type);
@@ -43,7 +43,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\AbstractExpression
+	 * @return AbstractExpression
 	 */
 	public function getSpecification()
 	{
@@ -51,7 +51,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinSpecification
+	 * @param AbstractExpression $joinSpecification
 	 */
 	public function setSpecification(AbstractExpression $joinSpecification = null)
 	{
@@ -59,7 +59,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @return interger
+	 * @return integer
 	 */
 	public function getType()
 	{
@@ -68,7 +68,7 @@ class Join extends AbstractExpression
 	
 	/**
 	 * @throws \InvalidArgumentException
-	 * @param interger $joinType
+	 * @param integer $joinType
 	 */
 	public function setType($joinType)
 	{
@@ -124,7 +124,7 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\AbstractExpression
+	 * @return AbstractExpression
 	 */
 	public function getTableExpression()
 	{
@@ -132,9 +132,9 @@ class Join extends AbstractExpression
 	}
 	
 	/**
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $joinedTable
+	 * @param AbstractExpression $joinedTable
 	 */
-	public function setTableExpression(\Change\Db\Query\Expressions\AbstractExpression $joinedTable)
+	public function setTableExpression(AbstractExpression $joinedTable)
 	{
 		$this->tableExpression = $joinedTable;
 	}

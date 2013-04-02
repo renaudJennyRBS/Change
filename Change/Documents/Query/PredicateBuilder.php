@@ -77,7 +77,6 @@ class PredicateBuilder
 		}
 	}
 
-
 	/**
 	 * @param string|Property $propertyName
 	 * @param mixed $value
@@ -101,6 +100,68 @@ class PredicateBuilder
 			$rhs = $this->builder->getValueAsParameter($value);
 		}
 		return array($lhs, $rhs);
+	}
+
+	/**
+	 * @api
+	 * @param InterfacePredicate|InterfacePredicate[] $predicate1
+	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate|\Change\Db\Query\Predicates\Conjunction
+	 */
+	public function logicAnd($predicate1, $_ = null)
+	{
+		$args = array();
+		foreach (func_get_args() as $idx => $arg)
+		{
+			if (is_array($arg))
+			{
+				/* @var $conjunction \Change\Db\Query\Predicates\Conjunction */
+				$conjunction = call_user_func_array(array($this, 'logicAnd'), $arg);
+				$args = array_merge($args, $conjunction->getArguments());
+			}
+			elseif ($arg instanceof InterfaceSQLFragment)
+			{
+				$args[] = $arg;
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Argument ' . ($idx + 1) . ' must be a valid InterfaceSQLFragment', 999999);
+			}
+		}
+
+		return call_user_func_array(array($this->getFragmentBuilder(), 'logicAnd'), $args);
+	}
+
+	/**
+	 * @api
+	 * @param InterfacePredicate|InterfacePredicate[] $predicate1
+	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate|\Change\Db\Query\Predicates\Disjunction
+	 */
+	public function logicOr($predicate1, $_ = null)
+	{
+		$args = array();
+		foreach (func_get_args() as $idx => $arg)
+		{
+			if (is_array($arg))
+			{
+				/* @var $disjunction \Change\Db\Query\Predicates\Disjunction */
+				$disjunction = call_user_func_array(array($this, 'logicOr'), $arg);
+				$args = array_merge($args, $disjunction->getArguments());
+			}
+			elseif ($arg instanceof InterfaceSQLFragment)
+			{
+				$args[] = $arg;
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Argument ' . ($idx + 1) . ' must be a valid InterfaceSQLFragment', 999999);
+			}
+		}
+
+		return call_user_func_array(array($this->getFragmentBuilder(), 'logicOr'), $args);
 	}
 
 	/**
@@ -344,6 +405,21 @@ class PredicateBuilder
 	}
 
 	/**
+	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
+	 * @param \Change\Db\Query\Expressions\Table $treeTable
+	 * @param string $treeTableIdentifier
+	 * @param string|Property $propertyName
+	 * @return Join
+	 */
+	protected function buildTreeTableJoin($fragmentBuilder, $treeTable, $treeTableIdentifier, $propertyName)
+	{
+		$id = $this->eq($propertyName, $fragmentBuilder->getDocumentColumn('id', $treeTableIdentifier));
+		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($id, 'ON');
+		$join = new Join($fragmentBuilder->alias($treeTable, $treeTableIdentifier), Join::INNER_JOIN, $joinExpr);
+		return $join;
+	}
+
+	/**
 	 * @param TreeNode|AbstractDocument|integer $node
 	 * @param string|Property $propertyName
 	 * @return \Change\Db\Query\Predicates\BinaryPredicate
@@ -358,13 +434,109 @@ class PredicateBuilder
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
 		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 
-		$id =  $this->eq($propertyName, $fb->getDocumentColumn('id', $treeTableIdentifier));
-		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($id, 'ON');
-
-		$join = new Join($fb->alias($treeTable, $treeTableIdentifier), Join::INNER_JOIN, $joinExpr);
 		$this->builder->addJoin($treeTableIdentifier, $join);
 
 		return $fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($document->getId(), Property::TYPE_INTEGER));
+	}
+
+
+	/**
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function descendantOf($node, $propertyName = 'id')
+	{
+		list($document, $node) = $this->validateNodeArgument($node);
+
+		/* @var $document AbstractDocument */
+		/* @var $node TreeNode */
+		$fb = $this->getFragmentBuilder();
+		$treeTable = $fb->getTreeTable($node->getTreeName());
+		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+
+		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
+		$this->builder->addJoin($treeTableIdentifier, $join);
+
+		return $fb->like($fb->column('node_path', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getFullPath(), Property::TYPE_STRING), \Change\Db\Query\Predicates\Like::BEGIN);
+	}
+
+	/**
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function ancestorOf($node, $propertyName = 'id')
+	{
+		list($document, $node) = $this->validateNodeArgument($node);
+
+		/* @var $document AbstractDocument */
+		/* @var $node TreeNode */
+		$fb = $this->getFragmentBuilder();
+		$treeTable = $fb->getTreeTable($node->getTreeName());
+		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+
+		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
+		$this->builder->addJoin($treeTableIdentifier, $join);
+		$ancestorsIds = $node->getAncestorIds();
+		if (count($ancestorsIds) == 0)
+		{
+			$ancestorsIds[] = -1;
+		}
+		return $this->in($fb->getDocumentColumn('id', $treeTableIdentifier), $ancestorsIds);
+	}
+
+	/**
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function nextSiblingOf($node, $propertyName = 'id')
+	{
+		list($document, $node) = $this->validateNodeArgument($node);
+
+		/* @var $document AbstractDocument */
+		/* @var $node TreeNode */
+		$fb = $this->getFragmentBuilder();
+		$treeTable = $fb->getTreeTable($node->getTreeName());
+		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
+
+		$this->builder->addJoin($treeTableIdentifier, $join);
+
+		return $fb->logicAnd(
+			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
+			$fb->gt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
+		);
+	}
+
+	/**
+	 * @param TreeNode|AbstractDocument|integer $node
+	 * @param string|Property $propertyName
+	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @throws \InvalidArgumentException
+	 */
+	public function previousSiblingOf($node, $propertyName = 'id')
+	{
+		list($document, $node) = $this->validateNodeArgument($node);
+
+		/* @var $document AbstractDocument */
+		/* @var $node TreeNode */
+		$fb = $this->getFragmentBuilder();
+		$treeTable = $fb->getTreeTable($node->getTreeName());
+		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
+
+		$this->builder->addJoin($treeTableIdentifier, $join);
+
+		return $fb->logicAnd(
+			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
+			$fb->lt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
+		);
 	}
 }

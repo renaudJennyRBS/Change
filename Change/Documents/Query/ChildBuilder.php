@@ -36,16 +36,42 @@ class ChildBuilder extends AbstractBuilder
 
 	/**
 	 * @param AbstractBuilder $parent
-	 * @param AbstractModel $model
-	 * @param Property $parentProperty
-	 * @param Property $property
+	 * @param AbstractModel|string $model
+	 * @param Property|string $parentProperty
+	 * @param Property|string $property
+	 * @throws \InvalidArgumentException
 	 */
-	function __construct(AbstractBuilder $parent, AbstractModel $model, Property $parentProperty, Property $property)
+	function __construct(AbstractBuilder $parent, $model, $parentProperty, $property)
 	{
 		$this->parent = $parent;
-		$this->setModel($model);
-		$this->setTableAliasName('_jt' . $this->getMaster()->getNextAliasCounter());
+		if (is_string($model))
+		{
+			$model = $this->getDocumentServices()->getModelManager()->getModelByName($model);
+		}
+		if (!($model instanceof AbstractModel))
+		{
+			throw new \InvalidArgumentException('Argument 2 must be a valid \Change\Documents\AbstractModel', 999999);
+		}
+		parent::__construct($model);
+
+		if (is_string($parentProperty))
+		{
+			$parentProperty = $parent->getValidProperty($parentProperty);
+		}
+		if (!($parentProperty instanceof Property))
+		{
+			throw new \InvalidArgumentException('Argument 3 must be a valid \Change\Documents\Property', 999999);
+		}
 		$this->parentProperty = $parentProperty;
+
+		if (is_string($property))
+		{
+			$property = $this->getValidProperty($property);
+		}
+		if (!($property instanceof Property))
+		{
+			throw new \InvalidArgumentException('Argument 4 must be a valid \Change\Documents\Property', 999999);
+		}
 		$this->property = $property;
 	}
 
@@ -73,6 +99,17 @@ class ChildBuilder extends AbstractBuilder
 	public function getFragmentBuilder()
 	{
 		return $this->parent->getFragmentBuilder();
+	}
+
+	/**
+	 * @param string|Property $propertyName
+	 * @param boolean $asc
+	 * @return $this
+	 */
+	public function addOrder($propertyName, $asc = true)
+	{
+		$this->getMaster()->addOrder($propertyName, $asc, $this);
+		return $this;
 	}
 
 	/**
@@ -157,7 +194,7 @@ class ChildBuilder extends AbstractBuilder
 		}
 		else
 		{
-			$c1 = $this->parent->getPredicateBuilder()->column($this->parentProperty);
+			$c1 = $this->parent->getColumn($this->parentProperty);
 			$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($this->getPredicateBuilder()->eq($this->property , $c1), 'ON');
 			$documentTable = $fb->getDocumentTable($this->model->getRootName());
 			$join = new Join($fb->alias($documentTable, $this->getTableAliasName()), Join::INNER_JOIN, $joinExpr);
