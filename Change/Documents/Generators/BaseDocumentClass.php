@@ -420,46 +420,7 @@ class BaseDocumentClass
 	 */
 	protected function buildValConverter($property, $varName)
 	{
-		if ($property->getType() === 'DateTime')
-		{
-			return $varName . ' = is_string(' . $varName . ') ? new \DateTime(' . $varName . ', new \DateTimeZone(\'UTC\')): ((' . $varName . ' instanceof \DateTime) ? ' . $varName . ' : null)';
-		}
-		elseif ($property->getType() === 'Date')
-		{
-			return $varName . ' = is_string(' . $varName . ') ? new \DateTime(' . $varName . ', new \DateTimeZone(\'UTC\')) : ' . $varName . '; ' . $varName . ' = (' . $varName . ' instanceof \DateTime) ? \DateTime::createFromFormat(\'Y-m-d\', ' . $varName . '->format(\'Y-m-d\'), new \DateTimeZone(\'UTC\'))->setTime(0, 0) : null';
-		}
-		elseif ($property->getType() === 'Boolean')
-		{
-			return $varName . ' = (' . $varName . ' === null) ? ' . $varName . ' : (bool)' . $varName . '';
-		}
-		elseif ($property->getType() === 'Integer')
-		{
-			return $varName . ' = (' . $varName . ' === null) ? ' . $varName . ' : intval(' . $varName . ')';
-		}
-		elseif ($property->getType() === 'Float' || $property->getType() === 'Decimal')
-		{
-			return $varName . ' = (' . $varName . ' === null) ? ' . $varName . ' : floatval(' . $varName . ')';
-		}
-		elseif ($property->getType() === 'DocumentId')
-		{
-			return $varName . ' = (' . $varName . ' === null) ? ' . $varName . ' : (' . $varName . ' instanceof \Change\Documents\AbstractDocument) ? ' . $varName . '->getId() : intval(' . $varName . ') > 0 ? intval(' . $varName . ') : null';
-		}
-		elseif ($property->getType() === 'JSON')
-		{
-			return $varName . ' = (' . $varName . ' === null || is_string(' . $varName . ')) ? ' . $varName . ' : json_encode(' . $varName . ')';
-		}
-		elseif ($property->getType() === 'Object')
-		{
-			return $varName . ' = (' . $varName . ' === null || is_string(' . $varName . ')) ? ' . $varName . ' : serialize(' . $varName . ')';
-		}
-		elseif ($property->getType() === 'Document' || $property->getType() === 'DocumentArray')
-		{
-			return $varName . ' = ' . $varName . ' === null || !(' . $varName . ' instanceof \Change\Documents\AbstractDocument)) ? null : ' . $varName . '->getId()';
-		}
-		else
-		{
-			return $varName . ' = ' . $varName . ' === null ? ' . $varName . ' : strval(' . $varName . ')';
-		}
+		return $varName . ' = $this->convertToInternalValue(' . $varName . ', '.$this->escapePHPValue($property->getType()).')';
 	}
 
 	/**
