@@ -299,7 +299,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 					case 'XML' :
 					case 'RichText' :
 					case 'JSON' :
-						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
+						$fd = '$schemaManager->newTextFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Lob' :
 					case 'Object' :
