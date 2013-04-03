@@ -49,7 +49,13 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $document2);
 		$this->assertEquals(-2, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
-		
+
+		/* @var $document3 \Project\Tests\Documents\DocStateless */
+		$document3 = $manager->getNewDocumentInstanceByModelName('Project_Tests_DocStateless');
+		$this->assertInstanceOf('\Project\Tests\Documents\DocStateless', $document3);
+		$this->assertInstanceOf('\Project\Tests\Documents\DocStateless', $document3);
+		$this->assertArrayHasKey('id', $document3->getData());
+		$this->assertArrayHasKey('CreationDate', $document3->getData());
 		return $manager;
 	}
 	

@@ -29,6 +29,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertNull($p->getLocalized());
 		$this->assertNull($p->getConstraintArray());
 		$this->assertNull($p->getParent());
+		$this->assertNull($p->getStateless());
 		$this->assertEquals($model, $p->getModel());
 		$this->assertEquals($p, $p->getRoot());
 		$this->assertCount(0,  $p->getAncestors());
@@ -314,6 +315,28 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		catch (\RuntimeException $e)
 		{
 			$this->assertStringStartsWith('Invalid localized attribute value', $e->getMessage());
+		}
+	}
+
+	public function testStatelessAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" stateless="true" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertTrue($p->getStateless());
+
+		$doc->loadXML('<property name="test" stateless="false" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid stateless attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid stateless attribute value', $e->getMessage());
 		}
 	}
 		

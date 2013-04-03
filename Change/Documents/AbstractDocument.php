@@ -88,9 +88,8 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		$this->documentServices = $documentServices;
 		$this->documentModel = $model;
 		$this->documentModelName = $model->getName();
-
 	}
-
+	
 	/**
 	 * This class is not serializable
 	 * @return null
@@ -184,6 +183,50 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			$this->setPersistentState($persistentState);
 		}
 		$this->getDocumentManager()->reference($this, $oldId);
+	}
+
+	/**
+	 * @param mixed $inputValue
+	 * @param string $propertyType
+	 * @return bool|\DateTime|float|int|null|string
+	 */
+	protected function convertToInternalValue($inputValue, $propertyType)
+	{
+		switch ($propertyType)
+		{
+			case Property::TYPE_DATE:
+				$inputValue = is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')) : $inputValue;
+				return ($inputValue instanceof \DateTime) ? \DateTime::createFromFormat('Y-m-d', $inputValue->format('Y-m-d'), new \DateTimeZone('UTC'))->setTime(0, 0) : null;
+
+			case Property::TYPE_DATETIME:
+				return is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')): (($inputValue instanceof \DateTime) ? $inputValue : null);
+
+			case Property::TYPE_BOOLEAN:
+				return ($inputValue === null) ? $inputValue : (bool)$inputValue;
+
+			case Property::TYPE_INTEGER:
+				return ($inputValue === null) ? $inputValue : intval($inputValue);
+
+			case Property::TYPE_FLOAT:
+			case Property::TYPE_DECIMAL:
+				return ($inputValue === null) ? $inputValue : floatval($inputValue);
+
+			case Property::TYPE_DOCUMENTID :
+				return ($inputValue === null) ? $inputValue : (($inputValue instanceof AbstractDocument) ? $inputValue->getId() : (intval($inputValue) > 0 ? intval($inputValue) : null));
+
+			case Property::TYPE_JSON:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
+
+			case Property::TYPE_OBJECT:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : serialize($inputValue);
+
+			case Property::TYPE_DOCUMENT:
+			case Property::TYPE_DOCUMENTARRAY:
+				return ($inputValue === null || !($inputValue instanceof AbstractDocument)) ? null : $inputValue->getId();
+
+			default:
+				return $inputValue === null ? $inputValue : strval($inputValue);
+		}
 	}
 
 	/**

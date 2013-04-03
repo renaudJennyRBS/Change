@@ -28,6 +28,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($model->getPublishable());
 		$this->assertNull($model->getUseVersion());
 		$this->assertNull($model->getEditable());
+		$this->assertNull($model->getStateless());
 		$this->assertEquals('Compilation\change\generic\Documents', $model->getCompilationNameSpace());
 		$this->assertEquals('change\generic\Documents', $model->getNameSpace());
 		

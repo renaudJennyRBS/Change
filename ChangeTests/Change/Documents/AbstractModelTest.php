@@ -153,4 +153,22 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('strext4', $modelExtend->getLocalizedPropertiesWithCorrection());
 		return $modelManager;
 	}
+
+	/**
+	 * @depends testExtend
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return \Change\Documents\ModelManager
+	 */
+	public function testStateless($modelManager)
+	{
+		$model = $modelManager->getModelByName('Project_Tests_DocStateless');
+		$this->assertTrue($model->isStateless());
+		$this->assertFalse($model->getProperty('label')->getStateless());
+
+		$model = $modelManager->getModelByName('Project_Tests_StateProps');
+		$this->assertFalse($model->isStateless());
+		$this->assertTrue($model->getProperty('lifeTime')->getStateless());
+
+		return $modelManager;
+	}
 }
