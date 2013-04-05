@@ -53,7 +53,12 @@ class SchemaManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$systemSchema = $schemaManager->getSystemSchema();
 		$this->assertInstanceOf('\Change\Db\Schema\SchemaDefinition', $systemSchema);
 		$systemSchema->generate();
-		$this->assertCount(5, $schemaManager->getTableNames());
+		$tables = $schemaManager->getTableNames();
+		$this->assertContains('change_document', $tables);
+		$this->assertContains('change_document_correction', $tables);
+		$this->assertContains('change_document_deleted', $tables);
+		$this->assertContains('change_document_metas', $tables);
+		$this->assertContains('change_path_rule', $tables);
 		return $schemaManager;
 	}
 
