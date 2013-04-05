@@ -6,5 +6,11 @@ namespace Change\Website\Documents;
  */
 class Section extends \Compilation\Change\Website\Documents\Section
 {
-
+	/**
+	 * @return string
+	 */
+	public function getPathSuffix()
+	{
+		return '/';
+	}
 }

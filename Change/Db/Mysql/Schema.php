@@ -75,6 +75,37 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addKey($this->newPrimaryKey()->addField($tokenId))
 				->addKey($this->newUniqueKey()->setName('token')->addField($token))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_path_rule'] = $td = $schemaManager->newTableDefinition('change_path_rule');
+			$td->addField($schemaManager->newIntegerFieldDefinition('rule_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('path', array('length' => 255))->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(true))
+				->addField($schemaManager->newIntegerFieldDefinition('section_id')->setNullable(true))
+				->addField($schemaManager->newIntegerFieldDefinition('http_status')->setNullable(false)->setDefaultValue(200))
+				->addField($schemaManager->newTextFieldDefinition('config_datas'))
+				->addKey($this->newPrimaryKey()
+					->addField($td->getField('rule_id')))
+				->addKey($this->newUniqueKey()->setName('path')
+					->addField($td->getField('website_id'))
+					->addField($td->getField('lcid'))
+					->addField($td->getField('path')))
+				->setOption('AUTONUMBER', 1);
+
+			/**
+			$this->tables['change_publication'] = $td = $schemaManager->newTableDefinition('change_publication');
+			$td->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newTimeStampFieldDefinition('start')->setNullable(false))
+				->addField($schemaManager->newTimeStampFieldDefinition('end')->setNullable(false))
+				->addField($schemaManager->newTimeStampFieldDefinition('last_update')->setNullable(false))
+				->addKey($this->newPrimaryKey()
+					->addField($td->getField('document_id'))
+					->addField($td->getField('lcid'))
+					->addField($td->getField('website_id')));
+			 */
 		}
 		return $this->tables;
 	}

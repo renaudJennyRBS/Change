@@ -3,6 +3,7 @@ namespace Change\Http\Web;
 
 use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
+use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Event;
 
@@ -19,7 +20,21 @@ class Controller extends \Change\Http\Controller
 	protected function registerDefaultListeners($eventManager)
 	{
 		$eventManager->addIdentifiers('Http.Web');
-		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'));
+
+		$callback = function ($event)
+		{
+			$composer = new \Change\Http\Web\Response\ComposeStaticPage();
+			$composer->execute($event);
+		};
+		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
+
+		$callback = function ($event)
+		{
+			$composer = new \Change\Http\Web\Response\ComposeFunctionalPage();
+			$composer->execute($event);
+		};
+		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
+		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'), 5);
 	}
 
 	/**
@@ -51,7 +66,7 @@ class Controller extends \Change\Http\Controller
 	public function onDefaultHtmlResponse($event)
 	{
 		$result = $event->getResult();
-		if ($result instanceof \Change\Http\Result)
+		if ($result instanceof Result)
 		{
 			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());

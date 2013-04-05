@@ -30,8 +30,13 @@ class SchemaTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$provider = $this->getApplicationServices()->getDbProvider();
 		$schema = new Schema($provider->getSchemaManager());
-		
-		$this->assertCount(5, $schema->getTables());
+
+		$tables = $schema->getTables();
+		$this->assertArrayHasKey('change_document', $tables);
+		$this->assertArrayHasKey('change_document_correction', $tables);
+		$this->assertArrayHasKey('change_document_deleted', $tables);
+		$this->assertArrayHasKey('change_document_metas', $tables);
+		$this->assertArrayHasKey('change_path_rule', $tables);
 
 		$schema->generate();
 	}

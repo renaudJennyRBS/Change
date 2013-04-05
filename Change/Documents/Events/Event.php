@@ -6,10 +6,11 @@ namespace Change\Documents\Events;
  */
 class Event extends \Zend\EventManager\Event
 {
-	const EVENT_CREATE      = 'documents.create';
-	const EVENT_UPDATE       = 'documents.update';
-	const EVENT_DELETE       = 'documents.delete';
-
+	const EVENT_CREATE      	= 'documents.create';
+	const EVENT_UPDATE       	= 'documents.update';
+	const EVENT_DELETE       	= 'documents.delete';
+	const EVENT_DISPLAY_PAGE    = 'http.web.displayPage';
+	const EVENT_PATH_RULE    	= 'http.web.pathRule';
 
 	/**
 	 * @throws \RuntimeException

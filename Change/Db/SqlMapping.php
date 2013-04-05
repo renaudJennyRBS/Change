@@ -145,4 +145,22 @@ class SqlMapping
 	{
 		return 'change_document_correction';
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getOAuthTable()
+	{
+		return 'change_oauth';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getPathRuleTable()
+	{
+		return 'change_path_rule';
+	}
 }
