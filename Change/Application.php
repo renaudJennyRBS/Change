@@ -103,7 +103,14 @@ class Application
 		// Register additional packages autoload
 		foreach ($this->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
 		{
-			$zendLoader->registerNamespace($namespace, $path);
+			if (substr($namespace, -1) == '_')
+			{
+				$zendLoader->registerPrefix($namespace, $path);
+			}
+			else
+			{
+				$zendLoader->registerNamespace($namespace, $path);
+			}
 		}
 		$zendLoader->register();
 	}
