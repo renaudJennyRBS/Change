@@ -1,55 +1,59 @@
 <?php
 namespace Change\Db\Query;
 
-use Zend\Code\Exception\BadMethodCallException;
+use Change\Db\DbProvider;
 
 /**
  * @api
  * @name \Change\Db\Query\AbstractQuery
  */
-abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
+abstract class AbstractQuery implements InterfaceSQLFragment
 {
 	/**
 	 * DB Provider instance the query will be executed with.
-	 * @var \Change\Db\DbProvider
+	 * @var DbProvider
 	 */
 	protected $dbProvider;
-	
-	
+
+	/**
+	 * @var string
+	 */
+	protected $cachedKey;
+
 	/**
 	 * @var string
 	 */
 	protected $cachedSql;
-	
+
 	/**
 	 * SQL Specific vendor options.
-	 *
 	 * @api
 	 * @var array
 	 */
 	protected $options;
-		
+
 	/**
 	 * @var array
 	 */
 	protected $parameters = array();
-	
+
 	/**
 	 * @var array
 	 */
 	protected $parametersValue = array();
-	
+
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param DbProvider $dbProvider
+	 * @param string $cachedKey
 	 */
-	public function __construct(\Change\Db\DbProvider $dbProvider)
+	public function __construct(DbProvider $dbProvider, $cachedKey = null)
 	{
 		$this->setDbProvider($dbProvider);
+		$this->cachedKey = $cachedKey;
 	}
-	
+
 	/**
 	 * Get the query's parameters list.
-	 * 
 	 * @api
 	 * @return \Change\Db\Query\Expressions\Parameter[]
 	 */
@@ -57,10 +61,9 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		return $this->parameters;
 	}
-	
+
 	/**
 	 * Set the query's parameters list.
-	 * 
 	 * @api
 	 * @param \Change\Db\Query\Expressions\Parameter[] $parameters
 	 */
@@ -75,10 +78,9 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 			}
 		}
 	}
-	
+
 	/**
 	 * Declare a new query parameter.
-	 * 
 	 * @api
 	 * @throws \RuntimeException
 	 * @param \Change\Db\Query\Expressions\Parameter $parameter
@@ -94,10 +96,9 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 		$this->parameters[$parameterName] = $parameter;
 		return $this;
 	}
-	
+
 	/**
 	 * Bind a value to an existing parameter.
-	 * 
 	 * @api
 	 * @throws \RuntimeException
 	 * @param string $parameterName
@@ -113,7 +114,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 		$this->parametersValue[$parameterName] = $value;
 		return $this;
 	}
-	
+
 	/**
 	 * @api
 	 * @throws \RuntimeException
@@ -127,8 +128,8 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 			throw new \RuntimeException('Parameter ' . $parameterName . ' does not exist', 42001);
 		}
 		return isset($this->parametersValue[$parameterName]) ? $this->parametersValue[$parameterName] : null;
-	}	
-	
+	}
+
 	/**
 	 * @api
 	 * @return array
@@ -137,7 +138,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		return $this->options;
 	}
-	
+
 	/**
 	 * @api
 	 * @param array $options
@@ -146,29 +147,34 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		$this->options = $options;
 	}
-	
+
 	/**
 	 * Get the provider the query is bound to.
-	 * 
-	 * @api 
-	 * @return \Change\Db\DbProvider
+	 * @api
+	 * @return DbProvider
 	 */
 	public function getDbProvider()
 	{
 		return $this->dbProvider;
 	}
-	
+
 	/**
 	 * Set the provider the query is bound to.
-	 * 
 	 * @api
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param DbProvider $dbProvider
 	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	public function setDbProvider(DbProvider $dbProvider)
 	{
 		$this->dbProvider = $dbProvider;
 	}
-	
+
+	/**
+	 * @return string
+	 */
+	public function getCachedKey()
+	{
+		return $this->cachedKey;
+	}
 
 	/**
 	 * @return string
@@ -177,7 +183,7 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		return $this->cachedSql;
 	}
-	
+
 	/**
 	 * @param string $cachedSql
 	 */
@@ -185,11 +191,10 @@ abstract class AbstractQuery implements \Change\Db\Query\InterfaceSQLFragment
 	{
 		$this->cachedSql = $cachedSql;
 	}
-	
+
 	/**
 	 * SQL-92 representation of the query (mostly for tests).
-	 * 
 	 * @return string
 	 */
-	abstract public function toSQL92String();	
+	abstract public function toSQL92String();
 }

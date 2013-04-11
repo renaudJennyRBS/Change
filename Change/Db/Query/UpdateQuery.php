@@ -5,23 +5,23 @@ namespace Change\Db\Query;
  * @api
  * @name \Change\Db\Query\UpdateQuery
  */
-class UpdateQuery extends \Change\Db\Query\AbstractQuery
+class UpdateQuery extends AbstractQuery
 {
 	/**
 	 * @var \Change\Db\Query\Clauses\UpdateClause
 	 */
 	protected $updateClause;
-	
+
 	/**
 	 * @var \Change\Db\Query\Clauses\SetClause
 	 */
 	protected $setClause;
-	
+
 	/**
 	 * @var \Change\Db\Query\Clauses\WhereClause
 	 */
 	protected $whereClause;
-	
+
 	/**
 	 * @api
 	 * @return \Change\Db\Query\Clauses\UpdateClause|null
@@ -75,7 +75,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 	{
 		$this->whereClause = $whereClause;
 	}
-	
+
 	/**
 	 * @api
 	 * @throws \RuntimeException
@@ -85,7 +85,7 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 		if ($this->updateClause === null)
 		{
 			throw new \RuntimeException('UpdateClause can not be null', 42021);
-		}		
+		}
 		if ($this->setClause === null)
 		{
 			throw new \RuntimeException('SetClause can not be null', 42022);
@@ -106,13 +106,13 @@ class UpdateQuery extends \Change\Db\Query\AbstractQuery
 		}
 		return implode(' ', $parts);
 	}
-	
+
 	/**
 	 * @api
 	 * @return integer
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);	
+		return $this->dbProvider->executeQuery($this);
 	}
 }

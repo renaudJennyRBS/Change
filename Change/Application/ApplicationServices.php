@@ -36,8 +36,6 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Logging\Logging', array('config' => $application->getConfiguration(), 'workspace' => $application->getWorkspace()));
 		$im->setParameters('Change\Transaction\TransactionManager', array('configuration' => $application->getConfiguration()));
 
-		$im->setInjections('Change\Db\DbProvider', array('Change\Logging\Logging'));
-		$im->setInjections('Change\Transaction\TransactionManager', array('Change\Db\DbProvider'));
 		$im->setInjections('Change\I18n\I18nManager',  array('Change\Logging\Logging'));
 	}
 
@@ -62,7 +60,7 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
 		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
-			->addMethod('newInstance', true)
+			->addMethod('newInstance')
 			->addMethodParameter('newInstance', 'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
 			->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
