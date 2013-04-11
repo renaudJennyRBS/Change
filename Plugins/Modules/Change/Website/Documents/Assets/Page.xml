@@ -4,9 +4,8 @@
 	icon="page" localized="true" publishable="true" use-version="true">
 	<properties>
         <property name="website" type="Document" document-type="Change_Website_Website" required="true" />
-
-        <property name="templateName" type="String" indexed="none" required="true" localized="true" has-correction="true" />
-		<property name="editableContent" type="XML" localized="true" has-correction="true"/>
+        <property name="pageTemplate" type="Document" document-type="Change_Theme_PageTemplate" has-correction="true" />
+		<property name="editableContent" type="JSON" localized="true" has-correction="true"/>
 
         <!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
         <property name="skin" type="Document" document-type="Change_Skin_Skin" />
