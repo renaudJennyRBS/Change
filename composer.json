@@ -20,7 +20,8 @@
     {
         "php": ">=5.3.3",
         "zendframework/zendframework": "2.1.4",
-        "zendframework/zendoauth": "2.0.1"
+        "zendframework/zendoauth": "2.0.1",
+		"twig/twig": "1.*"
     },
 	"config":
 	{
