@@ -121,6 +121,7 @@ class PackageManager
 				if ($appendNamespacePath)
 				{
 					$separator = substr($key, -1);
+					if ($separator !== '_') {$separator = '\\';}
 					$item .= str_replace($separator, DIRECTORY_SEPARATOR, $key);
 				}
 			});
