@@ -23,14 +23,14 @@ class Controller extends \Change\Http\Controller
 
 		$callback = function ($event)
 		{
-			$composer = new \Change\Http\Web\Response\ComposeStaticPage();
+			$composer = new \Change\Http\Web\Events\ComposeStaticPage();
 			$composer->execute($event);
 		};
 		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
 
 		$callback = function ($event)
 		{
-			$composer = new \Change\Http\Web\Response\ComposeFunctionalPage();
+			$composer = new \Change\Http\Web\Events\ComposeFunctionalPage();
 			$composer->execute($event);
 		};
 		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
@@ -56,7 +56,7 @@ class Controller extends \Change\Http\Controller
 	public function createResponse()
 	{
 		$response = parent::createResponse();
-		$response->getHeaders()->addHeaderLine('Content-Type: text/html');
+		$response->getHeaders()->addHeaderLine('Content-Type: text/html, charset=utf-8');
 		return $response;
 	}
 

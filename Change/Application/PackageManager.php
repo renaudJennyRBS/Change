@@ -61,7 +61,7 @@ class PackageManager
 	}
 
 	/**
-	 * Return the list of PSR-0 compatible autolooad registered by installed packages
+	 * Return the list of PSR-0 compatible autoload registered by installed packages
 	 *
 	 * @array
 	 */
@@ -120,7 +120,8 @@ class PackageManager
 				$item =  $basePath . DIRECTORY_SEPARATOR  . $item;
 				if ($appendNamespacePath)
 				{
-					$item .= DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $key);
+					$separator = substr($key, -1);
+					$item .= str_replace($separator, DIRECTORY_SEPARATOR, $key);
 				}
 			});
 		}

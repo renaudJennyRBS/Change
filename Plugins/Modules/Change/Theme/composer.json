@@ -1,0 +1,11 @@
+{
+	"name": "rbschange/theme",
+	"description": "RBS Change Theme module",
+	"type": "rbschange-module",
+	"license":"AGPL-3.0",
+	"autoload": {
+        "psr-0": {
+            "Change\\Theme\\": ""
+        }
+    }
+}

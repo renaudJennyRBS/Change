@@ -165,7 +165,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			$shortClassName = str_replace('.php', '', $file->getFilename());
 			if ($namespace === null)
 			{
-				$namespace = str_replace(DIRECTORY_SEPARATOR, '\\', substr($file->getPath(), strlen(PROJECT_HOME)));
+				$namespace = str_replace('/', '\\', substr($file->getPath(), strlen(PROJECT_HOME)));
 			}
 			$commandClassName = $namespace . '\\' . $shortClassName;
 			if (class_exists($commandClassName))

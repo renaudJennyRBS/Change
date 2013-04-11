@@ -262,7 +262,14 @@ class Controller implements EventManagerAwareInterface
 	 */
 	protected function doSendRequest($eventManager, Event $event)
 	{
-		$eventManager->trigger(Event::EVENT_REQUEST, $this, $event);
+		$event->setName(Event::EVENT_REQUEST);
+		$event->setTarget($this);
+
+		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		if ($results->stopped() && ($results->last() instanceof Result))
+		{
+			$event->setResult($results->last());
+		}
 	}
 
 	/**
@@ -271,7 +278,15 @@ class Controller implements EventManagerAwareInterface
 	 */
 	protected function doSendAction($eventManager, Event $event)
 	{
-		$eventManager->trigger(Event::EVENT_ACTION, $this, $event);
+		$event->setName(Event::EVENT_ACTION);
+		$event->setTarget($this);
+
+		$results = $eventManager->trigger($event, function($result) {return ($result !== null) && is_callable($result);});
+		$last = $results->last();
+		if ($results->stopped() && ($last !== null && is_callable($last)))
+		{
+			$event->setAction($last);
+		}
 	}
 
 	/**
@@ -280,7 +295,14 @@ class Controller implements EventManagerAwareInterface
 	 */
 	protected function doSendResult($eventManager, Event $event)
 	{
-		$eventManager->trigger(Event::EVENT_RESULT, $this, $event);
+		$event->setName(Event::EVENT_RESULT);
+		$event->setTarget($this);
+
+		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		if ($results->stopped() && ($results->last() instanceof Result))
+		{
+			$event->setResult($results->last());
+		}
 	}
 
 	/**
@@ -291,7 +313,15 @@ class Controller implements EventManagerAwareInterface
 	{
 		try
 		{
-			$eventManager->trigger(Event::EVENT_RESPONSE, $this, $event);
+			$event->setName(Event::EVENT_RESPONSE);
+			$event->setTarget($this);
+
+			$results = $eventManager->trigger($event, function($result) {return ($result instanceof Response);});
+			if ($results->stopped() && ($results->last() instanceof Response))
+			{
+				$event->setResponse($results->last());
+			}
+
 		}
 		catch (\Exception $exception)
 		{
@@ -313,7 +343,9 @@ class Controller implements EventManagerAwareInterface
 		try
 		{
 			$event->setParam('Exception', $exception);
-			$eventManager->trigger(Event::EVENT_EXCEPTION, $this, $event);
+			$event->setName(Event::EVENT_EXCEPTION);
+			$event->setTarget($this);
+			$eventManager->trigger($event);
 
 			$this->doSendResponse($eventManager, $event);
 		}
