@@ -1,57 +1,73 @@
 <?php
 namespace Change\Db;
 
+use Change\Configuration\Configuration;
+use Change\Db\Query\AbstractQuery;
+use Change\Db\Query\Builder;
+use Change\Db\Query\StatementBuilder;
+use Change\Logging\Logging;
+
 /**
  * @name \Change\Db\DbProvider
  * @api
  */
 abstract class DbProvider
-{	
+{
 	/**
 	 * @var integer
 	 */
-	protected $id;	
-	
+	protected $id;
+
 	/**
 	 * @var array
 	 */
 	protected $connectionInfos;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $timers;
-	
+
 	/**
-	 * @var \Change\Logging\Logging
+	 * @var Logging
 	 */
 	protected $logging;
-	
+
 	/**
 	 * @var \Change\Db\SqlMapping
 	 */
 	protected $sqlMapping;
-		
+
+	/**
+	 * @var AbstractQuery
+	 */
+	protected $builderQueries;
+
+	/**
+	 * @var AbstractQuery
+	 */
+	protected $statementBuilderQueries;
+
 	/**
 	 * @return integer
 	 */
 	public function getId()
 	{
 		return $this->id;
-	}	
-	
+	}
+
 	/**
 	 * @return string
 	 */
 	public abstract function getType();
-	
+
 	/**
-	 * @param \Change\Configuration\Configuration $config
-	 * @param \Change\Logging\Logging $logging
+	 * @param Configuration $config
+	 * @param Logging $logging
 	 * @throws \RuntimeException
 	 * @return \Change\Db\DbProvider
 	 */
-	public static function newInstance(\Change\Configuration\Configuration $config, \Change\Logging\Logging $logging)
+	public static function newInstance(Configuration $config, Logging $logging)
 	{
 		$section = $config->getEntry('Change/Db/use', 'default');
 		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
@@ -62,18 +78,18 @@ abstract class DbProvider
 		$className = $connectionInfos['dbprovider'];
 		return new $className($connectionInfos, $logging);
 	}
-	
+
 	/**
 	 * @param array $connectionInfos
-	 * @param \Change\Logging\Logging $logging
+	 * @param Logging $logging
 	 */
-	public function __construct(array $connectionInfos, \Change\Logging\Logging $logging)
+	public function __construct(array $connectionInfos, Logging $logging)
 	{
 		$this->connectionInfos = $connectionInfos;
 		$this->setLogging($logging);
-		$this->timers = array('init' => microtime(true), 'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
+		$this->timers = array('init' => microtime(true),
+			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
 	}
-
 
 	/**
 	 * @return array
@@ -92,23 +108,50 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @return \Change\Db\Query\Builder
+	 * @param AbstractQuery $query
 	 */
-	public function getNewQueryBuilder()
+	public function addBuilderQuery(AbstractQuery $query)
 	{
-		return new \Change\Db\Query\Builder($this);
+		if ($query->getCachedKey() !== null)
+		{
+			$this->builderQueries[$query->getCachedKey()] = $query;
+		}
 	}
 
 	/**
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @param null $cacheKey
+	 * @return Builder
 	 */
-	public function getNewStatementBuilder()
+	public function getNewQueryBuilder($cacheKey = null)
 	{
-		return new \Change\Db\Query\StatementBuilder($this);
+		$query = ($cacheKey !== null && isset($this->builderQueries[$cacheKey])) ? $this->builderQueries[$cacheKey] : null;
+		return new Builder($this, $cacheKey, $query);
 	}
-	
+
 	/**
-	 * @return \Change\Logging\Logging
+	 * @param AbstractQuery $query
+	 */
+	public function addStatementBuilderQuery(AbstractQuery $query)
+	{
+		if ($query->getCachedKey() !== null)
+		{
+			$this->statementBuilderQueries[$query->getCachedKey()] = $query;
+		}
+	}
+
+	/**
+	 * @param string $cacheKey
+	 * @return StatementBuilder
+	 */
+	public function getNewStatementBuilder($cacheKey = null)
+	{
+		$query = ($cacheKey !== null
+			&& isset($this->statementBuilderQueries[$cacheKey])) ? $this->statementBuilderQueries[$cacheKey] : null;
+		return new StatementBuilder($this, $cacheKey, $query);
+	}
+
+	/**
+	 * @return Logging
 	 */
 	public function getLogging()
 	{
@@ -116,15 +159,17 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @param \Change\Logging\Logging $logging
+	 * @param Logging $logging
 	 */
-	public function setLogging(\Change\Logging\Logging $logging)
+	public function setLogging(Logging $logging)
 	{
 		$this->logging = $logging;
 	}
 
 	public function __destruct()
 	{
+		unset($this->builderQueries);
+		unset($this->statementBuilderQueries);
 		if ($this->inTransaction())
 		{
 			$this->logging->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
@@ -135,12 +180,12 @@ abstract class DbProvider
 	 * @return void
 	 */
 	public abstract function closeConnection();
-	
+
 	/**
 	 * @return \Change\Db\InterfaceSchemaManager
 	 */
 	public abstract function getSchemaManager();
-		
+
 	/**
 	 * @return \Change\Db\SqlMapping
 	 */
@@ -152,33 +197,33 @@ abstract class DbProvider
 		}
 		return $this->sqlMapping;
 	}
-	
+
 	/**
 	 * @return void
 	 */
 	public abstract function beginTransaction();
-	
+
 	/**
 	 * @return void
 	 */
 	public abstract function commit();
-	
+
 	/**
 	 * @return void
 	 */
 	public abstract function rollBack();
-	
+
 	/**
 	 * @return boolean
 	 */
 	public abstract function inTransaction();
-	
+
 	/**
 	 * @param string $tableName
 	 * @return integer
 	 */
 	public abstract function getLastInsertId($tableName);
-	
+
 	/**
 	 * @api
 	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
@@ -188,31 +233,30 @@ abstract class DbProvider
 	{
 		return $fragment->toSQL92String();
 	}
-	
+
 	/**
 	 * @param \Change\Db\Query\SelectQuery $selectQuery
 	 * @return array
 	 */
 	public abstract function getQueryResultsArray(\Change\Db\Query\SelectQuery $selectQuery);
-		
+
 	/**
-	 * @param \Change\Db\Query\AbstractQuery $query
+	 * @param AbstractQuery $query
 	 * @return integer
 	 */
-	public abstract function executeQuery(\Change\Db\Query\AbstractQuery $query);
-	
+	public abstract function executeQuery(AbstractQuery $query);
+
 	/**
 	 * @param mixed $value
 	 * @param integer $scalarType \Change\Db\ScalarType::*
 	 * @return mixed
 	 */
 	public abstract function phpToDB($value, $scalarType);
-	
+
 	/**
 	 * @param mixed $value
 	 * @param integer $scalarType \Change\Db\ScalarType::*
 	 * @return mixed
 	 */
 	public abstract function dbToPhp($value, $scalarType);
-		
 }

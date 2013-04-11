@@ -1,6 +1,8 @@
 <?php
 namespace Change\Db\Query;
 
+use Change\Db\DbProvider;
+
 /**
  * @api
  * @name \Change\Db\Query\Builder
@@ -8,35 +10,54 @@ namespace Change\Db\Query;
 class Builder
 {
 	/**
-	 * @var \Change\Db\Query\SelectQuery
+	 * @var SelectQuery
 	 */
 	protected $query;
+
+	/**
+	 * @var string
+	 */
+	protected $cacheKey;
 	
 	/**
-	 * @var \Change\Db\DbProvider
+	 * @var DbProvider
 	 */
 	protected $dbProvider;
 	
 	/**
-	 * @var \Change\Db\Query\SQLFragmentBuilder
+	 * @var SQLFragmentBuilder
 	 */
 	protected $fragmentBuilder;
-	
+
 	/**
 	 * If you are looking to get a builder instance, please get it from
 	 * the application services which will properly inject the correct DB provider for you.
-	 * 
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param DbProvider $dbProvider
+	 * @param string $cacheKey
+	 * @param SelectQuery $query
 	 */
-	public function __construct(\Change\Db\DbProvider $dbProvider)
+	public function __construct(DbProvider $dbProvider, $cacheKey = null, SelectQuery $query = null)
 	{
 		$this->setDbProvider($dbProvider);
-		$this->fragmentBuilder = new \Change\Db\Query\SQLFragmentBuilder($dbProvider->getSqlMapping());
+		$this->fragmentBuilder = new SQLFragmentBuilder($dbProvider->getSqlMapping());
+		if ($cacheKey !== null)
+		{
+			$this->cacheKey = $cacheKey;
+			$this->query = $query;
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isCached()
+	{
+		return $this->cacheKey !== null && $this->query !== null && $this->query->getCachedKey() === $this->cacheKey;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\DbProvider
+	 * @return DbProvider
 	 */
 	public function getDbProvider()
 	{
@@ -45,9 +66,9 @@ class Builder
 
 	/**
 	 * @api
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param DbProvider $dbProvider
 	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	public function setDbProvider(DbProvider $dbProvider)
 	{
 		$this->dbProvider = $dbProvider;
 	}
@@ -58,12 +79,13 @@ class Builder
 	 */
 	public function reset()
 	{
+		$this->cacheKey = null;
 		$this->query = null;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\SQLFragmentBuilder
+	 * @return SQLFragmentBuilder
 	 */
 	public function getFragmentBuilder()
 	{
@@ -92,7 +114,7 @@ class Builder
 		{
 			$this->reset();
 		}
-		$this->query = new SelectQuery($this->dbProvider);
+		$this->query = new SelectQuery($this->dbProvider, $this->cacheKey);
 		$selectClause = new \Change\Db\Query\Clauses\SelectClause();
 		$this->query()->setSelectClause($selectClause);
 		
@@ -383,13 +405,18 @@ class Builder
 	/**
 	 * @api
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\SelectQuery
+	 * @return SelectQuery
 	 */
 	public function query()
 	{
 		if ($this->query === null)
 		{
 			throw new \LogicException('Call select() before', 42005);
+		}
+
+		if ($this->cacheKey)
+		{
+			$this->dbProvider->addBuilderQuery($this->query);
 		}
 		return $this->query;
 	}

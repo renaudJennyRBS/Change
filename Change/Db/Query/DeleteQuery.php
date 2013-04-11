@@ -5,23 +5,23 @@ namespace Change\Db\Query;
  * @api
  * @name \Change\Db\Query\DeleteQuery
  */
-class DeleteQuery extends \Change\Db\Query\AbstractQuery
+class DeleteQuery extends AbstractQuery
 {
 	/**
 	 * @var \Change\Db\Query\Clauses\DeleteClause
 	 */
 	protected $deleteClause;
-	
+
 	/**
 	 * @var \Change\Db\Query\Clauses\FromClause
 	 */
 	protected $fromClause;
-	
+
 	/**
 	 * @var \Change\Db\Query\Clauses\WhereClause
 	 */
 	protected $whereClause;
-	
+
 	/**
 	 * @api
 	 * @return \Change\Db\Query\Clauses\DeleteClause|null
@@ -75,7 +75,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	{
 		$this->whereClause = $whereClause;
 	}
-	
+
 	/**
 	 * @api
 	 * @throws \RuntimeException
@@ -85,13 +85,13 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 		if ($this->deleteClause === null)
 		{
 			throw new \RuntimeException('DeleteClause can not be null', 42006);
-		}		
+		}
 		if ($this->fromClause === null)
 		{
 			throw new \RuntimeException('FromClause can not be null', 42007);
 		}
 	}
-		
+
 	/**
 	 * @api
 	 * @throws \RuntimeException
@@ -100,7 +100,7 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 	public function toSQL92String()
 	{
 		$this->checkCompile();
-	
+
 		$parts = array($this->deleteClause->toSQL92String(), $this->fromClause->toSQL92String());
 		if ($this->whereClause !== null)
 		{
@@ -108,13 +108,13 @@ class DeleteQuery extends \Change\Db\Query\AbstractQuery
 		}
 		return implode(' ', $parts);
 	}
-	
+
 	/**
 	 * @api
 	 * @return integer
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);	
+		return $this->dbProvider->executeQuery($this);
 	}
 }

@@ -5,24 +5,23 @@ namespace Change\Db\Query;
  * @api
  * @name \Change\Db\Query\InsertQuery
  */
-class InsertQuery extends \Change\Db\Query\AbstractQuery
+class InsertQuery extends AbstractQuery
 {
 	/**
 	 * @var \Change\Db\Query\Clauses\InsertClause
 	 */
 	protected $insertClause;
-	
+
 	/**
 	 * @var \Change\Db\Query\Clauses\ValuesClause
 	 */
 	protected $valuesClause;
-	
+
 	/**
-	 * @var \Change\Db\Query\SelectQuery
+	 * @var SelectQuery
 	 */
 	protected $selectQuery;
-	
-	
+
 	/**
 	 * @api
 	 * @return \Change\Db\Query\Clauses\InsertClause|null
@@ -43,7 +42,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\SelectQuery|null
+	 * @return SelectQuery|null
 	 */
 	public function getSelectQuery()
 	{
@@ -70,13 +69,13 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\SelectQuery $selectQuery
+	 * @param SelectQuery $selectQuery
 	 */
-	public function setSelectQuery(\Change\Db\Query\SelectQuery $selectQuery)
+	public function setSelectQuery(SelectQuery $selectQuery)
 	{
 		$this->selectQuery = $selectQuery;
 	}
-	
+
 	/**
 	 * @api
 	 * @throws \RuntimeException
@@ -86,7 +85,7 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 		if ($this->insertClause === null)
 		{
 			throw new \RuntimeException('InsertClause can not be null', 42008);
-		}		
+		}
 		if ($this->valuesClause === null && $this->selectQuery === null)
 		{
 			throw new \RuntimeException('ValuesClause or SelectQuery should be not null', 42009);
@@ -116,14 +115,13 @@ class InsertQuery extends \Change\Db\Query\AbstractQuery
 
 		return implode(' ', $parts);
 	}
-	
-	
+
 	/**
 	 * @api
 	 * @return integer
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);	
+		return $this->dbProvider->executeQuery($this);
 	}
 }

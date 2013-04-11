@@ -5,7 +5,7 @@ namespace Change\Db\Query;
  * @api
  * @name \Change\Db\Query\SelectQuery
  */
-class SelectQuery extends \Change\Db\Query\AbstractQuery
+class SelectQuery extends AbstractQuery
 {
 	/**
 	 * @var \Change\Db\Query\Clauses\SelectClause

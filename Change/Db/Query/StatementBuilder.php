@@ -1,6 +1,8 @@
 <?php
 namespace Change\Db\Query;
 
+use Change\Db\DbProvider;
+
 /**
  * @api
  * @name \Change\Db\Query\StatementBuilder
@@ -8,42 +10,61 @@ namespace Change\Db\Query;
 class StatementBuilder
 {
 	/**
-	 * @var \Change\Db\Query\AbstractQuery
+	 * @var AbstractQuery
 	 */
 	protected $query;
-	
+
 	/**
-	 * 
-	 * @var \Change\Db\DbProvider
+	 * @var string
+	 */
+	protected $cacheKey;
+
+	/**
+	 * @var DbProvider
 	 */
 	protected $dbProvider;
 	
 	/**
-	 * @var \Change\Db\Query\SQLFragmentBuilder
+	 * @var SQLFragmentBuilder
 	 */
 	protected $fragmentBuilder;
-	
+
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param DbProvider $dbProvider
+	 * @param string $cacheKey
+	 * @param $query
 	 */
-	public function __construct(\Change\Db\DbProvider $dbProvider)
+	public function __construct(DbProvider $dbProvider, $cacheKey = null, AbstractQuery $query = null)
 	{
 		$this->dbProvider = $dbProvider;
-		$this->fragmentBuilder = new \Change\Db\Query\SQLFragmentBuilder($dbProvider->getSqlMapping());
+		$this->fragmentBuilder = new SQLFragmentBuilder($dbProvider->getSqlMapping());
+		if ($cacheKey !== null)
+		{
+			$this->cacheKey = $cacheKey;
+			$this->query = $query;
+		}
 	}
-	
+
+	/**
+	 * @return boolean
+	 */
+	public function isCached()
+	{
+		return $this->cacheKey !== null && $this->query !== null && $this->query->getCachedKey() === $this->cacheKey;
+	}
 	/**
 	 * @api
 	 * Explicitly reset the builder (which will destroy the current query).
 	 */
 	public function reset()
 	{
+		$this->cacheKey = null;
 		$this->query = null;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\SQLFragmentBuilder
+	 * @return SQLFragmentBuilder
 	 */
 	public function getFragmentBuilder()
 	{
@@ -60,7 +81,7 @@ class StatementBuilder
 	}
 
 	/**
-	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
+	 * @param SQLFragmentBuilder $fragmentBuilder
 	 */
 	public function setFragmentBuilder($fragmentBuilder)
 	{
@@ -101,6 +122,10 @@ class StatementBuilder
 	{
 		if ($this->query instanceof InsertQuery)
 		{
+			if ($this->cacheKey)
+			{
+				$this->dbProvider->addStatementBuilderQuery($this->query);
+			}
 			return $this->query;
 		}	
 		throw new \LogicException('Call insert() before', 42017);
@@ -119,7 +144,7 @@ class StatementBuilder
 		{
 			$this->reset();
 		}
-		$insertQuery = new InsertQuery($this->dbProvider);
+		$insertQuery = new InsertQuery($this->dbProvider, $this->cacheKey);
 		$this->query = $insertQuery;
 		
 		$columns = func_get_args();
@@ -242,6 +267,10 @@ class StatementBuilder
 	{
 		if ($this->query instanceof UpdateQuery)
 		{
+			if ($this->cacheKey)
+			{
+				$this->dbProvider->addStatementBuilderQuery($this->query);
+			}
 			return $this->query;
 		}
 	
@@ -259,7 +288,7 @@ class StatementBuilder
 		{
 			$this->reset();
 		}
-		$this->query = new UpdateQuery($this->dbProvider);
+		$this->query = new UpdateQuery($this->dbProvider, $this->cacheKey);
 
 		if ($table)
 		{
@@ -312,6 +341,10 @@ class StatementBuilder
 	{
 		if ($this->query instanceof DeleteQuery)
 		{
+			if ($this->cacheKey)
+			{
+				$this->dbProvider->addStatementBuilderQuery($this->query);
+			}
 			return $this->query;
 		}
 	
@@ -329,7 +362,7 @@ class StatementBuilder
 		{
 			$this->reset();
 		}
-		$this->query = new DeleteQuery($this->dbProvider);
+		$this->query = new DeleteQuery($this->dbProvider, $this->cacheKey);
 
 		if ($table)
 		{
