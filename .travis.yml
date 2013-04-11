@@ -10,8 +10,8 @@ before_install:
  - tar -zxf ZendFramework-minimal-2.1.4.tgz
  - mkdir -p Libraries/zendframework
  - mv ZendFramework-minimal-2.1.4 Libraries/zendframework/zendframework
- - wget "http://packages.zendframework.com/composer/ZendOAuth-2.0.1.zip"
- - unzip ZendOAuth-2.0.1.zip -d Libraries/zendframework/zendoauth
+ - wget "https://github.com/zendframework/ZendOAuth/archive/release-2.0.1.zip"
+ - unzip ZendOAuth-release-2.0.1.zip -d Libraries/zendframework/zendoauth
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
 
