@@ -141,7 +141,7 @@ class LoggingTest extends \ChangeTests\Change\TestAssets\TestCase
 		$logging->exception(new \Exception('Une exception !'));
 		$this->assertEquals(1, $writer->getMessageCount());
 		$message = $writer->shiftMessage();
-		$lines = explode("\n", $message); // Message contains a stack trace.
+		$lines = explode(PHP_EOL, $message); // Message contains a stack trace.
 		$this->assertGreaterThan(1, count($lines));
 		$this->assertTrue(\Change\Stdlib\String::endsWith($lines[0], ' ALERT (1): Exception: Une exception !'));
 		

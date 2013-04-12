@@ -123,7 +123,7 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testAddPersistentEntry()
 	{
-		$sourceConfigFile = "/tmp/testAddPersistentEntry_project1.json";
+		$sourceConfigFile = sys_get_temp_dir() . "/testAddPersistentEntry_project1.json";
 		if (file_exists($sourceConfigFile))
 		{
 			unlink($sourceConfigFile);

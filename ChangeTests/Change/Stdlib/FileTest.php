@@ -5,7 +5,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMkdir()
 	{
-		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . __METHOD__ . DIRECTORY_SEPARATOR .  'Test';
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . 'testMkdir' . DIRECTORY_SEPARATOR .  'Test';
 		// Cleanup dir
 		$components = explode(DIRECTORY_SEPARATOR, $path);
 		@rmdir(implode(DIRECTORY_SEPARATOR, $components));
