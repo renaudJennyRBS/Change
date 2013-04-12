@@ -9,8 +9,7 @@ class ExtractedClassTest extends \PHPUnit_Framework_TestCase
 		$class->setName("TestClass");
 		$class->setAbstract(true);
 		$class->setBody('{}');
-		$this->assertEquals('abstract class TestClass
-{}', $class->__toString());
+		$this->assertEquals('abstract class TestClass' . PHP_EOL . '{}', $class->__toString());
 	}
 	
 	public function testInvalidBody()
