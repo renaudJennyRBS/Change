@@ -54,6 +54,9 @@
                     "tokenRequestValidity":"P1D"
                 }
             },
+			"Web":{
+				"SingleWebsite":true
+			},
             "allowAnonymous":true
         },
         "Users":{
