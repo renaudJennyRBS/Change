@@ -165,7 +165,21 @@ class PropertyConverter
 			case Property::TYPE_DOCUMENT:
 				if ($restValue !== null)
 				{
-					$value = $this->document->getDocumentServices()->getDocumentManager()->getDocumentInstance($restValue);
+					$documentManager = $this->document->getDocumentServices()->getDocumentManager();
+					if (is_array($restValue))
+					{
+						$modelManager = $this->document->getDocumentServices()->getModelManager();
+						if (isset($restValue['id']))
+						{
+							$model = isset($item['model']) ? $modelManager->getModelByName($item['model']) : null;
+							$value = $documentManager->getDocumentInstance($restValue['id'], $model);
+						}
+					}
+					elseif (is_numeric($restValue))
+					{
+						$value = $documentManager->getDocumentInstance($restValue);
+					}
+
 					if ($value === null)
 					{
 						throw new \RuntimeException('Invalid Property value', 70001);
@@ -177,8 +191,21 @@ class PropertyConverter
 				if (is_array($restValue))
 				{
 					$documentManager = $this->document->getDocumentServices()->getDocumentManager();
-					$value = array_map(function($id) use ($documentManager) {
-						$doc = $documentManager->getDocumentInstance($id);
+					$modelManager = $this->document->getDocumentServices()->getModelManager();
+					$value = array_map(function($item) use ($documentManager, $modelManager) {
+						if (is_array($item))
+						{
+							if (isset($item['id']))
+							{
+								$model = isset($item['model']) ? $modelManager->getModelByName($item['model']) : null;
+								$doc = $documentManager->getDocumentInstance($item['id'], $model);
+							}
+						}
+						elseif (is_numeric($item))
+						{
+							$doc = $documentManager->getDocumentInstance($item);
+						}
+
 						if ($doc === null)
 						{
 							throw new \RuntimeException('Invalid Property value', 70001);
