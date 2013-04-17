@@ -2,6 +2,7 @@
 namespace Change\Http\Web\Result;
 
 use Change\Http\Result;
+use Change\Presentation\Layout\Layout;
 
 /**
  * @name \Change\Http\Web\Result\Page
@@ -9,9 +10,9 @@ use Change\Http\Result;
 class Page extends Result
 {
 	/**
-	 * @var integer
+	 * @var string
 	 */
-	protected $pageId;
+	protected $identifier;
 
 	/**
 	 * @var array
@@ -19,35 +20,14 @@ class Page extends Result
 	protected $head = array();
 
 	/**
-	 * @var \Change\Http\Web\Layout\Item[]
-	 */
-	protected $contentLayout = array();
-
-	/**
-	 * @var \Change\Http\Web\Blocks\Result[]
-	 */
-	protected $blockResults;
-
-	/**
-	 * @var integer
-	 */
-	protected $templateId;
-
-	/**
-	 * @var string
-	 */
-	protected $htmlTemplate;
-
-	/**
-	 * @var \Change\Http\Web\Layout\Item[]
+	 * @var Layout
 	 */
 	protected $templateLayout = array();
 
 	/**
-	 * @var array
+	 * @var Layout
 	 */
-	protected $htmlFragments = array();
-
+	protected $contentLayout = array();
 
 	/**
 	 * @var Callable
@@ -55,19 +35,24 @@ class Page extends Result
 	protected $renderer;
 
 	/**
-	 * @param integer $pageId
+	 * @var \Change\Http\Web\Result\BlockResult[]
 	 */
-	function __construct($pageId)
+	protected $blockResults;
+
+	/**
+	 * @param string $identifier
+	 */
+	function __construct($identifier)
 	{
-		$this->pageId = $pageId;
+		$this->identifier = $identifier;
 	}
 
 	/**
-	 * @return integer
+	 * @return string
 	 */
-	public function getPageId()
+	public function getIdentifier()
 	{
-		return $this->pageId;
+		return $this->identifier;
 	}
 
 	/**
@@ -88,48 +73,15 @@ class Page extends Result
 	}
 
 	/**
-	 * @param integer $templateId
+	 * @param Layout $templateLayout
 	 */
-	public function setTemplateId($templateId)
+	public function setTemplateLayout(Layout $templateLayout)
 	{
-		$this->templateId = $templateId;
+		$this->templateLayout = $templateLayout;
 	}
 
 	/**
-	 * @return integer
-	 */
-	public function getTemplateId()
-	{
-		return $this->templateId;
-	}
-
-
-	/**
-	 * @param string $htmlTemplate
-	 */
-	public function setHtmlTemplate($htmlTemplate)
-	{
-		$this->htmlTemplate = $htmlTemplate;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getHtmlTemplate()
-	{
-		return $this->htmlTemplate;
-	}
-
-	/**
-	 * @param \Change\Http\Web\Layout\Item[] $templateLayout
-	 */
-	public function setTemplateLayout($templateLayout)
-	{
-		$this->templateLayout = (is_array($templateLayout)) ? $templateLayout : array();
-	}
-
-	/**
-	 * @return \Change\Http\Web\Layout\Item[]
+	 * @return Layout
 	 */
 	public function getTemplateLayout()
 	{
@@ -137,15 +89,15 @@ class Page extends Result
 	}
 
 	/**
-	 * @param \Change\Http\Web\Layout\Item[] $contentLayout
+	 * @param Layout $contentLayout
 	 */
-	public function setContentLayout($contentLayout)
+	public function setContentLayout(Layout $contentLayout)
 	{
-		$this->contentLayout = (is_array($contentLayout)) ? $contentLayout : array();
+		$this->contentLayout = $contentLayout;
 	}
 
 	/**
-	 * @return \Change\Http\Web\Layout\Item[]
+	 * @return Layout
 	 */
 	public function getContentLayout()
 	{
@@ -153,56 +105,34 @@ class Page extends Result
 	}
 
 	/**
-	 * @param \Change\Http\Web\Blocks\Result[] $blockResults
+	 * @param \Change\Http\Web\Result\BlockResult[] $blockResults
 	 */
-	public function setBlockResults($blockResults)
+	public function setBlockResults(array $blockResults = null)
 	{
-		$this->blockResults = (is_array($blockResults)) ? $blockResults : array();
+		$this->blockResults = array();
+		if (is_array($blockResults))
+		{
+			foreach($blockResults as $blockResult)
+			{
+				$this->addBlockResult($blockResult);
+			}
+		}
 	}
 
 	/**
-	 * @return \Change\Http\Web\Blocks\Result[]
+	 * @param \Change\Http\Web\Result\BlockResult $blockResult
+	 */
+	public function addBlockResult(\Change\Http\Web\Result\BlockResult $blockResult)
+	{
+		$this->blockResults[$blockResult->getId()] = $blockResult;
+	}
+
+	/**
+	 * @return \Change\Http\Web\Result\BlockResult[]
 	 */
 	public function getBlockResults()
 	{
-		return $this->blockResults;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getHeadAsString()
-	{
-		return implode(PHP_EOL . "\t", $this->head);
-	}
-
-	public function addHtmlFragment($name, $html)
-	{
-		$this->htmlFragments[$name] = $html;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getHtmlFragments()
-	{
-		return $this->htmlFragments;
-	}
-
-	/**
-	 * @param array $head
-	 */
-	public function setHead($head)
-	{
-		$this->head = $head;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getHead()
-	{
-		return $this->head;
+		return $this->blockResults === null ? array() : $this->blockResults;
 	}
 
 	/**
@@ -229,7 +159,43 @@ class Page extends Result
 		return ($this->renderer && is_callable($this->renderer));
 	}
 
+
 	/**
+	 * Used by template
+	 * @return array
+	 */
+	public function getHead()
+	{
+		return $this->head;
+	}
+
+	/**
+	 * Used by template
+	 * @param $id
+	 * @return string
+	 */
+	public function htmlBlock($id)
+	{
+		$br = isset($this->blockResults[$id]) ? $this->blockResults[$id] : null;
+		if ($br)
+		{
+			$innerHTML = $br->getHtml();
+			$name = $br->getName();
+		}
+		else
+		{
+			$innerHTML = null;
+			$name = "unknown";
+		}
+		if ($innerHTML)
+		{
+			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '">' . $innerHTML . '</div>';
+		}
+		return '<div data-type="block" class="empty" data-id="' . $id . '" data-name="' . $name . '"></div>';
+	}
+
+	/**
+	 * Used for generate response
 	 * @return string
 	 * @throws \RuntimeException
 	 */

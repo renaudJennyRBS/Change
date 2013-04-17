@@ -101,7 +101,11 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 
 	protected function processPath()
 	{
-		$this->setPath($this->getServer('PATH_INFO', $this->getServer('REQUEST_URI')));
+		$path = $this->getServer('PATH_INFO', $this->getServer('REQUEST_URI'));
+		if (($pos = strpos($path, '?')) !== false) {
+			$path = substr($path, 0, $pos);
+		}
+		$this->setPath($path);
 	}
 
 	/**

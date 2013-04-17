@@ -7,14 +7,9 @@ namespace Change\Http\Web;
 class PathRule
 {
 	/**
-	 * @var integer
+	 * @var \Change\Presentation\Interfaces\Website
 	 */
-	protected $websiteId;
-
-	/**
-	 * @var string
-	 */
-	protected $LCID;
+	protected $website;
 
 	/**
 	 * @var string
@@ -47,14 +42,12 @@ class PathRule
 	protected $configDatas;
 
 	/**
-	 * @param integer $websiteId
-	 * @param string $LCID
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $path
 	 */
-	function __construct($websiteId, $LCID, $path)
+	function __construct($website, $path)
 	{
-		$this->websiteId = $websiteId;
-		$this->LCID = $LCID;
+		$this->website = $website;
 		$this->path = $path;
 	}
 
@@ -63,7 +56,7 @@ class PathRule
 	 */
 	public function getLCID()
 	{
-		return $this->LCID;
+		return $this->website->getLCID();
 	}
 
 	/**
@@ -87,7 +80,7 @@ class PathRule
 	 */
 	public function getWebsiteId()
 	{
-		return $this->websiteId;
+		return $this->website->getId();
 	}
 
 	/**

@@ -1,10 +1,10 @@
 <?php
-namespace Change\Http\Web\Blocks;
+namespace Change\Presentation\Blocks;
 
 use Change\Documents\Property;
 
 /**
- * @name \Change\Http\Web\Blocks\Parameters
+ * @name \Change\Presentation\Blocks\Parameters
  */
 class Parameters
 {
@@ -194,6 +194,35 @@ class Parameters
 		}
 		throw new \BadFunctionCallException(get_class($this) . '->' . $name. ' with ' . count($arguments) . ' arguments.', 999999);
 	}
+
+	/**
+	 * @param string $name
+	 * @return boolean
+	 */
+	function __isset($name)
+	{
+		return ($this->hasParameterValue($name) || $this->hasParameterMeta($name));
+	}
+
+	/**
+	 * @param string $name
+	 * @return mixed|null
+	 * @throws \InvalidArgumentException
+	 */
+	function __get($name)
+	{
+		if ($this->hasParameterValue($name))
+		{
+			return $this->getParameterValue($name);
+		}
+		elseif($this->hasParameterMeta($name))
+		{
+			return $this->getParameterMeta($name)->getDefaultValue();
+		}
+		throw new \InvalidArgumentException('Argument 1 must be a valid parameter name: ' . $name, 999999);
+	}
+
+
 
 	/**
 	 * @param string $name

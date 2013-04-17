@@ -3,6 +3,7 @@ namespace Change\Http\Web;
 
 use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
+use Change\Presentation\PresentationServices;
 use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Event;
@@ -23,17 +24,11 @@ class Controller extends \Change\Http\Controller
 
 		$callback = function ($event)
 		{
-			$composer = new \Change\Http\Web\Events\ComposeStaticPage();
+			$composer = new \Change\Http\Web\Events\ComposePage();
 			$composer->execute($event);
 		};
 		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
 
-		$callback = function ($event)
-		{
-			$composer = new \Change\Http\Web\Events\ComposeFunctionalPage();
-			$composer->execute($event);
-		};
-		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'), 5);
 	}
 
@@ -46,6 +41,7 @@ class Controller extends \Change\Http\Controller
 		$event = parent::createEvent($request);
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
+		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
 		return $event;
 	}
 
@@ -56,7 +52,7 @@ class Controller extends \Change\Http\Controller
 	public function createResponse()
 	{
 		$response = parent::createResponse();
-		$response->getHeaders()->addHeaderLine('Content-Type: text/html, charset=utf-8');
+		$response->getHeaders()->addHeaderLine('Content-Type: text/html;charset=utf-8');
 		return $response;
 	}
 
@@ -68,9 +64,11 @@ class Controller extends \Change\Http\Controller
 		$result = $event->getResult();
 		if ($result instanceof Result)
 		{
+
 			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
+
 			$callable = array($result, 'toHtml');
 			if (is_callable($callable))
 			{

@@ -6,6 +6,7 @@ use Change\Http\Event;
 use Change\Http\Web\Actions\FindDisplayPage;
 use Change\Http\Web\Actions\GeneratePathRule;
 use Change\Http\Web\Actions\RedirectPathRule;
+use Change\Presentation\Interfaces\Website;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -13,10 +14,6 @@ use Zend\Http\Response as HttpResponse;
  */
 class Resolver extends ActionResolver
 {
-	/**
-	 * @var boolean
-	 */
-	protected $singleWebsite = true;
 
 	/**
 	 * @param Event $event
@@ -24,97 +21,18 @@ class Resolver extends ActionResolver
 	 */
 	public function resolve(Event $event)
 	{
-		$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
-		$this->singleWebsite = $cfg->getEntry('Change/Http/Web/SingleWebsite', true);
+		//TODO use event
+		if (class_exists('\Change\Website\WebsiteResolver'))
+		{
+			$websiteResolver = new \Change\Website\WebsiteResolver();
+			$websiteResolver->resolve($event);
+		}
 
-		$this->populateWebsite($event);
 		$pathRule = $this->findRule($event);
 		if ($pathRule)
 		{
 			$this->populateEventByPathRule($event, $pathRule);
 		}
-	}
-
-	/**
-	 * @param Event $event
-	 * @return boolean
-	 */
-	protected function populateWebsite($event)
-	{
-		$data = $this->getWebsiteDatas($event);
-		if (count($data))
-		{
-			$request = $event->getRequest();
-			$path = $request->getPath();
-			$hostName = $request->getUri()->getHost();
-			$i18nManager = $event->getApplicationServices()->getI18nManager();
-			$mm = $event->getDocumentServices()->getModelManager();
-			$dm = $event->getDocumentServices()->getDocumentManager();
-			foreach ($data as $row)
-			{
-				if ($hostName === $row['hostName'])
-				{
-					$websitePathPart = $row['pathPart'];
-					if ($this->isBasePath($path, $row['pathPart']))
-					{
-						$model = $mm->getModelByName($row['model']);
-						$website = $dm->getDocumentInstance(intval($row['id']), $model);
-						if ($website instanceof \Change\Website\Documents\Website)
-						{
-							$LCID = $row['LCID'];
-							$i18nManager->setLCID($LCID);
-							$request->setLCID($LCID);
-							$event->setParam('website', $website);
-							$event->getUrlManager()->setBasePath($websitePathPart);
-							return true;
-						}
-					}
-				}
-			}
-
-			if ($this->singleWebsite)
-			{
-				$row = 	$data[0];
-				$model = $mm->getModelByName($row['model']);
-				$website = $dm->getDocumentInstance(intval($row['id']), $model);
-				if ($website instanceof \Change\Website\Documents\Website)
-				{
-					$websitePathPart = $row['pathPart'];
-					$LCID = $row['LCID'];
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$i18nManager->setLCID($LCID);
-					$request->setLCID($LCID);
-					$event->setParam('website', $website);
-					$event->getUrlManager()->setBasePath($websitePathPart);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @param Event $event
-	 * @return array
-	 */
-	protected function getWebsiteDatas($event)
-	{
-		$websiteModel =  $event->getDocumentServices()->getModelManager()->getModelByName('Change_Website_Website');
-		if ($websiteModel)
-		{
-			$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->alias($fb->getDocumentColumn('id'), 'id'),
-				$fb->alias($fb->getDocumentColumn('model'), 'model'),
-				$fb->alias($fb->getDocumentColumn('LCID'), 'LCID'),
-				$fb->alias($fb->getDocumentColumn('hostName'), 'hostName'),
-				$fb->alias($fb->getDocumentColumn('pathPart'), 'pathPart'));
-			$qb->from($fb->getDocumentI18nTable($websiteModel->getRootName()));
-			$qb->innerJoin($fb->getDocumentTable($websiteModel->getRootName()), $fb->getDocumentColumn('id'));
-			$qb->andWhere($fb->isNotNull($fb->getDocumentColumn('hostName')));
-			return $qb->query()->getResults();
-		}
-		return array();
 	}
 
 	/**
@@ -208,25 +126,26 @@ class Resolver extends ActionResolver
 	protected function findRule($event)
 	{
 		$website = $event->getParam('website');
-		if ($website instanceof \Change\Website\Documents\Website)
+		if ($website instanceof Website)
 		{
+
 			$path = $event->getRequest()->getPath();
-			if ($this->isBasePath($path, $website->getPathPart()))
+			if ($this->isBasePath($path, $website->getRelativePath()))
 			{
-				$relativePath = $this->getRelativePath($path, $website->getPathPart());
+				$relativePath = $this->getRelativePath($path, $website->getRelativePath());
 			}
 			else
 			{
 				//Invalid website path part
-				$location = $event->getUrlManager()->getByPathInfo($this->getRelativePath($path, null))->normalize()->toString();
-				$pathRule = new PathRule($website->getId(), $website->getLCID(), $path);
+				$location = $event->getUrlManager()->getByPathInfo($this->getRelativePath($path, null), $event->getRequest()->getQuery()->toArray())->normalize()->toString();
+				$pathRule = new PathRule($website, $path);
 				$pathRule->setConfig('Location', $location);
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
 				$pathRule->setRuleId(0);
 				return $pathRule;
 			}
 
-			$pathRule = new PathRule($website->getId(), $website->getLCID(), $relativePath);
+			$pathRule = new PathRule($website, $relativePath);
 			if (!$relativePath)
 			{
 				//Home
@@ -234,6 +153,7 @@ class Resolver extends ActionResolver
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
 				return $pathRule;
 			}
+
 			if ($this->findDbRule($event->getApplicationServices()->getDbProvider(), $pathRule))
 			{
 				return $pathRule;

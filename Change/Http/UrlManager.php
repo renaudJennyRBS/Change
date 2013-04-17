@@ -88,7 +88,7 @@ class UrlManager
 
 	/**
 	 * @param string|null $pathInfo
-	 * @param string|null $query
+	 * @param string|array|null $query
 	 * @param string|null $fragment
 	 * @return \Zend\Uri\Http
 	 */

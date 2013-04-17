@@ -1,10 +1,10 @@
 <?php
-namespace Change\Http\Web\Blocks;
+namespace Change\Presentation\Blocks;
 
 use Change\Documents\Property;
 
 /**
- * @name \Change\Http\Web\Blocks\ParameterMeta
+ * @name \Change\Presentation\Blocks\ParameterMeta
  */
 class ParameterMeta
 {

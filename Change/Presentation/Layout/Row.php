@@ -1,9 +1,9 @@
 <?php
-namespace Change\Http\Web\Layout;
+namespace Change\Presentation\Layout;
 
 /**
- * @name \Change\Http\Web\Layout\Row
- * @package Change\Http\Web\Layout
+ * @package Change\Presentation\Layout
+ * @name \Change\Presentation\Layout\Row
  */
 class Row extends Item
 {

@@ -1,26 +1,29 @@
 <?php
 namespace Change\Website\Blocks;
 
-use Change\Http\Web\Blocks\Event;
-use Change\Http\Web\Blocks\Result;
+use Change\Presentation\Blocks\Event;
+use Change\Http\Web\Result\BlockResult;
 
 /**
+ * TODO Sample
  * @package \Change\Website\Blocks\Menu
  */
 class Menu
 {
-
 	/**
 	 * @param Event $event
 	 */
 	public function onConfiguration($event)
 	{
-		$parameters = new \Change\Http\Web\Blocks\Parameters('Change_Website_Menu');
+		$parameters = new \Change\Presentation\Blocks\Parameters('Change_Website_Menu');
 		$parameters->addParameterMeta('documentId', \Change\Documents\Property::TYPE_DOCUMENT);
 		$parameters->addParameterMeta('maxLevel', \Change\Documents\Property::TYPE_INTEGER, true, 1);
-		if (($blockLayout = $event->getBlockLayout()) !== null)
+		$parameters->setUpdatedParametersValue($event->getBlockLayout()->getParameters());
+
+		$request = $event->getHttpRequest();
+		if ($request)
 		{
-			$parameters->setUpdatedParametersValue($blockLayout->getParameters());
+			//TODO Fill request parameters
 		}
 		$event->setBlockParameters($parameters);
 	}
@@ -30,8 +33,16 @@ class Menu
 	 */
 	public function onExecute($event)
 	{
-		$result = new Result();
-		$result->setHtml('<h1>Menu: ' . $event->getBlockParameters()->getDocumentId() . '</h1>');
+		$blockLayout = $event->getBlockLayout();
+		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
+		$templatePath = $event->getPresentationServices()->getThemeManager()->getCurrent()->getBlocTemplatePath('Change_Website', 'menu.twig');
+		$attributes = array('parameters' => $event->getBlockParameters());
+		$templateManager = $event->getPresentationServices()->getTemplateManager();
+		$callback = function () use ($templateManager, $templatePath, $attributes)
+		{
+			return $templateManager->renderTemplateFile($templatePath, $attributes);
+		};
+		$result->setHtmlCallback($callback);
 		$result->addHeadAsString('<meta name="description" content="Menu" />');
 		$event->setBlockResult($result);
 	}
