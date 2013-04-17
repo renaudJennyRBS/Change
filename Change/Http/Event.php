@@ -23,6 +23,11 @@ class Event extends \Zend\EventManager\Event
 	protected $documentServices;
 
 	/**
+	 * @var \Change\Presentation\PresentationServices
+	 */
+	protected $presentationServices;
+
+	/**
 	 * @var \Change\Http\Request
 	 */
 	protected $request;
@@ -78,7 +83,7 @@ class Event extends \Zend\EventManager\Event
 	/**
 	 * @param \Change\Application\ApplicationServices|null $applicationServices
 	 */
-	public function setApplicationServices($applicationServices)
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices = null)
 	{
 		$this->applicationServices = $applicationServices;
 	}
@@ -95,7 +100,7 @@ class Event extends \Zend\EventManager\Event
 	/**
 	 * @param \Change\Documents\DocumentServices|null $documentServices
 	 */
-	public function setDocumentServices($documentServices)
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
 	}
@@ -107,6 +112,23 @@ class Event extends \Zend\EventManager\Event
 	public function getDocumentServices()
 	{
 		return $this->documentServices;
+	}
+
+	/**
+	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 */
+	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices = null)
+	{
+		$this->presentationServices = $presentationServices;
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Presentation\PresentationServices|null
+	 */
+	public function getPresentationServices()
+	{
+		return $this->presentationServices;
 	}
 
 	/**

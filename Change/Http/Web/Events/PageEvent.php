@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Web\Events;
 
+use Change\Presentation\Interfaces\Page;
 use Zend\EventManager\Event;
 
 /**
@@ -8,6 +9,16 @@ use Zend\EventManager\Event;
  */
 class PageEvent extends Event
 {
+	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
+	 * @var \Change\Presentation\PresentationServices
+	 */
+	protected $presentationServices;
+
 	/**
 	 * @var \Change\Http\Web\Result\Page
 	 */
@@ -32,6 +43,41 @@ class PageEvent extends Event
 	 * @var \Change\Http\UrlManager
 	 */
 	protected $urlManager;
+
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	public function setApplicationServices($applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Application\ApplicationServices|null
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 */
+	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices = null)
+	{
+		$this->presentationServices = $presentationServices;
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Presentation\PresentationServices|null
+	 */
+	public function getPresentationServices()
+	{
+		return $this->presentationServices;
+	}
 
 	/**
 	 * @param \Change\Http\AclInterface $acl
@@ -114,11 +160,11 @@ class PageEvent extends Event
 	}
 
 	/**
-	 * @return \Change\Website\Documents\Page|null
+	 * @return Page|null
 	 */
 	public function getPage()
 	{
-		if ($this->getTarget() instanceof \Change\Website\Documents\Page)
+		if ($this->getTarget() instanceof Page)
 		{
 			return $this->getTarget();
 		}

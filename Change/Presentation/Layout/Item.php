@@ -1,8 +1,9 @@
 <?php
-namespace Change\Http\Web\Layout;
+namespace Change\Presentation\Layout;
 
 /**
- * @name \Change\Http\Web\Layout\Item
+ * @package Change\Presentation\Layout
+ * @name \Change\Presentation\Layout\Item
  */
 abstract class Item
 {
@@ -116,5 +117,29 @@ abstract class Item
 	public function getBlocks()
 	{
 		return $this->getItemsByType('block');
+	}
+
+	/**
+	 * @param string $id
+	 * @return Item|null
+	 */
+	public function getById($id)
+	{
+		if ($id === $this->getId())
+		{
+			return $this;
+		}
+		if (count($this->items))
+		{
+			foreach ($this->items as $item)
+			{
+				$result = $item->getById($id);
+				if ($result)
+				{
+					return $result;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -1,9 +1,11 @@
 <?php
 namespace Change\Http\Web\Actions;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\Events\Event as DocumentEvent;
 use Change\Http\Event;
 use Change\Http\Web\PathRule;
+use Change\Presentation\Interfaces\Page;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -26,46 +28,26 @@ class FindDisplayPage
 		}
 
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($pathRule->getDocumentId());
-		if ($document)
+		if ($document instanceof AbstractDocument)
 		{
 			$eventManager = $document->getEventManager();
-			$eventManager->attach(DocumentEvent::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 5);
-
 			$e = new DocumentEvent(DocumentEvent::EVENT_DISPLAY_PAGE, $document, array('pathRule' => $pathRule));
 			$result = $eventManager->trigger($e, function ($return)
 			{
-				return ($return instanceof \Change\Website\Documents\Page);
+				return ($return instanceof Page);
 			});
+			$page = null;
 
 			if ($result->stopped())
 			{
 				$page = $result->last();
 			}
-			else
+
+			if (!($page instanceof Page))
 			{
 				$page = $e->getParam('page');
 			}
 			$event->setParam('page', $page);
-		}
-	}
-
-	/**
-	 * @param DocumentEvent $event
-	 * @return \Change\Website\Documents\Page
-	 */
-	public function onDocumentDisplayPage($event)
-	{
-		if ($event instanceof DocumentEvent)
-		{
-			$document = $event->getDocument();
-			if ($document instanceof \Change\Website\Documents\Page)
-			{
-				$event->setParam('page', $document);
-			}
-			elseif ($document instanceof \Change\Website\Documents\Section)
-			{
-				$event->setParam('page', $document->getIndexPage());
-			}
 		}
 	}
 }

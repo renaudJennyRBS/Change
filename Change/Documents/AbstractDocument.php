@@ -150,8 +150,18 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			$eventManager->setSharedManager($this->getApplicationServices()->getApplication()->getSharedEventManager());
 			$eventManager->setEventClass('\Change\Documents\Events\Event');
 			$this->eventManager = $eventManager;
+			$this->attachEvents($eventManager);
 		}
 		return $this->eventManager;
+	}
+
+	/**
+	 * Attach specific document event
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
+	protected function attachEvents($eventManager)
+	{
+
 	}
 
 	/**

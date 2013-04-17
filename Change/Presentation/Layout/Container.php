@@ -1,7 +1,10 @@
 <?php
-namespace Change\Http\Web\Layout;
+namespace Change\Presentation\Layout;
 
-
+/**
+ * @package Change\Presentation\Layout
+ * @name \Change\Presentation\Layout\Container
+ */
 class Container extends Item
 {
 	/**
