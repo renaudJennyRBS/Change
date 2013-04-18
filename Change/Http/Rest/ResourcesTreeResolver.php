@@ -28,13 +28,62 @@ class ResourcesTreeResolver
 
 	/**
 	 * @param \Change\Http\Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
+	 */
+	public function getNextNamespace($event, $namespaceParts)
+	{
+		if (!isset($namespaceParts[1]))
+		{
+			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$vendors = array();
+			foreach ($treeNames as $treeName)
+			{
+				list($vendor, ) = explode('_', $treeName);
+				$vendors[$vendor] = true;
+			}
+			return array_keys($vendors);
+		}
+		elseif (!isset($namespaceParts[2]))
+		{
+			$vendor = $namespaceParts[1];
+			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$shortModulesNames = array();
+			foreach ($treeNames as $treeName)
+			{
+				list($vendorTree, $shortModuleName) = explode('_', $treeName);
+				if ($vendorTree === $vendor)
+				{
+					$shortModulesNames[$shortModuleName] = true;
+				}
+			}
+			return array_keys($shortModulesNames);
+		}
+		return array();
+	}
+
+	/**
+	 * @param \Change\Http\Event $event
 	 * @param array $resourceParts
 	 * @param $method
 	 * @return void
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if (count($resourceParts) >= 2)
+		if (count($resourceParts) < 2)
+		{
+			array_unshift($resourceParts, 'resourcestree');
+			$event->setParam('namespace', implode('.', $resourceParts));
+			$event->setParam('resolver', $this);
+			$action = function ($event)
+			{
+				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif (count($resourceParts) >= 2)
 		{
 			$vendor = array_shift($resourceParts);
 			$shortModuleName = array_shift($resourceParts);

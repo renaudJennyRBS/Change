@@ -131,6 +131,17 @@ class Parameters
 	}
 
 	/**
+	 * @param \Change\Presentation\Layout\Block $blockLayout
+	 */
+	public function setLayoutParameters(\Change\Presentation\Layout\Block $blockLayout = null)
+	{
+		if ($blockLayout !== null)
+		{
+			$this->setUpdatedParametersValue($blockLayout->getParameters());
+		}
+	}
+
+	/**
 	 * @param string $name
 	 * @return $this
 	 */

@@ -59,10 +59,10 @@ class ComposePage
 						$result = $blockManager->getResult($blockLayout, $parameters);
 						if (isset($result))
 						{
+							$pageResult->addHeads($result->getHead());
 							$blockResults[$blockLayout->getId()] = $result;
 						}
 					}
-
 					$pageResult->setBlockResults($blockResults);
 				}
 
@@ -114,35 +114,5 @@ class ComposePage
 	{
 		$pageEvent->setName(Page::EVENT_PAGE_COMPOSE);
 		$eventManager->trigger($pageEvent);
-	}
-
-	/**
-	 * @param \Change\Presentation\Layout\Block[] $blocks
-	 * @param \Change\Presentation\Blocks\BlockManager $blockManager
-	 * @return array
-	 */
-	protected function generateBlockResults($blocks, $blockManager)
-	{
-		$blockInputs = array();
-		foreach ($blocks as $block)
-		{
-			/* @var $block \Change\Presentation\Layout\Block */
-			$blockParameter = $blockManager->getParameters($block);
-			$blockInputs[] = array($block, $blockParameter);
-		}
-
-		$blockResults = array();
-		foreach ($blockInputs as $infos)
-		{
-			list($blockLayout, $parameters) = $infos;
-
-			/* @var $blockLayout \Change\Presentation\Layout\Block */
-			$result = $blockManager->getResult($blockLayout, $parameters);
-			if (isset($result))
-			{
-				$blockResults[$blockLayout->getId()] = $result;
-			}
-		}
-		return $blockResults;
 	}
 }

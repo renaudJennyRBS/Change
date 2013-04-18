@@ -12,36 +12,51 @@ use Zend\Http\Response;
  */
 class Resolver extends ActionResolver
 {
-	protected $resourceActionClasses = array();
+	protected $resolverClasses = array();
 
 	function __construct()
 	{
-		$this->resourceActionClasses = array(
-			'startValidation' => '\Change\Http\Rest\Actions\StartValidation',
-			'startPublication' => '\Change\Http\Rest\Actions\StartPublication',
-			'deactivate' => '\Change\Http\Rest\Actions\Deactivate',
-			'activate' => '\Change\Http\Rest\Actions\Activate',
-			'getCorrection' => '\Change\Http\Rest\Actions\GetCorrection',
-			'startCorrectionValidation' => '\Change\Http\Rest\Actions\StartCorrectionValidation',
-			'startCorrectionPublication' => '\Change\Http\Rest\Actions\StartCorrectionPublication');
+		$this->addResolverClasses('resources', '\Change\Http\Rest\ResourcesResolver');
+		$this->addResolverClasses('resourcesactions', '\Change\Http\Rest\ResourcesActionsResolver');
+		$this->addResolverClasses('resourcestree', '\Change\Http\Rest\ResourcesTreeResolver');
+		$this->addResolverClasses('blocks', '\Change\Http\Rest\BlocksResolver');
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getResourceActionClasses()
+	protected function addResolverClasses($name, $className)
 	{
-		return $this->resourceActionClasses;
+		$this->resolverClasses[$name] = $className;
 	}
 
 	/**
-	 * @param $actionName
-	 * @param $class
+	 * @param string $name
+	 * @return ResourcesActionsResolver|ResourcesResolver|ResourcesTreeResolver|BlocksResolver|null
+	 */
+	public function getResolverByName($name)
+	{
+		if (isset($this->resolverClasses[$name]))
+		{
+			$resolver = $this->resolverClasses[$name];
+			if (is_string($resolver))
+			{
+				$resolver = new $resolver($this);
+				$this->resolverClasses[$name] = $resolver;
+			}
+			return $resolver;
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $actionName
+	 * @param string $class
 	 */
 	public function registerActionClass($actionName, $class)
 	{
-		$this->resourceActionClasses[$actionName] = $class;
+		$resolver = $this->getResolverByName('resourcesactions');
+		$resolver->registerActionClass($actionName, $class);
 	}
+
+
 
 	/**
 	 * Set Event params: namespace, isDirectory
@@ -54,53 +69,60 @@ class Resolver extends ActionResolver
 		$path = $request->getPath();
 		if (strpos($path, '//') !== false)
 		{
-
 			return;
 		}
-		$nameSpaces = array_slice(explode('/', $path), 1);
-		if (end($nameSpaces) === '')
+		elseif ($path === '/rest.php')
 		{
-			array_pop($nameSpaces);
+			$path = '/';
+		}
+
+		$namespaceParts = array_slice(explode('/', $path), 1);
+		if (end($namespaceParts) === '')
+		{
+			array_pop($namespaceParts);
 			$event->setParam('isDirectory', true);
 		}
 		else
 		{
 			$event->setParam('isDirectory', false);
 		}
-		if (count($nameSpaces) !== 0)
+
+		if (count($namespaceParts) !== 0)
 		{
-			switch ($nameSpaces[0])
+			$resolver = $this->getResolverByName($namespaceParts[0]);
+			if ($resolver)
 			{
-				case 'resources' :
-					$resourcesResolver = new ResourcesResolver($this);
-					$resourcesResolver->resolve($event, array_slice($nameSpaces, 1), $request->getMethod());
-					break;
-				case 'resourcesactions' :
-					$resourcesResolver = new ResourcesActionsResolver($this);
-					$resourcesResolver->resolve($event, array_slice($nameSpaces, 1), $request->getMethod());
-					break;
-				case 'resourcestree' :
-					$resourcesResolver = new ResourcesTreeResolver($this);
-					$resourcesResolver->resolve($event, array_slice($nameSpaces, 1), $request->getMethod());
-					break;
+				array_shift($namespaceParts);
+				$resolver->resolve($event, $namespaceParts, $request->getMethod());
 			}
 		}
-
-		if ($event->getAction() === null && $event->getParam('isDirectory'))
+		elseif ($request->getMethod() === 'GET')
 		{
-			if ($request->getMethod() === 'GET')
-			{
-				$event->setParam('namespace', implode('.', $nameSpaces));
-				$event->setParam('Resolver', $this);
+			$event->setParam('namespace', '');
+			$event->setParam('resolver', $this);
+			$action = function($event) {
 				$action = new DiscoverNameSpace();
-				$event->setAction(function($event) use($action) {$action->execute($event);});
-				return;
-			}
-
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		else
+		{
 			$result = $this->buildNotAllowedError($request->getMethod(), array(Request::METHOD_GET));
 			$event->setResult($result);
 			return;
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
+	 */
+	public function getNextNamespace($event, $namespaceParts)
+	{
+		return array_keys($this->resolverClasses);
 	}
 
 	/**

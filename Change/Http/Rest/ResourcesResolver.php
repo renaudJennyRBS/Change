@@ -1,7 +1,6 @@
 <?php
 namespace Change\Http\Rest;
 
-use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
 use Change\Http\Event;
 use Change\Http\Rest\Actions\CreateDocument;
@@ -33,6 +32,30 @@ class ResourcesResolver
 	}
 
 	/**
+	 * @param Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
+	 */
+	public function getNextNamespace($event, $namespaceParts)
+	{
+		if (!isset($namespaceParts[1]))
+		{
+			return $event->getDocumentServices()->getModelManager()->getVendors();
+		}
+		elseif (!isset($namespaceParts[2]))
+		{
+			$vendor = $namespaceParts[1];
+			return $event->getDocumentServices()->getModelManager()->getShortModulesNames($vendor);
+		}
+		elseif (!isset($namespaceParts[3]))
+		{
+			return $event->getDocumentServices()->getModelManager()
+				->getShortDocumentsNames($namespaceParts[1], $namespaceParts[2]);
+		}
+		return array();
+	}
+
+	/**
 	 * Set event Params: modelName, documentId, LCID
 	 * @param Event $event
 	 * @param array $resourceParts
@@ -41,45 +64,26 @@ class ResourcesResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if (count($resourceParts) === 1 && is_numeric($resourceParts[0]) && $method === Request::METHOD_GET)
+		$nbParts = count($resourceParts);
+		if ($nbParts === 1 && is_numeric($resourceParts[0]) && $method === Request::METHOD_GET)
 		{
 			$documentId = intval($resourceParts[0]);
-			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
-			if ($document === null)
-			{
-				//Document not found
-				return;
-			}
-			$event->setParam('documentId', $documentId);
-
-			$modelName = $document->getDocumentModelName();
-			$event->setParam('modelName', $modelName);
-
-			$privilege = $modelName . '.load';
-			$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
-			if ($document->getDocumentModel()->isLocalized())
-			{
-				$event->setParam('LCID', $document->getRefLCID());
-				$action = function($event) {
-					$action = new GetLocalizedDocument();
-					$action->execute($event);
-				};
-				$event->setAction($action);
-				return;
-			}
-			else
-			{
-				$action = function($event) {
-					$action = new GetDocument();
-					$action->execute($event);
-				};
-				$event->setAction($action);
-				return;
-			}
+			$this->getDocumentActionById($event, $documentId);
 		}
-		else if (count($resourceParts) >= 3)
-
+		elseif (count($resourceParts) < 3 && $method === Request::METHOD_GET)
+		{
+			array_unshift($resourceParts, 'resources');
+			$event->setParam('namespace', implode('.', $resourceParts));
+			$event->setParam('resolver', $this);
+			$action = function ($event)
+			{
+				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif (count($resourceParts) >= 3)
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$documentServices = $event->getDocumentServices();
@@ -112,7 +116,9 @@ class ResourcesResolver
 					//Localized Document
 					if (isset($resourceParts[4]))
 					{
-						if ($model->isLocalized() && $event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4]))
+						if ($model->isLocalized()
+							&& $event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4])
+						)
 						{
 							$event->setParam('LCID', $resourceParts[4]);
 							if (!$isDirectory)
@@ -122,7 +128,8 @@ class ResourcesResolver
 									$privilege = $modelName . '.create';
 									$this->resolver->setAuthorisation($event, $modelName, $privilege);
 
-									$action = function($event) {
+									$action = function ($event)
+									{
 										$action = new CreateLocalizedDocument();
 										$action->execute($event);
 									};
@@ -135,7 +142,8 @@ class ResourcesResolver
 									$privilege = $modelName . '.load';
 									$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-									$action = function($event) {
+									$action = function ($event)
+									{
 										$action = new GetLocalizedDocument();
 										$action->execute($event);
 									};
@@ -148,7 +156,8 @@ class ResourcesResolver
 									$privilege = $modelName . '.updateLocalized';
 									$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-									$action = function($event) {
+									$action = function ($event)
+									{
 										$action = new UpdateLocalizedDocument();
 										$action->execute($event);
 									};
@@ -161,7 +170,8 @@ class ResourcesResolver
 									$privilege = $modelName . '.deleteLocalized';
 									$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-									$action = function($event) {
+									$action = function ($event)
+									{
 										$action = new DeleteLocalizedDocument();
 										$action->execute($event);
 									};
@@ -169,7 +179,8 @@ class ResourcesResolver
 									return;
 								}
 
-								$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
+								$result = $this->resolver->buildNotAllowedError($method,
+									array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
 								$event->setResult($result);
 								return;
 							}
@@ -190,14 +201,16 @@ class ResourcesResolver
 
 							if ($model->isLocalized())
 							{
-								$action = function($event) {
+								$action = function ($event)
+								{
 									$action = new CreateLocalizedDocument();
 									$action->execute($event);
 								};
 							}
 							else
 							{
-								$action = function($event) {
+								$action = function ($event)
+								{
 									$action = new CreateDocument();
 									$action->execute($event);
 								};
@@ -211,7 +224,8 @@ class ResourcesResolver
 							$privilege = $modelName . '.load';
 							$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-							$action = function($event) {
+							$action = function ($event)
+							{
 								$action = new GetDocument();
 								$action->execute($event);
 							};
@@ -224,7 +238,8 @@ class ResourcesResolver
 							$privilege = $modelName . '.update';
 							$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-							$action = function($event) {
+							$action = function ($event)
+							{
 								$action = new UpdateDocument();
 								$action->execute($event);
 							};
@@ -237,7 +252,8 @@ class ResourcesResolver
 							$privilege = $modelName . '.delete';
 							$this->resolver->setAuthorisation($event, $documentId, $privilege);
 
-							$action = function($event) {
+							$action = function ($event)
+							{
 								$action = new DeleteDocument();
 								$action->execute($event);
 							};
@@ -253,7 +269,8 @@ class ResourcesResolver
 						$privilege = $modelName . 'create';
 						$this->resolver->setAuthorisation($event, $modelName, $privilege);
 
-						$action = function($event) {
+						$action = function ($event)
+						{
 							$action = new CreateDocument();
 							$action->execute($event);
 						};
@@ -266,7 +283,8 @@ class ResourcesResolver
 						$privilege = $modelName . '.collection';
 						$this->resolver->setAuthorisation($event, $modelName, $privilege);
 
-						$action = function($event) {
+						$action = function ($event)
+						{
 							$action = new GetDocumentModelCollection();
 							$action->execute($event);
 						};
@@ -282,4 +300,46 @@ class ResourcesResolver
 		}
 	}
 
+	/**
+	 * @param Event $event
+	 * @param $documentId
+	 */
+	protected function getDocumentActionById($event, $documentId)
+	{
+		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		if ($document === null)
+		{
+			//Document not found
+			return;
+		}
+		$event->setParam('documentId', $documentId);
+
+		$modelName = $document->getDocumentModelName();
+		$event->setParam('modelName', $modelName);
+
+		$privilege = $modelName . '.load';
+		$this->resolver->setAuthorisation($event, $documentId, $privilege);
+
+		if ($document->getDocumentModel()->isLocalized())
+		{
+			$event->setParam('LCID', $document->getRefLCID());
+			$action = function ($event)
+			{
+				$action = new GetLocalizedDocument();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		else
+		{
+			$action = function ($event)
+			{
+				$action = new GetDocument();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+	}
 }

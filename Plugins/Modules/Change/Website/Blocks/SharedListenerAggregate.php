@@ -1,9 +1,9 @@
 <?php
 namespace Change\Website\Blocks;
 
-use Zend\EventManager\SharedListenerAggregateInterface;
-use Zend\EventManager\SharedEventManagerInterface;
 use Change\Presentation\Blocks\BlockManager;
+use Zend\EventManager\SharedEventManagerInterface;
+use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
  * @name \Change\Website\Blocks\SharedListenerAggregate
@@ -54,8 +54,14 @@ class SharedListenerAggregate implements SharedListenerAggregateInterface
 				$blockManager = $event->getTarget();
 				if ($blockManager instanceof BlockManager)
 				{
-					$blockManager->registerBlock('Change_Website_Richtext');
-					$blockManager->registerBlock('Change_Website_Menu');
+					$blockManager->registerBlock('Change_Website_Richtext', function () use ($blockManager)
+					{
+						return new BlocksInformation('Change_Website_Richtext', $blockManager);
+					});
+					$blockManager->registerBlock('Change_Website_Menu', function () use ($blockManager)
+					{
+						return new BlocksInformation('Change_Website_Menu', $blockManager);
+					});
 				}
 			}
 		};

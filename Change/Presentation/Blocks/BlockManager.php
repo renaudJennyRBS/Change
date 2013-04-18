@@ -36,7 +36,7 @@ class BlockManager
 	protected $sharedEventManager;
 
 	/**
-	 * @var array;
+	 * @var array
 	 */
 	protected $blocks;
 
@@ -98,11 +98,56 @@ class BlockManager
 
 	/**
 	 * @param $name
-	 * @param Callable|null $configuration
+	 * @param Callable|null $informationCallback
 	 */
-	public function registerBlock($name, $configuration = null)
+	public function registerBlock($name, $informationCallback = null)
 	{
-		$this->blocks[$name] = $configuration;
+		$this->blocks[$name] = $informationCallback;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getBlockNames()
+	{
+		if ($this->blocks === null)
+		{
+			$this->blocks = array();
+			$sharedEventManager = $this->registerBlocks();
+			$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER));
+			$eventManager->setSharedManager($sharedEventManager);
+			$event = new Event(static::EVENT_INFORMATION, $this);
+			$eventManager->trigger($event);
+		}
+		return array_keys($this->blocks);
+	}
+
+	/**
+	 * @param string $name
+	 * @return Information|null
+	 */
+	public function getBlockInformation($name)
+	{
+		$this->getBlockNames();
+		if (isset($this->blocks[$name]))
+		{
+			$infos = $this->blocks[$name] ;
+			if ($infos instanceof Information)
+			{
+				return $infos;
+			}
+			elseif (is_callable($infos))
+			{
+				$infos = call_user_func($infos);
+				if ($infos instanceof Information)
+				{
+					$this->blocks[$name] = $infos;
+					return $infos;
+				}
+			}
+
+		}
+		return null;
 	}
 
 	/**

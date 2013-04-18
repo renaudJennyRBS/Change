@@ -56,6 +56,27 @@ class Page extends Result
 	}
 
 	/**
+	 * @param array $heads
+	 */
+	public function addHeads(array $heads = null)
+	{
+		if ($heads !== null)
+		{
+			foreach ($heads as $key => $head)
+			{
+				if (is_int($key))
+				{
+					$this->addHeadAsString($head);
+				}
+				else
+				{
+					$this->addNamedHeadAsString($key, $head);
+				}
+			}
+		}
+	}
+
+	/**
 	 * @param string $headString
 	 */
 	public function addHeadAsString($headString)
