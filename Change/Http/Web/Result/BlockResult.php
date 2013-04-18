@@ -118,6 +118,24 @@ class BlockResult
 	}
 
 	/**
+	 * @param array $heads
+	 */
+	public function addHeads(array $heads)
+	{
+		foreach ($heads as $key => $head)
+		{
+			if (is_int($key))
+			{
+				$this->addHeadAsString($head);
+			}
+			else
+			{
+				$this->addNamedHeadAsString($key, $head);
+			}
+		}
+	}
+
+	/**
 	 * @param string $html
 	 */
 	public function setHtml($html)

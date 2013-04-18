@@ -47,7 +47,7 @@ class DefaultTheme implements Theme
 	{
 		$appServices = $this->presentationServices->getApplicationServices();
 		list ($vendor, $shortModuleName) = explode('_', $moduleName);
-		$path = $appServices->getApplication()->getWorkspace()->pluginsModulesPath($vendor, $shortModuleName, 'Templates', 'Assets', $fileName);
+		$path = $appServices->getApplication()->getWorkspace()->pluginsThemesPath('Change', 'Default', $vendor, $shortModuleName, 'Blocks', $fileName);
 		return (file_exists($path)) ? $path : null;
 	}
 

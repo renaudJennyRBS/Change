@@ -11,12 +11,50 @@ class ResourcesActionsResolver
 	 */
 	protected $resolver;
 
+	protected $resourceActionClasses = array();
+
 	/**
 	 * @param \Change\Http\Rest\Resolver $resolver
 	 */
 	function __construct(Resolver $resolver)
 	{
 		$this->resolver = $resolver;
+
+		$this->resourceActionClasses = array(
+			'startValidation' => '\Change\Http\Rest\Actions\StartValidation',
+			'startPublication' => '\Change\Http\Rest\Actions\StartPublication',
+			'deactivate' => '\Change\Http\Rest\Actions\Deactivate',
+			'activate' => '\Change\Http\Rest\Actions\Activate',
+			'getCorrection' => '\Change\Http\Rest\Actions\GetCorrection',
+			'startCorrectionValidation' => '\Change\Http\Rest\Actions\StartCorrectionValidation',
+			'startCorrectionPublication' => '\Change\Http\Rest\Actions\StartCorrectionPublication');
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getResourceActionClasses()
+	{
+		return $this->resourceActionClasses;
+	}
+
+	/**
+	 * @param $actionName
+	 * @param $class
+	 */
+	public function registerActionClass($actionName, $class)
+	{
+		$this->resourceActionClasses[$actionName] = $class;
+	}
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
+	 */
+	public function getNextNamespace($event, $namespaceParts)
+	{
+		return array_keys($this->resourceActionClasses);
 	}
 
 	/**
@@ -29,9 +67,22 @@ class ResourcesActionsResolver
 	public function resolve($event, $resourceParts, $method)
 	{
 		$nbParts = count($resourceParts);
-		$resourceActionClasses = $this->resolver->getResourceActionClasses();
-		if ($nbParts == 2 || $nbParts == 3)
+		if ($nbParts == 0)
 		{
+			array_unshift($resourceParts, 'resourcesactions');
+			$event->setParam('namespace', implode('.', $resourceParts));
+			$event->setParam('resolver', $this);
+			$action = function ($event)
+			{
+				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif ($nbParts == 2 || $nbParts == 3)
+		{
+			$resourceActionClasses = $this->getResourceActionClasses();
 			$actionName = $resourceParts[0];
 			if (!isset($resourceActionClasses[$actionName]))
 			{

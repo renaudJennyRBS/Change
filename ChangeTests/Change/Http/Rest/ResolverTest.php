@@ -34,11 +34,15 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testConstruct()
 	{
 		$resolver = new Resolver();
-		$this->assertArrayHasKey('getCorrection', $resolver->getResourceActionClasses());
-		$this->assertArrayNotHasKey('test', $resolver->getResourceActionClasses());
+		$resourcesActionsResolver = $resolver->getResolverByName('resourcesactions');
+		$this->assertInstanceOf('\Change\Http\Rest\ResourcesActionsResolver', $resourcesActionsResolver);
+
+		$this->assertArrayHasKey('getCorrection', $resourcesActionsResolver->getResourceActionClasses());
+		$this->assertArrayNotHasKey('test', $resourcesActionsResolver->getResourceActionClasses());
 
 		$resolver->registerActionClass('test', 'test');
-		$this->assertArrayHasKey('test', $resolver->getResourceActionClasses());
+
+		$this->assertArrayHasKey('test', $resourcesActionsResolver->getResourceActionClasses());
 
 		$application = $this->getApplication();
 
@@ -65,8 +69,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '');
 		$resolver->resolve($event);
-		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertEquals('fail', $event->getParam('namespace', 'fail'));
+		$this->assertTrue(is_callable($event->getAction()));
+		$this->assertEquals('', $event->getParam('namespace', ''));
 		$this->assertFalse($event->getParam('isDirectory'));
 
 		$this->resetEvent($event, '/');
@@ -91,18 +95,24 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testDiscover($event)
 	{
 		$resolver = new Resolver();
+		$this->resetEvent($event, '/resources/');
+		$resolver->resolve($event);
+		$this->assertTrue(is_callable($event->getAction()));
+		$this->assertEquals('resources', $event->getParam('namespace', 'fail'));
+		$this->assertTrue($event->getParam('isDirectory'));
+
 
 		$this->resetEvent($event, '/test/');
 		$resolver->resolve($event);
-		$this->assertTrue(is_callable($event->getAction()));
-		$this->assertEquals('test', $event->getParam('namespace', 'fail'));
+		$this->assertNull($event->getAction());
+		$this->assertNull($event->getParam('namespace'));
 		$this->assertTrue($event->getParam('isDirectory'));
 
 		$this->resetEvent($event, '/test/', 'POST');
 		$resolver->resolve($event);
 
-		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
+		$this->assertNull($event->getAction());
+		$this->assertNull($event->getResult());
 		return $event;
 	}
 
