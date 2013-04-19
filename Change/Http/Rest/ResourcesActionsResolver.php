@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest;
 
+use Change\Http\Rest\Actions\DiscoverNameSpace;
+
 /**
  * @name \Change\Http\Rest\ResourcesActionsResolver
  */
@@ -67,14 +69,14 @@ class ResourcesActionsResolver
 	public function resolve($event, $resourceParts, $method)
 	{
 		$nbParts = count($resourceParts);
-		if ($nbParts == 0)
+		if ($nbParts == 0 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'resourcesactions');
 			$event->setParam('namespace', implode('.', $resourceParts));
 			$event->setParam('resolver', $this);
 			$action = function ($event)
 			{
-				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action = new DiscoverNameSpace();
 				$action->execute($event);
 			};
 			$event->setAction($action);

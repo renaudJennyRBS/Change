@@ -94,7 +94,22 @@ class PropertyConverter
 			case Property::TYPE_DOCUMENT:
 				if ($propertyValue instanceof AbstractDocument)
 				{
+					$dm = $propertyValue->getDocumentManager();
 					$restValue = new DocumentLink($this->getUrlManager(), $propertyValue, DocumentLink::MODE_PROPERTY);
+					if ($propertyValue instanceof \Change\Documents\Interfaces\Editable)
+					{
+						if ($propertyValue instanceof \Change\Documents\Interfaces\Localizable)
+						{
+							$dm->pushLCID($propertyValue->getRefLCID());
+							$label = $propertyValue->getLabel();
+							$dm->popLCID();
+						}
+						else
+						{
+							$label = $propertyValue->getLabel();
+						}
+						$restValue->setProperty('label', $label);
+					}
 				}
 				elseif ($propertyValue !== null)
 				{
@@ -111,7 +126,23 @@ class PropertyConverter
 						{
 							throw new \RuntimeException('Invalid Property value', 70001);
 						}
-						return new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
+						$dm = $doc->getDocumentManager();
+						$restValue = new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
+						if ($doc instanceof \Change\Documents\Interfaces\Editable)
+						{
+							if ($doc instanceof \Change\Documents\Interfaces\Localizable)
+							{
+								$dm->pushLCID($doc->getRefLCID());
+								$label = $doc->getLabel();
+								$dm->popLCID();
+							}
+							else
+							{
+								$label = $doc->getLabel();
+							}
+							$restValue->setProperties(array('label' => $label));
+							return $restValue;
+						}
 					}, $propertyValue);
 				}
 				elseif ($propertyValue !== null)
