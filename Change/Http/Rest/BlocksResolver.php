@@ -2,8 +2,10 @@
 namespace Change\Http\Rest;
 
 use Change\Http\Event;
+use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetBlockCollection;
 use Change\Http\Rest\Actions\GetBlockInformation;
+use Change\Presentation\PresentationServices;
 
 /**
  * @name \Change\Http\Rest\BlocksResolver
@@ -71,16 +73,16 @@ class BlocksResolver
 	{
 		if ($event->getPresentationServices() === null)
 		{
-			$event->setPresentationServices(new \Change\Presentation\PresentationServices($event->getApplicationServices()));
+			$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
 		}
-		if (count($resourceParts) < 2)
+		if (count($resourceParts) < 2 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'blocks');
 			$event->setParam('namespace', implode('.', $resourceParts));
 			$event->setParam('resolver', $this);
 			$action = function ($event)
 			{
-				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action = new DiscoverNameSpace();
 				$action->execute($event);
 			};
 			$event->setAction($action);

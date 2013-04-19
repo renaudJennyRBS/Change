@@ -7,6 +7,7 @@ use Change\Http\Rest\Actions\CreateDocument;
 use Change\Http\Rest\Actions\CreateLocalizedDocument;
 use Change\Http\Rest\Actions\DeleteDocument;
 use Change\Http\Rest\Actions\DeleteLocalizedDocument;
+use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetDocument;
 use Change\Http\Rest\Actions\GetDocumentModelCollection;
 use Change\Http\Rest\Actions\GetLocalizedDocument;
@@ -77,7 +78,7 @@ class ResourcesResolver
 			$event->setParam('resolver', $this);
 			$action = function ($event)
 			{
-				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action = new DiscoverNameSpace();
 				$action->execute($event);
 			};
 			$event->setAction($action);

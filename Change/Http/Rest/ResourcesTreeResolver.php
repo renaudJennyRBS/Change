@@ -3,6 +3,7 @@ namespace Change\Http\Rest;
 
 use Change\Http\Rest\Actions\CreateTreeNode;
 use Change\Http\Rest\Actions\DeleteTreeNode;
+use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetTreeNode;
 use Change\Http\Rest\Actions\GetTreeNodeCollection;
 use Change\Http\Rest\Actions\GetTreeNodeAncestors;
@@ -70,14 +71,14 @@ class ResourcesTreeResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if (count($resourceParts) < 2)
+		if (count($resourceParts) < 2 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'resourcestree');
 			$event->setParam('namespace', implode('.', $resourceParts));
 			$event->setParam('resolver', $this);
 			$action = function ($event)
 			{
-				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action = new DiscoverNameSpace();
 				$action->execute($event);
 			};
 			$event->setAction($action);
