@@ -1,68 +1,53 @@
 <?php
 namespace Change\Website\Blocks;
 
+use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
-use Change\Http\Web\Result\BlockResult;
+use Change\Presentation\Blocks\Parameters;
+use Change\Presentation\Blocks\Standard\Block;
 
 /**
  * TODO Sample
- * @package \Change\Website\Blocks\Menu
+ * @name \Change\Website\Blocks\Menu
  */
-class Menu
+class Menu extends Block
 {
 	/**
+	 * @api
+	 * Set Block Parameters on $event
+	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Optional Event method: getHttpRequest
 	 * @param Event $event
+	 * @return Parameters
 	 */
-	public function onConfiguration($event)
+	protected function parameterize($event)
 	{
-		$parameters = new \Change\Presentation\Blocks\Parameters('Change_Website_Menu');
-		$parameters->addParameterMeta('documentId', \Change\Documents\Property::TYPE_DOCUMENT);
-		$parameters->addParameterMeta('maxLevel', \Change\Documents\Property::TYPE_INTEGER, true, 1);
-		$parameters->setLayoutParameters($event->getBlockLayout());
+		$parameters = parent::parameterize($event);
+		$parameters->addInformationMeta('showTitle', Property::TYPE_BOOLEAN, true, false);
+		$parameters->addParameterMeta('documentId', Property::TYPE_DOCUMENT);
+		$parameters->addParameterMeta('maxLevel', Property::TYPE_INTEGER, true, 1);
 
+		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
 		if ($request)
 		{
 			//TODO Fill request parameters
 		}
-		$event->setBlockParameters($parameters);
+		return $parameters;
 	}
 
 	/**
+	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
+	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
+	 *        getPresentationServices(), getDocumentServices()
 	 * @param Event $event
+	 * @param \ArrayObject $attributes
+	 * @return string|null
 	 */
-	public function onExecute($event)
-	{
-		$blockLayout = $event->getBlockLayout();
-		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
-		$parameters = $event->getBlockParameters();
-		$attributes = array('parameters' => $event->getBlockParameters());
-
-
-		$templateName = $this->execute($parameters, $attributes, $header);
-
-		$result->addHeads($header);
-		$templatePath = $event->getPresentationServices()->getThemeManager()->getCurrent()->getBlocTemplatePath('Change_Website', $templateName);
-		$templateManager = $event->getPresentationServices()->getTemplateManager();
-		$callback = function () use ($templateManager, $templatePath, $attributes)
-		{
-			return $templateManager->renderTemplateFile($templatePath, $attributes);
-		};
-		$result->setHtmlCallback($callback);
-		$event->setBlockResult($result);
-	}
-
-	/**
-	 * @param \Change\Presentation\Blocks\Parameters $parameters
-	 * @param array $attributes
-	 * @param array $header
-	 * @return string
-	 */
-	protected function execute($parameters, &$attributes, &$header)
+	protected function execute($event, $attributes)
 	{
 		$attributes['test'] = 'plop plob plop';
-		$templateName = 'menu.twig';
-		$header[] = '<meta name="description" content="AMenu" />';
-		return $templateName;
+		$event->getBlockResult()->addNamedHeadAsString('description', '<meta name="description" content="AMenu" />');
+		return 'menu.twig';
 	}
 }

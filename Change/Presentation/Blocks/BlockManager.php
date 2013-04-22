@@ -14,7 +14,7 @@ class BlockManager
 {
 	const DEFAULT_IDENTIFIER = 'Http.Web.Block';
 
-	const EVENT_PARAMETERS = 'block.configuration';
+	const EVENT_PARAMETERIZE = 'block.parameterize';
 
 	const EVENT_EXECUTE = 'block.execute';
 
@@ -168,7 +168,7 @@ class BlockManager
 		$sharedEventManager = $this->registerBlocks();
 		$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER, $blockLayout->getName()));
 		$eventManager->setSharedManager($sharedEventManager);
-		$event = new Event(static::EVENT_PARAMETERS, $this);
+		$event = new Event(static::EVENT_PARAMETERIZE, $this);
 
 		if ($httpEvent instanceof \Change\Http\Event)
 		{

@@ -1,35 +1,44 @@
 <?php
 namespace Change\Website\Blocks;
 
+use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
-use Change\Http\Web\Result\BlockResult;
+use Change\Presentation\Blocks\Standard\Block;
 
 /**
  * TODO Sample
- * @package \Change\Website\Blocks\Richtext
+ * @name \Change\Website\Blocks\Richtext
  */
-class Richtext
+class Richtext extends Block
 {
 	/**
+	 * @api
+	 * Set Block Parameters on $event
+	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Optional Event method: getHttpRequest
 	 * @param Event $event
+	 * @return Parameters
 	 */
-	public function onConfiguration($event)
+	protected function parameterize($event)
 	{
-		$parameters = new \Change\Presentation\Blocks\Parameters('Change_Website_Richtext');
-		$parameters->addParameterMeta('content', \Change\Documents\Property::TYPE_LONGSTRING);
-		$parameters->addParameterMeta('contentType', \Change\Documents\Property::TYPE_STRING, true, 'bbcode');
+		$parameters = parent::parameterize($event);
+		$parameters->addParameterMeta('content', Property::TYPE_LONGSTRING);
+		$parameters->addParameterMeta('contentType', Property::TYPE_STRING, true, 'html');
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$event->setBlockParameters($parameters);
+		return $parameters;
 	}
 
 	/**
+	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
+	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
+	 *        getPresentationServices(), getDocumentServices()
 	 * @param Event $event
+	 * @param \ArrayObject $attributes
+	 * @return string|null
 	 */
-	public function onExecute($event)
+	protected function execute($event, $attributes)
 	{
-		$blockLayout = $event->getBlockLayout();
-		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
-		$result->setHtml($event->getBlockParameters()->getParameter('content'));
-		$event->setBlockResult($result);
+		$attributes['htmlContent'] = $event->getBlockParameters()->getParameter('content');
+		return 'richtext.twig';
 	}
 }

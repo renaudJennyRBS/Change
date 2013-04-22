@@ -62,8 +62,6 @@ class BlockResult
 		return $this->name;
 	}
 
-
-
 	/**
 	 * @param string $etag
 	 */
