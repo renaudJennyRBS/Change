@@ -23,7 +23,7 @@ class Menu extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addInformationMeta('showTitle', Property::TYPE_BOOLEAN, true, false);
+		$parameters->addParameterMeta('showTitle', Property::TYPE_BOOLEAN, true, false);
 		$parameters->addParameterMeta('documentId', Property::TYPE_DOCUMENT);
 		$parameters->addParameterMeta('maxLevel', Property::TYPE_INTEGER, true, 1);
 
