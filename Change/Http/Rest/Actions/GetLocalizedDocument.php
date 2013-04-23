@@ -166,17 +166,14 @@ class GetLocalizedDocument
 		}
 		$result->setI18n($i18n);
 		$currentUrl = $urlManager->getSelf()->normalize()->toString();
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		if (($href = $documentLink->href()) != $currentUrl)
 		{
-			$statusCode = HttpResponse::STATUS_CODE_301;
-			$result->setHttpStatusCode($statusCode);
-			$result->setHeaderLocation($href);
 			$result->setHeaderContentLocation($href);
 		}
 		else
 		{
 			/* @var $document \Change\Documents\AbstractDocument */
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			if (!$document->getDocumentModel()->isStateless())
 			{
 				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));

@@ -92,8 +92,6 @@ class GetTreeNode
 		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		if (($href = $treeNodeLink->href()) != $currentUrl)
 		{
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_301);
-			$result->setHeaderLocation($href);
 			$result->setHeaderContentLocation($href);
 		}
 		$event->setResult($result);

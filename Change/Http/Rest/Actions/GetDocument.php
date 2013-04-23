@@ -141,15 +141,13 @@ class GetDocument
 		$result->setProperties($properties);
 		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		$this->addActions($result, $document, $urlManager);
+		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		if (($href = $documentLink->href()) != $currentUrl)
 		{
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_301);
-			$result->setHeaderLocation($href);
 			$result->setHeaderContentLocation($href);
 		}
 		else
 		{
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			if (!$document->getDocumentModel()->isStateless())
 			{
 				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
