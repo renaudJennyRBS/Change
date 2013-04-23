@@ -23,7 +23,7 @@ interface Theme
 	 * @param string $fileName
 	 * @return string|null
 	 */
-	public function getBlocTemplatePath($moduleName, $fileName);
+	public function getBlockTemplatePath($moduleName, $fileName);
 
 	/**
 	 * @param string $name

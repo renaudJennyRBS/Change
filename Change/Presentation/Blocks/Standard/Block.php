@@ -108,7 +108,7 @@ class Block
 	protected function setTemplateRenderer($presentationServices, $result, $attributes, $templateModuleName, $templateName)
 	{
 		$templatePath = $presentationServices->getThemeManager()->getCurrent()
-			->getBlocTemplatePath($templateModuleName, $templateName);
+			->getBlockTemplatePath($templateModuleName, $templateName);
 		$templateManager = $presentationServices->getTemplateManager();
 		$callback = function () use ($templateManager, $templatePath, $attributes)
 		{
