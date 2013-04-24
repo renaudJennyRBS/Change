@@ -5,6 +5,7 @@ use Change\Http\ActionResolver;
 use Change\Http\Event;
 use Change\Http\Web\Actions\FindDisplayPage;
 use Change\Http\Web\Actions\GeneratePathRule;
+use Change\Http\Web\Actions\GetThemeResource;
 use Change\Http\Web\Actions\RedirectPathRule;
 use Change\Presentation\Interfaces\Website;
 use Zend\Http\Response as HttpResponse;
@@ -28,12 +29,37 @@ class Resolver extends ActionResolver
 			$websiteResolver->resolve($event);
 		}
 
-		$pathRule = $this->findRule($event);
+		$website = $event->getParam('website');
+		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
 			$this->populateEventByPathRule($event, $pathRule);
 		}
+		else
+		{
+			$relativePath = $this->getRelativePath($event->getRequest()->getPath(), $website ? $website->getRelativePath() : null);
+			if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
+			{
+				$themeName = $matches[1] . '_' . $matches[2];
+				$themeResourcePath = $matches[3];
+				$theme = $event->getPresentationServices()->getThemeManager()->getByName($themeName);
+				if (!$theme)
+				{
+					$theme =  $event->getPresentationServices()->getThemeManager()->getDefault();
+				}
+				$event->setParam('theme', $theme);
+				$event->setParam('themeResourcePath', $themeResourcePath);
+				$action = function($event) {
+					$action = new GetThemeResource();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+		}
 	}
+
+
 
 	/**
 	 * @param string $path
@@ -121,14 +147,13 @@ class Resolver extends ActionResolver
 
 	/**
 	 * @param Event $event
+	 * @param Website $website
 	 * @return PathRule|null
 	 */
-	protected function findRule($event)
+	protected function findRule($event, $website)
 	{
-		$website = $event->getParam('website');
 		if ($website instanceof Website)
 		{
-
 			$path = $event->getRequest()->getPath();
 			if ($this->isBasePath($path, $website->getRelativePath()))
 			{
@@ -158,6 +183,7 @@ class Resolver extends ActionResolver
 			{
 				return $pathRule;
 			}
+
 			if ($this->findDefaultRule($pathRule))
 			{
 				$this->validateDbRule($event->getApplicationServices()->getDbProvider(), $pathRule);
@@ -166,6 +192,8 @@ class Resolver extends ActionResolver
 		}
 		return null;
 	}
+
+
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider

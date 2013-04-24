@@ -192,10 +192,11 @@ class Page extends Result
 
 	/**
 	 * Used by template
-	 * @param $id
+	 * @param string $id
+	 * @param string|null $class
 	 * @return string
 	 */
-	public function htmlBlock($id)
+	public function htmlBlock($id, $class = null)
 	{
 		$br = isset($this->blockResults[$id]) ? $this->blockResults[$id] : null;
 		if ($br)
@@ -208,10 +209,20 @@ class Page extends Result
 			$innerHTML = null;
 			$name = "unknown";
 		}
+
 		if ($innerHTML)
 		{
-			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '">' . $innerHTML . '</div>';
+			if ($class)
+			{
+				$class = ' class="' . $class . '"';
+			}
+			else
+			{
+				$class = '';
+			}
+			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '"'. $class.'>' . $innerHTML . '</div>';
 		}
+
 		return '<div data-type="block" class="empty" data-id="' . $id . '" data-name="' . $name . '"></div>';
 	}
 

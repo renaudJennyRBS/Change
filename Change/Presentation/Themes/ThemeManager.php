@@ -3,6 +3,8 @@ namespace Change\Presentation\Themes;
 
 use Change\Presentation\Interfaces\Theme;
 use Change\Presentation\PresentationServices;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * @api
@@ -11,11 +13,19 @@ use Change\Presentation\PresentationServices;
 class ThemeManager
 {
 	const DEFAULT_THEME_NAME = 'Change_Default';
+	const EVENT_LOADING = 'loading';
+
+	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
 
 	/**
 	 * @var PresentationServices
 	 */
 	protected $presentationServices;
+
+	/**
+	 * @var EventManager
+	 */
+	protected $eventManager;
 
 	/**
 	 * @var Theme
@@ -28,9 +38,9 @@ class ThemeManager
 	protected $current;
 
 	/**
-	 * @var Theme
+	 * @var Theme[]
 	 */
-	protected $themes;
+	protected $themes = array();
 
 	/**
 	 * @param PresentationServices $presentationServices
@@ -46,6 +56,47 @@ class ThemeManager
 	public function getPresentationServices()
 	{
 		return $this->presentationServices;
+	}
+
+	/**
+	 * @return EventManager
+	 */
+	public function getEventManager()
+	{
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = new EventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
+			$this->eventManager->setSharedManager($this->getPresentationServices()->getApplicationServices()->getApplication()
+				->getSharedEventManager());
+		}
+		return $this->eventManager;
+	}
+
+	/**
+	 * @param string $themeName
+	 * @return Theme|null
+	 */
+	protected function dispatchLoading($themeName)
+	{
+		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName));
+		$callback = function ($result)
+		{
+			return ($result instanceof Theme);
+		};
+		$results = $this->getEventManager()->triggerUntil($event, $callback);
+		return ($results->stopped() && ($results->last() instanceof Theme)) ? $results->last() : $event->getParam('theme');
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onLoading(Event $event)
+	{
+		if ($event->getParam('themeName') === static::DEFAULT_THEME_NAME)
+		{
+			$event->setParam('theme', new DefaultTheme($this->getPresentationServices()));
+		}
 	}
 
 	/**
@@ -69,14 +120,18 @@ class ThemeManager
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return Theme
 	 */
 	public function getDefault()
 	{
 		if ($this->default === null)
 		{
-			$this->default = new DefaultTheme($this->presentationServices);
-			$this->addTheme($this->default);
+			$this->default = $this->getByName(static::DEFAULT_THEME_NAME);
+			if ($this->default === null)
+			{
+				throw new \RuntimeException('Theme ' . static::DEFAULT_THEME_NAME . ' not found', 999999);
+			}
 		}
 		return $this->default;
 	}
@@ -91,11 +146,19 @@ class ThemeManager
 		{
 			return $this->getCurrent();
 		}
-		elseif ($name === static::DEFAULT_THEME_NAME)
+		elseif (!array_key_exists($name, $this->themes))
 		{
-			return $this->getDefault();
+			$theme = $this->dispatchLoading($name);
+			if ($theme instanceof Theme)
+			{
+				$this->addTheme($theme);
+			}
+			else
+			{
+				$this->themes[$name] = null;
+			}
 		}
-		return isset($this->themes[$name]) ? $this->themes[$name] : null;
+		return $this->themes[$name];
 	}
 
 	/**
@@ -104,8 +167,8 @@ class ThemeManager
 	public function addTheme(Theme $theme)
 	{
 		$this->themes[$theme->getName()] = $theme;
-
-		$extTheme = $theme->extendTheme($this);
+		$theme->setThemeManager($this);
+		$extTheme = $theme->extendTheme();
 		if ($extTheme && !isset($this->themes[$extTheme->getName()]))
 		{
 			$this->addTheme($extTheme);
