@@ -2,17 +2,16 @@
 namespace Change\Http\Rest\Result;
 
 use Change\Http\UrlManager;
-use Change\Presentation\Blocks\Information;
 
 /**
- * @name \Change\Http\Rest\Result\BlockLink
+ * @name \Change\Http\Rest\Result\ModelLink
  */
-class BlockLink extends Link
+class ModelLink extends Link
 {
 	/**
-	 * @var Information
+	 * @var array<string => string>
 	 */
-	protected $information;
+	protected $modelInfos;
 
 	/**
 	 * @var boolean
@@ -21,12 +20,12 @@ class BlockLink extends Link
 
 	/**
 	 * @param UrlManager $urlManager
-	 * @param Information $information
+	 * @param array<string => string> $modelInfos
 	 * @param boolean $withResume
 	 */
-	public function __construct(UrlManager $urlManager, Information $information, $withResume = true)
+	public function __construct(UrlManager $urlManager, $modelInfos, $withResume = true)
 	{
-		$this->information = $information;
+		$this->modelInfos = $modelInfos;
 		$this->withResume = $withResume;
 		parent::__construct($urlManager, $this->buildPathInfo());
 	}
@@ -36,7 +35,7 @@ class BlockLink extends Link
 	 */
 	protected function buildPathInfo()
 	{
-		$path = array_merge(array('blocks'), explode('_', $this->information->getName()));
+		$path = array_merge(array('models'), explode('_', $this->modelInfos['name']));
 		return implode('/', $path);
 	}
 
@@ -48,9 +47,8 @@ class BlockLink extends Link
 		$result = parent::toArray();
 		if ($this->withResume)
 		{
-			$result = array('name' => $this->information->getName(),
-				'label' => $this->information->getLabel(),
-				'link' => $result);
+			$this->modelInfos['link'] = $result;
+			return $this->modelInfos;
 		}
 		return $result;
 	}

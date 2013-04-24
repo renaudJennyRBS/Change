@@ -145,7 +145,6 @@ class BlockManager
 					return $infos;
 				}
 			}
-
 		}
 		return null;
 	}

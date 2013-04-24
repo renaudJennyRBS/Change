@@ -43,7 +43,7 @@ class DefaultTheme implements Theme
 	 * @param string $fileName
 	 * @return string|null
 	 */
-	public function getBlocTemplatePath($moduleName, $fileName)
+	public function getBlockTemplatePath($moduleName, $fileName)
 	{
 		$appServices = $this->presentationServices->getApplicationServices();
 		list ($vendor, $shortModuleName) = explode('_', $moduleName);

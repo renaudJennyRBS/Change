@@ -23,7 +23,9 @@ class Information
 	 */
 	protected $parametersInformation = array();
 
-
+	/**
+	 * @param string $name
+	 */
 	function __construct($name)
 	{
 		$this->name = $name;
@@ -52,7 +54,6 @@ class Information
 	{
 		$this->label = $label;
 	}
-
 
 	/**
 	 * @param string $name

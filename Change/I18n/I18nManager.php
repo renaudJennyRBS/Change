@@ -1,6 +1,8 @@
 <?php
 namespace Change\I18n;
 
+use Zend\EventManager\EventManager;
+
 /**
  * @api
  * @name \Change\I18n\I18nManager
@@ -10,93 +12,97 @@ class I18nManager
 	const SYNCHRO_MODIFIED = 'MODIFIED';
 	const SYNCHRO_VALID = 'VALID';
 	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
-	
+	const EVENT_KEY_NOT_FOUND = 'key-not-found';
+	const EVENT_FORMATTING = 'formatting';
+	const EVENT_MANAGER_IDENTIFIER = 'I18n';
+
 	/**
 	 * @var array
 	 */
 	protected $langMap = null;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $ignoreTransform;
-	
-	/**
-	 * @var array
-	 */
-	protected $transformers;
-	
+
 	/**
 	 * @var string ex: "fr_FR"
 	 */
 	protected $uiLCID;
-	
+
 	/**
 	 * @var string[] ex: "fr_FR"
 	 */
 	protected $supportedLCIDs = array();
-	
+
 	/**
 	 * @var string
 	 */
 	protected $uiDateFormat;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $uiDateTimeFormat;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $uiTimeZone;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $i18nDocumentsSynchro = null;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $i18nSynchro = null;
-	
+
 	/**
 	 * @var \Change\Configuration\Configuration
 	 */
 	protected $configuration;
-	
+
 	/**
 	 * @var \Change\Workspace
 	 */
 	protected $workspace;
-	
+
+	/**
+	 * @var \Change\Events\SharedEventManager
+	 */
+	protected $sharedEventManager;
+
 	/**
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging;
-	
+
+	/**
+	 * @var EventManager
+	 */
+	protected $eventManager;
+
 	/**
 	 * @var array<string, string>
 	 */
 	protected $packageList;
-	
+
 	/**
 	 * @var \Change\I18n\DefinitionCollection[]
 	 */
 	protected $definitionCollections = array();
-	
+
 	/**
 	 */
 	public function __construct()
 	{
 		$this->ignoreTransform = array(DefinitionKey::TEXT => 'raw', DefinitionKey::HTML => 'html');
-		
-		$this->transformers = array('lab' => 'transformLab', 'uc' => 'transformUc', 'ucf' => 'transformUcf', 
-			'lc' => 'transformLc', 'js' => 'transformJs', 'html' => 'transformHtml', 'text' => 'transformText', 
-			'attr' => 'transformAttr', 'space' => 'transformSpace', 'etc' => 'transformEtc', 'ucw' => 'transformUcw');
 	}
-	
+
 	/**
 	 * @param \Change\Configuration\Configuration $configuration
 	 */
@@ -105,7 +111,7 @@ class I18nManager
 		$this->configuration = $configuration;
 		$this->supportedLCIDs = $this->configuration->getEntry('Change/I18n/supported-lcids', array('fr_FR'));
 	}
-	
+
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
@@ -113,7 +119,7 @@ class I18nManager
 	{
 		return $this->configuration;
 	}
-	
+
 	/**
 	 * @param \Change\Workspace $workspace
 	 */
@@ -121,7 +127,7 @@ class I18nManager
 	{
 		$this->workspace = $workspace;
 	}
-	
+
 	/**
 	 * @return \Change\Workspace
 	 */
@@ -129,7 +135,23 @@ class I18nManager
 	{
 		return $this->workspace;
 	}
-	
+
+	/**
+	 * @param \Change\Events\SharedEventManager $sharedEventManager
+	 */
+	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
+	{
+		$this->sharedEventManager = $sharedEventManager;
+	}
+
+	/**
+	 * @return \Change\Events\SharedEventManager
+	 */
+	public function getSharedEventManager()
+	{
+		return $this->sharedEventManager;
+	}
+
 	/**
 	 * @param \Change\Logging\Logging $logging
 	 */
@@ -137,7 +159,7 @@ class I18nManager
 	{
 		$this->logging = $logging;
 	}
-	
+
 	/**
 	 * @return \Change\Logging\Logging
 	 */
@@ -145,7 +167,7 @@ class I18nManager
 	{
 		return $this->logging;
 	}
-	
+
 	/**
 	 * Get all supported LCIDs.
 	 * @api
@@ -165,7 +187,7 @@ class I18nManager
 	{
 		return ($LCID && in_array($LCID, $this->getSupportedLCIDs()));
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -174,7 +196,7 @@ class I18nManager
 	{
 		return count($this->supportedLCIDs) > 1;
 	}
-	
+
 	/**
 	 * Get the default LCID.
 	 * @api
@@ -184,7 +206,7 @@ class I18nManager
 	{
 		return $this->supportedLCIDs[0];
 	}
-	
+
 	/**
 	 * Get the UI LCID.
 	 * @api
@@ -198,7 +220,7 @@ class I18nManager
 		}
 		return $this->uiLCID;
 	}
-	
+
 	/**
 	 * Set the UI LCID.
 	 * @api
@@ -213,7 +235,7 @@ class I18nManager
 		}
 		$this->uiLCID = $LCID;
 	}
-	
+
 	/**
 	 * Loads the i18n synchro configuration.
 	 */
@@ -222,11 +244,12 @@ class I18nManager
 		$data = $this->getConfiguration()->getEntry('Change/I18n/synchro/keys', null);
 		$this->i18nSynchro = $this->cleanI18nSynchroConfiguration($data);
 	}
-	
+
 	/**
 	 * Clean i18n synchro configuration.
 	 * @see loadI18nSynchroConfiguration()
 	 * @param array $data
+	 * @return array|bool
 	 */
 	protected function cleanI18nSynchroConfiguration($data)
 	{
@@ -245,7 +268,7 @@ class I18nManager
 					}
 				}
 			}
-			
+
 			if (count($result))
 			{
 				return $result;
@@ -253,7 +276,7 @@ class I18nManager
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -265,7 +288,7 @@ class I18nManager
 		}
 		return $this->i18nSynchro !== false;
 	}
-	
+
 	/**
 	 * @return array string : string[]
 	 */
@@ -273,10 +296,11 @@ class I18nManager
 	{
 		return $this->hasI18nSynchro() ? $this->i18nSynchro : array();
 	}
-	
+
 	/**
 	 * Converts a LCID to a two characters lang code.
 	 * @param string $LCID
+	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
 	public function getLangByLCID($LCID)
@@ -285,7 +309,7 @@ class I18nManager
 		{
 			$this->langMap = $this->getConfiguration()->getEntry('Change/I18n/langs', array());
 		}
-		
+
 		if (!isset($this->langMap[$LCID]))
 		{
 			if (strlen($LCID) === 5)
@@ -299,9 +323,9 @@ class I18nManager
 		}
 		return $this->langMap[$LCID];
 	}
-	
+
 	/**
-	 * For example: trans('f.boolean.true')
+	 * For example: trans('c.boolean.true')
 	 * @api
 	 * @param string | \Change\I18n\PreparedKey $cleanKey
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, html, attr
@@ -310,18 +334,19 @@ class I18nManager
 	 */
 	public function trans($cleanKey, $formatters = array(), $replacements = array())
 	{
-		return $this->formatKey($this->getLCID(), $cleanKey, $formatters, $replacements);
+		return $this->transForLCID($this->getLCID(), $cleanKey, $formatters, $replacements);
 	}
-	
+
 	/**
-	 * For example: formatKey('fr_FR', 'f.boolean.true')
+	 * For example: transForLCID('fr_FR', 'c.boolean.true')
 	 * @api
 	 * @param string $LCID
 	 * @param string | \Change\I18n\PreparedKey $cleanKey
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
 	 * @param array $replacements
+	 * @return string
 	 */
-	public function formatKey($LCID, $cleanKey, $formatters = array(), $replacements = array())
+	public function transForLCID($LCID, $cleanKey, $formatters = array(), $replacements = array())
 	{
 		if ($cleanKey instanceof \Change\I18n\PreparedKey)
 		{
@@ -333,7 +358,7 @@ class I18nManager
 		{
 			$preparedKey = new \Change\I18n\PreparedKey($cleanKey, $formatters, $replacements);
 		}
-		
+
 		$textKey = $preparedKey->getKey();
 		if ($preparedKey->isValid())
 		{
@@ -343,9 +368,10 @@ class I18nManager
 			{
 				$content = strval($definitionKey->getText());
 				$format = $definitionKey->getFormat();
-				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(), $preparedKey->getReplacements());
+				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(),
+					$preparedKey->getReplacements());
 			}
-			$this->logKeyNotFound($textKey, $LCID);
+			return $this->dispatchKeyNotFound($preparedKey, $LCID);
 		}
 		return $textKey;
 	}
@@ -363,7 +389,7 @@ class I18nManager
 		{
 			return $key;
 		}
-		
+
 		if ($this->hasI18nSynchro())
 		{
 			$synchro = $this->getI18nSynchro();
@@ -381,7 +407,7 @@ class I18nManager
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param string $LCID
 	 * @param string[] $pathParts
@@ -395,7 +421,7 @@ class I18nManager
 		{
 			return null;
 		}
-		
+
 		$definitionCollection->load();
 		if ($definitionCollection->hasDefinitionKey($id))
 		{
@@ -415,11 +441,11 @@ class I18nManager
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param string $LCID
 	 * @param string[] $pathParts
-	 * @return \Change\I18n\DefinitionCollection | null 
+	 * @return \Change\I18n\DefinitionCollection | null
 	 */
 	public function getDefinitionCollection($LCID, $pathParts)
 	{
@@ -432,7 +458,7 @@ class I18nManager
 		{
 			return null;
 		}
-		
+
 		$code = implode('.', $pathParts) . '-' . $LCID;
 		if (!array_key_exists($collectionPath, $this->definitionCollections))
 		{
@@ -440,7 +466,7 @@ class I18nManager
 		}
 		return $this->definitionCollections[$code];
 	}
-	
+
 	/**
 	 * @param string[]
 	 * @return string
@@ -451,15 +477,16 @@ class I18nManager
 		{
 			$workspace = $this->getWorkspace();
 			$this->packageList = array();
-			
+
 			// Core.
 			$this->packageList['c'] = $this->workspace->changePath('I18n', 'Assets');
-			
+
 			// Modules.
 			if (is_dir($workspace->pluginsModulesPath()))
 			{
 				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'I18n', 'Assets'));
-				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $path)
+				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
+						 $path)
 				{
 					$parts = explode(DIRECTORY_SEPARATOR, $path);
 					$count = count($parts);
@@ -469,30 +496,32 @@ class I18nManager
 			if (is_dir($workspace->projectModulesPath()))
 			{
 				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'I18n', 'Assets'));
-				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $path)
+				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
+						 $path)
 				{
 					$parts = explode(DIRECTORY_SEPARATOR, $path);
 					$count = count($parts);
 					$this->packageList[strtolower('m.project.' . $parts[$count - 3])] = $path;
 				}
 			}
-				
 			// Themes.
 			// TODO
 		}
-		
+
 		$collectionPath = null;
 		switch ($pathParts[0])
 		{
 			case 'c':
-				$collectionPath = $this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 1));
+				$collectionPath =
+					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 1));
 				break;
 			case 'm':
 			case 't':
 				if (isset($this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]]))
 				{
 					$packagePath = $this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]];
-					$collectionPath = $packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 3));
+					$collectionPath =
+						$packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 3));
 				}
 				break;
 			case 'default':
@@ -500,7 +529,7 @@ class I18nManager
 		}
 		return $collectionPath;
 	}
-	
+
 	/**
 	 * For example: formatText('fr_FR', 'My text.')
 	 * @api
@@ -509,6 +538,7 @@ class I18nManager
 	 * @param string $format 'TEXT' or 'HTML'
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
 	 * @param array $replacements
+	 * @return string
 	 */
 	public function formatText($LCID, $text, $format = DefinitionKey::TEXT, $formatters = array(), $replacements = array())
 	{
@@ -523,24 +553,10 @@ class I18nManager
 			}
 			$text = str_replace($search, $replace, $text);
 		}
-		
+
 		if (count($formatters))
 		{
-			foreach ($formatters as $formatter)
-			{
-				if ($formatter === 'raw' || $formatter === $this->ignoreTransform[$format])
-				{
-					continue;
-				}
-				if (isset($this->transformers[$formatter]))
-				{
-					$text = call_user_func(array($this, $this->transformers[$formatter]), $text, $LCID);
-				}
-				else
-				{
-					$this->logging->warn(__METHOD__ . ' Invalid formatter ' . $formatter);
-				}
-			}
+			$text = $this->dispatchFormatting($text, $format, $formatters, $LCID);
 		}
 		return $text;
 	}
@@ -582,18 +598,99 @@ class I18nManager
 		return new \Change\I18n\PreparedKey(trim($parts[0]), $formatters, $replacements);
 	}
 
+	// Events.
+
 	/**
-	 * @param string $key
-	 * @param string $lcid
+	 * @return \Zend\EventManager\EventManager
 	 */
-	protected function logKeyNotFound($key, $lcid)
+	public function getEventManager()
 	{
-		$stringLine = $lcid . '/' . $key;
-		$this->logging->namedLog($stringLine, 'keynotfound');
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyNotFound'), 5);
+			$this->eventManager->attach(static::EVENT_FORMATTING, array($this, 'onFormatting'), 5);
+			$this->eventManager->setSharedManager($this->getSharedEventManager());
+		}
+		return $this->eventManager;
 	}
-	
+
+	/**
+	 * @param \Change\I18n\PreparedKey $preparedKey
+	 * @param string $LCID
+	 * @return string
+	 */
+	protected function dispatchKeyNotFound($preparedKey, $LCID)
+	{
+		$args = array('preparedKey' => $preparedKey, 'LCID' => $LCID);
+		$event = new \Zend\EventManager\Event(static::EVENT_KEY_NOT_FOUND, $this, $args);
+		$callback = function ($result)
+		{
+			return is_string($result);
+		};
+		$results = $this->getEventManager()->triggerUntil($event, $callback);
+		return ($results->stopped() && is_string($results->last())) ? $results->last() : $event->getParam('text');
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onKeyNotFound($event)
+	{
+		$key = $event->getParam('preparedKey')->getKey();
+		$stringLine = $event->getParam('LCID') . '/' . $key;
+		$event->getTarget()->getLogging()->namedLog($stringLine, 'keynotfound');
+		$event->setParam('text', $key);
+	}
+
+	/**
+	 * @param string $text
+	 * @param string $textFormat
+	 * @param string[] $formatters
+	 * @param string $LCID
+	 * @return string
+	 */
+	protected function dispatchFormatting($text, $textFormat, $formatters, $LCID)
+	{
+		$args = array('text' => $text, 'textFormat' => $textFormat, 'formatters' => $formatters, 'LCID' => $LCID);
+		$event = new \Zend\EventManager\Event(static::EVENT_FORMATTING, $this, $args);
+		$callback = function ($result)
+		{
+			return is_string($result);
+		};
+		$results = $this->getEventManager()->triggerUntil($event, $callback);
+		return ($results->stopped() && is_string($results->last())) ? $results->last() : $event->getParam('text');
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onFormatting($event)
+	{
+		$text = $event->getParam('text');
+		$format = $event->getParam('textFormat');
+		$LCID = $event->getParam('LCID');
+		foreach ($event->getParam('formatters') as $formatter)
+		{
+			if ($formatter === 'raw' || $formatter === $this->ignoreTransform[$format])
+			{
+				continue;
+			}
+			$callable = array($this, 'transform' . ucfirst($formatter));
+			if (is_callable($callable))
+			{
+				$text = call_user_func($callable, $text, $LCID);
+			}
+			else
+			{
+				$this->logging->info(__METHOD__ . ' Unknown formatter ' . $formatter);
+			}
+		}
+		$event->setParam('text', $text);
+	}
+
 	// Dates.
-	
+
 	/**
 	 * @api
 	 * @param string $LCID
@@ -605,9 +702,9 @@ class I18nManager
 		{
 			return $this->uiDateFormat;
 		}
-		return $this->formatKey($LCID, 'c.date.default-date-format');
+		return $this->transForLCID($LCID, 'c.date.default-date-format');
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $dateFormat
@@ -616,7 +713,7 @@ class I18nManager
 	{
 		$this->uiDateFormat = $dateFormat;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $LCID
@@ -628,18 +725,18 @@ class I18nManager
 		{
 			return $this->uiDateTimeFormat;
 		}
-		return $this->formatKey($LCID, 'c.date.default-datetime-format');
+		return $this->transForLCID($LCID, 'c.date.default-datetime-format');
 	}
-	
+
 	/**
 	 * @api
-	 * @param string $uiDateTimeFormat
+	 * @param string $dateTimeFormat
 	 */
 	public function setDateTimeFormat($dateTimeFormat)
 	{
 		$this->uiDateTimeFormat = $dateTimeFormat;
 	}
-	
+
 	/**
 	 * @api
 	 * @return \DateTimeZone
@@ -652,7 +749,7 @@ class I18nManager
 		}
 		return new \DateTimeZone($this->getConfiguration()->getEntry('Change/I18n/default-timezone'));
 	}
-	
+
 	/**
 	 * @api
 	 * @param \DateTimeZone|string $timeZone
@@ -665,7 +762,7 @@ class I18nManager
 		}
 		$this->uiTimeZone = $timeZone;
 	}
-	
+
 	/**
 	 * @api
 	 * @param \DateTime $gmtDate
@@ -676,10 +773,10 @@ class I18nManager
 		$LCID = $this->getLCID();
 		return $this->formatDate($LCID, $gmtDate, $this->getDateFormat($LCID));
 	}
-	
+
 	/**
 	 * @api
-	 * @param \DateTime $date
+	 * @param \DateTime $gmtDate
 	 * @return string
 	 */
 	public function transDateTime(\DateTime $gmtDate)
@@ -687,14 +784,15 @@ class I18nManager
 		$LCID = $this->getLCID();
 		return $this->formatDate($LCID, $gmtDate, $this->getDateTimeFormat($LCID));
 	}
-	
+
 	/**
-	 * Format a date. The format parameter 
+	 * Format a date. The format parameter
 	 * @api
 	 * @param string $LCID
-	 * @param \DateTime $date
+	 * @param \DateTime $gmtDate
 	 * @param string $format
 	 * @param \DateTimeZone $timeZone
+	 * @return string
 	 */
 	public function formatDate($LCID, \DateTime $gmtDate, $format, $timeZone = null)
 	{
@@ -705,47 +803,49 @@ class I18nManager
 		$datefmt = new \IntlDateFormatter($LCID, null, null, $timeZone->getName(), \IntlDateFormatter::GREGORIAN, $format);
 		return $datefmt->format($this->toLocalDateTime($gmtDate));
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $date
+	 * @return \DateTime
 	 */
 	public function getGMTDateTime($date)
 	{
 		return new \DateTime($date, new \DateTimeZone('UTC'));
 	}
-	
+
 	/**
 	 * @api
 	 * @param \DateTime $localDate
-	 * @param string $timeZone
+	 * @return \DateTime
 	 */
 	public function toGMTDateTime($localDate)
 	{
 		return $localDate->setTimezone(new \DateTimeZone('UTC'));
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $date
+	 * @return \DateTime
 	 */
 	public function getLocalDateTime($date)
 	{
 		return new \DateTime($date, $this->getTimeZone());
 	}
-	
+
 	/**
 	 * @api
 	 * @param \DateTime $localDate
-	 * @param string $timeZone
+	 * @return \DateTime
 	 */
 	public function toLocalDateTime($localDate)
 	{
 		return $localDate->setTimezone($this->getTimeZone());
 	}
-	
+
 	// Transformers.
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -755,7 +855,7 @@ class I18nManager
 	{
 		return $text . (substr($LCID, 0, 2) === 'fr' ? ' :' : ':');
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -765,7 +865,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toUpper($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -775,7 +875,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::ucfirst($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -785,7 +885,7 @@ class I18nManager
 	{
 		return mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -795,7 +895,7 @@ class I18nManager
 	{
 		return \Change\Stdlib\String::toLower($text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -805,7 +905,7 @@ class I18nManager
 	{
 		return str_replace(array("\\", "\t", "\n", "\"", "'"), array("\\\\", "\\t", "\\n", "\\\"", "\\'"), $text);
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -815,7 +915,7 @@ class I18nManager
 	{
 		return nl2br(htmlspecialchars($text, ENT_COMPAT, 'UTF-8'));
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -826,17 +926,19 @@ class I18nManager
 		if ($text === null)
 		{
 			return '';
-		}		
-		$text = str_replace(array('</div>', '</p>', '</li>', '</h1>', '</h2>', '</h3>', '</h4>', '</h5>', '</h6>', '</tr>'), PHP_EOL, $text);
+		}
+		$text = str_replace(array('</div>', '</p>', '</li>', '</h1>', '</h2>', '</h3>', '</h4>', '</h5>', '</h6>', '</tr>'),
+			PHP_EOL, $text);
 		$text = str_replace(array('</td>', '</th>'), "\t", $text);
 		$text = preg_replace('/<li[^>]*>/', ' * ', $text);
 		$text = preg_replace('/<br[^>]*>/', PHP_EOL, $text);
-		$text = preg_replace('/<hr[^>]*>/', "------".PHP_EOL, $text);
-		$text = preg_replace(array('/<a[^>]+href="([^"]+)"[^>]*>([^<]+)<\/a>/i', '/<img[^>]+alt="([^"]+)"[^>]*\/>/i'), array('$2 [$1]', PHP_EOL."[$1]".PHP_EOL), $text);
+		$text = preg_replace('/<hr[^>]*>/', "------" . PHP_EOL, $text);
+		$text = preg_replace(array('/<a[^>]+href="([^"]+)"[^>]*>([^<]+)<\/a>/i', '/<img' . '[^>]+alt="([^"]+)"[^>]*\/>/i'),
+			array('$2 [$1]', PHP_EOL . "[$1]" . PHP_EOL), $text);
 		$text = trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
 		return $text;
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -846,7 +948,7 @@ class I18nManager
 	{
 		return htmlspecialchars(str_replace(array("\t", "\n"), array("&#09;", "&#10;"), $text), ENT_COMPAT, 'UTF-8');
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID
@@ -856,7 +958,7 @@ class I18nManager
 	{
 		return ' ' . $text . ' ';
 	}
-	
+
 	/**
 	 * @param string $text
 	 * @param string $LCID

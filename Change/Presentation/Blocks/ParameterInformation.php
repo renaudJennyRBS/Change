@@ -36,6 +36,16 @@ class ParameterInformation
 	}
 
 	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		$this->attributes['label'] = $label;
+		return $this;
+	}
+
+	/**
 	 * @param mixed|null $defaultValue
 	 * @return $this
 	 */

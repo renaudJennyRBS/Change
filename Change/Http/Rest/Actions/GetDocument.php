@@ -7,6 +7,7 @@ use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\Result\ModelLink;
 use Change\Logging\Logging;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
@@ -116,6 +117,10 @@ class GetDocument
 		$result = new DocumentResult();
 		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
+
+		$modelLink = new ModelLink($urlManager, array('name' => $document->getDocumentModelName()), false);
+		$modelLink->setRel('model');
+		$result->addLink($modelLink);
 
 		if ($document->getTreeName())
 		{
