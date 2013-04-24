@@ -30,12 +30,20 @@ class DefaultTheme implements Theme
 	}
 
 	/**
-	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @param ThemeManager $themeManager
 	 * @return null
 	 */
-	public function extendTheme(\Change\Presentation\Themes\ThemeManager $themeManager)
+	public function extendTheme(ThemeManager $themeManager)
 	{
 		return null;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace();
 	}
 
 	/**
@@ -45,9 +53,8 @@ class DefaultTheme implements Theme
 	 */
 	public function getBlockTemplatePath($moduleName, $fileName)
 	{
-		$appServices = $this->presentationServices->getApplicationServices();
 		list ($vendor, $shortModuleName) = explode('_', $moduleName);
-		$path = $appServices->getApplication()->getWorkspace()->pluginsThemesPath('Change', 'Default', $vendor, $shortModuleName, 'Blocks', $fileName);
+		$path = $this->getWorkspace()->pluginsThemesPath('Change', 'Default', $vendor, $shortModuleName, 'Blocks', $fileName);
 		return (file_exists($path)) ? $path : null;
 	}
 
@@ -62,5 +69,18 @@ class DefaultTheme implements Theme
 			$this->defaultPageTemplate = new DefaultPageTemplate($this);
 		}
 		return $this->defaultPageTemplate;
+	}
+
+	/**
+	 * @param string $resourcePath
+	 * @return \Change\Presentation\Interfaces\ThemeResource|null
+	 */
+	public function getResource($resourcePath)
+	{
+		$path = $this->getWorkspace()->pluginsThemesPath('Change', 'Default', 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		if (file_exists($path))
+		{
+			return new FileResource($path);
+		}
 	}
 }

@@ -1,9 +1,10 @@
 <?php
 namespace Change\Presentation\Themes;
 
+use Change\Presentation\Interfaces\PageTemplate;
 use Change\Presentation\Layout\Layout;
 
-class DefaultPageTemplate implements \Change\Presentation\Interfaces\PageTemplate
+class DefaultPageTemplate implements PageTemplate
 {
 	/**
 	 * @var \Change\Presentation\Interfaces\Theme
@@ -37,9 +38,12 @@ class DefaultPageTemplate implements \Change\Presentation\Interfaces\PageTemplat
 	{% for headLine in pageResult.head %}
 	{{ headLine|raw }}
 	{% endfor %}
+	<link rel="icon" type="image/png" href="Theme/Change/Default/img/favicon.png" />
+	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap-responsive.min.css" />
 </head>
 <body>
-<!-- zoneEditable1 -->
+<!-- blockEditable1 -->
 </body>
 </html>';
 	}
@@ -50,12 +54,14 @@ class DefaultPageTemplate implements \Change\Presentation\Interfaces\PageTemplat
 	public function getContentLayout()
 	{
 		$config = json_decode('{
-	"zoneEditable1" : {
-        "id"   : "zoneEditable1",
-        "grid" : 12,
-        "gridMode" : "fluid",
-        "type" : "container",
-        "parameters" : {}
+	"blockEditable1" : {
+        "id"   : "blockEditable1",
+        "type":"block",
+        "visibility":"TP",
+        "name":"Change_Website_Richtext",
+        "parameters" : {
+			"content":"Oups!"
+        }
     }
 }', true);
 		return new Layout($config);

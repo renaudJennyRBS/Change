@@ -68,17 +68,42 @@ class Controller extends \Change\Http\Controller
 			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
-
-			$callable = array($result, 'toHtml');
-			if (is_callable($callable))
+			if ($result instanceof \Change\Http\Web\Result\Resource)
 			{
-				$response->setContent(call_user_func($callable));
+				$response->setContent($result->getContent());
 			}
 			else
 			{
-				$response->setContent(strval($result));
+				$callable = array($result, 'toHtml');
+				if (is_callable($callable))
+				{
+					$response->setContent(call_user_func($callable));
+				}
+				else
+				{
+					$response->setContent(strval($result));
+				}
 			}
 			$event->setResponse($response);
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 * @return Result
+	 */
+	public function notFound($event)
+	{
+		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager());
+		$event->setParam('page', $page);
+		$composer = new \Change\Http\Web\Events\ComposePage();
+		$composer->execute($event);
+		$result = $event->getResult();
+		if ($result !== null)
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
+			return $result;
+		}
+		return parent::notFound($event);
 	}
 }

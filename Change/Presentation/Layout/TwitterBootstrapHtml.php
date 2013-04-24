@@ -42,6 +42,33 @@ class TwitterBootstrapHtml
 	}
 
 	/**
+	 * @param Block $item
+	 * @return null
+	 */
+	public function getBlockClass(\Change\Presentation\Layout\Block $item)
+	{
+		if ($item->getVisibility())
+		{
+			$classes = array();
+			$vi = $item->getVisibility();
+			for($i = 0; $i < strlen($vi); $i++)
+			{
+				switch ($vi[$i])
+				{
+					case 'D' : $classes[] = 'visible-desktop'; break;
+					case 'P' : $classes[] = 'visible-phone'; break;
+					case 'T' : $classes[] = 'visible-tablet'; break;
+				}
+			}
+			if (count($classes))
+			{
+				return implode(' ', $classes);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @param \Change\Presentation\Layout\Layout $templateLayout
 	 * @param \Change\Presentation\Layout\Layout $pageLayout
 	 * @param Callable $callableBlockHtml
@@ -116,4 +143,5 @@ class TwitterBootstrapHtml
 		}
 		return (!empty($innerHTML)) ? $innerHTML : null;
 	}
+
 }

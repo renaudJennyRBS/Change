@@ -30,4 +30,11 @@ interface Theme
 	 * @return \Change\Presentation\Interfaces\PageTemplate|null
 	 */
 	public function getPageTemplate($name);
+
+
+	/**
+	 * @param string $resourcePath
+	 * @return \Change\Presentation\Interfaces\ThemeResource|null
+	 */
+	public function getResource($resourcePath);
 }
