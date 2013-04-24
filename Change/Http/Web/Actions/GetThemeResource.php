@@ -23,7 +23,6 @@ class GetThemeResource
 			$themeResourcePath = $event->getParam('themeResourcePath');
 			if (is_string($themeResourcePath))
 			{
-				$event->getApplicationServices()->getLogging()->fatal(__METHOD__ . $themeResourcePath);
 				$resource = $theme->getResource($themeResourcePath);
 				if ($resource)
 				{

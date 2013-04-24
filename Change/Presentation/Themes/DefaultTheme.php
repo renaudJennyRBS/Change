@@ -31,9 +31,16 @@ class DefaultTheme implements Theme
 
 	/**
 	 * @param ThemeManager $themeManager
+	 */
+	public function setThemeManager(ThemeManager $themeManager)
+	{
+		$this->presentationServices = $themeManager->getPresentationServices();
+	}
+
+	/**
 	 * @return null
 	 */
-	public function extendTheme(ThemeManager $themeManager)
+	public function extendTheme()
 	{
 		return null;
 	}

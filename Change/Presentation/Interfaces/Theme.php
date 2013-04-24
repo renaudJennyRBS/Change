@@ -8,15 +8,19 @@ namespace Change\Presentation\Interfaces;
 interface Theme
 {
 	/**
-	 * @return string
-	 */
+ * @return string
+ */
 	public function getName();
 
 	/**
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 */
+	public function setThemeManager(\Change\Presentation\Themes\ThemeManager $themeManager);
+
+	/**
 	 * @return \Change\Presentation\Interfaces\Theme|null
 	 */
-	public function extendTheme(\Change\Presentation\Themes\ThemeManager $themeManager);
+	public function extendTheme();
 
 	/**
 	 * @param string $moduleName

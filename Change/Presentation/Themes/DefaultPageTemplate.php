@@ -35,9 +35,9 @@ class DefaultPageTemplate implements PageTemplate
 		return '<!DOCTYPE html>
 <html>
 <head>
-	{% for headLine in pageResult.head %}
+{% for headLine in pageResult.head %}
 	{{ headLine|raw }}
-	{% endfor %}
+{% endfor %}
 	<link rel="icon" type="image/png" href="Theme/Change/Default/img/favicon.png" />
 	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap-responsive.min.css" />
@@ -57,7 +57,6 @@ class DefaultPageTemplate implements PageTemplate
 	"blockEditable1" : {
         "id"   : "blockEditable1",
         "type":"block",
-        "visibility":"TP",
         "name":"Change_Website_Richtext",
         "parameters" : {
 			"content":"Oups!"
