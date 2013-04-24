@@ -22,6 +22,10 @@ class Links extends \ArrayObject
 		}
 	}
 
+	/**
+	 * @param mixed $index
+	 * @return array|false|mixed
+	 */
 	public function offsetGet($index)
 	{
 		if (is_string($index))
@@ -141,7 +145,6 @@ class Links extends \ArrayObject
 				$array[] = $link;
 			}
 		}
-
 		return $array;
 	}
 }

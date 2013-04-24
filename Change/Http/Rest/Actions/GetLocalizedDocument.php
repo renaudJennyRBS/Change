@@ -12,13 +12,13 @@ use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
+use Change\Http\Rest\Result\ModelLink;
 
 /**
  * @name \Change\Http\Rest\Actions\GetLocalizedDocument
  */
 class GetLocalizedDocument
 {
-
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
@@ -130,6 +130,11 @@ class GetLocalizedDocument
 		$result = new DocumentResult();
 		$documentLink = new DocumentLink($urlManager, $document);
 		$result->addLink($documentLink);
+
+		$modelLink = new ModelLink($urlManager, array('name' => $document->getDocumentModelName()), false);
+		$modelLink->setRel('model');
+		$result->addLink($modelLink);
+
 		if ($document->getTreeName())
 		{
 			$tn = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);

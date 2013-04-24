@@ -3,14 +3,13 @@ namespace Change\Http\Rest;
 
 use Change\Http\Event;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
-use Change\Http\Rest\Actions\GetBlockCollection;
-use Change\Http\Rest\Actions\GetBlockInformation;
-use Change\Presentation\PresentationServices;
+use Change\Http\Rest\Actions\GetModelCollection;
+use Change\Http\Rest\Actions\GetModelInformation;
 
 /**
- * @name \Change\Http\Rest\BlocksResolver
+ * @name \Change\Http\Rest\ModelsResolver
  */
-class BlocksResolver
+class ModelsResolver
 {
 	/**
 	 * @param \Change\Http\Rest\Resolver $resolver
@@ -32,32 +31,19 @@ class BlocksResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		$bm = $event->getPresentationServices()->getBlockManager();
 		if (!isset($namespaceParts[1]))
 		{
-			$vendors = array();
-			$names = $bm->getBlockNames();
-			foreach($names as $name)
-			{
-				$a = explode('_', $name);
-				$vendors[$a[0]] = true;
-			}
-			return array_keys($vendors);
+			return $event->getDocumentServices()->getModelManager()->getVendors();
 		}
 		elseif (!isset($namespaceParts[2]))
 		{
 			$vendor = $namespaceParts[1];
-			$shortModulesNames = array();
-			$names = $bm->getBlockNames();
-			foreach($names as $name)
-			{
-				$a = explode('_', $name);
-				if ($a[0] === $vendor)
-				{
-					$shortModulesNames[$a[1]] = true;
-				}
-			}
-			return array_keys($shortModulesNames);
+			return $event->getDocumentServices()->getModelManager()->getShortModulesNames($vendor);
+		}
+		elseif (!isset($namespaceParts[3]))
+		{
+			return $event->getDocumentServices()->getModelManager()
+				->getShortDocumentsNames($namespaceParts[1], $namespaceParts[2]);
 		}
 		return array();
 	}
@@ -71,13 +57,9 @@ class BlocksResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if ($event->getPresentationServices() === null)
-		{
-			$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
-		}
 		if (count($resourceParts) < 2 && $method === Request::METHOD_GET)
 		{
-			array_unshift($resourceParts, 'blocks');
+			array_unshift($resourceParts, 'models');
 			$event->setParam('namespace', implode('.', $resourceParts));
 			$event->setParam('resolver', $this);
 			$action = function ($event)
@@ -94,7 +76,7 @@ class BlocksResolver
 			$event->setParam('shortModuleName', $resourceParts[1]);
 			$action = function ($event)
 			{
-				$action = new GetBlockCollection();
+				$action = new GetModelCollection();
 				$action->execute($event);
 			};
 			$event->setAction($action);
@@ -102,10 +84,10 @@ class BlocksResolver
 		}
 		elseif (count($resourceParts) == 3)
 		{
-			$event->setParam('blockName', implode('_', $resourceParts));
+			$event->setParam('modelName', implode('_', $resourceParts));
 			$action = function ($event)
 			{
-				$action = new GetBlockInformation();
+				$action = new GetModelInformation();
 				$action->execute($event);
 			};
 			$event->setAction($action);

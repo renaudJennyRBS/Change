@@ -12,6 +12,9 @@ class ModelManager
 	 */
 	protected $documentModels = array();
 
+	/**
+	 * @var string[]
+	 */
 	protected $modelsNames = null;
 	
 	/**

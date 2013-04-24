@@ -12,16 +12,24 @@ use Zend\Http\Response;
  */
 class Resolver extends ActionResolver
 {
+	/**
+	 * @var array<string => string>
+	 */
 	protected $resolverClasses = array();
 
-	function __construct()
+	public function __construct()
 	{
 		$this->addResolverClasses('resources', '\Change\Http\Rest\ResourcesResolver');
 		$this->addResolverClasses('resourcesactions', '\Change\Http\Rest\ResourcesActionsResolver');
 		$this->addResolverClasses('resourcestree', '\Change\Http\Rest\ResourcesTreeResolver');
 		$this->addResolverClasses('blocks', '\Change\Http\Rest\BlocksResolver');
+		$this->addResolverClasses('models', '\Change\Http\Rest\ModelsResolver');
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $className
+	 */
 	protected function addResolverClasses($name, $className)
 	{
 		$this->resolverClasses[$name] = $className;
@@ -29,7 +37,7 @@ class Resolver extends ActionResolver
 
 	/**
 	 * @param string $name
-	 * @return ResourcesActionsResolver|ResourcesResolver|ResourcesTreeResolver|BlocksResolver|null
+	 * @return ResourcesActionsResolver|ResourcesResolver|ResourcesTreeResolver|BlocksResolver|ModelsResolver|null
 	 */
 	public function getResolverByName($name)
 	{
@@ -55,8 +63,6 @@ class Resolver extends ActionResolver
 		$resolver = $this->getResolverByName('resourcesactions');
 		$resolver->registerActionClass($actionName, $class);
 	}
-
-
 
 	/**
 	 * Set Event params: namespace, isDirectory
