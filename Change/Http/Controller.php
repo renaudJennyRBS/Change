@@ -375,13 +375,24 @@ class Controller implements EventManagerAwareInterface
 	{
 		$event = new Event();
 		$event->setRequest($request);
+		$urlManager = $this->getNewUrlManager($request);
+		$event->setUrlManager($urlManager);
+		return $event;
+	}
+
+	/**
+	 * @param $request
+	 * @return UrlManager
+	 */
+	protected function getNewUrlManager($request)
+	{
 		$script = $request->getServer('SCRIPT_NAME');
 		if (strpos($request->getRequestUri(), $script) !== 0)
 		{
 			$script = null;
 		}
-		$event->setUrlManager(new UrlManager($request->getUri(), $script));
-		return $event;
+		$urlManager = new UrlManager($request->getUri(), $script);
+		return $urlManager;
 	}
 
 	/**

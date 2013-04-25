@@ -167,8 +167,7 @@ class BlockManager
 		$sharedEventManager = $this->registerBlocks();
 		$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER, $blockLayout->getName()));
 		$eventManager->setSharedManager($sharedEventManager);
-		$event = new Event(static::EVENT_PARAMETERIZE, $this);
-
+		$event = new Event(static::EVENT_PARAMETERIZE, $this, $httpEvent->getParams());
 		if ($httpEvent instanceof \Change\Http\Event)
 		{
 			$event->setParam('httpRequest', $httpEvent->getRequest());
@@ -201,9 +200,10 @@ class BlockManager
 	/**
 	 * @param \Change\Presentation\Layout\Block $blockLayout
 	 * @param Parameters $parameters
+	 * @param \Change\Http\UrlManager $urlManager
 	 * @return BlockResult|null
 	 */
-	public function getResult($blockLayout, $parameters)
+	public function getResult($blockLayout, $parameters, $urlManager)
 	{
 		$sharedEventManager = $this->registerBlocks();
 
@@ -215,6 +215,7 @@ class BlockManager
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
+		$event->setUrlManager($urlManager);
 		$results = $eventManager->trigger($event, function ($result)
 		{
 			return $result instanceof BlockResult;

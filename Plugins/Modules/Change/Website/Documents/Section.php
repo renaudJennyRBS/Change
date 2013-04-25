@@ -44,4 +44,24 @@ class Section extends \Compilation\Change\Website\Documents\Section
 		}
 		return null;
 	}
+
+	/**
+	 * @return \Change\Website\Documents\Section[]
+	 */
+	public function getSectionThread()
+	{
+		$tm = $this->getDocumentServices()->getTreeManager();
+		$tn = $tm->getNodeByDocument($this);
+		$sections = array();
+		foreach($tm->getAncestorNodes($tn) as $node)
+		{
+			$doc = $node->getDocument();
+			if ($doc instanceof \Change\Website\Documents\Section)
+			{
+				$sections[] = $doc;
+			}
+		}
+		$sections[] = $this;
+		return $sections;
+	}
 }

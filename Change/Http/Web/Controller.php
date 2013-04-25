@@ -45,6 +45,21 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
+	 * @param $request
+	 * @return \Change\Http\Web\UrlManager
+	 */
+	protected function getNewUrlManager($request)
+	{
+		$script = $request->getServer('SCRIPT_NAME');
+		if (strpos($request->getRequestUri(), $script) !== 0)
+		{
+			$script = null;
+		}
+		$urlManager = new UrlManager($request->getUri(), $script);
+		return $urlManager;
+	}
+
+	/**
 	 * @api
 	 * @return \Zend\Http\PhpEnvironment\Response
 	 */

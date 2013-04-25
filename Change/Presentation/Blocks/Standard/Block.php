@@ -14,6 +14,10 @@ use Change\Presentation\Blocks\Parameters;
 class Block
 {
 	/**
+	 * @api
+	 * Set Block Parameters on $event
+	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
+	 * Event params includes all params from Http\Event (ex: pathRule and page).
 	 * @param Event $event
 	 * @return Parameters
 	 */
@@ -26,8 +30,8 @@ class Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
-	 * Optional Event method: getHttpRequest
+	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
+	 * Event params includes all params from Http\Event (ex: pathRule and page).
 	 * @param Event $event
 	 * @return \Change\Presentation\Blocks\Parameters
 	 */
@@ -88,7 +92,10 @@ class Block
 	}
 
 	/**
+	 * @api
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
+	 * Required Event method: getBlockLayout(), getBlockParameters(), getBlockResult(),
+	 *        getPresentationServices(), getDocumentServices(), getUrlManager()
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
