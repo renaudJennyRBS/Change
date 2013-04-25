@@ -12,13 +12,27 @@ class DefaultPageTemplate implements PageTemplate
 	protected $theme;
 
 	/**
-	 * @param \Change\Presentation\Interfaces\Theme $theme
+	 * @var string
 	 */
-	function __construct($theme)
+	protected $name;
+
+	/**
+	 * @param DefaultTheme $theme
+	 * @param string $name
+	 */
+	function __construct($theme, $name)
 	{
 		$this->theme = $theme;
+		$this->name = $name;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 	/**
 	 * @return \Change\Presentation\Interfaces\Theme
 	 */
@@ -28,41 +42,31 @@ class DefaultPageTemplate implements PageTemplate
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function getHtml()
 	{
-		return '<!DOCTYPE html>
-<html>
-<head>
-{% for headLine in pageResult.head %}
-	{{ headLine|raw }}
-{% endfor %}
-	<link rel="icon" type="image/png" href="Theme/Change/Default/img/favicon.png" />
-	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="Theme/Change/Default/css/bootstrap-responsive.min.css" />
-</head>
-<body>
-<!-- blockEditable1 -->
-</body>
-</html>';
+		$res = $this->getTheme()->getResource('Layout/PageTemplate/' . $this->getName() . '.twig');
+		if (!$res->isValid())
+		{
+			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.twig resource not found', 999999);
+		}
+		return $res->getContent();
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return \Change\Presentation\Layout\Layout
 	 */
 	public function getContentLayout()
 	{
-		$config = json_decode('{
-	"blockEditable1" : {
-        "id"   : "blockEditable1",
-        "type":"block",
-        "name":"Change_Website_Richtext",
-        "parameters" : {
-			"content":"Oups!"
-        }
-    }
-}', true);
+		$res = $this->getTheme()->getResource('Layout/PageTemplate/' . $this->getName() . '.json');
+		if (!$res->isValid())
+		{
+			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.json resource not found', 999999);
+		}
+		$config = json_decode($res->getContent(), true);
 		return new Layout($config);
 	}
 }

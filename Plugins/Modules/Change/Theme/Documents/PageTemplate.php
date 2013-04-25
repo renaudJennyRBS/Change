@@ -9,18 +9,18 @@ use Change\Presentation\Layout\Layout;
 class PageTemplate extends \Compilation\Change\Theme\Documents\PageTemplate implements \Change\Presentation\Interfaces\PageTemplate
 {
 	/**
-	 * @return Theme
-	 */
-	public function getTheme()
-	{
-		return null;
-	}
-
-	/**
 	 * @return Layout
 	 */
 	public function getContentLayout()
 	{
 		return new Layout($this->getDecodedEditableContent());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->getId();
 	}
 }

@@ -168,10 +168,10 @@ class ThemeManager
 	{
 		$this->themes[$theme->getName()] = $theme;
 		$theme->setThemeManager($this);
-		$extTheme = $theme->extendTheme();
-		if ($extTheme && !isset($this->themes[$extTheme->getName()]))
+		$parentTheme = $theme->getParentTheme();
+		if ($parentTheme && !isset($this->themes[$parentTheme->getName()]))
 		{
-			$this->addTheme($extTheme);
+			$this->addTheme($parentTheme);
 		}
 	}
 }

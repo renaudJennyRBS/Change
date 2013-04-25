@@ -16,7 +16,15 @@ use Zend\Http\Response as HttpResponse;
  */
 class DefaultPage implements Page
 {
+	/**
+	 * @var ThemeManager
+	 */
 	protected $themeManager;
+
+	/**
+	 * @var string
+	 */
+	protected $identifier;
 
 	/**
 	 * @var \Zend\EventManager\EventManagerInterface
@@ -24,11 +32,18 @@ class DefaultPage implements Page
 	protected $eventManager;
 
 	/**
-	 * @param ThemeManager $themeManager
+	 * @var \Change\Presentation\Interfaces\ThemeResource
 	 */
-	function __construct(ThemeManager $themeManager)
+	protected $layoutResource;
+
+	/**
+	 * @param ThemeManager $themeManager
+	 * @param string $identifier
+	 */
+	function __construct(ThemeManager $themeManager, $identifier = 'default')
 	{
 		$this->themeManager = $themeManager;
+		$this->identifier = $identifier;
 	}
 
 	/**
@@ -55,7 +70,24 @@ class DefaultPage implements Page
 	 */
 	public function getIdentifier()
 	{
-		return 'default';
+		return $this->identifier;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Presentation\Interfaces\ThemeResource
+	 */
+	protected function getLayoutResource()
+	{
+		if ($this->layoutResource === null)
+		{
+			$this->layoutResource = $this->themeManager->getDefault()->getResource('Layout/Page/' . $this->getIdentifier() . '.json');
+			if (!$this->layoutResource->isValid())
+			{
+				throw new \RuntimeException($this->getIdentifier() . '.json resource not found', 999999);
+			}
+		}
+		return $this->layoutResource;
 	}
 
 	/**
@@ -63,9 +95,9 @@ class DefaultPage implements Page
 	 */
 	public function getModificationDate()
 	{
-		$md = new \DateTime();
-		return $md->setTimestamp(filemtime(__FILE__));
+		return $this->getLayoutResource()->getModificationDate();
 	}
+
 
 	/**
 	 * @api
@@ -73,7 +105,7 @@ class DefaultPage implements Page
 	 */
 	public function getPageTemplate()
 	{
-		return $this->themeManager->getDefault()->getPageTemplate($this->getIdentifier());
+		return $this->themeManager->getDefault()->getPageTemplate('default');
 	}
 
 	/**
@@ -81,7 +113,8 @@ class DefaultPage implements Page
 	 */
 	public function getContentLayout()
 	{
-		return new Layout();
+		$config = $this->getLayoutResource()->getContent();
+		return new Layout(json_decode($config, true));
 	}
 
 	/**
@@ -105,12 +138,15 @@ class DefaultPage implements Page
 		$result = new PageResult($page->getIdentifier());
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$this->themeManager->setCurrent($pageTemplate->getTheme());
+
 		$pageTemplate = $page->getPageTemplate();
 
 		$templateLayout = $pageTemplate->getContentLayout();
 		$result->setTemplateLayout($templateLayout);
 		$pageLayout = $page->getContentLayout();
 		$result->setContentLayout($pageLayout);
+
+
 		return $result;
 	}
 
@@ -122,6 +158,7 @@ class DefaultPage implements Page
 	 */
 	public function onCompose($pageEvent)
 	{
+
 		$result = $pageEvent->getPageResult();
 		if ($result instanceof PageResult)
 		{
@@ -130,7 +167,9 @@ class DefaultPage implements Page
 
 			$application = $pageEvent->getApplicationServices()->getApplication();
 			$cachePath = $application->getWorkspace()->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
-			if (!file_exists($cachePath) || filemtime($cachePath) < $page->getModificationDate()->getTimestamp())
+			$cacheTime = $page->getModificationDate()->getTimestamp();
+
+			if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
 			{
 				$templateLayout = $result->getTemplateLayout();
 				$pageLayout = $result->getContentLayout();
@@ -146,6 +185,7 @@ class DefaultPage implements Page
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
 				\Change\Stdlib\File::write($cachePath, $htmlTemplate);
+				touch($cachePath, $cacheTime);
 			}
 
 			$templateManager = $pageEvent->getPresentationServices()->getTemplateManager();
