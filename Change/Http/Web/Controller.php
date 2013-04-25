@@ -5,6 +5,7 @@ use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
 use Change\Presentation\PresentationServices;
 use Change\Http\Result;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Event;
 
@@ -21,14 +22,12 @@ class Controller extends \Change\Http\Controller
 	protected function registerDefaultListeners($eventManager)
 	{
 		$eventManager->addIdentifiers('Http.Web');
-
 		$callback = function ($event)
 		{
 			$composer = new \Change\Http\Web\Events\ComposePage();
 			$composer->execute($event);
 		};
 		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
-
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'), 5);
 	}
 
@@ -94,10 +93,9 @@ class Controller extends \Change\Http\Controller
 	 */
 	public function notFound($event)
 	{
-		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager());
+		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error404');
 		$event->setParam('page', $page);
-		$composer = new \Change\Http\Web\Events\ComposePage();
-		$composer->execute($event);
+		$this->doSendResult($this->getEventManager(), $event);
 		$result = $event->getResult();
 		if ($result !== null)
 		{
@@ -105,5 +103,36 @@ class Controller extends \Change\Http\Controller
 			return $result;
 		}
 		return parent::notFound($event);
+	}
+
+	/**
+	 * @api
+	 * @param Event $event
+	 * @return Result
+	 */
+	public function error($event)
+	{
+		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error500');
+		$event->setParam('page', $page);
+		$this->doSendResult($this->getEventManager(), $event);
+		$result = $event->getResult();
+		if ($result !== null)
+		{
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
+			return $result;
+		}
+		return parent::error($event);
+	}
+
+	/**
+	 * @param Event $event
+	 * @return Response
+	 */
+	protected function getDefaultResponse($event)
+	{
+		$result = $this->error($event);
+		$event->setResult($result);
+		$this->onDefaultHtmlResponse($event);
+		return $event->getResponse();
 	}
 }

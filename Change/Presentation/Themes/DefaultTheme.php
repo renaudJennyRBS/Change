@@ -11,7 +11,20 @@ class DefaultTheme implements Theme
 	 */
 	protected $presentationServices;
 
+	/**
+	 * @var DefaultPageTemplate
+	 */
 	protected $defaultPageTemplate;
+
+	/**
+	 * @var string
+	 */
+	protected $vendor;
+
+	/**
+	 * @var string
+	 */
+	protected $shortName;
 
 	/**
 	 * @param PresentationServices $presentationServices
@@ -19,6 +32,7 @@ class DefaultTheme implements Theme
 	function __construct($presentationServices)
 	{
 		$this->presentationServices = $presentationServices;
+		list($this->vendor, $this->shortName) = explode('_', $this->getName());
 	}
 
 	/**
@@ -34,13 +48,16 @@ class DefaultTheme implements Theme
 	 */
 	public function setThemeManager(ThemeManager $themeManager)
 	{
-		$this->presentationServices = $themeManager->getPresentationServices();
+		if ($this->presentationServices === null)
+		{
+			$this->presentationServices = $themeManager->getPresentationServices();
+		}
 	}
 
 	/**
 	 * @return null
 	 */
-	public function extendTheme()
+	public function getParentTheme()
 	{
 		return null;
 	}
@@ -61,33 +78,30 @@ class DefaultTheme implements Theme
 	public function getBlockTemplatePath($moduleName, $fileName)
 	{
 		list ($vendor, $shortModuleName) = explode('_', $moduleName);
-		$path = $this->getWorkspace()->pluginsThemesPath('Change', 'Default', $vendor, $shortModuleName, 'Blocks', $fileName);
+		$path = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, $vendor, $shortModuleName, 'Blocks', $fileName);
 		return (file_exists($path)) ? $path : null;
 	}
 
 	/**
 	 * @param string $name
-	 * @return \Change\Presentation\Interfaces\PageTemplate|null
+	 * @return \Change\Presentation\Interfaces\PageTemplate
 	 */
 	public function getPageTemplate($name)
 	{
-		if ($this->defaultPageTemplate === null)
+		if (is_numeric($name))
 		{
-			$this->defaultPageTemplate = new DefaultPageTemplate($this);
+			$name = 'default';
 		}
-		return $this->defaultPageTemplate;
+		return new DefaultPageTemplate($this, $name);
 	}
 
 	/**
 	 * @param string $resourcePath
-	 * @return \Change\Presentation\Interfaces\ThemeResource|null
+	 * @return \Change\Presentation\Interfaces\ThemeResource
 	 */
 	public function getResource($resourcePath)
 	{
-		$path = $this->getWorkspace()->pluginsThemesPath('Change', 'Default', 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
-		if (file_exists($path))
-		{
-			return new FileResource($path);
-		}
+		$path = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		return new FileResource($path);
 	}
 }

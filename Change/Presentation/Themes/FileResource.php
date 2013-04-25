@@ -4,8 +4,7 @@ namespace Change\Presentation\Themes;
 use Change\Presentation\Interfaces\ThemeResource;
 
 /**
- * Class FileResource
- * @package Change\Presentation\Themes
+ * @name \Change\Presentation\Themes\FileResource
  */
 class FileResource implements ThemeResource
 {

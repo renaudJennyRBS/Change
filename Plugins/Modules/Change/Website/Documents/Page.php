@@ -62,6 +62,8 @@ class Page extends \Compilation\Change\Website\Documents\Page implements \Change
 			return null;
 		}
 
+		throw new \RuntimeException('zzzzzzzzzzzzzzzz', 9999);
+
 		$page = $pageEvent->getPage();
 
 		$pageTemplate = $page->getPageTemplate();
@@ -116,12 +118,11 @@ class Page extends \Compilation\Change\Website\Documents\Page implements \Change
 				$templateLayout = $result->getTemplateLayout();
 				$pageLayout = $result->getContentLayout();
 
-				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item)
-				{
-					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\')|raw }}';
-				};
-
 				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
+				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
+				{
+					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
+				};
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
 
 				$pageTemplate = $page->getPageTemplate();

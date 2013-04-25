@@ -1,0 +1,20 @@
+{
+	"zoneEditable1": {
+		"id": "zoneEditable1",
+		"grid": 12,
+		"gridMode": "fluid",
+		"type": "container",
+		"parameters": {
+		},
+		"items": [
+			{
+				"id": "message",
+				"type": "block",
+				"name": "Change_Website_Exception",
+				"parameters": {
+					"message": "Grave erreur!!"
+				}
+			}
+		]
+	}
+}

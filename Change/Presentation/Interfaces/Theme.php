@@ -20,7 +20,7 @@ interface Theme
 	/**
 	 * @return \Change\Presentation\Interfaces\Theme|null
 	 */
-	public function extendTheme();
+	public function getParentTheme();
 
 	/**
 	 * @param string $moduleName
@@ -31,14 +31,14 @@ interface Theme
 
 	/**
 	 * @param string $name
-	 * @return \Change\Presentation\Interfaces\PageTemplate|null
+	 * @return \Change\Presentation\Interfaces\PageTemplate
 	 */
 	public function getPageTemplate($name);
 
 
 	/**
 	 * @param string $resourcePath
-	 * @return \Change\Presentation\Interfaces\ThemeResource|null
+	 * @return \Change\Presentation\Interfaces\ThemeResource
 	 */
 	public function getResource($resourcePath);
 }
