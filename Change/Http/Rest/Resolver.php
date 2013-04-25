@@ -24,6 +24,7 @@ class Resolver extends ActionResolver
 		$this->addResolverClasses('resourcestree', '\Change\Http\Rest\ResourcesTreeResolver');
 		$this->addResolverClasses('blocks', '\Change\Http\Rest\BlocksResolver');
 		$this->addResolverClasses('models', '\Change\Http\Rest\ModelsResolver');
+		$this->addResolverClasses('query', '\Change\Http\Rest\QueryResolver');
 	}
 
 	/**

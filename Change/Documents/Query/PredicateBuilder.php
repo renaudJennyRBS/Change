@@ -368,6 +368,27 @@ class PredicateBuilder
 	}
 
 	/**
+	 * @api
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function notPublished()
+	{
+		if (!$this->builder->getModel()->isPublishable())
+		{
+			throw new \RuntimeException('Model is not publishable: ' . $this->builder->getModel(), 999999);
+		}
+		$fb = $this->getFragmentBuilder();
+		$publicationDate = new \DateTime();
+
+		return $fb->logicOr(
+			$this->neq('publicationStatus', \Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE),
+			$fb->logicAnd($this->isNotNull('startPublication'), $this->gt('startPublication', $publicationDate)),
+			$fb->logicAnd($this->isNotNull('endPublication'), $this->lte('endPublication', $publicationDate))
+		);
+	}
+
+	/**
 	 * @param TreeNode|AbstractDocument|integer $node
 	 * @return array
 	 * @throws \InvalidArgumentException

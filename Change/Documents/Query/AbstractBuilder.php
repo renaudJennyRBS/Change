@@ -372,6 +372,7 @@ abstract class AbstractBuilder
 	 * @api
 	 * @param InterfacePredicate $p1
 	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
 	 * @return $this
 	 */
 	public function andPredicates($p1, $_ = null)
@@ -382,10 +383,7 @@ abstract class AbstractBuilder
 		{
 			$predicate->addArgument($pp);
 		}
-		foreach (func_get_args() as $pp)
-		{
-			$predicate->addArgument($pp);
-		}
+		$this->addJunctionArgs($predicate, func_get_args());
 
 		$this->setPredicate($predicate);
 		return $this;
@@ -395,6 +393,7 @@ abstract class AbstractBuilder
 	 * @api
 	 * @param InterfacePredicate $p1
 	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
 	 * @return $this
 	 */
 	public function orPredicates($p1, $_ = null)
@@ -405,13 +404,33 @@ abstract class AbstractBuilder
 		{
 			$predicate->addArgument($pp);
 		}
-		foreach (func_get_args() as $pp)
-		{
-			$predicate->addArgument($pp);
-		}
-
+		$this->addJunctionArgs($predicate, func_get_args());
 		$this->setPredicate($predicate);
 		return $this;
+	}
+
+	/**
+	 * @param Disjunction|Conjunction $junction
+	 * @param array $args
+	 * @throws \InvalidArgumentException
+	 */
+	protected function addJunctionArgs($junction, $args)
+	{
+		foreach ($args as $arg)
+		{
+			if (is_array($arg))
+			{
+				$this->addJunctionArgs($junction, $arg);
+			}
+			elseif ($arg instanceof \Change\Db\Query\InterfaceSQLFragment)
+			{
+				$junction->addArgument($arg);
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Invalid SQL Fragment', 999999);
+			}
+		}
 	}
 
 	/**
