@@ -113,4 +113,33 @@ class UrlManager
 		$uri->setPath($this->script . $pathInfo)->setQuery($query)->setFragment($fragment);
 		return $uri;
 	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return \Zend\Uri\Http
+	 */
+	public function getDefaultByDocument($document)
+	{
+		$pathInfo = $document->getDocumentModelName() . ',' . $document->getId() . '.html';
+		return $this->getByPathInfo($pathInfo);
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param mixed $context
+	 * @throws \InvalidArgumentException
+	 * @return \Zend\Uri\Http
+	 */
+	public function getContextualByDocument($document, $context)
+	{
+		if ($context instanceof \Change\Website\Documents\Section)
+		{
+			$pathInfo = $document->getDocumentModelName() . ',' . $context->getId() . ',' . $document->getId() . '.html';
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 2 must be a valid context', 999999);
+		}
+		return $this->getByPathInfo($pathInfo);
+	}
 }

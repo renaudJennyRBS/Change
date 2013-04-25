@@ -34,6 +34,11 @@ class Event extends ZendEvent
 	protected $blockResult;
 
 	/**
+	 * @var \Change\Http\UrlManager
+	 */
+	protected $urlManager;
+
+	/**
 	 * @param \Change\Presentation\PresentationServices|null $presentationServices
 	 */
 	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices)
@@ -131,7 +136,6 @@ class Event extends ZendEvent
 		return $this->blockResult;
 	}
 
-
 	/**
 	 * @api
 	 * @return \Change\Http\Request|null
@@ -139,5 +143,23 @@ class Event extends ZendEvent
 	public function getHttpRequest()
 	{
 		return $this->getParam('httpRequest');
+	}
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @return $this
+	 */
+	public function setUrlManager($urlManager)
+	{
+		$this->urlManager = $urlManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Http\UrlManager
+	 */
+	public function getUrlManager()
+	{
+		return $this->urlManager;
 	}
 }

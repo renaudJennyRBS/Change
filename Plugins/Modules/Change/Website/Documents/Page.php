@@ -62,8 +62,6 @@ class Page extends \Compilation\Change\Website\Documents\Page implements \Change
 			return null;
 		}
 
-		throw new \RuntimeException('zzzzzzzzzzzzzzzz', 9999);
-
 		$page = $pageEvent->getPage();
 
 		$pageTemplate = $page->getPageTemplate();

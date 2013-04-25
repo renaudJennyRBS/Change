@@ -24,4 +24,19 @@ class StaticPage extends \Compilation\Change\Website\Documents\StaticPage
 		}
 		return $result;
 	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 * @return \Change\Presentation\Interfaces\Page|null
+	 */
+	public function onDocumentDisplayPage($event)
+	{
+		$doc = parent::onDocumentDisplayPage($event);
+		if ($doc)
+		{
+			$tn = $this->getDocumentServices()->getTreeManager()->getNodeByDocument($this);
+			$event->getParam('pathRule')->setSectionId($tn->getParentId());
+		}
+		return $doc;
+	}
 }

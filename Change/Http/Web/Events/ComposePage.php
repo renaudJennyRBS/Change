@@ -56,7 +56,7 @@ class ComposePage
 						list($blockLayout, $parameters) = $infos;
 
 						/* @var $blockLayout \Change\Presentation\Layout\Block */
-						$result = $blockManager->getResult($blockLayout, $parameters);
+						$result = $blockManager->getResult($blockLayout, $parameters, $event->getUrlManager());
 						if (isset($result))
 						{
 							$pageResult->addHeads($result->getHead());
