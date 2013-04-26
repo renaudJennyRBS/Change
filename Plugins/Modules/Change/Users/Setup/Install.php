@@ -13,7 +13,7 @@ class Install
 	 */
 	public function executeApplication($application)
 	{
-
+		$application->getConfiguration()->addPersistentEntry('Change/Presentation/Blocks/Change_Users', '\\Change\\Users\\Blocks\\SharedListenerAggregate');
 	}
 
 	/**
