@@ -640,7 +640,7 @@ class TreeManager
 				$this->clearCachedTreeNodes();
 			}
 
-			if ($document->getDocumentModel()->useTree())
+			if (!$document->isDeleted() && $document->getDocumentModel()->useTree())
 			{
 				$q2 = $this->getUpdateTreeNameQuery($document->getDocumentModel()->getRootName());
 				$q2->bindParameter('treeName', null);

@@ -356,11 +356,11 @@ class DocumentQuery
 		{
 			if (isset($predicateJSON['mode']))
 			{
-				if ($predicateJSON['mode'] === 'left')
+				if ($predicateJSON['mode'] === 'begin')
 				{
 					$matchMode =  Like::BEGIN;
 				}
-				elseif ($predicateJSON['mode'] === 'right')
+				elseif ($predicateJSON['mode'] === 'end')
 				{
 					$matchMode =  Like::END;
 				}
