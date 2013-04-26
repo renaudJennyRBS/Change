@@ -602,21 +602,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			}
 			else
 			{
-				$backupData = $event->getParam('backupData');
-				if (is_array($backupData) && count($backupData))
-				{
-					try
-					{
-						$this->getDocumentManager()->insertDocumentBackup($this, $backupData);
-					}
-					catch (\Exception $e)
-					{
-						//Unable to backup document
-						$this->documentServices->getApplicationServices()->getLogging()->exception($e);
-					}
-				}
 				$this->doDelete();
+				$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
+				$this->getEventManager()->trigger($event);
+
 			}
+
 			$tm->commit();
 		}
 		catch (\Exception $e)

@@ -35,6 +35,14 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 			$l->onDelete($event);
 		};
 		$events->attach($identifiers, DocumentEvent::EVENT_DELETE, $callBack, 5);
+
+
+		$callBack = function ($event)
+		{
+			$l = new \Change\Documents\Events\DeleteListener();
+			$l->onDeleted($event);
+		};
+		$events->attach($identifiers, DocumentEvent::EVENT_DELETED, $callBack, 5);
 	}
 
 	/**

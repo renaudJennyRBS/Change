@@ -105,8 +105,12 @@ class GetTreeNodeCollection
 		foreach ($nodes as $node)
 		{
 			/* @var $node \Change\Documents\TreeNode */;
-			$t = new TreeNodeLink($urlManager, $node);
 			$document = $node->getDocument();
+			if (!$document)
+			{
+				continue;
+			}
+			$t = new TreeNodeLink($urlManager, $node);
 			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
 			$result->addResource($t);
 		}
