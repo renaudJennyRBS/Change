@@ -23,6 +23,11 @@ interface Website
 	public function getHostName();
 
 	/**
+	 * @return integer
+	 */
+	public function getPort();
+
+	/**
 	 * @return string
 	 */
 	public function getScriptName();

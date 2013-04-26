@@ -1,9 +1,9 @@
 {% macro item(item) %}
 	{% import _self as menu %}
-	<li{% if item.isInPath or item.isCurrent %} class="active"{% endif %}>
+	<li class="{% if item.hasChild %}dropdown{% endif %} {% if item.isInPath or item.isCurrent %}active{% endif %}">
 		<a href="{{ item.url }}">{{ item.label }}</a>
 		{% if item.hasChild %}
-			<ul class="regular">
+			<ul class="dropdown-menu sub-menu">
 				{% for child in item.getChildren %}
 					{{ menu.item(child) }}
 				{% endfor %}
@@ -14,9 +14,9 @@
 {% import _self as menu %}
 
 {% if parameters.showTitle == true %}
-	<h5>{{ root.label }}</h5>
+	<h3>{{ root.label }}</h3>
 {% endif %}
-<ul class="regular">
+<ul class="nav topnav">
 	{% for child in root.children %}
 		{{ menu.item(child) }}
 	{% endfor %}

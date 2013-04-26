@@ -35,6 +35,7 @@ class Install
 			$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Website_Website');
 			$website->setLabel('Site par défaut');
 			$website->setHostName('temporary.fr');
+			$website->setScriptName('/index.php');
 			$website->create();
 			$documentServices->getTreeManager()->insertNode($rootNode, $website);
 		}

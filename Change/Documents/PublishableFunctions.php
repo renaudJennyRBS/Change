@@ -172,4 +172,13 @@ class PublishableFunctions
 		$document->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$document->update();
 	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
+	 * @return \Change\Presentation\Interfaces\Section|null
+	 */
+	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null)
+	{
+		return $this->getDocument()->getDefaultSection($preferredWebsite);
+	}
 }

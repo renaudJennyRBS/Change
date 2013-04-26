@@ -87,7 +87,8 @@ class Block
 				$sn = explode('_', $blockLayout->getName());
 				$templateModuleName = $sn[0] . '_' . $sn[1];
 			}
-			$this->setTemplateRenderer($presentationServices, $result, $attributes->getArrayCopy(), $templateModuleName, $templateName);
+			$this->setTemplateRenderer($presentationServices, $result, $attributes->getArrayCopy(), $templateModuleName,
+				$templateName);
 		}
 	}
 
@@ -111,11 +112,17 @@ class Block
 	 * @param array $attributes
 	 * @param string $templateModuleName
 	 * @param string $templateName
+	 * @throws \RuntimeException
 	 */
 	protected function setTemplateRenderer($presentationServices, $result, $attributes, $templateModuleName, $templateName)
 	{
 		$templatePath = $presentationServices->getThemeManager()->getCurrent()
 			->getBlockTemplatePath($templateModuleName, $templateName);
+		if ($templatePath === null)
+		{
+			throw new \RuntimeException(
+				'No template found in module ' . $templateModuleName . ' for name ' . $templateName, 999999);
+		}
 		$templateManager = $presentationServices->getTemplateManager();
 		$callback = function () use ($templateManager, $templatePath, $attributes)
 		{

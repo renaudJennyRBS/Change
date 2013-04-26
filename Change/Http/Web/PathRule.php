@@ -84,6 +84,14 @@ class PathRule
 	}
 
 	/**
+	 * @return \Change\Presentation\Interfaces\Website
+	 */
+	public function getWebsite()
+	{
+		return $this->website;
+	}
+
+	/**
 	 * @api
 	 * @param int $documentId
 	 */

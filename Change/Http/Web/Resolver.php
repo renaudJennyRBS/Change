@@ -15,7 +15,6 @@ use Zend\Http\Response as HttpResponse;
  */
 class Resolver extends ActionResolver
 {
-
 	/**
 	 * @param Event $event
 	 * @return void
@@ -33,6 +32,11 @@ class Resolver extends ActionResolver
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
+			$urlManager = $event->getUrlManager();
+			if ($urlManager instanceof \Change\Http\Web\UrlManager)
+			{
+				$urlManager->setPathRule($pathRule);
+			}
 			$this->populateEventByPathRule($event, $pathRule);
 		}
 		else
@@ -58,8 +62,6 @@ class Resolver extends ActionResolver
 			}
 		}
 	}
-
-
 
 	/**
 	 * @param string $path
@@ -161,7 +163,7 @@ class Resolver extends ActionResolver
 			}
 			else
 			{
-				//Invalid website path part
+				// Invalid website path part.
 				$location = $event->getUrlManager()->getByPathInfo($this->getRelativePath($path, null), $event->getRequest()->getQuery()->toArray())->normalize()->toString();
 				$pathRule = new PathRule($website, $path);
 				$pathRule->setConfig('Location', $location);
@@ -173,7 +175,7 @@ class Resolver extends ActionResolver
 			$pathRule = new PathRule($website, $relativePath);
 			if (!$relativePath)
 			{
-				//Home
+				// Home.
 				$pathRule->setDocumentId($website->getId());
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
 				return $pathRule;
@@ -192,8 +194,6 @@ class Resolver extends ActionResolver
 		}
 		return null;
 	}
-
-
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider

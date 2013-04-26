@@ -1,6 +1,6 @@
 {% macro item(item) %}
 	{% import _self as menu %}
-	<li{% if item.isInPath or item.isCurrent %} class="active"{% endif %}>
+	<li>
 		<a href="{{ item.url }}">{{ item.label }}</a>
 		{% if item.hasChild %}
 			<ul class="regular">
@@ -14,7 +14,7 @@
 {% import _self as menu %}
 
 {% if parameters.showTitle == true %}
-	<h5>{{ root.label }}</h5>
+	<h1><a href=".">{{ i18n('m.change.website.fo.home',['ucf']) }}</a></h1>
 {% endif %}
 <ul class="regular">
 	{% for child in root.children %}

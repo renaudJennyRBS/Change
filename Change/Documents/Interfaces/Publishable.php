@@ -62,6 +62,19 @@ interface Publishable
 
 	/**
 	 * @api
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getPublicationSections();
+
+	/**
+	 * @api
+	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
+	 * @return \Change\Presentation\Interfaces\Section
+	 */
+	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null);
+
+	/**
+	 * @api
 	 * @return \Change\Documents\PublishableFunctions
 	 */
 	public function getPublishableFunctions();

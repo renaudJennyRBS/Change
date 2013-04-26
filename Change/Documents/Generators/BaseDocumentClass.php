@@ -190,6 +190,40 @@ class BaseDocumentClass
 			$this->publishableFunctions = new \Change\Documents\PublishableFunctions($this);
 		}
 		return $this->publishableFunctions;
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getPublicationSections()
+	{
+		return array();
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
+	 * @return \Change\Presentation\Interfaces\Section
+	 */
+	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null)
+	{
+		$sections = $this->getPublicationSections();
+		if (count($sections) == 0)
+		{
+			return null;
+		}
+		if ($preferredWebsite == null)
+		{
+			return $sections[0];
+		}
+		foreach ($sections as $section)
+		{
+			if ($section->getWebsite() === $preferredWebsite)
+			{
+				return $section;
+			}
+		}
+		return $sections[0];
 	}' . PHP_EOL;
 
 		return $code;
