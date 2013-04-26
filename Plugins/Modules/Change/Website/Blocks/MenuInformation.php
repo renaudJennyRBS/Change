@@ -21,6 +21,8 @@ class MenuInformation extends Information
 		$ucf = array('ucf');
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.change.website.blocks.menu', $ucf));
+		$this->addInformationMeta('templateName', Property::TYPE_STRING, true, 'menu.twig')
+			->setLabel($i18nManager->trans('m.change.website.blocks.menu-templatename', $ucf));
 		$this->addInformationMeta('documentId', Property::TYPE_DOCUMENT)->setAllowedModelsNames(array('Change_Website_Section',
 			'Change_Website_Menu'))->setLabel($i18nManager->trans('m.change.website.blocks.menu-documentid', $ucf));
 		$this->addInformationMeta('maxLevel', Property::TYPE_INTEGER, true, 1)

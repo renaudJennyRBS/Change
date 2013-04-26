@@ -13,4 +13,20 @@ class Website extends \Compilation\Change\Website\Documents\Website implements \
 	{
 		return  $this->getPathPart();
 	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Website
+	 */
+	public function getWebsite()
+	{
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getPublicationSections()
+	{
+		return array($this);
+	}
 }

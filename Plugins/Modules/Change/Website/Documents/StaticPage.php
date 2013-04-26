@@ -39,4 +39,24 @@ class StaticPage extends \Compilation\Change\Website\Documents\StaticPage
 		}
 		return $doc;
 	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getPublicationSections()
+	{
+		$ds = $this->getDocumentServices();
+		$node = $ds->getTreeManager()->getNodeByDocument($this);
+		if (!$node)
+		{
+			return array();
+		}
+		$section = $this->getDocumentManager()->getDocumentInstance($node->getParentId(),
+			$ds->getModelManager()->getModelByName('Change_Website_Section'));
+		if ($section)
+		{
+			return array($section);
+		}
+		return array();
+	}
 }

@@ -100,6 +100,22 @@ class Information
 
 	/**
 	 * @param string $name
+	 * @return ParameterInformation|null
+	 */
+	public function removeParameterInformation($name)
+	{
+		$key = $this->ucLower($name);
+		if (isset($this->parametersInformation[$key]))
+		{
+			$parameter = $this->parametersInformation[$key];
+			unset($this->parametersInformation[$key]);
+			return $parameter;
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $name
 	 * @return string
 	 */
 	protected function ucLower($name)

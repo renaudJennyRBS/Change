@@ -49,12 +49,12 @@ class Install
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand logo" href="/">
+					<a class="brand logo" href=".">
 						<img src="Theme/Change/Default/img/logo.png" alt="" />
 					</a>
 					<div class="navigation">
 						<nav>
-						<!-- blocMenu -->
+							<!-- menuHeader -->
 						</nav>
 					</div>
 				</div>
@@ -78,10 +78,7 @@ class Install
 		<div class="container">
 			<div class="row">
 				<div class="span12">
-					<ul class="breadcrumb notop">
-						<li><a href="#">Home</a><span class="divider">/</span></li>
-						<li class="active">Blog right sidebar</li>
-					</ul>
+					<!-- thread -->
 				</div>
 			</div>
 		</div>
@@ -94,42 +91,17 @@ class Install
 			<div class="row">
 				<div class="span3">
 					<div class="widget">
-						<h5>Browse pages</h5>
-						<ul class="regular">
-							<li><a href="#">Work for us</a></li>
-							<li><a href="#">Creative process</a></li>
-							<li><a href="#">Case study</a></li>
-							<li><a href="#">Scaffold awwards</a></li>
-							<li><a href="#">Meet the team</a></li>
-						</ul>
+						<!-- menuFooter1 -->
 					</div>
 				</div>
 				<div class="span3">
 					<div class="widget">
-						<h5>Recent blog posts</h5>
-						<ul class="regular">
-							<li><a href="#">Lorem ipsum dolor sit amet</a></li>
-							<li><a href="#">Mea malis nominavi insolens ut</a></li>
-							<li><a href="#">Minim timeam has no aperiri sanctus ei mea per pertinax</a></li>
-							<li><a href="#">Te malorum dignissim eos quod sensibus</a></li>
-						</ul>
+						<!-- menuFooter2 -->
 					</div>
 				</div>
 				<div class="span3">
 				</div>
 				<div class="span3">
-					<div class="widget">
-						<!-- logo -->
-						<a class="brand logo" href="index.html">
-						<img src="assets/img/logo-dark.png" alt="" />
-						</a>
-						<!-- end logo -->
-						<address>
-						<strong>Registered Companyname, Inc.</strong><br>
-						 8895 Somename Ave, Suite 600<br>
-						 San Francisco, CA 94107<br>
-						<abbr title="Phone">P:</abbr> (123) 456-7890 </address>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -153,29 +125,57 @@ class Install
 </body>
 </html>');
 		$pageTemplate->setEditableContent('{
-	"subintro" : {
-		"id"   : "subintro",
-		"type" : "block",
-		"name" : "Change_Website_Richtext",
-		"parameters" : {
-			"content" : "<h3>About us</h3><p>Lorem ipsum dolor sit amet, modus salutatus honestatis ex mea. Sit cu probo putant. Nam ne impedit atomorum.</p>"
-		}
-	},
 	"zoneEditable1" : {
-		"id"   : "zoneEditable1",
+		"id" : "zoneEditable1",
 		"grid" : 12,
 		"gridMode" : "fixed",
 		"type" : "container",
 		"parameters" : {
 		}
 	},
-	"blocMenu" : {
-		"id"   : "blocMenu",
+	"menuHeader" : {
+		"id" : "menuHeader",
 		"type" : "block",
 		"name" : "Change_Website_Menu",
 		"parameters" : {
 			"documentId" : 100003,
-			"maxLevel" : 3
+			"maxLevel" : 3,
+			"templateName" : "menu-header.twig"
+		}
+	},
+	"thread" : {
+		"id" : "thread",
+		"type" : "block",
+		"name" : "Change_Website_Thread",
+		"parameters" : {
+		}
+	},
+	"menuFooter1" : {
+		"id" : "menuFooter1",
+		"type" : "block",
+		"name" : "Change_Website_Menu",
+		"parameters" : {
+			"showTitle" : true,
+			"documentId" : 100003,
+			"maxLevel" : 1
+		}
+	},
+	"menuFooter2" : {
+		"id" : "menuFooter2",
+		"type" : "block",
+		"name" : "Change_Website_Menu",
+		"parameters" : {
+			"showTitle" : true,
+			"documentId" : 100003,
+			"maxLevel" : 2
+		}
+	},
+	"subintro" : {
+		"id" : "subintro",
+		"type" : "block",
+		"name" : "Change_Website_Richtext",
+		"parameters" : {
+			"content" : "<h3>About us</h3><p>Lorem ipsum dolor sit amet, modus salutatus honestatis ex mea. Sit cu probo putant. Nam ne impedit atomorum.</p>"
 		}
 	}
 }');

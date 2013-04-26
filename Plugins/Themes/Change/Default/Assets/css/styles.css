@@ -1354,7 +1354,7 @@ footer ul.regular,footer ul.nav {
 
 footer ul.regular li {
 	background-attachment: scroll;
-	background: url(../img/list/white-arrow.png) no-repeat 0 5px;
+	background: url("../img/white-arrow.png") no-repeat 0 5px;
 	padding-left:15px;
 	margin-top:5px;
 	margin-left:0;

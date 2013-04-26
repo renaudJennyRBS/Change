@@ -16,6 +16,8 @@ class SharedListenerAggregate implements SharedListenerAggregateInterface
 	public function attachShared(SharedEventManagerInterface $events)
 	{
 		new  RegisterByBlockName('Change_Website_Menu', true, $events);
+		new  RegisterByBlockName('Change_Website_Thread', false, $events);
+		new  RegisterByBlockName('Change_Website_SiteMap', true, $events);
 		new  RegisterByBlockName('Change_Website_Richtext', true, $events);
 		new  RegisterByBlockName('Change_Website_Exception', false, $events);
 	}

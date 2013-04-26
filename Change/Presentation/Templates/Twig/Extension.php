@@ -118,29 +118,33 @@ class Extension  implements \Twig_ExtensionInterface
 
 	/**
 	 * @param string $i18nKey
+	 * @param string[] $formatters
 	 * @param array $replacementArray
 	 * @return string
 	 */
-	public function i18n($i18nKey, $replacementArray = null)
+	public function i18n($i18nKey, $formatters = array(), $replacementArray = null)
 	{
 		if (!is_array($replacementArray))
 		{
 			$replacementArray = array();
 		}
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, array('html'), $replacementArray);
+		$formatters[] = 'html';
+		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 
 	/**
 	 * @param string $i18nKey
+	 * @param string[] $formatters
 	 * @param array $replacementArray
 	 * @return string
 	 */
-	public function i18nAttr($i18nKey, $replacementArray = null)
+	public function i18nAttr($i18nKey, $formatters = array(), $replacementArray = null)
 	{
 		if (!is_array($replacementArray))
 		{
 			$replacementArray = array();
 		}
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, array('attr'), $replacementArray);
+		$formatters[] = 'attr';
+		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 }

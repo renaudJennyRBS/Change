@@ -24,6 +24,17 @@ class Exception extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('message', Property::TYPE_STRING, true);
 		$parameters->setLayoutParameters($event->getBlockLayout());
+		$exception = $event->getParam('Exception');
+		if ($exception instanceof \Exception)
+		{
+			$message = 'Exception (code ' . $exception->getCode() . ') : ' . $exception->getMessage();
+			$configuration = $event->getPresentationServices()->getApplicationServices()->getApplication()->getConfiguration();
+			if ($configuration->getEntry('Change/Application/development-mode'))
+			{
+				$message .= PHP_EOL . $exception->getTraceAsString();
+			}
+			$parameters->setParameterValue('message', $message);
+		}
 		return $parameters;
 	}
 
