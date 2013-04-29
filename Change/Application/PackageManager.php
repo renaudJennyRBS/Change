@@ -1,14 +1,13 @@
 <?php
 namespace Change\Application;
 
-use Change\Application\Package\Package;
 use Zend\Stdlib\ErrorHandler;
 use Zend\Json\Json;
 use Zend\Loader\StandardAutoloader;
 
 /**
- * @name Change\Application\PackageManager
  * @api
+ * @name Change\Application\PackageManager
  */
 class PackageManager
 {
@@ -27,7 +26,6 @@ class PackageManager
 
 	/**
 	 * Clear all PackageManager related class
-	 *
 	 * @api
 	 */
 	public function clearCache()
@@ -51,7 +49,6 @@ class PackageManager
 
 	/**
 	 * Path to the PSR-0 Cache Path
-	 *
 	 * @api
 	 * @return string
 	 */
@@ -62,7 +59,6 @@ class PackageManager
 
 	/**
 	 * Return the list of PSR-0 compatible autoload registered by installed packages
-	 *
 	 * @array
 	 */
 	public function getRegisteredAutoloads()
@@ -71,30 +67,34 @@ class PackageManager
 		if (!file_exists($path))
 		{
 			$namespaces = array();
-			// Libraries
+			// Libraries.
 			$librariesPattern = $this->workspace->librariesPath('*', '*', 'composer.json');
-			foreach(\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
+			foreach (\Zend\Stdlib\Glob::glob($librariesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT)
+					 as $filePath)
 			{
 				$namespaces = array_merge($namespaces, $this->parseComposerFile($filePath, true));
 			}
-			// Plugin Modules
+			// Plugin Modules.
 			$pluginsModulesPattern = $this->workspace->pluginsModulesPath('*', '*', 'composer.json');
-			foreach(\Zend\Stdlib\Glob::glob($pluginsModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
+			foreach (\Zend\Stdlib\Glob::glob($pluginsModulesPattern,
+				\Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $filePath)
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $filePath);
 				$partsCount = count($parts);
-				$normalizedVendor = ucfirst(strtolower($parts[$partsCount-3]));
-				$normalizedName = ucfirst(strtolower($parts[$partsCount-2]));
-				$namespace =  $normalizedVendor . '\\' . $normalizedName . '\\';
-				$namespaces = array_merge($namespaces, array($namespace => dirname($filePath)), $this->parseComposerFile($filePath));
+				$normalizedVendor = ucfirst(strtolower($parts[$partsCount - 3]));
+				$normalizedName = ucfirst(strtolower($parts[$partsCount - 2]));
+				$namespace = $normalizedVendor . '\\' . $normalizedName . '\\';
+				$namespaces = array_merge($namespaces, array($namespace => dirname($filePath)),
+					$this->parseComposerFile($filePath));
 			}
-			// Project modules
+			// Project modules.
 			$projectModulesPattern = $this->workspace->projectModulesPath('*');
-			foreach (\Zend\Stdlib\Glob::glob($projectModulesPattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $modulePath)
+			foreach (\Zend\Stdlib\Glob::glob($projectModulesPattern,
+				\Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as $modulePath)
 			{
 				$parts = explode(DIRECTORY_SEPARATOR, $modulePath);
 				$partsCount = count($parts);
-				$moduleName = ucfirst(strtolower($parts[$partsCount-1]));
+				$moduleName = ucfirst(strtolower($parts[$partsCount - 1]));
 				$namespaces['Project\\' . $moduleName . '\\'] = $modulePath;
 			}
 			\Change\Stdlib\File::write($path, \Zend\Serializer\Serializer::serialize($namespaces));
@@ -103,7 +103,6 @@ class PackageManager
 	}
 
 	/**
-	 *
 	 * @param string $filePath path to the composer.json file
 	 * @param boolean $appendNamespacePath
 	 * @return array
@@ -115,13 +114,17 @@ class PackageManager
 		if (isset($composer['autoload']) && isset($composer['autoload']['psr-0']))
 		{
 			$basePath = dirname($filePath);
-			$namespaces =  $composer['autoload']['psr-0'];
-			array_walk($namespaces, function(&$item, $key) use ($basePath, $appendNamespacePath){
-				$item =  $basePath . DIRECTORY_SEPARATOR  . $item;
+			$namespaces = $composer['autoload']['psr-0'];
+			array_walk($namespaces, function (&$item, $key) use ($basePath, $appendNamespacePath)
+			{
+				$item = $basePath . DIRECTORY_SEPARATOR . $item;
 				if ($appendNamespacePath)
 				{
 					$separator = substr($key, -1);
-					if ($separator !== '_') {$separator = '\\';}
+					if ($separator !== '_')
+					{
+						$separator = '\\';
+					}
 					$item .= str_replace($separator, DIRECTORY_SEPARATOR, $key);
 				}
 			});

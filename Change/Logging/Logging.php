@@ -116,13 +116,14 @@ class Logging
 
 	/**
 	 * @param string $name
+	 * @param \Zend\Log\Logger $logger
 	 * @return \Zend\Log\Logger
 	 */
 	public function setLoggerByName($name, $logger)
 	{
 		$this->loggers[$name] = $logger;
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @return \Zend\Log\Logger
@@ -138,7 +139,7 @@ class Logging
 
 	/**
 	 * @param string $name
-	 * @return \Zend\Log\Logger\AbstractWriter
+	 * @return \Zend\Log\Writer\AbstractWriter
 	 */
 	protected function createStreamWriter($name)
 	{
@@ -153,7 +154,7 @@ class Logging
 
 	/**
 	 * @param string $name
-	 * @return \Zend\Log\Logger\AbstractWriter
+	 * @return \Zend\Log\Writer\AbstractWriter
 	 */
 	protected function createSyslogWriter($name)
 	{
@@ -187,7 +188,7 @@ class Logging
 	{
 		$logger = new \Zend\Log\Logger();
 		$writerMethodName = $this->getCreateWriterMethodName($name);
-		/* @var $writer \Zend\Log\Logger\AbstractWriter */
+		/* @var $writer \Zend\Log\Writer\AbstractWriter */
 		$writer = call_user_func(array($this, $writerMethodName), $name);
 		if ($name == 'phperror')
 		{
@@ -271,7 +272,7 @@ class Logging
 	/**
 	 * @var array
 	 */
-	protected $errortype;
+	protected $errorType;
 
 	/**
 	 * @return void
@@ -279,8 +280,7 @@ class Logging
 	public function registerErrorHandler()
 	{
 		ini_set('display_errors', 0);
-
-		$this->errortype = array(E_ERROR => 'E_ERROR', E_WARNING => 'E_WARNING', E_PARSE => 'E_PARSE', E_NOTICE => 'E_NOTICE',
+		$this->errorType = array(E_ERROR => 'E_ERROR', E_WARNING => 'E_WARNING', E_PARSE => 'E_PARSE', E_NOTICE => 'E_NOTICE',
 			E_CORE_ERROR => 'E_CORE_ERROR', E_CORE_WARNING => 'E_CORE_WARNING', E_COMPILE_ERROR => 'E_COMPILE_ERROR',
 			E_COMPILE_WARNING => 'E_COMPILE_WARNING', E_USER_ERROR => 'E_USER_ERROR', E_USER_WARNING => 'E_USER_WARNING',
 			E_USER_NOTICE => 'E_USER_NOTICE', E_STRICT => 'E_STRICT', E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
@@ -293,13 +293,14 @@ class Logging
 	 * @param integer $errno
 	 * @param string $errstr
 	 * @param string $errfile
-	 * @param int $errline
+	 * @param integer $errline
 	 * @param array $errcontext
+	 * @return bool
 	 * @throws Exception
 	 */
 	public function defaultErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
 	{
-		$message = '[' . $this->errortype[$errno] . '] ' . $errstr;
+		$message = '[' . $this->errorType[$errno] . '] ' . $errstr;
 		$extra = array('errno' => $errno, 'file' => $errfile, 'line' => $errline);
 		switch ($errno)
 		{
@@ -328,19 +329,21 @@ class Logging
 	}
 
 	/**
-	 * @param Exception $exception
+	 * @param \Exception $exception
 	 */
 	public function defaultExceptionHandler($exception)
 	{
-		$errfile = $exception->getFile();
-		$errline = $exception->getLine();
-		$message = '[' . get_class($exception) . '] ' . $exception->getMessage() . ' in file (' . $errfile . ') line ' . $errline . PHP_EOL . $exception->getTraceAsString();
+		$errorFile = $exception->getFile();
+		$errorLine = $exception->getLine();
+		$message = '[' . get_class($exception) . '] ' . $exception->getMessage() . ' in file (' . $errorFile . ') line '
+			. $errorLine . PHP_EOL . $exception->getTraceAsString();
 		$this->phperror($message);
 	}
 
 	/**
 	 * @api
 	 * @param string $message
+	 * @param array $extra
 	 */
 	protected function phperror($message, $extra = array())
 	{

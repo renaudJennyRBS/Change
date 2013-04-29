@@ -6,8 +6,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @name \Change\Application\Console\ChangeCommand
  * @api
+ * @name \Change\Application\Console\ChangeCommand
  */
 class ChangeCommand extends Command
 {
@@ -34,10 +34,8 @@ class ChangeCommand extends Command
 		$this->changeApplication = $application;
 	}
 
-
 	/**
 	 * Get the Change Application instance managed by the console tool
-	 *
 	 * @api
 	 * @throws \RuntimeException
 	 * @return \Change\Application
@@ -107,11 +105,10 @@ class ChangeCommand extends Command
 	/**
 	 * Override this method for complex argument validation.
 	 * You always call the parent implementation.
-	 *
 	 * @api
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
-	 * @throws Exception
+	 * @throws \RuntimeException
 	 * @return mixed number
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)

@@ -156,8 +156,7 @@ class PreparedKey
 
 	/**
 	 * @api
-	 * @param string $key
-	 * @param string $value
+	 * @param string[] $formatters
 	 */
 	public function mergeFormatters($formatters)
 	{
@@ -203,8 +202,7 @@ class PreparedKey
 
 	/**
 	 * @api
-	 * @param string $key
-	 * @param string $value
+	 * @param array<string => string> $replacements
 	 */
 	public function mergeReplacements($replacements)
 	{

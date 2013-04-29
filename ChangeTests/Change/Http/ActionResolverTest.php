@@ -5,7 +5,6 @@ use Change\Http\ActionResolver;
 
 class ActionResolverTest extends \PHPUnit_Framework_TestCase
 {
-
 	public function testResolve()
 	{
 		$event = new \Change\Http\Event();
@@ -16,6 +15,5 @@ class ActionResolverTest extends \PHPUnit_Framework_TestCase
 		$resolver->resolve($event);
 
 		$this->assertNull($event->getAction());
-
 	}
 }

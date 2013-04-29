@@ -10,12 +10,12 @@ class TransactionManager extends \Exception
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;
-	
+
 	/**
 	 * @var integer
 	 */
 	protected $count = 0;
-	
+
 	/**
 	 * @var boolean
 	 */
@@ -52,7 +52,7 @@ class TransactionManager extends \Exception
 	{
 		return $this->count > 0;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -60,7 +60,7 @@ class TransactionManager extends \Exception
 	{
 		return $this->dirty;
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -68,9 +68,7 @@ class TransactionManager extends \Exception
 	{
 		return $this->count;
 	}
-	
 
-	
 	public function begin()
 	{
 		$this->checkDirty();
@@ -79,30 +77,22 @@ class TransactionManager extends \Exception
 		{
 			$this->getDbProvider()->beginTransaction();
 		}
-		else
-		{
-			
-		}	
 	}
-	
+
 	public function commit()
 	{
 		$this->checkDirty();
 		if ($this->count <= 0)
 		{
-			throw new \LogicException('Commit bad transaction count ('.$this->count.')', 121000);
-		}	
+			throw new \LogicException('Commit bad transaction count (' . $this->count . ')', 121000);
+		}
 		if ($this->count == 1)
 		{
 			$this->getDbProvider()->commit();
 		}
-		else
-		{
-			
-		}
 		$this->count--;
 	}
-	
+
 	/**
 	 * @param \Exception $e
 	 * @throws \LogicException
@@ -116,7 +106,7 @@ class TransactionManager extends \Exception
 			throw new \LogicException('Rollback bad transaction count', 121001);
 		}
 		$this->count--;
-		
+
 		if (!$this->dirty)
 		{
 			$this->dirty = true;
@@ -134,10 +124,10 @@ class TransactionManager extends \Exception
 			}
 			throw $e;
 		}
-		
+
 		return ($e instanceof RollbackException) ? $e->getPrevious() : $e;
 	}
-		
+
 	/**
 	 * @throws \LogicException
 	 */
@@ -148,9 +138,12 @@ class TransactionManager extends \Exception
 			throw new \LogicException('Transaction is dirty', 121002);
 		}
 	}
-	
+
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
-		return 'Transaction count: ' .$this->count . ' dirty: ' .($this->dirty ? 'true' : 'false');
+		return 'Transaction count: ' . $this->count . ' dirty: ' . ($this->dirty ? 'true' : 'false');
 	}
 }

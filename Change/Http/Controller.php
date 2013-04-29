@@ -23,7 +23,6 @@ class Controller implements EventManagerAwareInterface
 	 */
 	protected $actionResolver;
 
-
 	/**
 	 * @var EventManager
 	 */
@@ -32,7 +31,7 @@ class Controller implements EventManagerAwareInterface
 	/**
 	 * @param Application $application
 	 */
-	function __construct(Application $application)
+	public function __construct(Application $application)
 	{
 		$this->setApplication($application);
 	}
@@ -381,7 +380,7 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param $request
+	 * @param Request $request
 	 * @return UrlManager
 	 */
 	protected function getNewUrlManager($request)

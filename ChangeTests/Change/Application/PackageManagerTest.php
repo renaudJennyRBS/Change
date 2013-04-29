@@ -4,6 +4,7 @@ namespace ChangeTests\Change\Application;
 class PackageManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
+	 * @param string $name
 	 * @return \ReflectionMethod
 	 */
 	protected function getMethod($name)

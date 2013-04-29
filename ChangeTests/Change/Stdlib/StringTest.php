@@ -49,7 +49,6 @@ class StringTest extends \PHPUnit_Framework_TestCase
 
 		$string = \Change\Stdlib\String::random(42);
 		$this->assertEquals(42, \Change\Stdlib\String::length($string));
-
 	}
 
 	public function testIsEmpty()

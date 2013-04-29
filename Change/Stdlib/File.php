@@ -26,7 +26,7 @@ class File
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove a directory (and its contents) from the filesystem.
 	 * @api
@@ -37,7 +37,9 @@ class File
 	{
 		if (is_dir($directoryPath))
 		{
-			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
+			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directoryPath,
+				\RecursiveDirectoryIterator::KEY_AS_PATHNAME
+					| \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $file => $info)
 			{
 				\Zend\Stdlib\ErrorHandler::start();
 				if (is_dir($file))
@@ -56,16 +58,16 @@ class File
 			}
 		}
 	}
-	
+
 	/**
-	 * Write a file. If the target directory doesn't exist, it is created.
+	 * Write a file. If the target directory does not exist, it is created.
 	 * @api
 	 * @param string $path
 	 * @param string $content
 	 * @throws \RuntimeException
 	 */
 	public static function write($path, $content)
-	{	
+	{
 		static::mkdir(dirname($path));
 		\Zend\Stdlib\ErrorHandler::start();
 		$result = file_put_contents($path, $content);
@@ -75,7 +77,7 @@ class File
 			throw new \RuntimeException("Could not write file $path", 110001, $exception);
 		}
 	}
-	
+
 	/**
 	 * Read a file.
 	 * @api

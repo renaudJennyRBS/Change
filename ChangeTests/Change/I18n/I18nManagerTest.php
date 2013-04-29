@@ -46,17 +46,17 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
 		$config->addVolatileEntry('Change/I18n/supported-lcids', null);
-		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
-		
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR', 'en_GB', 'it_IT', 'es_ES', 'en_US'));
+
 		$config->addVolatileEntry('Change/I18n/langs', null);
 		$config->addVolatileEntry('Change/I18n/langs', array('en_US' => 'us'));
-		
+
 		$manager = new I18nManager();
 		$manager->setWorkspace($application->getWorkspace());
 		$manager->setLogging($this->getApplicationServices()->getLogging());
 		$manager->setConfiguration($config);
 
-		$this->assertEquals(array('fr_FR','en_GB','it_IT','es_ES','en_US'), $manager->getSupportedLCIDs());
+		$this->assertEquals(array('fr_FR', 'en_GB', 'it_IT', 'es_ES', 'en_US'), $manager->getSupportedLCIDs());
 
 		return $manager;
 	}
@@ -68,23 +68,23 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		
+
 		$config->addVolatileEntry('Change/I18n/supported-lcids', null);
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->supportsMultipleLCIDs());
-		
+
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR'));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->supportsMultipleLCIDs());
 
-		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR', 'en_GB'));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->supportsMultipleLCIDs());
 
-		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR', 'en_GB', 'it_IT', 'es_ES', 'en_US'));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->supportsMultipleLCIDs());
@@ -97,32 +97,34 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$config = $application->getConfiguration();
-		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR', 'en_GB', 'it_IT', 'es_ES', 'en_US'));
 		$configArray = $config->getConfigArray();
-		
+
 		$config->addVolatileEntry('Change/I18n/synchro/keys', array());
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertFalse($manager->hasI18nSynchro());
 		$this->assertEquals(array(), $manager->getI18nSynchro());
-		
+
 		$config->setConfigArray($configArray);
 		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR')));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
 		$this->assertEquals(array('en_GB' => array('fr_FR')), $manager->getI18nSynchro());
-		
+
 		$config->setConfigArray($configArray);
-		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR'), 'en_US' => array('en_GB', 'fr_FR')));
+		$config->addVolatileEntry('Change/I18n/synchro/keys',
+			array('en_GB' => array('fr_FR'), 'en_US' => array('en_GB', 'fr_FR')));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
 		$this->assertEquals(array('en_GB' => array('fr_FR'), 'en_US' => array('en_GB', 'fr_FR')), $manager->getI18nSynchro());
-		
+
 		// Unsupported LCIDs are ignored
 		$config->setConfigArray($configArray);
-		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR', 'kl_KL'), 'to_TO' => array('fr_FR')));
+		$config->addVolatileEntry('Change/I18n/synchro/keys',
+			array('en_GB' => array('fr_FR', 'kl_KL'), 'to_TO' => array('fr_FR')));
 		$manager = new I18nManager();
 		$manager->setConfiguration($config);
 		$this->assertTrue($manager->hasI18nSynchro());
@@ -198,7 +200,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(array('ucf', 'attr'), $preparedKey->getFormatters());
 		$this->assertEquals(array('toTo' => 'titI'), $preparedKey->getReplacements());
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -207,7 +209,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$a = "çé Té tutu";
 		$this->assertEquals($a, $manager->trans($a));
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
@@ -218,7 +220,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\I18n\DefinitionCollection', $collection);
 		$collection = $manager->getDefinitionCollection('fr_FR', array('c', 'toto', 'titi'));
 		$this->assertNull($collection);
-		
+
 		// In modules.
 		$collection = $manager->getDefinitionCollection('fr_FR', array('m', 'project', 'tests', 'a', 'aa'));
 		$this->assertInstanceOf('\Change\I18n\DefinitionCollection', $collection);
@@ -234,13 +236,13 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('en_GB', $collection->getLCID());
 		$collection = $manager->getDefinitionCollection('fr_FR', array('m', 'project', 'testons', 'oupas'));
 		$this->assertNull($collection);
-		
+
 		// In themes.
 		// TODO
-		
+
 		return $manager;
 	}
-	
+
 	/**
 	 * @depends testGetDefinitionCollection
 	 */
@@ -257,7 +259,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('plap fr a.aa', $key->getText());
 		$key = $manager->getDefinitionKey('fr_FR', array('m', 'project', 'tests', 'a', 'aa'), 'plep');
 		$this->assertNull($key);
-		
+
 		$key = $manager->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plop');
 		$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
 		$this->assertEquals('plop en a.aa', $key->getText());
@@ -268,10 +270,10 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($key);
 		$key = $manager->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plep');
 		$this->assertNull($key);
-		
+
 		return $manager;
 	}
-	
+
 	/**
 	 * @depends testGetDefinitionKey
 	 */
@@ -282,30 +284,32 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('plip fr b', $manager->transForLCID('fr_FR', 'm.project.tests.a.aa.plip'));
 		$this->assertEquals('plap fr a.aa', $manager->transForLCID('fr_FR', 'm.project.tests.a.aa.plap'));
 		$this->assertEquals('--m.project.tests.a.aa.plep', $manager->transForLCID('fr_FR', 'm.project.tests.a.aa.plep'));
-		
+
 		$this->assertEquals('plop en a.aa', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plop'));
 		$this->assertEquals('plip en a.aa', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plip'));
 		$this->assertEquals('--m.project.tests.a.aa.plap', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plap'));
 		$this->assertEquals('--m.project.tests.a.aa.plep', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plep'));
-		
+
 		$this->assertEquals('un texte quelconque', $manager->transForLCID('fr_FR', 'un texte quelconque'));
-		
+
 		// Converters.
 		$this->assertEquals('Plop fr a.aa', $manager->transForLCID('fr_FR', 'm.project.tests.a.aa.plop', array('ucf')));
 		$this->assertEquals('un texte quelconque', $manager->transForLCID('fr_FR', 'un texte quelconque', array('ucf')));
 		$this->assertEquals('PLOP FR A.AA :', $manager->transForLCID('fr_FR', 'm.project.tests.a.aa.plop', array('uc', 'lab')));
 		$this->assertEquals('un texte quelconque', $manager->transForLCID('fr_FR', 'un texte quelconque', array('uc', 'lab')));
-		
+
 		// Substitutions.
-		$this->assertEquals('Withparams test {param2} fr a', $manager->transForLCID('fr_FR', 'm.project.tests.a.withparams', array('ucf'), array('param1' => 'test')));
-		$this->assertEquals('withparams test youpi fr a', $manager->transForLCID('fr_FR', 'm.project.tests.a.withparams', array(), array('param1' => 'test', 'param2' => 'youpi')));
-		
+		$this->assertEquals('Withparams test {param2} fr a',
+			$manager->transForLCID('fr_FR', 'm.project.tests.a.withparams', array('ucf'), array('param1' => 'test')));
+		$this->assertEquals('withparams test youpi fr a', $manager->transForLCID('fr_FR', 'm.project.tests.a.withparams', array(),
+			array('param1' => 'test', 'param2' => 'youpi')));
+
 		// Key synchro.
 		$config = $manager->getConfiguration();
 		$this->assertFalse($manager->hasI18nSynchro());
 		$this->assertEquals('plop en a.aa', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plop'));
 		$this->assertEquals('--m.project.tests.a.aa.plop', $manager->transForLCID('en_US', 'm.project.tests.a.aa.plop'));
-		
+
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('en_US'));
 		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_US' => array('en_GB')));
 		$syncManager = new I18nManager();
@@ -314,58 +318,68 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertTrue($syncManager->hasI18nSynchro());
 		$this->assertEquals('plop en a.aa', $syncManager->transForLCID('en_GB', 'm.project.tests.a.aa.plop'));
 		$this->assertEquals('plop en a.aa', $syncManager->transForLCID('en_US', 'm.project.tests.a.aa.plop'));
-		
+
 		return $manager;
 	}
-	
+
 	/**
 	 * @depends testConstruct
 	 */
 	public function testFormatText(I18nManager $manager)
 	{
 		$format = \Change\I18n\DefinitionKey::TEXT;
-		
+
 		// Converters.
 		$this->assertEquals('Un texte quelconque', $manager->formatText('fr_FR', 'un texte quelconque', $format, array('ucf')));
-		$this->assertEquals('UN TEXTE QUELCONQUE :', $manager->formatText('fr_FR', 'un texte quelconque', $format, array('uc', 'lab')));
-		$this->assertEquals('UN TEXTE QUELCONQUE:', $manager->formatText('en_GB', 'un texte quelconque', $format, array('uc', 'lab')));
-		
+		$this->assertEquals('UN TEXTE QUELCONQUE :',
+			$manager->formatText('fr_FR', 'un texte quelconque', $format, array('uc', 'lab')));
+		$this->assertEquals('UN TEXTE QUELCONQUE:',
+			$manager->formatText('en_GB', 'un texte quelconque', $format, array('uc', 'lab')));
+
 		// Substitutions.
-		$this->assertEquals('Un texte pramétré test {param2}', $manager->formatText('fr_FR', 'un texte pramétré {param1} {param2}', $format, array('ucf'), array('param1' => 'test')));
-		$this->assertEquals('un texte pramétré test youpi', $manager->formatText('fr_FR', 'un texte pramétré {param1} {param2}', $format, array(), array('param1' => 'test', 'param2' => 'youpi')));
+		$this->assertEquals('Un texte pramétré test {param2}',
+			$manager->formatText('fr_FR', 'un texte pramétré {param1} {param2}', $format, array('ucf'),
+				array('param1' => 'test')));
+		$this->assertEquals('un texte pramétré test youpi',
+			$manager->formatText('fr_FR', 'un texte pramétré {param1} {param2}', $format, array(),
+				array('param1' => 'test', 'param2' => 'youpi')));
 
 		// Specific formatter.
-		$this->assertEquals('* Un texte quelconque', $manager->formatText('fr_FR', 'un texte quelconque', $format, array('required', 'ucf')));
-		$this->assertEquals('<span class="required">*</span> Un texte quelconque', $manager->formatText('fr_FR', 'un texte quelconque', $format, array('ucf', 'required', 'html')));
+		$this->assertEquals('* Un texte quelconque',
+			$manager->formatText('fr_FR', 'un texte quelconque', $format, array('required', 'ucf')));
+		$this->assertEquals('<span class="required">*</span> Un texte quelconque',
+			$manager->formatText('fr_FR', 'un texte quelconque', $format, array('ucf', 'required', 'html')));
 	}
-	
+
 	/**
 	 * @depends testTransForLCID
 	 */
 	public function testTrans(I18nManager $manager)
 	{
 		$this->assertEquals('fr_FR', $manager->getLCID());
-		
+
 		// Key translation.
 		$this->assertEquals('plop fr a.aa', $manager->trans('m.project.tests.a.aa.plop'));
 		$this->assertEquals('plip fr b', $manager->trans('m.project.tests.a.aa.plip'));
 		$this->assertEquals('plap fr a.aa', $manager->trans('m.project.tests.a.aa.plap'));
 		$this->assertEquals('--m.project.tests.a.aa.plep', $manager->trans('m.project.tests.a.aa.plep'));
 		$this->assertEquals('un texte quelconque', $manager->trans('un texte quelconque'));
-		
+
 		// Converters.
 		$this->assertEquals('Plop fr a.aa', $manager->trans('m.project.tests.a.aa.plop', array('ucf')));
 		$this->assertEquals('un texte quelconque', $manager->trans('un texte quelconque', array('ucf')));
 		$this->assertEquals('PLOP FR A.AA :', $manager->trans('m.project.tests.a.aa.plop', array('uc', 'lab')));
 		$this->assertEquals('un texte quelconque', $manager->trans('un texte quelconque', array('uc', 'lab')));
-		
+
 		// Substitutions.
-		$this->assertEquals('Withparams test {param2} fr a', $manager->trans('m.project.tests.a.withparams', array('ucf'), array('param1' => 'test')));
-		$this->assertEquals('withparams test youpi fr a', $manager->trans('m.project.tests.a.withparams', array(), array('param1' => 'test', 'param2' => 'youpi')));
+		$this->assertEquals('Withparams test {param2} fr a',
+			$manager->trans('m.project.tests.a.withparams', array('ucf'), array('param1' => 'test')));
+		$this->assertEquals('withparams test youpi fr a',
+			$manager->trans('m.project.tests.a.withparams', array(), array('param1' => 'test', 'param2' => 'youpi')));
 	}
 
 	// Dates.
-	
+
 	/**
 	 * Tests for:
 	 *  - get/setDateFormat
@@ -381,23 +395,24 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		foreach (array('fr_FR', 'en_GB') as $lang)
 		{
 			$this->assertEquals($manager->transForLCID($lang, 'c.date.default-date-format'), $manager->getDateFormat($lang));
-			$this->assertEquals($manager->transForLCID($lang, 'c.date.default-datetime-format'), $manager->getDateTimeFormat($lang));
+			$this->assertEquals($manager->transForLCID($lang, 'c.date.default-datetime-format'),
+				$manager->getDateTimeFormat($lang));
 		}
-		
+
 		// If values are set, these values are returned.
 		$manager->setDateFormat('test');
 		$this->assertEquals('test', $manager->getDateFormat('fr_FR'));
 		$this->assertEquals('test', $manager->getDateFormat('en_GB'));
-		
+
 		$manager->setDateTimeFormat('toto');
 		$this->assertEquals('toto', $manager->getDateTimeFormat('fr_FR'));
 		$this->assertEquals('toto', $manager->getDateTimeFormat('en_GB'));
-		
+
 		$manager->setTimeZone('Asia/Tokyo'); // Time zone may be set by code...
 		$this->assertEquals('Asia/Tokyo', $manager->getTimeZone()->getName());
 		$manager->setTimeZone(new \DateTimeZone('America/New_York')); // ... or by DateTimeZone instance.
 		$this->assertEquals('America/New_York', $manager->getTimeZone()->getName());
-		
+
 		// Admitted values for following tests.
 		$manager->setTimeZone('Europe/Paris');
 		$this->assertEquals('Europe/Paris', $manager->getTimeZone()->getName());
@@ -407,7 +422,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('dd/MM/yyyy HH:mm', $manager->getDateTimeFormat($manager->getLCID()));
 		return $manager;
 	}
-	
+
 	/**
 	 * @depends testGetSetDateFormatsAndTimeZone
 	 */
@@ -418,7 +433,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('2012-10-16 09:00:00', $date->format('Y-m-d H:i:s'));
 		return $date;
 	}
-	
+
 	/**
 	 * @depends testGetSetDateFormatsAndTimeZone
 	 */
@@ -450,16 +465,16 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Europe/Paris', $date->getTimezone()->getName());
 		$this->assertEquals('2012-10-16 11:00:00', $date->format('Y-m-d H:i:s'));
 	}
-	
+
 	/**
 	 * @depends testGetSetDateFormatsAndTimeZone
 	 */
 	public function testFormatDate(I18nManager $manager)
 	{
-		// Basical formating.
+		// Basic formatting.
 		$date = $manager->getLocalDateTime('2012-10-16 09:00:00');
 		$this->assertEquals('16/10/2012 09:00', $manager->formatDate('fr_FR', $date, 'dd/MM/yyyy HH:mm'));
-		
+
 		// The language is correctly used for days and months.
 		$this->assertEquals('mardi, 16 octobre 2012', $manager->formatDate('fr_FR', $date, 'EEEE, d MMMM yyyy'));
 		$this->assertEquals('Tuesday, October 16 2012', $manager->formatDate('en_GB', $date, 'EEEE, MMMM d yyyy'));
@@ -468,12 +483,14 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('09:00 UTC+02:00', $manager->formatDate('fr_FR', $date, 'HH:mm ZZZZ'));
 		$gmtDate = $manager->getGMTDateTime('2012-10-16 09:00:00');
 		$this->assertEquals('11:00 UTC+02:00', $manager->formatDate('fr_FR', $gmtDate, 'HH:mm ZZZZ'));
-		
+
 		// If there is a specified time zone, the date is converted to it.
-		$this->assertEquals('03:00 UTC-04:00', $manager->formatDate('fr_FR', $date, 'HH:mm ZZZZ', new \DateTimeZone('America/New_York')));
-		$this->assertEquals('18:00 UTC+09:00', $manager->formatDate('fr_FR', $gmtDate, 'HH:mm ZZZZ', new \DateTimeZone('Asia/Tokyo')));
+		$this->assertEquals('03:00 UTC-04:00',
+			$manager->formatDate('fr_FR', $date, 'HH:mm ZZZZ', new \DateTimeZone('America/New_York')));
+		$this->assertEquals('18:00 UTC+09:00',
+			$manager->formatDate('fr_FR', $gmtDate, 'HH:mm ZZZZ', new \DateTimeZone('Asia/Tokyo')));
 	}
-	
+
 	/**
 	 * @depends testGetSetDateFormatsAndTimeZone
 	 */
@@ -483,7 +500,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('dd/MM/yyyy', $manager->getDateFormat($manager->getLCID()));
 		$this->assertEquals('16/10/2012', $manager->transDate($date));
 	}
-	
+
 	/**
 	 * @depends testGetSetDateFormatsAndTimeZone
 	 */
@@ -493,7 +510,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('dd/MM/yyyy HH:mm', $manager->getDateTimeFormat($manager->getLCID()));
 		$this->assertEquals('16/10/2012 09:00', $manager->transDateTime($date));
 	}
-	
+
 	// Transformers.
 
 	/**
@@ -559,7 +576,8 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testTransformHtml(I18nManager $manager)
 	{
-		$this->assertEquals("test <br />\n &lt;em&gt;toto&lt;/em&gt; &quot;test&quot;", $manager->transformHtml("test \n <em>toto</em> \"test\"", 'fr_FR'));
+		$this->assertEquals("test <br />\n &lt;em&gt;toto&lt;/em&gt; &quot;test&quot;",
+			$manager->transformHtml("test \n <em>toto</em> \"test\"", 'fr_FR'));
 	}
 
 	/**
@@ -568,11 +586,13 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testTransformText(I18nManager $manager)
 	{
 		$source = '<h1>Titre</h1><p>Un<br/>paragraphe</p><ul><li>item 1</li><li>item 2</li></ul><hr><div class="test">Contenu du div</div>';
-		$expected = 'Titre'.PHP_EOL.'Un'.PHP_EOL.'paragraphe'.PHP_EOL.' * item 1'.PHP_EOL.' * item 2'.PHP_EOL.'------'.PHP_EOL.'Contenu du div';
+		$expected =
+			'Titre' . PHP_EOL . 'Un' . PHP_EOL . 'paragraphe' . PHP_EOL . ' * item 1' . PHP_EOL . ' * item 2' . PHP_EOL . '------'
+				. PHP_EOL . 'Contenu du div';
 		$this->assertEquals($expected, $manager->transformText($source, 'fr_FR'));
-		
+
 		$source = '<table><tr><th>Titre 1</th><th>Titre 2</th></tr><tr><td>Cellule 1</td><td>Cellule 2</td></tr><table>';
-		$expected = "Titre 1\tTitre 2\t".PHP_EOL."Cellule 1\tCellule 2";
+		$expected = "Titre 1\tTitre 2\t" . PHP_EOL . "Cellule 1\tCellule 2";
 		$this->assertEquals($expected, $manager->transformText($source, 'fr_FR'));
 	}
 
@@ -581,7 +601,8 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testTransformAttr(I18nManager $manager)
 	{
-		$this->assertEquals("test&quot;sqdqs&quot; qsdqsd&lt;sdsdf&gt;", $manager->transformAttr('test"sqdqs" qsdqsd<sdsdf>', 'fr_FR'));
+		$this->assertEquals("test&quot;sqdqs&quot; qsdqsd&lt;sdsdf&gt;",
+			$manager->transformAttr('test"sqdqs" qsdqsd<sdsdf>', 'fr_FR'));
 	}
 
 	/**

@@ -3,8 +3,6 @@
 namespace Change\Http\Web\Result;
 
 /**
- * Class HtmlHeaderElement
- * @package Change\Http\Web\Result
  * @name \Change\Http\Web\Result\HtmlHeaderElement
  */
 class HtmlHeaderElement
