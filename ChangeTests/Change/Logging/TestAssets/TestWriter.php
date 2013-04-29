@@ -2,15 +2,15 @@
 namespace Tests\Change\Logging\TestAssets;
 
 /**
- * @name \Tests\Change\Logging\TestAssets\Testwriter
+ * @name \Tests\Change\Logging\TestAssets\TestWriter
  */
-class Testwriter extends \Zend\Log\Writer\AbstractWriter
+class TestWriter extends \Zend\Log\Writer\AbstractWriter
 {
 	/**
 	 * @var string
 	 */
 	protected $messages = array();
-	
+
 	/**
 	 * @return string
 	 */
@@ -18,7 +18,7 @@ class Testwriter extends \Zend\Log\Writer\AbstractWriter
 	{
 		return array_shift($this->messages);
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -26,7 +26,7 @@ class Testwriter extends \Zend\Log\Writer\AbstractWriter
 	{
 		$this->messages = array();
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -34,26 +34,21 @@ class Testwriter extends \Zend\Log\Writer\AbstractWriter
 	{
 		return count($this->messages);
 	}
-	
+
 	/**
-	 * @return Stream
-	 * @throws Exception\InvalidArgumentException
-	 * @throws Exception\RuntimeException
+	 * @return \Tests\Change\Logging\TestAssets\TestWriter
 	 */
 	public function __construct()
 	{
-		if($this->formatter === null) 
+		if ($this->formatter === null)
 		{
 			$this->formatter = new \Zend\Log\Formatter\Simple();
 		}
 	}
-	
+
 	/**
 	 * Write a message to the log.
-	 *
 	 * @param array $event event data
-	 * @return void
-	 * @throws Exception\RuntimeException
 	 */
 	protected function doWrite(array $event)
 	{

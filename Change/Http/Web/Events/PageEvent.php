@@ -44,7 +44,6 @@ class PageEvent extends Event
 	 */
 	protected $urlManager;
 
-
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 */

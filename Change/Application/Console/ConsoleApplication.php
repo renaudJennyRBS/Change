@@ -2,13 +2,11 @@
 namespace Change\Application\Console;
 
 use Zend\Json\Json;
-use Change\Stdlib\Path;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Finder\Glob;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 
@@ -74,7 +72,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		$changeCommandDir = new \SplFileInfo(PROJECT_HOME . '/Change/Commands');
 		$this->registerCommandsInDir($changeCommandDir, 'change');
 		
-		// Register project commands
+		// Register project commands.
 		$finder = new Finder();
 		$dirs = $finder->depth("== 1")->directories()->in(PROJECT_HOME . '/App/Modules/')->name('Commands');
 		foreach ($dirs as $dir)
@@ -148,10 +146,11 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			$this->add($command);
 		}
 	}
-	
+
 	/**
 	 * @param \SplFileInfo $dir
 	 * @param string $group
+	 * @param null $namespace
 	 */
 	protected function registerCommandsInDir(\SplFileInfo $dir, $group = null, $namespace = null)
 	{
@@ -161,7 +160,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		$cmdFinder = new Finder();
 		foreach ($cmdFinder->files()->depth('== 0')->in($dir->getPathname())->name('*.php') as $file)
 		{
-			/* @var $file SplFileInfo*/
+			/* @var $file \SplFileInfo */
 			$shortClassName = str_replace('.php', '', $file->getFilename());
 			if ($namespace === null)
 			{

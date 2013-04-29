@@ -10,27 +10,27 @@ class DefinitionCollection
 	 * @var string
 	 */
 	protected $LCID;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $path;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $loaded = false;
-	
+
 	/**
 	 * @var string[]
 	 */
 	protected $includesPaths = array();
-	
+
 	/**
 	 * @var \Change\I18n\DefinitionKey[]
 	 */
 	protected $definitionKeys = array();
-	
+
 	/**
 	 * @param string $LCID
 	 * @param string $path
@@ -40,7 +40,7 @@ class DefinitionCollection
 		$this->LCID = $LCID;
 		$this->path = $path;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -48,7 +48,7 @@ class DefinitionCollection
 	{
 		return $this->LCID;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class DefinitionCollection
 	{
 		return $this->path;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -64,7 +64,7 @@ class DefinitionCollection
 	{
 		return $this->getPath() . DIRECTORY_SEPARATOR . $this->getLCID() . '.xml';
 	}
-	
+
 	/**
 	 * @param string[] $includesPaths
 	 */
@@ -72,7 +72,7 @@ class DefinitionCollection
 	{
 		$this->includesPaths = $includesPaths;
 	}
-	
+
 	/**
 	 * @return string[]
 	 */
@@ -80,7 +80,7 @@ class DefinitionCollection
 	{
 		return $this->includesPaths;
 	}
-	
+
 	/**
 	 * @param string $path
 	 */
@@ -88,7 +88,7 @@ class DefinitionCollection
 	{
 		$this->includesPaths[] = $path;
 	}
-	
+
 	/**
 	 * @param \Change\I18n\DefinitionKey[] $definitionKeys
 	 */
@@ -96,7 +96,7 @@ class DefinitionCollection
 	{
 		$this->definitionKeys = $definitionKeys;
 	}
-	
+
 	/**
 	 * @return \Change\I18n\DefinitionKey[]
 	 */
@@ -104,7 +104,7 @@ class DefinitionCollection
 	{
 		return $this->definitionKeys;
 	}
-	
+
 	/**
 	 * @param \Change\I18n\DefinitionKey $definitionKey
 	 */
@@ -112,7 +112,7 @@ class DefinitionCollection
 	{
 		$this->definitionKeys[$definitionKey->getId()] = $definitionKey;
 	}
-	
+
 	/**
 	 * @param string $id
 	 * @return boolean
@@ -121,7 +121,7 @@ class DefinitionCollection
 	{
 		return isset($this->definitionKeys[$id]);
 	}
-	
+
 	/**
 	 * @param string $id
 	 * @return \Change\I18n\DefinitionKey|null
@@ -130,9 +130,9 @@ class DefinitionCollection
 	{
 		return isset($this->definitionKeys[$id]) ? $this->definitionKeys[$id] : null;
 	}
-	
+
 	/**
-	 * @param string $filePath
+	 * Load and parse the file.
 	 */
 	public function load()
 	{
@@ -140,14 +140,14 @@ class DefinitionCollection
 		{
 			return;
 		}
-		
+
 		$filePath = $this->getFilePath();
 		if (!file_exists($filePath))
 		{
 			$this->loaded = true;
 			return;
 		}
-		
+
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		if ($dom->load($this->getFilePath()))
 		{

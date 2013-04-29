@@ -74,7 +74,6 @@ class AjaxResult extends \Change\Http\Result
 		return $oldValue;
 	}
 
-
 	/**
 	 * @return array
 	 */

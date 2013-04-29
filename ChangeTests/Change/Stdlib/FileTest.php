@@ -5,7 +5,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMkdir()
 	{
-		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . 'testMkdir' . DIRECTORY_SEPARATOR .  'Test';
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . 'testMkdir' . DIRECTORY_SEPARATOR
+			. 'Test';
 		// Cleanup dir
 		$components = explode(DIRECTORY_SEPARATOR, $path);
 		@rmdir(implode(DIRECTORY_SEPARATOR, $components));
@@ -40,7 +41,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
 	public function testWrite()
 	{
-		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR .  'testWrite' . DIRECTORY_SEPARATOR .  'test.txt';
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . 'testWrite' . DIRECTORY_SEPARATOR
+			. 'test.txt';
 		@unlink($path);
 		\Change\Stdlib\File::write($path, 'test');
 		$this->assertFileExists($path);
@@ -56,7 +58,8 @@ class FileTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRead($path)
 	{
-		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR .  'testWrite' . DIRECTORY_SEPARATOR .  'test.txt';
+		$path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'FileTest' . DIRECTORY_SEPARATOR . 'testWrite' . DIRECTORY_SEPARATOR
+			. 'test.txt';
 		$this->assertEquals('test', \Change\Stdlib\File::read($path));
 		$this->setExpectedException('\RuntimeException', 'Could not read');
 		\Change\Stdlib\File::read(__DIR__ . DIRECTORY_SEPARATOR . 'aazeazeazeazeazeaze');

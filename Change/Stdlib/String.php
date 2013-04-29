@@ -17,7 +17,7 @@ class String
 	{
 		return mb_strlen($string, 'UTF-8');
 	}
-	
+
 	/**
 	 * UTF8-safe strtolower.
 	 * @api
@@ -28,7 +28,7 @@ class String
 	{
 		return mb_strtolower($string, 'UTF-8');
 	}
-	
+
 	/**
 	 * UTF8-safe strtoupper.
 	 * @api
@@ -39,7 +39,7 @@ class String
 	{
 		return mb_strtoupper($string, 'UTF-8');
 	}
-	
+
 	/**
 	 * UTF8-safe ucfirst.
 	 * @api
@@ -50,7 +50,7 @@ class String
 	{
 		return self::toUpper(self::subString($string, 0, 1)) . self::subString($string, 1);
 	}
-	
+
 	/**
 	 * UTF8-safe Sub string.
 	 * @api
@@ -67,7 +67,7 @@ class String
 		}
 		return mb_substr($string, $start, $length, 'UTF-8');
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $string
@@ -83,9 +83,9 @@ class String
 		}
 		return $string;
 	}
-	
+
 	/**
-	 * Generates an easily memorisable string random string (for random password generation for example).
+	 * Generates an easily memorable string random string (for random password generation for example).
 	 * @api
 	 * @param int $length
 	 * @param boolean $caseSensitive
@@ -94,16 +94,16 @@ class String
 	public static function random($length = 8, $caseSensitive = true)
 	{
 		$randomString = '';
-		$consons = array('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'z', 'bl', 'br', 
+		$consonants = array('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'z', 'bl', 'br',
 			'cl', 'cr', 'ch', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'qu', 'sl', 'sr');
 		$vowels = array('a', 'e', 'i', 'o', 'u', 'ae', 'ai', 'au', 'eu', 'ia', 'io', 'iu', 'oa', 'oi', 'ou', 'ua', 'ue', 'ui');
-		
+
 		if ($caseSensitive)
 		{
-			// Add upper conson to consons' array
-			foreach ($consons as $conson)
+			// Add upper consonant to consonants' array
+			foreach ($consonants as $consonant)
 			{
-				$consons[] = strtoupper($conson);
+				$consonants[] = strtoupper($consonant);
 			}
 			// Add upper vowel to vowels' array
 			foreach ($vowels as $vowel)
@@ -111,17 +111,17 @@ class String
 				$vowels[] = strtoupper($vowel);
 			}
 		}
-		$nbC = count($consons) - 1;
+		$nbC = count($consonants) - 1;
 		$nbV = count($vowels) - 1;
-		
+
 		for ($i = 0; $i < $length; $i++)
 		{
-			$randomString .= $consons[rand(0, $nbC)] . $vowels[rand(0, $nbV)];
+			$randomString .= $consonants[rand(0, $nbC)] . $vowels[rand(0, $nbV)];
 		}
-		
+
 		return substr($randomString, 0, $length);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $string
@@ -131,7 +131,7 @@ class String
 	{
 		return $string === null || (!is_array($string) && strlen(trim($string))) == 0;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $haystack
@@ -148,7 +148,7 @@ class String
 		}
 		return self::toLower(self::subString($haystack, -$len, $len)) === self::toLower($needle);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $haystack

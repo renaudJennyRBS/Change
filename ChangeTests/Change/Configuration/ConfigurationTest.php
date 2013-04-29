@@ -5,7 +5,7 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public $listenerCalled = false;
 
-	public function run(\PHPUnit_Framework_TestResult $result = NULL)
+	public function run(\PHPUnit_Framework_TestResult $result = null)
 	{
 		$this->setPreserveGlobalState(false);
 		return parent::run($result);
@@ -66,7 +66,7 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 					'entry23' => array('entry231' => 'Test231', 'entry232' => 'Test232'))));
 		$config->setConfigArray($entries);
 
-		// Entries whith path shorter than 2 are ignored.
+		// Entries with path shorter than 2 are ignored.
 		$this->assertEquals('value1', $config->getEntry('key1'));
 		$this->assertEquals('value2', $config->getEntry('key2'));
 		$this->assertEquals(null, $config->getEntry('key3'));
@@ -128,20 +128,20 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			unlink($sourceConfigFile);
 		}
-		copy(__DIR__ .'/TestAssets/project1.json', $sourceConfigFile);
+		copy(__DIR__ . '/TestAssets/project1.json', $sourceConfigFile);
 		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->assertNull($config->getEntry('mypath/myentry'));
 		$this->assertTrue($config->addPersistentEntry('mypath/myentry', 'value'));
 		$this->assertEquals('value', $config->getEntry('mypath/myentry'));
 		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
-		
+
 		// Giving an invalid path just returns false.
 		$this->assertNull($newConfig->getEntry('invalidpath'));
 		$this->assertFalse($config->addPersistentEntry('invalidpath', 'value'));
 		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
 		$this->assertNull($newConfig->getEntry('invalidpath'));
-		
+
 		// Boolean and integer types values are correctly preserved.
 		$this->assertNull($newConfig->getEntry('mypath/integer'));
 		$this->assertNull($newConfig->getEntry('mypath/boolean'));

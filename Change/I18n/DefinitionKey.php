@@ -20,14 +20,14 @@ class DefinitionKey
 	protected $text;
 	
 	/**
-	 * @var integer
+	 * @var string
 	 */
 	protected $format;
-	
+
 	/**
 	 * @param string $id
 	 * @param string $text
-	 * @param integer $format
+	 * @param string $format
 	 */
 	public function __construct($id, $text = null, $format = self::TEXT)
 	{
@@ -69,7 +69,7 @@ class DefinitionKey
 	}
 	
 	/**
-	 * @param integer $format
+	 * @param string $format
 	 */
 	public function setFormat($format = self::TEXT)
 	{
@@ -78,7 +78,7 @@ class DefinitionKey
 	
 	/**
 	 * DefinitionKey::TEXT | DefinitionKey::HTML
-	 * @return integer
+	 * @return string
 	 */
 	public function getFormat()
 	{

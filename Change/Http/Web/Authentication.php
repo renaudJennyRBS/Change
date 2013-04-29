@@ -12,7 +12,7 @@ class Authentication implements AuthenticationInterface
 	const DEFAULT_NAMESPACE = 'Authentication';
 
 	/**
-	 * @var
+	 * @var integer
 	 */
 	protected $accessorId = false;
 
@@ -28,7 +28,7 @@ class Authentication implements AuthenticationInterface
 	}
 
 	/**
-	 * @param  $accessorId
+	 * @param integer $accessorId
 	 */
 	public function setAccessorId($accessorId)
 	{
@@ -36,7 +36,7 @@ class Authentication implements AuthenticationInterface
 	}
 
 	/**
-	 * @return
+	 * @return integer
 	 */
 	public function getAccessorId()
 	{

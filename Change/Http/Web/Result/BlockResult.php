@@ -142,6 +142,7 @@ class BlockResult
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function getHtml()

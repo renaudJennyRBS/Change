@@ -19,7 +19,7 @@ class ConfigurationAcl implements  AclInterface
 	/**
 	 * @param AuthenticationInterface $authentication
 	 */
-	function __construct(AuthenticationInterface $authentication = null)
+	public function __construct(AuthenticationInterface $authentication = null)
 	{
 		$this->authentication = $authentication;
 	}

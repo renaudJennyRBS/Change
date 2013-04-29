@@ -77,7 +77,6 @@ class GeneratePathRule
 			$inputPathRule = $event->getParam('inputPathRule');
 			if ($inputPathRule instanceof PathRule)
 			{
-
 				//TODO update $inputPathRule->setPath()
 				//TODO Store final PathRule in event param 'pathRule'
 				//$event->setParam('pathRule', null);
