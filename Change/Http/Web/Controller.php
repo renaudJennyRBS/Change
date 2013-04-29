@@ -28,7 +28,7 @@ class Controller extends \Change\Http\Controller
 			$composer->execute($event);
 		};
 		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
-		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultHtmlResponse'), 5);
+		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
 	/**
@@ -60,29 +60,46 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @api
-	 * @return \Zend\Http\PhpEnvironment\Response
+	 * @param Event $event
 	 */
-	public function createResponse()
+	protected function validateAuthentication($event)
 	{
-		$response = parent::createResponse();
-		$response->getHeaders()->addHeaderLine('Content-Type: text/html;charset=utf-8');
-		return $response;
+		if (!($event->getAuthentication() instanceof \Change\Http\AuthenticationInterface))
+		{
+			$website = $event->getParam('website');
+			if ($website instanceof \Change\Presentation\Interfaces\Website)
+			{
+				$authentication = new Authentication($website);
+				$event->setAuthentication($authentication);
+			}
+		}
+		parent::validateAuthentication($event);
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function onDefaultHtmlResponse($event)
+	public function onDefaultResponse($event)
 	{
 		$result = $event->getResult();
+		$response = $event->getController()->createResponse();
 		if ($result instanceof Result)
 		{
-
-			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
-			if ($result instanceof \Change\Http\Web\Result\Resource)
+
+			if ($result instanceof  \Change\Http\Web\Result\Page)
+			{
+				if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_200)
+				{
+					$acceptHeader = $event->getRequest()->getHeader('Accept');
+					if ($acceptHeader instanceof \Zend\Http\Header\Accept && $acceptHeader->hasMediaType('text/html'))
+					{
+						$response->setContent($result->toHtml());
+					}
+				}
+			}
+			elseif ($result instanceof \Change\Http\Web\Result\Resource)
 			{
 				$response->setContent($result->getContent());
 			}
@@ -98,8 +115,8 @@ class Controller extends \Change\Http\Controller
 					$response->setContent(strval($result));
 				}
 			}
-			$event->setResponse($response);
 		}
+		$event->setResponse($response);
 	}
 
 	/**
@@ -147,7 +164,7 @@ class Controller extends \Change\Http\Controller
 	{
 		$result = $this->error($event);
 		$event->setResult($result);
-		$this->onDefaultHtmlResponse($event);
+		$this->onDefaultResponse($event);
 		return $event->getResponse();
 	}
 }

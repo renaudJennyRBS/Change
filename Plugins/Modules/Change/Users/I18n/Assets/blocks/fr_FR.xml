@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.users.blocks" lcid="fr_FR">
+	<key id="login">Bloc d'identification</key>
+	<key id="login-realm">realm</key>
+</i18n>
