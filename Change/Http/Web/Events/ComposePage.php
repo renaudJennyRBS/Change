@@ -29,6 +29,7 @@ class ComposePage
 
 			if ($pageResult instanceof PageResult)
 			{
+				$pageResult->getHeaders()->addHeaderLine('Content-Type: text/html;charset=utf-8');
 				$base = $event->getUrlManager()->getByPathInfo(null)->normalize()->toString();
 				$headElement = new HtmlHeaderElement('base', array('href' => $base, 'target' => '_self'));
 				$pageResult->addNamedHeadAsString('base', $headElement);

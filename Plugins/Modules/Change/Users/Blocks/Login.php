@@ -25,6 +25,7 @@ class Login extends Block
 		$parameters->addParameterMeta('login', Property::TYPE_STRING, true);
 		$parameters->addParameterMeta('password', Property::TYPE_STRING, true);
 		$parameters->addParameterMeta('realm', Property::TYPE_STRING, true, 'web');
+		$parameters->addParameterMeta('accessorId', Property::TYPE_INTEGER, false);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
@@ -34,17 +35,10 @@ class Login extends Block
 
 		$password = $request->getPost('password');
 		if ($password) {$parameters->setParameterValue('password', $password);}
-
-		$pathRule = $event->getParam('pathRule');
-		if ($pathRule instanceof \Change\Http\Web\PathRule)
+		if ($event->getAuthentication())
 		{
-			$origin = $pathRule->getPath();
+			$parameters->setParameterValue('accessorId', $event->getAuthentication()->getIdentity());
 		}
-		else
-		{
-			$origin = $request->getUriString();
-		}
-		$parameters->setParameterValue('origin', $origin);
 		return $parameters;
 	}
 

@@ -39,6 +39,16 @@ class Event extends ZendEvent
 	protected $urlManager;
 
 	/**
+	 * @var \Change\Http\AuthenticationInterface|null
+	 */
+	protected $authentication;
+
+	/**
+	 * @var \Change\Http\AclInterface
+	 */
+	protected $acl;
+
+	/**
 	 * @param \Change\Presentation\PresentationServices|null $presentationServices
 	 */
 	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices)
@@ -161,5 +171,38 @@ class Event extends ZendEvent
 	public function getUrlManager()
 	{
 		return $this->urlManager;
+	}
+
+	/**
+	 * @param \Change\Http\AuthenticationInterface|null $authentication
+	 */
+	public function setAuthentication($authentication)
+	{
+		$this->authentication = $authentication;
+	}
+
+	/**
+	 * @return \Change\Http\AuthenticationInterface|null
+	 */
+	public function getAuthentication()
+	{
+		return $this->authentication;
+	}
+
+
+	/**
+	 * @param \Change\Http\AclInterface $acl
+	 */
+	public function setAcl($acl)
+	{
+		$this->acl = $acl;
+	}
+
+	/**
+	 * @return \Change\Http\AclInterface
+	 */
+	public function getAcl()
+	{
+		return $this->acl;
 	}
 }

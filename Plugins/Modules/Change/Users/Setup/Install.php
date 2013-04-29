@@ -33,6 +33,12 @@ class Install
 			$group->setRealm('rest');
 			$group->create();
 
+			/* @var $group2 \Change\Users\Documents\Group */
+			$group2 = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
+			$group2->setLabel('Site Web');
+			$group2->setRealm('web');
+			$group2->create();
+
 			/* @var $user \Change\Users\Documents\User */
 			$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Users_User');
 			$user->setLabel('Administrateur');
@@ -41,7 +47,7 @@ class Install
 			$user->setPassword('admin');
 			$user->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
 			$user->addGroups($group);
-
+			$user->addGroups($group2);
 			$user->create();
 		}
 	}

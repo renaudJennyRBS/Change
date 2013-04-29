@@ -30,4 +30,12 @@ class ArrayResult extends \Change\Http\Result
 		}
 		return array();
 	}
+
+	/**
+	 * @return string
+	 */
+	function __toString()
+	{
+		return json_encode($this->toArray());
+	}
 }

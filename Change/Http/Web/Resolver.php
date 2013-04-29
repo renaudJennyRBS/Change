@@ -3,6 +3,7 @@ namespace Change\Http\Web;
 
 use Change\Http\ActionResolver;
 use Change\Http\Event;
+use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\FindDisplayPage;
 use Change\Http\Web\Actions\GeneratePathRule;
 use Change\Http\Web\Actions\GetThemeResource;
@@ -55,6 +56,16 @@ class Resolver extends ActionResolver
 				$event->setParam('themeResourcePath', $themeResourcePath);
 				$action = function($event) {
 					$action = new GetThemeResource();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+			elseif (preg_match('/^Action\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9\/]+)$/', $relativePath, $matches))
+			{
+				$event->setParam('action', array($matches[1], $matches[2], $matches[3]));
+				$action = function($event) {
+					$action = new ExecuteByName();
 					$action->execute($event);
 				};
 				$event->setAction($action);

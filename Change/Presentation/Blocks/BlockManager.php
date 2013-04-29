@@ -170,6 +170,8 @@ class BlockManager
 		$event = new Event(static::EVENT_PARAMETERIZE, $this, $httpEvent->getParams());
 		if ($httpEvent instanceof \Change\Http\Event)
 		{
+			$event->setAuthentication($httpEvent->getAuthentication());
+			$event->setAcl($httpEvent->getAcl());
 			$event->setParam('httpRequest', $httpEvent->getRequest());
 			if ($this->documentServices === null)
 			{
