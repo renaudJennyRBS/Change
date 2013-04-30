@@ -94,7 +94,6 @@
 					},
 
 					getWebsite : function () {
-						console.log("path=", path);
 						return this.getClosest('Change_Website_Website');
 					},
 

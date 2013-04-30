@@ -79,8 +79,6 @@
 							getFormUrl(),
 							null,
 							function (doc) {
-								doc.model = getFormModel(); // FIXME Useless in real life :)
-								doc.publicationStatus = 'DRAFT';
 								scope.document = doc;
 							},
 							getCreateLabel()
