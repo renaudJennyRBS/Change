@@ -1,0 +1,38 @@
+<div class="input-append">
+	<span class="uneditable-input" title="(=selectedModelName=)">(=document.label=)</span>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="editSelectedDocument()"
+		data-ng-disabled="document == null"
+		data-ng-show="allowEdition"
+		title="${m.generic.EditSelectedDocumentProperties}"><i class="icon-edit"></i></button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="createDocument()"
+		data-ng-show="allowCreation"
+		title="Créer un nouveau document"><i class="icon-plus"></i></button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="document = null"
+		data-ng-disabled="document == null"
+		title="Supprimer la sélection"><i class="icon-remove"></i></button>
+</div>
+
+<div class="btn-group">
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="openSelector()"
+		title="Choisir parmi les documents existants...">Choisir...</button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="getFromClipboard()"
+		data-ng-disabled="clipboardValues.length == 0"
+		title="Prendre dans le Presse-papier(=clipboardFirstLabel=)"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
+</div>
+
+<div class="document-picker-embedded" data-ng-show="documentPickerUrl" data-ng-include="documentPickerUrl"></div>

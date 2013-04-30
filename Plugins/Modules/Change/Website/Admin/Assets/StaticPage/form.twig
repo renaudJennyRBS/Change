@@ -1,0 +1,31 @@
+<div class="document-form" data-ng-controller="Change_Website_StaticPage_FormController">
+
+	<page-header sub-title="Page"></page-header>
+
+	<div data-ng-switch="isReferenceLanguage">
+
+		<div data-ng-switch-when="true">
+			<div class="document-editor change-editor-website-page"
+				document="document"
+				reference-document="referenceDocument"
+				language="language"
+				section="section"
+				on-save="onSave(document)"
+				on-cancel="onCancel()">
+			</div>
+		</div>
+
+		<div data-ng-switch-when="false">
+			<div class="document-editor change-editor-website-page-localized"
+				document="document"
+				reference-document="referenceDocument"
+				language="language"
+				section="section"
+				on-save="onSave(document)"
+				on-cancel="onCancel()">
+			</div>
+		</div>
+
+	</div>
+
+</div>

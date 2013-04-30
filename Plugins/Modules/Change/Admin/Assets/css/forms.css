@@ -1,0 +1,126 @@
+@CHARSET "UTF-8";
+
+.control-group.required .control-label {
+	font-weight: bold;
+}
+.control-group.required .control-label:before {
+	content: " *";
+	color: #b94a48;
+	font-size: 14pt;
+	font-family: Courier New, Courier;
+	position: relative;
+	top: 3px;
+	margin-right: 3px;
+}
+
+.number {
+	width: 60px;
+	text-align: right;
+}
+
+
+.nav-list li .required-indicator {
+	float: right;
+	position: relative;
+	top: 5px;
+
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-top: 1px;
+	*margin-right: .3em;
+	line-height: 14px;
+	vertical-align: text-top;
+	background-image: url("../lib/bootstrap/img/glyphicons-halflings.png");
+	background-position: 14px 14px;
+	background-repeat: no-repeat;
+	
+	background-position: -456px -96px;
+}
+
+.nav-list li.active .required-indicator {
+	background-image: url("../lib/bootstrap/img/glyphicons-halflings-white.png");
+}
+
+
+.help-block + .control-group {
+	margin-top: 20px;
+}
+
+.form-horizontal .control-group {
+	margin-bottom: 10px; /* Bootstrap tells 20px, but 10px is enough :) */
+}
+
+label.in-text {
+	display: inline;
+	font-weight: bold;
+	cursor: pointer;
+	border-bottom: 1px dotted silver;
+}
+
+.btn-toolbar.has-captions {
+	padding-bottom: 24px;
+}
+
+.controls label.error {
+	margin: 0;
+}
+
+.input-hour, .input-minute {
+	width: 20px;
+	text-align: center;
+}
+.input-unit {
+	display: inline-block;
+	padding: 6px;
+	position: relative;
+	top: 2px;
+}
+
+.price-round-options .btn-small {
+	min-width: 50px;
+}
+
+.document-form-sections form {
+	margin: 0;
+}
+
+
+
+
+
+input.ng-dirty.ng-invalid,
+textarea.ng-dirty.ng-invalid,
+select.ng-dirty.ng-invalid {
+	color: #b94a48;
+	border-color: #b94a48;
+	box-shadow: 0 0 6px #F8B9B7;
+}
+
+
+.cascading-forms-collapsed {
+	color: #999999;
+	padding: 4px 12px;
+	font-size: 12pt;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
+	background-image: -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	transition: font-size 0.2s ease, margin 0.2s ease;
+	position: relative;
+}
+
+.cascading-forms-last {
+	border-top: 2px solid #EEEEEE;
+	padding-top: 5px;
+}
+
+.cascading-forms-collapsed ~ .cascading-forms-collapsed {
+	margin-top: -4px;
+}
+
+form-button-bar > .confirmation-area {
+	position: relative;
+	top: 26px;
+}
+

@@ -1,14 +1,185 @@
-{% include 'header.twig' %}
+<!DOCTYPE html>
+<html lang="fr" data-ng-app="RbsChange">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>RBS Change</title>
+    <base href="{{ baseURL }}" />
 
-<div class="row-fluid">
-	<div class="span3" id="leftContainer">
-		<div id="mainMenu"></div>
-	</div>
-	<div class="span9" id="mainContainer">
-		<notification-center></notification-center>
-		<div id="helpListTop"></div>
-		<div id="workspace" class="ng-view"></div>
-		<div id="helpListBottom"></div>
-	</div>
-</div>
-{% include 'footer.twig' %}
+    <link rel="icon" type="image/png" href="Change/Admin/img/rbschange-favicon.png" />
+
+    <!-- Apple customization... -->
+    <link rel="apple-touch-icon" href="Change/Admin/img/rbschange-apple-touch-icon.png" />
+    <!-- Well, we like Microsoft too! -->
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta name="msapplication-TileImage" content="Change/Admin/img/rbschange-metro-icon.png" />
+    <meta name="msapplication-TileColor" content="#B1C903"/>
+    <!-- See http://relogo.org/ -->
+    <link rel="logo" type="image/svg" href="Change/Admin/img/rbschange-logo.svg" />
+
+    <link href="Change/Admin/lib/bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <link href="Change/Admin/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
+    <link href="Change/Admin/lib/FontAwesome/css/font-awesome.css" rel="stylesheet"/>
+    <link href="Change/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet"/>
+    <link href="Change/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/dockable.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/document-list.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/document-picker.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/forms.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/help.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/rbschange.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/rich-text.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/search-filters.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/structure-editor.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/timezone-selector.css" rel="stylesheet"/>
+    <link href="Change/Admin/css/token-list.css" rel="stylesheet"/>
+
+    <!-- TODO modules -->
+    <link href="Change/Website/css/admin.css" rel="stylesheet"/>
+
+</head>
+
+<body data-ng-controller="Change.RootController">
+    <div full-screen-toggle id="fullScreenBar">
+        <i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran.
+    </div>
+
+    {% include 'menu.twig' %}
+
+    <div class="container-fluid">
+
+        <div class="row-fluid clearfix" id="mainToolbar">
+            <div class="btn-toolbar">
+                <button type="button" loading-indicator-button="" class="btn btn-large"></button>
+                <clipboard-widget></clipboard-widget>
+                <button full-screen-toggle type="button" class="btn btn-large" title="Basculer en mode plein écran"></button>
+            </div>
+            <breadcrumb></breadcrumb>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span3" id="leftContainer">
+                <div id="mainMenu"></div>
+            </div>
+            <div class="span9" id="mainContainer">
+                <notification-center></notification-center>
+                <div id="helpListTop"></div>
+                <div id="workspace" class="ng-view"></div>
+                <div id="helpListBottom"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="container-fluid">
+        <div class="row-fluid">
+			<span class="span3">
+				<div class="icons-container">
+					<span class="icons">
+						<a onclick="window.open(this.href); return false;" href="https://www.rbschange.fr"><i class="icon-globe" title="Site web de RBS Change"></i></a>
+						<a onclick="window.open(this.href); return false;" href="http://www.twitter.com/RBSChange"><i class="icon-twitter" title="Suivez RBS Change sur Twitter"></i></a>
+						<a onclick="window.open(this.href); return false;" href="https://github.com/RBSChange"><i class="icon-github-alt" title="RBS Change sur GitHub"></i></a>
+					</span>
+                </div>
+			</span>
+			<span class="span9">
+				<a onclick="window.open(this.href); return false;" href="http://www.rbschange.com">RBS Change</a> est un CMS e-commerce open-source edité par la société <a onclick="window.open(this.href); return false" href="http://www.rbs.fr">Ready Business System</a>.
+			</span>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="Change/Admin/lib/script.min.js">​</script>
+
+    <script type="text/javascript" src="Change/Admin/lib/jquery.min.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/bootstrap/js/bootstrap.min.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/jstree/jquery.cookie.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/jstree/jquery.jstree.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular/angular.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular/angular-resource.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular/angular-sanitize.js">​</script>
+
+    <!-- TODO -->
+    <!--script type="text/javascript" src="Change/Admin/lib/angular/i18n/angular-locale_fr-fr.js">​</script-->
+    <script type="text/javascript" src="Change/Admin/lib/angular-strap/angular-strap.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular-strap/vendor/bootstrap-datepicker.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular-strap/vendor/bootstrap-timepicker.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/diff_match_patch/diff_match_patch.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular-local-storage/localStorageModule.js">​</script>
+
+    <script type="text/javascript" src="Change/Admin/js/rbschange.js">​</script>
+
+    <!-- TODO -->
+    <!--script type="text/javascript" src="Change/Admin/js/bootstrap-datepicker-fr.js">​</script-->
+    <script type="text/javascript" src="Change/Admin/js/global-search.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/help.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/routes.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/timezone-selector.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/lang/i18n_fr-fr.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/apply-correction-options.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/bind-action.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/breadcrumb.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/clipboard-add-widget.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/clipboard-widget.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/correction-viewer.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/date-selector.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/disable-on-click.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/dockable.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-list-toolbar.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-localization-options.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-picker-multiple.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-picker-single.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-system-info-section.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/drop-files-zone.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/form-button-bar.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/form-sections.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/go-up-in-tree.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/help.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/input-typeahead.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/loading-message.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/mask.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/model-select.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/notification-center.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/page-header.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/pagination-toolbar.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/rich-text.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/search-filters.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/status-switch.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/status.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/structure-editor.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/switch.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/token-list.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/tree-view.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/actions.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/array.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/base64.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/breadcrumb.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/clipboard.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/dialog.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/document-list.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/editor.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/error-formatter.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/forms-manager.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/fullscreen.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/i18n.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/loading.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/main-menu.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/modules.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/notification-center.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/oauth.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/rest.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/saved-searches.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/settings.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/url-manager.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/utils.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/services/workspace.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/filters/rbschange.filters.js">​</script>
+
+    <!-- TODO modules -->
+    <script type="text/javascript" src="Change/Website/js/admin.js">​</script>
+    <script type="text/javascript" src="Change/Website/StaticPage/controllers.js">​</script>
+    <script type="text/javascript" src="Change/Website/StaticPage/editor.js">​</script>
+    <script type="text/javascript" src="Change/Website/Topic/controllers.js">​</script>
+    <script type="text/javascript" src="Change/Website/Topic/editor.js">​</script>
+    <script type="text/javascript" src="Change/Website/Website/controllers.js">​</script>
+    <script type="text/javascript" src="Change/Website/Website/editor.js">​</script>
+</body>
+</html>

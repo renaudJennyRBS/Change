@@ -1,0 +1,7 @@
+<div class="notification-center" data-ng-show="notifications.length">
+	<div data-ng-repeat="notification in notifications" class="alert alert-block alert-(=notification.style=)">
+		<button type="button" class="close" data-ng-click="remove($index)">&times;</button>
+		<h4 data-ng-show="notification.title" data-ng-bind-html="notification.title"></h4>
+		<p data-ng-bind-html-unsafe="formatErrorMessage(notification)"></p>
+	</div>
+</div>
