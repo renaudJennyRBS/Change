@@ -1,0 +1,15 @@
+<div data-ng-init="applyCorrectionWhen = 'now'"></div>
+<label class="radio">
+	<input type="radio" name="applyCorrectionWhenOption" data-ng-model="applyCorrectionWhen" value="now" checked>
+	Appliquer la correction maintenant.
+</label>
+<label class="radio">
+	<input type="radio" name="applyCorrectionWhenOption" data-ng-model="applyCorrectionWhen" value="planned">
+	Plannifier l'application la correction.
+</label>
+<date-selector data-ng-show="applyCorrectionWhen == 'planned'" data-ng-model="plannedCorrectionDate" name="plannedCorrectionDate"></date-selector>
+<div class="form-actions">
+	<button type="button" data-ng-show="applyCorrectionWhen == 'now'" class="btn btn-success" data-ng-click="submitNow()">Appliquer la correction maintenant</button>
+	<button type="button" data-ng-hide="applyCorrectionWhen == 'now'" class="btn btn-primary" data-ng-click="submitPlanned()">Valider la plannification</button>
+	<button type="button" class="btn" data-ng-click="closeEmbeddedModal()">Annuler</button>
+</div>

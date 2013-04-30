@@ -40,7 +40,7 @@ class GetHtmlFragment
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 					$templateManager = $event->getPresentationServices()->getTemplateManager();
-					$attributes = array();
+					$attributes = array('query' => $event->getRequest()->getQuery()->toArray());
 					$renderer = function () use ($filePath, $templateManager, $attributes)
 					{
 						return $templateManager->renderTemplateFile($filePath, $attributes);

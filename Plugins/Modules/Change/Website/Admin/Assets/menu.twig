@@ -1,0 +1,33 @@
+<div data-ng-controller="Change_Website_MainMenuController">
+
+	<ul class="nav nav-list">
+		<li class="nav-header">Contenus</li>
+		<li><a href="Change/Website/Website"><i class="icon-home"></i> Sites</a></li>
+		<li class="nav-header">Arborescences des sites</li>
+	</ul>
+
+	<div class="accordion" id="chgMainMenuTree">
+		<div class="accordion-group" data-ng-repeat="website in websites" data-ng-class="{'selected': currentWebsiteId == website.id}">
+			<div class="accordion-heading">
+				<a class="accordion-toggle pull-right" data-toggle="collapse" data-parent="#chgMainMenuTree" data-target="#chgChangeWebsite(=website.id=)">
+					<i class="icon-sort"></i>
+				</a>
+				<a class="accordion-toggle" href="Change/Website/nav/?tn=(=website.id=)">
+					<i class="icon-home icon-large pull-left"></i>
+					<strong>(=website.label=)</strong>
+				</a>
+			</div>
+			<div id="chgChangeWebsite(=website.id=)" class="accordion-body collapse" data-ng-class="{'in': currentWebsiteId == website.id}">
+				<div class="accordion-inner">
+					<div tree-view="Change/Website"
+						root-node-url="(=website.META$.treeNode.url=)"
+						allow-drag-n-drop="true"
+						allowed-models="Change_Website_Website Change_Website_Topic"
+						url-template="Change/Website/nav/?tn=:id">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

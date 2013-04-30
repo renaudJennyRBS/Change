@@ -1,0 +1,69 @@
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+
+	<!-- general -->
+
+	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
+			<label class="control-label" for="label">Titre</label>
+			<div class="controls">
+				<input type="text" id="label" name="label" required class="input-block-level" data-ng-model="document.label"/>
+			</div>
+		</div>
+
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('navigationTitle')}">
+			<label class="control-label" for="navigationTitle">Titre dans les éléments de navigation</label>
+			<div class="controls">
+				<input type="text" id="navigationTitle" name="navigationTitle" required class="input-block-level" data-ng-model="document.navigationTitle"/>
+				<button type="button" class="btn btn-small" ng-click="document.navigationTitle = document.label">Même que le titre</button>
+			</div>
+		</div>
+
+		<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('pageTemplate')}">
+			<label class="control-label" for="pageTemplate">Modèle de page</label>
+			<div class="controls"><div class="document-picker-single"
+			                           document="document.pageTemplate"
+			                           accepted-model="Change_Theme_PageTemplate"
+			                           selector-title="Sélectionner le modèle de page"
+			                           property-label="Modèle de page"
+			                           master-label="(=document.label=)">
+				</div>
+			</div>
+		</div>
+
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('website')}">
+			<label class="control-label" for="website">Site web</label>
+			<div class="controls">
+				<!--model-select required ng-model="document.website" change-model="Change_Website_Website"></model-select-->
+				<div class="document-picker-single"
+				     document="document.website"
+				     accepted-model="Change_Website_Website"
+				     selector-title="Sélectionner le site web"
+				     property-label="Site web"
+				     master-label="(=document.label=)">
+			     </div>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="editableContent">Contenu de la page</label>
+			<div class="controls">
+				<button class="btn" id="editableContent" type="button" data-ng-click="editPage($event, document)"><i class="icon-edit"></i> Ouvrir l'éditeur de page</button>
+				<span class="help-block">Zones de contenu : <span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span></span>
+			</div>
+
+		</div>
+		<div data-role="edit-page-contents-confirmation"></div>
+
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="État"
+		data-form-section-group="Informations"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+
+</form>

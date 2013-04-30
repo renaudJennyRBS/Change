@@ -1,0 +1,29 @@
+<div>
+	<input data-role="input-date" class="input-small" size="16" type="date" id="(=name=)" data-date-format="dd/mm/yyyy" data-ng-model="date" data-date-language="fr"/>
+	<span class="input-unit">à</span>
+
+	<input data-role="input-hour" class="input-hour" type="number" size="2" value="0" />
+	<span class="input-unit">H</span>
+	<input data-role="input-minute" class="input-minute" type="number" size="2" value="00" />
+
+	<button class="btn timezone-selector" type="button" style="margin-left:10px" data-ng-click="openTimeZoneSelector()">
+		<i class="icon-globe"></i> <span title="(=timeZone.label=)">(=timeZone.code=)</span>
+	</button>
+
+	<div class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>Choisir un fuseau horaire</h3>
+		</div>
+		<div class="modal-body">
+			<p>Vous pouvez choisir d'utliser ce fuseau horaire pour le formulaire en cours uniquement, pour votre session ou pour toujours.</p>
+			<select size="10" data-ng-options="tz.label for tz in timeZones" data-ng-model="selectedTimeZone"></select>
+		</div>
+		<div class="modal-footer">
+			Changer de fuseau horaire pour...<br/>
+			<button data-ng-click="selectTimeZone('form')" type="button" class="btn btn-primary" aria-hidden="true">Ce formulaire</button>
+			<button data-ng-click="selectTimeZone('session')" type="button" class="btn" aria-hidden="true" title="Le fuseau horaire choisi sera utilisé durant toute votre session de travail. Lors de votre prochaine connexion, le fuseau horaire sélectionné sera celui enregistré dans vos paramètres personnels.">La session</button>
+			<button data-ng-click="selectTimeZone('forever')" type="button" class="btn" aria-hidden="true" title="Le fuseau horaire choisi sera enregistré dans vos paramètres personnels.">Toujours</button>
+		</div>
+	</div>
+</div>

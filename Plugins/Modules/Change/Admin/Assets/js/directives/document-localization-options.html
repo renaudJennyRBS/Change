@@ -1,0 +1,71 @@
+<loading-indicator-text></loading-indicator-text>
+
+<div class="container-fluid" data-ng-show="languages">
+
+	<div class="row-fluid">
+		Ce document est disponible en <strong>(=languages.length | number=) langues</strong>.<br/>La langue de référence est <strong>(=referenceLanguage.label=)</strong> ((=referenceLanguage.id=)) &mdash; <a href="javascript:;"data-ng-click="changeReferenceLanguage=true">changer</a>
+		<div class="form-inline" data-ng-show="changeReferenceLanguage" data-focus-on-show="select">
+			<label for="select_newReferenceLanguage">Choisir une nouvelle langue de référence :</label>
+			<select id="select_newReferenceLanguage" data-ng-model="newReferenceLanguage" data-ng-options="lang.label for lang in languages"></select>
+			<button type="button" data-ng-disabled="! newReferenceLanguage || newReferenceLanguage == referenceLanguage" data-ng-click="selectReferenceLanguage(newReferenceLanguage); changeReferenceLanguage=false" class="btn btn-success"><i class="icon-ok"></i> Valider</button>
+			<button type="button" data-ng-click="changeReferenceLanguage=false" class="btn">Annuler</button>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		<div class="span6">
+			<h4>Traduire en...</h4>
+			<ul class="nav nav-list">
+				<li data-ng-repeat="lang in languages"
+					data-ng-class="{'active': selectedLanguage.id == lang.id}">
+					<a href="javascript:;" data-ng-click="selectLanguage(lang)">
+						<span class="pull-right"><i data-ng-show="lang.isReference" class="icon-book" data-ng-class="{'icon-white': selectedLanguage.id == lang.id}"></i> <span class="language-code">(=lang.id=)</span></span>
+						<i data-ng-class="{ 'icon-ok': lang.complete, 'icon-warning-sign': !lang.complete }"></i>
+						(=lang.label=)
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="span6">
+			<h4>À partir de...</h4>
+			<ul class="nav nav-list">
+				<li data-ng-repeat="lang in languages"
+					data-ng-class="{ 'active': fromLanguage.id == lang.id, 'disabled': (lang.id == selectedLanguage.id || selectedLanguage.isReference) }">
+					<a href="javascript:;" data-ng-click="selectFromLanguage(lang)">
+						<span class="pull-right"><i data-ng-show="lang.isReference" class="icon-book" data-ng-class="{'icon-white': fromLanguage.id == lang.id}"></i> <span class="language-code">(=lang.id=)</span></span>
+						<i data-ng-class="{ 'icon-ok': lang.complete, 'icon-warning-sign': !lang.complete }"></i>
+						(=lang.label=)
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+
+	<div class="row-fluid">
+		<div class="alert alert-info" style="margin-top: 1em" data-ng-show="iconsLegendVisible">
+			<button class="close" type="button" data-ng-click="iconsLegendVisible = false">×</button>
+			<h4>Légende des icônes</h4>
+			<dl>
+				<dt><i class="icon-book"></i> Langue de référence</dt>
+				<dd>C'est la langue qui fait foi et qui sert de référence pour les traductions.</dd>
+				<dt><i class="icon-ok"></i> Traduction complète</dt>
+				<dd>Le document a été compètement traduit dans cette langue.</dd>
+				<dt><i class="icon-warning-sign"></i> Traduction manquante ou incomplète</dt>
+				<dd>Le document n'est pas traduit dans cette langue, ou ne l'est que partiellement.</dd>
+			</dl>
+		</div>
+	</div>
+
+</div>
+
+<div class="form-actions" data-ng-show="languages">
+	<button type="button" class="btn pull-right btn-info" data-ng-class="{'active': iconsLegendVisible}" data-ng-click="iconsLegendVisible = ! iconsLegendVisible">
+		Légende des icônes
+		<i class="icon-white" data-ng-class="{'icon-chevron-down': ! iconsLegendVisible, 'icon-chevron-up': iconsLegendVisible}"></i>
+	</button>
+	<button data-ng-disabled="! ((selectedLanguage && fromLanguage) || selectedLanguage.isReference)" data-ng-click="applySelectedLanguage()" type="button" class="btn btn-primary"><i class="icon-globe icon-white"></i> Traduire</button>
+	<button type="button" class="btn" data-ng-click="closeEmbeddedModal()">Annuler</button>
+</div>

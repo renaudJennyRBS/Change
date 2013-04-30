@@ -1,0 +1,186 @@
+@CHARSET "UTF-8";
+
+/* Picker */
+
+.widget-element-picker .items a {
+	display: block;
+}
+
+.drop-zone {
+	border: 3px dashed silver;
+	border-radius: 12px;
+	text-align: center;
+	color: silver;
+	background: url('../img/icons/drop-icon.png') center 10px no-repeat;
+	padding: 40px 10px 10px;
+	font-size: 95%;
+	line-height: 1.1em;
+}
+
+
+.drop-zone.large {
+	border: 3px dashed silver;
+	border-radius: 12px;
+	text-align: center;
+	color: silver;
+	background: url('../img/icons/drop-icon.png') center 10px no-repeat;
+	padding: 40px 10px 10px;
+	font-size: 140%;
+	line-height: 1.1em;
+}
+
+
+#embedded-modal-backdrop,
+#document-picker-backdrop {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background: black;
+	display: none;
+	z-index: 100;
+	opacity: 0.32;
+}
+
+
+.document-picker-embedded,
+.embedded-modal {
+	z-index: 101;
+	position: relative;
+	margin: 10px 0 0 0;
+	background: white;
+	padding: 10px 15px 10px;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+.form-horizontal .document-picker-embedded,
+.form-horizontal .embedded-modal {
+	margin-left: -180px;
+}
+
+
+.embedded-modal {
+	margin: 10px 0;
+	display: none; 
+}
+
+.document-picker-embedded .pagination {
+	margin-bottom: 0;
+}
+
+.document-picker-embedded h3 {
+	margin-top: 0;
+}
+
+.document-picker-embedded:after,
+.embedded-modal:after {
+	position: absolute;
+	border-bottom: 9px solid #FFFFFF;
+	border-left: 9px solid transparent;
+	border-right: 9px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 50px;
+	top: -9px;
+}
+
+.document-picker-embedded:before,
+.embedded-modal:before {
+	position: absolute;
+	border-bottom: 10px solid rgba(0, 0, 0, 0.2);
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 49px;
+	top: -10px;
+}
+
+.form-horizontal .document-picker-embedded:before {
+	left: 129px;
+}
+.form-horizontal .document-picker-embedded:after {
+	left: 130px;
+}
+
+
+/* Right-aligned embedded modal */
+.embedded-modal.right:after {
+	left: auto;
+	right: 50px;
+}
+
+.embedded-modal.right:before {
+	left: auto;
+	right: 49px;
+}
+
+/* Bottom-aligned embedded modal */
+.embedded-modal.bottom:after {
+	top: auto;
+	bottom: -9px;
+	border-top: 9px solid #FFFFFF;
+	border-bottom: none;
+}
+
+.embedded-modal.bottom:before {
+	top: auto;
+	bottom: -10px;
+	border-top: 10px solid rgba(0, 0, 0, 0.2);
+	border-bottom: none;
+}
+
+.embedded-modal h3 {
+	border-bottom: 1px solid #EEEEEE;
+	margin: 0 -15px 10px;
+	padding: 0 15px 6px;
+}
+
+.embedded-modal .container-fluid {
+	margin: 0 -15px;
+	padding: 0 15px;
+}
+
+.embeded-modal p,
+#workspace .page-header .embedded-modal p {
+	line-height: 18px;
+}
+
+.embedded-modal.bottom.has-form-actions:after {
+	top: auto;
+	bottom: -9px;
+	border-top: 9px solid #F5F5F5;
+	border-bottom: none;
+}
+
+.embedded-modal .form-actions {
+	margin: 10px -15px -10px -15px;
+	border-radius: 0 0 5px 5px;
+}
+
+
+
+document-picker-single .input-append,
+.document-picker-single .input-append {
+	display: inline-block;
+	margin: 0;
+}
+
+document-picker-single,
+.document-picker-single {
+	font-size: 0;
+}
+
+
+document-picker-single .input-append + .btn-group,
+.document-picker-single .input-append + .btn-group {
+	margin-left: 5px;
+}
+
+.form-horizontal document-picker-single .input-append + .btn-group,
+.form-horizontal .document-picker-single .input-append + .btn-group {
+	margin-bottom: auto;
+}

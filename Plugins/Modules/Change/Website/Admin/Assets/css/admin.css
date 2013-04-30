@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+.website-menu-card {
+	margin-left: 20px;
+	border: 1px solid silver;
+	background: #F5F5F5;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.website-menu-card h4 {
+	margin-top: 0px;
+}
