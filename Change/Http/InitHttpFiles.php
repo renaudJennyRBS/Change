@@ -29,8 +29,12 @@ class InitHttpFiles
 		$content = str_replace('__DIR__', var_export($this->application->getWorkspace()->projectPath(), true), $content);
 		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 
-
 		$srcPath = $this->application->getWorkspace()->changePath('Http', 'Assets', 'rest.php');
+		$content = \Change\Stdlib\File::read($srcPath);
+		$content = str_replace('__DIR__', var_export(PROJECT_HOME, true), $content);
+		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+
+		$srcPath = $this->application->getWorkspace()->changePath('Http', 'Assets', 'admin.php');
 		$content = \Change\Stdlib\File::read($srcPath);
 		$content = str_replace('__DIR__', var_export(PROJECT_HOME, true), $content);
 		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);

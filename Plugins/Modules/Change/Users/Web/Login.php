@@ -89,31 +89,12 @@ class Login
 	 */
 	protected function findAccessorId($realm, $login, $password, DocumentManager $documentManager)
 	{
-		$dbProvider = $documentManager->getApplicationServices()->getDbProvider();
-		$qb = $dbProvider->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$gtb = $fb->getDocumentTable('Change_Users_Group');
-		$utb = $fb->getDocumentTable('Change_Users_User');
-		$rtb = $fb->getDocumentRelationTable('Change_Users_User');
 
-		$sq = $qb->select()
-			->addColumn($fb->alias($fb->getDocumentColumn('id', $utb), 'id'))
-			->addColumn($fb->alias($fb->getDocumentColumn('model', $utb), 'model'))
-			->from($utb)
-			->innerJoin($rtb, $fb->eq($fb->getDocumentColumn('id', $utb), $fb->getDocumentColumn('id', $rtb)))
-			->innerJoin($gtb, $fb->eq($fb->getDocumentColumn('id', $gtb), $fb->column('relatedid', $rtb)))
-			->where(
-				$fb->logicAnd(
-					$fb->eq($fb->column('realm', $gtb), $fb->parameter('realm', $qb)),
-					$fb->eq($fb->getDocumentColumn('login', $utb), $fb->parameter('login', $qb)),
-					$fb->eq($fb->getDocumentColumn('publicationStatus', $utb), $fb->string(Publishable::STATUS_PUBLISHABLE))
-				)
-			)
-			->query();
-		$sq->bindParameter('realm', $realm);
-		$sq->bindParameter('login', $login);
+		$qb = new \Change\Documents\Query\Builder($documentManager->getDocumentServices(), 'Change_Users_User');
+		$qb1 = $qb->getPropertyBuilder('groups');
+		$qb->andPredicates($qb->eq('login', $login), $qb->published(), $qb1->eq('realm', $realm));
+		$collection = $qb->getDocuments();
 
-		$collection = new \Change\Documents\DocumentCollection($documentManager, $sq->getResults());
 		foreach ($collection as $document)
 		{
 			if ($document instanceof \Change\Users\Documents\User)

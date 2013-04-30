@@ -1,0 +1,14 @@
+{% include 'header.twig' %}
+
+<div class="row-fluid">
+	<div class="span3" id="leftContainer">
+		<div id="mainMenu"></div>
+	</div>
+	<div class="span9" id="mainContainer">
+		<notification-center></notification-center>
+		<div id="helpListTop"></div>
+		<div id="workspace" class="ng-view"></div>
+		<div id="helpListBottom"></div>
+	</div>
+</div>
+{% include 'footer.twig' %}
