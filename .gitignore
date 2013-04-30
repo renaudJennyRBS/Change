@@ -46,9 +46,11 @@ nbproject
 /phpinfo.php
 /App/Config
 /App/Modules
+/App/*.db
 .psr-0.ser
 ./test*
-/ChangeTests/UnitTestWorkspace/Compilation/
+/ChangeTests/UnitTestWorkspace/*
+/ChangeTests/report/
 /App/OldBootstrap.php
 /change.xml
 /tests/

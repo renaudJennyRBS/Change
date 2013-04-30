@@ -35,6 +35,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @throws \RuntimeException
+	 * @return \Change\Presentation\PresentationServices
+	 */
+	protected static function getNewPresentationServices(\Change\Application\ApplicationServices $applicationServices)
+	{
+		return new \Change\Presentation\PresentationServices($applicationServices);
+	}
+
+	/**
 	 * @var \ChangeTests\Change\TestAssets\Application
 	 */
 	protected $application;
@@ -48,6 +58,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
+
+	/**
+	 * @var \Change\Presentation\PresentationServices
+	 */
+	protected $presentationServices;
 
 	/**
 	 * @return \ChangeTests\Change\TestAssets\Application
@@ -86,4 +101,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		return $this->documentServices;
 	}
 
+	/**
+	 * @return \Change\Presentation\PresentationServices
+	 */
+	public function getPresentationServices()
+	{
+		if (!$this->presentationServices)
+		{
+			$this->presentationServices = static::getNewPresentationServices($this->getApplicationServices());
+		}
+		return $this->presentationServices;
+	}
 }
