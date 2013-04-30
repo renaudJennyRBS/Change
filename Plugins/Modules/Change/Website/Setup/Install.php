@@ -13,6 +13,8 @@ class Install
 	 */
 	public function executeApplication($application)
 	{
+		$application->getConfiguration()->addPersistentEntry('Change/Admin/Listeners/Change_Website', '\\Change\\Website\\Admin\\Register');
+
 		$application->getConfiguration()->addPersistentEntry('Change/Presentation/Blocks/Change_Website', '\\Change\\Website\\Blocks\\SharedListenerAggregate');
 	}
 

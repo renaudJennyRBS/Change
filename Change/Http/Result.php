@@ -80,6 +80,18 @@ class Result
 	}
 
 	/**
+	 * @param string|null $contentType
+	 */
+	public function setHeaderContentType($contentType)
+	{
+		$this->removeHeader('Content-Type');
+		if ($contentType)
+		{
+			$this->getHeaders()->addHeaderLine('Content-Type', $contentType);
+		}
+	}
+
+	/**
 	 * @param string|null $contentLocation
 	 */
 	public function setHeaderContentLocation($contentLocation)
