@@ -56,7 +56,7 @@ class Resolver extends ActionResolver
 				$event->setAction($action);
 				return;
 			}
-			elseif ($extension === 'html')
+			elseif ($extension === 'twig')
 			{
 				$action = function($event) {
 					$action = new \Change\Admin\Http\Actions\GetHtmlFragment();
@@ -74,6 +74,16 @@ class Resolver extends ActionResolver
 			$event->setAction($action);
 			return;
 		}
+		else
+		{
+			$action = function($event) {
+				$action = new \Change\Admin\Http\Actions\GetHome();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+
 	}
 
 	/**
