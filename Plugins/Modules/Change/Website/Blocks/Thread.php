@@ -55,6 +55,7 @@ class Thread extends Block
 		$urlManager = $event->getUrlManager();
 		$dm = $event->getDocumentServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
+		$lastSection = null;
 
 		$thread = array();
 		$currentSection = $dm->getDocumentInstance($parameters->getSectionId());
@@ -62,6 +63,7 @@ class Thread extends Block
 		{
 			foreach ($currentSection->getSectionThread() as $section)
 			{
+				$lastSection = $section;
 				if ($section instanceof \Change\Website\Documents\Website)
 				{
 					continue;
@@ -78,7 +80,7 @@ class Thread extends Block
 		}
 
 		$page = $dm->getDocumentInstance($parameters->getPageId());
-		if ($page && $section->getIndexPageId() !== $page->getId())
+		if ($page && $lastSection && $lastSection->getIndexPageId() !== $page->getId())
 		{
 			$entry = new \Change\Website\Menu\MenuEntry();
 			$entry->setLabel($page->getLabel());
