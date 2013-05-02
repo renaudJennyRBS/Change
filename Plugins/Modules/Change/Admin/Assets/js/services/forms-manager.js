@@ -1,27 +1,24 @@
 (function ($) {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
 
 	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils) {
 
-		var $ws = $('#workspace');
-
-		this.cascadeContext = null;
-		this.cascadeCount = 0;
-
-		var self = this;
-
-		this.cleanUp = function () {
-			this.cascadeContext = null;
-			this.cascadeCount = 0;
-		};
+		var	$ws = $('#workspace'),
+			cascadeContext = null,
+			cascadeCount = 0,
+			cascadedElement = null,
+			self = this;
 
 		/**
 		 * When the route changes, we need to clean up any cascading process.
 		 */
 		$rootScope.$on('$routeChangeSuccess', function () {
-			self.cleanUp();
+			cascadeContext = null;
+			cascadeCount = 0;
 		});
 
 		$rootScope.$on('$routeChangeStart', function () {
@@ -38,23 +35,24 @@
 		 */
 		this.cascade = function (formUrl, queryParam, saveCallback, message) {
 
+			var	$form,
+				contents;
+
 			// Freeze the Breadcrumb to prevent any other controller from modifying it.
 			Breadcrumb.freeze();
 
 			// Update cascade counter.
-			this.cascadeCount++;
+			cascadeCount++;
 
 			// Slides up the current form.
-			var $form = $ws.children('.document-form').last();
+			$form = $ws.children('.document-form').last();
 			$form.slideUp('fast');
 
 			// Create cascade context.
-			this.cascadeContext = {
+			cascadeContext = {
 				'saveCallback' : saveCallback,
 				  'queryParam' : queryParam
 			};
-
-			var self = this;
 
 			// Load and insert the new cascaded form.
 			$.get(formUrl, function (html) {
@@ -70,9 +68,11 @@
 				// * Append that new Element in the DOM,
 				// * Compile it with the Angular $compile service.
 				$ws.append('<div class="cascading-forms-collapsed">' + message + '</div>');
-				var contents = $(html);
+				contents = $(html);
 				$ws.append(contents);
 				$compile(contents)(scope);
+				cascadedElement = contents;
+				cascadedElement.hide();
 
 				MainMenu.pushContents($ws.find('.document-editor').last().scope());
 
@@ -88,7 +88,7 @@
 		 * @returns {Boolean}
 		 */
 		this.isCascading = function () {
-			return this.cascadeCount > 0;
+			return cascadeCount > 0;
 		};
 
 
@@ -96,9 +96,14 @@
 		 * Uncascade (cancel) the current form and go back to the previous form,
 		 * without any changes on it.
 		 */
-		this.uncascade = function () {
+		this.uncascade = function (doc) {
 
-			this.cascadeContext = null;
+			if (cascadeContext && angular.isFunction(cascadeContext.saveCallback)) {
+				cascadeContext.saveCallback(doc);
+			}
+
+			cascadeContext = null;
+			cascadedElement = null;
 
 			// Remove the last from and destroy its associated scope.
 			var $form = $ws.children('.document-form').last();
@@ -113,8 +118,8 @@
 			MainMenu.popContents();
 
 			// If all cascades are finnished, unfreeze the Breadcrumb to allow modifications on it.
-			this.cascadeCount--;
-			if (this.cascadeCount === 0) {
+			cascadeCount--;
+			if (cascadeCount === 0) {
 				Breadcrumb.unfreeze();
 			}
 
@@ -125,7 +130,7 @@
 		this.updateCollapsedForms = function () {
 			// "Shrink" older forms.
 			var collapsed = $ws.find('.cascading-forms-collapsed');
-			collapsed.each(function (i, elm) {
+			collapsed.each(function (i) {
 				$(this).removeClass('cascading-forms-last').css({
 					margin    : '0 ' + ((collapsed.length - i)*15)+'px',
 					opacity   : (0.7 + ((i+1)/collapsed.length*0.3)),
@@ -184,8 +189,8 @@
 			Loading.start("Chargement du document...");
 
 			if (this.isCascading()) {
-				if (this.cascadeContext.queryParam) {
-					params = this.cascadeContext.queryParam;
+				if (cascadeContext.queryParam) {
+					params = cascadeContext.queryParam;
 				} else {
 					params = { "id": "new" };
 				}
@@ -240,6 +245,10 @@
 				scope.locales = doc.META$.locales;
 
 				Breadcrumb.setResource(scope.document);
+
+				if (cascadedElement) {
+					cascadedElement.show();
+				}
 
 				focus();
 			}

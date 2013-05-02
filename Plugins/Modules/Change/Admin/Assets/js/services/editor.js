@@ -32,12 +32,6 @@
 				scope.submit();
 			});
 
-
-			// Are we in a "forms cascading" process?
-			if (FormsManager.isCascading()) {
-				scope.cascadeContext = angular.copy(FormsManager.cascadeContext);
-			}
-
 			/**
 			 * Reset the form back to the originally loaded document (scope.original).
 			 */
@@ -127,8 +121,7 @@
 						clearInvalidFields();
 
 						if (FormsManager.isCascading()) {
-							scope.cascadeContext.saveCallback(doc);
-							FormsManager.uncascade();
+							FormsManager.uncascade(doc);
 						} else {
 							$rootScope.$broadcast('Change:DocumentSaved', doc);
 							if (angular.isFunction(scope.onSave)) {
@@ -153,8 +146,6 @@
 					if (angular.isFunction(scope.beforeSave)) {
 						scope.beforeSave(scope.document);
 					}
-
-					//console.log("Editor: save(): currentTreeNode=", Breadcrumb.getCurrentNode());
 
 					Actions.execute(
 						'save',
@@ -186,7 +177,7 @@
 
 			scope.cancelCascade = function cancelCascadeFn () {
 				if (FormsManager.isCascading()) {
-					FormsManager.uncascade();
+					FormsManager.uncascade(scope.document);
 				}
 			};
 
