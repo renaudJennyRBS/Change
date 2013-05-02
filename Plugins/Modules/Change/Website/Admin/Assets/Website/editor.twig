@@ -2,7 +2,9 @@
 
 	<!-- general -->
 
-	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+	<fieldset data-ng-show="section==''"
+              data-form-section-label="{{ i18nAttr('m.change.admin.general-properties',['ucf']) }}"
+              data-form-section-group="{{ i18nAttr('m.change.admin.properties',['ucf']) }}">
 
 		<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
 			<label class="control-label" for="label">{{ i18n('m.change.website.document.website.label',['ucf']) }}</label>
@@ -70,8 +72,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="État"
-		data-form-section-group="Informations"
+		data-form-section-label="{{ i18nAttr('m.change.admin.Status',['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.Information',['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

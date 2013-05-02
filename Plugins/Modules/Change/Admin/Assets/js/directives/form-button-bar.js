@@ -9,7 +9,7 @@
 		return {
 			restrict: 'E',
 
-			templateUrl: 'Change/Admin/js/directives/form-button-bar.html',
+			templateUrl: 'Change/Admin/js/directives/form-button-bar.twig',
 
 			link : function (scope, element, attrs) {
 
