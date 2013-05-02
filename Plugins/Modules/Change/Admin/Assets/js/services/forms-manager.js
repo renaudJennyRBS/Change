@@ -203,7 +203,7 @@
 						q.resolve(REST.newResource(rest, scope.language));
 					});
 				} else {
-					promise = REST.resource(rest, params.id, params.LCID || 'fr_FR'); // FIXME
+					promise = REST.resource(rest, params.id, params.LCID); // || 'fr_FR'); // FIXME
 				}
 
 			} else {

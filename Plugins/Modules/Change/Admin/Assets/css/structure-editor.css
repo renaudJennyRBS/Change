@@ -340,17 +340,17 @@
 }
 
 
-.ace-editor {
+/*ace-editor,*/
+.ace_editor {
 	position: absolute;
 	right: 0;
 	bottom: 0;
 	top: 0;
 	left: 0;
-	min-height: 40px;
+	height: 300px;
 	border-radius: 4px;
 	border: 1px solid rgba(0, 0, 0, 0.5);
 }
-
 
 .unselectable {
 	user-select: none;
