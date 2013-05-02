@@ -5,57 +5,54 @@
 	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
 
 		<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
-			<label class="control-label" for="label">Nom</label>
+			<label class="control-label" for="label">{{ i18n('m.change.website.document.website.label',['ucf']) }}</label>
 			<div class="controls">
 				<input type="text" id="label" name="label" required data-ng-model="document.label">
 			</div>
 		</div>
 
 		<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('hostName')}">
-			<label class="control-label" for="hostName">Nom d'hôte</label>
+			<label class="control-label" for="hostName">{{ i18n('m.change.website.document.website.hostname',['ucf']) }}</label>
 			<div class="controls">
 				<input type="text" id="hostName" name="hostName" required data-ng-model="document.hostName">
 				<span class="help-block">
-					Le nom d'hôte est le nom de domaine sur lequel pointe le site.<br/>
-					<span class="label label-info">Attention !</span> Cette valeur ne doit pas contenir <strong>http://</strong>, ni <strong>https://</strong>, ni se terminer par <strong>/</strong>.<br/>
-					Exemples : <strong>domaine.com</strong>, <strong>sousdomaine.domaine.com</strong>, ...
+					{{ i18n('m.change.website.document.website.hostname-help') | raw }}
 				</span>
 			</div>
 		</div>
 
         <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('port')}">
-            <label class="control-label" for="port">Port</label>
+            <label class="control-label" for="port">{{ i18n('m.change.website.document.website.port',['ucf']) }}</label>
             <div class="controls">
                 <input type="number" class="input-mini" id="port" name="port" data-ng-model="document.port" placeholder="80">
 				<span class="help-block">
-					Pour un site web public, le port est généralement <strong>80</strong>.
+					{{ i18n('m.change.website.document.website.port-help') | raw }}
 				</span>
             </div>
         </div>
 
         <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('scriptName')}">
-            <label class="control-label" for="scriptName">Nom du script PHP</label>
+            <label class="control-label" for="scriptName">{{ i18n('m.change.website.document.website.scriptname',['ucf']) }}</label>
             <div class="controls">
                 <input type="text" id="scriptName" name="scriptName" data-ng-model="document.scriptName">
 				<span class="help-block">
-					Par exemple, si votre site doit être accessible sur <strong>domaine.com/index.php/siteweb/</strong>, renseignez <strong>/index.php</strong> dans ce champ.
+                    {{ i18n('m.change.website.document.website.scriptname-help') | raw }}
 				</span>
             </div>
         </div>
 
         <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('pathPart')}">
-            <label class="control-label" for="pathPart">Chemin</label>
+            <label class="control-label" for="pathPart">{{ i18n('m.change.website.document.website.pathpart',['ucf']) }}</label>
             <div class="controls">
                 <input type="text" id="pathPart" name="pathPart" data-ng-model="document.pathPart">
 				<span class="help-block">
-					Si votre site n'est pas accessible directement sur le nom de domaine mais sur un dossier derrière le nom de domaine, vous devez renseigner le nom de ce dossier ici.<br/>
-					Par exemple, si votre site doit être accessible sur <strong>domaine.com/siteweb/</strong>, renseignez <strong>siteweb</strong> dans ce champ.
+                    {{ i18n('m.change.website.document.website.pathpart-help') | raw }}
 				</span>
             </div>
         </div>
 
         <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('indexPage')}">
-			<label class="control-label" for="indexPage">Page d'accueil du site</label>
+			<label class="control-label" for="indexPage">{{ i18n('m.change.website.document.website.indexpage',['ucf']) }}</label>
 			<div class="controls">
 				<!-- FIXME accepted-model="Change_Website_Page" -->
 				<div class="document-picker-single"
