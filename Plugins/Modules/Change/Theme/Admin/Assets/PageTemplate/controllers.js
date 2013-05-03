@@ -42,7 +42,7 @@
 		'RbsChange.Breadcrumb',
 		'RbsChange.MainMenu'
 	];
-	app.controller('Change_Theme_PageTemplateListController', PageTemplateListController);
+	app.controller('Change_Theme_PageTemplate_ListController', PageTemplateListController);
 
 
 	/**
@@ -65,6 +65,6 @@
 		'RbsChange.Breadcrumb',
 		'RbsChange.FormsManager'
 	];
-	app.controller('Change_Theme_PageTemplateFormController', PageTemplateFormController);
+	app.controller('Change_Theme_PageTemplate_FormController', PageTemplateFormController);
 
 })();
