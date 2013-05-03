@@ -56,6 +56,12 @@ class TemplateManager
 	public function renderTemplateFile($pathName, array $attributes)
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
+
+		// Include Twig macros for forms.
+		// Use it with: {% import "@Admin/forms.twig" as forms %}
+		$formsMacroPath = $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Change', 'Admin', 'Assets');
+		$loader->addPath($formsMacroPath, 'Admin');
+
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
 		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->presentationServices));
 		return $twig->render(basename($pathName), $attributes);
