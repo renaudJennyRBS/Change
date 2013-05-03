@@ -145,7 +145,22 @@
 				reloadOnSearch : false
 			})
 
-		.otherwise({redirectTo:'/Change/Website/Website/'})
+		// Menu
+
+			. when(
+			'/Change/Website/Menu',
+			{
+				templateUrl : 'Change/Website/Menu/list.twig',
+				reloadOnSearch : false
+			})
+			. when(
+			'/Change/Website/Menu/:id',
+			{
+				templateUrl : 'Change/Website/Menu/form.twig',
+				reloadOnSearch : false
+			})
+
+			.otherwise({redirectTo:'/Change/Website/Website/'})
 
 		;
 	}]);
@@ -174,6 +189,12 @@
 				'form': '/Change/Website/Website/:id/:LCID',
 				'list': '/Change/Website/Website/:LCID',
 				'tree': '/Change/Website/nav/?tn=:id'
+			});
+
+			// Menus
+			$delegate.register('Change_Website_Menu', {
+				'form': '/Change/Website/Menu/:id',
+				'list': '/Change/Website/Menu/:LCID'
 			});
 
 			return $delegate;

@@ -56,25 +56,29 @@
 					return {
 						// Attributes for "li" DOM node:
 						"attr" : {
-							"id" : TREE_NODE_ID_PREFIX + rsc.id,
-							"rel": rsc.document.model + iconModifier
+							"id"  : TREE_NODE_ID_PREFIX + rsc.id,
+							"rel" : rsc.document.model + iconModifier
 						},
 
 						// Attributes for the link:
 						"data" : {
-							"title": this.buildNodeLabel(rsc, attrs),
-							"attr" : {
-								"href": this.buildNodeUrl(rsc, attrs)
+							"title" : this.buildNodeLabel(rsc, attrs),
+							"attr"  : {
+								"href" : this.buildNodeUrl(rsc, attrs),
+								"rel"  : "document",
+								"data-model" : rsc.document.model,
+								"data-label" : rsc.document.label,
+								"data-id"    : rsc.document.id
 							}
 						},
 
 						// Node state
-						"state": rsc.childrenCount ? "closed" : "",
+						"state" : rsc.childrenCount ? "closed" : "",
 
-						"metadata": angular.extend({
-								'NODE$': {
-									'url'          : rsc.link.href,
-									'childrenCount': rsc.childrenCount
+						"metadata" : angular.extend({
+								'NODE$' : {
+									'url'           : rsc.link.href,
+									'childrenCount' : rsc.childrenCount
 								}
 							},
 							rsc.document)
@@ -213,6 +217,29 @@
 							"icons" : true
 						}
 					});
+
+
+					var draggedEl;
+
+					$(elm).on({
+
+						'dragstart': function (e) {
+							draggedEl = $(this);
+							draggedEl.addClass('dragged');
+							e.dataTransfer.setData('Change/Document', JSON.stringify({
+								"model" : draggedEl.data('model'),
+								"label" : draggedEl.data('label'),
+								"id"    : draggedEl.data('id')
+							}));
+							e.dataTransfer.effectAllowed = "copyMove";
+						},
+
+						'dragend': function () {
+							draggedEl.removeClass('dragged');
+						}
+
+					}, 'a[rel="document"]');
+
 
 					return jQuery.jstree._reference($(elm));
 				}

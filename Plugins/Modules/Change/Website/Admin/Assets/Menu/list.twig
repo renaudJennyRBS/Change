@@ -1,0 +1,37 @@
+<div data-ng-controller="Change_Website_Menu_ListController">
+
+	<page-header title="Menus de navigation"></page-header>
+
+	<search-filters model="Change_Website_Website" query="DL.query" text-search="textSearch"></search-filters>
+
+	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
+
+	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
+		<h4>Cette liste est vide.</h4>
+		Vous pouvez :
+		<ul>
+			<li>Créer des éléments en utilisant les boutons ci-dessus</li>
+			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">Effacer les filtres de recherche</a></li>
+		</ul>
+	</div>
+
+	<div class="change-website-menu-functions"></div>
+
+	<ul class="thumbnail-grid clearfix">
+		<li data-ng-repeat="doc in DL.documents" data-ng-class="{selected: doc.selected, warning: doc.publicationStatus!='PUBLISHABLE'}">
+
+			<div class="change-website-menu-card" document="doc"></div>
+
+		</li>
+	</ul>
+
+	<footer class="row-fluid rbsc-list-footer" data-ng-show="DL.documents.length" data-mask="(=DL.loading=)">
+		<div class="span2">
+			<clipboard-add-widget selected="DL.selectedDocuments"></clipboard-add-widget>
+		</div>
+		<div class="span10">
+			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
+		</div>
+	</footer>
+
+</div>

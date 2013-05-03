@@ -569,7 +569,6 @@
 			}, true);
 
 			$scope.$watch(instanceName + '.query', function () {
-				console.log("QUERY=", DL.query);
 				DL.pagination.offset = 0;
 				DL.reload();
 			});

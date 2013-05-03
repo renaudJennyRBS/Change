@@ -1,5 +1,7 @@
 (function ($) {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
 	app.directive('tokenList', ['RbsChange.ArrayUtils', '$filter', '$parse', function (Array, $filter, $parse) {
@@ -10,7 +12,7 @@
 			restrict : 'E',
 
 			template: '<ul class="token-list">' +
-			'<li ng-repeat="item in items" id="tokenList{{counter}}-item{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
+			'<li draggable="true" ng-repeat="item in items" id="tokenList{{counter}}-item{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
 			'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)">&times;</a><span ng-bind-html="getItemLabel(item)"></span>' +
 			'</li>' +
 			'</ul>',
@@ -33,7 +35,7 @@
 
 				scope.getItemLabel = function (item) {
 					var val = item[labelProperty];
-					
+
 					if (attrs.labelExpr) {
 						val = attrs.labelExpr.replace(/\{(\w+)\}/g, function (match, property) {
 							if (attrs.labelFilter) {
@@ -42,13 +44,13 @@
 								return item[property] || '';
 							}
 						});
-						
+
 						val = val.replace(/(icon-[a-z\-]+)/g, '<i class="$1"></i>');
-						
+
 					} else if (attrs.labelFilter) {
 						val = $filter(attrs.labelFilter)(val);
 					}
-					
+
 					return val;
 				};
 
@@ -72,8 +74,6 @@
 									if (selected > 0) {
 										Array.move(scope.items, selected, selected-1);
 										selected--;
-										scope.$apply();
-										$el.find('li:eq(' + selected + ') a.delete').focus();
 									}
 								} else if (event.keyCode === 40) { // bottom
 									if (selected < (scope.items.length-1)) {
