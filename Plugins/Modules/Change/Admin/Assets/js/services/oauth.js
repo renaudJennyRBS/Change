@@ -306,7 +306,6 @@
 												oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
 												oauthData.userId = userId;
 												localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
-												$log.log("OAuth authentication complete! ", oauthData);
 
 												// Tells the rest of the world that the authentication is successful :)
 												q.resolve(userId);

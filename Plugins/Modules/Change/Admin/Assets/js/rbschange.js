@@ -71,34 +71,24 @@
 	}]);
 
 
-	app.controller('Change.MenuBarController', ['$rootScope', '$location', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, REST, OAuthService) {
-		// TODO Load main menu data
-
-		$rootScope.logout = function () {
-			OAuthService.logout();
-			$location.path('/Change/Users/Login');
-		};
-
-		REST.resource('Change_Users_User', OAuthService.getUserId()).then(function (user) {
-			$rootScope.user = user;
-		});
-
-	}]);
-
-
 	/**
 	 * RootController
 	 *
 	 * This Controller is bound on the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication.
 	 */
-	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', function ($rootScope, $location, Settings, Utils) {
+	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, Settings, Utils, REST, OAuthService) {
 		var redirectUrl = null,
 		    alreadyGotError = false;
 
 		$rootScope.setLanguage = function (lang) {
 			// TODO Save settings on the server.
 			$rootScope.language = Settings.language = lang;
+		};
+
+		$rootScope.logout = function () {
+			OAuthService.logout();
+			$location.path('/Change/Users/Login');
 		};
 
 		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
@@ -118,10 +108,13 @@
 			if (!redirectUrl || Utils.startsWith(redirectUrl, '/Change/Users/Login')) {
 				redirectUrl = '/';
 			}
-			console.log("Login success! User ID=", userId, ", Redirecting to: ", redirectUrl);
 			$rootScope.$apply(function () {
 				$location.path(redirectUrl);
 			});
+		});
+
+		REST.resource('Change_Users_User', OAuthService.getUserId()).then(function (user) {
+			$rootScope.user = user;
 		});
 
 	}]);
