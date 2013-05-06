@@ -50,6 +50,7 @@ nbproject
 .psr-0.ser
 ./test*
 /ChangeTests/UnitTestWorkspace/*
+!/ChangeTests/UnitTestWorkspace/App/Modules
 /ChangeTests/report/
 /App/OldBootstrap.php
 /change.xml
