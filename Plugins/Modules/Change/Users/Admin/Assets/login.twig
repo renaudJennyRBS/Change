@@ -2,7 +2,7 @@
 	<div class="control-group">
 		<label class="control-label" for="username">{{ i18n('m.change.users.document.user.login') }}</label>
 		<div class="controls">
-			<input type="text" id="username" name="username" ng-model="username"/>
+			<input type="text" id="username" name="username" ng-model="username" auto-focus=""/>
 		</div>
 	</div>
 	<div class="control-group">
@@ -13,9 +13,6 @@
 	</div>
 	<div class="control-group">
 		<div class="controls">
-			<label class="checkbox">
-				<input type="checkbox"> Rester connecté
-			</label>
 			<button type="submit" class="btn">Connexion</button>
 		</div>
 	</div>

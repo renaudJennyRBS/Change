@@ -46,23 +46,31 @@
 		}]);
 	}]);
 
-	function ChangeUsersUserLoginController($scope, $rootScope, Workspace, OAuthService) {
+	function ChangeUsersUserLoginController($scope, Workspace, OAuthService, NotificationCenter) {
 		Workspace.hideMenus();
 
-		$rootScope.$on('OAuth:UserLoginSuccess', function () {
-			Workspace.restore();
-		});
-
 		$scope.login = function () {
-			OAuthService.authenticate($scope.username, $scope.password);
+			OAuthService.authenticate($scope.username, $scope.password).then(
+
+				// Success
+				function () {
+					Workspace.restore();
+				},
+
+				// Failure
+				function (failure) {
+					NotificationCenter.error("Unable to authenticate", failure);
+				}
+			);
 		};
 	}
 
 
 	ChangeUsersUserLoginController.$inject = [
-		'$scope', '$rootScope',
+		'$scope',
 		'RbsChange.Workspace',
-		'OAuthService'
+		'OAuthService',
+		'RbsChange.NotificationCenter'
 	];
 	app.controller('Change_Users_User_LoginController', ChangeUsersUserLoginController);
 

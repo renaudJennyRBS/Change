@@ -436,7 +436,9 @@
 									console.log("Got HTTP 303 (See Other) for document ", data);
 									resolveQ(q, data);
 								} else {
-									data.httpStatus = status;
+									if (data) {
+										data.httpStatus = status;
+									}
 									rejectQ(q, data);
 								}
 							});
