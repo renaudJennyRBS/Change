@@ -424,7 +424,15 @@
 				} else if (this.$scope.currentFolder) {
 
 					this.startLoading();
-					promise = REST.treeChildren(this.$scope.currentFolder);
+					promise = REST.treeChildren(
+						this.$scope.currentFolder,
+						{
+							'offset': this.pagination.offset,
+							'limit' : this.pagination.limit,
+							'sort'  : this.sort.column,
+							'desc'  : this.sort.descending
+						}
+					);
 
 				}
 
@@ -449,10 +457,10 @@
 			},
 
 
-			setTreeNodeId : function (id) {
+			setTreeNodeId : function (id, forceReload) {
 				var DL = this;
 
-				if ( ! this.$scope.currentFolder || this.$scope.currentFolder.id !== id ) {
+				if ( forceReload || ! this.$scope.currentFolder || this.$scope.currentFolder.id !== id ) {
 
 					this.startLoading();
 
@@ -500,9 +508,12 @@
 			},
 
 
-			pageUrl : function (offset) {
+			pageUrl : function (offset, limit) {
 				var search = angular.copy($location.search());
-				search.offset = offset;
+				search.offset = Math.max(0, offset);
+				if (angular.isDefined(limit)) {
+					search.limit = limit;
+				}
 				return Utils.makeUrl($location.absUrl(), search);
 			},
 
@@ -516,30 +527,8 @@
 
 
 		this.initScopeForTree = function ($scope, instanceName) {
-
-			// Initialize the scope
-			var DL = this.initScope($scope, null, instanceName);
-
-			// Install watcher for 'tn' parameter in the URL (tn stands from Tree Node).
-			$scope.$watch(
-				// $scope.location has been initialized in initScope().
-				'location.search()',
-
-				function () {
-					var id = parseInt($location.search()['tn'], 10);
-					if (isNaN(id)) {
-						console.log("Tree node ID (tn) is not a valid ID.");
-					} else if (id) {
-						DL.setTreeNodeId(id);
-					}
-				},
-
-				true
-			);
-
-			return DL;
+			return this.initScope($scope, null, instanceName);
 		};
-
 
 
 		this.initScope = function ($scope, resourceUrl, instanceName) {
@@ -575,8 +564,13 @@
 
 			$scope.location = $location;
 			$scope.$watch('location.search()', function (search) {
-				DL.pagination.offset = search.offset || 0;
-				DL.pagination.limit = search.limit || Settings.pagingSize;
+				var	offset = parseInt(search.offset || 0, 10),
+					limit  = parseInt(search.limit || Settings.pagingSize, 10),
+					treeNodeId = parseInt(search.tn || 0, 10),
+					paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
+
+				DL.pagination.offset = offset;
+				DL.pagination.limit = limit;
 
 				if (search.sort) {
 					DL.sort.column = search.sort;
@@ -585,9 +579,13 @@
 					DL.sort.descending = (search.desc === 'true');
 				}
 
-				DL.currentTreeNodeId = search.tn;
+				var treeNodeId = parseInt(search.tn || 0, 10);
+				if (isNaN(treeNodeId) || !treeNodeId) {
+					DL.reload();
+				} else {
+					DL.setTreeNodeId(treeNodeId, paginationChanged);
+				}
 
-				DL.reload();
 			}, true);
 
 			$scope[instanceName] = DL;

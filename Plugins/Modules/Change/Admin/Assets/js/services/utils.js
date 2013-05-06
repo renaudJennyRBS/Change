@@ -169,8 +169,8 @@
 		 * If `params` contains parameters that are present in `url`, they will be replaced.
 		 * All parameters of `params` that are not in `url` are, of course, appended.
 		 *
-		 * @param {String} The base URL to use.
-		 * @param {Object} Parameters to append or replace in the base url.
+		 * @param url The base URL to use.
+		 * @param params Parameters to append or replace in the base url.
 		 *
 		 * @returns {String}
 		 */
