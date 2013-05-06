@@ -88,24 +88,24 @@
 
 		$rootScope.logout = function () {
 			OAuthService.logout();
-			$location.path('/Change/Users/Login');
+			$location.path('/login');
 		};
 
 		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
 			if (rejection.status === 401 || (rejection.status === 500 && rejection.data && Utils.startsWith(rejection.data.code, 'EXCEPTION-72'))) {
 				if (alreadyGotError) {
-					$location.path('/Change/Users/Login');
+					$location.path('/login');
 				} else {
 					alreadyGotError = true;
 					redirectUrl = angular.copy($location.path());
-					$location.path('/Change/Users/Login');
+					$location.path('/login');
 				}
 			}
 		});
 
 		$rootScope.$on('OAuth:UserLoginSuccess', function (event, userId) {
 			alreadyGotError = false;
-			if (!redirectUrl || Utils.startsWith(redirectUrl, '/Change/Users/Login')) {
+			if (!redirectUrl || Utils.startsWith(redirectUrl, '/login')) {
 				redirectUrl = '/';
 			}
 			$rootScope.$apply(function () {
