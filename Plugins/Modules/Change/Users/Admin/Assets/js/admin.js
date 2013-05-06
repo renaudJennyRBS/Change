@@ -15,10 +15,17 @@
 				reloadOnSearch : false
 			})
 
-		. when(
+			. when(
 			'/Change/Users/User/:id',
 			{
 				templateUrl : 'Change/Users/User/form.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
+			'/Change/Users/Login',
+			{
+				templateUrl : 'Change/Users/login.twig',
 				reloadOnSearch : false
 			})
 		;
@@ -38,5 +45,25 @@
 
 		}]);
 	}]);
+
+	function ChangeUsersUserLoginController($scope, $rootScope, Workspace, OAuthService) {
+		Workspace.hideMenus();
+
+		$rootScope.$on('OAuth:UserLoginSuccess', function () {
+			Workspace.restore();
+		});
+
+		$scope.login = function () {
+			OAuthService.authenticate($scope.username, $scope.password);
+		};
+	}
+
+
+	ChangeUsersUserLoginController.$inject = [
+		'$scope', '$rootScope',
+		'RbsChange.Workspace',
+		'OAuthService'
+	];
+	app.controller('Change_Users_User_LoginController', ChangeUsersUserLoginController);
 
 })();

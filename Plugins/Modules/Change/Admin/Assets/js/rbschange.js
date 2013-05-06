@@ -71,13 +71,17 @@
 	}]);
 
 
-	app.controller('Change.MenuBarController', ['$scope', '$location', 'OAuthService', function ($scope, $location, OAuthService) {
+	app.controller('Change.MenuBarController', ['$rootScope', '$location', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, REST, OAuthService) {
 		// TODO Load main menu data
 
-		$scope.logout = function () {
+		$rootScope.logout = function () {
 			OAuthService.logout();
-			$location.path('/login/');
+			$location.path('/Change/Users/Login');
 		};
+
+		REST.resource('Change_Users_User', OAuthService.getUserId()).then(function (user) {
+			$rootScope.user = user;
+		});
 
 	}]);
 
@@ -100,18 +104,18 @@
 		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
 			if (rejection.status === 401 || (rejection.status === 500 && rejection.data && Utils.startsWith(rejection.data.code, 'EXCEPTION-72'))) {
 				if (alreadyGotError) {
-					$location.path('/login/');
+					$location.path('/Change/Users/Login');
 				} else {
 					alreadyGotError = true;
 					redirectUrl = angular.copy($location.path());
-					$location.path('/login/');
+					$location.path('/Change/Users/Login');
 				}
 			}
 		});
 
 		$rootScope.$on('OAuth:UserLoginSuccess', function (event, userId) {
 			alreadyGotError = false;
-			if (!redirectUrl || Utils.startsWith(redirectUrl, '/login/')) {
+			if (!redirectUrl || Utils.startsWith(redirectUrl, '/Change/Users/Login')) {
 				redirectUrl = '/';
 			}
 			console.log("Login success! User ID=", userId, ", Redirecting to: ", redirectUrl);
