@@ -14,7 +14,7 @@
 		return {
 			"restrict"    : 'E',
 			"replace"     : true,
-			"templateUrl" : 'Change/Admin/js/directives/search-filters.html',
+			"templateUrl" : 'Change/Admin/js/directives/search-filters.twig',
 
 			"scope" : {
 				"model" : "@",

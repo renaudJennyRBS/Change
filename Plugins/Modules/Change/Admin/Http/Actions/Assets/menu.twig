@@ -1,4 +1,4 @@
-<div class="navbar navbar-inverse" id="mainNavbar" data-ng-controller="Change.MenuBarController">
+<div class="navbar navbar-inverse" id="mainNavbar">
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="home" title="Retourner à l'écran d'accueil"><img src="Change/Admin/img/logo-rbs-change@2x.png" width="170" height="30" alt="Logo de RBS Change"></a> <a
@@ -13,6 +13,7 @@
 
             <ul class="nav">
                 <li><a href="Change/Website/Website" data-ui-search="accueil,home,wysiwyg,éditeur,editeur,rubriques">Sites et pages</a></li>
+                <li><a href="Change/Theme/PageTemplate" data-ui-search="thèmes,modèles,templates">Thèmes</a></li>
             </ul>
 
             <div class="nav-collapse">
@@ -24,9 +25,10 @@
 
                 <ul class="nav pull-right">
                     <li class="dropdown"><a data-toggle="dropdown"
-                                            class="dropdown-toggle" href="javascript:;"><i class="icon-user icon-white"></i> Frédéric <b class="caret"></b></a>
+                                            class="dropdown-toggle" href="javascript:;"><i class="icon-user"></i> (= user.label =) <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:;" data-ng-click="logout()" data-ui-search="logout"><i class="icon-signout"></i> Déconnexion</a></li>
+	                        <li><a href ng-href="(= user.url() =)" data-ui-search="profile"><i class="icon-user"></i> Profil</a></li>
+	                        <li><a href="javascript:;" data-ng-click="logout()" data-ui-search="logout"><i class="icon-signout"></i> Déconnexion</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -35,6 +37,8 @@
                     <li class="dropdown"><a data-toggle="dropdown"
                                             class="dropdown-toggle" href="javascript:;">Outils <b class="caret"></b></a>
                         <ul class="dropdown-menu">
+	                        <li><a href="Change/Users/User"><i class="icon-user"></i> Utilisateurs</a></li>
+	                        <li class="divider"></li>
                             <li><a href="javascript:;" full-screen-toggle><i class="icon-fullscreen"></i> Mode plein écran</a></li>
                             <li class="divider"></li>
                             <li><a href="about" data-ui-search="about,info,version,rbs,change"><i class="icon-info-sign"></i> &Agrave; propos de RBS Change</a></li>

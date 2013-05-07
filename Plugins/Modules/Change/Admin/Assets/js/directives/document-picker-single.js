@@ -93,7 +93,9 @@
 							'LCID' : (scope.document.LCID || scope.language)
 						},
 						function (doc) {
-							scope.document = doc;
+							if (!angular.equals(scope.document, doc)) {
+								scope.document = doc;
+							}
 						},
 						getEditLabel()
 					);

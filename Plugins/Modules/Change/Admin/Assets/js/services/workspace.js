@@ -76,6 +76,21 @@
 		};
 
 
+
+		this.hideMenus = function () {
+			leftContainer.hide();
+			mainContainer.removeClass('span9');
+			$('#mainToolbar').hide();
+			$('#mainNavbar').hide();
+		};
+
+		this.restore = function () {
+			mainContainer.addClass('span9');
+			leftContainer.show();
+			$('#mainToolbar').show();
+			$('#mainNavbar').show();
+		};
+
 	}]);
 
 

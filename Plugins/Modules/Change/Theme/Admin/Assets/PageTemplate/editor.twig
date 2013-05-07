@@ -1,0 +1,42 @@
+<form name="form" data-ng-submit="submit()" novalidate>
+
+	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+
+        <div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
+            <label class="control-label" for="label">Titre</label>
+            <div class="controls">
+                <input type="text" id="label" name="label" required data-ng-model="document.label">
+            </div>
+        </div>
+
+
+        <ul class="nav nav-tabs" id="contentsTab">
+            <li class="active"><a href="javascript:;" data-target="#html" data-toggle="tab">HTML</a></li>
+            <li><a href="javascript:;" data-target="#htmlForBackoffice" data-toggle="tab">HTML Backoffice</a></li>
+            <li><a href="javascript:;" data-target="#editableContent" data-toggle="tab">Zones de contenu</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="html">
+                <ace-editor data-ng-model="document.html"></ace-editor>
+            </div>
+            <div class="tab-pane" id="htmlForBackoffice">
+                <ace-editor data-ng-model="document.htmlForBackoffice"></ace-editor>
+            </div>
+            <div class="tab-pane" id="editableContent">
+                <ace-editor data-ng-model="document.editableContent" mode="javascript"></ace-editor>
+            </div>
+        </div>
+
+    </fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="État"
+		data-form-section-group="Informations"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+
+</form>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.admin.forms" lcid="fr_FR">
+	<key id="afterSave">après l'enregistrement :</key>
+	<key id="afterSaveStay">rester sur ce formulaire</key>
+	<key id="afterSaveGoList">retourner à la liste</key>
+	<key id="btnGoBack" format="html"><![CDATA[retourner<small>à la liste</small>]]></key>
+	<key id="btnSave" format="html"><![CDATA[enregistrer<small>les modifications ((=changes.length=))</small>]]></key>
+	<key id="btnRevert" format="html"><![CDATA[annuler<small>les modifications ((=changes.length=))</small>]]></key>
+	<key id="btnCancelCascade" format="html"><![CDATA[annuler<small>et retourner au formulaire parent</small>]]></key>
+	<key id="propertiesModifiedPluralize">{'0': 'Aucune propriété n\'a été modifiée.', 'one': 'Une propriété a été modifiée.', 'other': '{} propriétés ont été modifiées.'}</key>
+</i18n>

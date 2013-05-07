@@ -1,0 +1,16 @@
+<h4><status class="small" data-ng-model="doc"/> <a href data-ng-href="(=document.url()=)">(=document.label=)</a></h4>
+
+<div class="btn-toolbar">
+	<button class="btn btn-mini" disabled="disabled" type="button">Activé :</button>
+	<button class="btn btn-danger btn-mini pull-right" type="button" data-ng-click="DL.remove(document)"><i class="icon-trash icon-white"></i></button>
+	<status-switch document="document"/>
+</div>
+
+<div data-ng-switch="document.items.length" style="height: 200px; overflow-y: auto">
+	<div data-ng-switch-when="0"><strong>Ce menu est vide.</strong><br/>Utiliser la liste <em>Ajouter</em> ci-dessous pour ajouter des entrées à ce menu.</div>
+	<token-list data-switch-default="" class="rows" items="document.items"></token-list>
+</div>
+
+<div class="btn-toolbar clearfix">
+	<button class="btn btn-primary btn-small pull-right" type="button"><i class="icon-ok icon-white"></i> OK</button>
+</div>

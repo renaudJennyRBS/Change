@@ -4,7 +4,7 @@
 
 		return {
 			restrict    : 'A',
-			templateUrl: 'Change/Admin/js/directives/document-system-info-section.html',
+			templateUrl: 'Change/Admin/js/directives/document-system-info-section.twig',
 			replace     : false,
 
 			link : function (scope, elm, attrs) {

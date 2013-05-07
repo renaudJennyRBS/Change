@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.document.menu" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="document-name">menu</key>
+	<key id="website">site web</key>
+</i18n>

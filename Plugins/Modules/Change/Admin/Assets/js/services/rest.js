@@ -432,8 +432,15 @@
 								}
 							})
 							.error(function restResourceErrorCallback (data, status) {
-								data.httpStatus = status;
-								rejectQ(q, data);
+								if (status === 303 && Utils.isDocument(data)) {
+									console.log("Got HTTP 303 (See Other) for document ", data);
+									resolveQ(q, data);
+								} else {
+									if (data) {
+										data.httpStatus = status;
+									}
+									rejectQ(q, data);
+								}
 							});
 
 						digest();

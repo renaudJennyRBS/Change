@@ -304,8 +304,8 @@
 												// Store OAuth data for future requests.
 												oauthData.tokenKey = oauthObject.getAccessTokenKey();
 												oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
+												oauthData.userId = userId;
 												localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
-												$log.log("OAuth authentication complete! ", oauthData);
 
 												// Tells the rest of the world that the authentication is successful :)
 												q.resolve(userId);
@@ -364,6 +364,11 @@
 				'logout' : function () {
 					oauthData = {};
 					localStorageService.remove(cfgLocalStorageKeyName);
+				},
+
+
+				'getUserId' : function () {
+					return oauthData ? oauthData.userId : null;
 				}
 
 			};

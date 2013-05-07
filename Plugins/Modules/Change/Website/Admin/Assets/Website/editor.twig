@@ -1,81 +1,56 @@
+{% import "@Admin/forms.twig" as forms %}
+
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 
 	<!-- general -->
 
-	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+	<fieldset data-ng-show="section==''"
+	          data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
 
-		<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
-			<label class="control-label" for="label">Nom</label>
-			<div class="controls">
-				<input type="text" id="label" name="label" required data-ng-model="document.label">
-			</div>
-		</div>
+		{{ forms.field('label', 'String',
+			i18n('m.change.website.document.website.label', ['ucf']),
+			true
+		) }}
 
-		<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('hostName')}">
-			<label class="control-label" for="hostName">Nom d'hôte</label>
-			<div class="controls">
-				<input type="text" id="hostName" name="hostName" required data-ng-model="document.hostName">
-				<span class="help-block">
-					Le nom d'hôte est le nom de domaine sur lequel pointe le site.<br/>
-					<span class="label label-info">Attention !</span> Cette valeur ne doit pas contenir <strong>http://</strong>, ni <strong>https://</strong>, ni se terminer par <strong>/</strong>.<br/>
-					Exemples : <strong>domaine.com</strong>, <strong>sousdomaine.domaine.com</strong>, ...
-				</span>
-			</div>
-		</div>
+		{{ forms.field('hostName', 'String',
+			i18n('m.change.website.document.website.hostname', ['ucf']),
+			true,
+			i18n('m.change.website.document.website.hostname-help')
+		) }}
 
-        <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('port')}">
-            <label class="control-label" for="port">Port</label>
-            <div class="controls">
-                <input type="number" class="input-mini" id="port" name="port" data-ng-model="document.port" placeholder="80">
-				<span class="help-block">
-					Pour un site web public, le port est généralement <strong>80</strong>.
-				</span>
-            </div>
-        </div>
+		{{ forms.field('port', 'Integer',
+			i18n('m.change.website.document.website.port', ['ucf']),
+			false,
+			i18n('m.change.website.document.website.port-help')
+		) }}
 
-        <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('scriptName')}">
-            <label class="control-label" for="scriptName">Nom du script PHP</label>
-            <div class="controls">
-                <input type="text" id="scriptName" name="scriptName" data-ng-model="document.scriptName">
-				<span class="help-block">
-					Par exemple, si votre site doit être accessible sur <strong>domaine.com/index.php/siteweb/</strong>, renseignez <strong>/index.php</strong> dans ce champ.
-				</span>
-            </div>
-        </div>
+		{{ forms.field('scriptName', 'String',
+			i18n('m.change.website.document.website.scriptName', ['ucf']),
+			false,
+			i18n('m.change.website.document.website.scriptName-help')
+		) }}
 
-        <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('pathPart')}">
-            <label class="control-label" for="pathPart">Chemin</label>
-            <div class="controls">
-                <input type="text" id="pathPart" name="pathPart" data-ng-model="document.pathPart">
-				<span class="help-block">
-					Si votre site n'est pas accessible directement sur le nom de domaine mais sur un dossier derrière le nom de domaine, vous devez renseigner le nom de ce dossier ici.<br/>
-					Par exemple, si votre site doit être accessible sur <strong>domaine.com/siteweb/</strong>, renseignez <strong>siteweb</strong> dans ce champ.
-				</span>
-            </div>
-        </div>
+		{{ forms.field('pathPart', 'String',
+			i18n('m.change.website.document.website.pathPart', ['ucf']),
+			false,
+			i18n('m.change.website.document.website.pathPart-help')
+		) }}
 
-        <div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('indexPage')}">
-			<label class="control-label" for="indexPage">Page d'accueil du site</label>
-			<div class="controls">
-				<!-- FIXME accepted-model="Change_Website_Page" -->
-				<div class="document-picker-single"
-				     document="document.indexPage"
-				     accepted-model="Change_Website_StaticPage"
-				     selector-title="Sélectionner la page d'accueil du site"
-				     property-label="Page d'accueil du site"
-				     master-label="(=document.label=)"
-				     allow-edition="true">
-				</div>
-			</div>
-		</div>
+		{{ forms.picker('indexPage', 'Change_Website_StaticPage',
+			i18n('m.change.website.document.website.indexpage', ['ucf']),
+			false,
+			null,
+			"Sélectionner la page d'accueil du site"
+		) }}
 
 	</fieldset>
 
 	<fieldset
-		data-ng-show="section=='systeminfo'"
-		data-form-section-label="État"
-		data-form-section-group="Informations"
-		data-document-system-info-section>
+			data-ng-show="section=='systeminfo'"
+			data-form-section-label="{{ i18nAttr('m.change.admin.Status', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.change.admin.Information', ['ucf']) }}"
+			data-document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>

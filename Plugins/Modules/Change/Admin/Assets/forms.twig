@@ -1,0 +1,61 @@
+{% macro field(name, type, label, required, help) %}
+	{% if required %}
+	<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+	{% else %}
+	<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+		{% endif %}
+		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<div class="controls">
+			{% if type == 'Integer' %}
+				<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"/>
+			{% elseif type == 'String' %}
+				<input type="text" class="input-block-level" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"/>
+			{% endif %}
+
+			{% if help %}
+				<span class="help-block">
+					{{ help|raw }}
+				</span>
+			{% endif %}
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro readonly(name, label, help) %}
+	<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<div class="controls">
+			<span class="uneditable-input input-block-level" id="{{ name }}" name="{{ name }}">(=document.{{ name }}=)</span>
+			{% if help %}
+				<span class="help-block">
+				{{ help|raw }}
+			</span>
+			{% endif %}
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro picker(name, model, label, required, help, selectorTitle) %}
+	{% if required %}
+	<div class="control-group property required" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+		{% else %}
+		<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+			{% endif %}
+			<label class="control-label" for="{{ name }}">{{ label }}</label>
+			<div class="controls">
+				<div class="document-picker-single"
+				     document="document.{{ name }}"
+				     accepted-model="{{ model }}"
+				     property-label="{{ label }}"
+				     selector-title="{{ selectorTitle }}"
+				     master-label="(=document.label=)"
+				     allow-edition="true">
+				</div>
+				{% if help %}
+					<span class="help-block">
+				{{ help|raw }}
+			</span>
+				{% endif %}
+			</div>
+		</div>
+{% endmacro %}

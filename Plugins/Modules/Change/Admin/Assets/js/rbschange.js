@@ -71,24 +71,13 @@
 	}]);
 
 
-	app.controller('Change.MenuBarController', ['$scope', '$location', 'OAuthService', function ($scope, $location, OAuthService) {
-		// TODO Load main menu data
-
-		$scope.logout = function () {
-			OAuthService.logout();
-			$location.path('/login/');
-		};
-
-	}]);
-
-
 	/**
 	 * RootController
 	 *
 	 * This Controller is bound on the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication.
 	 */
-	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', function ($rootScope, $location, Settings, Utils) {
+	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, Settings, Utils, REST, OAuthService) {
 		var redirectUrl = null,
 		    alreadyGotError = false;
 
@@ -97,27 +86,35 @@
 			$rootScope.language = Settings.language = lang;
 		};
 
+		$rootScope.logout = function () {
+			OAuthService.logout();
+			$location.path('/Change/Users/Login');
+		};
+
 		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
 			if (rejection.status === 401 || (rejection.status === 500 && rejection.data && Utils.startsWith(rejection.data.code, 'EXCEPTION-72'))) {
 				if (alreadyGotError) {
-					$location.path('/login/');
+					$location.path('/Change/Users/Login');
 				} else {
 					alreadyGotError = true;
 					redirectUrl = angular.copy($location.path());
-					$location.path('/login/');
+					$location.path('/Change/Users/Login');
 				}
 			}
 		});
 
 		$rootScope.$on('OAuth:UserLoginSuccess', function (event, userId) {
 			alreadyGotError = false;
-			if (!redirectUrl || Utils.startsWith(redirectUrl, '/login/')) {
+			if (!redirectUrl || Utils.startsWith(redirectUrl, '/Change/Users/Login')) {
 				redirectUrl = '/';
 			}
-			console.log("Login success! User ID=", userId, ", Redirecting to: ", redirectUrl);
 			$rootScope.$apply(function () {
 				$location.path(redirectUrl);
 			});
+		});
+
+		REST.resource('Change_Users_User', OAuthService.getUserId()).then(function (user) {
+			$rootScope.user = user;
 		});
 
 	}]);
