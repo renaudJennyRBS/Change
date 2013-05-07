@@ -360,10 +360,10 @@
 	});
 
 
-	app.filter('documentURL', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', function (Breadcrumb, Utils) {
 
 		return function (doc, urlName) {
-			if (!doc) {
+			if (!Utils.isDocument(doc)) {
 				return 'javascript:;';
 			}
 			var node = Breadcrumb.getCurrentNode();
