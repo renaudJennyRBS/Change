@@ -563,30 +563,33 @@
 			});
 
 			$scope.location = $location;
-			$scope.$watch('location.search()', function (search) {
-				var	offset = parseInt(search.offset || 0, 10),
-					limit  = parseInt(search.limit || Settings.pagingSize, 10),
-					treeNodeId = parseInt(search.tn || 0, 10),
-					paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
+			$scope.$watch(
+				'location.search()',
+				function (search) {
+					var	offset = parseInt(search.offset || 0, 10),
+						limit  = parseInt(search.limit || Settings.pagingSize, 10),
+						treeNodeId = parseInt(search.tn || 0, 10),
+						paginationChanged;
 
-				DL.pagination.offset = offset;
-				DL.pagination.limit = limit;
+					DL.pagination.offset = offset;
+					DL.pagination.limit = limit;
 
-				if (search.sort) {
-					DL.sort.column = search.sort;
-				}
-				if (search.desc) {
-					DL.sort.descending = (search.desc === 'true');
-				}
+					if (search.sort) {
+						DL.sort.column = search.sort;
+					}
+					if (search.desc) {
+						DL.sort.descending = (search.desc === 'true');
+					}
 
-				var treeNodeId = parseInt(search.tn || 0, 10);
-				if (isNaN(treeNodeId) || !treeNodeId) {
-					DL.reload();
-				} else {
-					DL.setTreeNodeId(treeNodeId, paginationChanged);
-				}
-
-			}, true);
+					if (isNaN(treeNodeId) || !treeNodeId) {
+						DL.reload();
+					} else {
+						paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
+						DL.setTreeNodeId(treeNodeId, paginationChanged);
+					}
+				},
+				true
+			);
 
 			$scope[instanceName] = DL;
 

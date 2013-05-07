@@ -5,9 +5,9 @@
 	app.directive('pageHeader', ['RbsChange.FormsManager', 'RbsChange.Dialog', function (FormsManager, Dialog) {
 		return {
 
-			   restrict : 'E',
-			templateUrl: 'Change/Admin/js/directives/page-header.html',
-			    replace : true,
+			restrict    : 'E',
+			templateUrl : 'Change/Admin/js/directives/page-header.html',
+			replace     : true,
 
 			link: function (scope, element, attrs) {
 				attrs.$observe('title', function (value) {
@@ -33,7 +33,6 @@
 				};
 
 				scope.openCorrectionViewer = function ($event) {
-					console.log("page-header: Scope=" + scope.$id);
 					Dialog.embed(
 						element.find('.embedded-content'),
 						{
