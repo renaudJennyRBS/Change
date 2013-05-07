@@ -34,7 +34,8 @@
 /* ----- Block Rich Text --------------------------------------------------- */
 
 
-.structure-editor .se-rich-text.block {
+.structure-editor .se-rich-text.block,
+.structure-editor .se-formatted-text.block{
 	cursor: pointer;
 	padding: 4px;
 	background: white;
@@ -44,17 +45,20 @@
 	/*background: #FFFFF8 url(../img/icons/text-edit.png) center right no-repeat;*/
 	outline: 0;
 }
-.structure-editor .se-rich-text.block.active {
+.structure-editor .se-rich-text.block.active,
+.structure-editor .se-formatted-text.block.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 2px;
 	background: #FFFFF8;
 	cursor: default;
 }
 
-.structure-editor .se-rich-text.block > *:first-child {
+.structure-editor .se-rich-text.block > *:first-child,
+.structure-editor .se-formatted-text.block > *:first-child{
 	margin-top: 0;
 }
-.structure-editor .se-rich-text.block > *:last-child {
+.structure-editor .se-rich-text.block > *:last-child,
+.structure-editor .se-formatted-text.block > *:last-child{
 	margin-bottom: 0;
 }
 

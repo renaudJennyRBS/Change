@@ -54,7 +54,7 @@
 						<i class="icon-edit icon-large"></i>
 					</a>
 					<a data-ng-show="doc.is('Change_Website_StaticPage')" title="Éditer le contenu de la page"
-					   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
+					   href ng-href="(= doc | documentURL:'editor' =)" draggable="true" data-draggable-info="Change/Document:{'id':(=doc.id=),'model':'(=doc.model=)'}">(=doc.label=)</a>
 					<a data-ng-show="doc.is('Change_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
 					   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a>
 				</td>

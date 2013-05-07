@@ -13,7 +13,8 @@
 		forEach = angular.forEach,
 
 		DEFAULT_GRID_SIZE = 12,
-		RICH_TEXT_BLOCK_NAME = 'Change_Website_Richtext';
+		RICH_TEXT_BLOCK_NAME = 'Change_Website_Richtext',
+		ADVANCED_TEXT_BLOCK_NAME = 'Change_Website_FormattedText';
 
 	// Append some visual decorations :)
 	$('body').append(
@@ -171,6 +172,8 @@
 			}
 			if (item.name === RICH_TEXT_BLOCK_NAME) {
 				return this.initRichText(item);
+			} else if (item.name === ADVANCED_TEXT_BLOCK_NAME) {
+				return this.initFormattedText(item);
 			} else {
 				var className = 'se-block-template';
 				return '<div class="' + className + '" data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
@@ -180,6 +183,12 @@
 		this.initRichText = function initRichText (item) {
 			var content = (item.parameters && item.parameters.content) ? item.parameters.content : '';
 			return '<div class="se-rich-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '">' + content + '</div>';
+		};
+
+		this.initFormattedText = function initFormattedText (item) {
+			console.log("initFormattedText");
+			var content = (item.parameters && item.parameters.content) ? item.parameters.content : '';
+			return '<div class="se-formatted-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '">' + content + '</div>';
 		};
 
 		this.initRow = function initRow (item) {
@@ -461,6 +470,7 @@
 			"restrict"   : 'E',
 			"require"    : 'ngModel',
 			"scope"      : true,
+			"transclude" : true,
 			"template"   :
 				'<div class="btn-toolbar">' +
 					'<button type="button" class="btn pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
@@ -473,8 +483,8 @@
 							'<li data-ng-repeat="entry in undoData"><a href="javascript:;" ng-click="undo($index)"><span class="muted">{{entry.date | date:\'mediumTime\'}}</span> <i class="{{entry.icon}}"></i> {{entry.label}} {{entry.item.label}}</a></li>' +
 						'</ul>' +
 					'</div>' +
+					'<div class="btn-group" ng-transclude></div>' +
 				'</div>' +
-
 				'<div class="structure-editor"></div>',
 
 
@@ -541,6 +551,9 @@
 
 					if (blockEl.is('.se-rich-text')) {
 						elName = "se-rich-text-settings";
+						shouldFocus = false;
+					} else if (blockEl.is('.se-formatted-text')) {
+						elName = "se-formatted-text-settings";
 						shouldFocus = false;
 					} else if (blockEl.is('.se-block-document')) {
 						elName = "se-block-document-settings";
@@ -1959,7 +1972,7 @@
 
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings" ng-click="selectBlock($event)">' +
-					'<i class="icon-th-large"></i> {{item.label}}' +
+					'<i class="icon-th-large"></i> <span data-ng-bind-html-unsafe="item.label | niceBlockName"></span>' +
 				'</div>',
 
 			"link" : function seBlockTemplateLinkFn (scope, element, attrs, ctrl) {
@@ -2115,7 +2128,7 @@
 
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings" block-label="{{item.label}}" block-type="document" ng-click="selectBlock($event)">' +
-					'<i class="icon-file"></i> {{item.label}}' +
+					'<i class="icon-file"></i> <span data-ng-bind-html-unsafe="item.label | niceBlockName"></span>' +
 				'</div>',
 
 			"link" : function seBlockDocumentLinkFn (scope, element, attrs, ctrl) {
@@ -2131,6 +2144,12 @@
 
 	}]);
 
+
+	app.filter('niceBlockName', function () {
+		return function (input) {
+			return input.replace(/_/g, '<span style="font-size:0;display:inline-block;"> </span>_');
+		};
+	});
 
 
 	app.directive('seBlockDocumentSettings', [ function () {
@@ -2166,6 +2185,7 @@
 				};
 
 				scope.submit = function () {
+					console.log("Block param submit: ", scope.block);
 					angular.extend(originalItem, scope.block);
 					scope.controller.notifyChange("changeSettings", "block", element);
 				};
@@ -2230,12 +2250,10 @@
 				};
 
 				scope.richTextCommandExecuted = function (command) {
-					scope.saveItem(ctrl.getItemById(element.data('id')));
+					//scope.saveItem(ctrl.getItemById(element.data('id')));
 					ctrl.notifyChange("changeText", command.label, element, null);
 					contents = element.html();
 				};
-
-				// TODO Focus contenteditable area
 
 			}
 
@@ -2243,6 +2261,44 @@
 
 	}]);
 
+
+
+	//-------------------------------------------------------------------------
+	//
+	// Block rich text.
+	//
+	//-------------------------------------------------------------------------
+
+	app.directive('seFormattedText', function () {
+
+		return {
+
+			"restrict"   : 'C',
+			"scope"      : {}, // isolated scope is required
+			"require"    : '^structureEditor',
+			//"transclude" : true,
+			"replace"    : true,
+			"template"   : '<div draggable="true" ng-click="selectBlock($event)" class="block"></div>',
+
+			"link" : function seFormattedTextLinkFn (scope, element, attrs, ctrl) {
+				element.attr('block-label', "Texte formatté");
+				element.attr('block-type', "formatted-text");
+
+				scope.saveItem = function (item) {
+					console.log("Saving formatted text: ", item);
+					element.html("totototot");
+				};
+
+				scope.selectBlock = function ($event) {
+					$event.stopPropagation();
+					ctrl.selectBlock(element);
+				};
+
+			}
+
+		};
+
+	});
 
 
 	//-------------------------------------------------------------------------
@@ -2251,7 +2307,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seRichTextSettings', ['$timeout', function ($timeout) {
+	app.directive('seRichTextSettings', function () {
 
 		return {
 
@@ -2259,71 +2315,32 @@
 			"scope"      : true,
 			"replace"    : true,
 
-			"template"   : '<rich-text-toolbar></rich-text-toolbar>',
+			"template"   : '<rich-text-toolbar></rich-text-toolbar>'
 
 		};
 
-	}]);
+	});
 
 
+	//-------------------------------------------------------------------------
+	//
+	// Block rich text settings.
+	//
+	//-------------------------------------------------------------------------
 
-	app.directive('seCodeEditor', [ function () {
+	app.directive('seFormattedTextSettings', function () {
 
 		return {
 
 			"restrict"   : 'C',
-			"scope"      : {}, // isolated scope is required
-			"require"    : '^structureEditor',
-			//"replace"    : true,
-			"template"   : '<div class="ace-editor" mode="markdown" ng-model="editorContents"></div>',
+			"scope"      : true,
+			"replace"    : true,
 
-			"link" : function seCodeEditorLinkFn (scope, element, attrs, ctrl) {
-				element.attr('block-label', "Code");
-				element.attr('block-type', "rich-text");
-
-				var contents, selected = false, item = ctrl.getItemById(attrs.id);
-
-				scope.editorContents = item.parameters.content;
-
-				scope.initItem = function (item) {
-					item.parameters = {};
-				};
-
-				scope.saveItem = function (item) {
-					if (item) {
-						angular.extend(item.parameters, {'content': scope.editorContents});
-					}
-				};
-
-				scope.$watch('editorContents', function (contents) {
-					scope.saveItem(item);
-					ctrl.notifyChange("changeText", "contents", element, null);
-				}, true);
-
-				/*
-				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
-					if (!selected) {
-						selected = true;
-						element.removeAttr('draggable');
-						ctrl.selectBlock(element);
-//						contents = element.html();
-					}
-				};
-
-				element.blur(function () {
-					selected = false;
-					element.attr('draggable', 'true');
-					if (contents !== element.html()) {
-						scope.saveItem(ctrl.getItemById(element.data('id')));
-						ctrl.notifyChange("changeText", "contents", element, null);
-					}
-				});
-				*/
-			}
+			"template"   : '<ace-editor mode="markdown"></ace-editor>'
 
 		};
 
-	}]);
+	});
+
 
 })(window.jQuery);

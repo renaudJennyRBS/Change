@@ -31,14 +31,12 @@
 				var modelMeta;
 
 				scope.availableFilters = {};
-				scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
 				scope.appliedFilters   = [];
 				scope.operator         = "and";
 				scope.treePolicy       = Breadcrumb.getCurrentNode() ? "descendantOf" : "all";
+				scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
 
-				scope.$watch('textSearch', function (textSearch) {
-					initSearch(textSearch);
-				}, true);
+				scope.$watch('textSearch', initSearch, true);
 
 
 				function initSearch (textSearch) {
@@ -255,6 +253,11 @@
 					ArrayUtils.remove(scope.appliedFilters, index);
 					scope.applyFilters();
 				};
+
+
+				scope.$watch('operator', function () {
+					scope.applyFilters();
+				}, true);
 
 
 				scope.applyFilters = function () {

@@ -321,8 +321,8 @@
 		return function (input, match) {
 			var output, diffObj, diffs;
 
-			output = '<span class="diff">',
-			diffObj = new diff_match_patch(),
+			output = '<span class="diff">';
+			diffObj = new diff_match_patch();
 			diffs = diffObj.diff_main(match || '', input || '');
 			diffObj.diff_cleanupSemantic(diffs);
 
@@ -363,6 +363,9 @@
 	app.filter('documentURL', ['RbsChange.Breadcrumb', function (Breadcrumb) {
 
 		return function (doc, urlName) {
+			if (!doc) {
+				return 'javascript:;';
+			}
 			var node = Breadcrumb.getCurrentNode();
 			if (node && urlName !== 'tree') {
 				return doc.url(urlName) + '?tn=' + node.id;

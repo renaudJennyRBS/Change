@@ -1,8 +1,24 @@
-<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+<form name="form" data-ng-submit="submit()" novalidate>
 
 	<!-- general -->
 
 	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('website')}">
+			<label class="control-label" for="website">Site web</label>
+			<div class="controls">
+				<div class="document-picker-single"
+				     document="document.website"
+				     accepted-model="Change_Website_Website"
+				     selector-title="Sélectionner le site web"
+				     property-label="Site web"
+				     master-label="(=document.label=)">
+				</div>
+				<span class="help-block">La page doit obligatoirement être rattachée à un site web.</span>
+			</div>
+		</div>
+
+		<hr/>
 
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
 			<label class="control-label" for="label">Titre</label>
@@ -14,8 +30,10 @@
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('navigationTitle')}">
 			<label class="control-label" for="navigationTitle">Titre dans les éléments de navigation</label>
 			<div class="controls">
-				<input type="text" id="navigationTitle" name="navigationTitle" required class="input-block-level" data-ng-model="document.navigationTitle"/>
-				<button type="button" class="btn btn-small" ng-click="document.navigationTitle = document.label">Même que le titre</button>
+				<div class="input-prepend">
+					<button type="button" class="btn" ng-click="document.navigationTitle = document.label" title="Utiliser (= document.label =)">Titre <i class="icon-angle-right"></i></button>
+					<input type="text" id="navigationTitle" name="navigationTitle" required class="input-xxlarge" data-ng-model="document.navigationTitle"/>
+				</div>
 			</div>
 		</div>
 
@@ -31,19 +49,7 @@
 			</div>
 		</div>
 
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('website')}">
-			<label class="control-label" for="website">Site web</label>
-			<div class="controls">
-				<!--model-select required ng-model="document.website" change-model="Change_Website_Website"></model-select-->
-				<div class="document-picker-single"
-				     document="document.website"
-				     accepted-model="Change_Website_Website"
-				     selector-title="Sélectionner le site web"
-				     property-label="Site web"
-				     master-label="(=document.label=)">
-			     </div>
-			</div>
-		</div>
+		<hr/>
 
 		<div class="control-group">
 			<label class="control-label" for="editableContent">Contenu de la page</label>
