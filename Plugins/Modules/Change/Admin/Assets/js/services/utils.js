@@ -275,6 +275,10 @@
 		},
 
 
+		equalsIgnoreCase : function (s1, s2) {
+			return angular.lowercase(s1) === angular.lowercase(s2);
+		},
+
 		// Various methods...
 		// These methods are not (yet?) documented, but their use is NOT encouraged
 		// as they are used for internal purposes only.
