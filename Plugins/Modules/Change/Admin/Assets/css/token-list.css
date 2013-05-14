@@ -45,13 +45,13 @@
 	margin: 3px 0;
 }
 
-.token-list.rows > li:first-child {
+/*.token-list.rows > li:first-child {
 	margin-top: 0;
 }
 
 .token-list.rows > li:last-child {
 	margin-bottom: 0;
-}
+}*/
 
 .token-list > li small {
 	font-weight: normal;
@@ -113,4 +113,24 @@
 .token-list > li.selected .delete,
 .token-list > li.selected .delete:hover {
 	color: white;
+}
+
+.token-list .sortable-placeholder {
+	border-style: dashed;
+	opacity: 0.8;
+}
+
+.token-list > li .icon-reorder {
+	margin-top: 1px;
+	cursor: move;
+}
+
+.token-list > li {
+	transition: transform 0.2s ease-out 0s;
+	-webkit-transition: -webkit-transform 0.2s ease-out 0s;
+}
+
+.token-list > li.sortable-dragging {
+	transform: scale(0.8);
+	-webkit-transform: scale(0.8);
 }
