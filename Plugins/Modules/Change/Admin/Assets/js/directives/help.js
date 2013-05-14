@@ -34,7 +34,7 @@
 		return {
 			restrict : 'A',
 
-			link : function (scope, elm, attrs, controller) {
+			link : function (scope, elm, attrs) {
 
 				var $target = $(attrs.help);
 				$target.hide();

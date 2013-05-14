@@ -256,11 +256,11 @@
 
 		// TODO i18n
 		var units = [
-	        ['octets', 'octets'],
-	        ['Ko', "Kilo-octets"],
-	        ['Mo', "Mega-octets"],
-	        ['Go', "Giga-octets"],
-	        ['To', "Tera-octets"]
+			['octets', 'octets'],
+			['Ko', "Kilo-octets"],
+			['Mo', "Mega-octets"],
+			['Go', "Giga-octets"],
+			['To', "Tera-octets"]
 		];
 
 		return function (bytes) {
