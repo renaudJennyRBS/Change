@@ -414,11 +414,11 @@
 			var	x1, y1, x2, y2, ww, hh;
 
 			x1 = x - highlightMargin - highlightBorder;
-			y1 = y - highlightMargin - highlightBorder;
+			y1 = y - highlightMargin - highlightBorder + 1;
 			x2 = x + w + highlightMargin;
-			y2 = y + h + highlightMargin;
+			y2 = y + h + highlightMargin - 1;
 			ww = w + (highlightMargin + highlightBorder) * 2;
-			hh = h + (highlightMargin + highlightBorder) * 2;
+			hh = h + (highlightMargin + highlightBorder - 1) * 2;
 
 			highlighter.top.css({
 				'top'    : y1 + 'px',
