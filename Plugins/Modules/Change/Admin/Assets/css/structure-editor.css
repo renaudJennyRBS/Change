@@ -25,6 +25,13 @@
 	-webkit-transition: -webkit-transform 0.2s ease-out 0s, opacity 0.2s ease-out 0s;
 }
 
+.structure-editor .block:first-child {
+	margin-top: 2px;
+}
+.structure-editor .block:last-child {
+	margin-bottom: 2px;
+}
+
 .ng-invalid .structure-editor {
 	border: 4px solid red;
 }

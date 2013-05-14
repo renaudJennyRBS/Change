@@ -14,7 +14,10 @@
 
 		DEFAULT_GRID_SIZE = 12,
 		RICH_TEXT_BLOCK_NAME = 'Change_Website_Richtext',
-		ADVANCED_TEXT_BLOCK_NAME = 'Change_Website_FormattedText';
+		ADVANCED_TEXT_BLOCK_NAME = 'Change_Website_FormattedText',
+
+		highlightMargin = 2,
+		highlightBorder = 5;
 
 	// Append some visual decorations :)
 	$('body').append(
@@ -364,9 +367,9 @@
 
 				offset = el.offset();
 				x = offset.left;
-				y = useParentHeight ? el.parent().offset().top : offset.top;
+				y = useParentHeight ? el.parent().offset().top + highlightMargin : offset.top;
 				w = el.innerWidth();
-				h = useParentHeight ? el.parent().outerHeight() : el.outerHeight();
+				h = useParentHeight ? el.parent().outerHeight() - (highlightMargin * 2) : el.outerHeight();
 
 				this.highlightZone(x, y, w, h, text);
 
@@ -408,15 +411,14 @@
 
 
 		this.highlightZone = function highlightZone (x, y, w, h, text) {
-			var	margin = 2, border = 5,
-				x1, y1, x2, y2, ww, hh;
+			var	x1, y1, x2, y2, ww, hh;
 
-			x1 = x - margin - border;
-			y1 = y - margin - border;
-			x2 = x + w + margin;
-			y2 = y + h + margin;
-			ww = w + (margin + border) * 2;
-			hh = h + (margin + border) * 2;
+			x1 = x - highlightMargin - highlightBorder;
+			y1 = y - highlightMargin - highlightBorder;
+			x2 = x + w + highlightMargin;
+			y2 = y + h + highlightMargin;
+			ww = w + (highlightMargin + highlightBorder) * 2;
+			hh = h + (highlightMargin + highlightBorder) * 2;
 
 			highlighter.top.css({
 				'top'    : y1 + 'px',
@@ -444,14 +446,13 @@
 
 			if (text) {
 				highlighter.text.css({
-					'top'    : (y1 - highlighter.text.outerHeight() + 4) + 'px',
-					'left'   : x + 'px'
+					'top'  : (y1 - highlighter.text.outerHeight() + 4) + 'px',
+					'left' : x + 'px'
 				}).html(text).show();
 			} else {
 				highlighter.text.hide();
 			}
 		};
-
 
 	}]);
 
@@ -1390,9 +1391,9 @@
 					nextCol = col.next();
 
 					x = col.offset().left + col.outerWidth();
-					y = rowEl.offset().top;
+					y = rowEl.offset().top + highlightMargin;
 					w = (nextCol.length ? nextCol.offset().left : rowEl.offset().left + rowEl.outerWidth()) - x;
-					h = rowEl.outerHeight();
+					h = rowEl.outerHeight() - (highlightMargin * 2);
 
 					if (scope.totalColumns < gridSize) {
 						newColSpan = gridSize - scope.totalColumns;
