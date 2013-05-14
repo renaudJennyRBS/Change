@@ -108,10 +108,6 @@
 					'label'  : "État",
 					'actions': ['groupPublishDocument', 'deactivate', 'applyCorrection']
 				},
-				{
-					'label'  : "Ordre",
-					'actions': ["treeMoveBefore", "treeMoveAfter"]
-				},
 				'delete'
 			]);
 
@@ -352,6 +348,15 @@
 				this.documents = response.resources;
 				this.pagination.total = response.pagination.count;
 
+				// Available sortable columns
+				// FIXME: remove default value here when the server sends this info.
+				var sort = response.pagination.availableSort || ['label', 'nodeOrder'];
+				if (angular.isArray(sort)) {
+					angular.forEach(this.columns, function (column) {
+						column.sortable = ArrayUtils.inArray(column.id, sort) !== -1;
+					});
+				}
+
 				// We are loading a collection, so we can tell the Breadcrumb that there is
 				// no end-resource to display.
 				Breadcrumb.setResource(null);
@@ -376,6 +381,7 @@
 
 
 			prepareQueryObject : function (query) {
+				// Sort by "label" instead of "nodeOrder" when sending a query (search).
 				if (this.sort.column === 'nodeOrder') {
 					this.sort.column = 'label';
 					this.sort.descending = 'asc';
@@ -398,49 +404,34 @@
 
 
 			reload : function () {
-				var DL, promise;
+				var DL, promise, params;
 
 				// Is there a query object in there?
 				if (this.hasFilters()) {
-
 					this.startLoading();
 					promise = REST.query(this.prepareQueryObject(this.query));
+				} else {
+					params = {
+						'offset': this.pagination.offset,
+						'limit' : this.pagination.limit,
+						'sort'  : this.sort.column,
+						'desc'  : this.sort.descending
+					};
 
-				// Or may be we are simply loading a Collection...
-				} else if (this.resourceUrl) {
-
-					this.startLoading();
-					promise = REST.collection(
-						this.resourceUrl,
-						{
-							'offset': this.pagination.offset,
-							'limit' : this.pagination.limit,
-							'sort'  : this.sort.column,
-							'desc'  : this.sort.descending
-						}
-					);
-
-				// Or may be tree children?
-				} else if (this.$scope.currentFolder) {
-
-					this.startLoading();
-					promise = REST.treeChildren(
-						this.$scope.currentFolder,
-						{
-							'offset': this.pagination.offset,
-							'limit' : this.pagination.limit,
-							'sort'  : this.sort.column,
-							'desc'  : this.sort.descending
-						}
-					);
-
+					// Or may be we are simply loading a Collection...
+					if (this.resourceUrl) {
+						this.startLoading();
+						promise = REST.collection(this.resourceUrl, params);
+					// Or may be tree children?
+					} else if (this.$scope.currentFolder) {
+						this.startLoading();
+						promise = REST.treeChildren(this.$scope.currentFolder, params);
+					}
 				}
 
 				if (promise) {
-
 					this.cbSelectAll = false;
 					DL = this;
-
 					promise.then(
 						function (response) {
 							DL.documentCollectionLoadedCallback(response);
@@ -450,7 +441,6 @@
 						}
 					);
 					return promise;
-
 				}
 
 				return null;
@@ -565,29 +555,35 @@
 			$scope.location = $location;
 			$scope.$watch(
 				'location.search()',
+
 				function (search) {
 					var	offset = parseInt(search.offset || 0, 10),
 						limit  = parseInt(search.limit || Settings.pagingSize, 10),
 						treeNodeId = parseInt(search.tn || 0, 10),
-						paginationChanged;
+						paginationChanged, sortChanged = false,
+						desc = (search.desc === 'true');
 
 					DL.pagination.offset = offset;
 					DL.pagination.limit = limit;
 
 					if (search.sort) {
+						sortChanged = DL.sort.column !== search.sort;
 						DL.sort.column = search.sort;
 					}
-					if (search.desc) {
-						DL.sort.descending = (search.desc === 'true');
+
+					if (desc !== DL.sort.descending) {
+						sortChanged = true;
 					}
+					DL.sort.descending = desc;
 
 					if (isNaN(treeNodeId) || !treeNodeId) {
 						DL.reload();
 					} else {
 						paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
-						DL.setTreeNodeId(treeNodeId, paginationChanged);
+						DL.setTreeNodeId(treeNodeId, paginationChanged || sortChanged);
 					}
 				},
+
 				true
 			);
 
