@@ -55,13 +55,14 @@
 							section = src.substring(p+1);
 							src = src.substring(0, p);
 						}
-						$http.get(src)
+						$http.get(src + '.twig')
 						.success(function (data) {
 							helpLoaded(scope, $target, data, section);
 						})
 						.error(function (data) {
 							helpLoaded(scope, $target, "L'aide n'a pas pu être chargée.", section, 'warning');
 						});
+						scope.$apply();
 					} else {
 						if ( (p = src.indexOf('.')) !== -1 ) {
 							section = src.substring(p+1);

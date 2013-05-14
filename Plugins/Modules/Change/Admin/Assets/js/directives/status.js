@@ -23,10 +23,10 @@
 		return {
 			restrict : 'E',
 
-			template : '<div title="{{tooltip}}" class="bullet-status {{document.publicationStatus}}" href="help/status.html" help="#helpListBottom"><div class="overlay correction" ng-show="correction">C</div></div>',
+			template : '<div title="{{tooltip}}" class="bullet-status {{document.publicationStatus}}" href="Change/Admin/help/status" help="#helpListBottom"><div class="overlay correction" ng-show="correction">C</div></div>',
 
 			require: '?ng-model',
-			
+
 			replace: true,
 
 			scope : {
@@ -41,7 +41,7 @@
 					scope.status = attrs.value;
 					scope.correction = false;
 				}
-				
+
 				scope.$watch('document', function (doc) {
 					if (doc && doc.publicationStatus) {
 						scope.tooltip = messages[doc.publicationStatus];
