@@ -345,21 +345,20 @@
 
 			documentCollectionLoadedCallback : function (response) {
 				this.stopLoading();
-				this.documents = response.resources;
-				this.pagination.total = response.pagination.count;
-
-				// Available sortable columns
-				// FIXME: remove default value here when the server sends this info.
-				var sort = response.pagination.availableSort || ['label', 'nodeOrder'];
-				if (angular.isArray(sort)) {
-					angular.forEach(this.columns, function (column) {
-						column.sortable = ArrayUtils.inArray(column.id, sort) !== -1;
-					});
-				}
 
 				// We are loading a collection, so we can tell the Breadcrumb that there is
 				// no end-resource to display.
 				Breadcrumb.setResource(null);
+
+				// Available sortable columns
+				// FIXME: remove default value here when the server sends this info.
+				var sort = response.pagination.availableSort || ['label', 'nodeOrder'];
+				angular.forEach(this.columns, function (column) {
+					column.sortable = angular.isArray(sort) && ArrayUtils.inArray(column.id, sort) !== -1;
+				});
+
+				this.documents = response.resources;
+				this.pagination.total = response.pagination.count;
 			},
 
 
