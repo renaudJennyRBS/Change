@@ -92,6 +92,20 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 					->addField($td->getField('lcid'))
 					->addField($td->getField('path')))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_plugin'] = $td = $schemaManager->newTableDefinition('change_plugin');
+			$td->addField($schemaManager->newVarCharFieldDefinition('type', array('length' => 25))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('vendor', array('length' => 25))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('name', array('length' => 25))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('package', array('length' => 25))->setNullable(true))
+				->addField($schemaManager->newTimeStampFieldDefinition('registration_date')->setNullable(false))
+				->addField($schemaManager->newBooleanFieldDefinition('configured')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newBooleanFieldDefinition('activated')->setNullable(false)->setDefaultValue(1))
+				->addField($schemaManager->newTextFieldDefinition('config_datas'))
+				->addKey($this->newPrimaryKey()
+					->addField($td->getField('type'))
+					->addField($td->getField('vendor'))
+					->addField($td->getField('name')));
 		}
 		return $this->tables;
 	}

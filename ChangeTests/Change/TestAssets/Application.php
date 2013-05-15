@@ -8,6 +8,16 @@ namespace ChangeTests\Change\TestAssets;
  */
 class Application extends \Change\Application
 {
+	public function registerCoreAutoload()
+	{
+		$classLoader = parent::registerCoreAutoload();
+		if ($classLoader instanceof \Composer\Autoload\ClassLoader)
+		{
+			$classLoader->set('Compilation', array(dirname($this->getWorkspace()->compilationPath())));
+			$classLoader->set('ChangeTests', array(dirname($this->getWorkspace()->projectPath())));
+		}
+	}
+
 	/**
 	 * @return \Change\Workspace
 	 */
@@ -18,14 +28,6 @@ class Application extends \Change\Application
 			$this->workspace = new \ChangeTests\Change\TestAssets\Workspace();
 		}
 		return $this->workspace;
-	}
-
-	public function registerCoreAutoload()
-	{
-		parent::registerCoreAutoload();
-		$zendLoader  = new \Zend\Loader\StandardAutoloader();
-		$zendLoader->registerNamespace('ChangeTests', dirname(dirname(__DIR__)));
-		$zendLoader->register();
 	}
 
 	/**

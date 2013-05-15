@@ -98,6 +98,18 @@ class Workspace
 		return call_user_func_array(array($this, 'projectPath'), $args);
 	}
 
+	/**
+	 * Build a path relative to the project's themes folder (App/Themes/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectThemesPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'Themes');
+		return call_user_func_array(array($this, 'appPath'), $args);
+	}
 
 	/**
 	 * Build a path relative to the plugins themes folder (Plugins/Themes/)

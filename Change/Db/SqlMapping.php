@@ -109,6 +109,15 @@ class SqlMapping
 		}
 		return \Change\Db\ScalarType::STRING;
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getPluginTableName()
+	{
+		return 'change_plugin';
+	}
 		
 	/**
 	 * @api

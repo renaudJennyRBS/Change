@@ -8,24 +8,18 @@ use Change\Documents\Correction;
 class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsDb();
+	}
+
+
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
-	}
-		
-	public function testInitializeDB()
-	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
-		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
-		$generator->generate();
+		static::clearDB();
 	}
 
-	/**
-	 * @depends testInitializeDB
-	 */
+
 	public function testSerialize()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
@@ -34,9 +28,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(serialize(null), $str);
 	}
 
-	/**
-	 * @depends testSerialize
-	 */
+
 	public function testBasic()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
@@ -136,9 +128,6 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 
-	/**
-	 * @depends testBasic
-	 */
 	public function testLocalized()
 	{
 
@@ -294,9 +283,6 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 
-	/**
-	 * @depends testLocalized
-	 */
 	public function testCorrection()
 	{
 		/* @var $c1 \Project\Tests\Documents\Correction */

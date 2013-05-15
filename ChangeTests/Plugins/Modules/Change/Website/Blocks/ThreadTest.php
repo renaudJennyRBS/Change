@@ -31,10 +31,7 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public static function setUpBeforeClass()
 	{
-		parent::setUpBeforeClass();
-		$app = self::getNewApplication();
-		$compiler = new \Change\Documents\Generators\Compiler($app, self::getNewApplicationServices($app));
-		$compiler->generate();
+		static::initDocumentsClasses();
 	}
 
 	public function testOnParameterize()

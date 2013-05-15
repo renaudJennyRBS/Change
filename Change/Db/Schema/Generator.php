@@ -25,8 +25,20 @@ class Generator
 		$this->workspace = $workspace;
 		$this->dbProvider = $dbProvider;
 	}
-	
+
+	/**
+	 * @api
+	 */
 	public function generate()
+	{
+		$this->generateSystemSchema();
+		$this->generatePluginsSchema();
+	}
+
+	/**
+	 * @api
+	 */
+	public function generateSystemSchema()
 	{
 		$dbProvider = $this->dbProvider;
 		$schemaManager = $dbProvider->getSchemaManager();
@@ -41,11 +53,21 @@ class Generator
 		{
 			$dbSchema->generate();
 		}
+	}
 
-		//@TODO Check Modules Specific Schema
-		//$workspace = $this->workspace;
-		
-			
+	/**
+	 * @api
+	 */
+	public function generatePluginsSchema()
+	{
+		$dbProvider = $this->dbProvider;
+		$schemaManager = $dbProvider->getSchemaManager();
+
+		if (!$schemaManager->check())
+		{
+			throw new \RuntimeException('unable to connect to database: '.$schemaManager->getName(), 40000);
+		}
+
 		if (class_exists('Compilation\Change\Documents\Schema'))
 		{
 			$documentSchema = new \Compilation\Change\Documents\Schema($schemaManager);

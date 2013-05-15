@@ -20,11 +20,6 @@ class Application
 	protected $workspace;
 
 	/**
-	 * @var \Change\Application\PackageManager
-	 */
-	protected $packageManager;
-
-	/**
 	 * @var \Change\Events\SharedEventManager
 	 */
 	protected $sharedEventManager;
@@ -67,62 +62,30 @@ class Application
 	}
 
 	/**
-	 * Registers the core autoload.
+	 * @return \Composer\Autoload\ClassLoader|null
 	 */
 	public function registerCoreAutoload()
 	{
-		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change',
-			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend');
-
-		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		foreach ($namespaces as $namespace => $path)
-		{
-			$zendLoader->registerNamespace($namespace, $path);
-		}
-		$zendLoader->register();
+		return require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'autoload.php';
 	}
 
 	/**
-	 * Register autoload for compiled code.
+	 * Register autoload for plugins
 	 */
-	public function registerCompilationAutoload()
+	public function registerPluginsAutoload()
 	{
-		// Register the compilation namespace
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		$zendLoader->registerNamespace('Compilation', $this->getWorkspace()->compilationPath());
-		$zendLoader->register();
-	}
-
-	/**
-	 * Register autoload for packages
-	 */
-	public function registerPackagesAutoload()
-	{
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		// Register additional packages autoload
-		foreach ($this->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
-		{
-			if (substr($namespace, -1) == '_')
-			{
-				$zendLoader->registerPrefix($namespace, $path);
-			}
-			else
-			{
-				$zendLoader->registerNamespace($namespace, $path);
-			}
-		}
-		$zendLoader->register();
+		$pluginsLoader = new \Change\Plugins\Autoloader();
+		$pluginsLoader->setWorkspace($this->getWorkspace());
+		$pluginsLoader->register();
 	}
 
 	/**
 	 * Namespace-based autoloading
 	 */
-	public function registerNamespaceAutoload()
+	public function registerAutoload()
 	{
 		$this->registerCoreAutoload();
-		$this->registerCompilationAutoload();
-		$this->registerPackagesAutoload();
+		$this->registerPluginsAutoload();
 	}
 
 	/**
@@ -167,26 +130,6 @@ class Application
 		return $this->configuration;
 	}
 
-	/**
-	 * @param \Change\Application\PackageManager $packageManager
-	 */
-	public function setPackageManager($packageManager)
-	{
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Application\PackageManager
-	 */
-	public function getPackageManager()
-	{
-		if ($this->packageManager === null)
-		{
-			$this->packageManager = new \Change\Application\PackageManager($this->getWorkspace());
-		}
-		return $this->packageManager;
-	}
 
 	/**
 	 * @param \Change\Events\SharedEventManager $eventManager
@@ -224,7 +167,7 @@ class Application
 				define('PROJECT_HOME', dirname(__DIR__));
 			}
 			// @codeCoverageIgnoreEnd
-			$this->registerNamespaceAutoload();
+			$this->registerAutoload();
 			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{
 				call_user_func(array($bootStrapClass, 'main'), $this);

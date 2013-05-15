@@ -8,25 +8,15 @@ use ChangeTests\Change\TestAssets\TestCase;
 class ChildBuilderTest extends TestCase
 {
 
-	static public function setUpBeforeClass()
+	public static function setUpBeforeClass()
 	{
-		$app = static::getNewApplication();
-
-		$appServices = static::getNewApplicationServices($app);
-
-		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
-		$compiler->generate();
-
-		$appServices->getDbProvider()->getSchemaManager()->clearDB();
-		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
-		$generator->generate();
-
+		static::initDocumentsDb();
 	}
+
 
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
+		static::clearDB();
 	}
 
 	public function testInitializeDB()
