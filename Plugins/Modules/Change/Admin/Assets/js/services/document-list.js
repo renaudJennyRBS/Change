@@ -460,6 +460,9 @@
 				return null;
 			},
 
+			setDefaultTreeName : function (treeName) {
+				this.defaultTreeName = treeName;
+			},
 
 			setTreeName : function (treeName) {
 				var self = this;
@@ -467,7 +470,6 @@
 					self.setTreeNodeId(data.resources[0].id);
 				});
 			},
-
 
 			setTreeNodeId : function (id, forceReload) {
 				var DL = this;
@@ -606,7 +608,13 @@
 					}
 
 					if (isNaN(treeNodeId) || !treeNodeId) {
-						DL.reload();
+						if (DL.defaultTreeName) {
+							DL.setTreeName(DL.defaultTreeName);
+						}
+						else
+						{
+							DL.reload();
+						}
 					} else {
 						paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
 						DL.setTreeNodeId(treeNodeId, paginationChanged || sortChanged);
