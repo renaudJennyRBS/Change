@@ -6,13 +6,11 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('documentPickerSingle', ['RbsChange.Modules', 'RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Modules, Clipboard, FormsManager, Breadcrumb, MainMenu, Utils, REST, $filter) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, FormsManager, Breadcrumb, MainMenu, Utils, REST, $filter) {
 		return {
-			// Utilisation : <page-header></page-header>
-			restrict: 'EAC',
 
-			// URL du template HTML
-			templateUrl: 'Change/Admin/js/directives/document-picker-single.twig',
+			restrict    : 'EAC',
+			templateUrl : 'Change/Admin/js/directives/document-picker-single.twig',
 
 			scope: {
 				document: '=',
@@ -67,7 +65,7 @@
 				scope.clipboardValues = Clipboard.values;
 				var first = scope.clipboardValues[0];
 				if (first) {
-					scope.clipboardFirstLabel = ' (' + Modules.models[first.model] + ' : ' + first.label + ')';
+					scope.clipboardFirstLabel = ' (' + first.label + ')';
 				} else {
 					scope.clipboardFirstLabel = '';
 				}
@@ -106,7 +104,7 @@
 				scope.openSelector = function () {
 					Breadcrumb.freeze();
 					MainMenu.freeze();
-					scope.selectorTitle = attrs.selectorTitle || Modules.models[attrs.acceptedModel];
+					scope.selectorTitle = attrs.selectorTitle;
 					scope.documentPickerUrl = 'Change/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
 				};
 
@@ -143,19 +141,14 @@
 				};
 
 				scope.selectDocuments = function (documents) {
-					scope.document = documents[0];
-					scope.closeSelector();
+					scope.selectDocument(documents[0]);
 				};
 
 				scope.replaceWithDocuments = function (documents) {
-					scope.document = documents[0];
-					scope.closeSelector();
+					scope.selectDocument(documents[0]);
 				};
 
-
-
 			}
-
 
 		};
 	}]);
