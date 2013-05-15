@@ -1,12 +1,11 @@
-<ul data-ng-show="items.length > 0" class="token-list rows">
-	<li data-ng-repeat="item in items" id="tokenList(=counter=)-item(=item.id=)" data-ng-click="itemClicked($index, $event)" data-ng-class="{selected: item.selected}">
+<ul data-ng-show="documents.length > 0" class="token-list rows">
+	<li data-ng-repeat="item in documents" id="tokenList(=counter=)-item(=item.id=)" data-ng-click="itemClicked($index, $event)" data-ng-class="{selected: item.selected}">
 		<a data-ng-hide="readonly" href="javascript:;" class="delete" data-ng-click="remove($index)">&times;</a>
-		<a data-ng-hide="readonly" data-ng-click="editSelectedDocument($index)" href="javascript:;" class="pull-right"><i class="icon-circle-arrow-right"></i></a>
 		(=getItemLabel(item)=)
 	</li>
 </ul>
 
-<div class="muted" data-ng-show="! items || items.length == 0">Aucun élément</div>
+<div class="muted" data-ng-show="! documents || documents.length == 0">Aucun élément</div>
 
 <div class="btn-toolbar">
 	<button
@@ -18,7 +17,7 @@
 		type="button"
 		class="btn"
 		data-ng-click="clear()"
-		data-ng-disabled="items.length == 0"
+		data-ng-disabled="documents.length == 0"
 		title="Supprimer la sélection"><i class="icon-remove"></i></button>
 
 	<div class="btn-group">

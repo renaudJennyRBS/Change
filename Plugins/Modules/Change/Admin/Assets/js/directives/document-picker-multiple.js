@@ -11,15 +11,12 @@
 		var counter = 0;
 
 		return {
-			// Utilisation : <page-header></page-header>
-			restrict: 'E',
+			restrict: 'ECA',
 
-			// URL du template HTML
-			templateUrl: 'Change/Admin/js/directives/document-picker-multiple.html',
+			templateUrl: 'Change/Admin/js/directives/document-picker-multiple.twig',
 
 			scope: {
-				items: '=',
-				formUrl: '@',
+				documents: '=',
 				collapsedLabelCreate: '@',
 				collapsedLabelEdit: '@'
 			},
@@ -36,11 +33,8 @@
 				}
 
 				function getFormUrl () {
-					if (scope.formUrl) {
-						return scope.formUrl;
-					}
 					var model = getFormModel();
-					return model.replace('_', '/') + '/form.php';
+					return model.replace(/_/g, '/') + '/form.twig';
 				}
 
 				scope.readonly = attrs.readonly ? true : false;
@@ -55,49 +49,29 @@
 					scope.clipboardFirstLabel = '';
 				}
 
-				scope.getDocumentUrl = function (doc) {
-					// FIXME
-					return 'media/media/' + doc.id;
-				};
-
 				scope.createDocument = function () {
 					FormsManager.cascade(
 							getFormUrl(),
 							null,
 							function (doc) {
-								doc.model = getFormModel(); // FIXME Useless in real life :)
-								if (!scope.items) {
-									scope.items = [];
+								if (!scope.documents) {
+									scope.documents = [];
 								}
-								scope.items.push(doc);
+								scope.documents.push(doc);
 							},
 							scope.collapsedLabelCreate
 						);
 				};
 
-				scope.editSelectedDocument = function (index) {
-					FormsManager.cascade(
-							getFormUrl(),
-							{ 'id': scope.items[index].id },
-							function (doc) {
-								scope.items[index] = doc;
-							},
-							scope.collapsedLabelEdit.replace('{}', scope.getItemLabel(scope.items[index].label))
-						);
-				};
-
 				scope.clear = function () {
-					ArrayUtils.clear(scope.items);
+					ArrayUtils.clear(scope.documents);
 				};
 
 				scope.openSelector = function () {
 					Breadcrumb.freeze();
 					MainMenu.freeze();
-					var p = attrs.acceptedModel.indexOf('/');
-					var module = attrs.acceptedModel.substring(8, p);
-					var model = attrs.acceptedModel.substring(p+1);
-					scope.selectorTitle = attrs.selectorTitle || Modules.models[attrs.acceptedModel];
-					scope.documentPickerUrl = 'modules/document-picker-list.php?multiple=true&module=' + module + '&model=' + model;
+					scope.selectorTitle = attrs.selectorTitle;
+					scope.documentPickerUrl = 'Change/Admin/document-picker-list.twig?multiple=true&model=' + attrs.acceptedModel;
 				};
 
 				scope.closeSelector = function () {
@@ -107,10 +81,7 @@
 				};
 
 				scope.getFromClipboard = function () {
-					var items = Clipboard.getItems(true);
-					for (var i=0 ; i<items.length ; i++) {
-						scope.items.push(items[i]);
-					}
+					scope.selectDocuments(Clipboard.getItems(true));
 				};
 
 				scope.$watch('documentPickerUrl', function () {
@@ -122,11 +93,12 @@
 				});
 
 				scope.selectDocument = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
+					console.log("Doc=", doc);
+					if ( ! scope.documents ) {
+						scope.documents = [];
 					}
-					if (scope.items.indexOf(doc) === -1) {
-						scope.items.push(doc);
+					if (scope.documents.indexOf(doc) === -1) {
+						scope.documents.push(doc);
 					}
 				};
 
@@ -138,17 +110,17 @@
 				};
 
 				scope.replaceWithDocument = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
+					if ( ! scope.documents ) {
+						scope.documents = [];
 					} else {
 						scope.clear();
 					}
-					scope.items.push(doc);
+					scope.documents.push(doc);
 				};
 
 				scope.replaceWithDocuments = function (docs) {
-					if ( ! scope.items ) {
-						scope.items = [];
+					if ( ! scope.documents ) {
+						scope.documents = [];
 					} else {
 						scope.clear();
 					}
@@ -156,11 +128,11 @@
 				};
 
 				scope.selectDocumentFirst = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
+					if ( ! scope.documents ) {
+						scope.documents = [];
 					}
-					if (scope.items.indexOf(doc) === -1) {
-						scope.items.unshift(doc);
+					if (scope.documents.indexOf(doc) === -1) {
+						scope.documents.unshift(doc);
 					}
 				};
 
@@ -180,8 +152,8 @@
 							});
 						} else if (event.keyCode === 38 || event.keyCode === 40) {
 							var selected = -1, nb = 0;
-							for (var i = 0 ; i < scope.items.length ; i++) {
-								if (scope.items[i].selected) {
+							for (var i = 0 ; i < scope.documents.length ; i++) {
+								if (scope.documents[i].selected) {
 									selected = i;
 									nb++;
 								}
@@ -190,14 +162,14 @@
 							if (nb === 1 && selected !== -1) {
 								if (event.keyCode === 38) { // top
 									if (selected > 0) {
-										ArrayUtils.move(scope.items, selected, selected-1);
+										ArrayUtils.move(scope.documents, selected, selected-1);
 										selected--;
 										scope.$apply();
 										$el.find('li:eq(' + selected + ') a.delete').focus();
 									}
 								} else if (event.keyCode === 40) { // bottom
-									if (selected < (scope.items.length-1)) {
-										ArrayUtils.move(scope.items, selected, selected+1);
+									if (selected < (scope.documents.length-1)) {
+										ArrayUtils.move(scope.documents, selected, selected+1);
 										selected++;
 									}
 								}
@@ -209,7 +181,7 @@
 				}
 
 				scope.remove = function (index) {
-					ArrayUtils.remove(scope.items, index);
+					ArrayUtils.remove(scope.documents, index);
 				};
 
 				scope.itemClicked = function (index, event) {
@@ -221,17 +193,17 @@
 							var from = Math.min(lastSelectedItemIndex, index);
 							var to = Math.max(lastSelectedItemIndex, index);
 							for (var i=from ; i<=to ; i++) {
-								scope.items[i].selected = true;
+								scope.documents[i].selected = true;
 							}
 						} else {
 							scope.clearSelected();
-							scope.items[index].selected = ! scope.items[index].selected;
+							scope.documents[index].selected = ! scope.documents[index].selected;
 						}
 					} else {
-						scope.items[index].selected = ! scope.items[index].selected;
+						scope.documents[index].selected = ! scope.documents[index].selected;
 					}
 					$el.find('li:eq(' + index + ') a.delete').focus();
-					if (scope.items[index].selected) {
+					if (scope.documents[index].selected) {
 						lastSelectedItemIndex = index;
 					} else {
 						lastSelectedItemIndex = -1;
@@ -239,7 +211,7 @@
 				};
 
 				scope.clearSelected = function () {
-					angular.forEach(scope.items, function (item) {
+					angular.forEach(scope.documents, function (item) {
 						item.selected = false;
 					});
 				};
@@ -249,8 +221,8 @@
 					if (scope.readonly) {
 						return;
 					}
-					for (i = scope.items.length-1 ; i >= 0 ; i--) {
-						if (scope.items[i].selected) {
+					for (i = scope.documents.length-1 ; i >= 0 ; i--) {
+						if (scope.documents[i].selected) {
 							scope.remove(i);
 						}
 					}

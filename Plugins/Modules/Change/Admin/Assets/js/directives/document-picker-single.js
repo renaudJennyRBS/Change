@@ -12,7 +12,7 @@
 			restrict: 'EAC',
 
 			// URL du template HTML
-			templateUrl: 'Change/Admin/js/directives/document-picker-single.html',
+			templateUrl: 'Change/Admin/js/directives/document-picker-single.twig',
 
 			scope: {
 				document: '=',
