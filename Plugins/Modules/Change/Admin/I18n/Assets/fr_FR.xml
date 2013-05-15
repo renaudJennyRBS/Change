@@ -5,4 +5,7 @@
 	<key id="information">informations</key>
 	<key id="status">état</key>
 	<key id="languages">langues</key>
+
+	<key id="submit">valider</key>
+	<key id="cancel">annuler</key>
 </i18n>
