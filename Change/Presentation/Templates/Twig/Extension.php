@@ -1,7 +1,7 @@
 <?php
 namespace Change\Presentation\Templates\Twig;
 
-use Change\Presentation\PresentationServices;
+use Change\Application\ApplicationServices;
 
 /**
  * Class Extension
@@ -11,16 +11,16 @@ use Change\Presentation\PresentationServices;
 class Extension  implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var PresentationServices
+	 * @var ApplicationServices
 	 */
-	protected $presentationServices;
+	protected $applicationServices;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(PresentationServices $presentationServices)
+	function __construct(ApplicationServices $applicationServices)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->applicationServices = $applicationServices;
 	}
 
 	/**
@@ -113,7 +113,7 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	protected function getApplicationServices()
 	{
-		return $this->presentationServices->getApplicationServices();
+		return $this->applicationServices;
 	}
 
 	/**
@@ -146,5 +146,24 @@ class Extension  implements \Twig_ExtensionInterface
 		}
 		$formatters[] = 'attr';
 		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
+	}
+
+	/**
+	 * @param string $pathName
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function renderTemplateFile($pathName, array $attributes)
+	{
+		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
+
+		// Include Twig macros for forms.
+		// Use it with: {% import "@Admin/forms.twig" as forms %}
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Change', 'Admin', 'Assets');
+		$loader->addPath($formsMacroPath, 'Admin');
+
+		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->presentationServices->getApplicationServices()));
+		return $twig->render(basename($pathName), $attributes);
 	}
 }

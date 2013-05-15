@@ -1,0 +1,208 @@
+<?php
+namespace ChangeTests\Change\Plugins;
+
+use Change\Db\Schema\Generator;
+use Change\Plugins\Plugin;
+use ChangeTests\Change\TestAssets\TestCase;
+
+/**
+* @name \ChangeTests\Change\Plugins\PluginManagerTest
+*/
+class PluginManagerTest extends TestCase
+{
+	public static function setUpBeforeClass()
+	{
+		$app = static::getNewApplication();
+		$appServices = static::getNewApplicationServices($app);
+
+		$generator = new Generator($app->getWorkspace(), $appServices->getDbProvider());
+		$generator->generateSystemSchema();
+	}
+
+
+	public static function tearDownAfterClass()
+	{
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
+		$dbp->getSchemaManager()->clearDB();
+	}
+
+	public function testService()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$this->assertInstanceOf('Change\Plugins\PluginManager', $pluginManager);
+	}
+
+	/**
+	 * @param Plugin[] $plugins
+	 * @param string $type
+	 * @param string $vendor
+	 * @param string $shortName
+	 * @return Plugin|null
+	 */
+	protected function findPlugin($plugins, $type, $vendor, $shortName)
+	{
+		$tmpPlugin = new Plugin(__DIR__, $type, $vendor, $shortName);
+		foreach ($plugins as $plugin)
+		{
+			if ($tmpPlugin->eq($plugin))
+			{
+				return $plugin;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $name
+	 * @return \ReflectionMethod
+	 */
+	protected function getMethod($name)
+	{
+		$class = new \ReflectionClass('\\Change\\Plugins\\PluginManager');
+		$method = $class->getMethod($name);
+		$method->setAccessible(true);
+		return $method;
+	}
+
+	public function testScanPlugins()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->scanPlugins();
+		$this->assertNotEmpty($plugins);
+		$plugin = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $plugin);
+
+		$plugin2 = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $plugin2);
+
+		return $plugin;
+	}
+
+	/**
+	 * @depends testScanPlugins
+	 * @param Plugin $plugin
+	 */
+	public function testCompile($plugin)
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->compile();
+		$this->assertEmpty($plugins);
+		$pluginManager->register($plugin);
+
+		$plugins = $pluginManager->compile();
+		$this->assertCount(1, $plugins);
+		$p = $plugins[0];
+		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
+		$this->assertNotSame($plugin, $p);
+		$this->assertTrue($plugin->eq($p));
+		$this->assertInstanceOf('\DateTime', $p->getRegistrationDate());
+
+		$p2 = $pluginManager->getModule('project', 'tests');
+		$this->assertSame($p, $p2);
+	}
+
+	/**
+	 * @depends testCompile
+	 */
+	public function testModule()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$p = $pluginManager->getModule('project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
+		$pluginManager->unRegister($p);
+		$p2 = $pluginManager->getModule('project', 'tests');
+		$this->assertNull($p2);
+
+		$pluginManager->compile();
+		$p3 = $pluginManager->getModule('project', 'tests');
+		$this->assertNull($p3);
+	}
+
+	/**
+	 * @depends testModule
+	 */
+	public function testGetUnregisteredPlugins()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$this->assertNull($pluginManager->getModule('project', 'tests'));
+		$this->assertNull($pluginManager->getTheme('project', 'tests'));
+
+		$plugins = $pluginManager->getUnregisteredPlugins();
+		$plugin = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $plugin);
+		$pluginManager->register($plugin);
+		$p2 = $pluginManager->getModule('project', 'tests');
+		$this->assertSame($plugin, $p2);
+		$this->assertNull($pluginManager->getTheme('project', 'tests'));
+
+		$plugin = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $plugin);
+		$pluginManager->register($plugin);
+		$p2 = $pluginManager->getTheme('project', 'tests');
+		$this->assertSame($plugin, $p2);
+	}
+
+	/**
+	 * @depends testGetUnregisteredPlugins
+	 */
+	public function testUnRegister()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$this->assertNull($pluginManager->getModule('project', 'tests'));
+		$this->assertNull($pluginManager->getTheme('project', 'tests'));
+		$pluginManager->compile();
+		$module = $pluginManager->getModule('project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $module);
+
+		$theme = $pluginManager->getTheme('project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $theme);
+
+		$pluginManager->unRegister($module);
+		$this->assertNull($pluginManager->getModule('project', 'tests'));
+
+		$pluginManager->unRegister($theme);
+		$this->assertNull($pluginManager->getTheme('project', 'tests'));
+
+		$pluginManager->reset();
+		$this->assertInstanceOf('Change\Plugins\Plugin', $pluginManager->getModule('project', 'tests'));
+		$this->assertInstanceOf('Change\Plugins\Plugin', $pluginManager->getTheme('project', 'tests'));
+
+		$pluginManager->compile();
+		$this->assertNull($pluginManager->getModule('project', 'tests'));
+		$this->assertNull($pluginManager->getTheme('project', 'tests'));
+	}
+
+	/**
+	 * @depends testUnRegister
+	 */
+	public function testLoad()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->getUnregisteredPlugins();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'project', 'tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $module);
+		$pluginManager->register($module);
+
+		$module->setActivated(true);
+		$module->setPackage('test');
+		$module->setConfiguration(array('locked' => true));
+
+		$pluginManager->update($module);
+
+		$module2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'project', 'tests');
+		$this->assertTrue($module2->eq($module));
+		$this->assertFalse($module2->getActivated());
+		$this->assertNull($module2->getPackage());
+		$this->assertEmpty($module2->getConfiguration());
+
+		$module3 = $pluginManager->load($module2);
+		$this->assertSame($module2, $module3);
+		$this->assertTrue($module2->getActivated());
+		$this->assertEquals('test', $module2->getPackage());
+		$this->assertEquals(array('locked' => true), $module2->getConfiguration());
+
+		$theme = new Plugin(__DIR__, Plugin::TYPE_THEME, 'project', 'tests');
+		$theme2 = $pluginManager->load($theme);
+		$this->assertNull($theme2);
+	}
+}

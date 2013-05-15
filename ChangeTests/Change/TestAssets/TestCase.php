@@ -112,4 +112,47 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		}
 		return $this->presentationServices;
 	}
+
+
+	public static function initDb()
+	{
+		$app = static::getNewApplication();
+		$appServices = static::getNewApplicationServices($app);
+
+		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
+		$generator->generateSystemSchema();
+	}
+
+	public static function initDocumentsClasses()
+	{
+		$app = static::getNewApplication();
+		$appServices = static::getNewApplicationServices($app);
+
+		$appServices->getPluginManager()->compile(false);
+
+		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
+		$compiler->generate();
+	}
+
+	public static function initDocumentsDb()
+	{
+		$app = static::getNewApplication();
+		$appServices = static::getNewApplicationServices($app);
+
+		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
+		$generator->generateSystemSchema();
+
+		$appServices->getPluginManager()->compile(false);
+
+		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
+		$compiler->generate();
+
+		$generator->generatePluginsSchema();
+	}
+
+	public static function clearDB()
+	{
+		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
+		$dbp->getSchemaManager()->clearDB();
+	}
 }

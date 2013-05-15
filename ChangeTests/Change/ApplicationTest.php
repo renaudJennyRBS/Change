@@ -5,7 +5,7 @@ namespace ChangeTests\Change;
  */
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
-	public function run(\PHPUnit_Framework_TestResult $result = NULL)
+	public function run(\PHPUnit_Framework_TestResult $result = null)
 	{
 		$this->setPreserveGlobalState(false);
 		return parent::run($result);
@@ -14,20 +14,18 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @runInSeparateProcess
 	 */
-	public function testNamespaceAutoload()
+	public function testRegisterAutoload()
 	{
 		if (!defined('PROJECT_HOME'))
 		{
 			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
 		}
 		$this->assertFalse(class_exists('\Zend\Stdlib\ErrorHandler'));
-		//$this->assertFalse(class_exists('\ZendOAuth\OAuth'));
 		$this->assertFalse(class_exists('\Change\Stdlib\File'));
 		require_once PROJECT_HOME . '/Change/Application.php';
 		$application = new \Change\Application();
-		$application->registerNamespaceAutoload();
+		$application->registerAutoload();
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
-		//$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
 
@@ -44,8 +42,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		require_once 'TestAssets/Application.php';
 
 		$application = new \ChangeTests\Change\TestAssets\Application();
-		$application->registerCoreAutoload();
-		$application->registerNamespaceAutoload();
+		$application->registerAutoload();
 
 		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
@@ -78,8 +75,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		require_once 'TestAssets/Application.php';
 
 		$application = new \ChangeTests\Change\TestAssets\Application();
-		$application->registerCoreAutoload();
-		$application->registerNamespaceAutoload();
+		$application->registerAutoload();
 		$application->start();
 		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
@@ -114,8 +110,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		require_once 'TestAssets/Application.php';
 
 		$application = new \ChangeTests\Change\TestAssets\Application();
-		$application->registerCoreAutoload();
-		$application->registerNamespaceAutoload();
+		$application->registerAutoload();
 
 		$originalInfo = array(
 			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',

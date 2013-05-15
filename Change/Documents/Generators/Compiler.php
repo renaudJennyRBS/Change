@@ -335,44 +335,20 @@ class Compiler
 	public function generate()
 	{
 		$nbModels = 0;
-		
-		$workspace = $this->application->getWorkspace();
-		if (is_dir($workspace->pluginsModulesPath()))
+		$plugins = $this->applicationServices->getPluginManager()->getModules();
+		foreach($plugins as $plugin)
 		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
-			$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-			foreach ($paths as $definitionPath)
+			$vendor = $plugin->getNormalizedVendor();
+			$moduleName = $plugin->getNormalizedShortName();
+			foreach ($plugin->getDocumentDefinitionPaths() as $documentName => $definitionPath)
 			{
-				$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-				$count = count($parts);
-				$documentName = basename($parts[$count - 1], '.xml');
-				$moduleName = $parts[$count - 4];
-				$vendor = $parts[$count - 5];
-				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
-				$nbModels++;
-			}
-		}
-
-		if (is_dir($workspace->projectModulesPath()))
-		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'Documents', 'Assets', '*.xml'));
-			$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-			foreach ($paths as $definitionPath)
-			{
-				$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-				$count = count($parts);
-				$documentName = basename($parts[$count - 1], '.xml');
-				$moduleName = $parts[$count - 4];
-				$vendor = 'Project';
 				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
 				$nbModels++;
 			}
 		}
 		
 		$this->buildTree();
-		
 		$this->validateInheritance();
-		
 		$this->saveModelsPHPCode();
 	}
 }

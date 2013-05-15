@@ -7,13 +7,9 @@ namespace ChangeTests\Change\Documents;
 class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
-	protected function compileDocuments()
+	public static function setUpBeforeClass()
 	{
-		if (!class_exists('\Compilation\Project\Tests\Documents\AbstractBasic'))
-		{
-			$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-			$compiler->generate();
-		}
+		static::initDocumentsClasses();
 	}
 
 	public function testConstructor()
@@ -55,7 +51,6 @@ class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testDocumentProperty()
 	{
-		$this->compileDocuments();
 		$node = new \Change\Documents\TreeNode('Project_Tests');
 		$node->setTreeManager($this->getDocumentServices()->getTreeManager());
 

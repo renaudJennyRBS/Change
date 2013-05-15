@@ -5,11 +5,14 @@ use Change\Http\UrlManager;
 
 class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsClasses();
+	}
+
 	public function testConstruct()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
 		$uri = new \Zend\Uri\Http();
 		$uri->parse('http://domain.net');
 		

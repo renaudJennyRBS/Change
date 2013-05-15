@@ -22,6 +22,8 @@ class GetHtmlFragment
 		$filePath = $this->getFilePath($resourcePath, $event->getApplicationServices()->getApplication()->getWorkspace());
 		if ($filePath !== null)
 		{
+
+
 			$fileResource = new \Change\Presentation\Themes\FileResource($filePath);
 			if ($fileResource->isValid())
 			{
@@ -39,11 +41,11 @@ class GetHtmlFragment
 				else
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-					$templateManager = $event->getPresentationServices()->getTemplateManager();
+					$manager = new \Change\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
 					$attributes = array('query' => $event->getRequest()->getQuery()->toArray());
-					$renderer = function () use ($filePath, $templateManager, $attributes)
+					$renderer = function () use ($filePath, $manager, $attributes)
 					{
-						return $templateManager->renderTemplateFile($filePath, $attributes);
+						return $manager->renderTemplateFile($filePath, $attributes);
 					};
 					$result->setRenderer($renderer);
 				}

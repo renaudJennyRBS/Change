@@ -513,6 +513,15 @@ class SQLFragmentBuilder
 		$result->setArguments($this->normalizeValue(func_get_args()));
 		return $result;
 	}
+
+	/**
+	 * @api
+	 * @return \Change\Db\Query\Expressions\Table
+	 */
+	public function getPluginTable()
+	{
+		return $this->table($this->sqlMapping->getPluginTableName());
+	}
 	
 	/**
 	 * @api

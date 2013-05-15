@@ -25,6 +25,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->registerDbProvider($dl);
 		$this->registerTransactionManager($dl);
 		$this->registerI18nManager($dl);
+		$this->registerPluginManager($dl);
 
 		parent::__construct($dl);
 
@@ -40,6 +41,9 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Transaction\TransactionManager', array('configuration' => $application->getConfiguration()));
 
 		$im->setInjections('Change\I18n\I18nManager', array('Change\Logging\Logging'));
+
+		$im->setInjections('Change\Plugins\PluginManager', array('Change\Db\DbProvider'));
+		$im->setParameters('Change\Plugins\PluginManager', array('workspace' => $application->getWorkspace()));
 	}
 
 	/**
@@ -105,6 +109,23 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerPluginManager($dl)
+	{
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Plugins\PluginManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+			->addMethod('setWorkspace')
+			->addMethodParameter('setWorkspace', 'workspace',
+				array('type' => 'Change\Workspace', 'required' => true))
+			->addMethod('setDbProvider')
+			->addMethodParameter('setDbProvider', 'dbProvider',
+			array('type' => 'Change\Db\DbProvider', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
 	 * @api
 	 * @return \Change\Application
 	 */
@@ -147,5 +168,14 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getTransactionManager()
 	{
 		return $this->get('Change\Transaction\TransactionManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Plugins\PluginManager
+	 */
+	public function getPluginManager()
+	{
+		return $this->get('Change\Plugins\PluginManager');
 	}
 }

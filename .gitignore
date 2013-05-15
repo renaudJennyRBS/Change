@@ -47,10 +47,11 @@ nbproject
 /App/Config
 /App/Modules
 /App/*.db
-.psr-0.ser
 ./test*
-/ChangeTests/UnitTestWorkspace/*
-!/ChangeTests/UnitTestWorkspace/App/Modules
+/ChangeTests/UnitTestWorkspace/App/*.db
+/ChangeTests/UnitTestWorkspace/App/Config/project.default.json
+/ChangeTests/UnitTestWorkspace/App/Config/project.sqlite.json
+/ChangeTests/UnitTestWorkspace/Compilation/*
 /ChangeTests/report/
 /App/OldBootstrap.php
 /change.xml

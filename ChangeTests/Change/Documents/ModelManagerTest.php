@@ -3,14 +3,16 @@ namespace ChangeTests\Change\Documents;
 
 class ModelManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsClasses();
+	}
+
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function testInitialize()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
 		$modelManager = $this->getDocumentServices()->getModelManager();
 		$this->assertInstanceOf('\Change\Documents\ModelManager', $modelManager);
 		return $modelManager;

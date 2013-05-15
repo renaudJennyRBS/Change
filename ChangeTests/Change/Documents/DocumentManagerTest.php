@@ -5,23 +5,17 @@ use Change\Documents\DocumentManager;
 
 class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	public function testInitializeDB()
+	public static function setUpBeforeClass()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
-		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
-		$generator->generate();
+		static::initDocumentsDb();
 	}
-	
+
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
+		static::clearDB();
 	}
 	
 	/**
-	 * @depends testInitializeDB
 	 * @return \Change\Documents\DocumentManager
 	 */
 	public function testConstruct()

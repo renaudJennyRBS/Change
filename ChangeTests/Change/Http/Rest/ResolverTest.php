@@ -7,10 +7,9 @@ use Zend\Http\Request;
 class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
-	public function testInitialize()
+	public static function setUpBeforeClass()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
+		static::initDocumentsClasses();
 	}
 
 	/**
@@ -28,9 +27,6 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->getRequest()->setPath($path);
 	}
 
-	/**
-	 * @depends testInitialize
-	 */
 	public function testConstruct()
 	{
 		$resolver = new Resolver();

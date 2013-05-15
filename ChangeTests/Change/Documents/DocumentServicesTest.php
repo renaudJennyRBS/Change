@@ -3,14 +3,16 @@ namespace ChangeTests\Change\Documents;
 
 class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsClasses();
+	}
+
 	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
 	public function testInitialize()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
 		$documentsServices = $this->getDocumentServices();
 		$this->assertInstanceOf('\Change\Documents\DocumentServices', $documentsServices);
 		$this->assertSame($this->getApplicationServices(), $documentsServices->getApplicationServices());
@@ -20,7 +22,6 @@ class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Documents\TreeManager', $documentsServices->getTreeManager());
 
 		$this->assertInstanceOf('\Change\Documents\Constraints\ConstraintsManager', $documentsServices->getConstraintsManager());
-
 		return $documentsServices;
 	}
 }

@@ -26,12 +26,12 @@ class GetThemeResource
 				$resource = $theme->getResource($themeResourcePath);
 				if ($resource)
 				{
-
 					$result = new Resource($theme->getName() . '_' . $themeResourcePath);
 					if ($resource->isValid())
 					{
 						$md = $resource->getModificationDate();
 						$result->setHeaderLastModified($md);
+						$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
 						$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
 						if ($ifModifiedSince && $ifModifiedSince == $md)
 						{

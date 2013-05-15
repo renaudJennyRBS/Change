@@ -7,10 +7,15 @@ namespace ChangeTests\Change\Documents;
  */
 class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsDb();
+	}
+
+
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
+		static::clearDB();
 	}
 
 	/**
@@ -18,14 +23,8 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInitializeDB()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-
-		$generator = new \Change\Db\Schema\Generator($this->getApplication()->getWorkspace(), $this->getApplicationServices()->getDbProvider());
-		$generator->generate();
-
 		$treeManager = $this->getDocumentServices()->getTreeManager();
-
+		$this->assertInstanceOf('\Change\Documents\TreeManager', $treeManager);
 		return $treeManager;
 	}
 
