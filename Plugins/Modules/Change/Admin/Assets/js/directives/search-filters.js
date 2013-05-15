@@ -134,9 +134,10 @@
 							}
 						}
 					} else {
+						filter = getNextUnusedFilter();
 						scope.appliedFilters.push({
-							"filter" : getNextUnusedFilter(),
-							"op"     : 'eq',
+							"filter" : filter,
+							"op"     : filter.type === 'String' ? 'contains' : 'eq',
 							'value'  : query
 						});
 					}
