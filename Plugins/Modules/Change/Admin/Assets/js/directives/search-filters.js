@@ -4,12 +4,12 @@
 
 	var forEach = angular.forEach,
 		likeModes = {
-			'beginsWith': 'begin',
-			'endsWith': 'end',
-			'contains': 'any'
+			'beginsWith' : 'begin',
+			'endsWith'   : 'end',
+			'contains'   : 'any'
 		};
 
-	function searchFiltersDirectiveFn ($timeout, ArrayUtils, Utils, Dialog, REST, Breadcrumb, SavedSearches) {
+	function searchFiltersDirectiveFn ($timeout, ArrayUtils, Utils, REST, Breadcrumb, SavedSearches) {
 
 		return {
 			"restrict"    : 'E',
@@ -22,7 +22,7 @@
 				"textSearch" : "="
 			},
 
-			"link" : function postLink(scope, elm, attrs) {
+			"link" : function postLink(scope, elm) {
 
 				if (!scope.model) {
 					throw new Error("Please provide a 'model' attribute with a valid Model name.");
@@ -31,26 +31,122 @@
 				var modelMeta;
 
 				scope.availableFilters = {};
-				scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
 				scope.appliedFilters   = [];
 				scope.operator         = "and";
 				scope.treePolicy       = Breadcrumb.getCurrentNode() ? "descendantOf" : "all";
+				scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
 
-				scope.$watch('textSearch', function (textSearch) {
+				scope.$watch('textSearch', initSearch, true);
+
+
+				function initSearch (textSearch) {
 					if (textSearch) {
 						elm.show();
 						if (textSearch === '...') {
 							textSearch = '';
 						}
-						scope.addFilter(textSearch);
+						ArrayUtils.clear(scope.appliedFilters);
+						parseQuery(textSearch);
 
 						// Apply filter if there is a value.
 						if (textSearch) {
 							scope.applyFilters();
 						}
 					}
-				});
+				}
 
+
+				function getFilterByName (name) {
+					for (var filter in scope.availableFilters) {
+						if (scope.availableFilters.hasOwnProperty(filter)) {
+							if (Utils.equalsIgnoreCase(filter, name) || Utils.equalsIgnoreCase(scope.availableFilters[filter].label, name)) {
+								return scope.availableFilters[filter];
+							}
+						}
+					}
+					return null;
+				}
+
+
+				function parseQuery (query) {
+					var tokens = null,
+						t, i, op,
+						parsed,
+						filter,
+						operators = [ '<>', '<=', '>=', '!=', '>', '<', '=' ],
+						key, val;
+
+					if (query) {
+						query = query.trim()
+							.replace(' et ', '&').replace(' ou ', '|')
+							.replace(' and ', '&').replace(' or ', '|');
+					} else {
+						query = '';
+					}
+
+					if (query.indexOf('=') !== -1 || query.indexOf('<') !== -1 || query.indexOf('>') !== -1) {
+						if (query.indexOf('&') !== -1) {
+							scope.operator = 'and';
+							tokens = query.split('&');
+						} else if (query.indexOf(',') !== -1) {
+							scope.operator = 'and';
+							tokens = query.split(',');
+						} else if (query.indexOf('|') !== -1) {
+							scope.operator = 'or';
+							tokens = query.split('|');
+						} else {
+							tokens = [ query ];
+						}
+						for (t=0 ; t<tokens.length ; t++) {
+							for (i=0 ; i<operators.length ; i++) {
+								op = operators[i];
+								if (tokens[t].indexOf(op) !== -1) {
+									parsed = tokens[t].split(op);
+									key = parsed[0].trim();
+									val = parsed[1].trim();
+									if (!isNaN(parseFloat(val))) {
+										val = parseFloat(val);
+									}
+
+									// Fix operator since the UI does not handle '<' and '>'.
+									if (op === '<') {
+										op = 'lte';
+									} else if (op === '>') {
+										op = 'gte';
+									} else if (op === '=') {
+										// If queryStr is not a number, use 'contains' instead of 'eq' for the operator.
+										op = angular.isNumber(val) ? 'eq' : 'contains';
+									} else if (op === '!=' || op === '<>') {
+										op = 'neq';
+									}
+
+									// Here is our filter!
+									filter = getFilterByName(key);
+									if (filter) {
+										scope.appliedFilters.push({
+											"filter" : filter,
+											"op"     : op,
+											"value"  : val
+										});
+										break;
+									}
+								}
+							}
+						}
+					} else {
+						filter = getNextUnusedFilter();
+						scope.appliedFilters.push({
+							"filter" : filter,
+							"op"     : filter.type === 'String' ? 'contains' : 'eq',
+							'value'  : query
+						});
+					}
+
+					$timeout(function () {
+						elm.find('[data-role="filter-value"]:visible').last().focus().select();
+					});
+
+				}
 
 				//
 				// Load Model's information.
@@ -69,11 +165,6 @@
 					forEach(modelInfo.properties, function (propertyObj, name) {
 
 						propertyObj.name = name;
-
-						// FIXME To be removed when labels are translated server side
-						if (!propertyObj.label || propertyObj.label.substr(0, 2) === 'm.') {
-							propertyObj.label = propertyObj.name;
-						}
 
 						// FIXME Localization
 						if (name === 'publicationStatus') {
@@ -140,6 +231,7 @@
 					return filter;
 				}
 
+
 				scope.$on("Change:DocumentList:CancelFilters", function () {
 					scope.cancelFiltersAndClose();
 				});
@@ -162,6 +254,11 @@
 					ArrayUtils.remove(scope.appliedFilters, index);
 					scope.applyFilters();
 				};
+
+
+				scope.$watch('operator', function () {
+					scope.applyFilters();
+				}, true);
 
 
 				scope.applyFilters = function () {
@@ -258,187 +355,14 @@
 					elm.hide();
 				};
 
-				scope.addToFavorites = function () {
 
+				scope.addToFavorites = function () {
 					var label = prompt("Donnez un nom à votre recherche");
 					if (label && label.trim()) {
 						SavedSearches.save(label, scope.query);
 					}
-
 				};
 
-
-
-				/*
-								var defaultFilters, dlName;
-
-								function getFilterDefByName (name) {
-									for (var af=0 ; af<scope.availableFilters.length ; af++) {
-										if (scope.availableFilters[af].name === name) {
-											return scope.availableFilters[af];
-										}
-									}
-									return null;
-								}
-
-								function getFilterDefValue (filterDef, filterValue) {
-									var p;
-									if (filterDef !== null && filterDef.possibleValues) {
-										for (p=0 ; p<filterDef.possibleValues.length ; p++) {
-											if (filterDef.possibleValues[p].value.toLowerCase() === filterValue.toLowerCase()) {
-												return filterDef.possibleValues[p];
-											}
-										}
-									}
-									return filterValue;
-								}
-
-								function fixType (value) {
-									var fixed = parseFloat(value);
-									if (!isNaN(fixed)) {
-										return fixed;
-									}
-									return value;
-								}
-
-								function addDefaultFilter (value) {
-									var filters = parseQuery(value),
-										filterDef,
-										filterValue,
-										f;
-									ArrayUtils.clear(scope.appliedFilters);
-
-									for (f=0 ; f<filters.length ; f++) {
-										filterDef = getFilterDefByName(filters[f].name);
-										filterValue = fixType(getFilterDefValue(filterDef, filters[f].value));
-										scope.appliedFilters.push({
-											'filter': filterDef,
-											'value': filterValue,
-											'modifier': filters[f].modifier ? filters[f].modifier : ((filterDef.type === 'text') ? 'contains' : 'equals')
-										});
-									}
-									scope.applyFilters();
-								}
-
-								function parseQuery (query) {
-									var filters = [],
-										tokens = null,
-										t, i, op,
-										parsed,
-										operators = [ '<>', '<=', '>=', '!=', '>', '<', '=' ],
-										key, val;
-
-									if (query) {
-										query = query.trim()
-													 .toLowerCase()
-													 .replace(' et ', '&').replace(' ou ', '|')
-													 .replace(' and ', '&').replace(' or ', '|');
-									} else {
-										query = '';
-									}
-
-									if (query.indexOf('=') !== -1 || query.indexOf('<') !== -1 || query.indexOf('>') !== -1) {
-										if (query.indexOf('&') !== -1) {
-											scope.operator = 'AND';
-											tokens = query.split('&');
-										} else if (query.indexOf(',') !== -1) {
-											scope.operator = 'AND';
-											tokens = query.split(',');
-										} else if (query.indexOf('|') !== -1) {
-											scope.operator = 'OR';
-											tokens = query.split('|');
-										} else {
-											tokens = [ query ];
-										}
-										for (t=0 ; t<tokens.length ; t++) {
-											for (i=0 ; i<operators.length ; i++) {
-												op = operators[i];
-												if (tokens[t].indexOf(op) !== -1) {
-													parsed = tokens[t].split(op);
-													key = parsed[0].trim();
-													val = parsed[1].trim();
-
-													// Fix operator since the UI does not handle '<' and '>'.
-													if (op === '<') {
-														op = '<=';
-													} else if (op === '>') {
-														op = '>=';
-													} else if (op === '=') {
-														// If queryStr is not a number, use 'contains' instead of 'equals' for the operator.
-														op = isNaN(parseInt(val, 10)) ? 'contains' : 'equals';
-													} else if (op === '!=' || op === '<>') {
-														op = 'notEquals';
-													}
-
-													// Here is our filter!
-													filters.push({
-														'name': key,
-														'value': val,
-														'modifier': op
-													});
-													break;
-												}
-											}
-										}
-									} else {
-										filters.push({
-											'name': scope.availableFilters[0].name,
-											'value': query
-										});
-									}
-
-									return filters;
-								}
-
-								scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
-
-								scope.$watch('query', function (value, oldValue) {
-									//console.log("SearchFilters: query changed: ", value, oldValue);
-									if (angular.isString(scope.query)) {
-										addDefaultFilter(scope.query);
-										elm.show();
-									}
-								}, true);
-
-								scope.$watch('operator', function () {
-									scope.applyFilters();
-								}, true);
-
-								if (attrs.filters) {
-									defaultFilters = angular.fromJson(attrs.filters);
-									if (!angular.isArray(defaultFilters)) {
-										throw new Error("Default filters should be an Array.");
-									}
-									for (var i=0 ; i<defaultFilters.length ; i++) {
-										var f = defaultFilters[i];
-										f.filter = getFilterDefByName(f.property);
-										f.value = getFilterDefValue(f.filter, f.value);
-										scope.appliedFilters.push(f);
-									}
-									elm.show();
-								}
-
-								scope.isUnchanged = function () {
-									return angular.equals(scope.appliedFiltersOriginal, scope.appliedFilters);
-								};
-
-								scope.addToFavorites = function ($event) {
-									var confirm = Dialog.confirmLocal(
-											$event.target,
-											"Enregister la recherche ?",
-											"Cette recherche va être ajoutée dans le menu de gauche du module actuel.",
-											{
-												question: "Souhaitez-vous l'ajouter aussi dans le [b]menu de la page d'accueil[/b] pour un accès direct ?",
-												placement: 'bottom'
-											});
-									confirm.done(function () {
-										console.log('Adding search to the home page...');
-									})
-									.fail(function () {
-										console.log('Favorite search will NOT be added to the home page.');
-									});
-								};
-				*/
 			}
 
 		};
@@ -452,7 +376,6 @@
 			'$timeout',
 			'RbsChange.ArrayUtils',
 			'RbsChange.Utils',
-			'RbsChange.Dialog',
 			'RbsChange.REST',
 			'RbsChange.Breadcrumb',
 			'RbsChange.SavedSearches',

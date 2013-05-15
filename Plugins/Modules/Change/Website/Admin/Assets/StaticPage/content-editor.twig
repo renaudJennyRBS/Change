@@ -13,7 +13,9 @@
 
 	<structure-editor name="contents"
 	                  data-ng-model="document.editableContent"
-	                  template="(=pageTemplate=)"></structure-editor>
+	                  template="(=pageTemplate=)">
+		<a class="btn" href ng-href="(= document | documentURL =)"><i class="icon-edit"></i> Éditer les propriétés</a>
+	</structure-editor>
 
 	<form-button-bar></form-button-bar>
 

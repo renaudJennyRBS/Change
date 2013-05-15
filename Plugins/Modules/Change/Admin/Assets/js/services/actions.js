@@ -75,18 +75,19 @@
 
 
 				/**
-				 * Checks wether the action identified by 'actionName' should be enabled when applied on the given documents.
+				 * Checks whether the action identified by 'actionName' should be enabled when applied on the given documents.
 				 *
 				 * @param actionName The name of the action.
 				 * @param $docs An array containing the documents on which the action may be applied.
+				 * @param $DL The DocumentList object attached to the documents.
 				 *
 				 * @return true if the action is enabled, false otherwise.
 				 */
-				this.isEnabled = function (actionName, $docs) {
+				this.isEnabled = function (actionName, $docs, $DL) {
 					var method = '_' + actionName.replace('.', '-');
 					if (method in this.actions) {
 						if ('isEnabled' in this.actions[method]) {
-							return this.actions[method].isEnabled($docs);
+							return this.actions[method].isEnabled($docs, $DL);
 						} else {
 							return true;
 						}
@@ -190,11 +191,12 @@
 							};
 						} else if (angular.isFunction(actionObject.isEnabled)) {
 							var isEnabledFn = actionObject.isEnabled;
-							actionObject.isEnabled = function(docs) {
-								return isSelectionOkFn(docs) && isModelOkFn(docs) && isEnabledFn(docs);
+							actionObject.isEnabled = function(docs, DL) {
+								return isSelectionOkFn(docs) && isModelOkFn(docs) && isEnabledFn(docs, DL);
 							};
 						}
 					}
+
 
 					// Mark this action as available for the given models.
 
@@ -631,84 +633,36 @@
 
 
 				/**
-				 * Action: treeMoveBefore
+				 * Action: reorder
 				 */
 				this.register({
-					name        : 'treeMoveBefore',
+					name        : 'reorder',
 					models      : '*',
-					label       : "Remonter",
-					description : "Remonter",
-					icon        : "icon-arrow-up",
-					selection   : "+",
+					label       : "Réorganiser",
+					description : "Réorganiser",
+					icon        : "icon-reorder",
 					display     : "icon",
-					loading     : true,
 
-					execute : ['$docs', function ($docs) {
-						/*
-						var promises = [];
-						// Call one REST request per document to activate and store the resulting Promise.
-						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('activate', doc);
-							promises.push(promise);
-							promise.then(function (updatedDoc) {
-								doc.publicationStatus = updatedDoc.publicationStatus;
-							});
-						});
-						return $q.all(promises);
-						*/
+					execute : ['$DL', '$scope', '$embedDialog', '$target', function ($DL, $scope, $embedDialog, $target) {
+						$DL.toggleSort('nodeOrder', true);
+						Dialog.embed(
+							$embedDialog,
+							{
+								'contents' : '<reorder-panel documents="DL.documents"></reorder-panel>',
+								'title'    : "<i class=\"" + this.icon + "\"></i> Réorganisation des éléments"
+							},
+							$scope,
+							{
+								'pointedElement': $target
+							}
+						);
 					}],
 
-					isEnabled : function ($docs) {
-						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.isTreeNode($docs[i]) ) {
-								return false;
-							}
-						}
-						return true;
+					isEnabled : function ($docs, $DL) {
+						return $DL.hasColumn('nodeOrder');
 					}
 
 				});
-
-
-				/**
-				 * Action: treeMoveBefore
-				 */
-				this.register({
-					name        : 'treeMoveAfter',
-					models      : '*',
-					label       : "Descendre",
-					description : "Descendre",
-					icon        : "icon-arrow-down",
-					selection   : "+",
-					display     : "icon",
-					loading     : true,
-
-					execute : ['$docs', function ($docs) {
-						/*
-						var promises = [];
-						// Call one REST request per document to activate and store the resulting Promise.
-						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('activate', doc);
-							promises.push(promise);
-							promise.then(function (updatedDoc) {
-								doc.publicationStatus = updatedDoc.publicationStatus;
-							});
-						});
-						return $q.all(promises);
-						*/
-					}],
-
-					isEnabled : function ($docs) {
-						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.isTreeNode($docs[i]) ) {
-								return false;
-							}
-						}
-						return true;
-					}
-
-				});
-
 
 
 				this.group('groupPublishDocument', function (docs) {

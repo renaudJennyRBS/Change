@@ -256,11 +256,11 @@
 
 		// TODO i18n
 		var units = [
-	        ['octets', 'octets'],
-	        ['Ko', "Kilo-octets"],
-	        ['Mo', "Mega-octets"],
-	        ['Go', "Giga-octets"],
-	        ['To', "Tera-octets"]
+			['octets', 'octets'],
+			['Ko', "Kilo-octets"],
+			['Mo', "Mega-octets"],
+			['Go', "Giga-octets"],
+			['To', "Tera-octets"]
 		];
 
 		return function (bytes) {
@@ -321,8 +321,8 @@
 		return function (input, match) {
 			var output, diffObj, diffs;
 
-			output = '<span class="diff">',
-			diffObj = new diff_match_patch(),
+			output = '<span class="diff">';
+			diffObj = new diff_match_patch();
 			diffs = diffObj.diff_main(match || '', input || '');
 			diffObj.diff_cleanupSemantic(diffs);
 
@@ -360,9 +360,12 @@
 	});
 
 
-	app.filter('documentURL', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', function (Breadcrumb, Utils) {
 
 		return function (doc, urlName) {
+			if (!Utils.isDocument(doc)) {
+				return 'javascript:;';
+			}
 			var node = Breadcrumb.getCurrentNode();
 			if (node && urlName !== 'tree') {
 				return doc.url(urlName) + '?tn=' + node.id;

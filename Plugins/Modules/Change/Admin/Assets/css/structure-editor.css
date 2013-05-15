@@ -25,6 +25,13 @@
 	-webkit-transition: -webkit-transform 0.2s ease-out 0s, opacity 0.2s ease-out 0s;
 }
 
+.structure-editor .block:first-child {
+	margin-top: 2px;
+}
+.structure-editor .block:last-child {
+	margin-bottom: 2px;
+}
+
 .ng-invalid .structure-editor {
 	border: 4px solid red;
 }
@@ -34,7 +41,8 @@
 /* ----- Block Rich Text --------------------------------------------------- */
 
 
-.structure-editor .se-rich-text.block {
+.structure-editor .se-rich-text.block,
+.structure-editor .se-formatted-text.block{
 	cursor: pointer;
 	padding: 4px;
 	background: white;
@@ -44,17 +52,20 @@
 	/*background: #FFFFF8 url(../img/icons/text-edit.png) center right no-repeat;*/
 	outline: 0;
 }
-.structure-editor .se-rich-text.block.active {
+.structure-editor .se-rich-text.block.active,
+.structure-editor .se-formatted-text.block.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 2px;
 	background: #FFFFF8;
 	cursor: default;
 }
 
-.structure-editor .se-rich-text.block > *:first-child {
+.structure-editor .se-rich-text.block > *:first-child,
+.structure-editor .se-formatted-text.block > *:first-child{
 	margin-top: 0;
 }
-.structure-editor .se-rich-text.block > *:last-child {
+.structure-editor .se-rich-text.block > *:last-child,
+.structure-editor .se-formatted-text.block > *:last-child{
 	margin-bottom: 0;
 }
 
@@ -124,7 +135,7 @@
 }
 
 .se-row-settings .column-info.active {
-	box-shadow: 0 0 5px 2px rgba(255,0,163,0.5);
+	box-shadow: 0 0 2px 2px #0088CC; /*rgba(255,0,163,0.5);*/
 }
 
 .se-row-settings .column-info + .btn-block {
@@ -170,7 +181,7 @@
 	z-index: 6;
 	position: absolute;
 	display: none;
-	background: rgb(255, 0, 163);
+	background: #0088CC; /*rgb(255, 0, 163);*/
 	transition: background 0.2s ease-out 0s;
 }
 
@@ -179,7 +190,7 @@
 #structure-editor-highlighter-bottom.done,
 #structure-editor-highlighter-left.done,
 #structure-editor-highlighter-text.done {
-	background: #B0C704;
+	background: #4ca600; /*#B0C704*/
 }
 
 
@@ -254,7 +265,7 @@
 	display: block;
 	position: absolute;
 	color: white;
-	background: rgb(255, 0, 163);
+	background: #0088CC; /*rgb(255, 0, 163);*/
 	padding: 5px 8px 5px 12px;
 	border-radius: 30px 4px 4px 30px;
 	z-index: 5;
@@ -275,7 +286,7 @@
 }
 
 .structure-editor .block.btn.just-dragged {
-	background: #B0C704;
+	background: #4ca600 /*#B0C704*/;
 	border-color: rgba(255,255,255,0.5);
 	color: white;
 	text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);

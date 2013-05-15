@@ -23,6 +23,8 @@
 		DL.sort.column = 'nodeOrder';
 		DL.sort.descending = false;
 
+		DL.addActions(['reorder']);
+
 		$scope.createActions = [
 			{ 'label': "Page", 'url': 'Change/Website/StaticPage/new', 'icon': 'file' },
 			{ 'label': "Rubrique", 'url': 'Change/Website/Topic/new', 'icon': 'folder-close' }

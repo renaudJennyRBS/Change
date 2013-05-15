@@ -169,8 +169,8 @@
 		 * If `params` contains parameters that are present in `url`, they will be replaced.
 		 * All parameters of `params` that are not in `url` are, of course, appended.
 		 *
-		 * @param {String} The base URL to use.
-		 * @param {Object} Parameters to append or replace in the base url.
+		 * @param url The base URL to use.
+		 * @param params Parameters to append or replace in the base url.
 		 *
 		 * @returns {String}
 		 */
@@ -274,6 +274,10 @@
 			return this.endsWith(angular.lowercase(haystack), angular.lowercase(needle));
 		},
 
+
+		equalsIgnoreCase : function (s1, s2) {
+			return angular.lowercase(s1) === angular.lowercase(s2);
+		},
 
 		// Various methods...
 		// These methods are not (yet?) documented, but their use is NOT encouraged

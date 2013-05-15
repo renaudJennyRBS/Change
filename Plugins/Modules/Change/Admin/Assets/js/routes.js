@@ -15,7 +15,7 @@
 	{
 		$routeProvider
 		. when(
-			'/Change/Users/login',
+			'/login',
 			{
 				templateUrl : 'Change/Users/login.twig',
 				reloadOnSearch : false

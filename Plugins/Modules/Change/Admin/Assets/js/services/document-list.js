@@ -108,10 +108,6 @@
 					'label'  : "État",
 					'actions': ['groupPublishDocument', 'deactivate', 'applyCorrection']
 				},
-				{
-					'label'  : "Ordre",
-					'actions': ["treeMoveBefore", "treeMoveAfter"]
-				},
 				'delete'
 			]);
 
@@ -137,9 +133,24 @@
 			},
 
 
-			toggleSort : function (column) {
+			hasColumn : function (column) {
+				var i;
+				for (i=0 ; i<this.columns.length ; i++) {
+					if (this.columns[i].id === column) {
+						return true;
+					}
+				}
+				return false;
+			},
+
+
+			toggleSort : function (column, forceAsc) {
 				if (this.sort.column === column) {
-					this.sort.descending = ! this.sort.descending;
+					if (forceAsc) {
+						this.sort.descending = false;
+					} else {
+						this.sort.descending = ! this.sort.descending;
+					}
 				} else {
 					this.sort.column = column;
 					this.sort.descending = false;
@@ -252,7 +263,7 @@
 
 
 			isActionEnabled : function (actionName) {
-				return Actions.isEnabled(actionName, this.selectedDocuments);
+				return Actions.isEnabled(actionName, this.selectedDocuments, this);
 			},
 
 
@@ -349,12 +360,20 @@
 
 			documentCollectionLoadedCallback : function (response) {
 				this.stopLoading();
-				this.documents = response.resources;
-				this.pagination.total = response.pagination.count;
 
 				// We are loading a collection, so we can tell the Breadcrumb that there is
 				// no end-resource to display.
 				Breadcrumb.setResource(null);
+
+				// Available sortable columns
+				// FIXME: remove default value here when the server sends this info.
+				var sort = response.pagination.availableSort || ['label', 'nodeOrder', 'modificationDate'];
+				angular.forEach(this.columns, function (column) {
+					column.sortable = angular.isArray(sort) && ArrayUtils.inArray(column.id, sort) !== -1;
+				});
+
+				this.documents = response.resources;
+				this.pagination.total = response.pagination.count;
 			},
 
 
@@ -376,6 +395,7 @@
 
 
 			prepareQueryObject : function (query) {
+				// Sort by "label" instead of "nodeOrder" when sending a query (search).
 				if (this.sort.column === 'nodeOrder') {
 					this.sort.column = 'label';
 					this.sort.descending = 'asc';
@@ -398,41 +418,34 @@
 
 
 			reload : function () {
-				var DL, promise;
+				var DL, promise, params;
 
 				// Is there a query object in there?
 				if (this.hasFilters()) {
-
 					this.startLoading();
 					promise = REST.query(this.prepareQueryObject(this.query));
+				} else {
+					params = {
+						'offset': this.pagination.offset,
+						'limit' : this.pagination.limit,
+						'sort'  : this.sort.column,
+						'desc'  : this.sort.descending
+					};
 
-				// Or may be we are simply loading a Collection...
-				} else if (this.resourceUrl) {
-
-					this.startLoading();
-					promise = REST.collection(
-						this.resourceUrl,
-						{
-							'offset': this.pagination.offset,
-							'limit' : this.pagination.limit,
-							'sort'  : this.sort.column,
-							'desc'  : this.sort.descending
-						}
-					);
-
-				// Or may be tree children?
-				} else if (this.$scope.currentFolder) {
-
-					this.startLoading();
-					promise = REST.treeChildren(this.$scope.currentFolder);
-
+					// Or may be we are simply loading a Collection...
+					if (this.resourceUrl) {
+						this.startLoading();
+						promise = REST.collection(this.resourceUrl, params);
+					// Or may be tree children?
+					} else if (this.$scope.currentFolder) {
+						this.startLoading();
+						promise = REST.treeChildren(this.$scope.currentFolder, params);
+					}
 				}
 
 				if (promise) {
-
 					this.cbSelectAll = false;
 					DL = this;
-
 					promise.then(
 						function (response) {
 							DL.documentCollectionLoadedCallback(response);
@@ -442,17 +455,24 @@
 						}
 					);
 					return promise;
-
 				}
 
 				return null;
 			},
 
 
-			setTreeNodeId : function (id) {
+			setTreeName : function (treeName) {
+				var self = this;
+				REST.treeNode(REST.treeUrl(treeName)).then(function (data) {
+					self.setTreeNodeId(data.resources[0].id);
+				});
+			},
+
+
+			setTreeNodeId : function (id, forceReload) {
 				var DL = this;
 
-				if ( ! this.$scope.currentFolder || this.$scope.currentFolder.id !== id ) {
+				if ( forceReload || ! this.$scope.currentFolder || this.$scope.currentFolder.id !== id ) {
 
 					this.startLoading();
 
@@ -500,9 +520,12 @@
 			},
 
 
-			pageUrl : function (offset) {
+			pageUrl : function (offset, limit) {
 				var search = angular.copy($location.search());
-				search.offset = offset;
+				search.offset = Math.max(0, offset);
+				if (angular.isDefined(limit)) {
+					search.limit = limit;
+				}
 				return Utils.makeUrl($location.absUrl(), search);
 			},
 
@@ -516,30 +539,8 @@
 
 
 		this.initScopeForTree = function ($scope, instanceName) {
-
-			// Initialize the scope
-			var DL = this.initScope($scope, null, instanceName);
-
-			// Install watcher for 'tn' parameter in the URL (tn stands from Tree Node).
-			$scope.$watch(
-				// $scope.location has been initialized in initScope().
-				'location.search()',
-
-				function () {
-					var id = parseInt($location.search()['tn'], 10);
-					if (isNaN(id)) {
-						console.log("Tree node ID (tn) is not a valid ID.");
-					} else if (id) {
-						DL.setTreeNodeId(id);
-					}
-				},
-
-				true
-			);
-
-			return DL;
+			return this.initScope($scope, null, instanceName);
 		};
-
 
 
 		this.initScope = function ($scope, resourceUrl, instanceName) {
@@ -568,27 +569,52 @@
 				DL.selectedDocuments = $filter('filter')(DL.documents, {'selected': true});
 			}, true);
 
+			$scope.$watch(instanceName + '.selectedDocuments', function () {
+				$scope.$broadcast('Change:DocumentList.Changed', DL);
+			});
+
 			$scope.$watch(instanceName + '.query', function () {
 				DL.pagination.offset = 0;
 				DL.reload();
 			});
 
 			$scope.location = $location;
-			$scope.$watch('location.search()', function (search) {
-				DL.pagination.offset = search.offset || 0;
-				DL.pagination.limit = search.limit || Settings.pagingSize;
+			$scope.$watch(
+				'location.search()',
 
-				if (search.sort) {
-					DL.sort.column = search.sort;
-				}
-				if (search.desc) {
-					DL.sort.descending = (search.desc === 'true');
-				}
+				function (search) {
+					var	offset = parseInt(search.offset || 0, 10),
+						limit  = parseInt(search.limit || Settings.pagingSize, 10),
+						treeNodeId = parseInt(search.tn || 0, 10),
+						paginationChanged, sortChanged = false,
+						desc = (search.desc === 'true');
 
-				DL.currentTreeNodeId = search.tn;
+					DL.pagination.offset = offset;
+					DL.pagination.limit = limit;
 
-				DL.reload();
-			}, true);
+					if (search.sort) {
+						sortChanged = DL.sort.column !== search.sort;
+						DL.sort.column = search.sort;
+					}
+					if (desc !== DL.sort.descending) {
+						sortChanged = true;
+					}
+					DL.sort.descending = desc;
+
+					if (sortChanged) {
+						$scope.$broadcast('Change:DocumentList.Changed', DL);
+					}
+
+					if (isNaN(treeNodeId) || !treeNodeId) {
+						DL.reload();
+					} else {
+						paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
+						DL.setTreeNodeId(treeNodeId, paginationChanged || sortChanged);
+					}
+				},
+
+				true
+			);
 
 			$scope[instanceName] = DL;
 

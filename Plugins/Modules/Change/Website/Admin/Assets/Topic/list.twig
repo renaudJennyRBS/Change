@@ -21,9 +21,9 @@
 			<tr>
 				<th style="text-align: center; width: 30px;"><input type="checkbox" data-ng-model="DL.cbSelectAll" data-ng-change="DL.toggleSelectAll()" /></th>
 				<th data-ng-repeat="column in DL.columns" style="text-align: (=column.align=); width: (=column.width=);" data-ng-class="{true:'sorted'}[DL.isSortedOn(column.id)]"><a
-					href data-ng-href="(=DL.headerUrl(column.id)=)">(=column.label=) <i class="column-sort-indicator"
+					data-ng-show="column.sortable" href data-ng-href="(=DL.headerUrl(column.id)=)">(=column.label=) <i class="column-sort-indicator"
 						data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn(column.id)"></i>
-				</a></th>
+				</a><span data-ng-hide="column.sortable">(=column.label=)</span></th>
 			</tr>
 		</thead>
 
@@ -46,7 +46,6 @@
 					<span data-ng-show="doc.is('Change_Website_StaticPage')" class="iconoverlay">
 						<i class="icon-2x icon-file"></i>
 					</span>
-
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">

@@ -55,7 +55,7 @@
 						}
 
 						elm.empty();
-						
+
 						// FIXME Keep content if there is one?
 						if (actionObject.label && display.indexOf('label') !== -1) {
 							if (elm.children().length > 0 && elm.children().first().prop('tagName').toUpperCase() === 'I') {
@@ -82,19 +82,16 @@
 					var groupName = null;
 					if (Actions.isGroup(actionName) && DL) {
 						groupName = actionName;
-						scope.$watch(
-								DL.name+'.selectedDocuments',
-								function () {
-									actionObject = Actions.getActionForGroup(groupName, DL.selectedDocuments);
-									updateUI(actionObject);
-									if (DL.isActionEnabled(actionObject.name)) {
-										elm.removeAttr('disabled');
-									} else {
-										elm.attr('disabled', 'disabled');
-									}
-								},
-								true
-							);
+
+						scope.$on('Change:DocumentList.Changed', function () {
+							actionObject = Actions.getActionForGroup(groupName, DL.selectedDocuments);
+							updateUI(actionObject);
+							if (DL.isActionEnabled(actionObject.name)) {
+								elm.removeAttr('disabled');
+							} else {
+								elm.attr('disabled', 'disabled');
+							}
+						});
 					} else {
 						actionObject = Actions.get(actionName);
 						if (actionObject) {
@@ -103,24 +100,20 @@
 							throw new Error("Unknown action '" + actionName + "' for directive 'bindAction'.");
 						}
 						if (DL) {
-							scope.$watch(
-									DL.name+'.selectedDocuments',
-									function () {
-										if (DL.isActionEnabled(actionName)) {
-											elm.removeAttr('disabled');
-										} else {
-											elm.attr('disabled', 'disabled');
-										}
-									},
-									true
-								);
+							scope.$on('Change:DocumentList.Changed', function () {
+								if (DL.isActionEnabled(actionName)) {
+									elm.removeAttr('disabled');
+								} else {
+									elm.attr('disabled', 'disabled');
+								}
+							});
 						}
 					}
 
 					var clickHandler = function (e) {
 						var params,
 						    iconElm, iconElmClass;
-						
+
 						if (attrs.bindActionParams) {
 							params = scope.$eval(attrs.bindActionParams);
 						} else {
@@ -146,7 +139,7 @@
 							iconElm.removeClass(iconElmClass).addClass('icon-spinner icon-spin');
 							elm.attr('disabled', 'disabled');
 						}
-						
+
 						scope.$apply(function () {
 							Actions.execute(actionObject.name, params).then(
 								// Success

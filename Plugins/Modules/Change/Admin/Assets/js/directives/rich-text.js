@@ -397,7 +397,7 @@
 					for (i=0 ; i<toolbarConfig.items.length ; i++) {
 						html += renderItem(toolbarConfig.items[i]);
 					}
-					html += renderSettingsItem();
+					//html += renderSettingsItem();
 					return html;
 				}
 

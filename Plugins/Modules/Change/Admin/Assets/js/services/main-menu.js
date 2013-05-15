@@ -143,7 +143,7 @@
 		 */
 		this.loadModuleMenu = function (module, scope) {
 			if (!this.frozen) {
-				return this.load(module.replace('_', '/') + '/menu.twig', scope);
+				return this.load(module.replace(/_/g, '/') + '/menu.twig', scope);
 			}
 			return false;
 		};

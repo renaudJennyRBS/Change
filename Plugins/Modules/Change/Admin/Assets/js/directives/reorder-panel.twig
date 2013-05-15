@@ -1,0 +1,13 @@
+<div class="alert alert-info">
+	{{ i18n('m.change.admin.lists.reorderDescription', ['ucf']) }}
+</div>
+
+<token-list items="documents" class="rows" readonly="true"></token-list>
+
+<div class="form-actions">
+	<button type="button" class="btn" data-ng-click="useAlphabeticalSort()">{{ i18n('m.change.admin.lists.alphabeticalSort', ['ucf']) }}</button>
+	<button type="button" class="btn" data-ng-click="reverseSort()">{{ i18n('m.change.admin.lists.reverseSort', ['ucf']) }}</button>
+
+	<button type="button" class="btn pull-right btn-primary" data-ng-click="save()" data-ng-disabled="isUnchanged()"><i class="icon-ok"></i> {{ i18n('m.change.admin.submit', ['ucf']) }}</button>
+	<button type="button" class="btn pull-right" data-ng-click="revert()" data-ng-disabled="isUnchanged()"><i class="icon-undo"></i> {{ i18n('m.change.admin.cancel', ['ucf']) }}</button>
+</div>

@@ -686,7 +686,7 @@
 					 *
 					 * @returns Promise
 					 */
-					'treeChildren' : function (resource) {
+					'treeChildren' : function (resource, params) {
 						var q = $q.defer(),
 							url;
 
@@ -695,6 +695,8 @@
 						} else if (angular.isObject(resource) && resource.META$ && resource.META$.treeNode && resource.META$.treeNode.url) {
 							url = resource.META$.treeNode.url + '/';
 						}
+
+						url = Utils.makeUrl(url, params);
 
 						$http.get(url, getHttpConfig(transformResponseCollectionFn))
 							.success(function restCollectionSuccessCallback (data) {
