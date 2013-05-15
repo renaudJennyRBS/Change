@@ -12,7 +12,7 @@
 			template :
 				'<ul class="token-list">' +
 					'<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
-						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)">&times;</a>{{ getItemLabel(item) }}' +
+						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)">&times;</a>(= getItemLabel(item) =)' +
 						'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering"></i>' +
 					'</li>' +
 				'</ul>',
@@ -126,10 +126,10 @@
 							isHandle = false;
 							var dt = e.originalEvent.dataTransfer;
 							dt.effectAllowed = 'move';
-							dt.setData('Text', 'dummy');
 							dragging = $(this);
 							dragging.addClass('sortable-dragging');
 							startIndex = dragging.index();
+							dt.setData('Text', 'item'+startIndex);
 						},
 
 						'dragend': function () {
@@ -159,16 +159,22 @@
 							e.originalEvent.dataTransfer.dropEffect = 'move';
 
 							if (dragging) {
-								placeholder.height(dragging.height());
 								if ( ! $(this).is(placeholder) ) {
 									dragging.hide();
+									placeholder.height(dragging.height());
 									$(this)[placeholder.index() < $(this).index() ? 'after' : 'before'](placeholder);
+									if (placeholder.index() > startIndex) {
+										placeholder.html(placeholder.index());
+									} else {
+										placeholder.html(placeholder.index()+1);
+									}
 								}
 							}
 						},
 
 						'drop': function (e) {
 							e.stopPropagation();
+							e.preventDefault();
 							placeholder.after(dragging);
 						}
 					}, 'li[data-id], li.sortable-placeholder');

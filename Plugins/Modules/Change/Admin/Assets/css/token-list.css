@@ -116,21 +116,24 @@
 }
 
 .token-list .sortable-placeholder {
-	border-style: dashed;
+	border: 2px dotted #e30018;
+	padding: 2px 8px;
+	background-color: rgba(255,248,240,0.75);
+	border-radius: 4px;
 	opacity: 0.8;
+	color: #e30018;
 }
 
 .token-list > li .icon-reorder {
 	margin-top: 1px;
 	cursor: move;
 }
-
+/*
 .token-list > li {
 	transition: transform 0.2s ease-out 0s;
 	-webkit-transition: -webkit-transform 0.2s ease-out 0s;
 }
-
-.token-list > li.sortable-dragging {
-	transform: scale(0.8);
-	-webkit-transform: scale(0.8);
+*/
+.token-list .sortable-dragging {
+	transform: scale(0.85);
 }
