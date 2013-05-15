@@ -9,7 +9,6 @@ use Zend\EventManager\EventManager;
 */
 class Manager
 {
-
 	/**
 	 * @var ApplicationServices
 	 */
@@ -24,6 +23,11 @@ class Manager
 	 * @var EventManager
 	 */
 	protected $eventManager;
+
+	/**
+	 * @var string
+	 */
+	protected $cachePath;
 
 	/**
 	 * @param ApplicationServices $applicationServices
@@ -126,5 +130,38 @@ class Manager
 		$event = new Event(Event::EVENT_RESOURCES, $this, $params);
 		$this->getEventManager()->trigger($event);
 		return $params->getArrayCopy();
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getCachePath()
+	{
+		if ($this->cachePath === null)
+		{
+			$this->cachePath = $this->getApplicationServices()->getApplication()->getWorkspace()->cachePath('Admin', 'Templates', 'Compiled');
+			\Change\Stdlib\File::mkdir($this->cachePath);
+		}
+		return $this->cachePath;
+	}
+
+	/**
+	 * @param string $pathName
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function renderTemplateFile($pathName, array $attributes)
+	{
+		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
+
+		// Include Twig macros for forms.
+		// Use it with: {% import "@Admin/forms.twig" as forms %}
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Change', 'Admin', 'Assets');
+		$loader->addPath($formsMacroPath, 'Admin');
+
+		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getApplicationServices()));
+		return $twig->render(basename($pathName), $attributes);
 	}
 }

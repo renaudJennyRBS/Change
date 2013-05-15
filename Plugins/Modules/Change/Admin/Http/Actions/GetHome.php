@@ -19,15 +19,12 @@ class GetHome
 		$result = new \Change\Admin\Http\Result\Home();
 		$templateFileName = implode(DIRECTORY_SEPARATOR, array( __DIR__ , 'Assets', 'home.twig'));
 		$attributes = array('baseURL' => $event->getUrlManager()->getByPathInfo('/')->normalize()->toString());
+
 		$manager = new \Change\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
-
-		$templateManager = $event->getPresentationServices()->getTemplateManager();
-
 		$attributes['resources'] = $manager->getResources();
-
-		$renderer = function () use ($templateFileName, $templateManager, $attributes)
+		$renderer = function () use ($templateFileName, $manager, $attributes)
 		{
-			return $templateManager->renderTemplateFile($templateFileName, $attributes);
+			return $manager->renderTemplateFile($templateFileName, $attributes);
 		};
 		$result->setRenderer($renderer);
 		$event->setResult($result);
