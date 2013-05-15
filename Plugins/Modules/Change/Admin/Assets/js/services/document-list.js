@@ -367,7 +367,7 @@
 
 				// Available sortable columns
 				// FIXME: remove default value here when the server sends this info.
-				var sort = response.pagination.availableSort || ['label', 'nodeOrder'];
+				var sort = response.pagination.availableSort || ['label', 'nodeOrder', 'modificationDate'];
 				angular.forEach(this.columns, function (column) {
 					column.sortable = angular.isArray(sort) && ArrayUtils.inArray(column.id, sort) !== -1;
 				});
@@ -458,6 +458,14 @@
 				}
 
 				return null;
+			},
+
+
+			setTreeName : function (treeName) {
+				var self = this;
+				REST.treeNode(REST.treeUrl(treeName)).then(function (data) {
+					self.setTreeNodeId(data.resources[0].id);
+				});
 			},
 
 
@@ -588,7 +596,6 @@
 						sortChanged = DL.sort.column !== search.sort;
 						DL.sort.column = search.sort;
 					}
-
 					if (desc !== DL.sort.descending) {
 						sortChanged = true;
 					}
