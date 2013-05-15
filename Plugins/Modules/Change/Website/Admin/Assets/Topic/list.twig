@@ -46,7 +46,6 @@
 					<span data-ng-show="doc.is('Change_Website_StaticPage')" class="iconoverlay">
 						<i class="icon-2x icon-file"></i>
 					</span>
-
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
@@ -62,7 +61,7 @@
 					(=doc.modificationDate | date:'medium'=)
 				</td>
 				<td style="text-align: right;" data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('nodeOrder')]">
-					(=doc.META$.treeNode.nodeOrder | number=) <i class="icon-reorder icon-large" style="color:#666666;" reorder document="doc" container="tr"></i>
+					(=doc.META$.treeNode.nodeOrder | number=)
 				</td>
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('activated')]" style="text-align: center;">
 					<status-switch document="doc"/>

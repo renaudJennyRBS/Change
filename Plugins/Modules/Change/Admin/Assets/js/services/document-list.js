@@ -133,9 +133,24 @@
 			},
 
 
-			toggleSort : function (column) {
+			hasColumn : function (column) {
+				var i;
+				for (i=0 ; i<this.columns.length ; i++) {
+					if (this.columns[i].id === column) {
+						return true;
+					}
+				}
+				return false;
+			},
+
+
+			toggleSort : function (column, forceAsc) {
 				if (this.sort.column === column) {
-					this.sort.descending = ! this.sort.descending;
+					if (forceAsc) {
+						this.sort.descending = false;
+					} else {
+						this.sort.descending = ! this.sort.descending;
+					}
 				} else {
 					this.sort.column = column;
 					this.sort.descending = false;
@@ -248,7 +263,7 @@
 
 
 			isActionEnabled : function (actionName) {
-				return Actions.isEnabled(actionName, this.selectedDocuments);
+				return Actions.isEnabled(actionName, this.selectedDocuments, this);
 			},
 
 
@@ -546,6 +561,10 @@
 				DL.selectedDocuments = $filter('filter')(DL.documents, {'selected': true});
 			}, true);
 
+			$scope.$watch(instanceName + '.selectedDocuments', function () {
+				$scope.$broadcast('Change:DocumentList.Changed', DL);
+			});
+
 			$scope.$watch(instanceName + '.query', function () {
 				DL.pagination.offset = 0;
 				DL.reload();
@@ -574,6 +593,10 @@
 						sortChanged = true;
 					}
 					DL.sort.descending = desc;
+
+					if (sortChanged) {
+						$scope.$broadcast('Change:DocumentList.Changed', DL);
+					}
 
 					if (isNaN(treeNodeId) || !treeNodeId) {
 						DL.reload();
