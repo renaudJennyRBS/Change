@@ -93,7 +93,6 @@
 				});
 
 				scope.selectDocument = function (doc) {
-					console.log("Doc=", doc);
 					if ( ! scope.documents ) {
 						scope.documents = [];
 					}

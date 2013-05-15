@@ -1,9 +1,6 @@
-<ul data-ng-show="documents.length > 0" class="token-list rows">
-	<li data-ng-repeat="item in documents" id="tokenList(=counter=)-item(=item.id=)" data-ng-click="itemClicked($index, $event)" data-ng-class="{selected: item.selected}">
-		<a data-ng-hide="readonly" href="javascript:;" class="delete" data-ng-click="remove($index)">&times;</a>
-		(=getItemLabel(item)=)
-	</li>
-</ul>
+<div data-ng-show="documents.length > 0">
+	<token-list items="documents" class="rows"></token-list>
+</div>
 
 <div class="muted" data-ng-show="! documents || documents.length == 0">Aucun élément</div>
 
