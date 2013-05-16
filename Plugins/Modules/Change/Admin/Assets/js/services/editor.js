@@ -60,7 +60,8 @@
 				});
 			});
 
-
+			/*
+			FIXME: Ask for confirmation when leaving the page but not when switching between sections.
 			// Ask confirmation when leaving a form with unsaved changes.
 			var locationChangeStartDeregistrationFn = $rootScope.$on('$locationChangeStart', function (event) {
 				if (! scope.isUnchanged() && ! window.confirm("Des données n'ont pas été enregistrées. Si vous quittez la page, ces données seront perdues.\nSouhaitez-vous réellement quitter cette page ?")) {
@@ -71,7 +72,7 @@
 			scope.$on('$destroy', function () {
 				locationChangeStartDeregistrationFn();
 			});
-
+			*/
 
 			/**
 			 * Sends the changes to the server, via a POST (creation) or a PUT (update) request.
