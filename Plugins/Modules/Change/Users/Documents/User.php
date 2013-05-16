@@ -41,18 +41,19 @@ class User extends \Compilation\Change\Users\Documents\User
 	 * @param string $password
 	 * @return string
 	 */
-	protected function encodePassword($password)
+	public function encodePassword($password)
 	{
 		$hashMethod = $this->getHashMethod();
 		if (!$hashMethod)
 		{
-			$hashMethod = 'MD5';
+			$hashMethod = 'md5';
 		}
-		$callable = array($this, 'encode' . ucfirst($hashMethod) . 'Password');
+		$callable = array($this, 'encode' . ucfirst(strtolower($hashMethod)) . 'Password');
 		if (is_callable($callable))
 		{
 			return call_user_func($callable, $password);
 		}
+		return $this->encodePasswordUsingHash($password, $hashMethod);
 	}
 
 	/**
@@ -65,31 +66,21 @@ class User extends \Compilation\Change\Users\Documents\User
 	}
 
 	/**
-	 * @param string $password
+	 * @param $name
+	 * @param $arguments
 	 * @return string
 	 */
-	protected function encodeMD5Password($password)
+    protected function encodePasswordUsingHash($password, $hashMethod)
 	{
-		$salt = $this->getSaltString();
-		if ($salt)
+		if (in_array($hashMethod, hash_algos()))
 		{
-			return md5($salt . '-' . $password);
+			$salt = $this->getSaltString();
+			if ($salt)
+			{
+				return hash($hashMethod, $salt . '-' . $password);
+			}
 		}
-		return $this->encodeSimpleMD5Password($password);
-	}
-
-	/**
-	 * @param string $password
-	 * @return string
-	 */
-	protected function encodeSha1Password($password)
-	{
-		$salt = $this->getSaltString();
-		if ($salt)
-		{
-			return sha1($salt . '-' . $password);
-		}
-		return sha1($password);
+		throw new \RuntimeException("hash $hashMethod does not exist");
 	}
 
 	/**
