@@ -16,8 +16,7 @@
 	 */
 	function WebsiteListController ($scope, DocumentList, Breadcrumb, MainMenu) {
 
-		var DL = DocumentList.initScopeForTree($scope);
-		DL.setTreeName('Change_Website');
+		var DL = DocumentList.initScope($scope, 'Change_Website_Website');
 
 		DL.viewMode = 'list';
 		DL.sort.column = 'modificationDate';
