@@ -1,10 +1,10 @@
 <div class="input-append">
-	<input type="text" readonly="readonly" title="(=selectedModelName=)" ng-model="document.label"/>
+	<input type="text" readonly="readonly" title="(=selectedModelName=)" name="label"/>
 	<button
 		type="button"
 		class="btn"
 		data-ng-click="editSelectedDocument()"
-		data-ng-disabled="document == null"
+		data-ng-disabled="isEmpty()"
 		data-ng-show="allowEdition"
 		title="${m.generic.EditSelectedDocumentProperties}"><i class="icon-edit"></i></button>
 	<button
@@ -16,8 +16,8 @@
 	<button
 		type="button"
 		class="btn"
-		data-ng-click="document = null"
-		data-ng-disabled="document == null"
+		data-ng-disabled="isEmpty()"
+		data-ng-click="clear()"
 		title="Supprimer la sélection"><i class="icon-remove"></i></button>
 </div>
 

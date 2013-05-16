@@ -44,11 +44,10 @@
 			<label class="control-label" for="{{ name }}">{{ label }}</label>
 			<div class="controls">
 				<div class="document-picker-single"
-				     document="document.{{ name }}"
+				     ng-model="document.{{ name }}"
 				     accepted-model="{{ model }}"
 				     property-label="{{ label }}"
 				     selector-title="{{ selectorTitle }}"
-				     master-label="(=document.label=)"
 				     allow-edition="true">
 				</div>
 				{% if help %}

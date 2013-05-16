@@ -11,56 +11,51 @@
 
 			restrict    : 'EAC',
 			templateUrl : 'Change/Admin/js/directives/document-picker-single.twig',
+			require     : 'ngModel',
 
-			scope: {
-				document: '=',
-				formUrl: '@',
-				masterLabel: '@',
-				propertyLabel: '@',
+			scope       : true,
 
-				allowCreation: '@',
-				allowEdition: '@',
 
-				// Deprecated:
-				collapsedLabelCreate: '@',
-				collapsedLabelEdit: '@'
-			},
+			link: function (scope, iElement, attrs, ngModel) {
 
-			// Initialisation du scope (logique du composant)
-			link: function (scope, iElement, attrs) {
+				var	$el = $(iElement),
+					inputEl = $el.find('input[name=label]');
+
+
+				// Initialize ngModel
+
+				ngModel.$render = function() {
+					inputEl.val(ngModel.$viewValue ? ngModel.$viewValue.label : '');
+				};
+				ngModel.$render();
+
+
+				scope.allowCreation = attrs.allowCreation;
+				scope.allowEdition = attrs.allowEdition;
+
 
 				function getFormModel () {
-					if (scope.document && scope.document.model) {
-						return scope.document.model;
+					if (ngModel.$viewValue && ngModel.$viewValue.model) {
+						return ngModel.$viewValue.model;
 					} else {
 						return attrs.acceptedModel;
 					}
 				}
 
 				function getFormUrl () {
-					if (scope.formUrl) {
-						return scope.formUrl;
-					}
-					var model = getFormModel();
-
-					return model.replace(/_/g, '/') + '/form.twig';
+					return getFormModel().replace(/_/g, '/') + '/form.twig';
 				}
 
 				function getCreateLabel () {
-					if (scope.masterLabel || scope.propertyLabel) {
-						return (scope.masterLabel || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + scope.propertyLabel + " : création d'un nouvel élément";
-					} else {
-						return scope.collapsedLabelCreate;
-					}
+					return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : création d'un nouvel élément";
 				}
 
 				function getEditLabel () {
-					if (scope.masterLabel || scope.propertyLabel) {
-						return (scope.masterLabel || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + scope.propertyLabel + " : édition de " + scope.document.label;
-					} else {
-						return scope.collapsedLabelEdit;
-					}
+					return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : édition de " + ngModel.$viewValue.label;
 				}
+
+
+				// Clipboard
 
 				scope.clipboardValues = Clipboard.values;
 				var first = scope.clipboardValues[0];
@@ -69,6 +64,14 @@
 				} else {
 					scope.clipboardFirstLabel = '';
 				}
+
+				scope.getFromClipboard = function () {
+					var items = Clipboard.getItems(true);
+					if (items.length >= 1) {
+						scope.selectDocument(items[0]);
+					}
+				};
+
 
 				// Edit or create
 
@@ -84,22 +87,32 @@
 				};
 
 				scope.editSelectedDocument = function () {
+					var doc = ngModel.$viewValue;
 					FormsManager.cascade(
 						getFormUrl(),
-						{ // TODO
-							'id'   : scope.document.id,
-							'LCID' : (scope.document.LCID || scope.language)
+						{
+							'id'   : doc.id,
+							'LCID' : (doc.LCID || scope.language)
 						},
-						function (doc) {
-							if (!angular.equals(scope.document, doc)) {
-								scope.document = doc;
+						function (editedDoc) {
+							if (!angular.equals(doc, editedDoc)) {
+								scope.selectDocument(editedDoc);
 							}
 						},
 						getEditLabel()
 					);
 				};
 
-				// Select
+
+				// Selection
+
+				scope.$watch('documentPickerUrl', function () {
+					if (scope.documentPickerUrl) {
+						$('#document-picker-backdrop').show();
+					} else {
+						$('#document-picker-backdrop').hide();
+					}
+				});
 
 				scope.openSelector = function () {
 					Breadcrumb.freeze();
@@ -114,29 +127,9 @@
 					scope.documentPickerUrl = null;
 				};
 
-				scope.getFromClipboard = function () {
-					var items = Clipboard.getItems(true);
-					if (items.length >= 1) {
-						scope.document = items[0];
-					}
-				};
-
-				scope.$watch('document', function () {
-					if (scope.document) {
-						scope.selectedModelName = $filter('modelLabel')(scope.document.model);
-					}
-				});
-
-				scope.$watch('documentPickerUrl', function () {
-					if (scope.documentPickerUrl) {
-						$('#document-picker-backdrop').show();
-					} else {
-						$('#document-picker-backdrop').hide();
-					}
-				});
-
 				scope.selectDocument = function (document) {
-					scope.document = document;
+					ngModel.$setViewValue(document);
+					ngModel.$render();
 					scope.closeSelector();
 				};
 
@@ -146,6 +139,15 @@
 
 				scope.replaceWithDocuments = function (documents) {
 					scope.selectDocument(documents[0]);
+				};
+
+				scope.clear = function () {
+					ngModel.$setViewValue(null);
+					ngModel.$render();
+				};
+
+				scope.isEmpty = function () {
+					return ! ngModel.$viewValue;
 				};
 
 			}
