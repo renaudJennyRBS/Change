@@ -52,6 +52,11 @@
 		},
 
 
+		isValidLCID : function (lcid) {
+			return angular.isString(lcid) && (/^[a-z]{2}(_[a-zA-Z]{2})?$/).test(lcid);
+		},
+
+
 		/**
 		 * Indicates whether the given `doc` is a Tree Node or not.
 		 */

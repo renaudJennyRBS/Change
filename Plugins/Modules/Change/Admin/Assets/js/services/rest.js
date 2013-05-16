@@ -22,10 +22,9 @@
 			'RbsChange.Utils',
 			'RbsChange.ArrayUtils',
 			'RbsChange.Settings',
-			'RbsChange.i18n',
 			'RbsChange.UrlManager',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, Settings, i18n, UrlManager) {
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, Settings, UrlManager) {
 
 				if ( ! REST_BASE_URL ) {
 					REST_BASE_URL = $location.protocol() + '://' + $location.host();
@@ -176,26 +175,11 @@
 						forEach(data.i18n, function (url, lcid) {
 							chgDoc.META$.locales.push({
 								'id': lcid,
-								'label': i18n.getLocaleNameFromCode(lcid),
+								'label': lcid, // FIXME Localization
 								'isReference': data.properties.refLCID === lcid
 							});
 						});
 					}
-
-					// FIXME Remove
-					// Used for Functional Pages (see Page Editor)
-					properties.acceptedModels = [
-						{
-							'id': 'Change_Website_Page',
-							'module': 'Sites et pages',
-							'label': 'Page'
-						},
-						{
-							'id': 'Change_Website_Topic',
-							'module': 'Sites et pages',
-							'label': 'Rubrique'
-						}
-					];
 
 					angular.extend(chgDoc, properties);
 					return chgDoc;
@@ -390,13 +374,12 @@
 					 * @return {Object}
 					 */
 					'newResource' : function (model, lcid) {
-						//console.log('REST: newResource() model=' + model + ", LCID=" + lcid);
 						var props = {
 							'id'     : Utils.getTemporaryId(),
 							'model'  : model,
 							'label'  : 'Nouveau...' // FIXME
 						};
-						if (i18n.isValidLCID(lcid)) {
+						if (Utils.isValidLCID(lcid)) {
 							props.refLCID = lcid;
 							props.LCID = lcid;
 						}

@@ -1,108 +1,63 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.provider('RbsChange.i18n', ['RbsChange.i18nStringsProvider', 'RbsChange.LocalesProvider', function RbsChangeI18NProvider(strings, locales) {
-		this.$get = function I18NService () {
 
-			return {
-				'translate' : function (key) {
-					if (strings.hasOwnProperty(key)) {
-						return strings[key];
-					} else {
-						//$log.warn("RbsChange.i18n: Localized string for '" + key + "' not found.");
-						return key;
-					}
-				},
+	/**
+	 * Localization filter.
+	 */
+	app.filter('i18n', function () {
 
-				'getLocaleNameFromCode' : function (code) {
-					if (!code) {
-						return undefined;
-					}
-					return locales[code] || code;
-				},
+		return function i18nFilterFn (string, params) {
+			// Guess path and key from the full locale key.
+			var	p = string.lastIndexOf('.'),
+				path = string.substring(0, p),
+				key = string.substr(p+1);
 
-				'isValidLCID' : function (lcid) {
-					return angular.isString(lcid) && (/^[a-z]{2}(_[a-zA-Z]{2})?$/).test(lcid);
-				}
-			};
-		};
-	}]);
-
-
-	app.directive('i18n', ['RbsChange.i18n', function (I18N) {
-		return {
-			priority: 0,
-			restrict: 'A',
-			scope: false,
-			compile: function compile (tElement, tAttrs, transclude) {
-				if (tAttrs.i18n) {
-					tElement.html(I18N.translate(tAttrs.i18n));
-				}
-				return {
-					pre: function preLink (scope, iElement, iAttrs, controller) {},
-					post: function postLink (scope, iElement, iAttrs, controller) {}
-				};
+			// Search for the key in the global object (comes from "Change/Admin/i18n.js").
+			if (__change.i18n[path] && __change.i18n[path][key]) {
+				string = __change.i18n[path][key];
+				// Replace parameters (if any).
+				angular.forEach(params, function (value, key) {
+					string = string.replace(new RegExp('\\{' + key + '\\}', 'g'), value);
+				});
 			}
+
+			return string;
 		};
-	}]);
+
+	});
 
 
-	app.directive('i18nAttr', ['RbsChange.i18n',
-		function (I18N) {
-			return {
-				priority : 0,
-				restrict : 'A',
-				scope : false,
-				compile : function compile (tElement, tAttrs, transclude) {
-					var value;
-					if (tAttrs.i18nAttr) {
-						value = tAttrs.i18nAttr;
-						var p = value.indexOf('=');
-						tAttrs.$set(
-								value.substring(0, p).trim(),
-								I18N.translate(value.substring(p + 1).trim())
-							);
-					}
-					return {
-						pre : function preLink (scope, iElement, iAttrs, controller) {
-						},
-						post : function postLink (scope, iElement, iAttrs, controller) {
-						}
-					};
-				}
-			};
-		}
-	]);
+	/**
+	 * Uppercase first letter.
+	 */
+	app.filter('ucf', function () {
 
-
-	app.directive('i18nTitle', ['RbsChange.i18n', function (I18N) {
-		return {
-			priority: 0,
-			restrict: 'A',
-			scope: false,
-			compile: function compile (tElement, tAttrs, transclude) {
-				if (tAttrs.i18nTitle) {
-					tAttrs.$set('title', I18N.translate(tAttrs.i18nTitle));
-				}
-				return {
-					pre: function preLink (scope, iElement, iAttrs, controller) {},
-					post: function postLink (scope, iElement, iAttrs, controller) {}
-				};
+		return function ucfFilterFn (input) {
+			if (input && input.length > 0) {
+				return angular.uppercase(input.substr(0, 1)) + input.substr(1);
 			}
+			return input;
 		};
-	}]);
+
+	});
 
 
-	app.directive('localeId', ['RbsChange.i18n', function (i18n) {
+	/**
+	 * The following directive should be placed on an input field to validate that its value is a valid locale name.
+	 */
+	app.directive('localeId', ['RbsChange.Utils', function (Utils) {
 
 		return {
 
 			require : 'ngModel',
 
-			link : function (scope, elm, attrs, ctrl) {
+			link : function localeIdLinkFn (scope, elm, attrs, ctrl) {
 				ctrl.$parsers.unshift(function (viewValue) {
-					if (i18n.isValidLCID(viewValue)) {
+					if (Utils.isValidLCID(viewValue)) {
 						ctrl.$setValidity('locale', true);
 					} else {
 						ctrl.$setValidity('locale', false);
@@ -122,17 +77,17 @@
 				});
 
 				elm.bind('blur', function () {
-					var viewValue = ctrl.$modelValue;
-					for (var i in ctrl.$formatters) {
-						viewValue = ctrl.$formatters[i](viewValue);
+					var viewValue = ctrl.$modelValue, i;
+					for (i in ctrl.$formatters) {
+						if (ctrl.$formatters.hasOwnProperty(i)) {
+							viewValue = ctrl.$formatters[i](viewValue);
+						}
 					}
 					ctrl.$viewValue = viewValue;
 					ctrl.$render();
 				});
-
 			}
 		};
 	}]);
-
 
 })();
