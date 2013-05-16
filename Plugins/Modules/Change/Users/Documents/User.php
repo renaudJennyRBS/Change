@@ -41,7 +41,7 @@ class User extends \Compilation\Change\Users\Documents\User
 	 * @param string $password
 	 * @return string
 	 */
-	public function encodePassword($password)
+	protected function encodePassword($password)
 	{
 		$hashMethod = $this->getHashMethod();
 		if (!$hashMethod)
