@@ -17,10 +17,10 @@
 	 *
 	 * @attribute name
 	 */
-	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', function (Dialog, $rootScope) {
+	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', function (Dialog, $rootScope, i18n) {
 		return {
 			restrict    : 'E',
-			templateUrl : 'Change/Admin/js/directives/date-selector.html',
+			templateUrl : 'Change/Admin/js/directives/date-selector.twig',
 			require     : 'ng-model',
 			replace     : true,
 			scope       : true,
@@ -37,7 +37,7 @@
 					Dialog.embed(
 						$(elm).find('.timeZoneSelectorContainer'),
 						{
-							"title"    : "Sélection du fuseau horaire",
+							"title"    : i18n.trans('m.change.admin.admin.js.time-zone-selector-title | ucf'),
 							"contents" : '<time-zone-selector time-zone="timeZone"></time-zone-selector>'
 						},
 						scope,
@@ -104,7 +104,7 @@
 	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', function ($rootScope, Dialog) {
 		return {
 			restrict    : 'E',
-			templateUrl : 'Change/Admin/js/directives/time-zone-selector.html',
+			templateUrl : 'Change/Admin/js/directives/time-zone-selector.twig',
 			replace     : true,
 
 			scope       : {

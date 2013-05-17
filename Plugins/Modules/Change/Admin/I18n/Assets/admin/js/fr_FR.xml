@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.admin.admin.js" lcid="fr_FR">
+	<key id="submit">valider</key>
+	<key id="cancel">annuler</key>
+
+	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
+</i18n>
