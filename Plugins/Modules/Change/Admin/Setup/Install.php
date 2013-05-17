@@ -1,12 +1,11 @@
 <?php
-namespace Change\Theme\Setup;
+namespace Change\Admin\Setup;
 
 use Change\Plugins\PluginManager;
 
+
 /**
- * Class Install
- * @package Change\Theme\Setup
- * @name \Change\Theme\Setup\Install
+ * @name \Change\Generic\Setup\Install
  */
 class Install implements \Zend\EventManager\ListenerAggregateInterface
 {
@@ -23,7 +22,7 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	 */
 	protected function getName()
 	{
-		return 'theme';
+		return 'admin';
 	}
 
 	/**
@@ -34,10 +33,7 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	 */
 	public function attach(\Zend\EventManager\EventManagerInterface $events)
 	{
-		$vendor = $this->getVendor();
-		$name = $this->getName();
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
+		$callBack = function (\Zend\EventManager\Event $event)
 		{
 			/* @var $pluginManager PluginManager */
 			$pluginManager = $event->getTarget();
@@ -51,25 +47,6 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $this->getVendor(), $this->getName())
 		);
 		$events->attach($eventNames, $callBack, 5);
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-
-			/* @var $application \Change\Application */
-			$application = $event->getParam('application');
-			$this->executeApplication($application);
-
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			$pluginManager->getModule($vendor, $name)->setConfigurationEntry(PluginManager::EVENT_SETUP_APPLICATION, 'Ok');
-		};
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 5);
 	}
 
 	/**
@@ -79,15 +56,5 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	public function detach(\Zend\EventManager\EventManagerInterface $events)
 	{
 		// TODO: Implement detach() method.
-	}
-
-	/**
-	 * @param \Change\Application $application
-	 */
-	protected function executeApplication($application)
-	{
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Theme',
-				'\\Change\\Theme\\Events\\SharedListenerAggregate');
 	}
 }

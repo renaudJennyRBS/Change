@@ -52,7 +52,12 @@ class Theme extends \Compilation\Change\Theme\Documents\Theme implements \Change
 		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
 		list ($vendor, $shortModuleName) = explode('_', $moduleName);
 		$path = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, $vendor, $shortModuleName, 'Blocks', $fileName);
-		return (file_exists($path)) ? $path : null;
+		if ((file_exists($path)))
+		{
+			return $path;
+		}
+		$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
+		return $parentTheme->getBlockTemplatePath($moduleName, $fileName);
 	}
 
 	/**

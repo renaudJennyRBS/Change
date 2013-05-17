@@ -88,6 +88,43 @@ class Plugin
 	}
 
 	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return $this
+	 */
+	public function setConfigurationEntry($name, $value)
+	{
+		if (is_string($name) && $name !== '')
+		{
+			if (is_array($this->configuration))
+			{
+				if ($value === null)
+				{
+					unset($this->configuration[$name]);
+				}
+				else
+				{
+					$this->configuration[$name] = $value;
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getConfigurationEntry($name)
+	{
+		if (is_string($name) && $name !== '' && isset($this->configuration[$name]))
+		{
+			return $this->configuration[$name];
+		}
+		return null;
+	}
+
+	/**
 	 * @param string $basePath
 	 * @return $this
 	 */

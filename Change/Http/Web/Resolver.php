@@ -22,13 +22,6 @@ class Resolver extends ActionResolver
 	 */
 	public function resolve(Event $event)
 	{
-		//TODO use event
-		if (class_exists('\Change\Website\WebsiteResolver'))
-		{
-			$websiteResolver = new \Change\Website\WebsiteResolver();
-			$websiteResolver->resolve($event);
-		}
-
 		$website = $event->getParam('website');
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
@@ -47,7 +40,9 @@ class Resolver extends ActionResolver
 			{
 				$themeName = $matches[1] . '_' . $matches[2];
 				$themeResourcePath = $matches[3];
-				$theme = $event->getPresentationServices()->getThemeManager()->getByName($themeName);
+				$themeManager = $event->getPresentationServices()->getThemeManager();
+				$themeManager->setDocumentServices($event->getDocumentServices());
+				$theme = $themeManager->getByName($themeName);
 				if (!$theme)
 				{
 					$theme =  $event->getPresentationServices()->getThemeManager()->getDefault();
