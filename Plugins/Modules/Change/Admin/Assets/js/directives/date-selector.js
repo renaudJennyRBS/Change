@@ -14,8 +14,6 @@
 
 	/**
 	 * @name dateSelector
-	 *
-	 * @attribute name
 	 */
 	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', function (Dialog, $rootScope, i18n) {
 		return {
@@ -51,16 +49,6 @@
 					ngModel.$setViewValue(getFullDate());
 				}, true);
 
-				scope.selectTimeZone = function (timeZoneScope) {
-					// timeZoneScope = when to use the selected time zone?
-					// - 'form'   : this time only (this form)
-					// - 'session': the working session
-					// - 'forever': always (saved in the user preferences)
-					//elm.find('.modal').modal('hide');
-					//scope.timeZone = scope.selectedTimeZone;
-					ngModel.$setViewValue(getFullDate());
-				};
-
 				function updateDate () {
 					scope.$apply(function () {
 						ngModel.$setViewValue(getFullDate());
@@ -74,14 +62,16 @@
 
 				ngModel.$render = function () {
 					if (ngModel.$viewValue) {
-						var date = new Date(ngModel.$viewValue);
 						dInput.datepicker('setValue', ngModel.$viewValue);
+						var date = new Date(ngModel.$viewValue);
 						hInput.val(date.getHours());
 						mInput.val(date.getMinutes());
 					}
 				};
 				ngModel.$render();
 
+				// Merge the date coming from the "datepicker" and the hour/minute information coming from the
+				// two additional input fields. The result is a Date object correctly set. (Well, I hope.)
 				function getFullDate () {
 					var date = datePicker.date, y, m, d, h, mm, s, dateStr;
 					y = date.getFullYear();
@@ -91,7 +81,10 @@
 					mm = parseInt(mInput.val(), 10);
 					s = 0;
 					dateStr = y + '-' + fixDoubleZero(m) + '-' + fixDoubleZero(d) + 'T' + fixDoubleZero(h) + ':' + fixDoubleZero(mm) + ':' + fixDoubleZero(s) + scope.timeZone.offset;
+
+					// For debug purpose:
 					$(elm).find('.fullDateString').html(dateStr + ' &mdash; ' + new Date(dateStr).toUTCString());
+
 					return new Date(dateStr);
 				}
 
@@ -100,18 +93,20 @@
 	}]);
 
 
-
+	/**
+	 * @name timeZoneSelector
+	 */
 	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', function ($rootScope, Dialog) {
 		return {
 			restrict    : 'E',
 			templateUrl : 'Change/Admin/js/directives/time-zone-selector.twig',
 			replace     : true,
 
-			scope       : {
-				"timeZone": "="
+			scope : {
+				"timeZone" : "="
 			},
 
-			link : function (scope, elm, attrs) {
+			link : function (scope) {
 				// FIXME Load time zones from the server
 				scope.timeZones = [
 					{
@@ -129,9 +124,10 @@
 						'label' : "South Africa",
 						'offset': '+02:00'
 					}
-
 				];
 
+				// Because ngOptions (see the template) only checks equality on objects reference, we need to
+				// loop through the options to find which one corresponds to the given time zone (scope.timeZone).
 				if (scope.timeZone) {
 					var i;
 					for (i=0 ; i<scope.timeZones.length ; i++) {
@@ -141,14 +137,17 @@
 						}
 					}
 				}
+				if (!scope.selectedTimeZone) {
+					scope.selectedTimeZone = scope.timeZones[0];
+				}
 
+
+				// ngOptions does not provide formatting facilities, so here is a small function to format
+				// the label of the time zones displayed in the <select/> element.
 				scope.getTimeZoneLabel = function (tz) {
 					return tz.label + ' (' + tz.code + ')';
 				};
 
-				if (!scope.selectedTimeZone) {
-					scope.selectedTimeZone = scope.timeZones[0];
-				}
 
 				scope.select = function () {
 					scope.timeZone = scope.selectedTimeZone;
