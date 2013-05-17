@@ -12,6 +12,12 @@
 		return val;
 	}
 
+	// Detect native date picker.
+	var inputEl = document.createElement("input");
+	inputEl.setAttribute("type", "date");
+	var isNativeDatePickerAvailable = inputEl.type === 'date';
+
+
 	/**
 	 * @name dateSelector
 	 */
@@ -30,6 +36,7 @@
 					hInput = $(elm).find('[data-role="input-hour"]').first(),
 					mInput = $(elm).find('[data-role="input-minute"]').first(),
 					datePicker;
+
 
 				scope.openTimeZoneSelector = function ($event) {
 					Dialog.embed(
@@ -55,7 +62,10 @@
 					});
 				}
 
-				datePicker = dInput.datepicker().data('datepicker');
+				if ( ! isNativeDatePickerAvailable) {
+					datePicker = dInput.datepicker().data('datepicker');
+				}
+
 				dInput.change(updateDate);
 				hInput.change(updateDate);
 				mInput.change(updateDate);
@@ -70,10 +80,18 @@
 				};
 				ngModel.$render();
 
+				function getDateValue () {
+					if (isNativeDatePickerAvailable) {
+						return new Date(dInput.val());
+					} else {
+						return datePicker.date;
+					}
+				}
+
 				// Merge the date coming from the "datepicker" and the hour/minute information coming from the
 				// two additional input fields. The result is a Date object correctly set. (Well, I hope.)
 				function getFullDate () {
-					var date = datePicker.date, y, m, d, h, mm, s, dateStr;
+					var date = getDateValue(), y, m, d, h, mm, s, dateStr;
 					y = date.getFullYear();
 					m = date.getMonth() + 1;
 					d = date.getDate();
