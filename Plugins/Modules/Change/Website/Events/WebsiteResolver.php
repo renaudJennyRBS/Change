@@ -1,12 +1,12 @@
 <?php
-namespace Change\Website;
+namespace Change\Website\Events;
 
 use Change\Http\Event;
 use Change\Website\Documents\Website;
 
 /**
  * @package Change\Website
- * @name \Change\Website\WebsiteResolver
+ * @name \Change\Website\Events\WebsiteResolver
  */
 class WebsiteResolver
 {

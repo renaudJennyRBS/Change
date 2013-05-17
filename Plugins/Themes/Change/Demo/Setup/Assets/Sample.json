@@ -1,0 +1,55 @@
+{
+	"zoneEditable1" : {
+		"id" : "zoneEditable1",
+		"grid" : 12,
+		"gridMode" : "fixed",
+		"type" : "container",
+		"parameters" : {
+		}
+	},
+	"menuHeader" : {
+		"id" : "menuHeader",
+		"type" : "block",
+		"name" : "Change_Website_Menu",
+		"parameters" : {
+			"documentId" : 100003,
+			"maxLevel" : 3,
+			"templateName" : "menu-header.twig"
+		}
+	},
+	"thread" : {
+		"id" : "thread",
+		"type" : "block",
+		"name" : "Change_Website_Thread",
+		"parameters" : {
+		}
+	},
+	"menuFooter1" : {
+		"id" : "menuFooter1",
+		"type" : "block",
+		"name" : "Change_Website_Menu",
+		"parameters" : {
+			"showTitle" : true,
+			"documentId" : 100003,
+			"maxLevel" : 1
+		}
+	},
+	"menuFooter2" : {
+		"id" : "menuFooter2",
+		"type" : "block",
+		"name" : "Change_Website_Menu",
+		"parameters" : {
+			"showTitle" : true,
+			"documentId" : 100003,
+			"maxLevel" : 2
+		}
+	},
+	"subintro" : {
+		"id" : "subintro",
+		"type" : "block",
+		"name" : "Change_Website_Richtext",
+		"parameters" : {
+			"content" : "<h3>About us</h3><p>Lorem ipsum dolor sit amet, modus salutatus honestatis ex mea. Sit cu probo putant. Nam ne impedit atomorum.</p>"
+		}
+	}
+}

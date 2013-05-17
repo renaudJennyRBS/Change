@@ -88,15 +88,12 @@ class Controller extends \Change\Http\Controller
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
 
-			if ($result instanceof  \Change\Http\Web\Result\Page)
+			if ($result instanceof \Change\Http\Web\Result\Page)
 			{
-				if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_200)
+				$acceptHeader = $event->getRequest()->getHeader('Accept');
+				if ($acceptHeader instanceof \Zend\Http\Header\Accept && $acceptHeader->hasMediaType('text/html'))
 				{
-					$acceptHeader = $event->getRequest()->getHeader('Accept');
-					if ($acceptHeader instanceof \Zend\Http\Header\Accept && $acceptHeader->hasMediaType('text/html'))
-					{
-						$response->setContent($result->toHtml());
-					}
+					$response->setContent($result->toHtml());
 				}
 			}
 			elseif ($result instanceof \Change\Http\Web\Result\Resource)
@@ -134,6 +131,7 @@ class Controller extends \Change\Http\Controller
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
 			return $result;
 		}
+
 		return parent::notFound($event);
 	}
 

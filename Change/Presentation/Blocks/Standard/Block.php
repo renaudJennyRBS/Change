@@ -120,6 +120,7 @@ class Block
 			->getBlockTemplatePath($templateModuleName, $templateName);
 		if ($templatePath === null)
 		{
+
 			throw new \RuntimeException(
 				'No template found in module ' . $templateModuleName . ' for name ' . $templateName, 999999);
 		}
@@ -130,4 +131,5 @@ class Block
 		};
 		$result->setHtmlCallback($callback);
 	}
+
 }

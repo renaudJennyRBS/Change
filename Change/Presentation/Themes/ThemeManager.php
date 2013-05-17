@@ -12,7 +12,7 @@ use Zend\EventManager\EventManager;
  */
 class ThemeManager
 {
-	const DEFAULT_THEME_NAME = 'Change_Default';
+	const DEFAULT_THEME_NAME = 'Change_Base';
 	const EVENT_LOADING = 'loading';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
@@ -21,6 +21,12 @@ class ThemeManager
 	 * @var PresentationServices
 	 */
 	protected $presentationServices;
+
+
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $documentServices;
 
 	/**
 	 * @var EventManager
@@ -59,6 +65,22 @@ class ThemeManager
 	}
 
 	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices|null
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
+	/**
 	 * @return EventManager
 	 */
 	public function getEventManager()
@@ -79,7 +101,7 @@ class ThemeManager
 	 */
 	protected function dispatchLoading($themeName)
 	{
-		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName));
+		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName, 'documentServices' => $this->getDocumentServices()));
 		$callback = function ($result)
 		{
 			return ($result instanceof Theme);

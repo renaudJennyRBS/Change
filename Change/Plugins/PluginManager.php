@@ -6,6 +6,7 @@ use Change\Db\Query\ResultsConverter;
 use Change\Db\ScalarType;
 use Change\Workspace;
 use Zend\Stdlib\Glob;
+use Zend\EventManager\EventManager;
 
 /**
  * @api
@@ -13,6 +14,17 @@ use Zend\Stdlib\Glob;
  */
 class PluginManager
 {
+	const EVENT_MANAGER_IDENTIFIER = 'Plugin';
+
+	const EVENT_SETUP_INITIALIZE = 'setupInitialize';
+	const EVENT_SETUP_APPLICATION = 'setupApplication';
+	const EVENT_SETUP_SERVICES = 'setupServices';
+	const EVENT_SETUP_FINALIZE = 'setupFinalize';
+
+	const EVENT_TYPE_PACKAGE = 'package';
+	const EVENT_TYPE_MODULE = 'module';
+	const EVENT_TYPE_THEME = 'theme';
+
 	/**
 	 * @var Workspace
 	 */
@@ -22,6 +34,16 @@ class PluginManager
 	 * @var DbProvider
 	 */
 	protected $dbProvider;
+
+	/**
+	 * @var \Change\Events\SharedEventManager
+	 */
+	protected $sharedEventManager;
+
+	/**
+	 * @var EventManager
+	 */
+	protected $eventManager;
 
 	/**
 	 * @var Plugin[]
@@ -66,6 +88,21 @@ class PluginManager
 	protected function getCompiledPluginsPath()
 	{
 		return $this->getWorkspace()->compilationPath('Change', 'Plugins.ser');
+	}
+
+	/**
+	 * @api
+	 * $step in PluginManager::EVENT_SETUP_*
+	 * $type in PluginManager::EVENT_TYPE_*
+	 * @param string $step
+	 * @param string $type
+	 * @param string $vendor
+	 * @param string $name
+	 * @return string
+	 */
+	public static function composeEventName($step, $type, $vendor, $name)
+	{
+		return $step . '_' . $type . '_' . $vendor . '_' . $name;
 	}
 
 	/**
@@ -200,13 +237,11 @@ class PluginManager
 		{
 			if ($folderName !== $type)
 			{
-				var_export($normalizedVendor . ' A-A ' . $folderName  . ' - ' . $type);
 				return null;
 			}
 		}
 		elseif ($normalizedVendor !== $folderName)
 		{
-			var_export($normalizedVendor . ' B-B ' . $folderName  . ' - ' . $type);
 			return null;
 		}
 
@@ -215,7 +250,6 @@ class PluginManager
 		$folderName = $parts[$partsCount - 2];
 		if ($normalizedShortName !== $folderName)
 		{
-			var_export($normalizedShortName . ' - ' . $folderName  . ' - ' . $type);
 			return null;
 		}
 
@@ -537,5 +571,117 @@ class PluginManager
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
+	}
+
+	/**
+	 * @param \Change\Events\SharedEventManager $sharedEventManager
+	 */
+	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
+	{
+		$this->sharedEventManager = $sharedEventManager;
+	}
+
+	/**
+	 * @return \Change\Events\SharedEventManager
+	 */
+	public function getSharedEventManager()
+	{
+		return $this->sharedEventManager;
+	}
+
+	/**
+	 * @return \Zend\EventManager\EventManager
+	 */
+	public function getEventManager()
+	{
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->setSharedManager($this->getSharedEventManager());
+			foreach ($this->getPlugins() as $plugin)
+			{
+				$this->registerPluginEvents($plugin, $this->eventManager);
+			}
+		}
+		return $this->eventManager;
+	}
+
+	/**
+	 * @param Plugin $plugin
+	 * @param \Zend\EventManager\EventManager $eventManager
+	 */
+	protected function registerPluginEvents($plugin, $eventManager)
+	{
+		$nss = array_keys($plugin->getNamespaces());
+		$className = $nss[0] . 'Setup\Install';
+		if (class_exists($className))
+		{
+			$listenerAggregate = new $className($plugin);
+			if ($listenerAggregate instanceof \Zend\EventManager\ListenerAggregateInterface)
+			{
+				$listenerAggregate->attach($eventManager);
+			}
+			else
+			{
+				var_dump(__METHOD__ . ' ListenerAggregateInterface');
+			}
+		}
+		else
+		{
+			var_dump(__METHOD__ . ' class_exists ' . $className);
+		}
+	}
+
+	/**
+	 * @param string $vendor
+	 * @param string $packageName
+	 * @param array $context
+	 */
+	public function installPackage($vendor, $packageName, $context)
+	{
+		$eventManager = $this->getEventManager();
+		$plugins = array();
+		$application = new \Change\Application();
+		$eventArgs = $eventManager->prepareArgs(array('application' => $application,'context' => $context));
+
+		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName), $this, $eventArgs);
+		$results = $this->getEventManager()->trigger($event);
+		$date = new \DateTime();
+		foreach ($results as $result)
+		{
+			if ($result instanceof Plugin)
+			{
+				$result->setActivated(true);
+				$result->setConfigurationEntry('installDate', $date->format('c'));
+				$plugins[] = $result;
+			}
+		}
+		$eventArgs['plugins'] = $plugins;
+
+		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$eventArgs['applicationServices'] = $applicationServices;
+		$event->setName(static::composeEventName(static::EVENT_SETUP_APPLICATION, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$this->getEventManager()->trigger($event);
+
+		$compiler = new \Change\Documents\Generators\Compiler($application, $applicationServices);
+		$compiler->generate();
+
+		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
+		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
+		$event->setName(static::composeEventName(static::EVENT_SETUP_SERVICES, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$this->getEventManager()->trigger($event);
+
+		$event->setName(static::composeEventName(static::EVENT_SETUP_FINALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$this->getEventManager()->trigger($event);
+
+		foreach ($plugins as $plugin)
+		{
+			/* $plugin Plugin */
+			$date = new \DateTime();
+
+			$plugin->setConfigured(true);
+			$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
+			$this->update($plugin);
+		}
 	}
 }

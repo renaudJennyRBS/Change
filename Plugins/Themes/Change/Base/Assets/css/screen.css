@@ -1,0 +1,5 @@
+@import url('bootstrap.min.css');
+@import url('bootstrap-responsive.min.css');
+.exception {
+	white-space: pre-wrap;
+}
