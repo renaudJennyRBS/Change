@@ -93,28 +93,37 @@ class Manager
 			$eventManager->setSharedManager($this->getApplication()->getSharedEventManager());
 			$eventManager->setEventClass('\\Change\\Admin\\Event');
 			$this->eventManager = $eventManager;
-			$this->attachEvents($eventManager);
+
+			$this->attachEvents();
 		}
 		return $this->eventManager;
 	}
 
 	/**
-	 * Attach specific document event
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 * Attach specific admin event
 	 */
-	protected function attachEvents($eventManager)
+	protected function attachEvents()
 	{
-		$classes = $this->getApplication()->getConfiguration()->getEntry('Change/Admin/Listeners');
-		if (is_array($classes) && count($classes))
+		$classNames = $this->getApplication()->getConfiguration()->getEntry('Change/Admin/Listeners');
+		$this->registerListenerAggregateClassNames($classNames);
+	}
+
+	/**
+	 * @param string[] $classNames
+	 */
+	public function registerListenerAggregateClassNames($classNames)
+	{
+		if (is_array($classNames) && count($classNames))
 		{
-			foreach ($classes as $className)
+			$eventManager = $this->getEventManager();
+			foreach ($classNames as $className)
 			{
 				if (class_exists($className))
 				{
-					$class = new $className();
-					if ($class instanceof \Zend\EventManager\ListenerAggregateInterface)
+					$listener = new $className();
+					if ($listener instanceof \Zend\EventManager\ListenerAggregateInterface)
 					{
-						$class->attach($eventManager);
+						$listener->attach($eventManager);
 					}
 				}
 			}
@@ -131,7 +140,6 @@ class Manager
 		$this->getEventManager()->trigger($event);
 		return $params->getArrayCopy();
 	}
-
 
 	/**
 	 * @return string

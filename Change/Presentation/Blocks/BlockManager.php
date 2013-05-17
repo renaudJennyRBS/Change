@@ -76,22 +76,7 @@ class BlockManager
 			$application = $this->presentationServices->getApplicationServices()->getApplication();
 			$this->sharedEventManager = $application->getSharedEventManager();
 			$sharedListeners = $application->getConfiguration()->getEntry('Change/Presentation/Blocks', array());
-
-			foreach ($sharedListeners as $className)
-			{
-				if (class_exists($className))
-				{
-					$sharedListener = new $className();
-					if ($sharedListener instanceof SharedListenerAggregateInterface)
-					{
-						$sharedListener->attachShared($this->sharedEventManager);
-					}
-				}
-				else
-				{
-					throw new \RuntimeException('Block configuration class not found: ' . $className, 999999);
-				}
-			}
+			$this->sharedEventManager->registerListenerAggregateClassNames($sharedListeners);
 		}
 		return $this->sharedEventManager;
 	}
