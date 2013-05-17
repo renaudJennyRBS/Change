@@ -10,15 +10,26 @@ class SharedEventManager extends \Zend\EventManager\SharedEventManager
 {
 	public function attachConfiguredListeners(\Change\Configuration\Configuration $configuration)
 	{
-		$classes = $configuration->getEntry('Change/Events/ListenerAggregateClasses', array());
-		foreach ($classes as $className)
+		$classNames = $configuration->getEntry('Change/Events/ListenerAggregateClasses', array());
+		$this->registerListenerAggregateClassNames($classNames);
+	}
+
+	/**
+	 * @param string[] $classNames
+	 */
+	public function registerListenerAggregateClassNames($classNames)
+	{
+		if (is_array($classNames) && count($classNames))
 		{
-			if (class_exists($className))
+			foreach ($classNames as $className)
 			{
-				$listenerAggregate = new $className();
-				if ($listenerAggregate instanceof SharedListenerAggregateInterface)
+				if (class_exists($className))
 				{
-					$listenerAggregate->attachShared($this);
+					$listenerAggregate = new $className();
+					if ($listenerAggregate instanceof SharedListenerAggregateInterface)
+					{
+						$listenerAggregate->attachShared($this);
+					}
 				}
 			}
 		}
