@@ -66,22 +66,6 @@
 
 
 		/**
-		 *
-		 */
-		shouldBeInTree : function (doc) {
-			// TODO
-			switch (doc.model) {
-			case 'Change_Website_StaticPage':
-			case 'Change_Website_Topic':
-			case 'Change_Website_Site':
-			case 'Change_Generic_Folder':
-				return true;
-			}
-			return false;
-		},
-
-
-		/**
 		 * Indicates whether the given `doc` is a model among the ones given as arguments.
 		 *
 		 * @param {Document} doc

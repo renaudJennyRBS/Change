@@ -11,7 +11,8 @@
 	app.provider('RbsChange.REST', function RbsChangeRESTProvider () {
 
 		var forEach = angular.forEach,
-			REST_BASE_URL;
+			REST_BASE_URL,
+			HTTP_STATUS_CREATED = 201;
 
 		this.setBaseUrl = function (url) {
 			REST_BASE_URL = url;
@@ -488,7 +489,7 @@
 						var mainQ = $q.defer(),
 							url,
 							method,
-							self = this;
+							REST = this;
 
 						// mainQ is the Promise that will be resolved when all the "actions" (correction, tree, ...)
 						// have been called successfully.
@@ -519,20 +520,38 @@
 								// 1) "doc" is a ChangeDocument instance.
 
 								function maybeInsertResourceInTree (resource, qToResolve) {
-									if (currentTreeNode && Utils.shouldBeInTree(resource) && (status === 201 || resource.treeName === null)) {
-										console.log("REST.save(): inserting document ", doc, " in tree at ", currentTreeNode.META$.treeNode.url);
-										$http.post(currentTreeNode.META$.treeNode.url + '/', { "id": doc.id }, getHttpConfig())
-											.success(function (nodeData) {
-												console.log("REST.save(): inserted in tree: node=", nodeData, ", doc=", doc);
-												resolveQ(qToResolve, buildChangeDocument(doc, resource));
-											})
-											.error(function errorCallback (data, status) {
-												data.httpStatus = status;
-												rejectQ(qToResolve, data);
-											});
+									console.log("REST.save(): maybeInsertResourceInTree()");
+									if (currentTreeNode && (status === HTTP_STATUS_CREATED || resource.treeName === null)) {
+
+										// Load model's information to check if the document should be inserted in a tree.
+										REST.modelInfo(resource).then(function (modelInfo) {
+
+											if (!modelInfo.metas || !modelInfo.metas.treeName) {
+
+												console.log("REST.save(): Saved. Not inserted in tree because the model has no tree information (treeName=null).", doc);
+												resolveQ(qToResolve, resource);
+
+											} else {
+
+												console.log("REST.save(): Saved. Inserting document ", doc, " in tree " + modelInfo.metas.treeName + " at ", currentTreeNode.META$.treeNode.url);
+												$http.post(currentTreeNode.META$.treeNode.url + '/', { "id" : doc.id }, getHttpConfig())
+													.success(function (nodeData) {
+														console.log("REST.save(): Inserted in tree: node=", nodeData);
+														resolveQ(qToResolve, buildChangeDocument(doc, resource));
+													})
+													.error(function errorCallback (data, status) {
+														data.httpStatus = status;
+														rejectQ(qToResolve, data);
+													});
+
+											}
+										});
+
 									} else {
-										console.log("REST.save(): Saved (not in tree) doc=", doc);
+
+										console.log("REST.save(): Saved. Not inserted in tree because of no tree node information is provided or status is not 201 (Created).", doc);
 										resolveQ(qToResolve, resource);
+
 									}
 								}
 
@@ -541,7 +560,8 @@
 								// if it was PUBLISHED on the website.
 								if (Utils.hasCorrection(doc)) {
 									console.log("REST.save(): Document has a Correction: let's load it!");
-									self.loadCorrection(doc).then(function (doc) {
+									REST.loadCorrection(doc).then(function (doc) {
+										console.log("REST.save(): Correction loaded.");
 										maybeInsertResourceInTree(doc, mainQ);
 									});
 								} else {
@@ -824,6 +844,10 @@
 
 					'modelInfo' : function (modelName) {
 						var	q = $q.defer();
+
+						if (Utils.isDocument(modelName)) {
+							modelName = modelName.model;
+						}
 
 						$http.get(REST_BASE_URL + 'models/' + modelName.replace(/_/g, '/'), getHttpConfigWithCache()).success(function (model) {
 							resolveQ(q, model);

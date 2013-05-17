@@ -23,9 +23,8 @@
 				Editor.initScope(scope, elm);
 
 				scope.beforeSave = function beforeSaveFn (doc) {
-					console.log("Editor Website/Topic: beforeSaveFn: website=", Breadcrumb.getWebsite().id);
 					if (!doc.website) {
-						doc.website = Breadcrumb.getWebsite().id;
+						doc.website = Breadcrumb.getWebsite();
 					}
 				};
 			}

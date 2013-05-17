@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $log, $location, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -314,16 +314,19 @@
 
 
 		this.initScope = function scopeWatchOriginal (scope, element, callback) {
+			//Wait for the document to be loaded...
 			scope.$watch('original', function () {
-				prepareScope(scope, element);
-				if (element) {
-					$timeout(function () {
-						scope.menu = compileSectionsAndFields(element);
-						MainMenu.build(scope);
-					});
-				}
-				if (angular.isFunction(callback)) {
-					callback.apply(scope);
+				if (Utils.isDocument(scope.original)) {
+					prepareScope(scope, element);
+					if (element) {
+						$timeout(function () {
+							scope.menu = compileSectionsAndFields(element);
+							MainMenu.build(scope);
+						});
+					}
+					if (angular.isFunction(callback)) {
+						callback.apply(scope);
+					}
 				}
 			}, true);
 		};
@@ -331,13 +334,14 @@
 	}
 
 	changeEditorServiceFn.$inject = [
-		'$timeout', '$rootScope', '$log', '$location',
+		'$timeout', '$rootScope', '$location',
 		'RbsChange.FormsManager',
 		'RbsChange.MainMenu',
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
 		'RbsChange.Actions',
-		'RbsChange.Breadcrumb'
+		'RbsChange.Breadcrumb',
+		'RbsChange.REST'
 	];
 
 	app.service('RbsChange.Editor', changeEditorServiceFn);
