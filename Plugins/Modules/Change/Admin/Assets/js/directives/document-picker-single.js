@@ -77,13 +77,13 @@
 
 				scope.createDocument = function () {
 					FormsManager.cascade(
-							getFormUrl(),
-							null,
-							function (doc) {
-								scope.document = doc;
-							},
-							getCreateLabel()
-						);
+						getFormUrl(),
+						null,
+						function (doc) {
+							scope.selectDocument(doc);
+						},
+						getCreateLabel()
+					);
 				};
 
 				scope.editSelectedDocument = function () {
@@ -131,14 +131,6 @@
 					ngModel.$setViewValue(document);
 					ngModel.$render();
 					scope.closeSelector();
-				};
-
-				scope.selectDocuments = function (documents) {
-					scope.selectDocument(documents[0]);
-				};
-
-				scope.replaceWithDocuments = function (documents) {
-					scope.selectDocument(documents[0]);
 				};
 
 				scope.clear = function () {
