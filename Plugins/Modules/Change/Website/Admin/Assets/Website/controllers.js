@@ -14,7 +14,7 @@
 	 * @param MainMenu
 	 * @constructor
 	 */
-	function WebsiteListController ($scope, DocumentList, Breadcrumb, MainMenu) {
+	function WebsiteListController ($scope, DocumentList, Breadcrumb, MainMenu, i18n) {
 
 		var DL = DocumentList.initScope($scope, 'Change_Website_Website');
 
@@ -26,8 +26,8 @@
 
 		$scope.createActions = [{ 'label': "Site web", 'url': 'Change/Website/Website/new' }];
 
-		DL.columns.push({ id: 'hostName', label: "Hôte", sortable: true });
-		DL.columns.push({ id: 'modificationDate', label: "Dernière modif.", sortable: true });
+		DL.columns.push({ id: 'hostName', label: i18n.trans("m.change.website.admin.js.host-name|ucf") });
+		DL.columns.push({ id: 'modificationDate', label: i18n.trans("m.change.admin.admin.js.last-modification-date|ucf") });
 		DL.columns.push(new DocumentList.Column('activated', "Activé", true, 'center', '90px'));
 
 		MainMenu.loadModuleMenu('Change_Website');
@@ -37,7 +37,8 @@
 		'$scope',
 		'RbsChange.DocumentList',
 		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu'
+		'RbsChange.MainMenu',
+		'RbsChange.i18n'
 	];
 	app.controller('Change_Website_Website_ListController', WebsiteListController);
 

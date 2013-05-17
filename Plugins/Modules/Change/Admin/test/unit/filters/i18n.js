@@ -25,6 +25,11 @@ describe('i18n', function () {
 		expect(filter('i18n')('m.change.admin.admin.js.unknown-key')).toBe("m.change.admin.admin.js.unknown-key");
 		expect(filter('i18n')('m.change.admin.admin.js.files-uploaded')).toBe("{files} files have been uploaded.");
 		expect(filter('i18n')('m.change.admin.admin.js.files-uploaded', {'files': 3})).toBe("3 files have been uploaded.");
+
+		// With filters
+		expect(filter('i18n')('m.change.website.admin.js.host-name | ucf')).toBe("Nom d'hôte");
+		expect(filter('i18n')('m.change.website.admin.js.host-name | uppercase')).toBe("NOM D'HÔTE");
+		expect(filter('i18n')('m.change.website.admin.js.host-name | uppercase | ucf')).toBe("NOM D'HÔTE");
 	});
 
 });

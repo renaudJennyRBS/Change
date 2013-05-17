@@ -6,15 +6,22 @@
 
 
 	/**
-	 * Localization filter.
+	 * Localization service.
 	 */
-	app.filter('i18n', function () {
+	app.service('RbsChange.i18n', ['$filter', function i18nServiceFn ($filter) {
 
-		return function i18nFilterFn (string, params) {
-			// Guess path and key from the full locale key.
-			var	p = string.lastIndexOf('.'),
-				path = string.substring(0, p),
-				key = string.substr(p+1);
+		this.trans = function (string, params) {
+			var p, path, key, filters = null;
+
+			p = string.indexOf('|');
+			if (p !== -1) {
+				filters = string.substr(p+1).trim().split('|');
+				string = string.substring(0, p).trim();
+			}
+
+			p = string.lastIndexOf('.');
+			path = string.substring(0, p);
+			key = string.substr(p + 1);
 
 			// Search for the key in the global object (comes from "Change/Admin/i18n.js").
 			if (__change.i18n[path] && __change.i18n[path][key]) {
@@ -25,10 +32,27 @@
 				});
 			}
 
+			if (filters) {
+				angular.forEach(filters, function (filterName) {
+					string = $filter(filterName.trim())(string);
+				});
+			}
+
 			return string;
 		};
+	}]);
 
-	});
+
+	/**
+	 * Localization filter.
+	 */
+	app.filter('i18n', ['RbsChange.i18n', function (i18n) {
+
+		return function i18nFilterFn (string, params) {
+			return i18n.trans(string, params);
+		};
+
+	}]);
 
 
 	/**
