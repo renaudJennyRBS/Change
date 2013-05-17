@@ -1355,3 +1355,16 @@ th label {
 .diff ins {
 	color: #468847;
 }
+
+
+
+
+
+.form-horizontal input + .help-block, .form-horizontal select + .help-block, .form-horizontal textarea + .help-block {
+	margin-top: 2px;
+}
+
+.control-group,
+.form-horizontal .control-group {
+	margin-bottom: 20px;
+}
