@@ -66,19 +66,20 @@
 		</div>
 	</div>
 
+
 	<div>
 		<div class="btn-toolbar has-captions-top" data-role="actions">
 
 			<div class="btn-virtual-group" data-ng-show="createActions.length > 0" data-ng-switch="createActions.length < 3">
 				<div data-ng-switch-when="true" class="btn-group">
 					<label class="caption">Créer</label>
-					<a data-ng-repeat="action in createActions" class="btn btn-primary" href data-ng-href="(=action.url=)?tn=(=DL.currentTreeNodeId=)" title="(=action.tooltip=)"><i data-ng-show="action.icon" class="icon-white icon-(=action.icon=)"></i> (=action.label=)</a>
+					<a data-ng-repeat="action in createActions" class="btn btn-primary" href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)"><i data-ng-show="action.icon" class="icon-white icon-(=action.icon=)"></i> (=action.label=)</a>
 				</div>
 				<div data-ng-switch-when="false" class="btn-group">
 					<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Créer <span class="caret"></span></button>
 					<ul class="dropdown-menu" role="menu">
 						<li data-ng-repeat="action in createActions">
-							<a href data-ng-href="(=action.url=)?tn=(=DL.currentTreeNodeId=)" title="(=action.tooltip=)"><i data-ng-show="action.icon" class="icon-white icon-(=action.icon=)"></i> (=action.label=)</a>
+							<a href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)"><i data-ng-show="action.icon" class="icon-white icon-(=action.icon=)"></i> (=action.label=)</a>
 						</li>
 					</ul>
 				</div>
