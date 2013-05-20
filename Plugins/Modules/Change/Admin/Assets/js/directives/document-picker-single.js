@@ -86,9 +86,10 @@
 					);
 				};
 
-				scope.editSelectedDocument = function () {
-					var doc = ngModel.$viewValue;
-					FormsManager.cascade(
+				scope.editSelectedDocument = function ($event) {
+					var doc, msg;
+					doc = ngModel.$viewValue;
+					msg = FormsManager.cascade(
 						getFormUrl(),
 						{
 							'id'   : doc.id,
@@ -101,6 +102,14 @@
 						},
 						getEditLabel()
 					);
+					if (msg) {
+						console.log("Could not cascade form: ", msg);
+						$($event.target).popover({
+							'content': msg,
+							'title'  : 'Edition canceled',
+							'show'   : true
+						});
+					}
 				};
 
 

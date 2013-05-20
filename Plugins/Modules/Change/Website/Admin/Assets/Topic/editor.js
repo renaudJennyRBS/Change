@@ -5,28 +5,24 @@
 	function changeEditorWebsiteTopic (Editor, Breadcrumb) {
 
 		return {
-			restrict : 'EC',
-
+			restrict    : 'EC',
 			templateUrl : 'Change/Website/Topic/editor.twig',
-
-			replace: true,
+			replace     : true,
 
 			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
+			scope : {
+				original : '=document',
+				onSave   : '&',
+				onCancel : '&',
+				section  : '='
 			},
 
 			link : function (scope, elm) {
-				Editor.initScope(scope, elm);
-
-				scope.beforeSave = function beforeSaveFn (doc) {
-					if (!doc.website) {
-						doc.website = Breadcrumb.getWebsite();
+				Editor.initScope(scope, elm, function () {
+					if (!scope.document.website) {
+						scope.document.website = Breadcrumb.getWebsite();
 					}
-				};
+				});
 			}
 		};
 

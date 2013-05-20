@@ -3,7 +3,8 @@ __change.i18n = {
 		"last-modification-date": "dernière modif.",
 		"time-zone-selector-title" : "sélection d'un fuseau horaire",
 		"confirm": "confirmation",
-		"home": "accueil"
+		"home": "accueil",
+		"document-is-already-beging-edited": "ce document est déjà en cours d'édition"
 	},
 	"m.change.website.admin.js": {
 		"host-name": "nom d'hôte",

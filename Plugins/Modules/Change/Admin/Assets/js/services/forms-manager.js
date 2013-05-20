@@ -5,13 +5,14 @@
 	var app = angular.module('RbsChange');
 
 
-	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils) {
+	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n) {
 
 		var	$ws = $('#workspace'),
 			cascadeContext = null,
 			cascadeCount = 0,
 			cascadedElement = null,
-			self = this;
+			self = this,
+			idStack = [];
 
 		/**
 		 * When the route changes, we need to clean up any cascading process.
@@ -25,6 +26,14 @@
 			Breadcrumb.unfreeze();
 		});
 
+		this.startEditSession = function (doc) {
+			idStack.push(doc.id);
+		};
+
+		this.stopEditSession = function (doc) {
+			idStack.pop();
+		};
+
 		/**
 		 * Open a new form from the given formUrl. A new FormContext will be created directly
 		 * within the form when it is loaded.
@@ -32,11 +41,17 @@
 		 * @param queryParam Query parameters (hash) to retrieve the existing document (if any).
 		 * @param saveCallback The callback to be called when the sub-$resource will be saved.
 		 * @param message The message to display in the current form when it is collapsed.
+		 *
+		 * @return String null if OK, message if not OK.
 		 */
 		this.cascade = function (formUrl, queryParam, saveCallback, message) {
-
 			var	$form,
 				contents;
+
+			// Check circular cascade:
+			if (ArrayUtils.inArray(queryParam.id, idStack) !== -1) {
+				return i18n.trans('m.change.admin.admin.js.document-is-already-beging-edited');
+			}
 
 			// Freeze the Breadcrumb to prevent any other controller from modifying it.
 			Breadcrumb.freeze();
@@ -44,15 +59,16 @@
 			// Update cascade counter.
 			cascadeCount++;
 
-			// Slides up the current form.
-			$form = $ws.children('.document-form').last();
-			$form.slideUp('fast');
-
 			// Create cascade context.
 			cascadeContext = {
 				'saveCallback' : saveCallback,
-				  'queryParam' : queryParam
+				'queryParam'   : queryParam
 			};
+			idStack.push(queryParam.id);
+
+			// Slides up the current form.
+			$form = $ws.children('.document-form').last();
+			$form.slideUp('fast');
 
 			// Load and insert the new cascaded form.
 			$.get(formUrl, function (html) {
@@ -79,6 +95,8 @@
 				self.updateCollapsedForms();
 				$ws.find(':input').first().focus();
 			});
+
+			return null;
 		};
 
 
@@ -104,6 +122,7 @@
 
 			cascadeContext = null;
 			cascadedElement = null;
+			idStack.pop();
 
 			// Remove the last from and destroy its associated scope.
 			var $form = $ws.children('.document-form').last();
@@ -186,7 +205,7 @@
 			};
 
 
-			Loading.start("Chargement du document...");
+			Loading.start(i18n.trans('m.change.admin.admin.js.loading-document | ucf'));
 
 			if (this.isCascading()) {
 				if (cascadeContext.queryParam) {

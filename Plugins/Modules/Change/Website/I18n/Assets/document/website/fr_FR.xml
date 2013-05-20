@@ -26,4 +26,8 @@
 		<![CDATA[Si le site n'est pas accessible directement sur le nom de domaine mais sur un dossier derrière le nom de domaine, vous devez renseigner le nom de ce dossier ici.<br/>
 		Exemple : pour un site accessible sur <strong>domaine.com/fr/</strong>, renseignez <strong>fr</strong> dans ce champ.]]>
 	</key>
+
+	<key id="indexpage">page d'accueil</key>
+	<key id="indexpage-picker-title">sélectionner la page d'accueil du site</key>
+
 </i18n>
