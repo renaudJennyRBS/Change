@@ -3,6 +3,7 @@
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>
 	<key id="confirm">confirmation</key>
+	<key id="home">accueil</key>
 
 	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
 </i18n>
