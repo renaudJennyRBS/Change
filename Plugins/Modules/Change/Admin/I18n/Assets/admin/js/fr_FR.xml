@@ -5,7 +5,7 @@
 	<key id="confirm">confirmation</key>
 	<key id="home">accueil</key>
 	<key id="loading-document">chargement du document...</key>
-	<key id="document-is-already-beging-edited">ce document est déjà en cours d'édition.</key>
+	<key id="document-is-already-being-edited">ce document est déjà en cours d'édition.</key>
 
 	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
 </i18n>

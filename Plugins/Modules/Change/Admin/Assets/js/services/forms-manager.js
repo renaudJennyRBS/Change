@@ -50,7 +50,7 @@
 
 			// Check circular cascade:
 			if (ArrayUtils.inArray(queryParam.id, idStack) !== -1) {
-				return i18n.trans('m.change.admin.admin.js.document-is-already-beging-edited | ucf');
+				return i18n.trans('m.change.admin.admin.js.document-is-already-being-edited | ucf');
 			}
 
 			// Freeze the Breadcrumb to prevent any other controller from modifying it.
