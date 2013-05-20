@@ -1,41 +1,35 @@
+{% import "@Admin/forms.twig" as forms %}
+
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 
-	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+	<fieldset data-ng-show="section==''"
+	          data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
 
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
-			<label class="control-label" for="label">Titre</label>
-			<div class="controls">
-				<input type="text" id="label" name="label" required data-ng-model="document.label">
-			</div>
-		</div>
+		{{ forms.field('label', 'String',
+			i18n('m.change.website.document.topic.label', ['ucf']),
+			true
+		) }}
 
-		<div class="control-group" data-ng-class="{'success': hasCorrectionOnProperty('pathPart')}">
-			<label class="control-label" for="pathPart">Chemin</label>
-			<div class="controls">
-				<input type="text" id="pathPart" name="pathPart" data-ng-model="document.pathPart">
-			</div>
-		</div>
+		{{ forms.field('pathPart', 'String',
+			i18n('m.change.website.document.topic.pathPart', ['ucf']),
+			false,
+			i18n('m.change.website.document.topic.pathPart-help')
+		) }}
 
-		<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('indexPage')}">
-			<label class="control-label" for="indexPage">Page d'index de la rubrique</label>
-			<div class="controls">
-				<div class="document-picker-single"
-				     document="document.indexPage"
-				     accepted-model="Change_Website_StaticPage"
-				     selector-title="Sélectionner la page d'index"
-				     property-label="Page d'index de la rubrique"
-				     master-label="(=document.label=)">
-				</div>
-			</div>
-		</div>
+		{{ forms.picker('indexPage', 'Change_Website_StaticPage',
+			i18n('m.change.website.document.topic.indexpage', ['ucf']),
+			false,
+			null,
+			"Sélectionner la page d'index de la rubrique"
+		) }}
 
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
-		data-form-section-label="État"
-		data-form-section-group="Informations"
-		data-document-system-info-section>
+	<fieldset data-ng-show="section=='systeminfo'"
+	          data-form-section-label="{{ i18nAttr('m.change.admin.Status', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.change.admin.Information', ['ucf']) }}"
+	          data-document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
