@@ -136,7 +136,7 @@
 		/**
 		 * Returns informations about the given model name: vendor, module and document.
 		 *
-		 * @param {String} A fully qualified model name, such as `change_website_page`.
+		 * @param {String} A fully qualified model name, such as `Change_Website_Page`.
 		 * @returns {Object} {'vendor', 'module', 'document', 'change':(true|false)}
 		 */
 		modelInfo : function (modelName) {
@@ -148,7 +148,7 @@
 				'vendor'   : splat[0],
 				'module'   : splat[1],
 				'document' : splat[2],
-				'change'   : (splat[0] === 'change' || splat[0] === 'modules')
+				'change'   : splat[0] === 'Change'
 			};
 		},
 
