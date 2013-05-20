@@ -1,13 +1,13 @@
 (function () {
 
-	function changeEditorWebsitePage (Editor, $location, Dialog, UrlManager, ArrayUtils, Breadcrumb, structureEditorService) {
+	"use strict";
+
+	function changeEditorWebsitePage (Editor, $rootScope, $location, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService) {
 
 		return {
-			restrict : 'C',
-
+			restrict    : 'C',
 			templateUrl : 'Change/Website/StaticPage/editor.twig',
-
-			replace : true,
+			replace     : true,
 
 			// Create isolated scope
 			scope : {
@@ -19,7 +19,7 @@
 				language : '='
 			},
 
-			link: function (scope, elm, attrs) {
+			link: function (scope, elm) {
 
 				Editor.initScope(scope, elm, function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
@@ -28,30 +28,30 @@
 					}
 				});
 
-				scope.beforeSave = function beforeSaveFn (doc) {
-					if (!doc.website) {
-						doc.website = Breadcrumb.getWebsite();
+				$rootScope.$watch('website', function (website) {
+					if (scope.document && ! scope.document.website) {
+						scope.document.website = website;
 					}
-				};
+				}, true);
 
 				scope.editPage = function ($event, page) {
 					if (scope.isUnchanged()) {
 						$location.path(UrlManager.getUrl(page, 'editor'));
 					} else {
 						Dialog.confirmEmbed(
-								elm.find('[data-role="edit-page-contents-confirmation"]'),
-								"Confirmation",
-								"<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.</strong><ul><li>Si vous choisissez <strong>Oui</strong>, les données de ce formulaire seront enregistrées puis vous serez redirigé vers l'éditeur de page.</li><li>Si vous choisissez <strong>Non</strong>, cette fenêtre sera fermée et... il ne se passera rien :)</li></ul>",
-								scope,
-								{
-									"pointedElement" : $event.target
-								}
-							).then(function () {
-								scope.onSave = function () {
-									$location.path(UrlManager.getUrl(page, 'editor'));
-								};
-								scope.submit();
-							});
+							elm.find('[data-role="edit-page-contents-confirmation"]'),
+							i18n.trans('m.change.admin.admin.js.confirm | ucf'),
+							i18n.trans('m.change.website.admin.js.open-page-editor-warning'),
+							scope,
+							{
+								"pointedElement" : $event.target
+							}
+						).then(function () {
+							scope.onSave = function () {
+								$location.path(UrlManager.getUrl(page, 'editor'));
+							};
+							scope.submit();
+						});
 					}
 				};
 
@@ -63,12 +63,12 @@
 	var app = angular.module('RbsChange');
 
 	changeEditorWebsitePage.$inject = [
-		'RbsChange.Editor',
+		'RbsChange.Editor', '$rootScope',
 		'$location',
 		'RbsChange.Dialog',
 		'RbsChange.UrlManager',
-		'RbsChange.ArrayUtils',
 		'RbsChange.Breadcrumb',
+		'RbsChange.i18n',
 		'structureEditorService'
 	];
 	app.directive('changeEditorWebsitePage', changeEditorWebsitePage);

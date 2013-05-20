@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.admin.js" lcid="fr_FR">
+	<key id="open-page-editor-warning" format="html"><![CDATA[<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.</strong><ul><li>Si vous choisissez <strong>Oui</strong>, les données de ce formulaire seront enregistrées puis vous serez redirigé vers l'éditeur de page.</li><li>Si vous choisissez <strong>Non</strong>, cette fenêtre sera fermée et... il ne se passera rien :)</li></ul>]]></key>
+</i18n>
