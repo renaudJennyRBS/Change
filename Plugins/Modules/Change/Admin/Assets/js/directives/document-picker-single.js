@@ -103,12 +103,8 @@
 						getEditLabel()
 					);
 					if (msg) {
-						console.log("Could not cascade form: ", msg);
-						$($event.target).popover({
-							'content': msg,
-							'title'  : 'Edition canceled',
-							'show'   : true
-						});
+						// TODO Use a nicer way to inform the user :)
+						window.alert(msg);
 					}
 				};
 
