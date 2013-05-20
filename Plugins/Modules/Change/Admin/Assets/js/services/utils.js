@@ -52,27 +52,16 @@
 		},
 
 
+		isValidLCID : function (lcid) {
+			return angular.isString(lcid) && (/^[a-z]{2}(_[a-zA-Z]{2})?$/).test(lcid);
+		},
+
+
 		/**
 		 * Indicates whether the given `doc` is a Tree Node or not.
 		 */
 		isTreeNode : function (doc) {
 			return this.isDocument(doc) && angular.isObject(doc.META$.treeNode);
-		},
-
-
-		/**
-		 *
-		 */
-		shouldBeInTree : function (doc) {
-			// TODO
-			switch (doc.model) {
-			case 'Change_Website_StaticPage':
-			case 'Change_Website_Topic':
-			case 'Change_Website_Site':
-			case 'Change_Generic_Folder':
-				return true;
-			}
-			return false;
 		},
 
 
@@ -147,7 +136,7 @@
 		/**
 		 * Returns informations about the given model name: vendor, module and document.
 		 *
-		 * @param {String} A fully qualified model name, such as `change_website_page`.
+		 * @param {String} A fully qualified model name, such as `Change_Website_Page`.
 		 * @returns {Object} {'vendor', 'module', 'document', 'change':(true|false)}
 		 */
 		modelInfo : function (modelName) {
@@ -159,7 +148,7 @@
 				'vendor'   : splat[0],
 				'module'   : splat[1],
 				'document' : splat[2],
-				'change'   : (splat[0] === 'change' || splat[0] === 'modules')
+				'change'   : splat[0] === 'Change'
 			};
 		},
 

@@ -6,7 +6,7 @@
 		'Change_Website_Website' : 'icon-home'
 	};
 
-	angular.module('RbsChange').directive('breadcrumb', ['$location', 'RbsChange.Utils', function ($location, Utils) {
+	angular.module('RbsChange').directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
 
 		return {
 			restrict : 'E',
@@ -70,7 +70,7 @@
 				function update (breadcrumbData) {
 					var html, i;
 					html = getEntryHtml(
-						['Accueil', ""],
+						[i18n.trans('m.change.admin.admin.js.home | ucf'), ""],
 						breadcrumbData.disabled,
 						// Last element?
 						breadcrumbData.location.length === 0 && breadcrumbData.path.length === 0 && ! breadcrumbData.resource,

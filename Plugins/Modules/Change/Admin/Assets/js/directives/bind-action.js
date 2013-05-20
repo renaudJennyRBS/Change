@@ -1,6 +1,6 @@
 (function ($) {
 
-	angular.module('RbsChange').directive('bindAction', ['RbsChange.Actions', '$timeout', 'RbsChange.i18n', function (Actions, $timeout, I18N) {
+	angular.module('RbsChange').directive('bindAction', ['RbsChange.Actions', '$timeout', 'RbsChange.i18n', function (Actions, $timeout, i18n) {
 
 		return {
 			restrict : 'A',
@@ -59,13 +59,13 @@
 						// FIXME Keep content if there is one?
 						if (actionObject.label && display.indexOf('label') !== -1) {
 							if (elm.children().length > 0 && elm.children().first().prop('tagName').toUpperCase() === 'I') {
-								elm.append(' ' + I18N.translate(actionObject.label));
+								elm.append(' ' + i18n.trans(actionObject.label));
 							} else {
-								elm.append(I18N.translate(actionObject.label));
+								elm.append(i18n.trans(actionObject.label));
 							}
 						}
 						if (actionObject.description) {
-							elm.attr('title', I18N.translate(actionObject.description));
+							elm.attr('title', i18n.trans(actionObject.description));
 						}
 						if (actionObject.icon && display.indexOf('icon') !== -1) {
 							if (display === 'label+icon') {

@@ -111,13 +111,6 @@
 			}
 		});
 
-		$scope.beforeSave = function beforeSaveFn (doc) {
-			// FIXME Change REST service to allow Documents where it expects a Document ID?
-			if (angular.isObject(doc.website) && angular.isDefined(doc.website.id)) {
-				doc.website = doc.website.id;
-			}
-		};
-
 		// This is for the "undo" dropdown menu:
 		// Each item automatically activates its previous siblings.
 		// FIXME Move this in a directive: controllers should never deal with the DOM.

@@ -639,9 +639,9 @@
 					name        : 'reorder',
 					models      : '*',
 					label       : "Réorganiser",
-					description : "Réorganiser",
+					description : "Réorganiser les éléments de la liste ci-dessous",
 					icon        : "icon-reorder",
-					display     : "icon",
+					display     : "icon+label",
 
 					execute : ['$DL', '$scope', '$embedDialog', '$target', function ($DL, $scope, $embedDialog, $target) {
 						$DL.toggleSort('nodeOrder', true);
@@ -659,7 +659,7 @@
 					}],
 
 					isEnabled : function ($docs, $DL) {
-						return $DL.hasColumn('nodeOrder');
+						return $DL.hasColumn('nodeOrder') && $DL.documents && $DL.documents.length > 1;
 					}
 
 				});

@@ -7,12 +7,12 @@
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('website')}">
 			<label class="control-label" for="website">Site web</label>
 			<div class="controls">
-				<div class="document-picker-single"
-				     document="document.website"
-				     accepted-model="Change_Website_Website"
-				     selector-title="Sélectionner le site web"
-				     property-label="Site web"
-				     master-label="(=document.label=)">
+				<div required="true" class="document-picker-single"
+					ng-model="document.website"
+					accepted-model="Change_Website_Website"
+					selector-title="Sélectionner le site web"
+					property-label="Site web"
+					allow-edition="true">
 				</div>
 				<span class="help-block">La page doit obligatoirement être rattachée à un site web.</span>
 			</div>
@@ -39,12 +39,12 @@
 
 		<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('pageTemplate')}">
 			<label class="control-label" for="pageTemplate">Modèle de page</label>
-			<div class="controls"><div class="document-picker-single"
-			                           document="document.pageTemplate"
-			                           accepted-model="Change_Theme_PageTemplate"
-			                           selector-title="Sélectionner le modèle de page"
-			                           property-label="Modèle de page"
-			                           master-label="(=document.label=)">
+			<div class="controls">
+				<div class="document-picker-single"
+					ng-model="document.pageTemplate"
+					accepted-model="Change_Theme_PageTemplate"
+					selector-title="Sélectionner le modèle de page"
+					property-label="Modèle de page">
 				</div>
 			</div>
 		</div>

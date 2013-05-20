@@ -8,44 +8,50 @@
 
 	app.directive('documentPickerMultiple', ['RbsChange.Modules', 'RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$filter', 'RbsChange.ArrayUtils', function (Modules, Clipboard, FormsManager, Breadcrumb, MainMenu, $filter, ArrayUtils) {
 
-		var counter = 0;
-
 		return {
-			// Utilisation : <page-header></page-header>
-			restrict: 'E',
+			restrict    : 'EAC',
+			templateUrl : 'Change/Admin/js/directives/document-picker-multiple.twig',
+			require     : 'ngModel',
 
-			// URL du template HTML
-			templateUrl: 'Change/Admin/js/directives/document-picker-multiple.html',
-
+			scope       : true,
+/*
 			scope: {
-				items: '=',
-				formUrl: '@',
+				documents: '=',
 				collapsedLabelCreate: '@',
 				collapsedLabelEdit: '@'
 			},
-
+*/
 			// Initialisation du scope (logique du composant)
-			link: function (scope, elm, attrs) {
+			link: function (scope, elm, attrs, ngModel) {
 
-				var $el = $(elm),
-				lastSelectedItemIndex = -1,
-				labelProperty = attrs.labelProperty || 'label';
+				var labelProperty = attrs.labelProperty || 'label';
+
+				ngModel.$render = function() {
+					scope.documents = ngModel.$viewValue;
+				};
+				ngModel.$render();
+
+
+				scope.allowCreation = attrs.allowCreation;
+				scope.allowEdition = attrs.allowEdition;
+
 
 				function getFormModel () {
 					return attrs.acceptedModel;
 				}
 
 				function getFormUrl () {
-					if (scope.formUrl) {
-						return scope.formUrl;
-					}
-					var model = getFormModel();
-					return model.replace('_', '/') + '/form.php';
+					return getFormModel().replace(/_/g, '/') + '/form.twig';
+				}
+
+				function getCreateLabel () {
+					return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : création d'un nouvel élément";
 				}
 
 				scope.readonly = attrs.readonly ? true : false;
 
-				scope.counter = ++counter;
+
+				// Clipboard
 
 				scope.clipboardValues = Clipboard.values;
 				var first = scope.clipboardValues[0];
@@ -55,63 +61,26 @@
 					scope.clipboardFirstLabel = '';
 				}
 
-				scope.getDocumentUrl = function (doc) {
-					// FIXME
-					return 'media/media/' + doc.id;
+				scope.getFromClipboard = function () {
+					scope.selectDocuments(Clipboard.getItems(true));
 				};
+
+
+				// Edit or create
 
 				scope.createDocument = function () {
 					FormsManager.cascade(
-							getFormUrl(),
-							null,
-							function (doc) {
-								doc.model = getFormModel(); // FIXME Useless in real life :)
-								if (!scope.items) {
-									scope.items = [];
-								}
-								scope.items.push(doc);
-							},
-							scope.collapsedLabelCreate
-						);
+						getFormUrl(),
+						null,
+						function (doc) {
+							scope.selectDocument(doc);
+						},
+						getCreateLabel()
+					);
 				};
 
-				scope.editSelectedDocument = function (index) {
-					FormsManager.cascade(
-							getFormUrl(),
-							{ 'id': scope.items[index].id },
-							function (doc) {
-								scope.items[index] = doc;
-							},
-							scope.collapsedLabelEdit.replace('{}', scope.getItemLabel(scope.items[index].label))
-						);
-				};
 
-				scope.clear = function () {
-					ArrayUtils.clear(scope.items);
-				};
-
-				scope.openSelector = function () {
-					Breadcrumb.freeze();
-					MainMenu.freeze();
-					var p = attrs.acceptedModel.indexOf('/');
-					var module = attrs.acceptedModel.substring(8, p);
-					var model = attrs.acceptedModel.substring(p+1);
-					scope.selectorTitle = attrs.selectorTitle || Modules.models[attrs.acceptedModel];
-					scope.documentPickerUrl = 'modules/document-picker-list.php?multiple=true&module=' + module + '&model=' + model;
-				};
-
-				scope.closeSelector = function () {
-					Breadcrumb.unfreeze();
-					MainMenu.unfreeze();
-					scope.documentPickerUrl = null;
-				};
-
-				scope.getFromClipboard = function () {
-					var items = Clipboard.getItems(true);
-					for (var i=0 ; i<items.length ; i++) {
-						scope.items.push(items[i]);
-					}
-				};
+				// Selection
 
 				scope.$watch('documentPickerUrl', function () {
 					if (scope.documentPickerUrl) {
@@ -121,140 +90,52 @@
 					}
 				});
 
-				scope.selectDocument = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
-					}
-					if (scope.items.indexOf(doc) === -1) {
-						scope.items.push(doc);
-					}
+				scope.openSelector = function () {
+					Breadcrumb.freeze();
+					MainMenu.freeze();
+					scope.selectorTitle = attrs.selectorTitle;
+					scope.documentPickerUrl = 'Change/Admin/document-picker-list.twig?multiple=true&model=' + attrs.acceptedModel;
 				};
 
-				scope.selectDocuments = function (docs) {
-					angular.forEach(docs, function (doc) {
-						scope.selectDocument(doc);
-						doc.selected = false;
-					});
+				scope.closeSelector = function () {
+					Breadcrumb.unfreeze();
+					MainMenu.unfreeze();
+					scope.documentPickerUrl = null;
+				};
+
+				scope.selectDocument = function (doc) {
+					var value;
+					if (angular.isArray(ngModel.$viewValue)) {
+						if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+							value = ngModel.$viewValue;
+							value.push(doc);
+						}
+					} else {
+						value = [doc];
+					}
+					ngModel.$setViewValue(value);
+					ngModel.$render();
 				};
 
 				scope.replaceWithDocument = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
-					} else {
-						scope.clear();
-					}
-					scope.items.push(doc);
+					ngModel.$setViewValue([doc]);
+					ngModel.$render();
 				};
 
 				scope.replaceWithDocuments = function (docs) {
-					if ( ! scope.items ) {
-						scope.items = [];
-					} else {
-						scope.clear();
-					}
-					scope.selectDocuments(docs);
+					ngModel.$setViewValue(docs);
+					ngModel.$render();
 				};
 
-				scope.selectDocumentFirst = function (doc) {
-					if ( ! scope.items ) {
-						scope.items = [];
-					}
-					if (scope.items.indexOf(doc) === -1) {
-						scope.items.unshift(doc);
-					}
+				scope.clear = function () {
+					ngModel.$setViewValue(null);
+					ngModel.$render();
 				};
 
-				scope.getItemLabel = function (item) {
-					var val = item[labelProperty];
-					if (attrs.labelFilter) {
-						val = $filter(attrs.labelFilter)(val);
-					}
-					return val;
+				scope.isEmpty = function () {
+					return ! ngModel.$viewValue;
 				};
 
-				if ( ! scope.readonly ) {
-					$el.on('keydown', 'li a.delete', function (event) {
-						if (event.keyCode === 46 || event.keyCode === 8) { // delete or back key
-							scope.$apply(function () {
-								scope.deleteSelected();
-							});
-						} else if (event.keyCode === 38 || event.keyCode === 40) {
-							var selected = -1, nb = 0;
-							for (var i = 0 ; i < scope.items.length ; i++) {
-								if (scope.items[i].selected) {
-									selected = i;
-									nb++;
-								}
-							}
-							// Move items only if one is selected
-							if (nb === 1 && selected !== -1) {
-								if (event.keyCode === 38) { // top
-									if (selected > 0) {
-										ArrayUtils.move(scope.items, selected, selected-1);
-										selected--;
-										scope.$apply();
-										$el.find('li:eq(' + selected + ') a.delete').focus();
-									}
-								} else if (event.keyCode === 40) { // bottom
-									if (selected < (scope.items.length-1)) {
-										ArrayUtils.move(scope.items, selected, selected+1);
-										selected++;
-									}
-								}
-								scope.$apply();
-								$el.find('li:eq(' + selected + ') a.delete').focus();
-							}
-						}
-				});
-				}
-
-				scope.remove = function (index) {
-					ArrayUtils.remove(scope.items, index);
-				};
-
-				scope.itemClicked = function (index, event) {
-					if (scope.readonly) {
-						return;
-					}
-					if ( ! event.metaKey ) {
-						if (event.shiftKey && lastSelectedItemIndex !== -1) {
-							var from = Math.min(lastSelectedItemIndex, index);
-							var to = Math.max(lastSelectedItemIndex, index);
-							for (var i=from ; i<=to ; i++) {
-								scope.items[i].selected = true;
-							}
-						} else {
-							scope.clearSelected();
-							scope.items[index].selected = ! scope.items[index].selected;
-						}
-					} else {
-						scope.items[index].selected = ! scope.items[index].selected;
-					}
-					$el.find('li:eq(' + index + ') a.delete').focus();
-					if (scope.items[index].selected) {
-						lastSelectedItemIndex = index;
-					} else {
-						lastSelectedItemIndex = -1;
-					}
-				};
-
-				scope.clearSelected = function () {
-					angular.forEach(scope.items, function (item) {
-						item.selected = false;
-					});
-				};
-
-				scope.deleteSelected = function () {
-					var i;
-					if (scope.readonly) {
-						return;
-					}
-					for (i = scope.items.length-1 ; i >= 0 ; i--) {
-						if (scope.items[i].selected) {
-							scope.remove(i);
-						}
-					}
-				};
 			}
 
 		};

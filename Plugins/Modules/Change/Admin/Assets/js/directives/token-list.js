@@ -13,7 +13,7 @@
 				'<ul class="token-list">' +
 					'<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
 						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)">&times;</a>(= getItemLabel(item) =)' +
-						'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering"></i>' +
+						'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="Glisser pour réorganiser"></i>' +
 					'</li>' +
 				'</ul>',
 

@@ -19,6 +19,7 @@
 		Breadcrumb.resetLocation([["Sites et pages", "Change/Website"]]);
 
 		var DL = DocumentList.initScopeForTree($scope);
+
 		DL.viewMode = 'list';
 		DL.sort.column = 'nodeOrder';
 		DL.sort.descending = false;
@@ -32,11 +33,9 @@
 
 		// Configure DataTable columns
 		DL.columns.splice(1, 0, { id: 'type', label: "", width: "24px", align: "center" });
-		DL.columns.push({ id: 'modificationDate', label: "Dernière modif.", sortable: true });
-		DL.columns.push({ id: 'nodeOrder', label: "Ordre", align: "right", sortable: true });
-		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center", sortable: true });
-
-		//DL.loadTreeChildren();
+		DL.columns.push({ id: 'modificationDate', label: "Dernière modif." });
+		DL.columns.push({ id: 'nodeOrder', label: "Ordre", align: "right" });
+		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center" });
 
 		MainMenu.loadModuleMenu('Change_Website');
 

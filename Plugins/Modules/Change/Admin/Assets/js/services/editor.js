@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $log, $location, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -26,6 +26,11 @@
 			if (scope._isPrepared) {
 				return;
 			}
+
+			FormsManager.startEditSession(scope.document);
+			scope.$on('$destroy', function () {
+				FormsManager.stopEditSession();
+			});
 
 			scope.$on('Change:UpdateDocumentProperties', function onUpdateDocumentPropertiesFn (event, properties) {
 				angular.extend(scope.document, properties);
@@ -60,7 +65,8 @@
 				});
 			});
 
-
+			/*
+			FIXME: Ask for confirmation when leaving the page but not when switching between sections.
 			// Ask confirmation when leaving a form with unsaved changes.
 			var locationChangeStartDeregistrationFn = $rootScope.$on('$locationChangeStart', function (event) {
 				if (! scope.isUnchanged() && ! window.confirm("Des données n'ont pas été enregistrées. Si vous quittez la page, ces données seront perdues.\nSouhaitez-vous réellement quitter cette page ?")) {
@@ -71,82 +77,78 @@
 			scope.$on('$destroy', function () {
 				locationChangeStartDeregistrationFn();
 			});
+			*/
+
+			function getSectionOfField (fieldName) {
+				var result = null;
+				angular.forEach(scope.menu, function (entry) {
+					if (entry.type === 'section') {
+						angular.forEach(entry.fields, function (field) {
+							if (field.id === fieldName) {
+								result = entry;
+							}
+						});
+					}
+				});
+				return result;
+			}
+
+			function markFieldAsInvalid (fieldName, messages) {
+				getSectionOfField(fieldName).invalid.push(fieldName);
+			}
+
+			function clearInvalidFields () {
+				$(element).find('.control-group.property.error').removeClass('error');
+				angular.forEach(scope.menu, function (entry) {
+					if (entry.type === 'section') {
+						ArrayUtils.clear(entry.invalid);
+					}
+				});
+			}
+
+			function saveSuccessHandler (docs) {
+				var	doc = docs[0],
+					hadCorrection = scope.document.hasCorrection();
+
+				scope.original = angular.copy(doc);
+
+				if (doc.hasCorrection() !== hadCorrection) {
+					scope.$emit('Change:DocumentUpdated', doc);
+				}
+
+				clearInvalidFields();
+
+				if (FormsManager.isCascading()) {
+					FormsManager.uncascade(doc);
+				} else {
+					$rootScope.$broadcast('Change:DocumentSaved', doc);
+					if (angular.isFunction(scope.onSave)) {
+						scope.onSave(doc);
+					}
+				}
+			}
+
+			function saveErrorHandler (reason) {
+				clearInvalidFields();
+				if (angular.isObject(reason) && angular.isObject(reason.data) && angular.isObject(reason.data['properties-errors'])) {
+					angular.forEach(reason.data['properties-errors'], function (messages, propertyName) {
+						$(element).find('label[for="'+propertyName+'"]').each(function () {
+							$(this).closest('.control-group.property').addClass('error');
+							$(this).nextAll('.controls').find(':input').first().focus();
+						});
+						markFieldAsInvalid(propertyName, messages);
+					});
+				}
+			}
 
 
 			/**
 			 * Sends the changes to the server, via a POST (creation) or a PUT (update) request.
 			 */
 			scope.submit = function submitFn () {
-				var promise = null,
-				    hadCorrection = scope.document.hasCorrection();
+				var promise = null;
 
 				function doSubmit () {
-
-					function getSectionOfField (fieldName) {
-						var result = null;
-						angular.forEach(scope.menu, function (entry) {
-							if (entry.type === 'section') {
-								angular.forEach(entry.fields, function (field) {
-									if (field.id === fieldName) {
-										result = entry;
-									}
-								});
-							}
-						});
-						return result;
-					}
-
-					function markFieldAsInvalid (fieldName, messages) {
-						getSectionOfField(fieldName).invalid.push(fieldName);
-					}
-
-					function clearInvalidFields () {
-						$(element).find('.control-group.property.error').removeClass('error');
-						angular.forEach(scope.menu, function (entry) {
-							if (entry.type === 'section') {
-								ArrayUtils.clear(entry.invalid);
-							}
-						});
-					}
-
-					function saveSuccessHandler (docs) {
-						var doc = docs[0];
-
-						scope.original = angular.copy(doc);
-
-						if (doc.hasCorrection() !== hadCorrection) {
-							scope.$emit('Change:DocumentUpdated', doc);
-						}
-
-						clearInvalidFields();
-
-						if (FormsManager.isCascading()) {
-							FormsManager.uncascade(doc);
-						} else {
-							$rootScope.$broadcast('Change:DocumentSaved', doc);
-							if (angular.isFunction(scope.onSave)) {
-								scope.onSave(doc);
-							}
-						}
-					}
-
-					function saveErrorHandler (reason) {
-						clearInvalidFields();
-						if (angular.isObject(reason) && angular.isObject(reason.data) && angular.isObject(reason.data['properties-errors'])) {
-							angular.forEach(reason.data['properties-errors'], function (messages, propertyName) {
-								$(element).find('label[for="'+propertyName+'"]').each(function () {
-									$(this).closest('.control-group.property').addClass('error');
-									$(this).nextAll('.controls').find(':input').first().focus();
-								});
-								markFieldAsInvalid(propertyName, messages);
-							});
-						}
-					}
-
-					if (angular.isFunction(scope.beforeSave)) {
-						scope.beforeSave(scope.document);
-					}
-
 					Actions.execute(
 						'save',
 						{
@@ -158,6 +160,13 @@
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
+				// Call "beforeSave" which can be overwritten in the Scope.
+				if (angular.isFunction(scope.beforeSave)) {
+					scope.beforeSave(scope.document);
+				}
+
+				// "preSubmit" is not meant to be overwritten: it is implemented in the "form-button-bar"
+				// directive to ask the user what to do when the edited document has a correction.
 				if (angular.isFunction(scope.preSubmit)) {
 					promise = scope.preSubmit(scope.document);
 				}
@@ -205,7 +214,10 @@
 			};
 
 			scope.hasCorrectionOnProperty = function hasCorrectionOnPropertyFn (property) {
-				return scope.document && scope.document.META$ && scope.document.META$.correction && ArrayUtils.inArray(property, scope.document.META$.correction.propertiesNames) !== -1;
+				return scope.document
+					&& scope.document.META$
+					&& scope.document.META$.correction
+					&& ArrayUtils.inArray(property, scope.document.META$.correction.propertiesNames) !== -1;
 			};
 
 			scope.hasCorrection = function hasCorrectionFn () {
@@ -313,16 +325,19 @@
 
 
 		this.initScope = function scopeWatchOriginal (scope, element, callback) {
+			// Wait for the document to be loaded...
 			scope.$watch('original', function () {
-				prepareScope(scope, element);
-				if (element) {
-					$timeout(function () {
-						scope.menu = compileSectionsAndFields(element);
-						MainMenu.build(scope);
-					});
-				}
-				if (angular.isFunction(callback)) {
-					callback.apply(scope);
+				if (Utils.isDocument(scope.original)) {
+					prepareScope(scope, element);
+					if (element) {
+						$timeout(function () {
+							scope.menu = compileSectionsAndFields(element);
+							MainMenu.build(scope);
+						});
+					}
+					if (angular.isFunction(callback)) {
+						callback.apply(scope);
+					}
 				}
 			}, true);
 		};
@@ -330,7 +345,7 @@
 	}
 
 	changeEditorServiceFn.$inject = [
-		'$timeout', '$rootScope', '$log', '$location',
+		'$timeout', '$rootScope', '$location',
 		'RbsChange.FormsManager',
 		'RbsChange.MainMenu',
 		'RbsChange.Utils',

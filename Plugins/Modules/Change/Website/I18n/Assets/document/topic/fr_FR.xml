@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.document.topic" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="document-name">rubrique</key>
+
+	<key id="indexpage">page d'index</key>
+	<key id="indexpage-picker-title">sélectionner la page d'index de la rubrique</key>
+
+	<key id="pathpart">chemin</key>
+	<key id="pathpart-help" format="html">
+		<![CDATA[Nom utilisé dans l'URL]]>
+	</key>
+</i18n>

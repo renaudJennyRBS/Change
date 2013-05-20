@@ -170,9 +170,7 @@
 				}
 
 				function broadcastEvent () {
-					//console.log("Breadcrumb.broadcastEvent()? loading=", loading);
 					if (!loading) {
-						//console.log("> YES => breadcrumbChanged");
 						$rootScope.$broadcast('Change:BreadcrumbChanged', {
 							'fullPath' : fullPath,
 							'path'     : path,
@@ -187,20 +185,17 @@
 
 				function routeChangeSuccessFn () {
 					var treeNodeId = $location.search()['tn'];
-
-					if (treeNodeId && ! loading && (treeNodeId !== currentTreeNodeId || path.length === 0)) {
+					if (! frozen && treeNodeId && ! loading && (treeNodeId !== currentTreeNodeId || path.length === 0)) {
 						loading = true;
 						REST.resource(treeNodeId).then(
 
 							// Success:
 							function (treeNode) {
-								//console.log("Breadcrumb.routeChangeSuccessFn(): treeNode loaded: ", treeNode);
 								// Load tree ancestors of the current TreeNode to update the breadcrumb.
 								REST.treeAncestors(treeNode).then(
 
 									// Success:
 									function (ancestors) {
-										//console.log("Breadcrumb.routeChangeSuccessFn(): ancestors loaded: ", ancestors);
 										loading = false;
 										currentTreeNodeId = treeNodeId;
 										breadcrumbService.setPath(ancestors.resources);
