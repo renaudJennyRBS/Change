@@ -117,7 +117,7 @@
 		 */
 		this.uncascade = function (doc) {
 
-			if (cascadeContext && angular.isFunction(cascadeContext.saveCallback)) {
+			if (cascadeContext && doc !== null && angular.isFunction(cascadeContext.saveCallback)) {
 				cascadeContext.saveCallback(doc);
 			}
 

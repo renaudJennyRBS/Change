@@ -186,7 +186,7 @@
 
 			scope.cancelCascade = function cancelCascadeFn () {
 				if (FormsManager.isCascading()) {
-					FormsManager.uncascade(scope.document);
+					FormsManager.uncascade(null); // null -> do NOT call saveCallback.
 				}
 			};
 
@@ -293,6 +293,7 @@
 
 				menu.push(entry);
 
+				// TODO Fields may be outside of a "div.control-group"
 				$fs.find('div.control-group.property').each(function (index, ctrlGrp) {
 					var $ctrlGrp = $(ctrlGrp),
 					    $lbl = $ctrlGrp.find('label[for]').first();
