@@ -5,10 +5,10 @@ php:
   - 5.5
 
 before_install:
- - wget "https://packages.zendframework.com/releases/ZendFramework-2.1.5/ZendFramework-minimal-2.1.5.tgz"
- - tar -zxf ZendFramework-minimal-2.1.5.tgz
+ - wget "https://packages.zendframework.com/releases/ZendFramework-2.2.0/ZendFramework-minimal-2.2.0.tgz"
+ - tar -zxf ZendFramework-minimal-2.2.0.tgz
  - mkdir -p Libraries/zendframework
- - mv ZendFramework-minimal-2.1.5 Libraries/zendframework/zendframework
+ - mv ZendFramework-minimal-2.2.0 Libraries/zendframework/zendframework
  - wget "https://github.com/zendframework/ZendOAuth/archive/release-2.0.1.zip"
  - unzip release-2.0.1.zip -d Libraries/zendframework/
  - mv Libraries/zendframework/ZendOAuth-release-2.0.1 Libraries/zendframework/zendoauth

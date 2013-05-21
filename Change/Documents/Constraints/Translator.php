@@ -4,7 +4,7 @@ namespace Change\Documents\Constraints;
 /**
  * @name \Change\Documents\Constraints\Translator
  */
-class Translator extends \Zend\I18n\Translator\Translator
+class Translator extends \Zend\I18n\Translator\Translator implements \Zend\Validator\Translator\TranslatorInterface
 {
 	
 	/**
