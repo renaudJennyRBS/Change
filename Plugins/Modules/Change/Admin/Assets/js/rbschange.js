@@ -13,7 +13,7 @@
 	//-------------------------------------------------------------------------
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', '$strap', 'OAuthModule']);
+	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'OAuthModule']);
 
 	app.constant('RbsChange.Version', '4.0.0');
 

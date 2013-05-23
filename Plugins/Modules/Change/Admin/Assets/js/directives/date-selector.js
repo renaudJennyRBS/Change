@@ -37,7 +37,6 @@
 					mInput = $(elm).find('[data-role="input-minute"]').first(),
 					datePicker;
 
-
 				scope.openTimeZoneSelector = function ($event) {
 					Dialog.embed(
 						$(elm).find('.timeZoneSelectorContainer'),
@@ -53,32 +52,38 @@
 				};
 
 				scope.$watch('timeZone', function () {
-					ngModel.$setViewValue(getFullDate());
+					if (ngModel.$viewValue) {
+						ngModel.$setViewValue(getFullDate());
+					}
 				}, true);
+
+				if ( ! isNativeDatePickerAvailable) {
+					datePicker = dInput.datepicker().data('datepicker');
+				}
+
+				ngModel.$render = function () {
+					if (ngModel.$viewValue && ! isNaN(ngModel.$viewValue)) {
+						dInput.datepicker('setValue', ngModel.$viewValue);
+						var date = new Date(ngModel.$viewValue);
+						hInput.val(date.getHours());
+						mInput.val(date.getMinutes());
+					} else {
+						dInput.val(null);
+						hInput.val('0');
+						mInput.val('0');
+					}
+				};
+				ngModel.$render();
+
+				dInput.change(updateDate);
+				hInput.change(updateDate);
+				mInput.change(updateDate);
 
 				function updateDate () {
 					scope.$apply(function () {
 						ngModel.$setViewValue(getFullDate());
 					});
 				}
-
-				if ( ! isNativeDatePickerAvailable) {
-					datePicker = dInput.datepicker().data('datepicker');
-				}
-
-				dInput.change(updateDate);
-				hInput.change(updateDate);
-				mInput.change(updateDate);
-
-				ngModel.$render = function () {
-					if (ngModel.$viewValue) {
-						dInput.datepicker('setValue', ngModel.$viewValue);
-						var date = new Date(ngModel.$viewValue);
-						hInput.val(date.getHours());
-						mInput.val(date.getMinutes());
-					}
-				};
-				ngModel.$render();
 
 				function getDateValue () {
 					if (isNativeDatePickerAvailable) {
@@ -99,10 +104,6 @@
 					mm = parseInt(mInput.val(), 10);
 					s = 0;
 					dateStr = y + '-' + fixDoubleZero(m) + '-' + fixDoubleZero(d) + 'T' + fixDoubleZero(h) + ':' + fixDoubleZero(mm) + ':' + fixDoubleZero(s) + scope.timeZone.offset;
-
-					// For debug purpose:
-					$(elm).find('.fullDateString').html(dateStr + ' &mdash; ' + new Date(dateStr).toUTCString());
-
 					return new Date(dateStr);
 				}
 

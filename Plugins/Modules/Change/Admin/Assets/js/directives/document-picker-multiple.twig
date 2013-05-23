@@ -28,7 +28,7 @@
 			class="btn"
 			data-ng-click="getFromClipboard()"
 			data-ng-disabled="clipboardValues.length == 0"
-			title="Prendre dans le Presse-papier(=clipboardFirstLabel=)"><i class="icon-bookmark"></i></button>
+			title="Prendre dans le Presse-papier(=clipboardFirstLabel=)"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
 	</div>
 </div>
 

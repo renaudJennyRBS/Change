@@ -39,19 +39,69 @@
 				scope.$watch('textSearch', initSearch, true);
 
 
+				//
+				// Load Model's information.
+				//
+				function loadModelsInfo () {
+					var promise = REST.modelInfo(scope.model)
+					promise.then(function (modelInfo) {
+						modelMeta = modelInfo.metas;
+
+						if (modelMeta.publishable && ! modelInfo.properties.hasOwnProperty("published")) {
+							modelInfo.properties.published = {
+								"name" : "published",
+								"type" : "Boolean"
+							};
+						}
+
+						forEach(modelInfo.properties, function (propertyObj, name) {
+
+							propertyObj.name = name;
+
+							// FIXME Localization
+							if (name === 'publicationStatus') {
+								propertyObj.possibleValues = [
+									{ "value" : "DRAFT",       "label" : "Brouillon" },
+									{ "value" : "DEACTIVATED", "label" : "Désactivé" },
+									{ "value" : "PUBLISHABLE", "label" : "Publiable" },
+									{ "value" : "ACTIVE",      "label" : "Activé" },
+									{ "value" : "VALIDATION",  "label" : "En cours de validation"}
+								];
+							}
+
+							// FIXME Find another way to determine which selector to use?
+							if (propertyObj.type === 'Document') {
+								switch (propertyObj.documentType) {
+									case 'Change_Website_Website' :
+									case 'Change_Theme_PageTemplate' :
+										propertyObj.selectorType = 'dropdown';
+										break;
+								}
+							}
+
+						});
+
+						scope.availableFilters = modelInfo.properties;
+					});
+					return promise;
+				}
+
+
 				function initSearch (textSearch) {
 					if (textSearch) {
-						elm.show();
-						if (textSearch === '...') {
-							textSearch = '';
-						}
-						ArrayUtils.clear(scope.appliedFilters);
-						parseQuery(textSearch);
+						loadModelsInfo().then(function () {
+							elm.show();
+							if (textSearch === '...') {
+								textSearch = '';
+							}
+							ArrayUtils.clear(scope.appliedFilters);
+							parseQuery(textSearch);
 
-						// Apply filter if there is a value.
-						if (textSearch) {
-							scope.applyFilters();
-						}
+							// Apply filter if there is a value.
+							if (textSearch) {
+								scope.applyFilters();
+							}
+						});
 					}
 				}
 
@@ -148,50 +198,6 @@
 
 				}
 
-				//
-				// Load Model's information.
-				//
-
-				REST.modelInfo(scope.model).then(function (modelInfo) {
-					modelMeta = modelInfo.metas;
-
-					if (modelMeta.publishable && ! modelInfo.properties.hasOwnProperty("published")) {
-						modelInfo.properties.published = {
-							"name" : "published",
-							"type" : "Boolean"
-						};
-					}
-
-					forEach(modelInfo.properties, function (propertyObj, name) {
-
-						propertyObj.name = name;
-
-						// FIXME Localization
-						if (name === 'publicationStatus') {
-							propertyObj.possibleValues = [
-								{ "value" : "DRAFT",       "label" : "Brouillon" },
-								{ "value" : "DEACTIVATED", "label" : "Désactivé" },
-								{ "value" : "PUBLISHABLE", "label" : "Publiable" },
-								{ "value" : "ACTIVE",      "label" : "Activé" },
-								{ "value" : "VALIDATION",  "label" : "En cours de validation"}
-							];
-						}
-
-						// FIXME Find another way to determine which selector to use?
-						if (propertyObj.type === 'Document') {
-							switch (propertyObj.documentType) {
-							case 'Change_Website_Website' :
-							case 'Change_Theme_PageTemplate' :
-								propertyObj.selectorType = 'dropdown';
-								break;
-							}
-						}
-
-					});
-
-					scope.availableFilters = modelInfo.properties;
-				});
-
 
 				//
 				// Filters manipulation.
@@ -256,8 +262,10 @@
 				};
 
 
-				scope.$watch('operator', function () {
-					scope.applyFilters();
+				scope.$watch('operator', function (oldVal, newVal) {
+					if (oldVal && newVal && oldVal !== newVal) {
+						scope.applyFilters();
+					}
 				}, true);
 
 

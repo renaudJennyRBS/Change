@@ -14,9 +14,8 @@
 	 * @param MainMenu
 	 * @constructor
 	 */
-	function PageTemplateListController ($scope, DocumentList, Breadcrumb, MainMenu) {
-
-		var DL = DocumentList.initScope($scope, 'Change_Theme_PageTemplate');
+	function ListController ($scope, $routeParams, DocumentList, Breadcrumb, MainMenu, REST) {
+		var DL = DocumentList.initScope($scope);
 
 		DL.viewMode = 'list';
 		DL.sort.column = 'nodeOrder';
@@ -29,21 +28,27 @@
 		];
 
 		// Configure DataTable columns
-		DL.columns.push({ id: 'modificationDate', label: "Dernière modif.", sortable: true });
-		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center", sortable: true });
+		DL.columns.push({ id: 'modificationDate', label: "Dernière modif." });
+		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center" });
+
+		REST.resource($routeParams.theme).then(function (theme) {
+			Breadcrumb.setPath([theme]);
+			console.log("treeUrl for theme: ", theme.url('tree'));
+			DL.query = {"model":"Change_Theme_PageTemplate","where":{"and":[{"op":"eq","lexp":{"property":"theme"},"rexp":{"value":theme.id}}]}};
+			DL.reload();
+		});
 
 		MainMenu.loadModuleMenu('Change_Theme');
-
 	}
 
-	PageTemplateListController.$inject = [
-		'$scope',
+	ListController.$inject = [
+		'$scope', '$routeParams',
 		'RbsChange.DocumentList',
 		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu'
+		'RbsChange.MainMenu',
+		'RbsChange.REST'
 	];
-	app.controller('Change_Theme_PageTemplate_ListController', PageTemplateListController);
-
+	app.controller('Change_Theme_PageTemplate_ListController', ListController);
 
 	/**
 	 * Controller for PageTemplate form.
@@ -53,18 +58,24 @@
 	 * @param FormsManager
 	 * @constructor
 	 */
-	function PageTemplateFormController ($scope, Breadcrumb, FormsManager) {
+	function FormController ($scope, $routeParams, Breadcrumb, FormsManager, REST) {
 
 		Breadcrumb.setLocation([["Thèmes", "Change/Theme"]]);
-		FormsManager.initResource($scope, 'Change_Theme_PageTemplate');
-
+		FormsManager.initResource($scope, 'Change_Theme_PageTemplate').then(function (pageTemplate) {
+			console.log("loading theme ", pageTemplate.theme);
+			REST.resource(pageTemplate.theme).then(function (theme) {
+				console.log("loaded OK ", theme);
+				Breadcrumb.setPath([theme]);
+			});
+		});
 	}
 
-	PageTemplateFormController.$inject = [
-		'$scope',
+	FormController.$inject = [
+		'$scope', '$routeParams',
 		'RbsChange.Breadcrumb',
-		'RbsChange.FormsManager'
+		'RbsChange.FormsManager',
+		'RbsChange.REST'
 	];
-	app.controller('Change_Theme_PageTemplate_FormController', PageTemplateFormController);
+	app.controller('Change_Theme_PageTemplate_FormController', FormController);
 
 })();

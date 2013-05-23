@@ -554,9 +554,15 @@
 
 			if (resourceUrl) {
 				if (angular.isObject(resourceUrl)) {
-					resourceUrl = Utils.makeUrl(resourceUrl.url, resourceUrl.params);
+					if (angular.isObject(resourceUrl.where) && angular.isString(resourceUrl.model)) {
+						DL.query = resourceUrl;
+					} else {
+						resourceUrl = Utils.makeUrl(resourceUrl.url, resourceUrl.params);
+						DL.setResourceUrl(resourceUrl);
+					}
+				} else {
+					DL.setResourceUrl(resourceUrl);
 				}
-				DL.setResourceUrl(resourceUrl);
 			}
 
 			$scope.$watch(instanceName + '.viewMode', function () {
@@ -575,9 +581,11 @@
 				$scope.$broadcast('Change:DocumentList.Changed', DL);
 			});
 
-			$scope.$watch(instanceName + '.query', function () {
+			$scope.$watch(instanceName + '.query', function (newVal, oldVal) {
 				DL.pagination.offset = 0;
-				DL.reload();
+				if (!DL.loading) {
+					DL.reload();
+				}
 			});
 
 			$scope.location = $location;
@@ -610,9 +618,7 @@
 					if (isNaN(treeNodeId) || !treeNodeId) {
 						if (DL.defaultTreeName) {
 							DL.setTreeName(DL.defaultTreeName);
-						}
-						else
-						{
+						} else {
 							DL.reload();
 						}
 					} else {

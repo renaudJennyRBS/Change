@@ -17,16 +17,16 @@
 			<textarea class="input-block-level" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"></textarea>
 			{% endif %}
 			{% if help %}
-				<span class="help-block">
-					{{ help|raw }}
-				</span>
+			<span class="help-block">
+				{{ help|raw }}
+			</span>
 			{% endif %}
 		</div>
 	</div>
 {% endmacro %}
 
 {% macro readonly(name, label, help) %}
-	<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
+	<div class="control-group" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
 		<label class="control-label" for="{{ name }}">{{ label }}</label>
 		<div class="controls">
 			<span class="uneditable-input input-block-level" id="{{ name }}" name="{{ name }}">(=document.{{ name }}=)</span>

@@ -46,7 +46,11 @@
 
 				var replaceParams = function (urlTpl, paramsObj) {
 					angular.forEach(urlTpl.match(/:(\w+)/g), function (match) {
-						urlTpl = urlTpl.replace(new RegExp(match, 'g'), paramsObj[match.slice(1)] || '');
+						var value = paramsObj[match.slice(1)] || '';
+						if (Utils.isDocument()) {
+							value = value.id;
+						}
+						urlTpl = urlTpl.replace(new RegExp(match, 'g'), value);
 					});
 					// Replace multiple '/' by only one '/'.
 					return urlTpl.replace(/\/+/g, '/');
@@ -150,19 +154,18 @@
 	// Filters
 
 
-	app.filter('documentURL', ['RbsChange.UrlManager', '$log', function documentURLFilter (UrlManager, $log) {
+	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', function (Breadcrumb, Utils) {
 
-		return function (doc, params, name) {
-			// This filter may be called while the `doc` is not loaded/instanciated yet.
-			if (!doc || !doc.id) {
+		return function (doc, urlName) {
+			if ( ! Utils.isDocument(doc) ) {
 				return 'javascript:;';
 			}
-			try {
-				return UrlManager.getUrl(doc, params, name);
-			} catch (e) {
-				$log.error("Error while getting URL for: ", doc, e);
-				return 'javascript:;';
+			var	url = doc.url(urlName),
+				node = Breadcrumb.getCurrentNode();
+			if (urlName !== 'tree' && Utils.isTreeNode(node)) {
+				url += '?tn=' + node.id;
 			}
+			return url;
 		};
 
 	}]);

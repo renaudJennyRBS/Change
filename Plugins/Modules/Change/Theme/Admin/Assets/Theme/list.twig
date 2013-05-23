@@ -1,8 +1,8 @@
-<div data-ng-controller="Change_Theme_PageTemplate_ListController">
+<div data-ng-controller="Change_Theme_Theme_ListController">
 
-	<page-header title="Modèles de page"></page-header>
+	<page-header title="Thèmes"></page-header>
 
-	<search-filters model="Change_Theme_PageTemplate" query="DL.query" text-search="textSearch"></search-filters>
+	<search-filters model="Change_Theme_Theme" query="DL.query" text-search="textSearch"></search-filters>
 
 	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
 
@@ -20,10 +20,13 @@
 		<thead>
 			<tr>
 				<th style="text-align: center; width: 30px;"><input type="checkbox" data-ng-model="DL.cbSelectAll" data-ng-change="DL.toggleSelectAll()" /></th>
-				<th data-ng-repeat="column in DL.columns" style="text-align: (=column.align=); width: (=column.width=);" data-ng-class="{true:'sorted'}[DL.isSortedOn(column.id)]"><a
-					href data-ng-href="(=DL.headerUrl(column.id)=)">(=column.label=) <i class="column-sort-indicator"
-						data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn(column.id)"></i>
-				</a></th>
+				<th data-ng-repeat="column in DL.columns" style="text-align: (=column.align=); width: (=column.width=);" data-ng-class="{true:'sorted'}[DL.isSortedOn(column.id)]">
+					<a	data-ng-show="column.sortable" data-ng-href="(=DL.headerUrl(column.id)=)">
+						(=column.label=)
+						<i class="column-sort-indicator" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn(column.id)"></i>
+					</a>
+					<span data-ng-show="!column.sortable">(=column.label=)</span>
+				</th>
 			</tr>
 		</thead>
 
@@ -37,12 +40,18 @@
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
+
 					<a href ng-href="(= doc | documentURL =)">(=doc.label=)</a>
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('modificationDate')]">
 					(=doc.modificationDate | date:'medium'=)
 				</td>
+
+				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('templates')]" style="text-align: center;">
+					<a href ng-href="(= doc | documentURL:'tree' =)">Lister <i class="icon-circle-arrow-right"></i></a>
+				</td>
+
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('activated')]" style="text-align: center;">
 					<status-switch document="doc"/>
 				</td>

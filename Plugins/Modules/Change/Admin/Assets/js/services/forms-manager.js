@@ -49,7 +49,7 @@
 				contents;
 
 			// Check circular cascade:
-			if (ArrayUtils.inArray(queryParam.id, idStack) !== -1) {
+			if (queryParam && ArrayUtils.inArray(queryParam.id, idStack) !== -1) {
 				return i18n.trans('m.change.admin.admin.js.document-is-already-being-edited | ucf');
 			}
 
@@ -64,7 +64,9 @@
 				'saveCallback' : saveCallback,
 				'queryParam'   : queryParam
 			};
-			idStack.push(queryParam.id);
+			if (queryParam) {
+				idStack.push(queryParam.id);
+			}
 
 			// Slides up the current form.
 			$form = $ws.children('.document-form').last();
@@ -72,7 +74,6 @@
 
 			// Load and insert the new cascaded form.
 			$.get(formUrl, function (html) {
-				///// MainMenu.pushContents();
 				// Create a new isolated scope for the new form.
 				var scope = angular.element($ws).scope().$new(true);
 				if (queryParam && queryParam.lang) {
@@ -116,7 +117,7 @@
 		 */
 		this.uncascade = function (doc) {
 
-			if (cascadeContext && angular.isFunction(cascadeContext.saveCallback)) {
+			if (cascadeContext && doc !== null && angular.isFunction(cascadeContext.saveCallback)) {
 				cascadeContext.saveCallback(doc);
 			}
 
