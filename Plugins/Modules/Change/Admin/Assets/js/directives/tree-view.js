@@ -20,15 +20,6 @@
 
 			defaultTreeFunctions = {
 
-				'icons' : {
-					"Change_Generic_Folder"     : "icon-folder-open",
-					"Change_Generic_Folder/0"   : "icon-folder-close",
-					"Change_Website_Topic"      : "icon-folder-close",
-					"Change_Website_Topic/0"    : "icon-folder-close-alt",
-					"Change_Website_StaticPage" : "icon-file"
-				},
-
-
 				'buildNodeLabel' : function (rsc, attrs) {
 					var label;
 
@@ -214,7 +205,7 @@
 						"themes" : {
 							"theme" : "bootstrap",
 							"dots"  : false,
-							"icons" : true
+							"icons" : attrs.hideIcons === 'true' ? false : true
 						}
 					});
 
@@ -291,7 +282,7 @@
 							.success(
 								function (data) {
 									rootNode = data.resources[0];
-									jsTree = treeObject.initTree(elm, data.resources[0].link.href + '/', attrs, breadcrumbChangedFn);
+									jsTree = treeObject.initTree(elm, rootNode.link.href + '/', attrs, breadcrumbChangedFn);
 								}
 							);
 
