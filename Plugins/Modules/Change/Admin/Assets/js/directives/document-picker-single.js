@@ -15,7 +15,6 @@
 
 			scope       : true,
 
-
 			link: function (scope, iElement, attrs, ngModel) {
 
 				var	$el = $(iElement),
