@@ -71,7 +71,7 @@
 				}
 			});
 
-			$("#chgMainMenuTree a[href]").each(function () {
+			$(".jstree a[href]").each(function () {
 				var href = $(this).attr('href');
 				if (href === currentUrl || href === currentPath || href === absUrl) {
 					$(this).addClass("jstree-clicked");
