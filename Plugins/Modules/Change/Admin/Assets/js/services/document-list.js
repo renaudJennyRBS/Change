@@ -374,6 +374,8 @@
 
 				this.documents = response.resources;
 				this.pagination.total = response.pagination.count;
+
+				this.$scope.$broadcast('Change:DocumentList.Changed', this);
 			},
 
 
