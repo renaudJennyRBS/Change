@@ -11,9 +11,8 @@
 			'RbsChange.ArrayUtils',
 			'RbsChange.Utils',
 			'RbsChange.REST',
-			'$log',
 
-			function ($rootScope, $document, $location, ArrayUtils, Utils, REST, $log) {
+			function ($rootScope, $document, $location, ArrayUtils, Utils, REST) {
 
 				var location = [],
 				    path = [],
@@ -64,7 +63,7 @@
 					},
 
 					resetLocation : function (loc) {
-						if ( ! angular.equals(location, loc) && ! this.isFrozen() ) {
+						if ( path.length || (! angular.equals(location, loc) && ! this.isFrozen()) ) {
 							location = loc;
 							ArrayUtils.clear(path);
 							resource = null;
@@ -99,7 +98,9 @@
 
 					goParent : function () {
 						var node = this.getCurrentNode();
-						if (node && node.treeUrl()) {
+						if (angular.isArray(node) && node.length === 2) {
+							$location.url(node[1]);
+						} else if (node && node.treeUrl && node.treeUrl()) {
 							$location.url(node.treeUrl());
 						} else if (location.length) {
 							$location.url(location[location.length-1][1]);
@@ -191,22 +192,28 @@
 
 							// Success:
 							function (treeNode) {
-								// Load tree ancestors of the current TreeNode to update the breadcrumb.
-								REST.treeAncestors(treeNode).then(
 
-									// Success:
-									function (ancestors) {
-										loading = false;
-										currentTreeNodeId = treeNodeId;
-										breadcrumbService.setPath(ancestors.resources);
-										$rootScope.website = breadcrumbService.getWebsite();
-									},
+								if (Utils.isTreeNode(treeNode)) {
+									// Load tree ancestors of the current TreeNode to update the breadcrumb.
+									REST.treeAncestors(treeNode).then(
 
-									// Error:
-									function () {
-										loading = false;
-									}
-								);
+										// Success:
+										function (ancestors) {
+											loading = false;
+											currentTreeNodeId = treeNodeId;
+											breadcrumbService.setPath(ancestors.resources);
+											$rootScope.website = breadcrumbService.getWebsite();
+										},
+
+										// Error:
+										function () {
+											loading = false;
+										}
+									);
+								} else {
+									loading = false;
+									breadcrumbService.setPath([[treeNode.label, treeNode.url()]]);
+								}
 							},
 
 							// Error:
