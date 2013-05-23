@@ -146,8 +146,6 @@
 			 * Sends the changes to the server, via a POST (creation) or a PUT (update) request.
 			 */
 			scope.submit = function submitFn () {
-				var promise = null;
-
 				function doSubmit () {
 					Actions.execute(
 						'save',
@@ -160,7 +158,7 @@
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
-				// Call "beforeSave" which can be overwritten in the Scope.
+				// Call "beforeSave" which can be defined in the Scope.
 				if (angular.isFunction(scope.beforeSave)) {
 					scope.beforeSave(scope.document);
 				}
@@ -168,11 +166,7 @@
 				// "preSubmit" is not meant to be overwritten: it is implemented in the "form-button-bar"
 				// directive to ask the user what to do when the edited document has a correction.
 				if (angular.isFunction(scope.preSubmit)) {
-					promise = scope.preSubmit(scope.document);
-				}
-
-				if (promise) {
-					promise.then(doSubmit);
+					scope.preSubmit(scope.document).then(doSubmit);
 				} else {
 					doSubmit();
 				}
@@ -214,10 +208,10 @@
 			};
 
 			scope.hasCorrectionOnProperty = function hasCorrectionOnPropertyFn (property) {
-				return scope.document
-					&& scope.document.META$
-					&& scope.document.META$.correction
-					&& ArrayUtils.inArray(property, scope.document.META$.correction.propertiesNames) !== -1;
+				return scope.document &&
+					scope.document.META$ &&
+					scope.document.META$.correction &&
+					ArrayUtils.inArray(property, scope.document.META$.correction.propertiesNames) !== -1;
 			};
 
 			scope.hasCorrection = function hasCorrectionFn () {
