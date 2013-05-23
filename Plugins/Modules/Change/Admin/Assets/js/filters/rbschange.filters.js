@@ -360,22 +360,6 @@
 	});
 
 
-	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', function (Breadcrumb, Utils) {
-
-		return function (doc, urlName) {
-			if (!Utils.isDocument(doc)) {
-				return 'javascript:;';
-			}
-			var node = Breadcrumb.getCurrentNode();
-			if (node && urlName !== 'tree') {
-				return doc.url(urlName) + '?tn=' + node.id;
-			}
-			return doc.url(urlName);
-		};
-
-	}]);
-
-
 	app.filter('maxNumber', ['$filter', function ($filter) {
 
 		return function (input, max) {

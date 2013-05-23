@@ -1,0 +1,34 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+
+	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+
+		{{ forms.field('name', 'String',
+			i18n('m.change.theme.document.theme.name', ['ucf']),
+			true,
+			i18n('m.change.theme.document.theme.name-help')
+		) }}
+
+		{{ forms.field('label', 'String',
+			i18n('m.change.theme.document.theme.label', ['ucf']),
+			true
+		) }}
+
+		{{ forms.picker('parentTheme', 'Change_Theme_Theme',
+			i18n('m.change.theme.document.theme.parent-theme', ['ucf']),
+			true
+		) }}
+
+    </fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="État"
+		data-form-section-group="Informations"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+
+</form>
