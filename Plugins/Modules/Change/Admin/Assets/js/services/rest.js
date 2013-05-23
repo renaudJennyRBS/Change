@@ -773,7 +773,7 @@
 
 						q.promise.then(function (ancestors) {
 							// Ship Root folder that is useless in the Backoffice UI.
-							if (ancestors.resources[0].model === "Change_Generic_Folder") {
+							if (ancestors.resources.length >= 1 && ancestors.resources[0].model === "Change_Generic_Folder") {
 								ancestors.resources.shift();
 							}
 							ancestors.resources.push(resource);
