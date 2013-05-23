@@ -1,0 +1,36 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
+		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
+		{{ forms.field('label', 'String', i18n('m.change.catalog.document.category.label', ['ucf']), true) }}
+		{{ forms.field('description', 'LongString', i18n('m.change.catalog.document.category.description', ['ucf']), false) }}
+		{{ forms.picker('visual', 'Change_Media_Image',
+			i18n('m.change.catalog.document.category.visual', ['ucf']),
+			false, null, i18n('m.change.catalog.document.category.select-visual', ['ucf']))
+		}}
+		<div class="control-group property">
+			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.category.startpublication', ['ucf']) }}</label>
+			<div class="controls">
+				<date-selector data-ng-model="document.startPublication" name="startPublication"></date-selector>
+			</div>
+		</div>
+
+		<div class="control-group property">
+			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.category.endpublication', ['ucf'])}}</label>
+			<div class="controls">
+				<date-selector data-ng-model="document.endPublication" name="endPublication"></date-selector>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
+		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
