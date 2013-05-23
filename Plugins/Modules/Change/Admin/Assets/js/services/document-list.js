@@ -76,7 +76,7 @@
 			this.allSelected = false;
 			this.lastCheckedIndex = -1;
 
-			this.loading = true;
+			this.loading = false;
 
 			this.thumbnailsSize = 'normal';
 			this.availableViewModes = {
@@ -467,7 +467,9 @@
 			setTreeName : function (treeName) {
 				var self = this;
 				REST.treeNode(REST.treeUrl(treeName)).then(function (data) {
-					self.setTreeNodeId(data.resources[0].id);
+					if (data.resources.length) {
+						self.setTreeNodeId(data.resources[0].id);
+					}
 				});
 			},
 

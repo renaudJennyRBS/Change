@@ -13,26 +13,18 @@
 
 		function ($http, REST, ArrayUtils, Breadcrumb, MainMenu) {
 
-			var TREE_NODE_ID_PREFIX,
-			    defaultTreeFunctions;
+			var	TREE_NODE_ID_PREFIX,
+				defaultTreeFunctions,
+				loadingRootNode;
 
 			TREE_NODE_ID_PREFIX = 'chgTreeNode_';
 
 			defaultTreeFunctions = {
 
-				'icons' : {
-					"Change_Generic_Folder"     : "icon-folder-open",
-					"Change_Generic_Folder/0"   : "icon-folder-close",
-					"Change_Website_Topic"      : "icon-folder-close",
-					"Change_Website_Topic/0"    : "icon-folder-close-alt",
-					"Change_Website_StaticPage" : "icon-file"
-				},
-
-
 				'buildNodeLabel' : function (rsc, attrs) {
 					var label;
 
-					label = rsc.document.label;
+					label = loadingRootNode && attrs.rootNodeLabel ? attrs.rootNodeLabel : rsc.document.label;
 					if (rsc.childrenCount && attrs.showChildCount === 'true') {
 						label += ' (' + rsc.childrenCount + ')';
 					}
@@ -169,12 +161,15 @@
 
 								"url" : function (node) {
 									if (node === -1) {
+										loadingRootNode = true;
 										return rootUrl;
 									}
+									loadingRootNode = false;
 									return node.data('NODE$').url + '/';
 								},
 
 								"success" : function (data) {
+									console.log("success: data=", data);
 									var nodes = [];
 									if (data.resources.length > 0) {
 										angular.forEach(data.resources, function (rsc) {
@@ -214,7 +209,7 @@
 						"themes" : {
 							"theme" : "bootstrap",
 							"dots"  : false,
-							"icons" : true
+							"icons" : attrs.hideIcons === 'true' ? false : true
 						}
 					});
 
@@ -291,7 +286,7 @@
 							.success(
 								function (data) {
 									rootNode = data.resources[0];
-									jsTree = treeObject.initTree(elm, data.resources[0].link.href + '/', attrs, breadcrumbChangedFn);
+									jsTree = treeObject.initTree(elm, rootNode.link.href + '/', attrs, breadcrumbChangedFn);
 								}
 							);
 

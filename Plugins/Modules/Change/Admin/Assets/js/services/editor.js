@@ -165,8 +165,13 @@
 
 				// "preSubmit" is not meant to be overwritten: it is implemented in the "form-button-bar"
 				// directive to ask the user what to do when the edited document has a correction.
+				var promise;
 				if (angular.isFunction(scope.preSubmit)) {
-					scope.preSubmit(scope.document).then(doSubmit);
+					promise = scope.preSubmit(scope.document);
+				}
+
+				if (promise) {
+					promise.then(doSubmit);
 				} else {
 					doSubmit();
 				}
