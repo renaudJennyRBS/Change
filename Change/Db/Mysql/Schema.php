@@ -107,6 +107,18 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 					->addField($td->getField('vendor'))
 					->addField($td->getField('name')));
 
+			$this->tables['change_storage'] = $td = $schemaManager->newTableDefinition('change_storage');
+			$td->addField($schemaManager->newIntegerFieldDefinition('item_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newVarCharFieldDefinition('store_name', array('length' => 50))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('store_path', array('length' => 255))->setNullable(false))
+				->addField($schemaManager->newTextFieldDefinition('infos'))
+				->addKey($this->newPrimaryKey()
+					->addField($td->getField('item_id')))
+				->addKey($this->newUniqueKey()->setName('path')
+					->addField($td->getField('store_name'))
+					->addField($td->getField('store_path')))
+				->setOption('AUTONUMBER', 1);
+
 		}
 		return $this->tables;
 	}

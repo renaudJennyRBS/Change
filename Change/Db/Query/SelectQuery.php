@@ -288,7 +288,7 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param \Closure|array $rowConverter
-	 * @return array row
+	 * @return array|null row
 	 */
 	public function getFirstResult($rowConverter = null)
 	{
