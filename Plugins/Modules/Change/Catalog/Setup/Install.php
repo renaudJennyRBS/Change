@@ -40,14 +40,32 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 		{
 			/* @var $pluginManager PluginManager */
 			$pluginManager = $event->getTarget();
-			return $pluginManager->getModule($vendor, $name)->setPackage('ecom')->setConfigurationEntry('locked', true);
+			return $pluginManager->getModule($vendor, $name)->setPackage('core')->setConfigurationEntry('locked', true);
 		};
 
 		$eventNames = array(
 			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'ecom'),
+				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
 			PluginManager::composeEventName(
 				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
+		);
+		$events->attach($eventNames, $callBack, 5);
+
+		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
+		{
+			/* @var $documentServices \Change\Documents\DocumentServices */
+			$documentServices = $event->getParam('documentServices');
+			$this->executeServices($documentServices);
+			/* @var $pluginManager PluginManager */
+			$pluginManager = $event->getTarget();
+
+			$pluginManager->getModule($vendor, $name)->setConfigurationEntry(PluginManager::EVENT_SETUP_SERVICES, 'Ok');
+		};
+		$eventNames = array(
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_SERVICES, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_SERVICES, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
 		);
 		$events->attach($eventNames, $callBack, 5);
 	}
@@ -59,5 +77,21 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	public function detach(\Zend\EventManager\EventManagerInterface $events)
 	{
 		// TODO: Implement detach() method.
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	protected function executeServices($documentServices)
+	{
+		$rootNode = $documentServices->getTreeManager()->getRootNode('Change_Catalog');
+		if (!$rootNode)
+		{
+			/* @var $folder \Change\Generic\Documents\Folder */
+			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+			$folder->setLabel('Change_Catalog');
+			$folder->create();
+			$documentServices->getTreeManager()->insertRootNode($folder, 'Change_Catalog');
+		}
 	}
 }
