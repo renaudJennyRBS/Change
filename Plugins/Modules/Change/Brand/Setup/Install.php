@@ -1,5 +1,5 @@
 <?php
-namespace Change\Admin\Setup;
+namespace Change\Brand\Setup;
 
 use Change\Plugins\PluginManager;
 
@@ -22,7 +22,7 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	 */
 	protected function getName()
 	{
-		return 'admin';
+		return 'brand';
 	}
 
 	/**
@@ -40,12 +40,12 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 		{
 			/* @var $pluginManager PluginManager */
 			$pluginManager = $event->getTarget();
-			return $pluginManager->getModule($vendor, $name)->setPackage('core')->setConfigurationEntry('locked', true);
+			return $pluginManager->getModule($vendor, $name)->setPackage('ecom')->setConfigurationEntry('locked', true);
 		};
 
 		$eventNames = array(
 			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
+				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'ecom'),
 			PluginManager::composeEventName(
 				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
 		);
