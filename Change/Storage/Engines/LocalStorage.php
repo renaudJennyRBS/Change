@@ -217,7 +217,54 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function rename($parsedUrlFrom, $pathTo)
 	{
-		//TODO not implemeted
+		$fromFileName = $this->basePath;
+		if (isset($parsedUrlFrom['path']))
+		{
+			$fromFileName .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrlFrom['path']);
+		}
+		if (!file_exists($fromFileName))
+		{
+			throw new \RuntimeException('Invalid From file', 999999);
+		}
+		$toItem = $this->getStorageManager()->getItemInfo($pathTo);
+		if ($toItem === null)
+		{
+			throw new \RuntimeException('Invalid Storage', 999999);
+		}
+
+		if ($toItem->getStorageEngine()->getName() === $this->getName())
+		{
+			$parsedUrlTo = parse_url($pathTo);
+			$toFileName = $this->basePath;
+			if (isset($parsedUrlTo['path']))
+			{
+				$toFileName .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrlTo['path']);
+			}
+			return @rename($fromFileName, $toFileName);
+		}
+
+		if (is_dir($fromFileName))
+		{
+			throw new \RuntimeException('Invalid From directory', 999999);
+		}
+
+		if (file_exists($pathTo))
+		{
+			throw new \RuntimeException('Destination already exist', 999999);
+		}
+
+		if (@copy($fromFileName, $pathTo))
+		{
+			if (@unlink($fromFileName))
+			{
+				return true;
+			}
+			else
+			{
+				@unlink($pathTo);
+				return false;
+			}
+		}
 		return false;
 	}
 
