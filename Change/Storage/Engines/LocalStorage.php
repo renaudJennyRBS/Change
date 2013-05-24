@@ -19,7 +19,7 @@ class LocalStorage extends AbstractStorage
 	/**
 	 * @var string
 	 */
-	protected $filename;
+	protected $path;
 
 	/**
 	 * @param string $basePath
@@ -30,18 +30,57 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
+	 * @param string $url
+	 * @return string|null
+	 */
+	public function getMimeType($url)
+	{
+		$infos = parse_url($url);
+		if ($infos)
+		{
+			if (!isset($infos['path']))
+			{
+				$infos['path'] = '/';
+			}
+			if (class_exists('finfo', false))
+			{
+				$filename = $this->basePath . $infos['path'];
+				$fi = new \finfo(FILEINFO_MIME_TYPE);
+				$mimeType = $fi->file($filename);
+				if ($mimeType)
+				{
+					return $mimeType;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @param string $path
+	 * @return string
+	 */
+	public function normalizePath($path)
+	{
+		$search = array(DIRECTORY_SEPARATOR, '%', ' ', ':', '*', '?', '"', '<', '>', '|');
+		$replace = array('/', '_', '_', '_', '_', '_', '_', '_', '_', '_');
+		return str_replace($search, $replace, $path);
+	}
+
+	/**
+	 * @param array $parsedUrl
 	 * @param string $mode
 	 * @param integer $options
 	 * @param string $opened_path
 	 * @param resource $context
 	 * @return boolean
 	 */
-	public function stream_open($path, $mode, $options, &$opened_path, &$context)
+	public function stream_open($parsedUrl, $mode, $options, &$opened_path, &$context)
 	{
-		$this->filename = $this->basePath . $path;
-		\Change\StdLib\File::mkdir(dirname($this->filename));
-		$this->resource = @fopen($this->filename, $mode);
+		$this->path = $parsedUrl['path'];
+		$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+		\Change\StdLib\File::mkdir(dirname($fileName));
+		$this->resource = @fopen($fileName, $mode);
 		return is_resource($this->resource);
 	}
 
@@ -70,6 +109,12 @@ class LocalStorage extends AbstractStorage
 	{
 		fclose($this->resource);
 		unset($this->resource);
+		if ($this->useDBStat)
+		{
+			$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+			$infos = array('stats' => @stat($fileName));
+			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->path, $infos);
+		}
 	}
 
 	/**
@@ -87,7 +132,140 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function url_stat($path, $flags)
 	{
-		$filename = $this->basePath . $path;
+		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $path);
+		if ((STREAM_URL_STAT_QUIET & $flags) === STREAM_URL_STAT_QUIET)
+		{
+			return @stat($filename);
+		}
 		return stat($filename);
+	}
+
+	/**
+	 * @param array $parsedUrl
+	 * @param integer $options
+	 * @return boolean
+	 */
+	public function dir_opendir($parsedUrl, $options)
+	{
+		$this->path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
+		$dirName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+		$this->resource = @opendir($dirName);
+		return is_resource($this->resource);
+	}
+
+	/**
+	 * @return  string|false
+	 */
+	public function dir_readdir()
+	{
+		return @readdir($this->resource);
+	}
+
+	/**
+	 * @return  boolean Returns TRUE on success or FALSE on failure.
+	 */
+	public function dir_rewinddir()
+	{
+		return @rewinddir($this->resource);
+	}
+
+	/**
+	 * @return  boolean Returns TRUE on success or FALSE on failure.
+	 */
+	public function dir_closedir()
+	{
+		$res = @closedir($this->resource);
+		$this->resource = null;
+		return $res;
+	}
+
+	/**
+	 * @param array $parsedUrl
+	 * @return  boolean Returns TRUE on success or FALSE on failure.
+	 */
+	public function unlink($parsedUrl)
+	{
+		$filename = $this->basePath;
+		if (isset($parsedUrl['path']))
+		{
+			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+		}
+		return @unlink($filename);
+	}
+
+	/**
+	 * @param array $parsedUrl
+	 * @param   integer  $mode      The value passed to {@see mkdir()}.
+	 * @param   integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+	 * @return  boolean             Returns TRUE on success or FALSE on failure.
+	 */
+	public function mkdir($parsedUrl, $mode, $options)
+	{
+		$filename = $this->basePath;
+		if (isset($parsedUrl['path']))
+		{
+			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+		}
+		$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
+		return @mkdir($filename, $mode, $recursive);
+	}
+
+	/**
+	 * @param array $parsedUrlFrom The URL to the current file.
+	 * @param string $pathTo The URL which the $path_from should be renamed to.
+	 * @return  boolean Returns TRUE on success or FALSE on failure.
+	 */
+	public function rename($parsedUrlFrom, $pathTo)
+	{
+		//TODO not implemeted
+		return false;
+	}
+
+	/**
+	 * @param array $parsedUrl
+	 * @param integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+	 * @return boolean             Returns TRUE on success or FALSE on failure.
+	 */
+	public function rmdir($parsedUrl, $options)
+	{
+		$filename = $this->basePath;
+		if (isset($parsedUrl['path']))
+		{
+			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+		}
+		//TODO Recursive ?
+		$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
+		return @rmdir($filename);
+	}
+
+	/**
+	 * @param   array   $parsedUrl
+	 * @param   integer  $option    One of:
+	 *                                  STREAM_META_TOUCH (The method was called in response to touch())
+	 *                                  STREAM_META_OWNER_NAME (The method was called in response to chown() with string parameter)
+	 *                                  STREAM_META_OWNER (The method was called in response to chown())
+	 *                                  STREAM_META_GROUP_NAME (The method was called in response to chgrp())
+	 *                                  STREAM_META_GROUP (The method was called in response to chgrp())
+	 *                                  STREAM_META_ACCESS (The method was called in response to chmod())
+	 * @param   integer  $var       If option is
+	 *                                  PHP_STREAM_META_TOUCH: Array consisting of two arguments of the touch() function.
+	 *                                  PHP_STREAM_META_OWNER_NAME or PHP_STREAM_META_GROUP_NAME: The name of the owner
+	 *                                      user/group as string.
+	 *                                  PHP_STREAM_META_OWNER or PHP_STREAM_META_GROUP: The value owner user/group argument as integer.
+	 *                                  PHP_STREAM_META_ACCESS: The argument of the chmod() as integer.
+	 * @return  boolean             Returns TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
+	 */
+	public function stream_metadata($parsedUrl, $option, $var)
+	{
+		if ($option === STREAM_META_TOUCH)
+		{
+			$filename = $this->basePath;
+			if (isset($parsedUrl['path']))
+			{
+				$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+			}
+			return @touch($filename, isset($var[0])? $var[0] : null, isset($var[1])? $var[1] : null);
+		}
+		return false;
 	}
 }

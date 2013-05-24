@@ -349,6 +349,9 @@ class Compiler
 		
 		$this->buildTree();
 		$this->validateInheritance();
-		$this->saveModelsPHPCode();
+		if (is_array($this->models) && count($this->models))
+		{
+			$this->saveModelsPHPCode();
+		}
 	}
 }

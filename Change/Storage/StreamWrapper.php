@@ -12,11 +12,18 @@ class StreamWrapper
 	protected static $storageManager;
 
 	/**
+	 * Return old value
 	 * @param StorageManager $storageManager
+	 * @return \Change\Storage\StorageManager|null
 	 */
-	public static function storageManager($storageManager)
+	public static function storageManager(StorageManager $storageManager = null)
 	{
-		static::$storageManager = $storageManager;
+		$ret = static::$storageManager;
+		if ($storageManager !== null)
+		{
+			static::$storageManager = $storageManager;
+		}
+		return $ret;
 	}
 
 	/**
@@ -28,7 +35,6 @@ class StreamWrapper
 	 * @var \Change\Storage\Engines\AbstractStorage
 	 */
 	protected $storage;
-
 
 	/**
 	 * @param   integer     $mask   The bitmask
@@ -46,7 +52,20 @@ class StreamWrapper
 	 */
 	public function __construct()
 	{
-		var_export(__METHOD__);
+
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return Engines\AbstractStorage
+	 */
+	protected function getCurrentStorage()
+	{
+		if ($this->storage)
+		{
+			return $this->storage;
+		}
+		throw new \RuntimeException('Invalid Storage', 999999);
 	}
 
 	/**
@@ -67,12 +86,11 @@ class StreamWrapper
 	 */
 	public function stream_open($path, $mode, $options, &$opened_path)
 	{
-		var_export(__METHOD__);
 		try
 		{
 			$infos = parse_url($path);
 			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->storage->stream_open($infos['path'], $mode, $options, $opened_path, $this->context);
+			return $this->getCurrentStorage()->stream_open($infos, $mode, $options, $opened_path, $this->context);
 		}
 		catch (\Exception $e)
 		{
@@ -92,8 +110,7 @@ class StreamWrapper
 	 */
 	public function stream_read($count)
 	{
-		var_export(__METHOD__);
-		return $this->storage->stream_read($count);
+		return $this->getCurrentStorage()->stream_read($count);
 	}
 
 	/**
@@ -104,8 +121,7 @@ class StreamWrapper
 	 */
 	public function stream_write($data)
 	{
-		var_export(__METHOD__);
-		return $this->storage->stream_write($data);
+		return $this->getCurrentStorage()->stream_write($data);
 	}
 
 	/**
@@ -113,8 +129,7 @@ class StreamWrapper
 	 */
 	public function stream_close()
 	{
-		var_export(__METHOD__);
-		$this->storage->stream_close();
+		$this->getCurrentStorage()->stream_close();
 	}
 
 	/**
@@ -139,36 +154,11 @@ class StreamWrapper
 	 */
 	public function stream_stat()
 	{
-		var_export(__METHOD__);
-		$this->storage->stream_stat();
+		$this->getCurrentStorage()->stream_stat();
 	}
 
 	/**
 	 * streamWrapper::url_stat — Retrieve information about a file
-	 * mode bit mask:
-	 * S_IFMT     0170000   bit mask for the file type bit fields
-	 * S_IFSOCK   0140000   socket
-	 * S_IFLNK    0120000   symbolic link
-	 * S_IFREG    0100000   regular file
-	 * S_IFBLK    0060000   block device
-	 * S_IFDIR    0040000   directory
-	 * S_IFCHR    0020000   character device
-	 * S_IFIFO    0010000   FIFO
-	 * S_ISUID    0004000   set UID bit
-	 * S_ISGID    0002000   set-group-ID bit (see below)
-	 * S_ISVTX    0001000   sticky bit (see below)
-	 * S_IRWXU    00700     mask for file owner permissions
-	 * S_IRUSR    00400     owner has read permission
-	 * S_IWUSR    00200     owner has write permission
-	 * S_IXUSR    00100     owner has execute permission
-	 * S_IRWXG    00070     mask for group permissions
-	 * S_IRGRP    00040     group has read permission
-	 * S_IWGRP    00020     group has write permission
-	 * S_IXGRP    00010     group has execute permission
-	 * S_IRWXO    00007     mask for permissions for others (not in group)
-	 * S_IROTH    00004     others have read permission
-	 * S_IWOTH    00002     others have write permission
-	 * S_IXOTH    00001     others have execute permission
 	 * @param   string  $path   The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL.
 	 *                          Other URL forms are not supported.
 	 * @param   integer $flags  Holds additional flags set by the streams API. It can hold one or more of the following
@@ -186,32 +176,25 @@ class StreamWrapper
 	 */
 	public function url_stat($path, $flags)
 	{
-		var_export(__METHOD__);
 		$infos = parse_url($path);
 		$storage = static::$storageManager->getStorageByName($infos['host']);
-		return $storage->url_stat($infos['path'], $flags);
+		if ($storage)
+		{
+			if (!isset($infos['path']))
+			{
+				$infos['path'] = '/';
+			}
+			return $storage->url_stat($infos['path'], $flags);
+		}
+		elseif ($this->maskHasFlag($flags, STREAM_URL_STAT_QUIET))
+		{
+			return false;
+		}
+		else
+		{
+			trigger_error('Storage not found: ' . $infos['host'], E_USER_WARNING);
+		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * streamWrapper::dir_opendir — Open directory handle
@@ -221,10 +204,11 @@ class StreamWrapper
 	 */
 	public function dir_opendir($path, $options)
 	{
-		var_export(__METHOD__);
 		try
 		{
-			return true;
+			$infos = parse_url($path);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->dir_opendir($infos, $options);
 		}
 		catch (\Exception $e)
 		{
@@ -238,8 +222,7 @@ class StreamWrapper
 	 */
 	public function dir_readdir()
 	{
-		var_export(__METHOD__);
-		return false;
+		return $this->getCurrentStorage()->dir_readdir();
 	}
 
 	/**
@@ -248,8 +231,7 @@ class StreamWrapper
 	 */
 	public function dir_rewinddir()
 	{
-		var_export(__METHOD__);
-		return true;
+		return $this->getCurrentStorage()->dir_rewinddir();
 	}
 
 	/**
@@ -258,8 +240,27 @@ class StreamWrapper
 	 */
 	public function dir_closedir()
 	{
-		var_export(__METHOD__);
-		return true;
+		return $this->getCurrentStorage()->dir_closedir();
+	}
+
+	/**
+	 * streamWrapper::unlink — Delete a file
+	 * @param   string   $path  The file URL which should be deleted.
+	 * @return  boolean         Returns TRUE on success or FALSE on failure.
+	 */
+	public function unlink($path)
+	{
+		try
+		{
+			$infos = parse_url($path);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->unlink($infos);
+		}
+		catch (\Exception $e)
+		{
+			trigger_error($e->getMessage(), E_USER_WARNING);
+			return false;
+		}
 	}
 
 
@@ -272,11 +273,11 @@ class StreamWrapper
 	 */
 	public function mkdir($path, $mode, $options)
 	{
-		var_export(__METHOD__);
 		try
 		{
-
-			return true;
+			$infos = parse_url($path);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->mkdir($infos, $mode, $options);
 		}
 		catch (\Exception $e)
 		{
@@ -293,11 +294,11 @@ class StreamWrapper
 	 */
 	public function rename($path_from, $path_to)
 	{
-		var_export(__METHOD__);
 		try
 		{
-
-			return true;
+			$infos = parse_url($path_from);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->rename($infos, $path_to);
 		}
 		catch (\Exception $e)
 		{
@@ -314,10 +315,11 @@ class StreamWrapper
 	 */
 	public function rmdir($path, $options)
 	{
-		var_export(__METHOD__);
 		try
 		{
-			return true;
+			$infos = parse_url($path);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->rmdir($infos, $options);
 		}
 		catch (\Exception $e)
 		{
@@ -335,7 +337,7 @@ class StreamWrapper
 
 	public function stream_cast($cast_as)
 	{
-		var_export(__METHOD__);
+		//TODO Not Implemented
 		return false;
 	}
 
@@ -348,7 +350,8 @@ class StreamWrapper
 	 */
 	public function stream_eof()
 	{
-		return true;
+		//TODO Not Implemented
+		return false;
 	}
 
 	/**
@@ -358,7 +361,8 @@ class StreamWrapper
 	 */
 	public function stream_flush()
 	{
-		return true;
+		//TODO Not Implemented
+		return false;
 	}
 
 	/**
@@ -373,6 +377,7 @@ class StreamWrapper
 
 	public function stream_lock($operation)
 	{
+		//TODO Not Implemented
 		return false;
 	}
 
@@ -395,17 +400,20 @@ class StreamWrapper
 	 *                                  PHP_STREAM_META_ACCESS: The argument of the chmod() as integer.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
 	 */
-
 	public function stream_metadata($path, $option, $var)
 	{
-		var_export(__METHOD__);
-		var_export(func_get_args());
-		return false;
+		try
+		{
+			$infos = parse_url($path);
+			$this->storage = static::$storageManager->getStorageByName($infos['host']);
+			return $this->getCurrentStorage()->stream_metadata($infos, $option, $var);
+		}
+		catch (\Exception $e)
+		{
+			//trigger_error($e->getMessage(), E_USER_WARNING);
+			return false;
+		}
 	}
-
-
-
-
 
 	/**
 	 * streamWrapper::stream_seek — Seeks to specific location in a stream
@@ -418,7 +426,7 @@ class StreamWrapper
 	 */
 	public function stream_seek($offset, $whence = SEEK_SET)
 	{
-		var_export(__METHOD__);
+		//TODO Not Implemented
 		return false;
 	}
 
@@ -441,7 +449,7 @@ class StreamWrapper
 	 */
 	public function stream_set_option($option, $arg1, $arg2)
 	{
-		var_export(__METHOD__);
+		//TODO Not Implemented
 		return false;
 	}
 
@@ -451,7 +459,7 @@ class StreamWrapper
 	 */
 	public function stream_tell()
 	{
-		var_export(__METHOD__);
+		//TODO Not Implemented
 		return 0;
 	}
 
@@ -462,29 +470,7 @@ class StreamWrapper
 	 */
 	public function stream_truncate($new_size)
 	{
-		var_export(__METHOD__);
+		//TODO Not Implemented
 		return false;
-	}
-
-
-
-	/**
-	 * streamWrapper::unlink — Delete a file
-	 * @param   string   $path  The file URL which should be deleted.
-	 * @return  boolean         Returns TRUE on success or FALSE on failure.
-	 */
-	public function unlink($path)
-	{
-		var_export(__METHOD__);
-		try
-		{
-
-			return true;
-		}
-		catch (\Exception $e)
-		{
-			trigger_error($e->getMessage(), E_USER_WARNING);
-			return false;
-		}
 	}
 }

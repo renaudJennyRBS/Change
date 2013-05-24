@@ -26,6 +26,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->registerTransactionManager($dl);
 		$this->registerI18nManager($dl);
 		$this->registerPluginManager($dl);
+		$this->registerStorageManager($dl);
 
 		parent::__construct($dl);
 
@@ -49,6 +50,11 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Plugins\PluginManager', array(
 			'workspace' => $application->getWorkspace(),
 			'sharedEventManager' => $application->getSharedEventManager()));
+
+		$im->setInjections('Change\Storage\StorageManager', array('Change\Db\DbProvider'));
+		$im->setParameters('Change\Storage\StorageManager', array(
+			'configuration' => $application->getConfiguration(),
+			'workspace' => $application->getWorkspace()));
 	}
 
 	/**
@@ -134,6 +140,31 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerStorageManager($dl)
+	{
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Storage\StorageManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+
+			->addMethod('setConfiguration', true)
+			->addMethodParameter('setConfiguration', 'configuration',
+				array('type' => 'Change\Configuration\Configuration', 'required' => true))
+
+			->addMethod('setWorkspace', true)
+			->addMethodParameter('setWorkspace', 'workspace',
+				array('type' => 'Change\Workspace', 'required' => true))
+
+			->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider',
+				array('type' => 'Change\Db\DbProvider', 'required' => true))
+
+			->addMethod('register', true);
+		$dl->addDefinition($cl);
+	}
+
+	/**
 	 * @api
 	 * @return \Change\Application
 	 */
@@ -185,5 +216,14 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getPluginManager()
 	{
 		return $this->get('Change\Plugins\PluginManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Storage\StorageManager
+	 */
+	public function getStorageManager()
+	{
+		return $this->get('Change\Storage\StorageManager');
 	}
 }
