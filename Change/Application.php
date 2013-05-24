@@ -1,6 +1,8 @@
 <?php
 namespace Change;
 
+use Zend\EventManager\EventManager;
+
 /**
  * @name \Change\Application
  * @api
@@ -191,8 +193,18 @@ class Application
 				$injection->update();
 			}
 			$this->registerInjectionAutoload();
+
+			$this->dispatchStart();
+
 			$this->started = true;
 		}
+	}
+
+	protected function dispatchStart()
+	{
+		$eventManager = new EventManager('application');
+		$eventManager->setSharedManager($this->getSharedEventManager());
+		$eventManager->trigger('start', $this);
 	}
 
 	/**
