@@ -109,6 +109,9 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	{
 		$application->getConfiguration()
 			->addPersistentEntry('Change/Presentation/Blocks/Change_Users', '\\Change\\Users\\Blocks\\SharedListenerAggregate');
+
+		$application->getConfiguration()
+			->addPersistentEntry('Change/Admin/Listeners/Change_Users', '\\Change\\Users\\Admin\\Register');
 	}
 
 	/**

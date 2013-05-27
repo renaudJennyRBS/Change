@@ -34,9 +34,10 @@
     <link href="Change/Admin/css/timezone-selector.css" rel="stylesheet"/>
     <link href="Change/Admin/css/token-list.css" rel="stylesheet"/>
 
-    <!-- TODO modules -->
-    <link href="Change/Website/css/admin.css" rel="stylesheet"/>
-    <link href="Change/Catalog/css/admin.css" rel="stylesheet"/>
+    <!-- modules -->
+{% for node in resources.header %}
+	{{ node|raw }}
+{% endfor %}
 
 	<script type="text/javascript">
 		var __change = {};
@@ -183,50 +184,9 @@
     <script type="text/javascript" src="Change/Admin/js/filters/rbschange.filters.js">​</script>
     <script type="text/javascript" src="Change/Admin/clipboard/controllers.js">​</script>
 
-    <!-- TODO modules -->
-
-    <!-- Website -->
-    <script type="text/javascript" src="Change/Website/js/admin.js">​</script>
-    <script type="text/javascript" src="Change/Website/StaticPage/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Website/StaticPage/editor.js">​</script>
-    <script type="text/javascript" src="Change/Website/Topic/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Website/Topic/editor.js">​</script>
-    <script type="text/javascript" src="Change/Website/Website/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Website/Website/editor.js">​</script>
-    <script type="text/javascript" src="Change/Website/Menu/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Website/Menu/editor.js">​</script>
-    <script type="text/javascript" src="Change/Website/Menu/directives/menu-card.js">​</script>
-    <script type="text/javascript" src="Change/Website/Menu/directives/menu-functions.js">​</script>
-
-    <!-- Theme -->
-    <script type="text/javascript" src="Change/Theme/js/admin.js">​</script>
-    <script type="text/javascript" src="Change/Theme/PageTemplate/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Theme/PageTemplate/editor.js">​</script>
-    <script type="text/javascript" src="Change/Theme/Theme/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Theme/Theme/editor.js">​</script>
-
-	<!-- Users -->
-    <script type="text/javascript" src="Change/Users/js/admin.js">​</script>
-    <script type="text/javascript" src="Change/Users/User/controllers.js">​</script>
-    <script type="text/javascript" src="Change/Users/User/editor.js">​</script>
-
-	<!-- Media -->
-	<script type="text/javascript" src="Change/Media/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Media/Image/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Media/Image/editor.js">​</script>
-
-	<!-- Catalog -->
-	<script type="text/javascript" src="Change/Catalog/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Category/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Category/editor.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Product/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Product/editor.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Shop/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/Shop/editor.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/BillingArea/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/BillingArea/editor.js">​</script>
-	<script type="text/javascript" src="Change/Brand/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/editor.js">​</script>
+    <!-- modules -->
+{% for node in resources.body %}
+	{{ node|raw }}
+{% endfor %}
 </body>
 </html>

@@ -92,5 +92,8 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 			->addPersistentEntry('Change/Storage/default/basePath', $application->getWorkspace()->appPath('Storage'));
 		$application->getConfiguration()
 			->addPersistentEntry('Change/Storage/default/useDBStat', true);
+
+		$application->getConfiguration()
+			->addPersistentEntry('Change/Admin/Listeners/Change_Media', '\\Change\\Media\\Admin\\Register');
 	}
 }
