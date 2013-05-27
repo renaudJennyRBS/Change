@@ -7,18 +7,15 @@
 		{{ forms.field('label', 'String', i18n('m.change.catalog.document.product.label', ['ucf']), true) }}
 		{{ forms.field('description', 'LongString', i18n('m.change.catalog.document.product.description', ['ucf']), false) }}
 		{{ forms.pickerMultiple('category', 'Change_Catalog_Category',
-			i18n('m.change.catalog.document.product.category', ['ucf']),
-			false, null, i18n('m.change.catalog.document.product.select-category', ['ucf']))
-		}}
+		i18n('m.change.catalog.document.product.category', ['ucf']),
+		false, null, i18n('m.change.catalog.document.product.select-category', ['ucf'])) }}
 		{{ forms.pickerMultiple('visual', 'Change_Media_Image',
-			i18n('m.change.catalog.document.product.visual', ['ucf']),
-			false, null, i18n('m.change.catalog.document.product.select-visual', ['ucf']))
-		}}
+		i18n('m.change.catalog.document.product.visual', ['ucf']),
+		false, null, i18n('m.change.catalog.document.product.select-visual', ['ucf'])) }}
 		{{ forms.picker('brand', 'Change_Brand_Brand',
-			i18n('m.change.catalog.document.product.brand', ['ucf']),
-			false, null, i18n('m.change.catalog.document.product.select-brand', ['ucf']))
-		}}
-		<hr />
+		i18n('m.change.catalog.document.product.brand', ['ucf']),
+		false, null, i18n('m.change.catalog.document.product.select-brand', ['ucf'])) }}
+		<hr/>
 		{{ forms.field('reference', 'String', i18n('m.change.catalog.document.product.reference', ['ucf']), false) }}
 		{{ forms.field('sku', 'String', i18n('m.change.catalog.document.product.sku', ['ucf']), false) }}
 	</fieldset>
@@ -26,38 +23,147 @@
 		data-form-section-label="{{ i18n('m.change.admin.advanced-properties', ['ucf', 'attr']) }}"
 		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
 		{{ forms.pickerMultiple('pictogram', 'Change_Media_Image',
-			i18n('m.change.catalog.document.product.pictogram', ['ucf']),
-			false, null, i18n('m.change.catalog.document.product.select-pictogram', ['ucf']))
-		}}
+		i18n('m.change.catalog.document.product.pictogram', ['ucf']),
+		false, null, i18n('m.change.catalog.document.product.select-pictogram', ['ucf'])) }}
 		{{ forms.field('shippedIn', 'String', i18n('m.change.catalog.document.product.shippedin', ['ucf']), false,
-			i18n('m.change.catalog.document.product.shippedin-help', ['ucf'])) }}
+		i18n('m.change.catalog.document.product.shippedin-help', ['ucf'])) }}
 		{{ forms.field('minOrderQuantity', 'Integer', i18n('m.change.catalog.document.product.minorderquantity', ['ucf']),
-			false, i18n('m.change.catalog.document.product.minorderquantity-help', ['ucf']))
-		}}
+		false, i18n('m.change.catalog.document.product.minorderquantity-help', ['ucf'])) }}
 		{{ forms.field('maxOrderQuantity', 'Integer', i18n('m.change.catalog.document.product.maxorderquantity', ['ucf']),
-			false, i18n('m.change.catalog.document.product.maxorderquantity-help', ['ucf']))
-		}}
+		false, i18n('m.change.catalog.document.product.maxorderquantity-help', ['ucf'])) }}
 	</fieldset>
 	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18n('m.change.admin.publication-properties', ['ucf', 'attr']) }}"
 		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}</label>
+			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
+			</label>
+
 			<div class="controls">
 				<date-selector data-ng-model="document.startPublication" name="startPublication"></date-selector>
 			</div>
 		</div>
 
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf'])}}</label>
+			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf']) }}
+			</label>
+
 			<div class="controls">
 				<date-selector data-ng-model="document.endPublication" name="endPublication"></date-selector>
 			</div>
 		</div>
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
+	<fieldset data-ng-show="section=='prices'"
+		data-form-section-label="{{ i18n('m.change.catalog.document.price.document-list-name', ['ucf', 'attr']) }}"
+		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}">
+		<div class="control-group">
+			<p><strong>Les prix d'un produit dépendend de la boutique et de la zone de tarification.</strong> Un même produit qui
+				apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des
+				éventuels prix promotionnels.</p>
+
+			<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.
+			</p>
+
+			<div class="control-group">
+				<label class="control-label" data-not-a-property="" for="selectShops">Boutique</label>
+
+				<div class="controls">
+					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.shopsLoading">
+						Chargement des boutiques...
+					</button>
+					<div class="btn-group">
+						<button class="btn" data-ng-class="{active: PricesSection.selectedShop == shop}" type="button"
+							data-ng-repeat="shop in PricesSection.shops" data-ng-click="PricesSection.selectedShop = shop">
+							 <i class="icon-ok" data-ng-show="PricesSection.selectedShop == shop"></i> (= shop.label =)
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" data-not-a-property="" for="selectBillingArea">Zone de tarification</label>
+
+				<div class="controls">
+					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.billingAreasLoading">
+						Chargement des zones de tarification...
+					</button>
+					<div class="btn-group">
+						<button class="btn" data-ng-class="{active: PricesSection.selectedBillingArea == billingArea}"
+							type="button" data-ng-repeat="billingArea in PricesSection.billingAreas"
+							data-ng-click="PricesSection.selectedBillingArea = billingArea">
+							<i class="icon-ok" data-ng-show="PricesSection.selectedBillingArea == billingArea"></i>
+							(= billingArea.label =)
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<strong>TODO: création + liste</strong>
+
+			<table data-ng-show="PricesSection.documents.length" data-ng-hide="PricesSection.isEmpty()"
+				class="document-list table table-condensed table-bordered table-striped table-hover data-ng-cloak">
+				<thead>
+				<tr>
+					<th style="text-align: center; width: 30px"><input type="checkbox" data-ng-model="PricesSection.cbSelectAll"
+						data-ng-change="PricesSection.toggleSelectAll()"/></th>
+					<th data-ng-repeat="column in PricesSection.columns"
+						style="text-align: (= column.align =); width: (= column.width =)"
+						data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn(column.id)]">
+						<a data-ng-show="column.sortable" href="javascript:;" data-ng-click="PricesSection.toggleSort(column.id)">
+							(= column.label =)
+							<i class="column-sort-indicator"
+								data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[PricesSection.sort.descending]"
+								data-ng-show="PricesSection.isSortedOn(column.id)"></i>
+						</a>
+						<span data-ng-show="!column.sortable">(= column.label =)</span>
+					</th>
+					<th style="text-align:center; width:30px"><i class="icon-trash"></i></th>
+				</tr>
+				</thead>
+
+				<tbody>
+				<tr data-ng-repeat="doc in PricesSection.documents | orderBy:PricesSection.sort.column:PricesSection.sort.descending"
+					data-ng-class="{selected: doc.selected, warning: doc.publicationStatus!='PUBLISHABLE'}">
+					<td style="text-align: center">
+						<input type="checkbox" data-ng-model="doc.selected"
+							data-ng-click="PricesSection.checkDocumentRow($event, $index, doc)" data-docid="(= doc.id =)"/>
+					</td>
+					<td style="text-align: center">
+						<status data-ng-model="doc"/>
+					</td>
+					<td data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn('label')]">
+						(= doc | documentInfoLabels =)
+						<a href data-ng-href="catalog/prices/(= doc.id =)">(= doc.label | currency =)</a>
+					</td>
+					<td data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn('discount')]"
+						style="text-align: center">
+						<a class="btn btn-small btn-inverse" data-ng-show="! doc.discountType" href=""
+							data-ng-href="catalog/prices/(= doc.id =)/new-discount"
+							title="Créer un prix promotionnel à partir de ce prix"><i class="icon-plus icon-white"></i> Créer</a>
+						<span data-ng-show="doc.discountType"><i class="icon-ok"></i> Oui</span>
+					</td>
+					<td data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn('beginDate')]">
+						(= doc.beginDate | date =)
+					</td>
+					<td data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn('endDate')]">
+						(= doc.endDate | date =)
+					</td>
+					<td data-ng-class="{true:'sorted', false:''}[PricesSection.isSortedOn('activated')]"
+						style="text-align: center">
+						<status-switch document="doc"/>
+					</td>
+					<td style="text-align: center">
+						<button class="btn btn-danger btn-small" type="button" data-ng-click="removePrice(doc)"><i
+							class="icon-trash icon-white"></i></button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<loading-indicator-text data-ng-hide="PricesSection.documents.length"></loading-indicator-text>
+		</div>
+	</fieldset>
+	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
 		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
 		data-document-system-info-section>
