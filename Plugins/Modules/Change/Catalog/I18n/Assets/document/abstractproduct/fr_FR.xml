@@ -5,13 +5,13 @@
 	<key id="document-list-name">produits</key>
 	<key id="description">description</key>
 	<key id="category">catégories</key>
-	<key id="select-category">sélectionner les catégories</key>
+	<key id="category-picker-title">sélectionner les catégories</key>
 	<key id="visual">visuels</key>
-	<key id="select-visual">sélectionner les visuels</key>
+	<key id="visual-picker-title">sélectionner les visuels</key>
 	<key id="pictogram">pictogrammes</key>
-	<key id="select-pictogram">sélectionner les pictogrammes</key>
+	<key id="pictogram-picker-title">sélectionner les pictogrammes</key>
 	<key id="brand">marque</key>
-	<key id="select-brand">sélectionner la marque</key>
+	<key id="brand-picker-title">sélectionner la marque</key>
 	<key id="shippedin">délai d'expédition</key>
 	<key id="shippedin-help">Délai d'expédition affiché sur le site.</key>
 	<key id="reference">référence</key>

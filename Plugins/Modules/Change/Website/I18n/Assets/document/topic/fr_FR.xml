@@ -2,6 +2,7 @@
 <i18n baseKey="m.change.website.document.topic" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
 	<key id="document-name">rubrique</key>
+	<key id="document-list-name">rubriques</key>
 
 	<key id="indexpage">page d'index</key>
 	<key id="indexpage-picker-title">sélectionner la page d'index de la rubrique</key>

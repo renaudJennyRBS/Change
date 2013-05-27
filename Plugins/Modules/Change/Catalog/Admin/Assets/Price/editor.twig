@@ -2,12 +2,12 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.price('basePrice', i18n('m.change.catalog.document.price.baseprice', ['ucf']), true) }}
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.price('basePrice', 'm.change.catalog.document.price.baseprice', true) }}
 		<!-- TODO list -->
-		{{ forms.field('taxCategory', 'String', i18n('m.change.catalog.document.price.taxcategory', ['ucf']), true) }}
-		{{ forms.price('ecoTax', i18n('m.change.catalog.document.price.ecotax', ['ucf']), true) }}
+		{{ forms.field('taxCategory', 'String', 'm.change.catalog.document.price.taxcategory', true) }}
+		{{ forms.price('ecoTax', 'm.change.catalog.document.price.ecotax', true) }}
 
 		<hr/>
 		<span class="help-block">
@@ -32,8 +32,8 @@
 				</div>
 			</div>
 		</div>
-		{{ forms.field('discountDetail', 'String', i18n('m.change.catalog.document.price.discountdetail', ['ucf']), true) }}
-		{{ forms.price('finalPrice', i18n('m.change.catalog.document.price.finalprice', ['ucf']), true, true) }}
+		{{ forms.field('discountDetail', 'String', 'm.change.catalog.document.price.discountdetail', true) }}
+		{{ forms.price('finalPrice', 'm.change.catalog.document.price.finalprice', true, true) }}
 
 		<div class="alert" data-ng-show="document.finalPrice <= 0">
 			Le prix final n'est pas correct !
@@ -93,13 +93,13 @@
 			soit appliqué.
 		</span>
 
-		{{ forms.field('thresholdMin', 'Integer', i18n('m.change.catalog.document.price.thresholdmin', ['ucf']), true) }}
+		{{ forms.field('thresholdMin', 'Integer', 'm.change.catalog.document.price.thresholdmin', true) }}
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-form-section-label="{{ i18nAttr('m.change.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

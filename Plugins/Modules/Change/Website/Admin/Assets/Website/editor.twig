@@ -1,49 +1,24 @@
 {% import "@Admin/forms.twig" as forms %}
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
-
-	<!-- general -->
-
 	<fieldset data-ng-show="section==''"
-	          data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.website.document.website.label', true) }}
 
-		{{ forms.field('label', 'String',
-			i18n('m.change.website.document.website.label', ['ucf']),
-			true
-		) }}
+		{{ forms.field('hostName', 'String', 'm.change.website.document.website.hostname',
+			true, 'm.change.website.document.website.hostname-help') }}
+		{{ forms.field('port', 'Integer', 'm.change.website.document.website.port',
+			false, 'm.change.website.document.website.port-help') }}
 
-		{{ forms.field('hostName', 'String',
-			i18n('m.change.website.document.website.hostname', ['ucf']),
-			true,
-			i18n('m.change.website.document.website.hostname-help')
-		) }}
+		{{ forms.field('scriptName', 'String', 'm.change.website.document.website.scriptName',
+			false, 'm.change.website.document.website.scriptName-help') }}
 
-		{{ forms.field('port', 'Integer',
-			i18n('m.change.website.document.website.port', ['ucf']),
-			false,
-			i18n('m.change.website.document.website.port-help')
-		) }}
+		{{ forms.field('pathPart', 'String', 'm.change.website.document.website.pathPart',
+			false, 'm.change.website.document.website.pathPart-help') }}
 
-		{{ forms.field('scriptName', 'String',
-			i18n('m.change.website.document.website.scriptName', ['ucf']),
-			false,
-			i18n('m.change.website.document.website.scriptName-help')
-		) }}
-
-		{{ forms.field('pathPart', 'String',
-			i18n('m.change.website.document.website.pathPart', ['ucf']),
-			false,
-			i18n('m.change.website.document.website.pathPart-help')
-		) }}
-
-		{{ forms.picker('indexPage', 'Change_Website_StaticPage',
-			i18n('m.change.website.document.website.indexpage', ['ucf']),
-			false,
-			null,
-			"Sélectionner la page d'accueil du site"
-		) }}
-
+		{{ forms.picker('indexPage', 'Change_Website_StaticPage', 'm.change.website.document.website.indexpage',
+			false, null, 'm.change.website.document.website.indexpage-picker-title') }}
 	</fieldset>
 
 	<fieldset
@@ -54,5 +29,4 @@
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
-
 </form>

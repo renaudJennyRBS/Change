@@ -86,7 +86,7 @@ class Extension  implements \Twig_ExtensionInterface
 	{
 		return array(
 			new \Twig_SimpleFunction('i18n', array($this, 'i18n'), array('is_safe' => array('html'))),
-			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html_attr'))),
+			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html', 'html_attr'))),
 		);
 	}
 

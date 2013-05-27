@@ -1,34 +1,20 @@
+{% import "@Admin/forms.twig" as forms %}
+
 <form name="form" data-ng-submit="submit()" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.picker('website', 'Change_Website_Website',
+			'm.change.website.document.staticpage.website',
+			true, 'm.change.website.document.staticpage.website-help',
+			'm.change.website.document.staticpage.website-picker-title') }}
 
-	<!-- general -->
+		<hr />
 
-	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
-
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('website')}">
-			<label class="control-label" for="website">Site web</label>
-			<div class="controls">
-				<div required="true" class="document-picker-single"
-					ng-model="document.website"
-					accepted-model="Change_Website_Website"
-					selector-title="Sélectionner le site web"
-					property-label="Site web"
-					allow-edition="true">
-				</div>
-				<span class="help-block">La page doit obligatoirement être rattachée à un site web.</span>
-			</div>
-		</div>
-
-		<hr/>
-
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('label')}">
-			<label class="control-label" for="label">Titre</label>
-			<div class="controls">
-				<input type="text" id="label" name="label" required class="input-block-level" data-ng-model="document.label"/>
-			</div>
-		</div>
+		{{ forms.field('label', 'String', 'm.change.website.document.staticpage.label', true) }}
 
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('navigationTitle')}">
-			<label class="control-label" for="navigationTitle">Titre dans les éléments de navigation</label>
+			<label class="control-label" for="navigationTitle">{{ i18n('m.change.website.document.staticpage.navigationtitle', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="input-prepend">
 					<button type="button" class="btn" ng-click="document.navigationTitle = document.label" title="Utiliser (= document.label =)">Titre <i class="icon-angle-right"></i></button>
@@ -37,39 +23,32 @@
 			</div>
 		</div>
 
-		<div class="control-group property" data-ng-class="{'success': hasCorrectionOnProperty('pageTemplate')}">
-			<label class="control-label" for="pageTemplate">Modèle de page</label>
-			<div class="controls">
-				<div class="document-picker-single"
-					ng-model="document.pageTemplate"
-					accepted-model="Change_Theme_PageTemplate"
-					selector-title="Sélectionner le modèle de page"
-					property-label="Modèle de page">
-				</div>
-			</div>
-		</div>
+		{{ forms.picker('pageTemplate', 'Change_Theme_PageTemplate', 'm.change.website.document.staticpage.pagetemplate',
+			true, null, 'm.change.website.document.staticpage.pagetemplate-picker-title') }}
 
-		<hr/>
+		<hr />
 
 		<div class="control-group">
-			<label class="control-label" for="editableContent">Contenu de la page</label>
+			<label class="control-label" for="editableContent">{{ i18n('m.change.website.document.staticpage.editablecontent', ['ucf']) }}</label>
 			<div class="controls">
-				<button class="btn" id="editableContent" type="button" data-ng-click="editPage($event, document)"><i class="icon-edit"></i> Ouvrir l'éditeur de page</button>
-				<span class="help-block">Zones de contenu : <span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span></span>
+				<button class="btn" id="editableContent" type="button" data-ng-click="editPage($event, document)">
+					<i class="icon-edit"></i>
+					{{ i18n('m.change.website.document.staticpage.open-page-editor', ['ucf']) }}
+				</button>
+				<span class="help-block">
+					{{ i18n('m.change.website.document.staticpage.content-zones', ['ucf', 'lab']) }}
+					<span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span>
+				</span>
 			</div>
-
 		</div>
 		<div data-role="edit-page-contents-confirmation"></div>
-
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
-		data-form-section-label="État"
-		data-form-section-group="Informations"
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.change.admin.Status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.Information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
-
 </form>

@@ -1,7 +1,7 @@
 {% macro field(name, type, label, required, help) %}
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
-		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			{% if type == 'Integer' %}
 			<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}" />
@@ -18,7 +18,7 @@
 			{% endif %}
 			{% if help %}
 			<span class="help-block">
-				{{ help|raw }}
+				{{ i18n(help) }}
 			</span>
 			{% endif %}
 		</div>
@@ -27,12 +27,12 @@
 
 {% macro readonly(name, label, help) %}
 	<div class="control-group" data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
-		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			<span class="uneditable-input input-block-level" id="{{ name }}" name="{{ name }}">(=document.{{ name }}=)</span>
 			{% if help %}
 				<span class="help-block">
-					{{ help|raw }}
+					{{ i18n(help) }}
 				</span>
 			{% endif %}
 		</div>
@@ -42,18 +42,18 @@
 {% macro picker(name, model, label, required, help, selectorTitle) %}
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
-		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			<div class="document-picker-single"
 				ng-model="document.{{ name }}"
 				accepted-model="{{ model }}"
-				property-label="{{ label }}"
-				selector-title="{{ selectorTitle }}"
+				property-label="{{ i18nAttr(label, ['ucf']) }}"
+				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
 				allow-edition="true">
 			</div>
 			{% if help %}
 				<span class="help-block">
-					{{ help|raw }}
+					{{ i18n(help) }}
 				</span>
 			{% endif %}
 		</div>
@@ -63,19 +63,19 @@
 {% macro pickerMultiple(name, model, label, required, help, selectorTitle) %}
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
-		<label class="control-label" for="{{ name }}">{{ label }}</label>
+		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			<div class="document-picker-multiple"
 				ng-model="document.{{ name }}"
 				accepted-model="{{ model }}"
-				property-label="{{ label }}"
-				selector-title="{{ selectorTitle }}"
+				property-label="{{ i18nAttr(label, ['ucf']) }}"
+				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
 				master-label="(=document.label=)"
 				allow-edition="true">
 			</div>
 			{% if help %}
 				<span class="help-block">
-					{{ help|raw }}
+					{{ i18n(help) }}
 				</span>
 			{% endif %}
 		</div>

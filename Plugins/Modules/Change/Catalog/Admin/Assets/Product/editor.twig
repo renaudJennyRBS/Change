@@ -2,39 +2,35 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.field('label', 'String', i18n('m.change.catalog.document.product.label', ['ucf']), true) }}
-		{{ forms.field('description', 'LongString', i18n('m.change.catalog.document.product.description', ['ucf']), false) }}
-		{{ forms.pickerMultiple('category', 'Change_Catalog_Category',
-		i18n('m.change.catalog.document.product.category', ['ucf']),
-		false, null, i18n('m.change.catalog.document.product.select-category', ['ucf'])) }}
-		{{ forms.pickerMultiple('visual', 'Change_Media_Image',
-		i18n('m.change.catalog.document.product.visual', ['ucf']),
-		false, null, i18n('m.change.catalog.document.product.select-visual', ['ucf'])) }}
-		{{ forms.picker('brand', 'Change_Brand_Brand',
-		i18n('m.change.catalog.document.product.brand', ['ucf']),
-		false, null, i18n('m.change.catalog.document.product.select-brand', ['ucf'])) }}
-		<hr/>
-		{{ forms.field('reference', 'String', i18n('m.change.catalog.document.product.reference', ['ucf']), false) }}
-		{{ forms.field('sku', 'String', i18n('m.change.catalog.document.product.sku', ['ucf']), false) }}
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.catalog.document.product.label', true) }}
+		{{ forms.field('description', 'LongString', 'm.change.catalog.document.product.description', false) }}
+		{{ forms.pickerMultiple('category', 'Change_Catalog_Category', 'm.change.catalog.document.product.category',
+			false, null, 'm.change.catalog.document.product.category-picker-title') }}
+		{{ forms.pickerMultiple('visual', 'Change_Media_Image', 'm.change.catalog.document.product.visual',
+			false, null, 'm.change.catalog.document.product.visual-picker-title') }}
+		{{ forms.picker('brand', 'Change_Brand_Brand', 'm.change.catalog.document.product.brand',
+			false, null, 'm.change.catalog.document.product.brand-picker-title') }}
+		<hr />
+		{{ forms.field('reference', 'String', 'm.change.catalog.document.product.reference', false) }}
+		{{ forms.field('sku', 'String', 'm.change.catalog.document.product.sku', false) }}
 	</fieldset>
 	<fieldset data-ng-show="section=='advanced'"
-		data-form-section-label="{{ i18n('m.change.admin.advanced-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.pickerMultiple('pictogram', 'Change_Media_Image',
-		i18n('m.change.catalog.document.product.pictogram', ['ucf']),
-		false, null, i18n('m.change.catalog.document.product.select-pictogram', ['ucf'])) }}
-		{{ forms.field('shippedIn', 'String', i18n('m.change.catalog.document.product.shippedin', ['ucf']), false,
-		i18n('m.change.catalog.document.product.shippedin-help', ['ucf'])) }}
-		{{ forms.field('minOrderQuantity', 'Integer', i18n('m.change.catalog.document.product.minorderquantity', ['ucf']),
-		false, i18n('m.change.catalog.document.product.minorderquantity-help', ['ucf'])) }}
-		{{ forms.field('maxOrderQuantity', 'Integer', i18n('m.change.catalog.document.product.maxorderquantity', ['ucf']),
-		false, i18n('m.change.catalog.document.product.maxorderquantity-help', ['ucf'])) }}
+		data-form-section-label="{{ i18nAttr('m.change.admin.advanced-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.pickerMultiple('pictogram', 'Change_Media_Image', 'm.change.catalog.document.product.pictogram',
+			false, null, 'm.change.catalog.document.product.pictogram-picker-title') }}
+		{{ forms.field('shippedIn', 'String', 'm.change.catalog.document.product.shippedin', false,
+			'm.change.catalog.document.product.shippedin-help') }}
+		{{ forms.field('minOrderQuantity', 'Integer', 'm.change.catalog.document.product.minorderquantity',
+			false, 'm.change.catalog.document.product.minorderquantity-help') }}
+		{{ forms.field('maxOrderQuantity', 'Integer', 'm.change.catalog.document.product.maxorderquantity',
+			false, 'm.change.catalog.document.product.maxorderquantity-help') }}
 	</fieldset>
 	<fieldset data-ng-show="section=='publication'"
-		data-form-section-label="{{ i18n('m.change.admin.publication-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
+		data-form-section-label="{{ i18nAttr('m.change.admin.publication-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
 		<div class="control-group property">
 			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
 			</label>
@@ -54,9 +50,10 @@
 		</div>
 	</fieldset>
 
+	<!-- TODO -->
 	<fieldset data-ng-show="section=='prices'"
-		data-form-section-label="{{ i18n('m.change.catalog.document.price.document-list-name', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}">
+		data-form-section-label="{{ i18nAttr('m.change.catalog.document.price.document-list-name', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}">
 		<div class="control-group">
 			<p><strong>Les prix d'un produit dépendend de la boutique et de la zone de tarification.</strong> Un même produit qui
 				apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des
@@ -163,9 +160,10 @@
 			<loading-indicator-text data-ng-hide="PricesSection.documents.length"></loading-indicator-text>
 		</div>
 	</fieldset>
+
 	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-form-section-label="{{ i18nAttr('m.change.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
