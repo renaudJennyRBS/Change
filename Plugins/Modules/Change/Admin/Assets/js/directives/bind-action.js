@@ -1,5 +1,7 @@
 (function ($) {
 
+	"use strict";
+
 	angular.module('RbsChange').directive('bindAction', ['RbsChange.Actions', '$timeout', 'RbsChange.i18n', function (Actions, $timeout, i18n) {
 
 		return {
