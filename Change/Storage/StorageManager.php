@@ -110,29 +110,27 @@ class StorageManager
 	 */
 	public function getStorageByName($name)
 	{
+		$config = $this->getConfiguration()->getEntry('Change/Storage/' . $name);
+		if (is_array($config) && isset($config['class']))
+		{
+			if (class_exists($config['class']))
+			{
+				$className = $config['class'];
+				$storageEngine = new $className($name, $config);
+				if ($storageEngine instanceof \Change\Storage\Engines\AbstractStorage)
+				{
+					$storageEngine->setStorageManager($this);
+					return $storageEngine;
+				}
+			}
+		}
+
 		if ($name === 'tmp')
 		{
 			$config = array('basePath' => $this->getWorkspace()->tmpPath('Storage'), 'useDBStat' => false);
 			$storageEngine = new \Change\Storage\Engines\LocalStorage($name, $config);
 			$storageEngine->setStorageManager($this);
 			return $storageEngine;
-		}
-		else
-		{
-			$config = $this->getConfiguration()->getEntry('Change/Storage/' . $name);
-			if (is_array($config) && isset($config['class']))
-			{
-				if (class_exists($config['class']))
-				{
-					$className = $config['class'];
-					$storageEngine = new $className($name, $config);
-					if ($storageEngine instanceof \Change\Storage\Engines\AbstractStorage)
-					{
-						$storageEngine->setStorageManager($this);
-						return $storageEngine;
-					}
-				}
-			}
 		}
 		return null;
 	}

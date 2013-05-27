@@ -27,6 +27,7 @@ class LocalStorage extends AbstractStorage
 	public function setBasePath($basePath)
 	{
 		$this->basePath = $basePath;
+		\Change\Stdlib\File::mkdir($basePath);
 	}
 
 	/**
