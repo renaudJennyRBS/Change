@@ -26,11 +26,11 @@
 			Breadcrumb.unfreeze();
 		});
 
-		this.startEditSession = function (doc) {
+		this.startEditSession = function startEditSessionFn (doc) {
 			idStack.push(doc.id);
 		};
 
-		this.stopEditSession = function (doc) {
+		this.stopEditSession = function stopEditSessionFn () {
 			idStack.pop();
 		};
 
