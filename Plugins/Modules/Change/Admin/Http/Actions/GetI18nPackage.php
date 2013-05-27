@@ -15,25 +15,39 @@ class GetI18nPackage
 	 */
 	public function execute($event)
 	{
-		$resourcePath = $event->getParam('resourcePath');
-		$parts = explode('/', strtolower(substr($resourcePath, 0, -3)));
-		unset($parts[2]);
+		$manager = new \Change\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		array_unshift($parts, 'm');
+		$modules = $event->getApplicationServices()->getPluginManager()->getModules();
 		$LCID = $i18nManager->getLCID();
-		$keys = $i18nManager->getDefinitionCollection($LCID, $parts);
-		if ($keys)
+		$packages = array();
+		foreach ($modules as $module)
 		{
-			$results = array();
-			$keys->load();
-			foreach ($keys->getDefinitionKeys() as $defKey)
+			$pathParts = array('m', $module->getVendor(), $module->getShortName(), 'admin', 'js');
+			$keys = $i18nManager->getDefinitionCollection($LCID, $pathParts);
+			if ($keys)
 			{
-				$results[$defKey->getId()] = $defKey->getText();
+				$package = array();
+				$keys->load();
+				foreach ($keys->getDefinitionKeys() as $defKey)
+				{
+					$package[$defKey->getId()] = $defKey->getText();
+				}
+				if (count($package))
+				{
+					$packages[implode('.', $pathParts)] = $package;
+				}
 			}
-			$package = array(implode('.', $parts) => $results);
+		}
+
+		if (count($packages))
+		{
 			$renderer = new \Change\Admin\Http\Result\Renderer();
 			$renderer->setHeaderContentType('application/javascript');
-			$renderer->setRenderer(function() use ($package) {return json_encode($package);});
+			$renderer->setRenderer(function() use ($packages)
+			{
+				return '__change.i18n = ' . json_encode($packages) . ';' . PHP_EOL;
+
+			});
 			$event->setResult($renderer);
 		}
 	}

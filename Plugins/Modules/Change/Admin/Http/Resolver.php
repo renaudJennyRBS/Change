@@ -37,8 +37,18 @@ class Resolver extends ActionResolver
 			return;
 		}
 
+
 		$relativePath = $this->getRelativePath($path);
-		if (preg_match('/^([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.([a-z]+)$/', $relativePath, $matches))
+		if ($relativePath === 'Change/Admin/i18n.js')
+		{
+			$action = function($event) {
+				$action = new \Change\Admin\Http\Actions\GetI18nPackage();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif (preg_match('/^([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.([a-z]+)$/', $relativePath, $matches))
 		{
 			$event->setParam('resourcePath', $relativePath);
 			list(,$vendor, $shortModuleName, $subPath, $extension) = $matches;
@@ -47,16 +57,7 @@ class Resolver extends ActionResolver
 			$event->setParam('modulePath', $subPath);
 			$event->setParam('extension', $extension);
 
-			if ($extension === 'js' && strpos($subPath, 'i18n/') === 0)
-			{
-				$action = function($event) {
-					$action = new \Change\Admin\Http\Actions\GetI18nPackage();
-					$action->execute($event);
-				};
-				$event->setAction($action);
-				return;
-			}
-			elseif ($extension === 'twig')
+			if ($extension === 'twig')
 			{
 				$action = function($event) {
 					$action = new \Change\Admin\Http\Actions\GetHtmlFragment();
