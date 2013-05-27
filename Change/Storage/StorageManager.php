@@ -150,7 +150,7 @@ class StorageManager
 			$storageEngine = $this->getStorageByName($name);
 			if ($storageEngine)
 			{
-				$itemInfo = new ItemInfo($url, $storageEngine);
+				$itemInfo = new ItemInfo($url);
 				$itemInfo->setStorageEngine($storageEngine);
 				return $itemInfo;
 			}
@@ -190,7 +190,7 @@ class StorageManager
 	/**
 	 * @param string $name
 	 * @param string $path
-	 * @param array $infos
+	 * @param array|null $infos
 	 * @return integer
 	 */
 	public function setItemDbInfo($name, $path, $infos)
@@ -198,11 +198,26 @@ class StorageManager
 		$oldInfos = $this->getItemDbInfo($name, $path);
 		if ($oldInfos === null)
 		{
-			return $this->insertItemDbInfo($name, $path, $infos);
+			if (is_array($infos) && count($infos))
+			{
+				return $this->insertItemDbInfo($name, $path, $infos);
+			}
+			else
+			{
+				return null;
+			}
+
 		}
 		else
 		{
-			$this->updateItemDbInfo($name, $path, $infos);
+			if (is_array($infos) && count($infos))
+			{
+				$this->updateItemDbInfo($name, $path, $infos);
+			}
+			else
+			{
+				$this->deleteItemDbInfo($name, $path);
+			}
 			return $oldInfos['id'];
 		}
 	}
@@ -253,5 +268,27 @@ class StorageManager
 		$uq->bindParameter('name', $name);
 		$uq->bindParameter('path', $path);
 		$uq->execute();
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $path
+	 * @param array $infos
+	 */
+	protected function deleteItemDbInfo($name, $path)
+	{
+		$dqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::deleteItemDbInfo');
+		if (!$dqb->isCached())
+		{
+			$fb = $dqb->getFragmentBuilder();
+			$dqb->delete($fb->table('change_storage'));
+			$dqb->where($fb->logicAnd(
+				$fb->eq($fb->column('store_name'), $fb->parameter('name', $dqb)),
+				$fb->eq($fb->column('store_path'), $fb->parameter('path', $dqb))));
+		}
+		$dq = $dqb->updateQuery();
+		$dq->bindParameter('name', $name);
+		$dq->bindParameter('path', $path);
+		$dq->execute();
 	}
 }
