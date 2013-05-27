@@ -1,0 +1,26 @@
+@CHARSET "UTF-8";
+
+/* Icons for Change_Catalog_Category in tree-view */
+.jstree-bootstrap li[rel="Change_Generic_Folder"] > a ins:before {
+	content: "\f07b";
+}
+
+.jstree-bootstrap li[rel="Change_Generic_Folder"].jstree-open > a ins:before {
+	content: "\f07c";
+}
+
+.jstree-bootstrap li[rel="Change_Catalog_Category"] > a ins:before {
+	content: "\f07b";
+}
+
+.jstree-bootstrap li[rel="Change_Catalog_Category"].jstree-open > a ins:before {
+	content: "\f07c";
+}
+
+.jstree-bootstrap li[rel="Change_Catalog_Category/0"] > a ins:before {
+	content: "\f114";
+}
+
+.jstree-bootstrap li[rel="Change_Catalog_Category/0"].jstree-open > a ins:before {
+	content: "\f115";
+}

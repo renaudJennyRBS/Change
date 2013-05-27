@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.catalog.document.billingarea" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="document-name">zone de tarification</key>
+	<key id="document-list-name">zones de tarification</key>
+</i18n>
