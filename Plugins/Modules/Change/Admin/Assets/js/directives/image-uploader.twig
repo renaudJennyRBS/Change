@@ -1,0 +1,12 @@
+<div>
+	<img ng-src="(= imageSrc =)" class="img-polaroid" style="width: (= previewWidth =)px; height: (= previewHeight =)px; display: block;"/>
+	<div ng-show="fileSize && fileName">
+		(= fileName =) &mdash; (= imageWidth =) &times; (= imageHeight =) &mdash; <span ng-bind-html="fileSize | fileSize"></span>
+	</div>
+	<div class="btn-toolbar">
+		<button ng-hide="loading" type="button" class="btn" ng-click="choose()">Choisir...</button>
+		<button ng-show="loading" type="button" class="btn" disabled="disabled"><i class="icon-spinner icon-spin"></i> Lecture...</button>
+		<button type="button" class="btn" ng-click="upload($event)"><i class="icon-upload"></i> Envoyer</button>
+	</div>
+	<input type="file" accept="image/*" name="file" style="text-indent: -3000px;opacity: 0; visibility: hidden;"/>
+</div>
