@@ -53,6 +53,25 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
 		{
+			/* @var $application \Change\Application */
+			$application = $event->getParam('application');
+			$this->executeApplication($application);
+
+			/* @var $pluginManager PluginManager */
+			$pluginManager = $event->getTarget();
+			$pluginManager->getModule($vendor, $name)
+				->setConfigurationEntry(PluginManager::EVENT_SETUP_APPLICATION, 'Ok');
+		};
+		$eventNames = array(
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
+		);
+		$events->attach($eventNames, $callBack, 5);
+
+		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
+		{
 			/* @var $documentServices \Change\Documents\DocumentServices */
 			$documentServices = $event->getParam('documentServices');
 			$this->executeServices($documentServices);
@@ -77,6 +96,15 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	public function detach(\Zend\EventManager\EventManagerInterface $events)
 	{
 		// TODO: Implement detach() method.
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 */
+	public function executeApplication($application)
+	{
+		$application->getConfiguration()
+			->addPersistentEntry('Change/Admin/Listeners/Change_Catalog', '\\Change\\Catalog\\Admin\\Register');
 	}
 
 	/**

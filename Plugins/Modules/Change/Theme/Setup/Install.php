@@ -89,5 +89,8 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 		$application->getConfiguration()
 			->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Theme',
 				'\\Change\\Theme\\Events\\SharedListenerAggregate');
+		$application->getConfiguration()
+			->addPersistentEntry('Change/Admin/Listeners/Change_Theme',
+				'\\Change\\Theme\\Admin\\Register');
 	}
 }

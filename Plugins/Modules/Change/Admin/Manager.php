@@ -135,7 +135,7 @@ class Manager
 	 */
 	public function getResources()
 	{
-		$params = new \ArrayObject();
+		$params = new \ArrayObject(array('header' => array(), 'body' => array()));
 		$event = new Event(Event::EVENT_RESOURCES, $this, $params);
 		$this->getEventManager()->trigger($event);
 		return $params->getArrayCopy();
