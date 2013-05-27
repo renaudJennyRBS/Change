@@ -1,17 +1,16 @@
 <div data-ng-controller="Change_Website_TopicListController">
-
-	<page-header sub-title="Rubriques"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.change.website.document.topic.document-list-name', ['ucf']) }}"></page-header>
 
 	<search-filters model="Change_Website_StaticPage" query="DL.query" text-search="textSearch"></search-filters>
 
 	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
 
 	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>Cette liste est vide.</h4>
-		Vous pouvez :
+		<h4>{{ i18n('m.change.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
+		{{ i18n('m.change.admin.lists.you-can', ['ucf', 'lab']) }}
 		<ul>
-			<li>Créer des éléments en utilisant les boutons ci-dessus</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">Effacer les filtres de recherche</a></li>
+			<li>{{ i18n('m.change.admin.lists.create-elements-with-buttons') }}</li>
+			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.change.admin.lists.clear-search-filters') }}</a></li>
 		</ul>
 	</div>
 
@@ -78,5 +77,4 @@
 			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
 		</div>
 	</footer>
-
 </div>

@@ -2,18 +2,17 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.field('label', 'String', i18n('m.change.catalog.document.shop.label', ['ucf']), true) }}
-		{{ forms.pickerMultiple('billingArea', 'Change_Catalog_BillingArea',
-		i18n('m.change.catalog.document.shop.billingarea', ['ucf']),
-		true, null, i18n('m.change.catalog.document.shop.select-billingarea', ['ucf'])) }}
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.catalog.document.shop.label', true) }}
+		{{ forms.pickerMultiple('billingArea', 'Change_Catalog_BillingArea', 'm.change.catalog.document.shop.billingarea',
+			true, null, 'm.change.catalog.document.shop.billingarea-picker-title') }}
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-form-section-label="{{ i18nAttr('m.change.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

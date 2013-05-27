@@ -2,15 +2,14 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.field('label', 'String', i18n('m.change.brand.document.brand.label', ['ucf']), true) }}
-		{{ forms.field('description', 'LongString', i18n('m.change.brand.document.brand.description', ['ucf']), false) }}
-		{{ forms.picker('visual', 'Change_Media_Image',
-			i18n('m.change.catalog.document.product.visual', ['ucf']),
-			false, null, i18n('m.change.brand.document.brand.select-visual', ['ucf']))
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.brand.document.brand.label', true) }}
+		{{ forms.field('description', 'LongString', 'm.change.brand.document.brand.description', false) }}
+		{{ forms.picker('visual', 'Change_Media_Image', 'm.change.catalog.document.product.visual',
+			false, null, 'm.change.brand.document.brand.select-visual')
 		}}
-		{{ forms.field('websiteUrl', 'Url', i18n('m.change.brand.document.brand.websiteurl', ['ucf']), true) }}
+		{{ forms.field('websiteUrl', 'Url', 'm.change.brand.document.brand.websiteurl', true) }}
 		<div class="control-group property">
 			<label class="control-label" for="beginDate">{{ i18n('m.change.brand.document.brand.startpublication', ['ucf']) }}</label>
 			<div class="controls">
@@ -28,8 +27,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-form-section-label="{{ i18nAttr('m.change.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

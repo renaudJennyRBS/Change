@@ -1,23 +1,13 @@
 {% import "@Admin/forms.twig" as forms %}
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
-
 	<fieldset data-ng-show="section==''"
-	          data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.website.document.menu.label', true) }}
 
-		{{ forms.field('label', 'String',
-			i18n('m.change.website.document.menu.label', ['ucf']),
-			true
-		) }}
-
-		{{ forms.picker('website', 'Change_Website_Website',
-			i18n('m.change.website.document.menu.website', ['ucf']),
-			true,
-			null,
-			"Sélectionner le site web"
-		) }}
-
+		{{ forms.picker('website', 'Change_Website_Website', 'm.change.website.document.menu.website',
+			true, null, 'm.change.website.document.menu.website-picker-title') }}
 	</fieldset>
 
 	<fieldset
@@ -28,5 +18,4 @@
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
-
 </form>

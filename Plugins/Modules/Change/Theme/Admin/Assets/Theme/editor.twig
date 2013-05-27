@@ -1,34 +1,23 @@
 {% import "@Admin/forms.twig" as forms %}
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('name', 'String', 'm.change.theme.document.theme.name',
+			true, 'm.change.theme.document.theme.name-help') }}
 
-	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+		{{ forms.field('label', 'String', 'm.change.theme.document.theme.label', true) }}
 
-		{{ forms.field('name', 'String',
-			i18n('m.change.theme.document.theme.name', ['ucf']),
-			true,
-			i18n('m.change.theme.document.theme.name-help')
-		) }}
-
-		{{ forms.field('label', 'String',
-			i18n('m.change.theme.document.theme.label', ['ucf']),
-			true
-		) }}
-
-		{{ forms.picker('parentTheme', 'Change_Theme_Theme',
-			i18n('m.change.theme.document.theme.parent-theme', ['ucf']),
-			true
-		) }}
-
-    </fieldset>
+		{{ forms.picker('parentTheme', 'Change_Theme_Theme', 'm.change.theme.document.theme.parent-theme', true) }}
+	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="État"
-		data-form-section-group="Informations"
+		data-form-section-label="{{ i18nAttr('m.change.admin.Status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.Information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
-
 </form>

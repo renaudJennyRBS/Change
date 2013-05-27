@@ -4,5 +4,5 @@
 	<key id="document-name">boutique</key>
 	<key id="document-list-name">boutiques</key>
 	<key id="billingarea">zones de tarification</key>
-	<key id="select-billingarea">sélectionner les zones de tarification</key>
+	<key id="billingarea-picker-title">sélectionner les zones de tarification</key>
 </i18n>

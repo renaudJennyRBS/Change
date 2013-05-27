@@ -5,5 +5,5 @@
 	<key id="document-list-name">catégories</key>
 	<key id="description">description</key>
 	<key id="visual">visuel</key>
-	<key id="select-visual">sélectionner le visuel</key>
+	<key id="visual-picker-title">sélectionner le visuel</key>
 </i18n>

@@ -1,38 +1,18 @@
 {% import "@Admin/forms.twig" as forms %}
 
 <form name="form" data-ng-submit="submit()" novalidate>
-
-	<!-- general -->
-
 	<fieldset data-ng-show="section==''"
-	          data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-
-		{{ forms.field('login', 'String',
-			i18n('m.change.users.document.user.login', ['ucf']),
-			true
-		) }}
-
-		{{ forms.field('email', 'String',
-			i18n('m.change.users.document.user.email', ['ucf']),
-			true
-		) }}
-
-		{{ forms.field('label', 'String',
-			i18n('m.change.users.document.user.label', ['ucf']),
-			true
-		) }}
-
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('login', 'String', 'm.change.users.document.user.login', true) }}
+		{{ forms.field('email', 'String', 'm.change.users.document.user.email', true) }}
+		{{ forms.field('label', 'String', 'm.change.users.document.user.label', true) }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='security'"
-	          data-form-section-label="{{ i18nAttr('m.change.users.document.user.security', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-
-		{{ forms.readonly('hashMethod',
-			i18n('m.change.users.document.user.hashMethod', ['ucf'])
-		) }}
-
+		data-form-section-label="{{ i18nAttr('m.change.users.document.user.security', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.readonly('hashMethod', 'm.change.users.document.user.hashMethod') }}
 	</fieldset>
 
 	<fieldset
@@ -43,5 +23,4 @@
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
-
 </form>

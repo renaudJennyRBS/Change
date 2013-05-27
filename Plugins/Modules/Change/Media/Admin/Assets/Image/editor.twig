@@ -2,25 +2,26 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18n('m.change.admin.general-properties', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.properties', ['ucf', 'attr']) }}">
-		{{ forms.field('label', 'String', i18n('m.change.media.document.image.label', ['ucf']), true) }}
-		{{ forms.field('alt', 'String', i18n('m.change.media.document.image.alt', ['ucf']), false) }}
-		{{ forms.field('localizePath', 'Boolean', i18n('m.change.media.document.image.localizepath', ['ucf']), false) }}
-		{{ forms.field('path', 'String', i18n('m.change.media.document.image.path', ['ucf'])) }}
+		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.change.media.document.image.label', true) }}
+		{{ forms.field('alt', 'String', 'm.change.media.document.image.alt', false) }}
+		{{ forms.field('localizePath', 'Boolean', 'm.change.media.document.image.localizepath', false) }}
+		{{ forms.field('path', 'String', 'm.change.media.document.image.path') }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18n('m.change.admin.status', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}"
+		data-form-section-label="{{ i18nAttr('m.change.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
+
 	<fieldset data-ng-show="section=='fileinfo'"
-		data-form-section-label="{{ i18n('m.change.media.document.image.file-informations', ['ucf', 'attr']) }}"
-		data-form-section-group="{{ i18n('m.change.admin.information', ['ucf', 'attr']) }}">
-		{{ forms.readonly('width', i18n('m.change.media.document.image.width', ['ucf'])) }}
-		{{ forms.readonly('height', i18n('m.change.media.document.image.height', ['ucf'])) }}
-		{{ forms.readonly('mimeType', i18n('m.change.media.document.image.mimetype', ['ucf'])) }}
+		data-form-section-label="{{ i18nAttr('m.change.media.document.image.file-informations', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}">
+		{{ forms.readonly('width', 'm.change.media.document.image.width') }}
+		{{ forms.readonly('height', 'm.change.media.document.image.height') }}
+		{{ forms.readonly('mimeType', 'm.change.media.document.image.mimetype') }}
 	</fieldset>
 
 	<form-button-bar></form-button-bar>

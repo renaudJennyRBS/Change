@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.staticpage.document.menu" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="document-name">page</key>
+	<key id="document-list-name">pages</key>
+	<key id="website">site web</key>
+	<key id="website-help">La page doit obligatoirement être rattachée à un site web.</key>
+	<key id="website-picker-title">sélectionner le site web</key>
+	<key id="navigationtitle">titre dans les éléments de navigation</key>
+	<key id="pagetemplate">modèle de page</key>
+	<key id="pagetemplate-picker-title">sélectionner le modèle de page</key>
+	<key id="editablecontent">contenu de la page</key>
+	<key id="open-page-editor">ouvrir l'éditeur de page</key>
+	<key id="content-zones">zones de contenu</key>
+</i18n>
