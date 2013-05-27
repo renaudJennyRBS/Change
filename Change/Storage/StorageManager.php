@@ -127,7 +127,9 @@ class StorageManager
 
 		if ($name === 'tmp')
 		{
-			$config = array('basePath' => $this->getWorkspace()->tmpPath('Storage'), 'useDBStat' => false);
+			$basePath = $this->getWorkspace()->tmpPath('Storage');
+			\Change\Stdlib\File::mkdir($basePath);
+			$config = array('basePath' => $basePath, 'useDBStat' => false);
 			$storageEngine = new \Change\Storage\Engines\LocalStorage($name, $config);
 			$storageEngine->setStorageManager($this);
 			return $storageEngine;
