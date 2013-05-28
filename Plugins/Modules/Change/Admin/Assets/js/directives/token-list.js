@@ -12,7 +12,7 @@
 			template :
 				'<ul class="token-list">' +
 					'<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
-						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)">&times;</a>(= getItemLabel(item) =)' +
+						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)"><i class="icon-remove"></i></a>(= getItemLabel(item) =)' +
 						'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="Glisser pour réorganiser"></i>' +
 					'</li>' +
 				'</ul>',
@@ -129,7 +129,7 @@
 							dragging = $(this);
 							dragging.addClass('sortable-dragging');
 							startIndex = dragging.index();
-							dt.setData('Text', 'item'+startIndex);
+							dt.setData('Text', dragging.text());
 						},
 
 						'dragend': function () {

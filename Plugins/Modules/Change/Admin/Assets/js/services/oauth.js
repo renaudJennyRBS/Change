@@ -95,17 +95,21 @@
 		headers = config.headers || {};
 		method  = config.method || 'GET';
 
-		// According to the spec
-		withFile = (function () {
-			var hasFile = false, name;
-			for (name in data) {
-				// Thanks to the FileAPI, any file entry has a fileName property
-				if (data[name] && (data[name] instanceof File || typeof data[name].fileName !== 'undefined')) {
-					hasFile = true;
+		if (config.processData === false) {
+			withFile = true;
+		} else {
+			// According to the spec
+			withFile = (function () {
+				var hasFile = false, name;
+				for (name in data) {
+					// Thanks to the FileAPI, any file entry has a fileName property
+					if (data[name] && (data[name] instanceof File || typeof data[name].fileName !== 'undefined')) {
+						hasFile = true;
+					}
 				}
-			}
-			return hasFile;
-		})();
+				return hasFile;
+			})();
+		}
 
 		headerParams = {
 			'oauth_callback': oauthData.callback,

@@ -63,6 +63,7 @@
 				    matches = href.match(/section=([a-z0-9\-]+)/i),
 				    section = matches ? matches[1] : undefined;
 
+				// TODO Optimize this... This should be possible ;)
 				if (href === currentUrl || href === currentPath || href === absUrl || (sectionParam && sectionParam === section) || (currentScope && currentScope.section !== null && angular.isDefined($(this).data('menuSection')) && $(this).data('menuSection') === currentScope.section)) {
 					$(this).parent().addClass("active");
 					currentLabel = $(this).text();
@@ -71,7 +72,7 @@
 				}
 			});
 
-			$("#chgMainMenuTree a[href]").each(function () {
+			$(".jstree a[href]").each(function () {
 				var href = $(this).attr('href');
 				if (href === currentUrl || href === currentPath || href === absUrl) {
 					$(this).addClass("jstree-clicked");
@@ -181,18 +182,6 @@
 					});
 				});
 
-
-				/*
-				self.request = $.get(url, function(data) {
-					$compile(data)(currentScope, function (clone) {
-						$timeout(function() {
-							$el.html(clone);
-							deferred.resolve(self.updateLinks());
-							self.request = null;
-						});
-					});
-				});
-				*/
 				currentUrl = url;
 			} else {
 				deferred.resolve(self.updateLinks());

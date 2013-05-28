@@ -303,6 +303,10 @@
 				}
 
 
+				function _ToSlash (string) {
+					return string.replace(/_/g, '/');
+				}
+
 				// Public API of the REST service.
 
 
@@ -678,7 +682,7 @@
 					 * @returns String
 					 */
 					'treeUrl' : function (treeName) {
-						return REST_BASE_URL + 'resourcestree/' + treeName.replace('_', '/') + '/';
+						return REST_BASE_URL + 'resourcestree/' + _ToSlash(treeName) + '/';
 					},
 
 
@@ -786,7 +790,7 @@
 					/**
 					 * Recursively load blocks for all vendors and modules.
 					 *
-					 * @returns {*}
+					 * @returns Promise
 					 */
 					'blocks' : function () {
 						var	q = $q.defer(),
@@ -823,7 +827,6 @@
 
 								});
 
-
 							});
 						});
 
@@ -831,10 +834,16 @@
 					},
 
 
+					/**
+					 * Returns information about a Block.
+					 *
+					 * @param blockName
+					 * @returns Promise
+					 */
 					'blockInfo' : function (blockName) {
 						var	q = $q.defer();
 
-						$http.get(REST_BASE_URL + 'blocks/' + blockName.replace(/_/g, '/'), getHttpConfigWithCache()).success(function (block) {
+						$http.get(REST_BASE_URL + 'blocks/' + _ToSlash(blockName), getHttpConfigWithCache()).success(function (block) {
 							resolveQ(q, block.properties);
 						});
 
@@ -842,6 +851,12 @@
 					},
 
 
+					/**
+					 * Returns information about a Model.
+					 *
+					 * @param modelName
+					 * @returns Promise
+					 */
 					'modelInfo' : function (modelName) {
 						var	q = $q.defer();
 
@@ -849,7 +864,7 @@
 							modelName = modelName.model;
 						}
 
-						$http.get(REST_BASE_URL + 'models/' + modelName.replace(/_/g, '/'), getHttpConfigWithCache()).success(function (model) {
+						$http.get(REST_BASE_URL + 'models/' + _ToSlash(modelName), getHttpConfigWithCache()).success(function (model) {
 							resolveQ(q, model);
 						});
 
@@ -857,6 +872,12 @@
 					},
 
 
+					/**
+					 * Sends a query to search for documents. Query is sent via a POST call.
+					 *
+					 * @param queryObject
+					 * @returns Promise, resolved with a collection of documents that match the filters.
+					 */
 					'query' : function (queryObject) {
 						var	q = $q.defer();
 
@@ -872,6 +893,79 @@
 						});
 
 						return q.promise;
+					},
+
+
+					//
+					// Storage
+					//
+
+					'storage' : {
+
+						'upload' : function (fileElm) {
+							var	q = $q.defer(),
+								formData = new FormData();
+
+							fileElm = fileElm.get(0);
+							if (!fileElm.files) {
+								window.alert('Browser not compatible');
+								rejectQ(q, 'Browser not compatible');
+								digest();
+							}
+
+							// Using the HTML5's File API:
+							// https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/FormData
+							if (fileElm.files.length > 0) {
+								formData.append('file', fileElm.files[0]);
+
+								// FIXME Change "/tmp" path.
+								window.jQuery.ajax({
+									"url"         : REST_BASE_URL + 'storage/tmp/',
+									"type"        : "POST",
+									"method"      : "POST",
+									"data"        : formData,
+									"processData" : false,  // tell jQuery not to process the data,
+									"contentType" : false,  // tell jQuery not to change the ContentType,
+
+									"success" : function (data, textStatus, jqXHR) {
+										resolveQ(q, data);
+										digest();
+									},
+
+									"error"   : function (jqXHR, textStatus, errorThrown) {
+										var error;
+										try {
+											error = JSON.parse(jqXHR.responseText);
+										} catch (e) {
+											error = {
+												"code"    : errorThrown,
+												"message" : textStatus + ": " + jqXHR.responseText
+											};
+										}
+										rejectQ(q, error);
+										digest();
+									}
+
+								});
+							} else {
+								window.alert('Please select a file');
+								rejectQ(q, 'No file');
+								digest();
+							}
+
+							return q.promise;
+						},
+
+
+						'getUrl' : function (storagePath) {
+							// FIXME Fix returned URL: is "?content=1" OK ?
+							if (Utils.startsWith(storagePath, "change://")) {
+								return REST_BASE_URL + 'storage/' + storagePath.substr(9) + '?content=1';
+							} else {
+								throw new Error("'storagePath' should begin with 'change://'.");
+							}
+						}
+
 					}
 
 				};

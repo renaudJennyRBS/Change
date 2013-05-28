@@ -87,37 +87,89 @@ class StorageResolver
 				return;
 			}
 		}
-		elseif ($method === Request::METHOD_POST && $event->getRequest()->getFiles('file', false))
+		elseif ($method === Request::METHOD_POST)
 		{
-			$storageName = array_shift($resourceParts);
-			$storageEngine = $event->getApplicationServices()->getStorageManager()->getStorageByName($storageName);
-			if ($storageEngine)
+			if ($event->getRequest()->getFiles('file', false))
 			{
-				$file = $event->getRequest()->getFiles('file');
-				if (isset($file['name']) && $file['error'] === 0)
+				$storageName = array_shift($resourceParts);
+				$storageEngine = $event->getApplicationServices()->getStorageManager()->getStorageByName($storageName);
+				if ($storageEngine)
 				{
-					$cleaner = function ($string) {return trim($string) != '';};
-					if ($isDirectory)
+					$file = $event->getRequest()->getFiles('file');
+					if (isset($file['name']))
 					{
-						$resourceParts[] = uniqid() . '_' . $file['name'];
+						if ($file['error'] === 0)
+						{
+							$cleaner = function ($string) {return trim($string) != '';};
+							if ($isDirectory)
+							{
+								$resourceParts[] = uniqid() . '_' . $file['name'];
+							}
+							$storagePath = $storageEngine->normalizePath(implode('/', array_filter($resourceParts, $cleaner)));
+							$path = \Change\Storage\StorageManager::DEFAULT_SCHEME . '://' . $storageName . '/' . $storagePath;
+							$event->setParam('destinationPath', $path);
+							$event->setParam('file', $file);
+
+							//TODO Activate Authorisation
+							//$privilege = 'storage.upload';
+							//$this->resolver->setAuthorisation($event, $path, $privilege);
+
+							$action = function ($event)
+							{
+								$action = new UploadFile();
+								$action->execute($event);
+							};
+							$event->setAction($action);
+							return;
+						}
+						else
+						{
+							switch ($file['error'])
+							{
+								case UPLOAD_ERR_INI_SIZE :
+									$msg = "The uploaded file exceeds " . ini_get('upload_max_filesize') . ". See php.ini.";
+									break;
+
+								case UPLOAD_ERR_INI_SIZE :
+									$msg = "Upload error: UPLOAD_ERR_INI_SIZE";
+									break;
+
+								case UPLOAD_ERR_FORM_SIZE :
+									$msg = "Upload error: UPLOAD_ERR_FORM_SIZE";
+									break;
+
+								case UPLOAD_ERR_PARTIAL :
+									$msg = "Upload error: UPLOAD_ERR_PARTIAL";
+									break;
+
+								case UPLOAD_ERR_NO_FILE :
+									$msg = "Upload error: UPLOAD_ERR_NO_FILE";
+									break;
+
+								case UPLOAD_ERR_NO_TMP_DIR :
+									$msg = "Upload error: UPLOAD_ERR_NO_TMP_DIR";
+									break;
+
+								case UPLOAD_ERR_CANT_WRITE :
+									$msg = "Upload error: UPLOAD_ERR_CANT_WRITE";
+									break;
+
+								case UPLOAD_ERR_EXTENSION :
+									$msg = "Upload error: UPLOAD_ERR_EXTENSION";
+									break;
+
+								default :
+									$msg = "Unknown upload error: " . $file['error'];
+							}
+
+							throw new \RuntimeException($msg, 999999);
+						}
 					}
-					$storagePath = $storageEngine->normalizePath(implode('/', array_filter($resourceParts, $cleaner)));
-					$path = \Change\Storage\StorageManager::DEFAULT_SCHEME . '://' . $storageName . '/' . $storagePath;
-					$event->setParam('destinationPath', $path);
-					$event->setParam('file', $file);
-
-					//TODO Activate Authorisation
-					//$privilege = 'storage.upload';
-					//$this->resolver->setAuthorisation($event, $path, $privilege);
-
-					$action = function ($event)
-					{
-						$action = new UploadFile();
-						$action->execute($event);
-					};
-					$event->setAction($action);
-					return;
 				}
+			}
+			else
+			{
+				throw new \RuntimeException("No file ", 999999);
 			}
 		}
 	}

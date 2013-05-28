@@ -31,12 +31,15 @@
 		DL.columns.push({ id: 'modificationDate', label: "Dernière modif." });
 		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center" });
 
-		REST.resource($routeParams.theme).then(function (theme) {
-			Breadcrumb.setPath([theme]);
-			console.log("treeUrl for theme: ", theme.url('tree'));
-			DL.query = {"model":"Change_Theme_PageTemplate","where":{"and":[{"op":"eq","lexp":{"property":"theme"},"rexp":{"value":theme.id}}]}};
-			DL.reload();
-		});
+		if ($routeParams.theme) {
+			REST.resource($routeParams.theme).then(function (theme) {
+				Breadcrumb.setPath([theme]);
+				DL.query = {"model":"Change_Theme_PageTemplate","where":{"and":[{"op":"eq","lexp":{"property":"theme"},"rexp":{"value":theme.id}}]}};
+				DL.reload();
+			});
+		} else {
+			DL.setResourceUrl('Change_Theme_PageTemplate');
+		}
 
 		MainMenu.loadModuleMenu('Change_Theme');
 	}
@@ -58,20 +61,18 @@
 	 * @param FormsManager
 	 * @constructor
 	 */
-	function FormController ($scope, $routeParams, Breadcrumb, FormsManager, REST) {
+	function FormController ($scope, Breadcrumb, FormsManager, REST) {
 
 		Breadcrumb.setLocation([["Thèmes", "Change/Theme"]]);
 		FormsManager.initResource($scope, 'Change_Theme_PageTemplate').then(function (pageTemplate) {
-			console.log("loading theme ", pageTemplate.theme);
 			REST.resource(pageTemplate.theme).then(function (theme) {
-				console.log("loaded OK ", theme);
 				Breadcrumb.setPath([theme]);
 			});
 		});
 	}
 
 	FormController.$inject = [
-		'$scope', '$routeParams',
+		'$scope',
 		'RbsChange.Breadcrumb',
 		'RbsChange.FormsManager',
 		'RbsChange.REST'

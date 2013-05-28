@@ -14,17 +14,9 @@
 			require     : 'ngModel',
 
 			scope       : true,
-/*
-			scope: {
-				documents: '=',
-				collapsedLabelCreate: '@',
-				collapsedLabelEdit: '@'
-			},
-*/
+
 			// Initialisation du scope (logique du composant)
 			link: function (scope, elm, attrs, ngModel) {
-
-				var labelProperty = attrs.labelProperty || 'label';
 
 				ngModel.$render = function() {
 					scope.documents = ngModel.$viewValue;
@@ -114,6 +106,22 @@
 						value = [doc];
 					}
 					ngModel.$setViewValue(value);
+					ngModel.$render();
+				};
+
+				scope.selectDocuments = function (docs) {
+					var value;
+					if (angular.isArray(ngModel.$viewValue)) {
+						value = ngModel.$viewValue;
+						angular.forEach(docs, function (doc) {
+							if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+								value.push(doc);
+							}
+						});
+						ngModel.$setViewValue(value);
+					} else {
+						ngModel.$setViewValue(docs);
+					}
 					ngModel.$render();
 				};
 
