@@ -25,10 +25,8 @@
 				scope.previewWidth = MAX_PREVIEW_HEIGHT * (16/9.0);
 				scope.previewHeight = MAX_PREVIEW_HEIGHT;
 
-				ngModel.$render = function () {
-					console.log("render: viewValue=", ngModel.$viewValue);
+				ngModel.$render = function ngModelRenderFn () {
 					if (ngModel.$viewValue) {
-						console.log("storage src=", REST.storage.getUrl(ngModel.$viewValue));
 						scope.imageSrc = REST.storage.getUrl(ngModel.$viewValue);
 					}
 				};
@@ -36,7 +34,7 @@
 				var	inputFile = $(elm).find("input[type=file]"),
 					reader = new FileReader();
 
-				reader.onload = function (event) {
+				reader.onload = function imgOnloadFn (event) {
 					scope.$apply(function () {
 						scope.loading = false;
 						scope.fileSize = event.total;
@@ -57,17 +55,17 @@
 					});
 				};
 
-				inputFile.change(function () {
+				inputFile.change(function inputChangedFn () {
 					scope.$apply('loading=true');
 					reader.readAsDataURL(inputFile.get(0).files[0]);
 				});
 
-				scope.choose = function () {
+				scope.choose = function chooseFn () {
 					inputFile.click();
 				};
 
-				scope.upload = function ($event) {
-					var button = $($event.target),
+				scope.upload = function uploadFn ($event) {
+					var	button = $($event.target),
 						file = inputFile.get(0).files[0];
 
 					if ( ! acceptedTypes.test(file.type) ) {
@@ -75,13 +73,12 @@
 					} else {
 						button.attr('disabled', 'disabled');
 						REST.storage.upload(inputFile).then(
-							function (response) {
-								console.log("response=", response);
+							function uploadSuccessFn (response) {
 								ngModel.$setViewValue(response.path);
 								ngModel.$render();
 								button.removeAttr('disabled');
 							},
-							function (data) {
+							function uploadErrorFn (data) {
 								window.alert(data.message);
 								button.removeAttr('disabled');
 							}
