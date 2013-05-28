@@ -1,8 +1,8 @@
-(function ()
+(function ($)
 {
 	"use strict";
 
-	function Editor(Editor)
+	function EditorFn (Editor, REST)
 	{
 		return {
 			restrict: 'EC',
@@ -13,10 +13,28 @@
 			link: function (scope, elm)
 			{
 				Editor.initScope(scope, elm);
+
+				scope.upload = function ($event) {
+					var button = $($event.target);
+					button.attr('disabled', 'disabled');
+					REST.upload(elm.find('#file')).then(
+						function (data) {
+							console.log(data);
+							button.removeAttr('disabled');
+						},
+						function () {
+							button.removeAttr('disabled');
+						}
+					);
+				};
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor'];
-	angular.module('RbsChange').directive('editorChangeMediaImage', Editor);
-})();
+	EditorFn.$inject = [
+		'RbsChange.Editor',
+		'RbsChange.REST'
+	];
+	angular.module('RbsChange').directive('editorChangeMediaImage', EditorFn);
+
+})(window.jQuery);
