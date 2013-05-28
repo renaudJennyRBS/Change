@@ -957,13 +957,29 @@
 						},
 
 
-						'getUrl' : function (storagePath) {
+						'displayUrl' : function (storagePath) {
 							// FIXME Fix returned URL: is "?content=1" OK ?
 							if (Utils.startsWith(storagePath, "change://")) {
 								return REST_BASE_URL + 'storage/' + storagePath.substr(9) + '?content=1';
 							} else {
 								throw new Error("'storagePath' should begin with 'change://'.");
 							}
+						},
+
+
+						'info' : function (storagePath) {
+							var q = $q.defer();
+
+							if (Utils.startsWith(storagePath, "change://")) {
+								$http.get(REST_BASE_URL + 'storage/' + storagePath.substr(9), getHttpConfig()).success(function (storageInfo) {
+									storageInfo.fileName = storagePath.substr(9);
+									resolveQ(q, storageInfo);
+								});
+							} else {
+								rejectQ(q, "'storagePath' should begin with 'change://'.");
+							}
+
+							return q.promise;
 						}
 
 					}
