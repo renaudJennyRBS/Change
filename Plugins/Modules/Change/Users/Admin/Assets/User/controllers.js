@@ -14,7 +14,7 @@
 	 * @param MainMenu
 	 * @constructor
 	 */
-	function WebsiteListController ($scope, DocumentList, Breadcrumb, MainMenu) {
+	function ListController ($scope, DocumentList, Breadcrumb, MainMenu) {
 
 		var DL = DocumentList.initScope($scope, 'Change_Users_User');
 
@@ -31,13 +31,13 @@
 		MainMenu.loadModuleMenu('Change_Users');
 	}
 
-	WebsiteListController.$inject = [
+	ListController.$inject = [
 		'$scope',
 		'RbsChange.DocumentList',
 		'RbsChange.Breadcrumb',
 		'RbsChange.MainMenu'
 	];
-	app.controller('Change_Users_User_ListController', WebsiteListController);
+	app.controller('Change_Users_User_ListController', ListController);
 
 
 	/**
@@ -48,7 +48,7 @@
 	 * @constructor
 	 * @param Breadcrumb
 	 */
-	function WebsiteFormController ($scope, FormsManager, Breadcrumb) {
+	function FormController ($scope, FormsManager, Breadcrumb) {
 
 		Breadcrumb.resetLocation([["Utilisateurs", "Change/Users/User"]]);
 		// Let FormsManager search for 'id' and 'LCID' parameters in the $routeParams service.
@@ -56,11 +56,11 @@
 
 	}
 
-	WebsiteFormController.$inject = [
+	FormController.$inject = [
 		'$scope',
 		'RbsChange.FormsManager',
 		'RbsChange.Breadcrumb'
 	];
-	app.controller('Change_Users_User_FormController', WebsiteFormController);
+	app.controller('Change_Users_User_FormController', FormController);
 
 })();
