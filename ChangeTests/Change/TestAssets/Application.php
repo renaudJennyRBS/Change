@@ -42,10 +42,7 @@ class Application extends \Change\Application
 		if (isset($_ENV['TestConfigFile']) && $_ENV['TestConfigFile'] != '')
 		{
 			$testConfigFile = $this->getWorkspace()->appPath('Config', $_ENV['TestConfigFile']);
-			if (file_exists($testConfigFile))
-			{
-				$result[] = $testConfigFile;
-			}
+			$result['TEST'] = $testConfigFile;
 		}
 		return $result;
 	}

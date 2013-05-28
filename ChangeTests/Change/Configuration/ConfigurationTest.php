@@ -120,35 +120,4 @@ class ConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('newValue24', $config->getEntry('complexEntry2/contents/entry24'));
 		$this->assertEquals(null, $config->getEntry('complexEntry2/contents/entry25'));
 	}
-
-	public function testAddPersistentEntry()
-	{
-		$sourceConfigFile = sys_get_temp_dir() . "/testAddPersistentEntry_project1.json";
-		if (file_exists($sourceConfigFile))
-		{
-			unlink($sourceConfigFile);
-		}
-		copy(__DIR__ . '/TestAssets/project1.json', $sourceConfigFile);
-		$config = new \Change\Configuration\Configuration(array($sourceConfigFile));
-		$this->assertNull($config->getEntry('mypath/myentry'));
-		$this->assertTrue($config->addPersistentEntry('mypath/myentry', 'value'));
-		$this->assertEquals('value', $config->getEntry('mypath/myentry'));
-		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
-		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
-
-		// Giving an invalid path just returns false.
-		$this->assertNull($newConfig->getEntry('invalidpath'));
-		$this->assertFalse($config->addPersistentEntry('invalidpath', 'value'));
-		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
-		$this->assertNull($newConfig->getEntry('invalidpath'));
-
-		// Boolean and integer types values are correctly preserved.
-		$this->assertNull($newConfig->getEntry('mypath/integer'));
-		$this->assertNull($newConfig->getEntry('mypath/boolean'));
-		$this->assertTrue($config->addPersistentEntry('mypath/integer', 155));
-		$this->assertTrue($config->addPersistentEntry('mypath/boolean', true));
-		$newConfig = new  \Change\Configuration\Configuration(array($sourceConfigFile));
-		$this->assertTrue(155 === $newConfig->getEntry('mypath/integer'));
-		$this->assertTrue(true === $newConfig->getEntry('mypath/boolean'));
-	}
 }

@@ -641,7 +641,12 @@ class PluginManager
 	{
 		$eventManager = $this->getEventManager();
 		$plugins = array();
+
 		$application = new \Change\Application();
+
+		$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
+		$application->setConfiguration($editableConfiguration->import($application->getConfiguration()));
+
 		$eventArgs = $eventManager->prepareArgs(array('application' => $application, 'context' => $context));
 
 		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName), $this, $eventArgs);
@@ -683,5 +688,7 @@ class PluginManager
 			$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
 			$this->update($plugin);
 		}
+
+		$editableConfiguration->save();
 	}
 }

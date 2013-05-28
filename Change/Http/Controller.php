@@ -151,9 +151,10 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
+	 * Initialize $event->getAuthentication() and $event->getAcl() if needed
 	 * @param Event $event
 	 */
-	protected function validateAuthentication($event)
+	public function validateAuthentication($event)
 	{
 		if (!($event->getAuthentication() instanceof AuthenticationInterface))
 		{

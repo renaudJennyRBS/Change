@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="c.constraints" lcid="en_GB">
+<i18n baseKey="c.constraints" lcid="en_US">
 	<key id="isinvalidfield">the field "{field}" is not valid: </key>
 	<key id="isempty">Value is required and can't be empty.</key>
 	<key id="notbetweendocumentarray">the field "{field}" is not valid: count='{count}' min-occurs='{minOccurs}', max-occurs='{maxOccurs}'</key>

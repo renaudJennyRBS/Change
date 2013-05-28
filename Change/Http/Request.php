@@ -169,21 +169,40 @@ class Request extends \Zend\Http\PhpEnvironment\Request
 	 */
 	public function populateLCIDByHeader(\Change\I18n\I18nManager $i18nManager)
 	{
+		$cookie = $this->getCookie();
+		if (isset($cookie['LCID']))
+		{
+			$testLCID = $cookie['LCID'];
+			if ($i18nManager->isSupportedLCID($testLCID))
+			{
+				$i18nManager->setLCID($testLCID);
+				$this->setLCID($i18nManager->getLCID());
+				return;
+			}
+		}
+
 		$header = $this->getHeader('Accept-Language');
 		if ($header instanceof \Zend\Http\Header\AcceptLanguage)
 		{
 			foreach ($header->getPrioritized() as $part)
 			{
 				/* @var $part \Zend\Http\Header\Accept\FieldValuePart\LanguageFieldValuePart */
-				$language = $part->getLanguage();
-
+				$language = strtolower($part->getLanguage());
 				if (strlen($language) === 2)
 				{
-					$testLCID = strtolower($language) . '_' . strtoupper($language);
+					$testLCID = $language . '_' . strtoupper($language);
+					foreach ($i18nManager->getSupportedLCIDs() as $LCID)
+					{
+						if ($language == $i18nManager->getLangByLCID($LCID))
+						{
+							$testLCID = $LCID;
+							break;
+						}
+					}
 				}
 				elseif (strlen($language) === 5)
 				{
-					$testLCID = strtolower(substr($language, 0, 2)) . '_' . strtoupper(substr($language, 3, 2));
+					$testLCID = substr($language, 0, 2) . '_' . strtoupper(substr($language, 3, 2));
 				}
 				else
 				{

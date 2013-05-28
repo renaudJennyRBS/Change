@@ -62,7 +62,7 @@ class Controller extends \Change\Http\Controller
 	/**
 	 * @param Event $event
 	 */
-	protected function validateAuthentication($event)
+	public  function validateAuthentication($event)
 	{
 		if (!($event->getAuthentication() instanceof \Change\Http\AuthenticationInterface))
 		{

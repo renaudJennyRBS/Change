@@ -109,7 +109,11 @@ class I18nManager
 	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
 		$this->configuration = $configuration;
-		$this->supportedLCIDs = $this->configuration->getEntry('Change/I18n/supported-lcids', array('fr_FR'));
+		$this->supportedLCIDs = $this->configuration->getEntry('Change/I18n/supported-lcids');
+		if (!is_array($this->supportedLCIDs) || count($this->supportedLCIDs) === 0)
+		{
+			$this->supportedLCIDs = array('fr_FR');
+		}
 	}
 
 	/**

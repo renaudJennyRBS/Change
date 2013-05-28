@@ -36,6 +36,8 @@ class Controller extends \Change\Http\Controller
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
+
+		$request->populateLCIDByHeader($event->getApplicationServices()->getI18nManager());
 		return $event;
 	}
 

@@ -1106,14 +1106,14 @@ class DocumentManager
 	// Working lang.
 
 	/**
-	 * @var string[] ex: "en_GB" or "fr_FR"
+	 * @var string[] ex: "en_US" or "fr_FR"
 	 */
 	protected $LCIDStack = array();
 
 	/**
 	 * Get the current lcid.
 	 * @api
-	 * @return string ex: "en_GB" or "fr_FR"
+	 * @return string ex: "en_US" or "fr_FR"
 	 */
 	public function getLCID()
 	{
