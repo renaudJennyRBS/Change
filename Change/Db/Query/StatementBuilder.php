@@ -7,28 +7,8 @@ use Change\Db\DbProvider;
  * @api
  * @name \Change\Db\Query\StatementBuilder
  */
-class StatementBuilder
+class StatementBuilder extends AbstractBuilder
 {
-	/**
-	 * @var AbstractQuery
-	 */
-	protected $query;
-
-	/**
-	 * @var string
-	 */
-	protected $cacheKey;
-
-	/**
-	 * @var DbProvider
-	 */
-	protected $dbProvider;
-	
-	/**
-	 * @var SQLFragmentBuilder
-	 */
-	protected $fragmentBuilder;
-
 	/**
 	 * @param DbProvider $dbProvider
 	 * @param string $cacheKey
@@ -37,7 +17,6 @@ class StatementBuilder
 	public function __construct(DbProvider $dbProvider, $cacheKey = null, AbstractQuery $query = null)
 	{
 		$this->dbProvider = $dbProvider;
-		$this->fragmentBuilder = new SQLFragmentBuilder($dbProvider->getSqlMapping());
 		if ($cacheKey !== null)
 		{
 			$this->cacheKey = $cacheKey;
@@ -46,73 +25,51 @@ class StatementBuilder
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function isCached()
-	{
-		return $this->cacheKey !== null && $this->query !== null && $this->query->getCachedKey() === $this->cacheKey;
-	}
-	/**
 	 * @api
-	 * Explicitly reset the builder (which will destroy the current query).
+	 * @param Expressions\Table|string $table
+	 * @param Expressions\Column|string $column1 [optional]
+	 * @param Expressions\Column|string $_ [optional]
+	 * @return $this
 	 */
-	public function reset()
+	public function insert($table = null, $column1 = null, $_ = null)
 	{
-		$this->cacheKey = null;
-		$this->query = null;
-	}
-	
-	/**
-	 * @api
-	 * @return SQLFragmentBuilder
-	 */
-	public function getFragmentBuilder()
-	{
-		return $this->fragmentBuilder;
-	}
-	
-	/**
-	 * @api
-	 * @return \Change\Db\SqlMapping
-	 */
-	public function getSqlMapping()
-	{
-		return $this->dbProvider->getSqlMapping();
-	}
+		if ($this->query)
+		{
+			$this->reset();
+		}
+		$insertQuery = new InsertQuery($this->dbProvider, $this->cacheKey);
+		$this->query = $insertQuery;
 
-	/**
-	 * @param SQLFragmentBuilder $fragmentBuilder
-	 */
-	public function setFragmentBuilder($fragmentBuilder)
-	{
-		$this->fragmentBuilder = $fragmentBuilder;
-	}
-	
-	/**
-	 * @api
-	 * @throws \InvalidArgumentException
-	 * @throws \LogicException
-	 * @param string|\Change\Db\Query\Expressions\Parameter $parameter
-	 * @return \Change\Db\Query\StatementBuilder
-	 */
-	public function addParameter($parameter)
-	{
-		if ($this->query === null)
+		$columns = func_get_args();
+		array_shift($columns);
+
+		if ($table)
 		{
-			throw new \LogicException('Query not initialized', 42016);
+			if (is_string($table))
+			{
+				$table = $this->getFragmentBuilder()->table($table);
+			}
+
+			if ($table instanceof Expressions\Table)
+			{
+				$insertClause = new Clauses\InsertClause($table);
+				$insertQuery->setInsertClause($insertClause);
+			}
 		}
-		if (is_string($parameter))
+
+		if (is_array($columns))
 		{
-			$parameter = $this->fragmentBuilder->parameter($parameter);
+			foreach ($columns as $column)
+			{
+				if ($column !== null)
+				{
+					$this->addColumn($column);
+				}
+			}
 		}
-		if (!($parameter instanceof \Change\Db\Query\Expressions\Parameter))
-		{
-			throw new \InvalidArgumentException('argument must be a string or a \Change\Db\Query\Expressions\Parameter', 42004);
-		}
-		$this->query->addParameter($parameter);
 		return $this;
 	}
-	
+
 	/**
 	 * @api
 	 * @throws \LogicException
@@ -131,63 +88,25 @@ class StatementBuilder
 		throw new \LogicException('Call insert() before', 42017);
 	}
 	
-	/**
-	 * @api
-	 * @param \Change\Db\Query\Expressions\Table|string $table
-	 * @param \Change\Db\Query\Expressions\Column|string $column1 [optional]
-	 * @param \Change\Db\Query\Expressions\Column|string $_ [optional]
-	 * @return \Change\Db\Query\StatementBuilder
-	 */
-	public function insert($table = null)
-	{
-		if ($this->query)
-		{
-			$this->reset();
-		}
-		$insertQuery = new InsertQuery($this->dbProvider, $this->cacheKey);
-		$this->query = $insertQuery;
-		
-		$columns = func_get_args();
-		array_shift($columns);
-		
-		if ($table)
-		{
-			if (is_string($table))
-			{
-				$table = $this->fragmentBuilder->table($table);
-			}
-			
-			if ($table instanceof \Change\Db\Query\Expressions\Table)
-			{
-				$insertClause = new \Change\Db\Query\Clauses\InsertClause($table);
-				$insertQuery->setInsertClause($insertClause);
-			}
-		}
-				
-		if (is_array($columns))
-		{
-			foreach ($columns as $column)
-			{
-				$this->addColumn($column);
-			}
-		}
 
-		return $this;
-	}
 	
 	/**
 	 * Add a columns to the existing insert clause
 	 *
 	 * @api
-	 * @param \Change\Db\Query\Expressions\Column|string $column1 [optional]
-	 * @param \Change\Db\Query\Expressions\Column|string $_ [optional]
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @param Expressions\Column|string $column1 [optional]
+	 * @param Expressions\Column|string $_ [optional]
+	 * @throws \LogicException
+	 * @return $this
 	 */
-	public function addColumns()
+	public function addColumns($column1 = null, $_ = null)
 	{
 		foreach (func_get_args() as $column)
 		{
-			$this->addColumn($column);
+			if ($column !== null)
+			{
+				$this->addColumn($column);
+			}
 		}
 		return $this;
 	}
@@ -196,20 +115,21 @@ class StatementBuilder
 	 * Add a column  to the existing insert clause
 	 *
 	 * @api
-	 * @param \Change\Db\Query\Expressions\Column|string $column
+	 * @param Expressions\Column|string $column
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @return $this
 	 */
 	public function addColumn($column)
 	{
 		if (is_string($column))
 		{
-			$column = $this->fragmentBuilder->column($column);
+			$column = $this->getFragmentBuilder()->column($column);
 		}
+
 		$insertClause = $this->insertQuery()->getInsertClause();
 		if ($insertClause === null)
 		{
-			$insertClause = new \Change\Db\Query\Clauses\InsertClause();
+			$insertClause = new Clauses\InsertClause();
 			$this->insertQuery()->setInsertClause($insertClause);
 		}
 		$insertClause->addColumn($column);
@@ -220,16 +140,19 @@ class StatementBuilder
 	 * Add a values to the existing insert clause
 	 *
 	 * @api
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $column1 [optional]
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $_ [optional]
+	 * @param Expressions\AbstractExpression|string $value1 [optional]
+	 * @param Expressions\AbstractExpression|string $_ [optional]
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @return $this
 	 */
-	public function addValues()
+	public function addValues($value1, $_)
 	{
-		foreach (func_get_args() as $expression)
+		foreach (func_get_args() as $value)
 		{
-			$this->addValue($expression);
+			if ($value !== null)
+			{
+				$this->addValue($value);
+			}
 		}
 		return $this;
 	}
@@ -238,23 +161,52 @@ class StatementBuilder
 	 * Add a column  to the existing insert clause
 	 *
 	 * @api
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $expression
+	 * @param Expressions\AbstractExpression|string $expression
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @return $this
 	 */
 	public function addValue($expression)
 	{
 		if (is_string($expression))
 		{
-			$expression = $this->fragmentBuilder->string($expression);
+			$expression = $this->getFragmentBuilder()->string($expression);
 		}
 		$valuesClause = $this->insertQuery()->getValuesClause();
 		if ($valuesClause === null)
 		{
-			$valuesClause = new \Change\Db\Query\Clauses\ValuesClause();
+			$valuesClause = new Clauses\ValuesClause();
 			$this->insertQuery()->setValuesClause($valuesClause);
 		}
 		$valuesClause->addValue($expression);
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @param Expressions\Table|string $table
+	 * @return $this
+	 */
+	public function update($table = null)
+	{
+		if ($this->query)
+		{
+			$this->reset();
+		}
+		$this->query = new UpdateQuery($this->dbProvider, $this->cacheKey);
+
+		if ($table)
+		{
+			if (is_string($table))
+			{
+				$table = $this->getFragmentBuilder()->table($table);
+			}
+
+			if ($table instanceof Expressions\Table)
+			{
+				$updateClause = new Clauses\UpdateClause($table);
+				$this->updateQuery()->setUpdateClause($updateClause);
+			}
+		}
 		return $this;
 	}
 	
@@ -273,62 +225,63 @@ class StatementBuilder
 			}
 			return $this->query;
 		}
-	
 		throw new \LogicException('Call update() before', 42018);
 	}
 	
-	/**
-	 * @api
-	 * @param \Change\Db\Query\Expressions\Table|string $table
-	 * @return \Change\Db\Query\StatementBuilder
-	 */
-	public function update($table = null)
-	{
-		if ($this->query)
-		{
-			$this->reset();
-		}
-		$this->query = new UpdateQuery($this->dbProvider, $this->cacheKey);
 
-		if ($table)
-		{
-			if (is_string($table))
-			{
-				$table = $this->fragmentBuilder->table($table);
-			}
-			if ($table instanceof \Change\Db\Query\Expressions\Table)
-			{
-				$updateClause = new \Change\Db\Query\Clauses\UpdateClause($table);
-				$this->updateQuery()->setUpdateClause($updateClause);
-			}
-		}
-		return $this;
-	}
-	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Expressions\Column|string $column
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|string $expression
+	 * @param Expressions\Column|string $column
+	 * @param Expressions\AbstractExpression|string $expression
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @return $this
 	 */
 	public function assign($column, $expression)
 	{
 		if (is_string($column))
 		{
-			$column = $this->fragmentBuilder->column($column);
+			$column = $this->getFragmentBuilder()->column($column);
 		}
 		if (is_string($expression))
 		{
-			$expression = $this->fragmentBuilder->string($expression);
+			$expression = $this->getFragmentBuilder()->string($expression);
 		}
 		$setClause = $this->updateQuery()->getSetClause();
 		if ($setClause === null)
 		{
-			$setClause = new \Change\Db\Query\Clauses\SetClause();
+			$setClause = new Clauses\SetClause();
 			$this->updateQuery()->setSetClause($setClause);
 		}
-		$setClause->addSet($this->fragmentBuilder->assignment($column, $expression));
+		$setClause->addSet($this->getFragmentBuilder()->assignment($column, $expression));
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @param Expressions\Table|string $table
+	 * @return $this
+	 */
+	public function delete($table = null)
+	{
+		if ($this->query)
+		{
+			$this->reset();
+		}
+		$this->query = new DeleteQuery($this->dbProvider, $this->cacheKey);
+
+		if ($table)
+		{
+			if (is_string($table))
+			{
+				$table = $this->getFragmentBuilder()->table($table);
+			}
+			if ($table instanceof Expressions\Table)
+			{
+				$this->deleteQuery()->setDeleteClause(new Clauses\DeleteClause());
+				$fromClause = new Clauses\FromClause($table);
+				$this->deleteQuery()->setFromClause($fromClause);
+			}
+		}
 		return $this;
 	}
 	
@@ -351,47 +304,21 @@ class StatementBuilder
 		throw new \LogicException('Call delete() before', 42019);
 	}
 	
-	/**
-	 * @api
-	 * @param \Change\Db\Query\Expressions\Table|string $table
-	 * @return \Change\Db\Query\StatementBuilder
-	 */
-	public function delete($table = null)
-	{
-		if ($this->query)
-		{
-			$this->reset();
-		}
-		$this->query = new DeleteQuery($this->dbProvider, $this->cacheKey);
 
-		if ($table)
-		{
-			if (is_string($table))
-			{
-				$table = $this->fragmentBuilder->table($table);
-			}
-			if ($table instanceof \Change\Db\Query\Expressions\Table)
-			{
-				$this->deleteQuery()->setDeleteClause(new \Change\Db\Query\Clauses\DeleteClause());
-				$fromClause = new \Change\Db\Query\Clauses\FromClause($table);
-				$this->deleteQuery()->setFromClause($fromClause);
-			}
-		}
-		return $this;
-	}
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Predicates\InterfacePredicate $predicate
+	 * @param Predicates\InterfacePredicate $predicate
 	 * @throws \LogicException
-	 * @return \Change\Db\Query\StatementBuilder
+	 * @return $this
 	 */
-	public function where(\Change\Db\Query\Predicates\InterfacePredicate $predicate)
+	public function where(Predicates\InterfacePredicate $predicate)
 	{
 		$validQuery = $this->query;
 		if ($validQuery instanceof UpdateQuery || $validQuery instanceof DeleteQuery)
 		{
-			$whereClause = new \Change\Db\Query\Clauses\WhereClause($predicate);
+			/* @var $validQuery UpdateQuery|DeleteQuery */
+			$whereClause = new Clauses\WhereClause($predicate);
 			$validQuery->setWhereClause($whereClause);
 			return $this;
 		}

@@ -324,10 +324,14 @@ class Controller implements EventManagerAwareInterface
 		}
 		catch (\Exception $exception)
 		{
-			$event->setParam('Exception', $exception);
 			if ($event->getApplicationServices())
 			{
 				$event->getApplicationServices()->getLogging()->exception($exception);
+			}
+
+			if (!($event->getParam('Exception') instanceof \Exception))
+			{
+				$this->doSendException($eventManager, $event, $exception);
 			}
 		}
 	}

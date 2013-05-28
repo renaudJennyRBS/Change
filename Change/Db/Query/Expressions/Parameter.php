@@ -1,6 +1,8 @@
 <?php
 namespace Change\Db\Query\Expressions;
 
+use Change\Db\ScalarType;
+
 /**
  * @name \Change\Db\Query\Expressions\Parameter
  */
@@ -12,15 +14,15 @@ class Parameter extends AbstractExpression
 	protected $name;
 	
 	/**
-	 * @var integer \Change\Db\ScalarType::*
+	 * @var integer as \Change\Db\ScalarType::*
 	 */
 	protected $type;
 	
 	/**
-	 * @param string $parameter
+	 * @param string $name
 	 * @param integer $type
 	 */
-	public function __construct($name, $type = \Change\Db\ScalarType::STRING)
+	public function __construct($name, $type = ScalarType::STRING)
 	{
 		$this->setName($name);
 		$this->setType($type);
@@ -35,7 +37,7 @@ class Parameter extends AbstractExpression
 	}
 	
 	/**
-	 * @param string $parameter
+	 * @param string $name
 	 */
 	public function setName($name)
 	{
@@ -43,7 +45,7 @@ class Parameter extends AbstractExpression
 	}
 	
 	/**
-	 * @return integer \Change\Db\ScalarType::*
+	 * @return integer as \Change\Db\ScalarType::*
 	 */
 	public function getType()
 	{
@@ -52,19 +54,19 @@ class Parameter extends AbstractExpression
 
 	/**
 	 * @throws \InvalidArgumentException
-	 * @param integer $type \Change\Db\ScalarType::*
+	 * @param integer $type as \Change\Db\ScalarType::*
 	 */
 	public function setType($type)
 	{
 		switch ($type) 
 		{
-			case \Change\Db\ScalarType::STRING:
-			case \Change\Db\ScalarType::BOOLEAN:
-			case \Change\Db\ScalarType::DATETIME:
-			case \Change\Db\ScalarType::DECIMAL:
-			case \Change\Db\ScalarType::INTEGER:
-			case \Change\Db\ScalarType::LOB:
-			case \Change\Db\ScalarType::TEXT:
+			case ScalarType::STRING:
+			case ScalarType::BOOLEAN:
+			case ScalarType::DATETIME:
+			case ScalarType::DECIMAL:
+			case ScalarType::INTEGER:
+			case ScalarType::LOB:
+			case ScalarType::TEXT:
 				$this->type = $type;
 				return;
 		}

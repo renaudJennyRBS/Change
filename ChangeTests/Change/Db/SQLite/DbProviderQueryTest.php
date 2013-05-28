@@ -55,13 +55,13 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 		$fb = $sb->getFragmentBuilder();
 		$iq = $sb->insert('test_t1', 'id', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6')
 			->addValues(
-			$fb->integerParameter('id', $sb),
-			$fb->parameter('f1', $sb),
-			$fb->integerParameter('f2', $sb),
-			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
-			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
-			$fb->parameter('f5', $sb),
-			$fb->dateTimeParameter('f6', $sb)
+			$fb->integerParameter('id'),
+			$fb->parameter('f1'),
+			$fb->integerParameter('f2'),
+			$fb->decimalParameter('f3'),
+			$fb->booleanParameter('f4'),
+			$fb->parameter('f5'),
+			$fb->dateTimeParameter('f6')
 		)->insertQuery();
 
 		$iq->bindParameter('id', 5);
@@ -111,13 +111,13 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$iq = $sb->insert('test_t2', 'id', '2f1', '2f2', '2f3', '2f4', '2f5', '2f6')
 			->addValues(
-			$fb->integerParameter('id', $sb),
-			$fb->parameter('f1', $sb),
-			$fb->integerParameter('f2', $sb),
-			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
-			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
-			$fb->parameter('f5', $sb),
-			$fb->dateTimeParameter('f6', $sb)
+			$fb->integerParameter('id'),
+			$fb->parameter('f1'),
+			$fb->integerParameter('f2'),
+			$fb->decimalParameter('f3'),
+			$fb->booleanParameter('f4'),
+			$fb->parameter('f5'),
+			$fb->dateTimeParameter('f6')
 		)->insertQuery();
 
 		$iq->bindParameter('id', 50);

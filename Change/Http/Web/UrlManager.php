@@ -129,11 +129,11 @@ class UrlManager extends \Change\Http\UrlManager
 		$qb->from($qb->getSqlMapping()->getPathRuleTable());
 
 		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId', $qb)),
-			$fb->eq($fb->column('lcid'), $fb->parameter('LCID', $qb)),
-			$fb->eq($fb->column('document_id'), $fb->parameter('documentId', $qb)),
-			$fb->eq($fb->column('section_id'), $fb->parameter('sectionId', $qb)),
-			$fb->eq($fb->column('http_status'), $fb->parameter('httpStatus', $qb))
+			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+			$fb->eq($fb->column('document_id'), $fb->parameter('documentId')),
+			$fb->eq($fb->column('section_id'), $fb->parameter('sectionId')),
+			$fb->eq($fb->column('http_status'), $fb->parameter('httpStatus'))
 		));
 
 		$sq = $qb->query();

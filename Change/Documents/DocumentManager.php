@@ -3,6 +3,7 @@ namespace Change\Documents;
 
 use Change\Application\ApplicationServices;
 use Change\Db\Query\ResultsConverter;
+use Change\Db\ScalarType;
 
 /**
  * @name \Change\Documents\DocumentManager
@@ -154,7 +155,7 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$sqlMapping = $qb->getSqlMapping();
 			$qb->select()->from($fb->getDocumentTable($model->getRootName()))->where($fb->eq($fb->getDocumentColumn('id'),
-				$fb->integerParameter('id', $qb)));
+				$fb->integerParameter('id')));
 
 			foreach ($model->getProperties() as $property)
 			{
@@ -206,7 +207,7 @@ class DocumentManager
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->select('metas')->from($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')))
 				->query();
 		}
 		$query = $qb->query();
@@ -237,12 +238,12 @@ class DocumentManager
 		if ($document->getId() > 0)
 		{
 			$qb->addColumn($fb->getDocumentColumn('id'));
-			$qb->addValue($fb->integerParameter('id', $qb));
+			$qb->addValue($fb->integerParameter('id'));
 			$iq->bindParameter('id', $document->getId());
 		}
 
 		$qb->addColumn($fb->getDocumentColumn('model'));
-		$qb->addValue($fb->parameter('model', $qb));
+		$qb->addValue($fb->parameter('model'));
 		$iq->bindParameter('model', $document->getDocumentModelName());
 
 		$iq->execute();
@@ -305,7 +306,7 @@ class DocumentManager
 				}
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
 				$qb->addColumn($fb->getDocumentColumn($name));
-				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
+				$qb->addValue($fb->typedParameter($name, $dbType));
 				$iq->bindParameter($name, $property->getValue($document));
 			}
 		}
@@ -335,8 +336,8 @@ class DocumentManager
 			$qb->delete($fb->getDocumentRelationTable($model->getRootName()));
 			$qb->where(
 				$fb->logicAnd(
-					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
+					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+					$fb->eq($fb->column('relname'), $fb->parameter('relname'))
 				)
 			);
 		}
@@ -382,8 +383,8 @@ class DocumentManager
 				$fb = $qb->getFragmentBuilder();
 				$qb->insert($fb->getDocumentRelationTable($model->getRootName()), $fb->getDocumentColumn('id'), 'relname',
 					'relorder', 'relatedid');
-				$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb),
-					$fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
+				$qb->addValues($fb->integerParameter('id'), $fb->parameter('relname'),
+					$fb->integerParameter('order'), $fb->integerParameter('relatedid'));
 			}
 
 			$query = $qb->insertQuery();
@@ -439,7 +440,7 @@ class DocumentManager
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
 				$qb->addColumn($fb->getDocumentColumn($name));
-				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
+				$qb->addValue($fb->typedParameter($name, $dbType));
 				$iq->bindParameter($name, $property->getValue($document));
 			}
 		}
@@ -467,7 +468,7 @@ class DocumentManager
 		$model = $document->getDocumentModel();
 
 		$qb->update($fb->getDocumentTable($model->getRootName()));
-		$iq = $qb->updateQuery();
+		$uq = $qb->updateQuery();
 		$execute = false;
 		$relations = array();
 
@@ -485,17 +486,17 @@ class DocumentManager
 					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
 				}
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($document));
+				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType));
+				$uq->bindParameter($name, $property->getValue($document));
 				$execute = true;
 			}
 		}
 
 		if ($execute)
 		{
-			$qb->where($fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)));
-			$iq->bindParameter('id', $document->getId());
-			$iq->execute();
+			$qb->where($fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id')));
+			$uq->bindParameter('id', $document->getId());
+			$uq->execute();
 
 			foreach ($relations as $name => $ids)
 			{
@@ -535,7 +536,7 @@ class DocumentManager
 		$model = $document->getDocumentModel();
 
 		$qb->update($sqlMapping->getDocumentI18nTableName($model->getRootName()));
-		$iq = $qb->updateQuery();
+		$uq = $qb->updateQuery();
 		$execute = false;
 
 		foreach ($model->getLocalizedProperties() as $name => $property)
@@ -548,8 +549,8 @@ class DocumentManager
 			if ($localizedPart->isPropertyModified($name))
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($localizedPart));
+				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType));
+				$uq->bindParameter($name, $property->getValue($localizedPart));
 				$execute = true;
 			}
 		}
@@ -558,14 +559,14 @@ class DocumentManager
 		{
 			$qb->where(
 				$fb->logicAnd(
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('LCID')), $fb->parameter('LCID', $qb))
+					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id')),
+					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('LCID')), $fb->parameter('LCID'))
 				)
 
 			);
-			$iq->bindParameter('id', $localizedPart->getId());
-			$iq->bindParameter('LCID', $localizedPart->getLCID());
-			$iq->execute();
+			$uq->bindParameter('id', $localizedPart->getId());
+			$uq->bindParameter('LCID', $localizedPart->getLCID());
+			$uq->execute();
 		}
 
 		$localizedPart->setPersistentState(static::STATE_LOADED);
@@ -582,7 +583,7 @@ class DocumentManager
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$deleteQuery = $qb->deleteQuery();
@@ -596,11 +597,9 @@ class DocumentManager
 		$qb = $this->getNewStatementBuilder(__METHOD__.'Insert');
 		if (!$qb->isCached())
 		{
-
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->getDocumentMetasTable(), $fb->getDocumentColumn('id'), 'metas', 'lastupdate')
-				->addValues($fb->integerParameter('id', $qb), $fb->typedParameter('metas', \Change\Db\ScalarType::TEXT, $qb),
-					$fb->dateTimeParameter('lastupdate', $qb));
+				->addValues($fb->integerParameter('id'), $fb->lobParameter('metas'), $fb->dateTimeParameter('lastupdate'));
 		}
 
 		$insertQuery = $qb->insertQuery();
@@ -625,8 +624,8 @@ class DocumentManager
 			$qb->select($fb->alias($fb->column('relatedid'), 'id'))->from($fb->getDocumentRelationTable($model->getRootName()))
 				->where(
 					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-						$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+						$fb->eq($fb->column('relname'), $fb->parameter('relname'))
 					))
 				->orderAsc($fb->column('relorder'));
 		}
@@ -727,8 +726,8 @@ class DocumentManager
 
 				$qb->where(
 					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-						$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb)
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+						$fb->eq($fb->column('lcid'), $fb->parameter('lcid')
 						)
 					)
 				);
@@ -786,7 +785,7 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->alias($fb->getDocumentColumn('LCID'), 'lc'))
 				->from($fb->getDocumentI18nTable($model->getRootName()))
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$q = $qb->query();
@@ -842,13 +841,13 @@ class DocumentManager
 				{
 					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
 						->from($fb->getDocumentTable($model->getRootName()))
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 				}
 				else
 				{
 					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
 						->from($fb->getDocumentIndexTable())
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 				}
 			}
 
@@ -941,9 +940,9 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->getDocumentDeletedTable(), $fb->getDocumentColumn('id'), $fb->getDocumentColumn('model'),
 				'deletiondate', 'datas')
-				->addValues($fb->integerParameter('id', $qb), $fb->parameter('model', $qb),
-					$fb->dateTimeParameter('deletiondate', $qb),
-					$fb->typedParameter('datas', \Change\Db\ScalarType::TEXT, $qb));
+				->addValues($fb->integerParameter('id'), $fb->parameter('model'),
+					$fb->dateTimeParameter('deletiondate'),
+					$fb->lobParameter('datas'));
 		}
 
 		$iq = $qb->insertQuery();
@@ -966,14 +965,14 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'), 'deletiondate', 'datas')
 				->from($fb->getDocumentDeletedTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$sq = $qb->query();
 		$sq->bindParameter('id', $documentId);
 
-		$converter = new ResultsConverter($sq->getDbProvider(), array('datas' => \Change\Db\ScalarType::TEXT,
-			'deletiondate' => \Change\Db\ScalarType::DATETIME));
+		$converter = new ResultsConverter($sq->getDbProvider(), array('datas' => ScalarType::TEXT,
+			'deletiondate' => ScalarType::DATETIME));
 
 		$row = $sq->getFirstResult(array($converter, 'convertRow'));
 		if ($row !== null)
@@ -1005,7 +1004,7 @@ class DocumentManager
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getDocumentTable($model->getRootName()))
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$dq = $qb->deleteQuery();
@@ -1017,7 +1016,7 @@ class DocumentManager
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getDocumentIndexTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$dq = $qb->deleteQuery();
@@ -1050,7 +1049,7 @@ class DocumentManager
 
 				$fb = $qb->getFragmentBuilder();
 				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
-					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 			}
 
 			$dq = $qb->deleteQuery();
@@ -1089,8 +1088,8 @@ class DocumentManager
 				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
 					->where(
 						$fb->logicAnd(
-							$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-							$fb->eq($fb->getDocumentColumn('LCID'), $fb->parameter('LCID', $qb)))
+							$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+							$fb->eq($fb->getDocumentColumn('LCID'), $fb->parameter('LCID')))
 					);
 
 			}

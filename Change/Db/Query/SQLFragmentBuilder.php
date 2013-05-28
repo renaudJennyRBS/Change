@@ -1,7 +1,6 @@
 <?php
 namespace Change\Db\Query;
 
-use Change\Db\Query\InterfaceSQLFragment;
 use Change\Db\Query\Expressions\Assignment;
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
@@ -35,14 +34,49 @@ class SQLFragmentBuilder
 	 * @var SqlMapping
 	 */
 	protected $sqlMapping;
-	
+
 	/**
-	 * @param SqlMapping $sqlMapping
+	 * @var AbstractBuilder
 	 */
-	public function __construct(SqlMapping $sqlMapping)
+	protected $builder;
+
+	/**
+	 * @param SqlMapping|AbstractBuilder $sqlMappingOrBuilder
+	 * @throws \InvalidArgumentException
+	 */
+	public function __construct($sqlMappingOrBuilder)
+	{
+		if ($sqlMappingOrBuilder instanceof AbstractBuilder)
+		{
+			$this->builder = $sqlMappingOrBuilder;
+			$this->sqlMapping = $this->builder->getSqlMapping();
+		}
+		elseif ($sqlMappingOrBuilder instanceof SqlMapping)
+		{
+			$this->sqlMapping = $sqlMappingOrBuilder;
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a SqlMapping or AbstractBuilder');
+		}
+	}
+
+	/**
+	 * @param \Change\Db\Query\AbstractBuilder $builder
+	 */
+	public function setBuilder(\Change\Db\Query\AbstractBuilder $builder = null)
+	{
+		$this->builder = $builder;
+	}
+
+	/**
+	 * @param \Change\Db\SqlMapping $sqlMapping
+	 */
+	public function setSqlMapping(\Change\Db\SqlMapping $sqlMapping)
 	{
 		$this->sqlMapping = $sqlMapping;
 	}
+
 
 	/**
 	 * Build a function argument after $name assumed as function arguments
@@ -73,7 +107,7 @@ class SQLFragmentBuilder
 	 * @api
 	 * @param string $tableName
 	 * @param string $dbName
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function table($tableName, $dbName = null)
 	{
@@ -85,11 +119,11 @@ class SQLFragmentBuilder
 	 * for instance as the second argument of the alias method.
 	 *
 	 * @api
-	 * @internal string $tableName
-	 * @internal string $dbName
-	 * @return \Change\Db\Query\Expressions\Identifier
+	 * @param string $tableName
+	 * @param string $dbName
+	 * @return Identifier
 	 */
-	public function identifier()
+	public function identifier($tableName = null, $dbName = null)
 	{
 		return new Identifier(func_get_args());
 	}
@@ -97,8 +131,8 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $name
-	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier | string $tableOrIdentifier
-	 * @return \Change\Db\Query\Expressions\Column
+	 * @param Table | Identifier | string $tableOrIdentifier
+	 * @return Column
 	 */
 	public function column($name, $tableOrIdentifier = null)
 	{
@@ -106,7 +140,7 @@ class SQLFragmentBuilder
 		{
 			$name = $this->identifier($name);
 		}
-		
+
 		if (is_string($tableOrIdentifier))
 		{
 			$tableOrIdentifier = $this->identifier($tableOrIdentifier);
@@ -117,9 +151,9 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @throws \InvalidArgumentException
-	 * @param \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\Identifier $rhs (if string assume identifier)
-	 * @return \Change\Db\Query\Expressions\Alias
+	 * @param AbstractExpression $lhs
+	 * @param string | Identifier $rhs (if string assume identifier)
+	 * @return Alias
 	 */
 	public function alias(AbstractExpression $lhs, $rhs)
 	{
@@ -137,9 +171,9 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @throws \InvalidArgumentException
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs (if string assume identifier)
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs (if string assume string)
-	 * @return \Change\Db\Query\Expressions\Assignment
+	 * @param string | AbstractExpression $lhs (if string assume identifier)
+	 * @param string | AbstractExpression $rhs (if string assume string)
+	 * @return Assignment
 	 */
 	public function assignment($lhs, $rhs)
 	{
@@ -165,95 +199,99 @@ class SQLFragmentBuilder
 	}
 
 	/**
-	 * @api
-	 * Assume a string parameter
-	 * @param string $parameterName
-	 * @param AbstractQuery|Builder|StatementBuilder $queryOrBuilder
-	 * @return \Change\Db\Query\Expressions\Parameter
+	 * @param Parameter $parameter
+	 * @return Parameter
 	 */
-	public function parameter($parameterName, $queryOrBuilder = null)
+	protected function bindParameter(Parameter $parameter)
 	{
-		$p = new Parameter($parameterName);
-		if ($queryOrBuilder !== null)
+		if ($this->builder)
 		{
-			$this->bindParameter($p, $queryOrBuilder);
+			$this->builder->addParameter($parameter);
 		}
-		return $p;
+		return $parameter;
 	}
 
 	/**
 	 * @api
 	 * @param string $parameterName
 	 * @param string $scalarType \Change\Db\ScalarType::*
-	 * @param AbstractQuery|Builder|StatementBuilder $queryOrBuilder
-	 * @return \Change\Db\Query\Expressions\Parameter
+	 * @throws \InvalidArgumentException
+	 * @return Parameter
 	 */
-	public function typedParameter($parameterName, $scalarType, $queryOrBuilder = null)
+	public function typedParameter($parameterName, $scalarType)
 	{
-		$p = new Parameter($parameterName, $scalarType);
-		if ($queryOrBuilder !== null)
+		if (!is_string($parameterName))
 		{
-			$this->bindParameter($p, $queryOrBuilder);
+			throw new \InvalidArgumentException('Argument 1 must be a string', 42013);
 		}
-		return $p;
-	}
-	
-	/**
-	 * @api
-	 * @param string $parameterName
-	 * @param AbstractQuery|Builder|StatementBuilder $queryOrBuilder
-	 * @return \Change\Db\Query\Expressions\Parameter
-	 */
-	public function integerParameter($parameterName, $queryOrBuilder = null)
-	{
-		$p = new Parameter($parameterName, ScalarType::INTEGER);
-		if ($queryOrBuilder !== null)
-		{
-			$this->bindParameter($p, $queryOrBuilder);
-		}
-		return $p;
-	}
-	
-	/**
-	 * @api
-	 * @param string $parameterName
-	 * @param AbstractQuery|Builder|StatementBuilder $queryOrBuilder
-	 * @return \Change\Db\Query\Expressions\Parameter
-	 */
-	public function dateTimeParameter($parameterName, $queryOrBuilder = null)
-	{
-		$p = new Parameter($parameterName, ScalarType::DATETIME);
-		if ($queryOrBuilder !== null)
-		{
-			$this->bindParameter($p, $queryOrBuilder);
-		}
-		return $p;
+		return $this->bindParameter(new Parameter($parameterName, $scalarType));
 	}
 
 	/**
-	 * @param \Change\Db\Query\Expressions\Parameter $parameter
-	 * @param AbstractQuery|Builder|StatementBuilder $queryOrBuilder
-	 * @throws \InvalidArgumentException
+	 * @api
+	 * Assume a string parameter
+	 * @param string $parameterName
+	 * @return Parameter
 	 */
-	protected function bindParameter($parameter, $queryOrBuilder)
+	public function parameter($parameterName)
 	{
-		if ($queryOrBuilder instanceof AbstractQuery
-			|| $queryOrBuilder instanceof Builder
-			|| $queryOrBuilder instanceof StatementBuilder
-		)
-		{
-			$queryOrBuilder->addParameter($parameter);
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid Query or Builder', 42014);
-		}
+		return $this->typedParameter($parameterName, ScalarType::STRING);
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @return Parameter
+	 */
+	public function integerParameter($parameterName)
+	{
+		return $this->typedParameter($parameterName, ScalarType::INTEGER);
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @return Parameter
+	 */
+	public function decimalParameter($parameterName)
+	{
+		return $this->typedParameter($parameterName, ScalarType::DECIMAL);
 	}
 	
 	/**
 	 * @api
+	 * @param string $parameterName
+	 * @return Parameter
+	 */
+	public function dateTimeParameter($parameterName)
+	{
+		return $this->typedParameter($parameterName, ScalarType::DATETIME);
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @return Parameter
+	 */
+	public function lobParameter($parameterName)
+	{
+		return $this->typedParameter($parameterName, ScalarType::LOB);
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @return Parameter
+	 */
+	public function booleanParameter($parameterName)
+	{
+		return $this->typedParameter($parameterName, ScalarType::BOOLEAN);
+	}
+
+	/**
+	 * @api
 	 * @param integer|float $number
-	 * @return \Change\Db\Query\Expressions\Numeric
+	 * @return Numeric
 	 */
 	public function number($number)
 	{
@@ -263,18 +301,20 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $string
-	 * @return \Change\Db\Query\Expressions\String
+	 * @return String
 	 */
 	public function string($string)
 	{
 		return new String($string);
 	}
-	
+
 	/**
 	 * @api
+	 * @param AbstractExpression|string $expression1
+	 * @param AbstractExpression|string $_ [optional]
 	 * @return ExpressionList
 	 */
-	public function expressionList()
+	public function expressionList($expression1, $_ = null)
 	{
 		return new ExpressionList($this->normalizeValue(func_get_args()));
 	}
@@ -291,9 +331,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function eq($lhs, $rhs)
 	{
@@ -304,9 +344,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function neq($lhs, $rhs)
 	{
@@ -317,9 +357,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function gt($lhs, $rhs)
 	{
@@ -330,9 +370,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function gte($lhs, $rhs)
 	{
@@ -343,9 +383,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function lt($lhs, $rhs)
 	{
@@ -356,9 +396,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return BinaryPredicate
 	 */
 	public function lte($lhs, $rhs)
 	{
@@ -370,8 +410,8 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
 	 * @param integer $matchMode
 	 * @param bool $caseSensitive
 	 * @return \Change\Db\Query\Predicates\Like
@@ -385,12 +425,12 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
-	 * @param string|\Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string|array|\Change\Db\Query\Expressions\AbstractExpression $rhs1
-	 * @internal string|array|\Change\Db\Query\Expressions\AbstractExpression $_
-	 * @return \Change\Db\Query\Predicates\In
+	 * @param string|AbstractExpression $lhs
+	 * @param string|array|AbstractExpression $rhs1
+	 * @param string|AbstractExpression $_ [optional]
+	 * @return In
 	 */
-	public function in($lhs, $rhs1)
+	public function in($lhs, $rhs1, $_ = null)
 	{
 		$lhs = $this->normalizeValue($lhs);
 		$rhs1 = $this->normalizeValue($rhs1);
@@ -432,9 +472,9 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
-	 * @return \Change\Db\Query\Predicates\In
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
+	 * @return In
 	 */
 	public function notIn($lhs, $rhs)
 	{
@@ -445,8 +485,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
 	 * @return BinaryOperation
 	 */
 	public function addition($lhs, $rhs)
@@ -458,8 +498,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $lhs
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $rhs
+	 * @param string | AbstractExpression $lhs
+	 * @param string | AbstractExpression $rhs
 	 * @return BinaryOperation
 	 */
 	public function subtraction($lhs, $rhs)
@@ -472,8 +512,8 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $expression
-	 * @return \Change\Db\Query\Predicates\UnaryPredicate
+	 * @param string | AbstractExpression $expression
+	 * @return UnaryPredicate
 	 */
 	public function isNull($expression)
 	{
@@ -483,20 +523,22 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
-	 * @param string | \Change\Db\Query\Expressions\AbstractExpression $expression
-	 * @return \Change\Db\Query\Predicates\UnaryPredicate
+	 * @param string | AbstractExpression $expression
+	 * @return UnaryPredicate
 	 */
 	public function isNotNull($expression)
 	{
 		$expression = $this->normalizeValue($expression);
 		return new UnaryPredicate($expression, UnaryPredicate::ISNOTNULL);
 	}
-		
+
 	/**
 	 * @api
+	 * @param InterfaceSQLFragment $predicate1
+	 * @param InterfaceSQLFragment $_ [optional]
 	 * @return Conjunction
 	 */
-	public function logicAnd()
+	public function logicAnd($predicate1, $_ = null)
 	{
 		$result = new Conjunction();
 		$result->setArguments($this->normalizeValue(func_get_args()));
@@ -505,9 +547,11 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
+	 * @param InterfaceSQLFragment $predicate1
+	 * @param InterfaceSQLFragment $_ [optional]
 	 * @return Disjunction
 	 */
-	public function logicOr()
+	public function logicOr($predicate1, $_ = null)
 	{
 		$result = new Disjunction();
 		$result->setArguments($this->normalizeValue(func_get_args()));
@@ -516,7 +560,7 @@ class SQLFragmentBuilder
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getPluginTable()
 	{
@@ -525,16 +569,25 @@ class SQLFragmentBuilder
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentIndexTable()
 	{
 		return $this->table($this->sqlMapping->getDocumentIndexTableName());
 	}
+
+	/**
+	 * @api
+	 * @return Table
+	 */
+	public function getDocumentCorrectionTable()
+	{
+		return $this->table($this->sqlMapping->getDocumentCorrectionTable());
+	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentDeletedTable()
 	{
@@ -544,7 +597,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $rootDocumentName
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentTable($rootDocumentName)
 	{
@@ -554,7 +607,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $rootDocumentName
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentI18nTable($rootDocumentName)
 	{
@@ -564,7 +617,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $rootDocumentName
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentRelationTable($rootDocumentName)
 	{
@@ -574,8 +627,8 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $propertyName
-	 * @param \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier | string $tableOrIdentifier
-	 * @return \Change\Db\Query\Expressions\Column
+	 * @param Table | Identifier | string $tableOrIdentifier
+	 * @return Column
 	 */
 	public function getDocumentColumn($propertyName, $tableOrIdentifier = null)
 	{
@@ -585,7 +638,7 @@ class SQLFragmentBuilder
 	/**
 	 * @api
 	 * @param string $moduleName
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getTreeTable($moduleName)
 	{
@@ -594,7 +647,7 @@ class SQLFragmentBuilder
 		
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Expressions\Table
+	 * @return Table
 	 */
 	public function getDocumentMetasTable()
 	{
@@ -603,10 +656,10 @@ class SQLFragmentBuilder
 
 	/**
 	 * For internal use only.
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|array|string $object
+	 * @param AbstractExpression|array|string $object
 	 * @param \Closure|null $converter
 	 * @throws \InvalidArgumentException
-	 * @return \Change\Db\Query\Expressions\AbstractExpression|array
+	 * @return AbstractExpression|array
 	 */
 	public function normalizeValue($object, $converter = null)
 	{
