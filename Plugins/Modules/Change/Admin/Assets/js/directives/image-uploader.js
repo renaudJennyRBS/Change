@@ -25,9 +25,23 @@
 				scope.previewWidth = MAX_PREVIEW_HEIGHT * (16/9.0);
 				scope.previewHeight = MAX_PREVIEW_HEIGHT;
 
+				function updatePreview (url) {
+					var	img = new Image();
+					img.onload = function () {
+						scope.$apply(function () {
+							scope.imageWidth  = img.width;
+							scope.imageHeight = img.height;
+							scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
+							scope.previewWidth = scope.previewHeight * (scope.imageWidth / scope.imageHeight);
+							scope.imageSrc = url;
+						});
+					};
+					img.src = url;
+				}
+
 				ngModel.$render = function ngModelRenderFn () {
 					if (ngModel.$viewValue) {
-						scope.imageSrc = REST.storage.getUrl(ngModel.$viewValue);
+						updatePreview(REST.storage.getUrl(ngModel.$viewValue));
 					}
 				};
 
@@ -39,19 +53,8 @@
 						scope.loading = false;
 						scope.fileSize = event.total;
 						scope.fileName = inputFile.get(0).files[0].name;
-
 						// Load the image to get its dimensions.
-						var img = new Image();
-						img.onload = function () {
-							scope.$apply(function () {
-								scope.imageWidth  = img.width;
-								scope.imageHeight = img.height;
-								scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
-								scope.previewWidth = scope.previewHeight * (scope.imageWidth / scope.imageHeight);
-								scope.imageSrc = event.target.result;
-							});
-						};
-						img.src = event.target.result;
+						updatePreview(event.target.result);
 					});
 				};
 
