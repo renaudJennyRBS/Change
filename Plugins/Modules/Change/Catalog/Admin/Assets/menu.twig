@@ -1,14 +1,14 @@
 <div>
 	<ul class="nav nav-list">
 		<li class="nav-header">{{ i18n('m.change.admin.contents', ['ucf']) }}</li>
-		<li><a href="Change/Catalog/Shop"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.shop.document-list-name', ['ucf']) }}</a></li>
-		<li><a href="Change/Catalog/BillingArea"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.billingarea.document-list-name', ['ucf']) }}</a></li>
-		<li><a href="Change/Catalog/Product"><i class="icon-list-alt"></i> {{ i18n('m.change.catalog.document.product.document-list-name', ['ucf']) }}</a></li>
-		<li><a href="Change/Brand/Brand"><i class="icon-list-alt"></i> {{ i18n('m.change.brand.document.brand.document-list-name', ['ucf']) }}</a></li>
+		<li><a href="Change/Catalog/Shop"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.shop-list', ['ucf']) }}</a></li>
+		<li><a href="Change/Catalog/BillingArea"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.billingarea-list', ['ucf']) }}</a></li>
+		<li><a href="Change/Catalog/Product"><i class="icon-list-alt"></i> {{ i18n('m.change.catalog.document.product-list', ['ucf']) }}</a></li>
+		<li><a href="Change/Brand/Brand"><i class="icon-list-alt"></i> {{ i18n('m.change.brand.document.brand-list', ['ucf']) }}</a></li>
 		<li>
 			<div tree-view="Change/Catalog"
 				show-root-node="true"
-				root-node-label="{{ i18n('m.change.catalog.document.category.document-list-name', ['ucf', 'attr']) }}"
+				root-node-label="{{ i18n('m.change.catalog.document.category-list', ['ucf', 'attr']) }}"
 				allowed-models="Change_Generic_Folder Change_Catalog_Category Change_Catalog_Product"
 				url-template="Change/Catalog/nav/?tn=:id">
 			</div>

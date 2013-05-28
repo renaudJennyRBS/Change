@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.catalog.document.category" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">catégorie</key>
-	<key id="document-list-name">catégories</key>
 	<key id="description">description</key>
 	<key id="visual">visuel</key>
 	<key id="visual-picker-title">sélectionner le visuel</key>

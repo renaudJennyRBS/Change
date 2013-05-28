@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.catalog.document.abstractproduct" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">produit</key>
-	<key id="document-list-name">produits</key>
 	<key id="description">description</key>
 	<key id="category">catégories</key>
 	<key id="category-picker-title">sélectionner les catégories</key>

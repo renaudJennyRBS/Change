@@ -1,53 +1,54 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
-
-	function MenuListController ($scope, $routeParams, DocumentList, Breadcrumb, Loading, ArrayUtils, MainMenu, REST) {
+	/**
+	 * @param $scope
+	 * @param DocumentList
+	 * @param Breadcrumb
+	 * @param MainMenu
+	 * @param i18n
+	 * @constructor
+	 */
+	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	{
+		Breadcrumb.resetLocation([
+			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
+			[i18n.trans('m.change.website.admin.js.menu-list | ucf'), "Change/Website/Menu"]
+		]);
 
 		DocumentList.initScope($scope, "Change_Website_Menu");
 
-		Breadcrumb.resetLocation([["Sites et pages", "Change/Website"], ["Menus de navigation", "Change/Website/Menu"]]);
-
-		$scope.createActions = [{ 'label': "Menu", 'url': 'Change/Website/Menu/new' }];
+		$scope.createActions = [
+			{ 'label': i18n.trans('m.change.website.admin.js.menu | ucf'), 'url': 'Change/Website/Menu/new' }
+		];
 
 		MainMenu.loadModuleMenu('Change_Website');
-
 	}
 
-	MenuListController.$inject = [
-		'$scope', '$routeParams',
-		'RbsChange.DocumentList',
-		'RbsChange.Breadcrumb',
-		'RbsChange.Loading',
-		'RbsChange.ArrayUtils',
-		'RbsChange.MainMenu',
-		'RbsChange.REST'
-	];
-	app.controller('Change_Website_Menu_ListController', MenuListController);
+	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+	app.controller('Change_Website_Menu_ListController', ListController);
 
 	//-------------------------------------------------------------------------
 
 	/**
-	 * @name website.MenuFormController
-	 * @description Handles the menu form.
+	 * @param $scope
+	 * @param FormsManager
+	 * @param Breadcrumb
+	 * @param i18n
+	 * @constructor
 	 */
-	function MenuFormController ($scope, FormsManager, Breadcrumb) {
-
-		Breadcrumb.setLocation([["Sites et pages", "Change/Website"], ["Menus de navigation", "Change/Website/Menu"]]);
+	function FormController($scope, FormsManager, Breadcrumb, i18n)
+	{
+		Breadcrumb.setLocation([
+			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
+			[i18n.trans('m.change.website.admin.js.menu-list | ucf'), "Change/Website/Menu"]
+		]);
 		FormsManager.initResource($scope, 'Change_Website_Menu');
-
 	}
 
-	MenuFormController.$inject = [
-		'$scope',
-		'RbsChange.FormsManager',
-		'RbsChange.Breadcrumb'
-	];
-	app.controller('Change_Website_Menu_FormController', MenuFormController);
-
-
+	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb'];
+	app.controller('Change_Website_Menu_FormController', FormController);
 })();

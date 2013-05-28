@@ -1,75 +1,66 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
 	/**
-	 * Controller for Topic list.
+	 * Controller for list.
 	 *
 	 * @param $scope
 	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
+	 * @param i18n
 	 * @constructor
 	 */
-	function TopicListController ($scope, DocumentList, Breadcrumb, MainMenu) {
-
-		Breadcrumb.resetLocation([["Sites et pages", "Change/Website"]]);
+	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	{
+		Breadcrumb.resetLocation([
+			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"]
+		]);
 
 		var DL = DocumentList.initScopeForTree($scope);
 
 		DL.viewMode = 'list';
 		DL.sort.column = 'nodeOrder';
 		DL.sort.descending = false;
-
 		DL.addActions(['reorder']);
 
 		$scope.createActions = [
-			{ 'label': "Page", 'url': 'Change/Website/StaticPage/new', 'icon': 'file' },
-			{ 'label': "Rubrique", 'url': 'Change/Website/Topic/new', 'icon': 'folder-close' }
+			{ 'label': i18n.trans('m.change.website.admin.js.staticpage | ucf'), 'url': 'Change/Website/StaticPage/new', 'icon': 'file' },
+			{ 'label': i18n.trans('m.change.website.admin.js.topic | ucf'), 'url': 'Change/Website/Topic/new', 'icon': 'folder-close' }
 		];
 
 		// Configure DataTable columns
 		DL.columns.splice(1, 0, { id: 'type', label: "", width: "24px", align: "center" });
-		DL.columns.push({ id: 'modificationDate', label: "Dernière modif." });
-		DL.columns.push({ id: 'nodeOrder', label: "Ordre", align: "right" });
-		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center" });
+		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
+		DL.columns.push({ id: 'nodeOrder', label: i18n.trans('m.change.admin.admin.js.order | ucf'), align: "right" });
+		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
 		MainMenu.loadModuleMenu('Change_Website');
-
 	}
 
-	TopicListController.$inject = [
-		'$scope',
-		'RbsChange.DocumentList',
-		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu'
-	];
-	app.controller('Change_Website_TopicListController', TopicListController);
-
+	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+	app.controller('Change_Website_TopicListController', ListController);
 
 	/**
-	 * Controller for Topic form.
+	 * Controller for form.
 	 *
 	 * @param $scope
 	 * @param Breadcrumb
 	 * @param FormsManager
+	 * @param i18n
 	 * @constructor
 	 */
-	function TopicFormController ($scope, Breadcrumb, FormsManager) {
-
-		Breadcrumb.setLocation([["Sites et pages", "Change/Website"]]);
+	function FormController($scope, Breadcrumb, FormsManager, i18n)
+	{
+		Breadcrumb.setLocation([
+			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"]
+		]);
 		FormsManager.initResource($scope, 'Change_Website_Topic');
-
 	}
 
-	TopicFormController.$inject = [
-		'$scope',
-		'RbsChange.Breadcrumb',
-		'RbsChange.FormsManager'
-	];
-	app.controller('Change_Website_TopicFormController', TopicFormController);
-
+	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
+	app.controller('Change_Website_TopicFormController', FormController);
 })();

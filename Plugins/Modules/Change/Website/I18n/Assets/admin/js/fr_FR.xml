@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.website.admin.js" lcid="fr_FR">
+	<include id="m.change.website.document"/>
+	<key id="module-name">sites et pages</key>
 	<key id="host-name">nom d'hôte</key>
 	<key id="open-page-editor-warning"><![CDATA[<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.</strong>
 		<ul>

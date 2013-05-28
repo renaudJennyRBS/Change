@@ -1,12 +1,11 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
 	/**
-	 * Controller for Website list.
+	 * Controller for list.
 	 *
 	 * @param $scope
 	 * @param DocumentList
@@ -14,53 +13,43 @@
 	 * @param MainMenu
 	 * @constructor
 	 */
-	function ListController ($scope, DocumentList, Breadcrumb, MainMenu) {
+	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	{
+		Breadcrumb.resetLocation([
+			[i18n.trans('m.change.users.admin.js.module-name | ucf'), "Change/Users/User"]
+		]);
 
 		var DL = DocumentList.initScope($scope, 'Change_Users_User');
-
 		DL.viewMode = 'list';
 		DL.sort.column = 'modificationDate';
 		DL.sort.descending = true;
 
-		Breadcrumb.resetLocation([["Utilisateurs", "Change/Users/User"]]);
-
-		$scope.createActions = [{ 'label': "Utilisateur", 'url': 'Change/Users/User/new' }];
-
-		DL.columns.push(new DocumentList.Column('activated', "Activé", true, 'center', '90px'));
+		// Configure DataTable columns
+		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
 		MainMenu.loadModuleMenu('Change_Users');
 	}
 
-	ListController.$inject = [
-		'$scope',
-		'RbsChange.DocumentList',
-		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu'
-	];
+	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Change_Users_User_ListController', ListController);
 
-
 	/**
-	 * Controller for Website forms.
+	 * Controller for form.
 	 *
 	 * @param $scope
-	 * @param FormsManager
-	 * @constructor
 	 * @param Breadcrumb
+	 * @param FormsManager
+	 * @param i18n
+	 * @constructor
 	 */
-	function FormController ($scope, FormsManager, Breadcrumb) {
-
-		Breadcrumb.resetLocation([["Utilisateurs", "Change/Users/User"]]);
-		// Let FormsManager search for 'id' and 'LCID' parameters in the $routeParams service.
+	function FormController($scope, FormsManager, Breadcrumb, i18n)
+	{
+		Breadcrumb.resetLocation([
+			[i18n.trans('m.change.users.admin.js.module-name | ucf'), "Change/Users/User"]
+		]);
 		FormsManager.initResource($scope, 'Change_Users_User');
-
 	}
 
-	FormController.$inject = [
-		'$scope',
-		'RbsChange.FormsManager',
-		'RbsChange.Breadcrumb'
-	];
+	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
 	app.controller('Change_Users_User_FormController', FormController);
-
 })();

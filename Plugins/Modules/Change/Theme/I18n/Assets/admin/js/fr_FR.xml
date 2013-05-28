@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.media.theme.js" lcid="fr_FR">
+	<include id="m.change.theme.document"/>
+	<key id="module-name">themes</key>
+</i18n>

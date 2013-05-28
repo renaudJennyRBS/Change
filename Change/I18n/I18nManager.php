@@ -257,14 +257,14 @@ class I18nManager
 		if (is_array($data) && count($data))
 		{
 			$LCIDs = $this->getSupportedLCIDs();
-			foreach ($data as $LCID => $froms)
+			foreach ($data as $LCID => $fromLCIDs)
 			{
 				if (in_array($LCID, $LCIDs))
 				{
-					$fromLangs = array_intersect($froms, $LCIDs);
-					if (count($fromLangs))
+					$fromLCIDs = array_intersect($fromLCIDs, $LCIDs);
+					if (count($fromLCIDs))
 					{
-						$result[$LCID] = $fromLangs;
+						$result[$LCID] = $fromLCIDs;
 					}
 				}
 			}
@@ -440,6 +440,57 @@ class I18nManager
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Get all definition keys for a paths.
+	 * @param string $LCID
+	 * @param string[] $pathParts
+	 * @return \Change\I18n\DefinitionKey[]
+	 */
+	public function getDefinitionKeys($LCID, $pathParts)
+	{
+		$keys = $this->doGetDefinitionKeys($LCID, $pathParts, array());
+		if ($this->hasI18nSynchro())
+		{
+			$synchro = $this->getI18nSynchro();
+			if (isset($synchro[$LCID]))
+			{
+				foreach ($synchro[$LCID] as $referenceLCID)
+				{
+					$keys = $this->doGetDefinitionKeys($referenceLCID, $pathParts, $keys);
+				}
+			}
+		}
+		return array_values($keys);
+	}
+
+	/**
+	 * @param string $LCID
+	 * @param string[] $pathParts
+	 * @param \Change\I18n\DefinitionKey[] $keys
+	 * @return \Change\I18n\DefinitionKey[]
+	 */
+	protected function doGetDefinitionKeys($LCID, $pathParts, $keys)
+	{
+		$defKeys = $this->getDefinitionCollection($LCID, $pathParts);
+		if ($defKeys)
+		{
+			$defKeys->load();
+			foreach ($defKeys->getDefinitionKeys() as $defKey)
+			{
+				if (!isset($keys[$defKey->getId()]))
+				{
+					$keys[$defKey->getId()] = $defKey;
+				}
+			}
+			foreach (array_reverse($defKeys->getIncludesPaths()) as $includePath)
+			{
+				$includeParts = explode('.', $includePath);
+				$keys = $this->doGetDefinitionKeys($LCID, $includeParts, $keys);
+			}
+		}
+		return $keys;
 	}
 
 	/**

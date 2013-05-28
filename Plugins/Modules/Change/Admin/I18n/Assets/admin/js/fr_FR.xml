@@ -9,4 +9,9 @@
 
 	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
 	<key id="last-modification-date">dernière modif.</key>
+
+	<key id="modification-date">dernière modif.</key>
+	<key id="activated">activé</key>
+	<key id="status">état</key>
+	<key id="order">ordre</key>
 </i18n>
