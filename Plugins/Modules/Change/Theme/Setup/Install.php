@@ -41,14 +41,14 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 		{
 			/* @var $pluginManager PluginManager */
 			$pluginManager = $event->getTarget();
-			return $pluginManager->getModule($this->getVendor(), $this->getName())->setPackage('core')->setConfigurationEntry('locked', true);
+			return $pluginManager->getModule($vendor, $name)->setPackage('core')->setConfigurationEntry('locked', true);
 		};
 
 		$eventNames = array(
 			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $this->getVendor(), 'core'),
+				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
 			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $this->getVendor(), $this->getName())
+				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
 		);
 		$events->attach($eventNames, $callBack, 5);
 
