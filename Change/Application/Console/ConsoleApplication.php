@@ -73,26 +73,32 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		$this->registerCommandsInDir($changeCommandDir, 'change');
 		
 		// Register project commands.
-		$finder = new Finder();
-		$dirs = $finder->depth("== 1")->directories()->in(PROJECT_HOME . '/App/Modules/')->name('Commands');
-		foreach ($dirs as $dir)
+		if (is_dir(PROJECT_HOME . '/App/Modules/'))
 		{
-			$pathComponents = explode(DIRECTORY_SEPARATOR, $dir->getPath());
-			$moduleName = array_pop($pathComponents);
-			$this->registerCommandsInDir($dir, 'project', '\\Project\\' . ucfirst(strtolower($moduleName)) . '\\Commands');
-		}
-		
-		$finder = new Finder();
-		$vendorModuleDirs = $finder->directories()->in(PROJECT_HOME . '/Plugins/Modules/')->depth('==1');
-		foreach ($vendorModuleDirs as $vendorModuleDir)
-		{
-			$commandDir = new \SplFileInfo($vendorModuleDir->getPathname() . DIRECTORY_SEPARATOR . 'Commands');
-			if ($commandDir->isDir())
+			$finder = new Finder();
+			$dirs = $finder->depth("== 1")->directories()->in(PROJECT_HOME . '/App/Modules/')->name('Commands');
+			foreach ($dirs as $dir)
 			{
-				$pathComponents = explode(DIRECTORY_SEPARATOR, $commandDir->getPath());
+				$pathComponents = explode(DIRECTORY_SEPARATOR, $dir->getPath());
 				$moduleName = array_pop($pathComponents);
-				$vendorName = array_pop($pathComponents);
-				$this->registerCommandsInDir($commandDir, strtolower($vendorName) . '-' . strtolower($moduleName), '\\' . $vendorName . '\\' . $moduleName . '\\Commands');
+				$this->registerCommandsInDir($dir, 'project', '\\Project\\' . ucfirst(strtolower($moduleName)) . '\\Commands');
+			}
+		}
+
+		if (is_dir(PROJECT_HOME . '/Plugins/Modules/'))
+		{
+			$finder = new Finder();
+			$vendorModuleDirs = $finder->directories()->in(PROJECT_HOME . '/Plugins/Modules/')->depth('==1');
+			foreach ($vendorModuleDirs as $vendorModuleDir)
+			{
+				$commandDir = new \SplFileInfo($vendorModuleDir->getPathname() . DIRECTORY_SEPARATOR . 'Commands');
+				if ($commandDir->isDir())
+				{
+					$pathComponents = explode(DIRECTORY_SEPARATOR, $commandDir->getPath());
+					$moduleName = array_pop($pathComponents);
+					$vendorName = array_pop($pathComponents);
+					$this->registerCommandsInDir($commandDir, strtolower($vendorName) . '-' . strtolower($moduleName), '\\' . $vendorName . '\\' . $moduleName . '\\Commands');
+				}
 			}
 		}
 		
