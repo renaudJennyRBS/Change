@@ -65,7 +65,7 @@ class StatementBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\LogicException $e)
 		{
-			$this->assertEquals('Query not initialized', $e->getMessage());
+			$this->assertEquals(42016, $e->getCode());
 		}
 		
 		$instance->insert('test');
@@ -74,11 +74,11 @@ class StatementBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$instance->addParameter(array('test'));
-			$this->fail('Query not initialized');
+			$this->fail('Argument 1 must be a Expressions\Parameter');
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			$this->assertStringStartsWith('argument must be a string', $e->getMessage());
+			$this->assertEquals(42004, $e->getCode());
 		}
 	}
 

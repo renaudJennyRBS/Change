@@ -498,7 +498,7 @@ class AuthenticationListener
 			'token_type', 'creation_date', 'validity_date',
 			'callback', 'verifier', 'authorized', 'accessor_id')
 			->from('change_oauth')
-			->where($fb->eq($fb->column('token'), $fb->parameter('token', $qb)))
+			->where($fb->eq($fb->column('token'), $fb->parameter('token')))
 			->query();
 		$sq->bindParameter('token', $storedOAuth->getToken());
 
@@ -542,10 +542,10 @@ class AuthenticationListener
 			'consumer_key', 'consumer_secret', 'realm',
 			'token_type', 'creation_date', 'validity_date',
 			'callback', 'verifier', 'authorized', 'accessor_id')
-			->addValues($fb->parameter('token', $qb), $fb->parameter('token_secret', $qb),
-				$fb->parameter('consumer_key', $qb), $fb->parameter('consumer_secret', $qb), $fb->parameter('realm', $qb),
-				$fb->parameter('token_type', $qb), $fb->dateTimeParameter('creation_date', $qb), $fb->dateTimeParameter('validity_date', $qb),
-				$fb->parameter('callback', $qb), $fb->parameter('verifier', $qb), $fb->typedParameter('authorized', ScalarType::BOOLEAN, $qb), $fb->integerParameter('accessor_id', $qb))
+			->addValues($fb->parameter('token'), $fb->parameter('token_secret'),
+				$fb->parameter('consumer_key'), $fb->parameter('consumer_secret'), $fb->parameter('realm'),
+				$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'), $fb->dateTimeParameter('validity_date'),
+				$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'), $fb->integerParameter('accessor_id'))
 			->insertQuery();
 
 		$iq->bindParameter('token', $storedOAuth->getToken());
@@ -575,11 +575,11 @@ class AuthenticationListener
 		$fb = $qb->getFragmentBuilder();
 
 		$uq = $qb->update('change_oauth')
-			->assign('validity_date', $fb->dateTimeParameter('validity_date', $qb))
-			->assign('verifier', $fb->parameter('verifier', $qb))
-			->assign('authorized', $fb->typedParameter('authorized', ScalarType::BOOLEAN, $qb))
-			->assign('accessor_id', $fb->integerParameter('accessor_id', $qb))
-			->where($fb->eq($fb->column('token_id'), $fb->integerParameter('id', $qb)))
+			->assign('validity_date', $fb->dateTimeParameter('validity_date'))
+			->assign('verifier', $fb->parameter('verifier'))
+			->assign('authorized', $fb->booleanParameter('authorized'))
+			->assign('accessor_id', $fb->integerParameter('accessor_id'))
+			->where($fb->eq($fb->column('token_id'), $fb->integerParameter('id')))
 			->updateQuery();
 
 		$uq->bindParameter('validity_date', $storedOAuth->getValidityDate());
@@ -614,8 +614,8 @@ class AuthenticationListener
 			->innerJoin($gtb, $fb->eq($fb->getDocumentColumn('id', $gtb), $fb->column('relatedid', $rtb)))
 			->where(
 				$fb->logicAnd(
-					$fb->eq($fb->column('realm', $gtb), $fb->parameter('realm', $qb)),
-					$fb->eq($fb->getDocumentColumn('login', $utb), $fb->parameter('login', $qb)),
+					$fb->eq($fb->column('realm', $gtb), $fb->parameter('realm')),
+					$fb->eq($fb->getDocumentColumn('login', $utb), $fb->parameter('login')),
 					$fb->eq($fb->getDocumentColumn('publicationStatus', $utb), $fb->string(Publishable::STATUS_PUBLISHABLE))
 					)
 				)

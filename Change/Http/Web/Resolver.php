@@ -220,9 +220,9 @@ class Resolver extends ActionResolver
 		$qb->from($qb->getSqlMapping()->getPathRuleTable());
 
 		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId', $qb)),
-			$fb->eq($fb->column('lcid'), $fb->parameter('LCID', $qb)),
-			$fb->eq($fb->column('path'), $fb->parameter('path', $qb))
+			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+			$fb->eq($fb->column('path'), $fb->parameter('path'))
 		));
 
 		$sq = $qb->query();
@@ -284,10 +284,10 @@ class Resolver extends ActionResolver
 		$qb->from($qb->getSqlMapping()->getPathRuleTable());
 
 		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId', $qb)),
-			$fb->eq($fb->column('lcid'), $fb->parameter('LCID', $qb)),
-			$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId', $qb)),
-			$fb->eq($fb->column('http_status'), $fb->integerParameter('httpStatus', $qb))
+			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+			$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+			$fb->eq($fb->column('http_status'), $fb->integerParameter('httpStatus'))
 		));
 
 		$sq = $qb->query();

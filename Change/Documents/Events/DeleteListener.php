@@ -171,8 +171,9 @@ class DeleteListener
 						if ($relModel->isLocalized())
 						{
 							$qb = $dbp->getNewStatementBuilder();
+							$fb = $qb->getFragmentBuilder();
 							$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate', $qb));
+							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
 							$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
 							$uq = $qb->updateQuery();
 							$uq->bindParameter('modificationDate', $modificationDate);
@@ -180,13 +181,14 @@ class DeleteListener
 						}
 
 						$qb = $dbp->getNewStatementBuilder();
+						$fb = $qb->getFragmentBuilder();
 						$qb->update($fb->getDocumentTable($relModel->getRootName()));
 						$column = $fb->getDocumentColumn($relProp->getName());
 
 						$qb->assign($column, $fb->subtraction($column, $fb->number(1)));
 						if (!$relModel->isLocalized())
 						{
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate', $qb));
+							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
 						}
 						$qb->where(
 							$fb->logicAnd(
@@ -204,6 +206,7 @@ class DeleteListener
 
 						//Delete relation
 						$qb = $dbp->getNewStatementBuilder();
+						$fb = $qb->getFragmentBuilder();
 						$qb->delete($fb->getDocumentRelationTable($relModel->getRootName()));
 						$qb->where(
 							$fb->logicAnd(
@@ -215,7 +218,6 @@ class DeleteListener
 					}
 					elseif ($relProp->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
 					{
-
 						if ($relModel->isLocalized())
 						{
 							$subSelect = $dbp->getNewQueryBuilder();
@@ -228,8 +230,9 @@ class DeleteListener
 							$subQuery = $subSelect->query();
 
 							$qb = $dbp->getNewStatementBuilder();
+							$fb = $qb->getFragmentBuilder();
 							$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate', $qb));
+							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
 							$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
 							$uq = $qb->updateQuery();
 							$uq->bindParameter('modificationDate', $modificationDate);
@@ -243,7 +246,7 @@ class DeleteListener
 						$qb->assign($column, $fb->number(null));
 						if (!$relModel->isLocalized())
 						{
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate', $qb));
+							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
 						}
 						$qb->where($fb->eq($column, $fb->number($document->getId())));
 						$uq = $qb->updateQuery();

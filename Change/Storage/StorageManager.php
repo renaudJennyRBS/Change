@@ -170,8 +170,8 @@ class StorageManager
 			$sqb->select('item_id', 'infos');
 			$sqb->from($fb->table('change_storage'));
 			$sqb->andWhere($fb->logicAnd(
-				$fb->eq($fb->column('store_name'), $fb->parameter('name', $sqb)),
-				$fb->eq($fb->column('store_path'), $fb->parameter('path', $sqb))));
+				$fb->eq($fb->column('store_name'), $fb->parameter('name')),
+				$fb->eq($fb->column('store_path'), $fb->parameter('path'))));
 		}
 		$sq = $sqb->query();
 		$sq->bindParameter('name', $name);
@@ -233,7 +233,7 @@ class StorageManager
 		{
 			$fb = $iqb->getFragmentBuilder();
 			$iqb->insert($fb->table('change_storage'), $fb->column('store_name'), $fb->column('store_path'), $fb->column('infos'));
-			$iqb->addValues($fb->parameter('name', $iqb), $fb->parameter('path', $iqb), $fb->parameter('infos', $iqb));
+			$iqb->addValues($fb->parameter('name'), $fb->parameter('path'), $fb->parameter('infos'));
 		}
 		$iq = $iqb->insertQuery();
 		$iq->bindParameter('name', $name);
@@ -256,10 +256,10 @@ class StorageManager
 		{
 			$fb = $uqb->getFragmentBuilder();
 			$uqb->update($fb->table('change_storage'));
-			$uqb->assign($fb->column('infos'), $fb->parameter('infos', $uqb));
+			$uqb->assign($fb->column('infos'), $fb->parameter('infos'));
 			$uqb->where($fb->logicAnd(
-				$fb->eq($fb->column('store_name'), $fb->parameter('name', $uqb)),
-				$fb->eq($fb->column('store_path'), $fb->parameter('path', $uqb))));
+				$fb->eq($fb->column('store_name'), $fb->parameter('name')),
+				$fb->eq($fb->column('store_path'), $fb->parameter('path'))));
 		}
 		$uq = $uqb->updateQuery();
 		$uq->bindParameter('infos', json_encode($infos));
@@ -271,7 +271,6 @@ class StorageManager
 	/**
 	 * @param string $name
 	 * @param string $path
-	 * @param array $infos
 	 */
 	protected function deleteItemDbInfo($name, $path)
 	{
@@ -281,8 +280,8 @@ class StorageManager
 			$fb = $dqb->getFragmentBuilder();
 			$dqb->delete($fb->table('change_storage'));
 			$dqb->where($fb->logicAnd(
-				$fb->eq($fb->column('store_name'), $fb->parameter('name', $dqb)),
-				$fb->eq($fb->column('store_path'), $fb->parameter('path', $dqb))));
+				$fb->eq($fb->column('store_name'), $fb->parameter('name')),
+				$fb->eq($fb->column('store_path'), $fb->parameter('path'))));
 		}
 		$dq = $dqb->updateQuery();
 		$dq->bindParameter('name', $name);

@@ -149,8 +149,8 @@ class Unique extends \Zend\Validator\AbstractValidator
 			->from($property->getLocalized() ? $fb->getDocumentI18nTable($model->getRootName()) : $fb->getDocumentTable($model->getRootName()))
 			->where(
 				$fb->logicAnd(
-					$fb->neq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value', $qb))
+					$fb->neq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value'))
 				)
 			)->query();
 		

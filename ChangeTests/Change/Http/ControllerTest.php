@@ -106,8 +106,9 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Zend\Http\PhpEnvironment\Response', $response);
 		$this->assertEquals(500, $response->getStatusCode());
 
-		$this->assertCount(5, $fakeEventHandler->callNames);
-		$this->assertEquals(array('onRequest', 'onAction', 'execute', 'onResult', 'onResponse'), $fakeEventHandler->callNames);
+		$this->assertCount(7, $fakeEventHandler->callNames);
+		$this->assertEquals(array('onRequest', 'onAction', 'execute', 'onResult', 'onResponse', 'onException(10003)', 'onResponse'),
+			$fakeEventHandler->callNames);
 
 		return $controller;
 	}

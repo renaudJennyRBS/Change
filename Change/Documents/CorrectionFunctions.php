@@ -1,6 +1,8 @@
 <?php
 namespace Change\Documents;
 
+use Change\Db\Query\ResultsConverter;
+use Change\Db\ScalarType;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Publishable;
@@ -480,23 +482,23 @@ class CorrectionFunctions
 
 		throw new \RuntimeException('Correction with no property not applicable to Document ' . $document, 51005);
 	}
-	
-	protected static $cachedQueries = array();
 
 	/**
+	 * @param string|null $cacheKey
 	 * @return \Change\Db\Query\Builder
 	 */
-	protected function getNewQueryBuilder()
+	protected function getNewQueryBuilder($cacheKey = null)
 	{
-		return $this->documentManager->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		return $this->documentManager->getApplicationServices()->getDbProvider()->getNewQueryBuilder($cacheKey);
 	}
 
 	/**
+	 * @param string|null $cacheKey
 	 * @return \Change\Db\Query\StatementBuilder
 	 */
-	protected function getNewStatementBuilder()
+	protected function getNewStatementBuilder($cacheKey = null)
 	{
-		return $this->documentManager->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		return $this->documentManager->getApplicationServices()->getDbProvider()->getNewStatementBuilder($cacheKey);
 	}
 
 	/**
@@ -505,32 +507,28 @@ class CorrectionFunctions
 	 */
 	protected function getCorrectionInstance($correctionId)
 	{
-		$key = 'loadCorrection';
-		if (!isset(static::$cachedQueries[$key]))
+		$qb = $this->getNewQueryBuilder('loadCorrection');
+		if (!$qb->isCached())
 		{
-			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->select('lcid', 'status', 'creationdate', 'publicationdate', 'datas')
-				->from($qb->getSqlMapping()->getDocumentCorrectionTable())
+			$qb->select('lcid', 'status', 'creationdate', 'publicationdate', 'datas')
+				->from($fb->getDocumentCorrectionTable())
 				->where(
-				$fb->logicAnd(
-					$fb->eq($fb->column('correction_id'), $fb->integerParameter('correctionId', $qb)),
-					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-					$fb->neq($fb->column('status'), $fb->string('FILED'))
-				)
-			)
-			->query();
+					$fb->logicAnd(
+						$fb->eq($fb->column('correction_id'), $fb->integerParameter('correctionId')),
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+						$fb->neq($fb->column('status'), $fb->string('FILED'))
+					)
+				);
 		}
-
-		/* @var $sq \Change\Db\Query\SelectQuery */
-		$sq = static::$cachedQueries[$key];
+		$sq = $qb->query();
 		$sq->bindParameter('correctionId', $correctionId);
 		$sq->bindParameter('id', $this->documentId);
 
-		$converter = new \Change\Db\Query\ResultsConverter($sq->getDbProvider(), array(
-			'creationdate' => \Change\Db\ScalarType::DATETIME,
-			'publicationdate' => \Change\Db\ScalarType::DATETIME,
-			'datas' => \Change\Db\ScalarType::LOB));
+		$converter = new ResultsConverter($sq->getDbProvider(), array(
+			'creationdate' => ScalarType::DATETIME,
+			'publicationdate' => ScalarType::DATETIME,
+			'datas' => ScalarType::LOB));
 		$row = $sq->getFirstResult(array($converter, 'convertRow'));
 
 		if ($row)
@@ -554,24 +552,20 @@ class CorrectionFunctions
 	 */
 	protected function findCorrection()
 	{
-		$key = 'findCorrections';
-		if (!isset(static::$cachedQueries[$key]))
+		$qb = $this->getNewQueryBuilder('findCorrections');
+		if (!$qb->isCached())
 		{
-			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->select('correction_id', 'lcid')
-				->from($qb->getSqlMapping()->getDocumentCorrectionTable())
+			$qb->select('correction_id', 'lcid')
+				->from($fb->getDocumentCorrectionTable())
 				->where(
 					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
+						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
 						$fb->neq($fb->column('status'), $fb->string('FILED'))
 				)
-			)
-			->query();
+			);
 		}
-
-		/* @var $sq \Change\Db\Query\SelectQuery */
-		$sq = static::$cachedQueries[$key];
+		$sq = $qb->query();
 		$sq->bindParameter('id', $this->documentId);
 
 		$this->corrections = array();
@@ -596,30 +590,27 @@ class CorrectionFunctions
 	 */
 	protected function loadCorrections()
 	{
-		$key = 'loadCorrections';
-		if (!isset(static::$cachedQueries[$key]))
+		$qb = $this->getNewQueryBuilder('loadCorrections');
+		if (!$qb->isCached())
 		{
-			$qb = $this->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->select('correction_id', 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
-				->from($qb->getSqlMapping()->getDocumentCorrectionTable())
+			$qb->select('correction_id', 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
+				->from($fb->getDocumentCorrectionTable())
 				->where(
 				$fb->logicAnd(
 					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
 					$fb->neq($fb->column('status'), $fb->string('FILED'))
 				)
-			)
-				->query();
+			);
 		}
-		/* @var $sq \Change\Db\Query\SelectQuery */
-		$sq = static::$cachedQueries[$key];
+		$sq = $qb->query();
 		$sq->bindParameter('id', $this->documentId);
 
-		$converter = new \Change\Db\Query\ResultsConverter($sq->getDbProvider(), array(
-			'correction_id' => \Change\Db\ScalarType::INTEGER,
-			'creationdate' => \Change\Db\ScalarType::DATETIME,
-			'publicationdate' => \Change\Db\ScalarType::DATETIME,
-			'datas' => \Change\Db\ScalarType::LOB));
+		$converter = new ResultsConverter($sq->getDbProvider(), array(
+			'correction_id' => ScalarType::INTEGER,
+			'creationdate' => ScalarType::DATETIME,
+			'publicationdate' => ScalarType::DATETIME,
+			'datas' => ScalarType::LOB));
 
 		$rows = $sq->getResults(array($converter, 'convertRows'));
 		$results = array();
@@ -642,21 +633,18 @@ class CorrectionFunctions
 	 */
 	protected function insertCorrection($correction)
 	{
-		$key = 'insertCorrection';
-		if (!isset(static::$cachedQueries[$key]))
+		$qb = $this->getNewStatementBuilder('insertCorrection');
+		if (!$qb->isCached())
 		{
-			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->insert($qb->getSqlMapping()->getDocumentCorrectionTable())
+			$qb->insert($fb->getDocumentCorrectionTable())
 				->addColumns($fb->getDocumentColumn('id'), 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
-				->addValues($fb->integerParameter('id', $qb), $fb->parameter('lcid', $qb), $fb->parameter('status', $qb),
-				$fb->dateTimeParameter('creationdate', $qb), $fb->dateTimeParameter('publicationdate', $qb),
-				$fb->typedParameter('datas', \Change\Db\ScalarType::LOB, $qb))
-				->insertQuery();
+				->addValues($fb->integerParameter('id', $qb), $fb->parameter('lcid'), $fb->parameter('status'),
+				$fb->dateTimeParameter('creationdate'), $fb->dateTimeParameter('publicationdate'),
+				$fb->lobParameter('datas'));
 		}
 
-		/* @var $iq \Change\Db\Query\InsertQuery */
-		$iq = static::$cachedQueries[$key];
+		$iq = $qb->insertQuery();
 		$iq->bindParameter('id', $correction->getDocumentId());
 		$iq->bindParameter('lcid', $correction->getLCID());
 		$iq->bindParameter('status', $correction->getStatus());
@@ -674,21 +662,19 @@ class CorrectionFunctions
 	 */
 	protected function updateCorrection($correction)
 	{
-		$key = 'updateCorrection';
-		if (!isset(static::$cachedQueries[$key]))
-		{
-			$qb = $this->getNewStatementBuilder();
-			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->update($qb->getSqlMapping()->getDocumentCorrectionTable())
-				->assign('status', $fb->parameter('status', $qb))
-				->assign('publicationdate', $fb->dateTimeParameter('publicationdate', $qb))
-				->assign('datas', $fb->typedParameter('datas', \Change\Db\ScalarType::LOB, $qb))
-				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id', $qb)))
-				->updateQuery();
-		}
 
-		/* @var $uq \Change\Db\Query\UpdateQuery */
-		$uq = static::$cachedQueries[$key];
+		$qb = $this->getNewStatementBuilder('updateCorrection');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status'))
+				->assign('publicationdate', $fb->dateTimeParameter('publicationdate'))
+				->assign('datas', $fb->lobParameter('datas'))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id')));
+		}
+		$uq = $qb->updateQuery();
+
 		$uq->bindParameter('status', $correction->getStatus());
 		$uq->bindParameter('publicationdate', $correction->getPublicationDate());
 		$uq->bindParameter('datas', serialize($correction->getDatas()));
@@ -703,20 +689,16 @@ class CorrectionFunctions
 	 */
 	protected function updateCorrectionStatus($correction)
 	{
-		$key = 'updateCorrectionStatus';
-		if (!isset(static::$cachedQueries[$key]))
+		$qb = $this->getNewStatementBuilder('updateCorrectionStatus');
+		if ($qb->isCached())
 		{
-			$qb = $this->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
-			static::$cachedQueries[$key] = $qb->update($qb->getSqlMapping()->getDocumentCorrectionTable())
-				->assign('status', $fb->parameter('status', $qb))
-				->assign('publicationdate', $fb->dateTimeParameter('publicationdate', $qb))
-				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id', $qb)))
-				->updateQuery();
+			$qb->update($fb->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status'))
+				->assign('publicationdate', $fb->dateTimeParameter('publicationdate'))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id')));
 		}
-
-		/* @var $uq \Change\Db\Query\UpdateQuery */
-		$uq = static::$cachedQueries[$key];
+		$uq = $qb->updateQuery();
 		$uq->bindParameter('status', $correction->getStatus());
 		$uq->bindParameter('publicationdate', $correction->getPublicationDate());
 		$uq->bindParameter('id', $correction->getId());

@@ -343,7 +343,7 @@ class PluginManager
 		$isb = $this->getDbProvider()->getNewStatementBuilder('PluginManager::register');
 		$fb = $isb->getFragmentBuilder();
 		$isb->insert($fb->getPluginTable(), 'type', 'vendor', 'name', 'registration_date');
-		$isb->addValues($fb->parameter('type', $isb), $fb->parameter('vendor', $isb), $fb->parameter('name', $isb), $fb->dateTimeParameter('registrationDate', $isb));
+		$isb->addValues($fb->parameter('type'), $fb->parameter('vendor'), $fb->parameter('name'), $fb->dateTimeParameter('registrationDate'));
 		$iq = $isb->insertQuery();
 		$iq->bindParameter('type', $plugin->getType());
 		$iq->bindParameter('vendor', $plugin->getVendor());
@@ -366,9 +366,9 @@ class PluginManager
 		$fb = $dsb->getFragmentBuilder();
 		$dsb->delete($fb->getPluginTable())
 			->where(
-				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type', $dsb)),
-				$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor', $dsb)),
-				$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name', $dsb)))
+				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type')),
+				$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor')),
+				$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name')))
 			);
 
 		$dq = $dsb->deleteQuery();
@@ -441,9 +441,9 @@ class PluginManager
 		$fb = $sqb->getFragmentBuilder('PluginManager::load');
 		$sqb->select('package', 'registration_date', 'configured', 'activated', 'config_datas')
 			->where(
-				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type', $sqb)),
-					$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor', $sqb)),
-					$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name', $sqb)))
+				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type')),
+					$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor')),
+					$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name')))
 			);
 
 		$sq = $sqb->from($fb->getPluginTable())->query();
@@ -487,14 +487,14 @@ class PluginManager
 		$usb = $this->getDbProvider()->getNewStatementBuilder('PluginManager::update');
 		$fb = $usb->getFragmentBuilder();
 		$usb->update($fb->getPluginTable())
-			->assign('package', $fb->parameter('package', $usb))
-			->assign('activated', $fb->typedParameter('activated', ScalarType::BOOLEAN, $usb))
-			->assign('configured', $fb->typedParameter('configured', ScalarType::BOOLEAN, $usb))
-			->assign('config_datas', $fb->typedParameter('configDatas', ScalarType::LOB, $usb))
+			->assign('package', $fb->parameter('package'))
+			->assign('activated', $fb->booleanParameter('activated'))
+			->assign('configured', $fb->booleanParameter('configured'))
+			->assign('config_datas', $fb->lobParameter('configDatas'))
 			->where(
-				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type', $usb)),
-					$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor', $usb)),
-					$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name', $usb)))
+				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type')),
+					$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor')),
+					$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name')))
 			);
 
 		$uq = $usb->updateQuery();
@@ -642,7 +642,7 @@ class PluginManager
 		$eventManager = $this->getEventManager();
 		$plugins = array();
 		$application = new \Change\Application();
-		$eventArgs = $eventManager->prepareArgs(array('application' => $application,'context' => $context));
+		$eventArgs = $eventManager->prepareArgs(array('application' => $application, 'context' => $context));
 
 		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName), $this, $eventArgs);
 		$results = $this->getEventManager()->trigger($event);

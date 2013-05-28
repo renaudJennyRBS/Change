@@ -71,7 +71,6 @@ class Builder extends AbstractBuilder
 		parent::__construct($model);
 	}
 
-
 	/**
 	 * @return integer
 	 */
@@ -137,6 +136,7 @@ class Builder extends AbstractBuilder
 		if ($this->dbQueryBuilder === null)
 		{
 			$this->dbQueryBuilder = $this->getDbProvider()->getNewQueryBuilder();
+			$this->dbQueryBuilder->select();
 		}
 		return $this->dbQueryBuilder;
 	}
@@ -147,7 +147,7 @@ class Builder extends AbstractBuilder
 	protected function addDocumentColumns($qb)
 	{
 		$fb = $qb->getFragmentBuilder();
-		$qb->select()->distinct();
+		$qb->distinct();
 
 		$tableAliasName = $this->getTableAliasName();
 
@@ -164,7 +164,6 @@ class Builder extends AbstractBuilder
 	public function getQueryBuilder()
 	{
 		$dqb = $this->getDbQueryBuilder();
-		$dqb->select();
 		$this->populateQueryBuilder($dqb);
 		$this->setQueryOrders($dqb);
 		$this->setQueryParameters($dqb->query());
@@ -331,7 +330,10 @@ class Builder extends AbstractBuilder
 		{
 			foreach ($this->parameters as $pn => $pi)
 			{
-				$query->addParameter($pi[0]);
+				if ($query->getParameter($pn) === null)
+				{
+					$query->addParameter($pi[0]);
+				}
 				$query->bindParameter($pn, $pi[1]);
 			}
 		}

@@ -101,13 +101,13 @@ class GeneratePathRule
 			$fb->column('http_status'),
 			$fb->column('config_datas')
 		);
-		$sb->addValues($fb->integerParameter('websiteId', $sb),
-			$fb->parameter('LCID', $sb),
-			$fb->parameter('path', $sb),
-			$fb->integerParameter('documentId', $sb),
-			$fb->integerParameter('sectionId', $sb),
-			$fb->integerParameter('httpStatus', $sb),
-			$fb->parameter('configDatas', $sb)
+		$sb->addValues($fb->integerParameter('websiteId'),
+			$fb->parameter('LCID'),
+			$fb->parameter('path'),
+			$fb->integerParameter('documentId'),
+			$fb->integerParameter('sectionId'),
+			$fb->integerParameter('httpStatus'),
+			$fb->parameter('configDatas')
 		);
 
 		$iq = $sb->insertQuery();
