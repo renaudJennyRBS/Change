@@ -2,6 +2,12 @@
 	"Change":{
 		"Application":{
 			"development-mode":true
+		},
+		"I18n":{
+			"supported-lcids":["fr_FR", "en_US"],
+			"langs":{
+				"en_US":"en"
+			}
 		}
 	}
 }

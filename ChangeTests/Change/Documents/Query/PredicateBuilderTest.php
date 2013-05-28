@@ -59,13 +59,13 @@ class PredicateBuilderTest extends TestCase
 		$localizedDoc->save();
 		$dm->popLCID();
 
-		$dm->pushLCID('en_GB');
+		$dm->pushLCID('en_US');
 		$localizedDoc->setPLStr('text one');
 		$localizedDoc->setPLInt(1002);
 		$localizedDoc->save();
 		$dm->popLCID();
 
-		$dm->pushLCID('en_GB');
+		$dm->pushLCID('en_US');
 		$localizedDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedDoc->initialize(1006);
 		$localizedDoc->setPStr('test 1006');
@@ -76,7 +76,7 @@ class PredicateBuilderTest extends TestCase
 		$localizedDoc->save();
 		$dm->popLCID();
 
-		$dm->pushLCID('en_GB');
+		$dm->pushLCID('en_US');
 		$localizedDoc->setPLStr('text one');
 		$localizedDoc->save();
 		$dm->popLCID();

@@ -227,8 +227,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$dm->popLCID();
 
 
-		$dm->pushLCID('en_GB');
-		$this->assertEquals('en_GB', $localizedDoc->getLCID());
+		$dm->pushLCID('en_US');
+		$this->assertEquals('en_US', $localizedDoc->getLCID());
 		$this->assertEquals(DocumentManager::STATE_NEW, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 
 		$this->assertNull($localizedDoc->getPLStr());
@@ -246,15 +246,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string FR 2', $localizedDoc->getPLStr());
 		$dm->popLCID();
 
-		$dm->pushLCID('en_GB');
+		$dm->pushLCID('en_US');
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
-		$this->assertEquals('en_GB', $localizedDoc->getLCID());
+		$this->assertEquals('en_US', $localizedDoc->getLCID());
 		$this->assertEquals('string EN', $localizedDoc->getPLStr());
 		$dm->popLCID();
 
 		$dm->reset();
 
-		$dm->pushLCID('en_GB');
+		$dm->pushLCID('en_US');
 		$localizedDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
 		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $localizedDoc2);
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $localizedDoc2->getPersistentState());
@@ -276,7 +276,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertArrayHasKey('LCID', $datas);
 		$this->assertEquals('string FR 2', $datas['LCID']['fr_FR']['pLStr']);
-		$this->assertEquals('string EN', $datas['LCID']['en_GB']['pLStr']);
+		$this->assertEquals('string EN', $datas['LCID']['en_US']['pLStr']);
 		$dm->popLCID();
 
 

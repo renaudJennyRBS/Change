@@ -423,7 +423,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('plop en a.aa', $manager->transForLCID('en_GB', 'm.project.tests.a.aa.plop'));
 		$this->assertEquals('--m.project.tests.a.aa.plop', $manager->transForLCID('en_US', 'm.project.tests.a.aa.plop'));
 
-		$config->addVolatileEntry('Change/I18n/supported-lcids', array('en_US'));
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('en_GB'));
 		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_US' => array('en_GB')));
 		$syncManager = new I18nManager();
 		$syncManager->setConfiguration($config);

@@ -102,19 +102,35 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 
 	/**
 	 * @param \Change\Application $application
+	 * @throws \RuntimeException
 	 */
 	protected function executeApplication($application)
 	{
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Admin/Listeners/Change_Website',
+		/* @var $config \Change\Configuration\EditableConfiguration */
+		$config = $application->getConfiguration();
+		$config->addPersistentEntry('Change/Admin/Listeners/Change_Website',
 				'\\Change\\Website\\Admin\\Register');
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Presentation/Blocks/Change_Website',
+		$config->addPersistentEntry('Change/Presentation/Blocks/Change_Website',
 			'\\Change\\Website\\Blocks\\SharedListenerAggregate');
 
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Website',
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Website',
 				'\\Change\\Website\\Events\\SharedListenerAggregate');
+
+		$projectPath = $application->getWorkspace()->projectPath();
+		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
+
+		if (is_dir($documentRootPath))
+		{
+			$srcPath = __DIR__ . '/Assets/index.php';
+			$content = \Change\Stdlib\File::read($srcPath);
+			$content = str_replace('__DIR__', var_export($projectPath, true), $content);
+			\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+		}
+		else
+		{
+			throw new \RuntimeException('Invalid document root path: '. $documentRootPath .
+			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
+		}
 	}
 
 	/**

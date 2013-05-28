@@ -12,7 +12,7 @@ class Application
 	const CHANGE_VERSION = "4.0";
 
 	/**
-	 * @var \Change\Configuration\Configuration
+	 * @var Configuration\Configuration
 	 */
 	protected $configuration;
 
@@ -114,20 +114,20 @@ class Application
 	/**
 	 * @param Configuration\Configuration $configuration
 	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	public function setConfiguration(Configuration\Configuration $configuration)
 	{
 		$this->configuration = $configuration;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Configuration\Configuration
+	 * @return Configuration\Configuration
 	 */
 	public function getConfiguration()
 	{
 		if ($this->configuration === null)
 		{
-			$this->configuration = new \Change\Configuration\Configuration($this->getProjectConfigurationPaths());
+			$this->configuration = new Configuration\Configuration($this->getProjectConfigurationPaths());
 		}
 		return $this->configuration;
 	}
@@ -227,7 +227,6 @@ class Application
 
 	/**
 	 * Get all the project-level config files paths, in the correct order
-	 *
 	 * @api
 	 * @return array string
 	 */
@@ -235,18 +234,8 @@ class Application
 	{
 		$workspace = $this->getWorkspace();
 		$result = array();
-		$globalConfigFile = $workspace->appPath('Config', 'project.json');
-		if (file_exists($globalConfigFile))
-		{
-			$result[] = $globalConfigFile;
-		}
-
-		//@TODO Fix instance config file name
-		$instanceConfigFile = $workspace->appPath('Config', 'project.default.json');
-		if (file_exists($instanceConfigFile))
-		{
-			$result[] = $instanceConfigFile;
-		}
+		$result[Configuration\Configuration::PROJECT] = $workspace->appPath('Config', 'project.json');
+		$result[Configuration\Configuration::INSTANCE] = $workspace->appPath('Config', 'project.default.json');
 		return $result;
 	}
 

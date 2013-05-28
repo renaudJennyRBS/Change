@@ -50,6 +50,24 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
 		);
 		$events->attach($eventNames, $callBack, 5);
+
+		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
+		{
+			/* @var $application \Change\Application */
+			$application = $event->getParam('application');
+			$this->executeApplication($application);
+
+			/* @var $pluginManager PluginManager */
+			$pluginManager = $event->getTarget();
+			$pluginManager->getModule($vendor, $name)->setConfigurationEntry(PluginManager::EVENT_SETUP_APPLICATION, 'Ok');
+		};
+		$eventNames = array(
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
+			PluginManager::composeEventName(
+				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
+		);
+		$events->attach($eventNames, $callBack, 5);
 	}
 
 	/**
@@ -59,5 +77,31 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 	public function detach(\Zend\EventManager\EventManagerInterface $events)
 	{
 		// TODO: Implement detach() method.
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @throws \RuntimeException
+	 */
+	protected function executeApplication($application)
+	{
+		/* @var $config \Change\Configuration\EditableConfiguration */
+		$config = $application->getConfiguration();
+
+		$projectPath = $application->getWorkspace()->projectPath();
+		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
+
+		if (is_dir($documentRootPath))
+		{
+			$srcPath = __DIR__ . '/Assets/admin.php';
+			$content = \Change\Stdlib\File::read($srcPath);
+			$content = str_replace('__DIR__', var_export($projectPath, true), $content);
+			\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+		}
+		else
+		{
+			throw new \RuntimeException('Invalid document root path: '. $documentRootPath .
+			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
+		}
 	}
 }

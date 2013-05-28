@@ -11,10 +11,8 @@
 			"level":"WARN"
 		},
 		"I18n":{
-			"supported-lcids":["fr_FR", "en_GB"],
-			"langs":{
-				"en_GB":"en"
-			},
+			"supported-lcids":[],
+			"langs":{},
 			"default-timezone":"Europe\/Paris",
 			"synchro":{}
 		},

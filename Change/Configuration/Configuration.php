@@ -9,10 +9,19 @@ use Zend\Json\Json;
  */
 class Configuration
 {
+	const PROJECT = 'project.json';
+	const INSTANCE = 'project.default.json';
+
 	/**
 	 * @var string[]
 	 */
 	protected $configurationFiles = array();
+
+	/**
+	 * The compiled project config.
+	 * @var array
+	 */
+	protected $config = array();
 
 	/**
 	 * @param array $configurationFiles
@@ -21,10 +30,6 @@ class Configuration
 	 */
 	public function __construct(array $configurationFiles, $config = null)
 	{
-		if (count($configurationFiles) == 0)
-		{
-			throw new \InvalidArgumentException('$configurationFiles must have at least one entry', 30000);
-		}
 		$this->configurationFiles = $configurationFiles;
 		if (!is_array($config))
 		{
@@ -32,12 +37,6 @@ class Configuration
 		}
 		$this->setConfigArray($config);
 	}
-
-	/**
-	 * The compiled project config.
-	 * @var array
-	 */
-	protected $config = array();
 
 	/**
 	 * @api
@@ -92,32 +91,6 @@ class Configuration
 			return false;
 		}
 
-		$this->config = \Zend\Stdlib\ArrayUtils::merge($this->config, $update);
-		return true;
-	}
-
-	/**
-	 * Add an entry in the first configuration file returned by \Change\Application::getProjectConfigurationPaths.
-	 * @api
-	 * @param string $path
-	 * @param string $value
-	 * @return boolean
-	 */
-	public function addPersistentEntry($path, $value)
-	{
-		$update = $this->getAddEntryArrayToMerge($path, $value);
-		if (!count($update))
-		{
-			return false;
-		}
-
-		// Base config.
-		$configProjectPath = $this->configurationFiles[0];
-		$overridableConfig = Json::decode(\Change\Stdlib\File::read($configProjectPath), Json::TYPE_ARRAY);
-		$mergedConfig = \Zend\Stdlib\ArrayUtils::merge($overridableConfig, $update);
-		\Change\Stdlib\File::write($configProjectPath, Json::encode($mergedConfig));
-
-		// Update loaded config.
 		$this->config = \Zend\Stdlib\ArrayUtils::merge($this->config, $update);
 		return true;
 	}
@@ -181,37 +154,13 @@ class Configuration
 
 		foreach ($this->configurationFiles as $path)
 		{
-			$data = \Change\Stdlib\File::read($path);
-			$projectConfig = Json::decode($data, Json::TYPE_ARRAY);
-			$config = \Zend\Stdlib\ArrayUtils::merge($config, $projectConfig);
+			if (is_readable($path))
+			{
+				$data = \Change\Stdlib\File::read($path);
+				$projectConfig = Json::decode($data, Json::TYPE_ARRAY);
+				$config = \Zend\Stdlib\ArrayUtils::merge($config, $projectConfig);
+			}
 		}
-
-		switch ($config['Change']['Logging']['level'])
-		{
-			// @codeCoverageIgnoreStart
-			case 'EXCEPTION' :
-			case 'ALERT' :
-				$logLevel = 'ALERT';
-				break;
-			case 'ERROR' :
-			case 'ERR' :
-				$logLevel = 'ERR';
-				break;
-			case 'NOTICE' :
-				$logLevel = 'NOTICE';
-				break;
-			case 'DEBUG' :
-				$logLevel = 'DEBUG';
-				break;
-			case 'INFO' :
-				$logLevel = 'INFO';
-				break;
-			default :
-				$logLevel = 'WARN';
-				break;
-			// @codeCoverageIgnoreEnd
-		}
-		$config['Change']['Logging']['level'] = $logLevel;
 		return $config;
 	}
 }
