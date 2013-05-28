@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.document" lcid="fr_FR">
+	<key id="menu">menu</key>
+	<key id="menu-list">menus de navigation</key>
+	<key id="staticpage">page</key>
+	<key id="staticpage-list">pages</key>
+	<key id="topic">rubrique</key>
+	<key id="topic-list">rubriques</key>
+	<key id="website">site web</key>
+	<key id="website-list">sites web</key>
+</i18n>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.users.document" lcid="fr_FR">
+	<key id="user">utilisateur</key>
+	<key id="user-list">utilisateurs</key>
+</i18n>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.website.document.menu" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">menu</key>
-	<key id="document-list-name">menus de navigation</key>
 	<key id="website">site web</key>
 	<key id="website-picker-title">sélectionner le site web associé au menu</key>
 </i18n>

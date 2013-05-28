@@ -11,13 +11,14 @@
 	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
+	 * @param i18n
 	 * @constructor
 	 */
-	function ListController($scope, DocumentList, Breadcrumb, MainMenu)
+	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			["Médiathèque", "Change/Media"],
-			["Images", "Change/Media/Image"]
+			[i18n.trans('m.change.media.admin.js.module-name | ucf'), "Change/Media"],
+			[i18n.trans('m.change.media.admin.js.image-list | ucf'), "Change/Media/Image"]
 		]);
 
 		var DL = DocumentList.initScope($scope, 'Change_Media_Image');
@@ -26,17 +27,17 @@
 		DL.sort.descending = false;
 
 		$scope.createActions = [
-			{ 'label': "Image", 'url': 'Change/Media/Image/new', 'icon': 'folder-close' }
+			{ 'label': i18n.trans('m.change.media.admin.js.image | ucf'), 'url': 'Change/Media/Image/new', 'icon': 'folder-close' }
 		];
 
 		// Configure DataTable columns
-		DL.columns.push({ id: 'modificationDate', label: "Dernière modif.", sortable: true });
-		DL.columns.push({ id: 'activated', label: "Activé", width: "90px", align: "center", sortable: true });
+		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
+		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
 		MainMenu.loadModuleMenu('Change_Media');
 	}
 
-	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu'];
+	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Change_Media_Image_ListController', ListController);
 
 	/**
@@ -45,17 +46,18 @@
 	 * @param $scope
 	 * @param Breadcrumb
 	 * @param FormsManager
+	 * @param i18n
 	 * @constructor
 	 */
-	function FormController($scope, Breadcrumb, FormsManager)
+	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
-			["Médiathèque", "Change/Media"],
-			["Images", "Change/Media/Image"]
+			[i18n.trans('m.change.media.admin.js.module-name | ucf'), "Change/Media"],
+			[i18n.trans('m.change.media.admin.js.image-list | ucf'), "Change/Media/Image"]
 		]);
 		FormsManager.initResource($scope, 'Change_Media_Image');
 	}
 
-	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager'];
+	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
 	app.controller('Change_Media_Image_FormController', FormController);
 })();

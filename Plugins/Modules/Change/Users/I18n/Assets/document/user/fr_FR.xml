@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.users.document.user" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">utilisateur</key>
-	<key id="document-list-name">utilisateurs</key>
 	<key id="login">nom d'utilisateur</key>
 	<key id="email">adresse e-mail</key>
 	<key id="pseudonym">pseudonyme</key>

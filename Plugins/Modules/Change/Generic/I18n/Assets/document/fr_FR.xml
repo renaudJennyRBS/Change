@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.generic.document" lcid="fr_FR">
-	<key id="document-name">document</key>
 	<key id="id">identifiant</key>
 	<key id="model">modèle</key>
 	<key id="creationdate">date de création</key>

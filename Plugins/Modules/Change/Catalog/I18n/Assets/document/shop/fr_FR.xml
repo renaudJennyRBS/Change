@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.catalog.document.shop" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">boutique</key>
-	<key id="document-list-name">boutiques</key>
 	<key id="billingarea">zones de tarification</key>
 	<key id="billingarea-picker-title">sélectionner les zones de tarification</key>
 </i18n>

@@ -271,6 +271,119 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$key = $manager->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plep');
 		$this->assertNull($key);
 
+		// Test with i18n synchro.
+		$config = $this->getApplication()->getConfiguration();
+		$configArray = $config->getConfigArray();
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR')));
+
+		$managerTwo = new I18nManager();
+		$managerTwo->setConfiguration($config);
+		$managerTwo->setWorkspace($manager->getWorkspace());
+		$this->assertEquals(array('en_GB' => array('fr_FR')), $managerTwo->getI18nSynchro());
+
+		$key = $managerTwo->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plop');
+		$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+		$this->assertEquals('plop en a.aa', $key->getText());
+		$key = $managerTwo->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plip');
+		$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+		$this->assertEquals('plip en a.aa', $key->getText());
+		$key = $managerTwo->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plap');
+		$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+		$this->assertEquals('plap fr a.aa', $key->getText());
+		$key = $managerTwo->getDefinitionKey('en_GB', array('m', 'project', 'tests', 'a', 'aa'), 'plep');
+		$this->assertNull($key);
+
+		$config->setConfigArray($configArray);
+
+		return $manager;
+	}
+
+	/**
+	 * @depends testGetDefinitionCollection
+	 */
+	public function testGetDefinitionKeys(I18nManager $manager)
+	{
+		$keys = $manager->getDefinitionKeys('fr_FR', array('m', 'project', 'tests', 'a', 'aa'));
+		$this->assertCount(3, $keys);
+		$foundIds = array();
+		foreach ($keys as $key)
+		{
+			$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+			switch ($key->getId())
+			{
+				case 'plop':
+					$this->assertEquals('plop fr a.aa', $key->getText());
+					break;
+				case 'plip':
+					$this->assertEquals('plip fr b', $key->getText());
+					break;
+				case 'plap':
+					$this->assertEquals('plap fr a.aa', $key->getText());
+					break;
+				default:
+					$this->fail('Unexpected key id ' . $key->getId());
+			}
+			$foundIds[] = $key->getId();
+		}
+		$this->assertCount(3, array_unique($foundIds));
+
+		$keys = $manager->getDefinitionKeys('en_GB', array('m', 'project', 'tests', 'a', 'aa'));
+		$this->assertCount(2, $keys);
+		$foundIds = array();
+		foreach ($keys as $key)
+		{
+			$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+			switch ($key->getId())
+			{
+				case 'plop':
+					$this->assertEquals('plop en a.aa', $key->getText());
+					break;
+				case 'plip':
+					$this->assertEquals('plip en a.aa', $key->getText());
+					break;
+				default:
+					$this->fail('Unexpected key id ' . $key->getId());
+			}
+			$foundIds[] = $key->getId();
+		}
+		$this->assertCount(2, array_unique($foundIds));
+
+		// Test with i18n synchro.
+		$config = $this->getApplication()->getConfiguration();
+		$configArray = $config->getConfigArray();
+		$config->addVolatileEntry('Change/I18n/synchro/keys', array('en_GB' => array('fr_FR')));
+
+		$managerTwo = new I18nManager();
+		$managerTwo->setConfiguration($config);
+		$managerTwo->setWorkspace($manager->getWorkspace());
+		$this->assertEquals(array('en_GB' => array('fr_FR')), $managerTwo->getI18nSynchro());
+
+		$keys = $managerTwo->getDefinitionKeys('en_GB', array('m', 'project', 'tests', 'a', 'aa'));
+		$this->assertCount(3, $keys);
+		$foundIds = array();
+		foreach ($keys as $key)
+		{
+			$this->assertInstanceOf('\Change\I18n\DefinitionKey', $key);
+			switch ($key->getId())
+			{
+				case 'plop':
+					$this->assertEquals('plop en a.aa', $key->getText());
+					break;
+				case 'plip':
+					$this->assertEquals('plip en a.aa', $key->getText());
+					break;
+				case 'plap':
+					$this->assertEquals('plap fr a.aa', $key->getText());
+					break;
+				default:
+					$this->fail('Unexpected key id ' . $key->getId());
+			}
+			$foundIds[] = $key->getId();
+		}
+		$this->assertCount(3, array_unique($foundIds));
+
+		$config->setConfigArray($configArray);
+
 		return $manager;
 	}
 
@@ -588,7 +701,7 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$source = '<h1>Titre</h1><p>Un<br/>paragraphe</p><ul><li>item 1</li><li>item 2</li></ul><hr><div class="test">Contenu du div</div>';
 		$expected =
 			'Titre' . PHP_EOL . 'Un' . PHP_EOL . 'paragraphe' . PHP_EOL . ' * item 1' . PHP_EOL . ' * item 2' . PHP_EOL . '------'
-				. PHP_EOL . 'Contenu du div';
+			. PHP_EOL . 'Contenu du div';
 		$this->assertEquals($expected, $manager->transformText($source, 'fr_FR'));
 
 		$source = '<table><tr><th>Titre 1</th><th>Titre 2</th></tr><tr><td>Cellule 1</td><td>Cellule 2</td></tr><table>';

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.brand.document.brand" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">marque</key>
-	<key id="document-list-name">marques</key>
 	<key id="description">description</key>
 	<key id="visual">visuel</key>
 	<key id="select-visual">sélectionner le visuel</key>

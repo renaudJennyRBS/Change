@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.catalog.document" lcid="fr_FR">
+	<key id="product">produit</key>
+	<key id="product-list">produits</key>
+	<key id="billingarea">zone de tarification</key>
+	<key id="billingarea-list">zones de tarification</key>
+	<key id="category">catégorie</key>
+	<key id="category-list">catégories</key>
+	<key id="price">prix</key>
+	<key id="price-list">prix</key>
+	<key id="shop">boutique</key>
+	<key id="shop-list">boutiques</key>
+</i18n>

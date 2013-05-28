@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.website.document.website" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="document-name">site web</key>
-	<key id="document-list-name">sites web</key>
 	<key id="indexpage">page d'index</key>
 
 	<key id="hostname">nom d'hôte</key>

@@ -5,9 +5,9 @@
 	<key id="advanced-properties">propriétés avancées</key>
 	<key id="publication-properties">publication</key>
 	<key id="information">informations</key>
-	<key id="status">état</key>
 	<key id="languages">langues</key>
 	<key id="contents">contenus</key>
+	<key id="status">état</key>
 
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>

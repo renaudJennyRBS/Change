@@ -31,10 +31,7 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Change/Catalog/Shop/controllers.js">​</script>
 	<script type="text/javascript" src="Change/Catalog/Shop/editor.js">​</script>
 	<script type="text/javascript" src="Change/Catalog/BillingArea/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Catalog/BillingArea/editor.js">​</script>
-	<script type="text/javascript" src="Change/Brand/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/editor.js">​</script>');
+	<script type="text/javascript" src="Change/Catalog/BillingArea/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 		});
 	}
