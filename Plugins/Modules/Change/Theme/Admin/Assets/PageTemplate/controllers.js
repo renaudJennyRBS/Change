@@ -34,7 +34,6 @@
 		if ($routeParams.theme) {
 			REST.resource($routeParams.theme).then(function (theme) {
 				Breadcrumb.setPath([theme]);
-				console.log("treeUrl for theme: ", theme.url('tree'));
 				DL.query = {"model":"Change_Theme_PageTemplate","where":{"and":[{"op":"eq","lexp":{"property":"theme"},"rexp":{"value":theme.id}}]}};
 				DL.reload();
 			});
