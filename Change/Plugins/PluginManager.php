@@ -671,8 +671,12 @@ class PluginManager
 		$compiler = new \Change\Documents\Generators\Compiler($application, $applicationServices);
 		$compiler->generate();
 
+		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $applicationServices->getDbProvider());
+		$generator->generatePluginsSchema();
+
 		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
 		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
+
 		$event->setName(static::composeEventName(static::EVENT_SETUP_SERVICES, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
 		$this->getEventManager()->trigger($event);
 
