@@ -3,7 +3,6 @@ namespace Change\Catalog\Setup;
 
 use Change\Plugins\PluginManager;
 
-
 /**
  * @name \Change\Generic\Setup\Install
  */

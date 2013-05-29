@@ -49,6 +49,6 @@
 		FormsManager.initResource($scope, 'Change_Website_Menu');
 	}
 
-	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb'];
+	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
 	app.controller('Change_Website_Menu_FormController', FormController);
 })();

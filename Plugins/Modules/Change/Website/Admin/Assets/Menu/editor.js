@@ -1,12 +1,10 @@
-(function () {
-
-	function changeEditorWebsiteMenu (Editor) {
-
+(function ()
+{
+	function changeEditorWebsiteMenu(Editor)
+	{
 		return {
-			restrict : 'EC',
-
-			templateUrl : 'Change/Website/Menu/editor.twig',
-
+			restrict: 'EC',
+			templateUrl: 'Change/Website/Menu/editor.twig',
 			replace: true,
 
 			// Create isolated scope
@@ -17,15 +15,14 @@
 				section: '='
 			},
 
-			link : function (scope, elm, attrs) {
+			link: function (scope, elm, attrs)
+			{
 				Editor.initScope(scope, elm);
 			}
 		};
-
 	}
 
 	changeEditorWebsiteMenu.$inject = ['RbsChange.Editor'];
 
 	angular.module('RbsChange').directive('editorChangeWebsiteMenu', changeEditorWebsiteMenu);
-
 })();

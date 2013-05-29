@@ -1,39 +1,34 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	app.directive('changeWebsiteMenuFunctions', [ function () {
-
+	app.directive('changeWebsiteMenuFunctions', [ function ()
+	{
 		return {
-			restrict : 'EC',
+			restrict: 'EC',
+			templateUrl: 'Change/Website/Menu/directives/menu-functions.twig',
 
-			templateUrl : 'Change/Website/Menu/directives/menu-functions.twig',
-
-			link : function (scope, elm) {
-
+			link: function (scope, elm)
+			{
 				$(elm).on({
-
-					'dragstart': function (e) {
+					'dragstart': function (e)
+					{
 						var draggedEl = $(this);
 						e.dataTransfer.setData('Change/MenuItemFunction', JSON.stringify({
-							"label" : draggedEl.text(),
-							"id"    : draggedEl.data('id')
+							"label": draggedEl.text(),
+							"id": draggedEl.data('id')
 						}));
 						e.dataTransfer.effectAllowed = "copyMove";
 					},
 
-					'dragend': function () {
+					'dragend': function ()
+					{
 						//draggedEl.removeClass('dragged');
 					}
-
 				}, '.menu-item-function');
-
 			}
-
 		};
-
 	}]);
-
 })();

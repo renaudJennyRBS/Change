@@ -1,76 +1,77 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	app.directive('changeWebsiteMenuCard', [ function () {
-
-		function getDraggedElement (event) {
+	app.directive('changeWebsiteMenuCard', [ function ()
+	{
+		function getDraggedElement(event)
+		{
 			var data = event.dataTransfer.getData('Change/Document');
-			if (!data) {
+			if (!data)
+			{
 				data = event.dataTransfer.getData('Change/MenuItemFunction');
 			}
-			try {
+			try
+			{
 				return JSON.parse(data);
-			} catch (err) {
+			}
+			catch (err)
+			{
 				console.error(err);
 			}
 			return null;
 		}
 
 		return {
-			restrict : 'EC',
-
-			templateUrl : 'Change/Website/Menu/directives/menu-card.twig',
-
+			restrict: 'EC',
+			templateUrl: 'Change/Website/Menu/directives/menu-card.twig',
 			// Create isolated scope.
-			scope    : {
-				document : '='
-			},
+			scope: { document: '=' },
 
-			link : function (scope, elm, attrs) {
-
+			link: function (scope, elm, attrs)
+			{
 				scope.document.items = scope.document.items || [];
 
 				$(elm).on({
-
-					'dragenter': function (event) {
+					'dragenter': function (event)
+					{
 						event.preventDefault();
 						event.stopPropagation();
 					},
 
-					'dragleave': function (event) {
+					'dragleave': function (event)
+					{
 						event.preventDefault();
 						event.stopPropagation();
 					},
 
-					'dragover': function (event) {
+					'dragover': function (event)
+					{
 						event.dataTransfer.dropEffect = "copy";
 						event.preventDefault();
 						event.stopPropagation();
 					},
 
-					'drop': function (event) {
+					'drop': function (event)
+					{
 						event.preventDefault();
 						event.stopPropagation();
 
 						var doc = getDraggedElement(event);
 
-						if (!scope.document.items) {
+						if (!scope.document.items)
+						{
 							scope.document.items = [];
 						}
-						scope.$apply(function () {
+						scope.$apply(function ()
+						{
 							scope.document.items.push(doc);
 						});
 					}
-
 				});
-
 			}
-
 		};
-
 	}]);
-
 })();
