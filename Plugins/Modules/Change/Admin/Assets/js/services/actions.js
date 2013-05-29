@@ -391,7 +391,6 @@
 					description : "Activer les documents sélectionnés",
 					icon        : "icon-play",
 					selection   : "+",
-					display     : "icon",
 					loading     : true,
 
 					execute : ['$docs', function ($docs) {
@@ -426,11 +425,10 @@
 				this.register({
 					name        : 'startValidation',
 					models      : '*',
-					label       : "Publier",
+					label       : "Activer",
 					description : "Valider les documents sélectionnés",
-					icon        : "icon-ok",
+					icon        : "icon-play",
 					selection   : "+",
-					display     : "icon",
 					loading     : true,
 
 					execute : ['$docs', function ($docs) {
@@ -469,7 +467,6 @@
 					description : "Publier les documents sélectionnés",
 					icon        : "icon-rss",
 					selection   : "+",
-					display     : "icon",
 					loading     : true,
 
 					execute : ['$docs', function ($docs) {
@@ -508,7 +505,6 @@
 					description : "Enregistrer les documents sélectionnés",
 					icon        : "icon-ok",
 					selection   : "+",
-					display     : "icon",
 					loading     : true,
 
 					execute : ['$docs', '$currentTreeNode', function ($docs, $currentTreeNode) {
@@ -535,7 +531,6 @@
 					description : "Appliquer la correction des documents sélectionnés",
 					icon        : "icon-download-alt",
 					selection   : "+",
-					display     : "icon",
 
 					execute : ['$docs', '$scope', '$embedDialog', '$target', function ($docs, $scope, $embedDialog, $target) {
 
@@ -602,7 +597,6 @@
 					description : "Désactiver les documents sélectionnés",
 					icon        : "icon-pause",
 					selection   : "+",
-					display     : "icon",
 					loading     : true,
 
 					execute : ['$docs', function ($docs) {
@@ -641,7 +635,6 @@
 					label       : "Réorganiser",
 					description : "Réorganiser les éléments de la liste ci-dessous",
 					icon        : "icon-reorder",
-					display     : "icon+label",
 
 					execute : ['$DL', '$scope', '$embedDialog', '$target', function ($DL, $scope, $embedDialog, $target) {
 						$DL.toggleSort('nodeOrder', true);

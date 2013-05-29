@@ -24,8 +24,9 @@
 			'RbsChange.ArrayUtils',
 			'RbsChange.Settings',
 			'RbsChange.UrlManager',
+			'RbsChange.i18n',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, Settings, UrlManager) {
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, Settings, UrlManager, i18n) {
 
 				if ( ! REST_BASE_URL ) {
 					REST_BASE_URL = $location.protocol() + '://' + $location.host();
@@ -380,9 +381,9 @@
 					 */
 					'newResource' : function (model, lcid) {
 						var props = {
-							'id'     : Utils.getTemporaryId(),
-							'model'  : model,
-							'label'  : 'Nouveau...' // FIXME
+							'id'    : Utils.getTemporaryId(),
+							'model' : model,
+							'label' : i18n.trans('m.change.admin.admin.js.new | ucf')
 						};
 						if (Utils.isValidLCID(lcid)) {
 							props.refLCID = lcid;
@@ -703,15 +704,18 @@
 							url = resource.META$.treeNode.url + '/';
 						}
 
-						url = Utils.makeUrl(url, params);
-
-						$http.get(url, getHttpConfig(transformResponseCollectionFn))
-							.success(function restCollectionSuccessCallback (data) {
-								resolveQ(q, data);
-							})
-							.error(function restCollectionErrorCallback (data) {
-								rejectQ(q, data);
-							});
+						if (url) {
+							url = Utils.makeUrl(url, params);
+							$http.get(url, getHttpConfig(transformResponseCollectionFn))
+								.success(function restCollectionSuccessCallback (data) {
+									resolveQ(q, data);
+								})
+								.error(function restCollectionErrorCallback (data) {
+									rejectQ(q, data);
+								});
+						} else {
+							resolveQ(q, null);
+						}
 
 						return q.promise;
 					},

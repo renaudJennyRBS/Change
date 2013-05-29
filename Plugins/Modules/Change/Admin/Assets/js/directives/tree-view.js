@@ -313,7 +313,7 @@
 						}
 					}
 
-					scope.$on('Change:BreadcrumbChanged', function (event, bcData) {
+					scope.$on('Change:TreePathChanged', function (event, bcData) {
 						breadcrumbChangedPendingData = bcData;
 						breadcrumbChangedFn();
 					});

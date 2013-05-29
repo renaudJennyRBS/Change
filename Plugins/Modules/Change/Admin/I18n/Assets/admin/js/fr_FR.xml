@@ -6,6 +6,8 @@
 	<key id="home">accueil</key>
 	<key id="loading-document">chargement du document...</key>
 	<key id="document-is-already-being-edited">ce document est déjà en cours d'édition.</key>
+	<key id="new">nouveau...</key>
+	<key id="not-defined">non défini</key>
 
 	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
 	<key id="last-modification-date">dernière modif.</key>

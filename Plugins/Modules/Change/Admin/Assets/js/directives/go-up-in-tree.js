@@ -12,7 +12,7 @@
 			replace : true,
 
 			link : function (scope, elm, attrs) {
-				scope.$on('Change:BreadcrumbChanged', function (event, bcData) {
+				scope.$on('Change:TreePathChanged', function (event, bcData) {
 					if (!bcData.resource && bcData.path.length > 1) {
 						scope.parent = bcData.path[bcData.path.length-2];
 					} else {

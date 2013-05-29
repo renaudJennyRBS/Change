@@ -138,7 +138,7 @@ td .correction {
 	.thumbnail-grid > li:first-child {
 		width: 25%;
 	}
-	
+
 	body.fullscreen .thumbnail-grid > li,
 	body.fullscreen .thumbnail-grid > li:first-child {
 		width: 20%;
@@ -381,4 +381,33 @@ li.selected .img-preview {
 
 .btn-nav-back {
 	vertical-align: top;
+}
+
+a.action {
+	margin-left: 1em;
+}
+
+a.action:first-child {
+	margin-left: 0;
+}
+
+
+.animate-enter,
+.animate-leave {
+	-webkit-transition: 0.3s linear all; /* Safari/Chrome */
+	-moz-transition: 0.3s linear all; /* Firefox */
+	-o-transition: 0.3s linear all; /* Opera */
+	transition: 0.3s linear all; /* IE10+ and Future Browsers */
+
+	/* The animation preparation code */
+	opacity: 0;
+}
+
+.animate-enter.animate-enter-active {
+	/* The animation code itself */
+	opacity: 1;
+}
+
+.table-striped.document-list tbody tr td.preview {
+	background: white;
 }

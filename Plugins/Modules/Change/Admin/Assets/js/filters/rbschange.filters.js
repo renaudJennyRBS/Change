@@ -373,4 +373,34 @@
 	}]);
 
 
+	app.filter('documentProperties', ['$filter', 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n', function ($filter, Utils, REST, i18n) {
+		var DATE_REGEXP = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
+		return function (doc, modelInfo) {
+			var html = [], name, value;
+			for (name in doc) {
+				if (doc.hasOwnProperty(name) && name.charAt(0) !== '$' && name !== 'META$') {
+					value = doc[name];
+					if (angular.isNumber(value) && name !== 'id') {
+						value = $filter('number')(value);
+					} else if (DATE_REGEXP.test(value)) {
+						value = $filter('date')(new Date(value));
+					} else if (Utils.isDocument(value)) {
+						value = '<a target="_blank" href="' + $filter('documentURL')(angular.extend(REST.newResource(value.model), value)) + '">' + value.id + ' (' + value.model + ')</a>';
+					} else if (angular.isObject(value)) {
+						value = JSON.stringify(value);
+					} else if (value === null) {
+						value = '<em class="muted">' + i18n.trans('m.change.admin.admin.js.not-defined') + '</em>';
+					}
+					if (modelInfo && modelInfo.properties[name]) {
+						name = modelInfo.properties[name].label;
+					}
+					html.push('<dt>' + name + '</dt>');
+					html.push('<dd>' + value + '</dd>');
+				}
+			}
+			return "<dl class=\"dl-horizontal\">" + html.join("\n") + "</dl>";
+		};
+	}]);
+
+
 })();

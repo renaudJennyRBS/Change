@@ -56,14 +56,14 @@
 					},
 
 					setLocation : function (loc) {
-						if ( ! angular.equals(location, loc) && ! this.isFrozen() ) {
+						if ( ! frozen && ! angular.equals(location, loc) ) {
 							location = loc;
 							update();
 						}
 					},
 
 					resetLocation : function (loc) {
-						if ( path.length || (! angular.equals(location, loc) && ! this.isFrozen()) ) {
+						if ( ! frozen && (path.length || ! angular.equals(location, loc)) ) {
 							location = loc;
 							ArrayUtils.clear(path);
 							resource = null;
@@ -72,7 +72,7 @@
 					},
 
 					setPath : function (p) {
-						if ( ! angular.equals(path, p) && ! this.isFrozen() ) {
+						if ( ! frozen && ! angular.equals(path, p) ) {
 							path = p;
 							update();
 						}
@@ -172,7 +172,7 @@
 
 				function broadcastEvent () {
 					if (!loading) {
-						$rootScope.$broadcast('Change:BreadcrumbChanged', {
+						$rootScope.$broadcast('Change:TreePathChanged', {
 							'fullPath' : fullPath,
 							'path'     : path,
 							'location' : location,
@@ -184,21 +184,25 @@
 					}
 				}
 
-				function routeChangeSuccessFn () {
+				function routeChangeSuccessFn (force) {
 					var treeNodeId = $location.search()['tn'];
-					if (! frozen && treeNodeId && ! loading && (treeNodeId !== currentTreeNodeId || path.length === 0)) {
+					if (! frozen && treeNodeId && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
 						loading = true;
+						console.log("treeNodeId=", treeNodeId);
 						REST.resource(treeNodeId).then(
 
 							// Success:
 							function (treeNode) {
 
+								console.log("treeNode=", treeNode);
 								if (Utils.isTreeNode(treeNode)) {
+									console.log("IS treeNode!");
 									// Load tree ancestors of the current TreeNode to update the breadcrumb.
 									REST.treeAncestors(treeNode).then(
 
 										// Success:
 										function (ancestors) {
+											console.log("ancestors=", ancestors);
 											loading = false;
 											currentTreeNodeId = treeNodeId;
 											breadcrumbService.setPath(ancestors.resources);
@@ -212,6 +216,7 @@
 									);
 								} else {
 									loading = false;
+									console.log("IS NOT treeNode!");
 									breadcrumbService.setPath([[treeNode.label, treeNode.url()]]);
 								}
 							},
@@ -224,8 +229,14 @@
 					}
 				}
 
-				$rootScope.$on('$routeChangeSuccess', routeChangeSuccessFn);
-				$rootScope.$on('$routeUpdate', routeChangeSuccessFn);
+				$rootScope.$on('$routeChangeSuccess', function () {
+					// If route changes, we force reloading even if the tree node is the same.
+					routeChangeSuccessFn(true);
+				});
+
+				$rootScope.$on('$routeUpdate', function () {
+					routeChangeSuccessFn(false);
+				});
 
 				return breadcrumbService;
 
