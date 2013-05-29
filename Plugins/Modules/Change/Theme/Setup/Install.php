@@ -54,7 +54,6 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
 		{
-
 			/* @var $application \Change\Application */
 			$application = $event->getParam('application');
 			$this->executeApplication($application);

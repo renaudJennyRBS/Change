@@ -31,7 +31,7 @@
 
 		// Configure DataTable columns
 		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf') });
-		DL.columns.push({ id: 'templates', label: i18n.trans('m.change.theme.document.pagetemplate-list | ucf'), width: "90px", align: "center" });
+		DL.columns.push({ id: 'templates', label: i18n.trans('m.change.theme.admin.js.pagetemplate-list | ucf'), width: "90px", align: "center" });
 		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center" });
 
 		MainMenu.loadModuleMenu('Change_Theme');
