@@ -1,6 +1,8 @@
 <?php
 namespace Change\Users\Documents;
 
+use Change\Stdlib\String;
+
 /**
  * Class User
  * @package Change\Users\Documents
@@ -33,7 +35,7 @@ class User extends \Compilation\Change\Users\Documents\User
 	 */
 	protected function getSaltString()
 	{
-		$cfg = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
+		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
 		return $cfg->getEntry('Change/Users/salt');
 	}
 
@@ -41,28 +43,44 @@ class User extends \Compilation\Change\Users\Documents\User
 	 * @param string $password
 	 * @return string
 	 */
-	protected function encodePassword($password)
+	protected function hashPassword($password)
 	{
 		$hashMethod = $this->getHashMethod();
-		if (!$hashMethod)
-		{
-			$hashMethod = 'md5';
-		}
-		$callable = array($this, 'encode' . ucfirst(strtolower($hashMethod)) . 'Password');
+		$callable = array($this, 'hashPassword' . ucfirst(strtolower($hashMethod)));
 		if (is_callable($callable))
 		{
 			return call_user_func($callable, $password);
 		}
-		return $this->encodePasswordUsingHash($password, $hashMethod);
+		return $this->hashPasswordUsingHashMethod($password, $hashMethod);
 	}
 
 	/**
 	 * @param string $password
 	 * @return string
 	 */
-	protected function encodeSimpleMD5Password($password)
+	protected function hashPasswordBcrypt($password)
 	{
-		return md5($password);
+		$options = array();
+		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
+		$logging = $this->getDocumentServices()->getApplicationServices()->getLogging();
+		$cost = $cfg->getEntry('Change/Users/bcrypt/cost');
+		if ($cost)
+		{
+			$options['cost'] = $cost;
+		}
+		$saltString = $this->getSaltString();
+		if (!String::isEmpty($saltString))
+		{
+			if (String::length($saltString) > 21)
+			{
+				$options['salt'] = $saltString;
+			}
+			else
+			{
+				$logging->info('salt is too short for bcrypt - using auto-generated salt instead');
+			}
+		}
+		return password_hash($password, PASSWORD_BCRYPT, $options);
 	}
 
 	/**
@@ -70,7 +88,7 @@ class User extends \Compilation\Change\Users\Documents\User
 	 * @param $arguments
 	 * @return string
 	 */
-    protected function encodePasswordUsingHash($password, $hashMethod)
+    protected function hashPasswordUsingHashMethod($password, $hashMethod)
 	{
 		if (in_array($hashMethod, hash_algos()))
 		{
@@ -89,7 +107,22 @@ class User extends \Compilation\Change\Users\Documents\User
 	 */
 	public function checkPassword($password)
 	{
-		return $this->getPasswordHash() === $this->encodePassword($password);
+		$hashMethod = $this->getHashMethod();
+		$callable = array($this, 'checkPassword' . ucfirst(strtolower($hashMethod)));
+		if (is_callable($callable))
+		{
+			return call_user_func($callable, $password, $this->getPasswordHash());
+		}
+		return $this->getPasswordHash() === $this->hashPassword($password);
+	}
+
+	/**
+	 * @param string $password
+	 * @return string
+	 */
+	protected function checkPasswordBcrypt($password, $hash)
+	{
+		return password_verify($password, $hash);
 	}
 
 	/**
@@ -118,12 +151,12 @@ class User extends \Compilation\Change\Users\Documents\User
 	{
 		if (!$this->getHashMethod())
 		{
-			$this->setHashMethod('sha1');
+			$this->setHashMethod('bcrypt');
 		}
 
 		if ($this->password)
 		{
-			$this->setPasswordHash($this->encodePassword($this->password));
+			$this->setPasswordHash($this->hashPassword($this->password));
 		}
 	}
 
@@ -131,7 +164,7 @@ class User extends \Compilation\Change\Users\Documents\User
 	{
 		if ($this->password)
 		{
-			$this->setPasswordHash($this->encodePassword($this->password));
+			$this->setPasswordHash($this->hashPassword($this->password));
 		}
 	}
 }
