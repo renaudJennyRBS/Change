@@ -20,8 +20,8 @@
 		"zendframework/zendframework": "2.2.0",
 		"zendframework/zendoauth": "2.0.1",
 		"twig/twig": "1.*",
-		"ruflin/Elastica": "v0.20.5.0.RC1"
-
+		"ruflin/Elastica": "v0.20.5.0.RC1",
+		"ircmaxell/password-compat": "v1.0.3"
 	},
 	"config": {
 		"vendor-dir": "Libraries"
