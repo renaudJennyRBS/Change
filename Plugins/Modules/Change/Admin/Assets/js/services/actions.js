@@ -3,7 +3,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.Breadcrumb', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, Breadcrumb) {
 			function Actions () {
 
 				this.reset = function () {
@@ -656,6 +656,7 @@
 					}
 
 				});
+
 
 
 				this.group('groupPublishDocument', function (docs) {

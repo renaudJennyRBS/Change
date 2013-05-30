@@ -336,7 +336,14 @@
 						});
 					}
 					if (angular.isFunction(callback)) {
-						callback.apply(scope);
+						// This callback can be used to initialize defaut values in the editor.
+						// It will be called only when the Breadcrumb is fully loaded.
+						Breadcrumb.ready().then(function () {
+							callback.apply(scope);
+							// Since this callback could have modified 'scope.document' to initialize some
+							// default values, we need to re-synchronize 'scope.original' with 'scope.document'.
+							scope.original = angular.copy(scope.document);
+						});
 					}
 				}
 			}, true);

@@ -53,9 +53,6 @@
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]" ng-if="! DL.isPreview(doc)">
-					<!--a class="pull-right" href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">
-						<i class="icon-edit icon-large"></i>
-					</a-->
 					<a data-ng-show="doc.is('Change_Website_StaticPage')" title="Éditer le contenu de la page"
 					   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
 					<a data-ng-show="doc.is('Change_Website_Topic')" title="Naviguer vers le contenu de la rubrique"

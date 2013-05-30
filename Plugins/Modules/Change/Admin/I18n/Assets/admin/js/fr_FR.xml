@@ -8,6 +8,9 @@
 	<key id="document-is-already-being-edited">ce document est déjà en cours d'édition.</key>
 	<key id="new">nouveau...</key>
 	<key id="not-defined">non défini</key>
+	<key id="loading-list">chargement de la liste...</key>
+	<key id="loading-list-error">le chargement de la liste a échoué.</key>
+	<key id="loading-preview">chargement de l'aperçu du document...</key>
 
 	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
 	<key id="last-modification-date">dernière modif.</key>

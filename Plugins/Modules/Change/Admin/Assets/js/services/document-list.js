@@ -14,8 +14,8 @@
 	 * <code>DL.fiteredDocuments</code>
 	 */
 	app.service('RbsChange.DocumentList',
-			['$routeParams', '$filter', 'RbsChange.Actions', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.Settings', 'RbsChange.FormsManager', '$q', '$location', '$http', 'RbsChange.Base64', '$timeout', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.Breadcrumb', 'RbsChange.NotificationCenter',
-			 function ($routeParams, $filter, Actions, ArrayUtils, Utils, Settings, FormsManager, $q, $location, $http, Base64, $timeout, Loading, REST, Breadcrumb, NotificationCenter) {
+			['$routeParams', '$filter', 'RbsChange.Actions', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.Settings', 'RbsChange.FormsManager', '$q', '$location', '$http', 'RbsChange.i18n', '$timeout', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.Breadcrumb', 'RbsChange.NotificationCenter',
+			 function ($routeParams, $filter, Actions, ArrayUtils, Utils, Settings, FormsManager, $q, $location, $http, i18n, $timeout, Loading, REST, Breadcrumb, NotificationCenter) {
 
 		var DocumentList = this;
 
@@ -378,9 +378,9 @@
 			},
 
 
-			startLoading : function () {
+			startLoading : function (msg) {
 				this.loading = true;
-				Loading.start("Chargement de la liste...");
+				Loading.start(msg || i18n.trans('m.change.admin.admin.js.loading-list | ucf'));
 			},
 
 
@@ -388,7 +388,7 @@
 				this.loading = false;
 				Loading.stop();
 				if (reason) {
-					NotificationCenter.error("Le chargement de la liste a échoué.", reason);
+					NotificationCenter.error(i18n.trans('m.change.admin.admin.js.loading-list-error | ucf'), reason);
 				} else {
 					NotificationCenter.clear();
 				}
@@ -538,19 +538,21 @@
 					return;
 				}
 
-				var	docs = this.documents,
+				var	DL = this,
 					current = this.documents[index],
 					preview = {
 					"__DL_preview" : true
 				};
 				current.__DL_preview_loading = true;
 
+				this.startLoading(i18n.trans('m.change.admin.admin.js.loading-preview | ucf'));
 				REST.resource(current).then(function (doc) {
 					REST.modelInfo(doc).then(function (modelInfo) {
 						delete current.__DL_preview_loading;
 						preview.document = angular.extend(current, doc);
 						preview.modelInfo = modelInfo;
-						docs.splice(index+1, 0, preview);
+						DL.documents.splice(index+1, 0, preview);
+						DL.stopLoading();
 					});
 				});
 
@@ -622,7 +624,7 @@
 				$scope.$broadcast('Change:DocumentListChanged', DL);
 			});
 
-			$scope.$watch(instanceName + '.query', function (newVal, oldVal) {
+			$scope.$watch(instanceName + '.query', function () {
 				DL.pagination.offset = 0;
 				if (!DL.loading) {
 					DL.reload();
@@ -630,7 +632,7 @@
 			});
 
 			$scope.$on('Change:TreePathChanged', function (event, pathInfo) {
-				DL.setTreeNode(pathInfo.path[pathInfo.path.length-1]);
+				DL.setTreeNode(pathInfo.currentNode);
 			});
 
 

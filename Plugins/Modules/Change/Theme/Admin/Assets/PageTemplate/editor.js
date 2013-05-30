@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function editorChangeThemePageTemplate (Editor) {
+	function editorChangeThemePageTemplate (Editor, Breadcrumb) {
 
 		return {
 			restrict : 'EC',
@@ -20,13 +20,15 @@
 			},
 
 			link : function (scope, elm) {
-				Editor.initScope(scope, elm);
+				Editor.initScope(scope, elm, function () {
+					scope.document.theme = Breadcrumb.getCurrentNode();
+				});
 			}
 		};
 
 	}
 
-	editorChangeThemePageTemplate.$inject = ['RbsChange.Editor'];
+	editorChangeThemePageTemplate.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb'];
 
 	angular.module('RbsChange').directive('editorChangeThemePageTemplate', editorChangeThemePageTemplate);
 

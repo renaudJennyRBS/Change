@@ -7,12 +7,12 @@
 	app.provider('RbsChange.Breadcrumb', function RbsChangeBreadcrumbProvider() {
 
 		this.$get = [
-			'$rootScope', '$document', '$location',
+			'$rootScope', '$document', '$location', '$q',
 			'RbsChange.ArrayUtils',
 			'RbsChange.Utils',
 			'RbsChange.REST',
 
-			function ($rootScope, $document, $location, ArrayUtils, Utils, REST) {
+			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST) {
 
 				var location = [],
 				    path = [],
@@ -22,7 +22,8 @@
 				    frozen = false,
 				    breadcrumbService,
 				    loading = false,
-					currentTreeNodeId = 0;
+					currentTreeNodeId = 0,
+					readyQ = [];
 
 				breadcrumbService = {
 
@@ -118,6 +119,16 @@
 
 					setResourceModifier : function (string) {
 						console.warn("Implement Breadcrumb.setResourceModifier() :)");
+					},
+
+					ready : function () {
+						var q = $q.defer();
+						if (loading) {
+							readyQ.push(q);
+						} else {
+							q.resolve(buildEventData());
+						}
+						return q.promise;
 					}
 
 				};
@@ -170,43 +181,63 @@
 
 				}
 
+
+				function buildEventData () {
+					return {
+						'fullPath'    : fullPath,
+						'path'        : path,
+						'currentNode' : breadcrumbService.getCurrentNode(),
+						'location'    : location,
+						'resource'    : resource,
+						'website'     : breadcrumbService.getWebsite(),
+						'disabled'    : disabled,
+						'frozen'      : frozen
+					};
+				}
+
+
 				function broadcastEvent () {
 					if (!loading) {
-						$rootScope.$broadcast('Change:TreePathChanged', {
-							'fullPath' : fullPath,
-							'path'     : path,
-							'location' : location,
-							'resource' : resource,
-							'website'  : breadcrumbService.getWebsite(),
-							'disabled' : disabled,
-							'frozen'   : frozen
-						});
+						$rootScope.$broadcast('Change:TreePathChanged', buildEventData());
 					}
 				}
+
+
+				function resolvePendingQs () {
+					var data = buildEventData();
+					while (readyQ.length) {
+						readyQ.pop().resolve(data);
+					}
+				}
+
+
+				function rejectPendingQs () {
+					while (readyQ.length) {
+						readyQ.pop().reject();
+					}
+				}
+
 
 				function routeChangeSuccessFn (force) {
 					var treeNodeId = $location.search()['tn'];
 					if (! frozen && treeNodeId && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
 						loading = true;
-						console.log("treeNodeId=", treeNodeId);
 						REST.resource(treeNodeId).then(
 
 							// Success:
 							function (treeNode) {
 
-								console.log("treeNode=", treeNode);
 								if (Utils.isTreeNode(treeNode)) {
-									console.log("IS treeNode!");
 									// Load tree ancestors of the current TreeNode to update the breadcrumb.
 									REST.treeAncestors(treeNode).then(
 
 										// Success:
 										function (ancestors) {
-											console.log("ancestors=", ancestors);
 											loading = false;
 											currentTreeNodeId = treeNodeId;
 											breadcrumbService.setPath(ancestors.resources);
 											$rootScope.website = breadcrumbService.getWebsite();
+											resolvePendingQs();
 										},
 
 										// Error:
@@ -216,13 +247,14 @@
 									);
 								} else {
 									loading = false;
-									console.log("IS NOT treeNode!");
-									breadcrumbService.setPath([[treeNode.label, treeNode.url()]]);
+									breadcrumbService.setPath([treeNode]);
+									resolvePendingQs();
 								}
 							},
 
 							// Error:
 							function () {
+								rejectPendingQs();
 								loading = false;
 							}
 						);

@@ -1,9 +1,11 @@
 <header class="row-fluid rbsc-list-header">
 
-
-	<ul class="nav nav-pills clearfix" data-ng-if="createActions.length > 0">
+	<!--ul class="nav nav-pills clearfix" data-ng-if="createActions.length > 0">
 		<li data-ng-repeat="action in createActions"><a href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a></li>
-	</ul>
+	</ul-->
+	<div class="btn-toolbar">
+		<a data-ng-repeat="action in createActions" class="btn btn-info" href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a>
+	</div>
 
 	<div>
 
@@ -74,6 +76,11 @@
 		</div>
 
 		<div class="btn-toolbar has-captions-top" data-role="actions">
+
+			<div ng-if="DL.hasColumn('nodeOrder')" class="btn-virtual-group">
+				<a class="btn" href go-up-in-tree></a>
+			</div>
+
 			<div class="btn-virtual-group" data-ng-repeat="item in DL.toolbar.actions" data-ng-switch="item.type">
 				<div data-ng-switch-when="single" class="btn-group">
 					<button data-bind-action="(=item.name=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn" type="button"></button>
