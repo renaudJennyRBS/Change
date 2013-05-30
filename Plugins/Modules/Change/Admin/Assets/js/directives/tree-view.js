@@ -78,63 +78,8 @@
 				},
 
 
-				// FIXME
-				'buildTypes' : function () {
-					return {
-						"max_depth" : -2,
-						"max_children" : -2,
-
-						"valid_children" : [ "Change_Generic_Folder", "Change_Website_Topic", "Change_Website_Website" ],
-
-						"types" : {
-							// The default type
-							"default" : {
-								"valid_children" : "all"
-							},
-
-							"EmptyNode" : {
-								"start_drag" : false,
-								"move_node" : false,
-								"delete_node" : false,
-								"remove" : false,
-								"select_node": false
-							},
-
-							// The `Website` nodes
-							"Change_Website_Website" : {
-								// can have Pages and Folders
-								"valid_children" : [ "Change_Website_StaticPage", "Change_Website_Topic" ],
-								// those prevent the functions with the same name to be used on `Website` nodes
-								// internally the `before` event is used
-								"start_drag" : false,
-								"move_node" : false,
-								"delete_node" : false,
-								"remove" : false
-							},
-
-							// The `Folder` type
-							"Change_Generic_Folder" : {
-								"valid_children" : [ "Change_Generic_Folder", "Change_Website_StaticPage", "Change_Website_Topic", "Change_Website_Website" ]
-							},
-
-							// The `Topic` type
-							"Change_Website_Topic" : {
-								"valid_children" : [ "Change_Website_StaticPage", "Change_Website_Topic" ]
-							},
-
-							// The `Page` type
-							"Change_Website_StaticPage" : {
-								"valid_children" : "none",
-								"max_depth" : -1,
-								"max_children" : -1
-							}
-						}
-					};
-				},
-
-
 				'initTree' : function (elm, rootUrl, attrs, loadCallback) {
-					var plugins = [ "themes", "json_data", "ui", "types" ],
+					var plugins = [ "themes", "json_data" ],
 					    allowedModels = null,
 					    self = this;
 
@@ -196,8 +141,6 @@
 
 							}
 						},
-
-						"types" : self.buildTypes(),
 
 						"core" : {
 							"animation" : 100,
@@ -313,7 +256,7 @@
 						}
 					}
 
-					scope.$on('Change:BreadcrumbChanged', function (event, bcData) {
+					scope.$on('Change:TreePathChanged', function (event, bcData) {
 						breadcrumbChangedPendingData = bcData;
 						breadcrumbChangedFn();
 					});

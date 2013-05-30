@@ -85,7 +85,7 @@
 					if (Actions.isGroup(actionName) && DL) {
 						groupName = actionName;
 
-						scope.$on('Change:DocumentList.Changed', function () {
+						scope.$on('Change:DocumentListChanged', function () {
 							actionObject = Actions.getActionForGroup(groupName, DL.selectedDocuments);
 							updateUI(actionObject);
 							if (DL.isActionEnabled(actionObject.name)) {
@@ -102,7 +102,7 @@
 							throw new Error("Unknown action '" + actionName + "' for directive 'bindAction'.");
 						}
 						if (DL) {
-							scope.$on('Change:DocumentList.Changed', function () {
+							scope.$on('Change:DocumentListChanged', function () {
 								if (DL.isActionEnabled(actionName)) {
 									elm.removeAttr('disabled');
 								} else {

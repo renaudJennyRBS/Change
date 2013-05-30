@@ -7,12 +7,12 @@
 	app.provider('RbsChange.Breadcrumb', function RbsChangeBreadcrumbProvider() {
 
 		this.$get = [
-			'$rootScope', '$document', '$location',
+			'$rootScope', '$document', '$location', '$q',
 			'RbsChange.ArrayUtils',
 			'RbsChange.Utils',
 			'RbsChange.REST',
 
-			function ($rootScope, $document, $location, ArrayUtils, Utils, REST) {
+			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST) {
 
 				var location = [],
 				    path = [],
@@ -22,7 +22,8 @@
 				    frozen = false,
 				    breadcrumbService,
 				    loading = false,
-					currentTreeNodeId = 0;
+					currentTreeNodeId = 0,
+					readyQ = [];
 
 				breadcrumbService = {
 
@@ -56,14 +57,14 @@
 					},
 
 					setLocation : function (loc) {
-						if ( ! angular.equals(location, loc) && ! this.isFrozen() ) {
+						if ( ! frozen && ! angular.equals(location, loc) ) {
 							location = loc;
 							update();
 						}
 					},
 
 					resetLocation : function (loc) {
-						if ( path.length || (! angular.equals(location, loc) && ! this.isFrozen()) ) {
+						if ( ! frozen && (path.length || ! angular.equals(location, loc)) ) {
 							location = loc;
 							ArrayUtils.clear(path);
 							resource = null;
@@ -72,7 +73,7 @@
 					},
 
 					setPath : function (p) {
-						if ( ! angular.equals(path, p) && ! this.isFrozen() ) {
+						if ( ! frozen && ! angular.equals(path, p) ) {
 							path = p;
 							update();
 						}
@@ -118,6 +119,16 @@
 
 					setResourceModifier : function (string) {
 						console.warn("Implement Breadcrumb.setResourceModifier() :)");
+					},
+
+					ready : function () {
+						var q = $q.defer();
+						if (loading) {
+							readyQ.push(q);
+						} else {
+							q.resolve(buildEventData());
+						}
+						return q.promise;
 					}
 
 				};
@@ -170,23 +181,46 @@
 
 				}
 
+
+				function buildEventData () {
+					return {
+						'fullPath'    : fullPath,
+						'path'        : path,
+						'currentNode' : breadcrumbService.getCurrentNode(),
+						'location'    : location,
+						'resource'    : resource,
+						'website'     : breadcrumbService.getWebsite(),
+						'disabled'    : disabled,
+						'frozen'      : frozen
+					};
+				}
+
+
 				function broadcastEvent () {
 					if (!loading) {
-						$rootScope.$broadcast('Change:BreadcrumbChanged', {
-							'fullPath' : fullPath,
-							'path'     : path,
-							'location' : location,
-							'resource' : resource,
-							'website'  : breadcrumbService.getWebsite(),
-							'disabled' : disabled,
-							'frozen'   : frozen
-						});
+						$rootScope.$broadcast('Change:TreePathChanged', buildEventData());
 					}
 				}
 
-				function routeChangeSuccessFn () {
+
+				function resolvePendingQs () {
+					var data = buildEventData();
+					while (readyQ.length) {
+						readyQ.pop().resolve(data);
+					}
+				}
+
+
+				function rejectPendingQs () {
+					while (readyQ.length) {
+						readyQ.pop().reject();
+					}
+				}
+
+
+				function routeChangeSuccessFn (force) {
 					var treeNodeId = $location.search()['tn'];
-					if (! frozen && treeNodeId && ! loading && (treeNodeId !== currentTreeNodeId || path.length === 0)) {
+					if (! frozen && treeNodeId && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
 						loading = true;
 						REST.resource(treeNodeId).then(
 
@@ -203,6 +237,7 @@
 											currentTreeNodeId = treeNodeId;
 											breadcrumbService.setPath(ancestors.resources);
 											$rootScope.website = breadcrumbService.getWebsite();
+											resolvePendingQs();
 										},
 
 										// Error:
@@ -212,20 +247,28 @@
 									);
 								} else {
 									loading = false;
-									breadcrumbService.setPath([[treeNode.label, treeNode.url()]]);
+									breadcrumbService.setPath([treeNode]);
+									resolvePendingQs();
 								}
 							},
 
 							// Error:
 							function () {
+								rejectPendingQs();
 								loading = false;
 							}
 						);
 					}
 				}
 
-				$rootScope.$on('$routeChangeSuccess', routeChangeSuccessFn);
-				$rootScope.$on('$routeUpdate', routeChangeSuccessFn);
+				$rootScope.$on('$routeChangeSuccess', function () {
+					// If route changes, we force reloading even if the tree node is the same.
+					routeChangeSuccessFn(true);
+				});
+
+				$rootScope.$on('$routeUpdate', function () {
+					routeChangeSuccessFn(false);
+				});
 
 				return breadcrumbService;
 

@@ -14,6 +14,21 @@
 		var	acceptedTypes = /image\/(gif|jpeg|png)/,
 			MAX_PREVIEW_HEIGHT = 100;
 
+		function updatePreview (scope, url) {
+			var	img = new Image();
+			img.onload = function () {
+				scope.$apply(function () {
+					scope.imageWidth  = img.width;
+					scope.imageHeight = img.height;
+					scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
+					scope.previewWidth = scope.previewHeight * (scope.imageWidth / scope.imageHeight);
+					scope.imageSrc = url;
+				});
+			};
+			img.src = url;
+		}
+
+
 		return {
 			restrict    : 'EAC',
 			require     : 'ngModel',
@@ -27,7 +42,12 @@
 
 				ngModel.$render = function ngModelRenderFn () {
 					if (ngModel.$viewValue) {
-						scope.imageSrc = REST.storage.getUrl(ngModel.$viewValue);
+						REST.storage.info(ngModel.$viewValue).then(function (info) {
+							scope.fileSize = info.size;
+							scope.fileName = info.fileName;
+							updatePreview(scope, info.data);
+						});
+
 					}
 				};
 
@@ -39,19 +59,8 @@
 						scope.loading = false;
 						scope.fileSize = event.total;
 						scope.fileName = inputFile.get(0).files[0].name;
-
 						// Load the image to get its dimensions.
-						var img = new Image();
-						img.onload = function () {
-							scope.$apply(function () {
-								scope.imageWidth  = img.width;
-								scope.imageHeight = img.height;
-								scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
-								scope.previewWidth = scope.previewHeight * (scope.imageWidth / scope.imageHeight);
-								scope.imageSrc = event.target.result;
-							});
-						};
-						img.src = event.target.result;
+						updatePreview(scope, event.target.result);
 					});
 				};
 

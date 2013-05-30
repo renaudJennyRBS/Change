@@ -1,28 +1,33 @@
-(function () {
+(function ($) {
 
-	angular.module('RbsChange').directive('goUpInTree', ['$location', 'RbsChange.Utils', function ($location, Utils) {
+	"use strict";
+
+	angular.module('RbsChange').directive('goUpInTree', ['RbsChange.Breadcrumb', function (Breadcrumb) {
 
 		return {
-			restrict : 'A',
 
-			scope : true,
+			link : function (scope, elm) {
 
-			template : '<a ng-show="parent != null" style="vertical-align: bottom" ng-href="{{parent.treeUrl()}}" class="btn" type="button" title="Retourner à {{parent.label}}"><i class="icon-arrow-up"></i></a>',
-
-			replace : true,
-
-			link : function (scope, elm, attrs) {
-				scope.$on('Change:BreadcrumbChanged', function (event, bcData) {
-					if (!bcData.resource && bcData.path.length > 1) {
-						scope.parent = bcData.path[bcData.path.length-2];
+				function breadcrumbChanged (event, pathInfo) {
+					scope.parent = pathInfo.path.length >= 2 ? pathInfo.path[pathInfo.path.length-2] : null;
+					if (scope.parent) {
+						elm.attr('href', scope.parent.treeUrl());
+						elm.removeClass('disabled');
 					} else {
-						scope.parent = null;
+						elm.attr('href', 'javascript:;');
+						elm.addClass('disabled');
 					}
+				}
+				Breadcrumb.ready().then(function (pathInfo) {
+					breadcrumbChanged(null, pathInfo);
+					scope.$on('Change:TreePathChanged', breadcrumbChanged);
 				});
+
+				elm.html('<i class="icon-level-up"></i>');
 			}
 
 		};
 
 	}]);
 
-})();
+})(window.jQuery);

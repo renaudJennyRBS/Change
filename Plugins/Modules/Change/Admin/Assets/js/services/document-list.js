@@ -14,8 +14,8 @@
 	 * <code>DL.fiteredDocuments</code>
 	 */
 	app.service('RbsChange.DocumentList',
-			['$routeParams', '$filter', 'RbsChange.Actions', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.Settings', 'RbsChange.FormsManager', '$q', '$location', '$http', 'RbsChange.Base64', '$timeout', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.Breadcrumb', 'RbsChange.NotificationCenter',
-			 function ($routeParams, $filter, Actions, ArrayUtils, Utils, Settings, FormsManager, $q, $location, $http, Base64, $timeout, Loading, REST, Breadcrumb, NotificationCenter) {
+			['$routeParams', '$filter', 'RbsChange.Actions', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.Settings', 'RbsChange.FormsManager', '$q', '$location', '$http', 'RbsChange.i18n', '$timeout', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.Breadcrumb', 'RbsChange.NotificationCenter',
+			 function ($routeParams, $filter, Actions, ArrayUtils, Utils, Settings, FormsManager, $q, $location, $http, i18n, $timeout, Loading, REST, Breadcrumb, NotificationCenter) {
 
 		var DocumentList = this;
 
@@ -105,7 +105,6 @@
 
 			this.setActions([
 				{
-					'label'  : "État",
 					'actions': ['groupPublishDocument', 'deactivate', 'applyCorrection']
 				},
 				'delete'
@@ -375,13 +374,13 @@
 				this.documents = response.resources;
 				this.pagination.total = response.pagination.count;
 
-				this.$scope.$broadcast('Change:DocumentList.Changed', this);
+				this.$scope.$broadcast('Change:DocumentListChanged', this);
 			},
 
 
-			startLoading : function () {
+			startLoading : function (msg) {
 				this.loading = true;
-				Loading.start("Chargement de la liste...");
+				Loading.start(msg || i18n.trans('m.change.admin.admin.js.loading-list | ucf'));
 			},
 
 
@@ -389,7 +388,7 @@
 				this.loading = false;
 				Loading.stop();
 				if (reason) {
-					NotificationCenter.error("Le chargement de la liste a échoué.", reason);
+					NotificationCenter.error(i18n.trans('m.change.admin.admin.js.loading-list-error | ucf'), reason);
 				} else {
 					NotificationCenter.clear();
 				}
@@ -422,6 +421,8 @@
 			reload : function () {
 				var DL, promise, params;
 
+				this.documents.length = 0;
+
 				// Is there a query object in there?
 				if (this.hasFilters()) {
 					this.startLoading();
@@ -441,6 +442,7 @@
 					// Or may be tree children?
 					} else if (this.$scope.currentFolder) {
 						this.startLoading();
+						console.log(this.$scope.currentFolder);
 						promise = REST.treeChildren(this.$scope.currentFolder, params);
 					}
 				}
@@ -450,7 +452,11 @@
 					DL = this;
 					promise.then(
 						function (response) {
-							DL.documentCollectionLoadedCallback(response);
+							if (response !== null) {
+								DL.documentCollectionLoadedCallback(response);
+							} else {
+								console.warn('Empty collection');
+							}
 						},
 						function (reason) {
 							DL.stopLoading(reason);
@@ -462,9 +468,11 @@
 				return null;
 			},
 
+
 			setDefaultTreeName : function (treeName) {
 				this.defaultTreeName = treeName;
 			},
+
 
 			setTreeName : function (treeName) {
 				var self = this;
@@ -475,28 +483,16 @@
 				});
 			},
 
-			setTreeNodeId : function (id, forceReload) {
-				var DL = this;
 
-				if ( forceReload || ! this.$scope.currentFolder || this.$scope.currentFolder.id !== id ) {
-
-					this.startLoading();
-
-					// Load TreeNode document.
-					REST.resource(id).then(
-
-						// Success:
-						function (container) {
-							DL.$scope.currentFolder = container;
-							DL.stopLoading();
-							DL.reload();
-						},
-
-						// Error:
-						function (reason) {
-							DL.stopLoading(reason);
-						}
-					);
+			setTreeNode : function (treeNode) {
+				if (treeNode) {
+					if (! this.$scope.currentFolder || this.$scope.currentFolder.id !== treeNode.id) {
+						this.$scope.currentFolder = treeNode;
+						this.reload();
+					}
+				} else {
+					this.$scope.currentFolder = null;
+					this.reload();
 				}
 			},
 
@@ -533,6 +529,49 @@
 					search.limit = limit;
 				}
 				return Utils.makeUrl($location.absUrl(), search);
+			},
+
+
+			preview : function (index, $event) {
+				if (this.hasPreview(index)) {
+					this.documents.splice(index+1, 1);
+					return;
+				}
+
+				var	DL = this,
+					current = this.documents[index],
+					preview = {
+					"__DL_preview" : true
+				};
+				current.__DL_preview_loading = true;
+
+				this.startLoading(i18n.trans('m.change.admin.admin.js.loading-preview | ucf'));
+				REST.resource(current).then(function (doc) {
+					REST.modelInfo(doc).then(function (modelInfo) {
+						delete current.__DL_preview_loading;
+						preview.document = angular.extend(current, doc);
+						preview.modelInfo = modelInfo;
+						DL.documents.splice(index+1, 0, preview);
+						DL.stopLoading();
+					});
+				});
+
+
+			},
+
+			isPreview : function (doc) {
+				return doc.__DL_preview === true;
+			},
+
+			isPreviewReady : function (doc) {
+				return ! doc.__DL_preview_loading;
+			},
+
+			hasPreview : function (index) {
+				var current, next;
+				current = this.documents[index];
+				next = (this.documents.length > (index+1)) ? this.documents[index+1] : null;
+				return (next && next.__DL_preview && next.document && next.document.id === current.id) ? true : false;
 			},
 
 
@@ -582,15 +621,20 @@
 			}, true);
 
 			$scope.$watch(instanceName + '.selectedDocuments', function () {
-				$scope.$broadcast('Change:DocumentList.Changed', DL);
+				$scope.$broadcast('Change:DocumentListChanged', DL);
 			});
 
-			$scope.$watch(instanceName + '.query', function (newVal, oldVal) {
+			$scope.$watch(instanceName + '.query', function () {
 				DL.pagination.offset = 0;
 				if (!DL.loading) {
 					DL.reload();
 				}
 			});
+
+			$scope.$on('Change:TreePathChanged', function (event, pathInfo) {
+				DL.setTreeNode(pathInfo.currentNode);
+			});
+
 
 			$scope.location = $location;
 			$scope.$watch(
@@ -599,7 +643,6 @@
 				function (search) {
 					var	offset = parseInt(search.offset || 0, 10),
 						limit  = parseInt(search.limit || Settings.pagingSize, 10),
-						treeNodeId = parseInt(search.tn || 0, 10),
 						paginationChanged, sortChanged = false,
 						desc = (search.desc === 'true');
 
@@ -616,18 +659,12 @@
 					DL.sort.descending = desc;
 
 					if (sortChanged) {
-						$scope.$broadcast('Change:DocumentList.Changed', DL);
+						$scope.$broadcast('Change:DocumentListChanged', DL);
 					}
 
-					if (isNaN(treeNodeId) || !treeNodeId) {
-						if (DL.defaultTreeName) {
-							DL.setTreeName(DL.defaultTreeName);
-						} else {
-							DL.reload();
-						}
-					} else {
-						paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
-						DL.setTreeNodeId(treeNodeId, paginationChanged || sortChanged);
+					paginationChanged = DL.pagination.offset !== offset || DL.pagination.limit !== limit;
+					if (paginationChanged || sortChanged) {
+						DL.reload();
 					}
 				},
 

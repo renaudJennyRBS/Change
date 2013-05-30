@@ -25,7 +25,7 @@
 			});
 		}
 
-		$scope.$on('Change:BreadcrumbChanged', function (event, bcData) {
+		$scope.$on('Change:TreePathChanged', function (event, bcData) {
 			$scope.currentWebsiteId = bcData.website ? bcData.website.id : 0;
 		});
 
@@ -51,9 +51,6 @@
 		'RbsChange.REST'
 	];
 	app.controller('Change_Website_MainMenuController', ChangeWebsiteMainMenuController);
-
-
-
 
 
 	app.config(['$routeProvider', function ($routeProvider) {
@@ -82,8 +79,8 @@
 				templateUrl : 'Change/Website/Website/form.twig',
 				reloadOnSearch : false
 			})
-			. when(
-		'/Change/Website/Website/:id',
+		. when(
+			'/Change/Website/Website/:id',
 			{
 				templateUrl : 'Change/Website/Website/form.twig',
 				reloadOnSearch : false
@@ -100,7 +97,7 @@
 
 		// Topic
 
-			. when(
+		. when(
 			'/Change/Website/Topic/:id/:LCID',
 			{
 				templateUrl : 'Change/Website/Topic/form.twig',

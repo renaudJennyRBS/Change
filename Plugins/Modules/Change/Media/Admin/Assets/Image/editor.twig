@@ -7,7 +7,14 @@
 		{{ forms.field('label', 'String', 'm.change.media.document.image.label', true) }}
 		{{ forms.field('alt', 'String', 'm.change.media.document.image.alt', false) }}
 		{{ forms.field('localizePath', 'Boolean', 'm.change.media.document.image.localizepath', false) }}
-		{{ forms.field('path', 'String', 'm.change.media.document.image.path') }}
+
+		<div class="control-group">
+			<label class="control-label" for="file">{{ i18n('m.change.media.document.image.path', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="image-uploader" ng-model="document.path"></div>
+			</div>
+		</div>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
