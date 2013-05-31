@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
+	icon="task" editable="true">
+	<properties>
+		<property name="workflowInstance" type="Document" document-type="Change_Workflow_WorkflowInstance" />
+		<property name="taskId" type="Integer" />
+		<property name="status" type="String" default-value="EN">
+			<dboptions length="2" />
+		</property>
+		<property name="taskCode" type="String" >
+			<dboptions length="100" />
+		</property>
+		<property name="document" type="Document" />
+		<property name="context" type="JSON" />
+		<property name="user" type="Document" document-type="Change_Users_User" />
+		<property name="role"  type="String" >
+			<dboptions length="100" />
+		</property>
+		<property name="deadLine" type="DateTime" />
+	</properties>
+</document>
