@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.document.menu" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="website">website</key>
+	<key id="website-picker-title">select the website of the menu</key>
+
+	<key id="this-menu-is-empty">This menu is empty</key>
+	<key id="this-menu-is-empty-help" format="html">
+		<![CDATA[Utiliser la liste <em>Ajouter</em> ci-dessous pour ajouter des entrées à ce menu.]]>
+	</key>
+	<key id="function-print-page">print page</key>
+	<key id="function-go-to-content">go to content</key>
+	<key id="function-bookmark-page">bookmark page</key>
+</i18n>

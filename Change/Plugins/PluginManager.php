@@ -7,6 +7,8 @@ use Change\Db\ScalarType;
 use Change\Workspace;
 use Zend\Stdlib\Glob;
 use Zend\EventManager\EventManager;
+use Change\Stdlib\File;
+use Zend\Json\Json;
 
 /**
  * @api
@@ -694,5 +696,88 @@ class PluginManager
 		}
 
 		$editableConfiguration->save();
+	}
+
+	/**
+	 * @param $name
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function normalizeVendorName($name)
+	{
+		$lcName = strtolower($name);
+		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $lcName))
+		{
+			throw new \InvalidArgumentException('Vendor name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+		}
+		return ucfirst($lcName);
+	}
+
+	/**
+	 * @param $name
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function normalizePluginName($name)
+	{
+		$lcName = strtolower($name);
+		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $lcName))
+		{
+			throw new \InvalidArgumentException('Plugin name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+		}
+		return ucfirst($lcName);
+	}
+
+	/**
+	 * @param $type
+	 * @param $vendor
+	 * @param $name
+	 * @return string
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
+	 */
+	public function initializePlugin($type, $vendor, $name)
+	{
+		if ($type != 'module' && $type != 'theme')
+		{
+			throw new \InvalidArgumentException('Type must be either "module" or "theme"');
+		}
+		$normalizedVendor = $this->normalizeVendorName($vendor);
+		$normalizedName = $this->normalizePluginName($name);
+		$path = null;
+		if ($type === 'module')
+		{
+			if ($vendor === 'Project')
+			{
+				$path = $this->getWorkspace()->projectModulesPath($name, 'plugin.json');
+			}
+			else
+			{
+				$path = $this->getWorkspace()->pluginsModulesPath($normalizedVendor, $normalizedName, 'plugin.json');
+			}
+		}
+		else
+		{
+			if ($vendor === 'Project')
+			{
+				$path = $this->getWorkspace()->projectThemesPath($name, 'plugin.json');
+			}
+			else
+			{
+				$path = $this->getWorkspace()->pluginsThemesPath($normalizedVendor, $normalizedName, 'plugin.json');
+			}
+		}
+		if (file_exists($path))
+		{
+			throw new \RuntimeException('Plugin already exists at path ' . $path, 999999);
+		}
+		$attributes = array('vendor' => $normalizedVendor, 'name' => $normalizedName);
+		File::write($path, Json::prettyPrint(Json::encode($attributes)));
+
+		$loader = new \Twig_Loader_Filesystem(__DIR__);
+		$twig = new \Twig_Environment($loader);
+		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php', $twig->render('Assets/Install.php.twig', $attributes));
+		$this->compile();
+		return dirname($path);
 	}
 }

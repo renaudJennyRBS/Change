@@ -41,11 +41,11 @@
         <xs:annotation>
             <xs:documentation source="version">4.0</xs:documentation>
             <xs:documentation source="description">
-                a document model name : [A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+
+                a document model name : [A-Z][a-z0-9]+_[A-Z][a-z0-9]+_[A-Z][A-Za-z0-9]+
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+"/>
+            <xs:pattern value="[A-Z][a-z0-9]+_[A-Z][a-z0-9]+_[A-Z][A-Za-z0-9]+"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -53,11 +53,11 @@
         <xs:annotation>
             <xs:documentation source="version">4.0</xs:documentation>
             <xs:documentation source="description">
-                a tree name : ([A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+)|(false)|(true)
+                a tree name : ([A-Z][a-z0-9]+_[A-Z][a-z0-9]+)|(false)|(true)
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:pattern value="([A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+)|(false)|(true)"/>
+            <xs:pattern value="([A-Z][a-z0-9]+_[A-Z][a-z0-9]+)|(false)|(true)"/>
         </xs:restriction>
     </xs:simpleType>
 

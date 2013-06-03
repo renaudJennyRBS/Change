@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.change.website.document.website" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
-	<key id="indexpage">page d'index</key>
-
 	<key id="hostname">nom d'hôte</key>
 	<key id="hostname-help" format="html">
 		<![CDATA[Le nom d'hôte est le nom de domaine sur lequel pointe le site.<br/>
