@@ -33,6 +33,7 @@
     <link href="Change/Admin/css/structure-editor.css" rel="stylesheet"/>
     <link href="Change/Admin/css/timezone-selector.css" rel="stylesheet"/>
     <link href="Change/Admin/css/token-list.css" rel="stylesheet"/>
+	<link href="Change/Admin/css/menu.css" rel="stylesheet"/>
 
     <!-- modules -->
 {% for node in resources.header %}
@@ -49,6 +50,7 @@
         <i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran.
 	</div>
 
+    {% include 'header.twig' %}
     {% include 'menu.twig' %}
 
     <div class="container-fluid" id="mainWrapper">
@@ -99,6 +101,7 @@
     <script type="text/javascript" src="Change/Admin/lib/jstree/jquery.cookie.js">​</script>
     <script type="text/javascript" src="Change/Admin/lib/jstree/jquery.jstree.js">​</script>
     <script type="text/javascript" src="Change/Admin/lib/angular/angular.js">​</script>
+    <script type="text/javascript" src="Change/Admin/lib/angular/angular-locale_fr-fr.js">​</script>
     <script type="text/javascript" src="Change/Admin/lib/angular/angular-resource.js">​</script>
     <script type="text/javascript" src="Change/Admin/lib/angular/angular-sanitize.js">​</script>
 
@@ -132,6 +135,7 @@
     <script type="text/javascript" src="Change/Admin/js/directives/date-selector.js">​</script>
     <script type="text/javascript" src="Change/Admin/js/directives/disable-on-click.js">​</script>
     <script type="text/javascript" src="Change/Admin/js/directives/dockable.js">​</script>
+    <script type="text/javascript" src="Change/Admin/js/directives/document-list.js">​</script>
     <script type="text/javascript" src="Change/Admin/js/directives/document-list-toolbar.js">​</script>
     <script type="text/javascript" src="Change/Admin/js/directives/document-localization-options.js">​</script>
     <script type="text/javascript" src="Change/Admin/js/directives/document-picker-multiple.js">​</script>

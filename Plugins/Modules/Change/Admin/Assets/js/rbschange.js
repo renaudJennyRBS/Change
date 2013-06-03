@@ -77,7 +77,7 @@
 	 * This Controller is bound on the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication.
 	 */
-	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, Settings, Utils, REST, OAuthService) {
+	app.controller('Change.RootController', ['$rootScope', '$filter', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $filter, $location, Settings, Utils, REST, OAuthService) {
 		var redirectUrl = null,
 		    alreadyGotError = false;
 
@@ -119,6 +119,98 @@
 
 	}]);
 
+
+
+
+	app.controller('Change_MainMenu_Controller', ['$rootScope', '$scope', '$filter', '$timeout', '$location', function ($rootScope, $scope, $filter, $timeout, $location) {
+
+
+		var $menu = jQuery('#change-menu');
+
+		$scope.modules = [
+			{
+				"label"  : "Sites et pages",
+				"url"    : "Change/Website",
+				"pinned" : true
+			},
+			{
+				"label"  : "Thèmes",
+				"url"    : "Change/Theme"
+			},
+			{
+				"label"  : "Médiathèque",
+				"url"    : "Change/Media",
+				"pinned" : true
+			},
+			{
+				"label"  : "Catalogue",
+				"url"    : "Change/Catalog"
+			}
+		];
+
+		$scope.open = function () {
+			$menu.addClass('show');
+			$menu.find('input.search-query').first().focus();
+		};
+
+		$scope.close = function () {
+			$scope.filterModules = '';
+			$menu.removeClass('show');
+			$menu.find('input.search-query').first().blur();
+		};
+
+		$scope.toggle = function () {
+			if ($menu.is('.show')) {
+				this.close();
+			} else {
+				this.open();
+			}
+		};
+
+		$scope.clear = function () {
+			$scope.filterModules = '';
+			$menu.find('input.search-query').first().focus();
+		};
+
+		$scope.filterKeydown = function ($event) {
+			if ($event.keyCode === 27) {
+				if (!$scope.filterModules || !$scope.filterModules.length) {
+					this.close();
+				} else {
+					$timeout(function () {
+						$scope.filterModules = '';
+					});
+				}
+			}
+		};
+
+		$scope.go = function () {
+			var found = $filter('filter')(this.modules, $scope.filterModules);
+			if (found.length === 1) {
+				this.close();
+				$location.path(found[0].url);
+			}
+		};
+
+		$rootScope.menu = {
+			"open": function () {
+				$scope.open();
+			},
+			"close": function () {
+				$scope.close();
+			},
+			"toggle": function () {
+				$scope.toggle();
+			}
+		};
+
+		jQuery('body').on('keydown', function (ev) {
+			if (ev.ctrlKey && ev.altKey && ev.keyCode === 77) {
+				$scope.toggle();
+			}
+		});
+
+	}]);
 
 	// === Global directives (custom HTML components) ===
 
