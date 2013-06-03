@@ -5,7 +5,7 @@
 	</div>
 
 	<ul class="nav nav-list">
-		<li><a href=""</li>
+		<li><a ng-click="close()" href="./"><i class="icon-home"></i> Accueil</a></li>
 		<li class="nav-header">Favoris &mdash; <a href="javascript:;" ng-click="editMode = ! editMode"><span ng-if="! editMode">modifier</span><span ng-if="editMode">terminer</span></a></li>
 		<li ng-repeat="m in modules | filter:{'pinned':true} | orderBy:'label'">
 			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>

@@ -15,6 +15,13 @@
 	{
 		$routeProvider
 		. when(
+			'/',
+			{
+				templateUrl : 'Change/Admin/dashboard.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
 			'/login',
 			{
 				templateUrl : 'Change/Users/login.twig',

@@ -41,7 +41,7 @@
 	font-weight: normal;
 }
 
-#change-menu li a i {
+#change-menu li a i.pull-right {
 	position: relative;
 	top: 3px;
 }
