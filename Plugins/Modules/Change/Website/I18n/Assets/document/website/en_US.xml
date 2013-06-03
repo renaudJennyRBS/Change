@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.change.website.document.website" lcid="fr_FR">
+	<include id="m.change.generic.document"/>
+	<key id="hostname">hostname</key>
+	<key id="hostname-help" format="html">
+		<![CDATA[The hostname is the domain name of your website.
+		<br/>
+        <span class="label label-info">Beware !</span> Its value should neither start with <strong>http://</strong>, or <strong>https://</strong>, nor end with a <strong>/</strong>.<br/>
+        Examples: <strong>mydomain.com</strong>, <strong>subdomain.mydomain.com</strong>, ...]]>
+	</key>
+
+	<key id="port">port</key>
+	<key id="port-help" format="html">
+		<![CDATA[For a typical website, the port is <strong>80</strong>.]]>
+	</key>
+
+	<key id="scriptname">PHP Script</key>
+	<key id="scriptname-help" format="html">
+		<![CDATA[
+		For instance, for a website accessed at <strong>http://domaine.com/test/index.php</strong>, enter <strong>index.php</strong> in the field above. <br/>
+		In general, this field can be left empty.]]>
+	</key>
+
+	<key id="pathpart">path</key>
+	<key id="pathpart-help" format="html">
+		<![CDATA[If your website has to be accessed from within a sub-directory of your domain, you should enter the relative path of that directory.<br/>
+		For instance, for a website accessed at <strong>http://domaine.com/mydirectory/</strong>, enter <strong>mydirectory</strong> in the field above.]]>
+	</key>
+
+	<key id="indexpage">homepage</key>
+	<key id="indexpage-picker-title">select the homepage for this website</key>
+
+</i18n>
