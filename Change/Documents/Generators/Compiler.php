@@ -85,7 +85,7 @@ class Compiler
 				}
 				$model->setExtendedModel($extModel);
 				$model->setParent($extModel);
-				if ($model->getInject())
+				if ($model->getReplace())
 				{
 					if (isset($injectionArray[$extendName]))
 					{
@@ -94,7 +94,7 @@ class Compiler
 					$injectionArray[$extendName] = $model;
 				}
 			}
-			elseif ($model->getInject())
+			elseif ($model->getReplace())
 			{
 				throw new \RuntimeException('Invalid Injection on ' . $modelName, 54004);
 			}
@@ -261,7 +261,7 @@ class Compiler
 		foreach ($this->getChildren($model) as $name => $cm)
 		{
 			/* @var $cm Model */
-			if ($excludeInjected && $cm->getInject())
+			if ($excludeInjected && $cm->getReplace())
 			{
 				continue;
 			}

@@ -199,7 +199,7 @@
             <xs:attribute name="backoffice-indexable" type="xs:boolean" default="false"/>
 
             <xs:attribute name="extends" type="documentModel"/>
-            <xs:attribute name="inject" type="xs:boolean" default="true"/>
+            <xs:attribute name="replace" type="xs:boolean" default="false"/>
 
             <xs:attribute name="localized" type="xs:boolean" default="true"/>
             <xs:attribute name="editable" type="xs:boolean" default="true"/>

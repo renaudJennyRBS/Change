@@ -1,8 +1,8 @@
 <?php
-namespace Change\Injection;
+namespace Change\Replacer;
 
 /**
- * @name \Change\Injection\CodeExtractor
+ * @name \Change\Replacer\CodeExtractor
  */
 class CodeExtractor
 {
@@ -38,7 +38,7 @@ class CodeExtractor
 	}
 	
 	/**
-	 * @return \Change\Injection\Extractor\ExtractedNamespace[]
+	 * @return \Change\Replacer\Extractor\ExtractedNamespace[]
 	 */
 	public function getNamespaces()
 	{
@@ -47,7 +47,7 @@ class CodeExtractor
 	
 	/**
 	 * @param string $nsName
-	 * @return \Change\Injection\Extractor\ExtractedNamespace
+	 * @return \Change\Replacer\Extractor\ExtractedNamespace
 	 */
 	public function getNamespace($nsName)
 	{
@@ -147,17 +147,17 @@ class CodeExtractor
 						$inClass = false;
 						if (!isset($result[$currentNamespace]))
 						{
-							$namespace = new \Change\Injection\Extractor\ExtractedNamespace();
+							$namespace = new \Change\Replacer\Extractor\ExtractedNamespace();
 							$namespace->setName($currentNamespace);
 							$result[$currentNamespace] = $namespace;
 						}
 						
-						/* @var $namespace \Change\Injection\Extractor\ExtractedNamespace */
+						/* @var $namespace \Change\Replacer\Extractor\ExtractedNamespace */
 						$namepace = $result[$currentNamespace];
 						
 						if ($currentClassIsInterface)
 						{
-							$interface = new \Change\Injection\Extractor\ExtractedInterface();
+							$interface = new \Change\Replacer\Extractor\ExtractedInterface();
 							$interface->setBody(implode('', $currentClassContent));
 							$interface->setExtendedInterfaceName($currentClassExtends);
 							$interface->setName($currentClassName);
@@ -166,7 +166,7 @@ class CodeExtractor
 						}
 						else
 						{
-							$class = new \Change\Injection\Extractor\ExtractedClass();
+							$class = new \Change\Replacer\Extractor\ExtractedClass();
 							$class->setBody(implode('', $currentClassContent));
 							$class->setExtendedClassName($currentClassExtends);
 							$class->setName($currentClassName);
@@ -178,7 +178,7 @@ class CodeExtractor
 						
 						foreach ($currentUses as $declaration)
 						{
-							$extractedUse = new \Change\Injection\Extractor\ExtractedUse();
+							$extractedUse = new \Change\Replacer\Extractor\ExtractedUse();
 							$extractedUse->setDeclaration($declaration);
 							$namepace->addDeclaredUse($extractedUse);
 						}

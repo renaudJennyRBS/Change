@@ -1,13 +1,13 @@
 <?php
-namespace Change\Injection;
+namespace Change\Replacer;
 
 /**
- * @name \Change\Injection\ClassInjection
+ * @name \Change\Replacer\ClassReplacer
  */
-class ClassInjection
+class ClassReplacer
 {
-	const REPLACED_CLASS_SUFFIX = '_injected';
-	const REPLACING_CLASS_SUFFIX = '_injecting';
+	const REPLACED_CLASS_SUFFIX = '_replaced';
+	const REPLACING_CLASS_SUFFIX = '_replacing';
 
 	/**
 	 * @var array
@@ -20,16 +20,16 @@ class ClassInjection
 	protected $replacingClassInfos;
 
 	/**
-	 * @var \Change\Injection\Extractor\ExtractedClass
+	 * @var \Change\Replacer\Extractor\ExtractedClass
 	 */
 	protected $originalExtractedClass;
 
 	/**
-	 * index of the injection in case of multiple injection
+	 * index of the replacer in case of multiple replacements
 	 *
 	 * @var int
 	 */
-	protected $injectionIndex = 0;
+	protected $replacerIndex = 0;
 
 	/**
 	 * @var \Change\Workspace
@@ -84,7 +84,7 @@ class ClassInjection
 	{
 		$result = array();
 		$fileInfo = new \SplFileInfo($this->originalClassInfo['path']);
-		$originalExtractor = new \Change\Injection\CodeExtractor($this->originalClassInfo['path']);
+		$originalExtractor = new \Change\Replacer\CodeExtractor($this->originalClassInfo['path']);
 
 		// There should be only one namespace in the original file
 		$namespaces = $originalExtractor->getNamespaces();
@@ -93,7 +93,7 @@ class ClassInjection
 			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one namespace', 90002);
 		}
 
-		/* @var $namespace \Change\Injection\Extractor\ExtractedNamespace */
+		/* @var $namespace \Change\Replacer\Extractor\ExtractedNamespace */
 		$namespace = $namespaces[0];
 
 		// There should be only one class in the original file
@@ -102,13 +102,13 @@ class ClassInjection
 		{
 			throw new \RuntimeException('file at ' . $this->originalClassInfo['path'] . ' should only contain one class', 90003);
 		}
-		/* @var $class \Change\Injection\Extractor\ExtractedClass */
+		/* @var $class \Change\Replacer\Extractor\ExtractedClass */
 		$this->originalExtractedClass = $classes[0];
 
 		$usesArray = array();
 		foreach ($namespace->getDeclaredUses() as $extractedUse)
 		{
-			/* @var $extractedUse \Change\Injection\Extractor\ExtractedUse */
+			/* @var $extractedUse \Change\Replacer\Extractor\ExtractedUse */
 			$usesArray[] = $extractedUse->__toString();
 		}
 		$usesString = implode(PHP_EOL, $usesArray);
@@ -119,12 +119,12 @@ class ClassInjection
 		}
 
 		$class = clone $this->originalExtractedClass;
-		$class->setName($this->originalExtractedClass->getName() . self::REPLACED_CLASS_SUFFIX . $this->injectionIndex);
+		$class->setName($this->originalExtractedClass->getName() . self::REPLACED_CLASS_SUFFIX . $this->replacerIndex);
 
 		$fullClassName = $this->buildFullClassName($class->getNamespace(), $class->getName());
 		$components = explode('\\', $fullClassName);
 		$fileName = implode('_', $components);
-		$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+		$path = $this->getWorkspace()->compilationPath('Replacer', $fileName . '.php');
 		\Change\Stdlib\File::mkdir(dirname($path));
 
 		$contentParts = array('<?php');
@@ -167,9 +167,9 @@ class ClassInjection
 		$extendNamespace = null;
 		foreach ($this->replacingClassInfos as $replacingClassInfo)
 		{
-			$replacingExtractor = new \Change\Injection\CodeExtractor($replacingClassInfo['path']);
+			$replacingExtractor = new \Change\Replacer\CodeExtractor($replacingClassInfo['path']);
 			$fileInfo = new \SplFileInfo($replacingClassInfo['path']);
-			$extendClassName = $this->originalClassInfo['name'] . self::REPLACED_CLASS_SUFFIX . ($this->injectionIndex++);
+			$extendClassName = $this->originalClassInfo['name'] . self::REPLACED_CLASS_SUFFIX . ($this->replacerIndex++);
 
 			// There should be only one namespace in the original file
 			$namespaces = $replacingExtractor->getNamespaces();
@@ -178,7 +178,7 @@ class ClassInjection
 				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one namespace', 90002);
 			}
 
-			/* @var $namespace \Change\Injection\Extractor\ExtractedNamespace */
+			/* @var $namespace \Change\Replacer\Extractor\ExtractedNamespace */
 			$namespace = $namespaces[0];
 
 			// There should be only one class in the original file
@@ -187,14 +187,14 @@ class ClassInjection
 			{
 				throw new \RuntimeException('file at ' . $replacingClassInfo['path'] . ' should only contain one class', 90003);
 			}
-			/* @var $class \Change\Injection\Extractor\ExtractedClass */
+			/* @var $class \Change\Replacer\Extractor\ExtractedClass */
 			$class = $classes[0];
 			$class->setExtendedClassName($extendClassName);
 
 			$usesArray = array();
 			foreach ($namespace->getDeclaredUses() as $extractedUse)
 			{
-				/* @var $extractedUse \Change\Injection\Extractor\ExtractedUse */
+				/* @var $extractedUse \Change\Replacer\Extractor\ExtractedUse */
 				$usesArray[] = $extractedUse->__toString();
 			}
 			$usesString = implode(PHP_EOL, $usesArray);
@@ -215,7 +215,7 @@ class ClassInjection
 
 			$components = explode('\\', $fullClassName);
 			$fileName = implode('_', $components);
-			$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+			$path = $this->getWorkspace()->compilationPath('Replacer', $fileName . '.php');
 			\Change\Stdlib\File::mkdir(dirname($path));
 
 			$contentParts = array('<?php');
@@ -233,7 +233,7 @@ class ClassInjection
 			 * We generate a second class, which is completely empty with the name and namespace of the original file
 			 * that extends the class generated above.
 			 */
-			$className = ($this->injectionIndex < count($this->replacingClassInfos)) ? $this->originalExtractedClass->getName() . self::REPLACED_CLASS_SUFFIX . $this->injectionIndex  : $this->originalExtractedClass->getName();
+			$className = ($this->replacerIndex < count($this->replacingClassInfos)) ? $this->originalExtractedClass->getName() . self::REPLACED_CLASS_SUFFIX . $this->replacerIndex  : $this->originalExtractedClass->getName();
 
 			$class->setExtendedClassName($fullClassName);
 			$class->setName($className);
@@ -243,7 +243,7 @@ class ClassInjection
 
 			$components = explode('\\', $fullClassName);
 			$fileName = implode('_', $components);
-			$path = $this->getWorkspace()->compilationPath('Injection', $fileName . '.php');
+			$path = $this->getWorkspace()->compilationPath('Replacer', $fileName . '.php');
 			\Change\Stdlib\File::mkdir(dirname($path));
 
 			$contentParts = array('<?php');
@@ -259,7 +259,7 @@ class ClassInjection
 	}
 
 	/**
-	 * If the informations passed on the classes involved in the injection do not contain the path to the class and its mtime get them on the fly.
+	 * If the informations passed on the classes involved in the replacer do not contain the path to the class and its mtime get them on the fly.
 	 *
 	 * @param array $info
 	 */
@@ -278,7 +278,7 @@ class ClassInjection
 	}
 
 	/**
-	 * This method performs the actual injection generating the necessary files for injection to work. It returns an array whose
+	 * This method performs the actual replacement generating the necessary files for replacement to work. It returns an array whose
 	 * keys are the name of the generated classes and the values are arrays with :
 	 *  - the key "path" containing the path of the file the original class was defined in
 	 *  - the key "mtime" containing the modification time of the above file

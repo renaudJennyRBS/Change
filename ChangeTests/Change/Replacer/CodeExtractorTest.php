@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Change\Injection;
+namespace Tests\Change\Replacer;
 
 class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 {	
@@ -10,25 +10,25 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	{
 		$path = realpath(__DIR__) . '/TestAssets/thisfiledoesnotexist.php';
 		$this->setExpectedException('RuntimeException');
-		$extractor = new \Change\Injection\CodeExtractor($path);
+		$extractor = new \Change\Replacer\CodeExtractor($path);
 	}
 	
 	public function testBadConstruct2()
 	{
 		$this->setExpectedException('InvalidArgumentException');
-		$extractor = new \Change\Injection\CodeExtractor(array());
+		$extractor = new \Change\Replacer\CodeExtractor(array());
 	}
 	
 	public function testConstruct()
 	{
 		$path = realpath(__DIR__) . '/TestAssets/ComplexPhpFile.php';
-		return new \Change\Injection\CodeExtractor($path);
+		return new \Change\Replacer\CodeExtractor($path);
 	}
 	
 	/**
 	 * @depends testConstruct
 	 */
-	public function testNamespaces(\Change\Injection\CodeExtractor $extractor)
+	public function testNamespaces(\Change\Replacer\CodeExtractor $extractor)
 	{
 		$namespaces = $extractor->getNamespaces();
 		$this->assertCount(4, $namespaces);
@@ -42,21 +42,21 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testNamespaces
 	 */
-	public function testInterfaces(\Change\Injection\CodeExtractor $extractor)
+	public function testInterfaces(\Change\Replacer\CodeExtractor $extractor)
 	{
 		$namespaceAlpha = $extractor->getNamespace('Alpha');
 		$interfaces = $namespaceAlpha->getDeclaredInterfaces();
 		$this->assertCount(2, $interfaces);
 		
 		$interfaceA = $namespaceAlpha->getDeclaredInterface('InterfaceA');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedInterface', $interfaceA);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedInterface', $interfaceA);
 		$this->assertNull($interfaceA->getExtendedInterfaceName());
 		$this->assertEquals($interfaceA->getBody(), "{
 	public function A();
 }");
 		
 		$extendedInterfaceA = $namespaceAlpha->getDeclaredInterface('ExtendingInterfaceA');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedInterface', $extendedInterfaceA);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedInterface', $extendedInterfaceA);
 		$this->assertEquals($extendedInterfaceA->getExtendedInterfaceName(), 'InterfaceA');		
 		$this->assertEquals($extendedInterfaceA->getBody(), "{
 	public function AA();
@@ -66,7 +66,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 		$interfaces = $namespaceBeta->getDeclaredInterfaces();
 		$this->assertCount(1, $interfaces);
 		$interfaceB = $namespaceBeta->getDeclaredInterface('InterfaceB');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedInterface', $interfaceB);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedInterface', $interfaceB);
 		$this->assertNull($interfaceB->getExtendedInterfaceName());
 		$this->assertEquals($interfaceB->getBody(), "{
 	public function B();
@@ -85,7 +85,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testInterfaces
 	 */
-	public function testClasses(\Change\Injection\CodeExtractor $extractor)
+	public function testClasses(\Change\Replacer\CodeExtractor $extractor)
 	{
 		$namespaceAlpha = $extractor->getNamespace('Alpha');
 		$classes = $namespaceAlpha->getDeclaredClasses();
@@ -95,7 +95,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 		$classes = $namespaceBeta->getDeclaredClasses();
 		$this->assertCount(1, $classes);
 		$classC = $namespaceBeta->getDeclaredClass('C');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedClass', $classC);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedClass', $classC);
 		$this->assertFalse($classC->getAbstract());
 		$this->assertNull($classC->getExtendedClassName());
 		$this->assertEmpty($classC->getImplementedInterfaceNames());
@@ -111,7 +111,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(2, $classes);
 		
 		$classTestable = $namespaceGamma->getDeclaredClass('Testable');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedClass', $classTestable);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedClass', $classTestable);
 		$this->assertTrue($classTestable->getAbstract());
 		$this->assertNull($classTestable->getExtendedClassName());
 		$this->assertCount(2, $classTestable->getImplementedInterfaceNames());
@@ -136,7 +136,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	}
 }');
 		$classC = $namespaceGamma->getDeclaredClass('C');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedClass', $classC);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedClass', $classC);
 		$this->assertFalse($classC->getAbstract());
 		$this->assertEquals('MyC', $classC->getExtendedClassName());
 		$this->assertEmpty($classC->getImplementedInterfaceNames());
@@ -149,7 +149,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 		$classes = $namespaceGammaZeta->getDeclaredClasses();
 		$this->assertCount(1, $classes);
 		$classTested = $namespaceGammaZeta->getDeclaredClass('Tested');
-		$this->assertInstanceOf('\Change\Injection\Extractor\ExtractedClass', $classTested);
+		$this->assertInstanceOf('\Change\Replacer\Extractor\ExtractedClass', $classTested);
 		$this->assertFalse($classTested->getAbstract());
 		$this->assertEquals('\Gamma\Testable', $classTested->getExtendedClassName());
 		$this->assertEmpty($classTested->getImplementedInterfaceNames());
@@ -165,7 +165,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testClasses
 	 */
-	public function testUses(\Change\Injection\CodeExtractor $extractor)
+	public function testUses(\Change\Replacer\CodeExtractor $extractor)
 	{
 		$namespaceAlpha = $extractor->getNamespace('Alpha');
 		$this->assertEmpty($namespaceAlpha->getDeclaredUses());
@@ -187,7 +187,7 @@ class CodeExtractorTest extends \PHPUnit_Framework_TestCase
 	public function testExtractClassWithoutNamespace()
 	{
 		$url = realpath(__DIR__) . '/TestAssets/ClassWithNoNamespace.php';
-		$extractor = new \Change\Injection\CodeExtractor($url);
+		$extractor = new \Change\Replacer\CodeExtractor($url);
 		$namespace = $extractor->getNamespace('');
 		$this->assertCount(1, $namespace->getDeclaredClasses());
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace ChangeTests\Change\Injection\TestAssets\Alpha;
+namespace ChangeTests\Change\Replacer\TestAssets\Alpha;
 
 class TestClass3
 {

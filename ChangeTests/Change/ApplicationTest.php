@@ -32,7 +32,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @runInSeparateProcess
 	 */
-	public function testRegisterInjectionAutoload()
+	public function testRegisterReplacerAutoload()
 	{
 		if (!defined('PROJECT_HOME'))
 		{
@@ -54,8 +54,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
 			),
 		);
-		$application->registerInjectionAutoload(true);
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$application->registerReplacerAutoload(true);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($application->getWorkspace());
 		$injection->compile();
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
@@ -87,13 +87,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
 			),
 		);
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($application->getWorkspace());
 		$injection->compile();
 		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
 		$this->assertEquals($instance->test(), 'InjectingClass');
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
-		//$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
+		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
 	}
 

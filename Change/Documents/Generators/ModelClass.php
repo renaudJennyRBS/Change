@@ -88,13 +88,13 @@ class ModelClass
 	public function __construct(\\Change\\Documents\\ModelManager $modelManager)
 	{
 		parent::__construct($modelManager);'. PHP_EOL;
-		if ($model->getExtends() && !$model->getInject())
+		if ($model->getExtends() && !$model->getReplace())
 		{	
 			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtends()) . ';'. PHP_EOL;
 		}
 		
-		$descendantsNames = array_keys($this->compiler->getDescendants($model, true));	
-		if (!$model->getInject())
+		$descendantsNames = array_keys($this->compiler->getDescendants($model, true));
+		if (!$model->getReplace())
 		{
 			$code .= '		$this->descendantsNames = ' . $this->escapePHPValue($descendantsNames) . ';'. PHP_EOL;
 			$code .= '		$this->vendorName = ' . $this->escapePHPValue($model->getVendor()) . ';'. PHP_EOL;

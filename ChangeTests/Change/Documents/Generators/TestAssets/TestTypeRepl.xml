@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
-	extends="Change_Test_TestType" inject="true"	>
+	extends="Change_Test_TestType" replace="true"	>
 	<properties>
 		<property name="int1" default-value="45">
 			<constraint name="max" max="15"/>

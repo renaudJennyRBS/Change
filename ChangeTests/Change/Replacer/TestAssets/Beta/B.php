@@ -1,5 +1,5 @@
 <?php
-namespace ChangeTests\Change\Injection\TestAssets\Beta;
+namespace ChangeTests\Change\Replacer\TestAssets\Beta;
 
 class B
 {

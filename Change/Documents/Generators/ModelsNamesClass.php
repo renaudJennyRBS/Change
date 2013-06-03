@@ -46,7 +46,7 @@ class ModelsNamesClass
 		foreach ($models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
-			if (!$model->getInject())
+			if (!$model->getReplace())
 			{
 				$rm[] = $model->getName();
 			}

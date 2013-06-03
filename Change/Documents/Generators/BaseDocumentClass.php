@@ -37,7 +37,7 @@ class BaseDocumentClass
 	{
 		$this->compiler = $compiler;
 		$code = '<' . '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		if (!$model->getInject())
+		if (!$model->getReplace())
 		{
 			$code .= '/**
  * @name ' . $model->getBaseDocumentClassName() . '
