@@ -39,7 +39,7 @@ class Model
 	/**
 	 * @var \Change\Documents\Generators\Model
 	 */
-	protected $extendModel;
+	protected $extendedModel;
 	
 	/**
 	 * @var Property
@@ -54,7 +54,7 @@ class Model
 	/**
 	 * @var string
 	 */
-	protected $extend;
+	protected $extends;
 	
 	/**
 	 * @var boolean
@@ -205,8 +205,8 @@ class Model
 						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
-				case "extend":
-					$this->extend = $value;
+				case "extends":
+					$this->extends = $value;
 					break;
 				case "inject":
 					$this->inject = ($value === 'true');
@@ -274,7 +274,7 @@ class Model
 				$this->backofficeIndexable = false;
 			}
 
-			if  ($this->extend || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
+			if  ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
 				|| $this->localized || $this->editable || $this->publishable || $this->useVersion)
 			{
 				throw new \RuntimeException('Property stateless can not be applicable', 54024);
@@ -328,7 +328,7 @@ class Model
 		{
 			throw new \RuntimeException('Invalid document element name ' . $this .' too long', 54009);
 		}
-		if ($this->extend)
+		if ($this->extends)
 		{
 			if ($this->localized !== null)
 			{
@@ -469,17 +469,17 @@ class Model
 	/**
 	 * @return \Change\Documents\Generators\Model
 	 */
-	public function getExtendModel()
+	public function getExtendedModel()
 	{
-		return $this->extendModel;
+		return $this->extendedModel;
 	}
 
 	/**
 	 * @param \Change\Documents\Generators\Model $extendModel
 	 */
-	public function setExtendModel($extendModel)
+	public function setExtendedModel($extendModel)
 	{
-		$this->extendModel = $extendModel;
+		$this->extendedModel = $extendModel;
 	}
 
 	/**
@@ -580,9 +580,9 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getExtend()
+	public function getExtends()
 	{
-		return $this->extend;
+		return $this->extends;
 	}
 	
 	/**

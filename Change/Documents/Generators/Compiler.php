@@ -74,16 +74,16 @@ class Compiler
 			$model->validate();
 			
 			$modelName = $model->getName();
-			$extendName = $model->getExtend();
+			$extendName = $model->getExtends();
 
 			if ($extendName)
 			{
 				$extModel = $this->getModelByName($extendName);
 				if ($extModel === null)
 				{
-					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtend(), 54002);
+					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtends(), 54002);
 				}
-				$model->setExtendModel($extModel);
+				$model->setExtendedModel($extModel);
 				$model->setParent($extModel);
 				if ($model->getInject())
 				{
@@ -103,7 +103,7 @@ class Compiler
 		foreach ($this->models as $model)
 		{
 			/* @var $model Model */
-			$extModel = $model->getExtendModel();
+			$extModel = $model->getExtendedModel();
 			if ($extModel)
 			{
 				$extendName = $extModel->getName();
@@ -204,9 +204,9 @@ class Compiler
 	 */
 	public function getParent($model)
 	{
-		if ($model->getExtend())
+		if ($model->getExtends())
 		{
-			return $this->getModelByName($model->getExtend());
+			return $this->getModelByName($model->getExtends());
 		}
 		return null;
 	}
@@ -241,7 +241,7 @@ class Compiler
 		foreach ($this->models as $cm)
 		{
 			/* @var $cm Model */
-			$cmp = $cm->getExtend() ? $this->getModelByName($cm->getExtend()) : null;
+			$cmp = $cm->getExtends() ? $this->getModelByName($cm->getExtends()) : null;
 			if ($cmp === $model)
 			{
 				$result[$cm->getName()] = $cm;

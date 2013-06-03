@@ -42,9 +42,9 @@ class DocumentLocalizedClass
 		$this->compiler = $compiler;
 		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
 		
-		if ($model->getExtend() !== null)
+		if ($model->getExtends() !== null)
 		{
-			$extend = $model->getExtendModel()->getDocumentLocalizedClassName();
+			$extend = $model->getExtendedModel()->getDocumentLocalizedClassName();
 		}
 		else
 		{

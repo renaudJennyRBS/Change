@@ -198,7 +198,7 @@
             <xs:attribute name="frontoffice-indexable" type="xs:boolean" default="true"/>
             <xs:attribute name="backoffice-indexable" type="xs:boolean" default="false"/>
 
-            <xs:attribute name="extend" type="documentModel"/>
+            <xs:attribute name="extends" type="documentModel"/>
             <xs:attribute name="inject" type="xs:boolean" default="true"/>
 
             <xs:attribute name="localized" type="xs:boolean" default="true"/>
@@ -207,7 +207,7 @@
             <xs:attribute name="use-version" type="xs:boolean" default="true"/>
             <xs:attribute name="tree-name" type="treeName" default="true"/>
 
-            <!-- stateless exclude: extend, inject, has-url, frontoffice-indexable, backoffice-indexable,
+            <!-- stateless exclude: extends, inject, has-url, frontoffice-indexable, backoffice-indexable,
                     localized, editable, publishable, use-version. -->
             <xs:attribute name="stateless" type="xs:boolean" default="true"/>
         </xs:complexType>

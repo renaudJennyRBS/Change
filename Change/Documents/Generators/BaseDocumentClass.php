@@ -45,7 +45,7 @@ class BaseDocumentClass
  */' . PHP_EOL;
 		}
 
-		$extendModel = $model->getExtendModel();
+		$extendModel = $model->getExtendedModel();
 		$extend = $extendModel ? $extendModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
 
 		$interfaces = array();

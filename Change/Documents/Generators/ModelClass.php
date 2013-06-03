@@ -38,7 +38,7 @@ class ModelClass
 		$this->compiler = $compiler;
 		
 		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		$extendModel = $model->getExtendModel();
+		$extendModel = $model->getExtendedModel();
 		$extend = $extendModel ? $extendModel->getModelClassName() : '\Change\Documents\AbstractModel';
 		$code .= '
 /**
@@ -88,9 +88,9 @@ class ModelClass
 	public function __construct(\\Change\\Documents\\ModelManager $modelManager)
 	{
 		parent::__construct($modelManager);'. PHP_EOL;
-		if ($model->getExtend() && !$model->getInject())
+		if ($model->getExtends() && !$model->getInject())
 		{	
-			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtend()) . ';'. PHP_EOL;
+			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtends()) . ';'. PHP_EOL;
 		}
 		
 		$descendantsNames = array_keys($this->compiler->getDescendants($model, true));	
