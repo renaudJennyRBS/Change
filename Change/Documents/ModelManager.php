@@ -1,6 +1,8 @@
 <?php
 namespace Change\Documents;
 
+use Change\Stdlib\File;
+
 /**
  * @name \Change\Documents\ModelManager
  * @method \Change\Documents\ModelManager getInstance()
@@ -16,6 +18,11 @@ class ModelManager
 	 * @var string[]
 	 */
 	protected $modelsNames = null;
+
+	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices = null;
 	
 	/**
 	 * @param string $modelName
@@ -127,5 +134,83 @@ class ModelManager
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param $pluginName
+	 * @param $shortModelName
+	 */
+	public function initializeModel($vendorName, $moduleName, $shortModelName)
+	{
+		$pm = $this->getApplicationServices()->getPluginManager();
+		$module = $pm->getModule($vendorName, $moduleName);
+		if ($module === null)
+		{
+			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
+		}
+		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getBasePath(), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
+		if (file_exists($docPath))
+		{
+			throw new \RuntimeException('Model file already exists at path ' . $docPath, 999999);
+		}
+		File::write($docPath, File::read(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'Sample.xml'));
+		return $docPath;
+	}
+
+	/**
+	 * @param $pluginName
+	 * @param $shortModelName
+	 */
+	public function initializeFinalDocumentPhpClass($vendorName, $moduleName, $shortModelName)
+	{
+		$pm = $this->getApplicationServices()->getPluginManager();
+		$module = $pm->getModule($vendorName, $moduleName);
+		if ($module === null)
+		{
+			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
+		}
+		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getBasePath(), 'Documents', $normalizedShortModelName . '.php'));
+		if (file_exists($docPath))
+		{
+			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);
+		}
+		$attributes = array('vendor' => $vendorName, 'module' => $moduleName, 'name' => $shortModelName);
+		$loader = new \Twig_Loader_Filesystem(__DIR__);
+		$twig = new \Twig_Environment($loader);
+		File::write($docPath, $twig->render('Assets/Sample.php.twig', $attributes));
+		return $docPath;
+	}
+
+	/**
+	 * @param $name
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function normalizeModelName($name)
+	{
+		$lcName = strtolower($name);
+		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $lcName))
+		{
+			throw new \InvalidArgumentException('Model name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+		}
+		return ucfirst($lcName);
 	}
 }

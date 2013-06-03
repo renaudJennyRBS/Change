@@ -32,6 +32,7 @@ class DocumentServices extends \Zend\Di\Di
 		parent::__construct($dl);
 
 		$im = $this->instanceManager();
+		$im->setParameters('Change\Documents\ModelManager', array('applicationServices'=> $applicationServices));
 		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
 		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
 		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
@@ -43,7 +44,9 @@ class DocumentServices extends \Zend\Di\Di
 	protected function registerModelManager($dl)
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\ModelManager');
-		$cl->setInstantiator('__construct');
+		$cl->setInstantiator('__construct')
+			->addMethod('setApplicationServices', true)
+			->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
