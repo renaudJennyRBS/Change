@@ -1,8 +1,8 @@
 <?php
-namespace Change\Injection\Extractor;
+namespace Change\Replacer\Extractor;
 
 /**
- * @name \Change\Injection\Extractor\ExtractedNamespace
+ * @name \Change\Replacer\Extractor\ExtractedNamespace
  */
 class ExtractedNamespace
 {

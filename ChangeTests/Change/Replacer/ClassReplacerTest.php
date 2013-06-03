@@ -1,59 +1,59 @@
 <?php
-namespace ChangeTests\Change\Injection;
+namespace ChangeTests\Change\Replacer;
 
-class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
+class ClassReplacerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testBadArgsConstruct()
 	{
-		$originalInfoBad1 = array(	'names' => '\ChangeTests\Change\Injection\TestAssets\Alpha\A',
+		$originalInfoBad1 = array(	'names' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\A',
 			'path' => __DIR__ . '/TestAssets/Alpha/A.php'
 		);
 		
 		$replacingInfos = 	array(
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Beta\B',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Beta\B',
 				'path' => __DIR__ . '/TestAssets/Beta/B.php'
 			),
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Gamma\C',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Gamma\C',
 				'path' => __DIR__ . '/TestAssets/Gamma/C.php'
 			)
 		);
 		
 		$this->setExpectedException('\InvalidArgumentException', 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
-		$injection = new \Change\Injection\ClassInjection($originalInfoBad1, $replacingInfos);		
+		$injection = new \Change\Replacer\ClassReplacer($originalInfoBad1, $replacingInfos);
 	}
 	
 	public function testBadArgsConstruct2()
 	{
 		$replacingInfos = 	array(
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Beta\B',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Beta\B',
 				'path' => __DIR__ . '/TestAssets/Beta/B.php'
 			),
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Gamma\C',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Gamma\C',
 				'path' => __DIR__ . '/TestAssets/Gamma/C.php'
 			)
 		);
 		
-		$originalInfoBad2 = array(	'name' => 'ChangeTests\Change\Injection\TestAssets\Alpha\A',
+		$originalInfoBad2 = array(	'name' => 'ChangeTests\Change\Replacer\TestAssets\Alpha\A',
 			'path' => __DIR__ . '/TestAssets/Alpha/A.php'
 		);
 		
 		$this->setExpectedException('\InvalidArgumentException', 'first argument of __construct must have at least the key "name" set to a fully-qualified class name');
-		$injection = new \Change\Injection\ClassInjection($originalInfoBad2, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfoBad2, $replacingInfos);
 	}
 	
 	public function testBadArgsConstruct3()
 	{
-		$originalInfo = array(	'name' => '\ChangeTests\Change\Injection\TestAssets\Alpha\A',
+		$originalInfo = array(	'name' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\A',
 			'path' => __DIR__ . '/TestAssets/Alpha/A.php'
 		);
 	
 		$replacingInfosBad1 = 	array(
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Beta\B',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Beta\B',
 				'path' => __DIR__ . '/TestAssets/Beta/B.php'
 			),
 			array(
@@ -62,47 +62,47 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		);
 	
 		$this->setExpectedException('\InvalidArgumentException', 'all entries of the second argument of __construct must have at least one key "name" set to a fully-qualified class name');
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfosBad1);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfosBad1);
 	}
 	
 	public function testBadArgsConstruct4()
 	{
-		$originalInfo = array(	'name' => '\ChangeTests\Change\Injection\TestAssets\Alpha\A',
+		$originalInfo = array(	'name' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\A',
 			'path' => __DIR__ . '/TestAssets/Alpha/A.php'
 		);
 	
 		$replacingInfosBad2 = 	array(
 			array(
-				'name' => 'ChangeTests\Change\Injection\TestAssets\Beta\B',
+				'name' => 'ChangeTests\Change\Replacer\TestAssets\Beta\B',
 				'path' => __DIR__ . '/TestAssets/Beta/B.php'
 			),
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Gamma\C',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Gamma\C',
 				'path' => __DIR__ . '/TestAssets/Gamma/C.php'
 			)
 		);
 	
 		$this->setExpectedException('\InvalidArgumentException', 'all entries of the second argument of __construct must have at least one key "name" set to a fully-qualified class name');
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfosBad2);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfosBad2);
 	}
 	
 	public function testConstruct()
 	{
-		$originalInfo = array(	'name' => '\ChangeTests\Change\Injection\TestAssets\Alpha\A',
+		$originalInfo = array(	'name' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\A',
 									'path' => __DIR__ . '/TestAssets/Alpha/A.php'
 							);
 		$replacingInfos = 	array(
 							 	array(
-							 		'name' => '\ChangeTests\Change\Injection\TestAssets\Beta\B',
+							 		'name' => '\ChangeTests\Change\Replacer\TestAssets\Beta\B',
 							 		'path' => __DIR__ . '/TestAssets/Beta/B.php'
 								),
 								array(
-									'name' => '\ChangeTests\Change\Injection\TestAssets\Gamma\C',
+									'name' => '\ChangeTests\Change\Replacer\TestAssets\Gamma\C',
 									'path' => __DIR__ . '/TestAssets/Gamma/C.php'
 								)
 			);
 
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
@@ -110,16 +110,16 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstruct
 	 */
-	public function testCompile(\Change\Injection\ClassInjection $injection)
+	public function testCompile(\Change\Replacer\ClassReplacer $injection)
 	{
 		$compilationResult = $injection->compile();	
 		$result = $compilationResult['compiled'];
 		$this->assertCount(5, $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\A_injected0', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Beta\B_injecting', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\A_injected1', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Gamma\C_injecting', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\A', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\A_replaced0', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Beta\B_replacing', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\A_replaced1', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Gamma\C_replacing', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\A', $result);
 		foreach ($result as $className => $entry)
 		{
 			$this->assertArrayHasKey('path', $entry);
@@ -134,12 +134,12 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInjection(array $result)
 	{		
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\A_injected0']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Beta\B_injecting']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\A_injected1']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Gamma\C_injecting']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\A']['path'];
-		$instance = new \ChangeTests\Change\Injection\TestAssets\Alpha\A();
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\A_replaced0']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Beta\B_replacing']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\A_replaced1']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Gamma\C_replacing']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\A']['path'];
+		$instance = new \ChangeTests\Change\Replacer\TestAssets\Alpha\A();
 		$this->assertEquals($instance->test(), 'C');
 	}
 	
@@ -154,7 +154,7 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
 			)
 		);
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
@@ -162,13 +162,13 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstructNoNamespace
 	 */
-	public function testCompileNoNamespace(\Change\Injection\ClassInjection $injection)
+	public function testCompileNoNamespace(\Change\Replacer\ClassReplacer $injection)
 	{
 		$compilationResult = $injection->compile();	
 		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
-		$this->assertArrayHasKey('\TestClass_injected0', $result);
-		$this->assertArrayHasKey('\InjectingClass_injecting', $result);
+		$this->assertArrayHasKey('\TestClass_replaced0', $result);
+		$this->assertArrayHasKey('\InjectingClass_replacing', $result);
 		$this->assertArrayHasKey('\TestClass', $result);
 		foreach ($result as $className => $entry)
 		{
@@ -184,11 +184,11 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInjectionNoNamespace(array $result)
 	{
-		require_once $result['\TestClass_injected0']['path'];
-		require_once $result['\InjectingClass_injecting']['path'];
+		require_once $result['\TestClass_replaced0']['path'];
+		require_once $result['\InjectingClass_replacing']['path'];
 		require_once $result['\TestClass']['path'];
 		$instance = new \TestClass();
-		$this->assertEquals($instance->test(), 'Injected!');
+		$this->assertEquals($instance->test(), 'replaced!');
 	}
 	
 	
@@ -199,11 +199,11 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		);
 		$replacingInfos = 	array(
 			array(
-				'name' => '\ChangeTests\Change\Injection\TestAssets\Alpha\InjectingTestClass2',
+				'name' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\InjectingTestClass2',
 				'path' => __DIR__ . '/TestAssets/Alpha/InjectingTestClass2.php'
 			)
 		);
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
@@ -211,13 +211,13 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstructMixed
 	 */
-	public function testCompileMixed(\Change\Injection\ClassInjection $injection)
+	public function testCompileMixed(\Change\Replacer\ClassReplacer $injection)
 	{
 		$compilationResult = $injection->compile();	
 		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
-		$this->assertArrayHasKey('\TestClass2_injected0', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\InjectingTestClass2_injecting', $result);
+		$this->assertArrayHasKey('\TestClass2_replaced0', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\InjectingTestClass2_replacing', $result);
 		$this->assertArrayHasKey('\TestClass2', $result);
 		foreach ($result as $className => $entry)
 		{
@@ -233,16 +233,16 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInjectionMixed(array $result)
 	{
-		require_once $result['\TestClass2_injected0']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\InjectingTestClass2_injecting']['path'];
+		require_once $result['\TestClass2_replaced0']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\InjectingTestClass2_replacing']['path'];
 		require_once $result['\TestClass2']['path'];
 		$instance = new \TestClass2();
-		$this->assertEquals($instance->test(), '\ChangeTests\Change\Injection\TestAssets\Alpha\InjectingTestClass2');
+		$this->assertEquals($instance->test(), '\ChangeTests\Change\Replacer\TestAssets\Alpha\InjectingTestClass2');
 	}
 	
 	public function testConstructMixed2()
 	{
-		$originalInfo = array(	'name' => '\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3',
+		$originalInfo = array(	'name' => '\ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3',
 			'path' => __DIR__ . '/TestAssets/Alpha/TestClass3.php'
 		);
 		$replacingInfos = 	array(
@@ -251,7 +251,7 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 				'path' => __DIR__ . '/TestAssets/InjectingTestClass3.php'
 			)
 		);
-		$injection = new \Change\Injection\ClassInjection($originalInfo, $replacingInfos);
+		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
 		$injection->setWorkspace($this->getApplication()->getWorkspace());
 		return $injection;
 	}
@@ -259,14 +259,14 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstructMixed2
 	 */
-	public function testCompileMixed2(\Change\Injection\ClassInjection $injection)
+	public function testCompileMixed2(\Change\Replacer\ClassReplacer $injection)
 	{
 		$compilationResult = $injection->compile();	
 		$result = $compilationResult['compiled'];
 		$this->assertCount(3, $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3_injected0', $result);
-		$this->assertArrayHasKey('\InjectingTestClass3_injecting', $result);
-		$this->assertArrayHasKey('\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3_replaced0', $result);
+		$this->assertArrayHasKey('\InjectingTestClass3_replacing', $result);
+		$this->assertArrayHasKey('\ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3', $result);
 		foreach ($result as $className => $entry)
 		{
 			$this->assertArrayHasKey('path', $entry);
@@ -281,10 +281,10 @@ class ClassInjectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInjectionMixed2(array $result)
 	{
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3_injected0']['path'];
-		require_once $result['\InjectingTestClass3_injecting']['path'];
-		require_once $result['\ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3']['path'];
-		$instance = new \ChangeTests\Change\Injection\TestAssets\Alpha\TestClass3();
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3_replaced0']['path'];
+		require_once $result['\InjectingTestClass3_replacing']['path'];
+		require_once $result['\ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3']['path'];
+		$instance = new \ChangeTests\Change\Replacer\TestAssets\Alpha\TestClass3();
 		$this->assertEquals($instance->test(), '\InjectingTestClass3');
 	}
 	

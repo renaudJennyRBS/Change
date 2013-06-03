@@ -15,11 +15,11 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('change_generic_document', $model->getName());
 		
 		$this->assertNull($model->getParent());
-		$this->assertNull($model->getExtendModel());
+		$this->assertNull($model->getExtendedModel());
 		$this->assertCount(0, $model->getProperties());
 		$this->assertCount(0, $model->getInverseProperties());
-		$this->assertNull($model->getExtend());
-		$this->assertNull($model->getInject());
+		$this->assertNull($model->getExtends());
+		$this->assertNull($model->getReplace());
 		$this->assertNull($model->getLocalized());
 		$this->assertNull($model->getIcon());
 		$this->assertNull($model->getHasUrl());
@@ -90,17 +90,17 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $model->getAncestors());
 		
 		$model2 = new \Change\Documents\Generators\Model('change', 'generic', 'documentext');
-		$doc->loadXML('<document extend="change_generic_document" inject="true">
+		$doc->loadXML('<document extends="change_generic_document" replace="true">
 	<properties>
 		<property name="test" default-value="essai" />
 	</properties>
 </document>');
 		$model2->setXmlDocument($doc);
-		$model2->setExtendModel($model);
+		$model2->setExtendedModel($model);
 		$model2->setParent($model);
-		$this->assertTrue($model2->getInject());
-		$this->assertEquals("change_generic_document", $model2->getExtend());
-		$this->assertEquals($model, $model2->getExtendModel());
+		$this->assertTrue($model2->getReplace());
+		$this->assertEquals("change_generic_document", $model2->getExtends());
+		$this->assertEquals($model, $model2->getExtendedModel());
 		$this->assertEquals($model, $model2->getParent());
 		
 		$this->assertCount(1, $model2->getAncestors());

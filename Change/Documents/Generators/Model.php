@@ -39,7 +39,7 @@ class Model
 	/**
 	 * @var \Change\Documents\Generators\Model
 	 */
-	protected $extendModel;
+	protected $extendedModel;
 	
 	/**
 	 * @var Property
@@ -54,12 +54,12 @@ class Model
 	/**
 	 * @var string
 	 */
-	protected $extend;
+	protected $extends;
 	
 	/**
 	 * @var boolean
 	 */
-	protected $inject;
+	protected $replace;
 
 	/**
 	 * @var boolean
@@ -205,11 +205,11 @@ class Model
 						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
 					break;
-				case "extend":
-					$this->extend = $value;
+				case "extends":
+					$this->extends = $value;
 					break;
-				case "inject":
-					$this->inject = ($value === 'true');
+				case "replace":
+					$this->replace = ($value === 'true');
 					break;
 				case "icon":
 					$this->icon = $value;
@@ -262,7 +262,7 @@ class Model
 			}
 		}
 		
-		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->inject === false)
+		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->replace === false)
 		{
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
@@ -274,7 +274,7 @@ class Model
 				$this->backofficeIndexable = false;
 			}
 
-			if  ($this->extend || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
+			if  ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
 				|| $this->localized || $this->editable || $this->publishable || $this->useVersion)
 			{
 				throw new \RuntimeException('Property stateless can not be applicable', 54024);
@@ -328,13 +328,13 @@ class Model
 		{
 			throw new \RuntimeException('Invalid document element name ' . $this .' too long', 54009);
 		}
-		if ($this->extend)
+		if ($this->extends)
 		{
 			if ($this->localized !== null)
 			{
 				throw new \RuntimeException('Invalid localized attribute ' . $this, 54015);
 			}
-			if ($this->inject)
+			if ($this->replace)
 			{
 				if ($this->publishable)
 				{
@@ -348,7 +348,7 @@ class Model
 		}
 		else
 		{
-			if ($this->inject)
+			if ($this->replace)
 			{
 				throw new \RuntimeException('Invalid inject attribute ' . $this, 54018);
 			}
@@ -469,17 +469,17 @@ class Model
 	/**
 	 * @return \Change\Documents\Generators\Model
 	 */
-	public function getExtendModel()
+	public function getExtendedModel()
 	{
-		return $this->extendModel;
+		return $this->extendedModel;
 	}
 
 	/**
 	 * @param \Change\Documents\Generators\Model $extendModel
 	 */
-	public function setExtendModel($extendModel)
+	public function setExtendedModel($extendModel)
 	{
-		$this->extendModel = $extendModel;
+		$this->extendedModel = $extendModel;
 	}
 
 	/**
@@ -580,17 +580,17 @@ class Model
 	/**
 	 * @return string
 	 */
-	public function getExtend()
+	public function getExtends()
 	{
-		return $this->extend;
+		return $this->extends;
 	}
 	
 	/**
 	 * @return boolean
 	 */
-	public function getInject()
+	public function getReplace()
 	{
-		return $this->inject;
+		return $this->replace;
 	}	
 	
 	/**
@@ -790,7 +790,7 @@ class Model
 	 */
 	public function getModelClassName()
 	{
-		if ($this->getInject())
+		if ($this->getReplace())
 		{
 			return $this->getParent()->getModelClassName();
 		}
@@ -810,7 +810,7 @@ class Model
 	 */
 	public function getBaseDocumentClassName()
 	{
-		if ($this->getInject())
+		if ($this->getReplace())
 		{
 			return $this->getParent()->getBaseDocumentClassName();
 		}
@@ -830,7 +830,7 @@ class Model
 	 */
 	public function getDocumentClassName()
 	{
-		if ($this->getInject())
+		if ($this->getReplace())
 		{
 			return $this->getParent()->getDocumentClassName();
 		}
@@ -851,7 +851,7 @@ class Model
 	 */
 	public function getDocumentLocalizedClassName()
 	{
-		if ($this->getInject())
+		if ($this->getReplace())
 		{
 			return $this->getParent()->getDocumentLocalizedClassName();
 		}

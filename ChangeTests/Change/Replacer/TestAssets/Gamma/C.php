@@ -1,5 +1,5 @@
 <?php
-namespace ChangeTests\Change\Injection\TestAssets\Gamma;
+namespace ChangeTests\Change\Replacer\TestAssets\Gamma;
 
 class C
 {

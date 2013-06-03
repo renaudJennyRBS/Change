@@ -1,11 +1,11 @@
 <?php
-namespace ChangeTests\Change\Injection\Extractor;
+namespace ChangeTests\Change\Replacer\Extractor;
 
 class ExtractedClassTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConstruct()
 	{
-		$class = new \Change\Injection\Extractor\ExtractedClass();
+		$class = new \Change\Replacer\Extractor\ExtractedClass();
 		$class->setName("TestClass");
 		$class->setAbstract(true);
 		$class->setBody('{}');
@@ -14,7 +14,7 @@ class ExtractedClassTest extends \PHPUnit_Framework_TestCase
 	
 	public function testInvalidBody()
 	{
-		$class = new \Change\Injection\Extractor\ExtractedClass();
+		$class = new \Change\Replacer\Extractor\ExtractedClass();
 		$class->setBody(' {}    ');
 		// The above is valid
 		$this->assertTrue(true);
@@ -24,7 +24,7 @@ class ExtractedClassTest extends \PHPUnit_Framework_TestCase
 	
 	public function testRuntimeToString()
 	{
-		$class = new \Change\Injection\Extractor\ExtractedClass();
+		$class = new \Change\Replacer\Extractor\ExtractedClass();
 		$class->setAbstract(true);
 		$class->setBody('{}');
 		$this->setExpectedException('\\RuntimeException');

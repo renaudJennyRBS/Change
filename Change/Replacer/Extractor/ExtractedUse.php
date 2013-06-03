@@ -1,8 +1,8 @@
 <?php
-namespace Change\Injection\Extractor;
+namespace Change\Replacer\Extractor;
 
 /**
- * @name \Change\Injection\Extractor\ExtractedUse
+ * @name \Change\Replacer\Extractor\ExtractedUse
  */
 class ExtractedUse
 {

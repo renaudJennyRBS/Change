@@ -1,10 +1,10 @@
 <?php
-namespace Change\Injection;
+namespace Change\Replacer;
 
 /**
- * @name \Change\Injection\Injection
+ * @name \Change\Replacer\Replacer
  */
-class Injection
+class Replacer
 {
 	
 	/**
@@ -33,16 +33,16 @@ class Injection
 	 */
 	public function compile($oldInfo = null)
 	{
-		$newInjectionInfos = array();
+		$newReplacerInfos = array();
 		if ($oldInfo === null)
 		{
 			$oldInfo = $this->loadInfos();
 		}
 
 		$compiledFileNames = array();
-		$compiledDir = $this->workspace->compilationPath('Injection');
-		$injectionArray = $this->configuration->getEntry('Change/Injection/class');
-		foreach ($injectionArray as $originalClassName => $classNames)
+		$compiledDir = $this->workspace->compilationPath('Replacer');
+		$replacer = $this->configuration->getEntry('Change/Replacer/class');
+		foreach ($replacer as $originalClassName => $classNames)
 		{
 			$originalClassInfo = $this->buildClassInfo($originalClassName, $oldInfo);
 
@@ -55,15 +55,15 @@ class Injection
 			}
 
 			if (count($replacingClassInfos) === 0) {continue;}
-			$injection = new ClassInjection($originalClassInfo, $replacingClassInfos);
-			$injection->setWorkspace($this->workspace);
-			$result = $injection->compile();
+			$rep = new ClassReplacer($originalClassInfo, $replacingClassInfos);
+			$rep->setWorkspace($this->workspace);
+			$result = $rep->compile();
 			foreach ($result['compiled'] as $infos)
 			{
 				$compiledFileNames[] = basename($infos['path']);
 				$compiledDir = dirname($infos['path']);
 			}
-			$newInjectionInfos = array_merge($newInjectionInfos, $result['source']);
+			$newReplacerInfos = array_merge($newReplacerInfos, $result['source']);
 		}
 
 		$dir = new \DirectoryIterator($compiledDir);
@@ -76,9 +76,9 @@ class Injection
 			}
 		}
 
-		if (count($newInjectionInfos))
+		if (count($newReplacerInfos))
 		{
-			$this->saveInfos($newInjectionInfos);
+			$this->saveInfos($newReplacerInfos);
 		}
 	}
 
@@ -102,13 +102,13 @@ class Injection
 	}
 
 	/**
-	 * Get the array containing all the injection related informations
+	 * Get the array containing all the replacer related informations
 	 *
 	 * @return array
 	 */
 	protected function loadInfos()
 	{
-		$path = $this->workspace->compilationPath('Injection', 'info.ser');
+		$path = $this->workspace->compilationPath('Replacer', 'info.ser');
 		if (file_exists($path))
 		{
 			return unserialize(file_get_contents($path));
@@ -117,25 +117,25 @@ class Injection
 	}
 
 	/**
-	 * Save injection to file
+	 * Save replacer to file
 	 *
 	 * @param array $infos
 	 */
 	protected function saveInfos($infos)
 	{
-		$path = $this->workspace->compilationPath('Injection', 'info.ser');
+		$path = $this->workspace->compilationPath('Replacer', 'info.ser');
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, serialize($infos));
 	}
 
 	/**
-	 * This method will update the injection only if needed.
+	 * This method will update the replacer only if needed.
 	 */
 	public function update()
 	{
-		// Check if injection is up to date
-		$injectionInfos = $this->loadInfos();
-		foreach ($injectionInfos as $className => $value)
+		// Check if replacer is up to date
+		$replacer = $this->loadInfos();
+		foreach ($replacer as $className => $value)
 		{
 			if (isset($value['mtime']))
 			{

@@ -37,7 +37,7 @@ class BaseDocumentClass
 	{
 		$this->compiler = $compiler;
 		$code = '<' . '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		if (!$model->getInject())
+		if (!$model->getReplace())
 		{
 			$code .= '/**
  * @name ' . $model->getBaseDocumentClassName() . '
@@ -45,7 +45,7 @@ class BaseDocumentClass
  */' . PHP_EOL;
 		}
 
-		$extendModel = $model->getExtendModel();
+		$extendModel = $model->getExtendedModel();
 		$extend = $extendModel ? $extendModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
 
 		$interfaces = array();

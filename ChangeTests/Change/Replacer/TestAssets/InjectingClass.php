@@ -4,6 +4,6 @@ class InjectingClass extends TestClass
 {
 	public function test()
 	{
-		return "Injected!";
+		return "replaced!";
 	}
 }
