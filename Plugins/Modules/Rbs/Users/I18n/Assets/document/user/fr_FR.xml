@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.users.document.user" lcid="fr_FR">
-	<include id="m.change.generic.document"/>
+<i18n baseKey="m.rbs.users.document.user" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
 	<key id="login">nom d'utilisateur</key>
 	<key id="email">adresse e-mail</key>
 	<key id="pseudonym">pseudonyme</key>

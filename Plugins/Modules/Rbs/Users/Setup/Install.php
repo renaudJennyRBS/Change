@@ -1,8 +1,8 @@
 <?php
-namespace Change\Users\Setup;
+namespace Rbs\Users\Setup;
 
 /**
- * @name \Change\Users\Setup\Install
+ * @name \Rbs\Users\Setup\Install
  */
 class Install
 {
@@ -15,10 +15,10 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Presentation/Blocks/Change_Users',
+		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_Users',
 			'\\Change\\Users\\Blocks\\SharedListenerAggregate');
 
-		$config->addPersistentEntry('Change/Admin/Listeners/Change_Users',
+		$config->addPersistentEntry('Change/Admin/Listeners/Rbs_Users',
 			'\\Change\\Users\\Admin\\Register');
 	}
 
@@ -30,25 +30,25 @@ class Install
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
-		$groupModel = $documentServices->getModelManager()->getModelByName('Change_Users_Group');
+		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_Users_Group');
 		$query = new \Change\Documents\Query\Builder($documentServices, $groupModel);
 		$group = $query->andPredicates($query->eq('realm', 'rest'))->getFirstDocument();
 		if (!$group)
 		{
-			/* @var $group \Change\Users\Documents\Group */
+			/* @var $group \Rbs\Users\Documents\Group */
 			$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 			$group->setLabel('Backoffice');
 			$group->setRealm('rest');
 			$group->create();
 
-			/* @var $group2 \Change\Users\Documents\Group */
+			/* @var $group2 \Rbs\Users\Documents\Group */
 			$group2 = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 			$group2->setLabel('Site Web');
 			$group2->setRealm('web');
 			$group2->create();
 
-			/* @var $user \Change\Users\Documents\User */
-			$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Users_User');
+			/* @var $user \Rbs\Users\Documents\User */
+			$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Users_User');
 			$user->setLabel('Administrator');
 			$user->setEmail('admin@temporary.fr');
 			$user->setLogin('admin');

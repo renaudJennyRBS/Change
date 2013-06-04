@@ -1,12 +1,12 @@
 <?php
-namespace Change\Users\Blocks;
+namespace Rbs\Users\Blocks;
 
 use Change\Presentation\Blocks\Standard\RegisterByBlockName;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
- * @name \Change\Users\Blocks\SharedListenerAggregate
+ * @name \Rbs\Users\Blocks\SharedListenerAggregate
  */
 class SharedListenerAggregate implements SharedListenerAggregateInterface
 {
@@ -15,7 +15,7 @@ class SharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		new  RegisterByBlockName('Change_Users_Login', true, $events);
+		new  RegisterByBlockName('Rbs_Users_Login', true, $events);
 	}
 
 	/**

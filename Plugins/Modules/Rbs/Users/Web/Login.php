@@ -1,5 +1,5 @@
 <?php
-namespace Change\Users\Web;
+namespace Rbs\Users\Web;
 
 use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
@@ -7,7 +7,7 @@ use Change\Documents\DocumentManager;
 use Change\Documents\Interfaces\Publishable;
 
 /**
-* @name \Change\Users\Events\Login
+* @name \Rbs\Users\Events\Login
 */
 class Login
 {
@@ -28,7 +28,7 @@ class Login
 		$request = $event->getRequest();
 		if ($request->getMethod() === 'POST')
 		{
-			if (strpos($request->getPath(), 'Action/Change/Users/HttpLogin') !== false)
+			if (strpos($request->getPath(), 'Action/Rbs/Users/HttpLogin') !== false)
 			{
 				$this->authenticate($event);
 			}
@@ -54,7 +54,7 @@ class Login
 					$event->setAuthentication($authentication);
 					$datas = array('accessorId' => $accessorId);
 					$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
-					if ($user instanceof \Change\Users\Documents\User)
+					if ($user instanceof \Rbs\Users\Documents\User)
 					{
 						$datas['pseudonym'] = $user->getPseudonym();
 						$datas['email'] = $user->getEmail();
@@ -90,14 +90,14 @@ class Login
 	protected function findAccessorId($realm, $login, $password, DocumentManager $documentManager)
 	{
 
-		$qb = new \Change\Documents\Query\Builder($documentManager->getDocumentServices(), 'Change_Users_User');
+		$qb = new \Change\Documents\Query\Builder($documentManager->getDocumentServices(), 'Rbs_Users_User');
 		$qb1 = $qb->getPropertyBuilder('groups');
 		$qb->andPredicates($qb->eq('login', $login), $qb->published(), $qb1->eq('realm', $realm));
 		$collection = $qb->getDocuments();
 
 		foreach ($collection as $document)
 		{
-			if ($document instanceof \Change\Users\Documents\User)
+			if ($document instanceof \Rbs\Users\Documents\User)
 			{
 				if ($document->getPublishableFunctions()->published() && $document->checkPassword($password))
 				{

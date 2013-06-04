@@ -27,7 +27,7 @@
             <dboptions length="20" />
         </property>
 
-		<property name="groups" type="DocumentArray" document-type="Change_Users_Group" />
+		<property name="groups" type="DocumentArray" document-type="Rbs_Users_Group" />
 
 		<property name="password" type="String" stateless="true">
 			<constraint name="maxSize" max="50" />

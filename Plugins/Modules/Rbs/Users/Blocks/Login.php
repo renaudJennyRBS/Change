@@ -1,5 +1,5 @@
 <?php
-namespace Change\Users\Blocks;
+namespace Rbs\Users\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
@@ -7,7 +7,7 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Change\Users\Blocks\Login
+ * @name \Rbs\Users\Blocks\Login
  */
 class Login extends Block
 {

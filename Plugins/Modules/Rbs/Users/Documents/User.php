@@ -1,14 +1,14 @@
 <?php
-namespace Change\Users\Documents;
+namespace Rbs\Users\Documents;
 
 use Change\Stdlib\String;
 
 /**
  * Class User
- * @package Change\Users\Documents
- * @name \Change\Users\Documents\User
+ * @package Rbs\Users\Documents
+ * @name \Rbs\Users\Documents\User
  */
-class User extends \Compilation\Change\Users\Documents\User
+class User extends \Compilation\Rbs\Users\Documents\User
 {
 	/**
 	 * @return string
@@ -36,7 +36,7 @@ class User extends \Compilation\Change\Users\Documents\User
 	protected function getSaltString()
 	{
 		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
-		return $cfg->getEntry('Change/Users/salt');
+		return $cfg->getEntry('Rbs/Users/salt');
 	}
 
 	/**
@@ -63,7 +63,7 @@ class User extends \Compilation\Change\Users\Documents\User
 		$options = array();
 		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
 		$logging = $this->getDocumentServices()->getApplicationServices()->getLogging();
-		$cost = $cfg->getEntry('Change/Users/bcrypt/cost');
+		$cost = $cfg->getEntry('Rbs/Users/bcrypt/cost');
 		if ($cost)
 		{
 			$options['cost'] = $cost;

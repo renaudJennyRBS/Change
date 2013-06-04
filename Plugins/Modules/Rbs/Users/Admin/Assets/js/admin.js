@@ -9,23 +9,23 @@
 		// Users
 
 		. when(
-			'/Change/Users/User',
+			'/Rbs/Users/User',
 			{
-				templateUrl : 'Change/Users/User/list.twig',
+				templateUrl : 'Rbs/Users/User/list.twig',
 				reloadOnSearch : false
 			})
 
 			. when(
-			'/Change/Users/User/:id',
+			'/Rbs/Users/User/:id',
 			{
-				templateUrl : 'Change/Users/User/form.twig',
+				templateUrl : 'Rbs/Users/User/form.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Change/Users/Login',
+			'/Rbs/Users/Login',
 			{
-				templateUrl : 'Change/Users/login.twig',
+				templateUrl : 'Rbs/Users/login.twig',
 				reloadOnSearch : false
 			})
 		;
@@ -36,9 +36,9 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
 
 			// Users
-			$delegate.register('Change_Users_User', {
-				'form'  : '/Change/Users/User/:id',
-				'list'  : '/Change/Users/User'
+			$delegate.register('Rbs_Users_User', {
+				'form'  : '/Rbs/Users/User/:id',
+				'list'  : '/Rbs/Users/User'
 			});
 
 			return $delegate;
@@ -72,6 +72,6 @@
 		'OAuthService',
 		'RbsChange.NotificationCenter'
 	];
-	app.controller('Change_Users_User_LoginController', ChangeUsersUserLoginController);
+	app.controller('Rbs_Users_User_LoginController', ChangeUsersUserLoginController);
 
 })();

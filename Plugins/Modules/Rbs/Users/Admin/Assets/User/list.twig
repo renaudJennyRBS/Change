@@ -1,15 +1,13 @@
-<div data-ng-controller="Change_Users_User_ListController">
-	<page-header title="{{ i18nAttr('m.change.users.document.user-list', ['ucf']) }}"></page-header>
-
-	<search-filters model="Change_Users_User" query="query" text-search="textSearch"></search-filters>
-
+<div data-ng-controller="Rbs_Users_User_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.users.document.user-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Users_User" query="query" text-search="textSearch"></search-filters>
 	<div>
-		<a href="Change/Users/User/new">{{ i18n('m.change.users.document.user-create', ['ucf']) }}</a>
+		<a href="Rbs/Users/User/new">{{ i18n('m.rbs.users.document.user-create', ['ucf']) }}</a>
 	</div>
 
 	<document-list data-dlid="DLUsers1"
 	               publishable="true"
-	               model="Change_Users_User"
+	               model="Rbs_Users_User"
 	               query="query">
 		<column name="label" label="Nom" primary="true"></column>
 	</document-list>
