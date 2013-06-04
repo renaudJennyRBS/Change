@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.brand.admin.js" lcid="fr_FR">
-	<include id="m.change.brand.document"/>
-	<key id="module-name">marques</key>
-</i18n>

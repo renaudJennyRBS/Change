@@ -1,9 +1,9 @@
 <?php
-namespace Change\Brand\Setup;
+namespace Rbs\Brand\Setup;
 
 
 /**
- * @name \Change\Brand\Setup\Install
+ * @name \Rbs\Brand\Setup\Install
  */
 class Install
 {
@@ -16,7 +16,7 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Admin/Listeners/Change_Brand', '\\Change\\Brand\\Admin\\Register');
+		$config->addPersistentEntry('Change/Admin/Listeners/Rbs_Brand', '\\Rbs\\Brand\\Admin\\Register');
 	}
 
 	/**
