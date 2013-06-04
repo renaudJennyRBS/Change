@@ -83,20 +83,20 @@ class PredicateBuilderTest extends TestCase
 
 		$treeManager = $this->getDocumentServices()->getTreeManager();
 		/* @var $folderDoc \Change\Generic\Documents\Folder */
-		$folderDoc = $dm->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$folderDoc = $dm->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 		$folderDoc->setLabel('Root');
 		$folderDoc->initialize(2000);
 		$folderDoc->save();
 		$rn = $treeManager->insertRootNode($folderDoc, 'Project_Tests');
 
-		$folderDoc = $dm->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$folderDoc = $dm->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 		$folderDoc->setLabel('F 1');
 		$folderDoc->initialize(2001);
 		$folderDoc->save();
 		$treeManager->insertNode($rn, $folderDoc);
 		$treeManager->insertNode($rn, $dm->getDocumentInstance(1000));
 
-		$folderDoc = $dm->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$folderDoc = $dm->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 		$folderDoc->setLabel('F 10');
 		$folderDoc->initialize(2010);
 		$folderDoc->save();
@@ -104,7 +104,7 @@ class PredicateBuilderTest extends TestCase
 		$treeManager->insertNode($n, $dm->getDocumentInstance(1001));
 		$treeManager->insertNode($n, $dm->getDocumentInstance(1002));
 
-		$folderDoc = $dm->getNewDocumentInstanceByModelName('Change_Generic_Folder');
+		$folderDoc = $dm->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 		$folderDoc->setLabel('F 11');
 		$folderDoc->initialize(2011);
 		$folderDoc->save();
@@ -555,7 +555,7 @@ class PredicateBuilderTest extends TestCase
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(0, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Change_Generic_Folder');
+		$builder = new Builder($this->getDocumentServices(), 'Rbs_Generic_Folder');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->ancestorOf(2011));
 		$ids = $builder->getDocuments()->ids();
