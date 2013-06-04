@@ -21,19 +21,6 @@
 			[i18n.trans('m.rbs.catalog.admin.js.billingarea-list | ucf'), "Rbs/Catalog/BillingArea"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Rbs_Catalog_BillingArea');
-		DL.viewMode = 'list';
-		DL.sort.column = 'nodeOrder';
-		DL.sort.descending = false;
-
-		$scope.createActions = [
-			{ 'label': i18n.trans('m.rbs.catalog.admin.js.billingarea | ucf'), 'url': 'Rbs/Catalog/BillingArea/new', 'icon': 'file' }
-		];
-
-		// Configure DataTable columns
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		MainMenu.loadModuleMenu('Rbs_Catalog');
 	}
 

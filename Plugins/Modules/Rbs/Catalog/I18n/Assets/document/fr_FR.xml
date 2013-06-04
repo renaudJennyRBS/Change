@@ -2,14 +2,20 @@
 <i18n baseKey="m.rbs.catalog.document" lcid="fr_FR">
 	<key id="product">produit</key>
 	<key id="product-list">produits</key>
+	<key id="product-create">créer un produit</key>
 	<key id="billingarea">zone de tarification</key>
 	<key id="billingarea-list">zones de tarification</key>
+	<key id="billingarea-create">créer une zone de tarification</key>
 	<key id="category">catégorie</key>
 	<key id="category-list">catégories</key>
+	<key id="category-create">créer une catégorie</key>
 	<key id="price">prix</key>
 	<key id="price-list">prix</key>
+	<key id="price-create">créer un prix</key>
 	<key id="shop">boutique</key>
 	<key id="shop-list">boutiques</key>
+	<key id="shop-create">créer une boutique</key>
 	<key id="currency">devise</key>
 	<key id="currency-list">devises</key>
+	<key id="currency-create">créer une devise</key>
 </i18n>
