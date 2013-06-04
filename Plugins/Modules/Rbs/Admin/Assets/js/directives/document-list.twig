@@ -1,0 +1,94 @@
+<div class="alert alert-info" ng-show="collection.length == 0 && !loading">
+	<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
+	{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
+	<ul>
+		<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
+		<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
+	</ul>
+</div>
+
+<div class="btn-toolbar">
+	<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
+		<a class="btn" href go-up-in-tree></a>
+	</div>
+
+	<clipboard-add-widget selected="selectedDocuments"></clipboard-add-widget>
+
+	<div class="btn-virtual-group" data-ng-repeat="item in actions" data-ng-switch="item.type">
+		<div data-ng-switch-when="single" class="btn-group">
+			<button data-bind-action="(= item.name =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
+		</div>
+		<div data-ng-switch-when="group" class="btn-group">
+			<button data-ng-repeat="action in item.actions" data-bind-action="(= action =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
+		</div>
+	</div>
+</div>
+
+<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)">
+
+<table class="document-list table table-condensed table-bordered table-striped table-hover" ng-hide="collection.length == 0 && !loading">
+	<thead>
+		<tr>
+		</tr>
+	</thead>
+	<tbody ng-repeat="doc in collection">
+		<tr class="preview-row" ng-if="isPreview(doc)">
+			<td class="preview">
+				<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>
+			</td>
+		</tr>
+		<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE' && ! isPreview(doc), 'warning': doc.publicationStatus=='DEACTIVATED'}">
+		</tr>
+	</tbody>
+</table>
+
+<footer class="rbsc-list-footer">
+
+		<div class="pull-right">
+
+			<div class="pagination pagination-small" style="display: block; margin: 0">
+				<ul>
+					<li ng-class="{disabled: isFirstPage()}">
+						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(0) =)"><i class="icon-double-angle-left"></i></a>
+						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-double-angle-left"></i></a>
+					</li>
+					<li ng-class="{disabled: isFirstPage()}">
+						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(currentPage-1) =)"><i class="icon-angle-left"></i></a>
+						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-double-angle-left"></i></a>
+					</li>
+
+					<li ng-repeat="page in pages" ng-class="{active: page==currentPage, disabled: page=='...'}"><a
+								ng-href="(= pageUrl(page) =)">(= page + 1 =)</a></li>
+
+					<li ng-class="{disabled: isLastPage()}">
+						<a ng-if="!isLastPage()" ng-href="(= pageUrl(currentPage+1) =)"><i class="icon-angle-right"></i></a>
+						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-double-angle-right"></i></a>
+					</li>
+
+					<li ng-class="{disabled: isLastPage()}">
+						<a ng-if="!isLastPage()" ng-href="(= pageUrl(pages.length-1) =)"><i class="icon-double-angle-right"></i></a>
+						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-double-angle-right"></i></a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+		<div class="pagination-info">
+			<strong ng-pluralize data-count="pagination.total"
+			        data-when="{'0':'Aucun élément', 'one': 'Un élément', 'other':'{} éléments'}"></strong>
+				<span class="muted" ng-show="pages.length > 0">
+					sur
+					<span ng-pluralize data-count="pages.length" data-when="{'one': 'une page', 'other': '{} pages'}"></span>
+				</span>
+			<div class="btn-group dropup">
+				<button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+					(= pagination.limit =) par page <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right" style="text-align: left">
+					<li ng-repeat="ps in predefinedPageSizes"><a href ng-href="(= pageUrl(0, ps) =)">(= ps =) <i class="icon-ok" ng-if="pagination.limit == ps"></i></a></li>
+				</ul>
+			</div>
+		</div>
+
+</footer>

@@ -1,0 +1,47 @@
+<div class="navbar navbar-inverse" id="mainNavbar">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="javascript:;" ng-click="menu.toggle()" title="{{ i18nAttr('m.rbs.admin.menu.open', ['ucf']) }}"><img src="Change/Admin/img/logo-rbs-change@2x.png" style="width:159px; height:25px;" alt="Logo RBS Change"></a> <a
+					class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span>
+			</a>
+			<ul class="nav notifications">
+				<li class="dropdown">
+				</li>
+			</ul>
+
+			<div class="nav-collapse">
+
+				<form action="javascript:;" data-toggle="dropdown" onsubmit="$.rbschange.navigation.go('search/' + $('#globalSearchInput').val()); return false;" class="navbar-search pull-left">
+					<input accesskey="4" type="text" placeholder="Rechercher..." class="search-query span2" id="globalSearchInput" value=""/>
+					<ul class="dropdown-menu" id="globalSearchInputDropDown" style="z-index:3000"></ul>
+				</form>
+
+				<ul class="nav pull-right">
+					<li class="dropdown"><a data-toggle="dropdown"
+					                        class="dropdown-toggle" href="javascript:;"><i class="icon-user"></i> (= user.label =) <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href ng-href="(= user.url() =)" data-ui-search="profile"><i class="icon-user"></i> {{ i18nAttr('m.rbs.admin.menu.profile', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" data-ng-click="logout()" data-ui-search="logout"><i class="icon-signout"></i> {{ i18nAttr('m.rbs.admin.menu.logout', ['ucf']) }}</a></li>
+						</ul>
+					</li>
+				</ul>
+
+				<ul class="nav pull-right">
+					<li class="dropdown"><a data-toggle="dropdown"
+					                        class="dropdown-toggle" href="javascript:;">{{ i18nAttr('m.rbs.admin.menu.tools', ['ucf']) }} <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="Change/Users/User"><i class="icon-user"></i> {{ i18nAttr('m.rbs.admin.menu.users', ['ucf']) }}</a></li>
+							<li class="divider"></li>
+							<li><a href="javascript:;" full-screen-toggle><i class="icon-fullscreen"></i> {{ i18nAttr('m.rbs.admin.menu.fullscreen-mode', ['ucf']) }}</a></li>
+							<li class="divider"></li>
+							<li><a href="about" data-ui-search="about,info,version,rbs,change"><i class="icon-info-sign"></i> {{ i18nAttr('m.rbs.admin.menu.about', ['ucf']) }}</a></li>
+						</ul>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+	</div>
+</div>

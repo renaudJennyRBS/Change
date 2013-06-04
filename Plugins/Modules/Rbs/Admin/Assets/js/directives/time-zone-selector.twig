@@ -1,0 +1,7 @@
+<div>
+	<p>{{ i18n('m.rbs.admin.forms.time-zone-selector-text') }}</p>
+	<select size="10" data-ng-options="getTimeZoneLabel(tz) for tz in timeZones" data-ng-model="selectedTimeZone"></select>
+	<div class="form-actions">
+		<button type="button" class="btn btn-primary" ng-click="select('form')">{{ i18n('m.rbs.admin.submit', ['ucf']) }}</button>
+	</div>
+</div>

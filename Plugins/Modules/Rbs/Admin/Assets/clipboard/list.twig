@@ -1,0 +1,76 @@
+<div data-ng-controller="Rbs_Admin_ClipboardController">
+
+	<div class="page-header">
+		<h2>Presse-papier</h2>
+	</div>
+
+	<div class="btn-toolbar has-captions-top">
+		<div class="btn-virtual-group" data-ng-repeat="item in DL.toolbar.actions" data-ng-switch="item.type">
+			<div data-ng-switch-when="single" class="btn-group">
+				<button bind-action="(=item.name=)" class="btn" type="button"></button>
+			</div>
+			<div data-ng-switch-when="group" class="btn-group">
+				<button data-ng-repeat="action in item.actions" data-bind-action="(=action=)" class="btn" type="button"></button>
+			</div>
+			<div data-ng-switch-when="group-with-label" class="btn-group">
+				<label class="caption">(=item.label=)</label>
+				<button data-ng-repeat="action in item.actions" data-bind-action="(=action=)" class="btn" type="button"></button>
+			</div>
+		</div>
+</div>
+
+	<table
+		data-ng-show="DL.documents.length" class="document-list table table-condensed table-bordered table-striped table-hover data-ng-cloak">
+		<thead>
+			<tr>
+				<th style="text-align: center; width: 30px"><input type="checkbox" data-ng-model="DL.cbSelectAll" data-ng-change="DL.toggleSelectAll()" /></th>
+				<th style="text-align: center; width: 20px" data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('status')]">
+					<a href="javascript:;" data-ng-click="DL.toggleSort('status')">
+						État
+						<i class="column-sort-indicator" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn('status')"></i>
+					</a>
+				</th>
+				<th data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
+					<a href="javascript:;" data-ng-click="DL.toggleSort('label')">
+						Libellé
+						<i class="column-sort-indicator" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn('label')"></i>
+					</a>
+				</th>
+				<th data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('model')]">
+					<a href="javascript:;" data-ng-click="DL.toggleSort('model')">
+						Type
+						<i class="column-sort-indicator" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn('model')"></i>
+					</a>
+				</th>
+				<th style="text-align:center; width:30px"><i class="icon-remove-circle"></i></th>
+				<th style="text-align:center; width:30px"><i class="icon-trash"></i></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr data-ng-repeat="doc in DL.documents" data-ng-class="{selected: doc.selected, warning: doc.publicationStatus!='PUBLISHABLE'}">
+				<td style="text-align: center"><input type="checkbox" data-ng-model="doc.selected" data-ng-click="DL.checkDocumentRow($event, $index, doc)" data-docid="(=doc.id=)"/></td>
+				<td style="text-align: center">
+					<status data-ng-model="doc"/>
+				</td>
+				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
+					<a data-ng-href="(=doc | documentURL=)" href="javascript:;" data-ng-click="selectDocument(doc)" data-ng-bind-html-unsafe="doc.label | highlight:query"></a>
+				</td>
+				<td>(=doc.model | modelLabel=)</td>
+				<td style="text-align: center">
+					<button class="btn btn-small" type="button" data-ng-click="removeFromSelection(doc)" title="Retirer de la Sélection"><i class="icon-remove-circle"></i></button>
+				</td>
+				<td style="text-align: center">
+					<button class="btn btn-danger btn-small" type="button" data-ng-click="DL.remove(doc)"><i class="icon-trash icon-white"></i></button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<footer class="row-fluid rbsc-list-footer" data-ng-show="DL.documents.length" data-mask="(=DL.loading=)">
+		<div class="span12">
+			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
+		</div>
+	</footer>
+
+</div>
