@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.catalog.admin.js" lcid="fr_FR">
-	<include id="m.change.catalog.document"/>
-	<key id="module-name">catalogue et produits</key>
-</i18n>

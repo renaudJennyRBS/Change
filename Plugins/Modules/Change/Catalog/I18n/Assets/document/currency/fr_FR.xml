@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.catalog.document.currency" lcid="fr_FR">
-	<include id="m.change.generic.document"/>
-	<key id="code">code ISO</key>
-	<key id="code-help" format="html"><![CDATA[Code <a href="https://fr.wikipedia.org/wiki/ISO_4217">ISO 4217</a> de la devise.]]></key>
-	<key id="symbol">symbole</key>
-</i18n>
