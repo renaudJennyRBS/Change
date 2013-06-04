@@ -12,7 +12,7 @@ use Zend\EventManager\EventManager;
  */
 class ThemeManager
 {
-	const DEFAULT_THEME_NAME = 'Change_Base';
+	const DEFAULT_THEME_NAME = 'Rbs_Base';
 	const EVENT_LOADING = 'loading';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';

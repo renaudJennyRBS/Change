@@ -602,9 +602,9 @@ class AuthenticationListener
 		$dbProvider = $documentManager->getApplicationServices()->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$gtb = $fb->getDocumentTable('Change_Users_Group');
-		$utb = $fb->getDocumentTable('Change_Users_User');
-		$rtb = $fb->getDocumentRelationTable('Change_Users_User');
+		$gtb = $fb->getDocumentTable('Rbs_Users_Group');
+		$utb = $fb->getDocumentTable('Rbs_Users_User');
+		$rtb = $fb->getDocumentRelationTable('Rbs_Users_User');
 
 		$sq = $qb->select()
 			->addColumn($fb->alias($fb->getDocumentColumn('id', $utb), 'id'))
@@ -626,7 +626,7 @@ class AuthenticationListener
 		$collection = new \Change\Documents\DocumentCollection($documentManager, $sq->getResults());
 		foreach ($collection as $document)
 		{
-			if ($document instanceof \Change\Users\Documents\User)
+			if ($document instanceof \Rbs\Users\Documents\User)
 			{
 				if ($document->getPublishableFunctions()->published() && $document->checkPassword($password))
 				{

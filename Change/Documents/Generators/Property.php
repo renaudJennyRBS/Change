@@ -569,7 +569,7 @@ class Property
 				break;
 			case 'authorId':
 				$this->type = 'DocumentId';
-				$this->documentType = 'Change_Users_User';
+				$this->documentType = 'Rbs_Users_User';
 				break;
 			case 'documentVersion':
 				$this->type = 'Integer';

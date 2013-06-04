@@ -96,7 +96,7 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @return string For example: Change_Generic
+	 * @return string For example: Rbs_Generic
 	 */
 	public function getModuleName()
 	{
@@ -105,7 +105,7 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @return string For example: Change_Generic_Folder
+	 * @return string For example: Rbs_Generic_Folder
 	 */
 	public function getName()
 	{
