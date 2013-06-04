@@ -1,0 +1,35 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.media.document.image.label', true) }}
+		{{ forms.field('alt', 'String', 'm.rbs.media.document.image.alt', false) }}
+		{{ forms.field('localizePath', 'Boolean', 'm.rbs.media.document.image.localizepath', false) }}
+
+		<div class="control-group">
+			<label class="control-label" for="file">{{ i18n('m.rbs.media.document.image.path', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="image-uploader" ng-model="document.path"></div>
+			</div>
+		</div>
+
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='fileinfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.media.document.image.file-informations', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
+		{{ forms.readonly('width', 'm.rbs.media.document.image.width') }}
+		{{ forms.readonly('height', 'm.rbs.media.document.image.height') }}
+		{{ forms.readonly('mimeType', 'm.rbs.media.document.image.mimetype') }}
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

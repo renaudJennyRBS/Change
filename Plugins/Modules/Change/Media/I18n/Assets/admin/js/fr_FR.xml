@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.media.admin.js" lcid="fr_FR">
-	<include id="m.change.media.document"/>
-	<key id="module-name">médiathèque</key>
-</i18n>

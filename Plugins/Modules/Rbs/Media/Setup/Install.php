@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Brand\Setup;
-
+namespace Rbs\Media\Setup;
 
 /**
- * @name \Rbs\Brand\Setup\Install
+ * @name \Rbs\Media\Setup\Install
  */
 class Install
 {
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
@@ -16,7 +16,11 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Brand', '\\Rbs\\Brand\\Admin\\Register');
+
+		$config->addPersistentEntry('Change/Storage/default/class', '\\Change\\Storage\\Engines\\LocalStorage');
+		$config->addPersistentEntry('Change/Storage/default/basePath', $application->getWorkspace()->appPath('Storage'));
+		$config->addPersistentEntry('Change/Storage/default/useDBStat', true);
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
 	}
 
 	/**

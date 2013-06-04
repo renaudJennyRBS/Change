@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.generic.document" lcid="fr_FR">
+	<key id="id">identifiant</key>
+	<key id="model">modèle</key>
+	<key id="creationdate">date de création</key>
+	<key id="modificationdate">dernière modification</key>
+	<key id="reflcid">langue de référence</key>
+	<key id="lcid">langue</key>
+	<key id="publicationstatus">statut de publication</key>
+	<key id="startpublication">début de publication</key>
+	<key id="endpublication">fin de publication</key>
+	<key id="treename">arbre</key>
+	<key id="label">libellé</key>
+	<key id="authorname">nom de l'auteur</key>
+	<key id="authorid">identifant de l'auteur</key>
+	<key id="documentversion">version</key>
+</i18n>
