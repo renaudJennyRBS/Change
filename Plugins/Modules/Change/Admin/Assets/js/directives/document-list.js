@@ -22,10 +22,11 @@
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
 		'RbsChange.Breadcrumb',
+		'RbsChange.Actions',
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb) {
+	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions) {
 
 		return {
 			restrict    : 'E',
@@ -34,6 +35,7 @@
 
 			scope : {
 				// Isolated scope.
+				query : '='
 			},
 
 
@@ -53,6 +55,7 @@
 				// Status column
 				if (tAttrs.publishable === 'true') {
 					columns.unshift({
+						"name"   : "publicationStatus",
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : i18n.trans('m.change.admin.admin.js.status | ucf'),
@@ -63,6 +66,7 @@
 				// Selectable column
 				if (angular.isUndefined(tAttrs.selectable) || tAttrs.selectable === 'true') {
 					columns.unshift({
+						"name"   : "selectable",
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : '<input type="checkbox" ng-model="selection.all"/>',
@@ -82,6 +86,7 @@
 				// Order in tree column
 				if (tAttrs.tree) {
 					columns.push({
+						"name"  : "nodeOrder",
 						"align"  : "right",
 						"width"  : "90px",
 						"label"  : i18n.trans('m.change.admin.admin.js.order | ucf'),
@@ -92,6 +97,7 @@
 				// Status switch column
 				if (tAttrs.publishable === 'true') {
 					columns.push({
+						"name"   : "publicationStatusSwitch",
 						"align"  : "center",
 						"width"  : "90px",
 						"label"  : i18n.trans('m.change.admin.admin.js.activated | ucf'),
@@ -99,8 +105,11 @@
 					});
 				}
 
+				tElement.data('columns', []);
+
 				while (columns.length) {
 					column = columns.shift(0);
+					tElement.data('columns').push(column.name);
 
 					// Create header cell
 					$th = $(
@@ -143,7 +152,12 @@
 										'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
 										' ' + i18n.trans('m.change.admin.admin.js.preview | ucf') +
 									'</a> | ' +
-									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' + i18n.trans('m.change.admin.admin.js.edit | ucf') + '</a>' +
+									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
+										i18n.trans('m.change.admin.admin.js.edit | ucf') +
+									'</a> | ' +
+									'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
+										i18n.trans('m.change.admin.admin.js.delete | ucf') +
+									'</a>' +
 								'</small>' +
 							'</div>'
 						);
@@ -158,7 +172,9 @@
 				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
 
 
-				return function linkFn (scope) {
+				return function linkFn (scope, elm, attrs) {
+
+					var queryObject, search;
 
 					scope.collection = [];
 
@@ -190,7 +206,7 @@
 
 
 					scope.actions = [];
-					if (tAttrs.actions) {
+					if (attrs.actions) {
 						var actions = tAttrs.actions.split(/ +/);
 						angular.forEach(actions, function (action) {
 							scope.actions.push({
@@ -199,6 +215,20 @@
 							});
 						});
 					}
+
+
+					scope.hasColumn = function (columnName) {
+						return elm.data('columns').indexOf(columnName) !== -1;
+					};
+
+
+					scope.remove = function (doc, $event) {
+						Actions.execute("delete", {
+							'$docs'   : [ doc ],
+							'$target' : $event.target,
+							'$scope'  : scope
+						});
+					};
 
 
 					//
@@ -265,7 +295,7 @@
 					//
 
 
-					var search = $location.search();
+					search = $location.search();
 					scope.pagination = {
 						offset : search.offset || 0,
 						limit  : search.limit || PAGINATION_DEFAULT_LIMIT,
@@ -337,9 +367,19 @@
 					// Sort.
 					//
 
+					function getDefaultSortColumn () {
+						var defaultSortColumn = attrs.defaultSortColumn, i, c;
+						for (i=0 ; i<elm.data('columns').length && !defaultSortColumn; i++) {
+							c = elm.data('columns')[i];
+							if (c !== 'publicationStatus' && c !== 'selectable') {
+								defaultSortColumn = c;
+							}
+						}
+						return defaultSortColumn;
+					}
 
 					scope.sort =  {
-						column     : 'label',
+						column     : getDefaultSortColumn(),
 						descending : false
 					};
 
@@ -400,11 +440,14 @@
 						};
 
 						// Or may be we are simply loading a Collection...
-						if (tAttrs.model) {
+						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
+							Loading.start();
+							promise = REST.query(prepareQueryObject(angular.copy(queryObject)));
+						} else if (attrs.model && ! attrs.parentProperty) {
 							Loading.start();
 							promise = REST.collection(tAttrs.model, params);
 							// Or may be tree children?
-						} else if (tAttrs.tree) {
+						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						}
@@ -433,6 +476,11 @@
 					}
 
 
+					scope.reload = function () {
+						reload();
+					};
+
+
 					scope.location = $location;
 					scope.$watch('location.search()', function locationSearchFn (search) {
 						var	offset = parseInt(search.offset || 0, 10),
@@ -459,7 +507,23 @@
 					}, true);
 
 
-					if (tAttrs.tree) {
+					function buildQueryParentProperty () {
+						var currentNode = Breadcrumb.getCurrentNode();
+						if (angular.isObject(currentNode)) {
+							scope.query = {
+								"model" : "Change_Theme_PageTemplate",
+								"where" : {
+									"and" : [{
+										"op" : "eq",
+										"lexp" : { "property" : attrs.parentProperty },
+										"rexp" : { "value"    : currentNode.id }
+									}]
+								}
+							};
+						}
+					}
+
+					if (attrs.tree) {
 						// If in a tree context, reload the list when the Breadcrumb is ready
 						// and everytime it changes.
 						Breadcrumb.ready().then(function () {
@@ -468,10 +532,49 @@
 								reload();
 							});
 						});
+					} else if (attrs.parentProperty) {
+						Breadcrumb.ready().then(function () {
+							buildQueryParentProperty();
+							scope.$on('Change:TreePathChanged', function () {
+								buildQueryParentProperty();
+							});
+						});
 					} else {
 						// Not in a tree? Just load the flat list.
 						reload();
 					}
+
+
+					// Query
+
+					function prepareQueryObject (query) {
+						// Sort by "label" instead of "nodeOrder" when sending a query (search).
+						if (scope.sort.column === 'nodeOrder') {
+							scope.sort.column = 'label';
+							scope.sort.descending = 'asc';
+						}
+						query.offset = scope.pagination.offset;
+						query.limit  = scope.pagination.limit;
+						query.order  = [
+							{
+								'property' : scope.sort.column,
+								'order'    : scope.sort.descending ? 'desc' : 'asc'
+							}
+						];
+						return query;
+					}
+
+
+					scope.$watch('query', function (query, oldValue) {
+						if (query !== oldValue) {
+							queryObject = query;
+							console.log("query watch: query=", query, ", old=", oldValue);
+							reload();
+						} else {
+							reload();
+						}
+					}, true);
+
 
 				};
 

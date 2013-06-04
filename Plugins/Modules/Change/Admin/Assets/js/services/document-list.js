@@ -532,7 +532,8 @@
 			},
 
 
-			preview : function (index, $event) {
+			preview : function (index) {
+
 				if (this.hasPreview(index)) {
 					this.documents.splice(index+1, 1);
 					return;

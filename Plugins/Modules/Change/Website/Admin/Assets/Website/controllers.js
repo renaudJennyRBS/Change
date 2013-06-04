@@ -21,19 +21,6 @@
 			[i18n.trans('m.change.website.admin.js.website-list | ucf'), "Change/Website/Website"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Change_Website_Website');
-		DL.viewMode = 'list';
-		DL.sort.column = 'modificationDate';
-		DL.sort.descending = true;
-
-		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.website.admin.js.website | ucf'), 'url': 'Change/Website/Website/new' }
-		];
-
-		DL.columns.push({ id: 'hostName', label: i18n.trans("m.change.website.admin.js.host-name | ucf") });
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans("m.change.admin.admin.js.modification-date | ucf") });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		MainMenu.loadModuleMenu('Change_Website');
 	}
 

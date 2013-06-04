@@ -372,10 +372,8 @@ li.selected .img-preview {
 /***********/
 
 .pagination-info {
-	/*padding: 4px 12px;*/
 	line-height: 28px;
-	font-size: 90%;
-	text-align: right;
+/*	font-size: 90%;*/
 	margin-bottom: 10px;
 }
 
@@ -391,23 +389,14 @@ a.action:first-child {
 	margin-left: 0;
 }
 
-
-.animate-enter,
-.animate-leave {
-	-webkit-transition: 0.3s linear all; /* Safari/Chrome */
-	-moz-transition: 0.3s linear all; /* Firefox */
-	-o-transition: 0.3s linear all; /* Opera */
-	transition: 0.3s linear all; /* IE10+ and Future Browsers */
-
-	/* The animation preparation code */
-	opacity: 0;
-}
-
-.animate-enter.animate-enter-active {
-	/* The animation code itself */
-	opacity: 1;
-}
-
 .table-striped.document-list tbody tr td.preview {
 	background: white;
+}
+
+a.danger:hover {
+	color: red;
+}
+
+a.danger:visited:hover {
+	color: red;
 }

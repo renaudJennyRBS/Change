@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.staticpage.document.menu" lcid="fr_FR">
+<i18n baseKey="m.change.website.document.staticpage" lcid="fr_FR">
 	<include id="m.change.generic.document"/>
 	<key id="website">site web</key>
 	<key id="website-help">La page doit obligatoirement être rattachée à un site web.</key>

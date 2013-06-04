@@ -21,33 +21,12 @@
 			[i18n.trans('m.change.theme.admin.js.module-name | ucf'), "Change/Theme"]
 		]);
 
-		var DL = DocumentList.initScope($scope);
-		DL.viewMode = 'list';
-		DL.sort.column = 'nodeOrder';
-		DL.sort.descending = false;
-
-		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.theme.admin.js.pagetemplate | ucf'), 'url': 'Change/Theme/PageTemplate/new', 'icon': 'folder-close' }
-		];
-
-		// Configure DataTable columns
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		if ($routeParams.theme)
 		{
 			REST.resource($routeParams.theme).then(function (theme)
 			{
 				Breadcrumb.setPath([theme]);
-				DL.query = {"model": "Change_Theme_PageTemplate", "where": {"and": [
-					{"op": "eq", "lexp": {"property": "theme"}, "rexp": {"value": theme.id}}
-				]}};
-				DL.reload();
 			});
-		}
-		else
-		{
-			DL.setResourceUrl('Change_Theme_PageTemplate');
 		}
 
 		MainMenu.loadModuleMenu('Change_Theme');
@@ -87,6 +66,7 @@
 		'$scope',
 		'RbsChange.Breadcrumb',
 		'RbsChange.FormsManager',
+		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Utils'
 	];

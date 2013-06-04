@@ -19,4 +19,8 @@
 	<key id="activated">activé</key>
 	<key id="status">état</key>
 	<key id="order">ordre</key>
+
+	<key id="preview">aperçu</key>
+	<key id="edit">éditer</key>
+	<key id="delete">supprimer</key>
 </i18n>

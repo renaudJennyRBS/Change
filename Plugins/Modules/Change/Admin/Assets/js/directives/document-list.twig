@@ -8,11 +8,11 @@
 </div>
 
 <div class="btn-toolbar">
-	<clipboard-add-widget selected="selectedDocuments"></clipboard-add-widget>
-
 	<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
 		<a class="btn" href go-up-in-tree></a>
 	</div>
+
+	<clipboard-add-widget selected="selectedDocuments"></clipboard-add-widget>
 
 	<div class="btn-virtual-group" data-ng-repeat="item in actions" data-ng-switch="item.type">
 		<div data-ng-switch-when="single" class="btn-group">
@@ -22,8 +22,9 @@
 			<button data-ng-repeat="action in item.actions" data-bind-action="(= action =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
 		</div>
 	</div>
-
 </div>
+
+<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)">
 
 <table class="document-list table table-condensed table-bordered table-striped table-hover" ng-hide="collection.length == 0 && !loading">
 	<thead>

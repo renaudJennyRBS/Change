@@ -17,7 +17,7 @@
 		. when(
 			'/',
 			{
-				templateUrl : 'Change/Admin/dashboard.twig',
+				templateUrl : 'Change/Admin/dashboard/dashboard.twig',
 				reloadOnSearch : false
 			})
 
