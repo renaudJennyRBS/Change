@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.document.menu" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="website">site web</key>
+	<key id="website-picker-title">sélectionner le site web associé au menu</key>
+
+	<key id="this-menu-is-empty">Ce menu est vide.</key>
+	<key id="this-menu-is-empty-help" format="html">
+		<![CDATA[Utiliser la liste <em>Ajouter</em> ci-dessous pour ajouter des entrées à ce menu.]]>
+	</key>
+	<key id="function-print-page">imprimer la page</key>
+	<key id="function-go-to-content">aller au contenu</key>
+	<key id="function-bookmark-page">ajouter la page aux favoris</key>
+</i18n>

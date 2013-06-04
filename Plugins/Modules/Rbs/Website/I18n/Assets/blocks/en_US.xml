@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.blocks" lcid="fr_FR">
+	<key id="richtext">richtext block</key>
+	<key id="menu">menu block</key>
+	<key id="menu-templatename">rendering template</key>
+	<key id="menu-documentid">root document</key>
+	<key id="menu-maxlevel">maximum depth</key>
+	<key id="menu-showtitle">display title</key>
+	<key id="sitemap">sitemap</key>
+</i18n>

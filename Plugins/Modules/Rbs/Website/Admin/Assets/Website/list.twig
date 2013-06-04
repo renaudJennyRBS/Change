@@ -1,0 +1,16 @@
+<div data-ng-controller="Rbs_Website_Website_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.website.document.website-list', ['ucf']) }}"></page-header>
+
+	<search-filters model="Rbs_Website_Website" query="query" text-search="textSearch"></search-filters>
+
+	<div>
+		<a href="Rbs/Website/Website/new">{{ i18n('m.rbs.website.document.website-create', ['ucf']) }}</a>
+	</div>
+
+	<document-list data-dlid="DLWebsite1"
+	               publishable="true"
+	               model="Rbs_Website_Website"
+	               query="query">
+		<column name="label" label="Libellé" primary="true"></column>
+	</document-list>
+</div>

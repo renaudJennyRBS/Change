@@ -1,0 +1,35 @@
+<div data-ng-controller="Rbs_Website_MainMenuController">
+	<ul class="nav nav-list">
+		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
+		<li><a href="Rbs/Website/Website">
+			<i class="icon-home"></i> {{ i18n('m.rbs.website.document.website-list', ['ucf']) }}
+		</a></li>
+		<li><a href="Rbs/Website/Menu">
+			<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.document.menu-list', ['ucf']) }}
+		</a></li>
+		<li class="nav-header">{{ i18n('m.rbs.website.admin.websites-trees', ['ucf']) }}</li>
+	</ul>
+
+	<div class="accordion" id="chgMainMenuTree">
+		<div class="accordion-group" data-ng-repeat="website in websites" data-ng-class="{'selected': currentWebsiteId == website.id}">
+			<div class="accordion-heading">
+				<a class="accordion-toggle pull-right" data-toggle="collapse" data-parent="#chgMainMenuTree" data-target="#chgChangeWebsite(=website.id=)">
+					<i class="icon-sort"></i>
+				</a>
+				<a class="accordion-toggle" href="Rbs/Website/nav/?tn=(=website.id=)">
+					<i class="icon-home icon-large pull-left"></i>
+					<strong>(=website.label=)</strong>
+				</a>
+			</div>
+			<div id="chgChangeWebsite(=website.id=)" class="accordion-body collapse" data-ng-class="{'in': currentWebsiteId == website.id}">
+				<div class="accordion-inner">
+					<div tree-view="Rbs/Website"
+						root-node-url="(=website.META$.treeNode.url=)"
+						allowed-models="Rbs_Website_Website Rbs_Website_Topic"
+						url-template="Rbs/Website/nav/?tn=:id">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

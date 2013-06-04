@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.admin.js" lcid="fr_FR">
+	<include id="m.rbs.website.document"/>
+	<key id="module-name">websites &amp; pages</key>
+	<key id="host-name">hostname</key>
+	<key id="open-page-editor-warning"><![CDATA[<strong>This form contains unsaved changes.</strong>
+		<ul>
+			<li>By clicking <strong>Yes</strong>,changes will be  <strong>saved</strong> and you will be redirected to the page editor.</li>
+			<li>By clicking <strong>No</strong>, this <strong>popup will be dismissed</strong> and no harm will be done :)</li>
+		</ul>
+	]]>
+	</key>
+</i18n>
