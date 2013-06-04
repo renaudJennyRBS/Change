@@ -17,12 +17,12 @@ class Install
 		$config = $application->getConfiguration();
 
 		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Website',
-				'\\Change\\Website\\Admin\\Register');
+				'\\Rbs\\Website\\Admin\\Register');
 		$config->addPersistentEntry('Rbs/Presentation/Blocks/Rbs_Website',
-			'\\Change\\Website\\Blocks\\SharedListenerAggregate');
+			'\\Rbs\\Website\\Blocks\\SharedListenerAggregate');
 
 		$config->addPersistentEntry('Rbs/Events/ListenerAggregateClasses/Rbs_Website',
-				'\\Change\\Website\\Events\\SharedListenerAggregate');
+				'\\Rbs\\Website\\Events\\SharedListenerAggregate');
 
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Rbs/Install/documentRootPath', $projectPath);

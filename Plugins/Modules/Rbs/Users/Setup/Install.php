@@ -16,10 +16,10 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_Users',
-			'\\Change\\Users\\Blocks\\SharedListenerAggregate');
+			'\\Rbs\\Users\\Blocks\\SharedListenerAggregate');
 
-		$config->addPersistentEntry('Change/Admin/Listeners/Rbs_Users',
-			'\\Change\\Users\\Admin\\Register');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Users',
+			'\\Rbs\\Users\\Admin\\Register');
 	}
 
 	/**

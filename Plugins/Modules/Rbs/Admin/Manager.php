@@ -165,10 +165,10 @@ class Manager
 
 		// Include Twig macros for forms.
 		// Use it with: {% import "@Admin/forms.twig" as forms %}
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Change', 'Admin', 'Assets');
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Rbs', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Admin');
 		// TODO: register macros from other plugins.
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Change', 'Catalog', 'Admin', 'Assets');
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Rbs', 'Catalog', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Catalog');
 
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
