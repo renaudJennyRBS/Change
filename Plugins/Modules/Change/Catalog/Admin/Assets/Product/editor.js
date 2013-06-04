@@ -2,7 +2,15 @@
 {
 	"use strict";
 
-	function Editor(Editor, DocumentList, Loading, REST)
+	/**
+	 * @param Editor
+	 * @param DocumentList
+	 * @param Loading
+	 * @param REST
+	 * @param i18n
+	 * @constructor
+	 */
+	function Editor(Editor, DocumentList, Loading, REST, i18n)
 	{
 		return {
 			restrict: 'EC',
@@ -14,6 +22,10 @@
 			{
 				Editor.initScope(scope, elm);
 
+				scope.createActions = [
+					{ 'label': i18n.trans('m.change.catalog.admin.js.price | ucf'), 'url': 'Change/Catalog/Price/new', 'icon': 'file' }
+				];
+
 				// Configure prices DataTable...
 				var PricesSection = DocumentList.initScope(scope, null, 'PricesSection');
 				PricesSection.columns[1].label = "Valeur";
@@ -23,7 +35,7 @@
 				PricesSection.columns.push(new DocumentList.Column('activated', "Activé", true, 'center', '90px'));
 
 				PricesSection.shopsLoading = true;
-				Loading.start("Chargement de la liste des boutiques...");
+				Loading.start(i18n.trans('m.change.catalog.admin.js.shop-list-loading'));
 				REST.collection('Change_Catalog_Shop').then(function (shops)
 				{
 					PricesSection.shops = shops.resources;
@@ -38,7 +50,7 @@
 					if (PricesSection.selectedShop)
 					{
 						PricesSection.billingAreasLoading = true;
-						Loading.start("Chargement de la liste des zones de tarification...");
+						Loading.start(i18n.trans('m.change.catalog.admin.js.billingarea-list-loading'));
 						REST.resource('Change_Catalog_Shop', PricesSection.selectedShop.id)
 							.then(function (shop)
 							{
@@ -53,7 +65,7 @@
 				{
 					if (PricesSection.selectedShop && PricesSection.selectedBillingArea)
 					{
-						Loading.start("Chargement de la liste des prix...");
+						Loading.start(i18n.trans('m.change.catalog.admin.js.price-list-loading'));
 						REST.collection('Change_Catalog_BillingArea',
 							{'shopId': PricesSection.selectedShop.id, 'billingAreaId': PricesSection.selectedBillingArea.id})
 							.then(function (prices)
@@ -67,6 +79,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.Loading', 'RbsChange.REST'];
+	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n'];
 	angular.module('RbsChange').directive('editorChangeCatalogProduct', Editor);
 })();

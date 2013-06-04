@@ -10,4 +10,6 @@
 	<key id="price-list">prix</key>
 	<key id="shop">boutique</key>
 	<key id="shop-list">boutiques</key>
+	<key id="currency">devise</key>
+	<key id="currency-list">devises</key>
 </i18n>

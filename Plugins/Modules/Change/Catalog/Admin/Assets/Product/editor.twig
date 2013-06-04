@@ -63,11 +63,13 @@
 			</p>
 
 			<div class="control-group">
-				<label class="control-label" data-not-a-property="" for="selectShops">Boutique</label>
+				<label class="control-label" data-not-a-property="" for="selectShops">
+					{{ i18n('m.change.catalog.admin.js.shop', ['ucf']) }}
+				</label>
 
 				<div class="controls">
 					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.shopsLoading">
-						Chargement des boutiques...
+						{{ i18n('m.change.catalog.admin.js.shop-list-loading') }}
 					</button>
 					<div class="btn-group">
 						<button class="btn" data-ng-class="{active: PricesSection.selectedShop == shop}" type="button"
@@ -78,11 +80,13 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" data-not-a-property="" for="selectBillingArea">Zone de tarification</label>
+				<label class="control-label" data-not-a-property="" for="selectBillingArea">
+					{{ i18n('m.change.catalog.admin.js.billingarea', ['ucf']) }}
+				</label>
 
 				<div class="controls">
 					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.billingAreasLoading">
-						Chargement des zones de tarification...
+						{{ i18n('m.change.catalog.admin.js.billingarea-list-loading') }}
 					</button>
 					<div class="btn-group">
 						<button class="btn" data-ng-class="{active: PricesSection.selectedBillingArea == billingArea}"
@@ -95,7 +99,7 @@
 				</div>
 			</div>
 
-			<strong>TODO: création + liste</strong>
+			<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
 
 			<table data-ng-show="PricesSection.documents.length" data-ng-hide="PricesSection.isEmpty()"
 				class="document-list table table-condensed table-bordered table-striped table-hover data-ng-cloak">

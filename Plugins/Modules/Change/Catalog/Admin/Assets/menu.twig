@@ -1,8 +1,6 @@
 <div>
 	<ul class="nav nav-list">
 		<li class="nav-header">{{ i18n('m.change.admin.contents', ['ucf']) }}</li>
-		<li><a href="Change/Catalog/Shop"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.shop-list', ['ucf']) }}</a></li>
-		<li><a href="Change/Catalog/BillingArea"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.billingarea-list', ['ucf']) }}</a></li>
 		<li><a href="Change/Catalog/Product"><i class="icon-list-alt"></i> {{ i18n('m.change.catalog.document.product-list', ['ucf']) }}</a></li>
 		<li><a href="Change/Brand/Brand"><i class="icon-list-alt"></i> {{ i18n('m.change.brand.document.brand-list', ['ucf']) }}</a></li>
 		<li>
@@ -13,5 +11,9 @@
 				url-template="Change/Catalog/nav/?tn=:id">
 			</div>
 		</li>
+		<li class="nav-header">{{ i18n('m.change.admin.administration', ['ucf']) }}</li>
+		<li><a href="Change/Catalog/Shop"><i class="icon-home"></i> {{ i18n('m.change.catalog.document.shop-list', ['ucf']) }}</a></li>
+		<li><a href="Change/Catalog/BillingArea"><i class="icon-list-alt"></i> {{ i18n('m.change.catalog.document.billingarea-list', ['ucf']) }}</a></li>
+		<li><a href="Change/Catalog/Currency"><i class="icon-list-alt"></i> {{ i18n('m.change.catalog.document.currency-list', ['ucf']) }}</a></li>
 	</ul>
 </div>

@@ -3,5 +3,11 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
 	icon="folder" localized="true" editable="true" publishable="true" tree-name="Change_Catalog">
 	<properties>
+		<property name="reference" type="String" />
+		<property name="currency" type="Document" document-type="Change_Catalog_Currency" required="true" />
+		<property name="taxZones" type="JSON" required="true" default-value="[]" />
+		<property name="defaultTaxZone" type="String" required="true" />
+		<property name="boEditWithTax" type="Boolean" default-value="false" />
+		<property name="storePriceWithTax" type="Boolean" default-value="false" />
 	</properties>
 </document>

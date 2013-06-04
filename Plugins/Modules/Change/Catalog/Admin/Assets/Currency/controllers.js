@@ -18,28 +18,27 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.change.catalog.admin.js.module-name | ucf'), "Change/Catalog"],
-			[i18n.trans('m.change.catalog.admin.js.product-list | ucf'), "Change/Catalog/Product"],
-			[i18n.trans('m.change.catalog.admin.js.price-list | ucf'), "Change/Catalog/Price"]
+			[i18n.trans('m.change.catalog.admin.js.currency-list | ucf'), "Change/Catalog/Currency"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Change_Catalog_Price');
+		var DL = DocumentList.initScope($scope, 'Change_Catalog_Currency');
 		DL.viewMode = 'list';
 		DL.sort.column = 'nodeOrder';
 		DL.sort.descending = false;
 
 		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.catalog.admin.js.price | ucf'), 'url': 'Change/Catalog/Price/new', 'icon': 'file' }
+			{ 'label': i18n.trans('m.change.catalog.admin.js.currency | ucf'), 'url': 'Change/Catalog/Currency/new', 'icon': 'file' }
 		];
 
 		// Configure DataTable columns
+		DL.columns.shift(); // remove the status column.
 		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
 		MainMenu.loadModuleMenu('Change_Catalog');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Change_Catalog_Price_ListController', ListController);
+	app.controller('Change_Catalog_Currency_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -54,12 +53,11 @@
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.change.catalog.admin.js.module-name | ucf'), "Change/Catalog"],
-			[i18n.trans('m.change.catalog.admin.js.product-list | ucf'), "Change/Catalog/Product"],
-			[i18n.trans('m.change.catalog.admin.js.price-list | ucf'), "Change/Catalog/Price"]
+			[i18n.trans('m.change.catalog.admin.js.currency-list | ucf'), "Change/Catalog/Currency"]
 		]);
-		FormsManager.initResource($scope, 'Change_Catalog_Price');
+		FormsManager.initResource($scope, 'Change_Catalog_Currency');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
-	app.controller('Change_Catalog_Price_FormController', FormController);
+	app.controller('Change_Catalog_Currency_FormController', FormController);
 })();
