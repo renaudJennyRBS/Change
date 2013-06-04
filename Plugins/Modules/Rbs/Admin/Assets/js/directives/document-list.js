@@ -133,7 +133,7 @@
 						$td = $('<td>' + column.content + '</td>');
 					} else {
 						if (column.primary) {
-							$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)">(= doc["' + column.name + '"] =)</a></td>');
+							$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
 						} else {
 							$td = $('<td>(= doc["' + column.name + '"] =)</td>');
 						}
@@ -149,8 +149,8 @@
 							'<div>' +
 								'<small>' +
 									'<a href="javascript:" ng-click="preview(doc)">' +
-										'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
-										'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
+										//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
+										//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
 										' ' + i18n.trans('m.rbs.admin.admin.js.preview | ucf') +
 									'</a> | ' +
 									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
@@ -437,20 +437,21 @@
 							'offset': scope.pagination.offset,
 							'limit' : scope.pagination.limit,
 							'sort'  : scope.sort.column,
-							'desc'  : scope.sort.descending
+							'desc'  : scope.sort.descending,
+							'column': elm.data('columns')
 						};
 
 						// Or may be we are simply loading a Collection...
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
 							promise = REST.query(prepareQueryObject(angular.copy(queryObject)));
+						} else if (attrs.tree) {
+							Loading.start();
+							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else if (attrs.model && ! attrs.parentProperty) {
 							Loading.start();
 							promise = REST.collection(tAttrs.model, params);
 							// Or may be tree children?
-						} else if (attrs.tree) {
-							Loading.start();
-							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						}
 
 						if (promise) {
