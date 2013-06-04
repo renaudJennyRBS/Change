@@ -192,7 +192,7 @@ class ModelManager
 		{
 			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);
 		}
-		$attributes = array('vendor' => $vendorName, 'module' => $moduleName, 'name' => $shortModelName);
+		$attributes = array('vendor' => $vendorName, 'module' => $moduleName, 'name' => $normalizedShortModelName);
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
 		File::write($docPath, $twig->render('Assets/Sample.php.twig', $attributes));
@@ -210,6 +210,6 @@ class ModelManager
 		{
 			throw new \InvalidArgumentException('Model name should match ^[a-z][a-z0-9]{1,24}$', 999999);
 		}
-		return $name;
+		return ucfirst($name);
 	}
 }
