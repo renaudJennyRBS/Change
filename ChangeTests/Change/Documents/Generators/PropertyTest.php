@@ -445,7 +445,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new Property($model, 'authorId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
-		$this->assertEquals('Change_Users_User', $p->getDocumentType());
+		$this->assertEquals('Rbs_Users_User', $p->getDocumentType());
 		
 		$p = new Property($model, 'documentVersion');
 		$p->validate();

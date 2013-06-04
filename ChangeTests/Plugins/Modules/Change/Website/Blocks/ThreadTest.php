@@ -24,7 +24,7 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->setPresentationServices($this->getPresentationServices());
 		$event->setDocumentServices($this->getDocumentServices());
 		$layout = new Block();
-		$layout->initialize(array('id' => 1, 'name' => 'Change_Website_Thread'));
+		$layout->initialize(array('id' => 1, 'name' => 'Rbs_Website_Thread'));
 		$event->setBlockLayout($layout);
 		return $event;
 	}
@@ -39,16 +39,16 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event = $this->getTestParameterizeEvent();
 		$layout = $event->getBlockLayout();
 		$layout->setParameters(array('separator' => '>'));
-		$page = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Website_StaticPage');
+		$page = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_StaticPage');
 		$page->initialize(123);
 		$event->setParam('page', $page);
 
-		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Website_Website');
+		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		$website->initialize(self::CURRENT_WEBSITE_ID);
 
 
 		$pathRule = new \Change\Http\Web\PathRule($website, 'test/toto/titi/tata.html');
-		$section = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Website_Topic');
+		$section = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Topic');
 		$section->initialize(789);
 
 		$pathRule->setSectionId(789);

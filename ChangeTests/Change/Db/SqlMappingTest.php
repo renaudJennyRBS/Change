@@ -20,7 +20,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetDocumentTableName(SqlMapping $sqlMapping)
 	{
-		$this->assertEquals('change_website_doc_page', $sqlMapping->getDocumentTableName('Change_Website_Page'));
+		$this->assertEquals('rbs_website_doc_page', $sqlMapping->getDocumentTableName('Rbs_Website_Page'));
 	}
 
 	/**
@@ -28,7 +28,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetDocumentRelationTableName(SqlMapping $sqlMapping)
 	{
-		$this->assertEquals('change_website_rel_page', $sqlMapping->getDocumentRelationTableName('Change_Website_Page'));
+		$this->assertEquals('rbs_website_rel_page', $sqlMapping->getDocumentRelationTableName('Rbs_Website_Page'));
 	}
 
 	/**
@@ -36,7 +36,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetDocumentI18nTableName(SqlMapping $sqlMapping)
 	{
-		$this->assertEquals('change_website_doc_page_i18n', $sqlMapping->getDocumentI18nTableName('Change_Website_Page'));
+		$this->assertEquals('rbs_website_doc_page_i18n', $sqlMapping->getDocumentI18nTableName('Rbs_Website_Page'));
 	}
 
 	/**
@@ -44,7 +44,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetTreeTableName(SqlMapping $sqlMapping)
 	{
-		$this->assertEquals('change_website_tree', $sqlMapping->getTreeTableName('Change_Website'));
+		$this->assertEquals('rbs_website_tree', $sqlMapping->getTreeTableName('Rbs_Website'));
 	}
 
 
