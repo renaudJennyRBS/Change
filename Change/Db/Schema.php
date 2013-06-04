@@ -20,7 +20,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 		{
 			$schemaManager = $this->getSchemaManager();
 			$idDef = $schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setAutoNumber(true);
-			$modelDef = $schemaManager->newVarCharFieldDefinition('document_model', array('length' => 50))->setDefaultValue('')->setNullable(false);
+			$modelDef = $schemaManager->newVarCharFieldDefinition('document_model', array('length' => 80))->setDefaultValue('')->setNullable(false);
 			
 			$this->tables['change_document'] = $schemaManager->newTableDefinition('change_document')
 				->addField($idDef)->addField($modelDef)

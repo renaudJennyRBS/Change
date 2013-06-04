@@ -1,4 +1,5 @@
 {
-	"vendor": "change",
-	"name": "workflow"
+	"vendor": "Change",
+	"name": "Workflow",
+	"package": "Core"
 }

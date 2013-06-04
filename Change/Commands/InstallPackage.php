@@ -8,17 +8,17 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @name \Change\Commands\InstallCorePlugins
+ * @name \Change\Commands\InstallPackage
  */
-class InstallCorePlugins extends \Change\Application\Console\ChangeCommand
+class InstallPackage extends \Change\Application\Console\ChangeCommand
 {
 	/**
 	 */
 	protected function configure()
 	{
-		//$name, $shortcut = null, $mode = null, $description = '', $default = null
-		$this->setDescription('Initialize CorePlugins')
-			->addOption('path', null, InputOption::VALUE_OPTIONAL, 'Path of document root', '.');
+		$this->setDescription("Install a Package");
+		$this->addOption('vendor', 'e', InputOption::VALUE_OPTIONAL, 'vendor of the package', 'Project');
+		$this->addArgument('name', InputArgument::REQUIRED, 'short name of the package');
 	}
 
 	/**
@@ -28,10 +28,14 @@ class InstallCorePlugins extends \Change\Application\Console\ChangeCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$output->writeln('<info>Install Core Plugins...</info>');
-		$path = realpath($input->getOption('path'));
 		$pluginManager = $this->getChangeApplicationServices()->getPluginManager();
 		$pluginManager->compile();
-		$pluginManager->installPackage('change', 'core', array('path' => $path));
+
+		$plugins = $pluginManager->installPackage($input->getOption('vendor'), $input->getArgument('name'), array());
+
+		foreach ($plugins as $plugin)
+		{
+			$output->writeln('<info>' . $plugin.  ' Installed</info>');
+		}
 	}
 }

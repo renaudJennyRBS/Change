@@ -338,8 +338,8 @@ class Compiler
 		$plugins = $this->applicationServices->getPluginManager()->getModules();
 		foreach($plugins as $plugin)
 		{
-			$vendor = $plugin->getNormalizedVendor();
-			$moduleName = $plugin->getNormalizedShortName();
+			$vendor = $plugin->getVendor();
+			$moduleName = $plugin->getShortName();
 			foreach ($plugin->getDocumentDefinitionPaths() as $documentName => $definitionPath)
 			{
 				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);

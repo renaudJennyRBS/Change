@@ -1,89 +1,25 @@
 <?php
 namespace Change\Admin\Setup;
 
-use Change\Plugins\PluginManager;
-
-
 /**
  * @name \Change\Generic\Setup\Install
  */
-class Install implements \Zend\EventManager\ListenerAggregateInterface
+class Install
 {
 	/**
-	 * @return string
+	 * @param \Change\Plugins\Plugin $plugin
 	 */
-	protected function getVendor()
+	public function initialize($plugin)
 	{
-		return 'change';
+		$plugin->setConfigurationEntry('locked', true);
 	}
 
 	/**
-	 * @return string
-	 */
-	protected function getName()
-	{
-		return 'admin';
-	}
-
-	/**
-	 * Attach one or more listeners
-	 * Implementors may add an optional $priority argument; the EventManager
-	 * implementation will pass this to the aggregate.
-	 * @param \Zend\EventManager\EventManagerInterface $events
-	 */
-	public function attach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		$vendor = $this->getVendor();
-		$name = $this->getName();
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			return $pluginManager->getModule($vendor, $name)->setPackage('core')->setConfigurationEntry('locked', true);
-		};
-
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 5);
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-			/* @var $application \Change\Application */
-			$application = $event->getParam('application');
-			$this->executeApplication($application);
-
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			$pluginManager->getModule($vendor, $name)->setConfigurationEntry(PluginManager::EVENT_SETUP_APPLICATION, 'Ok');
-		};
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 5);
-	}
-
-	/**
-	 * Detach all previously attached listeners
-	 * @param \Zend\EventManager\EventManagerInterface $events
-	 */
-	public function detach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		// TODO: Implement detach() method.
-	}
-
-	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
 	 * @throws \RuntimeException
 	 */
-	protected function executeApplication($application)
+	public function executeApplication($plugin, $application)
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
@@ -100,8 +36,26 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 		}
 		else
 		{
-			throw new \RuntimeException('Invalid document root path: '. $documentRootPath .
+			throw new \RuntimeException('Invalid document root path: ' . $documentRootPath .
 			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
 		}
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @throws \RuntimeException
+	 */
+	public function executeServices($plugin, $documentServices, $presentationServices)
+	{
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function finalize($plugin)
+	{
+		$plugin->setConfigurationEntry('locked', true);
 	}
 }

@@ -598,8 +598,18 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('11:00 UTC+02:00', $manager->formatDate('fr_FR', $gmtDate, 'HH:mm ZZZZ'));
 
 		// If there is a specified time zone, the date is converted to it.
-		$this->assertEquals('03:00 UTC-04:00',
-			$manager->formatDate('fr_FR', $date, 'HH:mm ZZZZ', new \DateTimeZone('America/New_York')));
+		$dt = $manager->formatDate('fr_FR', $date, 'HH:mm ZZZZ', new \DateTimeZone('America/New_York'));
+		if (strpos($dt, '-'))
+		{
+			$this->assertEquals('03:00 UTC-04:00', $dt);
+		}
+		else
+		{
+			//TODO fix this php 5.4.15 bug
+			$this->assertEquals('03:00 UTC−04:00', $dt);
+		}
+
+
 		$this->assertEquals('18:00 UTC+09:00',
 			$manager->formatDate('fr_FR', $gmtDate, 'HH:mm ZZZZ', new \DateTimeZone('Asia/Tokyo')));
 	}
