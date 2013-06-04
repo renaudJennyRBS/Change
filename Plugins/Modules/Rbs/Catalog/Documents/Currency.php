@@ -1,10 +1,10 @@
 <?php
-namespace Change\Catalog\Documents;
+namespace Rbs\Catalog\Documents;
 
 /**
- * @name \Change\Catalog\Documents\Currency
+ * @name \Rbs\Catalog\Documents\Currency
  */
-class Currency extends \Compilation\Change\Catalog\Documents\Currency
+class Currency extends \Compilation\Rbs\Catalog\Documents\Currency
 {
 
 }

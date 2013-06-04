@@ -1,10 +1,10 @@
 <?php
-namespace Change\Catalog\Documents;
+namespace Rbs\Catalog\Documents;
 
 /**
- * @name \Change\Catalog\Documents\DeclinationGroup
+ * @name \Rbs\Catalog\Documents\DeclinationGroup
  */
-class DeclinationGroup extends \Compilation\Change\Catalog\Documents\DeclinationGroup
+class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGroup
 {
 
 }

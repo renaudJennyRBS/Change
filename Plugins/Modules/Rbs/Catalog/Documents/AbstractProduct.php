@@ -1,13 +1,13 @@
 <?php
-namespace Change\Catalog\Documents;
+namespace Rbs\Catalog\Documents;
 
 /**
- * @name \Change\Catalog\Documents\AbstractProduct
+ * @name \Rbs\Catalog\Documents\AbstractProduct
  */
-class AbstractProduct extends \Compilation\Change\Catalog\Documents\AbstractProduct
+class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 {
 	/**
-	 * @return \Change\Media\Documents\Image|null
+	 * @return \Rbs\Media\Documents\Image|null
 	 */
 	public function getDefaultVisual()
 	{
@@ -15,7 +15,7 @@ class AbstractProduct extends \Compilation\Change\Catalog\Documents\AbstractProd
 	}
 
 	/**
-	 * @param \Change\Media\Documents\Image|null $defaultVisual
+	 * @param \Rbs\Media\Documents\Image|null $defaultVisual
 	 */
 	public function setDefaultVisual($defaultVisual)
 	{

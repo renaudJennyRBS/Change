@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Catalog/BillingArea/editor.twig',
+			templateUrl: 'Rbs/Catalog/BillingArea/editor.twig',
 			replace: true,
 			// Create isolated scope
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
@@ -18,5 +18,5 @@
 	}
 
 	Editor.$inject = ['RbsChange.Editor'];
-	angular.module('RbsChange').directive('editorChangeCatalogBillingArea', Editor);
+	angular.module('RbsChange').directive('editorRbsCatalogBillingArea', Editor);
 })();

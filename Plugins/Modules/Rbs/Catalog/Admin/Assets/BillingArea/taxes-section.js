@@ -4,7 +4,7 @@
 	{
 		return {
 			restrict    : 'A',
-			templateUrl: 'Change/Catalog/BillingArea/taxes-section.twig',
+			templateUrl: 'Rbs/Catalog/BillingArea/taxes-section.twig',
 			replace     : false,
 
 			link : function (scope, elm, attrs) {
@@ -29,7 +29,7 @@
 						{
 							if (this.categories[i].code == code)
 							{
-								alert(i18n.trans('m.change.catalog.admin.js.tax-zone-exists'));
+								alert(i18n.trans('m.rbs.catalog.admin.js.tax-zone-exists'));
 								return;
 							}
 						}
@@ -61,7 +61,7 @@
 						{
 							if (this.lines[i].zone.code == code)
 							{
-								alert(i18n.trans('m.change.catalog.admin.js.tax-category-exists'));
+								alert(i18n.trans('m.rbs.catalog.admin.js.tax-category-exists'));
 								return;
 							}
 						}

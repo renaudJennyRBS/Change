@@ -3,20 +3,20 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-		{{ catalogforms.price('basePrice', 'm.change.catalog.document.price.baseprice', true) }}
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ catalogforms.price('basePrice', 'm.rbs.catalog.document.price.baseprice', true) }}
 		<!-- TODO list -->
-		{{ forms.field('taxCategory', 'String', 'm.change.catalog.document.price.taxcategory', true) }}
-		{{ catalogforms.price('ecoTax', 'm.change.catalog.document.price.ecotax', true) }}
+		{{ forms.field('taxCategory', 'String', 'm.rbs.catalog.document.price.taxcategory', true) }}
+		{{ catalogforms.price('ecoTax', 'm.rbs.catalog.document.price.ecotax', true) }}
 
 		<hr />
 		<span class="help-block">
-			{{ i18n('m.change.catalog.document.price.discount-section-help', ['ucf']) }}
+			{{ i18n('m.rbs.catalog.document.price.discount-section-help', ['ucf']) }}
 		</span>
 
 		<div class="control-group">
-			<label class="control-label" for="discount">{{ i18n('m.change.catalog.document.price.discount', ['ucf']) }}</label>
+			<label class="control-label" for="discount">{{ i18n('m.rbs.catalog.document.price.discount', ['ucf']) }}</label>
 
 			<div class="controls">
 				<div class="input-append">
@@ -33,8 +33,8 @@
 				</div>
 			</div>
 		</div>
-		{{ forms.field('discountDetail', 'String', 'm.change.catalog.document.price.discountdetail', false) }}
-		{{ catalogforms.price('finalPrice', 'm.change.catalog.document.price.finalprice', false, true) }}
+		{{ forms.field('discountDetail', 'String', 'm.rbs.catalog.document.price.discountdetail', false) }}
+		{{ catalogforms.price('finalPrice', 'm.rbs.catalog.document.price.finalprice', false, true) }}
 
 		<div class="alert" data-ng-show="document.finalPrice <= 0">
 			Le prix final n'est pas correct !
@@ -45,11 +45,11 @@
 
 		<hr />
 		<span class="help-block">
-			{{ i18n('m.change.catalog.document.price.publication-section-help', ['ucf']) }}
+			{{ i18n('m.rbs.catalog.document.price.publication-section-help', ['ucf']) }}
 		</span>
 
 		<div class="control-group property">
-			<label class="control-label" for="startPublication">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
+			<label class="control-label" for="startPublication">{{ i18n('m.rbs.catalog.document.product.startpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -66,7 +66,7 @@
 		</div>
 
 		<div class="control-group property">
-			<label class="control-label" for="endPublication">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf']) }}
+			<label class="control-label" for="endPublication">{{ i18n('m.rbs.catalog.document.product.endpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -88,16 +88,16 @@
 
 		<hr />
 		<span class="help-block">
-			{{ i18n('m.change.catalog.document.price.threshold-section-help', ['ucf']) }}
+			{{ i18n('m.rbs.catalog.document.price.threshold-section-help', ['ucf']) }}
 		</span>
 
-		{{ forms.field('thresholdMin', 'Integer', 'm.change.catalog.document.price.thresholdmin', true) }}
+		{{ forms.field('thresholdMin', 'Integer', 'm.rbs.catalog.document.price.thresholdmin', true) }}
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.change.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

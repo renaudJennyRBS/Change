@@ -1,14 +1,14 @@
-<div data-ng-controller="Change_Catalog_Category_ListController">
-	<page-header sub-title="{{ i18nAttr('m.change.catalog.document.category-list', ['ucf']) }}"></page-header>
-	<search-filters model="Change_Catalog_Product" query="DL.query" text-search="textSearch"></search-filters>
+<div data-ng-controller="Rbs_Catalog_Category_ListController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Catalog_Product" query="DL.query" text-search="textSearch"></search-filters>
 	<document-list-toolbar></document-list-toolbar>
 
 	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>{{ i18n('m.change.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-		{{ i18n('m.change.admin.lists.you-can', ['ucf', 'lab']) }}
+		<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
+		{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
 		<ul>
-			<li>{{ i18n('m.change.admin.lists.create-elements-with-buttons') }}</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.change.admin.lists.clear-search-filters') }}</a></li>
+			<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
+			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
 		</ul>
 	</div>
 
@@ -35,13 +35,13 @@
 				</td>
 
 				<td style="text-align: center;">
-					<span data-ng-show="doc.is('Change_Catalog_Category') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette catégorie : (=doc.nodeChildrenCount()=)">
+					<span data-ng-show="doc.is('Rbs_Catalog_Category') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette catégorie : (=doc.nodeChildrenCount()=)">
 						<i class="icon-2x icon-folder-close"></i>
 						<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
 					</span>
-					<i data-ng-show="doc.is('Change_Catalog_Category') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
+					<i data-ng-show="doc.is('Rbs_Catalog_Category') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
 
-					<span data-ng-show="doc.is('Change_Catalog_Product')" class="iconoverlay">
+					<span data-ng-show="doc.is('Rbs_Catalog_Product')" class="iconoverlay">
 						<i class="icon-2x icon-file"></i>
 					</span>
 				</td>
@@ -50,7 +50,7 @@
 					<a class="pull-right" href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">
 						<i class="icon-edit icon-large"></i>
 					</a>
-					<a data-ng-show="doc.is('Change_Catalog_Category')" title="Naviguer vers le contenu de la catégorie"
+					<a data-ng-show="doc.is('Rbs_Catalog_Category')" title="Naviguer vers le contenu de la catégorie"
 						href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a>
 				</td>
 

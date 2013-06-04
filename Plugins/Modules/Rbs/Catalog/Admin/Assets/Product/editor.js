@@ -14,7 +14,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Catalog/Product/editor.twig',
+			templateUrl: 'Rbs/Catalog/Product/editor.twig',
 			replace: true,
 			// Create isolated scope
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
@@ -23,7 +23,7 @@
 				Editor.initScope(scope, elm);
 
 				scope.createActions = [
-					{ 'label': i18n.trans('m.change.catalog.admin.js.price | ucf'), 'url': 'Change/Catalog/Price/new', 'icon': 'file' }
+					{ 'label': i18n.trans('m.rbs.catalog.admin.js.price | ucf'), 'url': 'Rbs/Catalog/Price/new', 'icon': 'file' }
 				];
 
 				// Configure prices DataTable...
@@ -35,8 +35,8 @@
 				PricesSection.columns.push(new DocumentList.Column('activated', "Activé", true, 'center', '90px'));
 
 				PricesSection.shopsLoading = true;
-				Loading.start(i18n.trans('m.change.catalog.admin.js.shop-list-loading'));
-				REST.collection('Change_Catalog_Shop').then(function (shops)
+				Loading.start(i18n.trans('m.rbs.catalog.admin.js.shop-list-loading'));
+				REST.collection('Rbs_Catalog_Shop').then(function (shops)
 				{
 					PricesSection.shops = shops.resources;
 					Loading.stop();
@@ -50,8 +50,8 @@
 					if (PricesSection.selectedShop)
 					{
 						PricesSection.billingAreasLoading = true;
-						Loading.start(i18n.trans('m.change.catalog.admin.js.billingarea-list-loading'));
-						REST.resource('Change_Catalog_Shop', PricesSection.selectedShop.id)
+						Loading.start(i18n.trans('m.rbs.catalog.admin.js.billingarea-list-loading'));
+						REST.resource('Rbs_Catalog_Shop', PricesSection.selectedShop.id)
 							.then(function (shop)
 							{
 								PricesSection.billingAreas = shop.billingArea;
@@ -65,8 +65,8 @@
 				{
 					if (PricesSection.selectedShop && PricesSection.selectedBillingArea)
 					{
-						Loading.start(i18n.trans('m.change.catalog.admin.js.price-list-loading'));
-						REST.collection('Change_Catalog_BillingArea',
+						Loading.start(i18n.trans('m.rbs.catalog.admin.js.price-list-loading'));
+						REST.collection('Rbs_Catalog_BillingArea',
 							{'shopId': PricesSection.selectedShop.id, 'billingAreaId': PricesSection.selectedBillingArea.id})
 							.then(function (prices)
 							{
@@ -80,5 +80,5 @@
 	}
 
 	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n'];
-	angular.module('RbsChange').directive('editorChangeCatalogProduct', Editor);
+	angular.module('RbsChange').directive('editorRbsCatalogProduct', Editor);
 })();

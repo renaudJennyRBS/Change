@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.catalog.document.price" lcid="fr_FR">
-	<include id="m.change.generic.document" />
+<i18n baseKey="m.rbs.catalog.document.price" lcid="fr_FR">
+	<include id="m.rbs.generic.document" />
 	<key id="baseprice">montant</key>
 	<key id="taxcategory">catégorie de TVA</key>
 	<key id="ecotax">éco-participation</key>

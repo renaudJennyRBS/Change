@@ -17,28 +17,28 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.change.catalog.admin.js.module-name | ucf'), "Change/Catalog"],
-			[i18n.trans('m.change.catalog.admin.js.billingarea-list | ucf'), "Change/Catalog/BillingArea"]
+			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.admin.js.billingarea-list | ucf'), "Rbs/Catalog/BillingArea"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Change_Catalog_BillingArea');
+		var DL = DocumentList.initScope($scope, 'Rbs_Catalog_BillingArea');
 		DL.viewMode = 'list';
 		DL.sort.column = 'nodeOrder';
 		DL.sort.descending = false;
 
 		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.catalog.admin.js.billingarea | ucf'), 'url': 'Change/Catalog/BillingArea/new', 'icon': 'file' }
+			{ 'label': i18n.trans('m.rbs.catalog.admin.js.billingarea | ucf'), 'url': 'Rbs/Catalog/BillingArea/new', 'icon': 'file' }
 		];
 
 		// Configure DataTable columns
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
+		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
+		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
-		MainMenu.loadModuleMenu('Change_Catalog');
+		MainMenu.loadModuleMenu('Rbs_Catalog');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Change_Catalog_BillingArea_ListController', ListController);
+	app.controller('Rbs_Catalog_BillingArea_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -52,12 +52,12 @@
 	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.change.catalog.admin.js.module-name | ucf'), "Change/Catalog"],
-			[i18n.trans('m.change.catalog.admin.js.billingarea-list | ucf'), "Change/Catalog/BillingArea"]
+			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.admin.js.billingarea-list | ucf'), "Rbs/Catalog/BillingArea"]
 		]);
-		FormsManager.initResource($scope, 'Change_Catalog_BillingArea');
+		FormsManager.initResource($scope, 'Rbs_Catalog_BillingArea');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
-	app.controller('Change_Catalog_BillingArea_FormController', FormController);
+	app.controller('Rbs_Catalog_BillingArea_FormController', FormController);
 })();

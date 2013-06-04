@@ -1,8 +1,8 @@
 <?php
-namespace Change\Catalog\Setup;
+namespace Rbs\Catalog\Setup;
 
 /**
- * @name \Change\Generic\Setup\Install
+ * @name \Rbs\Generic\Setup\Install
  */
 class Install
 {
@@ -15,7 +15,7 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Admin/Listeners/Change_Catalog', '\\Change\\Catalog\\Admin\\Register');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
 	}
 
 	/**
@@ -26,14 +26,14 @@ class Install
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
-		$rootNode = $documentServices->getTreeManager()->getRootNode('Change_Catalog');
+		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{
-			/* @var $folder \Change\Generic\Documents\Folder */
-			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Generic_Folder');
-			$folder->setLabel('Change_Catalog');
+			/* @var $folder \Rbs\Generic\Documents\Folder */
+			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
+			$folder->setLabel('Rbs_Catalog');
 			$folder->create();
-			$documentServices->getTreeManager()->insertRootNode($folder, 'Change_Catalog');
+			$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Catalog');
 		}
 	}
 

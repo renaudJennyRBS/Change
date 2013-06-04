@@ -1,18 +1,18 @@
 <div class="pull-right">
-	{{ i18n('m.change.catalog.document.billingarea.enable-deletion', ['ucf', 'lab']) }}
+	{{ i18n('m.rbs.catalog.document.billingarea.enable-deletion', ['ucf', 'lab']) }}
 	<switch data-ng-model="TaxesSection.deletionMode" />
 </div>
 <div class="btn-toolbar">
 	<form class="input-append btn-group">
 		<input type="text" data-ng-model="TaxesSection.newCategoryCode" class="input-mini" />
 		<button class="btn btn-info" ng-click="TaxesSection.addCategory()" type="submit">
-			<i class="icon-plus"></i> {{ i18n('m.change.catalog.document.billingarea.tax-category', ['ucf']) }}
+			<i class="icon-plus"></i> {{ i18n('m.rbs.catalog.document.billingarea.tax-category', ['ucf']) }}
 		</button>
 	</form>
 	<form class="input-append btn-group">
 		<input type="text" data-ng-model="TaxesSection.newZoneCode" class="input-mini" />
 		<button class="btn btn-info" ng-click="TaxesSection.addZone()" type="submit">
-			<i class="icon-plus"></i> {{ i18n('m.change.catalog.document.billingarea.tax-zone', ['ucf']) }}
+			<i class="icon-plus"></i> {{ i18n('m.rbs.catalog.document.billingarea.tax-zone', ['ucf']) }}
 		</button>
 	</form>
 </div>

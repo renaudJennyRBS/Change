@@ -1,10 +1,10 @@
 <?php
-namespace Change\Catalog\Documents;
+namespace Rbs\Catalog\Documents;
 
 /**
- * @name \Change\Catalog\Documents\Price
+ * @name \Rbs\Catalog\Documents\Price
  */
-class Price extends \Compilation\Change\Catalog\Documents\Price
+class Price extends \Compilation\Rbs\Catalog\Documents\Price
 {
 
 }

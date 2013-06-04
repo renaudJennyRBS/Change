@@ -4,63 +4,63 @@
 
 	app.config(['$routeProvider', function ($routeProvider)
 	{
-		$routeProvider.when('/Change/Catalog', { templateUrl: 'Change/Catalog/Shop/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Shop', { templateUrl: 'Change/Catalog/Shop/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Shop/:id/:LCID', { templateUrl: 'Change/Catalog/Shop/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Shop/:id', { templateUrl: 'Change/Catalog/Shop/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Product', { templateUrl: 'Change/Catalog/Product/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Product/:id/:LCID', { templateUrl: 'Change/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Product/:id', { templateUrl: 'Change/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Price', { templateUrl: 'Change/Catalog/Price/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Price/:id/:LCID', { templateUrl: 'Change/Catalog/Price/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Price/:id', { templateUrl: 'Change/Catalog/Price/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/BillingArea', { templateUrl: 'Change/Catalog/BillingArea/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/BillingArea/:id/:LCID',
-			{ templateUrl: 'Change/Catalog/BillingArea/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/BillingArea/:id',
-			{ templateUrl: 'Change/Catalog/BillingArea/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Currency', { templateUrl: 'Change/Catalog/Currency/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Currency/:id', { templateUrl: 'Change/Catalog/Currency/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Category', { templateUrl: 'Change/Catalog/Category/list.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Category/:id/:LCID',
-			{ templateUrl: 'Change/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/Category/:id', { templateUrl: 'Change/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Change/Catalog/nav/', { templateUrl: 'Change/Catalog/Category/list.twig', reloadOnSearch: false });
+		$routeProvider.when('/Rbs/Catalog', { templateUrl: 'Rbs/Catalog/Shop/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Shop', { templateUrl: 'Rbs/Catalog/Shop/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Shop/:id/:LCID', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Shop/:id', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Price', { templateUrl: 'Rbs/Catalog/Price/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Price/:id/:LCID', { templateUrl: 'Rbs/Catalog/Price/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Price/:id', { templateUrl: 'Rbs/Catalog/Price/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/BillingArea', { templateUrl: 'Rbs/Catalog/BillingArea/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/BillingArea/:id/:LCID',
+			{ templateUrl: 'Rbs/Catalog/BillingArea/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/BillingArea/:id',
+			{ templateUrl: 'Rbs/Catalog/BillingArea/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Currency', { templateUrl: 'Rbs/Catalog/Currency/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Currency/:id', { templateUrl: 'Rbs/Catalog/Currency/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Category', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Category/:id/:LCID',
+			{ templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Category/:id', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false });
 	}]);
 
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.register('Change_Catalog_Category', {
-				'form': '/Change/Catalog/Category/:id/:LCID',
-				'list': '/Change/Catalog/Category/:LCID',
-				'i18n': '/Change/Catalog/Category/:id/:LCID/translate-from/:fromLCID',
-				'tree': '/Change/Catalog/nav/?tn=:id'
+			$delegate.register('Rbs_Catalog_Category', {
+				'form': '/Rbs/Catalog/Category/:id/:LCID',
+				'list': '/Rbs/Catalog/Category/:LCID',
+				'i18n': '/Rbs/Catalog/Category/:id/:LCID/translate-from/:fromLCID',
+				'tree': '/Rbs/Catalog/nav/?tn=:id'
 			});
-			$delegate.register('Change_Catalog_Product', {
-				'form': '/Change/Catalog/Product/:id/:LCID',
-				'list': '/Change/Catalog/Product/:LCID',
-				'i18n': '/Change/Catalog/Product/:id/:LCID/translate-from/:fromLCID'
+			$delegate.register('Rbs_Catalog_Product', {
+				'form': '/Rbs/Catalog/Product/:id/:LCID',
+				'list': '/Rbs/Catalog/Product/:LCID',
+				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID'
 			});
-			$delegate.register('Change_Catalog_Price', {
-				'form': '/Change/Catalog/Price/:id/:LCID',
-				'list': '/Change/Catalog/Price/:LCID',
-				'i18n': '/Change/Catalog/Price/:id/:LCID/translate-from/:fromLCID'
+			$delegate.register('Rbs_Catalog_Price', {
+				'form': '/Rbs/Catalog/Price/:id/:LCID',
+				'list': '/Rbs/Catalog/Price/:LCID',
+				'i18n': '/Rbs/Catalog/Price/:id/:LCID/translate-from/:fromLCID'
 			});
-			$delegate.register('Change_Catalog_Shop', {
-				'form': '/Change/Catalog/Shop/:id/:LCID',
-				'list': '/Change/Catalog/Shop/:LCID',
-				'i18n': '/Change/Catalog/Shop/:id/:LCID/translate-from/:fromLCID'
+			$delegate.register('Rbs_Catalog_Shop', {
+				'form': '/Rbs/Catalog/Shop/:id/:LCID',
+				'list': '/Rbs/Catalog/Shop/:LCID',
+				'i18n': '/Rbs/Catalog/Shop/:id/:LCID/translate-from/:fromLCID'
 			});
-			$delegate.register('Change_Catalog_BillingArea', {
-				'form': '/Change/Catalog/BillingArea/:id/:LCID',
-				'list': '/Change/Catalog/BillingArea/:LCID',
-				'i18n': '/Change/Catalog/BillingArea/:id/:LCID/translate-from/:fromLCID'
+			$delegate.register('Rbs_Catalog_BillingArea', {
+				'form': '/Rbs/Catalog/BillingArea/:id/:LCID',
+				'list': '/Rbs/Catalog/BillingArea/:LCID',
+				'i18n': '/Rbs/Catalog/BillingArea/:id/:LCID/translate-from/:fromLCID'
 			});
-			$delegate.register('Change_Catalog_Currency', {
-				'form': '/Change/Catalog/Currency/:id/:LCID',
-				'list': '/Change/Catalog/Currency/:LCID'
+			$delegate.register('Rbs_Catalog_Currency', {
+				'form': '/Rbs/Catalog/Currency/:id/:LCID',
+				'list': '/Rbs/Catalog/Currency/:LCID'
 			});
 			return $delegate;
 		}]);

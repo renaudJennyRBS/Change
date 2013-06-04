@@ -2,37 +2,37 @@
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.change.catalog.document.product.label', true) }}
-		{{ forms.field('description', 'LongString', 'm.change.catalog.document.product.description', false) }}
-		{{ forms.pickerMultiple('category', 'Change_Catalog_Category', 'm.change.catalog.document.product.category',
-			false, null, 'm.change.catalog.document.product.category-picker-title') }}
-		{{ forms.pickerMultiple('visual', 'Change_Media_Image', 'm.change.catalog.document.product.visual',
-			false, null, 'm.change.catalog.document.product.visual-picker-title') }}
-		{{ forms.picker('brand', 'Change_Brand_Brand', 'm.change.catalog.document.product.brand',
-			false, null, 'm.change.catalog.document.product.brand-picker-title') }}
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.catalog.document.product.label', true) }}
+		{{ forms.field('description', 'LongString', 'm.rbs.catalog.document.product.description', false) }}
+		{{ forms.pickerMultiple('category', 'Rbs_Catalog_Category', 'm.rbs.catalog.document.product.category',
+			false, null, 'm.rbs.catalog.document.product.category-picker-title') }}
+		{{ forms.pickerMultiple('visual', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.visual',
+			false, null, 'm.rbs.catalog.document.product.visual-picker-title') }}
+		{{ forms.picker('brand', 'Rbs_Brand_Brand', 'm.rbs.catalog.document.product.brand',
+			false, null, 'm.rbs.catalog.document.product.brand-picker-title') }}
 		<hr />
-		{{ forms.field('reference', 'String', 'm.change.catalog.document.product.reference', false) }}
-		{{ forms.field('sku', 'String', 'm.change.catalog.document.product.sku', false) }}
+		{{ forms.field('reference', 'String', 'm.rbs.catalog.document.product.reference', false) }}
+		{{ forms.field('sku', 'String', 'm.rbs.catalog.document.product.sku', false) }}
 	</fieldset>
 	<fieldset data-ng-show="section=='advanced'"
-		data-form-section-label="{{ i18nAttr('m.change.admin.advanced-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-		{{ forms.pickerMultiple('pictogram', 'Change_Media_Image', 'm.change.catalog.document.product.pictogram',
-			false, null, 'm.change.catalog.document.product.pictogram-picker-title') }}
-		{{ forms.field('shippedIn', 'String', 'm.change.catalog.document.product.shippedin', false,
-			'm.change.catalog.document.product.shippedin-help') }}
-		{{ forms.field('minOrderQuantity', 'Integer', 'm.change.catalog.document.product.minorderquantity',
-			false, 'm.change.catalog.document.product.minorderquantity-help') }}
-		{{ forms.field('maxOrderQuantity', 'Integer', 'm.change.catalog.document.product.maxorderquantity',
-			false, 'm.change.catalog.document.product.maxorderquantity-help') }}
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.advanced-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.pickerMultiple('pictogram', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.pictogram',
+			false, null, 'm.rbs.catalog.document.product.pictogram-picker-title') }}
+		{{ forms.field('shippedIn', 'String', 'm.rbs.catalog.document.product.shippedin', false,
+			'm.rbs.catalog.document.product.shippedin-help') }}
+		{{ forms.field('minOrderQuantity', 'Integer', 'm.rbs.catalog.document.product.minorderquantity',
+			false, 'm.rbs.catalog.document.product.minorderquantity-help') }}
+		{{ forms.field('maxOrderQuantity', 'Integer', 'm.rbs.catalog.document.product.maxorderquantity',
+			false, 'm.rbs.catalog.document.product.maxorderquantity-help') }}
 	</fieldset>
 	<fieldset data-ng-show="section=='publication'"
-		data-form-section-label="{{ i18nAttr('m.change.admin.publication-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.publication-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
+			<label class="control-label" for="beginDate">{{ i18n('m.rbs.catalog.document.product.startpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf']) }}
+			<label class="control-label" for="beginDate">{{ i18n('m.rbs.catalog.document.product.endpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -52,8 +52,8 @@
 
 	<!-- TODO -->
 	<fieldset data-ng-show="section=='prices'"
-		data-form-section-label="{{ i18nAttr('m.change.catalog.document.price-list', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.price-list', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 		<div class="control-group">
 			<p><strong>Les prix d'un produit dépendend de la boutique et de la zone de tarification.</strong> Un même produit qui
 				apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des
@@ -64,12 +64,12 @@
 
 			<div class="control-group">
 				<label class="control-label" data-not-a-property="" for="selectShops">
-					{{ i18n('m.change.catalog.admin.js.shop', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.admin.js.shop', ['ucf']) }}
 				</label>
 
 				<div class="controls">
 					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.shopsLoading">
-						{{ i18n('m.change.catalog.admin.js.shop-list-loading') }}
+						{{ i18n('m.rbs.catalog.admin.js.shop-list-loading') }}
 					</button>
 					<div class="btn-group">
 						<button class="btn" data-ng-class="{active: PricesSection.selectedShop == shop}" type="button"
@@ -81,12 +81,12 @@
 			</div>
 			<div class="control-group">
 				<label class="control-label" data-not-a-property="" for="selectBillingArea">
-					{{ i18n('m.change.catalog.admin.js.billingarea', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.admin.js.billingarea', ['ucf']) }}
 				</label>
 
 				<div class="controls">
 					<button class="btn" disabled="disabled" type="button" data-ng-show="PricesSection.billingAreasLoading">
-						{{ i18n('m.change.catalog.admin.js.billingarea-list-loading') }}
+						{{ i18n('m.rbs.catalog.admin.js.billingarea-list-loading') }}
 					</button>
 					<div class="btn-group">
 						<button class="btn" data-ng-class="{active: PricesSection.selectedBillingArea == billingArea}"
@@ -166,8 +166,8 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.change.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
