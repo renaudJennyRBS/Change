@@ -3,7 +3,7 @@ namespace Rbs\Brand\Admin;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Change\Admin\Event;
+use Rbs\Admin\Event;
 /**
  * @name \Rbs\Brand\Admin\Register
  */
