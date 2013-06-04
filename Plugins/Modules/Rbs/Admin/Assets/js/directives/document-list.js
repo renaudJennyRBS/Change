@@ -35,7 +35,8 @@
 
 			scope : {
 				// Isolated scope.
-				query : '='
+				query  : '=',
+				picker : '='
 			},
 
 
