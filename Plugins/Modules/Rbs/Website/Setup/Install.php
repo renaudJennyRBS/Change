@@ -18,14 +18,14 @@ class Install
 
 		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Website',
 				'\\Rbs\\Website\\Admin\\Register');
-		$config->addPersistentEntry('Rbs/Presentation/Blocks/Rbs_Website',
+		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_Website',
 			'\\Rbs\\Website\\Blocks\\SharedListenerAggregate');
 
-		$config->addPersistentEntry('Rbs/Events/ListenerAggregateClasses/Rbs_Website',
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Website',
 				'\\Rbs\\Website\\Events\\SharedListenerAggregate');
 
 		$projectPath = $application->getWorkspace()->projectPath();
-		$documentRootPath = $config->getEntry('Rbs/Install/documentRootPath', $projectPath);
+		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 
 		if (is_dir($documentRootPath))
 		{
