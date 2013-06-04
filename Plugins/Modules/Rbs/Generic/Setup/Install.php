@@ -1,8 +1,8 @@
 <?php
-namespace Change\Generic\Setup;
+namespace Rbs\Generic\Setup;
 
 /**
- * @name \Change\Generic\Setup\Install
+ * @name \Rbs\Generic\Setup\Install
  */
 class Install
 {

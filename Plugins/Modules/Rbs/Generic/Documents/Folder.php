@@ -1,10 +1,10 @@
 <?php
-namespace Change\Generic\Documents;
+namespace Rbs\Generic\Documents;
 
 /**
- * @name \Change\Generic\Documents\Folder
+ * @name \Rbs\Generic\Documents\Folder
  */
-class Folder extends \Compilation\Change\Generic\Documents\Folder
+class Folder extends \Compilation\Rbs\Generic\Documents\Folder
 {
 
 }
