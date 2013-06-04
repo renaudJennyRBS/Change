@@ -4,7 +4,7 @@
 	icon="folder" localized="true" editable="true" publishable="true">
 	<properties>
 		<property name="description" type="RichText" localized="true" />
-		<property name="visual" type="Document" document-type="Change_Media_Image" />
+		<property name="visual" type="Document" document-type="Rbs_Media_Image" />
 		<property name="websiteUrl" type="String" localized="true" />
 	</properties>
 </document>

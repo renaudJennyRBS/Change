@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.brand.admin.js" lcid="fr_FR">
+	<include id="m.rbs.brand.document"/>
+	<key id="module-name">marques</key>
+</i18n>

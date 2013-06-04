@@ -1,11 +1,11 @@
 <?php
-namespace Change\Brand\Admin;
+namespace Rbs\Brand\Admin;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Change\Admin\Event;
 /**
- * @name \Change\Brand\Admin\Register
+ * @name \Rbs\Brand\Admin\Register
  */
 class Register implements ListenerAggregateInterface
 {
@@ -21,9 +21,9 @@ class Register implements ListenerAggregateInterface
 		{
 			$body = array('
 
-	<script type="text/javascript" src="Change/Brand/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Brand/Brand/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/Brand/js/admin.js">​</script>
+	<script type="text/javascript" src="Rbs/Brand/Brand/controllers.js">​</script>
+	<script type="text/javascript" src="Rbs/Brand/Brand/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 		});
 	}

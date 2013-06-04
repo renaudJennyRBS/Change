@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Brand/Brand/editor.twig',
+			templateUrl: 'Rbs/Brand/Brand/editor.twig',
 			replace: true,
 			// Create isolated scope
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
@@ -18,5 +18,5 @@
 	}
 
 	Editor.$inject = ['RbsChange.Editor'];
-	angular.module('RbsChange').directive('editorChangeBrandBrand', Editor);
+	angular.module('RbsChange').directive('editorRbsBrandBrand', Editor);
 })();

@@ -1,0 +1,36 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.brand.document.brand.label', true) }}
+		{{ forms.field('description', 'LongString', 'm.rbs.brand.document.brand.description', false) }}
+		{{ forms.picker('visual', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.visual',
+			false, null, 'm.rbs.brand.document.brand.select-visual')
+		}}
+		{{ forms.field('websiteUrl', 'Url', 'm.rbs.brand.document.brand.websiteurl', true) }}
+		<div class="control-group property">
+			<label class="control-label" for="beginDate">{{ i18n('m.rbs.brand.document.brand.startpublication', ['ucf']) }}</label>
+			<div class="controls">
+				<date-selector data-ng-model="document.startPublication" name="startPublication"></date-selector>
+			</div>
+		</div>
+
+		<div class="control-group property">
+			<label class="control-label" for="beginDate">{{ i18n('m.rbs.brand.document.brand.endpublication', ['ucf'])}}</label>
+			<div class="controls">
+				<date-selector data-ng-model="document.endPublication" name="endPublication"></date-selector>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
