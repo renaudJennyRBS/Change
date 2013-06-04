@@ -71,7 +71,7 @@ class GetResource
 		{
 			$vendor = array_shift($parts);
 			$shortModuleName = array_shift($parts);
-			if ($vendor === 'Change' && $shortModuleName === 'Admin')
+			if ($vendor === 'Rbs' && $shortModuleName === 'Admin')
 			{
 				return $workspace->pluginsModulesPath($vendor, $shortModuleName, 'Assets', implode(DIRECTORY_SEPARATOR, $parts));
 			}

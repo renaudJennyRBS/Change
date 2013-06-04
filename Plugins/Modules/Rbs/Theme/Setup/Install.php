@@ -20,8 +20,8 @@ class Install
 		$config = $application->getConfiguration();
 
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Theme',
-			'\\Change\\Theme\\Events\\SharedListenerAggregate');
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Theme', '\\Change\\Theme\\Admin\\Register');
+			'\\Rbs\\Theme\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Theme', '\\Rbs\\Theme\\Admin\\Register');
 	}
 
 	/**
