@@ -33,6 +33,24 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertSame($date, $plugin->getRegistrationDate());
 	}
 
+	public function testType()
+	{
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
+		$this->assertTrue($plugin->getType() === Plugin::TYPE_MODULE);
+		$this->assertTrue($plugin->isModule());
+		$this->assertFalse($plugin->isTheme());
+
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_THEME, 'Change', 'Tests');
+		$this->assertTrue($plugin->getType() === Plugin::TYPE_THEME);
+		$this->assertFalse($plugin->isModule());
+		$this->assertTrue($plugin->isTheme());
+
+		$this->assertSame($plugin, $plugin->setType(null));
+		$this->assertNull($plugin->getType());
+		$this->assertFalse($plugin->isModule());
+		$this->assertFalse($plugin->isTheme());
+	}
+
 	public function testActivated()
 	{
 		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
@@ -91,7 +109,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$expected = array (
-			'basePath' => 'D:\\Projects\\Change\\ChangeTests\\Change\\Plugins',
+			'basePath' => __DIR__,
 			'type' => 'Modules',
 			'vendor' => 'Change',
 			'shortName' => 'Tests',
@@ -105,7 +123,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 			'className' => 'Change\\Plugins\\Plugin',
 			'namespaces' =>
 			array (
-				'Change\\Tests\\' => 'D:\\Projects\\Change\\ChangeTests\\Change\\Plugins',
+				'Change\\Tests\\' => __DIR__,
 			),
 		);
 		$this->assertEquals($expected, $plugin->toArray());
