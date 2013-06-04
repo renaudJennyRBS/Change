@@ -20,7 +20,7 @@ class GetI18nPackage
 		$packages = array();
 		foreach ($modules as $module)
 		{
-			$pathParts = array('m', $module->getVendor(), $module->getShortName(), 'admin', 'js');
+			$pathParts = array('m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'admin', 'js');
 			$keys = $i18nManager->getDefinitionKeys($LCID, $pathParts);
 			if (count($keys))
 			{
