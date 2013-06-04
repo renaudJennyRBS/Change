@@ -1,8 +1,8 @@
 <?php
-namespace Theme\Change\Demo\Setup;
+namespace Theme\Rbs\Demo\Setup;
 
 /**
- * @name \Theme\Change\Demo\Setup
+ * @name \Theme\Rbs\Demo\Setup
  */
 class Install
 {
@@ -14,24 +14,24 @@ class Install
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
-		$themeModel = $documentServices->getModelManager()->getModelByName('Change_Theme_Theme');
+		$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
 		$query = new \Change\Documents\Query\Builder($documentServices, $themeModel);
-		$query->andPredicates($query->eq('name', 'Change_Demo'));
+		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
-		if ($theme instanceof \Change\Theme\Documents\Theme)
+		if ($theme instanceof \Rbs\Theme\Documents\Theme)
 		{
 			return;
 		}
-		/* @var $theme \Change\Theme\Documents\Theme */
+		/* @var $theme \Rbs\Theme\Documents\Theme */
 		$theme = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
 		$theme->setLabel('Demo');
-		$theme->setName('Change_Demo');
+		$theme->setName('Rbs_Demo');
 		$theme->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
 		$theme->save();
 
-		$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Change_Theme_PageTemplate');
+		$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 
-		/* @var $pageTemplate \Change\Theme\Documents\PageTemplate */
+		/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
 		$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 		$pageTemplate->setTheme($theme);
 

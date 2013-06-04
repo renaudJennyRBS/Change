@@ -10,7 +10,7 @@
 			{
 				"id": "message",
 				"type": "block",
-				"name": "Change_Website_Richtext",
+				"name": "Rbs_Website_Richtext",
 				"parameters": {
 					"content": "Oups!, cette page n'est pas disponible."
 				}

@@ -10,7 +10,7 @@
 	"menuHeader" : {
 		"id" : "menuHeader",
 		"type" : "block",
-		"name" : "Change_Website_Menu",
+		"name" : "Rbs_Website_Menu",
 		"parameters" : {
 			"documentId" : 1,
 			"maxLevel" : 3,
@@ -20,14 +20,14 @@
 	"thread" : {
 		"id" : "thread",
 		"type" : "block",
-		"name" : "Change_Website_Thread",
+		"name" : "Rbs_Website_Thread",
 		"parameters" : {
 		}
 	},
 	"menuFooter1" : {
 		"id" : "menuFooter1",
 		"type" : "block",
-		"name" : "Change_Website_Menu",
+		"name" : "Rbs_Website_Menu",
 		"parameters" : {
 			"showTitle" : true,
 			"documentId" : 1,
@@ -37,7 +37,7 @@
 	"menuFooter2" : {
 		"id" : "menuFooter2",
 		"type" : "block",
-		"name" : "Change_Website_Menu",
+		"name" : "Rbs_Website_Menu",
 		"parameters" : {
 			"showTitle" : true,
 			"documentId" : 1,
@@ -47,7 +47,7 @@
 	"subintro" : {
 		"id" : "subintro",
 		"type" : "block",
-		"name" : "Change_Website_Richtext",
+		"name" : "Rbs_Website_Richtext",
 		"parameters" : {
 			"content" : "<h3>About us</h3><p>Lorem ipsum dolor sit amet, modus salutatus honestatis ex mea. Sit cu probo putant. Nam ne impedit atomorum.</p>"
 		}

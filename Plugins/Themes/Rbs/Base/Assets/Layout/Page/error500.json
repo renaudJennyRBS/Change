@@ -10,7 +10,7 @@
 			{
 				"id": "message",
 				"type": "block",
-				"name": "Change_Website_Exception",
+				"name": "Rbs_Website_Exception",
 				"parameters": {
 					"message": "Grave erreur!!"
 				}
