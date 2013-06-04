@@ -67,11 +67,12 @@ class DocumentQuery
 				$result->setCount($count);
 				if ($count && $startIndex < $count)
 				{
+					$extraColumn = $event->getRequest()->getQuery('column', array());
 					$collection = $queryBuilder->getDocuments($startIndex, $maxResults);
 					foreach ($collection as $document)
 					{
 						$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-						$result->addResource($this->addResourceItemInfos($l, $document, $urlManager));
+						$result->addResource($this->addResourceItemInfos($l, $document, $urlManager, $extraColumn));
 					}
 				}
 
@@ -98,9 +99,10 @@ class DocumentQuery
 	 * @param DocumentLink $documentLink
 	 * @param AbstractDocument $document
 	 * @param UrlManager $urlManager
+	 * @param array $extraColumn
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
 	{
 		$dm = $document->getDocumentManager();
 		if ($documentLink->getLCID())
@@ -138,6 +140,18 @@ class DocumentQuery
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$documentLink->setProperty('actions', array($l));
+			}
+		}
+
+		if (is_array($extraColumn) && count($extraColumn))
+		{
+			foreach ($extraColumn as $propertyName)
+			{
+				$property = $model->getProperty($propertyName);
+				if ($property)
+				{
+					$documentLink->setProperty($property);
+				}
 			}
 		}
 

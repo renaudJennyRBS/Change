@@ -204,6 +204,7 @@ class GetDocumentModelCollection
 	 * @param DocumentLink $documentLink
 	 * @param AbstractDocument $document
 	 * @param UrlManager $urlManager
+	 * @param array $extraColumn
 	 * @return DocumentLink
 	 */
 	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
