@@ -77,7 +77,7 @@
 	 * This Controller is bound on the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication.
 	 */
-	app.controller('Change.RootController', ['$rootScope', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $location, Settings, Utils, REST, OAuthService) {
+	app.controller('Change.RootController', ['$rootScope', '$filter', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $filter, $location, Settings, Utils, REST, OAuthService) {
 		var redirectUrl = null,
 		    alreadyGotError = false;
 
@@ -118,6 +118,7 @@
 		});
 
 	}]);
+
 
 
 	// === Global directives (custom HTML components) ===

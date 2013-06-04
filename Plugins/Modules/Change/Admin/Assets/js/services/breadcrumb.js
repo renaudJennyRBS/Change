@@ -64,8 +64,8 @@
 					},
 
 					resetLocation : function (loc) {
-						if ( ! frozen && (path.length || ! angular.equals(location, loc)) ) {
-							location = loc;
+						if ( ! frozen && (path.length || ! angular.equals(location, loc) || ! loc) ) {
+							location = loc || [];
 							ArrayUtils.clear(path);
 							resource = null;
 							update();

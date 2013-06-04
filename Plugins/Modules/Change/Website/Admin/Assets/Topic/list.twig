@@ -1,18 +1,46 @@
 <div data-ng-controller="Change_Website_TopicListController">
 	<page-header sub-title="{{ i18nAttr('m.change.website.document.topic-list', ['ucf']) }}"></page-header>
 
-	<search-filters model="Change_Website_StaticPage" query="DL.query" text-search="textSearch"></search-filters>
+	<search-filters model="Change_Website_StaticPage" query="query" text-search="textSearch"></search-filters>
 
-	<document-list-toolbar></document-list-toolbar>
-
-	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>{{ i18n('m.change.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-		{{ i18n('m.change.admin.lists.you-can', ['ucf', 'lab']) }}
-		<ul>
-			<li>{{ i18n('m.change.admin.lists.create-elements-with-buttons') }}</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.change.admin.lists.clear-search-filters') }}</a></li>
-		</ul>
+	<div>
+		<a href="Change/Website/StaticPage/new">{{ i18n('m.change.website.document.staticpage-create', ['ucf']) }}</a>
+		|
+		<a href="Change/Website/Topic/new">{{ i18n('m.change.website.document.topic-create', ['ucf']) }}</a>
 	</div>
+
+	<document-list data-dlid="DL1"
+	               publishable="true"
+	               tree="Change_Website"
+	               query="query"
+	               actions="activate reorder delete">
+
+		<column name="icon" width="30px" align="center">
+			<span ng-if="doc.is('Change_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
+				<i class="icon-2x icon-folder-close"></i>
+				<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
+			</span>
+			<i ng-if="doc.is('Change_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
+			<span ng-if="doc.is('Change_Website_StaticPage')" class="iconoverlay">
+				<i class="icon-2x icon-file"></i>
+			</span>
+		</column>
+
+		<column name="label" label="Libellé" primary="true">
+			<a ng-if="doc.is('Change_Website_StaticPage')" title="Éditer le contenu de la page"
+			   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
+			<a ng-if="doc.is('Change_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
+			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a>
+		</column>
+
+	</document-list>
+
+<!--
+	<document-list data-dlid="DLFlat2"
+				   publishable="true"
+				   model="Change_Website_StaticPage">
+		<column name="label" label="Libellé"></column>
+	</document-list>
 
 	<table
 		data-ng-show="DL.documents.length" class="document-list table table-condensed table-bordered table-striped table-hover data-ng-cloak">
@@ -89,4 +117,5 @@
 			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
 		</div>
 	</footer>
+	-->
 </div>

@@ -11,4 +11,15 @@
 
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>
+
+	<key id="translate">translate...</key>
+	<key id="search-ellipsis">rechercher...</key>
+	<key id="search">rechercher</key>
+	<key id="this-document-exists-in-multiple-languages">ce document existe en plusieurs langues</key>
+
+	<!-- Corrections -->
+	<key id="correction">correction</key>
+	<key id="this-document-has-a-correction-on">ce Document dispose d'une Correction portant sur</key>
+	<key id="correction-editor-explanation" format="html"><![CDATA[Les valeurs des propriétés affichées dans cet éditeur tiennent compte de la Correction (les propriétés corrigées sont affichées en couleur).<br/>Pour voir le détail des propriétés qui ont été corrigées, ainsi que les valeurs d'origine, utilisez le bouton	<strong>Correction</strong> ci-dessus.]]></key>
+
 </i18n>

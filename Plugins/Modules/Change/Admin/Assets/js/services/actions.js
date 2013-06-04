@@ -357,6 +357,16 @@
 									'primaryButtonText' : 'supprimer'
 								}
 							);
+						} else if ($target) {
+							// ($el, title, message, options) {
+							promise = Dialog.confirmLocal(
+								$target,
+								"Supprimer ?",
+								message,
+								{
+									"placement": "bottom"
+								}
+							);
 						} else {
 							promise = Dialog.confirm(
 									"Supprimer ?",
@@ -372,10 +382,16 @@
 							angular.forEach($docs, function (doc) {
 								promises.push(REST['delete'](doc));
 							});
-							// Refresh the list when all the requests have completed.
-							$q.all(promises).then(function () {
-								$DL.reload();
-							});
+							if ($DL && angular.isFunction ($DL.reload)) {
+								// Refresh the list when all the requests have completed.
+								$q.all(promises).then(function () {
+									$DL.reload();
+								});
+							} else if ($scope && angular.isFunction ($scope.reload)) {
+								$q.all(promises).then(function () {
+									$scope.reload();
+								});
+							}
 						});
 					}]
 				});

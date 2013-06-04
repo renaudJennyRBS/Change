@@ -1,12 +1,14 @@
 (function ($) {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.directive('pageHeader', ['RbsChange.FormsManager', 'RbsChange.Dialog', function (FormsManager, Dialog) {
+	app.directive('pageHeader', ['RbsChange.FormsManager', 'RbsChange.Dialog', 'RbsChange.Breadcrumb', function (FormsManager, Dialog, Breadcrumb) {
 		return {
 
 			restrict    : 'E',
-			templateUrl : 'Change/Admin/js/directives/page-header.html',
+			templateUrl : 'Change/Admin/js/directives/page-header.twig',
 			replace     : true,
 
 			link: function (scope, element, attrs) {
@@ -45,6 +47,13 @@
 						}
 					);
 				};
+
+				Breadcrumb.ready().then(function () {
+					scope.currentFolder = Breadcrumb.getCurrentNode();
+					scope.$on('Change:TreePathChanged', function () {
+						scope.currentFolder = Breadcrumb.getCurrentNode();
+					});
+				});
 
 			}
 

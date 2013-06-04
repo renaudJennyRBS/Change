@@ -1,54 +1,35 @@
-<div class="navbar navbar-inverse" id="mainNavbar">
-    <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="home" title="Retourner à l'écran d'accueil"><img src="Change/Admin/img/logo-rbs-change@2x.png" style="width:159px; height:25px;" alt="Logo de RBS Change"></a> <a
-                    class="btn btn-navbar" data-toggle="collapse"
-                    data-target=".nav-collapse"> <span class="icon-bar"></span> <span
-                        class="icon-bar"></span> <span class="icon-bar"></span>
-            </a>
-            <ul class="nav notifications">
-                <li class="dropdown">
-                </li>
-            </ul>
+<div id="change-menu" ng-controller="Change_MainMenu_Controller">
 
-            <ul class="nav">
-                <li><a href="Change/Website" data-ui-search="accueil,home,wysiwyg,éditeur,editeur,rubriques">Sites et pages</a></li>
-                <li><a href="Change/Theme" data-ui-search="thèmes,modèles,templates">Thèmes</a></li>
-                <li><a href="Change/Media" data-ui-search="médiathèque,média,image">Médiathèque</a></li>
-                <li><a href="Change/Catalog" data-ui-search="catalogue,produits,catégories,marques">Catalogue</a></li>
-            </ul>
+	<div class="nav-list clearfix">
+		<small style="position:relative;top:-6px" class="pull-right"><a href="javascript:;" ng-click="close()"><i class="icon-chevron-left"></i> Fermer</a></small>
+	</div>
 
-            <div class="nav-collapse">
+	<ul class="nav nav-list">
+		<li><a ng-click="close()" href="./"><i class="icon-home"></i> Accueil</a></li>
+		<li class="nav-header">Favoris &mdash; <a href="javascript:;" ng-click="editMode = ! editMode"><span ng-if="! editMode">modifier</span><span ng-if="editMode">terminer</span></a></li>
+		<li ng-repeat="m in modules | filter:{'pinned':true} | orderBy:'label'">
+			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
+			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = false"><i class="pull-right icon-remove"></i>(= m.label =)</a>
+		</li>
+	</ul>
 
-                <form action="javascript:;" data-toggle="dropdown" onsubmit="$.rbschange.navigation.go('search/' + $('#globalSearchInput').val()); return false;" class="navbar-search pull-left">
-                    <input accesskey="4" type="text" placeholder="Rechercher..." class="search-query span2" id="globalSearchInput" value=""/>
-                    <ul class="dropdown-menu" id="globalSearchInputDropDown" style="z-index:3000"></ul>
-                </form>
+	<ul class="nav nav-list">
+		<li class="divider"></li>
+		<li class="nav-header">Tous les modules</li>
+	</ul>
+	<div class="nav-list">
+		<form class="form-search" ng-submit="go()" novalidate>
+			<div class="input-append input-block">
+				<input placeholder="Chercher un module..." type="text" class="search-query" style="width:155px" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
+				<button ng-click="clear()" type="button" class="btn"><i class="icon-remove-circle"></i></button>
+			</div>
+		</form>
+	</div>
+	<ul class="nav nav-list">
+		<li ng-animate="'menu-animate'" ng-repeat="m in modules | filter:filterModules | orderBy:'label'">
+			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
+			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = true"><i ng-if="! m.pinned" class="pull-right icon-pushpin"></i>(= m.label =)</a>
+		</li>
+	</ul>
 
-                <ul class="nav pull-right">
-                    <li class="dropdown"><a data-toggle="dropdown"
-                                            class="dropdown-toggle" href="javascript:;"><i class="icon-user"></i> (= user.label =) <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-	                        <li><a href ng-href="(= user.url() =)" data-ui-search="profile"><i class="icon-user"></i> Profil</a></li>
-	                        <li><a href="javascript:;" data-ng-click="logout()" data-ui-search="logout"><i class="icon-signout"></i> Déconnexion</a></li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <ul class="nav pull-right">
-                    <li class="dropdown"><a data-toggle="dropdown"
-                                            class="dropdown-toggle" href="javascript:;">Outils <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-	                        <li><a href="Change/Users/User"><i class="icon-user"></i> Utilisateurs</a></li>
-	                        <li class="divider"></li>
-                            <li><a href="javascript:;" full-screen-toggle><i class="icon-fullscreen"></i> Mode plein écran</a></li>
-                            <li class="divider"></li>
-                            <li><a href="about" data-ui-search="about,info,version,rbs,change"><i class="icon-info-sign"></i> &Agrave; propos de RBS Change</a></li>
-                        </ul>
-                    </li>
-                </ul>
-
-            </div>
-        </div>
-    </div>
 </div>
