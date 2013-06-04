@@ -135,6 +135,21 @@
 					ngModel.$render();
 				};
 
+				scope.picker = {
+					"replaceWithDocuments" : function (d) {
+						scope.replaceWithDocuments(d);
+					},
+					"replaceWithDocument" : function (d) {
+						scope.replaceWithDocument(d);
+					},
+					"selectDocument" : function (d) {
+						scope.selectDocument(d);
+					},
+					"selectDocuments" : function (d) {
+						scope.selectDocuments(d);
+					}
+				};
+
 				scope.clear = function () {
 					ngModel.$setViewValue(null);
 					ngModel.$render();
