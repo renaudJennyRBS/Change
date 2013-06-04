@@ -1,10 +1,10 @@
 <?php
-namespace Change\Website\Events;
+namespace Rbs\Website\Events;
 
-use Change\Website\Events\WebsiteResolver;
+use Rbs\Website\Events\WebsiteResolver;
 
 /**
-* @name \Change\Website\Events\SharedListenerAggregate
+* @name \Rbs\Website\Events\SharedListenerAggregate
 */
 class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggregateInterface
 {

@@ -8,10 +8,10 @@
 	{
 		function getDraggedElement(event)
 		{
-			var data = event.dataTransfer.getData('Change/Document');
+			var data = event.dataTransfer.getData('Rbs/Document');
 			if (!data)
 			{
-				data = event.dataTransfer.getData('Change/MenuItemFunction');
+				data = event.dataTransfer.getData('Rbs/MenuItemFunction');
 			}
 			try
 			{
@@ -26,7 +26,7 @@
 
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Website/Menu/directives/menu-card.twig',
+			templateUrl: 'Rbs/Website/Menu/directives/menu-card.twig',
 			// Create isolated scope.
 			scope: { document: '=' },
 

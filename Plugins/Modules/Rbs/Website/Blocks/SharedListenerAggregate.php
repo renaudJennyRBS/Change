@@ -1,12 +1,12 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Presentation\Blocks\Standard\RegisterByBlockName;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
- * @name \Change\Website\Blocks\SharedListenerAggregate
+ * @name \Rbs\Website\Blocks\SharedListenerAggregate
  */
 class SharedListenerAggregate implements SharedListenerAggregateInterface
 {
@@ -15,12 +15,12 @@ class SharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		new  RegisterByBlockName('Change_Website_Menu', true, $events);
-		new  RegisterByBlockName('Change_Website_Thread', false, $events);
-		new  RegisterByBlockName('Change_Website_SiteMap', true, $events);
-		new  RegisterByBlockName('Change_Website_Richtext', true, $events);
-		new  RegisterByBlockName('Change_Website_FormattedText', true, $events);
-		new  RegisterByBlockName('Change_Website_Exception', false, $events);
+		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Thread', false, $events);
+		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
+		new  RegisterByBlockName('Rbs_Website_FormattedText', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Exception', false, $events);
 	}
 
 	/**

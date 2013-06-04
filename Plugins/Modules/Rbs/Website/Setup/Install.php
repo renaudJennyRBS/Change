@@ -1,8 +1,8 @@
 <?php
-namespace Change\Website\Setup;
+namespace Rbs\Website\Setup;
 
 /**
- * @name \Change\Website\Setup\Install
+ * @name \Rbs\Website\Setup\Install
  */
 class Install
 {
@@ -16,16 +16,16 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Admin/Listeners/Change_Website',
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Website',
 				'\\Change\\Website\\Admin\\Register');
-		$config->addPersistentEntry('Change/Presentation/Blocks/Change_Website',
+		$config->addPersistentEntry('Rbs/Presentation/Blocks/Rbs_Website',
 			'\\Change\\Website\\Blocks\\SharedListenerAggregate');
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Website',
+		$config->addPersistentEntry('Rbs/Events/ListenerAggregateClasses/Rbs_Website',
 				'\\Change\\Website\\Events\\SharedListenerAggregate');
 
 		$projectPath = $application->getWorkspace()->projectPath();
-		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
+		$documentRootPath = $config->getEntry('Rbs/Install/documentRootPath', $projectPath);
 
 		if (is_dir($documentRootPath))
 		{
@@ -49,17 +49,17 @@ class Install
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
-		$rootNode = $documentServices->getTreeManager()->getRootNode('Change_Website');
+		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Website');
 		if (!$rootNode)
 		{
 			/* @var $folder \Change\Generic\Documents\Folder */
-			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Generic_Folder');
-			$folder->setLabel('Change_Website');
+			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
+			$folder->setLabel('Rbs_Website');
 			$folder->create();
-			$rootNode = $documentServices->getTreeManager()->insertRootNode($folder, 'Change_Website');
+			$rootNode = $documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
 
-			/* @var $website \Change\Website\Documents\Website */
-			$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Website_Website');
+			/* @var $website \Rbs\Website\Documents\Website */
+			$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 			$website->setLabel('Site par défaut');
 			$website->setHostName('temporary.fr');
 			$website->setScriptName('/index.php');

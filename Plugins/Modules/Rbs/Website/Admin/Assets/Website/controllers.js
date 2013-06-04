@@ -17,16 +17,16 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
-			[i18n.trans('m.change.website.admin.js.website-list | ucf'), "Change/Website/Website"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.js.website-list | ucf'), "Rbs/Website/Website"]
 		]);
 
-		MainMenu.loadModuleMenu('Change_Website');
+		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
 	ListController.$inject =
 		['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Change_Website_Website_ListController', ListController);
+	app.controller('Rbs_Website_Website_ListController', ListController);
 
 	/**
 	 * Controller for forms.
@@ -40,13 +40,13 @@
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
-			[i18n.trans('m.change.website.admin.js.website-list | ucf'), "Change/Website/Website"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.js.website-list | ucf'), "Rbs/Website/Website"]
 		]);
-		FormsManager.initResource($scope, 'Change_Website_Website');
+		FormsManager.initResource($scope, 'Rbs_Website_Website');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Change_Website_Website_FormController', FormController);
+	app.controller('Rbs_Website_Website_FormController', FormController);
 
 })();

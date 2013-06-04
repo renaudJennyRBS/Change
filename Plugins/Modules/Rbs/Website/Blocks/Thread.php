@@ -1,5 +1,5 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
@@ -7,7 +7,7 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Change\Website\Blocks\Thread
+ * @name \Rbs\Website\Blocks\Thread
  */
 class Thread extends Block
 {
@@ -29,7 +29,7 @@ class Thread extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');
-		if ($page instanceof \Change\Website\Documents\Page)
+		if ($page instanceof \Rbs\Website\Documents\Page)
 		{
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
@@ -59,16 +59,16 @@ class Thread extends Block
 
 		$thread = array();
 		$currentSection = $dm->getDocumentInstance($parameters->getSectionId());
-		if ($currentSection instanceof \Change\Website\Documents\Section)
+		if ($currentSection instanceof \Rbs\Website\Documents\Section)
 		{
 			foreach ($currentSection->getSectionThread() as $section)
 			{
 				$lastSection = $section;
-				if ($section instanceof \Change\Website\Documents\Website)
+				if ($section instanceof \Rbs\Website\Documents\Website)
 				{
 					continue;
 				}
-				$entry = new \Change\Website\Menu\MenuEntry();
+				$entry = new \Rbs\Website\Menu\MenuEntry();
 				$entry->setLabel($section->getLabel());
 				if ($section->getIndexPageId())
 				{
@@ -82,7 +82,7 @@ class Thread extends Block
 		$page = $dm->getDocumentInstance($parameters->getPageId());
 		if ($page && $lastSection && $lastSection->getIndexPageId() !== $page->getId())
 		{
-			$entry = new \Change\Website\Menu\MenuEntry();
+			$entry = new \Rbs\Website\Menu\MenuEntry();
 			$entry->setLabel($page->getLabel());
 			$entry->setInPath(true);
 			$entry->setCurrent(true);

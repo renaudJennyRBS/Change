@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.website.document.menu" lcid="fr_FR">
-	<include id="m.change.generic.document"/>
+<i18n baseKey="m.rbs.website.document.menu" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
 	<key id="website">website</key>
 	<key id="website-picker-title">select the website of the menu</key>
 

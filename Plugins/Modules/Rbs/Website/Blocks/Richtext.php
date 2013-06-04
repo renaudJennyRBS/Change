@@ -1,5 +1,5 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
@@ -7,7 +7,7 @@ use Change\Presentation\Blocks\Standard\Block;
 
 /**
  * TODO Sample
- * @name \Change\Website\Blocks\Richtext
+ * @name \Rbs\Website\Blocks\Richtext
  */
 class Richtext extends Block
 {

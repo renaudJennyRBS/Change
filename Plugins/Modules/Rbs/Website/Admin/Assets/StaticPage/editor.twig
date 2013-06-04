@@ -2,41 +2,41 @@
 
 <form name="form" data-ng-submit="submit()" novalidate>
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-		{{ forms.picker('website', 'Change_Website_Website',
-			'm.change.website.document.staticpage.website',
-			true, 'm.change.website.document.staticpage.website-help',
-			'm.change.website.document.staticpage.website-picker-title') }}
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.picker('website', 'Rbs_Website_Website',
+			'm.rbs.website.document.staticpage.website',
+			true, 'm.rbs.website.document.staticpage.website-help',
+			'm.rbs.website.document.staticpage.website-picker-title') }}
 
 		<hr />
 
-		{{ forms.field('label', 'String', 'm.change.website.document.staticpage.label', true) }}
+		{{ forms.field('label', 'String', 'm.rbs.website.document.staticpage.label', true) }}
 
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('navigationTitle')}">
-			<label class="control-label" for="navigationTitle">{{ i18n('m.change.website.document.staticpage.navigationtitle', ['ucf']) }}</label>
+			<label class="control-label" for="navigationTitle">{{ i18n('m.rbs.website.document.staticpage.navigationtitle', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="input-prepend">
-					<button type="button" class="btn" ng-click="document.navigationTitle = document.label" title="Use (= document.label =)">{{ i18n('m.change.website.document.staticpage.label', ['ucf']) }} <i class="icon-angle-right"></i></button>
+					<button type="button" class="btn" ng-click="document.navigationTitle = document.label" title="Use (= document.label =)">{{ i18n('m.rbs.website.document.staticpage.label', ['ucf']) }} <i class="icon-angle-right"></i></button>
 					<input type="text" id="navigationTitle" name="navigationTitle" required class="input-xxlarge" data-ng-model="document.navigationTitle"/>
 				</div>
 			</div>
 		</div>
 
-		{{ forms.picker('pageTemplate', 'Change_Theme_PageTemplate', 'm.change.website.document.staticpage.pagetemplate',
-			true, null, 'm.change.website.document.staticpage.pagetemplate-picker-title') }}
+		{{ forms.picker('pageTemplate', 'Rbs_Theme_PageTemplate', 'm.rbs.website.document.staticpage.pagetemplate',
+			true, null, 'm.rbs.website.document.staticpage.pagetemplate-picker-title') }}
 
 		<hr />
 
 		<div class="control-group">
-			<label class="control-label" for="editableContent">{{ i18n('m.change.website.document.staticpage.editablecontent', ['ucf']) }}</label>
+			<label class="control-label" for="editableContent">{{ i18n('m.rbs.website.document.staticpage.editablecontent', ['ucf']) }}</label>
 			<div class="controls">
 				<button class="btn" id="editableContent" type="button" data-ng-click="editPage($event, document)">
 					<i class="icon-edit"></i>
-					{{ i18n('m.change.website.document.staticpage.open-page-editor', ['ucf']) }}
+					{{ i18n('m.rbs.website.document.staticpage.open-page-editor', ['ucf']) }}
 				</button>
 				<span class="help-block">
-					{{ i18n('m.change.website.document.staticpage.content-zones', ['ucf', 'lab']) }}
+					{{ i18n('m.rbs.website.document.staticpage.content-zones', ['ucf', 'lab']) }}
 					<span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span>
 				</span>
 			</div>
@@ -45,8 +45,8 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.change.admin.Status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.change.admin.Information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

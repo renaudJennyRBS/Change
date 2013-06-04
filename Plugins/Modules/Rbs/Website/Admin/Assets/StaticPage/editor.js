@@ -6,7 +6,7 @@
 
 		return {
 			restrict    : 'C',
-			templateUrl : 'Change/Website/StaticPage/editor.twig',
+			templateUrl : 'Rbs/Website/StaticPage/editor.twig',
 			replace     : true,
 
 			// Create isolated scope
@@ -40,8 +40,8 @@
 					} else {
 						Dialog.confirmEmbed(
 							elm.find('[data-role="edit-page-contents-confirmation"]'),
-							i18n.trans('m.change.admin.admin.js.confirm | ucf'),
-							i18n.trans('m.change.website.admin.js.open-page-editor-warning'),
+							i18n.trans('m.rbs.admin.admin.js.confirm | ucf'),
+							i18n.trans('m.rbs.website.admin.js.open-page-editor-warning'),
 							scope,
 							{
 								"pointedElement" : $event.target
@@ -79,7 +79,7 @@
 	 */
 	function changeEditorWebsitePageLocalized (Editor, $location, Dialog, UrlManager) {
 		var directive = changeEditorWebsitePage (Editor, $location, Dialog, UrlManager);
-		directive.templateUrl = 'Change/Website/StaticPage/editor-localized.twig';
+		directive.templateUrl = 'Rbs/Website/StaticPage/editor-localized.twig';
 		return directive;
 	}
 

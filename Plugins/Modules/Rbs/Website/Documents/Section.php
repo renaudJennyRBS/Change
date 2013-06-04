@@ -1,12 +1,12 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
 
 /**
- * @name \Change\Website\Documents\Section
+ * @name \Rbs\Website\Documents\Section
  */
-class Section extends \Compilation\Change\Website\Documents\Section implements \Change\Presentation\Interfaces\Section
+class Section extends \Compilation\Rbs\Website\Documents\Section implements \Change\Presentation\Interfaces\Section
 {
 	/**
 	 * @return string
@@ -46,7 +46,7 @@ class Section extends \Compilation\Change\Website\Documents\Section implements \
 	}
 
 	/**
-	 * @return \Change\Website\Documents\Section[]
+	 * @return \Rbs\Website\Documents\Section[]
 	 */
 	public function getSectionThread()
 	{
@@ -56,7 +56,7 @@ class Section extends \Compilation\Change\Website\Documents\Section implements \
 		foreach($tm->getAncestorNodes($tn) as $node)
 		{
 			$doc = $node->getDocument();
-			if ($doc instanceof \Change\Website\Documents\Section)
+			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
 				$sections[] = $doc;
 			}

@@ -1,5 +1,5 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
@@ -7,7 +7,7 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Change\Website\Blocks\Exception
+ * @name \Rbs\Website\Blocks\Exception
  */
 class Exception extends Block
 {
@@ -29,7 +29,7 @@ class Exception extends Block
 		{
 			$message = 'Exception (code ' . $exception->getCode() . ') : ' . $exception->getMessage();
 			$configuration = $event->getPresentationServices()->getApplicationServices()->getApplication()->getConfiguration();
-			if ($configuration->getEntry('Change/Application/development-mode'))
+			if ($configuration->getEntry('Rbs/Application/development-mode'))
 			{
 				$message .= PHP_EOL . $exception->getTraceAsString();
 			}

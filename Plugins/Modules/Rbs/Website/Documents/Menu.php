@@ -1,10 +1,10 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 /**
- * @name \Change\Website\Documents\Menu
+ * @name \Rbs\Website\Documents\Menu
  */
-class Menu extends \Compilation\Change\Website\Documents\Menu
+class Menu extends \Compilation\Rbs\Website\Documents\Menu
 {
 
 }

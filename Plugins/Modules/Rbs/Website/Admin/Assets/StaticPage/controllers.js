@@ -17,32 +17,32 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
-			[i18n.trans('m.change.website.admin.js.staticpage-list | ucf'), "Change/Website/StaticPage"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.js.staticpage-list | ucf'), "Rbs/Website/StaticPage"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Change_Website_StaticPage');
+		var DL = DocumentList.initScope($scope, 'Rbs_Website_StaticPage');
 		DL.viewMode = 'list';
 		DL.sort.column = 'modificationDate';
 		DL.sort.descending = true;
 
 		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.website.admin.js.staticpage | ucf'), 'url': 'Change/Website/StaticPage/new' }
+			{ 'label': i18n.trans('m.rbs.website.admin.js.staticpage | ucf'), 'url': 'Rbs/Website/StaticPage/new' }
 		];
 
-		DL.columns.push({ id: 'template', label: i18n.trans('m.change.theme.admin.js.pagetemplate | ucf'), sortable: true });
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.change.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.change.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
+		DL.columns.push({ id: 'template', label: i18n.trans('m.rbs.theme.admin.js.pagetemplate | ucf'), sortable: true });
+		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
+		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
-		MainMenu.loadModuleMenu('Change_Website');
+		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Change_Website_StaticPage_ListController', ListController);
+	app.controller('Rbs_Website_StaticPage_ListController', ListController);
 
 	// FIXME
-	app.controller('Change_Website_FunctionalPage_ListController', ListController);
-	app.controller('Change_Website_Page_ListController', ListController);
+	app.controller('Rbs_Website_FunctionalPage_ListController', ListController);
+	app.controller('Rbs_Website_Page_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -55,20 +55,20 @@
 	 */
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
-		$scope.urlAfterSave = '/Change/Website/StaticPage';
+		$scope.urlAfterSave = '/Rbs/Website/StaticPage';
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
 		]);
-		FormsManager.initResource($scope, 'Change_Website_StaticPage');
+		FormsManager.initResource($scope, 'Rbs_Website_StaticPage');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Change_Website_StaticPage_FormController', FormController);
+	app.controller('Rbs_Website_StaticPage_FormController', FormController);
 
 	// FIXME
-	app.controller('Change_Website_FunctionalPage_FormController', FormController);
-	app.controller('Change_Website_Page_FormController', FormController);
+	app.controller('Rbs_Website_FunctionalPage_FormController', FormController);
+	app.controller('Rbs_Website_Page_FormController', FormController);
 
 	/**
 	 * Controller for contents editor.
@@ -83,10 +83,10 @@
 	function ContentsFormController($scope, FormsManager, Editor, Breadcrumb, REST, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
 		]);
 
-		FormsManager.initResource($scope, 'Change_Website_StaticPage').then(function (document)
+		FormsManager.initResource($scope, 'Rbs_Website_StaticPage').then(function (document)
 		{
 			Editor.initScope($scope);
 			$scope.original = document;
@@ -117,8 +117,8 @@
 	}
 
 	ContentsFormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Editor', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n'];
-	app.controller('Change_Website_StaticPage_ContentsFormController', ContentsFormController);
+	app.controller('Rbs_Website_StaticPage_ContentsFormController', ContentsFormController);
 
 	// FIXME
-	app.controller('Change_Website_FunctionalPage_ContentsFormController', ContentsFormController);
+	app.controller('Rbs_Website_FunctionalPage_ContentsFormController', ContentsFormController);
 })();

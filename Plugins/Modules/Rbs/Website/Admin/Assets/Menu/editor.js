@@ -4,7 +4,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Website/Menu/editor.twig',
+			templateUrl: 'Rbs/Website/Menu/editor.twig',
 			replace: true,
 
 			// Create isolated scope

@@ -6,7 +6,7 @@
 
 		return {
 			restrict    : 'EC',
-			templateUrl : 'Change/Website/Topic/editor.twig',
+			templateUrl : 'Rbs/Website/Topic/editor.twig',
 			replace     : true,
 
 			// Create isolated scope

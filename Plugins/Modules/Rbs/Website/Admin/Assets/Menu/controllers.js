@@ -15,21 +15,21 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
-			[i18n.trans('m.change.website.admin.js.menu-list | ucf'), "Change/Website/Menu"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
 		]);
 
-		DocumentList.initScope($scope, "Change_Website_Menu");
+		DocumentList.initScope($scope, "Rbs_Website_Menu");
 
 		$scope.createActions = [
-			{ 'label': i18n.trans('m.change.website.admin.js.menu | ucf'), 'url': 'Change/Website/Menu/new' }
+			{ 'label': i18n.trans('m.rbs.website.admin.js.menu | ucf'), 'url': 'Rbs/Website/Menu/new' }
 		];
 
-		MainMenu.loadModuleMenu('Change_Website');
+		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Change_Website_Menu_ListController', ListController);
+	app.controller('Rbs_Website_Menu_ListController', ListController);
 
 	//-------------------------------------------------------------------------
 
@@ -43,12 +43,12 @@
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.change.website.admin.js.module-name | ucf'), "Change/Website"],
-			[i18n.trans('m.change.website.admin.js.menu-list | ucf'), "Change/Website/Menu"]
+			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
 		]);
-		FormsManager.initResource($scope, 'Change_Website_Menu');
+		FormsManager.initResource($scope, 'Rbs_Website_Menu');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Change_Website_Menu_FormController', FormController);
+	app.controller('Rbs_Website_Menu_FormController', FormController);
 })();

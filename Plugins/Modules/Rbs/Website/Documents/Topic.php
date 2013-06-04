@@ -1,10 +1,10 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 /**
- * @name \Change\Website\Documents\Topic
+ * @name \Rbs\Website\Documents\Topic
  */
-class Topic extends \Compilation\Change\Website\Documents\Topic
+class Topic extends \Compilation\Rbs\Website\Documents\Topic
 {
 	/**
 	 * @return \Change\Presentation\Interfaces\Section[]

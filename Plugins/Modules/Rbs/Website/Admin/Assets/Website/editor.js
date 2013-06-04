@@ -5,7 +5,7 @@
 		return {
 			restrict : 'EC',
 
-			templateUrl : 'Change/Website/Website/editor.twig',
+			templateUrl : 'Rbs/Website/Website/editor.twig',
 
 			replace: true,
 

@@ -5,7 +5,7 @@
 
 
 	/**
-	 * @name Change_Website_MainMenuController
+	 * @name Rbs_Website_MainMenuController
 	 */
 	function ChangeWebsiteMainMenuController ($scope, $location, REST) {
 
@@ -38,7 +38,7 @@
 		}
 
 		function reload () {
-			REST.treeChildren('Change/Website').then(loadSuccessFn, loadErrorFn);
+			REST.treeChildren('Rbs/Website').then(loadSuccessFn, loadErrorFn);
 		}
 
 		reload();
@@ -50,7 +50,7 @@
 		'$location',
 		'RbsChange.REST'
 	];
-	app.controller('Change_Website_MainMenuController', ChangeWebsiteMainMenuController);
+	app.controller('Rbs_Website_MainMenuController', ChangeWebsiteMainMenuController);
 
 
 	app.config(['$routeProvider', function ($routeProvider) {
@@ -59,105 +59,105 @@
 		// Home
 
 		. when(
-			'/Change/Website',
+			'/Rbs/Website',
 			{
-				templateUrl : 'Change/Website/Website/list.twig',
+				templateUrl : 'Rbs/Website/Website/list.twig',
 				reloadOnSearch : false
 			})
 
 		// Website
 
 		. when(
-			'/Change/Website/Website',
+			'/Rbs/Website/Website',
 			{
-				templateUrl : 'Change/Website/Website/list.twig',
+				templateUrl : 'Rbs/Website/Website/list.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/Website/:id/:LCID',
+			'/Rbs/Website/Website/:id/:LCID',
 			{
-				templateUrl : 'Change/Website/Website/form.twig',
+				templateUrl : 'Rbs/Website/Website/form.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/Website/:id',
+			'/Rbs/Website/Website/:id',
 			{
-				templateUrl : 'Change/Website/Website/form.twig',
+				templateUrl : 'Rbs/Website/Website/form.twig',
 				reloadOnSearch : false
 			})
 
 		// Navigation in topics
 
 		. when(
-			'/Change/Website/nav/',
+			'/Rbs/Website/nav/',
 			{
-				templateUrl : 'Change/Website/Topic/list.twig',
+				templateUrl : 'Rbs/Website/Topic/list.twig',
 				reloadOnSearch : false
 			})
 
 		// Topic
 
 		. when(
-			'/Change/Website/Topic/:id/:LCID',
+			'/Rbs/Website/Topic/:id/:LCID',
 			{
-				templateUrl : 'Change/Website/Topic/form.twig',
+				templateUrl : 'Rbs/Website/Topic/form.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Change/Website/Topic/:id/',
+			'/Rbs/Website/Topic/:id/',
 			{
-				templateUrl : 'Change/Website/Topic/form.twig',
+				templateUrl : 'Rbs/Website/Topic/form.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Change/Website/StaticPage',
+			'/Rbs/Website/StaticPage',
 			{
-				templateUrl : 'Change/Website/StaticPage/list.twig',
+				templateUrl : 'Rbs/Website/StaticPage/list.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/StaticPage/:id',
+			'/Rbs/Website/StaticPage/:id',
 			{
-				templateUrl : 'Change/Website/StaticPage/form.twig',
+				templateUrl : 'Rbs/Website/StaticPage/form.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/StaticPage/:id/:LCID',
+			'/Rbs/Website/StaticPage/:id/:LCID',
 			{
-				templateUrl : 'Change/Website/StaticPage/form.twig',
+				templateUrl : 'Rbs/Website/StaticPage/form.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/StaticPage/:id/:LCID/editor',
+			'/Rbs/Website/StaticPage/:id/:LCID/editor',
 			{
-				templateUrl : 'Change/Website/StaticPage/content-editor.twig',
+				templateUrl : 'Rbs/Website/StaticPage/content-editor.twig',
 				reloadOnSearch : false
 			})
 		. when(
-			'/Change/Website/StaticPage/:id/:LCID/translate-from/:fromLCID',
+			'/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID',
 			{
-				templateUrl : 'Change/Website/StaticPage/form.twig',
+				templateUrl : 'Rbs/Website/StaticPage/form.twig',
 				reloadOnSearch : false
 			})
 
 		// Menu
 
 			. when(
-			'/Change/Website/Menu',
+			'/Rbs/Website/Menu',
 			{
-				templateUrl : 'Change/Website/Menu/list.twig',
+				templateUrl : 'Rbs/Website/Menu/list.twig',
 				reloadOnSearch : false
 			})
 			. when(
-			'/Change/Website/Menu/:id',
+			'/Rbs/Website/Menu/:id',
 			{
-				templateUrl : 'Change/Website/Menu/form.twig',
+				templateUrl : 'Rbs/Website/Menu/form.twig',
 				reloadOnSearch : false
 			})
 
-			.otherwise({redirectTo:'/Change/Website/Website/'})
+			.otherwise({redirectTo:'/Rbs/Website/Website/'})
 
 		;
 	}]);
@@ -167,31 +167,31 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
 
 			// Pages
-			$delegate.register('Change_Website_StaticPage', {
-				'form'  : '/Change/Website/StaticPage/:id/:LCID',
-				'editor': '/Change/Website/StaticPage/:id/:LCID/editor',
-				'list'  : '/Change/Website/StaticPage/:LCID',
-				'i18n'  : '/Change/Website/StaticPage/:id/:LCID/translate-from/:fromLCID'
+			$delegate.register('Rbs_Website_StaticPage', {
+				'form'  : '/Rbs/Website/StaticPage/:id/:LCID',
+				'editor': '/Rbs/Website/StaticPage/:id/:LCID/editor',
+				'list'  : '/Rbs/Website/StaticPage/:LCID',
+				'i18n'  : '/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID'
 			});
 
 			// Topics
-			$delegate.register('Change_Website_Topic', {
-				'form': '/Change/Website/Topic/:id/:LCID',
-				'list': '/Change/Website/Topic/:LCID',
-				'tree': '/Change/Website/nav/?tn=:id'
+			$delegate.register('Rbs_Website_Topic', {
+				'form': '/Rbs/Website/Topic/:id/:LCID',
+				'list': '/Rbs/Website/Topic/:LCID',
+				'tree': '/Rbs/Website/nav/?tn=:id'
 			});
 
 			// Websites
-			$delegate.register('Change_Website_Website', {
-				'form': '/Change/Website/Website/:id/:LCID',
-				'list': '/Change/Website/Website/:LCID',
-				'tree': '/Change/Website/nav/?tn=:id'
+			$delegate.register('Rbs_Website_Website', {
+				'form': '/Rbs/Website/Website/:id/:LCID',
+				'list': '/Rbs/Website/Website/:LCID',
+				'tree': '/Rbs/Website/nav/?tn=:id'
 			});
 
 			// Menus
-			$delegate.register('Change_Website_Menu', {
-				'form': '/Change/Website/Menu/:id',
-				'list': '/Change/Website/Menu/:LCID'
+			$delegate.register('Rbs_Website_Menu', {
+				'form': '/Rbs/Website/Menu/:id',
+				'list': '/Rbs/Website/Menu/:LCID'
 			});
 
 			return $delegate;

@@ -1,12 +1,12 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 
 /**
- * @name \Change\Website\Blocks\SiteMap
+ * @name \Rbs\Website\Blocks\SiteMap
  */
 class SiteMap extends Menu
 {

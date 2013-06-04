@@ -1,15 +1,15 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 use Change\Http\Web\Result\HtmlHeaderElement;
 
 /**
- * @name \Change\Website\Documents\StaticPage
+ * @name \Rbs\Website\Documents\StaticPage
  */
-class StaticPage extends \Compilation\Change\Website\Documents\StaticPage
+class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 {
 	/**
-	 * @see \Change\Website\Documents\Page::onPrepare()
+	 * @see \Rbs\Website\Documents\Page::onPrepare()
 	 * @param \Change\Http\Web\Events\PageEvent $pageEvent
 	 * @return \Change\Http\Web\Result\Page|null
 	 */
@@ -52,7 +52,7 @@ class StaticPage extends \Compilation\Change\Website\Documents\StaticPage
 			return array();
 		}
 		$section = $this->getDocumentManager()->getDocumentInstance($node->getParentId(),
-			$ds->getModelManager()->getModelByName('Change_Website_Section'));
+			$ds->getModelManager()->getModelByName('Rbs_Website_Section'));
 		if ($section)
 		{
 			return array($section);

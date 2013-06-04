@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.website.document.website" lcid="fr_FR">
-	<include id="m.change.generic.document"/>
+<i18n baseKey="m.rbs.website.document.website" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
 	<key id="hostname">hostname</key>
 	<key id="hostname-help" format="html">
 		<![CDATA[The hostname is the domain name of your website.

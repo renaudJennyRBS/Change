@@ -1,35 +1,35 @@
-<div data-ng-controller="Change_Website_TopicListController">
-	<page-header sub-title="{{ i18nAttr('m.change.website.document.topic-list', ['ucf']) }}"></page-header>
+<div data-ng-controller="Rbs_Website_TopicListController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.website.document.topic-list', ['ucf']) }}"></page-header>
 
-	<search-filters model="Change_Website_StaticPage" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Website_StaticPage" query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href="Change/Website/StaticPage/new">{{ i18n('m.change.website.document.staticpage-create', ['ucf']) }}</a>
+		<a href="Rbs/Website/StaticPage/new">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
 		|
-		<a href="Change/Website/Topic/new">{{ i18n('m.change.website.document.topic-create', ['ucf']) }}</a>
+		<a href="Rbs/Website/Topic/new">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
 	</div>
 
 	<document-list data-dlid="DL1"
 	               publishable="true"
-	               tree="Change_Website"
+	               tree="Rbs_Website"
 	               query="query"
 	               actions="activate reorder delete">
 
 		<column name="icon" width="30px" align="center">
-			<span ng-if="doc.is('Change_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
+			<span ng-if="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
 				<i class="icon-2x icon-folder-close"></i>
 				<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
 			</span>
-			<i ng-if="doc.is('Change_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
-			<span ng-if="doc.is('Change_Website_StaticPage')" class="iconoverlay">
+			<i ng-if="doc.is('Rbs_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
+			<span ng-if="doc.is('Rbs_Website_StaticPage')" class="iconoverlay">
 				<i class="icon-2x icon-file"></i>
 			</span>
 		</column>
 
 		<column name="label" label="Libellé" primary="true">
-			<a ng-if="doc.is('Change_Website_StaticPage')" title="Éditer le contenu de la page"
+			<a ng-if="doc.is('Rbs_Website_StaticPage')" title="Éditer le contenu de la page"
 			   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
-			<a ng-if="doc.is('Change_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
+			<a ng-if="doc.is('Rbs_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
 			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a>
 		</column>
 
@@ -38,7 +38,7 @@
 <!--
 	<document-list data-dlid="DLFlat2"
 				   publishable="true"
-				   model="Change_Website_StaticPage">
+				   model="Rbs_Website_StaticPage">
 		<column name="label" label="Libellé"></column>
 	</document-list>
 
@@ -69,21 +69,21 @@
 				</td>
 
 				<td style="text-align: center;" ng-if="! DL.isPreview(doc)">
-					<span data-ng-show="doc.is('Change_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
+					<span data-ng-show="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
 						<i class="icon-2x icon-folder-close"></i>
 						<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
 					</span>
-					<i data-ng-show="doc.is('Change_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
+					<i data-ng-show="doc.is('Rbs_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
 
-					<span data-ng-show="doc.is('Change_Website_StaticPage')" class="iconoverlay">
+					<span data-ng-show="doc.is('Rbs_Website_StaticPage')" class="iconoverlay">
 						<i class="icon-2x icon-file"></i>
 					</span>
 				</td>
 
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]" ng-if="! DL.isPreview(doc)">
-					<a data-ng-show="doc.is('Change_Website_StaticPage')" title="Éditer le contenu de la page"
+					<a data-ng-show="doc.is('Rbs_Website_StaticPage')" title="Éditer le contenu de la page"
 					   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
-					<a data-ng-show="doc.is('Change_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
+					<a data-ng-show="doc.is('Rbs_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
 					   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a>
 
 					<div>

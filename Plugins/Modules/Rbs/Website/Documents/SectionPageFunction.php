@@ -1,10 +1,10 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 /**
- * @name \Change\Website\Documents\SectionPageFunction
+ * @name \Rbs\Website\Documents\SectionPageFunction
  */
-class SectionPageFunction extends \Compilation\Change\Website\Documents\SectionPageFunction
+class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPageFunction
 {
 
 }

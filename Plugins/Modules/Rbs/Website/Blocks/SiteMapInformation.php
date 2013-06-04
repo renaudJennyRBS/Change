@@ -1,11 +1,11 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\BlockManager;
 
 /**
- * @name \Change\Website\Blocks\SiteMapInformation
+ * @name \Rbs\Website\Blocks\SiteMapInformation
  */
 class SiteMapInformation extends MenuInformation
 {
@@ -18,7 +18,7 @@ class SiteMapInformation extends MenuInformation
 		parent::__construct($name, $blockManager);
 		$ucf = array('ucf');
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.change.website.blocks.sitemap', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.sitemap', $ucf));
 		$this->getParameterInformation('templateName')->setDefaultValue('siteMap.twig');
 		$this->getParameterInformation('maxLevel')->setDefaultValue(5);
 		$this->removeParameterInformation('documentId');

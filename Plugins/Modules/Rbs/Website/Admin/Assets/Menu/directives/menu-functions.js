@@ -8,7 +8,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Website/Menu/directives/menu-functions.twig',
+			templateUrl: 'Rbs/Website/Menu/directives/menu-functions.twig',
 
 			link: function (scope, elm)
 			{
@@ -16,7 +16,7 @@
 					'dragstart': function (e)
 					{
 						var draggedEl = $(this);
-						e.dataTransfer.setData('Change/MenuItemFunction', JSON.stringify({
+						e.dataTransfer.setData('Rbs/MenuItemFunction', JSON.stringify({
 							"label": draggedEl.text(),
 							"id": draggedEl.data('id')
 						}));

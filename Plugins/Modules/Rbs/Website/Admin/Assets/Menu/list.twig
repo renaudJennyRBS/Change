@@ -1,7 +1,7 @@
-<div data-ng-controller="Change_Website_Menu_ListController">
-	<page-header title="{{ i18nAttr('m.change.website.document.menu-list', ['ucf']) }}"></page-header>
+<div data-ng-controller="Rbs_Website_Menu_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.website.document.menu-list', ['ucf']) }}"></page-header>
 
-	<search-filters model="Change_Website_Website" query="DL.query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Website_Website" query="DL.query" text-search="textSearch"></search-filters>
 
 	<div class="alert alert-danger">
 		TODO : en cours de développement...
@@ -10,11 +10,11 @@
 	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
 
 	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>{{ i18n('m.change.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-		{{ i18n('m.change.admin.lists.you-can', ['ucf', 'lab']) }}
+		<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
+		{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
 		<ul>
-			<li>{{ i18n('m.change.admin.lists.create-elements-with-buttons') }}</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.change.admin.lists.clear-search-filters') }}</a></li>
+			<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
+			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
 		</ul>
 	</div>
 

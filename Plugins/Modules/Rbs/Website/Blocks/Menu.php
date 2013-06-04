@@ -1,5 +1,5 @@
 <?php
-namespace Change\Website\Blocks;
+namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
@@ -8,7 +8,7 @@ use Change\Presentation\Blocks\Standard\Block;
 
 /**
  * TODO Sample
- * @name \Change\Website\Blocks\Menu
+ * @name \Rbs\Website\Blocks\Menu
  */
 class Menu extends Block
 {
@@ -32,7 +32,7 @@ class Menu extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');
-		if ($page instanceof \Change\Website\Documents\Page)
+		if ($page instanceof \Rbs\Website\Documents\Page)
 		{
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
@@ -78,16 +78,16 @@ class Menu extends Block
 	/**
 	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param integer $maxLevel
-	 * @param \Change\Website\Documents\Page|null $currentPage
-	 * @param \Change\Website\Documents\Section[] $path
+	 * @param \Rbs\Website\Documents\Page|null $currentPage
+	 * @param \Rbs\Website\Documents\Section[] $path
 	 * @param \Change\Http\UrlManager $urlManager
-	 * @return \Change\Website\Menu\MenuEntry
+	 * @return \Rbs\Website\Menu\MenuEntry
 	 */
 	protected function getMenuEntry($doc, $maxLevel, $currentPage, $path, $urlManager)
 	{
-		$entry = new \Change\Website\Menu\MenuEntry();
+		$entry = new \Rbs\Website\Menu\MenuEntry();
 		$entry->setLabel($doc->getLabel());
-		if ($doc instanceof \Change\Website\Documents\Section)
+		if ($doc instanceof \Rbs\Website\Documents\Section)
 		{
 			if ($doc->getIndexPageId())
 			{
@@ -110,7 +110,7 @@ class Menu extends Block
 
 		if ($maxLevel >= 1)
 		{
-			if ($doc instanceof \Change\Website\Documents\Section)
+			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
 				$tn = $doc->getDocumentServices()->getTreeManager()->getNodeByDocument($doc);
 				foreach ($tn->getChildren() as $child)
@@ -118,7 +118,7 @@ class Menu extends Block
 					$entry->addChild($this->getMenuEntry($child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
 				}
 			}
-			elseif ($doc instanceof \Change\Website\Documents\Menu)
+			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
 			{
 				foreach ($doc->getItems() as $item)
 				{

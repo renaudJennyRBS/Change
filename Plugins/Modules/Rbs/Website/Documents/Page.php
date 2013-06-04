@@ -1,5 +1,5 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
 use Change\Http\Web\Events\PageEvent;
@@ -8,9 +8,9 @@ use Change\Presentation\Layout\Layout;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Change\Website\Documents\Page
+ * @name \Rbs\Website\Documents\Page
  */
-class Page extends \Compilation\Change\Website\Documents\Page implements \Change\Presentation\Interfaces\Page
+class Page extends \Compilation\Rbs\Website\Documents\Page implements \Change\Presentation\Interfaces\Page
 {
 	/**
 	 * @see \Change\Presentation\Interfaces\Page::getIdentifier()

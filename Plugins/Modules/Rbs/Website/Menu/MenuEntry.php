@@ -1,8 +1,8 @@
 <?php
-namespace Change\Website\Menu;
+namespace Rbs\Website\Menu;
 
 /**
- * @name \Change\Website\Menu\MenuEntry
+ * @name \Rbs\Website\Menu\MenuEntry
  */
 class MenuEntry
 {

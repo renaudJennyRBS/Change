@@ -1,10 +1,10 @@
 <?php
-namespace Change\Website\Documents;
+namespace Rbs\Website\Documents;
 
 /**
- * @name \Change\Website\Documents\Text
+ * @name \Rbs\Website\Documents\Text
  */
-class Text extends \Compilation\Change\Website\Documents\Text
+class Text extends \Compilation\Rbs\Website\Documents\Text
 {
 	/**
 	 * @return string

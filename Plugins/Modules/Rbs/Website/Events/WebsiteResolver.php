@@ -1,12 +1,12 @@
 <?php
-namespace Change\Website\Events;
+namespace Rbs\Website\Events;
 
 use Change\Http\Event;
-use Change\Website\Documents\Website;
+use Rbs\Website\Documents\Website;
 
 /**
- * @package Change\Website
- * @name \Change\Website\Events\WebsiteResolver
+ * @package Rbs\Website
+ * @name \Rbs\Website\Events\WebsiteResolver
  */
 class WebsiteResolver
 {
@@ -46,7 +46,7 @@ class WebsiteResolver
 			}
 
 			$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
-			$singleWebsite = $cfg->getEntry('Change/Http/Web/SingleWebsite', true);
+			$singleWebsite = $cfg->getEntry('Rbs/Http/Web/SingleWebsite', true);
 
 			if ($singleWebsite)
 			{
@@ -106,7 +106,7 @@ class WebsiteResolver
 			return unserialize($item);
 		}
 
-		$websiteModel =  $event->getDocumentServices()->getModelManager()->getModelByName('Change_Website_Website');
+		$websiteModel =  $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Website_Website');
 		if ($websiteModel)
 		{
 			$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
@@ -136,7 +136,7 @@ class WebsiteResolver
 	protected function getCache($applicationServices)
 	{
 		$options = array('cacheDir' => $applicationServices->getApplication()->getWorkspace()->cachePath(),
-			'namespace' => 'Change_Website');
+			'namespace' => 'Rbs_Website');
 		$cache = new \Zend\Cache\Storage\Adapter\Filesystem($options);
 		$plugin = new \Zend\Cache\Storage\Plugin\ExceptionHandler(array('throw_exceptions' => false));
 		$cache->addPlugin($plugin);
