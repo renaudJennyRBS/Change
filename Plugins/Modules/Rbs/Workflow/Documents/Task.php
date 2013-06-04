@@ -1,10 +1,10 @@
 <?php
-namespace Change\Workflow\Documents;
+namespace Rbs\Workflow\Documents;
 
 /**
- * @name \Change\Workflow\Documents\Task
+ * @name \Rbs\Workflow\Documents\Task
  */
-class Task extends \Compilation\Change\Workflow\Documents\Task
+class Task extends \Compilation\Rbs\Workflow\Documents\Task
 {
 
 }

@@ -1,16 +1,16 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 use Change\Workflow\Interfaces\InstanceItem;
 use Change\Workflow\Interfaces\WorkflowItem;
 
 /**
-* @name \Change\Workflow\Std\Serializer
+* @name \Rbs\Workflow\Std\Serializer
 */
 class Serializer
 {
 	/**
-	 * @param \Change\Workflow\Documents\Workflow $workflow
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
 	 * @param array|null $itemsData
 	 * @return WorkflowItem[]
 	 */
@@ -140,7 +140,7 @@ class Serializer
 	}
 
 	/**
-	 * @param \Change\Workflow\Documents\WorkflowInstance $workflowInstance
+	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
 	 * @param array $itemsData
 	 * @return InstanceItem[]
 	 */

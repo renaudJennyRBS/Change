@@ -1,10 +1,10 @@
 <?php
-namespace Change\Workflow\Documents;
+namespace Rbs\Workflow\Documents;
 
 /**
- * @name \Change\Workflow\Documents\WorkflowInstance
+ * @name \Rbs\Workflow\Documents\WorkflowInstance
  */
-class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowInstance
+class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInstance
 	implements \Change\Workflow\Interfaces\WorkflowInstance
 {
 	/**
@@ -30,7 +30,7 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	{
 		if ($this->items === null)
 		{
-			$s = new \Change\Workflow\Std\Serializer();
+			$s = new \Rbs\Workflow\Std\Serializer();
 			$this->items = $s->unserializeInstanceItems($this, $this->getDecodedItemsData());
 		}
 		return $this->items;
@@ -81,13 +81,13 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\Place $place
-	 * @return \Change\Workflow\Std\Token
+	 * @param \Rbs\Workflow\Std\Place $place
+	 * @return \Rbs\Workflow\Std\Token
 	 */
 	public function createToken($place)
 	{
-		$token = new \Change\Workflow\Std\Token($this);
-		if ($place instanceof \Change\Workflow\Std\Place)
+		$token = new \Rbs\Workflow\Std\Token($this);
+		if ($place instanceof \Rbs\Workflow\Std\Place)
 		{
 			$token->setPlace($place);
 			$this->addItem($token);
@@ -96,13 +96,13 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\Transition $transition
-	 * @return \Change\Workflow\Std\WorkItem
+	 * @param \Rbs\Workflow\Std\Transition $transition
+	 * @return \Rbs\Workflow\Std\WorkItem
 	 */
 	public function createWorkItem($transition)
 	{
-		$workItem = new \Change\Workflow\Std\WorkItem($this);
-		if ($transition instanceof \Change\Workflow\Std\Transition)
+		$workItem = new \Rbs\Workflow\Std\WorkItem($this);
+		if ($transition instanceof \Rbs\Workflow\Std\Transition)
 		{
 			$workItem->setTransition($transition);
 			$this->addItem($workItem);
@@ -135,7 +135,7 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 			$this->getContext()->exchangeArray($context);
 		}
 
-		$date = isset($context[\Change\Workflow\Std\WorkItem::DATE_CONTEXT_KEY]) ? \Change\Workflow\Std\WorkItem::DATE_CONTEXT_KEY : null;
+		$date = isset($context[\Rbs\Workflow\Std\WorkItem::DATE_CONTEXT_KEY]) ? \Rbs\Workflow\Std\WorkItem::DATE_CONTEXT_KEY : null;
 		$engine = new \Change\Workflow\Engine($this, $date instanceof \DateTime ? $date : null);
 
 		$place = $engine->getStartPlace();
@@ -166,14 +166,14 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 		$engine = new \Change\Workflow\Engine($this);
 		$workItem = $engine->getEnabledWorkItemByTaskId($taskId);
 
-		if ($workItem instanceof \Change\Workflow\Std\WorkItem)
+		if ($workItem instanceof \Rbs\Workflow\Std\WorkItem)
 		{
 			$transition = $workItem->getTransition();
-			if ($transition->getTrigger() === \Change\Workflow\Std\Transition::TRIGGER_USER)
+			if ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_USER)
 			{
-				if (isset($ctx[\Change\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]))
+				if (isset($ctx[\Rbs\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]))
 				{
-					$userId = intval($ctx[\Change\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]);
+					$userId = intval($ctx[\Rbs\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]);
 					if ($userId)
 					{
 						$workItem->setUserId($userId);
@@ -191,7 +191,7 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\WorkItem $workItem
+	 * @param \Rbs\Workflow\Std\WorkItem $workItem
 	 * @return boolean
 	 */
 	public function execute($workItem)
@@ -208,7 +208,7 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 		{
 			$this->getApplicationServices()->getLogging()->exception($e);
 			$ctx = $this->getContext();
-			$ctx[\Change\Workflow\Std\WorkItem::EXCEPTION_CONTEXT_KEY] = $e->getMessage();
+			$ctx[\Rbs\Workflow\Std\WorkItem::EXCEPTION_CONTEXT_KEY] = $e->getMessage();
 			return false;
 		}
 		return true;
@@ -265,7 +265,7 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	{
 		if ($this->items !== null)
 		{
-			$s = new \Change\Workflow\Std\Serializer();
+			$s = new \Rbs\Workflow\Std\Serializer();
 			$array = $s->serializeInstanceItems($this->items);
 			$this->setItemsData($array ? json_encode($array) : null);
 		}
@@ -305,16 +305,16 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\WorkItem $workItem
+	 * @param \Rbs\Workflow\Std\WorkItem $workItem
 	 */
 	public function generateTasks()
 	{
-		/* @var $workItems  \Change\Workflow\Std\WorkItem[] */
+		/* @var $workItems  \Rbs\Workflow\Std\WorkItem[] */
 		$workItems = array();
 		foreach ($this->getItems() as $item)
 		{
-			if ($item instanceof \Change\Workflow\Std\WorkItem &&
-				$item->getStatus() === \Change\Workflow\Std\WorkItem::STATUS_ENABLED)
+			if ($item instanceof \Rbs\Workflow\Std\WorkItem &&
+				$item->getStatus() === \Rbs\Workflow\Std\WorkItem::STATUS_ENABLED)
 			{
 				$workItems['T' . $item->getTaskId()] = $item;
 			}
@@ -325,9 +325,9 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 			return;
 		}
 
-		$dqb = new \Change\Documents\Query\Builder($this->getDocumentServices(), 'Change_Workflow_Task');
+		$dqb = new \Change\Documents\Query\Builder($this->getDocumentServices(), 'Rbs_Workflow_Task');
 		$qb = $dqb->andPredicates(
-			$dqb->eq('workflowInstance', $this), $dqb->eq('status', \Change\Workflow\Std\WorkItem::STATUS_ENABLED)
+			$dqb->eq('workflowInstance', $this), $dqb->eq('status', \Rbs\Workflow\Std\WorkItem::STATUS_ENABLED)
 		)->getQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
@@ -347,8 +347,8 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 
 		foreach ($workItems as $workItem)
 		{
-			/* @var $task  \Change\Workflow\Documents\Task */
-			$task = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Workflow_Task');
+			/* @var $task  \Rbs\Workflow\Documents\Task */
+			$task = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Task');
 
 			$transition = $workItem->getTransition();
 			$task->setLabel($transition->getName());
@@ -357,11 +357,11 @@ class WorkflowInstance extends \Compilation\Change\Workflow\Documents\WorkflowIn
 			$task->setTaskId($workItem->getTaskId());
 			$task->setTaskCode($transition->getTaskCode());
 			$task->setStatus($workItem->getStatus());
-			if ($transition->getTrigger() === \Change\Workflow\Std\Transition::TRIGGER_USER)
+			if ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_USER)
 			{
 				$task->setRole($transition->getRole());
 			}
-			elseif ($transition->getTrigger() === \Change\Workflow\Std\Transition::TRIGGER_TIME)
+			elseif ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_TIME)
 			{
 				$deadLine = clone($workItem->getEnabledDate());
 				$deadLine->add($transition->getTimeLimit());

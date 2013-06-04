@@ -1,8 +1,8 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 /**
-* @name \Change\Workflow\Std\Arc
+* @name \Rbs\Workflow\Std\Arc
 */
 class Arc implements \Change\Workflow\Interfaces\Arc
 {
@@ -37,12 +37,12 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	protected $place;
 
 	/**
-	 * @var \Change\Workflow\Documents\Workflow
+	 * @var \Rbs\Workflow\Documents\Workflow
 	 */
 	protected $workflow;
 
 	/**
-	 * @param \Change\Workflow\Documents\Workflow $workflow
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
 	 */
 	function __construct($workflow)
 	{

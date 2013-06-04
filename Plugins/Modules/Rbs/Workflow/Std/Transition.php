@@ -1,8 +1,8 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 /**
- * @name \Change\Workflow\Std\Transition
+ * @name \Rbs\Workflow\Std\Transition
  */
 class Transition implements \Change\Workflow\Interfaces\Transition
 {
@@ -39,7 +39,7 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	protected $taskCode;
 
 	/**
-	 * @var \Change\Workflow\Documents\Workflow
+	 * @var \Rbs\Workflow\Documents\Workflow
 	 */
 	protected $workflow;
 
@@ -49,7 +49,7 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	protected $arcs = array();
 
 	/**
-	 * @param \Change\Workflow\Documents\Workflow $workflow
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
 	 */
 	function __construct($workflow)
 	{

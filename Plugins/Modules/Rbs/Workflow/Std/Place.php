@@ -1,8 +1,8 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 /**
- * @name \Change\Workflow\Std\Place
+ * @name \Rbs\Workflow\Std\Place
  */
 class Place implements \Change\Workflow\Interfaces\Place
 {
@@ -22,7 +22,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	protected $name;
 
 	/**
-	 * @var \Change\Workflow\Documents\Workflow
+	 * @var \Rbs\Workflow\Documents\Workflow
 	 */
 	protected $workflow;
 
@@ -32,7 +32,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	protected $arcs = array();
 
 	/**
-	 * @param \Change\Workflow\Documents\Workflow $workflow
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
 	 */
 	function __construct($workflow)
 	{

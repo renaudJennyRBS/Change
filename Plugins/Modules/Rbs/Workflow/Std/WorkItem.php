@@ -1,13 +1,13 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 /**
-* @name \Change\Workflow\Std\WorkItem
+* @name \Rbs\Workflow\Std\WorkItem
 */
 class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 {
 	/**
-	 * @var \Change\Workflow\Documents\WorkflowInstance
+	 * @var \Rbs\Workflow\Documents\WorkflowInstance
 	 */
 	protected $workflowInstance;
 
@@ -52,7 +52,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	protected $finishedDate;
 
 	/**
-	 * @param \Change\Workflow\Documents\WorkflowInstance $workflowInstance
+	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
 	 */
 	function __construct($workflowInstance)
 	{
@@ -120,7 +120,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * Id of Change_Workflow_Task Document
+	 * Id of Rbs_Workflow_Task Document
 	 * @return integer
 	 */
 	public function getTaskId()
@@ -130,7 +130,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 
 	/**
 	 * Only for user transition trigger
-	 * Id of Change_Users_User Document
+	 * Id of Rbs_Users_User Document
 	 * @return integer|null
 	 */
 	public function getUserId()
@@ -209,7 +209,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\Transition $transition
+	 * @param \Rbs\Workflow\Std\Transition $transition
 	 * @return $this
 	 */
 	public function setTransition($transition)

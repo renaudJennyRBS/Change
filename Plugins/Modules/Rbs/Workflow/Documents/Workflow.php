@@ -1,10 +1,12 @@
 <?php
-namespace Change\Workflow\Documents;
+namespace Rbs\Workflow\Documents;
+
+use Change\Workflow\Validator;
 
 /**
- * @name \Change\Workflow\Documents\Workflow
+ * @name \Rbs\Workflow\Documents\Workflow
  */
-class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implements \Change\Workflow\Interfaces\Workflow
+class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \Change\Workflow\Interfaces\Workflow
 {
 
 	/**
@@ -53,7 +55,7 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 	{
 		if ($this->items === null)
 		{
-			$s = new \Change\Workflow\Std\Serializer();
+			$s = new \Rbs\Workflow\Std\Serializer();
 			$this->items = $s->unserializeItems($this, $this->getDecodedItemsData());
 		}
 		return $this->items;
@@ -61,11 +63,11 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 
 	/**
 	 * @param boolean $identify
-	 * @return \Change\Workflow\Std\Place
+	 * @return \Rbs\Workflow\Std\Place
 	 */
 	public function getNewPlace($identify = true)
 	{
-		$place = new \Change\Workflow\Std\Place($this);
+		$place = new \Rbs\Workflow\Std\Place($this);
 		if ($identify)
 		{
 			$place->setId($this->nextId());
@@ -76,11 +78,11 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 
 	/**
 	 * @param boolean $identify
-	 * @return \Change\Workflow\Std\Transition
+	 * @return \Rbs\Workflow\Std\Transition
 	 */
 	public function getNewTransition($identify = true)
 	{
-		$transition =  new \Change\Workflow\Std\Transition($this);
+		$transition =  new \Rbs\Workflow\Std\Transition($this);
 		if ($identify)
 		{
 			$transition->setId($this->nextId());
@@ -91,11 +93,11 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 
 	/**
 	 * @param boolean $identify
-	 * @return \Change\Workflow\Std\Arc
+	 * @return \Rbs\Workflow\Std\Arc
 	 */
 	public function getNewArc($identify = true)
 	{
-		$arc = new \Change\Workflow\Std\Arc($this);
+		$arc = new \Rbs\Workflow\Std\Arc($this);
 		if ($identify)
 		{
 			$arc->setId($this->nextId());
@@ -183,7 +185,7 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 	{
 		if ($this->items !== null)
 		{
-			$s = new \Change\Workflow\Std\Serializer();
+			$s = new \Rbs\Workflow\Std\Serializer();
 			$array = $s->serializeItems($this->items);
 			$this->setItemsData($array ? json_encode($array) : null);
 		}
@@ -195,7 +197,7 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 	 */
 	public function isValid()
 	{
-		$validator = new \Change\Workflow\Validator();
+		$validator = new Validator();
 		try
 		{
 			$validator->isValid($this);
@@ -226,14 +228,14 @@ class Workflow extends \Compilation\Change\Workflow\Documents\Workflow implement
 	}
 
 	/**
-	 * @return \Change\Workflow\Documents\WorkflowInstance
+	 * @return \Rbs\Workflow\Documents\WorkflowInstance
 	 */
 	public function createWorkflowInstance()
 	{
 		$workflowInstanceModel = $this->documentServices->getModelManager()
-			->getModelByName('Change_Workflow_WorkflowInstance');
+			->getModelByName('Rbs_Workflow_WorkflowInstance');
 
-		/* @var $workflowInstance \Change\Workflow\Documents\WorkflowInstance */
+		/* @var $workflowInstance \Rbs\Workflow\Documents\WorkflowInstance */
 		$workflowInstance = $this->documentServices->getDocumentManager()
 				->getNewDocumentInstanceByModel($workflowInstanceModel);
 		$workflowInstance->setWorkflow($this);

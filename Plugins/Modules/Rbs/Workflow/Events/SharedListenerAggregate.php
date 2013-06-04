@@ -1,11 +1,11 @@
 <?php
-namespace Change\Workflow\Events;
+namespace Rbs\Workflow\Events;
 
-use Change\Workflow\Events\WorkflowResolver;
+use Rbs\Workflow\Events\WorkflowResolver;
 use Change\Workflow\WorkflowManager;
 
 /**
-* @name \Change\Workflow\Events\SharedListenerAggregate
+* @name \Rbs\Workflow\Events\SharedListenerAggregate
 */
 class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggregateInterface
 {

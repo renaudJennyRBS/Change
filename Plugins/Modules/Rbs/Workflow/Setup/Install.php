@@ -1,8 +1,8 @@
 <?php
-namespace Change\Workflow\Setup;
+namespace Rbs\Workflow\Setup;
 
 /**
- * @name \Change\Workflow\Setup\Install
+ * @name \Rbs\Workflow\Setup\Install
  */
 class Install
 {
@@ -16,7 +16,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Change_Workflow',
-			'\\Change\\Workflow\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Workflow',
+			'\\Rbs\\Workflow\\Events\\SharedListenerAggregate');
 	}
 }

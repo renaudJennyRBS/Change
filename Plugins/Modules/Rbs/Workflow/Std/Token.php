@@ -1,13 +1,13 @@
 <?php
-namespace Change\Workflow\Std;
+namespace Rbs\Workflow\Std;
 
 /**
-* @name \Change\Workflow\Std\Token
+* @name \Rbs\Workflow\Std\Token
 */
 class Token implements \Change\Workflow\Interfaces\Token
 {
 	/**
-	 * @var \Change\Workflow\Documents\WorkflowInstance
+	 * @var \Rbs\Workflow\Documents\WorkflowInstance
 	 */
 	protected $workflowInstance;
 
@@ -37,7 +37,7 @@ class Token implements \Change\Workflow\Interfaces\Token
 	protected $consumedDate;
 
 	/**
-	 * @param \Change\Workflow\Documents\WorkflowInstance $workflowInstance
+	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
 	 */
 	function __construct($workflowInstance)
 	{
@@ -119,7 +119,7 @@ class Token implements \Change\Workflow\Interfaces\Token
 	}
 
 	/**
-	 * @param \Change\Workflow\Std\Place $place
+	 * @param \Rbs\Workflow\Std\Place $place
 	 * @return $this
 	 */
 	public function setPlace($place)
