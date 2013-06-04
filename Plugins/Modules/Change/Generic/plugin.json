@@ -1,4 +1,5 @@
 {
-	"vendor": "change",
-	"name": "generic"
+	"vendor": "Change",
+	"name": "Generic",
+	"package": "Core"
 }

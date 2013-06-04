@@ -11,11 +11,11 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testConstruct()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$this->assertEquals(__DIR__, $plugin->getBasePath());
 		$this->assertEquals(Plugin::TYPE_MODULE, $plugin->getType());
-		$this->assertEquals('change', $plugin->getVendor());
-		$this->assertEquals('tests', $plugin->getShortName());
+		$this->assertEquals('Change', $plugin->getVendor());
+		$this->assertEquals('Tests', $plugin->getShortName());
 		$this->assertFalse($plugin->getActivated());
 		$this->assertFalse($plugin->getConfigured());
 		$this->assertNull($plugin->getRegistrationDate());
@@ -26,7 +26,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testRegistrationDate()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$date = new \DateTime();
 		$p2 = $plugin->setRegistrationDate($date);
 		$this->assertSame($plugin, $p2);
@@ -35,7 +35,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testActivated()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$p2 = $plugin->setActivated(true);
 		$this->assertSame($plugin, $p2);
 		$this->assertTrue($plugin->getActivated());
@@ -43,7 +43,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testConfigured()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$p2 = $plugin->setConfigured(true);
 		$this->assertSame($plugin, $p2);
 		$this->assertTrue($plugin->getConfigured());
@@ -51,7 +51,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testPackage()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$p2 = $plugin->setPackage('core');
 		$this->assertSame($plugin, $p2);
 		$this->assertEquals('core', $plugin->getPackage());
@@ -59,7 +59,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testAvailable()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$plugin->setActivated(true);
 		$this->assertFalse($plugin->isAvailable());
 		$plugin->setConfigured(true);
@@ -68,24 +68,46 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testEq()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$this->assertTrue($plugin->eq($plugin));
 
-		$plugin2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
+		$plugin2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$this->assertTrue($plugin->eq($plugin2));
 
-		$plugin2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests2');
+		$plugin2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'tests2');
 		$this->assertFalse($plugin->eq($plugin2));
 	}
 
-	public function testNamespaces()
+	public function testNamespace()
 	{
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'change', 'tests');
-		$expected = array('Change\\Tests\\' => __DIR__);
-		$this->assertEquals($expected, $plugin->getNamespaces());
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
+		$this->assertEquals('Change\\Tests', $plugin->getNamespace());
 
-		$plugin = new Plugin(__DIR__, Plugin::TYPE_THEME, 'change', 'tests');
-		$expected = array('Theme\\Change\\Tests\\' => __DIR__);
-		$this->assertEquals($expected, $plugin->getNamespaces());
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_THEME, 'Change', 'Tests');
+		$this->assertEquals('Theme\\Change\\Tests', $plugin->getNamespace());
+	}
+
+	public function testToArray()
+	{
+		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
+		$expected = array (
+			'basePath' => 'D:\\Projects\\Change\\ChangeTests\\Change\\Plugins',
+			'type' => 'Modules',
+			'vendor' => 'Change',
+			'shortName' => 'Tests',
+			'package' => NULL,
+			'registrationDate' => NULL,
+			'configured' => false,
+			'activated' => false,
+			'configuration' =>
+			array (
+			),
+			'className' => 'Change\\Plugins\\Plugin',
+			'namespaces' =>
+			array (
+				'Change\\Tests\\' => 'D:\\Projects\\Change\\ChangeTests\\Change\\Plugins',
+			),
+		);
+		$this->assertEquals($expected, $plugin->toArray());
 	}
 }

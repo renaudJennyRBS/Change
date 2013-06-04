@@ -1,4 +1,5 @@
 {
-	"vendor": "change",
-	"name": "media"
+	"vendor": "Change",
+	"name": "Media",
+	"package": "Core"
 }

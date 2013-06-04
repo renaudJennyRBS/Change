@@ -231,49 +231,53 @@ class PluginManager
 		$parts = explode(DIRECTORY_SEPARATOR, $filePath);
 		$partsCount = count($parts);
 
+		$vendor = $this->normalizeVendorName($config['vendor']);
+		$shortName = $this->normalizePluginName($config['name']);
 
-		$vendor = strtolower($config['vendor']);
-		$normalizedVendor = ucfirst($vendor);
 		$folderName = $parts[$partsCount - 3];
-		if ($normalizedVendor === 'Project')
+		if ($vendor === 'Project')
 		{
 			if ($folderName !== $type)
 			{
 				return null;
 			}
 		}
-		elseif ($normalizedVendor !== $folderName)
+		elseif ($vendor !== $folderName)
 		{
 			return null;
 		}
 
-		$shortName = strtolower($config['name']);
-		$normalizedShortName = ucfirst($shortName);
 		$folderName = $parts[$partsCount - 2];
-		if ($normalizedShortName !== $folderName)
+		if ($shortName !== $folderName)
 		{
 			return null;
 		}
 
 		$basePath = dirname($filePath);
+		$plugin = null;
+
 		if (is_readable($basePath . DIRECTORY_SEPARATOR . 'Plugin.php'))
 		{
-			$className =  ($type === Plugin::TYPE_THEME ? '\\Theme\\' : '\\' )  . $normalizedVendor . '\\' . $normalizedShortName . '\\Plugin';
+			$className =  ($type === Plugin::TYPE_THEME ? '\\Theme\\' : '\\' )  . $vendor . '\\' . $shortName . '\\Plugin';
 			require_once $basePath . DIRECTORY_SEPARATOR . 'Plugin.php';
 			if (class_exists($className, false))
 			{
 				$plugin = new $className($basePath, $type, $vendor, $shortName);
-				if ($plugin instanceof Plugin)
+				if (!($plugin instanceof Plugin))
 				{
-					return $plugin;
+					$plugin = null;
 				}
 			}
 		}
 		else
 		{
-			return new Plugin($basePath, $type, $vendor, $shortName);
+			$plugin = new Plugin($basePath, $type, $vendor, $shortName);
 		}
-		return null;
+		if ($plugin && isset($config['package']))
+		{
+			$plugin->setPackage($config['package']);
+		}
+		return $plugin;
 	}
 
 	/**
@@ -344,12 +348,13 @@ class PluginManager
 		}
 		$isb = $this->getDbProvider()->getNewStatementBuilder('PluginManager::register');
 		$fb = $isb->getFragmentBuilder();
-		$isb->insert($fb->getPluginTable(), 'type', 'vendor', 'name', 'registration_date');
-		$isb->addValues($fb->parameter('type'), $fb->parameter('vendor'), $fb->parameter('name'), $fb->dateTimeParameter('registrationDate'));
+		$isb->insert($fb->getPluginTable(), 'type', 'vendor', 'name', 'package', 'registration_date');
+		$isb->addValues($fb->parameter('type'), $fb->parameter('vendor'), $fb->parameter('name'), $fb->parameter('package'), $fb->dateTimeParameter('registrationDate'));
 		$iq = $isb->insertQuery();
 		$iq->bindParameter('type', $plugin->getType());
 		$iq->bindParameter('vendor', $plugin->getVendor());
 		$iq->bindParameter('name', $plugin->getShortName());
+		$iq->bindParameter('package', $plugin->getPackage());
 		$iq->bindParameter('registrationDate', $registrationDate);
 		$iq->execute();
 
@@ -528,8 +533,6 @@ class PluginManager
 	 */
 	public function getModule($vendor, $shortName)
 	{
-		$vendor = strtolower($vendor);
-		$shortName = strtolower($shortName);
 		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
 			return $plugin->getType() === Plugin::TYPE_MODULE && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
 		});
@@ -542,7 +545,6 @@ class PluginManager
 	 */
 	public function getModules($vendor = null)
 	{
-		$vendor = ($vendor) ? strtolower($vendor) : null;
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_MODULE && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
@@ -555,8 +557,6 @@ class PluginManager
 	 */
 	public function getTheme($vendor, $shortName)
 	{
-		$vendor = strtolower($vendor);
-		$shortName = strtolower($shortName);
 		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
 			return $plugin->getType() === Plugin::TYPE_THEME && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
 		});
@@ -569,7 +569,6 @@ class PluginManager
 	 */
 	public function getThemes($vendor = null)
 	{
-		$vendor = ($vendor) ? strtolower($vendor) : null;
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
@@ -614,23 +613,10 @@ class PluginManager
 	 */
 	protected function registerPluginEvents($plugin, $eventManager)
 	{
-		$nss = array_keys($plugin->getNamespaces());
-		$className = $nss[0] . 'Setup\Install';
-		if (class_exists($className))
+		$listenerAggregate = new Register($plugin);
+		if ($listenerAggregate instanceof \Zend\EventManager\ListenerAggregateInterface)
 		{
-			$listenerAggregate = new $className($plugin);
-			if ($listenerAggregate instanceof \Zend\EventManager\ListenerAggregateInterface)
-			{
-				$listenerAggregate->attach($eventManager);
-			}
-			else
-			{
-				var_dump(__METHOD__ . ' ListenerAggregateInterface');
-			}
-		}
-		else
-		{
-			var_dump(__METHOD__ . ' class_exists ' . $className);
+			$listenerAggregate->attach($eventManager);
 		}
 	}
 
@@ -638,10 +624,55 @@ class PluginManager
 	 * @param string $vendor
 	 * @param string $packageName
 	 * @param array $context
+	 * @return \Change\Plugins\Plugin[]
 	 */
-	public function installPackage($vendor, $packageName, $context)
+	public function installPackage($vendor, $packageName, $context = array())
 	{
+		$vendor = $this->normalizeVendorName($vendor);
+		return $this->doInstall(static::EVENT_TYPE_PACKAGE, $vendor, $packageName, $context);
+	}
+
+	/**
+	 * @param string $type
+	 * @param string $vendor
+	 * @param string $name
+	 * @param array $context
+	 * @throws \InvalidArgumentException
+	 * @return \Change\Plugins\Plugin[]
+	 */
+	public function installPlugin($type, $vendor, $name, $context = array())
+	{
+		if ($type == 'module' && $type != 'theme')
+		{
+			$eventType = static::EVENT_TYPE_MODULE;
+		}
+		elseif ($type == 'theme')
+		{
+			$eventType = static::EVENT_TYPE_THEME;
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Type must be either "module" or "theme"');
+		}
+
+		$vendor = $this->normalizeVendorName($vendor);
+		$name = $this->normalizeVendorName($name);
+		return $this->doInstall($eventType, $vendor, $name, $context);
+	}
+
+	/**
+	 * @param string $eventType
+	 * @param string $vendor
+	 * @param string $name
+	 * @param array $context
+	 * @return Plugin[]
+	 */
+	protected function doInstall($eventType, $vendor, $name, $context)
+	{
+
 		$eventManager = $this->getEventManager();
+
+		/* @var $plugins \Change\Plugins\Plugin[] */
 		$plugins = array();
 
 		$application = new \Change\Application();
@@ -651,7 +682,8 @@ class PluginManager
 
 		$eventArgs = $eventManager->prepareArgs(array('application' => $application, 'context' => $context));
 
-		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName), $this, $eventArgs);
+		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, $eventType, $vendor,
+			$name), $this, $eventArgs);
 		$results = $this->getEventManager()->trigger($event);
 		$date = new \DateTime();
 		foreach ($results as $result)
@@ -667,7 +699,7 @@ class PluginManager
 
 		$applicationServices = new \Change\Application\ApplicationServices($application);
 		$eventArgs['applicationServices'] = $applicationServices;
-		$event->setName(static::composeEventName(static::EVENT_SETUP_APPLICATION, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$event->setName(static::composeEventName(static::EVENT_SETUP_APPLICATION, $eventType, $vendor, $name));
 		$this->getEventManager()->trigger($event);
 
 		$compiler = new \Change\Documents\Generators\Compiler($application, $applicationServices);
@@ -679,24 +711,24 @@ class PluginManager
 		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
 		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
 
-		$event->setName(static::composeEventName(static::EVENT_SETUP_SERVICES, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$event->setName(static::composeEventName(static::EVENT_SETUP_SERVICES, $eventType, $vendor, $name));
 		$this->getEventManager()->trigger($event);
 
-		$event->setName(static::composeEventName(static::EVENT_SETUP_FINALIZE, static::EVENT_TYPE_PACKAGE, $vendor, $packageName));
+		$event->setName(static::composeEventName(static::EVENT_SETUP_FINALIZE, $eventType, $vendor, $name));
 		$this->getEventManager()->trigger($event);
 
 		foreach ($plugins as $plugin)
 		{
-			/* $plugin Plugin */
 			$date = new \DateTime();
-
 			$plugin->setConfigured(true);
 			$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
 			$this->update($plugin);
 		}
 
 		$editableConfiguration->save();
+		return $plugins;
 	}
+
 
 	/**
 	 * @param $name
@@ -755,6 +787,7 @@ class PluginManager
 			{
 				$path = $this->getWorkspace()->pluginsModulesPath($normalizedVendor, $normalizedName, 'plugin.json');
 			}
+			$twigFileName = 'Assets/Install.module.php.twig';
 		}
 		else
 		{
@@ -766,6 +799,7 @@ class PluginManager
 			{
 				$path = $this->getWorkspace()->pluginsThemesPath($normalizedVendor, $normalizedName, 'plugin.json');
 			}
+			$twigFileName = 'Assets/Install.theme.php.twig';
 		}
 		if (file_exists($path))
 		{
@@ -776,7 +810,13 @@ class PluginManager
 
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
-		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php', $twig->render('Assets/Install.php.twig', $attributes));
+
+
+		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php', $twig->render($twigFileName, $attributes));
+
+		$plugin = $this->getNewPlugin($path, $type === 'module' ? Plugin::TYPE_MODULE : Plugin::TYPE_THEME);
+		$this->register($plugin);
+
 		$this->compile();
 		return dirname($path);
 	}

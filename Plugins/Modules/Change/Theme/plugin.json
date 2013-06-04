@@ -1,4 +1,5 @@
 {
-	"vendor": "change",
-	"name": "theme"
+	"vendor": "Change",
+	"name": "Theme",
+	"package": "Core"
 }

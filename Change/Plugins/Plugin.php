@@ -179,14 +179,6 @@ class Plugin
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getNormalizedVendor()
-	{
-		return ucfirst($this->getVendor());
-	}
-
-	/**
 	 * @param string $shortName
 	 * @return $this
 	 */
@@ -204,20 +196,13 @@ class Plugin
 		return $this->shortName;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getNormalizedShortName()
-	{
-		return ucfirst($this->getShortName());
-	}
 
 	/**
 	 * @return string
 	 */
 	public function getName()
 	{
-		return $this->getNormalizedVendor() . '_' . $this->getNormalizedShortName();
+		return $this->getVendor() . '_' . $this->getShortName();
 	}
 
 	/**
@@ -301,12 +286,35 @@ class Plugin
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function isTheme()
+	{
+		return $this->getType() === static::TYPE_THEME;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isModule()
+	{
+		return $this->getType() === static::TYPE_MODULE;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getNamespace()
+	{
+		return ($this->type === Plugin::TYPE_THEME ? 'Theme\\' : '' )  . $this->getVendor() . '\\' . $this->getShortName();
+	}
+
+	/**
 	 * @return array
 	 */
-	public function getNamespaces()
+	protected function getAutoloadNamespaces()
 	{
-		$namespace =  ($this->type === Plugin::TYPE_THEME ? 'Theme\\' : '' )  . $this->getNormalizedVendor() . '\\' . $this->getNormalizedShortName() . '\\';
-		return array($namespace => $this->basePath);
+		return array($this->getNamespace() . '\\' => $this->basePath);
 	}
 
 	/**
@@ -316,7 +324,7 @@ class Plugin
 	{
 		$array = get_object_vars($this);
 		$array['className'] = get_class($this);
-		$array['namespaces'] = $this->getNamespaces();
+		$array['namespaces'] = $this->getAutoloadNamespaces();
 		return $array;
 	}
 
@@ -346,5 +354,14 @@ class Plugin
 			}
 		}
 		return $paths;
+	}
+
+	function __toString()
+	{
+		if ($this->getPackage())
+		{
+			return 'Package: ' . $this->getPackage() . ', '. ($this->getType() === static::TYPE_THEME ? 'Theme: ' : 'Module: ') . $this->getName();
+		}
+		return ($this->getType() === static::TYPE_THEME ? 'Theme: ' : 'Module: ') . $this->getName();
 	}
 }

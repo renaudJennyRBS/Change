@@ -1,4 +1,5 @@
 {
-	"vendor": "change",
-	"name": "admin"
+	"vendor": "Change",
+	"name": "Admin",
+	"package": "Core"
 }

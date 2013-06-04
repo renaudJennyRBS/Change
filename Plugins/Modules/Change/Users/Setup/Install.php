@@ -1,123 +1,34 @@
 <?php
 namespace Change\Users\Setup;
 
-use Change\Plugins\PluginManager;
-
 /**
- * Class Install
- * @package Change\Users\Setup
  * @name \Change\Users\Setup\Install
  */
-class Install implements \Zend\EventManager\ListenerAggregateInterface
+class Install
 {
 	/**
-	 * @return string
-	 */
-	protected function getVendor()
-	{
-		return 'change';
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getName()
-	{
-		return 'users';
-	}
-
-	/**
-	 * Attach one or more listeners
-	 * Implementors may add an optional $priority argument; the EventManager
-	 * implementation will pass this to the aggregate.
-	 * @param \Zend\EventManager\EventManagerInterface $events
-	 */
-	public function attach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		$vendor = $this->getVendor();
-		$name = $this->getName();
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			return $pluginManager->getModule($vendor, $name)->setPackage('core')->setConfigurationEntry('locked', true);
-		};
-
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_INITIALIZE, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 5);
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-			/* @var $application \Change\Application */
-			$application = $event->getParam('application');
-			$this->executeApplication($application);
-
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			$pluginManager->getModule($vendor, $name)
-				->setConfigurationEntry(PluginManager::EVENT_SETUP_APPLICATION, 'Ok');
-		};
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_APPLICATION, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 5);
-
-		$callBack = function (\Zend\EventManager\Event $event) use ($vendor, $name)
-		{
-
-			/* @var $documentServices \Change\Documents\DocumentServices */
-			$documentServices = $event->getParam('documentServices');
-			$this->executeServices($documentServices);
-
-			/* @var $pluginManager PluginManager */
-			$pluginManager = $event->getTarget();
-			$pluginManager->getModule($vendor, $name)
-				->setConfigurationEntry(PluginManager::EVENT_SETUP_SERVICES, 'Ok');
-		};
-
-		$eventNames = array(
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_SERVICES, PluginManager::EVENT_TYPE_PACKAGE, $vendor, 'core'),
-			PluginManager::composeEventName(
-				PluginManager::EVENT_SETUP_SERVICES, PluginManager::EVENT_TYPE_MODULE, $vendor, $name)
-		);
-		$events->attach($eventNames, $callBack, 10);
-	}
-
-	/**
-	 * Detach all previously attached listeners
-	 * @param \Zend\EventManager\EventManagerInterface $events
-	 */
-	public function detach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		// TODO: Implement detach() method.
-	}
-
-	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @throws \RuntimeException
 	 */
-	public function executeApplication($application)
+	public function executeApplication($plugin, $application)
 	{
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Presentation/Blocks/Change_Users', '\\Change\\Users\\Blocks\\SharedListenerAggregate');
+		/* @var $config \Change\Configuration\EditableConfiguration */
+		$config = $application->getConfiguration();
+		$config->addPersistentEntry('Change/Presentation/Blocks/Change_Users',
+			'\\Change\\Users\\Blocks\\SharedListenerAggregate');
 
-		$application->getConfiguration()
-			->addPersistentEntry('Change/Admin/Listeners/Change_Users', '\\Change\\Users\\Admin\\Register');
+		$config->addPersistentEntry('Change/Admin/Listeners/Change_Users',
+			'\\Change\\Users\\Admin\\Register');
 	}
 
 	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @throws \RuntimeException
 	 */
-	public function executeServices($documentServices)
+	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
 		$groupModel = $documentServices->getModelManager()->getModelByName('Change_Users_Group');
 		$query = new \Change\Documents\Query\Builder($documentServices, $groupModel);
@@ -138,7 +49,7 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 
 			/* @var $user \Change\Users\Documents\User */
 			$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Change_Users_User');
-			$user->setLabel('Administrateur');
+			$user->setLabel('Administrator');
 			$user->setEmail('admin@temporary.fr');
 			$user->setLogin('admin');
 			$user->setPassword('admin');
@@ -147,5 +58,13 @@ class Install implements \Zend\EventManager\ListenerAggregateInterface
 			$user->addGroups($group2);
 			$user->create();
 		}
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function finalize($plugin)
+	{
+		$plugin->setConfigurationEntry('locked', true);
 	}
 }
