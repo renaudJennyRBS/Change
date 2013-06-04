@@ -183,7 +183,7 @@ class GetDocumentModelCollection
 					$qb->orderAsc($orderColumn);
 				}
 			}
-
+			$extraColumn = $event->getRequest()->getQuery('column', array());
 			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
@@ -191,7 +191,7 @@ class GetDocumentModelCollection
 			foreach ($collection as $document)
 			{
 				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-				$result->addResource($this->addResourceItemInfos($l, $document, $urlManager));
+				$result->addResource($this->addResourceItemInfos($l, $document, $urlManager, $extraColumn));
 			}
 		}
 
@@ -204,9 +204,10 @@ class GetDocumentModelCollection
 	 * @param DocumentLink $documentLink
 	 * @param AbstractDocument $document
 	 * @param UrlManager $urlManager
+	 * @param array $extraColumn
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
 	{
 		if ($documentLink->getLCID())
 		{
@@ -248,6 +249,18 @@ class GetDocumentModelCollection
 		if ($documentLink->getLCID())
 		{
 			$document->getDocumentServices()->getDocumentManager()->popLCID();
+		}
+
+		if (is_array($extraColumn) && count($extraColumn))
+		{
+			foreach ($extraColumn as $propertyName)
+			{
+				$property = $model->getProperty($propertyName);
+				if ($property)
+				{
+					$documentLink->setProperty($property);
+				}
+			}
 		}
 		return $documentLink;
 	}
