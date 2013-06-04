@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.lists" lcid="fr_FR">
+	<key id="reorderDescription" format="html"><![CDATA[Réorganisez les éléments en faisant glisser les symboles <i class="icon-reorder"></i> disponibles sur chaque ligne.]]></key>
+	<key id="alphabeticalSort">sort alphabetically</key>
+	<key id="reverseSort">reverse</key>
+
+	<key id="this-list-is-empty">This list is empty!</key>
+	<key id="you-can">you can</key>
+	<key id="create-elements-with-buttons">create new elements using the commands above</key>
+	<key id="clear-search-filters">clear search filters</key>
+</i18n>

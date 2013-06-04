@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin" lcid="fr_FR">
+	<key id="properties">properties</key>
+	<key id="general-properties">general properties</key>
+	<key id="advanced-properties">advanced properties</key>
+	<key id="publication-properties">publication</key>
+	<key id="information">information</key>
+	<key id="languages">languages</key>
+	<key id="contents">contents</key>
+	<key id="status">state</key>
+
+	<key id="submit">submit</key>
+	<key id="cancel">cancel</key>
+</i18n>

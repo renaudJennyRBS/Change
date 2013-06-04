@@ -1,0 +1,127 @@
+<form class="form-inline search-filters well well-small hide" data-ng-submit="applyFilters()">
+
+	<header>
+		<button type="button" class="close" data-ng-click="cancelFiltersAndClose()" title="{{ i18nAttr('m.rbs.admin.filters.cancelAllFilters', ['ucf']) }}">×</button>
+		<h4><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.filters.title', ['ucf']) }}</span></h4>
+	</header>
+
+	<div class="content">
+		<div>
+			<label>{{ i18n('m.rbs.admin.filters.requiredConditions', ['ucf']) }}</label>
+			<div class="btn-group" data-toggle="buttons-radio">
+				<button title="{{ i18nAttr('m.rbs.admin.filters.allTooltip') }}" type="button" class="btn btn-small" data-ng-class="{active: operator=='and'}" data-ng-click="operator='and'">{{ i18n('m.rbs.admin.filters.all') }}</button>
+				<button title="{{ i18nAttr('m.rbs.admin.filters.atLeastOneTooltip') }}" type="button" class="btn btn-small" data-ng-class="{active: operator=='or'}" data-ng-click="operator='or'">{{ i18n('m.rbs.admin.filters.atLeastOne') }}</button>
+			</div>
+		</div>
+
+		<div class="filters">
+
+			<div class="filter" data-ng-repeat="applied in appliedFilters">
+				<button class="btn rounded-icon" type="button" data-ng-click="removeFilter($index)" title="{{ i18n('m.rbs.admin.filters.deleteThisFilter', ['ucf']) }}"><i class="icon-minus"></i></button>
+				<select data-ng-model="applied.filter" data-ng-options="f.label for (name,f) in availableFilters"></select>
+
+				<div data-ng-switch="applied.filter.type" style="display:inline-block">
+
+					<!-- String -->
+
+					<div data-ng-switch-when="String" style="display:inline-block">
+
+						<select data-ng-hide="applied.filter.possibleValues" data-ng-model="applied.op" class="input-medium">
+							<option value="contains">{{ i18n('m.rbs.admin.filters.contains') }}</option>
+							<option value="beginsWith">{{ i18n('m.rbs.admin.filters.startsWith') }}</option>
+							<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
+							<option value="endsWith">{{ i18n('m.rbs.admin.filters.endsWith') }}</option>
+						</select>
+						<input data-ng-hide="applied.filter.possibleValues" type="text" data-role="filter-value" class="inline input-medium" data-ng-model="applied.value"/>
+
+						<select data-ng-show="applied.filter.possibleValues" data-ng-model="applied.op" class="input-medium">
+							<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
+							<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
+						</select>
+						<select data-ng-show="applied.filter.possibleValues" data-ng-model="applied.value" data-role="filter-value" data-ng-options="o.label for o in applied.filter.possibleValues"></select>
+
+					</div>
+
+					<!-- Integer -->
+
+					<div data-ng-switch-when="Integer" style="display:inline-block">
+
+						<select data-ng-hide="applied.filter.possibleValues" data-ng-model="applied.op">
+							<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
+							<option value="gte">{{ i18n('m.rbs.admin.filters.isGreaterThanOrEquals') }}</option>
+							<option value="lte">{{ i18n('m.rbs.admin.filters.isLessThanOrEquals') }}</option>
+							<option value="neq">{{ i18n('m.rbs.admin.filters.isDifferentOf') }}</option>
+						</select>
+						<input data-ng-hide="applied.filter.possibleValues" type="number" data-role="filter-value" class="inline input-mini" data-ng-model="applied.value"/>
+
+						<select data-ng-show="applied.filter.possibleValues" data-ng-model="applied.op" class="input-medium">
+							<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
+							<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
+						</select>
+						<select data-ng-show="applied.filter.possibleValues" data-ng-model="applied.value" data-role="filter-value" data-ng-options="o.label for o in applied.filter.possibleValues"></select>
+
+					</div>
+
+					<!-- DateTime -->
+
+					<div data-ng-switch-when="DateTime" style="display:inline-block">
+						<select data-ng-model="applied.op" class="input-medium">
+							<option value="lte">{{ i18n('m.rbs.admin.filters.isBefore') }}</option>
+							<option value="eq">{{ i18n('m.rbs.admin.filters.isOn') }}</option>
+							<option value="gte">{{ i18n('m.rbs.admin.filters.isAfter') }}</option>
+						</select>
+						<date-selector data-ng-model="applied.value" data-role="filter-value" style="display:inline-block"/>
+					</div>
+
+					<!-- Boolean -->
+
+					<div data-ng-switch-when="Boolean" style="display:inline-block">
+						<switch data-role="filter-value" data-ng-model="applied.value"/>
+					</div>
+
+					<!-- Document -->
+
+					<div data-ng-switch-when="Document" ng-switch="applied.filter.selectorType" style="display:inline-block">
+						<model-select
+								ng-switch-when="dropdown"
+								ng-model="applied.value"
+								change-model="(=applied.filter.documentType=)"></model-select>
+						<input
+								ng-switch-default=""
+								data-ng-model="applied.value"
+								type="number" data-role="filter-value" class="inline input-mini"/>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+
+		<footer>
+			<div class="btn-toolbar">
+				<button type="button" class="btn btn-small" data-ng-click="addFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.filters.addFilter', ['ucf']) }}</button>
+			</div>
+
+			<!--div>
+				<label class="radio">
+					<input type="radio" value="all" ng-model="treePolicy" />
+					Tous
+				</label>
+				<label class="radio">
+					<input type="radio" value="childOf" ng-model="treePolicy" />
+					Enfants directs
+				</label>
+				<label class="radio">
+					<input type="radio" value="descendantOf" ng-model="treePolicy" />
+					Descendants
+				</label>
+			</div-->
+
+			<div class="btn-toolbar">
+				<button type="submit" class="btn btn-primary" data-ng-disabled="isUnchanged()" data-ng-class="{pulse: !isUnchanged()}"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.filters.filter', ['ucf']) }}</button>
+				<button type="button" class="btn" data-ng-click="addToFavorites($event)" data-ng-disabled="! isUnchanged()">{{ i18n('m.rbs.admin.filters.saveSearch', ['ucf']) }}</button>
+			</div>
+		</footer>
+	</div>
+
+</form>

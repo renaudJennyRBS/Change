@@ -1,0 +1,28 @@
+<div class="control-group">
+	<label class="control-label" for="id">{{ i18n('m.rbs.generic.document.id',['ucf']) }}</label>
+	<div class="controls">
+		<span class="uneditable-input">(=document.id=)</span>
+	</div>
+</div>
+
+<div class="control-group">
+	<label class="control-label" for="modelName">{{ i18n('m.rbs.generic.document.model',['ucf']) }}</label>
+	<div class="controls">
+		<span class="uneditable-input">(=document.model=)</span>
+	</div>
+</div>
+
+<div class="control-group" data-ng-show="document.publicationStatus">
+	<label class="control-label" for="status">{{ i18n('m.rbs.generic.document.publicationstatus',['ucf']) }}</label>
+	<div class="controls">
+		<span class="uneditable-input">(=document.publicationStatus=)</span>
+	</div>
+</div>
+
+<div class="control-group" data-ng-show="document.refLCID">
+	<label class="control-label" for="status">{{ i18n('m.rbs.admin.languages',['ucf']) }}</label>
+	<div class="controls">
+		<span class="label label-success"><i class="icon-book"></i> (=document.refLCID=)</span>
+		<span data-ng-repeat="l in document.META$.locales" data-ng-show="l.id != document.refLCID" class="label">(=l.label=)</span>
+	</div>
+</div>

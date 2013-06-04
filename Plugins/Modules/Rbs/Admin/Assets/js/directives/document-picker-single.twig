@@ -1,0 +1,38 @@
+<div class="input-append">
+	<input type="text" readonly="readonly" title="(=selectedModelName=)" name="label"/>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="editSelectedDocument($event)"
+		data-ng-disabled="isEmpty()"
+		data-ng-show="allowEdition"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-edit-tooltip', ['ucf']) }}"><i class="icon-edit"></i></button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="createDocument()"
+		data-ng-show="allowCreation"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-create-tooltip', ['ucf']) }}"><i class="icon-plus"></i></button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-disabled="isEmpty()"
+		data-ng-click="clear()"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-delete-selection-tooltip', ['ucf']) }}"><i class="icon-remove"></i></button>
+</div>
+
+<div class="btn-group">
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="openSelector()"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-choose-tooltip', ['ucf']) }}">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</button>
+	<button
+		type="button"
+		class="btn"
+		data-ng-click="getFromClipboard()"
+		data-ng-disabled="clipboardValues.length == 0"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-take-from-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
+</div>
+
+<div class="document-picker-embedded" data-ng-show="documentPickerUrl" data-ng-include="documentPickerUrl"></div>

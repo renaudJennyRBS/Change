@@ -1,0 +1,30 @@
+<div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
+
+	<div class="row-fluid indicators">
+		<div ng-repeat="ind in indicators" class="span(= 12/indicators.length =) indicator indicator-(= ind.style =)">
+			<div class="indicator-inner">
+				<div class="value pull-left">(= ind.value | number =)</div>
+				<div class="title">
+					<div ng-bind-html-unsafe="ind.label"></div>
+					<div class="message" ng-bind-html-unsafe="ind.message"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+		<span class="span4">
+			Statut :
+			<input type="text" class="input-block"/>
+		</span>
+		<span class="span4">
+			14 notifications
+		</span>
+		<span class="span4">
+			Récemment...
+		</span>
+	</div>
+
+	<div class="clearfix"></div>
+
+</div>

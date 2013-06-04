@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.admin.js" lcid="fr_FR">
+	<key id="submit">valider</key>
+	<key id="cancel">annuler</key>
+	<key id="confirm">confirmation</key>
+	<key id="home">accueil</key>
+	<key id="loading-document">chargement du document...</key>
+	<key id="document-is-already-being-edited">ce document est déjà en cours d'édition.</key>
+	<key id="new">nouveau...</key>
+	<key id="not-defined">non défini</key>
+	<key id="loading-list">chargement de la liste...</key>
+	<key id="loading-list-error">le chargement de la liste a échoué.</key>
+	<key id="loading-preview">chargement de l'aperçu du document...</key>
+
+	<key id="time-zone-selector-title">sélection d'un fuseau horaire</key>
+	<key id="last-modification-date">dernière modif.</key>
+
+	<key id="modification-date">dernière modif.</key>
+	<key id="activated">activé</key>
+	<key id="status">état</key>
+	<key id="order">ordre</key>
+
+	<key id="preview">aperçu</key>
+	<key id="edit">éditer</key>
+	<key id="delete">supprimer</key>
+</i18n>

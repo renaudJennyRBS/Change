@@ -1,0 +1,29 @@
+<div class="confirmation-area"></div>
+<div class="form-actions">
+	<div style="margin-bottom: 10px; margin-top: -10px;"
+		data-ng-class="{true: 'muted'}[changes.length == 0]"
+		data-ng-pluralize
+		data-count="changes.length"
+		data-when="{{ i18nAttr('m.rbs.admin.forms.propertiesModifiedPluralize') }}">
+	</div>
+
+	<!--button data-ng-show="hasStatus('DRAFT', 'VALIDATION')" type="button" data-ng-click="publish($event)" class="btn btn-success btn-headline pull-right" data-ng-disabled="! isUnchanged()"><i class="icon-play"></i>Publier<small>sur le site web</small></button-->
+
+	<button data-ng-hide="isCascading()" disabled="disabled" class="btn btn-headline" type="button" data-ng-click="goBack($event)" data-ng-disabled="! canGoBack()"><i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}</button>
+	<button data-ng-show="isCascading()" disabled="disabled" class="btn btn-headline" type="button" data-ng-click="cancelCascade($event)" data-ng-disabled="! canCancelCascade()"><i class="icon-arrow-up"></i>{{ i18n('m.rbs.admin.forms.btnCancelCascade', ['ucf']) }}</button>
+
+	<button disabled="disabled" class="btn btn-headline" type="button" data-ng-click="confirmReset($event)" data-ng-disabled="isUnchanged()" title="Rétablir les dernières données enregistrées"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.forms.btnRevert', ['ucf']) }}</button>
+	<button disabled="disabled" class="btn btn-headline btn-primary" data-role="save" type="submit" data-ng-disabled="form.$invalid || isUnchanged()"><i class="icon-ok icon-white"></i>{{ i18n('m.rbs.admin.forms.btnSave', ['ucf']) }}</button>
+
+	<div style="margin-top: 1em;" data-ng-hide="isCascading()">
+		<strong style="margin-bottom: 10px; display: block;">{{ i18n('m.rbs.admin.forms.afterSave', ['ucf']) }}</strong>
+		<label class="radio">
+			<input type="radio" data-ng-model="actionAfterSave" value="stay"/>
+			{{ i18n('m.rbs.admin.forms.afterSaveStay', ['ucf']) }}
+		</label>
+		<label class="radio">
+			<input type="radio" data-ng-model="actionAfterSave" value="list"/>
+            {{ i18n('m.rbs.admin.forms.afterSaveGoList', ['ucf']) }}
+		</label>
+	</div>
+</div>

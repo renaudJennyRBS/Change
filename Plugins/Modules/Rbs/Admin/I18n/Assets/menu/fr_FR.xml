@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.menu" lcid="fr_FR">
+	<key id="open">ouvrir le menu principal (Ctrl+Alt+M)</key>
+	<key id="tools">outils</key>
+	<key id="users">outils</key>
+	<key id="about">à propos de RBS Change</key>
+	<key id="users">utilisateurs</key>
+	<key id="fullscreen-mode">mode plein écran</key>
+	<key id="profile">profil</key>
+	<key id="logout">déconnexion</key>
+</i18n>
