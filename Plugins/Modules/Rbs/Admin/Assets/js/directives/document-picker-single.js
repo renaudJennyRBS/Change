@@ -137,6 +137,12 @@
 					scope.closeSelector();
 				};
 
+				scope.picker = {
+					"selectDocument" : function (d) {
+						scope.selectDocument(d);
+					}
+				};
+
 				scope.clear = function () {
 					ngModel.$setViewValue(null);
 					ngModel.$render();

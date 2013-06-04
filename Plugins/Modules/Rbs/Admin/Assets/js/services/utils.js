@@ -193,7 +193,16 @@
 					if (queryString.length > 0) {
 						queryString += '&';
 					}
-					queryString += key + '=' + value;
+					if (angular.isArray(value)) {
+						for (p=0 ; p<value.length ; p++) {
+							if (p > 0) {
+								queryString += '&';
+							}
+							queryString += key + '[]=' + value[p];
+						}
+					} else {
+						queryString += key + '=' + value;
+					}
 				}
 			});
 

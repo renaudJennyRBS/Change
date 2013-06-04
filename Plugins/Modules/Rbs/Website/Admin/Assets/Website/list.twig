@@ -11,6 +11,9 @@
 	               publishable="true"
 	               model="Rbs_Website_Website"
 	               query="query">
-		<column name="label" label="Libellé" primary="true"></column>
+		<column name="label" label="{{ i18nAttr('m.rbs.website.document.website.label', ['ucf']) }}" primary="true"></column>
+		<column name="hostName" label="{{ i18nAttr('m.rbs.website.document.website.hostname', ['ucf']) }}">
+			<a href ng-href="(= doc.hostName =)" target="_blank">(= doc.hostName =) <i class="icon-external-link-sign"></i></a>
+		</column>
 	</document-list>
 </div>
