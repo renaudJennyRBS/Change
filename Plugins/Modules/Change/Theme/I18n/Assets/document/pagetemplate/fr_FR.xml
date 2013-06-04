@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.change.theme.document.pagetemplate" lcid="fr_FR">
-	<include id="m.change.generic.document"/>
-	<key id="html">HTML</key>
-	<key id="htmlforbackoffice">HTML backoffice</key>
-	<key id="editablecontent">zones de contenu</key>
-</i18n>

@@ -1,0 +1,42 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.theme.document.pagetemplate.label', true) }}
+
+		<ul class="nav nav-tabs" id="contentsTab">
+			<li class="active"><a href="javascript:;" data-target="#html" data-toggle="tab">
+				{{ i18n('m.rbs.theme.document.pagetemplate.html', ['ucf']) }}
+			</a></li>
+			<li><a href="javascript:;" data-target="#htmlForBackoffice" data-toggle="tab">
+				{{ i18n('m.rbs.theme.document.pagetemplate.htmlforbackoffice', ['ucf']) }}
+			</a></li>
+			<li><a href="javascript:;" data-target="#editableContent" data-toggle="tab">
+				{{ i18n('m.rbs.theme.document.pagetemplate.editablecontent', ['ucf']) }}
+			</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div class="tab-pane active" id="html">
+				<ace-editor data-ng-model="document.html"></ace-editor>
+			</div>
+			<div class="tab-pane" id="htmlForBackoffice">
+				<ace-editor data-ng-model="document.htmlForBackoffice"></ace-editor>
+			</div>
+			<div class="tab-pane" id="editableContent">
+				<ace-editor data-ng-model="document.editableContent" mode="javascript"></ace-editor>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
