@@ -1,7 +1,7 @@
 <div data-ng-controller="Change_Catalog_Category_ListController">
 	<page-header sub-title="{{ i18nAttr('m.change.catalog.document.category-list', ['ucf']) }}"></page-header>
 	<search-filters model="Change_Catalog_Product" query="DL.query" text-search="textSearch"></search-filters>
-	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
+	<document-list-toolbar></document-list-toolbar>
 
 	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
 		<h4>{{ i18n('m.change.admin.lists.this-list-is-empty', ['ucf']) }}</h4>

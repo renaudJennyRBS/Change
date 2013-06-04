@@ -5,13 +5,26 @@
 		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
 		{{ forms.field('label', 'String', 'm.change.catalog.document.billingarea.label', true) }}
+		{{ forms.field('reference', 'String', 'm.change.catalog.document.billingarea.reference', false) }}
+		<!-- TODO select -->
+		{{ forms.picker('currency', 'Change_Catalog_Currency', 'm.change.catalog.document.billingarea.currency',
+			true, null, 'm.change.catalog.document.billingarea.currency-picker-title') }}
+		{{ forms.field('defaultTaxZone', 'String', 'm.change.catalog.document.billingarea.defaulttaxzone', true) }}
+		{{ forms.field('boEditWithTax', 'Boolean', 'm.change.catalog.document.billingarea.boeditwithtax', false) }}
+		{{ forms.field('storePriceWithTax', 'Boolean', 'm.change.catalog.document.billingarea.storepricewithtax', false) }}
+	</fieldset>
+
+	<fieldset data-ng-show="section=='taxes'"
+		data-form-section-label="{{ i18nAttr('m.change.catalog.document.billingarea.taxes', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.change.catalog.document.billingarea.taxes', ['ucf']) }}"
+		data-taxes-section="">
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.change.admin.admin.js.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.change.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-document-system-info-section="">
 	</fieldset>
 
 	<form-button-bar></form-button-bar>

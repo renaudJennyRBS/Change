@@ -8,6 +8,8 @@
 	<key id="languages">langues</key>
 	<key id="contents">contenus</key>
 	<key id="status">état</key>
+	<key id="administration">administration</key>
+	<key id="add">ajouter</key>
 
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>

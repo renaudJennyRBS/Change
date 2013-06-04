@@ -1,21 +1,22 @@
 {% import "@Admin/forms.twig" as forms %}
+{% import "@Catalog/forms.twig" as catalogforms %}
 
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.change.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.change.admin.properties', ['ucf']) }}">
-		{{ forms.price('basePrice', 'm.change.catalog.document.price.baseprice', true) }}
+		{{ catalogforms.price('basePrice', 'm.change.catalog.document.price.baseprice', true) }}
 		<!-- TODO list -->
 		{{ forms.field('taxCategory', 'String', 'm.change.catalog.document.price.taxcategory', true) }}
-		{{ forms.price('ecoTax', 'm.change.catalog.document.price.ecotax', true) }}
+		{{ catalogforms.price('ecoTax', 'm.change.catalog.document.price.ecotax', true) }}
 
-		<hr/>
+		<hr />
 		<span class="help-block">
-			Pour appliquer une <label class="in-text" for="discount">promotion</label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire.
+			{{ i18n('m.change.catalog.document.price.discount-section-help', ['ucf']) }}
 		</span>
 
 		<div class="control-group">
-			<label class="control-label" for="discount">Promotion</label>
+			<label class="control-label" for="discount">{{ i18n('m.change.catalog.document.price.discount', ['ucf']) }}</label>
 
 			<div class="controls">
 				<div class="input-append">
@@ -32,8 +33,8 @@
 				</div>
 			</div>
 		</div>
-		{{ forms.field('discountDetail', 'String', 'm.change.catalog.document.price.discountdetail', true) }}
-		{{ forms.price('finalPrice', 'm.change.catalog.document.price.finalprice', true, true) }}
+		{{ forms.field('discountDetail', 'String', 'm.change.catalog.document.price.discountdetail', false) }}
+		{{ catalogforms.price('finalPrice', 'm.change.catalog.document.price.finalprice', false, true) }}
 
 		<div class="alert" data-ng-show="document.finalPrice <= 0">
 			Le prix final n'est pas correct !
@@ -42,15 +43,13 @@
 			Hum... Le prix ne semble pas être si promotionnel que ça !
 		</div>
 
-		<hr/>
+		<hr />
 		<span class="help-block">
-			Vous pouvez indiquer une <strong>période de validité</strong> pour ce prix.<br />
-			<span class="label label-important">Important</span> Si vous définissez un prix promotionnel, il est recommandé
-			d'indiquer une <label class="in-text" for="endDate">date de fin</label>.
+			{{ i18n('m.change.catalog.document.price.publication-section-help', ['ucf']) }}
 		</span>
 
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
+			<label class="control-label" for="startPublication">{{ i18n('m.change.catalog.document.product.startpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -67,7 +66,7 @@
 		</div>
 
 		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf']) }}
+			<label class="control-label" for="endPublication">{{ i18n('m.change.catalog.document.product.endpublication', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -87,10 +86,9 @@
 			</div>
 		</div>
 
-		<hr/>
+		<hr />
 		<span class="help-block">
-			Vous pouvez définir une <label class="in-text" for="minQuantity">quantité minimale</label> d'achat pour que ce prix
-			soit appliqué.
+			{{ i18n('m.change.catalog.document.price.threshold-section-help', ['ucf']) }}
 		</span>
 
 		{{ forms.field('thresholdMin', 'Integer', 'm.change.catalog.document.price.thresholdmin', true) }}

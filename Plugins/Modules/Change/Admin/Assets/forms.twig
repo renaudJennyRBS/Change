@@ -12,7 +12,7 @@
 			{% elseif type == 'Url' %}
 			<input type="url" class="input-block-level" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}" />
 			{% elseif type == 'Boolean' %}
-			<input type="checkbox" class="input-block-level" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}" />
+			<switch ng-model="document.{{ name }}" />
 			{% elseif type == 'LongString' %}
 			<textarea class="input-block-level" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"></textarea>
 			{% endif %}
