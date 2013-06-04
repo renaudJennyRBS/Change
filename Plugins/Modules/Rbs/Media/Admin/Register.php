@@ -1,11 +1,11 @@
 <?php
-namespace Change\Media\Admin;
+namespace Rbs\Media\Admin;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Change\Admin\Event;
 /**
- * @name \Change\Media\Admin\Register
+ * @name \Rbs\Media\Admin\Register
  */
 class Register implements ListenerAggregateInterface
 {
@@ -20,9 +20,9 @@ class Register implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_RESOURCES, function(Event $event)
 		{
 			$body = array('
-	<script type="text/javascript" src="Change/Media/js/admin.js">​</script>
-	<script type="text/javascript" src="Change/Media/Image/controllers.js">​</script>
-	<script type="text/javascript" src="Change/Media/Image/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/Media/js/admin.js">​</script>
+	<script type="text/javascript" src="Rbs/Media/Image/controllers.js">​</script>
+	<script type="text/javascript" src="Rbs/Media/Image/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 		});
 	}

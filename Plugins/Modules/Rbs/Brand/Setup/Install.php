@@ -16,7 +16,7 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Admin/Listeners/Rbs_Brand', '\\Rbs\\Brand\\Admin\\Register');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Brand', '\\Rbs\\Brand\\Admin\\Register');
 	}
 
 	/**

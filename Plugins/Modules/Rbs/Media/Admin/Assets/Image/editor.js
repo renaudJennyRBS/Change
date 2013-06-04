@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict: 'EC',
-			templateUrl: 'Change/Media/Image/editor.twig',
+			templateUrl: 'Rbs/Media/Image/editor.twig',
 			replace: true,
 			// Create isolated scope
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
@@ -35,6 +35,6 @@
 		'RbsChange.Editor',
 		'RbsChange.REST'
 	];
-	angular.module('RbsChange').directive('editorChangeMediaImage', EditorFn);
+	angular.module('RbsChange').directive('editorRbsMediaImage', EditorFn);
 
 })(window.jQuery);

@@ -1,8 +1,8 @@
 <?php
-namespace Change\Media\Setup;
+namespace Rbs\Media\Setup;
 
 /**
- * @name \Change\Media\Setup\Install
+ * @name \Rbs\Media\Setup\Install
  */
 class Install
 {
@@ -20,7 +20,7 @@ class Install
 		$config->addPersistentEntry('Change/Storage/default/class', '\\Change\\Storage\\Engines\\LocalStorage');
 		$config->addPersistentEntry('Change/Storage/default/basePath', $application->getWorkspace()->appPath('Storage'));
 		$config->addPersistentEntry('Change/Storage/default/useDBStat', true);
-		$config->addPersistentEntry('Change/Admin/Listeners/Change_Media', '\\Change\\Media\\Admin\\Register');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
 	}
 
 	/**

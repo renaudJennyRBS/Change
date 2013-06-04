@@ -1,10 +1,10 @@
 <?php
-namespace Change\Media\Documents;
+namespace Rbs\Media\Documents;
 
 /**
- * @name \Change\Media\Documents\Image
+ * @name \Rbs\Media\Documents\Image
  */
-class Image extends \Compilation\Change\Media\Documents\Image
+class Image extends \Compilation\Rbs\Media\Documents\Image
 {
 	/**
 	 * @return integer
