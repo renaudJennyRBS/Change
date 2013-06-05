@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.geo.document.territorialunit" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="unittype">type</key>
+	<key id="country">pays</key>
+	<key id="country-picker-title">sélectionner le pays</key>
+	<key id="unitparent">unité parente</key>
+	<key id="unitparent-picker-title">sélectionner l'unité territoriale parente</key>
+</i18n>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
+	<properties>
+		<property name="country" type="Document" document-type="Rbs_Geo_Country" />
+		<property name="province" type="Document" document-type="Rbs_Geo_TerritorialUnit" />
+		<property name="zipCode" type="String" />
+		<property name="locality" type="String" />
+		<property name="line1" type="String" />
+		<property name="line2" type="String" />
+		<property name="line3" type="String" />
+		<property name="line4" type="String" />
+		<property name="line5" type="String" />
+		<property name="line6" type="String" />
+		<property name="line7" type="String" />
+		<property name="line8" type="String" />
+	</properties>
+</document>

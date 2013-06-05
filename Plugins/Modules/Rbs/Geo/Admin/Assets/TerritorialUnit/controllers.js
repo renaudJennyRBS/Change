@@ -17,14 +17,14 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.media.admin.js.module-name | ucf'), "Rbs/Media"],
-			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image"]
+			[i18n.trans('m.rbs.geo.admin.js.module-name | ucf'), "Rbs/Geo"],
+			[i18n.trans('m.rbs.geo.admin.js.territorialunit-list | ucf'), "Rbs/Geo/TerritorialUnit"]
 		]);
-		MainMenu.loadModuleMenu('Rbs_Media');
+		MainMenu.loadModuleMenu('Rbs_Geo');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_Media_Image_ListController', ListController);
+	app.controller('Rbs_Geo_TerritorialUnit_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -38,12 +38,12 @@
 	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.media.admin.js.module-name | ucf'), "Rbs/Media"],
-			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image"]
+			[i18n.trans('m.rbs.geo.admin.js.module-name | ucf'), "Rbs/Geo"],
+			[i18n.trans('m.rbs.geo.admin.js.territorialunit-list | ucf'), "Rbs/Geo/TerritorialUnit"]
 		]);
-		FormsManager.initResource($scope, 'Rbs_Media_Image');
+		FormsManager.initResource($scope, 'Rbs_Geo_TerritorialUnit');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
-	app.controller('Rbs_Media_Image_FormController', FormController);
+	app.controller('Rbs_Geo_TerritorialUnit_FormController', FormController);
 })();
