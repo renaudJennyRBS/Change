@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Documents\Query;
 
-use Change\Documents\Query\Builder;
+use Change\Documents\Query\Query;
 use Change\Documents\Query\PredicateBuilder;
 use ChangeTests\Change\TestAssets\TestCase;
 
@@ -128,7 +128,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testConstruct()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = new PredicateBuilder($builder);
 		$this->assertNotNull($pb);
 	}
@@ -139,7 +139,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testLogicAnd()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 
 		$predicate = $pb->logicAnd($pb->eq('id', 1001), $pb->eq('pInt', 1001));
@@ -179,7 +179,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testLogicOr()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 
 		$predicate = $pb->logicOr($pb->eq('id', 1001), $pb->eq('pInt', 1001));
@@ -220,7 +220,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testEq()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->eq('id', 1000);
 		$builder->andPredicates($predicate);
@@ -228,7 +228,7 @@ class PredicateBuilderTest extends TestCase
 		$this->assertCount(1, $ids);
 		$this->assertContains(1000, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->eq('pLStr', 'text un');
 		$builder->andPredicates($predicate);
@@ -254,7 +254,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testNeq()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->neq('id', 1000);
 		$builder->andPredicates($predicate);
@@ -269,7 +269,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testGt()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->gt('id', 1001);
 		$builder->andPredicates($predicate);
@@ -283,7 +283,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testLt()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->lt('id', 1001);
 		$builder->andPredicates($predicate);
@@ -297,7 +297,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testGte()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->gte('id', 1001);
 		$builder->andPredicates($predicate);
@@ -312,7 +312,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testLte()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->lte('id', 1001);
 		$builder->andPredicates($predicate);
@@ -327,7 +327,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testLike()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->like('pStr', 'test');
 		$builder->andPredicates($predicate);
@@ -336,14 +336,14 @@ class PredicateBuilderTest extends TestCase
 		$this->assertContains(1001, $ids);
 		$this->assertContains(1000, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->like('pStr', 'test', \Change\Db\Query\Predicates\Like::ANYWHERE, true);
 		$builder->andPredicates($predicate);
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(0, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->like('pStr', 'test', \Change\Db\Query\Predicates\Like::BEGIN);
 		$builder->andPredicates($predicate);
@@ -351,7 +351,7 @@ class PredicateBuilderTest extends TestCase
 		$this->assertCount(1, $ids);
 		$this->assertContains(1000, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->like('pStr', 'test', \Change\Db\Query\Predicates\Like::END);
 		$builder->andPredicates($predicate);
@@ -365,7 +365,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testIn()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->in('id', 1000, 2000, 1002);
 		$builder->andPredicates($predicate);
@@ -374,7 +374,7 @@ class PredicateBuilderTest extends TestCase
 		$this->assertContains(1000, $ids);
 		$this->assertContains(1002, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->in('id', array('A', 1000, '1001'));
 		$builder->andPredicates($predicate);
@@ -386,7 +386,7 @@ class PredicateBuilderTest extends TestCase
 		try
 		{
 			$str = 'Right Hand Expression must be a ExpressionList with one element or more';
-			$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+			$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 			$pb = $builder->getPredicateBuilder();
 			$predicate = $pb->in('id', array());
 			$builder->andPredicates($predicate);
@@ -404,7 +404,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testNotIn()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->notIn('id', 1000, 2000, 1002);
 		$builder->andPredicates($predicate);
@@ -418,7 +418,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testIsNull()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNull('pFloat');
 		$builder->andPredicates($predicate);
@@ -427,14 +427,14 @@ class PredicateBuilderTest extends TestCase
 		$this->assertContains(1001, $ids);
 		$this->assertContains(1002, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNull('pDocArr');
 		$builder->andPredicates($predicate);
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(3, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNull('pDocArr');
 		$builder->andPredicates($predicate);
@@ -447,7 +447,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testIsNotNull()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNotNull('pFloat');
 		$builder->andPredicates($predicate);
@@ -455,14 +455,14 @@ class PredicateBuilderTest extends TestCase
 		$this->assertCount(1, $ids);
 		$this->assertContains(1000, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNotNull('pDocArr');
 		$builder->andPredicates($predicate);
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(0, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$pb = $builder->getPredicateBuilder();
 		$predicate = $pb->isNotNull('pDocArr');
 		$builder->andPredicates($predicate);
@@ -475,7 +475,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testPublished()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		try
 		{
@@ -488,7 +488,7 @@ class PredicateBuilderTest extends TestCase
 			$this->assertEquals($str, $e->getMessage());
 		}
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Correction');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Correction');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->published());
 		$ids = $builder->getDocuments()->ids();
@@ -501,20 +501,20 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testChildOf()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->childOf(2000));
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(1, $ids);
 		$this->assertContains(1000, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->childOf(2001));
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(0, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->childOf(2010));
 		$ids = $builder->getDocuments()->ids();
@@ -528,7 +528,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testDescendantOf()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->descendantOf(2000));
 		$ids = $builder->getDocuments()->ids();
@@ -537,7 +537,7 @@ class PredicateBuilderTest extends TestCase
 		$this->assertContains(1001, $ids);
 		$this->assertContains(1002, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->descendantOf(1000));
 		$ids = $builder->getDocuments()->ids();
@@ -549,13 +549,13 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testAncestorOf()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->ancestorOf(2000));
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(0, $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Rbs_Generic_Folder');
+		$builder = new Query($this->getDocumentServices(), 'Rbs_Generic_Folder');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->ancestorOf(2011));
 		$ids = $builder->getDocuments()->ids();
@@ -570,7 +570,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testNextSiblingOf()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->nextSiblingOf(2011));
 		$ids = $builder->getDocuments()->ids();
@@ -583,7 +583,7 @@ class PredicateBuilderTest extends TestCase
 	 */
 	public function testPreviousSiblingOf()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
 		$builder->andPredicates($pb->previousSiblingOf(1002));
 		$ids = $builder->getDocuments()->ids();

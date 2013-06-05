@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Documents\Query;
 
-use Change\Documents\Query\Builder;
+use Change\Documents\Query\Query;
 use Change\Documents\Query\ChildBuilder;
 use ChangeTests\Change\TestAssets\TestCase;
 
@@ -29,12 +29,12 @@ class ChildBuilderTest extends TestCase
 	public function testConstruct()
 	{
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 
 
 		$childBuilder = new ChildBuilder($builder, 'Project_Tests_Localized', 'id', 'id');
 		$this->assertSame($builder, $childBuilder->getParent());
-		$this->assertSame($builder, $childBuilder->getMaster());
+		$this->assertSame($builder, $childBuilder->getQuery());
 		$this->assertSame($this->getApplicationServices()->getDbProvider(), $builder->getDbProvider());
 		$this->assertEquals('Project_Tests_Localized', $childBuilder->getModel()->getName());
 

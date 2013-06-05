@@ -31,7 +31,7 @@ class Install
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
 		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_Users_Group');
-		$query = new \Change\Documents\Query\Builder($documentServices, $groupModel);
+		$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
 		$group = $query->andPredicates($query->eq('realm', 'rest'))->getFirstDocument();
 		if (!$group)
 		{

@@ -172,8 +172,25 @@ class PredicateBuilder
 	 */
 	public function eq($propertyName, $value)
 	{
+		$fb = $this->getFragmentBuilder();
+		$property = $this->builder->getValidProperty($propertyName);
+		if ($property && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		{
+			$abstractBuilder = $this->builder;
+			$relTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
+			$relTableIdentifier = '_r' . $this->builder->getQuery()->getNextAliasCounter() . 'R';
+
+			$idPredicate = $fb->eq($abstractBuilder->getColumn('id') , $fb->getDocumentColumn('id', $relTableIdentifier));
+			$relnamePredicate = $fb->eq($fb->column('relname', $relTableIdentifier), $fb->string($property->getName()));
+
+			$joinCondition = new \Change\Db\Query\Predicates\Conjunction($idPredicate, $relnamePredicate);
+			$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
+			$join = new Join($fb->alias($relTable, $relTableIdentifier), Join::INNER_JOIN, $joinExpr);
+			$this->builder->addJoin($relTableIdentifier, $join);
+			return $fb->eq($fb->column('relatedid', $relTableIdentifier), $this->builder->getValueAsParameter($value, Property::TYPE_INTEGER));
+		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
-		return $this->getFragmentBuilder()->eq($lhs, $rhs);
+		return $fb->eq($lhs, $rhs);
 	}
 
 	/**
@@ -405,7 +422,7 @@ class PredicateBuilder
 		}
 		elseif (is_numeric($node))
 		{
-			$document = $this->builder->getMaster()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node);
+			$document = $this->builder->getQuery()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node);
 		}
 		else
 		{
@@ -417,7 +434,7 @@ class PredicateBuilder
 			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
 		}
 
-		$node = $this->builder->getMaster()->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
+		$node = $this->builder->getQuery()->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
 		if ($node === null)
 		{
 			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
@@ -454,7 +471,7 @@ class PredicateBuilder
 		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
 		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 
 		$this->builder->addJoin($treeTableIdentifier, $join);
@@ -477,7 +494,7 @@ class PredicateBuilder
 		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
 
 		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 		$this->builder->addJoin($treeTableIdentifier, $join);
@@ -499,7 +516,7 @@ class PredicateBuilder
 		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
 
 		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 		$this->builder->addJoin($treeTableIdentifier, $join);
@@ -525,7 +542,7 @@ class PredicateBuilder
 		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
 		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 
 		$this->builder->addJoin($treeTableIdentifier, $join);
@@ -550,7 +567,7 @@ class PredicateBuilder
 		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
 		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
+		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
 		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 
 		$this->builder->addJoin($treeTableIdentifier, $join);

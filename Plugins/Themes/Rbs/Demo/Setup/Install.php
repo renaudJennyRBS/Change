@@ -15,7 +15,7 @@ class Install
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
 		$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
-		$query = new \Change\Documents\Query\Builder($documentServices, $themeModel);
+		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
 		if ($theme instanceof \Rbs\Theme\Documents\Theme)

@@ -90,7 +90,7 @@ class Login
 	protected function findAccessorId($realm, $login, $password, DocumentManager $documentManager)
 	{
 
-		$qb = new \Change\Documents\Query\Builder($documentManager->getDocumentServices(), 'Rbs_Users_User');
+		$qb = new \Change\Documents\Query\Query($documentManager->getDocumentServices(), 'Rbs_Users_User');
 		$qb1 = $qb->getPropertyBuilder('groups');
 		$qb->andPredicates($qb->eq('login', $login), $qb->published(), $qb1->eq('realm', $realm));
 		$collection = $qb->getDocuments();

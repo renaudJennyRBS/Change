@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Website\Documents;
 
-use Change\Documents\Query\Builder;
+use Change\Documents\Query\Query;
 
 /**
  * @name \Rbs\Website\Documents\FunctionalPage
@@ -35,7 +35,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	 */
 	public function getPublicationSections()
 	{
-		$query = new Builder($this->getDocumentServices(), 'Rbs_Website_Section');
+		$query = new Query($this->getDocumentServices(), 'Rbs_Website_Section');
 		$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'section');
 		$subQuery->andPredicates($subQuery->eq('page', $this));
 		return $query->getDocuments();

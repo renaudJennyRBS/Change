@@ -325,10 +325,10 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			return;
 		}
 
-		$dqb = new \Change\Documents\Query\Builder($this->getDocumentServices(), 'Rbs_Workflow_Task');
+		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Workflow_Task');
 		$qb = $dqb->andPredicates(
 			$dqb->eq('workflowInstance', $this), $dqb->eq('status', \Rbs\Workflow\Std\WorkItem::STATUS_ENABLED)
-		)->getQueryBuilder();
+		)->dbQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
 		$rows = $qb->addColumn($fb->alias($fb->getDocumentColumn('taskId'), 'taskId'))
