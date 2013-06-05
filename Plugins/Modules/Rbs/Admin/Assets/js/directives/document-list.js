@@ -24,10 +24,11 @@
 		'RbsChange.ArrayUtils',
 		'RbsChange.Breadcrumb',
 		'RbsChange.Actions',
+		'RbsChange.NotificationCenter',
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions) {
+	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
 
 		return {
 			restrict    : 'E',
@@ -497,8 +498,7 @@
 						if (promise) {
 							promise.then(
 								function (response) {
-									Loading.stop();
-									scope.loading = false;
+									stopLoading();
 									if (response !== null) {
 										documentCollectionLoadedCallback(response);
 									} else {
@@ -506,15 +506,24 @@
 									}
 								},
 								function (reason) {
-									Loading.stop();
-									scope.loading = false;
-									// TODO Display error message with NotificationCenter.
+									stopLoading(reason);
 								}
 							);
 							return promise;
 						}
 
 						return null;
+					}
+
+
+					function stopLoading (reason) {
+						scope.loading = false;
+						Loading.stop();
+						if (reason) {
+							NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.loading-list-error | ucf'), reason);
+						} else {
+							NotificationCenter.clear();
+						}
 					}
 
 

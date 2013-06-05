@@ -12,8 +12,6 @@
 		data = localStorageService.get(cfgLocalStorageKeyName);
 		searches = data ? JSON.parse(data) : [];
 
-		console.log("SavedSearchesService: searches=", searches);
-
 
 		this.save = function (label, queryObject) {
 			queryObject.meta = queryObject.meta || {};
