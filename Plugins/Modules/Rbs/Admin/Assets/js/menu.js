@@ -55,7 +55,7 @@
 					},
 					{
 						"label"  : "Zones géographiques",
-						"url"    : "Rbs/Geo"
+						"url"    : "Rbs/Geo",
 						"section": "ecommerce"
 					}
 				]
