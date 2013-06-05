@@ -21,7 +21,6 @@ class InitializeModel extends \Change\Application\Console\ChangeCommand
 		$this->addArgument('vendor', InputArgument::REQUIRED, 'vendor of the target module');
 		$this->addArgument('module', InputArgument::REQUIRED, 'name of the target module');
 		$this->addArgument('name', InputArgument::REQUIRED, 'short name of the model');
-
 	}
 
 	/**
@@ -31,9 +30,12 @@ class InitializeModel extends \Change\Application\Console\ChangeCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$path = $this->getChangeDocumentServices()->getModelManager()->initializeModel($input->getArgument('vendor'), $input->getArgument('module'), $input->getArgument('name'));
+		$vendor = $input->getArgument('vendor');
+		$moduleName = $input->getArgument('module');
+		$shortName = $input->getArgument('name');
+		$path = $this->getChangeDocumentServices()->getModelManager()->initializeModel($vendor, $moduleName, $shortName);
 		$output->writeln('<info>Model definition written at path ' . $path .'</info>');
-		$path = $this->getChangeDocumentServices()->getModelManager()->initializeFinalDocumentPhpClass($input->getArgument('vendor'), $input->getArgument('module'), $input->getArgument('name'));
+		$path = $this->getChangeDocumentServices()->getModelManager()->initializeFinalDocumentPhpClass($vendor, $moduleName, $shortName);
 		$output->writeln('<info>Final php document class  written at path ' . $path .'</info>');
 	}
 }

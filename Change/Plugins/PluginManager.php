@@ -533,6 +533,8 @@ class PluginManager
 	 */
 	public function getModule($vendor, $shortName)
 	{
+		$vendor = $this->normalizeVendorName($vendor);
+		$shortName = $this->normalizePluginName($shortName);
 		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
 			return $plugin->getType() === Plugin::TYPE_MODULE && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
 		});
@@ -545,6 +547,7 @@ class PluginManager
 	 */
 	public function getModules($vendor = null)
 	{
+		$vendor = $this->normalizeVendorName($vendor);
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_MODULE && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
@@ -557,6 +560,8 @@ class PluginManager
 	 */
 	public function getTheme($vendor, $shortName)
 	{
+		$vendor = $this->normalizeVendorName($vendor);
+		$shortName = $this->normalizePluginName($shortName);
 		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
 			return $plugin->getType() === Plugin::TYPE_THEME && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
 		});
@@ -569,6 +574,7 @@ class PluginManager
 	 */
 	public function getThemes($vendor = null)
 	{
+		$vendor = $this->normalizeVendorName($vendor);
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
 		});

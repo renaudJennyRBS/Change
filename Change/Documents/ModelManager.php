@@ -206,10 +206,11 @@ class ModelManager
 	 */
 	protected function normalizeModelName($name)
 	{
-		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $name))
+		$ucfName = ucfirst($name);
+		if (!preg_match('/^[A-Z][a-zA-Z0-9]{1,24}$/', $ucfName))
 		{
-			throw new \InvalidArgumentException('Model name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+			throw new \InvalidArgumentException('Model name should match ^[A-Z][a-zA-Z0-9]{1,24}$', 999999);
 		}
-		return ucfirst($name);
+		return $ucfName;
 	}
 }
