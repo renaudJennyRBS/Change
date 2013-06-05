@@ -202,6 +202,7 @@ class ModelClass
 	}'. PHP_EOL;
 		}
 
+
 		if ($model->getStateless())
 		{
 			$code .= '
@@ -212,6 +213,19 @@ class ModelClass
 	public function isStateless()
 	{
 		return true;
+	}'. PHP_EOL;
+		}
+
+		if ($model->getAbstract() !== null)
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isAbstract()
+	{
+		return '. $this->escapePHPValue($model->getAbstract()).';
 	}'. PHP_EOL;
 		}
 

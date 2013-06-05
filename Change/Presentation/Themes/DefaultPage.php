@@ -196,4 +196,20 @@ class DefaultPage implements Page
 			$result->setRenderer($renderer);
 		}
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		// TODO: Implement getTitle() method.
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section
+	 */
+	public function getSection()
+	{
+		// TODO: Implement getSection() method.
+	}
 }

@@ -62,6 +62,12 @@ interface Publishable
 
 	/**
 	 * @api
+	 * @return string
+	 */
+	public function getTitle();
+
+	/**
+	 * @api
 	 * @return \Change\Presentation\Interfaces\Section[]
 	 */
 	public function getPublicationSections();

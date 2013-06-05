@@ -27,6 +27,11 @@ class Model
 	protected $stateless;
 
 	/**
+	 * @var boolean
+	 */
+	protected $abstract;
+
+	/**
 	 * @var string
 	 */
 	protected $treeName;
@@ -204,6 +209,9 @@ class Model
 					{
 						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
 					}
+					break;
+				case "abstract":
+					$this->abstract = ($value === 'true');
 					break;
 				case "extends":
 					$this->extends = $value;
@@ -392,6 +400,19 @@ class Model
 		
 		if ($this->publishable)
 		{
+			if (!isset($this->properties['title']))
+			{
+				$property = new Property($this, 'title', 'String');
+				$this->properties[$property->getName()] = $property;
+			}
+
+			if (!isset($this->properties['publicationSections']))
+			{
+				$property = new Property($this, 'publicationSections', 'DocumentArray');
+				$property->setStateless(true);
+				$this->properties[$property->getName()] = $property;
+			}
+
 			$property = new Property($this, 'publicationStatus', 'String');
 			$this->properties[$property->getName()] = $property;
 			
@@ -568,6 +589,14 @@ class Model
 		return $this->stateless;
 	}
 
+
+	/**
+	 * @return boolean
+	 */
+	public function getAbstract()
+	{
+		return $this->abstract;
+	}
 
 	/**
 	 * @return string

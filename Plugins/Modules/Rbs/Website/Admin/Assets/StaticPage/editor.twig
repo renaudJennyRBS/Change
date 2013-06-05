@@ -13,12 +13,12 @@
 
 		{{ forms.field('label', 'String', 'm.rbs.website.document.staticpage.label', true) }}
 
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('navigationTitle')}">
-			<label class="control-label" for="navigationTitle">{{ i18n('m.rbs.website.document.staticpage.navigationtitle', ['ucf']) }}</label>
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('title')}">
+			<label class="control-label" for="title">{{ i18n('m.rbs.website.document.staticpage.title', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="input-prepend">
-					<button type="button" class="btn" ng-click="document.navigationTitle = document.label" title="Use (= document.label =)">{{ i18n('m.rbs.website.document.staticpage.label', ['ucf']) }} <i class="icon-angle-right"></i></button>
-					<input type="text" id="navigationTitle" name="navigationTitle" required class="input-xxlarge" data-ng-model="document.navigationTitle"/>
+					<button type="button" class="btn" ng-click="document.title = document.label" title="Use (= document.label =)">{{ i18n('m.rbs.website.document.staticpage.label', ['ucf']) }} <i class="icon-angle-right"></i></button>
+					<input type="text" id="title" name="title" required class="input-xxlarge" data-ng-model="document.title"/>
 				</div>
 			</div>
 		</div>

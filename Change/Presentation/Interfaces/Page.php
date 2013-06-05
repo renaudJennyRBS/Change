@@ -41,4 +41,14 @@ interface Page
 	 */
 	public function getContentLayout();
 
+	/**
+	 * @return string
+	 */
+	public function getTitle();
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section
+	 */
+	public function getSection();
+
 }

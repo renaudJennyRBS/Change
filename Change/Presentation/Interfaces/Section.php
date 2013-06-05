@@ -7,6 +7,11 @@ namespace Change\Presentation\Interfaces;
 interface Section
 {
 	/**
+	 * @return string
+	 */
+	public function getTitle();
+
+	/**
 	 * @return integer
 	 */
 	public function getId();
@@ -15,4 +20,9 @@ interface Section
 	 * @return \Change\Presentation\Interfaces\Website
 	 */
 	public function getWebsite();
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getSectionPath();
 }

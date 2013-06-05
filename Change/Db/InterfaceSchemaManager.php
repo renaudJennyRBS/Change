@@ -17,6 +17,11 @@ interface InterfaceSchemaManager
 	function check();
 
 	/**
+	 * @return void
+	 */
+	public function closeConnection();
+
+	/**
 	 * @param string $sql
 	 * @return integer the number of affected rows
 	 * @throws Exception on error

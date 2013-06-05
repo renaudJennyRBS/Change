@@ -6,7 +6,7 @@ use Change\Documents\Events\Event;
 /**
  * @name \Rbs\Website\Documents\Section
  */
-class Section extends \Compilation\Rbs\Website\Documents\Section implements \Change\Presentation\Interfaces\Section
+abstract class Section extends \Compilation\Rbs\Website\Documents\Section implements \Change\Presentation\Interfaces\Section
 {
 	/**
 	 * @return string
@@ -50,6 +50,14 @@ class Section extends \Compilation\Rbs\Website\Documents\Section implements \Cha
 	 */
 	public function getSectionThread()
 	{
+		return $this->getSectionPath();
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getSectionPath()
+	{
 		$tm = $this->getDocumentServices()->getTreeManager();
 		$tn = $tm->getNodeByDocument($this);
 		$sections = array();
@@ -63,23 +71,5 @@ class Section extends \Compilation\Rbs\Website\Documents\Section implements \Cha
 		}
 		$sections[] = $this;
 		return $sections;
-	}
-
-	/**
-	 * @throws \LogicException
-	 * @return \Change\Presentation\Interfaces\Website
-	 */
-	public function getWebsite()
-	{
-		throw new \LogicException('A section must implement getWebsite()', 999999);
-	}
-
-	/**
-	 * @throws \LogicException
-	 * @return \Change\Presentation\Interfaces\Section[]
-	 */
-	public function getPublicationSections()
-	{
-		throw new \LogicException('A publishable document must implement getPublicationSections()', 999999);
 	}
 }

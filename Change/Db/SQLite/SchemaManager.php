@@ -119,6 +119,14 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		}
 		return true;
 	}
+
+	/**
+	 * @return void
+	 */
+	public function closeConnection()
+	{
+		$this->pdo = null;
+	}
 		
 	/**
 	 * @param string $sql
