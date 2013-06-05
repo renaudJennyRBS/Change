@@ -186,13 +186,15 @@ class ModelManager
 		{
 			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
 		}
+		$normalizedVendorName = $module->getVendor();
+		$normalizedModuleName = $module->getShortName();
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
 		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getBasePath(), 'Documents', $normalizedShortModelName . '.php'));
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);
 		}
-		$attributes = array('vendor' => $vendorName, 'module' => $moduleName, 'name' => $normalizedShortModelName);
+		$attributes = array('vendor' => $normalizedVendorName, 'module' => $normalizedModuleName, 'name' => $normalizedShortModelName);
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
 		File::write($docPath, $twig->render('Assets/Sample.php.twig', $attributes));
