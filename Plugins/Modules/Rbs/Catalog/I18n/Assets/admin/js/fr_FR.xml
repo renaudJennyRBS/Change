@@ -2,6 +2,7 @@
 <i18n baseKey="m.rbs.catalog.admin.js" lcid="fr_FR">
 	<include id="m.rbs.catalog.document"/>
 	<key id="module-name">catalogue et produits</key>
+	<key id="section-name">E-commerce</key>
 	<key id="shop-list-loading">Chargement de la liste des boutiques...</key>
 	<key id="billingarea-list-loading">Chargement de la liste des zones de tarification...</key>
 	<key id="price-list-loading">Chargement de la liste des prix...</key>

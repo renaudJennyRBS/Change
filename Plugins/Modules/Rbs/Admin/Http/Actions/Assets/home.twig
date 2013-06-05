@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-ng-app="RbsChange">
+<html lang="{{ lang }}" data-ng-app="RbsChange">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -43,6 +43,7 @@
 
 	<script type="text/javascript">
 		var __change = {};
+		__change.menu = {{ resources.menu|json_encode|raw }};
 	</script>
 </head>
 
