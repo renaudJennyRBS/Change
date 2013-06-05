@@ -882,11 +882,11 @@
 					 * @param queryObject
 					 * @returns Promise, resolved with a collection of documents that match the filters.
 					 */
-					'query' : function (queryObject) {
+					'query' : function (queryObject, params) {
 						var	q = $q.defer();
 
 						$http.post(
-							REST_BASE_URL + 'query/',
+							Utils.makeUrl(REST_BASE_URL + 'query/', params),
 							queryObject,
 							getHttpConfig(transformResponseCollectionFn)
 						).success(function (data) {

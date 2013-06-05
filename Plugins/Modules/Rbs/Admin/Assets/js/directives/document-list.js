@@ -16,6 +16,7 @@
 	app.directive('documentList', [
 		'$filter',
 		'$location',
+		'$compile',
 		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Loading',
@@ -26,7 +27,7 @@
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions) {
+	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions) {
 
 		return {
 			restrict    : 'E',
@@ -42,7 +43,9 @@
 
 			compile : function (tElement, tAttrs) {
 
-				var dlid, columns, column, $th, $td, $head, $body;
+				var	dlid,
+					columns, undefinedColumnLabels = [], column,
+					$th, $td, $head, $body;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
@@ -50,8 +53,8 @@
 				}
 
 				columns = __columns[dlid];
-				$head = tElement.find('thead tr');
-				$body = tElement.find('tbody tr.normal-row');
+				$head = tElement.find('table.document-list thead tr');
+				$body = tElement.find('table.document-list tbody tr.normal-row');
 
 				// Status column
 				if (tAttrs.publishable === 'true') {
@@ -75,15 +78,6 @@
 					});
 				}
 
-				// Modification Date column
-				if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
-					columns.push({
-						"name"   : "modificationDate",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
-						"content": "(=doc.modificationDate | date:'medium' =)"
-					});
-				}
-
 				// Order in tree column
 				if (tAttrs.tree) {
 					columns.push({
@@ -92,6 +86,16 @@
 						"width"  : "90px",
 						"label"  : i18n.trans('m.rbs.admin.admin.js.order | ucf'),
 						"content": '(=doc.META$.treeNode.nodeOrder | number=)'
+					});
+				}
+
+				// Modification Date column
+				if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
+					columns.push({
+						"name"   : "modificationDate",
+						"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
+						"content": "(=doc.modificationDate | date:'medium' =)",
+						"width"  : "150px"
 					});
 				}
 
@@ -106,19 +110,26 @@
 					});
 				}
 
-				tElement.data('columns', []);
+				tElement.data('columns', {});
 
 				while (columns.length) {
 					column = columns.shift(0);
-					tElement.data('columns').push(column.name);
+					tElement.data('columns')[column.name] = column;
+
+					// Check if the label has been provided or not.
+					// If one at least label has not been provided, the Model's information will be
+					// loaded to automatically set the columns' header text.
+					if ( ! column.label ) {
+						undefinedColumnLabels.push(column.name);
+					}
 
 					// Create header cell
 					$th = $(
 						'<th ng-if="isSortable(\'' + column.name + '\')">' +
-							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)">' + (column.label || '') + '</a>' +
+							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</a>' +
 							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')">' + (column.label || '') + '</th>'
+						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</th>'
 					);
 					if (column.align) {
 						$th.css('text-align', column.align);
@@ -174,10 +185,19 @@
 
 
 				return function linkFn (scope, elm, attrs) {
-
-					var queryObject, search;
+					var queryObject, search, columnNames;
 
 					scope.collection = [];
+					scope.columns = elm.data('columns');
+
+					// Load Model's information and update the columns' header with the correct property label.
+					if (undefinedColumnLabels.length && tAttrs.model) {
+						REST.modelInfo(tAttrs.model).then(function (modelInfo) {
+							angular.forEach(undefinedColumnLabels, function (columnName) {
+								scope.columns[columnName].label = modelInfo.properties[columnName].label;
+							});
+						});
+					}
 
 
 					//
@@ -219,7 +239,7 @@
 
 
 					scope.hasColumn = function (columnName) {
-						return elm.data('columns').indexOf(columnName) !== -1;
+						return angular.isObject(elm.data('columns')[columnName]);
 					};
 
 
@@ -368,10 +388,16 @@
 					// Sort.
 					//
 
+					// Compute columns list to give to the REST server.
+					columnNames = [];
+					angular.forEach(scope.columns, function (column) {
+						columnNames.push(column.name);
+					});
+
 					function getDefaultSortColumn () {
 						var defaultSortColumn = attrs.defaultSortColumn, i, c;
-						for (i=0 ; i<elm.data('columns').length && !defaultSortColumn; i++) {
-							c = elm.data('columns')[i];
+						for (i=0 ; i<columnNames.length && !defaultSortColumn; i++) {
+							c = columnNames[i];
 							if (c !== 'publicationStatus' && c !== 'selectable') {
 								defaultSortColumn = c;
 							}
@@ -438,20 +464,18 @@
 							'limit' : scope.pagination.limit,
 							'sort'  : scope.sort.column,
 							'desc'  : scope.sort.descending,
-							'column': elm.data('columns')
+							'column': columnNames
 						};
 
-						// Or may be we are simply loading a Collection...
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
-							promise = REST.query(prepareQueryObject(angular.copy(queryObject)));
+							promise = REST.query(prepareQueryObject(angular.copy(queryObject)), {'column': columnNames});
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else if (attrs.model && ! attrs.parentProperty) {
 							Loading.start();
 							promise = REST.collection(tAttrs.model, params);
-							// Or may be tree children?
 						}
 
 						if (promise) {
@@ -570,9 +594,8 @@
 					scope.$watch('query', function (query, oldValue) {
 						if (query !== oldValue) {
 							queryObject = query;
-							console.log("query watch: query=", query, ", old=", oldValue);
 							reload();
-						} else {
+						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();
 						}
 					}, true);
