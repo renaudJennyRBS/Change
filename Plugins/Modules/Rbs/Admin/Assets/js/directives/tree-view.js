@@ -114,7 +114,6 @@
 								},
 
 								"success" : function (data) {
-									console.log("success: data=", data);
 									var nodes = [];
 									if (data.resources.length > 0) {
 										angular.forEach(data.resources, function (rsc) {

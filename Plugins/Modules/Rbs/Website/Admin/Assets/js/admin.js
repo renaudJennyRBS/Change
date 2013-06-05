@@ -16,7 +16,7 @@
 		function loadSuccessFn (root) {
 			REST.treeChildren(root.resources[0]).then(function (websites) {
 				$scope.websites = websites.resources;
-				if (!$scope.currentWebsiteId) {
+				if (!$scope.currentWebsiteId && $scope.websites && $scope.websites.length) {
 					$scope.currentWebsiteId = $scope.websites[0].id;
 				}
 				if (unregisterUserLoginListener) {

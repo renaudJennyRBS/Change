@@ -26,6 +26,15 @@
 	}]);
 
 
+	app.directive('todo', function () {
+		return {
+			'restrict'   : 'E',
+			'transclude' : true,
+			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">en cours de développement... </span></div>'
+		};
+	});
+
+
 	// UID generation
 	// FIXME Check if this is still used.
 

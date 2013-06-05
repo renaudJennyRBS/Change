@@ -23,8 +23,8 @@
 
 				Editor.initScope(scope, elm, function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
-					if (!scope.document.website && Breadcrumb.getWebsite()) {
-						scope.document.website = Breadcrumb.getWebsite();
+					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
+						scope.document.section = Breadcrumb.getCurrentNode();
 					}
 				});
 

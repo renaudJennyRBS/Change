@@ -29,6 +29,16 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Geo/TerritorialUnit/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Geo/TerritorialUnit/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
+
+			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
+
+			$menu = array(
+				'entries' => array(
+					array('label' => $i18nManager->trans('m.rbs.geo.admin.js.module-name', array('ucf')),
+						'url' => 'Rbs/Geo', 'section' => 'admin', 'keywords' => $i18nManager->trans('m.rbs.geo.admin.js.module-keywords'))
+				));
+
+			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 		});
 	}
 

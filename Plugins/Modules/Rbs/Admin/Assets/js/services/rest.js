@@ -198,7 +198,11 @@
 							});
 						}
 					} catch (e) {
-						console.log("Got error when parsing response: '" + response + "'");
+						data = {
+							"error"   : true,
+							"code"    : "InvalidResponse",
+							"message" : "Got error when parsing response: " + response
+						};
 					}
 					return data;
 				}
@@ -212,7 +216,11 @@
 							data = buildChangeDocument(data);
 						}
 					} catch (e) {
-						console.log("Got error when parsing response: '" + response + "'");
+						data = {
+							"error"   : true,
+							"code"    : "InvalidResponse",
+							"message" : "Got error when parsing response: " + response
+						};
 					}
 					return data;
 				}
@@ -277,7 +285,11 @@
 				 * @param data
 				 */
 				function resolveQ (q, data) {
-					q.resolve(data);
+					if (data.error && data.code && data.message) {
+						q.reject(data);
+					} else {
+						q.resolve(data);
+					}
 				}
 
 
@@ -882,11 +894,11 @@
 					 * @param queryObject
 					 * @returns Promise, resolved with a collection of documents that match the filters.
 					 */
-					'query' : function (queryObject) {
+					'query' : function (queryObject, params) {
 						var	q = $q.defer();
 
 						$http.post(
-							REST_BASE_URL + 'query/',
+							Utils.makeUrl(REST_BASE_URL + 'query/', params),
 							queryObject,
 							getHttpConfig(transformResponseCollectionFn)
 						).success(function (data) {

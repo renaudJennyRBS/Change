@@ -19,49 +19,6 @@
 		var	$menu = jQuery('#change-menu'),
 			$filterInput = $menu.find('input.search-query').first();
 
-		// TODO Load modules from the server.
-		if (!__change.menu) {
-			__change.menu = {
-				"sections" : [
-					{
-						"code" : "cms",
-						"label": "CMS"
-					},
-					{
-						"code" : "ecommerce",
-						"label": "E-commerce"
-					}
-				],
-				"entries" : [
-					{
-						"label"  : "Sites et pages",
-						"url"    : "Rbs/Website",
-						"section": "cms"
-					},
-					{
-						"label"  : "Thèmes",
-						"url"    : "Rbs/Theme",
-						"section": "cms"
-					},
-					{
-						"label"  : "Médiathèque",
-						"url"    : "Rbs/Media",
-						"section": "cms"
-					},
-					{
-						"label"  : "Catalogue",
-						"url"    : "Rbs/Catalog",
-						"section": "ecommerce"
-					},
-					{
-						"label"  : "Zones géographiques",
-						"url"    : "Rbs/Geo",
-						"section": "ecommerce"
-					}
-				]
-			};
-		}
-
 		$scope.hasOtherModules = false;
 		$scope.menu = __change.menu;
 		angular.forEach($scope.menu.entries, function (entry) {

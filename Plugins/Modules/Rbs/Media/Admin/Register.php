@@ -29,7 +29,7 @@ class Register implements ListenerAggregateInterface
 			$menu = array(
 				'entries' => array(
 					array('label' => $i18nManager->trans('m.rbs.media.admin.js.module-name', array('ucf'))
-					, 'url' => 'Rbs/Media', 'section' => 'cms')
+					, 'url' => 'Rbs/Media', 'section' => 'cms', 'keywords' => $i18nManager->trans('m.rbs.media.admin.js.module-keywords'))
 				));
 			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 		});

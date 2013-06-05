@@ -17,20 +17,16 @@
 
 <div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)">
 
-<div class="alert alert-info" ng-show="collection.length == 0 && !loading">
-	<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-	{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
-	<ul>
-		<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
-		<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
-	</ul>
-</div>
-
-<table class="document-list table table-condensed table-bordered table-striped table-hover" ng-hide="collection.length == 0 && !loading">
+<table class="document-list table table-condensed table-bordered table-striped table-hover">
 	<thead>
 		<tr>
 		</tr>
 	</thead>
+	<tbody ng-if="collection.length == 0 && !loading">
+		<tr class="empty-row">
+			<td>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
+		</tr>
+	</tbody>
 	<tbody ng-repeat="doc in collection">
 		<tr class="preview-row" ng-if="isPreview(doc)">
 			<td class="preview">
@@ -42,7 +38,7 @@
 	</tbody>
 </table>
 
-<footer class="rbsc-list-footer">
+<footer class="rbsc-list-footer" ng-hide="collection.length == 0 && !loading">
 
 		<div class="pull-right">
 
@@ -54,7 +50,7 @@
 					</li>
 					<li ng-class="{disabled: isFirstPage()}">
 						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(currentPage-1) =)"><i class="icon-angle-left"></i></a>
-						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-double-angle-left"></i></a>
+						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-angle-left"></i></a>
 					</li>
 
 					<li ng-repeat="page in pages" ng-class="{active: page==currentPage, disabled: page=='...'}"><a
@@ -62,7 +58,7 @@
 
 					<li ng-class="{disabled: isLastPage()}">
 						<a ng-if="!isLastPage()" ng-href="(= pageUrl(currentPage+1) =)"><i class="icon-angle-right"></i></a>
-						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-double-angle-right"></i></a>
+						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-angle-right"></i></a>
 					</li>
 
 					<li ng-class="{disabled: isLastPage()}">

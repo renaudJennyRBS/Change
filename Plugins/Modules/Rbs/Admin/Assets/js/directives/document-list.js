@@ -16,6 +16,7 @@
 	app.directive('documentList', [
 		'$filter',
 		'$location',
+		'$compile',
 		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Loading',
@@ -23,10 +24,11 @@
 		'RbsChange.ArrayUtils',
 		'RbsChange.Breadcrumb',
 		'RbsChange.Actions',
+		'RbsChange.NotificationCenter',
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions) {
+	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
 
 		return {
 			restrict    : 'E',
@@ -42,7 +44,9 @@
 
 			compile : function (tElement, tAttrs) {
 
-				var dlid, columns, column, $th, $td, $head, $body;
+				var	dlid,
+					columns, undefinedColumnLabels = [], column,
+					$th, $td, $head, $body;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
@@ -50,8 +54,8 @@
 				}
 
 				columns = __columns[dlid];
-				$head = tElement.find('thead tr');
-				$body = tElement.find('tbody tr.normal-row');
+				$head = tElement.find('table.document-list thead tr');
+				$body = tElement.find('table.document-list tbody tr.normal-row');
 
 				// Status column
 				if (tAttrs.publishable === 'true') {
@@ -60,7 +64,8 @@
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
-						"content": '<status ng-model="doc"/>'
+						"content": '<status ng-model="doc"/>',
+						"dummy"  : true
 					});
 				}
 
@@ -71,16 +76,8 @@
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : '<input type="checkbox" ng-model="selection.all"/>',
-						"content": '<input type="checkbox" ng-model="doc.selected"/>'
-					});
-				}
-
-				// Modification Date column
-				if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
-					columns.push({
-						"name"   : "modificationDate",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
-						"content": "(=doc.modificationDate | date:'medium' =)"
+						"content": '<input type="checkbox" ng-model="doc.selected"/>',
+						"dummy"  : true
 					});
 				}
 
@@ -95,6 +92,16 @@
 					});
 				}
 
+				// Modification Date column
+				if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
+					columns.push({
+						"name"   : "modificationDate",
+						"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
+						"content": "(=doc.modificationDate | date:'medium' =)",
+						"width"  : "150px"
+					});
+				}
+
 				// Status switch column
 				if (tAttrs.publishable === 'true') {
 					columns.push({
@@ -102,23 +109,35 @@
 						"align"  : "center",
 						"width"  : "90px",
 						"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
-						"content": '<status-switch document="doc"/>'
+						"content": '<status-switch document="doc"/>',
+						"dummy"  : true
 					});
 				}
 
-				tElement.data('columns', []);
+				tElement.data('columns', {});
+
+				// Update colspan value for preview and empty cells.
+				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
+				tElement.find('tbody tr.empty-row td').attr('colspan', columns.length);
 
 				while (columns.length) {
 					column = columns.shift(0);
-					tElement.data('columns').push(column.name);
+					tElement.data('columns')[column.name] = column;
+
+					// Check if the label has been provided or not.
+					// If one at least label has not been provided, the Model's information will be
+					// loaded to automatically set the columns' header text.
+					if ( ! column.label ) {
+						undefinedColumnLabels.push(column.name);
+					}
 
 					// Create header cell
 					$th = $(
 						'<th ng-if="isSortable(\'' + column.name + '\')">' +
-							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)">' + (column.label || '') + '</a>' +
+							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</a>' +
 							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')">' + (column.label || '') + '</th>'
+						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</th>'
 					);
 					if (column.align) {
 						$th.css('text-align', column.align);
@@ -133,7 +152,11 @@
 						$td = $('<td>' + column.content + '</td>');
 					} else {
 						if (column.primary) {
-							$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							if (tAttrs.tree) {
+								$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							} else {
+								$td = $('<td><a href ng-href="(= doc | documentURL =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							}
 						} else {
 							$td = $('<td>(= doc["' + column.name + '"] =)</td>');
 						}
@@ -169,15 +192,26 @@
 
 				delete __columns[dlid];
 
-				// Update colspan value for preview cell.
-				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
-
-
+				/**
+				 * Directive's link function.
+				 */
 				return function linkFn (scope, elm, attrs) {
-
-					var queryObject, search;
+					var queryObject, search, columnNames;
 
 					scope.collection = [];
+
+					console.log("collection=", scope.collection);
+
+					scope.columns = elm.data('columns');
+
+					// Load Model's information and update the columns' header with the correct property label.
+					if (undefinedColumnLabels.length && tAttrs.model) {
+						REST.modelInfo(tAttrs.model).then(function (modelInfo) {
+							angular.forEach(undefinedColumnLabels, function (columnName) {
+								scope.columns[columnName].label = modelInfo.properties[columnName].label;
+							});
+						});
+					}
 
 
 					//
@@ -219,7 +253,7 @@
 
 
 					scope.hasColumn = function (columnName) {
-						return elm.data('columns').indexOf(columnName) !== -1;
+						return angular.isObject(elm.data('columns')[columnName]);
 					};
 
 
@@ -347,7 +381,7 @@
 					 * @returns {boolean}
 					 */
 					scope.isLastPage = function () {
-						return scope.currentPage === (scope.pages.length-1);
+						return scope.pages.length === 0 || scope.currentPage === (scope.pages.length-1);
 					};
 
 					/**
@@ -368,10 +402,18 @@
 					// Sort.
 					//
 
+					// Compute columns list to give to the REST server.
+					columnNames = [];
+					angular.forEach(scope.columns, function (column) {
+						if ( ! column.dummy ) {
+							columnNames.push(column.name);
+						}
+					});
+
 					function getDefaultSortColumn () {
 						var defaultSortColumn = attrs.defaultSortColumn, i, c;
-						for (i=0 ; i<elm.data('columns').length && !defaultSortColumn; i++) {
-							c = elm.data('columns')[i];
+						for (i=0 ; i<columnNames.length && !defaultSortColumn; i++) {
+							c = columnNames[i];
 							if (c !== 'publicationStatus' && c !== 'selectable') {
 								defaultSortColumn = c;
 							}
@@ -438,27 +480,25 @@
 							'limit' : scope.pagination.limit,
 							'sort'  : scope.sort.column,
 							'desc'  : scope.sort.descending,
-							'column': elm.data('columns')
+							'column': columnNames,
+							'dlid': dlid // TODO remove
 						};
 
-						// Or may be we are simply loading a Collection...
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
-							promise = REST.query(prepareQueryObject(angular.copy(queryObject)));
+							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames, 'dlid': dlid});
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else if (attrs.model && ! attrs.parentProperty) {
 							Loading.start();
 							promise = REST.collection(tAttrs.model, params);
-							// Or may be tree children?
 						}
 
 						if (promise) {
 							promise.then(
 								function (response) {
-									Loading.stop();
-									scope.loading = false;
+									stopLoading();
 									if (response !== null) {
 										documentCollectionLoadedCallback(response);
 									} else {
@@ -466,15 +506,24 @@
 									}
 								},
 								function (reason) {
-									Loading.stop();
-									scope.loading = false;
-									// TODO Display error message with NotificationCenter.
+									stopLoading(reason);
 								}
 							);
 							return promise;
 						}
 
 						return null;
+					}
+
+
+					function stopLoading (reason) {
+						scope.loading = false;
+						Loading.stop();
+						if (reason) {
+							NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.loading-list-error | ucf'), reason);
+						} else {
+							NotificationCenter.clear();
+						}
 					}
 
 
@@ -512,8 +561,8 @@
 					function buildQueryParentProperty () {
 						var currentNode = Breadcrumb.getCurrentNode();
 						if (angular.isObject(currentNode)) {
-							scope.query = {
-								"model" : "Rbs_Theme_PageTemplate",
+							queryObject = {
+								"model" : attrs.model,
 								"where" : {
 									"and" : [{
 										"op" : "eq",
@@ -522,6 +571,7 @@
 									}]
 								}
 							};
+							reload();
 						}
 					}
 
@@ -563,16 +613,18 @@
 								'order'    : scope.sort.descending ? 'desc' : 'asc'
 							}
 						];
+						if (attrs.model) {
+							queryObject.model = attrs.model;
+						}
 						return query;
 					}
 
 
 					scope.$watch('query', function (query, oldValue) {
 						if (query !== oldValue) {
-							queryObject = query;
-							console.log("query watch: query=", query, ", old=", oldValue);
+							queryObject = angular.copy(query);
 							reload();
-						} else {
+						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();
 						}
 					}, true);
