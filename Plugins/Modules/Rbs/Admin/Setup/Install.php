@@ -25,7 +25,7 @@ class Install
 		$config = $application->getConfiguration();
 
 		$projectPath = $application->getWorkspace()->projectPath();
-		$documentRootPath = $config->getEntry('Rbs/Install/documentRootPath', $projectPath);
+		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 
 		if (is_dir($documentRootPath))
 		{
