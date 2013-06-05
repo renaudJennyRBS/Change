@@ -1,13 +1,13 @@
 <div id="change-menu" ng-controller="Rbs_MainMenu_Controller">
 
 	<div class="nav-list clearfix">
-		<small style="position:relative;top:-6px" class="pull-right"><a href="javascript:;" ng-click="close()"><i class="icon-chevron-left"></i> Fermer</a></small>
+		<small style="position:relative;top:-6px" class="pull-right"><a href="javascript:;" ng-click="close()"><i class="icon-chevron-left"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a></small>
 	</div>
-
+<!--
 	<ul class="nav nav-list">
 		<li><a ng-click="close()" href=""><i class="icon-home"></i> Accueil</a></li>
 		<li class="nav-header">Favoris &mdash; <a href="javascript:;" ng-click="editMode = ! editMode"><span ng-if="! editMode">modifier</span><span ng-if="editMode">terminer</span></a></li>
-		<li ng-repeat="m in modules | filter:{'pinned':true} | orderBy:'label'">
+		<li ng-repeat="m in menu.entries | filter:{'pinned':true} | orderBy:'label'">
 			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
 			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = false"><i class="pull-right icon-remove"></i>(= m.label =)</a>
 		</li>
@@ -15,21 +15,40 @@
 
 	<ul class="nav nav-list">
 		<li class="divider"></li>
-		<li class="nav-header">Tous les modules</li>
 	</ul>
+-->
 	<div class="nav-list">
 		<form class="form-search" ng-submit="go()" novalidate>
 			<div class="input-append input-block">
-				<input placeholder="Chercher un module..." type="text" class="search-query" style="width:155px" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
-				<button ng-click="clear()" type="button" class="btn"><i class="icon-remove-circle"></i></button>
+				<input placeholder="{{ i18nAttr('m.rbs.admin.menu.search-for-a-module', ['ucf']) }}" type="text" class="search-query" style="width:155px" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
+				<button title="{{ i18nAttr('m.rbs.admin.menu.clear-search', ['ucf']) }}" ng-click="clear()" type="button" class="btn"><i class="icon-remove-circle"></i></button>
 			</div>
 		</form>
 	</div>
-	<ul class="nav nav-list">
-		<li ng-animate="'menu-animate'" ng-repeat="m in modules | filter:filterModules | orderBy:'label'">
+
+	<ul class="nav nav-list" ng-repeat="s in menu.sections | orderBy:'label'">
+		<li class="divider"></li>
+		<li class="nav-header">(= s.label =)</li>
+		<li ng-animate="'menu-animate'" ng-repeat="m in menu.entries | filter:{'label':filterModules,'section':s.code} | orderBy:'label'">
 			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
 			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = true"><i ng-if="! m.pinned" class="pull-right icon-pushpin"></i>(= m.label =)</a>
 		</li>
 	</ul>
 
+	<ul class="nav nav-list" ng-if="hasOtherModules">
+		<li class="divider"></li>
+		<li class="nav-header">{{ i18n('m.rbs.admin.menu.other-modules', ['ucf']) }}</li>
+		<li ng-animate="'menu-animate'" ng-repeat="m in menu.entries | filter:{'label':filterModules,'section':'other'} | orderBy:'label'">
+			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
+			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = true"><i ng-if="! m.pinned" class="pull-right icon-pushpin"></i>(= m.label =)</a>
+		</li>
+	</ul>
+
+	<ul class="nav nav-list">
+		<li class="divider"></li>
+	</ul>
+
+	<div class="menu-help">
+		Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M.
+	</div>
 </div>

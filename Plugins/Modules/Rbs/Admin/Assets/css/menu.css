@@ -77,3 +77,11 @@
 	height: 26px;
 	opacity: 1;
 }
+
+#change-menu .menu-help {
+	color: silver;
+	font-size: 90%;
+	margin: 10px 15px 15px 15px;
+	text-align: center;
+	text-shadow: 0 1px 0 white;
+}
