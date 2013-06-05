@@ -38,6 +38,19 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Catalog/Currency/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Currency/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
+
+			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
+			$menu = array(
+				'sections' => array(
+					array('code' => 'ecommerce',
+						'label' => $i18nManager->trans('m.rbs.catalog.admin.js.section-name', array('ucf'))),
+				),
+				'entries' => array(
+					array('label' => $i18nManager->trans('m.rbs.catalog.admin.js.module-name', array('ucf'))
+					, 'url' => 'Rbs/Catalog', 'section' => 'ecommerce')
+				));
+
+			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 		});
 	}
 

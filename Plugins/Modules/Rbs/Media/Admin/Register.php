@@ -24,6 +24,14 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Media/Image/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Media/Image/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
+
+			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
+			$menu = array(
+				'entries' => array(
+					array('label' => $i18nManager->trans('m.rbs.media.admin.js.module-name', array('ucf'))
+					, 'url' => 'Rbs/Media', 'section' => 'cms')
+				));
+			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 		});
 	}
 
