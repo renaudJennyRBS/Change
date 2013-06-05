@@ -547,7 +547,7 @@ class PluginManager
 	 */
 	public function getModules($vendor = null)
 	{
-		$vendor = $this->normalizeVendorName($vendor);
+		$vendor = ($vendor) ? $this->normalizeVendorName($vendor) : null;
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_MODULE && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
@@ -574,7 +574,7 @@ class PluginManager
 	 */
 	public function getThemes($vendor = null)
 	{
-		$vendor = $this->normalizeVendorName($vendor);
+		$vendor = ($vendor) ? $this->normalizeVendorName($vendor) : null;
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
@@ -746,7 +746,7 @@ class PluginManager
 		$lcName = strtolower($name);
 		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $lcName))
 		{
-			throw new \InvalidArgumentException('Vendor name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+			throw new \InvalidArgumentException('Vendor name "' . $lcName . '" should match ^[a-z][a-z0-9]{1,24}$', 999999);
 		}
 		return ucfirst($lcName);
 	}
@@ -761,7 +761,7 @@ class PluginManager
 		$lcName = strtolower($name);
 		if (!preg_match('/^[a-z][a-z0-9]{1,24}$/', $lcName))
 		{
-			throw new \InvalidArgumentException('Plugin name should match ^[a-z][a-z0-9]{1,24}$', 999999);
+			throw new \InvalidArgumentException('Plugin name "' . $lcName . '" should match ^[a-z][a-z0-9]{1,24}$', 999999);
 		}
 		return ucfirst($lcName);
 	}
