@@ -20,26 +20,51 @@
 			$filterInput = $menu.find('input.search-query').first();
 
 		// TODO Load modules from the server.
-		$scope.modules = [
-			{
-				"label"  : "Sites et pages",
-				"url"    : "Rbs/Website",
-				"pinned" : true
-			},
-			{
-				"label"  : "Thèmes",
-				"url"    : "Rbs/Theme"
-			},
-			{
-				"label"  : "Médiathèque",
-				"url"    : "Rbs/Media",
-				"pinned" : true
-			},
-			{
-				"label"  : "Catalogue",
-				"url"    : "Rbs/Catalog"
+		if (!__change.menu) {
+			__change.menu = {
+				"sections" : [
+					{
+						"code" : "cms",
+						"label": "CMS"
+					},
+					{
+						"code" : "ecommerce",
+						"label": "E-commerce"
+					}
+				],
+				"entries" : [
+					{
+						"label"  : "Sites et pages",
+						"url"    : "Rbs/Website",
+						"section": "cms"
+					},
+					{
+						"label"  : "Thèmes",
+						"url"    : "Rbs/Theme",
+						"section": "cms"
+					},
+					{
+						"label"  : "Médiathèque",
+						"url"    : "Rbs/Media",
+						"section": "cms"
+					},
+					{
+						"label"  : "Catalogue",
+						"url"    : "Rbs/Catalog",
+						"section": "ecommerce"
+					}
+				]
+			};
+		}
+
+		$scope.hasOtherModules = false;
+		$scope.menu = __change.menu;
+		angular.forEach($scope.menu.entries, function (entry) {
+			if (!entry.section) {
+				entry.section = 'other';
+				$scope.hasOtherModules = true;
 			}
-		];
+		});
 
 		$scope.open = function () {
 			$menu.addClass('show');
