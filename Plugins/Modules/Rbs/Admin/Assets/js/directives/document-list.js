@@ -63,7 +63,8 @@
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
-						"content": '<status ng-model="doc"/>'
+						"content": '<status ng-model="doc"/>',
+						"dummy"  : true
 					});
 				}
 
@@ -74,7 +75,8 @@
 						"align"  : "center",
 						"width"  : "30px",
 						"label"  : '<input type="checkbox" ng-model="selection.all"/>',
-						"content": '<input type="checkbox" ng-model="doc.selected"/>'
+						"content": '<input type="checkbox" ng-model="doc.selected"/>',
+						"dummy"  : true
 					});
 				}
 
@@ -106,11 +108,16 @@
 						"align"  : "center",
 						"width"  : "90px",
 						"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
-						"content": '<status-switch document="doc"/>'
+						"content": '<status-switch document="doc"/>',
+						"dummy"  : true
 					});
 				}
 
 				tElement.data('columns', {});
+
+				// Update colspan value for preview and empty cells.
+				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
+				tElement.find('tbody tr.empty-row td').attr('colspan', columns.length);
 
 				while (columns.length) {
 					column = columns.shift(0);
@@ -144,7 +151,11 @@
 						$td = $('<td>' + column.content + '</td>');
 					} else {
 						if (column.primary) {
-							$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							if (tAttrs.tree) {
+								$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							} else {
+								$td = $('<td><a href ng-href="(= doc | documentURL =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+							}
 						} else {
 							$td = $('<td>(= doc["' + column.name + '"] =)</td>');
 						}
@@ -180,14 +191,16 @@
 
 				delete __columns[dlid];
 
-				// Update colspan value for preview cell.
-				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
-
-
+				/**
+				 * Directive's link function.
+				 */
 				return function linkFn (scope, elm, attrs) {
 					var queryObject, search, columnNames;
 
 					scope.collection = [];
+
+					console.log("collection=", scope.collection);
+
 					scope.columns = elm.data('columns');
 
 					// Load Model's information and update the columns' header with the correct property label.
@@ -367,7 +380,7 @@
 					 * @returns {boolean}
 					 */
 					scope.isLastPage = function () {
-						return scope.currentPage === (scope.pages.length-1);
+						return scope.pages.length === 0 || scope.currentPage === (scope.pages.length-1);
 					};
 
 					/**
@@ -391,7 +404,9 @@
 					// Compute columns list to give to the REST server.
 					columnNames = [];
 					angular.forEach(scope.columns, function (column) {
-						columnNames.push(column.name);
+						if ( ! column.dummy ) {
+							columnNames.push(column.name);
+						}
 					});
 
 					function getDefaultSortColumn () {
@@ -464,12 +479,13 @@
 							'limit' : scope.pagination.limit,
 							'sort'  : scope.sort.column,
 							'desc'  : scope.sort.descending,
-							'column': columnNames
+							'column': columnNames,
+							'dlid': dlid // TODO remove
 						};
 
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
-							promise = REST.query(prepareQueryObject(angular.copy(queryObject)), {'column': columnNames});
+							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames, 'dlid': dlid});
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
@@ -536,8 +552,8 @@
 					function buildQueryParentProperty () {
 						var currentNode = Breadcrumb.getCurrentNode();
 						if (angular.isObject(currentNode)) {
-							scope.query = {
-								"model" : "Rbs_Theme_PageTemplate",
+							queryObject = {
+								"model" : attrs.model,
 								"where" : {
 									"and" : [{
 										"op" : "eq",
@@ -546,6 +562,7 @@
 									}]
 								}
 							};
+							reload();
 						}
 					}
 
@@ -587,13 +604,16 @@
 								'order'    : scope.sort.descending ? 'desc' : 'asc'
 							}
 						];
+						if (attrs.model) {
+							queryObject.model = attrs.model;
+						}
 						return query;
 					}
 
 
 					scope.$watch('query', function (query, oldValue) {
 						if (query !== oldValue) {
-							queryObject = query;
+							queryObject = angular.copy(query);
 							reload();
 						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();

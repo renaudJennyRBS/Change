@@ -400,3 +400,11 @@ a.danger:hover {
 a.danger:visited:hover {
 	color: red;
 }
+
+.document-list .empty-row td {
+	color: silver;
+	font-size: 14pt;
+	padding: 10px;
+	text-align: left;
+	text-shadow: 0 1px 0 white;
+}
