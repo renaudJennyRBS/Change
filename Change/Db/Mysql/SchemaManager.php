@@ -280,8 +280,8 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		if ($tableDef)
 		{
 			$sql = "SELECT C.`CONSTRAINT_NAME`, C.`CONSTRAINT_TYPE`, F.`COLUMN_NAME` FROM `information_schema`.`TABLE_CONSTRAINTS` AS C  
-INNER JOIN `information_schema`.`KEY_COLUMN_USAGE` AS F ON F.`TABLE_SCHEMA` = C.`TABLE_SCHEMA` AND F.`TABLE_NAME` = C.`TABLE_NAME` AND C.`CONSTRAINT_NAME` = F.`CONSTRAINT_NAME`
-WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableName."' ORDER BY C.`CONSTRAINT_NAME`, F.`ORDINAL_POSITION`";
+INNER JOIN `information_schema`.`KEY_COLUMN_USAGE` AS F ON F.`CONSTRAINT_NAME` = C.`CONSTRAINT_NAME`
+WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableName."' AND F.`TABLE_SCHEMA` = '".$this->getName()."' AND F.`TABLE_NAME`= '".$tableName."' ORDER BY C.`CONSTRAINT_NAME`, F.`ORDINAL_POSITION`";
 			$statement = $this->query($sql);
 
 			/* @var $k \Change\Db\Schema\KeyDefinition */
