@@ -29,4 +29,12 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	{
 		return array($this);
 	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $publicationSections
+	 */
+	public function setPublicationSections($publicationSections)
+	{
+		// TODO: Implement setPublicationSections() method.
+	}
 }

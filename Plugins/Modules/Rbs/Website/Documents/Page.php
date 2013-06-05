@@ -10,7 +10,7 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Rbs\Website\Documents\Page
  */
-class Page extends \Compilation\Rbs\Website\Documents\Page implements \Change\Presentation\Interfaces\Page
+abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \Change\Presentation\Interfaces\Page
 {
 	/**
 	 * @see \Change\Presentation\Interfaces\Page::getIdentifier()
@@ -146,14 +146,5 @@ class Page extends \Compilation\Rbs\Website\Documents\Page implements \Change\Pr
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 5);
 		$this->eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
 		$this->eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
-	}
-
-	/**
-	 * @throws \LogicException
-	 * @return \Change\Presentation\Interfaces\Section[]
-	 */
-	public function getPublicationSections()
-	{
-		throw new \LogicException('A publishable document must implement getPublicationSections()', 999999);
 	}
 }

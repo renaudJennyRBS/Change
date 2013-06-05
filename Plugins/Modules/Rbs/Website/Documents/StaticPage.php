@@ -19,7 +19,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 		if ($result)
 		{
 			$headElement = new HtmlHeaderElement('title');
-			$headElement->setContent('Page: ' . $this->getNavigationTitle());
+			$headElement->setContent('Page: ' . $this->getTitle());
 			$result->addNamedHeadAsString('title', $headElement);
 		}
 		return $result;
@@ -45,18 +45,15 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	 */
 	public function getPublicationSections()
 	{
-		$ds = $this->getDocumentServices();
-		$node = $ds->getTreeManager()->getNodeByDocument($this);
-		if (!$node)
-		{
-			return array();
-		}
-		$section = $this->getDocumentManager()->getDocumentInstance($node->getParentId(),
-			$ds->getModelManager()->getModelByName('Rbs_Website_Section'));
-		if ($section)
-		{
-			return array($section);
-		}
-		return array();
+		$section = $this->getSection();
+		return $section ? array($section) : array();
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $publicationSections
+	 */
+	public function setPublicationSections($publicationSections)
+	{
+		// TODO: Implement setPublicationSections() method.
 	}
 }
