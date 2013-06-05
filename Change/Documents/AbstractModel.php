@@ -125,6 +125,15 @@ abstract class AbstractModel
 	 * @api
 	 * @return boolean
 	 */
+	public function isAbstract()
+	{
+		return false;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function isLocalized()
 	{
 		return false;

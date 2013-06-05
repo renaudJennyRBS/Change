@@ -124,6 +124,12 @@ class UrlManagerTest_FakeSection implements \Change\Presentation\Interfaces\Sect
 	 */
 	protected $website;
 
+
+	protected $sectionPath = array();
+
+
+	protected $title = 'UrlManagerTest_FakeSection';
+
 	/**
 	 * @param integer $id
 	 * @param \Change\Presentation\Interfaces\Website $website
@@ -148,6 +154,22 @@ class UrlManagerTest_FakeSection implements \Change\Presentation\Interfaces\Sect
 	public function getWebsite()
 	{
 		return $this->website;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->title;
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getSectionPath()
+	{
+		return $this->sectionPath;
 	}
 }
 

@@ -550,6 +550,12 @@ class Property
 					$this->required = true;
 				}
 				break;
+			case 'title':
+				if ($this->type !== null)
+				{
+					$this->type = 'String';
+				}
+				break;
 			case 'refLCID':
 			case 'LCID':
 				$this->type = 'String';
@@ -569,7 +575,7 @@ class Property
 				break;
 			case 'authorId':
 				$this->type = 'DocumentId';
-				$this->documentType = 'Rbs_Users_User';
+				//$this->documentType = 'Rbs_Users_User';
 				break;
 			case 'documentVersion':
 				$this->type = 'Integer';
@@ -586,6 +592,10 @@ class Property
 				break;
 			case 'endPublication':
 				$this->type = 'DateTime';
+				break;
+			case 'publicationSections':
+				$this->type = 'DocumentArray';
+				//$this->documentType = 'Rbs_Website_Section';
 				break;
 			case 'versionOfId':
 				$this->type = 'DocumentId';
@@ -649,12 +659,13 @@ class Property
 				case 'versionOfId':
 				case 'treeName':
 					$this->makeLocalized(null);
-					break;					
+					break;
 				case 'LCID':
 				case 'creationDate':
 				case 'modificationDate':
 
 				case 'label':
+				case 'title':
 				case 'authorName':
 				case 'authorId':
 				case 'documentVersion':
@@ -740,6 +751,16 @@ class Property
 		}
 		return $val;
 	}
+
+	/**
+	 * @param boolean $stateless
+	 */
+	public function setStateless($stateless)
+	{
+		$this->stateless = ($stateless === true) ? true : null;
+	}
+
+
 	
 	/**
 	 * @return string

@@ -660,6 +660,7 @@ class DocumentManager
 
 	/**
 	 * @param AbstractModel $model
+	 * @throws \RuntimeException
 	 * @return AbstractDocument
 	 */
 	public function getNewDocumentInstanceByModel(AbstractModel $model)
@@ -673,10 +674,15 @@ class DocumentManager
 
 	/**
 	 * @param AbstractModel $model
+	 * @throws \RuntimeException
 	 * @return AbstractDocument
 	 */
 	protected function createNewDocumentInstance(AbstractModel $model)
 	{
+		if ($model->isAbstract())
+		{
+			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
+		}
 		$className = $this->getDocumentClassFromModel($model);
 		/* @var $newDocument AbstractDocument */
 		return new $className($this->getDocumentServices(), $model);
@@ -824,12 +830,19 @@ class DocumentManager
 		}
 		elseif ($id > 0)
 		{
-			if ($model && $model->isStateless())
+			if ($model)
 			{
-				$document = $this->createNewDocumentInstance($model);
-				$document->initialize($id, static::STATE_INITIALIZED);
-				$document->load();
-				return $document;
+				if ($model->isAbstract())
+				{
+					return null;
+				}
+				elseif ($model->isStateless())
+				{
+					$document = $this->createNewDocumentInstance($model);
+					$document->initialize($id, static::STATE_INITIALIZED);
+					$document->load();
+					return $document;
+				}
 			}
 
 			$qb = $this->getNewQueryBuilder(__METHOD__ . ($model ? $model->getRootName() : 'std'));
@@ -859,7 +872,7 @@ class DocumentManager
 			{
 				$modelName = $constructorInfos['model'];
 				$documentModel = $this->getModelManager()->getModelByName($modelName);
-				if ($documentModel !== null)
+				if ($documentModel !== null && !$documentModel->isAbstract())
 				{
 					$document = $this->createNewDocumentInstance($documentModel);
 					$document->initialize($id, static::STATE_INITIALIZED);

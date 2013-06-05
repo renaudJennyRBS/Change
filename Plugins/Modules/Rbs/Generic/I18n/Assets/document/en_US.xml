@@ -14,4 +14,5 @@
 	<key id="authorname">author name</key>
 	<key id="authorid">author id</key>
 	<key id="documentversion">version</key>
+	<key id="title">title used for navigation items</key>
 </i18n>

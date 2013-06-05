@@ -407,6 +407,11 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	public function testValidate()
 	{
 		$model = new Model('vendor', 'module', 'name');
+
+		$p = new Property($model, 'label');
+		$p->validate();
+		$this->assertNull($p->getType());
+
 		$p = new Property($model, 'label' , 'Integer');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
@@ -445,14 +450,31 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new Property($model, 'authorId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
-		$this->assertEquals('Rbs_Users_User', $p->getDocumentType());
+		$this->assertNull($p->getDocumentType());
+
+
 		
 		$p = new Property($model, 'documentVersion');
 		$p->validate();
 		$this->assertEquals('Integer', $p->getType());
 		$this->assertEquals('0', $p->getDefaultValue());
 		$this->assertTrue($p->getRequired());
-		
+
+
+		$p = new Property($model, 'title', 'Integer');
+		$p->validate();
+		$this->assertEquals('String', $p->getType());
+
+		$p = new Property($model, 'title');
+		$p->validate();
+		$this->assertNull($p->getType());
+
+
+		$p = new Property($model, 'publicationSections');
+		$p->validate();
+		$this->assertEquals('DocumentArray', $p->getType());
+		$this->assertNull($p->getDocumentType());
+
 		$p = new Property($model, 'publicationStatus');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());

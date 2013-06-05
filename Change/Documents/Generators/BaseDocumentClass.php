@@ -193,14 +193,6 @@ class BaseDocumentClass
 	}
 
 	/**
-	 * @return \Change\Presentation\Interfaces\Section[]
-	 */
-	public function getPublicationSections()
-	{
-		return array();
-	}
-
-	/**
 	 * @api
 	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
 	 * @return \Change\Presentation\Interfaces\Section
@@ -653,6 +645,27 @@ class BaseDocumentClass
 		$var = '$' . $name;
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
+
+		if ($name === 'publicationSections')
+		{
+			$code[] = '
+	/**
+	 * @return ' . $ct . '
+	 */
+	public function get' . $un . '()
+	{
+		return array();
+	}
+
+	/**
+	 * @param ' . $ct . ' ' . $var . '
+	 */
+	public function set' . $un . '(' . $var . ')
+	{
+	}';
+		}
+		else
+		{
 		$code[] = '
 	/**
 	 * @return ' . $ct . '
@@ -663,6 +676,7 @@ class BaseDocumentClass
 	 * @param ' . $ct . ' ' . $var . '
 	 */
 	abstract public function set' . $un . '(' . $var . ');';
+		}
 
 		if ($property->getType() === 'Document')
 		{
