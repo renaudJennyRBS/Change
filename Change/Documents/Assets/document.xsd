@@ -186,8 +186,6 @@
 
 									<!-- stateless exclude: cascade-delete, has-correction. -->
 									<xs:attribute name="stateless" type="xs:boolean" default="true"/>
-
-									<xs:attribute name="abstract" type="xs:boolean" default="true"/>
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
@@ -200,6 +198,7 @@
 			<xs:attribute name="frontoffice-indexable" type="xs:boolean" default="true"/>
 			<xs:attribute name="backoffice-indexable" type="xs:boolean" default="false"/>
 
+			<xs:attribute name="abstract" type="xs:boolean" default="true"/>
 			<xs:attribute name="extends" type="documentModel"/>
 			<xs:attribute name="replace" type="xs:boolean" default="false"/>
 
