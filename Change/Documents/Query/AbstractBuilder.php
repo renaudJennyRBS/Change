@@ -58,7 +58,7 @@ abstract class AbstractBuilder
 	function __construct(AbstractModel $model)
 	{
 		$this->setModel($model);
-		$this->setTableAliasName('_t' . $this->getMaster()->getNextAliasCounter());
+		$this->setTableAliasName('_t' . $this->getQuery()->getNextAliasCounter());
 	}
 
 	/**
@@ -326,9 +326,9 @@ abstract class AbstractBuilder
 
 	/**
 	 * @api
-	 * @return Builder
+	 * @return Query
 	 */
-	abstract public function getMaster();
+	abstract public function getQuery();
 
 	/**
 	 * @api
@@ -525,7 +525,7 @@ abstract class AbstractBuilder
 			throw new \InvalidArgumentException('Argument 2 must be a valid type', 999999);
 		}
 
-		$name = '_p' . $this->getMaster()->getNextAliasCounter();
+		$name = '_p' . $this->getQuery()->getNextAliasCounter();
 		$parameter = $this->getFragmentBuilder()->typedParameter($name, $dbType);
 		$this->setValuedParameter($parameter, $value);
 		return $parameter;

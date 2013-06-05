@@ -19,7 +19,7 @@ class WorkflowResolver
 			$workflowModel = $documentServices->getModelManager()->getModelByName('Rbs_Workflow_Workflow');
 			if ($workflowModel)
 			{
-				$dqb = new \Change\Documents\Query\Builder($documentServices, $workflowModel);
+				$dqb = new \Change\Documents\Query\Query($documentServices, $workflowModel);
 				$workflow = $dqb->andPredicates($dqb->published(), $dqb->eq('startTask', $startTask))->getFirstDocument();
 				if ($workflow)
 				{

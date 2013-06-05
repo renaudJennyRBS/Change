@@ -10,11 +10,12 @@ use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
 use Change\Documents\DocumentCollection;
 use Change\Documents\DocumentServices;
+use Change\Documents\Property;
 
 /**
- * @name \Change\Documents\Query\Builder
+ * @name \Change\Documents\Query\Query
  */
-class Builder extends AbstractBuilder
+class Query extends AbstractBuilder
 {
 	/**
 	 * @var DocumentServices
@@ -80,9 +81,9 @@ class Builder extends AbstractBuilder
 	}
 
 	/**
-	 * @return $this|Builder
+	 * @return $this
 	 */
-	public function getMaster()
+	public function getQuery()
 	{
 		return $this;
 	}
@@ -161,7 +162,7 @@ class Builder extends AbstractBuilder
 	/**
 	 * @return \Change\Db\Query\Builder
 	 */
-	public function getQueryBuilder()
+	public function dbQueryBuilder()
 	{
 		$dqb = $this->getDbQueryBuilder();
 		$this->populateQueryBuilder($dqb);
@@ -275,8 +276,6 @@ class Builder extends AbstractBuilder
 				$sysPredicate[] = $fb->in($fb->getDocumentColumn('model', $this->getTableAliasName()), $models);
 			}
 		}
-
-
 
 		if (is_array($this->childBuilderArray))
 		{

@@ -86,11 +86,11 @@ class ChildBuilder extends AbstractBuilder
 
 	/**
 	 * @api
-	 * @return Builder
+	 * @return Query
 	 */
-	public function getMaster()
+	public function getQuery()
 	{
-		return $this->parent->getMaster();
+		return $this->parent->getQuery();
 	}
 
 	/**
@@ -108,7 +108,7 @@ class ChildBuilder extends AbstractBuilder
 	 */
 	public function addOrder($propertyName, $asc = true)
 	{
-		$this->getMaster()->addOrder($propertyName, $asc, $this);
+		$this->getQuery()->addOrder($propertyName, $asc, $this);
 		return $this;
 	}
 
@@ -154,7 +154,7 @@ class ChildBuilder extends AbstractBuilder
 		$fromClause = $qb->query()->getFromClause();
 		if ($this->parentProperty->getType() === Property::TYPE_DOCUMENTARRAY)
 		{
-			$relTableIdentifier = $fb->identifier('_t' . $this->getMaster()->getNextAliasCounter() . 'R');
+			$relTableIdentifier = $fb->identifier('_t' . $this->getQuery()->getNextAliasCounter() . 'R');
 			$relTable = $fb->getDocumentRelationTable($this->parent->getModel()->getRootName());
 
 			$id = $this->parent->getPredicateBuilder()->eq('id', $fb->getDocumentColumn('id', $relTableIdentifier));
@@ -173,7 +173,7 @@ class ChildBuilder extends AbstractBuilder
 		}
 		elseif ($this->property->getType() === Property::TYPE_DOCUMENTARRAY)
 		{
-			$relTableIdentifier = $fb->identifier('_t' . $this->getMaster()->getNextAliasCounter() . 'R');
+			$relTableIdentifier = $fb->identifier('_t' . $this->getQuery()->getNextAliasCounter() . 'R');
 			$relTable = $fb->getDocumentRelationTable($this->getModel()->getRootName());
 
 			$relatedId = $this->parent->getPredicateBuilder()->eq($this->parentProperty, $fb->column('relatedid', $relTableIdentifier));
@@ -224,7 +224,7 @@ class ChildBuilder extends AbstractBuilder
 	 */
 	public function setValuedParameter(Parameter $parameter, $value)
 	{
-		$this->getMaster()->setValuedParameter($parameter, $value);
+		$this->getQuery()->setValuedParameter($parameter, $value);
 	}
 
 	/**

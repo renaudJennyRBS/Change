@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Documents\Query;
 
-use Change\Documents\Query\Builder;
+use Change\Documents\Query\Query;
 
 class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -85,11 +85,11 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testConstruct()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$this->assertSame($this->getDocumentServices(), $builder->getDocumentServices());
 		$this->assertSame($this->getApplicationServices()->getDbProvider(), $builder->getDbProvider());
 		$this->assertSame($model, $builder->getModel());
-		$this->assertSame($builder, $builder->getMaster());
+		$this->assertSame($builder, $builder->getQuery());
 
 		$fb = $builder->getFragmentBuilder();
 		$this->assertInstanceOf('\Change\Db\Query\SQLFragmentBuilder', $fb);
@@ -97,12 +97,12 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$pb = $builder->getPredicateBuilder();
 		$this->assertInstanceOf('\Change\Documents\Query\PredicateBuilder', $pb);
 
-		$builder2 = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder2 = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$this->assertSame($model, $builder2->getModel());
 
 		try
 		{
-			new Builder($this->getDocumentServices(), 'Project_Tests_Invalid');
+			new Query($this->getDocumentServices(), 'Project_Tests_Invalid');
 			$this->fail('Argument 2 must by a valid AbstractModel');
 		}
 		catch (\InvalidArgumentException $e)
@@ -117,7 +117,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetFirstDocument()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$doc = $builder->getFirstDocument();
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $doc);
 	}
@@ -129,7 +129,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetDocuments()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$documents = $builder->getDocuments();
 		$this->assertInstanceOf('\Change\Documents\DocumentCollection', $documents);
 		$this->assertEquals(3, $documents->count());
@@ -142,7 +142,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetCountDocuments()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$this->assertEquals(3, $builder->getCountDocuments());
 	}
 
@@ -152,8 +152,8 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetQueryBuilder()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
-		$qb = $builder->getQueryBuilder();
+		$builder = new Query($this->getDocumentServices(), $model);
+		$qb = $builder->dbQueryBuilder();
 		$rows = $qb->query()->getResults();
 		$this->assertCount(3, $rows);
 		$this->assertArrayHasKey('pstr', $rows[0]);
@@ -166,7 +166,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testJoin()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$this->assertNull($builder->getJoin('_test'));
 		$te = new \Change\Db\Query\Expressions\Table('test');
 		$j = new \Change\Db\Query\Expressions\Join($te);
@@ -180,7 +180,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetNextAliasCounter()
 	{
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$this->assertEquals(1, $builder->getNextAliasCounter());
 		$this->assertEquals(2, $builder->getNextAliasCounter());
 	}
@@ -192,7 +192,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$LCID = $this->getDocumentServices()->getDocumentManager()->getLCID();
 		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Project_Tests_Basic');
-		$builder = new Builder($this->getDocumentServices(), $model);
+		$builder = new Query($this->getDocumentServices(), $model);
 		$this->assertEquals($LCID, $builder->getLCID());
 		$builder->setLCID('xx_XX');
 		$this->assertEquals('xx_XX', $builder->getLCID());
@@ -203,7 +203,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testTableAliasName()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$this->assertEquals('_t0', $builder->getTableAliasName());
 	}
 
@@ -212,7 +212,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testLocalized()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$this->assertFalse($builder->hasLocalizedTable());
 		$this->assertEquals('_t0L', $builder->getLocalizedTableAliasName());
 		$this->assertTrue($builder->hasLocalizedTable());
@@ -223,7 +223,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testGetValidProperty()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$p = $builder->getValidProperty('pStr');
 		$this->assertInstanceOf('\Change\Documents\Property', $p);
 		$this->assertNull($builder->getValidProperty('invalid'));
@@ -234,7 +234,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testPropertyBuilder()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$cb = $builder->getPropertyBuilder('pDocArr');
 		$this->assertInstanceOf('\Change\Documents\Query\ChildBuilder', $cb);
 		$this->assertEquals('Project_Tests_Localized', $cb->getModel()->getName());
@@ -256,7 +256,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testModelBuilder()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$cb = $builder->getModelBuilder('Project_Tests_Localized', 'pDocId');
 		$this->assertInstanceOf('\Change\Documents\Query\ChildBuilder', $cb);
 		$this->assertEquals('Project_Tests_Localized', $cb->getModel()->getName());
@@ -288,7 +288,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testGetPropertyModelBuilder()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$cb = $builder->getPropertyModelBuilder('pDocId', 'Project_Tests_Localized', 'pInt');
 		$this->assertInstanceOf('\Change\Documents\Query\ChildBuilder', $cb);
 		$this->assertEquals('Project_Tests_Localized', $cb->getModel()->getName());
@@ -342,7 +342,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testGetColumn()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Column', $builder->getColumn('pStr'));
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Column',  $builder->getColumn($builder->getModel()->getProperty('pInt')));
 
@@ -362,7 +362,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testGetValueAsParameter()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', ($p = $builder->getValueAsParameter(12)));
 		$this->assertEquals(\Change\Db\ScalarType::INTEGER, $p->getType());
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', ($p = $builder->getValueAsParameter(new \DateTime())));
@@ -390,25 +390,25 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testOrder()
 	{
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$builder->addOrder('id');
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(3, $ids);
 		$this->assertEquals(array(1000, 1001, 1002), $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$builder->addOrder('id', false);
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(3, $ids);
 		$this->assertEquals(array(1002, 1001, 1000), $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$builder->getPropertyBuilder('pDocInst')->addOrder('pDocId');
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(2, $ids);
 		$this->assertEquals(array(1006, 1005), $ids);
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Localized');
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Localized');
 		$builder->getPropertyBuilder('pDocInst')->addOrder('pDocId', false);
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(2, $ids);
