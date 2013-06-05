@@ -52,6 +52,11 @@
 						"label"  : "Catalogue",
 						"url"    : "Rbs/Catalog",
 						"section": "ecommerce"
+					},
+					{
+						"label"  : "Zones géographiques",
+						"url"    : "Rbs/Geo"
+						"section": "ecommerce"
 					}
 				]
 			};

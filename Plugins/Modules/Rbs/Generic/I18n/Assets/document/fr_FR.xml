@@ -15,4 +15,5 @@
 	<key id="authorid">identifant de l'auteur</key>
 	<key id="documentversion">version</key>
 	<key id="title">titre dans les éléments de navigation</key>
+	<key id="code">code référence</key>
 </i18n>
