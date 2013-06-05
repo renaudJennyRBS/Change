@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: fstauffer
- * Date: 30/04/13
- * Time: 10:21
- * To change this template use File | Settings | File Templates.
- */
 
 namespace ChangeTests\Website\Blocks;
 
@@ -53,7 +46,7 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$pathRule->setSectionId(789);
 		$event->setParam('pathRule', $pathRule);
-		$block = new \Change\Website\Blocks\Thread();
+		$block = new \Rbs\Website\Blocks\Thread();
 		$block->onParameterize($event);
 		$parameters = $event->getBlockParameters();
 
