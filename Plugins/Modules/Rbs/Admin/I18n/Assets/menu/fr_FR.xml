@@ -8,9 +8,10 @@
 	<key id="fullscreen-mode">mode plein écran</key>
 	<key id="profile">profil</key>
 	<key id="logout">déconnexion</key>
-	<key id="close">fermer</key>
-	<key id="search-for-a-module">chercher un module...</key>
+	<key id="close">fermer le menu</key>
+	<key id="search">rechercher</key>
 	<key id="clear-search">effacer la recherche</key>
 	<key id="other-modules">autres modules</key>
 	<key id="help-bottom">Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M.</key>
+	<key id="dashboard">tableau de bord</key>
 </i18n>

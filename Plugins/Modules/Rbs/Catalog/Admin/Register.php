@@ -47,7 +47,7 @@ class Register implements ListenerAggregateInterface
 				),
 				'entries' => array(
 					array('label' => $i18nManager->trans('m.rbs.catalog.admin.js.module-name', array('ucf'))
-					, 'url' => 'Rbs/Catalog', 'section' => 'ecommerce')
+					, 'url' => 'Rbs/Catalog', 'section' => 'ecommerce', 'keywords' => $i18nManager->trans('m.rbs.catalog.admin.js.module-keywords'))
 				));
 
 			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));

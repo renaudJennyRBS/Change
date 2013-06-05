@@ -1359,3 +1359,16 @@ th label {
 .form-horizontal .control-group {
 	margin-bottom: 20px;
 }
+
+
+.opacity-animation-enter {
+	-webkit-transition: opacity ease-in-out 0.5s;
+	-moz-transition: opacity ease-in-out 0.5s;
+	-o-transition: opacity ease-in-out 0.5s;
+	transition: opacity ease-in-out 0.5s;
+	opacity: 0;
+}
+
+.opacity-animation-enter.opacity-animation-enter-active {
+	opacity: 1;
+}

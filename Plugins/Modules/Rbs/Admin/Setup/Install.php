@@ -39,6 +39,8 @@ class Install
 			throw new \RuntimeException('Invalid document root path: ' . $documentRootPath .
 			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
 		}
+
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Admin', '\\Rbs\\Admin\\Register');
 	}
 
 	/**

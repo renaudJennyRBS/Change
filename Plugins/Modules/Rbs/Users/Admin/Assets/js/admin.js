@@ -9,13 +9,20 @@
 		// Users
 
 		. when(
+			'/Rbs/Users',
+			{
+				templateUrl : 'Rbs/Users/User/list.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
 			'/Rbs/Users/User',
 			{
 				templateUrl : 'Rbs/Users/User/list.twig',
 				reloadOnSearch : false
 			})
 
-			. when(
+		. when(
 			'/Rbs/Users/User/:id',
 			{
 				templateUrl : 'Rbs/Users/User/form.twig',
