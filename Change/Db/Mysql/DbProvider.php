@@ -131,6 +131,10 @@ class DbProvider extends \Change\Db\DbProvider
 	public function closeConnection()
 	{
 		$this->setDriver(null);
+		if ($this->schemaManager)
+		{
+			$this->schemaManager->closeConnection();
+		}
 	}
 	
 	/**
