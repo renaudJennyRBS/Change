@@ -4,7 +4,7 @@
 
 	app.config(['$routeProvider', function ($routeProvider)
 	{
-		$routeProvider.when('/Rbs/Media', { templateUrl: 'Rbs/Media/Image/list.twig', reloadOnSearch: false })
+		$routeProvider.when('/Rbs/Media', { redirectTo: '/Rbs/Media/Image' })
 			.when('/Rbs/Media/Image', { templateUrl: 'Rbs/Media/Image/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Media/Image/:id/:LCID', { templateUrl: 'Rbs/Media/Image/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Media/Image/:id', { templateUrl: 'Rbs/Media/Image/form.twig', reloadOnSearch: false });
