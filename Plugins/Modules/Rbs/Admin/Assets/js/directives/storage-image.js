@@ -33,7 +33,15 @@
 				}
 
 				attrs.$observe('rbsStorageImage', function (value) {
-					elm.attr('src', REST.storage.displayUrl(value));
+					if (value) {
+						if (/\d+/.test(value)) {
+							REST.resource(parseInt(value, 10)).then(function (image) {
+								elm.attr('src', REST.storage.displayUrl(image.path));
+							});
+						} else {
+							elm.attr('src', REST.storage.displayUrl(value));
+						}
+					}
 				});
 
 				if (attrs.thumbnail) {

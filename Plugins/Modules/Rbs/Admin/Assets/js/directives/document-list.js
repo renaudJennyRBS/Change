@@ -159,7 +159,11 @@
 						$td = $('<td>' + column.content + '</td>');
 					} else {
 						if (column.thumbnail) {
-							column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
+							if (column.thumbnailPath) {
+								column.content = '<img rbs-storage-image="(= ' + column.thumbnailPath + ' =)" thumbnail="' + column.thumbnail + '"/>';
+							} else {
+								column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
+							}
 						} else {
 							column.content = '(= doc["' + column.name + '"] =)';
 						}
@@ -676,7 +680,6 @@
 					if (sizes[tAttrs.thumbnail]) {
 						tAttrs.thumbnail = sizes[tAttrs.thumbnail];
 					}
-					console.log("tAttrs.thumbnail=", tAttrs.thumbnail);
 					if (/\dx\d/.test(tAttrs.thumbnail)) {
 						var dim = tAttrs.thumbnail.split('x');
 						tAttrs.maxWidth = dim[0];
