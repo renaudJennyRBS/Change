@@ -16,7 +16,7 @@
 	});
 
 	/**
-	 * @example: <code><img rbs-storage-image="myMedia.path" thumbnail="100x100"/></code>
+	 * @example: <code><img rbs-storage-image="myMedia.path" thumbnail="xs"/></code>
 	 */
 	app.directive('rbsStorageImage', ['RbsChange.REST', 'rbsThumbnailSizes', function (REST, sizes) {
 		return {
@@ -34,7 +34,7 @@
 
 				attrs.$observe('rbsStorageImage', function (value) {
 					if (value) {
-						if (/\d+/.test(value)) {
+						if (/^\d+$/.test(value)) {
 							REST.resource(parseInt(value, 10)).then(function (image) {
 								elm.attr('src', REST.storage.displayUrl(image.path));
 							});
@@ -49,7 +49,7 @@
 					if (sizes.hasOwnProperty(attrs.thumbnail)) {
 						attrs.thumbnail = sizes[attrs.thumbnail];
 					}
-					if (/\d+x\d+/.test(attrs.thumbnail)) {
+					if (/^\d+x\d+$/.test(attrs.thumbnail)) {
 						dim = attrs.thumbnail.split('x');
 						maxWidth = parseInt(dim[0], 10);
 						maxHeight = parseInt(dim[1], 10);

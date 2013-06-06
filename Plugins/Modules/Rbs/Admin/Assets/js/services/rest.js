@@ -859,6 +859,7 @@
 					'blockInfo' : function (blockName) {
 						var	q = $q.defer();
 
+						// TODO Use UI language
 						$http.get(REST_BASE_URL + 'blocks/' + _ToSlash(blockName), getHttpConfigWithCache()).success(function (block) {
 							resolveQ(q, block.properties);
 						});
@@ -880,6 +881,7 @@
 							modelName = modelName.model;
 						}
 
+						// TODO Use UI language
 						$http.get(REST_BASE_URL + 'models/' + _ToSlash(modelName), getHttpConfigWithCache()).success(function (model) {
 							resolveQ(q, model);
 						});
