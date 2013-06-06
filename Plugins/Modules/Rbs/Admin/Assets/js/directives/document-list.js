@@ -9,6 +9,7 @@
 
 	var	app = angular.module('RbsChange'),
 		__columns = {},
+		__preview = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ];
@@ -120,6 +121,12 @@
 				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
 				tElement.find('tbody tr.empty-row td').attr('colspan', columns.length);
 
+				if ( ! __preview[dlid] ) {
+					__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
+				}
+				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
+				console.log("preview tpl=", __preview[dlid]);
+
 				while (columns.length) {
 					column = columns.shift(0);
 					tElement.data('columns')[column.name] = column;
@@ -151,14 +158,19 @@
 					if (column.content) {
 						$td = $('<td>' + column.content + '</td>');
 					} else {
+						if (column.thumbnail) {
+							column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
+						} else {
+							column.content = '(= doc["' + column.name + '"] =)';
+						}
 						if (column.primary) {
 							if (tAttrs.tree) {
-								$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+								$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></td>');
 							} else {
-								$td = $('<td><a href ng-href="(= doc | documentURL =)"><strong>(= doc["' + column.name + '"] =)</strong></a></td>');
+								$td = $('<td><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></td>');
 							}
 						} else {
-							$td = $('<td>(= doc["' + column.name + '"] =)</td>');
+							$td = $('<td>' + column.content + '</td>');
 						}
 					}
 
@@ -166,7 +178,7 @@
 						$td.css('text-align', column.align);
 					}
 
-					// The primary column has extra links for preview and edition.
+					// The primary column has extra links for preview, edit and delete.
 					if (column.primary) {
 						$td.append(
 							'<div>' +
@@ -174,13 +186,13 @@
 									'<a href="javascript:" ng-click="preview(doc)">' +
 										//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
 										//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
-										' ' + i18n.trans('m.rbs.admin.admin.js.preview | ucf') +
+										' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
 									'</a> | ' +
 									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
-										i18n.trans('m.rbs.admin.admin.js.edit | ucf') +
+										i18n.trans('m.rbs.admin.admin.js.edit') +
 									'</a> | ' +
 									'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
-										i18n.trans('m.rbs.admin.admin.js.delete | ucf') +
+										i18n.trans('m.rbs.admin.admin.js.delete') +
 									'</a>' +
 								'</small>' +
 							'</div>'
@@ -639,7 +651,7 @@
 	}
 
 
-	app.directive('column', [function () {
+	app.directive('column', ['rbsThumbnailSizes', function (sizes) {
 
 		return {
 			restrict : 'E',
@@ -659,10 +671,56 @@
 					tAttrs.content = content;
 				}
 
+				if (tAttrs.thumbnail) {
+					tAttrs.thumbnail = angular.lowercase(tAttrs.thumbnail);
+					if (sizes[tAttrs.thumbnail]) {
+						tAttrs.thumbnail = sizes[tAttrs.thumbnail];
+					}
+					console.log("tAttrs.thumbnail=", tAttrs.thumbnail);
+					if (/\dx\d/.test(tAttrs.thumbnail)) {
+						var dim = tAttrs.thumbnail.split('x');
+						tAttrs.maxWidth = dim[0];
+						tAttrs.maxHeight = dim[1];
+					} else {
+						tAttrs.maxWidth = '100';
+						tAttrs.maxHeight = '100';
+					}
+					if (!tAttrs.width) {
+						tAttrs.width = tAttrs.maxWidth + 'px';
+					}
+					if (!tAttrs.align) {
+						tAttrs.align = 'center';
+					}
+				}
+
+
 				if (!__columns.hasOwnProperty(dlid)) {
 					__columns[dlid] = [];
 				}
 				__columns[dlid].push(tAttrs);
+
+			}
+		};
+
+	}]);
+
+
+	app.directive('preview', [function () {
+
+		return {
+			restrict : 'E',
+			require  : '^documentList',
+
+			compile : function (tElement) {
+
+				var dlid;
+
+				dlid = tElement.parent().data('dlid');
+				if (!dlid) {
+					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+				}
+				__preview[dlid] = tElement.html();
+				console.log("PREVIEW:", tElement.html());
 
 			}
 		};

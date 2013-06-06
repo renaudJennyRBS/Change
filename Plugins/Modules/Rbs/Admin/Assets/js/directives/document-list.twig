@@ -29,9 +29,7 @@
 	</tbody>
 	<tbody ng-repeat="doc in collection">
 		<tr class="preview-row" ng-if="isPreview(doc)">
-			<td class="preview">
-				<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>
-			</td>
+			<td class="preview"></td>
 		</tr>
 		<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE' && ! isPreview(doc), 'warning': doc.publicationStatus=='DEACTIVATED'}">
 		</tr>
