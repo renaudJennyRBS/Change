@@ -401,13 +401,12 @@ class PluginManager
 		$sqb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $sqb->getFragmentBuilder();
 		$sqb->select('type', 'vendor', 'name', 'package', 'registration_date', 'configured', 'activated', 'config_datas');
-		$resultsConverter = new ResultsConverter($this->getDbProvider(),
-			array('registration_date' => ScalarType::DATETIME,
-				'configured' => ScalarType::BOOLEAN,
-				'activated' => ScalarType::BOOLEAN,
-				'config_datas' => ScalarType::LOB));
+		$q = $sqb->from($fb->getPluginTable())->query();
 
-		$registered = $sqb->from($fb->getPluginTable())->query()->getResults(array($resultsConverter, 'convertRows'));
+		$converter = $q->getRowsConverter()->addStrCol('type', 'vendor', 'name', 'package')
+			->addDtCol('registration_date')->addBoolCol('configured', 'activated')->addLobCol('config_datas');
+
+		$registered = $q->getResults($converter);
 		$plugins = array_filter($plugins, function (Plugin $plugin) use ($registered)
 		{
 			foreach ($registered as $infos)
