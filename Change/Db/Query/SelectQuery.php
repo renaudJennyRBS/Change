@@ -274,6 +274,12 @@ class SelectQuery extends AbstractQuery
 		return $this->maxResults;
 	}
 
+	public function getRowsConverter()
+	{
+		$dbp = $this->dbProvider;
+		return new ResultsConverter(function($dbValue, $dbType) use ($dbp) {return $dbp->dbToPhp($dbValue, $dbType);});
+	}
+
 	/**
 	 * @api
 	 * @param \Closure|array $rowsConverter
@@ -281,8 +287,12 @@ class SelectQuery extends AbstractQuery
 	 */
 	public function getResults($rowsConverter = null)
 	{
-		$results = $this->dbProvider->getQueryResultsArray($this);	
-		return is_callable($rowsConverter) ? call_user_func($rowsConverter, $results) : $results;
+		$results = $this->dbProvider->getQueryResultsArray($this);
+		if (is_array($results) && count($results))
+		{
+			return is_callable($rowsConverter) ? call_user_func($rowsConverter, $results) : $results;
+		}
+		return array();
 	}
 	
 	/**
