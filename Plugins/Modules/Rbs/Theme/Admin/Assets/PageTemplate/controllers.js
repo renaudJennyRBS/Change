@@ -7,15 +7,14 @@
 	/**
 	 * Controller for list.
 	 *
-	 * @param $scope
-	 * @param DocumentList
+	 * @param $routeParams
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
 	 * @param REST
 	 * @constructor
 	 */
-	function ListController($scope, $routeParams, DocumentList, Breadcrumb, MainMenu, i18n, REST)
+	function ListController($routeParams, Breadcrumb, MainMenu, i18n, REST)
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.theme.admin.js.module-name | ucf'), "Rbs/Theme"]
@@ -33,8 +32,7 @@
 	}
 
 	ListController.$inject =
-		['$scope', '$routeParams', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n',
-			'RbsChange.REST'];
+		['$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n', 'RbsChange.REST'];
 	app.controller('Rbs_Theme_PageTemplate_ListController', ListController);
 
 	/**

@@ -17,6 +17,14 @@
 
 	app.constant('RbsChange.Version', '4.0.0');
 
+	app.directive('rbsChangeVersion', ['RbsChange.Version', function (version) {
+		return {
+			'restrict'   : 'A',
+			link : function (scope, elm) {
+				elm.text('RBS Change version ' + version);
+			}
+		};
+	}]);
 
 	// === Routing and navigation ===
 

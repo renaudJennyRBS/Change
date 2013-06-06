@@ -6,7 +6,13 @@
 		<a href="Rbs/Media/Image/new">{{ i18n('m.rbs.media.document.image-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLMediaImage" publishable="true" model="Rbs_Media_Image" query="query">
-		<column name="label" label="{{ i18n('m.rbs.media.document.image.label', ['ucf']) }}" primary="true"></column>
+	<document-list data-dlid="DLRbsMediaImage" publishable="true" model="Rbs_Media_Image" query="query">
+		<column name="path" thumbnail="XS"></column>
+		<column name="label" primary="true"></column>
+		<preview>
+			<img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
+			<h4>(= doc.document.label =)</h4>
+			<todo>Ajouter d'autres caractéristiques de l'image</todo>
+		</preview>
 	</document-list>
 </div>

@@ -1361,6 +1361,8 @@ th label {
 }
 
 
+/* AngularJS animations */
+
 .opacity-animation-enter {
 	-webkit-transition: opacity ease-in-out 0.5s;
 	-moz-transition: opacity ease-in-out 0.5s;
@@ -1371,4 +1373,10 @@ th label {
 
 .opacity-animation-enter.opacity-animation-enter-active {
 	opacity: 1;
+}
+
+/* Margins and other positioning classes */
+
+.margin-right {
+	margin-right: 15px;
 }

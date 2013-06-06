@@ -79,9 +79,41 @@
 }
 
 #change-menu .menu-help {
-	color: silver;
+	color: #A0A0A0;
 	font-size: 90%;
-	margin: 10px 15px 15px 15px;
 	text-align: center;
 	text-shadow: 0 1px 0 white;
+	bottom: 0;
+	position: absolute;
+	border-top: 1px solid rgba(128, 128, 128, 0.1);
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background: #F0F0F0;
+}
+
+#change-menu .close-menu {
+	position: absolute;
+	right: 0;
+	top: 14px;
+	width: 8px;
+	height: 18px;
+	line-height: 16px;
+	padding: 6px 9px;
+
+	overflow: hidden;
+	white-space: nowrap;
+
+	border-radius: 16px 0 0 16px;
+	background: #b1ca27;
+	color: white;
+	text-decoration: none;
+
+	-webkit-transition: 0.2s ease-in-out width;
+	-moz-transition: 0.2s ease-in-out width;
+	-o-transition: 0.2s ease-in-out width;
+	transition: 0.2s ease-in-out width;
+}
+
+#change-menu .close-menu:hover {
+	width: 60px;
 }

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.admin.menu" lcid="fr_FR">
 	<key id="open">ouvrir le menu principal (Ctrl+Alt+M)</key>
-	<key id="tools">outils</key>
-	<key id="users">outils</key>
 	<key id="about">à propos de RBS Change</key>
-	<key id="users">utilisateurs</key>
-	<key id="fullscreen-mode">mode plein écran</key>
 	<key id="profile">profil</key>
 	<key id="logout">déconnexion</key>
-	<key id="close">fermer le menu</key>
+	<key id="close">fermer</key>
 	<key id="search">rechercher</key>
 	<key id="clear-search">effacer la recherche</key>
 	<key id="other-modules">autres modules</key>
 	<key id="help-bottom">Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M.</key>
 	<key id="dashboard">tableau de bord</key>
+	<key id="website">Site web</key>
+	<key id="twitter">Twitter</key>
+	<key id="github">GitHub</key>
 </i18n>
