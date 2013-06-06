@@ -436,6 +436,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			throw $tm->rollBack($e);
 		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_CREATED, $this);
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**
@@ -472,6 +475,8 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			call_user_func($callable);
 		}
+
+
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATE, $this);
 		$this->getEventManager()->trigger($event);
 
@@ -482,6 +487,8 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			$e->propertiesErrors = $propertiesErrors;
 			throw $e;
 		}
+
+		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
@@ -505,6 +512,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			throw $tm->rollBack($e);
 		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**
@@ -603,17 +613,16 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			else
 			{
 				$this->doDelete();
-				$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
-				$this->getEventManager()->trigger($event);
-
 			}
-
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
 			throw $tm->rollBack($e);
 		}
+
+		$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**

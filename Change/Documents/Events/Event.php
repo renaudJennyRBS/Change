@@ -7,9 +7,12 @@ namespace Change\Documents\Events;
 class Event extends \Zend\EventManager\Event
 {
 	const EVENT_CREATE      	= 'documents.create';
+	const EVENT_CREATED      	= 'documents.created';
 	const EVENT_UPDATE       	= 'documents.update';
+	const EVENT_UPDATED       	= 'documents.updated';
 	const EVENT_DELETE       	= 'documents.delete';
 	const EVENT_DELETED       	= 'documents.deleted';
+
 	const EVENT_DISPLAY_PAGE    = 'http.web.displayPage';
 	const EVENT_PATH_RULE    	= 'http.web.pathRule';
 
