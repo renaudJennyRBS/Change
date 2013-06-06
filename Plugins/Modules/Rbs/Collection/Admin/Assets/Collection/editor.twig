@@ -1,0 +1,15 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.collection.document.collection.label', true) }}
+		{{ forms.field('title', 'String', 'm.rbs.collection.document.collection.title', true) }}
+		{{ forms.field('code', 'String', 'm.rbs.collection.document.collection.code', true) }}
+		{{ forms.field('items', 'DocumentArray', 'm.rbs.collection.document.collection.items', true) }}
+		{{ forms.pickerMultiple('items', 'Rbs_Collection_Item', 'm.rbs.collection.document.item-list',
+		false, null, 'm.rbs.collection.document.item.item-picker-title') }}
+	</fieldset>
+	<form-button-bar></form-button-bar>
+</form>

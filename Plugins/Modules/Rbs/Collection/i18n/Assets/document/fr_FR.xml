@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.collection.document" lcid="fr_FR">
+	<key id="collection">collection</key>
+	<key id="collection-list">collections</key>
+	<key id="collection-create">créer une collection</key>
+	<key id="item">item</key>
+	<key id="item-list">items</key>
+	<key id="item-create">créer un un item</key>
+</i18n>
