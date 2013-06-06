@@ -25,6 +25,8 @@ class Install
 
 		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Collection',
 			'\\Rbs\\Collection\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Collection',
+			'\\Rbs\\Collection\\Events\\SharedListenerAggregate');
 	}
 
 	/**
