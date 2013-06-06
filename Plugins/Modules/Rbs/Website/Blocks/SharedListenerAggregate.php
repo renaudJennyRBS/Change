@@ -19,7 +19,6 @@ class SharedListenerAggregate implements SharedListenerAggregateInterface
 		new  RegisterByBlockName('Rbs_Website_Thread', false, $events);
 		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
-		new  RegisterByBlockName('Rbs_Website_FormattedText', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Exception', false, $events);
 	}
 
