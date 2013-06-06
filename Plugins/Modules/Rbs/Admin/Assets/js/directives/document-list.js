@@ -680,7 +680,7 @@
 					if (sizes[tAttrs.thumbnail]) {
 						tAttrs.thumbnail = sizes[tAttrs.thumbnail];
 					}
-					if (/\dx\d/.test(tAttrs.thumbnail)) {
+					if (/^\d+x\d+$/.test(tAttrs.thumbnail)) {
 						var dim = tAttrs.thumbnail.split('x');
 						tAttrs.maxWidth = dim[0];
 						tAttrs.maxHeight = dim[1];
