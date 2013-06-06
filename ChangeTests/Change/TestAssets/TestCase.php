@@ -114,6 +114,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	}
 
 
+	public function closeDbConnection()
+	{
+		$this->getApplicationServices()->getDbProvider()->closeConnection();
+	}
+
 	public static function initDb()
 	{
 		$app = static::getNewApplication();
@@ -121,6 +126,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
 		$generator->generateSystemSchema();
+
+		$appServices->getDbProvider()->closeConnection();
 	}
 
 	public static function initDocumentsClasses()
@@ -148,11 +155,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$compiler->generate();
 
 		$generator->generatePluginsSchema();
+
+		$appServices->getDbProvider()->closeConnection();
 	}
 
 	public static function clearDB()
 	{
 		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
+		$dbp->closeConnection();
 	}
 }

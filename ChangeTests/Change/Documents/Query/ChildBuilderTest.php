@@ -23,6 +23,12 @@ class ChildBuilderTest extends TestCase
 	{
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
+	}
+
 	/**
 	 * @depends testInitializeDB
 	 */

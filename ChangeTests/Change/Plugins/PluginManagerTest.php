@@ -1,7 +1,6 @@
 <?php
 namespace ChangeTests\Change\Plugins;
 
-use Change\Db\Schema\Generator;
 use Change\Plugins\Plugin;
 use ChangeTests\Change\TestAssets\TestCase;
 
@@ -12,18 +11,18 @@ class PluginManagerTest extends TestCase
 {
 	public static function setUpBeforeClass()
 	{
-		$app = static::getNewApplication();
-		$appServices = static::getNewApplicationServices($app);
-
-		$generator = new Generator($app->getWorkspace(), $appServices->getDbProvider());
-		$generator->generateSystemSchema();
+		static::initDb();
 	}
-
 
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
+		static::clearDB();
+	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
 	}
 
 	public function testService()

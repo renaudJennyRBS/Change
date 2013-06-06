@@ -19,6 +19,11 @@ class PredicateBuilderTest extends TestCase
 		static::clearDB();
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
+	}
 
 	public function testInitializeDB()
 	{

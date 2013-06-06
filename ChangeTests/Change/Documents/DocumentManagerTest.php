@@ -14,6 +14,12 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		static::clearDB();
 	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
+	}
 	
 	/**
 	 * @return \Change\Documents\DocumentManager
@@ -132,7 +138,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
 		$this->assertSame($newDoc, $manager->getDocumentInstance($finalId));
-		
+
 		return $manager;
 	}
 	
@@ -181,7 +187,6 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$deleted = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
 		$this->assertEquals(DocumentManager::STATE_DELETED, $deleted->getPersistentState());
-
 		return $manager;
 	}
 	

@@ -11,12 +11,16 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::initDocumentsDb();
 	}
 
-
 	public static function tearDownAfterClass()
 	{
 		static::clearDB();
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
+	}
 
 	public function testInitializeDB()
 	{

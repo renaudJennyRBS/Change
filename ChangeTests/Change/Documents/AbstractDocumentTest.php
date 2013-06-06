@@ -19,6 +19,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->closeDbConnection();
+	}
 
 	public function testSerialize()
 	{
