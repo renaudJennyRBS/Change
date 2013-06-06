@@ -1,22 +1,7 @@
 <div id="change-menu" ng-controller="Rbs_MainMenu_Controller">
 
-<!--
-	<ul class="nav nav-list">
-		<li><a ng-click="close()" href=""><i class="icon-home"></i> Accueil</a></li>
-		<li class="nav-header">Favoris &mdash; <a href="javascript:;" ng-click="editMode = ! editMode"><span ng-if="! editMode">modifier</span><span ng-if="editMode">terminer</span></a></li>
-		<li ng-repeat="m in menu.entries | filter:{'pinned':true} | orderBy:'label'">
-			<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
-			<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = false"><i class="pull-right icon-remove"></i>(= m.label =)</a>
-		</li>
-	</ul>
-
-	<ul class="nav nav-list">
-		<li class="divider"></li>
-	</ul>
--->
-
 	<div class="nav-list">
-		<a class="pull-right close" href="javascript:;" ng-click="close()" style="line-height: 26px;"  title="{{ i18n('m.rbs.admin.menu.close', ['ucf']) }}">&times;</a>
+		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18n('m.rbs.admin.menu.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a>
 		<form class="form-search" ng-submit="go()" novalidate>
 			<div class="input-append input-block">
 				<input placeholder="{{ i18nAttr('m.rbs.admin.menu.search', ['ucf', 'etc']) }}" type="text" style="width:135px;" class="search-query" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
@@ -52,12 +37,14 @@
 		</ul>
 	</div>
 
-	<div class="visible-desktop">
-		<ul class="nav nav-list">
-			<li class="divider"></li>
-		</ul>
-		<div class="menu-help">
-			{{ i18n('m.rbs.admin.menu.help-bottom', ['ucf']) }}
+	<div class="nav-list menu-help">
+		<div>{{ i18n('m.rbs.admin.menu.help-bottom', ['ucf']) }}</div>
+		<div class="links">
+			<a onclick="window.open(this.href); return false;" href="http://www.rbschange.fr">{{ i18n('m.rbs.admin.menu.website') }}</a>
+			|
+			<a onclick="window.open(this.href); return false;" href="http://www.twitter.com/RBSChange">{{ i18n('m.rbs.admin.menu.twitter') }}</a>
+			|
+			<a onclick="window.open(this.href); return false;" href="https://github.com/RBSChange">{{ i18n('m.rbs.admin.menu.github') }}</a>
 		</div>
 	</div>
 
