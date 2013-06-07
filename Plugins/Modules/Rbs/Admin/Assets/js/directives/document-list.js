@@ -10,7 +10,7 @@
 	var	app = angular.module('RbsChange'),
 		__columns = {},
 		__preview = {},
-		__cards = {},
+		__gridItems = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ];
@@ -214,16 +214,16 @@
 				//
 
 				var gridModeAvailable = false;
-				if (__cards[dlid]) {
+				if (__gridItems[dlid]) {
 					gridModeAvailable = true;
 					var inner = tElement.find('ul.thumbnail-grid li .inner');
-					if (__cards[dlid]['class']) {
-						inner.addClass(__cards[dlid]['class']);
+					if (__gridItems[dlid]['class']) {
+						inner.addClass(__gridItems[dlid]['class']);
 					}
-					inner.html(__cards[dlid].content);
+					inner.html(__gridItems[dlid].content);
 				}
 
-				delete __cards[dlid];
+				delete __gridItems[dlid];
 
 
 				/**
@@ -722,7 +722,7 @@
 	}]);
 
 
-	app.directive('card', [function () {
+	app.directive('gridItem', [function () {
 
 		return {
 			restrict : 'E',
@@ -738,7 +738,7 @@
 				}
 
 				tAttrs.content = tElement.html().trim();
-				__cards[dlid] = tAttrs;
+				__gridItems[dlid] = tAttrs;
 
 			}
 		};

@@ -19,12 +19,12 @@
 			<img ng-repeat="visual in doc.document.visual" rbs-storage-image="(= visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
 		</preview>
 
-		<card>
+		<grid-item>
 			<img rbs-storage-image="(= doc.visual[0].id =)" thumbnail="L"/>
 			<div class="caption">
 				<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
 			</div>
-		</card>
+		</grid-item>
 
 	</document-list>
 </div>
