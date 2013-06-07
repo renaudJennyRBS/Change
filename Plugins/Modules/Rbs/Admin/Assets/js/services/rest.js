@@ -302,7 +302,7 @@
 				 * @param data
 				 */
 				function resolveQ (q, data) {
-					if (data.error && data.code && data.message) {
+					if (data === null || (data.error && data.code && data.message)) {
 						q.reject(data);
 					} else {
 						q.resolve(data);
