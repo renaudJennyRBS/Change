@@ -125,7 +125,6 @@
 					__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
 				}
 				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
-				console.log("preview tpl=", __preview[dlid]);
 
 				while (columns.length) {
 					column = columns.shift(0);
@@ -215,8 +214,6 @@
 					var queryObject, search, columnNames;
 
 					scope.collection = [];
-
-					console.log("collection=", scope.collection);
 
 					scope.columns = elm.data('columns');
 
@@ -492,17 +489,16 @@
 						scope.loading = true;
 
 						params = {
-							'offset': scope.pagination.offset,
-							'limit' : scope.pagination.limit,
-							'sort'  : scope.sort.column,
-							'desc'  : scope.sort.descending,
-							'column': columnNames,
-							'dlid': dlid // TODO remove
+							'offset' : scope.pagination.offset,
+							'limit'  : scope.pagination.limit,
+							'sort'   : scope.sort.column,
+							'desc'   : scope.sort.descending,
+							'column' : columnNames
 						};
 
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
-							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames, 'dlid': dlid});
+							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
@@ -517,8 +513,6 @@
 									stopLoading();
 									if (response !== null) {
 										documentCollectionLoadedCallback(response);
-									} else {
-										console.warn('Empty collection');
 									}
 								},
 								function (reason) {
@@ -723,7 +717,6 @@
 					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
 				}
 				__preview[dlid] = tElement.html();
-				console.log("PREVIEW:", tElement.html());
 
 			}
 		};
