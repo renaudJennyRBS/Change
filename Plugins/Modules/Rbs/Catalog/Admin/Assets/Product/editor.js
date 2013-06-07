@@ -9,9 +9,10 @@
 	 * @param REST
 	 * @param i18n
 	 * @param Breadcrumb
+	 * @param Utils
 	 * @constructor
 	 */
-	function Editor(Editor, DocumentList, Loading, REST, i18n, Breadcrumb)
+	function Editor(Editor, DocumentList, Loading, REST, i18n, Breadcrumb, Utils)
 	{
 		return {
 			restrict: 'EC',
@@ -22,7 +23,7 @@
 			link: function (scope, elm)
 			{
 				Editor.initScope(scope, elm, function () {
-					if (scope.document.isNew()) {
+					if (scope.document.isNew() && Utils.isTreeNode(Breadcrumb.getCurrentNode())) {
 						scope.document.category = [Breadcrumb.getCurrentNode()];
 					}
 				});
@@ -84,6 +85,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Breadcrumb'];
+	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Breadcrumb', 'RbsChange.Utils'];
 	angular.module('RbsChange').directive('editorRbsCatalogProduct', Editor);
 })();
