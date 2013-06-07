@@ -10,6 +10,7 @@
 	var	app = angular.module('RbsChange'),
 		__columns = {},
 		__preview = {},
+		__cards = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ];
@@ -207,6 +208,24 @@
 
 				delete __columns[dlid];
 
+
+				//
+				// Initialize grid mode.
+				//
+
+				var gridModeAvailable = false;
+				if (__cards[dlid]) {
+					gridModeAvailable = true;
+					var inner = tElement.find('ul.thumbnail-grid li .inner');
+					if (__cards[dlid]['class']) {
+						inner.addClass(__cards[dlid]['class']);
+					}
+					inner.html(__cards[dlid].content);
+				}
+
+				delete __cards[dlid];
+
+
 				/**
 				 * Directive's link function.
 				 */
@@ -214,7 +233,8 @@
 					var queryObject, search, columnNames;
 
 					scope.collection = [];
-
+					scope.gridModeAvailable = gridModeAvailable;
+					scope.viewMode = 'list';
 					scope.columns = elm.data('columns');
 
 					// Load Model's information and update the columns' header with the correct property label.
@@ -664,7 +684,7 @@
 					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
 				}
 
-				content = tElement.html();
+				content = tElement.html().trim();
 				if (content.length) {
 					tAttrs.content = content;
 				}
@@ -702,6 +722,30 @@
 	}]);
 
 
+	app.directive('card', [function () {
+
+		return {
+			restrict : 'E',
+			require  : '^documentList',
+
+			compile : function (tElement, tAttrs) {
+
+				var dlid;
+
+				dlid = tElement.parent().data('dlid');
+				if (!dlid) {
+					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+				}
+
+				tAttrs.content = tElement.html().trim();
+				__cards[dlid] = tAttrs;
+
+			}
+		};
+
+	}]);
+
+
 	app.directive('preview', [function () {
 
 		return {
@@ -716,7 +760,7 @@
 				if (!dlid) {
 					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
 				}
-				__preview[dlid] = tElement.html();
+				__preview[dlid] = tElement.html().trim();
 
 			}
 		};

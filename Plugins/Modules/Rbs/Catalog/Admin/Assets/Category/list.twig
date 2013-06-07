@@ -12,9 +12,20 @@
 	               publishable="true"
 	               tree="Rbs_Catalog"
 	               query="query">
+
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true"></column>
+
+		<card class="folder">
+			<img rbs-storage-image="(= doc.visual.id =)" thumbnail="L"/>
+			<div class="caption">
+				<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+			</div>
+		</card>
+
 	</document-list>
+
+	<hr/>
 
 	<h3>Produits</h3>
 	<div>
@@ -25,12 +36,22 @@
 	               model="Rbs_Catalog_Product"
 	               publishable="true"
 	               query="query" parent-property="category">
+
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual[0].id"></column>
 		<column name="label" primary="true"></column>
+
 		<preview>
 			<div class="muted" ng-if="!doc.document.visual.length">Aucun visuel défini</div>
 			<h4>(= doc.document.label =)</h4>
 			<img ng-repeat="visual in doc.document.visual" rbs-storage-image="(= visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
 		</preview>
+
+		<card>
+			<img rbs-storage-image="(= doc.visual[0].id =)" thumbnail="L"/>
+			<div class="caption">
+				<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+			</div>
+		</card>
+
 	</document-list>
 </div>
