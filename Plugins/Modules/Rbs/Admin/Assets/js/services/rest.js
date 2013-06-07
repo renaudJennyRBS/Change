@@ -556,7 +556,8 @@
 
 								function maybeInsertResourceInTree (resource, qToResolve) {
 									console.log("REST.save(): maybeInsertResourceInTree()");
-									if (currentTreeNode && (status === HTTP_STATUS_CREATED || resource.treeName === null)) {
+
+									if ( ! Utils.isTreeNode(resource) && (status === HTTP_STATUS_CREATED || resource.treeName === null) && currentTreeNode) {
 
 										// Load model's information to check if the document should be inserted in a tree.
 										REST.modelInfo(resource).then(function (modelInfo) {
