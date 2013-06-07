@@ -9,7 +9,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('imageUploader', ['RbsChange.REST', function (REST) {
+	angular.module('RbsChange').directive('imageUploader', ['RbsChange.REST', '$q', function (REST, $q) {
 
 		var	acceptedTypes = /image\/(gif|jpeg|png)/,
 			MAX_PREVIEW_HEIGHT = 100;
@@ -41,13 +41,12 @@
 				scope.previewHeight = MAX_PREVIEW_HEIGHT;
 
 				ngModel.$render = function ngModelRenderFn () {
-					if (ngModel.$viewValue) {
+					if (ngModel.$viewValue && ngModel.$viewValue.substr(0, 6) !== 'local:') {
 						REST.storage.info(ngModel.$viewValue).then(function (info) {
 							scope.fileSize = info.size;
 							scope.fileName = info.fileName;
 							updatePreview(scope, info.data);
 						});
-
 					}
 				};
 
@@ -62,37 +61,53 @@
 						// Load the image to get its dimensions.
 						updatePreview(scope, event.target.result);
 					});
+
+					ngModel.$setViewValue("local:" + event.target.result);
 				};
 
 				inputFile.change(function inputChangedFn () {
-					scope.$apply('loading=true');
-					reader.readAsDataURL(inputFile.get(0).files[0]);
+					var file = inputFile.get(0).files[0];
+					if (acceptedTypes.test(file.type)) {
+						scope.$apply('loading=true');
+						reader.readAsDataURL(file);
+					} else {
+						window.alert('Please select an image.');
+					}
 				});
 
 				scope.choose = function chooseFn () {
 					inputFile.click();
 				};
 
-				scope.upload = function uploadFn ($event) {
-					var	button = $($event.target),
-						file = inputFile.get(0).files[0];
 
-					if ( ! acceptedTypes.test(file.type) ) {
-						window.alert('Please select an image.');
-					} else {
-						button.attr('disabled', 'disabled');
+				scope.upload = function uploadFn () {
+					var	file = inputFile.get(0).files[0],
+						q = $q.defer();
+
+					if (ngModel.$pristine) {
+						console.log("imageUploader: no changes (pristine) => q is resolved with '" + ngModel.$viewValue + "'");
+						return null;
+					} else if (acceptedTypes.test(file.type)) {
+						console.log("imageUploader: has changes (dirty) => uploading...");
 						REST.storage.upload(inputFile).then(
 							function uploadSuccessFn (response) {
 								ngModel.$setViewValue(response.path);
 								ngModel.$render();
-								button.removeAttr('disabled');
+								console.log("imageUploader: uploading complete => q is resolved with '" + ngModel.$viewValue + "'");
+								q.resolve(response.path);
 							},
 							function uploadErrorFn (data) {
 								window.alert(data.message);
-								button.removeAttr('disabled');
+								console.log("imageUploader: uploading failed => q is REJECTED with reason '" + data.message + "'");
+								q.reject(data);
 							}
 						);
+					} else {
+						console.log("imageUploader: invalid image file => q is REJECTED");
+						q.reject('imageUploader: invalid image file.');
 					}
+
+					return q.promise;
 				};
 
 			}
