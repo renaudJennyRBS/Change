@@ -72,50 +72,6 @@ td .correction {
 	position: relative;
 }
 
-.thumbnail-grid.small-thumbnails > li {
-	width: 16.6%;
-}
-.thumbnail-grid.small-thumbnails > li:first-child {
-	width: 16.7%;
-}
-
-.small-thumbnails .img-preview {
-	height: 100px;
-	border: none;
-	box-shadow: none;
-	overflow: visible;
-}
-
-.small-thumbnails .img-preview img {
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.45);
-	margin: 2px;
-}
-
-.small-thumbnails .img-preview .caption {
-	display: none;
-}
-.small-thumbnails .img-preview .thumbnail-label {
-	display: block;
-	font-size: 8pt;
-	overflow: hidden;
-	text-align: center;
-	white-space: nowrap;
-}
-
-.small-thumbnails li.selected .img-preview .thumbnail-label {
-	color: #0088CC;
-}
-
-.small-thumbnails li.selected .img-preview {
-	box-shadow: none;
-	border: none;
-}
-
-.small-thumbnails li.selected .img-preview img {
-	box-shadow: 0 0 4px rgba(0, 136, 255, 0.75);
-	border: 2px solid #0088CC;
-	margin: 0;
-}
 
 @media (min-width: 960px) {
 	.thumbnail-grid > li {
@@ -163,7 +119,7 @@ td .correction {
 	}
 }
 
-.img-preview {
+.thumbnail-grid li .inner {
 	height: 220px;
 	overflow: hidden;
 	border: 5px solid #eee;
@@ -173,93 +129,72 @@ td .correction {
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
 }
 
-.img-preview.DEACTIVATED {
+.thumbnail-grid li .inner.DEACTIVATED {
 	border-color: #FFBB33;
 }
 
-.img-preview.PUBLISHED {
+.thumbnail-grid li .inner.PUBLISHABLE {
 	border-color: #D1F0B7;
 }
 
-li.selected .img-preview {
+.thumbnail-grid li.selected .inner {
 	box-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
 	border-color: #0088CC;
 }
 
-.thumbnails-info .img-preview .caption {
-	bottom: -5px;
-}
-
-.img-preview img {
+.thumbnail-grid li .inner img {
 	max-width: 100%;
 	max-height: 100%;
 }
 
-.img-preview p {
+.thumbnail-grid li .inner p {
 	font-size: 9pt;
 	margin: 0 4px;
 }
 
-.img-preview .caption {
+.thumbnail-grid li .inner .caption {
 	background: #eee;
 	color: #444;
-	text-shadow:0 1px 1px white;
-	position:absolute;
-	bottom:-85px;
-	width:100%;
-	clear:both;
-	-webkit-transition:all 0.3s;
-	   -moz-transition:all 0.3s;
-	     -o-transition:all 0.3s;
-	        transition:all 0.3s;
+	text-shadow: 0 1px 1px white;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	clear: both;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 	opacity: 0.95;
 }
 
 
-.img-preview .caption h4 {
+.thumbnail-grid li .inner .caption h4 {
 	margin: 0;
 	font-size: 11pt;
 	padding: 1px 4px;
 }
 
-.img-preview .caption dl {
-	font-size: 9pt;
-	margin-bottom: 5px;
+.thumbnail-grid li .inner .caption h4 .bullet-status {
+	top: 1px;
 }
 
-.img-preview .caption dl dt {
-	width: 60px;
-}
-
-.img-preview .caption dl dd {
-	margin-left: 65px;
-}
-
-.img-preview h4 [class^="icon-"],
-.img-preview h4 [class*=" icon-"] {
-	vertical-align: baseline;
-}
 
 /************/
 
-.img-folder {
+.thumbnail-grid li .inner.folder {
     position: relative;
     overflow: visible;
 	text-align: center;
 	background: #EEEEEE;
 }
 
-.img-folder h4 {
+.thumbnail-grid li .inner.folder h4 {
 	font-variant: small-caps;
 }
 
-.img-folder, .img-folder:after, .img-folder:before {
+.thumbnail-grid li .inner.folder, .container:after, .container:before {
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
     border-radius: 3px;
 }
-.img-folder:after,
-.img-folder:before {
+.thumbnail-grid li .inner.folder:after,
+.thumbnail-grid li .inner.folder:before {
 	background: none repeat scroll 0 0 #FFFFFF;
     bottom: 0;
     content: "";
@@ -271,7 +206,7 @@ li.selected .img-preview {
     z-index: -10;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
 }
-.img-folder:after {
+.thumbnail-grid li .inner.folder:after {
     background-color: #EEEEEE;
 	/*
 	transform: rotate(3deg);
@@ -283,7 +218,7 @@ li.selected .img-preview {
     right: 4px;
     top: -10px;
 }
-.img-folder:before {
+.thumbnail-grid li .inner.folder:before {
     background-color: #EEEEEE;
 	/*
 	transform: rotate(5deg);
@@ -296,7 +231,7 @@ li.selected .img-preview {
     top: -14px;
 }
 
-.img-folder .dropped-files-info {
+.thumbnail-grid li .inner.folder .dropped-files-info {
 	position: absolute;
 	top: 10px;
 	left: 0px;
@@ -307,22 +242,22 @@ li.selected .img-preview {
 	color: white;
 }
 
-.img-folder .dropped-files-info .files-count {
+.thumbnail-grid li .inner.folder .dropped-files-info .files-count {
 	margin: 7px 0;
 }
 
-.img-folder .dropped-files-info .btn-toolbar {
+.thumbnail-grid li .inner.folder .dropped-files-info .btn-toolbar {
 	margin: 7px 0;
 }
 
-.img-folder .dropped-files-info button.close {
+.thumbnail-grid li .inner.folder .dropped-files-info button.close {
 	float: right;
 	margin-right: 10px;
 	color: white;
 	opacity: 0.9;
 }
 
-.img-folder .empty-folder-message {
+.thumbnail-grid li .inner.folder .empty-folder-message {
 	padding-top: 10px;
 	height: 140px;
 }

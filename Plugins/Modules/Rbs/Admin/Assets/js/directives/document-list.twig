@@ -13,28 +13,48 @@
 			<button data-ng-repeat="action in item.actions" data-bind-action="(= action =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
 		</div>
 	</div>
+
+	<div class="btn-group pull-right" ng-show="gridModeAvailable" data-toggle="buttons-radio">
+		<button type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn"><i class="icon-list"></i> Liste</button>
+		<button type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn"><i class="icon-th-large"></i> Grille</button>
+	</div>
 </div>
 
 <div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)">
 
-<table class="document-list table table-condensed table-bordered table-striped table-hover">
-	<thead>
-		<tr>
-		</tr>
-	</thead>
-	<tbody ng-if="collection.length == 0 && !loading">
-		<tr class="empty-row">
-			<td>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
-		</tr>
-	</tbody>
-	<tbody ng-repeat="doc in collection">
-		<tr class="preview-row" ng-if="isPreview(doc)">
-			<td class="preview"></td>
-		</tr>
-		<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE' && ! isPreview(doc), 'warning': doc.publicationStatus=='DEACTIVATED'}">
-		</tr>
-	</tbody>
-</table>
+<div ng-switch="viewMode">
+
+	<table ng-switch-when="list" class="document-list table table-condensed table-bordered table-striped table-hover">
+		<thead>
+			<tr>
+			</tr>
+		</thead>
+		<tbody ng-if="collection.length == 0 && !loading">
+			<tr class="empty-row">
+				<td>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
+			</tr>
+		</tbody>
+		<tbody ng-repeat="doc in collection">
+			<tr class="preview-row" ng-if="isPreview(doc)">
+				<td class="preview"></td>
+			</tr>
+			<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE' && ! isPreview(doc), 'warning': doc.publicationStatus=='DEACTIVATED'}">
+			</tr>
+		</tbody>
+	</table>
+
+	<ul ng-switch-when="grid" class="thumbnail-grid clearfix">
+		<li ng-repeat="doc in collection"
+		    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
+			<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
+				<div class="caption">
+					<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+				</div>
+			</div>
+		</li>
+	</ul>
+
+</div>
 
 <footer class="rbsc-list-footer" ng-hide="collection.length == 0 && !loading">
 
