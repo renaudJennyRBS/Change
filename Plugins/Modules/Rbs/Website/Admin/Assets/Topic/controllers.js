@@ -24,7 +24,7 @@
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_Website_TopicListController', ListController);
+	app.controller('Rbs_Website_Topic_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -44,6 +44,6 @@
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
-	app.controller('Rbs_Website_TopicFormController', FormController);
+	app.controller('Rbs_Website_Topic_FormController', FormController);
 
 })();
