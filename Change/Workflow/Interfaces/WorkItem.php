@@ -77,7 +77,7 @@ interface WorkItem extends InstanceItem
 	public function getUserId();
 
 	/**
-	 * @return \DateTime|null
+	 * @param \DateTime $dateTime
 	 */
 	public function enable($dateTime);
 
@@ -87,6 +87,7 @@ interface WorkItem extends InstanceItem
 	public function fire();
 
 	/**
+	 * @param string $preCondition
 	 * @return boolean
 	 */
 	public function guard($preCondition);

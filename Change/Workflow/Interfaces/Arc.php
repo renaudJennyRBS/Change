@@ -16,10 +16,7 @@ interface Arc extends WorkflowItem
 	const TYPE_AND_SPLIT = 'AND_SPLIT';
 	const TYPE_AND_JOIN = 'AND_JOIN';
 
-
 	const PRECONDITION_DEFAULT = true;
-
-
 
 	/**
 	 * @return \Change\Workflow\Interfaces\Transition
@@ -32,7 +29,7 @@ interface Arc extends WorkflowItem
 	public function getPlace();
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Place::DIRECTION_*
+	 * Return \Change\Workflow\Interfaces\Arc::DIRECTION_*
 	 * @return string
 	 */
 	public function getDirection();

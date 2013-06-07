@@ -43,12 +43,12 @@ interface Token extends InstanceItem
 	public function getConsumedDate();
 
 	/**
-	 * @return \DateTime|null
+	 * @param \DateTime $dateTime
 	 */
 	public function enable($dateTime);
 
 	/**
-	 * @return \DateTime|null
+	 * @param \DateTime $dateTime
 	 */
 	public function consume($dateTime);
 }

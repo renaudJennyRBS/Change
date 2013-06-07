@@ -28,6 +28,11 @@ class Validator
 			throw new \RuntimeException('Empty Workflow start task: ' . $workflow->getName(), 999999);
 		}
 
+		if (!is_array($workflow->getItems()) || count($workflow->getItems()) < 5)
+		{
+			throw new \RuntimeException('Invalid items array size', 999999);
+		}
+
 		$ids = array();
 		$startPlace = null;
 		$endPlace = null;
@@ -103,9 +108,6 @@ class Validator
 		{
 			throw new \RuntimeException('End place not linked', 999999);
 		}
-
-
-
 
 		return true;
 	}
@@ -193,7 +195,7 @@ class Validator
 
 			if (count($place->getWorkflowOutputItems()))
 			{
-				throw new \RuntimeException('Invalid Output End Place:' . $place->getName(), 999999);
+				throw new \RuntimeException('Invalid Output Arc End Place:' . $place->getName(), 999999);
 			}
 		}
 		elseif ($place->getType() !== Interfaces\Place::TYPE_INTERMEDIATE)
@@ -227,7 +229,7 @@ class Validator
 
 		if (!$transition->getTaskCode())
 		{
-			throw new \RuntimeException('Invalid Task Id: ' . $transition->getName(), 999999);
+			throw new \RuntimeException('Invalid Task Code: ' . $transition->getName(), 999999);
 		}
 
 		if ($transition->getTrigger() === Interfaces\Transition::TRIGGER_AUTO)
@@ -349,7 +351,7 @@ class Validator
 			if ($arc->getType() !== Interfaces\Arc::TYPE_SEQ && $arc->getType() !== Interfaces\Arc::TYPE_AND_JOIN)
 			{
 				$name = $arc->getPlace()->getName() . ' -> ' .$arc->getType() . ' -> ' . $arc->getTransition()->getName();
-				throw new \RuntimeException('Invalid Arc type: ' . $name, 999999);
+				throw new \RuntimeException('Invalid Out Place Arc (SEQ, AND_JOIN) type: ' . $name, 999999);
 			}
 		}
 		else
@@ -359,7 +361,12 @@ class Validator
 				if ($arc->getType() !== Interfaces\Arc::TYPE_IMPLICIT_OR_SPLIT)
 				{
 					$name = $arc->getPlace()->getName() . ' -> ' .$arc->getType() . ' -> ' . $arc->getTransition()->getName();
-					throw new \RuntimeException('Invalid Arc type: ' . $name, 999999);
+					throw new \RuntimeException('Invalid Out Place Arc (IMPLICIT_OR_SPLIT) type: ' . $name, 999999);
+				}
+				if ($arc->getTransition()->getTrigger() === Interfaces\Transition::TRIGGER_AUTO)
+				{
+					$name = $arc->getPlace()->getName() . ' -> ' .$arc->getType() . ' -> ' . $arc->getTransition()->getName();
+					throw new \RuntimeException('Invalid AUTO trigger Transition on IMPLICIT_OR_SPLIT Arc. ' . $name, 999999);
 				}
 			}
 		}
@@ -376,7 +383,7 @@ class Validator
 			if ($arc->getType() !== Interfaces\Arc::TYPE_SEQ && $arc->getType() !== Interfaces\Arc::TYPE_OR_JOIN)
 			{
 				$name = $arc->getTransition()->getName() . ' -> ' .$arc->getType() . ' -> ' . $arc->getPlace()->getName();
-				throw new \RuntimeException('Invalid Arc type: ' . $name, 999999);
+				throw new \RuntimeException('Invalid Out Transition Arc (SEQ, OR_JOIN) type: ' . $name, 999999);
 			}
 		}
 		else
@@ -388,7 +395,7 @@ class Validator
 				if ($arc->getType() !== Interfaces\Arc::TYPE_AND_SPLIT && $arc->getType() !== Interfaces\Arc::TYPE_EXPLICIT_OR_SPLIT)
 				{
 					$name = $arc->getTransition()->getName() . ' -> ' .$arc->getType() . ' -> ' . $arc->getPlace()->getName();
-					throw new \RuntimeException('Invalid Arc type: ' . $name, 999999);
+					throw new \RuntimeException('Invalid Out Transition Arc (AND_SPLIT, EXPLICIT_OR_SPLIT) type: ' . $name, 999999);
 				}
 				if ($gType === null)
 				{

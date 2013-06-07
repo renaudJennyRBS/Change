@@ -66,7 +66,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Place::DIRECTION_*
+	 * Return \Change\Workflow\Interfaces\Arc::DIRECTION_*
 	 * @return string
 	 */
 	public function getDirection()

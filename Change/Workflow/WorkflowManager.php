@@ -72,6 +72,7 @@ class WorkflowManager
 	}
 
 	/**
+	 * @api
 	 * @param string $startTask
 	 * @param \DateTime|null $date
 	 * @return \Change\Workflow\Interfaces\Workflow|null
@@ -95,15 +96,16 @@ class WorkflowManager
 	}
 
 	/**
+	 * @api
 	 * @param string $startTask
 	 * @param array $context
 	 * @return \Change\Workflow\Interfaces\WorkflowInstance|null
 	 */
 	public function getNewWorkflowInstance($startTask, array $context = array())
 	{
-		if (isset($context[\Change\Workflow\Interfaces\WorkItem::DATE_CONTEXT_KEY]))
+		if (isset($context[Interfaces\WorkItem::DATE_CONTEXT_KEY]))
 		{
-			$date = $context[\Change\Workflow\Interfaces\WorkItem::DATE_CONTEXT_KEY];
+			$date = $context[Interfaces\WorkItem::DATE_CONTEXT_KEY];
 		}
 		else
 		{
@@ -121,16 +123,22 @@ class WorkflowManager
 	}
 
 	/**
+	 * @api
 	 * @param $taskId
 	 * @param array $context
 	 * @return \Change\Workflow\Interfaces\WorkflowInstance
 	 */
 	public function processWorkflowInstance($taskId, array $context = array())
 	{
+		if (!isset($context[Interfaces\WorkItem::DATE_CONTEXT_KEY]))
+		{
+			$context[Interfaces\WorkItem::DATE_CONTEXT_KEY] = new \DateTime();
+		}
+
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($context);
+
 		$args['taskId'] = $taskId;
-		$args['date'] = new \DateTime();
 		$args['documentServices'] = $this->getDocumentServices();
 
 		$event = new \Zend\EventManager\Event(static::EVENT_PROCESS, $this, $args);
