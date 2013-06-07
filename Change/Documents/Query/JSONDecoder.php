@@ -15,6 +15,11 @@ class JSONDecoder
 	protected $documentServices;
 
 	/**
+	 * @var AbstractBuilder[]
+	 */
+	protected $joins = array();
+
+	/**
 	 * @param DocumentServices $documentServices
 	 */
 	public function setDocumentServices(DocumentServices $documentServices)
@@ -36,47 +41,49 @@ class JSONDecoder
 	}
 
 	/**
-	 * @return \Change\Documents\TreeManager
-	 */
-	public function getTreeManager()
-	{
-		return $this->getDocumentServices()->getTreeManager();
-	}
-
-	/**
+	 * @api
 	 * @param string|array $json
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
+	 * @throws \RuntimeException
 	 * @return Query
 	 */
 	public function getQuery($json)
 	{
-		$array = is_string($json) ? json_decode($json, true) : $json;
-		if (!is_array($array) || !isset($array['model']))
+		$jsonQuery = is_string($json) ? json_decode($json, true) : $json;
+		if (!is_array($jsonQuery) || !isset($jsonQuery['model']))
 		{
 			throw new \InvalidArgumentException('Argument is not a valid json query string', 999999);
 		}
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($array['model']);
+		$model = $this->getDocumentServices()->getModelManager()->getModelByName($jsonQuery['model']);
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: model', 71000);
 		}
 		$query = new Query($this->getDocumentServices(), $model);
-		$this->configureQuery($query, $array);
-
+		$this->configureQuery($query, $jsonQuery);
 		return $query;
 	}
 
 	/**
-	 * @param \Change\Documents\Query\Query $query
-	 * @param array $array
+	 * @param Query $query
+	 * @param array $jsonQuery
 	 * @throws \RuntimeException
 	 */
-	protected function configureQuery($query, $array)
+	public function configureQuery(Query $query, array $jsonQuery)
 	{
-		if (isset($array['where']) && is_array($array['where']))
+		$this->joins = array();
+		if (isset($jsonQuery['join']) && is_array($jsonQuery['join']))
 		{
-			foreach($array['where'] as $junction => $predicatesJSON)
+			foreach($jsonQuery['join'] as $joinJSON)
+			{
+				$this->processJoin($query, $joinJSON);
+			}
+		}
+
+		if (isset($jsonQuery['where']) && is_array($jsonQuery['where']))
+		{
+			foreach($jsonQuery['where'] as $junction => $predicatesJSON)
 			{
 				$predicates = $this->configureJunction($query->getPredicateBuilder(), $junction, $predicatesJSON, false);
 				if ($junction === 'and')
@@ -90,19 +97,101 @@ class JSONDecoder
 			}
 		}
 
-		if (isset($array['order']) && is_array($array['order']))
+		if (isset($jsonQuery['order']) && is_array($jsonQuery['order']))
 		{
-			foreach ($array['order'] as $orderInfo)
+			foreach ($jsonQuery['order'] as $orderInfo)
 			{
 				if (isset($orderInfo['property']))
 				{
 					$asc = (!isset($orderInfo['order'])) || $orderInfo['order'] !== 'desc';
-					$query->addOrder($orderInfo['property'], $asc);
+
+					if (isset($orderInfo['join']))
+					{
+						if (isset($this->joins[$orderInfo['join']]))
+						{
+							/* @var $pb AbstractBuilder */
+							$pb = $this->joins[$orderInfo['join']];
+							$pb->addOrder($orderInfo['property'], $asc);
+						}
+						else
+						{
+							throw new \RuntimeException('Invalid Query order', 999999);
+						}
+					}
+					else
+					{
+						$query->addOrder($orderInfo['property'], $asc);
+					}
 				}
 				else
 				{
 					throw new \RuntimeException('Invalid Query order', 999999);
 				}
+			}
+		}
+	}
+
+	/**
+	 * @return \Change\Documents\TreeManager
+	 */
+	protected function getTreeManager()
+	{
+		return $this->getDocumentServices()->getTreeManager();
+	}
+
+	/**
+	 * @param AbstractBuilder $parentQuery
+	 * @param array $joinJSON
+	 * @throws \RuntimeException
+	 */
+	protected function processJoin(AbstractBuilder $parentQuery, array $joinJSON)
+	{
+		if (!isset($joinJSON['name']))
+		{
+			throw new \RuntimeException('Required Join name', 999999);
+		}
+
+		$joinName = $joinJSON['name'];
+		if (isset($this->joins[$joinName]))
+		{
+			throw new \RuntimeException('Duplicate Join name: ' . $joinName, 999999);
+		}
+
+		if (!isset($joinJSON['model']))
+		{
+			throw new \RuntimeException('Required Join model', 999999);
+		}
+		$modelName = $joinJSON['model'];
+		$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+		if ($model === null || $model->isStateless())
+		{
+			throw new \RuntimeException('Invalid Join model name: ' . $modelName, 999999);
+		}
+		$propertyName = !isset($joinJSON['property']) ? 'id' : $joinJSON['property'];
+		$parentPropertyName = !isset($joinJSON['parentProperty']) ? 'id' : $joinJSON['parentProperty'];
+		if ($propertyName === 'id' && $parentPropertyName === 'id')
+		{
+			throw new \RuntimeException('Required Join property / parentProperty', 999999);
+		}
+		$property = $model->getProperty($propertyName);
+		if ($property === null || $property->getStateless())
+		{
+			throw new \RuntimeException('Invalid Join property: '. $propertyName, 999999);
+		}
+
+		$parentProperty = $parentQuery->getModel()->getProperty($parentPropertyName);
+		if ($parentProperty === null || $parentProperty->getStateless())
+		{
+			throw new \RuntimeException('Invalid Join parentProperty: '. $parentPropertyName, 999999);
+		}
+		$childBuilder = $parentQuery->getPropertyModelBuilder($parentProperty, $model, $property);
+		$this->joins[$joinName] = $childBuilder;
+
+		if (isset($joinJSON['join']) && is_array($joinJSON['join']))
+		{
+			foreach($joinJSON['join'] as $childJoinJSON)
+			{
+				$this->processJoin($childBuilder, $childJoinJSON);
 			}
 		}
 	}
@@ -175,6 +264,27 @@ class JSONDecoder
 	}
 
 	/**
+	 * @param PredicateBuilder $predicateBuilder
+	 * @param $expressionJson
+	 * @throws \RuntimeException
+	 * @param array $expressionJson
+	 * @return PredicateBuilder
+	 */
+	protected function getValidPredicateBuilder($predicateBuilder, $expressionJson)
+	{
+		if (isset($expressionJson['join']))
+		{
+			if (isset($this->joins[$expressionJson['join']]))
+			{
+				$abstractBuilder = $this->joins[$expressionJson['join']];
+				return $abstractBuilder->getPredicateBuilder();
+			}
+			throw new \RuntimeException('Invalid join property: ' . $expressionJson['join'] . '.' . $expressionJson['property'] , 999999);
+		}
+		return $predicateBuilder;
+	}
+
+	/**
 	 * Configure 'eq'
 	 * @param PredicateBuilder $predicateBuilder
 	 * @param array $predicateJSON
@@ -185,7 +295,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->eq($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->eq($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid eq predicate', 999999);
 	}
@@ -200,7 +311,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->neq($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->neq($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid neq predicate', 999999);
 	}
@@ -215,7 +327,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->gt($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->gt($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid gt predicate', 999999);
 	}
@@ -230,7 +343,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->gte($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->gte($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid gte predicate', 999999);
 	}
@@ -245,7 +359,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->lt($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->lt($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid lt predicate', 999999);
 	}
@@ -260,7 +375,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && isset($predicateJSON['rexp']['value']))
 		{
-			return $predicateBuilder->lte($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->lte($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value']);
 		}
 		throw new \RuntimeException('Invalid lte predicate', 999999);
 	}
@@ -298,7 +414,8 @@ class JSONDecoder
 			{
 				$matchMode = Like::ANYWHERE;
 			}
-			return $predicateBuilder->like($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value'], $matchMode);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->like($predicateJSON['lexp']['property'], $predicateJSON['rexp']['value'], $matchMode);
 		}
 		throw new \RuntimeException('Invalid like predicate', 999999);
 	}
@@ -313,7 +430,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && is_array($predicateJSON['rexp']) && isset($predicateJSON['rexp'][0]))
 		{
-			return $predicateBuilder->in($predicateJSON['lexp']['property'], $predicateJSON['rexp']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->in($predicateJSON['lexp']['property'], $predicateJSON['rexp']);
 		}
 		throw new \RuntimeException('Invalid in predicate', 999999);
 	}
@@ -328,7 +446,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['lexp']['property']) && is_array($predicateJSON['rexp']) && isset($predicateJSON['rexp'][0]))
 		{
-			return $predicateBuilder->notIn($predicateJSON['lexp']['property'], $predicateJSON['rexp']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->notIn($predicateJSON['lexp']['property'], $predicateJSON['rexp']);
 		}
 		throw new \RuntimeException('Invalid notIn predicate', 999999);
 	}
@@ -343,7 +462,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['exp']['property']))
 		{
-			return $predicateBuilder->isNull($predicateJSON['exp']['property']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['exp'])
+				->isNull($predicateJSON['exp']['property']);
 		}
 		throw new \RuntimeException('Invalid isNull predicate', 999999);
 	}
@@ -358,7 +478,8 @@ class JSONDecoder
 	{
 		if (isset($predicateJSON['exp']['property']))
 		{
-			return $predicateBuilder->isNotNull($predicateJSON['exp']['property']);
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['exp'])
+				->isNotNull($predicateJSON['exp']['property']);
 		}
 		throw new \RuntimeException('Invalid isNull predicate', 999999);
 	}
