@@ -21,7 +21,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				$parentNode = $tm->getNodeByDocument($page->getSection());
 				if ($parentNode)
 				{
-					$tm->insertNode($parentNode, $this);
+					$tm->insertNode($parentNode, $page);
 				}
 			}
 		};
@@ -40,7 +40,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 					$parentNode = $tm->getNodeByDocument($page->getSection());
 					if ($parentNode)
 					{
-						$tm->insertNode($parentNode, $this);
+						$tm->insertNode($parentNode, $page);
 					}
 				}
 			}
