@@ -183,23 +183,24 @@
 
 					// The primary column has extra links for preview, edit and delete.
 					if (column.primary) {
-						$td.append(
-							'<div>' +
-								'<small>' +
-									'<a href="javascript:" ng-click="preview(doc)">' +
-										//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
-										//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
-										' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
-									'</a> | ' +
-									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
-										i18n.trans('m.rbs.admin.admin.js.edit') +
-									'</a> | ' +
-									'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
-										i18n.trans('m.rbs.admin.admin.js.delete') +
-									'</a>' +
-								'</small>' +
-							'</div>'
-						);
+						var html =
+							'<div class="quick-actions">' +
+								'<a href="javascript:" ng-click="preview(doc)">' +
+									//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
+									//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
+									' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
+								'</a>';
+						if (!tAttrs.picker) {
+							html +=
+								' | <a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
+								i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a> | ' +
+								'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
+								i18n.trans('m.rbs.admin.admin.js.delete') +
+								'</a>';
+						}
+						html += '</div>';
+						$td.append(html);
 					}
 
 					$body.append($td);
