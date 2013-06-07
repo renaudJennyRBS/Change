@@ -246,11 +246,6 @@ class GetDocumentModelCollection
 			}
 		}
 
-		if ($documentLink->getLCID())
-		{
-			$document->getDocumentServices()->getDocumentManager()->popLCID();
-		}
-
 		if (is_array($extraColumn) && count($extraColumn))
 		{
 			foreach ($extraColumn as $propertyName)
@@ -261,6 +256,11 @@ class GetDocumentModelCollection
 					$documentLink->setProperty($property);
 				}
 			}
+		}
+
+		if ($documentLink->getLCID())
+		{
+			$document->getDocumentServices()->getDocumentManager()->popLCID();
 		}
 		return $documentLink;
 	}
