@@ -17,7 +17,6 @@
 	app.directive('documentList', [
 		'$filter',
 		'$location',
-		'$compile',
 		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Loading',
@@ -29,7 +28,7 @@
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
+	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
 
 		return {
 			restrict    : 'E',
