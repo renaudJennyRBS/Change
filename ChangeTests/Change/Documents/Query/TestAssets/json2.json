@@ -1,0 +1,40 @@
+{
+	"model": "Project_Tests_Basic",
+	"join" : [
+		{
+			"model": "Project_Tests_Localized",
+			"name": "j0",
+			"property": "id",
+			"parentProperty": "pDocInst",
+			"join" : [
+				{
+					"name": "j1",
+					"model": "Project_Tests_Basic",
+					"property": "pInt",
+					"parentProperty": "pInt"
+				}
+			]
+		}
+	],
+	"where": {
+		"and": [
+			{
+				"op": "gt",
+				"lexp": {
+					"property": "pFloat",
+					"join": "j0"
+				},
+				"rexp": {
+					"value": "10"
+				}
+			}
+		]
+	},
+	"order": [
+		{
+			"property": "pStr",
+			"join": "j1",
+			"order": "asc"
+		}
+	]
+}

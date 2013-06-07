@@ -102,6 +102,8 @@ class GetTreeNodeCollection
 			$result->addLink($anl);
 		}
 
+		$extraColumn = $event->getRequest()->getQuery('column', array());
+
 		foreach ($nodes as $node)
 		{
 			/* @var $node \Change\Documents\TreeNode */;
@@ -111,7 +113,7 @@ class GetTreeNodeCollection
 				continue;
 			}
 			$t = new TreeNodeLink($urlManager, $node);
-			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
+			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager, $extraColumn);
 			$result->addResource($t);
 		}
 
@@ -129,14 +131,14 @@ class GetTreeNodeCollection
 		return array('limit' => $result->getLimit(), 'offset' => $result->getOffset());
 	}
 
-
 	/**
 	 * @param DocumentLink $documentLink
 	 * @param AbstractDocument $document
 	 * @param UrlManager $urlManager
+	 * @param array $extraColumn
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
 	{
 		if ($documentLink->getLCID())
 		{
@@ -172,6 +174,18 @@ class GetTreeNodeCollection
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$documentLink->setProperty('actions', array($l));
+			}
+		}
+
+		if (is_array($extraColumn) && count($extraColumn))
+		{
+			foreach ($extraColumn as $propertyName)
+			{
+				$property = $model->getProperty($propertyName);
+				if ($property)
+				{
+					$documentLink->setProperty($property);
+				}
 			}
 		}
 
