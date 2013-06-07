@@ -2,6 +2,7 @@
 namespace Rbs\Website\Events;
 
 use Rbs\Website\Events\WebsiteResolver;
+use Change\Documents\Events\Event as DocumentEvent;
 
 /**
 * @name \Rbs\Website\Events\SharedListenerAggregate
@@ -24,6 +25,21 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 			return $resolver->resolve($event);
 		};
 		$events->attach('Http.Web', \Change\Http\Event::EVENT_REQUEST, $callback, 5);
+
+		$callback = function (\Change\Documents\Events\Event $event)
+		{
+			$website = $event->getDocument();
+			if ($website instanceof \Rbs\Website\Documents\Website)
+			{
+				$resolver = new WebsiteResolver();
+				return $resolver->changed($website);
+			}
+		};
+
+		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_UPDATED);
+		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
+
+
 	}
 
 	/**
