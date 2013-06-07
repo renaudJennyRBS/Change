@@ -93,6 +93,16 @@ class WebsiteResolver
 	}
 
 	/**
+	 * @param \Rbs\Website\Documents\Website $website
+	 */
+	public function changed($website)
+	{
+		$appServices = $website->getDocumentServices()->getApplicationServices();
+		$cache = $this->getCache($appServices);
+		$cache->removeItem('WebsiteDatas');
+	}
+
+	/**
 	 * @param Event $event
 	 * @return array
 	 */
