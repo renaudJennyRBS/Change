@@ -154,14 +154,20 @@
 	// Filters
 
 
-	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', function (Breadcrumb, Utils) {
+	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName) {
-			if ( ! Utils.isDocument(doc) ) {
+			var	url,
+				node = Breadcrumb.getCurrentNode();
+
+			if (Utils.isDocument(doc)) {
+				url = doc.url(urlName);
+			} else if (Utils.isModelName(doc)) {
+				url = UrlManager.getFormUrl(doc, {'id': 'new'});
+			} else {
 				return 'javascript:;';
 			}
-			var	url = doc.url(urlName),
-				node = Breadcrumb.getCurrentNode();
+
 			if (urlName !== 'tree' && Utils.isTreeNode(node)) {
 				url += '?tn=' + node.id;
 			}

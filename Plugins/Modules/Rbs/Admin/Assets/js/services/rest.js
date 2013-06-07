@@ -61,6 +61,10 @@
 					return Utils.isModel(this, modelName);
 				};
 
+				ChangeDocument.prototype.isNew = function (modelName) {
+					return Utils.isNew(this);
+				};
+
 				ChangeDocument.prototype.url = function (name) {
 					return UrlManager.getUrl(this, name || 'form');
 				};
