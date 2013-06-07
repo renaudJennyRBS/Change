@@ -408,3 +408,11 @@ a.danger:visited:hover {
 	text-align: left;
 	text-shadow: 0 1px 0 white;
 }
+
+.document-list .quick-actions {
+	font-size: 85%;
+}
+
+[picker] .document-list .quick-actions {
+	float: right;
+}

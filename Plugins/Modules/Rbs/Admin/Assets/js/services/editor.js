@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $location, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -146,7 +146,8 @@
 			 * Sends the changes to the server, via a POST (creation) or a PUT (update) request.
 			 */
 			scope.submit = function submitFn () {
-				function doSubmit () {
+
+				function executeSaveAction () {
 					Actions.execute(
 						'save',
 						{
@@ -156,6 +157,29 @@
 							'$currentTreeNode'     : Breadcrumb.getCurrentNode()
 						}
 					).then(saveSuccessHandler, saveErrorHandler);
+				}
+
+				function doSubmit () {
+					var uploadPromises = [], promise;
+					element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
+						var scope = angular.element($(this)).scope();
+						if (angular.isFunction(scope.upload)) {
+							promise = scope.upload();
+							if (promise !== null) {
+								uploadPromises.push(promise);
+							}
+						} else {
+							throw new Error("Could not find 'upload()' method in imageUploader's scope.");
+						}
+					});
+
+					if (uploadPromises.length) {
+						console.log("Uploading " + uploadPromises.length + " files...");
+						$q.all(uploadPromises).then(executeSaveAction);
+					} else {
+						console.log("No files to upload.");
+						executeSaveAction();
+					}
 				}
 
 				// Call "beforeSave" which can be defined in the Scope.
@@ -175,7 +199,6 @@
 				} else {
 					doSubmit();
 				}
-
 			};
 
 
@@ -352,7 +375,7 @@
 	}
 
 	changeEditorServiceFn.$inject = [
-		'$timeout', '$rootScope', '$location',
+		'$timeout', '$rootScope', '$location', '$q',
 		'RbsChange.FormsManager',
 		'RbsChange.MainMenu',
 		'RbsChange.Utils',

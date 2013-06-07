@@ -122,7 +122,11 @@
 					Breadcrumb.freeze();
 					MainMenu.freeze();
 					scope.selectorTitle = attrs.selectorTitle;
-					scope.documentPickerUrl = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
+					if (attrs.picker === 'model') {
+						scope.documentPickerUrl = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?model=' + attrs.acceptedModel;
+					} else {
+						scope.documentPickerUrl = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
+					}
 				};
 
 				scope.closeSelector = function () {

@@ -1317,6 +1317,15 @@ input[type="color"].ng-invalid::-moz-selection
 	margin-left: 5px;
 }
 
+.label a:link,
+.label a:visited {
+	color: rgba(255,255,255,0.8);
+	text-decoration: none;
+}
+.label a:hover {
+	color: white;
+	text-decoration: underline;
+}
 
 /* Sections of main menu that contains invalid fields */
 

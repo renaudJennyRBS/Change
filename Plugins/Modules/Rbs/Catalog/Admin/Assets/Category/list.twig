@@ -2,22 +2,24 @@
 	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_Category" query="query" text-search="textSearch"></search-filters>
 
-	<div>
-		<!-- TODO Add current category in URL -->
-		<a href="Rbs/Catalog/Category/new">{{ i18n('m.rbs.catalog.document.category-create', ['ucf']) }}</a>
-	</div>
-
 	<h3>Catégories</h3>
+	<div>
+		<a href ng-href="(= 'Rbs_Catalog_Category' | documentURL =)">{{ i18n('m.rbs.catalog.document.category-create', ['ucf']) }}</a>
+	</div>
 
 	<document-list data-dlid="DLRbsCatalogCategory"
 	               model="Rbs_Catalog_Category"
 	               publishable="true"
 	               tree="Rbs_Catalog"
 	               query="query">
+		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true"></column>
 	</document-list>
 
 	<h3>Produits</h3>
+	<div>
+		<a href ng-href="(= 'Rbs_Catalog_Product' | documentURL =)">{{ i18n('m.rbs.catalog.document.product-create', ['ucf']) }}</a>
+	</div>
 
 	<document-list data-dlid="DLRbsCatalogProduct"
 	               model="Rbs_Catalog_Product"

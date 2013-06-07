@@ -39,7 +39,7 @@
 	</div>
 {% endmacro %}
 
-{% macro picker(name, model, label, required, help, selectorTitle) %}
+{% macro picker(name, model, label, required, help, selectorTitle, useModelPicker) %}
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
 		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
@@ -50,6 +50,9 @@
 				property-label="{{ i18nAttr(label, ['ucf']) }}"
 				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
 				allow-edition="true"
+				{% if useModelPicker %}
+				picker="model"
+				{% endif %}
 				allow-creation="true">
 			</div>
 			{% if help %}
@@ -61,7 +64,7 @@
 	</div>
 {% endmacro %}
 
-{% macro pickerMultiple(name, model, label, required, help, selectorTitle) %}
+{% macro pickerMultiple(name, model, label, required, help, selectorTitle, useModelPicker) %}
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
 		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
@@ -72,6 +75,9 @@
 				property-label="{{ i18nAttr(label, ['ucf']) }}"
 				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
 				master-label="(=document.label=)"
+				{% if useModelPicker %}
+				picker="model"
+				{% endif %}
 				allow-edition="true">
 			</div>
 			{% if help %}

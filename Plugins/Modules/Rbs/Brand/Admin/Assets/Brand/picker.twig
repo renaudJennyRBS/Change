@@ -1,0 +1,45 @@
+<div data-ng-controller="{{ query.model }}_ListController">
+
+	<div data-ng-init="_isEmbeded = true"></div>
+
+	<header class="clearfix">
+		<button data-ng-click="closeSelector()" class="close pull-right" style="margin-left:30px;" type="button" auto-focus>×</button>
+		<h3>(=selectorTitle=)</h3>
+	</header>
+
+	<div class="btn-toolbar" data-ng-switch="DL.enabledViewModes.length > 1">
+		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
+			<div class="input-append">
+				<!--TODO localization-->
+				<input type="text" class="input-medium search-query" placeholder="Rechercher..." data-ng-model="search"/>
+				<button type="submit" class="btn" title="Rechercher">
+					<i class="icon-search"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+	<div class="clearfix"></div>
+
+	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
+
+	<document-list data-dlid="DLDocumentPicker{{ query.model }}"
+	               publishable="true"
+	               model="{{ query.model }}"
+	               query="query" picker="picker">
+		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
+		<column name="label" primary="true">
+			{% if (query.multiple) %}
+			<span class="pull-right">
+				<!--TODO localization-->
+				<button type="button" class="btn btn-mini" ng-click="picker.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
+			</span>
+			{% endif %}
+			<a href="javascript:;" ng-click="picker.selectDocument(doc)">(=doc.label=)</a>
+		</column>
+		<preview>
+			<img rbs-storage-image="(= doc.document.visual.id =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
+			<h4>(= doc.document.label =)</h4>
+		</preview>
+	</document-list>
+
+</div>

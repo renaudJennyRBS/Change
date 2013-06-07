@@ -17,7 +17,6 @@
 	app.directive('documentList', [
 		'$filter',
 		'$location',
-		'$compile',
 		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Loading',
@@ -29,7 +28,7 @@
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, $compile, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
+	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
 
 		return {
 			restrict    : 'E',
@@ -125,7 +124,6 @@
 					__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
 				}
 				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
-				console.log("preview tpl=", __preview[dlid]);
 
 				while (columns.length) {
 					column = columns.shift(0);
@@ -184,23 +182,24 @@
 
 					// The primary column has extra links for preview, edit and delete.
 					if (column.primary) {
-						$td.append(
-							'<div>' +
-								'<small>' +
-									'<a href="javascript:" ng-click="preview(doc)">' +
-										//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
-										//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
-										' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
-									'</a> | ' +
-									'<a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
-										i18n.trans('m.rbs.admin.admin.js.edit') +
-									'</a> | ' +
-									'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
-										i18n.trans('m.rbs.admin.admin.js.delete') +
-									'</a>' +
-								'</small>' +
-							'</div>'
-						);
+						var html =
+							'<div class="quick-actions">' +
+								'<a href="javascript:" ng-click="preview(doc)">' +
+									//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
+									//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
+									' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
+								'</a>';
+						if (!tAttrs.picker) {
+							html +=
+								' | <a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
+								i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a> | ' +
+								'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
+								i18n.trans('m.rbs.admin.admin.js.delete') +
+								'</a>';
+						}
+						html += '</div>';
+						$td.append(html);
 					}
 
 					$body.append($td);
@@ -215,8 +214,6 @@
 					var queryObject, search, columnNames;
 
 					scope.collection = [];
-
-					console.log("collection=", scope.collection);
 
 					scope.columns = elm.data('columns');
 
@@ -492,17 +489,16 @@
 						scope.loading = true;
 
 						params = {
-							'offset': scope.pagination.offset,
-							'limit' : scope.pagination.limit,
-							'sort'  : scope.sort.column,
-							'desc'  : scope.sort.descending,
-							'column': columnNames,
-							'dlid': dlid // TODO remove
+							'offset' : scope.pagination.offset,
+							'limit'  : scope.pagination.limit,
+							'sort'   : scope.sort.column,
+							'desc'   : scope.sort.descending,
+							'column' : columnNames
 						};
 
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
-							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames, 'dlid': dlid});
+							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
@@ -517,8 +513,6 @@
 									stopLoading();
 									if (response !== null) {
 										documentCollectionLoadedCallback(response);
-									} else {
-										console.warn('Empty collection');
 									}
 								},
 								function (reason) {
@@ -723,7 +717,6 @@
 					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
 				}
 				__preview[dlid] = tElement.html();
-				console.log("PREVIEW:", tElement.html());
 
 			}
 		};

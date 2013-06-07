@@ -14,32 +14,17 @@
 	 * @param i18n
 	 * @constructor
 	 */
-	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
 			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"]
 		]);
 
-		var DL = DocumentList.initScopeForTree($scope);
-		DL.setDefaultTreeName('Rbs_Catalog');
-		DL.viewMode = 'list';
-		DL.sort.column = 'nodeOrder';
-		DL.sort.descending = false;
-
-		$scope.createActions = [
-			{ 'label': i18n.trans('m.rbs.catalog.admin.js.category | ucf'), 'url': 'Rbs/Catalog/Category/new', 'icon': 'folder-close' }
-		];
-
-		// Configure DataTable columns
-		DL.columns.splice(1, 0, { id: 'type', label: "", width: "24px", align: "center" });
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		MainMenu.loadModuleMenu('Rbs_Catalog');
 	}
 
-	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Rbs_Catalog_Category_ListController', ListController);
 
 	/**

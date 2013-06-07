@@ -1,58 +1,22 @@
 <div data-ng-controller="Rbs_Brand_Brand_ListController">
-	<page-header sub-title="{{ i18nAttr('m.rbs.brand.document.brand-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Brand_Brand" query="DL.query" text-search="textSearch"></search-filters>
-	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
+	<page-header title="{{ i18nAttr('m.rbs.brand.document.brand-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Brand_Brand" query="query" text-search="textSearch"></search-filters>
 
-	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-		{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
-		<ul>
-			<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
-		</ul>
+	<div>
+		<a href="Rbs/Brand/Brand/new">{{ i18n('m.rbs.brand.document.brand-create', ['ucf']) }}</a>
 	</div>
 
-	<table
-		data-ng-show="DL.documents.length" class="document-list table table-condensed table-bordered table-striped table-hover data-ng-cloak">
-		<thead>
-			<tr>
-				<th style="text-align: center; width: 30px;"><input type="checkbox" data-ng-model="DL.cbSelectAll" data-ng-change="DL.toggleSelectAll()" /></th>
-				<th data-ng-repeat="column in DL.columns" style="text-align: (=column.align=); width: (=column.width=);" data-ng-class="{true:'sorted'}[DL.isSortedOn(column.id)]"><a
-					href data-ng-href="(=DL.headerUrl(column.id)=)">(=column.label=) <i class="column-sort-indicator"
-						data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.isSortedOn(column.id)"></i>
-				</a></th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr data-ng-repeat="doc in DL.documents" data-ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE', 'warning': doc.publicationStatus=='DEACTIVATED'}">
-				<td style="text-align: center;">
-					<input type="checkbox" data-ng-model="doc.selected" data-ng-click="DL.checkDocumentRow($event, $index, doc)" data-docid="(=doc.id=)"/>
-				</td>
-				<td style="text-align: center">
-					<status data-ng-model="doc"/>
-				</td>
-
-				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
-					<a href ng-href="(= doc | documentURL =)">(=doc.label=)</a>
-				</td>
-
-				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('modificationDate')]">
-					(=doc.modificationDate | date:'medium'=)
-				</td>
-				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('activated')]" style="text-align: center;">
-					<status-switch document="doc"/>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-
-	<footer class="row-fluid rbsc-list-footer" data-ng-show="DL.documents.length" data-mask="(=DL.loading=)">
-		<div class="span2">
-			<clipboard-add-widget selected="DL.selectedDocuments"></clipboard-add-widget>
-		</div>
-		<div class="span10">
-			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
-		</div>
-	</footer>
+	<document-list data-dlid="DLRbsBrandBrand"
+	               model="Rbs_Brand_Brand"
+	               publishable="true"
+	               query="query">
+		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
+		<column name="label" primary="true"></column>
+		<preview>
+			<div class="muted" ng-if="!doc.document.visual">Aucun visuel défini</div>
+			<h4>(= doc.document.label =)</h4>
+			<img rbs-storage-image="(= doc.document.visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
+		</preview>
+		<column name="websiteUrl"></column>
+	</document-list>
 </div>
