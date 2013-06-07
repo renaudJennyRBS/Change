@@ -141,6 +141,8 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		$place = $engine->getStartPlace();
 		if ($place)
 		{
+			$this->setStartDate($engine->getDateTime());
+			$this->setStatus(static::STATUS_OPEN);
 			$engine->enableToken($place);
 			$this->save();
 		}

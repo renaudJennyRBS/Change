@@ -1,51 +1,44 @@
 <?php
-namespace Rbs\Workflow\Std;
+namespace ChangeTests\Change\Workflow\TestAssets;
 
+use Change\Workflow\Interfaces\Token as TokenInterface;
 /**
-* @name \Rbs\Workflow\Std\Token
+* @name \ChangeTests\Change\Workflow\TestAssets\Token
 */
-class Token implements \Change\Workflow\Interfaces\Token
+class Token implements TokenInterface
 {
 	/**
-	 * @var \Rbs\Workflow\Documents\WorkflowInstance
+	 * @var WorkflowInstance
 	 */
-	protected $workflowInstance;
+	public $workflowInstance;
 
 	/**
 	 * @var Place
 	 */
-	protected $place;
+	public $place;
 
 	/**
 	 * @var string
 	 */
-	protected $status = self::STATUS_FREE;
+	public $status = self::STATUS_FREE;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $enabledDate;
+	public $enabledDate;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $canceledDate;
+	public $canceledDate;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $consumedDate;
+	public $consumedDate;
 
 	/**
-	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
-	 */
-	function __construct($workflowInstance)
-	{
-		$this->workflowInstance = $workflowInstance;
-	}
-
-	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowInstance
+	 * @return WorkflowInstance
 	 */
 	public function getWorkflowInstance()
 	{

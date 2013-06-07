@@ -1,66 +1,61 @@
 <?php
-namespace Rbs\Workflow\Std;
+namespace ChangeTests\Change\Workflow\TestAssets;
+
+use Change\Workflow\Interfaces\WorkItem as WorkItemInterface;
 
 /**
-* @name \Rbs\Workflow\Std\WorkItem
+* @name \ChangeTests\Change\Workflow\TestAssets\WorkItem
 */
-class WorkItem implements \Change\Workflow\Interfaces\WorkItem
+class WorkItem implements WorkItemInterface
 {
 	/**
-	 * @var \Rbs\Workflow\Documents\WorkflowInstance
+	 * @var WorkflowInstance
 	 */
-	protected $workflowInstance;
+	public $workflowInstance;
 
 	/**
 	 * @var Transition
 	 */
-	protected $transition;
+	public $transition;
 
 	/**
 	 * @var string
 	 */
-	protected $status = self::STATUS_ENABLED;
+	public $status = self::STATUS_ENABLED;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $deadLine;
+	public $deadLine;
 
 	/**
 	 * @var integer
 	 */
-	protected $taskId;
+	public $taskId;
 
 	/**
 	 * @var integer
 	 */
-	protected $userId;
+	public $userId;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $enabledDate;
+	public $enabledDate;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $canceledDate;
+	public $canceledDate;
 
 	/**
 	 * @var \DateTime|null
 	 */
-	protected $finishedDate;
+	public $finishedDate;
+
 
 	/**
-	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
-	 */
-	function __construct($workflowInstance)
-	{
-		$this->workflowInstance = $workflowInstance;
-	}
-
-	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowInstance
+	 * @return WorkflowInstance
 	 */
 	public function getWorkflowInstance()
 	{
@@ -163,7 +158,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * @param \DateTime $dateTime
+	 *@param \DateTime $dateTime
 	 */
 	public function enable($dateTime)
 	{
@@ -207,85 +202,5 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	{
 		$this->finishedDate = ($dateTime === null) ? new \DateTime() : $dateTime;
 		$this->status = static::STATUS_FINISHED;
-	}
-
-	/**
-	 * @param \Rbs\Workflow\Std\Transition $transition
-	 * @return $this
-	 */
-	public function setTransition($transition)
-	{
-		$this->transition = $transition;
-		return $this;
-	}
-
-	/**
-	 * @param string $status
-	 * @return $this
-	 */
-	public function setStatus($status)
-	{
-		$this->status = $status;
-		return $this;
-	}
-
-	/**
-	 * @param \DateTime|null $deadLine
-	 * @return $this
-	 */
-	public function setDeadLine($deadLine)
-	{
-		$this->deadLine = $deadLine;
-		return $this;
-	}
-
-	/**
-	 * @param int $taskId
-	 * @return $this
-	 */
-	public function setTaskId($taskId)
-	{
-		$this->taskId = $taskId;
-		return $this;
-	}
-
-	/**
-	 * @param int $userId
-	 * @return $this
-	 */
-	public function setUserId($userId)
-	{
-		$this->userId = $userId;
-		return $this;
-	}
-
-	/**
-	 * @param \DateTime|null $enabledDate
-	 * @return $this
-	 */
-	public function setEnabledDate($enabledDate)
-	{
-		$this->enabledDate = $enabledDate;
-		return $this;
-	}
-
-	/**
-	 * @param \DateTime|null $finishedDate
-	 * @return $this
-	 */
-	public function setFinishedDate($finishedDate)
-	{
-		$this->finishedDate = $finishedDate;
-		return $this;
-	}
-
-	/**
-	 * @param \DateTime|null $canceledDate
-	 * @return $this
-	 */
-	public function setCanceledDate($canceledDate)
-	{
-		$this->canceledDate = $canceledDate;
-		return $this;
 	}
 }

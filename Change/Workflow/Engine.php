@@ -16,6 +16,7 @@ class Engine
 	 */
 	protected $workflowInstance;
 
+
 	/**
 	 * @param Interfaces\WorkflowInstance $workflowInstance
 	 * @param \DateTime $dateTime
@@ -27,27 +28,57 @@ class Engine
 	}
 
 	/**
+	 * @param \DateTime $dateTime
+	 */
+	public function setDateTime(\DateTime $dateTime)
+	{
+		$this->dateTime = $dateTime;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDateTime()
+	{
+		return $this->dateTime;
+	}
+
+	/**
+	 * @return \Change\Workflow\Interfaces\WorkflowInstance
+	 */
+	public function getWorkflowInstance()
+	{
+		return $this->workflowInstance;
+	}
+
+	/**
+	 * @api
 	 * @return \Change\Workflow\Interfaces\Place|null
 	 */
 	public function getStartPlace()
 	{
 		$workflow = $this->workflowInstance->getWorkflow();
-		foreach ($workflow->getItems() as $item)
+		$item = $workflow->getItems();
+		if (is_array($item) && count($item))
 		{
-			if ($item instanceof \Change\Workflow\Interfaces\Place &&
-				$item->getType() === \Change\Workflow\Interfaces\Place::TYPE_START)
+			foreach ($workflow->getItems() as $item)
 			{
-				return $item;
+				if ($item instanceof \Change\Workflow\Interfaces\Place &&
+					$item->getType() === \Change\Workflow\Interfaces\Place::TYPE_START)
+				{
+					return $item;
+				}
 			}
 		}
 		return null;
 	}
 
 	/**
+	 * @api
 	 * @param Interfaces\Place $place
 	 * @return Interfaces\Token
 	 */
-	public function enableToken($place)
+	public function enableToken(Interfaces\Place $place)
 	{
 		if ($this->workflowInstance->getWorkflow() !== $place->getWorkflow())
 		{
@@ -89,6 +120,7 @@ class Engine
 	}
 
 	/**
+	 * @api
 	 * @param string $taskId
 	 * @return Interfaces\WorkItem|null
 	 */
@@ -108,6 +140,7 @@ class Engine
 	}
 
 	/**
+	 * @api
 	 * @param Interfaces\WorkItem $workItem
 	 */
 	public function firedWorkItem($workItem)
