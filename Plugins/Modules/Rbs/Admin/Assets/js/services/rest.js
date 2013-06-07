@@ -187,6 +187,19 @@
 						});
 					}
 
+					// Transform sub-documents into ChangeDocument instances.
+					angular.forEach(properties, function (value, name) {
+						if (Utils.isDocument(value)) {
+							properties[name] = buildChangeDocument(value);
+						} else if (angular.isArray(value)) {
+							angular.forEach(value, function (v, i) {
+								if (Utils.isDocument(value[i])) {
+									value[i] = buildChangeDocument(value[i]);
+								}
+							});
+						}
+					});
+
 					angular.extend(chgDoc, properties);
 					return chgDoc;
 				}
@@ -465,6 +478,7 @@
 					 */
 					'collection' : function (model, params) {
 						var q = $q.defer();
+						console.log("REST: collection: ", this.getCollectionUrl(model, params));
 						$http.get(
 								this.getCollectionUrl(model, params),
 								getHttpConfig(transformResponseCollectionFn)
