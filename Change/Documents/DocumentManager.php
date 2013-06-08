@@ -23,6 +23,8 @@ class DocumentManager
 
 	const STATE_DELETED = 6;
 
+    const STATE_DELETING = 7;
+
 	/**
 	 * @var ApplicationServices
 	 */
