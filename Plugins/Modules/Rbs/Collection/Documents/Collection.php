@@ -35,24 +35,31 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 			if ($document->isNew() || $document->isPropertyModified('items'))
 			{
 				$error = false;
-				$codes = array();
-				foreach($document->getItems() as $item)
+				$values = array();
+				$duplicatedItems = null;
+				$items = $document->getItems();
+				foreach($items as $item)
 				{
 					$value = $item->getValue();
-					if (in_array($value, $codes))
+					if (in_array($value, $values))
 					{
 						$error = true;
+						$duplicatedItems = array(
+							'item1Label' => $item->getLabel(),
+							'item2Label' => array_search($value, $values),
+							'value' => $item->getValue()
+						);
 						break;
 					}
 					else
 					{
-						$codes[] = $value;
+						$values[$item->getLabel()] = $value;
 					}
 				}
 				if ($error)
 				{
 					$errors = $event->getParam('propertiesErrors', array());
-					$errors['items'][] = new PreparedKey('m.rbs.collection.document.collection.error-duplicated-item-value', array('ucf'));
+					$errors['items'][] = new PreparedKey('m.rbs.collection.document.collection.error-duplicated-item-value', array('ucf'), $duplicatedItems);
 					$event->setParam('propertiesErrors', $errors);
 				}
 			}

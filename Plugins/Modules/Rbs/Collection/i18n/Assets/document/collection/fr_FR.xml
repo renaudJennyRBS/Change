@@ -4,5 +4,5 @@
 	<key id="title">titre</key>
 	<key id="code">code</key>
 	<key id="items">items</key>
-	<key id="error-duplicated-item-value">vous ne pouvez pas créer un item avec une valeur déjà existante pour cette collection</key>
+	<key id="error-duplicated-item-value">vous ne pouvez pas ajouter un item avec une valeur déjà existante pour cette collection. {item1Label} et {item2Label} ont la même valeur : {value}.</key>
 </i18n>
