@@ -16,10 +16,7 @@
 		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('title')}">
 			<label class="control-label" for="title">{{ i18n('m.rbs.website.document.staticpage.title', ['ucf']) }}</label>
 			<div class="controls">
-				<div class="input-prepend">
-					<button type="button" class="btn" ng-click="document.title = document.label" title="Use (= document.label =)">{{ i18n('m.rbs.website.document.staticpage.label', ['ucf']) }} <i class="icon-angle-right"></i></button>
-					<input type="text" id="title" name="title" required class="input-xxlarge" data-ng-model="document.title"/>
-				</div>
+				<input type="text" rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.staticpage.synchronize-title-label', ['ucf']) }}" id="title" name="title" required class="input-block-level" ng-model="document.title"/>
 			</div>
 		</div>
 

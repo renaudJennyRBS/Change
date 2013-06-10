@@ -9,4 +9,5 @@
 	<key id="editablecontent">contenu de la page</key>
 	<key id="open-page-editor">ouvrir l'éditeur de page</key>
 	<key id="content-zones">zones de contenu</key>
+	<key id="synchronize-title-label">synchroniser la valeur avec celle du libellé</key>
 </i18n>
