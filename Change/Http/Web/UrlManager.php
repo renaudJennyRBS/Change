@@ -7,6 +7,11 @@ namespace Change\Http\Web;
 class UrlManager extends \Change\Http\UrlManager
 {
 	/**
+	 * @var bool
+	 */
+	protected $absoluteUrl = false;
+
+	/**
 	 * @var PathRule $pathRule
 	 */
 	protected $pathRule;
@@ -28,7 +33,7 @@ class UrlManager extends \Change\Http\UrlManager
 	public function getByPathInfo($pathInfo, $query = null, $fragment = null)
 	{
 		$uri = parent::getByPathInfo($pathInfo, $query, $fragment);
-		if ($pathInfo)
+		if (!$this->absoluteUrl() && $pathInfo)
 		{
 			$uri->makeRelative($this->getBaseUri());
 		}
@@ -56,7 +61,7 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 
 		$uri = $this->getDocumentUri($document, $documentPathPrefix, $section);
-		if ($this->pathRule->getWebsite() === $section->getWebsite())
+		if (!$this->absoluteUrl() && $this->pathRule->getWebsite() === $section->getWebsite())
 		{
 			$uri->makeRelative($this->getBaseUri());
 		}
@@ -83,7 +88,7 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 
 		$uri = $this->getDocumentUri($document, $documentPathPrefix, $context);
-		if ($this->pathRule->getWebsite() === $context->getWebsite())
+		if (!$this->absoluteUrl() && $this->pathRule->getWebsite() === $context->getWebsite())
 		{
 			$uri->makeRelative($this->getBaseUri());
 		}
@@ -148,5 +153,18 @@ class UrlManager extends \Change\Http\UrlManager
 			return $row['path'];
 		}
 		return null;
+	}
+
+	/**
+	 * @param bool $absoluteUrl
+	 * @return $this
+	 */
+	public function absoluteUrl($absoluteUrl = null)
+	{
+		if (is_bool($absoluteUrl))
+		{
+			$this->absoluteUrl = $absoluteUrl;
+		}
+		return $this;
 	}
 }

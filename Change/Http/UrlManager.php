@@ -29,7 +29,7 @@ class UrlManager
 	public function __construct(\Zend\Uri\Http $self, $script = null)
 	{
 		$this->self = $self;
-		if (is_string($script) && $script[0] !== '/')
+		if (is_string($script) && $script && $script[0] !== '/')
 		{
 			$script = '/' . $script;
 		}
@@ -184,6 +184,10 @@ class UrlManager
 			if ($website->getScriptName())
 			{
 				$path .= $website->getScriptName() . '/';
+			}
+			else
+			{
+				$path .= '/';
 			}
 			if ($website->getRelativePath())
 			{
