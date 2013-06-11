@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\ArrayResult;
@@ -17,7 +18,7 @@ class StartValidation
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|Publishable|null
+	 * @return AbstractDocument|Publishable|null
 	 */
 	protected function getDocument($event)
 	{
@@ -48,7 +49,7 @@ class StartValidation
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 
 		$LCID = null;
 		if ($document instanceof Localizable)
@@ -92,11 +93,11 @@ class StartValidation
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->startValidation();
+			/* @var $document AbstractDocument|Publishable */
+			$document->startValidation();
 			$result = new ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
-			/* @var $document \Change\Documents\AbstractDocument|Publishable */
 			$l = new DocumentLink($event->getUrlManager(), $document);
 			$l->setRel('resource');
 

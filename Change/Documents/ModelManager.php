@@ -37,6 +37,12 @@ class ModelManager
 			{
 				/* @var $model \Change\Documents\AbstractModel */
 				$model = new $className($this);
+				if ($model->getReplacedBy())
+				{
+					$className = $this->getModelClassName($model->getReplacedBy());
+					$model = new $className($this);
+					$this->documentModels[$model->getReplacedBy()] = $model;
+				}
 				$this->documentModels[$modelName] = $model;
 			}
 			else

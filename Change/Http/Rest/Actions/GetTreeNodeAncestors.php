@@ -2,6 +2,7 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
@@ -127,9 +128,10 @@ class GetTreeNodeAncestors
 	 */
 	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
 	{
+		$dm = $document->getDocumentServices()->getDocumentManager();
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentServices()->getDocumentManager()->pushLCID($documentLink->getLCID());
+			$dm->pushLCID($documentLink->getLCID());
 		}
 
 		$model = $document->getDocumentModel();
@@ -154,10 +156,10 @@ class GetTreeNodeAncestors
 			$documentLink->setProperty($model->getProperty('LCID'));
 		}
 
-		if ($model->useCorrection())
+		if ($document instanceof Correction)
 		{
-			$cf = $document->getCorrectionFunctions();
-			if ($cf->hasCorrection())
+			/* @var $document AbstractDocument|Correction */
+			if ($document->hasCorrection())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$documentLink->setProperty('actions', array($l));
@@ -166,7 +168,7 @@ class GetTreeNodeAncestors
 
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentServices()->getDocumentManager()->popLCID();
+			$dm->popLCID();
 		}
 		return $documentLink;
 	}

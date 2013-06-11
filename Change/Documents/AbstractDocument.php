@@ -1,9 +1,6 @@
 <?php
 namespace Change\Documents;
 
-use Change\Documents\Events\Event as DocumentEvent;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
 
@@ -32,21 +29,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @var array
 	 */
 	private $modifiedProperties = array();
-
-	/**
-	 * @var array<String,String|String[]>
-	 */
-	private $metas;
-	
-	/**
-	 * @var boolean
-	 */
-	private $modifiedMetas = false;
-
-	/**
-	 * @var \Change\Documents\CorrectionFunctions
-	 */
-	protected $correctionFunctions;
 
 	/**
 	 * @var AbstractModel
@@ -244,11 +226,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function reset()
 	{
-		$this->modifiedProperties = array();
-		$this->metas = null;
-		$this->modifiedMetas = false;
-		$this->correctionFunctions = null;
-
+		$this->unsetProperties();
 		if ($this->persistentState === DocumentManager::STATE_LOADED)
 		{
 			$this->persistentState = DocumentManager::STATE_INITIALIZED;
@@ -257,6 +235,14 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			$this->setDefaultValues($this->documentModel);
 		}
+	}
+
+	/**
+	 * Set private properties to null.
+	 */
+	protected function unsetProperties()
+	{
+		$this->clearModifiedProperties();
 	}
 
 	/**
@@ -273,7 +259,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$property->setValue($this, $property->getDefaultValue());
 			}
 		}
-		$this->clearModifiedProperties();
 	}
 	
 	/**
@@ -301,7 +286,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$this->clearModifiedProperties();
 			case DocumentManager::STATE_NEW:
 			case DocumentManager::STATE_INITIALIZED:
-			case DocumentManager::STATE_LOADING:	
+			case DocumentManager::STATE_LOADING:
 			case DocumentManager::STATE_DELETED:
 			case DocumentManager::STATE_SAVING:
 				$this->persistentState = $newValue;
@@ -338,322 +323,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
-	 * Load properties
-	 * @api
-	 */
-	public function load()
-	{
-		if ($this->persistentState === DocumentManager::STATE_INITIALIZED)
-		{
-			if ($this->documentModel->isStateless())
-			{
-				$callable = array($this, 'doLoadStateless');
-				if (is_callable($callable))
-				{
-					call_user_func($callable);
-				}
-			}
-			else
-			{
-				$this->doLoad();
-			}
-		}
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return void
-	 */
-	protected function doLoad()
-	{
-		$this->getDocumentManager()->loadDocument($this);
-		$callable = array($this, 'onLoad');
-		if (is_callable($callable))
-		{
-			call_user_func($callable);
-		}
-	}
-
-	/**
-	 * @api
-	 */
-	public function save()
-	{
-		if ($this->isNew())
-		{
-			$this->create();
-		}
-		else
-		{
-			$this->update();
-		}
-	}
-	
-	/**
-	 * @api
-	 */
-	public function create()
-	{
-		if (!$this->isNew())
-		{
-			throw new \RuntimeException('Document is not new', 51001);
-		}
-		$callable = array($this, 'onCreate');
-		if (is_callable($callable))
-		{
-			call_user_func($callable);
-		}
-		$event = new DocumentEvent(DocumentEvent::EVENT_CREATE, $this);
-		$this->getEventManager()->trigger($event);
-
-		$propertiesErrors = $event->getParam('propertiesErrors');
-		if (is_array($propertiesErrors) && count($propertiesErrors))
-		{
-			$e = new \RuntimeException('Document is not valid', 52000);
-			$e->propertiesErrors = $propertiesErrors;
-			throw $e;
-		}
-
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			if ($this->documentModel->isStateless())
-			{
-				$callable = array($this, 'doCreateStateless');
-				if (is_callable($callable))
-				{
-					call_user_func($callable);
-				}
-			}
-			else
-			{
-				$this->doCreate();
-			}
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
-
-		$event = new DocumentEvent(DocumentEvent::EVENT_CREATED, $this);
-		$this->getEventManager()->trigger($event);
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return void
-	 */
-	protected function doCreate()
-	{
-		$dm = $this->getDocumentManager();
-		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
-		{
-			$dm->affectId($this);
-			$dm->insertDocument($this);
-		}
-
-		if ($this instanceof Localizable)
-		{
-			$dm->insertLocalizedDocument($this, $this->getCurrentLocalizedPart());
-		}
-	}
-	
-	/**
-	 * @api
-	 */
-	public function update()
-	{
-		if ($this->isNew())
-		{
-			throw new \RuntimeException('Document is new', 51002);
-		}
-
-		$callable = array($this, 'onUpdate');
-		if (is_callable($callable))
-		{
-			call_user_func($callable);
-		}
-
-
-		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATE, $this);
-		$this->getEventManager()->trigger($event);
-
-		$propertiesErrors = $event->getParam('propertiesErrors');
-		if (is_array($propertiesErrors) && count($propertiesErrors))
-		{
-			$e = new \RuntimeException('Document is not valid', 52000);
-			$e->propertiesErrors = $propertiesErrors;
-			throw $e;
-		}
-
-		$modifiedPropertyNames = $this->getModifiedPropertyNames();
-
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			if ($this->documentModel->isStateless())
-			{
-				$callable = array($this, 'doUpdateStateless');
-				if (is_callable($callable))
-				{
-					call_user_func($callable);
-				}
-			}
-			else
-			{
-				$this->doUpdate();
-			}
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
-
-		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
-		$this->getEventManager()->trigger($event);
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return void
-	 */
-	protected function doUpdate()
-	{
-		if ($this->getDocumentModel()->useCorrection())
-		{
-			$corrections = $this->getCorrectionFunctions()->extractCorrections();
-		}
-		else
-		{
-			$corrections = array();
-		}
-
-		$dm = $this->getDocumentManager();
-		if (count($corrections))
-		{
-			$cleanUpPropertiesNames = array();
-			foreach ($corrections as $correction)
-			{
-				/* @var $correction \Change\Documents\Correction */
-				$this->getCorrectionFunctions()->save($correction);
-				$cleanUpPropertiesNames = array_merge($cleanUpPropertiesNames, $correction->getPropertiesNames());
-			}
-
-			foreach (array_unique($cleanUpPropertiesNames) as $propertyName)
-			{
-				$this->removeOldPropertyValue($propertyName);
-			}
-
-		}
-
-		if ($this->hasModifiedProperties() || count($corrections))
-		{
-			$this->setModificationDate(new \DateTime());
-			if ($this instanceof Editable)
-			{
-				$this->nextDocumentVersion();
-			}
-
-			if ($this->hasNonLocalizedModifiedProperties())
-			{
-				$dm->updateDocument($this);
-			}
-
-			if ($this instanceof Localizable)
-			{
-				$localizedPart = $this->getCurrentLocalizedPart();
-				if ($localizedPart->hasModifiedProperties())
-				{
-					$dm->updateLocalizedDocument($this, $localizedPart);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @api
-	 */
-	public function delete()
-	{
-		//Already deleted
-		if ($this->getPersistentState() === DocumentManager::STATE_DELETED)
-		{
-			return;
-		}
-
-		if ($this->getPersistentState() === DocumentManager::STATE_NEW )
-		{
-			throw new \RuntimeException('Document is new', 51002);
-		}
-
-		$callable = array($this, 'onDelete');
-		if (is_callable($callable))
-		{
-			call_user_func($callable);
-		}
-		$event = new DocumentEvent(DocumentEvent::EVENT_DELETE, $this);
-		$this->getEventManager()->trigger($event);
-
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			if ($this->documentModel->isStateless())
-			{
-				$callable = array($this, 'doDeleteStateless');
-				if (is_callable($callable))
-				{
-					call_user_func($callable);
-				}
-			}
-			else
-			{
-				$this->doDelete();
-			}
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
-
-		$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
-		$this->getEventManager()->trigger($event);
-	}
-
-	/**
-	 * @throws \Exception
-	 */
-	protected function doDelete()
-	{
-		$dm = $this->getDocumentManager();
-		$dm->deleteDocument($this);
-		if ($this instanceof Localizable)
-		{
-			$dm->deleteLocalizedDocuments($this);
-		}
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasNonLocalizedModifiedProperties()
-	{
-		return count($this->modifiedProperties) > 0;
-	}
-
-	/**
 	 * @api
 	 * @return boolean
 	 */
 	public function hasModifiedProperties()
 	{
-		return $this->hasNonLocalizedModifiedProperties();
+		return count($this->modifiedProperties) !== 0;
 	}
 
 	/**
@@ -714,10 +389,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function removeOldPropertyValue($propertyName)
 	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			unset($this->modifiedProperties[$propertyName]);
-		}
+		unset($this->modifiedProperties[$propertyName]);
 	}
 
 	/**
@@ -747,150 +419,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		return $this->getDocumentModelName().' '.$this->getId();
 	}
 		
-	// Metadata management
 
-	/**
-	 * @api
-	 */
-	public function saveMetas()
-	{
-		if ($this->modifiedMetas)
-		{
-			$this->getDocumentManager()->saveMetas($this, $this->metas);
-			$this->modifiedMetas = false;
-		}
-	}
-	
-	/**
-	 * @return void
-	 */
-	protected function checkMetasLoaded()
-	{
-		if ($this->metas === null)
-		{
-			$this->metas = $this->getDocumentManager()->loadMetas($this);
-			$this->modifiedMetas = false;
-		}
-	}
-	
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasModifiedMetas()
-	{
-		return $this->modifiedMetas;
-	}
-		
-	/**
-	 * @api
-	 * @return array
-	 */
-	public function getMetas()
-	{
-		$this->checkMetasLoaded();
-		return $this->metas;
-	}
-	
-	/**
-	 * @api
-	 * @param array $metas
-	 */
-	public function setMetas($metas)
-	{
-		$this->checkMetasLoaded();
-		if (count($this->metas))
-		{
-			$this->metas = array();
-			$this->modifiedMetas = true;
-		}
-		if (is_array($metas))
-		{
-			foreach ($metas as $name => $value)
-			{
-				$this->metas[$name] = $value;
-			}
-			$this->modifiedMetas = true;
-		}
-	}
-	
-	/**
-	 * @api
-	 * @param string $name
-	 * @return boolean
-	 */
-	public function hasMeta($name)
-	{
-		$this->checkMetasLoaded();
-		return isset($this->metas[$name]);
-	}
-
-	/**
-	 * @api
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function getMeta($name)
-	{
-		$this->checkMetasLoaded();
-		return isset($this->metas[$name]) ? $this->metas[$name] : null;
-	}
-
-	/**
-	 * @api
-	 * @param string $name
-	 * @param mixed|null $value
-	 */
-	public function setMeta($name, $value)
-	{
-		$this->checkMetasLoaded();
-		if ($value === null)
-		{
-			if (isset($this->metas[$name]))
-			{
-				unset($this->metas[$name]);
-				$this->modifiedMetas = true;
-			}
-		}
-		elseif (!isset($this->metas[$name]) || $this->metas[$name] != $value)
-		{
-			$this->metas[$name] = $value;
-			$this->modifiedMetas = true;
-		}
-	}
-	
-	// Correction Method
-
-	/**
-	 * @return \Change\Documents\CorrectionFunctions
-	 */
-	public function getCorrectionFunctions()
-	{
-		if ($this->correctionFunctions === null)
-		{
-			$this->correctionFunctions = new CorrectionFunctions($this);
-		}
-		return $this->correctionFunctions;
-	}
-
-	// Generic Method
-
-	/**
-	 * @param string|null $treeName
-	 */
-	public function setTreeName($treeName)
-	{
-		return;
-	}
-
-	/**
-	 * @api
-	 * @return string|null
-	 */
-	public function getTreeName()
-	{
-		return null;
-	}
 	
 	/**
 	 * @api
@@ -915,4 +444,36 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @param \DateTime $modificationDate
 	 */
 	abstract public function setModificationDate($modificationDate);
+
+
+	// Tree
+
+	/**
+	 * @param string|null $treeName
+	 */
+	public function setTreeName($treeName)
+	{
+		return;
+	}
+
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getTreeName()
+	{
+		return null;
+	}
+
+	// Generic Method
+
+	abstract public function load();
+
+	abstract public function save();
+
+	abstract public function update();
+
+	abstract public function create();
+
+	abstract public function delete();
 }

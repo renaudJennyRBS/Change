@@ -92,6 +92,7 @@ class Compiler
 						throw new \RuntimeException('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $injectionArray[$extendName], 54003);
 					}
 					$injectionArray[$extendName] = $model;
+					$extModel->replacedBy($model->getName());
 				}
 			}
 			elseif ($model->getReplace())
@@ -110,7 +111,7 @@ class Compiler
 				
 				if (in_array($extModel, $injectionArray))
 				{
-					throw new \RuntimeException($model . ' extends a injecting model ' . $extendName, 54005);
+					throw new \RuntimeException($model . ' extends a "replace" model ' . $extendName, 54005);
 				}
 				
 				if (isset($injectionArray[$extendName]) && $injectionArray[$extendName] !== $model)

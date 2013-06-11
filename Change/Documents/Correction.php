@@ -164,6 +164,33 @@ class Correction
 
 	/**
 	 * @api
+	 * @return boolean
+	 */
+	public function isDraft()
+	{
+		return $this->getStatus() === static::STATUS_DRAFT;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function inValidation()
+	{
+		return $this->getStatus() === static::STATUS_VALIDATION;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isPublishable()
+	{
+		return $this->getStatus() === static::STATUS_PUBLISHABLE;
+	}
+
+	/**
+	 * @api
 	 * @param string $status
 	 */
 	public function setStatus($status)

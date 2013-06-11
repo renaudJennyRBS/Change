@@ -38,9 +38,12 @@ class ModelClass
 		$this->compiler = $compiler;
 		
 		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		$extendModel = $model->getExtendedModel();
-		$extend = $extendModel ? $extendModel->getModelClassName() : '\Change\Documents\AbstractModel';
+		$parentModel = $model->getParent();
+		$extend = $parentModel ? $parentModel->getModelClassName() : '\Change\Documents\AbstractModel';
 		$code .= '
+use Change\Documents\Property;
+use Change\Documents\InverseProperty;
+
 /**
  * @name '.$model->getModelClassName().'
  */
@@ -56,7 +59,7 @@ class ModelClass
 			$code .= $this->getLoadInverseProperties($model);
 		}
 		$code .= $this->getOthersFunctions($model);
-			
+
 		$code .= '}'. PHP_EOL;
 		
 		$this->compiler = null;
@@ -69,11 +72,39 @@ class ModelClass
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
 	{
+		if (is_array($value))
+		{
+			return $this->escapeArrayPHPValue($value);
+		}
 		if ($removeSpace)
 		{
 			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
 		}
 		return var_export($value, true);
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	protected function escapeArrayPHPValue($value)
+	{
+		$data = array();
+		if (\Zend\Stdlib\ArrayUtils::isList($value))
+		{
+			foreach($value as $val)
+			{
+				$data[] = $this->escapePHPValue($val, false);
+			}
+		}
+		else
+		{
+			foreach($value as $key => $val)
+			{
+				$data[] = $this->escapePHPValue($key, false) . ' => '. $this->escapePHPValue($val, false);
+			}
+		}
+		return 'array(' . implode(', ', $data) . ')';
 	}
 	
 
@@ -92,26 +123,30 @@ class ModelClass
 		{	
 			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtends()) . ';'. PHP_EOL;
 		}
-		
-		$descendantsNames = array_keys($this->compiler->getDescendants($model, true));
+
 		if (!$model->getReplace())
 		{
+			$descendantsNames = array_keys($this->compiler->getDescendants($model, true));
 			$code .= '		$this->descendantsNames = ' . $this->escapePHPValue($descendantsNames) . ';'. PHP_EOL;
 			$code .= '		$this->vendorName = ' . $this->escapePHPValue($model->getVendor()) . ';'. PHP_EOL;
 			$code .= '		$this->shortModuleName = ' . $this->escapePHPValue($model->getShortModuleName()) . ';'. PHP_EOL;
 			$code .= '		$this->shortName = ' . $this->escapePHPValue($model->getShortName()) . ';'. PHP_EOL;
-			$code .= '		$this->injectedBy = null;'. PHP_EOL;
+
+		}
+
+		if ($model->replacedBy())
+		{
+			$code .= '		$this->replacedBy = ' . $this->escapePHPValue($model->replacedBy()) . ';'. PHP_EOL;
 		}
 		else
 		{
-			$code .= '		$this->injectedBy = ' . $this->escapePHPValue($model->getName()) . ';'. PHP_EOL;
+			$code .= '		$this->replacedBy = null;'. PHP_EOL;
 		}
 
 		if ($model->getTreeName() !== null)
 		{
 			$code .= '		$this->treeName = ' . $this->escapePHPValue($model->getTreeName()) . ';'. PHP_EOL;
 		}
-		
 		$code .= '	}'. PHP_EOL;
 		return $code;
 	}
@@ -125,18 +160,19 @@ class ModelClass
 		$code = '
 	protected function loadProperties()
 	{
-		parent::loadProperties();'. PHP_EOL;
+		parent::loadProperties();
+		/* @var $p Property */'. PHP_EOL;
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$code .= '		$p = $this->properties['.$this->escapePHPValue($property->getName()).']';
 			if ($property->getParent())
 			{
-				$code .= ';'. PHP_EOL;
+				$code .= '		$p = $this->properties['.$this->escapePHPValue($property->getName()).'];'. PHP_EOL;
 			}
 			else
 			{
-				$code .= ' = new \Change\Documents\Property('.$this->escapePHPValue($property->getName()).', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+				$code .= '		$p = new Property('.$this->escapePHPValue($property->getName()).', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+				$code .= '		$this->properties['.$this->escapePHPValue($property->getName()).'] = $p;'. PHP_EOL;
 			}
 			 
 			$affects = array();
@@ -174,8 +210,8 @@ class ModelClass
 		foreach ($model->getInverseProperties() as $inverseProperty)
 		{
 			/* @var $inverseProperty \Change\Documents\Generators\InverseProperty */
-			$code .= '		$p = $this->inverseProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = new \Change\Documents\InverseProperty('.$this->escapePHPValue($inverseProperty->getName()).');'. PHP_EOL;
-			$code .= '		$p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
+			$code .= '		$p = new InverseProperty('.$this->escapePHPValue($inverseProperty->getName()).');'. PHP_EOL;
+			$code .= '		$this->inverseProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = $p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;
@@ -187,8 +223,25 @@ class ModelClass
 	 */	
 	protected function getOthersFunctions($model)
 	{	
-		$code = '';
-		
+		$code = '
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getDocumentClassName()
+	{
+		return '.$this->escapePHPValue($model->getDocumentClassName()).';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getLocalizedDocumentClassName()
+	{
+		return '.$this->escapePHPValue($model->getDocumentLocalizedClassName()).';
+	}';
+
 		if ($model->getIcon())
 		{
 			$code .= '

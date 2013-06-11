@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\ArrayResult;
 use Change\Http\Rest\Result\DocumentLink;
@@ -16,7 +18,7 @@ class StartCorrectionPublication
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -81,7 +83,7 @@ class StartCorrectionPublication
 
 		if ($LCID)
 		{
-			$documentManager = $document->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getDocumentServices()->getDocumentManager();
 			try
 			{
 
@@ -106,7 +108,7 @@ class StartCorrectionPublication
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param boolean $publishImmediately
 	 * @throws \Exception
 	 */
@@ -114,12 +116,13 @@ class StartCorrectionPublication
 	{
 		try
 		{
-			$correction = $document->getCorrectionFunctions()->startPublication();
+			/* @var $document AbstractDocument|Correction */
+			$correction = $document->startCorrectionPublication();
 			if ($correction)
 			{
 				if ($publishImmediately && ($correction->getPublicationDate() <= new \DateTime()))
 				{
-					$document->getCorrectionFunctions()->publish();
+					$document->publishCorrection();
 				}
 
 				$result = new ArrayResult();

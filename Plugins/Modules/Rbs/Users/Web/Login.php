@@ -99,7 +99,7 @@ class Login
 		{
 			if ($document instanceof \Rbs\Users\Documents\User)
 			{
-				if ($document->getPublishableFunctions()->published() && $document->checkPassword($password))
+				if ($document->published() && $document->checkPassword($password))
 				{
 					return $document->getId();
 				}

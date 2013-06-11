@@ -66,6 +66,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testDocument(DocumentManager $manager)
 	{
+		/* @var $document \Project\Tests\Documents\Basic */
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document->getId());
 		$manager->affectId($document);
@@ -73,13 +74,15 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
 		$definedId = $document->getId() + 10;
+		/* @var $document2 \Project\Tests\Documents\Basic */
 		$document2 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document2->getId());
 		$document2->initialize($definedId);
 		$manager->affectId($document2);
 		$this->assertEquals($definedId, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
-		
+
+		/* @var $document3 \Project\Tests\Documents\Basic */
 		$document3 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document3->getId());
 		$manager->affectId($document3);
@@ -109,6 +112,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_LOADED, $cachedDoc->getPersistentState());
 		
 		$manager->reset();
+		/* @var $newDoc1 \Project\Tests\Documents\Basic */
 		$newDoc1 = $manager->getDocumentInstance($document->getId());
 		$this->assertTrue($newDoc1 !== $document);
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $newDoc1);
@@ -124,7 +128,8 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$metasLoaded = $manager->loadMetas($newDoc1);
 		$this->assertEquals($metas, $metasLoaded);
-				
+
+		/* @var $newDoc \Project\Tests\Documents\Basic */
 		$newDoc = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$tmpId = $newDoc->getId();
 
@@ -149,10 +154,10 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testI18nDocument(DocumentManager $manager)
 	{
+		/* @var $localized \Project\Tests\Documents\Localized */
 		$localized = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-		$localizedI18nPartFr = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
-		
-		/* @var $localizedI18nPartFr \Compilation\Project\Tests\Documents\LocalizedI18n */
+		$localizedI18nPartFr = $localized->getCurrentLocalization();
+
 		$tmpId = $localized->getId();
 		$this->assertNotNull($localizedI18nPartFr);
 		$this->assertEquals($tmpId, $localizedI18nPartFr->getId());
@@ -164,29 +169,36 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localized->getPersistentState());
 		
 		$this->assertNotEquals($tmpId, $localized->getId());
-		
-		$manager->insertLocalizedDocument($localized, $localizedI18nPartFr);
+
+		$localized->saveCurrentLocalization();
+
 		$this->assertEquals($localized->getId(), $localizedI18nPartFr->getId());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedI18nPartFr->getPersistentState());
-		
-		$localizedI18nPartFr->setPLStr('Localized Label');
+
+		$localized->setPLStr('Localized Label');
 		$this->assertTrue($localizedI18nPartFr->isPropertyModified('pLStr'));
-		$manager->updateLocalizedDocument($localized, $localizedI18nPartFr);
+		$this->assertTrue($localized->isPropertyModified('pLStr'));
+
+		$localized->save();
 		$this->assertFalse($localizedI18nPartFr->isPropertyModified('pLStr'));
-		
-		$loaded = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
+		$this->assertFalse($localized->isPropertyModified('pLStr'));
+
+		$localized->reset();
+
+		$loaded = $localized->getCurrentLocalization();
 		$this->assertNotSame($loaded, $localizedI18nPartFr);
 		
 		$this->assertEquals($localized->getId(), $loaded->getId());
 		$this->assertEquals('fr_FR', $loaded->getLCID());
 		$this->assertEquals('Localized Label', $loaded->getPLStr());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $loaded->getPersistentState());
-		
-		$manager->deleteDocument($localized);
-		$manager->deleteLocalizedDocuments($localized);
-		
-		$deleted = $manager->getLocalizedDocumentInstanceByDocument($localized, 'fr_FR');
-		$this->assertEquals(DocumentManager::STATE_DELETED, $deleted->getPersistentState());
+
+		$localized->delete();
+		$this->assertEquals(DocumentManager::STATE_DELETED, $loaded->getPersistentState());
+
+		$deleted = $localized->getCurrentLocalization();
+		$this->assertSame($loaded, $deleted);
+
 		return $manager;
 	}
 	
@@ -196,11 +208,15 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testPropertyDocumentIds(DocumentManager $manager)
 	{
+		/* @var $sd1 \Project\Tests\Documents\Localized */
 		$sd1 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+
+		/* @var $sd2 \Project\Tests\Documents\Localized */
 		$sd2 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-		
-		$basic = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
 		/* @var $basic \Project\Tests\Documents\Basic */
+		$basic = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
 		$basic->addPDocArr($sd1);
 		$basic->addPDocArr($sd2);
 		

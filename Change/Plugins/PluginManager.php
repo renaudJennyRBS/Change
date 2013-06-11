@@ -674,6 +674,7 @@ class PluginManager
 	 */
 	protected function doInstall($eventType, $vendor, $name, $context)
 	{
+		$this->getDbProvider()->closeConnection();
 
 		$eventManager = $this->getEventManager();
 
@@ -713,6 +714,8 @@ class PluginManager
 		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $applicationServices->getDbProvider());
 		$generator->generatePluginsSchema();
 
+		$applicationServices->getDbProvider()->closeConnection();
+
 		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
 		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
 
@@ -721,6 +724,8 @@ class PluginManager
 
 		$event->setName(static::composeEventName(static::EVENT_SETUP_FINALIZE, $eventType, $vendor, $name));
 		$this->getEventManager()->trigger($event);
+
+		$applicationServices->getDbProvider()->closeConnection();
 
 		foreach ($plugins as $plugin)
 		{

@@ -76,11 +76,11 @@ class CreateLocalizedDocument
 			return;
 		}
 
-		/* @var $document \Change\Documents\AbstractDocument */
+		/* @var $document \Change\Documents\AbstractDocument|Localizable */
 		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		$documentManager->pushLCID($LCID);
 
-		if ($document->isNew())
+		if ($document->getCurrentLocalization()->isNew())
 		{
 			$event->setParam('LCID', $LCID);
 			$this->create($event, $document, $properties);
@@ -88,7 +88,7 @@ class CreateLocalizedDocument
 		else
 		{
 			/* @var $document Localizable */
-			$definedLCIDArray = $document->getLocalizableFunctions()->getLCIDArray();
+			$definedLCIDArray = $document->getLCIDArray();
 			$supported = array_values(array_diff($event->getApplicationServices()->getI18nManager()->getSupportedLCIDs(), $definedLCIDArray));
 			$errorResult = new ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
 			$errorResult->addDataValue('value', $LCID);
@@ -131,7 +131,7 @@ class CreateLocalizedDocument
 
 		try
 		{
-			$document->create();
+			$document->save();
 			$event->setParam('LCID', $document->getLCID());
 
 			$getLocalizedDocument = new GetLocalizedDocument();
@@ -143,30 +143,25 @@ class CreateLocalizedDocument
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
 			}
 		}
-		catch (\Exception $e)
+		catch (\Change\Documents\PropertiesValidationException $e)
 		{
-			$code = $e->getCode();
-			if ($code && $code >= 52000 && $code < 53000)
+			$errors = $e->getPropertiesErrors();
+			$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
+			if (count($errors) > 0)
 			{
-				$errors = isset($e->propertiesErrors) ? $e->propertiesErrors : array();
-				$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
-				if (count($errors) > 0)
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$pe = array();
+				foreach ($errors as $propertyName => $errorsMsg)
 				{
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$pe = array();
-					foreach ($errors as $propertyName => $errorsMsg)
+					foreach ($errorsMsg as $errorMsg)
 					{
-						foreach ($errorsMsg as $errorMsg)
-						{
-							$pe[$propertyName][] = $i18nManager->trans($errorMsg);
-						}
+						$pe[$propertyName][] = $i18nManager->trans($errorMsg);
 					}
-					$errorResult->addDataValue('properties-errors', $pe);
 				}
-				$event->setResult($errorResult);
-				return;
+				$errorResult->addDataValue('properties-errors', $pe);
 			}
-			throw $e;
+			$event->setResult($errorResult);
+			return;
 		}
 	}
 }

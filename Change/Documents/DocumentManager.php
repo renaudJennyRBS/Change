@@ -23,6 +23,8 @@ class DocumentManager
 
 	const STATE_DELETED = 6;
 
+    const STATE_DELETING = 7;
+
 	/**
 	 * @var ApplicationServices
 	 */
@@ -198,7 +200,7 @@ class DocumentManager
 	/**
 	 * @api
 	 * @param AbstractDocument $document
-	 * @return array()
+	 * @return array
 	 */
 	public function loadMetas(AbstractDocument $document)
 	{
@@ -400,57 +402,8 @@ class DocumentManager
 	}
 
 	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @throws \InvalidArgumentException
-	 */
-	public function insertLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($document->getId() <= 0)
-		{
-			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId(), 51008);
-		}
-		elseif ($localizedPart->getPersistentState() != static::STATE_NEW)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-		if ($localizedPart->getId() !== $document->getId())
-		{
-			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_NEW);
-		}
-		$localizedPart->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
-
-		$model = $document->getDocumentModel();
-		$qb->insert($fb->getDocumentI18nTable($model->getRootName()));
-		$iq = $qb->insertQuery();
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if ($property->getLocalized() || $name === 'id')
-			{
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->addColumn($fb->getDocumentColumn($name));
-				$qb->addValue($fb->typedParameter($name, $dbType));
-				$iq->bindParameter($name, $property->getValue($document));
-			}
-		}
-
-		$iq->execute();
-		$localizedPart->setPersistentState(static::STATE_LOADED);
-	}
-
-	/**
 	 * @param AbstractDocument $document
+	 * @return boolean
 	 * @throws \InvalidArgumentException
 	 */
 	public function updateDocument(AbstractDocument $document)
@@ -461,39 +414,42 @@ class DocumentManager
 		}
 
 		$document->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
 		$model = $document->getDocumentModel();
-
-		$qb->update($fb->getDocumentTable($model->getRootName()));
-		$uq = $qb->updateQuery();
-		$execute = false;
+		$columns = array();
 		$relations = array();
 
 		foreach ($model->getNonLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
+			if ($property->getStateless() || !$document->isPropertyModified($name))
 			{
 				continue;
 			}
-			if ($document->isPropertyModified($name))
+
+			$type = $property->getType();
+			if ($type === Property::TYPE_DOCUMENTARRAY)
 			{
-				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
-				{
-					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
-				}
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType));
-				$uq->bindParameter($name, $property->getValue($document));
-				$execute = true;
+				$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
 			}
+			$columns[] = array($name, $type, $property->getValue($document));
 		}
 
-		if ($execute)
+		if (count($columns))
 		{
+			$qb = $this->getNewStatementBuilder();
+			$sqlMapping = $qb->getSqlMapping();
+			$fb = $qb->getFragmentBuilder();
+
+
+			$qb->update($fb->getDocumentTable($model->getRootName()));
+			$uq = $qb->updateQuery();
+			foreach($columns as $fieldData)
+			{
+				list($name, $type, $value) = $fieldData;
+				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $sqlMapping->getDbScalarType($type)));
+				$uq->bindParameter($name, $value);
+			}
+
 			$qb->where($fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id')));
 			$uq->bindParameter('id', $document->getId());
 			$uq->execute();
@@ -507,69 +463,9 @@ class DocumentManager
 				}
 			}
 		}
+
 		$document->setPersistentState(static::STATE_LOADED);
-	}
-
-	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @throws \InvalidArgumentException
-	 */
-	public function updateLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-		if ($localizedPart->getId() !== $document->getId())
-		{
-			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_LOADED);
-		}
-
-		$localizedPart->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
-		$model = $document->getDocumentModel();
-
-		$qb->update($sqlMapping->getDocumentI18nTableName($model->getRootName()));
-		$uq = $qb->updateQuery();
-		$execute = false;
-
-		foreach ($model->getLocalizedProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if ($localizedPart->isPropertyModified($name))
-			{
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType));
-				$uq->bindParameter($name, $property->getValue($localizedPart));
-				$execute = true;
-			}
-		}
-
-		if ($execute)
-		{
-			$qb->where(
-				$fb->logicAnd(
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id')),
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('LCID')), $fb->parameter('LCID'))
-				)
-
-			);
-			$uq->bindParameter('id', $localizedPart->getId());
-			$uq->bindParameter('LCID', $localizedPart->getLCID());
-			$uq->execute();
-		}
-
-		$localizedPart->setPersistentState(static::STATE_LOADED);
+		return count($columns) !== 0;
 	}
 
 	/**
@@ -683,130 +579,15 @@ class DocumentManager
 		{
 			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
 		}
-		$className = $this->getDocumentClassFromModel($model);
-		/* @var $newDocument AbstractDocument */
+		$className = $model->getDocumentClassName();
+
 		return new $className($this->getDocumentServices(), $model);
-	}
-
-	/**
-	 * @param AbstractModel $model
-	 * @return \Change\Documents\AbstractLocalizedDocument
-	 */
-	protected function createNewLocalizedDocumentInstance(AbstractModel $model)
-	{
-		$className = $this->getLocalizedDocumentClassFromModel($model);
-		return new $className($this);
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param string $LCID
-	 * @return \Change\Documents\AbstractLocalizedDocument
-	 */
-	public function getLocalizedDocumentInstanceByDocument(AbstractDocument $document, $LCID)
-	{
-		$model = $document->getDocumentModel();
-		$localizedPart = $this->createNewLocalizedDocumentInstance($model);
-		$localizedPart->initialize($document->getId(), $LCID, static::STATE_NEW);
-
-		if ($document->getPersistentState() != static::STATE_NEW)
-		{
-			$localizedPart->setPersistentState(static::STATE_LOADING);
-			$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getName());
-			if (!$qb->isCached())
-			{
-				$fb = $qb->getFragmentBuilder();
-				$qb->select()->from($fb->getDocumentI18nTable($model->getRootName()));
-				foreach ($model->getProperties() as $property)
-				{
-					/* @var $property \Change\Documents\Property */
-					if ($property->getStateless())
-					{
-						continue;
-					}
-					if ($property->getLocalized())
-					{
-						$qb->addColumn($fb->alias($fb->getDocumentColumn($property->getName()), $property->getName()));
-					}
-				}
-
-				$qb->where(
-					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
-						$fb->eq($fb->column('lcid'), $fb->parameter('lcid')
-						)
-					)
-				);
-			}
-
-			$q = $qb->query();
-			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);
-			$propertyBag = $q->getFirstResult();
-			if ($propertyBag)
-			{
-				$dbp = $q->getDbProvider();
-				$sqlMapping = $dbp->getSqlMapping();
-				foreach ($propertyBag as $propertyName => $dbValue)
-				{
-					if (($property = $model->getProperty($propertyName)) !== null)
-					{
-						$propVal = $dbp->dbToPhp($dbValue, $sqlMapping->getDbScalarType($property->getType()));
-						$property->setValue($localizedPart, $propVal);
-					}
-				}
-				$localizedPart->setPersistentState(static::STATE_LOADED);
-			}
-			elseif ($document->getPersistentState() == static::STATE_DELETED)
-			{
-				$localizedPart->setPersistentState(static::STATE_DELETED);
-			}
-			else
-			{
-				$localizedPart->setPersistentState(static::STATE_NEW);
-				$localizedPart->setDefaultValues($model);
-			}
-		}
-		else
-		{
-			$localizedPart->setDefaultValues($model);
-		}
-		return $localizedPart;
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @return string[]
-	 */
-	public function getLocalizedDocumentLCIDArray(AbstractDocument $document)
-	{
-		if ($document->getId() <= 0)
-		{
-			return array();
-		}
-
-		$model = $document->getDocumentModel();
-		$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getRootName());
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->alias($fb->getDocumentColumn('LCID'), 'lc'))
-				->from($fb->getDocumentI18nTable($model->getRootName()))
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
-		}
-
-		$q = $qb->query();
-		$q->bindParameter('id', $document->getId());
-		$rows = $q->getResults();
-		return array_map(function ($row)
-		{
-			return $row['lc'];
-		}, $rows);
 	}
 
 	/**
 	 * @param integer $documentId
 	 * @param AbstractModel $model
-	 * @return AbstractDocument|null
+	 * @return \Change\Documents\AbstractDocument|null
 	 */
 	public function getDocumentInstance($documentId, AbstractModel $model = null)
 	{
@@ -921,26 +702,6 @@ class DocumentManager
 	}
 
 	/**
-	 * @param AbstractModel $model
-	 * @return string
-	 */
-	protected function getDocumentClassFromModel($model)
-	{
-		return '\\' . implode('\\',
-			array($model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName()));
-	}
-
-	/**
-	 * @param AbstractModel $model
-	 * @return string
-	 */
-	protected function getLocalizedDocumentClassFromModel($model)
-	{
-		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents',
-			'Localized' . $model->getShortName()));
-	}
-
-	/**
 	 * @param AbstractDocument $document
 	 * @param array $backupData
 	 * @return integer
@@ -1040,82 +801,6 @@ class DocumentManager
 		return $rowCount;
 	}
 
-	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @return integer|boolean
-	 * @throws \InvalidArgumentException
-	 */
-	public function deleteLocalizedDocuments(AbstractDocument $document)
-	{
-		if ($document->getPersistentState() != static::STATE_DELETED)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
-		}
-
-		$model = $document->getDocumentModel();
-		$rowCount = false;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{
-			$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-			if (!$qb->isCached())
-			{
-
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
-					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
-			}
-
-			$dq = $qb->deleteQuery();
-			$dq->bindParameter('id', $document->getId());
-
-			$rowCount = $dq->execute();
-			$document->getLocalizableFunctions()->unsetLocalizedPart();
-		}
-		return $rowCount;
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @return integer|boolean
-	 * @throws \InvalidArgumentException
-	 */
-	public function deleteLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-
-		$model = $document->getDocumentModel();
-		$rowCount = false;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{
-			$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-			if (!$qb->isCached())
-			{
-
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
-					->where(
-						$fb->logicAnd(
-							$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
-							$fb->eq($fb->getDocumentColumn('LCID'), $fb->parameter('LCID')))
-					);
-
-			}
-			$dq = $qb->deleteQuery();
-			$dq->bindParameter('id', $document->getId());
-			$dq->bindParameter('LCID', $localizedPart->getLCID());
-
-			$rowCount = $dq->execute();
-			$document->getLocalizableFunctions()->unsetLocalizedPart($localizedPart);
-		}
-		return $rowCount;
-	}
-
 	// Working lang.
 
 	/**
@@ -1164,12 +849,18 @@ class DocumentManager
 	 */
 	public function popLCID($exception = null)
 	{
-		// FIXME: what if the exception was raized by pushLCID (and so no lang was pushed)?
 		if ($this->getLCIDStackSize() === 0)
 		{
-			throw new \LogicException('Invalid LCID Stack size', 51013);
+			if ($exception === null)
+			{
+				$exception = new \LogicException('Invalid LCID Stack size', 51013);
+			}
 		}
-		array_pop($this->LCIDStack);
+		else
+		{
+			array_pop($this->LCIDStack);
+		}
+
 		if ($exception !== null)
 		{
 			throw $exception;

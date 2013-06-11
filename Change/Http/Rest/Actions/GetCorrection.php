@@ -16,7 +16,7 @@ class GetCorrection
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function getDocument($event)
 	{
@@ -59,14 +59,16 @@ class GetCorrection
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
+
+		/* @var $document \Change\Documents\Interfaces\Correction */
 		if ($LCID)
 		{
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				if ($document->getCorrectionFunctions()->hasCorrection())
+				if ($document->hasCorrection())
 				{
-					$this->doGetCorrection($event, $document, $document->getCorrectionFunctions()->getCorrection());
+					$this->doGetCorrection($event, $document, $document->getCurrentCorrection());
 				}
 				$documentManager->popLCID();
 			}
@@ -77,9 +79,9 @@ class GetCorrection
 		}
 		else
 		{
-			if ($document->getCorrectionFunctions()->hasCorrection())
+			if ($document->hasCorrection())
 			{
-				$correction = $document->getCorrectionFunctions()->getCorrection();
+				$correction = $document->getCurrentCorrection();
 				$this->doGetCorrection($event, $document, $correction);
 			}
 		}

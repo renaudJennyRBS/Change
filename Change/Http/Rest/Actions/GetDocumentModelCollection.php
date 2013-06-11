@@ -3,6 +3,7 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentCollection;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
@@ -209,9 +210,10 @@ class GetDocumentModelCollection
 	 */
 	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
 	{
+		$dm = $document->getDocumentServices()->getDocumentManager();
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentServices()->getDocumentManager()->pushLCID($documentLink->getLCID());
+			$dm->pushLCID($documentLink->getLCID());
 		}
 
 		$model = $document->getDocumentModel();
@@ -236,10 +238,10 @@ class GetDocumentModelCollection
 			$documentLink->setProperty($model->getProperty('LCID'));
 		}
 
-		if ($model->useCorrection())
+		if ($document instanceof Correction)
 		{
-			$cf = $document->getCorrectionFunctions();
-			if ($cf->hasCorrection())
+			/* @var $document AbstractDocument|Correction */
+			if ($document->hasCorrection())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$documentLink->setProperty('actions', array($l));
@@ -260,7 +262,7 @@ class GetDocumentModelCollection
 
 		if ($documentLink->getLCID())
 		{
-			$document->getDocumentServices()->getDocumentManager()->popLCID();
+			$dm->popLCID();
 		}
 		return $documentLink;
 	}

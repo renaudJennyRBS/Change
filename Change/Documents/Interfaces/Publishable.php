@@ -80,8 +80,47 @@ interface Publishable
 	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null);
 
 	/**
-	 * @api
-	 * @return \Change\Documents\PublishableFunctions
+	 * @return boolean
 	 */
-	public function getPublishableFunctions();
+	public function published();
+
+	/**
+	 * @return boolean
+	 */
+	public function canStartValidation();
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function startValidation();
+
+	/**
+	 * @return boolean
+	 */
+	public function canStartPublication();
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function startPublication();
+
+	/**
+	 * @return boolean
+	 */
+	public function canDeactivate();
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function deactivate();
+
+	/**
+	 * @return boolean
+	 */
+	public function canActivate();
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function activate();
 }

@@ -54,7 +54,7 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 
 		$preferredWebsite = ($this->pathRule) ? $this->pathRule->getWebsite() : null;
-		$section = $document->getPublishableFunctions()->getDefaultSection($preferredWebsite);
+		$section = $document->getDefaultSection($preferredWebsite);
 		if ($section === null)
 		{
 			return null;

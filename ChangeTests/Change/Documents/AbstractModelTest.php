@@ -9,7 +9,6 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		static::initDocumentsClasses();
 	}
-
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
@@ -42,7 +41,7 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($modelBasic->hasDescendants());
 		$this->assertTrue($modelBasic->useTree());
 		$this->assertCount(0, $modelBasic->getDescendantsNames());
-		$this->assertNull($modelBasic->getInjectedBy());
+		$this->assertNull($modelBasic->getReplacedBy());
 		$this->assertFalse($modelBasic->hasParent());
 		$this->assertNull($modelBasic->getParentName());
 		$this->assertCount(0, $modelBasic->getAncestorsNames());

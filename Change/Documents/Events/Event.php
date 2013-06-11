@@ -6,6 +6,7 @@ namespace Change\Documents\Events;
  */
 class Event extends \Zend\EventManager\Event
 {
+    const EVENT_LOADED      	= 'documents.loaded';
 	const EVENT_CREATE      	= 'documents.create';
 	const EVENT_CREATED      	= 'documents.created';
 	const EVENT_UPDATE       	= 'documents.update';

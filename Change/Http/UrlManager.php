@@ -115,7 +115,7 @@ class UrlManager
 		}
 		if (!is_string($pathInfo))
 		{
-			$pathInfo = $this->basePath;
+			$pathInfo = ($this->basePath ? $this->basePath : '/');
 		}
 		elseif (strpos($pathInfo, '/') !== 0)
 		{
@@ -135,7 +135,7 @@ class UrlManager
 		$documentPathPrefix = $document->getDocumentModelName();
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$section = $document->getPublishableFunctions()->getDefaultSection();
+			$section = $document->getDefaultSection();
 			if ($section === null)
 			{
 				return null;
