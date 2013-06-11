@@ -55,7 +55,7 @@ abstract class AbstractModel
 	/**
 	 * @var string
 	 */
-	protected $injectedBy;
+	protected $replacedBy;
 
 	/**
 	 * @param ModelManager $modelManager
@@ -251,9 +251,9 @@ abstract class AbstractModel
 	 * @api
 	 * @return string|null
 	 */
-	public function getInjectedBy()
+	public function getReplacedBy()
 	{
-		return $this->injectedBy;
+		return $this->replacedBy;
 	}
 
 	/**
@@ -303,11 +303,13 @@ abstract class AbstractModel
 	protected function loadProperties()
 	{
 		$this->properties = array();
-		$p = $this->properties['id'] = new \Change\Documents\Property('id', 'Integer');
-		$p->setRequired(true);
 
-		$p = $this->properties['model'] = new \Change\Documents\Property('model', 'String');
-		$p->setRequired(true)->setDefaultValue($this->getName());
+		$p = new Property('id', 'Integer');
+		$this->properties['id'] = $p->setRequired(true);
+
+		$p =  new Property('model', 'String');
+		$this->properties['model'] = $p->setRequired(true)->setDefaultValue($this->getName());
+
 	}
 
 	/**
@@ -325,7 +327,7 @@ abstract class AbstractModel
 	 */
 	public function getLocalizedProperties()
 	{
-		return array_filter($this->properties, function (\Change\Documents\Property $property)
+		return array_filter($this->properties, function (Property $property)
 		{
 			return $property->getLocalized();
 		});
@@ -339,7 +341,7 @@ abstract class AbstractModel
 	{
 		if ($this->isLocalized())
 		{
-			return array_filter($this->properties, function (\Change\Documents\Property $property)
+			return array_filter($this->properties, function (Property $property)
 			{
 				return !$property->getLocalized();
 			});
@@ -353,7 +355,7 @@ abstract class AbstractModel
 	 */
 	public function getPropertiesWithCorrection()
 	{
-		return array_filter($this->properties, function (\Change\Documents\Property $property)
+		return array_filter($this->properties, function (Property $property)
 		{
 			return $property->getHasCorrection();
 		});
@@ -365,7 +367,7 @@ abstract class AbstractModel
 	 */
 	public function getLocalizedPropertiesWithCorrection()
 	{
-		return array_filter($this->properties, function (\Change\Documents\Property $property)
+		return array_filter($this->properties, function (Property $property)
 		{
 			return $property->getLocalized() && $property->getHasCorrection();
 		});
@@ -379,7 +381,7 @@ abstract class AbstractModel
 	{
 		if ($this->isLocalized())
 		{
-			return array_filter($this->properties, function (\Change\Documents\Property $property)
+			return array_filter($this->properties, function (Property $property)
 			{
 				return !$property->getLocalized() && $property->getHasCorrection();
 			});
@@ -393,7 +395,7 @@ abstract class AbstractModel
 	 */
 	public function getIndexedProperties()
 	{
-		return array_filter($this->properties, function (\Change\Documents\Property $property)
+		return array_filter($this->properties, function (Property $property)
 		{
 			return $property->isIndexed();
 		});
@@ -440,7 +442,6 @@ abstract class AbstractModel
 	{
 		foreach ($this->getProperties() as $property)
 		{
-			/* @var $property \Change\Documents\Property */
 			if ($property->getCascadeDelete())
 			{
 				return true;
@@ -519,6 +520,18 @@ abstract class AbstractModel
 		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.' . $this->getShortName()
 			. '.document-name');
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	abstract function getDocumentClassName();
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	abstract function getLocalizedDocumentClassName();
 
 	/**
 	 * @return string

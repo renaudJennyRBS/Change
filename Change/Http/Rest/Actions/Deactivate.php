@@ -94,7 +94,7 @@ class Deactivate
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->deactivate();
+			$document->deactivate();
 			$result = new ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

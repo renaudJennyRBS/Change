@@ -94,7 +94,7 @@ class Activate
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->activate();
+			$document->activate();
 			$result = new ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

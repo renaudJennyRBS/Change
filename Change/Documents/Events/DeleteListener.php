@@ -95,7 +95,7 @@ class DeleteListener
 		if (count($localized) && $document instanceof Localizable)
 		{
 			$datas['LCID'] = array();
-			foreach ($document->getLocalizableFunctions()->getLCIDArray() as $LCID)
+			foreach ($document->getLCIDArray() as $LCID)
 			{
 				$dm->pushLCID($LCID);
 				$datas['LCID'][$LCID] = array();

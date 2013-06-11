@@ -650,6 +650,11 @@ class Property
 			}
 		}
 
+		if ($this->hasCorrection)
+		{
+			$model->getRoot()->implementCorrection(true);
+		}
+
 		$ancestors = $this->getAncestors();
 		if ($model->checkLocalized())
 		{

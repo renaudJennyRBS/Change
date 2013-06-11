@@ -18,7 +18,8 @@ class BaseDocumentClass
 	 * @param string $compilationPath
 	 * @return boolean
 	 */
-	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model, $compilationPath)
+	public function savePHPCode(\Change\Documents\Generators\Compiler $compiler, \Change\Documents\Generators\Model $model,
+		$compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $model);
 		$nsParts = explode('\\', $model->getNameSpace());
@@ -37,23 +38,41 @@ class BaseDocumentClass
 	{
 		$this->compiler = $compiler;
 		$code = '<' . '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		if (!$model->getReplace())
-		{
-			$code .= '/**
+		$code .= '
+/**
  * @name ' . $model->getBaseDocumentClassName() . '
- * @method ' . $model->getModelClassName() . ' getDocumentModel()
- */' . PHP_EOL;
-		}
+ * @method ' . $model->getModelClassName() . ' getDocumentModel()'. PHP_EOL .
+			($model->checkLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getCurrentLocalization()'. PHP_EOL : '') .
+' */' . PHP_EOL;
 
-		$extendModel = $model->getExtendedModel();
-		$extend = $extendModel ? $extendModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
+		$parentModel = $model->getParent();
+		$extend = $parentModel ? $parentModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
 
 		$interfaces = array();
+		$uses = array();
+
+		if ($model->getExtends() === null)
+		{
+			if ($model->getStateless())
+			{
+				$uses[] = '\Change\Documents\Traits\Stateless';
+			}
+			else
+			{
+				$uses[] = '\Change\Documents\Traits\DbStorage';
+				if ($model->implementCorrection())
+				{
+					$interfaces[] = '\Change\Documents\Interfaces\Correction';
+					$uses[] = '\Change\Documents\Traits\Correction';
+				}
+			}
+		}
 
 		// implements , 
 		if ($model->getLocalized())
 		{
 			$interfaces[] = '\Change\Documents\Interfaces\Localizable';
+			$uses[] = '\Change\Documents\Traits\Localized';
 		}
 		if ($model->getEditable())
 		{
@@ -62,6 +81,7 @@ class BaseDocumentClass
 		if ($model->getPublishable())
 		{
 			$interfaces[] = '\Change\Documents\Interfaces\Publishable';
+			$uses[] = '\Change\Documents\Traits\Publication';
 		}
 		if ($model->getUseVersion())
 		{
@@ -75,8 +95,12 @@ class BaseDocumentClass
 
 		$code .= 'abstract class ' . $model->getShortBaseDocumentClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{' . PHP_EOL;
-		$properties = $this->getMemberProperties($model);
+		if (count($uses))
+		{
+			$code .= '	use ' . implode(', ', $uses) . ';'. PHP_EOL;
+		}
 
+		$properties = $this->getMemberProperties($model);
 
 		if (count($properties))
 		{
@@ -111,16 +135,6 @@ class BaseDocumentClass
 			}
 		}
 
-		if ($model->getLocalized())
-		{
-			$code .= $this->getLocalizableInterface($model);
-		}
-
-		if ($model->getPublishable())
-		{
-			$code .= $this->getPublishableInterface($model);
-		}
-
 		if ($model->getEditable())
 		{
 			$code .= $this->getEditableInterface($model);
@@ -130,7 +144,6 @@ class BaseDocumentClass
 		$this->compiler = null;
 		return $code;
 	}
-
 
 	/**
 	 * @param mixed $value
@@ -145,7 +158,6 @@ class BaseDocumentClass
 		}
 		return var_export($value, true);
 	}
-
 
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -166,159 +178,6 @@ class BaseDocumentClass
 
 		return $code;
 	}
-
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getPublishableInterface($model)
-	{
-		$code = '
-	/**
-	 * @var \Change\Documents\PublishableFunctions
-	 */
-	protected $publishableFunctions;
-
-	/**
-	 * @api
-	 * @return \Change\Documents\PublishableFunctions
-	 */
-	public function getPublishableFunctions()
-	{
-		if ($this->publishableFunctions === null)
-		{
-			$this->publishableFunctions = new \Change\Documents\PublishableFunctions($this);
-		}
-		return $this->publishableFunctions;
-	}
-
-	/**
-	 * @api
-	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
-	 * @return \Change\Presentation\Interfaces\Section
-	 */
-	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null)
-	{
-		$sections = $this->getPublicationSections();
-		if (count($sections) == 0)
-		{
-			return null;
-		}
-		if ($preferredWebsite == null)
-		{
-			return $sections[0];
-		}
-		foreach ($sections as $section)
-		{
-			if ($section->getWebsite() === $preferredWebsite)
-			{
-				return $section;
-			}
-		}
-		return $sections[0];
-	}' . PHP_EOL;
-
-		return $code;
-	}
-
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getLocalizableInterface($model)
-	{
-		$class = $model->getDocumentLocalizedClassName();
-		$code = '
-	/**
-	 * @var \Change\Documents\LocalizableFunctions
-	 */
-	protected $localizableFunctions;
-
-	/**
-	 * @return \Change\Documents\LocalizableFunctions
-	 */
-	public function getLocalizableFunctions()
-	{
-		if ($this->localizableFunctions === null)
-		{
-			$this->localizableFunctions = new \Change\Documents\LocalizableFunctions($this);
-		}
-		return $this->localizableFunctions;
-	}
-
-	/**
-	 * @return ' . $class . '
-	 */
-	public function getCurrentLocalizedPart()
-	{
-	 	return $this->getLocalizableFunctions()->getCurrent();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isDeleted()
-	{
-		return $this->getCurrentLocalizedPart()->isDeleted();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isNew()
-	{
-		return $this->getCurrentLocalizedPart()->isNew();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasModifiedProperties()
-	{
-		return parent::hasModifiedProperties() || $this->getCurrentLocalizedPart()->hasModifiedProperties();
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	public function isPropertyModified($propertyName)
-	{
-		return parent::isPropertyModified($propertyName) || $this->getCurrentLocalizedPart()->isPropertyModified($propertyName);
-	}
-
-	/**
-	 * @api
-	 * @return string[]
-	 */
-	public function getModifiedPropertyNames()
-	{
-		return array_merge(parent::getModifiedPropertyNames(), $this->getCurrentLocalizedPart()->getModifiedPropertyNames());
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 */
-	public function removeOldPropertyValue($propertyName)
-	{
-		$localizedPart = $this->getCurrentLocalizedPart();
-		if ($localizedPart->isPropertyModified($propertyName))
-		{
-			$localizedPart->removeOldPropertyValue($propertyName);
-		}
-		else
-		{
-			parent::removeOldPropertyValue($propertyName);
-		}
-	}' . PHP_EOL;
-		return $code;
-	}
-
 
 	/**
 	 * @param \Change\Documents\Generators\Model $model
@@ -348,8 +207,13 @@ class BaseDocumentClass
 		$resetProperties = array();
 		if ($model->getLocalized())
 		{
-			$resetProperties[] = '		$this->getLocalizableFunctions()->reset();';
+			$resetProperties[] = '		$this->resetCurrentLocalized();';
 		}
+		if ($model->implementCorrection())
+		{
+			$resetProperties[] = '		$this->corrections = null;';
+		}
+
 		$code = '';
 		foreach ($properties as $property)
 		{
@@ -370,9 +234,9 @@ class BaseDocumentClass
 	/**
 	 * @api
 	 */
-	public function reset()
+	public function unsetProperties()
 	{
-		parent::reset();' . PHP_EOL . implode(PHP_EOL, $resetProperties) . '
+		parent::unsetProperties();' . PHP_EOL . implode(PHP_EOL, $resetProperties) . '
 	}' . PHP_EOL;
 
 		return $code;
@@ -412,7 +276,6 @@ class BaseDocumentClass
 		}
 	}
 
-
 	/**
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
@@ -446,7 +309,8 @@ class BaseDocumentClass
 	 */
 	protected function buildValConverter($property, $varName)
 	{
-		return $varName . ' = $this->convertToInternalValue(' . $varName . ', '.$this->escapePHPValue($property->getType()).')';
+		return
+			$varName . ' = $this->convertToInternalValue(' . $varName . ', ' . $this->escapePHPValue($property->getType()) . ')';
 	}
 
 	/**
@@ -493,7 +357,6 @@ class BaseDocumentClass
 		}
 	}
 
-
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property $property
@@ -538,11 +401,7 @@ class BaseDocumentClass
 			return;
 		}
 		$this->load();
-		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
-		{
-			' . $mn . ' = ' . $var . ';
-		}
-		elseif (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
+		if (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
 		{
 			if ($this->isPropertyModified(' . $en . '))
 			{
@@ -564,8 +423,6 @@ class BaseDocumentClass
 		return $code;
 	}
 
-
-
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property $property
@@ -585,7 +442,7 @@ class BaseDocumentClass
 	 */
 	public function get' . $un . '()
 	{
-		$localizedPart = $this->getCurrentLocalizedPart();
+		$localizedPart = $this->getCurrentLocalization();
 		return $localizedPart->get' . $un . '();
 	}
 
@@ -594,7 +451,7 @@ class BaseDocumentClass
 	 */
 	public function get' . $un . 'OldValue()
 	{
-		return $this->getCurrentLocalizedPart()->get' . $un . 'OldValue();
+		return $this->getOldPropertyValue(' . $en . ');
 	}';
 
 		if ($name === 'LCID')
@@ -618,9 +475,16 @@ class BaseDocumentClass
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
-		$localizedPart = $this->getCurrentLocalizedPart();
+		$this->load();
+		' . $this->buildValConverter($property, $var) . ';
+		$localizedPart = $this->getCurrentLocalization();
 		if ($localizedPart->set' . $un . '(' . $var . '))
 		{
+			$this->removeOldPropertyValue(' . $en . ');
+			if ($localizedPart->isPropertyModified(' . $en . '))
+			{
+				$this->setOldPropertyValue(' . $en . ', $localizedPart->get' . $un . 'OldValue());
+			}
 			$this->propertyChanged(' . $en . ');
 		}
 	}';
@@ -666,7 +530,7 @@ class BaseDocumentClass
 		}
 		else
 		{
-		$code[] = '
+			$code[] = '
 	/**
 	 * @return ' . $ct . '
 	 */
@@ -836,11 +700,7 @@ class BaseDocumentClass
 		}
 		$this->load();
 		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : null;
-		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
-		{
-			' . $mn . ' = $newId;
-		}
-		elseif (' . $mn . ' !== $newId)
+		if (' . $mn . ' !== $newId)
 		{
 			if ($this->isPropertyModified(' . $en . '))
 			{
@@ -1059,11 +919,7 @@ class BaseDocumentClass
 	 */
 	protected function setInternal' . $un . 'Ids(array $newValueIds)
 	{
-		if ($this->getPersistentState() != \Change\Documents\DocumentManager::STATE_LOADED)
-		{
-			' . $mn . ' = $newValueIds;
-		}
-		elseif (' . $mn . ' != $newValueIds)
+		if (' . $mn . ' != $newValueIds)
 		{
 			if ($this->isPropertyModified(' . $en . '))
 			{

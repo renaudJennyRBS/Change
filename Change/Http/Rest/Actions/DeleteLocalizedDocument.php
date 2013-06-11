@@ -66,7 +66,7 @@ class DeleteLocalizedDocument
 			$documentManager->pushLCID($LCID);
 
 			/* @var $document Localizable */
-			$document->getLocalizableFunctions()->delete();
+			$document->deleteCurrentLocalization();
 
 			$result = new Result();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);

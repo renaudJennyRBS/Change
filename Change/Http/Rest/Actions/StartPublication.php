@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\ArrayResult;
@@ -17,7 +18,7 @@ class StartPublication
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|Publishable|null
+	 * @return AbstractDocument|Publishable|null
 	 */
 	protected function getDocument($event)
 	{
@@ -95,7 +96,8 @@ class StartPublication
 		$oldStatus = $document->getPublicationStatus();
 		try
 		{
-			$document->getPublishableFunctions()->startPublication();
+			/* @var $document AbstractDocument|Publishable */
+			$document->startPublication();
 			$result = new ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

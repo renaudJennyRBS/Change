@@ -77,9 +77,12 @@ class GetDocument
 	{
 		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
 
-		if ($document->getDocumentModel()->useCorrection() && $document->getCorrectionFunctions()->hasCorrection())
+		if ($document instanceof \Change\Documents\Interfaces\Correction)
 		{
-			$parts[] = $document->getCorrectionFunctions()->getCorrection()->getStatus();
+			if ($document->hasCorrection())
+			{
+				$parts[] = $document->getCurrentCorrection()->getStatus();
+			}
 		}
 
 		if ($document instanceof Editable)
@@ -94,7 +97,7 @@ class GetDocument
 
 		if ($document instanceof Localizable)
 		{
-			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
+			$parts = array_merge($parts, $document->getLCIDArray());
 		}
 
 		if ($logging)
@@ -171,52 +174,48 @@ class GetDocument
 	{
 		if ($document->getDocumentModel()->useCorrection())
 		{
-			if ($document->getCorrectionFunctions()->hasCorrection())
+			/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
+			$correction = $document->getCurrentCorrection();
+			if ($correction)
 			{
-				$correction = $document->getCorrectionFunctions()->getCorrection();
-				if ($correction)
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-					$result->addAction($l);
+				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$result->addAction($l);
 
-					if ($correction->getStatus() === Correction::STATUS_DRAFT)
-					{
-						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
-						$result->addAction($l);
-					}
-					elseif ($correction->getStatus() === Correction::STATUS_VALIDATION)
-					{
-						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
-						$result->addAction($l);
-					}
+				if ($correction->getStatus() === Correction::STATUS_DRAFT)
+				{
+					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
+					$result->addAction($l);
+				}
+				elseif ($correction->getStatus() === Correction::STATUS_VALIDATION)
+				{
+					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
+					$result->addAction($l);
 				}
 			}
 		}
 
 		if ($document instanceof Publishable)
 		{
-			$pf = $document->getPublishableFunctions();
-
-			/* @var $document \Change\Documents\AbstractDocument */
-			if ($pf->canStartValidation())
+			/* @var $document Publishable|\Change\Documents\AbstractDocument */
+			if ($document->canStartValidation())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
 				$result->addAction($l);
 			}
 
-			if ($pf->canStartPublication())
+			if ($document->canStartPublication())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
 				$result->addAction($l);
 			}
 
-			if ($pf->canActivate())
+			if ($document->canActivate())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'activate');
 				$result->addAction($l);
 			}
 
-			if ($pf->canDeactivate())
+			if ($document->canDeactivate())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
 				$result->addAction($l);

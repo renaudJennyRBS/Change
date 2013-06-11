@@ -5,17 +5,17 @@ namespace Change\Documents\Generators;
  * @name \Change\Documents\Generators\Model
  */
 class Model
-{	
+{
 	/**
 	 * @var string
 	 */
 	protected $vendor;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $shortModuleName;
-	
+
 	/**
 	 * @var string
 	 */
@@ -35,89 +35,99 @@ class Model
 	 * @var string
 	 */
 	protected $treeName;
-	
+
 	/**
 	 * @var \Change\Documents\Generators\Model
 	 */
 	protected $parent;
-	
+
 	/**
 	 * @var \Change\Documents\Generators\Model
 	 */
 	protected $extendedModel;
-	
+
 	/**
 	 * @var Property
 	 */
 	protected $properties = array();
-	
+
 	/**
 	 * @var InverseProperty
 	 */
-	protected $inverseProperties = array();	
-	
+	protected $inverseProperties = array();
+
 	/**
 	 * @var string
 	 */
 	protected $extends;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $replace;
 
 	/**
+	 * @var string|null
+	 */
+	protected $replacedBy;
+
+	/**
 	 * @var boolean
 	 */
 	protected $localized;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $icon;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $hasUrl;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $frontofficeIndexable;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $backofficeIndexable;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $publishable;
-		
+
 	/**
 	 * @var boolean
 	 */
 	protected $useVersion;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $editable;
-		
+
+	/**
+	 * @var boolean
+	 */
+	protected $implementCorrection = false;
+
 	/**
 	 * @param string $vendor
 	 * @param string $shortModuleName
 	 * @param string $shortName
 	 */
-	public function __construct($vendor, $shortModuleName, $shortName)	
+	public function __construct($vendor, $shortModuleName, $shortName)
 	{
 		$this->vendor = $vendor;
 		$this->shortModuleName = $shortModuleName;
 		$this->shortName = $shortName;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -125,7 +135,7 @@ class Model
 	{
 		return $this->vendor;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -133,7 +143,7 @@ class Model
 	{
 		return $this->shortModuleName;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -141,7 +151,7 @@ class Model
 	{
 		return $this->shortName;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -170,7 +180,8 @@ class Model
 							$this->importProperties($xmlSectionNode);
 							break;
 						default:
-							throw new \RuntimeException('Invalid properties node name ' . $this . ' ' . $xmlSectionNode->localName, 54008);
+							throw new \RuntimeException('Invalid properties node name ' . $this . ' '
+							. $xmlSectionNode->localName, 54008);
 					}
 				}
 			}
@@ -186,10 +197,9 @@ class Model
 		if ($xmlElement->localName !== 'document')
 		{
 			throw new \RuntimeException('Invalid document element name ' . $this, 54009);
-			return;
 		}
-	
-		foreach($xmlElement->attributes as $attribute)
+
+		foreach ($xmlElement->attributes as $attribute)
 		{
 			$name = $attribute->nodeName;
 			$value = $attribute->nodeValue;
@@ -197,7 +207,7 @@ class Model
 			if ($tv == '' || $tv != $value)
 			{
 				throw new \RuntimeException('Invalid empty attribute value for ' . $this . ' ' . $name, 54010);
-			}	
+			}
 			switch ($name)
 			{
 				case "stateless":
@@ -207,7 +217,7 @@ class Model
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "abstract":
@@ -256,7 +266,7 @@ class Model
 					{
 						if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
 						{
-							throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+							throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 						}
 						$this->treeName = $value;
 					}
@@ -269,8 +279,8 @@ class Model
 					break;
 			}
 		}
-		
-		if ($this->localized === false || $this->editable === false  || $this->publishable === false  || $this->replace === false)
+
+		if ($this->localized === false || $this->editable === false || $this->publishable === false || $this->replace === false)
 		{
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
@@ -282,8 +292,12 @@ class Model
 				$this->backofficeIndexable = false;
 			}
 
-			if  ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
-				|| $this->localized || $this->editable || $this->publishable || $this->useVersion)
+			if ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
+				|| $this->localized
+				|| $this->editable
+				|| $this->publishable
+				|| $this->useVersion
+			)
 			{
 				throw new \RuntimeException('Property stateless can not be applicable', 54024);
 			}
@@ -308,7 +322,7 @@ class Model
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid property node name ' . $this. ' ' . $xmlProperty->nodeName, 54013);
+					throw new \RuntimeException('Invalid property node name ' . $this . ' ' . $xmlProperty->nodeName, 54013);
 				}
 			}
 		}
@@ -322,7 +336,7 @@ class Model
 	{
 		if (isset($this->properties[$property->getName()]))
 		{
-			throw new \RuntimeException('Duplicate property name ' . $this. '::'. $property->getName(), 54014);
+			throw new \RuntimeException('Duplicate property name ' . $this . '::' . $property->getName(), 54014);
 		}
 		$this->properties[$property->getName()] = $property;
 	}
@@ -334,7 +348,7 @@ class Model
 	{
 		if (strlen($this->getName()) > 50)
 		{
-			throw new \RuntimeException('Invalid document element name ' . $this .' too long', 54009);
+			throw new \RuntimeException('Invalid document element name ' . $this . ' too long', 54009);
 		}
 		if ($this->extends)
 		{
@@ -346,11 +360,11 @@ class Model
 			{
 				if ($this->publishable)
 				{
-					throw new \RuntimeException('inject ' .$this . ' as invalid publishable attribute', 54016);
+					throw new \RuntimeException('inject ' . $this . ' as invalid publishable attribute', 54016);
 				}
 				if ($this->useVersion)
 				{
-					throw new \RuntimeException('inject ' .$this . ' as invalid use-version attribute', 54017);
+					throw new \RuntimeException('inject ' . $this . ' as invalid use-version attribute', 54017);
 				}
 			}
 		}
@@ -360,25 +374,25 @@ class Model
 			{
 				throw new \RuntimeException('Invalid inject attribute ' . $this, 54018);
 			}
-			
+
 			$creationDate = new Property($this, 'creationDate', 'DateTime');
 			$creationDate->setDefaultValue('now');
 			$this->properties[$creationDate->getName()] = $creationDate;
-			
+
 			$modificationDate = new Property($this, 'modificationDate', 'DateTime');
 			$modificationDate->setDefaultValue('now');
 			$this->properties[$modificationDate->getName()] = $modificationDate;
-			
+
 			if ($this->localized)
 			{
 				$property = new Property($this, 'refLCID', 'String');
 				$this->properties[$property->getName()] = $property;
-				
+
 				$property = new Property($this, 'LCID', 'String');
 				$this->properties[$property->getName()] = $property;
 			}
 		}
-		
+
 		if ($this->editable)
 		{
 			if (!isset($this->properties['label']))
@@ -386,7 +400,7 @@ class Model
 				$property = new Property($this, 'label', 'String');
 				$this->properties[$property->getName()] = $property;
 			}
-			
+
 			$property = new Property($this, 'authorName', 'String');
 			$this->properties[$property->getName()] = $property;
 
@@ -395,9 +409,8 @@ class Model
 
 			$property = new Property($this, 'documentVersion', 'Integer');
 			$this->properties[$property->getName()] = $property;
-
 		}
-		
+
 		if ($this->publishable)
 		{
 			if (!isset($this->properties['title']))
@@ -415,33 +428,32 @@ class Model
 
 			$property = new Property($this, 'publicationStatus', 'String');
 			$this->properties[$property->getName()] = $property;
-			
+
 			$creationDate = new Property($this, 'startPublication', 'DateTime');
 			$this->properties[$creationDate->getName()] = $creationDate;
-			
+
 			$property = new Property($this, 'endPublication', 'DateTime');
 			$this->properties[$property->getName()] = $property;
 		}
-		
+
 		if ($this->useVersion)
 		{
 			$property = new Property($this, 'versionOfId', 'DocumentId');
 			$this->properties[$property->getName()] = $property;
 		}
-			
+
 		foreach ($this->properties as $property)
 		{
 			/* @var $property Property */
 			$property->validate();
 		}
 	}
-	
-	
+
 	/**
 	 * @throws \Exception
 	 */
 	public function validateInheritance()
-	{	
+	{
 		if ($this->getUseVersion() !== null)
 		{
 			if ($this->checkAncestorUseVersion())
@@ -449,7 +461,7 @@ class Model
 				throw new \RuntimeException('Duplicate use-version attribute on ' . $this, 54019);
 			}
 		}
-		
+
 		if ($this->getPublishable() !== null)
 		{
 			if ($this->checkAncestorPublishable())
@@ -478,15 +490,14 @@ class Model
 				$this->properties[$property->getName()] = $property;
 			}
 		}
-		
+
 		foreach ($this->properties as $property)
 		{
 			/* @var $property Property */
 			$property->validateInheritance();
 		}
 	}
-	
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Model
 	 */
@@ -554,7 +565,7 @@ class Model
 		}
 		return array();
 	}
-	
+
 	/**
 	 * @return InverseProperty
 	 */
@@ -571,7 +582,7 @@ class Model
 	{
 		return isset($this->inverseProperties[$name]) ? $this->inverseProperties[$name] : null;
 	}
-	
+
 	/**
 	 * @param InverseProperty $inverseProperty
 	 * @return \Change\Documents\Generators\InverseProperty
@@ -588,7 +599,6 @@ class Model
 	{
 		return $this->stateless;
 	}
-
 
 	/**
 	 * @return boolean
@@ -613,15 +623,27 @@ class Model
 	{
 		return $this->extends;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
 	public function getReplace()
 	{
 		return $this->replace;
-	}	
-	
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function replacedBy($modelName = null)
+	{
+		if ($modelName !== null)
+		{
+			$this->replacedBy = $modelName;
+		}
+		return $this->replacedBy;
+	}
+
 	/**
 	 * @return boolean
 	 */
@@ -661,8 +683,7 @@ class Model
 	{
 		return $this->backofficeIndexable;
 	}
-	
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -694,7 +715,7 @@ class Model
 	{
 		return $this->getName();
 	}
-		
+
 	/**
 	 * @param boolean $localized
 	 */
@@ -702,7 +723,7 @@ class Model
 	{
 		$this->localized = ($localized == true);
 	}
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Model[]
 	 */
@@ -716,7 +737,7 @@ class Model
 		}
 		return array();
 	}
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Model
 	 */
@@ -724,7 +745,7 @@ class Model
 	{
 		return ($this->parent) ? $this->parent->getRoot() : $this;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -740,7 +761,7 @@ class Model
 	{
 		return $this->getRoot()->getStateless() == true;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -755,8 +776,7 @@ class Model
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -773,8 +793,6 @@ class Model
 		return false;
 	}
 
-
-		
 	/**
 	 * @return boolean
 	 */
@@ -789,43 +807,39 @@ class Model
 			}
 		}
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getNameSpace()
 	{
-		return implode('\\', array($this->getVendor(),  $this->getShortModuleName(), 'Documents'));
+		return implode('\\', array($this->getVendor(), $this->getShortModuleName(), 'Documents'));
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getCompilationNameSpace()
 	{
-		return implode('\\', array('Compilation', $this->getVendor(),  $this->getShortModuleName(), 'Documents'));
+		return implode('\\', array('Compilation', $this->getVendor(), $this->getShortModuleName(), 'Documents'));
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getShortModelClassName()
 	{
-		return $this->getShortName().'Model';
+		return $this->getShortName() . 'Model';
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getModelClassName()
 	{
-		if ($this->getReplace())
-		{
-			return $this->getParent()->getModelClassName();
-		}
-		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortModelClassName();
+		return '\\' . $this->getCompilationNameSpace() . '\\' . $this->getShortModelClassName();
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -839,13 +853,9 @@ class Model
 	 */
 	public function getBaseDocumentClassName()
 	{
-		if ($this->getReplace())
-		{
-			return $this->getParent()->getBaseDocumentClassName();
-		}
-		return '\\'. $this->getCompilationNameSpace() . '\\' . $this->getShortBaseDocumentClassName();
+		return '\\' . $this->getCompilationNameSpace() . '\\' . $this->getShortBaseDocumentClassName();
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -853,20 +863,15 @@ class Model
 	{
 		return $this->getShortName();
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getDocumentClassName()
 	{
-		if ($this->getReplace())
-		{
-			return $this->getParent()->getDocumentClassName();
-		}
-		return '\\'. $this->getNameSpace() . '\\' . $this->getShortDocumentClassName();
+		return '\\' . $this->getNameSpace() . '\\' . $this->getShortDocumentClassName();
 	}
-	
-	
+
 	/**
 	 * @return string
 	 */
@@ -874,16 +879,25 @@ class Model
 	{
 		return 'Localized' . $this->getShortName();
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getDocumentLocalizedClassName()
 	{
-		if ($this->getReplace())
+		return '\\' . $this->getCompilationNameSpace() . '\\' . $this->getShortDocumentLocalizedClassName();
+	}
+
+	/**
+	 * @param boolean $implementCorrection
+	 * @return boolean
+	 */
+	public function implementCorrection($implementCorrection = null)
+	{
+		if (is_bool($implementCorrection))
 		{
-			return $this->getParent()->getDocumentLocalizedClassName();
+			$this->implementCorrection = $implementCorrection;
 		}
-		return '\\'. $this->getCompilationNameSpace(). '\\' . $this->getShortDocumentLocalizedClassName();
+		return $this->implementCorrection;
 	}
 }

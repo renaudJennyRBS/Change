@@ -1,9 +1,6 @@
 <?php
 namespace Change\Documents;
 
-use Change\Documents\Events\Event as DocumentEvent;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
 
@@ -32,11 +29,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @var array
 	 */
 	private $modifiedProperties = array();
-
-	/**
-	 * @var \Change\Documents\CorrectionFunctions
-	 */
-	protected $correctionFunctions;
 
 	/**
 	 * @var AbstractModel
@@ -234,11 +226,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function reset()
 	{
-		$this->modifiedProperties = array();
-		$this->metas = null;
-		$this->modifiedMetas = false;
-		$this->correctionFunctions = null;
-
+		$this->unsetProperties();
 		if ($this->persistentState === DocumentManager::STATE_LOADED)
 		{
 			$this->persistentState = DocumentManager::STATE_INITIALIZED;
@@ -247,6 +235,14 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			$this->setDefaultValues($this->documentModel);
 		}
+	}
+
+	/**
+	 * Set private properties to null.
+	 */
+	protected function unsetProperties()
+	{
+		$this->clearModifiedProperties();
 	}
 
 	/**
@@ -263,7 +259,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$property->setValue($this, $property->getDefaultValue());
 			}
 		}
-		$this->clearModifiedProperties();
 	}
 	
 	/**
@@ -291,7 +286,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$this->clearModifiedProperties();
 			case DocumentManager::STATE_NEW:
 			case DocumentManager::STATE_INITIALIZED:
-			case DocumentManager::STATE_LOADING:	
+			case DocumentManager::STATE_LOADING:
 			case DocumentManager::STATE_DELETED:
 			case DocumentManager::STATE_SAVING:
 				$this->persistentState = $newValue;
@@ -325,6 +320,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		return count($this->modifiedProperties) !== 0;
 	}
 
 	/**
@@ -385,10 +389,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function removeOldPropertyValue($propertyName)
 	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			unset($this->modifiedProperties[$propertyName]);
-		}
+		unset($this->modifiedProperties[$propertyName]);
 	}
 
 	/**
@@ -420,39 +421,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		
 
 	
-	// Correction Method
-
-	/**
-	 * @return \Change\Documents\CorrectionFunctions
-	 */
-	public function getCorrectionFunctions()
-	{
-		if ($this->correctionFunctions === null)
-		{
-			$this->correctionFunctions = new CorrectionFunctions($this);
-		}
-		return $this->correctionFunctions;
-	}
-
-	// Generic Method
-
-	/**
-	 * @param string|null $treeName
-	 */
-	public function setTreeName($treeName)
-	{
-		return;
-	}
-
-	/**
-	 * @api
-	 * @return string|null
-	 */
-	public function getTreeName()
-	{
-		return null;
-	}
-	
 	/**
 	 * @api
 	 * @return \DateTime
@@ -476,4 +444,36 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @param \DateTime $modificationDate
 	 */
 	abstract public function setModificationDate($modificationDate);
+
+
+	// Tree
+
+	/**
+	 * @param string|null $treeName
+	 */
+	public function setTreeName($treeName)
+	{
+		return;
+	}
+
+	/**
+	 * @api
+	 * @return string|null
+	 */
+	public function getTreeName()
+	{
+		return null;
+	}
+
+	// Generic Method
+
+	abstract public function load();
+
+	abstract public function save();
+
+	abstract public function update();
+
+	abstract public function create();
+
+	abstract public function delete();
 }

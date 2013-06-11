@@ -2,6 +2,7 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
@@ -135,11 +136,10 @@ class DocumentQuery
 			$documentLink->setProperty($model->getProperty('LCID'));
 		}
 
-		if ($model->useCorrection())
+		if ($document instanceof Correction)
 		{
-			/* @var $cf \Change\Documents\CorrectionFunctions */
-			$cf = $document->getCorrectionFunctions();
-			if ($cf->hasCorrection())
+			/* @var $document AbstractDocument|Correction */
+			if ($document->hasCorrection())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
 				$documentLink->setProperty('actions', array($l));

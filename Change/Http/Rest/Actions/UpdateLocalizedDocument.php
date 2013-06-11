@@ -85,7 +85,7 @@ class UpdateLocalizedDocument
 			else
 			{
 				/* @var $document Localizable */
-				$supported = $document->getLocalizableFunctions()->getLCIDArray();
+				$supported = $document->getLCIDArray();
 				$errorResult = new ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
 				$errorResult->addDataValue('value', $LCID);
 				$errorResult->addDataValue('supported-LCID', $supported);
@@ -135,30 +135,25 @@ class UpdateLocalizedDocument
 			$getDocument = new GetLocalizedDocument();
 			$getDocument->execute($event);
 		}
-		catch (\Exception $e)
+		catch (\Change\Documents\PropertiesValidationException $e)
 		{
-			$code = $e->getCode();
-			if ($code && $code >= 52000 && $code < 53000)
+			$errors = $e->getPropertiesErrors();
+			$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
+			if (count($errors) > 0)
 			{
-				$errors = isset($e->propertiesErrors) ? $e->propertiesErrors : array();
-				$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
-				if (count($errors) > 0)
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$pe = array();
+				foreach ($errors as $propertyName => $errorsMsg)
 				{
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$pe = array();
-					foreach ($errors as $propertyName => $errorsMsg)
+					foreach ($errorsMsg as $errorMsg)
 					{
-						foreach ($errorsMsg as $errorMsg)
-						{
-							$pe[$propertyName][] = $i18nManager->trans($errorMsg);
-						}
+						$pe[$propertyName][] = $i18nManager->trans($errorMsg);
 					}
-					$errorResult->addDataValue('properties-errors', $pe);
 				}
-				$event->setResult($errorResult);
-				return;
+				$errorResult->addDataValue('properties-errors', $pe);
 			}
-			throw $e;
+			$event->setResult($errorResult);
+			return;
 		}
 	}
 }

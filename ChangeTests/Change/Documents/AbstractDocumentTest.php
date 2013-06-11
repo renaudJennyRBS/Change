@@ -45,7 +45,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertLessThan(0 , $basicDoc->getId());
 		$this->assertTrue($basicDoc->isNew());
 		$this->assertFalse($basicDoc->isDeleted());
-		$this->assertFalse($basicDoc->hasModifiedProperties());
+		$this->assertTrue($basicDoc->hasModifiedProperties());
+		$this->assertEquals(array('creationDate', 'modificationDate'), $basicDoc->getModifiedPropertyNames());
 		$this->assertFalse($basicDoc->hasModifiedMetas());
 
 		
@@ -73,8 +74,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$validation->onValidate($event);
 		$errors = $event->getParam('propertiesErrors');
 		$this->assertNull($errors);
-		$this->assertFalse($basicDoc->hasModifiedProperties());
-		
+		$this->assertTrue($basicDoc->hasModifiedProperties());
+		$this->assertEquals(array('creationDate', 'modificationDate', 'pStr', 'pInt', 'pFloat'), $basicDoc->getModifiedPropertyNames());
+
 		$basicDoc->save();
 		$this->assertGreaterThan(0 , $basicDoc->getId());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $basicDoc->getPersistentState());
@@ -109,7 +111,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$documentId = $basicDoc->getId();
 		$this->getDocumentServices()->getDocumentManager()->reset();
 
-		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		/* @var $basicDoc2 \Project\Tests\Documents\Basic */
 		$basicDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
 
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
@@ -166,7 +168,6 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\DateTime', $localizedDoc->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $localizedDoc->getModificationDate());
 
-
 		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $localizedDoc);
 		$validation = new \Change\Documents\Events\ValidateListener();
 		$validation->onValidate($event);
@@ -192,9 +193,12 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$errors = $event->getParam('propertiesErrors');
 
 		$this->assertNull($errors);
-		$this->assertFalse($localizedDoc->hasModifiedProperties());
+		$this->assertTrue($localizedDoc->hasModifiedProperties());
+		$this->assertEquals(array('creationDate', 'modificationDate', 'refLCID', 'pStr', 'pLStr', 'pInt', 'pFloat'), $localizedDoc->getModifiedPropertyNames());
 
 		$localizedDoc->save();
+		$this->assertFalse($localizedDoc->hasModifiedProperties());
+		$this->assertEquals(array(), $localizedDoc->getModifiedPropertyNames());
 
 		$this->assertGreaterThan(0 , $localizedDoc->getId());
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getPersistentState());
@@ -232,27 +236,30 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$dm->popLCID();
 
 
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
 		$dm->pushLCID('en_US');
-		$this->assertEquals('en_US', $localizedDoc->getLCID());
-		$this->assertEquals(DocumentManager::STATE_NEW, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
 
+		$this->assertEquals('en_US', $localizedDoc->getLCID());
+
+		$this->assertEquals(DocumentManager::STATE_NEW, $localizedDoc->getCurrentLocalization()->getPersistentState());
 		$this->assertNull($localizedDoc->getPLStr());
 		$localizedDoc->setPLStr('string EN');
+		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
+		$localizedDoc->save();
+		$this->assertFalse($localizedDoc->hasModifiedProperties());
 
-		$localizedDoc->create();
-
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
-
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalization()->getPersistentState());
 		$dm->popLCID();
 
+
 		$dm->pushLCID('fr_FR');
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalization()->getPersistentState());
 		$this->assertEquals('fr_FR', $localizedDoc->getLCID());
 		$this->assertEquals('string FR 2', $localizedDoc->getPLStr());
 		$dm->popLCID();
 
 		$dm->pushLCID('en_US');
-		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalizedPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $localizedDoc->getCurrentLocalization()->getPersistentState());
 		$this->assertEquals('en_US', $localizedDoc->getLCID());
 		$this->assertEquals('string EN', $localizedDoc->getPLStr());
 		$dm->popLCID();
@@ -300,17 +307,19 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->setStr3('Str3');
 		$c1->setStr4('Str4');
 		$c1->create();
-		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
+		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->hasModifiedProperties());
 
 		$c1Id = $c1->getId();
 		$this->assertGreaterThan(0, $c1Id);
 		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getPersistentState());
-		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getCurrentLocalizedPart()->getPersistentState());
+		$this->assertEquals(DocumentManager::STATE_LOADED, $c1->getCurrentLocalization()->getPersistentState());
 
 		$c1->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
 		$this->assertTrue($c1->isPropertyModified('publicationStatus'));
 		$c1->update();
-		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
+		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->hasModifiedProperties());
 
 		$c1->setStr1('Str1 v2');
 		$c1->setStr2('Str2 v2');
@@ -319,9 +328,22 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertTrue($c1->hasModifiedProperties());
 		$c1->update();
+		$this->assertFalse($c1->hasModifiedProperties());
 
 		$this->assertFalse($c1->hasModifiedProperties());
-		$this->assertTrue($c1->getCorrectionFunctions()->hasCorrection());
+		$this->assertTrue($c1->hasCorrection());
+
+		/* @var $correction \Change\Documents\Correction */
+		$correction = $c1->getCurrentCorrection();
+		$this->assertInstanceOf('\Change\Documents\Correction', $correction);
+		$this->assertGreaterThan(0, $correction->getId());
+		$this->assertEquals(\Change\Documents\Correction::STATUS_DRAFT, $correction->getStatus());
+		$this->assertTrue($correction->isDraft());
+		$this->assertEquals('fr_FR', $correction->getLCID());
+		$this->assertArrayHasKey('str2', $correction->getDatas());
+		$this->assertArrayHasKey('str4', $correction->getDatas());
+		$this->assertEquals(array('str2', 'str4', 'docs2'), $correction->getPropertiesNames());
+
 		$this->assertEquals('Str1 v2', $c1->getStr1());
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getStr3());
@@ -333,17 +355,17 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Str2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getStr3());
 		$this->assertEquals('Str4', $c1->getStr4());
-		$this->assertTrue($c1->getCorrectionFunctions()->hasCorrection());
+		$this->assertTrue($c1->hasCorrection());
 
-		$corr = $c1->getCorrectionFunctions()->getCorrection();
+		$corr = $c1->getCurrentCorrection();
 		$this->assertEquals('Str2 v2', $corr->getPropertyValue('str2'));
 		$this->assertEquals('Str4 v2', $corr->getPropertyValue('str4'));
 		$this->assertEquals(Correction::STATUS_DRAFT, $corr->getStatus());
 
 		$corr->setStatus(Correction::STATUS_PUBLISHABLE);
-		$c1->getCorrectionFunctions()->save($corr);
+		$c1->saveCorrection($corr);
 
-		$c1->getCorrectionFunctions()->publish();
+		$c1->publishCorrection();
 
 		$this->assertEquals(Correction::STATUS_FILED, $corr->getStatus());
 		$this->assertEquals('Str2', $corr->getPropertyValue('str2'));
@@ -351,7 +373,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str4 v2', $c1->getStr4());
-		$this->assertFalse($c1->getCorrectionFunctions()->hasCorrection());
+		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->hasModifiedProperties());
 
 		$this->getDocumentServices()->getDocumentManager()->reset();
 	}

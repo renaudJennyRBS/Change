@@ -1,7 +1,8 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\Correction;
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
@@ -22,7 +23,7 @@ class GetLocalizedDocument
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return Localizable|\Change\Documents\AbstractDocument|null
+	 * @return Localizable|AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -67,7 +68,7 @@ class GetLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 		try
 		{
 			$documentManager->pushLCID($LCID);
@@ -83,7 +84,7 @@ class GetLocalizedDocument
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param Logging $logging
 	 * @return null|string
 	 */
@@ -91,9 +92,9 @@ class GetLocalizedDocument
 	{
 		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
 
-		if ($document->getDocumentModel()->useCorrection() && $document->getCorrectionFunctions()->hasCorrection())
+		if ($document instanceof Correction && $document->hasCorrection())
 		{
-			$parts[] = $document->getCorrectionFunctions()->getCorrection()->getStatus();
+			$parts[] = $document->getCurrentCorrection()->getStatus();
 		}
 
 		if ($document instanceof Editable)
@@ -108,7 +109,7 @@ class GetLocalizedDocument
 
 		if ($document instanceof Localizable)
 		{
-			$parts = array_merge($parts, $document->getLocalizableFunctions()->getLCIDArray());
+			$parts = array_merge($parts, $document->getLCIDArray());
 		}
 
 		if ($logging)
@@ -120,7 +121,7 @@ class GetLocalizedDocument
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param Localizable | \Change\Documents\AbstractDocument  $document
+	 * @param AbstractDocument  $document
 	 * @param string $LCID
 	 * @return DocumentResult
 	 */
@@ -137,7 +138,7 @@ class GetLocalizedDocument
 
 		if ($document->getTreeName())
 		{
-			$tn = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
+			$tn = $event->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
 			if ($tn)
 			{
 				$l = new TreeNodeLink($urlManager, $tn, TreeNodeLink::MODE_LINK);
@@ -163,7 +164,7 @@ class GetLocalizedDocument
 		$i18n = array();
 
 		/* @var $document Localizable */
-		foreach ($document->getLocalizableFunctions()->getLCIDArray() as $tmpLCID)
+		foreach ($document->getLCIDArray() as $tmpLCID)
 		{
 			$LCIDLink = clone($documentLink);
 			$LCIDLink->setLCID($tmpLCID);
@@ -178,7 +179,7 @@ class GetLocalizedDocument
 		}
 		else
 		{
-			/* @var $document \Change\Documents\AbstractDocument */
+			/* @var $document AbstractDocument */
 			if (!$document->getDocumentModel()->isStateless())
 			{
 				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
@@ -190,60 +191,56 @@ class GetLocalizedDocument
 
 	/**
 	 * @param DocumentResult $result
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param string $LCID
 	 */
 	protected function addActions($result, $document, $urlManager, $LCID)
 	{
-		if ($document->getDocumentModel()->useCorrection())
+		if ($document instanceof Correction)
 		{
-			if ($document->getCorrectionFunctions()->hasCorrection())
+			/* @var $document AbstractDocument|Correction */
+			$correction = $document->getCurrentCorrection();
+			if ($correction)
 			{
-				$correction = $document->getCorrectionFunctions()->getCorrection();
-				if ($correction)
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-					$result->addAction($l);
+				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$result->addAction($l);
 
-					if ($correction->getStatus() === Correction::STATUS_DRAFT)
-					{
-						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
-						$result->addAction($l);
-					}
-					elseif ($correction->getStatus() === Correction::STATUS_VALIDATION)
-					{
-						$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
-						$result->addAction($l);
-					}
+				if ($correction->isDraft())
+				{
+					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
+					$result->addAction($l);
+				}
+				elseif ($correction->inValidation())
+				{
+					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
+					$result->addAction($l);
 				}
 			}
 		}
 
 		if ($document instanceof Publishable)
 		{
-			$pf = $document->getPublishableFunctions();
-
-			/* @var $document \Change\Documents\AbstractDocument */
-			if ($pf->canStartValidation())
+			/* @var $document AbstractDocument|Publishable */
+			if ($document->canStartValidation())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
 				$result->addAction($l);
 			}
 
-			if ($pf->canStartPublication())
+			if ($document->canStartPublication())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
 				$result->addAction($l);
 			}
 
-			if ($pf->canActivate())
+			if ($document->canActivate())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'activate');
 				$result->addAction($l);
 			}
 
-			if ($pf->canDeactivate())
+			if ($document->canDeactivate())
 			{
 				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
 				$result->addAction($l);

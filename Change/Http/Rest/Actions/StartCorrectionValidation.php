@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\ArrayResult;
 use Change\Http\Rest\Result\DocumentLink;
@@ -16,7 +18,7 @@ class StartCorrectionValidation
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return AbstractDocument|null
 	 */
 	protected function getDocument($event)
 	{
@@ -99,7 +101,7 @@ class StartCorrectionValidation
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @param \DateTime $publicationDate
 	 * @throws \Exception
 	 */
@@ -107,7 +109,8 @@ class StartCorrectionValidation
 	{
 		try
 		{
-			$correction = $document->getCorrectionFunctions()->startValidation($publicationDate);
+			/* @var $document AbstractDocument|Correction */
+			$correction = $document->startCorrectionValidation($publicationDate);
 			if ($correction)
 			{
 				$result = new ArrayResult();
