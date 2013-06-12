@@ -17,6 +17,10 @@ class PropertiesValidationException extends \RuntimeException
 	public function setPropertiesErrors($propertiesErrors)
 	{
 		$this->propertiesErrors = $propertiesErrors;
+		if (count($propertiesErrors))
+		{
+			$this->message .= ' (' . implode(', ', array_keys($propertiesErrors)) . ')';
+		}
 	}
 
 	/**
