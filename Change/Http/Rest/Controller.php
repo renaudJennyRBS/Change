@@ -113,7 +113,7 @@ class Controller extends \Change\Http\Controller
 		{
 			$response = $event->getController()->createResponse();
 			$response->getHeaders()->addHeaders($result->getHeaders());
-			if ($event->getApplicationServices()->getApplication()->inDevelopmentMode())
+			if ($this->getApplication()->inDevelopmentMode())
 			{
 				$response->getHeaders()->addHeaderLine('Change-Memory-Usage: ' . number_format(memory_get_usage()));
 			}
