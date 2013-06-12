@@ -26,7 +26,7 @@
 	<key id="stringlengthinvalid">le champ "{field}" doit etre de type chaîne</key>
 	<key id="stringlengthtooshort">le champ "{field}" doit avoir une taille minimal de %min% caractères.</key>
 	<key id="notunique">la valeur n'est pas unique.</key>
-	<key id="regexnotmatch">le champ "{field}" doit respecter le format suivant : %pattern%.</key>
+	<key id="notmatch">le champ "{field}" doit respecter le format suivant : %pattern%.</key>
 	<key id="notgreaterthan">le champ "{field}" doit avoir une valeur minimale de %min%.</key>
 	<key id="notlessthan">le champ "{field}" doit avoir une valeur maximale de %max%.</key>
 	<key id="notbetween">le champ "{field}" doit avoir une valeur comprise entre %min% et %max%.</key>

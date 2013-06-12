@@ -41,9 +41,23 @@ class Translator extends \Zend\I18n\Translator\Translator implements \Zend\Valid
 	{
 		if (strpos($message, ' ') === false)
 		{
-			$pk = new \Change\I18n\PreparedKey($textDomain . '.' . $message, array('ucf'));
-			$msg = ($pk->isValid()) ? $this->i18nManager->trans($pk) : null;
-			return $msg;
+			if (strpos($message, '.') === false)
+			{
+				$pk = new \Change\I18n\PreparedKey($textDomain . '.' . $message, array('ucf'));
+			}
+			else
+			{
+				$pk = new \Change\I18n\PreparedKey($message, array('ucf'));
+			}
+
+			if ($pk->isValid())
+			{
+				$msg = $this->i18nManager->trans($pk);
+				if ($msg !== $pk->getKey())
+				{
+					return $msg;
+				}
+			}
 		}
 		return null;
 	}

@@ -18,7 +18,14 @@ class Translator extends \Change\Documents\Constraints\Translator
 	{
 		if (strpos($message, ' ') === false)
 		{
-			$pk = new \Change\I18n\PreparedKey($textDomain . '.' . $message, array('ucf'));
+			if (strpos($message, '.') === false)
+			{
+				$pk = new \Change\I18n\PreparedKey($textDomain . '.' . $message, array('ucf'));
+			}
+			else
+			{
+				$pk = new \Change\I18n\PreparedKey($message, array('ucf'));
+			}
 			$msg = ($pk->isValid()) ? $pk->getKey() : null;
 			return $msg;
 		}

@@ -191,6 +191,10 @@ class ConstraintsManager
 		{
 			$c->setMessage($params['message']);
 		}
+		else
+		{
+			$c->setMessage('notMatch');
+		}
 		return $c;
 	}
 	
