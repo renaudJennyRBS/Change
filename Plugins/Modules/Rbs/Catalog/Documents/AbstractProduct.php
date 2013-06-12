@@ -16,6 +16,7 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 
 	/**
 	 * @param \Rbs\Media\Documents\Image|null $defaultVisual
+	 * @return $this
 	 */
 	public function setDefaultVisual($defaultVisual)
 	{
@@ -27,5 +28,6 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 		{
 			$this->removeVisualByIndex(0);
 		}
+		return $this;
 	}
 }

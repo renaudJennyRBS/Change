@@ -24,10 +24,12 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 
 	/**
 	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @return $this
 	 */
 	public function setSection($section)
 	{
 		$this->section = $section;
+		return $this;
 	}
 
 	/**

@@ -16,10 +16,12 @@ class Text extends \Compilation\Rbs\Website\Documents\Text
 
 	/**
 	 * @param string $html
+	 * @return $this
 	 */
 	public function setHtml($html)
 	{
 		// TODO: Implement setHtml() method.
+		return $this;
 	}
 
 	/**
@@ -32,9 +34,11 @@ class Text extends \Compilation\Rbs\Website\Documents\Text
 
 	/**
 	 * @param string $src
+	 * @return $this
 	 */
 	public function setSrc($src)
 	{
 		// TODO: Implement setSrc() method.
+		return $this;
 	}
 }
