@@ -94,6 +94,7 @@ class DocumentManager
 	 */
 	public function reset()
 	{
+		array_map(function (AbstractDocument $document) {$document->cleanUp();}, $this->documentInstances);
 		$this->documentInstances = array();
 		$this->tmpRelationIds = array();
 		$this->newInstancesCounter = 0;
@@ -587,7 +588,7 @@ class DocumentManager
 	/**
 	 * @param integer $documentId
 	 * @param AbstractModel $model
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return AbstractDocument|null
 	 */
 	public function getDocumentInstance($documentId, AbstractModel $model = null)
 	{
