@@ -24,7 +24,7 @@ td .correction {
 
 .table-striped thead tr:first-child th.sorted {
 	background: #F0F8FF;
-	box-shadow: 0 -1px 0 #0088CC;
+	box-shadow: 0 -2px 0 #0088CC;
 }
 
 .document-info-labels {
@@ -127,6 +127,8 @@ td .correction {
 	border-radius: 3px;
 	position: relative;
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+	line-height: 190px;
+	text-align: center;
 }
 
 .thumbnail-grid li .inner.DEACTIVATED {
@@ -336,18 +338,79 @@ a.danger:visited:hover {
 	color: red;
 }
 
-.document-list .empty-row td {
+document-list .empty-row td,
+document-list div.empty-row {
 	color: silver;
 	font-size: 14pt;
-	padding: 10px;
+	padding: 14px;
 	text-align: left;
 	text-shadow: 0 1px 0 white;
 }
 
-.document-list .quick-actions {
-	font-size: 85%;
+document-list div.empty-row {
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	background: #F9F9F9;
 }
 
-[picker] .document-list .quick-actions {
-	float: right;
+document-list tr .quick-actions {
+	font-size: 85%;
+	position: absolute;
+	right: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	visibility: hidden;
+}
+document-list tr:hover .quick-actions {
+	visibility: visible;
+}
+
+document-list tr td .quick-actions-mobile {
+	font-size: 85%;
+	position: absolute;
+	right: 0;
+	width: 0;
+	top: 0;
+	overflow: hidden;
+	white-space: nowrap;
+
+	-webkit-transition: 0.3s ease-in-out width;
+	-moz-transition: 0.3s ease-in-out width;
+	-o-transition: 0.3s ease-in-out width;
+	transition: 0.3s ease-in-out width;
+}
+
+document-list tr td .quick-actions-mobile.shown {
+	width: 150px;
+}
+
+/*
+document-list tr:hover .quick-actions {
+	visibility: visible;
+}*/
+
+.table-striped tbody:nth-child(odd) tr td,
+.table-striped tbody:nth-child(odd) tr th {
+	background-color: #f9f9f9;
+}
+
+.table-striped tbody:nth-child(even) tr td,
+.table-striped tbody:nth-child(even) tr th {
+	background-color: white;
+}
+
+.table-hover tbody:nth-child(even) tr:hover td,
+.table-hover tbody:nth-child(even) tr:hover th,
+.table-hover tbody:nth-child(odd) tr:hover td,
+.table-hover tbody:nth-child(odd) tr:hover th {
+	background-color: #f5f5f5;
+}
+
+document-list .table thead th {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+document-list .tags {
+	display: inline-block;
 }

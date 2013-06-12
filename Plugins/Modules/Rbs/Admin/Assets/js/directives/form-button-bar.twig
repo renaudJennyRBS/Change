@@ -9,6 +9,9 @@
 
 	<!--button data-ng-show="hasStatus('DRAFT', 'VALIDATION')" type="button" data-ng-click="publish($event)" class="btn btn-success btn-headline pull-right" data-ng-disabled="! isUnchanged()"><i class="icon-play"></i>Publier<small>sur le site web</small></button-->
 
+	Étiquettes :
+	<rbs-tag-selector></rbs-tag-selector>
+
 	<button data-ng-hide="isCascading()" disabled="disabled" class="btn btn-headline" type="button" data-ng-click="goBack($event)" data-ng-disabled="! canGoBack()"><i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}</button>
 	<button data-ng-show="isCascading()" disabled="disabled" class="btn btn-headline" type="button" data-ng-click="cancelCascade($event)" data-ng-disabled="! canCancelCascade()"><i class="icon-arrow-up"></i>{{ i18n('m.rbs.admin.forms.btnCancelCascade', ['ucf']) }}</button>
 

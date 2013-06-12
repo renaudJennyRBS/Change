@@ -7,7 +7,11 @@
 
 	<div class="btn-virtual-group" data-ng-repeat="item in actions" data-ng-switch="item.type">
 		<div data-ng-switch-when="single" class="btn-group">
-			<button data-bind-action="(= item.name =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
+			<button class="btn" type="button"
+			        rbs-bind-action="(= item.name =)"
+			        collection="collection"
+			        selection="selectedDocuments"
+			        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 		</div>
 		<div data-ng-switch-when="group" class="btn-group">
 			<button data-ng-repeat="action in item.actions" data-bind-action="(= action =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
@@ -15,12 +19,22 @@
 	</div>
 
 	<div class="btn-group pull-right" ng-show="gridModeAvailable" data-toggle="buttons-radio">
-		<button type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn"><i class="icon-list"></i> Liste</button>
-		<button type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn"><i class="icon-th-large"></i> Grille</button>
+		<button title="{{ i18nAttr('m.rbs.admin.lists.list-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn"><i class="icon-list"></i></button>
+		<button title="{{ i18nAttr('m.rbs.admin.lists.grid-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn"><i class="icon-th-large"></i></button>
+	</div>
+
+	<div ng-if="viewMode == 'grid'" class="btn-group pull-right" title="{{ i18nAttr('m.rbs.admin.lists.sort', ['ucf']) }}">
+		<a class="btn" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
+		<button class="btn dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu">
+			<li ng-repeat="c in sortable"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
+		</ul>
 	</div>
 </div>
 
-<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)">
+<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
 
 <div ng-switch="viewMode">
 
@@ -30,37 +44,39 @@
 			</tr>
 		</thead>
 		<tbody ng-if="collection.length == 0 && !loading">
-			<tr class="empty-row">
+			<tr class="empty-row" colspan="0">
 				<td>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
 		</tbody>
 		<tbody ng-repeat="doc in collection">
 			<tr class="preview-row" ng-if="isPreview(doc)">
-				<td class="preview"></td>
+				<td class="preview" colspan="0"></td>
 			</tr>
-			<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'selected': doc.selected, 'success': doc.publicationStatus=='PUBLISHABLE' && ! isPreview(doc), 'warning': doc.publicationStatus=='DEACTIVATED'}">
+			<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'success': isLastCreated(doc), 'selected': doc.selected}">
 			</tr>
 		</tbody>
 	</table>
 
-	<ul ng-switch-when="grid" class="thumbnail-grid clearfix">
-		<li ng-repeat="doc in collection"
-		    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
-			<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
-				<div class="caption">
-					<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+	<div ng-switch-when="grid">
+		<div ng-if="collection.length == 0 && !loading" class="empty-row">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</div>
+		<ul class="thumbnail-grid clearfix">
+			<li ng-repeat="doc in collection"
+			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
+				<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
+					<div class="caption">
+						<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+					</div>
 				</div>
-			</div>
-		</li>
-	</ul>
+			</li>
+		</ul>
+	</div>
 
 </div>
 
 <footer class="rbsc-list-footer" ng-hide="collection.length == 0 && !loading">
 
 		<div class="pull-right">
-
-			<div class="pagination pagination-small" style="display: block; margin: 0">
+			<div class="pagination pagination-small" style="display: block; margin: 0;">
 				<ul>
 					<li ng-class="{disabled: isFirstPage()}">
 						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(0) =)"><i class="icon-double-angle-left"></i></a>
@@ -85,19 +101,18 @@
 					</li>
 				</ul>
 			</div>
-
 		</div>
 
 		<div class="pagination-info">
 			<strong ng-pluralize data-count="pagination.total"
-			        data-when="{'0':'Aucun élément', 'one': 'Un élément', 'other':'{} éléments'}"></strong>
+			        data-when="{{ i18nAttr('m.rbs.admin.lists.pagination-total') }}"></strong>
 				<span class="muted" ng-show="pages.length > 0">
-					sur
-					<span ng-pluralize data-count="pages.length" data-when="{'one': 'une page', 'other': '{} pages'}"></span>
+					{{ i18n('m.rbs.admin.lists.on') }}
+					<span ng-pluralize data-count="pages.length" data-when="{{ i18nAttr('m.rbs.admin.lists.pagination-pages') }}"></span>
 				</span>
 			<div class="btn-group dropup">
 				<button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
-					(= pagination.limit =) par page <span class="caret"></span>
+					(= pagination.limit =) {{ i18n('m.rbs.admin.lists.per-page') }} <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu pull-right" style="text-align: left">
 					<li ng-repeat="ps in predefinedPageSizes"><a href ng-href="(= pageUrl(0, ps) =)">(= ps =) <i class="icon-ok" ng-if="pagination.limit == ps"></i></a></li>

@@ -1,20 +1,29 @@
-<div id="change-menu" ng-controller="Rbs_MainMenu_Controller">
+<div id="change-menu" ng-controller="Rbs_MainMenu_Controller" ng-mouseleave="close()" ng-swipe-left="close()">
+
+	<div class="navbar navbar-inverse">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="javascript:;"><img
+							src="Rbs/Admin/img/logo-rbs-change@2x.png" style="width:159px; height:25px;" alt="Logo RBS Change"/></a>
+			</div>
+		</div>
+	</div>
 
 	<div class="nav-list">
 		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18n('m.rbs.admin.menu.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a>
 		<form class="form-search" ng-submit="go()" novalidate>
 			<div class="input-append input-block">
-				<input placeholder="{{ i18nAttr('m.rbs.admin.menu.search', ['ucf', 'etc']) }}" type="text" style="width:135px;" class="search-query" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
+				<input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="{{ i18nAttr('m.rbs.admin.menu.search', ['ucf', 'etc']) }}" type="text" style="width:135px;" class="search-query" ng-model="filterModules" ng-keydown="filterKeydown($event)"/>
 				<button title="{{ i18nAttr('m.rbs.admin.menu.clear-search', ['ucf']) }}" ng-click="clear()" type="button" class="btn"><i class="icon-remove-circle"></i></button>
 			</div>
 		</form>
 	</div>
 
-	<div class="nav-list" ng-if="filterModules == 'chucknorris'" ng-animate="'opacity-animation'" style="text-align: center">
+	<div class="nav-list" ng-if="filterModules == 'chuck norris'" ng-animate="'opacity-animation'" style="text-align: center">
 		<a target="_blank" href="http://chucknorrisfacts.fr/"><img class="img-polaroid" src="Rbs/Admin/img/chuck.jpg"/></a>
 		<br/><small class="muted">On ne cherche pas Chuck Norris.<br/>C'est Chuck Norris qui vous trouve.</small>
 	</div>
-	<div ng-if="filterModules != 'chucknorris'">
+	<div ng-if="filterModules != 'chuck norris'">
 		<ul class="nav nav-list">
 			<li><a ng-click="close()" href="./"><i class="icon-tasks"></i> {{ i18nAttr('m.rbs.admin.menu.dashboard', ['ucf']) }}</a></li>
 		</ul>

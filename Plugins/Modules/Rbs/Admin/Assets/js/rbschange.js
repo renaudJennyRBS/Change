@@ -13,9 +13,13 @@
 	//-------------------------------------------------------------------------
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'OAuthModule']);
+	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'ngMobile', 'OAuthModule']);
 
 	app.constant('RbsChange.Version', '4.0.0');
+
+	app.constant('RbsChange.Device', {
+		'touch' : ('ontouchstart' in document.documentElement)
+	});
 
 	app.directive('rbsChangeVersion', ['RbsChange.Version', function (version) {
 		return {

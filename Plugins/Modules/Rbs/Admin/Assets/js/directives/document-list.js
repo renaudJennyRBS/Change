@@ -13,7 +13,8 @@
 		__gridItems = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
-		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ];
+		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ],
+		DEFAULT_ACTIONS = 'activate reorder delete(icon)';
 
 	app.directive('documentList', [
 		'$filter',
@@ -26,11 +27,227 @@
 		'RbsChange.Breadcrumb',
 		'RbsChange.Actions',
 		'RbsChange.NotificationCenter',
+		'RbsChange.Device',
 		documentListDirectiveFn
 	]);
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter) {
 
+
+	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device) {
+
+		/**
+		 * Initialize columns for <document-list/>
+		 * @param dlid
+		 * @param tElement
+		 * @param tAttrs
+		 * @returns {Array}
+		 */
+		function initColumns (dlid, tElement, tAttrs) {
+			var	columns, undefinedColumnLabels = [], column,
+				$th, $td, $head, $body, html;
+
+			columns = __columns[dlid];
+			$head = tElement.find('table.document-list thead tr');
+			$body = tElement.find('table.document-list tbody tr.normal-row');
+
+			// Status column
+			if (tAttrs.publishable === 'true') {
+				columns.unshift({
+					"name"   : "publicationStatus",
+					"align"  : "center",
+					"width"  : "30px",
+					"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
+					"content": '<status ng-model="doc"/>',
+					"dummy"  : true
+				});
+			}
+
+			// Selectable column
+			if (angular.isUndefined(tAttrs.selectable) || tAttrs.selectable === 'true') {
+				columns.unshift({
+					"name"   : "selectable",
+					"align"  : "center",
+					"width"  : "30px",
+					"label"  : '<input type="checkbox" ng-model="allSelected.cb"/>',
+					"content": '<input type="checkbox" ng-model="doc.selected"/>',
+					"dummy"  : true
+				});
+			}
+
+			// Order in tree column
+			if (tAttrs.tree) {
+				columns.push({
+					"name"  : "nodeOrder",
+					"align"  : "right",
+					"width"  : "90px",
+					"label"  : i18n.trans('m.rbs.admin.admin.js.order | ucf'),
+					"content": '(=doc.META$.treeNode.nodeOrder | number=)'
+				});
+			}
+
+			// Modification Date column
+			if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
+				columns.push({
+					"name"   : "modificationDate",
+					"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
+					"content": "(=doc.modificationDate | date:'medium' =)",
+					"width"  : "150px"
+				});
+			}
+
+			// Status switch column
+			if (tAttrs.publishable === 'true') {
+				columns.push({
+					"name"   : "publicationStatusSwitch",
+					"align"  : "center",
+					"width"  : "90px",
+					"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
+					"content": '<status-switch document="doc"/>',
+					"dummy"  : true
+				});
+			}
+
+			tElement.data('columns', {});
+
+			// Update colspan value for preview and empty cells.
+			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
+			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
+
+			if ( ! __preview[dlid] ) {
+				__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
+			}
+			tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
+
+			while (columns.length) {
+				column = columns.shift(0);
+				tElement.data('columns')[column.name] = column;
+
+				// Check if the label has been provided or not.
+				// If one at least label has not been provided, the Model's information will be
+				// loaded to automatically set the columns' header text.
+				if ( ! column.label ) {
+					undefinedColumnLabels.push(column.name);
+				}
+
+				// Create header cell
+				if (column.name === 'selectable') {
+					$th = $('<th ng-if="!isSortable(\'' + column.name + '\')">' + column.label + '</th>');
+				} else {
+					$th = $(
+						'<th ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}" ng-if="isSortable(\'' + column.name + '\')">' +
+							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>' +
+							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
+							'</th>' +
+						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</th>'
+					);
+				}
+				if (column.align) {
+					$th.css('text-align', column.align);
+				}
+				if (column.width) {
+					$th.css('width', column.width);
+				}
+				$head.append($th);
+
+				// Create body cell
+				if (column.content) {
+					$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
+				} else {
+					if (column.thumbnail) {
+						if (column.thumbnailPath) {
+							column.content = '<img rbs-storage-image="(= ' + column.thumbnailPath + ' =)" thumbnail="' + column.thumbnail + '"/>';
+						} else {
+							column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
+						}
+					} else {
+						column.content = '(= doc["' + column.name + '"] =)';
+					}
+					if (column.primary) {
+						if (tAttrs.tree) {
+							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div style="position:relative"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
+						} else {
+							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div style="position:relative"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+						}
+					} else {
+						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
+					}
+				}
+
+				if (column.align) {
+					$td.css({
+						'text-align': column.align,
+						'position'  : 'relative'
+					});
+				}
+
+				// The primary column has extra links for preview, edit and delete.
+				if (column.primary) {
+					html =
+						'<div class="quick-actions' + (Device.touch ? '-mobile' : '') + '">' +
+							'<a href="javascript:" ng-click="preview(doc)">' +
+							//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
+							//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
+							' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
+							'</a>';
+					if (!tAttrs.picker) {
+						html +=
+							' | <a href data-ng-href="(= doc | documentURL =)">' +
+								i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a> | ' +
+								'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
+								i18n.trans('m.rbs.admin.admin.js.delete') +
+								'</a>';
+					}
+					html += '</div>';
+					$td.find('div').first().prepend(html);
+
+					if (column.tags === 'true') {
+						$td.find('div').first().append('<br/><div class="tags"><span class="tag red">image</span><span class="tag">logo</span><span class="tag green">marque</span></div>');
+					}
+				}
+
+				$body.append($td);
+			}
+
+			if (Device.touch) {
+				$body.attr('ng-swipe-left', "showQuickActions($event)");
+				$body.attr('ng-swipe-right', "hideQuickActions($event)");
+			}
+
+			delete __columns[dlid];
+
+			return undefinedColumnLabels;
+		}
+
+
+		/**
+		 * Initialize grid mode for <document-list/>
+		 * @param dlid
+		 * @param tElement
+		 * @returns {boolean}
+		 */
+		function initGrid (dlid, tElement) {
+			var	gridModeAvailable = false,
+				inner;
+
+			if (__gridItems[dlid]) {
+				gridModeAvailable = true;
+				inner = tElement.find('ul.thumbnail-grid li .inner');
+				if (__gridItems[dlid]['class']) {
+					inner.addClass(__gridItems[dlid]['class']);
+				}
+				inner.html(__gridItems[dlid].content);
+			}
+
+			delete __gridItems[dlid];
+
+			return gridModeAvailable;
+		}
+
+
+		/**
+		 * <document-list/> directive.
+		 */
 		return {
 			restrict    : 'E',
 			transclude  : true,
@@ -45,201 +262,34 @@
 
 			compile : function (tElement, tAttrs) {
 
-				var	dlid,
-					columns, undefinedColumnLabels = [], column,
-					$th, $td, $head, $body;
+				var	dlid, undefinedColumnLabels, gridModeAvailable;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
 					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
 				}
 
-				columns = __columns[dlid];
-				$head = tElement.find('table.document-list thead tr');
-				$body = tElement.find('table.document-list tbody tr.normal-row');
+				undefinedColumnLabels = initColumns(dlid, tElement, tAttrs);
 
-				// Status column
-				if (tAttrs.publishable === 'true') {
-					columns.unshift({
-						"name"   : "publicationStatus",
-						"align"  : "center",
-						"width"  : "30px",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
-						"content": '<status ng-model="doc"/>',
-						"dummy"  : true
-					});
-				}
-
-				// Selectable column
-				if (angular.isUndefined(tAttrs.selectable) || tAttrs.selectable === 'true') {
-					columns.unshift({
-						"name"   : "selectable",
-						"align"  : "center",
-						"width"  : "30px",
-						"label"  : '<input type="checkbox" ng-model="selection.all"/>',
-						"content": '<input type="checkbox" ng-model="doc.selected"/>',
-						"dummy"  : true
-					});
-				}
-
-				// Order in tree column
-				if (tAttrs.tree) {
-					columns.push({
-						"name"  : "nodeOrder",
-						"align"  : "right",
-						"width"  : "90px",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.order | ucf'),
-						"content": '(=doc.META$.treeNode.nodeOrder | number=)'
-					});
-				}
-
-				// Modification Date column
-				if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
-					columns.push({
-						"name"   : "modificationDate",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
-						"content": "(=doc.modificationDate | date:'medium' =)",
-						"width"  : "150px"
-					});
-				}
-
-				// Status switch column
-				if (tAttrs.publishable === 'true') {
-					columns.push({
-						"name"   : "publicationStatusSwitch",
-						"align"  : "center",
-						"width"  : "90px",
-						"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
-						"content": '<status-switch document="doc"/>',
-						"dummy"  : true
-					});
-				}
-
-				tElement.data('columns', {});
-
-				// Update colspan value for preview and empty cells.
-				tElement.find('tbody tr.preview-row td').attr('colspan', columns.length);
-				tElement.find('tbody tr.empty-row td').attr('colspan', columns.length);
-
-				if ( ! __preview[dlid] ) {
-					__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
-				}
-				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
-
-				while (columns.length) {
-					column = columns.shift(0);
-					tElement.data('columns')[column.name] = column;
-
-					// Check if the label has been provided or not.
-					// If one at least label has not been provided, the Model's information will be
-					// loaded to automatically set the columns' header text.
-					if ( ! column.label ) {
-						undefinedColumnLabels.push(column.name);
-					}
-
-					// Create header cell
-					$th = $(
-						'<th ng-if="isSortable(\'' + column.name + '\')">' +
-							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</a>' +
-							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
-						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</th>'
-					);
-					if (column.align) {
-						$th.css('text-align', column.align);
-					}
-					if (column.width) {
-						$th.css('width', column.width);
-					}
-					$head.append($th);
-
-					// Create body cell
-					if (column.content) {
-						$td = $('<td>' + column.content + '</td>');
-					} else {
-						if (column.thumbnail) {
-							if (column.thumbnailPath) {
-								column.content = '<img rbs-storage-image="(= ' + column.thumbnailPath + ' =)" thumbnail="' + column.thumbnail + '"/>';
-							} else {
-								column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
-							}
-						} else {
-							column.content = '(= doc["' + column.name + '"] =)';
-						}
-						if (column.primary) {
-							if (tAttrs.tree) {
-								$td = $('<td><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></td>');
-							} else {
-								$td = $('<td><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></td>');
-							}
-						} else {
-							$td = $('<td>' + column.content + '</td>');
-						}
-					}
-
-					if (column.align) {
-						$td.css('text-align', column.align);
-					}
-
-					// The primary column has extra links for preview, edit and delete.
-					if (column.primary) {
-						var html =
-							'<div class="quick-actions">' +
-								'<a href="javascript:" ng-click="preview(doc)">' +
-									//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
-									//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
-									' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
-								'</a>';
-						if (!tAttrs.picker) {
-							html +=
-								' | <a href data-ng-href="(= doc | documentURL =)" title="Éditer les propriétés">' +
-								i18n.trans('m.rbs.admin.admin.js.edit') +
-								'</a> | ' +
-								'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)" title="Supprimer">' +
-								i18n.trans('m.rbs.admin.admin.js.delete') +
-								'</a>';
-						}
-						html += '</div>';
-						$td.append(html);
-					}
-
-					$body.append($td);
-				}
-
-				delete __columns[dlid];
-
-
-				//
-				// Initialize grid mode.
-				//
-
-				var gridModeAvailable = false;
-				if (__gridItems[dlid]) {
-					gridModeAvailable = true;
-					var inner = tElement.find('ul.thumbnail-grid li .inner');
-					if (__gridItems[dlid]['class']) {
-						inner.addClass(__gridItems[dlid]['class']);
-					}
-					inner.html(__gridItems[dlid].content);
-				}
-
-				delete __gridItems[dlid];
+				gridModeAvailable = initGrid(dlid, tElement);
 
 
 				/**
 				 * Directive's link function.
 				 */
 				return function linkFn (scope, elm, attrs) {
-					var queryObject, search, columnNames;
+					var queryObject, search, columnNames, currentPath;
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
 					scope.viewMode = 'list';
 					scope.columns = elm.data('columns');
+					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
+					scope.$DL = scope;
 
 					// Load Model's information and update the columns' header with the correct property label.
-					if (undefinedColumnLabels.length && tAttrs.model) {
-						REST.modelInfo(tAttrs.model).then(function (modelInfo) {
+					if (undefinedColumnLabels.length && attrs.model) {
+						REST.modelInfo(attrs.model).then(function (modelInfo) {
 							angular.forEach(undefinedColumnLabels, function (columnName) {
 								scope.columns[columnName].label = modelInfo.properties[columnName].label;
 							});
@@ -252,12 +302,12 @@
 					//
 
 
-					scope.selection = {
-						'all': false
+					scope.allSelected = {
+						'cb' : false
 					};
-					scope.$watch('selection.all', function (value) {
+					scope.$watch('allSelected', function (value) {
 						angular.forEach(scope.collection, function (doc) {
-							doc.selected = value;
+							doc.selected = scope.allSelected.cb;
 						});
 					}, true);
 
@@ -273,21 +323,27 @@
 					//
 
 
-					scope.actions = [];
-					if (attrs.actions) {
-						var actions = tAttrs.actions.split(/ +/);
-						angular.forEach(actions, function (action) {
-							scope.actions.push({
-								"type" : "single",
-								"name" : action
-							});
-						});
-					}
-
-
 					scope.hasColumn = function (columnName) {
 						return angular.isObject(elm.data('columns')[columnName]);
 					};
+
+
+					scope.actions = [];
+					var actionList = attrs.actions;
+					if (! actionList) {
+						actionList = 'default';
+					}
+					actionList = actionList.replace('default', DEFAULT_ACTIONS);
+					if (! scope.hasColumn('nodeOrder') ) {
+						actionList = actionList.replace('nodeOrder', '');
+					}
+
+					angular.forEach(actionList.split(/ +/), function (action) {
+						scope.actions.push({
+							"type" : "single",
+							"name" : action
+						});
+					});
 
 
 					scope.remove = function (doc, $event) {
@@ -296,6 +352,11 @@
 							'$target' : $event.target,
 							'$scope'  : scope
 						});
+					};
+
+
+					scope.isLastCreated = function (doc) {
+						return REST.isLastCreated(doc);
 					};
 
 
@@ -441,6 +502,9 @@
 						if ( ! column.dummy ) {
 							columnNames.push(column.name);
 						}
+						if (column.tags) {
+							columnNames.push('tags');
+						}
 					});
 
 					function getDefaultSortColumn () {
@@ -455,8 +519,8 @@
 					}
 
 					scope.sort =  {
-						column     : getDefaultSortColumn(),
-						descending : false
+						'column'     : getDefaultSortColumn(),
+						'descending' : false
 					};
 
 
@@ -494,7 +558,10 @@
 
 						// Available sortable columns
 						// FIXME: remove default value here when the server sends this info.
-						scope.sortable = response.pagination.availableSort || ['label', 'nodeOrder', 'modificationDate'];
+						scope.sortable = response.pagination.availableSort || ['label', 'modificationDate'];
+						if (scope.hasColumn('nodeOrder')) {
+							scope.sortable.push('nodeOrder');
+						}
 
 						scope.pagination.total = response.pagination.count;
 						scope.collection = response.resources;
@@ -524,7 +591,7 @@
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else if (attrs.model && ! attrs.parentProperty) {
 							Loading.start();
-							promise = REST.collection(tAttrs.model, params);
+							promise = REST.collection(attrs.model, params);
 						}
 
 						if (promise) {
@@ -563,7 +630,14 @@
 
 
 					scope.location = $location;
+					currentPath = scope.location.path();
 					scope.$watch('location.search()', function locationSearchFn (search) {
+
+						// Are we leaving this place?
+						if (currentPath !== scope.location.path()) {
+							return;
+						}
+
 						var	offset = parseInt(search.offset || 0, 10),
 							limit  = parseInt(search.limit || PAGINATION_DEFAULT_LIMIT, 10),
 							paginationChanged, sortChanged = false,
@@ -583,6 +657,7 @@
 						scope.sort.descending = desc;
 
 						if (paginationChanged || sortChanged) {
+							console.log("reloading...");
 							reload();
 						}
 					}, true);
@@ -660,6 +735,24 @@
 					}, true);
 
 
+					var lastQuickActionsShown = null;
+					if (Device.touch) {
+						scope.showQuickActions = function ($event) {
+							if (lastQuickActionsShown) {
+								lastQuickActionsShown.removeClass('shown');
+							}
+							lastQuickActionsShown = $($event.target).find('.quick-actions-mobile');
+							lastQuickActionsShown.addClass('shown');
+						};
+
+						scope.hideQuickActions = function ($event) {
+							var el = $($event.target).find('.quick-actions-mobile');
+							if (el.is('.shown')) {
+								el.removeClass('shown');
+								lastQuickActionsShown = null;
+							}
+						};
+					}
 				};
 
 			}

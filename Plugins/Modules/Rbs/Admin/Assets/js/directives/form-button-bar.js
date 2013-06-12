@@ -13,7 +13,7 @@
 
 			link : function (scope, element, attrs) {
 
-				scope.actionAfterSave = 'stay';
+				scope.actionAfterSave = 'list';
 
 
 				scope.confirmApplyCorrection = function ($event) {

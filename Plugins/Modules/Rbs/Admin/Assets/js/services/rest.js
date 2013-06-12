@@ -337,13 +337,26 @@
 					return string.replace(/_/g, '/');
 				}
 
-				// Public API of the REST service.
 
+				var lastCreatedDocument = null;
+
+
+				// Public API of the REST service.
 
 				return {
 
 					'transformObjectToChangeDocument' : function (object) {
 						return angular.extend(new ChangeDocument(), object);
+					},
+
+
+					'isLastCreated' : function (doc) {
+						return lastCreatedDocument && doc && (doc.id === lastCreatedDocument.id && doc.model === lastCreatedDocument.model);
+					},
+
+
+					'getLastCreated' : function () {
+						return lastCreatedDocument;
 					},
 
 
@@ -557,37 +570,47 @@
 								function maybeInsertResourceInTree (resource, qToResolve) {
 									console.log("REST.save(): maybeInsertResourceInTree()");
 
+									if (status === HTTP_STATUS_CREATED) {
+										lastCreatedDocument = resource;
+									}
+
 									if ( ! Utils.isTreeNode(resource) && (status === HTTP_STATUS_CREATED || resource.treeName === null) && currentTreeNode) {
 
 										// Load model's information to check if the document should be inserted in a tree.
-										REST.modelInfo(resource).then(function (modelInfo) {
+										REST.modelInfo(resource).then(
 
-											if (!modelInfo.metas || !modelInfo.metas.treeName) {
+											// modelInfo success
+											function (modelInfo) {
+												if (!modelInfo.metas || !modelInfo.metas.treeName) {
+													console.log("REST.save(): Saved. Not inserted in tree because the model has no tree information (treeName=null).", doc);
+													resolveQ(qToResolve, resource);
+												} else {
+													console.log("REST.save(): Saved. Inserting document ", doc, " in tree " + modelInfo.metas.treeName + " at ", currentTreeNode.META$.treeNode.url);
+													$http.post(currentTreeNode.META$.treeNode.url + '/', { "id" : doc.id }, getHttpConfig())
+														.success(function (nodeData) {
+															console.log("REST.save(): Inserted in tree: node=", nodeData);
+															doc = buildChangeDocument(doc, resource);
+															if (status === HTTP_STATUS_CREATED) {
+																lastCreatedDocument = doc;
+															}
+															resolveQ(qToResolve, doc);
+														})
+														.error(function errorCallback (data, status) {
+															data.httpStatus = status;
+															rejectQ(qToResolve, data);
+														});
+												}
+											},
 
-												console.log("REST.save(): Saved. Not inserted in tree because the model has no tree information (treeName=null).", doc);
-												resolveQ(qToResolve, resource);
-
-											} else {
-
-												console.log("REST.save(): Saved. Inserting document ", doc, " in tree " + modelInfo.metas.treeName + " at ", currentTreeNode.META$.treeNode.url);
-												$http.post(currentTreeNode.META$.treeNode.url + '/', { "id" : doc.id }, getHttpConfig())
-													.success(function (nodeData) {
-														console.log("REST.save(): Inserted in tree: node=", nodeData);
-														resolveQ(qToResolve, buildChangeDocument(doc, resource));
-													})
-													.error(function errorCallback (data, status) {
-														data.httpStatus = status;
-														rejectQ(qToResolve, data);
-													});
-
+											// modelInfo error
+											function (data) {
+												rejectQ(qToResolve, data);
 											}
-										});
+										);
 
 									} else {
-
-										console.log("REST.save(): Saved. Not inserted in tree because of no tree node information is provided or status is not 201 (Created).", doc);
+										console.log("REST.save(): Saved. Not inserted in tree because no tree node information has been provided or status is not 201 (Created).", doc);
 										resolveQ(qToResolve, resource);
-
 									}
 								}
 
@@ -1018,6 +1041,59 @@
 
 							return q.promise;
 						}
+
+					},
+
+					'tags' : {
+
+						getList : function (moduleName) {
+							var tags = [], q = $q.defer();
+
+							q.promise.then(function (result) {
+								angular.forEach(result, function (r) {
+									tags.push(r);
+								});
+							});
+							q.resolve([
+								{
+									"label" : "image",
+									"count" : 4589,
+									"color" : "red"
+								},
+								{
+									"label" : "vidéo",
+									"count" : 27,
+									"color" : "blue"
+								},
+								{
+									"label" : "marque",
+									"count" : 6,
+									"color" : "green"
+								},
+								{
+									"label" : "visuel produit",
+									"count" : 2768,
+									"color" : "orange"
+								},
+								{
+									"label" : "logo",
+									"count" : 8
+								},
+								{
+									"label" : "paysage",
+									"count" : 14,
+									"color" : "black"
+								},
+								{
+									"label" : "portrait homme",
+									"count" : 1,
+									"color" : "navy"
+								}
+							]);
+
+							return tags;
+						}
+
 
 					}
 

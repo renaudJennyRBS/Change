@@ -317,11 +317,12 @@
 					name        : 'delete',
 					models      : '*',
 					description : "Supprimer les documents sélectionnés",
+					label       : 'Supprimer',
 					icon        : "icon-trash",
 					selection   : "+",
 					cssClass    : "btn-danger-hover",
 
-					execute : ['$docs', '$embedDialog', '$scope', '$target', 'confirmMessage', '$DL', function ($docs, $embedDialog, $scope, $target, confirmMessage, $DL) {
+					execute : ['$docs', '$embedDialog', '$scope', '$target', 'confirmMessage', function ($docs, $embedDialog, $scope, $target, confirmMessage) {
 						var correction = false,
 						    localized = false,
 						    message;
@@ -369,25 +370,22 @@
 							);
 						} else {
 							promise = Dialog.confirm(
-									"Supprimer ?",
-									message,
-									"danger",
-									confirmMessage
+								"Supprimer ?",
+								message,
+								"danger",
+								confirmMessage
 							);
 						}
 
 						promise.then(function () {
 							var promises = [];
-							// Call one REST request per document to remove and store the resulting Promise.
+							// Call one REST request per document to remove, and store the resulting Promise.
 							angular.forEach($docs, function (doc) {
 								promises.push(REST['delete'](doc));
 							});
-							if ($DL && angular.isFunction ($DL.reload)) {
+							console.log($scope, $scope.reload);
+							if ($scope && angular.isFunction($scope.reload)) {
 								// Refresh the list when all the requests have completed.
-								$q.all(promises).then(function () {
-									$DL.reload();
-								});
-							} else if ($scope && angular.isFunction ($scope.reload)) {
 								$q.all(promises).then(function () {
 									$scope.reload();
 								});
@@ -652,12 +650,12 @@
 					description : "Réorganiser les éléments de la liste ci-dessous",
 					icon        : "icon-reorder",
 
-					execute : ['$DL', '$scope', '$embedDialog', '$target', function ($DL, $scope, $embedDialog, $target) {
-						$DL.toggleSort('nodeOrder', true);
+					execute : ['$scope', '$embedDialog', '$target', function ($scope, $embedDialog, $target) {
+						//$DL.toggleSort('nodeOrder', true);
 						Dialog.embed(
 							$embedDialog,
 							{
-								'contents' : '<reorder-panel documents="DL.documents"></reorder-panel>',
+								'contents' : '<reorder-panel documents="collection"></reorder-panel>',
 								'title'    : "<i class=\"" + this.icon + "\"></i> Réorganisation des éléments"
 							},
 							$scope,
@@ -668,7 +666,7 @@
 					}],
 
 					isEnabled : function ($docs, $DL) {
-						return $DL.hasColumn('nodeOrder') && $DL.documents && $DL.documents.length > 1;
+						return true; // FIXME $DL.hasColumn('nodeOrder') && $DL.collection && $DL.collection.length > 1;
 					}
 
 				});
@@ -686,12 +684,12 @@
 					}
 
 					switch (status) {
-						case 'DRAFT':
-							return this.get('startValidation');
-						case 'VALIDATION':
-							return this.get('startPublication');
-						default:
-							return this.get('activate');
+					case 'DRAFT':
+						return this.get('startValidation');
+					case 'VALIDATION':
+						return this.get('startPublication');
+					default:
+						return this.get('activate');
 					}
 				});
 

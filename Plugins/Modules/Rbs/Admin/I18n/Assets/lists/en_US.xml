@@ -8,4 +8,12 @@
 	<key id="you-can">you can</key>
 	<key id="create-elements-with-buttons">create new elements using the commands above</key>
 	<key id="clear-search-filters">clear search filters</key>
+
+	<key id="sort">sort</key>
+	<key id="list-display">display as list</key>
+	<key id="grid-display">display as grid</key>
+	<key id="pagination-total">{'0':'No element', 'one': 'One element', 'other':'{} elements'}</key>
+	<key id="pagination-pages">{'one': 'one page', 'other': '{} pages'}</key>
+	<key id="on">on</key>
+	<key id="per-page">per page</key>
 </i18n>
