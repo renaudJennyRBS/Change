@@ -96,6 +96,7 @@ class GetModelInformation
 			$result->setMeta('localized', $model->isLocalized());
 			$result->setMeta('publishable', $model->isPublishable());
 			$result->setMeta('stateless', $model->isStateless());
+			$result->setMeta('abstract', $model->isAbstract());
 
 			// Properties.
 			foreach ($model->getProperties() as $property)
