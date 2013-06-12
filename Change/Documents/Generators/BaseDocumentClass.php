@@ -380,7 +380,7 @@ class BaseDocumentClass
 		$this->load();
 		return ' . $mn . ';
 	}
-	
+
 	/**
 	 * @return ' . $ct . '|null
 	 */
@@ -388,9 +388,10 @@ class BaseDocumentClass
 	{
 		return $this->getOldPropertyValue(' . $en . ');
 	}
-	
+
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
@@ -398,7 +399,7 @@ class BaseDocumentClass
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			' . $mn . ' = ' . $var . ';
-			return;
+			return $this;
 		}
 		$this->load();
 		if (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
@@ -418,6 +419,7 @@ class BaseDocumentClass
 			' . $mn . ' = ' . $var . ';
 			$this->propertyChanged(' . $en . ');
 		}
+		return $this;
 	}' . PHP_EOL;
 		$code .= $this->getPropertyExtraGetters($model, $property);
 		return $code;
@@ -461,10 +463,11 @@ class BaseDocumentClass
 	 * Has no effect.
 	 * @see \Change\Documents\DocumentManager::pushLCID()
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
-		return;
+		return $this;
 	}';
 		}
 		else
@@ -472,6 +475,7 @@ class BaseDocumentClass
 			$code[] = '
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
@@ -487,6 +491,7 @@ class BaseDocumentClass
 			}
 			$this->propertyChanged(' . $en . ');
 		}
+		return $this;
 	}';
 		}
 		$code[] = $this->getPropertyExtraGetters($model, $property);
@@ -523,9 +528,11 @@ class BaseDocumentClass
 
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
+		return $this;
 	}';
 		}
 		else
@@ -538,6 +545,7 @@ class BaseDocumentClass
 
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	abstract public function set' . $un . '(' . $var . ');';
 		}
@@ -607,27 +615,40 @@ class BaseDocumentClass
 		
 	/**
 	 * @param \DOMDocument $document
+	 * @return $this
 	 */
 	public function set' . $un . 'DOMDocument($document)
 	{
-		 $this->set' . $un . '($document && $document->documentElement ? $document->saveXML() : null);
+		$this->set' . $un . '($document && $document->documentElement ? $document->saveXML() : null);
+		return $this;
 	}' . PHP_EOL;
 		}
 		elseif ($property->getType() === 'JSON')
 		{
-			$code .= '	
+			$code .= '
 	/**
 	 * @return array
 	 */
 	public function getDecoded' . $un . '()
 	{
 		' . $var . ' = $this->get' . $un . '();
-		return ' . $var . ' === null ? ' . $var . ' : json_decode(' . $var . ', true);
+		return ' . $var . ' === null ? ' . $var . ' : \Zend\Json\Json::decode(' . $var . ', \Zend\Json\Json::TYPE_ARRAY);
+	}
+
+	/**
+	 * @param array|null $array
+	 * @return $this
+	 */
+	public function setDecoded' . $un . '($array)
+	{
+		$jsonString = $array !== null ? \Zend\Json\Json::encode($array) : null;
+		return $this->set' . $un . '($jsonString);
 	}' . PHP_EOL;
 		}
 		elseif ($property->getType() === 'Object')
 		{
-			$code .= '	
+
+			$code .= '
 	/**
 	 * @return mixed
 	 */
@@ -635,6 +656,16 @@ class BaseDocumentClass
 	{
 		' . $var . ' = $this->get' . $un . '();
 		return ' . $var . ' === null ? ' . $var . ' : unserialize(' . $var . ');
+	}
+
+	/**
+	 * @param mixed|null $object
+	 * @return $this
+	 */
+	public function setDecoded' . $un . '($object)
+	{
+		$string = $object !== null ? serialize($object) : null;
+		return $this->set' . $un . '($string);
 	}' . PHP_EOL;
 		}
 		elseif ($property->getType() === 'DocumentId')
@@ -666,7 +697,7 @@ class BaseDocumentClass
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
 
-		$code .= '	
+		$code .= '
 	/**
 	 * @return integer|null
 	 */
@@ -674,7 +705,7 @@ class BaseDocumentClass
 	{
 		return $this->getOldPropertyValue(' . $en . ');
 	}
-	
+
 	/**
 	 * @return ' . $ct . '|null
 	 */
@@ -683,16 +714,17 @@ class BaseDocumentClass
 		$oldId = $this->get' . $un . 'OldValueId();
 		return ($oldId !== null) ? $this->getDocumentManager()->getDocumentInstance($oldId) : null;
 	}
-			
+
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ' = null)
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			' . $mn . ' = ' . $var . ' === null ? null : intval(' . $var . ');
-			return;
+			return $this;
 		}
 		if (' . $var . ' !== null && !(' . $var . ' instanceof ' . $ct . '))
 		{
@@ -717,6 +749,7 @@ class BaseDocumentClass
 			' . $mn . ' = $newId;
 			$this->propertyChanged(' . $en . ');
 		}
+		return $this;
 	}
 
 	/**
@@ -727,7 +760,7 @@ class BaseDocumentClass
 		$this->load();
 		return ' . $mn . ';
 	}
-	
+
 	/**
 	 * @return ' . $ct . '|null
 	 */
@@ -774,7 +807,7 @@ class BaseDocumentClass
 			}
 		}
 	}
-					
+
 	/**
 	 * @return integer[]
 	 */
@@ -783,14 +816,16 @@ class BaseDocumentClass
 		$result = $this->getOldPropertyValue(' . $en . ');
 		return (is_array($result)) ? $result : array();
 	}
-						
+
 	/**
 	 * @return ' . $ct . '[]
 	 */
 	public function get' . $un . 'OldValue()
 	{
 		$dm = $this->getDocumentManager();
-		return array_map(function ($documentId) use ($dm) {return $dm->getDocumentInstance($documentId);}, $this->get' . $un . 'OldValueIds());
+		return array_map(function ($documentId) use ($dm) {
+			return $dm->getDocumentInstance($documentId);
+			}, $this->get' . $un . 'OldValueIds());
 	}
 
 	/**
@@ -819,14 +854,14 @@ class BaseDocumentClass
 	/**
 	 * @param ' . $ct . '[] $newValueArray
 	 * @throws \InvalidArgumentException
-	 * @return void
+	 * @return $this
 	 */
 	public function set' . $un . '($newValueArray)
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			' . $mn . ' = intval($newValueArray);
-			return;
+			return $this;
 		}
 		if (!is_array($newValueArray))
 		{
@@ -843,22 +878,25 @@ class BaseDocumentClass
 			{
 				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '[]\', 52005);
 			}
-		}, $newValueArray);			
+		}, $newValueArray);
 		$this->setInternal' . $un . 'Ids($newValueIds);
+		return $this;
 	}
-			
-			
+
 	/**
 	 * @param ' . $ct . ' ' . $var . '
+	 * @return $this
 	 */
 	public function add' . $un . '(' . $ct . ' ' . $var . ')
 	{
 		$this->set' . $un . 'AtIndex(' . $var . ', -1);
-	}	
+		return $this;
+	}
 
 	/**
 	 * @param ' . $ct . ' ' . $var . '
 	 * @param integer $index
+	 * @return $this
 	 */
 	public function set' . $un . 'AtIndex(' . $ct . ' ' . $var . ', $index = 0)
 	{
@@ -872,9 +910,10 @@ class BaseDocumentClass
 			{
 				$index = count($newValueIds);
 			}
-			$newValueIds[$index] = $newId;		
+			$newValueIds[$index] = $newId;
 			$this->setInternal' . $un . 'Ids($newValueIds);
-		}	
+		}
+		return $this;
 	}
 
 	/**
@@ -901,17 +940,21 @@ class BaseDocumentClass
 		if (isset(' . $mn . '[$index]))
 		{
 			$newValueIds = ' . $mn . ';
-			unset($newValueIds[$index]);	
+			unset($newValueIds[$index]);
 			$this->setInternal' . $un . 'Ids($newValueIds);
 			return true;
 		}
 		return false;
 	}
 
+	/**
+	 * @return $this
+	 */
 	public function removeAll' . $un . '()
 	{
 		$this->checkLoaded' . $un . '();
 		$this->setInternal' . $un . 'Ids(array());
+		return $this;
 	}
 
 	/**
@@ -947,7 +990,7 @@ class BaseDocumentClass
 		$this->checkLoaded' . $un . '();
 		return isset(' . $mn . '[$index]) ?  $this->getDocumentManager()->getDocumentInstance(' . $mn . '[$index]) : null;
 	}
-	
+
 	/**
 	 * @return integer[]
 	 */

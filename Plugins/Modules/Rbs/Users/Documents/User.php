@@ -24,10 +24,12 @@ class User extends \Compilation\Rbs\Users\Documents\User
 
 	/**
 	 * @param string $label
+	 * @return $this
 	 */
 	public function setLabel($label)
 	{
 		$this->setPseudonym($label);
+		return $this;
 	}
 
 	/**
@@ -140,11 +142,12 @@ class User extends \Compilation\Rbs\Users\Documents\User
 
 	/**
 	 * @param string $password
+	 * @return $this
 	 */
 	public function setPassword($password)
 	{
 		$this->password = $password;
-
+		return $this;
 	}
 
 	protected function onCreate()

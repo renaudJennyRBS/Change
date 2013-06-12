@@ -144,7 +144,7 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	protected function attachEvents($eventManager)
 	{
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 5);
-		$this->eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
-		$this->eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
+		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
+		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
 	}
 }

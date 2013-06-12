@@ -85,7 +85,8 @@ class GetTreeNodeCollection
 		$result->setSort('nodeOrder');
 
 		$result->setCount(count($nodes));
-		//TODO Add pagination
+
+		$nodes = array_slice($nodes, $result->getOffset(), $result->getLimit());
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));

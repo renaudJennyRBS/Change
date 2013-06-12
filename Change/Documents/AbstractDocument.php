@@ -54,10 +54,16 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		$this->setDocumentContext($documentServices, $model);
 	}
 
-	public function __destruct()
+	public function cleanUp()
 	{
-		unset($this->documentServices);
-		unset($this->documentModel);
+		if (isset($this->eventManager))
+		{
+			foreach ($this->eventManager->getEvents() as $event)
+			{
+				$this->eventManager->clearListeners($event);
+			}
+			$this->eventManager = null;
+		}
 	}
 
 	/**
@@ -145,6 +151,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 
 	}
+
 
 	/**
 	 * @return \Change\Documents\DocumentManager

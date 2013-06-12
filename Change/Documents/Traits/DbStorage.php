@@ -91,7 +91,7 @@ trait DbStorage
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Document is not valid', 52000);
+			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
@@ -150,7 +150,7 @@ trait DbStorage
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Document is not valid', 52000);
+			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
