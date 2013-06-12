@@ -23,7 +23,7 @@
 	<key id="stringlengthinvalid">the field "{field}" must be a String</key>
 	<key id="stringlengthtooshort">the field "{field}" must have a minimum size of %max% characters.</key>
 	<key id="notunique">the field "{field}" must be have a unique value.</key>
-	<key id="regexnotmatch">the field "{field}" must match the following format: %pattern%.</key>
+	<key id="notmatch">the field "{field}" must match the following format: %pattern%.</key>
 	<key id="notgreaterthan">the field "{field}" must have a minimum value of %min%.</key>
 	<key id="notlessthan">the field "{field}" must have a maximum value of %max%.</key>
 	<key id="notbetween">the field "{field}" must have a value between %min% and %max%.</key>
