@@ -163,6 +163,10 @@ class Resolver extends ActionResolver
 		if ($website instanceof Website)
 		{
 			$path = $event->getRequest()->getPath();
+			if ($path === $website->getScriptName())
+			{
+				$path = '/';
+			}
 			if ($this->isBasePath($path, $website->getRelativePath()))
 			{
 				$relativePath = $this->getRelativePath($path, $website->getRelativePath());

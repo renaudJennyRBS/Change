@@ -44,7 +44,6 @@ class GetTreeNodeCollection
 		$nodes = array();
 		if (!count($pathIds))
 		{
-
 			$node = $treeManager->getRootNode($treeName);
 			if ($node)
 			{
@@ -59,7 +58,10 @@ class GetTreeNodeCollection
 			{
 				return;
 			}
-			$nodes = $treeManager->getChildrenNode($parentNode);
+			$offset = intval($event->getRequest()->getQuery('offset', 0));
+			$limit = intval($event->getRequest()->getQuery('limit', 10));
+			$treeManager->getChildrenCount($parentNode);
+			$nodes = $treeManager->getChildrenNode($parentNode, $offset, $limit);
 		}
 		$this->generateResult($event, $parentNode, $nodes);
 	}
@@ -83,10 +85,7 @@ class GetTreeNodeCollection
 			$result->setLimit(intval($limit));
 		}
 		$result->setSort('nodeOrder');
-
-		$result->setCount(count($nodes));
-
-		$nodes = array_slice($nodes, $result->getOffset(), $result->getLimit());
+		$result->setCount($parentNode ? $parentNode->getChildrenCount() : count($nodes));
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
@@ -105,10 +104,11 @@ class GetTreeNodeCollection
 		}
 
 		$extraColumn = $event->getRequest()->getQuery('column', array());
-
+		$treeManager = $event->getDocumentServices()->getTreeManager();
 		foreach ($nodes as $node)
 		{
-			/* @var $node \Change\Documents\TreeNode */;
+			/* @var $node \Change\Documents\TreeNode */
+			$node->setTreeManager($treeManager);
 			$document = $node->getDocument();
 			if (!$document)
 			{

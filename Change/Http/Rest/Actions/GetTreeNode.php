@@ -56,22 +56,26 @@ class GetTreeNode
 	 */
 	protected function generateResult($event, $node)
 	{
+
 		$urlManager = $event->getUrlManager();
 		$result = new TreeNodeResult();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
-
 		$result->setProperty('id', $node->getDocumentId());
-		$document = $node->getDocument();
+
 
 		$result->setProperties(array('id' => $node->getDocumentId(),
 			'childrenCount' => $node->getChildrenCount(),
 			'level' => $node->getLevel(),
 			'nodeOrder' => $node->getPosition()));
 
-		$dl = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-		$this->addResourceItemInfos($dl, $document, $urlManager);
-		$result->setProperty('document', $dl);
+		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
+		if ($document)
+		{
+			$dl = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
+			$this->addResourceItemInfos($dl, $document, $urlManager);
+			$result->setProperty('document', $dl);
+		}
 
 		$treeNodeLink = new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_LINK);
 		$result->addLink($treeNodeLink);

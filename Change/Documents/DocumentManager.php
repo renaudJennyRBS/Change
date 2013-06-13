@@ -689,6 +689,15 @@ class DocumentManager
 	}
 
 	/**
+	 * @param $documentId
+	 * @return boolean
+	 */
+	public function isInCache($documentId)
+	{
+		return $this->getFromCache($documentId) === null;
+	}
+
+	/**
 	 * @param integer $documentId
 	 * @return AbstractDocument|null
 	 */
@@ -772,6 +781,7 @@ class DocumentManager
 		{
 			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
 		}
+		$document->setPersistentState(static::STATE_DELETING);
 
 		$model = $document->getDocumentModel();
 		$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());

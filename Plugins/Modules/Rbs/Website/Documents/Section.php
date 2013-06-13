@@ -59,14 +59,17 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	public function getSectionPath()
 	{
 		$tm = $this->getDocumentServices()->getTreeManager();
-		$tn = $tm->getNodeByDocument($this);
 		$sections = array();
-		foreach($tm->getAncestorNodes($tn) as $node)
+		$tn = $tm->getNodeByDocument($this);
+		if ($tn)
 		{
-			$doc = $node->getDocument();
-			if ($doc instanceof \Rbs\Website\Documents\Section)
+			foreach($tm->getAncestorNodes($tn) as $node)
 			{
-				$sections[] = $doc;
+				$doc = $node->setTreeManager($tm)->getDocument();
+				if ($doc instanceof \Rbs\Website\Documents\Section)
+				{
+					$sections[] = $doc;
+				}
 			}
 		}
 		$sections[] = $this;

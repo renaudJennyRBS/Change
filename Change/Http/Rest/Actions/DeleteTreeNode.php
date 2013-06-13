@@ -37,8 +37,7 @@ class DeleteTreeNode
 		{
 			return;
 		}
-		$treeManager->deleteDocumentNode($node->getDocument());
-
+		$treeManager->deleteNode($node);
 		$result = new Result();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 		$event->setResult($result);

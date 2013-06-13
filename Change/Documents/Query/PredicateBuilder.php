@@ -418,7 +418,7 @@ class PredicateBuilder
 		}
 		elseif ($node instanceof TreeNode)
 		{
-			$document = $node->getDocument();
+			$document = $this->builder->getQuery()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
 		}
 		elseif (is_numeric($node))
 		{
