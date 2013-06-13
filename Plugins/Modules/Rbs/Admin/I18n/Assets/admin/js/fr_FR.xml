@@ -23,4 +23,6 @@
 	<key id="preview">aperçu</key>
 	<key id="edit">éditer</key>
 	<key id="delete">supprimer</key>
+
+	<key id="search">rechercher</key>
 </i18n>

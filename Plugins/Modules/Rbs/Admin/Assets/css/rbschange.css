@@ -1467,16 +1467,17 @@ button.tag span.count {
 
 /* Tag selector */
 .tag-selector {
-	padding: 3px;
-	background: #444444;
+	padding: 5px;
+	background: white;
 	border: 1px solid #CCCCCC;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 	border-radius: 4px;
 	margin-bottom: 5px;
 	color: white;
+	min-height: 26px;
 }
 
-.tag-selector input[type="text"],
+.tag-selector input[type=text],
 .tag-selector .typed,
 .tag-selector .tag {
 	margin: 2px;
@@ -1495,22 +1496,77 @@ button.tag span.count {
 	text-decoration: none;
 }
 
-.tag-selector input[type="text"],
+.tag-selector .tag {
+	padding: 3px 6px;
+	font-size: 85%;
+}
+
+.tag-selector input[type=text],
 .tag-selector .typed {
 	border: 0;
 	padding: 0;
-	color: white;
-	background: #444444;
+	color: #444444;
+	background: white;
+	height: 18px;
 }
 
-.tag-selector input[type="text"] {
-	margin: 0;
+.tag-selector input[type=text] {
+	margin: 0 -10px 0 5px;
 	background: none;
-	width: 1em;
-	vertical-align: top;
+	width: 1px;
+	outline: none;
+	padding: 1px 0;
+	min-width: 2px;
+	vertical-align: middle;
+	text-align: left;
+}
+.tag-selector input.first[type=text] {
+	margin-left: 2px;
 }
 
 .tag-selector .typed {
 	margin-right: 0;
 	background: none;
+}
+
+#rbsTagSelectorAutocompleteList {
+	padding: 7px;
+	background: #444444;
+	color: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	border-radius: 4px;
+}
+
+#rbsTagSelectorAutocompleteList a:link,
+#rbsTagSelectorAutocompleteList a:visited {
+	color: white;
+}
+
+
+/* rbs-form-simple */
+
+.rbs-form-simple-filter {
+	display: block;
+	clear: both;
+	position: relative;
+}
+
+.rbs-form-simple-filter input {
+	display: block;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	height: 32px;
+}
+
+.rbs-form-simple-filter button {
+	position: absolute;
+	right: 2px;
+	top: 3px;
+	line-height: 26px;
+	background: none;
+	border: none;
+	background: none;
+	color: #CCCCCC;
 }

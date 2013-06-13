@@ -1,6 +1,10 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Media/Image"><i class="icon-home"></i> {{ i18n('m.rbs.media.document.image-list', ['ucf']) }}</a></li>
-	</ul>
+<div ng-controller="Rbs_Media_Menu_Controller">
+	<div class="nav-list">
+
+		<form class="rbs-form-simple-filter" filter="filterTags"></form>
+
+		<div>
+			<button ng-animate="'menu-animate'" ng-repeat="tag in tags | filter:filterTags | orderBy:'count':true" class="tag (= tag.color =)" type="button"><span class="text">(= tag.label =)</span><span class="count">(= tag.count | number =)</span></button>
+		</div>
+	</div>
 </div>

@@ -19,4 +19,10 @@
 	<key id="activated">activated</key>
 	<key id="status">state</key>
 	<key id="order">order</key>
+
+	<key id="preview">preview</key>
+	<key id="edit">edit</key>
+	<key id="delete">delete</key>
+
+	<key id="search">search</key>
 </i18n>
