@@ -71,6 +71,18 @@
 
 
 	/**
+	 * Ellipsis letter.
+	 */
+	app.filter('etc', function () {
+
+		return function etcFilterFn (input) {
+			return input + '…';
+		};
+
+	});
+
+
+	/**
 	 * The following directive should be placed on an input field to validate that its value is a valid locale name.
 	 */
 	app.directive('localeId', ['RbsChange.Utils', function (Utils) {
