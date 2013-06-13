@@ -161,17 +161,19 @@
 
 				function doSubmit () {
 					var uploadPromises = [], promise;
-					element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
-						var scope = angular.element($(this)).scope();
-						if (angular.isFunction(scope.upload)) {
-							promise = scope.upload();
-							if (promise !== null) {
-								uploadPromises.push(promise);
+					if (element) {
+						element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
+							var scope = angular.element($(this)).scope();
+							if (angular.isFunction(scope.upload)) {
+								promise = scope.upload();
+								if (promise !== null) {
+									uploadPromises.push(promise);
+								}
+							} else {
+								throw new Error("Could not find 'upload()' method in imageUploader's scope.");
 							}
-						} else {
-							throw new Error("Could not find 'upload()' method in imageUploader's scope.");
-						}
-					});
+						});
+					}
 
 					if (uploadPromises.length) {
 						console.log("Uploading " + uploadPromises.length + " files...");
