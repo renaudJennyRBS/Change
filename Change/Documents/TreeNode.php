@@ -8,7 +8,7 @@ namespace Change\Documents;
 class TreeNode
 {
 	/**
-	 * @var \Change\Documents\TreeManager
+	 * @var TreeManager
 	 */
 	protected $treeManager;
 
@@ -48,32 +48,51 @@ class TreeNode
 	protected $childrenCount;
 
 	/**
-	 * @var integer[]
+	 * @var TreeNode[]
 	 */
-	protected $childrenIds;
+	protected $children;
 
 	/**
 	 * @param string $treeName
+	 * @param integer $documentId
 	 */
-	public function __construct($treeName)
+	public function __construct($treeName, $documentId = null)
 	{
 		$this->setTreeName($treeName);
+		$this->setDocumentId($documentId);
 	}
 
 	/**
-	 * @param \Change\Documents\TreeManager $treeManager
+	 * @param TreeManager $treeManager
+	 * @return $this
 	 */
-	public function setTreeManager(\Change\Documents\TreeManager $treeManager)
+	public function setTreeManager(TreeManager $treeManager = null)
 	{
 		$this->treeManager = $treeManager;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Documents\TreeManager
+	 * @throws \RuntimeException
+	 * @return TreeManager
 	 */
 	public function getTreeManager()
 	{
-		return $this->treeManager;
+		if ($this->treeManager !== null)
+		{
+			return $this->treeManager;
+		}
+		throw new \RuntimeException('TreeManager not set.', 999999);
+	}
+
+	/**
+	 * @param string $treeName
+	 * @return $this
+	 */
+	public function setTreeName($treeName)
+	{
+		$this->treeName = $treeName;
+		return $this;
 	}
 
 	/**
@@ -86,12 +105,32 @@ class TreeNode
 	}
 
 	/**
+	 * @param integer $documentId
+	 * @return $this
+	 */
+	public function setDocumentId($documentId)
+	{
+		$this->documentId = $documentId;
+		return $this;
+	}
+
+	/**
 	 * @api
 	 * @return integer
 	 */
 	public function getDocumentId()
 	{
 		return $this->documentId;
+	}
+
+	/**
+	 * @param integer $parentId
+	 * @return $this
+	 */
+	public function setParentId($parentId)
+	{
+		$this->parentId = $parentId;
+		return $this;
 	}
 
 	/**
@@ -104,6 +143,16 @@ class TreeNode
 	}
 
 	/**
+	 * @param integer $position
+	 * @return $this
+	 */
+	public function setPosition($position)
+	{
+		$this->position = $position;
+		return $this;
+	}
+
+	/**
 	 * @api
 	 * @return integer
 	 */
@@ -113,12 +162,32 @@ class TreeNode
 	}
 
 	/**
+	 * @param integer $level
+	 * @return $this
+	 */
+	public function setLevel($level)
+	{
+		$this->level = $level;
+		return $this;
+	}
+
+	/**
 	 * @api
 	 * @return integer
 	 */
 	public function getLevel()
 	{
 		return $this->level;
+	}
+
+	/**
+	 * @param string $path
+	 * @return $this
+	 */
+	public function setPath($path)
+	{
+		$this->path = $path;
+		return $this;
 	}
 
 	/**
@@ -145,15 +214,18 @@ class TreeNode
 	 */
 	public function getAncestorIds()
 	{
-		$ancestorIds = array();
-		foreach (explode('/', $this->getPath()) as $id)
-		{
-			if ($id != '')
-			{
-				$ancestorIds[] = intval($id);
-			}
-		}
-		return $ancestorIds;
+		$trimPath = trim($this->getPath(), '/');
+		return ($trimPath !== '') ? array_map('intval', explode('/', $trimPath)) : array();
+	}
+
+	/**
+	 * @param $childrenCount
+	 * @param integer $childrenCount
+	 */
+	public function setChildrenCount($childrenCount)
+	{
+		$this->childrenCount = $childrenCount;
+		return $this;
 	}
 
 	/**
@@ -185,20 +257,66 @@ class TreeNode
 
 	/**
 	 * @api
-	 * @return\Change\Documents\AbstractDocument|null
+	 * @param TreeNode|integer|null $treeNode
+	 * @return boolean
 	 */
-	public function getDocument()
+	public function eq($treeNode)
 	{
-		return $this->treeManager->getDocumentManager()->getDocumentInstance($this->documentId);
+		if ($treeNode instanceof TreeNode)
+		{
+			return $treeNode === $this || $this->getDocumentId() === $treeNode->getDocumentId();
+		}
+		elseif (is_int($treeNode))
+		{
+			return $this->getDocumentId() === $treeNode;
+		}
+		return false;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Documents\TreeNode[]
+	 * @param TreeNode $descendantNode
+	 * @return boolean
+	 */
+	public function ancestorOf(TreeNode $descendantNode)
+	{
+		return in_array($this->getDocumentId(), $descendantNode->getAncestorIds());
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractDocument|null
+	 */
+	public function getDocument()
+	{
+		return $this->getTreeManager()->getDocumentManager()->getDocumentInstance($this->documentId);
+	}
+
+
+	/**
+	 * @param TreeNode[] $children
+	 * @return $this
+	 */
+	public function setChildren(array $children = null)
+	{
+		$this->children = $children;
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @throws \RuntimeException
+	 * @return TreeNode[]
 	 */
 	public function getChildren()
 	{
-		return $this->treeManager->getChildrenNode($this);
+		if ($this->children === null)
+		{
+			$tm = $this->getTreeManager();
+			return array_map(function(TreeNode $node) use($tm) {return $node->setTreeManager($tm);}, $tm->getChildrenNode($this));
+		}
+		return $this->children;
 	}
 
 	/**
@@ -207,78 +325,7 @@ class TreeNode
 	 */
 	public function __toString()
 	{
-		return implode(', ', array($this->treeName, $this->documentId, $this->parentId, $this->position, $this->level, $this->path));
-	}
-
-	/**
-	 * @return integer[]|null
-	 */
-	public function getChildrenIds()
-	{
-		return $this->childrenIds;
-	}
-
-	/**
-	 * @param string $treeName
-	 */
-	public function setTreeName($treeName)
-	{
-		$this->treeName = $treeName;
-	}
-
-	/**
-	 * @param integer $documentId
-	 */
-	public function setDocumentId($documentId)
-	{
-		$this->documentId = $documentId;
-	}
-
-	/**
-	 * @param integer $parentId
-	 */
-	public function setParentId($parentId)
-	{
-		$this->parentId = $parentId;
-	}
-
-	/**
-	 * @param integer $position
-	 */
-	public function setPosition($position)
-	{
-		$this->position = $position;
-	}
-
-	/**
-	 * @param integer $level
-	 */
-	public function setLevel($level)
-	{
-		$this->level = $level;
-	}
-
-	/**
-	 * @param string $path
-	 */
-	public function setPath($path)
-	{
-		$this->path = $path;
-	}
-
-	/**
-	 * @param integer $childrenCount
-	 */
-	public function setChildrenCount($childrenCount)
-	{
-		$this->childrenCount = $childrenCount;
-	}
-
-	/**
-	 * @param integer[]|null $childrenIds
-	 */
-	public function setChildrenIds($childrenIds)
-	{
-		$this->childrenIds = $childrenIds;
+		return implode(', ',
+			array($this->treeName, $this->documentId, $this->level, $this->position, $this->parentId, $this->childrenCount, $this->path));
 	}
 }

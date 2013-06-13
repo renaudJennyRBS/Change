@@ -117,6 +117,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 			case DocumentManager::STATE_NEW:
 			case DocumentManager::STATE_LOADING:
 			case DocumentManager::STATE_DELETED:
+			case DocumentManager::STATE_DELETING:
 			case DocumentManager::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;

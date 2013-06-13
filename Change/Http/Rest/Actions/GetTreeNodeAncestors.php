@@ -95,14 +95,19 @@ class GetTreeNodeAncestors
 		$pnl = new TreeNodeLink($urlManager, $currentNode, TreeNodeLink::MODE_LINK);
 		$pnl->setRel('node');
 		$result->addLink($pnl);
+		$treeManager = $event->getDocumentServices()->getTreeManager();
 
 		foreach ($nodes as $node)
 		{
 			/* @var $node \Change\Documents\TreeNode */;
-			$t = new TreeNodeLink($urlManager, $node);
+			$node->setTreeManager($treeManager);
 			$document = $node->getDocument();
-			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
-			$result->addResource($t);
+			if ($document)
+			{
+				$t = new TreeNodeLink($urlManager, $node);
+				$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
+				$result->addResource($t);
+			}
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

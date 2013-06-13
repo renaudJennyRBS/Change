@@ -112,10 +112,14 @@ class Menu extends Block
 		{
 			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
-				$tn = $doc->getDocumentServices()->getTreeManager()->getNodeByDocument($doc);
-				foreach ($tn->getChildren() as $child)
+				$treeManager = $doc->getDocumentServices()->getTreeManager();
+				$tn = $treeManager->getNodeByDocument($doc);
+				if ($tn)
 				{
-					$entry->addChild($this->getMenuEntry($child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
+					foreach ($tn->setTreeManager($treeManager)->getChildren() as $child)
+					{
+						$entry->addChild($this->getMenuEntry($child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
+					}
 				}
 			}
 			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
