@@ -18,7 +18,7 @@
 	function ChangeMainMenuControllerFn ($rootScope, $scope, $filter, $timeout, $location, Device) {
 
 		var	$menu = jQuery('#change-menu'),
-			$filterInput = $menu.find('input.search-query').first();
+			$filterInput = $menu.find('input[type=text]').first();
 
 		$scope.hasOtherModules = false;
 		$scope.menu = __change.menu;
