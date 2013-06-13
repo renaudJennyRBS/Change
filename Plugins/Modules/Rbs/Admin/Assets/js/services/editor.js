@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -160,7 +160,11 @@
 				}
 
 				function doSubmit () {
-					var uploadPromises = [], promise;
+					var	uploadPromises = [],
+						promise,
+						uploadCount = 0,
+						tagCreationCount = 0;
+
 					if (element) {
 						element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
 							var scope = angular.element($(this)).scope();
@@ -168,6 +172,7 @@
 								promise = scope.upload();
 								if (promise !== null) {
 									uploadPromises.push(promise);
+									uploadCount++;
 								}
 							} else {
 								throw new Error("Could not find 'upload()' method in imageUploader's scope.");
@@ -175,8 +180,15 @@
 						});
 					}
 
+					angular.forEach(scope.document.tags, function (tag) {
+						if (tag.isNew) {
+							uploadPromises.push(REST.tags.create(tag));
+							tagCreationCount++;
+						}
+					});
+
 					if (uploadPromises.length) {
-						console.log("Uploading " + uploadPromises.length + " files...");
+						console.log("Files to upload: " + uploadCount + ". Tags to create: " + tagCreationCount);
 						$q.all(uploadPromises).then(executeSaveAction);
 					} else {
 						console.log("No files to upload.");
@@ -383,7 +395,8 @@
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
 		'RbsChange.Actions',
-		'RbsChange.Breadcrumb'
+		'RbsChange.Breadcrumb',
+		'RbsChange.REST'
 	];
 
 	app.service('RbsChange.Editor', changeEditorServiceFn);

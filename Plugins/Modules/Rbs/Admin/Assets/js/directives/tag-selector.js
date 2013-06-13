@@ -47,10 +47,9 @@
 	});
 
 
-	app.directive('rbsTagSelector', ['$timeout', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.REST', function ($timeout, $compile, ArrayUtils, REST) {
+	app.directive('rbsTagSelector', ['$timeout', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.i18n', function ($timeout, $compile, ArrayUtils, REST, i18n) {
 
-		var	counter = 0,
-			availTags = null,
+		var	availTags = null,
 			autocompleteEl;
 
 		function loadAvailTags () {
@@ -68,14 +67,15 @@
 
 		return {
 			restrict : 'E',
-			//replace  : true,
+			replace  : true,
 			require  : 'ngModel',
 			scope    : true,
 			template :
 				'<div class="tag-selector" ng-click="focus($event)">' +
 					'<span ng-repeat="tag in tags">' +
-						'<span ng-if="!tag.input" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
-						'<input type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete($event)" ng-keydown="keydown($event, $index)"></span>' +
+						'<span ng-if="!tag.input && !tag.isNew" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<span ng-if="!tag.input && tag.isNew"  class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
 					'</span>' +
 				'</div>',
 
@@ -130,12 +130,33 @@
 					}
 				}
 
+				function findTag (label) {
+					var i;
+					for (i=0 ; i<scope.availTags.length ; i++) {
+						if (angular.lowercase(scope.availTags[i].label) === angular.lowercase(label)) {
+							return scope.availTags[i];
+						}
+					}
+					return null;
+				}
+
 				function add (value) {
-					scope.tags.splice(inputIndex, 0, {
+					var tag = findTag(value);
+					if (!tag) {
+						tag = createTemporaryTag(value);
+					}
+					appendTag(tag);
+				}
+
+				function createTemporaryTag (value) {
+					return {
 						'label' : value,
-						'id'    : (++counter),
-						'color' : (value === 'fred' ? "blue" : (value === 'ipad' ? "red" : ""))
-					});
+						'isNew' : true
+					};
+				}
+
+				function appendTag (tag) {
+					scope.tags.splice(inputIndex, 0, tag);
 					update();
 				}
 
@@ -155,9 +176,10 @@
 				};
 
 				scope.focus = function () {
+					getInput().focus();
 					$timeout(function () {
 						getInput().focus();
-					});
+					}, 100);
 				};
 
 				scope.keydown = function ($event, index) {
@@ -178,6 +200,8 @@
 
 					// Tab
 					case 9 :
+					// Coma
+					case 188 :
 						if (value.length > 0) {
 							add(value);
 							input.val('');
@@ -186,9 +210,13 @@
 						}
 						break;
 
-					// Coma
-					case 188 :
-						if (value.length > 0) {
+					// Tab
+					case 13 :
+						if (scope.suggestions.length) {
+							$event.preventDefault();
+							$event.stopPropagation();
+							scope.autocompleteAdd(scope.suggestions[0]);
+						} else if (value.length > 0) {
 							add(value);
 							input.val('');
 							$event.preventDefault();
@@ -216,23 +244,26 @@
 				};
 
 
-				scope.add = function (tag) {
+				scope.autocompleteAdd = function (tag) {
 					autocompleteEl.hide();
 					getInput().val('');
-					scope.tags.splice(inputIndex, 0, tag);
-					update();
+					appendTag(tag);
 					focus();
 				};
 
-				scope.autocomplete = function ($event) {
+				scope.autocomplete = function () {
 					var	input = getInput(),
-						value = input.val().trim();
-					console.log("value=", value);
+						value = input.val().trim(),
+						suggestions = [];
 
-					var suggestions = [];
 					if (value.length) {
 						angular.forEach(scope.availTags, function (tag) {
-							if (angular.lowercase(tag.label).indexOf(angular.lowercase(value)) !== -1) {
+							if (angular.lowercase(tag.label).indexOf(angular.lowercase(value)) === 0) {
+								suggestions.push(tag);
+							}
+						});
+						angular.forEach(scope.availTags, function (tag) {
+							if (angular.lowercase(tag.label).indexOf(angular.lowercase(value)) > 0) {
 								suggestions.push(tag);
 							}
 						});
@@ -240,7 +271,7 @@
 					scope.suggestions = suggestions;
 
 					function buildSuggestionsList () {
-						return '<a href ng-repeat="tag in suggestions" ng-click="add(tag)"><span class="tag (= tag.color =)">(= tag.label =)</span></a>';
+						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span class="tag (= tag.color =)">(= tag.label =)</span></a><br/><small><em>' + i18n.trans('m.rbs.admin.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
 					}
 
 					if (suggestions.length) {
@@ -249,7 +280,7 @@
 							autocompleteEl.append(clone);
 							autocompleteEl.css({
 								'left' : input.offset().left + 'px',
-								'top'  : (input.outerHeight() + input.offset().top)  + 'px'
+								'top'  : (input.outerHeight() + input.offset().top + 3)  + 'px'
 							});
 							autocompleteEl.show();
 						});

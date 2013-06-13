@@ -25,4 +25,6 @@
 	<key id="delete">supprimer</key>
 
 	<key id="search">rechercher</key>
+	<key id="tag-not-saved">cette étiquette sera effectivement créée lors de la validation du formulaire</key>
+	<key id="enter-selects-first-tag">[Entrée] pour sélectionner la première étiquette</key>
 </i18n>

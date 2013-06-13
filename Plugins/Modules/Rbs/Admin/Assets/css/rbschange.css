@@ -1434,6 +1434,13 @@ span.tag {
 	border-radius: 2px;
 }
 
+span.tag.new {
+	border-color: rgb(99,79,0);
+	background: rgb(243,197,27);
+	color: rgb(99,79,0);
+	border-style: dashed;
+}
+
 button.tag span {
 	padding: 1px 5px;
 }
@@ -1535,7 +1542,35 @@ button.tag span.count {
 	color: white;
 	box-shadow: 0 0 5px rgba(0,0,0,0.5);
 	border-radius: 4px;
+	border: 1px solid white;
 }
+
+
+
+#rbsTagSelectorAutocompleteList:after {
+	border-bottom: 6px solid #444444;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 10px;
+	position: absolute;
+	top: -6px;
+}
+
+#rbsTagSelectorAutocompleteList:before {
+	border-bottom: 7px solid white;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 9px;
+	position: absolute;
+	top: -7px;
+}
+
+
+
 
 #rbsTagSelectorAutocompleteList a:link,
 #rbsTagSelectorAutocompleteList a:visited {

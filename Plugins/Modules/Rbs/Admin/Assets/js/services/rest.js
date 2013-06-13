@@ -1092,6 +1092,32 @@
 							]);
 
 							return tags;
+						},
+
+						newTagIdCounter : 9000000,
+
+						// FIXME Call server
+						create : function (tag) {
+							var q = $q.defer();
+
+							q.promise.then(function (tag) {
+								console.log("Tag created: ", tag);
+							});
+
+							if (angular.isString(tag)) {
+								q.resolve({
+									'label' : tag,
+									'id'    : ++this.newTagIdCounter,
+									'color' : 'red'
+								});
+							} else {
+								tag.id = ++this.newTagIdCounter;
+								tag.color = 'blue';
+								delete tag.isNew;
+								q.resolve(tag);
+							}
+
+							return q.promise;
 						}
 
 
