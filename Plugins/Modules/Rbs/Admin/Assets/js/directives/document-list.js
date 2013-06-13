@@ -28,12 +28,13 @@
 		'RbsChange.Actions',
 		'RbsChange.NotificationCenter',
 		'RbsChange.Device',
+		'RbsChange.Settings',
 		documentListDirectiveFn
 	]);
 
 
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device) {
+	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
 
 		/**
 		 * Initialize columns for <document-list/>
@@ -282,7 +283,7 @@
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
-					scope.viewMode = 'list';
+					scope.viewMode = Settings.get('documentListViewMode', gridModeAvailable ? 'grid' : 'list');
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope;
@@ -295,6 +296,11 @@
 							});
 						});
 					}
+
+					// Save selected view mode is user's settings.
+					scope.$watch('viewMode', function (value) {
+						Settings.set('documentListViewMode', value);
+					}, true);
 
 
 					//
@@ -635,6 +641,7 @@
 
 						// Are we leaving this place?
 						if (currentPath !== scope.location.path()) {
+							// If yes, there is nothing to do.
 							return;
 						}
 
@@ -657,7 +664,6 @@
 						scope.sort.descending = desc;
 
 						if (paginationChanged || sortChanged) {
-							console.log("reloading...");
 							reload();
 						}
 					}, true);

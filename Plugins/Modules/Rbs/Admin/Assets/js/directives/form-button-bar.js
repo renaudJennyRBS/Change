@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('formButtonBar', ['RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', function (Dialog, Utils, Actions, Breadcrumb) {
+	app.directive('formButtonBar', ['RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', function (Dialog, Utils, Actions, Breadcrumb, Settings) {
 
 		return {
 			restrict: 'E',
@@ -13,7 +13,7 @@
 
 			link : function (scope, element, attrs) {
 
-				scope.actionAfterSave = 'list';
+				scope.actionAfterSave = Settings.get('actionAfterSave', 'list');
 
 
 				scope.confirmApplyCorrection = function ($event) {
@@ -62,6 +62,7 @@
 
 
 				scope.$on('Change:DocumentSaved', function (event, doc) {
+					Settings.set('actionAfterSave', scope.actionAfterSave);
 					if (scope.actionAfterSave === 'list') {
 						Breadcrumb.goParent();
 					}

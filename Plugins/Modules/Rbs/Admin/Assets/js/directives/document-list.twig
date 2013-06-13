@@ -44,8 +44,8 @@
 			</tr>
 		</thead>
 		<tbody ng-if="collection.length == 0 && !loading">
-			<tr class="empty-row" colspan="0">
-				<td>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
+			<tr class="empty-row">
+				<td colspan="0">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
 		</tbody>
 		<tbody ng-repeat="doc in collection">
