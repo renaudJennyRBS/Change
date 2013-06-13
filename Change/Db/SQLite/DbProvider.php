@@ -329,6 +329,10 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			return '(' . $this->buildQuery($fragment->getSubQuery()) . ')';
 		}
+		elseif ($fragment instanceof \Change\Db\Query\Expressions\Func)
+		{
+			return $this->buildSQLFunc($fragment);
+		}
 		elseif ($fragment instanceof \Change\Db\Query\AbstractQuery)
 		{
 			return $this->buildQuery($fragment);
@@ -354,7 +358,15 @@ class DbProvider extends \Change\Db\DbProvider
 		}
 		return $strings;
 	}
-	
+
+	/**
+	 * @param \Change\Db\Query\Expressions\Func $func
+	 * @return string
+	 */
+	protected function buildSQLFunc($func)
+	{
+		return $func->getFunctionName() . '(' .implode(',', $this->buildSQLFragmentArray($func->getArguments())). ')';
+	}
 	/**
 	 * @param \Change\Db\Query\AbstractQuery $query
 	 * @return string

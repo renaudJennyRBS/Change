@@ -2,7 +2,7 @@
 namespace Change\Db\Query\Expressions;
 
 /**
- * @name \Change\Db\Query\Expressions\Column
+ * @name \Change\Db\Query\Expressions\ExpressionList
  */
 class ExpressionList extends \Change\Db\Query\Expressions\AbstractExpression implements \Countable
 {
