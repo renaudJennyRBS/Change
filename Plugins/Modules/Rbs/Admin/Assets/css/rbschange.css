@@ -1435,10 +1435,10 @@ span.tag {
 }
 
 span.tag.new {
-	border-color: rgb(99,79,0);
-	background: rgb(243,197,27);
-	color: rgb(99,79,0);
-	border-style: dashed;
+	border-color: darkred;
+	background: orangered;
+	color: white;/*rgb(119,99,0);*/
+	/*border-style: dashed;*/
 }
 
 button.tag span {

@@ -18,7 +18,9 @@
 	app.constant('RbsChange.Version', '4.0.0');
 
 	app.constant('RbsChange.Device', {
-		'touch' : ('ontouchstart' in document.documentElement)
+		'isMultiTouch' : function () {
+			return ('ontouchstart' in document.documentElement);
+		}
 	});
 
 	app.directive('rbsChangeVersion', ['RbsChange.Version', function (version) {

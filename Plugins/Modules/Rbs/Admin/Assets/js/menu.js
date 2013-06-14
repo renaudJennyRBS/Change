@@ -31,7 +31,7 @@
 
 		$scope.open = function () {
 			$menu.addClass('show');
-			if (!Device.touch) {
+			if (!Device.isMultiTouch()) {
 				$filterInput.focus();
 			}
 		};

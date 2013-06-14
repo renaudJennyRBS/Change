@@ -70,6 +70,7 @@
 					$el.popover('destroy');
 					options = options || {};
 					options.question = options.question || 'Souhaitez-vous continuer ?';
+					options.container = 'body';
 
 					var deferred = $q.defer();
 					deferred.promise.then(function () {

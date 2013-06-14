@@ -5,6 +5,10 @@
 	var	app = angular.module('RbsChange');
 
 
+	/**
+	 * @name rbsAutoSizeInput
+	 * <input class="rbs-auto-size-input" ... />
+	 */
 	app.directive('rbsAutoSizeInput', function () {
 
 		var options = {
@@ -13,7 +17,7 @@
 		};
 
 		return {
-			restrict : 'A',
+			restrict : 'AC',
 
 			link : function (scope, elm) {
 
@@ -47,7 +51,19 @@
 	});
 
 
-	app.directive('rbsTagSelector', ['$timeout', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.i18n', function ($timeout, $compile, ArrayUtils, REST, i18n) {
+	/**
+	 * @name rbsTagSelector
+	 * <rbs-tag-selector ng-model="document.tags"></rbs-tag-selector>
+	 */
+	app.directive(
+		'rbsTagSelector',
+		[
+			'$timeout', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.i18n',
+			rbsTagSelectorFn
+		]
+	);
+
+	function rbsTagSelectorFn ($timeout, $compile, ArrayUtils, REST, i18n) {
 
 		var	availTags = null,
 			autocompleteEl;
@@ -59,6 +75,7 @@
 			return availTags;
 		}
 
+		// Popover element that shows suggestions.
 		$('<div id="rbsTagSelectorAutocompleteList"></div>').css({
 			'position' : 'absolute',
 			'display'  : 'none'
@@ -73,8 +90,8 @@
 			template :
 				'<div class="tag-selector" ng-click="focus($event)">' +
 					'<span ng-repeat="tag in tags">' +
-						'<span ng-if="!tag.input && !tag.isNew" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
-						'<span ng-if="!tag.input && tag.isNew"  class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<span ng-if="! tag.input && ! tag.isNew" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<span ng-if="! tag.input &&   tag.isNew" class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
 						'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
 					'</span>' +
 				'</div>',
@@ -284,7 +301,6 @@
 							});
 							autocompleteEl.show();
 						});
-
 					} else {
 						autocompleteEl.hide();
 					}
@@ -293,6 +309,6 @@
 
 			}
 		};
-	}]);
+	}
 
 })(window.jQuery);

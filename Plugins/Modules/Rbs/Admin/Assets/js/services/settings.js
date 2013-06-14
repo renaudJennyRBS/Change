@@ -8,30 +8,36 @@
 
 	app.service('RbsChange.Settings', ['$rootScope', 'localStorageService', function ($rootScope, localStorageService) {
 
+		$rootScope.settings = {
+			'pagingSize': 15,
+			'documentListViewMode': 'list',
+			'timeZone': {
+				'code'  : 'GMT+2',
+				'label' : "Paris, Madrid",
+				'offset': '+02:00'
+			},
+			'language': 'fr_FR'
+		};
+
+		var storedSettings;
 		try {
-			$rootScope.settings = JSON.parse(localStorageService.get('settings'));
+			storedSettings = JSON.parse(localStorageService.get('settings'));
 		} catch (e) {
-			$rootScope.settings = {};
 		}
+
+		if (angular.isObject(storedSettings)) {
+			angular.extend($rootScope.settings, storedSettings);
+		}
+
 		console.log("Loaded settings: ", $rootScope.settings);
 
 		return angular.extend(
-			{
-				'pagingSize': 15,
-				'documentListViewMode': 'grid',
-				'timeZone': {
-					'code'  : 'GMT+2',
-					'label' : "Paris, Madrid",
-					'offset': '+02:00'
-				},
-				'language': 'fr_FR'
-			},
+			{ },
 			$rootScope.settings,
 			{
 				'set' : function (key, value) {
 					$rootScope.settings[key] = value;
 					localStorageService.add('settings', JSON.stringify($rootScope.settings));
-					console.log("Saving setting: ", key, "=", value);
 				},
 
 				'get' : function (key, defaultValue) {
