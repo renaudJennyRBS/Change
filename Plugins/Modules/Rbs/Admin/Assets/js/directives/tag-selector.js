@@ -88,10 +88,10 @@
 			require  : 'ngModel',
 			scope    : true,
 			template :
-				'<div class="tag-selector" ng-click="focus($event)">' +
+				'<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">' +
 					'<span ng-repeat="tag in tags">' +
 						'<span ng-if="! tag.input && ! tag.isNew" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
-						'<span ng-if="! tag.input &&   tag.isNew" class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<span ng-if="! tag.input &&   tag.isNew" class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href="javascript:;" tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
 						'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
 					'</span>' +
 				'</div>',
@@ -177,7 +177,7 @@
 					update();
 				}
 
-				function moveinput (value, offset) {
+				function moveInput (value, offset) {
 					if (value.length === 0 && (inputIndex+offset) < (scope.tags.length)) {
 						var r = ArrayUtils.move(scope.tags, inputIndex, inputIndex + offset);
 						update();
@@ -193,10 +193,16 @@
 				};
 
 				scope.focus = function () {
-					getInput().focus();
 					$timeout(function () {
 						getInput().focus();
-					}, 100);
+					});
+				};
+
+				scope.moveLeft = function () {
+					moveInput(getInput().val().trim(), -1);
+				};
+				scope.moveRight = function () {
+					moveInput(getInput().val().trim(), +1);
 				};
 
 				scope.keydown = function ($event, index) {
@@ -243,7 +249,7 @@
 
 					// Left arrow
 					case 37 :
-						if (moveinput(value, -1)) {
+						if (moveInput(value, -1)) {
 							$event.preventDefault();
 							$event.stopPropagation();
 						}
@@ -251,7 +257,7 @@
 
 					// Right arrow
 					case 39 :
-						if (moveinput(value, 1)) {
+						if (moveInput(value, 1)) {
 							$event.preventDefault();
 							$event.stopPropagation();
 						}
