@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Workflow\Std;
 
+use Rbs\Workflow\Documents\Workflow;
+
 /**
 * @name \Rbs\Workflow\Std\Arc
 */
@@ -27,22 +29,22 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	protected $preCondition;
 
 	/**
-	 * @var \Change\Workflow\Interfaces\Transition
+	 * @var Transition
 	 */
 	protected $transition;
 
 	/**
-	 * @var \Change\Workflow\Interfaces\Place
+	 * @var Place
 	 */
 	protected $place;
 
 	/**
-	 * @var \Rbs\Workflow\Documents\Workflow
+	 * @var Workflow
 	 */
 	protected $workflow;
 
 	/**
-	 * @param \Rbs\Workflow\Documents\Workflow $workflow
+	 * @param Workflow $workflow
 	 */
 	function __construct($workflow)
 	{
@@ -50,7 +52,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\Transition
+	 * @return Transition
 	 */
 	public function getTransition()
 	{
@@ -58,7 +60,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\Place
+	 * @return Place
 	 */
 	public function getPlace()
 	{
@@ -66,7 +68,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Arc::DIRECTION_*
+	 * Return Arc::DIRECTION_*
 	 * @return string
 	 */
 	public function getDirection()
@@ -75,7 +77,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Arc::TYPE_*
+	 * Return Arc::TYPE_*
 	 * @return integer
 	 */
 	public function getType()
@@ -93,7 +95,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\Workflow
+	 * @return Workflow
 	 */
 	public function getWorkflow()
 	{
@@ -109,7 +111,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Place[]|Transition[]
 	 */
 	public function getWorkflowInputItems()
 	{
@@ -117,7 +119,7 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Place[]|Transition[]
 	 */
 	public function getWorkflowOutputItems()
 	{
@@ -196,20 +198,20 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	}
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Place $place
+	 * @param Place $place
 	 * @return $this
 	 */
-	public function setPlace($place)
+	public function setPlace(Place $place)
 	{
 		$this->place = $place;
 		return $this;
 	}
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Transition $transition
+	 * @param Transition $transition
 	 * @return $this
 	 */
-	public function setTransition($transition)
+	public function setTransition(Transition $transition)
 	{
 		$this->transition = $transition;
 		return $this;

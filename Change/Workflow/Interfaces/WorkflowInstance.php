@@ -75,14 +75,16 @@ interface WorkflowInstance
 	public function process($taskId, $context);
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function cancel();
+	public function cancel(\DateTime $date = null);
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function close();
+	public function close(\DateTime $date = null);
 
 	/**
 	 * @param boolean $suspend

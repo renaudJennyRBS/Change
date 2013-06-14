@@ -140,6 +140,7 @@ class WorkflowManager
 
 		$args['taskId'] = $taskId;
 		$args['documentServices'] = $this->getDocumentServices();
+		$args['date'] = $context[Interfaces\WorkItem::DATE_CONTEXT_KEY];
 
 		$event = new \Zend\EventManager\Event(static::EVENT_PROCESS, $this, $args);
 		$this->getEventManager()->trigger($event);

@@ -1,13 +1,15 @@
 <?php
 namespace Rbs\Workflow\Std;
 
+use Rbs\Workflow\Documents\WorkflowInstance;
+
 /**
 * @name \Rbs\Workflow\Std\WorkItem
 */
 class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 {
 	/**
-	 * @var \Rbs\Workflow\Documents\WorkflowInstance
+	 * @var WorkflowInstance
 	 */
 	protected $workflowInstance;
 
@@ -52,7 +54,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	protected $finishedDate;
 
 	/**
-	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
+	 * @param WorkflowInstance $workflowInstance
 	 */
 	function __construct($workflowInstance)
 	{
@@ -60,7 +62,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowInstance
+	 * @return WorkflowInstance
 	 */
 	public function getWorkflowInstance()
 	{
@@ -76,7 +78,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Transition::STATUS_*
+	 * Return WorkItem::STATUS_*
 	 * @return string
 	 */
 	public function getStatus()
@@ -93,7 +95,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Transition::TRIGGER_*
+	 * Return Transition::TRIGGER_*
 	 * @return string
 	 */
 	public function getTransitionTrigger()
@@ -263,7 +265,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	 * @param \DateTime|null $enabledDate
 	 * @return $this
 	 */
-	public function setEnabledDate($enabledDate)
+	public function setEnabledDate(\DateTime $enabledDate = null)
 	{
 		$this->enabledDate = $enabledDate;
 		return $this;
@@ -273,7 +275,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	 * @param \DateTime|null $finishedDate
 	 * @return $this
 	 */
-	public function setFinishedDate($finishedDate)
+	public function setFinishedDate(\DateTime $finishedDate = null)
 	{
 		$this->finishedDate = $finishedDate;
 		return $this;
@@ -283,7 +285,7 @@ class WorkItem implements \Change\Workflow\Interfaces\WorkItem
 	 * @param \DateTime|null $canceledDate
 	 * @return $this
 	 */
-	public function setCanceledDate($canceledDate)
+	public function setCanceledDate(\DateTime $canceledDate = null)
 	{
 		$this->canceledDate = $canceledDate;
 		return $this;

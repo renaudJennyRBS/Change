@@ -1,6 +1,9 @@
 <?php
 namespace Rbs\Workflow\Documents;
 
+use Rbs\Workflow\Std\Transition;
+use Rbs\Workflow\Std\WorkItem;
+
 /**
  * @name \Rbs\Workflow\Documents\WorkflowInstance
  */
@@ -96,13 +99,13 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	}
 
 	/**
-	 * @param \Rbs\Workflow\Std\Transition $transition
-	 * @return \Rbs\Workflow\Std\WorkItem
+	 * @param Transition $transition
+	 * @return WorkItem
 	 */
 	public function createWorkItem($transition)
 	{
-		$workItem = new \Rbs\Workflow\Std\WorkItem($this);
-		if ($transition instanceof \Rbs\Workflow\Std\Transition)
+		$workItem = new WorkItem($this);
+		if ($transition instanceof Transition)
 		{
 			$workItem->setTransition($transition);
 			$this->addItem($workItem);
@@ -135,7 +138,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			$this->getContext()->exchangeArray($context);
 		}
 
-		$date = isset($context[\Rbs\Workflow\Std\WorkItem::DATE_CONTEXT_KEY]) ? \Rbs\Workflow\Std\WorkItem::DATE_CONTEXT_KEY : null;
+		$date = isset($context[WorkItem::DATE_CONTEXT_KEY]) ? WorkItem::DATE_CONTEXT_KEY : null;
 		$engine = new \Change\Workflow\Engine($this, $date instanceof \DateTime ? $date : null);
 
 		$place = $engine->getStartPlace();
@@ -144,7 +147,15 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			$this->setStartDate($engine->getDateTime());
 			$this->setStatus(static::STATUS_OPEN);
 			$engine->enableToken($place);
+			if ($this->getStatus() === static::STATUS_CLOSED || $this->getStatus() === static::STATUS_CANCELED)
+			{
+				if (!$this->getWorkflow()->getSaveVolatile())
+				{
+					return;
+				}
+			}
 			$this->save();
+			$this->generateTasks();
 		}
 		else
 		{
@@ -168,14 +179,14 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		$engine = new \Change\Workflow\Engine($this);
 		$workItem = $engine->getEnabledWorkItemByTaskId($taskId);
 
-		if ($workItem instanceof \Rbs\Workflow\Std\WorkItem)
+		if ($workItem instanceof WorkItem)
 		{
 			$transition = $workItem->getTransition();
-			if ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_USER)
+			if ($transition->getTrigger() === Transition::TRIGGER_USER)
 			{
-				if (isset($ctx[\Rbs\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]))
+				if (isset($ctx[WorkItem::USER_ID_CONTEXT_KEY]))
 				{
-					$userId = intval($ctx[\Rbs\Workflow\Std\WorkItem::USER_ID_CONTEXT_KEY]);
+					$userId = intval($ctx[WorkItem::USER_ID_CONTEXT_KEY]);
 					if ($userId)
 					{
 						$workItem->setUserId($userId);
@@ -185,6 +196,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 
 			$engine->firedWorkItem($workItem);
 			$this->save();
+			$this->generateTasks();
 		}
 		else
 		{
@@ -193,7 +205,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	}
 
 	/**
-	 * @param \Rbs\Workflow\Std\WorkItem $workItem
+	 * @param WorkItem $workItem
 	 * @return boolean
 	 */
 	public function execute($workItem)
@@ -210,30 +222,40 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		{
 			$this->getApplicationServices()->getLogging()->exception($e);
 			$ctx = $this->getContext();
-			$ctx[\Rbs\Workflow\Std\WorkItem::EXCEPTION_CONTEXT_KEY] = $e->getMessage();
+			$ctx[WorkItem::EXCEPTION_CONTEXT_KEY] = $transition->getTaskCode() . ' ('. $workItem->getTaskId() .') -> '. $e->getMessage();
 			return false;
 		}
 		return true;
 	}
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function cancel()
+	public function cancel(\DateTime $date = null)
 	{
 		$this->setStatus(static::STATUS_CANCELED);
-		$this->setEndDate(new \DateTime());
-		$this->save();
+		$this->setEndDate($date ? $date : new \DateTime());
+
+		foreach ($this->getItems() as $item)
+		{
+			if ($item instanceof WorkItem &&
+				($item->getStatus() === WorkItem::STATUS_ENABLED || $item->getStatus() === WorkItem::STATUS_IN_PROGRESS))
+			{
+				$item->cancel($this->getEndDate());
+			}
+		}
+
 	}
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function close()
+	public function close(\DateTime $date = null)
 	{
 		$this->setStatus(static::STATUS_CLOSED);
-		$this->setEndDate(new \DateTime());
-		$this->save();
+		$this->setEndDate($date ? $date : new \DateTime());
 	}
 
 	/**
@@ -282,6 +304,8 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		if ($this->context instanceof \ArrayObject)
 		{
 			$array = $this->context->getArrayCopy();
+			unset($array[WorkItem::DATE_CONTEXT_KEY]);
+			unset($array[WorkItem::PRECONDITION_CONTEXT_KEY]);
 			$this->setContextData(count($array) ? json_encode($array) : null);
 		}
 		return $this;
@@ -306,17 +330,14 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		$this->serializeContext();
 	}
 
-	/**
-	 * @param \Rbs\Workflow\Std\WorkItem $workItem
-	 */
-	public function generateTasks()
+
+	protected function generateTasks()
 	{
-		/* @var $workItems  \Rbs\Workflow\Std\WorkItem[] */
+		/* @var $workItems  WorkItem[] */
 		$workItems = array();
 		foreach ($this->getItems() as $item)
 		{
-			if ($item instanceof \Rbs\Workflow\Std\WorkItem &&
-				$item->getStatus() === \Rbs\Workflow\Std\WorkItem::STATUS_ENABLED)
+			if ($item instanceof WorkItem && $item->getTransitionTrigger() !== Transition::TRIGGER_AUTO)
 			{
 				$workItems['T' . $item->getTaskId()] = $item;
 			}
@@ -329,17 +350,35 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 
 		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Workflow_Task');
 		$qb = $dqb->andPredicates(
-			$dqb->eq('workflowInstance', $this), $dqb->eq('status', \Rbs\Workflow\Std\WorkItem::STATUS_ENABLED)
+			$dqb->eq('workflowInstance', $this), $dqb->eq('status', WorkItem::STATUS_ENABLED)
 		)->dbQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
 
+		$fb = $qb->getFragmentBuilder();
 		$rows = $qb->addColumn($fb->alias($fb->getDocumentColumn('taskId'), 'taskId'))
-			->distinct()->query()->getResults();
+				->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'))
+				->distinct()->query()->getResults();
 
 		foreach($rows as $row)
 		{
-			$taskId = intval($row['taskId']);
-			unset($workItems['T' . $taskId]);
+			$taskId = 'T' . $row['taskId'];
+			if (isset($workItems[$taskId]))
+			{
+				$wi = $workItems[$taskId];
+				if ($wi->getStatus() != WorkItem::STATUS_ENABLED)
+				{
+					/* @var $task \Rbs\Workflow\Documents\Task */
+					$task = $this->getDocumentManager()->getDocumentInstance(intval($row['id']));
+					$task->setStatus($wi->getStatus());
+					$task->save();
+				}
+				unset($workItems[$taskId]);
+			}
+			else
+			{
+				$task = $this->getDocumentManager()->getDocumentInstance(intval($row['id']));
+				$task->setStatus(WorkItem::STATUS_CANCELLED);
+				$task->save();
+			}
 		}
 
 		if (count($workItems) === 0)
@@ -349,6 +388,11 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 
 		foreach ($workItems as $workItem)
 		{
+			if ($workItem->getStatus() != WorkItem::STATUS_ENABLED)
+			{
+				continue;
+			}
+
 			/* @var $task  \Rbs\Workflow\Documents\Task */
 			$task = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Task');
 
@@ -359,11 +403,11 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			$task->setTaskId($workItem->getTaskId());
 			$task->setTaskCode($transition->getTaskCode());
 			$task->setStatus($workItem->getStatus());
-			if ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_USER)
+			if ($transition->getTrigger() === Transition::TRIGGER_USER)
 			{
 				$task->setRole($transition->getRole());
 			}
-			elseif ($transition->getTrigger() === \Rbs\Workflow\Std\Transition::TRIGGER_TIME)
+			elseif ($transition->getTrigger() === Transition::TRIGGER_TIME)
 			{
 				$deadLine = clone($workItem->getEnabledDate());
 				$deadLine->add($transition->getTimeLimit());
