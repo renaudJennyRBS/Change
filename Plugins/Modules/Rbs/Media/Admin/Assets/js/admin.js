@@ -22,4 +22,10 @@
 			return $delegate;
 		}]);
 	}]);
+
+	app.controller('Rbs_Media_Menu_Controller', ['$scope', 'RbsChange.REST', function ($scope, REST) {
+
+		$scope.tags = REST.tags.getList('Rbs_Media');
+
+	}]);
 })();
