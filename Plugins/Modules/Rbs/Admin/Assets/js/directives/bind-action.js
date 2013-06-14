@@ -36,7 +36,6 @@
 						} else {
 							actionName = rbsBindAction;
 						}
-						console.log(actionName, " -- ", params);
 
 						actionObject = Actions.get(actionName);
 

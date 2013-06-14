@@ -7,6 +7,15 @@
 
 	"use strict";
 
+	$('<div id="rbs-document-list-tester"></div>').css({
+		'position' : 'absolute',
+		'top'      : -9999,
+		'left'     : -9999,
+		'width'    : 'auto',
+		'display'  : 'inline-block'
+	}).appendTo('body');
+
+
 	var	app = angular.module('RbsChange'),
 		__columns = {},
 		__preview = {},
@@ -14,9 +23,10 @@
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ],
-		DEFAULT_ACTIONS = 'activate reorder delete(icon)';
+		DEFAULT_ACTIONS = 'activate reorder delete(icon)',
+		testerEl = $('#rbs-document-list-tester');
 
-	app.directive('documentList', [
+	app.directive('rbsDocumentList', [
 		'$filter',
 		'$location',
 		'RbsChange.i18n',
@@ -31,7 +41,6 @@
 		'RbsChange.Settings',
 		documentListDirectiveFn
 	]);
-
 
 
 	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
@@ -114,10 +123,10 @@
 			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
 			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
 
-			if ( ! __preview[dlid] ) {
-				__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
+			if (__preview[dlid]) {
+				//__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
+				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
 			}
-			tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
 
 			while (columns.length) {
 				column = columns.shift(0);
@@ -165,9 +174,9 @@
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div style="position:relative"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div style="position:relative"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
@@ -182,35 +191,57 @@
 				}
 
 				// The primary column has extra links for preview, edit and delete.
+				var actionsCount = 0, actionDivider = '<span class="divider">|</span>';
 				if (column.primary) {
-					html =
-						'<div class="quick-actions' + (Device.touch ? '-mobile' : '') + '">' +
-							'<a href="javascript:" ng-click="preview(doc)">' +
-							//'<i ng-if="!isPreviewReady(doc)" class="icon-spinner icon-spin"></i>' +
-							//'<i ng-if="isPreviewReady(doc)" ng-class="{true: \'icon-circle-arrow-up\', false: \'icon-circle-arrow-down\'}[hasPreview(doc)]"></i>' +
-							' ' + i18n.trans('m.rbs.admin.admin.js.preview') +
-							'</a>';
-					if (!tAttrs.picker) {
+					html = '<div class="quick-actions ' + (Device.isMultiTouch() ? 'quick-actions-touch' : 'quick-actions-mouse') + '">';
+
+					if (Device.isMultiTouch()) {
+						html += '<i class="icon-chevron-left handle-open"></i><i class="icon-chevron-right handle-close"></i> ';
+					}
+
+					if (__preview[dlid]) {
+						html += '<a href="javascript:" ng-click="preview(doc)"> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
+						actionsCount++;
+					}
+
+					if ( ! tAttrs.picker ) {
+						if (actionsCount) {
+							html += actionDivider;
+						}
 						html +=
-							' | <a href data-ng-href="(= doc | documentURL =)">' +
-								i18n.trans('m.rbs.admin.admin.js.edit') +
-								'</a> | ' +
-								'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
-								i18n.trans('m.rbs.admin.admin.js.delete') +
-								'</a>';
+							'<a href data-ng-href="(= doc | documentURL =)">' +
+							i18n.trans('m.rbs.admin.admin.js.edit') +
+							'</a>';
+						actionsCount++;
+
+						if (actionsCount) {
+							html += actionDivider;
+						}
+						html +=
+							'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
+							i18n.trans('m.rbs.admin.admin.js.delete') +
+							'</a>';
 					}
 					html += '</div>';
-					$td.find('div').first().prepend(html);
+
+					testerEl.html(html);
+
+					$td.find('.primary-cell').prepend(html);
+
+					// Compute real width so that the CSS animation can work correctly when
+					// opening this menu.
+					// (see showQuickActions() below, in the directive's linking function).
+					$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
 
 					if (column.tags === 'true') {
-						$td.find('div').first().append('<br/><div class="tags"><span class="tag red">image</span><span class="tag">logo</span><span class="tag green">marque</span></div>');
+						$td.append('<div class="tags"><span class="tag red">image</span><span class="tag">logo</span><span class="tag green">marque</span></div>');
 					}
 				}
 
 				$body.append($td);
 			}
 
-			if (Device.touch) {
+			if (Device.isMultiTouch()) {
 				$body.attr('ng-swipe-left', "showQuickActions($event)");
 				$body.attr('ng-swipe-right', "hideQuickActions($event)");
 			}
@@ -742,19 +773,19 @@
 
 
 					var lastQuickActionsShown = null;
-					if (Device.touch) {
+					if (Device.isMultiTouch()) {
 						scope.showQuickActions = function ($event) {
 							if (lastQuickActionsShown) {
-								lastQuickActionsShown.removeClass('shown');
+								lastQuickActionsShown.removeClass('shown').css({'width':'0'});
 							}
-							lastQuickActionsShown = $($event.target).find('.quick-actions-mobile');
-							lastQuickActionsShown.addClass('shown');
+							lastQuickActionsShown = $($event.target).closest('tr').find('.quick-actions-touch');
+							lastQuickActionsShown.addClass('shown').css({'width': lastQuickActionsShown.attr('data-real-width')});
 						};
 
 						scope.hideQuickActions = function ($event) {
-							var el = $($event.target).find('.quick-actions-mobile');
+							var el = $($event.target).closest('tr').find('.quick-actions-touch');
 							if (el.is('.shown')) {
-								el.removeClass('shown');
+								el.removeClass('shown').css({'width':'0'});
 								lastQuickActionsShown = null;
 							}
 						};

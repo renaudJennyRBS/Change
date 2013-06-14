@@ -7,7 +7,7 @@
 		<a href ng-href="(= 'Rbs_Catalog_Category' | documentURL =)">{{ i18n('m.rbs.catalog.document.category-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLRbsCatalogCategory"
+	<rbs-document-list data-dlid="DLRbsCatalogCategory"
 	               model="Rbs_Catalog_Category"
 	               publishable="true"
 	               tree="Rbs_Catalog"
@@ -23,7 +23,7 @@
 			</div>
 		</grid-item>
 
-	</document-list>
+	</rbs-document-list>
 
 	<hr/>
 
@@ -32,7 +32,7 @@
 		<a href ng-href="(= 'Rbs_Catalog_Product' | documentURL =)">{{ i18n('m.rbs.catalog.document.product-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLRbsCatalogProduct"
+	<rbs-document-list data-dlid="DLRbsCatalogProduct"
 	               model="Rbs_Catalog_Product"
 	               publishable="true"
 	               query="query" parent-property="category">
@@ -53,5 +53,5 @@
 			</div>
 		</grid-item>
 
-	</document-list>
+	</rbs-document-list>
 </div>

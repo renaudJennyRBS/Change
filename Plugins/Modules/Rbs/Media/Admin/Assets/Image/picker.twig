@@ -22,7 +22,7 @@
 
 	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
 
-	<document-list data-dlid="DLDocumentPicker{{ query.model }}"
+	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               publishable="true"
 	               model="{{ query.model }}"
 	               query="query" picker="picker">
@@ -41,6 +41,6 @@
 			<h4>(= doc.document.label =)</h4>
 			<todo>Ajouter d'autres caractéristiques de l'image</todo>
 		</preview>
-	</document-list>
+	</rbs-document-list>
 
 </div>

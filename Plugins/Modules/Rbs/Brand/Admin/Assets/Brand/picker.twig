@@ -22,7 +22,7 @@
 
 	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
 
-	<document-list data-dlid="DLDocumentPicker{{ query.model }}"
+	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               publishable="true"
 	               model="{{ query.model }}"
 	               query="query" picker="picker">
@@ -40,6 +40,6 @@
 			<img rbs-storage-image="(= doc.document.visual.id =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
 			<h4>(= doc.document.label =)</h4>
 		</preview>
-	</document-list>
+	</rbs-document-list>
 
 </div>

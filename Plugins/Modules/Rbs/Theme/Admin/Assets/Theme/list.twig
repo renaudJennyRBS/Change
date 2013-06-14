@@ -7,7 +7,7 @@
 		<a href="Rbs/Theme/Theme/new">{{ i18n('m.rbs.theme.document.theme-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLTheme1"
+	<rbs-document-list data-dlid="DLTheme1"
 	               publishable="true"
 	               model="Rbs_Theme_Theme"
 	               query="query">
@@ -15,5 +15,5 @@
 		<column name="themes" label="Modèles">
 			<a href ng-href="(= doc | documentURL:'tree' =)">Lister <i class="icon-circle-arrow-right"></i></a>
 		</column>
-	</document-list>
+	</rbs-document-list>
 </div>

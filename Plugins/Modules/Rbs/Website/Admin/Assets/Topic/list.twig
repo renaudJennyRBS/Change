@@ -9,11 +9,10 @@
 		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL=)">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DL1"
+	<rbs-document-list data-dlid="DL1"
 	               publishable="true"
 	               tree="Rbs_Website"
-	               query="query"
-	               actions="activate reorder delete">
+	               query="query">
 
 		<column name="icon" width="30px" align="center">
 			<span ng-if="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
@@ -33,5 +32,5 @@
 			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></strong>
 		</column>
 
-	</document-list>
+	</rbs-document-list>
 </div>
