@@ -6,9 +6,14 @@
 		<a href="Rbs/Media/Image/new">{{ i18n('m.rbs.media.document.image-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLRbsMediaImage" publishable="true" model="Rbs_Media_Image" query="query">
+	<rbs-document-list data-dlid="DLRbsMediaImage" publishable="true" model="Rbs_Media_Image" query="query">
 		<column name="path" thumbnail="XS"></column>
-		<column name="label" primary="true"></column>
+		<column name="label" primary="true" tagss="true"></column>
+		<!--column name="tags" label="Étiquettes">
+			<span class="tag red">image</span>
+			<span class="tag">logo</span>
+			<span class="tag green">marque</span>
+		</column-->
 
 		<preview>
 			<img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
@@ -20,5 +25,5 @@
 			<img rbs-storage-image="(= doc.path =)" thumbnail="L"/>
 		</grid-item>
 
-	</document-list>
+	</rbs-document-list>
 </div>

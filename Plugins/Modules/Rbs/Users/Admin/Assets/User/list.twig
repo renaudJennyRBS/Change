@@ -5,12 +5,13 @@
 		<a href="Rbs/Users/User/new">{{ i18n('m.rbs.users.document.user-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLUsers1"
+	<rbs-document-list data-dlid="DLUsers1"
 	               publishable="true"
 	               model="Rbs_Users_User"
+	               modification-date="false"
 	               query="query">
 		<column name="pseudonym" primary="true"></column>
 		<column name="login"></column>
 		<column name="email"></column>
-	</document-list>
+	</rbs-document-list>
 </div>

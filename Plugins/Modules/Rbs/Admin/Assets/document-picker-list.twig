@@ -22,7 +22,7 @@
 
 	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
 
-	<document-list data-dlid="DLDocumentPicker{{ query.model }}"
+	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               publishable="true"
 	               model="{{ query.model }}"
 	               query="query" picker="picker">
@@ -35,6 +35,6 @@
 			{% endif %}
 			<a href="javascript:;" ng-click="picker.selectDocument(doc)">(=doc.label=)</a>
 		</column>
-	</document-list>
+	</rbs-document-list>
 
 </div>

@@ -19,4 +19,12 @@
 	<key id="activated">activated</key>
 	<key id="status">state</key>
 	<key id="order">order</key>
+
+	<key id="preview">preview</key>
+	<key id="edit">edit</key>
+	<key id="delete">delete</key>
+
+	<key id="search">search</key>
+	<key id="tag-not-saved">this tag will be created when this form is saved</key>
+	<key id="enter-selects-first-tag">[Enter] to select first tag</key>
 </i18n>

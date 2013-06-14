@@ -10,14 +10,15 @@
 			'$filter',
 			'$timeout',
 			'$location',
+			'RbsChange.Device',
 			ChangeMainMenuControllerFn
 		]
 	);
 
-	function ChangeMainMenuControllerFn ($rootScope, $scope, $filter, $timeout, $location) {
+	function ChangeMainMenuControllerFn ($rootScope, $scope, $filter, $timeout, $location, Device) {
 
 		var	$menu = jQuery('#change-menu'),
-			$filterInput = $menu.find('input.search-query').first();
+			$filterInput = $menu.find('input[type=text]').first();
 
 		$scope.hasOtherModules = false;
 		$scope.menu = __change.menu;
@@ -30,7 +31,9 @@
 
 		$scope.open = function () {
 			$menu.addClass('show');
-			$filterInput.focus();
+			if (!Device.isMultiTouch()) {
+				$filterInput.focus();
+			}
 		};
 
 		$scope.close = function () {

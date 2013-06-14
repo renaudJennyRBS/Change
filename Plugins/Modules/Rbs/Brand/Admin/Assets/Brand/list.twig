@@ -6,7 +6,7 @@
 		<a href="Rbs/Brand/Brand/new">{{ i18n('m.rbs.brand.document.brand-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLRbsBrandBrand"
+	<rbs-document-list data-dlid="DLRbsBrandBrand"
 	               model="Rbs_Brand_Brand"
 	               publishable="true"
 	               query="query">
@@ -18,5 +18,5 @@
 			<img rbs-storage-image="(= doc.document.visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
 		</preview>
 		<column name="websiteUrl"></column>
-	</document-list>
+	</rbs-document-list>
 </div>

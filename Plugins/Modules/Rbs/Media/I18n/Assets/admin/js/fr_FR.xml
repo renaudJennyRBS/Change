@@ -2,5 +2,5 @@
 <i18n baseKey="m.rbs.media.admin.js" lcid="fr_FR">
 	<include id="m.rbs.media.document"/>
 	<key id="module-name">médiathèque</key>
-	<key id="module-keywords">images,photos,photographies,videos,vidéos,documents,icônes,icones,visuels</key>
+	<key id="module-keywords">images,photos,photographies,videos,vidéos,documents,icônes,icones,visuels,albums,galeries</key>
 </i18n>

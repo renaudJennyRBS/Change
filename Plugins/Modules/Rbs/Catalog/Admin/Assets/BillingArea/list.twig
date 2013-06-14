@@ -6,11 +6,11 @@
 		<a href="Rbs/Catalog/BillingArea/new">{{ i18n('m.rbs.catalog.document.billingarea-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLRbsCatalogBillingArea"
+	<rbs-document-list data-dlid="DLRbsCatalogBillingArea"
 	               publishable="true"
 	               model="Rbs_Catalog_BillingArea"
 	               query="query">
 		<column name="label" primary="true"></column>
 		<column name="currency" width="100px">(= doc.currency.label =)</column>
-	</document-list>
+	</rbs-document-list>
 </div>

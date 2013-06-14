@@ -7,13 +7,14 @@
 		<a href="Rbs/Website/Website/new">{{ i18n('m.rbs.website.document.website-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list data-dlid="DLWebsite1"
+	<rbs-document-list data-dlid="DLWebsite1"
 	               publishable="true"
 	               model="Rbs_Website_Website"
-	               query="query">
+	               query="query"
+	               actions="default Rbs_Website_toggleMaintenanceMode">
 		<column name="label" primary="true"></column>
 		<column name="hostName">
 			<a href ng-href="(= doc.hostName =)" target="_blank">(= doc.hostName =) <i class="icon-external-link-sign"></i></a>
 		</column>
-	</document-list>
+	</rbs-document-list>
 </div>

@@ -23,4 +23,6 @@
 	<key id="picker-delete-selection-tooltip">supprimer la sélection</key>
 	<key id="picker-take-from-clipboard-tooltip">prendre dans le Presse-papier(=clipboardFirstLabel=)</key>
 
+	<key id="click-to-select-another-image">cliquer pour sélectionner une autre image depuis votre ordinateur</key>
+
 </i18n>
