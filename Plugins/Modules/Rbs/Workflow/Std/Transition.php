@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Workflow\Std;
 
+use Rbs\Workflow\Documents\Workflow;
+
 /**
  * @name \Rbs\Workflow\Std\Transition
  */
@@ -17,7 +19,7 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	protected $name;
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Transition::TRIGGER_*
+	 * Return Transition::TRIGGER_*
 	 * @var string
 	 */
 	protected $trigger = self::TRIGGER_AUTO;
@@ -39,17 +41,17 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	protected $taskCode;
 
 	/**
-	 * @var \Rbs\Workflow\Documents\Workflow
+	 * @var Workflow
 	 */
 	protected $workflow;
 
 	/**
-	 * @var \Change\Workflow\Interfaces\Arc[]
+	 * @var Arc[]
 	 */
 	protected $arcs = array();
 
 	/**
-	 * @param \Rbs\Workflow\Documents\Workflow $workflow
+	 * @param Workflow $workflow
 	 */
 	function __construct($workflow)
 	{
@@ -66,7 +68,7 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\Workflow
+	 * @return Workflow
 	 */
 	public function getWorkflow()
 	{
@@ -82,7 +84,7 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Transition::TRIGGER_*
+	 * Return Transition::TRIGGER_*
 	 * @return string
 	 */
 	public function getTrigger()
@@ -117,35 +119,38 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Arc[]
 	 */
 	public function getWorkflowInputItems()
 	{
-		return array_values(array_filter($this->arcs, function (\Change\Workflow\Interfaces\Arc $arc)
+		return array_values(array_filter($this->arcs, function (Arc $arc)
 		{
-			return $arc->getDirection() === \Change\Workflow\Interfaces\Arc::DIRECTION_PLACE_TO_TRANSITION;
+			return $arc->getDirection() === Arc::DIRECTION_PLACE_TO_TRANSITION;
 		}));
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Arc[]
 	 */
 	public function getWorkflowOutputItems()
 	{
-		return array_values(array_filter($this->arcs, function (\Change\Workflow\Interfaces\Arc $arc)
+		return array_values(array_filter($this->arcs, function (Arc $arc)
 		{
-			return $arc->getDirection() === \Change\Workflow\Interfaces\Arc::DIRECTION_TRANSITION_TO_PLACE;
+			return $arc->getDirection() === Arc::DIRECTION_TRANSITION_TO_PLACE;
 		}));
 	}
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Arc[] $arcs
+	 * @param Arc[] $arcs
 	 */
 	public function setArcs($arcs)
 	{
 		$this->arcs = $arcs;
 	}
 
+	/**
+	 * @return integer[]
+	 */
 	public function getArcIds()
 	{
 		if (is_array($this->arcs))
@@ -229,10 +234,10 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	//Design Function
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Arc $arc
+	 * @param Arc $arc
 	 * @return $this
 	 */
-	public function addArc($arc)
+	public function addArc(Arc $arc)
 	{
 		if (!in_array($arc, $this->arcs, true))
 		{

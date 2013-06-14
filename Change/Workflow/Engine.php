@@ -91,7 +91,7 @@ class Engine
 		if ($place->getType() === Interfaces\Place::TYPE_END)
 		{
 			$token->consume($this->dateTime);
-			$this->workflowInstance->close();
+			$this->workflowInstance->close($this->dateTime);
 			return $token;
 		}
 		$arcs = $place->getWorkflowOutputItems();
@@ -156,7 +156,7 @@ class Engine
 		else
 		{
 			$workItem->cancel($this->dateTime);
-			$this->workflowInstance->cancel();
+			$this->workflowInstance->cancel($this->dateTime);
 		}
 	}
 
@@ -224,7 +224,7 @@ class Engine
 				else
 				{
 					//TODO WORKFLOW DESIGN ERROR
-					$this->workflowInstance->cancel();
+					$this->workflowInstance->cancel($this->dateTime);
 				}
 			}
 			else
@@ -246,7 +246,7 @@ class Engine
 		else
 		{
 			//TODO WORKFLOW DESIGN ERROR
-			$this->workflowInstance->cancel();
+			$this->workflowInstance->cancel($this->dateTime);
 		}
 	}
 

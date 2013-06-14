@@ -1,13 +1,15 @@
 <?php
 namespace Rbs\Workflow\Std;
 
+use Rbs\Workflow\Documents\WorkflowInstance;
+
 /**
 * @name \Rbs\Workflow\Std\Token
 */
 class Token implements \Change\Workflow\Interfaces\Token
 {
 	/**
-	 * @var \Rbs\Workflow\Documents\WorkflowInstance
+	 * @var WorkflowInstance
 	 */
 	protected $workflowInstance;
 
@@ -37,7 +39,7 @@ class Token implements \Change\Workflow\Interfaces\Token
 	protected $consumedDate;
 
 	/**
-	 * @param \Rbs\Workflow\Documents\WorkflowInstance $workflowInstance
+	 * @param WorkflowInstance $workflowInstance
 	 */
 	function __construct($workflowInstance)
 	{
@@ -45,12 +47,14 @@ class Token implements \Change\Workflow\Interfaces\Token
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowInstance
+	 * @return WorkflowInstance
 	 */
 	public function getWorkflowInstance()
 	{
 		return $this->workflowInstance;
 	}
+
+
 
 	/**
 	 * @return Place
@@ -60,8 +64,9 @@ class Token implements \Change\Workflow\Interfaces\Token
 		return $this->place;
 	}
 
+
 	/**
-	 * Return \Change\Workflow\Interfaces\Token::STATUS_*
+	 * Return Token::STATUS_*
 	 * @return string
 	 */
 	public function getStatus()
@@ -117,5 +122,56 @@ class Token implements \Change\Workflow\Interfaces\Token
 	{
 		$this->consumedDate = ($dateTime === null) ? new \DateTime() : $dateTime;
 		$this->status = static::STATUS_CONSUMED;
+	}
+
+
+	/**
+	 * @param Place $place
+	 * @return $this
+	 */
+	public function setPlace($place)
+	{
+		$this->place = $place;
+		return $this;
+	}
+
+	/**
+	 * @param string $status
+	 * @return $this
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
+		return $this;
+	}
+
+	/**
+	 * @param \DateTime|null $canceledDate
+	 * @return $this
+	 */
+	public function setCanceledDate(\DateTime $canceledDate = null)
+	{
+		$this->canceledDate = $canceledDate;
+		return $this;
+	}
+
+	/**
+	 * @param \DateTime|null $consumedDate
+	 * @return $this
+	 */
+	public function setConsumedDate(\DateTime $consumedDate = null)
+	{
+		$this->consumedDate = $consumedDate;
+		return $this;
+	}
+
+	/**
+	 * @param \DateTime|null $enabledDate
+	 * @return $this
+	 */
+	public function setEnabledDate(\DateTime $enabledDate = null)
+	{
+		$this->enabledDate = $enabledDate;
+		return $this;
 	}
 }

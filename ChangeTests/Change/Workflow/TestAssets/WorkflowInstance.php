@@ -164,21 +164,23 @@ class WorkflowInstance implements WorkflowInstanceInterface
 	}
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function cancel()
+	public function cancel(\DateTime $date = null)
 	{
 		$this->status = static::STATUS_CANCELED;
-		$this->endDate = new \DateTime();
+		$this->endDate = $date ? $date : new \DateTime();
 	}
 
 	/**
+	 * @param \DateTime $date
 	 * @return void
 	 */
-	public function close()
+	public function close(\DateTime $date = null)
 	{
 		$this->status = static::STATUS_CLOSED;
-		$this->endDate = new \DateTime();
+		$this->endDate = $date ? $date : new \DateTime();
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Workflow\Std;
 
+use Rbs\Workflow\Documents\Workflow;
+
 /**
  * @name \Rbs\Workflow\Std\Place
  */
@@ -22,17 +24,17 @@ class Place implements \Change\Workflow\Interfaces\Place
 	protected $name;
 
 	/**
-	 * @var \Rbs\Workflow\Documents\Workflow
+	 * @var Workflow
 	 */
 	protected $workflow;
 
 	/**
-	 * @var \Change\Workflow\Interfaces\Arc[]
+	 * @var Arc[]
 	 */
 	protected $arcs = array();
 
 	/**
-	 * @param \Rbs\Workflow\Documents\Workflow $workflow
+	 * @param Workflow $workflow
 	 */
 	function __construct($workflow)
 	{
@@ -40,7 +42,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	}
 
 	/**
-	 * Return \Change\Workflow\Interfaces\Place::TYPE_*
+	 * Return Place::TYPE_*
 	 * @return integer
 	 */
 	public function getType()
@@ -58,7 +60,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\Workflow
+	 * @return Workflow
 	 */
 	public function getWorkflow()
 	{
@@ -74,7 +76,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Arc[]
 	 */
 	public function getWorkflowInputItems()
 	{
@@ -85,7 +87,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	}
 
 	/**
-	 * @return \Change\Workflow\Interfaces\WorkflowItem[]
+	 * @return Arc[]
 	 */
 	public function getWorkflowOutputItems()
 	{
@@ -96,7 +98,7 @@ class Place implements \Change\Workflow\Interfaces\Place
 	}
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Arc[] $arcs
+	 * @param Arc[] $arcs
 	 * @return $this
 	 */
 	public function setArcs($arcs)
@@ -105,11 +107,14 @@ class Place implements \Change\Workflow\Interfaces\Place
 		return $this;
 	}
 
+	/**
+	 * @return integer[]
+	 */
 	public function getArcIds()
 	{
 		if (is_array($this->arcs))
 		{
-			return array_map(function (\Change\Workflow\Interfaces\Arc $arc)
+			return array_map(function (Arc $arc)
 			{
 				return $arc->getId();
 			}, $this->arcs);
@@ -150,10 +155,10 @@ class Place implements \Change\Workflow\Interfaces\Place
 	//Design Function
 
 	/**
-	 * @param \Change\Workflow\Interfaces\Arc $arc
+	 * @param Arc $arc
 	 * @return $this
 	 */
-	public function addArc($arc)
+	public function addArc(Arc $arc)
 	{
 		if (!in_array($arc, $this->arcs, true))
 		{
