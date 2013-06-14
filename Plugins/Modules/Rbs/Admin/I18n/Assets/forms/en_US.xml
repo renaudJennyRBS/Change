@@ -23,4 +23,6 @@
 	<key id="picker-delete-selection-tooltip">clear selection</key>
 	<key id="picker-take-from-clipboard-tooltip">fill using clipboard(=clipboardFirstLabel=)</key>
 
+	<key id="click-to-select-another-image">click to select another image from your computer</key>
+
 </i18n>

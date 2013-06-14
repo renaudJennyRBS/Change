@@ -1,10 +1,9 @@
 <div>
-	<img ng-src="(= imageSrc =)" class="img-polaroid" style="width: (= previewWidth =)px; height: (= previewHeight =)px; display: block;"/>
+	<img ng-src="(= imageSrc =)" class="img-polaroid" title="{{ i18nAttr('m.rbs.admin.forms.click-to-select-another-image', ['ucf']) }}" ng-click="choose()" style="cursor: pointer; width: (= previewWidth =)px; height: (= previewHeight =)px; display: block;"/>
 	<div ng-show="fileSize && fileName">
 		(= fileName =) &mdash; (= imageWidth =) &times; (= imageHeight =) &mdash; <span ng-bind-html="fileSize | fileSize"></span>
 	</div>
 	<div class="btn-toolbar">
-		<button ng-hide="loading" type="button" class="btn" ng-click="choose()">Choisir...</button>
 		<button ng-show="loading" type="button" class="btn" disabled="disabled"><i class="icon-spinner icon-spin"></i> Lecture...</button>
 	</div>
 	<input type="file" accept="image/*" name="file" style="text-indent: -3000px;opacity: 0; visibility: hidden;"/>
