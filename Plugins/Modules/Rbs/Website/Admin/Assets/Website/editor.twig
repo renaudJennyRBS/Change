@@ -6,16 +6,7 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		{{ forms.field('label', 'String', 'm.rbs.website.document.website.label', true) }}
 
-		{{ forms.field('hostName', 'String', 'm.rbs.website.document.website.hostname',
-			true, 'm.rbs.website.document.website.hostname-help') }}
-		{{ forms.field('port', 'Integer', 'm.rbs.website.document.website.port',
-			false, 'm.rbs.website.document.website.port-help') }}
-
-		{{ forms.field('scriptName', 'String', 'm.rbs.website.document.website.scriptName',
-			false, 'm.rbs.website.document.website.scriptName-help') }}
-
-		{{ forms.field('pathPart', 'String', 'm.rbs.website.document.website.pathPart',
-			false, 'm.rbs.website.document.website.pathPart-help') }}
+        {{ forms.field('baseurl', 'String', 'm.rbs.website.document.website.baseurl', true, 'm.rbs.website.document.website.baseurl-help') }}
 
 		{{ forms.picker('indexPage', 'Rbs_Website_StaticPage', 'm.rbs.website.document.website.indexpage',
 			false, null, 'm.rbs.website.document.website.indexpage-picker-title') }}
