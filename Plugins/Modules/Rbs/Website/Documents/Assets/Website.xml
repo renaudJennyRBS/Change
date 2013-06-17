@@ -12,7 +12,7 @@
 		<property name="scriptName" type="String" localized="true">
 			<dboptions length="64" />
 			</property>
-
+		<property name="baseurl" type="String" stateless="true" />
 	<!-- TODO UNCOMMENT THIS AFTER MEDIA MODULE IMPLEMENTATION
 	<property name="icon" type="Document" document-type="Rbs_Media_Image" />
 	-->
