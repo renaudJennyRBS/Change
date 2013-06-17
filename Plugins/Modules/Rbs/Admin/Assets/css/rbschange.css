@@ -538,6 +538,13 @@ i[class^="icon-"].margin-h {
 }
 
 
+#mainMenu a.accordion-toggle i.collapsible:before {
+	content: "\f151";
+}
+#mainMenu a.accordion-toggle.collapsed i.collapsible:before {
+	content: "\f150";
+}
+
 
 .modal.large {
 	width: 980px;
@@ -557,15 +564,6 @@ i[class^="icon-"].margin-h {
 	line-height: 1.2em;
 }
 
-/*
-#leftContainer h4 {
-	margin-top: 0px;
-	color: #666666;
-	font-family: "Bebas Neue","League Gothic","Arial Narrow",Arial,Helvetica,sans-serif;
-	font-size: 12pt;
-	text-shadow: 0 1px 0 white;
-}
-*/
 
 .nav-list li a.delete {
 	float: right;
@@ -1435,10 +1433,9 @@ span.tag {
 }
 
 span.tag.new {
-	border-color: darkred;
-	background: orangered;
-	color: white;/*rgb(119,99,0);*/
-	/*border-style: dashed;*/
+	border-color: maroon;
+	background: orange;
+	color: white;
 }
 
 button.tag span {
