@@ -96,17 +96,7 @@ trait DbStorage
 			throw $e;
 		}
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$this->doCreate();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$this->doCreate();
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_CREATED, $this);
 		$this->getEventManager()->trigger($event);
@@ -157,17 +147,7 @@ trait DbStorage
 
 		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$this->doUpdate();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$this->doUpdate();
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
 		$this->getEventManager()->trigger($event);
@@ -234,17 +214,7 @@ trait DbStorage
 		$event = new DocumentEvent(DocumentEvent::EVENT_DELETE, $this);
 		$this->getEventManager()->trigger($event);
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$this->doDelete();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$this->doDelete();
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
 		$this->getEventManager()->trigger($event);

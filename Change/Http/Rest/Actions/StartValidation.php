@@ -14,7 +14,6 @@ use Zend\Http\Response as HttpResponse;
  */
 class StartValidation
 {
-
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
@@ -60,11 +59,14 @@ class StartValidation
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
-		if ($LCID)
+
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
 		{
-			try
+			$transactionManager->begin();
+			if ($LCID)
 			{
-				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
 				{
 					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
@@ -72,14 +74,15 @@ class StartValidation
 				$this->doStartValidation($event, $document);
 				$documentManager->popLCID();
 			}
-			catch (\Exception $e)
+			else
 			{
-				$documentManager->popLCID($e);
+				$this->doStartValidation($event, $document);
 			}
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->doStartValidation($event, $document);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

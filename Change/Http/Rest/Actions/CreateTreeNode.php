@@ -19,6 +19,25 @@ class CreateTreeNode
 	 */
 	public function execute($event)
 	{
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$this->executeInTransaction($event);
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+	/**
+	 * Use Event Params: treeName, pathIds
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	protected function executeInTransaction($event)
+	{
 		$documentServices = $event->getDocumentServices();
 		$treeManager = $documentServices->getTreeManager();
 

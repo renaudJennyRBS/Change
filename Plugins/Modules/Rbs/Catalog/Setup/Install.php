@@ -29,11 +29,23 @@ class Install
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{
-			/* @var $folder \Rbs\Generic\Documents\Folder */
-			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
-			$folder->setLabel('Rbs_Catalog');
-			$folder->create();
-			$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Catalog');
+			$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+
+				/* @var $folder \Rbs\Generic\Documents\Folder */
+				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
+				$folder->setLabel('Rbs_Catalog');
+				$folder->create();
+				$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Catalog');
+
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
 		}
 	}
 

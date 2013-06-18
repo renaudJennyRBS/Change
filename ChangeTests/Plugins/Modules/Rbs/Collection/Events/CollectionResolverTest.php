@@ -2,14 +2,27 @@
 
 class CollectionResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	public function setUp()
+	public static function setUpBeforeClass()
 	{
 		static::initDocumentsDb();
 	}
 
-	public function tearDown()
+	public static function tearDownAfterClass()
 	{
 		static::clearDB();
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->getApplicationServices()->getTransactionManager()->begin();
+	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->getApplicationServices()->getTransactionManager()->commit();
+		$this->closeDbConnection();
 	}
 
 	public function testGetCollection()
@@ -27,12 +40,13 @@ class CollectionResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('collection1', $collection->getLabel());
 	}
 
+	/**
+	 * @depends testGetCollection
+	 */
 	public function testGetCodes()
 	{
-		$this->createFiveFakeCollections();
-
 		$event = new \Zend\EventManager\Event();
-		$event->setParam('documentServices', $this->documentServices);
+		$event->setParam('documentServices', $this->getDocumentServices());
 		$collectionResolver = new \Rbs\Collection\Events\CollectionResolver();
 		$collectionResolver->getCodes($event);
 		$codes = $event->getParam('codes');
@@ -67,6 +81,8 @@ class CollectionResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$end = $beginIndex + 5;
 		for ($i = $beginIndex; $i < $end; $i++)
 		{
+
+			/* @var $collection \Rbs\Collection\Documents\Collection */
 			$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 			$collection->setCode('rbsCollectionTest' . $i);
 			$collection->setLabel('collection' . $i);

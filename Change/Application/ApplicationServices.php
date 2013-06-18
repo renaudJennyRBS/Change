@@ -22,8 +22,9 @@ class ApplicationServices extends \Zend\Di\Di
 		$dl = new \Zend\Di\DefinitionList(array());
 
 		$this->registerLogging($dl);
-		$this->registerDbProvider($dl);
+
 		$this->registerTransactionManager($dl);
+		$this->registerDbProvider($dl);
 		$this->registerI18nManager($dl);
 		$this->registerPluginManager($dl);
 		$this->registerStorageManager($dl);
@@ -36,17 +37,16 @@ class ApplicationServices extends \Zend\Di\Di
 			'config' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace()));
 
-		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
+		$im->setParameters('Change\Transaction\TransactionManager',
+			array('sharedEventManager' => $application->getSharedEventManager()));
 
-		$im->setParameters('Change\Transaction\TransactionManager', array('configuration' => $application->getConfiguration()));
+		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
 
 		$im->setParameters('Change\I18n\I18nManager', array(
 			'configuration' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace(),
 			'sharedEventManager' => $application->getSharedEventManager()));
-		$im->setInjections('Change\I18n\I18nManager', array('Change\Logging\Logging'));
 
-		$im->setInjections('Change\Plugins\PluginManager', array('Change\Db\DbProvider'));
 		$im->setParameters('Change\Plugins\PluginManager', array(
 			'workspace' => $application->getWorkspace(),
 			'sharedEventManager' => $application->getSharedEventManager()));
@@ -80,9 +80,16 @@ class ApplicationServices extends \Zend\Di\Di
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
 		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
 			->addMethod('newInstance')
-			->addMethodParameter('newInstance', 'config',
-				array('type' => 'Change\Configuration\Configuration', 'required' => true))
-			->addMethodParameter('newInstance', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
+			->addMethodParameter('newInstance',
+				'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+
+			->addMethod('setLogging', true)
+			->addMethodParameter('setLogging',
+				'logging', array('type' => 'Change\Logging\Logging', 'required' => true))
+
+			->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager',
+				'transactionManager', array('type' => 'Change\Transaction\TransactionManager', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
@@ -93,8 +100,10 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Transaction\TransactionManager');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethodParameter('__construct', 'provider', array('type' => 'Change\Db\DbProvider', 'required' => true));
+		->addMethod('__construct', true)
+		->addMethod('setSharedEventManager')
+		->addMethodParameter('setSharedEventManager', 'sharedEventManager',
+			array('type' => 'Change\Events\SharedEventManager', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
@@ -105,16 +114,20 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\I18n\I18nManager');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethod('setConfiguration')
+			->addMethod('__construct')
+
+			->addMethod('setConfiguration', true)
 			->addMethodParameter('setConfiguration', 'configuration',
 				array('type' => 'Change\Configuration\Configuration', 'required' => true))
-			->addMethod('setWorkspace')
+
+			->addMethod('setWorkspace', true)
 			->addMethodParameter('setWorkspace', 'workspace', array('type' => 'Change\Workspace', 'required' => true))
-			->addMethod('setSharedEventManager')
+
+			->addMethod('setSharedEventManager', true)
 			->addMethodParameter('setSharedEventManager', 'sharedEventManager',
 				array('type' => 'Change\Events\SharedEventManager', 'required' => true))
-			->addMethod('setLogging')
+
+			->addMethod('setLogging', true)
 			->addMethodParameter('setLogging', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
 		$dl->addDefinition($cl);
 	}
@@ -126,14 +139,17 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Plugins\PluginManager');
 		$cl->setInstantiator('__construct')
-			->addMethod('__construct', true)
-			->addMethod('setWorkspace')
+			->addMethod('__construct')
+
+			->addMethod('setWorkspace', true)
 			->addMethodParameter('setWorkspace', 'workspace',
 				array('type' => 'Change\Workspace', 'required' => true))
-			->addMethod('setDbProvider')
+
+			->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider',
-			array('type' => 'Change\Db\DbProvider', 'required' => true))
-			->addMethod('setSharedEventManager')
+				array('type' => 'Change\Db\DbProvider', 'required' => true))
+
+			->addMethod('setSharedEventManager', true)
 			->addMethodParameter('setSharedEventManager', 'sharedEventManager',
 				array('type' => 'Change\Events\SharedEventManager', 'required' => true));
 		$dl->addDefinition($cl);

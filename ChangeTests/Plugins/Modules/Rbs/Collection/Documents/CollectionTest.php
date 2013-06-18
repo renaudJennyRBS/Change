@@ -12,6 +12,19 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->getApplicationServices()->getTransactionManager()->begin();
+	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->getApplicationServices()->getTransactionManager()->commit();
+		$this->closeDbConnection();
+	}
+
 	public function testGetItemByValue()
 	{
 		$dm = $this->getDocumentServices()->getDocumentManager();

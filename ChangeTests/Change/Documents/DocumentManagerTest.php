@@ -24,20 +24,18 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
-	public function testConstruct()
+	protected function getObject()
 	{
 		$manager = $this->getDocumentServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}
 	
-	/**
-	 * @depends testConstruct
-	 * @param \Change\Documents\DocumentManager $manager
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function testGetNewDocumentInstance(DocumentManager $manager)
+
+	public function testGetNewDocumentInstance()
 	{
+		$manager = $this->getObject();
+
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $document);
 		$this->assertEquals(-1, $document->getId());
@@ -56,17 +54,53 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Project\Tests\Documents\DocStateless', $document3);
 		$this->assertArrayHasKey('id', $document3->getData());
 		$this->assertArrayHasKey('CreationDate', $document3->getData());
-		return $manager;
 	}
-	
-	/**
-	 * @depends testGetNewDocumentInstance
-	 * @param \Change\Documents\DocumentManager $manager
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function testDocument(DocumentManager $manager)
+
+	public function testTransaction()
 	{
 		/* @var $document \Project\Tests\Documents\Basic */
+		$manager = $this->getObject();
+		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		try
+		{
+			$manager->affectId($document);
+			$this->fail('RuntimeException: Transaction not started');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertEquals(121003, $e->getCode());
+		}
+
+		try
+		{
+			$document->initialize(1, DocumentManager::STATE_NEW);
+			$manager->insertDocument($document);
+			$this->fail('RuntimeException: Transaction not started');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertEquals(121003, $e->getCode());
+		}
+
+		try
+		{
+			$document->initialize(1, DocumentManager::STATE_LOADED);
+			$manager->updateDocument($document);
+			$this->fail('RuntimeException: Transaction not started');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertEquals(121003, $e->getCode());
+		}
+	}
+
+	public function testDocument()
+	{
+		$manager = $this->getObject();
+
+		/* @var $document \Project\Tests\Documents\Basic */
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document->getId());
 		$manager->affectId($document);
@@ -112,9 +146,10 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(DocumentManager::STATE_LOADED, $cachedDoc->getPersistentState());
 		
 		$manager->reset();
+
 		/* @var $newDoc1 \Project\Tests\Documents\Basic */
 		$newDoc1 = $manager->getDocumentInstance($document->getId());
-		$this->assertTrue($newDoc1 !== $document);
+		$this->assertNotSame($document, $newDoc1);
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $newDoc1);
 		$this->assertEquals($document->getId(), $newDoc1->getId());
 		$this->assertEquals(DocumentManager::STATE_INITIALIZED, $newDoc1->getPersistentState());
@@ -132,28 +167,25 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $newDoc \Project\Tests\Documents\Basic */
 		$newDoc = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$tmpId = $newDoc->getId();
-
-		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
+		$this->assertLessThan(0, $tmpId);
+		$this->assertNull($manager->getDocumentInstance($tmpId));
 		$this->assertNull($manager->getDocumentInstance(-5000));
 
 		$manager->affectId($newDoc);
 		
 		$finalId = $newDoc->getId();
-		$this->assertNotEquals($tmpId, $finalId);
+		$this->assertGreaterThan(0, $finalId);
 
-		$this->assertSame($newDoc, $manager->getDocumentInstance($tmpId));
 		$this->assertSame($newDoc, $manager->getDocumentInstance($finalId));
-
-		return $manager;
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
-	
-	/**
-	 * @param \Change\Documents\DocumentManager $manager
-	 * @return \Change\Documents\DocumentManager
-	 * @depends testDocument
-	 */
-	public function testI18nDocument(DocumentManager $manager)
+
+	public function testI18nDocument()
 	{
+
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
+		$manager = $this->getObject();
 		/* @var $localized \Project\Tests\Documents\Localized */
 		$localized = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedI18nPartFr = $localized->getCurrentLocalization();
@@ -198,16 +230,15 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$deleted = $localized->getCurrentLocalization();
 		$this->assertSame($loaded, $deleted);
-
-		return $manager;
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
-	
-	/**
-	 * @param \Change\Documents\DocumentManager $manager
-	 * @depends testI18nDocument
-	 */
-	public function testPropertyDocumentIds(DocumentManager $manager)
+
+
+	public function testPropertyDocumentIds()
 	{
+		$manager = $this->getObject();
+
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		/* @var $sd1 \Project\Tests\Documents\Localized */
 		$sd1 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 
@@ -217,18 +248,27 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $basic \Project\Tests\Documents\Basic */
 		$basic = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
-		$basic->addPDocArr($sd1);
-		$basic->addPDocArr($sd2);
-		
+
 		$manager->affectId($sd1);
 		$manager->insertDocument($sd1);
 
 		$manager->affectId($sd2);
 		$manager->insertDocument($sd2);
-		
+
+		$basic->addPDocArr($sd1);
+		$basic->addPDocArr($sd2);
+
 		$manager->affectId($basic);
 		$manager->insertDocument($basic);
 		
+		$ids = $manager->getPropertyDocumentIds($basic, 'pDocArr');
+		$this->assertEquals(array($sd1->getId(), $sd2->getId()), $ids);
+		$this->getApplicationServices()->getTransactionManager()->commit();
+
+
+		/* @var $b2 \Project\Tests\Documents\Basic */
+		$b2 = $manager->getDocumentInstance($basic->getId());
+		$this->assertNotSame($basic, $b2);
 		$ids = $manager->getPropertyDocumentIds($basic, 'pDocArr');
 		$this->assertEquals(array($sd1->getId(), $sd2->getId()), $ids);
 	}
@@ -297,5 +337,39 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->assertEquals(0, $manager->getLCIDStackSize());
 			$this->assertEquals($i18nManger->getLCID(), $manager->getLCID());
 		}
-	}	
+	}
+
+	public function testTransactionLangStack()
+	{
+		$application = $this->getApplication();
+		$config = $application->getConfiguration();
+		$config->addVolatileEntry('Change/I18n/supported-lcids' , null);
+		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
+
+		$manager = $this->getDocumentServices()->getDocumentManager();
+
+		$manager->pushLCID('fr_FR');
+		$manager->pushLCID('en_GB');
+		$manager->pushLCID('it_IT');
+		$this->getApplicationServices()->getTransactionManager()->begin();
+		$manager->pushLCID('es_ES');
+		$manager->pushLCID('en_US');
+		$this->getApplicationServices()->getTransactionManager()->begin();
+		$manager->pushLCID('en_GB');
+		$this->assertEquals('en_GB', $manager->getLCID());
+
+		try
+		{
+			$this->getApplicationServices()->getTransactionManager()->rollBack();
+			$this->fail('RollbackException expected');
+		}
+		catch (\Change\Transaction\RollbackException $e)
+		{
+
+		}
+		$this->assertEquals('en_US', $manager->getLCID());
+
+		$this->getApplicationServices()->getTransactionManager()->rollBack();
+		$this->assertEquals('it_IT', $manager->getLCID());
+	}
 }

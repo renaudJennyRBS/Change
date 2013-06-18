@@ -48,8 +48,6 @@ class Deactivate
 			//Document Not Found
 			return;
 		}
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
-
 		$LCID = null;
 		if ($document instanceof Localizable)
 		{
@@ -59,10 +57,13 @@ class Deactivate
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 
-		if ($LCID)
+		try
 		{
-			try
+			$transactionManager->begin();
+			if ($LCID)
 			{
 				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
@@ -72,14 +73,16 @@ class Deactivate
 				$this->doDeactivate($event, $document);
 				$documentManager->popLCID();
 			}
-			catch (\Exception $e)
+			else
 			{
-				$documentManager->popLCID($e);
+				$this->doDeactivate($event, $document);
 			}
+
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->doDeactivate($event, $document);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

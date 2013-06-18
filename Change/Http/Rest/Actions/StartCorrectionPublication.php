@@ -32,7 +32,6 @@ class StartCorrectionPublication
 		if (!($document->getDocumentModel()->useCorrection()))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
-
 		}
 		return $document;
 	}
@@ -80,13 +79,14 @@ class StartCorrectionPublication
 		{
 			$publishImmediately = false;
 		}
-
-		if ($LCID)
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
-			try
-			{
+			$transactionManager->begin();
 
+			if ($LCID)
+			{
 				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
 				{
@@ -95,14 +95,16 @@ class StartCorrectionPublication
 				$this->doStartPublication($event, $document, $publishImmediately);
 				$documentManager->popLCID();
 			}
-			catch (\Exception $e)
+			else
 			{
-				$documentManager->popLCID($e);
+				$this->doStartPublication($event, $document, $publishImmediately);
 			}
+
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->doStartPublication($event, $document, $publishImmediately);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

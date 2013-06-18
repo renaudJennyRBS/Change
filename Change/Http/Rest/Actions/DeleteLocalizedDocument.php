@@ -59,10 +59,12 @@ class DeleteLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
+			$transactionManager->begin();
 			$documentManager->pushLCID($LCID);
 
 			/* @var $document Localizable */
@@ -73,10 +75,11 @@ class DeleteLocalizedDocument
 			$event->setResult($result);
 
 			$documentManager->popLCID();
+			$transactionManager->commit();
 		}
 		catch (\Exception $e)
 		{
-			$documentManager->popLCID($e);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 }

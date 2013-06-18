@@ -175,13 +175,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function initialize($id, $persistentState = null)
 	{
-		$oldId = $this->id;
 		$this->id = intval($id);
-		if ($persistentState!== null)
+		if ($persistentState !==  null)
 		{
 			$this->setPersistentState($persistentState);
 		}
-		$this->getDocumentManager()->reference($this, $oldId);
+		$this->getDocumentManager()->reference($this);
 	}
 
 	/**

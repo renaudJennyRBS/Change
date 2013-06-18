@@ -125,6 +125,7 @@ class Unique extends \Zend\Validator\AbstractValidator
 
 	/**
 	 * @param  mixed $value
+	 * @throws \InvalidArgumentException
 	 * @return boolean
 	 */
 	public function isValid($value)
@@ -157,8 +158,8 @@ class Unique extends \Zend\Validator\AbstractValidator
 		$query->setMaxResults(1);
 		$query->bindParameter('id', $this->getDocumentId());
 		$query->bindParameter('value', $value);
-		$rows = $query->getResults();
-		if (count($rows))
+		$row = $query->getFirstResult();
+		if ($row)
 		{
 			$this->error(self::NOTUNIQUE);
 			return false;

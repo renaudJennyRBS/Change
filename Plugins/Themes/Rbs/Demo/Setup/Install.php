@@ -22,26 +22,38 @@ class Install
 		{
 			return;
 		}
-		/* @var $theme \Rbs\Theme\Documents\Theme */
-		$theme = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
-		$theme->setLabel('Demo');
-		$theme->setName('Rbs_Demo');
-		$theme->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
-		$theme->save();
 
-		$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
+		$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			/* @var $theme \Rbs\Theme\Documents\Theme */
+			$theme = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
+			$theme->setLabel('Demo');
+			$theme->setName('Rbs_Demo');
+			$theme->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
+			$theme->save();
 
-		/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
-		$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
-		$pageTemplate->setTheme($theme);
+			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 
-		$pageTemplate->setLabel('Sample');
-		$html = file_get_contents(__DIR__ . '/Assets/Sample.twig');
-		$pageTemplate->setHtml($html);
-		$json = file_get_contents(__DIR__ . '/Assets/Sample.json');
-		$pageTemplate->setEditableContent($json);
-		$pageTemplate->setHtmlForBackoffice('<div data-editable-zone-id="zoneEditable1"></div>');
-		$pageTemplate->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
-		$pageTemplate->save();
+			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate->setTheme($theme);
+
+			$pageTemplate->setLabel('Sample');
+			$html = file_get_contents(__DIR__ . '/Assets/Sample.twig');
+			$pageTemplate->setHtml($html);
+			$json = file_get_contents(__DIR__ . '/Assets/Sample.json');
+			$pageTemplate->setEditableContent($json);
+			$pageTemplate->setHtmlForBackoffice('<div data-editable-zone-id="zoneEditable1"></div>');
+			$pageTemplate->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
+			$pageTemplate->save();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
 	}
 }

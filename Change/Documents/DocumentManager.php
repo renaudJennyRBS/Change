@@ -4,6 +4,7 @@ namespace Change\Documents;
 use Change\Application\ApplicationServices;
 use Change\Db\Query\ResultsConverter;
 use Change\Db\ScalarType;
+use Change\Transaction\TransactionManager;
 
 /**
  * @name \Change\Documents\DocumentManager
@@ -23,7 +24,7 @@ class DocumentManager
 
 	const STATE_DELETED = 6;
 
-    const STATE_DELETING = 7;
+	const STATE_DELETING = 7;
 
 	/**
 	 * @var ApplicationServices
@@ -42,9 +43,9 @@ class DocumentManager
 	protected $documentInstances = array();
 
 	/**
-	 * @var array
+	 * @var integer
 	 */
-	protected $tmpRelationIds = array();
+	protected $cycleCount = 0;
 
 	/**
 	 * Temporary identifier for new persistent document
@@ -53,11 +54,80 @@ class DocumentManager
 	protected $newInstancesCounter = 0;
 
 	/**
+	 * @var string[] ex: "en_US" or "fr_FR"
+	 */
+	protected $LCIDStack = array();
+
+	/**
+	 * @var boolean
+	 */
+	protected $inTransaction = false;
+
+	/**
+	 * @var array
+	 */
+	protected $LCIDStackTransaction = array();
+
+	/**
 	 * @param ApplicationServices $applicationServices
 	 */
 	public function setApplicationServices(ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+
+		$tm = $applicationServices->getTransactionManager();
+		$this->inTransaction = $tm->started();
+		$tem = $tm->getEventManager();
+
+		$tem->attach(TransactionManager::EVENT_BEGIN, array($this, 'beginTransaction'));
+		$tem->attach(TransactionManager::EVENT_COMMIT, array($this, 'commit'));
+		$tem->attach(TransactionManager::EVENT_ROLLBACK, array($this, 'rollBack'));
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function beginTransaction(\Zend\EventManager\Event $event)
+	{
+		if ($event->getParam('primary'))
+		{
+			$this->inTransaction = true;
+		}
+		$count = $event->getParam('count');
+		$this->LCIDStackTransaction[$count] = $this->LCIDStack;
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function commit(\Zend\EventManager\Event $event)
+	{
+		if ($event->getParam('primary'))
+		{
+			$this->inTransaction = false;
+			$this->reset();
+		}
+		$count = $event->getParam('count');
+		unset($this->LCIDStackTransaction[$count]);
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function rollBack(\Zend\EventManager\Event $event)
+	{
+
+		$count = $event->getParam('count');
+		if (isset($this->LCIDStackTransaction[$count]))
+		{
+			$this->LCIDStack = $this->LCIDStackTransaction[$count];
+		}
+		if ($event->getParam('primary'))
+		{
+			$this->LCIDStackTransaction = array();
+			$this->inTransaction = false;
+			$this->reset();
+		}
 	}
 
 	/**
@@ -94,9 +164,11 @@ class DocumentManager
 	 */
 	public function reset()
 	{
-		array_map(function (AbstractDocument $document) {$document->cleanUp();}, $this->documentInstances);
+		array_map(function (AbstractDocument $document)
+		{
+			$document->cleanUp();
+		}, $this->documentInstances);
 		$this->documentInstances = array();
-		$this->tmpRelationIds = array();
 		$this->newInstancesCounter = 0;
 	}
 
@@ -226,10 +298,15 @@ class DocumentManager
 	/**
 	 * @api
 	 * @param AbstractDocument $document
+	 * @throws \RuntimeException
 	 * @return integer
 	 */
 	public function affectId(AbstractDocument $document)
 	{
+		if (!$this->inTransaction)
+		{
+			throw new \RuntimeException('Transaction not started', 121003);
+		}
 		$dbp = $this->getDbProvider();
 
 		$qb = $this->getNewStatementBuilder();
@@ -256,13 +333,7 @@ class DocumentManager
 		}
 		else
 		{
-			$tmpId = $document->getId();
 			$id = $dbp->getLastInsertId($dt->getName());
-			if (isset($this->tmpRelationIds[$tmpId]))
-			{
-				unset($this->documentInstances[$tmpId]);
-				$this->tmpRelationIds[$tmpId] = $id;
-			}
 			$document->initialize($id);
 		}
 		return $id;
@@ -270,6 +341,7 @@ class DocumentManager
 
 	/**
 	 * @param AbstractDocument $document
+	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 */
 	public function insertDocument(AbstractDocument $document)
@@ -281,6 +353,10 @@ class DocumentManager
 		elseif ($document->getPersistentState() != static::STATE_NEW)
 		{
 			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
+		}
+		elseif (!$this->inTransaction)
+		{
+			throw new \RuntimeException('Transaction not started', 121003);
 		}
 
 		$document->setPersistentState(static::STATE_SAVING);
@@ -404,14 +480,19 @@ class DocumentManager
 
 	/**
 	 * @param AbstractDocument $document
-	 * @return boolean
+	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
+	 * @return boolean
 	 */
 	public function updateDocument(AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_LOADED)
 		{
 			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
+		}
+		elseif (!$this->inTransaction)
+		{
+			throw new \RuntimeException('Transaction not started', 121003);
 		}
 
 		$document->setPersistentState(static::STATE_SAVING);
@@ -441,10 +522,9 @@ class DocumentManager
 			$sqlMapping = $qb->getSqlMapping();
 			$fb = $qb->getFragmentBuilder();
 
-
 			$qb->update($fb->getDocumentTable($model->getRootName()));
 			$uq = $qb->updateQuery();
-			foreach($columns as $fieldData)
+			foreach ($columns as $fieldData)
 			{
 				list($name, $type, $value) = $fieldData;
 				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $sqlMapping->getDbScalarType($type)));
@@ -472,10 +552,16 @@ class DocumentManager
 	/**
 	 * @param AbstractDocument $document
 	 * @param array $metas
+	 * @throws \RuntimeException
 	 */
 	public function saveMetas(AbstractDocument $document, $metas)
 	{
-		$qb = $this->getNewStatementBuilder(__METHOD__.'Delete');
+		if (!$this->inTransaction)
+		{
+			throw new \RuntimeException('Transaction not started', 999999);
+		}
+
+		$qb = $this->getNewStatementBuilder(__METHOD__ . 'Delete');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -491,7 +577,7 @@ class DocumentManager
 			return;
 		}
 
-		$qb = $this->getNewStatementBuilder(__METHOD__.'Insert');
+		$qb = $this->getNewStatementBuilder(__METHOD__ . 'Insert');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -581,7 +667,6 @@ class DocumentManager
 			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
 		}
 		$className = $model->getDocumentClassName();
-
 		return new $className($this->getDocumentServices(), $model);
 	}
 
@@ -593,6 +678,11 @@ class DocumentManager
 	public function getDocumentInstance($documentId, AbstractModel $model = null)
 	{
 		$id = intval($documentId);
+		if ($id <= 0)
+		{
+			return null;
+		}
+
 		$document = $this->getFromCache($id);
 		if ($document !== null)
 		{
@@ -604,88 +694,86 @@ class DocumentManager
 				{
 					$this->applicationServices->getLogging()->warn(
 						__METHOD__ . ' Invalid document model name: ' . $document->getDocumentModelName() . ', '
-							. $model->getName() . ' Expected');
+						. $model->getName() . ' Expected');
 					return null;
 				}
 			}
 			return $document;
 		}
-		elseif ($id > 0)
+
+		$this->gcCache();
+
+		if ($model)
 		{
+			if ($model->isAbstract())
+			{
+				return null;
+			}
+			elseif ($model->isStateless())
+			{
+				$document = $this->createNewDocumentInstance($model);
+				$document->initialize($id, static::STATE_INITIALIZED);
+				$document->load();
+				return $document;
+			}
+		}
+
+		$qb = $this->getNewQueryBuilder(__METHOD__ . ($model ? $model->getRootName() : 'std'));
+		if (!$qb->isCached())
+		{
+
+			$fb = $qb->getFragmentBuilder();
 			if ($model)
 			{
-				if ($model->isAbstract())
-				{
-					return null;
-				}
-				elseif ($model->isStateless())
-				{
-					$document = $this->createNewDocumentInstance($model);
-					$document->initialize($id, static::STATE_INITIALIZED);
-					$document->load();
-					return $document;
-				}
-			}
-
-			$qb = $this->getNewQueryBuilder(__METHOD__ . ($model ? $model->getRootName() : 'std'));
-			if (!$qb->isCached())
-			{
-
-				$fb = $qb->getFragmentBuilder();
-				if ($model)
-				{
-					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
-						->from($fb->getDocumentTable($model->getRootName()))
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
-				}
-				else
-				{
-					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
-						->from($fb->getDocumentIndexTable())
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
-				}
-			}
-
-			$query = $qb->query();
-			$query->bindParameter('id', $id);
-
-			$constructorInfos = $query->getFirstResult();
-			if ($constructorInfos)
-			{
-				$modelName = $constructorInfos['model'];
-				$documentModel = $this->getModelManager()->getModelByName($modelName);
-				if ($documentModel !== null && !$documentModel->isAbstract())
-				{
-					$document = $this->createNewDocumentInstance($documentModel);
-					$document->initialize($id, static::STATE_INITIALIZED);
-					return $document;
-				}
-				else
-				{
-					$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
-				}
+				$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentTable($model->getRootName()))
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 			}
 			else
 			{
-				$this->applicationServices->getLogging()->info('Document id ' . $id . ' not found');
+				$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentIndexTable())
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 			}
 		}
+
+		$query = $qb->query();
+		$query->bindParameter('id', $id);
+
+		$constructorInfos = $query->getFirstResult();
+		if ($constructorInfos)
+		{
+			$modelName = $constructorInfos['model'];
+			$documentModel = $this->getModelManager()->getModelByName($modelName);
+			if ($documentModel !== null && !$documentModel->isAbstract())
+			{
+				$document = $this->createNewDocumentInstance($documentModel);
+				$document->initialize($id, static::STATE_INITIALIZED);
+				return $document;
+			}
+			else
+			{
+				$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
+			}
+		}
+		else
+		{
+			$this->applicationServices->getLogging()->info('Document id ' . $id . ' not found');
+		}
+
 		return null;
 	}
 
 	/**
 	 * @param AbstractDocument $document
-	 * @param integer|null $oldId
 	 */
-	public function reference(AbstractDocument $document, $oldId)
+	public function reference(AbstractDocument $document)
 	{
 		$documentId = $document->getId();
-		if ($oldId !== 0 && $documentId !== $oldId)
+		if ($documentId > 0)
 		{
-			unset($this->documentInstances[$oldId]);
-			$this->tmpRelationIds[$oldId] = $documentId;
+			$this->documentInstances[$documentId] = $document;
 		}
-		$this->documentInstances[$documentId] = $document;
 	}
 
 	/**
@@ -697,6 +785,19 @@ class DocumentManager
 		return $this->getFromCache($documentId) === null;
 	}
 
+	protected function gcCache()
+	{
+		if (!$this->inTransaction)
+		{
+			$this->cycleCount++;
+			if ($this->cycleCount % 100 === 0)
+			{
+				$this->applicationServices->getLogging()->info(__METHOD__ . ': ' . count($this->documentInstances));
+				$this->reset();
+			}
+		}
+	}
+
 	/**
 	 * @param integer $documentId
 	 * @return AbstractDocument|null
@@ -704,10 +805,6 @@ class DocumentManager
 	protected function getFromCache($documentId)
 	{
 		$id = intval($documentId);
-		if (isset($this->tmpRelationIds[$id]))
-		{
-			$id = intval($this->tmpRelationIds[$id]);
-		}
 		return isset($this->documentInstances[$id]) ? $this->documentInstances[$id] : null;
 	}
 
@@ -772,14 +869,19 @@ class DocumentManager
 
 	/**
 	 * @param AbstractDocument $document
-	 * @return integer
+	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
+	 * @return integer
 	 */
 	public function deleteDocument(AbstractDocument $document)
 	{
 		if ($document->getPersistentState() != static::STATE_LOADED)
 		{
 			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
+		}
+		elseif (!$this->inTransaction)
+		{
+			throw new \RuntimeException('Transaction not started', 999999);
 		}
 		$document->setPersistentState(static::STATE_DELETING);
 
@@ -796,7 +898,7 @@ class DocumentManager
 		$dq->bindParameter('id', $document->getId());
 		$rowCount = $dq->execute();
 
-		$qb = $this->getNewStatementBuilder(__METHOD__.'documentIndex');
+		$qb = $this->getNewStatementBuilder(__METHOD__ . 'documentIndex');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -813,12 +915,6 @@ class DocumentManager
 	}
 
 	// Working lang.
-
-	/**
-	 * @var string[] ex: "en_US" or "fr_FR"
-	 */
-	protected $LCIDStack = array();
-
 	/**
 	 * Get the current lcid.
 	 * @api

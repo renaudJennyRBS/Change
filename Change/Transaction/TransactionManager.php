@@ -6,10 +6,21 @@ namespace Change\Transaction;
  */
 class TransactionManager extends \Exception
 {
+	const EVENT_MANAGER_IDENTIFIER = 'TransactionManager';
+
+	const EVENT_BEGIN = 'begin';
+	const EVENT_COMMIT = 'commit';
+	const EVENT_ROLLBACK = 'rollback';
+
 	/**
-	 * @var \Change\Db\DbProvider
+	 * @var \Change\Events\SharedEventManager
 	 */
-	protected $dbProvider;
+	protected $sharedEventManager;
+
+	/**
+	 * @var \Zend\EventManager\EventManager
+	 */
+	protected $eventManager;
 
 	/**
 	 * @var integer
@@ -22,27 +33,32 @@ class TransactionManager extends \Exception
 	protected $dirty = false;
 
 	/**
-	 * @param \Change\Db\DbProvider $provider
+	 * @param \Change\Events\SharedEventManager $sharedEventManager
 	 */
-	public function __construct(\Change\Db\DbProvider $provider)
+	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
 	{
-		$this->setDbProvider($provider);
+		$this->sharedEventManager = $sharedEventManager;
 	}
 
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return \Change\Events\SharedEventManager
 	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	public function getSharedEventManager()
 	{
-		$this->dbProvider = $dbProvider;
+		return $this->sharedEventManager;
 	}
 
 	/**
-	 * @return \Change\Db\DbProvider
+	 * @return \Zend\EventManager\EventManager
 	 */
-	public function getDbProvider()
+	public function getEventManager()
 	{
-		return $this->dbProvider;
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->setSharedManager($this->getSharedEventManager());
+		}
+		return $this->eventManager;
 	}
 
 	/**
@@ -51,14 +67,6 @@ class TransactionManager extends \Exception
 	public function started()
 	{
 		return $this->count > 0;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isDirty()
-	{
-		return $this->dirty;
 	}
 
 	/**
@@ -73,10 +81,12 @@ class TransactionManager extends \Exception
 	{
 		$this->checkDirty();
 		$this->count++;
-		if ($this->count == 1)
-		{
-			$this->getDbProvider()->beginTransaction();
-		}
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+
+		$event = new \Zend\EventManager\Event(static::EVENT_BEGIN, $this, $args);
+		$em->trigger($event);
 	}
 
 	public function commit()
@@ -86,10 +96,13 @@ class TransactionManager extends \Exception
 		{
 			throw new \LogicException('Commit bad transaction count (' . $this->count . ')', 121000);
 		}
-		if ($this->count == 1)
-		{
-			$this->getDbProvider()->commit();
-		}
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+
+		$event = new \Zend\EventManager\Event(static::EVENT_COMMIT, $this, $args);
+		$em->trigger($event);
+
 		$this->count--;
 	}
 
@@ -105,16 +118,19 @@ class TransactionManager extends \Exception
 		{
 			throw new \LogicException('Rollback bad transaction count', 121001);
 		}
+
+		$this->dirty = true;
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+		$event = new \Zend\EventManager\Event(static::EVENT_ROLLBACK, $this, $args);
+		$em->trigger($event);
+
 		$this->count--;
 
-		if (!$this->dirty)
-		{
-			$this->dirty = true;
-		}
-		if ($this->count == 0)
+		if ($this->count === 0)
 		{
 			$this->dirty = false;
-			$this->getDbProvider()->rollBack();
 		}
 		else
 		{

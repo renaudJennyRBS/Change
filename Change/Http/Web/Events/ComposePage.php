@@ -22,9 +22,8 @@ class ComposePage
 		$page = $event->getParam('page');
 		if ($page instanceof Page)
 		{
-			$eventManager = $page->getEventManager();
 			$pageEvent = $this->newPageEvent($event, $page);
-			$this->dispatchPrepare($eventManager, $pageEvent);
+			$this->dispatchPrepare($page->getEventManager(), $pageEvent);
 			$pageResult = $pageEvent->getPageResult();
 
 			if ($pageResult instanceof PageResult)
@@ -34,7 +33,7 @@ class ComposePage
 				$headElement = new HtmlHeaderElement('base', array('href' => $base, 'target' => '_self'));
 				$pageResult->addNamedHeadAsString('base', $headElement);
 
-				$this->dispatchCompose($eventManager, $pageEvent);
+				$this->dispatchCompose($page->getEventManager(), $pageEvent);
 
 				$blocks = array_merge($pageResult->getTemplateLayout()->getBlocks(), $pageResult->getContentLayout()->getBlocks());
 

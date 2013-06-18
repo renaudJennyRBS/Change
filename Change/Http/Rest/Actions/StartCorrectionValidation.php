@@ -32,7 +32,6 @@ class StartCorrectionValidation
 		if (!($document->getDocumentModel()->useCorrection()))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
-
 		}
 		return $document;
 	}
@@ -51,7 +50,6 @@ class StartCorrectionValidation
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
 		$LCID = null;
 		if ($document instanceof Localizable)
 		{
@@ -76,10 +74,14 @@ class StartCorrectionValidation
 			$publicationDate = null;
 		}
 
-		if ($LCID)
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
 		{
-			try
+			$transactionManager->begin();
+			if ($LCID)
 			{
+
 				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
 				{
@@ -88,14 +90,15 @@ class StartCorrectionValidation
 				$this->doStartValidation($event, $document, $publicationDate);
 				$documentManager->popLCID();
 			}
-			catch (\Exception $e)
+			else
 			{
-				$documentManager->popLCID($e);
+				$this->doStartValidation($event, $document, $publicationDate);
 			}
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->doStartValidation($event, $document, $publicationDate);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 
@@ -118,7 +121,7 @@ class StartCorrectionValidation
 				$l = new DocumentLink($event->getUrlManager(), $document);
 				$l->setRel('resource');
 				$result->setArray(array('link' => $l->toArray(),
-					'data' => array('correction-id' => $correction->getId(),'correction-status' => $correction->getStatus())));
+					'data' => array('correction-id' => $correction->getId(), 'correction-status' => $correction->getStatus())));
 				$event->setResult($result);
 			}
 		}

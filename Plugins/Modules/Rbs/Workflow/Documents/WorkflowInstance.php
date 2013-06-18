@@ -154,8 +154,19 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 					return;
 				}
 			}
-			$this->save();
-			$this->generateTasks();
+
+			$transactionManager = $this->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+				$this->save();
+				$this->generateTasks();
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
 		}
 		else
 		{
@@ -167,6 +178,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	 * @param string $taskId
 	 * @param array $context
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function process($taskId, $context)
 	{
@@ -193,10 +205,19 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 					}
 				}
 			}
-
-			$engine->firedWorkItem($workItem);
-			$this->save();
-			$this->generateTasks();
+			$transactionManager = $this->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+				$engine->firedWorkItem($workItem);
+				$this->save();
+				$this->generateTasks();
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
 		}
 		else
 		{

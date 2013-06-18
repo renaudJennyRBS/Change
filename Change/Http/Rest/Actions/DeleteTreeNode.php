@@ -32,14 +32,27 @@ class DeleteTreeNode
 			throw new \RuntimeException('Invalid Parameter: pathIds', 71000);
 		}
 		$nodeId = end($pathIds);
+
 		$node = $treeManager->getNodeById($nodeId, $treeName);
 		if (!$node || (($node->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
 		{
 			return;
 		}
-		$treeManager->deleteNode($node);
-		$result = new Result();
-		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
-		$event->setResult($result);
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+
+			$treeManager->deleteNode($node);
+			$result = new Result();
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
+			$event->setResult($result);
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
 	}
 }
