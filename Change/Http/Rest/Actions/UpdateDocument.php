@@ -59,7 +59,20 @@ class UpdateDocument
 			return;
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
-		$this->update($event, $document, $properties);
+
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+
+			$this->update($event, $document, $properties);
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
 	}
 
 	/**

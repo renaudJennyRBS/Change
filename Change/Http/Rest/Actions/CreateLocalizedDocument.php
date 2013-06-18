@@ -1,12 +1,12 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
-use Change\Documents\Interfaces\Localizable;
 
 /**
  * @name \Change\Http\Rest\Actions\CreateLocalizedDocument
@@ -32,17 +32,18 @@ class CreateLocalizedDocument
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $documentManager->getDocumentInstance($documentId, $model);
 		if ($document === null)
 		{
-			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+			$document = $documentManager->getDocumentInstance($documentId);
 			if ($document !== null)
 			{
 				throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 			}
 
-			$document = $event->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+			$document = $documentManager->getNewDocumentInstanceByModel($model);
 			$document->initialize($documentId);
 		}
 
@@ -60,7 +61,7 @@ class CreateLocalizedDocument
 			{
 				$LCID = $properties['LCID'];
 			}
-			elseif($LCID !== $properties['LCID'])
+			elseif ($LCID !== $properties['LCID'])
 			{
 				$LCID = null;
 			}
@@ -77,30 +78,41 @@ class CreateLocalizedDocument
 		}
 
 		/* @var $document \Change\Documents\AbstractDocument|Localizable */
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
-		$documentManager->pushLCID($LCID);
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
 
-		if ($document->getCurrentLocalization()->isNew())
-		{
-			$event->setParam('LCID', $LCID);
-			$this->create($event, $document, $properties);
+			$documentManager->pushLCID($LCID);
+			if ($document->getCurrentLocalization()->isNew())
+			{
+				$event->setParam('LCID', $LCID);
+				$this->create($event, $document, $properties);
+			}
+			else
+			{
+				/* @var $document Localizable */
+				$definedLCIDArray = $document->getLCIDArray();
+				$supported = array_values(array_diff($event->getApplicationServices()->getI18nManager()->getSupportedLCIDs(),
+					$definedLCIDArray));
+				$errorResult = new ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
+				$errorResult->addDataValue('value', $LCID);
+				$errorResult->addDataValue('supported-LCID', $supported);
+				$event->setResult($errorResult);
+			}
+			$documentManager->popLCID();
+
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			/* @var $document Localizable */
-			$definedLCIDArray = $document->getLCIDArray();
-			$supported = array_values(array_diff($event->getApplicationServices()->getI18nManager()->getSupportedLCIDs(), $definedLCIDArray));
-			$errorResult = new ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
-			$errorResult->addDataValue('value', $LCID);
-			$errorResult->addDataValue('supported-LCID', $supported);
-			$event->setResult($errorResult);
+			throw $transactionManager->rollBack($e);
 		}
-		$documentManager->popLCID();
 	}
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param \Change\Documents\AbstractDocument|Localizable  $document
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param array $properties
 	 * @throws \Exception
 	 * @return DocumentResult
@@ -129,6 +141,7 @@ class CreateLocalizedDocument
 			}
 		}
 
+		/* @var $document \Change\Documents\AbstractDocument|Localizable */
 		try
 		{
 			$document->save();

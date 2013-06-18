@@ -6,6 +6,7 @@ use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
 use Change\Logging\Logging;
+use Change\Transaction\TransactionManager;
 
 /**
  * @name \Change\Db\DbProvider
@@ -22,6 +23,11 @@ abstract class DbProvider
 	 * @var array
 	 */
 	protected $connectionInfos;
+
+	/**
+	 * @var TransactionManager
+	 */
+	protected $transactionManager;
 
 	/**
 	 * @var array
@@ -63,11 +69,10 @@ abstract class DbProvider
 
 	/**
 	 * @param Configuration $config
-	 * @param Logging $logging
 	 * @throws \RuntimeException
 	 * @return \Change\Db\DbProvider
 	 */
-	public static function newInstance(Configuration $config, Logging $logging)
+	public static function newInstance(Configuration $config)
 	{
 		$section = $config->getEntry('Change/Db/use', 'default');
 		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
@@ -76,17 +81,15 @@ abstract class DbProvider
 			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
 		}
 		$className = $connectionInfos['dbprovider'];
-		return new $className($connectionInfos, $logging);
+		return new $className($connectionInfos);
 	}
 
 	/**
 	 * @param array $connectionInfos
-	 * @param Logging $logging
 	 */
-	public function __construct(array $connectionInfos, Logging $logging)
+	public function __construct(array $connectionInfos)
 	{
 		$this->connectionInfos = $connectionInfos;
-		$this->setLogging($logging);
 		$this->timers = array('init' => microtime(true),
 			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
 	}
@@ -150,30 +153,10 @@ abstract class DbProvider
 		return new StatementBuilder($this, $cacheKey, $query);
 	}
 
-	/**
-	 * @return Logging
-	 */
-	public function getLogging()
-	{
-		return $this->logging;
-	}
-
-	/**
-	 * @param Logging $logging
-	 */
-	public function setLogging(Logging $logging)
-	{
-		$this->logging = $logging;
-	}
-
 	public function __destruct()
 	{
 		unset($this->builderQueries);
 		unset($this->statementBuilderQueries);
-		if ($this->inTransaction())
-		{
-			$this->logging->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
-		}
 	}
 
 	/**
@@ -199,6 +182,47 @@ abstract class DbProvider
 	}
 
 	/**
+	 * @param Logging $logging
+	 */
+	public function setLogging(Logging $logging)
+	{
+		$this->logging = $logging;
+	}
+
+	/**
+	 * @return Logging
+	 */
+	public function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param TransactionManager $transactionManager
+	 */
+	public function setTransactionManager(TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		if ($transactionManager->started())
+		{
+			$this->beginTransaction();
+		}
+		$tem = $transactionManager->getEventManager();
+		$tem->attach(TransactionManager::EVENT_BEGIN, array($this, 'beginTransaction'));
+		$tem->attach(TransactionManager::EVENT_COMMIT, array($this, 'commit'));
+		$tem->attach(TransactionManager::EVENT_ROLLBACK, array($this, 'rollBack'));
+	}
+
+	/**
+	 * @return TransactionManager
+	 */
+	public function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
+
+
+	/**
 	 * @return void
 	 */
 	public abstract function beginTransaction();
@@ -212,11 +236,6 @@ abstract class DbProvider
 	 * @return void
 	 */
 	public abstract function rollBack();
-
-	/**
-	 * @return boolean
-	 */
-	public abstract function inTransaction();
 
 	/**
 	 * @param string $tableName

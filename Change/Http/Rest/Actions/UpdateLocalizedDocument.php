@@ -74,10 +74,13 @@ class UpdateLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
+			$transactionManager->begin();
 			$documentManager->pushLCID($LCID);
+
 			if (!$document->isNew())
 			{
 				$this->update($event, $document, $properties);
@@ -91,11 +94,13 @@ class UpdateLocalizedDocument
 				$errorResult->addDataValue('supported-LCID', $supported);
 				$event->setResult($errorResult);
 			}
+
 			$documentManager->popLCID();
+			$transactionManager->commit();
 		}
 		catch (\Exception $e)
 		{
-			$documentManager->popLCID($e);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

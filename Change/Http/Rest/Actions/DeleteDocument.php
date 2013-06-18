@@ -23,10 +23,21 @@ class DeleteDocument
 			//Document Not Found
 			return;
 		}
-		$document->delete();
-		$result = new Result();
-		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
-		$event->setResult($result);
+
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$document->delete();
+			$result = new Result();
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
+			$event->setResult($result);
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
 	}
 
 	/**

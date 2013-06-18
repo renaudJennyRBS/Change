@@ -726,9 +726,16 @@ class BaseDocumentClass
 			' . $mn . ' = ' . $var . ' === null ? null : intval(' . $var . ');
 			return $this;
 		}
-		if (' . $var . ' !== null && !(' . $var . ' instanceof ' . $ct . '))
+		if (' . $var . ' instanceof ' . $ct . ')
 		{
-			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '\', 52005);
+			if (' . $var . '->getId() <= 0)
+			{
+				throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
+			}
+		}
+		elseif (' . $var . ' !== null)
+		{
+			throw new \InvalidArgumentException(\'Argument 1 must be an ' . $ct . '\', 52005);
 		}
 		$this->load();
 		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : null;
@@ -865,18 +872,21 @@ class BaseDocumentClass
 		}
 		if (!is_array($newValueArray))
 		{
-			throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an array\', 52005);
+			throw new \InvalidArgumentException(\'Argument 1 must be a array\', 52005);
 		}
 		$this->checkLoaded' . $un . '();
 
 		$newValueIds = array_map(function($newValue) {
 			if ($newValue instanceof ' . $ct . ')
 			{
-				return $newValue->getId();
+				if ($newValue->getId() <= 0)
+				{
+					throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
+				}
 			}
 			else
 			{
-				throw new \InvalidArgumentException(\'Argument 1 passed to __METHOD__ must be an ' . $ct . '[]\', 52005);
+				throw new \InvalidArgumentException(\'Argument 1 must be a ' . $ct . '[]\', 52005);
 			}
 		}, $newValueArray);
 		$this->setInternal' . $un . 'Ids($newValueIds);
@@ -902,6 +912,10 @@ class BaseDocumentClass
 	{
 		$this->checkLoaded' . $un . '();
 		$newId = ' . $var . '->getId();
+		if ($newId <= 0)
+		{
+			throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
+		}
 		if (!in_array($newId, ' . $mn . '))
 		{
 			$newValueIds = ' . $mn . ';

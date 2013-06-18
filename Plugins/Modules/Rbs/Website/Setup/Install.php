@@ -52,19 +52,32 @@ class Install
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Website');
 		if (!$rootNode)
 		{
-			/* @var $folder \Change\Generic\Documents\Folder */
-			$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
-			$folder->setLabel('Rbs_Website');
-			$folder->create();
-			$rootNode = $documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+			$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
 
-			/* @var $website \Rbs\Website\Documents\Website */
-			$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
-			$website->setLabel('Site par défaut');
-			$website->setHostName('temporary.fr');
-			$website->setScriptName('/index.php');
-			$website->create();
-			$documentServices->getTreeManager()->insertNode($rootNode, $website);
+			try
+			{
+				$transactionManager->begin();
+
+				/* @var $folder \Change\Generic\Documents\Folder */
+				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
+				$folder->setLabel('Rbs_Website');
+				$folder->create();
+				$rootNode = $documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+
+				/* @var $website \Rbs\Website\Documents\Website */
+				$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+				$website->setLabel('Site par défaut');
+				$website->setHostName('temporary.fr');
+				$website->setScriptName('/index.php');
+				$website->create();
+				$documentServices->getTreeManager()->insertNode($rootNode, $website);
+
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
 		}
 	}
 

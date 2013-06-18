@@ -17,9 +17,11 @@ class CreateDocument
 	 * Use Required Event Params: modelName
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 		$documentId = $event->getParam('documentId');
 		if ($documentId !== null)
 		{
@@ -29,7 +31,7 @@ class CreateDocument
 				throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 			}
 
-			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+			$document = $documentManager->getDocumentInstance($documentId);
 			if ($document)
 			{
 				$errorResult = new ErrorResult('DOCUMENT-ALREADY-EXIST', 'document already exist', HttpResponse::STATUS_CODE_409);
@@ -48,7 +50,7 @@ class CreateDocument
 		}
 
 
-		$document = $event->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+		$document = $documentManager->getNewDocumentInstanceByModel($model);
 		if ($documentId)
 		{
 			$document->initialize($documentId);
@@ -74,16 +76,26 @@ class CreateDocument
 			$LCID = null;
 		}
 
-		if ($LCID)
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
 		{
-			$documentManager = $document->getDocumentServices()->getDocumentManager();
-			$documentManager->pushLCID($LCID);
-			$this->create($event, $document, $properties);
-			$documentManager->popLCID();
+			$transactionManager->begin();
+			if ($LCID)
+			{
+				$documentManager->pushLCID($LCID);
+				$this->create($event, $document, $properties);
+				$documentManager->popLCID();
+			}
+			else
+			{
+				$this->create($event, $document, $properties);
+			}
+
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->create($event, $document, $properties);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

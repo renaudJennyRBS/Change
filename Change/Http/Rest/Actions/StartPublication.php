@@ -33,7 +33,7 @@ class StartPublication
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
-		
+
 		return $document;
 	}
 
@@ -50,8 +50,7 @@ class StartPublication
 			//Document Not Found
 			return;
 		}
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
-		
+
 		$LCID = null;
 		if ($document instanceof Localizable)
 		{
@@ -62,9 +61,12 @@ class StartPublication
 			}
 		}
 
-		if ($LCID)
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
 		{
-			try
+			$transactionManager->begin();
+			if ($LCID)
 			{
 				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
@@ -74,14 +76,15 @@ class StartPublication
 				$this->doStartPublication($event, $document);
 				$documentManager->popLCID();
 			}
-			catch (\Exception $e)
+			else
 			{
-				$documentManager->popLCID($e);
+				$this->doStartPublication($event, $document);
 			}
+			$transactionManager->commit();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->doStartPublication($event, $document);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 
@@ -108,7 +111,6 @@ class StartPublication
 			array('old-publication-status' => $oldStatus, 'new-publication-status' => $document->getPublicationStatus())));
 
 			$event->setResult($result);
-
 		}
 		catch (\Exception $e)
 		{

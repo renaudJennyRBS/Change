@@ -45,23 +45,33 @@ class UpdateTreeNode
 			$parentNode =  $treeManager->getNodeById(intval($properties['parentNode']), $treeName);
 			if ($parentNode)
 			{
-				$beforeNode = null;
-				if (isset($properties['beforeId']))
+				$transactionManager = $event->getApplicationServices()->getTransactionManager();
+				try
 				{
-					$beforeNode = $treeManager->getNodeById(intval($properties['beforeId']), $treeName);
-					if (!$beforeNode)
+					$transactionManager->begin();
+					$beforeNode = null;
+					if (isset($properties['beforeId']))
 					{
-						throw new \RuntimeException('Invalid Parameter: beforeId', 71000);
+						$beforeNode = $treeManager->getNodeById(intval($properties['beforeId']), $treeName);
+						if (!$beforeNode)
+						{
+							throw new \RuntimeException('Invalid Parameter: beforeId', 71000);
+						}
 					}
+					$movedNode = $treeManager->moveNode($node, $parentNode, $beforeNode);
+
+					$pathIds = $movedNode->getAncestorIds();
+					$pathIds[] = $movedNode->getDocumentId();
+					$event->setParam('pathIds', $pathIds);
+
+					$getTreeNode = new GetTreeNode();
+					$getTreeNode->execute($event);
+					$transactionManager->commit();
 				}
-				$movedNode = $treeManager->moveNode($node, $parentNode, $beforeNode);
-
-				$pathIds = $movedNode->getAncestorIds();
-				$pathIds[] = $movedNode->getDocumentId();
-				$event->setParam('pathIds', $pathIds);
-
-				$getTreeNode = new GetTreeNode();
-				$getTreeNode->execute($event);
+				catch (\Exception $e)
+				{
+					throw $transactionManager->rollBack($e);
+				}
 			}
 			else
 			{

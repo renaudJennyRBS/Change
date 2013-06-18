@@ -8,13 +8,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
 	 * @throws \RuntimeException
 	 */
@@ -28,21 +21,4 @@ class Install
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Collection',
 			'\\Rbs\\Collection\\Events\\SharedListenerAggregate');
 	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
-	 */
-//	public function executeServices($plugin, $documentServices, $presentationServices)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function finalize($plugin)
-//	{
-//	}
 }

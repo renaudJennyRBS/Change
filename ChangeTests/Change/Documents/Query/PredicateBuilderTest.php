@@ -13,15 +13,21 @@ class PredicateBuilderTest extends TestCase
 		static::initDocumentsDb();
 	}
 
-
 	public static function tearDownAfterClass()
 	{
 		static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->getApplicationServices()->getTransactionManager()->begin();
+	}
+
 	protected function tearDown()
 	{
 		parent::tearDown();
+		$this->getApplicationServices()->getTransactionManager()->commit();
 		$this->closeDbConnection();
 	}
 
