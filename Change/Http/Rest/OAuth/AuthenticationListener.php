@@ -180,13 +180,41 @@ class AuthenticationListener
 	}
 
 	/**
+	 * @param \Change\Http\Request $request
+	 * @return array
+	 */
+	protected function extractAuthorization($request)
+	{
+		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		if (count($authorization))
+		{
+			return $authorization;
+		}
+		if ($request->getMethod() === \Zend\Http\Request::METHOD_POST)
+		{
+			$authorization = $request->getPost()->toArray();
+			if (isset($authorization['oauth_signature']))
+			{
+				return $authorization;
+			}
+		}
+		$authorization = $request->getQuery()->toArray();
+		if (isset($authorization['oauth_signature']))
+		{
+			return $authorization;
+		}
+		return array();
+	}
+
+	/**
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
 	protected function onRequestToken(HttpEvent $event)
 	{
 		$request = $event->getRequest();
-		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		$authorization = $this->extractAuthorization($request);
+
 		if (count($authorization) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_consumer_key']))
 		{
 			if ($authorization['oauth_consumer_key'] !== $this->getDefaultConsumerKey())
@@ -287,7 +315,8 @@ class AuthenticationListener
 	protected function onAccessToken(HttpEvent $event)
 	{
 		$request = $event->getRequest();
-		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		$authorization = $this->extractAuthorization($request);
+
 		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_verifier']))
 		{
 			$this->checkTimestamp($authorization['oauth_timestamp']);
