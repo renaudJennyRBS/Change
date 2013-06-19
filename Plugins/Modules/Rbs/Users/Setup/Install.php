@@ -20,13 +20,16 @@ class Install
 
 		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Users',
 			'\\Rbs\\Users\\Admin\\Register');
+
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Users',
+			'\\Rbs\\Users\\Events\\SharedListenerAggregate');
 	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{

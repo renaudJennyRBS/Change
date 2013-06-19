@@ -155,10 +155,13 @@ class AuthenticationListener
 		$password = $request->getPost('password');
 		if ($realm && $login && $password)
 		{
-			$accessorId = $this->findAccessorId($realm, $login, $password, $event->getDocumentServices()->getDocumentManager());
-			if ($accessorId)
+			$am = new \Change\User\AuthenticationManager();
+			$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
+			$am->setDocumentServices($event->getDocumentServices());
+			$user = $am->login($login, $password, $realm);
+			if ($user)
 			{
-				$array = array('accessor_id' => $accessorId);
+				$array = array('accessor_id' => $user->getId());
 				$array['consumer_key'] = $this->getDefaultConsumerKey();
 				$array['consumer_secret'] = $this->getDefaultConsumerSecret();
 				$result  = new ArrayResult();
@@ -252,10 +255,13 @@ class AuthenticationListener
 			$this->loadToken($storeOAuth, $event->getApplicationServices()->getDbProvider());
 			if ($storeOAuth->getId() && $storeOAuth->getType() === StoredOAuth::TYPE_REQUEST && !$storeOAuth->getAuthorized())
 			{
-				$accessorId = $this->findAccessorId($realm, $login, $password, $event->getDocumentServices()->getDocumentManager());
-				if ($accessorId)
+				$am = new \Change\User\AuthenticationManager();
+				$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
+				$am->setDocumentServices($event->getDocumentServices());
+				$user = $am->login($login, $password, $realm);
+				if ($user)
 				{
-					$storeOAuth->setAccessorId($accessorId);
+					$storeOAuth->setAccessorId($user->getId());
 					$storeOAuth->setAuthorized(true);
 					$storeOAuth->setVerifier(substr(md5(uniqid()),0, 10));
 					$validityDate = new \DateTime();
@@ -591,53 +597,6 @@ class AuthenticationListener
 	}
 
 	/**
-	 * @param string $realm
-	 * @param string $login
-	 * @param string $password
-	 * @param DocumentManager $documentManager
-	 * @return integer|null
-	 */
-	protected function findAccessorId($realm, $login, $password, DocumentManager $documentManager)
-	{
-		$dbProvider = $documentManager->getApplicationServices()->getDbProvider();
-		$qb = $dbProvider->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$gtb = $fb->getDocumentTable('Rbs_Users_Group');
-		$utb = $fb->getDocumentTable('Rbs_Users_User');
-		$rtb = $fb->getDocumentRelationTable('Rbs_Users_User');
-
-		$sq = $qb->select()
-			->addColumn($fb->alias($fb->getDocumentColumn('id', $utb), 'id'))
-			->addColumn($fb->alias($fb->getDocumentColumn('model', $utb), 'model'))
-			->from($utb)
-			->innerJoin($rtb, $fb->eq($fb->getDocumentColumn('id', $utb), $fb->getDocumentColumn('id', $rtb)))
-			->innerJoin($gtb, $fb->eq($fb->getDocumentColumn('id', $gtb), $fb->column('relatedid', $rtb)))
-			->where(
-				$fb->logicAnd(
-					$fb->eq($fb->column('realm', $gtb), $fb->parameter('realm')),
-					$fb->eq($fb->getDocumentColumn('login', $utb), $fb->parameter('login')),
-					$fb->eq($fb->getDocumentColumn('publicationStatus', $utb), $fb->string(Publishable::STATUS_PUBLISHABLE))
-					)
-				)
-			->query();
-		$sq->bindParameter('realm', $realm);
-		$sq->bindParameter('login', $login);
-
-		$collection = new \Change\Documents\DocumentCollection($documentManager, $sq->getResults());
-		foreach ($collection as $document)
-		{
-			if ($document instanceof \Rbs\Users\Documents\User)
-			{
-				if ($document->published() && $document->checkPassword($password))
-				{
-					return $document->getId();
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * @param HttpEvent $event
 	 */
 	public function onResponse($event)
@@ -737,7 +696,7 @@ class AuthenticationListener
 	protected function buildNotAllowedError($notAllowed, array $allow)
 	{
 		$msg = 'Method not allowed: ' . $notAllowed;
-		$result = new ErrorResult('METHOD-ERROR', $msg, Response::STATUS_CODE_405);
+		$result = new ErrorResult('METHOD-ERROR', $msg, \Zend\Http\Response::STATUS_CODE_405);
 		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
 		$result->getHeaders()->addHeader($header);
 		$result->addDataValue('allow', $allow);

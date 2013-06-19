@@ -8,7 +8,7 @@ use Change\Stdlib\String;
  * @package Rbs\Users\Documents
  * @name \Rbs\Users\Documents\User
  */
-class User extends \Compilation\Rbs\Users\Documents\User
+class User extends \Compilation\Rbs\Users\Documents\User implements \Change\User\UserInterface
 {
 	/**
 	 * @return string
@@ -169,5 +169,13 @@ class User extends \Compilation\Rbs\Users\Documents\User
 		{
 			$this->setPasswordHash($this->hashPassword($this->password));
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->getLabel();
 	}
 }

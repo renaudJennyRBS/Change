@@ -46,19 +46,19 @@ class Login
 			$password = $datas['password'];
 			if ($realm && $login && $password)
 			{
-				$accessorId = $this->findAccessorId($realm, $login, $password, $event->getDocumentServices()->getDocumentManager());
-				if ($accessorId)
+				$am = new \Change\User\AuthenticationManager();
+				$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
+				$am->setDocumentServices($event->getDocumentServices());
+				$user = $am->login($login, $password, $realm);
+				if ($user instanceof \Rbs\Users\Documents\User)
 				{
+					$accessorId = $user->getId();
 					$authentication = new \Change\Http\Web\Authentication();
-					$authentication->save($website,$accessorId);
+					$authentication->save($website, $accessorId);
 					$event->setAuthentication($authentication);
 					$datas = array('accessorId' => $accessorId);
-					$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
-					if ($user instanceof \Rbs\Users\Documents\User)
-					{
-						$datas['pseudonym'] = $user->getPseudonym();
-						$datas['email'] = $user->getEmail();
-					}
+					$datas['pseudonym'] = $user->getPseudonym();
+					$datas['email'] = $user->getEmail();
 				}
 				else
 				{
