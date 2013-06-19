@@ -1,45 +1,26 @@
 <?php
 namespace Change\Collection;
 
+use Zend\EventManager\EventManagerInterface;
+use string;
+
 /**
  * @name \Change\Collection\CollectionManager
  */
-class CollectionManager
+class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	const EVENT_MANAGER_IDENTIFIER = 'CollectionManager';
 	const EVENT_GET_COLLECTION = 'getCollection';
 	const EVENT_GET_CODES = 'getCodes';
 
-	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
-	 * @var \Zend\EventManager\EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
 
-	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
-	{
-		$this->sharedEventManager = $sharedEventManager;
-	}
-
-	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		return $this->sharedEventManager;
-	}
 
 	/**
 	 * @param \Change\Documents\DocumentServices $documentServices
@@ -58,16 +39,24 @@ class CollectionManager
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return null|string|string[]
 	 */
-	public function getEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		if ($this->eventManager === null)
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		if ($this->documentServices)
 		{
-			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->setSharedManager($this->getSharedEventManager());
+			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
+			return $config->getEntry('Change/Events/CollectionManager', array());
 		}
-		return $this->eventManager;
+		return array();
 	}
 
 	/**
@@ -115,4 +104,6 @@ class CollectionManager
 		}
 		return array();
 	}
+
+
 }

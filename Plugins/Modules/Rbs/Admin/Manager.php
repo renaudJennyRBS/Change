@@ -7,8 +7,10 @@ use Zend\EventManager\EventManager;
 /**
 * @name \Rbs\Admin\Manager
 */
-class Manager
+class Manager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	/**
 	 * @var ApplicationServices
 	 */
@@ -18,11 +20,6 @@ class Manager
 	 * @var DocumentServices
 	 */
 	protected $documentServices;
-
-	/**
-	 * @var EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @var string
@@ -35,16 +32,26 @@ class Manager
 	 */
 	function __construct($applicationServices, $documentServices)
 	{
-		$this->applicationServices = $applicationServices;
-		$this->documentServices = $documentServices;
+		if ($applicationServices)
+		{
+			$this->setApplicationServices($applicationServices);
+		}
+		if ($documentServices)
+		{
+			$this->setDocumentServices($documentServices);
+		}
 	}
 
 	/**
 	 * @param ApplicationServices $applicationServices
 	 */
-	public function setApplicationServices($applicationServices)
+	public function setApplicationServices(ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+		if ($this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
@@ -58,9 +65,13 @@ class Manager
 	/**
 	 * @param DocumentServices $documentServices
 	 */
-	public function setDocumentServices($documentServices)
+	public function setDocumentServices(DocumentServices $documentServices)
 	{
 		$this->documentServices = $documentServices;
+		if ($this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
@@ -80,54 +91,24 @@ class Manager
 	}
 
 	/**
-	 * Retrieve the event manager
-	 * @api
-	 * @return \Zend\EventManager\EventManagerInterface
+	 * @return null|string|string[]
 	 */
-	public function getEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		if ($this->eventManager === null)
-		{
-			$identifiers = array('Change.Admin');
-			$eventManager = new EventManager($identifiers);
-			$eventManager->setSharedManager($this->getApplication()->getSharedEventManager());
-			$eventManager->setEventClass('\\Change\\Admin\\Event');
-			$this->eventManager = $eventManager;
-
-			$this->attachEvents();
-		}
-		return $this->eventManager;
+		return 'Rbs_Admin';
 	}
 
 	/**
-	 * Attach specific admin event
+	 * @return string[]
 	 */
-	protected function attachEvents()
+	protected function getListenerAggregateClassNames()
 	{
-		$classNames = $this->getApplication()->getConfiguration()->getEntry('Rbs/Admin/Listeners');
-		$this->registerListenerAggregateClassNames($classNames);
-	}
-
-	/**
-	 * @param string[] $classNames
-	 */
-	public function registerListenerAggregateClassNames($classNames)
-	{
-		if (is_array($classNames) && count($classNames))
+		if ($this->documentServices)
 		{
-			$eventManager = $this->getEventManager();
-			foreach ($classNames as $className)
-			{
-				if (class_exists($className))
-				{
-					$listener = new $className();
-					if ($listener instanceof \Zend\EventManager\ListenerAggregateInterface)
-					{
-						$listener->attach($eventManager);
-					}
-				}
-			}
+			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
+			return $config->getEntry('Change/Events/Rbs/Admin', array());
 		}
+		return array();
 	}
 
 	/**

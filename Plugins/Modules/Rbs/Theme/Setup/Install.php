@@ -19,9 +19,10 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Theme',
-			'\\Rbs\\Theme\\Events\\SharedListenerAggregate');
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Theme', '\\Rbs\\Theme\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/ThemeManager/Rbs_Theme',
+			'\\Rbs\\Theme\\Events\\ListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Theme', '\\Rbs\\Theme\\Admin\\Register');
 	}
 
 	/**

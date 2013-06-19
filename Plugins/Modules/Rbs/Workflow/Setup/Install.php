@@ -16,7 +16,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Workflow',
-			'\\Rbs\\Workflow\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/WorkflowManager/Rbs_Workflow',
+			'\\Rbs\\Workflow\\Events\\ListenerAggregate');
 	}
 }

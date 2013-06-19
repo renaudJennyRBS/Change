@@ -16,9 +16,10 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Collection',
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Collection',
 			'\\Rbs\\Collection\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Collection',
-			'\\Rbs\\Collection\\Events\\SharedListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Collection',
+			'\\Rbs\\Collection\\Events\\ListenerAggregate');
 	}
 }

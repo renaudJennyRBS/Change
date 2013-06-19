@@ -15,7 +15,7 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Geo', '\\Rbs\\Geo\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Geo', '\\Rbs\\Geo\\Admin\\Register');
 	}
 
 	/**

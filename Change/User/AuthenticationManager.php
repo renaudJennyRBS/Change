@@ -1,78 +1,56 @@
 <?php
 namespace Change\User;
 
+use Change\Documents\DocumentServices;
+
 /**
 * @name \Change\User\AuthenticationManager
 */
-class AuthenticationManager
+class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'AuthenticationManager';
 
 	const EVENT_LOGIN = 'login';
 
 	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
-	 * @var \Zend\EventManager\EventManager
-	 */
-	protected $eventManager;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var DocumentServices
 	 */
 	protected $documentServices;
 
 	/**
-	 * @var \Change\User\UserInterface|null
+	 * @var UserInterface|null
 	 */
 	protected $currentUser;
 
 	/**
-	 * @param \Change\User\UserInterface $currentUser
+	 * @param UserInterface $currentUser
 	 */
-	public function setCurrentUser(\Change\User\UserInterface $currentUser = null)
+	public function setCurrentUser(UserInterface $currentUser = null)
 	{
 		$this->currentUser = $currentUser;
 	}
 
 	/**
-	 * @return \Change\User\UserInterface|null
+	 * @return UserInterface|null
 	 */
 	public function getCurrentUser()
 	{
 		return $this->currentUser;
 	}
 
-	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
-	{
-		$this->sharedEventManager = $sharedEventManager;
-	}
 
 	/**
-	 * @return \Change\Events\SharedEventManager
+	 * @param DocumentServices $documentServices
 	 */
-	public function getSharedEventManager()
-	{
-		return $this->sharedEventManager;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
+	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices|null
+	 * @return DocumentServices|null
 	 */
 	public function getDocumentServices()
 	{
@@ -80,16 +58,24 @@ class AuthenticationManager
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return null|string|string[]
 	 */
-	public function getEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		if ($this->eventManager === null)
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		if ($this->documentServices)
 		{
-			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->setSharedManager($this->getSharedEventManager());
+			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
+			return $config->getEntry('Change/Events/AuthenticationManager', array());
 		}
-		return $this->eventManager;
+		return array();
 	}
 
 	/**

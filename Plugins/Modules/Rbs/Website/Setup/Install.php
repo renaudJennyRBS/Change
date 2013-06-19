@@ -16,10 +16,11 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Website',
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Website',
 				'\\Rbs\\Website\\Admin\\Register');
-		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_Website',
-			'\\Rbs\\Website\\Blocks\\SharedListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_Website',
+			'\\Rbs\\Website\\Blocks\\ListenerAggregate');
 
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Website',
 				'\\Rbs\\Website\\Events\\SharedListenerAggregate');
@@ -58,7 +59,7 @@ class Install
 			{
 				$transactionManager->begin();
 
-				/* @var $folder \Change\Generic\Documents\Folder */
+				/* @var $folder \Rbs\Generic\Documents\Folder */
 				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 				$folder->setLabel('Rbs_Website');
 				$folder->create();

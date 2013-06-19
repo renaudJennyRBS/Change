@@ -40,7 +40,7 @@ class Install
 			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
 		}
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Admin', '\\Rbs\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Admin', '\\Rbs\\Admin\\Register');
 	}
 
 	/**

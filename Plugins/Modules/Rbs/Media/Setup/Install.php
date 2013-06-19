@@ -20,7 +20,7 @@ class Install
 		$config->addPersistentEntry('Change/Storage/default/class', '\\Change\\Storage\\Engines\\LocalStorage');
 		$config->addPersistentEntry('Change/Storage/default/basePath', $application->getWorkspace()->appPath('Storage'));
 		$config->addPersistentEntry('Change/Storage/default/useDBStat', true);
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
 	}
 
 	/**

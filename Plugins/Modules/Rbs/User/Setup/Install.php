@@ -15,14 +15,11 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_User',
-			'\\Rbs\\User\\Blocks\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_User', '\\Rbs\\User\\Blocks\\ListenerAggregate');
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_User',
-			'\\Rbs\\User\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_User', '\\Rbs\\User\\Admin\\Register');
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_User',
-			'\\Rbs\\User\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_User', '\\Rbs\\User\\Events\\ListenerAggregate');
 	}
 
 	/**
