@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Users\Documents;
+namespace Rbs\User\Documents;
 
 /**
  * Class Group
- * @package Rbs\Users\Documents
- * @name \Rbs\Users\Documents\Group
+ * @package Rbs\User\Documents
+ * @name \Rbs\User\Documents\Group
  */
-class Group extends \Compilation\Rbs\Users\Documents\Group implements \Change\User\GroupInterface
+class Group extends \Compilation\Rbs\User\Documents\Group implements \Change\User\GroupInterface
 {
 	/**
 	 * @return string

@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Users\Admin;
+namespace Rbs\User\Admin;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Rbs\Admin\Event;
 /**
- * @name \Rbs\Users\Admin\Register
+ * @name \Rbs\User\Admin\Register
  */
 class Register implements ListenerAggregateInterface
 {
@@ -20,17 +20,17 @@ class Register implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_RESOURCES, function(Event $event)
 		{
 			$body = array('
-	<script type="text/javascript" src="Rbs/Users/js/admin.js">​</script>
-	<script type="text/javascript" src="Rbs/Users/User/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Users/User/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/User/js/admin.js">​</script>
+	<script type="text/javascript" src="Rbs/User/User/controllers.js">​</script>
+	<script type="text/javascript" src="Rbs/User/User/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
 
 			$menu = array(
 				'entries' => array(
-					array('label' => $i18nManager->trans('m.rbs.users.admin.js.module-name', array('ucf')),
-						'url' => 'Rbs/Users', 'section' => 'admin', 'keywords' => $i18nManager->trans('m.rbs.users.admin.js.module-keywords'))
+					array('label' => $i18nManager->trans('m.rbs.user.admin.js.module-name', array('ucf')),
+						'url' => 'Rbs/User', 'section' => 'admin', 'keywords' => $i18nManager->trans('m.rbs.user.admin.js.module-keywords'))
 				));
 
 			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));

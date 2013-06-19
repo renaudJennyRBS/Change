@@ -4,15 +4,15 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('login', 'String', 'm.rbs.users.document.user.login', true) }}
-		{{ forms.field('email', 'String', 'm.rbs.users.document.user.email', true) }}
-		{{ forms.field('label', 'String', 'm.rbs.users.document.user.label', true) }}
+		{{ forms.field('login', 'String', 'm.rbs.user.document.user.login', true) }}
+		{{ forms.field('email', 'String', 'm.rbs.user.document.user.email', true) }}
+		{{ forms.field('label', 'String', 'm.rbs.user.document.user.label', true) }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='security'"
-		data-form-section-label="{{ i18nAttr('m.rbs.users.document.user.security', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.user.document.user.security', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.readonly('hashMethod', 'm.rbs.users.document.user.hashMethod') }}
+		{{ forms.readonly('hashMethod', 'm.rbs.user.document.user.hashMethod') }}
 	</fieldset>
 
 	<fieldset

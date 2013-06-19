@@ -16,10 +16,10 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.users.admin.js.module-name | ucf'), "Rbs/Users/User"]
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Rbs_Users_User');
+		var DL = DocumentList.initScope($scope, 'Rbs_User_User');
 		DL.viewMode = 'list';
 		DL.sort.column = 'modificationDate';
 		DL.sort.descending = true;
@@ -27,11 +27,11 @@
 		// Configure DataTable columns
 		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
-		MainMenu.loadModuleMenu('Rbs_Users');
+		MainMenu.loadModuleMenu('Rbs_User');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_Users_User_ListController', ListController);
+	app.controller('Rbs_User_User_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -45,11 +45,11 @@
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.users.admin.js.module-name | ucf'), "Rbs/Users/User"]
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
 		]);
-		FormsManager.initResource($scope, 'Rbs_Users_User');
+		FormsManager.initResource($scope, 'Rbs_User_User');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Rbs_Users_User_FormController', FormController);
+	app.controller('Rbs_User_User_FormController', FormController);
 })();

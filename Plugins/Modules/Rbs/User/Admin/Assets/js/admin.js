@@ -6,33 +6,33 @@
 	app.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider
 
-		// Users
+		// User
 
 		. when(
-			'/Rbs/Users',
+			'/Rbs/User',
 			{
-				templateUrl : 'Rbs/Users/User/list.twig',
+				templateUrl : 'Rbs/User/User/list.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Rbs/Users/User',
+			'/Rbs/User/User',
 			{
-				templateUrl : 'Rbs/Users/User/list.twig',
+				templateUrl : 'Rbs/User/User/list.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Rbs/Users/User/:id',
+			'/Rbs/User/User/:id',
 			{
-				templateUrl : 'Rbs/Users/User/form.twig',
+				templateUrl : 'Rbs/User/User/form.twig',
 				reloadOnSearch : false
 			})
 
 		. when(
-			'/Rbs/Users/Login',
+			'/Rbs/User/Login',
 			{
-				templateUrl : 'Rbs/Users/login.twig',
+				templateUrl : 'Rbs/User/login.twig',
 				reloadOnSearch : false
 			})
 		;
@@ -42,10 +42,10 @@
 	app.config(['$provide', function ($provide) {
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
 
-			// Users
-			$delegate.register('Rbs_Users_User', {
-				'form'  : '/Rbs/Users/User/:id',
-				'list'  : '/Rbs/Users/User'
+			// User
+			$delegate.register('Rbs_User_User', {
+				'form'  : '/Rbs/User/User/:id',
+				'list'  : '/Rbs/User/User'
 			});
 
 			return $delegate;
@@ -53,7 +53,7 @@
 		}]);
 	}]);
 
-	function ChangeUsersUserLoginController($scope, Workspace, OAuthService, NotificationCenter) {
+	function ChangeUserUserLoginController($scope, Workspace, OAuthService, NotificationCenter) {
 		Workspace.hideMenus();
 
 		$scope.login = function () {
@@ -73,12 +73,12 @@
 	}
 
 
-	ChangeUsersUserLoginController.$inject = [
+	ChangeUserUserLoginController.$inject = [
 		'$scope',
 		'RbsChange.Workspace',
 		'OAuthService',
 		'RbsChange.NotificationCenter'
 	];
-	app.controller('Rbs_Users_User_LoginController', ChangeUsersUserLoginController);
+	app.controller('Rbs_User_User_LoginController', ChangeUserUserLoginController);
 
 })();

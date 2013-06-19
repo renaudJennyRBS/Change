@@ -1,11 +1,11 @@
 (function () {
 
-	function editorChangeUsersUser (Editor) {
+	function editorChangeUserUser (Editor) {
 
 		return {
 			restrict : 'EC',
 
-			templateUrl : 'Rbs/Users/User/editor.twig',
+			templateUrl : 'Rbs/User/User/editor.twig',
 
 			replace: true,
 
@@ -24,8 +24,8 @@
 
 	}
 
-	editorChangeUsersUser.$inject = ['RbsChange.Editor'];
+	editorChangeUserUser.$inject = ['RbsChange.Editor'];
 
-	angular.module('RbsChange').directive('editorChangeUsersUser', editorChangeUsersUser);
+	angular.module('RbsChange').directive('editorChangeUserUser', editorChangeUserUser);
 
 })();

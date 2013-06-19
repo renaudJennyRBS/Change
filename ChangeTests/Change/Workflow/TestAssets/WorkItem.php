@@ -125,7 +125,7 @@ class WorkItem implements WorkItemInterface
 
 	/**
 	 * Only for user transition trigger
-	 * Id of Rbs_Users_User Document
+	 * Id of Rbs_User_User Document
 	 * @return integer|null
 	 */
 	public function getUserId()

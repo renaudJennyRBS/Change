@@ -13,7 +13,7 @@
 		</property>
 		<property name="document" type="Document" />
 		<property name="context" type="JSON" />
-		<property name="user" type="Document" document-type="Rbs_Users_User" />
+		<property name="user" type="Document" document-type="Rbs_User_User" />
 		<property name="role"  type="String" >
 			<dboptions length="100" />
 		</property>

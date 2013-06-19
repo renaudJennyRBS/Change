@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Users\Events;
+namespace Rbs\User\Events;
 
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
-* @name \Rbs\Users\Events\SharedListenerAggregate
+* @name \Rbs\User\Events\SharedListenerAggregate
 */
 class SharedListenerAggregate implements SharedListenerAggregateInterface
 {

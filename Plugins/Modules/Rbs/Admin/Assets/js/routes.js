@@ -24,7 +24,7 @@
 		. when(
 			'/login',
 			{
-				templateUrl : 'Rbs/Users/login.twig',
+				templateUrl : 'Rbs/User/login.twig',
 				reloadOnSearch : false
 			})
 		;

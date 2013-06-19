@@ -1,11 +1,11 @@
 <?php
-namespace ChangeTests\Rbs\Users\Events;
+namespace ChangeTests\Rbs\User\Events;
 
-use Rbs\Users\Events\Login;
+use Rbs\User\Events\Login;
 use Zend\EventManager\Event;
 /**
  * Class LoginTest
- * @package ChangeTests\Rbs\Users\Events
+ * @package ChangeTests\Rbs\User\Events
  */
 class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -35,14 +35,14 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testLogin()
 	{
 		$ds = $this->getDocumentServices();
-		/* @var $grp \Rbs\Users\Documents\Group */
-		$grp = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Users_Group');
+		/* @var $grp \Rbs\User\Documents\Group */
+		$grp = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_Group');
 		$grp->setLabel('Test 1');
 		$grp->setRealm('test');
 		$grp->save();
 
-		/* @var $user \Rbs\Users\Documents\User */
-		$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Users_User');
+		/* @var $user \Rbs\User\Documents\User */
+		$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
 		$user->setLabel('user 1');
 		$user->setLogin('login de test');
 		$user->setEmail('fake@temporary.fr');
@@ -58,9 +58,9 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$obj = new Login();
 		$obj->execute($event);
 
-		/* @var $u \Rbs\Users\Documents\User */
+		/* @var $u \Rbs\User\Documents\User */
 		$u = $event->getParam('user');
-		$this->assertInstanceOf('\Rbs\Users\Documents\User', $u);
+		$this->assertInstanceOf('\Rbs\User\Documents\User', $u);
 		$this->assertEquals($user->getId(), $u->getId());
 
 

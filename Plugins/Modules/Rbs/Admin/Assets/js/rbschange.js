@@ -136,7 +136,7 @@
 			});
 		});
 
-		REST.resource('Rbs_Users_User', OAuthService.getUserId()).then(function (user) {
+		REST.resource('Rbs_User_User', OAuthService.getUserId()).then(function (user) {
 			$rootScope.user = user;
 		});
 

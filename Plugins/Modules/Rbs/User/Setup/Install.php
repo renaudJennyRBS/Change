@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Users\Setup;
+namespace Rbs\User\Setup;
 
 /**
- * @name \Rbs\Users\Setup\Install
+ * @name \Rbs\User\Setup\Install
  */
 class Install
 {
@@ -15,14 +15,14 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_Users',
-			'\\Rbs\\Users\\Blocks\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Presentation/Blocks/Rbs_User',
+			'\\Rbs\\User\\Blocks\\SharedListenerAggregate');
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Users',
-			'\\Rbs\\Users\\Admin\\Register');
+		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_User',
+			'\\Rbs\\User\\Admin\\Register');
 
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Users',
-			'\\Rbs\\Users\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_User',
+			'\\Rbs\\User\\Events\\SharedListenerAggregate');
 	}
 
 	/**
@@ -33,7 +33,7 @@ class Install
 	 */
 	public function executeServices($plugin, $documentServices, $presentationServices)
 	{
-		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_Users_Group');
+		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
 		$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
 		$group = $query->andPredicates($query->eq('realm', 'rest'))->getFirstDocument();
 		if (!$group)
@@ -43,20 +43,20 @@ class Install
 			{
 				$transactionManager->begin();
 
-				/* @var $group \Rbs\Users\Documents\Group */
+				/* @var $group \Rbs\User\Documents\Group */
 				$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group->setLabel('Backoffice');
 				$group->setRealm('rest');
 				$group->create();
 
-				/* @var $group2 \Rbs\Users\Documents\Group */
+				/* @var $group2 \Rbs\User\Documents\Group */
 				$group2 = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group2->setLabel('Site Web');
 				$group2->setRealm('web');
 				$group2->create();
 
-				/* @var $user \Rbs\Users\Documents\User */
-				$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Users_User');
+				/* @var $user \Rbs\User\Documents\User */
+				$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
 				$user->setLabel('Administrator');
 				$user->setEmail('admin@temporary.fr');
 				$user->setLogin('admin');

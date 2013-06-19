@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Users\Events;
+namespace Rbs\User\Events;
 
 use Change\Documents\DocumentServices;
 use Change\Documents\Query\Query;
 use Zend\EventManager\Event;
 
 /**
- * @name \Rbs\Users\Events\Login
+ * @name \Rbs\User\Events\Login
  */
 class Login
 {
@@ -33,14 +33,14 @@ class Login
 			return;
 		}
 
-		$query = new Query($documentServices, 'Rbs_Users_User');
+		$query = new Query($documentServices, 'Rbs_User_User');
 		$groupBuilder = $query->getPropertyBuilder('groups');
 		$query->andPredicates($query->published(), $query->eq('login', $login), $groupBuilder->eq('realm', $realm));
 
 		$collection = $query->getDocuments();
 		foreach ($collection as $document)
 		{
-			/* @var $document \Rbs\Users\Documents\User */
+			/* @var $document \Rbs\User\Documents\User */
 			if ($document->checkPassword($password))
 			{
 				$event->setParam('user', $document);
