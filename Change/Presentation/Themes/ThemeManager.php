@@ -1,6 +1,7 @@
 <?php
 namespace Change\Presentation\Themes;
 
+use Change\Events\EventsCapableTrait;
 use Change\Presentation\Interfaces\Theme;
 use Change\Presentation\PresentationServices;
 use Zend\EventManager\Event;
@@ -10,8 +11,12 @@ use Zend\EventManager\EventManager;
  * @api
  * @name \Change\Presentation\Themes\ThemeManager
  */
-class ThemeManager
+class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use EventsCapableTrait {
+		EventsCapableTrait::attachEvents as defaultAttachEvents;
+	}
+
 	const DEFAULT_THEME_NAME = 'Rbs_Base';
 	const EVENT_LOADING = 'loading';
 
@@ -22,16 +27,11 @@ class ThemeManager
 	 */
 	protected $presentationServices;
 
-
 	/**
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
 
-	/**
-	 * @var EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @var Theme
@@ -54,6 +54,10 @@ class ThemeManager
 	public function setPresentationServices(PresentationServices $presentationServices)
 	{
 		$this->presentationServices = $presentationServices;
+		if ($this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
@@ -70,6 +74,10 @@ class ThemeManager
 	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
 	{
 		$this->documentServices = $documentServices;
+		if ($this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
@@ -81,18 +89,33 @@ class ThemeManager
 	}
 
 	/**
-	 * @return EventManager
+	 * @return null|string|string[]
 	 */
-	public function getEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		if ($this->eventManager === null)
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		if ($this->presentationServices)
 		{
-			$this->eventManager = new EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
-			$this->eventManager->setSharedManager($this->getPresentationServices()->getApplicationServices()->getApplication()
-				->getSharedEventManager());
+			$config = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration();
+			return $config->getEntry('Change/Events/ThemeManager', array());
 		}
-		return $this->eventManager;
+		return array();
+	}
+
+	/**
+	 * @param \Zend\EventManager\EventManager $eventManager
+	 */
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	{
+		$this->defaultAttachEvents($eventManager);
+		$eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
 	}
 
 	/**
