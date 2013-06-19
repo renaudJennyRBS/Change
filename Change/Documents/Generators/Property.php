@@ -575,7 +575,6 @@ class Property
 				break;
 			case 'authorId':
 				$this->type = 'DocumentId';
-				//$this->documentType = 'Rbs_Users_User';
 				break;
 			case 'documentVersion':
 				$this->type = 'Integer';
@@ -595,7 +594,6 @@ class Property
 				break;
 			case 'publicationSections':
 				$this->type = 'DocumentArray';
-				//$this->documentType = 'Rbs_Website_Section';
 				break;
 			case 'versionOfId':
 				$this->type = 'DocumentId';

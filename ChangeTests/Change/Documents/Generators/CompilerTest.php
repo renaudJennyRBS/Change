@@ -41,7 +41,7 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(3, $compiler->getModels());
 		$this->assertCount(0, $compiler->getModelsByLevel(0));
 
-		$userModel = new \Change\Documents\Generators\Model('Rbs', 'Users', 'User');
+		$userModel = new \Change\Documents\Generators\Model('Rbs', 'User', 'User');
 		$compiler->addModel($userModel);
 		
 		$compiler->buildTree();

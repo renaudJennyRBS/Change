@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.users.theme.js" lcid="fr_FR">
-	<include id="m.rbs.users.document"/>
-	<key id="module-name">utilisateurs</key>
-	<key id="module-keywords">groupes,sécurité,mot de passe,password,login,comptes,authentification</key>
-</i18n>

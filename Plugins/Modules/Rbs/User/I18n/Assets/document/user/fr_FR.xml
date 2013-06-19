@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.user.document.user" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="login">nom d'utilisateur</key>
+	<key id="email">adresse e-mail</key>
+	<key id="pseudonym">pseudonyme</key>
+	<key id="label">nom complet</key>
+	<key id="hashMethod">méthode de cryptage du mot de passe</key>
+	<key id="security">sécurité</key>
+	<key id="password">mot de passe</key>
+</i18n>
