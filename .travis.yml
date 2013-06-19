@@ -19,7 +19,7 @@ before_install:
  - mkdir -p Libraries/ircmaxell
  - wget "https://github.com/ircmaxell/password_compat/archive/v1.0.3.zip"
  - unzip v1.0.3.zip -d Libraries/ircmaxell/
- - mv Libraries/ircmaxell/password_compat-1.0.3 Libraries/ircmaxell/password_compat
+ - mv Libraries/ircmaxell/password_compat-1.0.3 Libraries/ircmaxell/password-compat
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
 
