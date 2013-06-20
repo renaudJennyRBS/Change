@@ -39,6 +39,7 @@
 					confirmTitle
 					;
 
+				// FIXME Localization
 				scope.labelOn = attrs.labelOn || 'oui';
 				scope.labelOff = attrs.labelOff || 'non';
 				valueOff = attrs.valueOff || false;
