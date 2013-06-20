@@ -32,7 +32,7 @@ class Resolver extends ActionResolver
 	 * @param string $name
 	 * @param string $className
 	 */
-	protected function addResolverClasses($name, $className)
+	public function addResolverClasses($name, $className)
 	{
 		$this->resolverClasses[$name] = $className;
 	}
@@ -67,7 +67,7 @@ class Resolver extends ActionResolver
 	}
 
 	/**
-	 * Set Event params: namespace, isDirectory
+	 * Set Event params: pathParts, isDirectory
 	 * @param Event $event
 	 * @return void
 	 */
@@ -84,24 +84,25 @@ class Resolver extends ActionResolver
 			$path = '/';
 		}
 
-		$namespaceParts = array_slice(explode('/', $path), 1);
-		if (end($namespaceParts) === '')
+		$pathParts = array_slice(explode('/', $path), 1);
+		if (end($pathParts) === '')
 		{
-			array_pop($namespaceParts);
+			array_pop($pathParts);
 			$event->setParam('isDirectory', true);
 		}
 		else
 		{
 			$event->setParam('isDirectory', false);
 		}
+		$event->setParam('pathParts', $pathParts);
 
-		if (count($namespaceParts) !== 0)
+		if (count($pathParts) !== 0)
 		{
-			$resolver = $this->getResolverByName($namespaceParts[0]);
+			$resolver = $this->getResolverByName($pathParts[0]);
 			if ($resolver)
 			{
-				array_shift($namespaceParts);
-				$resolver->resolve($event, $namespaceParts, $request->getMethod());
+				array_shift($pathParts);
+				$resolver->resolve($event, $pathParts, $request->getMethod());
 			}
 		}
 		elseif ($request->getMethod() === 'GET')
@@ -157,9 +158,7 @@ class Resolver extends ActionResolver
 	{
 		$authorisation = function(Event $event) use ($resource, $privilege)
 		{
-			$hasPrivilege = $event->getAcl()->hasPrivilege($resource, $privilege);
-			$event->getApplicationServices()->getLogging()->info('hasPrivilege(' . var_export($resource, true) . ', '.  var_export($privilege, true).'): ' . var_export($hasPrivilege, true));
-			return $hasPrivilege;
+			return $event->getPermissionsManager()->isAllowed(null, $resource, $privilege);
 		};
 		$event->setAuthorization($authorisation);
 	}

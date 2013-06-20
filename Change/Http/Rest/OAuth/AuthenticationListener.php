@@ -4,8 +4,7 @@ namespace Change\Http\Rest\OAuth;
 use Change\Db\DbProvider;
 use Change\Db\Query\ResultsConverter;
 use Change\Db\ScalarType;
-use Change\Documents\DocumentManager;
-use Change\Documents\Interfaces\Publishable;
+
 use Change\Http\Event as HttpEvent;
 use Change\Http\Rest\Result\ArrayResult;
 use Change\Http\Rest\Result\ErrorResult;
@@ -15,24 +14,28 @@ use Zend\Http\Header\Authorization;
 use ZendOAuth\Http\Utility;
 use Zend\Http\Response as HttpResponse;
 use Zend\Uri\Http as HttpUri;
+use Change\Http\Request;
 
 /**
  * @name \Change\Http\Rest\OAuth\AuthenticationListener
  */
 class AuthenticationListener
 {
-	const requestRegisterPath = '/OAuth/Register';
+	const RESOLVER_NAME = 'OAuth';
 
-	const requestTokenPath = '/OAuth/RequestToken';
+	const RESOLVE_REGISTER = 'Register';
 
-	const authorizePath = '/OAuth/Authorize';
+	const RESOLVE_REQUEST_TOKEN = 'RequestToken';
 
-	const accessTokenPath = '/OAuth/AccessToken';
+	const RESOLVE_AUTHORIZE = 'Authorize';
+
+	const RESOLVE_ACCESS_TOKEN = 'AccessToken';
 
 	/**
 	 * @var array
 	 */
 	protected $config;
+
 
 	public function setConfig(array $config)
 	{
@@ -85,61 +88,85 @@ class AuthenticationListener
 	}
 
 	/**
-	 * @param HttpEvent $event
+	 * @param \Change\Http\Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
 	 */
-	public function onRequest($event)
+	public function getNextNamespace($event, $namespaceParts)
 	{
-		if (!$event instanceof HttpEvent)
+		return array('Register', 'RequestToken', 'Authorize', 'AccessToken');
+	}
+
+	/**
+	 * Set Event params: resourcesActionName, documentId, LCID
+	 * @param \Change\Http\Event $event
+	 * @param array $resourceParts
+	 * @param $method
+	 * @return void
+	 */
+	public function resolve($event, $resourceParts, $method)
+	{
+		$nbParts = count($resourceParts);
+		if ($nbParts == 0 && $method === Request::METHOD_GET)
 		{
+			array_unshift($resourceParts, static::RESOLVER_NAME);
+			$event->setParam('namespace', implode('.', $resourceParts));
+			$event->setParam('resolver', $this);
+			$action = function ($event)
+			{
+				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action->execute($event);
+			};
+			$event->setAction($action);
 			return;
 		}
+		elseif ($nbParts == 1)
+		{
+			if (null === $this->config)
+			{
+				$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
+				$this->setConfig($cfg->getEntry('Change/Http/Rest/OAuth', array()));
+			}
+			$request = $event->getRequest();
+			$action = $this;
+			if ($resourceParts[0] === static::RESOLVE_REGISTER)
+			{
+				if ('POST' === $request->getMethod())
+				{
+					$event->setAction(function($event) use($action) {$action->onRegister($event);});
+				}
+				else
+				{
+					$event->setResult($this->buildNotAllowedError($request->getMethod(), array('POST')));
+				}
+			}
+			elseif ($resourceParts[0] === static::RESOLVE_REQUEST_TOKEN)
+			{
+				$event->setAction(function($event) use($action) {$action->onRequestToken($event);});
+			}
+			elseif ($resourceParts[0] === static::RESOLVE_AUTHORIZE)
+			{
+				if ('POST' === $request->getMethod())
+				{
+					$event->setAction(function($event) use($action) {$action->onAuthorize($event);});
+				}
+			}
+			elseif ($resourceParts[0] === static::RESOLVE_ACCESS_TOKEN)
+			{
+				$event->setAction(function($event) use($action) {$action->onAccessToken($event);});
+			}
+		}
+	}
 
-		if (null === $this->config)
+	/**
+	 * @param HttpEvent $event
+	 */
+	public function onRequest(HttpEvent $event)
+	{
+		$resolver = $event->getController()->getActionResolver();
+		if ($resolver instanceof \Change\Http\Rest\Resolver)
 		{
-			$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
-			$this->setConfig($cfg->getEntry('Change/Http/Rest/OAuth', array()));
-		}
-
-		$request = $event->getRequest();
-		$path = $request->getPath();
-		if (strpos($path, static::requestRegisterPath) === 0)
-		{
-			if ('POST' === $request->getMethod())
-			{
-				$this->onRegister($event);
-			}
-			else
-			{
-				$event->setResult($this->buildNotAllowedError($request->getMethod(), array('POST')));
-			}
-		}
-		elseif (strpos($path, static::requestTokenPath) === 0)
-		{
-			$this->onRequestToken($event);
-		}
-		elseif (strpos($path, static::authorizePath) === 0)
-		{
-			if ('POST' === $request->getMethod())
-			{
-				$this->onAuthorize($event);
-			}
-
-			if ($event->getResult() === null)
-			{
-				$array = array('oauth_token' => $request->getPost('oauth_token', $request->getQuery('oauth_token')));
-				$result  = new ArrayResult();
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-				$result->setArray($array);
-				$event->setResult($result);
-			}
-		}
-		elseif (strpos($path, static::accessTokenPath) === 0)
-		{
-			$this->onAccessToken($event);
-		}
-		else
-		{
-			$this->onAuthenticate($event);
+			$resolver->addResolverClasses(static::RESOLVER_NAME, get_class($this));
 		}
 	}
 
@@ -147,7 +174,7 @@ class AuthenticationListener
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
-	protected function onRegister(HttpEvent $event)
+	public function onRegister(HttpEvent $event)
 	{
 		$request = $event->getRequest();
 		$realm = $request->getPost('realm');
@@ -180,13 +207,41 @@ class AuthenticationListener
 	}
 
 	/**
+	 * @param \Change\Http\Request $request
+	 * @return array
+	 */
+	protected function extractAuthorization($request)
+	{
+		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		if (count($authorization))
+		{
+			return $authorization;
+		}
+		if ($request->getMethod() === \Zend\Http\Request::METHOD_POST)
+		{
+			$authorization = $request->getPost()->toArray();
+			if (isset($authorization['oauth_signature']))
+			{
+				return $authorization;
+			}
+		}
+		$authorization = $request->getQuery()->toArray();
+		if (isset($authorization['oauth_signature']))
+		{
+			return $authorization;
+		}
+		return array();
+	}
+
+	/**
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
-	protected function onRequestToken(HttpEvent $event)
+	public function onRequestToken(HttpEvent $event)
 	{
 		$request = $event->getRequest();
-		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		$authorization = $this->extractAuthorization($request);
+
 		if (count($authorization) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_consumer_key']))
 		{
 			if ($authorization['oauth_consumer_key'] !== $this->getDefaultConsumerKey())
@@ -235,7 +290,7 @@ class AuthenticationListener
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
-	protected function onAuthorize(HttpEvent $event)
+	public function onAuthorize(HttpEvent $event)
 	{
 		$request = $event->getRequest();
 		$token = $request->getPost('oauth_token', $request->getQuery('oauth_token'));
@@ -278,16 +333,26 @@ class AuthenticationListener
 				}
 			}
 		}
+
+		if ($event->getResult() === null)
+		{
+			$array = array('oauth_token' => $request->getPost('oauth_token', $request->getQuery('oauth_token')));
+			$result  = new ArrayResult();
+			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+			$result->setArray($array);
+			$event->setResult($result);
+		}
 	}
 
 	/**
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
-	protected function onAccessToken(HttpEvent $event)
+	public function onAccessToken(HttpEvent $event)
 	{
 		$request = $event->getRequest();
-		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
+		$authorization = $this->extractAuthorization($request);
+
 		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_verifier']))
 		{
 			$this->checkTimestamp($authorization['oauth_timestamp']);
@@ -356,11 +421,8 @@ class AuthenticationListener
 	 * @param HttpEvent $event
 	 * @throws \RuntimeException
 	 */
-	protected function onAuthenticate(HttpEvent $event)
+	public function onAuthenticate(HttpEvent $event)
 	{
-		$authentication = new Authentication();
-		$event->setAuthentication($authentication);
-
 		$request = $event->getRequest();
 		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
 		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']))
@@ -385,7 +447,15 @@ class AuthenticationListener
 				$signature = $utils->sign($params , $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(), $storeOAuth->getTokenSecret(), $method, $url);
 				if ($signature === $authorization['oauth_signature'])
 				{
-					$authentication->setStoredOAuth($storeOAuth);
+					$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($storeOAuth->getAccessorId());
+					if ($user instanceof \Change\User\UserInterface)
+					{
+						$event->getAuthenticationManager()->setCurrentUser($user);
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid OAuth AccessorId: ' . $storeOAuth->getAccessorId(), 72004);
+					}
 				}
 				else
 				{
@@ -599,9 +669,10 @@ class AuthenticationListener
 	/**
 	 * @param HttpEvent $event
 	 */
-	public function onResponse($event)
+	public function onResponse(HttpEvent $event)
 	{
-		if (!$event instanceof HttpEvent)
+		$pathPart = $event->getParam('pathParts');
+		if (!is_array($pathPart) || count($pathPart) !== 2 || $pathPart[0] !== static::RESOLVER_NAME)
 		{
 			return;
 		}
@@ -620,8 +691,8 @@ class AuthenticationListener
 			}
 		}
 
-		$path = $request->getPath();
-		if (strpos($path, static::requestTokenPath) === 0 || strpos($path, static::accessTokenPath) === 0)
+
+		if ($pathPart[1] === static::RESOLVE_REQUEST_TOKEN || $pathPart[1] === static::RESOLVE_ACCESS_TOKEN)
 		{
 			$result = $event->getResult();
 			if ($result instanceof ArrayResult)
@@ -642,7 +713,7 @@ class AuthenticationListener
 				$event->stopPropagation();
 			}
 		}
-		elseif (strpos($path, static::authorizePath) === 0)
+		elseif ($pathPart[1] === static::RESOLVE_AUTHORIZE)
 		{
 			$result = $event->getResult();
 			if ($result instanceof ArrayResult)

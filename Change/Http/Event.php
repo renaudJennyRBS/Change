@@ -1,64 +1,61 @@
 <?php
 namespace Change\Http;
 
+use Change\Application\ApplicationServices;
+use Change\Documents\DocumentServices;
+use Change\Permissions\PermissionsManager;
+use Change\Presentation\PresentationServices;
+use Change\User\AuthenticationManager;
+
 /**
  * @name \Change\Http\Event
  */
 class Event extends \Zend\EventManager\Event
 {
-	const EVENT_REQUEST      = 'http.request';
-	const EVENT_ACTION       = 'http.action';
-	const EVENT_RESULT 		 = 'http.result';
-	const EVENT_RESPONSE     = 'http.response';
-	const EVENT_EXCEPTION    = 'http.exception';
+	const EVENT_REQUEST = 'http.request';
+	const EVENT_ACTION = 'http.action';
+	const EVENT_RESULT = 'http.result';
+	const EVENT_RESPONSE = 'http.response';
+	const EVENT_EXCEPTION = 'http.exception';
+	const EVENT_AUTHENTICATE = 'http.authenticate';
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var DocumentServices
 	 */
 	protected $documentServices;
 
 	/**
-	 * @var \Change\Presentation\PresentationServices
+	 * @var PresentationServices
 	 */
 	protected $presentationServices;
 
 	/**
-	 * @var \Change\Http\Request
+	 * @var Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \Change\Http\AuthenticationInterface|null
-	 */
-	protected $authentication;
-
-	/**
-	 * @var \Change\Http\AclInterface
-	 */
-	protected $acl;
-
-	/**
-	 * @var \Change\Http\UrlManager
+	 * @var UrlManager
 	 */
 	protected $urlManager;
 
 	/**
-	 * @var callable|null
+	 * @var Callable|null
 	 */
 	protected $authorization;
 
 	/**
-	 * @var callable|null
+	 * @var Callable|null
 	 */
 	protected $action;
 
 	/**
-	 * @var \Change\Http\Result
+	 * @var Result
 	 */
 	protected $result;
 
@@ -68,12 +65,22 @@ class Event extends \Zend\EventManager\Event
 	protected $response;
 
 	/**
+	 * @var AuthenticationManager
+	 */
+	protected $authenticationManager;
+
+	/**
+	 * @var PermissionsManager
+	 */
+	protected $permissionsManager;
+
+	/**
 	 * @api
-	 * @return \Change\Http\Controller|null
+	 * @return Controller|null
 	 */
 	public function getController()
 	{
-		if ($this->getTarget() instanceof \Change\Http\Controller)
+		if ($this->getTarget() instanceof Controller)
 		{
 			return $this->getTarget();
 		}
@@ -81,16 +88,16 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices|null $applicationServices
+	 * @param ApplicationServices|null $applicationServices
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices = null)
+	public function setApplicationServices(ApplicationServices $applicationServices = null)
 	{
 		$this->applicationServices = $applicationServices;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Application\ApplicationServices|null
+	 * @return ApplicationServices|null
 	 */
 	public function getApplicationServices()
 	{
@@ -98,16 +105,16 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices|null $documentServices
+	 * @param DocumentServices|null $documentServices
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
+	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Documents\DocumentServices|null
+	 * @return DocumentServices|null
 	 */
 	public function getDocumentServices()
 	{
@@ -115,16 +122,16 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 * @param PresentationServices|null $presentationServices
 	 */
-	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices = null)
+	public function setPresentationServices(PresentationServices $presentationServices = null)
 	{
 		$this->presentationServices = $presentationServices;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
+	 * @return PresentationServices|null
 	 */
 	public function getPresentationServices()
 	{
@@ -132,7 +139,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Http\Request $request
+	 * @param Request $request
 	 */
 	public function setRequest($request)
 	{
@@ -141,7 +148,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\Request
+	 * @return Request
 	 */
 	public function getRequest()
 	{
@@ -149,41 +156,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Http\AuthenticationInterface|null $authentication
-	 */
-	public function setAuthentication($authentication)
-	{
-		$this->authentication = $authentication;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Http\AuthenticationInterface|null
-	 */
-	public function getAuthentication()
-	{
-		return $this->authentication;
-	}
-
-	/**
-	 * @param \Change\Http\AclInterface $acl
-	 */
-	public function setAcl($acl)
-	{
-		$this->acl = $acl;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Http\AclInterface
-	 */
-	public function getAcl()
-	{
-		return $this->acl;
-	}
-
-	/**
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param UrlManager $urlManager
 	 */
 	public function setUrlManager($urlManager)
 	{
@@ -192,7 +165,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\UrlManager
+	 * @return UrlManager
 	 */
 	public function getUrlManager()
 	{
@@ -200,8 +173,42 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
+	 * @param AuthenticationManager $authenticationManager
+	 */
+	public function setAuthenticationManager(AuthenticationManager $authenticationManager)
+	{
+		$this->authenticationManager = $authenticationManager;
+	}
+
+	/**
 	 * @api
-	 * @param callable|null $authorization
+	 * @return AuthenticationManager
+	 */
+	public function getAuthenticationManager()
+	{
+		return $this->authenticationManager;
+	}
+
+	/**
+	 * @param PermissionsManager $permissionsManager
+	 */
+	public function setPermissionsManager(PermissionsManager $permissionsManager)
+	{
+		$this->permissionsManager = $permissionsManager;
+	}
+
+	/**
+	 * @api
+	 * @return PermissionsManager
+	 */
+	public function getPermissionsManager()
+	{
+		return $this->permissionsManager;
+	}
+
+	/**
+	 * @api
+	 * @param Callable|null $authorization
 	 */
 	public function setAuthorization($authorization)
 	{
@@ -210,7 +217,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return callable|null
+	 * @return Callable|null
 	 */
 	public function getAuthorization()
 	{
@@ -219,7 +226,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @param callable|null $action
+	 * @param Callable|null $action
 	 */
 	public function setAction($action)
 	{
@@ -228,7 +235,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return callable|null
+	 * @return Callable|null
 	 */
 	public function getAction()
 	{
@@ -237,7 +244,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @param \Change\Http\Result $result
+	 * @param Result $result
 	 */
 	public function setResult($result)
 	{
@@ -246,7 +253,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\Result
+	 * @return Result
 	 */
 	public function getResult()
 	{

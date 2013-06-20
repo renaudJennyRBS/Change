@@ -27,7 +27,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param UserInterface $currentUser
 	 */
-	public function setCurrentUser(UserInterface $currentUser = null)
+	public function setCurrentUser($currentUser = null)
 	{
 		$this->currentUser = $currentUser;
 	}
@@ -47,6 +47,10 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
+		if ($documentServices !== null  && $this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**

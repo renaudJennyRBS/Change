@@ -38,8 +38,10 @@
 		},
 		"Events": {
 			"ListenerAggregateClasses": {
-				"Change": "\\Change\\Events\\DefaultSharedListenerAggregate",
-				"Rest": "\\Change\\Http\\Rest\\OAuth\\SharedListenerAggregate"
+				"Change": "\\Change\\Events\\DefaultSharedListenerAggregate"
+			},
+			"Http.Rest": {
+				"OAuth": "\\Change\\Http\\Rest\\OAuth\\ListenerAggregate"
 			}
 		},
 		"Http": {

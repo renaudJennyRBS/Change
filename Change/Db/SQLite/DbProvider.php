@@ -105,55 +105,70 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return $this->inTransaction;
 	}
-	
+
 	/**
+	 * @param \Zend\EventManager\Event $event
+	 * @return void
 	 */
-	public function beginTransaction()
+	public function beginTransaction($event = null)
 	{
-		if ($this->inTransaction())
+		if ($event === null || $event->getParam('primary'))
 		{
-			$this->logging->warn(get_class($this) . " while already in transaction");
-		}
-		else
-		{
-			$this->timers['bt'] = microtime(true);
-			$this->inTransaction = true;
-			$this->getDriver()->beginTransaction();
-		}
-	}
-	
-	/**
-	 */
-	public function commit()
-	{
-		if (!$this->inTransaction())
-		{
-			$this->logging->warn(__METHOD__ . " called while not in transaction");
-		}
-		else
-		{
-			$this->getDriver()->commit();
-			$duration = round(microtime(true) - $this->timers['bt'], 4);
-			if ($duration > $this->timers['longTransaction'])
+			if ($this->inTransaction())
 			{
-				$this->logging->warn('Long Transaction detected ' . number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+				$this->logging->warn(get_class($this) . " while already in transaction");
 			}
-			$this->inTransaction = false;
+			else
+			{
+				$this->timers['bt'] = microtime(true);
+				$this->inTransaction = true;
+				$this->getDriver()->beginTransaction();
+			}
 		}
 	}
-	
+
 	/**
+	 * @param \Zend\EventManager\Event $event
+	 * @return void
 	 */
-	public function rollBack()
+	public function commit($event)
 	{
-		if (!$this->inTransaction())
+		if ($event && $event->getParam('primary'))
 		{
-			$this->logging->warn(__METHOD__ . " called while not in transaction");
+			if (!$this->inTransaction())
+			{
+				$this->logging->warn(__METHOD__ . " called while not in transaction");
+			}
+			else
+			{
+				$this->getDriver()->commit();
+				$duration = round(microtime(true) - $this->timers['bt'], 4);
+				if ($duration > $this->timers['longTransaction'])
+				{
+					$this->logging->warn('Long Transaction detected ' . number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+				}
+				$this->inTransaction = false;
+			}
 		}
-		else
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 * @return void
+	 */
+	public function rollBack($event)
+	{
+		if ($event && $event->getParam('primary'))
 		{
-			$this->inTransaction = false;
-			$this->getDriver()->rollBack();
+			if (!$this->inTransaction())
+			{
+				$this->logging->warn(__METHOD__ . " called while not in transaction");
+			}
+			else
+			{
+				$this->inTransaction = false;
+				$this->getDriver()->rollBack();
+			}
 		}
 	}
 	

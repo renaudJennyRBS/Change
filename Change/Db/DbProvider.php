@@ -205,7 +205,7 @@ abstract class DbProvider
 		$this->transactionManager = $transactionManager;
 		if ($transactionManager->started())
 		{
-			$this->beginTransaction();
+			$this->beginTransaction(null);
 		}
 		$tem = $transactionManager->getEventManager();
 		$tem->attach(TransactionManager::EVENT_BEGIN, array($this, 'beginTransaction'));
@@ -221,21 +221,23 @@ abstract class DbProvider
 		return $this->transactionManager;
 	}
 
-
 	/**
+	 * @param \Zend\EventManager\Event $event
 	 * @return void
 	 */
-	public abstract function beginTransaction();
+	public abstract function beginTransaction($event = null);
 
 	/**
+	 * @param \Zend\EventManager\Event $event
 	 * @return void
 	 */
-	public abstract function commit();
+	public abstract function commit($event);
 
 	/**
+	 * @param \Zend\EventManager\Event $event
 	 * @return void
 	 */
-	public abstract function rollBack();
+	public abstract function rollBack($event);
 
 	/**
 	 * @param string $tableName

@@ -382,7 +382,5 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Str4 v2', $c1->getStr4());
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
-
-		$this->getDocumentServices()->getDocumentManager()->reset();
 	}
 }

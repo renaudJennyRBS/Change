@@ -13,14 +13,20 @@ use Change\Http\Rest\Result\ErrorResult;
  */
 class Controller extends \Change\Http\Controller
 {
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Http.Rest', 'Http');
+	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
-	 * @return void
+	 * @param \Zend\EventManager\EventManager $eventManager
 	 */
-	protected function registerDefaultListeners($eventManager)
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
 	{
-		$eventManager->addIdentifiers('Http.Rest');
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
@@ -43,6 +49,16 @@ class Controller extends \Change\Http\Controller
 	{
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
+
+		$authenticationManager = new \Change\User\AuthenticationManager();
+		$authenticationManager->setDocumentServices($event->getDocumentServices());
+		$event->setAuthenticationManager($authenticationManager);
+
+		$permissionsManager = new \Change\Permissions\PermissionsManager();
+		$allowAnonymous = $this->getApplication()->getConfiguration()->getEntry('Change/Http/allowAnonymous', false);
+		$permissionsManager->allow($allowAnonymous);
+		$permissionsManager->setApplicationServices($event->getApplicationServices());
+		$event->setPermissionsManager($permissionsManager);
 
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();

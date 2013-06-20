@@ -130,6 +130,9 @@ class Resolver extends ActionResolver
 				$action = new FindDisplayPage();
 				$action->execute($event);
 			};
+
+			$resource =  $pathRule->getSectionId() ? $pathRule->getSectionId() : $pathRule->getWebsiteId();
+			$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
 			$event->setAction($action);
 			return;
 		}
@@ -326,5 +329,19 @@ class Resolver extends ActionResolver
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 * @param mixed $resource
+	 * @param string $privilege
+	 */
+	public function setAuthorisation($event, $resource, $privilege)
+	{
+		$authorisation = function(Event $event) use ($resource, $privilege)
+		{
+			return $event->getPermissionsManager()->isAllowed(null, $resource, $privilege);
+		};
+		$event->setAuthorization($authorisation);
 	}
 }

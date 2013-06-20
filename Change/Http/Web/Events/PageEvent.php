@@ -1,8 +1,12 @@
 <?php
 namespace Change\Http\Web\Events;
 
+use Change\Application\ApplicationServices;
 use Change\Presentation\Interfaces\Page;
 use Zend\EventManager\Event;
+use Change\Permissions\PermissionsManager;
+use Change\Presentation\PresentationServices;
+use Change\User\AuthenticationManager;
 
 /**
  * @name \Change\Http\Web\Events\PageEvent
@@ -10,12 +14,12 @@ use Zend\EventManager\Event;
 class PageEvent extends Event
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
-	 * @var \Change\Presentation\PresentationServices
+	 * @var PresentationServices
 	 */
 	protected $presentationServices;
 
@@ -30,14 +34,14 @@ class PageEvent extends Event
 	protected $request;
 
 	/**
-	 * @var \Change\Http\AuthenticationInterface
+	 * @var AuthenticationManager
 	 */
-	protected $authentication;
+	protected $authenticationManager;
 
 	/**
-	 * @var \Change\Http\AclInterface
+	 * @var PermissionsManager
 	 */
-	protected $acl;
+	protected $permissionsManager;
 
 	/**
 	 * @var \Change\Http\UrlManager
@@ -45,7 +49,7 @@ class PageEvent extends Event
 	protected $urlManager;
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param ApplicationServices $applicationServices
 	 */
 	public function setApplicationServices($applicationServices)
 	{
@@ -54,7 +58,7 @@ class PageEvent extends Event
 
 	/**
 	 * @api
-	 * @return \Change\Application\ApplicationServices|null
+	 * @return ApplicationServices|null
 	 */
 	public function getApplicationServices()
 	{
@@ -62,16 +66,16 @@ class PageEvent extends Event
 	}
 
 	/**
-	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 * @param PresentationServices|null $presentationServices
 	 */
-	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices = null)
+	public function setPresentationServices(PresentationServices $presentationServices = null)
 	{
 		$this->presentationServices = $presentationServices;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
+	 * @return PresentationServices|null
 	 */
 	public function getPresentationServices()
 	{
@@ -79,35 +83,35 @@ class PageEvent extends Event
 	}
 
 	/**
-	 * @param \Change\Http\AclInterface $acl
+	 * @param AuthenticationManager $authenticationManager
 	 */
-	public function setAcl($acl)
+	public function setAuthenticationManager($authenticationManager)
 	{
-		$this->acl = $acl;
+		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
-	 * @return \Change\Http\AclInterface
+	 * @return AuthenticationManager
 	 */
-	public function getAcl()
+	public function getAuthenticationManager()
 	{
-		return $this->acl;
+		return $this->authenticationManager;
 	}
 
 	/**
-	 * @param \Change\Http\AuthenticationInterface $authentication
+	 * @param \Change\Permissions\PermissionsManager $permissionsManager
 	 */
-	public function setAuthentication($authentication)
+	public function setPermissionsManager($permissionsManager)
 	{
-		$this->authentication = $authentication;
+		$this->permissionsManager = $permissionsManager;
 	}
 
 	/**
-	 * @return \Change\Http\AuthenticationInterface
+	 * @return \Change\Permissions\PermissionsManager
 	 */
-	public function getAuthentication()
+	public function getPermissionsManager()
 	{
-		return $this->authentication;
+		return $this->permissionsManager;
 	}
 
 	/**

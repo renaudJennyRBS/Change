@@ -1,7 +1,14 @@
 <?php
 namespace Change\Presentation\Blocks;
 
+use Change\Documents\DocumentServices;
+use Change\Http\UrlManager;
+use Change\Http\Web\Result\BlockResult;
+use Change\Presentation\Layout\Block;
 use Zend\EventManager\Event as ZendEvent;
+use Change\Permissions\PermissionsManager;
+use Change\Presentation\PresentationServices;
+use Change\User\AuthenticationManager;
 
 /**
  * @name \Change\Presentation\Blocks\Event
@@ -9,17 +16,17 @@ use Zend\EventManager\Event as ZendEvent;
 class Event extends ZendEvent
 {
 	/**
-	 * @var \Change\Presentation\PresentationServices
+	 * @var PresentationServices
 	 */
 	protected $presentationServices;
 
 	/**
-	 * @var \Change\Documents\DocumentServices|null
+	 * @var DocumentServices|null
 	 */
 	protected $documentServices;
 
 	/**
-	 * @var \Change\Presentation\Layout\Block
+	 * @var Block
 	 */
 	protected $blockLayout;
 
@@ -29,36 +36,38 @@ class Event extends ZendEvent
 	protected $blockParameters;
 
 	/**
-	 * @var \Change\Http\Web\Result\BlockResult;
+	 * @var BlockResult;
 	 */
 	protected $blockResult;
 
 	/**
-	 * @var \Change\Http\UrlManager
+	 * @var UrlManager
 	 */
 	protected $urlManager;
 
-	/**
-	 * @var \Change\Http\AuthenticationInterface|null
-	 */
-	protected $authentication;
 
 	/**
-	 * @var \Change\Http\AclInterface
+	 * @var AuthenticationManager
 	 */
-	protected $acl;
+	protected $authenticationManager;
 
 	/**
-	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 * @var PermissionsManager
 	 */
-	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices)
+	protected $permissionsManager;
+
+
+	/**
+	 * @param PresentationServices|null $presentationServices
+	 */
+	public function setPresentationServices(PresentationServices $presentationServices)
 	{
 		$this->presentationServices = $presentationServices;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
+	 * @return PresentationServices|null
 	 */
 	public function getPresentationServices()
 	{
@@ -66,9 +75,9 @@ class Event extends ZendEvent
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices|null $documentServices
+	 * @param DocumentServices|null $documentServices
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
+	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
 	}
@@ -76,7 +85,7 @@ class Event extends ZendEvent
 	/**
 	 * @api
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\DocumentServices
+	 * @return DocumentServices
 	 */
 	public function getDocumentServices()
 	{
@@ -88,7 +97,7 @@ class Event extends ZendEvent
 	}
 
 	/**
-	 * @param \Change\Presentation\Layout\Block $blockLayout
+	 * @param Block $blockLayout
 	 * @return $this
 	 */
 	public function setBlockLayout($blockLayout)
@@ -99,7 +108,7 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @return \Change\Presentation\Layout\Block
+	 * @return Block
 	 */
 	public function getBlockLayout()
 	{
@@ -128,7 +137,7 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @param \Change\Http\Web\Result\BlockResult $blockResult
+	 * @param BlockResult $blockResult
 	 * @return $this
 	 */
 	public function setBlockResult($blockResult)
@@ -139,7 +148,7 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @return \Change\Http\Web\Result\BlockResult|null
+	 * @return BlockResult|null
 	 */
 	public function getBlockResult()
 	{
@@ -156,7 +165,7 @@ class Event extends ZendEvent
 	}
 
 	/**
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param UrlManager $urlManager
 	 * @return $this
 	 */
 	public function setUrlManager($urlManager)
@@ -166,7 +175,7 @@ class Event extends ZendEvent
 	}
 
 	/**
-	 * @return \Change\Http\UrlManager
+	 * @return UrlManager
 	 */
 	public function getUrlManager()
 	{
@@ -174,35 +183,34 @@ class Event extends ZendEvent
 	}
 
 	/**
-	 * @param \Change\Http\AuthenticationInterface|null $authentication
+	 * @param AuthenticationManager $authenticationManager
 	 */
-	public function setAuthentication($authentication)
+	public function setAuthenticationManager($authenticationManager)
 	{
-		$this->authentication = $authentication;
+		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
-	 * @return \Change\Http\AuthenticationInterface|null
+	 * @return AuthenticationManager
 	 */
-	public function getAuthentication()
+	public function getAuthenticationManager()
 	{
-		return $this->authentication;
-	}
-
-
-	/**
-	 * @param \Change\Http\AclInterface $acl
-	 */
-	public function setAcl($acl)
-	{
-		$this->acl = $acl;
+		return $this->authenticationManager;
 	}
 
 	/**
-	 * @return \Change\Http\AclInterface
+	 * @param PermissionsManager $permissionsManager
 	 */
-	public function getAcl()
+	public function setPermissionsManager($permissionsManager)
 	{
-		return $this->acl;
+		$this->permissionsManager = $permissionsManager;
+	}
+
+	/**
+	 * @return PermissionsManager
+	 */
+	public function getPermissionsManager()
+	{
+		return $this->permissionsManager;
 	}
 }
