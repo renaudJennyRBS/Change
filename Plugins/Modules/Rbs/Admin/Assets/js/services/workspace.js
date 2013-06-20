@@ -4,7 +4,8 @@
 
 	var app = angular.module('RbsChange'),
 		leftContainer = $('#leftContainer'),
-		mainContainer = $('#mainContainer');
+		mainContainer = $('#mainContainer'),
+		mainToolbar = $('#mainToolbar');
 
 
 	app.service('RbsChange.Workspace', ['$rootScope', function ($rootScope) {
@@ -24,6 +25,10 @@
 			mainContainer.addClass('span9');
 			leftContainer.show();
 			$rootScope.$broadcast('Change:Workspace:SidebarExpanded', 'left');
+		};
+
+		this.hideBreadcrumb = function () {
+			mainToolbar.hide();
 		};
 
 		this.addResizeHandler = function (uniqueId, callback) {
