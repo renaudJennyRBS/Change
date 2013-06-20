@@ -26,6 +26,7 @@
 		Breadcrumb.resetLocation();
 
 		Workspace.collapseLeftSidebar();
+		Workspace.hideBreadcrumb();
 		MainMenu.hide();
 
 		$scope.indicators = [

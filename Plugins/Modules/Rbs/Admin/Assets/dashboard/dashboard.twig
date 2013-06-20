@@ -1,5 +1,33 @@
 <div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
 
+	<div class="small-indicators">
+		<span>
+			<i class="icon-exclamation-sign"></i>
+			<div>Notifications</div>
+			<div class="value">14</div>
+		</span>
+		<span>
+			<i class="icon-tasks"></i>
+			<div>Tâches</div>
+			<div class="value">3</div>
+		</span>
+		<span style="border-bottom: 3px solid #0088cc;">
+			<i class="icon-tag"></i>
+			<div>brouillon</div>
+			<div class="value">38</div>
+		</span>
+		<span style="border-bottom: 3px solid #ff5a58;">
+			<i class="icon-tag"></i>
+			<div>à traduire</div>
+			<div class="value">14</div>
+		</span>
+		<span class="settings">
+			<i class="icon-cog"></i>
+		</span>
+	</div>
+
+	<hr/>
+
 	<div class="row-fluid indicators">
 		<div ng-repeat="ind in indicators" class="span(= 12/indicators.length =) indicator indicator-(= ind.style =)">
 			<div class="indicator-inner">
@@ -12,16 +40,28 @@
 		</div>
 	</div>
 
+	<hr/>
+
 	<div class="row-fluid">
-		<span class="span4">
-			Statut :
-			<input type="text" class="input-block"/>
+		<span class="span8">
+			<div style="float: left; width: 50px; height: 50px; margin-right: 5px;">
+				<img src="Rbs/Admin/img/user-default.png" class="img-circle" style="width: 50px; height: 50px;"/>
+				<br/><small><a href="javascript:;"><i class="icon-pencil"></i> éditer</a></small>
+			</div>
+			<input type="text" class="social-my-status" placeholder="Sur quoi travaillez-vous ?"/>
 		</span>
 		<span class="span4">
-			14 notifications
-		</span>
-		<span class="span4">
-			Récemment...
+			<h3>RSS 1</h3>
+			Lorem ipsum...<br/>
+			Bla bla bla bla...<br/>
+			Lorem ipsum...<br/>
+			Bla bla bla bla...<br/>
+			<h3>RSS 2</h3>
+			Lorem ipsum...<br/>
+			Bla bla bla bla...<br/>
+			<h3>RSS 3</h3>
+			Bla bla bla bla...<br/>
+			<h3>Twitter</h3>
 		</span>
 	</div>
 
