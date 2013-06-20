@@ -94,7 +94,7 @@
 					'</span>' +
 					'<div class="all-tags clearfix" ng-show="showAll">' +
 						'<h6 ng-pluralize count="availTags.length" when="' + i18n.trans('m.rbs.tag.admin.js.available-tags-pluralize') + '"></h6>' +
-						'<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span ng-class="{true:\'opacity-half\'}[isUsed(tag)]" class="tag (= tag.color =)">(= tag.label =)</span></a>' +
+						'<a href ng-repeat="tag in availTags | orderBy:\'label\'" ng-click="appendTag(tag)"><span ng-class="{true:\'opacity-half\'}[isUsed(tag)]" class="tag (= tag.color =)">(= tag.label =)</span></a>' +
 					'</div>' +
 				'</div>',
 
