@@ -18,6 +18,8 @@
 		 */
 		function prepareScope (scope, element) {
 
+			var parentDocument, parentPropertyName;
+
 			// scope.original has been set via the data-bindings of the editor's directive.
 			// We copy the original document into the 'document' property of the scope:
 			// scope.document is now the working copy, on which the form controls are working on.
@@ -108,7 +110,8 @@
 
 			function saveSuccessHandler (docs) {
 				var	doc = docs[0],
-					hadCorrection = scope.document.hasCorrection();
+					hadCorrection = scope.document.hasCorrection(),
+					promise;
 
 				scope.original = angular.copy(doc);
 
@@ -118,13 +121,34 @@
 
 				clearInvalidFields();
 
-				if (FormsManager.isCascading()) {
-					FormsManager.uncascade(doc);
-				} else {
-					$rootScope.$broadcast('Change:DocumentSaved', doc);
-					if (angular.isFunction(scope.onSave)) {
-						scope.onSave(doc);
+
+				// Add the just-saved-document as a child of 'parentDocument' on property 'parentPropertyName'.
+				if (parentDocument && parentPropertyName) {
+					if (parentDocument === 'auto') {
+						parentDocument = Breadcrumb.getCurrentNode();
 					}
+					if (parentDocument) {
+						console.log("Adding current doc as a child of ", parentDocument, " on property ", parentPropertyName);
+						parentDocument[parentPropertyName].push(doc);
+						promise = REST.save(parentDocument);
+					}
+				}
+
+				function terminateSave () {
+					if (FormsManager.isCascading()) {
+						FormsManager.uncascade(doc);
+					} else {
+						$rootScope.$broadcast('Change:DocumentSaved', doc);
+						if (angular.isFunction(scope.onSave)) {
+							scope.onSave(doc);
+						}
+					}
+				}
+
+				if (promise) {
+					promise.then(terminateSave);
+				} else {
+					terminateSave();
 				}
 			}
 
@@ -159,19 +183,25 @@
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
+				/**
+				 * Submits the changes to the server.
+				 * If there are files to upload and/or tags to create, they will be processed before
+				 * the document is really saved.
+				 */
 				function doSubmit () {
-					var	uploadPromises = [],
+					var	preSavePromises = [],
 						promise,
 						uploadCount = 0,
 						tagCreationCount = 0;
 
+					// Check for files to upload...
 					if (element) {
 						element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
 							var scope = angular.element($(this)).scope();
 							if (angular.isFunction(scope.upload)) {
 								promise = scope.upload();
 								if (promise !== null) {
-									uploadPromises.push(promise);
+									preSavePromises.push(promise);
 									uploadCount++;
 								}
 							} else {
@@ -180,16 +210,17 @@
 						});
 					}
 
+					// Check for new tags to create...
 					angular.forEach(scope.document.tags, function (tag) {
-						if (tag.isNew) {
-							uploadPromises.push(REST.tags.create(tag));
+						if (tag.unsaved) {
+							preSavePromises.push(REST.tags.create(tag));
 							tagCreationCount++;
 						}
 					});
 
-					if (uploadPromises.length) {
+					if (preSavePromises.length) {
 						console.log("Files to upload: " + uploadCount + ". Tags to create: " + tagCreationCount);
-						$q.all(uploadPromises).then(executeSaveAction);
+						$q.all(preSavePromises).then(executeSaveAction);
 					} else {
 						console.log("No files to upload.");
 						executeSaveAction();
@@ -266,6 +297,11 @@
 
 			scope.onCancel = function onCancelFn () {
 				Breadcrumb.goParent();
+			};
+
+			scope.saveAsChildOf = function (parentDoc, propertyName) {
+				parentDocument = parentDoc;
+				parentPropertyName = propertyName;
 			};
 
 			scope._isPrepared = true;

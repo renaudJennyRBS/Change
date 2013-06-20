@@ -168,7 +168,8 @@
 				return 'javascript:;';
 			}
 
-			if (urlName !== 'tree' && Utils.isTreeNode(node)) {
+			//if (urlName !== 'tree' && Utils.isTreeNode(node)) {
+			if (urlName !== 'tree' && Utils.isDocument(node)) {
 				url += '?tn=' + node.id;
 			}
 			return url;

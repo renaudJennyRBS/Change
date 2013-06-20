@@ -338,12 +338,12 @@
 				}
 
 
-				var lastCreatedDocument = null;
+				var lastCreatedDocument = null, REST;
 
 
 				// Public API of the REST service.
 
-				return {
+				REST = {
 
 					'transformObjectToChangeDocument' : function (object) {
 						return angular.extend(new ChangeDocument(), object);
@@ -491,7 +491,6 @@
 					 */
 					'collection' : function (model, params) {
 						var q = $q.defer();
-						console.log("REST: collection: ", this.getCollectionUrl(model, params));
 						$http.get(
 								this.getCollectionUrl(model, params),
 								getHttpConfig(transformResponseCollectionFn)
@@ -1047,84 +1046,34 @@
 					'tags' : {
 
 						getList : function (moduleName) {
-							var tags = [], q = $q.defer();
+							var tags = [];
 
-							q.promise.then(function (result) {
-								angular.forEach(result, function (r) {
+							REST.collection('Rbs_Tag_Tag', {'column':['color'],'limit':100}).then(function (result) {
+								angular.forEach(result.resources, function (r) {
 									tags.push(r);
 								});
 							});
-							q.resolve([
-								{
-									"label" : "image",
-									"count" : 4589,
-									"color" : "red"
-								},
-								{
-									"label" : "vidéo",
-									"count" : 27,
-									"color" : "blue"
-								},
-								{
-									"label" : "marque",
-									"count" : 6,
-									"color" : "green"
-								},
-								{
-									"label" : "visuel produit",
-									"count" : 2768,
-									"color" : "orange"
-								},
-								{
-									"label" : "logo",
-									"count" : 8
-								},
-								{
-									"label" : "paysage",
-									"count" : 14,
-									"color" : "black"
-								},
-								{
-									"label" : "portrait homme",
-									"count" : 1,
-									"color" : "navy"
-								}
-							]);
 
 							return tags;
 						},
 
-						newTagIdCounter : 9000000,
-
-						// FIXME Call server
 						create : function (tag) {
-							var q = $q.defer();
-
-							q.promise.then(function (tag) {
-								console.log("Tag created: ", tag);
+							tag.model = 'Rbs_Tag_Tag';
+							tag.id = Utils.getTemporaryId();
+							tag.refLCID = Settings.get('language');
+							var promise = REST.save(tag);
+							promise.then(function (created) {
+								angular.extend(tag, created);
+								delete tag.unsaved;
 							});
-
-							if (angular.isString(tag)) {
-								q.resolve({
-									'label' : tag,
-									'id'    : ++this.newTagIdCounter,
-									'color' : 'red'
-								});
-							} else {
-								tag.id = ++this.newTagIdCounter;
-								tag.color = 'blue';
-								delete tag.isNew;
-								q.resolve(tag);
-							}
-
-							return q.promise;
+							return promise;
 						}
-
 
 					}
 
 				};
 
+				return REST;
 			}
 		];
 

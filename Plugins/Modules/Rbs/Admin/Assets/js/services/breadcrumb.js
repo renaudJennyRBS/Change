@@ -220,44 +220,49 @@
 
 				function routeChangeSuccessFn (force) {
 					var treeNodeId = $location.search()['tn'];
-					if (! frozen && treeNodeId && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
-						loading = true;
-						REST.resource(treeNodeId).then(
+					if (! frozen && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
+						if (treeNodeId) {
+							loading = true;
+							REST.resource(treeNodeId).then(
 
-							// Success:
-							function (treeNode) {
+								// Success:
+								function (treeNode) {
 
-								if (Utils.isTreeNode(treeNode)) {
-									// Load tree ancestors of the current TreeNode to update the breadcrumb.
-									REST.treeAncestors(treeNode).then(
+									if (Utils.isTreeNode(treeNode)) {
+										// Load tree ancestors of the current TreeNode to update the breadcrumb.
+										REST.treeAncestors(treeNode).then(
 
-										// Success:
-										function (ancestors) {
-											loading = false;
-											currentTreeNodeId = treeNodeId;
-											breadcrumbService.setPath(ancestors.resources);
-											$rootScope.website = breadcrumbService.getWebsite();
-											resolvePendingQs();
-										},
+											// Success:
+											function (ancestors) {
+												loading = false;
+												currentTreeNodeId = treeNodeId;
+												breadcrumbService.setPath(ancestors.resources);
+												$rootScope.website = breadcrumbService.getWebsite();
+												resolvePendingQs();
+											},
 
-										// Error:
-										function () {
-											loading = false;
-										}
-									);
-								} else {
+											// Error:
+											function () {
+												loading = false;
+											}
+										);
+									} else {
+										loading = false;
+										breadcrumbService.setPath([treeNode]);
+										resolvePendingQs();
+									}
+								},
+
+								// Error:
+								function () {
+									rejectPendingQs();
 									loading = false;
-									breadcrumbService.setPath([treeNode]);
-									resolvePendingQs();
 								}
-							},
-
-							// Error:
-							function () {
-								rejectPendingQs();
-								loading = false;
-							}
-						);
+							);
+						} else {
+							breadcrumbService.setPath([]);
+							resolvePendingQs();
+						}
 					}
 				}
 

@@ -65,14 +65,10 @@
 
 	function rbsTagSelectorFn ($timeout, $compile, ArrayUtils, REST, i18n) {
 
-		var	availTags = null,
-			autocompleteEl;
+		var	autocompleteEl;
 
 		function loadAvailTags () {
-			if (availTags === null) {
-				availTags = REST.tags.getList();
-			}
-			return availTags;
+			return REST.tags.getList();
 		}
 
 		// Popover element that shows suggestions.
@@ -89,11 +85,17 @@
 			scope    : true,
 			template :
 				'<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">' +
+					'<button class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="showAll=!showAll">' +
+						'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
+					'</button>' +
 					'<span ng-repeat="tag in tags">' +
-						'<span ng-if="! tag.input && ! tag.isNew" class="tag (= tag.color =)">(= tag.label =) <a href tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
-						'<span ng-if="! tag.input &&   tag.isNew" class="tag (= tag.color =) new" title="' + i18n.trans('m.rbs.admin.admin.js.tag-not-saved | ucf') + '"><i class="icon-exclamation-sign"></i> (= tag.label =) <a href="javascript:;" tabindex="-1" ng-click="removeTag($index)"><i class="icon-remove"></i></a></span>' +
+						'<span ng-if="! tag.input" rbs-tag="tag" on-remove="removeTag($index)"></span>' +
 						'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
 					'</span>' +
+					'<div class="all-tags clearfix" ng-show="showAll">' +
+						'<h6 ng-pluralize count="availTags.length" when="' + i18n.trans('m.rbs.tag.admin.js.available-tags-pluralize') + '"></h6>' +
+						'<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span ng-class="{true:\'opacity-half\'}[isUsed(tag)]" class="tag (= tag.color =)">(= tag.label =)</span></a>' +
+					'</div>' +
 				'</div>',
 
 
@@ -116,6 +118,7 @@
 				};
 
 				scope.availTags = loadAvailTags();
+				scope.showAll = false;
 
 				function getInput() {
 					return elm.find('input[type=text]');
@@ -167,15 +170,18 @@
 
 				function createTemporaryTag (value) {
 					return {
-						'label' : value,
-						'isNew' : true
+						'label'   : value,
+						'unsaved' : true
 					};
 				}
 
 				function appendTag (tag) {
-					scope.tags.splice(inputIndex, 0, tag);
-					update();
+					if (!scope.isUsed(tag)) {
+						scope.tags.splice(inputIndex, 0, tag);
+						update();
+					}
 				}
+				scope.appendTag = appendTag;
 
 				function moveInput (value, offset) {
 					if (value.length === 0 && (inputIndex+offset) < (scope.tags.length)) {
@@ -186,6 +192,16 @@
 					}
 					return false;
 				}
+
+				scope.isUsed = function (tag) {
+					var i;
+					for (i=0 ; i<scope.tags.length ; i++) {
+						if (angular.lowercase(scope.tags[i].label) === angular.lowercase(tag.label)) {
+							return true;
+						}
+					}
+					return false;
+				};
 
 				scope.removeTag = function (index) {
 					scope.tags.splice(index, 1);
@@ -233,7 +249,7 @@
 						}
 						break;
 
-					// Tab
+					// Enter
 					case 13 :
 						if (scope.suggestions.length) {
 							$event.preventDefault();
@@ -280,21 +296,27 @@
 						suggestions = [];
 
 					if (value.length) {
+						value = angular.lowercase(value);
 						angular.forEach(scope.availTags, function (tag) {
-							if (angular.lowercase(tag.label).indexOf(angular.lowercase(value)) === 0) {
-								suggestions.push(tag);
-							}
-						});
-						angular.forEach(scope.availTags, function (tag) {
-							if (angular.lowercase(tag.label).indexOf(angular.lowercase(value)) > 0) {
-								suggestions.push(tag);
+							var label = angular.lowercase(tag.label), p;
+							if (ArrayUtils.inArray(tag, scope.tags) === -1) {
+								p = label.indexOf(value);
+								if (p === 0) {
+									// Tag begins with the entered value?
+									// Add it at the beginning of the autocomplete list.
+									suggestions.unshift(tag);
+								} else if (p > 0) {
+									// Tag contains the entered value?
+									// Add it at the end of the autocomplete list.
+									suggestions.push(tag);
+								}
 							}
 						});
 					}
 					scope.suggestions = suggestions;
 
 					function buildSuggestionsList () {
-						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span class="tag (= tag.color =)">(= tag.label =)</span></a><br/><small><em>' + i18n.trans('m.rbs.admin.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
+						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span class="tag (= tag.color =)">(= tag.label =)</span></a><br/><small><em>' + i18n.trans('m.rbs.tag.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
 					}
 
 					if (suggestions.length) {
