@@ -23,7 +23,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Rbs/Admin/Listeners/Rbs_Tag',
+		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Tag',
 			'\\Rbs\\Tag\\Admin\\Register');
 	}
 
