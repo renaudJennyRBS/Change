@@ -277,32 +277,4 @@ class Event extends \Zend\EventManager\Event
 	{
 		return $this->response;
 	}
-
-	/**
-	 * @deprecated
-	 */
-	public function setAuthentication($authentication)
-	{
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function getAuthentication()
-	{
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function setAcl($acl)
-	{
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function getAcl()
-	{
-	}
 }

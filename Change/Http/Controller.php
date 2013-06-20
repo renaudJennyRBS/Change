@@ -338,6 +338,11 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	{
 		try
 		{
+			if ($event->getApplicationServices())
+			{
+				$event->getApplicationServices()->getLogging()->exception($exception);
+			}
+
 			$event->setParam('Exception', $exception);
 			$event->setName(Event::EVENT_EXCEPTION);
 			$event->setTarget($this);
@@ -349,7 +354,7 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($event->getApplicationServices())
 			{
-				$event->getApplicationServices()->getLogging()->exception($exception);
+				$event->getApplicationServices()->getLogging()->exception($e);
 			}
 		}
 	}

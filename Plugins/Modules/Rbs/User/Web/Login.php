@@ -117,14 +117,17 @@ class Login
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
 			$accessorId = $this->load($website);
-			$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
-			if ($user instanceof \Change\User\UserInterface)
+			if (is_int($accessorId))
 			{
-				$event->getAuthenticationManager()->setCurrentUser($user);
-			}
-			else
-			{
-				throw new \RuntimeException('Invalid AccessorId: ' . $accessorId, 999999);
+				$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
+				if ($user instanceof \Change\User\UserInterface)
+				{
+					$event->getAuthenticationManager()->setCurrentUser($user);
+				}
+				else
+				{
+					throw new \RuntimeException('Invalid AccessorId: ' . $accessorId, 999999);
+				}
 			}
 		}
 	}

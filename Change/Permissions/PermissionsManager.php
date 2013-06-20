@@ -1,9 +1,6 @@
 <?php
 namespace Change\Permissions;
 
-use Zend\Permissions\Acl\Resource;
-use Zend\Permissions\Acl\Role;
-
 /**
  * @name \Change\Permissions\PermissionsManager
  */

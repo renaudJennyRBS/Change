@@ -213,34 +213,4 @@ class Event extends ZendEvent
 	{
 		return $this->permissionsManager;
 	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function setAuthentication($authentication)
-	{
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function getAuthentication()
-	{
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function setAcl($acl)
-	{
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function getAcl()
-	{
-	}
 }

@@ -80,8 +80,8 @@ class ComposePage
 	protected function newPageEvent($event, $page)
 	{
 		$pageEvent = new PageEvent(Page::EVENT_PAGE_PREPARE, $page);
-		$pageEvent->setAcl($event->getAcl());
-		$pageEvent->setAuthentication($event->getAuthentication());
+		$pageEvent->setAuthenticationManager($event->getAuthenticationManager());
+		$pageEvent->setPermissionsManager($event->getPermissionsManager());
 		$pageEvent->setRequest($event->getRequest());
 		$pageEvent->setUrlManager($event->getUrlManager());
 		$pageEvent->setApplicationServices($event->getApplicationServices());
