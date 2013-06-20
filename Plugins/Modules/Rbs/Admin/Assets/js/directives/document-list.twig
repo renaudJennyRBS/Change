@@ -48,11 +48,9 @@
 				<td colspan="0">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
 		</tbody>
-		<tbody ng-repeat="doc in collection">
-			<tr class="preview-row" ng-if="isPreview(doc)">
-				<td class="preview" colspan="0"></td>
-			</tr>
-			<tr class="normal-row" ng-if="! isPreview(doc)" ng-class="{'success': isLastCreated(doc), 'selected': doc.selected}">
+		<tbody>
+			<tr ng-repeat="doc in collection" class="normal-row" ng-class="{'success': isLastCreated(doc), 'selected': doc.selected}">
+				<td class="preview" colspan="0" ng-if="isPreview(doc)"></td>
 			</tr>
 		</tbody>
 	</table>

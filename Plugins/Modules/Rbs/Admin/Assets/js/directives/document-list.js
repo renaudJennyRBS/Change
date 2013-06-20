@@ -28,6 +28,7 @@
 
 	app.directive('rbsDocumentList', [
 		'$filter',
+		'$q',
 		'$location',
 		'RbsChange.i18n',
 		'RbsChange.REST',
@@ -43,10 +44,10 @@
 	]);
 
 
-	function documentListDirectiveFn ($filter, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
+	function documentListDirectiveFn ($filter, $q, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
 
 		/**
-		 * Initialize columns for <document-list/>
+		 * Initialize columns for <rbs-document-list/>
 		 * @param dlid
 		 * @param tElement
 		 * @param tAttrs
@@ -57,6 +58,11 @@
 				$th, $td, $head, $body, html;
 
 			columns = __columns[dlid];
+
+			if (!columns) {
+				throw new Error("Could not find any column for <rbs-document-list/> directive with id='" + dlid + "'. We are sure you want something to be displayed in this list :)");
+			}
+
 			$head = tElement.find('table.document-list thead tr');
 			$body = tElement.find('table.document-list tbody tr.normal-row');
 
@@ -100,8 +106,7 @@
 				columns.push({
 					"name"   : "modificationDate",
 					"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
-					"content": "(=doc.modificationDate | date:'medium' =)",
-					"width"  : "150px"
+					"format" : "date"
 				});
 			}
 
@@ -124,12 +129,38 @@
 			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
 
 			if (__preview[dlid]) {
-				//__preview[dlid] = '<span ng-if="isPreviewReady(doc)" ng-bind-html-unsafe="doc.document | documentProperties:doc.modelInfo"></span>';
-				tElement.find('tbody tr.preview-row td.preview').html(__preview[dlid]);
+				tElement.find('tbody tr td.preview').html(__preview[dlid]);
 			}
 
 			while (columns.length) {
 				column = columns.shift(0);
+
+				var p = column.name.indexOf('.');
+				if (p !== -1) {
+					column.valuePath = column.name;
+					column.name = column.name.substring(0, p);
+				} else {
+					column.valuePath = column.name;
+				}
+
+				switch (column.format) {
+
+				case 'number' :
+					column.valuePath += '|number';
+					if (!column.align) {
+						column.align = 'right';
+					}
+					break;
+
+				case 'date' :
+					column.valuePath += "|date:'medium'";
+					if (!column.width) {
+						column.width = "150px";
+					}
+					break;
+
+				}
+
 				tElement.data('columns')[column.name] = column;
 
 				// Check if the label has been provided or not.
@@ -161,16 +192,23 @@
 
 				// Create body cell
 				if (column.content) {
-					$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
+					html = '<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">';
+					if (column.primary) {
+						html += '<div class="primary-cell">' + column.content + '</div>';
+					} else {
+						html += column.content;
+					}
+					html += '</td>';
+					$td = $(html);
 				} else {
 					if (column.thumbnail) {
 						if (column.thumbnailPath) {
 							column.content = '<img rbs-storage-image="(= ' + column.thumbnailPath + ' =)" thumbnail="' + column.thumbnail + '"/>';
 						} else {
-							column.content = '<img rbs-storage-image="(= doc.' + column.name + ' =)" thumbnail="' + column.thumbnail + '"/>';
+							column.content = '<img rbs-storage-image="(= doc.' + column.valuePath + ' =)" thumbnail="' + column.thumbnail + '"/>';
 						}
 					} else {
-						column.content = '(= doc["' + column.name + '"] =)';
+						column.content = '(= doc.' + column.valuePath + ' =)';
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
@@ -238,6 +276,7 @@
 					}
 				}
 
+				$td.attr('ng-if', "! isPreview(doc)");
 				$body.append($td);
 			}
 
@@ -269,16 +308,15 @@
 					inner.addClass(__gridItems[dlid]['class']);
 				}
 				inner.html(__gridItems[dlid].content);
+				delete __gridItems[dlid];
 			}
-
-			delete __gridItems[dlid];
 
 			return gridModeAvailable;
 		}
 
 
 		/**
-		 * <document-list/> directive.
+		 * <rbs-document-list/> directive.
 		 */
 		return {
 			restrict    : 'E',
@@ -287,8 +325,9 @@
 
 			scope : {
 				// Isolated scope.
-				query  : '=',
-				picker : '='
+				query     : '=',
+				picker    : '=',
+				onPreview : '&'
 			},
 
 
@@ -298,13 +337,12 @@
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
-					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
 				undefinedColumnLabels = initColumns(dlid, tElement, tAttrs);
 
 				gridModeAvailable = initGrid(dlid, tElement);
-
 
 				/**
 				 * Directive's link function.
@@ -422,13 +460,30 @@
 						Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
 						REST.resource(current).then(function (doc) {
 							REST.modelInfo(doc).then(function (modelInfo) {
+								var promise;
 								delete current.__dlPreviewLoading;
 								// Prevent META$ information from being overwritten.
 								angular.extend(doc.META$, current.META$);
 								preview.document = angular.extend(current, doc);
 								preview.modelInfo = modelInfo;
-								scope.collection.splice(index+1, 0, preview);
-								Loading.stop();
+
+								if (angular.isFunction(scope.onPreview)) {
+									promise = scope.onPreview({
+										'document' : preview.document,
+										'modelInfo': modelInfo
+									});
+								}
+
+								function terminatePreview () {
+									scope.collection.splice(index+1, 0, preview);
+									Loading.stop();
+								}
+
+								if (promise) {
+									promise.then(terminatePreview);
+								} else {
+									terminatePreview();
+								}
 							});
 						});
 
@@ -453,6 +508,22 @@
 						current = scope.collection[index];
 						next = (scope.collection.length > (index+1)) ? scope.collection[index+1] : null;
 						return (next && next.__dlPreview && next.document && next.document.id === current.id) ? true : false;
+					};
+
+
+					/**
+					 * Save the given doc.
+					 * @param doc
+					 */
+					scope.save = function (doc) {
+						Loading.start(i18n.trans('m.rbs.admin.admin.js.saving-document | ucf'));
+						REST.save(doc).then(function (savedDoc) {
+							angular.extend(doc, savedDoc);
+							Loading.stop();
+						}, function () {
+							Loading.stop();
+							// FIXME Display error message
+						});
 					};
 
 
@@ -543,6 +614,13 @@
 							columnNames.push('tags');
 						}
 					});
+					if (attrs.useProperties) {
+						angular.forEach(attrs.useProperties.split(/[\s,]+/), function (name) {
+							if (columnNames.indexOf(name) === -1) {
+								columnNames.push(name);
+							}
+						});
+					}
 
 					function getDefaultSortColumn () {
 						var defaultSortColumn = attrs.defaultSortColumn, i, c;
@@ -626,9 +704,28 @@
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
-						} else if (attrs.model && ! attrs.parentProperty) {
-							Loading.start();
-							promise = REST.collection(attrs.model, params);
+						} else if (attrs.model) {
+							if (attrs.childrenProperty) {
+								console.log("attrs.childrenProperty=", attrs.childrenProperty);
+								var currentNode = Breadcrumb.getCurrentNode();
+								console.log("currentNode=", currentNode);
+								if (currentNode) {
+									var children = currentNode[attrs.childrenProperty];
+									console.log("children=", children);
+									documentCollectionLoadedCallback({
+										'resources' : children,
+										'pagination': {
+											'count' : children.length
+										}
+									});
+								} else {
+									Loading.start();
+									promise = REST.collection(attrs.model, params);
+								}
+							} else if (! attrs.parentProperty) {
+								Loading.start();
+								promise = REST.collection(attrs.model, params);
+							}
 						}
 
 						if (promise) {
@@ -662,6 +759,7 @@
 
 
 					scope.reload = function () {
+						console.log("reload 1");
 						reload();
 					};
 
@@ -695,6 +793,7 @@
 						scope.sort.descending = desc;
 
 						if (paginationChanged || sortChanged) {
+							console.log("reload 2");
 							reload();
 						}
 					}, true);
@@ -713,16 +812,19 @@
 									}]
 								}
 							};
+							console.log("reload 6");
 							reload();
 						}
 					}
 
 					if (attrs.tree) {
 						// If in a tree context, reload the list when the Breadcrumb is ready
-						// and everytime it changes.
+						// and each time it changes.
 						Breadcrumb.ready().then(function () {
+							console.log("reload 3");
 							reload();
 							scope.$on('Change:TreePathChanged', function () {
+								console.log("reload 3.1");
 								reload();
 							});
 						});
@@ -733,8 +835,19 @@
 								buildQueryParentProperty();
 							});
 						});
+					} else if (attrs.childrenProperty) {
+						console.log("List child documents: ", attrs.childrenProperty);
+						Breadcrumb.ready().then(function () {
+							console.log("reload 4");
+							reload();
+							scope.$on('Change:TreePathChanged', function () {
+								console.log("reload 4.1");
+								reload();
+							});
+						});
 					} else {
 						// Not in a tree? Just load the flat list.
+						console.log("reload 5");
 						reload();
 					}
 
@@ -765,8 +878,10 @@
 					scope.$watch('query', function (query, oldValue) {
 						if (query !== oldValue) {
 							queryObject = angular.copy(query);
+							console.log("reload 7");
 							reload();
 						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
+							console.log("reload 8");
 							reload();
 						}
 					}, true);
@@ -811,7 +926,8 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
-					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+					console.log(tElement, tElement.parent());
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
 				content = tElement.html().trim();
@@ -864,7 +980,7 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
-					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
 				tAttrs.content = tElement.html().trim();
@@ -888,7 +1004,7 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
-					throw new Error("DocumentList must have a unique 'data-dlid' attribute.");
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__preview[dlid] = tElement.html().trim();
 

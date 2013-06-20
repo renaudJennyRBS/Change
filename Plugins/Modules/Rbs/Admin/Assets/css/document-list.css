@@ -419,25 +419,6 @@ rbs-document-list .table td .primary-cell {
 	min-width: 170px;
 }
 
-
-
-.table-striped tbody:nth-child(odd) tr td,
-.table-striped tbody:nth-child(odd) tr th {
-	background-color: #f9f9f9;
-}
-
-.table-striped tbody:nth-child(even) tr td,
-.table-striped tbody:nth-child(even) tr th {
-	background-color: white;
-}
-
-.table-hover tbody:nth-child(even) tr:hover td,
-.table-hover tbody:nth-child(even) tr:hover th,
-.table-hover tbody:nth-child(odd) tr:hover td,
-.table-hover tbody:nth-child(odd) tr:hover th {
-	background-color: #f5f5f5;
-}
-
 rbs-document-list .table thead th {
 	padding-top: 10px;
 	padding-bottom: 10px;
