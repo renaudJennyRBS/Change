@@ -35,9 +35,9 @@ class Login extends Block
 
 		$password = $request->getPost('password');
 		if ($password) {$parameters->setParameterValue('password', $password);}
-		if ($event->getAuthentication())
+		if ($event->getAuthenticationManager()->getCurrentUser())
 		{
-			$parameters->setParameterValue('accessorId', $event->getAuthentication()->getIdentity());
+			$parameters->setParameterValue('accessorId', $event->getAuthenticationManager()->getCurrentUser()->getId());
 		}
 		return $parameters;
 	}

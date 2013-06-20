@@ -14,14 +14,20 @@ use Change\Http\Event;
  */
 class Controller extends \Change\Http\Controller
 {
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Http.Web', 'Http');
+	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
-	 * @return void
+	 * @param \Zend\EventManager\EventManager $eventManager
 	 */
-	protected function registerDefaultListeners($eventManager)
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
 	{
-		$eventManager->addIdentifiers('Http.Web');
+		parent::attachEvents($eventManager);
 		$callback = function ($event)
 		{
 			$composer = new \Change\Http\Web\Events\ComposePage();
@@ -41,6 +47,16 @@ class Controller extends \Change\Http\Controller
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
+
+		$authenticationManager = new \Change\User\AuthenticationManager();
+		$authenticationManager->setDocumentServices($event->getDocumentServices());
+		$event->setAuthenticationManager($authenticationManager);
+
+		$permissionsManager = new \Change\Permissions\PermissionsManager();
+		$permissionsManager->allow(true);
+		$permissionsManager->setApplicationServices($event->getApplicationServices());
+
+		$event->setPermissionsManager($permissionsManager);
 		return $event;
 	}
 
@@ -60,29 +76,13 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param Event $event
-	 */
-	public  function validateAuthentication($event)
-	{
-		if (!($event->getAuthentication() instanceof \Change\Http\AuthenticationInterface))
-		{
-			$website = $event->getParam('website');
-			if ($website instanceof \Change\Presentation\Interfaces\Website)
-			{
-				$authentication = new Authentication($website);
-				$event->setAuthentication($authentication);
-			}
-		}
-		parent::validateAuthentication($event);
-	}
-
-	/**
 	 * @param \Change\Http\Event $event
 	 */
 	public function onDefaultResponse($event)
 	{
 		$result = $event->getResult();
 		$response = $event->getController()->createResponse();
+
 		if ($result instanceof Result)
 		{
 			$response->setStatusCode($result->getHttpStatusCode());

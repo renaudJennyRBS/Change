@@ -3,14 +3,14 @@ namespace Rbs\User\Web;
 
 use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
-use Change\Documents\DocumentManager;
-use Change\Documents\Interfaces\Publishable;
 
 /**
-* @name \Rbs\User\Events\Login
+* @name \Rbs\User\Web\Login
 */
 class Login
 {
+	const DEFAULT_NAMESPACE = 'Authentication';
+
 	/**
 	 * @param Event $event
 	 */
@@ -19,7 +19,7 @@ class Login
 		if ($event->getRequest()->getMethod() === 'POST')
 		{
 			$a = new self();
-			$a->authenticate($event);
+			$a->login($event);
 		}
 	}
 
@@ -30,12 +30,12 @@ class Login
 		{
 			if (strpos($request->getPath(), 'Action/Rbs/User/HttpLogin') !== false)
 			{
-				$this->authenticate($event);
+				$this->login($event);
 			}
 		}
 	}
 
-	public function authenticate(Event $event)
+	public function login(Event $event)
 	{
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
@@ -46,16 +46,13 @@ class Login
 			$password = $datas['password'];
 			if ($realm && $login && $password)
 			{
-				$am = new \Change\User\AuthenticationManager();
-				$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
-				$am->setDocumentServices($event->getDocumentServices());
+				$am = $event->getAuthenticationManager();
 				$user = $am->login($login, $password, $realm);
 				if ($user instanceof \Rbs\User\Documents\User)
 				{
+					$am->setCurrentUser($user);
 					$accessorId = $user->getId();
-					$authentication = new \Change\Http\Web\Authentication();
-					$authentication->save($website, $accessorId);
-					$event->setAuthentication($authentication);
+					$this->save($website, $accessorId);
 					$datas = array('accessorId' => $accessorId);
 					$datas['pseudonym'] = $user->getPseudonym();
 					$datas['email'] = $user->getEmail();
@@ -79,32 +76,56 @@ class Login
 		$event->setResult($result);
 	}
 
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param $accessorId
+	 */
+	public function save(\Change\Presentation\Interfaces\Website $website, $accessorId)
+	{
+		$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
+		if ($accessorId === null || $accessorId === false)
+		{
+			unset($session[$website->getId()]);
+		}
+		else
+		{
+			$session[$website->getId()] = $accessorId;
+		}
+	}
 
 	/**
-	 * @param string $realm
-	 * @param string $login
-	 * @param string $password
-	 * @param DocumentManager $documentManager
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @return integer|null
 	 */
-	protected function findAccessorId($realm, $login, $password, DocumentManager $documentManager)
+	public function load(\Change\Presentation\Interfaces\Website $website)
 	{
-
-		$qb = new \Change\Documents\Query\Query($documentManager->getDocumentServices(), 'Rbs_User_User');
-		$qb1 = $qb->getPropertyBuilder('groups');
-		$qb->andPredicates($qb->eq('login', $login), $qb->published(), $qb1->eq('realm', $realm));
-		$collection = $qb->getDocuments();
-
-		foreach ($collection as $document)
+		$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
+		if (isset($session[$website->getId()]))
 		{
-			if ($document instanceof \Rbs\User\Documents\User)
-			{
-				if ($document->published() && $document->checkPassword($password))
-				{
-					return $document->getId();
-				}
-			}
+			return $session[$website->getId()];
 		}
 		return null;
+	}
+
+	/**
+	 * @param Event $event
+	 * @throws \RuntimeException
+	 */
+	public function authenticate(Event $event)
+	{
+		$website = $event->getParam('website');
+		if ($website instanceof \Change\Presentation\Interfaces\Website)
+		{
+			$accessorId = $this->load($website);
+			$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
+			if ($user instanceof \Change\User\UserInterface)
+			{
+				$event->getAuthenticationManager()->setCurrentUser($user);
+			}
+			else
+			{
+				throw new \RuntimeException('Invalid AccessorId: ' . $accessorId, 999999);
+			}
+		}
 	}
 }

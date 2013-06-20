@@ -24,7 +24,7 @@ class SharedEventManager extends \Zend\EventManager\SharedEventManager
 		{
 			foreach ($classNames as $className)
 			{
-				if (class_exists($className))
+				if (is_string($className) && class_exists($className))
 				{
 					$listenerAggregate = new $className();
 					if ($listenerAggregate instanceof SharedListenerAggregateInterface)
@@ -47,7 +47,7 @@ class SharedEventManager extends \Zend\EventManager\SharedEventManager
 		{
 			foreach ($classNames as $className)
 			{
-				if (class_exists($className))
+				if (is_string($className) && class_exists($className))
 				{
 					$listenerAggregate = new $className();
 					if ($listenerAggregate instanceof ListenerAggregateInterface)

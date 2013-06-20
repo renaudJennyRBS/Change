@@ -16,7 +16,6 @@ interface UserInterface
 	 */
 	public function getName();
 
-
 	/**
 	 * @return \Change\User\GroupInterface[]
 	 */

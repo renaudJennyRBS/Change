@@ -16,13 +16,21 @@ use Zend\Http\Response as HttpResponse;
  */
 class Controller extends \Change\Http\Controller
 {
+
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
-	 * @return void
+	 * @return string[]
 	 */
-	protected function registerDefaultListeners($eventManager)
+	protected function getEventManagerIdentifier()
 	{
-		$eventManager->addIdentifiers('Http.Admin');
+		return array('Http.Admin', 'Http');
+	}
+
+	/**
+	 * @param \Zend\EventManager\EventManager $eventManager
+	 */
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	{
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
@@ -36,6 +44,14 @@ class Controller extends \Change\Http\Controller
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
+
+		$authenticationManager = new \Change\User\AuthenticationManager();
+		$authenticationManager->setDocumentServices($event->getDocumentServices());
+		$event->setAuthenticationManager($authenticationManager);
+
+		$permissionsManager = new \Change\Permissions\PermissionsManager();
+		$permissionsManager->allow(true);
+		$permissionsManager->setApplicationServices($event->getApplicationServices());
 
 		$request->populateLCIDByHeader($event->getApplicationServices()->getI18nManager());
 		return $event;

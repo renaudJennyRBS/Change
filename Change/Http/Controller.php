@@ -2,17 +2,20 @@
 namespace Change\Http;
 
 use Change\Application;
+use Change\Events\EventsCapableTrait;
 use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Change\Http\Controller
  */
-class Controller implements EventManagerAwareInterface
+class Controller implements \Zend\EventManager\EventsCapableInterface
 {
+	use EventsCapableTrait {
+		EventsCapableTrait::attachEvents as defaultAttachEvents;
+	}
+
 	/**
 	 * @var Application
 	 */
@@ -23,10 +26,6 @@ class Controller implements EventManagerAwareInterface
 	 */
 	protected $actionResolver;
 
-	/**
-	 * @var EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @param Application $application
@@ -34,10 +33,11 @@ class Controller implements EventManagerAwareInterface
 	public function __construct(Application $application)
 	{
 		$this->setApplication($application);
+		$this->setSharedEventManager($application->getSharedEventManager());
 	}
 
 	/**
-	 * @param Application $application
+	 * @param \Change\Application $application
 	 */
 	public function setApplication(Application $application)
 	{
@@ -45,7 +45,7 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @return Application
+	 * @return \Change\Application
 	 */
 	public function getApplication()
 	{
@@ -53,27 +53,29 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager|EventManagerInterface $eventManager
-	 * @return void
+	 * @return string[]
 	 */
-	public function setEventManager(EventManagerInterface $eventManager)
+	protected function getEventManagerIdentifier()
 	{
-		$this->eventManager = $eventManager;
+		return array('Http');
 	}
 
 	/**
-	 * @return EventManager
+	 * @return string[]
 	 */
-	public function getEventManager()
+	protected function getListenerAggregateClassNames()
 	{
-		if ($this->eventManager === null)
-		{
-			$eventManager = new EventManager('Http');
-			$eventManager->setSharedManager($this->application->getSharedEventManager());
-			$this->registerDefaultListeners($eventManager);
-			$this->setEventManager($eventManager);
-		}
-		return $this->eventManager;
+		$config = $this->getApplication()->getConfiguration();
+		$identifiers = $this->getEventManagerIdentifier();
+		return $config->getEntry('Change/Events/' . $identifiers[0], array());
+	}
+
+	/**
+	 * @param EventManager $eventManager
+	 */
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	{
+		$this->defaultAttachEvents($eventManager);
 	}
 
 	/**
@@ -115,13 +117,10 @@ class Controller implements EventManagerAwareInterface
 
 				$this->doSendAction($eventManager, $event);
 
-				$this->validateAuthentication($event);
-
-				$action = $event->getAction();
-
-				if (is_callable($action))
+				if ($this->checkAuthorization($eventManager, $event))
 				{
-					if ($this->checkAuthorization($event))
+					$action = $event->getAction();
+					if (is_callable($action))
 					{
 						call_user_func($action, $event);
 					}
@@ -151,56 +150,37 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * Initialize $event->getAuthentication() and $event->getAcl() if needed
-	 * @param Event $event
-	 */
-	public function validateAuthentication($event)
-	{
-		if (!($event->getAuthentication() instanceof AuthenticationInterface))
-		{
-			$authentication = new AnonymousAuthentication();
-			$event->setAuthentication($authentication);
-		}
-
-		if (!($event->getAcl() instanceof AclInterface))
-		{
-			$configurationAcl = new ConfigurationAcl($event->getAuthentication());
-			$allowAnonymous = $this->application->getConfiguration()->getEntry('Change/Http/allowAnonymous', true);
-			$configurationAcl->setAllowAnonymous($allowAnonymous);
-			$event->setAcl($configurationAcl);
-		}
-	}
-
-	/**
+	 * @param EventManager $eventManager
 	 * @param Event $event
 	 * @return boolean
 	 */
-	protected function checkAuthorization(Event $event)
+	protected function checkAuthorization(EventManager $eventManager, Event $event)
 	{
 		$authorization = $event->getAuthorization();
 		if (is_callable($authorization))
 		{
-			try
+			$permissionsManager = $event->getPermissionsManager();
+			$this->doSendAuthenticate($eventManager, $event);
+			if (!$permissionsManager->allow())
 			{
-				$authorized = call_user_func($authorization, $event);
-			}
-			catch (\Exception $e)
-			{
-				$authorized = false;
-			}
-
-			if (!$authorized)
-			{
-				if ($event->getAuthentication()->isAuthenticated())
+				$user = $event->getAuthenticationManager()->getCurrentUser();
+				if ($user)
 				{
-					$this->forbidden($event);
+					$permissionsManager->setUser($user);
+					$authorized = call_user_func($authorization, $event);
+					if (!$authorized)
+					{
+						$this->forbidden($event);
+						return false;
+					}
+				}
+				else
+				{
+					$this->unauthorized($event);
 					return false;
 				}
-				$this->unauthorized($event);
-				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -270,6 +250,18 @@ class Controller implements EventManagerAwareInterface
 		{
 			$event->setResult($results->last());
 		}
+	}
+
+
+	/**
+	 * @param EventManager $eventManager
+	 * @param Event $event
+	 */
+	protected function doSendAuthenticate($eventManager, Event $event)
+	{
+		$event->setName(Event::EVENT_AUTHENTICATE);
+		$event->setTarget($this);
+		$eventManager->trigger($event);
 	}
 
 	/**
@@ -360,15 +352,6 @@ class Controller implements EventManagerAwareInterface
 				$event->getApplicationServices()->getLogging()->exception($exception);
 			}
 		}
-	}
-
-	/**
-	 * @param EventManagerInterface $eventManager
-	 * @return void
-	 */
-	protected function registerDefaultListeners($eventManager)
-	{
-
 	}
 
 	/**
