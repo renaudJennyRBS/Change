@@ -699,26 +699,13 @@ trait Correction
 		$correction->setPublicationDate(new \DateTime());
 
 		$dm = $this->getDocumentManager();
-		$tm = $dm->getApplicationServices()->getTransactionManager();
+		$dm->updateDocument($this);
 
-		try
+		if ($this instanceof Localizable)
 		{
-			$tm->begin();
-
-			$dm->updateDocument($this);
-
-			if ($this instanceof Localizable)
-			{
-				$this->saveCurrentLocalization();
-			}
-
-			$this->updateCorrection($correction);
-			$tm->commit();
+			$this->saveCurrentLocalization();
 		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$this->updateCorrection($correction);
 	}
 
 	/**
@@ -741,22 +728,10 @@ trait Correction
 			throw new \RuntimeException('Invalid Publication status', 55000);
 		}
 
-		$tm = $this->getDocumentManager()->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
+		$correction->setPublicationDate($publicationDate);
+		$correction->setStatus(CorrectionInstance::STATUS_VALIDATION);
+		$this->updateCorrectionStatus($correction);
 
-			$correction->setPublicationDate($publicationDate);
-			$correction->setStatus(CorrectionInstance::STATUS_VALIDATION);
-
-			$this->updateCorrectionStatus($correction);
-
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
 		return $correction;
 	}
 
@@ -779,23 +754,13 @@ trait Correction
 			throw new \RuntimeException('Invalid Publication status', 55000);
 		}
 
-		$tm = $this->getDocumentManager()->getApplicationServices()->getTransactionManager();
-		try
+		if ($correction->getPublicationDate() === null)
 		{
-			$tm->begin();
-			if ($correction->getPublicationDate() === null)
-			{
-				$correction->setPublicationDate(new \DateTime());
-			}
-			$correction->setStatus(CorrectionInstance::STATUS_PUBLISHABLE);
+			$correction->setPublicationDate(new \DateTime());
+		}
 
-			$this->updateCorrectionStatus($correction);
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$correction->setStatus(CorrectionInstance::STATUS_PUBLISHABLE);
+		$this->updateCorrectionStatus($correction);
 
 		return $correction;
 	}

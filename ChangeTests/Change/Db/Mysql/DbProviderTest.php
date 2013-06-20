@@ -56,24 +56,30 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testTransaction(DbProvider $provider)
 	{
+		$event = new \Zend\EventManager\Event('tm', $this, array('primary' => true));
+
 		$this->assertFalse($provider->inTransaction());
 		
 		$provider->beginTransaction();
 		
 		$this->assertTrue($provider->inTransaction());
 	
-		$provider->commit();
+		$provider->commit($event);
 		
 		$this->assertFalse($provider->inTransaction());
 		
-		$provider->beginTransaction();
+		$provider->beginTransaction($event);
 		
 		$this->assertTrue($provider->inTransaction());
 		
-		$provider->rollBack();
+		$provider->rollBack($event);
 		
-		$this->assertFalse($provider->inTransaction());	
-		
+		$this->assertFalse($provider->inTransaction());
+
+		$event->setParam('primary', false);
+		$provider->beginTransaction($event);
+		$this->assertFalse($provider->inTransaction());
+
 		return $provider;
 	}
 	
