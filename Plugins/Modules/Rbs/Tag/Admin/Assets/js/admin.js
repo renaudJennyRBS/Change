@@ -31,12 +31,7 @@
 	/**
 	 * <rbs-tag-color-selector/>
 	 */
-	app.directive('rbsTagColorSelector', ['$timeout', function ($timeout) {
-
-		jQuery('<span id="rbsTagColorSelectorIndicator" class="blow-up" style="display: none; position: absolute;"><i class="tag-color-setter icon-circle"></i></span>').appendTo('body');
-		var indicator = jQuery('#rbsTagColorSelectorIndicator'),
-			indicatorIcon = indicator.find('i').first(),
-			lastColor = '?', lastSize = '?';
+	app.directive('rbsTagColorSelector', function () {
 
 		return {
 			restrict : 'E',
@@ -59,26 +54,11 @@
 				scope.setColor = function ($event, color) {
 					ngModel.$setViewValue(color);
 					ngModel.$render();
-
-					jQuery($event.target).closest('a').addClass('active');
-
-					/*
-					var offset = jQuery($event.target).closest('a').offset();
-					indicatorIcon.removeClass(lastColor).addClass(color).removeClass(lastSize).addClass(scope.iconSize);
-					indicator.css({
-						'left' : offset.left,
-						'top'  : offset.top-10
-					}).show().addClass('active');
-					lastColor = color;
-					lastSize = scope.iconSize;
-					$timeout(function () {
-						indicator.hide().removeClass('active');
-					}, 700);
-					*/
 				};
 			}
 		};
-	}]);
+
+	});
 
 
 	/**
@@ -89,22 +69,39 @@
 			restrict : 'A',
 			replace  : true,
 			template :
-				'<span class="tag (= rbsTag.color =)" ng-class="{\'new\':rbsTag.unsaved}">' +
+				'<span class="tag (= rbsTag.color =)">' +
 					'<i class="icon-user" ng-if="rbsTag.userTag" title="' + i18n.trans('m.rbs.tag.admin.js.usertag-text | ucf') + '" style="border-right:1px dotted white; padding-right:4px"></i> ' +
 					'<i class="icon-exclamation-sign" ng-if="rbsTag.unsaved" title="' + i18n.trans('m.rbs.tag.admin.js.tag-not-saved | ucf') + '" style="border-right:1px dotted white; padding-right:4px"></i> ' +
 					'(= rbsTag.label =)' +
 					'<a ng-if="canBeRemoved" href tabindex="-1" class="tag-delete" ng-click="remove()"><i class="icon-remove"></i></a>' +
 				'</span>',
+
 			scope : {
 				'rbsTag'   : '=',
 				'onRemove' : '&'
 			},
 
 			link : function (scope, elm) {
+				elm.addClass('tag');
 				scope.canBeRemoved = elm.is('[on-remove]');
 				scope.remove = function () {
 					scope.onRemove();
 				};
+				scope.$watch('rbsTag', function (value) {
+					if (value) {
+						elm.addClass(value.color);
+						if (value.unsaved) {
+							elm.addClass('new');
+						} else {
+							elm.removeClass('new');
+						}
+						if (value.used) {
+							elm.addClass('opacity-half');
+						} else {
+							elm.removeClass('opacity-half');
+						}
+					}
+				}, true);
 			}
 		};
 	}]);

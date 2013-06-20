@@ -281,6 +281,24 @@
 							$event.stopPropagation();
 						}
 						break;
+
+					//Down arrow
+					case 40 :
+						if ($event.ctrlKey) {
+							$event.preventDefault();
+							$event.stopPropagation();
+							scope.showAll = true;
+						}
+						break;
+
+					//Down arrow
+					case 38 :
+						if ($event.ctrlKey) {
+							$event.preventDefault();
+							$event.stopPropagation();
+							scope.showAll = false;
+						}
+						break;
 					}
 
 				};
