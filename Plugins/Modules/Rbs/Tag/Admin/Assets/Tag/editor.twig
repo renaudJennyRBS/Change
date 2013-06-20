@@ -28,7 +28,7 @@
 		     data-ng-class="{'success': hasCorrectionOnProperty('userTag')}">
 			<label class="control-label" for="userTag">{{ i18n('m.rbs.tag.document.tag.usertag', ['ucf']) }}</label>
 			<div class="controls">
-				<switch disabled="disabled" ng-model="document.userTag" />
+				<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
 				<span class="help-block">
 					{{ i18n('m.rbs.tag.document.tag.usertag-help') }}
 				</span>
