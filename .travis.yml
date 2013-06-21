@@ -5,21 +5,7 @@ php:
   - 5.5
 
 before_install:
- - wget "https://packages.zendframework.com/releases/ZendFramework-2.2.0/ZendFramework-minimal-2.2.0.tgz"
- - tar -zxf ZendFramework-minimal-2.2.0.tgz
- - mkdir -p Libraries/zendframework
- - mv ZendFramework-minimal-2.2.0 Libraries/zendframework/zendframework
- - wget "https://github.com/zendframework/ZendOAuth/archive/release-2.0.1.zip"
- - unzip release-2.0.1.zip -d Libraries/zendframework/
- - mv Libraries/zendframework/ZendOAuth-release-2.0.1 Libraries/zendframework/zendoauth
- - mkdir -p Libraries/ruflin
- - wget "https://github.com/ruflin/Elastica/archive/v0.20.5.0.RC1.zip"
- - unzip v0.20.5.0.RC1.zip -d Libraries/ruflin/
- - mv Libraries/ruflin/Elastica-0.20.5.0.RC1 Libraries/ruflin/elastica
- - mkdir -p Libraries/ircmaxell
- - wget "https://github.com/ircmaxell/password_compat/archive/v1.0.3.zip"
- - unzip v1.0.3.zip -d Libraries/ircmaxell/
- - mv Libraries/ircmaxell/password_compat-1.0.3 Libraries/ircmaxell/password-compat
+ - composer install
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
 

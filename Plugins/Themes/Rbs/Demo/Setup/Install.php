@@ -1,6 +1,8 @@
 <?php
 namespace Theme\Rbs\Demo\Setup;
 
+use Zend\Json\Json;
+
 /**
  * @name \Theme\Rbs\Demo\Setup
  */
@@ -39,12 +41,11 @@ class Install
 			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
 			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
-
 			$pageTemplate->setLabel('Sample');
 			$html = file_get_contents(__DIR__ . '/Assets/Sample.twig');
 			$pageTemplate->setHtml($html);
 			$json = file_get_contents(__DIR__ . '/Assets/Sample.json');
-			$pageTemplate->setEditableContent($json);
+			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
 			$pageTemplate->setHtmlForBackoffice('<div data-editable-zone-id="zoneEditable1"></div>');
 			$pageTemplate->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
 			$pageTemplate->save();

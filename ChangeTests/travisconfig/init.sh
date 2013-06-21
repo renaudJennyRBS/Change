@@ -4,5 +4,3 @@ cp ChangeTests/travisconfig/config/project.default.json ChangeTests/UnitTestWork
 cp ChangeTests/travisconfig/config/project.sqlite.json ChangeTests/UnitTestWorkspace/App/Config/project.sqlite.json
 sed -i 's|<current_dir>|'`pwd`'|g' ChangeTests/UnitTestWorkspace/App/Config/project.default.json
 sed -i 's|<current_dir>|'`pwd`'|g' ChangeTests/UnitTestWorkspace/App/Config/project.sqlite.json
-mv ChangeTests/travisconfig/autoload/autoload.php Libraries/autoload.php
-mv ChangeTests/travisconfig/autoload/composer Libraries/composer
