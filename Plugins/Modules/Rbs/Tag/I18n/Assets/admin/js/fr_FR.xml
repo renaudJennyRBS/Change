@@ -3,7 +3,7 @@
 	<include id="m.rbs.tag.document"/>
 	<key id="module-name">étiquettes</key>
 	<key id="module-keywords">étiquettes,tags</key>
-	<key id="show-hide-all-tags">afficher/masquer toutes les étiquettes</key>
+	<key id="show-hide-all-tags" format="html"><![CDATA[afficher/masquer toutes les étiquettes (Ctrl+&darr; / Ctrl+&uarr;)]]></key>
 	<key id="available-tags-pluralize">{'0':'Aucune étiquette disponible','one':'Une étiquette disponible :','other':'{} étiquettes disponibles :'}</key>
 	<key id="tag-not-saved">cette étiquette sera réellement créée lors de la validation du formulaire</key>
 	<key id="enter-selects-first-tag">[Entrée] pour sélectionner la première étiquette</key>

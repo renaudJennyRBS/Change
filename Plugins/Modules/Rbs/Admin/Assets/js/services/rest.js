@@ -43,7 +43,8 @@
 						'actions'    : {},
 						'locales'    : [],
 						'correction' : null,
-						'treeNode'   : null
+						'treeNode'   : null,
+						'tags'       : null
 					};
 				}
 
@@ -95,6 +96,25 @@
 
 				ChangeDocument.prototype.hasCorrection = function () {
 					return angular.isObject(this.META$.correction);
+				};
+
+				ChangeDocument.prototype.getTagsUrl = function () {
+					return this.META$.links['self'].href + '/tags/';
+				};
+
+				ChangeDocument.prototype.getTags = function () {
+					if (this.META$.tags === null) {
+						this.META$.tags = [];
+						var doc = this;
+
+						$http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn))
+						.success(function (result) {
+							angular.forEach(result.resources, function (r) {
+								doc.META$.tags.push(r);
+							});
+						});
+					}
+					return this.META$.tags;
 				};
 
 
@@ -166,6 +186,10 @@
 							);
 						}
 					});
+
+					if (angular.isObject(data.link)) {
+						chgDoc.META$.links['self'] = data.link;
+					}
 
 					// Parse the 'actions' section:
 					forEach(data.actions, function (action) {
@@ -335,6 +359,15 @@
 
 				function _ToSlash (string) {
 					return string.replace(/_/g, '/');
+				}
+
+
+				function getIdArray (data) {
+					var ids = [];
+					angular.forEach(data, function (item) {
+						ids.push(item.id);
+					});
+					return ids;
 				}
 
 
@@ -1067,6 +1100,19 @@
 								delete tag.unsaved;
 							});
 							return promise;
+						},
+
+						setDocumentTags : function (doc, tags) {
+							var q = $q.defer();
+							$http.post(doc.getTagsUrl(), {"ids":getIdArray(tags)}, getHttpConfig())
+								.success(function (data) {
+									console.log("REST.setDocumentTags(): data=", data);
+									resolveQ(q, doc);
+								})
+								.error(function errorCallback (data, status) {
+									data.httpStatus = status;
+									rejectQ(q, data);
+								});
 						}
 
 					}

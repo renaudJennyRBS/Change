@@ -47,7 +47,7 @@
 			};
 
 			/**
-			 * Tells wether the editor has changes or not.
+			 * Tells whether the editor has changes or not.
 			 * @return Boolean
 			 */
 			scope.isUnchanged = function isUnchangedFn () {
@@ -111,7 +111,8 @@
 			function saveSuccessHandler (docs) {
 				var	doc = docs[0],
 					hadCorrection = scope.document.hasCorrection(),
-					promise;
+					postSavePromises = [],
+					tags;
 
 				scope.original = angular.copy(doc);
 
@@ -121,7 +122,6 @@
 
 				clearInvalidFields();
 
-
 				// Add the just-saved-document as a child of 'parentDocument' on property 'parentPropertyName'.
 				if (parentDocument && parentPropertyName) {
 					if (parentDocument === 'auto') {
@@ -130,12 +130,20 @@
 					if (parentDocument) {
 						console.log("Adding current doc as a child of ", parentDocument, " on property ", parentPropertyName);
 						parentDocument[parentPropertyName].push(doc);
-						promise = REST.save(parentDocument);
+						postSavePromises.push(REST.save(parentDocument));
 					}
+				}
+
+				// Check for tags to assign to the document.
+				tags = scope.document.META$.tags;
+				if (angular.isArray(tags) && tags.length) {
+					console.log("Tags to assign: ", tags.length);
+					postSavePromises.push(REST.tags.setDocumentTags(scope.document, tags));
 				}
 
 				function terminateSave () {
 					if (FormsManager.isCascading()) {
+						console.log("isCascading: -> uncascade()");
 						FormsManager.uncascade(doc);
 					} else {
 						$rootScope.$broadcast('Change:DocumentSaved', doc);
@@ -145,8 +153,9 @@
 					}
 				}
 
-				if (promise) {
-					promise.then(terminateSave);
+				console.log("Post save promises: ", postSavePromises.length);
+				if (postSavePromises.length) {
+					$q.all(postSavePromises).then(terminateSave);
 				} else {
 					terminateSave();
 				}
@@ -211,7 +220,7 @@
 					}
 
 					// Check for new tags to create...
-					angular.forEach(scope.document.tags, function (tag) {
+					angular.forEach(scope.document.META$.tags, function (tag) {
 						if (tag.unsaved) {
 							preSavePromises.push(REST.tags.create(tag));
 							tagCreationCount++;
@@ -222,7 +231,7 @@
 						console.log("Files to upload: " + uploadCount + ". Tags to create: " + tagCreationCount);
 						$q.all(preSavePromises).then(executeSaveAction);
 					} else {
-						console.log("No files to upload.");
+						console.log("No files to upload nor tags to create.");
 						executeSaveAction();
 					}
 				}
@@ -408,6 +417,11 @@
 							MainMenu.build(scope);
 						});
 					}
+
+					if (scope.original.model !== 'Rbs_Tag_Tag') {
+						scope.original.getTags();
+					}
+
 					if (angular.isFunction(callback)) {
 						// This callback can be used to initialize defaut values in the editor.
 						// It will be called only when the Breadcrumb is fully loaded.
