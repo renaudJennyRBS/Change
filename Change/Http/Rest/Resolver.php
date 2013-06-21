@@ -26,6 +26,7 @@ class Resolver extends ActionResolver
 		$this->addResolverClasses('models', '\Change\Http\Rest\ModelsResolver');
 		$this->addResolverClasses('query', '\Change\Http\Rest\QueryResolver');
 		$this->addResolverClasses('storage', '\Change\Http\Rest\StorageResolver');
+		$this->addResolverClasses('actions', '\Change\Http\Rest\ActionsResolver');
 	}
 
 	/**
@@ -64,6 +65,22 @@ class Resolver extends ActionResolver
 	{
 		$resolver = $this->getResolverByName('resourcesactions');
 		$resolver->registerActionClass($actionName, $class);
+	}
+
+	/**
+	 * @param \Change\Http\Rest\ResourcesActionsResolver|null
+	 */
+	public function getResourcesActionsResolver()
+	{
+		return $this->getResolverByName('resourcesactions');
+	}
+
+	/**
+	 * @param \Change\Http\Rest\ActionsResolver|null
+	 */
+	public function getActionsResolver()
+	{
+		return $this->getResolverByName('actions');
 	}
 
 	/**

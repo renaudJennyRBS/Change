@@ -28,6 +28,10 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
+		if ($documentServices && $this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
