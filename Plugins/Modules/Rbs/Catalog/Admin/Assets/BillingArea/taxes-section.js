@@ -1,6 +1,6 @@
 (function ()
 {
-	angular.module('RbsChange').directive('taxesSection', ['RbsChange.i18n', function (i18n)
+	angular.module('RbsChange').directive('taxesSection', ['RbsChange.i18n', 'RbsChange.REST', function (i18n, REST)
 	{
 		return {
 			restrict    : 'A',
@@ -8,58 +8,88 @@
 			replace     : false,
 
 			link : function (scope, elm, attrs) {
-				scope.TaxesSection = {
-					// Data.
-					// TODO dynamic data (scope.document.id)
-					categories: [{code: '1'}, {code: '2'}],
-					lines: [
-						{ zone: {code: 'FR'}, rates: [{category: '1', value: 10.5}, {category: '2', value: 4.2}] },
-						{ zone: {code: 'BE'}, rates: [{category: '1', value: 75.5}, {category: '2', value: null}] }
-					],
+				// TODO better way to ignore this property...
+				delete scope.document.taxes;
 
-					// Categories management.
-					newCategoryCode: '',
-					addCategory: function() {
-						var code = this.newCategoryCode;
+				scope.TaxesSection = {
+					// Tax management.
+					newTaxCode: '',
+					addTax: function() {
+						var code = this.newTaxCode;
 						if (!code)
 						{
 							return;
 						}
-						for (var i in this.categories)
+						for (var i in scope.document.taxesData)
 						{
-							if (this.categories[i].code == code)
+							if (scope.document.taxesData[i].code == code)
 							{
 								alert(i18n.trans('m.rbs.catalog.admin.js.tax-zone-exists'));
 								return;
 							}
 						}
-						this.categories.push({code: code});
-
-						for (var j in this.lines)
+						scope.document.taxesData.push({code: code, categories: [], ratesByZone: []});
+						this.newTaxCode = '';
+					},
+					removeTax: function(index) {
+						scope.document.taxesData.splice(index, 1);
+					},
+					moveTaxUp: function(index) {
+						if (index > 0)
 						{
-							this.lines[j].rates.push({category: code, value: null});
+							scope.document.taxesData.splice(index-1, 0, scope.document.taxesData.splice(index, 1)[0]);
+						}
+					},
+					moveTaxDown: function(index) {
+						if (index+1 < scope.document.taxesData.length)
+						{
+							scope.document.taxesData.splice(index+1, 0, scope.document.taxesData.splice(index, 1)[0]);
+						}
+					},
+
+					// Categories management.
+					newCategoryCode: '',
+					addCategory: function(tax) {
+						var code = this.newCategoryCode;
+						if (!code)
+						{
+							return;
+						}
+						for (var i in tax.categories)
+						{
+							if (tax.categories[i].code == code)
+							{
+								alert(i18n.trans('m.rbs.catalog.admin.js.tax-zone-exists'));
+								return;
+							}
+						}
+						tax.categories.push({code: code});
+
+						for (var j in tax.ratesByZone)
+						{
+							tax.ratesByZone[j].rates.push({category: code, value: null});
 						}
 						this.newCategoryCode = '';
 					},
-					removeCategory: function(index) {
-						this.categories.splice(index, 1);
-						for (var j in this.lines)
+					removeCategory: function(tax, index) {
+						tax.categories.splice(index, 1);
+						for (var j in tax.ratesByZone)
 						{
-							this.lines[j].rates.splice(index, 1);
+							tax.ratesByZone[j].rates.splice(index, 1);
 						}
 					},
 
 					// Zones management.
 					newZoneCode: '',
-					addZone: function() {
+					addZone: function(tax) {
 						var code = this.newZoneCode;
 						if (!code)
 						{
 							return;
 						}
-						for (var i in this.lines)
+						for (var i in tax.ratesByZone)
 						{
-							if (this.lines[i].zone.code == code)
+							if (tax.ratesByZone[i].zone.code == code)
 							{
 								alert(i18n.trans('m.rbs.catalog.admin.js.tax-category-exists'));
 								return;
@@ -67,15 +97,15 @@
 						}
 
 						var line = { zone: {code: code}, rates: []};
-						for (var j in this.categories)
+						for (var j in tax.categories)
 						{
-							line.rates.push({category: this.categories[j].code, value: null});
+							line.rates.push({category: tax.categories[j].code, value: null});
 						}
-						this.lines.push(line);
+						tax.ratesByZone.push(line);
 						this.newZoneCode = '';
 					},
 					removeZone: function(index) {
-						this.lines.splice(index, 1);
+						tax.ratesByZone.splice(index, 1);
 					},
 
 					// Deletion mode.
@@ -87,6 +117,17 @@
 						this.deletionMode = false;
 					}
 				}
+
+				// TODO: dynamic list of Rbs_Geo_Zone.
+				/*REST.collection('Rbs_Geo_Zone').then(function (zones)
+				{
+					scope.TaxesSection.zones = zones.resources;
+				});*/
+				scope.TaxesSection.zones = [
+					{label: 'France continentale', code: 'FR-CONT' },
+					{label: 'Corse', code: 'FR-CORSE' },
+					{label: 'Belgique', code: 'BE' }
+				];
 			}
 		};
 	}]);

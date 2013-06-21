@@ -18,4 +18,7 @@
 	<key id="currency">devise</key>
 	<key id="currency-list">devises</key>
 	<key id="currency-create">créer une devise</key>
+	<key id="tax">taxe</key>
+	<key id="tax-list">taxes</key>
+	<key id="tax-create">créer une taxe</key>
 </i18n>

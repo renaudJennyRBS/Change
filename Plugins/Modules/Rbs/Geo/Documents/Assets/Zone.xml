@@ -5,6 +5,7 @@
 	<properties>
 		<property name="code" type="String">
 			<dboptions length="80" />
+			<constraint name="unique" />
 		</property>
 		<property name="country" type="Document" document-type="Rbs_Geo_Country" />
 	</properties>
