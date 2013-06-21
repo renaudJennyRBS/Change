@@ -898,7 +898,7 @@
 						$scope.undoData.unshift({
 							'label': (operation + ' ' + elementName),
 							'item' : item,
-							'data' : JSON.stringify(output),
+							'data' : output,
 							'date' : new Date(),
 							'icon' : operationIcons[operation]
 						});
@@ -1114,7 +1114,7 @@
 				attrs.$observe('template', function watchLayout (template) {
 					if (template) {
 						var tpl = JSON.parse(template);
-						templateData = JSON.parse(tpl.data);
+						templateData = tpl.data;
 						elm.find('.structure-editor').html(tpl.html);
 						ngModel.$render();
 					}
@@ -1153,7 +1153,7 @@
 							}
 
 							try {
-								pageContent = ngModel.$viewValue ? JSON.parse(ngModel.$viewValue) : getDefaultEmptyContent();
+								pageContent = ngModel.$viewValue ? ngModel.$viewValue : getDefaultEmptyContent();
 							} catch (e) {
 								console.log("Got error: " + e);
 								pageContent = getDefaultEmptyContent();
@@ -1217,7 +1217,7 @@
 					};
 
 					scope.contentChanged = function (newContent, isValid) {
-						ngModel.$setViewValue(JSON.stringify(newContent));
+						ngModel.$setViewValue(newContent);
 						ngModel.$setValidity("content", isValid);
  					};
 

@@ -34,7 +34,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		if ($this->items === null)
 		{
 			$s = new \Rbs\Workflow\Std\Serializer();
-			$this->items = $s->unserializeInstanceItems($this, $this->getDecodedItemsData());
+			$this->items = $s->unserializeInstanceItems($this, $this->getItemsData());
 		}
 		return $this->items;
 	}
@@ -120,7 +120,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	{
 		if ($this->context === null)
 		{
-			$data = $this->getDecodedContextData();
+			$data = $this->getContextData();
 			$this->context = new \ArrayObject(is_array($data) ? $data : array());
 		}
 
@@ -130,6 +130,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	/**
 	 * @param array $context
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function start($context)
 	{
@@ -312,7 +313,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		{
 			$s = new \Rbs\Workflow\Std\Serializer();
 			$array = $s->serializeInstanceItems($this->items);
-			$this->setItemsData($array ? json_encode($array) : null);
+			$this->setItemsData(count($array) ? $array : null);
 		}
 		return $this;
 	}
@@ -327,7 +328,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			$array = $this->context->getArrayCopy();
 			unset($array[WorkItem::DATE_CONTEXT_KEY]);
 			unset($array[WorkItem::PRECONDITION_CONTEXT_KEY]);
-			$this->setContextData(count($array) ? json_encode($array) : null);
+			$this->setContextData(count($array) ? $array : null);
 		}
 		return $this;
 	}

@@ -1,15 +1,15 @@
-(function () {
-
+(function ()
+{
 	"use strict";
 
-	function editorRbsThemePageTemplate (Editor, Breadcrumb) {
-
+	function editorRbsThemePageTemplate(Editor, Breadcrumb)
+	{
 		return {
-			restrict : 'EC',
+			restrict: 'EC',
 
-			templateUrl : 'Rbs/Theme/PageTemplate/editor.twig',
+			templateUrl: 'Rbs/Theme/PageTemplate/editor.twig',
 
-			replace : true,
+			replace: true,
 
 			// Create isolated scope
 			scope: {
@@ -19,17 +19,17 @@
 				section: '='
 			},
 
-			link : function (scope, elm) {
-				Editor.initScope(scope, elm, function () {
+			link: function (scope, elm)
+			{
+				Editor.initScope(scope, elm, function ()
+				{
 					scope.document.theme = Breadcrumb.getCurrentNode();
 				});
 			}
 		};
-
 	}
 
 	editorRbsThemePageTemplate.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb'];
 
 	angular.module('RbsChange').directive('editorRbsThemePageTemplate', editorRbsThemePageTemplate);
-
 })();

@@ -42,11 +42,11 @@ class UpdateLocalizedDocument
 		return $document;
 	}
 
-
 	/**
 	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{

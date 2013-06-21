@@ -37,10 +37,10 @@ class UpdateDocument
 		return $document;
 	}
 
-
 	/**
 	 * Use Event Params: documentId, modelName
 	 * @param \Change\Http\Event $event
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{

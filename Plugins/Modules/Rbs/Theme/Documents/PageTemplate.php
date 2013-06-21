@@ -13,7 +13,7 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 	 */
 	public function getContentLayout()
 	{
-		return new Layout($this->getDecodedEditableContent());
+		return new Layout($this->getEditableContent());
 	}
 
 	/**

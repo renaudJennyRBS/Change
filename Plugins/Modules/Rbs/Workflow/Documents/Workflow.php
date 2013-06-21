@@ -56,7 +56,7 @@ class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \
 		if ($this->items === null)
 		{
 			$s = new \Rbs\Workflow\Std\Serializer();
-			$this->items = $s->unserializeItems($this, $this->getDecodedItemsData());
+			$this->items = $s->unserializeItems($this, $this->getItemsData());
 		}
 		return $this->items;
 	}
@@ -187,7 +187,7 @@ class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \
 		{
 			$s = new \Rbs\Workflow\Std\Serializer();
 			$array = $s->serializeItems($this->items);
-			$this->setItemsData($array ? json_encode($array) : null);
+			$this->setItemsData(count($array) ? $array : null);
 		}
 		return $this;
 	}
