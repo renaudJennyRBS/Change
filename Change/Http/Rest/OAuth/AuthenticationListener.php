@@ -146,10 +146,7 @@ class AuthenticationListener
 			}
 			elseif ($resourceParts[0] === static::RESOLVE_AUTHORIZE)
 			{
-				if ('POST' === $request->getMethod())
-				{
-					$event->setAction(function($event) use($action) {$action->onAuthorize($event);});
-				}
+				$event->setAction(function($event) use($action) {$action->onAuthorize($event);});
 			}
 			elseif ($resourceParts[0] === static::RESOLVE_ACCESS_TOKEN)
 			{
@@ -298,38 +295,40 @@ class AuthenticationListener
 		{
 			throw new \RuntimeException('Invalid Parameter: oauth_token', 71000);
 		}
-
-		$login = $request->getPost('login');
-		$password = $request->getPost('password');
-		$realm = $request->getPost('realm');
-		if ($realm && $login && $password)
+		if ($request->getMethod() === Request::METHOD_POST)
 		{
-			$storeOAuth = new StoredOAuth();
-			$storeOAuth->setToken($token);
-
-			$this->loadToken($storeOAuth, $event->getApplicationServices()->getDbProvider());
-			if ($storeOAuth->getId() && $storeOAuth->getType() === StoredOAuth::TYPE_REQUEST && !$storeOAuth->getAuthorized())
+			$login = $request->getPost('login');
+			$password = $request->getPost('password');
+			$realm = $request->getPost('realm');
+			if ($realm && $login && $password)
 			{
-				$am = new \Change\User\AuthenticationManager();
-				$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
-				$am->setDocumentServices($event->getDocumentServices());
-				$user = $am->login($login, $password, $realm);
-				if ($user)
+				$storeOAuth = new StoredOAuth();
+				$storeOAuth->setToken($token);
+
+				$this->loadToken($storeOAuth, $event->getApplicationServices()->getDbProvider());
+				if ($storeOAuth->getId() && $storeOAuth->getType() === StoredOAuth::TYPE_REQUEST && !$storeOAuth->getAuthorized())
 				{
-					$storeOAuth->setAccessorId($user->getId());
-					$storeOAuth->setAuthorized(true);
-					$storeOAuth->setVerifier(substr(md5(uniqid()),0, 10));
-					$validityDate = new \DateTime();
-					$storeOAuth->setValidityDate($validityDate->add(new \DateInterval($this->getTokenRequestValidity())));
-					$this->updateToken($storeOAuth, $event->getApplicationServices()->getDbProvider());
+					$am = new \Change\User\AuthenticationManager();
+					$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
+					$am->setDocumentServices($event->getDocumentServices());
+					$user = $am->login($login, $password, $realm);
+					if ($user)
+					{
+						$storeOAuth->setAccessorId($user->getId());
+						$storeOAuth->setAuthorized(true);
+						$storeOAuth->setVerifier(substr(md5(uniqid()),0, 10));
+						$validityDate = new \DateTime();
+						$storeOAuth->setValidityDate($validityDate->add(new \DateInterval($this->getTokenRequestValidity())));
+						$this->updateToken($storeOAuth, $event->getApplicationServices()->getDbProvider());
 
-					$array = array('oauth_callback' => $storeOAuth->getCallback(), 'oauth_token' => $storeOAuth->getToken(),
-						'oauth_verifier'=> $storeOAuth->getVerifier());
+						$array = array('oauth_callback' => $storeOAuth->getCallback(), 'oauth_token' => $storeOAuth->getToken(),
+							'oauth_verifier'=> $storeOAuth->getVerifier());
 
-					$result  = new ArrayResult();
-					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-					$result->setArray($array);
-					$event->setResult($result);
+						$result  = new ArrayResult();
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+						$result->setArray($array);
+						$event->setResult($result);
+					}
 				}
 			}
 		}
