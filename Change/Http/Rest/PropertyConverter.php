@@ -224,6 +224,7 @@ class PropertyConverter
 					$documentManager = $this->document->getDocumentServices()->getDocumentManager();
 					$modelManager = $this->document->getDocumentServices()->getModelManager();
 					$value = array_map(function($item) use ($documentManager, $modelManager) {
+						$doc = null;
 						if (is_array($item))
 						{
 							if (isset($item['id']))

@@ -27,7 +27,7 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	 */
 	public function getContentLayout()
 	{
-		return new Layout($this->getDecodedEditableContent());
+		return new Layout($this->getEditableContent());
 	}
 
 	/**

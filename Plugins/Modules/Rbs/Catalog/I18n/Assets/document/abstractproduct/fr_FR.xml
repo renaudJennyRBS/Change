@@ -12,7 +12,6 @@
 	<key id="brand-picker-title">sélectionner la marque</key>
 	<key id="shippedin">délai d'expédition</key>
 	<key id="shippedin-help">Délai d'expédition affiché sur le site.</key>
-	<key id="reference">référence</key>
 	<key id="sku">code SKU</key>
 	<key id="minorderquantity">quantité minimum</key>
 	<key id="minorderquantity-help">Quantité minimum de ce produit que l'on peut commander.</key>

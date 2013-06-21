@@ -3,7 +3,7 @@
 	<key id="collection">collection</key>
 	<key id="collection-list">collections</key>
 	<key id="collection-create">créer une collection</key>
-	<key id="item">item</key>
-	<key id="item-list">items</key>
-	<key id="item-create">créer un un item</key>
+	<key id="item">élément</key>
+	<key id="item-list">éléments</key>
+	<key id="item-create">créer un élément</key>
 </i18n>

@@ -87,6 +87,7 @@ class DocumentLocalizedClass
 
 	/**
 	 * @param mixed $value
+	 * @param boolean $removeSpace
 	 * @return string
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
@@ -117,7 +118,7 @@ class DocumentLocalizedClass
 			$code .= '
 	/**
 	 * @var ' . $this->getCommentaryMemberType($property) . '
-	 */	
+	 */
 	private $' . $property->getName() . ';' . PHP_EOL;
 		}
 		return $code;
@@ -129,7 +130,14 @@ class DocumentLocalizedClass
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$code .= $this->getPropertyAccessors($model, $property);
+			if ($property->getType() === 'JSON' || $property->getType() === 'Object')
+			{
+				$code .= $this->getComplexPropertyAccessors($model, $property);
+			}
+			else
+			{
+				$code .= $this->getPropertyAccessors($model, $property);
+			}
 		}
 		return $code;
 	}
@@ -214,6 +222,69 @@ class DocumentLocalizedClass
 	 * @return boolean
 	 */
 	public function set' . $un . '(' . $var . ')
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
+		{
+			' . $mn . ' = ' . $var . ';
+		}
+		elseif (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
+		{
+			if ($this->isPropertyModified(' . $en . '))
+			{
+				$loadedVal = $this->getOldPropertyValue(' . $en . ');
+				if (' . $this->buildEqualsProperty('$loadedVal', $var, $property->getType()) . ')
+				{
+					$this->removeOldPropertyValue(' . $en . ');
+				}
+			}
+			else
+			{
+				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
+			}
+			' . $mn . ' = ' . $var . ';
+			return true;
+		}
+		return false;
+	}' . PHP_EOL;
+		return $code;
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 * @return string
+	 */
+	protected function getComplexPropertyAccessors($model, $property)
+	{
+		$code = '';
+		$name = $property->getName();
+		$var = '$' . $name;
+		$mn = '$this->' . $name;
+		$en = $this->escapePHPValue($name);
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		$code .= '
+	/**
+	 * @return string
+	 */
+	public function get' . $un . 'String()
+	{
+		return ' . $mn . ';
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get' . $un . 'OldStringValue()
+	{
+		return $this->getOldPropertyValue(' . $en . ');
+	}
+
+	/**
+	 * @param string|null ' . $var . '
+	 * @return boolean
+	 */
+	public function set' . $un . 'String(' . $var . ')
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{

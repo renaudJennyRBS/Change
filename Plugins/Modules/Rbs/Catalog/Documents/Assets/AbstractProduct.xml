@@ -13,7 +13,7 @@
 		<property name="minOrderQuantity" type="Integer" default-value="1" required="true" />
 		<property name="maxOrderQuantity" type="Integer" />
 		<!-- Codes -->
-		<property name="reference" type="String" />
+		<property name="code" type="String" />
 		<property name="sku" type="String" />
 		<!-- TODO
 			- serializedAttributes

@@ -383,4 +383,313 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
 	}
+
+	public function testStringPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPStr());
+
+		$this->assertSame($basicDoc, $basicDoc->setPStr('toto'));
+		$this->assertEquals('toto', $basicDoc->getPStr());
+
+		$basicDoc->setPStr(null);
+		$this->assertNull($basicDoc->getPStr());
+	}
+
+	public function testBooleanPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPBool());
+
+		$this->assertSame($basicDoc, $basicDoc->setPBool(true));
+		$this->assertTrue($basicDoc->getPBool());
+
+		$basicDoc->setPBool(false);
+		$this->assertFalse($basicDoc->getPBool());
+
+		$basicDoc->setPBool(null);
+		$this->assertNull($basicDoc->getPBool());
+	}
+
+	public function testIntegerPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPInt());
+
+		$this->assertSame($basicDoc, $basicDoc->setPInt(10));
+		$this->assertEquals(10, $basicDoc->getPInt());
+
+		$basicDoc->setPInt(null);
+		$this->assertNull($basicDoc->getPInt());
+	}
+
+	public function testFloatPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPFloat());
+
+		$this->assertSame($basicDoc, $basicDoc->setPFloat(10.1));
+		$this->assertEquals(10.1, $basicDoc->getPFloat());
+
+		$basicDoc->setPFloat(null);
+		$this->assertNull($basicDoc->getPFloat());
+	}
+
+	public function testDecimalPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPDec());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDec(10.1));
+		$this->assertEquals(10.1, $basicDoc->getPDec());
+
+		$basicDoc->setPDec(null);
+		$this->assertNull($basicDoc->getPDec());
+	}
+
+	public function testDateTimePropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPDaTi());
+
+		$date = new \DateTime();
+		$this->assertSame($basicDoc, $basicDoc->setPDaTi($date));
+		$this->assertSame($date->format('c'), $basicDoc->getPDaTi()->format('c'));
+
+		$basicDoc->setPDaTi(null);
+		$this->assertNull($basicDoc->getPDaTi());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDaTi('2013-06-20T17:45:04+02:00'));
+		$this->assertEquals('2013-06-20T17:45:04+02:00', $basicDoc->getPDaTi()->format('c'));
+	}
+
+	public function testDatePropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPDa());
+
+		$date = new \DateTime();
+		$this->assertSame($basicDoc, $basicDoc->setPDa($date));
+		$this->assertSame($date->format('Y-m-d'), $basicDoc->getPDa()->format('Y-m-d'));
+
+		$basicDoc->setPDa(null);
+		$this->assertNull($basicDoc->getPDa());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDa('2013-06-20'));
+		$this->assertEquals('2013-06-20', $basicDoc->getPDa()->format('Y-m-d'));
+	}
+
+	public function testLongStringPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPText());
+
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor.
+
+		Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+		Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.';
+		$this->assertSame($basicDoc, $basicDoc->setPText($text));
+		$this->assertSame($text, $basicDoc->getPText());
+
+		$basicDoc->setPText(null);
+		$this->assertNull($basicDoc->getPText());
+	}
+
+	public function testJSONPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPJson());
+
+		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
+		$json = '{"toto":"youpi","plop":12.2,"1":"test"}';
+		$this->assertSame($basicDoc, $basicDoc->setPJson($data));
+		$this->assertEquals($data, $basicDoc->getPJson());
+		$this->assertEquals($json, $basicDoc->getPJsonString());
+
+		$basicDoc->setPJson(null);
+		$this->assertNull($basicDoc->getPJson());
+	}
+
+	public function testXMLPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPXml());
+
+		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root><test id=\"tutu\" tata=\"titi\">Toto</test></root>\n";
+		$this->assertSame($basicDoc, $basicDoc->setPXml($xml));
+		$this->assertEquals($xml, $basicDoc->getPXml());
+		$domDoc = $basicDoc->getPXmlDOMDocument();
+		$this->assertInstanceOf('DOMDocument', $domDoc);
+		$node = $domDoc->getElementsByTagName('test')->item(0);
+		$node->removeAttribute('tata');
+		$node->removeAttribute('id');
+		$node->setAttribute('titi', 'tutu');
+		$this->assertSame($basicDoc, $basicDoc->setPXmlDOMDocument($domDoc));
+		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root><test titi=\"tutu\">Toto</test></root>\n";
+		$this->assertEquals($xml, $basicDoc->getPXml());
+
+		$basicDoc->setPXml(null);
+		$this->assertNull($basicDoc->getPXml());
+	}
+
+	public function testRichtextPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPRt());
+
+		// TODO
+
+		$basicDoc->setPJson(null);
+		$this->assertNull($basicDoc->getPJson());
+	}
+
+	public function testLobPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPlob());
+
+		$string = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 1000);
+		$this->assertSame($basicDoc, $basicDoc->setPlob($string));
+		$this->assertSame($string, $basicDoc->getPlob());
+
+		$basicDoc->setPlob(null);
+		$this->assertNull($basicDoc->getPlob());
+	}
+
+	public function testObjectPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPObj());
+
+		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
+		$serialized = serialize($data);
+		$this->assertSame($basicDoc, $basicDoc->setPObj($data));
+		$this->assertEquals($data, $basicDoc->getPObj());
+		$this->assertEquals($serialized, $basicDoc->getPObjString());
+
+		$basicDoc->setPObj(null);
+		$this->assertNull($basicDoc->getPObj());
+	}
+
+	public function testDocumentIdPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		/* @var $doc1 \Project\Tests\Documents\Localized */
+		$doc1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc1->setPStr('Doc1');
+		$doc1->setPLStr('Doc1 loc');
+		$doc1->save();
+		$doc1Id = $doc1->getId();
+
+		$this->assertNull($basicDoc->getPDocId());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDocId($doc1Id));
+		$this->assertEquals($doc1Id, $basicDoc->getPDocId());
+		$this->assertSame($doc1, $basicDoc->getPDocIdInstance());
+
+		$basicDoc->setPDocId(null);
+		$this->assertNull($basicDoc->getPDocId());
+	}
+
+	public function testDocumentPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		/* @var $doc1 \Project\Tests\Documents\Localized */
+		$doc1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc1->setPStr('Doc1');
+		$doc1->setPLStr('Doc1 loc');
+		$doc1->save();
+		$doc1Id = $doc1->getId();
+
+		$this->assertNull($basicDoc->getPDocInst());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDocInst($doc1));
+		$this->assertSame($doc1, $basicDoc->getPDocInst());
+		$this->assertEquals($doc1Id, $basicDoc->getPDocInstId());
+
+		$basicDoc->setPDocInst(null);
+		$this->assertNull($basicDoc->getPDocInst());
+	}
+
+	public function testDocumentArrayPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		/* @var $doc1 \Project\Tests\Documents\Localized */
+		$doc1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc1->setPStr('Doc1');
+		$doc1->setPLStr('Doc1 loc');
+		$doc1->save();
+		$doc1Id = $doc1->getId();
+
+		/* @var $doc2 \Project\Tests\Documents\Localized */
+		$doc2 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc2->setPStr('Doc2');
+		$doc2->setPLStr('Doc2 loc');
+		$doc2->save();
+		$doc2Id = $doc2->getId();
+
+		/* @var $doc3 \Project\Tests\Documents\Localized */
+		$doc3 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc3->setPStr('Doc3');
+		$doc3->setPLStr('Doc3 loc');
+		$doc3->save();
+		$doc3Id = $doc3->getId();
+
+		$this->assertEquals(array(), $basicDoc->getPDocArr());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDocArr(array($doc1, $doc2)));
+		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr());
+
+		$this->assertSame($basicDoc, $basicDoc->addPDocArr($doc2));
+		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr());
+		$this->assertSame($basicDoc, $basicDoc->addPDocArr($doc3));
+		$this->assertEquals(array($doc1, $doc2, $doc3), $basicDoc->getPDocArr());
+		$this->assertEquals(array($doc1Id, $doc2Id, $doc3Id), $basicDoc->getPDocArrIds());
+
+		$basicDoc->setPDocArr(array());
+		$this->assertEquals(array(), $basicDoc->getPDocArr());
+
+		$this->assertSame($basicDoc, $basicDoc->setPDocArrAtIndex($doc2, 0));
+		$this->assertEquals(array($doc2), $basicDoc->getPDocArr());
+		$this->assertSame($basicDoc, $basicDoc->setPDocArrAtIndex($doc3, 1));
+		$this->assertEquals(array($doc2, $doc3), $basicDoc->getPDocArr());
+		$this->assertEquals($doc3, $basicDoc->getPDocArrByIndex(1));
+		$this->assertEquals(array($doc2Id, $doc3Id), $basicDoc->getPDocArrIds());
+
+		$basicDoc->setPDocArr(array());
+		$this->assertEquals(array(), $basicDoc->getPDocArr());
+	}
 }
