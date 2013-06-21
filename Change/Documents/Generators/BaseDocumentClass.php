@@ -883,6 +883,7 @@ class BaseDocumentClass
 				{
 					throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
 				}
+				return $newValue->getId();
 			}
 			else
 			{
