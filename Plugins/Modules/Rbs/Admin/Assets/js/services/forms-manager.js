@@ -8,8 +8,7 @@
 	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n) {
 
 		var	$ws = $('#workspace'),
-			cascadeContext = null,
-			cascadeCount = 0,
+			cascadeContextStack = [],
 			cascadedElement = null,
 			self = this,
 			idStack = [];
@@ -18,8 +17,7 @@
 		 * When the route changes, we need to clean up any cascading process.
 		 */
 		$rootScope.$on('$routeChangeSuccess', function () {
-			cascadeContext = null;
-			cascadeCount = 0;
+			cascadeContextStack = [];
 		});
 
 		$rootScope.$on('$routeChangeStart', function () {
@@ -56,14 +54,11 @@
 			// Freeze the Breadcrumb to prevent any other controller from modifying it.
 			Breadcrumb.freeze();
 
-			// Update cascade counter.
-			cascadeCount++;
-
 			// Create cascade context.
-			cascadeContext = {
+			cascadeContextStack.push({
 				'saveCallback' : saveCallback,
 				'queryParam'   : queryParam
-			};
+			});
 			if (queryParam) {
 				idStack.push(queryParam.id);
 			}
@@ -107,7 +102,7 @@
 		 * @returns {Boolean}
 		 */
 		this.isCascading = function () {
-			return cascadeCount > 0;
+			return cascadeContextStack.length > 0;
 		};
 
 
@@ -116,17 +111,19 @@
 		 * without any changes on it.
 		 */
 		this.uncascade = function (doc) {
+			var	ctx = cascadeContextStack.pop(),
+				$form;
 
-			if (cascadeContext && doc !== null && angular.isFunction(cascadeContext.saveCallback)) {
-				cascadeContext.saveCallback(doc);
+			console.log("uncascade(): cascadeContext=", ctx);
+			if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
+				ctx.saveCallback(doc);
 			}
 
-			cascadeContext = null;
 			cascadedElement = null;
 			idStack.pop();
 
 			// Remove the last from and destroy its associated scope.
-			var $form = $ws.children('.document-form').last();
+			$form = $ws.children('.document-form').last();
 			angular.element($form).scope().$destroy();
 			$form.remove();
 			$ws.children('.cascading-forms-collapsed').last().remove();
@@ -137,13 +134,17 @@
 
 			MainMenu.popContents();
 
-			// If all cascades are finnished, unfreeze the Breadcrumb to allow modifications on it.
-			cascadeCount--;
-			if (cascadeCount === 0) {
+			// If all cascades are finished, unfreeze the Breadcrumb to allow modifications on it.
+			if (cascadeContextStack.length === 0) {
 				Breadcrumb.unfreeze();
 			}
 
 			this.updateCollapsedForms();
+		};
+
+
+		this.getCurrentContext = function () {
+			return cascadeContextStack.length ? cascadeContextStack[cascadeContextStack.length-1] : null;
 		};
 
 
@@ -170,7 +171,8 @@
 			var promise,
 			    self = this,
 			    params,
-			    q;
+				q,
+				ctx;
 
 			// Install event handlers.
 
@@ -208,9 +210,10 @@
 
 			Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
 
+			ctx = this.getCurrentContext();
 			if (this.isCascading()) {
-				if (cascadeContext.queryParam) {
-					params = cascadeContext.queryParam;
+				if (ctx.queryParam) {
+					params = ctx.queryParam;
 				} else {
 					params = { "id": "new" };
 				}

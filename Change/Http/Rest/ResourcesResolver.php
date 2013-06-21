@@ -71,7 +71,7 @@ class ResourcesResolver
 			$documentId = intval($resourceParts[0]);
 			$this->getDocumentActionById($event, $documentId);
 		}
-		elseif (count($resourceParts) < 3 && $method === Request::METHOD_GET)
+		elseif ($nbParts < 3 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'resources');
 			$event->setParam('namespace', implode('.', $resourceParts));
@@ -84,7 +84,7 @@ class ResourcesResolver
 			$event->setAction($action);
 			return;
 		}
-		elseif (count($resourceParts) >= 3)
+		elseif ($nbParts >=3 && $nbParts <= 5)
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$documentServices = $event->getDocumentServices();

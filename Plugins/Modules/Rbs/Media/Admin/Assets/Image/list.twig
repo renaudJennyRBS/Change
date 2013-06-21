@@ -9,16 +9,11 @@
 	<rbs-document-list data-dlid="DLRbsMediaImage" publishable="true" model="Rbs_Media_Image" query="query">
 		<column name="path" thumbnail="XS"></column>
 		<column name="label" primary="true" tagss="true"></column>
-		<!--column name="tags" label="Étiquettes">
-			<span class="tag red">image</span>
-			<span class="tag">logo</span>
-			<span class="tag green">marque</span>
-		</column-->
 
 		<preview>
 			<img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
 			<h4>(= doc.document.label =)</h4>
-			<todo>Ajouter d'autres caractéristiques de l'image</todo>
+			<span rbs-tag="tag" ng-repeat="tag in doc.document.getTags()"></span>
 		</preview>
 
 		<grid-item>

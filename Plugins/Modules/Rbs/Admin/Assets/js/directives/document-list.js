@@ -55,7 +55,7 @@
 		 */
 		function initColumns (dlid, tElement, tAttrs) {
 			var	columns, undefinedColumnLabels = [], column,
-				$th, $td, $head, $body, html;
+				$th, $td, $head, $body, html, p, td, actionsCount, actionDivider;
 
 			columns = __columns[dlid];
 
@@ -129,18 +129,25 @@
 			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
 
 			if (__preview[dlid]) {
-				tElement.find('tbody tr td.preview').html(__preview[dlid]);
+				td = tElement.find('tbody tr td.preview');
+				if (__preview[dlid]['class']) {
+					td.addClass(__preview[dlid]['class']);
+				}
+				if (__preview[dlid]['style']) {
+					td.attr('style', __preview[dlid]['style']);
+				}
+				td.html('<button type="button" class="close pull-right" ng-click="preview(doc.document)">&times;</button>' + __preview[dlid].contents);
 			}
 
 			while (columns.length) {
 				column = columns.shift(0);
 
-				var p = column.name.indexOf('.');
-				if (p !== -1) {
+				p = column.name.indexOf('.');
+				if (p === -1) {
 					column.valuePath = column.name;
-					column.name = column.name.substring(0, p);
 				} else {
 					column.valuePath = column.name;
+					column.name = column.name.substring(0, p);
 				}
 
 				switch (column.format) {
@@ -229,7 +236,8 @@
 				}
 
 				// The primary column has extra links for preview, edit and delete.
-				var actionsCount = 0, actionDivider = '<span class="divider">|</span>';
+				actionsCount = 0;
+				actionDivider = '<span class="divider">|</span>';
 				if (column.primary) {
 					html = '<div class="quick-actions ' + (Device.isMultiTouch() ? 'quick-actions-touch' : 'quick-actions-mouse') + '">';
 
@@ -998,7 +1006,7 @@
 			restrict : 'E',
 			require  : '^documentList',
 
-			compile : function (tElement) {
+			compile : function (tElement, tAttrs) {
 
 				var dlid;
 
@@ -1006,7 +1014,7 @@
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
-				__preview[dlid] = tElement.html().trim();
+				__preview[dlid] = angular.extend({}, tAttrs, {'contents':tElement.html().trim()});
 
 			}
 		};

@@ -88,6 +88,9 @@
 					'<button class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="showAll=!showAll">' +
 						'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
 					'</button>' +
+					'<a target="_blank" class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.manage-tags | ucf') + '" type="button" href="Rbs/Tag">' +
+						'<i class="icon-cog"></i>' +
+					'</a>' +
 					'<span ng-repeat="tag in tags">' +
 						'<span ng-if="! tag.input" rbs-tag="tag" on-remove="removeTag($index)"></span>' +
 						'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
@@ -101,7 +104,7 @@
 
 			link : function (scope, elm, attrs, ngModel) {
 
-				var inputIndex = -1;
+				var inputIndex = -1, tempTagCounter = 0;
 
 				ngModel.$render = function ngModelRenderFn () {
 					if (angular.isArray(ngModel.$viewValue)) {
@@ -109,12 +112,12 @@
 					} else {
 						scope.tags = [];
 					}
+					console.log("inputIndex=", inputIndex, ", tags=", scope.tags);
 					if (inputIndex === -1) {
 						scope.tags.push({'input': true});
 					} else {
 						scope.tags.splice(inputIndex, 0, {'input': true});
 					}
-					$timeout(update);
 				};
 
 				scope.availTags = loadAvailTags();
@@ -135,12 +138,6 @@
 					});
 
 					ngModel.$setViewValue(value.length === 0 ? undefined : value);
-
-					if (inputIndex === 0) {
-						getInput().addClass('first');
-					} else {
-						getInput().removeClass('first');
-					}
 				}
 
 				function backspace () {
@@ -171,8 +168,10 @@
 
 				function createTemporaryTag (value) {
 					return {
+						'id'      : --tempTagCounter,
 						'label'   : value,
-						'unsaved' : true
+						'unsaved' : true,
+						'userTag' : true
 					};
 				}
 
@@ -198,7 +197,7 @@
 				scope.isUsed = function (tag) {
 					var i;
 					for (i=0 ; i<scope.tags.length ; i++) {
-						if (scope.tags[i].id === tag.id) {
+						if (! scope.tags[i].input && scope.tags[i].id === tag.id) {
 							return true;
 						}
 					}
@@ -282,7 +281,7 @@
 						}
 						break;
 
-					//Down arrow
+					// Down arrow
 					case 40 :
 						if ($event.ctrlKey) {
 							$event.preventDefault();
@@ -291,12 +290,21 @@
 						}
 						break;
 
-					//Down arrow
+					// Up arrow
 					case 38 :
 						if ($event.ctrlKey) {
 							$event.preventDefault();
 							$event.stopPropagation();
 							scope.showAll = false;
+						}
+						break;
+
+					// Ctrl+R
+					case 82 :
+						if ($event.ctrlKey) {
+							scope.availTags = loadAvailTags();
+							$event.preventDefault();
+							$event.stopPropagation();
 						}
 						break;
 					}

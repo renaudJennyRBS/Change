@@ -1,5 +1,8 @@
 <?php
 namespace Rbs\Tag\Setup;
+use Change\Application\ApplicationServices;
+use Change\Db\Schema\FieldDefinition;
+use Change\Db\Schema\KeyDefinition;
 
 /**
  * @name \Rbs\Tag\Setup\Install
@@ -23,8 +26,40 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
+		$config->addPersistentEntry('Change/Events/Http.Rest/Rbs_Tag', '\\Rbs\\Tag\\Http\\Rest\\ListenerAggregate');
+
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Tag',
 			'\\Rbs\\Tag\\Admin\\Register');
+
+		$appServices = new ApplicationServices($application);
+		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
+
+		// Create table tag <-> doc
+		$td = $schemaManager->newTableDefinition('rbs_tag_rel_document');
+		$tagIdField = new FieldDefinition('tag_id');
+		$tagIdField->setType(FieldDefinition::INTEGER);
+		$td->addField($tagIdField);
+		$docIdField = new FieldDefinition('doc_id');
+		$docIdField->setType(FieldDefinition::INTEGER);
+		$td->addField($docIdField);
+		$key = new KeyDefinition();
+		$key->setType(KeyDefinition::PRIMARY);
+		$key->addField($tagIdField);
+		$key->addField($docIdField);
+		$td->addKey($key);
+		$schemaManager->createOrAlterTable($td);
+/* TODO
+		// Create table tag_search
+		$td = $schemaManager->newTableDefinition('rbs_tag_search');
+		$tagIdField = new FieldDefinition('tag_id');
+		$tagIdField->setType(FieldDefinition::INTEGER);
+		$td->addField($tagIdField);
+		$tagPathField = new FieldDefinition('tag_path');
+		$tagPathField->setType(FieldDefinition::VARCHAR);
+		$tagPathField->setLength(255);
+		$td->addField($tagPathField);
+		$schemaManager->createOrAlterTable($td);
+*/
 	}
 
 	/**
