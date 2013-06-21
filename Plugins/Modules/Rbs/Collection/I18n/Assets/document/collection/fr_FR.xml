@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.collection.document.collection" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="title">titre</key>
-	<key id="code">code</key>
-	<key id="items">items</key>
+	<key id="items">éléments</key>
 	<key id="error-duplicated-item-value">vous ne pouvez pas ajouter un item avec une valeur déjà existante pour cette collection. {item1Label} et {item2Label} ont la même valeur : {value}.</key>
 </i18n>
