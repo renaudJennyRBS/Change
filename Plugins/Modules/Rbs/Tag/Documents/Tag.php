@@ -83,7 +83,6 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 			$stmt = $appServices->getDbProvider()->getNewStatementBuilder();
 			$fb = $stmt->getFragmentBuilder();
 
-			// Create delete all document's tags statement
 			$stmt->delete($fb->table('rbs_tag_search'));
 			$stmt->where($fb->eq($fb->column('tag_id'), $fb->integerParameter('tagId')));
 			$dq = $stmt->deleteQuery();
