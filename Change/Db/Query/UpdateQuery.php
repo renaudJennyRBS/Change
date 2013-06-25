@@ -8,23 +8,23 @@ namespace Change\Db\Query;
 class UpdateQuery extends AbstractQuery
 {
 	/**
-	 * @var \Change\Db\Query\Clauses\UpdateClause
+	 * @var Clauses\UpdateClause
 	 */
 	protected $updateClause;
 
 	/**
-	 * @var \Change\Db\Query\Clauses\SetClause
+	 * @var Clauses\SetClause
 	 */
 	protected $setClause;
 
 	/**
-	 * @var \Change\Db\Query\Clauses\WhereClause
+	 * @var Clauses\WhereClause
 	 */
 	protected $whereClause;
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\UpdateClause|null
+	 * @return Clauses\UpdateClause|null
 	 */
 	public function getUpdateClause()
 	{
@@ -33,7 +33,7 @@ class UpdateQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\SetClause|null
+	 * @return Clauses\SetClause|null
 	 */
 	public function getSetClause()
 	{
@@ -42,7 +42,7 @@ class UpdateQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\WhereClause|null
+	 * @return Clauses\WhereClause|null
 	 */
 	public function getWhereClause()
 	{
@@ -51,27 +51,27 @@ class UpdateQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\UpdateClause $updateClause
+	 * @param Clauses\UpdateClause $updateClause
 	 */
-	public function setUpdateClause(\Change\Db\Query\Clauses\UpdateClause $updateClause)
+	public function setUpdateClause(Clauses\UpdateClause $updateClause)
 	{
 		$this->updateClause = $updateClause;
 	}
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\SetClause $setClause
+	 * @param Clauses\SetClause $setClause
 	 */
-	public function setSetClause(\Change\Db\Query\Clauses\SetClause $setClause)
+	public function setSetClause(Clauses\SetClause $setClause)
 	{
 		$this->setClause = $setClause;
 	}
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
+	 * @param Clauses\WhereClause $whereClause
 	 */
-	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
+	public function setWhereClause(Clauses\WhereClause $whereClause)
 	{
 		$this->whereClause = $whereClause;
 	}
@@ -113,6 +113,6 @@ class UpdateQuery extends AbstractQuery
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);
+		return $this->getDbProvider()->executeQuery($this);
 	}
 }

@@ -40,7 +40,8 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Transaction\TransactionManager',
 			array('sharedEventManager' => $application->getSharedEventManager()));
 
-		$im->setParameters('Change\Db\DbProvider', array('config' => $application->getConfiguration()));
+		$im->setParameters('Change\Db\DbProvider',
+			array('config' => $application->getConfiguration(), 'sharedEventManager' => $application->getSharedEventManager()));
 
 		$im->setParameters('Change\I18n\I18nManager', array(
 			'configuration' => $application->getConfiguration(),
@@ -89,7 +90,12 @@ class ApplicationServices extends \Zend\Di\Di
 
 			->addMethod('setTransactionManager', true)
 			->addMethodParameter('setTransactionManager',
-				'transactionManager', array('type' => 'Change\Transaction\TransactionManager', 'required' => true));
+				'transactionManager', array('type' => 'Change\Transaction\TransactionManager', 'required' => true))
+
+			->addMethod('setSharedEventManager', true)
+			->addMethodParameter('setSharedEventManager',
+			'sharedEventManager', array('type' => 'Change\Events\SharedEventManager', 'required' => true));
+
 		$dl->addDefinition($cl);
 	}
 

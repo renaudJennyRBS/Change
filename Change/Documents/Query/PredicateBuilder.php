@@ -103,6 +103,22 @@ class PredicateBuilder
 	}
 
 	/**
+	 * @param Property|string $propertyName
+	 * @return \Change\Db\Query\Expressions\Column
+	 */
+	public function columnProperty($propertyName)
+	{
+		if ($propertyName instanceof InterfaceSQLFragment)
+		{
+			return $propertyName;
+		}
+		else
+		{
+			return $this->builder->getColumn($propertyName);
+		}
+	}
+
+	/**
 	 * @api
 	 * @param InterfacePredicate|InterfacePredicate[] $predicate1
 	 * @param InterfacePredicate $_ [optional]

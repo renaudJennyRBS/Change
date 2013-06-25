@@ -2,7 +2,7 @@
 namespace Change\Db\Query\Expressions;
 
 /**
- * @name \Change\Db\Query\Expressions\Raw
+ * @name \Change\Db\Query\Expressions\SubQuery
  */
 class SubQuery extends AbstractExpression
 {
