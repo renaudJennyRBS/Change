@@ -14,6 +14,11 @@ use Change\Transaction\TransactionManager;
  */
 abstract class DbProvider
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_SQL_FRAGMENT_STRING = 'SQLFragmentString';
+
+	const EVENT_SQL_FRAGMENT = 'SQLFragment';
 	/**
 	 * @var integer
 	 */
@@ -23,6 +28,11 @@ abstract class DbProvider
 	 * @var array
 	 */
 	protected $connectionInfos;
+
+	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
 
 	/**
 	 * @var TransactionManager
@@ -55,11 +65,38 @@ abstract class DbProvider
 	protected $statementBuilderQueries;
 
 	/**
+	 * @var string[]
+	 */
+	protected $listenerAggregateClassNames;
+
+	/**
 	 * @return integer
 	 */
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Db');
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		$classNames = array();
+		foreach ($this->getEventManagerIdentifier() as $identifier)
+		{
+			$path = 'Change/Events/' . str_replace('.', '/', $identifier);
+			$classNames = array_merge($classNames, array_values($this->configuration->getEntry($path, array())));
+		}
+		return array_unique($classNames);
 	}
 
 	/**
@@ -81,14 +118,17 @@ abstract class DbProvider
 			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
 		}
 		$className = $connectionInfos['dbprovider'];
-		return new $className($connectionInfos);
+		$class = new $className($connectionInfos, $config);
+		return $class;
 	}
 
 	/**
 	 * @param array $connectionInfos
+	 * @param Configuration $configuration
 	 */
-	public function __construct(array $connectionInfos)
+	public function __construct(array $connectionInfos, Configuration $configuration = null)
 	{
+		$this->configuration = $configuration;
 		$this->connectionInfos = $connectionInfos;
 		$this->timers = array('init' => microtime(true),
 			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
@@ -247,12 +287,42 @@ abstract class DbProvider
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
+	 * @param Query\InterfaceSQLFragment $fragment
 	 * @return string
 	 */
-	public function buildSQLFragment(\Change\Db\Query\InterfaceSQLFragment $fragment)
+	public abstract function buildSQLFragment(Query\InterfaceSQLFragment $fragment);
+
+	/**
+	 * @param Query\InterfaceSQLFragment $fragment
+	 * @return string
+	 */
+	public function buildCustomSQLFragment(Query\InterfaceSQLFragment $fragment)
 	{
+		$event = new \Zend\EventManager\Event(static::EVENT_SQL_FRAGMENT_STRING, $this, array('fragment'=> $fragment));
+		$this->getEventManager()->trigger($event);
+		$sql = $event->getParam('sql');
+		if (is_string($sql))
+		{
+			return $sql;
+		}
+		$this->getLogging()->warn(__METHOD__ . '(' . get_class($fragment) . ') not implemented');
 		return $fragment->toSQL92String();
+	}
+
+	/**
+	 * @param array $argument
+	 * @return Query\InterfaceSQLFragment|null
+	 */
+	public function getCustomSQLFragment(array $argument = array())
+	{
+		$event = new \Zend\EventManager\Event(static::EVENT_SQL_FRAGMENT, $this, $argument);
+		$this->getEventManager()->trigger($event);
+		$fragment = $event->getParam('SQLFragment');
+		if ($fragment instanceof Query\InterfaceSQLFragment)
+		{
+			return $fragment;
+		}
+		return null;
 	}
 
 	/**

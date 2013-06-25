@@ -46,7 +46,7 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	 * @param DbProvider $dbProvider
 	 * @param string $cachedKey
 	 */
-	public function __construct(DbProvider $dbProvider, $cachedKey = null)
+	public function __construct(DbProvider $dbProvider = null, $cachedKey = null)
 	{
 		$this->setDbProvider($dbProvider);
 		$this->cachedKey = $cachedKey;
@@ -163,10 +163,15 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	/**
 	 * Get the provider the query is bound to.
 	 * @api
+	 * @throws \RuntimeException
 	 * @return DbProvider
 	 */
 	public function getDbProvider()
 	{
+		if ($this->dbProvider === null)
+		{
+			throw new \RuntimeException('DbProvider not set', 999999);
+		}
 		return $this->dbProvider;
 	}
 
@@ -175,7 +180,7 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	 * @api
 	 * @param DbProvider $dbProvider
 	 */
-	public function setDbProvider(DbProvider $dbProvider)
+	public function setDbProvider(DbProvider $dbProvider = null)
 	{
 		$this->dbProvider = $dbProvider;
 	}

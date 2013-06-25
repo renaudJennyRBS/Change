@@ -20,6 +20,11 @@ class JSONDecoder
 	protected $joins = array();
 
 	/**
+	 * @var Query
+	 */
+	protected $query;
+
+	/**
 	 * @param DocumentServices $documentServices
 	 */
 	public function setDocumentServices(DocumentServices $documentServices)
@@ -41,6 +46,31 @@ class JSONDecoder
 	}
 
 	/**
+	 * @return Query
+	 */
+	public function getDocumentQuery()
+	{
+		return $this->query;
+	}
+
+	/**
+	 * @param Query $documentQuery
+	 */
+	public function setDocumentQuery(Query $documentQuery)
+	{
+		$this->query = $documentQuery;
+	}
+
+	/**
+	 * @param string $name
+	 * @return AbstractBuilder|null
+	 */
+	public function getJoin($name)
+	{
+		return isset($this->joins[$name]) ? $this->joins[$name] : null;
+	}
+
+	/**
 	 * @api
 	 * @param string|array $json
 	 * @throws \RuntimeException
@@ -51,18 +81,32 @@ class JSONDecoder
 	public function getQuery($json)
 	{
 		$jsonQuery = is_string($json) ? json_decode($json, true) : $json;
-		if (!is_array($jsonQuery) || !isset($jsonQuery['model']))
+		if (!is_array($jsonQuery))
 		{
 			throw new \InvalidArgumentException('Argument is not a valid json query string', 999999);
 		}
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($jsonQuery['model']);
-		if (!$model)
+
+		if ($this->query === null)
 		{
-			throw new \RuntimeException('Invalid Parameter: model', 71000);
+
+			if (isset($jsonQuery['model']) && is_string($jsonQuery['model']))
+			{
+				$model = $this->getDocumentServices()->getModelManager()->getModelByName($jsonQuery['model']);
+			}
+			else
+			{
+				$model = null;
+			}
+
+			if (!$model)
+			{
+				throw new \RuntimeException('Invalid Parameter: model', 71000);
+			}
+			$this->query = new Query($this->getDocumentServices(), $model);
 		}
-		$query = new Query($this->getDocumentServices(), $model);
-		$this->configureQuery($query, $jsonQuery);
-		return $query;
+
+		$this->configureQuery($this->query, $jsonQuery);
+		return $this->query;
 	}
 
 	/**
@@ -196,7 +240,6 @@ class JSONDecoder
 		}
 	}
 
-
 	/**
 	 * @param PredicateBuilder $predicateBuilder
 	 * @param string $junction
@@ -257,10 +300,16 @@ class JSONDecoder
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid predicate op: ' . $predicateJSON['op'], 999999);
+				$argument = array('predicateJSON' => $predicateJSON,
+					'JSONDecoder' => $this, 'predicateBuilder' => $predicateBuilder);
+				$fragment = $this->query->getDbProvider()->getCustomSQLFragment($argument);
+				if ($fragment)
+				{
+					return $fragment;
+				}
 			}
 		}
-		throw new \RuntimeException('Invalid predicate', 999999);
+		throw new \RuntimeException('Invalid predicate: ' . json_encode($predicateJSON), 999999);
 	}
 
 	/**

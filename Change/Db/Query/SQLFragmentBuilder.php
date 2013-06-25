@@ -482,6 +482,37 @@ class SQLFragmentBuilder
 		$pre->setNot(true);
 		return $pre;
 	}
+
+	/**
+	 * @param SelectQuery|SubQuery $subQuery
+	 * @throws \InvalidArgumentException
+	 * @return Predicates\Exists
+	 */
+	public function exists($subQuery)
+	{
+		if ($subQuery instanceof SelectQuery)
+		{
+			$subQuery = $this->subQuery($subQuery);
+		}
+
+		if ($subQuery instanceof SubQuery)
+		{
+			return new Predicates\Exists($subQuery);
+		}
+		throw new \InvalidArgumentException('Could not convert argument 1 to an SubQuery', 42012);
+	}
+
+	/**
+	 * @param SelectQuery|SubQuery $subQuery
+	 * @throws \InvalidArgumentException
+	 * @return Predicates\Exists
+	 */
+	public function notExists($subQuery)
+	{
+		$exists = $this->exists($subQuery);
+		$exists->setNot(true);
+		return $exists;
+	}
 	
 	/**
 	 * @api
