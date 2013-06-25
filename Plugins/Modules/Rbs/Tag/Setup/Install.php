@@ -39,7 +39,7 @@ class Install
 		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
 
 		// Create table tag <-> doc
-		$td = $schemaManager->newTableDefinition('rbs_tag_rel_document');
+		$td = $schemaManager->newTableDefinition('rbs_tag_document');
 		$tagIdField = new FieldDefinition('tag_id');
 		$tagIdField->setType(FieldDefinition::INTEGER);
 		$td->addField($tagIdField);
@@ -52,18 +52,16 @@ class Install
 		$key->addField($docIdField);
 		$td->addKey($key);
 		$schemaManager->createOrAlterTable($td);
-/* TODO
+
 		// Create table tag_search
 		$td = $schemaManager->newTableDefinition('rbs_tag_search');
 		$tagIdField = new FieldDefinition('tag_id');
 		$tagIdField->setType(FieldDefinition::INTEGER);
 		$td->addField($tagIdField);
-		$tagPathField = new FieldDefinition('tag_path');
-		$tagPathField->setType(FieldDefinition::VARCHAR);
-		$tagPathField->setLength(255);
-		$td->addField($tagPathField);
+		$searchTagIdField = new FieldDefinition('search_tag_id');
+		$searchTagIdField->setType(FieldDefinition::INTEGER);
+		$td->addField($searchTagIdField);
 		$schemaManager->createOrAlterTable($td);
-*/
 	}
 
 	/**

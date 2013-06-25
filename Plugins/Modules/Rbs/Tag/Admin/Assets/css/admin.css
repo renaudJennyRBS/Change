@@ -35,13 +35,18 @@ span.tag {
 	background: white;
 	padding: 2px 5px;
 	margin: 0 2px 2px 0;
-	font-size: 75%;
+	font-size: 80%;
 	height: 14px;
 	line-height: 14px;
 	border-radius: 3px;
 	color: white;
-	text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 	text-transform: uppercase;
+	/*
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+	text-transform: uppercase;
+	color: rgba(0,0,0,0.6);
+	*/
 }
 
 span.tag.new {
