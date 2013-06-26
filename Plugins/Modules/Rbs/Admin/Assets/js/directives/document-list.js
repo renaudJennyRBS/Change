@@ -370,7 +370,7 @@
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
-					scope.viewMode = Settings.get('documentListViewMode', gridModeAvailable ? 'grid' : 'list');
+					scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope;
