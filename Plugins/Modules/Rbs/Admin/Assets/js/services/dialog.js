@@ -7,7 +7,8 @@
 	app.provider('RbsChange.Dialog', function RbsChangeDialogProvider() {
 
 		$('body').append('<div id="embedded-modal-backdrop"/>');
-		var $embeddedModalBackdrop = $('#embedded-modal-backdrop');
+		var	$embeddedModalBackdrop = $('#embedded-modal-backdrop'),
+			buttonIdCounter = 0;
 
 		this.$get = ['$filter', '$compile', '$timeout', '$rootScope', '$q', 'RbsChange.Utils', function ($filter, $compile, $timeout, $rootScope, $q, Utils) {
 
@@ -79,8 +80,9 @@
 						$el.popover('destroy');
 					});
 
-					var uidOK = $.getUID();
-					var uidCancel = $.getUID();
+					buttonIdCounter++;
+					var uidOK = "ok_button_" + buttonIdCounter;
+					var uidCancel = "cancel_button_" + buttonIdCounter;
 
 					message += '<hr/>' +
 						options.question +
