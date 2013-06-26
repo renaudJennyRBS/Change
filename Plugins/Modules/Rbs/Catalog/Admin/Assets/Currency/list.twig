@@ -1,6 +1,6 @@
 <div data-ng-controller="Rbs_Catalog_Currency_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.catalog.document.currency-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Catalog_Currency" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Catalog_Currency" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
 		<a href="Rbs/Catalog/Currency/new">{{ i18n('m.rbs.catalog.document.currency-create', ['ucf']) }}</a>
@@ -8,7 +8,7 @@
 
 	<rbs-document-list data-dlid="DLRbsCatalogCurrency"
 	               model="Rbs_Catalog_Currency"
-	               query="query">
+	               filter-query="query">
 		<column name="label" primary="true"></column>
 		<column name="code" width="90px"></column>
 		<column name="symbol" width="90px"></column>

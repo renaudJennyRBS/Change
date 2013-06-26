@@ -1,6 +1,6 @@
 <div data-ng-controller="Rbs_Collection_Collection_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.collection.document.collection-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Collection_Collection" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Collection_Collection" filter-query="query" text-search="textSearch"></search-filters>
 	<div>
 		<a href="Rbs/Collection/Collection/new">{{ i18n('m.rbs.collection.document.collection-create', ['ucf']) }}</a>
 	</div>
@@ -8,7 +8,7 @@
 	<rbs-document-list data-dlid="DLCollection1"
 	               publishable="true"
 	               model="Rbs_Collection_Collection"
-	               query="query">
+	               filter-query="query">
 		<column name="label" primary="true"></column>
 		<column name="code"></column>
 	</rbs-document-list>

@@ -20,12 +20,12 @@
 	</div>
 	<div class="clearfix"></div>
 
-	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="{{ query.model }}" filter-query="query" text-search="textSearch"></search-filters>
 
 	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               publishable="true"
 	               model="{{ query.model }}"
-	               query="query" picker="picker">
+	               filter-query="query" picker="picker">
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true">
 			{% if (query.multiple) %}

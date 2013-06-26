@@ -20,11 +20,11 @@
 	</div>
 	<div class="clearfix"></div>
 
-	<search-filters model="{{ query.model }}" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="{{ query.model }}" filter-query="query" text-search="textSearch"></search-filters>
 
 	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               model="{{ query.model }}"
-	               query="query" picker="picker" use-properties="color userTag children">
+	               filter-query="query" picker="picker" use-properties="color userTag children">
 		<column name="label" primary="true">
 			{% if (query.multiple) %}
 			<span class="pull-right">
