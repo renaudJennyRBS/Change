@@ -40,11 +40,12 @@
 		'RbsChange.NotificationCenter',
 		'RbsChange.Device',
 		'RbsChange.Settings',
+		'RbsChange.FormsManager',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
+	function documentListDirectiveFn ($filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager) {
 
 		/**
 		 * Initialize columns for <rbs-document-list/>
@@ -221,7 +222,11 @@
 						if (tAttrs.tree) {
 							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							if (tAttrs.cascadeEdit) {
+								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEditFn(doc)"><strong>' + column.content + '</strong></a></div></td>');
+							} else {
+								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							}
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
@@ -254,10 +259,17 @@
 						if (actionsCount) {
 							html += actionDivider;
 						}
-						html +=
-							'<a href data-ng-href="(= doc | documentURL =)">' +
-							i18n.trans('m.rbs.admin.admin.js.edit') +
-							'</a>';
+						if (tAttrs.cascadeEdit) {
+							html +=
+								'<a href="javascript:;" ng-click="cascadeEditFn(doc)">' +
+									i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a>';
+						} else {
+							html +=
+								'<a href ng-href="(= doc | documentURL =)">' +
+									i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a>';
+						}
 						actionsCount++;
 
 						if (actionsCount) {
@@ -278,10 +290,6 @@
 					// opening this menu.
 					// (see showQuickActions() below, in the directive's linking function).
 					$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
-
-					if (column.tags === 'true') {
-						$td.append('<div class="tags"><span class="tag red">image</span><span class="tag">logo</span><span class="tag green">marque</span></div>');
-					}
 				}
 
 				$td.attr('ng-if', "! isPreview(doc)");
@@ -336,7 +344,8 @@
 				filterQuery : '=',
 				loadQuery   : '=',
 				picker      : '=',
-				onPreview   : '&'
+				onPreview   : '&',
+				cascadeEdit : '@'
 			},
 
 
@@ -379,6 +388,24 @@
 					scope.$watch('viewMode', function (value) {
 						Settings.set('documentListViewMode', value);
 					}, true);
+
+
+
+					scope.cascadeEditFn = function (doc) {
+						FormsManager.cascade(
+							doc.model.replace(/_/g, '/') + '/form.twig',
+							{
+								'id'   : doc.id,
+								'LCID' : (doc.LCID || scope.language)
+							},
+							function (editedDoc) {
+								if (!angular.equals(doc, editedDoc)) {
+									console.log("Document is been edited...")
+								}
+							},
+							scope.cascadeEdit
+						);
+					};
 
 
 					//

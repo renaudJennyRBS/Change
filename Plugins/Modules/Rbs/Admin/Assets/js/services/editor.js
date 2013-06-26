@@ -424,7 +424,7 @@
 						Breadcrumb.ready().then(function () {
 							callback.apply(scope);
 							$rootScope.$broadcast(Events.EditorReady, {
-								"scope"     : scope,
+								"scope"    : scope,
 								"document" : scope.document
 							});
 							// Since this callback (or the event handlers) could have modified 'scope.document'

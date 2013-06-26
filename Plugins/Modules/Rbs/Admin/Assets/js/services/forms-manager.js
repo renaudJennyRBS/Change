@@ -74,6 +74,7 @@
 				if (queryParam && queryParam.lang) {
 					scope.language = queryParam.lang;
 				}
+				scope.section = '';
 				// Compile the HTML and insert it into the #workspace.
 				// The insertion of new content is a bit tricky. We need to:
 				// * Create a new Element with jQuery,
@@ -114,7 +115,6 @@
 			var	ctx = cascadeContextStack.pop(),
 				$form;
 
-			console.log("uncascade(): cascadeContext=", ctx);
 			if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
 				ctx.saveCallback(doc);
 			}
@@ -230,7 +230,7 @@
 						q.resolve(REST.newResource(rest, scope.language));
 					});
 				} else {
-					promise = REST.resource(rest, params.id, params.LCID); // || 'fr_FR'); // FIXME
+					promise = REST.resource(rest, params.id, params.LCID);
 				}
 
 			} else {
@@ -253,14 +253,13 @@
 			}
 
 			function getSection () {
-				return $routeParams.section || $location.search()['section'] || '';
+				return self.isCascading() ? '' : ($routeParams.section || $location.search()['section'] || '');
 			}
 
 			function resourceReadyCallback (doc) {
 
 				Loading.stop();
-				scope.section = self.isCascading() ? '' : getSection();
-
+				scope.section = getSection();
 				scope.document = doc;
 				scope.isReferenceLanguage = (scope.document.refLCID === scope.document.LCID);
 				scope.isLocalized = angular.isDefined(scope.document.refLCID);
