@@ -129,7 +129,7 @@ class DeleteListener
 		}
 
 		$document = $event->getDocument();
-		if ($document === null|| ($model = $document->getDocumentModel()) === null || $model->isStateless())
+		if ($document === null || ($model = $document->getDocumentModel()) === null || $model->isStateless())
 		{
 			return;
 		}
@@ -141,124 +141,169 @@ class DeleteListener
 		//Remove Metas
 		$documentServices->getDocumentManager()->saveMetas($document, null);
 
-		//Remove Relations
-		$dbp = $documentServices->getApplicationServices()->getDbProvider();
-		$modificationDate = new \DateTime();
-		foreach ($model->getInverseProperties() as $property)
+		$jobManager = new \Change\Job\JobManager();
+		$jobManager->setApplicationServices($documentServices->getApplicationServices());
+		$jobManager->setDocumentServices($documentServices);
+
+		$jobManager->createNewJob('Change_Document_CleanUp',
+			array('id' => $document->getId(), 'model' => $document->getDocumentModelName()));
+	}
+
+	public function onCleanUp(\Change\Job\Event $event)
+	{
+		$job = $event->getJob();
+		$documentServices = $event->getDocumentServices();
+		$documentId = $job->getArgument('id');
+		$modelName = $job->getArgument('model');
+		if (!is_numeric($documentId) || !is_string($modelName))
 		{
-			$relModel = $documentServices->getModelManager()->getModelByName($property->getRelatedDocumentType());
-			if ($relModel)
+			$event->failed('Invalid Arguments ' . $documentId . ', ' . $modelName);
+			return;
+		}
+
+		$model = $documentServices->getModelManager()->getModelByName($modelName);
+		if (!$model)
+		{
+			$event->failed('Document Model ' . $modelName . ' not found');
+			return;
+		}
+
+
+		$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+
+			//Remove Relations
+			$dbp = $documentServices->getApplicationServices()->getDbProvider();
+			$modificationDate = new \DateTime();
+			foreach ($model->getInverseProperties() as $property)
 			{
-				$relProp = $relModel->getProperty($property->getRelatedPropertyName());
-				if ($relProp)
+				$relModel = $documentServices->getModelManager()->getModelByName($property->getRelatedDocumentType());
+				if ($relModel)
 				{
-					if ($relProp->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+					$relProp = $relModel->getProperty($property->getRelatedPropertyName());
+					if ($relProp)
 					{
-						//Decrement counter in document table
-						$subSelect = $dbp->getNewQueryBuilder();
-						$fb = $subSelect->getFragmentBuilder();
-
-						$subSelect->select($fb->getDocumentColumn('id'));
-						$subSelect->from($fb->getDocumentRelationTable($relModel->getRootName()));
-						$subSelect->where(
-							$fb->logicAnd(
-								$fb->eq($fb->getDocumentColumn('relatedid'), $fb->number($document->getId())),
-								$fb->eq($fb->getDocumentColumn('relname'), $fb->string($relProp->getName()))
-							)
-						);
-						$subQuery = $subSelect->query();
-
-						if ($relModel->isLocalized())
+						if ($relProp->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
 						{
-							$qb = $dbp->getNewStatementBuilder();
-							$fb = $qb->getFragmentBuilder();
-							$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
-							$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
-							$uq = $qb->updateQuery();
-							$uq->bindParameter('modificationDate', $modificationDate);
-							$uq->execute();
-						}
-
-						$qb = $dbp->getNewStatementBuilder();
-						$fb = $qb->getFragmentBuilder();
-						$qb->update($fb->getDocumentTable($relModel->getRootName()));
-						$column = $fb->getDocumentColumn($relProp->getName());
-
-						$qb->assign($column, $fb->subtraction($column, $fb->number(1)));
-						if (!$relModel->isLocalized())
-						{
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
-						}
-						$qb->where(
-							$fb->logicAnd(
-								$fb->gte($column, $fb->number(1)),
-								$fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery))
-							)
-						);
-
-						$uq = $qb->updateQuery();
-						if (!$relModel->isLocalized())
-						{
-							$uq->bindParameter('modificationDate', $modificationDate);
-						}
-						$uq->execute();
-
-						//Delete relation
-						$qb = $dbp->getNewStatementBuilder();
-						$fb = $qb->getFragmentBuilder();
-						$qb->delete($fb->getDocumentRelationTable($relModel->getRootName()));
-						$qb->where(
-							$fb->logicAnd(
-								$fb->eq($fb->getDocumentColumn('relatedid'), $fb->number($document->getId())),
-								$fb->eq($fb->getDocumentColumn('relname'), $fb->string($relProp->getName()))
-							)
-						);
-						$qb->deleteQuery()->execute();
-					}
-					elseif ($relProp->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
-					{
-						if ($relModel->isLocalized())
-						{
+							//Decrement counter in document table
 							$subSelect = $dbp->getNewQueryBuilder();
 							$fb = $subSelect->getFragmentBuilder();
-							$column = $fb->getDocumentColumn($relProp->getName());
 
 							$subSelect->select($fb->getDocumentColumn('id'));
-							$subSelect->from($fb->getDocumentTable($relModel->getRootName()));
-							$subSelect->where($fb->eq($column, $fb->number($document->getId())));
+							$subSelect->from($fb->getDocumentRelationTable($relModel->getRootName()));
+							$subSelect->where(
+								$fb->logicAnd(
+									$fb->eq($fb->getDocumentColumn('relatedid'), $fb->number($documentId)),
+									$fb->eq($fb->getDocumentColumn('relname'), $fb->string($relProp->getName()))
+								)
+							);
 							$subQuery = $subSelect->query();
+
+							if ($relModel->isLocalized())
+							{
+								$qb = $dbp->getNewStatementBuilder();
+								$fb = $qb->getFragmentBuilder();
+								$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
+								$qb->assign($fb->getDocumentColumn('modificationDate'),
+									$fb->dateTimeParameter('modificationDate'));
+								$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
+								$uq = $qb->updateQuery();
+								$uq->bindParameter('modificationDate', $modificationDate);
+								$uq->execute();
+							}
 
 							$qb = $dbp->getNewStatementBuilder();
 							$fb = $qb->getFragmentBuilder();
-							$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
-							$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
+							$qb->update($fb->getDocumentTable($relModel->getRootName()));
+							$column = $fb->getDocumentColumn($relProp->getName());
+
+							$qb->assign($column, $fb->subtraction($column, $fb->number(1)));
+							if (!$relModel->isLocalized())
+							{
+								$qb->assign($fb->getDocumentColumn('modificationDate'),
+									$fb->dateTimeParameter('modificationDate'));
+							}
+							$qb->where(
+								$fb->logicAnd(
+									$fb->gte($column, $fb->number(1)),
+									$fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery))
+								)
+							);
+
 							$uq = $qb->updateQuery();
-							$uq->bindParameter('modificationDate', $modificationDate);
+							if (!$relModel->isLocalized())
+							{
+								$uq->bindParameter('modificationDate', $modificationDate);
+							}
+							$uq->execute();
+
+							//Delete relation
+							$qb = $dbp->getNewStatementBuilder();
+							$fb = $qb->getFragmentBuilder();
+							$qb->delete($fb->getDocumentRelationTable($relModel->getRootName()));
+							$qb->where(
+								$fb->logicAnd(
+									$fb->eq($fb->getDocumentColumn('relatedid'), $fb->number($documentId)),
+									$fb->eq($fb->getDocumentColumn('relname'), $fb->string($relProp->getName()))
+								)
+							);
+							$qb->deleteQuery()->execute();
+						}
+						elseif ($relProp->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
+						{
+							if ($relModel->isLocalized())
+							{
+								$subSelect = $dbp->getNewQueryBuilder();
+								$fb = $subSelect->getFragmentBuilder();
+								$column = $fb->getDocumentColumn($relProp->getName());
+
+								$subSelect->select($fb->getDocumentColumn('id'));
+								$subSelect->from($fb->getDocumentTable($relModel->getRootName()));
+								$subSelect->where($fb->eq($column, $fb->number($documentId)));
+								$subQuery = $subSelect->query();
+
+								$qb = $dbp->getNewStatementBuilder();
+								$fb = $qb->getFragmentBuilder();
+								$qb->update($fb->getDocumentI18nTable($relModel->getRootName()));
+								$qb->assign($fb->getDocumentColumn('modificationDate'),
+									$fb->dateTimeParameter('modificationDate'));
+								$qb->where($fb->in($fb->getDocumentColumn('id'), $fb->subQuery($subQuery)));
+								$uq = $qb->updateQuery();
+								$uq->bindParameter('modificationDate', $modificationDate);
+								$uq->execute();
+							}
+
+							$qb = $dbp->getNewStatementBuilder();
+							$fb = $qb->getFragmentBuilder();
+							$qb->update($fb->getDocumentTable($relModel->getRootName()));
+							$column = $fb->getDocumentColumn($relProp->getName());
+							$qb->assign($column, $fb->number(null));
+							if (!$relModel->isLocalized())
+							{
+								$qb->assign($fb->getDocumentColumn('modificationDate'),
+									$fb->dateTimeParameter('modificationDate'));
+							}
+							$qb->where($fb->eq($column, $fb->number($documentId)));
+							$uq = $qb->updateQuery();
+							if (!$relModel->isLocalized())
+							{
+								$uq->bindParameter('modificationDate', $modificationDate);
+							}
+
 							$uq->execute();
 						}
-
-						$qb = $dbp->getNewStatementBuilder();
-						$fb = $qb->getFragmentBuilder();
-						$qb->update($fb->getDocumentTable($relModel->getRootName()));
-						$column = $fb->getDocumentColumn($relProp->getName());
-						$qb->assign($column, $fb->number(null));
-						if (!$relModel->isLocalized())
-						{
-							$qb->assign($fb->getDocumentColumn('modificationDate'), $fb->dateTimeParameter('modificationDate'));
-						}
-						$qb->where($fb->eq($column, $fb->number($document->getId())));
-						$uq = $qb->updateQuery();
-						if (!$relModel->isLocalized())
-						{
-							$uq->bindParameter('modificationDate', $modificationDate);
-						}
-
-						$uq->execute();
 					}
 				}
 			}
+			$event->success();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
 		}
 	}
 }
