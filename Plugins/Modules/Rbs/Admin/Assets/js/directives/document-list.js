@@ -921,14 +921,17 @@
 					}
 
 
-					scope.$watch('filterQuery', function (query, oldValue) {
+					function watchQueryFn (query, oldValue) {
 						if (query !== oldValue) {
 							queryObject = angular.copy(query);
 							reload();
 						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();
 						}
-					}, true);
+					}
+
+					scope.$watch('filterQuery', watchQueryFn, true);
+					scope.$watch('loadQuery', watchQueryFn, true);
 
 
 					var lastQuickActionsShown = null;
