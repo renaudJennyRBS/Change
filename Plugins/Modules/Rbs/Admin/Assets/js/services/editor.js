@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST, Events) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -34,7 +34,7 @@
 				FormsManager.stopEditSession();
 			});
 
-			scope.$on('Change:UpdateDocumentProperties', function onUpdateDocumentPropertiesFn (event, properties) {
+			scope.$on(Events.EditorUpdateDocumentProperties, function onUpdateDocumentPropertiesFn (event, properties) {
 				angular.extend(scope.document, properties);
 				scope.submit();
 			});
@@ -111,13 +111,12 @@
 			function saveSuccessHandler (docs) {
 				var	doc = docs[0],
 					hadCorrection = scope.document.hasCorrection(),
-					postSavePromises = [],
-					tags;
+					postSavePromises = [];
 
 				scope.original = angular.copy(doc);
 
 				if (doc.hasCorrection() !== hadCorrection) {
-					scope.$emit('Change:DocumentUpdated', doc);
+					scope.$emit(Events.EditorDocumentUpdated, doc);
 				}
 
 				clearInvalidFields();
@@ -134,12 +133,13 @@
 					}
 				}
 
-				// Check for tags to assign to the document.
-				tags = scope.document.META$.tags;
-				if (angular.isArray(tags) && tags.length) {
-					console.log("Tags to assign: ", tags.length);
-					postSavePromises.push(REST.tags.setDocumentTags(scope.document, tags));
-				}
+				// Broadcast an event before the document is saved.
+				// The "promises" array can be filled in with promises that will be resolved AFTER
+				// the document is saved.
+				$rootScope.$broadcast(Events.EditorPostSave, {
+					"document" : scope.document,
+					"promises" : postSavePromises
+				});
 
 				function terminateSave () {
 					if (FormsManager.isCascading()) {
@@ -194,14 +194,11 @@
 
 				/**
 				 * Submits the changes to the server.
-				 * If there are files to upload and/or tags to create, they will be processed before
-				 * the document is really saved.
+				 * If there are files to upload, they will be processed before the document is really saved.
 				 */
 				function doSubmit () {
 					var	preSavePromises = [],
-						promise,
-						uploadCount = 0,
-						tagCreationCount = 0;
+						promise;
 
 					// Check for files to upload...
 					if (element) {
@@ -211,7 +208,6 @@
 								promise = scope.upload();
 								if (promise !== null) {
 									preSavePromises.push(promise);
-									uploadCount++;
 								}
 							} else {
 								throw new Error("Could not find 'upload()' method in imageUploader's scope.");
@@ -219,19 +215,19 @@
 						});
 					}
 
-					// Check for new tags to create...
-					angular.forEach(scope.document.META$.tags, function (tag) {
-						if (tag.unsaved) {
-							preSavePromises.push(REST.tags.create(tag));
-							tagCreationCount++;
-						}
+					// Broadcast an event before the document is saved.
+					// The "promises" array can be filled in with promises that will be resolved BEFORE
+					// the document is saved.
+					$rootScope.$broadcast(Events.EditorPreSave, {
+						"document" : scope.document,
+						"promises" : preSavePromises
 					});
 
 					if (preSavePromises.length) {
-						console.log("Files to upload: " + uploadCount + ". Tags to create: " + tagCreationCount);
+						console.log("PreSavePromises: ", preSavePromises.length);
 						$q.all(preSavePromises).then(executeSaveAction);
 					} else {
-						console.log("No files to upload nor tags to create.");
+						console.log("No files to upload.");
 						executeSaveAction();
 					}
 				}
@@ -427,8 +423,13 @@
 						// It will be called only when the Breadcrumb is fully loaded.
 						Breadcrumb.ready().then(function () {
 							callback.apply(scope);
-							// Since this callback could have modified 'scope.document' to initialize some
-							// default values, we need to re-synchronize 'scope.original' with 'scope.document'.
+							$rootScope.$broadcast(Events.EditorReady, {
+								"scope"     : scope,
+								"document" : scope.document
+							});
+							// Since this callback (or the event handlers) could have modified 'scope.document'
+							// to initialize some default values, we need to re-synchronize
+							// 'scope.original' with 'scope.document'.
 							scope.original = angular.copy(scope.document);
 						});
 					}
@@ -446,7 +447,8 @@
 		'RbsChange.ArrayUtils',
 		'RbsChange.Actions',
 		'RbsChange.Breadcrumb',
-		'RbsChange.REST'
+		'RbsChange.REST',
+		'RbsChange.Events'
 	];
 
 	app.service('RbsChange.Editor', changeEditorServiceFn);

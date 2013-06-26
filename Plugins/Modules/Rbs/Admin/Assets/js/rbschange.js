@@ -5,17 +5,19 @@
 	// Convenient hack to reverse jQuery collections.
 	$.fn.reverse = [].reverse;
 
-
-	//-------------------------------------------------------------------------
-	//
-	// AngularJS modules
-	//
-	//-------------------------------------------------------------------------
-
 	// Declares the main module and its dependencies.
 	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'ngMobile', 'OAuthModule']);
 
+
+	//-------------------------------------------------------------------------
+	//
+	// Constants.
+	//
+	//-------------------------------------------------------------------------
+
+
 	app.constant('RbsChange.Version', '4.0.0');
+
 
 	app.constant('RbsChange.Device', {
 		'isMultiTouch' : function () {
@@ -23,63 +25,47 @@
 		}
 	});
 
-	app.directive('rbsChangeVersion', ['RbsChange.Version', function (version) {
-		return {
-			'restrict'   : 'A',
-			link : function (scope, elm) {
-				elm.text('RBS Change version ' + version);
-			}
-		};
-	}]);
 
-	// === Routing and navigation ===
+	/**
+	 * Events used by Change, where you can attach your own handlers.
+	 */
+	app.constant('RbsChange.Events', {
+
+		// Raised when an Editor is ready (its document and the Breadcrumb are loaded).
+		// Single argument is the edited document.
+		'EditorReady'                    : 'Change:Editor.Ready',
+
+		// Raised when an Editor is about to save a Document.
+		// Single argument is a hash object with:
+		// - document: the edited document that is about to be saved
+		// - promises: array of promises that should be resolved before the save process is called.
+		'EditorPreSave'                  : 'Change:Editor.RegisterPreSavePromises',
+
+		// Raised when an Editor has just saved a Document.
+		// Single argument is a hash object with:
+		// - document: the edited document that has been saved
+		// - promises: array of promises that should be resolved before the edit process is terminated.
+		'EditorPostSave'                 : 'Change:Editor.RegisterPostSavePromises',
+
+		// The following events are less useful for you...
+		'EditorDocumentUpdated'          : 'Change:Editor.DocumentUpdated',
+		'EditorCorrectionChanged'        : 'Change:CorrectionChanged',
+		'EditorCorrectionRemoved'        : 'Change:CorrectionRemoved',
+		'EditorUpdateDocumentProperties' : 'Change:UpdateDocumentProperties'
+	});
+
+
+	//-------------------------------------------------------------------------
+	//
+	// Configuration.
+	//
+	//-------------------------------------------------------------------------
+
 
 	app.config(['$locationProvider', '$interpolateProvider', function ($locationProvider, $interpolateProvider) {
 		$locationProvider.html5Mode(true);
 		$interpolateProvider.startSymbol('(=').endSymbol('=)');
 	}]);
-
-
-	app.directive('todo', function () {
-		return {
-			'restrict'   : 'E',
-			'transclude' : true,
-			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">en cours de développement... </span></div>'
-		};
-	});
-
-
-	// UID generation
-	// FIXME Check if this is still used.
-
-	app.factory('RbsChange.UID', function () {
-
-		var uid = 0;
-
-		var getUID = function (prefix) {
-			prefix = prefix || 'RCUID-';
-			uid++;
-			return prefix + uid;
-		};
-
-		$.fn.getUID = function (prefix) {
-			prefix = prefix || 'RCUID-';
-			if (!this.length) {
-				return 0;
-			}
-			var fst = this.first(),
-			    id = fst.attr('id');
-			if (!id) {
-				id = getUID();
-				fst.attr('id', id);
-			}
-			return id;
-		};
-
-		return {
-			getUID: getUID
-		};
-	});
 
 
 	app.config(['OAuthServiceProvider', function (OAuth) {
@@ -94,11 +80,78 @@
 	}]);
 
 
+	//-------------------------------------------------------------------------
+	//
+	// Directives.
+	//
+	//-------------------------------------------------------------------------
+
+
+	app.directive('rbsChangeVersion', ['RbsChange.Version', function (version) {
+		return {
+			'restrict'   : 'A',
+			link : function (scope, elm) {
+				elm.text('RBS Change version ' + version);
+			}
+		};
+	}]);
+
+
+	app.directive('rbsTodo', function () {
+		return {
+			'restrict'   : 'E',
+			'transclude' : true,
+			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">en cours de développement... </span></div>'
+		};
+	});
+
+
+	/**
+	 * Directive that automatically gives the focus to an element when it is created/displayed.
+	 */
+	app.directive('autoFocus', function () {
+		var timer = null;
+
+		return function (scope, elm, attr) {
+			if (timer) {
+				clearTimeout(timer);
+			}
+
+			timer = setTimeout(function () {
+				elm.focus();
+				timer = null;
+			});
+		};
+	});
+
+
+	app.directive('focusOnShow', ['$timeout', function ($timeout) {
+		return function (scope, element, attr) {
+			if (attr.ngShow) {
+				scope.$watch(attr.ngShow, function (value) {
+					if (value) {
+						$timeout(function () {
+							jQuery(element).find(attr.focusOnShow).first().focus();
+						});
+					}
+				});
+			}
+		};
+	}]);
+
+
+	//-------------------------------------------------------------------------
+	//
+	// Controllers.
+	//
+	//-------------------------------------------------------------------------
+
+
 	/**
 	 * RootController
 	 *
-	 * This Controller is bound on the <body/> tag and is, thus, the "root Controller".
-	 * Mostly, it deals with user authentication.
+	 * This Controller is bound to the <body/> tag and is, thus, the "root Controller".
+	 * Mostly, it deals with user authentication and settings.
 	 */
 	app.controller('Change.RootController', ['$rootScope', '$filter', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $filter, $location, Settings, Utils, REST, OAuthService) {
 		var redirectUrl = null,
@@ -141,69 +194,6 @@
 		});
 
 	}]);
-
-
-
-	// === Global directives (custom HTML components) ===
-
-	/**
-	 * Directive that automatically gives the focus to an element when it is created/displayed.
-	 */
-	app.directive('autoFocus', function () {
-		var timer = null;
-
-		return function (scope, elm, attr) {
-			if (timer) {
-				clearTimeout(timer);
-			}
-
-			timer = setTimeout(function () {
-				elm.focus();
-				timer = null;
-			});
-		};
-	});
-
-	app.directive('focusOnShow', ['$timeout', function ($timeout) {
-
-		return function (scope, element, attr) {
-			if (attr.ngShow) {
-				scope.$watch(attr.ngShow, function (value) {
-					if (value) {
-						$timeout(function () {
-							jQuery(element).find(attr.focusOnShow).first().focus();
-						});
-					}
-				});
-			}
-		};
-
-	}]);
-
-
-
-	var uid = 0;
-
-    $.getUID = function (prefix) {
-		prefix = prefix || 'RCUID-';
-		uid++;
-		return prefix + uid;
-    };
-
-	$.fn.getUID = function (prefix) {
-		prefix = prefix || 'RCUID-';
-		if (!this.length) {
-			return 0;
-		}
-		var	fst = this.first(),
-			id = fst.attr('id');
-		if (!id) {
-			id = $.getUID();
-			fst.attr('id', id);
-		}
-		return id;
-	};
-
 
 
 	//=========================================================================

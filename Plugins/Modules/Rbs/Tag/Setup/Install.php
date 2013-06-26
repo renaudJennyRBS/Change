@@ -32,7 +32,7 @@ class Install
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Tag',
 			'\\Rbs\\Tag\\Admin\\Register');
 
-		$config->addPersistentEntry('Change/Events/Db',
+		$config->addPersistentEntry('Change/Events/Db/Rbs_Tag',
 			'\\Rbs\\Tag\\Db\\ListenerAggregate');
 
 		$appServices = new ApplicationServices($application);

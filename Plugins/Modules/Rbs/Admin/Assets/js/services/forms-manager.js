@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n) {
+	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events) {
 
 		var	$ws = $('#workspace'),
 			cascadeContextStack = [],
@@ -183,12 +183,11 @@
 			// The Editor listens to it and updates its 'document' Model consequently, using the properties that
 			// come as the event's parameters.
 			function correctionChangedHandler (event, properties) {
-				scope.$broadcast('Change:UpdateDocumentProperties', properties);
+				scope.$broadcast(Events.EditorUpdateDocumentProperties, properties);
 			}
-			scope.$on('Change:CorrectionChanged', correctionChangedHandler);
-			scope.$on('Change:CorrectionRemoved', correctionChangedHandler);
-
-			scope.$on('Change:DocumentUpdated', function (event, doc) {
+			scope.$on(Events.EditorDocumentUpdated, correctionChangedHandler);
+			scope.$on(Events.EditorCorrectionRemoved, correctionChangedHandler);
+			scope.$on(Events.EditorDocumentUpdated, function (event, doc) {
 				scope.document = angular.extend(scope.document, doc);
 			});
 

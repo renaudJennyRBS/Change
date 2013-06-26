@@ -1,7 +1,7 @@
 (function () {
 	var app = angular.module('RbsChange');
 
-	app.directive('correctionViewer', ['$timeout', 'RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', function ($timeout, Dialog, ArrayUtils, REST) {
+	app.directive('correctionViewer', ['$timeout', 'RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.Events', function ($timeout, Dialog, ArrayUtils, REST, Events) {
 		return {
 
 			restrict    : 'A',
@@ -73,7 +73,7 @@
 
 					Dialog.closeEmbedded().then(function () {
 						// Notify the parent scope (bound to the FormsManager)
-						scope.$emit('Change:CorrectionChanged', properties);
+						scope.$emit(Events.EditorCorrectionChanged, properties);
 					});
 
 				};
@@ -89,7 +89,7 @@
 
 					Dialog.closeEmbedded().then(function () {
 						// Notify the parent scope (bound to the FormsManager)
-						scope.$emit('Change:CorrectionRemoved', properties);
+						scope.$emit(Events.EditorCorrectionRemoved, properties);
 					});
 
 				};

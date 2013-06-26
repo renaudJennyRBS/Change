@@ -62,7 +62,7 @@
 					return Utils.isModel(this, modelName);
 				};
 
-				ChangeDocument.prototype.isNew = function (modelName) {
+				ChangeDocument.prototype.isNew = function () {
 					return Utils.isNew(this);
 				};
 
@@ -99,7 +99,7 @@
 				};
 
 				ChangeDocument.prototype.getTagsUrl = function () {
-					return this.META$.links['self'].href + '/tags/';
+					return this.META$.links['self'] ? this.META$.links['self'].href + '/tags/' : null;
 				};
 
 				ChangeDocument.prototype.getTags = function () {
@@ -107,12 +107,14 @@
 						this.META$.tags = [];
 						var doc = this;
 
-						$http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn))
-						.success(function (result) {
-							angular.forEach(result.resources, function (r) {
-								doc.META$.tags.push(r);
+						if (doc.getTagsUrl() !== null) {
+							$http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn))
+							.success(function (result) {
+								angular.forEach(result.resources, function (r) {
+									doc.META$.tags.push(r);
+								});
 							});
-						});
+						}
 					}
 					return this.META$.tags;
 				};
@@ -362,21 +364,16 @@
 				}
 
 
-				function getIdArray (data) {
-					var ids = [];
-					angular.forEach(data, function (item) {
-						ids.push(item.id);
-					});
-					return ids;
-				}
-
-
 				var lastCreatedDocument = null, REST;
 
 
 				// Public API of the REST service.
 
 				REST = {
+
+					'getHttpConfig' : function () {
+						return getHttpConfig();
+					},
 
 					'transformObjectToChangeDocument' : function (object) {
 						return angular.extend(new ChangeDocument(), object);
@@ -1107,6 +1104,19 @@
 							$http.post(doc.getTagsUrl(), {"ids":getIdArray(tags)}, getHttpConfig())
 								.success(function (data) {
 									console.log("REST.setDocumentTags(): data=", data);
+									resolveQ(q, doc);
+								})
+								.error(function errorCallback (data, status) {
+									data.httpStatus = status;
+									rejectQ(q, data);
+								});
+						},
+
+						addTag : function (doc, tag) {
+							var q = $q.defer();
+							$http.post(doc.getTagsUrl(), {"addIds":[tag]}, getHttpConfig())
+								.success(function (data) {
+									console.log("REST.addTag(): data=", data);
 									resolveQ(q, doc);
 								})
 								.error(function errorCallback (data, status) {

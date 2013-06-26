@@ -21,9 +21,9 @@ class Register implements ListenerAggregateInterface
 		{
 			$body = array('
 	<script type="text/javascript" src="Rbs/Tag/js/admin.js">​</script>
+	<script type="text/javascript" src="Rbs/Tag/js/directives.js">​</script>
 	<script type="text/javascript" src="Rbs/Tag/Tag/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Tag/Tag/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Tag/js/tag-selector.js">​</script>');
+	<script type="text/javascript" src="Rbs/Tag/Tag/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$header = array('

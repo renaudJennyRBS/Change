@@ -28,7 +28,7 @@
 
 	app.directive('rbsDocumentList', [
 		'$filter',
-		'$q',
+		'$rootScope',
 		'$location',
 		'RbsChange.i18n',
 		'RbsChange.REST',
@@ -44,7 +44,7 @@
 	]);
 
 
-	function documentListDirectiveFn ($filter, $q, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
+	function documentListDirectiveFn ($filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
 
 		/**
 		 * Initialize columns for <rbs-document-list/>
@@ -550,6 +550,7 @@
 					scope.predefinedPageSizes = PAGINATION_PAGE_SIZES;
 					scope.pages = [];
 					scope.currentPage = 0;
+					scope.currentTag = 0;
 
 					// Keep pagination data up-to-date.
 					scope.$watch(
@@ -706,6 +707,8 @@
 							'column' : columnNames
 						};
 
+						// TODO Reorganize this to use a query for tree and/or tag
+
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
@@ -732,7 +735,22 @@
 								}
 							} else if (! attrs.parentProperty) {
 								Loading.start();
-								promise = REST.collection(attrs.model, params);
+
+								if (scope.currentFilter) {
+									var query = {
+										"model" : attrs.model,
+										"where" : {
+											"and" : []
+										}
+									};
+									$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
+										"filter" : scope.currentFilter,
+										"predicates" : query.where.and
+									});
+									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
+								} else {
+									promise = REST.collection(attrs.model, params);
+								}
 							}
 						}
 
@@ -774,6 +792,7 @@
 
 					scope.location = $location;
 					currentPath = scope.location.path();
+
 					scope.$watch('location.search()', function locationSearchFn (search) {
 
 						// Are we leaving this place?
@@ -785,7 +804,9 @@
 						var	offset = parseInt(search.offset || 0, 10),
 							limit  = parseInt(search.limit || PAGINATION_DEFAULT_LIMIT, 10),
 							paginationChanged, sortChanged = false,
-							desc = (search.desc === 'true');
+							desc = (search.desc === 'true'),
+							filter = search.filter,
+							filterChanged = scope.currentFilter !== filter;
 
 						paginationChanged = scope.pagination.offset !== offset || scope.pagination.limit !== limit;
 						scope.pagination.offset = offset;
@@ -800,7 +821,9 @@
 						}
 						scope.sort.descending = desc;
 
-						if (paginationChanged || sortChanged) {
+						scope.currentFilter = filter;
+
+						if (paginationChanged || sortChanged || filterChanged) {
 							console.log("reload 2");
 							reload();
 						}
@@ -877,7 +900,7 @@
 							}
 						];
 						if (attrs.model) {
-							queryObject.model = attrs.model;
+							query.model = attrs.model;
 						}
 						return query;
 					}

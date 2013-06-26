@@ -36,21 +36,15 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 
 			$stmt = $appServices->getDbProvider()->getNewStatementBuilder();
 			$fb = $stmt->getFragmentBuilder();
+
 			$stmt->insert($fb->table('rbs_tag_search'), 'tag_id', 'search_tag_id');
 			$stmt->addValues($fb->integerParameter('tagId'), $fb->integerParameter('searchTagId'));
 			$iq = $stmt->insertQuery();
 
-			$iq->bindParameter('tagId', $tag->getId());
-			$iq->bindParameter('searchTagId', $tag->getId());
-			$iq->execute();
-
-			foreach ($tag->getChildren() as $childTag)
+			foreach ($tag->getSearchTagIds() as $searchTagId)
 			{
-				$stmt->insert($fb->table('rbs_tag_search'), 'tag_id', 'search_tag_id');
-				$stmt->addValues($fb->integerParameter('tagId'), $fb->integerParameter('childTagId'));
-				$iq = $stmt->insertQuery();
-				$iq->bindParameter('tagId', $tag->getId());
-				$iq->bindParameter('childTagId', $childTag->getId());
+				$iq->bindParameter('tagId', $searchTagId);
+				$iq->bindParameter('searchTagId', $tag->getId());
 				$iq->execute();
 			}
 
@@ -84,18 +78,19 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 			$fb = $stmt->getFragmentBuilder();
 
 			$stmt->delete($fb->table('rbs_tag_search'));
-			$stmt->where($fb->eq($fb->column('tag_id'), $fb->integerParameter('tagId')));
+			$stmt->where($fb->eq($fb->column('search_tag_id'), $fb->integerParameter('searchTagId')));
 			$dq = $stmt->deleteQuery();
-			$dq->bindParameter('tagId', $tag->getId());
+			$dq->bindParameter('searchTagId', $tag->getId());
 			$dq->execute();
 
-			foreach ($tag->getChildren() as $childTag)
+			$stmt->insert($fb->table('rbs_tag_search'), 'tag_id', 'search_tag_id');
+			$stmt->addValues($fb->integerParameter('tagId'), $fb->integerParameter('searchTagId'));
+			$iq = $stmt->insertQuery();
+
+			foreach ($tag->getSearchTagIds() as $searchTagId)
 			{
-				$stmt->insert($fb->table('rbs_tag_search'), 'tag_id', 'search_tag_id');
-				$stmt->addValues($fb->integerParameter('tagId'), $fb->integerParameter('childTagId'));
-				$iq = $stmt->insertQuery();
-				$iq->bindParameter('tagId', $tag->getId());
-				$iq->bindParameter('childTagId', $childTag->getId());
+				$iq->bindParameter('tagId', $searchTagId);
+				$iq->bindParameter('searchTagId', $tag->getId());
 				$iq->execute();
 			}
 
@@ -106,6 +101,19 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 			throw $transactionManager->rollBack($e);
 		}
 
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getSearchTagIds()
+	{
+		$ids = array($this->getId());
+		foreach ($this->getChildren() as $subTag)
+		{
+			$ids = array_merge($ids, $subTag->getSearchTagIds());
+		}
+		return $ids;
 	}
 
 }

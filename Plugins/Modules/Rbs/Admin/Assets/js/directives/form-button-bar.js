@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('formButtonBar', ['RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', function (Dialog, Utils, Actions, Breadcrumb, Settings) {
+	app.directive('formButtonBar', ['RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', function (Dialog, Utils, Actions, Breadcrumb, Settings, Events) {
 
 		return {
 			restrict: 'E',
@@ -90,7 +90,7 @@
 							'$scope'  : scope
 						}
 					).then(function (data) {
-							scope.$emit('Change:DocumentUpdated', data[0]);
+							scope.$emit(Events.EditorDocumentUpdated, data[0]);
 						});
 				};
 
