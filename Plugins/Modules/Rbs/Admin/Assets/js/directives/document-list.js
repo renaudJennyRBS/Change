@@ -333,9 +333,10 @@
 
 			scope : {
 				// Isolated scope.
-				query     : '=',
-				picker    : '=',
-				onPreview : '&'
+				filterQuery : '=',
+				loadQuery   : '=',
+				picker      : '=',
+				onPreview   : '&'
 			},
 
 
@@ -848,6 +849,14 @@
 						}
 					}
 
+
+					//---------------------------------------------------------
+					//
+					// Initial load.
+					//
+					//---------------------------------------------------------
+
+
 					if (attrs.tree) {
 						// If in a tree context, reload the list when the Breadcrumb is ready
 						// and each time it changes.
@@ -877,9 +886,15 @@
 							});
 						});
 					} else {
-						// Not in a tree? Just load the flat list.
-						console.log("reload 5");
-						reload();
+						// Not in a tree.
+
+						// If a "load-query" attribute, the list should not be loaded as is.
+						if (! elm.is('[load-query]')) {
+							// ? Just load the flat list.
+							console.log("reload 5");
+							reload();
+						}
+
 					}
 
 
@@ -906,13 +921,11 @@
 					}
 
 
-					scope.$watch('query', function (query, oldValue) {
+					scope.$watch('filterQuery', function (query, oldValue) {
 						if (query !== oldValue) {
 							queryObject = angular.copy(query);
-							console.log("reload 7");
 							reload();
 						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
-							console.log("reload 8");
 							reload();
 						}
 					}, true);
