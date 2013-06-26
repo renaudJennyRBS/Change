@@ -331,7 +331,7 @@ class BaseDocumentClass
 	{
 		if ($type === 'Float' || $type === 'Decimal')
 		{
-			return 'abs(floatval(' . $oldVarName . ') - ' . $newVarName . ') <= 0.0001';
+			return '$this->compareFloat(' . $oldVarName . ', ' . $newVarName . ')';
 		}
 		elseif ($type === 'Date' || $type === 'DateTime')
 		{
@@ -353,7 +353,7 @@ class BaseDocumentClass
 	{
 		if ($type === 'Float' || $type === 'Decimal')
 		{
-			return 'abs(floatval(' . $oldVarName . ') - ' . $newVarName . ') > 0.0001';
+			return '!$this->compareFloat(' . $oldVarName . ', ' . $newVarName . ')';
 		}
 		elseif ($type === 'Date' || $type === 'DateTime')
 		{
