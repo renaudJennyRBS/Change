@@ -27,6 +27,7 @@ class Resolver extends ActionResolver
 		$this->addResolverClasses('query', '\Change\Http\Rest\QueryResolver');
 		$this->addResolverClasses('storage', '\Change\Http\Rest\StorageResolver');
 		$this->addResolverClasses('actions', '\Change\Http\Rest\ActionsResolver');
+		$this->addResolverClasses('jobs', '\Change\Http\Rest\JobsResolver');
 	}
 
 	/**

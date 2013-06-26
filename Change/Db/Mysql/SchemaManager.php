@@ -651,9 +651,13 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 				$type .= ' DEFAULT \'' . $fieldDefinition->getDefaultValue() . '\'';
 			}
 		}
-		else if ($fieldDefinition->getAutoNumber())
+		elseif ($fieldDefinition->getAutoNumber())
 		{
 			$type .= ' auto_increment';
+		}
+		else
+		{
+			$type .= ' NULL';
 		}
 		return $type;
 	}

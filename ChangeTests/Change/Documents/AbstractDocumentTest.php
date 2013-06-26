@@ -441,6 +441,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$basicDoc->setPFloat(null);
 		$this->assertNull($basicDoc->getPFloat());
+
+		$basicDoc->setPFloat(0);
+		$this->assertSame(0.0, $basicDoc->getPFloat());
 	}
 
 	public function testDecimalPropertyAccessors()
@@ -455,6 +458,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$basicDoc->setPDec(null);
 		$this->assertNull($basicDoc->getPDec());
+
+		$basicDoc->setPDec(0);
+		$this->assertSame(0.0, $basicDoc->getPDec());
 	}
 
 	public function testDateTimePropertyAccessors()

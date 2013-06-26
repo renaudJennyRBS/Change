@@ -119,6 +119,17 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 					->addField($td->getField('store_path')))
 				->setOption('AUTONUMBER', 1);
 
+			$this->tables['change_job'] = $td = $schemaManager->newTableDefinition('change_job');
+			$td->addField($schemaManager->newIntegerFieldDefinition('id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newVarCharFieldDefinition('name', array('length' => 100))->setNullable(false))
+				->addField($schemaManager->newTimeStampFieldDefinition('start_date')->setNullable(false))
+				->addField($schemaManager->newTextFieldDefinition('arguments')->setNullable(true))
+				->addField($schemaManager->newEnumFieldDefinition('status',
+					array('VALUES' => array('waiting', 'running', 'success', 'failed')))
+					->setNullable(false)->setDefaultValue('waiting'))
+				->addField($schemaManager->newTimeStampFieldDefinition('last_modification_date')->setNullable(true)->setDefaultValue(null))
+				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

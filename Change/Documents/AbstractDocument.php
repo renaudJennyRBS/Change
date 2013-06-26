@@ -228,6 +228,25 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
+	 * @param float $v1
+	 * @param float $v2
+	 * @param float $delta
+	 * @return boolean
+	 */
+	protected function compareFloat($v1, $v2, $delta = 0.000001)
+	{
+		if ($v1 === $v2)
+		{
+			return true;
+		}
+		elseif ($v1 === null || $v2 === null)
+		{
+			return false;
+		}
+		return abs(floatval($v1) - floatval($v2)) <= $delta;
+	}
+
+	/**
 	 * @api
 	 */
 	public function reset()
