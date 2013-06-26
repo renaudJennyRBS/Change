@@ -18,8 +18,14 @@ class WebsiteResolver
 		$data = $this->getWebsiteDatas($event);
 		if (count($data))
 		{
+			$script = $event->getUrlManager()->getScript();
 			$request = $event->getRequest();
 			$path = $request->getPath();
+			if ($script && strpos($path, $script) === 0)
+			{
+				$path = ($path === $script) ? null : substr($path, strlen($script));
+			}
+
 			$hostName = $request->getUri()->getHost();
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$mm = $event->getDocumentServices()->getModelManager();
@@ -40,6 +46,8 @@ class WebsiteResolver
 							$request->setLCID($LCID);
 							$event->setParam('website', $website);
 							$event->getUrlManager()->setBasePath($websitePathPart);
+							$website->setScriptName($script);
+							return;
 						}
 					}
 				}
@@ -62,6 +70,8 @@ class WebsiteResolver
 					$request->setLCID($LCID);
 					$event->setParam('website', $website);
 					$event->getUrlManager()->setBasePath($websitePathPart);
+					$website->setScriptName($script);
+					$website->setHostName($hostName);
 				}
 			}
 		}
