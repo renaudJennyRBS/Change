@@ -1,13 +1,11 @@
-<div data-ng-controller="{{ query.model }}_ListController">
-
-	<div data-ng-init="_isEmbeded = true"></div>
+<div>
 
 	<header class="clearfix">
 		<button data-ng-click="closeSelector()" class="close pull-right" style="margin-left:30px;" type="button" auto-focus>×</button>
 		<h3>(=selectorTitle=)</h3>
 	</header>
 
-	<div class="btn-toolbar" data-ng-switch="DL.enabledViewModes.length > 1">
+	<div class="btn-toolbar">
 		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
 			<div class="input-append">
 				<!--TODO localization-->
