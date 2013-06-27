@@ -161,7 +161,7 @@
 					break;
 
 				case 'date' :
-					column.valuePath += "|date:'medium'";
+					column.valuePath += "|rbsDateTime";
 					if (!column.width) {
 						column.width = "150px";
 					}
@@ -504,10 +504,7 @@
 								preview.modelInfo = modelInfo;
 
 								if (angular.isFunction(scope.onPreview)) {
-									promise = scope.onPreview({
-										'document' : preview.document,
-										'modelInfo': modelInfo
-									});
+									promise = scope.onPreview(preview);
 								}
 
 								function terminatePreview () {
@@ -992,7 +989,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 
@@ -1046,7 +1043,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 
@@ -1070,7 +1067,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 
