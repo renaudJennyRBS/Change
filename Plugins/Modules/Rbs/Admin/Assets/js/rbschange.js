@@ -53,15 +53,17 @@
 		// - contents: array of HTML Strings (Angular code is allowed as it will be compiled :))
 		'EditorFormButtonBarContents'    : 'Change:Editor.FormButtonBarContents',
 
-		// Raised from the <rbs-document-list/> directive when a filter parameter is present in the URL.
-		// Listeners should fill in the 'predicates' received ans
-		'DocumentListApplyFilter'        : 'Change:DocumentList.ApplyFilter',
-
 		// The following events are less useful for you...
 		'EditorDocumentUpdated'          : 'Change:Editor.DocumentUpdated',
 		'EditorCorrectionChanged'        : 'Change:CorrectionChanged',
 		'EditorCorrectionRemoved'        : 'Change:CorrectionRemoved',
-		'EditorUpdateDocumentProperties' : 'Change:UpdateDocumentProperties'
+		'EditorUpdateDocumentProperties' : 'Change:UpdateDocumentProperties',
+
+		// Raised from the <rbs-document-list/> directive when a filter parameter is present in the URL.
+		// Listeners should fill in the 'predicates' received ans
+		'DocumentListApplyFilter'        : 'Change:DocumentList.ApplyFilter',
+
+		'DocumentListPreview'            : 'Change:DocumentList.Preview'
 	});
 
 
