@@ -27,6 +27,7 @@
 		testerEl = $('#rbs-document-list-tester');
 
 	app.directive('rbsDocumentList', [
+		'$q',
 		'$filter',
 		'$rootScope',
 		'$location',
@@ -41,11 +42,12 @@
 		'RbsChange.Device',
 		'RbsChange.Settings',
 		'RbsChange.FormsManager',
+		'RbsChange.Events',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events) {
 
 		/**
 		 * Initialize columns for <rbs-document-list/>
@@ -137,7 +139,7 @@
 				if (__preview[dlid]['style']) {
 					td.attr('style', __preview[dlid]['style']);
 				}
-				td.html('<button type="button" class="close pull-right" ng-click="preview(doc.document)">&times;</button>' + __preview[dlid].contents);
+				td.html('<button type="button" class="close pull-right" ng-click="preview(doc)">&times;</button>' + __preview[dlid].contents);
 			}
 
 			while (columns.length) {
@@ -477,43 +479,45 @@
 
 
 					scope.preview = function (index) {
-
 						if (angular.isObject(index)) {
+							if (scope.isPreview(index)) {
+								ArrayUtils.removeValue(scope.collection, index);
+								return;
+							}
 							index = scope.collection.indexOf(index);
 						}
+
+						var	current = scope.collection[index];
 
 						if (scope.hasPreview(index)) {
 							scope.collection.splice(index+1, 1);
 							return;
 						}
 
-						var	current = scope.collection[index],
-							preview = {
-								"__dlPreview" : true
-							};
 						current.__dlPreviewLoading = true;
 
 						Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
 						REST.resource(current).then(function (doc) {
 							REST.modelInfo(doc).then(function (modelInfo) {
-								var promise;
+								var previewPromises = [];
 								delete current.__dlPreviewLoading;
-								// Prevent META$ information from being overwritten.
+								// Copy the current's META$ information into the newly loaded document.
 								angular.extend(doc.META$, current.META$);
-								preview.document = angular.extend(current, doc);
-								preview.modelInfo = modelInfo;
+								doc.__dlPreview = true;
+								doc.META$.modelInfo = modelInfo;
 
-								if (angular.isFunction(scope.onPreview)) {
-									promise = scope.onPreview(preview);
-								}
+								$rootScope.$broadcast(Events.DocumentListPreview, {
+									"document" : doc,
+									"promises" : previewPromises
+								});
 
 								function terminatePreview () {
-									scope.collection.splice(index+1, 0, preview);
+									scope.collection.splice(index+1, 0, doc);
 									Loading.stop();
 								}
 
-								if (promise) {
-									promise.then(terminatePreview);
+								if (previewPromises.length) {
+									$q.all(previewPromises).then(terminatePreview);
 								} else {
 									terminatePreview();
 								}
@@ -540,7 +544,7 @@
 						var current, next;
 						current = scope.collection[index];
 						next = (scope.collection.length > (index+1)) ? scope.collection[index+1] : null;
-						return (next && next.__dlPreview && next.document && next.document.id === current.id) ? true : false;
+						return (next && next.__dlPreview && next.id === current.id) ? true : false;
 					};
 
 

@@ -23,8 +23,8 @@
 		<column name="module"></column>
 
 		<preview>
-			(= doc.document.children.length | number =) sous-étiquettes :
-			<span ng-repeat="tag in doc.document.children" class="tag (= tag.color =)">(= tag.label =)</span>
+			(= doc.children.length | number =) sous-étiquettes :
+			<span ng-repeat="tag in doc.children" class="tag (= tag.color =)">(= tag.label =)</span>
 		</preview>
 
 	</rbs-document-list>

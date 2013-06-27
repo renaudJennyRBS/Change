@@ -41,9 +41,9 @@
 		<column name="label" primary="true"></column>
 
 		<preview>
-			<div class="muted" ng-if="!doc.document.visual.length">Aucun visuel défini</div>
-			<h4>(= doc.document.label =)</h4>
-			<img ng-repeat="visual in doc.document.visual" rbs-storage-image="(= visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
+			<div class="muted" ng-if="!doc.visual.length">Aucun visuel défini</div>
+			<h4>(= doc.label =)</h4>
+			<img ng-repeat="visual in doc.visual" rbs-storage-image="(= visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
 		</preview>
 
 		<grid-item>

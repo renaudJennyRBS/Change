@@ -11,9 +11,9 @@
 		<column name="label" primary="true" tagss="true"></column>
 
 		<preview>
-			<img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
-			<h4>(= doc.document.label =)</h4>
-			<span rbs-tag="tag" ng-repeat="tag in doc.document.getTags()"></span>
+			<img rbs-storage-image="(= doc.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
+			<h4>(= doc.label =)</h4>
+			<span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span>
 		</preview>
 
 		<grid-item>
