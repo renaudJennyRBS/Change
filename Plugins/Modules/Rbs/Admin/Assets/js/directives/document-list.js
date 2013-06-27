@@ -22,13 +22,13 @@
 		__gridItems = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
-		PAGINATION_PAGE_SIZES = [ 2, 5, 10, 15, 20, 30, 50 ],
+		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
 		DEFAULT_ACTIONS = 'activate reorder delete(icon)',
 		testerEl = $('#rbs-document-list-tester');
 
 	app.directive('rbsDocumentList', [
 		'$filter',
-		'$q',
+		'$rootScope',
 		'$location',
 		'RbsChange.i18n',
 		'RbsChange.REST',
@@ -40,11 +40,12 @@
 		'RbsChange.NotificationCenter',
 		'RbsChange.Device',
 		'RbsChange.Settings',
+		'RbsChange.FormsManager',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($filter, $q, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings) {
+	function documentListDirectiveFn ($filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager) {
 
 		/**
 		 * Initialize columns for <rbs-document-list/>
@@ -160,7 +161,7 @@
 					break;
 
 				case 'date' :
-					column.valuePath += "|date:'medium'";
+					column.valuePath += "|rbsDateTime";
 					if (!column.width) {
 						column.width = "150px";
 					}
@@ -221,7 +222,11 @@
 						if (tAttrs.tree) {
 							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							if (tAttrs.cascadeEdit) {
+								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEditFn(doc)"><strong>' + column.content + '</strong></a></div></td>');
+							} else {
+								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							}
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
@@ -254,10 +259,17 @@
 						if (actionsCount) {
 							html += actionDivider;
 						}
-						html +=
-							'<a href data-ng-href="(= doc | documentURL =)">' +
-							i18n.trans('m.rbs.admin.admin.js.edit') +
-							'</a>';
+						if (tAttrs.cascadeEdit) {
+							html +=
+								'<a href="javascript:;" ng-click="cascadeEditFn(doc)">' +
+									i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a>';
+						} else {
+							html +=
+								'<a href ng-href="(= doc | documentURL =)">' +
+									i18n.trans('m.rbs.admin.admin.js.edit') +
+								'</a>';
+						}
 						actionsCount++;
 
 						if (actionsCount) {
@@ -278,10 +290,6 @@
 					// opening this menu.
 					// (see showQuickActions() below, in the directive's linking function).
 					$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
-
-					if (column.tags === 'true') {
-						$td.append('<div class="tags"><span class="tag red">image</span><span class="tag">logo</span><span class="tag green">marque</span></div>');
-					}
 				}
 
 				$td.attr('ng-if', "! isPreview(doc)");
@@ -333,9 +341,11 @@
 
 			scope : {
 				// Isolated scope.
-				query     : '=',
-				picker    : '=',
-				onPreview : '&'
+				filterQuery : '=',
+				loadQuery   : '=',
+				picker      : '=',
+				onPreview   : '&',
+				cascadeEdit : '@'
 			},
 
 
@@ -360,7 +370,7 @@
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
-					scope.viewMode = Settings.get('documentListViewMode', gridModeAvailable ? 'grid' : 'list');
+					scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope;
@@ -378,6 +388,24 @@
 					scope.$watch('viewMode', function (value) {
 						Settings.set('documentListViewMode', value);
 					}, true);
+
+
+
+					scope.cascadeEditFn = function (doc) {
+						FormsManager.cascade(
+							doc.model.replace(/_/g, '/') + '/form.twig',
+							{
+								'id'   : doc.id,
+								'LCID' : (doc.LCID || scope.language)
+							},
+							function (editedDoc) {
+								if (!angular.equals(doc, editedDoc)) {
+									console.log("Document is been edited...")
+								}
+							},
+							scope.cascadeEdit
+						);
+					};
 
 
 					//
@@ -476,10 +504,7 @@
 								preview.modelInfo = modelInfo;
 
 								if (angular.isFunction(scope.onPreview)) {
-									promise = scope.onPreview({
-										'document' : preview.document,
-										'modelInfo': modelInfo
-									});
+									promise = scope.onPreview(preview);
 								}
 
 								function terminatePreview () {
@@ -550,6 +575,7 @@
 					scope.predefinedPageSizes = PAGINATION_PAGE_SIZES;
 					scope.pages = [];
 					scope.currentPage = 0;
+					scope.currentTag = 0;
 
 					// Keep pagination data up-to-date.
 					scope.$watch(
@@ -706,6 +732,8 @@
 							'column' : columnNames
 						};
 
+						// TODO Reorganize this to use a query for tree and/or tag
+
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
@@ -732,7 +760,22 @@
 								}
 							} else if (! attrs.parentProperty) {
 								Loading.start();
-								promise = REST.collection(attrs.model, params);
+
+								if (scope.currentFilter) {
+									var query = {
+										"model" : attrs.model,
+										"where" : {
+											"and" : []
+										}
+									};
+									$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
+										"filter" : scope.currentFilter,
+										"predicates" : query.where.and
+									});
+									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
+								} else {
+									promise = REST.collection(attrs.model, params);
+								}
 							}
 						}
 
@@ -774,6 +817,7 @@
 
 					scope.location = $location;
 					currentPath = scope.location.path();
+
 					scope.$watch('location.search()', function locationSearchFn (search) {
 
 						// Are we leaving this place?
@@ -785,7 +829,9 @@
 						var	offset = parseInt(search.offset || 0, 10),
 							limit  = parseInt(search.limit || PAGINATION_DEFAULT_LIMIT, 10),
 							paginationChanged, sortChanged = false,
-							desc = (search.desc === 'true');
+							desc = (search.desc === 'true'),
+							filter = search.filter,
+							filterChanged = scope.currentFilter !== filter;
 
 						paginationChanged = scope.pagination.offset !== offset || scope.pagination.limit !== limit;
 						scope.pagination.offset = offset;
@@ -800,7 +846,9 @@
 						}
 						scope.sort.descending = desc;
 
-						if (paginationChanged || sortChanged) {
+						scope.currentFilter = filter;
+
+						if (paginationChanged || sortChanged || filterChanged) {
 							console.log("reload 2");
 							reload();
 						}
@@ -824,6 +872,14 @@
 							reload();
 						}
 					}
+
+
+					//---------------------------------------------------------
+					//
+					// Initial load.
+					//
+					//---------------------------------------------------------
+
 
 					if (attrs.tree) {
 						// If in a tree context, reload the list when the Breadcrumb is ready
@@ -854,9 +910,15 @@
 							});
 						});
 					} else {
-						// Not in a tree? Just load the flat list.
-						console.log("reload 5");
-						reload();
+						// Not in a tree.
+
+						// If a "load-query" attribute, the list should not be loaded as is.
+						if (! elm.is('[load-query]')) {
+							// ? Just load the flat list.
+							console.log("reload 5");
+							reload();
+						}
+
 					}
 
 
@@ -877,22 +939,23 @@
 							}
 						];
 						if (attrs.model) {
-							queryObject.model = attrs.model;
+							query.model = attrs.model;
 						}
 						return query;
 					}
 
 
-					scope.$watch('query', function (query, oldValue) {
+					function watchQueryFn (query, oldValue) {
 						if (query !== oldValue) {
 							queryObject = angular.copy(query);
-							console.log("reload 7");
 							reload();
 						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
-							console.log("reload 8");
 							reload();
 						}
-					}, true);
+					}
+
+					scope.$watch('filterQuery', watchQueryFn, true);
+					scope.$watch('loadQuery', watchQueryFn, true);
 
 
 					var lastQuickActionsShown = null;
@@ -926,7 +989,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 
@@ -980,7 +1043,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 
@@ -1004,7 +1067,7 @@
 
 		return {
 			restrict : 'E',
-			require  : '^documentList',
+			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
 

@@ -1,25 +1,33 @@
 <div ng-controller="Rbs_Media_Menu_Controller">
-	<div class="nav-list">
 
-		<form class="rbs-form-simple-filter" filter="filterTags"></form>
-
-		<!--div>
-			<button ng-animate="'menu-animate'" ng-repeat="tag in tags | filter:filterTags | orderBy:'count':true" class="tag tag-menu (= tag.color =)" type="button"><span class="text">(= tag.label =)</span><span class="count">(= tag.count | number =)</span></button>
-		</div-->
-
-		<!--div>
-			<button ng-animate="'menu-animate'" ng-repeat="tag in tags | filter:filterTags | orderBy:'count':true" class="btn btn-small btn-block" type="button" style="text-align: left; padding-left: 5px">
-				<i class="icon-circle" style="color: #a4c644;"></i>
-				(= tag.label =)
-			</button>
-		</div-->
-
-		<div>
-			<span ng-animate="'scale-animation'" rbs-tag="tag" ng-repeat="tag in tags | filter:{'label':filterTags} | orderBy:'label'"></span>
+	<div style="display:none;" ng-show="selectedTags.length > 0">
+		<ul class="nav nav-list">
+			<li class="nav-header">Étiquettes sélectionnées</li>
+		</ul>
+		<div class="nav-list">
+			<div class="muted" style="text-align:right;line-height:14px;"><small>Les étiquettes sélectionnées ici servent à filter la liste des éléments présente à droite <i class="icon-arrow-right"></i></small></div>
+			<span
+				ng-repeat="tag in selectedTags"
+				on-remove="unselectTag(tag)"
+				rbs-tag="tag"></span>
+			<br/>
+			<small><a href="javascript:;" ng-click="unselectAll()"><i class="icon-remove"></i> Effacer la sélection</a></small>
+			<hr/>
 		</div>
+	</div>
 
+	<ul class="nav nav-list">
+		<li class="nav-header">Toutes les étiquettes</li>
+	</ul>
+	<div class="nav-list">
+		<form class="rbs-form-simple-filter"
+		      filter="filterTags"
+		      on-enter="selectTag(filteredTags[0])"
+		      on-escape="removeLastSelectedTag()"></form>
+		<span ng-repeat="tag in filteredTags"
+		      ng-click="selectTag(tag)"><span class="cursor-pointer" rbs-tag="tag"></span></span>
 		<hr/>
-
 		<a href="Rbs/Tag">Gérer les étiquettes <i class="icon-circle-arrow-right"></i></a>
 	</div>
+
 </div>

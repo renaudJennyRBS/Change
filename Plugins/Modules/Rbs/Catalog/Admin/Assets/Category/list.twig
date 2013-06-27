@@ -1,6 +1,6 @@
 <div data-ng-controller="Rbs_Catalog_Category_ListController">
 	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Catalog_Category" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Catalog_Category" filter-query="query" text-search="textSearch"></search-filters>
 
 	<h3>Catégories</h3>
 	<div>
@@ -11,7 +11,7 @@
 	               model="Rbs_Catalog_Category"
 	               publishable="true"
 	               tree="Rbs_Catalog"
-	               query="query">
+	               filter-query="query">
 
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true"></column>
@@ -35,7 +35,7 @@
 	<rbs-document-list data-dlid="DLRbsCatalogProduct"
 	               model="Rbs_Catalog_Product"
 	               publishable="true"
-	               query="query" parent-property="category">
+	               filter-query="query" parent-property="category">
 
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual[0].id"></column>
 		<column name="label" primary="true"></column>

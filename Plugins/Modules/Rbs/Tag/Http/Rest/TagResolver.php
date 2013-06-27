@@ -5,6 +5,7 @@ use \Change\Http\Event;
 use \Change\Http\Rest\Request;
 use Rbs\Tag\Http\Rest\Actions\GetDocumentTags;
 use Rbs\Tag\Http\Rest\Actions\SetDocumentTags;
+use Rbs\Tag\Http\Rest\Actions\AddDocumentTags;
 use Rbs\Tag\Http\Rest\Actions\GetTaggedDocuments;
 
 class TagResolver {
@@ -94,6 +95,18 @@ class TagResolver {
 				$action = function ($event)
 				{
 					$action = new SetDocumentTags();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+
+			if ($method === Request::METHOD_PUT)
+			{
+				$event->setParam('addIds', $event->getRequest()->getPost()->get("addIds"));
+				$action = function ($event)
+				{
+					$action = new AddDocumentTags();
 					$action->execute($event);
 				};
 				$event->setAction($action);

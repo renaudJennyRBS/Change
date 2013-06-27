@@ -1,6 +1,6 @@
 <div data-ng-controller="Rbs_Brand_Brand_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.brand.document.brand-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Brand_Brand" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Brand_Brand" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
 		<a href="Rbs/Brand/Brand/new">{{ i18n('m.rbs.brand.document.brand-create', ['ucf']) }}</a>
@@ -9,7 +9,7 @@
 	<rbs-document-list data-dlid="DLRbsBrandBrand"
 	               model="Rbs_Brand_Brand"
 	               publishable="true"
-	               query="query">
+	               filter-query="query">
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true"></column>
 		<preview>

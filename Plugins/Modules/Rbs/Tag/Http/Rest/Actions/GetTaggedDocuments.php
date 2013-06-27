@@ -85,7 +85,7 @@ class GetTaggedDocuments
 			$fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count')
 		);
 		$qb->from($fb->getDocumentIndexTable());
-		$qb->innerJoin($fb->alias($fb->table('rbs_tag_rel_document'), 'tag'), $fb->eq($fb->column('doc_id', 'tag'), 'id'));
+		$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'), $fb->eq($fb->column('doc_id', 'tag'), 'id'));
 
 		if ($requestedModelName)
 		{
@@ -143,7 +143,7 @@ class GetTaggedDocuments
 				$fb->alias($fb->getDocumentColumn('model'), 'model')
 			);
 			$qb->from($fb->getDocumentIndexTable());
-			$qb->innerJoin($fb->alias($fb->table('rbs_tag_rel_document'), 'tag'), $fb->eq($fb->column('doc_id', 'tag'), 'id'));
+			$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'), $fb->eq($fb->column('doc_id', 'tag'), 'id'));
 			if ($requestedModelName)
 			{
 				$qb->where($fb->logicAnd(

@@ -28,8 +28,7 @@
 			<li class="divider"></li>
 			<li class="nav-header">(= s.label =)</li>
 			<li ng-animate="'menu-animate'" ng-repeat="m in menu.entries | filter:{'section':s.code} | filter:filterModules | orderBy:'label'">
-				<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
-				<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = true"><i ng-if="! m.pinned" class="pull-right icon-pushpin"></i>(= m.label =)</a>
+				<a href ng-click="close()" ng-href="(= m.url =)" ng-bind-html="m.label"></a>
 			</li>
 		</ul>
 
@@ -37,8 +36,7 @@
 			<li class="divider"></li>
 			<li class="nav-header">{{ i18n('m.rbs.admin.menu.other-modules', ['ucf']) }}</li>
 			<li ng-animate="'menu-animate'" ng-repeat="m in menu.entries | filter:{'section':'other'} | filter:filterModules |  orderBy:'label'">
-				<a ng-if="! editMode" href ng-click="close()" ng-href="(= m.url =)">(= m.label =)</a>
-				<a ng-if="editMode" href="javascript:;" ng-click="m.pinned = true"><i ng-if="! m.pinned" class="pull-right icon-pushpin"></i>(= m.label =)</a>
+				<a href ng-click="close()" ng-href="(= m.url =)" ng-bind-html="m.label"></a>
 			</li>
 		</ul>
 	</div>

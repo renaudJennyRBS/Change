@@ -23,10 +23,8 @@
 	<search-filters model="{{ query.model }}" filter-query="query" text-search="textSearch"></search-filters>
 
 	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
-	               publishable="true"
 	               model="{{ query.model }}"
-	               filter-query="query" picker="picker">
-		<column name="path" thumbnail="XS"></column>
+	               filter-query="query" picker="picker" use-properties="color userTag children">
 		<column name="label" primary="true">
 			{% if (query.multiple) %}
 			<span class="pull-right">
@@ -34,7 +32,8 @@
 				<button type="button" class="btn btn-mini" ng-click="picker.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
 			</span>
 			{% endif %}
-			<a href="javascript:;" ng-click="picker.selectDocument(doc)">(=doc.label=)</a>
+			<a href="javascript:;" ng-click="picker.selectDocument(doc)"><span rbs-tag="doc"></span></a>
+			<span ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
 		</column>
 		<preview>
 			<img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>

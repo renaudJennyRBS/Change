@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n) {
+	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events) {
 
 		var	$ws = $('#workspace'),
 			cascadeContextStack = [],
@@ -74,6 +74,7 @@
 				if (queryParam && queryParam.lang) {
 					scope.language = queryParam.lang;
 				}
+				scope.section = '';
 				// Compile the HTML and insert it into the #workspace.
 				// The insertion of new content is a bit tricky. We need to:
 				// * Create a new Element with jQuery,
@@ -114,7 +115,6 @@
 			var	ctx = cascadeContextStack.pop(),
 				$form;
 
-			console.log("uncascade(): cascadeContext=", ctx);
 			if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
 				ctx.saveCallback(doc);
 			}
@@ -183,12 +183,11 @@
 			// The Editor listens to it and updates its 'document' Model consequently, using the properties that
 			// come as the event's parameters.
 			function correctionChangedHandler (event, properties) {
-				scope.$broadcast('Change:UpdateDocumentProperties', properties);
+				scope.$broadcast(Events.EditorUpdateDocumentProperties, properties);
 			}
-			scope.$on('Change:CorrectionChanged', correctionChangedHandler);
-			scope.$on('Change:CorrectionRemoved', correctionChangedHandler);
-
-			scope.$on('Change:DocumentUpdated', function (event, doc) {
+			scope.$on(Events.EditorDocumentUpdated, correctionChangedHandler);
+			scope.$on(Events.EditorCorrectionRemoved, correctionChangedHandler);
+			scope.$on(Events.EditorDocumentUpdated, function (event, doc) {
 				scope.document = angular.extend(scope.document, doc);
 			});
 
@@ -231,7 +230,7 @@
 						q.resolve(REST.newResource(rest, scope.language));
 					});
 				} else {
-					promise = REST.resource(rest, params.id, params.LCID); // || 'fr_FR'); // FIXME
+					promise = REST.resource(rest, params.id, params.LCID);
 				}
 
 			} else {
@@ -254,14 +253,13 @@
 			}
 
 			function getSection () {
-				return $routeParams.section || $location.search()['section'] || '';
+				return self.isCascading() ? '' : ($routeParams.section || $location.search()['section'] || '');
 			}
 
 			function resourceReadyCallback (doc) {
 
 				Loading.stop();
-				scope.section = self.isCascading() ? '' : getSection();
-
+				scope.section = getSection();
 				scope.document = doc;
 				scope.isReferenceLanguage = (scope.document.refLCID === scope.document.LCID);
 				scope.isLocalized = angular.isDefined(scope.document.refLCID);

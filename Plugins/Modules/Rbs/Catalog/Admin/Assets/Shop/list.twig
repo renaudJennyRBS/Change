@@ -1,6 +1,6 @@
 <div data-ng-controller="Rbs_Catalog_Shop_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.catalog.document.shop-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Catalog_Shop" query="query" text-search="textSearch"></search-filters>
+	<search-filters model="Rbs_Catalog_Shop" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
 		<a href="Rbs/Catalog/Shop/new">{{ i18n('m.rbs.catalog.document.shop-create', ['ucf']) }}</a>
@@ -9,7 +9,7 @@
 	<rbs-document-list data-dlid="DLRbsCatalogShop"
 	               model="Rbs_Catalog_Shop"
 	               publishable="true"
-	               query="query">
+	               filter-query="query">
 		<column name="label" primary="true"></column>
 		<column name="billingArea"><span class="label" ng-repeat="ba in doc.billingArea"><a href ng-href="(= ba | documentURL =)">(= ba.label =)</a></span></column>
 	</rbs-document-list>

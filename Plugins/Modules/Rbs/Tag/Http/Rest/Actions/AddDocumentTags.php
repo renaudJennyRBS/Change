@@ -9,7 +9,7 @@ use Change\Http\Rest\Result\DocumentLink;
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\SetDocumentTags
  */
-class SetDocumentTags
+class AddDocumentTags
 {
 
 	const MAX_TAGS = 1000;
@@ -35,7 +35,7 @@ class SetDocumentTags
 	 */
 	public function execute($event)
 	{
-		$tags = $event->getParam('tags');
+		$addIds = $event->getParam('addIds');
 		$docId = $event->getParam('docId');
 
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
@@ -49,19 +49,12 @@ class SetDocumentTags
 			$stmt = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $stmt->getFragmentBuilder();
 
-			// Create delete all document's tags statement
-			$stmt->delete($fb->table('rbs_tag_document'));
-			$stmt->where($fb->eq($fb->column('doc_id'), $fb->integerParameter('docId')));
-			$dq = $stmt->deleteQuery();
-			$dq->bindParameter('docId', $docId);
-			$dq->execute();
-
 			// Create insert statement
 			$stmt->insert($fb->table('rbs_tag_document'), 'doc_id', 'tag_id');
 			$stmt->addValues($fb->integerParameter('docId'), $fb->integerParameter('tagId'));
 			$iq = $stmt->insertQuery();
 
-			foreach ($tags as $tag)
+			foreach ($addIds as $tag)
 			{
 				$tagId = null;
 				if (is_numeric($tag))
