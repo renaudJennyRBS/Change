@@ -3,6 +3,7 @@
 	<include id="m.rbs.tag.document"/>
 	<key id="module-name">tags</key>
 	<key id="module-keywords">tags,labels</key>
+	<key id="tags">tags:</key>
 	<key id="show-hide-all-tags">show/hide all tags</key>
 	<key id="available-tags-pluralize">{'0':'No tag available','one':'One tag available:','other':'{} tags available:'}</key>
 	<key id="tag-not-saved">this tag will be created when this form is saved</key>

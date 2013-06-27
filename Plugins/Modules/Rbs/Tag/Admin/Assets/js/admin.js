@@ -59,10 +59,10 @@
 	 * - affect tags in a Document's Editor (post-save).
 	 * - build predicates for "filter:hasTag" in <rbs-document-list/>.
 	 */
-	app.run(['RbsChange.TagService', 'RbsChange.Loading', '$rootScope', '$q', '$timeout', function (TagService, Loading, $rootScope, $q, $timeout) {
+	app.run(['RbsChange.TagService', 'RbsChange.Loading', 'RbsChange.Events', 'RbsChange.i18n', '$rootScope', '$q', '$timeout', function (TagService, Loading, Events, i18n, $rootScope, $q, $timeout) {
 
 		// Create new and unsaved tags when an Editor is submitted.
-		$rootScope.$on('Change:Editor.RegisterPreSavePromises', function (event, args) {
+		$rootScope.$on(Events.EditorPreSave, function (event, args) {
 			angular.forEach(args.document.META$.tags, function (tag) {
 				if (tag.unsaved) {
 					args.promises.push(TagService.create(tag));
@@ -71,7 +71,7 @@
 		});
 
 		// Affect tags to a document that has just been saved in an Editor.
-		$rootScope.$on('Change:Editor.RegisterPostSavePromises', function (event, args) {
+		$rootScope.$on(Events.EditorPostSave, function (event, args) {
 			var	doc = args.document,
 				tags = doc.META$.tags;
 			if (angular.isArray(tags) && tags.length) {
@@ -80,7 +80,7 @@
 		});
 
 		// Filter 'hasTag' for <rbs-document-list/>.
-		$rootScope.$on('Change:DocumentList.ApplyFilter', function (event, args) {
+		$rootScope.$on(Events.DocumentListApplyFilter, function (event, args) {
 			var	filter = args.filter,
 				predicates = args.predicates,
 				p, filterName, filterValue, tags;
@@ -102,6 +102,13 @@
 					"op"  : "hasTag",
 					"tag" : parseInt(tags[p], 10)
 				});
+			}
+		});
+
+		$rootScope.$on(Events.EditorFormButtonBarContents, function (event, args) {
+			console.log('Events.EditorFormButtonBarContents: ', args);
+			if (args.document.model !== 'Rbs_Tag_Tag') {
+				args.contents.push('<div>' + i18n.trans('m.rbs.tag.admin.js.tags | ucf')  + '<rbs-tag-selector ng-model="document.META$.tags"></rbs-tag-selector></div>');
 			}
 		});
 

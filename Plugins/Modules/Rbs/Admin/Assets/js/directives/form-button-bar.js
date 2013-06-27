@@ -4,16 +4,34 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('formButtonBar', ['RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', function (Dialog, Utils, Actions, Breadcrumb, Settings, Events) {
+	app.directive('formButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events) {
 
 		return {
 			restrict: 'E',
 
 			templateUrl: 'Rbs/Admin/js/directives/form-button-bar.twig',
 
-			link : function (scope, element, attrs) {
+			link : function (scope, element) {
 
 				scope.actionAfterSave = Settings.get('actionAfterSave', 'list');
+
+				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
+				var shouldLoadContents = true;
+				scope.$watch('document', function (doc) {
+					if (shouldLoadContents && doc) {
+						shouldLoadContents = false;
+						var contents = [];
+						$rootScope.$broadcast(Events.EditorFormButtonBarContents, {
+							'contents' : contents,
+							'document' : doc
+						});
+						if (contents.length) {
+							$compile(contents.join(''))(scope, function (clone) {
+								element.find('[data-role="preContents"]').empty().append(clone);
+							});
+						}
+					}
+				});
 
 
 				scope.confirmApplyCorrection = function ($event) {

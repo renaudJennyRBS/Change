@@ -47,6 +47,16 @@
 		// - promises: array of promises that should be resolved before the edit process is terminated.
 		'EditorPostSave'                 : 'Change:Editor.RegisterPostSavePromises',
 
+		// Raised from the <form-button-bar/> directive to build the contents displayed before the buttons.
+		// Single argument is a hash object with:
+		// - document: the document being edited in the Editor
+		// - contents: array of HTML Strings (Angular code is allowed as it will be compiled :))
+		'EditorFormButtonBarContents'    : 'Change:Editor.FormButtonBarContents',
+
+		// Raised from the <rbs-document-list/> directive when a filter parameter is present in the URL.
+		// Listeners should fill in the 'predicates' received ans
+		'DocumentListApplyFilter'        : 'Change:DocumentList.ApplyFilter',
+
 		// The following events are less useful for you...
 		'EditorDocumentUpdated'          : 'Change:Editor.DocumentUpdated',
 		'EditorCorrectionChanged'        : 'Change:CorrectionChanged',
