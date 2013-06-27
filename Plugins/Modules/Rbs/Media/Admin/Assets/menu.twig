@@ -23,6 +23,7 @@
 		<form class="rbs-form-simple-filter"
 		      filter="filterTags"
 		      on-enter="selectTag(filteredTags[0])"
+		      on-tab="selectTag(filteredTags[0])"
 		      on-escape="removeLastSelectedTag()"></form>
 		<span ng-repeat="tag in filteredTags"
 		      ng-click="selectTag(tag)"><span class="cursor-pointer" rbs-tag="tag"></span></span>
