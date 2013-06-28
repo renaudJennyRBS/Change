@@ -69,7 +69,7 @@ class GetDocumentTags
 			$fb->alias($fb->getDocumentColumn('model'), 'model')
 		);
 		$qb->from($fb->getDocumentTable('Rbs_Tag_Tag'));
-		$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'), $fb->eq($fb->column('tag_id', 'tag'), 'id'));
+		$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'), $fb->eq($fb->column('tag_id', 'tag'), $fb->getDocumentColumn('id')));
 		$qb->where($fb->eq($fb->column('doc_id', 'tag'), $fb->integerParameter('docId')));
 		$sc = $qb->query();
 		$sc->bindParameter('docId', $docId);
