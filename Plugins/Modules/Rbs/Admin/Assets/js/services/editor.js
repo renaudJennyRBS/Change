@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST, Events) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST, Events, Settings) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -262,6 +262,29 @@
 				}
 			};
 
+			/**
+			 * Cascade a new Editor and initialize it for creation.
+			 * @param doc
+			 * @param collapsedTitle
+			 * @param callback
+			 */
+			scope.cascadeCreate = function (doc, collapsedTitle, callback) {
+				if (angular.isString(doc)) {
+					doc = REST.newResource(doc, scope.document.LCID || Settings.get('language'));
+				}
+				FormsManager.cascadeEditor(doc, collapsedTitle || scope.document.label, callback);
+			};
+
+			/**
+			 * Edit the given doc in a cascaded Editor.
+			 * @param doc
+			 * @param collapsedTitle
+			 * @param callback
+			 */
+			scope.cascadeEdit = function (doc, collapsedTitle, callback) {
+				FormsManager.cascadeEditor(doc, collapsedTitle || scope.document.label, callback);
+			};
+
 			scope.canGoBack = function canGoBackFn () {
 				return scope.isUnchanged();
 			};
@@ -357,7 +380,8 @@
 					'fields'   : [],
 					'required' : [],
 					'invalid'  : [],
-					'corrected': []
+					'corrected': [],
+					'hideWhenCreate' : $fs.attr('hide-when-create') === 'true'
 				};
 
 				if ( ! FormsManager.isCascading() ) {
@@ -448,7 +472,8 @@
 		'RbsChange.Actions',
 		'RbsChange.Breadcrumb',
 		'RbsChange.REST',
-		'RbsChange.Events'
+		'RbsChange.Events',
+		'RbsChange.Settings'
 	];
 
 	app.service('RbsChange.Editor', changeEditorServiceFn);

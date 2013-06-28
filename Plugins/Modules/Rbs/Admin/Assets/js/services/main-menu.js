@@ -17,7 +17,7 @@
 		       '<ul class="nav nav-list">' +
 		          '<div ng-repeat="entry in menu" ng-switch="entry.type">' +
 		             '<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
-		             '<li ng-switch-when="section" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
+		             '<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
 		                '<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
 		                '<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
 		                '<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +

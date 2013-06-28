@@ -97,6 +97,64 @@
 		};
 
 
+		this.cascadeEditor = function (doc, collapsedTitle, saveCallback) {
+			var $form, contents, formUrl;
+
+			if (!doc || !Utils.isDocument(doc)) {
+				throw new Error("Please provide a valid Document.");
+			}
+
+			// Check circular cascade:
+			if (ArrayUtils.inArray(doc.id, idStack) !== -1) {
+				throw new Error("Circular cascade error: Document " + doc.id + " is already being edited in a cascaded Editor.");
+			}
+
+			// Freeze the Breadcrumb to prevent any other controller from modifying it.
+			Breadcrumb.freeze();
+
+			// Create cascade context.
+			cascadeContextStack.push({
+				'saveCallback' : saveCallback,
+				'queryParam'   : doc
+			});
+			idStack.push(doc.id);
+
+			// Slides up the current form.
+			// TODO Use CSS3 transition if possible.
+			$form = $ws.children('.document-form').last();
+			$form.slideUp('fast');
+
+			// Load and insert the new cascaded form.
+			formUrl = doc.model.replace(/_/g, '/') + '/form.twig';
+			$.get(formUrl, function (html) {
+				// Create a new isolated scope for the new form.
+				var scope = angular.element($ws).scope().$new(true);
+				if (doc.LCID) {
+					scope.language = doc.LCID;
+				}
+				scope.section = '';
+				// Compile the HTML and insert it into the #workspace.
+				// The insertion of new content is a bit tricky. We need to:
+				// * Create a new Element with jQuery,
+				// * Append that new Element in the DOM,
+				// * Compile it with the Angular $compile service.
+				$ws.append('<div class="cascading-forms-collapsed">' + collapsedTitle + '</div>');
+				contents = $(html);
+				$ws.append(contents);
+				$compile(contents)(scope);
+				cascadedElement = contents;
+				cascadedElement.hide();
+
+				MainMenu.pushContents($ws.find('.document-editor').last().scope());
+
+				self.updateCollapsedForms();
+				$ws.find(':input').first().focus();
+			});
+
+			return null;
+		};
+
+
 		/**
 		 * Returns true if we are in a cascading process, false otherwise.
 		 *
@@ -132,6 +190,7 @@
 			$form = $ws.children('.document-form').last();
 			$form.fadeIn('fast');
 
+			// Restore previous menu.
 			MainMenu.popContents();
 
 			// If all cascades are finished, unfreeze the Breadcrumb to allow modifications on it.
@@ -211,10 +270,17 @@
 
 			ctx = this.getCurrentContext();
 			if (this.isCascading()) {
-				if (ctx.queryParam) {
+				if (ctx.document) {
+					params = {
+						'id' : ctx.document.id
+					};
+					if (ctx.document.LCID) {
+						params.LCID = ctx.document.LCID;
+					}
+				} else if (angular.isObject(ctx.queryParam)) {
 					params = ctx.queryParam;
 				} else {
-					params = { "id": "new" };
+					params = { "id" : "new" };
 				}
 			} else {
 				params = $routeParams;
@@ -223,7 +289,7 @@
 			// Is 'rest' parameter a Model name?
 			if (Utils.isModelName(rest)) {
 
-				if (params.id === 'new') {
+				if (params.id === 'new' || (angular.isNumber(params.id) && params.id < 0)) {
 					q = $q.defer();
 					promise = q.promise;
 					$timeout(function () {
