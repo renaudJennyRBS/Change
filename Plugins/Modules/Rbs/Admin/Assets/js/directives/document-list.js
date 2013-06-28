@@ -342,12 +342,11 @@
 			templateUrl : 'Rbs/Admin/js/directives/document-list.twig',
 
 			scope : {
-				// Isolated scope.
-				filterQuery : '=',
-				loadQuery   : '=',
-				picker      : '=',
-				onPreview   : '&',
-				cascadeEdit : '@'
+				'filterQuery' : '=',
+				'loadQuery'   : '=',
+				'picker'      : '=',
+				'onPreview'   : '&',
+				'cascadeEdit' : '@'
 			},
 
 
@@ -394,17 +393,8 @@
 
 
 					scope.cascadeEditFn = function (doc) {
-						FormsManager.cascade(
-							doc.model.replace(/_/g, '/') + '/form.twig',
-							{
-								'id'   : doc.id,
-								'LCID' : (doc.LCID || scope.language)
-							},
-							function (editedDoc) {
-								if (!angular.equals(doc, editedDoc)) {
-									console.log("Document is been edited...")
-								}
-							},
+						FormsManager.cascadeEditor(
+							doc,
 							scope.cascadeEdit
 						);
 					};
