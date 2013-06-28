@@ -1,33 +1,20 @@
 <?php
 namespace Change\Commands;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
 
 /**
- * @name \Change\Commands\InitHttp
+ * @name \Change\Commands\ClearCache
  */
-class ClearCache extends \Change\Application\Console\ChangeCommand
+class ClearCache
 {
 	/**
+	 * @param Event $event
 	 */
-	protected function configure()
+	public function execute(Event $event)
 	{
-		//$name, $shortcut = null, $mode = null, $description = '', $default = null
-		$this->setDescription('Clear Project File Cache');
-	}
-
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		\Change\Stdlib\File::rmdir($this->getChangeApplication()->getWorkspace()->cachePath(), true);
-		$output->writeln('<info>Done!</info>');
+		$application = $event->getApplication();
+		\Change\Stdlib\File::rmdir($application->getWorkspace()->cachePath(), true);
+		$event->addInfoMessage('Done.');
 	}
 }

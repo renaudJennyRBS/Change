@@ -1,44 +1,35 @@
 <?php
 namespace Change\Commands;
 
-use Change\Application\Console\ChangeCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
+
 
 /**
  * @name \Change\Commands\RegisterPlugins
  */
-class RegisterPlugins extends ChangeCommand
-{	
+class RegisterPlugins
+{
 	/**
+	 * @param Event $event
 	 */
-	protected function configure()
+	public function execute(Event $event)
 	{
-		$this->setDescription('Register All Plugins');
-	}
-	
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$output->writeln('<info>Register All Plugins...</info>');
-		$pluginManager = $this->getChangeApplicationServices()->getPluginManager();
+		$application = $event->getApplication();
+		$applicationServices = new \Change\Application\ApplicationServices($application);
+
+		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->getUnregisteredPlugins();
+
 		foreach ($plugins as $plugin)
 		{
 			$pluginManager->register($plugin);
+			$event->addInfoMessage($plugin . ' registered');
 		}
 		$nbPlugins = count($plugins);
-		$output->writeln('<info>' .$nbPlugins. ' new plugins added !</info>');
+		$event->addInfoMessage($nbPlugins. ' new plugins registered');
 
 		$plugins = $pluginManager->compile();
 		$nbPlugins = count($plugins);
-		$output->writeln('<info>' .$nbPlugins. ' registered !</info>');
+		$event->addInfoMessage($nbPlugins. ' plugins registered.');
 	}
 }

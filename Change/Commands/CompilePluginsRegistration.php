@@ -1,36 +1,23 @@
 <?php
 namespace Change\Commands;
 
-use Change\Application\Console\ChangeCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
 
 /**
  * @name \Change\Commands\CompileDocuments
  */
-class CompilePluginsRegistration extends ChangeCommand
-{	
+class CompilePluginsRegistration
+{
 	/**
+	 * @param Event $event
 	 */
-	protected function configure()
+	public function execute(Event $event)
 	{
-		$this->setDescription('Compile Plugins Registration');
-	}
-	
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$output->writeln('<info>Compiling Plugins Registration...</info>');
-		$pluginManager = $this->getChangeApplicationServices()->getPluginManager();
+		$application = $event->getApplication();
+		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$nbPlugins = count($plugins);
-		$output->writeln('<info>' .$nbPlugins. ' registered !</info>');
+		$event->addInfoMessage($nbPlugins. ' plugins registered');
 	}
 }

@@ -42,6 +42,9 @@
 			},
 			"Http.Rest": {
 				"OAuth": "\\Change\\Http\\Rest\\OAuth\\ListenerAggregate"
+			},
+			"Commands": {
+				"Change": "\\Change\\Commands\\Events\\ListenerAggregate"
 			}
 		},
 		"Http": {

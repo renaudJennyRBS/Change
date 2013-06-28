@@ -277,7 +277,7 @@ class Compiler
 	}
 	
 	/**
-	 * @return Model
+	 * @return Model[]
 	 */
 	public function getModels()
 	{

@@ -1,41 +1,37 @@
 <?php
 namespace Change\Commands;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
 
 /**
  * @name \Change\Commands\InitializeModel
  */
-class InitializeModel extends \Change\Application\Console\ChangeCommand
+class InitializeModel
 {
 	/**
+	 * @param Event $event
 	 */
-	protected function configure()
+	public function execute(Event $event)
 	{
-		// Configure your command here
-		$this->setDescription("Initialize an new XML model file");
-		$this->addArgument('vendor', InputArgument::REQUIRED, 'vendor of the target module');
-		$this->addArgument('module', InputArgument::REQUIRED, 'name of the target module');
-		$this->addArgument('name', InputArgument::REQUIRED, 'short name of the model');
-	}
+		$application = $event->getApplication();
+		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$vendor = $input->getArgument('vendor');
-		$moduleName = $input->getArgument('module');
-		$shortName = $input->getArgument('name');
-		$path = $this->getChangeDocumentServices()->getModelManager()->initializeModel($vendor, $moduleName, $shortName);
-		$output->writeln('<info>Model definition written at path ' . $path .'</info>');
-		$path = $this->getChangeDocumentServices()->getModelManager()->initializeFinalDocumentPhpClass($vendor, $moduleName, $shortName);
-		$output->writeln('<info>Final php document class  written at path ' . $path .'</info>');
+		$vendor = $event->getParam('vendor');
+		$moduleName = $event->getParam('module');
+		$shortName = $event->getParam('name');
+
+		try
+		{
+			$path = $documentServices->getModelManager()->initializeModel($vendor, $moduleName, $shortName);
+			$event->addInfoMessage('Model definition written at path ' . $path);
+			$path = $documentServices->getModelManager()->initializeFinalDocumentPhpClass($vendor, $moduleName, $shortName);
+			$event->addInfoMessage('Final php document class  written at path ' . $path);
+		}
+		catch (\Exception $e)
+		{
+			$applicationServices->getLogging()->exception($e);
+			$event->addErrorMessage($e->getMessage());
+		}
 	}
 }

@@ -43,7 +43,7 @@ class SharedEventManager extends \Zend\EventManager\SharedEventManager
 	public function registerListenerAggregateClassNames(EventManager $eventManager, array $classNames)
 	{
 		$eventManager->setSharedManager($this);
-		if (count($classNames))
+		if (is_array($classNames) && count($classNames))
 		{
 			foreach ($classNames as $className)
 			{

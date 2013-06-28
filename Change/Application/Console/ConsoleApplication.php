@@ -1,6 +1,7 @@
 <?php
 namespace Change\Application\Console;
 
+use \Change\Application\Console\ChangeCommand as Command;
 use Zend\Json\Json;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -8,6 +9,7 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -69,139 +71,128 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	 */
 	public function registerCommands()
 	{
-		$changeCommandDir = new \SplFileInfo(PROJECT_HOME . '/Change/Commands');
-		$this->registerCommandsInDir($changeCommandDir, 'change');
-		
-		// Register project commands.
-		if (is_dir(PROJECT_HOME . '/App/Modules/'))
+		$changeApplication = $this->getChangeApplication();
+		$eventManager = new \Zend\EventManager\EventManager('Commands');
+		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
+		$changeApplication->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $classNames);
+		$eventManager->setSharedManager($changeApplication->getSharedEventManager());
+
+		$event = new \Change\Commands\Events\Event('config', $changeApplication, array());
+		$results = $eventManager->trigger($event);
+		foreach ($results as $result)
 		{
-			$finder = new Finder();
-			$dirs = $finder->depth("== 1")->directories()->in(PROJECT_HOME . '/App/Modules/')->name('Commands');
-			foreach ($dirs as $dir)
+			if (is_array($result))
 			{
-				$pathComponents = explode(DIRECTORY_SEPARATOR, $dir->getPath());
-				$moduleName = array_pop($pathComponents);
-				$this->registerCommandsInDir($dir, 'project', '\\Project\\' . ucfirst(strtolower($moduleName)) . '\\Commands');
+				$this->registerCommandsConfig($result, $eventManager, $changeApplication);
 			}
+		}
+	}
+
+	/**
+	 * @param array $commandsConfig
+	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Application $changeApplication
+	 */
+	protected function registerCommandsConfig($commandsConfig, $eventManager, $changeApplication)
+	{
+		if (!is_array($commandsConfig))
+		{
+			return;
 		}
 
-		if (is_dir(PROJECT_HOME . '/Plugins/Modules/'))
-		{
-			$finder = new Finder();
-			$vendorModuleDirs = $finder->directories()->in(PROJECT_HOME . '/Plugins/Modules/')->depth('==1');
-			foreach ($vendorModuleDirs as $vendorModuleDir)
-			{
-				$commandDir = new \SplFileInfo($vendorModuleDir->getPathname() . DIRECTORY_SEPARATOR . 'Commands');
-				if ($commandDir->isDir())
-				{
-					$pathComponents = explode(DIRECTORY_SEPARATOR, $commandDir->getPath());
-					$moduleName = array_pop($pathComponents);
-					$vendorName = array_pop($pathComponents);
-					$this->registerCommandsInDir($commandDir, strtolower($vendorName) . '-' . strtolower($moduleName), '\\' . $vendorName . '\\' . $moduleName . '\\Commands');
-				}
-			}
-		}
-		
-		$this->registerCommandGroups();
-	}
-	
-	/**
-	 * @throws \RuntimeException
-	 */
-	protected function registerCommandGroups()
-	{
 		$config = $this->getConfiguration();
-		$groups = isset($config['groups']) ? $config['groups'] : array();
-		foreach ($groups as $name => $commandNames)
+		$aliases = isset($config['aliases']) ? $config['aliases'] : array();
+		foreach ($commandsConfig as $commandName => $commandConfig)
 		{
-			$command = new ChangeCommand($name);
-			$application = $this;
-			$command->addOption('--isolation', null, InputOption::VALUE_NONE, 'Run commands in separate processes');
-			$command->addOption('--ignore-errors', null, InputOption::VALUE_NONE, 'Ignore subcommand error');
-			$command->setCode(function(InputInterface $input, OutputInterface $output) use ($commandNames, $application) {
-				
-				$style = new OutputFormatterStyle('yellow', null, array('bold'));
-				$output->getFormatter()->setStyle('strong', $style);
-				foreach ($commandNames as $commandName)
+			$command = new Command($commandName);
+			if (isset($aliases[$commandName]))
+			{
+				$currentAliases = $command->getAliases();
+				if (is_array($aliases[$commandName]))
 				{
-					$output->writeln("");
-					$output->writeln("<strong>Executing command $commandName</strong>");
-					$output->writeln("");
-					if ($input->getOption('isolation'))
+					$currentAliases = array_merge($currentAliases, $aliases[$commandName]);
+				}
+				elseif (is_string($aliases[$commandName]))
+				{
+					$currentAliases[] = $aliases[$commandName];
+				}
+				$command->setAliases($currentAliases);
+			}
+			$command->setDescription($commandConfig['description']);
+			if (isset($commandConfig['dev']) && $commandConfig['dev'] === true)
+			{
+				$command->setDevCommand(true);
+			}
+
+			if (isset($commandConfig['options']) && is_array($commandConfig['options']))
+			{
+				foreach($commandConfig['options'] as $optionName => $optionData)
+				{
+					$shortcut = isset($optionData['shortcut']) ? $optionData['shortcut'] : null;
+					if (array_key_exists('default', $optionData))
 					{
-						$process = new Process($this->getConfiguration()->getEntry('Change/Application/php-cli-path') . ' ' . $_SERVER['argv'][0] . " $commandName " . ($input->getOption('dev') ? '--dev' : ''));
-						$process->run(function($type, $buffer) use ($output) {
-							$output->write($buffer, false, OutputInterface::OUTPUT_RAW);
-						});
+						if (isset($optionData['default']))
+						{
+							$mode = InputOption::VALUE_OPTIONAL;
+							$default = $optionData['default'];
+						}
+						else
+						{
+							$mode = InputOption::VALUE_REQUIRED;
+							$default = null;
+						}
 					}
 					else
 					{
-						$command = $application->find($commandName);
-						$subCommandInput = new ArrayInput(array('command' => $commandName, '--dev' => $input->getOption('dev')));
-						$returnCode = $command->run($subCommandInput, $output);
-						if ($returnCode && !$this->getOption('ignore-errors'))
-						{
-							$e = new \RuntimeException('Command ' . $commandName . ' failed', 20000);
-							$e->returnCode = $returnCode;
-							throw $e;
-						}
+						$mode = InputOption::VALUE_NONE;
+						$default = null;
+					}
+					$description = isset($optionData['description']) ? $optionData['description'] : '';
+					$command->addOption($optionName, $shortcut, $mode, $description, $default);
+				}
+			}
+			if (isset($commandConfig['arguments']) && is_array($commandConfig['arguments']))
+			{
+				foreach($commandConfig['arguments'] as $argumentName => $argumentData)
+				{
+					$description = isset($argumentData['description']) ? $argumentData['description'] : '';
+					$mode = isset($argumentData['required']) && $argumentData['required']
+						? InputArgument::REQUIRED : InputArgument::OPTIONAL;
+					$default = isset($argumentData['default']) ? $argumentData['default'] : null;
+					$command->addArgument($argumentName, $mode, $description, $default);
+				}
+			}
+
+			$command->setCode(function(InputInterface $input, OutputInterface $output) use ($command, $eventManager, $changeApplication) {
+				$args = $eventManager->prepareArgs(array_merge($input->getOptions(), $input->getArguments()));
+				$args['outputMessages'] = new \ArrayObject();
+				$event = new \Change\Commands\Events\Event($command->getName(), $changeApplication, $args);
+				$eventManager->trigger($event);
+				$hasErrors = false;
+				foreach($event->getOutputMessages() as $message)
+				{
+					list($string, $level) = $message;
+					switch ($level)
+					{
+						case 1:
+							$output->writeln('<comment>' . $string . '</comment>');
+							break;
+						case 2:
+							$hasErrors = true;
+							$output->writeln('<error>' . $string . '</error>');
+							break;
+						default:
+							$output->writeln('<info>' . $string . '</info>');
+							break;
 					}
 				}
+				return $hasErrors ? 1 : 0;
 			});
-			$command->setChangeApplication($this->getChangeApplication());
+			$command->setChangeApplication($changeApplication);
 			$this->add($command);
 		}
 	}
 
-	/**
-	 * @param \SplFileInfo $dir
-	 * @param string $group
-	 * @param null $namespace
-	 */
-	protected function registerCommandsInDir(\SplFileInfo $dir, $group = null, $namespace = null)
-	{
-		$config = $this->getConfiguration();
-		$aliases = isset($config['aliases']) ? $config['aliases'] : array();
-		
-		$cmdFinder = new Finder();
-		foreach ($cmdFinder->files()->depth('== 0')->in($dir->getPathname())->name('*.php') as $file)
-		{
-			/* @var $file \SplFileInfo */
-			$shortClassName = str_replace('.php', '', $file->getFilename());
-			if ($namespace === null)
-			{
-				$namespace = str_replace('/', '\\', substr($file->getPath(), strlen(PROJECT_HOME)));
-			}
-			$commandClassName = $namespace . '\\' . $shortClassName;
-			if (class_exists($commandClassName))
-			{
-				$commandName = strtolower($shortClassName[0] . preg_replace('/([A-Z])/', '-${0}', substr($shortClassName, 1)));
-				if ($group)
-				{
-					$commandName = $group . ':' . $commandName;
-				}
-				/* @var $command \Change\Application\Console\ChangeCommand */
-				$command = new $commandClassName($commandName);
-				if (isset($aliases[$commandName]))
-				{
-					$currentAliases = $command->getAliases();
-					if (is_array($aliases[$commandName]))
-					{
-						$currentAliases = array_merge($currentAliases, $aliases[$commandName]);
-					}
-					elseif (is_string($aliases[$commandName]))
-					{
-						$currentAliases[] = $aliases[$commandName];
-					}
-					
-					$command->setAliases($currentAliases);
-				}
-				$command->setChangeApplication($this->getChangeApplication());
-				$this->add($command);
-			}
-		}
-	}
-	
 	/**
 	 * @return \Symfony\Component\Console\Input\InputDefinition
 	 */
