@@ -5,9 +5,16 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ catalogforms.price('basePrice', 'm.rbs.catalog.document.price.baseprice', true) }}
-		<!-- TODO list -->
-		{{ forms.field('taxCategory', 'String', 'm.rbs.catalog.document.price.taxcategory', true) }}
+		{{ catalogforms.price('baseValue', 'm.rbs.catalog.document.price.baseprice', true) }}
+		<div class="control-group property required"
+			data-ng-class="{'success': hasCorrectionOnProperty('taxCategory')}">
+			<label class="control-label" for="taxCategory">{{ i18n('m.rbs.catalog.document.price.taxcategory', ['ucf']) }}</label>
+			<div class="controls">
+				<select data-ng-model="document.taxCategory" class="input-medium" ng-options="c.code as c.code for c in metadata.taxCategories">
+					<option value="">...</option>
+				</select>
+			</div>
+		</div>
 		{{ catalogforms.price('ecoTax', 'm.rbs.catalog.document.price.ecotax', true) }}
 
 		<hr />
@@ -19,22 +26,19 @@
 			<label class="control-label" for="discount">{{ i18n('m.rbs.catalog.document.price.discount', ['ucf']) }}</label>
 
 			<div class="controls">
-				<div class="input-append">
-					<input class="input-mini number" name="discount" id="discount" size="16" type="text"
-						data-ng-model="document.discount"/>
-
-					<div class="btn-group" data-toggle="buttons-radio">
-						<button class="btn" type="button" data-ng-click="setDiscount('percent')" title="Pourcentage">%</button>
-						<button class="btn" type="button" data-ng-click="setDiscount('fixedprice')" title="Prix barré">€</button>
-						<button class="btn" type="button" data-ng-click="setDiscount('reduction')" title="Valeur à déduire">
-							<i class="icon-minus"></i>
-						</button>
-					</div>
+				<input class="input-mini number" name="discount" id="discount" size="16" type="text"
+					data-ng-model="document.discount"/>
+				<div class="btn-group" data-toggle="buttons-radio">
+					<button class="btn" type="button" data-ng-click="setDiscount('percent')" title="Pourcentage">%</button>
+					<button class="btn" type="button" data-ng-click="setDiscount('fixedprice')" title="Prix barré">(=metadata.currencySymbol=)</button>
+					<button class="btn" type="button" data-ng-click="setDiscount('reduction')" title="Valeur à déduire">
+						<i class="icon-minus"></i>
+					</button>
 				</div>
 			</div>
 		</div>
 		{{ forms.field('discountDetail', 'String', 'm.rbs.catalog.document.price.discountdetail', false) }}
-		{{ catalogforms.price('finalPrice', 'm.rbs.catalog.document.price.finalprice', false, true) }}
+		{{ catalogforms.price('finalValue', 'm.rbs.catalog.document.price.finalprice', false, true) }}
 
 		<div class="alert" data-ng-show="document.finalPrice <= 0">
 			Le prix final n'est pas correct !

@@ -391,7 +391,6 @@
 					}, true);
 
 
-
 					scope.cascadeEditFn = function (doc) {
 						FormsManager.cascadeEditor(
 							doc,
@@ -400,12 +399,14 @@
 					};
 
 					scope.cascadeDuplicate = function (doc) {
-						FormsManager.cascadeEditor(
-							Utils.duplicateDocument(doc),
-							scope.cascadeEdit
+						REST.resource(doc).then(function (fullDoc) {
+								FormsManager.cascadeEditor(
+									Utils.duplicateDocument(fullDoc),
+									scope.cascadeEdit
+								);
+							}
 						);
 					};
-
 
 					//
 					// Document selection.

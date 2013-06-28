@@ -12,15 +12,14 @@
 	</form>
 </div>
 
-<rbs-todo>Permettre de replier les sections correspondant aux taxes.</rbs-todo>
+<rbs-todo>Forcer à avoir au moins une zone et une catégorie par taxe ainsi qu'une zone par défaut.</rbs-todo>
+
 <div class="accordion" id="taxes-accordion">
 	<div class="accordion-group" data-ng-repeat="(taxIndex, tax) in document.taxesData">
-		<div class="accordion-heading">
-			<a class="accordion-toggle" data-toggle="collapse" data-parent="#taxes-accordion" href="#collapseOne">
-				(= tax.code =)
-			</a>
+		<div class="accordion-heading" onclick="jQuery('#collapse-(= taxIndex =)').toggle()">
+			<span class="accordion-toggle">(= tax.code =)</span>
 		</div>
-		<div id="collapseOne" class="accordion-body collapse in">
+		<div id="collapse-(= taxIndex =)" class="accordion-body collapse in">
 			<div class="accordion-inner">
 				<div class="btn-toolbar">
 					<form class="input-append btn-group">
@@ -86,7 +85,7 @@
 					</tbody>
 				</table>
 
-				<div class="control-group">
+				<div class="control-group required">
 					<label class="control-label" for="defaultZone-(= taxIndex =)">
 						{{ i18n('m.rbs.catalog.document.tax.defaultzone', ['ucf']) }}
 					</label>

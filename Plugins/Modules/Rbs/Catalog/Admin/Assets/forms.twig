@@ -5,10 +5,11 @@
 		<div class="controls">
 			<div class="input-append">
 				<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"/>
-				<span class="add-on" title="(=document.currencyLabel=)">(=document.currencyCode=)</span>
-				<span class="add-on" title="(=document.taxModeLabel=)">(=document.taxModeCode=)</span>
+				<span class="add-on" title="(=document.currencyLabel=)">(=metadata.currencySymbol=)</span>
+				<span class="add-on" title="(=document.taxModeLabel=)">(=metadata.editWithTax ? '{{ i18n('m.rbs.catalog.admin.macros.with-tax-abbr') }}' : '{{ i18n('m.rbs.catalog.admin.macros.without-tax-abbr') }}' =)</span>
 			</div>
 			{% if roundable %}
+				<rbs-todo>Réagir sur les boutons...</rbs-todo>
 				<div class="btn-toolbar price-round-options has-captions">
 					<div class="btn-group">
 						<label class="caption">{{ i18n('m.rbs.catalog.admin.macros.round-down', ['ucf']) }}</label>

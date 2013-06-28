@@ -9,7 +9,10 @@
 
 			link : function (scope, elm, attrs) {
 				// TODO better way to ignore this property...
-				delete scope.document.taxes;
+				if ('taxes' in scope.document)
+				{
+					delete scope.document.taxes;
+				}
 
 				scope.TaxesSection = {
 					// Tax management.
@@ -118,16 +121,17 @@
 					}
 				}
 
-				// TODO: dynamic list of Rbs_Geo_Zone.
-				/*REST.collection('Rbs_Geo_Zone').then(function (zones)
+				// List of zones.
+				scope.TaxesSection.zones = [];
+				REST.collection('Rbs_Geo_Zone', {column: ['code']}).then(function (zones)
 				{
-					scope.TaxesSection.zones = zones.resources;
-				});*/
-				scope.TaxesSection.zones = [
-					{label: 'France continentale', code: 'FR-CONT' },
-					{label: 'Corse', code: 'FR-CORSE' },
-					{label: 'Belgique', code: 'BE' }
-				];
+					for (var i in zones.resources)
+					{
+						var zone = zones.resources[i];
+						console.log('Zone: ' + zone.label + ', ' + zone.code);
+						scope.TaxesSection.zones.push({label: zone.label, code: zone.code});
+					}
+				});
 			}
 		};
 	}]);

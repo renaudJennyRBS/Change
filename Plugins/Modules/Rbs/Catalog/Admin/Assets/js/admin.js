@@ -11,8 +11,6 @@
 			.when('/Rbs/Catalog/Product', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Price', { templateUrl: 'Rbs/Catalog/Price/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Price/:id/:LCID', { templateUrl: 'Rbs/Catalog/Price/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Price/:id', { templateUrl: 'Rbs/Catalog/Price/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/BillingArea', { templateUrl: 'Rbs/Catalog/BillingArea/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/BillingArea/:id/:LCID',
@@ -44,9 +42,7 @@
 				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID'
 			});
 			$delegate.register('Rbs_Catalog_Price', {
-				'form': '/Rbs/Catalog/Price/:id/:LCID',
-				'list': '/Rbs/Catalog/Price/:LCID',
-				'i18n': '/Rbs/Catalog/Price/:id/:LCID/translate-from/:fromLCID'
+				'form': '/Rbs/Catalog/Price/:id/:LCID'
 			});
 			$delegate.register('Rbs_Catalog_Shop', {
 				'form': '/Rbs/Catalog/Shop/:id/:LCID',

@@ -18,6 +18,7 @@ interface Localizable
 	/**
 	 * @api
 	 * @param string $val
+	 * @return $this
 	 */
 	public function setRefLCID($val);
 
