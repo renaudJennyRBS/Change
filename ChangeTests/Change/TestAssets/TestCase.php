@@ -165,4 +165,24 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$dbp->getSchemaManager()->clearDB();
 		$dbp->closeConnection();
 	}
+
+	/**
+	 * Returns a new "loaded" instance of a document that can't be save in DB.
+	 *
+	 * @param strjng $modelName
+	 * @param integer $id
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	protected function getNewReadonlyDocument($modelName, $id)
+	{
+		$dm = $this->getDocumentServices()->getDocumentManager();
+		$doc = $dm->getNewDocumentInstanceByModelName($modelName);
+		if ($doc instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$doc->setRefLCID($dm->getLCID());
+			$doc->getCurrentLocalization();
+		}
+		$doc->initialize($id, \Change\Documents\DocumentManager::STATE_LOADED);
+		return $doc;
+	}
 }
