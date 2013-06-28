@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events) {
+	app.service('RbsChange.FormsManager', ['$compile', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', 'RbsChange.Settings', function ($compile, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events, Settings) {
 
 		var	$ws = $('#workspace'),
 			cascadeContextStack = [],
@@ -115,7 +115,7 @@
 			// Create cascade context.
 			cascadeContextStack.push({
 				'saveCallback' : saveCallback,
-				'queryParam'   : doc
+				'document'     : doc
 			});
 			idStack.push(doc.id);
 
@@ -231,7 +231,8 @@
 			    self = this,
 			    params,
 				q,
-				ctx;
+				ctx,
+				resource;
 
 			// Install event handlers.
 
@@ -254,7 +255,7 @@
 			// Init scope data and functions.
 
 			scope.document = {};
-			scope.language = $routeParams.LCID || 'fr_FR'; // FIXME
+			scope.language = $routeParams.LCID || Settings.get('language');
 			scope.parentId = $routeParams.parentId || null;
 
 			scope.hasCorrection = function () {
@@ -271,12 +272,7 @@
 			ctx = this.getCurrentContext();
 			if (this.isCascading()) {
 				if (ctx.document) {
-					params = {
-						'id' : ctx.document.id
-					};
-					if (ctx.document.LCID) {
-						params.LCID = ctx.document.LCID;
-					}
+					params = ctx.document;
 				} else if (angular.isObject(ctx.queryParam)) {
 					params = ctx.queryParam;
 				} else {
@@ -292,8 +288,9 @@
 				if (params.id === 'new' || (angular.isNumber(params.id) && params.id < 0)) {
 					q = $q.defer();
 					promise = q.promise;
+					resource = ctx.document || REST.newResource(rest, scope.language);
 					$timeout(function () {
-						q.resolve(REST.newResource(rest, scope.language));
+						q.resolve(resource);
 					});
 				} else {
 					promise = REST.resource(rest, params.id, params.LCID);

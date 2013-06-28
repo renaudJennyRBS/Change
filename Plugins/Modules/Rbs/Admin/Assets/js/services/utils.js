@@ -134,6 +134,20 @@
 
 
 		/**
+		 * Duplicates the given `doc` and returns a new copy ready to be saved.
+		 * @param doc
+		 */
+		duplicateDocument : function (doc) {
+			doc = angular.copy(doc);
+			doc.id = this.getTemporaryId();
+			delete doc.modificationDate;
+			delete doc.creationDate;
+			delete doc.documentVersion;
+			return doc;
+		},
+
+
+		/**
 		 * Returns informations about the given model name: vendor, module and document.
 		 *
 		 * @param {String} A fully qualified model name, such as `Change_Website_Page`.
