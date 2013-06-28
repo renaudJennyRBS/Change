@@ -285,6 +285,16 @@
 				FormsManager.cascadeEditor(doc, collapsedTitle || scope.document.label, callback);
 			};
 
+			/**
+			 * Duplicate then edit the given doc in a cascaded Editor.
+			 * @param doc
+			 * @param collapsedTitle
+			 * @param callback
+			 */
+			scope.cascadeDuplicate = function (doc, collapsedTitle, callback) {
+				FormsManager.cascadeEditor(Utils.duplicateDocument(doc), collapsedTitle || scope.document.label, callback);
+			};
+
 			scope.canGoBack = function canGoBackFn () {
 				return scope.isUnchanged();
 			};

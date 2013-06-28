@@ -399,6 +399,13 @@
 						);
 					};
 
+					scope.cascadeDuplicate = function (doc) {
+						FormsManager.cascadeEditor(
+							Utils.duplicateDocument(doc),
+							scope.cascadeEdit
+						);
+					};
+
 
 					//
 					// Document selection.
