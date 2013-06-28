@@ -288,7 +288,7 @@
 				if (params.id === 'new' || (angular.isNumber(params.id) && params.id < 0)) {
 					q = $q.defer();
 					promise = q.promise;
-					resource = ctx.document || REST.newResource(rest, scope.language);
+					resource = (ctx && ctx.document) ? ctx.document : REST.newResource(rest, scope.language);
 					$timeout(function () {
 						q.resolve(resource);
 					});
