@@ -1,105 +1,80 @@
 <?php
 namespace Change\Commands;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
 
 /**
  * @name \Change\Commands\CreateCommand
  */
-class CreateCommand extends \Change\Application\Console\ChangeCommand
+class CreateCommand
 {
 	/**
-	 * @return boolean
+	 * @param Event $event
 	 */
-	public function isDevCommand()
+	public function execute(Event $event)
 	{
-		return true;
-	}
-
-	/**
-	 */
-	protected function configure()
-	{
-		$this->setDescription('Create an empty console command')
-		->addArgument('package', InputArgument::REQUIRED, 'name of the package (vendor/module or change)')
-		->addArgument('cmdname', InputArgument::REQUIRED, 'name of the command (e.g. my-cmd)');
-	}
-
-	/**
-	 *
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \RuntimeException
-	 */
-	protected function initialize(InputInterface $input, OutputInterface $output)
-	{
-		parent::initialize($input, $output);
-		$cmdName = $input->getArgument('cmdname');
+		$application = $event->getApplication();
+		$cmdName = $event->getParam('cmdname');
 		$validator = new \Zend\Validator\Regex('#^([a-z]+-{1})*[a-z]+$#');
 		if (!$validator->isValid($cmdName))
 		{
-			throw new \InvalidArgumentException('Command name should be a lowercase dash separated string', 21002);
+			$event->addErrorMessage('Command name should be a lowercase dash separated string');
+			return;
 		}
-		$package = $input->getArgument('package');
+		$package = $event->getParam('package');
 		$valid = ($package === 'change');
 		if (!$valid)
 		{
-			$parts = explode('/', $package);
+			$parts = explode('_', $package);
 			if (count($parts) == 2)
 			{
 				$vendor = ucfirst(strtolower($parts[0]));
 				$module = ucfirst(strtolower($parts[1]));
-				$pathToTest = ($vendor == 'Project') ? $this->getChangeApplication()->getWorkspace()->appPath('Modules', $module) : $this->getChangeApplication()->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module);
+				$pathToTest = ($vendor == 'Project') ? $application->getWorkspace()->appPath('Modules', $module) :
+					$application->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module);
 				$valid = is_dir($pathToTest);
 			}
 		}
 
 		if (!$valid)
 		{
-			throw new \InvalidArgumentException('Package name should be of the form vendor/module or change or package not installed', 21003);
+			$event->addErrorMessage('Package name should be of the form vendor_module not installed');
+			return;
 		}
-	}
 
-	/**
-	 *
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$className = implode('', array_map('ucfirst', explode('-', $input->getArgument('cmdname'))));
-		$package = $input->getArgument('package');
+		$className = implode('', array_map('ucfirst', explode('-', $cmdName)));
 		if (strtolower($package) === 'change')
 		{
 			$namespace = 'Change\\Commands';
-			$commandDir = $this->getChangeApplication()->getWorkspace()->projectPath('Change', 'Commands');
+			$commandDir = $application->getWorkspace()->projectPath('Change', 'Commands');
 		}
 		else
 		{
 			list($vendor, $module) = array_map(function($var){
 				return ucfirst(strtolower($var));
-			}, explode('/', $package));
+			}, explode('_', $package));
 			if ($vendor == 'Project')
 			{
 				$namespace = 'Project\\' . $module . '\\Commands';
-				$commandDir = $this->getChangeApplication()->getWorkspace()->appPath('Modules', $module , 'Commands');
+				$commandDir = $application->getWorkspace()->appPath('Modules', $module , 'Commands');
 			}
 			else
 			{
 				$namespace = $vendor . '\\' . $module . '\\Commands';
-				$commandDir = $this->getChangeApplication()->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module, 'Commands');
+				$commandDir = $application->getWorkspace()->projectPath('Plugins', 'Modules', $vendor, $module, 'Commands');
 			}
 		}
+
 		$content = file_get_contents(__DIR__ . '/Assets/CommandTemplate.tpl');
 		$content = str_replace(array('#namespace#', '#className#'), array($namespace, $className), $content);
 		$filePath = $commandDir . DIRECTORY_SEPARATOR . $className . '.php' ;
 		if (file_exists($filePath))
 		{
-			throw new \RuntimeException('File already exists at path ' . $filePath, 22000);
+			$event->addErrorMessage('File already exists at path ' . $filePath);
+			return;
 		}
 		\Change\Stdlib\File::write($commandDir . DIRECTORY_SEPARATOR . $className . '.php' , $content);
+
+		$event->addInfoMessage('Command added at path ' . $filePath);
 	}
 }

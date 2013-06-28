@@ -17,14 +17,9 @@ class ChangeCommand extends Command
 	protected $changeApplication;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var boolean
 	 */
-	protected $changeApplicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $changeDocumentServices;
+	protected $devCommand = false;
 
 	/**
 	 * @param \Change\Application $application
@@ -32,6 +27,14 @@ class ChangeCommand extends Command
 	public function setChangeApplication(\Change\Application $application)
 	{
 		$this->changeApplication = $application;
+	}
+
+	/**
+	 * @param boolean $devCommand
+	 */
+	public function setDevCommand($devCommand)
+	{
+		$this->devCommand = ($devCommand === true);
 	}
 
 	/**
@@ -50,47 +53,6 @@ class ChangeCommand extends Command
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setChangeApplicationServices(\Change\Application\ApplicationServices $applicationServices)
-	{
-		$this->changeApplicationServices = $applicationServices;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getChangeApplicationServices()
-	{
-		if ($this->changeApplicationServices === null)
-		{
-			$this->changeApplicationServices = new \Change\Application\ApplicationServices($this->getChangeApplication());
-		}
-		return $this->changeApplicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setChangeDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->changeDocumentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getChangeDocumentServices()
-	{
-		if ($this->changeDocumentServices === null)
-		{
-			$this->changeDocumentServices =  new \Change\Documents\DocumentServices($this->getChangeApplicationServices());
-		}
-		return $this->changeDocumentServices;
-	}
-
-	/**
 	 * Override to allow command only in developer mode
 	 * (DEVELOPMENT_MODE=true or forced with --dev)
 	 *
@@ -99,7 +61,7 @@ class ChangeCommand extends Command
 	 */
 	public function isDevCommand()
 	{
-		return false;
+		return $this->devCommand;
 	}
 
 	/**

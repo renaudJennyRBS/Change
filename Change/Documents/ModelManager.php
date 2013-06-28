@@ -159,8 +159,12 @@ class ModelManager
 	}
 
 	/**
-	 * @param $pluginName
-	 * @param $shortModelName
+	 * @param string $vendorName
+	 * @param string $moduleName
+	 * @param string$shortModelName
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
+	 * @return string
 	 */
 	public function initializeModel($vendorName, $moduleName, $shortModelName)
 	{
@@ -181,8 +185,12 @@ class ModelManager
 	}
 
 	/**
-	 * @param $pluginName
-	 * @param $shortModelName
+	 * @param string $vendorName
+	 * @param string $moduleName
+	 * @param string $shortModelName
+	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
+	 * @return string
 	 */
 	public function initializeFinalDocumentPhpClass($vendorName, $moduleName, $shortModelName)
 	{

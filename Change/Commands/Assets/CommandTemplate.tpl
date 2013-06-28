@@ -1,31 +1,23 @@
 <?php
 namespace #namespace#;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Commands\Events\Event;
 
 /**
  * @name \#namespace#\#className#
  */
-class #className# extends \Change\Application\Console\ChangeCommand
+class #className#
 {
 	/**
+	 * @param Event $event
 	 */
-	protected function configure()
+	public function execute(Event $event)
 	{
-		// Configure your command here 
-	}
+		$application = $event->getApplication();
+		//Code of you command here
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @throws \LogicException
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		// Code of you command here 
+//		$applicationServices = new \Change\Application\ApplicationServices($application);
+
+		$event->addInfoMessage('Done.');
 	}
 }
