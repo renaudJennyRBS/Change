@@ -350,6 +350,10 @@
 			},
 
 
+			/**
+			 * Directive's compile function:
+			 * collect columns definition and templates for columns, grid items and preview.
+			 */
 			compile : function (tElement, tAttrs) {
 
 				var	dlid, undefinedColumnLabels, gridModeAvailable;
@@ -375,6 +379,19 @@
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope;
+
+
+					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
+					scope.data = {};
+					angular.forEach(elm.data(), function (value, key) {
+						if (key === 'columns' || key === 'dlid') {
+							return;
+						}
+						scope.$parent.$watch(value, function (v) {
+							scope.data[key] = v;
+						}, true);
+					});
+
 
 					// Load Model's information and update the columns' header with the correct property label.
 					if (undefinedColumnLabels.length && attrs.model) {
@@ -422,11 +439,12 @@
 						});
 					}, true);
 
-					scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
-
-					scope.$watch('collection', function () {
+					function updateSelectedDocuments () {
 						scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
-					}, true);
+					}
+
+					scope.$watch('collection', updateSelectedDocuments, true);
+					updateSelectedDocuments();
 
 
 					//
