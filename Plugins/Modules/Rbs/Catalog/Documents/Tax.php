@@ -6,4 +6,5 @@ namespace Rbs\Catalog\Documents;
  */
 class Tax extends \Compilation\Rbs\Catalog\Documents\Tax
 {
+
 }

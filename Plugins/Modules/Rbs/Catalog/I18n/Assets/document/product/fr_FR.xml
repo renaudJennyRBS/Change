@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.document.product" lcid="fr_FR">
 	<include id="m.rbs.catalog.document.abstractproduct"/>
+	<key id="price-section-help" format="html">
+		<![CDATA[<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.</strong> Un même produit qui apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.</p>
+		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>
+	</key>
 </i18n>

@@ -18,4 +18,7 @@
 	<key id="threshold-section-help" format="html">
 		<![CDATA[Vous pouvez définir une <label class="in-text" for="thresholdMin">quantité minimale</label> d'achat pour que ce prix soit appliqué.]]>
 	</key>
+	<key id="value">montant</key>
+	<key id="discount">promotion</key>
+	<key id="create-discount-from-price">créer un prix promotionnel à partir de ce prix</key>
 </i18n>

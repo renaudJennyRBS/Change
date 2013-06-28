@@ -227,6 +227,7 @@ class ConstraintsManager
 	
 	/**
 	 * @param array $params<allow => \Zend\Validator\Hostname::ALLOW_*>
+	 * @return \Zend\Validator\Hostname
 	 */
 	public function hostname($params = array())
 	{

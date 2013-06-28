@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
-	icon="folder" localized="true" editable="true" publishable="true" tree-name="Rbs_Catalog">
+	icon="folder" editable="true" publishable="true" tree-name="Rbs_Catalog">
 	<properties>
+		<property name="label" stateless="true" />
 		<property name="product" type="Document" document-type="Rbs_Catalog_AbstractProduct" required="true" />
 		<property name="shop" type="Document" document-type="Rbs_Catalog_Shop" required="true" />
 		<property name="billingArea" type="Document" document-type="Rbs_Catalog_BillingArea" required="true" />
-		<property name="targetId" type="DocumentId" required="true" default-value="0" />
+		<property name="targetId" type="DocumentId" />
 		<property name="thresholdMin" type="Integer" required="true" default-value="1" />
 		<property name="priority" type="Integer" required="true" default-value="25" />
 		<property name="storeWithTax" type="Boolean" default-value="false" />
 		<property name="taxCategory" type="String" required="true" default-value="0" />
-		<property name="value" type="Float" required="true" />
-		<property name="valueWithoutDiscount" type="Float" />
+		<property name="value" type="Decimal" required="true" />
+		<property name="valueWithoutDiscount" type="Decimal" />
 		<property name="discountDetail" type="String" />
-		<property name="ecoTax" type="Float" required="true" default-value="0" />
+		<property name="ecoTax" type="Decimal" />
+		<property name="baseValue" type="Decimal" stateless="true" />
+		<property name="finalValue" type="Decimal" stateless="true" />
 	</properties>
 </document>
