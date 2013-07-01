@@ -24,6 +24,7 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='fileinfo'"
+		hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.media.document.image.file-informations', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 		{{ forms.readonly('width', 'm.rbs.media.document.image.width') }}
