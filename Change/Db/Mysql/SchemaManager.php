@@ -655,7 +655,7 @@ WHERE C.`TABLE_SCHEMA` = '".$this->getName()."' AND C.`TABLE_NAME`= '".$tableNam
 		{
 			$type .= ' auto_increment';
 		}
-		else
+		elseif ($fieldDefinition->getNullable())
 		{
 			$type .= ' NULL';
 		}

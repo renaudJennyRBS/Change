@@ -27,7 +27,7 @@
 	"change:generate-db-schema": {
 		"description": "Generate database Schema",
 		"options":{
-			"with-module": {
+			"with-modules": {
 				"description": "Compile Modules Db schema",
 				"shortcut": "m"
 			}
