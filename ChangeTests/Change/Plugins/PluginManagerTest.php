@@ -108,7 +108,7 @@ class PluginManagerTest extends TestCase
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$p = $pluginManager->getModule('Project', 'Tests');
 		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
-		$pluginManager->unRegister($p);
+		$pluginManager->deregister($p);
 		$p2 = $pluginManager->getModule('Project', 'Tests');
 		$this->assertNull($p2);
 
@@ -144,7 +144,7 @@ class PluginManagerTest extends TestCase
 	/**
 	 * @depends testGetUnregisteredPlugins
 	 */
-	public function testUnRegister()
+	public function testDeregister()
 	{
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$this->assertNull($pluginManager->getModule('Project', 'Tests'));
@@ -156,10 +156,10 @@ class PluginManagerTest extends TestCase
 		$theme = $pluginManager->getTheme('Project', 'Tests');
 		$this->assertInstanceOf('Change\Plugins\Plugin', $theme);
 
-		$pluginManager->unRegister($module);
+		$pluginManager->deregister($module);
 		$this->assertNull($pluginManager->getModule('Project', 'Tests'));
 
-		$pluginManager->unRegister($theme);
+		$pluginManager->deregister($theme);
 		$this->assertNull($pluginManager->getTheme('Project', 'Tests'));
 
 		$pluginManager->reset();
@@ -172,7 +172,7 @@ class PluginManagerTest extends TestCase
 	}
 
 	/**
-	 * @depends testUnRegister
+	 * @depends testDeregister
 	 */
 	public function testLoad()
 	{

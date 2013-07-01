@@ -339,7 +339,7 @@ class PluginManager
 	 */
 	public function register(Plugin $plugin)
 	{
-		$this->unRegister($plugin);
+		$this->deregister($plugin);
 		$registrationDate = $plugin->getRegistrationDate();
 		if (!($registrationDate instanceof \DateTime))
 		{
@@ -367,7 +367,7 @@ class PluginManager
 	/**
 	 * @param Plugin $plugin
 	 */
-	public function unRegister(Plugin $plugin)
+	public function deregister(Plugin $plugin)
 	{
 		$dsb = $this->getDbProvider()->getNewStatementBuilder('PluginManager::unRegister');
 		$fb = $dsb->getFragmentBuilder();
