@@ -24,7 +24,8 @@
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
 		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
-		testerEl = $('#rbs-document-list-tester');
+		testerEl = $('#rbs-document-list-tester'),
+		forEach = angular.forEach;
 
 	app.directive('rbsDocumentList', [
 		'$q',
@@ -188,7 +189,7 @@
 						'<th ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}" ng-if="isSortable(\'' + column.name + '\')">' +
 							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>' +
 							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
-							'</th>' +
+						'</th>' +
 						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</th>'
 					);
 				}
@@ -218,7 +219,11 @@
 							column.content = '<img rbs-storage-image="(= doc.' + column.valuePath + ' =)" thumbnail="' + column.thumbnail + '"/>';
 						}
 					} else {
-						column.content = '(= doc.' + column.valuePath + ' =)';
+						if (column.converter) {
+							column.content = '(= getConvertedValue(doc.' + column.valuePath + ', "' + column.converter + '", "' + column.converterParams + '") =)';
+						} else {
+							column.content = '(= doc.' + column.valuePath + ' =)';
+						}
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
@@ -896,49 +901,110 @@
 
 					//---------------------------------------------------------
 					//
-					// Initial load.
+					// Converters
 					//
 					//---------------------------------------------------------
 
 
-					if (attrs.tree) {
-						// If in a tree context, reload the list when the Breadcrumb is ready
-						// and each time it changes.
-						Breadcrumb.ready().then(function () {
-							console.log("reload 3");
-							reload();
-							scope.$on('Change:TreePathChanged', function () {
-								console.log("reload 3.1");
-								reload();
-							});
-						});
-					} else if (attrs.parentProperty) {
-						Breadcrumb.ready().then(function () {
-							buildQueryParentProperty();
-							scope.$on('Change:TreePathChanged', function () {
-								buildQueryParentProperty();
-							});
-						});
-					} else if (attrs.childrenProperty) {
-						console.log("List child documents: ", attrs.childrenProperty);
-						Breadcrumb.ready().then(function () {
-							console.log("reload 4");
-							reload();
-							scope.$on('Change:TreePathChanged', function () {
-								console.log("reload 4.1");
-								reload();
-							});
-						});
-					} else {
-						// Not in a tree.
+					function initializeConverters () {
+						Loading.start("Initializing converters...");
+						var promises = [];
+						scope.convertersValues = {};
 
-						// If a "load-query" attribute, the list should not be loaded as is.
-						if (! elm.is('[load-query]')) {
-							// ? Just load the flat list.
-							console.log("reload 5");
-							reload();
+						scope.getConvertedValue = function (value, converter) {
+							if (value) {
+								if (scope.convertersValues[converter] && scope.convertersValues[converter][value]) {
+									return scope.convertersValues[converter][value];
+								}
+								return '[' + value + ']';
+							}
+							return '';
+						};
+
+						forEach(scope.columns, function (column) {
+							var	conv = column.converter,
+								params = column.converterParams;
+							if (conv) {
+								if (conv === 'object' && /^{.*}$/.test(params)) {
+									scope.convertersValues[conv] = scope.$eval(params);
+								} else {
+									scope.convertersValues[conv] = {};
+									$rootScope.$broadcast(Events.DocumentListConverterGetValues, {
+										"converter" : conv,
+										"params"    : column.converterParams,
+										"promises"  : promises,
+										"values"    : scope.convertersValues[conv]
+									});
+								}
+							}
+						});
+
+						function errorFn (error) {
+							console.error(error);
+							successFn();
 						}
 
+						function successFn () {
+							console.log("scope.convertersValues=", scope.convertersValues);
+							Loading.stop();
+							initialLoad();
+						}
+
+						if (promises.length) {
+							$q.all(promises).then(successFn, errorFn);
+						} else {
+							successFn();
+						}
+					}
+					initializeConverters();
+
+
+					//---------------------------------------------------------
+					//
+					// Initial load.
+					//
+					//---------------------------------------------------------
+
+					function initialLoad () {
+						if (attrs.tree) {
+							// If in a tree context, reload the list when the Breadcrumb is ready
+							// and each time it changes.
+							Breadcrumb.ready().then(function () {
+								console.log("reload 3");
+								reload();
+								scope.$on('Change:TreePathChanged', function () {
+									console.log("reload 3.1");
+									reload();
+								});
+							});
+						} else if (attrs.parentProperty) {
+							Breadcrumb.ready().then(function () {
+								buildQueryParentProperty();
+								scope.$on('Change:TreePathChanged', function () {
+									buildQueryParentProperty();
+								});
+							});
+						} else if (attrs.childrenProperty) {
+							console.log("List child documents: ", attrs.childrenProperty);
+							Breadcrumb.ready().then(function () {
+								console.log("reload 4");
+								reload();
+								scope.$on('Change:TreePathChanged', function () {
+									console.log("reload 4.1");
+									reload();
+								});
+							});
+						} else {
+							// Not in a tree.
+
+							// If a "load-query" attribute, the list should not be loaded as is.
+							if (! elm.is('[load-query]')) {
+								// ? Just load the flat list.
+								console.log("reload 5");
+								reload();
+							}
+
+						}
 					}
 
 

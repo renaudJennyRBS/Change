@@ -20,7 +20,7 @@
 			<rbs-tag-color-selector ng-model="doc.color" ng-change="save(doc)"></rbs-tag-color-selector>
 		</column>
 
-		<column name="module"></column>
+		<column name="module" converter-params="modules" converter="collection"></column>
 
 		<preview>
 			(= doc.children.length | number =) sous-étiquettes :

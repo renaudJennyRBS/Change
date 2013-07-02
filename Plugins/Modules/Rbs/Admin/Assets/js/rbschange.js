@@ -60,8 +60,18 @@
 		'EditorUpdateDocumentProperties' : 'Change:UpdateDocumentProperties',
 
 		// Raised from the <rbs-document-list/> directive when a filter parameter is present in the URL.
-		// Listeners should fill in the 'predicates' received ans
+		// Listeners should fill in the 'predicates' recieved in the args.
 		'DocumentListApplyFilter'        : 'Change:DocumentList.ApplyFilter',
+
+		// Raised from the <rbs-document-list/> directive when a converter has been requested on a column.
+		// {
+		//    "converter" : "...",
+		//    "params"    : "...",
+		//    "promises"  : [],
+		//    "values"    : {}
+		// }
+		// Listeners should fill in the "promises" array and the "values" hash object.
+		'DocumentListConverterGetValues' : 'Change:DocumentList.ConverterGetValues',
 
 		'DocumentListPreview'            : 'Change:DocumentList.Preview'
 	});
