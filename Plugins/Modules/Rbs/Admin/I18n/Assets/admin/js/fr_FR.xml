@@ -25,4 +25,28 @@
 	<key id="delete">supprimer</key>
 
 	<key id="search">rechercher</key>
+
+	<!-- actions -->
+
+	<key id="action-validate">valider</key>
+	<key id="action-validate-help">valider les documents sélectionnés</key>
+
+	<key id="action-activate">activer</key>
+	<key id="action-activate-help">activer les documents sélectionnés</key>
+
+	<key id="action-deactivate">désactiver</key>
+	<key id="action-deactivate-help">désactiver les documents sélectionnés</key>
+
+	<key id="action-publish">publier</key>
+	<key id="action-publish-help">publier les documents sélectionnés</key>
+
+	<key id="action-delete">supprimer</key>
+	<key id="action-delete-help">supprimer les documents sélectionnés</key>
+
+	<key id="action-reorder">réorganiser</key>
+	<key id="action-reorder-help">réorganiser les documents de la liste ci-dessous</key>
+
+	<key id="action-apply-correction">appliquer la correction</key>
+	<key id="action-apply-correction-help">appliquer la correction sur les documents sélectionnés</key>
+
 </i18n>

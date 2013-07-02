@@ -23,7 +23,7 @@
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
-		DEFAULT_ACTIONS = 'activate reorder delete(icon)',
+		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
 		testerEl = $('#rbs-document-list-tester');
 
 	app.directive('rbsDocumentList', [

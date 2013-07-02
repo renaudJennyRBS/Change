@@ -3,7 +3,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.Breadcrumb', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, Breadcrumb) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n) {
 			function Actions () {
 
 				this.reset = function () {
@@ -317,7 +317,7 @@
 					name        : 'delete',
 					models      : '*',
 					description : "Supprimer les documents sélectionnés",
-					label       : 'Supprimer',
+					label       : i18n.trans('m.rbs.admin.admin.js.action-delete | ucf'),
 					icon        : "icon-trash",
 					selection   : "+",
 					cssClass    : "btn-danger-hover",
@@ -401,8 +401,8 @@
 				this.register({
 					name        : 'activate',
 					models      : '*',
-					label       : "Activer",
-					description : "Activer les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-activate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-activate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -439,8 +439,8 @@
 				this.register({
 					name        : 'startValidation',
 					models      : '*',
-					label       : "Activer",
-					description : "Valider les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-validate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-validate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -477,8 +477,8 @@
 				this.register({
 					name        : 'startPublication',
 					models      : '*',
-					label       : "Publier",
-					description : "Publier les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-publish | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-publish-help | ucf'),
 					icon        : "icon-rss",
 					selection   : "+",
 					loading     : true,
@@ -541,8 +541,8 @@
 				this.register({
 					name        : 'applyCorrection',
 					models      : '*',
-					label       : "Appliquer la correction",
-					description : "Appliquer la correction des documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-apply-correction | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-apply-correction-help | ucf'),
 					icon        : "icon-download-alt",
 					selection   : "+",
 
@@ -607,8 +607,8 @@
 				this.register({
 					name        : 'deactivate',
 					models      : '*',
-					label       : "Désactiver",
-					description : "Désactiver les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-deactivate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-deactivate-help | ucf'),
 					icon        : "icon-pause",
 					selection   : "+",
 					loading     : true,
@@ -646,8 +646,8 @@
 				this.register({
 					name        : 'reorder',
 					models      : '*',
-					label       : "Réorganiser",
-					description : "Réorganiser les éléments de la liste ci-dessous",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-reorder | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-reorder-help | ucf'),
 					icon        : "icon-reorder",
 
 					execute : ['$scope', '$embedDialog', '$target', function ($scope, $embedDialog, $target) {
