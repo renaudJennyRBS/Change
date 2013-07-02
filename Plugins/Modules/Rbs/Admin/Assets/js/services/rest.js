@@ -753,7 +753,7 @@
 						var q = $q.defer(),
 							self = this;
 
-						this.action(actionName, resource, params).then(
+						this.resourceAction(actionName, resource, params).then(
 							function () {
 								self.resource(resource.model, resource.id, resource.LCID).then(function (rsc) {
 									resolveQ(q, rsc);
