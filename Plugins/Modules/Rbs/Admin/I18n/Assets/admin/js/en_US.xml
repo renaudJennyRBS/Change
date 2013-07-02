@@ -49,4 +49,7 @@
 	<key id="action-apply-correction">apply correction</key>
 	<key id="action-apply-correction-help">apply correction on selected documents</key>
 
+	<key id="action-add-to-clipboard">add to Clipboard</key>
+	<key id="action-add-to-clipboard-help">add selected documents to Clipboard</key>
+
 </i18n>

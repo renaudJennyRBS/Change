@@ -298,7 +298,8 @@
 				this.register({
 					name        : 'addToClipboard',
 					models      : '*',
-					description : "Ajouter les documents sélectionnés dans le Presse-papier",
+					description : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard | ucf'),
 					icon        : "icon-bookmark",
 					selection   : "+",
 
@@ -316,7 +317,7 @@
 				this.register({
 					name        : 'delete',
 					models      : '*',
-					description : "Supprimer les documents sélectionnés",
+					description : i18n.trans('m.rbs.admin.admin.js.action-delete-help | ucf'),
 					label       : i18n.trans('m.rbs.admin.admin.js.action-delete | ucf'),
 					icon        : "icon-trash",
 					selection   : "+",

@@ -49,4 +49,7 @@
 	<key id="action-apply-correction">appliquer la correction</key>
 	<key id="action-apply-correction-help">appliquer la correction sur les documents sélectionnés</key>
 
+	<key id="action-add-to-clipboard">ajouter au Presse-papier</key>
+	<key id="action-add-to-clipboard-help">ajouter les documents sélectionnés au Presse-papier</key>
+
 </i18n>
