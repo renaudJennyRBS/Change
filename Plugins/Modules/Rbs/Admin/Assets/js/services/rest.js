@@ -562,7 +562,7 @@
 					 * @return {Object} Promise that will be resolved when `resource` is successfully saved.
 					 *                  Promise is resolved with the saved Resource as argument.
 					 */
-					'save' : function (resource, currentTreeNode) {
+					'save' : function (resource, currentTreeNode, propertiesList) {
 						var mainQ = $q.defer(),
 							url,
 							method,
@@ -583,6 +583,16 @@
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
 							method = 'put';
 							url = this.getResourceUrl(resource);
+							// Save only the properties listed here.
+							if (angular.isArray(propertiesList)) {
+								var toSave = {};
+								angular.forEach(propertiesList, function (prop) {
+									if (resource.hasOwnProperty(prop)) {
+										toSave[prop] = resource[prop];
+									}
+								});
+								resource = toSave;
+							}
 						}
 
 						// REST call:
