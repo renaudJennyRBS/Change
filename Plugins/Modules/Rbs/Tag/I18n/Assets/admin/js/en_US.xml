@@ -9,4 +9,5 @@
 	<key id="tag-not-saved">this tag will be created when this form is saved</key>
 	<key id="enter-selects-first-tag">[Enter] to select first tag</key>
 	<key id="usertag-text">this tag is personal and can only be used by you</key>
+	<key id="applying-tags">applying tags</key>
 </i18n>

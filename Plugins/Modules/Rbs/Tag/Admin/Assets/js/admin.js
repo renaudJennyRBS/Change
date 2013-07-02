@@ -13,28 +13,15 @@
 
 
 	app.config(['$routeProvider', function ($routeProvider) {
+		// Angular's routes.
 		$routeProvider
-
-		// Users
-
-		. when(
-			'/Rbs/Tag',
-			{
-				templateUrl : 'Rbs/Tag/Tag/list.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/Tag/:id',
-			{
-				templateUrl : 'Rbs/Tag/Tag/form.twig',
-				reloadOnSearch : false
-			})
-
+		. when('/Rbs/Tag'    , { templateUrl : 'Rbs/Tag/Tag/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Tag/:id', { templateUrl : 'Rbs/Tag/Tag/form.twig', reloadOnSearch : false })
 		;
 	}]);
 
 	app.config(['$provide', function ($provide) {
+		// Change's URL.
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
 			$delegate.register('Rbs_Tag_Tag', {
 				'form'  : '/Rbs/Tag/:id',
@@ -140,7 +127,7 @@
 					documents = $(this).scope().selectedDocuments;
 				if (tag && documents && documents.length) {
 					$timeout(function () {
-						Loading.start("Applying tags..."); // FIXME Localization
+						Loading.start(i18n.trans('m.rbs.tag.admin.js.applying-tags | ucf | etc'));
 						affectTagToDocuments(JSON.parse(tag), documents).then(function () {
 							Loading.stop();
 						});
@@ -160,9 +147,6 @@
 	//-------------------------------------------------------------------------
 
 
-	/**
-	 * TagService
-	 */
 	app.service('RbsChange.TagService', ['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Settings', '$q', '$http', '$rootScope', function (REST, Utils, Settings, $q, $http, $rootScope) {
 
 		function getIdArray (data) {
