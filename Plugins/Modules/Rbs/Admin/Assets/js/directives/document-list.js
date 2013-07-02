@@ -781,7 +781,11 @@
 									});
 								} else {
 									Loading.start();
-									promise = REST.collection(attrs.model, params);
+									if (attrs.collectionUrl) {
+										promise = REST.collection(attrs.collectionUrl, params);
+									} else {
+										promise = REST.collection(attrs.model, params);
+									}
 								}
 							} else if (! attrs.parentProperty) {
 								Loading.start();
@@ -799,7 +803,11 @@
 									});
 									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
 								} else {
-									promise = REST.collection(attrs.model, params);
+									if (attrs.collectionUrl) {
+										promise = REST.collection(attrs.collectionUrl, params);
+									} else {
+										promise = REST.collection(attrs.model, params);
+									}
 								}
 							}
 						}

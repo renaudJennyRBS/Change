@@ -328,7 +328,7 @@
 				 * @param data
 				 */
 				function resolveQ (q, data) {
-					if (data === null || (data.error && data.code && data.message)) {
+					if (data === null || (data.code && data.message)) {
 						q.reject(data);
 					} else {
 						q.resolve(data);
@@ -513,16 +513,24 @@
 					/**
 					 * Loads a collection via a 'GET' REST call.
 					 *
-					 * @param model Model name.
+					 * @param model Model name OR URL of a RESTful service that returns a Collection.
 					 * @param params Parameters (limit, offset, sort, ...)
 					 *
 					 * @return Promise Promise that will be resolved when the collection is loaded.
 					 *                 The Promise is resolved with the whole response as argument.
 					 */
 					'collection' : function (model, params) {
-						var q = $q.defer();
+						var	q = $q.defer(),
+							url;
+
+						if (Utils.isModelName(model)) {
+							url = this.getCollectionUrl(model, params);
+						} else {
+							url = Utils.makeUrl(model, params);
+						}
 						$http.get(
-								this.getCollectionUrl(model, params),
+								//this.getCollectionUrl(model, params),
+								url,
 								getHttpConfig(transformResponseCollectionFn)
 							).success(function (data) {
 								resolveQ(q, data);
