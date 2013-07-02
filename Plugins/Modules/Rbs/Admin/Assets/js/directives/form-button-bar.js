@@ -63,7 +63,7 @@
 				};
 
 
-				scope.preSubmit = function (doc) {
+				scope.preSubmitCorrectionCheck = function (doc) {
 					if (Utils.hasCorrection(doc)) {
 						return Dialog.confirmEmbed(
 							element.find('.confirmation-area'),
