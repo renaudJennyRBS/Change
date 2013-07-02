@@ -412,7 +412,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('activate', doc);
+							var promise = REST.resourceActionThenReload('activate', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -450,7 +450,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('startValidation', doc);
+							var promise = REST.resourceActionThenReload('startValidation', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -488,7 +488,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('startPublication', doc);
+							var promise = REST.resourceActionThenReload('startPublication', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -573,12 +573,12 @@
 							REST.loadCorrection(doc).then(function (doc) {
 
 								if (doc.META$.correction.status === 'DRAFT') {
-									REST.action('startCorrectionValidation', doc).then(function (result) {
+									REST.resourceAction('startCorrectionValidation', doc).then(function (result) {
 										doc.META$.correction.status = result.data['correction-status'];
 										q.resolve(doc);
 									});
 								} else {
-									REST.action('startCorrectionPublication', doc, {'publishImmediately': true}).then(function (result) {
+									REST.resourceAction('startCorrectionPublication', doc, {'publishImmediately': true}).then(function (result) {
 										doc.META$.correction.status = result.data['correction-status'];
 										if (doc.META$.correction.status === 'FILED') {
 											delete doc.META$.correction;
@@ -618,7 +618,7 @@
 						var promises = [];
 						// Call one REST request per document to remove and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('deactivate', doc);
+							var promise = REST.resourceActionThenReload('deactivate', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								doc.publicationStatus = updatedDoc.publicationStatus;

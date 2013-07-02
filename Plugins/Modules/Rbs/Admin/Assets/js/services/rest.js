@@ -704,7 +704,7 @@
 					 *
 					 * @returns Promise
 					 */
-					'action' : function (actionName, resource, params) {
+					'resourceAction' : function (actionName, resource, params) {
 						var q = $q.defer(),
 							url;
 
@@ -739,7 +739,7 @@
 					 *
 					 * @returns Promise
 					 */
-					'actionThenReload' : function (actionName, resource, params) {
+					'resourceActionThenReload' : function (actionName, resource, params) {
 						var q = $q.defer(),
 							self = this;
 
@@ -985,6 +985,36 @@
 					},
 
 
+					/**
+					 * Calls the action `actionName` with the given `params`.
+					 *
+					 * @param actionName
+					 * @param params
+					 *
+					 * @returns Promise
+					 */
+					'action' : function (actionName, params) {
+						var q = $q.defer(),
+							url;
+
+						url = Utils.makeUrl(REST_BASE_URL + 'actions/' + actionName + '/', params);
+
+						$http.get(url, getHttpConfig())
+							.success(function restActionSuccessCallback (data) {
+								resolveQ(q, data);
+							})
+							.error(function restActionErrorCallback (data, status) {
+								data.httpStatus = status;
+								rejectQ(q, data);
+							});
+
+						digest();
+
+						return q.promise;
+					},
+
+
+
 					//
 					// Storage
 					//
@@ -1069,60 +1099,6 @@
 							}
 
 							return q.promise;
-						}
-
-					},
-
-					'tags' : {
-
-						getList : function (moduleName) {
-							var tags = [];
-
-							REST.collection('Rbs_Tag_Tag', {'column':['color','userTag'],'limit':100}).then(function (result) {
-								angular.forEach(result.resources, function (r) {
-									tags.push(r);
-								});
-							});
-
-							return tags;
-						},
-
-						create : function (tag) {
-							tag.model = 'Rbs_Tag_Tag';
-							tag.id = Utils.getTemporaryId();
-							tag.refLCID = Settings.get('language');
-							var promise = REST.save(tag);
-							promise.then(function (created) {
-								angular.extend(tag, created);
-								delete tag.unsaved;
-							});
-							return promise;
-						},
-
-						setDocumentTags : function (doc, tags) {
-							var q = $q.defer();
-							$http.post(doc.getTagsUrl(), {"ids":getIdArray(tags)}, getHttpConfig())
-								.success(function (data) {
-									console.log("REST.setDocumentTags(): data=", data);
-									resolveQ(q, doc);
-								})
-								.error(function errorCallback (data, status) {
-									data.httpStatus = status;
-									rejectQ(q, data);
-								});
-						},
-
-						addTag : function (doc, tag) {
-							var q = $q.defer();
-							$http.post(doc.getTagsUrl(), {"addIds":[tag]}, getHttpConfig())
-								.success(function (data) {
-									console.log("REST.addTag(): data=", data);
-									resolveQ(q, doc);
-								})
-								.error(function errorCallback (data, status) {
-									data.httpStatus = status;
-									rejectQ(q, data);
-								});
 						}
 
 					}

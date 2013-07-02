@@ -96,7 +96,7 @@
 
 
 				scope.submitNow = function () {
-					REST.action('startCorrectionValidation', scope.current).then(function (result) {
+					REST.resourceAction('startCorrectionValidation', scope.current).then(function (result) {
 						console.log(result);
 						console.log(scope.current.META$.correction);
 						scope.current.META$.correction.status = result.data['correction-status'];
@@ -106,7 +106,7 @@
 
 
 				scope.publish = function () {
-					REST.action('startCorrectionPublication', scope.current, {'publishImmediately': true}).then(function (result) {
+					REST.resourceAction('startCorrectionPublication', scope.current, {'publishImmediately': true}).then(function (result) {
 						scope.current.META$.correction.status = result.data['correction-status'];
 						scope.correctionInfo = angular.copy(scope.current.META$.correction);
 						if (scope.current.META$.correction.status === 'FILED') {
