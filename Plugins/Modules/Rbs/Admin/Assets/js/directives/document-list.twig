@@ -1,4 +1,4 @@
-<div class="btn-toolbar">
+<div class="btn-toolbar" ng-if="useToolBar">
 	<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
 		<a class="btn" href go-up-in-tree></a>
 	</div>
@@ -71,7 +71,7 @@
 
 </div>
 
-<footer class="rbsc-list-footer" ng-hide="collection.length == 0 && !loading">
+<footer class="rbsc-list-footer clearfix" ng-hide="collection.length == 0 && !loading">
 
 		<div class="pull-right">
 			<div class="pagination pagination-small" style="display: block; margin: 0;">

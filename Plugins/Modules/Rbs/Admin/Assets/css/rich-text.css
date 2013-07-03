@@ -18,15 +18,11 @@
 .no-margin {
 	margin: 0;
 }
-/*
-[contentEditable] {
-	border: 0 none;
-	margin: 0;
-	padding: 0;
-	background: white;
+
+rich-text-editor[contenteditable] {
 	min-height: 140px;
 }
-*/
+
 .editor[contentEditable] {
 	border: 1px solid rgb(192,192,192);
 	display: block;
@@ -112,4 +108,29 @@ i[class*="big-icon-"] {
 label.caption + .btn {
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
+}
+
+
+rbs-rich-text-input .ace_editor {
+	border: 1px solid #DDDDDD;
+	border-radius: 0;
+}
+
+rbs-rich-text-input.focused .ace_editor {
+	border-color: rgba(82, 168, 236, 0.8);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+	outline: 0 none;
+}
+
+rbs-rich-text-input .btn-toolbar {
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#dddddd));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: linear-gradient(to bottom, #ffffff 0%,#dddddd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 );
+	margin: 0;
+	padding: 5px;
 }

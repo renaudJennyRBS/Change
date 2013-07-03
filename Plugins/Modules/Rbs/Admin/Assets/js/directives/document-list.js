@@ -380,10 +380,15 @@
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
-					scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
+					if (attrs.display) {
+						scope.viewMode = attrs.display;
+					} else {
+						scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
+					}
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
-					scope.$DL = scope;
+					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
+					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
 
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.

@@ -1012,12 +1012,32 @@
 					 * @returns Promise
 					 */
 					'action' : function (actionName, params) {
-						var q = $q.defer(),
+						var	q = $q.defer(),
 							url;
 
 						url = Utils.makeUrl(REST_BASE_URL + 'actions/' + actionName + '/', params);
 
 						$http.get(url, getHttpConfig())
+							.success(function restActionSuccessCallback (data) {
+								resolveQ(q, data);
+							})
+							.error(function restActionErrorCallback (data, status) {
+								data.httpStatus = status;
+								rejectQ(q, data);
+							});
+
+						digest();
+
+						return q.promise;
+					},
+
+					'postAction' : function (actionName, content) {
+						var	q = $q.defer(),
+							url;
+
+						url = REST_BASE_URL + 'actions/' + actionName + '/';
+
+						$http.post(url, content, getHttpConfig())
 							.success(function restActionSuccessCallback (data) {
 								resolveQ(q, data);
 							})
