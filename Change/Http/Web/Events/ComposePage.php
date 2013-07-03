@@ -14,7 +14,7 @@ class ComposePage
 {
 	/**
 	 * Use Required Event Params: page
-	 * @param \Change\Http\Event $event
+	 * @param \Change\Http\Web\Event $event
 	 * @throws \RuntimeException
 	 */
 	public function execute($event)
@@ -73,7 +73,7 @@ class ComposePage
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param \Change\Http\Web\Event $event
 	 * @param Page $page
 	 * @return PageEvent
 	 */

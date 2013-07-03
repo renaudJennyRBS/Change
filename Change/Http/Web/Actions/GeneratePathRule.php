@@ -12,7 +12,7 @@ class GeneratePathRule
 {
 	/**
 	 * Use Required Event Params: pathRule
-	 * @param \Change\Http\Event $event
+	 * @param \Change\Http\Web\Event $event
 	 * @throws \RuntimeException
 	 */
 	public function execute($event)
@@ -23,103 +23,30 @@ class GeneratePathRule
 		{
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
 		}
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($pathRule->getDocumentId());
+		$dm = $event->getDocumentServices()->getDocumentManager();
+
+		/* @var $urlManager \Change\Http\Web\UrlManager */
+		$urlManager = $event->getUrlManager();
+		$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 		if ($document)
 		{
-			$tmpPathRule = clone($pathRule);
-			$tmpPathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-			$eventManager = $document->getEventManager();
-			$eventManager->attach(DocumentEvent::EVENT_PATH_RULE, array($this, "onGeneratePathRule"), 5);
-			$e = new DocumentEvent(DocumentEvent::EVENT_PATH_RULE, $document, array('inputPathRule' => $tmpPathRule));
-			$result = $eventManager->trigger($e, function ($return)
+			$newPathRule = $urlManager->rewritePathRule($document, $pathRule);
+			if ($newPathRule === null)
 			{
-				return ($return instanceof PathRule);
-			});
-
-			$finalPathRule = ($result->stopped()) ? $result->last() : $e->getParam('pathRule');
-
-			if ($finalPathRule instanceof PathRule)
-			{
-				$this->insertPathRule($event->getApplicationServices(), $finalPathRule);
-			}
-			else
-			{
-				$finalPathRule = $tmpPathRule;
-				$callBack = array($document, 'getPathSuffix');
-				$suffix = (is_callable($callBack)) ? call_user_func($callBack) : '.html';
-				$sectionId = $pathRule->getSectionId();
-				$finalPathRule->setPath($document->getDocumentModelName() . ($sectionId ? ','. $sectionId : '')  . ',' . $document->getId() . $suffix);
-			}
-
-			if ($pathRule->getPath() !== $finalPathRule->getPath())
-			{
-				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
-				$pathRule->setConfig('Location', $finalPathRule->getPath());
-				$action = new RedirectPathRule();
-				$action->execute($event);
-			}
-			else
-			{
-				$event->setParam('pathRule', $finalPathRule);
+				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
 				$action = new FindDisplayPage();
 				$action->execute($event);
 			}
-		}
-	}
-
-	/**
-	 * @param DocumentEvent $event
-	 */
-	public function onGeneratePathRule($event)
-	{
-		if ($event instanceof DocumentEvent)
-		{
-			$inputPathRule = $event->getParam('inputPathRule');
-			if ($inputPathRule instanceof PathRule)
+			else
 			{
-				//TODO update $inputPathRule->setPath()
-				//TODO Store final PathRule in event param 'pathRule'
-				//$event->setParam('pathRule', null);
+				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
+				$urlManager->setAbsoluteUrl(true);
+				$uri = $urlManager->getByPathInfo($newPathRule->getRelativePath(), $pathRule->getQueryParameters());
+				$pathRule->setLocation($uri->normalize()->toString());
+
+				$action = new RedirectPathRule();
+				$action->execute($event);
 			}
 		}
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param PathRule $pathRule
-	 */
-	protected function insertPathRule($applicationServices, $pathRule)
-	{
-		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
-		$fb = $sb->getFragmentBuilder();
-		$sb->insert($sb->getSqlMapping()->getPathRuleTable());
-		$sb->addColumns($fb->column('website_id'),
-			$fb->column('lcid'),
-			$fb->column('path'),
-			$fb->column('document_id'),
-			$fb->column('section_id'),
-			$fb->column('http_status'),
-			$fb->column('config_datas')
-		);
-		$sb->addValues($fb->integerParameter('websiteId'),
-			$fb->parameter('LCID'),
-			$fb->parameter('path'),
-			$fb->integerParameter('documentId'),
-			$fb->integerParameter('sectionId'),
-			$fb->integerParameter('httpStatus'),
-			$fb->parameter('configDatas')
-		);
-
-		$iq = $sb->insertQuery();
-		$iq->bindParameter('websiteId', $pathRule->getWebsiteId());
-		$iq->bindParameter('LCID', $pathRule->getLCID());
-		$iq->bindParameter('path', $pathRule->getPath());
-		$iq->bindParameter('documentId', $pathRule->getDocumentId());
-		$iq->bindParameter('sectionId', $pathRule->getSectionId());
-		$iq->bindParameter('httpStatus', $pathRule->getHttpStatus());
-		$iq->bindParameter('configDatas', count($pathRule->getConfigDatas()) ? json_encode($pathRule->getConfigDatas()) : null );
-		$iq->execute();
-
-		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($sb->getSqlMapping()->getPathRuleTable()));
 	}
 }

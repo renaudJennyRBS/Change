@@ -68,8 +68,6 @@ class UrlManager
 		return null;
 	}
 
-
-
 	/**
 	 * @param string $basePath
 	 * @return $this
@@ -159,100 +157,5 @@ class UrlManager
 		}
 		$uri->setPath($this->script . $pathInfo)->setQuery($query)->setFragment($fragment);
 		return $uri;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @throws \RuntimeException
-	 * @return \Zend\Uri\Http|null
-	 */
-	public function getDefaultByDocument(\Change\Documents\AbstractDocument $document)
-	{
-		$documentPathPrefix = $document->getDocumentModelName();
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
-		{
-			$section = $document->getDefaultSection();
-			if ($section === null)
-			{
-				return null;
-			}
-			return $this->getDocumentUri($document, $documentPathPrefix, $section);
-		}
-		throw new \RuntimeException('Document not publishable: ' . $document, 999999);
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param mixed $context
-	 * @throws \RuntimeException
-	 * @throws \InvalidArgumentException
-	 * @return \Zend\Uri\Http|null
-	 */
-	public function getContextualByDocument(\Change\Documents\AbstractDocument $document, $context)
-	{
-		$documentPathPrefix = $document->getDocumentModelName();
-		if (!$context instanceof \Change\Presentation\Interfaces\Section)
-		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid context', 999999);
-		}
-		if ($document instanceof \Change\Documents\Interfaces\Publishable)
-		{
-			return $this->getDocumentUri($document, $documentPathPrefix, $context);
-		}
-		throw new \RuntimeException('Document not publishable: ' . $document, 999999);
-	}
-
-	/**
-	 * @param \Change\Documents\Interfaces\Publishable $document
-	 * @param string $documentPathPrefix
-	 * @param \Change\Presentation\Interfaces\Section $section
-	 * @return \Zend\Uri\Http
-	 */
-	protected function getDocumentUri($document, $documentPathPrefix, $section = null)
-	{
-		$uri = $this->getSelf();
-		$path = '';
-		if ($section && $section->getWebsite())
-		{
-			$website = $section->getWebsite();
-			$uri->setHost($website->getHostName());
-			$uri->setPort($website->getPort());
-			if ($website->getScriptName())
-			{
-				$path .= $website->getScriptName() . '/';
-			}
-			else
-			{
-				$path .= '/';
-			}
-			if ($website->getRelativePath())
-			{
-				$path .= $website->getRelativePath() . '/';
-			}
-		}
-		if (!($document instanceof \Change\Presentation\Interfaces\Website))
-		{
-			$path .= $this->getDocumentPath($document, $documentPathPrefix, $section);
-		}
-		$uri->setPath($path);
-		return $uri;
-	}
-
-	/**
-	 * @param \Change\Documents\Interfaces\Publishable $document
-	 * @param string $documentPathPrefix
-	 * @param \Change\Presentation\Interfaces\Section $section
-	 * @return string
-	 */
-	protected function getDocumentPath($document, $documentPathPrefix, $section)
-	{
-		$path = $documentPathPrefix;
-		if ($section)
-		{
-			$path .= ',' . $section->getId();
-		}
-		$path .= ',' . $document->getId();
-		$path .= ($document instanceof \Change\Presentation\Interfaces\Section) ? '/' : '.html';
-		return $path;
 	}
 }

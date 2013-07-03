@@ -2,7 +2,7 @@
 namespace Change\Http\Web;
 
 use Change\Http\ActionResolver;
-use Change\Http\Event;
+use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\FindDisplayPage;
 use Change\Http\Web\Actions\GeneratePathRule;
@@ -20,17 +20,14 @@ class Resolver extends ActionResolver
 	 * @param Event $event
 	 * @return void
 	 */
-	public function resolve(Event $event)
+	public function resolve($event)
 	{
 		$website = $event->getParam('website');
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
 			$urlManager = $event->getUrlManager();
-			if ($urlManager instanceof \Change\Http\Web\UrlManager)
-			{
-				$urlManager->setPathRule($pathRule);
-			}
+			$urlManager->setWebsite($website);
 			$this->populateEventByPathRule($event, $pathRule);
 		}
 		else
@@ -124,34 +121,58 @@ class Resolver extends ActionResolver
 	protected function populateEventByPathRule($event, $pathRule)
 	{
 		$event->setParam('pathRule', $pathRule);
-		if ($pathRule->getHttpStatus() === HttpResponse::STATUS_CODE_200)
-		{
-			$action = function($event) {
-				$action = new FindDisplayPage();
-				$action->execute($event);
-			};
+		$resource =  $pathRule->getSectionId() ? $pathRule->getSectionId() : $pathRule->getWebsiteId();
+		$urlManager = $event->getUrlManager();
 
-			$resource =  $pathRule->getSectionId() ? $pathRule->getSectionId() : $pathRule->getWebsiteId();
-			$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
-			$event->setAction($action);
-			return;
-		}
-		elseif ($pathRule->getRuleId() === null)
+		if ($pathRule->getHttpStatus() !== HttpResponse::STATUS_CODE_200 && $pathRule->getLocation() === null)
 		{
-			$action = function($event) {
-				$action = new GeneratePathRule();
-				$action->execute($event);
-			};
-			$event->setAction($action);
-			return;
+			//Generic document URL
+			$dm = $event->getDocumentServices()->getDocumentManager();
+			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
+			if (!$document)
+			{
+				return;
+			}
+
+			$queryParameters = $event->getRequest()->getQuery()->toArray();
+			$pathRule->setQueryParameters($queryParameters);
+			$validPathRule = $urlManager->getValidDocumentRule($document, $pathRule);
+			if ($validPathRule instanceof PathRule)
+			{
+				//Rewritten url already exist
+				$urlManager->setAbsoluteUrl(true);
+				$location = $urlManager->getByPathInfo($validPathRule->getRelativePath(), $queryParameters);
+				$pathRule->setLocation($location->normalize()->toString());
+			}
+			else
+			{
+				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
+				$action = function($event) {
+					$action = new GeneratePathRule();
+					$action->execute($event);
+				};
+				$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
+				$event->setAction($action);
+				return;
+			}
 		}
-		else
+		if ($pathRule->getLocation())
 		{
 			$action = function($event) {
 				$action = new RedirectPathRule();
 				$action->execute($event);
 			};
 			$event->setAction($action);
+			return;
+		}
+		else if ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200)
+		{
+			$action = function($event) {
+				$action = new FindDisplayPage();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
 			return;
 		}
 	}
@@ -163,46 +184,49 @@ class Resolver extends ActionResolver
 	 */
 	protected function findRule($event, $website)
 	{
+		$urlManager = $event->getUrlManager();
 		if ($website instanceof Website)
 		{
-			$path = $event->getRequest()->getPath();
-			if ($path === $website->getScriptName())
+			$pathInfo = $event->getRequest()->getPath();
+			if ($pathInfo === $website->getScriptName())
 			{
-				$path = '/';
+				$pathInfo = '/';
 			}
-			if ($this->isBasePath($path, $website->getRelativePath()))
+			$pathRule = new PathRule();
+			$pathRule->setWebsiteId($website->getId())->setLCID($website->getLCID());
+			if ($this->isBasePath($pathInfo, $website->getRelativePath()))
 			{
-				$relativePath = $this->getRelativePath($path, $website->getRelativePath());
+				$relativePath = $this->getRelativePath($pathInfo, $website->getRelativePath());
 			}
 			else
 			{
-				// Invalid website path part.
-				$location = $event->getUrlManager()->getByPathInfo($this->getRelativePath($path, null), $event->getRequest()->getQuery()->toArray())->normalize()->toString();
-				$pathRule = new PathRule($website, $path);
-				$pathRule->setConfig('Location', $location);
+				$pathRule->setRelativePath($pathInfo);
+				$uri = $urlManager->getByPathInfo($this->getRelativePath($pathInfo, null), $event->getRequest()->getQuery()->toArray());
+				$location = $uri->normalize()->toString();
+				$pathRule->setLocation($location);
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
-				$pathRule->setRuleId(0);
 				return $pathRule;
 			}
 
-			$pathRule = new PathRule($website, $relativePath);
 			if (!$relativePath)
 			{
 				// Home.
+				$pathRule->setRelativePath(null);
 				$pathRule->setDocumentId($website->getId());
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
 				return $pathRule;
 			}
-
-			if ($this->findDbRule($event->getApplicationServices()->getDbProvider(), $pathRule))
+			else
 			{
-				return $pathRule;
-			}
-
-			if ($this->findDefaultRule($pathRule))
-			{
-				$this->validateDbRule($event->getApplicationServices()->getDbProvider(), $pathRule);
-				return $pathRule;
+				$pathRule->setRelativePath($relativePath);
+				if ($this->findDbRule($event->getApplicationServices()->getDbProvider(), $pathRule))
+				{
+					return $pathRule;
+				}
+				if ($this->findDefaultRule($pathRule))
+				{
+					return $pathRule;
+				}
 			}
 		}
 		return null;
@@ -221,35 +245,42 @@ class Resolver extends ActionResolver
 		$qb->select($fb->alias($fb->column('rule_id'), 'ruleId'),
 			$fb->alias($fb->column('document_id'), 'documentId'),
 			$fb->alias($fb->column('section_id'), 'sectionId'),
+			$fb->alias($fb->column('relative_path'), 'relativePath'),
 			$fb->alias($fb->column('http_status'), 'httpStatus'),
-			$fb->alias($fb->column('config_datas'), 'configDatas'));
+			$fb->alias($fb->column('query'), 'query'));
 
 		$qb->from($qb->getSqlMapping()->getPathRuleTable());
 
 		$qb->where($fb->logicAnd(
 			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
 			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-			$fb->eq($fb->column('path'), $fb->parameter('path'))
+			$fb->eq($fb->column('hash'), $fb->parameter('hash'))
 		));
 
 		$sq = $qb->query();
 		$sq->bindParameter('websiteId', $pathRule->getWebsiteId());
 		$sq->bindParameter('LCID', $pathRule->getLCID());
-		$sq->bindParameter('path', $pathRule->getPath());
-		$row = $sq->getFirstResult();
+		$sq->bindParameter('hash', $pathRule->getHash());
+
+		$row = $sq->getFirstResult($sq->getRowsConverter()
+			->addIntCol('ruleId', 'documentId', 'sectionId', 'httpStatus')->addTxtCol('relativePath', 'query'));
+
 		if ($row)
 		{
 			$pathRule->setRuleId(intval($row['ruleId']));
-			if (isset($row['documentId']))
+			$pathRule->setRelativePath($row['relativePath']);
+			$pathRule->setHttpStatus(intval($row['httpStatus']));
+			$pathRule->setQuery($row['query']);
+
+			if ($row['documentId'])
 			{
 				$pathRule->setDocumentId(intval($row['documentId']));
 			}
-			if (isset($row['sectionId']))
+
+			if ($row['sectionId'])
 			{
 				$pathRule->setSectionId(intval($row['sectionId']));
 			}
-			$pathRule->setHttpStatus(intval($row['httpStatus']));
-			$pathRule->setConfigDatas($row['configDatas']);
 			return true;
 		}
 		return null;
@@ -261,74 +292,17 @@ class Resolver extends ActionResolver
 	 */
 	protected function findDefaultRule($pathRule)
 	{
-		if (preg_match('/(?:,(\d{4,10}))?,(\d{4,10})(\.html|\/)$/', $pathRule->getPath(), $matches))
+		if (preg_match('/^document(?:\/(\d{4,10}))?\/(\d{4,10})(\.html|\/)$/', $pathRule->getRelativePath(), $matches))
 		{
 			$pathRule->setDocumentId(intval($matches[2]));
 			if ($matches[1] !== '')
 			{
 				$pathRule->setSectionId(intval($matches[1]));
 			}
-			$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
+			$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_303);
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 * @param PathRule $pathRule
-	 */
-	protected function validateDbRule($dbProvider, $pathRule)
-	{
-		$qb = $dbProvider->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-
-		$qb->select($fb->alias($fb->column('rule_id'), 'ruleId'),
-			$fb->alias($fb->column('path'), 'path'),
-			$fb->alias($fb->column('section_id'), 'sectionId'),
-			$fb->alias($fb->column('config_datas'), 'configDatas'));
-
-		$qb->from($qb->getSqlMapping()->getPathRuleTable());
-
-		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
-			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-			$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
-			$fb->eq($fb->column('http_status'), $fb->integerParameter('httpStatus'))
-		));
-
-		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $pathRule->getWebsiteId());
-		$sq->bindParameter('LCID', $pathRule->getLCID());
-		$sq->bindParameter('documentId', $pathRule->getDocumentId());
-		$sq->bindParameter('httpStatus', HttpResponse::STATUS_CODE_200);
-
-		$rows = $sq->getResults();
-		if (count($rows))
-		{
-			foreach ($sq->getResults() as $row)
-			{
-				$sectionId = isset($row['sectionId']) ? intval($row['sectionId']) : null;
-				if ($pathRule->getSectionId() === $sectionId)
-				{
-					$pathRule->setRuleId(intval($row['ruleId']));
-					$pathRule->setSectionId($sectionId);
-					$pathRule->setConfigDatas($row['configDatas']);
-					$pathRule->setConfig('Location', $row['path']);
-					break;
-				}
-
-				//Invalid pathRule sectionId
-				if ($pathRule->getRuleId() === null)
-				{
-					$row = $rows[0];
-					$pathRule->setRuleId(intval($row['ruleId']));
-					$pathRule->setSectionId(isset($row['sectionId']) ? intval($row['sectionId']) : null);
-					$pathRule->setConfigDatas($row['configDatas']);
-					$pathRule->setConfig('Location', $row['path']);
-				}
-			}
-		}
 	}
 
 	/**

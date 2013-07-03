@@ -12,16 +12,58 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $absoluteUrl = false;
 
 	/**
-	 * @var PathRule $pathRule
+	 * @var \Change\Presentation\Interfaces\Website
 	 */
-	protected $pathRule;
+	protected $website;
 
 	/**
-	 * @param \Change\Http\Web\PathRule $pathRule
+	 * @var string
 	 */
-	public function setPathRule($pathRule)
+	protected $LCID;
+
+	/**
+	 * @var \Change\Http\Web\UrlManager[]
+	 */
+	protected $webUrlManagers = array();
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @return $this
+	 */
+	public function setWebsite($website)
 	{
-		$this->pathRule = $pathRule;
+		$this->website = $website;
+		if ($website && $this->LCID === null)
+		{
+			$this->LCID = $website->getLCID();
+		}
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Website
+	 */
+	public function getWebsite()
+	{
+		return $this->website;
+	}
+
+	/**
+	 * @param string $LCID
+	 * @return $this
+	 */
+	public function setLCID($LCID)
+	{
+		$this->LCID = $LCID;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLCID()
+	{
+		return $this->LCID;
 	}
 
 	/**
@@ -33,7 +75,7 @@ class UrlManager extends \Change\Http\UrlManager
 	public function getByPathInfo($pathInfo, $query = null, $fragment = null)
 	{
 		$uri = parent::getByPathInfo($pathInfo, $query, $fragment);
-		if (!$this->absoluteUrl() && $pathInfo)
+		if (!$this->absoluteUrl && $pathInfo)
 		{
 			$uri->makeRelative($this->getBaseUri());
 		}
@@ -41,80 +83,297 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @throws \RuntimeException
-	 * @return \Zend\Uri\Http|null
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param string $LCID
+	 * @return $this|\Change\Http\Web\UrlManager
 	 */
-	public function getDefaultByDocument(\Change\Documents\AbstractDocument $document)
+	protected function getURLManagerForWebsite($website, $LCID)
 	{
-		$documentPathPrefix = $document->getDocumentModelName();
-		if (!($document instanceof \Change\Documents\Interfaces\Publishable))
+		if ($this->website->getId() == $website->getId() && $this->getLCID() == $LCID)
 		{
-			throw new \RuntimeException('Document not publishable: ' . $document, 999999);
+			return $this;
 		}
+		$key = $website->getId() .'/' . $LCID;
+		if (!isset($this->webUrlManagers[$key]))
+		{
+			$this->webUrlManagers[$key] = $website->getUrlManager($LCID);
+		}
+		return $this->webUrlManagers[$key];
+	}
 
-		$preferredWebsite = ($this->pathRule) ? $this->pathRule->getWebsite() : null;
-		$section = $document->getDefaultSection($preferredWebsite);
-		if ($section === null)
-		{
-			return null;
-		}
-
-		$uri = $this->getDocumentUri($document, $documentPathPrefix, $section);
-		if (!$this->absoluteUrl() && $this->pathRule->getWebsite() === $section->getWebsite())
-		{
-			$uri->makeRelative($this->getBaseUri());
-		}
-		return $uri;
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param string $LCID
+	 * @param string $pathInfo
+	 * @param array $query
+	 * @return \Zend\Uri\Http
+	 */
+	public function getByPathInfoForWebsite($website, $LCID, $pathInfo, $query = array())
+	{
+		$manager = $this->getURLManagerForWebsite($website, $LCID);
+		return $manager->getByPathInfo($pathInfo, $query);
 	}
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
-	 * @param mixed $context
-	 * @throws \RuntimeException
+	 * @param \Change\Presentation\Interfaces\Section|\Change\Presentation\Interfaces\Website $website
+	 * @param array $query
+	 * @param string $LCID
 	 * @throws \InvalidArgumentException
-	 * @return \Zend\Uri\Http|null
+	 * @return \Zend\Uri\Http
 	 */
-	public function getContextualByDocument(\Change\Documents\AbstractDocument $document, $context)
+	public function getCanonicalByDocument($document, $website = null, $query = array(), $LCID = null)
 	{
-		$documentPathPrefix = $document->getDocumentModelName();
-		if (!($document instanceof \Change\Documents\Interfaces\Publishable))
+		if ($website === null)
 		{
-			throw new \RuntimeException('Document not publishable: ' . $document, 999999);
+			$website = $this->website;
 		}
-		if (!$context instanceof \Change\Presentation\Interfaces\Section)
+		elseif ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid context', 999999);
+			//Nothing
+		}
+		elseif ($website instanceof \Change\Presentation\Interfaces\Section)
+		{
+			$website = $website->getWebsite();
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 2 should be a Section or a Website', 999999);
 		}
 
-		$uri = $this->getDocumentUri($document, $documentPathPrefix, $context);
-		if (!$this->absoluteUrl() && $this->pathRule->getWebsite() === $context->getWebsite())
+
+		if ($query instanceof \ArrayObject)
 		{
-			$uri->makeRelative($this->getBaseUri());
+			$queryParameters = $query;
 		}
-		return $uri;
+		elseif (is_array($query))
+		{
+			$queryParameters = new \ArrayObject($query);
+		}
+		else
+		{
+			$queryParameters = new \ArrayObject();
+		}
+		if (null === $LCID)
+		{
+			$LCID = $document->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID();
+		}
+
+		$pathInfo = $this->getPathInfo($document, $website, $LCID, null, $queryParameters);
+		return $this->getByPathInfoForWebsite($website, $LCID, $pathInfo, $queryParameters->getArrayCopy());
 	}
 
 	/**
-	 * @param \Change\Documents\Interfaces\Publishable $document
-	 * @param string $documentPathPrefix
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Presentation\Interfaces\Section $section
-	 * @return string|null
+	 * @param array $query
+	 * @param string $LCID
+	 * @throws \InvalidArgumentException
+	 * @return \Zend\Uri\Http
 	 */
-	protected function getDocumentPath($document, $documentPathPrefix, $section)
+	public function getByDocument($document, $section, $query = array(), $LCID = null)
 	{
-		/* @var $document \Change\Documents\AbstractDocument */
-		$website = $section->getWebsite();
-		$dbProvider = $document->getDocumentServices()->getApplicationServices()->getDbProvider();
-		$LCID = $document->getDocumentServices()->getDocumentManager()->getLCID();
-		$path = $this->findDbPath($dbProvider, $website->getId(), $LCID, $document->getId(), $section->getId());
-		if (!$path)
+		if (!($document instanceof \Change\Documents\AbstractDocument))
 		{
-			/* @var $document \Change\Documents\Interfaces\Publishable */
-			return parent::getDocumentPath($document, $documentPathPrefix, $section);
+			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument', 999999);
 		}
+		if (!($section instanceof \Change\Presentation\Interfaces\Section))
+		{
+			throw new \InvalidArgumentException('Argument 2 must be a Section', 999999);
+		}
+
+		if ($query instanceof \ArrayObject)
+		{
+			$queryParameters = $query;
+		}
+		elseif (is_array($query))
+		{
+			$queryParameters = new \ArrayObject($query);
+		}
+		else
+		{
+			$queryParameters = new \ArrayObject();
+		}
+
+		if (null === $LCID)
+		{
+			$LCID = $document->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID();
+		}
+
+		if ($section instanceof \Change\Presentation\Interfaces\Website)
+		{
+			$website = $section;
+			$section = null;
+		}
+		else
+		{
+			$website = $section->getWebsite();
+		}
+		$pathInfo = $this->getPathInfo($document, $website, $LCID, $section, $queryParameters);
+		return $this->getByPathInfoForWebsite($website, $LCID, $pathInfo, $queryParameters->getArrayCopy());
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param string $LCID
+	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @param \ArrayObject $queryParameters
+	 * @return string
+	 */
+	protected function getPathInfo($document, $website, $LCID, $section = null, $queryParameters)
+	{
+		$dbProvider = $document->getDocumentServices()->getApplicationServices()->getDbProvider();
+		$sectionId = $section ? $section->getId() : null;
+		$pathRules = $this->findPathRules($dbProvider, $website->getId(), $LCID, $document->getId(), $sectionId);
+		if (count($pathRules))
+		{
+			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
+			if ($pathRule instanceof PathRule)
+			{
+				return $pathRule->getRelativePath();
+			}
+		}
+		return $this->getDefaultDocumentPathInfo($document, $section);
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @return string
+	 */
+	protected function getDefaultDocumentPathInfo($document, $section)
+	{
+		if ($document instanceof \Change\Presentation\Interfaces\Website)
+		{
+			return '';
+		}
+		$path = 'document/';
+
+		if ($document instanceof \Change\Presentation\Interfaces\Section)
+		{
+			return $path . $document->getId() . '/';
+		}
+
+		if ($section instanceof \Change\Presentation\Interfaces\Section)
+		{
+			$path .= $section->getId(). '/';
+		}
+
+		$path .= $document->getId() . '.html';
 		return $path;
 	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param PathRule $pathRule
+	 * @throws \InvalidArgumentException
+	 * @return PathRule|null
+	 */
+	public function getValidDocumentRule($document, $pathRule)
+	{
+		$websiteId = $pathRule->getWebsiteId();
+		$LCID = $pathRule->getLCID();
+		$sectionId = $pathRule->getSectionId();
+
+		$dbProvider = $document->getDocumentServices()->getApplicationServices()->getDbProvider();
+		$pathRules = $this->findPathRules($dbProvider, $websiteId, $LCID, $document->getId(), $sectionId);
+		if (count($pathRules))
+		{
+			$queryParameters = new \ArrayObject($pathRule->getQueryParameters());
+			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
+			if ($pathRule instanceof PathRule)
+			{
+				return $pathRule;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Http\Web\PathRule $genericPathRule
+	 * @throws \Exception
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	public function rewritePathRule($document, $genericPathRule)
+	{
+		$newPathRule = clone($genericPathRule);
+		$newPathRule->setRelativePath(null);
+		$newPathRule->setQuery(null);
+
+		$eventManager = $document->getEventManager();
+		$queryParameters = new \ArrayObject($genericPathRule->getQueryParameters());
+		$e = new \Change\Documents\Events\Event('populatePathRule', $document, array('pathRule' => $newPathRule, 'queryParameters' => $queryParameters));
+		$eventManager->trigger($e);
+
+		$newPathRule = $e->getParam('pathRule');
+		if ($newPathRule instanceof PathRule && $newPathRule->getRelativePath())
+		{
+			$applicationServices = $document->getDocumentServices()->getApplicationServices();
+			$transactionManager = $applicationServices->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+				if ($genericPathRule->getRelativePath() === $newPathRule->getRelativePath())
+				{
+					$genericPathRule->setQuery($newPathRule->getQuery());
+					$genericPathRule->setHttpStatus(200);
+					$this->updatePathRule($applicationServices, $genericPathRule);
+					$newPathRule = $genericPathRule;
+				}
+				else
+				{
+					try
+					{
+						$this->insertPathRule($applicationServices, $newPathRule);
+					}
+					catch (\Exception $pke)
+					{
+						$newPathRule->setRelativePath($document->getId() . '/' . $newPathRule->getRelativePath());
+						$this->insertPathRule($applicationServices, $newPathRule);
+					}
+				}
+				$transactionManager->commit();
+			}
+			catch (\Exception $exception)
+			{
+				throw $transactionManager->rollBack($exception);
+			}
+			return $newPathRule;
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Http\Web\PathRule[] $pathRules
+	 * @param \ArrayObject $queryParameters
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	protected function selectPathRule($document, $pathRules, $queryParameters)
+	{
+		if (count($pathRules) === 1)
+		{
+			$pathRule = $pathRules[0];
+			if ($pathRule->getQuery() === null)
+			{
+				return $pathRule;
+			}
+		}
+		$em = $document->getEventManager();
+		$args = array('pathRules' => $pathRules, 'queryParameters' => $queryParameters);
+		$event = new \Change\Documents\Events\Event('selectPathRule', $document, $args);
+		$em->trigger($event);
+		$pathRule = $event->getParam('pathRule');
+		if ($pathRule instanceof PathRule)
+		{
+			return $pathRule;
+		}
+		return null;
+	}
+
+
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -122,44 +381,120 @@ class UrlManager extends \Change\Http\UrlManager
 	 * @param string $LCID
 	 * @param integer $documentId
 	 * @param integer $sectionId
-	 * @return string|null
+	 * @return PathRule[]
 	 */
-	protected function findDbPath($dbProvider, $websiteId, $LCID, $documentId, $sectionId)
+	protected function findPathRules($dbProvider, $websiteId, $LCID, $documentId, $sectionId)
 	{
-		$qb = $dbProvider->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
+		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findPathRules');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
 
-		$qb->select($fb->alias($fb->column('path'), 'path'));
+			$qb->select($fb->alias($fb->column('rule_id'), 'rule_id'),
+				$fb->alias($fb->column('relative_path'), 'relative_path'),
+				$fb->alias($fb->column('query'), 'query'));
 
-		$qb->from($qb->getSqlMapping()->getPathRuleTable());
-
-		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
-			$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-			$fb->eq($fb->column('document_id'), $fb->parameter('documentId')),
-			$fb->eq($fb->column('section_id'), $fb->parameter('sectionId')),
-			$fb->eq($fb->column('http_status'), $fb->parameter('httpStatus'))
-		));
+			$qb->from($qb->getSqlMapping()->getPathRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->eq($fb->column('http_status'), $fb->number(200))
+			));
+			$qb->orderAsc($fb->column('rule_id'));
+		}
 
 		$sq = $qb->query();
 		$sq->bindParameter('websiteId', $websiteId);
 		$sq->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', $documentId);
-		$sq->bindParameter('sectionId', $sectionId);
-		$sq->bindParameter('httpStatus', 200);
-		$row = $sq->getFirstResult();
-		if ($row)
+		$sq->bindParameter('documentId', intval($documentId));
+		$sq->bindParameter('sectionId', intval($sectionId));
+		$pathRules = array();
+		foreach ($sq->getResults() as $row)
 		{
-			return $row['path'];
+			$pathRule = new PathRule();
+			$pathRule->setRuleId(intval($row['rule_id']))
+				->setRelativePath($row['relative_path'])
+				->setQuery($row['query'])
+				->setWebsiteId($websiteId)
+				->setLCID($LCID)
+				->setDocumentId($documentId)
+				->setSectionId($sectionId)
+				->setHttpStatus(200);
+			$pathRules[] = $pathRule;
 		}
-		return null;
+		return $pathRules;
+	}
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param PathRule $pathRule
+	 */
+	protected function updatePathRule($applicationServices, $pathRule)
+	{
+		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+		$table = $sb->getSqlMapping()->getPathRuleTable();
+		$fb = $sb->getFragmentBuilder();
+		$sb->update($table)
+			->assign($fb->column('http_status'), $fb->integerParameter('httpStatus'))
+			->assign($fb->column('query'), $fb->lobParameter('query'))
+			->where($fb->eq($fb->column('rule_id'), $fb->integerParameter('ruleId')));
+		$uq = $sb->updateQuery();
+		$uq->bindParameter('httpStatus', $pathRule->getHttpStatus());
+		$uq->bindParameter('query', $pathRule->getQuery());
+		$uq->bindParameter('ruleId', $pathRule->getRuleId());
+		$uq->execute();
+	}
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param PathRule $pathRule
+	 */
+	protected function insertPathRule($applicationServices, $pathRule)
+	{
+		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+		$table = $sb->getSqlMapping()->getPathRuleTable();
+
+		$fb = $sb->getFragmentBuilder();
+		$sb->insert($table);
+		$sb->addColumns($fb->column('website_id'),
+			$fb->column('lcid'),
+			$fb->column('hash'),
+			$fb->column('relative_path'),
+			$fb->column('document_id'),
+			$fb->column('section_id'),
+			$fb->column('http_status'),
+			$fb->column('query')
+		);
+		$sb->addValues($fb->integerParameter('websiteId'),
+			$fb->parameter('LCID'),
+			$fb->parameter('hash'),
+			$fb->lobParameter('relativePath'),
+			$fb->integerParameter('documentId'),
+			$fb->integerParameter('sectionId'),
+			$fb->integerParameter('httpStatus'),
+			$fb->lobParameter('query')
+		);
+
+		$iq = $sb->insertQuery();
+		$iq->bindParameter('websiteId', $pathRule->getWebsiteId());
+		$iq->bindParameter('LCID', $pathRule->getLCID());
+		$iq->bindParameter('hash', $pathRule->getHash());
+		$iq->bindParameter('relativePath', $pathRule->getRelativePath());
+		$iq->bindParameter('documentId', intval($pathRule->getDocumentId()));
+		$iq->bindParameter('sectionId', intval($pathRule->getSectionId()));
+		$iq->bindParameter('httpStatus', $pathRule->getHttpStatus());
+		$iq->bindParameter('query', $pathRule->getQuery());
+		$iq->execute();
+		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
 	}
 
 	/**
 	 * @param bool $absoluteUrl
 	 * @return $this
 	 */
-	public function absoluteUrl($absoluteUrl = null)
+	public function setAbsoluteUrl($absoluteUrl = null)
 	{
 		if (is_bool($absoluteUrl))
 		{

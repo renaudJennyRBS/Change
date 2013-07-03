@@ -38,15 +38,7 @@ class Controller extends \Change\Http\Controller
 	protected function createEvent($request)
 	{
 		$event = parent::createEvent($request);
-		$this->initializeEvent($event);
-		return $event;
-	}
 
-	/**
-	 * @param Event $event
-	 */
-	protected function initializeEvent(Event $event)
-	{
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 
@@ -63,6 +55,8 @@ class Controller extends \Change\Http\Controller
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$request->populateLCIDByHeader($i18nManager);
+
+		return $event;
 	}
 
 	/**

@@ -172,4 +172,13 @@ class SqlMapping
 	{
 		return 'change_path_rule';
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getJobTable()
+	{
+		return 'change_job';
+	}
 }

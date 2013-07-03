@@ -367,24 +367,16 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	{
 		$event = new Event();
 		$event->setRequest($request);
-		$urlManager = $this->getNewUrlManager($request);
-		$event->setUrlManager($urlManager);
-		return $event;
-	}
 
-	/**
-	 * @param Request $request
-	 * @return UrlManager
-	 */
-	protected function getNewUrlManager($request)
-	{
 		$script = $request->getServer('SCRIPT_NAME');
 		if (strpos($request->getRequestUri(), $script) !== 0)
 		{
 			$script = null;
 		}
+
 		$urlManager = new UrlManager($request->getUri(), $script);
-		return $urlManager;
+		$event->setUrlManager($urlManager);
+		return $event;
 	}
 
 	/**

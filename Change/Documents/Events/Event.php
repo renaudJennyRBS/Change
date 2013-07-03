@@ -15,7 +15,6 @@ class Event extends \Zend\EventManager\Event
 	const EVENT_DELETED       	= 'documents.deleted';
 
 	const EVENT_DISPLAY_PAGE    = 'http.web.displayPage';
-	const EVENT_PATH_RULE    	= 'http.web.pathRule';
 
 	/**
 	 * @throws \RuntimeException

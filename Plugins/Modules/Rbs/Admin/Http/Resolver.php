@@ -14,7 +14,7 @@ class Resolver extends ActionResolver
 	 * @param Event $event
 	 * @return void
 	 */
-	public function resolve(Event $event)
+	public function resolve($event)
 	{
 		$request = $event->getRequest();
 		$path = $request->getPath();

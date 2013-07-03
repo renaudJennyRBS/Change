@@ -30,11 +30,6 @@ class Event extends \Zend\EventManager\Event
 	protected $documentServices;
 
 	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
 	 * @var Request
 	 */
 	protected $request;
@@ -73,6 +68,7 @@ class Event extends \Zend\EventManager\Event
 	 * @var PermissionsManager
 	 */
 	protected $permissionsManager;
+
 
 	/**
 	 * @api
@@ -122,20 +118,20 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param PresentationServices|null $presentationServices
+	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 */
 	public function setPresentationServices(PresentationServices $presentationServices = null)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->setParam('presentationServices', $presentationServices);
 	}
 
 	/**
 	 * @api
-	 * @return PresentationServices|null
+	 * @return \Change\Presentation\PresentationServices|null
 	 */
 	public function getPresentationServices()
 	{
-		return $this->presentationServices;
+		return $this->getParam('presentationServices');
 	}
 
 	/**

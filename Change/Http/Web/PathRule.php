@@ -7,16 +7,6 @@ namespace Change\Http\Web;
 class PathRule
 {
 	/**
-	 * @var \Change\Presentation\Interfaces\Website
-	 */
-	protected $website;
-
-	/**
-	 * @var string
-	 */
-	protected $path;
-
-	/**
 	 * @var integer
 	 */
 	protected $ruleId;
@@ -24,10 +14,30 @@ class PathRule
 	/**
 	 * @var integer
 	 */
-	protected $documentId;
+	protected $websiteId;
+
+	/**
+	 * @var string
+	 */
+	protected $LCID;
+
+	/**
+	 * @var string
+	 */
+	protected $hash;
+
+	/**
+	 * @var string
+	 */
+	protected $relativePath;
 
 	/**
 	 * @var integer
+	 */
+	protected $documentId;
+
+	/**
+	 * @var integer|null
 	 */
 	protected $sectionId;
 
@@ -37,67 +47,130 @@ class PathRule
 	protected $httpStatus;
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	protected $configDatas;
+	protected $location;
 
 	/**
-	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @param string $path
+	 * @var string
 	 */
-	function __construct($website, $path)
+	protected $query;
+
+	/**
+	 * @api
+	 * @param int $ruleId
+	 * @return $this
+	 */
+	public function setRuleId($ruleId)
 	{
-		$this->website = $website;
-		$this->path = $path;
+		$this->ruleId = $ruleId;
+		return $this;
+	}
+
+
+	/**
+	 * @api
+	 * @return int
+	 */
+	public function getRuleId()
+	{
+		return $this->ruleId;
 	}
 
 	/**
-	 * @return string
+	 * @api
+	 * @param int $websiteId
+	 * @return $this
 	 */
-	public function getLCID()
+	public function setWebsiteId($websiteId)
 	{
-		return $this->website->getLCID();
+		$this->websiteId = $websiteId;
+		return $this;
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getPath()
-	{
-		return $this->path;
-	}
-
-	/**
-	 * @param string $path
-	 */
-	public function setPath($path)
-	{
-		$this->path = $path;
-	}
-
-	/**
+	 * @api
 	 * @return integer
 	 */
 	public function getWebsiteId()
 	{
-		return $this->website->getId();
+		return $this->websiteId;
 	}
 
 	/**
-	 * @return \Change\Presentation\Interfaces\Website
+	 * @api
+	 * @param string $LCID
+	 * @return $this
 	 */
-	public function getWebsite()
+	public function setLCID($LCID)
 	{
-		return $this->website;
+		$this->LCID = $LCID;
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getLCID()
+	{
+		return $this->LCID;
+	}
+
+	/**
+	 * @api
+	 * @param string $hash
+	 * @return $this
+	 */
+	public function setHash($hash)
+	{
+		$this->hash = $hash;
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getHash()
+	{
+		return $this->hash;
+	}
+
+	/**
+	 * @api
+	 * @param string $pathInfo
+	 * @return $this
+	 */
+	public function setRelativePath($pathInfo)
+	{
+		if ($pathInfo)
+		{
+			$this->relativePath = $pathInfo;
+			return $this->setHash(sha1($pathInfo));
+		}
+		$this->relativePath = null;
+		return $this->setHash(null);
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getRelativePath()
+	{
+		return $this->relativePath;
 	}
 
 	/**
 	 * @api
 	 * @param int $documentId
+	 * @return $this
 	 */
 	public function setDocumentId($documentId)
 	{
 		$this->documentId = $documentId;
+		return $this;
 	}
 
 	/**
@@ -111,29 +184,13 @@ class PathRule
 
 	/**
 	 * @api
-	 * @param int $ruleId
-	 */
-	public function setRuleId($ruleId)
-	{
-		$this->ruleId = $ruleId;
-	}
-
-	/**
-	 * @api
-	 * @return int
-	 */
-	public function getRuleId()
-	{
-		return $this->ruleId;
-	}
-
-	/**
-	 * @api
 	 * @param int $sectionId
+	 * @return $this
 	 */
 	public function setSectionId($sectionId)
 	{
 		$this->sectionId = $sectionId;
+		return $this;
 	}
 
 	/**
@@ -148,10 +205,12 @@ class PathRule
 	/**
 	 * @api
 	 * @param int $httpStatus
+	 * @return $this
 	 */
 	public function setHttpStatus($httpStatus)
 	{
 		$this->httpStatus = $httpStatus;
+		return $this;
 	}
 
 	/**
@@ -165,59 +224,116 @@ class PathRule
 
 	/**
 	 * @api
-	 * @param array|string $configDatas
+	 * @param string $query
+	 * @return $this
 	 */
-	public function setConfigDatas($configDatas)
+	public function setQuery($query)
 	{
-		if (is_string($configDatas))
-		{
-			$configDatas = json_decode($configDatas, true);
-			if (json_last_error() !== JSON_ERROR_NONE)
-			{
-				$configDatas = array();
-			}
-		}
-		elseif (!is_array($configDatas))
-		{
-			$configDatas = array();
-		}
-		$this->configDatas = $configDatas;
+		$this->query = $query;
+		return $this;
 	}
 
 	/**
 	 * @api
+	 * @return string
+	 */
+	public function getQuery()
+	{
+		return $this->query;
+	}
+
+	/**
 	 * @return array
 	 */
-	public function getConfigDatas()
+	public function getQueryParameters()
 	{
-		return isset($this->configDatas) ? $this->configDatas : array();
+		$query = $this->getQuery();
+		$queryParameters = array();
+		if (is_string($query))
+		{
+			parse_str($query, $queryParameters);
+		}
+		return $queryParameters;
 	}
 
 	/**
-	 * @param string $name
-	 * @param mixed $value
+	 * @param array|null $queryParameters
+	 * @return $this
 	 */
-	public function setConfig($name, $value)
+	public function setQueryParameters($queryParameters)
 	{
-		if (!is_array($this->configDatas))
+		if (is_array($queryParameters) && count($queryParameters))
 		{
-			$this->configDatas = array();
+			$this->setQuery(http_build_query($this->orderQueryParameters($queryParameters)));
 		}
-		$this->configDatas[$name] = $value;
+		else
+		{
+			$this->setQuery(null);
+		}
+		return $this;
 	}
 
 	/**
-	 * @api
-	 * @param string $name
-	 * @param mixed|null $defaultValue
-	 * @return mixed
+	 * @param array $queryParameters
+	 * @return array
 	 */
-	public function getConfig($name, $defaultValue = null)
+	protected function orderQueryParameters($queryParameters)
 	{
-		if (!isset($this->configDatas[$name]))
+		ksort($queryParameters);
+		foreach ($queryParameters as $key => $value)
 		{
-			return $defaultValue;
+			if (is_array($value))
+			{
+				$queryParameters[$key] = $this->orderQueryParameters($value);
+			}
+			elseif ($value instanceof \DateTime)
+			{
+				$queryParameters[$key] = $value->format(\DateTime::ISO8601);
+			}
+			elseif ($value instanceof \Change\Documents\AbstractDocument)
+			{
+				$queryParameters[$key] = $value->getId();
+			}
+			elseif (is_object($value))
+			{
+				$callback = array($value, 'toArray');
+				if (is_callable($callback))
+				{
+					$value = call_user_func($callback);
+				}
+				else
+				{
+					$value = get_object_vars($value);
+				}
+
+				if (is_array($value))
+				{
+					$queryParameters[$key] = $this->orderQueryParameters($value);
+				}
+				else
+				{
+					$queryParameters[$key] = null;
+				}
+			}
 		}
-		return $this->configDatas[$name];
+		return $queryParameters;
+	}
+
+	/**
+	 * @param string $location
+	 * @return $this
+	 */
+	public function setLocation($location)
+	{
+		$this->location = $location;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLocation()
+	{
+		return $this->location;
 	}
 }
