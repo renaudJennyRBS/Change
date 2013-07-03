@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Website\Events;
 
-use Change\Http\Event;
+use Change\Http\Web\Event;
 use Rbs\Website\Documents\Website;
 
 /**

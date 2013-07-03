@@ -46,6 +46,25 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			}
 		};
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATED, $callback);
+
+		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onPopulatePathRule(\Change\Documents\Events\Event $event)
+	{
+		/* @var $pathRule \Change\Http\Web\PathRule */
+		$pathRule = $event->getParam('pathRule');
+
+		$relativePath = $this->getTitle() . '.' . $this->getId() . '.html';
+		$section = $this->getSection();
+		if ($section !== null && $section->getPathPart())
+		{
+			$relativePath = $section->getPathPart() . '/' . $relativePath;
+		}
+		$pathRule->setRelativePath($relativePath);
 	}
 
 	/**

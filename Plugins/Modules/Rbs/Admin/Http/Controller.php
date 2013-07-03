@@ -43,7 +43,6 @@ class Controller extends \Change\Http\Controller
 		$event = parent::createEvent($request);
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
-		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
 
 		$authenticationManager = new \Change\User\AuthenticationManager();
 		$authenticationManager->setDocumentServices($event->getDocumentServices());
@@ -52,6 +51,7 @@ class Controller extends \Change\Http\Controller
 		$permissionsManager = new \Change\Permissions\PermissionsManager();
 		$permissionsManager->allow(true);
 		$permissionsManager->setApplicationServices($event->getApplicationServices());
+		$event->setPermissionsManager($permissionsManager);
 
 		$request->populateLCIDByHeader($event->getApplicationServices()->getI18nManager());
 		return $event;

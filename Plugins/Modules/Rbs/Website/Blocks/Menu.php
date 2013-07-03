@@ -29,6 +29,8 @@ class Menu extends Block
 		$parameters->addParameterMeta('maxLevel', Property::TYPE_INTEGER, true, 1);
 		$parameters->addParameterMeta('pageId', Property::TYPE_INTEGER, false, null);
 		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, false, null);
+		$parameters->addParameterMeta('websiteId', Property::TYPE_INTEGER, false, null);
+
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');
@@ -40,6 +42,12 @@ class Menu extends Block
 		if ($pathRule instanceof \Change\Http\Web\PathRule)
 		{
 			$parameters->setParameterValue('sectionId', $pathRule->getSectionId());
+			$parameters->setParameterValue('websiteId', $pathRule->getWebsiteId());
+		}
+		elseif ($page instanceof \Change\Presentation\Interfaces\Page && $page->getSection())
+		{
+			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
+			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
 		return $parameters;
 	}
@@ -60,6 +68,7 @@ class Menu extends Block
 		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
 		if ($doc !== null)
 		{
+			$website = $dm->getDocumentInstance($parameters->getWebsiteId());
 			$page = $dm->getDocumentInstance($parameters->getPageId());
 			$section = $dm->getDocumentInstance($parameters->getSectionId());
 			if ($section)
@@ -70,28 +79,32 @@ class Menu extends Block
 			{
 				$path = array();
 			}
-			$attributes['root'] = $this->getMenuEntry($doc, $parameters->getMaxLevel(), $page, $path, $event->getUrlManager());
+			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path, $event->getUrlManager());
 		}
 		return $parameters->getTemplateName();
 	}
 
 	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param \Change\Documents\AbstractDocument $doc
 	 * @param integer $maxLevel
-	 * @param \Rbs\Website\Documents\Page|null $currentPage
+	 * @param null|\Rbs\Website\Documents\Page $currentPage
 	 * @param \Rbs\Website\Documents\Section[] $path
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @return \Rbs\Website\Menu\MenuEntry
 	 */
-	protected function getMenuEntry($doc, $maxLevel, $currentPage, $path, $urlManager)
+	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path, $urlManager)
 	{
 		$entry = new \Rbs\Website\Menu\MenuEntry();
-		$entry->setLabel($doc->getLabel());
+		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
+		{
+			$entry->setLabel($doc->getTitle());
+		}
 		if ($doc instanceof \Rbs\Website\Documents\Section)
 		{
 			if ($doc->getIndexPageId())
 			{
-				$entry->setUrl($urlManager->getDefaultByDocument($doc));
+				$entry->setUrl($urlManager->getCanonicalByDocument($doc, $website));
 			}
 			if (count($path) && in_array($doc, $path))
 			{
@@ -100,7 +113,7 @@ class Menu extends Block
 		}
 		else
 		{
-			$entry->setUrl($urlManager->getDefaultByDocument($doc));
+			$entry->setUrl($urlManager->getCanonicalByDocument($doc, $website));
 			if ($currentPage === $doc)
 			{
 				$entry->setCurrent(true);
@@ -118,7 +131,7 @@ class Menu extends Block
 				{
 					foreach ($tn->setTreeManager($treeManager)->getChildren() as $child)
 					{
-						$entry->addChild($this->getMenuEntry($child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
+						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
 					}
 				}
 			}

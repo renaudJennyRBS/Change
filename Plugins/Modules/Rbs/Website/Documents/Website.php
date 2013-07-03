@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Documents;
 
-use Change\Http\Web\PathRule;
 use Change\Http\Web\UrlManager;
 use Zend\Uri\Http;
 
@@ -43,15 +42,8 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getBaseurl()
-	{
-		return $this->getUrlManager()->absoluteUrl(true)->getDefaultByDocument($this)->normalize()->toString();
-	}
-
-	/**
 	 * @param string $url
+	 * @return $this
 	 */
 	public function setBaseurl($url)
 	{
@@ -73,20 +65,34 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 			$this->setPathPart($path ? $path : null);
 			$this->setScriptName(null);
 		}
+		return $this;
 	}
 
 	/**
-	 * @return UrlManager
+	 * @return string
 	 */
-	public function getUrlManager()
+	public function getBaseurl()
 	{
+		return $this->getUrlManager($this->getLCID())->getByPathInfo('')->normalize()->toString();
+	}
+
+	/**
+	 * @param string $LCID
+	 * @return \Change\Http\Web\UrlManager
+	 */
+	public function getUrlManager($LCID)
+	{
+		$this->getDocumentManager()->pushLCID($LCID);
+
 		$url = new Http();
 		$url->setScheme("http");
 		$url->setHost($this->getHostName());
 		$url->setPort($this->getPort());
-		$url->setPath($this->getScriptName() . '/' . $this->getPathPart());
+		$url->setPath('/');
 		$urlManager = new UrlManager($url, $this->getScriptName());
-		$urlManager->setPathRule(new PathRule($this, ''));
+		$urlManager->setBasePath($this->getPathPart());
+
+		$this->getDocumentManager()->popLCID();
 		return $urlManager;
 	}
 }

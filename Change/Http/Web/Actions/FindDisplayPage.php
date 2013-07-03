@@ -3,7 +3,7 @@ namespace Change\Http\Web\Actions;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\Events\Event as DocumentEvent;
-use Change\Http\Event;
+use Change\Http\Web\Event;
 use Change\Http\Web\PathRule;
 use Change\Presentation\Interfaces\Page;
 use Zend\Http\Response as HttpResponse;
@@ -25,6 +25,12 @@ class FindDisplayPage
 		if (!($pathRule instanceof PathRule))
 		{
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
+		}
+
+		if ($pathRule->getQuery())
+		{
+			$requestQuery = $event->getRequest()->getQuery();
+			$requestQuery->fromArray(\Zend\Stdlib\ArrayUtils::merge($pathRule->getQueryParameters(), $requestQuery->toArray()));
 		}
 
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($pathRule->getDocumentId());

@@ -1,7 +1,7 @@
 <?php
 namespace Change\Http\Web\Actions;
 
-use Change\Http\Event;
+use Change\Http\Web\Event;
 use Change\Http\Web\Result\Resource;
 use Change\Presentation\Interfaces\Theme;
 use Zend\Http\Response as HttpResponse;

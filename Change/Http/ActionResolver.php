@@ -9,7 +9,7 @@ class ActionResolver
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function resolve(Event $event)
+	public function resolve($event)
 	{
 		$event->setAction(null);
 	}

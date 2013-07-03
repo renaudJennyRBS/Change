@@ -12,7 +12,7 @@ class RedirectPathRule
 {
 	/**
 	 * Use Required Event Params: pathRule
-	 * @param \Change\Http\Event $event
+	 * @param \Change\Http\Web\Event $event
 	 * @throws \RuntimeException
 	 */
 	public function execute($event)
@@ -23,9 +23,17 @@ class RedirectPathRule
 		{
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
 		}
+
 		$result = new Result();
 		$result->setHttpStatusCode($pathRule->getHttpStatus());
-		$result->setHeaderLocation($pathRule->getConfig('Location'));
+		if ($pathRule->getLocation())
+		{
+			$result->setHeaderLocation($pathRule->getLocation());
+		}
+		else
+		{
+			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
+		}
 		$event->setResult($result);
 	}
 }

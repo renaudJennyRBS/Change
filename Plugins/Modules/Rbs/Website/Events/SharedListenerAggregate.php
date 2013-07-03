@@ -19,7 +19,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 	 */
 	public function attachShared(\Zend\EventManager\SharedEventManagerInterface $events)
 	{
-		$callback = function (\Change\Http\Event $event)
+		$callback = function (\Change\Http\Web\Event $event)
 		{
 			$resolver = new WebsiteResolver();
 			return $resolver->resolve($event);
@@ -38,8 +38,6 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 
 		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_UPDATED);
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
-
-
 	}
 
 	/**

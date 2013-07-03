@@ -12,6 +12,11 @@ interface Section
 	public function getTitle();
 
 	/**
+	 * @return string
+	 */
+	public function getPathPart();
+
+	/**
 	 * @return integer
 	 */
 	public function getId();

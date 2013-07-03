@@ -38,6 +38,10 @@ class Thread extends Block
 		{
 			$parameters->setParameterValue('sectionId', $pathRule->getSectionId());
 		}
+		elseif ($page instanceof \Change\Presentation\Interfaces\Page && $page->getSection())
+		{
+			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
+		}
 		return $parameters;
 	}
 
@@ -59,8 +63,10 @@ class Thread extends Block
 
 		$thread = array();
 		$currentSection = $dm->getDocumentInstance($parameters->getSectionId());
+
 		if ($currentSection instanceof \Rbs\Website\Documents\Section)
 		{
+			$website = $currentSection->getWebsite();
 			foreach ($currentSection->getSectionThread() as $section)
 			{
 				$lastSection = $section;
@@ -72,7 +78,7 @@ class Thread extends Block
 				$entry->setLabel($section->getLabel());
 				if ($section->getIndexPageId())
 				{
-					$entry->setUrl($urlManager->getDefaultByDocument($section));
+					$entry->setUrl($urlManager->getCanonicalByDocument($section, $website));
 				}
 				$entry->setInPath(true);
 				$thread[] = $entry;

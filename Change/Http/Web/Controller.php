@@ -7,7 +7,6 @@ use Change\Presentation\PresentationServices;
 use Change\Http\Result;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Event;
 
 /**
  * @name \Change\Http\Web\Controller
@@ -39,11 +38,20 @@ class Controller extends \Change\Http\Controller
 
 	/**
 	 * @param $request
-	 * @return \Change\Http\Event
+	 * @return Event
 	 */
 	protected function createEvent($request)
 	{
-		$event = parent::createEvent($request);
+		$event = new Event();
+		$event->setRequest($request);
+		$script = $request->getServer('SCRIPT_NAME');
+		if (strpos($request->getRequestUri(), $script) !== 0)
+		{
+			$script = null;
+		}
+		$urlManager = new UrlManager($request->getUri(), $script);
+		$event->setUrlManager($urlManager);
+
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
 		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
@@ -61,15 +69,14 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Change\Http\Event $event
+	 * @param Event $event
 	 */
 	public function onDefaultResponse($event)
 	{
 		$result = $event->getResult();
-		$response = $event->getController()->createResponse();
-
 		if ($result instanceof Result)
 		{
+			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
 
@@ -97,8 +104,8 @@ class Controller extends \Change\Http\Controller
 					$response->setContent(strval($result));
 				}
 			}
+			$event->setResponse($response);
 		}
-		$event->setResponse($response);
 	}
 
 	/**

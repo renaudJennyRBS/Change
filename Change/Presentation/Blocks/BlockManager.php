@@ -164,14 +164,14 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Change\Presentation\Layout\Block $blockLayout
-	 * @param \Change\Http\Event $httpEvent
+	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return Parameters
 	 */
 	public function getParameters($blockLayout, $httpEvent = null)
 	{
 		$eventManager =  $this->getEventManager();
 		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE, $blockLayout->getName()), $this, $httpEvent->getParams());
-		if ($httpEvent instanceof \Change\Http\Event)
+		if ($httpEvent instanceof \Change\Http\Web\Event)
 		{
 			$event->setAuthenticationManager($httpEvent->getAuthenticationManager());
 			$event->setPermissionsManager($httpEvent->getPermissionsManager());

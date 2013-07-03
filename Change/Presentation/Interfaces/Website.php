@@ -2,7 +2,6 @@
 namespace Change\Presentation\Interfaces;
 
 /**
- * @package Change\Presentation\Interfaces
  * @name \Change\Presentation\Interfaces\Website
  */
 interface Website
@@ -37,4 +36,15 @@ interface Website
 	 * @return string|null
 	 */
 	public function getRelativePath();
+
+	/**
+	 * @return string
+	 */
+	public function getBaseurl();
+
+	/**
+	 * @param string $LCID
+	 * @return \Change\Http\Web\UrlManager
+	 */
+	public function getUrlManager($LCID);
 }
