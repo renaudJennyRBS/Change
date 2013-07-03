@@ -24,7 +24,7 @@
 
 		<preview>
 			(= doc.children.length | number =) sous-étiquettes :
-			<span ng-repeat="tag in doc.children" class="tag (= tag.color =)">(= tag.label =)</span>
+			<span ng-repeat="tag in doc.children"><a href ng-href="(= tag | documentURL:'tree' =)"><span class="tag (= tag.color =)">(= tag.label =)</span></a></span>
 		</preview>
 
 	</rbs-document-list>
