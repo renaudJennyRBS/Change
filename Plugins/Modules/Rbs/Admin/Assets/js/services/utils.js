@@ -292,6 +292,12 @@
 		},
 
 
+		/**
+		 * Converts camel case name to HTML attribute name.
+		 *
+		 * @param str
+		 * @returns {XML}
+		 */
 		normalizeAttrName : function (str) {
 			return str.
 				replace(/[^a-z0-9]/ig, '-').
