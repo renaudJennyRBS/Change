@@ -91,11 +91,11 @@
 					session,
 					id,
 					$previewEl = element.find('div[data-role="preview-container"]'),
-					$mediaPicker = element.find('div.media-picker');
+					$mediaPicker = element.find('div.media-picker'),
+					$editorTab;
 
 				scope.editorId = ++aceEditorIdCounter;
 				id = "rbsInputMarkdownAceEditor" + scope.editorId;
-
 
 				// Initialize ACE editor when the scope has been completely applied.
 				function initEditor () {
@@ -106,7 +106,9 @@
 					session.setWrapLimitRange(null, null);
 					session.setFoldStyle("manual");
 					editor.setShowFoldWidgets(true);
-					// editor.renderer.setShowGutter(false);
+					editor.renderer.setShowGutter(false);
+
+					$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
 
 					heightUpdateFunction(id, editor);
 					editor.getSession().on('change', function () {
@@ -158,17 +160,21 @@
 					// http://stackoverflow.com/questions/11584061/
 					var newHeight =
 						editor.getSession().getScreenLength() * editor.renderer.lineHeight + editor.renderer.scrollBar.getWidth();
-					$('#'+id).height(Math.max(MIN_HEIGHT, newHeight) + "px");
+					newHeight = Math.max(MIN_HEIGHT, newHeight);
+					$('#'+id).height(newHeight + "px");
 					// This call is required for the editor to fix all of
 					// its inner structure for adapting to a change in size
 					editor.resize();
+					console.log(newHeight, " -- ", $editorTab.outerHeight());
+					$previewEl.css('min-height', $editorTab.outerHeight()+"px");
 				}
 
 
 				// Tabs and preview.
-				element.find('a[data-toggle="tab"]').on('shown', function (e) {
+				element.find('a[data-toggle="tab"]').on('show', function (e) {
 					if ($(e.target).data('role') === 'preview') {
 						// TODO Localization
+						$previewEl.empty();
 						scope.previewing = true;
 						REST.postAction('md2html', editor.getValue()).then(function (data) {
 							$previewEl.html(data.html);
