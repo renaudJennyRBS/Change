@@ -526,7 +526,11 @@
 						if (Utils.isModelName(model)) {
 							url = this.getCollectionUrl(model, params);
 						} else {
-							url = Utils.makeUrl(model, params);
+							if (model.charAt(0) === '/') {
+								url = Utils.makeUrl(REST_BASE_URL + model.substr(1), params);
+							} else {
+								url = Utils.makeUrl(model, params);
+							}
 						}
 						$http.get(
 								//this.getCollectionUrl(model, params),
