@@ -18,13 +18,15 @@
 
 				$compile('<button class="btn sync-value-button" type="button" ng-click="toggle()" ng-class="{\'btn-success\': isEnabled()}"><span ng-if="isEnabled()">=</span><span ng-if="!isEnabled()">&ne;</span></button>')(scope, function (clone) {
 					clone.attr('title', attrs.syncTitle);
-					elm.after(clone);
+					elm.before(clone);
 				});
 				elm.css({'padding-left': '34px'});
+				elm.parent().css({'position': 'relative'});
 
 				scope.isEnabled = function () {
 					return enabled;
 				};
+
 
 				function update () {
 					if (enabled) {

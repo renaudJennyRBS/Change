@@ -11,6 +11,13 @@
 
 		{{ forms.field('label', 'String', 'm.rbs.website.document.topic.label', true) }}
 
+		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('title')}">
+			<label class="control-label" for="title">{{ i18n('m.rbs.website.document.topic.title', ['ucf']) }}</label>
+			<div class="controls">
+				<input type="text" rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}" id="title" name="title" required class="input-block-level" ng-model="document.title"/>
+			</div>
+		</div>
+
 		{{ forms.field('pathPart', 'String', 'm.rbs.website.document.topic.pathPart',
 			false, 'm.rbs.website.document.topic.pathPart-help') }}
 

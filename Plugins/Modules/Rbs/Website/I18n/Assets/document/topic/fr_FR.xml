@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.website.document.topic" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
+	<key id="website">site web</key>
+	<key id="website-help">Le site web dans lequel se trouve cette rubrique.</key>
 	<key id="indexpage">page d'index</key>
 	<key id="indexpage-picker-title">sélectionner la page d'index de la rubrique</key>
 	<key id="pathpart">chemin</key>
 	<key id="pathpart-help" format="html">
 		<![CDATA[Nom utilisé dans l'URL]]>
 	</key>
+	<key id="synchronize-title-label">synchroniser la valeur avec celle du libellé</key>
 </i18n>
