@@ -38,7 +38,14 @@
 			</div>
 		</div>
 
-		{{ forms.field('module', 'String', 'm.rbs.tag.document.tag.module', false, 'm.rbs.tag.document.tag.module-help') }}
+		<div class="control-group property"
+		     data-ng-class="{'success': hasCorrectionOnProperty('module')}">
+			<label class="control-label" for="module">{{ i18n('m.rbs.tag.document.tag.module', ['ucf']) }}</label>
+			<div class="controls">
+				<select ng-model="document.module" rbs-items-from-collection="modules"></select>
+			</div>
+		</div>
+
 		{{ forms.pickerMultiple('children', 'Rbs_Tag_Tag', 'm.rbs.tag.document.tag.children', false, 'm.rbs.tag.document.tag.children-help', 'm.rbs.tag.document.tag.children-selector-title', true) }}
 	</fieldset>
 	<form-button-bar></form-button-bar>

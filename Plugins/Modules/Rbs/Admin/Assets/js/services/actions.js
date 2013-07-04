@@ -3,7 +3,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.Breadcrumb', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, Breadcrumb) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n) {
 			function Actions () {
 
 				this.reset = function () {
@@ -298,7 +298,8 @@
 				this.register({
 					name        : 'addToClipboard',
 					models      : '*',
-					description : "Ajouter les documents sélectionnés dans le Presse-papier",
+					description : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard | ucf'),
 					icon        : "icon-bookmark",
 					selection   : "+",
 
@@ -316,8 +317,8 @@
 				this.register({
 					name        : 'delete',
 					models      : '*',
-					description : "Supprimer les documents sélectionnés",
-					label       : 'Supprimer',
+					description : i18n.trans('m.rbs.admin.admin.js.action-delete-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.admin.js.action-delete | ucf'),
 					icon        : "icon-trash",
 					selection   : "+",
 					cssClass    : "btn-danger-hover",
@@ -401,8 +402,8 @@
 				this.register({
 					name        : 'activate',
 					models      : '*',
-					label       : "Activer",
-					description : "Activer les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-activate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-activate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -412,7 +413,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('activate', doc);
+							var promise = REST.resourceActionThenReload('activate', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -439,8 +440,8 @@
 				this.register({
 					name        : 'startValidation',
 					models      : '*',
-					label       : "Activer",
-					description : "Valider les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-validate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-validate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -450,7 +451,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('startValidation', doc);
+							var promise = REST.resourceActionThenReload('startValidation', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -477,8 +478,8 @@
 				this.register({
 					name        : 'startPublication',
 					models      : '*',
-					label       : "Publier",
-					description : "Publier les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-publish | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-publish-help | ucf'),
 					icon        : "icon-rss",
 					selection   : "+",
 					loading     : true,
@@ -488,7 +489,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('startPublication', doc);
+							var promise = REST.resourceActionThenReload('startPublication', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -541,8 +542,8 @@
 				this.register({
 					name        : 'applyCorrection',
 					models      : '*',
-					label       : "Appliquer la correction",
-					description : "Appliquer la correction des documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-apply-correction | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-apply-correction-help | ucf'),
 					icon        : "icon-download-alt",
 					selection   : "+",
 
@@ -573,12 +574,12 @@
 							REST.loadCorrection(doc).then(function (doc) {
 
 								if (doc.META$.correction.status === 'DRAFT') {
-									REST.action('startCorrectionValidation', doc).then(function (result) {
+									REST.resourceAction('startCorrectionValidation', doc).then(function (result) {
 										doc.META$.correction.status = result.data['correction-status'];
 										q.resolve(doc);
 									});
 								} else {
-									REST.action('startCorrectionPublication', doc, {'publishImmediately': true}).then(function (result) {
+									REST.resourceAction('startCorrectionPublication', doc, {'publishImmediately': true}).then(function (result) {
 										doc.META$.correction.status = result.data['correction-status'];
 										if (doc.META$.correction.status === 'FILED') {
 											delete doc.META$.correction;
@@ -607,8 +608,8 @@
 				this.register({
 					name        : 'deactivate',
 					models      : '*',
-					label       : "Désactiver",
-					description : "Désactiver les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-deactivate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-deactivate-help | ucf'),
 					icon        : "icon-pause",
 					selection   : "+",
 					loading     : true,
@@ -618,7 +619,7 @@
 						var promises = [];
 						// Call one REST request per document to remove and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.actionThenReload('deactivate', doc);
+							var promise = REST.resourceActionThenReload('deactivate', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								doc.publicationStatus = updatedDoc.publicationStatus;
@@ -646,8 +647,8 @@
 				this.register({
 					name        : 'reorder',
 					models      : '*',
-					label       : "Réorganiser",
-					description : "Réorganiser les éléments de la liste ci-dessous",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-reorder | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-reorder-help | ucf'),
 					icon        : "icon-reorder",
 
 					execute : ['$scope', '$embedDialog', '$target', function ($scope, $embedDialog, $target) {

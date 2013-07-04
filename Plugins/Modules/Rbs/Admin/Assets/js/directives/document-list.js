@@ -23,8 +23,9 @@
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
-		DEFAULT_ACTIONS = 'activate reorder delete(icon)',
-		testerEl = $('#rbs-document-list-tester');
+		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
+		testerEl = $('#rbs-document-list-tester'),
+		forEach = angular.forEach;
 
 	app.directive('rbsDocumentList', [
 		'$q',
@@ -188,7 +189,7 @@
 						'<th ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}" ng-if="isSortable(\'' + column.name + '\')">' +
 							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>' +
 							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
-							'</th>' +
+						'</th>' +
 						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</th>'
 					);
 				}
@@ -218,7 +219,11 @@
 							column.content = '<img rbs-storage-image="(= doc.' + column.valuePath + ' =)" thumbnail="' + column.thumbnail + '"/>';
 						}
 					} else {
-						column.content = '(= doc.' + column.valuePath + ' =)';
+						if (column.converter) {
+							column.content = '(= getConvertedValue(doc.' + column.valuePath + ', "' + column.converter + '", "' + column.converterParams + '") =)';
+						} else {
+							column.content = '(= doc.' + column.valuePath + ' =)';
+						}
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
@@ -325,6 +330,13 @@
 				if (__gridItems[dlid]['class']) {
 					inner.addClass(__gridItems[dlid]['class']);
 				}
+
+				forEach(__gridItems[dlid], function (value, name) {
+					if (name !== 'class' && name !== 'content' && ! Utils.startsWith(name, '$')) {
+						inner.attr('data-' + Utils.normalizeAttrName(name), value);
+					}
+				});
+
 				inner.html(__gridItems[dlid].content);
 				delete __gridItems[dlid];
 			}
@@ -350,6 +362,10 @@
 			},
 
 
+			/**
+			 * Directive's compile function:
+			 * collect columns definition and templates for columns, grid items and preview.
+			 */
 			compile : function (tElement, tAttrs) {
 
 				var	dlid, undefinedColumnLabels, gridModeAvailable;
@@ -371,10 +387,28 @@
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
-					scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
+					if (attrs.display) {
+						scope.viewMode = attrs.display;
+					} else {
+						scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
+					}
 					scope.columns = elm.data('columns');
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
-					scope.$DL = scope;
+					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
+					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
+
+
+					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
+					scope.data = {};
+					angular.forEach(elm.data(), function (value, key) {
+						if (key === 'columns' || key === 'dlid') {
+							return;
+						}
+						scope.$parent.$watch(value, function (v) {
+							scope.data[key] = v;
+						}, true);
+					});
+
 
 					// Load Model's information and update the columns' header with the correct property label.
 					if (undefinedColumnLabels.length && attrs.model) {
@@ -422,11 +456,12 @@
 						});
 					}, true);
 
-					scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
-
-					scope.$watch('collection', function () {
+					function updateSelectedDocuments () {
 						scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
-					}, true);
+					}
+
+					scope.$watch('collection', updateSelectedDocuments, true);
+					updateSelectedDocuments();
 
 
 					//
@@ -758,7 +793,11 @@
 									});
 								} else {
 									Loading.start();
-									promise = REST.collection(attrs.model, params);
+									if (attrs.collectionUrl) {
+										promise = REST.collection(attrs.collectionUrl, params);
+									} else {
+										promise = REST.collection(attrs.model, params);
+									}
 								}
 							} else if (! attrs.parentProperty) {
 								Loading.start();
@@ -776,7 +815,11 @@
 									});
 									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
 								} else {
-									promise = REST.collection(attrs.model, params);
+									if (attrs.collectionUrl) {
+										promise = REST.collection(attrs.collectionUrl, params);
+									} else {
+										promise = REST.collection(attrs.model, params);
+									}
 								}
 							}
 						}
@@ -878,49 +921,110 @@
 
 					//---------------------------------------------------------
 					//
-					// Initial load.
+					// Converters
 					//
 					//---------------------------------------------------------
 
 
-					if (attrs.tree) {
-						// If in a tree context, reload the list when the Breadcrumb is ready
-						// and each time it changes.
-						Breadcrumb.ready().then(function () {
-							console.log("reload 3");
-							reload();
-							scope.$on('Change:TreePathChanged', function () {
-								console.log("reload 3.1");
-								reload();
-							});
-						});
-					} else if (attrs.parentProperty) {
-						Breadcrumb.ready().then(function () {
-							buildQueryParentProperty();
-							scope.$on('Change:TreePathChanged', function () {
-								buildQueryParentProperty();
-							});
-						});
-					} else if (attrs.childrenProperty) {
-						console.log("List child documents: ", attrs.childrenProperty);
-						Breadcrumb.ready().then(function () {
-							console.log("reload 4");
-							reload();
-							scope.$on('Change:TreePathChanged', function () {
-								console.log("reload 4.1");
-								reload();
-							});
-						});
-					} else {
-						// Not in a tree.
+					function initializeConverters () {
+						Loading.start("Initializing converters...");
+						var promises = [];
+						scope.convertersValues = {};
 
-						// If a "load-query" attribute, the list should not be loaded as is.
-						if (! elm.is('[load-query]')) {
-							// ? Just load the flat list.
-							console.log("reload 5");
-							reload();
+						scope.getConvertedValue = function (value, converter) {
+							if (value) {
+								if (scope.convertersValues[converter] && scope.convertersValues[converter][value]) {
+									return scope.convertersValues[converter][value];
+								}
+								return '[' + value + ']';
+							}
+							return '';
+						};
+
+						forEach(scope.columns, function (column) {
+							var	conv = column.converter,
+								params = column.converterParams;
+							if (conv) {
+								if (conv === 'object' && /^{.*}$/.test(params)) {
+									scope.convertersValues[conv] = scope.$eval(params);
+								} else {
+									scope.convertersValues[conv] = {};
+									$rootScope.$broadcast(Events.DocumentListConverterGetValues, {
+										"converter" : conv,
+										"params"    : column.converterParams,
+										"promises"  : promises,
+										"values"    : scope.convertersValues[conv]
+									});
+								}
+							}
+						});
+
+						function errorFn (error) {
+							console.error(error);
+							successFn();
 						}
 
+						function successFn () {
+							console.log("scope.convertersValues=", scope.convertersValues);
+							Loading.stop();
+							initialLoad();
+						}
+
+						if (promises.length) {
+							$q.all(promises).then(successFn, errorFn);
+						} else {
+							successFn();
+						}
+					}
+					initializeConverters();
+
+
+					//---------------------------------------------------------
+					//
+					// Initial load.
+					//
+					//---------------------------------------------------------
+
+					function initialLoad () {
+						if (attrs.tree) {
+							// If in a tree context, reload the list when the Breadcrumb is ready
+							// and each time it changes.
+							Breadcrumb.ready().then(function () {
+								console.log("reload 3");
+								reload();
+								scope.$on('Change:TreePathChanged', function () {
+									console.log("reload 3.1");
+									reload();
+								});
+							});
+						} else if (attrs.parentProperty) {
+							Breadcrumb.ready().then(function () {
+								buildQueryParentProperty();
+								scope.$on('Change:TreePathChanged', function () {
+									buildQueryParentProperty();
+								});
+							});
+						} else if (attrs.childrenProperty) {
+							console.log("List child documents: ", attrs.childrenProperty);
+							Breadcrumb.ready().then(function () {
+								console.log("reload 4");
+								reload();
+								scope.$on('Change:TreePathChanged', function () {
+									console.log("reload 4.1");
+									reload();
+								});
+							});
+						} else {
+							// Not in a tree.
+
+							// If a "load-query" attribute, the list should not be loaded as is.
+							if (! elm.is('[load-query]')) {
+								// ? Just load the flat list.
+								console.log("reload 5");
+								reload();
+							}
+
+						}
 					}
 
 
@@ -1058,6 +1162,7 @@
 
 				tAttrs.content = tElement.html().trim();
 				__gridItems[dlid] = tAttrs;
+				console.log('__gridItems['+dlid+']', __gridItems[dlid]);
 
 			}
 		};
@@ -1079,7 +1184,7 @@
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
-				__preview[dlid] = angular.extend({}, tAttrs, {'contents':tElement.html().trim()});
+				__preview[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
 
 			}
 		};

@@ -328,7 +328,7 @@
 				 * @param data
 				 */
 				function resolveQ (q, data) {
-					if (data === null || (data.error && data.code && data.message)) {
+					if (data === null || (data.code && data.message)) {
 						q.reject(data);
 					} else {
 						q.resolve(data);
@@ -513,16 +513,24 @@
 					/**
 					 * Loads a collection via a 'GET' REST call.
 					 *
-					 * @param model Model name.
+					 * @param model Model name OR URL of a RESTful service that returns a Collection.
 					 * @param params Parameters (limit, offset, sort, ...)
 					 *
 					 * @return Promise Promise that will be resolved when the collection is loaded.
 					 *                 The Promise is resolved with the whole response as argument.
 					 */
 					'collection' : function (model, params) {
-						var q = $q.defer();
+						var	q = $q.defer(),
+							url;
+
+						if (Utils.isModelName(model)) {
+							url = this.getCollectionUrl(model, params);
+						} else {
+							url = Utils.makeUrl(model, params);
+						}
 						$http.get(
-								this.getCollectionUrl(model, params),
+								//this.getCollectionUrl(model, params),
+								url,
 								getHttpConfig(transformResponseCollectionFn)
 							).success(function (data) {
 								resolveQ(q, data);
@@ -562,7 +570,7 @@
 					 * @return {Object} Promise that will be resolved when `resource` is successfully saved.
 					 *                  Promise is resolved with the saved Resource as argument.
 					 */
-					'save' : function (resource, currentTreeNode) {
+					'save' : function (resource, currentTreeNode, propertiesList) {
 						var mainQ = $q.defer(),
 							url,
 							method,
@@ -583,6 +591,16 @@
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
 							method = 'put';
 							url = this.getResourceUrl(resource);
+							// Save only the properties listed here.
+							if (angular.isArray(propertiesList)) {
+								var toSave = {};
+								angular.forEach(propertiesList, function (prop) {
+									if (resource.hasOwnProperty(prop)) {
+										toSave[prop] = resource[prop];
+									}
+								});
+								resource = toSave;
+							}
 						}
 
 						// REST call:
@@ -704,7 +722,7 @@
 					 *
 					 * @returns Promise
 					 */
-					'action' : function (actionName, resource, params) {
+					'resourceAction' : function (actionName, resource, params) {
 						var q = $q.defer(),
 							url;
 
@@ -739,11 +757,11 @@
 					 *
 					 * @returns Promise
 					 */
-					'actionThenReload' : function (actionName, resource, params) {
+					'resourceActionThenReload' : function (actionName, resource, params) {
 						var q = $q.defer(),
 							self = this;
 
-						this.action(actionName, resource, params).then(
+						this.resourceAction(actionName, resource, params).then(
 							function () {
 								self.resource(resource.model, resource.id, resource.LCID).then(function (rsc) {
 									resolveQ(q, rsc);
@@ -985,6 +1003,56 @@
 					},
 
 
+					/**
+					 * Calls the action `actionName` with the given `params`.
+					 *
+					 * @param actionName
+					 * @param params
+					 *
+					 * @returns Promise
+					 */
+					'action' : function (actionName, params) {
+						var	q = $q.defer(),
+							url;
+
+						url = Utils.makeUrl(REST_BASE_URL + 'actions/' + actionName + '/', params);
+
+						$http.get(url, getHttpConfig())
+							.success(function restActionSuccessCallback (data) {
+								resolveQ(q, data);
+							})
+							.error(function restActionErrorCallback (data, status) {
+								data.httpStatus = status;
+								rejectQ(q, data);
+							});
+
+						digest();
+
+						return q.promise;
+					},
+
+					'postAction' : function (actionName, content) {
+						var	q = $q.defer(),
+							url;
+
+						url = REST_BASE_URL + 'actions/' + actionName + '/';
+
+						$http.post(url, content, getHttpConfig())
+							.success(function restActionSuccessCallback (data) {
+								resolveQ(q, data);
+							})
+							.error(function restActionErrorCallback (data, status) {
+								data.httpStatus = status;
+								rejectQ(q, data);
+							});
+
+						digest();
+
+						return q.promise;
+					},
+
+
+
 					//
 					// Storage
 					//
@@ -1069,60 +1137,6 @@
 							}
 
 							return q.promise;
-						}
-
-					},
-
-					'tags' : {
-
-						getList : function (moduleName) {
-							var tags = [];
-
-							REST.collection('Rbs_Tag_Tag', {'column':['color','userTag'],'limit':100}).then(function (result) {
-								angular.forEach(result.resources, function (r) {
-									tags.push(r);
-								});
-							});
-
-							return tags;
-						},
-
-						create : function (tag) {
-							tag.model = 'Rbs_Tag_Tag';
-							tag.id = Utils.getTemporaryId();
-							tag.refLCID = Settings.get('language');
-							var promise = REST.save(tag);
-							promise.then(function (created) {
-								angular.extend(tag, created);
-								delete tag.unsaved;
-							});
-							return promise;
-						},
-
-						setDocumentTags : function (doc, tags) {
-							var q = $q.defer();
-							$http.post(doc.getTagsUrl(), {"ids":getIdArray(tags)}, getHttpConfig())
-								.success(function (data) {
-									console.log("REST.setDocumentTags(): data=", data);
-									resolveQ(q, doc);
-								})
-								.error(function errorCallback (data, status) {
-									data.httpStatus = status;
-									rejectQ(q, data);
-								});
-						},
-
-						addTag : function (doc, tag) {
-							var q = $q.defer();
-							$http.post(doc.getTagsUrl(), {"addIds":[tag]}, getHttpConfig())
-								.success(function (data) {
-									console.log("REST.addTag(): data=", data);
-									resolveQ(q, doc);
-								})
-								.error(function errorCallback (data, status) {
-									data.httpStatus = status;
-									rejectQ(q, data);
-								});
 						}
 
 					}

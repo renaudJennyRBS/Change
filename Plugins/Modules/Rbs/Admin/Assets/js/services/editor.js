@@ -108,9 +108,8 @@
 				});
 			}
 
-			function saveSuccessHandler (docs) {
-				var	doc = docs[0],
-					hadCorrection = scope.document.hasCorrection(),
+			function saveSuccessHandler (doc) {
+				var	hadCorrection = scope.document.hasCorrection(),
 					postSavePromises = [];
 
 				scope.original = angular.copy(doc);
@@ -181,14 +180,10 @@
 			scope.submit = function submitFn () {
 
 				function executeSaveAction () {
-					Actions.execute(
-						'save',
-						{
-							'$docs'                : [ scope.document ],
-							'$propertyInfoProvider': element ? element.data(FIELDS_DATA_KEY_NAME) : null,
-							'$scope'               : scope,
-							'$currentTreeNode'     : Breadcrumb.getCurrentNode()
-						}
+					REST.save(
+						scope.document,
+						Breadcrumb.getCurrentNode(),
+						scope.changes
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
@@ -232,16 +227,11 @@
 					}
 				}
 
-				// Call "beforeSave" which can be defined in the Scope.
-				if (angular.isFunction(scope.beforeSave)) {
-					scope.beforeSave(scope.document);
-				}
-
-				// "preSubmit" is not meant to be overwritten: it is implemented in the "form-button-bar"
+				// "preSubmitCorrectionCheck" is not meant to be overwritten: it is implemented in the "form-button-bar"
 				// directive to ask the user what to do when the edited document has a correction.
 				var promise;
-				if (angular.isFunction(scope.preSubmit)) {
-					promise = scope.preSubmit(scope.document);
+				if (angular.isFunction(scope.preSubmitCorrectionCheck)) {
+					promise = scope.preSubmitCorrectionCheck(scope.document);
 				}
 
 				if (promise) {
