@@ -315,7 +315,7 @@
 
 
 		/**
-		 * Initialize grid mode for <document-list/>
+		 * Initialize grid mode for <rbs-document-list/>
 		 * @param dlid
 		 * @param tElement
 		 * @returns {boolean}
@@ -354,11 +354,12 @@
 			templateUrl : 'Rbs/Admin/js/directives/document-list.twig',
 
 			scope : {
-				'filterQuery' : '=',
-				'loadQuery'   : '=',
-				'picker'      : '=',
-				'onPreview'   : '&',
-				'cascadeEdit' : '@'
+				'filterQuery'  : '=',
+				'loadQuery'    : '=',
+				'picker'       : '=',
+				'onPreview'    : '&',
+				'cascadeEdit'  : '@',
+				'collectionUrl': '@'
 			},
 
 
@@ -918,6 +919,14 @@
 						}
 					}
 
+					if (elm.is('[collection-url]')) {
+						attrs.$observe('collectionUrl', function (value) {
+							if (value) {
+								reload();
+							}
+						});
+					}
+
 
 					//---------------------------------------------------------
 					//
@@ -1018,7 +1027,7 @@
 							// Not in a tree.
 
 							// If a "load-query" attribute, the list should not be loaded as is.
-							if (! elm.is('[load-query]')) {
+							if (! elm.is('[load-query]') && ! elm.is('[collection-url]')) {
 								// ? Just load the flat list.
 								console.log("reload 5");
 								reload();
