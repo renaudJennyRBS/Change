@@ -1,6 +1,5 @@
 <?php
 namespace Rbs\Tag\Setup;
-use Change\Application\ApplicationServices;
 use Change\Db\Schema\FieldDefinition;
 use Change\Db\Schema\KeyDefinition;
 
@@ -34,8 +33,17 @@ class Install
 
 		$config->addPersistentEntry('Change/Events/Db/Rbs_Tag',
 			'\\Rbs\\Tag\\Db\\ListenerAggregate');
+	}
 
-		$appServices = new ApplicationServices($application);
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @throws \RuntimeException
+	 */
+	public function executeServices($plugin, $documentServices, $presentationServices)
+	{
+		$appServices = $documentServices->getApplicationServices();
 		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
 
 		// Create table tag <-> doc
@@ -63,16 +71,6 @@ class Install
 		$td->addField($searchTagIdField);
 		$schemaManager->createOrAlterTable($td);
 	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
-	 */
-//	public function executeServices($plugin, $documentServices, $presentationServices)
-//	{
-//	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

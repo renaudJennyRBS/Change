@@ -391,6 +391,15 @@
 
 
 					/**
+					 * @param relativePath
+					 * @returns {String}
+					 */
+					'getBaseUrl' : function (relativePath) {
+						return REST_BASE_URL + relativePath;
+					},
+
+
+					/**
 					 * Returns the URL of the Resource identified by its `model`, `id` and eventually `lcid`.
 					 *
 					 * @param id

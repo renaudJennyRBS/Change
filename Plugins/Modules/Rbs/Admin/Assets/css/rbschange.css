@@ -1367,8 +1367,8 @@ th label {
 	font-family: Andale Mono,Courier New,Monospace;
 	font-size: 14pt;
 	left: 1px;
-	position: relative;
-	top: -39px;
+	top: 1px;
+	position: absolute;
 	width: 30px;
 	border-bottom-right-radius: 0;
 	border-top-right-radius: 0;

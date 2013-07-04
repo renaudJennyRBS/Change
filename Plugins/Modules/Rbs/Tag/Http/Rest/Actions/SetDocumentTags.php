@@ -11,7 +11,6 @@ use Change\Http\Rest\Result\DocumentLink;
  */
 class SetDocumentTags
 {
-
 	const MAX_TAGS = 1000;
 
 	/**
@@ -32,6 +31,7 @@ class SetDocumentTags
 	/**
 	 * Use Event Params: tags[], docId
 	 * @param \Change\Http\Event $event
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
@@ -101,5 +101,4 @@ class SetDocumentTags
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
 		}
 	}
-
 }

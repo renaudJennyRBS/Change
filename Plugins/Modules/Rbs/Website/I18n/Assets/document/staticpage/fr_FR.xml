@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.website.document.staticpage" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="website">site web</key>
-	<key id="website-help">La page doit obligatoirement être rattachée à un site web.</key>
-	<key id="website-picker-title">sélectionner le site web</key>
+	<key id="section">section</key>
+	<key id="section-help">La rubrique ou le site web contenant la page.</key>
+	<key id="section-picker-title">sélectionner la section</key>
 	<key id="pagetemplate">modèle de page</key>
 	<key id="pagetemplate-picker-title">sélectionner le modèle de page</key>
 	<key id="editablecontent">contenu de la page</key>

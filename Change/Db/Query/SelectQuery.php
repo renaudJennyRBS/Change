@@ -241,10 +241,12 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param integer|null $startIndex
+	 * @return $this
 	 */
 	public function setStartIndex($startIndex)
 	{
 		$this->startIndex = $startIndex;
+		return $this;
 	}
 
 	/**
@@ -259,10 +261,12 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param integer|null $maxResults
+	 * @return $this
 	 */
 	public function setMaxResults($maxResults)
 	{
 		$this->maxResults = $maxResults;
+		return $this;
 	}
 
 	/**
@@ -298,7 +302,7 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param \Closure|array $rowConverter
-	 * @return array|null row
+	 * @return array|mixed|null row
 	 */
 	public function getFirstResult($rowConverter = null)
 	{
