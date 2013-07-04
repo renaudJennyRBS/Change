@@ -14,6 +14,7 @@ script:
  - phpunit --configuration phpunit.xml.dist
  - phpunit --configuration phpunit.xml.sqlite.dist
  - phpunit --configuration phpunit.xml.plugins.dist
+ - phpunit --configuration phpunit.xml.perf.dist
 
 notifications:
    email:
