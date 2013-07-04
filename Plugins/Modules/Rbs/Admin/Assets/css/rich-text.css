@@ -138,3 +138,12 @@ rbs-rich-text-input .btn-toolbar {
 rbs-rich-text-input .media-picker .pagination ul > .disabled > a {
 	background: white;
 }
+
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h1,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h2,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h3,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h4,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h5,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h6 {
+	margin-top: 0;
+}
