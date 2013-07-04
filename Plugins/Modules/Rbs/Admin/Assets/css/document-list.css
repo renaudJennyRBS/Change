@@ -66,13 +66,18 @@ td .correction {
 }
 
 .grid-small .thumbnail-grid > li {
-	float: left;
 	width: 25%;
-	margin-top: 20px;
-	position: relative;
 }
 .grid-small .thumbnail-grid > li:first-child {
 	width: 25%;
+}
+
+.grid-xsmall .thumbnail-grid > li {
+	width: 20%;
+}
+.grid-xsmall .thumbnail-grid > li:first-child {
+	width: 20%;
+	font-size: 90%;
 }
 
 
@@ -113,6 +118,13 @@ td .correction {
 		height: 90px;
 	}
 
+	.grid-xsmall .thumbnail-grid {
+		width: 10%;
+	}
+	.grid-xsmall .thumbnail-grid > li:first-child {
+		width: 10%;
+	}
+
 }
 
 @media (min-width: 1560px) {
@@ -120,6 +132,14 @@ td .correction {
 	.thumbnail-grid > li:first-child {
 		width: 20%;
 	}
+
+	.grid-xsmall .thumbnail-grid {
+		width: 6.25%;
+	}
+	.grid-xsmall .thumbnail-grid > li:first-child {
+		width: 6.25%;
+	}
+
 }
 
 .thumbnail-grid li .inner {
@@ -137,10 +157,14 @@ td .correction {
 
 
 .grid-small .thumbnail-grid li .inner {
-	height: 100px;
-	line-height: 50px;
+	height: 60px;
+	line-height: 30px;
 }
 
+.grid-xsmall .thumbnail-grid li .inner {
+	height: 60px;
+	line-height: 30px;
+}
 
 .thumbnail-grid li .inner.DEACTIVATED {
 	border-color: #FFBB33;

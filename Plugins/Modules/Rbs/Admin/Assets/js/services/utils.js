@@ -291,6 +291,15 @@
 			return angular.lowercase(s1) === angular.lowercase(s2);
 		},
 
+
+		normalizeAttrName : function (str) {
+			return str.
+				replace(/[^a-z0-9]/ig, '-').
+				replace(/([A-Z])/g, function (_, letter, offset) {
+					return (offset ? '-' : '')+letter.toLowerCase();
+				});
+		},
+
 		// Various methods...
 		// These methods are not (yet?) documented, but their use is NOT encouraged
 		// as they are used for internal purposes only.

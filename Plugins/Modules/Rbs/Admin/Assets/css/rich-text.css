@@ -134,3 +134,7 @@ rbs-rich-text-input .btn-toolbar {
 	margin: 0;
 	padding: 5px;
 }
+
+rbs-rich-text-input .media-picker .pagination ul > .disabled > a {
+	background: white;
+}

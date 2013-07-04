@@ -16,18 +16,17 @@
 
 		var	aceEditorIdCounter = 0,
 			mediaPickerTpl =
-			'<div style="padding: 10px; background: #444; color: white;">' +
+			'<div style="padding: 10px 15px; background: #444; color: white;">' +
 				'<button type="button" style="color: white;" class="close pull-right" ng-click="closeMediaSelector()">&times;</button>' +
-				'<h4 style="margin:0">Sélectionner une image à insérer</h4>' +
-				'<rbs-document-list class="grid-small" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
+				'<h4 style="margin:0">Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
+				'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
 				'<column name="path" thumbnail="XS"></column>' +
-				'<column name="label" primary="true"></column>' +
-				'<grid-item>' +
+				'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
 				'<img rbs-storage-image="(= doc.path =)" thumbnail="XS"/>' +
 				'<a style="display:block" href="javascript:;" ng-click="picker.selectMedia(doc, $event)">(= doc.label =)</a>' +
 				'</grid-item>' +
 				'</rbs-document-list>' +
-				'</div>';
+			'</div>';
 
 		return {
 			restrict : 'EC',
@@ -132,9 +131,26 @@
 						element.removeClass('focused');
 					});
 
+					editor.on("drop", function (event) {
+						event.stopPropagation();
+						event.preventDefault();
+					});
+
 					ngModel.$render();
 				}
 				$timeout(initEditor);
+
+
+				// Drag and drop image from the media picker in the editor:
+				// We simply build the "Text" data transfer with the Markdown representation of the image,
+				// and we're done!
+				$(element).on({
+					'dragstart' : function (event) {
+						var draggedEl = $(this);
+						event.dataTransfer.setData('Text', buildMdImageTag(draggedEl.data('mediaPath'), draggedEl.data('mediaLabel')));
+						event.dataTransfer.effectAllowed = "copyMove";
+					}
+				}, '.media-picker .inner');
 
 
 				// Auto-height.
@@ -283,11 +299,11 @@
 				function buildMdImageTag (imagePath, imageLabel) {
 					var	range = editor.getSelectionRange(), alt;
 					alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
-					return '![' + alt + '](' + imagePath + ' "")';
+					return '![' + alt + '](' + REST.storage.displayUrl(imagePath) + ' "")';
 				}
 
 				scope.mdInsertMedia = function (media) {
-					scope.mdInsertText(buildMdImageTag(REST.storage.displayUrl(media.path), media.label));
+					scope.mdInsertText(buildMdImageTag(media.path, media.label));
 				};
 
 				scope.picker = {
@@ -309,13 +325,16 @@
 				};
 
 				scope.closeMediaSelector = function () {
-					$mediaPicker.empty();
+					$mediaPicker.hide();
 					scope.isMediaSelectorOpen = false;
 				};
 
 				scope.openMediaSelector = function () {
-					$mediaPicker.html(mediaPickerTpl);
-					$compile($mediaPicker)(scope);
+					if (! $mediaPicker.children().length) {
+						$mediaPicker.html(mediaPickerTpl);
+						$compile($mediaPicker)(scope);
+					}
+					$mediaPicker.show();
 					scope.isMediaSelectorOpen = true;
 				};
 

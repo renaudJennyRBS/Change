@@ -330,6 +330,13 @@
 				if (__gridItems[dlid]['class']) {
 					inner.addClass(__gridItems[dlid]['class']);
 				}
+
+				forEach(__gridItems[dlid], function (value, name) {
+					if (name !== 'class' && name !== 'content' && ! Utils.startsWith(name, '$')) {
+						inner.attr('data-' + Utils.normalizeAttrName(name), value);
+					}
+				});
+
 				inner.html(__gridItems[dlid].content);
 				delete __gridItems[dlid];
 			}
@@ -1155,6 +1162,7 @@
 
 				tAttrs.content = tElement.html().trim();
 				__gridItems[dlid] = tAttrs;
+				console.log('__gridItems['+dlid+']', __gridItems[dlid]);
 
 			}
 		};
@@ -1176,7 +1184,7 @@
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
-				__preview[dlid] = angular.extend({}, tAttrs, {'contents':tElement.html().trim()});
+				__preview[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
 
 			}
 		};
