@@ -87,11 +87,11 @@ class StartCorrectionPublication
 
 			if ($LCID)
 			{
-				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
 				{
 					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 				}
+				$documentManager->pushLCID($LCID);
 				$this->doStartPublication($event, $document, $publishImmediately);
 				$documentManager->popLCID();
 			}
