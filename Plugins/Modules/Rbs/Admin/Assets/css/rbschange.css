@@ -1496,3 +1496,8 @@ th label {
 .strikethrough {
 	text-decoration: line-through;
 }
+
+.icon-rbs-navigate-to:before {
+	content: "\F0A9";
+	color: silver;
+}

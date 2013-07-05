@@ -227,10 +227,10 @@
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)" title="Naviguer vers..."><strong>' + column.content + '</strong></a> <i class="icon-rbs-navigate-to"></i></div></td>');
 						} else {
-							if (tAttrs.cascadeEdit) {
-								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEditFn(doc)"><strong>' + column.content + '</strong></a></div></td>');
+							if (tAttrs.cascadeEdition) {
+								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
 							} else {
 								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
 							}
@@ -266,9 +266,9 @@
 						if (actionsCount) {
 							html += actionDivider;
 						}
-						if (tAttrs.cascadeEdit) {
+						if (tAttrs.cascadeEdition) {
 							html +=
-								'<a href="javascript:;" ng-click="cascadeEditFn(doc)">' +
+								'<a href="javascript:;" ng-click="cascadeEdit(doc)">' +
 									i18n.trans('m.rbs.admin.admin.js.edit') +
 								'</a>';
 						} else {
@@ -354,12 +354,12 @@
 			templateUrl : 'Rbs/Admin/js/directives/document-list.twig',
 
 			scope : {
-				'filterQuery'  : '=',
-				'loadQuery'    : '=',
-				'picker'       : '=',
-				'onPreview'    : '&',
-				'cascadeEdit'  : '@',
-				'collectionUrl': '@'
+				'filterQuery' : '=',
+				'loadQuery' : '=',
+				'picker' : '=',
+				'onPreview' : '&',
+				'cascadeEdition' : '@',
+				'collectionUrl' : '@'
 			},
 
 
@@ -426,10 +426,10 @@
 					}, true);
 
 
-					scope.cascadeEditFn = function (doc) {
+					scope.cascadeEdit = function (doc) {
 						FormsManager.cascadeEditor(
 							doc,
-							scope.cascadeEdit
+							scope.cascadeEdition
 						);
 					};
 
@@ -437,7 +437,7 @@
 						REST.resource(doc).then(function (fullDoc) {
 								FormsManager.cascadeEditor(
 									Utils.duplicateDocument(fullDoc),
-									scope.cascadeEdit
+									scope.cascadeEdition
 								);
 							}
 						);
