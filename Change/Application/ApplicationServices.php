@@ -48,9 +48,7 @@ class ApplicationServices extends \Zend\Di\Di
 			'workspace' => $application->getWorkspace(),
 			'sharedEventManager' => $application->getSharedEventManager()));
 
-		$im->setParameters('Change\Plugins\PluginManager', array(
-			'workspace' => $application->getWorkspace(),
-			'sharedEventManager' => $application->getSharedEventManager()));
+		$im->setParameters('Change\Plugins\PluginManager', array('application' => $application));
 
 		$im->setInjections('Change\Storage\StorageManager', array('Change\Db\DbProvider'));
 		$im->setParameters('Change\Storage\StorageManager', array(
@@ -146,18 +144,13 @@ class ApplicationServices extends \Zend\Di\Di
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Plugins\PluginManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct')
-
-			->addMethod('setWorkspace', true)
-			->addMethodParameter('setWorkspace', 'workspace',
-				array('type' => 'Change\Workspace', 'required' => true))
+			->addMethod('setApplication', true)
+			->addMethodParameter('setApplication', 'application',
+				array('type' => 'Change\Application', 'required' => true))
 
 			->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider',
-				array('type' => 'Change\Db\DbProvider', 'required' => true))
-
-			->addMethod('setSharedEventManager', true)
-			->addMethodParameter('setSharedEventManager', 'sharedEventManager',
-				array('type' => 'Change\Events\SharedEventManager', 'required' => true));
+				array('type' => 'Change\Db\DbProvider', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 

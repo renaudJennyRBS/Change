@@ -278,6 +278,9 @@ class SelectQuery extends AbstractQuery
 		return $this->maxResults;
 	}
 
+	/**
+	 * @return ResultsConverter
+	 */
 	public function getRowsConverter()
 	{
 		$dbp = $this->getDbProvider();

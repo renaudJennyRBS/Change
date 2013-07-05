@@ -4,6 +4,7 @@ namespace Change\Db\Query;
 use Change\Db\Query\Expressions\Assignment;
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
+use Change\Db\Query\Expressions\Concat;
 use Change\Db\Query\Expressions\Func;
 use Change\Db\Query\Expressions\Table;
 use Change\Db\Query\Expressions\Identifier;
@@ -146,6 +147,17 @@ class SQLFragmentBuilder
 			$tableOrIdentifier = $this->identifier($tableOrIdentifier);
 		}
 		return new Column($name, $tableOrIdentifier);
+	}
+
+	/**
+	 * @param AbstractExpression|string $exp1
+	 * @param AbstractExpression|string $exp2
+	 * @param AbstractExpression|string $_ [optional]
+	 * @return Concat
+	 */
+	public function concat($exp1, $exp2, $_ = null)
+	{
+		return new Concat($this->normalizeValue(func_get_args()));
 	}
 	
 	/**

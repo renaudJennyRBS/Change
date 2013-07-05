@@ -84,39 +84,36 @@ class GetLocalizedDocument
 	}
 
 	/**
+	 * @param \Change\Http\Result $result
 	 * @param AbstractDocument $document
-	 * @param Logging $logging
-	 * @return null|string
 	 */
-	protected function buildEtag($document, Logging $logging = null)
+	protected function setResultCacheHeader($result, $document)
 	{
-		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
-
-		if ($document instanceof Correction && $document->hasCorrection())
+		if ($document->getDocumentModel()->isStateless())
 		{
-			$parts[] = $document->getCurrentCorrection()->getStatus();
+			return;
 		}
 
+		$etagParts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
+		if ($document instanceof Correction && $document->hasCorrection())
+		{
+			$etagParts[] = $document->getCurrentCorrection()->getStatus();
+		}
 		if ($document instanceof Editable)
 		{
-			$parts[] = $document->getDocumentVersion();
+			$etagParts[] = $document->getDocumentVersion();
 		}
 
 		if ($document instanceof Publishable)
 		{
-			$parts[] = $document->getPublicationStatus();
+			$etagParts[] = $document->getPublicationStatus();;
 		}
 
 		if ($document instanceof Localizable)
 		{
-			$parts = array_merge($parts, $document->getLCIDArray());
+			$etagParts = array_merge($etagParts, $document->getLCIDArray());
 		}
-
-		if ($logging)
-		{
-			$logging->info('ETAG BUILD INFO: ' . implode(',', $parts));
-		}
-		return md5(implode(',', $parts));
+		$result->setHeaderEtag(md5(implode(',', $etagParts)));
 	}
 
 	/**
@@ -163,7 +160,7 @@ class GetLocalizedDocument
 
 		$i18n = array();
 
-		/* @var $document Localizable */
+		/* @var $document AbstractDocument|Localizable */
 		foreach ($document->getLCIDArray() as $tmpLCID)
 		{
 			$LCIDLink = clone($documentLink);
@@ -179,11 +176,7 @@ class GetLocalizedDocument
 		}
 		else
 		{
-			/* @var $document AbstractDocument */
-			if (!$document->getDocumentModel()->isStateless())
-			{
-				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
-			}
+			$this->setResultCacheHeader($result, $document);
 		}
 		$event->setResult($result);
 		return $result;

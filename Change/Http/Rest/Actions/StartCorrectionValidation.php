@@ -81,12 +81,11 @@ class StartCorrectionValidation
 			$transactionManager->begin();
 			if ($LCID)
 			{
-
-				$documentManager->pushLCID($LCID);
 				if ($document->isNew())
 				{
 					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 				}
+				$documentManager->pushLCID($LCID);
 				$this->doStartValidation($event, $document, $publicationDate);
 				$documentManager->popLCID();
 			}

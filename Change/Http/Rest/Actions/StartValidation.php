@@ -71,6 +71,7 @@ class StartValidation
 				{
 					throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 				}
+				$documentManager->pushLCID($LCID);
 				$this->doStartValidation($event, $document);
 				$documentManager->popLCID();
 			}

@@ -350,20 +350,20 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @api
-	 * @return boolean
-	 */
-	public function hasModifiedProperties()
-	{
-		return count($this->modifiedProperties) !== 0;
-	}
-
-	/**
-	 * @api
 	 * @return string[]
 	 */
 	public function getModifiedPropertyNames()
 	{
 		return array_keys($this->modifiedProperties);
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function hasModifiedProperties()
+	{
+		return count($this->getModifiedPropertyNames()) !== 0;
 	}
 	
 	/**
@@ -373,7 +373,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function isPropertyModified($propertyName)
 	{
-		return array_key_exists($propertyName, $this->modifiedProperties);
+		return in_array($propertyName, $this->getModifiedPropertyNames());
 	}
 
 	/**

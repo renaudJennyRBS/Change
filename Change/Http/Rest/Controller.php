@@ -99,12 +99,15 @@ class Controller extends \Change\Http\Controller
 			if ($event->getResult() instanceof Result)
 			{
 				$result = $event->getResult();
-				$error->setHttpStatusCode($result->getHttpStatusCode());
-				if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
+				if ($result->getHttpStatusCode() && $result->getHttpStatusCode() !== HttpResponse::STATUS_CODE_200)
 				{
-					$error->setErrorCode('PATH-NOT-FOUND');
-					$error->setErrorMessage('Unable to resolve path');
-					$error->addDataValue('path', $event->getRequest()->getPath());
+					$error->setHttpStatusCode($result->getHttpStatusCode());
+					if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
+					{
+						$error->setErrorCode('PATH-NOT-FOUND');
+						$error->setErrorMessage('Unable to resolve path');
+						$error->addDataValue('path', $event->getRequest()->getPath());
+					}
 				}
 			}
 

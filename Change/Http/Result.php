@@ -156,6 +156,33 @@ class Result
 	}
 
 	/**
+	 * @param \DateTime|null
+	 */
+	public function setHeaderExpires($expires)
+	{
+		$this->removeHeader('Expires');
+		if ($expires)
+		{
+			$header = new \Zend\Http\Header\Expires();
+			$header->setDate($expires);
+			$this->getHeaders()->addHeader($header);
+		}
+	}
+
+	/**
+	 * @param string|null
+	 */
+	public function setHeaderCacheControl($cacheControl)
+	{
+		$this->removeHeader('Cache-Control');
+		if ($cacheControl)
+		{
+			$this->getHeaders()->addHeaderLine('Cache-Control', $cacheControl);
+		}
+	}
+
+
+	/**
 	 * @return string
 	 */
 	function __toString()

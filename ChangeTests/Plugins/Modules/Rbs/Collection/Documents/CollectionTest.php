@@ -38,7 +38,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $collection \Rbs\Collection\Documents\Collection */
 		$collection->setCode('rbsCollectionTest1');
 		$collection->setLabel('RbsCollectionTest1');
-		$collection->addItems($item);
+		$collection->setItems(array($item));
 		$collection->save();
 
 		$foundItem = $collection->getItemByValue('test1');

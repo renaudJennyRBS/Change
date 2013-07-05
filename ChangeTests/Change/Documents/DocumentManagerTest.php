@@ -134,7 +134,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			
 		$manager->deleteDocument($document2);
 		$this->assertEquals(DocumentManager::STATE_DELETED, $document2->getPersistentState());
-			
+
 		$document->setPStr('Document Label');
 		$this->assertTrue($document->isPropertyModified('pStr'));
 		
@@ -255,8 +255,8 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$manager->affectId($sd2);
 		$manager->insertDocument($sd2);
 
-		$basic->addPDocArr($sd1);
-		$basic->addPDocArr($sd2);
+		$basic->getPDocArr()->add($sd1);
+		$basic->getPDocArr()->add($sd2);
 
 		$manager->affectId($basic);
 		$manager->insertDocument($basic);

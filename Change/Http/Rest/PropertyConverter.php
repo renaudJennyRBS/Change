@@ -117,6 +117,10 @@ class PropertyConverter
 				}
 				break;
 			case Property::TYPE_DOCUMENTARRAY:
+				if ($propertyValue instanceof \Change\Documents\DocumentArrayProperty)
+				{
+					$propertyValue = $propertyValue->toArray();
+				}
 				if (is_array($propertyValue))
 				{
 					$urlManager = $this->getUrlManager();
