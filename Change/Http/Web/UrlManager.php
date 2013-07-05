@@ -315,14 +315,25 @@ class UrlManager extends \Change\Http\UrlManager
 			try
 			{
 				$transactionManager->begin();
-				if ($genericPathRule->getRelativePath() === $newPathRule->getRelativePath())
+
+				$redirectRules = $this->findRedirectedRules($applicationServices->getDbProvider(),
+					$newPathRule->getWebsiteId(), $newPathRule->getLCID(),
+					$newPathRule->getDocumentId(), $newPathRule->getSectionId());
+
+				$redirectRule = null;
+				foreach ($redirectRules as $rule)
 				{
-					$genericPathRule->setQuery($newPathRule->getQuery());
-					$genericPathRule->setHttpStatus(200);
-					$this->updatePathRule($applicationServices, $genericPathRule);
-					$newPathRule = $genericPathRule;
+					if ($rule->getRelativePath() === $newPathRule->getRelativePath())
+					{
+						$rule->setQuery($newPathRule->getQuery());
+						$rule->setHttpStatus(200);
+						$this->updatePathRule($applicationServices, $rule);
+						$redirectRule = $rule;
+						break;
+					}
 				}
-				else
+
+				if (null === $redirectRule)
 				{
 					try
 					{
@@ -334,6 +345,11 @@ class UrlManager extends \Change\Http\UrlManager
 						$this->insertPathRule($applicationServices, $newPathRule);
 					}
 				}
+				else
+				{
+					$newPathRule = $redirectRule;
+				}
+
 				$transactionManager->commit();
 			}
 			catch (\Exception $exception)
@@ -389,11 +405,7 @@ class UrlManager extends \Change\Http\UrlManager
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-
-			$qb->select($fb->alias($fb->column('rule_id'), 'rule_id'),
-				$fb->alias($fb->column('relative_path'), 'relative_path'),
-				$fb->alias($fb->column('query'), 'query'));
-
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'));
 			$qb->from($qb->getSqlMapping()->getPathRuleTable());
 			$qb->where($fb->logicAnd(
 				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
@@ -406,10 +418,9 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 
 		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $websiteId);
-		$sq->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', intval($documentId));
-		$sq->bindParameter('sectionId', intval($sectionId));
+		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
+		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
+
 		$pathRules = array();
 		foreach ($sq->getResults() as $row)
 		{
@@ -422,6 +433,53 @@ class UrlManager extends \Change\Http\UrlManager
 				->setDocumentId($documentId)
 				->setSectionId($sectionId)
 				->setHttpStatus(200);
+			$pathRules[] = $pathRule;
+		}
+		return $pathRules;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param integer $websiteId
+	 * @param string $LCID
+	 * @param integer $documentId
+	 * @param integer $sectionId
+	 * @return PathRule[]
+	 */
+	protected function findRedirectedRules($dbProvider, $websiteId, $LCID, $documentId, $sectionId)
+	{
+		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findRedirectedRules');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'), $fb->column('http_status'));
+			$qb->from($qb->getSqlMapping()->getPathRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->neq($fb->column('http_status'), $fb->number(200))
+			));
+			$qb->orderAsc($fb->column('rule_id'));
+		}
+		$sq = $qb->query();
+		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
+		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
+
+		$pathRules = array();
+		foreach ($sq->getResults($sq->getRowsConverter()->addIntCol('rule_id', 'http_status')
+			->addTxtCol('relative_path', 'query')) as $row)
+		{
+			$pathRule = new PathRule();
+			$pathRule->setRuleId($row['rule_id'])
+				->setRelativePath($row['relative_path'])
+				->setQuery($row['query'])
+				->setWebsiteId($websiteId)
+				->setLCID($LCID)
+				->setDocumentId($documentId)
+				->setSectionId($sectionId)
+				->setHttpStatus($row['http_status']);
 			$pathRules[] = $pathRule;
 		}
 		return $pathRules;
