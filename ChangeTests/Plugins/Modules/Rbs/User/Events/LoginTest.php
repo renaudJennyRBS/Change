@@ -47,7 +47,7 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$user->setLogin('login de test');
 		$user->setEmail('fake@temporary.fr');
 		$user->setPassword('Un password');
-		$user->addGroups($grp);
+		$user->setGroups(array($grp));
 		$user->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
 		$user->save();
 
