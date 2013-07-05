@@ -61,7 +61,40 @@ class MarkdownParser extends \Michelf\Markdown {
 		$documentId 	=  $matches[3] == '' ? $matches[4] : $matches[3];
 		$title			=& $matches[7];
 
-		$url = $this->generateDocumentLink($documentId);
+		$params = explode(',', $documentId);
+		$model = null;
+
+		/**
+		 * @var \Change\Documents\AbstractDocument
+		 */
+		$document = null;
+
+		if (count($params) === 1)
+		{
+			$id = $params[0];
+		}
+		elseif (count($params) === 2)
+		{
+			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
+			$id = $params[1];
+		}
+
+		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+
+		if (!$document)
+		{
+			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $documentId . '</span>');
+		}
+
+		if ($this->website)
+		{
+			$url = $this->website->getUrlManager($this->website->getLCID())->getCanonicalByDocument($document);
+		}
+		else
+		{
+			$url = "javascript:;";
+		}
+
 
 		$result = "<a href=\"$url\"";
 		if (isset($title)) {
@@ -76,31 +109,6 @@ class MarkdownParser extends \Michelf\Markdown {
 	}
 
 
-	/**
-	 * @param $documentId string
-	 */
-	protected function generateDocumentLink($documentId)
-	{
-		$params = explode(',', $documentId);
-		$modelName = $params[0];
-		$id = $params[1];
-
-		$model = $this->documentServices->getModelManager()->getModelByName($modelName);
-		/**
-		 * @var \Change\Documents\AbstractDocument
-		 */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
-
-		if ($this->website)
-		{
-			return $this->website->getUrlManager($this->website->getLCID())->getCanonicalByDocument($document);
-		}
-		else
-		{
-			return "javascript:;";
-		}
-	}
-
 
 	/**
 	 * @param $matches
@@ -114,22 +122,38 @@ class MarkdownParser extends \Michelf\Markdown {
 		$alt_text = $this->encodeAttribute($alt_text);
 
 		$params = explode(',', $mediaId);
-		$modelName = $params[0];
-		$id = $params[1];
-		if (count($params) === 3)
+		$model = null;
+
+		if (count($params) === 2)
 		{
+			if (is_numeric($params[0]))
+			{
+				$id = $params[0];
+				$params = $params[1];
+			}
+			else
+			{
+				$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
+				$id = $params[1];
+				$params = null;
+			}
+		}
+		elseif (count($params) === 3)
+		{
+			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
+			$id = $params[1];
 			$params = $params[2];
 		}
-		else
-		{
-			$params = null;
-		}
 
-		$model = $this->documentServices->getModelManager()->getModelByName($modelName);
 		/**
 		 * @var \Rbs\Media\Documents\Image
 		 */
 		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+
+		if (!$document)
+		{
+			return $this->hashPart('<span class="label label-important">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');
+		}
 
 		// FIXME Generate real Media URL
 		$url = '/rest.php/storage/' . substr($document->getPath(), 9) . '?content=1';

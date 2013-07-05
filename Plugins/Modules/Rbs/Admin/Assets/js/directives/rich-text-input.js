@@ -273,6 +273,9 @@
 						}
 						newRange.end.column = c;
 						session.replace(newRange, headingMarker);
+
+						// FIXME : fix replacement of # at the end of the line
+
 					} else if (range.isEmpty()) {
 						session.insert({'row': range.start.row, 'column': 0}, headingMarker);
 					} else {
@@ -294,6 +297,10 @@
 				};
 
 
+				//
+				// Resources selectors
+				//
+
 				scope.picker = {
 					"insertMedia" : function (doc, $event) {
 						$event.stopPropagation();
@@ -305,22 +312,6 @@
 						$event.preventDefault();
 						scope.mdInsertDocumentLink(doc);
 					}
-				};
-
-
-				//
-				// Media insertion
-				//
-
-				function buildMdImageTag (imageId, imageLabel) {
-					var	range = editor.getSelectionRange(), alt;
-					alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
-					//return '![' + alt + '](' + REST.storage.displayUrl(imagePath) + ' "' + imageLabel + '")';
-					return '![' + alt + '](' + imageId + ' "' + imageLabel + '")';
-				}
-
-				scope.mdInsertMedia = function (media) {
-					scope.mdInsertText(buildMdImageTag(media.model + ',' + media.id, media.label));
 				};
 
 				scope.currentSelector = null;
@@ -359,6 +350,24 @@
 				};
 
 
+				//
+				// Media insertion
+				//
+
+				function buildMdImageTag (imageId, imageLabel) {
+					var	range = editor.getSelectionRange(), alt;
+					alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
+					return '![' + alt + '](' + imageId + ' "' + imageLabel + '")';
+				}
+
+				scope.mdInsertMedia = function (media) {
+					scope.mdInsertText(buildMdImageTag(media.model + ',' + media.id, media.label));
+				};
+
+
+				//
+				// Links insertion
+				//
 
 				scope.mdInsertDocumentLink = function (doc) {
 					scope.mdInsertText(buildMdLinkTag(doc.model + ',' + doc.id, doc.label));
@@ -373,8 +382,6 @@
 					}
 					return '[' + text + '](' + href + ' "' + title + '")';
 				}
-
-
 
 			}
 
