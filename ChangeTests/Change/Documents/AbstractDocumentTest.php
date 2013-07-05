@@ -674,28 +674,35 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$doc3->save();
 		$doc3Id = $doc3->getId();
 
-		$this->assertEquals(array(), $basicDoc->getPDocArr());
+		$this->assertInstanceOf('\Change\Documents\DocumentArrayProperty', $basicDoc->getPDocArr());
+		$this->assertEquals('Project_Tests_Localized', $basicDoc->getPDocArr()->getModelName());
 
 		$this->assertSame($basicDoc, $basicDoc->setPDocArr(array($doc1, $doc2)));
-		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr());
+		$this->assertEquals(2, $basicDoc->getPDocArr()->count());
+		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr()->toArray());
 
-		$this->assertSame($basicDoc, $basicDoc->addPDocArr($doc2));
-		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr());
-		$this->assertSame($basicDoc, $basicDoc->addPDocArr($doc3));
-		$this->assertEquals(array($doc1, $doc2, $doc3), $basicDoc->getPDocArr());
+		$this->assertSame($basicDoc->getPDocArr(),  $basicDoc->getPDocArr()->add($doc2));
+		$this->assertEquals(array($doc1, $doc2), $basicDoc->getPDocArr()->toArray());
+		$this->assertEquals(2, $basicDoc->getPDocArr()->count());
+		$basicDoc->getPDocArr()->add($doc3);
+		$this->assertEquals(array($doc1, $doc2, $doc3), $basicDoc->getPDocArr()->toArray());
+		$this->assertEquals(3, $basicDoc->getPDocArr()->count());
 		$this->assertEquals(array($doc1Id, $doc2Id, $doc3Id), $basicDoc->getPDocArrIds());
 
-		$basicDoc->setPDocArr(array());
-		$this->assertEquals(array(), $basicDoc->getPDocArr());
+		$this->assertSame($basicDoc->getPDocArr(),  $basicDoc->getPDocArr()->remove($doc1));
+		$this->assertEquals(2, $basicDoc->getPDocArr()->count());
+		$this->assertEquals(array($doc2, $doc3), $basicDoc->getPDocArr()->toArray());
+		$basicDoc->getPDocArr()[1] = $doc1;
+		$this->assertEquals(2, $basicDoc->getPDocArr()->count());
+		$this->assertEquals(array($doc2, $doc1), $basicDoc->getPDocArr()->toArray());
+		$this->assertEquals(1, $basicDoc->getPDocArr()->indexOf($doc1));
+		$this->assertEquals(0, $basicDoc->getPDocArr()->indexOf($doc2));
 
-		$this->assertSame($basicDoc, $basicDoc->setPDocArrAtIndex($doc2, 0));
-		$this->assertEquals(array($doc2), $basicDoc->getPDocArr());
-		$this->assertSame($basicDoc, $basicDoc->setPDocArrAtIndex($doc3, 1));
-		$this->assertEquals(array($doc2, $doc3), $basicDoc->getPDocArr());
-		$this->assertEquals($doc3, $basicDoc->getPDocArrByIndex(1));
-		$this->assertEquals(array($doc2Id, $doc3Id), $basicDoc->getPDocArrIds());
+		$this->assertFalse($basicDoc->getPDocArr()->indexOf($doc3));
 
 		$basicDoc->setPDocArr(array());
-		$this->assertEquals(array(), $basicDoc->getPDocArr());
+		$this->assertEquals(array(), $basicDoc->getPDocArr()->toArray());
+		$this->assertEquals(array(), $basicDoc->getPDocArr()->getIds());
+		$this->assertEquals(0, $basicDoc->getPDocArr()->count());
 	}
 }

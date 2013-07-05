@@ -61,8 +61,7 @@ class Install
 				$user->setLogin('admin');
 				$user->setPassword('admin');
 				$user->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
-				$user->addGroups($group);
-				$user->addGroups($group2);
+				$user->setGroups(array($group, $group2));
 				$user->create();
 
 				$transactionManager->commit();

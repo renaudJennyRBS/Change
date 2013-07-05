@@ -209,6 +209,7 @@ class BaseDocumentClass
 	protected function getMembers($model, $properties)
 	{
 		$resetProperties = array();
+		$modifiedProperties = array();
 		if ($model->getLocalized())
 		{
 			$resetProperties[] = '		$this->resetCurrentLocalized();';
@@ -226,12 +227,23 @@ class BaseDocumentClass
 			{
 				continue;
 			}
-			$resetProperties[] = '		$this->' . $property->getName() . ' = null;';
+			$propertyName = $property->getName();
+			if ($property->getType() === 'DocumentArray')
+			{
+				$memberValue =  ' = 0;';
+				$modifiedProperties[] = '		if ($this->'.$propertyName.' instanceof \Change\Documents\DocumentArrayProperty && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
+			}
+			else
+			{
+				$memberValue = ' = null;';
+			}
+
+			$resetProperties[] = '		$this->' . $propertyName . $memberValue;
 			$code .= '
 	/**
 	 * @var ' . $this->getCommentaryMemberType($property) . '
 	 */	
-	private $' . $property->getName() . ';' . PHP_EOL;
+	private $' . $propertyName . $memberValue . PHP_EOL;
 		}
 
 		$code .= '		
@@ -242,6 +254,20 @@ class BaseDocumentClass
 	{
 		parent::unsetProperties();' . PHP_EOL . implode(PHP_EOL, $resetProperties) . '
 	}' . PHP_EOL;
+
+		if (count($modifiedProperties))
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getModifiedPropertyNames()
+	{
+		$names =  parent::getModifiedPropertyNames();' . PHP_EOL . implode(PHP_EOL, $modifiedProperties) . '
+		return $names;
+	}' . PHP_EOL;
+		}
 
 		return $code;
 	}
@@ -300,8 +326,9 @@ class BaseDocumentClass
 			case 'Integer' :
 			case 'DocumentId' :
 			case 'Document' :
-			case 'DocumentArray' :
 				return 'integer';
+			case 'DocumentArray' :
+				return 'integer|\Change\Documents\DocumentArrayProperty';
 			case 'Date' :
 			case 'DateTime' :
 				return '\DateTime';
@@ -1070,31 +1097,57 @@ class BaseDocumentClass
 		$mn = '$this->' . $name;
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
+		$modelName = $this->escapePHPValue($property->getDocumentType(), false);
 		$un = ucfirst($name);
 		$code .= '
 	protected function checkLoaded' . $un . '()
 	{
 		$this->load();
-		if (!is_array(' . $mn . '))
+		if (!(' . $mn . ' instanceof \Change\Documents\DocumentArrayProperty))
 		{
-			if (' . $mn . ')
-			{
-				' . $mn . ' = $this->getDocumentManager()->getPropertyDocumentIds($this, ' . $en . ');
-			}
-			else
-			{
-				' . $mn . ' = array();
-			}
+			' . $mn . ' = new \Change\Documents\DocumentArrayProperty($this->getDocumentManager(), '.$modelName.');
+			$ids = $this->getDocumentManager()->getPropertyDocumentIds($this, ' . $en . ');
+			' . $mn . '->setDefaultIds($ids);
 		}
 	}
 
 	/**
-	 * @return integer[]
+	 * @param ' . $ct . '[] ' . $var . '
+	 * @throws \InvalidArgumentException
+	 * @return $this
 	 */
-	public function get' . $un . 'OldValueIds()
+	public function set' . $un . '(' . $var . ')
 	{
-		$result = $this->getOldPropertyValue(' . $en . ');
-		return (is_array($result)) ? $result : array();
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
+		{
+			' . $mn . ' = intval(' . $var . ');
+			return $this;
+		}
+		$this->checkLoaded' . $un . '();
+		' . $mn . '->fromArray(' . $var . ');
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentArrayProperty|' . $ct . '[]
+	 */
+	public function get' . $un . '()
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
+		{
+			return (' . $mn . ' instanceof \Change\Documents\DocumentArrayProperty) ? ' . $mn . '->count() : ' . $mn . ';
+		}
+		$this->checkLoaded' . $un . '();
+		return ' . $mn . ';
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get' . $un . 'Count()
+	{
+		$this->load();
+		return (' . $mn . ' instanceof \Change\Documents\DocumentArrayProperty) ? ' . $mn . '->count() : ' . $mn . ';
 	}
 
 	/**
@@ -1102,182 +1155,11 @@ class BaseDocumentClass
 	 */
 	public function get' . $un . 'OldValue()
 	{
-		$dm = $this->getDocumentManager();
-		return array_map(function ($documentId) use ($dm) {
-			return $dm->getDocumentInstance($documentId);
-			}, $this->get' . $un . 'OldValueIds());
-	}
-
-	/**
-	 * @return ' . $ct . '[]
-	 */
-	public function get' . $un . '()
-	{
-		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
+		if (' . $mn . ' instanceof \Change\Documents\DocumentArrayProperty && ' . $mn . '->isModified())
 		{
-			return is_array(' . $mn . ') ? count(' . $mn . ') : ' . $mn . ';
+			return ' . $mn . '->getDefaultDocuments();
 		}
-		$this->checkLoaded' . $un . '();
-		$dm = $this->getDocumentManager();
-		$documents = array();
-		foreach(' . $mn . ' as $documentId)
-		{
-			$document = $dm->getDocumentInstance($documentId);
-			if ($document instanceof ' . $ct . ')
-			{
-				$documents[] = $document;
-			}
-		}
-		return $documents;
-	}
-
-	/**
-	 * @param ' . $ct . '[] $newValueArray
-	 * @throws \InvalidArgumentException
-	 * @return $this
-	 */
-	public function set' . $un . '($newValueArray)
-	{
-		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
-		{
-			' . $mn . ' = intval($newValueArray);
-			return $this;
-		}
-		if (!is_array($newValueArray))
-		{
-			throw new \InvalidArgumentException(\'Argument 1 must be an array\', 52005);
-		}
-		$this->checkLoaded' . $un . '();
-
-		$newValueIds = array_map(function($newValue) {
-			if ($newValue instanceof ' . $ct . ')
-			{
-				if ($newValue->getId() <= 0)
-				{
-					throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
-				}
-				return $newValue->getId();
-			}
-			else
-			{
-				throw new \InvalidArgumentException(\'Argument 1 must be a ' . $ct . '[]\', 52005);
-			}
-		}, $newValueArray);
-		$this->setInternal' . $un . 'Ids($newValueIds);
-		return $this;
-	}
-
-	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @return $this
-	 */
-	public function add' . $un . '(' . $ct . ' ' . $var . ')
-	{
-		$this->set' . $un . 'AtIndex(' . $var . ', -1);
-		return $this;
-	}
-
-	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @param integer $index
-	 * @throws \InvalidArgumentException
-	 * @return $this
-	 */
-	public function set' . $un . 'AtIndex(' . $ct . ' ' . $var . ', $index = 0)
-	{
-		$this->checkLoaded' . $un . '();
-		$newId = ' . $var . '->getId();
-		if ($newId <= 0)
-		{
-			throw new \InvalidArgumentException(\'Argument 1 must be a saved document\', 52005);
-		}
-		if (!in_array($newId, ' . $mn . '))
-		{
-			$newValueIds = ' . $mn . ';
-			$index = intval($index);
-			if ($index < 0 || $index > count($newValueIds))
-			{
-				$index = count($newValueIds);
-			}
-			$newValueIds[$index] = $newId;
-			$this->setInternal' . $un . 'Ids($newValueIds);
-		}
-		return $this;
-	}
-
-	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @return boolean
-	 */
-	public function remove' . $un . '(' . $ct . ' ' . $var . ')
-	{
-		$index = $this->getIndexof' . $un . '(' . $var . ');
-		if ($index !== -1)
-		{
-			return $this->remove' . $un . 'ByIndex($index);
-		}
-		return false;
-	}
-
-	/**
-	 * @param integer $index
-	 * @return boolean
-	 */
-	public function remove' . $un . 'ByIndex($index)
-	{
-		$this->checkLoaded' . $un . '();
-		if (isset(' . $mn . '[$index]))
-		{
-			$newValueIds = ' . $mn . ';
-			unset($newValueIds[$index]);
-			$this->setInternal' . $un . 'Ids($newValueIds);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @return $this
-	 */
-	public function removeAll' . $un . '()
-	{
-		$this->checkLoaded' . $un . '();
-		$this->setInternal' . $un . 'Ids(array());
-		return $this;
-	}
-
-	/**
-	 * @param integer[] $newValueIds
-	 */
-	protected function setInternal' . $un . 'Ids(array $newValueIds)
-	{
-		if (' . $mn . ' != $newValueIds)
-		{
-			if ($this->isPropertyModified(' . $en . '))
-			{
-				$loadedVal = $this->getOldPropertyValue(' . $en . ');
-				if ($loadedVal == $newValueIds)
-				{
-					$this->removeOldPropertyValue(' . $en . ');
-				}
-			}
-			else
-			{
-				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
-			}
-			' . $mn . ' = $newValueIds;
-			$this->propertyChanged(' . $en . ');
-		}
-	}
-
-	/**
-	 * @param integer $index
-	 * @return ' . $ct . '|null
-	 */
-	public function get' . $un . 'ByIndex($index)
-	{
-		$this->checkLoaded' . $un . '();
-		return isset(' . $mn . '[$index]) ?  $this->getDocumentManager()->getDocumentInstance(' . $mn . '[$index]) : null;
+		return array();
 	}
 
 	/**
@@ -1286,20 +1168,21 @@ class BaseDocumentClass
 	public function get' . $un . 'Ids()
 	{
 		$this->checkLoaded' . $un . '();
-		return ' . $mn . ';
+		return ' . $mn . '->getIds();
 	}
 
 	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @return integer
+	 * @return integer[]
 	 */
-	public function getIndexof' . $un . '(' . $ct . ' ' . $var . ')
+	public function get' . $un . 'OldValueIds()
 	{
-		$this->checkLoaded' . $un . '();
-		$valueId = ' . $var . '->getId();
-		$index = array_search($valueId, ' . $mn . ');
-		return $index !== false ? $index : -1;
+		if (' . $mn . ' instanceof \Change\Documents\DocumentArrayProperty && ' . $mn . '->isModified())
+		{
+			return ' . $mn . '->getDefaultIds();
+		}
+		return array();
 	}' . PHP_EOL;
+
 		return $code;
 	}
 }
