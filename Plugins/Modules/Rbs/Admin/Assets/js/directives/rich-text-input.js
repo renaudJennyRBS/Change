@@ -369,10 +369,6 @@
 				// Links insertion
 				//
 
-				scope.mdInsertDocumentLink = function (doc) {
-					scope.mdInsertText(buildMdLinkTag(doc.model + ',' + doc.id, doc.label));
-				};
-
 				function buildMdLinkTag (href, title) {
 					var	range = editor.getSelectionRange(), text;
 					if (range.isEmpty()) {
@@ -382,6 +378,10 @@
 					}
 					return '[' + text + '](' + href + ' "' + title + '")';
 				}
+
+				scope.mdInsertDocumentLink = function (doc) {
+					scope.mdInsertText(buildMdLinkTag(doc.model + ',' + doc.id, doc.label));
+				};
 
 			}
 
@@ -427,7 +427,7 @@
 					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
 					'<select ng-options="model.name as model.label group by model.plugin for model in models" ng-model="selectedModel"></select>' +
 					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="Change_Document" collection-url="(=collectionUrl=)" toolbar="false" picker="picker">' +
-						'<column name="label">' +
+						'<column name="label" label="Label">' +
 							'<a href="javascript:;" ng-click="picker.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
 						'</column>' +
 					'</rbs-document-list>' +
@@ -447,6 +447,8 @@
 						"plugin" : "Sites et pages"
 					}
 				];
+
+				scope.selectedModel = scope.models[0].name;
 
 				scope.$watch('selectedModel', function (model) {
 					if (model) {

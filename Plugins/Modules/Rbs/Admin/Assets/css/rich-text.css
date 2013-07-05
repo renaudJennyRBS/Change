@@ -135,7 +135,7 @@ rbs-rich-text-input .btn-toolbar {
 	padding: 5px;
 }
 
-rbs-rich-text-input .media-picker .pagination ul > .disabled > a {
+rbs-rich-text-input .inner-selector .pagination ul > .disabled > a {
 	background: white;
 }
 
@@ -154,6 +154,10 @@ rbs-rich-text-input .inner-selector {
 	color: white;
 }
 
+rbs-rich-text-input .inner-selector .table {
+	color: #333333;
+}
+
 rbs-rich-text-input .inner-selector h4 {
 	margin: 0;
 }
@@ -165,4 +169,9 @@ rbs-rich-text-input .inner-selector button.close {
 
 rbs-rich-text-input .inner-selector button.close:hover {
 	opacity: 0.8;
+}
+
+rbs-rich-text-input th,
+rbs-rich-text-input td {
+	background: white;
 }
