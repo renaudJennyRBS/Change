@@ -25,7 +25,7 @@ class ResultsConverter
 	protected $singleColumn = false;
 
 	/**
-	 * @param callable|\Change\Db\DbProvider $converter
+	 * @param Callable|\Change\Db\DbProvider $converter
 	 * @param array $fieldsTypes
 	 * @throws \InvalidArgumentException
 	 * @return \Change\Db\Query\ResultsConverter
