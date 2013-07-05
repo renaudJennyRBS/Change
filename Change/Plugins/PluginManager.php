@@ -28,19 +28,14 @@ class PluginManager
 	const EVENT_TYPE_THEME = 'theme';
 
 	/**
-	 * @var Workspace
+	 * @var \Change\Application
 	 */
-	protected $workspace;
+	protected $application;
 
 	/**
 	 * @var DbProvider
 	 */
 	protected $dbProvider;
-
-	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
 
 	/**
 	 * @var EventManager
@@ -53,19 +48,19 @@ class PluginManager
 	protected $plugins;
 
 	/**
-	 * @param Workspace $workspace
+	 * @param \Change\Application $application
 	 */
-	public function setWorkspace(Workspace $workspace)
+	public function setApplication($application)
 	{
-		$this->workspace = $workspace;
+		$this->application = $application;
 	}
 
 	/**
-	 * @return Workspace
+	 * @return \Change\Application
 	 */
-	protected function getWorkspace()
+	public function getApplication()
 	{
-		return $this->workspace;
+		return $this->application;
 	}
 
 	/**
@@ -82,6 +77,14 @@ class PluginManager
 	protected function getDbProvider()
 	{
 		return $this->dbProvider;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->application->getWorkspace();
 	}
 
 	/**
@@ -580,22 +583,6 @@ class PluginManager
 	}
 
 	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
-	{
-		$this->sharedEventManager = $sharedEventManager;
-	}
-
-	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		return $this->sharedEventManager;
-	}
-
-	/**
 	 * @return \Zend\EventManager\EventManager
 	 */
 	public function getEventManager()
@@ -603,7 +590,7 @@ class PluginManager
 		if ($this->eventManager === null)
 		{
 			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->setSharedManager($this->getSharedEventManager());
+			$this->eventManager->setSharedManager($this->application->getSharedEventManager());
 			foreach ($this->getPlugins() as $plugin)
 			{
 				$this->registerPluginEvents($plugin, $this->eventManager);
@@ -681,12 +668,12 @@ class PluginManager
 		/* @var $plugins \Change\Plugins\Plugin[] */
 		$plugins = array();
 
-		$application = new \Change\Application();
+		$installApplication = clone($this->application);
 
 		$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
-		$application->setConfiguration($editableConfiguration->import($application->getConfiguration()));
+		$installApplication->setConfiguration($editableConfiguration->import($installApplication->getConfiguration()));
 
-		$eventArgs = $eventManager->prepareArgs(array('application' => $application, 'context' => $context));
+		$eventArgs = $eventManager->prepareArgs(array('application' => $installApplication, 'context' => $context));
 
 		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, $eventType, $vendor,
 			$name), $this, $eventArgs);
@@ -703,15 +690,15 @@ class PluginManager
 		}
 		$eventArgs['plugins'] = $plugins;
 
-		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$applicationServices = new \Change\Application\ApplicationServices($installApplication);
 		$eventArgs['applicationServices'] = $applicationServices;
 		$event->setName(static::composeEventName(static::EVENT_SETUP_APPLICATION, $eventType, $vendor, $name));
 		$this->getEventManager()->trigger($event);
 
-		$compiler = new \Change\Documents\Generators\Compiler($application, $applicationServices);
+		$compiler = new \Change\Documents\Generators\Compiler($installApplication, $applicationServices);
 		$compiler->generate();
 
-		$generator = new \Change\Db\Schema\Generator($application->getWorkspace(), $applicationServices->getDbProvider());
+		$generator = new \Change\Db\Schema\Generator($installApplication->getWorkspace(), $applicationServices->getDbProvider());
 		$generator->generatePluginsSchema();
 
 		$applicationServices->getDbProvider()->closeConnection();
