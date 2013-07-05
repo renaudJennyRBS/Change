@@ -476,21 +476,19 @@
 
 
 					scope.actions = [];
-					var actionList = attrs.actions;
-					if (! actionList) {
-						actionList = 'default';
-					}
-					actionList = actionList.replace('default', DEFAULT_ACTIONS);
-					if (! scope.hasColumn('nodeOrder') ) {
-						actionList = actionList.replace('nodeOrder', '');
-					}
-
-					angular.forEach(actionList.split(/ +/), function (action) {
-						scope.actions.push({
-							"type" : "single",
-							"name" : action
+					var actionList = elm.is('[actions]') ? attrs.actions : 'default';
+					if (actionList.length) {
+						actionList = actionList.replace('default', DEFAULT_ACTIONS);
+						if (! scope.hasColumn('nodeOrder') ) {
+							actionList = actionList.replace('nodeOrder', '');
+						}
+						angular.forEach(actionList.split(/ +/), function (action) {
+							scope.actions.push({
+								"type" : "single",
+								"name" : action
+							});
 						});
-					});
+					}
 
 
 					scope.remove = function (doc, $event) {
