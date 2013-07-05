@@ -147,3 +147,22 @@ rbs-rich-text-input .tab-pane[data-role="preview-container"] h5,
 rbs-rich-text-input .tab-pane[data-role="preview-container"] h6 {
 	margin-top: 0;
 }
+
+rbs-rich-text-input .inner-selector {
+	padding: 10px 15px;
+	background: #444;
+	color: white;
+}
+
+rbs-rich-text-input .inner-selector h4 {
+	margin: 0;
+}
+
+rbs-rich-text-input .inner-selector button.close {
+	color: white;
+	opacity: 0.4;
+}
+
+rbs-rich-text-input .inner-selector button.close:hover {
+	opacity: 0.8;
+}

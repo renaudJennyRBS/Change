@@ -5,28 +5,13 @@
 	var app = angular.module('RbsChange'),
 		MIN_HEIGHT = 150;
 
-	//=========================================================================
-	//
-	// ACE editor widget
-	//
-	//=========================================================================
 
-
+	/**
+	 * RichText input field.
+	 */
 	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', '$compile', function ($timeout, REST, Utils, $compile) {
 
-		var	aceEditorIdCounter = 0,
-			mediaPickerTpl =
-			'<div style="padding: 10px 15px; background: #444; color: white;">' +
-				'<button type="button" style="color: white;" class="close pull-right" ng-click="closeMediaSelector()">&times;</button>' +
-				'<h4 style="margin:0">Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
-				'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
-				'<column name="path" thumbnail="XS"></column>' +
-				'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
-				'<img rbs-storage-image="(= doc.path =)" thumbnail="XS"/>' +
-				'<a style="display:block" href="javascript:;" ng-click="picker.selectMedia(doc, $event)">(= doc.label =)</a>' +
-				'</grid-item>' +
-				'</rbs-document-list>' +
-			'</div>';
+		var	aceEditorIdCounter = 0;
 
 		return {
 			restrict : 'EC',
@@ -70,18 +55,22 @@
 
 								// Media
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-class="{active:isMediaSelectorOpen}" ng-click="toggleMediaSelector()"><i class="icon-picture"></i></button>' +
+									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'media\'}" ng-click="toggleSelector(\'media\')"><i class="icon-picture"></i></button>' +
+								'</div>' +
+
+								// Links
+								'<div class="btn-group">' +
+									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
 								'</div>' +
 
 							'</div>' +
 
 							'<div class="media-picker"></div>' +
+							'<div class="link-picker"></div>' +
 
 							'<div id="rbsInputMarkdownAceEditor(=editorId=)"></div>' +
 						'</div>' +
-						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview">' +
-							'<p>Générer l\'aperçu...</p>' +
-						'</div>' +
+						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview"></div>' +
 					'</div>' +
 				'</div>',
 
@@ -91,8 +80,11 @@
 					session,
 					id,
 					$previewEl = element.find('div[data-role="preview-container"]'),
-					$mediaPicker = element.find('div.media-picker'),
-					$editorTab;
+					$editorTab,
+					$selectors = {
+						'media' : element.find('div.media-picker'),
+						'link'  : element.find('div.link-picker')
+					};
 
 				scope.editorId = ++aceEditorIdCounter;
 				id = "rbsInputMarkdownAceEditor" + scope.editorId;
@@ -173,7 +165,6 @@
 				// Tabs and preview.
 				element.find('a[data-toggle="tab"]').on('show', function (e) {
 					if ($(e.target).data('role') === 'preview') {
-						// TODO Localization
 						$previewEl.empty();
 						scope.previewing = true;
 						REST.postAction('md2html', editor.getValue()).then(function (data) {
@@ -302,50 +293,160 @@
 					editor.insert(text);
 				};
 
-				function buildMdImageTag (imagePath, imageLabel) {
-					var	range = editor.getSelectionRange(), alt;
-					alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
-					return '![' + alt + '](' + REST.storage.displayUrl(imagePath) + ' "")';
-				}
-
-				scope.mdInsertMedia = function (media) {
-					scope.mdInsertText(buildMdImageTag(media.path, media.label));
-				};
 
 				scope.picker = {
-					"selectMedia" : function (doc, $event) {
+					"insertMedia" : function (doc, $event) {
 						$event.stopPropagation();
 						$event.preventDefault();
 						scope.mdInsertMedia(doc);
+					},
+					"insertDocumentLink" : function (doc, $event) {
+						$event.stopPropagation();
+						$event.preventDefault();
+						scope.mdInsertDocumentLink(doc);
 					}
 				};
 
-				scope.isMediaSelectorOpen = false;
 
-				scope.toggleMediaSelector = function () {
-					if (scope.isMediaSelectorOpen) {
-						scope.closeMediaSelector();
+				//
+				// Media insertion
+				//
+
+				function buildMdImageTag (imageId, imageLabel) {
+					var	range = editor.getSelectionRange(), alt;
+					alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
+					//return '![' + alt + '](' + REST.storage.displayUrl(imagePath) + ' "' + imageLabel + '")';
+					return '![' + alt + '](' + imageId + ' "' + imageLabel + '")';
+				}
+
+				scope.mdInsertMedia = function (media) {
+					scope.mdInsertText(buildMdImageTag(media.model + ',' + media.id, media.label));
+				};
+
+				scope.currentSelector = null;
+
+				scope.toggleSelector = function (name) {
+					if (scope.currentSelector === name) {
+						scope.closeSelector(name);
 					} else {
-						scope.openMediaSelector();
+						scope.closeSelector(scope.currentSelector);
+						scope.openSelector(name);
 					}
 				};
 
-				scope.closeMediaSelector = function () {
-					$mediaPicker.hide();
-					scope.isMediaSelectorOpen = false;
+				scope.closeSelector = function (name) {
+					if (name && $selectors[name]) {
+						$selectors[name].hide();
+					}
+					scope.currentSelector = null;
 				};
 
-				scope.openMediaSelector = function () {
-					if (! $mediaPicker.children().length) {
-						$mediaPicker.html(mediaPickerTpl);
-						$compile($mediaPicker)(scope);
+				scope.openSelector = function (name) {
+					if (scope.currentSelector === name) {
+						return;
 					}
-					$mediaPicker.show();
-					scope.isMediaSelectorOpen = true;
+
+					scope.closeSelector(scope.currentSelector);
+					scope.currentSelector = name;
+					if (name && $selectors[name]) {
+						var $sel = $selectors[name];
+						if (! $sel.children().length) {
+							$sel.html('<rbs-rich-text-input-' + name + '-selector></rbs-rich-text-input-' + name + '-selector>');
+							$compile($sel)(scope);
+						}
+						$sel.show();
+					}
 				};
+
+
+
+				scope.mdInsertDocumentLink = function (doc) {
+					scope.mdInsertText(buildMdLinkTag(doc.model + ',' + doc.id, doc.label));
+				};
+
+				function buildMdLinkTag (href, title) {
+					var	range = editor.getSelectionRange(), text;
+					if (range.isEmpty()) {
+						text = title;
+					} else {
+						text = session.getTextRange(range);
+					}
+					return '[' + text + '](' + href + ' "' + title + '")';
+				}
+
+
 
 			}
 
+		};
+	}]);
+
+
+	/**
+	 * Media selector
+	 */
+	app.directive('rbsRichTextInputMediaSelector', [function () {
+		return {
+			restrict : 'E',
+			scope    : false,
+			// TODO Localization
+			template :
+				'<div class="inner-selector">' +
+					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
+					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
+					'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
+						'<column name="path" thumbnail="XS"></column>' +
+						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
+							'<img rbs-storage-image="(= doc.path =)" thumbnail="XS"/>' +
+							'<a style="display:block" href="javascript:;" ng-click="picker.insertMedia(doc, $event)">(= doc.label =)</a>' +
+						'</grid-item>' +
+					'</rbs-document-list>' +
+				'</div>'
+		};
+	}]);
+
+
+	/**
+	 * Document selector for links
+	 */
+	app.directive('rbsRichTextInputLinkSelector', ['RbsChange.REST', function (REST) {
+		return {
+			restrict : 'E',
+			scope    : true,
+			// TODO Localization
+			template :
+				'<div class="inner-selector">' +
+					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
+					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
+					'<select ng-options="model.name as model.label group by model.plugin for model in models" ng-model="selectedModel"></select>' +
+					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="Change_Document" collection-url="(=collectionUrl=)" toolbar="false" picker="picker">' +
+						'<column name="label">' +
+							'<a href="javascript:;" ng-click="picker.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
+						'</column>' +
+					'</rbs-document-list>' +
+				'</div>',
+
+			link : function (scope, element) {
+				// FIXME Load models from the server
+				scope.models = [
+					{
+						"name"   : "Rbs_Website_Page",
+						"label"  : "Page",
+						"plugin" : "Sites et pages"
+					},
+					{
+						"name"   : "Rbs_Website_Website",
+						"label"  : "Site web",
+						"plugin" : "Sites et pages"
+					}
+				];
+
+				scope.$watch('selectedModel', function (model) {
+					if (model) {
+						scope.collectionUrl = REST.getCollectionUrl(model);
+					}
+				});
+			}
 		};
 	}]);
 
