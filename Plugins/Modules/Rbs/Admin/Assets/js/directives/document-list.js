@@ -500,6 +500,11 @@
 					};
 
 
+					scope.refresh = function () {
+						reload();
+					};
+
+
 					scope.isLastCreated = function (doc) {
 						return REST.isLastCreated(doc);
 					};

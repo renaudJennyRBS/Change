@@ -18,6 +18,10 @@
 		</div>
 	</div>
 
+	<div class="btn-group pull-right">
+		<button type="button" class="btn" ng-disabled="loading" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}"><i ng-class="{'icon-spin':loading}" class="icon-refresh"></i></button>
+	</div>
+
 	<div class="btn-group pull-right" ng-show="gridModeAvailable" data-toggle="buttons-radio">
 		<button title="{{ i18nAttr('m.rbs.admin.lists.list-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn"><i class="icon-list"></i></button>
 		<button title="{{ i18nAttr('m.rbs.admin.lists.grid-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn"><i class="icon-th-large"></i></button>
