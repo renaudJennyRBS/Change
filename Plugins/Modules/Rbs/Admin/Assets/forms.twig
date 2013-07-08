@@ -4,19 +4,19 @@
 		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			{% if type == 'Integer' %}
-			<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
+			<input type="number" class="input-mini"{% if required %} required="required"{% endif %} id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
 			{% elseif type == 'String' %}
-			<input type="text" class="input-block-level" id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
+			<input type="text" class="input-block-level"{% if required %} required="required"{% endif %}  id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
 			{% elseif type == 'Email' %}
-			<input type="email" class="input-block-level" id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
+			<input type="email" class="input-block-level"{% if required %} required="required"{% endif %}  id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
 			{% elseif type == 'Url' %}
-			<input type="url" class="input-block-level" id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
+			<input type="url" class="input-block-level"{% if required %} required="required"{% endif %}  id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}" />
 			{% elseif type == 'Boolean' %}
 			<switch ng-model="document.{{ name }}" />
 			{% elseif type == 'LongString' %}
-			<textarea class="input-block-level" id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}"></textarea>
+			<textarea class="input-block-level"{% if required %} required="required"{% endif %}  id="{{ name }}" name="{{ name }}" ng-model="document.{{ name }}"></textarea>
 			{% elseif type == 'RichText' %}
-			<rbs-rich-text-input ng-model="document.{{ name }}"></rbs-rich-text-input>
+			<rbs-rich-text-input{% if required %} required="required"{% endif %}  ng-model="document.{{ name }}"></rbs-rich-text-input>
 			{% endif %}
 			{% if help %}
 			<span class="help-block">
@@ -48,6 +48,7 @@
 		<div class="controls">
 			<div class="document-picker-single"
 				ng-model="document.{{ name }}"
+				{% if required %}required="required"{% endif %}
 				accepted-model="{{ model }}"
 				property-label="{{ i18nAttr(label, ['ucf']) }}"
 				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
@@ -73,6 +74,7 @@
 		<div class="controls">
 			<div class="document-picker-multiple"
 				ng-model="document.{{ name }}"
+				{% if required %}required="required"{% endif %}
 				accepted-model="{{ model }}"
 				property-label="{{ i18nAttr(label, ['ucf']) }}"
 				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"

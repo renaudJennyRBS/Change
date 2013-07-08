@@ -3,12 +3,12 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Http\Event;
 use Change\Http\Request;
+use Change\Presentation\Markdown\MarkdownParser;
 use Zend\Http\Response as HttpResponse;
-use \Michelf\Markdown;
 
 /**
-* @name \Change\Http\Rest\Actions\Md2Html
-*/
+ * @name \Change\Http\Rest\Actions\Md2Html
+ */
 class Md2Html
 {
 	/**
@@ -32,7 +32,8 @@ class Md2Html
 			return;
 		}
 
-		$event->setResult($this->generateResult($md, Markdown::defaultTransform($md)));
+		$mdParser = new MarkdownParser($event->getDocumentServices());
+		$event->setResult($this->generateResult($md, $mdParser->transform($md)));
 	}
 
 	/**
