@@ -4,6 +4,7 @@ namespace Change\Http\Web;
 use Change\Http\ActionResolver;
 use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
+use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Actions\FindDisplayPage;
 use Change\Http\Web\Actions\GeneratePathRule;
 use Change\Http\Web\Actions\GetThemeResource;
@@ -53,11 +54,25 @@ class Resolver extends ActionResolver
 				$event->setAction($action);
 				return;
 			}
-			elseif (preg_match('/^Action\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9\/]+)$/', $relativePath, $matches))
+
+			if (preg_match('/^Action\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9\/]+)$/', $relativePath, $matches))
 			{
 				$event->setParam('action', array($matches[1], $matches[2], $matches[3]));
 				$action = function($event) {
 					$action = new ExecuteByName();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+
+			if (preg_match('/^Storage\/([A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
+			{
+				$storageName = $matches[1];
+				$changeURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, '/' . $matches[2]);
+				$event->setParam('changeURI', $changeURI);
+				$action = function($event) {
+					$action = new GetStorageItemContent();
 					$action->execute($event);
 				};
 				$event->setAction($action);
@@ -98,18 +113,17 @@ class Resolver extends ActionResolver
 	 */
 	protected function getRelativePath($path, $websitePathPart)
 	{
-		if ($path && $path[0] == '/')
-		{
-			$path = substr($path, 1);
-		}
-
 		if ($websitePathPart)
 		{
-			$path = substr($path, strlen($websitePathPart));
-			if ($path && $path[0] == '/')
+			$websitePathPart = '/' . $websitePathPart . '/';
+			if (strpos($path, $websitePathPart) === 0)
 			{
-				$path = substr($path, 1);
+				return substr($path, strlen($websitePathPart));
 			}
+		}
+		elseif ($path && $path[0] === '/')
+		{
+			$path = substr($path, 1);
 		}
 		return $path;
 	}

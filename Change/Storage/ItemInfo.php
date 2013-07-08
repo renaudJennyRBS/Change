@@ -71,4 +71,12 @@ class ItemInfo extends \SplFileInfo
 	{
 		return $this->getStorageEngine()->getMimeType($this->getPathname());
 	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getPublicURL()
+	{
+		return $this->getStorageEngine()->getPublicURL($this->getPathname());
+	}
 }

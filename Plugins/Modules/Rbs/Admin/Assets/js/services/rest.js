@@ -1072,7 +1072,7 @@
 
 					'storage' : {
 
-						'upload' : function (fileElm) {
+						'upload' : function (fileElm, storageName) {
 							var	q = $q.defer(),
 								formData = new FormData();
 
@@ -1086,11 +1086,13 @@
 							// Using the HTML5's File API:
 							// https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/FormData
 							if (fileElm.files.length > 0) {
+								if (!storageName) {
+									storageName = 'tmp';
+								}
 								formData.append('file', fileElm.files[0]);
 
-								// FIXME Change "/tmp" path.
 								window.jQuery.ajax({
-									"url"         : REST_BASE_URL + 'storage/tmp/',
+									"url"         : REST_BASE_URL + 'storage/'+ storageName + '/',
 									"type"        : "POST",
 									"method"      : "POST",
 									"data"        : formData,

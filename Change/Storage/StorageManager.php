@@ -78,7 +78,7 @@ class StorageManager
 	}
 
 	/**
-	 *
+	 * @return void
 	 */
 	public function register()
 	{
@@ -102,6 +102,18 @@ class StorageManager
 		{
 			return array_merge(array('tmp'), array_keys($config));
 		}
+	}
+
+	/**
+	 * @param string $storageName
+	 * @param string $path
+	 * @param array $query
+	 * @return \Zend\Uri\Uri
+	 */
+	public function buildChangeURI($storageName, $path, $query = array())
+	{
+		$uri = new \Zend\Uri\Uri();
+		return $uri->setScheme(static::DEFAULT_SCHEME)->setHost($storageName)->setPath($path)->setQuery($query);
 	}
 
 	/**
@@ -156,6 +168,28 @@ class StorageManager
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param $url
+	 * @return string|null
+	 */
+	public function getMimeType($url)
+	{
+		$itemInfo = $this->getItemInfo($url);
+		return $itemInfo ? $itemInfo->getMimeType() : null;
+
+	}
+
+	/**
+	 * @param $url
+	 * @return string|null
+	 */
+	public function getPublicURL($url)
+	{
+		$itemInfo = $this->getItemInfo($url);
+		return $itemInfo ? $itemInfo->getPublicURL() : null;
+
 	}
 
 	/**

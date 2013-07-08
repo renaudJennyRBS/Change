@@ -158,8 +158,11 @@ class GetLocalizedDocument
 
 		$this->addActions($result, $document, $urlManager, $LCID);
 
-		$i18n = array();
+		$event->setResult($result);
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result));
+		$document->getEventManager()->trigger($documentEvent);
 
+		$i18n = array();
 		/* @var $document AbstractDocument|Localizable */
 		foreach ($document->getLCIDArray() as $tmpLCID)
 		{
@@ -168,6 +171,7 @@ class GetLocalizedDocument
 			$i18n[$tmpLCID] = $LCIDLink->href();
 		}
 		$result->setI18n($i18n);
+
 		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		if (($href = $documentLink->href()) != $currentUrl)
@@ -178,7 +182,6 @@ class GetLocalizedDocument
 		{
 			$this->setResultCacheHeader($result, $document);
 		}
-		$event->setResult($result);
 		return $result;
 	}
 
