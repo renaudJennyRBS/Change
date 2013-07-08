@@ -20,13 +20,19 @@
 				templateUrl : 'Rbs/Admin/dashboard/dashboard.twig',
 				reloadOnSearch : false
 			})
-
+		. when(
+			'/404',
+			{
+				templateUrl : 'Rbs/Admin/404.twig',
+				reloadOnSearch : false
+			})
 		. when(
 			'/login',
 			{
 				templateUrl : 'Rbs/User/login.twig',
 				reloadOnSearch : false
 			})
+		.otherwise({ redirectTo: '/404'})
 		;
 
 	}]);
