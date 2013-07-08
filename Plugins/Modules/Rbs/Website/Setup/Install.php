@@ -44,16 +44,18 @@ class Install
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 * @throws \RuntimeException
 	 */
-	public function executeServices($plugin, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Website');
 		if (!$rootNode)
 		{
-			$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+			$transactionManager = $applicationServices->getTransactionManager();
 
 			try
 			{

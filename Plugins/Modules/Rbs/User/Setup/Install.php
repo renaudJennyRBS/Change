@@ -26,18 +26,21 @@ class Install
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+
 		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
 		$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
 		$group = $query->andPredicates($query->eq('realm', 'rest'))->getFirstDocument();
 		if (!$group)
 		{
-			$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+			$transactionManager = $applicationServices->getTransactionManager();
 			try
 			{
 				$transactionManager->begin();
@@ -70,7 +73,6 @@ class Install
 			{
 				throw $transactionManager->rollBack($e);
 			}
-
 		}
 	}
 

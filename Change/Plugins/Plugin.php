@@ -356,6 +356,15 @@ class Plugin
 		return $paths;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getThemeAssetsPath()
+	{
+		$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Theme'));
+		return is_dir($path) ? $path : null ;
+	}
+
 	function __toString()
 	{
 		if ($this->getPackage())
