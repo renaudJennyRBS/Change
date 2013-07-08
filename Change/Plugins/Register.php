@@ -153,7 +153,9 @@ class Register implements ListenerAggregateInterface
 				$install = new $installClassName();
 				if (is_callable(array($install, 'executeServices')))
 				{
-					call_user_func(array($install, 'executeServices'), $plugin, $event->getParam('documentServices'),
+					call_user_func(array($install, 'executeServices'), $plugin,
+						$event->getParam('applicationServices'),
+						$event->getParam('documentServices'),
 						$event->getParam('presentationServices'));
 				}
 			}

@@ -72,13 +72,24 @@ class DefaultTheme implements Theme
 
 	/**
 	 * @param string $moduleName
+	 * @param string $pathName
+	 * @param string $content
+	 */
+	public function setModuleContent($moduleName, $pathName, $content)
+	{
+		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName, $moduleName, $pathName);
+		\Change\Stdlib\File::mkdir(dirname($path));
+		file_put_contents($path, $content);
+	}
+
+	/**
+	 * @param string $moduleName
 	 * @param string $fileName
 	 * @return string|null
 	 */
 	public function getBlockTemplatePath($moduleName, $fileName)
 	{
-		list ($vendor, $shortModuleName) = explode('_', $moduleName);
-		$path = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, $vendor, $shortModuleName, 'Blocks', $fileName);
+		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName, $moduleName, 'Blocks', $fileName);
 		return (file_exists($path)) ? $path : null;
 	}
 

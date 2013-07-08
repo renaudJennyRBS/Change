@@ -37,14 +37,15 @@ class Install
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 * @throws \RuntimeException
 	 */
-	public function executeServices($plugin, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
-		$appServices = $documentServices->getApplicationServices();
-		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
+
+		$schemaManager = $applicationServices->getDbProvider()->getSchemaManager();
 
 		// Create table tag <-> doc
 		$td = $schemaManager->newTableDefinition('rbs_tag_document');

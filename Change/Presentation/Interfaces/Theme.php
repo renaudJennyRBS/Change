@@ -24,6 +24,13 @@ interface Theme
 
 	/**
 	 * @param string $moduleName
+	 * @param string $pathName
+	 * @param string $content
+	 */
+	public function setModuleContent($moduleName, $pathName, $content);
+
+	/**
+	 * @param string $moduleName
 	 * @param string $fileName
 	 * @return string|null
 	 */

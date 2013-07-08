@@ -219,4 +219,31 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			$this->addTheme($parentTheme);
 		}
 	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param Theme|null $theme
+	 */
+	public function installPluginTemplates($plugin, $theme = null)
+	{
+		$path = $plugin->getThemeAssetsPath();
+		if (!is_dir($path))
+		{
+			return;
+		}
+		if ($theme === null)
+		{
+			$theme = $this->getDefault();
+		}
+		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
+		while ($it->valid()) {
+			/* @var $current \RecursiveDirectoryIterator */
+			$current = $it->current();
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0)
+			{
+				$theme->setModuleContent($plugin->getName(), $current->getSubPathname(), file_get_contents($current->getPathname()));
+			}
+			$it->next();
+		}
+	}
 }
