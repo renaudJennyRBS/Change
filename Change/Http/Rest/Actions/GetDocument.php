@@ -145,10 +145,14 @@ class GetDocument
 			$c = new PropertyConverter($document, $property, $urlManager);
 			$properties[$name] = $c->getRestValue();
 		}
-
 		$result->setProperties($properties);
 		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		$this->addActions($result, $document, $urlManager);
+		$event->setResult($result);
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result));
+		$document->getEventManager()->trigger($documentEvent);
+
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		if (($href = $documentLink->href()) != $currentUrl)
 		{
@@ -161,7 +165,7 @@ class GetDocument
 				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
 			}
 		}
-		$event->setResult($result);
+
 		return $result;
 	}
 

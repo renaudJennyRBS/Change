@@ -89,7 +89,7 @@
 						return null;
 					} else if (acceptedTypes.test(file.type)) {
 						console.log("imageUploader: has changes (dirty) => uploading...");
-						REST.storage.upload(inputFile).then(
+						REST.storage.upload(inputFile, attrs.storageName || 'images').then(
 							function uploadSuccessFn (response) {
 								ngModel.$setViewValue(response.path);
 								ngModel.$render();

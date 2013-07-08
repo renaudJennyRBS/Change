@@ -46,6 +46,8 @@ abstract class AbstractStorage
 	 */
 	protected $useDBStat = true;
 
+
+
 	function __construct($name, array $config)
 	{
 		$this->setName($name);
@@ -104,6 +106,12 @@ abstract class AbstractStorage
 	 * @return string|null
 	 */
 	abstract public function getMimeType($url);
+
+	/**
+	 * @param string $url
+	 * @return string|null
+	 */
+	abstract public function getPublicURL($url);
 
 	/**
 	 * @param string $path

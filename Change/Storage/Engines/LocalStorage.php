@@ -12,6 +12,11 @@ class LocalStorage extends AbstractStorage
 	protected $basePath;
 
 	/**
+	 * @var string
+	 */
+	protected $baseURL;
+
+	/**
 	 * @var resource
 	 */
 	protected $resource;
@@ -28,6 +33,14 @@ class LocalStorage extends AbstractStorage
 	{
 		$this->basePath = $basePath;
 		\Change\Stdlib\File::mkdir($basePath);
+	}
+
+	/**
+	 * @param string $basePath
+	 */
+	public function setBaseURL($baseURL)
+	{
+		$this->baseURL = $baseURL;
 	}
 
 	/**
@@ -52,6 +65,24 @@ class LocalStorage extends AbstractStorage
 				{
 					return $mimeType;
 				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param string $url
+	 * @return string|null
+	 */
+	public function getPublicURL($url)
+	{
+		if ($this->baseURL)
+		{
+			$infos = parse_url($url);
+			if ($infos && isset($infos['path']))
+			{
+				$publicURL = $this->baseURL . '/Storage/' . $this->name . $infos['path'];
+				return $publicURL;
 			}
 		}
 		return null;
