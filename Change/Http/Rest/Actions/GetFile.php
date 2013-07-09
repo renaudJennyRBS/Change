@@ -83,12 +83,15 @@ class GetFile
 					$event->setParam('itemInfo', $itemInfo);
 					$event->getController()->getEventManager()->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onResultContent'), 10);
 				}
+				$mTime = \DateTime::createFromFormat('U', $itemInfo->getMTime());
 				$result->setArray(array(
 					'link' => $link->toArray(),
-					'path' => $storagePath,
+					'storageURI' => $storagePath,
 					'size' => $itemInfo->getSize(),
 					'data' => $hrefContent,
-					'mimeType' => $itemInfo->getMimeType()));
+					'mTime' => $mTime->format(\DateTime::ISO8601),
+					'mimeType' => $itemInfo->getMimeType(),
+					'publicURL' => $itemInfo->getPublicURL()));
 			}
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$result->setHeaderLastModified(\DateTime::createFromFormat('U', $itemInfo->getMTime()));

@@ -296,6 +296,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'LongString' :
+					case 'StorageUri' :
 					case 'XML' :
 					case 'RichText' :
 					case 'JSON' :

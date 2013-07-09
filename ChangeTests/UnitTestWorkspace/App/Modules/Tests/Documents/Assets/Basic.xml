@@ -17,6 +17,7 @@
 		<property name="plob" type="Lob" />
 		<property name="pObj" type="Object" />
 		<property name="pDocId" type="DocumentId" />
+		<property name="pStorUri" type="StorageUri" />
 		
 		<property name="pDocInst" type="Document" document-type="Project_Tests_Localized" />
 		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_Localized"/>

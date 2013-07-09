@@ -40,4 +40,5 @@
 	<key id="hostnameundecipherabletld">'%value%' appears to be a DNS hostname but cannot extract TLD part</key>
 	<key id="hostnameunknowntld">'%value%' appears to be a DNS hostname but cannot match TLD against known list</key>
 	<key id="notdigits">'%value%' must contain only digits</key>
+	<key id="storageuriinvalid">'%value%' must be a valid storage URI.</key>
 </i18n>

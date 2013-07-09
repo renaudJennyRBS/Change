@@ -13,7 +13,7 @@
 			<xs:documentation source="version">4.0</xs:documentation>
 			<xs:documentation source="description">
 				A property type : String | Boolean | Integer | Float | Decimal |
-				Date | DateTime | LongString | XML | Lob | RichText | JSON | Object
+				Date | DateTime | LongString | StorageUri | XML | Lob | RichText | JSON | Object
 				DocumentId | Document | DocumentArray
 			</xs:documentation>
 		</xs:annotation>
@@ -26,6 +26,7 @@
 			<xs:enumeration value="Date"/>
 			<xs:enumeration value="DateTime"/>
 			<xs:enumeration value="LongString"/>
+			<xs:enumeration value="StorageUri"/>
 			<xs:enumeration value="XML"/>
 			<xs:enumeration value="Lob"/>
 			<xs:enumeration value="RichText"/>

@@ -518,6 +518,37 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($basicDoc->getPText());
 	}
 
+	public function testStorageUriPropertyAccessors()
+	{
+		/* @var $basicDoc \Project\Tests\Documents\Basic */
+		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
+		$this->assertNull($basicDoc->getPStorUri());
+
+		$text = 'change://tmp/test.txt';
+		$this->assertSame($basicDoc, $basicDoc->setPStorUri($text));
+		$this->assertSame($text, $basicDoc->getPStorUri());
+		$obj = $basicDoc->getPStorUriItemInfo();
+		$this->assertInstanceOf('\Change\Storage\ItemInfo', $obj);
+		$this->assertEquals($text, $obj->getPathname());
+		$basicDoc->setPStorUri(null);
+		$this->assertNull($basicDoc->getPText());
+
+		$basicDoc->setPStorUri('http://tmp/test.txt');
+		$l = new \Change\Documents\Events\ValidateListener();
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$l->onValidate($event);
+		$pe = $event->getParam('propertiesErrors');
+		$this->assertArrayHasKey('pStorUri', $pe);
+		$this->assertEquals('\'http://tmp/test.txt\' doit être une URI de stockage valide.', $pe['pStorUri'][0]);
+
+		$basicDoc->setPStorUri($text);
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$l->onValidate($event);
+		$pe = $event->getParam('propertiesErrors');
+		$this->assertArrayNotHasKey('pStorUri', $pe);
+	}
+
 	public function testJSONPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */

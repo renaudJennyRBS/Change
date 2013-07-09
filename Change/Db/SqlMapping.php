@@ -99,6 +99,7 @@ class SqlMapping
 	
 			case \Change\Documents\Property::TYPE_JSON:
 			case \Change\Documents\Property::TYPE_LONGSTRING:
+			case \Change\Documents\Property::TYPE_STORAGEURI:
 			case \Change\Documents\Property::TYPE_RICHTEXT:
 			case \Change\Documents\Property::TYPE_XML:
 				return \Change\Db\ScalarType::TEXT;

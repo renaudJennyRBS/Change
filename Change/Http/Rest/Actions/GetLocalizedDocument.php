@@ -7,7 +7,6 @@ use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\DocumentResult;
-use Change\Logging\Logging;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;

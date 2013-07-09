@@ -28,7 +28,8 @@ class ConstraintsManager
 			'domain' => '\Change\Documents\Constraints\Domain',
 			'url' => '\Change\Documents\Constraints\Url',
 			'unique' => '\Change\Documents\Constraints\Unique',
-			'enum' => '\Change\Documents\Constraints\Enum');
+			'enum' => '\Change\Documents\Constraints\Enum',
+			'storageUri' => '\Change\Documents\Constraints\StorageUri');
 	}
 
 	protected function registerDefaultTranslator()

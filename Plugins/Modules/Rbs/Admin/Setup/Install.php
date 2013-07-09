@@ -41,8 +41,6 @@ class Install
 		}
 
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Admin', '\\Rbs\\Admin\\Register');
-
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Admin', '\\Rbs\\Admin\\SharedListenerAggregate');
 	}
 
 	/**

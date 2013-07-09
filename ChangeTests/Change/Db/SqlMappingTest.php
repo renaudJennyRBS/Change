@@ -94,6 +94,8 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(ScalarType::TEXT,
 			$sqlMapping->getDbScalarType(Property::TYPE_LONGSTRING));
 		$this->assertEquals(ScalarType::TEXT,
+			$sqlMapping->getDbScalarType(Property::TYPE_STORAGEURI));
+		$this->assertEquals(ScalarType::TEXT,
 			$sqlMapping->getDbScalarType(Property::TYPE_RICHTEXT));
 		$this->assertEquals(ScalarType::TEXT,
 			$sqlMapping->getDbScalarType(Property::TYPE_XML));
