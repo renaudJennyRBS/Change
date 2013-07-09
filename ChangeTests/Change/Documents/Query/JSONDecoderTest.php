@@ -45,4 +45,20 @@ class JSONDecoderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$expected = 'SELECT * FROM "project_tests_doc_basic" AS "_t0" INNER JOIN "project_tests_doc_localized" AS "_t1" ON "_t1"."document_id" = "_t0"."pdocinst" INNER JOIN "project_tests_doc_basic" AS "_t2" ON "_t2"."pint" = "_t1"."pint" WHERE (("_t1"."pfloat" > :_p3)) ORDER BY "_t2"."pstr" ASC';
 		$this->assertEquals($expected, $query->dbQueryBuilder()->query()->toSQL92String());
 	}
+
+	public function testPublishedQuery()
+	{
+		$o = $this->getObject();
+		$json = file_get_contents(__DIR__ . '/TestAssets/json3.json');
+		$query = $o->getQuery($json);
+		$sq = $query->dbQueryBuilder()->query();
+
+		$at = \DateTime::createFromFormat(\DateTime::ISO8601, '2013-07-04T15:04:08Z');
+		$to = \DateTime::createFromFormat(\DateTime::ISO8601, '2013-08-04T15:04:08Z');
+		$this->assertEquals($at, $sq->getParameterValue('_p2'));
+		$this->assertEquals($to, $sq->getParameterValue('_p3'));
+
+		$expected = 'SELECT * FROM "project_tests_doc_correction" AS "_t0" INNER JOIN "project_tests_doc_correction_i18n" AS "_t0L" ON ("_t0"."document_id" = "_t0L"."document_id" AND "_t0L"."lcid" = \'fr_FR\') WHERE ("_t0"."document_model" IN (\'Project_Tests_Correction\', \'Project_Tests_CorrectionExt\') AND (("_t0L"."publicationstatus" = :_p1 AND ("_t0L"."startpublication" IS NULL OR "_t0L"."startpublication" <= :_p2) AND ("_t0L"."endpublication" IS NULL OR "_t0L"."endpublication" > :_p3))))';
+		$this->assertEquals($expected, $sq->toSQL92String());
+	}
 }

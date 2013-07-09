@@ -541,7 +541,31 @@ class JSONDecoder
 	 */
 	protected function configurePublishedPredicate($predicateBuilder, $predicateJSON)
 	{
-		return $predicateBuilder->published();
+		if (isset($predicateJSON['at']))
+		{
+			$at = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['at']);
+			if ($at === false)
+			{
+				throw new \RuntimeException('Invalid published at value', 999999);
+			}
+		}
+		else
+		{
+			$at = null;
+		}
+		if (isset($predicateJSON['to']))
+		{
+			$to = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['to']);
+			if ($to === false)
+			{
+				throw new \RuntimeException('Invalid published to value', 999999);
+			}
+		}
+		else
+		{
+			$to = null;
+		}
+		return $predicateBuilder->published($at, $to);
 	}
 
 	/**
@@ -552,7 +576,31 @@ class JSONDecoder
 	 */
 	protected function configureNotPublishedPredicate($predicateBuilder, $predicateJSON)
 	{
-		return $predicateBuilder->notPublished();
+		if (isset($predicateJSON['at']))
+		{
+			$at = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['at']);
+			if ($at === false)
+			{
+				throw new \RuntimeException('Invalid notPublished at value', 999999);
+			}
+		}
+		else
+		{
+			$at = null;
+		}
+		if (isset($predicateJSON['to']))
+		{
+			$to = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['to']);
+			if ($to === false)
+			{
+				throw new \RuntimeException('Invalid notPublished to value', 999999);
+			}
+		}
+		else
+		{
+			$to = null;
+		}
+		return $predicateBuilder->notPublished($at, $to);
 	}
 
 	/**

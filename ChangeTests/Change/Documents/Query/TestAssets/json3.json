@@ -1,0 +1,12 @@
+{
+	"model": "Project_Tests_Correction",
+	"where": {
+		"and": [
+			{
+				"op": "published",
+				"at": "2013-07-04T15:04:08Z",
+				"to": "2013-08-04T15:04:08Z"
+			}
+		]
+	}
+}
