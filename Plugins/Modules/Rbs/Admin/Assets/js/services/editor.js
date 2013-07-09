@@ -162,14 +162,25 @@
 
 			function saveErrorHandler (reason) {
 				clearInvalidFields();
-				if (angular.isObject(reason) && angular.isObject(reason.data) && angular.isObject(reason.data['properties-errors'])) {
-					angular.forEach(reason.data['properties-errors'], function (messages, propertyName) {
+				console.log(reason);
+				if (angular.isObject(reason) && angular.isObject(reason.data)) {
+
+					if (angular.isObject(reason.data['properties-errors'])) {
+						angular.forEach(reason.data['properties-errors'], function (messages, propertyName) {
+							$(element).find('label[for="'+propertyName+'"]').each(function () {
+								$(this).closest('.control-group.property').addClass('error');
+								$(this).nextAll('.controls').find(':input').first().focus();
+							});
+							markFieldAsInvalid(propertyName, messages);
+						});
+					} else if (reason.code === "INVALID-VALUE-TYPE") {
+						var propertyName = reason.data.name;
 						$(element).find('label[for="'+propertyName+'"]').each(function () {
 							$(this).closest('.control-group.property').addClass('error');
 							$(this).nextAll('.controls').find(':input').first().focus();
 						});
-						markFieldAsInvalid(propertyName, messages);
-					});
+						markFieldAsInvalid(propertyName, reason.message);
+					}
 				}
 			}
 

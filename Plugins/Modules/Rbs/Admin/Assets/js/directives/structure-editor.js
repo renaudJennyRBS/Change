@@ -1227,6 +1227,7 @@
 				// Initialize workspace --------------------------------------------------------------------------------
 
 				// Change collapse the left sidebar to give more space to the editor.
+				// TODO Collapse sidebar in the controller instead of here.
 				Workspace.collapseLeftSidebar();
 				MainMenu.hide();
 

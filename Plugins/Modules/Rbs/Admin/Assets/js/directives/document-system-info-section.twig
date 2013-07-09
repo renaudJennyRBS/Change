@@ -1,21 +1,22 @@
 <div class="control-group">
 	<label class="control-label" for="id">{{ i18n('m.rbs.generic.document.id',['ucf']) }}</label>
 	<div class="controls">
-		<span class="uneditable-input">(=document.id=)</span>
+		<span class="uneditable-input input-small">(=document.id=)</span>
+		<span class="muted" ng-if="document.id < 0">{{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span>
 	</div>
 </div>
 
 <div class="control-group">
 	<label class="control-label" for="modelName">{{ i18n('m.rbs.generic.document.model',['ucf']) }}</label>
 	<div class="controls">
-		<span class="uneditable-input">(=document.model=)</span>
+		<span class="uneditable-input input-xlarge">(=document.model=)</span>
 	</div>
 </div>
 
 <div class="control-group" data-ng-show="document.publicationStatus">
 	<label class="control-label" for="status">{{ i18n('m.rbs.generic.document.publicationstatus',['ucf']) }}</label>
 	<div class="controls">
-		<span class="uneditable-input">(=document.publicationStatus=)</span>
+		<span class="uneditable-input"><status ng-model="document" class="small"></status> (=document.publicationStatus=)</span>
 	</div>
 </div>
 

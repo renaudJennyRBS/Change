@@ -464,7 +464,8 @@
 						var props = {
 							'id'    : Utils.getTemporaryId(),
 							'model' : model,
-							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf')
+							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf'),
+							'publicationStatus' : 'DRAFT'
 						};
 						if (Utils.isValidLCID(lcid)) {
 							props.refLCID = lcid;
@@ -615,6 +616,13 @@
 								resource = toSave;
 							}
 						}
+
+						// For child-documents, only send the ID.
+						angular.forEach(resource, function (value, name) {
+							if (Utils.isDocument(value)) {
+								resource[name] = value.id;
+							}
+						});
 
 						// REST call:
 						$http[method](url, resource, getHttpConfig(transformResponseResourceFn))

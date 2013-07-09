@@ -23,7 +23,7 @@
 		return {
 			restrict : 'E',
 
-			template : '<div title="{{tooltip}}" class="bullet-status {{document.publicationStatus}}" href="Change/Admin/help/status" help="#helpListBottom"><div class="overlay correction" ng-show="correction">C</div></div>',
+			template : '<div title="{{tooltip}}" class="bullet-status {{document.publicationStatus}}" href="Rbs/Admin/help/status" help="#helpListBottom"><div class="overlay correction" ng-show="correction">C</div></div>',
 
 			require: '?ng-model',
 
