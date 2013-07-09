@@ -420,6 +420,33 @@
 						});
 					}
 
+					// The list listens to this event: 'Change:DocumentList:' + dlid + ':call'
+					var self = this;
+					scope.$on('Change:DocumentList:' + dlid + ':call', function (event, args) {
+						if (angular.isFunction(scope[args.method])) {
+							var q, result;
+
+							// Call the method on the Scope...
+							result = scope[args.method].apply(self, args.params || []);
+
+							// Ensure that "args.promises" is an Array.
+							if (! angular.isArray(args.promises)) {
+								args.promises = [];
+							}
+
+							// Store the result as a Promise in the "args.promises" Array.
+							if (angular.isFunction(result.then)) {
+								args.promises.push(result);
+							} else {
+								q = $q.defer();
+								q.resolve(result);
+								args.promises.push(q.promise);
+							}
+						} else {
+							console.warn("Received event 'Change:DocumentList:" + dlid + ":call' but no method '" + args.method + "' is defined in the DocumentList's scope.");
+						}
+					});
+
 					// Save selected view mode is user's settings.
 					scope.$watch('viewMode', function (value) {
 						Settings.set('documentListViewMode', value);
@@ -501,7 +528,11 @@
 
 
 					scope.refresh = function () {
-						reload();
+						return reload();
+					};
+
+					scope.reload = function () {
+						return reload();
 					};
 
 
@@ -856,12 +887,6 @@
 							NotificationCenter.clear();
 						}
 					}
-
-
-					scope.reload = function () {
-						console.log("reload 1");
-						reload();
-					};
 
 
 					scope.location = $location;
