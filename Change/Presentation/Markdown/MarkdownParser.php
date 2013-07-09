@@ -56,18 +56,12 @@ class MarkdownParser extends \Michelf\Markdown {
 	 */
 	protected function _doAnchors_inline_callback($matches)
 	{
-		$whole_match	=  $matches[1];
-		$link_text		=  $this->runSpanGamut($matches[2]);
-		$documentId 	=  $matches[3] == '' ? $matches[4] : $matches[3];
-		$title			=& $matches[7];
+		$link_text  = $this->runSpanGamut($matches[2]);
+		$documentId = $matches[3] == '' ? $matches[4] : $matches[3];
+		$title      = $matches[7];
 
 		$params = explode(',', $documentId);
 		$model = null;
-
-		/**
-		 * @var \Change\Documents\AbstractDocument
-		 */
-		$document = null;
 
 		if (count($params) === 1)
 		{
@@ -79,6 +73,7 @@ class MarkdownParser extends \Michelf\Markdown {
 			$id = $params[1];
 		}
 
+		/* @var $document \Change\Documents\AbstractDocument */
 		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
 
 		if (!$document)
@@ -97,7 +92,8 @@ class MarkdownParser extends \Michelf\Markdown {
 
 
 		$result = "<a href=\"$url\"";
-		if (isset($title)) {
+		if (isset($title))
+		{
 			$title = $this->encodeAttribute($title);
 			$result .=  " title=\"$title\"";
 		}
@@ -116,9 +112,9 @@ class MarkdownParser extends \Michelf\Markdown {
 	 */
 	protected function _doImages_inline_callback($matches)
 	{
-		$alt_text		= $matches[2];
-		$mediaId		= $matches[3] == '' ? $matches[4] : $matches[3];
-		$title			=& $matches[7];
+		$alt_text = $matches[2];
+		$mediaId  = $matches[3] == '' ? $matches[4] : $matches[3];
+		$title    = $matches[7];
 		$alt_text = $this->encodeAttribute($alt_text);
 
 		$params = explode(',', $mediaId);
@@ -145,25 +141,27 @@ class MarkdownParser extends \Michelf\Markdown {
 			$params = $params[2];
 		}
 
-		/**
-		 * @var \Rbs\Media\Documents\Image
-		 */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
-
-		if (!$document)
+		/* @var $image \Rbs\Media\Documents\Image */
+		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+		if (!$image)
 		{
 			return $this->hashPart('<span class="label label-important">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');
 		}
 
-		// FIXME Generate real Media URL
-		$url = '/rest.php/storage/' . substr($document->getPath(), 9) . '?content=1';
+		$url = $image->getDocumentServices()->getApplicationServices()->getStorageManager()->getPublicURL($image->getPath());
+		if (!$url)
+		{
+			return $this->hashPart('<span class="label label-important">No public URL for Rbs\Media\Image: ' . $mediaId . '</span>');
+		}
 
 		$result = "<img src=\"$url\" alt=\"$alt_text\"";
-		if (isset($title)) {
+		if (isset($title))
+		{
 			$title = $this->encodeAttribute($title);
 			$result .=  " title=\"$title\""; # $title already quoted
 		}
-		if ($params) {
+		if ($params)
+		{
 			$result .=  " style=\"$params\"";
 		}
 		$result .= $this->empty_element_suffix;

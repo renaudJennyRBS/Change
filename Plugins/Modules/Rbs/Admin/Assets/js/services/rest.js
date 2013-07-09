@@ -1137,14 +1137,13 @@
 						},
 
 						'displayUrl' : function (storage) {
-							console.log(storage);
 							if (angular.isObject(storage) && angular.isArray(storage.links))
 							{
 								var links = storage.links, link, i;
 								for (i = 0; i < links.length; i++)
 								{
 									link = links[i];
-									if (link.rel == 'data')
+									if (link.rel === 'data')
 									{
 										return link.href;
 									}
@@ -1154,7 +1153,7 @@
 							{
 								return null;
 							}
-							throw new Error("'storage' should be a object with links/data.");
+							throw new Error("'storage' should be an object with links/data.");
 						},
 
 
