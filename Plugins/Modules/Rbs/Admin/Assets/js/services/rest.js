@@ -616,6 +616,13 @@
 							}
 						}
 
+						// For child-documents, only send the ID.
+						angular.forEach(resource, function (value, name) {
+							if (Utils.isDocument(value)) {
+								resource[name] = value.id;
+							}
+						});
+
 						// REST call:
 						$http[method](url, resource, getHttpConfig(transformResponseResourceFn))
 
