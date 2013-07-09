@@ -464,7 +464,8 @@
 						var props = {
 							'id'    : Utils.getTemporaryId(),
 							'model' : model,
-							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf')
+							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf'),
+							'publicationStatus' : 'DRAFT'
 						};
 						if (Utils.isValidLCID(lcid)) {
 							props.refLCID = lcid;
