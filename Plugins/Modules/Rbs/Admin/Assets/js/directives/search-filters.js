@@ -18,7 +18,7 @@
 
 			"scope" : {
 				"model" : "@",
-				"query" : "=",
+				"query" : "=filterQuery",
 				"textSearch" : "="
 			},
 
