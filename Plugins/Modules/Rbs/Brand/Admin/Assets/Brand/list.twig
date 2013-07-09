@@ -15,7 +15,7 @@
 		<preview>
 			<div class="muted" ng-if="!doc.visual">Aucun visuel défini</div>
 			<h4>(= doc.label =)</h4>
-			<img rbs-storage-image="(= doc.visual.id =)" thumbnail="m" class="img-polaroid margin-right"/>
+			<img rbs-storage-image="doc.visual.id" thumbnail="m" class="img-polaroid margin-right"/>
 		</preview>
 		<column name="websiteUrl"></column>
 	</rbs-document-list>

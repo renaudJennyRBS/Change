@@ -23,7 +23,7 @@
 	<key id="emailaddresslengthexceeded">le champ "{field}" doit contenir une adresse e-mail valide
 		('%value%' excède la taille autorisée).</key>
 	<key id="stringlengthtoolong">le champ "{field}" doit avoir une taille maximale de %max% caractères.</key>
-	<key id="stringlengthinvalid">le champ "{field}" doit etre de type chaîne</key>
+	<key id="stringlengthinvalid">le champ "{field}" doit être de type chaîne</key>
 	<key id="stringlengthtooshort">le champ "{field}" doit avoir une taille minimal de %min% caractères.</key>
 	<key id="notunique">la valeur n'est pas unique.</key>
 	<key id="notmatch">le champ "{field}" doit respecter le format suivant : %pattern%.</key>
@@ -46,4 +46,5 @@
 	<key id="domaininvalid">'%value%' n'est pas un nom de domaine valide.</key>
 	<key id="urlinvalid">'%value%' n'est pas une URL valide.</key>
 	<key id="notinlist">'%value%' n'est pas une valeur autorisée.</key>
+	<key id="storageuriinvalid">'%value%' doit être une URI de stockage valide.</key>
 </i18n>

@@ -21,6 +21,9 @@
 	app.directive('rbsStorageImage', ['RbsChange.REST', 'rbsThumbnailSizes', function (REST, sizes) {
 		return {
 			restrict : 'A',
+			scope: {
+				rbsStorageImage: "="
+			},
 
 			link : function (scope, elm, attrs) {
 				var	$el = $(elm),
@@ -32,7 +35,7 @@
 					throw new Error("Directive 'rbs-storage-image' must be used on <img/> elements only.");
 				}
 
-				attrs.$observe('rbsStorageImage', function (value) {
+				scope.$watch('rbsStorageImage', function (value) {
 					if (value) {
 						if (/^\d+$/.test(value)) {
 							REST.resource(parseInt(value, 10)).then(function (image) {

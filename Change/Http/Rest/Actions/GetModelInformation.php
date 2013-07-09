@@ -97,6 +97,7 @@ class GetModelInformation
 			$result->setMeta('publishable', $model->isPublishable());
 			$result->setMeta('stateless', $model->isStateless());
 			$result->setMeta('abstract', $model->isAbstract());
+			$result->setMeta('useCorrection', $model->useCorrection());
 
 			// Properties.
 			foreach ($model->getProperties() as $property)
@@ -112,6 +113,7 @@ class GetModelInformation
 				$infos['localized'] = $property->getLocalized();
 				$infos['stateless'] = $property->getStateless();
 				$infos['required'] = $property->getRequired();
+				$infos['hasCorrection'] = $property->getHasCorrection();
 				if ($property->getDefaultValue() !== null)
 				{
 					$infos['defaultValue'] = $property->getDefaultValue();

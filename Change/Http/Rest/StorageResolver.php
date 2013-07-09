@@ -37,6 +37,17 @@ class StorageResolver
 	}
 
 	/**
+	 * @param string $storageURI
+	 * @return string
+	 */
+	public static function buildPathInfo($storageURI)
+	{
+		$infos = parse_url($storageURI);
+		if (!isset($infos['path'])) {$infos['path'] = '/';}
+		return 'storage/' . $infos['host'] . $infos['path'];
+	}
+
+	/**
 	 * Set Event params: query
 	 * @param \Change\Http\Event $event
 	 * @param array $resourceParts

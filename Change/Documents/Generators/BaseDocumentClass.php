@@ -676,6 +676,22 @@ class BaseDocumentClass
 		return $this->getDocumentManager()->getDocumentInstance($this->get' . $un . '());
 	}' . PHP_EOL;
 		}
+		elseif ($property->getType() === 'StorageUri')
+		{
+			$code .= '
+	/**
+	 * @return \Change\Storage\ItemInfo|null
+	 */
+	public function get' . $un . 'ItemInfo()
+	{
+		$uri = $this->get' . $un . '();
+		if ($uri)
+		{
+			return $this->getApplicationServices()->getStorageManager()->getItemInfo($uri);
+		}
+		return null;
+	}' . PHP_EOL;
+		}
 		return $code;
 	}
 

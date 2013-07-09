@@ -41,8 +41,8 @@
 				scope.previewHeight = MAX_PREVIEW_HEIGHT;
 
 				ngModel.$render = function ngModelRenderFn () {
-					if (ngModel.$viewValue && ngModel.$viewValue.substr(0, 6) !== 'local:') {
-						REST.storage.info(ngModel.$viewValue).then(function (info) {
+					if (angular.isObject(ngModel.$viewValue)) {
+						REST.storage.info(ngModel.$viewValue.storageURI).then(function (info) {
 							scope.fileSize = info.size;
 							scope.fileName = info.fileName;
 							updatePreview(scope, info.data);
@@ -91,10 +91,10 @@
 						console.log("imageUploader: has changes (dirty) => uploading...");
 						REST.storage.upload(inputFile, attrs.storageName || 'images').then(
 							function uploadSuccessFn (response) {
-								ngModel.$setViewValue(response.path);
+								ngModel.$setViewValue(response);
 								ngModel.$render();
 								console.log("imageUploader: uploading complete => q is resolved with '" + ngModel.$viewValue + "'");
-								q.resolve(response.path);
+								q.resolve(response);
 							},
 							function uploadErrorFn (data) {
 								window.alert(data.message);

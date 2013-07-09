@@ -4,6 +4,7 @@ namespace Change\Http\Rest;
 use Change\Documents\Property;
 use Change\Documents\AbstractDocument;
 use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\Link;
 
 /**
  * @name \Change\Http\Rest\PropertyConverter
@@ -154,6 +155,21 @@ class PropertyConverter
 					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
+			case Property::TYPE_STORAGEURI:
+				if (is_string($propertyValue))
+				{
+					$restValue = array('storageURI' => $propertyValue);
+					$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue));
+					$restValue['links'][] = $link->toArray();
+					$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue), 'data');
+					$link->setQuery(array('content' => 1));
+					$restValue['links'][] = $link->toArray();
+				}
+				else
+				{
+					$restValue = null;
+				}
+				break;
 			default:
 				$restValue = $propertyValue;
 				break;
@@ -196,7 +212,6 @@ class PropertyConverter
 					throw new \RuntimeException('Invalid Property value', 70001);
 				}
 				break;
-
 			case Property::TYPE_DOCUMENT:
 				if ($restValue !== null)
 				{
@@ -256,6 +271,16 @@ class PropertyConverter
 				else
 				{
 					throw new \RuntimeException('Invalid Property value', 70001);
+				}
+				break;
+			case Property::TYPE_STORAGEURI:
+				if (is_array($restValue) && isset($restValue['storageURI']))
+				{
+					$value = $restValue['storageURI'];
+				}
+				else
+				{
+					$value = is_string($restValue) ? $restValue : null;
 				}
 				break;
 			default:

@@ -1136,14 +1136,25 @@
 							return q.promise;
 						},
 
-
-						'displayUrl' : function (storagePath) {
-							// FIXME Fix returned URL: is "?content=1" OK ?
-							if (Utils.startsWith(storagePath, "change://")) {
-								return REST_BASE_URL + 'storage/' + storagePath.substr(9) + '?content=1';
-							} else {
-								throw new Error("'storagePath' should begin with 'change://'.");
+						'displayUrl' : function (storage) {
+							console.log(storage);
+							if (angular.isObject(storage) && angular.isArray(storage.links))
+							{
+								var links = storage.links, link, i;
+								for (i = 0; i < links.length; i++)
+								{
+									link = links[i];
+									if (link.rel == 'data')
+									{
+										return link.href;
+									}
+								}
 							}
+							else (!storage)
+							{
+								return null;
+							}
+							throw new Error("'storage' should be a object with links/data.");
 						},
 
 

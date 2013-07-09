@@ -19,6 +19,7 @@ class Property
 	
 	const TYPE_LONGSTRING = 'LongString';
 	const TYPE_XML = 'XML';
+	const TYPE_STORAGEURI = 'StorageUri';
 	
 	const TYPE_RICHTEXT = 'RichText';
 	const TYPE_JSON = 'JSON';
@@ -239,6 +240,7 @@ class Property
 			case self::TYPE_JSON:
 			case self::TYPE_OBJECT:
 			case self::TYPE_LONGSTRING:
+			case self::TYPE_STORAGEURI:
 			case self::TYPE_RICHTEXT:
 				return true;
 			default:

@@ -7,7 +7,7 @@ namespace Change\Documents\Generators;
 class Property
 {
 	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Float', 'Decimal',
-		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
+		'Date', 'DateTime', 'LongString', 'StorageUri', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
 		'DocumentId', 'Document', 'DocumentArray');
 	
 	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
@@ -717,6 +717,13 @@ class Property
 			if ($this->constraintArray === null || !isset($this->constraintArray['maxSize']))
 			{
 				$this->constraintArray['maxSize'] = array('max' => 255);
+			}
+		}
+		elseif ($this->type === 'StorageUri')
+		{
+			if ($this->constraintArray === null || !isset($this->constraintArray['storageUri']))
+			{
+				$this->constraintArray['storageUri'] = array();
 			}
 		}
 	}

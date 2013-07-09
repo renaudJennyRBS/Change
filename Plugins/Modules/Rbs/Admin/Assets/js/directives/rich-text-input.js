@@ -404,7 +404,7 @@
 					'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
 						'<column name="path" thumbnail="XS"></column>' +
 						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
-							'<img rbs-storage-image="(= doc.path =)" thumbnail="XS"/>' +
+							'<img rbs-storage-image="doc.path" thumbnail="XS"/>' +
 							'<a style="display:block" href="javascript:;" ng-click="picker.insertMedia(doc, $event)">(= doc.label =)</a>' +
 						'</grid-item>' +
 					'</rbs-document-list>' +
