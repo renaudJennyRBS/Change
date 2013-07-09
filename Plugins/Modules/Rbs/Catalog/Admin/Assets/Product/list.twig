@@ -6,22 +6,19 @@
 		<a href="Rbs/Catalog/Product/new">{{ i18n('m.rbs.catalog.document.product-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsCatalogProduct"
-	               model="Rbs_Catalog_Product"
-	               publishable="true"
-	               filter-query="query">
-
-		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual[0].id"></column>
+	<rbs-document-list data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-query="query">
+		<column name="visuals" thumbnail="XS" thumbnail-path="doc.visuals[0].id"
+			label="{{ i18nAttr('m.rbs.catalog.document.product.visual', ['ucf']) }}"></column>
 		<column name="label" primary="true"></column>
 		<preview>
-			<div class="muted" ng-if="!doc.visual.length">Aucun visuel défini</div>
+			<div class="muted" ng-if="!doc.visuals.length">{{ i18nAttr('m.rbs.catalog.document.product.no-visual', ['ucf']) }}</div>
 			<h4>(= doc.label =)</h4>
 			<p ng-bind-html="doc.description"></p>
-			<img ng-repeat="visual in doc.visual" rbs-storage-image="visual.id" thumbnail="m" class="img-polaroid margin-right pull-left"/>
+			<img ng-repeat="visual in doc.visuals" rbs-storage-image="visual.id" thumbnail="m" class="img-polaroid margin-right pull-left"/>
 		</preview>
 
 		<grid-item>
-			<img rbs-storage-image="doc.visual[0].id" thumbnail="L"/>
+			<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
 			<div class="caption">
 				<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
 			</div>

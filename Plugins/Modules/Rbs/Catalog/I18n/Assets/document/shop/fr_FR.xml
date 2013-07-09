@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.document.shop" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="billingarea">zones de tarification</key>
-	<key id="billingarea-picker-title">sélectionner les zones de tarification</key>
+	<key id="billingareas">zones de tarification</key>
+	<key id="billingareas-picker-title">sélectionner les zones de tarification</key>
 </i18n>

@@ -6,11 +6,12 @@
 		<a href="Rbs/Catalog/Shop/new">{{ i18n('m.rbs.catalog.document.shop-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsCatalogShop"
-	               model="Rbs_Catalog_Shop"
-	               publishable="true"
-	               filter-query="query">
+	<rbs-document-list data-dlid="DLRbsCatalogShop" model="Rbs_Catalog_Shop" publishable="true" filter-query="query">
 		<column name="label" primary="true"></column>
-		<column name="billingArea"><span class="label" ng-repeat="ba in doc.billingArea"><a href ng-href="(= ba | documentURL =)">(= ba.label =)</a></span></column>
+		<column name="billingAreas">
+			<span class="label" ng-repeat="ba in doc.billingAreas">
+				<a href ng-href="(= ba | documentURL =)">(= ba.label =)</a>
+			</span>
+		</column>
 	</rbs-document-list>
 </div>

@@ -128,7 +128,6 @@
 					for (var i in zones.resources)
 					{
 						var zone = zones.resources[i];
-						console.log('Zone: ' + zone.label + ', ' + zone.code);
 						scope.TaxesSection.zones.push({label: zone.label, code: zone.code});
 					}
 				});

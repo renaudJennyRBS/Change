@@ -1,0 +1,90 @@
+<form novalidate="" data-ng-controller="Rbs_Catalog_Category_ProductsController" class="form-horizontal">
+	<div class="page-header">
+		<h2 class="ng-binding">
+			(= document.label =)
+			<small>
+				({{ i18n('m.rbs.catalog.document.category.shop', ['ucf', 'lab']) }}
+				<a ng-show="document.shop" ng-href="document.shop | documentUrl">(= document.shop.label =)</a>
+				<span ng-hide="document.shop">x</span>
+				-
+				{{ i18n('m.rbs.catalog.document.category.section', ['ucf', 'lab']) }}
+				{% spaceless %}
+				<a ng-show="document.section" ng-href="document.section | documentUrl">(= document.section.label =)</a>
+				<span ng-hide="document.section">x</span>)
+				{% endspaceless %}
+			</small>
+		</h2>
+	</div>
+
+	<div ng-if="List.conditions.length > 1">
+		<p>{{ i18n('m.rbs.catalog.document.category.condition-help', ['ucf']) }}</p>
+
+		<div class="control-group" >
+			<label class="control-label" data-not-a-property="" for="selectCondition">
+				{{ i18n('m.rbs.catalog.document.category.condition', ['ucf']) }}
+			</label>
+
+			<div class="controls">
+				<div class="btn-group" ng-if="List.conditions.length <= 5">
+					<button class="btn" data-ng-class="{active: List.selectedCondition == condition}" type="button"
+						data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+						<i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)
+					</button>
+				</div>
+				<div class="btn-group" ng-if="List.conditions.length > 5">
+					<button class="btn" data-toggle="dropdown" type="button"
+						data-ng-class="{active: List.selectedCondition}">
+						<span data-ng-show="List.selectedCondition"><i class="icon-ok"></i> (= List.selectedCondition.label =)</span>
+						<em data-ng-show="!List.selectedCondition">...</em>
+					</button>
+					<button class="btn dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+							<a><i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group" ng-show="List.selectedCondition">
+		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_AbstractProduct" publishable="true"
+			collection-url="(= productListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductsFromCategory"
+			data-container-id="document.id" data-condition-id="List.selectedCondition.id" cascade-edition="(= document.label=)"
+			data-role="contained-products">
+			<column name="visuals" thumbnail="XS" thumbnail-path="doc.visuals[0].id" label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.visual', ['ucf']) }}"></column>
+			<column name="label" primary="true">
+				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+				<span class="label">(= doc.visuals.length =) visuels</span>
+				<span class="label label-important strikethrough" ng-if="!doc.description">Desc.</span>
+			</column>
+			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.category.priority', ['ucf']) }}"></column>
+
+			<preview>
+				<h4>(= doc.label =)</h4>
+				<p ng-bind-html="doc.description"></p>
+				<div class="muted" ng-if="!doc.visuals.length">{{ i18n('m.rbs.catalog.document.product.no-visual', ['ucf']) }}</div>
+				<img ng-repeat="visual in doc.visuals" rbs-storage-image="visual.id" thumbnail="m" class="img-polaroid margin-right" />
+			</preview>
+
+			<grid-item>
+				<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
+				<div class="caption">
+					<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+				</div>
+			</grid-item>
+		</rbs-document-list>
+
+		<h4>{{ i18n('m.rbs.catalog.document.category.add-products', ['ucf']) }}</h4>
+
+		<div class="rbs-catalog-category-picker"
+			product-id="(= document.id =)" adding-method-name="addProducts"
+			accepted-model="Rbs_Catalog_AbstractProduct"
+			selector-title="{{ i18nAttr('m.rbs.catalog.document.category.products-picker-title', ['ucf']) }}"
+			field-label="{{ i18n('m.rbs.catalog.document.category.products', ['ucf']) }}">
+		</div>
+	</div>
+</form>
