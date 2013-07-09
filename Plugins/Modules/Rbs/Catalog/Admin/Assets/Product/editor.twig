@@ -6,10 +6,8 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		{{ forms.field('label', 'String', 'm.rbs.catalog.document.product.label', true) }}
 		{{ forms.field('description', 'RichText', 'm.rbs.catalog.document.product.description', false) }}
-		{{ forms.pickerMultiple('category', 'Rbs_Catalog_Category', 'm.rbs.catalog.document.product.category',
-			false, null, 'm.rbs.catalog.document.product.category-picker-title') }}
-		{{ forms.pickerMultiple('visual', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.visual',
-			false, null, 'm.rbs.catalog.document.product.visual-picker-title', true) }}
+		{{ forms.pickerMultiple('visuals', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.visuals',
+			false, null, 'm.rbs.catalog.document.product.visuals-picker-title', true) }}
 		{{ forms.picker('brand', 'Rbs_Brand_Brand', 'm.rbs.catalog.document.product.brand',
 			false, null, 'm.rbs.catalog.document.product.brand-picker-title', true) }}
 		<hr />
@@ -19,8 +17,8 @@
 	<fieldset data-ng-show="section=='advanced'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.advanced-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.pickerMultiple('pictogram', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.pictogram',
-			false, null, 'm.rbs.catalog.document.product.pictogram-picker-title') }}
+		{{ forms.pickerMultiple('pictograms', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.pictograms',
+			false, null, 'm.rbs.catalog.document.product.pictograms-picker-title') }}
 		{{ forms.field('shippedIn', 'String', 'm.rbs.catalog.document.product.shippedin', false,
 			'm.rbs.catalog.document.product.shippedin-help') }}
 		{{ forms.field('minOrderQuantity', 'Integer', 'm.rbs.catalog.document.product.minorderquantity',
@@ -28,7 +26,7 @@
 		{{ forms.field('maxOrderQuantity', 'Integer', 'm.rbs.catalog.document.product.maxorderquantity',
 			false, 'm.rbs.catalog.document.product.maxorderquantity-help') }}
 	</fieldset>
-	<fieldset hide-when-create="true" data-ng-show="section=='publication'"
+	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.publication-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<div class="control-group property">
@@ -50,14 +48,86 @@
 		</div>
 	</fieldset>
 
-	<!-- TODO: masquer l'onglet quand le doc est new -->
-	<fieldset data-ng-show="section=='prices'"
+	<fieldset hide-when-create="true" data-ng-show="section=='prices'"
 		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.price-list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 		<div class="control-group">
 			{{ i18n('m.rbs.catalog.document.product.price-section-help', ['ucf']) }}
 
 			<rbs-price-list product="document"></rbs-price-list>
+		</div>
+	</fieldset>
+
+	<fieldset hide-when-create="true" data-ng-show="section=='categories'"
+		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
+		<div class="control-group">
+			<p>{{ i18n('m.rbs.catalog.document.product.category-section-help', ['ucf']) }}</p>
+
+			<div ng-if="List.conditions.length > 1">
+				<p>{{ i18n('m.rbs.catalog.document.product.condition-help', ['ucf']) }}</p>
+
+				<div class="control-group" >
+					<label class="control-label" data-not-a-property="" for="selectCondition">
+						{{ i18n('m.rbs.catalog.document.category.condition', ['ucf']) }}
+					</label>
+
+					<div class="controls">
+						<div class="btn-group" ng-if="List.conditions.length <= 5">
+							<button class="btn" data-ng-class="{active: List.selectedCondition == condition}" type="button"
+								data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+								<i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)
+							</button>
+						</div>
+						<div class="btn-group" ng-if="List.conditions.length > 5">
+							<button class="btn" data-toggle="dropdown" type="button"
+								data-ng-class="{active: List.selectedCondition}">
+								<span data-ng-show="List.selectedCondition"><i class="icon-ok"></i> (= List.selectedCondition.label =)</span>
+								<em data-ng-show="!List.selectedCondition">...</em>
+							</button>
+							<button class="btn dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+									<a><i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="control-group" ng-show="List.selectedCondition">
+				<rbs-document-list data-dlid="DLRbsCatalogProductCategories" model="Rbs_Catalog_Category" publishable="true"
+					collection-url="(= categoryListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductFromCategories"
+					data-container-id="document.id" data-condition-id="List.selectedCondition.id" cascade-edition="(= document.label=)">
+					<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
+					<column name="label" primary="true"></column>
+					<column name="shop">
+						<a ng-if="doc.shop" href="(= doc.shop | documentURL =)">(= doc.shop.label =)</a>
+					</column>
+					<column name="section">
+						<a ng-if="doc.section" href="(= doc.section | documentURL =)">(= doc.section.label =)</a>
+					</column>
+
+					<grid-item class="folder">
+						<img rbs-storage-image="(= doc.visual.id =)" thumbnail="L"/>
+						<div class="caption">
+							<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></h4>
+						</div>
+					</grid-item>
+				</rbs-document-list>
+
+				<h4>{{ i18n('m.rbs.catalog.document.product.add-categories', ['ucf']) }}</h4>
+
+				<div class="rbs-catalog-category-picker"
+					product-id="(= document.id =)" adding-method-name="addInCategories"
+					accepted-model="Rbs_Catalog_Category"
+					selector-title="{{ i18nAttr('m.rbs.catalog.document.product.categories-picker-title', ['ucf']) }}"
+					field-label="{{ i18n('m.rbs.catalog.document.product.categories', ['ucf']) }}">
+				</div>
+			</div>
 		</div>
 	</fieldset>
 

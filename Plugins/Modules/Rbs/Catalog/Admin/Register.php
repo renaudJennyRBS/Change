@@ -26,6 +26,7 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Catalog/js/admin.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Category/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Category/editor.js">​</script>
+	<script type="text/javascript" src="Rbs/Catalog/Category/picker.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/editor.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Price/controllers.js">​</script>

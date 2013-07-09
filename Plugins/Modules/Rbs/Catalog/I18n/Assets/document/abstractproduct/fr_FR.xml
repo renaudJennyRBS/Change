@@ -2,12 +2,15 @@
 <i18n baseKey="m.rbs.catalog.document.abstractproduct" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
 	<key id="description">description</key>
-	<key id="category">catégories</key>
-	<key id="category-picker-title">sélectionner les catégories</key>
-	<key id="visual">visuels</key>
-	<key id="visual-picker-title">sélectionner les visuels</key>
-	<key id="pictogram">pictogrammes</key>
-	<key id="pictogram-picker-title">sélectionner les pictogrammes</key>
+	<key id="categories">catégories</key>
+	<key id="categories-picker-title">sélectionner les catégories</key>
+	<key id="add-categories">ajouter des catégories</key>
+	<key id="visual">visuel</key>
+	<key id="visuals">visuels</key>
+	<key id="visuals-picker-title">sélectionner les visuels</key>
+	<key id="no-visual">aucun visuel défini</key>
+	<key id="pictograms">pictogrammes</key>
+	<key id="pictograms-picker-title">sélectionner les pictogrammes</key>
 	<key id="brand">marque</key>
 	<key id="brand-picker-title">sélectionner la marque</key>
 	<key id="shippedin">délai d'expédition</key>
@@ -17,4 +20,5 @@
 	<key id="minorderquantity-help">Quantité minimum de ce produit que l'on peut commander.</key>
 	<key id="maxorderquantity">quantité maximum</key>
 	<key id="maxorderquantity-help">Quantité maximum de ce produit que l'on peut commander.</key>
+	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des catégories.</key>
 </i18n>

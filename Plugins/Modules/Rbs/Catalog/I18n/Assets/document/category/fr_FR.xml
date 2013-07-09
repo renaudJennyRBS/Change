@@ -4,4 +4,18 @@
 	<key id="description">description</key>
 	<key id="visual">visuel</key>
 	<key id="visual-picker-title">sélectionner le visuel</key>
+	<key id="shop">boutique</key>
+	<key id="shop-picker-title">sélectionner la boutique</key>
+	<key id="section">section</key>
+	<key id="section-picker-title">sélectionner la section</key>
+	<key id="priority">priorité</key>
+	<key id="priority-help">Priorité d'affichage du produit dans les catégories sélectionnées.</key>
+	<key id="highlightproducts">produits mis en avant</key>
+	<key id="highlightproducts-help">Les produits mis en avant sont à sélectionner parmis les produits sélectionnés dans la section "produits".</key>
+	<key id="highlightproducts-picker-title">sélectionner les produits mis en avant</key>
+	<key id="products">produits</key>
+	<key id="products-picker-title">sélectionner les produits à ajouter à la catégorie</key>
+	<key id="add-products">ajouter des produits</key>
+	<key id="condition">condition</key>
+	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des produits.</key>
 </i18n>

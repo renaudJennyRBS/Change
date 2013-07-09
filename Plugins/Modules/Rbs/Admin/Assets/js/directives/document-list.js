@@ -415,7 +415,12 @@
 					if (undefinedColumnLabels.length && attrs.model) {
 						REST.modelInfo(attrs.model).then(function (modelInfo) {
 							angular.forEach(undefinedColumnLabels, function (columnName) {
-								scope.columns[columnName].label = modelInfo.properties[columnName].label;
+								if (columnName in modelInfo.properties) {
+									scope.columns[columnName].label = modelInfo.properties[columnName].label;
+								}
+								else {
+									console.log('[Rbs/Admin/Assets/js/directives/document-list.js] ' + columnName + ' does not exist in model infos properties!');
+								}
 							});
 						});
 					}

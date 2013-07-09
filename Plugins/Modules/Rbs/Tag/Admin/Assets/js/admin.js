@@ -93,7 +93,7 @@
 		});
 
 		$rootScope.$on(Events.EditorFormButtonBarContents, function (event, args) {
-			console.log('Events.EditorFormButtonBarContents: ', args);
+			//console.log('Events.EditorFormButtonBarContents: ', args);
 			if (args.document.model !== 'Rbs_Tag_Tag') {
 				args.contents.push('<div>' + i18n.trans('m.rbs.tag.admin.js.tags | ucf')  + '<rbs-tag-selector ng-model="document.META$.tags"></rbs-tag-selector></div>');
 			}

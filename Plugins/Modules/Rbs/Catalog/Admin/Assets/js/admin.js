@@ -4,7 +4,7 @@
 
 	app.config(['$routeProvider', function ($routeProvider)
 	{
-		$routeProvider.when('/Rbs/Catalog', { templateUrl: 'Rbs/Catalog/Shop/list.twig', reloadOnSearch: false })
+		$routeProvider.when('/Rbs/Catalog', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Shop', { templateUrl: 'Rbs/Catalog/Shop/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Shop/:id/:LCID', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Shop/:id', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
@@ -23,6 +23,7 @@
 			.when('/Rbs/Catalog/Category/:id/:LCID',
 			{ templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/CategoryProducts/:id', { templateUrl: 'Rbs/Catalog/Category/products.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false });
 	}]);
 

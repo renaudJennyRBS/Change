@@ -15,6 +15,7 @@
 				Loading.start(i18n.trans('m.rbs.catalog.admin.js.shop-list-loading'));
 				REST.collection('Rbs_Catalog_Shop').then(function (shops)
 				{
+					scope.List.selectedShop = null;
 					scope.List.shops = shops.resources;
 					Loading.stop();
 					scope.shopsLoading = false;
@@ -27,7 +28,6 @@
 						return;
 					}
 
-					console.log('newValue = ', newValue);
 					scope.List.billingAreas = [];
 					scope.List.selectedBillingArea = null;
 					if (newValue)
@@ -37,7 +37,7 @@
 						REST.resource('Rbs_Catalog_Shop', newValue.id)
 							.then(function (shop)
 							{
-								scope.List.billingAreas = shop.billingArea;
+								scope.List.billingAreas = shop.billingAreas;
 								Loading.stop();
 								scope.List.billingAreasLoading = false;
 							});

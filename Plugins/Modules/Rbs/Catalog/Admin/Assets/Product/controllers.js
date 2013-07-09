@@ -46,4 +46,38 @@
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
 	app.controller('Rbs_Catalog_Product_FormController', FormController);
+
+	/**
+	 * List actions.
+	 */
+	app.config(['$provide', function ($provide) {
+		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', function (Actions, REST, $http) {
+			Actions.register({
+				name: 'Rbs_Catalog_RemoveProductFromCategories',
+				models: '*',
+				description: "Retirer ce produit des catégories sélectionnées.",
+				label: "Retirer",
+				selection: "+",
+				execute: ['$docs', '$scope', function ($docs, $scope) {
+					var categoryIds = [];
+					for (var i in $docs)
+					{
+						categoryIds.push($docs[i].id);
+					}
+					var conditionId = $scope.data.conditionId;
+					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/' + conditionId + '/categories/');
+					$http.put(url, {"removeCategoryIds": categoryIds}, REST.getHttpConfig())
+						.success(function (data) {
+							// TODO use data
+							$scope.refresh();
+						})
+						.error(function errorCallback (data, status) {
+							data.httpStatus = status;
+							$scope.refresh();
+						});
+				}]
+			});
+			return Actions;
+		}]);
+	}]);
 })();

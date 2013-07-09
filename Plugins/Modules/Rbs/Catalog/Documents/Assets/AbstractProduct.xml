@@ -4,10 +4,8 @@
 	icon="folder" localized="true" editable="true" publishable="true">
 	<properties>
 		<property name="description" type="RichText" localized="true" />
-		<property name="category" type="DocumentArray" document-type="Rbs_Catalog_Category" />
-		<property name="visual" type="DocumentArray" document-type="Rbs_Media_Image" />
-		<property name="defaultVisual" type="Document" document-type="Rbs_Media_Image" stateless="true" />
-		<property name="pictogram" type="DocumentArray" document-type="Rbs_Media_Image" />
+		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" />
+		<property name="pictograms" type="DocumentArray" document-type="Rbs_Media_Image" />
 		<property name="brand" type="Document" document-type="Rbs_Brand_Brand" />
 		<property name="shippedIn" type="String" />
 		<property name="minOrderQuantity" type="Integer" default-value="1" required="true" />

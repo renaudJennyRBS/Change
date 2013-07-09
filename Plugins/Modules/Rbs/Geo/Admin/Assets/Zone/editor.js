@@ -19,7 +19,6 @@
 					button.attr('disabled', 'disabled');
 					REST.upload(elm.find('#file')).then(
 						function (data) {
-							console.log(data);
 							button.removeAttr('disabled');
 						},
 						function () {

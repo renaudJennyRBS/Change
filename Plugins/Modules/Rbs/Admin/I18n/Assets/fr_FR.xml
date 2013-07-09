@@ -13,6 +13,7 @@
 	<key id="create">créer</key>
 	<key id="move-up">monter</key>
 	<key id="move-down">descendre</key>
+	<key id="add">ajouter</key>
 
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>

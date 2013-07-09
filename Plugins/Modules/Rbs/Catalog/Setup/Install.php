@@ -1,6 +1,9 @@
 <?php
 namespace Rbs\Catalog\Setup;
 
+use Change\Db\Schema\FieldDefinition;
+use Change\Db\Schema\KeyDefinition;
+
 /**
  * @name \Rbs\Generic\Setup\Install
  */
@@ -16,6 +19,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
+		$config->addPersistentEntry('Change/Events/Http.Rest/Rbs_Catalog', '\\Rbs\\Catalog\\Http\\Rest\\ListenerAggregate');
 	}
 
 	/**
@@ -23,10 +27,15 @@ class Install
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$appServices = $documentServices->getApplicationServices();
+		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
+		$schema = new \Rbs\Catalog\Setup\Schema($schemaManager);
+		$schema->generate();
+
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{
