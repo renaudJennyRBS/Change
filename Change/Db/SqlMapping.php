@@ -169,6 +169,15 @@ class SqlMapping
 	 * @api
 	 * @return string
 	 */
+	public function getOAuthApplicationTable()
+	{
+		return 'change_oauth_application';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
 	public function getPathRuleTable()
 	{
 		return 'change_path_rule';

@@ -48,15 +48,6 @@
 			}
 		},
 		"Http": {
-			"Rest": {
-				"OAuth": {
-					"consumerKey": "TODO_SET_CONSUMER_KEY",
-					"consumerSecret": "TODO_SET_CONSUMER_SECRET",
-					"timestampMaxOffset": 60,
-					"tokenAccessValidity": "P10Y",
-					"tokenRequestValidity": "P1D"
-				}
-			},
 			"Web": {
 				"SingleWebsite": true
 			}

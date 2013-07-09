@@ -1,6 +1,9 @@
 <?php
 namespace Rbs\Admin\Setup;
 
+use Change\Http\Rest\OAuth\Consumer;
+use Change\Http\Rest\OAuth\OAuth;
+
 /**
  * @name \Change\Generic\Setup\Install
  */
@@ -23,6 +26,9 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
+
+		$config->addPersistentEntry('Change/Events/Http.Rest/Rbs_Admin',
+			'\\Rbs\\Admin\\Http\\Rest\\ListenerAggregate');
 
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
@@ -52,6 +58,34 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$OAuth = new OAuth();
+		$OAuth->setApplicationServices($documentServices->getApplicationServices());
+		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
+		if ($consumer)
+		{
+			return;
+		}
+
+		$consumer = new Consumer($OAuth->generateConsumerKey(), $OAuth->generateConsumerSecret());
+
+		$applicationServices = $documentServices->getApplicationServices();
+		$isb = $applicationServices->getDbProvider()->getNewStatementBuilder('Install::executeApplication');
+		$fb = $isb->getFragmentBuilder();
+		$isb->insert($fb->table($isb->getSqlMapping()->getOAuthApplicationTable()), $fb->column('application'),
+			$fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('timestamp_max_offset'),
+			$fb->column('token_access_validity'), $fb->column('token_request_validity'), $fb->column('active'));
+		$isb->addValues($fb->parameter('application'), $fb->parameter('consumer_key'), $fb->parameter('consumer_secret'),
+			$fb->integerParameter('timestamp_max_offset'), $fb->parameter('token_access_validity'),
+			$fb->parameter('token_request_validity'), $fb->booleanParameter('active'));
+		$iq = $isb->insertQuery();
+		$iq->bindParameter('application', 'Rbs_Admin');
+		$iq->bindParameter('consumer_key', $consumer->getKey());
+		$iq->bindParameter('consumer_secret', $consumer->getSecret());
+		$iq->bindParameter('timestamp_max_offset', 60);
+		$iq->bindParameter('token_access_validity', 'P10Y');
+		$iq->bindParameter('timestamp_max_offset', 'P1D');
+		$iq->bindParameter('timestamp_max_offset', true);
+		$iq->execute();
 	}
 
 	/**

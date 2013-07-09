@@ -93,7 +93,7 @@
 	app.config(['OAuthServiceProvider', function (OAuth) {
 		var oauthUrl = '/rest.php/OAuth/';
 		OAuth.setBaseUrl(oauthUrl);
-		OAuth.setRealm('rest');
+		OAuth.setRealm(__change.OAuth.realm);
 
 		// Sign all the requests on our REST services...
 		OAuth.setSignedUrlPatternInclude('/rest.php/');
@@ -192,7 +192,7 @@
 		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
 			if (rejection.status === 401 || (rejection.status === 500 && rejection.data && Utils.startsWith(rejection.data.code, 'EXCEPTION-72'))) {
 				if (alreadyGotError) {
-					$location.path('/login');
+					console.log('OAuth:AuthenticationFailure'); //FIXME
 				} else {
 					alreadyGotError = true;
 					redirectUrl = angular.copy($location.path());
@@ -201,22 +201,38 @@
 			}
 		});
 
-		$rootScope.$on('OAuth:UserLoginSuccess', function (event, userId) {
+		$rootScope.$on('OAuth:UserLoginSuccess', function (event) {
 			alreadyGotError = false;
 			if (!redirectUrl || Utils.startsWith(redirectUrl, '/login')) {
 				redirectUrl = '/';
 			}
+			loadCurrentUser();
 			$rootScope.$apply(function () {
+				redirectUrl = $location.search()['route'];
 				$location.path(redirectUrl);
 			});
 		});
 
-		REST.resource('Rbs_User_User', OAuthService.getUserId()).then(function (user) {
-			$rootScope.user = user;
-		});
+		function loadCurrentUser()
+		{
+			REST.call(REST.getBaseUrl('admin/currentUser/')).then(function (result) {
+				$rootScope.user = result.properties;
+			});
+		}
 
+		if ($location.path() !== '/login')
+		{
+			if (OAuthService.hasOAuthData())
+			{
+				loadCurrentUser();
+			}
+			else
+			{
+				var callbackUrl = document.getElementsByTagName('base')[0].href + 'login?route=' + $location.path();
+				OAuthService.startAuthentication(callbackUrl);
+			}
+		}
 	}]);
-
 
 	//=========================================================================
 

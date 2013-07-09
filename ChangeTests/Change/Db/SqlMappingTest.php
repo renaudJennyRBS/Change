@@ -119,6 +119,7 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('change_document_deleted', $sqlMapping->getDocumentDeletedTable());
 		$this->assertEquals('change_document_correction', $sqlMapping->getDocumentCorrectionTable());
 		$this->assertEquals('change_oauth', $sqlMapping->getOAuthTable());
+		$this->assertEquals('change_oauth_application', $sqlMapping->getOAuthApplicationTable());
 		$this->assertEquals('change_path_rule', $sqlMapping->getPathRuleTable());
 		$this->assertEquals('change_plugin', $sqlMapping->getPluginTableName());
 	}

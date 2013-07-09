@@ -1072,7 +1072,28 @@
 						return q.promise;
 					},
 
+					/**
+					 * @param url Full URL
+					 * @param params
+					 *
+					 * @returns Promise
+					 */
+					'call' : function (url, params) {
+						var	q = $q.defer();
 
+						$http.get(Utils.makeUrl(url, params), getHttpConfig())
+							.success(function restActionSuccessCallback (data) {
+								resolveQ(q, data);
+							})
+							.error(function restActionErrorCallback (data, status) {
+								data.httpStatus = status;
+								rejectQ(q, data);
+							});
+
+						digest();
+
+						return q.promise;
+					},
 
 					//
 					// Storage

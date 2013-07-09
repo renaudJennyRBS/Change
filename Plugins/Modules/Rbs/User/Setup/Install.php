@@ -49,7 +49,7 @@ class Install
 				/* @var $group \Rbs\User\Documents\Group */
 				$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group->setLabel('Backoffice');
-				$group->setRealm('rest');
+				$group->setRealm('Rbs_Admin');
 				$group->create();
 
 				/* @var $group2 \Rbs\User\Documents\Group */
