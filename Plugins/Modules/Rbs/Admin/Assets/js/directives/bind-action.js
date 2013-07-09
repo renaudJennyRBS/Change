@@ -38,6 +38,10 @@
 						}
 
 						actionObject = Actions.get(actionName);
+						if (!actionObject) {
+							console.log('[Rbs/Admin/Assets/js/directives/bind-action.js] ' + actionName + ' does not exist!');
+							return;
+						}
 
 						// Update UI
 						if (params.indexOf('icon') !== -1) {
