@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.admin" lcid="fr_FR">
+<i18n baseKey="m.rbs.admin" lcid="en_US">
 	<key id="properties">properties</key>
 	<key id="general-properties">general properties</key>
 	<key id="advanced-properties">advanced properties</key>
@@ -11,4 +11,21 @@
 
 	<key id="submit">submit</key>
 	<key id="cancel">cancel</key>
+
+	<key id="yes">yes</key>
+	<key id="no">no</key>
+
+	<key id="translate">translate...</key>
+	<key id="search-ellipsis">search...</key>
+	<key id="search">search</key>
+	<key id="this-document-exists-in-multiple-languages">this Document has multiple languages</key>
+
+	<!-- Corrections -->
+	<key id="correction">correction</key>
+	<key id="this-document-has-a-correction-on">this Document has a Correction on</key>
+	<key id="correction-editor-explanation" format="html"><![CDATA[The values diplayed in this editor are the values of the Correction, and the concerned properties are displayed with a color.<br/>To see more information about the modified properties, and the original values, use the <strong>Correction</strong> button below.]]></key>
+
+	<key id="admin-section-name">administration</key>
+
+	<key id="temporary-id">temporary ID</key>
 </i18n>
