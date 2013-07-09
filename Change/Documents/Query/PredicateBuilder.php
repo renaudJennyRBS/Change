@@ -381,43 +381,62 @@ class PredicateBuilder
 
 	/**
 	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
 	 * @throws \RuntimeException
 	 * @return InterfacePredicate
 	 */
-	public function published()
+	public function published($at = null, $to = null)
 	{
 		if (!$this->builder->getModel()->isPublishable())
 		{
 			throw new \RuntimeException('Model is not publishable: ' . $this->builder->getModel(), 999999);
 		}
 		$fb = $this->getFragmentBuilder();
-		$publicationDate = new \DateTime();
+
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
 
 		return $fb->logicAnd(
 			$this->eq('publicationStatus', \Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE),
-			$fb->logicOr($this->isNull('startPublication'), $this->lte('startPublication', $publicationDate)),
-			$fb->logicOr($this->isNull('endPublication'), $this->gt('endPublication', $publicationDate))
+			$fb->logicOr($this->isNull('startPublication'), $this->lte('startPublication', $at)),
+			$fb->logicOr($this->isNull('endPublication'), $this->gt('endPublication', $to))
 		);
 	}
 
 	/**
 	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
 	 * @throws \RuntimeException
 	 * @return InterfacePredicate
 	 */
-	public function notPublished()
+	public function notPublished($at = null, $to = null)
 	{
 		if (!$this->builder->getModel()->isPublishable())
 		{
 			throw new \RuntimeException('Model is not publishable: ' . $this->builder->getModel(), 999999);
 		}
 		$fb = $this->getFragmentBuilder();
-		$publicationDate = new \DateTime();
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
 
 		return $fb->logicOr(
 			$this->neq('publicationStatus', \Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE),
-			$fb->logicAnd($this->isNotNull('startPublication'), $this->gt('startPublication', $publicationDate)),
-			$fb->logicAnd($this->isNotNull('endPublication'), $this->lte('endPublication', $publicationDate))
+			$fb->logicAnd($this->isNotNull('startPublication'), $this->gt('startPublication', $at)),
+			$fb->logicAnd($this->isNotNull('endPublication'), $this->lte('endPublication', $to))
 		);
 	}
 

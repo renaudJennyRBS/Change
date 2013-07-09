@@ -297,4 +297,11 @@ class SQLFragmentBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getLeftHandExpression());
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Raw', $frag->getRightHandExpression());
 	}
+
+	public function testConcat()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->concat('a', $fb->column('b'));
+		$this->assertEquals('a || "b"', $frag->toSQL92String());
+	}
 }

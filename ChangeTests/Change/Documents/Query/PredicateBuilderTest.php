@@ -488,11 +488,12 @@ class PredicateBuilderTest extends TestCase
 	{
 		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 		$pb = $builder->getPredicateBuilder();
+		$str = 'Model is not publishable: Project_Tests_Basic';
 		try
 		{
-			$str = 'Model is not publishable: Project_Tests_Basic';
+
 			$builder->andPredicates($pb->published());
-			$this->fail($str);
+			$this->fail('Exception');
 		}
 		catch (\RuntimeException $e)
 		{
@@ -505,6 +506,23 @@ class PredicateBuilderTest extends TestCase
 		$ids = $builder->getDocuments()->ids();
 		$this->assertCount(1, $ids);
 		$this->assertContains(3001, $ids);
+	}
+
+	/**
+	 * @depends testInitializeDB
+	 */
+	public function testPublishedAt()
+	{
+		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Correction');
+		$pb = $builder->getPredicateBuilder();
+		$at = \DateTime::createFromFormat(\DateTime::ISO8601, '2013-07-04T15:04:08Z');
+		$to = \DateTime::createFromFormat(\DateTime::ISO8601, '2013-08-04T15:04:08Z');
+		$predicate = $pb->published($at, $to);
+		$builder->andPredicates($predicate);
+		$this->assertEquals('("_t0L"."publicationstatus" = :_p1 AND ("_t0L"."startpublication" IS NULL OR "_t0L"."startpublication" <= :_p2) AND ("_t0L"."endpublication" IS NULL OR "_t0L"."endpublication" > :_p3))', $predicate->toSQL92String());
+		$q = $builder->dbQueryBuilder()->query();
+		$this->assertEquals($at, $q->getParameterValue('_p2'));
+		$this->assertEquals($to, $q->getParameterValue('_p3'));
 	}
 
 	/**
