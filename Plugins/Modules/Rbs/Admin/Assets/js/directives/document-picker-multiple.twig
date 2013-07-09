@@ -2,33 +2,33 @@
 	<token-list items="documents" class="rows"></token-list>
 </div>
 
-<div class="muted" data-ng-show="! documents || documents.length == 0">Aucun élément</div>
+<div class="muted" data-ng-show="! documents || documents.length == 0">{{ i18n('m.rbs.admin.forms.picker-no-element', ['ucf']) }}</div>
 
 <div class="btn-toolbar">
 	<button
 		type="button"
 		class="btn"
 		data-ng-click="createDocument()"
-		title="Créer un nouveau document"><i class="icon-plus"></i></button>
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-create-tooltip', ['ucf']) }}"><i class="icon-plus"></i></button>
 	<button
 		type="button"
 		class="btn"
 		data-ng-click="clear()"
 		data-ng-disabled="isEmpty()"
-		title="Supprimer la sélection"><i class="icon-remove"></i></button>
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-delete-selection-tooltip', ['ucf']) }}"><i class="icon-remove"></i></button>
 
 	<div class="btn-group">
 		<button
 			type="button"
 			class="btn"
 			data-ng-click="openSelector()"
-			title="Choisir parmi des documents existants...">Choisir...</button>
+			title="{{ i18nAttr('m.rbs.admin.forms.picker-choose-tooltip', ['ucf', 'etc']) }}">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf', 'etc']) }}</button>
 		<button
 			type="button"
 			class="btn"
 			data-ng-click="getFromClipboard()"
 			data-ng-disabled="clipboardValues.length == 0"
-			title="Prendre dans le Presse-papier(=clipboardFirstLabel=)"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
+			title="{{ i18nAttr('m.rbs.admin.forms.picker-take-from-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
 	</div>
 </div>
 
