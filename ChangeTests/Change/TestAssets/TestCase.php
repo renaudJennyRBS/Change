@@ -180,7 +180,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	/**
 	 * Returns a new "loaded" instance of a document that can't be save in DB.
 	 *
-	 * @param strjng $modelName
+	 * @param string $modelName
 	 * @param integer $id
 	 * @return \Change\Documents\AbstractDocument
 	 */
