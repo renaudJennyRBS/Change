@@ -20,6 +20,7 @@
 		__columns = {},
 		__preview = {},
 		__gridItems = {},
+		__quickActions = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
 		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
@@ -51,6 +52,96 @@
 	function documentListDirectiveFn ($q, $filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events) {
 
 		/**
+		 * Build the HTML used in the "Quick actions" toolbar.
+		 * @param dlid
+		 * @param tAttrs
+		 * @returns {string}
+		 */
+		function buildQuickActionsHtml (dlid, tAttrs) {
+			var	actionDivider = '<span class="divider">|</span>',
+				html,
+				quickActionsHtml;
+
+			html = '<div class="quick-actions ' + (Device.isMultiTouch() ? 'quick-actions-touch' : 'quick-actions-mouse') + '">';
+
+			if (Device.isMultiTouch()) {
+				html += '<i class="icon-chevron-left handle-open"></i><i class="icon-chevron-right handle-close"></i> ';
+			}
+
+			function buildDefault () {
+				if (tAttrs.picker) {
+					return buildPreviewAction();
+				}
+				if (__preview[dlid]) {
+					return buildPreviewAction() + actionDivider + buildEditAction() + actionDivider + buildDeleteAction();
+				}
+				return buildEditAction() + actionDivider + buildDeleteAction();
+			}
+
+			function buildDeleteAction () {
+				return	'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
+							i18n.trans('m.rbs.admin.admin.js.delete') +
+						'</a>';
+			}
+
+			function buildEditAction () {
+				if (tAttrs.cascadeEdition) {
+					return	'<a href="javascript:;" ng-click="cascadeEdit(doc)">' +
+								i18n.trans('m.rbs.admin.admin.js.edit') +
+							'</a>';
+				} else {
+					return	'<a href ng-href="(= doc | documentURL =)">' +
+								i18n.trans('m.rbs.admin.admin.js.edit') +
+							'</a>';
+				}
+			}
+
+			function buildOtherAction (action) {
+				return	'<a href="javascript:;" ng-click="_executeAction(\'' + action.name + '\', doc, $event)">' +
+							action.label +
+						'</a>';
+			}
+
+			function buildPreviewAction () {
+				return '<a href="javascript:" ng-click="preview(doc)"> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
+			}
+
+			if (__quickActions[dlid]) {
+				if (__quickActions[dlid].divider) {
+					actionDivider = __quickActions[dlid].divider;
+				}
+				quickActionsHtml = __quickActions[dlid].contents;
+				quickActionsHtml = quickActionsHtml.replace(/\|\|/g, actionDivider).replace(/\[action\s+([A-Za-z0-9_\-]+)\]/g, function (match, actionName) {
+					if (actionName === 'delete') {
+						return buildDeleteAction();
+					}
+					if (actionName === 'preview') {
+						return buildPreviewAction();
+					}
+					if (actionName === 'edit') {
+						return buildEditAction();
+					}
+					if (actionName === 'default') {
+						return buildDefault();
+					}
+
+					var actionObject = Actions.get(actionName);
+					if (actionObject !== null) {
+						return buildOtherAction(actionObject);
+					}
+				});
+				html += quickActionsHtml;
+			} else {
+				html += buildDefault();
+			}
+
+			html += '</div>';
+
+			return html;
+		}
+
+
+		/**
 		 * Initialize columns for <rbs-document-list/>
 		 * @param dlid
 		 * @param tElement
@@ -59,7 +150,7 @@
 		 */
 		function initColumns (dlid, tElement, tAttrs) {
 			var	columns, undefinedColumnLabels = [], column,
-				$th, $td, $head, $body, html, p, td, actionsCount, actionDivider;
+				$th, $td, $head, $body, html, p, td;
 
 			columns = __columns[dlid];
 
@@ -247,50 +338,11 @@
 					});
 				}
 
+
 				// The primary column has extra links for preview, edit and delete.
-				actionsCount = 0;
-				actionDivider = '<span class="divider">|</span>';
 				if (column.primary) {
-					html = '<div class="quick-actions ' + (Device.isMultiTouch() ? 'quick-actions-touch' : 'quick-actions-mouse') + '">';
-
-					if (Device.isMultiTouch()) {
-						html += '<i class="icon-chevron-left handle-open"></i><i class="icon-chevron-right handle-close"></i> ';
-					}
-
-					if (__preview[dlid]) {
-						html += '<a href="javascript:" ng-click="preview(doc)"> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
-						actionsCount++;
-					}
-
-					if ( ! tAttrs.picker ) {
-						if (actionsCount) {
-							html += actionDivider;
-						}
-						if (tAttrs.cascadeEdition) {
-							html +=
-								'<a href="javascript:;" ng-click="cascadeEdit(doc)">' +
-									i18n.trans('m.rbs.admin.admin.js.edit') +
-								'</a>';
-						} else {
-							html +=
-								'<a href ng-href="(= doc | documentURL =)">' +
-									i18n.trans('m.rbs.admin.admin.js.edit') +
-								'</a>';
-						}
-						actionsCount++;
-
-						if (actionsCount) {
-							html += actionDivider;
-						}
-						html +=
-							'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
-							i18n.trans('m.rbs.admin.admin.js.delete') +
-							'</a>';
-					}
-					html += '</div>';
-
+					html = buildQuickActionsHtml(dlid, tAttrs);
 					testerEl.html(html);
-
 					$td.find('.primary-cell').prepend(html);
 
 					// Compute real width so that the CSS animation can work correctly when
@@ -518,12 +570,17 @@
 					}
 
 
-					scope.remove = function (doc, $event) {
-						Actions.execute("delete", {
+					scope._executeAction = function (actionName, doc, $event) {
+						return Actions.execute(actionName, {
 							'$docs'   : [ doc ],
 							'$target' : $event.target,
 							'$scope'  : scope
 						});
+					};
+
+
+					scope.remove = function (doc, $event) {
+						return scope._executeAction("delete", doc, $event);
 					};
 
 
@@ -1222,6 +1279,28 @@
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__preview[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
+
+			}
+		};
+
+	}]);
+
+
+	app.directive('quickActions', [function () {
+
+		return {
+			restrict : 'E',
+			require  : '^rbsDocumentList',
+
+			compile : function (tElement, tAttrs) {
+
+				var dlid;
+
+				dlid = tElement.parent().data('dlid');
+				if (!dlid) {
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
+				}
+				__quickActions[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
 
 			}
 		};
