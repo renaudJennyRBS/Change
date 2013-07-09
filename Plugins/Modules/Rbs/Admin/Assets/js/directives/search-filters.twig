@@ -82,10 +82,10 @@
 					<!-- Document -->
 
 					<div data-ng-switch-when="Document" ng-switch="applied.filter.selectorType" style="display:inline-block">
-						<model-select
+						<rbs-document-select
 								ng-switch-when="dropdown"
 								ng-model="applied.value"
-								change-model="(=applied.filter.documentType=)"></model-select>
+								model="(=applied.filter.documentType=)"></rbs-document-select>
 						<input
 								ng-switch-default=""
 								data-ng-model="applied.value"
