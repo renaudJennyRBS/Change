@@ -25,16 +25,16 @@
 	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
 	               publishable="true"
 	               model="{{ query.model }}"
-	               filter-query="query" picker="picker">
+	               filter-query="query" extend="picker">
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true">
 			{% if (query.multiple) %}
 			<span class="pull-right">
 				<!--TODO localization-->
-				<button type="button" class="btn btn-mini" ng-click="picker.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
+				<button type="button" class="btn btn-mini" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
 			</span>
 			{% endif %}
-			<a href="javascript:;" ng-click="picker.selectDocument(doc)">(=doc.label=)</a>
+			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
 		</column>
 		<preview>
 			<img rbs-storage-image="doc.visual.id" thumbnail="M" class="pull-left img-polaroid margin-right"/>

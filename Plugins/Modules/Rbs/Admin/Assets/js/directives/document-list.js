@@ -408,10 +408,10 @@
 			scope : {
 				'filterQuery' : '=',
 				'loadQuery' : '=',
-				'picker' : '=',
 				'onPreview' : '&',
 				'cascadeEdition' : '@',
-				'collectionUrl' : '@'
+				'collectionUrl' : '@',
+				'extend' : '='
 			},
 
 
