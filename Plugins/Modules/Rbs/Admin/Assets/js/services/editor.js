@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, Actions, Breadcrumb, REST, Events, Settings) {
+	function changeEditorServiceFn ($timeout, $rootScope, $location, $q, FormsManager, MainMenu, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter) {
 
 		// Used internally to store compiled informations in data attributes.
 		var FIELDS_DATA_KEY_NAME = 'chg-form-fields';
@@ -29,6 +29,13 @@
 				return;
 			}
 
+			scope.saveProgress = {
+				"running"   : false,
+				"error"     : false,
+				"success"   : false,
+				"operation" : null
+			};
+
 			FormsManager.startEditSession(scope.document);
 			scope.$on('$destroy', function () {
 				FormsManager.stopEditSession();
@@ -44,6 +51,7 @@
 			 */
 			scope.reset = function resetFn () {
 				scope.document = angular.copy(scope.original);
+				scope.saveProgress.error = false;
 			};
 
 			/**
@@ -135,12 +143,14 @@
 				// Broadcast an event before the document is saved.
 				// The "promises" array can be filled in with promises that will be resolved AFTER
 				// the document is saved.
+				saveOperation("Processing post-save Promises");
 				$rootScope.$broadcast(Events.EditorPostSave, {
 					"document" : scope.document,
 					"promises" : postSavePromises
 				});
 
 				function terminateSave () {
+					saveOperation("success");
 					if (FormsManager.isCascading()) {
 						console.log("isCascading: -> uncascade()");
 						FormsManager.uncascade(doc);
@@ -152,7 +162,6 @@
 					}
 				}
 
-				console.log("Post save promises: ", postSavePromises.length);
 				if (postSavePromises.length) {
 					$q.all(postSavePromises).then(terminateSave);
 				} else {
@@ -161,6 +170,8 @@
 			}
 
 			function saveErrorHandler (reason) {
+				saveOperation("error");
+
 				clearInvalidFields();
 				console.log(reason);
 				if (angular.isObject(reason) && angular.isObject(reason.data)) {
@@ -184,6 +195,29 @@
 				}
 			}
 
+			function saveOperation (op) {
+				switch (op) {
+				case 'error':
+					scope.saveProgress.running = false;
+					scope.saveProgress.error = true;
+					scope.saveProgress.operation = null;
+					scope.saveProgress.success = ! scope.saveProgress.error;
+					break;
+
+				case 'success':
+					scope.saveProgress.running = false;
+					scope.saveProgress.error = false;
+					scope.saveProgress.operation = null;
+					scope.saveProgress.success = ! scope.saveProgress.error;
+					break;
+
+				default :
+					scope.saveProgress.running = true;
+					scope.saveProgress.error = false;
+					scope.saveProgress.success = false;
+					scope.saveProgress.operation = op;
+				}
+			}
 
 			/**
 			 * Sends the changes to the server, via a POST (creation) or a PUT (update) request.
@@ -191,6 +225,7 @@
 			scope.submit = function submitFn () {
 
 				function executeSaveAction () {
+					saveOperation("Saving Document");
 					REST.save(
 						scope.document,
 						Breadcrumb.getCurrentNode(),
@@ -224,16 +259,19 @@
 					// Broadcast an event before the document is saved.
 					// The "promises" array can be filled in with promises that will be resolved BEFORE
 					// the document is saved.
+					saveOperation("Processing pre-save Promises");
 					$rootScope.$broadcast(Events.EditorPreSave, {
 						"document" : scope.document,
 						"promises" : preSavePromises
 					});
 
 					if (preSavePromises.length) {
-						console.log("PreSavePromises: ", preSavePromises.length);
-						$q.all(preSavePromises).then(executeSaveAction);
+						$q.all(preSavePromises).then(executeSaveAction, function (err) {
+							saveOperation("error");
+							console.warn("Editor: pre-save Promises error: ", err);
+							NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.save-error'), err);
+						});
 					} else {
-						console.log("No files to upload.");
 						executeSaveAction();
 					}
 				}
@@ -246,6 +284,7 @@
 				}
 
 				if (promise) {
+					saveOperation("Checking Correction");
 					promise.then(doSubmit);
 				} else {
 					doSubmit();
@@ -449,10 +488,6 @@
 						});
 					}
 
-					if (scope.original.model !== 'Rbs_Tag_Tag') {
-						scope.original.getTags();
-					}
-
 					if (angular.isFunction(callback)) {
 						// This callback can be used to initialize defaut values in the editor.
 						// It will be called only when the Breadcrumb is fully loaded.
@@ -480,11 +515,12 @@
 		'RbsChange.MainMenu',
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
-		'RbsChange.Actions',
+		'RbsChange.i18n',
 		'RbsChange.Breadcrumb',
 		'RbsChange.REST',
 		'RbsChange.Events',
-		'RbsChange.Settings'
+		'RbsChange.Settings',
+		'RbsChange.NotificationCenter'
 	];
 
 	app.service('RbsChange.Editor', changeEditorServiceFn);

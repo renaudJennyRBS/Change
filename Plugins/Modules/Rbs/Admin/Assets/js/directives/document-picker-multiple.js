@@ -132,6 +132,20 @@
 					$('#document-picker-backdrop').hide();
 				};
 
+				scope.selectDocument = function (doc) {
+					var value;
+					if (angular.isArray(ngModel.$viewValue)) {
+						if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+							value = ngModel.$viewValue;
+							value.push(doc);
+						}
+					} else {
+						value = [doc];
+					}
+					ngModel.$setViewValue(value);
+					ngModel.$render();
+				};
+
 				scope.appendSelected = function () {
 					var value, docs = documentList.selectedDocuments;
 					if (angular.isArray(ngModel.$viewValue)) {
