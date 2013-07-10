@@ -61,13 +61,24 @@ class CatalogResolver
 			$event->setAction($action);
 			return;
 		}
+		elseif (count($resourceParts) == 3)
+		{
+			if ($resourceParts[0] === 'category' && is_numeric($resourceParts[1]) && $resourceParts[2] === 'products')
+			{
+				// TODO list conditions
+			}
+			elseif ($resourceParts[0] === 'product' && is_numeric($resourceParts[1]) && $resourceParts[2] === 'categories')
+			{
+				// TODO list conditions
+			}
+		}
 		elseif (count($resourceParts) == 4)
 		{
-			if ($resourceParts[0] === 'category' && is_numeric($resourceParts[1]) && is_numeric($resourceParts[2]) &&
-				$resourceParts[3] === 'products')
+			if ($resourceParts[0] === 'category' && is_numeric($resourceParts[1]) &&
+				$resourceParts[2] === 'products' && is_numeric($resourceParts[3]))
 			{
 				$event->setParam('categoryId', intval($resourceParts[1]));
-				$event->setParam('conditionId', intval($resourceParts[2]));
+				$event->setParam('conditionId', intval($resourceParts[3]));
 				switch ($method)
 				{
 					case Request::METHOD_GET:
@@ -118,11 +129,11 @@ class CatalogResolver
 						break;
 				}
 			}
-			elseif ($resourceParts[0] === 'product' && is_numeric($resourceParts[1]) && is_numeric($resourceParts[2]) &&
-				$resourceParts[3] === 'categories')
+			elseif ($resourceParts[0] === 'product' && is_numeric($resourceParts[1]) &&
+				$resourceParts[2] === 'categories' && is_numeric($resourceParts[3]))
 			{
 				$event->setParam('productId', intval($resourceParts[1]));
-				$event->setParam('conditionId', intval($resourceParts[2]));
+				$event->setParam('conditionId', intval($resourceParts[3]));
 				switch ($method)
 				{
 					case Request::METHOD_GET:

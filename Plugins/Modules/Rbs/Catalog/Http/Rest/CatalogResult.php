@@ -16,8 +16,7 @@ class CatalogResult
 		/* @var $result \Change\Http\Rest\Result\DocumentResult */
 		$result = $event->getResult();
 		$id = $result->getProperties()['id'];
-		$condition = $result->getProperties()['condition'];
-		$path = 'catalog/category/' . $id . '/' . $condition . '/products';
+		$path = 'catalog/category/' . $id . '/products/';
 		$link = new \Change\Http\Rest\Result\Link($event->getUrlManager(), $path, 'products');
 		$result->addAction($link);
 	}
@@ -30,8 +29,7 @@ class CatalogResult
 		/* @var $result \Change\Http\Rest\Result\DocumentResult */
 		$result = $event->getResult();
 		$id = $result->getProperties()['id'];
-		$condition = $result->getProperties()['condition'];
-		$path = 'catalog/product/' . $id . '/' . $condition . '/categories';
+		$path = 'catalog/product/' . $id . '/categories/';
 		$link = new \Change\Http\Rest\Result\Link($event->getUrlManager(), $path, 'categories');
 		$result->addAction($link);
 	}

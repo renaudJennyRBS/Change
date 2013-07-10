@@ -83,10 +83,10 @@
 			REST.collection('Rbs_Catalog_Condition').then(function (conditions)
 			{
 				$scope.List.conditions = conditions.resources;
-				for (var i = 5; i > 0; i--)
+				/*for (var i = 5; i > 0; i--)
 				{
 					$scope.List.conditions.unshift({id: i, label: 'toto' + i});
-				}
+				}*/
 				$scope.List.conditions.unshift({id: 0, label: i18n.trans('m.rbs.catalog.admin.js.no-condition')});
 				if ($scope.List.conditions.length == 1)
 				{
@@ -106,7 +106,7 @@
 			var url = '';
 			if (newValue)
 			{
-				url = '/catalog/category/' + $scope.document.id + '/' + $scope.List.selectedCondition.id + '/products/';
+				url = '/catalog/category/' + $scope.document.id + '/products/' + $scope.List.selectedCondition.id + '/';
 			}
 			$scope.productListUrl = url;
 		});
@@ -114,7 +114,7 @@
 		$scope.addProducts = function (docIds)
 		{
 			var conditionId = $scope.List.selectedCondition.id;
-			var url = REST.getBaseUrl('catalog/category/' + $scope.document.id + '/' + conditionId + '/products/');
+			var url = REST.getBaseUrl('catalog/category/' + $scope.document.id + '/products/' + conditionId + '/');
 			$http.put(url, {"addProductIds": docIds, "priorities": 0}, REST.getHttpConfig())
 				.success(function (data)
 				{
@@ -127,6 +127,19 @@
 					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
 				});
 		};
+
+		$scope.canGoBack = function ()
+		{
+			// TODO
+			return true;
+		}
+
+		$scope.goBack = function ()
+		{
+			Workspace.expandLeftSidebar();
+			MainMenu.show();
+			Breadcrumb.goParent();
+		}
 	}
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
@@ -151,7 +164,7 @@
 						categoryIds.push($docs[i].id);
 					}
 					var conditionId = $scope.data.conditionId;
-					var url = REST.getBaseUrl('catalog/category/' + $scope.data.containerId + '/' + conditionId + '/products/');
+					var url = REST.getBaseUrl('catalog/category/' + $scope.data.containerId + '/products/' + conditionId + '/');
 					$http.put(url, {"removeProductIds": categoryIds}, REST.getHttpConfig())
 						.success(function (data) {
 							// TODO use data
