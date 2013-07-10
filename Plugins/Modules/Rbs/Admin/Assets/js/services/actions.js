@@ -1,5 +1,11 @@
 (function ($) {
 
+	"use strict";
+
+	// FIXME Localization
+
+	// FIXME Workflow actions names
+
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
@@ -57,12 +63,14 @@
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
 								Loading.stop();
+								// FIXME Localization
 								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
 							});
 						} else {
 							promise.then(function actionCallback () {
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
+								// FIXME Localization
 								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
 							});
 						}
@@ -340,6 +348,7 @@
 						// TODO
 						// If there are corrections and/or localizations, ask the user what should be deleted.
 
+						// FIXME Localization
 						message = "Vous êtes sur le point de supprimer " + $filter('documentListSummary')($docs) + ".";
 						if (correction) {
 							message += "<p>Certains documents ont des corrections en cours : seules les corrections seront supprimées.</p>";

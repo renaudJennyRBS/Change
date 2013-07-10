@@ -6,7 +6,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('documentPickerMultiple', ['RbsChange.Modules', 'RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$filter', 'RbsChange.ArrayUtils', function (Modules, Clipboard, FormsManager, Breadcrumb, MainMenu, $filter, ArrayUtils) {
+	app.directive('documentPickerMultiple', ['RbsChange.Modules', 'RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$filter', 'RbsChange.ArrayUtils', '$compile', '$http', function (Modules, Clipboard, FormsManager, Breadcrumb, MainMenu, $filter, ArrayUtils, $compile, $http) {
 
 		return {
 			restrict    : 'EAC',
@@ -18,6 +18,9 @@
 			// Initialisation du scope (logique du composant)
 			link: function (scope, elm, attrs, ngModel) {
 
+				var	$el = $(elm),
+					documentList;
+
 				ngModel.$render = function() {
 					scope.documents = ngModel.$viewValue;
 				};
@@ -26,14 +29,10 @@
 
 				scope.allowCreation = attrs.allowCreation;
 				scope.allowEdition = attrs.allowEdition;
-
-
-				function getFormModel () {
-					return attrs.acceptedModel;
-				}
+				scope.acceptedModel = attrs.acceptedModel;
 
 				function getFormUrl () {
-					return getFormModel().replace(/_/g, '/') + '/form.twig';
+					return attrs.acceptedModel.replace(/_/g, '/') + '/form.twig';
 				}
 
 				function getCreateLabel () {
@@ -74,47 +73,67 @@
 
 				// Selection
 
-				scope.$watch('documentPickerUrl', function () {
-					if (scope.documentPickerUrl) {
-						$('#document-picker-backdrop').show();
-					} else {
-						$('#document-picker-backdrop').hide();
-					}
-				});
+				var	$picker = $el.find('.document-picker-embedded'),
+					$pickerContents = $picker.find('[data-role="picker-contents"]');
 
 				scope.openSelector = function () {
 					Breadcrumb.freeze();
 					MainMenu.freeze();
 					scope.selectorTitle = attrs.selectorTitle;
+
+					var url;
 					if (attrs.picker === 'model') {
-						scope.documentPickerUrl = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?multiple=true&model=' + attrs.acceptedModel;
+						url = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?model=' + attrs.acceptedModel;
 					} else {
-						scope.documentPickerUrl = 'Rbs/Admin/document-picker-list.twig?multiple=true&model=' + attrs.acceptedModel;
+						url = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
 					}
+
+					$http.get(url).success(function (html) {
+						var $html = $(html);
+						if ($html.is('rbs-document-list')) {
+							$html.attr('actions', '');
+						} else {
+							$html.find('rbs-document-list').attr('actions', '');
+							documentList = angular.element($html.find('rbs-document-list').first()).scope();
+						}
+
+						if ($html.find('quick-actions').length) {
+							$html.find('quick-actions').empty();
+						} else {
+							$html.append(
+								'<quick-actions>' +
+									'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> tout remplacer par cet élément</a>' +
+								'</quick-actions>'
+							);
+						}
+
+						$pickerContents.empty().append($html);
+						$compile($html)(scope);
+						$('#document-picker-backdrop').show();
+						$picker.show();
+
+						if ($html.is('rbs-document-list')) {
+							documentList = angular.element($html).scope();
+						} else {
+							documentList = angular.element($html.find('rbs-document-list').first()).scope();
+						}
+
+					}).error(function (data) {
+							$('#document-picker-backdrop').show();
+							$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
+							$picker.show();
+						});
 				};
 
 				scope.closeSelector = function () {
 					Breadcrumb.unfreeze();
 					MainMenu.unfreeze();
-					scope.documentPickerUrl = null;
+					$picker.hide();
+					$('#document-picker-backdrop').hide();
 				};
 
-				scope.selectDocument = function (doc) {
-					var value;
-					if (angular.isArray(ngModel.$viewValue)) {
-						if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
-							value = ngModel.$viewValue;
-							value.push(doc);
-						}
-					} else {
-						value = [doc];
-					}
-					ngModel.$setViewValue(value);
-					ngModel.$render();
-				};
-
-				scope.selectDocuments = function (docs) {
-					var value;
+				scope.appendSelected = function () {
+					var value, docs = documentList.selectedDocuments;
 					if (angular.isArray(ngModel.$viewValue)) {
 						value = ngModel.$viewValue;
 						angular.forEach(docs, function (doc) {
@@ -129,28 +148,38 @@
 					ngModel.$render();
 				};
 
-				scope.replaceWithDocument = function (doc) {
-					ngModel.$setViewValue([doc]);
+				scope.prependSelected = function () {
+					var value, docs = documentList.selectedDocuments;
+					if (angular.isArray(ngModel.$viewValue)) {
+						value = ngModel.$viewValue;
+						angular.forEach(docs, function (doc) {
+							if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+								value.unshift(doc);
+							}
+						});
+						ngModel.$setViewValue(value);
+					} else {
+						ngModel.$setViewValue(docs);
+					}
 					ngModel.$render();
 				};
 
-				scope.replaceWithDocuments = function (docs) {
-					ngModel.$setViewValue(docs);
+				scope.replaceWithSelected = function () {
+					ngModel.$setViewValue(documentList.selectedDocuments);
 					ngModel.$render();
 				};
 
 				scope.picker = {
-					"replaceWithDocuments" : function (d) {
-						scope.replaceWithDocuments(d);
+					"replaceWithDocument" : function (doc) {
+						ngModel.$setViewValue([doc]);
+						ngModel.$render();
 					},
-					"replaceWithDocument" : function (d) {
-						scope.replaceWithDocument(d);
-					},
-					"selectDocument" : function (d) {
-						scope.selectDocument(d);
-					},
-					"selectDocuments" : function (d) {
-						scope.selectDocuments(d);
+					"selectDocument" : function (doc) {
+						if (doc.selected === undefined) {
+							doc.selected = true;
+						} else {
+							doc.selected = ! doc.selected;
+						}
 					}
 				};
 

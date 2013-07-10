@@ -6,7 +6,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, FormsManager, Breadcrumb, MainMenu, Utils, REST, $filter) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
 		return {
 
 			restrict    : 'EAC',
@@ -31,6 +31,7 @@
 
 				scope.allowCreation = attrs.allowCreation;
 				scope.allowEdition = attrs.allowEdition;
+				scope.acceptedModel = attrs.acceptedModel;
 
 
 				function getFormModel () {
@@ -110,29 +111,52 @@
 
 				// Selection
 
-				scope.$watch('documentPickerUrl', function () {
-					if (scope.documentPickerUrl) {
-						$('#document-picker-backdrop').show();
-					} else {
-						$('#document-picker-backdrop').hide();
-					}
-				});
+				var	$picker = $el.find('.document-picker-embedded'),
+					$pickerContents = $picker.find('[data-role="picker-contents"]');
 
 				scope.openSelector = function () {
 					Breadcrumb.freeze();
 					MainMenu.freeze();
 					scope.selectorTitle = attrs.selectorTitle;
+
+					var url;
 					if (attrs.picker === 'model') {
-						scope.documentPickerUrl = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?model=' + attrs.acceptedModel;
+						url = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?model=' + attrs.acceptedModel;
 					} else {
-						scope.documentPickerUrl = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
+						url = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
 					}
+
+					$http.get(url).success(function (html) {
+						var $html = $(html);
+						if ($html.is('rbs-document-list')) {
+							$html.attr('actions', '');
+							$html.attr('selectable', 'false');
+						} else {
+							$html.find('rbs-document-list').attr('actions', '');
+						}
+
+						if ($html.find('quick-actions').length) {
+							$html.find('quick-actions').empty();
+						} else {
+							$html.append('<quick-actions></quick-actions>');
+						}
+
+						$pickerContents.empty().append($html);
+						$compile($html)(scope);
+						$('#document-picker-backdrop').show();
+						$picker.show();
+					}).error(function (data) {
+						$('#document-picker-backdrop').show();
+						$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
+						$picker.show();
+					});
 				};
 
 				scope.closeSelector = function () {
 					Breadcrumb.unfreeze();
 					MainMenu.unfreeze();
-					scope.documentPickerUrl = null;
+					$picker.hide();
+					$('#document-picker-backdrop').hide();
 				};
 
 				scope.selectDocument = function (document) {
