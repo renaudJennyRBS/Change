@@ -1,7 +1,6 @@
 <div>
 
 	<header class="clearfix">
-		<button data-ng-click="closeSelector()" class="close pull-right" style="margin-left:30px;" type="button" auto-focus>×</button>
 		<h3>(=selectorTitle=)</h3>
 	</header>
 
@@ -34,5 +33,9 @@
 			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
 		</column>
 	</rbs-document-list>
+
+	<div class="btn-toolbar">
+		<button ng-click="closeSelector()" type="button">Fermer</button>
+	</div>
 
 </div>

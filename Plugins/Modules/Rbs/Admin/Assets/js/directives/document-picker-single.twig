@@ -35,4 +35,26 @@
 		title="{{ i18nAttr('m.rbs.admin.forms.picker-take-from-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
 </div>
 
-<div class="document-picker-embedded" data-ng-show="documentPickerUrl" data-ng-include="documentPickerUrl"></div>
+<div class="document-picker-embedded" style="display: none;">
+	<header class="clearfix">
+		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
+			<div class="input-append">
+				<!--TODO localization-->
+				<input type="text" class="input-medium search-query" placeholder="Rechercher..." data-ng-model="search"/>
+				<button type="submit" class="btn" title="Rechercher">
+					<i class="icon-search"></i>
+				</button>
+			</div>
+			<button ng-click="closeSelector()" type="button" class="close" style="margin-left: 10px; margin-top: 4px;">&times;</button>
+		</form>
+		<h3>(=selectorTitle=)</h3>
+	</header>
+
+	<search-filters model="(= acceptedModel =)" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div data-role="picker-contents"></div>
+
+	<div class="btn-toolbar clearfix">
+		<button ng-click="closeSelector()" type="button" class="btn btn-success pull-right">Fermer</button>
+	</div>
+</div>

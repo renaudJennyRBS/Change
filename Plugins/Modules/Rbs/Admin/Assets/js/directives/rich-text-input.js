@@ -401,11 +401,11 @@
 				'<div class="inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
 					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" picker="picker">' +
+					'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
 						'<column name="path" thumbnail="XS"></column>' +
 						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
 							'<img rbs-storage-image="doc.path" thumbnail="XS"/>' +
-							'<a style="display:block" href="javascript:;" ng-click="picker.insertMedia(doc, $event)">(= doc.label =)</a>' +
+							'<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>' +
 						'</grid-item>' +
 					'</rbs-document-list>' +
 				'</div>'
@@ -426,9 +426,9 @@
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
 					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
 					'<select ng-options="model.name as model.label group by model.plugin for model in models" ng-model="selectedModel"></select>' +
-					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="Change_Document" collection-url="(=collectionUrl=)" toolbar="false" picker="picker">' +
+					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="Change_Document" collection-url="(=collectionUrl=)" toolbar="false" extend="picker">' +
 						'<column name="label" label="Label">' +
-							'<a href="javascript:;" ng-click="picker.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
+							'<a href="javascript:;" ng-click="extend.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
 						'</column>' +
 					'</rbs-document-list>' +
 				'</div>',

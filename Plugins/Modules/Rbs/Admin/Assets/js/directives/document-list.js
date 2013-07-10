@@ -69,9 +69,6 @@
 			}
 
 			function buildDefault () {
-				if (tAttrs.picker) {
-					return buildPreviewAction();
-				}
 				if (__preview[dlid]) {
 					return buildPreviewAction() + actionDivider + buildEditAction() + actionDivider + buildDeleteAction();
 				}
@@ -111,7 +108,10 @@
 					actionDivider = __quickActions[dlid].divider;
 				}
 				quickActionsHtml = __quickActions[dlid].contents;
-				quickActionsHtml = quickActionsHtml.replace(/\|\|/g, actionDivider).replace(/\[action\s+([A-Za-z0-9_\-]+)\]/g, function (match, actionName) {
+				if (! quickActionsHtml.length) {
+					return null;
+				}
+				quickActionsHtml = quickActionsHtml.replace(/\s*\|\|\s*/g, actionDivider).replace(/\[action\s+([A-Za-z0-9_\-]+)\]/g, function (match, actionName) {
 					if (actionName === 'delete') {
 						return buildDeleteAction();
 					}
@@ -148,9 +148,10 @@
 		 * @param tAttrs
 		 * @returns {Array}
 		 */
-		function initColumns (dlid, tElement, tAttrs) {
-			var	columns, undefinedColumnLabels = [], column,
-				$th, $td, $head, $body, html, p, td;
+		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels) {
+			var	columns, column,
+				$th, $td, $head, $body, html, p, td,
+				result = {};
 
 			columns = __columns[dlid];
 
@@ -263,7 +264,7 @@
 
 				}
 
-				tElement.data('columns')[column.name] = column;
+				result[column.name] = column;
 
 				// Check if the label has been provided or not.
 				// If one at least label has not been provided, the Model's information will be
@@ -342,13 +343,15 @@
 				// The primary column has extra links for preview, edit and delete.
 				if (column.primary) {
 					html = buildQuickActionsHtml(dlid, tAttrs);
-					testerEl.html(html);
-					$td.find('.primary-cell').prepend(html);
+					if (html !== null) {
+						testerEl.html(html);
+						$td.find('.primary-cell').prepend(html);
 
-					// Compute real width so that the CSS animation can work correctly when
-					// opening this menu.
-					// (see showQuickActions() below, in the directive's linking function).
-					$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
+						// Compute real width so that the CSS animation can work correctly when
+						// opening this menu.
+						// (see showQuickActions() below, in the directive's linking function).
+						$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
+					}
 				}
 
 				$td.attr('ng-if', "! isPreview(doc)");
@@ -362,7 +365,7 @@
 
 			delete __columns[dlid];
 
-			return undefinedColumnLabels;
+			return result;
 		}
 
 
@@ -421,14 +424,16 @@
 			 */
 			compile : function (tElement, tAttrs) {
 
-				var	dlid, undefinedColumnLabels, gridModeAvailable;
+				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columns;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
-				undefinedColumnLabels = initColumns(dlid, tElement, tAttrs);
+				console.log("rbs-document-list: compile: ", dlid);
+
+				columns = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels);
 
 				gridModeAvailable = initGrid(dlid, tElement);
 
@@ -445,7 +450,7 @@
 					} else {
 						scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
 					}
-					scope.columns = elm.data('columns');
+					scope.columns = columns;
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
@@ -555,7 +560,7 @@
 
 
 					scope.hasColumn = function (columnName) {
-						return angular.isObject(elm.data('columns')[columnName]);
+						return angular.isObject(scope.columns[columnName]);
 					};
 
 
@@ -1237,6 +1242,7 @@
 					__columns[dlid] = [];
 				}
 				__columns[dlid].push(tAttrs);
+				console.log('__columns['+dlid+']', __columns[dlid]);
 
 			}
 		};
