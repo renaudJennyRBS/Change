@@ -65,7 +65,7 @@
 						categoryIds.push($docs[i].id);
 					}
 					var conditionId = $scope.data.conditionId;
-					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/' + conditionId + '/categories/');
+					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/categories/' + conditionId + '/');
 					$http.put(url, {"removeCategoryIds": categoryIds}, REST.getHttpConfig())
 						.success(function (data) {
 							// TODO use data

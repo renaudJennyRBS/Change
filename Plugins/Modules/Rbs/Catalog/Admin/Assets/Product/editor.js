@@ -51,7 +51,7 @@
 						var url = '';
 						if (newValue)
 						{
-							url = '/catalog/product/' + scope.document.id + '/' + scope.List.selectedCondition.id + '/categories/';
+							url = '/catalog/product/' + scope.document.id + '/categories/' + scope.List.selectedCondition.id + '/';
 						}
 						scope.categoryListUrl = url;
 					});
@@ -59,7 +59,7 @@
 					scope.addInCategories = function (docIds)
 					{
 						var conditionId = scope.List.selectedCondition.id;
-						var url = REST.getBaseUrl('catalog/product/' + scope.document.id + '/' + conditionId + '/categories/');
+						var url = REST.getBaseUrl('catalog/product/' + scope.document.id + '/categories/' + conditionId + '/');
 						$http.put(url, {"addCategoryIds": docIds, "priorities": 0}, REST.getHttpConfig())
 							.success(function (data)
 							{

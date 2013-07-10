@@ -87,4 +87,10 @@
 			field-label="{{ i18n('m.rbs.catalog.document.category.products', ['ucf']) }}">
 		</div>
 	</div>
+
+	<div class="form-actions">
+		<button disabled="disabled" class="btn btn-headline" type="button" data-ng-click="goBack($event)" data-ng-disabled="!canGoBack()">
+			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}
+		</button>
+	</div>
 </form>
