@@ -24,6 +24,11 @@ class Information
 	protected $parametersInformation = array();
 
 	/**
+	 * @var string[]
+	 */
+	protected $functions = array();
+
+	/**
 	 * @param string $name
 	 */
 	function __construct($name)
@@ -49,11 +54,35 @@ class Information
 
 	/**
 	 * @param string $label
+	 * @return $this
 	 */
 	public function setLabel($label)
 	{
 		$this->label = $label;
+		return $this;
 	}
+
+	/**
+	 * @param string[]|string $functions
+	 * @return $this
+	 */
+	public function setFunctions($functions)
+	{
+		if (\Zend\Stdlib\ArrayUtils::isHashTable($functions))
+		{
+			$this->functions = $functions;
+		}
+		return $this;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getFunctions()
+	{
+		return $this->functions;
+	}
+
 
 	/**
 	 * @param string $name
@@ -128,7 +157,7 @@ class Information
 	 */
 	public function toArray()
 	{
-		$array = array('name' => $this->getName(), 'label' => $this->getLabel());
+		$array = array('name' => $this->getName(), 'label' => $this->getLabel(), 'functions' => $this->getFunctions());
 		$parameters = array();
 		foreach($this->getParametersInformation() as $parameterInformation)
 		{
