@@ -381,27 +381,6 @@
 				parentPropertyName = propertyName;
 			};
 
-
-			//
-			// Sections initialization
-			// Implement the initSection() in your Editor's scope to initialize the section given as argument.
-			// initSection() will be called only once for each section, when the user switches to it.
-			//
-
-			var initializedSections = {};
-			function initSectionIfNeeded (section) {
-				if (angular.isFunction(scope.initSection) && !initializedSections[section]) {
-					scope.initSection(section);
-					initializedSections[section] = true;
-				}
-			}
-
-			scope.$watch('section', function (section) {
-				if (section !== undefined && section !== null) {
-					initSectionIfNeeded(section);
-				}
-			});
-
 			scope._isPrepared = true;
 
 		}
@@ -513,6 +492,30 @@
 						// It will be called only when the Breadcrumb is fully loaded.
 						Breadcrumb.ready().then(function () {
 							callback.apply(scope);
+
+
+							//
+							// Sections initialization
+							// Implement the initSection() in your Editor's scope to initialize the section given as argument.
+							// initSection() will be called only once for each section, when the user switches to it.
+							//
+
+							var initializedSections = {};
+							function initSectionIfNeeded (section) {
+								if (angular.isFunction(scope.initSection) && !initializedSections[section]) {
+									scope.initSection(section);
+									initializedSections[section] = true;
+								}
+							}
+
+							scope.$watch('section', function (section) {
+								if (section !== undefined && section !== null) {
+									initSectionIfNeeded(section);
+								}
+							});
+
+
+
 							$rootScope.$broadcast(Events.EditorReady, {
 								"scope"    : scope,
 								"document" : scope.document
