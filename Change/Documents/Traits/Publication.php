@@ -100,7 +100,7 @@ trait Publication
 		{
 			throw new \RuntimeException('Invalid Publication status', 55000);
 		}
-		$this->setPublicationStatus(Publishable::STATUS_DEACTIVATED);
+		$this->setPublicationStatus(Publishable::STATUS_FROZEN);
 		$this->update();
 	}
 
@@ -110,7 +110,7 @@ trait Publication
 	 */
 	public function canActivate()
 	{
-		return ($this->getPublicationStatus() == Publishable::STATUS_DEACTIVATED);
+		return ($this->getPublicationStatus() == Publishable::STATUS_FROZEN);
 	}
 
 	/**

@@ -60,7 +60,7 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $u \Rbs\User\Documents\User */
 		$u = $event->getParam('user');
-		$this->assertInstanceOf('\Rbs\User\Documents\User', $u);
+		$this->assertInstanceOf('\Change\User\UserInterface', $u);
 		$this->assertEquals($user->getId(), $u->getId());
 
 

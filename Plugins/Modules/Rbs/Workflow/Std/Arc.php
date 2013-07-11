@@ -143,6 +143,14 @@ class Arc implements \Change\Workflow\Interfaces\Arc
 	public function setPreCondition($preCondition)
 	{
 		$this->preCondition = $preCondition;
+		if ($preCondition === null && $this->type === static::TYPE_EXPLICIT_OR_SPLIT)
+		{
+			$this->type = static::TYPE_SEQ;
+		}
+		elseif ($preCondition !== null && $this->type === static::TYPE_SEQ)
+		{
+			$this->type = static::TYPE_EXPLICIT_OR_SPLIT;
+		}
 		return $this;
 	}
 

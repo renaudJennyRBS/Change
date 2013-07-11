@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
@@ -56,6 +57,15 @@ class CreateDocument
 			$document->initialize($documentId);
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
+		if ($document instanceof Editable)
+		{
+			if (!isset($properties['authorId']) || intval($properties['authorId']) === 0)
+			{
+				$user = $event->getAuthenticationManager()->getCurrentUser();
+				$properties['authorId'] = $user->getId();
+				$properties['authorName'] = $user->getName();
+			}
+		}
 
 		if ($document instanceof Localizable)
 		{

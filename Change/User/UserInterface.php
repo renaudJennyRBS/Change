@@ -20,4 +20,9 @@ interface UserInterface
 	 * @return \Change\User\GroupInterface[]
 	 */
 	public function getGroups();
+
+	/**
+	 * @return boolean
+	 */
+	public function authenticated();
 }

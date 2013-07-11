@@ -16,7 +16,6 @@ class Engine
 	 */
 	protected $workflowInstance;
 
-
 	/**
 	 * @param Interfaces\WorkflowInstance $workflowInstance
 	 * @param \DateTime $dateTime
@@ -158,6 +157,43 @@ class Engine
 			$workItem->cancel($this->dateTime);
 			$this->workflowInstance->cancel($this->dateTime);
 		}
+	}
+
+	/**
+	 * @api
+	 * @param Interfaces\WorkItem $workItem
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @throws \RuntimeException
+	 * @return boolean
+	 */
+	public function executeWorkItemTask(Interfaces\WorkItem $workItem, \Change\Documents\DocumentServices $documentServices)
+	{
+		if ($this->workflowInstance !== $workItem->getWorkflowInstance())
+		{
+			throw new \RuntimeException('Invalid WorkItem Workflow Instance', 999999);
+		}
+
+		$applicationServices = $documentServices->getApplicationServices();
+		$application = $applicationServices->getApplication();
+		$taskCode = $workItem->getTransition()->getTaskCode();
+		try
+		{
+			$sharedEventManager = $application->getSharedEventManager();
+			$evtManager = new \Zend\EventManager\EventManager('Workflow.Task');
+			$startTask = $this->workflowInstance->getWorkflow()->startTask();
+			$classes = $application->getConfiguration()->getEntry('Change/Events/Workflow/' . $startTask, array());
+			$sharedEventManager->registerListenerAggregateClassNames($evtManager, $classes);
+			$args = array('workItem' => $workItem, 'documentServices' => $documentServices);
+			$evtManager->trigger($taskCode, $this->workflowInstance, $args);
+		}
+		catch (\Exception $e)
+		{
+			$applicationServices->getLogging()->exception($e);
+			$ctx = $this->workflowInstance->getContext();
+			$ctx[Interfaces\WorkItem::EXCEPTION_CONTEXT_KEY] = $taskCode . ' ('. $workItem->getTaskId() .') -> '. $e->getMessage();
+			return false;
+		}
+		return true;
 	}
 
 	/**

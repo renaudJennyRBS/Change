@@ -182,4 +182,13 @@ class SqlMapping
 	{
 		return 'change_job';
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getPermissionRuleTable()
+	{
+		return 'change_permission_rule';
+	}
 }

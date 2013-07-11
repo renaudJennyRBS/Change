@@ -50,15 +50,15 @@ class AuthenticationManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testCurrentUser()
 	{
 		$am = $this->getAuthenticationManager();
-
-		$this->assertNull($am->getCurrentUser());
+		$this->assertInstanceOf('\Change\User\AnonymousUser', $am->getCurrentUser());
+		$this->assertFalse($am->getCurrentUser()->authenticated());
 		$u = new User_2124512348();
 		$am->setCurrentUser($u);
 
 		$this->assertSame($u, $am->getCurrentUser());
 
 		$am->setCurrentUser(null);
-		$this->assertNull($am->getCurrentUser());
+		$this->assertInstanceOf('\Change\User\AnonymousUser', $am->getCurrentUser());
 	}
 }
 
@@ -87,5 +87,13 @@ class User_2124512348 implements UserInterface
 	public function getGroups()
 	{
 		return array();
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function authenticated()
+	{
+		return true;
 	}
 }

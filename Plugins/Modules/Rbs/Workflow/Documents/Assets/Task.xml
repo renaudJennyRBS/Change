@@ -12,9 +12,15 @@
 			<dboptions length="100" />
 		</property>
 		<property name="document" type="Document" />
+		<property name="documentLCID" type="String">
+			<dboptions length="5" />
+		</property>
 		<property name="context" type="JSON" />
 		<property name="user" type="Document" document-type="Rbs_User_User" />
 		<property name="role"  type="String" >
+			<dboptions length="100" />
+		</property>
+		<property name="privilege" type="String">
 			<dboptions length="100" />
 		</property>
 		<property name="deadLine" type="DateTime" />

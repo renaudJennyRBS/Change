@@ -8,11 +8,12 @@ use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\CollectionResult;
+use Change\Http\Rest\Result\DocumentActionLink;
+use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\Link;
 use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentActionLink;
-use Change\Http\Rest\Result\Link;
+
 /**
  * @name \Change\Http\Rest\Actions\GetDocumentModelCollection
  */
@@ -80,7 +81,6 @@ class GetDocumentModelCollection
 		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);
 
-
 		if ($model->isStateless())
 		{
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
@@ -95,7 +95,7 @@ class GetDocumentModelCollection
 		$table = $fb->getDocumentTable($model->getRootName());
 
 		$qb->select()->addColumn($fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count'))
-				->from($table);
+			->from($table);
 
 		if ($model->hasDescendants())
 		{
@@ -106,7 +106,7 @@ class GetDocumentModelCollection
 			$qb->where($fb->eq($fb->getDocumentColumn('model'), $fb->string($model->getName())));
 		}
 
-		$sc	= $qb->query();
+		$sc = $qb->query();
 		$row = $sc->getFirstResult();
 		if ($row && $row['count'])
 		{
@@ -208,9 +208,12 @@ class GetDocumentModelCollection
 	 * @param array $extraColumn
 	 * @return DocumentLink
 	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
+	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager,
+		$extraColumn)
 	{
 		$dm = $document->getDocumentServices()->getDocumentManager();
+		$eventManager = $document->getEventManager();
+
 		if ($documentLink->getLCID())
 		{
 			$dm->pushLCID($documentLink->getLCID());
@@ -260,10 +263,15 @@ class GetDocumentModelCollection
 			}
 		}
 
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document,
+			array('restResult' => $documentLink, 'extraColumn' => $extraColumn));
+		$eventManager->trigger($documentEvent);
+
 		if ($documentLink->getLCID())
 		{
 			$dm->popLCID();
 		}
+
 		return $documentLink;
 	}
 }

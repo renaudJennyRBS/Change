@@ -4,11 +4,9 @@ namespace Rbs\User\Documents;
 use Change\Stdlib\String;
 
 /**
- * Class User
- * @package Rbs\User\Documents
  * @name \Rbs\User\Documents\User
  */
-class User extends \Compilation\Rbs\User\Documents\User implements \Change\User\UserInterface
+class User extends \Compilation\Rbs\User\Documents\User
 {
 	/**
 	 * @return string
@@ -169,13 +167,5 @@ class User extends \Compilation\Rbs\User\Documents\User implements \Change\User\
 		{
 			$this->setPasswordHash($this->hashPassword($this->password));
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->getLabel();
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentLink;
@@ -17,6 +18,7 @@ class CreateLocalizedDocument
 	 * Use Required Event Params: documentId, modelName
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
@@ -86,6 +88,15 @@ class CreateLocalizedDocument
 			$documentManager->pushLCID($LCID);
 			if ($document->getCurrentLocalization()->isNew())
 			{
+				if ($document instanceof Editable)
+				{
+					if (!isset($properties['authorId']) || intval($properties['authorId']) === 0)
+					{
+						$user = $event->getAuthenticationManager()->getCurrentUser();
+						$properties['authorId'] = $user->getId();
+						$properties['authorName'] = $user->getName();
+					}
+				}
 				$event->setParam('LCID', $LCID);
 				$this->create($event, $document, $properties);
 			}
