@@ -275,12 +275,13 @@
 
 				// Create header cell
 				if (column.name === 'selectable') {
-					$th = $('<th ng-if="!isSortable(\'' + column.name + '\')">' + column.label + '</th>');
+					$th = $('<th>' + column.label + '</th>');
 				} else {
 					$th = $(
 						'<th ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}" ng-if="isSortable(\'' + column.name + '\')">' +
 							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>' +
-							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-show="isSortedOn(\'' + column.name + '\')"></i>' +
+							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-if="isSortedOn(\'' + column.name + '\')"></i>' +
+							'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.name + '\')"></i>' +
 						'</th>' +
 						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</th>'
 					);
@@ -431,8 +432,6 @@
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
-				console.log("rbs-document-list: compile: ", dlid);
-
 				columns = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels);
 
 				gridModeAvailable = initGrid(dlid, tElement);
@@ -476,13 +475,13 @@
 									scope.columns[columnName].label = modelInfo.properties[columnName].label;
 								}
 								else {
-									console.log('[Rbs/Admin/Assets/js/directives/document-list.js] ' + columnName + ' does not exist in model infos properties!');
+									console.warn('[Rbs/Admin/Assets/js/directives/document-list.js] ' + columnName + ' does not exist in model infos properties!');
 								}
 							});
 						});
 					}
 
-					// The list listens to this event: 'Change:DocumentList:' + dlid + ':call'
+					// The list listens to this event: 'Change:DocumentList:<dlid>:call'
 					var self = this;
 					scope.$on('Change:DocumentList:' + dlid + ':call', function (event, args) {
 						if (angular.isFunction(scope[args.method])) {
@@ -796,27 +795,23 @@
 					}
 
 					function getDefaultSortColumn () {
-						var defaultSortColumn = attrs.defaultSortColumn, i, c;
-						for (i=0 ; i<columnNames.length && !defaultSortColumn; i++) {
-							c = columnNames[i];
-							if (c !== 'publicationStatus' && c !== 'selectable') {
-								defaultSortColumn = c;
-							}
-						}
-						return defaultSortColumn;
+						return attrs.defaultSortColumn || 'modificationDate';
+					}
+
+					function getDefaultSortDir () {
+						return attrs.defaultSortDir || 'desc';
 					}
 
 					scope.sort =  {
 						'column'     : getDefaultSortColumn(),
-						'descending' : false
+						'descending' : getDefaultSortDir() === 'desc'
 					};
-
 
 					scope.headerUrl = function (sortProperty) {
 						var search = angular.copy($location.search());
 						search.sort = sortProperty;
-						if (this.sort.column === sortProperty) {
-							search.desc = ! this.sort.descending;
+						if (scope.sort.column === sortProperty) {
+							search.desc = ! scope.sort.descending;
 						} else {
 							search.desc = false;
 						}
@@ -981,16 +976,15 @@
 						if (search.sort) {
 							sortChanged = scope.sort.column !== search.sort;
 							scope.sort.column = search.sort;
+							if (desc !== scope.sort.descending) {
+								sortChanged = true;
+								scope.sort.descending = desc;
+							}
 						}
-						if (desc !== scope.sort.descending) {
-							sortChanged = true;
-						}
-						scope.sort.descending = desc;
 
 						scope.currentFilter = filter;
 
 						if (paginationChanged || sortChanged || filterChanged) {
-							console.log("reload 2");
 							reload();
 						}
 					}, true);
@@ -1009,7 +1003,6 @@
 									}]
 								}
 							};
-							console.log("reload 6");
 							reload();
 						}
 					}
@@ -1069,7 +1062,6 @@
 						}
 
 						function successFn () {
-							console.log("scope.convertersValues=", scope.convertersValues);
 							Loading.stop();
 							initialLoad();
 						}
@@ -1094,10 +1086,8 @@
 							// If in a tree context, reload the list when the Breadcrumb is ready
 							// and each time it changes.
 							Breadcrumb.ready().then(function () {
-								console.log("reload 3");
 								reload();
 								scope.$on('Change:TreePathChanged', function () {
-									console.log("reload 3.1");
 									reload();
 								});
 							});
@@ -1109,25 +1099,22 @@
 								});
 							});
 						} else if (attrs.childrenProperty) {
-							console.log("List child documents: ", attrs.childrenProperty);
 							Breadcrumb.ready().then(function () {
-								console.log("reload 4");
 								reload();
 								scope.$on('Change:TreePathChanged', function () {
-									console.log("reload 4.1");
 									reload();
 								});
 							});
 						} else {
 							// Not in a tree.
-
-							// If a "load-query" attribute, the list should not be loaded as is.
-							if (! elm.is('[load-query]') && ! elm.is('[collection-url]')) {
-								// ? Just load the flat list.
-								console.log("reload 5");
+							var search = $location.search();
+							// If one of "load-query" or "collection-url" attribute is present,
+							// the list should not be loaded now: it will be when these objects are $watched.
+							// And it works the same way with "sort" parameter in the URL:
+							// the $watch() on $location.search() will load the query.
+							if (! elm.is('[load-query]') && ! elm.is('[collection-url]') && ! search['sort']) {
 								reload();
 							}
-
 						}
 					}
 
@@ -1207,7 +1194,6 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
-					console.log(tElement, tElement.parent());
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
@@ -1242,7 +1228,6 @@
 					__columns[dlid] = [];
 				}
 				__columns[dlid].push(tAttrs);
-				console.log('__columns['+dlid+']', __columns[dlid]);
 
 			}
 		};
@@ -1267,7 +1252,6 @@
 
 				tAttrs.content = tElement.html().trim();
 				__gridItems[dlid] = tAttrs;
-				console.log('__gridItems['+dlid+']', __gridItems[dlid]);
 
 			}
 		};
