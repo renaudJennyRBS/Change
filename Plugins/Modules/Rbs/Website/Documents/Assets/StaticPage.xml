@@ -4,7 +4,6 @@
 		  extends="Rbs_Website_Page" frontoffice-indexable="true" has-url="true" abstract="false" tree-name="Rbs_Website">
 	<properties>
 		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true"/>
-		<property name="pathPart" type="String" localized="true" has-correction="true"/>
 		<property name="title" required="true">
 			<dboptions length="100"/>
 			<constraint name="maxSize" max="80"/>

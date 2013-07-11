@@ -57,108 +57,37 @@
 		$routeProvider
 
 		// Home
-
-		. when(
-			'/Rbs/Website',
-			{
-				templateUrl : 'Rbs/Website/Website/list.twig',
-				reloadOnSearch : false
-			})
+		. when('/Rbs/Website',{ templateUrl : 'Rbs/Website/Website/list.twig', reloadOnSearch : false })
 
 		// Website
-
-		. when(
-			'/Rbs/Website/Website',
-			{
-				templateUrl : 'Rbs/Website/Website/list.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/Website/:id/:LCID',
-			{
-				templateUrl : 'Rbs/Website/Website/form.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/Website/:id',
-			{
-				templateUrl : 'Rbs/Website/Website/form.twig',
-				reloadOnSearch : false
-			})
+		. when('/Rbs/Website/Website', { templateUrl : 'Rbs/Website/Website/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:id/:LCID', { templateUrl : 'Rbs/Website/Website/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:id', { templateUrl : 'Rbs/Website/Website/form.twig', reloadOnSearch : false })
 
 		// Navigation in topics
-
-		. when(
-			'/Rbs/Website/nav/',
-			{
-				templateUrl : 'Rbs/Website/Topic/list.twig',
-				reloadOnSearch : false
-			})
+		. when('/Rbs/Website/nav/', { templateUrl : 'Rbs/Website/Topic/list.twig', reloadOnSearch : false })
 
 		// Topic
+		. when('/Rbs/Website/Topic/:id/:LCID', { templateUrl : 'Rbs/Website/Topic/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Topic/:id/', { templateUrl : 'Rbs/Website/Topic/form.twig', reloadOnSearch : false })
 
-		. when(
-			'/Rbs/Website/Topic/:id/:LCID',
-			{
-				templateUrl : 'Rbs/Website/Topic/form.twig',
-				reloadOnSearch : false
-			})
+		// Static pages
+		. when('/Rbs/Website/StaticPage', { templateUrl : 'Rbs/Website/StaticPage/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/StaticPage/:id', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/StaticPage/:id/:LCID', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/StaticPage/:id/:LCID/editor', { templateUrl : 'Rbs/Website/StaticPage/content-editor.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
 
-		. when(
-			'/Rbs/Website/Topic/:id/',
-			{
-				templateUrl : 'Rbs/Website/Topic/form.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/Website/StaticPage',
-			{
-				templateUrl : 'Rbs/Website/StaticPage/list.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/StaticPage/:id',
-			{
-				templateUrl : 'Rbs/Website/StaticPage/form.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/StaticPage/:id/:LCID',
-			{
-				templateUrl : 'Rbs/Website/StaticPage/form.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/StaticPage/:id/:LCID/editor',
-			{
-				templateUrl : 'Rbs/Website/StaticPage/content-editor.twig',
-				reloadOnSearch : false
-			})
-		. when(
-			'/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID',
-			{
-				templateUrl : 'Rbs/Website/StaticPage/form.twig',
-				reloadOnSearch : false
-			})
+		// Functional pages
+		. when('/Rbs/Website/FunctionalPage', { templateUrl : 'Rbs/Website/FunctionalPage/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/FunctionalPage/:id', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/FunctionalPage/:id/:LCID', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/FunctionalPage/:id/:LCID/editor', { templateUrl : 'Rbs/Website/FunctionalPage/content-editor.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/FunctionalPage/:id/:LCID/translate-from/:fromLCID', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
 
 		// Menu
-
-			. when(
-			'/Rbs/Website/Menu',
-			{
-				templateUrl : 'Rbs/Website/Menu/list.twig',
-				reloadOnSearch : false
-			})
-			. when(
-			'/Rbs/Website/Menu/:id',
-			{
-				templateUrl : 'Rbs/Website/Menu/form.twig',
-				reloadOnSearch : false
-			})
-
-			.otherwise({redirectTo:'/Rbs/Website/Website/'})
-
+		. when('/Rbs/Website/Menu', { templateUrl : 'Rbs/Website/Menu/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Menu/:id', { templateUrl : 'Rbs/Website/Menu/form.twig', reloadOnSearch : false })
 		;
 	}]);
 
@@ -166,12 +95,20 @@
 	app.config(['$provide', function ($provide) {
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
 
-			// Pages
+			// StaticPages
 			$delegate.register('Rbs_Website_StaticPage', {
 				'form'  : '/Rbs/Website/StaticPage/:id/:LCID',
 				'editor': '/Rbs/Website/StaticPage/:id/:LCID/editor',
 				'list'  : '/Rbs/Website/StaticPage/:LCID',
 				'i18n'  : '/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID'
+			});
+
+			// FunctionalPages
+			$delegate.register('Rbs_Website_FunctionalPage', {
+				'form'  : '/Rbs/Website/FunctionalPage/:id/:LCID',
+				'editor': '/Rbs/Website/FunctionalPage/:id/:LCID/editor',
+				'list'  : '/Rbs/Website/FunctionalPage/:LCID',
+				'i18n'  : '/Rbs/Website/FunctionalPage/:id/:LCID/translate-from/:fromLCID'
 			});
 
 			// Topics
