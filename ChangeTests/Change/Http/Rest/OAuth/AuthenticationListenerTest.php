@@ -213,14 +213,12 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$_POST['login'] = 'test';
 		$_POST['password'] = 'change';
 
-		$user = $this->getNewReadonlyDocument('Rbs_User_User', 99999);
-
-		$callback = function(\Zend\EventManager\Event $event) use ($user) {
+		$callback = function(\Zend\EventManager\Event $event) {
 			if ($event->getParam('login') === 'test' &&
 				$event->getParam('password') == 'change' &&
 				$event->getParam('realm') == 'Change_Test')
 			{
-				$event->setParam('user', $user);
+				$event->setParam('user', new  fakeUser_5498723());
 			}
 		};
 
@@ -306,5 +304,18 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotEquals($oauthData['result']['oauth_token'], $resultArray['oauth_token']);
 		$this->assertArrayHasKey('oauth_token_secret', $resultArray);
 		$this->assertNotNull($resultArray['oauth_token_secret']);
+	}
+}
+
+class fakeUser_5498723 extends \Change\User\AnonymousUser
+{
+	public function getId()
+	{
+		return 255;
+	}
+
+	public function authenticated()
+	{
+		return true;
 	}
 }
