@@ -36,7 +36,7 @@ class AuthenticationListener
 	}
 
 	/**
-	 * Set Event params: resourcesActionName, documentId, LCID
+	 * Set Event params: namespace, resolver,
 	 * @param \Change\Http\Event $event
 	 * @param array $resourceParts
 	 * @param $method
@@ -210,9 +210,7 @@ class AuthenticationListener
 			$realm = $request->getPost('realm');
 			if ($realm && $login && $password)
 			{
-				$am = new \Change\User\AuthenticationManager();
-				$am->setSharedEventManager($event->getApplicationServices()->getApplication()->getSharedEventManager());
-				$am->setDocumentServices($event->getDocumentServices());
+				$am = $event->getAuthenticationManager();
 				$user = $am->login($login, $password, $realm);
 				if (null !== $user)
 				{
@@ -260,6 +258,10 @@ class AuthenticationListener
 			$OAuth = new OAuth();
 			$OAuth->setApplicationServices($event->getApplicationServices());
 			$consumer = $OAuth->getConsumerByKey($authorization['oauth_consumer_key']);
+			if (!$consumer)
+			{
+				throw new \RuntimeException('Invalid OAuth Consumer Key: ' . $authorization['oauth_consumer_key'], 72001);
+			}
 			$OAuth->checkTimestamp($authorization['oauth_timestamp'], $consumer);
 			$storeOAuth = $OAuth->getStoredOAuth($authorization['oauth_token'], $authorization['oauth_consumer_key']);
 
@@ -310,7 +312,7 @@ class AuthenticationListener
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
+				throw new \RuntimeException('Invalid OAuth Token: ' . $authorization['oauth_token'], 72004);
 			}
 		}
 		else
@@ -339,6 +341,10 @@ class AuthenticationListener
 			$oauth = new OAuth();
 			$oauth->setApplicationServices($event->getApplicationServices());
 			$consumer = $oauth->getConsumerByKey($authorization['oauth_consumer_key']);
+			if(!$consumer)
+			{
+				throw new \RuntimeException('Invalid OAuth Consumer Key: ' . $authorization['oauth_consumer_key'], 72001);
+			}
 			$oauth->checkTimestamp($authorization['oauth_timestamp'], $consumer);
 			$storeOAuth = $oauth->getStoredOAuth($authorization['oauth_token'], $authorization['oauth_consumer_key']);
 			$now = new \DateTime();

@@ -256,8 +256,8 @@ class OAuth
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
-		$sq = $qb->select('application_id')
-			->from($dbProvider->getSqlMapping()->getOAuthApplicationTable())
+		$sq = $qb->select($fb->column('application_id'))
+			->from($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()))
 			->where($fb->eq('consumer_key', $fb->parameter('consumer_key')))
 			->query();
 		$sq->bindParameter('consumer_key', $storedOAuth->getConsumerKey());
@@ -330,7 +330,7 @@ class OAuth
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('application_id'))->from($qb->getSqlMapping()->getOAuthTable());
+			$qb->select($fb->column('application_id'))->from($qb->getSqlMapping()->getOAuthApplicationTable());
 			$qb->where($fb->eq($fb->column('consumer_key'), $fb->parameter('consumer_key')));
 		}
 		$qs = $qb->query();

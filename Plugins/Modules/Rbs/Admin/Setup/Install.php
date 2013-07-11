@@ -83,8 +83,8 @@ class Install
 		$iq->bindParameter('consumer_secret', $consumer->getSecret());
 		$iq->bindParameter('timestamp_max_offset', 60);
 		$iq->bindParameter('token_access_validity', 'P10Y');
-		$iq->bindParameter('timestamp_max_offset', 'P1D');
-		$iq->bindParameter('timestamp_max_offset', true);
+		$iq->bindParameter('token_request_validity', 'P1D');
+		$iq->bindParameter('active', true);
 		$iq->execute();
 	}
 

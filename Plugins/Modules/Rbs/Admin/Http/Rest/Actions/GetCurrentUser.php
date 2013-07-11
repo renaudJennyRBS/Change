@@ -11,35 +11,22 @@ class GetCurrentUser
 {
 
 	/**
+	 * TODO WWW-Authenticate: OAuth realm="Rbs_Admin"
 	 * @param \Change\Http\Event $event
 	 */
 	public function execute($event)
 	{
-		$user = $event->getAuthenticationManager()->getCurrentUser();
-		if ($user instanceof \Rbs\User\Documents\User)
-		{
-			$event->setResult($this->generateResult($event, $user));
-		}
 
-	}
-
-	/**
-	 * @param \Change\Http\Event $event
-	 * @param \Rbs\User\Documents\User $user
-	 * @return DocumentResult
-	 */
-	protected function generateResult($event, $user)
-	{
 		$result = new DocumentResult();
-
+		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$properties = array(
 			'id' => $user->getId(),
-			'pseudonym' => $user->getPseudonym()
+			'pseudonym' => $user->getName()
 		);
 
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
-		return $result;
+		$event->setResult($result);
 	}
 }
