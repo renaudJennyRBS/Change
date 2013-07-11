@@ -14,7 +14,6 @@
 		}
 
 		function isDismissed (tipId) {
-			console.log(ls, ls[tipId] === true);
 			return ls[tipId] === true;
 		}
 
