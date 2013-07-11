@@ -150,7 +150,7 @@ class GetDocument
 		$this->addActions($result, $document, $urlManager);
 		$event->setResult($result);
 
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result));
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result, 'urlManager' => $urlManager));
 		$document->getEventManager()->trigger($documentEvent);
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

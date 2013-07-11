@@ -29,8 +29,11 @@
 		. when(
 			'/login',
 			{
-				templateUrl : 'Rbs/User/login.twig',
-				reloadOnSearch : false
+				template : '<div></div>',
+				controller : ['$location', 'OAuthService', function($location, OAuthService){
+					console.log('LoginController', $location.search());
+					OAuthService.getAccessToken($location.search()['oauth_token'], $location.search()['oauth_verifier']);
+				}]
 			})
 		.otherwise({ redirectTo: '/404'})
 		;

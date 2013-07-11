@@ -2,6 +2,7 @@
 namespace Rbs\Admin\Http\Actions;
 
 use Change\Http\Event;
+use Change\Http\Rest\OAuth\OAuth;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -24,6 +25,10 @@ class GetHome
 		$manager = new \Rbs\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
 		$attributes['resources'] = $manager->getResources();
 
+		$OAuth = new OAuth();
+		$OAuth->setApplicationServices($event->getApplicationServices());
+		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
+		$attributes['OAuth']['Consumer'] = $consumer ? array_merge($consumer->toArray(), array('realm' => 'Rbs_Admin')) : array();
 		if (!isset($attributes['resources']['menu']))
 		{
 			$attributes['resources']['menu'] = array("sections" => array(), "entries" => array());

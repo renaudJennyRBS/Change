@@ -27,14 +27,9 @@ class StoredOAuth
 	protected $tokenSecret;
 
 	/**
-	 * @var string
+	 * @var Consumer
 	 */
-	protected $consumerKey;
-
-	/**
-	 * @var string
-	 */
-	protected $consumerSecret;
+	protected $consumer;
 
 	/**
 	 * @var string
@@ -109,11 +104,37 @@ class StoredOAuth
 	}
 
 	/**
+	 * @param \Change\Http\Rest\OAuth\Consumer $consumer
+	 */
+	public function setConsumer($consumer)
+	{
+		$this->consumer = $consumer;
+	}
+
+	/**
+	 * @return \Change\Http\Rest\OAuth\Consumer
+	 */
+	public function getConsumer()
+	{
+		return $this->consumer;
+	}
+
+
+	/**
 	 * @param string $consumerKey
+	 * @return $this
 	 */
 	public function setConsumerKey($consumerKey)
 	{
-		$this->consumerKey = $consumerKey;
+		if ($this->consumer === null)
+		{
+			$this->consumer = new Consumer($consumerKey);
+		}
+		else
+		{
+			$this->consumer->setKey($consumerKey);
+		}
+		return $this;
 	}
 
 	/**
@@ -121,15 +142,24 @@ class StoredOAuth
 	 */
 	public function getConsumerKey()
 	{
-		return $this->consumerKey;
+		return $this->consumer ? $this->consumer->getKey() : null;
 	}
 
 	/**
 	 * @param string $consumerSecret
+	 * @return $this
 	 */
 	public function setConsumerSecret($consumerSecret)
 	{
-		$this->consumerSecret = $consumerSecret;
+		if ($this->consumer === null)
+		{
+			$this->consumer = new Consumer(null, $consumerSecret);
+		}
+		else
+		{
+			$this->consumer->setSecret($consumerSecret);
+		}
+		return $this;
 	}
 
 	/**
@@ -137,7 +167,7 @@ class StoredOAuth
 	 */
 	public function getConsumerSecret()
 	{
-		return $this->consumerSecret;
+		return $this->consumer ? $this->consumer->getSecret() : null;
 	}
 
 	/**
@@ -294,6 +324,7 @@ class StoredOAuth
 			switch ($k)
 			{
 				case 'id':
+				case 'token_id':
 					$this->id = $v;
 					break;
 				case 'token':
@@ -302,15 +333,33 @@ class StoredOAuth
 					break;
 				case 'consumer_key':
 				case 'oauth_consumer_key':
-					$this->consumerKey = $v;
+				{
+					if ($this->getConsumer())
+					{
+						$this->consumer->setKey($v);
+					}
+					else
+					{
+						$this->consumer = new Consumer($v);
+					}
 					break;
+				}
 				case 'callback':
 				case 'oauth_callback':
 					$this->callback = $v;
 					break;
 				case 'consumer_secret':
-					$this->consumerSecret = $v;
+				{
+					if ($this->getConsumer())
+					{
+						$this->consumer->setSecret($v);
+					}
+					else
+					{
+						$this->consumer = new Consumer(null, $v);
+					}
 					break;
+				}
 				case 'token_secret':
 					$this->tokenSecret = $v;
 					break;

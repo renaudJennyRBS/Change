@@ -253,6 +253,73 @@
 
 			return {
 
+				'startAuthentication' : function (callbackUrl) {
+					oauthData.consumerKey = __change.OAuth.consumer_key;
+					oauthData.consumerSecret = __change.OAuth.consumer_secret;
+					oauthData.realm = __change.OAuth.realm;
+
+					oauthObject = new OAuth({
+						consumerKey      : oauthData.consumerKey,
+						consumerSecret   : oauthData.consumerSecret,
+						realm            : oauthData.realm,
+
+						requestTokenUrl  : cfgBaseUrl + cfgRequestTokenUrl,
+						authorizationUrl : cfgBaseUrl + cfgAuthorizeUrl,
+						accessTokenUrl   : cfgBaseUrl + cfgAccessTokenUrl,
+						callbackUrl      : callbackUrl
+					});
+
+					oauthObject.fetchRequestToken(temporaryTokenSuccessFn, temporaryTokenErrorFn);
+
+					function temporaryTokenSuccessFn (url) {
+						localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
+						window.location.href = url;
+					}
+
+					function temporaryTokenErrorFn (error) {
+						alert(error);
+					}
+				},
+
+				'getAccessToken' : function (token, verifier) {
+					oauthData.consumerKey = __change.OAuth.consumer_key;
+					oauthData.consumerSecret = __change.OAuth.consumer_secret;
+
+					oauthObject = new OAuth({
+						consumerKey      : oauthData.consumerKey,
+						consumerSecret   : oauthData.consumerSecret,
+
+						requestTokenUrl  : cfgBaseUrl + cfgRequestTokenUrl,
+						authorizationUrl : cfgBaseUrl + cfgAuthorizeUrl,
+						accessTokenUrl   : cfgBaseUrl + cfgAccessTokenUrl
+					});
+					oauthObject.setCallbackUrl(undefined);
+
+					oauthData.verifier = verifier;
+					oauthObject.setVerifier(verifier);
+					oauthObject.setAccessToken([token, oauthData.tokenSecret]);
+					oauthObject.fetchAccessToken(
+
+						// Success:
+						function () {
+
+							// Store OAuth data for future requests.
+							oauthData.tokenKey = oauthObject.getAccessTokenKey();
+							oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
+							localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
+
+							// Tells the rest of the world that the authentication is successful :)
+							$rootScope.$broadcast(cfgUserLoginSuccessEventName);
+						},
+
+						// Error:
+						function (data) {
+							$log.log("OAuth authentication ERROR (3): ", data);
+							$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
+						}
+					);
+				},
+
 				/**
 				 * Sign in on the platform with `username` and `password`, and launch the OAuth process.
 				 * When the OAuth process is complete, a {cfgUserLoginSuccessEventName} event is broadcasted
@@ -274,89 +341,71 @@
 						'password': password
 					};
 
-					$http.post(cfgBaseUrl + cfgRegisterUrl, loginParams)
-					.success(
-						function oAuthRegisterSuccess (registerData) {
+					oauthData.consumerKey = __change.OAuth.consumer_key;
+					oauthData.consumerSecret = __change.OAuth.consumer_secret;
 
-							oauthData.consumerKey = registerData.consumer_key;
-							oauthData.consumerSecret = registerData.consumer_secret;
+					oauthObject = new OAuth({
+						consumerKey      : oauthData.consumerKey,
+						consumerSecret   : oauthData.consumerSecret,
 
-							oauthObject = new OAuth({
-								consumerKey      : oauthData.consumerKey,
-								consumerSecret   : oauthData.consumerSecret,
+						requestTokenUrl  : cfgBaseUrl + cfgRequestTokenUrl,
+						authorizationUrl : cfgBaseUrl + cfgAuthorizeUrl,
+						accessTokenUrl   : cfgBaseUrl + cfgAccessTokenUrl
+					});
 
-								requestTokenUrl  : cfgBaseUrl + cfgRequestTokenUrl,
-								authorizationUrl : cfgBaseUrl + cfgAuthorizeUrl,
-								accessTokenUrl   : cfgBaseUrl + cfgAccessTokenUrl
-							});
+					oauthObject.fetchRequestToken(temporaryTokenSuccessFn, temporaryTokenErrorFn);
 
-							oauthObject.fetchRequestToken(temporaryTokenSuccessFn, temporaryTokenErrorFn);
+					function temporaryTokenSuccessFn (url) {
+						$http.post(url, loginParams)
+						.success(
+							function (tempTokenData) {
+								oauthData.verifier = tempTokenData.oauth_verifier;
+								oauthData.callback = tempTokenData.oauth_callback;
+								oauthObject.setVerifier(tempTokenData.oauth_verifier);
+								oauthObject.fetchAccessToken(
 
-							function temporaryTokenSuccessFn (url) {
-								$http.post(url, loginParams)
-								.success(
-									function (tempTokenData) {
-										oauthData.verifier = tempTokenData.oauth_verifier;
-										oauthData.callback = tempTokenData.oauth_callback;
-										oauthObject.setVerifier(tempTokenData.oauth_verifier);
-										oauthObject.fetchAccessToken(
+									// Success:
+									function () {
 
-											// Success:
-											function () {
-												var userId = registerData.accessor_id;
+										// Store OAuth data for future requests.
+										oauthData.tokenKey = oauthObject.getAccessTokenKey();
+										oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
+										localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
 
-												// Store OAuth data for future requests.
-												oauthData.tokenKey = oauthObject.getAccessTokenKey();
-												oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
-												oauthData.userId = userId;
-												localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
+										// Tells the rest of the world that the authentication is successful :)
+										q.resolve();//FIXME UserId
+										$rootScope.$broadcast(cfgUserLoginSuccessEventName);
+									},
 
-												// Tells the rest of the world that the authentication is successful :)
-												q.resolve(userId);
-												$rootScope.$broadcast(cfgUserLoginSuccessEventName, userId);
-											},
-
-											// Error:
-											function (data) {
-												$log.log("OAuth authentication ERROR (3): ", data);
-												q.reject(data);
-												$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
-											}
-										);
-									}
-								)
-								.error(
-									function (tempTokenError) {
-										$log.log("OAuth authentication ERROR (2): ", tempTokenError);
-										q.reject(tempTokenError);
-										$rootScope.$broadcast(cfgUserLoginFailureEventName, tempTokenError);
+									// Error:
+									function (data) {
+										$log.log("OAuth authentication ERROR (3): ", data);
+										q.reject(data);
+										$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
 									}
 								);
-
-								// FIXME fredericbonjour 2013-04-02:
-								// With the current development version of AngularJS, we need to call this for the
-								// request to be sent. I think this should NOT be needed in stable releases of
-								// AngularJS.
-								$rootScope.$apply();
 							}
-
-							function temporaryTokenErrorFn (data) {
-								$log.log("OAuth authentication ERROR (1): ", data);
-								q.reject(data);
-								$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
+						)
+						.error(
+							function (tempTokenError) {
+								$log.log("OAuth authentication ERROR (2): ", tempTokenError);
+								q.reject(tempTokenError);
+								$rootScope.$broadcast(cfgUserLoginFailureEventName, tempTokenError);
 							}
+						);
 
-						}
-					)
-					.error(
-						function oAuthRegisterError (data) {
-							// ErrorResult : 403, AUTHENTICATION-ERROR, Unable to authenticate
-							// ErrorResult : 500, EXCEPTION-71000, Invalid Parameter: realm, login, password
-							$log.log("OAuth authentication ERROR (0): ", data);
-							q.reject(data);
-							$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
-						}
-					);
+						// FIXME fredericbonjour 2013-04-02:
+						// With the current development version of AngularJS, we need to call this for the
+						// request to be sent. I think this should NOT be needed in stable releases of
+						// AngularJS.
+						$rootScope.$apply();
+					}
+
+					function temporaryTokenErrorFn (data) {
+						$log.log("OAuth authentication ERROR (1): ", data);
+						q.reject(data);
+						$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
+					}
 
 					return q.promise;
 				},
@@ -370,9 +419,8 @@
 					localStorageService.remove(cfgLocalStorageKeyName);
 				},
 
-
-				'getUserId' : function () {
-					return oauthData ? oauthData.userId : null;
+				'hasOAuthData' : function() {
+					return oauthData.tokenKey != null;
 				}
 
 			};
@@ -738,7 +786,9 @@
 			this.get(this.requestTokenUrl, function (data) {
 				var token = oauth.parseTokenRequest(data, data.responseHeaders['Content-Type'] || undefined);
 				oauth.setAccessToken([token.oauth_token, token.oauth_token_secret]);
-				success(url + '?' + data.text);
+				oauthData.tokenKey = token.oauth_token;
+				oauthData.tokenSecret = token.oauth_token_secret;
+				success(url + '?oauth_token=' + token.oauth_token + '&oauth_callback_confirmed=true');
 			}, failure);
 		},
 

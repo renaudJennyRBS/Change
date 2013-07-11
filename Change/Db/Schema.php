@@ -62,8 +62,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($tokenId)
 				->addField($token)
 				->addField($schemaManager->newVarCharFieldDefinition('token_secret', array('length' => 64))->setNullable(false))
-				->addField($schemaManager->newVarCharFieldDefinition('consumer_key', array('length' => 64))->setNullable(false))
-				->addField($schemaManager->newVarCharFieldDefinition('consumer_secret', array('length' => 64))->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('application_id')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('realm', array('length' => 128))->setNullable(false))
 				->addField($schemaManager->newEnumFieldDefinition('token_type', array('VALUES' => array('request', 'access')))->setNullable(false)->setDefaultValue('request'))
 				->addField($schemaManager->newTimeStampFieldDefinition('creation_date'))
@@ -75,6 +74,22 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addKey($this->newPrimaryKey()->addField($tokenId))
 				->addKey($this->newUniqueKey()->setName('token')->addField($token))
 				->setOption('AUTONUMBER', 1);
+
+			$applicationId = $schemaManager->newIntegerFieldDefinition('application_id')->setNullable(false)->setAutoNumber(true);
+			$application = $schemaManager->newVarCharFieldDefinition('application', array('length' => 255))->setNullable(false);
+			$consumerKey = $schemaManager->newVarCharFieldDefinition('consumer_key', array('length' => 64))->setNullable(false);
+			$this->tables['change_oauth_application'] = $schemaManager->newTableDefinition('change_oauth_application')
+				->addField($applicationId)
+				->addField($application)
+				->addField($consumerKey)
+				->addField($schemaManager->newVarCharFieldDefinition('consumer_secret', array('length' => 64))->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('timestamp_max_offset')->setNullable(false)->setDefaultValue(60))
+				->addField($schemaManager->newVarCharFieldDefinition('token_access_validity', array('length' => 10))->setNullable(false)->setDefaultValue("P10Y"))
+				->addField($schemaManager->newVarCharFieldDefinition('token_request_validity', array('length' => 10))->setNullable(false)->setDefaultValue("P1D"))
+				->addField($schemaManager->newBooleanFieldDefinition('active')->setNullable(false)->setDefaultValue(1))
+				->addKey($this->newPrimaryKey()->addField($applicationId))
+				->addKey($this->newUniqueKey()->setName('application')->addField($application))
+				->addKey($this->newUniqueKey()->setName('consumer_key')->addField($consumerKey));
 
 			$this->tables['change_path_rule'] = $td = $schemaManager->newTableDefinition('change_path_rule');
 			$td->addField($schemaManager->newIntegerFieldDefinition('rule_id')->setNullable(false)->setAutoNumber(true))
