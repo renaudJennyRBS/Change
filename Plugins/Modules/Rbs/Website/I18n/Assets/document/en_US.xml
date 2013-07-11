@@ -4,8 +4,11 @@
 	<key id="menu-list">navigation menus</key>
 	<key id="staticpage">page</key>
 	<key id="staticpage-list">pages</key>
+	<key id="staticpage-create">add content page</key>
 	<key id="topic">topic</key>
 	<key id="topic-list">topics</key>
+	<key id="topic-create">add topic</key>
 	<key id="website">website</key>
 	<key id="website-list">websites</key>
+	<key id="website-create">add website</key>
 </i18n>

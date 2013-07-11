@@ -8,41 +8,23 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
-	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
 	 * @constructor
 	 */
-	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
 			[i18n.trans('m.rbs.website.admin.js.staticpage-list | ucf'), "Rbs/Website/StaticPage"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Rbs_Website_StaticPage');
-		DL.viewMode = 'list';
-		DL.sort.column = 'modificationDate';
-		DL.sort.descending = true;
-
-		$scope.createActions = [
-			{ 'label': i18n.trans('m.rbs.website.admin.js.staticpage | ucf'), 'url': 'Rbs/Website/StaticPage/new' }
-		];
-
-		DL.columns.push({ id: 'template', label: i18n.trans('m.rbs.theme.admin.js.pagetemplate | ucf'), sortable: true });
-		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
-	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Rbs_Website_StaticPage_ListController', ListController);
-
-	// FIXME
-	app.controller('Rbs_Website_FunctionalPage_ListController', ListController);
-	app.controller('Rbs_Website_Page_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -65,10 +47,6 @@
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
 	app.controller('Rbs_Website_StaticPage_FormController', FormController);
-
-	// FIXME
-	app.controller('Rbs_Website_FunctionalPage_FormController', FormController);
-	app.controller('Rbs_Website_Page_FormController', FormController);
 
 	/**
 	 * Controller for contents editor.

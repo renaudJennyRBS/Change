@@ -26,10 +26,12 @@
 		</column>
 
 		<column name="label" label="Libellé" primary="true">
-			<strong><a ng-if="doc.is('Rbs_Website_StaticPage')" title="Éditer le contenu de la page"
-			   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a>
-			<a ng-if="doc.is('Rbs_Website_Topic')" title="Naviguer vers le contenu de la rubrique"
+			<strong ng-if="doc.is('Rbs_Website_StaticPage')"><a title="Éditer le contenu de la page"
+			   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a></strong>
+			<span ng-if="doc.is('Rbs_Website_Topic')"><strong><a title="Naviguer vers le contenu de la rubrique"
 			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></strong>
+				<i class="icon-rbs-navigate-to"></i>
+			</span>
 		</column>
 
 	</rbs-document-list>
