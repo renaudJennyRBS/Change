@@ -67,41 +67,6 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$iq->execute();
 	}
 
-	protected function setUserForAuthorize()
-	{
-		$documentServices = $this->getDocumentServices();
-		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
-
-		$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$transactionManager->begin();
-
-			/* @var $group \Rbs\User\Documents\Group */
-			$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
-			$group->setLabel('For Test');
-			$group->setRealm('Change_Test');
-			$group->create();
-
-			/* @var $user \Rbs\User\Documents\User */
-			$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
-			$user->setLabel('Change Test');
-			$user->setEmail('change@rbs.fr');
-			$user->setLogin('test');
-			$user->setPassword('change');
-			$user->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
-			$user->setGroups(array($group));
-			$user->create();
-
-			$transactionManager->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $transactionManager->rollBack($e);
-		}
-
-	}
-
 	/**
 	 * @return array
 	 * @throws \RuntimeException
@@ -199,8 +164,6 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testOnAuthorizePost($oauthData)
 	{
-		$this->setUserForAuthorize();
-
 		$controller = new \Change\Http\Rest\Controller($this->getApplication());
 		$controller->setActionResolver(new \Change\Http\Rest\Resolver());
 
