@@ -1,0 +1,27 @@
+<div class="document-form" data-ng-controller="Rbs_Website_FunctionalPage_FormController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.website.document.functionalpage', ['ucf']) }}"></page-header>
+
+	<div data-ng-switch="isReferenceLanguage">
+		<div data-ng-switch-when="true">
+			<div class="document-editor change-editor-website-functional-page"
+				document="document"
+				reference-document="referenceDocument"
+				language="language"
+				section="section"
+				on-save="onSave(document)"
+				on-cancel="onCancel()">
+			</div>
+		</div>
+
+		<div data-ng-switch-when="false">
+			<div class="document-editor change-editor-website-functional-page-localized"
+				document="document"
+				reference-document="referenceDocument"
+				language="language"
+				section="section"
+				on-save="onSave(document)"
+				on-cancel="onCancel()">
+			</div>
+		</div>
+	</div>
+</div>
