@@ -209,7 +209,7 @@
 			loadCurrentUser();
 			$rootScope.$apply(function () {
 				redirectUrl = $location.search()['route'];
-				$location.path(redirectUrl);
+				$location.url(redirectUrl);
 			});
 		});
 
@@ -228,7 +228,7 @@
 			}
 			else
 			{
-				var callbackUrl = document.getElementsByTagName('base')[0].href + 'login?route=' + $location.path();
+				var callbackUrl = document.getElementsByTagName('base')[0].href + 'login?route=' + encodeURIComponent($location.url());
 				OAuthService.startAuthentication(callbackUrl);
 			}
 		}

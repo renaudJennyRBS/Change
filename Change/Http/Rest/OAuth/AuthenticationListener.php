@@ -506,7 +506,7 @@ class AuthenticationListener
 						$query['oauth_verifier'] = $array['oauth_verifier'];
 						$uri->setQuery($query);
 
-						$response->getHeaders()->addHeaderLine('Location', $uri->normalize()->toString());
+						$response->getHeaders()->addHeaderLine('Location', $uri->toString());
 						$event->setResponse($response);
 						$event->stopPropagation();
 					}
