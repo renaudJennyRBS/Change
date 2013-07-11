@@ -22,12 +22,8 @@
 	// Append some visual decorations :)
 	$('body').append(
 		'<div id="structure-editor-block-properties-popup" class="dockable" style="display:none;"></div>' +
-		//'<div id="structure-editor-block-properties-link"></div>' +
-		//'<div id="structure-editor-block-properties-link-border"></div>' +
 		'<div id="structure-editor-dropzone-indicator"><span class="content"></span><i class="icon-arrow-right"></i></div>'
 	);
-	//blockPropertiesLink = $('#structure-editor-block-properties-link');
-	//blockPropertiesLinkBorder = $('#structure-editor-block-properties-link-border');
 	dropZoneIndicator = $('#structure-editor-dropzone-indicator');
 
 	blockPropertiesPopup = $('#structure-editor-block-properties-popup');
@@ -1212,6 +1208,7 @@
 							});
 
 							resizeHandler();
+							Workspace.pin(blockPropertiesPopup);
 						}
 
 					};
