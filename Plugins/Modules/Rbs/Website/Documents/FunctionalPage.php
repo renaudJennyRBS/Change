@@ -40,7 +40,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		$query = new Query($this->getDocumentServices(), 'Rbs_Website_Section');
 		$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'section');
 		$subQuery->andPredicates($subQuery->eq('page', $this));
-		return $query->getDocuments();
+		return $query->getDocuments()->toArray();
 	}
 
 	/**
