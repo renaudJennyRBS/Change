@@ -119,7 +119,7 @@ class Login
 			$accessorId = $this->load($website);
 			if (is_int($accessorId))
 			{
-				$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($accessorId);
+				$user = $event->getAuthenticationManager()->getById($accessorId);
 				if ($user instanceof \Change\User\UserInterface)
 				{
 					$event->getAuthenticationManager()->setCurrentUser($user);

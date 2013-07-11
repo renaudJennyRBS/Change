@@ -23,6 +23,11 @@ interface WorkflowInstance
 	public function getWorkflow();
 
 	/**
+	 * @return \Change\Documents\AbstractDocument|null
+	 */
+	public function getDocument();
+
+	/**
 	 * Return all Workflow instance Items defined
 	 * @return \Change\Workflow\Interfaces\InstanceItem[]
 	 */

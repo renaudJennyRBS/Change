@@ -78,6 +78,14 @@ class SQLFragmentBuilder
 		$this->sqlMapping = $sqlMapping;
 	}
 
+	/**
+	 * @return \Change\Db\SqlMapping
+	 */
+	public function getSqlMapping()
+	{
+		return $this->sqlMapping;
+	}
+
 
 	/**
 	 * Build a function argument after $name assumed as function arguments
@@ -599,6 +607,24 @@ class SQLFragmentBuilder
 		$result = new Disjunction();
 		$result->setArguments($this->normalizeValue(func_get_args()));
 		return $result;
+	}
+
+	/**
+	 * @api
+	 * @return Table
+	 */
+	public function getPermissionRuleTable()
+	{
+		return $this->table($this->sqlMapping->getPermissionRuleTable());
+	}
+
+	/**
+	 * @api
+	 * @return Table
+	 */
+	public function getJobTable()
+	{
+		return $this->table($this->sqlMapping->getJobTable());
 	}
 
 	/**

@@ -21,6 +21,16 @@ class Login
 			return;
 		}
 
+		if ($event->getParam('userId'))
+		{
+			$user = $documentServices->getDocumentManager()->getDocumentInstance($event->getParam('userId'));
+			if ($user instanceof \Rbs\User\Documents\User)
+			{
+				$event->setParam('user', new AuthenticatedUser($user));
+			}
+			return;
+		}
+
 		$realm = $event->getParam('realm');
 		$login = $event->getParam('login');
 		$password = $event->getParam('password');
@@ -43,7 +53,7 @@ class Login
 			/* @var $document \Rbs\User\Documents\User */
 			if ($document->checkPassword($password))
 			{
-				$event->setParam('user', $document);
+				$event->setParam('user', new AuthenticatedUser($document));
 				return;
 			}
 		}

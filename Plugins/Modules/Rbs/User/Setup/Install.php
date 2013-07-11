@@ -35,15 +35,16 @@ class Install
 	{
 		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 
-		$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
-		$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
-		$group = $query->andPredicates($query->eq('realm', 'rest'))->getFirstDocument();
-		if (!$group)
+		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_User');
+		$user = $query->andPredicates($query->eq('login', 'admin'))->getFirstDocument();
+		if (!$user)
 		{
 			$transactionManager = $applicationServices->getTransactionManager();
 			try
 			{
 				$transactionManager->begin();
+
+				$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
 
 				/* @var $group \Rbs\User\Documents\Group */
 				$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
@@ -73,6 +74,13 @@ class Install
 			{
 				throw $transactionManager->rollBack($e);
 			}
+		}
+
+		$pm = new \Change\Permissions\PermissionsManager();
+		$pm->setApplicationServices($applicationServices);
+		if (!$pm->hasRule($user->getId()))
+		{
+			$pm->addRule($user->getId());
 		}
 	}
 

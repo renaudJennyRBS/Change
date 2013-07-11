@@ -24,6 +24,10 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
+		if ($documentServices !== null && $this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**

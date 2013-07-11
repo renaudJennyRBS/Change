@@ -73,6 +73,14 @@ class WorkflowInstance implements WorkflowInstanceInterface
 	}
 
 	/**
+	 * @return \Change\Documents\AbstractDocument|null
+	 */
+	public function getDocument()
+	{
+		return null;
+	}
+
+	/**
 	 * Return all Workflow instance Items defined
 	 * @return Token[]|WorkItem[]
 	 */

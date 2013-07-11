@@ -4,6 +4,7 @@
 	icon="workflow">
 	<properties>
 		<property name="workflow" type="Document" document-type="Rbs_Workflow_Workflow" required="true" />
+		<property name="document" type="Document" />
 		<property name="status" type="String" required="true" default-value="EN">
 			<dboptions length="2" />
 		</property>

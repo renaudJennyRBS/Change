@@ -170,14 +170,15 @@ class Resolver extends ActionResolver
 
 	/**
 	 * @param Event $event
-	 * @param mixed $resource
+	 * @param string $role
+	 * @param integer $resource
 	 * @param string $privilege
 	 */
-	public function setAuthorisation($event, $resource, $privilege)
+	public function setAuthorisation($event, $role = null, $resource = null, $privilege = null)
 	{
-		$authorisation = function(Event $event) use ($resource, $privilege)
+		$authorisation = function(Event $event) use ($role, $resource, $privilege)
 		{
-			return $event->getPermissionsManager()->isAllowed(null, $resource, $privilege);
+			return $event->getPermissionsManager()->isAllowed($role, $resource, $privilege);
 		};
 		$event->setAuthorization($authorisation);
 	}

@@ -59,8 +59,7 @@
 			},
 			"Web": {
 				"SingleWebsite": true
-			},
-			"allowAnonymous": false
+			}
 		},
 		"User": {
 			"salt": "a6CHo80Qzg5DOe"

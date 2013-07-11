@@ -131,6 +131,17 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newTimeStampFieldDefinition('last_modification_date')->setNullable(true)->setDefaultValue(null))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_permission_rule'] = $td = $schemaManager->newTableDefinition('change_permission_rule');
+			$td->addField($schemaManager->newIntegerFieldDefinition('rule_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newIntegerFieldDefinition('accessor_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newVarCharFieldDefinition('role', array('length' => 100))
+					->setNullable(false)->setDefaultValue('*'))
+				->addField($schemaManager->newIntegerFieldDefinition('resource_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newVarCharFieldDefinition('privilege', array('length' => 100))
+					->setNullable(false)->setDefaultValue('*'))
+				->addKey($this->newPrimaryKey()->addField($td->getField('rule_id')))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

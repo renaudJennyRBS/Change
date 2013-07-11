@@ -126,8 +126,7 @@ class ResourcesResolver
 							{
 								if ($method === Request::METHOD_POST)
 								{
-									$privilege = $modelName . '.create';
-									$this->resolver->setAuthorisation($event, $modelName, $privilege);
+									$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
 
 									$action = function ($event)
 									{
@@ -140,9 +139,7 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_GET)
 								{
-									$privilege = $modelName . '.load';
-									$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
+									$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
 									$action = function ($event)
 									{
 										$action = new GetLocalizedDocument();
@@ -154,9 +151,7 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_PUT)
 								{
-									$privilege = $modelName . '.updateLocalized';
-									$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
+									$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
 									$action = function ($event)
 									{
 										$action = new UpdateLocalizedDocument();
@@ -168,8 +163,7 @@ class ResourcesResolver
 
 								if ($method === Request::METHOD_DELETE)
 								{
-									$privilege = $modelName . '.deleteLocalized';
-									$this->resolver->setAuthorisation($event, $documentId, $privilege);
+									$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
 
 									$action = function ($event)
 									{
@@ -197,8 +191,7 @@ class ResourcesResolver
 					{
 						if ($method === 'POST')
 						{
-							$privilege = $modelName . '.create';
-							$this->resolver->setAuthorisation($event, $modelName, $privilege);
+							$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
 
 							if ($model->isLocalized())
 							{
@@ -222,8 +215,7 @@ class ResourcesResolver
 
 						if ($method === 'GET')
 						{
-							$privilege = $modelName . '.load';
-							$this->resolver->setAuthorisation($event, $documentId, $privilege);
+							$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
 
 							$action = function ($event)
 							{
@@ -236,8 +228,7 @@ class ResourcesResolver
 
 						if ($method === 'PUT')
 						{
-							$privilege = $modelName . '.update';
-							$this->resolver->setAuthorisation($event, $documentId, $privilege);
+							$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
 
 							$action = function ($event)
 							{
@@ -250,9 +241,7 @@ class ResourcesResolver
 
 						if ($method === 'DELETE')
 						{
-							$privilege = $modelName . '.delete';
-							$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
+							$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
 							$action = function ($event)
 							{
 								$action = new DeleteDocument();
@@ -267,8 +256,7 @@ class ResourcesResolver
 				{
 					if ($method === Request::METHOD_POST)
 					{
-						$privilege = $modelName . 'create';
-						$this->resolver->setAuthorisation($event, $modelName, $privilege);
+						$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
 
 						$action = function ($event)
 						{
@@ -281,8 +269,7 @@ class ResourcesResolver
 
 					if ($method === Request::METHOD_GET)
 					{
-						$privilege = $modelName . '.collection';
-						$this->resolver->setAuthorisation($event, $modelName, $privilege);
+						$this->resolver->setAuthorisation($event, 'Consumer', null, $modelName);
 
 						$action = function ($event)
 						{
@@ -319,7 +306,7 @@ class ResourcesResolver
 		$event->setParam('modelName', $modelName);
 
 		$privilege = $modelName . '.load';
-		$this->resolver->setAuthorisation($event, $documentId, $privilege);
+		$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
 
 		if ($document->getDocumentModel()->isLocalized())
 		{

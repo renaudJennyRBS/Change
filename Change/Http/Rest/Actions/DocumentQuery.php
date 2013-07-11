@@ -110,6 +110,7 @@ class DocumentQuery
 		$extraColumn)
 	{
 		$dm = $document->getDocumentManager();
+		$eventManager = $document->getEventManager();
 		if ($documentLink->getLCID())
 		{
 			$dm->pushLCID($documentLink->getLCID());
@@ -158,6 +159,10 @@ class DocumentQuery
 				}
 			}
 		}
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document,
+			array('restResult' => $documentLink, 'extraColumn' => $extraColumn));
+		$eventManager->trigger($documentEvent);
 
 		if ($documentLink->getLCID())
 		{

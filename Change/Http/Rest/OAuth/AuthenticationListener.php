@@ -446,7 +446,7 @@ class AuthenticationListener
 				$signature = $utils->sign($params , $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(), $storeOAuth->getTokenSecret(), $method, $url);
 				if ($signature === $authorization['oauth_signature'])
 				{
-					$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($storeOAuth->getAccessorId());
+					$user = $event->getAuthenticationManager()->getById($storeOAuth->getAccessorId());
 					if ($user instanceof \Change\User\UserInterface)
 					{
 						$event->getAuthenticationManager()->setCurrentUser($user);

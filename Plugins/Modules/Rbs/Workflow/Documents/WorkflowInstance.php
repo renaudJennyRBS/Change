@@ -145,6 +145,11 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		$place = $engine->getStartPlace();
 		if ($place)
 		{
+			if (isset($context[WorkItem::DOCUMENT_ID_CONTEXT_KEY]))
+			{
+				$this->setDocument($this->getDocumentManager()->getDocumentInstance($context[WorkItem::DOCUMENT_ID_CONTEXT_KEY]));
+			}
+
 			$this->setStartDate($engine->getDateTime());
 			$this->setStatus(static::STATUS_OPEN);
 			$engine->enableToken($place);
@@ -232,22 +237,8 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	 */
 	public function execute($workItem)
 	{
-		$transition = $workItem->getTransition();
-		try
-		{
-			$evtManager = new \Zend\EventManager\EventManager('Workflow.Task');
-			$evtManager->setSharedManager($this->getEventManager()->getSharedManager());
-			$args = array('workItem' => $workItem, 'documentServices' => $this->documentServices);
-			$evtManager->trigger($transition->getTaskCode(), $this, $args);
-		}
-		catch (\Exception $e)
-		{
-			$this->getApplicationServices()->getLogging()->exception($e);
-			$ctx = $this->getContext();
-			$ctx[WorkItem::EXCEPTION_CONTEXT_KEY] = $transition->getTaskCode() . ' ('. $workItem->getTaskId() .') -> '. $e->getMessage();
-			return false;
-		}
-		return true;
+		$engine = new \Change\Workflow\Engine($this);
+		return $engine->executeWorkItemTask($workItem, $this->getDocumentServices());
 	}
 
 	/**
@@ -352,7 +343,6 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 		$this->serializeContext();
 	}
 
-
 	protected function generateTasks()
 	{
 		/* @var $workItems  WorkItem[] */
@@ -420,19 +410,39 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 
 			$transition = $workItem->getTransition();
 			$task->setLabel($transition->getName());
-
 			$task->setWorkflowInstance($this);
 			$task->setTaskId($workItem->getTaskId());
 			$task->setTaskCode($transition->getTaskCode());
 			$task->setStatus($workItem->getStatus());
+
+			$document = $this->getDocument();
+			if ($document)
+			{
+				$task->setDocument($this->getDocument());
+				$task->setPrivilege($document->getDocumentModelName());
+				if ($document instanceof \Change\Documents\Interfaces\Localizable)
+				{
+					$task->setDocumentLCID($document->getLCID());
+				}
+			}
+
 			if ($transition->getTrigger() === Transition::TRIGGER_USER)
 			{
 				$task->setRole($transition->getRole());
+
 			}
 			elseif ($transition->getTrigger() === Transition::TRIGGER_TIME)
 			{
-				$deadLine = clone($workItem->getEnabledDate());
-				$deadLine->add($transition->getTimeLimit());
+				$ctx = $this->getContext();
+				if (isset($ctx[$transition->getTaskCode() . 'DeadLine']))
+				{
+					$deadLine = new \DateTime($ctx[$transition->getTaskCode() . 'DeadLine']);
+				}
+				else
+				{
+					$deadLine = clone($workItem->getEnabledDate());
+					$deadLine->add($transition->getTimeLimit());
+				}
 				$task->setDeadLine($deadLine);
 			}
 			$task->save();

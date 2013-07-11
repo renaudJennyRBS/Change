@@ -132,7 +132,7 @@ class ResourcesActionsResolver
 				}
 			}
 			$event->setParam('resourcesActionName', $actionName);
-			$this->resolver->setAuthorisation($event, $document->getId(), $document->getDocumentModelName() . '.' . $actionName);
+			$this->resolver->setAuthorisation($event, 'Actions', $document->getId(), $document->getDocumentModelName() . '.' . $actionName);
 			$event->setAction(function($event) use($instance) {$instance->execute($event);});
 			return;
 		}

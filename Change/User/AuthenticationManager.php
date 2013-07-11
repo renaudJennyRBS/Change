@@ -14,6 +14,8 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_LOGIN = 'login';
 
+	const EVENT_BY_USER_ID = 'byUserId';
+
 	/**
 	 * @var DocumentServices
 	 */
@@ -33,13 +35,12 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @return UserInterface|null
+	 * @return UserInterface
 	 */
 	public function getCurrentUser()
 	{
-		return $this->currentUser;
+		return $this->currentUser === null ? new AnonymousUser() : $this->currentUser;
 	}
-
 
 	/**
 	 * @param DocumentServices $documentServices
@@ -83,6 +84,25 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param integer $userId
+	 * @return UserInterface|null
+	 */
+	public function getById($userId)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('userId' => $userId));
+		$args['documentServices'] = $this->getDocumentServices();
+		$event = new \Zend\EventManager\Event(static::EVENT_BY_USER_ID, $this, $args);
+		$this->getEventManager()->trigger($event);
+		$user = $event->getParam('user');
+		if ($user instanceof UserInterface)
+		{
+			return $user;
+		}
+		return null;
+	}
+
+	/**
 	 * @param string $login
 	 * @param string $password
 	 * @param string $realm
@@ -97,7 +117,6 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 
 		$event = new \Zend\EventManager\Event(static::EVENT_LOGIN, $this, $args);
 		$this->getEventManager()->trigger($event);
-
 		$user = $event->getParam('user');
 		if ($user instanceof UserInterface)
 		{

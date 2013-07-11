@@ -18,5 +18,39 @@ class Install
 
 		$config->addPersistentEntry('Change/Events/WorkflowManager/Rbs_Workflow',
 			'\\Rbs\\Workflow\\Events\\ListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
+			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\ListenerAggregate');
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @throws \Exception
+	 */
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	{
+		$workflowManager = new \Change\Workflow\WorkflowManager();
+		$workflowManager->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
+		$workflowManager->setDocumentServices($documentServices);
+
+		$applicationServices->getLogging(__METHOD__);
+		if ($workflowManager->getWorkflow('publicationProcess') === null)
+		{
+			try
+			{
+				$applicationServices->getTransactionManager()->begin();
+				$publicationProcessWorkflow = new PublicationProcessWorkflow($documentServices);
+				$workflow = $publicationProcessWorkflow->install();
+				$plugin->setConfigurationEntry('publicationProcess', $workflow->getId());
+				$applicationServices->getTransactionManager()->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $applicationServices->getTransactionManager()->rollBack( $e);
+			}
+		}
 	}
 }

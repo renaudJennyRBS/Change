@@ -47,8 +47,7 @@ class Controller extends \Change\Http\Controller
 		$event->setAuthenticationManager($authenticationManager);
 
 		$permissionsManager = new \Change\Permissions\PermissionsManager();
-		$allowAnonymous = $this->getApplication()->getConfiguration()->getEntry('Change/Http/allowAnonymous', false);
-		$permissionsManager->allow($allowAnonymous);
+		$permissionsManager->allow(false);
 		$permissionsManager->setApplicationServices($event->getApplicationServices());
 		$event->setPermissionsManager($permissionsManager);
 

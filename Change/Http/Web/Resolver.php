@@ -135,14 +135,13 @@ class Resolver extends ActionResolver
 	protected function populateEventByPathRule($event, $pathRule)
 	{
 		$event->setParam('pathRule', $pathRule);
-		$resource =  $pathRule->getSectionId() ? $pathRule->getSectionId() : $pathRule->getWebsiteId();
+		$dm = $event->getDocumentServices()->getDocumentManager();
+		$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 		$urlManager = $event->getUrlManager();
 
 		if ($pathRule->getHttpStatus() !== HttpResponse::STATUS_CODE_200 && $pathRule->getLocation() === null)
 		{
 			//Generic document URL
-			$dm = $event->getDocumentServices()->getDocumentManager();
-			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 			if (!$document)
 			{
 				return;
@@ -165,7 +164,7 @@ class Resolver extends ActionResolver
 					$action = new GeneratePathRule();
 					$action->execute($event);
 				};
-				$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
+				$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
 				$event->setAction($action);
 				return;
 			}
@@ -179,14 +178,14 @@ class Resolver extends ActionResolver
 			$event->setAction($action);
 			return;
 		}
-		else if ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200)
+		elseif ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200 && $document)
 		{
 			$action = function($event) {
 				$action = new FindDisplayPage();
 				$action->execute($event);
 			};
 			$event->setAction($action);
-			$this->setAuthorisation($event, $resource, 'Rbs_Website_Page.view');
+			$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
 			return;
 		}
 	}
@@ -321,14 +320,15 @@ class Resolver extends ActionResolver
 
 	/**
 	 * @param Event $event
-	 * @param mixed $resource
+	 * @param string $role
+	 * @param integer $resource
 	 * @param string $privilege
 	 */
-	public function setAuthorisation($event, $resource, $privilege)
+	public function setAuthorisation($event, $role, $resource, $privilege)
 	{
-		$authorisation = function(Event $event) use ($resource, $privilege)
+		$authorisation = function(Event $event) use ($role, $resource, $privilege)
 		{
-			return $event->getPermissionsManager()->isAllowed(null, $resource, $privilege);
+			return $event->getPermissionsManager()->isAllowed($role, $resource, $privilege);
 		};
 		$event->setAuthorization($authorisation);
 	}

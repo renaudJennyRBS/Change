@@ -25,7 +25,7 @@ class ListenerAggregate implements ListenerAggregateInterface
 			$loginListener = new Login();
 			$loginListener->execute($event);
 		};
-		$events->attach(AuthenticationManager::EVENT_LOGIN, $callback, 5);
+		$events->attach(array(AuthenticationManager::EVENT_LOGIN, AuthenticationManager::EVENT_BY_USER_ID), $callback, 5);
 	}
 
 	/**
