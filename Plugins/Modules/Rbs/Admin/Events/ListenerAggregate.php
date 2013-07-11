@@ -26,7 +26,6 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		// TODO: Implement attach() method.
 		$callback = function (\Zend\EventManager\Event $event)
 		{
 			$resolver = new GetAvailablePageFunctions();

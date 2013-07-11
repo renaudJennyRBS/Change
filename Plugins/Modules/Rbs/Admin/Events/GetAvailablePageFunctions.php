@@ -31,7 +31,6 @@ class GetAvailablePageFunctions
 			if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 			{
 				$parsedFunctions = array();
-
 				$blocks = $page->getContentLayout()->getBlocks();
 				if (count($blocks))
 				{
@@ -56,6 +55,7 @@ class GetAvailablePageFunctions
 			{
 				$presentationServices = new \Change\Presentation\PresentationServices($documentServices->getApplicationServices());
 				$blockManager = $presentationServices->getBlockManager();
+				$parsedFunctions = array();
 				foreach ($blockManager->getBlockNames() as $blockName)
 				{
 					$blockInfo = $blockManager->getBlockInformation($blockName);
