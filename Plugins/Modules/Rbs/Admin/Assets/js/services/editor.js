@@ -171,9 +171,8 @@
 
 			function saveErrorHandler (reason) {
 				saveOperation("error");
+				NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.save-error'), reason);
 
-				clearInvalidFields();
-				console.log(reason);
 				if (angular.isObject(reason) && angular.isObject(reason.data)) {
 
 					if (angular.isObject(reason.data['properties-errors'])) {
