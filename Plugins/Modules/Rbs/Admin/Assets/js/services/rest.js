@@ -600,6 +600,8 @@
 						if (Utils.isNew(resource)) {
 							// If resource is new (see isNew()), we must POST on the Collection's URL.
 							method = 'post';
+							// Remove temporary ID
+							delete resource.id;
 							url = this.getCollectionUrl(resource.model);
 						} else {
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
