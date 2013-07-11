@@ -161,7 +161,7 @@ class DocumentQuery
 		}
 
 		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document,
-			array('restResult' => $documentLink, 'extraColumn' => $extraColumn));
+			array('restResult' => $documentLink, 'extraColumn' => $extraColumn, 'urlManager' => $urlManager));
 		$eventManager->trigger($documentEvent);
 
 		if ($documentLink->getLCID())

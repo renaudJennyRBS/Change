@@ -158,7 +158,7 @@ class GetLocalizedDocument
 		$this->addActions($result, $document, $urlManager, $LCID);
 
 		$event->setResult($result);
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result));
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result, 'urlManager' => $urlManager));
 		$document->getEventManager()->trigger($documentEvent);
 
 		$i18n = array();
