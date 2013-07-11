@@ -441,6 +441,67 @@ class PredicateBuilder
 	}
 
 	/**
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function activated($at = null, $to = null)
+	{
+		if (!$this->builder->getModel()->isActivable())
+		{
+			throw new \RuntimeException('Model is not activable: ' . $this->builder->getModel(), 999999);
+		}
+		$fb = $this->getFragmentBuilder();
+
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
+
+		return $fb->logicAnd(
+			$this->eq('active', true),
+			$fb->logicOr($this->isNull('startActivation'), $this->lte('startActivation', $at)),
+			$fb->logicOr($this->isNull('endActivation'), $this->gt('endActivation', $to))
+		);
+	}
+
+	/**
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function notActivated($at = null, $to = null)
+	{
+		if (!$this->builder->getModel()->isActivable())
+		{
+			throw new \RuntimeException('Model is not activable: ' . $this->builder->getModel(), 999999);
+		}
+		$fb = $this->getFragmentBuilder();
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
+
+		return $fb->logicOr(
+			$this->neq('active', true),
+			$fb->logicAnd($this->isNotNull('startActivation'), $this->gt('startActivation', $at)),
+			$fb->logicAnd($this->isNotNull('endActivation'), $this->lte('endActivation', $to))
+		);
+	}
+
+	/**
 	 * @param TreeNode|AbstractDocument|integer $node
 	 * @return array
 	 * @throws \InvalidArgumentException

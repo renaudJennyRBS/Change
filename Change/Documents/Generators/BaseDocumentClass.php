@@ -83,6 +83,10 @@ class BaseDocumentClass
 			$interfaces[] = '\Change\Documents\Interfaces\Publishable';
 			$uses[] = '\Change\Documents\Traits\Publication';
 		}
+		if ($model->getActivable())
+		{
+			$interfaces[] = '\Change\Documents\Interfaces\Activable';
+		}
 		if ($model->getUseVersion())
 		{
 			$interfaces[] = '\Change\Documents\Interfaces\Versionable';
@@ -144,6 +148,11 @@ class BaseDocumentClass
 			$code .= $this->getEditableInterface($model);
 		}
 
+		if ($model->getActivable())
+		{
+			$code .= $this->getActivableInterface($model);
+		}
+
 		$code .= '}' . PHP_EOL;
 		$this->compiler = null;
 		return $code;
@@ -163,6 +172,32 @@ class BaseDocumentClass
 		return var_export($value, true);
 	}
 
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @return string
+	 */
+	protected function getActivableInterface($model)
+	{
+		$code = '
+	/**
+	 * @param \DateTime $at
+	 * @return boolean
+	 */
+	public function activated(\DateTime $at = null)
+	{
+		if ($this->getActive())
+		{
+			$st = $this->getStartActivation();
+			$ep = $this->getEndActivation();
+			$test = ($at === null) ? new \DateTime() : $at;
+			return (null === $st || $st <= $test) && (null === $ep || $test < $ep);
+		}
+		return false;
+	}' . PHP_EOL;
+
+		return $code;
+	}
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @return string

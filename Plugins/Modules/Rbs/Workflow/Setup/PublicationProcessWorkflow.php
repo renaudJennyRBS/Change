@@ -31,9 +31,8 @@ class PublicationProcessWorkflow
 		/* @var $workflow Documents\Workflow */
 		$workflow = $this->documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
 
-		$workflow->setStartTask('publicationProcess')
-			->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
-		$workflow->setLabel('Publication Process')->setTitle('Publication Process');
+		$workflow->setStartTask('publicationProcess') ->setActive(true);
+		$workflow->setLabel('Publication Process');
 		$workflow->setDescription('Publishing process documents');
 
 		$draft = $workflow->getNewPlace()->setName('Draft')->setType(Std\Place::TYPE_START);

@@ -34,7 +34,7 @@ class Install
 			$theme = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
 			$theme->setLabel('Demo');
 			$theme->setName('Rbs_Demo');
-			$theme->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
+			$theme->setActive(true);
 			$theme->save();
 
 			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
@@ -48,7 +48,7 @@ class Install
 			$json = file_get_contents(__DIR__ . '/Assets/Sample.json');
 			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
 			$pageTemplate->setHtmlForBackoffice('<div data-editable-zone-id="zoneEditable1"></div>');
-			$pageTemplate->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_DRAFT);
+			$pageTemplate->setActive(true);
 			$pageTemplate->save();
 
 			$transactionManager->commit();

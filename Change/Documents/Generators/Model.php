@@ -104,6 +104,11 @@ class Model
 	/**
 	 * @var boolean
 	 */
+	protected $activable;
+
+	/**
+	 * @var boolean
+	 */
 	protected $useVersion;
 
 	/**
@@ -247,6 +252,9 @@ class Model
 				case "publishable":
 					$this->publishable = ($value === 'true');
 					break;
+				case "activable":
+					$this->activable = ($value === 'true');
+					break;
 				case "use-version":
 					$this->useVersion = ($value === 'true');
 					break;
@@ -280,7 +288,8 @@ class Model
 			}
 		}
 
-		if ($this->localized === false || $this->editable === false || $this->publishable === false || $this->replace === false)
+		if ($this->localized === false || $this->editable === false
+			|| $this->publishable === false || $this->activable === false || $this->replace === false)
 		{
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
@@ -293,14 +302,17 @@ class Model
 			}
 
 			if ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
-				|| $this->localized
-				|| $this->editable
-				|| $this->publishable
+				|| $this->localized || $this->editable
+				|| $this->publishable || $this->activable
 				|| $this->useVersion
 			)
 			{
 				throw new \RuntimeException('Property stateless can not be applicable', 54024);
 			}
+		}
+		elseif ($this->publishable && $this->activable)
+		{
+			throw new \RuntimeException('Property publishable and activable can not be applicable', 54024);
 		}
 	}
 
@@ -361,6 +373,10 @@ class Model
 				if ($this->publishable)
 				{
 					throw new \RuntimeException('inject ' . $this . ' as invalid publishable attribute', 54016);
+				}
+				if ($this->activable)
+				{
+					throw new \RuntimeException('inject ' . $this . ' as invalid activable attribute', 54016);
 				}
 				if ($this->useVersion)
 				{
@@ -429,10 +445,21 @@ class Model
 			$property = new Property($this, 'publicationStatus', 'String');
 			$this->properties[$property->getName()] = $property;
 
-			$creationDate = new Property($this, 'startPublication', 'DateTime');
-			$this->properties[$creationDate->getName()] = $creationDate;
+			$property = new Property($this, 'startPublication', 'DateTime');
+			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'endPublication', 'DateTime');
+			$this->properties[$property->getName()] = $property;
+		}
+		elseif ($this->activable)
+		{
+			$property = new Property($this, 'active', 'Boolean');
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'startActivation', 'DateTime');
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'endActivation', 'DateTime');
 			$this->properties[$property->getName()] = $property;
 		}
 
@@ -467,6 +494,14 @@ class Model
 			if ($this->checkAncestorPublishable())
 			{
 				throw new \RuntimeException('Duplicate publishable attribute on ' . $this, 54020);
+			}
+		}
+
+		if ($this->getActivable() !== null)
+		{
+			if ($this->checkAncestorActivable())
+			{
+				throw new \RuntimeException('Duplicate activable attribute on ' . $this, 54020);
 			}
 		}
 
@@ -695,6 +730,14 @@ class Model
 	/**
 	 * @return boolean
 	 */
+	public function getActivable()
+	{
+		return $this->activable;
+	}
+
+	/**
+	 * @return boolean
+	 */
 	public function getEditable()
 	{
 		return $this->editable;
@@ -786,6 +829,22 @@ class Model
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			if ($model->getPublishable())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function checkAncestorActivable()
+	{
+		foreach ($this->getAncestors() as $model)
+		{
+			/* @var $model \Change\Documents\Generators\Model */
+			if ($model->getActivable())
 			{
 				return true;
 			}

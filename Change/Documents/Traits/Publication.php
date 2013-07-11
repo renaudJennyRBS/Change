@@ -20,16 +20,17 @@ trait Publication
 {
 	/**
 	 * @api
+	 * @param \DateTime $at
 	 * @return boolean
 	 */
-	public function published()
+	public function published(\DateTime $at = null)
 	{
 		if (Publishable::STATUS_PUBLISHABLE === $this->getPublicationStatus())
 		{
 			$st = $this->getStartPublication();
 			$ep = $this->getEndPublication();
-			$now = new \DateTime();
-			return (null === $st || $st <= $now) && (null === $ep || $now < $ep);
+			$test = ($at === null) ? new \DateTime(): $at;
+			return (null === $st || $st <= $test) && (null === $ep || $test < $ep);
 		}
 		return false;
 	}

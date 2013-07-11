@@ -64,7 +64,7 @@ class Install
 				$user->setEmail('admin@temporary.fr');
 				$user->setLogin('admin');
 				$user->setPassword('admin');
-				$user->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
+				$user->setActive(true);
 				$user->setGroups(array($group, $group2));
 				$user->create();
 

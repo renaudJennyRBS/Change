@@ -20,7 +20,7 @@ class WorkflowResolver
 			if ($workflowModel)
 			{
 				$dqb = new \Change\Documents\Query\Query($documentServices, $workflowModel);
-				$workflow = $dqb->andPredicates($dqb->published(), $dqb->eq('startTask', $startTask))->getFirstDocument();
+				$workflow = $dqb->andPredicates($dqb->activated($date), $dqb->eq('startTask', $startTask))->getFirstDocument();
 				if ($workflow)
 				{
 					$event->setParam('workflow', $workflow);

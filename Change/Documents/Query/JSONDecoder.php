@@ -609,6 +609,77 @@ class JSONDecoder
 	 * @throws \RuntimeException
 	 * @return \Change\Db\Query\Predicates\InterfacePredicate
 	 */
+	protected function configureActivatedPredicate($predicateBuilder, $predicateJSON)
+	{
+		if (isset($predicateJSON['at']))
+		{
+			$at = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['at']);
+			if ($at === false)
+			{
+				throw new \RuntimeException('Invalid activated at value', 999999);
+			}
+		}
+		else
+		{
+			$at = null;
+		}
+		if (isset($predicateJSON['to']))
+		{
+			$to = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['to']);
+			if ($to === false)
+			{
+				throw new \RuntimeException('Invalid activated to value', 999999);
+			}
+		}
+		else
+		{
+			$to = null;
+		}
+		return $predicateBuilder->activated($at, $to);
+	}
+
+
+	/**
+	 * @param PredicateBuilder $predicateBuilder
+	 * @param array $predicateJSON
+	 * @throws \RuntimeException
+	 * @return \Change\Db\Query\Predicates\InterfacePredicate
+	 */
+	protected function configureNotActivatedPredicate($predicateBuilder, $predicateJSON)
+	{
+		if (isset($predicateJSON['at']))
+		{
+			$at = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['at']);
+			if ($at === false)
+			{
+				throw new \RuntimeException('Invalid notActivated at value', 999999);
+			}
+		}
+		else
+		{
+			$at = null;
+		}
+		if (isset($predicateJSON['to']))
+		{
+			$to = \DateTime::createFromFormat(\DateTime::ISO8601, $predicateJSON['to']);
+			if ($to === false)
+			{
+				throw new \RuntimeException('Invalid notActivated to value', 999999);
+			}
+		}
+		else
+		{
+			$to = null;
+		}
+		return $predicateBuilder->notActivated($at, $to);
+	}
+
+	/**
+	 * @param PredicateBuilder $predicateBuilder
+	 * @param array $predicateJSON
+	 * @throws \RuntimeException
+	 * @return \Change\Db\Query\Predicates\InterfacePredicate
+	 */
 	protected function configureChildOfPredicate($predicateBuilder, $predicateJSON)
 	{
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
