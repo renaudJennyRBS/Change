@@ -359,6 +359,18 @@ use Change\Documents\InverseProperty;
 		return '. $this->escapePHPValue($model->getPublishable()).';
 	}'. PHP_EOL;
 		}
+		elseif ($model->getActivable() !== null)
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isActivable()
+	{
+		return '. $this->escapePHPValue($model->getActivable()).';
+	}'. PHP_EOL;
+		}
 		
 		if ($model->getEditable() !== null)
 		{

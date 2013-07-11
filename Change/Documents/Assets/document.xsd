@@ -206,11 +206,12 @@
 			<xs:attribute name="localized" type="xs:boolean" default="true"/>
 			<xs:attribute name="editable" type="xs:boolean" default="true"/>
 			<xs:attribute name="publishable" type="xs:boolean" default="true"/>
+			<xs:attribute name="activable" type="xs:boolean" default="true"/>
 			<xs:attribute name="use-version" type="xs:boolean" default="true"/>
 			<xs:attribute name="tree-name" type="treeName" default="true"/>
 
 			<!-- stateless exclude: extends, inject, has-url, frontoffice-indexable, backoffice-indexable,
-					localized, editable, publishable, use-version. -->
+					localized, editable, publishable, activable, use-version. -->
 			<xs:attribute name="stateless" type="xs:boolean" default="true"/>
 		</xs:complexType>
 	</xs:element>

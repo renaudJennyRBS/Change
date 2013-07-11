@@ -90,7 +90,7 @@ class Menu extends Block
 	 * @param integer $maxLevel
 	 * @param null|\Rbs\Website\Documents\Page $currentPage
 	 * @param \Rbs\Website\Documents\Section[] $path
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param \Change\Http\Web\UrlManager $urlManager
 	 * @return \Rbs\Website\Menu\MenuEntry
 	 */
 	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path, $urlManager)

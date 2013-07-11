@@ -84,9 +84,10 @@ interface Publishable
 	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null);
 
 	/**
+	 * @param \DateTime $at
 	 * @return boolean
 	 */
-	public function published();
+	public function published(\DateTime $at = null);
 
 	/**
 	 * @return boolean

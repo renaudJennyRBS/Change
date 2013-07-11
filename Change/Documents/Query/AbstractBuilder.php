@@ -654,11 +654,50 @@ abstract class AbstractBuilder
 
 	/**
 	 * @see \Change\Documents\Query\PredicateBuilder::published
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
 	 * @return InterfacePredicate
 	 */
-	public function published()
+	public function published($at = null, $to = null)
 	{
-		return $this->getPredicateBuilder()->published();
+		return $this->getPredicateBuilder()->published($at, $to);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::notPublished
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function notPublished($at = null, $to = null)
+	{
+		return $this->getPredicateBuilder()->notPublished($at, $to);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::activated
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function activated($at = null, $to = null)
+	{
+		return $this->getPredicateBuilder()->activated($at, $to);
+	}
+
+	/**
+	 * @see \Change\Documents\Query\PredicateBuilder::notActivated
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function notActivated($at = null, $to = null)
+	{
+		return $this->getPredicateBuilder()->notActivated($at, $to);
 	}
 
 	/**

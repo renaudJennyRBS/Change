@@ -197,6 +197,15 @@ abstract class AbstractModel
 	 * @api
 	 * @return boolean
 	 */
+	public function isActivable()
+	{
+		return false;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function useVersion()
 	{
 		return false;
