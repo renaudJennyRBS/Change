@@ -12,6 +12,7 @@
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
 			link: function (scope, elm)
 			{
+				Editor.initScope(scope, elm);
 			}
 		};
 	}
