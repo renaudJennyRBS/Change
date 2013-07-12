@@ -1,10 +1,12 @@
 <div class="confirmation-area"></div>
 <div class="form-actions">
 	<div style="margin-bottom: 10px; margin-top: -10px;"
-		data-ng-class="{true: 'muted'}[changes.length == 0]"
-		data-ng-pluralize
+		data-ng-class="{true: 'muted'}[changes.length == 0]">
+		<span data-ng-pluralize
 		data-count="changes.length"
-		data-when="{{ i18nAttr('m.rbs.admin.forms.propertiesModifiedPluralize') }}">
+		data-when="{{ i18nAttr('m.rbs.admin.forms.propertiesModifiedPluralize') }}"></span>
+		<i ng-show="changes.length" ng-class="{'icon-chevron-sign-left': showChanges, 'icon-chevron-sign-right': !showChanges}" ng-click="showChanges = !showChanges"></i>
+		<span ng-show="showChanges"><span class="label" ng-repeat="change in changes">(= change =)</span></span>
 	</div>
 
 	<!--button data-ng-show="hasStatus('DRAFT', 'VALIDATION')" type="button" data-ng-click="publish($event)" class="btn btn-success btn-headline pull-right" data-ng-disabled="! isUnchanged()"><i class="icon-play"></i>Publier<small>sur le site web</small></button-->
