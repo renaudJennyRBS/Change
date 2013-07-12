@@ -799,7 +799,7 @@
 					}
 
 					function getDefaultSortDir () {
-						return attrs.defaultSortDir || 'desc';
+						return attrs.defaultSortDir || (getDefaultSortColumn() === 'modificationDate' ? 'desc' : 'asc');
 					}
 
 					scope.sort =  {
