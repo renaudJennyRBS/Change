@@ -5,6 +5,9 @@
 	var app = angular.module('RbsChange');
 
 	/**
+	 * FIXME
+	 * This does not work well as a field in an Editor:
+	 * when coming back on the form, the value is not always set.
 	 */
 	app.directive('rbsDocumentSelect', ['RbsChange.REST', function (REST) {
 		return {

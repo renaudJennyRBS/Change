@@ -24,7 +24,7 @@
 
 			"link" : function postLink(scope, elm) {
 
-				if (!scope.model) {
+				if (! elm.is('[model]')) {
 					throw new Error("Please provide a 'model' attribute with a valid Model name.");
 				}
 

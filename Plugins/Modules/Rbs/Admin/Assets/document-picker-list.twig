@@ -1,41 +1,14 @@
-<div>
-
-	<header class="clearfix">
-		<h3>(=selectorTitle=)</h3>
-	</header>
-
-	<div class="btn-toolbar">
-		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
-			<div class="input-append">
-				<!--TODO localization-->
-				<input type="text" class="input-medium search-query" placeholder="Rechercher..." data-ng-model="search"/>
-				<button type="submit" class="btn" title="Rechercher">
-					<i class="icon-search"></i>
-				</button>
-			</div>
-		</form>
-	</div>
-	<div class="clearfix"></div>
-
-	<search-filters model="{{ query.model }}" filter-query="query" text-search="textSearch"></search-filters>
-
-	<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
-	               publishable="true"
-	               model="{{ query.model }}"
-	               filter-query="query" extend="picker">
-		<column name="label" label="Libellé"><!--TODO localization-->
-			{% if (query.multiple) %}
-			<span class="pull-right">
-				<!--TODO localization-->
-				<button type="button" class="btn btn-mini" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
-			</span>
-			{% endif %}
-			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
-		</column>
-	</rbs-document-list>
-
-	<div class="btn-toolbar">
-		<button ng-click="closeSelector()" type="button">Fermer</button>
-	</div>
-
-</div>
+<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
+               publishable="true"
+               model="{{ query.model }}"
+               filter-query="query" extend="picker">
+	<column name="label" label="Libellé"><!--TODO localization-->
+		{% if (query.multiple) %}
+		<span class="pull-right">
+			<!--TODO localization-->
+			<button type="button" class="btn btn-mini" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
+		</span>
+		{% endif %}
+		<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
+	</column>
+</rbs-document-list>

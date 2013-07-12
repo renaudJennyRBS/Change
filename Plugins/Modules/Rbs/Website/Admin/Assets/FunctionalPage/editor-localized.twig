@@ -1,0 +1,50 @@
+<form name="form" data-ng-submit="submit()" novalidate>
+
+	<!-- general -->
+
+	<div class="alert alert-info">
+		<h4>Traduction</h4>
+		<p>
+			La langue choisie pour l'édition ((=language=)) n'est pas la langue de référence du document ((=document.refLCID=)).
+		</p>
+		<p>
+			Seules les propriétés pouvant être traduites sont affichées ici. Pour modifier des propriétés communes à toutes les traductions,
+			vous devez <a href data-ng-href="(= document | documentURL:{'LCID': document.refLCID} =)">éditer le document dans sa langue de référence ((=document.refLCID=))</a>.
+		</p>
+	</div>
+
+	<fieldset data-ng-show="section==''" data-form-section-label="Propriétés générales" data-form-section-group="Propriétés">
+
+		<div class="control-group required property">
+			<label class="control-label" for="name">Titre</label>
+			<div class="controls">
+				<input type="text" id="name" name="name" class="input-xxlarge" required data-ng-model="document.label"/>
+				<div data-chg-if="referenceDocument" class="input-append localization-help">
+					<span class="uneditable-input">(=referenceDocument.label=)</span>
+					<span class="add-on">(=referenceDocument.LCID=)</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="page-contents-button">Contenu</label>
+			<div class="controls">
+				<button class="btn" id="page-contents-button" type="button" data-ng-click="editPage($event, document)"><i class="icon-edit"></i> Ouvrir l'éditeur de page</button>
+			</div>
+		</div>
+		<div data-role="edit-page-contents-confirmation"></div>
+
+		<div class="control-group property">
+			<label class="control-label" for="contents">Résumé</label>
+			<div class="controls">
+				<rich-text-toolbar></rich-text-toolbar>
+				<div class="rich-text-editor" id="summary" name="summary" data-ng-model="document.summary"></div>
+				<div data-chg-if="referenceDocument" class="localization-help" data-ng-bind-html-unsafe="referenceDocument.summary"></div>
+			</div>
+		</div>
+
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+
+</form>

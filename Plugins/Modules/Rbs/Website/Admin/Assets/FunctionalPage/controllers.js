@@ -8,6 +8,7 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
+	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
@@ -17,14 +18,16 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.staticpage-list | ucf'), "Rbs/Website/StaticPage"]
+			[i18n.trans('m.rbs.website.admin.js.functionalpage-list | ucf'), "Rbs/Website/FunctionalPage"]
 		]);
 
 		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_Website_StaticPage_ListController', ListController);
+
+	// FIXME
+	app.controller('Rbs_Website_FunctionalPage_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -37,17 +40,18 @@
 	 */
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
-		$scope.urlAfterSave = '/Rbs/Website/StaticPage';
+		$scope.urlAfterSave = '/Rbs/Website/FunctionalPage';
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.staticpage-list | ucf'), "Rbs/Website/StaticPage"]
+			[i18n.trans('m.rbs.website.admin.js.functionalpage-list | ucf'), "Rbs/Website/FunctionalPage"]
 		]);
-		FormsManager.initResource($scope, 'Rbs_Website_StaticPage');
+		FormsManager.initResource($scope, 'Rbs_Website_FunctionalPage');
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Rbs_Website_StaticPage_FormController', FormController);
+	app.controller('Rbs_Website_FunctionalPage_FormController', FormController);
+
 
 	/**
 	 * Controller for contents editor.
@@ -63,10 +67,10 @@
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.staticpage-list | ucf'), "Rbs/Website/StaticPage"]
+			[i18n.trans('m.rbs.website.admin.js.functionalpage-list | ucf'), "Rbs/Website/FunctionalPage"]
 		]);
 
-		FormsManager.initResource($scope, 'Rbs_Website_StaticPage').then(function (document)
+		FormsManager.initResource($scope, 'Rbs_Website_FunctionalPage').then(function (document)
 		{
 			Editor.initScope($scope);
 			$scope.original = document;
@@ -97,5 +101,6 @@
 	}
 
 	ContentsFormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Editor', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n'];
-	app.controller('Rbs_Website_StaticPage_ContentsFormController', ContentsFormController);
+	app.controller('Rbs_Website_FunctionalPage_ContentsFormController', ContentsFormController);
+
 })();

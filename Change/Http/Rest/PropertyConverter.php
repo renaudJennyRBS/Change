@@ -89,7 +89,7 @@ class PropertyConverter
 				}
 				elseif ($propertyValue !== null)
 				{
-					throw new \RuntimeException('Invalid Property value', 70001);
+					throw new \RuntimeException('Invalid Property value: ' . $this->property->getName(), 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENT:
@@ -114,7 +114,7 @@ class PropertyConverter
 				}
 				elseif ($propertyValue !== null)
 				{
-					throw new \RuntimeException('Invalid Property value', 70001);
+					throw new \RuntimeException('Invalid Property value: ' . $this->property->getName(), 70001);
 				}
 				break;
 			case Property::TYPE_DOCUMENTARRAY:
@@ -129,7 +129,7 @@ class PropertyConverter
 					{
 						if (!($doc instanceof AbstractDocument))
 						{
-							throw new \RuntimeException('Invalid Property value', 70001);
+							throw new \RuntimeException('Invalid Property value: ' . $this->property->getName(), 70001);
 						}
 						$dm = $doc->getDocumentManager();
 						$restValue = new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
@@ -152,7 +152,7 @@ class PropertyConverter
 				}
 				elseif ($propertyValue !== null)
 				{
-					throw new \RuntimeException('Invalid Property value', 70001);
+					throw new \RuntimeException('Invalid Property value: ' . $this->property->getName(), 70001);
 				}
 				break;
 			case Property::TYPE_STORAGEURI:

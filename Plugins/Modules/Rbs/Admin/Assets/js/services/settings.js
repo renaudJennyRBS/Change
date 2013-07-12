@@ -29,8 +29,6 @@
 			angular.extend($rootScope.settings, storedSettings);
 		}
 
-		console.log("Loaded settings: ", $rootScope.settings);
-
 		return angular.extend(
 			{ },
 			$rootScope.settings,
@@ -47,6 +45,5 @@
 		);
 
 	}]);
-
 
 })();

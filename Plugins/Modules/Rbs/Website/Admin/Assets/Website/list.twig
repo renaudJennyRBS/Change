@@ -12,7 +12,10 @@
 	               model="Rbs_Website_Website"
 	               filter-query="query"
 	               actions="default">
-		<column name="label" primary="true"></column>
+		<column name="label" primary="true">
+			<strong><a href ng-href="(= doc|documentURL:'tree'=)">(= doc.label =)</a></strong>
+			<i class="icon-rbs-navigate-to"></i>
+		</column>
 		<column name="baseurl">
 			<a href ng-href="(= doc.baseurl =)" target="_blank">(= doc.baseurl =) <i class="icon-external-link-sign"></i></a>
 		</column>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.document.functionalpage" lcid="en_US">
+	<include id="m.rbs.generic.document"/>
+	<key id="website">website</key>
+	<key id="website-help">The website this page belongs to.</key>
+	<key id="website-picker-title">select the website for this page</key>
+	<key id="pagetemplate">page template</key>
+	<key id="editablecontent">page content</key>
+	<key id="open-page-editor">open page editor</key>
+	<key id="content-zones">content zones</key>
+	<key id="synchronize-title-label">synchronize title with label</key>
+
+	<key id="functions">functions</key>
+	<key id="allowedFunctionsCode">supported functions</key>
+
+	<key id="functional-page-editor-help" format="html"><![CDATA[This page is a <strong>functional page</strong>: it is used to display other contents in the website.<br/>To configure the functions this page supports, click on <em>Functions</em> in the menu on the left.]]></key>
+	<key id="functional-page-list-help" format="html"><![CDATA[The <strong>functional pages</strong> are used to display contents coming from different modules, such as news or products.]]></key>
+</i18n>

@@ -10,12 +10,12 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
-	
+
 	/**
 	 * @var integer
 	 */
 	protected $index = 0;
-	
+
 	/**
 	 * @var array
 	 */
@@ -54,8 +54,8 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
@@ -63,7 +63,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return $this->documentManager;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 */
@@ -71,7 +71,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		$this->documentManager = $documentManager;
 	}
-	
+
 	/**
 	 * @param integer $offset
 	 * @return boolean
@@ -80,7 +80,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return isset($this->entries[$offset]);
 	}
-	
+
 	/**
 	 * @param integer $offset
 	 * @return \Change\Documents\AbstractDocument|null
@@ -133,7 +133,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 			throw new \InvalidArgumentException('Argument 1 must be null or \Change\Documents\AbstractDocument', 50001);
 		}
 	}
-	
+
 	/**
 	 * @param integer $offset
 	 */
@@ -142,7 +142,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 		unset($this->entries[$offset]);
 		$this->entries = array_values($this->entries);
 	}
-	
+
 	/**
 	 * @param array $entry
 	 * @return \Change\Documents\AbstractDocument|null
@@ -152,7 +152,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 		$model = isset($entry[1]) ?$this->documentManager->getModelManager()->getModelByName($entry[1]) : null;
 		return $this->documentManager->getDocumentInstance($entry[0], $model);
 	}
-	
+
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return array
@@ -161,7 +161,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return array($document->getId(), $document->getDocumentModelName());
 	}
-	
+
 	/**
 	 * @return\Change\Documents\AbstractDocument|null
 	 */
@@ -169,7 +169,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return $this->convertToDocument($this->entries[$this->index]);
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -177,18 +177,18 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		 return $this->index;
 	}
-	
-	
+
+
 	public function next()
 	{
 		 ++$this->index;
 	}
-	
+
 	public function rewind()
 	{
 		$this->index = 0;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -196,7 +196,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	{
 		return isset($this->entries[$this->index]);
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -211,5 +211,22 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	public function ids()
 	{
 		return array_map(function($row) {return $row[0];}, $this->entries);
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument[]
+	 */
+	public function toArray()
+	{
+		$documents = array();
+		foreach ($this->ids() as $id)
+		{
+			$document = $this->documentManager->getDocumentInstance($id);
+			if ($document instanceof \Change\Documents\AbstractDocument)
+			{
+				$documents[] = $document;
+			}
+		}
+		return $documents;
 	}
 }

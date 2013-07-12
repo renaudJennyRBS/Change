@@ -464,7 +464,6 @@
 						var props = {
 							'id'    : Utils.getTemporaryId(),
 							'model' : model,
-							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf'),
 							'publicationStatus' : 'DRAFT'
 						};
 						if (Utils.isValidLCID(lcid)) {
@@ -600,6 +599,8 @@
 						if (Utils.isNew(resource)) {
 							// If resource is new (see isNew()), we must POST on the Collection's URL.
 							method = 'post';
+							// Remove temporary ID
+							delete resource.id;
 							url = this.getCollectionUrl(resource.model);
 						} else {
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
@@ -1128,7 +1129,7 @@
 									"processData" : false,  // tell jQuery not to process the data,
 									"contentType" : false,  // tell jQuery not to change the ContentType,
 
-									"success" : function (data, textStatus, jqXHR) {
+									"success" : function (data) {
 										resolveQ(q, data);
 										digest();
 									},
@@ -1139,9 +1140,14 @@
 											error = JSON.parse(jqXHR.responseText);
 										} catch (e) {
 											error = {
-												"code"    : errorThrown,
-												"message" : textStatus + ": " + jqXHR.responseText
+												"code"    : errorThrown || 'UPLOAD-ERROR',
+												"message" : "Could not upload file: " + jqXHR.responseText
 											};
+											if (jqXHR.responseText) {
+												error.message = "Could not upload file: " + jqXHR.responseText;
+											} else {
+												error.message = "Could not upload file.";
+											}
 										}
 										rejectQ(q, error);
 										digest();

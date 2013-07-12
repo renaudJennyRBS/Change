@@ -2,14 +2,17 @@
 <i18n baseKey="m.rbs.website.document" lcid="fr_FR">
 	<key id="menu">menu</key>
 	<key id="menu-list">menus de navigation</key>
-	<key id="menu-create">créer un menu de navigation</key>
-	<key id="staticpage">page</key>
-	<key id="staticpage-list">pages</key>
-	<key id="staticpage-create">créer une page</key>
+	<key id="menu-create">ajouter un menu de navigation</key>
+	<key id="staticpage">page de contenu</key>
+	<key id="staticpage-list">pages de contenu</key>
+	<key id="staticpage-create">ajouter une page de contenu</key>
+	<key id="functionalpage">page fonctionnelle</key>
+	<key id="functionalpage-list">pages fonctionnelles</key>
+	<key id="functionalpage-create">ajouter une page fonctionnelle</key>
 	<key id="topic">rubrique</key>
 	<key id="topic-list">rubriques</key>
-	<key id="topic-create">créer une rubrique</key>
+	<key id="topic-create">ajouter une rubrique</key>
 	<key id="website">site web</key>
 	<key id="website-list">sites web</key>
-	<key id="website-create">créer un site web</key>
+	<key id="website-create">ajouter un site web</key>
 </i18n>
