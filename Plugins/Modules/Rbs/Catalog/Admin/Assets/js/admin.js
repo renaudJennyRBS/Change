@@ -9,16 +9,11 @@
 			.when('/Rbs/Catalog/Shop/:id/:LCID', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Shop/:id', { templateUrl: 'Rbs/Catalog/Shop/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id/Prices/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id/Prices/:shopId/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id/Prices/:shopId/:areaId/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Price/:id', { templateUrl: 'Rbs/Catalog/Price/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/BillingArea', { templateUrl: 'Rbs/Catalog/BillingArea/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/BillingArea/:id/:LCID',
-			{ templateUrl: 'Rbs/Catalog/BillingArea/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/BillingArea/:id',
-			{ templateUrl: 'Rbs/Catalog/BillingArea/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Currency', { templateUrl: 'Rbs/Catalog/Currency/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Currency/:id', { templateUrl: 'Rbs/Catalog/Currency/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id/:LCID',
 			{ templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
@@ -54,10 +49,6 @@
 				'form': '/Rbs/Catalog/BillingArea/:id/:LCID',
 				'list': '/Rbs/Catalog/BillingArea/:LCID',
 				'i18n': '/Rbs/Catalog/BillingArea/:id/:LCID/translate-from/:fromLCID'
-			});
-			$delegate.register('Rbs_Catalog_Currency', {
-				'form': '/Rbs/Catalog/Currency/:id/:LCID',
-				'list': '/Rbs/Catalog/Currency/:LCID'
 			});
 			return $delegate;
 		}]);

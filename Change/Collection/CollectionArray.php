@@ -13,7 +13,7 @@ class CollectionArray implements CollectionInterface
 	/**
 	 * @var BaseItem[]
 	 */
-	protected $items;
+	protected $items = array();
 
 	/**
 	 * @param string $code

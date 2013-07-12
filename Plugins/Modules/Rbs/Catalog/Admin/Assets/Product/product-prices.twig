@@ -1,0 +1,61 @@
+<div data-ng-controller="Rbs_Catalog_Product_PricesController">
+        <div class="control-group property">
+            <label class="control-label" data-not-a-property="" for="selectShops">
+                {{ i18n('m.rbs.catalog.admin.js.shop', ['ucf']) }}
+            </label>
+            <div class="controls">
+                <select ng-model="shopId" rbs-items-from-collection="Rbs_Catalog_Collection_Shops" ng-change="changeShop(shopId)">
+					<option value=""> {{ i18n('m.rbs.catalog.admin.js.select-shop', ['ucf']) }}</option>
+                </select>
+            </div>
+        </div>
+	<div class="control-group property">
+		<label class="control-label" data-not-a-property="" for="selectShops">
+			{{ i18n('m.rbs.catalog.admin.js.billingarea', ['ucf']) }}
+		</label>
+		<div class="controls">
+			<select ng-model="areaId" ng-disabled="(=!shopId=)" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForShop"
+				rbs-items-collection-params="shopId:(=shopId=)" ng-change="changeArea(areaId)">
+				<option value="">{{ i18n('m.rbs.catalog.admin.js.select-billingarea', ['ucf']) }}</option>
+			</select>
+		</div>
+	</div>
+	<div>
+		<a href="javascript:;" ng-click="cascadeCreatePrice()">
+			{{ i18nAttr('m.rbs.catalog.document.price-create', ['ucf']) }}
+		</a>
+
+		<div>
+			<search-filters model="Rbs_Catalog_Price" query="DL.query" text-search="textSearch"></search-filters>
+
+			<rbs-document-list data-dlid="DLRbsCatalogPrice" model="Rbs_Catalog_Price" publishable="true"
+				cascade-edition="(= product.label=)" load-query="List.query" modification-date="false"
+				 default-sort-column="value">
+
+				<column name="formattedValue" primary="true">
+					<a href="javascript:;" ng-click="cascadeEdit(doc)">(= doc.formattedValue =)</a>
+					<del ng-show="doc.formattedValueWithoutDiscount">(= doc.formattedValueWithoutDiscount =)</del>
+				</column>
+				<column name="valueWithoutDiscount" align="center" label="{{ i18nAttr('m.rbs.catalog.document.price.discount', ['ucf']) }}">
+					<div ng-show="doc.valueWithoutDiscount"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.yes', ['ucf']) }}</div>
+					<button type="button" ng-click="cascadeDuplicate(doc)" ng-show="!doc.valueWithoutDiscount" class="btn btn-small btn-inverse" title="{{ i18nAttr('m.rbs.catalog.document.price.create-discount-from-price', ['ucf']) }}">
+						<i class="icon-plus icon-white"></i> {{ i18n('m.rbs.admin.create', ['ucf']) }}
+					</button>
+				</column>
+				<column name="startPublication"></column>
+				<column name="endPublication"></column>
+				<column name="thresholdMin"></column>
+				<preview>
+					<dl class="dl-horizontal">
+						<dt>{{ i18nAttr('m.rbs.catalog.document.price.modificationDate', ['ucf']) }}</dt>
+						<dd>(= doc.modificationDate | date:'medium' =)</dd>
+						<dt>{{ i18nAttr('m.rbs.catalog.document.price.ecoTax', ['ucf']) }}</dt>
+						<dd>(= doc.ecoTax | currency:List.currencySymbol =)</dd>
+						<dt>{{ i18nAttr('m.rbs.catalog.document.price.discountDetail', ['ucf']) }}</dt>
+						<dd>(= doc.discountDetail =)</dd>
+					</dl>
+				</preview>
+			</rbs-document-list>
+		</div>
+	</div>
+</div>

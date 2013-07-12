@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.collection.admin.js" lcid="fr_FR">
+	<include id="m.rbs.collection.document"/>
+	<key id="module-name">prix et taxes</key>
+	<key id="module-keywords">prix,taxes,tarification,tarifs,zone</key>
+	<key id="price-list">prix</key>
+	<key id="price-create">créer un prix</key>
+	<key id="tax-list">taxes</key>
+	<key id="tax-create">créer une taxe</key>
+	<key id="billingarea-list">zones de tarification</key>
+	<key id="billingarea-create">créer une zone de tarification</key>
+	<key id="tax-delete-zone">supprimer</key>
+	<key id="tax-delete-category">supprimer</key>
+	<key id="tax-make-default-zone">zone par défaut</key>
+	<key id="tax-add-zone">ajouter une zone</key>
+	<key id="tax-add-category">ajouter une catégorie</key>
+	<key id="add">ajouter</key>
+	<key id="category-exists">il existe déjà une catégorie avec ce code</key>
+	<key id="zone-exists">il existe déjà une zone avec ce code</key>
+</i18n>

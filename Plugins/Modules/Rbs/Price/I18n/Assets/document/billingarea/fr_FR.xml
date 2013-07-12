@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.document.billingarea" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="currencyCode">code ISO devise</key>
+	<key id="boeditwithtax">saisie TTC des prix</key>
+	<key id="storepricewithtax">sauvegarde des prix TTC</key>
+	<key id="taxes">taxes</key>
+	<key id="tax-category">catégorie</key>
+	<key id="tax-zone">zone</key>
+	<key id="enable-deletion">afficher les boutons de suppression</key>
+</i18n>
