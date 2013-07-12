@@ -743,6 +743,13 @@ class Property
 			{
 				$this->constraintArray['maxSize'] = array('max' => 255);
 			}
+			if ($this->name === 'publicationStatus')
+			{
+				if (!isset($this->constraintArray['publicationStatus']))
+				{
+					$this->constraintArray['publicationStatus'] = array();
+				}
+			}
 		}
 		elseif ($this->type === 'StorageUri')
 		{

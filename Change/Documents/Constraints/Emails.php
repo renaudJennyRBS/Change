@@ -14,7 +14,7 @@ class Emails extends \Zend\Validator\AbstractValidator
 	protected $emailConstraint;
 	
 	/**
-	 * @param array $params <modelName => modelName, propertyName => propertyName, [documentId => documentId]>
+	 * @param array $params <property => property, document => document>
 	 */
 	public function __construct($params = array())
 	{
