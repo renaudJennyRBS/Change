@@ -18,7 +18,7 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function getEventManagerIdentifier()
 	{
-		return array('Http.Rest', 'Http');
+		return array('Http', 'Http.Rest');
 	}
 
 	/**

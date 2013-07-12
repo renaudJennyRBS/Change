@@ -34,6 +34,14 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return 'mysql';
 	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Db', 'Db.Mysql');
+	}
 	
 	/**
 	 * @param \PDO|null $driver

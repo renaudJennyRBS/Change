@@ -34,6 +34,14 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return 'sqlite';
 	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Db', 'Db.Sqlite');
+	}
 	
 	/**
 	 * @param \PDO|null $driver

@@ -25,7 +25,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/Http.Rest/Rbs_Tag',
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Tag',
 			'\\Rbs\\Tag\\Http\\Rest\\ListenerAggregate');
 
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Tag',

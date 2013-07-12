@@ -93,8 +93,17 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$path = 'Change/Events/' . str_replace('.', '/', $identifier);
-			$classNames = array_merge($classNames, array_values($this->configuration->getEntry($path, array())));
+			$entry = $this->configuration->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
+			if (is_array($entry))
+			{
+				foreach($entry as $className)
+				{
+					if (is_string($className))
+					{
+						$classNames[] = $className;
+					}
+				}
+			}
 		}
 		return array_unique($classNames);
 	}
