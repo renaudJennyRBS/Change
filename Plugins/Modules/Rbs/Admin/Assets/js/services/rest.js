@@ -464,7 +464,6 @@
 						var props = {
 							'id'    : Utils.getTemporaryId(),
 							'model' : model,
-							'label' : i18n.trans('m.rbs.admin.admin.js.new | ucf'),
 							'publicationStatus' : 'DRAFT'
 						};
 						if (Utils.isValidLCID(lcid)) {
@@ -1130,7 +1129,7 @@
 									"processData" : false,  // tell jQuery not to process the data,
 									"contentType" : false,  // tell jQuery not to change the ContentType,
 
-									"success" : function (data, textStatus, jqXHR) {
+									"success" : function (data) {
 										resolveQ(q, data);
 										digest();
 									},
@@ -1141,9 +1140,14 @@
 											error = JSON.parse(jqXHR.responseText);
 										} catch (e) {
 											error = {
-												"code"    : errorThrown,
-												"message" : textStatus + ": " + jqXHR.responseText
+												"code"    : errorThrown || 'UPLOAD-ERROR',
+												"message" : "Could not upload file: " + jqXHR.responseText
 											};
+											if (jqXHR.responseText) {
+												error.message = "Could not upload file: " + jqXHR.responseText;
+											} else {
+												error.message = "Could not upload file.";
+											}
 										}
 										rejectQ(q, error);
 										digest();
