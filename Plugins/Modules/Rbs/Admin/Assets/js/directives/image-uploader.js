@@ -97,12 +97,12 @@
 								q.resolve(response);
 							},
 							function uploadErrorFn (data) {
-								console.log("imageUploader: uploading failed => q is REJECTED with reason '" + data.message + "'");
-								if (data.message === 'error: ') {
-									data.message = "Could not upload image.";
-								}
+								console.log("imageUploader: uploading failed => q is REJECTED with reason: ", data);
 								if (!data.code) {
 									data.code = "UPLOAD-ERROR";
+									if (data.message === 'error: ') {
+										data.message = "Could not upload image.";
+									}
 								}
 								q.reject(data);
 							}
