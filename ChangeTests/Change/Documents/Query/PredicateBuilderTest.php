@@ -129,8 +129,9 @@ class PredicateBuilderTest extends TestCase
 
 		$corDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Correction');
 		$corDoc->initialize(3001);
-		$corDoc->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
 		$corDoc->setLabel('C1');
+		$corDoc->save();
+		$corDoc->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
 		$corDoc->save();
 	}
 

@@ -47,4 +47,6 @@
 	<key id="urlinvalid">'%value%' n'est pas une URL valide.</key>
 	<key id="notinlist">'%value%' n'est pas une valeur autorisée.</key>
 	<key id="storageuriinvalid">'%value%' doit être une URI de stockage valide.</key>
+	<key id="publicationStatusInvalid">'%value%' doit être un statut de publication valide.</key>
+	<key id="newpublicationStatusInvalid">'%value%' n'est pas valide pour un nouveau document.</key>
 </i18n>

@@ -41,4 +41,6 @@
 	<key id="hostnameunknowntld">'%value%' appears to be a DNS hostname but cannot match TLD against known list</key>
 	<key id="notdigits">'%value%' must contain only digits</key>
 	<key id="storageuriinvalid">'%value%' must be a valid storage URI.</key>
+	<key id="publicationstatusinvalid">'%value%' must be a valid publication status.</key>
+	<key id="newpublicationStatusInvalid">'%value%' is not  valid for new document.</key>
 </i18n>

@@ -6,8 +6,8 @@ namespace Change\Documents\Constraints;
  */
 class Enum extends \Zend\Validator\AbstractValidator
 {
-	const NOTINLIST = 'notInList';
-	
+	const NOT_IN_LIST = 'notInList';
+
 	/**
 	 * @var string
 	 */
@@ -18,15 +18,20 @@ class Enum extends \Zend\Validator\AbstractValidator
 	 */
 	protected $values;
 
- 	/**
+	/**
+	 * @var \Change\Documents\AbstractDocument
+	 */
+	protected $document;
+
+	/**
 	 * @param array $params <fromList => modelName>
-	 */   
+	 */
 	public function __construct($params = array())
 	{
-		$this->messageTemplates = array(self::NOTINLIST => self::NOTINLIST);
+		$this->messageTemplates = array(self::NOT_IN_LIST => self::NOT_IN_LIST);
 		parent::__construct($params);
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -60,8 +65,25 @@ class Enum extends \Zend\Validator\AbstractValidator
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function setDocument($document)
+	{
+		$this->document = $document;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		return $this->document;
+	}
+
+	/**
 	 * @param  mixed $value
 	 * @throws \LogicException
+	 * @throws \RuntimeException
 	 * @return boolean
 	 */
 	public function isValid($value)
@@ -78,18 +100,34 @@ class Enum extends \Zend\Validator\AbstractValidator
 				}
 			}
 
-			$this->error(self::NOTINLIST);
+			$this->error(self::NOT_IN_LIST);
 			return false;
 		}
 
 		$fromList = $this->getFromList();
 		if (is_string($fromList))
 		{
-			//@TODO Implement this when Change/list module is ready.
-			throw new \LogicException('Not implemented', 10001);
-			$this->error(self::NOTINLIST);
-			return false;
+			if ($this->getDocument() instanceof \Change\Documents\AbstractDocument)
+			{
+				$cm = new \Change\Collection\CollectionManager();
+				$cm->setDocumentServices($this->getDocument()->getDocumentServices());
+				$collection = $cm->getCollection($fromList, array('document' => $this->getDocument()));
+				if ($collection === null)
+				{
+					throw  new \LogicException('Collection ' . $fromList . ' not found', 999999);
+				}
+
+				if ($collection->getItemByValue($value) === null)
+				{
+					$this->error(self::NOT_IN_LIST);
+					return false;
+				}
+			}
+			else
+			{
+				throw new \RuntimeException('Document not set.', 999999);
+			}
 		}
 		return true;
-	}	
+	}
 }
