@@ -94,7 +94,7 @@
 			}
 
 			function buildOtherAction (action) {
-				return	'<a href="javascript:;" ng-click="_executeAction(\'' + action.name + '\', doc, $event)">' +
+				return	'<a href="javascript:;" ng-click="executeAction(\'' + action.name + '\', doc, $event)">' +
 							action.label +
 						'</a>';
 			}
@@ -580,7 +580,7 @@
 					}
 
 
-					scope._executeAction = function (actionName, doc, $event) {
+					scope.executeAction = function (actionName, doc, $event) {
 						return Actions.execute(actionName, {
 							'$docs'   : [ doc ],
 							'$target' : $event.target,
@@ -590,7 +590,7 @@
 
 
 					scope.remove = function (doc, $event) {
-						return scope._executeAction("delete", doc, $event);
+						return scope.executeAction("delete", doc, $event);
 					};
 
 
