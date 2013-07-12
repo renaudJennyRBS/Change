@@ -1,17 +1,19 @@
 <?php
 namespace Change\I18n;
 
+use Change\Events\EventsCapableTrait;
 use Zend\EventManager\EventManager;
 
 /**
  * @api
  * @name \Change\I18n\I18nManager
  */
-class I18nManager
+class I18nManager implements \Zend\EventManager\EventsCapableInterface
 {
-	const SYNCHRO_MODIFIED = 'MODIFIED';
-	const SYNCHRO_VALID = 'VALID';
-	const SYNCHRO_SYNCHRONIZED = 'SYNCHRONIZED';
+	use EventsCapableTrait {
+		EventsCapableTrait::attachEvents as defaultAttachEvents;
+	}
+
 	const EVENT_KEY_NOT_FOUND = 'key-not-found';
 	const EVENT_FORMATTING = 'formatting';
 	const EVENT_MANAGER_IDENTIFIER = 'I18n';
@@ -72,19 +74,9 @@ class I18nManager
 	protected $workspace;
 
 	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging;
-
-	/**
-	 * @var EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @var array<string, string>
@@ -138,22 +130,6 @@ class I18nManager
 	public function getWorkspace()
 	{
 		return $this->workspace;
-	}
-
-	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
-	{
-		$this->sharedEventManager = $sharedEventManager;
-	}
-
-	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		return $this->sharedEventManager;
 	}
 
 	/**
@@ -654,20 +630,30 @@ class I18nManager
 	}
 
 	// Events.
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return string[]
 	 */
-	public function getEventManager()
+	protected function getListenerAggregateClassNames()
 	{
-		if ($this->eventManager === null)
-		{
-			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyNotFound'), 5);
-			$this->eventManager->attach(static::EVENT_FORMATTING, array($this, 'onFormatting'), 5);
-			$this->eventManager->setSharedManager($this->getSharedEventManager());
-		}
-		return $this->eventManager;
+		return $this->configuration->getEntry('Change/Events/I18n', array());
+	}
+
+	/**
+	 * @param EventManager $eventManager
+	 */
+	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	{
+		$this->defaultAttachEvents($eventManager);
+		$eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyNotFound'), 5);
+		$eventManager->attach(static::EVENT_FORMATTING, array($this, 'onFormatting'), 5);
 	}
 
 	/**

@@ -202,7 +202,7 @@ class Application
 
 	protected function dispatchStart()
 	{
-		$eventManager = new EventManager('application');
+		$eventManager = new EventManager('Application');
 		$eventManager->setSharedManager($this->getSharedEventManager());
 		$eventManager->trigger('start', $this);
 	}

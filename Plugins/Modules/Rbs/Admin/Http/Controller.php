@@ -22,7 +22,7 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function getEventManagerIdentifier()
 	{
-		return array('Http.Admin', 'Http');
+		return array('Http', 'Http.Admin');
 	}
 
 	/**

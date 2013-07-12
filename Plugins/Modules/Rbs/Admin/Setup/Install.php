@@ -27,7 +27,7 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/Http.Rest/Rbs_Admin',
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Admin',
 			'\\Rbs\\Admin\\Http\\Rest\\ListenerAggregate');
 
 		$projectPath = $application->getWorkspace()->projectPath();

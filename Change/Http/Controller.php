@@ -66,8 +66,22 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	protected function getListenerAggregateClassNames()
 	{
 		$config = $this->getApplication()->getConfiguration();
-		$identifiers = $this->getEventManagerIdentifier();
-		return $config->getEntry('Change/Events/' . $identifiers[0], array());
+		$classes = array();
+		foreach ($this->getEventManagerIdentifier() as $name)
+		{
+			$entry = $config->getEntry('Change/Events/' . str_replace('.', '/', $name), array());
+			if (is_array($entry))
+			{
+				foreach($entry as $className)
+				{
+					if (is_string($className))
+					{
+						$classes[] = $className;
+					}
+				}
+			}
+		}
+		return array_unique($classes);
 	}
 
 	/**
