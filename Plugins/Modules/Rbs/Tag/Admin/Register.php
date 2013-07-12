@@ -34,7 +34,7 @@ class Register implements ListenerAggregateInterface
 
 			$menu = array(
 				'entries' => array(
-					array('label' => '<i class="icon-tags"></i> ' . $i18nManager->trans('m.rbs.tag.admin.js.module-name', array('ucf')),
+					array('label' => $i18nManager->trans('m.rbs.tag.admin.js.module-name', array('ucf')),
 						'url' => 'Rbs/Tag', 'section' => 'admin', 'keywords' => $i18nManager->trans('m.rbs.tag.admin.js.module-keywords'))
 				));
 
