@@ -71,7 +71,6 @@
 
 
 				scope.editPage = function ($event, page) {
-/*
 					if (scope.isUnchanged()) {
 						$location.path(UrlManager.getUrl(page, 'editor'));
 					} else {
@@ -90,7 +89,6 @@
 							scope.submit();
 						});
 					}
-*/
 				};
 
 			}
