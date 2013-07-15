@@ -7,5 +7,6 @@
 			<dboptions length="3" />
 			<constraint name="unique" />
 		</property>
+		<property name="title" type="String" />
 	</properties>
 </document>

@@ -1,8 +1,8 @@
 <?php
-namespace rbs\geo\Documents;
+namespace Rbs\geo\Documents;
 
 /**
- * @name \rbs\geo\Documents\Address
+ * @name \Rbs\geo\Documents\Address
  */
 class Address extends \Compilation\Rbs\Geo\Documents\Address
 {

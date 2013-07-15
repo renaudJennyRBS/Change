@@ -1,8 +1,8 @@
 <?php
-namespace rbs\geo\Documents;
+namespace Rbs\geo\Documents;
 
 /**
- * @name \rbs\geo\Documents\TerritorialUnit
+ * @name \Rbs\geo\Documents\TerritorialUnit
  */
 class TerritorialUnit extends \Compilation\Rbs\Geo\Documents\TerritorialUnit
 {
