@@ -1,8 +1,8 @@
 <?php
-namespace rbs\geo\Documents;
+namespace Rbs\geo\Documents;
 
 /**
- * @name \rbs\geo\Documents\Country
+ * @name \Rbs\geo\Documents\Country
  */
 class Country extends \Compilation\Rbs\Geo\Documents\Country
 {
