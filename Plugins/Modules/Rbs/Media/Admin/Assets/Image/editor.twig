@@ -4,17 +4,15 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.media.document.image.label', true) }}
-		{{ forms.field('alt', 'String', 'm.rbs.media.document.image.alt', false) }}
-		{{ forms.field('localizePath', 'Boolean', 'm.rbs.media.document.image.localizepath', false) }}
-
-		<div class="control-group">
+		<div class="control-group property required">
 			<label class="control-label" for="file">{{ i18n('m.rbs.media.document.image.path', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="image-uploader" ng-model="document.path" storage-name="images"></div>
 			</div>
 		</div>
-
+		{{ forms.field('label', 'String', 'm.rbs.media.document.image.label', true) }}
+		{{ forms.field('alt', 'String', 'm.rbs.media.document.image.alt', false) }}
+		{{ forms.field('localizePath', 'Boolean', 'm.rbs.media.document.image.localizepath', false) }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
