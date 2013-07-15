@@ -1,64 +1,77 @@
-(function ($) {
-
+(function ($)
+{
 	"use strict";
 
-	function KeyboardService ($rootScope) {
-
+	function KeyboardService($rootScope)
+	{
 		$rootScope.__changeKeyboardStatus = {
-			'shift' : false,
-			'ctrl' : false,
-			'alt' : false,
-			'meta' : false
+			'shift': false,
+			'ctrl': false,
+			'alt': false,
+			'meta': false
 		};
 
-		function keydown (event) {
-			if (event.shiftKey) {
+		function keyDown(event)
+		{
+			if (event.shiftKey)
+			{
 				$rootScope.__changeKeyboardStatus.shift = true;
 			}
-			if (event.ctrlKey) {
+			if (event.ctrlKey)
+			{
 				$rootScope.__changeKeyboardStatus.ctrl = true;
 			}
-			if (event.altKey) {
+			if (event.altKey)
+			{
 				$rootScope.__changeKeyboardStatus.alt = true;
 			}
-			if (event.metaKey) {
+			if (event.metaKey)
+			{
 				$rootScope.__changeKeyboardStatus.meta = true;
 			}
 			$rootScope.$digest();
 		}
 
-		function keyup (event) {
-			if (! event.shiftKey) {
+		function keyUp(event)
+		{
+			if (!event.shiftKey)
+			{
 				$rootScope.__changeKeyboardStatus.shift = false;
 			}
-			if (! event.ctrlKey) {
+			if (!event.ctrlKey)
+			{
 				$rootScope.__changeKeyboardStatus.ctrl = false;
 			}
-			if (! event.altKey) {
+			if (!event.altKey)
+			{
 				$rootScope.__changeKeyboardStatus.alt = false;
 			}
-			if (! event.metaKey) {
+			if (!event.metaKey)
+			{
 				$rootScope.__changeKeyboardStatus.meta = false;
 			}
 			$rootScope.$digest();
 		}
 
-		this.watch = function (scope, key, callback) {
-			var expr = '__changeKeyboardStatus.' + key.replace(/\+/g, ' && __changeKeyboardStatus.').replace(/\-/g, ' && !__changeKeyboardStatus.');
-			var deregistrationFunc = $rootScope.$watch(expr, function (value) {
-				if (value === true || value === false) {
-					callback(value);
+		this.watch = function (scope, key, callback)
+		{
+			var expr = '__changeKeyboardStatus.' +
+				key.replace(/\+/g, ' && __changeKeyboardStatus.').replace(/\-/g, ' && !__changeKeyboardStatus.');
+			var deregistrationFunc = $rootScope.$watch(expr, function (value, oldValue)
+			{
+				if (value === true || (value === false))
+				{
+					callback(value, oldValue);
 				}
 			}, true);
-			scope.$on('$destroy', function () {
+			scope.$on('$destroy', function ()
+			{
 				deregistrationFunc();
 			});
 		};
 
-		$('body').on('keydown', keydown);
-		$('body').on('keyup', keyup);
+		$('body').on('keydown', keyDown).on('keyup', keyUp);
 	}
-
 
 	/**
 	 * <rbs-kb-switch>
@@ -68,34 +81,42 @@
 	 *    <i rbs-kb-default="" class="icon-github icon-3x"></i>
 	 * </rbs-kb-switch>
 	 */
-	function rbsKbSwitch (Keyboard) {
-
+	function rbsKbSwitch(Keyboard)
+	{
 		return {
-			restrict : 'EAC',
-
-			link : function (scope, elm) {
+			restrict: 'EAC',
+			link: function (scope, elm)
+			{
 				var when, whenCounter, def;
 
 				when = elm.find('[rbs-kb-when]');
-				whenCounter = when.length;
+				whenCounter = 0;
 				def = elm.find('[rbs-kb-default]');
 
-				when.each(function () {
+				when.each(function ()
+				{
 					var $el = $(this);
-					Keyboard.watch(scope, $el.attr('rbs-kb-when'), function (value) {
-						if (value) {
+					Keyboard.watch(scope, $el.attr('rbs-kb-when'), function (value, oldValue)
+					{
+						if (value)
+						{
 							def.hide();
 							$el.show();
 							whenCounter++;
-						} else {
+						}
+						else
+						{
 							$el.hide();
-							whenCounter--;
-							if (whenCounter === 0) {
+							if (oldValue === true)
+							{
+								whenCounter--;
+							}
+							if (whenCounter === 0)
+							{
 								def.show();
 							}
 						}
 					});
-
 				});
 			}
 		};
@@ -104,5 +125,4 @@
 	var app = angular.module('RbsChange');
 	app.service('RbsChange.Keyboard', ['$rootScope', KeyboardService]);
 	app.directive('rbsKbSwitch', ['RbsChange.Keyboard', rbsKbSwitch]);
-
-})( window.jQuery );
+})(window.jQuery);
