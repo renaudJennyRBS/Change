@@ -304,4 +304,18 @@ class SQLFragmentBuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$frag = $fb->concat('a', $fb->column('b'));
 		$this->assertEquals('a || "b"', $frag->toSQL92String());
 	}
+
+	public function testAllColumns()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->allColumns();
+		$this->assertEquals('*', $frag->toSQL92String());
+	}
+
+	public function testHasPermission()
+	{
+		$fb = $this->getNewSQLFragmentBuilder();
+		$frag = $fb->hasPermission(10, 'R', 5, 'P');
+		$this->assertEquals('EXISTS(SELECT * FROM "change_permission_rule" WHERE (("accessor_id" = 10 OR "accessor_id" = 0) AND ("role" = \'R\' OR "role" = \'*\') AND ("resource_id" = 5 OR "resource_id" = 0) AND ("privilege" = \'P\' OR "privilege" = \'*\')))', $frag->toSQL92String());
+	}
 }

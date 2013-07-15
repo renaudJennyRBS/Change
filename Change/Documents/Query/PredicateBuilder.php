@@ -1,6 +1,8 @@
 <?php
 namespace Change\Documents\Query;
 
+use Change\Db\Query\Expressions\AbstractExpression;
+use Change\Db\Query\Predicates\HasPermission;
 use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Expressions\ExpressionList;
 use Change\Db\Query\Expressions\Subquery;
@@ -469,6 +471,23 @@ class PredicateBuilder
 			$fb->logicOr($this->isNull('startActivation'), $this->lte('startActivation', $at)),
 			$fb->logicOr($this->isNull('endActivation'), $this->gt('endActivation', $to))
 		);
+	}
+
+	/**
+	 * @api
+	 * @param AbstractExpression|\Change\User\UserInterface|integer|null $accessor
+	 * @param AbstractExpression|string|null $role
+	 * @param AbstractExpression|integer|null $resource
+	 * @param AbstractExpression|string|null $privilege
+	 * @return HasPermission
+	 */
+	public function hasPermission($accessor = null, $role = null, $resource = null, $privilege = null)
+	{
+		if ($resource === null)
+		{
+			$resource = $this->builder->getColumn('id');
+		}
+		return $this->getFragmentBuilder()->hasPermission($accessor, $role, $resource, $privilege);
 	}
 
 	/**

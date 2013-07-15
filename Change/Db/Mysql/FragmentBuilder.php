@@ -5,15 +5,14 @@ use Change\Db\Query;
 use Change\Db\ScalarType;
 
 /**
-* @name \Change\Db\Mysql\FragmentBuilder
-*/
+ * @name \Change\Db\Mysql\FragmentBuilder
+ */
 class FragmentBuilder
 {
 	/**
 	 * @var DbProvider
 	 */
 	protected $dbProvider;
-
 
 	function __construct($dbProvider)
 	{
@@ -28,181 +27,207 @@ class FragmentBuilder
 	 */
 	public function buildSQLFragment(Query\InterfaceSQLFragment $fragment)
 	{
-		if ($fragment instanceof Query\Expressions\Table)
+		$className = get_class($fragment);
+		switch ($className)
 		{
-			$identifierParts = array();
-			$dbName = $fragment->getDatabase();
-			$tableName = $fragment->getName();
-			if (!empty($dbName))
-			{
-				$identifierParts[] = '`' . $dbName . '`';
-			}
-			$identifierParts[] = '`' . $tableName . '`';
-			return implode('.', $identifierParts);
-		}
-		elseif ($fragment instanceof Query\Expressions\Column)
-		{
-			$columnName = $this->buildSQLFragment($fragment->getColumnName());
-			$tableOrIdentifier = $fragment->getTableOrIdentifier();
-			$table = ($tableOrIdentifier) ? $this->buildSQLFragment($tableOrIdentifier) : null;
-			return empty($table) ? $columnName : $table . '.' . $columnName;
-		}
-		elseif ($fragment instanceof Query\Expressions\Parentheses)
-		{
-			return '(' . $this->buildSQLFragment($fragment->getExpression()) . ')';
-		}
-		elseif ($fragment instanceof Query\Expressions\Identifier)
-		{
-			return implode('.', array_map(function ($part)
-			{
-				return '`' . $part . '`';
-			}, $fragment->getParts()));
-		}
-		elseif ($fragment instanceof Query\Expressions\Concat)
-		{
-			return 'CONCAT(' . implode(', ', $this->buildSQLFragmentArray($fragment->getList())) . ')';
-		}
-		elseif ($fragment instanceof Query\Expressions\ExpressionList)
-		{
-			return implode(', ', $this->buildSQLFragmentArray($fragment->getList()));
-		}
-		elseif ($fragment instanceof Query\Expressions\AllColumns)
-		{
-			return $fragment->toSQL92String();
-		}
-		elseif ($fragment instanceof Query\Expressions\Raw)
-		{
-			return $fragment->toSQL92String();
-		}
-		elseif ($fragment instanceof Query\Predicates\Conjunction)
-		{
-			return '(' . implode(' AND ', $this->buildSQLFragmentArray($fragment->getArguments())) . ')';
-		}
-		elseif ($fragment instanceof Query\Predicates\Disjunction)
-		{
-			return '(' . implode(' OR ', $this->buildSQLFragmentArray($fragment->getArguments())) . ')';
-		}
-		elseif ($fragment instanceof Query\Predicates\Like)
-		{
-			$fragment->checkCompile();
-			$rhe = $fragment->getCompletedRightHandExpression();
-			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($rhe);
-		}
-		elseif ($fragment instanceof Query\Predicates\In)
-		{
-			$fragment->checkCompile();
-			$rhe = $fragment->getCompletedRightHandExpression();
-			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($rhe);
-		}
-		elseif ($fragment instanceof Query\Predicates\Exists)
-		{
-			$fragment->checkCompile();
-			return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
-		}
-		elseif ($fragment instanceof Query\Expressions\BinaryOperation)
-		{
-			return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getRightHandExpression());
-		}
-		elseif ($fragment instanceof Query\Predicates\UnaryPredicate)
-		{
-			return $this->buildSQLFragment($fragment->getExpression()) . ' ' . $fragment->getOperator();
-		}
-		elseif ($fragment instanceof Query\Expressions\OrderingSpecification)
-		{
-			return $this->buildSQLFragment($fragment->getExpression()) . ' ' . $fragment->getOperator();
-		}
-		elseif ($fragment instanceof Query\Expressions\UnaryOperation)
-		{
-			return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
-		}
-		elseif ($fragment instanceof Query\Expressions\Join)
-		{
-			$joinedTable = $fragment->getTableExpression();
-			if (!$joinedTable)
-			{
-				throw new \RuntimeException('A joined table is required', 42002);
-			}
-			$parts = array();
-			if ($fragment->isNatural())
-			{
-				$parts[] = 'NATURAL';
-			}
-			if ($fragment->isQualified())
-			{
-				switch ($fragment->getType())
+			case 'Change\Db\Query\Expressions\Table':
+				/* @var $fragment \Change\Db\Query\Expressions\Table */
+				$identifierParts = array();
+				$dbName = $fragment->getDatabase();
+				$tableName = $fragment->getName();
+				if (!empty($dbName))
 				{
-					case Query\Expressions\Join::LEFT_OUTER_JOIN :
-						$parts[] = 'LEFT OUTER JOIN';
-						break;
-					case Query\Expressions\Join::RIGHT_OUTER_JOIN :
-						$parts[] = 'RIGHT OUTER JOIN';
-						break;
-					case Query\Expressions\Join::FULL_OUTER_JOIN :
-						$parts[] = 'FULL OUTER JOIN';
-						break;
-					case Query\Expressions\Join::INNER_JOIN :
-					default :
-						$parts[] = 'INNER JOIN';
-						break;
+					$identifierParts[] = '`' . $dbName . '`';
 				}
-			}
-			else
-			{
-				$parts[] = 'CROSS JOIN';
-			}
-			$parts[] = $this->buildSQLFragment($joinedTable);
-			if (!$fragment->isNatural())
-			{
-				$joinSpecification = $fragment->getSpecification();
-				$parts[] = $this->buildSQLFragment($joinSpecification);
-			}
-			return implode(' ', $parts);
-		}
-		elseif ($fragment instanceof Query\Expressions\Value)
-		{
-			$v = $fragment->getValue();
-			if ($v === null)
-			{
-				return 'NULL';
-			}
-			switch ($fragment->getScalarType())
-			{
-				case ScalarType::BOOLEAN :
-					return ($v) ? '1' : '0';
-				case ScalarType::INTEGER :
-					return strval(intval($v));
-				case ScalarType::DECIMAL :
-					return strval(floatval($v));
-				case ScalarType::DATETIME :
-					if ($v instanceof \DateTime)
+				$identifierParts[] = '`' . $tableName . '`';
+				return implode('.', $identifierParts);
+
+			case 'Change\Db\Query\Expressions\Column':
+				/* @var $fragment \Change\Db\Query\Expressions\Column */
+				$columnName = $this->buildSQLFragment($fragment->getColumnName());
+				$tableOrIdentifier = $fragment->getTableOrIdentifier();
+				$table = ($tableOrIdentifier) ? $this->buildSQLFragment($tableOrIdentifier) : null;
+				return empty($table) ? $columnName : $table . '.' . $columnName;
+
+			case 'Change\Db\Query\Expressions\Parentheses':
+				/* @var $fragment \Change\Db\Query\Expressions\Parentheses */
+				return '(' . $this->buildSQLFragment($fragment->getExpression()) . ')';
+
+			case 'Change\Db\Query\Expressions\Identifier':
+				/* @var $fragment \Change\Db\Query\Expressions\Identifier */
+				return implode('.', array_map(function ($part)
+				{
+					return '`' . $part . '`';
+				}, $fragment->getParts()));
+
+			case 'Change\Db\Query\Expressions\Concat':
+				/* @var $fragment \Change\Db\Query\Expressions\Concat */
+				return 'CONCAT(' . implode(', ', $this->buildSQLFragmentArray($fragment->getList())) . ')';
+
+			case 'Change\Db\Query\Expressions\ExpressionList':
+				/* @var $fragment \Change\Db\Query\Expressions\ExpressionList */
+				return implode(', ', $this->buildSQLFragmentArray($fragment->getList()));
+
+			case 'Change\Db\Query\Expressions\Raw':
+			case 'Change\Db\Query\Expressions\AllColumns':
+				return $fragment->toSQL92String();
+
+			case 'Change\Db\Query\Predicates\Conjunction':
+				/* @var $fragment \Change\Db\Query\Predicates\Conjunction */
+				return '(' . implode(' AND ', $this->buildSQLFragmentArray($fragment->getArguments())) . ')';
+
+			case 'Change\Db\Query\Predicates\Disjunction':
+				/* @var $fragment \Change\Db\Query\Predicates\Disjunction */
+				return '(' . implode(' OR ', $this->buildSQLFragmentArray($fragment->getArguments())) . ')';
+
+			case 'Change\Db\Query\Predicates\Like':
+				/* @var $fragment \Change\Db\Query\Predicates\Like */
+				$fragment->checkCompile();
+				$rhe = $fragment->getCompletedRightHandExpression();
+				return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' '
+				. $this->buildSQLFragment($rhe);
+
+			case 'Change\Db\Query\Predicates\In':
+				/* @var $fragment \Change\Db\Query\Predicates\In */
+				$fragment->checkCompile();
+				$rhe = $fragment->getCompletedRightHandExpression();
+				return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' '
+				. $this->buildSQLFragment($rhe);
+
+			case 'Change\Db\Query\Predicates\Exists':
+				/* @var $fragment \Change\Db\Query\Predicates\Exists */
+				$fragment->checkCompile();
+				return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
+
+			case 'Change\Db\Query\Predicates\hasPermission':
+				/* @var $fragment \Change\Db\Query\Predicates\hasPermission */
+				return $this->buildSQLFragment($fragment->getPredicate());
+
+			case 'Change\Db\Query\Expressions\BinaryOperation':
+			case 'Change\Db\Query\Expressions\Alias':
+			case 'Change\Db\Query\Expressions\Assignment':
+			case 'Change\Db\Query\Predicates\BinaryPredicate':
+				/* @var $fragment \Change\Db\Query\Expressions\BinaryOperation */
+				return $this->buildSQLFragment($fragment->getLeftHandExpression()) . ' ' . $fragment->getOperator() . ' '
+				. $this->buildSQLFragment($fragment->getRightHandExpression());
+
+			case 'Change\Db\Query\Predicates\UnaryPredicate':
+				/* @var $fragment \Change\Db\Query\Predicates\UnaryPredicate */
+				return $this->buildSQLFragment($fragment->getExpression()) . ' ' . $fragment->getOperator();
+
+			case 'Change\Db\Query\Expressions\OrderingSpecification':
+				/* @var $fragment \Change\Db\Query\Expressions\OrderingSpecification */
+				return $this->buildSQLFragment($fragment->getExpression()) . ' ' . $fragment->getOperator();
+
+			case 'Change\Db\Query\Expressions\UnaryOperation':
+				/* @var $fragment \Change\Db\Query\Expressions\UnaryOperation */
+				return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
+
+			case 'Change\Db\Query\Expressions\Join':
+				/* @var $fragment \Change\Db\Query\Expressions\Join */
+				$joinedTable = $fragment->getTableExpression();
+				if (!$joinedTable)
+				{
+					throw new \RuntimeException('A joined table is required', 42002);
+				}
+				$parts = array();
+				if ($fragment->isNatural())
+				{
+					$parts[] = 'NATURAL';
+				}
+				if ($fragment->isQualified())
+				{
+					switch ($fragment->getType())
 					{
-						$v->setTimezone(new \DateTimeZone('UTC'));
-						$v = $v->format('Y-m-d H:i:s');
+						case Query\Expressions\Join::LEFT_OUTER_JOIN :
+							$parts[] = 'LEFT OUTER JOIN';
+							break;
+						case Query\Expressions\Join::RIGHT_OUTER_JOIN :
+							$parts[] = 'RIGHT OUTER JOIN';
+							break;
+						case Query\Expressions\Join::FULL_OUTER_JOIN :
+							$parts[] = 'FULL OUTER JOIN';
+							break;
+						case Query\Expressions\Join::INNER_JOIN :
+						default :
+							$parts[] = 'INNER JOIN';
+							break;
 					}
-			}
-			return $this->dbProvider->getDriver()->quote($v);
+				}
+				else
+				{
+					$parts[] = 'CROSS JOIN';
+				}
+				$parts[] = $this->buildSQLFragment($joinedTable);
+				if (!$fragment->isNatural())
+				{
+					$joinSpecification = $fragment->getSpecification();
+					$parts[] = $this->buildSQLFragment($joinSpecification);
+				}
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Expressions\Value':
+			case 'Change\Db\Query\Expressions\String':
+			case 'Change\Db\Query\Expressions\Numeric':
+				/* @var $fragment \Change\Db\Query\Expressions\Value */
+				$v = $fragment->getValue();
+				if ($v === null)
+				{
+					return 'NULL';
+				}
+				switch ($fragment->getScalarType())
+				{
+					case ScalarType::BOOLEAN :
+						return ($v) ? '1' : '0';
+					case ScalarType::INTEGER :
+						return strval(intval($v));
+					case ScalarType::DECIMAL :
+						return strval(floatval($v));
+					case ScalarType::DATETIME :
+						if ($v instanceof \DateTime)
+						{
+							$v->setTimezone(new \DateTimeZone('UTC'));
+							$v = $v->format('Y-m-d H:i:s');
+						}
+				}
+				return $this->dbProvider->getDriver()->quote($v);
+
+			case 'Change\Db\Query\Expressions\Parameter':
+				/* @var $fragment \Change\Db\Query\Expressions\Parameter */
+				return ':' . $fragment->getName();
+
+			case 'Change\Db\Query\Expressions\SubQuery':
+				/* @var $fragment \Change\Db\Query\Expressions\SubQuery */
+				return '(' . $this->buildQuery($fragment->getSubQuery()) . ')';
+
+			case 'Change\Db\Query\Expressions\Func':
+				/* @var $fragment \Change\Db\Query\Expressions\Func */
+				return $this->buildSQLFunc($fragment);
+
+			case 'Change\Db\Query\SelectQuery':
+			case 'Change\Db\Query\InsertQuery':
+			case 'Change\Db\Query\UpdateQuery':
+			case 'Change\Db\Query\DeleteQuery':
+				/* @var $fragment \Change\Db\Query\AbstractQuery */
+				return $this->buildQuery($fragment);
+
+			case 'Change\Db\Query\Clauses\WhereClause':
+			case 'Change\Db\Query\Clauses\CollateClause':
+			case 'Change\Db\Query\Clauses\DeleteClause':
+			case 'Change\Db\Query\Clauses\FromClause':
+			case 'Change\Db\Query\Clauses\GroupByClause':
+			case 'Change\Db\Query\Clauses\HavingClause':
+			case 'Change\Db\Query\Clauses\InsertClause':
+			case 'Change\Db\Query\Clauses\OrderByClause':
+			case 'Change\Db\Query\Clauses\SelectClause':
+			case 'Change\Db\Query\Clauses\SetClause':
+			case 'Change\Db\Query\Clauses\UpdateClause':
+			case 'Change\Db\Query\Clauses\ValuesClause':
+				/* @var $fragment \Change\Db\Query\Clauses\AbstractClause */
+				return $this->buildAbstractClause($fragment);
+			default:
+				return $this->dbProvider->buildCustomSQLFragment($fragment);
 		}
-		elseif ($fragment instanceof Query\Expressions\Parameter)
-		{
-			return ':' . $fragment->getName();
-		}
-		elseif ($fragment instanceof Query\Expressions\SubQuery)
-		{
-			return '(' . $this->buildQuery($fragment->getSubQuery()) . ')';
-		}
-		elseif ($fragment instanceof Query\Expressions\Func)
-		{
-			return $this->buildSQLFunc($fragment);
-		}
-		elseif ($fragment instanceof Query\AbstractQuery)
-		{
-			return $this->buildQuery($fragment);
-		}
-		elseif ($fragment instanceof Query\Clauses\AbstractClause)
-		{
-			return $this->buildAbstractClause($fragment);
-		}
-		return $this->dbProvider->buildCustomSQLFragment($fragment);
 	}
 
 	/**
@@ -225,7 +250,7 @@ class FragmentBuilder
 	 */
 	protected function buildSQLFunc($func)
 	{
-		return $func->getFunctionName() . '(' .implode(',', $this->buildSQLFragmentArray($func->getArguments())). ')';
+		return $func->getFunctionName() . '(' . implode(',', $this->buildSQLFragmentArray($func->getArguments())) . ')';
 	}
 
 	/**
@@ -235,91 +260,94 @@ class FragmentBuilder
 	 */
 	public function buildQuery(Query\AbstractQuery $query)
 	{
-		if ($query instanceof Query\SelectQuery)
+		$className = get_class($query);
+		switch ($className)
 		{
-			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getSelectClause()));
-			$fromClause = $query->getFromClause();
-			if ($fromClause)
-			{
-				$parts[] = $this->buildAbstractClause($fromClause);
-			}
-			$whereClause = $query->getWhereClause();
-			if ($whereClause)
-			{
-				$parts[] = $this->buildAbstractClause($whereClause);
-			}
-
-			$groupByClause = $query->getGroupByClause();
-			if ($groupByClause)
-			{
-				$parts[] = $this->buildAbstractClause($groupByClause);
-			}
-
-			$havingClause = $query->getHavingClause();
-			if ($havingClause)
-			{
-				$parts[] = $this->buildAbstractClause($havingClause);
-			}
-
-			$orderByClause = $query->getOrderByClause();
-			if ($orderByClause)
-			{
-				$parts[] = $this->buildAbstractClause($orderByClause);
-			}
-
-			if ($query->getMaxResults())
-			{
-
-				$parts[] = 'LIMIT';
-				if ($query->getStartIndex())
+			case 'Change\Db\Query\SelectQuery':
+				/* @var $query \Change\Db\Query\SelectQuery */
+				$query->checkCompile();
+				$parts = array($this->buildAbstractClause($query->getSelectClause()));
+				$fromClause = $query->getFromClause();
+				if ($fromClause)
 				{
-					$parts[] = strval(max(0, $query->getStartIndex())) . ',';
+					$parts[] = $this->buildAbstractClause($fromClause);
 				}
-				$parts[] = strval(max(1, $query->getMaxResults()));
-			}
+				$whereClause = $query->getWhereClause();
+				if ($whereClause)
+				{
+					$parts[] = $this->buildAbstractClause($whereClause);
+				}
 
-			return implode(' ', $parts);
-		}
-		elseif ($query instanceof Query\InsertQuery)
-		{
-			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getInsertClause()));
-			if ($query->getValuesClause() !== null)
-			{
-				$parts[] = $this->buildAbstractClause($query->getValuesClause());
-			}
-			elseif ($query->getSelectQuery() !== null)
-			{
-				$parts[] = $this->buildQuery($query->getSelectQuery());
-			}
-			return implode(' ', $parts);
-		}
-		elseif ($query instanceof Query\UpdateQuery)
-		{
-			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getUpdateClause()),
-				$this->buildAbstractClause($query->getSetClause()));
-			if ($query->getWhereClause() !== null)
-			{
-				$parts[] = $this->buildAbstractClause($query->getWhereClause());
-			}
-			return implode(' ', $parts);
-		}
-		elseif ($query instanceof Query\DeleteQuery)
-		{
-			$query->checkCompile();
-			$parts = array($this->buildAbstractClause($query->getDeleteClause()),
-				$this->buildAbstractClause($query->getFromClause()));
-			if ($query->getWhereClause() !== null)
-			{
-				$parts[] = $this->buildAbstractClause($query->getWhereClause());
-			}
-			return implode(' ', $parts);
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 must be a Select, Insert, Update or Delete query', 999999);
+				$groupByClause = $query->getGroupByClause();
+				if ($groupByClause)
+				{
+					$parts[] = $this->buildAbstractClause($groupByClause);
+				}
+
+				$havingClause = $query->getHavingClause();
+				if ($havingClause)
+				{
+					$parts[] = $this->buildAbstractClause($havingClause);
+				}
+
+				$orderByClause = $query->getOrderByClause();
+				if ($orderByClause)
+				{
+					$parts[] = $this->buildAbstractClause($orderByClause);
+				}
+
+				if ($query->getMaxResults())
+				{
+
+					$parts[] = 'LIMIT';
+					if ($query->getStartIndex())
+					{
+						$parts[] = strval(max(0, $query->getStartIndex())) . ',';
+					}
+					$parts[] = strval(max(1, $query->getMaxResults()));
+				}
+
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\InsertQuery':
+				/* @var $query \Change\Db\Query\InsertQuery */
+				$query->checkCompile();
+				$parts = array($this->buildAbstractClause($query->getInsertClause()));
+				if ($query->getValuesClause() !== null)
+				{
+					$parts[] = $this->buildAbstractClause($query->getValuesClause());
+				}
+				elseif ($query->getSelectQuery() !== null)
+				{
+					$parts[] = $this->buildQuery($query->getSelectQuery());
+				}
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\UpdateQuery':
+				/* @var $query \Change\Db\Query\UpdateQuery */
+				$query->checkCompile();
+				$parts = array($this->buildAbstractClause($query->getUpdateClause()),
+					$this->buildAbstractClause($query->getSetClause()));
+				if ($query->getWhereClause() !== null)
+				{
+					$parts[] = $this->buildAbstractClause($query->getWhereClause());
+				}
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\DeleteQuery':
+				/* @var $query \Change\Db\Query\DeleteQuery */
+
+				$query->checkCompile();
+				$parts = array($this->buildAbstractClause($query->getDeleteClause()),
+					$this->buildAbstractClause($query->getFromClause()));
+				if ($query->getWhereClause() !== null)
+				{
+					$parts[] = $this->buildAbstractClause($query->getWhereClause());
+				}
+				return implode(' ', $parts);
+
+			default:
+				throw new \InvalidArgumentException('Argument 1 must be a Select, Insert, Update or Delete query', 999999);
 		}
 	}
 
@@ -330,87 +358,89 @@ class FragmentBuilder
 	 */
 	protected function buildAbstractClause(Query\Clauses\AbstractClause $clause)
 	{
-		if ($clause instanceof Query\Clauses\SelectClause)
+		$className = get_class($clause);
+		switch ($className)
 		{
-			$parts = array($clause->getName());
-			if ($clause->getQuantifier() === Query\Clauses\SelectClause::QUANTIFIER_DISTINCT)
-			{
-				$parts[] = Query\Clauses\SelectClause::QUANTIFIER_DISTINCT;
-			}
-			$selectList = $clause->getSelectList();
-			if ($selectList === null || $selectList->count() == 0)
-			{
-				$selectList = new Query\Expressions\AllColumns();
-			}
+			case 'Change\Db\Query\Clauses\SelectClause':
+				/* @var $clause \Change\Db\Query\Clauses\SelectClause */
+				$parts = array($clause->getName());
+				if ($clause->getQuantifier() === Query\Clauses\SelectClause::QUANTIFIER_DISTINCT)
+				{
+					$parts[] = Query\Clauses\SelectClause::QUANTIFIER_DISTINCT;
+				}
+				$selectList = $clause->getSelectList();
+				if ($selectList === null || $selectList->count() == 0)
+				{
+					$selectList = new Query\Expressions\AllColumns();
+				}
 
-			$parts[] = $this->buildSQLFragment($selectList);
-			return implode(' ', $parts);
-		}
-		elseif ($clause instanceof Query\Clauses\FromClause)
-		{
-			$clause->checkCompile();
-			$parts = array($clause->getName(), $this->buildSQLFragment($clause->getTableExpression()));
-			$parts[] = implode(' ', $this->buildSQLFragmentArray($clause->getJoins()));
-			return implode(' ', $parts);
-		}
-		elseif ($clause instanceof Query\Clauses\WhereClause)
-		{
-			$parts = array($clause->getName(), $this->buildSQLFragment($clause->getPredicate()));
-			return implode(' ', $parts);
-		}
-		elseif ($clause instanceof Query\Clauses\OrderByClause)
-		{
-			$clause->checkCompile();
-			$parts = array($clause->getName(), $this->buildSQLFragment($clause->getExpressionList()));
-			return implode(' ', $parts);
-		}
-		elseif ($clause instanceof Query\Clauses\GroupByClause)
-		{
-			$clause->checkCompile();
-			$parts = array($clause->getName(), $this->buildSQLFragment($clause->getExpressionList()));
-			return implode(' ', $parts);
-		}
-		elseif ($clause instanceof Query\Clauses\HavingClause)
-		{
-			return 'HAVING ' . $this->buildSQLFragment($clause->getPredicate());
-		}
-		elseif ($clause instanceof Query\Clauses\InsertClause)
-		{
-			$clause->checkCompile();
-			$insert = 'INSERT INTO ' . $this->buildSQLFragment($clause->getTable());
-			$columns = $clause->getColumns();
-			if (count($columns))
-			{
-				$compiler = $this;
-				$insert .= ' (' . implode(', ', array_map(function ($column) use($compiler)
-					{
-						return $compiler->buildSQLFragment($column);
-					}, $columns)) . ')';
-			}
-			return $insert;
-		}
-		elseif ($clause instanceof Query\Clauses\ValuesClause)
-		{
-			$clause->checkCompile();
-			return 'VALUES (' . $this->buildSQLFragment($clause->getValuesList()) . ')';
-		}
-		elseif ($clause instanceof Query\Clauses\UpdateClause)
-		{
-			$clause->checkCompile();
-			return 'UPDATE ' . $this->buildSQLFragment($clause->getTable());
-		}
-		elseif ($clause instanceof Query\Clauses\SetClause)
-		{
-			$clause->checkCompile();
-			return 'SET ' . $this->buildSQLFragment($clause->getSetList());
-		}
-		elseif ($clause instanceof Query\Clauses\DeleteClause)
-		{
-			return 'DELETE';
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 must be a valid clause', 999999);
+				$parts[] = $this->buildSQLFragment($selectList);
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Clauses\FromClause':
+				/* @var $clause \Change\Db\Query\Clauses\FromClause */
+				$clause->checkCompile();
+				$parts = array($clause->getName(), $this->buildSQLFragment($clause->getTableExpression()));
+				$parts[] = implode(' ', $this->buildSQLFragmentArray($clause->getJoins()));
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Clauses\WhereClause':
+				/* @var $clause \Change\Db\Query\Clauses\WhereClause */
+				$parts = array($clause->getName(), $this->buildSQLFragment($clause->getPredicate()));
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Clauses\OrderByClause':
+				/* @var $clause \Change\Db\Query\Clauses\OrderByClause */
+				$clause->checkCompile();
+				$parts = array($clause->getName(), $this->buildSQLFragment($clause->getExpressionList()));
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Clauses\GroupByClause':
+				/* @var $clause \Change\Db\Query\Clauses\GroupByClause */
+				$clause->checkCompile();
+				$parts = array($clause->getName(), $this->buildSQLFragment($clause->getExpressionList()));
+				return implode(' ', $parts);
+
+			case 'Change\Db\Query\Clauses\HavingClause':
+				/* @var $clause \Change\Db\Query\Clauses\HavingClause */
+				return 'HAVING ' . $this->buildSQLFragment($clause->getPredicate());
+
+			case 'Change\Db\Query\Clauses\InsertClause':
+				/* @var $clause \Change\Db\Query\Clauses\InsertClause */
+				$clause->checkCompile();
+				$insert = 'INSERT INTO ' . $this->buildSQLFragment($clause->getTable());
+				$columns = $clause->getColumns();
+				if (count($columns))
+				{
+					$compiler = $this;
+					$insert .= ' (' . implode(', ', array_map(function ($column) use ($compiler)
+						{
+							return $compiler->buildSQLFragment($column);
+						}, $columns)) . ')';
+				}
+				return $insert;
+
+			case 'Change\Db\Query\Clauses\ValuesClause':
+				/* @var $clause \Change\Db\Query\Clauses\ValuesClause */
+				$clause->checkCompile();
+				return 'VALUES (' . $this->buildSQLFragment($clause->getValuesList()) . ')';
+
+			case 'Change\Db\Query\Clauses\UpdateClause':
+				/* @var $clause \Change\Db\Query\Clauses\UpdateClause */
+				$clause->checkCompile();
+				return 'UPDATE ' . $this->buildSQLFragment($clause->getTable());
+
+			case 'Change\Db\Query\Clauses\SetClause':
+				/* @var $clause \Change\Db\Query\Clauses\SetClause */
+				$clause->checkCompile();
+				return 'SET ' . $this->buildSQLFragment($clause->getSetList());
+
+			case 'Change\Db\Query\Clauses\DeleteClause':
+				/* @var $clause \Change\Db\Query\Clauses\DeleteClause */
+				return 'DELETE';
+
+				default:
+				throw new \InvalidArgumentException('Argument 1 must be a valid clause', 999999);
 		}
 	}
 }

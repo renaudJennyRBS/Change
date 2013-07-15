@@ -93,7 +93,7 @@ class PredicateBuilderTest extends TestCase
 		$dm->popLCID();
 
 		$treeManager = $this->getDocumentServices()->getTreeManager();
-		/* @var $folderDoc \Change\Generic\Documents\Folder */
+		/* @var $folderDoc \Rbs\Generic\Documents\Folder */
 		$folderDoc = $dm->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 		$folderDoc->setLabel('Root');
 		$folderDoc->initialize(2000);

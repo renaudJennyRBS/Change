@@ -9,6 +9,7 @@ use Change\Db\Query\Expressions\Func;
 use Change\Db\Query\Expressions\Table;
 use Change\Db\Query\Expressions\Identifier;
 use Change\Db\Query\Expressions\Column;
+use Change\Db\Query\Expressions\AllColumns;
 use Change\Db\Query\Expressions\Alias;
 use Change\Db\Query\Expressions\Parameter;
 use Change\Db\Query\Expressions\Numeric;
@@ -22,6 +23,7 @@ use Change\Db\Query\Predicates\UnaryPredicate;
 use Change\Db\Query\Predicates\BinaryPredicate;
 use Change\Db\Query\Predicates\Like;
 use Change\Db\Query\Predicates\In;
+use Change\Db\Query\Predicates\HasPermission;
 use Change\Db\ScalarType;
 use Change\Db\SqlMapping;
 
@@ -155,6 +157,15 @@ class SQLFragmentBuilder
 			$tableOrIdentifier = $this->identifier($tableOrIdentifier);
 		}
 		return new Column($name, $tableOrIdentifier);
+	}
+
+	/**
+	 * @api
+	 * @return AllColumns
+	 */
+	public function allColumns()
+	{
+		return new AllColumns();
 	}
 
 	/**
@@ -607,6 +618,55 @@ class SQLFragmentBuilder
 		$result = new Disjunction();
 		$result->setArguments($this->normalizeValue(func_get_args()));
 		return $result;
+	}
+
+	/**
+	 * @api
+	 * @param AbstractExpression|\Change\User\UserInterface|integer|null $accessor
+	 * @param AbstractExpression|string|null $role
+	 * @param AbstractExpression|integer|null $resource
+	 * @param AbstractExpression|string|null $privilege
+	 * @return HasPermission
+	 */
+	public function hasPermission($accessor = null, $role = null, $resource = null, $privilege = null)
+	{
+		if ($accessor instanceof \Change\User\UserInterface)
+		{
+			if ($accessor->authenticated())
+			{
+				$list = $this->expressionList($this->number($accessor->getId()));
+				foreach ($accessor->getGroups() as $group);
+				{
+					/* @var $group \Change\User\GroupInterface */
+					$list->add($this->number($group->getId()));
+				}
+				$accessor = $list;
+			}
+			else
+			{
+				$accessor = null;
+			}
+		}
+		elseif (is_numeric($accessor))
+		{
+			$accessor = $this->number($accessor);
+		}
+
+		if (is_string($role))
+		{
+			$role = $this->string($role);
+		}
+
+		if (is_numeric($resource))
+		{
+			$resource = $this->number($resource);
+		}
+
+		if (is_string($privilege))
+		{
+			$privilege = $this->string($privilege);
+		}
+		return new HasPermission($accessor, $role, $resource, $privilege);
 	}
 
 	/**

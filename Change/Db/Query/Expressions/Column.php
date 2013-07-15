@@ -27,7 +27,7 @@ class Column extends AbstractExpression
 	}
 	
 	/**
-	 * @return \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifie
+	 * @return \Change\Db\Query\Expressions\Table | \Change\Db\Query\Expressions\Identifier
 	 */
 	public function getTableOrIdentifier()
 	{
