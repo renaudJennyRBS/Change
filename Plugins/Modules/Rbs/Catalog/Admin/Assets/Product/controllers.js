@@ -4,6 +4,72 @@
 
 	var app = angular.module('RbsChange');
 
+	function PricesController($scope, $routeParams, $location, REST, i18n)
+	{
+		$scope.shopId = $routeParams.shopId;
+		$scope.areaId = $routeParams.areaId;
+		$scope.List = {};
+
+		var query = {
+			"model": "Rbs_Catalog_Price",
+			"where": {
+				"and": [
+					{
+						"op": "eq",
+						"lexp": { "property" : "product" },
+						"rexp": { "value": $routeParams.id}
+					}/*,
+					{
+						"op" : "eq",
+						"lexp": { "property" : "shop" },
+						"rexp": { "value": scope.List.selectedShop.id }
+					},
+					{
+						"op": "eq",
+						"lexp": { "property" : "billingArea" },
+						"rexp": { "value": newValue.id }
+					}*/
+				]
+			},
+			"order": [
+				{
+					"property": "value",
+					"order": "asc"
+				}
+			]
+		};
+		$scope.List.query = query;
+
+		var updateLocation = function (newDocId, oldDocId){
+			var regexp = new RegExp('/' + oldDocId + '/');
+			var path = $location.path();
+			if (regexp.test(path))
+			{
+				var replace = newDocId ? '/' + newDocId + '/' : '/';
+				$location.path(path.replace(regexp, replace));
+			}
+			else
+			{
+				if (newDocId > 0)
+				{
+					$location.path(path +  newDocId + '/');
+				}
+			}
+		};
+
+		$scope.changeShop = function(shopId){
+			updateLocation(shopId, $routeParams.shopId);
+		};
+
+		$scope.changeArea = function(areaId){
+			updateLocation(areaId, $routeParams.areaId);
+		};
+	}
+
+	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n'];
+	app.controller('Rbs_Catalog_Product_PricesController', PricesController);
+
+
 	/**
 	 * Controller for list.
 	 *

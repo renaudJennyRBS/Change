@@ -1,0 +1,70 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.price.document.tax.label', true) }}
+		{{ forms.field('code', 'String', 'm.rbs.price.document.tax.code', false) }}
+		{{ forms.field('cascading', 'Boolean', 'm.rbs.price.document.tax.cascading', false) }}
+		<h3>{{ i18n('m.rbs.price.document.tax.data', ['ucf']) }}</h3>
+		<table class="table table-striped">
+			<thead>
+			<th></th>
+			<th data-ng-repeat="cat in document.data.c">
+				(= cat =)
+				<br/>
+				<small><a ng-click="deleteCategory($index)">{{ i18n('m.rbs.price.admin.js.tax-delete-category') }}</a></small>
+			</th>
+			</thead>
+			<tbody>
+			<tr data-ng-repeat="zone in document.data.z">
+				<td>(= zone =)
+					<br/>
+					<small data-ng-show="$index"><a
+							ng-click="makeDefaultZone($index)">{{ i18n('m.rbs.price.admin.js.tax-make-default-zone') }}</a> |
+					</small>
+					<small><a ng-click="deleteZone($index)">{{ i18n('m.rbs.price.admin.js.tax-delete-zone') }}</a></small>
+
+
+				</td>
+				<td data-ng-repeat="cat in document.data.c track by $index">
+					<input type="number" smart-float="" data-ng-model="document.data.r[$index][$parent.$index]" style="width: 60px"/>
+					<span class="add-on">%</span>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<div class="control-group">
+			<small>
+				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-zone', ['ucf']) }}
+				<br />
+				<span>
+					<input name="newZoneName" class="input-mini" type="text" data-ng-model="newZoneName" />
+					<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					<p class="text-error" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
+				</span>
+			</small>
+		</div>
+		<div class="control-group">
+			<small>
+				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-category', ['ucf']) }}
+				<br />
+				<span>
+					<input name="newCategoryName" class="input-mini" type="text" data-ng-model="newCategoryName" />
+					<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+				</span>
+				<p class="text-error" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
+			</small>
+		</div>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section="">
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

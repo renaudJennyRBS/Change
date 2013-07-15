@@ -5,7 +5,6 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		{{ forms.field('label', 'String', 'm.rbs.collection.document.collection.label', true) }}
-		{{ forms.field('title', 'String', 'm.rbs.collection.document.collection.title', true) }}
 		{{ forms.field('code', 'String', 'm.rbs.collection.document.collection.code', true) }}
 		{{ forms.pickerMultiple('items', 'Rbs_Collection_Item', 'm.rbs.collection.document.item-list',
 		false, null, 'm.rbs.collection.document.item.item-picker-title') }}

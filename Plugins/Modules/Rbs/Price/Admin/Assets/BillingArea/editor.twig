@@ -1,0 +1,30 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.price.document.billingarea.label', true) }}
+		{{ forms.field('code', 'String', 'm.rbs.price.document.billingarea.code', false) }}
+        <div class="control-group property"
+                data-ng-class="">
+            <label class="control-label" for="module">{{ i18n('m.rbs.price.document.billingarea.currencyCode', ['ucf']) }}</label>
+            <div class="controls">
+                <select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
+            </div>
+        </div>
+		{{ forms.pickerMultiple('taxes', 'Rbs_Price_Tax', 'm.rbs.price.document.billingarea.taxes',
+		false, null, 'm.rbs.price.document.billingarea.taxes-picker-title') }}
+		{{ forms.field('boEditWithTax', 'Boolean', 'm.rbs.price.document.billingarea.boeditwithtax', false) }}
+		{{ forms.field('storePriceWithTax', 'Boolean', 'm.rbs.price.document.billingarea.storepricewithtax', false) }}
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section="">
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

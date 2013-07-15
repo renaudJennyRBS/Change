@@ -29,16 +29,8 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Catalog/Category/picker.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Price/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Price/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Price/price-list.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Shop/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Shop/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/BillingArea/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/BillingArea/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/BillingArea/taxes-section.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Currency/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Catalog/Currency/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/Catalog/Shop/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();

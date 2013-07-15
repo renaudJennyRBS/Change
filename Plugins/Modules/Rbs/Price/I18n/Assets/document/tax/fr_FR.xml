@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.document.tax" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="code">code</key>
+	<key id="cascading">application en cascade</key>
+	<key id="data">taux de taxes (catégories et zones)</key>
+</i18n>
