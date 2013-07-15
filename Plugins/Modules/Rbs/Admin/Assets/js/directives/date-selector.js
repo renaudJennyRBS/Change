@@ -30,7 +30,8 @@
 			scope       : true,
 
 			link : function (scope, elm, attrs, ngModel) {
-				scope.timeZone = $rootScope.timeZone;
+
+				scope.timeZone = $rootScope.settings.timeZone;
 
 				var	dInput = $(elm).find('[data-role="input-date"]').first(),
 					hInput = $(elm).find('[data-role="input-hour"]').first(),
