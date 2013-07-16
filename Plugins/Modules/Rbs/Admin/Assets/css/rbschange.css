@@ -1501,3 +1501,8 @@ th label {
 	content: "\F0A9";
 	color: silver;
 }
+
+
+.well h5 {
+	margin-top: 0;
+}

@@ -65,15 +65,14 @@ class Install
 				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 				$folder->setLabel('Rbs_Website');
 				$folder->create();
-				$rootNode = $documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+				$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
 
 				/* @var $website \Rbs\Website\Documents\Website */
 				$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 				$website->setLabel('Site par défaut');
-				$website->setHostName('temporary.fr');
+				$website->setHostName('localhost');
 				$website->setScriptName('/index.php');
 				$website->create();
-				$documentServices->getTreeManager()->insertNode($rootNode, $website);
 
 				$transactionManager->commit();
 			}

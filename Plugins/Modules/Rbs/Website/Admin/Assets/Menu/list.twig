@@ -1,37 +1,29 @@
 <div data-ng-controller="Rbs_Website_Menu_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.website.document.menu-list', ['ucf']) }}"></page-header>
 
-	<search-filters model="Rbs_Website_Website" query="DL.query" text-search="textSearch"></search-filters>
+	<rbs-todo></rbs-todo>
 
-	<div class="alert alert-danger">
-		TODO : en cours de développement...
+	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div>
+		<a href="Rbs/Website/Menu/new">{{ i18n('m.rbs.website.document.menu-create', ['ucf']) }}</a>
 	</div>
 
-	<document-list-toolbar data-mask="(=DL.loading=)"></document-list-toolbar>
+	<rbs-document-list data-dlid="DLRbsWebsiteMenu"
+	                   model="Rbs_Website_Menu"
+	                   filter-query="query"
+	                   actions="default">
 
-	<div class="alert alert-info" data-ng-show="DL.documents.length == 0 && ! DL.loading">
-		<h4>{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</h4>
-		{{ i18n('m.rbs.admin.lists.you-can', ['ucf', 'lab']) }}
-		<ul>
-			<li>{{ i18n('m.rbs.admin.lists.create-elements-with-buttons') }}</li>
-			<li ng-show="DL.hasFilters()"><a href="javascript:;" ng-click="DL.cancelFilters()">{{ i18n('m.rbs.admin.lists.clear-search-filters') }}</a></li>
-		</ul>
-	</div>
+		<column name="label" primary="true">
+			<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+		</column>
+		<column name="website">
+			<a href ng-href="(= doc.website | documentURL:'tree' =)">(= doc.website.label =)</a>
+			<i class="icon-rbs-navigate-to"></i>
+		</column>
+		<column name="items">
+			(= doc.items | json =)
+		</column>
 
-	<div class="change-website-menu-functions"></div>
-
-	<ul class="thumbnail-grid clearfix">
-		<li data-ng-repeat="doc in DL.documents" data-ng-class="{selected: doc.selected, warning: doc.publicationStatus!='PUBLISHABLE'}">
-			<div class="change-website-menu-card" document="doc"></div>
-		</li>
-	</ul>
-
-	<footer class="row-fluid rbsc-list-footer" data-ng-show="DL.documents.length" data-mask="(=DL.loading=)">
-		<div class="span2">
-			<clipboard-add-widget selected="DL.selectedDocuments"></clipboard-add-widget>
-		</div>
-		<div class="span10">
-			<pagination-toolbar document-list="DL" class="pull-right"></pagination-toolbar>
-		</div>
-	</footer>
+	</rbs-document-list>
 </div>

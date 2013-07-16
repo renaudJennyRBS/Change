@@ -95,4 +95,24 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$this->getDocumentManager()->popLCID();
 		return $urlManager;
 	}
+
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$callback = function(\Change\Documents\Events\Event $event)
+		{
+			/* @var $website Website */
+			$website = $event->getDocument();
+			$tm = $website->getDocumentServices()->getTreeManager();
+			$parentNode = $tm->getRootNode($website->getDocumentModel()->getTreeName());
+			if ($parentNode)
+			{
+				$tm->insertNode($parentNode, $website);
+			}
+		};
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, $callback);
+	}
 }

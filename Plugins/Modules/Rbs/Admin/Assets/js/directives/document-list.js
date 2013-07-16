@@ -296,6 +296,7 @@
 
 				// Create body cell
 				if (column.content) {
+					column.content = column.content.replace(/converted\s*\(\s*([a-zA-Z0-9\.]+)\s*\)/, 'getConvertedValue($1, "' + column.name + '")');
 					html = '<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">';
 					if (column.primary) {
 						html += '<div class="primary-cell">' + column.content + '</div>';
@@ -313,7 +314,7 @@
 						}
 					} else {
 						if (column.converter) {
-							column.content = '(= getConvertedValue(doc.' + column.valuePath + ', "' + column.converter + '", "' + column.converterParams + '") =)';
+							column.content = '(= getConvertedValue(doc.' + column.valuePath + ', "' + column.name + '") =)';
 						} else {
 							column.content = '(= doc.' + column.valuePath + ' =)';
 						}
@@ -1028,8 +1029,9 @@
 						var promises = [];
 						scope.convertersValues = {};
 
-						scope.getConvertedValue = function (value, converter) {
+						scope.getConvertedValue = function (value, columnName) {
 							if (value) {
+								var converter = scope.columns[columnName].converter;
 								if (scope.convertersValues[converter] && scope.convertersValues[converter][value]) {
 									return scope.convertersValues[converter][value];
 								}

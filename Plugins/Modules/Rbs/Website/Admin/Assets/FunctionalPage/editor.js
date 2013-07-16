@@ -47,7 +47,6 @@
 							console.log(scope.document.allowedFunctionsCode);
 							updateFunctionsStatus();
 						}, true);
-//						updateFunctionsStatus();
 					});
 				}
 
@@ -62,6 +61,14 @@
 						}
 					});
 				}
+
+				scope.hasAvailableFunctions = function () {
+					var counter = 0;
+					angular.forEach(scope.availableFunctions, function () {
+						counter++;
+					});
+					return counter > 0;
+				};
 
 				scope.initSection = function (sectionName) {
 					if (sectionName === 'functions') {

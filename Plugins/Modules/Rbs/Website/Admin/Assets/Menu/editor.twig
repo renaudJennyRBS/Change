@@ -8,6 +8,16 @@
 
 		{{ forms.picker('website', 'Rbs_Website_Website', 'm.rbs.website.document.menu.website',
 			true, null, 'm.rbs.website.document.menu.website-picker-title') }}
+
+		<div class="control-group property">
+			<label class="control-label" for="items">{{ i18n('m.rbs.website.document.menu.items', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
+				<textarea ng-model="document.items"></textarea>
+			</div>
+		</div>
+
+
 	</fieldset>
 
 	<fieldset

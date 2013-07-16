@@ -11,7 +11,7 @@
 
 	<div class="nav-list">
 		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18n('m.rbs.admin.menu.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a>
-		<form class="rbs-form-simple-filter" filter="filterModules" ng-submit="go()"></form>
+		<form class="rbs-form-simple-filter" on-escape="close()" filter="filterModules" ng-submit="go()"></form>
 	</div>
 
 	<div class="nav-list" ng-if="filterModules == 'chuck norris'" ng-animate="'opacity-animation'" style="text-align: center">
