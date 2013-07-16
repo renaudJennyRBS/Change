@@ -5,4 +5,5 @@
 	<key id="section">section</key>
 	<key id="page">page fonctionnelle</key>
 	<key id="section-functions-list-tip" format="html"><![CDATA[<strong>La liste ci-dessous affiche les fonctions attribuées à cette section</strong>.<br/>Pour ajouter une fonction à une section, vous devez d'abord choisir une <strong>page fonctionnelle</strong>, puis choisir des fonctions parmi celles supportées par la page choisie.]]></key>
+	<key id="error-not-unique">Une page est déjà affectée à cette fonction dans cette section.</key>
 </i18n>
