@@ -1,18 +1,11 @@
 <?php
 namespace Rbs\Tag\Http\Rest\Actions;
 
-use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentCollection;
-use Change\Documents\Interfaces\Correction;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\CollectionResult;
 use \Change\Documents\Query\Builder;
-use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\Link;
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\GetTaggedDocuments
@@ -167,78 +160,12 @@ class GetTaggedDocuments
 			foreach ($collection as $document)
 			{
 				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-				$result->addResource($this->addResourceItemInfos($l, $document, $urlManager, null));
+				$result->addResource($l->addResourceItemInfos($document, $urlManager, null));
 			}
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 		return $result;
-	}
-
-	/**
-	 * @param DocumentLink $documentLink
-	 * @param AbstractDocument $document
-	 * @param UrlManager $urlManager
-	 * @param array $extraColumn
-	 * @return DocumentLink
-	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager, $extraColumn)
-	{
-		$dm = $document->getDocumentServices()->getDocumentManager();
-		if ($documentLink->getLCID())
-		{
-			$dm->pushLCID($documentLink->getLCID());
-		}
-
-		$model = $document->getDocumentModel();
-
-		$documentLink->setProperty($model->getProperty('creationDate'));
-		$documentLink->setProperty($model->getProperty('modificationDate'));
-
-		if ($document instanceof Editable)
-		{
-			$documentLink->setProperty($model->getProperty('label'));
-			$documentLink->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$documentLink->setProperty($model->getProperty('publicationStatus'));
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$documentLink->setProperty($model->getProperty('refLCID'));
-			$documentLink->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($document instanceof Correction)
-		{
-			/* @var $document AbstractDocument|Correction */
-			if ($document->hasCorrection())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$documentLink->setProperty('actions', array($l));
-			}
-		}
-
-		if (is_array($extraColumn) && count($extraColumn))
-		{
-			foreach ($extraColumn as $propertyName)
-			{
-				$property = $model->getProperty($propertyName);
-				if ($property)
-				{
-					$documentLink->setProperty($property);
-				}
-			}
-		}
-
-		if ($documentLink->getLCID())
-		{
-			$dm->popLCID();
-		}
-		return $documentLink;
 	}
 }

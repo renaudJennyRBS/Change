@@ -1,17 +1,10 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\AbstractDocument;
-use Change\Documents\Interfaces\Correction;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\UrlManager;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
-use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\Link;
 /**
  * @name \Change\Http\Rest\Actions\GetTreeNodeAncestors
@@ -105,7 +98,7 @@ class GetTreeNodeAncestors
 			if ($document)
 			{
 				$t = new TreeNodeLink($urlManager, $node);
-				$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
+				$t->getDocumentLink()->addResourceItemInfos($document, $urlManager);
 				$result->addResource($t);
 			}
 		}
@@ -123,59 +116,4 @@ class GetTreeNodeAncestors
 	{
 		return array('limit' => $result->getLimit(), 'offset' => $result->getOffset());
 	}
-
-
-	/**
-	 * @param DocumentLink $documentLink
-	 * @param AbstractDocument $document
-	 * @param UrlManager $urlManager
-	 * @return DocumentLink
-	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
-	{
-		$dm = $document->getDocumentServices()->getDocumentManager();
-		if ($documentLink->getLCID())
-		{
-			$dm->pushLCID($documentLink->getLCID());
-		}
-
-		$model = $document->getDocumentModel();
-
-		$documentLink->setProperty($model->getProperty('creationDate'));
-		$documentLink->setProperty($model->getProperty('modificationDate'));
-
-		if ($document instanceof Editable)
-		{
-			$documentLink->setProperty($model->getProperty('label'));
-			$documentLink->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$documentLink->setProperty($model->getProperty('publicationStatus'));
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$documentLink->setProperty($model->getProperty('refLCID'));
-			$documentLink->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($document instanceof Correction)
-		{
-			/* @var $document AbstractDocument|Correction */
-			if ($document->hasCorrection())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$documentLink->setProperty('actions', array($l));
-			}
-		}
-
-		if ($documentLink->getLCID())
-		{
-			$dm->popLCID();
-		}
-		return $documentLink;
-	}
-
 }

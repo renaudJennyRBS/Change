@@ -1,6 +1,14 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Activable;
+use Change\Documents\Interfaces\Correction;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
+use Change\Http\UrlManager;
+
 /**
  * @name \Change\Http\Rest\Result\DocumentLink
  */
@@ -205,5 +213,79 @@ class DocumentLink extends Link
 			}
 		}
 		return $value;
+	}
+
+	/**
+	 * @param AbstractDocument $document
+	 * @param UrlManager $urlManager
+	 * @param array $extraColumn
+	 * @return $this
+	 */
+	public function addResourceItemInfos(AbstractDocument $document, UrlManager $urlManager, $extraColumn = array())
+	{
+		$dm = $document->getDocumentManager();
+		$eventManager = $document->getEventManager();
+		if ($this->getLCID())
+		{
+			$dm->pushLCID($this->getLCID());
+		}
+
+		$model = $document->getDocumentModel();
+
+		$this->setProperty($model->getProperty('creationDate'));
+		$this->setProperty($model->getProperty('modificationDate'));
+
+		if ($document instanceof Editable)
+		{
+			$this->setProperty($model->getProperty('label'));
+			$this->setProperty($model->getProperty('documentVersion'));
+		}
+
+		if ($document instanceof Publishable)
+		{
+			$this->setProperty($model->getProperty('publicationStatus'));
+		}
+		elseif ($document instanceof Activable)
+		{
+			$this->setProperty($model->getProperty('active'));
+		}
+
+		if ($document instanceof Localizable)
+		{
+			$this->setProperty($model->getProperty('refLCID'));
+			$this->setProperty($model->getProperty('LCID'));
+		}
+
+		if ($document instanceof Correction)
+		{
+			/* @var $document AbstractDocument|Correction */
+			if ($document->hasCorrection())
+			{
+				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$this->setProperty('actions', array($l));
+			}
+		}
+
+		if (is_array($extraColumn) && count($extraColumn))
+		{
+			foreach ($extraColumn as $propertyName)
+			{
+				$property = $model->getProperty($propertyName);
+				if ($property)
+				{
+					$this->setProperty($property);
+				}
+			}
+		}
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document,
+			array('restResult' => $this, 'extraColumn' => $extraColumn, 'urlManager' => $urlManager));
+		$eventManager->trigger($documentEvent);
+
+		if ($this->getLCID())
+		{
+			$dm->popLCID();
+		}
+		return $this;
 	}
 }
