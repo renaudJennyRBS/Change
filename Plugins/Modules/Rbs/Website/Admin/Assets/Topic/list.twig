@@ -3,16 +3,39 @@
 
 	<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
 
+
 	<div>
 		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL=)">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
 		|
 		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL=)">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
+		|
+		<a href ng-click="toggleFunctions($event)"><i ng-class="{'icon-spinner icon-spin':loadingFunctions, 'icon-chevron-up':showFunctions, 'icon-chevron-down':! showFunctions}"></i> Fonctions</a>
 	</div>
 
-	<rbs-document-list data-dlid="DL1"
+	<div ng-if="sectionFunctions && showFunctions" class="well well-small">
+		<button class="close pull-right" type="button" ng-click="toggleFunctions($event, false)">&times;</button>
+		<h5 ng-show="! loadingFunctions" ng-pluralize count="sectionFunctions.length" when="{{ i18n('m.rbs.website.document.topic.section-functions', ['ucf']) }}"></h5>
+		<ul>
+			<li ng-repeat="f in sectionFunctions"><strong>(= f.functionLabel =)</strong> <span class="muted">((= f.functionCode =))</span><br/>via la page <a href ng-href="(= f.page | documentURL =)">(= f.page.label =)</a></li>
+		</ul>
+		<div>
+			<a href ng-href="(= currentSection | documentURL:'functions':true =)"><i class="icon-cog"></i> {{ i18n('m.rbs.website.document.topic.configure-section-functions-link', ['ucf']) }}</a>
+		</div>
+	</div>
+
+	<rbs-document-list data-dlid="DLRbsWebsiteTopicList"
 	               publishable="true"
 	               tree="Rbs_Website"
 	               filter-query="query">
+
+		<quick-actions>
+			[action default]
+			<span ng-if="doc.is('Rbs_Website_Topic')">
+				|| <a href ng-href="(= doc | documentURL:'functions':true =)" title="Configurer les fonctions de cette rubrique">
+					<i class="icon-cog"></i> fonctions
+				</a>
+			</span>
+		</quick-actions>
 
 		<column name="icon" width="30px" align="center">
 			<span ng-if="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">

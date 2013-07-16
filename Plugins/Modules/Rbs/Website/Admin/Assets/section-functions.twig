@@ -1,0 +1,55 @@
+<div data-ng-controller="Rbs_Website_SectionFunctionsController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.website.document.sectionpagefunction-list', ['ucf']) }}"></page-header>
+
+	<div>
+		<a href ng-href="(= document | documentURL:'tree' =)"><i class="icon-arrow-left"></i> Retourner à (= document.label =)</a>
+	</div>
+
+	<div rbs-tip="Rbs_Website_SectionFunctionsList">
+		{{ i18n('m.rbs.website.document.sectionpagefunction.section-functions-list-tip', ['ucf']) }}
+	</div>
+
+	<div class="well well-small">
+		<h5>Ajouter des fonctions à cette section</h5>
+
+		<div>
+			1. Choisissez une page fonctionnelle :
+			<div class="document-picker-single"
+			     ng-model="add.newFunctionPage"
+			     accepted-model="Rbs_Website_FunctionalPage"
+			     property-label=""
+			     selector-title="Sélectionner une page fonctionnelle">
+			</div>
+		</div>
+
+		<div ng-show="pageFunctions">
+			2. Choisissez une fonction de cette page :
+			<select multiple="multiple" class="input-block-level" size="10"
+			        ng-model="add.functions"
+			        ng-options="value as func.label+' ('+value+')' for (value, func) in pageFunctions">
+				<option value="">-</option>
+			</select>
+		</div>
+
+		<div ng-show="pageFunctions">
+			3. Valider : <button ng-show="add.functions" type="button" class="btn btn-success" ng-click="addSectionFunction(add.newFunctionPage, add.functions)">Ajouter</button>
+		</div>
+	</div>
+
+
+	<rbs-document-list data-dlid="DLRbsWebsiteSectionFunctions"
+	                   model="Rbs_Website_SectionPageFunction"
+	                   filter-query="query"
+	                   load-query="loadQuery"
+	                   actions="delete">
+
+		<quick-actions>[action delete]</quick-actions>
+
+		<column name="functionCode" primary="true" converter-params="Rbs_Website_AvailablePageFunctions" converter="collection">
+			<strong>(= converted(doc.functionCode) =)</strong><br/>
+			<em class="muted">(= doc.functionCode =)</em>
+		</column>
+		<column name="page.label"></column>
+
+	</rbs-document-list>
+</div>

@@ -156,20 +156,20 @@
 
 	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
-		return function (doc, urlName) {
+		return function (doc, urlName, clearParams) {
 			var	url,
 				node = Breadcrumb.getCurrentNode();
 
 			if (Utils.isDocument(doc)) {
 				url = doc.url(urlName);
 			} else if (Utils.isModelName(doc)) {
-				url = UrlManager.getFormUrl(doc, {'id': 'new'});
+				url = UrlManager.getFormUrl(doc, urlName ? urlName : {'id': 'new'});
 			} else {
 				return 'javascript:;';
 			}
 
 			//if (urlName !== 'tree' && Utils.isTreeNode(node)) {
-			if (urlName !== 'tree' && Utils.isDocument(node)) {
+			if (urlName !== 'tree' && Utils.isDocument(node) && ! clearParams) {
 				url += '?tn=' + node.id;
 			}
 			return url;

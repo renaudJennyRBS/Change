@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.document.sectionpagefunction" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="functionCode">function</key>
+	<key id="section">section</key>
+	<key id="page">functional page</key>
+</i18n>

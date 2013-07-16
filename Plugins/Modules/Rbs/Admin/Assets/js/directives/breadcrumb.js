@@ -3,7 +3,7 @@
 	"use strict";
 
 	var modelIcons = {
-		'Rbs_Website_Website' : 'icon-home'
+		//'Rbs_Website_Website' : 'icon-home'
 	};
 
 	angular.module('RbsChange').directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {

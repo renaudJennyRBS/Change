@@ -15,4 +15,6 @@
 	<key id="website">site web</key>
 	<key id="website-list">sites web</key>
 	<key id="website-create">ajouter un site web</key>
+	<key id="sectionpagefunction-list">fonctions</key>
+	<key id="sectionpagefunction-create">associer une fonction à une section</key>
 </i18n>
