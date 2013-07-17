@@ -33,6 +33,7 @@
 		'$filter',
 		'$rootScope',
 		'$location',
+		'$cacheFactory',
 		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Loading',
@@ -49,7 +50,7 @@
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -100,7 +101,7 @@
 			}
 
 			function buildPreviewAction () {
-				return '<a href="javascript:" ng-click="preview(doc)"> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
+				return '<a href="javascript:" ng-click="preview(doc, $event)"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-chevron-up\':hasPreview($index), \'icon-chevron-down\':!hasPreview($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
 			}
 
 			if (__quickActions[dlid]) {
@@ -151,7 +152,10 @@
 		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels) {
 			var	columns, column,
 				$th, $td, $head, $body, html, p, td,
-				result = {};
+				result = {
+					'columns' : {},
+					'preview' : false
+				};
 
 			columns = __columns[dlid];
 
@@ -240,7 +244,8 @@
 				if (!__preview[dlid].contents) {
 					__preview[dlid].contents = '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>';
 				}
-				td.html('<button type="button" class="close pull-right" ng-click="preview(doc)">&times;</button>' + __preview[dlid].contents);
+				td.html('<button type="button" class="close pull-right" ng-click="preview(doc, $event)">&times;</button>' + __preview[dlid].contents);
+				result.preview = true;
 			}
 
 			while (columns.length) {
@@ -272,7 +277,7 @@
 
 				}
 
-				result[column.name] = column;
+				result.columns[column.name] = column;
 
 				// Check if the label has been provided or not.
 				// If one at least label has not been provided, the Model's information will be
@@ -309,7 +314,7 @@
 					// in column templates that have a converter defined on them.
 					column.content = column.content.replace(/converted\s*\(\s*([a-zA-Z0-9\.]+)\s*\)/, 'getConvertedValue($1, "' + column.name + '")');
 
-					html = '<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">';
+					html = '<td ng-class="{' + (column.primary ? '\'preview\':hasPreview(doc),' : '') + '\'sorted\':isSortedOn(\'' + column.name + '\')}">';
 					if (column.primary) {
 						html += '<div class="primary-cell">' + column.content + '</div>';
 					} else {
@@ -335,12 +340,12 @@
 					}
 					if (column.primary) {
 						if (tAttrs.tree) {
-							$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)" title="Naviguer vers..."><strong>' + column.content + '</strong></a> <i class="icon-rbs-navigate-to"></i></div></td>');
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)" title="Naviguer vers..."><strong>' + column.content + '</strong></a> <i class="icon-rbs-navigate-to"></i></div></td>');
 						} else {
 							if (tAttrs.cascadeEdition) {
-								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
+								$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
 							} else {
-								$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+								$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
 							}
 						}
 					} else {
@@ -441,14 +446,14 @@
 			 */
 			compile : function (tElement, tAttrs) {
 
-				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columns;
+				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columnResult;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
-				columns = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels);
+				columnResult = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels);
 
 				gridModeAvailable = initGrid(dlid, tElement);
 
@@ -456,7 +461,7 @@
 				 * Directive's link function.
 				 */
 				return function linkFn (scope, elm, attrs) {
-					var queryObject, search, columnNames, currentPath;
+					var queryObject, search, columnNames, currentPath, previewCache;
 
 					scope.collection = [];
 					scope.gridModeAvailable = gridModeAvailable;
@@ -465,7 +470,8 @@
 					} else {
 						scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
 					}
-					scope.columns = columns;
+					scope.columns = columnResult.columns;
+					scope.previewAvailable = columnResult.preview;
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
@@ -627,8 +633,14 @@
 					// Embedded preview.
 					//
 
+					previewCache = $cacheFactory('chgRbsDocumentListPreview_' + dlid);
+					scope.$on('$destroy', function () {
+						previewCache.destroy();
+					});
 
-					scope.preview = function (index) {
+					scope.preview = function (index, $event) {
+						$event.preventDefault();
+
 						if (angular.isObject(index)) {
 							if (scope.isPreview(index)) {
 								ArrayUtils.removeValue(scope.collection, index);
@@ -637,7 +649,7 @@
 							index = scope.collection.indexOf(index);
 						}
 
-						var	current = scope.collection[index];
+						var	current = scope.collection[index], cachedDoc;
 						scope.previewTemplateUrl = current.model.replace(/_/g, '/') + '/preview.twig';
 
 						if (scope.hasPreview(index)) {
@@ -645,35 +657,41 @@
 							return;
 						}
 
-						current.__dlPreviewLoading = true;
+						cachedDoc = $event.shiftKey ? null : previewCache.get(current.id);
+						if (cachedDoc) {
+							scope.collection.splice(index+1, 0, cachedDoc);
+						} else {
+							current.__dlPreviewLoading = true;
+							Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
+							REST.resource(current).then(function (doc) {
+								REST.modelInfo(doc).then(function (modelInfo) {
+									var previewPromises = [];
+									delete current.__dlPreviewLoading;
+									// Copy the current's META$ information into the newly loaded document.
+									angular.extend(doc.META$, current.META$);
+									doc.__dlPreview = true;
+									doc.META$.modelInfo = modelInfo;
 
-						Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
-						REST.resource(current).then(function (doc) {
-							REST.modelInfo(doc).then(function (modelInfo) {
-								var previewPromises = [];
-								delete current.__dlPreviewLoading;
-								// Copy the current's META$ information into the newly loaded document.
-								angular.extend(doc.META$, current.META$);
-								doc.__dlPreview = true;
-								doc.META$.modelInfo = modelInfo;
+									$rootScope.$broadcast(Events.DocumentListPreview, {
+										"document" : doc,
+										"promises" : previewPromises
+									});
 
-								$rootScope.$broadcast(Events.DocumentListPreview, {
-									"document" : doc,
-									"promises" : previewPromises
+									previewCache.put(doc.id, doc);
+
+									function terminatePreview () {
+										scope.collection.splice(index+1, 0, doc);
+										Loading.stop();
+									}
+
+									if (previewPromises.length) {
+										$q.all(previewPromises).then(terminatePreview);
+									} else {
+										terminatePreview();
+									}
 								});
-
-								function terminatePreview () {
-									scope.collection.splice(index+1, 0, doc);
-									Loading.stop();
-								}
-
-								if (previewPromises.length) {
-									$q.all(previewPromises).then(terminatePreview);
-								} else {
-									terminatePreview();
-								}
 							});
-						});
+						}
 
 					};
 
@@ -685,6 +703,11 @@
 
 					scope.isPreviewReady = function (doc) {
 						return ! doc || ! doc.__dlPreviewLoading;
+					};
+
+
+					scope.isPreviewLoading = function (doc) {
+						return doc && doc.__dlPreviewLoading;
 					};
 
 

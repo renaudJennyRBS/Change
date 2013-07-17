@@ -362,8 +362,19 @@ a.action:first-child {
 }
 
 .table-striped.document-list tbody tr td.preview {
-	background: white;
+	background: #F0F8F8;
 }
+.table-striped.document-list tbody tr.preview td {
+	border-top: none;
+}
+
+.table-striped.document-list tbody tr.has-preview td {
+	border-bottom: 1px solid #DDD;
+}
+.table-striped.document-list tbody tr.has-preview td.preview {
+	border-bottom: 1px dashed #DDD;
+}
+
 
 a.danger:hover {
 	color: red;
@@ -391,6 +402,7 @@ rbs-document-list div.empty-row {
 
 #rbs-document-list-tester .quick-actions {
 	font-size: 85%;
+	text-transform: lowercase;
 }
 #rbs-document-list-tester .handle-open {
 	display: none;
@@ -414,6 +426,7 @@ rbs-document-list tr .quick-actions {
 	border-top-left-radius: 15px;
 	border-bottom-left-radius: 15px;
 	box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1) inset;
+	text-transform: lowercase;
 }
 rbs-document-list tr:hover .quick-actions-mouse {
 	visibility: visible;
