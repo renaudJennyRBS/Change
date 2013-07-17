@@ -154,7 +154,7 @@
 	 * @param $scope
 	 * @constructor
 	 */
-	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query) {
+	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter) {
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
 		]);
@@ -189,20 +189,31 @@
 				spf.page = funcPage.id;
 				spf.section = $scope.section.id;
 				spf.functionCode = functions.pop();
-				REST.save(spf).then(function () {
-					if (functions.length) {
-						saveFunctions(functions);
-					} else {
-						$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload"});
+				REST.save(spf).then(
+					// Success
+					function () {
+						if (functions.length) {
+							saveFunctions(functions);
+						} else {
+							$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload"});
+						}
+					},
+					// Error
+					function (error) {
+						var promises = [];
+						$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload", "promises": promises});
+						$q.all(promises).then(function () {
+							NotificationCenter.error("L'enregistrement a échoué", error);
+						});
 					}
-				});
+				);
 			}
 			saveFunctions();
 		};
 
 	}
 
-	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query'];
+	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter'];
 	app.controller('Rbs_Website_SectionFunctionsController', SectionFunctionsController);
 
 })();

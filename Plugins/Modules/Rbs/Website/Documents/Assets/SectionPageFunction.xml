@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	icon="topic">
 	<properties>
-        <property name="functionCode" type="String">
+        <property name="functionCode" type="String" required="true">
             <dboptions length="150" />
         </property>
 		<property name="labelKey" type="String" />
         <property name="section" type="Document" document-type="Rbs_Website_Section" required="true" />
-        <property name="page" type="Document" document-type="Rbs_Website_Page" />
+        <property name="page" type="Document" document-type="Rbs_Website_Page" required="true" />
 	</properties>
 </document>

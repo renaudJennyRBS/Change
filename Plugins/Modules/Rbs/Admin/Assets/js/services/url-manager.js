@@ -195,4 +195,12 @@
 
 	}]);
 
+
+	app.filter('adminTemplateURL', function () {
+		return function (doc, tplName) {
+			return doc && doc.model ? doc.model.replace(/_/g, '/') + '/' + tplName + '.twig' : '';
+		};
+	});
+
+
 })();
