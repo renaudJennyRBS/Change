@@ -176,8 +176,6 @@
 	 * Mostly, it deals with user authentication and settings.
 	 */
 	app.controller('Change.RootController', ['$rootScope', '$filter', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $filter, $location, Settings, Utils, REST, OAuthService) {
-		var redirectUrl = null,
-		    alreadyGotError = false;
 
 		$rootScope.setLanguage = function (lang) {
 			// TODO Save settings on the server.
@@ -186,30 +184,13 @@
 
 		$rootScope.logout = function () {
 			OAuthService.logout();
-			$location.path('/login');
+			loadCurrentUser();
 		};
 
-		$rootScope.$on('OAuth:AuthenticationFailure', function (event, rejection) {
-			if (rejection.status === 401 || (rejection.status === 500 && rejection.data && Utils.startsWith(rejection.data.code, 'EXCEPTION-72'))) {
-				if (alreadyGotError) {
-					console.log('OAuth:AuthenticationFailure'); //FIXME
-				} else {
-					alreadyGotError = true;
-					redirectUrl = angular.copy($location.path());
-					$location.path('/login');
-				}
-			}
-		});
-
-		$rootScope.$on('OAuth:UserLoginSuccess', function (event) {
-			alreadyGotError = false;
-			if (!redirectUrl || Utils.startsWith(redirectUrl, '/login')) {
-				redirectUrl = '/';
-			}
+		$rootScope.$on('OAuth:AuthenticationSuccess', function () {
 			loadCurrentUser();
 			$rootScope.$apply(function () {
-				redirectUrl = $location.search()['route'];
-				$location.url(redirectUrl);
+				$location.url($location.search()['route']);
 			});
 		});
 
@@ -217,10 +198,21 @@
 		{
 			REST.call(REST.getBaseUrl('admin/currentUser/')).then(function (result) {
 				$rootScope.user = result.properties;
+			}, function (error) {
+				if (error.status == 401 || error.status == 403)
+				{
+					OAuthService.logout();
+					var callbackUrl = document.getElementsByTagName('base')[0].href + 'authenticate?route=' + encodeURIComponent($location.url());
+					OAuthService.startAuthentication(callbackUrl);
+				}
+				else
+				{
+					console.error(error);
+				}
 			});
 		}
 
-		if ($location.path() !== '/login')
+		if ($location.path() !== '/authenticate')
 		{
 			if (OAuthService.hasOAuthData())
 			{
@@ -228,7 +220,7 @@
 			}
 			else
 			{
-				var callbackUrl = document.getElementsByTagName('base')[0].href + 'login?route=' + encodeURIComponent($location.url());
+				var callbackUrl = document.getElementsByTagName('base')[0].href + 'authenticate?route=' + encodeURIComponent($location.url());
 				OAuthService.startAuthentication(callbackUrl);
 			}
 		}

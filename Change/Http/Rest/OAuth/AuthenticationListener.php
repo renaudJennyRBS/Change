@@ -232,7 +232,16 @@ class AuthenticationListener
 				}
 				else
 				{
-					throw new \RuntimeException('Unable to authenticate', 999999);
+					$array = array('oauth_token' => $token,
+						'realm' => $request->getPost('realm'),
+						'error' => 'unable to authenticate');
+
+					$result  = new ArrayResult();
+					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+					$result->setArray($array);
+					$event->setResult($result);
+
+					return;
 				}
 			}
 		}
@@ -526,6 +535,14 @@ class AuthenticationListener
 					$html = file_get_contents(__DIR__ . '/Assets/login.html');
 					$html = str_replace('{oauth_token}', $array['oauth_token'], $html);
 					$html = str_replace('{realm}', $array['realm'], $html);
+					if (isset($array['error']))
+					{
+						$html = str_replace('{error}', $array['error'], $html);
+					}
+					else
+					{
+						$html = str_replace('{error}', '', $html);
+					}
 					$response->setContent($html);
 					$event->setResponse($response);
 					$event->stopPropagation();

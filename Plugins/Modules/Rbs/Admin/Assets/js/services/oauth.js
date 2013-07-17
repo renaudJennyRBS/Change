@@ -15,15 +15,12 @@
 
 		// URL
 		cfgBaseUrl = null,
-		cfgRegisterUrl = "Register",
 		cfgRequestTokenUrl = "RequestToken",
 		cfgAuthorizeUrl = "Authorize",
 		cfgAccessTokenUrl = "AccessToken",
 
 		// Events
-		cfgUserLoginSuccessEventName = "OAuth:UserLoginSuccess",
-		cfgUserLoginFailureEventName = "OAuth:UserLoginFailure",
-		cfgOAuthFailureEventName = "OAuth:AuthenticationFailure",
+		cfgOAuthSuccessEventName = 'OAuth:AuthenticationSuccess',
 
 		cfgSignedUrlPatternInclude = null,
 		cfgSignedUrlPatternExclude = null,
@@ -272,6 +269,7 @@
 					oauthObject.fetchRequestToken(temporaryTokenSuccessFn, temporaryTokenErrorFn);
 
 					function temporaryTokenSuccessFn (url) {
+						oauthData.temporary = true;
 						localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
 						window.location.href = url;
 					}
@@ -306,110 +304,19 @@
 							// Store OAuth data for future requests.
 							oauthData.tokenKey = oauthObject.getAccessTokenKey();
 							oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
+							delete oauthData.temporary;
 							localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
 
 							// Tells the rest of the world that the authentication is successful :)
-							$rootScope.$broadcast(cfgUserLoginSuccessEventName);
+							$rootScope.$broadcast(cfgOAuthSuccessEventName);
 						},
 
 						// Error:
 						function (data) {
 							$log.log("OAuth authentication ERROR (3): ", data);
-							$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
 						}
 					);
 				},
-
-				/**
-				 * Sign in on the platform with `username` and `password`, and launch the OAuth process.
-				 * When the OAuth process is complete, a {cfgUserLoginSuccessEventName} event is broadcasted
-				 * from the $rootScope.
-				 * If the OAuth process fails, a {cfgUserLoginFailureEventName} event is broadcasted.
-				 *
-				 * @param username
-				 * @param password
-				 *
-				 * @returns Promise resolved with {"userId":theUserId}
-				 */
-				'authenticate' : function registerFn (username, password) {
-					var q = $q.defer(),
-					    loginParams;
-
-					loginParams = {
-						'realm'   : cfgRealm,
-						'login'   : username,
-						'password': password
-					};
-
-					oauthData.consumerKey = __change.OAuth.consumer_key;
-					oauthData.consumerSecret = __change.OAuth.consumer_secret;
-
-					oauthObject = new OAuth({
-						consumerKey      : oauthData.consumerKey,
-						consumerSecret   : oauthData.consumerSecret,
-
-						requestTokenUrl  : cfgBaseUrl + cfgRequestTokenUrl,
-						authorizationUrl : cfgBaseUrl + cfgAuthorizeUrl,
-						accessTokenUrl   : cfgBaseUrl + cfgAccessTokenUrl
-					});
-
-					oauthObject.fetchRequestToken(temporaryTokenSuccessFn, temporaryTokenErrorFn);
-
-					function temporaryTokenSuccessFn (url) {
-						$http.post(url, loginParams)
-						.success(
-							function (tempTokenData) {
-								oauthData.verifier = tempTokenData.oauth_verifier;
-								oauthData.callback = tempTokenData.oauth_callback;
-								oauthObject.setVerifier(tempTokenData.oauth_verifier);
-								oauthObject.fetchAccessToken(
-
-									// Success:
-									function () {
-
-										// Store OAuth data for future requests.
-										oauthData.tokenKey = oauthObject.getAccessTokenKey();
-										oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
-										localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
-
-										// Tells the rest of the world that the authentication is successful :)
-										q.resolve();//FIXME UserId
-										$rootScope.$broadcast(cfgUserLoginSuccessEventName);
-									},
-
-									// Error:
-									function (data) {
-										$log.log("OAuth authentication ERROR (3): ", data);
-										q.reject(data);
-										$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
-									}
-								);
-							}
-						)
-						.error(
-							function (tempTokenError) {
-								$log.log("OAuth authentication ERROR (2): ", tempTokenError);
-								q.reject(tempTokenError);
-								$rootScope.$broadcast(cfgUserLoginFailureEventName, tempTokenError);
-							}
-						);
-
-						// FIXME fredericbonjour 2013-04-02:
-						// With the current development version of AngularJS, we need to call this for the
-						// request to be sent. I think this should NOT be needed in stable releases of
-						// AngularJS.
-						$rootScope.$apply();
-					}
-
-					function temporaryTokenErrorFn (data) {
-						$log.log("OAuth authentication ERROR (1): ", data);
-						q.reject(data);
-						$rootScope.$broadcast(cfgUserLoginFailureEventName, data);
-					}
-
-					return q.promise;
-				},
-
 
 				/**
 				 * Logout
@@ -420,7 +327,7 @@
 				},
 
 				'hasOAuthData' : function() {
-					return oauthData.tokenKey != null;
+					return oauthData.tokenKey != null && !oauthData.temporary;
 				}
 
 			};
@@ -452,7 +359,6 @@
 				// Response interceptor: check for authentication-related errors.
 
 				'responseError' : function responseInterceptor (rejection) {
-					$rootScope.$broadcast(cfgOAuthFailureEventName, rejection);
 					return $q.reject(rejection);
 				}
 			};
