@@ -221,8 +221,8 @@
 			tElement.data('columns', {});
 
 			// Update colspan value for preview and empty cells.
-			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
-			tElement.find('tbody td[colspan=0]').attr('colspan', columns.length);
+			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
+			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
 
 			if (__preview[dlid]) {
 				td = tElement.find('tbody tr td.preview');
@@ -308,9 +308,9 @@
 				} else {
 					if (column.thumbnail) {
 						if (column.thumbnailPath) {
-							column.content = '<img rbs-storage-image="' + column.thumbnailPath + '" thumbnail="' + column.thumbnail + '"/>';
+							column.content = '<img ng-if="' + column.thumbnailPath + '" rbs-storage-image="' + column.thumbnailPath + '" thumbnail="' + column.thumbnail + '"/>';
 						} else {
-							column.content = '<img rbs-storage-image="doc.' + column.valuePath + '" thumbnail="' + column.thumbnail + '"/>';
+							column.content = '<img ng-if="doc.' + column.valuePath + '" rbs-storage-image="doc.' + column.valuePath + '" thumbnail="' + column.thumbnail + '"/>';
 						}
 					} else {
 						if (column.converter) {
