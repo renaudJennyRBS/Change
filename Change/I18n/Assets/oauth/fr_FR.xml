@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="c.oauth" lcid="fr_FR">
+	<key id="login">identifiant</key>
+	<key id="password">mot de passe</key>
+	<key id="authorize-application">autoriser une application à se lier à votre compte</key>
+	<key id="authorize">autoriser</key>
+	<key id="invalid-credentials">vos informations de connexion sont incorrectes!</key>
+
+</i18n>
