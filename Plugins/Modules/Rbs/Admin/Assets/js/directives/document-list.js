@@ -224,6 +224,10 @@
 			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
 			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
 
+			if (!__preview[dlid] && tAttrs.preview === 'true') {
+				__preview[dlid] = {};
+			}
+
 			if (__preview[dlid]) {
 				td = tElement.find('tbody tr td.preview');
 				if (__preview[dlid]['class']) {
@@ -231,6 +235,10 @@
 				}
 				if (__preview[dlid]['style']) {
 					td.attr('style', __preview[dlid]['style']);
+				}
+
+				if (!__preview[dlid].contents) {
+					__preview[dlid].contents = '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>';
 				}
 				td.html('<button type="button" class="close pull-right" ng-click="preview(doc)">&times;</button>' + __preview[dlid].contents);
 			}
@@ -296,7 +304,11 @@
 
 				// Create body cell
 				if (column.content) {
+
+					// Allow the use of "converted(<property>)" instead of "getConvertedValue(<property>, <columnName>)"
+					// in column templates that have a converter defined on them.
 					column.content = column.content.replace(/converted\s*\(\s*([a-zA-Z0-9\.]+)\s*\)/, 'getConvertedValue($1, "' + column.name + '")');
+
 					html = '<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">';
 					if (column.primary) {
 						html += '<div class="primary-cell">' + column.content + '</div>';
@@ -305,7 +317,9 @@
 					}
 					html += '</td>';
 					$td = $(html);
+
 				} else {
+
 					if (column.thumbnail) {
 						if (column.thumbnailPath) {
 							column.content = '<img ng-if="' + column.thumbnailPath + '" rbs-storage-image="' + column.thumbnailPath + '" thumbnail="' + column.thumbnail + '"/>';
@@ -332,6 +346,7 @@
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
 					}
+
 				}
 
 				if (column.align) {
@@ -623,6 +638,7 @@
 						}
 
 						var	current = scope.collection[index];
+						scope.previewTemplateUrl = current.model.replace(/_/g, '/') + '/preview.twig';
 
 						if (scope.hasPreview(index)) {
 							scope.collection.splice(index+1, 1);
