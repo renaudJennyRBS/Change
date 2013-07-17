@@ -24,6 +24,7 @@ class Register implements ListenerAggregateInterface
 
 			$body = array('
 	<script type="text/javascript" src="Rbs/Price/js/admin.js">​</script>
+	<script type="text/javascript" src="Rbs/Price/js/directives.js">​</script>
 	<script type="text/javascript" src="Rbs/Price/Price/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Price/Price/editor.js">​</script>
 	<script type="text/javascript" src="Rbs/Price/Price/price-list.js">​</script>

@@ -59,7 +59,7 @@ class Install
 				. 'GST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$GST->setLabel('Goods and Services Tax (CANADA)');
 				$GST->setCode('GST');
-				$GST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONE_KEY][0]);
+				$GST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONES_KEY][0]);
 				$GST->setData($data);
 				$GST->save();
 			}
@@ -75,7 +75,7 @@ class Install
 				. 'PST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$PST->setLabel('Provincial Sales Taxes (CANADA)');
 				$PST->setCode('PST');
-				$PST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONE_KEY][0]);
+				$PST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONES_KEY][0]);
 				$PST->setData($data);
 				$PST->save();
 			}
@@ -90,8 +90,8 @@ class Install
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'HST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$HST->setLabel('Harmonized Sales Tax (CANADA)');
-				$HST->setCode('PST');
-				$HST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONE_KEY][0]);
+				$HST->setCode('HST');
+				$HST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONES_KEY][0]);
 				$HST->setData($data);
 				$HST->save();
 			}
@@ -107,7 +107,7 @@ class Install
 				. 'QST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$QST->setLabel('Quebec Sales Tax (CANADA)');
 				$QST->setCode('QST');
-				$QST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONE_KEY][0]);
+				$QST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONES_KEY][0]);
 				$QST->setData($data);
 				$QST->save();
 			}
@@ -122,8 +122,8 @@ class Install
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'FRC.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$QST->setLabel('Taxe sur la valeur ajoutée (FRANCE CONTINENTALE)');
-				$QST->setCode('TVAFRC');
-				$QST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONE_KEY][0]);
+				$QST->setCode('TVAFR');
+				$QST->setDefaultZone($data[\Rbs\Price\Documents\Tax::ZONES_KEY][0]);
 				$QST->setData($data);
 				$QST->save();
 			}

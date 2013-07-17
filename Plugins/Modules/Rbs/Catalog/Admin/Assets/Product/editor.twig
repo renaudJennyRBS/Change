@@ -48,16 +48,6 @@
 		</div>
 	</fieldset>
 
-	<fieldset hide-when-create="true" data-ng-show="section=='prices'"
-		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.price-list', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
-		<div class="control-group">
-			{{ i18n('m.rbs.catalog.document.product.price-section-help', ['ucf']) }}
-
-			<rbs-price-list product="document"></rbs-price-list>
-		</div>
-	</fieldset>
-
 	<fieldset hide-when-create="true" data-ng-show="section=='categories'"
 		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">

@@ -17,4 +17,6 @@
 	<key id="add">ajouter</key>
 	<key id="category-exists">il existe déjà une catégorie avec ce code</key>
 	<key id="zone-exists">il existe déjà une zone avec ce code</key>
+	<key id="select-shop">sélectionner une boutique</key>
+	<key id="select-billingarea">sélectionner une zone de tarification</key>
 </i18n>

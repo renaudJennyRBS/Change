@@ -8,7 +8,8 @@
 
 	<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" publishable="true" filter-query="query">
 		<column name="label" primary="true"></column>
-		<column name="product"></column>
-		<column name="shop"></column>
+		<column name="value">(=doc.value=)</column>
+		<column name="product">(=doc.product.label=)</column>
+		<column name="shop">(=doc.shop.label=)</column>
 	</rbs-document-list>
 </div>

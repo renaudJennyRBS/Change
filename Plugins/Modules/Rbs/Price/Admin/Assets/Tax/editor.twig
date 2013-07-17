@@ -6,7 +6,17 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		{{ forms.field('label', 'String', 'm.rbs.price.document.tax.label', true) }}
 		{{ forms.field('code', 'String', 'm.rbs.price.document.tax.code', false) }}
-		{{ forms.field('cascading', 'Boolean', 'm.rbs.price.document.tax.cascading', false) }}
+		<div class="control-group property">
+			<label class="control-label" for="rounding">
+				{{ i18n('m.rbs.price.document.tax.rounding', ['ucf']) }}
+			</label>
+			<div class="controls">
+				<select name="rounding" ng-model="document.rounding" rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
+				</select>
+				<span class="help-block"> {{ i18n('m.rbs.price.document.tax.rounding-help') }}</span>
+			</div>
+		</div>
+		{{ forms.field('cascading', 'Boolean', 'm.rbs.price.document.tax.cascading', false, 'm.rbs.price.document.tax.cascading-help') }}
 		<h3>{{ i18n('m.rbs.price.document.tax.data', ['ucf']) }}</h3>
 		<table class="table table-striped">
 			<thead>
@@ -25,7 +35,6 @@
 							ng-click="makeDefaultZone($index)">{{ i18n('m.rbs.price.admin.js.tax-make-default-zone') }}</a> |
 					</small>
 					<small><a ng-click="deleteZone($index)">{{ i18n('m.rbs.price.admin.js.tax-delete-zone') }}</a></small>
-
 
 				</td>
 				<td data-ng-repeat="cat in document.data.c track by $index">

@@ -4,7 +4,7 @@
 		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>
 		<div class="controls">
 			<div class="input-append">
-				<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}" data-ng-model="document.{{ name }}"/>
+				<input type="number" class="input-mini" id="{{ name }}" name="{{ name }}"  data-ng-model="document.{{ name }}"/>
 				<span class="add-on" title="(=document.currencyLabel=)">(=metadata.currencySymbol=)</span>
 				<span class="add-on" title="(=document.taxModeLabel=)">(=metadata.editWithTax ? '{{ i18n('m.rbs.catalog.admin.macros.with-tax-abbr') }}' : '{{ i18n('m.rbs.catalog.admin.macros.without-tax-abbr') }}' =)</span>
 			</div>
