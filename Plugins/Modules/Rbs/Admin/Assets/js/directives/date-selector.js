@@ -4,14 +4,6 @@
 
 	var	app = angular.module('RbsChange');
 
-	function fixDoubleZero (val) {
-		val = '' + val;
-		if (val.length === 1) {
-			val = '0' + val;
-		}
-		return val;
-	}
-
 	// Detect native date picker.
 	var inputEl = document.createElement("input");
 	inputEl.setAttribute("type", "date");
@@ -52,8 +44,8 @@
 					);
 				};
 
-				scope.$watch('timeZone', function () {
-					if (ngModel.$viewValue) {
+				scope.$watch('timeZone', function (newValue, oldValue) {
+					if (newValue !== oldValue && ngModel.$viewValue) {
 						ngModel.$setViewValue(getFullDate());
 					}
 				}, true);
@@ -63,8 +55,14 @@
 				}
 
 				ngModel.$render = function () {
-					if (ngModel.$viewValue && ! isNaN(ngModel.$viewValue)) {
-						dInput.datepicker('setValue', ngModel.$viewValue);
+
+					if (ngModel.$viewValue && !(angular.isNumber(ngModel.$viewValue) && isNaN(ngModel.$viewValue))) {
+
+						if (isNativeDatePickerAvailable) {
+							dInput.val(moment(ngModel.$viewValue).format('YYYY-MM-DD'));
+						} else {
+							dInput.datepicker('setValue', ngModel.$viewValue);
+						}
 						var date = new Date(ngModel.$viewValue);
 						hInput.val(date.getHours());
 						mInput.val(date.getMinutes());
@@ -88,7 +86,8 @@
 
 				function getDateValue () {
 					if (isNativeDatePickerAvailable) {
-						return new Date(dInput.val());
+						var inputValue = dInput.val();
+						return inputValue != '' ? new Date(inputValue) : null;
 					} else {
 						return datePicker.date;
 					}
@@ -97,15 +96,14 @@
 				// Merge the date coming from the "datepicker" and the hour/minute information coming from the
 				// two additional input fields. The result is a Date object correctly set. (Well, I hope.)
 				function getFullDate () {
-					var date = getDateValue(), y, m, d, h, mm, s, dateStr;
-					y = date.getFullYear();
-					m = date.getMonth() + 1;
-					d = date.getDate();
-					h = parseInt(hInput.val(), 10);
-					mm = parseInt(mInput.val(), 10);
-					s = 0;
-					dateStr = y + '-' + fixDoubleZero(m) + '-' + fixDoubleZero(d) + 'T' + fixDoubleZero(h) + ':' + fixDoubleZero(mm) + ':' + fixDoubleZero(s) + scope.timeZone.offset;
-					return new Date(dateStr);
+					var date = getDateValue();
+					if (date == null)
+					{
+						return null;
+					}
+					return moment(date).hours(parseInt(hInput.val(), 10))
+								.minutes(parseInt(mInput.val(), 10))
+						 		.second(0).milliseconds(0).toDate();
 				}
 
 			}

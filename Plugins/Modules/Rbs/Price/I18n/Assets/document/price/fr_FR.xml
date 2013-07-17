@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.price.document.price" lcid="fr_FR">
 	<include id="m.rbs.generic.document" />
-	<key id="baseprice">montant</key>
+	<key id="product">produit</key>
+	<key id="shop">boutique</key>
+	<key id="billingarea">zone de tarification</key>
+	<key id="taxcategories">Catégories de taxes</key>
+	<key id="basevalue">montant</key>
 	<key id="taxcategory">catégorie de TVA</key>
 	<key id="ecotax">éco-participation</key>
 	<key id="discount">promotion</key>
 	<key id="discountdetail">libellé de la promotion</key>
-	<key id="finalprice">prix final</key>
+	<key id="finalvalue">prix final</key>
 	<key id="thresholdmin">quantité minimale</key>
 	<key id="discount-section-help" format="html">
 		<![CDATA[Pour appliquer une <label class="in-text" for="discount">promotion</label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire.]]>

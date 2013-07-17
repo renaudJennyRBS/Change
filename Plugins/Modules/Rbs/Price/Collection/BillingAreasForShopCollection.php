@@ -4,7 +4,7 @@ namespace Rbs\Price\Collection;
 /**
  * @name \Rbs\Price\Collection\BillingAreasForShops
  */
-class BillingAreasForShop implements \Change\Collection\CollectionInterface
+class BillingAreasForShopCollection implements \Change\Collection\CollectionInterface
 {
 
 	/**

@@ -6,6 +6,9 @@
 			<dboptions length="80" />
 		</property>
 		<property name="cascading" type="Boolean" default-value="false" />
+		<property name="rounding" type="String" default-value="t">
+			<dboptions length="3" />
+		</property>
 		<property name="data" type="JSON" />
 		<property name="defaultZone" type="String" stateless="true" />
 	</properties>

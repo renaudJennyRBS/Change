@@ -201,7 +201,7 @@ class PropertyConverter
 			case Property::TYPE_DATETIME:
 				if (is_string($restValue))
 				{
-					$value = \DateTime::createFromFormat(\DateTime::ISO8601, $restValue);
+					$value = new \DateTime($restValue);
 					if ($value === false)
 					{
 						throw new \RuntimeException('Invalid Property value', 70001);

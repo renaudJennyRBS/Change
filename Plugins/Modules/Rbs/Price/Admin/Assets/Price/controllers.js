@@ -39,7 +39,7 @@
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.price.admin.js.module-name | ucf'), "Rbs/Price"],
-			[i18n.trans('m.rbs.price.admin.js.price-list | ucf'), "Rbs/Price/Shop"]
+			[i18n.trans('m.rbs.price.admin.js.price-list | ucf'), "Rbs/Price/Price"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Price_Price');
 	}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.collection.taxroundingstrategy" lcid="fr_FR">
+	<key id="on-unit-value">sur la valeur unitaire</key>
+	<key id="on-line-value">sur la valeur ligne</key>
+	<key id="on-total-value">sur la valeur totale</key>
+</i18n>

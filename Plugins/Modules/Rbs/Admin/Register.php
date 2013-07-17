@@ -23,7 +23,8 @@ class Register implements ListenerAggregateInterface
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
 			$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
 			$body = array('
-	<script type="text/javascript" src="Rbs/Admin/lib/angular/i18n/angular-locale_' . $lcid . '.js">​</script>'
+	<script type="text/javascript" src="Rbs/Admin/lib/moment/i18n/' . $lcid . '.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/i18n/angular-locale_' . $lcid . '.js"></script>'
 			);
 			$event->setParam('body', array_merge($event->getParam('body', array()), $body));
 

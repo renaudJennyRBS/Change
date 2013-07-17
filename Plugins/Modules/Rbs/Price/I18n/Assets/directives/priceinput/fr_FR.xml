@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.directives.priceinput" lcid="fr_FR">
+	<key id="round-down">arrondi inférieur</key>
+	<key id="round-down-tencents">à la dizaine de centimes inférieure</key>
+	<key id="round-down-unit">à l'entier inférieur</key>
+	<key id="round-up">arrondi supérieur</key>
+	<key id="round-up-tencent">à la dizaine de centimes supérieure</key>
+	<key id="round-up-99cents">à 99 centimes</key>
+	<key id="round-up-unit">à l'entier supérieur</key>
+	<key id="with-tax-abbr">TTC</key>
+	<key id="without-tax-abbr">HT</key>
+</i18n>

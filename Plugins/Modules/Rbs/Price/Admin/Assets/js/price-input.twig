@@ -1,0 +1,39 @@
+<div>
+	<div class="input-append">
+		<input type="text" data-ng-disabled="disabled" smart-float="" class="input-mini" data-ng-model="value"/>
+		<span class="add-on" data-ng-show="currencyCode">(= currencyCode =)</span>
+		<span class="add-on">
+			<span data-ng-show="priceWithTax">{{ i18n('m.rbs.price.directives.priceinput.with-tax-abbr') }}</span>
+			<span data-ng-hide="priceWithTax" ng-cloak="">{{ i18n('m.rbs.price.directives.priceinput.without-tax-abbr') }}
+		</span>
+	</span>
+	</div>
+	<div data-ng-show="hasRounding" class="btn-toolbar price-round-options has-captions" ng-cloak="">
+		<div class="btn-group">
+			<label class="caption">{{ i18n('m.rbs.catalog.admin.macros.round-down', ['ucf']) }}</label>
+			<button data-ng-click="round10CentsDown()" class="btn btn-small" type="button"
+				title="{{ i18n('m.rbs.catalog.admin.macros.round-down-tencents', ['ucf', 'attr']) }}">
+				0,1
+			</button>
+			<button data-ng-click="roundIntDown()" class="btn btn-small" type="button"
+				title="{{ i18n('m.rbs.catalog.admin.macros.round-down-unit', ['ucf', 'attr']) }}">
+				1
+			</button>
+		</div>
+		<div class="btn-group">
+			<label class="caption">{{ i18n('m.rbs.catalog.admin.macros.round-up', ['ucf']) }}</label>
+			<button data-ng-click="round10CentsUp()" class="btn btn-small" type="button"
+				title="{{ i18n('m.rbs.catalog.admin.macros.round-up-tencent', ['ucf', 'attr']) }}">
+				0,1
+			</button>
+			<button data-ng-click="round99Cents()" class="btn btn-small" type="button"
+				title="{{ i18n('m.rbs.catalog.admin.macros.round-up-99cents', ['ucf', 'attr']) }}">
+				0,99
+			</button>
+			<button data-ng-click="roundIntUp()" class="btn btn-small" type="button"
+				title="{{ i18n('m.rbs.catalog.admin.macros.round-up-unit', ['ucf', 'attr']) }}">
+				1
+			</button>
+		</div>
+	</div>
+</div>

@@ -20,23 +20,28 @@
 			link : function (scope, elm, attrs, ngModel) {
 				elm.find('option').attr('data-option-from-template', 'true');
 				var ngModelReady = false;
+				var collectionLoaded = false;
 				var paramsAttrReady = elm.is('[rbs-items-collection-params]') ? false : true;
 				if (!paramsAttrReady)
 				{
+					// It seems that $observe always gets called *before* $render
+					// so we can force a collection load here...
 					attrs.$observe('rbsItemsCollectionParams', function(value){
+						paramsAttrReady = true;
 						if (value)
 						{
-							paramsAttrReady = true;
+							collectionLoaded = false;
 							loadCollection();
 						}
 					});
 				}
 				// Load Collection's items.
 				function loadCollection () {
-					if (!ngModelReady || !paramsAttrReady)
+					if (!ngModelReady || !paramsAttrReady || collectionLoaded)
 					{
 						return;
 					}
+					collectionLoaded = true;
 					elm.find('option:not([data-option-from-template])').remove();
 					var params = {code: attrs.rbsItemsFromCollection};
 					if (attrs.rbsItemsCollectionParams)
