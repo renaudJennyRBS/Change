@@ -33,11 +33,17 @@ class ListenerAggregate implements ListenerAggregateInterface
 		};
 		$events->attach(array(HttpEvent::EVENT_RESPONSE), $callBack, 10);
 
-
-		$callBack = function ($event)
+		$callBack = function (HttpEvent $event)
 		{
 			$l = new AuthenticationListener();
-			$l->onAuthenticate($event);
+			try
+			{
+				$l->onAuthenticate($event);
+			}
+			catch (\RuntimeException $e)
+			{
+				$event->getApplicationServices()->getLogging()->exception($e);
+			}
 		};
 		$events->attach(array(HttpEvent::EVENT_AUTHENTICATE), $callBack, 10);
 	}

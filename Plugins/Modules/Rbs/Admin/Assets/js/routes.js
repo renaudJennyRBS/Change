@@ -27,11 +27,11 @@
 				reloadOnSearch : false
 			})
 		. when(
-			'/login',
+			'/authenticate',
 			{
 				template : '<div></div>',
 				controller : ['$location', 'OAuthService', function($location, OAuthService){
-					console.log('LoginController', $location.search());
+					console.log('Authenticate', $location.search());
 					OAuthService.getAccessToken($location.search()['oauth_token'], $location.search()['oauth_verifier']);
 				}]
 			})

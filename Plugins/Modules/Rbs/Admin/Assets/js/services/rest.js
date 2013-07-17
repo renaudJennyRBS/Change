@@ -1087,7 +1087,11 @@
 								resolveQ(q, data);
 							})
 							.error(function restActionErrorCallback (data, status) {
-								data.httpStatus = status;
+								if (!data)
+								{
+									data = {};
+								}
+								data.status = status;
 								rejectQ(q, data);
 							});
 
