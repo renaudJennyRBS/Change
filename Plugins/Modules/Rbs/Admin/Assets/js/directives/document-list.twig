@@ -49,12 +49,12 @@
 		</thead>
 		<tbody ng-if="collection.length == 0 && !loading">
 			<tr class="empty-row">
-				<td colspan="0">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
+				<td data-colspan="auto">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
 		</tbody>
 		<tbody>
 			<tr ng-repeat="doc in collection" class="normal-row" ng-class="{'success': isLastCreated(doc), 'selected': doc.selected}">
-				<td class="preview" colspan="0" ng-if="isPreview(doc)"></td>
+				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)"></td>
 			</tr>
 		</tbody>
 	</table>

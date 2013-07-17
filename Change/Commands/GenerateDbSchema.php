@@ -21,12 +21,12 @@ class GenerateDbSchema
 			if ($event->getParam('with-modules'))
 			{
 				$generator->generate();
-				$event->addInfoMessage('Change and Modules Db schema generated.');
+				$event->addInfoMessage('Change and Modules DB schema generated.');
 			}
 			else
 			{
 				$generator->generateSystemSchema();
-				$event->addInfoMessage('Change Db schema generated.');
+				$event->addInfoMessage('Change DB schema generated (to generate Modules DB schema, add -m option).');
 			}
 		} 
 		catch (\Exception $e )

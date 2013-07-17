@@ -80,8 +80,9 @@ class GetCategoryProducts
 				}
 
 				$documentLink = new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY);
-				$this->addResourceItemInfos($documentLink, $product, $urlManager, $extraColumn);
+				$documentLink->addResourceItemInfos($product, $urlManager, $extraColumn);
 				$documentLink->setProperty('_priority', $row['priority']);
+				$documentLink->setProperty('_highlight', $row['priority'] !== 0);
 				$result->addResource($documentLink);
 			}
 		}
@@ -89,73 +90,5 @@ class GetCategoryProducts
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
 		return $result;
-	}
-
-	/**
-	 * Copied from \Change\Http\Rest\Actions\DocumentQuery
-	 * @param DocumentLink $documentLink
-	 * @param AbstractDocument $document
-	 * @param UrlManager $urlManager
-	 * @param array $extraColumn
-	 * @return DocumentLink
-	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager,
-		$extraColumn)
-	{
-		$dm = $document->getDocumentManager();
-		if ($documentLink->getLCID())
-		{
-			$dm->pushLCID($documentLink->getLCID());
-		}
-
-		$model = $document->getDocumentModel();
-
-		$documentLink->setProperty($model->getProperty('creationDate'));
-		$documentLink->setProperty($model->getProperty('modificationDate'));
-
-		if ($document instanceof Editable)
-		{
-			$documentLink->setProperty($model->getProperty('label'));
-			$documentLink->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$documentLink->setProperty($model->getProperty('publicationStatus'));
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$documentLink->setProperty($model->getProperty('refLCID'));
-			$documentLink->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($document instanceof Correction)
-		{
-			/* @var $document AbstractDocument|Correction */
-			if ($document->hasCorrection())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$documentLink->setProperty('actions', array($l));
-			}
-		}
-
-		if (is_array($extraColumn) && count($extraColumn))
-		{
-			foreach ($extraColumn as $propertyName)
-			{
-				$property = $model->getProperty($propertyName);
-				if ($property)
-				{
-					$documentLink->setProperty($property);
-				}
-			}
-		}
-
-		if ($documentLink->getLCID())
-		{
-			$dm->popLCID();
-		}
-		return $documentLink;
 	}
 }

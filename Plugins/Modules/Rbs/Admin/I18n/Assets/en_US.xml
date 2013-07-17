@@ -15,8 +15,7 @@
 	<key id="yes">yes</key>
 	<key id="no">no</key>
 
-	<key id="translate">translate...</key>
-	<key id="search-ellipsis">search...</key>
+	<key id="translate">translate</key>
 	<key id="search">search</key>
 	<key id="this-document-exists-in-multiple-languages">this Document has multiple languages</key>
 

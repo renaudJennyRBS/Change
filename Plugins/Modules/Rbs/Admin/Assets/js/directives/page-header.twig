@@ -2,7 +2,7 @@
 
 	<form data-ng-show="! document" class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
 		<div class="input-append">
-			<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search-ellipsis', ['ucf']) }}" data-ng-model="search"/>
+			<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
 			<button type="submit" class="btn" title="{{ i18nAttr('m.rbs.admin.search', ['ucf']) }}">
 				<i class="icon-search"></i>
 			</button>
@@ -26,7 +26,7 @@
 						<a href data-ng-href="(= document | documentI18nURL:locale.id:document.refLCID =)"><i data-ng-show="language==locale.id" class="icon-ok"></i> (=locale.label=) <i data-ng-show="locale.isReference" class="icon-book"></i></a>
 					</li>
 					<li class="divider"></li>
-					<li><a href="javascript:;" data-ng-click="openLocalizationOptions()"><i class="icon-globe"></i> {{ i18n('m.rbs.admin.translate', ['ucf']) }}</a></li>
+					<li><a href="javascript:;" data-ng-click="openLocalizationOptions()"><i class="icon-globe"></i> {{ i18n('m.rbs.admin.translate', ['ucf', 'etc']) }}</a></li>
 				</ul>
 			</div>
 		</div>

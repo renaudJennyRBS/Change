@@ -6,6 +6,7 @@
 
 <div class="btn-toolbar">
 	<button
+		ng-show="allowCreation"
 		type="button"
 		class="btn"
 		data-ng-click="createDocument()"
@@ -37,7 +38,7 @@
 		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
 			<div class="input-append">
 				<!--TODO localization-->
-				<input type="text" class="input-medium search-query" placeholder="Rechercher..." data-ng-model="search"/>
+				<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
 				<button type="submit" class="btn" title="Rechercher">
 					<i class="icon-search"></i>
 				</button>
