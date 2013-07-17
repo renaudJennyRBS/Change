@@ -79,7 +79,7 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertEquals(1, $output->count());
-		$this->assertStringStartsWith('Change Db schema generated', $output[0][0]);
+		$this->assertStringStartsWith('Change DB schema generated', $output[0][0]);
 		return array($application, $eventManager);
 	}
 
