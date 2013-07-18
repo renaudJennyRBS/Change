@@ -10,6 +10,13 @@
 		<column name="visuals" thumbnail="XS" thumbnail-path="doc.visuals[0].id"
 			label="{{ i18nAttr('m.rbs.catalog.document.product.visual', ['ucf']) }}"></column>
 		<column name="label" primary="true"></column>
+		<quick-actions>
+			[action preview]
+			|| <a href="(= doc | documentURL:'categories' =)">{{ i18nAttr('m.rbs.catalog.document.product.categories') }}</a>
+			|| [action edit]
+			|| [action delete]
+		</quick-actions>
+
 		<preview>
 			<div class="muted" ng-if="!doc.visuals.length">{{ i18nAttr('m.rbs.catalog.document.product.no-visual', ['ucf']) }}</div>
 			<h4>(= doc.label =)</h4>
@@ -23,6 +30,5 @@
 				<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
 			</div>
 		</grid-item>
-
 	</rbs-document-list>
 </div>

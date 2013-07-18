@@ -145,8 +145,8 @@
 						scope.List.value = ngModel.$viewValue;
 					});
 
-					scope.$watch('List.value', function (value) {
-						if (value !== null) {
+					scope.$watch('List.value', function (value, oldValue) {
+						if (value !== null && value !== oldValue) {
 							ngModel.$setViewValue(value);
 						}
 					}, true);

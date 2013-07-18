@@ -327,9 +327,9 @@
 
 					if (column.thumbnail) {
 						if (column.thumbnailPath) {
-							column.content = '<img ng-if="' + column.thumbnailPath + '" rbs-storage-image="' + column.thumbnailPath + '" thumbnail="' + column.thumbnail + '"/>';
+							column.content = '<img rbs-storage-image="' + column.thumbnailPath + '" thumbnail="' + column.thumbnail + '"/>';
 						} else {
-							column.content = '<img ng-if="doc.' + column.valuePath + '" rbs-storage-image="doc.' + column.valuePath + '" thumbnail="' + column.thumbnail + '"/>';
+							column.content = '<img rbs-storage-image="doc.' + column.valuePath + '" thumbnail="' + column.thumbnail + '"/>';
 						}
 					} else {
 						if (column.converter) {

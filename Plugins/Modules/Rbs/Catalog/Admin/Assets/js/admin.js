@@ -14,6 +14,7 @@
 			.when('/Rbs/Catalog/Product/:id/Prices/:shopId/:areaId/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/ProductCategories/:id', { templateUrl: 'Rbs/Catalog/Product/categories.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id/:LCID',
 			{ templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
@@ -36,7 +37,8 @@
 			$delegate.register('Rbs_Catalog_Product', {
 				'form': '/Rbs/Catalog/Product/:id/:LCID',
 				'list': '/Rbs/Catalog/Product/:LCID',
-				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID'
+				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID',
+				'categories': '/Rbs/Catalog/ProductCategories/:id'
 			});
 			$delegate.register('Rbs_Catalog_Price', {
 				'form': '/Rbs/Catalog/Price/:id/:LCID'

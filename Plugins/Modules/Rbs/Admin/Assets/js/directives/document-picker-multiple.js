@@ -26,8 +26,7 @@
 				};
 				ngModel.$render();
 
-
-				scope.allowCreation = attrs.allowCreation;
+				scope.allowCreation = attrs.allowCreation !== 'false';
 				scope.allowEdition = attrs.allowEdition;
 				scope.acceptedModel = attrs.acceptedModel;
 
