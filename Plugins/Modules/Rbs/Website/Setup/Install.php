@@ -25,6 +25,8 @@ class Install
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Website',
 				'\\Rbs\\Website\\Events\\SharedListenerAggregate');
 
+		$config->addPersistentEntry('Change/Events/Commands/Rbs_Website', '\\Rbs\\Website\\Commands\\ListenerAggregate');
+
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 
@@ -66,14 +68,6 @@ class Install
 				$folder->setLabel('Rbs_Website');
 				$folder->create();
 				$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
-
-				/* @var $website \Rbs\Website\Documents\Website */
-				$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
-				$website->setLabel('Site par défaut');
-				$website->setHostName('localhost');
-				$website->setScriptName('/index.php');
-				$website->create();
-
 				$transactionManager->commit();
 			}
 			catch (\Exception $e)
