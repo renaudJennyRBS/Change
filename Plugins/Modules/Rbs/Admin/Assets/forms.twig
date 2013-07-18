@@ -52,10 +52,10 @@
 				accepted-model="{{ model }}"
 				property-label="{{ i18nAttr(label, ['ucf']) }}"
 				selector-title="{{ i18nAttr(selectorTitle, ['ucf']) }}"
-				allow-edition="true"
 				{% if useModelPicker %}
 				picker="model"
 				{% endif %}
+				allow-edition="true"
 				allow-creation="true">
 			</div>
 			{% if help %}
@@ -82,7 +82,7 @@
 				{% if useModelPicker %}
 				picker="model"
 				{% endif %}
-				allow-edition="true">
+				allow-creation="true">
 			</div>
 			{% if help %}
 				<span class="help-block">
