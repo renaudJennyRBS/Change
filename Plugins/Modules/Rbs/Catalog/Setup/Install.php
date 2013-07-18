@@ -20,7 +20,10 @@ class Install
 		$config = $application->getConfiguration();
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
 		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Catalog', '\\Rbs\\Catalog\\Http\\Rest\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Catalog', '\\Rbs\\Catalog\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Catalog',
+			'\\Rbs\\Catalog\\Collection\\ListenerAggregate');
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Catalog',
+			'\\Rbs\\Catalog\\Events\\SharedListenerAggregate');
 	}
 
 	/**

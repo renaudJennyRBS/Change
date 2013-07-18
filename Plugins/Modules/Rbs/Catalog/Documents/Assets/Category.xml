@@ -8,5 +8,7 @@
 		<property name="section" type="Document" document-type="Rbs_Website_Section" />
 		<property name="description" type="RichText" localized="true" />
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" />
+		<property name="productSortOrder" type="String" default-value="title" />
+		<property name="productSortDirection" type="String" default-value="asc" />
 	</properties>
 </document>

@@ -117,12 +117,12 @@
 	 * List actions.
 	 */
 	app.config(['$provide', function ($provide) {
-		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', function (Actions, REST, $http) {
+		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
 			Actions.register({
 				name: 'Rbs_Catalog_RemoveProductFromCategories',
 				models: '*',
-				description: "Retirer ce produit des catégories sélectionnées.",
-				label: "Retirer",
+				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-categories'),
+				label: i18n.trans('m.rbs.catalog.admin.js.remove'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
 					var categoryIds = [];

@@ -7,11 +7,38 @@
 		{{ forms.field('label', 'String', 'm.rbs.catalog.document.category.label', true) }}
 		<hr />
 		{{ forms.picker('shop', 'Rbs_Catalog_Shop', 'm.rbs.catalog.document.category.shop',
-		false, null, 'm.rbs.catalog.document.category.shop-picker-title', false)
+			false, null, 'm.rbs.catalog.document.category.shop-picker-title', false)
 		}}
 		{{ forms.picker('section', 'Rbs_Website_Section', 'm.rbs.catalog.document.category.section',
-		false, null, 'm.rbs.catalog.document.category.section-picker-title', false)
+			false, null, 'm.rbs.catalog.document.category.section-picker-title', false)
 		}}
+		<hr />
+		<div class="control-group property required">
+			<label class="control-label" data-not-a-property="" for="productSortOrder">
+				{{ i18n('m.rbs.catalog.document.category.productsortorder', ['ucf']) }}
+			</label>
+			<div class="controls">
+				<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
+					rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
+				</select>
+				<span class="help-block">
+					{{ i18n('m.rbs.catalog.document.category.productsortorder-help') }}
+				</span>
+			</div>
+		</div>
+		<div class="control-group property required">
+			<label class="control-label" data-not-a-property="" for="productSortDirection">
+				{{ i18n('m.rbs.catalog.document.category.productsortdirection', ['ucf']) }}
+			</label>
+			<div class="controls">
+				<rbs-collection-item-selector ng-model="document.productSortDirection"
+					collection-code="Rbs_Generic_Collection_SortDirections">
+				</rbs-collection-item-selector>
+				<span class="help-block">
+					{{ i18n('m.rbs.catalog.document.category.productsortdirection-help') }}
+				</span>
+			</div>
+		</div>
 		<hr />
 		{{ forms.field('description', 'LongString', 'm.rbs.catalog.document.category.description', false) }}
 		{{ forms.picker('visual', 'Rbs_Media_Image', 'm.rbs.catalog.document.category.visual',

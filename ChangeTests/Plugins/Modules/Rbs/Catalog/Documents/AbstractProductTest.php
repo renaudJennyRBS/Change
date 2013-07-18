@@ -34,6 +34,18 @@ class AbstractProductTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testCategoryList()
 	{
 		/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10001);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10002);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10003);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10011);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10012);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10013);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10014);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10025);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10026);
+		$this->getNewReadonlyDocument('Rbs_Catalog_Category', 10027);
+
+		/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
 		$product = $this->getNewReadonlyDocument('Rbs_Catalog_AbstractProduct', 10000);
 		$conditionId1 = 10500;
 		$conditionId2 = 10501;
@@ -102,7 +114,7 @@ class AbstractProductTest extends \ChangeTests\Change\TestAssets\TestCase
 		$list = $product->getCategoryList($conditionId1, 0, 10);
 		$this->assertCount(4, $list);
 		$expected = array(
-			array('category_id' => 10011, 'priority' => 1), // id 10011 already exists, the priority is not modified.
+			array('category_id' => 10011, 'priority' => 75), // id 10011 already exists, the priority is not modified.
 			array('category_id' => 10014, 'priority' => 125),
 			array('category_id' => 10025, 'priority' => 75),
 			array('category_id' => 10026, 'priority' => 75),
@@ -119,7 +131,7 @@ class AbstractProductTest extends \ChangeTests\Change\TestAssets\TestCase
 		$list = $product->getCategoryList($conditionId1, 0, 10);
 		$this->assertCount(5, $list);
 		$expected = array(
-			array('category_id' => 10011, 'priority' => 1), // id 10011 already exists, the priority is not modified.
+			array('category_id' => 10011, 'priority' => 89), // id 10011 already exists, the priority is not modified.
 			array('category_id' => 10014, 'priority' => 125),
 			array('category_id' => 10025, 'priority' => 75),
 			array('category_id' => 10026, 'priority' => 75),

@@ -101,52 +101,21 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 				throw new \RuntimeException('Argument 2 has not the same size than argument 1.', 999999);
 			}
 		}
-		elseif (!is_numeric($priorities))
-		{
-			throw new \RuntimeException('Argument 2 should be an array or an integer.', 999999);
-		}
-		else
-		{
-			$priorities = array_fill(0, count($categoryIds), intval($priorities));
-		}
 
 		$as = $this->getApplicationServices();
 		$transactionManager = $as->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-
-			$allIds = $this->getAllCategoryIds($conditionId);
-			$stmt = $as->getDbProvider()->getNewStatementBuilder();
-			$fb = $stmt->getFragmentBuilder();
-
-			// Create insert statement.
-			$stmt->insert($fb->table('rbs_catalog_category_products'),
-				$fb->column('category_id'),
-				$fb->column('product_id'),
-				$fb->column('condition_id'),
-				$fb->column('priority')
-			);
-			$stmt->addValues(
-				$fb->integerParameter('categoryId'),
-				$fb->integerParameter('productId'),
-				$fb->integerParameter('conditionId'),
-				$fb->integerParameter('priority')
-			);
-			$iq = $stmt->insertQuery();
-
+			$dm = $this->getDocumentManager();
 			foreach ($categoryIds as $index => $categoryId)
 			{
-				if (in_array($categoryId, $allIds))
+				$category = $dm->getDocumentInstance($categoryId);
+				if ($category instanceof \Rbs\Catalog\Documents\Category)
 				{
-					continue;
+					$priority = (is_array($priorities)) ? $priorities[$index] : $priorities;
+					$category->addProductIds($conditionId, array($this->getId()), array($priority));
 				}
-
-				$iq->bindParameter('categoryId', $categoryId);
-				$iq->bindParameter('productId', $this->getId());
-				$iq->bindParameter('conditionId', $conditionId);
-				$iq->bindParameter('priority', $priorities[$index]);
-				$iq->execute();
 			}
 
 			$transactionManager->commit();
@@ -204,24 +173,15 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 		{
 			$transactionManager->begin();
 
-			$stmt = $as->getDbProvider()->getNewStatementBuilder();
-			$fb = $stmt->getFragmentBuilder();
-
-			$stmt->delete($fb->table('rbs_catalog_category_products'));
-			$stmt->where($fb->logicAnd(
-				$fb->eq($fb->column('category_id'), $fb->integerParameter('categoryId')),
-				$fb->eq($fb->column('product_id'), $fb->integerParameter('productId')),
-				$fb->eq($fb->column('condition_id'), $fb->integerParameter('conditionId'))
-			));
-
-			$dq = $stmt->deleteQuery();
-
+			$dm = $this->getDocumentManager();
 			foreach ($categoryIds as $categoryId)
 			{
-				$dq->bindParameter('categoryId', $categoryId);
-				$dq->bindParameter('productId', $this->getId());
-				$dq->bindParameter('conditionId', $conditionId);
-				$dq->execute();
+				/* @var $category \Rbs\Catalog\Documents\Category */
+				$category = $dm->getDocumentInstance($categoryId);
+				if ($category instanceof \Rbs\Catalog\Documents\Category)
+				{
+					$category->removeProductIds($conditionId, array($this->getId()));
+				}
 			}
 
 			$transactionManager->commit();
@@ -230,25 +190,5 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 		{
 			throw $transactionManager->rollBack($e);
 		}
-	}
-
-	/**
-	 * @param integer $conditionId
-	 * @return integer[]
-	 */
-	protected function getAllCategoryIds($conditionId)
-	{
-		$as = $this->getApplicationServices();
-		$qb = $as->getDbProvider()->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('category_id'))->from($fb->table('rbs_catalog_category_products'))
-			->where($fb->logicAnd(
-				$fb->eq($fb->column('product_id'), $fb->integerParameter('productId')),
-				$fb->eq($fb->column('condition_id'), $fb->integerParameter('conditionId'))
-			));
-		$sq = $qb->query();
-		$sq->bindParameter('productId', $this->getId());
-		$sq->bindParameter('conditionId', $conditionId);
-		return $sq->getResults($sq->getRowsConverter()->addIntCol('category_id'));
 	}
 }
