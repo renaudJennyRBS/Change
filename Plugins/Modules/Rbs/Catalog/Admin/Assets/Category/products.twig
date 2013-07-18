@@ -3,15 +3,18 @@
 		<h2 class="ng-binding">
 			(= document.label =)
 			<small>
-				({{ i18n('m.rbs.catalog.document.category.shop', ['ucf', 'lab']) }}
-				<a ng-show="document.shop" ng-href="document.shop | documentUrl">(= document.shop.label =)</a>
+				{{ i18n('m.rbs.catalog.document.category.shop', ['ucf', 'lab']) }}
+				<a ng-show="document.shop" ng-href="(= document.shop | documentURL =)">(= document.shop.label =)</a>
 				<span ng-hide="document.shop">x</span>
 				-
 				{{ i18n('m.rbs.catalog.document.category.section', ['ucf', 'lab']) }}
-				{% spaceless %}
-				<a ng-show="document.section" ng-href="document.section | documentUrl">(= document.section.label =)</a>
-				<span ng-hide="document.section">x</span>)
-				{% endspaceless %}
+				<a ng-show="document.section" ng-href="(= document.section | documentURL =)">(= document.section.label =)</a>
+				<span ng-hide="document.section">x</span>
+				-
+				{{ i18n('m.rbs.catalog.document.category.productsortorder', ['ucf', 'lab']) }}
+				(= List.sortOrders[document.productSortOrder].label =)
+				(= List.sortDirections[document.productSortDirection].label =)
+				(<a ng-href="(= document | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
 			</small>
 		</h2>
 	</div>
@@ -52,16 +55,46 @@
 
 	<div class="control-group" ng-show="List.selectedCondition">
 		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_AbstractProduct" publishable="true"
-			collection-url="(= productListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductsFromCategory"
-			data-container-id="document.id" data-condition-id="List.selectedCondition.id" cascade-edition="(= document.label=)"
-			data-role="contained-products">
+			collection-url="(= productListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
+			data-container-id="document.id" data-condition-id="List.selectedCondition.id" extend="List" use-properties="title">
 			<column name="visuals" thumbnail="XS" thumbnail-path="doc.visuals[0].id" label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.visual', ['ucf']) }}"></column>
 			<column name="label" primary="true">
 				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
 				<span class="label">(= doc.visuals.length =) visuels</span>
 				<span class="label label-important strikethrough" ng-if="!doc.description">Desc.</span>
+				<br />
+				<small>(= doc.title =)</small>
 			</column>
-			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.category.priority', ['ucf']) }}"></column>
+			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.category.sort-order', ['ucf']) }}" align="center" width="110px">
+				<!--(= doc._priority =)-->
+				<span ng-show="doc._highlight">
+					<rbs-kb-switch>
+						<button rbs-kb-when="shift" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button rbs-kb-when="shift" ng-disabled="doc._priority == 1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="doc._priority == 1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+				</span>
+			</column>
+			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.category.highlight', ['ucf']) }}" align="center" width="90px">
+				<switch ng-model="doc._highlight" ng-change="extend.toggleHighlight(doc)"></switch>
+			</column>
+
+			<quick-actions>
+				[action preview]
+				|| [action edit]
+				|| [action Rbs_Catalog_RemoveProductsFromCategory]
+			</quick-actions>
 
 			<preview>
 				<h4>(= doc.label =)</h4>
@@ -80,11 +113,21 @@
 
 		<h4>{{ i18n('m.rbs.catalog.document.category.add-products', ['ucf']) }}</h4>
 
-		<div class="rbs-catalog-category-picker"
-			product-id="(= document.id =)" adding-method-name="addProducts"
-			accepted-model="Rbs_Catalog_AbstractProduct"
-			selector-title="{{ i18nAttr('m.rbs.catalog.document.category.products-picker-title', ['ucf']) }}"
-			field-label="{{ i18n('m.rbs.catalog.document.category.products', ['ucf']) }}">
+		<div class="control-group property">
+			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.document.category.products', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="document-picker-multiple" ng-model="List.productsToAdd"
+					accepted-model="Rbs_Catalog_AbstractProduct"
+					property-label="{{ i18n('m.rbs.catalog.document.category.products', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.document.category.products-picker-title', ['ucf']) }}"
+					master-label="(= document.label =)"
+					allow-edition="false" allow-creation="false" disable-reordering="true">
+				</div>
+
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-primary" data-ng-click="addProductsFromPicker()" data-ng-disabled="hasProductsToAdd()">{{ i18n('m.rbs.admin.add', ['ucf']) }}</button>
+				</div>
+			</div>
 		</div>
 	</div>
 

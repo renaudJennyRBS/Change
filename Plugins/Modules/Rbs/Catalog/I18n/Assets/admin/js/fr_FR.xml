@@ -11,4 +11,11 @@
 	<key id="tax-category-exists">Une catégorie avec ce code existe déjà.</key>
 	<key id="tax-zone-exists">Une zone avec ce code existe déjà.</key>
 	<key id="no-condition">aucune</key>
+	<key id="remove">retirer</key>
+	<key id="remove-products-from-category">Retirer les produits sélectionnés de la catégorie.</key>
+	<key id="remove-product-from-categories">Retirer ce produit des catégories sélectionnées.</key>
+	<key id="highlight">mettre en avant</key>
+	<key id="highlight-products">Mettre en avant les produits sélectionnés.</key>
+	<key id="remove-highlight">ne plus mettre en avant</key>
+	<key id="remove-highlight-products">Ne plus mettre en avant les produits sélectionnés.</key>
 </i18n>

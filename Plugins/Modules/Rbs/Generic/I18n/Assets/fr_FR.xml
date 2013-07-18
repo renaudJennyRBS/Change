@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.generic" lcid="fr_FR">
+	<key id="ascending">croissant</key>
+	<key id="descending">décroissant</key>
+</i18n>

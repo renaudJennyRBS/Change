@@ -28,6 +28,7 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 	 * Tests the following methods:
 	 * - getKey
 	 * - setKey
+	 * - __toString
 	 * @depends testConstructor
 	 */
 	public function testGetSetKey()
@@ -35,19 +36,24 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 		$key = new \Change\I18n\PreparedKey('');
 		$key->setKey('c.date.default-format');
 		$this->assertEquals('c.date.default-format', $key->getKey());
+		$this->assertEquals('c.date.default-format', strval($key));
 
 		$key->setKey('m.website.fo.test');
 		$this->assertEquals('m.website.fo.test', $key->getKey());
+		$this->assertEquals('m.website.fo.test', strval($key));
 
 		$key->setKey('t.default.templates.tpl1');
 		$this->assertEquals('t.default.templates.tpl1', $key->getKey());
+		$this->assertEquals('t.default.templates.tpl1', strval($key));
 
 		// Invalid keys are not modified.
 		$key->setKey(' c.date.Default-Format');
 		$this->assertEquals(' c.date.Default-Format', $key->getKey());
+		$this->assertEquals(' c.date.Default-Format', strval($key));
 
 		$key->setKey('C\'est l\'ÉTÉ. Ça va chauffer !');
 		$this->assertEquals('C\'est l\'ÉTÉ. Ça va chauffer !', $key->getKey());
+		$this->assertEquals('C\'est l\'ÉTÉ. Ça va chauffer !', strval($key));
 	}
 
 	/**

@@ -30,6 +30,7 @@
 				'form': '/Rbs/Catalog/Category/:id/:LCID',
 				'list': '/Rbs/Catalog/Category/:LCID',
 				'i18n': '/Rbs/Catalog/Category/:id/:LCID/translate-from/:fromLCID',
+				'products': '/Rbs/Catalog/CategoryProducts/:id',
 				'tree': '/Rbs/Catalog/nav/?tn=:id'
 			});
 			$delegate.register('Rbs_Catalog_Product', {

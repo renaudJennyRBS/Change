@@ -1,10 +1,11 @@
 <?php
-
 namespace Change\Collection;
 
-
-class BaseItem implements ItemInterface {
-
+/**
+ * @name \Change\Collection\BaseItem
+ */
+class BaseItem implements ItemInterface
+{
 	/* @var $title string */
 	protected $title;
 
@@ -16,12 +17,21 @@ class BaseItem implements ItemInterface {
 
 	/**
 	 * @param string $value
-	 * @param string $label
-	 * @param string $title
+	 * @param string|array|I18nString $label
+	 * @param string|I18nString $title
 	 */
 	function __construct($value, $label = null, $title = null)
 	{
 		$this->value = $value;
+		if (\Zend\Stdlib\ArrayUtils::isList($label))
+		{
+			list($label, $title) = $label;
+		}
+		elseif (\Zend\Stdlib\ArrayUtils::isHashTable($label))
+		{
+			$title = $label['title'];
+			$label = $label['label'];
+		}
 		$this->label = $label === null ? $this->value : $label;
 		$this->title = $title === null ? $this->label : $title;
 	}
@@ -31,7 +41,7 @@ class BaseItem implements ItemInterface {
 	 */
 	public function getLabel()
 	{
-		return $this->label;
+		return strval($this->label);
 	}
 
 	/**
@@ -39,7 +49,7 @@ class BaseItem implements ItemInterface {
 	 */
 	public function getTitle()
 	{
-		return $this->title;
+		return strval($this->title);
 	}
 
 	/**
@@ -49,5 +59,4 @@ class BaseItem implements ItemInterface {
 	{
 		return $this->value;
 	}
-
 }

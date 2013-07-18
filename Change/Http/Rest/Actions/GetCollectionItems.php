@@ -12,6 +12,7 @@ class GetCollectionItems
 {
 	/**
 	 * @param Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute(Event $event)
 	{

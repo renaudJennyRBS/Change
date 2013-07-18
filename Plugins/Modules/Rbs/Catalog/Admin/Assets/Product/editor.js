@@ -24,7 +24,7 @@
 				Editor.initScope(scope, elm, function ()
 				{
 					// Categories.
-					scope.List = {selectedCondition: null};
+					scope.List = {selectedCondition: null, categoriesToAdd: []};
 					Loading.start(i18n.trans('m.rbs.catalog.admin.js.condition-list-loading'));
 					REST.collection('Rbs_Catalog_Condition').then(function (conditions)
 					{
@@ -71,6 +71,22 @@
 								data.httpStatus = status;
 								scope.$broadcast('Change:DocumentList:DLRbsCatalogProductCategories:call', { 'method': 'reload' });
 							});
+					};
+
+					scope.addCategoriesFromPicker = function ()
+					{
+						var docIds = [];
+						for (var i in scope.List.categoriesToAdd)
+						{
+							docIds.push(scope.List.categoriesToAdd[i].id);
+						}
+						scope.addInCategories(docIds, 0);
+						scope.List.categoriesToAdd = [];
+					};
+
+					scope.hasCategoriesToAdd = function ()
+					{
+						return !scope.List.categoriesToAdd || scope.List.categoriesToAdd.length == 0;
 					};
 				});
 
