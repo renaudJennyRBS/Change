@@ -41,9 +41,14 @@
 							REST.resource(parseInt(value, 10)).then(function (image) {
 								elm.attr('src', REST.storage.displayUrl(image.path));
 							});
-						} else {
+						}
+						else {
 							elm.attr('src', REST.storage.displayUrl(value));
 						}
+						elm.show();
+					}
+					else {
+						elm.hide();
 					}
 				});
 
