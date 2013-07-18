@@ -19,16 +19,18 @@ class Md2Html
 	{
 		$request = $event->getRequest();
 
-		if ($request->isPost()) {
+		if ($request->isPost())
+		{
 			$md = $request->getContent();
-		} elseif ($request->isGet()) {
+		}
+		elseif ($request->isGet())
+		{
 			$md = $request->getQuery('md');
-		} else {
-			$resolver = $event->getController()->getActionResolver();
-			if ($resolver instanceof \Change\Http\Rest\Resolver)
-			{
-				$resolver->buildNotAllowedError($request->getMethod(), array(Request::METHOD_GET));
-			}
+		}
+		else
+		{
+			$result = $event->getController()->notAllowedError($request->getMethod(), array(Request::METHOD_GET));
+			$event->setResult($result);
 			return;
 		}
 
