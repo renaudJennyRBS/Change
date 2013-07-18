@@ -5,7 +5,10 @@
 
 
 	<div>
-		<a class="pull-right" href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> Éditer les propriétés</a>
+		<span class="pull-right">
+			<span ng-if="currentFolder.is('Rbs_Website_Website')"><a href ng-href="(= currentFolder | documentURL:'menus':true =)"><i class="icon-list-alt"></i> Menus</a> |</span>
+			<a href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> Propriétés</a>
+		</span>
 
 		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL=)">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
 		|
