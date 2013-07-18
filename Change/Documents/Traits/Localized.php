@@ -253,7 +253,11 @@ trait Localized
 	public function removeOldPropertyValue($propertyName)
 	{
 		parent::removeOldPropertyValue($propertyName);
-		$this->getCurrentLocalization()->removeOldPropertyValue($propertyName);
+		$property = $this->getDocumentModel()->getProperty($propertyName);
+		if ($property && $property->getLocalized())
+		{
+			$this->getCurrentLocalization()->removeOldPropertyValue($propertyName);
+		}
 	}
 
 	/**

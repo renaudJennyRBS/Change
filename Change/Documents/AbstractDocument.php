@@ -418,15 +418,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
-	 * Called every time a property has changed.
-	 * @param string $propertyName Name of the property that has changed.
-	 */
-	protected function propertyChanged($propertyName)
-	{
-
-	}
-
-	/**
 	 * @api
 	 * @param \Change\Documents\AbstractDocument $b
 	 * @return boolean

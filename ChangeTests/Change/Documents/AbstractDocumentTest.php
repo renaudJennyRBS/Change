@@ -390,12 +390,23 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPStr());
-
+		$this->assertFalse($basicDoc->isPropertyModified('pStr'));
 		$this->assertSame($basicDoc, $basicDoc->setPStr('toto'));
 		$this->assertEquals('toto', $basicDoc->getPStr());
-
+		$this->assertTrue($basicDoc->isPropertyModified('pStr'));
 		$basicDoc->setPStr(null);
 		$this->assertNull($basicDoc->getPStr());
+
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
+		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+
+		$this->assertNull($localizedDoc->getPLStr());
+		$this->assertFalse($localizedDoc->isPropertyModified('pLStr'));
+		$this->assertSame($localizedDoc, $localizedDoc->setPLStr('toto'));
+		$this->assertEquals('toto', $localizedDoc->getPLStr());
+		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
+		$localizedDoc->setPLStr(null);
+		$this->assertNull($localizedDoc->getPLStr());
 	}
 
 	public function testBooleanPropertyAccessors()
@@ -404,15 +415,32 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPBool());
-
+		$this->assertFalse($basicDoc->isPropertyModified('pBool'));
 		$this->assertSame($basicDoc, $basicDoc->setPBool(true));
 		$this->assertTrue($basicDoc->getPBool());
-
+		$this->assertTrue($basicDoc->isPropertyModified('pBool'));
 		$basicDoc->setPBool(false);
 		$this->assertFalse($basicDoc->getPBool());
+		$this->assertTrue($basicDoc->isPropertyModified('pBool'));
 
 		$basicDoc->setPBool(null);
 		$this->assertNull($basicDoc->getPBool());
+		$this->assertFalse($basicDoc->isPropertyModified('pBool'));
+
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
+		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$this->assertNull($localizedDoc->getPLBool());
+		$this->assertFalse($localizedDoc->isPropertyModified('pLBool'));
+		$this->assertSame($localizedDoc, $localizedDoc->setPLBool(true));
+		$this->assertTrue($localizedDoc->getPLBool());
+		$this->assertTrue($localizedDoc->isPropertyModified('pLBool'));
+		$localizedDoc->setPLBool(false);
+		$this->assertFalse($localizedDoc->getPLBool());
+		$this->assertTrue($localizedDoc->isPropertyModified('pLBool'));
+
+		$localizedDoc->setPLBool(null);
+		$this->assertNull($localizedDoc->getPLBool());
+		$this->assertFalse($localizedDoc->isPropertyModified('pLBool'));
 	}
 
 	public function testIntegerPropertyAccessors()
@@ -435,15 +463,16 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPFloat());
-
+		$this->assertFalse($basicDoc->isPropertyModified('pFloat'));
 		$this->assertSame($basicDoc, $basicDoc->setPFloat(10.1));
 		$this->assertEquals(10.1, $basicDoc->getPFloat());
-
+		$this->assertTrue($basicDoc->isPropertyModified('pFloat'));
 		$basicDoc->setPFloat(null);
 		$this->assertNull($basicDoc->getPFloat());
-
+		$this->assertFalse($basicDoc->isPropertyModified('pFloat'));
 		$basicDoc->setPFloat(0);
 		$this->assertSame(0.0, $basicDoc->getPFloat());
+		$this->assertTrue($basicDoc->isPropertyModified('pFloat'));
 	}
 
 	public function testDecimalPropertyAccessors()
@@ -555,15 +584,32 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPJson());
+		$this->assertFalse($basicDoc->isPropertyModified('pJson'));
 
 		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
 		$json = '{"toto":"youpi","plop":12.2,"1":"test"}';
 		$this->assertSame($basicDoc, $basicDoc->setPJson($data));
 		$this->assertEquals($data, $basicDoc->getPJson());
 		$this->assertEquals($json, $basicDoc->getPJsonString());
-
+		$this->assertTrue($basicDoc->isPropertyModified('pJson'));
 		$basicDoc->setPJson(null);
+		$this->assertFalse($basicDoc->isPropertyModified('pJson'));
 		$this->assertNull($basicDoc->getPJson());
+
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
+		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$this->assertNull($localizedDoc->getPLJson());
+		$this->assertFalse($localizedDoc->isPropertyModified('pLJson'));
+
+		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
+		$json = '{"toto":"youpi","plop":12.2,"1":"test"}';
+		$this->assertSame($localizedDoc, $localizedDoc->setPLJson($data));
+		$this->assertEquals($data, $localizedDoc->getPLJson());
+		$this->assertEquals($json, $localizedDoc->getPLJsonString());
+		$this->assertTrue($localizedDoc->isPropertyModified('pLJson'));
+		$localizedDoc->setPLJson(null);
+		$this->assertFalse($localizedDoc->isPropertyModified('pLJson'));
+		$this->assertNull($localizedDoc->getPLJson());
 	}
 
 	public function testXMLPropertyAccessors()
@@ -596,11 +642,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPRt());
+		$this->assertFalse($basicDoc->isPropertyModified('pRt'));
 
-		// TODO
-
-		$basicDoc->setPJson(null);
-		$this->assertNull($basicDoc->getPJson());
+		$string = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 1000);
+		$this->assertSame($basicDoc, $basicDoc->setPRt($string));
+		$this->assertSame($string, $basicDoc->getPRt());
+		$this->assertTrue($basicDoc->isPropertyModified('pRt'));
+		$basicDoc->setPRt(null);
+		$this->assertNull($basicDoc->getPRt());
+		$this->assertFalse($basicDoc->isPropertyModified('pRt'));
 	}
 
 	public function testLobPropertyAccessors()
