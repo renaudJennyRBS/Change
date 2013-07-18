@@ -17,7 +17,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('String', $p->getComputedType());
 		$this->assertEquals(0, $p->getComputedMinOccurs());
-		$this->assertEquals(-1, $p->getComputedMaxOccurs());
+		$this->assertEquals(100, $p->getComputedMaxOccurs());
 		$this->assertNull($p->getDocumentType());
 		$this->assertNull($p->getIndexed());
 		$this->assertNull($p->getCascadeDelete());

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
-	icon="page" localized="true" publishable="true" use-version="true" editable="true" abstract="true" >
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		  icon="page" localized="true" publishable="true" use-version="true" editable="true" abstract="true">
 	<properties>
-		<property name="label" localized="true" has-correction="true"/>
+		<property name="label"/>
 		<property name="title" localized="true" has-correction="true"/>
-        <property name="pageTemplate" type="Document" document-type="Rbs_Theme_PageTemplate" has-correction="true" />
+		<property name="pageTemplate" type="Document" document-type="Rbs_Theme_PageTemplate" has-correction="true"/>
 		<property name="editableContent" type="JSON" localized="true" has-correction="true"/>
 
-        <!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
-        <property name="skin" type="Document" document-type="Rbs_Skin_Skin" />
-        -->
+		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
+		<property name="skin" type="Document" document-type="Rbs_Skin_Skin" />
+		-->
 	</properties>
 </document>

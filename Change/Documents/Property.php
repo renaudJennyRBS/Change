@@ -64,7 +64,7 @@ class Property
 	/**
 	 * @var integer
 	 */
-	protected $maxOccurs = 1;
+	protected $maxOccurs = 100;
 
 	/**
 	 * @var boolean
@@ -342,7 +342,7 @@ class Property
 		return $this->maxOccurs == 1;
 	}
 
-	/* Information de présentation */
+	/* Presentation information */
 
 	/**
 	 * @return mixed
@@ -519,11 +519,7 @@ class Property
 		{
 			$this->setMaxOccurs(1);
 		}
-		elseif ($this->maxOccurs <= 1)
-		{
-			$this->setMaxOccurs(-1);
-		}
-	
+
 		if ($this->documentType !== null && !$this->isDocument() && $this->type !== self::TYPE_DOCUMENTID)
 		{
 			$this->documentType = null;
