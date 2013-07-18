@@ -48,6 +48,14 @@ class PreparedKey
 	/**
 	 * @return string
 	 */
+	public function __toString()
+	{
+		return $this->getKey();
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getRawValue()
 	{
 		return $this->key;
@@ -160,7 +168,7 @@ class PreparedKey
 	 */
 	public function mergeFormatters($formatters)
 	{
-		$this->formatters = array_unique(array_merge($this->formatters, $formatters));
+		$this->formatters = array_values(array_unique(array_merge($this->formatters, $formatters)));
 	}
 
 	/**
