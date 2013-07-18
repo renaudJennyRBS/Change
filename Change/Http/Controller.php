@@ -22,7 +22,7 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	protected $application;
 
 	/**
-	 * @var ActionResolver
+	 * @var BaseResolver
 	 */
 	protected $actionResolver;
 
@@ -93,21 +93,21 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param ActionResolver $actionResolver
+	 * @param BaseResolver $actionResolver
 	 */
-	public function setActionResolver(ActionResolver $actionResolver)
+	public function setActionResolver(BaseResolver $actionResolver)
 	{
 		$this->actionResolver = $actionResolver;
 	}
 
 	/**
-	 * @return ActionResolver
+	 * @return BaseResolver
 	 */
 	public function getActionResolver()
 	{
 		if ($this->actionResolver === null)
 		{
-			$this->actionResolver = new ActionResolver();
+			$this->actionResolver = new BaseResolver();
 		}
 		return $this->actionResolver;
 	}
@@ -248,6 +248,19 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$error->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
 		$event->setResult($error);
 		return $error;
+	}
+
+	/**
+	 * @param string $notAllowed
+	 * @param string[] $allow
+	 * @return Result
+	 */
+	public function notAllowedError($notAllowed, array $allow)
+	{
+		$result = new Result(HttpResponse::STATUS_CODE_405);
+		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
+		$result->getHeaders()->addHeader($header);
+		return $result;
 	}
 
 	/**

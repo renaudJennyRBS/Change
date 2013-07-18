@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Workflow\Tasks\PublicationProcess;
+namespace Rbs\Workflow\Tasks\CorrectionPublicationProcess;
 
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Workflow\Tasks\PublicationProcess\ListenerAggregate
+ * @name \Rbs\Workflow\Tasks\CorrectionPublicationProcess\ListenerAggregate
  */
 class ListenerAggregate implements ListenerAggregateInterface
 {
@@ -36,13 +36,6 @@ class ListenerAggregate implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$task = new CheckPublication();
-			$task->execute($event);
-		};
-		$events->attach('checkPublication', $callback, 5);
-
-		$callback = function (Event $event)
-		{
 			$task = new PublicationValidation();
 			$task->execute($event);
 		};
@@ -50,24 +43,17 @@ class ListenerAggregate implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$task = new Freeze();
+			$task = new Cancel();
 			$task->execute($event);
 		};
-		$events->attach('freeze', $callback, 5);
+		$events->attach('cancel', $callback, 5);
 
 		$callback = function (Event $event)
 		{
-			$task = new Unfreeze();
+			$task = new ContentMerging();
 			$task->execute($event);
 		};
-		$events->attach('unfreeze', $callback, 5);
-
-		$callback = function (Event $event)
-		{
-			$task = new File();
-			$task->execute($event);
-		};
-		$events->attach('file', $callback, 5);
+		$events->attach('contentMerging', $callback, 5);
 	}
 
 	/**

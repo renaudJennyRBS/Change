@@ -7,6 +7,24 @@ namespace Change\Documents\Interfaces;
 interface Correction
 {
 	/**
+	 * @api
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public function getDocumentModel();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices();
+
+	/**
 	 * @return boolean
 	 */
 	public function useCorrection();
@@ -22,36 +40,8 @@ interface Correction
 	public function getCurrentCorrection();
 
 	/**
-	 * @throws \RuntimeException
-	 * @return boolean
-	 */
-	public function saveCorrections();
-
-	/**
-	 * @param \Change\Documents\Correction $correction
-	 * @throws \RuntimeException
-	 */
-	public function saveCorrection(\Change\Documents\Correction $correction);
-
-	/**
 	 * @return boolean
 	 * @throws \InvalidArgumentException
 	 */
-	public function publishCorrection();
-
-	/**
-	 * @param \DateTime $publicationDate
-	 * @throws \RuntimeException
-	 * @return \Change\Documents\Correction|null
-	 */
-	public function startCorrectionValidation(\DateTime $publicationDate = null);
-
-
-	/**
-	 * @throws \RuntimeException
-	 * @throws \Exception
-	 * @return \Change\Documents\Correction|null
-	 */
-	public function startCorrectionPublication();
-
+	public function mergeCurrentCorrection();
 }

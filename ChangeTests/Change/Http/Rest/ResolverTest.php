@@ -30,15 +30,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testConstruct()
 	{
 		$resolver = new Resolver();
-		$resourcesActionsResolver = $resolver->getResolverByName('resourcesactions');
-		$this->assertInstanceOf('\Change\Http\Rest\ResourcesActionsResolver', $resourcesActionsResolver);
-
-		$this->assertArrayHasKey('getCorrection', $resourcesActionsResolver->getResourceActionClasses());
-		$this->assertArrayNotHasKey('test', $resourcesActionsResolver->getResourceActionClasses());
-
-		$resolver->registerActionClass('test', 'test');
-
-		$this->assertArrayHasKey('test', $resourcesActionsResolver->getResourceActionClasses());
+		$actionsResolver = $resolver->getResolverByName('actions');
+		$this->assertInstanceOf('\Change\Http\Rest\ActionsResolver', $actionsResolver);
 
 		$application = $this->getApplication();
 
@@ -78,8 +71,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->resetEvent($event, '/', 'POST');
 		$resolver->resolve($event);
 		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
-
+		$this->assertInstanceOf('\Change\Http\Result', $event->getResult());
+		$this->assertEquals(405, $event->getResult()->getHttpStatusCode());
 		return $event;
 	}
 
@@ -136,14 +129,17 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
+
+		$this->assertInstanceOf('\Change\Http\Result', $event->getResult());
+		$this->assertEquals(405, $event->getResult()->getHttpStatusCode());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/', Request::METHOD_DELETE);
 		$resolver->resolve($event);
 		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
+		$this->assertInstanceOf('\Change\Http\Result', $event->getResult());
+		$this->assertEquals(405, $event->getResult()->getHttpStatusCode());
 
 
 		return $event;
@@ -166,7 +162,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
+		$this->assertEquals('fail', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
@@ -195,8 +191,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId() . '/fr_FR', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
-		$this->assertEquals($document->getId(), $event->getParam('documentId'));
+		$this->assertEquals('fail', $event->getParam('modelName', 'fail'));
+		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
 
@@ -233,7 +229,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
+		$this->assertEquals('fail', $event->getParam('modelName', 'fail'));
 		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
@@ -254,8 +250,8 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId() . '/zz_ZZ', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
-		$this->assertEquals($document->getId(), $event->getParam('documentId'));
+		$this->assertEquals('fail', $event->getParam('modelName', 'fail'));
+		$this->assertNull($event->getParam('documentId'));
 		$this->assertFalse(is_callable($event->getAction()));
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_POST);
@@ -307,28 +303,26 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$resolver = new Resolver();
 
-		$this->resetEvent($event, '/resourcesactions/startValidation/-3');
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/1000/notfound');
 		$resolver->resolve($event);
 		$this->assertNull($event->getAction());
 
-		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
-		$document = $mi->getInstanceRo5001($this->getDocumentServices());
+		$document = $this->getNewReadonlyDocument('Project_Tests_Basic', 5001);
 
-		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
+		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId() . '/correction');
 		$resolver->resolve($event);
 
-		$this->assertEquals('startValidation', $event->getParam('resourcesActionName', 'fail'));
-		$this->assertEquals($document->getId(), $event->getParam('documentId', 'fail'));
-		$this->assertTrue(is_callable($event->getAction()));
+		$this->assertEquals('fail', $event->getParam('modelName', 'fail'));
+		$this->assertNull($event->getParam('documentId'));
+		$this->assertFalse(is_callable($event->getAction()));
 
 
-		$document = $mi->getInstanceRo5002($this->getDocumentServices());
-
-		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId());
+		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 5002);
+		$this->resetEvent($event, '/resources/Project/Tests/Correction/' . $document->getId() . '/correction');
 		$resolver->resolve($event);
 		$this->assertFalse(is_callable($event->getAction()));
 
-		$this->resetEvent($event, '/resourcesactions/startValidation/' . $document->getId(). '/fr_FR');
+		$this->resetEvent($event, '/resources/Project/Tests/Correction/' . $document->getId(). '/fr_FR/correction');
 		$resolver->resolve($event);
 		$this->assertTrue(is_callable($event->getAction()));
 

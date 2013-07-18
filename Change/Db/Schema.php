@@ -42,8 +42,8 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			->addKey($this->newPrimaryKey()->addField($idDef));
 			
 			$correctionId = $schemaManager->newIntegerFieldDefinition('correction_id')->setNullable(false)->setAutoNumber(true);
-			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(true);
-			$status = $schemaManager->newEnumFieldDefinition('status', array('VALUES' => array('DRAFT', 'VALIDATION', 'PUBLISHABLE', 'FILED')))->setNullable(false)->setDefaultValue('DRAFT');
+			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(false)->setDefaultValue('_____');
+			$status = $schemaManager->newEnumFieldDefinition('status', array('VALUES' => array('DRAFT', 'VALIDATION', 'VALIDCONTENT', 'VALID', 'PUBLISHABLE', 'FILED')))->setNullable(false)->setDefaultValue('DRAFT');
 			$this->tables['change_document_correction'] = $schemaManager->newTableDefinition('change_document_correction')
 			->addField($correctionId)
 			->addField($idDef)

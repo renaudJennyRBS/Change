@@ -21,6 +21,12 @@ class Install
 
 		$config->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
 			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\ListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/Workflow/correctionPublicationProcess/Rbs_Workflow',
+			'\\Rbs\\Workflow\\Tasks\\CorrectionPublicationProcess\\ListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Workflow',
+			'\\Rbs\\Workflow\\Events\\SharedListenerAggregate');
 	}
 
 	/**
@@ -36,7 +42,6 @@ class Install
 		$workflowManager->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
 		$workflowManager->setDocumentServices($documentServices);
 
-		$applicationServices->getLogging(__METHOD__);
 		if ($workflowManager->getWorkflow('publicationProcess') === null)
 		{
 			try
@@ -45,6 +50,22 @@ class Install
 				$publicationProcessWorkflow = new PublicationProcessWorkflow($documentServices);
 				$workflow = $publicationProcessWorkflow->install();
 				$plugin->setConfigurationEntry('publicationProcess', $workflow->getId());
+				$applicationServices->getTransactionManager()->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $applicationServices->getTransactionManager()->rollBack( $e);
+			}
+		}
+
+		if ($workflowManager->getWorkflow('correctionPublicationProcess') === null)
+		{
+			try
+			{
+				$applicationServices->getTransactionManager()->begin();
+				$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($documentServices);
+				$workflow = $publicationProcessWorkflow->install();
+				$plugin->setConfigurationEntry('correctionPublicationProcess', $workflow->getId());
 				$applicationServices->getTransactionManager()->commit();
 			}
 			catch (\Exception $e)

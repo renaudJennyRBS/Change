@@ -56,6 +56,10 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
+		if ($documentServices && $this->applicationServices === null)
+		{
+			$this->setApplicationServices($documentServices->getApplicationServices());
+		}
 	}
 
 	/**
@@ -201,6 +205,11 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function updateJobStatus($job, $status, array $arguments = null, \DateTime $lastModificationDate = null)
 	{
+		if ($job->getId() <= 0)
+		{
+			return;
+		}
+
 		if ($lastModificationDate === null)
 		{
 			$lastModificationDate = new \DateTime();

@@ -27,7 +27,7 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testActionResolver($controller)
 	{
-		$ac = new \Change\Http\ActionResolver();
+		$ac = new \Change\Http\BaseResolver();
 
 		$controller->setActionResolver($ac);
 

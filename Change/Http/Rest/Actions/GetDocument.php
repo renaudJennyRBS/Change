@@ -1,18 +1,17 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\PropertyConverter;
+use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ModelLink;
+use Change\Http\Rest\Result\TreeNodeLink;
 use Change\Logging\Logging;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
-use Change\Http\Rest\Result\DocumentActionLink;
-use Change\Http\Rest\Result\TreeNodeLink;
 
 /**
  * @name \Change\Http\Rest\Actions\GetDocument
@@ -100,7 +99,6 @@ class GetDocument
 		return md5(implode(',', $parts));
 	}
 
-
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
@@ -138,15 +136,18 @@ class GetDocument
 			$c = new PropertyConverter($document, $property, $urlManager);
 			$properties[$name] = $c->getRestValue();
 		}
-		$result->setProperties($properties);
-		$currentUrl = $urlManager->getSelf()->normalize()->toString();
-		$this->addActions($result, $document, $urlManager);
-		$event->setResult($result);
 
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result, 'urlManager' => $urlManager));
+		$result->setProperties($properties);
+		$this->addCorrection($result, $document, $urlManager);
+
+		$event->setResult($result);
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result,
+			'urlManager' => $urlManager));
 		$document->getEventManager()->trigger($documentEvent);
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+
+		$currentUrl = $urlManager->getSelf()->normalize()->toString();
 		if (($href = $documentLink->href()) != $currentUrl)
 		{
 			$result->setHeaderContentLocation($href);
@@ -167,7 +168,7 @@ class GetDocument
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Http\UrlManager $urlManager
 	 */
-	protected function addActions($result, $document, $urlManager)
+	protected function addCorrection($result, $document, $urlManager)
 	{
 		if ($document->getDocumentModel()->useCorrection())
 		{
@@ -175,46 +176,7 @@ class GetDocument
 			$correction = $document->getCurrentCorrection();
 			if ($correction)
 			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$result->addAction($l);
-
-				if ($correction->getStatus() === Correction::STATUS_DRAFT)
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
-					$result->addAction($l);
-				}
-				elseif ($correction->getStatus() === Correction::STATUS_VALIDATION)
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
-					$result->addAction($l);
-				}
-			}
-		}
-
-		if ($document instanceof Publishable)
-		{
-			/* @var $document Publishable|\Change\Documents\AbstractDocument */
-			if ($document->canStartValidation())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
-				$result->addAction($l);
-			}
-
-			if ($document->canStartPublication())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
-				$result->addAction($l);
-			}
-
-			if ($document->canActivate())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'activate');
-				$result->addAction($l);
-			}
-
-			if ($document->canDeactivate())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
+				$l = new DocumentActionLink($urlManager, $document, 'correction');
 				$result->addAction($l);
 			}
 		}

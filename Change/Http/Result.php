@@ -9,6 +9,7 @@ use Zend\Http\Response;
  */
 class Result
 {
+
 	/**
 	 * @var Headers|null
 	 */
@@ -18,6 +19,14 @@ class Result
 	 * @var integer
 	 */
 	protected $httpStatusCode;
+
+	/**
+	 * @param integer $httpStatusCode
+	 */
+	function __construct($httpStatusCode = \Zend\Http\Response::STATUS_CODE_200)
+	{
+		$this->httpStatusCode = $httpStatusCode;
+	}
 
 	/**
 	 * @param int $httpStatusCode
@@ -48,7 +57,8 @@ class Result
 	 */
 	public function getHeaders()
 	{
-		if ($this->headers === null) {
+		if ($this->headers === null)
+		{
 
 			$this->headers = new Headers();
 		}
@@ -180,7 +190,6 @@ class Result
 			$this->getHeaders()->addHeaderLine('Cache-Control', $cacheControl);
 		}
 	}
-
 
 	/**
 	 * @return string

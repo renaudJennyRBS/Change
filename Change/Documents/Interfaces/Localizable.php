@@ -1,19 +1,30 @@
 <?php
 namespace Change\Documents\Interfaces;
 
-use Change\Documents\AbstractLocalizedDocument;
-
 /**
  * @name \Change\Documents\Interfaces\Localizable
  * @api
  */
 interface Localizable
 {
+
 	/**
 	 * @api
 	 * @return integer
 	 */
 	public function getId();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public function getDocumentModel();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices();
 
 	/**
 	 * @api
@@ -42,7 +53,7 @@ interface Localizable
 
 	/**
 	 * @api
-	 * @return AbstractLocalizedDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
 	public function getCurrentLocalization();
 
@@ -51,7 +62,6 @@ interface Localizable
 	 * @throws \RuntimeException if current LCID = refLCID
 	 */
 	public function deleteCurrentLocalization();
-
 
 	public function saveCurrentLocalization();
 }

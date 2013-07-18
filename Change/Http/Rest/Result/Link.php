@@ -1,13 +1,15 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Http\UrlManager;
+
 /**
  * @name \Change\Http\Rest\Result\Link
  */
 class Link
 {
 	/**
-	 * @var \Change\Http\UrlManager
+	 * @var UrlManager
 	 */
 	protected $urlManager;
 
@@ -32,11 +34,11 @@ class Link
 	protected $method;
 
 	/**
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param UrlManager $urlManager
 	 * @param null $pathInfo
 	 * @param string $rel
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, $pathInfo = null, $rel = 'self')
+	public function __construct(UrlManager $urlManager, $pathInfo = null, $rel = 'self')
 	{
 		$this->urlManager = $urlManager;
 		$this->rel = $rel;
@@ -44,15 +46,17 @@ class Link
 	}
 
 	/**
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param UrlManager $urlManager
+	 * @return $this
 	 */
-	public function setUrlManager(\Change\Http\UrlManager $urlManager)
+	public function setUrlManager(UrlManager $urlManager)
 	{
 		$this->urlManager = $urlManager;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Http\UrlManager
+	 * @return UrlManager
 	 */
 	public function getUrlManager()
 	{
@@ -61,10 +65,12 @@ class Link
 
 	/**
 	 * @param string $pathInfo
+	 * @return $this
 	 */
 	public function setPathInfo($pathInfo)
 	{
 		$this->pathInfo = $pathInfo;
+		return $this;
 	}
 
 	/**
@@ -77,10 +83,12 @@ class Link
 
 	/**
 	 * @param array|string $query
+	 * @return $this
 	 */
 	public function setQuery($query)
 	{
 		$this->query = $query;
+		return $this;
 	}
 
 	/**
@@ -93,10 +101,12 @@ class Link
 
 	/**
 	 * @param string $rel
+	 * @return $this
 	 */
 	public function setRel($rel)
 	{
 		$this->rel = $rel;
+		return $this;
 	}
 
 	/**
@@ -109,10 +119,12 @@ class Link
 
 	/**
 	 * @param string $method
+	 * @return $this
 	 */
 	public function setMethod($method)
 	{
 		$this->method = $method;
+		return $this;
 	}
 
 	/**

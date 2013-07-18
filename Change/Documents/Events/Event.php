@@ -14,6 +14,8 @@ class Event extends \Zend\EventManager\Event
 	const EVENT_DELETE       	= 'documents.delete';
 	const EVENT_DELETED       	= 'documents.deleted';
 
+	const EVENT_CORRECTION_CREATED	= 'correction.created';
+
 	const EVENT_DISPLAY_PAGE    = 'http.web.displayPage';
 
 	/**

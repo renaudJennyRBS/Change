@@ -19,6 +19,7 @@ use Change\Documents\Interfaces\Publishable;
 trait Publication
 {
 	/**
+	 * @see \Change\Documents\Interfaces\Publishable::published
 	 * @api
 	 * @param \DateTime $at
 	 * @return boolean
@@ -37,123 +38,66 @@ trait Publication
 
 	/**
 	 * @api
-	 * @return boolean
+	 * @see \Change\Documents\Interfaces\Publishable::isPublishable
+	 * Return true if is publishable or a string for reason if is unpublishable
+	 * @return string|boolean
 	 */
-	public function canStartValidation()
+	public function isPublishable()
 	{
-		return ($this->getPublicationStatus() == Publishable::STATUS_DRAFT);
+		return true;
 	}
 
 	/**
 	 * @api
-	 * @throws \RuntimeException
+	 * @see \Change\Documents\Interfaces\Publishable::updatePublicationStatus
+	 * @param string $newPublicationStatus
 	 */
-	public function startValidation()
+	public function updatePublicationStatus($newPublicationStatus)
 	{
-		if (!$this->canStartValidation())
+		if ($this->getPublicationStatus() !== $newPublicationStatus)
 		{
-			throw new \RuntimeException('Invalid Publication status', 55000);
+			$this->setPublicationStatus($newPublicationStatus);
+			$this->update();
 		}
-
-		$this->setPublicationStatus(Publishable::STATUS_VALIDATION);
-		$this->update();
 	}
 
 	/**
 	 * @api
-	 * @return boolean
+	 * @see \Change\Documents\Interfaces\Publishable::getValidPublicationStatusForCorrection
+	 * @return array
 	 */
-	public function canStartPublication()
+	public function getValidPublicationStatusForCorrection()
 	{
-		return ($this->getPublicationStatus() == Publishable::STATUS_VALIDATION);
+		return array(Publishable::STATUS_UNPUBLISHABLE, Publishable::STATUS_PUBLISHABLE, Publishable::STATUS_FROZEN);
 	}
 
+
 	/**
+	 * If $website is null return the first section in getPublicationSections
 	 * @api
-	 * @throws \RuntimeException
-	 */
-	public function startPublication()
-	{
-		if (!$this->canStartPublication())
-		{
-			throw new \RuntimeException('Invalid Publication status', 55000);
-		}
-		$this->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
-		$this->update();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function canDeactivate()
-	{
-		return ($this->getPublicationStatus() == Publishable::STATUS_PUBLISHABLE);
-	}
-
-	/**
-	 * @api
-	 * @throws \RuntimeException
-	 */
-	public function deactivate()
-	{
-		if (!$this->canDeactivate())
-		{
-			throw new \RuntimeException('Invalid Publication status', 55000);
-		}
-		$this->setPublicationStatus(Publishable::STATUS_FROZEN);
-		$this->update();
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function canActivate()
-	{
-		return ($this->getPublicationStatus() == Publishable::STATUS_FROZEN);
-	}
-
-	/**
-	 * @api
-	 * @throws \RuntimeException
-	 */
-	public function activate()
-	{
-		if (!$this->canActivate())
-		{
-			throw new \RuntimeException('Invalid Publication status', 55000);
-		}
-
-		$this->setPublicationStatus(Publishable::STATUS_PUBLISHABLE);
-		$this->update();
-	}
-
-	/**
-	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
+	 * @see \Change\Documents\Interfaces\Publishable::getCanonicalSection
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @return \Change\Presentation\Interfaces\Section|null
 	 */
-	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null)
+	public function getCanonicalSection(\Change\Presentation\Interfaces\Website $website = null)
 	{
 		$sections = $this->getPublicationSections();
-
 		if (count($sections) == 0)
 		{
 			return null;
 		}
-
-		if ($preferredWebsite == null)
+		if ($website == null)
 		{
 			return $sections[0];
 		}
 
 		foreach ($sections as $section)
 		{
-			if ($section->getWebsite() === $preferredWebsite)
+			if ($section->getWebsite() === $website)
 			{
 				return $section;
 			}
 		}
-		return $sections[0];
+		return null;
 	}
 }

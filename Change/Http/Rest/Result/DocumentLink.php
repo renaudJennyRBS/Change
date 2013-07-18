@@ -261,7 +261,7 @@ class DocumentLink extends Link
 			/* @var $document AbstractDocument|Correction */
 			if ($document->hasCorrection())
 			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
+				$l = new DocumentActionLink($urlManager, $document, 'correction');
 				$this->setProperty('actions', array($l));
 			}
 		}

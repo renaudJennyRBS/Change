@@ -1,14 +1,15 @@
 <?php
-namespace Rbs\Workflow\Tasks\PublicationProcess;
+namespace Rbs\Workflow\Tasks\CorrectionPublicationProcess;
 
-use Change\Documents\Interfaces\Publishable;
+use Change\Documents\Interfaces\Correction;
+use Change\Documents\Correction as CorrectionInstance;
 use Change\Workflow\Interfaces\WorkItem;
 use Zend\EventManager\Event;
 
 /**
-* @name \Rbs\Workflow\Tasks\PublicationProcess\File
+* @name \Rbs\Workflow\Tasks\CorrectionPublicationProcess\ContentMerging
 */
-class File
+class ContentMerging
 {
 	/**
 	 * @param Event $event
@@ -18,18 +19,22 @@ class File
 	{
 		/* @var $workItem WorkItem */
 		$workItem = $event->getParam('workItem');
+		$ctx = $workItem->getContext();
 		$document = $workItem->getWorkflowInstance()->getDocument();
-		if ($document instanceof Publishable)
+		if ($document instanceof Correction)
 		{
-			if ($document->getPublicationStatus() === Publishable::STATUS_PUBLISHABLE)
+			$correction = $document->getCurrentCorrection();
+			if ($correction && $correction->getId() == $ctx['__CORRECTION_ID'])
 			{
 				$documentServices = $document->getDocumentServices();
 				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();
-
-					$document->updatePublicationStatus(Publishable::STATUS_FILED);
+					if (!$document->mergeCurrentCorrection())
+					{
+						throw new \RuntimeException('Unable to merge correction :' . $correction, 999999);
+					}
 					$transactionManager->commit();
 				}
 				catch (\Exception $e)

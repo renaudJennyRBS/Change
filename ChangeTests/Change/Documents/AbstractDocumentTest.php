@@ -346,7 +346,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertGreaterThan(0, $correction->getId());
 		$this->assertEquals(\Change\Documents\Correction::STATUS_DRAFT, $correction->getStatus());
 		$this->assertTrue($correction->isDraft());
-		$this->assertEquals('fr_FR', $correction->getLCID());
+		$this->assertEquals(\Change\Documents\Correction::NULL_LCID_KEY, $correction->getLCID());
 		$this->assertArrayHasKey('str2', $correction->getDatas());
 		$this->assertArrayHasKey('str4', $correction->getDatas());
 		$this->assertEquals(array('str2', 'str4', 'docs2'), $correction->getPropertiesNames());
@@ -370,9 +370,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(Correction::STATUS_DRAFT, $corr->getStatus());
 
 		$corr->setStatus(Correction::STATUS_PUBLISHABLE);
-		$c1->saveCorrection($corr);
+		$corr->save();
 
-		$c1->publishCorrection();
+		$c1->mergeCurrentCorrection();
 
 		$this->assertEquals(Correction::STATUS_FILED, $corr->getStatus());
 		$this->assertEquals('Str2', $corr->getPropertyValue('str2'));
