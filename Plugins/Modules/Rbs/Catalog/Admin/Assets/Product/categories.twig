@@ -1,0 +1,101 @@
+<form novalidate="" data-ng-controller="Rbs_Catalog_Product_CategoriesController" class="form-horizontal">
+	<div class="page-header">
+		<h2 class="ng-binding">
+			(= document.label =)
+		</h2>
+	</div>
+
+	<p>{{ i18n('m.rbs.catalog.document.product.category-section-help', ['ucf']) }}</p>
+
+	<div ng-if="List.conditions.length > 1">
+		<p>{{ i18n('m.rbs.catalog.document.product.condition-help', ['ucf']) }}</p>
+
+		<div class="control-group" >
+			<label class="control-label" data-not-a-property="" for="selectCondition">
+				{{ i18n('m.rbs.catalog.document.product.condition', ['ucf']) }}
+			</label>
+
+			<div class="controls">
+				<div class="btn-group" ng-if="List.conditions.length <= 5">
+					<button class="btn" data-ng-class="{active: List.selectedCondition == condition}" type="button"
+						data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+						<i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)
+					</button>
+				</div>
+				<div class="btn-group" ng-if="List.conditions.length > 5">
+					<button class="btn" data-toggle="dropdown" type="button"
+						data-ng-class="{active: List.selectedCondition}">
+						<span data-ng-show="List.selectedCondition"><i class="icon-ok"></i> (= List.selectedCondition.label =)</span>
+						<em data-ng-show="!List.selectedCondition">...</em>
+					</button>
+					<button class="btn dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li data-ng-repeat="condition in List.conditions" data-ng-click="List.selectedCondition = condition">
+							<a><i class="icon-ok" data-ng-show="List.selectedCondition == condition"></i> (= condition.label =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group" ng-show="List.selectedCondition">
+		<rbs-document-list data-dlid="DLRbsCatalogProductCategories" model="Rbs_Catalog_Category" publishable="true" extend="List"
+			collection-url="(= categoryListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductFromCategories"
+			data-container-id="document.id" data-condition-id="List.selectedCondition.id" cascade-edition="(= document.label=)"
+			use-properties="_priority">
+			<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
+			<column name="label" primary="true">
+				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+			</column>
+			<column name="shop">
+				<a ng-if="doc.shop" href="(= doc.shop | documentURL =)">(= doc.shop.label =)</a>
+			</column>
+			<column name="section">
+				<a ng-if="doc.section" href="(= doc.section | documentURL =)">(= doc.section.label =)</a>
+			</column>
+			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.category.highlight', ['ucf']) }}" align="center" width="90px">
+				<switch ng-model="doc._highlight" ng-change="extend.toggleHighlight(doc)"></switch>
+			</column>
+
+			<quick-actions>
+				[action edit]
+				|| [action Rbs_Catalog_RemoveProductFromCategories]
+			</quick-actions>
+
+			<grid-item class="folder">
+				<img rbs-storage-image="doc.visual.id" thumbnail="L"/>
+				<div class="caption">
+					<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL:'tree' =)">(= doc.label =)</a></h4>
+				</div>
+			</grid-item>
+		</rbs-document-list>
+
+		<h4>{{ i18n('m.rbs.catalog.document.product.add-categories', ['ucf']) }}</h4>
+
+		<div class="control-group property">
+			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.document.product.categories', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="document-picker-multiple" ng-model="List.categoriesToAdd"
+					accepted-model="Rbs_Catalog_Category"
+					property-label="{{ i18n('m.rbs.catalog.document.product.categories', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.document.product.categories-picker-title', ['ucf']) }}"
+					master-label="(= document.label =)"
+					allow-edition="false" allow-creation="false" disable-reordering="true">
+				</div>
+
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-primary" data-ng-click="addCategoriesFromPicker()" data-ng-disabled="hasCategoriesToAdd()">{{ i18n('m.rbs.admin.add', ['ucf']) }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-actions">
+		<button disabled="disabled" class="btn btn-headline" type="button" data-ng-click="goBack($event)" data-ng-disabled="!canGoBack()">
+			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}
+		</button>
+	</div>
+</form>
