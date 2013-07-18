@@ -35,6 +35,7 @@ class Install
 			'\\Rbs\\Tag\\Db\\ListenerAggregate');
 	}
 
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
@@ -44,7 +45,16 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$this->initializeTables($applicationServices);
+		$this->createDefaultTags($applicationServices, $documentServices);
+	}
 
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 */
+	private function initializeTables($applicationServices)
+	{
 		$schemaManager = $applicationServices->getDbProvider()->getSchemaManager();
 
 		// Create table tag <-> doc
@@ -72,6 +82,47 @@ class Install
 		$td->addField($searchTagIdField);
 		$schemaManager->createOrAlterTable($td);
 	}
+
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @throws
+	 */
+	private function createDefaultTags($applicationServices, $documentServices)
+	{
+		$tagModel = $documentServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
+		$documentManager = $documentServices->getDocumentManager();
+
+		$tags = array(
+			'à traduire' => 'red'
+		);
+
+		$transactionManager = $applicationServices->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			foreach ($tags as $label => $color)
+			{
+				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Tag_Tag');
+				$tag = $query->andPredicates($query->eq('label', $label))->getFirstDocument();
+				if (!$tag)
+				{
+					/* @var $tag \Rbs\Tag\Documents\Tag */
+					$tag = $documentManager->getNewDocumentInstanceByModel($tagModel);
+					$tag->setLabel($label);
+					$tag->setColor($color);
+					$tag->create();
+				}
+			}
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
