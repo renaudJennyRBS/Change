@@ -102,13 +102,13 @@ class ValidateListener
 				$this->addPropertyError($property->getName(), new PreparedKey('c.constraints.isempty', array('ucf')));
 				return false;
 			}
-			elseif ($property->getMaxOccurs() > 1 && $nbValue > $property->getMaxOccurs())
+			elseif ($nbValue > $property->getMaxOccurs())
 			{
 				$args = array('maxOccurs' => $property->getMaxOccurs());
 				$this->addPropertyError($property->getName(), new PreparedKey('c.constraints.maxoccurs', array('ucf'), array($args)));
 				return false;
 			}
-			elseif ($property->getMinOccurs() > 1 && $nbValue < $property->getMinOccurs())
+			elseif ($nbValue < $property->getMinOccurs())
 			{
 				$args = array('minOccurs' => $property->getMinOccurs());
 				$this->addPropertyError($property->getName(), new PreparedKey('c.constraints.minoccurs', array('ucf'), array($args)));

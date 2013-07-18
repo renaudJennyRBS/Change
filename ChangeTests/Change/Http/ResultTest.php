@@ -12,7 +12,7 @@ class ResultTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$result = new Result();
 		$this->assertInstanceOf('\Change\Http\Result', $result);
-		$this->assertNull($result->getHttpStatusCode());
+		$this->assertEquals(200, $result->getHttpStatusCode());
 
 		return $result;
 	}
@@ -24,8 +24,8 @@ class ResultTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testHttpStatusCode($result)
 	{
-		$result->setHttpStatusCode(200);
-		$this->assertEquals(200, $result->getHttpStatusCode());
+		$result->setHttpStatusCode(201);
+		$this->assertEquals(201, $result->getHttpStatusCode());
 		return $result;
 	}
 

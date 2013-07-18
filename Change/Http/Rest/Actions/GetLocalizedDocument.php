@@ -6,13 +6,13 @@ use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\Result\DocumentResult;
-use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\TreeNodeLink;
+use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ModelLink;
+use Change\Http\Rest\Result\TreeNodeLink;
+use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Change\Http\Rest\Actions\GetLocalizedDocument
@@ -117,7 +117,7 @@ class GetLocalizedDocument
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @param AbstractDocument  $document
+	 * @param AbstractDocument $document
 	 * @param string $LCID
 	 * @return DocumentResult
 	 */
@@ -154,11 +154,11 @@ class GetLocalizedDocument
 		}
 
 		$result->setProperties($properties);
-
-		$this->addActions($result, $document, $urlManager, $LCID);
+		$this->addCorrection($result, $document, $urlManager);
 
 		$event->setResult($result);
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result, 'urlManager' => $urlManager));
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result,
+			'urlManager' => $urlManager));
 		$document->getEventManager()->trigger($documentEvent);
 
 		$i18n = array();
@@ -186,58 +186,18 @@ class GetLocalizedDocument
 
 	/**
 	 * @param DocumentResult $result
-	 * @param AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Http\UrlManager $urlManager
-	 * @param string $LCID
 	 */
-	protected function addActions($result, $document, $urlManager, $LCID)
+	protected function addCorrection($result, $document, $urlManager)
 	{
-		if ($document instanceof Correction)
+		if ($document->getDocumentModel()->useCorrection())
 		{
-			/* @var $document AbstractDocument|Correction */
+			/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
 			$correction = $document->getCurrentCorrection();
 			if ($correction)
 			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$result->addAction($l);
-
-				if ($correction->isDraft())
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionValidation');
-					$result->addAction($l);
-				}
-				elseif ($correction->inValidation())
-				{
-					$l = new DocumentActionLink($urlManager, $document, 'startCorrectionPublication');
-					$result->addAction($l);
-				}
-			}
-		}
-
-		if ($document instanceof Publishable)
-		{
-			/* @var $document AbstractDocument|Publishable */
-			if ($document->canStartValidation())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'startValidation');
-				$result->addAction($l);
-			}
-
-			if ($document->canStartPublication())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'startPublication');
-				$result->addAction($l);
-			}
-
-			if ($document->canActivate())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'activate');
-				$result->addAction($l);
-			}
-
-			if ($document->canDeactivate())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'deactivate');
+				$l = new DocumentActionLink($urlManager, $document, 'correction');
 				$result->addAction($l);
 			}
 		}

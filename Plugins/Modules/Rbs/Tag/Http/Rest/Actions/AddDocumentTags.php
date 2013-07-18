@@ -2,7 +2,6 @@
 namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
-use \Change\Documents\Query\Builder;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 
@@ -32,6 +31,7 @@ class AddDocumentTags
 	/**
 	 * Use Event Params: tags[], docId
 	 * @param \Change\Http\Event $event
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{

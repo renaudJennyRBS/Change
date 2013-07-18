@@ -1,6 +1,10 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\Interfaces\Localizable;
+use Change\Http\UrlManager;
+
 /**
  * @name \Change\Http\Rest\Result\DocumentActionLink
  */
@@ -12,9 +16,14 @@ class DocumentActionLink extends Link
 	protected $action;
 
 	/**
-	 * @var \Change\Documents\AbstractDocument
+	 * @var string
 	 */
-	protected $document;
+	protected $modelName;
+
+	/**
+	 * @var integer
+	 */
+	protected $id;
 
 	/**
 	 * @var string
@@ -22,59 +31,52 @@ class DocumentActionLink extends Link
 	protected $LCID;
 
 	/**
-	 * @param \Change\Http\UrlManager $urlManager
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param string $action
-	 * @return \Change\Http\Rest\Result\DocumentActionLink
+	 * @param string $modelName
+	 * @return $this
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action)
+	public function setModelName($modelName)
 	{
-		$this->document = $document;
-		$this->action = $action;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{
-			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();
-		}
-		parent::__construct($urlManager, $this->buildPathInfo(), $this->action);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function buildPathInfo()
-	{
-		$path = array('resourcesactions', $this->getAction(), $this->getId());
-		if ($this->LCID)
-		{
-			$path[] = $this->LCID;
-		}
-		return implode('/', $path);
-	}
-
-	/**
-	 * @param string $action
-	 */
-	public function setAction($action)
-	{
-		$this->action = $action;
+		$this->modelName = $modelName;
 		$this->setPathInfo($this->buildPathInfo());
+		return $this;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getAction()
+	public function getModelName()
 	{
-		return $this->action;
+		return $this->modelName;
+	}
+
+	/**
+	 * @param int $id
+	 * @return $this
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+		$this->setPathInfo($this->buildPathInfo());
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
 	}
 
 	/**
 	 * @param string $LCID
+	 * @return $this
 	 */
 	public function setLCID($LCID)
 	{
 		$this->LCID = $LCID;
 		$this->setPathInfo($this->buildPathInfo());
+		return $this;
 	}
 
 	/**
@@ -86,10 +88,62 @@ class DocumentActionLink extends Link
 	}
 
 	/**
-	 * @return integer
+	 * @param string $action
+	 * @return $this
 	 */
-	public function getId()
+	public function setAction($action)
 	{
-		return $this->document->getId();
+		$this->action = $action;
+		$this->setPathInfo($this->buildPathInfo());
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAction()
+	{
+		return $this->action;
+	}
+
+	/**
+	 * @param UrlManager $urlManager
+	 * @param AbstractDocument $document
+	 * @param string $action
+	 * @return \Change\Http\Rest\Result\DocumentActionLink
+	 */
+	public function __construct(UrlManager $urlManager, AbstractDocument $document, $action = null)
+	{
+		$this->modelName = $document->getDocumentModelName();
+		$this->id = $document->getId();
+		$this->action = $action;
+		if ($document instanceof Localizable)
+		{
+			/* @var $document Localizable|AbstractDocument */
+			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();
+		}
+		parent::__construct($urlManager, $this->buildPathInfo(), $this->action);
+	}
+
+	protected function buildPathInfo()
+	{
+		$path = array('resources');
+		if ($this->getModelName())
+		{
+			$path = array_merge($path, explode('_', $this->getModelName()));
+		}
+		if ($this->getId())
+		{
+			$path[] = $this->getId();
+		}
+		if ($this->getLCID())
+		{
+			$path[] = $this->getLCID();
+		}
+		if ($this->getAction())
+		{
+			$path[] = $this->getAction();
+		}
+		return implode('/', $path);
 	}
 }

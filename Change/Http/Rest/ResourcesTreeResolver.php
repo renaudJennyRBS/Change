@@ -146,7 +146,7 @@ class ResourcesTreeResolver
 						return;
 					}
 
-					$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
+					$result = $event->getController()->notAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
 					$event->setResult($result);
 					return;
 				}
@@ -182,7 +182,7 @@ class ResourcesTreeResolver
 						$event->setAction($action);
 						return;
 					}
-					$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
+					$result = $event->getController()->notAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
 					$event->setResult($result);
 					return;
 				}

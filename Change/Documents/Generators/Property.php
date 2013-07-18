@@ -222,7 +222,7 @@ class Property
 					break;
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
-					if ($this->maxOccurs != -1 && $this->maxOccurs < 1)
+					if ($this->maxOccurs <= 1)
 					{
 						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
@@ -529,7 +529,7 @@ class Property
 			}
 			$p = $p->getParent();
 		}
-		return -1;
+		return 100;
 	}
 
 	/**
@@ -672,6 +672,10 @@ class Property
 
 		if ($this->hasCorrection)
 		{
+			if ($this->name === 'label')
+			{
+				throw new \RuntimeException('Invalid has-correction attribute on ' . $this->model . '::' . $this, 54028);
+			}
 			$model->getRoot()->implementCorrection(true);
 		}
 
@@ -684,11 +688,15 @@ class Property
 				case 'treeName':
 					$this->makeLocalized(null);
 					break;
+				case 'label':
+					if ($this->localized !== null)
+					{
+						throw new \RuntimeException('Invalid localized attribute on ' . $this->model . '::' . $this, 54028);
+					}
+					break;
 				case 'LCID':
 				case 'creationDate':
 				case 'modificationDate':
-
-				case 'label':
 				case 'title':
 				case 'authorName':
 				case 'authorId':
@@ -725,7 +733,7 @@ class Property
 		{
 			$mi = $this->getComputedMinOccurs();
 			$ma = $this->getComputedMaxOccurs();
-			if ($ma != -1 && $ma < $mi)
+			if ($ma < $mi)
 			{
 				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this, 54028);
 			}

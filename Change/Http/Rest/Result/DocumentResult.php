@@ -160,6 +160,15 @@ class DocumentResult extends Result
 	}
 
 	/**
+	 * @param string $name
+	 * @return mixed|null
+	 */
+	public function getProperty($name)
+	{
+		return isset($this->properties[$name]) ? $this->properties[$name] : null;
+	}
+
+	/**
 	 * @param array $i18n
 	 */
 	public function setI18n($i18n)

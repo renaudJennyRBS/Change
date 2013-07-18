@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Workflow\Tasks\PublicationProcess;
 
+use Change\Documents\Interfaces\Publishable;
+use Change\Workflow\Interfaces\WorkItem;
 use Zend\EventManager\Event;
 /**
 * @name \Rbs\Workflow\Tasks\PublicationProcess\Unfreeze
@@ -9,17 +11,33 @@ class Unfreeze
 {
 	/**
 	 * @param Event $event
+	 * @throws \Exception
 	 */
 	public function execute(Event $event)
 	{
-		/* @var $workItem \Change\Workflow\Interfaces\WorkItem */
+		/* @var $workItem WorkItem */
 		$workItem = $event->getParam('workItem');
+		$document = $workItem->getWorkflowInstance()->getDocument();
+		if ($document instanceof Publishable)
+		{
+			if ($document->getPublicationStatus() === Publishable::STATUS_FROZEN)
+			{
+				$documentServices = $document->getDocumentServices();
+				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$transactionManager->begin();
 
-		/* @var $documentServices \Change\Documents\DocumentServices */
-		$documentServices = $event->getParam('documentServices');
-		$ctx = $workItem->getContext();
+					$document->updatePublicationStatus(Publishable::STATUS_VALID);
 
-		//TODO
-		$documentServices->getApplicationServices()->getLogging()->info(__METHOD__);
+					$transactionManager->commit();
+
+				}
+				catch (\Exception $e)
+				{
+					throw $transactionManager->rollBack($e);
+				}
+			}
+		}
 	}
 }

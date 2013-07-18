@@ -46,7 +46,7 @@ class CatalogResolver
 		{
 			if ($method !== Request::METHOD_GET)
 			{
-				$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET));
+				$result = $event->getController()->notAllowedError($method, array(Request::METHOD_GET));
 				$event->setResult($result);
 				return;
 			}
@@ -123,7 +123,7 @@ class CatalogResolver
 						break;
 
 					default:
-						$result = $this->resolver->buildNotAllowedError($method,
+						$result = $event->getController()->notAllowedError($method,
 							array(Request::METHOD_GET, Request::METHOD_DELETE, Request::METHOD_POST, Request::METHOD_PUT));
 						$event->setResult($result);
 						break;
@@ -178,7 +178,7 @@ class CatalogResolver
 						break;
 
 					default:
-						$result = $this->resolver->buildNotAllowedError($method,
+						$result = $event->getController()->notAllowedError($method,
 							array(Request::METHOD_GET, Request::METHOD_DELETE, Request::METHOD_POST, Request::METHOD_PUT));
 						$event->setResult($result);
 						break;

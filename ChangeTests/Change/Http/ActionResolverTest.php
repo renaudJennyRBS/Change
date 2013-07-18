@@ -1,7 +1,7 @@
 <?php
 namespace ChangeTests\Change\Http;
 
-use Change\Http\ActionResolver;
+use Change\Http\BaseResolver;
 
 class ActionResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,7 +10,7 @@ class ActionResolverTest extends \PHPUnit_Framework_TestCase
 		$event = new \Change\Http\Event();
 		$event->setAction('test');
 
-		$resolver = new ActionResolver();
+		$resolver = new BaseResolver();
 
 		$resolver->resolve($event);
 

@@ -1,6 +1,9 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+
 /**
  * @name \Change\Documents\Correction
  * @api
@@ -9,6 +12,8 @@ class Correction
 {
 	const STATUS_DRAFT = 'DRAFT';
 	const STATUS_VALIDATION = 'VALIDATION';
+	const STATUS_VALIDCONTENT = 'VALIDCONTENT';
+	const STATUS_VALID = 'VALID';
 	const STATUS_PUBLISHABLE = 'PUBLISHABLE';
 	const STATUS_FILED = 'FILED';
 	
@@ -184,9 +189,36 @@ class Correction
 	 * @api
 	 * @return boolean
 	 */
+	public function isValidContent()
+	{
+		return $this->getStatus() === static::STATUS_VALIDCONTENT;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isValid()
+	{
+		return $this->getStatus() === static::STATUS_VALID;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function isPublishable()
 	{
 		return $this->getStatus() === static::STATUS_PUBLISHABLE;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isFiled()
+	{
+		return $this->getStatus() === static::STATUS_FILED;
 	}
 
 	/**
@@ -199,6 +231,8 @@ class Correction
 		{
 			case static::STATUS_DRAFT:
 			case static::STATUS_VALIDATION:
+			case static::STATUS_VALIDCONTENT;
+			case static::STATUS_VALID;
 			case static::STATUS_PUBLISHABLE:
 			case static::STATUS_FILED:
 				$this->modified = true;
@@ -419,6 +453,185 @@ class Correction
 	public function __toString()
 	{
 		return 'Id:' . $this->id . '('. $this->status.'), document: ' . $this->documentId;
+	}
+
+	/**
+	 * @api
+	 */
+	public function save()
+	{
+		if (!$this->hasModifiedProperties())
+		{
+			$this->getStatus(static::STATUS_FILED);
+		}
+
+		if (!$this->isNew())
+		{
+			$this->update();
+		}
+		elseif ($this->getStatus() !== static::STATUS_FILED)
+		{
+			$this->insert();
+		}
+	}
+
+	/**
+	 * @api
+	 */
+	public function updateStatus()
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('updateCorrectionStatus');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status'))
+				->assign('publicationdate', $fb->dateTimeParameter('publicationdate'))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id')));
+		}
+		$uq = $qb->updateQuery();
+		$uq->bindParameter('status', $this->getStatus());
+		$uq->bindParameter('publicationdate', $this->getPublicationDate());
+		$uq->bindParameter('id', $this->getId());
+		$uq->execute();
+		$this->setModified(false);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 * @return boolean
+	 */
+	public function merge()
+	{
+		$document = $this->getDocument();
+		if ($document)
+		{
+			/* @var $document AbstractDocument */
+			if ($document->hasModifiedProperties())
+			{
+				throw new \InvalidArgumentException('Document ' . $document . ' is already modified', 51007);
+			}
+
+			$model = $document->getDocumentModel();
+			foreach ($model->getProperties() as $propertyName => $property)
+			{
+				/* @var $property \Change\Documents\Property */
+				if ($this->isModifiedProperty($propertyName))
+				{
+					$property->setValue($document, $this->getPropertyValue($propertyName));
+					if ($document->isPropertyModified($propertyName))
+					{
+						$oldValue = $property->getOldValue($document);
+						$this->setPropertyValue($propertyName, $oldValue);
+					}
+					else
+					{
+						$this->unsetPropertyValue($propertyName);
+					}
+				}
+			}
+			$this->doMergeCorrection($document);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param AbstractDocument $document
+	 * @throws \Exception
+	 */
+	protected function doMergeCorrection($document)
+	{
+		$document->setModificationDate(new \DateTime());
+		if ($document instanceof Editable)
+		{
+			$document->nextDocumentVersion();
+		}
+
+		$this->setStatus(static::STATUS_FILED);
+		$this->setPublicationDate(new \DateTime());
+
+		$dm = $this->getDocumentManager();
+		$dm->updateDocument($document);
+
+		if ($document instanceof Localizable)
+		{
+			$document->saveCurrentLocalization();
+		}
+		$this->save();
+	}
+
+	/**
+	 * @return AbstractDocument|null
+	 */
+	protected function getDocument()
+	{
+		return $this->documentManager->getDocumentInstance($this->getDocumentId());
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->documentManager->getApplicationServices()->getDbProvider();
+	}
+
+	protected function insert()
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('insertCorrection');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->insert($fb->getDocumentCorrectionTable())
+				->addColumns($fb->getDocumentColumn('id'), 'lcid', 'status', 'creationdate', 'publicationdate', 'datas')
+				->addValues($fb->integerParameter('id', $qb), $fb->parameter('lcid'), $fb->parameter('status'),
+					$fb->dateTimeParameter('creationdate'), $fb->dateTimeParameter('publicationdate'),
+					$fb->lobParameter('datas'));
+		}
+
+		$iq = $qb->insertQuery();
+		$iq->bindParameter('id', $this->getDocumentId());
+		$iq->bindParameter('lcid', $this->getLCID());
+		$iq->bindParameter('status', $this->getStatus());
+		$iq->bindParameter('creationdate', $this->getCreationDate());
+		$iq->bindParameter('publicationdate', $this->getPublicationDate());
+		$iq->bindParameter('datas', serialize($this->getDatas()));
+		$iq->execute();
+		$this->setId($iq->getDbProvider()->getLastInsertId($iq->getInsertClause()->getTable()->getName()));
+
+		$this->setModified(false);
+
+		//Dispatch new correction created
+		$document = $this->getDocument();
+		if ($document)
+		{
+			$event = new Events\Event(Events\Event::EVENT_CORRECTION_CREATED, $document, array('correction' => $this));
+			$document->getEventManager()->trigger($event);
+		}
+	}
+
+	protected function update()
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('updateCorrection');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->getDocumentCorrectionTable())
+				->assign('status', $fb->parameter('status'))
+				->assign('publicationdate', $fb->dateTimeParameter('publicationdate'))
+				->assign('datas', $fb->lobParameter('datas'))
+				->where($fb->eq($fb->column('correction_id'), $fb->integerParameter('id')));
+		}
+		$uq = $qb->updateQuery();
+
+		$uq->bindParameter('status', $this->getStatus());
+		$uq->bindParameter('publicationdate', $this->getPublicationDate());
+		$uq->bindParameter('datas', serialize($this->getDatas()));
+		$uq->bindParameter('id', $this->getId());
+		$uq->execute();
+
+		$this->setModified(false);
 	}
 }
 

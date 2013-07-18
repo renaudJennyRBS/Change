@@ -31,22 +31,22 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	private $modifiedProperties = array();
 
 	/**
-	 * @var AbstractModel
+	 * @var \Change\Documents\AbstractModel
 	 */
 	protected $documentModel;
 	
 	/**
-	 * @var DocumentServices
+	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
 
 	/**
-	 * @var EventManager
+	 * @var \Zend\EventManager\EventManager
 	 */
 	protected $eventManager;
 
 	/**
-	 * @param DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param AbstractModel $model
 	 */
 	public function __construct(DocumentServices $documentServices, AbstractModel $model)
@@ -98,7 +98,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @api
-	 * @return DocumentServices
+	 * @return \Change\Documents\DocumentServices
 	 */
 	public function getDocumentServices()
 	{
@@ -107,7 +107,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @api
-	 * @return AbstractModel
+	 * @return \Change\Documents\AbstractModel
 	 */
 	public function getDocumentModel()
 	{
@@ -151,7 +151,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 
 	}
-
 
 	/**
 	 * @return \Change\Documents\DocumentManager

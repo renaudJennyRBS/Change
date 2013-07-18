@@ -16,7 +16,7 @@
 			<dboptions length="5" />
 		</property>
 		<property name="context" type="JSON" />
-		<property name="user" type="Document" document-type="Rbs_User_User" />
+		<property name="userId" type="DocumentId" />
 		<property name="role"  type="String" >
 			<dboptions length="100" />
 		</property>

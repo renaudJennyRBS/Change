@@ -3,10 +3,10 @@ namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Documents\DocumentCollection;
 use Change\Http\Rest\Result\CollectionResult;
-use \Change\Documents\Query\Builder;
-use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\Link;
+use Zend\Http\Response as HttpResponse;
+
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\GetTaggedDocuments
  */
@@ -99,7 +99,7 @@ class GetTaggedDocuments
 			$sc->bindParameter('model', $requestedModelName);
 		}
 
-			$row = $sc->getFirstResult();
+		$row = $sc->getFirstResult();
 		if ($row && $row['count'])
 		{
 			$result->setCount(intval($row['count']));

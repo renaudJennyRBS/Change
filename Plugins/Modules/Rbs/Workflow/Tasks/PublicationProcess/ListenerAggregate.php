@@ -43,6 +43,13 @@ class ListenerAggregate implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
+			$task = new PublicationValidation();
+			$task->execute($event);
+		};
+		$events->attach('publicationValidation', $callback, 5);
+
+		$callback = function (Event $event)
+		{
 			$task = new Freeze();
 			$task->execute($event);
 		};

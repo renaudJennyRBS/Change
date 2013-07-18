@@ -535,7 +535,7 @@ class BaseDocumentClass
 		$localizedPart = $this->getCurrentLocalization();
 		if ($localizedPart->set' . $un . '(' . $var . '))
 		{
-			$this->removeOldPropertyValue(' . $en . ');
+			$this->unsetOldPropertyValue(' . $en . ');
 			if ($localizedPart->isPropertyModified(' . $en . '))
 			{
 				$this->setOldPropertyValue(' . $en . ', $localizedPart->get' . $un . 'OldValue());

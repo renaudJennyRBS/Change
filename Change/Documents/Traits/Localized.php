@@ -15,7 +15,6 @@ use Change\Documents\DocumentManager;
  * @method \Change\Application\ApplicationServices getApplicationServices()
  *
  * @method string[] getModifiedPropertyNames()
- * @method removeOldPropertyValue($propertyName)
  * @method setOldPropertyValue($propertyName, $value)
  */
 trait Localized
@@ -233,7 +232,7 @@ trait Localized
 				$model = $this->getDocumentModel();
 				foreach ($model->getLocalizedProperties() as $name => $property)
 				{
-					$this->removeOldPropertyValue($name);
+					$this->unsetOldPropertyValue($name);
 				}
 
 				foreach ($localizedPart->getModifiedProperties() as $name => $value)
@@ -245,6 +244,25 @@ trait Localized
 		}
 
 		return $localizedPart;
+	}
+
+	/**
+	 * @api
+	 * @param string $propertyName
+	 */
+	public function removeOldPropertyValue($propertyName)
+	{
+		parent::removeOldPropertyValue($propertyName);
+		$this->getCurrentLocalization()->removeOldPropertyValue($propertyName);
+	}
+
+	/**
+	 * @api
+	 * @param string $propertyName
+	 */
+	protected function unsetOldPropertyValue($propertyName)
+	{
+		parent::removeOldPropertyValue($propertyName);
 	}
 
 	/**

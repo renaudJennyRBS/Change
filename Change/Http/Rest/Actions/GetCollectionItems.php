@@ -19,11 +19,8 @@ class GetCollectionItems
 		$request = $event->getRequest();
 		if (!$request->isGet())
 		{
-			$resolver = $event->getController()->getActionResolver();
-			if ($resolver instanceof \Change\Http\Rest\Resolver)
-			{
-				$resolver->buildNotAllowedError($request->getMethod(), array(Request::METHOD_GET));
-			}
+			$result = $event->getController()->notAllowedError($request->getMethod(), array(Request::METHOD_GET));
+			$event->setResult($result);
 			return;
 		}
 

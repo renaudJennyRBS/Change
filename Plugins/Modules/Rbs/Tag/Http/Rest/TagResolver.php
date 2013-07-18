@@ -55,8 +55,6 @@ class TagResolver {
 				$event->setAction($action);
 				return;
 			}
-
-
 		}
 		else if (($nbParts === 6 || $nbParts === 7) && $pathParts[$nbParts-1] === 'tags')
 		{
@@ -112,55 +110,6 @@ class TagResolver {
 				$event->setAction($action);
 				return;
 			}
-
-
-			/*
-						if ($method === Request::METHOD_POST)
-						{
-							$privilege = $modelName . '.create';
-							$this->resolver->setAuthorisation($event, $modelName, $privilege);
-
-							$action = function ($event)
-							{
-								$action = new CreateLocalizedDocument();
-								$action->execute($event);
-							};
-							$event->setAction($action);
-							return;
-						}
-
-						if ($method === Request::METHOD_PUT)
-						{
-							$privilege = $modelName . '.updateLocalized';
-							$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
-							$action = function ($event)
-							{
-								$action = new UpdateLocalizedDocument();
-								$action->execute($event);
-							};
-							$event->setAction($action);
-							return;
-						}
-
-						if ($method === Request::METHOD_DELETE)
-						{
-							$privilege = $modelName . '.deleteLocalized';
-							$this->resolver->setAuthorisation($event, $documentId, $privilege);
-
-							$action = function ($event)
-							{
-								$action = new DeleteLocalizedDocument();
-								$action->execute($event);
-							};
-							$event->setAction($action);
-							return;
-						}
-			*/
 		}
-
-
-
-
 	}
 }

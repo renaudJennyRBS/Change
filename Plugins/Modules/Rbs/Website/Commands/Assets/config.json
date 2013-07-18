@@ -1,0 +1,11 @@
+{
+	"rbs_website:add-default-website": {
+		"description": "Add default Website",
+		"options":{
+			"baseURL": {
+				"description": "base url of website",
+				"default": "http://localhost/index.php/"
+			}
+		}
+	}
+}

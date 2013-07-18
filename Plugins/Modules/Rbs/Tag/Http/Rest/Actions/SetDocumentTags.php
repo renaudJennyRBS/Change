@@ -2,9 +2,8 @@
 namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
-use \Change\Documents\Query\Builder;
-use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
+use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\SetDocumentTags

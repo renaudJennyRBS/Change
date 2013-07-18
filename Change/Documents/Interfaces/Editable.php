@@ -5,7 +5,25 @@ namespace Change\Documents\Interfaces;
  * @name \Change\Documents\Interfaces\Editable
  */
 interface Editable
-{	
+{
+	/**
+	 * @api
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public function getDocumentModel();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices();
+
 	/**
 	 * @return string
 	 */

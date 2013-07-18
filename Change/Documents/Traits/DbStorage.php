@@ -1,8 +1,11 @@
 <?php
 namespace Change\Documents\Traits;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentManager;
 use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\PropertiesValidationException;
 
 /**
  * @name \Change\Documents\Traits\DbStorage
@@ -12,16 +15,19 @@ use Change\Documents\Events\Event as DocumentEvent;
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method \Zend\EventManager\EventManagerInterface getEventManager()
- * @method \Change\Application\ApplicationServices getApplicationServices()
  * @method string[] getModifiedPropertyNames()
  * @method boolean hasModifiedProperties()
  * @method setModificationDate($dateTime)
  *
  * From \Change\Documents\Traits\Correction
- * @method saveCorrections()
+ * @method saveCorrection()
+ * @method populateCorrection()
  *
  * From \Change\Documents\Traits\Localized
  * @method deleteAllLocalizedPart()
+ *
+ * From \Change\Documents\Traits\Publication
+ * @method string[] getValidPublicationStatusForCorrection()
  *
  */
 trait DbStorage
@@ -91,7 +97,7 @@ trait DbStorage
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
+			$e = new PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
@@ -108,13 +114,15 @@ trait DbStorage
 	 */
 	protected function doCreate()
 	{
-		$dm = $this->getDocumentManager();
-		$dm->affectId($this);
-		$dm->insertDocument($this);
+		/* @var $document AbstractDocument|Localizable */
+		$document = $this;
 
-		if ($this instanceof \Change\Documents\Interfaces\Localizable)
+		$dm = $this->getDocumentManager();
+		$dm->affectId($document);
+		$dm->insertDocument($document);
+		if ($document instanceof Localizable)
 		{
-			$this->saveCurrentLocalization();
+			$document->saveCurrentLocalization();
 		}
 	}
 
@@ -140,15 +148,18 @@ trait DbStorage
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
+			$e = new PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
 
 		$modifiedPropertyNames = $this->getModifiedPropertyNames();
+		if ($this->getDocumentModel()->useCorrection())
+		{
+			$this->populateCorrection();
+		}
 
 		$this->doUpdate();
-
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
 		$this->getEventManager()->trigger($event);
 	}
@@ -161,7 +172,7 @@ trait DbStorage
 	{
 		if ($this->getDocumentModel()->useCorrection())
 		{
-			$modified = $this->saveCorrections();
+			$modified = $this->saveCorrection();
 		}
 		else
 		{
@@ -181,7 +192,7 @@ trait DbStorage
 
 			$dm->updateDocument($this);
 
-			if ($this instanceof \Change\Documents\Interfaces\Localizable)
+			if ($this instanceof Localizable)
 			{
 				$this->saveCurrentLocalization();
 			}

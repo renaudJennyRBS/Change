@@ -30,6 +30,18 @@ interface Publishable
 
 	/**
 	 * @api
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public function getDocumentModel();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices();
+
+	/**
+	 * @api
 	 * @return string
 	 */
 	public function getPublicationStatus();
@@ -39,28 +51,35 @@ interface Publishable
 	 * @param string $publicationStatus
 	 */
 	public function setPublicationStatus($publicationStatus);
+
+	/**
+	 * Return valid PublicationStatus for correction system
+	 * @api
+	 * @return string[]
+	 */
+	public function getValidPublicationStatusForCorrection();
 	
 	/**
 	 * @api
-	 * @return string|null
+	 * @return \DateTime|null
 	 */
 	public function getStartPublication();
 		
 	/**
 	 * @api
-	 * @param string|null $startPublication
+	 * @param \DateTime|null $startPublication
 	 */
 	public function setStartPublication($startPublication);
 	
 	/**
 	 * @api
-	 * @return string|null
+	 * @return \DateTime|null
 	 */
 	public function getEndPublication();
 	
 	/**
 	 * @api
-	 * @param string|null $endPublication
+	 * @param \DateTime|null $endPublication
 	 */
 	public function setEndPublication($endPublication);
 
@@ -78,10 +97,10 @@ interface Publishable
 
 	/**
 	 * @api
-	 * @param \Change\Presentation\Interfaces\Website $preferredWebsite
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @return \Change\Presentation\Interfaces\Section
 	 */
-	public function getDefaultSection(\Change\Presentation\Interfaces\Website $preferredWebsite = null);
+	public function getCanonicalSection(\Change\Presentation\Interfaces\Website $website = null);
 
 	/**
 	 * @param \DateTime $at
@@ -90,42 +109,14 @@ interface Publishable
 	public function published(\DateTime $at = null);
 
 	/**
-	 * @return boolean
+	 * Return true if is publishable or a string for reason if is unpublishable
+	 * @return string|boolean
 	 */
-	public function canStartValidation();
+	public function isPublishable();
+
 
 	/**
-	 * @throws \RuntimeException
+	 * @param string $newPublicationStatus
 	 */
-	public function startValidation();
-
-	/**
-	 * @return boolean
-	 */
-	public function canStartPublication();
-
-	/**
-	 * @throws \RuntimeException
-	 */
-	public function startPublication();
-
-	/**
-	 * @return boolean
-	 */
-	public function canDeactivate();
-
-	/**
-	 * @throws \RuntimeException
-	 */
-	public function deactivate();
-
-	/**
-	 * @return boolean
-	 */
-	public function canActivate();
-
-	/**
-	 * @throws \RuntimeException
-	 */
-	public function activate();
+	public function updatePublicationStatus($newPublicationStatus);
 }

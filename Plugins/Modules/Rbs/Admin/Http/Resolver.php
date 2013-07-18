@@ -1,14 +1,14 @@
 <?php
 namespace Rbs\Admin\Http;
 
-use Change\Http\ActionResolver;
+use Change\Http\BaseResolver;
 use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Rbs\Admin\Http\Resolver
  */
-class Resolver extends ActionResolver
+class Resolver extends BaseResolver
 {
 	/**
 	 * @param Event $event

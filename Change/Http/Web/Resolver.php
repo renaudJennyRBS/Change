@@ -1,7 +1,7 @@
 <?php
 namespace Change\Http\Web;
 
-use Change\Http\ActionResolver;
+use Change\Http\BaseResolver;
 use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\GetStorageItemContent;
@@ -15,7 +15,7 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Change\Http\Web\Resolver
  */
-class Resolver extends ActionResolver
+class Resolver extends BaseResolver
 {
 	/**
 	 * @param Event $event

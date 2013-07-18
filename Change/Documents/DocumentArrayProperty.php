@@ -168,7 +168,11 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 			/* @var $document AbstractDocument */
 			foreach ($documents as $document)
 			{
-				if ($this->isCompatible($document))
+				if (!$document instanceof AbstractDocument)
+				{
+					continue;
+				}
+				if (!in_array($document->getId(), $this->ids) && $this->isCompatible($document))
 				{
 					$this->ids[] = $document->getId();
 				}
@@ -177,6 +181,11 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 		else
 		{
 			throw new \InvalidArgumentException('Argument 1 should be a array or a DocumentCollection', 50001);
+		}
+
+		if ($this->defaultIds === $this->ids)
+		{
+			$this->defaultIds = null;
 		}
 	}
 
@@ -192,10 +201,15 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 		$this->ids = array();
 		foreach ($ids as $id)
 		{
-			if (($id = intval($id)) > 0)
+			if (($id = intval($id)) > 0 && !in_array($id, $this->ids))
 			{
 				$this->ids[] = $id;
 			}
+		}
+
+		if ($this->defaultIds === $this->ids)
+		{
+			$this->defaultIds = null;
 		}
 	}
 
@@ -278,7 +292,7 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 	 */
 	public function offsetGet($offset)
 	{
-		return $this->documentManager->getDocumentInstance($this->ids[$this->$offset]);
+		return $this->documentManager->getDocumentInstance($this->ids[$offset]);
 	}
 
 	/**
@@ -350,6 +364,11 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 				{
 					$this->ids[$offset] = $id;
 				}
+
+				if ($this->ids === $this->defaultIds)
+				{
+					$this->defaultIds = null;
+				}
 			}
 		}
 		else
@@ -373,6 +392,10 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 		if ($this->index >= $this->count())
 		{
 			$this->rewind();
+		}
+		if ($this->ids === $this->defaultIds)
+		{
+			$this->defaultIds = null;
 		}
 	}
 
