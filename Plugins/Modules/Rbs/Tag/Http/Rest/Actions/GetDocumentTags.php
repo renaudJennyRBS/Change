@@ -3,10 +3,10 @@ namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Documents\DocumentCollection;
 use Change\Http\Rest\Result\CollectionResult;
-use \Change\Documents\Query\Builder;
-use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\Link;
+use Zend\Http\Response as HttpResponse;
+
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\GetDocumentTags
  */
@@ -62,7 +62,8 @@ class GetDocumentTags
 			$fb->alias($fb->getDocumentColumn('model'), 'model')
 		);
 		$qb->from($fb->getDocumentTable('Rbs_Tag_Tag'));
-		$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'), $fb->eq($fb->column('tag_id', 'tag'), $fb->getDocumentColumn('id')));
+		$qb->innerJoin($fb->alias($fb->table('rbs_tag_document'), 'tag'),
+			$fb->eq($fb->column('tag_id', 'tag'), $fb->getDocumentColumn('id')));
 		$qb->where($fb->eq($fb->column('doc_id', 'tag'), $fb->integerParameter('docId')));
 		$sc = $qb->query();
 		$sc->bindParameter('docId', $docId);
@@ -74,7 +75,7 @@ class GetDocumentTags
 		foreach ($collection as $document)
 		{
 			$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-			$result->addResource($l->addResourceItemInfos($document, $urlManager, array('color','userTag')));
+			$result->addResource($l->addResourceItemInfos($document, $urlManager, array('color', 'userTag')));
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

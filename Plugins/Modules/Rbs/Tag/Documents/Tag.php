@@ -26,8 +26,9 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 	 */
 	public function setSearchTag($event)
 	{
+		/* @var $tag \Rbs\Tag\Documents\Tag */
 		$tag = $event->getDocument();
-		$appServices = $event->getDocument()->getApplicationServices();
+		$appServices = $tag->getApplicationServices();
 
 		$transactionManager = $appServices->getTransactionManager();
 		try
@@ -63,12 +64,12 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 	 */
 	public function updateSearchTag($event)
 	{
-		/** @var \Rbs\Tag\Documents\Tag $tag */
+		/* @var $tag \Rbs\Tag\Documents\Tag */
 		$tag = $event->getDocument();
 
 		// TODO Check if "children" property has been modified.
 
-		$appServices = $event->getDocument()->getApplicationServices();
+		$appServices = $tag->getApplicationServices();
 		$transactionManager = $appServices->getTransactionManager();
 		try
 		{
