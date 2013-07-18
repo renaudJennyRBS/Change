@@ -22,8 +22,8 @@
 
 			template : '<div class="switch-on-off switch">' +
 				'<div class="switch-button"></div>' +
-				'<label class="on">{{labelOn}}</label>' +
-				'<label class="off">{{labelOff}}</label>' +
+				'<label class="on">(= labelOn =)</label>' +
+				'<label class="off">(= labelOff =)</label>' +
 				'</div>',
 
 			require: 'ng-model',
@@ -34,10 +34,7 @@
 			scope: true,
 
 			link : function (scope, elm, attrs, ngModel) {
-				var sw = $(elm),
-					valueOff, valueOn, acceptedValuesOn,
-					confirmTitle
-					;
+				var sw = $(elm), valueOff, valueOn, acceptedValuesOn, confirmTitle;
 
 				// FIXME Localization
 				scope.labelOn = attrs.labelOn || 'oui';
