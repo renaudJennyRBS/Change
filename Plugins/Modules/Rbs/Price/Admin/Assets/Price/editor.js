@@ -26,7 +26,7 @@
 					}
 					if (!newValue)
 					{
-
+						scope.document.billingArea = null;
 					}
 				});
 
@@ -53,6 +53,11 @@
 						}
 
 					}
+					else
+					{
+						scope.billingArea = null;
+						scope.taxInfo = null;
+					}
 				});
 
 				scope.activationNow = function(){
@@ -70,6 +75,31 @@
 				scope.activationNextMonth = function(){
 					scope.document.startActivation = moment().add('M', 1).startOf('M').startOf('d').toDate();
 				};
+
+				scope.endActivationOneWeek = function(){
+					scope.document.endActivation = moment(scope.document.startActivation).add('w', 1).toDate();
+				};
+
+				scope.endActivationTwoWeeks = function(){
+					scope.document.endActivation = moment(scope.document.startActivation).add('w', 2).toDate();
+				};
+
+				scope.endActivationOneMonth = function(){
+					scope.document.endActivation = moment(scope.document.startActivation).add('M', 1).toDate();
+				};
+
+				scope.endActivationTomorrow = function(){
+					scope.document.endActivation = moment().endOf('d').toDate();
+				};
+
+				scope.endActivationEndOfWeek = function(){
+					scope.document.endActivation = moment().endOf('w').toDate();
+				};
+
+				scope.endActivationEndOfMonth = function(){
+					scope.document.endActivation = moment().endOf('M').toDate();
+				};
+
 			}
 		};
 	}

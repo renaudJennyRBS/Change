@@ -19,4 +19,13 @@
 	<key id="zone-exists">il existe déjà une zone avec ce code</key>
 	<key id="select-shop">sélectionner une boutique</key>
 	<key id="select-billingarea">sélectionner une zone de tarification</key>
+	<key id="now">maintenant</key>
+	<key id="tomorrow">demain</key>
+	<key id="nextmonday">lundi prochain</key>
+	<key id="nextmonth">mois prochain</key>
+	<key id="add-one-week">+1 semaine</key>
+	<key id="add-two-weeks">+2 semaines</key>
+	<key id="add-one-month">+1 mois</key>
+	<key id="end-of-week">fin de la semaine</key>
+	<key id="end-of-month">fin du mois</key>
 </i18n>
