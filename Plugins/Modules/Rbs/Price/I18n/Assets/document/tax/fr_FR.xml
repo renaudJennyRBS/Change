@@ -8,4 +8,5 @@
 	<key id="rounding-help">Détermine quand le montant des taxes doit être arrondi (sur les paniers, commandes, factures...)/</key>
 	<key id="data">taux de taxes (catégories et zones)</key>
 	<key id="category">catégorie</key>
+	<key id="not-applicable">Non Applicable</key>
 </i18n>
