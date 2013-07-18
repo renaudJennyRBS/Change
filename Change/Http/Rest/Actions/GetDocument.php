@@ -56,13 +56,6 @@ class GetDocument
 			$event->setParam('LCID', $document->getRefLCID());
 			$getLocalizedDocument = new GetLocalizedDocument();
 			$getLocalizedDocument->execute($event);
-
-			$result = $event->getResult();
-			if ($result instanceof DocumentResult)
-			{
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_303);
-			}
-
 			return;
 		}
 		$this->generateResult($event, $document);
