@@ -165,10 +165,28 @@
 				return 'javascript:;';
 			}
 
-			//if (urlName !== 'tree' && Utils.isTreeNode(node)) {
 			if (urlName !== 'tree' && Utils.isDocument(node) && ! clearParams) {
 				url += '?tn=' + node.id;
 			}
+			return url;
+		};
+
+	}]);
+
+	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
+
+		return function (doc, urlName, params) {
+			var	url,
+				node = Breadcrumb.getCurrentNode();
+
+			if (Utils.isDocument(doc)) {
+				url = doc.url(urlName);
+			} else if (Utils.isModelName(doc)) {
+				url = UrlManager.getUrl(doc, angular.extend({'id': 'new'}, params), urlName || 'form');
+			} else {
+				return 'javascript:;';
+			}
+
 			return url;
 		};
 

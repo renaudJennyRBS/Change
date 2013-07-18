@@ -1502,6 +1502,9 @@ th label {
 	color: silver;
 }
 
+.margin-top {
+	margin-top: 20px;
+}
 
 .well h5 {
 	margin-top: 0;

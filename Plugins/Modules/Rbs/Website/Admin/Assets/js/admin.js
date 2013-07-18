@@ -62,8 +62,8 @@
 		// ------ KEEP THE 'Section' and 'Menu' ROUTES BEFORE THE 'Website' ONES !
 
 		// Section functions
-		. when('/Rbs/Website/Topic/:id/Functions/',   { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
-		. when('/Rbs/Website/Website/:id/Functions/', { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Topic/:id/Functions/',   { templateUrl : 'Rbs/Website/SectionPageFunction/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:id/Functions/', { templateUrl : 'Rbs/Website/SectionPageFunction/list.twig', reloadOnSearch : false })
 
 		// Menu
 		. when('/Rbs/Website/Menu/', { templateUrl : 'Rbs/Website/Menu/list.twig', reloadOnSearch : false })
@@ -151,76 +151,5 @@
 
 		}]);
 	}]);
-
-
-
-
-
-	/**
-	 *
-	 * @param $scope
-	 * @constructor
-	 */
-	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter) {
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
-		]);
-
-		function ready (section) {
-			$scope.document = $scope.section = section;
-			Breadcrumb.setResource(null);
-			Breadcrumb.setPath([
-				[section.label, section.url('tree')],
-				['Fonctions'] // FIXME
-			]);
-
-			// Load the list (loadQuery is bound to <rbs-document-list load-query=""/>)
-			$scope.loadQuery = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', section.id);
-		}
-
-		REST.resource($routeParams.id).then(ready);
-
-		$scope.add = {};
-
-		$scope.$watch('add.newFunctionPage', function (value, oldValue) {
-			if (value !== oldValue) {
-				REST.action('collectionItems', { 'code' : 'Rbs_Website_AvailablePageFunctions', 'pageId' : value.id }).then(function (collection) {
-					$scope.pageFunctions = collection.items;
-				});
-			}
-		}, true);
-
-		$scope.addSectionFunction = function (funcPage, functions) {
-			function saveFunctions () {
-				var spf = REST.newResource('Rbs_Website_SectionPageFunction');
-				spf.page = funcPage.id;
-				spf.section = $scope.section.id;
-				spf.functionCode = functions.pop();
-				REST.save(spf).then(
-					// Success
-					function () {
-						if (functions.length) {
-							saveFunctions(functions);
-						} else {
-							$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload"});
-						}
-					},
-					// Error
-					function (error) {
-						var promises = [];
-						$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload", "promises": promises});
-						$q.all(promises).then(function () {
-							NotificationCenter.error("L'enregistrement a échoué", error);
-						});
-					}
-				);
-			}
-			saveFunctions();
-		};
-
-	}
-
-	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter'];
-	app.controller('Rbs_Website_SectionFunctionsController', SectionFunctionsController);
 
 })();

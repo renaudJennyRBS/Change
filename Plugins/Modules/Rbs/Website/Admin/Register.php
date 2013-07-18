@@ -24,19 +24,19 @@ class Register implements ListenerAggregateInterface
 			$event->setParam('header', array_merge($event->getParam('header'), $header));
 
 			$body = array('
-	<script type="text/javascript" src="Rbs/Website/js/admin.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/StaticPage/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/StaticPage/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/FunctionalPage/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/FunctionalPage/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Topic/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Topic/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Website/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Website/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Menu/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Menu/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Menu/directives/menu-card.js">​</script>
-	<script type="text/javascript" src="Rbs/Website/Menu/directives/menu-functions.js">​</script>');
+	<script type="text/javascript" src="Rbs/Website/js/admin.js"></script>
+	<script type="text/javascript" src="Rbs/Website/StaticPage/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Website/StaticPage/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Website/FunctionalPage/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Website/FunctionalPage/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Topic/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Topic/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Website/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Website/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Menu/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Website/Menu/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Website/SectionPageFunction/controllers.js">​</script>
+');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();

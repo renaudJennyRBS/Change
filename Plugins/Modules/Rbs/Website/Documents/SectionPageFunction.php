@@ -31,10 +31,10 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 		/* @var $document \Rbs\Website\Documents\SectionPageFunction */
 		$document = $event->getDocument();
 		$query = new \Change\Documents\Query\Query($document->getDocumentServices(), $document->getDocumentModel());
-		$query->andPredicates($query->eq('section', $document->getSection()), $query->eq('page', $document->getPage()), $query->eq('functionCode', $document->getFunctionCode()));
+		$query->andPredicates($query->eq('section', $document->getSection()), $query->eq('functionCode', $document->getFunctionCode()));
 		if ($query->getCountDocuments())
 		{
-			$event->setParam('propertiesErrors', array('section' => array(new \Change\I18n\PreparedKey('m.rbs.website.document.sectionpagefunction.error-not-unique'))));
+			$event->setParam('propertiesErrors', array('functionCode' => array(new \Change\I18n\PreparedKey('m.rbs.website.document.sectionpagefunction.error-not-unique'))));
 		}
 	}
 

@@ -7,14 +7,13 @@
 	<div>
 		<span class="pull-right">
 			<span ng-if="currentFolder.is('Rbs_Website_Website')"><a href ng-href="(= currentFolder | documentURL:'menus':true =)"><i class="icon-list-alt"></i> Menus</a> |</span>
+			<a href ng-click="toggleFunctions($event)"><i ng-class="{'icon-spinner icon-spin':loadingFunctions, 'icon-chevron-up':showFunctions, 'icon-chevron-down':! showFunctions}"></i> Fonctions</a> |
 			<a href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> Propriétés</a>
 		</span>
 
 		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL=)">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
 		|
 		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL=)">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
-		|
-		<a href ng-click="toggleFunctions($event)"><i ng-class="{'icon-spinner icon-spin':loadingFunctions, 'icon-chevron-up':showFunctions, 'icon-chevron-down':! showFunctions}"></i> Fonctions</a>
 	</div>
 
 	<div ng-if="sectionFunctions && showFunctions" class="well well-small">

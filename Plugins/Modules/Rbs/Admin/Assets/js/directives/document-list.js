@@ -436,6 +436,7 @@
 				'onPreview' : '&',
 				'cascadeEdition' : '@',
 				'collectionUrl' : '@',
+				'externalCollection' : '=collection',
 				'extend' : '='
 			},
 
@@ -464,6 +465,7 @@
 					var queryObject, search, columnNames, currentPath, previewCache;
 
 					scope.collection = [];
+
 					scope.gridModeAvailable = gridModeAvailable;
 					if (attrs.display) {
 						scope.viewMode = attrs.display;
@@ -475,7 +477,6 @@
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
-
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
 					scope.data = {};
@@ -569,6 +570,7 @@
 
 					function updateSelectedDocuments () {
 						scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
+						scope.$emit('Change:DocumentList:' + dlid + ':CollectionChanged', scope.collection);
 					}
 
 					scope.$watch('collection', updateSelectedDocuments, true);
@@ -743,6 +745,8 @@
 					//
 
 
+					scope.disablePagination = attrs.disablePagination === 'true';
+
 					search = $location.search();
 					scope.pagination = {
 						offset : search.offset || 0,
@@ -874,6 +878,23 @@
 					//
 
 
+					if (elm.is('[collection]')) {
+						scope.$watch('externalCollection', function (collection, oldCollection) {
+							if (collection !== oldCollection) {
+								if (angular.isObject(collection) && collection.pagination && collection.resources) {
+									documentCollectionLoadedCallback(collection);
+								} else {
+									replaceCollection(collection);
+								}
+							}
+						});
+					}
+
+					function replaceCollection (collection) {
+						ArrayUtils.clear(scope.collection);
+						ArrayUtils.append(scope.collection, collection);
+					}
+
 					function documentCollectionLoadedCallback (response) {
 						// We are loading a collection, so we can tell the Breadcrumb that there is
 						// no end-resource to display.
@@ -887,7 +908,8 @@
 						}
 
 						scope.pagination.total = response.pagination.count;
-						scope.collection = response.resources;
+
+						replaceCollection(response.resources);
 
 						scope.$broadcast('Change:DocumentListChanged', scope.collection);
 					}
@@ -1123,6 +1145,10 @@
 					//---------------------------------------------------------
 
 					function initialLoad () {
+						if (scope.externalCollection) {
+							console.log("DocumentList " + dlid + ": collection is loaded from the outside.");
+							return;
+						}
 						if (attrs.tree) {
 							// If in a tree context, reload the list when the Breadcrumb is ready
 							// and each time it changes.
