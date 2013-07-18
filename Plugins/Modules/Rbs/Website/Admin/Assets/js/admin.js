@@ -59,8 +59,21 @@
 		// Home
 		. when('/Rbs/Website',{ templateUrl : 'Rbs/Website/Website/list.twig', reloadOnSearch : false })
 
+		// ------ KEEP THE 'Section' and 'Menu' ROUTES BEFORE THE 'Website' ONES !
+
+		// Section functions
+		. when('/Rbs/Website/Topic/:id/Functions/',   { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:id/Functions/', { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
+
+		// Menu
+		. when('/Rbs/Website/Menu/', { templateUrl : 'Rbs/Website/Menu/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:websiteId/Menus/', { templateUrl : 'Rbs/Website/Menu/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/:websiteId/Menus/:id/:LCID', { templateUrl : 'Rbs/Website/Menu/form.twig', reloadOnSearch : false })
+
+		// ------
+
 		// Website
-		. when('/Rbs/Website/Website', { templateUrl : 'Rbs/Website/Website/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/Website/', { templateUrl : 'Rbs/Website/Website/list.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/Website/:id/:LCID', { templateUrl : 'Rbs/Website/Website/form.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/Website/:id', { templateUrl : 'Rbs/Website/Website/form.twig', reloadOnSearch : false })
 
@@ -72,26 +85,18 @@
 		. when('/Rbs/Website/Topic/:id/', { templateUrl : 'Rbs/Website/Topic/form.twig', reloadOnSearch : false })
 
 		// Static pages
-		. when('/Rbs/Website/StaticPage', { templateUrl : 'Rbs/Website/StaticPage/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/StaticPage/', { templateUrl : 'Rbs/Website/StaticPage/list.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/StaticPage/:id', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/StaticPage/:id/:LCID', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/StaticPage/:id/:LCID/editor', { templateUrl : 'Rbs/Website/StaticPage/content-editor.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/StaticPage/:id/:LCID/translate-from/:fromLCID', { templateUrl : 'Rbs/Website/StaticPage/form.twig', reloadOnSearch : false })
 
 		// Functional pages
-		. when('/Rbs/Website/FunctionalPage', { templateUrl : 'Rbs/Website/FunctionalPage/list.twig', reloadOnSearch : false })
+		. when('/Rbs/Website/FunctionalPage/', { templateUrl : 'Rbs/Website/FunctionalPage/list.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/FunctionalPage/:id', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/FunctionalPage/:id/:LCID', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/FunctionalPage/:id/:LCID/editor', { templateUrl : 'Rbs/Website/FunctionalPage/content-editor.twig', reloadOnSearch : false })
 		. when('/Rbs/Website/FunctionalPage/:id/:LCID/translate-from/:fromLCID', { templateUrl : 'Rbs/Website/FunctionalPage/form.twig', reloadOnSearch : false })
-
-		// Menu
-		. when('/Rbs/Website/Menu', { templateUrl : 'Rbs/Website/Menu/list.twig', reloadOnSearch : false })
-		. when('/Rbs/Website/Menu/:id', { templateUrl : 'Rbs/Website/Menu/form.twig', reloadOnSearch : false })
-
-		// Section functions
-		. when('/Rbs/Website/Topic/:id/:LCID/functions/',   { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
-		. when('/Rbs/Website/Website/:id/:LCID/functions/', { templateUrl : 'Rbs/Website/section-functions.twig', reloadOnSearch : false })
 
 		;
 	}]);
@@ -123,7 +128,7 @@
 				'form': '/Rbs/Website/Topic/:id/:LCID',
 				'list': '/Rbs/Website/Topic/:LCID',
 				'tree': '/Rbs/Website/nav/?tn=:id',
-				'functions': '/Rbs/Website/Topic/:id/:LCID/functions/'
+				'functions': '/Rbs/Website/Topic/:id/Functions/'
 			});
 
 			// Websites
@@ -131,12 +136,14 @@
 				'form': '/Rbs/Website/Website/:id/:LCID',
 				'list': '/Rbs/Website/Website/:LCID',
 				'tree': '/Rbs/Website/nav/?tn=:id',
-				'functions': '/Rbs/Website/Website/:id/:LCID/functions/'
+				'functions': '/Rbs/Website/Website/:id/Functions/',
+				'menus': '/Rbs/Website/Website/:id/Menus/'
 			});
 
 			// Menus
 			$delegate.register('Rbs_Website_Menu', {
-				'form': '/Rbs/Website/Menu/:id',
+				//'form': '/Rbs/Website/Menu/:id',
+				'form': '/Rbs/Website/Website/:website/Menus/:id/:LCID',
 				'list': '/Rbs/Website/Menu/:LCID'
 			});
 

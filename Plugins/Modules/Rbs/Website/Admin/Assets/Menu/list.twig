@@ -1,29 +1,36 @@
 <div data-ng-controller="Rbs_Website_Menu_ListController">
 	<page-header title="{{ i18nAttr('m.rbs.website.document.menu-list', ['ucf']) }}"></page-header>
 
-	<rbs-todo></rbs-todo>
-
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href="Rbs/Website/Menu/new">{{ i18n('m.rbs.website.document.menu-create', ['ucf']) }}</a>
+		Site web : <select ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsWebsiteMenu"
-	                   model="Rbs_Website_Menu"
-	                   filter-query="query"
-	                   actions="default">
+	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
+		<i class="icon-arrow-up icon-3x pull-left"></i>
+		<strong>Les menus sont classés par site web.</strong>
+		<br/>Choisissez un site web pour accéder aux menus qui lui sont rattachés.
+	</div>
 
-		<column name="label" primary="true">
-			<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
-		</column>
-		<column name="website">
-			<a href ng-href="(= doc.website | documentURL:'tree' =)">(= doc.website.label =)</a>
-			<i class="icon-rbs-navigate-to"></i>
-		</column>
-		<column name="items">
-			(= doc.items | json =)
-		</column>
+	<div ng-show="selectedWebsite">
+		<div>
+			<a href="Rbs/Website/Menu/new">{{ i18n('m.rbs.website.document.menu-create', ['ucf']) }}</a>
+		</div>
 
-	</rbs-document-list>
+		<rbs-document-list data-dlid="DLRbsWebsiteMenu"
+		                   model="Rbs_Website_Menu"
+		                   filter-query="query"
+		                   load-query="listLoadQuery"
+		                   actions="default" use-properties="website">
+
+			<column name="label" primary="true">
+				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+			</column>
+			<column name="items">
+				(= doc.items | json =)
+			</column>
+
+		</rbs-document-list>
+	</div>
 </div>
