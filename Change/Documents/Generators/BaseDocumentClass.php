@@ -43,7 +43,7 @@ class BaseDocumentClass
  * @name ' . $model->getBaseDocumentClassName() . '
  * @method ' . $model->getModelClassName() . ' getDocumentModel()'. PHP_EOL .
 			($model->checkLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getCurrentLocalization()'. PHP_EOL : '') .
-' */' . PHP_EOL;
+			' */' . PHP_EOL;
 
 		$parentModel = $model->getParent();
 		$extend = $parentModel ? $parentModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
@@ -490,7 +490,6 @@ class BaseDocumentClass
 				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
 			}
 			' . $mn . ' = ' . $var . ';
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}' . PHP_EOL;
@@ -540,7 +539,6 @@ class BaseDocumentClass
 			{
 				$this->setOldPropertyValue(' . $en . ', $localizedPart->get' . $un . 'OldValue());
 			}
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}' . PHP_EOL;
@@ -789,7 +787,7 @@ class BaseDocumentClass
 			if ($this->isPropertyModified(' . $en . '))
 			{
 				$loadedVal = $this->getOldPropertyValue(' . $en . ');
-				if ($loadedVal !== $newString)
+				if ($loadedVal === $newString)
 				{
 					$this->removeOldPropertyValue(' . $en . ');
 				}
@@ -799,7 +797,6 @@ class BaseDocumentClass
 				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
 			}
 			' . $mn . ' = $newString;
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}
@@ -850,12 +847,11 @@ class BaseDocumentClass
 		$newString = (' . $var . ' !== null) ? \Zend\Json\Json::encode(' . $var . ') : null;
 		if ($localizedPart->set' . $un . 'String($newString))
 		{
-			$this->removeOldPropertyValue(' . $en . ');
+			$this->unsetOldPropertyValue(' . $en . ');
 			if ($localizedPart->isPropertyModified(' . $en . '))
 			{
 				$this->setOldPropertyValue(' . $en . ', $localizedPart->get' . $un . 'OldStringValue());
 			}
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}
@@ -940,7 +936,7 @@ class BaseDocumentClass
 			if ($this->isPropertyModified(' . $en . '))
 			{
 				$loadedVal = $this->getOldPropertyValue(' . $en . ');
-				if ($loadedVal !== $newString)
+				if ($loadedVal === $newString)
 				{
 					$this->removeOldPropertyValue(' . $en . ');
 				}
@@ -950,7 +946,6 @@ class BaseDocumentClass
 				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
 			}
 			' . $mn . ' = $newString;
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}
@@ -996,12 +991,11 @@ class BaseDocumentClass
 		$newString = (' . $var . ' !== null) ? serialize(' . $var . ') : null;
 		if ($localizedPart->set' . $un . 'String($newString))
 		{
-			$this->removeOldPropertyValue(' . $en . ');
+			$this->unsetOldPropertyValue(' . $en . ');
 			if ($localizedPart->isPropertyModified(' . $en . '))
 			{
 				$this->setOldPropertyValue(' . $en . ', $localizedPart->get' . $un . 'OldStringValue());
 			}
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}
@@ -1105,7 +1099,6 @@ class BaseDocumentClass
 				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
 			}
 			' . $mn . ' = $newId;
-			$this->propertyChanged(' . $en . ');
 		}
 		return $this;
 	}
