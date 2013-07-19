@@ -2,6 +2,7 @@
 namespace Change\Http\Web\Events;
 
 use Change\Application\ApplicationServices;
+use Change\Documents\DocumentServices;
 use Change\Presentation\Interfaces\Page;
 use Zend\EventManager\Event;
 use Change\Permissions\PermissionsManager;
@@ -17,6 +18,11 @@ class PageEvent extends Event
 	 * @var ApplicationServices
 	 */
 	protected $applicationServices;
+
+	/**
+	 * @var DocumentServices
+	 */
+	protected $documentServices;
 
 	/**
 	 * @var PresentationServices
@@ -50,10 +56,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param ApplicationServices $applicationServices
+	 * @return $this
 	 */
 	public function setApplicationServices($applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+		return $this;
 	}
 
 	/**
@@ -65,12 +73,35 @@ class PageEvent extends Event
 		return $this->applicationServices;
 	}
 
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return $this
+	 */
+	public function setDocumentServices($documentServices)
+	{
+		$this->documentServices = $documentServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
+
+
+
 	/**
 	 * @param PresentationServices|null $presentationServices
+	 * @return $this
 	 */
 	public function setPresentationServices(PresentationServices $presentationServices = null)
 	{
 		$this->presentationServices = $presentationServices;
+		return $this;
 	}
 
 	/**
@@ -84,10 +115,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param AuthenticationManager $authenticationManager
+	 * @return $this
 	 */
 	public function setAuthenticationManager($authenticationManager)
 	{
 		$this->authenticationManager = $authenticationManager;
+		return $this;
 	}
 
 	/**
@@ -100,10 +133,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param \Change\Permissions\PermissionsManager $permissionsManager
+	 * @return $this
 	 */
 	public function setPermissionsManager($permissionsManager)
 	{
 		$this->permissionsManager = $permissionsManager;
+		return $this;
 	}
 
 	/**
@@ -116,10 +151,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param \Change\Http\Web\Result\Page $pageResult
+	 * @return $this
 	 */
 	public function setPageResult($pageResult)
 	{
 		$this->pageResult = $pageResult;
+		return $this;
 	}
 
 	/**
@@ -132,10 +169,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param \Change\Http\Request $request
+	 * @return $this
 	 */
 	public function setRequest($request)
 	{
 		$this->request = $request;
+		return $this;
 	}
 
 	/**
@@ -148,10 +187,12 @@ class PageEvent extends Event
 
 	/**
 	 * @param \Change\Http\UrlManager $urlManager
+	 * @return $this
 	 */
 	public function setUrlManager($urlManager)
 	{
 		$this->urlManager = $urlManager;
+		return $this;
 	}
 
 	/**

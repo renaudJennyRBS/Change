@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Website\Documents;
 
+use Change\Documents\Events\Event;
 use Change\Http\Web\Result\HtmlHeaderElement;
 
 /**
@@ -11,7 +12,9 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$callback = function(\Change\Documents\Events\Event $event)
+		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
+
+		$callback = function (Event $event)
 		{
 			/* @var $page StaticPage */
 			$page = $event->getDocument();
@@ -25,9 +28,9 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				}
 			}
 		};
-		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, $callback);
+		$eventManager->attach(Event::EVENT_CREATED, $callback);
 
-		$callback = function(\Change\Documents\Events\Event $event)
+		$callback = function (Event $event)
 		{
 			/* @var $page StaticPage */
 			if (in_array('section', $event->getParam('modifiedPropertyNames', array())))
@@ -45,15 +48,15 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				}
 			}
 		};
-		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATED, $callback);
+		$eventManager->attach(Event::EVENT_UPDATED, $callback);
 
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 	}
 
 	/**
-	 * @param \Change\Documents\Events\Event $event
+	 * @param Event $event
 	 */
-	public function onPopulatePathRule(\Change\Documents\Events\Event $event)
+	public function onPopulatePathRule(Event $event)
 	{
 		/* @var $pathRule \Change\Http\Web\PathRule */
 		$pathRule = $event->getParam('pathRule');
@@ -65,6 +68,19 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			$relativePath = $section->getPathPart() . '/' . $relativePath;
 		}
 		$pathRule->setRelativePath($relativePath);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDocumentDisplayPage(Event $event)
+	{
+		$document = $event->getDocument();
+		if ($document instanceof \Change\Presentation\Interfaces\Page)
+		{
+			$event->setParam('page', $document);
+			$event->stopPropagation();
+		}
 	}
 
 	/**
@@ -82,21 +98,6 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			$result->addNamedHeadAsString('title', $headElement);
 		}
 		return $result;
-	}
-
-	/**
-	 * @param \Change\Documents\Events\Event $event
-	 * @return \Change\Presentation\Interfaces\Page|null
-	 */
-	public function onDocumentDisplayPage($event)
-	{
-		$doc = parent::onDocumentDisplayPage($event);
-		if ($doc)
-		{
-			$tn = $this->getDocumentServices()->getTreeManager()->getNodeByDocument($this);
-			$event->getParam('pathRule')->setSectionId($tn->getParentId());
-		}
-		return $doc;
 	}
 
 	/**

@@ -31,23 +31,6 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	}
 
 	/**
-	 * @param Event $event
-	 * @return \Change\Presentation\Interfaces\Page|null
-	 */
-	public function onDocumentDisplayPage($event)
-	{
-		if ($event instanceof Event)
-		{
-			$document = $event->getDocument();
-			if ($document instanceof \Change\Presentation\Interfaces\Page)
-			{
-				return $document;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Required Event params : getPage
 	 * Return A result initialized with : TemplateLayout, ContentLayout
 	 * @param PageEvent $pageEvent
@@ -143,7 +126,6 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	 */
 	protected function attachEvents($eventManager)
 	{
-		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 5);
 		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
 		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
 	}

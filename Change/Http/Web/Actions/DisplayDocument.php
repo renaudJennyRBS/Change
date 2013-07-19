@@ -9,9 +9,9 @@ use Change\Presentation\Interfaces\Page;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Change\Http\Web\Actions\FindDisplayPage
+ * @name \Change\Http\Web\Actions\DisplayDocument
  */
-class FindDisplayPage
+class DisplayDocument
 {
 	/**
 	 * Use Required Event Params: pathRule
@@ -21,7 +21,7 @@ class FindDisplayPage
 	public function execute($event)
 	{
 		/* @var $pathRule PathRule */
-		$pathRule = $event->getParam('pathRule');
+		$pathRule = $event->getPathRule();
 		if (!($pathRule instanceof PathRule))
 		{
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
@@ -33,27 +33,16 @@ class FindDisplayPage
 			$requestQuery->fromArray(\Zend\Stdlib\ArrayUtils::merge($pathRule->getQueryParameters(), $requestQuery->toArray()));
 		}
 
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($pathRule->getDocumentId());
+		$document = $event->getDocument();
 		if ($document instanceof AbstractDocument)
 		{
-			$eventManager = $document->getEventManager();
-			$e = new DocumentEvent(DocumentEvent::EVENT_DISPLAY_PAGE, $document, array('pathRule' => $pathRule));
-			$result = $eventManager->trigger($e, function ($return)
+			$documentEvent = new DocumentEvent(DocumentEvent::EVENT_DISPLAY_PAGE, $document, $event->getParams());
+			$document->getEventManager()->trigger($documentEvent);
+			$page = $documentEvent->getParam('page');
+			if ($page instanceof Page)
 			{
-				return ($return instanceof Page);
-			});
-			$page = null;
-
-			if ($result->stopped())
-			{
-				$page = $result->last();
+				$event->setParam('page', $page);
 			}
-
-			if (!($page instanceof Page))
-			{
-				$page = $e->getParam('page');
-			}
-			$event->setParam('page', $page);
 		}
 	}
 }

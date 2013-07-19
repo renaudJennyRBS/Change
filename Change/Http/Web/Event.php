@@ -45,4 +45,22 @@ class Event extends \Change\Http\Event
 	{
 		return $this->getParam('pathRule');
 	}
+
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractDocument|null
+	 */
+	public function getDocument()
+	{
+		return $this->getParam('document');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Presentation\Interfaces\Page|null
+	 */
+	public function getPage()
+	{
+		return $this->getParam('page');
+	}
 }
