@@ -434,6 +434,7 @@
 				'filterQuery' : '=',
 				'loadQuery' : '=',
 				'onPreview' : '&',
+				'onReload' : '&',
 				'cascadeEdition' : '@',
 				'collectionUrl' : '@',
 				'externalCollection' : '=collection',
@@ -519,7 +520,7 @@
 							}
 
 							// Store the result as a Promise in the "args.promises" Array.
-							if (angular.isFunction(result.then)) {
+							if (result && angular.isFunction(result.then)) {
 								args.promises.push(result);
 							} else {
 								q = $q.defer();
@@ -878,7 +879,8 @@
 					//
 
 
-					if (elm.is('[collection]')) {
+					var useExternalCollection = elm.is('[collection]');
+					if (useExternalCollection) {
 						scope.$watch('externalCollection', function (collection, oldCollection) {
 							if (collection !== oldCollection) {
 								if (angular.isObject(collection) && collection.pagination && collection.resources) {
@@ -916,6 +918,16 @@
 
 
 					function reload () {
+
+						if (useExternalCollection) {
+							if (angular.isFunction(scope.onReload)) {
+								scope.onReload();
+							} else {
+								console.warn("DocumentList '" + dlid + "' uses an external Collection. You may also add the 'on-reload' attribute.");
+							}
+							return;
+						}
+
 						var promise, params;
 
 						scope.loading = true;
