@@ -94,9 +94,35 @@ class Install
 		$tagModel = $documentServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
 		$documentManager = $documentServices->getDocumentManager();
 
-		$tags = array(
-			'à traduire' => 'red'
-		);
+		$query = new \Change\Documents\Query\Query($documentServices, $tagModel);
+		if ($query->getCountDocuments())
+		{
+			return;
+		}
+
+		$lcid = $applicationServices->getI18nManager()->getLCID();
+
+		// TODO Move hard-coded text elsewhere.
+		if ($lcid === 'fr_FR')
+		{
+			$tags = array(
+				// Media
+				'grande image'  => 'grey',
+				'moyenne image' => 'grey',
+				// Other...
+				'à traduire' => 'red'
+			);
+		}
+		else
+		{
+			$tags = array(
+				// Media
+				'large picture'  => 'grey',
+				'medium picture' => 'grey',
+				// Other...
+				'to translate' => 'red'
+			);
+		}
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
@@ -104,16 +130,11 @@ class Install
 			$transactionManager->begin();
 			foreach ($tags as $label => $color)
 			{
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Tag_Tag');
-				$tag = $query->andPredicates($query->eq('label', $label))->getFirstDocument();
-				if (!$tag)
-				{
-					/* @var $tag \Rbs\Tag\Documents\Tag */
-					$tag = $documentManager->getNewDocumentInstanceByModel($tagModel);
-					$tag->setLabel($label);
-					$tag->setColor($color);
-					$tag->create();
-				}
+				/* @var $tag \Rbs\Tag\Documents\Tag */
+				$tag = $documentManager->getNewDocumentInstanceByModel($tagModel);
+				$tag->setLabel($label);
+				$tag->setColor($color);
+				$tag->create();
 			}
 			$transactionManager->commit();
 		}
