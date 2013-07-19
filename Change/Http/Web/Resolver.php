@@ -5,7 +5,7 @@ use Change\Http\BaseResolver;
 use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\GetStorageItemContent;
-use Change\Http\Web\Actions\FindDisplayPage;
+use Change\Http\Web\Actions\DisplayDocument;
 use Change\Http\Web\Actions\GeneratePathRule;
 use Change\Http\Web\Actions\GetThemeResource;
 use Change\Http\Web\Actions\RedirectPathRule;
@@ -23,13 +23,68 @@ class Resolver extends BaseResolver
 	 */
 	public function resolve($event)
 	{
-		$website = $event->getParam('website');
+		$website = $event->getWebsite();
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
 			$urlManager = $event->getUrlManager();
 			$urlManager->setWebsite($website);
-			$this->populateEventByPathRule($event, $pathRule);
+			$event->setParam('pathRule', $pathRule);
+			$dm = $event->getDocumentServices()->getDocumentManager();
+			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
+			$event->setParam('document', $document);
+
+			$urlManager = $event->getUrlManager();
+			if ($pathRule->getHttpStatus() !== HttpResponse::STATUS_CODE_200 && $pathRule->getLocation() === null)
+			{
+				//Generic document URL
+				if (!$document)
+				{
+					return;
+				}
+
+				$queryParameters = $event->getRequest()->getQuery()->toArray();
+				$pathRule->setQueryParameters($queryParameters);
+				$validPathRule = $urlManager->getValidDocumentRule($document, $pathRule);
+				if ($validPathRule instanceof PathRule)
+				{
+					//Rewritten url already exist
+					$urlManager->setAbsoluteUrl(true);
+					$location = $urlManager->getByPathInfo($validPathRule->getRelativePath(), $queryParameters);
+					$pathRule->setLocation($location->normalize()->toString());
+				}
+				else
+				{
+					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
+					$action = function($event) {
+						$action = new GeneratePathRule();
+						$action->execute($event);
+					};
+					$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+					$event->setAction($action);
+					return;
+				}
+			}
+
+			if ($pathRule->getLocation())
+			{
+				$action = function($event) {
+					$action = new RedirectPathRule();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+			elseif ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200 && $document)
+			{
+				$action = function($event) {
+					$action = new DisplayDocument();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+				return;
+			}
 		}
 		else
 		{
@@ -126,68 +181,6 @@ class Resolver extends BaseResolver
 			$path = substr($path, 1);
 		}
 		return $path;
-	}
-
-	/**
-	 * @param Event $event
-	 * @param PathRule $pathRule
-	 */
-	protected function populateEventByPathRule($event, $pathRule)
-	{
-		$event->setParam('pathRule', $pathRule);
-		$dm = $event->getDocumentServices()->getDocumentManager();
-		$document = $dm->getDocumentInstance($pathRule->getDocumentId());
-		$urlManager = $event->getUrlManager();
-
-		if ($pathRule->getHttpStatus() !== HttpResponse::STATUS_CODE_200 && $pathRule->getLocation() === null)
-		{
-			//Generic document URL
-			if (!$document)
-			{
-				return;
-			}
-
-			$queryParameters = $event->getRequest()->getQuery()->toArray();
-			$pathRule->setQueryParameters($queryParameters);
-			$validPathRule = $urlManager->getValidDocumentRule($document, $pathRule);
-			if ($validPathRule instanceof PathRule)
-			{
-				//Rewritten url already exist
-				$urlManager->setAbsoluteUrl(true);
-				$location = $urlManager->getByPathInfo($validPathRule->getRelativePath(), $queryParameters);
-				$pathRule->setLocation($location->normalize()->toString());
-			}
-			else
-			{
-				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-				$action = function($event) {
-					$action = new GeneratePathRule();
-					$action->execute($event);
-				};
-				$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
-				$event->setAction($action);
-				return;
-			}
-		}
-		if ($pathRule->getLocation())
-		{
-			$action = function($event) {
-				$action = new RedirectPathRule();
-				$action->execute($event);
-			};
-			$event->setAction($action);
-			return;
-		}
-		elseif ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200 && $document)
-		{
-			$action = function($event) {
-				$action = new FindDisplayPage();
-				$action->execute($event);
-			};
-			$event->setAction($action);
-			$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
-			return;
-		}
 	}
 
 	/**
@@ -316,20 +309,5 @@ class Resolver extends BaseResolver
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * @param Event $event
-	 * @param string $role
-	 * @param integer $resource
-	 * @param string $privilege
-	 */
-	public function setAuthorisation($event, $role, $resource, $privilege)
-	{
-		$authorisation = function(Event $event) use ($role, $resource, $privilege)
-		{
-			return $event->getPermissionsManager()->isAllowed($role, $resource, $privilege);
-		};
-		$event->setAuthorization($authorisation);
 	}
 }

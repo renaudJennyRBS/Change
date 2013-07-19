@@ -48,6 +48,16 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
+		elseif (preg_match('/^Rbs\/Admin\/Aggregate\/[a-z]{2}_[A-Z]{2}\/.*$/', $relativePath, $matches))
+		{
+			$event->setParam('resourcePath', $relativePath);
+			$action = function($event) {
+				$action = new \Rbs\Admin\Http\Actions\GetAggregate();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
 		elseif (preg_match('/^([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.([a-z]+)$/', $relativePath, $matches))
 		{
 			$event->setParam('resourcePath', $relativePath);

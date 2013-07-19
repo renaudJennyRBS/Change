@@ -79,12 +79,13 @@ class ComposePage
 	 */
 	protected function newPageEvent($event, $page)
 	{
-		$pageEvent = new PageEvent(Page::EVENT_PAGE_PREPARE, $page);
+		$pageEvent = new PageEvent(Page::EVENT_PAGE_PREPARE, $page, $event->getParams());
 		$pageEvent->setAuthenticationManager($event->getAuthenticationManager());
 		$pageEvent->setPermissionsManager($event->getPermissionsManager());
 		$pageEvent->setRequest($event->getRequest());
 		$pageEvent->setUrlManager($event->getUrlManager());
 		$pageEvent->setApplicationServices($event->getApplicationServices());
+		$pageEvent->setDocumentServices($event->getDocumentServices());
 		$pageEvent->setPresentationServices($event->getPresentationServices());
 		return $pageEvent;
 	}

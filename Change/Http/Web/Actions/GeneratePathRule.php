@@ -1,7 +1,7 @@
 <?php
 namespace Change\Http\Web\Actions;
 
-use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\AbstractDocument;
 use Change\Http\Web\PathRule;
 use Zend\Http\Response as HttpResponse;
 
@@ -18,23 +18,22 @@ class GeneratePathRule
 	public function execute($event)
 	{
 		/* @var $pathRule PathRule */
-		$pathRule = $event->getParam('pathRule');
+		$pathRule = $event->getPathRule();
 		if (!($pathRule instanceof PathRule))
 		{
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
 		}
-		$dm = $event->getDocumentServices()->getDocumentManager();
 
 		/* @var $urlManager \Change\Http\Web\UrlManager */
 		$urlManager = $event->getUrlManager();
-		$document = $dm->getDocumentInstance($pathRule->getDocumentId());
-		if ($document)
+		$document = $event->getDocument();
+		if ($document instanceof AbstractDocument)
 		{
 			$newPathRule = $urlManager->rewritePathRule($document, $pathRule);
 			if ($newPathRule === null)
 			{
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-				$action = new FindDisplayPage();
+				$action = new DisplayDocument();
 				$action->execute($event);
 			}
 			else
@@ -43,7 +42,6 @@ class GeneratePathRule
 				$urlManager->setAbsoluteUrl(true);
 				$uri = $urlManager->getByPathInfo($newPathRule->getRelativePath(), $pathRule->getQueryParameters());
 				$pathRule->setLocation($uri->normalize()->toString());
-
 				$action = new RedirectPathRule();
 				$action->execute($event);
 			}

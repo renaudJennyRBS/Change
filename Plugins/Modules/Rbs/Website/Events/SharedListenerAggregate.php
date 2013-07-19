@@ -22,7 +22,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		$callback = function (\Change\Http\Web\Event $event)
 		{
 			$resolver = new WebsiteResolver();
-			return $resolver->resolve($event);
+			$resolver->resolve($event);
 		};
 		$events->attach('Http.Web', \Change\Http\Event::EVENT_REQUEST, $callback, 5);
 
@@ -32,7 +32,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 			if ($website instanceof \Rbs\Website\Documents\Website)
 			{
 				$resolver = new WebsiteResolver();
-				return $resolver->changed($website);
+				$resolver->changed($website);
 			}
 		};
 
@@ -40,6 +40,13 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
 
 		$events->attach('Http.Rest', 'http.action', array($this, 'registerActions'));
+
+		$callback = function (\Change\Documents\Events\Event $event)
+		{
+			$resolver = new PageResolver();
+			$resolver->resolve($event);
+		};
+		$events->attach('Documents', DocumentEvent::EVENT_DISPLAY_PAGE, $callback, 5);
 	}
 
 	/**

@@ -7,7 +7,7 @@
 		<property name="title" localized="true" has-correction="true"/>
 
 		<property name="pathPart" type="String" localized="true"/>
-		<property name="indexPage" type="Document" document-type="Rbs_Website_Page"/>
+		<property name="indexPage" type="Document" document-type="Rbs_Website_Page" stateless="true" />
 		<property name="allowedTemplateNames" type="JSON"/>
 
 		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
