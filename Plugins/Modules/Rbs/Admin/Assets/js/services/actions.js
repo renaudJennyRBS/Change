@@ -393,7 +393,6 @@
 							angular.forEach($docs, function (doc) {
 								promises.push(REST['delete'](doc));
 							});
-							console.log($scope, $scope.reload);
 							if ($scope && angular.isFunction($scope.reload)) {
 								// Refresh the list when all the requests have completed.
 								$q.all(promises).then(function () {
