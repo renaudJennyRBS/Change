@@ -167,7 +167,10 @@ class LocalStorage extends AbstractStorage
 		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $path);
 		if ((STREAM_URL_STAT_QUIET & $flags) === STREAM_URL_STAT_QUIET)
 		{
-			return @stat($filename);
+			if (!file_exists($filename))
+			{
+				return false;
+			}
 		}
 		return stat($filename);
 	}

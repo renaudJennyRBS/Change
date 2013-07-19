@@ -232,7 +232,7 @@ class AuthenticationListener
 				}
 				else
 				{
-					$array = array('oauth_token' => $token,
+					$array = array('oauth_token' => $token, 'applicationName' => $storeOAuth->getConsumer()->getApplicationName(),
 						'realm' => $request->getPost('realm'),
 						'error' => $event->getApplicationServices()->getI18nManager()->trans('c.oauth.invalid-credentials', ['ucf']));
 
@@ -246,7 +246,8 @@ class AuthenticationListener
 			}
 		}
 
-		$array = array('oauth_token' => $storeOAuth->getToken(), 'realm' => $storeOAuth->getRealm());
+		$array = array('oauth_token' => $storeOAuth->getToken(), 'realm' => $storeOAuth->getRealm(),
+			'applicationName' => $storeOAuth->getConsumer()->getApplicationName());
 		$result  = new ArrayResult();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$result->setArray($array);

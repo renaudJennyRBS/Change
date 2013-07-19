@@ -196,7 +196,7 @@
 					// Parse the 'actions' section:
 					forEach(data.actions, function (action) {
 						chgDoc.META$.actions[action.rel] = action;
-						if (action.rel === 'getCorrection') {
+						if (action.rel === 'correction') {
 							chgDoc.META$.correction = {};
 						}
 					});
@@ -564,7 +564,7 @@
 					 */
 					'loadCorrection' : function (resource) {
 						var q = $q.defer();
-						$http.get(resource.META$.actions.getCorrection.href, getHttpConfig())
+						$http.get(resource.META$.actions.correction.href, getHttpConfig())
 							.success(function restResourceSuccessCallback (data) {
 								console.log("loadCorrection: data=", data);
 								applyCorrection(resource, data);

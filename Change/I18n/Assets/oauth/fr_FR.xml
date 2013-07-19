@@ -5,5 +5,5 @@
 	<key id="authorize-application">autoriser une application à se lier à votre compte</key>
 	<key id="authorize">autoriser</key>
 	<key id="invalid-credentials">vos informations de connexion sont incorrectes!</key>
-
+	<key id="application-name">application</key>
 </i18n>

@@ -360,6 +360,26 @@ class StoredOAuth
 					}
 					break;
 				}
+				case 'application_id':
+				{
+					if (!$this->getConsumer())
+					{
+						$this->consumer = new Consumer(null, null);
+
+					}
+					$this->consumer->setApplicationId($v);
+					break;
+				}
+				case 'application':
+				{
+					if (!$this->getConsumer())
+					{
+						$this->consumer = new Consumer(null, null);
+
+					}
+					$this->consumer->setApplicationName($v);
+					break;
+				}
 				case 'token_secret':
 					$this->tokenSecret = $v;
 					break;
