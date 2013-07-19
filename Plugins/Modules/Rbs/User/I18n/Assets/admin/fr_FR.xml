@@ -6,5 +6,6 @@
 	<key id="creation-date">date de création</key>
 	<key id="validity-date">date de validité</key>
 	<key id="revoke-token">révoquer</key>
-	<key id="token-list-title">jetons</key>
+	<key id="applications-list-sub-title">applications</key>
+	<key id="applications">applications</key>
 </i18n>

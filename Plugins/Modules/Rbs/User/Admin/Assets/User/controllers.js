@@ -53,17 +53,26 @@
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
 	app.controller('Rbs_User_User_FormController', FormController);
 
-	function TokensController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils)
+	/**
+	 * Controller for applications.
+	 *
+	 * @param $scope
+	 * @param $routeParams
+	 * @param $location
+	 * @param REST
+	 * @param i18n
+	 * @param $http
+	 * @param ArrayUtils
+	 * @constructor
+	 */
+	function ApplicationsController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils, MainMenu, Breadcrumb)
 	{
-		$scope.userId = $routeParams.id;
+		REST.resource($routeParams.id).then(function (user){
+			$scope.document = user;
+		});
 		var url = REST.getBaseUrl('admin/userTokens/?userId=' + $routeParams.id);
 		$http.get(url).success(function (data){
-				var tokens = data.properties;
-				angular.forEach(tokens, function (token){
-					token.creation_date = moment(token.creation_date.date).unix() * 1000;
-					token.validity_date = moment(token.validity_date.date).unix() * 1000;
-				})
-				$scope.tokens = data.properties;
+				$scope.tokens = data;
 			}
 		);
 
@@ -72,7 +81,6 @@
 			{
 				var url = REST.getBaseUrl('admin/revokeToken/');
 				$http.post(url, { 'token': token.token }).success(function (){
-						console.log(token);
 						ArrayUtils.removeValue($scope.tokens, token);
 					}
 				);
@@ -83,8 +91,13 @@
 		$scope.predicate = 'validity_date';
 		$scope.reverse = false;
 		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
+
+		MainMenu.loadModuleMenu('Rbs_User');
+		Breadcrumb.resetLocation([
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
+		]);
 	}
 
-	TokensController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils'];
-	app.controller('Rbs_User_User_TokensController', TokensController);
+	ApplicationsController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb'];
+	app.controller('Rbs_User_User_ApplicationsController', ApplicationsController);
 })();

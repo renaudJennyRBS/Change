@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Admin\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\Result\ArrayResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -42,8 +42,17 @@ class GetUserTokens
 			->addStrCol('token', 'realm', 'application')->addDtCol('creation_date' ,'validity_date')
 		);
 
-		$result = new DocumentResult();
-		$result->setProperties($rowAssoc);
+		$array = array();
+
+		foreach ($rowAssoc as $row)
+		{
+			$row['creation_date'] = $row['creation_date']->format(\DateTime::ISO8601);
+			$row['validity_date'] = $row['validity_date']->format(\DateTime::ISO8601);
+			$array[] = $row;
+		}
+
+		$result = new ArrayResult();
+		$result->setArray($array);
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 		$event->setResult($result);

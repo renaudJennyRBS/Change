@@ -37,9 +37,9 @@
 			})
 
 		. when(
-			'/Rbs/User/User/:id/Tokens/',
+			'/Rbs/User/User/:id/Applications/',
 			{
-				templateUrl: 'Rbs/User/User/tokens.twig',
+				templateUrl: 'Rbs/User/User/applications.twig',
 				reloadOnSearch: false
 			})
 		;
@@ -52,7 +52,8 @@
 			// User
 			$delegate.register('Rbs_User_User', {
 				'form'  : '/Rbs/User/User/:id',
-				'list'  : '/Rbs/User/User'
+				'list'  : '/Rbs/User/User',
+				'applications' : '/Rbs/User/User/:id/Applications/'
 			});
 
 			return $delegate;

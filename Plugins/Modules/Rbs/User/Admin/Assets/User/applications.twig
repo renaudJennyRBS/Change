@@ -1,7 +1,5 @@
-<div data-ng-controller="Rbs_User_User_TokensController">
-	<div class="page-header" title="{{ i18nAttr('m.rbs.user.admin.token-list-title', ['ucf']) }}">
-		<h2>{{ i18nAttr('m.rbs.user.admin.token-list-title', ['ucf']) }}</h2>
-	</div>
+<div data-ng-controller="Rbs_User_User_ApplicationsController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.applications-list-sub-title', ['ucf']) }}"></page-header>
 	<table class="document-list table table-condensed table-bordered table-striped table-hover token">
 		<thead>
 			<tr>
@@ -44,7 +42,7 @@
 				<td>(= token.realm =)</td>
 				<td>(= token.creation_date | date:'medium' =)</td>
 				<td>(= token.validity_date | date:'medium' =)</td>
-				<td><button class="btn btn-danger" data-ng-click="revokeToken(token)">{{ i18nAttr('m.rbs.user.admin.revoke-token', ['ucf']) }}</button></td>
+				<td><button class="btn btn-danger btn-small" data-ng-click="revokeToken(token)">{{ i18nAttr('m.rbs.user.admin.revoke-token', ['ucf']) }}</button></td>
 			</tr>
 		</tbody>
 	</table>

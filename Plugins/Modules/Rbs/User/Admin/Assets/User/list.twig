@@ -10,6 +10,10 @@
 	               model="Rbs_User_User"
 	               modification-date="false"
 	               filter-query="query">
+		<quick-actions>
+			[action default] ||
+			<a href="(= doc | documentURL : 'applications' =)">{{ i18nAttr('m.rbs.user.admin.applications') }}</a>
+		</quick-actions>
 		<column name="pseudonym" primary="true"></column>
 		<column name="login"></column>
 		<column name="email"></column>
