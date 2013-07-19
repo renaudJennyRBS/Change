@@ -8,6 +8,6 @@
         </property>
 		<property name="labelKey" type="String" />
         <property name="section" type="Document" document-type="Rbs_Website_Section" required="true" />
-        <property name="page" type="Document" document-type="Rbs_Website_Page" required="true" />
+        <property name="page" type="Document" document-type="Rbs_Website_Page" />
 	</properties>
 </document>

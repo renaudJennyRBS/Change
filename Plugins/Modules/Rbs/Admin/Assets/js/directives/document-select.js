@@ -13,11 +13,9 @@
 		return {
 			restrict : 'E',
 			require  : 'ngModel',
-
 			template : '<select ng-options="doc.label for doc in documents"></select>',
 			replace  : true,
-
-			scope    : true,
+			scope    : false,
 
 			link     : function (scope, elm, attrs) {
 				REST.collection(attrs.model).then(function (docs) {

@@ -47,7 +47,7 @@
 				var replaceParams = function (urlTpl, paramsObj) {
 					angular.forEach(urlTpl.match(/:(\w+)/g), function (match) {
 						var value = paramsObj[match.slice(1)] || '';
-						if (Utils.isDocument()) {
+						if (Utils.isDocument(value)) {
 							value = value.id;
 						}
 						urlTpl = urlTpl.replace(new RegExp(match, 'g'), value);
@@ -58,10 +58,7 @@
 
 
 				var fixUrl = function (url) {
-					// Remove starting and ending slashes
-					if (url.charAt(url.length-1) === '/') {
-						url = url.slice(0, -1);
-					}
+					// Remove starting slash
 					if (url.charAt(0) === '/') {
 						url = url.slice(1);
 					}
@@ -168,10 +165,28 @@
 				return 'javascript:;';
 			}
 
-			//if (urlName !== 'tree' && Utils.isTreeNode(node)) {
 			if (urlName !== 'tree' && Utils.isDocument(node) && ! clearParams) {
 				url += '?tn=' + node.id;
 			}
+			return url;
+		};
+
+	}]);
+
+	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
+
+		return function (doc, urlName, params) {
+			var	url,
+				node = Breadcrumb.getCurrentNode();
+
+			if (Utils.isDocument(doc)) {
+				url = doc.url(urlName);
+			} else if (Utils.isModelName(doc)) {
+				url = UrlManager.getUrl(doc, angular.extend({'id': 'new'}, params), urlName || 'form');
+			} else {
+				return 'javascript:;';
+			}
+
 			return url;
 		};
 

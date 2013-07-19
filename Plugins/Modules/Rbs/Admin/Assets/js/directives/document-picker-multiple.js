@@ -93,7 +93,6 @@
 							$html.attr('actions', '');
 						} else {
 							$html.find('rbs-document-list').attr('actions', '');
-							documentList = angular.element($html.find('rbs-document-list').first()).scope();
 						}
 
 						if ($html.find('quick-actions').length) {
@@ -128,6 +127,7 @@
 					Breadcrumb.unfreeze();
 					MainMenu.unfreeze();
 					$picker.hide();
+					documentList.$destroy();
 					$('#document-picker-backdrop').hide();
 				};
 

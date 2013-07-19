@@ -306,6 +306,28 @@
 				});
 		},
 
+
+		getByProperty : function (collection, propertyName, value) {
+			var results = [];
+			angular.forEach(collection, function (item) {
+				if (item && item[propertyName] === value) {
+					results.push(item);
+				}
+			});
+			return results;
+		},
+
+
+		getById : function (collection, id) {
+			for (var i=0 ; i<collection.length ; i++) {
+				if (collection[i] && collection[i].id === id) {
+					return collection[i];
+				}
+			}
+			return null;
+		},
+
+
 		// Various methods...
 		// These methods are not (yet?) documented, but their use is NOT encouraged
 		// as they are used for internal purposes only.

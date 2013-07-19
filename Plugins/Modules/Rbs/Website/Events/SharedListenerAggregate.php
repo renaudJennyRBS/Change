@@ -38,7 +38,35 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 
 		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_UPDATED);
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
+
+		$events->attach('Http.Rest', 'http.action', array($this, 'registerActions'));
 	}
+
+	/**
+	 * @param \Change\Http\Event $event
+	 */
+	public function registerActions(\Change\Http\Event $event)
+	{
+		if ($event->getAction())
+		{
+			return;
+		}
+
+		$path = implode('/', $event->getParam('pathParts'));
+		if ($path === 'Rbs/Website/FunctionsList')
+		{
+			$event->setAction(function ($event) {
+				(new \Rbs\Website\Http\Rest\Actions\FunctionsList())->execute($event);
+			});
+		}
+		elseif ($path === 'Rbs/Website/PagesForFunction')
+		{
+			$event->setAction(function ($event) {
+				(new \Rbs\Website\Http\Rest\Actions\PagesForFunction())->execute($event);
+			});
+		}
+	}
+
 
 	/**
 	 * Detach all previously attached listeners

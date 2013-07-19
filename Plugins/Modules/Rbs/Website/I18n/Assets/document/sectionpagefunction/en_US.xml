@@ -3,5 +3,5 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="functionCode">function</key>
 	<key id="section">section</key>
-	<key id="page">functional page</key>
+	<key id="page">page</key>
 </i18n>

@@ -122,6 +122,11 @@
 
 				scope.original = angular.copy(doc);
 
+				if (!doc.META$.tags) {
+					doc.META$.tags = [];
+				}
+				angular.extend(doc.META$.tags, scope.document.META$.tags);
+
 				if (doc.hasCorrection() !== hadCorrection) {
 					scope.$emit(Events.EditorDocumentUpdated, doc);
 				}
@@ -145,7 +150,7 @@
 				// the document is saved.
 				saveOperation("Processing post-save Promises");
 				$rootScope.$broadcast(Events.EditorPostSave, {
-					"document" : scope.document,
+					"document" : doc,
 					"promises" : postSavePromises
 				});
 

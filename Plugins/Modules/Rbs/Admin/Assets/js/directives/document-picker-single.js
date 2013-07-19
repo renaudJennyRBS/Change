@@ -18,7 +18,8 @@
 			link: function (scope, iElement, attrs, ngModel) {
 
 				var	$el = $(iElement),
-					inputEl = $el.find('input[name=label]');
+					inputEl = $el.find('input[name=label]'),
+					documentList;
 
 
 				// Initialize ngModel
@@ -145,6 +146,13 @@
 						$compile($html)(scope);
 						$('#document-picker-backdrop').show();
 						$picker.show();
+
+						if ($html.is('rbs-document-list')) {
+							documentList = angular.element($html).scope();
+						} else {
+							documentList = angular.element($html.find('rbs-document-list').first()).scope();
+						}
+
 					}).error(function (data) {
 						$('#document-picker-backdrop').show();
 						$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
@@ -156,6 +164,7 @@
 					Breadcrumb.unfreeze();
 					MainMenu.unfreeze();
 					$picker.hide();
+					documentList.$destroy();
 					$('#document-picker-backdrop').hide();
 				};
 
