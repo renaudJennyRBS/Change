@@ -36,6 +36,17 @@ class Consumer
 	 */
 	protected $active;
 
+
+	/**
+	 * @var integer
+	 */
+	protected $applicationId;
+
+	/**
+	 * @var string
+	 */
+	protected $applicationName;
+
 	/**
 	 * @param string $key
 	 * @param string $secret
@@ -144,6 +155,42 @@ class Consumer
 	public function getTokenRequestValidity()
 	{
 		return $this->tokenRequestValidity;
+	}
+
+	/**
+	 * @param int $applicationId
+	 * @return $this
+	 */
+	public function setApplicationId($applicationId)
+	{
+		$this->applicationId = $applicationId;
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getApplicationId()
+	{
+		return $this->applicationId;
+	}
+
+	/**
+	 * @param string $applicationName
+	 * @return $this
+	 */
+	public function setApplicationName($applicationName)
+	{
+		$this->applicationName = $applicationName;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getApplicationName()
+	{
+		return $this->applicationName;
 	}
 
 	/**

@@ -43,20 +43,22 @@ class OAuth
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('token_access_validity'),
-			$fb->column('token_request_validity'), $fb->column('timestamp_max_offset'))
+			$fb->column('token_request_validity'), $fb->column('timestamp_max_offset'), $fb->column('application_id'))
 			->from($qb->getSqlMapping()->getOAuthApplicationTable())
 			->where($fb->eq($fb->column('application'), $fb->parameter('application')));
 		$sq = $qb->query();
 		$sq->bindParameter('application', $application);
 
-		$result = $sq->getFirstResult($sq->getRowsConverter()->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
-			'token_request_validity')->addIntCol('timestamp_max_offset'));
+		$result = $sq->getFirstResult($sq->getRowsConverter()
+			->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
+			'token_request_validity')->addIntCol('timestamp_max_offset', 'application_id'));
 		if ($result)
 		{
 			$consumer = new Consumer($result['consumer_key'], $result['consumer_secret']);
 			$consumer->setTokenAccessValidity($result['token_access_validity']);
 			$consumer->setTokenRequestValidity($result['token_request_validity']);
 			$consumer->setTimestampMaxOffset($result['timestamp_max_offset']);
+			$consumer->setApplicationId($result['application_id'])->setApplicationName($application);
 			return $consumer;
 		}
 		return null;
@@ -73,20 +75,21 @@ class OAuth
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('token_access_validity'),
-			$fb->column('token_request_validity'), $fb->column('timestamp_max_offset'))
+			$fb->column('token_request_validity'), $fb->column('timestamp_max_offset'), $fb->column('application'))
 			->from($qb->getSqlMapping()->getOAuthApplicationTable())
 			->where($fb->eq($fb->column('application_id'), $fb->parameter('application_id')));
 		$sq = $qb->query();
 		$sq->bindParameter('application_id', $applicationId);
 
 		$result = $sq->getFirstResult($sq->getRowsConverter()->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
-			'token_request_validity', 'timestamp_max_offset')->addIntCol('timestamp_max_offset'));
+			'token_request_validity', 'timestamp_max_offset', 'application')->addIntCol('timestamp_max_offset'));
 		if ($result)
 		{
 			$consumer = new Consumer($result['consumer_key'], $result['consumer_secret']);
 			$consumer->setTokenAccessValidity($result['token_access_validity']);
 			$consumer->setTokenRequestValidity($result['token_request_validity']);
 			$consumer->setTimestampMaxOffset($result['timestamp_max_offset']);
+			$consumer->setApplicationId(intval($applicationId))->setApplicationName($result['application']);
 			return $consumer;
 		}
 		return null;
@@ -102,20 +105,21 @@ class OAuth
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('consumer_secret'), $fb->column('token_access_validity'),$fb->column('token_request_validity'),
-			$fb->column('timestamp_max_offset'), $fb->column('application_id'))
+			$fb->column('timestamp_max_offset'), $fb->column('application_id'),$fb->column('application'))
 			->from($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()))
 			->where($fb->eq($fb->column('consumer_key'), $fb->parameter('consumer_key')));
 		$qs = $qb->query();
 		$qs->bindParameter('consumer_key', $consumerKey);
 
 		$result = $qs->getFirstResult($qs->getRowsConverter()->addStrCol('consumer_secret', 'token_access_validity',
-			'token_request_validity')->addIntCol('timestamp_max_offset'));
+			'token_request_validity', 'application')->addIntCol('timestamp_max_offset', 'application_id'));
 		if ($result)
 		{
 			$consumer = new Consumer($consumerKey, $result['consumer_secret']);
 			$consumer->setTokenAccessValidity($result['token_access_validity']);
 			$consumer->setTokenRequestValidity($result['token_request_validity']);
 			$consumer->setTimestampMaxOffset($result['timestamp_max_offset']);
+			$consumer->setApplicationId($result['application_id'])->setApplicationName($result['application']);
 			return $consumer;
 		}
 		return null;

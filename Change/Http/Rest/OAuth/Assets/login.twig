@@ -29,8 +29,10 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label" for="authenticate">{{ i18n('c.oauth.application-name', ['ucf', 'lab']) }}</label>
 					<div class="controls">
-						<button type="submit" class="btn" name="authenticate" value="authenticate">{{ i18n('c.oauth.authorize', ['ucf']) }}</button>
+						<button type="submit" class="btn" id="authenticate" name="authenticate" value="authenticate">{{ i18n('c.oauth.authorize', ['ucf']) }}</button>
+						<strong>{{ applicationName }}</strong>
 					</div>
 				</div>
 				</fieldset>
