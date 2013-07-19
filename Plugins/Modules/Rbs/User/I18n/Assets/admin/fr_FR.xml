@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.user" lcid="fr_FR">
+	<key id="token">jeton</key>
+	<key id="application">application</key>
+	<key id="realm">realm</key>
+	<key id="creation-date">date de création</key>
+	<key id="validity-date">date de validité</key>
+	<key id="revoke-token">révoquer</key>
+	<key id="applications-list-sub-title">applications</key>
+	<key id="applications">applications</key>
+</i18n>
