@@ -52,4 +52,39 @@
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
 	app.controller('Rbs_User_User_FormController', FormController);
+
+	function TokensController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils)
+	{
+		$scope.userId = $routeParams.id;
+		var url = REST.getBaseUrl('admin/userTokens/?userId=' + $routeParams.id);
+		$http.get(url).success(function (data){
+				var tokens = data.properties;
+				angular.forEach(tokens, function (token){
+					token.creation_date = moment(token.creation_date.date).unix() * 1000;
+					token.validity_date = moment(token.validity_date.date).unix() * 1000;
+				})
+				$scope.tokens = data.properties;
+			}
+		);
+
+		$scope.revokeToken = function(token){
+			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-revoke-token | ucf', { 'token': token.token })))
+			{
+				var url = REST.getBaseUrl('admin/revokeToken/');
+				$http.post(url, { 'token': token.token }).success(function (){
+						console.log(token);
+						ArrayUtils.removeValue($scope.tokens, token);
+					}
+				);
+			}
+		}
+
+		//sort
+		$scope.predicate = 'validity_date';
+		$scope.reverse = false;
+		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
+	}
+
+	TokensController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils'];
+	app.controller('Rbs_User_User_TokensController', TokensController);
 })();

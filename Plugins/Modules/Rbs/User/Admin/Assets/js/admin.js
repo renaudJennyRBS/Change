@@ -35,6 +35,13 @@
 				templateUrl : 'Rbs/User/login.twig',
 				reloadOnSearch : false
 			})
+
+		. when(
+			'/Rbs/User/User/:id/Tokens/',
+			{
+				templateUrl: 'Rbs/User/User/tokens.twig',
+				reloadOnSearch: false
+			})
 		;
 	}]);
 
