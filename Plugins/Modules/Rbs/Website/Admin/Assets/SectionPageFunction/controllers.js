@@ -23,16 +23,9 @@
 		// Load current Section (Website or Topic).
 		//
 
-		function ready (section) {
-			$scope.document = $scope.section = section;
-			Breadcrumb.setResource(null);
-			Breadcrumb.setPath([
-				[section.label, section.url('tree')],
-				['Fonctions'] // FIXME
-			]);
-
+		$scope.reload = function () {
 			// Load the list of SectionPageFunction Documents
-			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', section.id);
+			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $scope.section.id);
 			REST.query(query, {"limit": 100, "offset": 0, "column": ['functionCode', 'page']}).then(function (result) {
 				$scope.sectionPageFunctionList = result.resources;
 				functions.length = 0;
@@ -40,6 +33,16 @@
 					functions.push(spf.functionCode);
 				});
 			});
+		};
+
+		function ready (section) {
+			$scope.document = $scope.section = section;
+			Breadcrumb.setResource(null);
+			Breadcrumb.setPath([
+				[section.label, section.url('tree')],
+				['Fonctions'] // FIXME
+			]);
+			$scope.reload();
 		}
 		REST.resource($routeParams.id).then(ready);
 

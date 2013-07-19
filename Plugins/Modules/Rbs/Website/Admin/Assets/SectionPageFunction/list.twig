@@ -19,15 +19,22 @@
 		</select>
 
 		<div ng-show="selectedFunction">
-			<div ng-show="pagesForFunction.length > 0">
-				<h5>Liste des pages remplissant la fonction choisie :</h5>
-				<select class="input-block-level" size="10"
-				        ng-model="selectedPage"
-				        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
-				</select>
+			<div class="alert alert-danger margin-top" ng-show="isFunctionAlreadyUsed(selectedFunction)">
+				Cette fonction est déjà présente dans cette section.
 			</div>
-			<div class="alert alert-danger margin-top" ng-show="pagesForFunction.length == 0">
-				Aucune page ne remplit la fonction sélectionnée.
+
+			<div ng-show="! isFunctionAlreadyUsed(selectedFunction)">
+				<div class="alert alert-danger margin-top" ng-show="pagesForFunction.length == 0">
+					Aucune page ne remplit la fonction sélectionnée.
+				</div>
+
+				<div ng-show="pagesForFunction.length > 0">
+					<h5>Liste des pages remplissant la fonction choisie :</h5>
+					<select class="input-block-level" size="10"
+					        ng-model="selectedPage"
+					        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
+					</select>
+				</div>
 			</div>
 		</div>
 
@@ -41,7 +48,8 @@
 	                   filter-query="query"
 	                   collection="sectionPageFunctionList"
 	                   disable-pagination="true"
-	                   actions="delete">
+	                   actions="delete"
+	                   on-reload="reload()">
 
 		<quick-actions>[action delete]</quick-actions>
 
@@ -56,4 +64,5 @@
 		</column>
 
 	</rbs-document-list>
+
 </div>
