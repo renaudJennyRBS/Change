@@ -167,19 +167,16 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return Parameters
 	 */
-	public function getParameters($blockLayout, $httpEvent = null)
+	public function getParameters($blockLayout, $httpEvent)
 	{
 		$eventManager =  $this->getEventManager();
 		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE, $blockLayout->getName()), $this, $httpEvent->getParams());
-		if ($httpEvent instanceof \Change\Http\Web\Event)
+		$event->setAuthenticationManager($httpEvent->getAuthenticationManager());
+		$event->setPermissionsManager($httpEvent->getPermissionsManager());
+		$event->setParam('httpRequest', $httpEvent->getRequest());
+		if ($this->documentServices === null)
 		{
-			$event->setAuthenticationManager($httpEvent->getAuthenticationManager());
-			$event->setPermissionsManager($httpEvent->getPermissionsManager());
-			$event->setParam('httpRequest', $httpEvent->getRequest());
-			if ($this->documentServices === null)
-			{
-				$this->documentServices = $httpEvent->getDocumentServices();
-			}
+			$this->documentServices = $httpEvent->getDocumentServices();
 		}
 		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
@@ -205,18 +202,18 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Change\Presentation\Layout\Block $blockLayout
 	 * @param Parameters $parameters
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return BlockResult|null
 	 */
-	public function getResult($blockLayout, $parameters, $urlManager)
+	public function getResult($blockLayout, $parameters, $httpEvent)
 	{
 		$eventManager = $this->getEventManager();
-		$event = new Event(static::composeEventName(static::EVENT_EXECUTE, $blockLayout->getName()), $this);
+		$event = new Event(static::composeEventName(static::EVENT_EXECUTE, $blockLayout->getName()), $this, $httpEvent->getParams());
 		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
-		$event->setUrlManager($urlManager);
+		$event->setUrlManager($httpEvent->getUrlManager());
 		$results = $eventManager->trigger($event, function ($result)
 		{
 			return $result instanceof BlockResult;
