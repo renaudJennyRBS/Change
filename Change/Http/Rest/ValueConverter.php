@@ -25,20 +25,13 @@ class ValueConverter
 	protected $documentManager;
 
 	/**
-	 * @var \Change\Documents\ModelManager
-	 */
-	protected $modelManager;
-
-	/**
 	 * @param UrlManager $urlManager
-	 * @param \Change\Documents\ModelManager $modelManager
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 */
-	function __construct($urlManager, $modelManager, $documentManager)
+	function __construct($urlManager, $documentManager)
 	{
-		$this->urlManager = $urlManager;
-		$this->modelManager = $modelManager;
-		$this->documentManager = $documentManager;
+		$this->setUrlManager($urlManager);
+		$this->setDocumentManager($documentManager);
 	}
 
 	/**
@@ -68,13 +61,14 @@ class ValueConverter
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
-	public function setDocumentManager($documentManager)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager = null)
 	{
 		$this->documentManager = $documentManager;
 		return $this;
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return \Change\Documents\DocumentManager
 	 */
 	public function getDocumentManager()
@@ -86,35 +80,23 @@ class ValueConverter
 		return $this->documentManager;
 	}
 
-	/**
-	 * @param \Change\Documents\ModelManager $modelManager
-	 * @return $this
-	 */
-	public function setModelManager($modelManager)
-	{
-		$this->modelManager = $modelManager;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function getModelManager()
 	{
-		if ($this->modelManager === null)
-		{
-			throw new \RuntimeException('ModelManager is not set', 70000);
-		}
-		return $this->modelManager;
+		return $this->getDocumentManager()->getModelManager();
 	}
 
 	/**
+	 * @api
 	 * @param mixed $propertyValue
 	 * @param string $type constant from \Change\Documents\Property::TYPE_*
 	 * @return array|\Change\Http\Rest\Result\DocumentLink|null|string
 	 * @throws \RuntimeException
 	 */
-	protected function toRestValue($propertyValue, $type)
+	public function toRestValue($propertyValue, $type)
 	{
 		$restValue = null;
 		switch ($type)
@@ -194,12 +176,13 @@ class ValueConverter
 	}
 
 	/**
+	 * @api
 	 * @param mixed $restValue
 	 * @param string $type constant from \Change\Documents\Property::TYPE_*
 	 * @throws \RuntimeException
 	 * @return array|\Change\Documents\AbstractDocument|\DateTime|null|string
 	 */
-	protected function toPropertyValue($restValue, $type)
+	public function toPropertyValue($restValue, $type)
 	{
 		$value = null;
 		switch ($type)

@@ -26,11 +26,9 @@ class PropertyConverter extends ValueConverter
 	 */
 	public function __construct(AbstractDocument $document, Property $property, UrlManager $urlManager = null)
 	{
-		parent::__construct($urlManager, $document->getDocumentServices()->getModelManager(),
-			$document->getDocumentServices()->getDocumentManager());
+		parent::__construct($urlManager, $document->getDocumentServices()->getDocumentManager());
 		$this->document = $document;
 		$this->property = $property;
-		$this->urlManager = $urlManager;
 	}
 
 	/**
