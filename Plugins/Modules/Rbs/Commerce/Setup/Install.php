@@ -22,7 +22,7 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\\Rbs\\Commerce\\Http\\Rest\\ListenerAggregate');
+		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\\Rbs\\Commerce\\Http\\Web\\ListenerAggregate');
 	}
 
 	/**

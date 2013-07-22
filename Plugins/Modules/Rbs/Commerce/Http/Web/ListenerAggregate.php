@@ -1,13 +1,13 @@
 <?php
-namespace Rbs\Commerce\Http\Rest;
+namespace Rbs\Commerce\Http\Web;
 
 use Rbs\Commerce\Services\CommerceServices;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Change\Http\Event;
+use Change\Http\Web\Event;
 
 /**
- * @name \Rbs\Commerce\Http\ListenerAggregate
+ * @name \Rbs\Commerce\Web\ListenerAggregate
  */
 class ListenerAggregate implements ListenerAggregateInterface
 {

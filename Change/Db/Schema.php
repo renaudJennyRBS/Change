@@ -42,7 +42,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			->addKey($this->newPrimaryKey()->addField($idDef));
 			
 			$correctionId = $schemaManager->newIntegerFieldDefinition('correction_id')->setNullable(false)->setAutoNumber(true);
-			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(false)->setDefaultValue('_____');
+			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 5))->setNullable(false)->setDefaultValue('_____');
 			$status = $schemaManager->newEnumFieldDefinition('status', array('VALUES' => array('DRAFT', 'VALIDATION', 'VALIDCONTENT', 'VALID', 'PUBLISHABLE', 'FILED')))->setNullable(false)->setDefaultValue('DRAFT');
 			$this->tables['change_document_correction'] = $schemaManager->newTableDefinition('change_document_correction')
 			->addField($correctionId)
@@ -94,7 +94,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			$this->tables['change_path_rule'] = $td = $schemaManager->newTableDefinition('change_path_rule');
 			$td->addField($schemaManager->newIntegerFieldDefinition('rule_id')->setNullable(false)->setAutoNumber(true))
 				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
-				->addField($schemaManager->newVarCharFieldDefinition('lcid', array('length' => 10))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('lcid', array('length' => 5))->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('hash', array('length' => 40))->setNullable(false))
 				->addField($schemaManager->newTextFieldDefinition('relative_path')->setNullable(false))
 				->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setDefaultValue(0))

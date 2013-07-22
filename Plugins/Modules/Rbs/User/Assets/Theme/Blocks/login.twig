@@ -1,5 +1,5 @@
 {% if parameters.accessorId != null %}
-	<span> Vous êtes actuellement authentifier : {{ parameters.accessorId }}</span>
+	<span> Vous êtes actuellement authentifier : {{ parameters.accessorName }}</span>
 {% else %}
 <form method="post" id="Login" action="Action/Rbs/User/Login">
 	<input type="hidden" name="realm" value="{{ parameters.realm }}">
