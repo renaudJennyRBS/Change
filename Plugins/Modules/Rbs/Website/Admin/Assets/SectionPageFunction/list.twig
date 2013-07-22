@@ -23,23 +23,38 @@
 				Cette fonction est déjà présente dans cette section.
 			</div>
 
-			<div ng-show="! isFunctionAlreadyUsed(selectedFunction)">
+			<div ng-hide="isFunctionAlreadyUsed(selectedFunction)">
 				<div class="alert alert-danger margin-top" ng-show="pagesForFunction.length == 0">
 					Aucune page ne remplit la fonction sélectionnée.
 				</div>
 
-				<div ng-show="pagesForFunction.length > 0">
+				<div ng-show="pagesForFunction.length">
 					<h5>Liste des pages remplissant la fonction choisie :</h5>
 					<select class="input-block-level" size="10"
 					        ng-model="selectedPage"
 					        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
 					</select>
+					<div>
+						La page peut aussi remplir les fonctions suivantes :
+						<select class="input-block-level" size="10"
+						        multiple="multiple"
+						        ng-model="extraFunctions"
+						        ng-options="func.code as func.label+' ('+func.code+') ('+func.usage+')' for func in selectedPage.functions">
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<button ng-disabled="! selectedFunction || ! selectedPage" type="button" class="btn btn-success" ng-click="addSectionFunction(selectedFunction, selectedPage)">Ajouter</button>
+		<button ng-disabled="! selectedFunction || ! selectedPage" type="button" class="btn btn-success" ng-click="addSectionFunction(selectedFunction, selectedPage, extraFunctions)">Ajouter</button>
 
+	</div>
+
+
+	<div class="well well-small" ng-hide="indexFunctionExists">
+		Page d'index :
+		<div class="document-picker-single" ng-model="toto.indexPage" accepted-model="Rbs_Website_Page"></div>
+		<button ng-disabled="! toto.indexPage" type="button" class="btn btn-success" ng-click="setIndexPage(toto.indexPage)">Définir</button>
 	</div>
 
 
@@ -54,8 +69,8 @@
 		<quick-actions>[action delete]</quick-actions>
 
 		<column name="functionCode" primary="true" converter-params="Rbs_Website_AvailablePageFunctions" converter="collection">
-			<span class="label label-success pull-right" ng-if="doc.functionCode == 'Rbs_Website_Section'">index</span>
-			<strong>(= converted(doc.functionCode) =)</strong><br/>
+			<strong ng-if="doc.functionCode == 'Rbs_Website_Section'">{{ i18n('m.rbs.website.functions.index-page', ['ucf']) }}</strong>
+			<strong ng-if="doc.functionCode != 'Rbs_Website_Section'">(= converted(doc.functionCode) =)</strong><br/>
 			<em class="muted">(= doc.functionCode =)</em>
 		</column>
 		<column name="page.label">

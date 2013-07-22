@@ -2,7 +2,8 @@
 
 	"use strict";
 
-	var app = angular.module('RbsChange');
+	var app = angular.module('RbsChange'),
+		INDEX_FUNCTION_CODE = 'Rbs_Website_Section';
 
 	/**
 	 *
@@ -15,8 +16,29 @@
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
 		]);
 
-		$scope.sectionPageFunctionList = [];
 		var functions = [];
+
+		$scope.sectionPageFunctionList = [];
+		$scope.indexFunctionExists = false;
+		$scope.toto = {
+			'indexPage' : null
+		};
+
+
+		/**
+		 * Stores the codes of the functions that are attached to the current section
+		 * and checks whether the 'index' function is present or not.
+		 * @param functionList
+		 */
+		function initExistingFunctions (functionList) {
+			functions.length = 0;
+			angular.forEach(functionList, function (spf) {
+				functions.push(spf.functionCode);
+				if (spf.functionCode === INDEX_FUNCTION_CODE) {
+					$scope.indexFunctionExists = true;
+				}
+			});
+		}
 
 
 		//
@@ -27,11 +49,7 @@
 			// Load the list of SectionPageFunction Documents
 			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $scope.section.id);
 			REST.query(query, {"limit": 100, "offset": 0, "column": ['functionCode', 'page']}).then(function (result) {
-				$scope.sectionPageFunctionList = result.resources;
-				functions.length = 0;
-				angular.forEach(result.resources, function (spf) {
-					functions.push(spf.functionCode);
-				});
+				initExistingFunctions($scope.sectionPageFunctionList = result.resources);
 			});
 		};
 
@@ -76,24 +94,63 @@
 			}
 		});
 
-		$scope.addSectionFunction = function (func, page) {
-			function saveFunctions () {
+		$scope.addSectionFunction = function (func, page, extraFunctions) {
+
+			function saveFunctions (functions) {
+
 				var spf = REST.newResource('Rbs_Website_SectionPageFunction');
 				spf.page = page.id;
 				spf.section = $scope.section.id;
-				spf.functionCode = func;
+				spf.functionCode = functions.pop();
+
 				REST.save(spf).then(
 					// Success
 					function () {
-						$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload"});
+						if (functions.length) {
+							saveFunctions(functions);
+						} else {
+							$scope.reload();
+						}
 					},
 					// Error
 					function (error) {
-						NotificationCenter.error("L'enregistrement a échoué", error);
+						var promises = [];
+						$scope.reload();
+						//$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload", "promises": promises});
+						$q.all(promises).then(function () {
+							NotificationCenter.error("L'enregistrement a échoué", error);
+						});
 					}
 				);
 			}
-			saveFunctions();
+
+			var allFunctions;
+			if (angular.isArray(extraFunctions)) {
+				allFunctions = angular.copy(extraFunctions);
+			} else {
+				allFunctions = [];
+			}
+			if (allFunctions.indexOf(func) === -1) {
+				allFunctions.unshift(func);
+			}
+
+			saveFunctions(allFunctions);
+		};
+
+
+		$scope.setIndexPage = function (page) {
+			var spf = REST.newResource('Rbs_Website_SectionPageFunction');
+			spf.page = page.id;
+			spf.section = $scope.section.id;
+			spf.functionCode = INDEX_FUNCTION_CODE;
+			REST.save(spf).then(
+				function () {
+					$scope.reload();
+				},
+				function (error) {
+					NotificationCenter.error("L'enregistrement a échoué", error);
+				}
+			);
 		};
 
 	}
