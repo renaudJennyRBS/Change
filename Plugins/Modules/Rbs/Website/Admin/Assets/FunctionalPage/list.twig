@@ -27,5 +27,14 @@
 			<strong><a href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a></strong>
 		</column>
 
+		<column name="allowedFunctionsCode">
+			<div ng-if="doc.allowedFunctionsCode">
+				<div class="label" ng-repeat="func in doc.allowedFunctionsCode">(= func =)</div>
+			</div>
+			<div ng-if="! doc.allowedFunctionsCode">
+				<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.document.functionalpage.configure-functions', ['ucf']) }}</a>
+			</div>
+		</column>
+
 	</rbs-document-list>
 </div>

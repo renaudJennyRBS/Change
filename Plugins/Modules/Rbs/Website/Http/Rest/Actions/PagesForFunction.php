@@ -39,14 +39,50 @@ class PagesForFunction
 
 		$query = new Query($documentServices, 'Rbs_Website_FunctionalPage');
 		$query->andPredicates($query->like('allowedFunctionsCode', '"' . $function . '"'));
-		foreach ($query->getDocuments() as $page)
+		$pages = $query->getDocuments();
+
+		if (count($pages))
 		{
-			$pagesForFunction[] = array(
-				"id" => $page->getId(),
-				"label" => $page->getLabel(),
-				"website" => $page->getWebsite()->getLabel()
-			);
+			$presentationServices = new \Change\Presentation\PresentationServices($documentServices->getApplicationServices());
+			$blockManager = $presentationServices->getBlockManager();
+			$allFunctions = array();
+			foreach ($blockManager->getBlockNames() as $blockName)
+			{
+				$blockInfo = $blockManager->getBlockInformation($blockName);
+				if ($blockInfo)
+				{
+					foreach ($blockInfo->getFunctions() as $name => $label)
+					{
+						$allFunctions[$name] = $label;
+					}
+				}
+			}
+
+			foreach ($pages as $page)
+			{
+				/* @var $page \Rbs\Website\Documents\FunctionalPage */
+				$funcs = array();
+				foreach($page->getAllowedFunctionsCode() as $code)
+				{
+					$query = new Query($documentServices, 'Rbs_Website_SectionPageFunction');
+					$query->andPredicates($query->eq('functionCode', $code));
+					$funcs[] = array(
+						"code" => $code,
+						"label" => $allFunctions[$code],
+						"usage" => $query->getCountDocuments()
+					);
+				}
+
+				$pagesForFunction[] = array(
+					"id" => $page->getId(),
+					"label" => $page->getLabel(),
+					"website" => $page->getWebsite()->getLabel(),
+					"functions" => $funcs
+				);
+			}
+
 		}
+
 
 		$result->setArray($pagesForFunction);
 

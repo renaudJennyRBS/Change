@@ -12,4 +12,8 @@
 	<key id="synchronize-title-label">synchroniser la valeur avec celle du libellé</key>
 	<key id="section-functions">{'0':'Aucune fonction n\'est configurée pour cette section.','one':'Cette section dispose de la fonction suivante :','other':'Cette section dispose des {} fonctions suivantes :'}</key>
 	<key id="configure-section-functions-link">configurer les fonctions de cette section</key>
+	<key id="function-via-page" format="html"><![CDATA[<em>via</em> la page]]></key>
+	<key id="functions">fonctions</key>
+	<key id="properties">propriétés</key>
+	<key id="menus">menus</key>
 </i18n>
