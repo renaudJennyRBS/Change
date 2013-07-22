@@ -102,22 +102,29 @@
 					return this.META$.links['self'] ? this.META$.links['self'].href + '/tags/' : null;
 				};
 
-				ChangeDocument.prototype.getTags = function () {
+				ChangeDocument.prototype.loadTags = function () {
 					if (this.META$.tags === null) {
 						this.META$.tags = [];
 						var doc = this;
 
 						if (doc.getTagsUrl() !== null) {
-							$http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn))
-							.success(function (result) {
+							var p = $http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn));
+							p.success(function (result) {
 								angular.forEach(result.resources, function (r) {
 									doc.META$.tags.push(r);
 								});
 							});
+							return p;
 						}
 					}
+					return null;
+				};
+
+				ChangeDocument.prototype.getTags = function () {
+					this.loadTags();
 					return this.META$.tags;
 				};
+
 
 
 				/**

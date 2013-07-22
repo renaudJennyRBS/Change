@@ -492,45 +492,47 @@
 						});
 					}
 
-					if (angular.isFunction(callback)) {
-						// This callback can be used to initialize defaut values in the editor.
-						// It will be called only when the Breadcrumb is fully loaded.
-						Breadcrumb.ready().then(function () {
+					Breadcrumb.ready().then(function () {
+						if (angular.isFunction(callback)) {
 							callback.apply(scope);
+						}
 
-
-							//
-							// Sections initialization
-							// Implement the initSection() in your Editor's scope to initialize the section given as argument.
-							// initSection() will be called only once for each section, when the user switches to it.
-							//
-
-							var initializedSections = {};
-							function initSectionIfNeeded (section) {
-								if (angular.isFunction(scope.initSection) && !initializedSections[section]) {
-									scope.initSection(section);
-									initializedSections[section] = true;
-								}
-							}
-
-							scope.$watch('section', function (section) {
-								if (section !== undefined && section !== null) {
-									initSectionIfNeeded(section);
-								}
-							});
-
-
-
-							$rootScope.$broadcast(Events.EditorReady, {
-								"scope"    : scope,
-								"document" : scope.document
-							});
-							// Since this callback (or the event handlers) could have modified 'scope.document'
-							// to initialize some default values, we need to re-synchronize
-							// 'scope.original' with 'scope.document'.
-							scope.original = angular.copy(scope.document);
+						var readyPromises = [];
+						$rootScope.$broadcast(Events.EditorReady, {
+							"scope"    : scope,
+							"document" : scope.document,
+							"promises" : readyPromises
 						});
-					}
+
+						// Since this callback (or the event handlers) could have modified 'scope.document'
+						// to initialize some default values, we need to re-synchronize
+						// 'scope.original' with 'scope.document'.
+						if (readyPromises.length) {
+							$q.all(readyPromises).then(function () {
+								scope.original = angular.copy(scope.document);
+							});
+						} else {
+							scope.original = angular.copy(scope.document);
+						}
+
+						// Sections initialization
+						// Implement the initSection() in your Editor's scope to initialize the section given as argument.
+						// initSection() will be called only once for each section, when the user switches to it.
+						var initializedSections = {};
+						function initSectionIfNeeded (section) {
+							if (angular.isFunction(scope.initSection) && !initializedSections[section]) {
+								scope.initSection(section);
+								initializedSections[section] = true;
+							}
+						}
+
+						scope.$watch('section', function (section) {
+							if (section !== undefined && section !== null) {
+								initSectionIfNeeded(section);
+							}
+						});
+
+					});
 				}
 			}, true);
 		};

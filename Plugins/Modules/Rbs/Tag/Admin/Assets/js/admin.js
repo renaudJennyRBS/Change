@@ -66,6 +66,15 @@
 			}
 		});
 
+		// Load tags of the document being edited in an Editor.
+		$rootScope.$on(Events.EditorReady, function (event, args) {
+			var doc = args.document;
+			if (doc.model !== 'Rbs_Tag_Tag') {
+				args.promises.push(doc.loadTags());
+			}
+		});
+
+
 		// Filter 'hasTag' for <rbs-document-list/>.
 		$rootScope.$on(Events.DocumentListApplyFilter, function (event, args) {
 			var	filter = args.filter,
@@ -93,7 +102,6 @@
 		});
 
 		$rootScope.$on(Events.EditorFormButtonBarContents, function (event, args) {
-			//console.log('Events.EditorFormButtonBarContents: ', args);
 			if (args.document.model !== 'Rbs_Tag_Tag') {
 				args.contents.push('<div>' + i18n.trans('m.rbs.tag.admin.js.tags | ucf')  + '<rbs-tag-selector ng-model="document.META$.tags"></rbs-tag-selector></div>');
 			}
