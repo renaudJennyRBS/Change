@@ -39,6 +39,7 @@ class GetResource
 				else
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+					$result->setHeaderExpires((new \DateTime())->add(new \DateInterval('P10D')));
 					$result->getHeaders()->addHeaderLine('Content-Type', $fileResource->getContentType());
 					$result->setRenderer(function () use ($fileResource)
 					{
