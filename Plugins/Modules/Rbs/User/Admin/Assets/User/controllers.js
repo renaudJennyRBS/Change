@@ -70,7 +70,7 @@
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
 		});
-		var url = REST.getBaseUrl('admin/userTokens/?userId=' + $routeParams.id);
+		var url = REST.getBaseUrl('user/userTokens/?userId=' + $routeParams.id);
 		$http.get(url).success(function (data){
 				$scope.tokens = data;
 			}
@@ -79,7 +79,7 @@
 		$scope.revokeToken = function(token){
 			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-revoke-token | ucf', { 'token': token.token })))
 			{
-				var url = REST.getBaseUrl('admin/revokeToken/');
+				var url = REST.getBaseUrl('user/revokeToken/');
 				$http.post(url, { 'token': token.token }).success(function (){
 						ArrayUtils.removeValue($scope.tokens, token);
 					}

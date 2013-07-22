@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Admin\Http\Rest\Actions;
+namespace Rbs\User\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\DocumentResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\Admin\Http\Rest\Actions\RevokeToken
+ * @name \Rbs\User\Http\Rest\Actions\RevokeToken
  */
 class RevokeToken
 {

@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Admin\Http\Rest\Actions;
+namespace Rbs\User\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\ArrayResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\Admin\Http\Rest\Actions\GetUserTokens
+ * @name \Rbs\User\Http\Rest\Actions\GetUserTokens
  */
 class GetUserTokens
 {

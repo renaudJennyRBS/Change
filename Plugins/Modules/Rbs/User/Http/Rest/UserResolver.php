@@ -1,15 +1,16 @@
 <?php
-namespace Rbs\Admin\Http\Rest;
+namespace Rbs\User\Http\Rest;
 
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
-use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
+use Rbs\User\Http\Rest\Actions\GetUserTokens;
+use Rbs\User\Http\Rest\Actions\RevokeToken;
 
 /**
- * @name \Rbs\Admin\Http\Rest\AdminResolver
+ * @name \Rbs\User\Http\Rest\UserResolver
  */
-class AdminResolver
+class UserResolver
 {
 	/**
 	 * @param \Change\Http\Rest\Resolver $resolver
@@ -31,7 +32,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser');
+		return array('userTokens', 'revokeToken');
 	}
 
 	/**
@@ -46,7 +47,7 @@ class AdminResolver
 		$nbParts = count($resourceParts);
 		if ($nbParts == 0 && $method === Request::METHOD_GET)
 		{
-			array_unshift($resourceParts, 'admin');
+			array_unshift($resourceParts, 'user');
 			$event->setParam('namespace', implode('.', $resourceParts));
 			$event->setParam('resolver', $this);
 			$action = function ($event)
@@ -60,11 +61,17 @@ class AdminResolver
 		elseif ($nbParts == 1)
 		{
 			$actionName = $resourceParts[0];
-			if ($actionName === 'currentUser')
+			if ($actionName === 'userTokens')
 			{
-				$action = new GetCurrentUser();
+				$action = new GetUserTokens();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'currentUser');
+				$this->resolver->setAuthorisation($event, null, 'userTokens');
+			}
+			else if ($actionName === 'revokeToken')
+			{
+				$action = new RevokeToken();
+				$event->setAction(function($event) use($action) {$action->execute($event);});
+				$this->resolver->setAuthorisation($event, null, 'revokeToken');
 			}
 		}
 	}
