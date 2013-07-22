@@ -48,14 +48,12 @@ class Login
 			{
 				$am = $event->getAuthenticationManager();
 				$user = $am->login($login, $password, $realm);
-				if ($user instanceof \Rbs\User\Documents\User)
+				if ($user instanceof \Change\User\UserInterface)
 				{
 					$am->setCurrentUser($user);
 					$accessorId = $user->getId();
 					$this->save($website, $accessorId);
-					$datas = array('accessorId' => $accessorId);
-					$datas['pseudonym'] = $user->getPseudonym();
-					$datas['email'] = $user->getEmail();
+					$datas = array('accessorId' => $accessorId, 'name' => $user->getName());
 				}
 				else
 				{

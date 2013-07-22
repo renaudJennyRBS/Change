@@ -39,6 +39,7 @@ class Login extends Block
 		if ($user->authenticated())
 		{
 			$parameters->setParameterValue('accessorId', $user->getId());
+			$parameters->setParameterValue('accessorName', $user->getName());
 		}
 		return $parameters;
 	}
