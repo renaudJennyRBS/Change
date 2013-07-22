@@ -22,6 +22,7 @@ class Install
 
 		$config->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_User', '\\Rbs\\User\\Events\\ListenerAggregate');
 		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_User', '\\Rbs\\User\\Web\\ListenerAggregate');
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_User', '\\Rbs\\User\\Http\\Rest\\ListenerAggregate');
 	}
 
 	/**
