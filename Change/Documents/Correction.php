@@ -16,29 +16,29 @@ class Correction
 	const STATUS_VALID = 'VALID';
 	const STATUS_PUBLISHABLE = 'PUBLISHABLE';
 	const STATUS_FILED = 'FILED';
-	
+
 	const NULL_LCID_KEY = '_____';
 
 	/**
 	 * @var integer
 	 */
 	protected $id;
-	
+
 	/**
 	 * @var integer
 	 */
 	protected $documentId;
-	
+
 	/**
 	 * @var string|null;
 	 */
 	protected $LCID;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $status;
-	
+
 	/**
 	 * @var \DateTime
 	 */
@@ -48,22 +48,22 @@ class Correction
 	 * @var \DateTime
 	 */
 	protected $publicationDate;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $modified;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $datas;
-	
+
 	/**
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
-	
+
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param integer $documentId
@@ -76,7 +76,7 @@ class Correction
 		$this->LCID = $LCID;
 		$this->setCreationDate(new \DateTime());
 	}
-	
+
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
@@ -84,7 +84,7 @@ class Correction
 	{
 		return $this->documentManager;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return \Change\Documents\DocumentManager
@@ -112,7 +112,7 @@ class Correction
 	{
 		return $this->id;
 	}
-	
+
 	/**
 	 * @api
 	 * @return integer
@@ -227,7 +227,7 @@ class Correction
 	 */
 	public function setStatus($status)
 	{
-		switch ($status) 
+		switch ($status)
 		{
 			case static::STATUS_DRAFT:
 			case static::STATUS_VALIDATION:
@@ -295,7 +295,7 @@ class Correction
 	{
 		$this->datas = $datas;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string[] $names
@@ -304,7 +304,7 @@ class Correction
 	{
 		$this->datas['__propertiesNames'] = $names;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string[]
@@ -313,7 +313,7 @@ class Correction
 	{
 		return isset($this->datas['__propertiesNames']) ? $this->datas['__propertiesNames'] : array();
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -323,7 +323,7 @@ class Correction
 	{
 		return in_array($name, $this->getPropertiesNames());
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -333,7 +333,7 @@ class Correction
 	{
 		return $this->isValidProperty($name) && array_key_exists($name, $this->datas);
 	}
-	
+
 	/**
 	 * @api
 	 * @return array[]
@@ -350,7 +350,7 @@ class Correction
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -380,7 +380,7 @@ class Correction
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -402,7 +402,7 @@ class Correction
 			$this->modified = true;
 		}
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -446,7 +446,7 @@ class Correction
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -462,7 +462,7 @@ class Correction
 	{
 		if (!$this->hasModifiedProperties())
 		{
-			$this->getStatus(static::STATUS_FILED);
+			$this->setStatus(static::STATUS_FILED);
 		}
 
 		if (!$this->isNew())
