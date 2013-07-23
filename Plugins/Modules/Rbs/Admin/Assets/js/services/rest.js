@@ -49,10 +49,10 @@
 				}
 
 				ChangeDocument.prototype.meta = function (string) {
-					var splat = string.split('.'),
+					var splat = string.split(/\./),
 						obj, i;
 					obj = this.META$;
-					for (i=0 ; i<splat.length && !obj ; i++) {
+					for (i=0 ; i<splat.length && obj ; i++) {
 						obj = obj[splat[i]];
 					}
 					return obj;
