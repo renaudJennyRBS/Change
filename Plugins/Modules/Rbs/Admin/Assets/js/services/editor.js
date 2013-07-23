@@ -492,10 +492,18 @@
 						});
 					}
 
-					Breadcrumb.ready().then(function () {
+					var promises = [
+						Breadcrumb.ready(),
+						REST.modelInfo(scope.original.model)
+					];
+
+					$q.all(promises).then(function (promisesResults) {
 						if (angular.isFunction(callback)) {
 							callback.apply(scope);
 						}
+
+						scope.modelInfo = promisesResults[1];
+						delete scope.modelInfo.links;
 
 						var readyPromises = [];
 						$rootScope.$broadcast(Events.EditorReady, {
