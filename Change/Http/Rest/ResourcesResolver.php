@@ -110,7 +110,7 @@ class ResourcesResolver
 			$event->setParam('modelName', $modelName);
 			if ($method === Request::METHOD_GET)
 			{
-				$this->resolver->setAuthorisation($event, 'Consumer', null, $modelName);
+				$this->resolver->setAuthorization($event, 'Consumer', null, $modelName);
 
 				$action = function ($event)
 				{
@@ -122,7 +122,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_POST)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', null, $modelName);
 
 				$action = function ($event)
 				{
@@ -153,7 +153,7 @@ class ResourcesResolver
 			$event->setParam('documentId', $documentId);
 			if ($method === Request::METHOD_GET)
 			{
-				$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new GetDocument();
@@ -164,7 +164,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_PUT)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new UpdateDocument();
@@ -175,7 +175,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_DELETE)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new DeleteDocument();
@@ -186,7 +186,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_POST)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', null, $modelName);
 				if ($model->isLocalized())
 				{
 					$action = function ($event)
@@ -229,7 +229,7 @@ class ResourcesResolver
 			$event->setParam('LCID', $resourceParts[4]);
 			if ($method === Request::METHOD_GET)
 			{
-				$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new GetLocalizedDocument();
@@ -240,7 +240,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_PUT)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new UpdateLocalizedDocument();
@@ -251,7 +251,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_DELETE)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', $documentId, $modelName);
 
 				$action = function ($event)
 				{
@@ -263,7 +263,7 @@ class ResourcesResolver
 			}
 			elseif ($method === Request::METHOD_POST)
 			{
-				$this->resolver->setAuthorisation($event, 'Creator', null, $modelName);
+				$this->resolver->setAuthorization($event, 'Creator', null, $modelName);
 				$action = function ($event)
 				{
 					$action = new CreateLocalizedDocument();
@@ -307,7 +307,7 @@ class ResourcesResolver
 
 			if ($method === Request::METHOD_GET)
 			{
-				$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
+				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
 				$action = function ($event)
 				{
 					$action = new GetCorrection();
@@ -340,7 +340,7 @@ class ResourcesResolver
 		$modelName = $document->getDocumentModelName();
 		$event->setParam('modelName', $modelName);
 
-		$this->resolver->setAuthorisation($event, 'Consumer', $documentId, $modelName);
+		$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
 		if ($document instanceof Localizable)
 		{
 			$event->setParam('LCID', $document->getRefLCID());

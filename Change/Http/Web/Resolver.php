@@ -60,7 +60,7 @@ class Resolver extends BaseResolver
 						$action = new GeneratePathRule();
 						$action->execute($event);
 					};
-					$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+					$this->setAuthorization($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
 					$event->setAction($action);
 					return;
 				}
@@ -82,7 +82,7 @@ class Resolver extends BaseResolver
 					$action->execute($event);
 				};
 				$event->setAction($action);
-				$this->setAuthorisation($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+				$this->setAuthorization($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
 				return;
 			}
 		}

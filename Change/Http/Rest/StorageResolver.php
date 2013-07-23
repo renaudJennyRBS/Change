@@ -87,7 +87,7 @@ class StorageResolver
 
 				//TODO Activate Authorisation
 				//$privilege = 'storage.get';
-				//$this->resolver->setAuthorisation($event, $path, $privilege);
+				//$this->resolver->setAuthorization($event, $path, $privilege);
 
 				$action = function ($event)
 				{
@@ -123,7 +123,7 @@ class StorageResolver
 
 							//TODO Activate Authorisation
 							//$privilege = 'storage.upload';
-							//$this->resolver->setAuthorisation($event, $path, $privilege);
+							//$this->resolver->setAuthorization($event, $path, $privilege);
 
 							$action = function ($event)
 							{
