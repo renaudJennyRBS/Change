@@ -8,4 +8,6 @@
 	<key id="revoke-token">révoquer</key>
 	<key id="applications-list-sub-title">applications</key>
 	<key id="applications">applications</key>
+	<key id="current-password">mot de passe actuel</key>
+	<key id="new-password">nouveau mot de passe</key>
 </i18n>

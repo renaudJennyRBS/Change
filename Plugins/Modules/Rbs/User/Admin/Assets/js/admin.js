@@ -42,6 +42,20 @@
 				templateUrl: 'Rbs/User/User/applications.twig',
 				reloadOnSearch: false
 			})
+
+		. when(
+			'/Rbs/User/Group',
+			{
+				templateUrl : 'Rbs/User/Group/list.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
+			'/Rbs/User/Group/:id',
+			{
+				templateUrl : 'Rbs/User/Group/form.twig',
+				reloadOnSearch : false
+			})
 		;
 	}]);
 
@@ -54,6 +68,11 @@
 				'form'  : '/Rbs/User/User/:id',
 				'list'  : '/Rbs/User/User',
 				'applications' : '/Rbs/User/User/:id/Applications/'
+			});
+			// Group
+			$delegate.register('Rbs_User_Group', {
+				'form'  : '/Rbs/User/Group/:id',
+				'list'  : '/Rbs/User/Group'
 			});
 
 			return $delegate;

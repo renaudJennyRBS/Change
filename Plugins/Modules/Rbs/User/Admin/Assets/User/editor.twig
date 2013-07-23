@@ -7,12 +7,20 @@
 		{{ forms.field('login', 'String', 'm.rbs.user.document.user.login', true) }}
 		{{ forms.field('email', 'String', 'm.rbs.user.document.user.email', true) }}
 		{{ forms.field('label', 'String', 'm.rbs.user.document.user.label', true) }}
+		{{ forms.pickerMultiple('groups', 'Rbs_User_Group', 'm.rbs.user.document.group-list',
+		false, null, 'm.rbs.user.document.group.group-picker-title') }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='security'"
 		data-form-section-label="{{ i18nAttr('m.rbs.user.document.user.security', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		{{ forms.readonly('hashMethod', 'm.rbs.user.document.user.hashMethod') }}
+		<div data-ng-if="document.isNew()">
+		{{ forms.field('password', 'String', 'm.rbs.user.document.user.password', true) }}
+		</div>
+		<div data-ng-if="!document.isNew()">
+		{{ forms.field('password', 'String', 'm.rbs.user.admin.new-password') }}
+		</div>
 	</fieldset>
 
 	<fieldset

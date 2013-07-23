@@ -65,13 +65,21 @@ class UserResolver
 			{
 				$action = new GetUserTokens();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'userTokens');
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Consumer', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
 			}
 			else if ($actionName === 'revokeToken')
 			{
 				$action = new RevokeToken();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'revokeToken');
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
 			}
 		}
 	}

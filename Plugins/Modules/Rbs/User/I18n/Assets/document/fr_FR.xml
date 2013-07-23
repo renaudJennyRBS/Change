@@ -3,4 +3,8 @@
 	<key id="user">utilisateur</key>
 	<key id="user-list">utilisateurs</key>
 	<key id="user-create">créer un utilisateur</key>
+	<key id="group">groupe</key>
+	<key id="group-list">groupes</key>
+	<key id="group-create">créer un groupe d'utilisateurs</key>
+	<key id="users-in-group">utilisateurs du groupe</key>
 </i18n>

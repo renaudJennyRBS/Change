@@ -4,4 +4,6 @@
 	<key id="module-name">utilisateurs</key>
 	<key id="module-keywords">groupes,sécurité,mot de passe,password,login,comptes,authentification</key>
 	<key id="confirm-revoke-token">confirmer la révocation du token : {token} ?</key>
+	<key id="group">groupe</key>
+	<key id="group-list">groupes</key>
 </i18n>

@@ -85,7 +85,7 @@
 					}
 				);
 			}
-		}
+		};
 
 		//sort
 		$scope.predicate = 'validity_date';

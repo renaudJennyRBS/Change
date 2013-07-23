@@ -1,0 +1,19 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.user.document.group.label', true) }}
+		{{ forms.field('realm', 'String', 'm.rbs.user.document.group.realm', true) }}
+	</fieldset>
+
+	<fieldset
+			data-ng-show="section=='systeminfo'"
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
+			data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
