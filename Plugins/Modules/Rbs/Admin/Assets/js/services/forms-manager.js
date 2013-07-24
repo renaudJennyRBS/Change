@@ -242,11 +242,6 @@
 			// 'updateDocumentProperties' event down to the child scopes.
 			// The Editor listens to it and updates its 'document' Model consequently, using the properties that
 			// come as the event's parameters.
-			function correctionChangedHandler (event, properties) {
-				scope.$broadcast(Events.EditorUpdateDocumentProperties, properties);
-			}
-			scope.$on(Events.EditorDocumentUpdated, correctionChangedHandler);
-			scope.$on(Events.EditorCorrectionRemoved, correctionChangedHandler);
 			scope.$on(Events.EditorDocumentUpdated, function (event, doc) {
 				scope.document = angular.extend(scope.document, doc);
 			});

@@ -1,43 +1,47 @@
 (function () {
 	var app = angular.module('RbsChange');
 
-	app.directive('correctionViewer', ['$timeout', 'RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.Events', function ($timeout, Dialog, ArrayUtils, REST, Events) {
+	app.directive('rbsCorrectionViewer', ['$timeout', 'RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.Events', 'RbsChange.Utils', function ($timeout, Dialog, ArrayUtils, REST, Events, Utils) {
 		return {
 
 			restrict    : 'A',
-			templateUrl: 'Rbs/Admin/js/directives/correction-viewer.html',
+			templateUrl: 'Rbs/Admin/js/directives/correction-viewer.twig',
 
 			scope : {
-				current : '='
+				current : '=document'
 			},
 
 			link : function (scope, element, attrs) {
 
-				var originalDiff;
+//				var originalDiff;
 
 				function update () {
 					ArrayUtils.clear(scope.diff);
-					angular.forEach(scope.correctionInfo.propertiesNames, function (property) {
-						scope.diff.push({
-							'id'       : property,
-							'current'  : scope.current[property],
-							'original' : scope.correctionInfo.original[property]
+					if (scope.correctionInfo) {
+						angular.forEach(scope.correctionInfo.propertiesNames, function (property) {
+							scope.diff.push({
+								'id'       : property,
+								'current'  : scope.current[property],
+								'original' : scope.correctionInfo.original[property]
+							});
 						});
-					});
+					}
 				}
 
 				scope.diff = [];
-				scope.advancedDiffs = false;
+				scope.advancedDiffs = true;
 				scope.correctionInfo = angular.copy(scope.current.META$.correction);
 				update();
-				originalDiff = angular.copy(scope.diff);
 
+/*
+				originalDiff = angular.copy(scope.diff);
 
 				scope.$watch('correctionInfo', update, true);
 
 
 				scope.cancelLine = function (line) {
-					ArrayUtils.removeValue(scope.correctionInfo.propertiesNames, line.id);
+					//ArrayUtils.removeValue(scope.correctionInfo.propertiesNames, line.id);
+					Utils.removeCorrection(scope.current, line.id);
 				};
 
 
@@ -77,54 +81,76 @@
 					});
 
 				};
+*/
 
+				// TODO Init this according to the Correction info
+				scope.params = {
+					'applyCorrectionWhen' : scope.correctionInfo.publicationDate ? 'planned' : 'now',
+					'plannedCorrectionDate' : scope.correctionInfo.publicationDate
+				};
 
 				scope.deleteCorrection = function () {
-
-					var properties = {};
-					angular.forEach(scope.correctionInfo.propertiesNames, function (property) {
-						properties[property] = scope.current.META$.correction.original[property];
-					});
-					delete scope.current.META$.correction;
-
 					Dialog.closeEmbedded().then(function () {
+						console.log("removing correction from ", scope.current);
+
+						var copy = angular.copy(scope.current);
+						if (Utils.removeCorrection(copy)) {
+							console.log("saving ", copy);
+							REST.save(copy).then(function (updated) {
+								delete scope.current.META$.correction;
+								angular.extend(scope.current, updated);
+								console.log("saved ", scope.current);
+							});
+						}
+						else {
+							console.warn("Could not remove Correction from ", copy);
+						}
+
 						// Notify the parent scope (bound to the FormsManager)
-						scope.$emit(Events.EditorCorrectionRemoved, properties);
-					});
-
-				};
-
-
-				scope.submitNow = function () {
-					REST.resourceAction('startCorrectionValidation', scope.current).then(function (result) {
-						console.log(result);
-						console.log(scope.current.META$.correction);
-						scope.current.META$.correction.status = result.data['correction-status'];
-						scope.correctionInfo = angular.copy(scope.current.META$.correction);
+						//scope.$emit(Events.EditorCorrectionRemoved);
 					});
 				};
 
+				scope.canChooseDate = function () {
+					var cs = scope.correctionInfo.status;
+					return scope.diff.length > 0 && (cs === 'DRAFT' || cs === 'VALIDATION' || cs === 'VALIDCONTENT');
+				};
 
-				scope.publish = function () {
-					REST.resourceAction('startCorrectionPublication', scope.current, {'publishImmediately': true}).then(function (result) {
-						scope.current.META$.correction.status = result.data['correction-status'];
-						scope.correctionInfo = angular.copy(scope.current.META$.correction);
-						if (scope.current.META$.correction.status === 'FILED') {
+
+				scope.requestValidation = function () {
+					executeTask('requestValidation');
+				};
+
+
+				scope.contentValidation = function () {
+					executeTask('contentValidation');
+				};
+
+
+				scope.publicationValidation = function () {
+					executeTask('publicationValidation');
+				};
+
+
+				function executeTask (taskCode) {
+					var params = {};
+					console.log("execute task: ", scope.params.applyCorrectionWhen, scope.params.plannedCorrectionDate);
+					if (scope.params.applyCorrectionWhen === 'planned') {
+						params['publicationDate'] = scope.params.plannedCorrectionDate;
+					}
+
+					REST.executeTask(taskCode, scope.current, params).then(function (doc) {
+						if (Utils.hasCorrection(doc)) {
+							scope.current.META$.correction = doc.META$.correction;
+							scope.current.META$.actions = doc.META$.actions;
+							scope.correctionInfo = angular.copy(scope.current.META$.correction);
+						}
+						else {
 							delete scope.current.META$.correction;
+							Dialog.closeEmbedded();
 						}
 					});
-				};
-
-
-				scope.submitPlanned = function () {
-
-				};
-
-
-				scope.closeEmbeddedModal = function () {
-					this.cancelChanges();
-					Dialog.closeEmbedded();
-				};
+				}
 
 			}
 

@@ -1,0 +1,102 @@
+<div>
+	<strong>(= correctionInfo.status | statusLabel =)</strong> | <i class="icon-time"></i> {{ i18n('m.rbs.admin.correction.correction-created-on', ['ucf']) }} (= correctionInfo.creationDate | rbsDateTime =) <span class="muted" rbs-time-ago="correctionInfo.creationDate">({time})</span>
+</div>
+
+<div class="alert alert-info" ng-if="correctionInfo.status == 'VALIDATION'">
+	{{ i18n('m.rbs.admin.correction.being-validated') }}
+</div>
+
+<div ng-if="correctionInfo.status == 'DRAFT' || correctionInfo.status == 'VALIDATION'">
+	<table class="table table-striped table-bordered">
+		<caption>{{ i18n('m.rbs.admin.correction.modified-properties-list', ['ucf']) }}</caption>
+		<thead>
+			<tr>
+				<th scope="col">{{ i18n('m.rbs.admin.correction.property', ['ucf']) }}</th>
+				<th scope="col">
+					{{ i18n('m.rbs.admin.correction.original-value', ['ucf']) }}<br/>
+					<small class="muted">{{ i18n('m.rbs.admin.correction.in-use', ['ucf']) }}</small>
+				</th>
+				<th scope="col">
+					<!-- label class="checkbox pull-right"><input type="checkbox" ng-model="advancedDiffs"/> Afficher les différences</label -->
+					<button type="button" class="btn btn-mini btn-info pull-right"
+						title="Afficher les changements"
+						ng-click="advancedDiffs = ! advancedDiffs"
+						ng-class="{'active': advancedDiffs}"><i class="icon-lightbulb"></i> {{ i18n('m.rbs.admin.correction.diff', ['ucf']) }}</button>
+					{{ i18n('m.rbs.admin.correction.fixed-value', ['ucf']) }}<br/>
+					<small class="muted">{{ i18n('m.rbs.admin.correction.displayed-in-editor', ['ucf']) }}</small>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="line in diff">
+				<th scope="row">(=line.id=)</th>
+				<td style="vertical-align: top">(=line.original=)</td>
+				<td style="vertical-align: top" ng-switch="advancedDiffs">
+					<div ng-switch-when="true" ng-bind-html-unsafe="line.current | diff:line.original"></div>
+					<div ng-switch-when="false">(=line.current=)</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+</div>
+
+<div ng-show="canChooseDate()">
+	<label class="radio">
+		<input type="radio" name="applyCorrectionWhenOption" ng-model="params.applyCorrectionWhen" value="now" checked/>
+		{{ i18n('m.rbs.admin.correction.publish-correction-after-validation', ['ucf']) }}
+	</label>
+	<label class="radio">
+		<input type="radio" name="applyCorrectionWhenOption" ng-model="params.applyCorrectionWhen" value="planned"/>
+		{{ i18n('m.rbs.admin.correction.choose-plublication-date', ['ucf']) }}
+	</label>
+	<date-selector ng-show="params.applyCorrectionWhen == 'planned'" ng-model="params.plannedCorrectionDate" name="plannedCorrectionDate"></date-selector>
+</div>
+
+<div ng-if="correctionInfo.status == 'VALIDCONTENT'">
+	<div class="alert alert-success">
+		{{ i18n('m.rbs.admin.correction.content-has-been-validated', ['ucf']) }}
+	</div>
+</div>
+
+<div ng-if="correctionInfo.status == 'VALID'">
+	<div class="alert alert-success">
+		{{ i18n('m.rbs.admin.correction.correction-will-be-published-on', ['ucf']) }}
+		<strong>(= correctionInfo.publicationDate | rbsDateTime =)</strong> <span class="muted" rbs-time-ago="correctionInfo.publicationDate">({time})</span>
+	</div>
+</div>
+
+<div ng-if="correctionInfo.status == 'PUBLISHABLE'">
+	<div class="alert alert-info">
+		{{ i18n('m.rbs.admin.correction.correction-is-about-to-be-published', ['ucf']) }}
+	</div>
+</div>
+
+<div ng-if="correctionInfo.status == 'FILED'">
+	<div class="alert alert-success">
+		{{ i18n('m.rbs.admin.correction.correction-has-been-published', ['ucf']) }}
+	</div>
+</div>
+
+<div>
+	<a class="pull-right" href="Rbs/Admin/help/correction" help="#correctionHelpContainer"><i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.correction.need-help', ['ucf']) }}</a>
+	<div class="clearfix"></div>
+	<div id="correctionHelpContainer" class="hide"></div>
+</div>
+
+<div class="form-actions" ng-switch="correctionInfo.status">
+
+	<div ng-switch-when="DRAFT">
+		<button type="button" ng-disabled="diff.length == 0" class="btn btn-success btn-headline" ng-click="requestValidation()"><i class="icon-bullhorn"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
+		<button type="button" class="btn btn-danger btn-headline" ng-click="deleteCorrection()"><i class="icon-trash"></i>{{ i18n('m.rbs.admin.correction.button-delete') }}</button>
+	</div>
+
+	<div ng-switch-when="VALIDATION">
+		<button type="button" class="btn btn-primary btn-headline" ng-click="contentValidation()"><i class="icon-ok"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
+	</div>
+
+	<div ng-switch-when="VALIDCONTENT">
+		<button type="button" class="btn btn-success btn-headline" ng-click="publicationValidation()"><i class="icon-download-alt"></i>{{ i18n('m.rbs.admin.correction.button-publish') }}</button>
+	</div>
+
+</div>
