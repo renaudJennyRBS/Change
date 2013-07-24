@@ -17,4 +17,15 @@ interface Tax
 	 * @return float
 	 */
 	public function getRate($category, $zone);
+
+	/**
+	 * @return boolean
+	 */
+	public function getCascading();
+
+	/**
+	 * Return t => total, l => row, u => unit
+	 * @return string
+	 */
+	public function getRounding();
 }

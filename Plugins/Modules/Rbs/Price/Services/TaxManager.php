@@ -48,4 +48,80 @@ class TaxManager
 		return $this->commerceServices->getApplicationServices();
 	}
 
+	/**
+	 * @param \Rbs\Price\Std\TaxApplication[] $taxApplicationArray
+	 * @return float
+	 */
+	protected function getEffectiveRate($taxApplicationArray)
+	{
+		$effectiveRate = 0.0;
+		array_walk($taxApplicationArray, function(\Rbs\Price\Std\TaxApplication $taxApplication, $key) use (&$effectiveRate) {$effectiveRate += $taxApplication->getRate();});
+		return $effectiveRate;
+	}
+
+
+	/**
+	 * @param array<taxCode => category> $taxCategories
+	 * @param \Rbs\Commerce\Interfaces\Tax[] $taxes
+	 * @param string $zone
+	 * @return \Rbs\Price\Std\TaxApplication[]
+	 */
+	protected function getTaxRates($taxCategories, $taxes, $zone)
+	{
+		/* @var $taxRates \Rbs\Price\Std\TaxApplication[] */
+		$taxRates = array();
+		foreach($taxes as $tax)
+		{
+			if (isset($taxCategories[$tax->getCode()]))
+			{
+				$category = $taxCategories[$tax->getCode()];
+				$taxRate = floatval($tax->getRate($category, $zone));
+				$taxApplication = new \Rbs\Price\Std\TaxApplication($tax, $category, $zone, $taxRate);
+				if ($tax->getCascading() && $taxRate > 0.0)
+				{
+					$previousEffectiveRate = $this->getEffectiveRate($taxRates);
+					$taxApplication->setRate($previousEffectiveRate * $taxRate + $taxRate);
+				}
+				$taxRates[] = $taxApplication;
+			}
+		}
+		return $taxRates;
+	}
+
+
+
+	/**
+	 * @param float $value
+	 * @param array<taxCode => category> $taxCategories
+	 * @return \Rbs\Price\Std\TaxApplication[]
+	 */
+	public function getTaxByValue($value, $taxCategories)
+	{
+		$taxRates = $this->getTaxRates($taxCategories, $this->getCommerceServices()->getBillingArea()->getTaxes(),
+			$this->getCommerceServices()->getZone());
+		foreach($taxRates as $taxApplication)
+		{
+
+			$taxApplication->setValue($taxApplication->getRate() * $value);
+		}
+		return $taxRates;
+	}
+
+	/**
+	 * @param float $valueWithTax
+	 * @param array<taxCode => category> $taxCategories
+	 * @return \Rbs\Price\Std\TaxApplication[]
+	 */
+	public function getTaxByValueWithTax($valueWithTax, $taxCategories)
+	{
+		$taxRates = $this->getTaxRates($taxCategories, $this->getCommerceServices()->getBillingArea()->getTaxes(),
+			$this->getCommerceServices()->getZone());
+
+		$value = $valueWithTax  / ( 1 + $this->getEffectiveRate($taxRates));
+		foreach($taxRates as $taxApplication)
+		{
+			$taxApplication->setValue($taxApplication->getRate() * $value);
+		}
+		return $taxRates;
+	}
 }
