@@ -51,14 +51,12 @@
 						.then(function (data) {
 							angular.forEach(data.items, function (item, value) {
 								var $opt = $('<option></option>');
-								if (ngModel.$viewValue == value) {
-									$opt.attr('selected', 'selected');
-								}
 								$opt
 									.attr('value', value)
 									.text(item.label)
 									.appendTo(elm);
 							});
+							selectCurrentOption();
 						},
 						function () {
 							$('<option></option>')
@@ -68,9 +66,24 @@
 						});
 				}
 
+				function selectCurrentOption () {
+					elm.find('option').each(function(index, option){
+						if ($(this).attr('value') == ngModel.$viewValue)
+						{
+							$(this).attr('selected', 'selected');
+						}
+						else
+						{
+							$(this).removeAttr('selected');
+						}
+
+					});
+				}
+
 				ngModel.$render = function () {
 					ngModelReady = true;
 					loadCollection();
+					selectCurrentOption();
 				};
 			}
 		};
@@ -119,6 +132,7 @@
 				}
 
 				var ngModelReady = false;
+
 				ngModel.$render = function () {
 					ngModelReady = true;
 					loadCollection();

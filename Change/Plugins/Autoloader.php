@@ -85,7 +85,7 @@ class Autoloader extends StandardAutoloader
 		{
 			foreach($callbackArray as $callback)
 			{
-				if (is_array($callback) && ($callback[0] instanceof static))
+				if (is_array($callback) && ($callback[0] instanceof Autoloader))
 				{
 					$autoLoader = $callback[0];
 

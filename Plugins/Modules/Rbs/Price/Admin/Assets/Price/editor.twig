@@ -55,19 +55,17 @@
 			</div>
 		</div>
 		<hr/>
-		<div class="control-group property required"
-			data-ng-class="{'success': hasCorrectionOnProperty('baseValue')}">
-			<label class="control-label" for="baseValue">{{ i18n('m.rbs.price.document.price.basevalue', ['ucf']) }}</label>
+		<div class="control-group property required">
+			<label class="control-label" for="boValue">{{ i18n('m.rbs.price.document.price.basevalue', ['ucf']) }}</label>
 
 			<div class="controls">
-				<rbs-price-input data-ng-model="document.baseValue" data-currency-code="(=billingArea.currencyCode=)"
+				<rbs-price-input data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
 					data-price-with-tax="(=billingArea.boEditWithTax=)"
 					></rbs-price-input>
 			</div>
 		</div>
 
-		<div class="control-group property"
-			data-ng-class="{'success': hasCorrectionOnProperty('ecoTax')}">
+		<div class="control-group property">
 			<label class="control-label" for="ecoTax">{{ i18n('m.rbs.price.document.price.ecotax', ['ucf']) }}</label>
 
 			<div class="controls">
@@ -77,6 +75,7 @@
 		</div>
 
 		<hr/>
+		<!--
 		<span class="help-block">
 			{{ i18n('m.rbs.price.document.price.discount-section-help', ['ucf']) }}
 		</span>
@@ -99,23 +98,16 @@
 				</div>
 			</div>
 		</div>
+		-->
 		{{ forms.field('discountDetail', 'String', 'm.rbs.price.document.price.discountdetail', false) }}
 
-		<div class="control-group property"
-			data-ng-class="{'success': hasCorrectionOnProperty('finalValue')}">
-			<label class="control-label" for="finalValue">{{ i18n('m.rbs.price.document.price.finalvalue', ['ucf']) }}</label>
+		<div class="control-group property">
+			<label class="control-label" for="boDiscountValue">{{ i18n('m.rbs.price.document.price.finalvalue', ['ucf']) }}</label>
 
 			<div class="controls">
-				<rbs-price-input data-ng-model="document.finalValue" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)"/>
+				<rbs-price-input data-ng-model="document.boDiscountValue" data-currency-code="(=billingArea.currencyCode=)"
+					data-price-with-tax="(=document.boEditWithTax=)"/>
 			</div>
-		</div>
-
-		<div class="alert" data-ng-show="document.finalPrice <= 0">
-			Le prix final n'est pas correct !
-		</div>
-		<div class="alert" data-ng-show="document.finalPrice > document.basePrice">
-			Hum... Le prix ne semble pas être si promotionnel que ça !
 		</div>
 
 		<hr/>
@@ -150,9 +142,9 @@
 				<date-selector data-ng-model="document.endActivation" name="endActivation"></date-selector>
 				<div class="btn-toolbar">
 					<div class="btn-group">
-						<button data-ng-click="endActivationOneWeek()" data-ng-disabled="!document.startActivation" type="button" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-one-week') }}</button>
-						<button data-ng-click="endActivationTwoWeeks()" data-ng-disabled="!document.startActivation" type="button" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-two-weeks') }}</button>
-						<button data-ng-click="endActivationOneMonth()" data-ng-disabled="!document.startActivation" type="button" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-one-month') }}</button>
+						<button data-ng-click="endActivationOneWeek(true)" data-ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1w']" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-one-week') }}</button>
+						<button data-ng-click="endActivationTwoWeeks(true)" data-ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['2w']" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-two-weeks') }}</button>
+						<button data-ng-click="endActivationOneMonth(true)" data-ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1M']" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-one-month') }}</button>
 					</div>
 					<div class="btn-group">
 						<button data-ng-click="endActivationTomorrow()" type="button" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.tomorrow') }}</button>

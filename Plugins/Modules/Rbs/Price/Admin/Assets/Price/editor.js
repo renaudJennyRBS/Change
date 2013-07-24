@@ -16,17 +16,50 @@
 					if (!scope.document.taxCategories)
 					{
 						scope.document.taxCategories = {};
+
 					}
+					if (scope.document.startActivation && scope.document.endActivation)
+					{
+						var startAct = moment(scope.document.startActivation);
+						var endAct = moment(scope.document.endActivation);
+
+						if (endAct.diff(startAct, 'weeks', true) == 1)
+						{
+							scope.activationOffsetClass = {"1w": "active", "2w" : null, "1M": null};
+						}
+						else if (endAct.diff(startAct, 'weeks', true) == 2)
+						{
+							scope.activationOffsetClass = {"1w": null, "2w" : "active", "1M": null};
+
+						}
+						else if (endAct.diff(startAct, 'months', true) == 1)
+						{
+							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": "active"};
+						}
+						else
+						{
+							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
+						}
+					}
+					else
+					{
+						scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
+					}
+
+
 				});
 
 				scope.$watch('document.shop', function(newValue, oldValue){
-					if (newValue && angular.isObject(newValue) && newValue.hasOwnProperty('id'))
+					if (!angular.isUndefined(newValue))
 					{
-						scope.document.shop = newValue.id;
-					}
-					if (!newValue)
-					{
-						scope.document.billingArea = null;
+						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
+						{
+							scope.document.shop = newValue.id;
+						}
+						if (!newValue)
+						{
+							scope.document.billingArea = null;
+						}
 					}
 				});
 
@@ -76,16 +109,52 @@
 					scope.document.startActivation = moment().add('M', 1).startOf('M').startOf('d').toDate();
 				};
 
-				scope.endActivationOneWeek = function(){
+				scope.$watch('document.startActivation', function(newValue, oldValue){
+					if (newValue != oldValue && angular.isObject(scope.activationOffsetClass))
+					{
+						if (scope.activationOffsetClass['1w'])
+						{
+							scope.endActivationOneWeek();
+						}
+						else if (scope.activationOffsetClass['2w'])
+						{
+							scope.endActivationTwoWeeks();
+						}
+						else if (scope.activationOffsetClass['1M'])
+						{
+							scope.endActivationOneMonth();
+						}
+					}
+				});
+
+				scope.endActivationOneWeek = function(toggle){
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1w'])
+					{
+						scope.activationOffsetClass['1w'] = null;
+						return;
+					}
 					scope.document.endActivation = moment(scope.document.startActivation).add('w', 1).toDate();
+					scope.activationOffsetClass = {"1w":"active", "2w" : null, "1M": null};
 				};
 
-				scope.endActivationTwoWeeks = function(){
+				scope.endActivationTwoWeeks = function(toggle){
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['2w'])
+					{
+						scope.activationOffsetClass['2w'] = null;
+						return;
+					}
 					scope.document.endActivation = moment(scope.document.startActivation).add('w', 2).toDate();
+					scope.activationOffsetClass = {"1w":null, "2w" : "active", "1M": null};
 				};
 
-				scope.endActivationOneMonth = function(){
+				scope.endActivationOneMonth = function(toggle){
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1M'])
+					{
+						scope.activationOffsetClass['1M'] = null;
+						return;
+					}
 					scope.document.endActivation = moment(scope.document.startActivation).add('M', 1).toDate();
+					scope.activationOffsetClass = {"1w":null, "2w" : null, "1M": "active"};
 				};
 
 				scope.endActivationTomorrow = function(){

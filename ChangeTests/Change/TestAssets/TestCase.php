@@ -142,8 +142,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$app = static::getNewApplication();
 		$appServices = static::getNewApplicationServices($app);
 
-		$appServices->getPluginManager()->compile(false);
-
 		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
 		$compiler->generate();
 	}
@@ -158,8 +156,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
 		$generator->generateSystemSchema();
-
-		$appServices->getPluginManager()->compile(false);
 
 		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
 		$compiler->generate();

@@ -20,11 +20,28 @@ class TemplateManager
 	protected $cachePath;
 
 	/**
+	 * @var \Twig_ExtensionInterface[]
+	 */
+	protected $extensions = array();
+
+	/**
 	 * @param PresentationServices $presentationServices
 	 */
 	public function setPresentationServices(PresentationServices $presentationServices)
 	{
 		$this->presentationServices = $presentationServices;
+		$this->addExtension(new Twig\Extension($presentationServices->getApplicationServices()));
+	}
+
+	/**
+	 * @api
+	 * @param \Twig_ExtensionInterface $extension
+	 * @return $this
+	 */
+	public function addExtension(\Twig_ExtensionInterface $extension)
+	{
+		$this->extensions[$extension->getName()] = $extension;
+		return $this;
 	}
 
 	/**
@@ -49,6 +66,7 @@ class TemplateManager
 	}
 
 	/**
+	 * @api
 	 * @param string $pathName
 	 * @param array $attributes
 	 * @return string
@@ -57,7 +75,10 @@ class TemplateManager
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
-		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->presentationServices->getApplicationServices()));
+		foreach ($this->extensions as $extension)
+		{
+			$twig->addExtension($extension);
+		}
 		return $twig->render(basename($pathName), $attributes);
 	}
 }
