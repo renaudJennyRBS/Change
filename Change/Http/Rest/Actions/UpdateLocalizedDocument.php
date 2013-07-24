@@ -137,6 +137,7 @@ class UpdateLocalizedDocument
 		try
 		{
 			$document->update();
+			$document->reset();
 			$getDocument = new GetLocalizedDocument();
 			$getDocument->execute($event);
 		}
