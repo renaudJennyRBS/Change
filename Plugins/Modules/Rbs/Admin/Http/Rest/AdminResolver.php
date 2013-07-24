@@ -64,7 +64,7 @@ class AdminResolver
 			{
 				$action = new GetCurrentUser();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'currentUser');
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}
 	}

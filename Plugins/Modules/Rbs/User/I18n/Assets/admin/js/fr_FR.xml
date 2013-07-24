@@ -4,4 +4,8 @@
 	<key id="module-name">utilisateurs</key>
 	<key id="module-keywords">groupes,sécurité,mot de passe,password,login,comptes,authentification</key>
 	<key id="confirm-revoke-token">confirmer la révocation du token : {token} ?</key>
+	<key id="group">groupe</key>
+	<key id="group-list">groupes</key>
+	<key id="confirm-remove-permission-rule">confirmer la suppresion de la règle de permission {role} pour le privilège {privilege} sur la ressource {resource_id} ?</key>
+	<key id="confirm-remove-all-permission-rules">confirmer la suppresion de toutes les règles de permissions pour l'utilisateur {user} ?</key>
 </i18n>

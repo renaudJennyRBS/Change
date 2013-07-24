@@ -22,7 +22,9 @@ class Register implements ListenerAggregateInterface
 			$body = array('
 	<script type="text/javascript" src="Rbs/User/js/admin.js">​</script>
 	<script type="text/javascript" src="Rbs/User/User/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/User/User/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/User/User/editor.js">​</script>
+	<script type="text/javascript" src="Rbs/User/Group/controllers.js">​</script>
+	<script type="text/javascript" src="Rbs/User/Group/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();

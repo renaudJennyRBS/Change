@@ -42,6 +42,34 @@
 				templateUrl: 'Rbs/User/User/applications.twig',
 				reloadOnSearch: false
 			})
+
+		. when(
+			'/Rbs/User/Group',
+			{
+				templateUrl : 'Rbs/User/Group/list.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
+			'/Rbs/User/Group/:id',
+			{
+				templateUrl : 'Rbs/User/Group/form.twig',
+				reloadOnSearch : false
+			})
+
+		. when(
+			'/Rbs/User/User/:id/Permission/',
+			{
+				templateUrl : 'Rbs/User/User/permission.twig',
+				reloadOnSearch : false
+			})
+
+			. when(
+			'/Rbs/User/Group/:id/Permission/',
+			{
+				templateUrl : 'Rbs/User/User/permission.twig',
+				reloadOnSearch : false
+			})
 		;
 	}]);
 
@@ -53,7 +81,14 @@
 			$delegate.register('Rbs_User_User', {
 				'form'  : '/Rbs/User/User/:id',
 				'list'  : '/Rbs/User/User',
-				'applications' : '/Rbs/User/User/:id/Applications/'
+				'applications' : '/Rbs/User/User/:id/Applications/',
+				'permission' : '/Rbs/User/User/:id/Permission/'
+			});
+			// Group
+			$delegate.register('Rbs_User_Group', {
+				'form'  : '/Rbs/User/Group/:id',
+				'list'  : '/Rbs/User/Group',
+				'permission' : '/Rbs/User/Group/:id/Permission/'
 			});
 
 			return $delegate;

@@ -4,7 +4,13 @@ namespace Rbs\User\Http\Rest;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Rbs\User\Http\Rest\Actions\AddPermission;
+use Rbs\User\Http\Rest\Actions\AddPermissionRules;
+use Rbs\User\Http\Rest\Actions\GetPermission;
+use Rbs\User\Http\Rest\Actions\GetPermissionRules;
+use Rbs\User\Http\Rest\Actions\RemovePermission;
 use Rbs\User\Http\Rest\Actions\GetUserTokens;
+use Rbs\User\Http\Rest\Actions\RemovePermissionRule;
 use Rbs\User\Http\Rest\Actions\RevokeToken;
 
 /**
@@ -32,7 +38,7 @@ class UserResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('userTokens', 'revokeToken');
+		return array('userTokens', 'revokeToken', 'permissionRules', 'addPermissionRules', 'removePermissionRule');
 	}
 
 	/**
@@ -65,13 +71,51 @@ class UserResolver
 			{
 				$action = new GetUserTokens();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'userTokens');
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Consumer', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
 			}
 			else if ($actionName === 'revokeToken')
 			{
 				$action = new RevokeToken();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$this->resolver->setAuthorisation($event, null, 'revokeToken');
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
+			}
+			else if ($actionName === 'permissionRules')
+			{
+				$action = new GetPermissionRules();
+				$event->setAction(function($event) use ($action) {$action->execute($event);});
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Consumer', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
+			}
+			else if ($actionName === 'addPermissionRules')
+			{
+				$action = new AddPermissionRules();
+				$event->setAction(function($event) use ($action) {$action->execute($event);});
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
+			}
+			else if ($actionName === 'removePermissionRule')
+			{
+				$action = new RemovePermissionRule();
+				$event->setAction(function($event) use ($action) {$action->execute($event);});
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
 			}
 		}
 	}

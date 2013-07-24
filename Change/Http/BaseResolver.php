@@ -20,7 +20,7 @@ class BaseResolver
 	 * @param integer $resource
 	 * @param string $privilege
 	 */
-	public function setAuthorisation($event, $role = null, $resource = null, $privilege = null)
+	public function setAuthorization($event, $role = null, $resource = null, $privilege = null)
 	{
 		$authorisation = function(Event $event) use ($role, $resource, $privilege)
 		{
