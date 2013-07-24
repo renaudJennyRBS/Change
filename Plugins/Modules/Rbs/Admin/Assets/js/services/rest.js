@@ -95,7 +95,7 @@
 				};
 
 				ChangeDocument.prototype.hasCorrection = function () {
-					return angular.isObject(this.META$.correction);
+					return Utils.hasCorrection(this);
 				};
 
 				ChangeDocument.prototype.getTagsUrl = function () {
@@ -105,10 +105,10 @@
 				ChangeDocument.prototype.loadTags = function () {
 					if (this.META$.tags === null) {
 						this.META$.tags = [];
-						var doc = this;
+						var doc = this, p;
 
 						if (doc.getTagsUrl() !== null) {
-							var p = $http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn));
+							p = $http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn));
 							p.success(function (result) {
 								angular.forEach(result.resources, function (r) {
 									doc.META$.tags.push(r);
@@ -307,22 +307,6 @@
 					var config = getHttpConfig(transformResponseFn);
 					config.cache = true;
 					return config;
-				}
-
-
-				/**
-				 * Applies the Correction represented by `correctionData` on the given `resource`.
-				 *
-				 * @param resource
-				 * @param correctionData
-				 *
-				 * @returns ChangeDocument The `resource` with its correction applied.
-				 */
-				function applyCorrection (resource, correctionData) {
-					var original = angular.copy(resource);
-					delete original.META$;
-					resource.META$.correction = angular.extend({'original': original}, correctionData.correction);
-					return angular.extend(resource, correctionData.properties);
 				}
 
 
@@ -571,12 +555,19 @@
 					 */
 					'loadCorrection' : function (resource) {
 						var q = $q.defer();
-						$http.get(resource.META$.actions.correction.href, getHttpConfig())
-							.success(function restResourceSuccessCallback (data) {
-								console.log("loadCorrection: data=", data);
-								applyCorrection(resource, data);
-								resolveQ(q, resource);
-							});
+						if (Utils.hasCorrection(resource)) {
+							$http.get(resource.META$.actions['correction'].href, getHttpConfig())
+								.success(function restResourceSuccessCallback (data) {
+									Utils.applyCorrection(resource, data);
+									resolveQ(q, resource);
+								})
+								.error(function (data) {
+									rejectQ(q, data);
+								});
+						}
+						else {
+							rejectQ(q, 'No correction available on the given Document');
+						}
 						return q.promise;
 					},
 
@@ -613,8 +604,8 @@
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
 							method = 'put';
 							url = this.getResourceUrl(resource);
-							// Save only the properties listed here.
-							if (angular.isArray(propertiesList)) {
+							// Save only the properties listed here unless we are updating a Correction.
+							if (! Utils.hasCorrection(resource) && angular.isArray(propertiesList)) {
 								var toSave = {};
 								angular.forEach(propertiesList, function (prop) {
 									if (resource.hasOwnProperty(prop)) {
@@ -745,61 +736,49 @@
 					/**
 					 * Calls the action `actionName` on the given `resource` with the given `params`.
 					 *
-					 * @param actionName
-					 * @param resource
+					 * @param taskCode
+					 * @param doc
 					 * @param params
 					 *
 					 * @returns Promise
 					 */
-					'resourceAction' : function (actionName, resource, params) {
+					'executeTask' : function (taskCode, doc, params) {
 						var q = $q.defer(),
-							url;
+							rest = this;
 
-						url = REST_BASE_URL + 'resourcesactions/' + actionName + '/' + resource.id;
-						if (resource.LCID) {
-							url += '/' + resource.LCID;
+						if (! Utils.isDocument(doc)) {
+							throw new Error("Parameter 'resource' should be a valid Document.");
 						}
-						url = Utils.makeUrl(url, params);
 
-						$http.get(url, getHttpConfig())
-							.success(function restActionSuccessCallback (data) {
-								resolveQ(q, data);
+						if (! doc.META$.actions || ! doc.META$.actions.hasOwnProperty(taskCode)) {
+							throw new Error("Action '" + taskCode + "' is not available for Document '" + doc.id + "'.");
+						}
+
+						// Load the Task Document
+						// TODO Optimize:
+						// Can we call 'execute' directly with '/execute' at the end of the Task URL?
+						$http.get(doc.META$.actions[taskCode].href, getHttpConfig(transformResponseResourceFn))
+
+							.success(function (task) {
+
+								// Execute Task.
+								$http.get(Utils.makeUrl(task.META$.actions['execute'].href, params), getHttpConfig(transformResponseResourceFn))
+
+									.success(function (task) {
+										// Task has been executed and we don't need it here anymore.
+										rest.resource(doc).then(function (updatedDoc) {
+											resolveQ(q, updatedDoc);
+										});
+									})
+
+									.error(function (data) {
+										rejectQ(q, data);
+									});
 							})
-							.error(function restActionErrorCallback (data, status) {
-								data.httpStatus = status;
+
+							.error(function (data) {
 								rejectQ(q, data);
 							});
-
-						digest();
-
-						return q.promise;
-					},
-
-
-					/**
-					 * Calls the action `actionName` on the given `resource` with the given `params` and reloads
-					 * the `resource`.
-					 *
-					 * @param actionName
-					 * @param resource
-					 * @param params
-					 *
-					 * @returns Promise
-					 */
-					'resourceActionThenReload' : function (actionName, resource, params) {
-						var q = $q.defer(),
-							self = this;
-
-						this.resourceAction(actionName, resource, params).then(
-							function () {
-								self.resource(resource.model, resource.id, resource.LCID).then(function (rsc) {
-									resolveQ(q, rsc);
-								});
-							},
-							function (reason) {
-								rejectQ(q, reason);
-							}
-						);
 
 						return q.promise;
 					},
