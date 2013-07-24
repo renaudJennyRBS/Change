@@ -14,3 +14,7 @@ require_once 'Change/TestAssets/Application.php';
 $application = new \ChangeTests\Change\TestAssets\Application();
 $application->registerAutoload();
 $application->clearCache();
+$pluginManager = new \Change\Plugins\PluginManager();
+$pluginManager->setApplication($application);
+$pluginManager->compile(false);
+$application->registerPluginsAutoload();
