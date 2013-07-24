@@ -24,6 +24,12 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 				case 'Rbs_Generic_Collection_SortDirections':
 					(new Collections())->addSortDirections($event);
 					break;
+				case 'Rbs_Generic_Collection_PermissionRoles':
+					(new Collections())->addPermissionRoles($event);
+					break;
+				case 'Rbs_Generic_Collection_PermissionPrivileges':
+					(new Collections())->addPermissionPrivileges($event);
+					break;
 			}
 		};
 		$events->attach('getCollection', $callback, 5);
@@ -31,7 +37,11 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 		$callback = function (\Zend\EventManager\Event $event)
 		{
 			$codes = $event->getParam('codes');
-			$codes[] = 'Rbs_Generic_Collection_SortDirections';
+			$codes = array_merge($codes, array(
+				'Rbs_Generic_Collection_SortDirections',
+				'Rbs_Generic_Collection_PermissionRoles',
+				'Rbs_Generic_Collection_PermissionPrivileges'
+			));
 			$event->setParam('codes', $codes);
 		};
 		$events->attach('getCodes', $callback, 1);
