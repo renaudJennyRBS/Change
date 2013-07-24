@@ -162,6 +162,64 @@
 	}]);
 
 
+	/**
+	 * Usages:
+	 * `<div rbs-time-ago="my.date.object"></div>`
+	 * `<div rbs-time-ago="my.date.object">Last update: {time}</div>`
+	 * `<div rbs-time-ago="my.date.object" interval="60"></div>` (interval is in seconds)
+	 */
+	app.directive('rbsTimeAgo', ['$timeout', function ($timeout) {
+
+		var DEFAULT_INTERVAL = 60;
+
+		return {
+			'restrict' : 'A',
+			'scope' : {
+				'date' : '=rbsTimeAgo'
+			},
+
+			'link' : function (scope, element, attrs) {
+				var stop,
+					interval = DEFAULT_INTERVAL,
+					content = element.html();
+
+				if (attrs.interval) {
+					interval = parseInt(attrs.interval, 10);
+					if (isNaN(interval) || interval <= 0) {
+						console.warn("Attribute 'interval' should be a valid positive integer.");
+						interval = DEFAULT_INTERVAL;
+					}
+				}
+
+				function update () {
+					var timeAgo = moment(scope.date).fromNow();
+					if (content) {
+						element.html(content.replace(/\{time\}/, timeAgo));
+					}
+					else {
+						element.html(timeAgo);
+					}
+					// Re-launch timer for next update
+					stop = $timeout(update, interval*1000);
+				}
+
+				scope.$watch('date', function (value) {
+					if (value) {
+						if (stop) {
+							$timeout.cancel(stop);
+						}
+						update();
+					}
+				}, true);
+
+				scope.$on('$destroy', function () {
+					$timeout.cancel(stop);
+				});
+			}
+		};
+	}]);
+
+
 	//-------------------------------------------------------------------------
 	//
 	// Controllers.
