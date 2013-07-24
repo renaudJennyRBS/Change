@@ -10,16 +10,15 @@
 		<property name="targetId" type="DocumentId" />
 		<property name="thresholdMin" type="Integer" required="true" default-value="1" />
 		<property name="priority" type="Integer" required="true" default-value="25" />
-		<property name="storeWithTax" type="Boolean" default-value="false" />
+
 		<property name="taxCategories" type="JSON" required="true" />
 		<property name="value" type="Decimal" required="true" />
 		<property name="valueWithoutDiscount" type="Decimal" />
 		<property name="discountDetail" type="String" />
 		<property name="ecoTax" type="Decimal" />
-		<!-- Stateless properties -->
-		<property name="baseValue" type="Decimal" stateless="true" />
-		<property name="finalValue" type="Decimal" stateless="true" />
-		<property name="formattedValue" type="String" stateless="true" />
-		<property name="formattedValueWithoutDiscount" type="String" stateless="true" />
+
+		<property name="boEditWithTax" type="Boolean" default-value="false" />
+		<property name="boValue" type="Decimal" />
+		<property name="boDiscountValue" type="Decimal" />
 	</properties>
 </document>

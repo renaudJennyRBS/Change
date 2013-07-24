@@ -2,29 +2,6 @@
 
 class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-//	public static function setUpBeforeClass()
-//	{
-//		static::initDocumentsDb();
-//	}
-//
-//	public static function tearDownAfterClass()
-//	{
-//		static::clearDB();
-//	}
-//
-//	protected function setUp()
-//	{
-//		parent::setUp();
-//		$this->getApplicationServices()->getTransactionManager()->begin();
-//	}
-//
-//	protected function tearDown()
-//	{
-//		parent::tearDown();
-//		$this->getApplicationServices()->getTransactionManager()->commit();
-//		$this->closeDbConnection();
-//	}
-
 	/**
 	 * @return \Rbs\Price\Services\TaxManager
 	 */

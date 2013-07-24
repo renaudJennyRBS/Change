@@ -31,131 +31,6 @@ class Price extends \Compilation\Rbs\Price\Documents\Price
 	}
 
 	/**
-	 * @return float
-	 */
-	public function getBaseValue()
-	{
-		$value = $this->isDiscount() ? $this->getValueWithoutDiscount() : $this->getValue();
-		return $this->convertToEditableValue($value);
-	}
-
-	/**
-	 * @param float $value
-	 * @return $this
-	 */
-	public function setBaseValue($value)
-	{
-		$value = $this->convertToDatabaseValue(doubleval($value));
-		if ($this->isDiscount())
-		{
-			$this->setValueWithoutDiscount($value);
-		}
-		else
-		{
-			$this->setValue($value);
-		}
-		return $this;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getFinalValue()
-	{
-		$value = $this->isDiscount() ? $this->getValue() : null;
-		return $this->convertToEditableValue($value);
-	}
-
-	/**
-	 * @param float $value
-	 * @return $this
-	 */
-	public function setFinalValue($value)
-	{
-		if ($value === null)
-		{
-			$this->removeDiscount();
-		}
-		else
-		{
-			$value = $this->convertToDatabaseValue(doubleval($value));
-			if ($this->isDiscount())
-			{
-				$this->setValue($value);
-			}
-			else
-			{
-				$this->setDiscountValue($value);
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * @param float $value
-	 * @return float
-	 */
-	protected function convertToEditableValue($value)
-	{
-		$billingArea = $this->getBillingArea();
-		$editWithTax = $billingArea->getBoEditWithTax();
-		if ($value == 0 || $this->getStoreWithTax() == $editWithTax)
-		{
-			return $value;
-		}
-
-		// TODO conversions
-		/*
-		$taxCategory = $this->getTaxCategory();
-		$taxesData = $billingArea->getTaxesData();
-		$taxRate = $taxesData[$taxCategory]['rate'];
-		if ($editWithTax)
-		{
-			$value = catalog_PriceFormatter::getInstance()->round(catalog_TaxService::getInstance()->addTaxByRate($valueHT, $taxRate), $currencyDoc->getCode());
-		}
-		else
-		{
-
-			$value = catalog_PriceFormatter::getInstance()->round(catalog_TaxService::getInstance()->removeTaxByRate($valueTTC, $taxRate), $currencyDoc->getCode());
-		}
-		*/
-		return $value;
-	}
-
-	/**
-	 * @param float $value
-	 * @return float
-	 */
-	protected function convertToDatabaseValue($value)
-	{
-		$billingArea = $this->getBillingArea();
-		$editWithTax = $billingArea->getBoEditWithTax();
-		if ($value == 0 || $this->getStoreWithTax() == $editWithTax)
-		{
-			return $value;
-		}
-
-		// TODO conversions
-		/*
-		$shop = $this->getShop();
-		if ($billingArea->getBoEditWithTax() != $this->getStoreWithTax())
-		{
-			$taxZone = $billingArea->getDefaultZone();
-			$taxRate = catalog_TaxService::getInstance()->getTaxRateByKey($billingArea->getId(), $this->getTaxCategory(), $taxZone);
-			if ($this->getStoreWithTax())
-			{
-				$value = catalog_TaxService::getInstance()->addTaxByRate($value, $taxRate);
-			}
-			else
-			{
-				$value = catalog_TaxService::getInstance()->removeTaxByRate($value, $taxRate);
-			}
-		}
-		*/
-		return $value;
-	}
-
-	/**
 	 * @return boolean
 	 */
 	protected function isDiscount()
@@ -164,73 +39,104 @@ class Price extends \Compilation\Rbs\Price\Documents\Price
 	}
 
 	/**
-	 * @return $this
+	 * @return boolean
 	 */
-	protected function removeDiscount()
+	public function applyBoValues()
 	{
-		if ($this->isDiscount())
+		if ($this->getBoValue() !== null)
 		{
-			$this->setValue($this->getValueWithoutDiscount());
-			$this->setValueWithoutDiscount(null);
+			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
+			return true;
 		}
-		return $this;
+		return false;
 	}
 
 	/**
-	 * @param float $value
-	 * @return $this
+	 * @return null|\Rbs\Price\Services\TaxManager
 	 */
-	protected function setDiscountValue($value)
+	protected function getBoTaxManager()
 	{
-		if (!$this->isDiscount())
+		$ba = $this->getBillingArea();
+		$taxCategories = $this->getTaxCategories();
+		if (is_array($taxCategories))
 		{
-			$this->setValueWithoutDiscount($this->getValue());
+			$taxCodes = array_keys($taxCategories);
+			$zone = null;
+			foreach ($ba->getTaxes() as $tax)
+			{
+				if (in_array($tax->getCode(), $taxCodes))
+				{
+					$zone = $tax->getDefaultZone();
+					break;
+				}
+			}
+			if ($zone)
+			{
+				$cs = new \Rbs\Commerce\Services\CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+				$cs->setBillingArea($ba)->setZone($zone);
+				return $cs->getTaxManager();
+			}
 		}
-		$this->setValue($value);
-		return $this;
+		return null;
 	}
 
-	/**
-	 * @param string $formattedValue
-	 * @return $this
-	 */
-	public function setFormattedValue($formattedValue)
+	protected function onCreate()
 	{
-		// TODO: Implement setFormattedValue() method.
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormattedValueWithoutDiscount($lcid = null)
-	{
-		if ($lcid === null)
+		if ($this->getBoValue() !== null || $this->getBoDiscountValue() !== null)
 		{
-			$lcid = $this->getApplicationServices()->getI18nManager()->getLCID();
+			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
 		}
-		$nf = new \NumberFormatter($lcid, \NumberFormatter::CURRENCY);
-		return $nf->formatCurrency($this->getValueWithoutDiscount(), $this->getBillingArea()->getCurrencyCode());
 	}
 
-	/**
-	 * @param string $formattedValueWithoutDiscount
-	 * @return $this
-	 */
-	public function setFormattedValueWithoutDiscount($formattedValueWithoutDiscount)
+	protected function onUpdate()
 	{
-		// TODO: Implement setFormattedValueWithoutDiscount() method.
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormattedValue($lcid = null)
-	{
-		if ($lcid === null)
+		if ($this->isPropertyModified('boValue') || $this->isPropertyModified('boDiscountValue'))
 		{
-			$lcid = $this->getApplicationServices()->getI18nManager()->getLCID();
+			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
 		}
-		$nf = new \NumberFormatter($lcid, \NumberFormatter::CURRENCY);
-		return $nf->formatCurrency($this->getValue(), $this->getBillingArea()->getCurrencyCode());
+	}
+
+	/**
+	 * @param float $boValue
+	 * @param float|null $boDiscountValue
+	 */
+	protected function updateValuesFromBo($boValue, $boDiscountValue)
+	{
+		$ba = $this->getBillingArea();
+		if ($ba->getBoEditWithTax() && ($taxManager = $this->getBoTaxManager()) !== null)
+		{
+			$valueCallback = function ($valueWithTax, $taxCategories) use ($taxManager) {
+				$taxApplications = $taxManager->getTaxByValueWithTax($valueWithTax, $taxCategories);
+				foreach ($taxApplications as $taxApplication)
+				{
+					/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
+					$valueWithTax -= $taxApplication->getValue();
+				}
+				return $valueWithTax;
+			};
+
+			$this->setBoEditWithTax(true);
+			$taxCategories = $this->getTaxCategories();
+			$boValue =  $valueCallback($boValue,  $taxCategories);
+			if ($boDiscountValue !== null)
+			{
+				$boDiscountValue =  $valueCallback($boDiscountValue,  $taxCategories);
+			}
+		}
+		else
+		{
+			$this->setBoEditWithTax(false);
+		}
+
+		if ($boDiscountValue !== null)
+		{
+			$this->setValue($boDiscountValue);
+			$this->setValueWithoutDiscount($boValue);
+		}
+		else
+		{
+			$this->setValue($boValue);
+			$this->setValueWithoutDiscount($boDiscountValue);
+		}
 	}
 }
