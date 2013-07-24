@@ -45,6 +45,46 @@
 
 
 		/**
+		 *
+		 * @param doc
+		 * @param propertiesNames
+		 * @returns {boolean}
+		 */
+		removeCorrection : function (doc, propertiesNames) {
+			if (! this.hasCorrection(doc)) {
+				return false;
+			}
+			if (angular.isString(propertiesNames)) {
+				propertiesNames = [ propertiesNames ];
+			}
+			else if (! angular.isArray(propertiesNames) || propertiesNames.length === 0) {
+				propertiesNames = doc.META$.correction.propertiesNames;
+			}
+			angular.forEach(propertiesNames, function (property) {
+				doc[property] = doc.META$.correction.original[property];
+			});
+			delete doc.META$.correction;
+			return true;
+		},
+
+
+		/**
+		 * @param doc
+		 * @param correctionData
+		 * @returns {*}
+		 */
+		applyCorrection : function (doc, correctionData) {
+			// Copy current values to make them available as 'doc.correction.original'.
+			var original = angular.copy(doc);
+			delete original.META$;
+			// Create Correction object with original values available as 'doc.correction.original'.
+			doc.META$.correction = angular.extend({'original': original}, correctionData.correction);
+			// Replace corrected values in the Document.
+			return angular.extend(doc, correctionData.properties);
+		},
+
+
+		/**
 		 * Indicates whether the given `doc` is localized or not.
 		 */
 		isLocalized : function (doc) {
@@ -212,10 +252,16 @@
 							if (p > 0) {
 								queryString += '&';
 							}
-							queryString += key + '[]=' + value[p];
+							if (angular.isDate(value[p])) {
+								value[p] = moment(value[p]).format();
+							}
+							queryString += key + '[]=' + encodeURIComponent(value[p]);
 						}
 					} else {
-						queryString += key + '=' + value;
+						if (angular.isDate(value)) {
+							value = moment(value).format();
+						}
+						queryString += key + '=' + encodeURIComponent(value);
 					}
 				}
 			});
