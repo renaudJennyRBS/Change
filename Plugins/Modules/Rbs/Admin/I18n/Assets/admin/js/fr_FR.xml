@@ -55,6 +55,7 @@
 	<key id="save-error">L'enregistrement a échoué</key>
 
 	<key id="tip-dismiss-thank-you">Merci, ne plus afficher ce message !</key>
+	<key id="correction-confirm-delete">Souhaitez-vous réellement supprimer la Correction ?</key>
 
 	<key id="status-draft">brouillon</key>
 	<key id="status-frozen">gelé</key>
