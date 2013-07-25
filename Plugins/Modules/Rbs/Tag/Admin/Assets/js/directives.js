@@ -218,12 +218,12 @@
 				};
 
 
-				scope.availTags = null;
+				scope.availTags = loadAvailTags();
 				scope.showAll = false;
 
 				scope.toggleShowAll = function ($event) {
 					scope.showAll = ! scope.showAll;
-					if (scope.showAll && (! scope.availTags || $event.shiftKey)) {
+					if (scope.showAll && $event.shiftKey) {
 						scope.availTags = loadAvailTags();
 					}
 				};
@@ -449,7 +449,7 @@
 					scope.suggestions = suggestions;
 
 					function buildSuggestionsList () {
-						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span class="tag (= tag.color =)">(= tag.label =)</span></a><br/><small><em>' + i18n.trans('m.rbs.tag.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
+						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span rbs-tag="tag"></span></a><br/><small><em>' + i18n.trans('m.rbs.tag.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
 					}
 
 					if (suggestions.length) {

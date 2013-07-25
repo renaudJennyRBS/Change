@@ -119,6 +119,11 @@
 			function saveSuccessHandler (doc) {
 				var	postSavePromises = [];
 
+				if (!doc.META$.tags) {
+					doc.META$.tags = [];
+				}
+				angular.extend(doc.META$.tags, scope.document.META$.tags);
+
 				scope.original = angular.copy(doc);
 
 				clearInvalidFields();
