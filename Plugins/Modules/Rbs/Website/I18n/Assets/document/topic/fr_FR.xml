@@ -4,7 +4,7 @@
 	<key id="website">site web</key>
 	<key id="website-help">Le site web dans lequel se trouve cette rubrique.</key>
 	<key id="indexpage">page d'index</key>
-	<key id="indexpage-picker-title">sélectionner la page d'index de la rubrique</key>
+	<key id="indexpage-help">La page d'index se sélectionne depuis l'écran des fonctions de la rubrique.</key>
 	<key id="pathpart">chemin</key>
 	<key id="pathpart-help" format="html">
 		<![CDATA[Nom utilisé dans l'URL]]>

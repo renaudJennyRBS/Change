@@ -55,12 +55,22 @@
 				if (ngModel) {
 
 					ngModel.$render = function() {
-						editor.setValue(ngModel.$viewValue);
+						if (angular.isString(ngModel.$viewValue)) {
+							editor.setValue(ngModel.$viewValue);
+						}
+						else {
+							editor.setValue(JSON.stringify(ngModel.$viewValue));
+						}
 					};
 
 					session.on('change', function () {
 						$timeout(function () {
-							ngModel.$setViewValue(editor.getValue());
+							if (angular.isString(ngModel.$viewValue)) {
+								ngModel.$setViewValue(editor.getValue());
+							}
+							else {
+								ngModel.$setViewValue(JSON.parse(editor.getValue()));
+							}
 						});
 					});
 

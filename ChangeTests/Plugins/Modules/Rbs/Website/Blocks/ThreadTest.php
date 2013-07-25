@@ -32,17 +32,22 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event = $this->getTestParameterizeEvent();
 		$layout = $event->getBlockLayout();
 		$layout->setParameters(array('separator' => '>'));
-		$page = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_StaticPage');
-		$page->initialize(123);
-		$event->setParam('page', $page);
 
+		/* @var $website \Rbs\Website\Documents\Website */
 		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		$website->initialize(self::CURRENT_WEBSITE_ID);
 
-
+		/* @var $section \Rbs\Website\Documents\Topic */
 		$pathRule = new \Change\Http\Web\PathRule($website, 'test/toto/titi/tata.html');
 		$section = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Topic');
+		$section->setWebsite($website);
 		$section->initialize(789);
+
+		/* @var $page \Rbs\Website\Documents\StaticPage */
+		$page = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_StaticPage');
+		$page->setSection($section);
+		$page->initialize(123);
+		$event->setParam('page', $page);
 
 		$pathRule->setSectionId(789);
 		$event->setParam('pathRule', $pathRule);
