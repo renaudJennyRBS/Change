@@ -73,21 +73,6 @@
 	});
 
 
-	/**
-	 * Returns the model's readable name from its system name.
-	 */
-	app.filter('modelLabel', ['RbsChange.Modules', function (Modules) {
-
-		return function (model) {
-			if (angular.isObject(model) && model.hasOwnProperty('model')) {
-				model = model.model;
-			}
-			return (model in Modules.models) ? Modules.models[model] : model;
-		};
-
-	}]);
-
-
 	app.filter('documentSummary', ['$filter', function ($filter) {
 
 		return function (doc, needle, length) {

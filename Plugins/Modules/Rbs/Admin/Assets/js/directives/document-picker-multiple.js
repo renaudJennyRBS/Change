@@ -6,7 +6,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('documentPickerMultiple', ['RbsChange.Modules', 'RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$filter', 'RbsChange.ArrayUtils', '$compile', '$http', function (Modules, Clipboard, FormsManager, Breadcrumb, MainMenu, $filter, ArrayUtils, $compile, $http) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$filter', 'RbsChange.ArrayUtils', '$compile', '$http', function (Clipboard, FormsManager, Breadcrumb, MainMenu, $filter, ArrayUtils, $compile, $http) {
 
 		return {
 			restrict    : 'EAC',
@@ -46,7 +46,7 @@
 				scope.clipboardValues = Clipboard.values;
 				var first = scope.clipboardValues[0];
 				if (first) {
-					scope.clipboardFirstLabel = ' (' + Modules.models[first.model] + ' : ' + first.label + ')';
+					scope.clipboardFirstLabel = ' (' + first.model + ' : ' + first.label + ')';
 				} else {
 					scope.clipboardFirstLabel = '';
 				}
