@@ -50,7 +50,12 @@
 		<h3>(=selectorTitle=)</h3>
 	</header>
 
-	<search-filters model="(= acceptedModel =)" filter-query="query" text-search="textSearch"></search-filters>
+	<search-filters model="(= dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div class="well well-small" ng-show="! acceptedModel">
+		<label style="display: inline-block" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
+		<select class="input-xlarge" id="DpSelectModel" ng-model="dp.selectedModel" ng-options="m.label for m in availableModels"></select>
+	</div>
 
 	<div data-role="picker-contents"></div>
 
