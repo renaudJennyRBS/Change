@@ -21,9 +21,11 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		$events->attach('Http.Rest', 'http.action', array($this, 'registerActions'));
 	}
 
+	/**
+	 * @param \Change\Http\Event $event
+	 */
 	public function registerActions(\Change\Http\Event $event)
 	{
-
 		if (!$event->getAction() && implode('/', $event->getParam('pathParts')) === 'rbs/price/taxInfo')
 		{
 			$event->setAction(function($event){

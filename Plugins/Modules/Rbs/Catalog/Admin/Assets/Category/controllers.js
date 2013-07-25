@@ -67,71 +67,53 @@
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"]
+			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"],
 		]);
 
-		$scope.List = {selectedCondition: null, productsToAdd: []};
+
+		$scope.List = {};
+
+
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
 		REST.resource('Rbs_Catalog_Category', $routeParams.id).then(function (category)
 		{
-			$scope.document = category;
+			$scope.productsUrl = category.META$.links['products'].href;
+			$scope.category = category;
 			Loading.stop();
+		});
 
-			Loading.start(i18n.trans('m.rbs.catalog.admin.js.condition-list-loading'));
-			REST.collection('Rbs_Catalog_Condition').then(function (conditions)
+		$scope.List.toggleHighlight = function (doc) {
+			var url = null;
+			if (doc.position < 0)
 			{
-				$scope.List.conditions = conditions.resources;
-				/*for (var i = 5; i > 0; i--)
-				{
-					$scope.List.conditions.unshift({id: i, label: 'toto' + i});
-				}*/
-				$scope.List.conditions.unshift({id: 0, label: i18n.trans('m.rbs.catalog.admin.js.no-condition')});
-				if ($scope.List.conditions.length == 1)
-				{
-					$scope.List.selectedCondition = $scope.List.conditions[0];
-				}
-				Loading.stop();
-			});
-		});
-
-		REST.action('collectionItems', { code: 'Rbs_Catalog_Collection_ProductSortOrders' }).then(function (data) {
-			$scope.List.sortOrders = data.items;
-		});
-		REST.action('collectionItems', { code: 'Rbs_Generic_Collection_SortDirections' }).then(function (data) {
-			$scope.List.sortDirections = data.items;
-		});
-
-		$scope.$watch('List.selectedCondition', function (newValue, oldValue)
-		{
-			if (newValue === oldValue)
-			{
-				return;
+				url = doc.META$.actions['downplay'].href;
 			}
-
-			var url = '';
-			if (newValue)
+			else
 			{
-				url = '/catalog/category/' + $scope.document.id + '/products/' + $scope.List.selectedCondition.id + '/';
+				url = doc.META$.actions['highlight'].href;
 			}
-			$scope.productListUrl = url;
-		});
-
-		$scope.addProducts = function (docIds, priorities)
-		{
-			var conditionId = $scope.List.selectedCondition.id;
-			var url = REST.getBaseUrl('catalog/category/' + $scope.document.id + '/products/' + conditionId + '/');
-			$http.put(url, {addProductIds: docIds, priorities: priorities}, REST.getHttpConfig())
-				.success(function (data)
-				{
-					// TODO use data
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
-				})
-				.error(function errorCallback(data, status)
-				{
-					data.httpStatus = status;
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
-				});
+			callActionUrlAndReload(url);
 		};
+
+		$scope.$on('$destroy', function () {
+			Workspace.restore();
+		});
+
+		$scope.List.moveTop = function (doc) {
+			callActionUrlAndReload(doc.META$.actions['highlighttop'].href);
+		}
+
+		$scope.List.moveUp = function (doc) {
+			callActionUrlAndReload(doc.META$.actions['moveup'].href);
+		}
+
+		$scope.List.moveDown = function (doc) {
+			callActionUrlAndReload(doc.META$.actions['movedown'].href);
+		}
+
+		$scope.List.moveBottom = function (doc) {
+			callActionUrlAndReload(doc.META$.actions['highlightbottom'].href);
+		}
 
 		$scope.addProductsFromPicker = function ()
 		{
@@ -140,48 +122,32 @@
 			{
 				docIds.push($scope.List.productsToAdd[i].id);
 			}
-			$scope.addProducts(docIds, 0);
+			var url = REST.getBaseUrl('rbs/catalog/productcategorization/addproducts');
+			Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
+			$http.post(url, {"categoryId": $scope.category.id , "documentIds": docIds}).success(function (data) {
+				Loading.stop();
+				$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+
+			}).error(function errorCallback (data, status) {
+					data.httpStatus = status;
+					Loading.stop();
+			});
 			$scope.List.productsToAdd = [];
-		};
+		}
 
-		$scope.hasProductsToAdd = function ()
+		function callActionUrlAndReload(url)
 		{
-			return !$scope.List.productsToAdd || $scope.List.productsToAdd.length == 0;
-		};
-
-		$scope.canGoBack = function ()
-		{
-			// TODO
-			return true;
-		}
-
-		$scope.goBack = function ()
-		{
-			Breadcrumb.goParent();
-		}
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-		});
-
-		$scope.List.toggleHighlight = function (doc) {
-			$scope.addProducts([doc.id], doc._highlight ? 1 : 0); // _highlight is already updated.
-		}
-
-		$scope.List.moveTop = function (doc) {
-			$scope.addProducts([doc.id], 'top');
-		}
-
-		$scope.List.moveUp = function (doc) {
-			$scope.addProducts([doc.id], doc._priority + 1);
-		}
-
-		$scope.List.moveDown = function (doc) {
-			$scope.addProducts([doc.id], doc._priority - 1);
-		}
-
-		$scope.List.moveBottom = function (doc) {
-			$scope.addProducts([doc.id], 1);
+			if (url)
+			{
+				$http.get(url).success(function (data)
+				{
+					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+				}).error(function errorCallback(data, status)
+					{
+						data.httpStatus = status;
+						$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+					});
+			}
 		}
 	}
 
@@ -193,21 +159,24 @@
 	 * List actions.
 	 */
 	app.config(['$provide', function ($provide) {
-		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
+		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', 'RbsChange.Loading', function (Actions, REST, $http, i18n, Loading) {
 			var action = function (ids, $scope, operation, priorities)
 			{
-				var params =  (operation == 'remove') ? {removeProductIds: ids} : {addProductIds: ids, priorities: priorities};
-				var conditionId = $scope.data.conditionId;
-				var url = REST.getBaseUrl('catalog/category/' + $scope.data.containerId + '/products/' + conditionId + '/');
-				$http.put(url, params, REST.getHttpConfig())
-					.success(function (data) {
-						// TODO use data
+				if ((operation == 'remove'))
+				{
+					var url = REST.getBaseUrl('rbs/catalog/productcategorization/delete');
+					Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
+					$http.post(url, {"documentIds": ids}).success(function (data) {
+						Loading.stop();
 						$scope.refresh();
+
 					})
 					.error(function errorCallback (data, status) {
-						data.httpStatus = status;
-						$scope.refresh();
+							data.httpStatus = status;
+							Loading.stop();
+							$scope.refresh();
 					});
+				}
 			}
 
 			Actions.register({
@@ -222,7 +191,7 @@
 					{
 						ids.push($docs[i].id);
 					}
-					action(ids, $scope, 'remove', null);
+					action(ids, $scope, 'remove', 0);
 				}]
 			});
 
@@ -241,7 +210,8 @@
 							ids.push($docs[i].id);
 						}
 					}
-					action(ids, $scope, 'add', 1);
+					$scope.deleteProductCategorizations($docs);
+					//action(ids, $scope, 'add', 1);
 				}]
 			});
 

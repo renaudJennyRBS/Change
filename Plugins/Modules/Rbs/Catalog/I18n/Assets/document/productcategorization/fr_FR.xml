@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.document.productcategorization" lcid="fr_FR">
+	<key id="productvisual">visuel du produit</key>
+	<key id="productlabel">libellé du produit</key>
+</i18n>

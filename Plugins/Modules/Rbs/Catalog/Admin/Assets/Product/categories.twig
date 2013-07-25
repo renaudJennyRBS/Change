@@ -41,37 +41,49 @@
 		</div>
 	</div>
 
-	<div class="control-group" ng-show="List.selectedCondition">
-		<rbs-document-list data-dlid="DLRbsCatalogProductCategories" model="Rbs_Catalog_Category" publishable="true" extend="List"
-			collection-url="(= categoryListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductFromCategories"
-			data-container-id="document.id" data-condition-id="List.selectedCondition.id" cascade-edition="(= document.label=)"
-			use-properties="_priority">
-			<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
-			<column name="label" primary="true">
-				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
-			</column>
-			<column name="shop">
-				<a ng-if="doc.shop" href="(= doc.shop | documentURL =)">(= doc.shop.label =)</a>
-			</column>
-			<column name="section">
-				<a ng-if="doc.section" href="(= doc.section | documentURL =)">(= doc.section.label =)</a>
-			</column>
-			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.category.highlight', ['ucf']) }}" align="center" width="90px">
-				<switch ng-model="doc._highlight" ng-change="extend.toggleHighlight(doc)"></switch>
-			</column>
+	<div class="control-group">
+		<div class="control-group" >
+			<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_ProductCategorization" publishable="true"
+				collection-url="(=categoriesUrl=)"
+				modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
+				use-properties="title">
+				<column name="categoryLabel" primary="true">
+					<strong><a href ng-href="(= doc | documentURL =)">(= doc.categoryLabel =)</a></strong>
+				</column>
+				<span ng-show="doc.isHighlighted">
+					<rbs-kb-switch>
+						<button rbs-kb-when="shift" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button rbs-kb-when="shift" ng-disabled="doc.position ==  -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+				</span>
+				</column>
+				<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.category.highlight', ['ucf']) }}" align="center" width="90px">
+					<switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></switch>
+				</column>
 
-			<quick-actions>
-				[action edit]
-				|| [action Rbs_Catalog_RemoveProductFromCategories]
-			</quick-actions>
+				<quick-actions>
+					[action Rbs_Catalog_RemoveProductsFromCategory]
+				</quick-actions>
 
-			<grid-item class="folder">
-				<img rbs-storage-image="doc.visual.id" thumbnail="L"/>
-				<div class="caption">
-					<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL:'tree' =)">(= doc.label =)</a></h4>
-				</div>
-			</grid-item>
-		</rbs-document-list>
+				<grid-item>
+					<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
+					<div class="caption">
+						<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+					</div>
+				</grid-item>
+			</rbs-document-list>
 
 		<h4>{{ i18n('m.rbs.catalog.document.product.add-categories', ['ucf']) }}</h4>
 

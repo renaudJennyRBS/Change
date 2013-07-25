@@ -17,7 +17,7 @@ class Max extends \Zend\Validator\LessThan
 	public function isValid($value)
 	{
 		$this->setValue($value);
-		if ($this->max <= $value) {
+		if ($this->max < $value) {
 			$this->error(\Zend\Validator\LessThan::NOT_LESS);
 			return false;
 		}

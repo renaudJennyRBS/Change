@@ -905,7 +905,7 @@
 
 						// Available sortable columns
 						// FIXME: remove default value here when the server sends this info.
-						scope.sortable = response.pagination.availableSort || ['label', 'modificationDate'];
+						scope.sortable = response.pagination.availableSort || [];
 						if (scope.hasColumn('nodeOrder')) {
 							scope.sortable.push('nodeOrder');
 						}
@@ -1209,12 +1209,15 @@
 						}
 						query.offset = scope.pagination.offset;
 						query.limit  = scope.pagination.limit;
-						query.order  = [
-							{
-								'property' : scope.sort.column,
-								'order'    : scope.sort.descending ? 'desc' : 'asc'
-							}
-						];
+						if (!angular.isObject(query.order))
+						{
+							query.order  = [
+								{
+									'property' : scope.sort.column,
+									'order'    : scope.sort.descending ? 'desc' : 'asc'
+								}
+							];
+						}
 						if (attrs.model) {
 							query.model = attrs.model;
 						}

@@ -1,20 +1,20 @@
 <form novalidate="" data-ng-controller="Rbs_Catalog_Category_ProductsController" class="form-horizontal">
 	<div class="page-header">
 		<h2 class="ng-binding">
-			(= document.label =)
+			(= category.label =)
 			<small>
 				{{ i18n('m.rbs.catalog.document.category.shop', ['ucf', 'lab']) }}
-				<a ng-show="document.shop" ng-href="(= document.shop | documentURL =)">(= document.shop.label =)</a>
-				<span ng-hide="document.shop">x</span>
+				<a ng-show="category.shop" ng-href="(= category.shop | documentURL =)">(= category.shop.label =)</a>
+				<span ng-hide="category.shop">x</span>
 				-
 				{{ i18n('m.rbs.catalog.document.category.section', ['ucf', 'lab']) }}
-				<a ng-show="document.section" ng-href="(= document.section | documentURL =)">(= document.section.label =)</a>
-				<span ng-hide="document.section">x</span>
+				<a ng-show="category.section" ng-href="(= category.section | documentURL =)">(= category.section.label =)</a>
+				<span ng-hide="category.section">x</span>
 				-
 				{{ i18n('m.rbs.catalog.document.category.productsortorder', ['ucf', 'lab']) }}
-				(= List.sortOrders[document.productSortOrder].label =)
-				(= List.sortDirections[document.productSortDirection].label =)
-				(<a ng-href="(= document | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
+				(= List.sortOrders[category.productSortOrder].label =)
+				(= List.sortDirections[category.productSortDirection].label =)
+				(<a ng-href="(= category | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
 			</small>
 		</h2>
 	</div>
@@ -53,21 +53,17 @@
 		</div>
 	</div>
 
-	<div class="control-group" ng-show="List.selectedCondition">
-		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_AbstractProduct" publishable="true"
-			collection-url="(= productListUrl =)" modification-date ="false" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
-			data-container-id="document.id" data-condition-id="List.selectedCondition.id" extend="List" use-properties="title">
-			<column name="visuals" thumbnail="XS" thumbnail-path="doc.visuals[0].id" label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.visual', ['ucf']) }}"></column>
-			<column name="label" primary="true">
-				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
-				<span class="label">(= doc.visuals.length =) visuels</span>
-				<span class="label label-important strikethrough" ng-if="!doc.description">Desc.</span>
-				<br />
-				<small>(= doc.title =)</small>
+	<div class="control-group" >
+		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_ProductCategorization" publishable="true"
+			collection-url="(=productsUrl=)"
+			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
+			use-properties="title">
+			<column name="visuals" thumbnail="S" thumbnail-path="doc.productVisualId" label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.productvisual', ['ucf']) }}"></column>
+			<column name="productLabel" primary="true">
+				<strong><a href ng-href="(= doc | documentURL =)">(= doc.productLabel =)</a></strong>
 			</column>
 			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.category.sort-order', ['ucf']) }}" align="center" width="110px">
-				<!--(= doc._priority =)-->
-				<span ng-show="doc._highlight">
+				<span ng-show="doc.isHighlighted">
 					<rbs-kb-switch>
 						<button rbs-kb-when="shift" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
 							<i class="icon-step-forward icon-rotate-270"></i>
@@ -77,31 +73,22 @@
 						</button>
 					</rbs-kb-switch>
 					<rbs-kb-switch>
-						<button rbs-kb-when="shift" ng-disabled="doc._priority == 1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
+						<button rbs-kb-when="shift" ng-disabled="doc.position ==  -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
 							<i class="icon-step-forward icon-rotate-90"></i>
 						</button>
-						<button rbs-kb-default="" ng-disabled="doc._priority == 1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
 							<i class="icon-play icon-rotate-90"></i>
 						</button>
 					</rbs-kb-switch>
 				</span>
 			</column>
 			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.category.highlight', ['ucf']) }}" align="center" width="90px">
-				<switch ng-model="doc._highlight" ng-change="extend.toggleHighlight(doc)"></switch>
+				<switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></switch>
 			</column>
 
 			<quick-actions>
-				[action preview]
-				|| [action edit]
-				|| [action Rbs_Catalog_RemoveProductsFromCategory]
+				[action Rbs_Catalog_RemoveProductsFromCategory]
 			</quick-actions>
-
-			<preview>
-				<h4>(= doc.label =)</h4>
-				<p ng-bind-html="doc.description"></p>
-				<div class="muted" ng-if="!doc.visuals.length">{{ i18n('m.rbs.catalog.document.product.no-visual', ['ucf']) }}</div>
-				<img ng-repeat="visual in doc.visuals" rbs-storage-image="visual.id" thumbnail="m" class="img-polaroid margin-right" />
-			</preview>
 
 			<grid-item>
 				<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
