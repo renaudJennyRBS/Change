@@ -126,19 +126,20 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	}
 
 	/**
-	 * @return array
-	 */
-	public final function getModifiedProperties()
-	{
-		return $this->modifiedProperties;
-	}
-
-	/**
 	 * @return integer
 	 */
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @api
+	 * @param string $propertyName
+	 */
+	public function removeOldPropertyValue($propertyName)
+	{
+		unset($this->modifiedProperties[$propertyName]);
 	}
 
 	/**
@@ -156,7 +157,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	 */
 	public function hasModifiedProperties()
 	{
-		return count($this->modifiedProperties) > 0;
+		return count($this->getModifiedPropertyNames()) !== 0;
 	}
 
 	/**
@@ -174,7 +175,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	 */
 	public final function isPropertyModified($propertyName)
 	{
-		return array_key_exists($propertyName, $this->modifiedProperties);
+		return in_array($propertyName, $this->getModifiedPropertyNames());
 	}
 
 	/**
@@ -186,18 +187,6 @@ abstract class AbstractLocalizedDocument implements \Serializable
 		if (!array_key_exists($propertyName, $this->modifiedProperties))
 		{
 			$this->modifiedProperties[$propertyName] = $value;
-		}
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 */
-	public function removeOldPropertyValue($propertyName)
-	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			unset($this->modifiedProperties[$propertyName]);
 		}
 	}
 

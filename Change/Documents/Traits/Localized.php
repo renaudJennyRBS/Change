@@ -224,49 +224,11 @@ trait Localized
 			$localizedPart = $this->localizedPartArray[$LCID];
 		}
 
-		//Update document modified properties
 		if ($this->currentLCID !== $LCID)
 		{
-			if ($this->currentLCID !== null)
-			{
-				$model = $this->getDocumentModel();
-				foreach ($model->getLocalizedProperties() as $name => $property)
-				{
-					$this->unsetOldPropertyValue($name);
-				}
-
-				foreach ($localizedPart->getModifiedProperties() as $name => $value)
-				{
-					$this->setOldPropertyValue($name, $value);
-				}
-			}
 			$this->currentLCID = $LCID;
 		}
-
 		return $localizedPart;
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 */
-	public function removeOldPropertyValue($propertyName)
-	{
-		parent::removeOldPropertyValue($propertyName);
-		$property = $this->getDocumentModel()->getProperty($propertyName);
-		if ($property && $property->getLocalized())
-		{
-			$this->getCurrentLocalization()->removeOldPropertyValue($propertyName);
-		}
-	}
-
-	/**
-	 * @api
-	 * @param string $propertyName
-	 */
-	protected function unsetOldPropertyValue($propertyName)
-	{
-		parent::removeOldPropertyValue($propertyName);
 	}
 
 	/**

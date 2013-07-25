@@ -106,20 +106,61 @@ class DocumentLocalizedClass
 	 */
 	protected function getMembers($model, $properties)
 	{
-		$resetProperties = array();
+		$modifiedProperties = array();
+		$removeOldPropertiesValue = array();
 		$code = '';
 		foreach ($properties as $property)
 		{
+			$propertyName = $property->getName();
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getName() !== 'LCID')
+			if ($propertyName !== 'LCID')
 			{
-				$resetProperties[] = '		$this->' . $property->getName() . ' = null;';
+				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': unset($this->modifiedProperties[\''.$propertyName.'\']); return;';
 			}
+			if ($property->getType() === 'RichText')
+			{
+				$modifiedProperties[] = 'if ($this->'.$propertyName.' !== null && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
+				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
+			}
+
 			$code .= '
 	/**
 	 * @var ' . $this->getCommentaryMemberType($property) . '
 	 */
 	private $' . $property->getName() . ';' . PHP_EOL;
+		}
+
+		if (count($modifiedProperties))
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getModifiedPropertyNames()
+	{
+		$names =  parent::getModifiedPropertyNames();
+		' . implode(PHP_EOL . '		', $modifiedProperties) . '
+		return $names;
+	}' . PHP_EOL;
+		}
+
+		if (count($removeOldPropertiesValue))
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @param string $propertyName
+	 */
+	public function removeOldPropertyValue($propertyName)
+	{
+		switch ($propertyName)
+		{
+			' . implode(PHP_EOL . '			', $removeOldPropertiesValue) . '
+			default:
+				parent::removeOldPropertyValue($propertyName);
+		}
+	}' . PHP_EOL;
 		}
 		return $code;
 	}
@@ -130,9 +171,17 @@ class DocumentLocalizedClass
 		foreach ($properties as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getType() === 'JSON' || $property->getType() === 'Object')
+			if ($property->getType() === 'JSON')
 			{
-				$code .= $this->getComplexPropertyAccessors($model, $property);
+				$code .= $this->getJSONPropertyAccessors($model, $property);
+			}
+			elseif ($property->getType() === 'Object')
+			{
+				$code .= $this->getObjectPropertyAccessors($model, $property);
+			}
+			elseif ($property->getType() === 'RichText')
+			{
+				$code .= $this->getRichTextPropertyAccessors($model, $property);
 			}
 			else
 			{
@@ -202,7 +251,7 @@ class DocumentLocalizedClass
 		$un = ucfirst($name);
 		$code .= '
 	/**
-	 * @return ' . $ct . '
+	 * @return ' . $ct . '|null
 	 */
 	public function get' . $un . '()
 	{
@@ -210,7 +259,7 @@ class DocumentLocalizedClass
 	}
 	
 	/**
-	 * @return ' . $ct . '|NULL
+	 * @return ' . $ct . '|null
 	 */
 	public function get' . $un . 'OldValue()
 	{
@@ -218,8 +267,7 @@ class DocumentLocalizedClass
 	}
 	
 	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @return boolean
+	 * @param ' . $ct . '|null ' . $var . '
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
@@ -229,22 +277,19 @@ class DocumentLocalizedClass
 		}
 		elseif (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
 		{
-			if ($this->isPropertyModified(' . $en . '))
+			if (array_key_exists(' . $en . ', $this->modifiedProperties))
 			{
-				$loadedVal = $this->getOldPropertyValue(' . $en . ');
-				if (' . $this->buildEqualsProperty('$loadedVal', $var, $property->getType()) . ')
+				if (' . $this->buildEqualsProperty('$this->modifiedProperties[' . $en . ']', $var, $property->getType()) . ')
 				{
-					$this->removeOldPropertyValue(' . $en . ');
+					unset($this->modifiedProperties[' . $en . ']);
 				}
 			}
 			else
 			{
-				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
+				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
 			}
 			' . $mn . ' = ' . $var . ';
-			return true;
 		}
-		return false;
 	}' . PHP_EOL;
 		return $code;
 	}
@@ -254,7 +299,7 @@ class DocumentLocalizedClass
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
-	protected function getComplexPropertyAccessors($model, $property)
+	protected function getJSONPropertyAccessors($model, $property)
 	{
 		$code = '';
 		$name = $property->getName();
@@ -265,7 +310,80 @@ class DocumentLocalizedClass
 		$un = ucfirst($name);
 		$code .= '
 	/**
+	 * @return string|null
+	 */
+	public function get' . $un . 'String()
+	{
+		return ' . $mn . ';
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get' . $un . '()
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
+		{
+			return ' . $mn . ';
+		}
+		return ' . $mn . ' === null ? null : \Zend\Json\Json::decode(' . $mn . ', \Zend\Json\Json::TYPE_ARRAY);
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function get' . $un . 'OldStringValue()
+	{
+		return $this->getOldPropertyValue(' . $en . ');
+	}
+
+	/**
+	 * @param '. $ct .'|null ' . $var . '
+	 */
+	public function set' . $un . '(' . $var . ')
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
+		{
+			' . $mn . ' = ' . $var . ';
+			return;
+		}
+		$newString = (' . $var . ' !== null) ? \Zend\Json\Json::encode(' . $var . ') : null;
+		if (' . $mn . ' !== $newString)
+		{
+			if (array_key_exists(' . $en . ', $this->modifiedProperties))
+			{
+				if ($this->modifiedProperties[' . $en . '] === $newString)
+				{
+					unset($this->modifiedProperties[' . $en . ']);
+				}
+			}
+			else
+			{
+				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
+			}
+			' . $mn . ' = $newString;
+		}
+	}' . PHP_EOL;
+		return $code;
+	}
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
+	 */
+	protected function getObjectPropertyAccessors($model, $property)
+	{
+		$code = '';
+		$name = $property->getName();
+		$var = '$' . $name;
+		$mn = '$this->' . $name;
+		$en = $this->escapePHPValue($name);
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		$code .= '
+	/**
+	 * @return string|null
 	 */
 	public function get' . $un . 'String()
 	{
@@ -281,37 +399,123 @@ class DocumentLocalizedClass
 	}
 
 	/**
-	 * @param string|null ' . $var . '
-	 * @return boolean
+	 * @param ' . $ct . '|null ' . $var . '
 	 */
-	public function set' . $un . 'String(' . $var . ')
+	public function set' . $un . '(' . $var . ')
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
 			' . $mn . ' = ' . $var . ';
+			return;
 		}
-		elseif (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
+		$newString = (' . $var . ' !== null) ? serialize(' . $var . ') : null;
+		if (' . $mn . ' !== $newString)
 		{
-			if ($this->isPropertyModified(' . $en . '))
+			if (array_key_exists(' . $en . ', $this->modifiedProperties))
 			{
-				$loadedVal = $this->getOldPropertyValue(' . $en . ');
-				if (' . $this->buildEqualsProperty('$loadedVal', $var, $property->getType()) . ')
+				if ($this->modifiedProperties[' . $en . '] === $newString)
 				{
-					$this->removeOldPropertyValue(' . $en . ');
+					unset($this->modifiedProperties[' . $en . ']);
 				}
 			}
 			else
 			{
-				$this->setOldPropertyValue(' . $en . ', ' . $mn . ');
+				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
 			}
-			' . $mn . ' = ' . $var . ';
+			' . $mn . ' = $newString;
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @return ' . $ct . '|null
+	 */
+	public function get' . $un . '()
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
+		{
+			return ' . $mn . ';
+		}
+		return ' . $mn . ' === null ? null : unserialize(' . $mn . ');
 	}' . PHP_EOL;
 		return $code;
 	}
 
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 * @return string
+	 */
+	protected function getRichTextPropertyAccessors($model, $property)
+	{
+		$code = '';
+		$name = $property->getName();
+		$var = '$' . $name;
+		$mn = '$this->' . $name;
+		$en = $this->escapePHPValue($name);
+		$ct = $this->getCommentaryType($property);
+		$un = ucfirst($name);
+		$code .= '
+	/**
+	 * @return ' . $ct . '
+	 */
+	public function get' . $un . 'OldValue()
+	{
+		return new ' . $ct . '((' . $mn . ' !== null) ? ' . $mn . '->getDefaultJSONString() : null);
+	}
+
+	/**
+	 * @param string|array|' . $ct . '|null ' . $var . '
+	 */
+	public function set' . $un . '(' . $var . ')
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
+		{
+			' . $mn . ' = new ' . $ct . '(' . $var . ');
+			return;
+		}
+		if (' . $mn . ' === null)
+		{
+			' . $mn . ' = new ' . $ct . '();
+		}
+
+		if (is_string(' . $var . '))
+		{
+			' . $mn . '->fromJSONString(' . $var . ');
+		}
+		elseif (is_array(' . $var . '))
+		{
+			' . $mn . '->fromArray(' . $var . ');
+		}
+		elseif (' . $var . '  instanceof ' . $ct . ')
+		{
+			' . $mn . '->fromRichtextProperty(' . $var . ');
+		}
+		elseif (' . $var . ' !== null)
+		{
+			throw new \InvalidArgumentException(\'Argument 1 must be an array, string, ' . $ct . ' or null\', 52005);
+		}
+	}
+
+	/**
+	 * @return ' . $ct . '|null
+	 */
+	public function get' . $un . '()
+	{
+		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_SAVING)
+		{
+			return (' . $mn . ' !== null) ? ' . $mn . '->toJSONString() : null;
+		}
+		if (' . $mn . ' === null)
+		{
+			' . $mn . ' = new ' . $ct . '();
+		}
+		return ' . $mn . ';
+	}' . PHP_EOL;
+		return $code;
+	}
 	/**
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
@@ -333,6 +537,8 @@ class DocumentLocalizedClass
 			case 'Date' :
 			case 'DateTime' :
 				return '\DateTime';
+			case 'RichText' :
+				return '\Change\Documents\RichtextProperty';
 			default:
 				return 'string';
 		}
@@ -359,6 +565,8 @@ class DocumentLocalizedClass
 			case 'Date' :
 			case 'DateTime' :
 				return '\DateTime';
+			case 'RichText' :
+				return '\Change\Documents\RichtextProperty';
 			default:
 				return 'string';
 		}
