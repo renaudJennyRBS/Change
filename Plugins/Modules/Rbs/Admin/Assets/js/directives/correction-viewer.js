@@ -39,6 +39,8 @@
 					'plannedCorrectionDate' : scope.correctionInfo.publicationDate
 				};
 
+				scope.reject = false;
+
 				scope.deleteCorrection = function () {
 					Dialog.closeEmbedded().then(function () {
 						var copy = angular.copy(scope.current);
@@ -70,14 +72,20 @@
 					executeTask('contentValidation');
 				};
 
+				scope.rejectContentValidation = function (message) {
+					executeTask('contentValidation', {'reason' : message});
+				};
+
 
 				scope.publicationValidation = function () {
 					executeTask('publicationValidation');
 				};
 
 
-				function executeTask (taskCode) {
-					var params = {};
+				function executeTask (taskCode, params) {
+					if (!params) {
+						params = {};
+					}
 					if (scope.params.applyCorrectionWhen === 'planned') {
 						params['publicationDate'] = scope.params.plannedCorrectionDate;
 					}

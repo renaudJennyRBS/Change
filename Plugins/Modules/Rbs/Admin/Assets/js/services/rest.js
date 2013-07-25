@@ -762,7 +762,7 @@
 							.success(function (task) {
 
 								// Execute Task.
-								$http.get(Utils.makeUrl(task.META$.actions['execute'].href, params), getHttpConfig(transformResponseResourceFn))
+								$http.post(task.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
 
 									.success(function (task) {
 										// Task has been executed and we don't need it here anymore.
