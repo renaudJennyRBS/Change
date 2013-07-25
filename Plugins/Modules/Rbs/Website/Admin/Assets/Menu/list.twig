@@ -4,13 +4,13 @@
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		Site web : <select ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
+		{{ i18n('m.rbs.website.document.menu.website', ['ucf', 'lab']) }}
+		<select ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
 	</div>
 
 	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
 		<i class="icon-arrow-up icon-3x pull-left"></i>
-		<strong>Les menus sont classés par site web.</strong>
-		<br/>Choisissez un site web pour accéder aux menus qui lui sont rattachés.
+		{{ i18n('m.rbs.website.document.menu.menus-are-grouped-by-website') }}
 	</div>
 
 	<div ng-show="selectedWebsite">
@@ -28,7 +28,7 @@
 				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
 			</column>
 			<column name="items">
-				(= doc.items | json =)
+				<span class="label" ng-repeat="item in doc.items" ng-bind-html="item.title"></span>
 			</column>
 
 		</rbs-document-list>
