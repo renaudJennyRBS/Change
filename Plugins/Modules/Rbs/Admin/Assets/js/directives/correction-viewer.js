@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsCorrectionViewer', ['RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.Utils', function (Dialog, ArrayUtils, REST, Utils) {
+	app.directive('rbsCorrectionViewer', ['RbsChange.Dialog', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', function (Dialog, ArrayUtils, REST, Utils, i18n) {
 		return {
 
 			restrict    : 'A',
@@ -42,6 +42,10 @@
 				scope.reject = false;
 
 				scope.deleteCorrection = function () {
+					if (!window.confirm(i18n.trans('m.rbs.admin.admin.js.correction-confirm-delete'))) {
+						return;
+					}
+
 					Dialog.closeEmbedded().then(function () {
 						var copy = angular.copy(scope.current);
 						if (Utils.removeCorrection(copy)) {
