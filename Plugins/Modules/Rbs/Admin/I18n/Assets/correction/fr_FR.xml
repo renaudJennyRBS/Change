@@ -16,9 +16,13 @@
 	<key id="correction-has-been-published" format="html"><![CDATA[Cette Correction a été appliquée sur le document.]]></key>
 	<key id="need-help" format="html">Besoin d'aide à propos des corrections ?</key>
 	<key id="correction-created-on">créée le</key>
+	<key id="please-provide-reason">veuillez préciser en quelques mots la raison du refus :</key>
+	<key id="reject-correction">refuser la correction</key>
+	<key id="cancel-reject">ne pas refuser maintenant</key>
 
 	<!-- buttons -->
 	<key id="button-validate" format="html"><![CDATA[Valider<small>la correction</small>]]></key>
 	<key id="button-delete" format="html"><![CDATA[Supprimer<small>la correction</small>]]></key>
 	<key id="button-publish" format="html"><![CDATA[Appliquer<small>la correction</small>]]></key>
+	<key id="button-reject" format="html"><![CDATA[Refuser<small>la correction</small>]]></key>
 </i18n>
