@@ -9,11 +9,12 @@
 	<rbs-document-list data-dlid="DLRbsCatalogCategory" model="Rbs_Catalog_Category" publishable="true" tree="Rbs_Catalog"
 		filter-query="query" modification-date ="false">
 		<quick-actions>
-			<a href="(= doc | documentURL:'products' =)">{{ i18nAttr('m.rbs.catalog.document.category.products') }}</a>
+			<a href="Rbs/Catalog/Category/(=doc.id=)/ProductCategorization/">{{ i18nAttr('m.rbs.catalog.document.category.products') }}</a>
 			|| [action default]
 		</quick-actions>
 
-		<column name="visual" thumbnail="XS" thumbnail-path="doc.visuals.id"></column>
+		<column name="visual" thumbnail="XS" thumbnail-path="doc.visuals.id">
+		</column>
 		<column name="label" primary="true"></column>
 		<column name="shop">
 			<a ng-if="doc.shop" href="(= doc.shop | documentURL =)">(= doc.shop.label =)</a>

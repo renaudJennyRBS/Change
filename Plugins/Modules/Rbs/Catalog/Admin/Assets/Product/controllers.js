@@ -135,95 +135,50 @@
 			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
 		]);
 
-		$scope.List = {selectedCondition: null, productsToAdd: []};
+		$scope.List = {};
+
+
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
-		REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function (product)
+		REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.id).then(function (product)
 		{
+			console.log(product);
+			$scope.categoriesUrl = product.META$.links['categories'].href;
 			$scope.document = product;
 			Loading.stop();
-
-			Loading.start(i18n.trans('m.rbs.catalog.admin.js.condition-list-loading'));
-			REST.collection('Rbs_Catalog_Condition').then(function (conditions)
-			{
-				$scope.List.conditions = conditions.resources;
-				/*for (var i = 5; i > 0; i--)
-				 {
-				 $scope.List.conditions.unshift({id: i, label: 'toto' + i});
-				 }*/
-				$scope.List.conditions.unshift({id: 0, label: i18n.trans('m.rbs.catalog.admin.js.no-condition')});
-				if ($scope.List.conditions.length == 1)
-				{
-					$scope.List.selectedCondition = $scope.List.conditions[0];
-				}
-				Loading.stop();
-			});
 		});
 
-		$scope.$watch('List.selectedCondition', function (newValue, oldValue)
-		{
-			if (newValue === oldValue)
-			{
-				return;
-			}
 
-			var url = '';
-			if (newValue)
+		$scope.List.toggleHighlight = function (doc) {
+			var url = null;
+			if (doc.position < 0)
 			{
-				url = '/catalog/product/' + $scope.document.id + '/categories/' + $scope.List.selectedCondition.id + '/';
+				url = doc.META$.actions['downplay'].href;
 			}
-			$scope.categoryListUrl = url;
-		});
-
-		$scope.addInCategories = function (docIds, priorities)
-		{
-			var conditionId = $scope.List.selectedCondition.id;
-			var url = REST.getBaseUrl('catalog/product/' + $scope.document.id + '/categories/' + conditionId + '/');
-			$http.put(url, {addCategoryIds: docIds, priorities: priorities}, REST.getHttpConfig())
-				.success(function (data)
-				{
-					// TODO use data
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductCategories:call', { 'method' : 'reload' });
-				})
-				.error(function errorCallback(data, status)
-				{
-					data.httpStatus = status;
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductCategories:call', { 'method' : 'reload' });
-				});
+			else
+			{
+				url = doc.META$.actions['highlight'].href;
+			}
+			callActionUrlAndReload(url);
 		};
 
-		$scope.addCategoriesFromPicker = function ()
-		{
-			var docIds = [];
-			for (var i in $scope.List.categoriesToAdd)
-			{
-				docIds.push($scope.List.categoriesToAdd[i].id);
-			}
-			$scope.addInCategories(docIds, 0);
-			$scope.List.categoriesToAdd = [];
-		};
-
-		$scope.hasCategoriesToAdd = function ()
-		{
-			return !$scope.List.categoriesToAdd || $scope.List.categoriesToAdd.length == 0;
-		};
-
-		$scope.canGoBack = function ()
-		{
-			// TODO
-			return true;
-		}
-
-		$scope.goBack = function ()
-		{
-			Breadcrumb.goParent();
-		}
 
 		$scope.$on('$destroy', function () {
 			Workspace.restore();
 		});
 
-		$scope.List.toggleHighlight = function (doc) {
-			$scope.addInCategories([doc.id], doc._highlight ? 1 : 0); // _highlight is already updated.
+		function callActionUrlAndReload(url)
+		{
+			if (url)
+			{
+				$http.get(url).success(function (data)
+				{
+					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+				}).error(function errorCallback(data, status)
+					{
+						data.httpStatus = status;
+						$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+					});
+			}
 		}
 	}
 

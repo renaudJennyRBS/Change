@@ -12,14 +12,14 @@
 			.when('/Rbs/Catalog/Product/:id/Prices/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/Prices/:shopId/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/Prices/:shopId/:areaId/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Product/categories.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/ProductCategories/:id', { templateUrl: 'Rbs/Catalog/Product/categories.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Category/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Category/products.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id/:LCID',
 			{ templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/CategoryProducts/:id', { templateUrl: 'Rbs/Catalog/Category/products.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false });
 	}]);
 

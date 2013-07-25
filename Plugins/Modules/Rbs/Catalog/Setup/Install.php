@@ -19,7 +19,6 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Catalog', '\\Rbs\\Catalog\\Http\\Rest\\ListenerAggregate');
 		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Catalog',
 			'\\Rbs\\Catalog\\Collection\\ListenerAggregate');
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Catalog',
@@ -35,11 +34,6 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
-		$appServices = $documentServices->getApplicationServices();
-		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
-		$schema = new \Rbs\Catalog\Setup\Schema($schemaManager);
-		$schema->generate();
-
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{
