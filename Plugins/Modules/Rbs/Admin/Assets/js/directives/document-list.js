@@ -439,7 +439,8 @@
 				'cascadeEdition' : '@',
 				'collectionUrl' : '@',
 				'externalCollection' : '=collection',
-				'extend' : '='
+				'extend' : '=',
+				'model' : '@'
 			},
 
 
@@ -1139,7 +1140,21 @@
 
 						function successFn () {
 							Loading.stop();
-							initialLoad();
+
+							if (attrs.model) {
+								console.log("MODEL OK -> LOAD");
+								initialLoad();
+							}
+							else {
+								console.log("NO MODEL : $observe....");
+								attrs.$observe('model', function (model) {
+									console.log("MODEL changed: ", model);
+									if (model) {
+										initialLoad();
+									}
+								});
+							}
+
 						}
 
 						if (promises.length) {
@@ -1148,6 +1163,7 @@
 							successFn();
 						}
 					}
+
 					initializeConverters();
 
 
@@ -1373,6 +1389,7 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
+					console.log("data-dlid=", dlid, tElement);
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__quickActions[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});

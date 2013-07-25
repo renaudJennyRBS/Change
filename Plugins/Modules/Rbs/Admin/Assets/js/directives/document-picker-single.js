@@ -5,6 +5,7 @@
 	}
 
 	var app = angular.module('RbsChange');
+	var counter = 0;
 
 	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
 		return {
@@ -32,7 +33,10 @@
 
 				scope.allowCreation = attrs.allowCreation;
 				scope.allowEdition = attrs.allowEdition;
-				scope.acceptedModel = attrs.acceptedModel;
+
+				attrs.$observe('acceptedModel', function (value) {
+					scope.acceptedModel = value;
+				});
 
 
 				function getFormModel () {
@@ -110,6 +114,12 @@
 				};
 
 
+				if (! attrs.acceptedModel) {
+					REST.call(REST.getBaseUrl('Rbs/PublishableModels')).then(function (models) {
+						scope.availableModels = models;
+					});
+				}
+
 				// Selection
 
 				var	$picker = $el.find('.document-picker-embedded'),
@@ -122,24 +132,27 @@
 
 					var url;
 					if (attrs.picker === 'model') {
-						url = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?model=' + attrs.acceptedModel;
+						url = attrs.acceptedModel.replace(/_/g, '/') + '/picker.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 					} else {
-						url = 'Rbs/Admin/document-picker-list.twig?model=' + attrs.acceptedModel;
+						url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 					}
 
 					$http.get(url).success(function (html) {
-						var $html = $(html);
+						var $html = $(html), $dl;
+
 						if ($html.is('rbs-document-list')) {
-							$html.attr('actions', '');
-							$html.attr('selectable', 'false');
+							$dl = $html;
 						} else {
-							$html.find('rbs-document-list').attr('actions', '');
+							$dl = $html.find('rbs-document-list').first();
 						}
 
-						if ($html.find('quick-actions').length) {
+						$dl.attr('actions', '');
+						$dl.attr('selectable', 'false');
+
+						if ($dl.find('quick-actions').length) {
 							$html.find('quick-actions').empty();
 						} else {
-							$html.append('<quick-actions></quick-actions>');
+							$dl.append('<quick-actions></quick-actions>');
 						}
 
 						$pickerContents.empty().append($html);
@@ -147,11 +160,7 @@
 						$('#document-picker-backdrop').show();
 						$picker.show();
 
-						if ($html.is('rbs-document-list')) {
-							documentList = angular.element($html).scope();
-						} else {
-							documentList = angular.element($html.find('rbs-document-list').first()).scope();
-						}
+						documentList = angular.element($dl).scope();
 
 					}).error(function (data) {
 						$('#document-picker-backdrop').show();
