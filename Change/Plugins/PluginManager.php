@@ -776,9 +776,9 @@ class PluginManager
 		$path = null;
 		if ($type === 'module')
 		{
-			if ($vendor === 'Project')
+			if ($normalizedVendor === 'Project')
 			{
-				$path = $this->getWorkspace()->projectModulesPath($name, 'plugin.json');
+				$path = $this->getWorkspace()->projectModulesPath($normalizedName, 'plugin.json');
 			}
 			else
 			{
@@ -788,9 +788,9 @@ class PluginManager
 		}
 		else
 		{
-			if ($vendor === 'Project')
+			if ($normalizedVendor === 'Project')
 			{
-				$path = $this->getWorkspace()->projectThemesPath($name, 'plugin.json');
+				$path = $this->getWorkspace()->projectThemesPath($normalizedName, 'plugin.json');
 			}
 			else
 			{
