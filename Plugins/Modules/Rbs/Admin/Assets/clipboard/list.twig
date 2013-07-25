@@ -56,7 +56,7 @@
 				<td data-ng-class="{true:'sorted', false:''}[DL.isSortedOn('label')]">
 					<a data-ng-href="(=doc | documentURL=)" href="javascript:;" data-ng-click="selectDocument(doc)" data-ng-bind-html-unsafe="doc.label | highlight:query"></a>
 				</td>
-				<td>(=doc.model | modelLabel=)</td>
+				<td>(= doc.model =)</td>
 				<td style="text-align: center">
 					<button class="btn btn-small" type="button" data-ng-click="removeFromSelection(doc)" title="Retirer de la Sélection"><i class="icon-remove-circle"></i></button>
 				</td>
