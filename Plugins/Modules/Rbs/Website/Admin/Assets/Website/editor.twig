@@ -8,8 +8,8 @@
 
         {{ forms.field('baseurl', 'String', 'm.rbs.website.document.website.baseurl', true, 'm.rbs.website.document.website.baseurl-help') }}
 
-		{{ forms.picker('indexPage', 'Rbs_Website_StaticPage', 'm.rbs.website.document.website.indexpage',
-			false, null, 'm.rbs.website.document.website.indexpage-picker-title') }}
+		{{ forms.readonly('indexPage.label', 'm.rbs.website.document.website.indexpage',
+			'm.rbs.website.document.website.indexpage-help') }}
 	</fieldset>
 
 	<fieldset

@@ -21,8 +21,8 @@
 		{{ forms.field('pathPart', 'String', 'm.rbs.website.document.topic.pathPart',
 			false, 'm.rbs.website.document.topic.pathPart-help') }}
 
-		{{ forms.picker('indexPage', 'Rbs_Website_StaticPage', 'm.rbs.website.document.topic.indexpage',
-			false, null, 'm.rbs.website.document.topic.indexpage-picker-title') }}
+		{{ forms.readonly('indexPage.label', 'm.rbs.website.document.topic.indexpage',
+			'm.rbs.website.document.topic.indexpage-help') }}
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
