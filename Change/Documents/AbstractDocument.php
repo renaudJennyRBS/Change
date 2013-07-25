@@ -28,7 +28,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	/**
 	 * @var array
 	 */
-	private $modifiedProperties = array();
+	protected $modifiedProperties = array();
 
 	/**
 	 * @var \Change\Documents\AbstractModel
@@ -349,6 +349,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @api
+	 * @param string $propertyName
+	 */
+	public function removeOldPropertyValue($propertyName)
+	{
+		unset($this->modifiedProperties[$propertyName]);
+	}
+
+	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getModifiedPropertyNames()
@@ -360,7 +369,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @api
 	 * @return boolean
 	 */
-	public function hasModifiedProperties()
+	public final function hasModifiedProperties()
 	{
 		return count($this->getModifiedPropertyNames()) !== 0;
 	}
@@ -370,27 +379,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @param string $propertyName
 	 * @return boolean
 	 */
-	public function isPropertyModified($propertyName)
+	public final function isPropertyModified($propertyName)
 	{
 		return in_array($propertyName, $this->getModifiedPropertyNames());
 	}
 
-	/**
-	 * @param string $propertyName
-	 * @return mixed
-	 */
-	protected function getOldPropertyValue($propertyName)
-	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			return $this->modifiedProperties[$propertyName];
-		}
-		return null;
-	}
-
-	/**
-	 * @api
-	 */
 	protected function clearModifiedProperties()
 	{
 		$this->modifiedProperties = array();
@@ -407,14 +400,18 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			$this->modifiedProperties[$propertyName] = $value;
 		}
 	}
-	
+
 	/**
-	 * @api
 	 * @param string $propertyName
+	 * @return mixed
 	 */
-	public function removeOldPropertyValue($propertyName)
+	protected function getOldPropertyValue($propertyName)
 	{
-		unset($this->modifiedProperties[$propertyName]);
+		if (array_key_exists($propertyName, $this->modifiedProperties))
+		{
+			return $this->modifiedProperties[$propertyName];
+		}
+		return null;
 	}
 
 	/**

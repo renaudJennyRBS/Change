@@ -5,7 +5,6 @@
 	var app = angular.module('RbsChange'),
 		MIN_HEIGHT = 150;
 
-
 	/**
 	 * RichText input field.
 	 */
@@ -108,12 +107,27 @@
 					});
 
 					ngModel.$render = function() {
-						editor.setValue(ngModel.$viewValue);
+						if (angular.isObject(ngModel.$viewValue))
+						{
+							editor.setValue(ngModel.$viewValue.t);
+						}
+						else
+						{
+							editor.setValue(ngModel.$viewValue);
+						}
 					};
 
 					session.on('change', function () {
 						$timeout(function () {
-							ngModel.$setViewValue(editor.getValue());
+							if (angular.isObject(ngModel.$viewValue))
+							{
+								ngModel.$viewValue.t = editor.getValue();
+								ngModel.$setViewValue(ngModel.$viewValue);
+							}
+							else
+							{
+								ngModel.$setViewValue(editor.getValue());
+							}
 						});
 					});
 

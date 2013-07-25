@@ -60,44 +60,7 @@ class GetDocument
 		$this->generateResult($event, $document);
 	}
 
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param Logging $logging
-	 * @return null|string
-	 */
-	protected function buildEtag($document, Logging $logging = null)
-	{
-		$parts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
 
-		if ($document instanceof \Change\Documents\Interfaces\Correction)
-		{
-			if ($document->hasCorrection())
-			{
-				$parts[] = $document->getCurrentCorrection()->getStatus();
-			}
-		}
-
-		if ($document instanceof Editable)
-		{
-			$parts[] = $document->getDocumentVersion();
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$parts[] = $document->getPublicationStatus();
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$parts = array_merge($parts, $document->getLCIDArray());
-		}
-
-		if ($logging)
-		{
-			$logging->info('ETAG BUILD INFO: ' . implode(',', $parts));
-		}
-		return md5(implode(',', $parts));
-	}
 
 	/**
 	 * @param \Change\Http\Event $event
@@ -152,14 +115,6 @@ class GetDocument
 		{
 			$result->setHeaderContentLocation($href);
 		}
-		else
-		{
-			if (!$document->getDocumentModel()->isStateless())
-			{
-				$result->setHeaderEtag($this->buildEtag($document, $event->getApplicationServices()->getLogging()));
-			}
-		}
-
 		return $result;
 	}
 

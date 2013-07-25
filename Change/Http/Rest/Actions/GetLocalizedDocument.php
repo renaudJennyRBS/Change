@@ -83,39 +83,6 @@ class GetLocalizedDocument
 	}
 
 	/**
-	 * @param \Change\Http\Result $result
-	 * @param AbstractDocument $document
-	 */
-	protected function setResultCacheHeader($result, $document)
-	{
-		if ($document->getDocumentModel()->isStateless())
-		{
-			return;
-		}
-
-		$etagParts = array($document->getModificationDate()->format(\DateTime::ISO8601), $document->getTreeName());
-		if ($document instanceof Correction && $document->hasCorrection())
-		{
-			$etagParts[] = $document->getCurrentCorrection()->getStatus();
-		}
-		if ($document instanceof Editable)
-		{
-			$etagParts[] = $document->getDocumentVersion();
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$etagParts[] = $document->getPublicationStatus();;
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$etagParts = array_merge($etagParts, $document->getLCIDArray());
-		}
-		$result->setHeaderEtag(md5(implode(',', $etagParts)));
-	}
-
-	/**
 	 * @param \Change\Http\Event $event
 	 * @param AbstractDocument $document
 	 * @param string $LCID
@@ -176,10 +143,6 @@ class GetLocalizedDocument
 		if (($href = $documentLink->href()) != $currentUrl)
 		{
 			$result->setHeaderContentLocation($href);
-		}
-		else
-		{
-			$this->setResultCacheHeader($result, $document);
 		}
 		return $result;
 	}

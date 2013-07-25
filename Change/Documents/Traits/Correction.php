@@ -5,7 +5,6 @@ use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
 use Change\Documents\Correction as CorrectionInstance;
 use Change\Documents\DocumentManager;
-use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 

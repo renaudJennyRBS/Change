@@ -84,6 +84,7 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 
 	/**
 	 * @param integer[] $ids
+	 * @return $this
 	 */
 	public function setDefaultIds(array $ids)
 	{
@@ -96,6 +97,16 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 				$this->ids[] = $id;
 			}
 		}
+		return $this;
+	}
+
+	/**
+	 * @return $this
+	 */
+	public function setAsDefault()
+	{
+		$this->defaultIds = null;
+		return $this;
 	}
 
 	/**
