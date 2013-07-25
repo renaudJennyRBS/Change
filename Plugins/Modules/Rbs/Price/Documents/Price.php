@@ -12,10 +12,10 @@ class Price extends \Compilation\Rbs\Price\Documents\Price
 	public function getLabel()
 	{
 		$ba = $this->getBillingArea();
-		$shop = $this->getShop();
-		if ($ba && $shop)
+		$webStore = $this->getWebStore();
+		if ($ba && $webStore)
 		{
-			return $shop->getLabel() . ' (' . $ba->getLabel() . ')';
+			return $webStore->getLabel() . ' (' . $ba->getLabel() . ')';
 		}
 		return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.admin.admin.js.new', array('ucf', 'etc'));
 	}

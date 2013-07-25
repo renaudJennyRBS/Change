@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Catalog\Collection;
+namespace Rbs\Store\Collection;
 
 use Zend\EventManager\EventManagerInterface;
 
 /**
- * @name \Rbs\Catalog\Collection\ListenerAggregate
+ * @name \Rbs\Store\Collection\ListenerAggregate
  */
 class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 {
@@ -21,8 +21,8 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 		{
 			switch ($event->getParam('code'))
 			{
-				case 'Rbs_Catalog_Collection_ProductSortOrders':
-					(new Collections())->addProductSortOrders($event);
+				case 'Rbs_Store_Collection_WebStores':
+					(new Collections())->addWebStores($event);
 					break;
 			}
 		};
@@ -31,7 +31,7 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 		$callback = function (\Zend\EventManager\Event $event)
 		{
 			$codes = $event->getParam('codes');
-			$codes[] = 'Rbs_Catalog_Collection_ProductSortOrders';
+			$codes[] = 'Rbs_Store_Collection_WebStores';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach('getCodes', $callback, 1);

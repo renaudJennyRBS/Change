@@ -11,17 +11,17 @@
 
 			link: function (scope, elm, attrs) {
 				scope.List = {};
-				scope.shopsLoading = true;
-				Loading.start(i18n.trans('m.rbs.catalog.admin.js.shop-list-loading'));
-				REST.collection('Rbs_Catalog_Shop').then(function (shops)
+				scope.webStoresLoading = true;
+				Loading.start(i18n.trans('m.rbs.store.admin.js.webstore-list-loading'));
+				REST.collection('Rbs_Store_WebStore').then(function (webStores)
 				{
-					scope.List.selectedShop = null;
-					scope.List.shops = shops.resources;
+					scope.List.selectedWebStore = null;
+					scope.List.webStores = webStores.resources;
 					Loading.stop();
-					scope.shopsLoading = false;
+					scope.webStoresLoading = false;
 				});
 
-				scope.$watch('List.selectedShop', function (newValue, oldValue)
+				scope.$watch('List.selectedWebStore', function (newValue, oldValue)
 				{
 					if (newValue === oldValue)
 					{
@@ -34,10 +34,10 @@
 					{
 						scope.List.billingAreasLoading = true;
 						Loading.start(i18n.trans('m.rbs.catalog.admin.js.billingarea-list-loading'));
-						REST.resource('Rbs_Catalog_Shop', newValue.id)
-							.then(function (shop)
+						REST.resource('Rbs_Store_WebStore', newValue.id)
+							.then(function (webStore)
 							{
-								scope.List.billingAreas = shop.billingAreas;
+								scope.List.billingAreas = webStore.billingAreas;
 								Loading.stop();
 								scope.List.billingAreasLoading = false;
 							});
@@ -51,7 +51,7 @@
 						return;
 					}
 
-					if (scope.List.selectedShop && newValue)
+					if (scope.List.selectedWebStore && newValue)
 					{
 						var query = {
 							"model": "Rbs_Catalog_Price",
@@ -64,8 +64,8 @@
 									},
 									{
 										"op" : "eq",
-										"lexp": { "property" : "shop" },
-										"rexp": { "value": scope.List.selectedShop.id }
+										"lexp": { "property" : "webStore" },
+										"rexp": { "value": scope.List.selectedWebStore.id }
 									},
 									{
 										"op": "eq",
@@ -92,7 +92,7 @@
 
 				scope.cascadeCreatePrice = function () {
 					var price = REST.newResource('Rbs_Catalog_Price');
-					price.shop = scope.List.selectedShop;
+					price.webStore = scope.List.selectedWebStore;
 					price.billingArea = scope.List.selectedBillingArea;
 					price.product = scope.product;
 					FormsManager.cascadeEditor(price, scope.product.label);

@@ -6,7 +6,7 @@
 
 	function PricesController($scope, $routeParams, $location, REST, i18n)
 	{
-		$scope.shopId = $routeParams.shopId;
+		$scope.webStoreId = $routeParams.webStoreId;
 		$scope.areaId = $routeParams.areaId;
 		$scope.List = {};
 
@@ -18,17 +18,7 @@
 						"op": "eq",
 						"lexp": { "property" : "product" },
 						"rexp": { "value": $routeParams.id}
-					}/*,
-					{
-						"op" : "eq",
-						"lexp": { "property" : "shop" },
-						"rexp": { "value": scope.List.selectedShop.id }
-					},
-					{
-						"op": "eq",
-						"lexp": { "property" : "billingArea" },
-						"rexp": { "value": newValue.id }
-					}*/
+					}
 				]
 			},
 			"order": [
@@ -57,8 +47,8 @@
 			}
 		};
 
-		$scope.changeShop = function(shopId){
-			updateLocation(shopId, $routeParams.shopId);
+		$scope.changeWebStore = function(webStoreId){
+			updateLocation(webStoreId, $routeParams.webStoreId);
 		};
 
 		$scope.changeArea = function(areaId){

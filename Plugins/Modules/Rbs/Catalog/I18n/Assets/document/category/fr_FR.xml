@@ -4,8 +4,8 @@
 	<key id="description">description</key>
 	<key id="visual">visuel</key>
 	<key id="visual-picker-title">sélectionner le visuel</key>
-	<key id="shop">boutique</key>
-	<key id="shop-picker-title">sélectionner la boutique</key>
+	<key id="webstore">boutique</key>
+	<key id="webstore-picker-title">sélectionner la boutique</key>
 	<key id="section">section</key>
 	<key id="section-picker-title">sélectionner la section</key>
 	<key id="highlightproducts">produits mis en avant</key>
