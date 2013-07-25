@@ -56,4 +56,13 @@
 
 	<key id="tip-dismiss-thank-you">Merci, ne plus afficher ce message !</key>
 
+	<key id="status-draft">brouillon</key>
+	<key id="status-frozen">gelé</key>
+	<key id="status-validcontent">contenu validé</key>
+	<key id="status-valid">validé</key>
+	<key id="status-validation">à valider</key>
+	<key id="status-unpublishable">non-publiable</key>
+	<key id="status-publishable">publiable</key>
+	<key id="status-filed">archivé</key>
+
 </i18n>

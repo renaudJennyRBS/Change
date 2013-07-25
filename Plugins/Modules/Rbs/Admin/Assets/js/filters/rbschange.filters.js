@@ -321,6 +321,13 @@
 		return function (input, match) {
 			var output, diffObj, diffs;
 
+			if (angular.isObject(input)) {
+				input = JSON.stringify(input);
+			}
+			if (angular.isObject(match)) {
+				match = JSON.stringify(match);
+			}
+
 			output = '<span class="diff">';
 			diffObj = new diff_match_patch();
 			diffs = diffObj.diff_main(match || '', input || '');
@@ -342,22 +349,11 @@
 	});
 
 
-	app.filter('statusLabel', function () {
-
-		// FIXME Put this somewhere else (i18n)
-		var statuses = {
-			'DRAFT'       : "Brouillon",
-			'PUBLISHABLE' : "Publiable",
-			'DEACTIVATED' : "Désactivé",
-			'VALIDATION'  : "À valider",
-			'ACTIVE'      : "Activé"
-		};
-
+	app.filter('statusLabel', ['RbsChange.i18n', function (i18n) {
 		return function (input) {
-			return statuses[input] || input;
+			return i18n.trans('m.rbs.admin.admin.js.status-' + angular.lowercase(input) + '|ucf');
 		};
-
-	});
+	}]);
 
 
 	app.filter('maxNumber', ['$filter', function ($filter) {

@@ -38,7 +38,7 @@
 					Dialog.embed(
 						element.find('.embedded-content'),
 						{
-							'contents' : '<div correction-viewer current="document"></div>',
+							'contents' : '<div rbs-correction-viewer document="document"></div>',
 							'title'    : "Correction"
 						},
 						scope,

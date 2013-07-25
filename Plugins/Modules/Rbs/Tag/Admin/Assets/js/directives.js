@@ -183,7 +183,7 @@
 			scope    : true,
 			template :
 				'<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">' +
-					'<button class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="showAll=!showAll">' +
+					'<button class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="toggleShowAll($event)">' +
 					'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
 					'</button>' +
 					'<a target="_blank" class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.manage-tags | ucf') + '" type="button" href="Rbs/Tag">' +
@@ -217,8 +217,16 @@
 					}
 				};
 
-				scope.availTags = loadAvailTags();
+
+				scope.availTags = null;
 				scope.showAll = false;
+
+				scope.toggleShowAll = function ($event) {
+					scope.showAll = ! scope.showAll;
+					if (scope.showAll && (! scope.availTags || $event.shiftKey)) {
+						scope.availTags = loadAvailTags();
+					}
+				};
 
 				function getInput() {
 					return elm.find('input[type=text]');

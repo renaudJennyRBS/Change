@@ -108,7 +108,7 @@ class UpdateDocument
 		try
 		{
 			$document->update();
-
+			$document->reset();
 			$getDocument = new GetDocument();
 			$getDocument->execute($event);
 		}

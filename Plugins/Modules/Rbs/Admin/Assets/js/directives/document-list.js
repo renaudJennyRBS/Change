@@ -373,6 +373,7 @@
 						// opening this menu.
 						// (see showQuickActions() below, in the directive's linking function).
 						$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
+						$td.find('.primary-cell').prepend('<span ng-if="doc.hasCorrection()" class="label label-success pull-right">correction</span>');
 					}
 				}
 

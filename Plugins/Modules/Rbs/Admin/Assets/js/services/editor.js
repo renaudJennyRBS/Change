@@ -117,19 +117,9 @@
 			}
 
 			function saveSuccessHandler (doc) {
-				var	hadCorrection = scope.document.hasCorrection(),
-					postSavePromises = [];
+				var	postSavePromises = [];
 
 				scope.original = angular.copy(doc);
-
-				if (!doc.META$.tags) {
-					doc.META$.tags = [];
-				}
-				angular.extend(doc.META$.tags, scope.document.META$.tags);
-
-				if (doc.hasCorrection() !== hadCorrection) {
-					scope.$emit(Events.EditorDocumentUpdated, doc);
-				}
 
 				clearInvalidFields();
 
@@ -145,7 +135,7 @@
 					}
 				}
 
-				// Broadcast an event before the document is saved.
+				// Broadcast an event after the document has been successfully saved.
 				// The "promises" array can be filled in with promises that will be resolved AFTER
 				// the document is saved.
 				saveOperation("Processing post-save Promises");
@@ -157,7 +147,6 @@
 				function terminateSave () {
 					saveOperation("success");
 					if (FormsManager.isCascading()) {
-						console.log("isCascading: -> uncascade()");
 						FormsManager.uncascade(doc);
 					} else {
 						$rootScope.$broadcast('Change:DocumentSaved', doc);
@@ -492,10 +481,18 @@
 						});
 					}
 
-					Breadcrumb.ready().then(function () {
+					var promises = [
+						Breadcrumb.ready(),
+						REST.modelInfo(scope.original.model)
+					];
+
+					$q.all(promises).then(function (promisesResults) {
 						if (angular.isFunction(callback)) {
 							callback.apply(scope);
 						}
+
+						scope.modelInfo = promisesResults[1];
+						delete scope.modelInfo.links;
 
 						var readyPromises = [];
 						$rootScope.$broadcast(Events.EditorReady, {

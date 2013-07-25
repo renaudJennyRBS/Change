@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.correction" lcid="fr_FR">
+	<key id="being-validated" format="html"><![CDATA[Cette Correction est <strong>en cours de validation</strong> : elle ne peut être ni modifiée, ni supprimée.]]></key>
+	<key id="modified-properties-list">Liste des propriétés modifiées dans la correction</key>
+	<key id="original-value">valeur originale</key>
+	<key id="in-use">en cours d'utilisation</key>
+	<key id="diff">diff.</key>
+	<key id="property">propriété</key>
+	<key id="fixed-value">valeur corrigée</key>
+	<key id="displayed-in-editor">affichée dans l'éditeur</key>
+	<key id="publish-correction-after-validation">appliquer la correction immédiatement après sa validation.</key>
+	<key id="choose-plublication-date">choisir une date d'application de la correction :</key>
+	<key id="content-has-been-validated" format="html"><![CDATA[Le contenu de cette Correction a été <strong>validé</strong>.]]></key>
+	<key id="correction-will-be-published-on">la Correction sera appliquée le</key>
+	<key id="correction-is-about-to-be-published" format="html"><![CDATA[Cette Correction va être appliquée : elle ne peut être modifiée, ni supprimée.]]></key>
+	<key id="correction-has-been-published" format="html"><![CDATA[Cette Correction a été appliquée sur le document.]]></key>
+	<key id="need-help" format="html">Besoin d'aide à propos des corrections ?</key>
+	<key id="correction-created-on">créée le</key>
+
+	<!-- buttons -->
+	<key id="button-validate" format="html"><![CDATA[Valider<small>la correction</small>]]></key>
+	<key id="button-delete" format="html"><![CDATA[Supprimer<small>la correction</small>]]></key>
+	<key id="button-publish" format="html"><![CDATA[Appliquer<small>la correction</small>]]></key>
+</i18n>

@@ -13,9 +13,9 @@
 		<div class="btn-toolbar pull-right">
 			<button type="button" class="btn btn-small btn-success"
 				data-role="view-correction"
-				data-ng-show="document.hasCorrection()"
+				ng-if="document.hasCorrection()"
 				title="Date de la correction : (=document.meta('correction.creationDate') | date:'medium'=)"
-				data-ng-click="openCorrectionViewer()">{{ i18n('m.rbs.admin.correction', ['ucf']) }} <span class="badge">(=document.META$.correction.propertiesNames.length=)</span></button>
+				ng-click="openCorrectionViewer()">{{ i18n('m.rbs.admin.correction', ['ucf']) }} <span class="badge">(=document.META$.correction.propertiesNames.length=)</span></button>
 
 			<button type="button" class="btn btn-small language-code disabled" data-ng-show="document && isCascading()"><i class="icon-globe"></i> (=language=)</button>
 
@@ -38,15 +38,13 @@
 
 	<div class="embedded-content"></div>
 
-	<div data-ng-switch="hasCorrection()">
-		<div class="alert icon alert-success" data-ng-switch-when="true">
-			<i class="icon-info-sign"></i>
-			<h4>
-				{{ i18n('m.rbs.admin.this-document-has-a-correction-on', ['ucf']) }}
-				<span data-ng-pluralize data-count="document.META$.correction.propertiesNames.length" data-when="{'one': 'une propriété', 'other': '{} propriétés'}"></span>.
-			</h4>
-			{{ i18n('m.rbs.admin.correction-editor-explanation', ['ucf']) }}
-		</div>
+	<div ng-if="document.hasCorrection()" class="alert icon alert-success">
+		<i class="icon-info-sign"></i>
+		<h4>
+			{{ i18n('m.rbs.admin.this-document-has-a-correction-on', ['ucf']) }}
+			<span ng-pluralize count="document.META$.correction.propertiesNames.length" when="{'one': 'une propriété', 'other': '{} propriétés'}"></span>.
+		</h4>
+		{{ i18n('m.rbs.admin.correction-editor-explanation', ['ucf']) }}
 	</div>
 
 </div>
