@@ -32,15 +32,8 @@ class Thread extends Block
 		if ($page instanceof \Rbs\Website\Documents\Page)
 		{
 			$parameters->setParameterValue('pageId', $page->getId());
-		}
-		$pathRule = $event->getParam('pathRule');
-		if ($pathRule instanceof \Change\Http\Web\PathRule)
-		{
-			$parameters->setParameterValue('sectionId', $pathRule->getSectionId());
-		}
-		elseif ($page instanceof \Change\Presentation\Interfaces\Page && $page->getSection())
-		{
 			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
+			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
 		return $parameters;
 	}
@@ -56,6 +49,7 @@ class Thread extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		/* @var $urlManager \Change\Http\Web\UrlManager */
 		$urlManager = $event->getUrlManager();
 		$dm = $event->getDocumentServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
@@ -75,7 +69,7 @@ class Thread extends Block
 					continue;
 				}
 				$entry = new \Rbs\Website\Menu\MenuEntry();
-				$entry->setLabel($section->getLabel());
+				$entry->setLabel($section->getTitle());
 				if ($section->getIndexPageId())
 				{
 					$entry->setUrl($urlManager->getCanonicalByDocument($section, $website));
@@ -86,10 +80,10 @@ class Thread extends Block
 		}
 
 		$page = $dm->getDocumentInstance($parameters->getPageId());
-		if ($page && $lastSection && $lastSection->getIndexPageId() !== $page->getId())
+		if ($page instanceof \Rbs\Website\Documents\Page && $lastSection && $lastSection->getIndexPageId() !== $page->getId())
 		{
 			$entry = new \Rbs\Website\Menu\MenuEntry();
-			$entry->setLabel($page->getLabel());
+			$entry->setLabel($page->getTitle());
 			$entry->setInPath(true);
 			$entry->setCurrent(true);
 			$thread[] = $entry;

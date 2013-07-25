@@ -23,7 +23,7 @@ class Menu extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('templateName', Property::TYPE_STRING, true, 'menu.twig');
+		$parameters->addParameterMeta('templateName', Property::TYPE_STRING, true, 'menu-vertical.twig');
 		$parameters->addParameterMeta('showTitle', Property::TYPE_BOOLEAN, true, false);
 		$parameters->addParameterMeta('documentId', Property::TYPE_DOCUMENT);
 		$parameters->addParameterMeta('maxLevel', Property::TYPE_INTEGER, true, 1);
@@ -31,21 +31,11 @@ class Menu extends Block
 		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, false, null);
 		$parameters->addParameterMeta('websiteId', Property::TYPE_INTEGER, false, null);
 
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');
 		if ($page instanceof \Rbs\Website\Documents\Page)
 		{
 			$parameters->setParameterValue('pageId', $page->getId());
-		}
-		$pathRule = $event->getParam('pathRule');
-		if ($pathRule instanceof \Change\Http\Web\PathRule)
-		{
-			$parameters->setParameterValue('sectionId', $pathRule->getSectionId());
-			$parameters->setParameterValue('websiteId', $pathRule->getWebsiteId());
-		}
-		elseif ($page instanceof \Change\Presentation\Interfaces\Page && $page->getSection())
-		{
 			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
 			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
@@ -68,8 +58,11 @@ class Menu extends Block
 		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
 		if ($doc !== null)
 		{
+			/* @var $website \Rbs\Website\Documents\Website */
 			$website = $dm->getDocumentInstance($parameters->getWebsiteId());
+			/* @var $page \Rbs\Website\Documents\Page */
 			$page = $dm->getDocumentInstance($parameters->getPageId());
+			/* @var $section \Rbs\Website\Documents\Section */
 			$section = $dm->getDocumentInstance($parameters->getSectionId());
 			if ($section)
 			{
@@ -79,7 +72,9 @@ class Menu extends Block
 			{
 				$path = array();
 			}
-			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path, $event->getUrlManager());
+			/* @var $urlManager \Change\Http\Web\UrlManager */
+			$urlManager = $event->getUrlManager();
+			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path, $urlManager);
 		}
 		return $parameters->getTemplateName();
 	}
