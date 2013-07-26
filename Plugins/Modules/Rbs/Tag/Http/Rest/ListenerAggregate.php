@@ -21,8 +21,7 @@ class ListenerAggregate implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$tagResolver = new TagResolver();
-			$tagResolver->execute($event);
+			(new TagResolver())->execute($event);
 		};
 		$events->attach(\Change\Http\Event::EVENT_ACTION, $callback, 5);
 	}

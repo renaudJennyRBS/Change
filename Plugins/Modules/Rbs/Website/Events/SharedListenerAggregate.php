@@ -58,8 +58,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		{
 			return;
 		}
-
-		$path = implode('/', $event->getParam('pathParts'));
+		$path = $event->getParam('pathInfo');
 		if ($path === 'Rbs/Website/FunctionsList')
 		{
 			$event->setAction(function ($event) {

@@ -2,9 +2,9 @@
 namespace Rbs\Price\Collection;
 
 /**
- * @name \Rbs\Price\Collection\BillingAreasForShops
+ * @name \Rbs\Price\Collection\BillingAreasForWebStoreCollection
  */
-class BillingAreasForShopCollection implements \Change\Collection\CollectionInterface
+class BillingAreasForWebStoreCollection implements \Change\Collection\CollectionInterface
 {
 
 	/**
@@ -14,22 +14,23 @@ class BillingAreasForShopCollection implements \Change\Collection\CollectionInte
 
 	/**
 	 * @param \Change\Documents\DocumentServices $documentService
+	 * @param integer $webStoreId
 	 */
-	function __construct(\Change\Documents\DocumentServices $documentService, $shopId)
+	function __construct(\Change\Documents\DocumentServices $documentService, $webStoreId)
 	{
 		$collection = array();
-		if (intval($shopId) > 0)
+		if (intval($webStoreId) > 0)
 		{
-			$shop = $documentService->getDocumentManager()->getDocumentInstance($shopId);
-			if ($shop instanceof \Rbs\Catalog\Documents\Shop)
+			$webStore = $documentService->getDocumentManager()->getDocumentInstance($webStoreId);
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 			{
-				foreach($shop->getBillingAreas() as $area)
+				foreach($webStore->getBillingAreas() as $area)
 				{
 					$collection[$area->getId()] = $area->getLabel();
 				}
 			}
 		}
-		$this->collection = new \Change\Collection\CollectionArray('Rbs_Price_Collection_BillingAreasForShop', $collection);
+		$this->collection = new \Change\Collection\CollectionArray('Rbs_Price_Collection_BillingAreasForWebStore', $collection);
 	}
 
 	/**

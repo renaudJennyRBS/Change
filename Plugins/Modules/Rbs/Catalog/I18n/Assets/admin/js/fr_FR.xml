@@ -4,7 +4,6 @@
 	<key id="module-name">catalogue et produits</key>
 	<key id="module-keywords">prix,taxes,zones,facturation,promotions,promos,réductions,devises,boutiques,marques,catégories,rayons</key>
 	<key id="section-name">E-commerce</key>
-	<key id="shop-list-loading">Chargement de la liste des boutiques...</key>
 	<key id="billingarea-list-loading">Chargement de la liste des zones de tarification...</key>
 	<key id="price-list-loading">Chargement de la liste des prix...</key>
 	<key id="condition-list-loading">Chargement de la liste des conditions...</key>

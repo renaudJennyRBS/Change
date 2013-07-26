@@ -10,27 +10,27 @@
 		true, null,
 		'm.rbs.price.document.price.product-picker-title') }}
 		<div class="control-group property required">
-			<label class="control-label" for="shop">
-				{{ i18n('m.rbs.price.document.price.shop', ['ucf']) }}
+			<label class="control-label" for="webStore">
+				{{ i18n('m.rbs.price.document.price.webstore', ['ucf']) }}
 			</label>
 
 			<div class="controls">
-				<select data-ng-model="document.shop" rbs-items-from-collection="Rbs_Catalog_Collection_Shops">
-					<option value=""> {{ i18n('m.rbs.price.admin.js.select-shop', ['ucf']) }}</option>
+				<select data-ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
+					<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
 				</select>
 			</div>
 		</div>
 
 		<div class="control-group property required">
-			<label class="control-label" data-not-a-property="" for="selectShops">
+			<label class="control-label" data-not-a-property="" for="selectWebStores">
 				{{ i18n('m.rbs.price.document.price.billingarea', ['ucf']) }}
 			</label>
 
 			<div class="controls">
 				<div>
-					<select ng-model="document.billingArea" ng-disabled="!document.shop"
-						rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForShop"
-						rbs-items-collection-params="shopId:(=document.shop=)">
+					<select ng-model="document.billingArea" ng-disabled="!document.webStore"
+						rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
+						rbs-items-collection-params="webStoreId:(=document.webStore=)">
 						<option value=""> {{ i18n('m.rbs.price.admin.js.select-billingarea', ['ucf']) }}</option>
 					</select>
 				</div>
@@ -60,8 +60,7 @@
 
 			<div class="controls">
 				<rbs-price-input data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)"
-					></rbs-price-input>
+					data-price-with-tax="(=billingArea.boEditWithTax=)" />
 			</div>
 		</div>
 
@@ -70,35 +69,11 @@
 
 			<div class="controls">
 				<rbs-price-input data-ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)"/>
+					data-price-with-tax="(=billingArea.boEditWithTax=)" />
 			</div>
 		</div>
-
 		<hr/>
-		<!--
-		<span class="help-block">
-			{{ i18n('m.rbs.price.document.price.discount-section-help', ['ucf']) }}
-		</span>
 
-		<div class="control-group">
-			<label class="control-label" for="discount">{{ i18n('m.rbs.price.document.price.discount', ['ucf']) }}</label>
-
-			<div class="controls">
-				<input class="input-mini number" name="discount" id="discount" size="16" type="text"
-					data-ng-model="document.discount"/>
-
-				<div class="btn-group" data-toggle="buttons-radio">
-					<button class="btn" type="button" data-ng-click="setDiscount('percent')" title="Pourcentage">%</button>
-					<button data-ng-show="billingArea.currencyCode" class="btn" type="button" data-ng-click="setDiscount('fixedprice')" title="Prix barré">
-						(=billingArea.currencyCode=)
-					</button>
-					<button class="btn" type="button" data-ng-click="setDiscount('reduction')" title="Valeur à déduire">
-						<i class="icon-minus"></i>
-					</button>
-				</div>
-			</div>
-		</div>
-		-->
 		{{ forms.field('discountDetail', 'String', 'm.rbs.price.document.price.discountdetail', false) }}
 
 		<div class="control-group property">
@@ -106,7 +81,7 @@
 
 			<div class="controls">
 				<rbs-price-input data-ng-model="document.boDiscountValue" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=document.boEditWithTax=)"/>
+					data-price-with-tax="(=billingArea.boEditWithTax=)" />
 			</div>
 		</div>
 

@@ -49,12 +49,12 @@
 
 				});
 
-				scope.$watch('document.shop', function(newValue, oldValue){
+				scope.$watch('document.webStore', function(newValue, oldValue){
 					if (!angular.isUndefined(newValue))
 					{
 						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
 						{
-							scope.document.shop = newValue.id;
+							scope.document.webStore = newValue.id;
 						}
 						if (!newValue)
 						{

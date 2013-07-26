@@ -1,30 +1,30 @@
 <div class="control-group">
-	<label class="control-label" data-not-a-property="" for="selectShops">
-		{{ i18n('m.rbs.catalog.admin.js.shop', ['ucf']) }}
+	<label class="control-label" data-not-a-property="" for="selectWebStores">
+		{{ i18n('m.rbs.store.admin.js.webstore', ['ucf']) }}
 	</label>
 
 	<div class="controls">
-		<button class="btn" disabled="disabled" type="button" data-ng-show="List.shopsLoading">
-			{{ i18n('m.rbs.catalog.admin.js.shop-list-loading') }}
+		<button class="btn" disabled="disabled" type="button" data-ng-show="List.webStoresLoading">
+			{{ i18n('m.rbs.store.admin.js.webstore-list-loading') }}
 		</button>
-		<div class="btn-group" ng-if="List.shops.length <= 5">
-			<button class="btn" data-ng-class="{active: List.selectedShop == shop}" type="button"
-				data-ng-repeat="shop in List.shops" data-ng-click="List.selectedShop = shop">
-				<i class="icon-ok" data-ng-show="List.selectedShop == shop"></i> (= shop.label =)
+		<div class="btn-group" ng-if="List.webStores.length <= 5">
+			<button class="btn" data-ng-class="{active: List.selectedWebStore == webStore}" type="button"
+				data-ng-repeat="webStore in List.webStores" data-ng-click="List.selectedWebStore = webStore">
+				<i class="icon-ok" data-ng-show="List.selectedWebStore == webStore"></i> (= webStore.label =)
 			</button>
 		</div>
-		<div class="btn-group" ng-if="List.shops.length > 5">
+		<div class="btn-group" ng-if="List.webStores.length > 5">
 			<button class="btn" data-toggle="dropdown" type="button"
-				data-ng-class="{active: List.selectedShop}">
-				<span data-ng-show="List.selectedShop"><i class="icon-ok"></i> (= List.selectedShop.label =)</span>
-				<em data-ng-show="!List.selectedShop">...</em>
+				data-ng-class="{active: List.selectedWebStore}">
+				<span data-ng-show="List.selectedWebStore"><i class="icon-ok"></i> (= List.selectedWebStore.label =)</span>
+				<em data-ng-show="!List.selectedWebStore">...</em>
 			</button>
 			<button class="btn dropdown-toggle" data-toggle="dropdown">
 				<span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu">
-				<li data-ng-repeat="shop in List.shops" data-ng-click="List.selectedShop = shop">
-					<a><i class="icon-ok" data-ng-show="List.selectedShop == shop"></i> (= shop.label =)</a>
+				<li data-ng-repeat="webStore in List.webStores" data-ng-click="List.selectedWebStore = webStore">
+					<a><i class="icon-ok" data-ng-show="List.selectedWebStore == webStore"></i> (= webStore.label =)</a>
 				</li>
 			</ul>
 		</div>

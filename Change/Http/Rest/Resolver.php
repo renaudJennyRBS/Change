@@ -85,6 +85,7 @@ class Resolver extends BaseResolver
 		}
 
 		$pathParts = array_slice(explode('/', $path), 1);
+		$event->setParam('pathInfo', implode('/', $pathParts));
 		if (end($pathParts) === '')
 		{
 			array_pop($pathParts);
@@ -96,7 +97,6 @@ class Resolver extends BaseResolver
 		}
 		$event->setParam('isDirectory', $isDirectory);
 		$event->setParam('pathParts', $pathParts);
-		$event->setParam('path', $path);
 
 		if (count($pathParts) !== 0)
 		{

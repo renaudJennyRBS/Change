@@ -62,26 +62,21 @@ class Rest
 	 */
 	public function resolveTaskExecute(HttpEvent $event)
 	{
-		$pathParts = $event->getParam('pathParts');
-		$nbParts = count($pathParts);
-		if ($nbParts === 6 && $pathParts[0] === 'resources' && $pathParts[5] === 'execute' && is_numeric($pathParts[4]))
+		$pathInfo = $event->getParam('pathInfo');
+		if (preg_match('#^resources/Rbs/Workflow/Task/([0-9]+)/execute$#', $pathInfo, $matches))
 		{
-			$modelName = $pathParts[1] . '_' . $pathParts[2] . '_' . $pathParts[3];
-			if ($modelName === 'Rbs_Workflow_Task')
+			$task = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($matches[1]);
+			if ($task instanceof Task)
 			{
-				$task = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($pathParts[4]);
-				if ($task instanceof Task)
-				{
-					$event->setParam('modelName', $task->getDocumentModelName());
-					$event->setParam('documentId', $task->getId());
+				$event->setParam('modelName', $task->getDocumentModelName());
+				$event->setParam('documentId', $task->getId());
 
-					$event->setParam('task', $task);
-					$action = array($this, 'executeTask');
-					$event->setAction($action);
+				$event->setParam('task', $task);
+				$action = array($this, 'executeTask');
+				$event->setAction($action);
 
-					$authorization = array($this, 'canExecuteTask');
-					$event->setAuthorization($authorization);
-				}
+				$authorization = array($this, 'canExecuteTask');
+				$event->setAuthorization($authorization);
 			}
 		}
 	}

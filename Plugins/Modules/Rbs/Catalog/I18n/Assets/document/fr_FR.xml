@@ -12,9 +12,6 @@
 	<key id="price">prix</key>
 	<key id="price-list">prix</key>
 	<key id="price-create">créer un prix</key>
-	<key id="shop">boutique</key>
-	<key id="shop-list">boutiques</key>
-	<key id="shop-create">créer une boutique</key>
 	<key id="currency">devise</key>
 	<key id="currency-list">devises</key>
 	<key id="currency-create">créer une devise</key>

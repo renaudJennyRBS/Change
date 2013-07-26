@@ -26,7 +26,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 	 */
 	public function registerActions(\Change\Http\Event $event)
 	{
-		if (!$event->getAction() && implode('/', $event->getParam('pathParts')) === 'rbs/price/taxInfo')
+		if (!$event->getAction() && $event->getParam('pathInfo') === 'rbs/price/taxInfo')
 		{
 			$event->setAction(function($event){
 				(new TaxInfo())->execute($event);
@@ -53,8 +53,8 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 			$collection = null;
 			switch ($event->getParam('code'))
 			{
-				case 'Rbs_Price_Collection_BillingAreasForShop':
-					$collection = new \Rbs\Price\Collection\BillingAreasForShopCollection($event->getParam('documentServices'), $event->getParam('shopId'));
+				case 'Rbs_Price_Collection_BillingAreasForWebStore':
+					$collection = new \Rbs\Price\Collection\BillingAreasForWebStoreCollection($event->getParam('documentServices'), $event->getParam('webStoreId'));
 					break;
 				case 'Rbs_Price_Collection_Iso4217':
 					$collection =  new \Rbs\Price\Collection\Iso4217Collection();
@@ -75,7 +75,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		$callback = function (\Zend\EventManager\Event $event)
 		{
 			$codes = $event->getParam('codes');
-			$codes[] = 'Rbs_Price_Collection_BillingAreasForShop';
+			$codes[] = 'Rbs_Price_Collection_BillingAreasForWebStore';
 			$codes[] = 'Rbs_Price_Collection_Iso4217';
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';
 			$event->setParam('codes', $codes);

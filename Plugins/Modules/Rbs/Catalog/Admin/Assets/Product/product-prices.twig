@@ -1,21 +1,21 @@
 <div data-ng-controller="Rbs_Catalog_Product_PricesController">
         <div class="control-group property">
-            <label class="control-label" data-not-a-property="" for="selectShops">
-                {{ i18n('m.rbs.catalog.admin.js.shop', ['ucf']) }}
+            <label class="control-label" data-not-a-property="" for="selectWebStores">
+                {{ i18n('m.rbs.store.admin.js.webstore', ['ucf']) }}
             </label>
             <div class="controls">
-                <select ng-model="shopId" rbs-items-from-collection="Rbs_Catalog_Collection_Shops" ng-change="changeShop(shopId)">
-					<option value=""> {{ i18n('m.rbs.catalog.admin.js.select-shop', ['ucf']) }}</option>
+                <select ng-model="webStoreId" rbs-items-from-collection="Rbs_Catalog_Collection_WebStores" ng-change="changeWebStore(webStoreId)">
+					<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
                 </select>
             </div>
         </div>
 	<div class="control-group property">
-		<label class="control-label" data-not-a-property="" for="selectShops">
+		<label class="control-label" data-not-a-property="" for="selectWebStores">
 			{{ i18n('m.rbs.catalog.admin.js.billingarea', ['ucf']) }}
 		</label>
 		<div class="controls">
-			<select ng-model="areaId" ng-disabled="(=!shopId=)" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForShop"
-				rbs-items-collection-params="shopId:(=shopId=)" ng-change="changeArea(areaId)">
+			<select ng-model="areaId" ng-disabled="(=!webStoreId=)" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
+				rbs-items-collection-params="webStoreId:(=webStoreId=)" ng-change="changeArea(areaId)">
 				<option value="">{{ i18n('m.rbs.catalog.admin.js.select-billingarea', ['ucf']) }}</option>
 			</select>
 		</div>

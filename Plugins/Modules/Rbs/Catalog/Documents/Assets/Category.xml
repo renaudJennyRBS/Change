@@ -4,7 +4,7 @@
 	icon="folder" localized="true" editable="true" publishable="true" tree-name="Rbs_Catalog">
 	<properties>
 		<property name="title" stateless="true" />
-		<property name="shop" type="Document" document-type="Rbs_Catalog_Shop" />
+		<property name="webStore" type="Document" document-type="Rbs_Store_WebStore" />
 		<property name="section" type="Document" document-type="Rbs_Website_Section" />
 		<property name="description" type="RichText" localized="true" />
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" />

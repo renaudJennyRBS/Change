@@ -11,31 +11,6 @@ class Collections
 	/**
 	 * @param \Zend\EventManager\Event $event
 	 */
-	public function addShops(\Zend\EventManager\Event $event)
-	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
-		{
-			$collection = array();
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Shop');
-			$builder = $query->dbQueryBuilder();
-			$fb = $builder->getFragmentBuilder();
-			$builder->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'));
-			$builder->addColumn($fb->alias($fb->getDocumentColumn('label'), 'label'));
-			$selectQuery = $builder->query();
-			$rows = $selectQuery->getResults($selectQuery->getRowsConverter()->addIntCol('id')->addStrCol('label'));
-			foreach ($rows as $row)
-			{
-				$collection[$row['id']] = $row['label'];
-			}
-			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_Shops', $collection);
-			$event->setParam('collection', $collection);
-		}
-	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
-	 */
 	public function addProductSortOrders(\Zend\EventManager\Event $event)
 	{
 		$documentServices = $event->getParam('documentServices');

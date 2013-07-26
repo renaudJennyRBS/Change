@@ -25,11 +25,6 @@
 				'list': '/Rbs/Price/Price/:LCID',
 				'form': '/Rbs/Price/Price/:id/:LCID'
 			});
-			$delegate.register('Rbs_Catalog_Shop', {
-				'form': '/Rbs/Catalog/Shop/:id/:LCID',
-				'list': '/Rbs/Catalog/Shop/:LCID',
-				'i18n': '/Rbs/Catalog/Shop/:id/:LCID/translate-from/:fromLCID'
-			});
 			$delegate.register('Rbs_Price_BillingArea', {
 				'form': '/Rbs/Price/BillingArea/:id/:LCID',
 				'list': '/Rbs/Price/BillingArea/:LCID',

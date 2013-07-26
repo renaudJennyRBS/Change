@@ -2,7 +2,8 @@
 <i18n baseKey="m.rbs.price.document.price" lcid="fr_FR">
 	<include id="m.rbs.generic.document" />
 	<key id="product">produit</key>
-	<key id="shop">boutique</key>
+	<key id="product-picker-title">Séléctionner un produit</key>
+	<key id="webstore">boutique</key>
 	<key id="billingarea">zone de tarification</key>
 	<key id="taxcategories">Catégories de taxes</key>
 	<key id="basevalue">montant</key>
