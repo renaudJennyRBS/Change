@@ -39,7 +39,7 @@
 	font-size: 16pt;
 }
 
-.dashboard .small-indicators span i {
+.dashboard .small-indicators span > i {
 	font-size: 30pt;
 	float: left;
 }

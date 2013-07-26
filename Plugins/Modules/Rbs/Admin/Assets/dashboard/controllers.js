@@ -19,9 +19,10 @@
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
+	 * @param REST
 	 * @constructor
 	 */
-	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n)
+	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST)
 	{
 		Breadcrumb.resetLocation();
 
@@ -53,6 +54,59 @@
 			}
 		];
 
+		var taskQuery = {
+			'model' : 'Rbs_Workflow_Task',
+			'where': {
+				'and': [
+					/*{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "role"
+						},
+						"rexp" : {
+							"value": "Creator"
+						}
+					},*/
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "status"
+						},
+						"rexp" : {
+							"value": "EN"
+						}
+					}
+				]
+			}
+		};
+
+
+		$scope.reloadTasks = function () {
+			REST.query(taskQuery, {'column':['document','taskCode','status']}).then(function (tasks) {
+				$scope.tasks = tasks;
+			});
+		};
+
+		$scope.reloadTasks();
+
+
+		$scope.taskList = {
+
+			'resolveTask' : function (task) {
+				REST.executeTask(task);
+			},
+
+			'rejectTask' : function (task) {
+				REST.executeTask(
+					task,
+					{
+						'reason' : window.prompt("Veuillez indiquer le motif du refus :")
+					}
+				);
+			}
+
+		};
+
 		$scope.$on('$destroy', function () {
 			Workspace.restore();
 			MainMenu.show();
@@ -64,7 +118,8 @@
 		'RbsChange.Workspace',
 		'RbsChange.Breadcrumb',
 		'RbsChange.MainMenu',
-		'RbsChange.i18n'
+		'RbsChange.i18n',
+		'RbsChange.REST'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);
 
