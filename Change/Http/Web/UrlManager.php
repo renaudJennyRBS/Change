@@ -7,6 +7,16 @@ namespace Change\Http\Web;
 class UrlManager extends \Change\Http\UrlManager
 {
 	/**
+	 * @var \Change\Application\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
+	 * @var \Change\Documents\DocumentServices
+	 */
+	protected $documentServices;
+
+	/**
 	 * @var bool
 	 */
 	protected $absoluteUrl = false;
@@ -25,6 +35,46 @@ class UrlManager extends \Change\Http\UrlManager
 	 * @var \Change\Http\Web\UrlManager[]
 	 */
 	protected $webUrlManagers = array();
+
+	/**
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @return $this
+	 */
+	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return $this
+	 */
+	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	{
+		$this->documentServices = $documentServices;
+		if ($this->applicationServices === null)
+		{
+			$this->setApplicationServices($documentServices->getApplicationServices());
+		}
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentServices
+	 */
+	public function getDocumentServices()
+	{
+		return $this->documentServices;
+	}
 
 	/**
 	 * @param \Change\Presentation\Interfaces\Website $website
@@ -115,7 +165,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Section|\Change\Presentation\Interfaces\Website $website
 	 * @param array $query
 	 * @param string $LCID
@@ -124,6 +174,11 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	public function getCanonicalByDocument($document, $website = null, $query = array(), $LCID = null)
 	{
+		if (!is_numeric($document) && !($document instanceof \Change\Documents\AbstractDocument))
+		{
+			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument or integer', 999999);
+		}
+
 		if ($website === null)
 		{
 			$website = $this->website;
@@ -156,7 +211,7 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 		if (null === $LCID)
 		{
-			$LCID = $document->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID();
+			$LCID = $this->getLCID();
 		}
 
 		$pathInfo = $this->getPathInfo($document, $website, $LCID, null, $queryParameters);
@@ -164,7 +219,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Section $section
 	 * @param array $query
 	 * @param string $LCID
@@ -173,9 +228,9 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	public function getByDocument($document, $section, $query = array(), $LCID = null)
 	{
-		if (!($document instanceof \Change\Documents\AbstractDocument))
+		if (!is_numeric($document) && !($document instanceof \Change\Documents\AbstractDocument))
 		{
-			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument', 999999);
+			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument or integer', 999999);
 		}
 		if (!($section instanceof \Change\Presentation\Interfaces\Section))
 		{
@@ -197,7 +252,7 @@ class UrlManager extends \Change\Http\UrlManager
 
 		if (null === $LCID)
 		{
-			$LCID = $document->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID();
+			$LCID = $this->getLCID();;
 		}
 
 		if ($section instanceof \Change\Presentation\Interfaces\Website)
@@ -214,7 +269,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
 	 * @param \Change\Presentation\Interfaces\Section $section
@@ -223,9 +278,10 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	protected function getPathInfo($document, $website, $LCID, $section = null, $queryParameters)
 	{
-		$dbProvider = $document->getDocumentServices()->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		$sectionId = $section ? $section->getId() : null;
-		$pathRules = $this->findPathRules($dbProvider, $website->getId(), $LCID, $document->getId(), $sectionId);
+		$pathRules = $this->findPathRules($dbProvider, $website->getId(), $LCID, $documentId, $sectionId);
 		if (count($pathRules))
 		{
 			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
@@ -238,7 +294,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Section $section
 	 * @return string
 	 */
@@ -250,9 +306,10 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 		$path = 'document/';
 
+		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		if ($document instanceof \Change\Presentation\Interfaces\Section)
 		{
-			return $path . $document->getId() . '/';
+			return $path . $documentId . '/';
 		}
 
 		if ($section instanceof \Change\Presentation\Interfaces\Section)
@@ -260,7 +317,7 @@ class UrlManager extends \Change\Http\UrlManager
 			$path .= $section->getId(). '/';
 		}
 
-		$path .= $document->getId() . '.html';
+		$path .= $documentId . '.html';
 		return $path;
 	}
 
@@ -276,7 +333,7 @@ class UrlManager extends \Change\Http\UrlManager
 		$LCID = $pathRule->getLCID();
 		$sectionId = $pathRule->getSectionId();
 
-		$dbProvider = $document->getDocumentServices()->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getApplicationServices()->getDbProvider();
 		$pathRules = $this->findPathRules($dbProvider, $websiteId, $LCID, $document->getId(), $sectionId);
 		if (count($pathRules))
 		{
@@ -310,7 +367,7 @@ class UrlManager extends \Change\Http\UrlManager
 		$newPathRule = $e->getParam('pathRule');
 		if ($newPathRule instanceof PathRule && $newPathRule->getRelativePath())
 		{
-			$applicationServices = $document->getDocumentServices()->getApplicationServices();
+			$applicationServices = $this->getApplicationServices();
 			$transactionManager = $applicationServices->getTransactionManager();
 			try
 			{
@@ -362,7 +419,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Http\Web\PathRule[] $pathRules
 	 * @param \ArrayObject $queryParameters
 	 * @return \Change\Http\Web\PathRule|null
@@ -377,15 +434,26 @@ class UrlManager extends \Change\Http\UrlManager
 				return $pathRule;
 			}
 		}
-		$em = $document->getEventManager();
-		$args = array('pathRules' => $pathRules, 'queryParameters' => $queryParameters);
-		$event = new \Change\Documents\Events\Event('selectPathRule', $document, $args);
-		$em->trigger($event);
-		$pathRule = $event->getParam('pathRule');
-		if ($pathRule instanceof PathRule)
+
+		if (is_numeric($document) && $this->getDocumentServices())
 		{
-			return $pathRule;
+			$document = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($document);
 		}
+
+		if ($document instanceof \Change\Documents\AbstractDocument)
+		{
+			$em = $document->getEventManager();
+			$args = array('pathRules' => $pathRules, 'queryParameters' => $queryParameters);
+			$event = new \Change\Documents\Events\Event('selectPathRule', $document, $args);
+			$em->trigger($event);
+			$pathRule = $event->getParam('pathRule');
+			if ($pathRule instanceof PathRule)
+			{
+				return $pathRule;
+			}
+		}
+
+		//TODO Detect valid rule by queryParameters analysis
 		return null;
 	}
 

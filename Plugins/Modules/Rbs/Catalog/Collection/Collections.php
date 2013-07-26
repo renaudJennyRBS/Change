@@ -23,6 +23,7 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);
+			$event->stopPropagation();
 		}
 	}
 }

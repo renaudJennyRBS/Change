@@ -23,6 +23,7 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_SortDirections', $collection);
 			$event->setParam('collection', $collection);
+			$event->stopPropagation();
 		}
 	}
 
@@ -45,6 +46,7 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_PermissionRoles', $collection);
 			$event->setParam('collection', $collection);
+			$event->stopPropagation();
 		}
 	}
 
@@ -62,6 +64,7 @@ class Collections
 			$collection['*'] = new I18nString($i18n, 'm.rbs.generic.any-privilege', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_PermissionPrivileges', $collection);
 			$event->setParam('collection', $collection);
+			$event->stopPropagation();
 		}
 	}
 }

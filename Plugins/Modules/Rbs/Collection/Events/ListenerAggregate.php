@@ -23,15 +23,13 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$resolver = new CollectionResolver();
-			return $resolver->getCollection($event);
+			(new CollectionResolver())->getCollection($event);
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 5);
 
 		$callback = function (Event $event)
 		{
-			$resolver = new CollectionResolver();
-			return $resolver->getCodes($event);
+			(new CollectionResolver())->getCodes($event);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 5);
 	}

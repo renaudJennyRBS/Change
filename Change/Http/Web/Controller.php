@@ -49,12 +49,17 @@ class Controller extends \Change\Http\Controller
 		{
 			$script = null;
 		}
+		$applicationServices = new ApplicationServices($this->getApplication());
+		$event->setApplicationServices($applicationServices);
+
 		$urlManager = new UrlManager($request->getUri(), $script);
+		$urlManager->setApplicationServices($applicationServices);
 		$event->setUrlManager($urlManager);
 
-		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
-		$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
+		$event->setDocumentServices(new DocumentServices($applicationServices));
+		$urlManager->setDocumentServices($event->getDocumentServices());
+
+		$event->setPresentationServices(new PresentationServices($applicationServices));
 
 		$authenticationManager = new \Change\User\AuthenticationManager();
 		$authenticationManager->setDocumentServices($event->getDocumentServices());
@@ -62,7 +67,7 @@ class Controller extends \Change\Http\Controller
 
 		$permissionsManager = new \Change\Permissions\PermissionsManager();
 		$permissionsManager->allow(true);
-		$permissionsManager->setApplicationServices($event->getApplicationServices());
+		$permissionsManager->setApplicationServices($applicationServices);
 
 		$event->setPermissionsManager($permissionsManager);
 		return $event;

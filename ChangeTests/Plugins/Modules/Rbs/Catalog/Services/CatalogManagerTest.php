@@ -11,18 +11,12 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public static function setUpBeforeClass()
 	{
-		static::clearDB();
-		$appServices = static::initDocumentsDb();
-
-		$schemaManager = $appServices->getDbProvider()->getSchemaManager();
-		$schema = new \Rbs\Catalog\Setup\Schema($schemaManager);
-		$schema->generate();
-		$appServices->getDbProvider()->closeConnection();
+		static::initDocumentsDb();
 	}
 
 	public static function tearDownAfterClass()
 	{
-	//	static::clearDB();
+		static::clearDB();
 	}
 
 	protected function setUp()
