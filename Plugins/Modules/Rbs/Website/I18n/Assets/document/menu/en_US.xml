@@ -11,4 +11,6 @@
 	<key id="function-print-page">print page</key>
 	<key id="function-go-to-content">go to content</key>
 	<key id="function-bookmark-page">bookmark page</key>
+
+	<key id="items">menu entries</key>
 </i18n>

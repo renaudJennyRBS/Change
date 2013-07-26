@@ -10,7 +10,7 @@ use Zend\Http\Response as HttpResponse;
  *
  * @name \Rbs\Admin\Http\Rest\Actions\PublishableModels
  */
-class PublishableModels
+class ModelsInfo
 {
 	/**
 	 * @param Event $event
@@ -36,22 +36,25 @@ class PublishableModels
 	{
 		$result = new \Change\Http\Rest\Result\ArrayResult();
 
-		$publishableModels = array();
+		$models = array();
 
+		$i18n = $applicationServices->getI18nManager();
 		$modelManager = $documentServices->getModelManager();
 		foreach ($modelManager->getModelsNames() as $modelName)
 		{
 			$model = $modelManager->getModelByName($modelName);
-			if ($model->isPublishable())
-			{
-				$publishableModels[] = array(
-					'name'  => $model->getName(),
-					'label' => $applicationServices->getI18nManager()->trans($model->getLabelKey(), array('ucf'))
-				);
-			}
+			$models[] = array(
+				'name' => $model->getName(),
+				'label' => $i18n->trans($model->getLabelKey(), array('ucf')),
+				'leaf' => ! $model->hasDescendants(),
+				'root' => ! $model->hasParent(),
+				'abstract' => $model->isAbstract(),
+				'publishable' => $model->isPublishable(),
+				'plugin' => $i18n->trans('m.' . $model->getVendorName() . '.' . $model->getShortModuleName() . '.admin.js.module-name', array('ucf'))
+			);
 		}
 
-		$result->setArray($publishableModels);
+		$result->setArray($models);
 		return $result;
 	}
 }

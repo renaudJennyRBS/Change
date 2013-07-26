@@ -58,17 +58,23 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		{
 			return;
 		}
-		$path = $event->getParam('pathInfo');
-		if ($path === 'Rbs/Website/FunctionsList')
+
+		switch ($event->getParam('pathInfo'))
 		{
-			$event->setAction(function ($event) {
-				(new \Rbs\Website\Http\Rest\Actions\FunctionsList())->execute($event);
-			});
+			case 'Rbs/Website/FunctionsList' :
+				$action = new \Rbs\Website\Http\Rest\Actions\FunctionsList();
+				break;
+			case 'Rbs/Website/PagesForFunction' :
+				$action = new \Rbs\Website\Http\Rest\Actions\PagesForFunction();
+				break;
+			default :
+				$action = null;
 		}
-		elseif ($path === 'Rbs/Website/PagesForFunction')
+
+		if ($action)
 		{
-			$event->setAction(function ($event) {
-				(new \Rbs\Website\Http\Rest\Actions\PagesForFunction())->execute($event);
+			$event->setAction(function ($event) use ($action) {
+				$action->execute($event);
 			});
 		}
 	}

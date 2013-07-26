@@ -2,7 +2,7 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
-use Compilation\Rbs\Website\Documents\FunctionalPage;
+use Rbs\Website\Documents\FunctionalPage;
 
 /**
  * @name \Rbs\Website\Documents\Section

@@ -526,8 +526,7 @@ abstract class AbstractModel
 	 */
 	public function getLabelKey()
 	{
-		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.' . $this->getShortName()
-			. '.document-name');
+		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.' . $this->getShortName());
 	}
 
 	/**

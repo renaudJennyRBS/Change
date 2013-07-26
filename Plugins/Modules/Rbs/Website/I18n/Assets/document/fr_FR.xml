@@ -3,6 +3,8 @@
 	<key id="menu">menu</key>
 	<key id="menu-list">menus de navigation</key>
 	<key id="menu-create">ajouter un menu de navigation</key>
+	<key id="page">page</key>
+	<key id="section">section</key>
 	<key id="staticpage">page de contenu</key>
 	<key id="staticpage-list">pages de contenu</key>
 	<key id="staticpage-create">ajouter une page de contenu</key>

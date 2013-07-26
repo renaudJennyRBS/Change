@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.document" lcid="fr_FR">
+	<key id="abstractproduct">produit</key>
 	<key id="product">produit</key>
 	<key id="product-list">produits</key>
 	<key id="product-create">créer un produit</key>
