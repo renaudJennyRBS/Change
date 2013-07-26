@@ -742,7 +742,7 @@
 					 *
 					 * @returns Promise
 					 */
-					'executeTask' : function (taskCode, doc, params) {
+					'executeTaskByCodeOnDocument' : function (taskCode, doc, params) {
 						var q = $q.defer(),
 							rest = this;
 
@@ -762,16 +762,16 @@
 							.success(function (task) {
 
 								// Execute Task.
-								$http.post(task.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
-
-									.success(function (task) {
+								rest.executeTask(task, params).then(
+									// Success
+									function (task) {
 										// Task has been executed and we don't need it here anymore.
 										rest.resource(doc).then(function (updatedDoc) {
 											resolveQ(q, updatedDoc);
 										});
-									})
-
-									.error(function (data) {
+									},
+									// Error
+									function (data) {
 										rejectQ(q, data);
 									});
 							})
@@ -779,6 +779,45 @@
 							.error(function (data) {
 								rejectQ(q, data);
 							});
+
+						return q.promise;
+					},
+
+
+					/**
+					 *
+					 * @param task
+					 * @param params
+					 * @returns {promise}
+					 */
+					'executeTask' : function (task, params) {
+						var q = $q.defer();
+
+						function doExecute (taskObj) {
+							$http.post(taskObj.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
+								.success(function (taskObj) {
+									angular.extend(task, taskObj);
+									resolveQ(q, taskObj);
+								})
+								.error(function (data) {
+									rejectQ(q, data);
+								});
+						}
+
+						if (task.META$.actions['execute']) {
+							doExecute(task);
+						}
+						else {
+							q = $q.defer();
+							this.resource(task).then(
+								// Success
+								doExecute,
+								// Error
+								function (data) {
+									rejectQ(q, data);
+								}
+							);
+						}
 
 						return q.promise;
 					},

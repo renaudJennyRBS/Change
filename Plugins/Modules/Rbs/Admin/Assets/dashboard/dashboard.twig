@@ -7,10 +7,10 @@
 			<div>Notifications</div>
 			<div class="value">14</div>
 		</span>
-		<span>
+		<span ng-init="showTasks = false" ng-click="showTasks = ! showTasks">
 			<i class="icon-tasks"></i>
 			<div>Tâches</div>
-			<div class="value">3</div>
+			<div class="value"><i class="icon-spinner icon-spin" ng-if="! tasks"></i>(= tasks.resources.length =)</div>
 		</span>
 		<span style="border-bottom: 3px solid #0088cc;">
 			<i class="icon-tag"></i>
@@ -25,6 +25,35 @@
 		<span class="settings">
 			<i class="icon-cog"></i>
 		</span>
+	</div>
+
+	<div ng-show="showTasks">
+		<h4>Tâches en cours</h4>
+		<rbs-document-list data-dlid="DLRbsDashboardTasksList"
+		                   model="Rbs_Workflow_Task"
+		                   collection="tasks"
+		                   selectable="false"
+		                   extend="taskList"
+		                   on-reload="reloadTasks()"
+		                   quick-actions=""
+		                   actions="">
+			<column name="label">
+				<div class="pull-right" ng-if="doc.status=='EN'">
+					<button type="button" class="btn btn-small btn-success" ng-click="extend.resolveTask(doc)"><i class="icon-ok"></i></button>
+					<button type="button" class="btn btn-small btn-danger" ng-click="extend.rejectTask(doc)"><i class="icon-ban-circle"></i></button>
+				</div>
+				(= doc.label =)
+			</column>
+			<column name="taskCode"></column>
+			<column name="status">
+				<span class="label label-success" ng-if="doc.status=='FI'">terminé</span>
+				<span class="label" ng-if="doc.status=='EN'">à exécuter</span>
+			</column>
+			<column name="document">
+				<a href ng-href="(= doc.document | documentURL =)">(= doc.document.label =)</a>
+				<i class="icon-rbs-navigate-to"></i>
+			</column>
+		</rbs-document-list>
 	</div>
 
 	<hr/>

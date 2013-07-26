@@ -94,7 +94,7 @@
 						params['publicationDate'] = scope.params.plannedCorrectionDate;
 					}
 
-					REST.executeTask(taskCode, scope.current, params).then(function (doc) {
+					REST.executeTaskByCodeOnDocument(taskCode, scope.current, params).then(function (doc) {
 						if (Utils.hasCorrection(doc)) {
 							scope.current.META$.correction = doc.META$.correction;
 							scope.current.META$.actions = doc.META$.actions;
