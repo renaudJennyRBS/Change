@@ -2,7 +2,6 @@
 
 namespace Rbs\Admin\Events;
 
-
 use Change\Collection\CollectionArray;
 use Change\Documents\DocumentServices;
 
@@ -50,6 +49,7 @@ class GetAvailablePageFunctions
 				}
 
 				$event->setParam('collection', new CollectionArray($code, $parsedFunctions));
+				$event->stopPropagation();
 			}
 			else
 			{
@@ -69,10 +69,8 @@ class GetAvailablePageFunctions
 				}
 
 				$event->setParam('collection', new CollectionArray($code, $parsedFunctions));
+				$event->stopPropagation();
 			}
-
 		}
-
 	}
-
 }

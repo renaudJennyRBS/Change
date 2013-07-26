@@ -90,7 +90,10 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$url->setPort($this->getPort());
 		$url->setPath('/');
 		$urlManager = new UrlManager($url, $this->getScriptName());
+		$urlManager->setWebsite($this);
+		$urlManager->setLCID($LCID);
 		$urlManager->setBasePath($this->getPathPart());
+		$urlManager->setDocumentServices($this->getDocumentServices());
 
 		$this->getDocumentManager()->popLCID();
 		return $urlManager;

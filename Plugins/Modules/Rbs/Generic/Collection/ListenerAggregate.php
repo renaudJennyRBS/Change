@@ -32,11 +32,11 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 					break;
 			}
 		};
-		$events->attach('getCollection', $callback, 5);
+		$events->attach('getCollection', $callback, 10);
 
 		$callback = function (\Zend\EventManager\Event $event)
 		{
-			$codes = $event->getParam('codes');
+			$codes = $event->getParam('codes', array());
 			$codes = array_merge($codes, array(
 				'Rbs_Generic_Collection_SortDirections',
 				'Rbs_Generic_Collection_PermissionRoles',

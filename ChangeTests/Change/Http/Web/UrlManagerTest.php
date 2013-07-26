@@ -23,7 +23,9 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getObject($baseURL = 'http://domain.net')
 	{
-		return new \Change\Http\Web\UrlManager(new \Zend\Uri\Http($baseURL));
+		$urlManager = new \Change\Http\Web\UrlManager(new \Zend\Uri\Http($baseURL));
+		$urlManager->setApplicationServices($this->getApplicationServices());
+		return $urlManager;
 	}
 
 	public function testWebsite()
@@ -75,6 +77,15 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$website2->port = 8080;
 		$uri = $urlManager->getByPathInfoForWebsite($website2, $website2->getLCID(), 'test.html', array('a' => 'b'));
 		$this->assertEquals('http://website2.domain.net:8080/index.php/fr/test.html?a=b', $uri->toString());
+	}
+
+	public function testCanonicalByDocument()
+	{
+		$website1 = new FakeWebsite_5842135();
+		$urlManager = $this->getObject();
+		$urlManager->setWebsite($website1);
+
+		$this->assertEquals('document/500.html', $urlManager->getCanonicalByDocument(500)->toString());
 	}
 
 	public function testGetByDocument()

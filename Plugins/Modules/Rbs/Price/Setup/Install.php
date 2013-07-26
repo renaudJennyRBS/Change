@@ -16,7 +16,8 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Price', '\\Rbs\\Price\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Price', '\\Rbs\\Price\\Events\\SharedListenerAggregate');
+		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Price', '\\Rbs\\Price\\Collection\\ListenerAggregate');
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Price', '\\Rbs\\Price\\Http\\rest\\ListenerAggregate');
 	}
 
 	/**
