@@ -4,23 +4,25 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsModelSelector', ['RbsChange.REST', function (REST) {
+	app.directive('rbsModelSelector', ['RbsChange.Models', function (Models) {
 		return {
-			restrict : 'A',
-			require  : 'ngModel',
-			template : '<select ng-options="m.label for m in models"></select>',
+			restrict : 'E',
+			template : '<select ng-model="model" ng-options="m.label group by m.plugin for m in models | filter:filter | orderBy:[\'plugin\',\'label\']"></select>',
 			replace  : true,
-			scope    : true,
+
+			scope : {
+				model : '=',
+				filter : '@'
+			},
 
 			link : function (scope, elm, attrs) {
-				if (attrs.rbsModelSelect === 'publishable') {
-					REST.call(REST.getBaseUrl('Rbs/PublishableModels')).then(function (models) {
-						scope.models = models;
-					});
-				} else {
-					throw new Error("Directive 'rbs-model-select' only works with publishable models for now.");
-				}
+				scope.models = Models.getAll();
+				scope.filter = {};
+				attrs.$observe('filter', function (value) {
+					scope.filter = scope.$eval(attrs.filter);
+				});
 			}
+
 		};
 	}]);
 
