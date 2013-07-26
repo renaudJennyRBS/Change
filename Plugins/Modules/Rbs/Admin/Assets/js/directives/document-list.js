@@ -920,13 +920,8 @@
 
 
 					function reload () {
-
 						if (useExternalCollection) {
-							if (angular.isFunction(scope.onReload)) {
-								scope.onReload();
-							} else {
-								console.warn("DocumentList '" + dlid + "' uses an external Collection. You may also add the 'on-reload' attribute.");
-							}
+							scope.onReload();
 							return;
 						}
 
