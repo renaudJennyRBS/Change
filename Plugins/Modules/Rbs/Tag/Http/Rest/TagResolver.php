@@ -16,8 +16,7 @@ class TagResolver {
 	public function execute(Event $event)
 	{
 		$pathParts = $event->getParam('pathParts');
-
-		if ($event->getAction() || ! $event->getParam('isDirectory') || $pathParts[0] !== 'resources')
+		if ($event->getAction() || !$event->getParam('isDirectory') || $pathParts[0] !== 'resources')
 		{
 			return;
 		}

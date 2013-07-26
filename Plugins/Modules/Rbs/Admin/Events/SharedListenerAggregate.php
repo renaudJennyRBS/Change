@@ -31,21 +31,12 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		{
 			return;
 		}
-
-		$path = implode('/', $event->getParam('pathParts'));
-
-		switch ($path)
+		if ($event->getParam('pathInfo') === 'Rbs/PublishableModels')
 		{
-			case 'Rbs/PublishableModels' :
-				$action = new \Rbs\Admin\Http\Rest\Actions\PublishableModels();
-				break;
-		}
-
-		if ($action)
-		{
-			$event->setAction(function ($event) use ($action) {
-				$action->execute($event);
-			});
+			$action = function ($event) {
+				(new \Rbs\Admin\Http\Rest\Actions\PublishableModels())->execute($event);
+			};
+			$event->setAction($action);
 		}
 	}
 

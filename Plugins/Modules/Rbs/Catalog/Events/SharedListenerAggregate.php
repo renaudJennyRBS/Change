@@ -59,7 +59,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 	{
 		if (!$event->getAction())
 		{
-			$relativePath =  implode('/', $event->getParam('pathParts'));
+			$relativePath =  $event->getParam('pathInfo');
 			if (preg_match('#^resources/Rbs/Catalog/ProductCategorization/([0-9]+)/(highlight|downplay|moveup|movedown|highlighttop|highlightbottom)$#', $relativePath, $matches))
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
@@ -70,7 +70,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 					call_user_func(array($cr, $methodName), $event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/(Category|Product)/([0-9]+)/ProductCategorization$#', $relativePath, $matches))
+			else if (preg_match('#^resources/Rbs/Catalog/(Category|Product)/([0-9]+)/ProductCategorization/?$#', $relativePath, $matches))
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
 				$event->setParam('documentId', intval($matches[2]));
