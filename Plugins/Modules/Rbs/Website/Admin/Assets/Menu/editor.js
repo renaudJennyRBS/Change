@@ -23,7 +23,6 @@
 			link: function (scope, elm, attrs) {
 				scope.add = {};
 				scope.add.titlePattern = ALL_REGEXP;
-				scope.availableModels = [];
 				scope.addItemUIShown = false;
 
 				Editor.initScope(scope, elm, function () {

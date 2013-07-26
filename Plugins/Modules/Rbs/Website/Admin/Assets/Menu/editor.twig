@@ -38,7 +38,9 @@
 				<div class="controls">
 					<div class="document-picker-single"
 					     allow-creation="false"
+					     select-model="{publishable:'true', root:'true'}"
 					     ng-model="add.selectedDocument"
+					     selector-title="Sélectionner un document à ajouter au menu"
 					     ng-change="onDocumentSelected(add.selectedDocument)">
 					</div>
 				</div>
@@ -47,7 +49,7 @@
 			<div class="control-group">
 				<label class="control-label" for="title">{{ i18n('m.rbs.website.document.menu.title', ['ucf']) }}</label>
 				<div class="controls">
-					<input type="text" ng-required="true" ng-pattern="add.titlePattern" ng-model="add.title"/><br/>
+					<input type="text" class="input-xlarge" ng-required="true" ng-pattern="add.titlePattern" ng-model="add.title"/><br/>
 					<label class="checkbox">
 						<input type="checkbox" ng-model="add.titleI18nKey"/> {{ i18n('m.rbs.website.document.menu.i18nKey', ['ucf']) }}
 					</label>
@@ -57,7 +59,7 @@
 			<div class="control-group">
 				<label class="control-label" for="title">{{ i18n('m.rbs.website.document.menu.url') }}</label>
 				<div class="controls">
-					<input type="url" ng-model="add.url"/>
+					<input type="url" class="input-xlarge" ng-model="add.url"/>
 				</div>
 			</div>
 
