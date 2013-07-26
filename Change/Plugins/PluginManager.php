@@ -529,6 +529,22 @@ class PluginManager
 	}
 
 	/**
+	 * @param string $type
+	 * @param string $vendor
+	 * @param string $shortName
+	 * @return Plugin|null
+	 */
+	public function getPlugin($type, $vendor, $shortName)
+	{
+		$vendor = $this->normalizeVendorName($vendor);
+		$shortName = $this->normalizePluginName($shortName);
+		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($type, $vendor, $shortName) {
+			return $plugin->getType() === $type && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
+		});
+		return array_pop($result);
+	}
+
+	/**
 	 * @param string $vendor
 	 * @param string $shortName
 	 * @return Plugin|null
@@ -579,6 +595,26 @@ class PluginManager
 		$vendor = ($vendor) ? $this->normalizeVendorName($vendor) : null;
 		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
+		});
+	}
+
+	/**
+	 * @return Plugin[]
+	 */
+	public function getRegisteredPlugins()
+	{
+		return array_filter($this->getPlugins(), function(Plugin $plugin) {
+			return $plugin->getConfigured() === false;
+		});
+	}
+
+	/**
+	 * @return Plugin[]
+	 */
+	public function getInstalledPlugins()
+	{
+		return array_filter($this->getPlugins(), function(Plugin $plugin) {
+			return $plugin->getConfigured() === true;
 		});
 	}
 
@@ -650,6 +686,27 @@ class PluginManager
 		$vendor = $this->normalizeVendorName($vendor);
 		$name = $this->normalizeVendorName($name);
 		return $this->doInstall($eventType, $vendor, $name, $context);
+	}
+
+	/**
+	 * @param Plugin $plugin
+	 * @throws \InvalidArgumentException
+	 */
+	public function deinstall(Plugin $plugin)
+	{
+		if (isset($plugin->getConfiguration()['locked']) && $plugin->getConfiguration()['locked'])
+		{
+			throw new \InvalidArgumentException('Plugin is locked, unable to deinstall');
+		}
+		else
+		{
+			//TODO do a real deinstall!
+			$plugin->setActivated(false);
+			$plugin->setConfigured(false);
+			$date = new \DateTime();
+			$plugin->setConfigurationEntry('deinstallDate', $date->format('c'));
+			$this->update($plugin);
+		}
 	}
 
 	/**
