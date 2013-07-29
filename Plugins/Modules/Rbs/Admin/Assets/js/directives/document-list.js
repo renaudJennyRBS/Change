@@ -210,8 +210,8 @@
 				});
 			}
 
-			// Status switch column
-			if (tAttrs.publishable === 'true') {
+			// Activable switch column
+			if (tAttrs.activable === 'true') {
 				columns.push({
 					"name"   : "publicationStatusSwitch",
 					"align"  : "center",
@@ -228,6 +228,8 @@
 			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
 			tElement.find('tbody td[data-colspan="auto"]').attr('colspan', columns.length);
 
+
+			// Prepare preview
 			if (!__preview[dlid] && tAttrs.preview === 'true') {
 				__preview[dlid] = {};
 			}
@@ -248,6 +250,7 @@
 				result.preview = true;
 			}
 
+			// Loop through all the columns and build header et body cells.
 			while (columns.length) {
 				column = columns.shift(0);
 
@@ -1136,20 +1139,25 @@
 						function successFn () {
 							Loading.stop();
 
-							if (attrs.model) {
-								console.log("MODEL OK -> LOAD");
-								initialLoad();
+							if (elm.is('[model]')) {
+								// No model value yet?
+								if (attrs.model) {
+									console.log("MODEL OK -> LOAD");
+									initialLoad();
+								}
+								else {
+									attrs.$observe('model', function (model) {
+										console.log("MODEL changed: ", model);
+										if (model) {
+											initialLoad();
+										}
+									});
+								}
 							}
 							else {
-								console.log("NO MODEL : $observe....");
-								attrs.$observe('model', function (model) {
-									console.log("MODEL changed: ", model);
-									if (model) {
-										initialLoad();
-									}
-								});
+								console.log("NO MODEL attr");
+								initialLoad();
 							}
-
 						}
 
 						if (promises.length) {
