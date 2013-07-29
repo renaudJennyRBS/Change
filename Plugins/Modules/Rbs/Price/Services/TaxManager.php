@@ -88,8 +88,6 @@ class TaxManager
 		return $taxRates;
 	}
 
-
-
 	/**
 	 * @param float $value
 	 * @param array<taxCode => category> $taxCategories
@@ -101,7 +99,6 @@ class TaxManager
 			$this->getCommerceServices()->getZone());
 		foreach($taxRates as $taxApplication)
 		{
-
 			$taxApplication->setValue($taxApplication->getRate() * $value);
 		}
 		return $taxRates;
@@ -123,5 +120,23 @@ class TaxManager
 			$taxApplication->setValue($taxApplication->getRate() * $value);
 		}
 		return $taxRates;
+	}
+
+	/**
+	 * @param float $value
+	 * @param \Rbs\Price\Std\TaxApplication[] $taxApplications
+	 * @return float
+	 */
+	public function getValueWithTax($value, $taxApplications)
+	{
+		$valueWithTax = $value;
+		if (is_array($taxApplications) && count($taxApplications))
+		{
+			foreach ($taxApplications as $taxApplication)
+			{
+				$valueWithTax += $taxApplication->getValue();
+			}
+		}
+		return $valueWithTax;
 	}
 }

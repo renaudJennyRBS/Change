@@ -23,4 +23,13 @@ class Category extends \Compilation\Rbs\Catalog\Documents\Category
 		// Do nothing.
 		return $this;
 	}
+
+	public function getPublicationSections()
+	{
+		if ($this->getSection())
+		{
+			return array($this->getSection());
+		}
+		return array();
+	}
 }

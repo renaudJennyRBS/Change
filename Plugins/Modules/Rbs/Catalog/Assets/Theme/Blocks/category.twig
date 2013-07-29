@@ -1,0 +1,12 @@
+<h1>{{ title }}</h1>
+<table>
+	<tr>
+		<th>Produit</th><th>Prix HT</th><th>Prix TTC</th>
+	</tr>
+	{% for row in rows %}
+		<tr>
+			<td><a href="{{ row.url }}"> {{ row.title }}</a></td>
+			<td>{{ row.price }}</td><td>{{ row.priceTTC }}</td>
+		</tr>
+	{% endfor %}
+</table>
