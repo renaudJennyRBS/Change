@@ -87,7 +87,7 @@ class Install
 			if (!$doc)
 			{
 				$HST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
-				/* @var $PST \Rbs\Price\Documents\Tax */
+				/* @var $HST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'HST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$HST->setLabel('Harmonized Sales Tax (CANADA)');
@@ -103,7 +103,7 @@ class Install
 			if (!$doc)
 			{
 				$QST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
-				/* @var $PST \Rbs\Price\Documents\Tax */
+				/* @var $QST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'QST.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$QST->setLabel('Quebec Sales Tax (CANADA)');
@@ -119,7 +119,7 @@ class Install
 			if (!$doc)
 			{
 				$QST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
-				/* @var $PST \Rbs\Price\Documents\Tax */
+				/* @var $QST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'FRC.json'), \Zend\Json\Json::TYPE_ARRAY);
 				$QST->setLabel('Taxe sur la valeur ajoutée (FRANCE CONTINENTALE)');
