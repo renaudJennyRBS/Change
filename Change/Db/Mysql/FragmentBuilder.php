@@ -99,8 +99,8 @@ class FragmentBuilder
 				$fragment->checkCompile();
 				return $fragment->getOperator() . ' ' . $this->buildSQLFragment($fragment->getExpression());
 
-			case 'Change\Db\Query\Predicates\hasPermission':
-				/* @var $fragment \Change\Db\Query\Predicates\hasPermission */
+			case 'Change\Db\Query\Predicates\HasPermission':
+				/* @var $fragment \Change\Db\Query\Predicates\HasPermission */
 				return $this->buildSQLFragment($fragment->getPredicate());
 
 			case 'Change\Db\Query\Expressions\BinaryOperation':

@@ -44,14 +44,14 @@ class PublicationProcessWorkflow
 		$filed = $workflow->getNewPlace()->setName('Filed')->setType(Std\Place::TYPE_END);
 
 		$requestValidation = $workflow->getNewTransition()->setName('Request Validation')->setTaskCode('requestValidation')
-			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Creator');
+			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Creator')->setShowInDashboard(true);
 
 
 		$contentValidation = $workflow->getNewTransition()->setName('Content Validation')->setTaskCode('contentValidation')
-			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Editor');
+			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Editor')->setShowInDashboard(true);
 
 		$publicationValidation = $workflow->getNewTransition()->setName('Publication Validation')->setTaskCode('publicationValidation')
-			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Publisher');
+			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Publisher')->setShowInDashboard(true);
 
 
 		$publication = $workflow->getNewTransition()->setName('Publication')->setTaskCode('checkPublication')

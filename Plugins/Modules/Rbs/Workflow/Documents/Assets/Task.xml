@@ -24,5 +24,6 @@
 			<dboptions length="100" />
 		</property>
 		<property name="deadLine" type="DateTime" />
+		<property name="showInDashboard" type="Boolean" default-value="false" />
 	</properties>
 </document>

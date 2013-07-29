@@ -429,7 +429,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			if ($transition->getTrigger() === Transition::TRIGGER_USER)
 			{
 				$task->setRole($transition->getRole());
-
+				$task->setShowInDashboard($transition->getShowInDashboard());
 			}
 			elseif ($transition->getTrigger() === Transition::TRIGGER_TIME)
 			{

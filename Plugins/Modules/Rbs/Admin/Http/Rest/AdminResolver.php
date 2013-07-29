@@ -4,6 +4,7 @@ namespace Rbs\Admin\Http\Rest;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 
 /**
@@ -31,7 +32,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser');
+		return array('currentUser', 'currentTasks');
 	}
 
 	/**
@@ -64,6 +65,13 @@ class AdminResolver
 			{
 				$action = new GetCurrentUser();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			if ($actionName === 'currentTasks')
+			{
+				$event->setAction(function($event) {
+					(new CurrentTasks())->execute($event);
+				});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}

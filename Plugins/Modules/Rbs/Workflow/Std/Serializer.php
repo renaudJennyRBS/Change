@@ -36,6 +36,7 @@ class Serializer
 					$item = $workflow->getNewTransition(false);
 					$item->setId($itemData['id'])->setName($itemData['name'])->setTaskCode($itemData['taskCode'])
 						->setTrigger($itemData['trigger'])
+						->setShowInDashboard(isset($itemData['sid']) ? $itemData['sid'] : false)
 						->setRole($itemData['role'])->setTimeLimit($itemData['timeLimit']);
 					$result[] = $item;
 					break;
@@ -116,6 +117,10 @@ class Serializer
 					'taskCode' => $item->getTaskCode(), 'trigger' => $item->getTrigger(),
 					'role' => $item->getRole(), 'timeLimit' => $item->getStringTimeLimit());
 				$itemData['arcs'] = $item->getArcIds();
+				if ($item->getShowInDashboard())
+				{
+					$itemData['sid'] = true;
+				}
 			}
 			elseif ($item instanceof Arc)
 			{
