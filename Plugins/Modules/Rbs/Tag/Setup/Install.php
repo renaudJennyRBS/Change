@@ -81,6 +81,8 @@ class Install
 		$searchTagIdField->setType(FieldDefinition::INTEGER);
 		$td->addField($searchTagIdField);
 		$schemaManager->createOrAlterTable($td);
+
+		$applicationServices->getDbProvider()->closeConnection();
 	}
 
 

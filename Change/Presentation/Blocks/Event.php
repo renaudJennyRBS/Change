@@ -2,7 +2,7 @@
 namespace Change\Presentation\Blocks;
 
 use Change\Documents\DocumentServices;
-use Change\Http\UrlManager;
+use Change\Http\Web\UrlManager;
 use Change\Http\Web\Result\BlockResult;
 use Change\Presentation\Layout\Block;
 use Zend\EventManager\Event as ZendEvent;

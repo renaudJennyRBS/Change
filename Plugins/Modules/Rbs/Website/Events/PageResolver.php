@@ -47,7 +47,12 @@ class PageResolver
 				$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Website_Page');
 				$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
 				$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $sectionPageFunction));
-				$event->setParam('page', $query->getFirstDocument());
+				$page = $query->getFirstDocument();
+				if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+				{
+					$page->setSection($section);
+				}
+				$event->setParam('page', $page);
 			}
 		}
 	}

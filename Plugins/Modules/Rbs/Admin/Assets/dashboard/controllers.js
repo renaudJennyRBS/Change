@@ -54,41 +54,13 @@
 			}
 		];
 
-		var taskQuery = {
-			'model' : 'Rbs_Workflow_Task',
-			'where': {
-				'and': [
-					/*{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "role"
-						},
-						"rexp" : {
-							"value": "Creator"
-						}
-					},*/
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "status"
-						},
-						"rexp" : {
-							"value": "EN"
-						}
-					}
-				]
-			}
-		};
-
-
 		$scope.reloadTasks = function () {
-			REST.query(taskQuery, {'column':['document','taskCode','status']}).then(function (tasks) {
-				$scope.tasks = tasks;
+			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column':['document','taskCode','status']}).then(function (result) {
+				$scope.tasks = result;
 			});
 		};
 
 		$scope.reloadTasks();
-
 
 		$scope.taskList = {
 

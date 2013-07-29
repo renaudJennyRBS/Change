@@ -41,6 +41,11 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	protected $taskCode;
 
 	/**
+	 * @var boolean
+	 */
+	protected $showInDashboard;
+
+	/**
 	 * @var Workflow
 	 */
 	protected $workflow;
@@ -229,6 +234,24 @@ class Transition implements \Change\Workflow\Interfaces\Transition
 	{
 		$this->trigger = $trigger;
 		return $this;
+	}
+
+	/**
+	 * @param boolean $showInDashboard
+	 * @return $this
+	 */
+	public function setShowInDashboard($showInDashboard)
+	{
+		$this->showInDashboard = $showInDashboard;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getShowInDashboard()
+	{
+		return $this->showInDashboard;
 	}
 
 	//Design Function

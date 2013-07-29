@@ -9,6 +9,7 @@
 	<key id="publicationstatus">statut de publication</key>
 	<key id="startpublication">début de publication</key>
 	<key id="endpublication">fin de publication</key>
+	<key id="active">actif</key>
 	<key id="startactivation">début d'activation</key>
 	<key id="endactivation">fin d'activation</key>
 	<key id="treename">arbre</key>

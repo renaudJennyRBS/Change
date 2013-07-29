@@ -9,6 +9,9 @@
 	<key id="publicationstatus">publication status</key>
 	<key id="startpublication">date published</key>
 	<key id="endpublication">date unpublished</key>
+	<key id="active">active</key>
+	<key id="startactivation">sart activation date</key>
+	<key id="endactivation">end activation date</key>
 	<key id="treename">tree</key>
 	<key id="label">label</key>
 	<key id="authorname">author name</key>
