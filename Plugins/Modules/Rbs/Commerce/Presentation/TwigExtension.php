@@ -1,26 +1,24 @@
 <?php
-namespace Change\Presentation\Templates\Twig;
+namespace Rbs\Commerce\Presentation;
 
-use Change\Application\ApplicationServices;
+use \Rbs\Commerce\Services\CommerceServices;
 
 /**
- * Class Extension
- * @package Change\Presentation\Templates\Twig
- * @name \Change\Presentation\Templates\Twig\Extension
+ * @name \Rbs\Commerce\Presentation\TwigExtension
  */
-class Extension  implements \Twig_ExtensionInterface
+class TwigExtension  implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var ApplicationServices
+	 * @var CommerceServices
 	 */
-	protected $applicationServices;
+	protected $commerceServices;
 
 	/**
-	 * @param ApplicationServices $applicationServices
+	 * @param CommerceServices $applicationServices
 	 */
-	function __construct(ApplicationServices $applicationServices)
+	function __construct(CommerceServices $applicationServices)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->commerceServices = $applicationServices;
 	}
 
 	/**
@@ -29,7 +27,7 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	public function getName()
 	{
-		return 'Change';
+		return 'Rbs_Commerce';
 	}
 
 	/**
@@ -85,8 +83,7 @@ class Extension  implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('i18n', array($this, 'i18n'), array('is_safe' => array('html'))),
-			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html', 'html_attr'))),
+			new \Twig_SimpleFunction('formatPrice', array($this, 'formatPrice'))
 		);
 	}
 
@@ -109,42 +106,23 @@ class Extension  implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return CommerceServices
 	 */
-	protected function getApplicationServices()
+	protected function getCommerceServices()
 	{
-		return $this->applicationServices;
+		return $this->commerceServices;
 	}
 
 	/**
-	 * @param string $i18nKey
-	 * @param string[] $formatters
-	 * @param array $replacementArray
+	 * @param float $value
 	 * @return string
 	 */
-	public function i18n($i18nKey, $formatters = array(), $replacementArray = null)
+	public function formatPrice($value)
 	{
-		if (!is_array($replacementArray))
+		if ($value === null || !is_numeric($value))
 		{
-			$replacementArray = array();
+			return '';
 		}
-		$formatters[] = 'html';
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
-	}
-
-	/**
-	 * @param string $i18nKey
-	 * @param string[] $formatters
-	 * @param array $replacementArray
-	 * @return string
-	 */
-	public function i18nAttr($i18nKey, $formatters = array(), $replacementArray = null)
-	{
-		if (!is_array($replacementArray))
-		{
-			$replacementArray = array();
-		}
-		$formatters[] = 'attr';
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
+		return $this->getCommerceServices()->getPriceManager()->formatValue($value);
 	}
 }

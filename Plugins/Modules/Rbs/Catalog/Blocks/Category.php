@@ -93,19 +93,20 @@ class Category extends Block
 			}
 
 			$rows = array();
-			$options = array('webStore' => $category->getWebStore());
+			$webStore = $category->getWebStore();
 			foreach ($query->getDocuments() as $product)
 			{
+				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
 				$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null );
-				$price = $priceManager ? $priceManager->getPriceByProduct($product, $options) : null;
+				$price = $priceManager ? $priceManager->getPriceByProduct($product, $webStore) : null;
 				if ($price)
 				{
-					$row['price'] = $priceManager->formatValue($price->getValue());
+					$row['price'] = $price->getValue();
 					if ($taxManager)
 					{
 						$taxApplications = $taxManager->getTaxByValue($price->getValue(), $price->getTaxCategories());
-						$row['priceTTC'] = $priceManager->formatValue($taxManager->getValueWithTax($price->getValue(), $taxApplications));
+						$row['priceTTC'] = $taxManager->getValueWithTax($price->getValue(), $taxApplications);
 					}
 				}
 				$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);

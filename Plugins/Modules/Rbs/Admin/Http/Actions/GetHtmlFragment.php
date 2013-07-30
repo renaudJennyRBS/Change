@@ -2,12 +2,11 @@
 namespace Rbs\Admin\Http\Actions;
 
 use Change\Http\Event;
-use Change\Http\Web\Result\Resource;
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Admin\Http\Actions\GetHtmlFragment
-*/
+ * @name \Rbs\Admin\Http\Actions\GetHtmlFragment
+ */
 class GetHtmlFragment
 {
 	/**
@@ -22,7 +21,6 @@ class GetHtmlFragment
 		$filePath = $this->getFilePath($resourcePath, $event->getApplicationServices()->getApplication()->getWorkspace());
 		if ($filePath !== null)
 		{
-
 
 			$fileResource = new \Change\Presentation\Themes\FileResource($filePath);
 			if ($fileResource->isValid())
@@ -41,7 +39,10 @@ class GetHtmlFragment
 				else
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-					$manager = new \Rbs\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
+
+					/* @var $manager \Rbs\Admin\Manager */
+					$manager = $event->getParam('manager');
+
 					$attributes = array('query' => $event->getRequest()->getQuery()->toArray());
 					$renderer = function () use ($filePath, $manager, $attributes)
 					{
@@ -81,7 +82,8 @@ class GetHtmlFragment
 			}
 			else
 			{
-				return $workspace->pluginsModulesPath($vendor, $shortModuleName, 'Admin', 'Assets', implode(DIRECTORY_SEPARATOR, $parts));
+				return $workspace->pluginsModulesPath($vendor, $shortModuleName, 'Admin', 'Assets',
+					implode(DIRECTORY_SEPARATOR, $parts));
 			}
 		}
 		return null;

@@ -36,11 +36,6 @@ class CommerceServices extends Di
 	protected $zone;
 
 	/**
-	 * @var \Rbs\Store\Documents\WebStore
-	 */
-	protected $webStore;
-
-	/**
 	 * @param ApplicationServices $applicationServices
 	 * @param DocumentServices $documentServices
 	 */
@@ -183,24 +178,6 @@ class CommerceServices extends Di
 	public function getBillingArea()
 	{
 		return $this->billingArea;
-	}
-
-	/**
-	 * @param \Rbs\Store\Documents\WebStore $webStore
-	 * @return $this
-	 */
-	public function setWebStore($webStore)
-	{
-		$this->webStore = $webStore;
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Store\Documents\WebStore
-	 */
-	public function getWebStore()
-	{
-		return $this->webStore;
 	}
 
 	/**

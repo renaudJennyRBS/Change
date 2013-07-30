@@ -1,12 +1,13 @@
 <?php
 namespace Rbs\Admin;
+
 use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
 use Zend\EventManager\EventManager;
 
 /**
-* @name \Rbs\Admin\Manager
-*/
+ * @name \Rbs\Admin\Manager
+ */
 class Manager implements \Zend\EventManager\EventsCapableInterface
 {
 	use \Change\Events\EventsCapableTrait;
@@ -25,6 +26,11 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 * @var string
 	 */
 	protected $cachePath;
+
+	/**
+	 * @var \Twig_ExtensionInterface[]
+	 */
+	protected $extensions = array();
 
 	/**
 	 * @param ApplicationServices $applicationServices
@@ -91,6 +97,25 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
+	 * @param \Twig_ExtensionInterface $extension
+	 * @return $this
+	 */
+	public function addExtension(\Twig_ExtensionInterface $extension)
+	{
+		$this->extensions[$extension->getName()] = $extension;
+		return $this;
+	}
+
+	/**
+	 * @return \Twig_ExtensionInterface[]
+	 */
+	public function getExtensions()
+	{
+		return $this->extensions;
+	}
+
+	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -129,7 +154,8 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->cachePath === null)
 		{
-			$this->cachePath = $this->getApplicationServices()->getApplication()->getWorkspace()->cachePath('Admin', 'Templates', 'Compiled');
+			$this->cachePath = $this->getApplicationServices()->getApplication()->getWorkspace()
+				->cachePath('Admin', 'Templates', 'Compiled');
 			\Change\Stdlib\File::mkdir($this->cachePath);
 		}
 		return $this->cachePath;
@@ -146,14 +172,21 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 
 		// Include Twig macros for forms.
 		// Use it with: {% import "@Admin/forms.twig" as forms %}
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Rbs', 'Admin', 'Assets');
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()
+			->pluginsModulesPath('Rbs', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Admin');
+
 		// TODO: register macros from other plugins.
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()->pluginsModulesPath('Rbs', 'Price', 'Admin', 'Assets');
+		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()
+			->pluginsModulesPath('Rbs', 'Price', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Price');
 
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
 		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getApplicationServices()));
+		foreach ($this->getExtensions() as $extension)
+		{
+			$twig->addExtension($extension);
+		}
 		return $twig->render(basename($pathName), $attributes);
 	}
 }
