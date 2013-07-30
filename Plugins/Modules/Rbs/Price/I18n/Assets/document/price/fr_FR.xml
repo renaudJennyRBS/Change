@@ -13,6 +13,9 @@
 	<key id="discountdetail">libellé de la promotion</key>
 	<key id="finalvalue">prix final</key>
 	<key id="thresholdmin">quantité minimale</key>
+	<key id="priority">priorité</key>
+	<key id="bovalue">prix</key>
+	<key id="bodiscountvalue">prix promotion</key>
 	<key id="discount-section-help" format="html">
 		<![CDATA[Pour appliquer une <label class="in-text" for="discount">promotion</label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire.]]>
 	</key>
@@ -23,7 +26,7 @@
 	<key id="threshold-section-help" format="html">
 		<![CDATA[Vous pouvez définir une <label class="in-text" for="thresholdMin">quantité minimale</label> d'achat pour que ce prix soit appliqué.]]>
 	</key>
-	<key id="value">montant</key>
-	<key id="discount">promotion</key>
+	<key id="value">prix</key>
+	<key id="discount">prix promotion</key>
 	<key id="create-discount-from-price">créer un prix promotionnel à partir de ce prix</key>
 </i18n>

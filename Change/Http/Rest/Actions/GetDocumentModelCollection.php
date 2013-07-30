@@ -2,6 +2,7 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\DocumentCollection;
+use Change\Documents\Property;
 use Change\Http\Rest\Result\CollectionResult;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\Link;
@@ -12,6 +13,11 @@ use Zend\Http\Response as HttpResponse;
  */
 class GetDocumentModelCollection
 {
+	/**
+	 * @var string[]
+	 */
+	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
+
 	/**
 	 * Use Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
@@ -69,7 +75,13 @@ class GetDocumentModelCollection
 		{
 			$result->setDesc($desc);
 		}
-
+		foreach ($model->getProperties() as $property)
+		{
+			if (!$property->getStateless() && in_array($property->getType(), $this->sortablePropertyTypes))
+			{
+				$result->addAvailableSort($property->getName());
+			}
+		}
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);

@@ -5,10 +5,21 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.picker('product', 'Rbs_Catalog_Product',
-		'm.rbs.price.document.price.product',
-		true, null,
-		'm.rbs.price.document.price.product-picker-title') }}
+		<div class="control-group property required" data-ng-hide="hideProduct"
+			data-ng-class="{'success': hasCorrectionOnProperty('document')}">
+			<label class="control-label" for="product">{{ i18n('m.rbs.price.document.price.product', ['ucf']) }}</label>
+			<div class="controls">
+				<div class="document-picker-single"
+					ng-model="document.product"
+					disabled="true"
+					accepted-model="Rbs_Catalog_Product"
+					property-label="{{ i18nAttr('m.rbs.price.document.price.product', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.price.document.price.product-picker-title', ['ucf']) }}"
+					allow-edition="true"
+					allow-creation="false">
+				</div>
+			</div>
+		</div>
 		<div class="control-group property required">
 			<label class="control-label" for="webStore">
 				{{ i18n('m.rbs.price.document.price.webstore', ['ucf']) }}

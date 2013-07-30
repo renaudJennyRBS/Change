@@ -21,4 +21,5 @@
 	<key id="maxorderquantity">quantité maximum</key>
 	<key id="maxorderquantity-help">Quantité maximum de ce produit que l'on peut commander.</key>
 	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des catégories.</key>
+	<key id="prices">prix</key>
 </i18n>

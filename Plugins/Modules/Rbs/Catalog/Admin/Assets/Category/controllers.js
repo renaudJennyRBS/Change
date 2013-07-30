@@ -67,7 +67,7 @@
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"],
+			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"]
 		]);
 
 
@@ -77,7 +77,7 @@
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
 		REST.resource('Rbs_Catalog_Category', $routeParams.id).then(function (category)
 		{
-			$scope.productsUrl = category.META$.links['products'].href;
+			$scope.productsUrl = category.META$.links['productcategorizations'].href;
 			$scope.category = category;
 			Loading.stop();
 		});
@@ -101,19 +101,19 @@
 
 		$scope.List.moveTop = function (doc) {
 			callActionUrlAndReload(doc.META$.actions['highlighttop'].href);
-		}
+		};
 
 		$scope.List.moveUp = function (doc) {
 			callActionUrlAndReload(doc.META$.actions['moveup'].href);
-		}
+		};
 
 		$scope.List.moveDown = function (doc) {
 			callActionUrlAndReload(doc.META$.actions['movedown'].href);
-		}
+		};
 
 		$scope.List.moveBottom = function (doc) {
 			callActionUrlAndReload(doc.META$.actions['highlightbottom'].href);
-		}
+		};
 
 		$scope.addProductsFromPicker = function ()
 		{
@@ -133,7 +133,7 @@
 					Loading.stop();
 			});
 			$scope.List.productsToAdd = [];
-		}
+		};
 
 		function callActionUrlAndReload(url)
 		{

@@ -17,4 +17,6 @@
 	<key id="highlight-products">Mettre en avant les produits sélectionnés.</key>
 	<key id="remove-highlight">ne plus mettre en avant</key>
 	<key id="remove-highlight-products">Ne plus mettre en avant les produits sélectionnés.</key>
+	<key id="product-price-list">liste des prix du produit</key>
+	<key id="filter-product-prices">Filtrer la liste des prix</key>
 </i18n>

@@ -1,6 +1,9 @@
 <?php
 namespace Rbs\Price\Documents;
 
+use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\DocumentResult;
+
 /**
  * @name \Rbs\Price\Documents\Price
  */
@@ -33,7 +36,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price
 	/**
 	 * @return boolean
 	 */
-	protected function isDiscount()
+	public function isDiscount()
 	{
 		return ($this->getValueWithoutDiscount() !== null);
 	}
@@ -138,5 +141,28 @@ class Price extends \Compilation\Rbs\Price\Documents\Price
 			$this->setValue($boValue);
 			$this->setValueWithoutDiscount($boDiscountValue);
 		}
+	}
+
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
+			$result = $event->getParam('restResult');
+			if ($result instanceof DocumentLink || $result instanceof DocumentResult)
+			{
+				/* @var $price \Rbs\Price\Documents\Price */
+				$price = $event->getDocument();
+				$nf = new \NumberFormatter($event->getDocument()->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+				$result->setProperty('formattedBoValue', $nf->formatCurrency($price->getBoValue(), $price->getBillingArea()->getCurrencyCode()));
+				if ($price->isDiscount())
+				{
+					$result->setProperty('formattedBoDiscountValue', $nf->formatCurrency($price->getBoDiscountValue(), $price->getBillingArea()->getCurrencyCode()));
+				}
+				else
+				{
+					$result->setProperty('formattedBoDiscountValue', null);
+				}
+			}
+		}, 5);
 	}
 }
