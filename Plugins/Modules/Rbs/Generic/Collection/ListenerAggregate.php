@@ -30,6 +30,12 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 				case 'Rbs_Generic_Collection_PermissionPrivileges':
 					(new Collections())->addPermissionPrivileges($event);
 					break;
+				case 'Rbs_Generic_Collection_TimeZones':
+					(new Collections())->addTimeZones($event);
+					break;
+				case 'Rbs_Generic_Collection_Languages':
+					(new Collections())->addLanguages($event);
+					break;
 			}
 		};
 		$events->attach('getCollection', $callback, 10);
@@ -40,7 +46,9 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 			$codes = array_merge($codes, array(
 				'Rbs_Generic_Collection_SortDirections',
 				'Rbs_Generic_Collection_PermissionRoles',
-				'Rbs_Generic_Collection_PermissionPrivileges'
+				'Rbs_Generic_Collection_PermissionPrivileges',
+				'Rbs_Generic_Collection_TimeZones',
+				'Rbs_Generic_Collection_Languages'
 			));
 			$event->setParam('codes', $codes);
 		};

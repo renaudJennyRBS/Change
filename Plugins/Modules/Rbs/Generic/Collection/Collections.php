@@ -67,4 +67,45 @@ class Collections
 			$event->stopPropagation();
 		}
 	}
+
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addTimeZones(\Zend\EventManager\Event $event)
+	{
+		$items = array();
+		$now = new \DateTime();
+		foreach (\DateTimeZone::listIdentifiers() as $timeZoneName)
+		{
+			$now = new \DateTime('now', new \DateTimeZone($timeZoneName));
+			$items[$timeZoneName] = $timeZoneName . ' (' . $now->format('P') .')';
+		}
+
+		$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_TimeZones', $items);
+		$event->setParam('collection', $collection);
+		$event->stopPropagation();
+	}
+
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addLanguages(\Zend\EventManager\Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$items = array();
+			$applicationServices = $documentServices->getApplicationServices();
+			foreach ($applicationServices->getI18nManager()->getSupportedLCIDs() as $lcid)
+			{
+				$items[$lcid] = \Locale::getDisplayLanguage($lcid, $applicationServices->getI18nManager()->getLCID()) . ' (' . $lcid . ')';
+			}
+			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_Languages', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
+
 }
