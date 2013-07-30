@@ -21,8 +21,11 @@ class Install
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
 		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Catalog',
 			'\\Rbs\\Catalog\\Collection\\ListenerAggregate');
+
 		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Catalog',
 			'\\Rbs\\Catalog\\Events\\SharedListenerAggregate');
+
+		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_Catalog', '\\Rbs\\Catalog\\Blocks\\ListenerAggregate');
 	}
 
 	/**
@@ -34,6 +37,8 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{

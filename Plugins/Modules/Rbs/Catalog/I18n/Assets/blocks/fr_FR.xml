@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.blocks" lcid="fr_FR">
+	<key id="productlist">produits d'une catégorie</key>
+	<key id="productlist-category">catégorie</key>
+	<key id="productlist-function">Liste des produits d'une catégorie</key>
+</i18n>

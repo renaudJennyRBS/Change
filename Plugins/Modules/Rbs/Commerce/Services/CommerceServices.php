@@ -2,6 +2,7 @@
 namespace Rbs\Commerce\Services;
 
 use Change\Application\ApplicationServices;
+use Change\Events\EventsCapableTrait;
 use Change\Documents\DocumentServices;
 use Zend\Di\Definition\ClassDefinition;
 use Zend\Di\DefinitionList;
@@ -12,6 +13,8 @@ use Zend\Di\Di;
  */
 class CommerceServices extends Di
 {
+	use EventsCapableTrait;
+
 	/**
 	 * @var ApplicationServices
 	 */
@@ -33,14 +36,24 @@ class CommerceServices extends Di
 	protected $zone;
 
 	/**
+	 * @var \Rbs\Store\Documents\WebStore
+	 */
+	protected $webStore;
+
+	/**
 	 * @param ApplicationServices $applicationServices
 	 * @param DocumentServices $documentServices
 	 */
-	function __construct($applicationServices, $documentServices)
+	function __construct(ApplicationServices $applicationServices = null, DocumentServices $documentServices = null)
 	{
-		$this->applicationServices = $applicationServices;
-		$this->documentServices = $documentServices;
-
+		if ($applicationServices)
+		{
+			$this->setApplicationServices($applicationServices);
+		}
+		if ($documentServices)
+		{
+			$this->setDocumentServices($documentServices);
+		}
 		$dl = new DefinitionList(array());
 
 		$this->registerTaxManager($dl);
@@ -102,6 +115,7 @@ class CommerceServices extends Di
 	public function setApplicationServices(ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+		$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
 		return $this;
 	}
 
@@ -120,6 +134,10 @@ class CommerceServices extends Di
 	public function setDocumentServices(DocumentServices $documentServices)
 	{
 		$this->documentServices = $documentServices;
+		if ($this->applicationServices === null)
+		{
+			$this->setApplicationServices($documentServices->getApplicationServices());
+		}
 		return $this;
 	}
 
@@ -168,6 +186,24 @@ class CommerceServices extends Di
 	}
 
 	/**
+	 * @param \Rbs\Store\Documents\WebStore $webStore
+	 * @return $this
+	 */
+	public function setWebStore($webStore)
+	{
+		$this->webStore = $webStore;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Store\Documents\WebStore
+	 */
+	public function getWebStore()
+	{
+		return $this->webStore;
+	}
+
+	/**
 	 * @return \Rbs\Price\Services\TaxManager
 	 */
 	public function getTaxManager()
@@ -189,5 +225,22 @@ class CommerceServices extends Di
 	public function getCatalogManager()
 	{
 		return $this->get('Rbs\Catalog\Services\CatalogManager');
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return 'CommerceServices';
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
+		return $config->getEntry('Change/Events/CommerceServices', array());
 	}
 }
