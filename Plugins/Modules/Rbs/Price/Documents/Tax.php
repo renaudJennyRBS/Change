@@ -22,24 +22,21 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Commerce\
 	 */
 	public function getRate($category, $zone)
 	{
+		if ($category == null || $zone == null)
+		{
+			return 0.0;
+		}
 		if (!isset($this->ratesCache[$category][$zone]))
 		{
 			$data = $this->getData();
 			$categoryIndex = array_search($category, $data[self::CATEGORIES_KEY]);
-			if ($categoryIndex === false)
-			{
-				$categoryIndex = 0;
-			}
 			$zoneIndex = array_search($zone, $data[self::ZONES_KEY]);
-			if ($zoneIndex === false)
+			if ($categoryIndex === false || $zoneIndex === false)
 			{
-				$zoneIndex = array_search($this->getDefaultZone(), $data[self::ZONES_KEY]);
-				if ($zoneIndex === false)
-				{
-					$zoneIndex = 0;
-				}
+				return 0.0;
 			}
-			$this->ratesCache[$category][$zone] = isset($data[self::RATES_KEY][$categoryIndex][$zoneIndex]) ? 0.01*floatval($data[self::RATES_KEY][$categoryIndex][$zoneIndex]) : 0;
+			$this->ratesCache[$category][$zone] = isset($data[self::RATES_KEY][$categoryIndex][$zoneIndex]) ?
+				0.01 * floatval($data[self::RATES_KEY][$categoryIndex][$zoneIndex]) : 0.0;
 		}
 		return $this->ratesCache[$category][$zone];
 	}
@@ -50,7 +47,8 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Commerce\
 	public function getCategoryCodes()
 	{
 		$data = $this->getData();
-		return isset($data[self::CATEGORIES_KEY]) && is_array($data[self::CATEGORIES_KEY]) ? $data[self::CATEGORIES_KEY] : array();
+		return
+			isset($data[self::CATEGORIES_KEY]) && is_array($data[self::CATEGORIES_KEY]) ? $data[self::CATEGORIES_KEY] : array();
 	}
 
 	/**
@@ -68,7 +66,8 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Commerce\
 	public function getDefaultZone()
 	{
 		$data = $this->getData();
-		return isset($data[self::ZONES_KEY]) && is_array($data[self::ZONES_KEY]) && count($data[self::ZONES_KEY])  ? $data[self::ZONES_KEY][0] : null;
+		return isset($data[self::ZONES_KEY]) && is_array($data[self::ZONES_KEY])
+		&& count($data[self::ZONES_KEY]) ? $data[self::ZONES_KEY][0] : null;
 	}
 
 	/**
