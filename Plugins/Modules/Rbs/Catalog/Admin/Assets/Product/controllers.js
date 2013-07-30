@@ -4,31 +4,46 @@
 
 	var app = angular.module('RbsChange');
 
-	function PricesController($scope, $routeParams, $location, REST, i18n)
+	function PricesController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager)
 	{
-		$scope.webStoreId = $routeParams.webStoreId;
-		$scope.areaId = $routeParams.areaId;
-		$scope.List = {};
 
-		var query = {
-			"model": "Rbs_Catalog_Price",
-			"where": {
-				"and": [
-					{
-						"op": "eq",
-						"lexp": { "property" : "product" },
-						"rexp": { "value": $routeParams.id}
-					}
-				]
-			},
-			"order": [
-				{
-					"property": "value",
-					"order": "asc"
-				}
-			]
-		};
-		$scope.List.query = query;
+		Workspace.collapseLeftSidebar();
+
+		Breadcrumb.setLocation([
+			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
+		]);
+
+		$scope.$on('$destroy', function () {
+			Workspace.restore();
+		});
+		$scope.params = {};
+		$scope.params.webStoreId = $routeParams.webStoreId;
+		$scope.params.areaId = $routeParams.areaId;
+		$scope.List = {};
+		if ($routeParams.startActivation){
+			$scope.params.startActivation = moment($routeParams.startActivation).toDate();
+		}
+
+		if ($routeParams.endActivation){
+			$scope.params.endActivation = moment($routeParams.endActivation).toDate();
+		}
+
+		if (!$scope.product)
+		{
+			Loading.start();
+			REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.id).then(function(product){
+				Loading.stop();
+				Breadcrumb.setLocation([
+					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+					[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(product, 'list')],
+					[product.label, UrlManager.getUrl(product, 'form') ],
+					[i18n.trans('m.rbs.price.admin.js.price-list | ucf'), "Rbs/Catalog/Product"]]
+				);
+				$scope.product = product;
+				updatePricesURL();
+			});
+		}
 
 		var updateLocation = function (newDocId, oldDocId){
 			var regexp = new RegExp('/' + oldDocId + '/');
@@ -47,16 +62,62 @@
 			}
 		};
 
+		var updatePricesURL = function(){
+			var params = { 	'areaId': $scope.params.areaId == '' ? null :  $scope.params.areaId ,
+							'webStoreId': $scope.params.webStoreId == '' ? null : $scope.params.webStoreId ,
+							'startActivation': $scope.params.startActivation ? moment($scope.params.startActivation).format() : null,
+							'endActivation':  $scope.params.endActivation ? moment($scope.params.endActivation).format() : null
+			};
+			if ($scope.product)
+			{
+				$scope.pricesURL = Utils.makeUrl($scope.product.META$.links['prices'].href, params);
+			}
+		};
+
 		$scope.changeWebStore = function(webStoreId){
-			updateLocation(webStoreId, $routeParams.webStoreId);
+			if (webStoreId == ''){
+				webStoreId = null;
+				$scope.params.areaId = null;
+			}
+			$location.search('webStoreId', webStoreId);
+			updatePricesURL();
 		};
 
 		$scope.changeArea = function(areaId){
-			updateLocation(areaId, $routeParams.areaId);
+			if (areaId == ''){
+				areaId = null;
+			}
+			$location.search('areaId', areaId);
+			updatePricesURL();
+		};
+
+		$scope.changeStartActivation = function(date){
+			if (date)
+			{
+				$location.search('startActivation', moment(date).format());
+			}
+			else
+			{
+				$location.search('startActivation', null);
+			}
+			updatePricesURL();
+		};
+
+
+		$scope.changeEndActivation = function(date){
+			if (date)
+			{
+				$location.search('endActivation', moment(date).format());
+			}
+			else
+			{
+				$location.search('endActivation', null);
+			}
+			updatePricesURL();
 		};
 	}
 
-	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n'];
+	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager'];
 	app.controller('Rbs_Catalog_Product_PricesController', PricesController);
 
 
@@ -127,16 +188,13 @@
 
 		$scope.List = {};
 
-
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
 		REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.id).then(function (product)
 		{
-			console.log(product);
-			$scope.categoriesUrl = product.META$.links['categories'].href;
+			$scope.categoriesUrl = product.META$.links['productcategorizations'].href;
 			$scope.document = product;
 			Loading.stop();
 		});
-
 
 		$scope.List.toggleHighlight = function (doc) {
 			var url = null;

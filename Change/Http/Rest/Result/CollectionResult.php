@@ -43,6 +43,11 @@ class CollectionResult extends \Change\Http\Result
 	 */
 	protected $count = 0;
 
+	/**
+	 * @var array
+	 */
+	protected $availableSorts = array();
+
 
 	public function __construct()
 	{
@@ -218,7 +223,7 @@ class CollectionResult extends \Change\Http\Result
 
 		$array =  array('pagination' =>
 			array('count' => $this->getCount(), 'offset' => $this->getOffset(), 'limit' => $this->getLimit(),
-				'sort' => $this->getSort(), 'desc' => $this->getDesc()),
+				'sort' => $this->getSort(), 'desc' => $this->getDesc(), 'availableSort' => $this->getAvailableSorts()),
 			'resources' => $resources);
 
 		$links = $this->getLinks();
@@ -228,5 +233,29 @@ class CollectionResult extends \Change\Http\Result
 			$array['links'] = $links->toArray();
 		}
 		return $array;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getAvailableSorts()
+	{
+		return $this->availableSorts;
+	}
+
+	/**
+	 * @param string[] $array
+	 */
+	public function setAvailableSorts($array)
+	{
+		$this->availableSorts = $array;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function addAvailableSort($value)
+	{
+		$this->availableSorts[] = $value;
 	}
 }

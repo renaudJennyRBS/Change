@@ -52,6 +52,7 @@ nbproject
 /ChangeTests/UnitTestWorkspace/App/Config/project.default.json
 /ChangeTests/UnitTestWorkspace/App/Config/project.sqlite.json
 /ChangeTests/UnitTestWorkspace/Compilation/*
+/ChangeTests/UnitTestWorkspace/tmp/
 /ChangeTests/report/
 /App/OldBootstrap.php
 /change.xml

@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(Editor, REST)
+	function Editor(Editor, REST, $routeParams)
 	{
 		return {
 			restrict: 'EC',
@@ -13,6 +13,12 @@
 			link: function (scope, elm)
 			{
 				Editor.initScope(scope, elm, function(){
+					if (!scope.document.product && $routeParams.productId)
+					{
+						REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.productId).then(function(product){
+							scope.document.product = product;
+						});
+					}
 					if (!scope.document.taxCategories)
 					{
 						scope.document.taxCategories = {};
@@ -173,6 +179,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.REST'];
+	Editor.$inject = ['RbsChange.Editor', 'RbsChange.REST', '$routeParams'];
 	angular.module('RbsChange').directive('editorRbsPricePrice', Editor);
 })();

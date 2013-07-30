@@ -59,9 +59,9 @@ class DocumentResult extends Result
 
 	/**
 	 * @param string $rel
-	 * @return array|false
+	 * @return \Change\Http\Rest\Result\Link|array
 	 */
-	public function getRelLinks($rel)
+	public function getRelLink($rel)
 	{
 		return $this->links[$rel];
 	}
@@ -82,8 +82,6 @@ class DocumentResult extends Result
 	{
 		$this->links[$rel] = $link;
 	}
-
-
 
 	/**
 	 * @param array|\Change\Http\Rest\Result\Links $actions
@@ -110,9 +108,9 @@ class DocumentResult extends Result
 
 	/**
 	 * @param string $rel
-	 * @return array|false
+	 * @return \Change\Http\Rest\Result\Link|array
 	 */
-	public function getRelActions($rel)
+	public function getRelAction($rel)
 	{
 		return $this->actions[$rel];
 	}

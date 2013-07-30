@@ -12,7 +12,8 @@
 		<column name="label" primary="true"></column>
 		<quick-actions>
 			[action preview]
-			|| <a href="Rbs/Catalog/Product/(=doc.id=)/ProductCategorization/">{{ i18nAttr('m.rbs.catalog.document.product.categories') }}</a>
+			|| <a href="(= doc | documentURL:'productcategorizations' =)">{{ i18nAttr('m.rbs.catalog.document.product.categories') }}</a>
+			|| <a href="(= doc | documentURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.document.product.prices') }}</a>
 			|| [action edit]
 			|| [action delete]
 		</quick-actions>

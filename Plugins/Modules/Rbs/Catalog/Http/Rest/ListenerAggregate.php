@@ -1,55 +1,33 @@
 <?php
-namespace Rbs\Catalog\Events;
+namespace Rbs\Catalog\Http\Rest;
 
-use Zend\EventManager\SharedEventManagerInterface;
+use Zend\EventManager\EventManagerInterface;
 
 /**
- * @name \Rbs\Catalog\Events\SharedListenerAggregate
+ * @name \Rbs\Catalog\Http\Rest\ListenerAggregate
  */
-class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggregateInterface
+class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 {
 	/**
 	 * Attach one or more listeners
-	 * Implementors may add an optional $priority argument; the SharedEventManager
+	 * Implementors may add an optional $priority argument; the EventManager
 	 * implementation will pass this to the aggregate.
-	 * @param SharedEventManagerInterface $events
+	 * @param EventManagerInterface $events
+	 * @return void
 	 */
-	public function attachShared(SharedEventManagerInterface $events)
+	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Change\Documents\Events\Event $event)
-		{
-			$result = $event->getParam('restResult');
-			if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
-			{
-				$document = $event->getTarget();
-				if ($document instanceof \Rbs\Catalog\Documents\Category)
-				{
-					$cr = new \Rbs\Catalog\Http\Rest\CatalogResult();
-					$cr->onCategoryResult($event);
-				}
-				elseif ($document instanceof \Rbs\Catalog\Documents\AbstractProduct)
-				{
-					$cr = new \Rbs\Catalog\Http\Rest\CatalogResult();
-					$cr->onProductResult($event);
-				}
-				elseif ($document instanceof \Rbs\Catalog\Documents\ProductCategorization)
-				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-					$cr->onProductCategorizationResult($event);
-				}
-			}
-			else if ($result instanceof \Change\Http\Rest\Result\DocumentLink)
-			{
-				$document = $event->getTarget();
-				if ($document instanceof \Rbs\Catalog\Documents\ProductCategorization)
-				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-					$cr->onProductCategorizationLink($event);
-				}
-			}
-		};
-		$events->attach(array('Rbs_Catalog_ProductCategorization', 'Rbs_Catalog_Category', 'Rbs_Catalog_AbstractProduct'), 'updateRestResult', $callback, 5);
-		$events->attach('Http.Rest', 'http.action', array($this, 'registerActions'));
+		$events->attach(\Change\Http\Event::EVENT_ACTION, array($this, 'registerActions'));
+	}
+
+	/**
+	 * Detach all previously attached listeners
+	 * @param EventManagerInterface $events
+	 * @return void
+	 */
+	public function detach(EventManagerInterface $events)
+	{
+		// TODO: Implement detach() method.
 	}
 
 	/**
@@ -79,6 +57,15 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 						$cr->productCategorizationCollection($event);
 					});
 			}
+			else if (preg_match('#^resources/Rbs/Catalog/Product/([0-9]+)/Prices/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Price_Price');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function($event){
+					$cr = new \Rbs\Catalog\Http\Rest\PriceResult();
+					$cr->productPriceCollection($event);
+				});
+			}
 			else if ($relativePath === 'rbs/catalog/productcategorization/delete')
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
@@ -96,14 +83,5 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 				});
 			}
 		}
-	}
-
-	/**
-	 * Detach all previously attached listeners
-	 * @param SharedEventManagerInterface $events
-	 */
-	public function detachShared(SharedEventManagerInterface $events)
-	{
-		// TODO: Implement detachShared() method.
 	}
 }
