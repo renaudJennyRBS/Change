@@ -24,6 +24,8 @@ class ListenerAggregate implements ListenerAggregateInterface
 		{
 			$commerceServices = new CommerceServices($event->getApplicationServices(), $event->getDocumentServices());
 			$event->setParam('commerceServices', $commerceServices);
+			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
+			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 		};
 		$events->attach(\Change\Http\Event::EVENT_REQUEST, $callback, 5);
 	}

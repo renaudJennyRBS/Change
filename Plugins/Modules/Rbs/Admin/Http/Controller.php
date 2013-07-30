@@ -2,12 +2,10 @@
 namespace Rbs\Admin\Http;
 
 use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
-use Change\Presentation\PresentationServices;
 use Change\Application;
+use Change\Documents\DocumentServices;
 use Change\Http\Event;
 use Change\Http\Result;
-use Zend\EventManager\EventManagerInterface;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
@@ -43,6 +41,8 @@ class Controller extends \Change\Http\Controller
 		$event = parent::createEvent($request);
 		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
 		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
+
+		$event->setParam('manager', new \Rbs\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices()));
 
 		$authenticationManager = new \Change\User\AuthenticationManager();
 		$authenticationManager->setDocumentServices($event->getDocumentServices());

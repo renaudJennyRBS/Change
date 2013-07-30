@@ -22,7 +22,9 @@ class GetHome
 		$attributes = array('baseURL' => $event->getUrlManager()->getByPathInfo('/')->normalize()->toString());
 		$attributes['LCID'] = $event->getApplicationServices()->getI18nManager()->getLCID();
 		$attributes['lang'] = substr($attributes['LCID'], 0, 2);
-		$manager = new \Rbs\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices());
+
+		/* @var $manager \Rbs\Admin\Manager */
+		$manager = $event->getParam('manager');
 		$attributes['resources'] = $manager->getResources();
 
 		$OAuth = new OAuth();

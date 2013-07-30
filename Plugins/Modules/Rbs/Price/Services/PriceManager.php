@@ -52,17 +52,19 @@ class PriceManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * Standard Options : quantity,
+	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
 	 * @return null|Price
 	 */
-	public function getPriceByProduct($product, $options = array())
+	public function getPriceByProduct($product, $webStore, $options = array())
 	{
 		$commerceServices = $this->getCommerceServices();
-		$price = $this->triggerGetPriceByProduct($commerceServices, $product, $options);
+		$price = $this->triggerGetPriceByProduct($commerceServices, $product, $webStore, $options);
 		if ($price === false)
 		{
-			return $this->getDefaultPriceByProduct($commerceServices, $product, $options);
+			return $this->getDefaultPriceByProduct($commerceServices, $product, $webStore, $options);
 		}
 
 		return $price;
@@ -71,14 +73,16 @@ class PriceManager
 	/**
 	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
 	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
 	 * @return null|Price|boolean
 	 */
-	protected function triggerGetPriceByProduct($commerceServices, $product, $options)
+	protected function triggerGetPriceByProduct($commerceServices, $product, $webStore, $options)
 	{
 		$ev = $commerceServices->getEventManager();
 		$arguments = $ev->prepareArgs($options);
 		$arguments['product'] = $product;
+		$arguments['webStore'] = $webStore;
 		$arguments['commerceServices'] = $commerceServices;
 		$arguments['price'] = false;
 		$ev->trigger('getPriceByProduct', $this, $arguments);
@@ -88,13 +92,17 @@ class PriceManager
 	/**
 	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
 	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
-	 * @return null|Price|boolean
+	 * @return null|Price
 	 */
-	protected function getDefaultPriceByProduct($commerceServices, $product, $options)
+	protected function getDefaultPriceByProduct($commerceServices, $product, $webStore, $options)
 	{
 		$billingArea = $commerceServices->getBillingArea();
-		$webStore = isset($options['webStore']) ? $options['webStore'] : $commerceServices->getWebStore();
+		if ($billingArea == null || $webStore == null)
+		{
+			return null;
+		}
 		$quantity = isset($options['quantity']) ? intval($options['quantity']) : 1;
 
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_Price');
