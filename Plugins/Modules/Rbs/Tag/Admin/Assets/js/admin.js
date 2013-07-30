@@ -155,7 +155,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.service('RbsChange.TagService', ['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Settings', '$q', '$http', '$rootScope', function (REST, Utils, Settings, $q, $http, $rootScope) {
+	app.service('RbsChange.TagService', ['RbsChange.REST', 'RbsChange.Utils', '$q', '$http', function (REST, Utils, $q, $http) {
 
 		function getIdArray (data) {
 			var ids = [];
@@ -180,7 +180,6 @@
 			'create' : function (tag) {
 				tag.model = 'Rbs_Tag_Tag';
 				tag.id = Utils.getTemporaryId();
-				tag.refLCID = Settings.get('language');
 				var promise = REST.save(tag);
 				promise.then(function (created) {
 					angular.extend(tag, created);
