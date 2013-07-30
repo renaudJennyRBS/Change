@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.media.menu" lcid="fr_FR">
+	<key id="selected-tags">étiquettes sélectionnées</key>
+	<key id="all-tags">toutes les étiquettes</key>
+	<key id="manage-tags">gérer les étiquettes</key>
+	<key id="clear-selection">effacer la sélection</key>
+	<key id="selected-tags-message">les étiquettes sélectionnées ici servent à filter la liste des éléments présente à droite</key>
+</i18n>
