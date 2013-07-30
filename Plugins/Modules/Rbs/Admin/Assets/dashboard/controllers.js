@@ -55,7 +55,7 @@
 		];
 
 		$scope.reloadTasks = function () {
-			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column':['document','taskCode','status']}).then(function (result) {
+			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column':['document','taskCode','status']}, REST.collectionTransformer()).then(function (result) {
 				$scope.tasks = result;
 			});
 		};

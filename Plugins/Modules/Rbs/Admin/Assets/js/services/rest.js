@@ -370,6 +370,13 @@
 						return angular.extend(new ChangeDocument(), object);
 					},
 
+					'collectionTransformer' : function () {
+						return transformResponseCollectionFn;
+					},
+
+					'resourceTransformer' : function () {
+						return transformResponseResourceFn;
+					},
 
 					'isLastCreated' : function (doc) {
 						return lastCreatedDocument && doc && (doc.id === lastCreatedDocument.id && doc.model === lastCreatedDocument.model);
@@ -1104,10 +1111,10 @@
 					 *
 					 * @returns Promise
 					 */
-					'call' : function (url, params) {
+					'call' : function (url, params, transformer) {
 						var	q = $q.defer();
 
-						$http.get(Utils.makeUrl(url, params), getHttpConfig())
+						$http.get(Utils.makeUrl(url, params), getHttpConfig(transformer))
 							.success(function restActionSuccessCallback (data) {
 								resolveQ(q, data);
 							})
