@@ -5,7 +5,7 @@
 	app.config(['$routeProvider', function ($routeProvider)
 	{
 		$routeProvider.when('/Rbs/Brand', { templateUrl: 'Rbs/Brand/Brand/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Brand/Brand', { templateUrl: 'Rbs/Brand/Brand/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Brand/Brand/', { templateUrl: 'Rbs/Brand/Brand/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Brand/Brand/:id/:LCID', { templateUrl: 'Rbs/Brand/Brand/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Brand/Brand/:id', { templateUrl: 'Rbs/Brand/Brand/form.twig', reloadOnSearch: false });
 	}]);

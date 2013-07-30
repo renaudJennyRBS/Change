@@ -2,4 +2,5 @@
 <i18n baseKey="m.rbs.brand.admin.js" lcid="fr_FR">
 	<include id="m.rbs.brand.document"/>
 	<key id="module-name">marques</key>
+	<key id="module-keywords">marques</key>
 </i18n>

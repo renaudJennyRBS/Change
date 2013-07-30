@@ -17,8 +17,8 @@
 	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.brand.admin.js.brand-list | ucf'), "Rbs/Brand/Brand"]
+			[i18n.trans('m.rbs.brand.admin.js.module-name | ucf'), "Rbs/Brand"],
+			[i18n.trans('m.rbs.brand.admin.js.brand-list | ucf'), "Rbs/Brand/Brand/"]
 		]);
 
 		var DL = DocumentList.initScope($scope, 'Rbs_Brand_Brand');
@@ -34,7 +34,7 @@
 		DL.columns.push({ id: 'modificationDate', label: i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'), sortable: true });
 		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
 
-		MainMenu.loadModuleMenu('Rbs_Catalog');
+		MainMenu.loadModuleMenu('Rbs_Brand');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
@@ -52,8 +52,8 @@
 	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.brand.admin.js.brand-list | ucf'), "Rbs/Brand/Brand"]
+			[i18n.trans('m.rbs.brand.admin.js.module-name | ucf'), "Rbs/Brand"],
+			[i18n.trans('m.rbs.brand.admin.js.brand-list | ucf'), "Rbs/Brand/Brand/"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Brand_Brand');
 	}
