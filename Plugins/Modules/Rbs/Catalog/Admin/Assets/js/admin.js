@@ -36,14 +36,6 @@
 				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID',
 				'categories': '/Rbs/Catalog/ProductCategories/:id'
 			});
-			$delegate.register('Rbs_Catalog_Price', {
-				'form': '/Rbs/Catalog/Price/:id/:LCID'
-			});
-			$delegate.register('Rbs_Catalog_BillingArea', {
-				'form': '/Rbs/Catalog/BillingArea/:id/:LCID',
-				'list': '/Rbs/Catalog/BillingArea/:LCID',
-				'i18n': '/Rbs/Catalog/BillingArea/:id/:LCID/translate-from/:fromLCID'
-			});
 			return $delegate;
 		}]);
 	}]);
