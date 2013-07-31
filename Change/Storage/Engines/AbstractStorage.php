@@ -46,6 +46,10 @@ abstract class AbstractStorage
 	 */
 	protected $useDBStat = true;
 
+	/**
+	 * @var boolean
+	 */
+	protected $updateDBStat = false;
 
 
 	function __construct($name, array $config)
@@ -152,11 +156,11 @@ abstract class AbstractStorage
 	abstract public function stream_close();
 
 	/**
-	 * @param string $path
+	 * @param array $info (from parse_url)
 	 * @param integer $flags
 	 * @return array mixed
 	 */
-	abstract public function url_stat($path, $flags);
+	abstract public function url_stat($info, $flags);
 
 
 	/**

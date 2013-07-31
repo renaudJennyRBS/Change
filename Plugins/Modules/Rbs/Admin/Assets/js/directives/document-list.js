@@ -677,7 +677,7 @@
 									var previewPromises = [];
 									delete current.__dlPreviewLoading;
 									// Copy the current's META$ information into the newly loaded document.
-									angular.extend(doc.META$, current.META$);
+									//angular.extend(doc.META$, current.META$);
 									doc.__dlPreview = true;
 									doc.META$.modelInfo = modelInfo;
 

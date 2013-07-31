@@ -1222,6 +1222,10 @@
 									}
 								}
 							}
+							else if (angular.isString(storage))
+							{
+								return storage;
+							}
 							else (!storage)
 							{
 								return null;

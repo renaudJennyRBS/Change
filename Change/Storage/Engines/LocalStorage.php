@@ -24,7 +24,7 @@ class LocalStorage extends AbstractStorage
 	/**
 	 * @var string
 	 */
-	protected $path;
+	protected $dbPath;
 
 	/**
 	 * @param string $basePath
@@ -76,7 +76,7 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function getPublicURL($url)
 	{
-		if ($this->baseURL)
+		if ($this->baseURL !== false)
 		{
 			$infos = parse_url($url);
 			if ($infos && isset($infos['path']))
@@ -109,8 +109,8 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function stream_open($parsedUrl, $mode, $options, &$opened_path, &$context)
 	{
-		$this->path = $parsedUrl['path'];
-		$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+		$this->dbPath = $this->buildDbPath($parsedUrl);
+		$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
 		\Change\StdLib\File::mkdir(dirname($fileName));
 		$this->resource = @fopen($fileName, $mode);
 		return is_resource($this->resource);
@@ -131,6 +131,7 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function stream_write($data)
 	{
+		$this->updateDBStat = true;
 		return fwrite($this->resource, $data);
 	}
 
@@ -141,11 +142,11 @@ class LocalStorage extends AbstractStorage
 	{
 		fclose($this->resource);
 		unset($this->resource);
-		if ($this->useDBStat)
+		if ($this->useDBStat && $this->updateDBStat)
 		{
-			$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+			$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->dbPath);
 			$infos = array('stats' => @stat($fileName));
-			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->path, $infos);
+			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->dbPath, $infos);
 		}
 	}
 
@@ -158,13 +159,13 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param string $path
+	 * @param array $info (from parse_url)
 	 * @param integer $flags
 	 * @return array mixed
 	 */
-	public function url_stat($path, $flags)
+	public function url_stat($info, $flags)
 	{
-		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $path);
+		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $info['path']);
 		if ((STREAM_URL_STAT_QUIET & $flags) === STREAM_URL_STAT_QUIET)
 		{
 			if (!file_exists($filename))
@@ -182,8 +183,8 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function dir_opendir($parsedUrl, $options)
 	{
-		$this->path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
-		$dirName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->path);
+		$this->dbPath = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
+		$dirName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->dbPath);
 		$this->resource = @opendir($dirName);
 		return is_resource($this->resource);
 	}
@@ -224,6 +225,10 @@ class LocalStorage extends AbstractStorage
 		if (isset($parsedUrl['path']))
 		{
 			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+		}
+		if ($this->useDBStat)
+		{
+			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($parsedUrl), null);
 		}
 		return @unlink($filename);
 	}
@@ -346,8 +351,21 @@ class LocalStorage extends AbstractStorage
 			{
 				$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
 			}
+			if ($this->useDBStat)
+			{
+				$infos = array('stats' => @stat($filename));
+				$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($parsedUrl), $infos);
+			}
 			return @touch($filename, isset($var[0])? $var[0] : null, isset($var[1])? $var[1] : null);
 		}
 		return false;
+	}
+
+	/**
+	 * @param $parsedUrl
+	 */
+	protected function buildDbPath($parsedUrl)
+	{
+		return isset($parsedUrl['query']) ? $parsedUrl['path'] . '?' . $parsedUrl['query'] : $parsedUrl['path'];
 	}
 }

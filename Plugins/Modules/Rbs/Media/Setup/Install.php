@@ -18,12 +18,13 @@ class Install
 		$config = $application->getConfiguration();
 		$images = array('class' => '\\Change\\Storage\\Engines\\LocalStorage',
 			'basePath' => $application->getWorkspace()->appPath('Storage', 'images'),
-			'useDBStat' => true, 'baseURL' => false
+			'formattedPath' => $application->getWorkspace()->cachePath('Imagestorage', 'images'),
+			'useDBStat' => true, 'baseURL' => ""
 		);
+
 		$config->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::INSTANCE);
-
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Media', '\\Rbs\\Media\\Http\\Rest\\ListenerAggregate');
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
-
 	}
 
 
