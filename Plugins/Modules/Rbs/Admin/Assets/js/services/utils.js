@@ -337,6 +337,10 @@
 			return angular.lowercase(s1) === angular.lowercase(s2);
 		},
 
+		containsIgnoreCase : function (haystack, needle) {
+			return angular.lowercase(haystack).indexOf(angular.lowercase(needle)) !== -1;
+		},
+
 
 		/**
 		 * Converts camel case name to HTML attribute name.
