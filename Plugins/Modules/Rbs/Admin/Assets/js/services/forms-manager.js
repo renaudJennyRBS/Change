@@ -250,7 +250,7 @@
 			// Init scope data and functions.
 
 			scope.document = {};
-			scope.language = $routeParams.LCID || Settings.get('language');
+			scope.language = $routeParams.LCID || Settings.get('LCID');
 			scope.parentId = $routeParams.parentId || null;
 
 			scope.hasCorrection = function () {

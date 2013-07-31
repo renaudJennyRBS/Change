@@ -308,7 +308,7 @@
 			 */
 			scope.cascadeCreate = function (doc, collapsedTitle, callback) {
 				if (angular.isString(doc)) {
-					doc = REST.newResource(doc, scope.document.LCID || Settings.get('language'));
+					doc = REST.newResource(doc, scope.document.LCID || Settings.get('LCID'));
 				}
 				FormsManager.cascadeEditor(doc, collapsedTitle || scope.document.label, callback);
 			};

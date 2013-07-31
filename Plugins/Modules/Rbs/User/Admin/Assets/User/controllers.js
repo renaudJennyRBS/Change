@@ -8,29 +8,21 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
-	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
+	 * @param i18n
 	 * @constructor
 	 */
-	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
 		]);
 
-		var DL = DocumentList.initScope($scope, 'Rbs_User_User');
-		DL.viewMode = 'list';
-		DL.sort.column = 'modificationDate';
-		DL.sort.descending = true;
-
-		// Configure DataTable columns
-		DL.columns.push({ id: 'activated', label: i18n.trans('m.rbs.admin.admin.js.activated | ucf'), width: "90px", align: "center", sortable: true });
-
 		MainMenu.loadModuleMenu('Rbs_User');
 	}
 
-	ListController.$inject = ['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Rbs_User_User_ListController', ListController);
 
 	/**

@@ -20,11 +20,12 @@ class Register implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_RESOURCES, function(Event $event)
 		{
 			$body = array('
-	<script type="text/javascript" src="Rbs/User/js/admin.js">​</script>
-	<script type="text/javascript" src="Rbs/User/User/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/User/User/editor.js">​</script>
-	<script type="text/javascript" src="Rbs/User/Group/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/User/Group/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/User/js/admin.js"></script>
+	<script type="text/javascript" src="Rbs/User/User/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/User/User/editor.js"></script>
+	<script type="text/javascript" src="Rbs/User/Group/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/User/Group/editor.js"></script>
+	<script type="text/javascript" src="Rbs/User/Profile/controllers.js"></script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 
 			$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();

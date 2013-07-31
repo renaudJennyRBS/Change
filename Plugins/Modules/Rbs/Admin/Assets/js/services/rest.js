@@ -22,11 +22,10 @@
 			'$http', '$location', '$q', '$timeout', '$rootScope',
 			'RbsChange.Utils',
 			'RbsChange.ArrayUtils',
-			'RbsChange.Settings',
 			'RbsChange.UrlManager',
 			'RbsChange.i18n',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, Settings, UrlManager, i18n) {
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, i18n) {
 
 				if ( ! REST_BASE_URL ) {
 					REST_BASE_URL = $location.protocol() + '://' + $location.host();
@@ -35,6 +34,8 @@
 					}
 					REST_BASE_URL += '/rest.php/';
 				}
+
+				var language = 'fr_FR';
 
 
 				function ChangeDocument () {
@@ -285,7 +286,7 @@
 				function getHttpConfig (transformResponseFn) {
 					var config = {
 						'headers': {
-							'Accept-Language': angular.lowercase(Settings.language).replace('_', '-')
+							'Accept-Language': angular.lowercase(language).replace('_', '-')
 						}
 					};
 
@@ -394,6 +395,15 @@
 					 */
 					'getBaseUrl' : function (relativePath) {
 						return REST_BASE_URL + relativePath;
+					},
+
+
+					/**
+					 * @param lang
+					 */
+					'setLanguage' : function (lang) {
+						language = lang;
+						console.log("REST: Language changed to ", language);
 					},
 
 

@@ -1,7 +1,20 @@
 <div>
 	<p>{{ i18n('m.rbs.admin.forms.time-zone-selector-text') }}</p>
-	<select size="10" data-ng-options="getTimeZoneLabel(tz) for tz in timeZones" data-ng-model="selectedTimeZone"></select>
+
+	<form class="rbs-form-simple-filter" filter="tzFilter"></form>
+	<select class="input-block-level" size="7" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="selectedTimeZone"></select>
+	<div class="well well-small margin-top">
+		<i class="icon-time icon-4x pull-left"></i>
+		{{ i18n('m.rbs.admin.forms.current-time-in-selected-timezone', ['ucf']) }}
+		<h4>(= formattedTz =) <span class="muted">(GMT (= tzOffset =))</span></h4>
+	</div>
+
 	<div class="form-actions">
-		<button type="button" class="btn btn-primary" ng-click="select('form')">{{ i18n('m.rbs.admin.submit', ['ucf']) }}</button>
+		<button type="button" class="btn pull-right" ng-click="cancel()">{{ i18n('m.rbs.admin.cancel', ['ucf']) }}</button>
+		<button type="button" class="btn btn-primary pull-right" ng-click="select()"><span ng-if="!saveSetting">{{ i18n('m.rbs.admin.forms.use', ['ucf']) }}</span><span ng-if="saveSetting">{{ i18n('m.rbs.admin.forms.always-use', ['ucf']) }}</span></button>
+		<label class="checkbox">
+			{{ i18n('m.rbs.admin.forms.always-use-this-timezone', ['ucf']) }}
+			<input type="checkbox" ng-model="saveSetting"/>
+		</label>
 	</div>
 </div>

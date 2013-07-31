@@ -4,9 +4,9 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsItemsFromCollection', ['RbsChange.REST', '$timeout', rbsItemsFromCollectionDirective]);
+	app.directive('rbsItemsFromCollection', ['RbsChange.REST', 'RbsChange.Utils', rbsItemsFromCollectionDirective]);
 
-	function rbsItemsFromCollectionDirective (REST, $timeout) {
+	function rbsItemsFromCollectionDirective (REST, Utils) {
 
 		return {
 			restrict : 'A',
@@ -17,6 +17,7 @@
 				var ngModelReady = false;
 				var collectionLoaded = false;
 				var paramsAttrReady = elm.is('[rbs-items-collection-params]') ? false : true;
+				var items, itemsFilter;
 				if (!paramsAttrReady)
 				{
 					// It seems that $observe always gets called *before* $render
@@ -37,7 +38,6 @@
 						return;
 					}
 					collectionLoaded = true;
-					elm.find('option:not([data-option-from-template])').remove();
 					var params = {code: attrs.rbsItemsFromCollection};
 					if (attrs.rbsItemsCollectionParams)
 					{
@@ -49,14 +49,8 @@
 					}
 					REST.action('collectionItems', params)
 						.then(function (data) {
-							angular.forEach(data.items, function (item, value) {
-								var $opt = $('<option></option>');
-								$opt
-									.attr('value', value)
-									.text(item.label)
-									.appendTo(elm);
-							});
-							selectCurrentOption();
+							items = data.items;
+							redraw();
 						},
 						function () {
 							$('<option></option>')
@@ -64,6 +58,21 @@
 								.text("Unable to load Collection '" + attrs.rbsItemsFromCollection + "'.")
 								.appendTo(elm);
 						});
+				}
+
+
+				function redraw () {
+					elm.find('option:not([data-option-from-template])').remove();
+					angular.forEach(items, function (item, value) {
+						if (! itemsFilter || Utils.containsIgnoreCase(item.label, itemsFilter) || Utils.containsIgnoreCase(value, itemsFilter)) {
+							var $opt = $('<option></option>');
+							$opt
+								.attr('value', value)
+								.text(item.label)
+								.appendTo(elm);
+						}
+					});
+					selectCurrentOption();
 				}
 
 				function selectCurrentOption () {
@@ -76,7 +85,6 @@
 						{
 							$(this).removeAttr('selected');
 						}
-
 					});
 				}
 
@@ -85,6 +93,17 @@
 					loadCollection();
 					selectCurrentOption();
 				};
+
+
+				if (attrs.filter) {
+					scope.$watch(attrs.filter, function (filter, old) {
+						console.log("filter=", filter);
+						if (filter !== old) {
+							itemsFilter = filter;
+							redraw();
+						}
+					}, true);
+				}
 			}
 		};
 	}

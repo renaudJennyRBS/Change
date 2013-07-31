@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, $script, moment) {
 
 	"use strict";
 
@@ -10,20 +10,40 @@
 	var isNativeDatePickerAvailable = inputEl.type === 'date';
 
 
+	function loadTimeZoneInfo (timeZone, callback, Loading) {
+		console.log("loadTimeZoneInfo: ", timeZone);
+		var continent = timeZone.substring(0, timeZone.indexOf('/'));
+		if (Loading) {
+			Loading.start("Chargement des informations de zone pour " + continent); // TODO i18n
+		}
+		$script('Rbs/Admin/lib/moment/tz/' + continent + '.js', function () {
+			if (Loading) {
+				Loading.stop();
+			}
+			if (angular.isFunction(callback)) {
+				callback();
+			}
+		});
+	}
+
+
 	/**
 	 * @name dateSelector
 	 */
-	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', function (Dialog, $rootScope, i18n) {
+	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', 'RbsChange.Settings', function (Dialog, $rootScope, i18n, Settings) {
 		return {
 			restrict    : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/date-selector.twig',
-			require     : 'ng-model',
+			require     : 'ngModel',
 			replace     : true,
 			scope       : true,
 
 			link : function (scope, elm, attrs, ngModel) {
 
-				scope.timeZone = $rootScope.settings.timeZone;
+				Settings.ready().then(function () {
+					scope.timeZone = Settings.get('TimeZone');
+					loadTimeZoneInfo(scope.timeZone);
+				});
 
 				var	dInput = $(elm).find('[data-role="input-date"]').first(),
 					hInput = $(elm).find('[data-role="input-hour"]').first(),
@@ -44,9 +64,23 @@
 					);
 				};
 
+				function setTimeZone (tz) {
+					console.log("setTimeZone: tz=", tz);
+					loadTimeZoneInfo(tz, function () {
+						scope.$apply(function () {
+							ngModel.$setViewValue(getFullDate());
+						});
+					});
+				}
+
+				scope.$on('Change:TimeZoneChanged', function (event, tz) {
+					console.log("on TimeZoneChanged: tz=", tz);
+					scope.timeZone = tz;
+				});
+
 				scope.$watch('timeZone', function (newValue, oldValue) {
 					if (newValue !== oldValue && ngModel.$viewValue) {
-						ngModel.$setViewValue(getFullDate());
+						setTimeZone(newValue);
 					}
 				}, true);
 
@@ -55,9 +89,7 @@
 				}
 
 				ngModel.$render = function () {
-
 					if (ngModel.$viewValue && !(angular.isNumber(ngModel.$viewValue) && isNaN(ngModel.$viewValue))) {
-
 						if (isNativeDatePickerAvailable) {
 							dInput.val(moment(ngModel.$viewValue).format('YYYY-MM-DD'));
 						} else {
@@ -94,16 +126,17 @@
 				}
 
 				// Merge the date coming from the "datepicker" and the hour/minute information coming from the
-				// two additional input fields. The result is a Date object correctly set. (Well, I hope.)
+				// two additional input fields. The result is a Date object correctly set.
 				function getFullDate () {
 					var date = getDateValue();
 					if (date == null)
 					{
 						return null;
 					}
-					return moment(date).hours(parseInt(hInput.val(), 10))
-								.minutes(parseInt(mInput.val(), 10))
-						 		.second(0).milliseconds(0).toDate();
+
+					return moment.utc(date).tz(scope.timeZone).hours(parseInt(hInput.val(), 10))
+						.minutes(parseInt(mInput.val(), 10))
+						.second(0).milliseconds(0).toDate();
 				}
 
 			}
@@ -114,7 +147,7 @@
 	/**
 	 * @name timeZoneSelector
 	 */
-	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', function ($rootScope, Dialog) {
+	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.Settings', function ($rootScope, Dialog, Loading, Settings) {
 		return {
 			restrict    : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/time-zone-selector.twig',
@@ -124,55 +157,41 @@
 				"timeZone" : "="
 			},
 
-			link : function (scope) {
-				// FIXME Load time zones from the server
-				scope.timeZones = [
-					{
-						'code'  : 'GMT',
-						'label' : "Greenwich",
-						'offset': '+00:00'
-					},
-					{
-						'code'  : 'GMT+1',
-						'label' : "Paris, Madrid",
-						'offset': '+01:00'
-					},
-					{
-						'code'  : 'GMT+2',
-						'label' : "South Africa",
-						'offset': '+02:00'
-					}
-				];
+			link : function (scope, elm) {
 
-				// Because ngOptions (see the template) only checks equality on objects reference, we need to
-				// loop through the options to find which one corresponds to the given time zone (scope.timeZone).
+				scope.$watch('selectedTimeZone', function (tz) {
+					if (tz) {
+						loadTimeZoneInfo(tz, function () {
+							var now = moment().tz(tz);
+							scope.$apply(function () {
+								scope.formattedTz = now.format('LLLL');
+								scope.tzOffset = now.format('Z');
+							});
+						}, Loading);
+					}
+				});
+
 				if (scope.timeZone) {
-					var i;
-					for (i=0 ; i<scope.timeZones.length ; i++) {
-						if (scope.timeZone.code === scope.timeZones[i].code) {
-							scope.selectedTimeZone = scope.timeZones[i];
-							break;
-						}
-					}
-				}
-				if (!scope.selectedTimeZone) {
-					scope.selectedTimeZone = scope.timeZones[0];
+					scope.selectedTimeZone = scope.timeZone;
 				}
 
-
-				// ngOptions does not provide formatting facilities, so here is a small function to format
-				// the label of the time zones displayed in the <select/> element.
-				scope.getTimeZoneLabel = function (tz) {
-					return tz.label + ' (' + tz.code + ')';
-				};
-
+				scope.$on('$destroy', function () {
+					Dialog.closeEmbedded();
+				});
 
 				scope.select = function () {
 					scope.timeZone = scope.selectedTimeZone;
-					Dialog.closeEmbedded();
+					angular.element(elm.closest('form')).scope().$broadcast('Change:TimeZoneChanged', scope.timeZone);
+					if (scope.saveSetting) {
+						Settings.set('TimeZone', scope.timeZone, true).then(function () {
+							Dialog.closeEmbedded();
+						});
+					} else {
+						Dialog.closeEmbedded();
+					}
 				};
 			}
 		};
 	}]);
 
-})(window.jQuery);
+})(window.jQuery, $script, moment);

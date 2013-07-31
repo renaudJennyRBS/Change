@@ -6,6 +6,7 @@ use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
+use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
 /**
  * @name \Rbs\Admin\Http\Rest\AdminResolver
@@ -63,9 +64,18 @@ class AdminResolver
 			$actionName = $resourceParts[0];
 			if ($actionName === 'currentUser')
 			{
-				$action = new GetCurrentUser();
-				$event->setAction(function($event) use($action) {$action->execute($event);});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				if ($method === Request::METHOD_GET)
+				{
+					$action = new GetCurrentUser();
+					$event->setAction(function($event) use($action) {$action->execute($event);});
+					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				}
+				elseif ($method === Request::METHOD_PUT)
+				{
+					$action = new UpdateCurrentUser();
+					$event->setAction(function($event) use($action) {$action->execute($event);});
+					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				}
 			}
 			if ($actionName === 'currentTasks')
 			{
