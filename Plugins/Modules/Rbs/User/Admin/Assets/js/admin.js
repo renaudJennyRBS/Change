@@ -30,9 +30,9 @@
 			})
 
 		. when(
-			'/Rbs/User/Login',
+			'/Rbs/User/Profile',
 			{
-				templateUrl : 'Rbs/User/login.twig',
+				templateUrl : 'Rbs/User/Profile/profile.twig',
 				reloadOnSearch : false
 			})
 
@@ -64,7 +64,7 @@
 				reloadOnSearch : false
 			})
 
-			. when(
+		. when(
 			'/Rbs/User/Group/:id/Permission/',
 			{
 				templateUrl : 'Rbs/User/User/permission.twig',

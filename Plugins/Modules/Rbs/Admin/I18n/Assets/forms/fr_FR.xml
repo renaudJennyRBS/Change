@@ -5,8 +5,8 @@
 	<key id="afterSaveStay">rester sur ce formulaire</key>
 	<key id="afterSaveGoList">retourner à la liste</key>
 	<key id="btnGoBack" format="html"><![CDATA[retourner<small>à la liste</small>]]></key>
-	<key id="btnSave" format="html"><![CDATA[enregistrer<small>les modifications ((=changes.length=))</small>]]></key>
-	<key id="btnRevert" format="html"><![CDATA[annuler<small>les modifications ((=changes.length=))</small>]]></key>
+	<key id="btnSave" format="html"><![CDATA[enregistrer<small>les modifications <span ng-if="changes.length">((=changes.length=))</span></small>]]></key>
+	<key id="btnRevert" format="html"><![CDATA[annuler<small>les modifications <span ng-if="changes.length">((=changes.length=))</span></small>]]></key>
 	<key id="btnCancelCascade" format="html"><![CDATA[annuler<small>et retourner au formulaire parent</small>]]></key>
 	<key id="propertiesModifiedPluralize">{'0': 'Aucune propriété n\'a été modifiée.', 'one': 'Une propriété a été modifiée.', 'other': '{} propriétés ont été modifiées.'}</key>
 
@@ -15,7 +15,11 @@
 	<key id="date-selector-hour-letter">H</key>
 	<key id="date-selector-lang">fr</key>
 
-	<key id="time-zone-selector-text">Vous pouvez choisir d'utiliser ce fuseau horaire pour le formulaire en cours uniquement, pour votre session ou pour toujours.</key>
+	<key id="time-zone-selector-text" format="html"><![CDATA[Vous pouvez choisir d'utiliser ce fuseau horaire pour le formulaire en cours uniquement ou pour toujours (enregistré dans <a href="Rbs/User/Profile">vos paramètres de profil</a>).]]></key>
+	<key id="always-use-this-timezone">toujours utiliser ce fuseau horaire</key>
+	<key id="current-time-in-selected-timezone">heure actuelle dans la zone sélectionnée :</key>
+	<key id="use">utiliser</key>
+	<key id="always-use">utiliser toujours</key>
 
 	<key id="picker-no-element">aucun élément</key>
 	<key id="picker-edit-tooltip">éditer les propriétés du document sélectionné</key>

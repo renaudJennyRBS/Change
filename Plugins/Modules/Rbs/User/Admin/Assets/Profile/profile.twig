@@ -1,0 +1,47 @@
+<form class="form-horizontal" novalidate ng-submit="saveProfile()" name="form" ng-controller="Rbs_User_Profile_Controller">
+
+	<h3>Internationalisation</h3>
+
+	<div class="control-group">
+		<label class="control-label" for="LCID">{{ i18n('m.rbs.user.profile.lcid', ['ucf']) }}</label>
+		<div class="controls">
+			<select id="LCID" rbs-items-from-collection="Rbs_Generic_Collection_Languages" ng-model="user.profile.LCID"></select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="timeZone">{{ i18n('m.rbs.user.profile.timezone', ['ucf']) }}</label>
+			<div class="controls"><div class="rbs-form-simple-filter" filter="tzFilter" style="clear:none;"></div>
+			<select id="timeZone" class="input-block-level" size="10" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="user.profile.TimeZone"></select>
+		</div>
+	</div>
+
+	<h3>Affichage des listes</h3>
+
+	<div class="control-group">
+		<label class="control-label" for="pagingSize">{{ i18n('m.rbs.user.profile.pagingSize', ['ucf']) }}</label>
+		<div class="controls">
+			<select id="pagingSize" class="input-small" ng-model="user.profile.pagingSize" ng-options="size for size in PaginationPageSizes"></select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="documentListViewMode">{{ i18n('m.rbs.user.profile.documentListViewMode', ['ucf']) }}</label>
+		<div class="controls">
+			<div class="btn-group">
+				<button type="button" class="btn" ng-class="{'active':user.profile.documentListViewMode == 'list'}" ng-click="user.profile.documentListViewMode = 'list'"><i class="icon-list"></i> {{ i18n('m.rbs.user.profile.list', ['ucf']) }}</button>
+				<button type="button" class="btn" ng-class="{'active':user.profile.documentListViewMode == 'grid'}" ng-click="user.profile.documentListViewMode = 'grid'"><i class="icon-th-large"></i> {{ i18n('m.rbs.user.profile.grid', ['ucf']) }}</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="avatar">{{ i18n('m.rbs.user.profile.avatar', ['ucf']) }}</label>
+		<div class="controls">
+			<input type="text" id="avatar" class="input-block-level" name="avatar" ng-model="user.profile.avatar"/>
+		</div>
+	</div>
+
+	<div class="form-actions">
+		<button disabled="disabled" class="btn btn-headline" type="button" ng-click="revert($event)" ng-disabled="isUnchanged()"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.forms.btnRevert', ['ucf']) }}</button>
+		<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" type="submit"
+		        ng-disabled="form.$invalid || isUnchanged()"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.forms.btnSave', ['ucf']) }}</button>
+	</div>
+</form>

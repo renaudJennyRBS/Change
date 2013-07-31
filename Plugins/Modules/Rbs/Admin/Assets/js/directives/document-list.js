@@ -15,7 +15,6 @@
 		'display'  : 'inline-block'
 	}).appendTo('body');
 
-
 	var	app = angular.module('RbsChange'),
 		__columns = {},
 		__preview = {},
@@ -23,10 +22,11 @@
 		__quickActions = {},
 		// FIXME: Hard-coded values here.
 		PAGINATION_DEFAULT_LIMIT = 20,
-		PAGINATION_PAGE_SIZES = [ 10, 20, 30, 50, 75, 100 ],
 		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
 		testerEl = $('#rbs-document-list-tester'),
 		forEach = angular.forEach;
+
+	app.constant('RbsChange.PaginationPageSizes', [ 10, 20, 30, 50, 75, 100 ]);
 
 	app.directive('rbsDocumentList', [
 		'$q',
@@ -46,11 +46,12 @@
 		'RbsChange.Settings',
 		'RbsChange.FormsManager',
 		'RbsChange.Events',
+		'RbsChange.PaginationPageSizes',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events, PaginationPageSizes) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -760,7 +761,7 @@
 						total  : 0
 					};
 
-					scope.predefinedPageSizes = PAGINATION_PAGE_SIZES;
+					scope.predefinedPageSizes = PaginationPageSizes;
 					scope.pages = [];
 					scope.currentPage = 0;
 					scope.currentTag = 0;

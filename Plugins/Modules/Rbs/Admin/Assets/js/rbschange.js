@@ -6,7 +6,7 @@
 	$.fn.reverse = [].reverse;
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'ngMobile', 'OAuthModule']);
+	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'ngMobile', 'ngCookies', 'OAuthModule']);
 
 
 	//-------------------------------------------------------------------------
@@ -233,60 +233,25 @@
 	 * This Controller is bound to the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication and settings.
 	 */
-	app.controller('Change.RootController', ['$rootScope', '$filter', '$location', 'RbsChange.Settings', 'RbsChange.Utils', 'RbsChange.REST', 'OAuthService', function ($rootScope, $filter, $location, Settings, Utils, REST, OAuthService) {
+	app.controller('Change.RootController', ['$rootScope', 'RbsChange.User', '$location', function ($rootScope, User, $location) {
 
-		$rootScope.setLanguage = function (lang) {
-			// TODO Save settings on the server.
-			$rootScope.language = Settings.language = lang;
-		};
-
-		$rootScope.logout = function () {
-			OAuthService.logout();
-			loadCurrentUser();
-		};
+		if ($location.path() !== '/authenticate') {
+			User.init();
+		}
 
 		$rootScope.$on('OAuth:AuthenticationSuccess', function () {
-			loadCurrentUser();
-			$rootScope.$apply(function () {
+			console.log("User:AuthenticationSuccess");
+			User.load().then(function () {
 				$location.url($location.search()['route']);
+
 			});
 		});
 
-		function loadCurrentUser()
-		{
-			REST.call(REST.getBaseUrl('admin/currentUser/')).then(function (result) {
-				$rootScope.user = result.properties;
-			}, function (error) {
-				if (error.status == 401 || error.status == 403)
-				{
-					OAuthService.logout();
-					var callbackUrl = document.getElementsByTagName('base')[0].href + 'authenticate?route=' + encodeURIComponent($location.url());
-					OAuthService.startAuthentication(callbackUrl);
-				}
-				else
-				{
-					console.error(error);
-				}
-			});
-		}
-
-		if ($location.path() !== '/authenticate')
-		{
-			if (OAuthService.hasOAuthData())
-			{
-				loadCurrentUser();
-			}
-			else
-			{
-				var callbackUrl = document.getElementsByTagName('base')[0].href + 'authenticate?route=' + encodeURIComponent($location.url());
-				OAuthService.startAuthentication(callbackUrl);
-			}
-		}
 	}]);
 
 	//=========================================================================
 
-
+/*
 	$('body').on('click', '[data-role="close"][data-parent]', function () {
 		var $this = $(this);
 		var parent = $this.attr('data-parent');
@@ -322,6 +287,6 @@
 
 	// Fix for mobile devices (iPad)
 	$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
-
+*/
 
 })( window.jQuery );

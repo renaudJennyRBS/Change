@@ -56,10 +56,12 @@
 					switch ($event.keyCode) {
 						// TAB
 						case 9 :
-							$event.stopPropagation();
-							$event.preventDefault();
-							scope.onTab();
-							scope.clear();
+							if (elm.is('[on-tab]')) {
+								$event.stopPropagation();
+								$event.preventDefault();
+								scope.onTab();
+								scope.clear();
+							}
 							break;
 					}
 				};
