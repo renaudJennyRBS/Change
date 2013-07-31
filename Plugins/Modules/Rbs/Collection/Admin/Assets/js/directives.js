@@ -97,7 +97,6 @@
 
 				if (attrs.filter) {
 					scope.$watch(attrs.filter, function (filter, old) {
-						console.log("filter=", filter);
 						if (filter !== old) {
 							itemsFilter = filter;
 							redraw();

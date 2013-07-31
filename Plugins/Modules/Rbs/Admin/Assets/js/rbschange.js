@@ -249,44 +249,4 @@
 
 	}]);
 
-	//=========================================================================
-
-/*
-	$('body').on('click', '[data-role="close"][data-parent]', function () {
-		var $this = $(this);
-		var parent = $this.attr('data-parent');
-		if (parent.substring(0, 9) === 'popover:#') {
-			$(parent.substring(8, parent.length)).popover('hide');
-		} else {
-			$this.closest(parent).hide();
-		}
-	});
-
-	$('body').on('click', '[data-toggle-class]', function () {
-		var $this = $(this);
-		var val = $this.data('toggleClass');
-		var p = val.indexOf(' ');
-		var cls = val.substring(0, p);
-		var sel = val.substring(p + 1);
-		$(sel).toggleClass(cls);
-	});
-
-	$('body').on('change', ':checkbox[data-toggle-class]', function () {
-		var $this = $(this);
-		var val = $this.data('toggleClass');
-		var p = val.indexOf(' ');
-		var cls = val.substring(0, p);
-		var inverse = false;
-		if (cls.charAt(0) === '!') {
-			cls = cls.substring(1, cls.length);
-			inverse = true;
-		}
-		var sel = val.substring(p + 1);
-		$(sel).toggleClass(cls, inverse ? ! $this.prop('checked') : $this.prop('checked'));
-	});
-
-	// Fix for mobile devices (iPad)
-	$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
-*/
-
 })( window.jQuery );
