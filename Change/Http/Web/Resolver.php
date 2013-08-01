@@ -2,6 +2,7 @@
 namespace Change\Http\Web;
 
 use Change\Http\BaseResolver;
+use Change\Http\Web\Actions\GetImagestorageItemContent;
 use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\GetStorageItemContent;
@@ -128,6 +129,28 @@ class Resolver extends BaseResolver
 				$event->setParam('changeURI', $changeURI);
 				$action = function($event) {
 					$action = new GetStorageItemContent();
+					$action->execute($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+
+			if (preg_match('/^Imagestorage\/([A-Za-z0-9]+)\/([0-9]+)\/([0-9]+)(\/.+)$/', $relativePath, $matches))
+			{
+				$storageName = $matches [1];
+				$maxWidth = intval($matches[2]);
+				$maxHeight = intval($matches[3]);
+				$path = $matches[4];
+
+				$originalURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, $path);
+				$changeURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, $path, array('max-width' => $maxWidth, 'max-height' => $maxHeight));
+
+				$event->setParam('originalURI', $originalURI);
+				$event->setParam('changeURI', $changeURI);
+				$event->setParam('maxWidth', $maxWidth);
+				$event->setParam('maxHeight', $maxHeight);
+				$action = function($event) {
+					$action = new GetImagestorageItemContent();
 					$action->execute($event);
 				};
 				$event->setAction($action);

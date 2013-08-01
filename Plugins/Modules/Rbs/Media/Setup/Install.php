@@ -16,14 +16,18 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$images = array('class' => '\\Change\\Storage\\Engines\\LocalStorage',
+
+		$images = $config->getEntry('Change/Storage/images', array());
+		$images = array_merge( array(
+			'class' => '\\Change\\Storage\\Engines\\LocalImageStorage',
 			'basePath' => $application->getWorkspace()->appPath('Storage', 'images'),
-			'useDBStat' => true, 'baseURL' => false
-		);
+			'formattedPath' => $application->getWorkspace()->cachePath('Imagestorage', 'images'),
+			'useDBStat' => true,
+			'baseURL' => "/index.php"
+		), $images);
 		$config->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::INSTANCE);
-
+		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Media', '\\Rbs\\Media\\Http\\Rest\\ListenerAggregate');
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
-
 	}
 
 

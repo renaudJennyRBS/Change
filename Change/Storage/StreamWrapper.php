@@ -184,7 +184,7 @@ class StreamWrapper
 			{
 				$infos['path'] = '/';
 			}
-			return $storage->url_stat($infos['path'], $flags);
+			return $storage->url_stat($infos, $flags);
 		}
 		elseif ($this->maskHasFlag($flags, STREAM_URL_STAT_QUIET))
 		{

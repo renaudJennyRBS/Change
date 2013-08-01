@@ -189,7 +189,6 @@ class StorageManager
 	{
 		$itemInfo = $this->getItemInfo($url);
 		return $itemInfo ? $itemInfo->getPublicURL() : null;
-
 	}
 
 	/**
