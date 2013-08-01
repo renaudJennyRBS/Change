@@ -4,6 +4,7 @@ namespace Rbs\Media\Documents;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
+use Rbs\Media\Std\Resizer;
 
 /**
  * @name \Rbs\Media\Documents\Image
@@ -20,10 +21,11 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	 */
 	public function getImageSize()
 	{
+		// Load the storage manager even if not used in the function itself
 		$sm = $this->getApplicationServices()->getStorageManager();
 		if ($this->imageSize === false)
 		{
-			$this->imageSize = getimagesize($this->getPath());
+			$this->imageSize = (new Resizer())->getImageSize($this->getPath());
 		}
 		return $this->imageSize;
 	}
@@ -36,7 +38,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	 */
 	public function getWidth()
 	{
-		return $this->getImageSize()[0];
+		return $this->getImageSize()['width'];
 	}
 
 	/**
@@ -57,8 +59,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	 */
 	public function getHeight()
 	{
-		return $this->getImageSize()[1];
-		// TODO: Implement getHeight() method.
+		return $this->getImageSize()['height'];
 	}
 
 	/**
@@ -137,16 +138,6 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 					$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl');
 					$result->addAction($link);
 				}
-				$link = array('rel' => 'thumbxs', 'href' => $document->getPublicURL(57, 32));
-				$result->addLink($link);
-				$link = array('rel' => 'thumbs', 'href' => $document->getPublicURL(100, 56));
-				$result->addLink($link);
-				$link = array('rel' => 'thumbm', 'href' => $document->getPublicURL(177, 100));
-				$result->addLink($link);
-				$link = array('rel' => 'thumbl', 'href' => $document->getPublicURL(267, 150));
-				$result->addLink($link);
-				$link = array('rel' => 'thumbxl', 'href' => $document->getPublicURL(356, 200));
-				$result->addLink($link);
 			}
 			else if ($result instanceof DocumentLink)
 			{

@@ -1,13 +1,14 @@
 <?php
-namespace Change\Http\Web\Actions;
+namespace Rbs\Media\Http\Web\Actions;
 
 use Change\Http\Result;
+use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Event;
-use Rbs\Media\Std\GDResizer;
+use Rbs\Media\Std\Resizer;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Change\Http\Web\Actions\GetImagestorageItemContent
+ * @name \CRbs\Media\Http\Web\Actions\GetImagestorageItemContent
  */
 class GetImagestorageItemContent
 {
@@ -35,7 +36,7 @@ class GetImagestorageItemContent
 		}
 		else if (!file_exists($changeURI->toString()))
 		{
-			$resizer = new GDResizer();
+			$resizer = new Resizer();
 			$resizer->resize($originalURI->toString(), $changeURI->toString(), $maxWidth, $maxHeight);
 		}
 		$forwardedAction = new GetStorageItemContent();
