@@ -204,4 +204,144 @@ class PluginManagerTest extends TestCase
 		$theme2 = $pluginManager->load($theme);
 		$this->assertNull($theme2);
 	}
+
+	public function testGetPlugin()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->compile();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $module);
+		$p = $pluginManager->getPlugin(Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
+		$pluginManager->deregister($p);
+		$p2 = $pluginManager->getPlugin(Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertNull($p2);
+		$pluginManager->compile();
+		$p3 = $pluginManager->getPlugin(Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertNull($p3);
+
+		$plugins = $pluginManager->getUnregisteredPlugins();
+		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $theme);
+		$pluginManager->register($theme);
+		$p = $pluginManager->getPlugin(Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
+		$pluginManager->deregister($p);
+		$p2 = $pluginManager->getPlugin(Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertNull($p2);
+		$pluginManager->compile();
+		$p3 = $pluginManager->getPlugin(Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertNull($p3);
+	}
+
+	public function testGetRegisteredPlugins()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$registeredPlugins = $pluginManager->getRegisteredPlugins();
+		$this->assertEmpty($registeredPlugins);
+		$plugins = $pluginManager->getUnregisteredPlugins();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertNotNull($module);
+		$pluginManager->register($module);
+		$plugins = $pluginManager->compile();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertNotNull($module);
+		$registeredPlugins = $pluginManager->getRegisteredPlugins();
+		$this->assertCount(1, $registeredPlugins);
+
+		$plugins = $pluginManager->getUnregisteredPlugins();
+		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertNotNull($theme);
+		$pluginManager->register($theme);
+		$plugins = $pluginManager->compile();
+		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertNotNull($theme);
+		$registeredPlugins = $pluginManager->getRegisteredPlugins();
+		$this->assertCount(2, $registeredPlugins);
+	}
+
+	/**
+	 * @depends testGetRegisteredPlugins
+	 */
+	public function testGetInstalledPlugins()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertEmpty($installedPlugins);
+		$plugins = $pluginManager->compile();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertNotNull($module);
+		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_MODULE, $module->getVendor(), $module->getShortName());
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertCount(1, $installedPlugins);
+
+		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_THEME, $theme->getVendor(), $theme->getShortName());
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertCount(2, $installedPlugins);
+	}
+
+	/**
+	 * @depends testGetInstalledPlugins
+	 */
+	public function testDeinstall()
+	{
+		//TODO improve this test when Setup/Deinstall will be done.
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$pluginManager->compile();
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertCount(2, $installedPlugins);
+		$module = $this->findPlugin($installedPlugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$pluginManager->deinstall($module);
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertCount(1, $installedPlugins);
+		$pluginManager->compile();
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertCount(1, $installedPlugins);
+
+		$theme = $this->findPlugin($installedPlugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$pluginManager->deinstall($theme);
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertEmpty($installedPlugins);
+		$pluginManager->compile();
+		$installedPlugins = $pluginManager->getInstalledPlugins();
+		$this->assertEmpty($installedPlugins);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDeinstallLockedModule()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->compile();
+		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$configuration = $module->getConfiguration();
+		$configuration['locked'] = true;
+		$module->setConfiguration($configuration);
+		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_MODULE, $module->getVendor(), $module->getShortName());
+		$pluginManager->compile();
+		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
+		$pluginManager->deinstall($module);
+	}
+
+	/**
+	 * @depends testDeinstallLockedModule
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDeinstallLockedTheme()
+	{
+		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->compile();
+		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$configuration = $theme->getConfiguration();
+		$configuration['locked'] = true;
+		$theme->setConfiguration($configuration);
+		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_THEME, $theme->getVendor(), $theme->getShortName());
+		$pluginManager->compile();
+		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
+		$pluginManager->deinstall($theme);
+	}
+
+
 }

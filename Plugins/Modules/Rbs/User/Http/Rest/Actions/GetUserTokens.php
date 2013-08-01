@@ -17,7 +17,6 @@ class GetUserTokens
 	{
 
 		$userId = $event->getRequest()->getQuery('userId');
-		$event->getApplicationServices()->getLogging()->fatal(var_export($userId, true));
 
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -35,7 +34,7 @@ class GetUserTokens
 
 		$now = new \DateTime();
 		$sq->bindParameter('accessor_id', $userId);
-		$sq->bindParameter('token_type', 'access');
+		$sq->bindParameter('token_type', \Change\Http\Rest\OAuth\StoredOAuth::TYPE_ACCESS);
 		$sq->bindParameter('validity_date', $now);
 
 		$rowAssoc = $sq->getResults($sq->getRowsConverter()
