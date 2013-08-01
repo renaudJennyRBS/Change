@@ -2,20 +2,34 @@
 namespace Rbs\Media\Std;
 
 /**
- * @name \Rbs\Media\Std\GDResizer
+ * @name \Rbs\Media\Std\GDResizerEngine
  */
-class GDResizer
+class GDResizerEngine
 {
+
+	/**
+	 * @param $path
+	 * @return array
+	 */
+	public function getImageSize($path)
+	{
+		$result = getimagesize($path);
+		return $result ? array('width' => $result[0], 'height' => $result[1]) : array('height' => null, 'width' => null);
+	}
 
 	/**
 	 * @param string $inputFileName
 	 * @param string $formattedFileName
 	 * @param array $formatSizeInfo
-	 * @return boolean true if resized
 	 */
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{
 		$sizeInfo = getimagesize($inputFileName);
+		if ($sizeInfo === false)
+		{
+			copy($inputFileName, $formattedFileName);
+			return;
+		}
 		$imageType = $sizeInfo[2];
 		list ($width, $height) = $this->computeImageSize($sizeInfo[0], $sizeInfo[1], $maxWidth, $maxHeight);
 		if ($width == $sizeInfo[0] && $height == $sizeInfo[1])
