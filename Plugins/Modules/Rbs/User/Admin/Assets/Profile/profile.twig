@@ -1,6 +1,6 @@
 <form class="form-horizontal" novalidate ng-submit="saveProfile()" name="form" ng-controller="Rbs_User_Profile_Controller">
 
-	<h3>Internationalisation</h3>
+	<h4>{{ i18n('m.rbs.user.profile.internationalization', ['ucf']) }}</h4>
 
 	<div class="control-group">
 		<label class="control-label" for="LCID">{{ i18n('m.rbs.user.profile.lcid', ['ucf']) }}</label>
@@ -15,7 +15,8 @@
 		</div>
 	</div>
 
-	<h3>Affichage des listes</h3>
+	<hr/>
+	<h4>{{ i18n('m.rbs.user.profile.lists', ['ucf']) }}</h4>
 
 	<div class="control-group">
 		<label class="control-label" for="pagingSize">{{ i18n('m.rbs.user.profile.pagingSize', ['ucf']) }}</label>
@@ -36,6 +37,19 @@
 		<label class="control-label" for="avatar">{{ i18n('m.rbs.user.profile.avatar', ['ucf']) }}</label>
 		<div class="controls">
 			<input type="text" id="avatar" class="input-block-level" name="avatar" ng-model="user.profile.avatar"/>
+		</div>
+	</div>
+
+	<hr/>
+	<h4>{{ i18n('m.rbs.user.profile.editors', ['ucf']) }}</h4>
+
+	<div class="control-group">
+		<label class="control-label" for="editorActionAfterSave">{{ i18n('m.rbs.user.profile.editorActionAfterSave', ['ucf']) }}</label>
+		<div class="controls">
+			<select id="editorActionAfterSave" ng-model="user.profile.editorActionAfterSave">
+				<option value="list">{{ i18n('m.rbs.user.profile.backtolist', ['ucf']) }}</option>
+				<option value="stay">{{ i18n('m.rbs.user.profile.stayonform', ['ucf']) }}</option>
+			</select>
 		</div>
 	</div>
 

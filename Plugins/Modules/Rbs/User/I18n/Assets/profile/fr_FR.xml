@@ -7,4 +7,10 @@
 	<key id="documentlistviewmode">vue par défaut des listes</key>
 	<key id="list">liste</key>
 	<key id="grid">grille</key>
+	<key id="editoractionaftersave">après l'enregistrement</key>
+	<key id="backtolist">retourner à la liste</key>
+	<key id="stayonform">rester sur le formulaire</key>
+	<key id="internationalization">internationalisation</key>
+	<key id="lists">affichage des listes</key>
+	<key id="editors">éditeurs</key>
 </i18n>

@@ -13,7 +13,9 @@
 
 			link : function (scope, element) {
 
-				scope.actionAfterSave = Settings.get('actionAfterSave', 'list');
+				Settings.ready().then(function () {
+					scope.actionAfterSave = Settings.get('editorActionAfterSave', 'list');
+				});
 
 				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
 				var shouldLoadContents = true;
@@ -80,7 +82,7 @@
 
 
 				scope.$on('Change:DocumentSaved', function (event, doc) {
-					Settings.set('actionAfterSave', scope.actionAfterSave);
+					Settings.set('editorActionAfterSave', scope.actionAfterSave, true);
 					if (scope.actionAfterSave === 'list') {
 						Breadcrumb.goParent();
 					}

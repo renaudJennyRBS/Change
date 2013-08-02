@@ -12,8 +12,9 @@
 
 		return {
 			'set' : function (key, value, save) {
+				var isModified = user.profile[key] !== value;
 				user.profile[key] = value;
-				if (save !== false) {
+				if (isModified && save !== false) {
 					return User.saveProfile(user.profile);
 				}
 				return null;
