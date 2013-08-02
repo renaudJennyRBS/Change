@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.document.tax" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="code">code</key>
+	<key id="cascading">cascading tax</key>
+	<key id="cascading-help">When this option is enabled, the tax calculation is performed on top of the taxes already applied.</key>
+	<key id="rounding">rounding</key>
+	<key id="rounding-help">Configure the rounding mode for this tax (on carts, invoices ...).</key>
+	<key id="data">tax rate (category and zones)</key>
+	<key id="category">category</key>
+	<key id="not-applicable">not applicable</key>
+</i18n>
