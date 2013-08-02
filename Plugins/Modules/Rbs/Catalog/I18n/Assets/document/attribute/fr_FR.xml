@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.document.attribute" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="title">titre</key>
+	<key id="title-help">titre affiché sur le site web</key>
+	<key id="valuetype">type de la valeur de l'attribut</key>
+	<key id="defaultvalue">valeur par défaut de l'attribut</key>
+	<key id="requiredvalue">attribut requis</key>
+	<key id="localizedvalue">valeur localisé</key>
+	<key id="collectioncode">valeur compise dans la collection</key>
+	<key id="productproperty">propriété du produit</key>
+	<key id="attributes">attributs du groupe</key>
+
+	<key id="type-boolean">oui / non</key>
+	<key id="type-integer">nombre entier</key>
+	<key id="type-document">document</key>
+	<key id="type-float">numérique</key>
+	<key id="type-datetime">date</key>
+	<key id="type-code">code ou référence</key>
+	<key id="type-text">texte</key>
+	<key id="type-group">groupe d'attributs</key>
+	<key id="type-property">propriété d'un produit</key>
+</i18n>

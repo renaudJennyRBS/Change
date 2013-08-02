@@ -22,4 +22,7 @@
 	<key id="maxorderquantity-help">Quantité maximum de ce produit que l'on peut commander.</key>
 	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des catégories.</key>
 	<key id="prices">prix</key>
+
+	<key id="attribute">jeu d'attributs</key>
+	<key id="section-attributes">Attributs étendus</key>
 </i18n>

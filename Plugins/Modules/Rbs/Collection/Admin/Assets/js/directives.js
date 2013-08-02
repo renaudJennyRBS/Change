@@ -60,7 +60,6 @@
 						});
 				}
 
-
 				function redraw () {
 					elm.find('option:not([data-option-from-template])').remove();
 					angular.forEach(items, function (item, value) {
@@ -76,8 +75,9 @@
 				}
 
 				function selectCurrentOption () {
+					var selectValue = (angular.isObject(ngModel.$viewValue) && ngModel.$viewValue.id) ? ngModel.$viewValue.id : ngModel.$viewValue;
 					elm.find('option').each(function(index, option){
-						if ($(this).attr('value') == ngModel.$viewValue)
+						if ($(this).attr('value') == selectValue)
 						{
 							$(this).attr('selected', 'selected');
 						}

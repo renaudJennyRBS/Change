@@ -105,6 +105,7 @@ class ValueConverter
 			case Property::TYPE_DATETIME:
 				if ($propertyValue instanceof \DateTime)
 				{
+					$propertyValue->setTimezone(new \DateTimeZone('UTC'));
 					$restValue = $propertyValue->format(\DateTime::ISO8601);
 				}
 				elseif ($propertyValue !== null)
@@ -115,10 +116,17 @@ class ValueConverter
 			case Property::TYPE_DOCUMENT:
 				if ($propertyValue instanceof AbstractDocument)
 				{
-					$restValue = new DocumentLink($this->getUrlManager(), $propertyValue, DocumentLink::MODE_PROPERTY);
-					if ($propertyValue instanceof Editable)
+					if ($this->urlManager)
 					{
-						$restValue->setProperty('label', $propertyValue->getLabel());
+						$restValue = new DocumentLink($this->getUrlManager(), $propertyValue, DocumentLink::MODE_PROPERTY);
+						if ($propertyValue instanceof Editable)
+						{
+							$restValue->setProperty('label', $propertyValue->getLabel());
+						}
+					}
+					else
+					{
+						$restValue = $propertyValue->getId();
 					}
 				}
 				elseif ($propertyValue !== null)
@@ -133,20 +141,35 @@ class ValueConverter
 				}
 				if (is_array($propertyValue))
 				{
-					$urlManager = $this->getUrlManager();
-					$restValue = array_map(function ($doc) use ($urlManager)
+					if ($this->urlManager)
 					{
-						if (!($doc instanceof AbstractDocument))
+						$urlManager = $this->getUrlManager();
+						$restValue = array_map(function ($doc) use ($urlManager)
 						{
-							throw new \RuntimeException('Invalid DocumentArray value', 70001);
-						}
-						$restValue = new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
-						if ($doc instanceof Editable)
+							if (!($doc instanceof AbstractDocument))
+							{
+								throw new \RuntimeException('Invalid DocumentArray value', 70001);
+							}
+							$restValue = new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
+							if ($doc instanceof Editable)
+							{
+								$restValue->setProperties(array('label' => $doc->getLabel()));
+							}
+							return $restValue;
+						}, $propertyValue);
+					}
+					else
+					{
+						$restValue = array_map(function ($doc)
 						{
-							$restValue->setProperties(array('label' => $doc->getLabel()));
-						}
-						return $restValue;
-					}, $propertyValue);
+							if (!($doc instanceof AbstractDocument))
+							{
+								throw new \RuntimeException('Invalid DocumentArray value', 70001);
+							}
+							return $doc->getId();
+						}, $propertyValue);
+					}
+
 				}
 				elseif ($propertyValue !== null)
 				{
@@ -157,11 +180,14 @@ class ValueConverter
 				if (is_string($propertyValue))
 				{
 					$restValue = array('storageURI' => $propertyValue);
-					$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue));
-					$restValue['links'][] = $link->toArray();
-					$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue), 'data');
-					$link->setQuery(array('content' => 1));
-					$restValue['links'][] = $link->toArray();
+					if ($this->urlManager)
+					{
+						$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue));
+						$restValue['links'][] = $link->toArray();
+						$link = new Link($this->getUrlManager(), \Change\Http\Rest\StorageResolver::buildPathInfo($propertyValue), 'data');
+						$link->setQuery(array('content' => 1));
+						$restValue['links'][] = $link->toArray();
+					}
 				}
 				else
 				{

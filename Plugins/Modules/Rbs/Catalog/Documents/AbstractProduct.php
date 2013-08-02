@@ -48,6 +48,14 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 						$result->addLink($link);
 					}
 				}
+				if (is_array(($attributeValues = $result->getProperty('attributeValues'))))
+				{
+					/* @var $product AbstractProduct */
+					$product = $event->getDocument();
+					$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($product->getDocumentServices());
+					$expandedAttributeValues =  $attributeEngine->expandAttributeValues($product, $attributeValues, $event->getParam('urlManager'));
+					$result->setProperty('attributeValues', $expandedAttributeValues);
+				}
 			}
 			elseif ($result instanceof DocumentLink)
 			{
@@ -61,4 +69,30 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 			}
 		}, 5);
 	}
+
+	protected function onCreate()
+	{
+		if ($this->isPropertyModified('attributeValues'))
+		{
+			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentServices());
+			$normalizedAttributeValues =  $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
+			$this->setAttributeValues($normalizedAttributeValues);
+		}
+	}
+
+	protected function onUpdate()
+	{
+		if ($this->isPropertyModified('attributeValues'))
+		{
+			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentServices());
+			$normalizedAttributeValues =  $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
+
+			//DB Stat
+			$attributeEngine->setAttributeValues($this, $normalizedAttributeValues);
+
+			$this->setAttributeValues($normalizedAttributeValues);
+		}
+	}
+
+
 }

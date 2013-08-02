@@ -35,8 +35,11 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+		$schema = new Schema($applicationServices->getDbProvider()->getSchemaManager());
+		$schema->generate();
+		$applicationServices->getDbProvider()->closeConnection();
 
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
 		if (!$rootNode)
 		{
