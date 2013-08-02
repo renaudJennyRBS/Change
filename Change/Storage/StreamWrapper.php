@@ -350,8 +350,7 @@ class StreamWrapper
 	 */
 	public function stream_eof()
 	{
-		//TODO Not Implemented
-		return false;
+		return $this->getCurrentStorage()->stream_eof();
 	}
 
 	/**
@@ -361,8 +360,7 @@ class StreamWrapper
 	 */
 	public function stream_flush()
 	{
-		//TODO Not Implemented
-		return false;
+		return $this->getCurrentStorage()->stream_flush();
 	}
 
 	/**
@@ -426,8 +424,7 @@ class StreamWrapper
 	 */
 	public function stream_seek($offset, $whence = SEEK_SET)
 	{
-		//TODO Not Implemented
-		return false;
+		return $this->getCurrentStorage()->stream_seek($offset, $whence);
 	}
 
 	/**

@@ -151,6 +151,21 @@ abstract class AbstractStorage
 	abstract public function stream_stat();
 
 	/**
+	 * @return array
+	 */
+	abstract public function stream_eof();
+
+	/**
+	 * @return array
+	 */
+	abstract public function stream_flush();
+
+	/**
+	 * @return array
+	 */
+	abstract public function stream_seek($offset, $whence = SEEK_SET);
+
+	/**
 	 * @return void
 	 */
 	abstract public function stream_close();
