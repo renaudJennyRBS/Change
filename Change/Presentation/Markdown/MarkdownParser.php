@@ -148,7 +148,16 @@ class MarkdownParser extends \Michelf\Markdown {
 			return $this->hashPart('<span class="label label-important">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');
 		}
 
-		$url = $image->getDocumentServices()->getApplicationServices()->getStorageManager()->getPublicURL($image->getPath());
+		$matches = array();
+		if ($params && preg_match('/^(\d+)x(\d+)$/', $params, $matches))
+		{
+			$url = $image->getPublicURL($matches[1], $matches[2]);
+		}
+		else
+		{
+			$url = $image->getPublicURL();
+		}
+
 		if (!$url)
 		{
 			return $this->hashPart('<span class="label label-important">No public URL for Rbs\Media\Image: ' . $mediaId . '</span>');
