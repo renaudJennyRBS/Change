@@ -43,7 +43,6 @@
 					var dimension = attrs.thumbnail.split('x');
 					var width = parseInt(dim[0], 10);
 					var height = parseInt(dim[1], 10);
-					console.log(value);
 					if (value) {
 						if (/^\d+$/.test(value)) {
 							REST.resource(parseInt(value, 10)).then(function (image) {
