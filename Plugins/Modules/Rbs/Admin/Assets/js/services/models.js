@@ -6,10 +6,11 @@
 
 	app.service('RbsChange.Models', ['$filter', 'RbsChange.REST', function ($filter, REST) {
 
-		var allModels = [];
+		var allModels = [], shouldLoad = true;
 
 		function loadModelsIfNeeded () {
-			if (! allModels.length) {
+			if (shouldLoad) {
+				shouldLoad = false;
 				REST.call(REST.getBaseUrl('Rbs/ModelsInfo')).then(function (models) {
 					// Copy loaded models into 'allModels', keeping same reference to 'allModels' variable.
 					angular.forEach(models, function (model) {
