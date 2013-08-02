@@ -65,7 +65,6 @@
 				};
 
 				function setTimeZone (tz) {
-					console.log("setTimeZone: tz=", tz);
 					loadTimeZoneInfo(tz, function () {
 						scope.$apply(function () {
 							ngModel.$setViewValue(getFullDate());
@@ -74,7 +73,6 @@
 				}
 
 				scope.$on('Change:TimeZoneChanged', function (event, tz) {
-					console.log("on TimeZoneChanged: tz=", tz);
 					scope.timeZone = tz;
 				});
 

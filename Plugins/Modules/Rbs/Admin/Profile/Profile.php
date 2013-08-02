@@ -9,7 +9,12 @@ class Profile extends \Change\User\AbstractProfile
 {
 	function __construct()
 	{
-		$this->properties = array('avatar' => 'Rbs/Admin/img/chuck.jpg', 'pagingSize' => 10, 'documentListViewMode' => 'list');
+		$this->properties = array(
+			'avatar' => 'Rbs/Admin/img/chuck.jpg',
+			'pagingSize' => 10,
+			'documentListViewMode' => 'list',
+			'editorActionAfterSave' => 'list'
+		);
 	}
 
 	/**
@@ -25,6 +30,6 @@ class Profile extends \Change\User\AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('avatar', 'pagingSize', 'documentListViewMode');
+		return array('avatar', 'pagingSize', 'documentListViewMode', 'editorActionAfterSave');
 	}
 }

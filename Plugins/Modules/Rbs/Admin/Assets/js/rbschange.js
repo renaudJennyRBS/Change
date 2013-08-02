@@ -220,6 +220,89 @@
 	}]);
 
 
+	app.directive('time', ['$timeout', '$filter', function ($timeout, $filter) {
+
+		var DEFAULT_INTERVAL = 60;
+
+		return {
+			'restrict' : 'E',
+			'scope' : {
+				'datetime' : '@',
+				'display' : '@'
+			},
+
+			'link' : function (scope, element, attrs) {
+
+				if (! element.is('[datetime]')) {
+					throw new Error("Attribute 'datetime' is required on <time/> elements.");
+				}
+
+				var	dateTime,
+					stop,
+					content = element.html();
+
+				attrs.$observe('datetime', function (value) {
+					if (value) {
+						dateTime = moment(value);
+						if (stop) {
+							$timeout.cancel(stop);
+						}
+						update();
+					}
+				});
+
+				attrs.$observe('display', function () {
+					if (stop) {
+						$timeout.cancel(stop);
+					}
+					update();
+				});
+
+
+				function update () {
+					var html, title;
+
+					if (! dateTime) {
+						return;
+					}
+
+					switch (attrs.display) {
+						case 'relative':
+							html = dateTime.fromNow();
+							title = $filter('rbsDateTime')(dateTime.toDate());
+							break;
+						case 'both':
+							html = $filter('rbsDateTime')(dateTime.toDate()) + ' (' + dateTime.fromNow() + ')';
+							break;
+						default :
+							title = dateTime.fromNow();
+							html = $filter('rbsDateTime')(dateTime.toDate());
+					}
+
+					if (content) {
+						element.html(content.replace(/\{time\}/, html));
+					}
+					else {
+						element.html(html);
+					}
+
+					if (title) {
+						element.attr('title', title);
+					}
+
+					// Re-launch timer for next update
+					stop = $timeout(update, DEFAULT_INTERVAL*1000);
+				}
+
+				scope.$on('$destroy', function () {
+					$timeout.cancel(stop);
+				});
+			}
+		};
+	}]);
+
+
+
 	//-------------------------------------------------------------------------
 	//
 	// Controllers.
@@ -248,45 +331,5 @@
 		});
 
 	}]);
-
-	//=========================================================================
-
-/*
-	$('body').on('click', '[data-role="close"][data-parent]', function () {
-		var $this = $(this);
-		var parent = $this.attr('data-parent');
-		if (parent.substring(0, 9) === 'popover:#') {
-			$(parent.substring(8, parent.length)).popover('hide');
-		} else {
-			$this.closest(parent).hide();
-		}
-	});
-
-	$('body').on('click', '[data-toggle-class]', function () {
-		var $this = $(this);
-		var val = $this.data('toggleClass');
-		var p = val.indexOf(' ');
-		var cls = val.substring(0, p);
-		var sel = val.substring(p + 1);
-		$(sel).toggleClass(cls);
-	});
-
-	$('body').on('change', ':checkbox[data-toggle-class]', function () {
-		var $this = $(this);
-		var val = $this.data('toggleClass');
-		var p = val.indexOf(' ');
-		var cls = val.substring(0, p);
-		var inverse = false;
-		if (cls.charAt(0) === '!') {
-			cls = cls.substring(1, cls.length);
-			inverse = true;
-		}
-		var sel = val.substring(p + 1);
-		$(sel).toggleClass(cls, inverse ? ! $this.prop('checked') : $this.prop('checked'));
-	});
-
-	// Fix for mobile devices (iPad)
-	$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
-*/
 
 })( window.jQuery );

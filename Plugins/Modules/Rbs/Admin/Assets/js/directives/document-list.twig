@@ -58,7 +58,7 @@
 			</tr>
 		</tbody>
 		<tbody>
-			<tr ng-repeat="doc in collection" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'success': isLastCreated(doc), 'selected': doc.selected}">
+			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'success': isLastCreated(doc), 'selected': doc.selected}">
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)"></td>
 			</tr>
 		</tbody>

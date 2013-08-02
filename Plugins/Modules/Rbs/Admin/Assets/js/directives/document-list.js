@@ -273,10 +273,10 @@
 					break;
 
 				case 'date' :
-					column.valuePath += "|rbsDateTime";
 					if (!column.width) {
-						column.width = "150px";
+						column.width = "160px";
 					}
+					column.content = '<time data-column="' + column.name + '" display="(= dateDisplay.' + column.name + ' =)" datetime="(=doc.' + column.valuePath + '=)"></time>';
 					break;
 
 				}
@@ -294,14 +294,29 @@
 				if (column.name === 'selectable') {
 					$th = $('<th>' + column.label + '</th>');
 				} else {
-					$th = $(
-						'<th ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}" ng-if="isSortable(\'' + column.name + '\')">' +
-							'<a href ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>' +
-							'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[sort.descending]" ng-if="isSortedOn(\'' + column.name + '\')"></i>' +
-							'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.name + '\')"></i>' +
+					var toggleDateBtn, htmlTh;
+
+					if (column.format === 'date') {
+						toggleDateBtn = '<button type="button" ng-class="{\'active\':dateDisplay.' + column.name + '==\'relative\'}" ng-click="toggleRelativeDates(\'' + column.name + '\')" class="btn btn-mini btn-info pull-right"><i class="icon-time"></i></button>';
+					} else {
+						toggleDateBtn = '';
+					}
+
+					htmlTh = '<th ng-if="isSortable(\'' + column.name + '\')" ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + toggleDateBtn;
+
+					if (column.localSort === 'true') {
+						htmlTh += '<a href="javascript:;" ng-click="toggleLocalSort(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+					} else {
+						htmlTh += '<a href ng-click="clearLocalSort()" ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+					}
+
+					htmlTh +=
+						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.name + '\')"></i>' +
+						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.name + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</th>'
-					);
+						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + toggleDateBtn + column.name + '</th>';
+
+					$th = $(htmlTh);
 				}
 				if (column.align) {
 					$th.css('text-align', column.align);
@@ -480,6 +495,7 @@
 						scope.viewMode = gridModeAvailable ? Settings.get('documentListViewMode', 'grid') : 'list';
 					}
 					scope.columns = columnResult.columns;
+					scope.dateDisplay = {};
 					scope.previewAvailable = columnResult.preview;
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
@@ -642,6 +658,35 @@
 					// Embedded preview.
 					//
 
+					function doPreview (index, currentItem, newItem) {
+						var previewPromises = [];
+						delete currentItem.__dlPreviewLoading;
+						// Copy the current's META$ information into the newly loaded document.
+						//angular.extend(doc.META$, current.META$);
+						newItem.__dlPreview = true;
+
+						$rootScope.$broadcast(Events.DocumentListPreview, {
+							"document" : newItem,
+							"promises" : previewPromises
+						});
+
+						if (newItem.id) {
+							previewCache.put(newItem.id, newItem);
+						}
+
+						function terminatePreview () {
+							scope.collection.splice(index+1, 0, newItem);
+							Loading.stop();
+						}
+
+						if (previewPromises.length) {
+							$q.all(previewPromises).then(terminatePreview);
+						} else {
+							terminatePreview();
+						}
+
+					}
+
 					previewCache = $cacheFactory('chgRbsDocumentListPreview_' + dlid);
 					scope.$on('$destroy', function () {
 						previewCache.destroy();
@@ -659,7 +704,6 @@
 						}
 
 						var	current = scope.collection[index], cachedDoc;
-						scope.previewTemplateUrl = current.model.replace(/_/g, '/') + '/preview.twig';
 
 						if (scope.hasPreview(index)) {
 							scope.collection.splice(index+1, 1);
@@ -670,38 +714,19 @@
 						if (cachedDoc) {
 							scope.collection.splice(index+1, 0, cachedDoc);
 						} else {
-							current.__dlPreviewLoading = true;
 							Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
-							REST.resource(current).then(function (doc) {
-								REST.modelInfo(doc).then(function (modelInfo) {
-									var previewPromises = [];
-									delete current.__dlPreviewLoading;
-									// Copy the current's META$ information into the newly loaded document.
-									//angular.extend(doc.META$, current.META$);
-									doc.__dlPreview = true;
-									doc.META$.modelInfo = modelInfo;
-
-									$rootScope.$broadcast(Events.DocumentListPreview, {
-										"document" : doc,
-										"promises" : previewPromises
+							current.__dlPreviewLoading = true;
+							if (Utils.isDocument(current)) {
+								REST.resource(current).then(function (doc) {
+									REST.modelInfo(doc).then(function (modelInfo) {
+										doc.META$.modelInfo = modelInfo;
+										doPreview(index, current, doc);
 									});
-
-									previewCache.put(doc.id, doc);
-
-									function terminatePreview () {
-										scope.collection.splice(index+1, 0, doc);
-										Loading.stop();
-									}
-
-									if (previewPromises.length) {
-										$q.all(previewPromises).then(terminatePreview);
-									} else {
-										terminatePreview();
-									}
 								});
-							});
+							} else {
+								doPreview(index, current, angular.copy(current));
+							}
 						}
-
 					};
 
 
@@ -836,6 +861,11 @@
 						if (column.tags) {
 							columnNames.push('tags');
 						}
+
+						if (column.format === 'date') {
+							scope.dateDisplay[column.name] = '';
+						}
+
 					});
 					if (attrs.useProperties) {
 						angular.forEach(attrs.useProperties.split(/[\s,]+/), function (name) {
@@ -857,6 +887,7 @@
 						'column'     : getDefaultSortColumn(),
 						'descending' : getDefaultSortDir() === 'desc'
 					};
+					scope.localSortColumn = null;
 
 					scope.headerUrl = function (sortProperty) {
 						var search = angular.copy($location.search());
@@ -869,14 +900,34 @@
 						return Utils.makeUrl($location.absUrl(), search);
 					};
 
-
 					scope.isSortable = function (columnName) {
-						return ArrayUtils.inArray(columnName, scope.sortable) !== -1;
+						return ArrayUtils.inArray(columnName, scope.sortable) !== -1 || scope.columns[columnName].localSort === 'true';
 					};
 
-
 					scope.isSortedOn = function (columnName) {
+						if (scope.localSortColumn !== null) {
+							return scope.localSortColumn === ('+' + columnName) || scope.localSortColumn === ('-' + columnName);
+						}
 						return scope.sort.column === columnName;
+					};
+
+					scope.isSortDescending = function () {
+						if (scope.localSortColumn !== null) {
+							return scope.localSortColumn.charAt(0) === '-';
+						}
+						return scope.sort.descending;
+					};
+
+					scope.toggleLocalSort = function (columnName) {
+						if (scope.localSortColumn === ('+' + columnName)) {
+							scope.localSortColumn = '-' + columnName;
+						} else {
+							scope.localSortColumn = '+' + columnName;
+						}
+					};
+
+					scope.clearLocalSort = function () {
+						scope.localSortColumn = null;
 					};
 
 
@@ -884,9 +935,20 @@
 					// Resources loading.
 					//
 
+					function setExternalCollection (collection) {
+						if (angular.isObject(collection) && collection.pagination && collection.resources) {
+							documentCollectionLoadedCallback(collection);
+						} else {
+							replaceCollection(collection);
+						}
+					}
 
 					var useExternalCollection = elm.is('[collection]');
 					if (useExternalCollection) {
+						// External collection may be already here, if defined directly in the scope.
+						if (scope.externalCollection) {
+							setExternalCollection(scope.externalCollection);
+						}
 						scope.$watch('externalCollection', function (collection, oldCollection) {
 							if (collection !== oldCollection) {
 								if (angular.isObject(collection) && collection.pagination && collection.resources) {
@@ -895,7 +957,7 @@
 									replaceCollection(collection);
 								}
 							}
-						});
+						}, true);
 					}
 
 					function replaceCollection (collection) {
@@ -1276,6 +1338,11 @@
 							}
 						};
 					}
+
+
+					scope.toggleRelativeDates = function (column) {
+						scope.dateDisplay[column] = scope.dateDisplay[column] === 'relative' ? '' : 'relative';
+					};
 				};
 
 			}

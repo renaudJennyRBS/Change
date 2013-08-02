@@ -1,5 +1,7 @@
 <div>
-	<strong>(= correctionInfo.status | statusLabel =)</strong> | <i class="icon-time"></i> {{ i18n('m.rbs.admin.correction.correction-created-on', ['ucf']) }} (= correctionInfo.creationDate | rbsDateTime =) <span class="muted" rbs-time-ago="correctionInfo.creationDate">({time})</span>
+	<strong>(= correctionInfo.status | statusLabel =)</strong>
+	| <i class="icon-time"></i> {{ i18n('m.rbs.admin.correction.correction-created-on', ['ucf']) }}
+	<time datetime="(= correctionInfo.creationDate =)" display="both"></time>
 </div>
 
 <div class="alert alert-info" ng-if="correctionInfo.status == 'VALIDATION'">
