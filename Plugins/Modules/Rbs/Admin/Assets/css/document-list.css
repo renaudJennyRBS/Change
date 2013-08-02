@@ -476,4 +476,10 @@ rbs-document-list .tags {
 	display: block;
 }
 
+rbs-document-list th .btn-mini {
+	font-size: 14px;
+	line-height: 16px;
+	position: relative;
+	top: -2px;
+}
 
