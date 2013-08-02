@@ -24,6 +24,15 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 				case 'Rbs_Catalog_Collection_ProductSortOrders':
 					(new Collections())->addProductSortOrders($event);
 					break;
+				case 'Rbs_Catalog_Collection_AttributeValueTypes':
+					(new Collections())->addAttributeValueTypes($event);
+					break;
+				case 'Rbs_Catalog_Collection_AttributeCollections':
+					(new Collections())->addAttributeCollections($event);
+					break;
+				case 'Rbs_Catalog_Collection_AttributeSet':
+					(new Collections())->addAttributeSet($event);
+					break;
 			}
 		};
 		$events->attach('getCollection', $callback, 10);
@@ -32,6 +41,9 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 		{
 			$codes = $event->getParam('codes', array());
 			$codes[] = 'Rbs_Catalog_Collection_ProductSortOrders';
+			$codes[] = 'Rbs_Catalog_Collection_AttributeValueTypes';
+			$codes[] = 'Rbs_Catalog_Collection_AttributeCollections';
+			$codes[] = 'Rbs_Catalog_Collection_AttributeSet';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach('getCodes', $callback, 1);

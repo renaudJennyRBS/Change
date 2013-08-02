@@ -12,5 +12,7 @@
 		<property name="maxOrderQuantity" type="Integer" />
 		<property name="code" type="String" />
 		<property name="sku" type="String" />
+		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
+		<property name="attributeValues" type="JSON" />
 	</properties>
 </document>

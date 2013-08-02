@@ -27,6 +27,22 @@
 		{{ forms.field('maxOrderQuantity', 'Integer', 'm.rbs.catalog.document.product.maxorderquantity',
 			false, 'm.rbs.catalog.document.product.maxorderquantity-help') }}
 	</fieldset>
+	<fieldset data-ng-show="section=='attributes'"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.section-attributes', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		<div class="control-group property" data-ng-class="">
+			<label class="control-label"
+					for="attribute">{{ i18n('m.rbs.catalog.document.abstractproduct.attribute', ['ucf']) }}</label>
+			<div class="controls">
+				<select ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
+					<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
+				</select>
+			</div>
+		</div>
+
+		<rbs-attribute-editor attribute-values="document.attributeValues" attribute-editor="document.attribute">
+		</rbs-attribute-editor>
+	</fieldset>
 	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.publication-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">

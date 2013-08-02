@@ -1,0 +1,25 @@
+<div class="control-group property" data-ng-class="{'required': attribute.required}">
+	<label class="control-label" for="(= attribute.id =)">(= attribute.label =)</label>
+	<div class="controls">
+		<div ng-if="attribute.collectionCode">
+			<select ng-model="attribute.value.value" rbs-items-from-collection="(= attribute.collectionCode =)">
+				<option value=""></option>
+			</select>
+		</div>
+		<div ng-if="!attribute.collectionCode">
+			<div data-ng-switch="attribute.type">
+				<input type="text" data-ng-switch-when="Code" class="input-block-level" ng-required="attribute.required" id="(= attribute.id =)"  ng-model="attribute.value.value" />
+				<switch  data-ng-switch-when="Boolean" ng-model="attribute.value.value" id="(= attribute.id =)" ></switch>
+				<date-selector data-ng-switch-when="DateTime" ng-required="attribute.required" ng-model="attribute.value.value" id="(= attribute.id =)" ></date-selector>
+				<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attribute.required" id="(= attribute.id =)" ng-model="attribute.value.value" />
+				<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attribute.required" id="(= attribute.id =)"  ng-model="attribute.value.value" />
+				<div class="document-picker-single"  data-ng-switch-when="Document"
+						ng-model="attribute.value.value" ng-required="attribute.required"
+						property-label="" selector-title=""
+						allow-edition="false" allow-creation="false">
+				</div>
+				<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attribute.required" id="(= attribute.id =)" ng-model="attribute.value.value"></rbs-rich-text-input>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,68 @@
+{% import "@Admin/forms.twig" as forms %}
+
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		{{ forms.field('label', 'String', 'm.rbs.catalog.document.attribute.label', true) }}
+		{{ forms.field('title', 'String', 'm.rbs.catalog.document.attribute.title', true, 'm.rbs.catalog.document.attribute.title-help') }}
+		<div class="control-group property required"
+				data-ng-class="">
+			<label class="control-label" for="valueType">{{ i18n('m.rbs.catalog.document.attribute.valuetype', ['ucf']) }}</label>
+
+			<div class="controls">
+				<select ng-model="document.valueType" required="required"
+						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes"></select>
+			</div>
+		</div>
+
+		<div data-ng-hide="document.valueType == 'Group'">
+
+			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Boolean'">
+				{{ forms.field('requiredValue', 'Boolean', 'm.rbs.catalog.document.attribute.requiredvalue', false) }}
+			</div>
+
+			<div class="control-group property" data-ng-class="" data-ng-hide="document.valueType == 'Text' || document.valueType == 'Document' || document.valueType == 'Property'">
+				<label class="control-label"
+						for="defaultValue">{{ i18n('m.rbs.catalog.document.attribute.defaultvalue', ['ucf']) }}</label>
+				<div class="controls">
+					<input type="text" ng-model="document.defaultValue" id="defaultValue">
+				</div>
+			</div>
+
+			<div class="control-group property" data-ng-class=""
+					data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'Document'">
+				<label class="control-label"
+						for="collectionCode">{{ i18n('m.rbs.catalog.document.attribute.collectioncode', ['ucf']) }}</label>
+				<div class="controls">
+					<select ng-model="document.collectionCode"
+							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
+						<option value=""></option>
+					</select>
+				</div>
+			</div>
+
+			<div data-ng-show="document.valueType == 'Property'">
+				{{ forms.field('productProperty', 'String', 'm.rbs.catalog.document.attribute.productproperty', false) }}
+			</div>
+
+			<div data-ng-show="document.valueType == 'Text'">
+				{{ forms.field('localizedValue', 'Boolean', 'm.rbs.catalog.document.attribute.localizedvalue', false) }}
+			</div>
+		</div>
+
+		<div data-ng-show="document.valueType == 'Group'">
+			{{ forms.pickerMultiple('attributes', 'Rbs_Catalog_Attribute', 'm.rbs.catalog.document.attribute.attributes',
+			false, null, 'm.rbs.catalog.admin.js.attribute-picker-title') }}
+		</div>
+	</fieldset>
+
+	<fieldset
+			data-ng-show="section=='systeminfo'"
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+			data-document-system-info-section="">
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

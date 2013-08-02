@@ -5,7 +5,7 @@
 	app.config(['$routeProvider', function ($routeProvider)
 	{
 		$routeProvider.when('/Rbs/Catalog', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Product/', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/Prices/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Product/categories.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
@@ -14,7 +14,10 @@
 			.when('/Rbs/Catalog/Category/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Category/products.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id/:LCID', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
 			.when('/Rbs/Catalog/Category/:id', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false });
+			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Attribute/', { templateUrl: 'Rbs/Catalog/Attribute/list.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Attribute/:id/:LCID', { templateUrl: 'Rbs/Catalog/Attribute/form.twig', reloadOnSearch: false })
+			.when('/Rbs/Catalog/Attribute/:id', { templateUrl: 'Rbs/Catalog/Attribute/form.twig', reloadOnSearch: false });
 	}]);
 
 	app.config(['$provide', function ($provide)
@@ -34,6 +37,11 @@
 				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID',
 				'productcategorizations': 'Rbs/Catalog/Product/:id/ProductCategorization/',
 				'prices': 'Rbs/Catalog/Product/:id/Prices/'
+			});
+			$delegate.register('Rbs_Catalog_Attribute', {
+				'form': '/Rbs/Catalog/Attribute/:id/:LCID',
+				'list': '/Rbs/Catalog/Attribute/',
+				'i18n': '/Rbs/Catalog/Attribute/:id/:LCID/translate-from/:fromLCID'
 			});
 			return $delegate;
 		}]);

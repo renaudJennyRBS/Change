@@ -21,7 +21,26 @@
 			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
 			link: function (scope, elm)
 			{
-				Editor.initScope(scope, elm, function () { });
+				Editor.initScope(scope, elm, function() {
+					if (!angular.isArray(scope.document.attributeValues))
+					{
+						scope.document.attributeValues = [];
+					}
+				});
+
+				scope.$watch('document.attribute', function(newValue, oldValue){
+					if (!angular.isUndefined(newValue))
+					{
+						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
+						{
+							scope.document.attribute = newValue.id;
+						}
+						else if (newValue == '')
+						{
+							scope.document.attribute = null;
+						}
+					}
+				});
 
 				// Prices.
 				scope.createActions = [
