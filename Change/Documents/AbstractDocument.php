@@ -209,8 +209,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				return ($inputValue === null) ? $inputValue : floatval($inputValue);
 
 			case Property::TYPE_DOCUMENTID :
-				return ($inputValue === null) ? $inputValue : (($inputValue instanceof AbstractDocument) ? $inputValue->getId() : (intval($inputValue) > 0 ? intval($inputValue) : null));
-
+				if (is_object($inputValue) && is_callable(array($inputValue, 'getId')))
+				{
+					$inputValue = call_user_func(array($inputValue, 'getId'));
+				}
+				return max(0, intval($inputValue));
 			case Property::TYPE_JSON:
 				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
 
@@ -219,8 +222,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 			case Property::TYPE_DOCUMENT:
 			case Property::TYPE_DOCUMENTARRAY:
-				return ($inputValue === null || !($inputValue instanceof AbstractDocument)) ? null : $inputValue->getId();
-
+				return ($inputValue === null || !($inputValue instanceof AbstractDocument)) ? 0 : $inputValue->getId();
 			default:
 				return $inputValue === null ? $inputValue : strval($inputValue);
 		}

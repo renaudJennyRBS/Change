@@ -284,12 +284,12 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 				$dbOptionsEsc = $this->escapePHPValue($property->getDbOptions());
 				switch ($propertyType)
 				{
-					case 'Document' :
 					case 'Integer' :
-					case 'DocumentId' :
 						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'DocumentArray' :
+					case 'DocumentId' :
+					case 'Document' :
 						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')->setDefaultValue(\'0\')';
 						break;
 					case 'String' :

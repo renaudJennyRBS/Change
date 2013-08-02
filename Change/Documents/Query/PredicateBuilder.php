@@ -357,7 +357,7 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		if ($property !== null && in_array($property->getType(), array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
 		{
 			return $this->getFragmentBuilder()->eq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
@@ -374,7 +374,7 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		if ($property !== null && in_array($property->getType(), array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
 		{
 			return $this->getFragmentBuilder()->neq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
