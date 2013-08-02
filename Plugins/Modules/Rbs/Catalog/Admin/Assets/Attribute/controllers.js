@@ -58,19 +58,22 @@
 			templateUrl : "Rbs/Catalog/Attribute/attributeEditor.twig",
 
 			link : function (scope, elm, attrs) {
+				var edtId = null;
 
-				scope.$watch('attributeEditor', function (value, oldvalue) {
-					if (value !== oldvalue)
+				scope.$watch('attributeEditor', function (value) {
+					var attrId = Utils.isDocument(value) ? value.id : parseInt(value, 10);
+					if (!isNaN(attrId))
 					{
-						var attrId = Utils.isDocument(value) ? value.id : parseInt(value, 10);
-						if (!isNaN(attrId))
+						if (attrId !== edtId)
 						{
+							edtId = attrId;
 							REST.resource('Rbs_Catalog_Attribute', attrId).then(generateEditor, clearEditor);
 						}
-						else
-						{
-							clearEditor();
-						}
+					}
+					else
+					{
+						edtId = null;
+						clearEditor();
 					}
 				});
 

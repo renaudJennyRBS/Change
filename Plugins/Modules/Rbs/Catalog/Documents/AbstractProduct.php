@@ -48,6 +48,14 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 						$result->addLink($link);
 					}
 				}
+				if (is_array(($attributeValues = $result->getProperty('attributeValues'))))
+				{
+					/* @var $product AbstractProduct */
+					$product = $event->getDocument();
+					$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($product->getDocumentServices());
+					$expandedAttributeValues =  $attributeEngine->expandAttributeValues($product, $attributeValues, $event->getParam('urlManager'));
+					$result->setProperty('attributeValues', $expandedAttributeValues);
+				}
 			}
 			elseif ($result instanceof DocumentLink)
 			{
@@ -57,14 +65,6 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 				if ($image)
 				{
 					$result->setProperty('adminthumbnail',  $image->getPublicURL(512, 512));
-				}
-				if (is_array(($attributeValues = $result->getProperty('attributeValues'))))
-				{
-					/* @var $product AbstractProduct */
-					$product = $event->getDocument();
-					$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($product->getDocumentServices());
-					$expandedAttributeValues =  $attributeEngine->expandAttributeValues($product, $attributeValues, $event->getParam('urlManager'));
-					$result->setProperty('attributeValues', $expandedAttributeValues);
 				}
 			}
 		}, 5);
