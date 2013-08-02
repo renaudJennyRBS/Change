@@ -102,14 +102,7 @@ class CatalogManager
 	public function getProductCategorization(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition)
 	{
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		if ($condition)
-		{
-			$query->andPredicates($query->eq('product', $product), $query->eq('category', $category), $query->eq('condition', $condition));
-		}
-		else
-		{
-			$query->andPredicates($query->eq('product', $product), $query->eq('category', $category), $query->isNull('condition'));
-		}
+		$query->andPredicates($query->eq('product', $product), $query->eq('category', $category), $query->eq('condition', $condition));
 		return $query->getFirstDocument();
 	}
 
@@ -182,22 +175,13 @@ class CatalogManager
 		$updateQuery = $this->getCommerceServices()->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
 		$positionColumn = $fb->getDocumentColumn('position');
-		if ($condition)
-		{
-			$where = $fb->logicAnd(
-				$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-				$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
-				$fb->eq($fb->getDocumentColumn('condition'), $fb->number($condition->getId()))
-			);
-		}
-		else
-		{
-			$where = $fb->logicAnd(
-				$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-				$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
-				$fb->isNull($fb->getDocumentColumn('condition'))
-			);
-		}
+		$conditionId = ($condition) ? $condition->getId() : 0;
+		$where = $fb->logicAnd(
+			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
+			$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
+			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
+		);
+
 		try
 		{
 			$tm->begin();
@@ -259,22 +243,12 @@ class CatalogManager
 		$updateQuery = $this->getCommerceServices()->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
 		$positionColumn = $fb->getDocumentColumn('position');
-		if ($condition)
-		{
-			$where = $fb->logicAnd(
-				$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-				$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
-				$fb->eq($fb->getDocumentColumn('condition'), $fb->number($condition->getId()))
-			);
-		}
-		else
-		{
-			$where = $fb->logicAnd(
-				$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-				$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
-				$fb->isNull($fb->getDocumentColumn('condition'))
-			);
-		}
+		$conditionId = ($condition) ? $condition->getId() : 0;
+		$where = $fb->logicAnd(
+			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
+			$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
+			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
+		);
 
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		if ($currentPosition == 0)
@@ -349,24 +323,14 @@ class CatalogManager
 		}
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$condition = $productCategorization->getCondition();
-		if ($condition)
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->eq('condition', $condition),
-				$query->gt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition())),
-				$query->lt('position', $query->getFragmentBuilder()->number(0))
-			);
-		}
-		else
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->isNull('condition'),
-				$query->gt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition())),
-				$query->lt('position', $query->getFragmentBuilder()->number(0))
-			);
-		}
+
+		$query->andPredicates(
+			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('condition', $condition),
+			$query->gt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition())),
+			$query->lt('position', $query->getFragmentBuilder()->number(0))
+		);
+
 		$query->addOrder('position', true);
 		/* @var $downCat \Rbs\Catalog\Documents\ProductCategorization */
 		$downCat = $query->getFirstDocument();
@@ -414,22 +378,12 @@ class CatalogManager
 		}
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$condition = $productCategorization->getCondition();
-		if ($condition)
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->eq('condition', $condition),
-				$query->lt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition()))
-			);
-		}
-		else
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->isNull('condition'),
-				$query->lt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition()))
-			);
-		}
+		$query->andPredicates(
+			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('condition', $condition),
+			$query->lt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition()))
+		);
+
 		$query->addOrder('position', false);
 		/* @var $upCat \Rbs\Catalog\Documents\ProductCategorization */
 		$upCat = $query->getFirstDocument();
@@ -471,22 +425,11 @@ class CatalogManager
 		}
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$condition = $productCategorization->getCondition();
-		if ($condition)
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->eq('condition', $condition),
-				$query->lt('position', $query->getFragmentBuilder()->number(0))
-			);
-		}
-		else
-		{
-			$query->andPredicates(
-				$query->eq('category', $productCategorization->getCategory()),
-				$query->isNull('condition'),
-				$query->lt('position', $query->getFragmentBuilder()->number(0))
-			);
-		}
+		$query->andPredicates(
+			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('condition', $condition),
+			$query->lt('position', $query->getFragmentBuilder()->number(0))
+		);
 		$query->addOrder('position', true);
 		$topProductCategorization = $query->getFirstDocument();
 		if ($topProductCategorization == null)

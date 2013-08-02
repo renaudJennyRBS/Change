@@ -355,7 +355,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$doc1->setPLStr('Doc1 loc');
 		$doc1Id = $doc1->getId();
 
-		$this->assertNull($basicDoc->getPDocId());
+		$this->assertSame(0, $basicDoc->getPDocId());
 		$this->assertFalse($basicDoc->isPropertyModified('pDocId'));
 		$this->assertSame($basicDoc, $basicDoc->setPDocId($doc1Id));
 		$this->assertEquals($doc1Id, $basicDoc->getPDocId());
@@ -363,7 +363,10 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$this->assertTrue($basicDoc->isPropertyModified('pDocId'));
 
 		$basicDoc->setPDocId(null);
-		$this->assertNull($basicDoc->getPDocId());
+		$this->assertSame(0, $basicDoc->getPDocId());
+		$this->assertFalse($basicDoc->isPropertyModified('pDocId'));
+		$basicDoc->setPDocId(0);
+		$this->assertSame(0, $basicDoc->getPDocId());
 		$this->assertFalse($basicDoc->isPropertyModified('pDocId'));
 	}
 
@@ -379,6 +382,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$doc1Id = $doc1->getId();
 
 		$this->assertNull($basicDoc->getPDocInst());
+		$this->assertSame(0, $basicDoc->getPDocInstId());
 		$this->assertFalse($basicDoc->isPropertyModified('pDocInst'));
 
 		$this->assertSame($basicDoc, $basicDoc->setPDocInst($doc1));
@@ -388,6 +392,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 		$basicDoc->setPDocInst(null);
 		$this->assertNull($basicDoc->getPDocInst());
+		$this->assertSame(0, $basicDoc->getPDocInstId());
 		$this->assertFalse($basicDoc->isPropertyModified('pDocInst'));
 	}
 
