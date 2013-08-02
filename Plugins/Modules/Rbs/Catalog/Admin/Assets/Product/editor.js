@@ -4,14 +4,11 @@
 
 	/**
 	 * @param Editor
-	 * @param DocumentList
-	 * @param REST
 	 * @param i18n
-	 * @param $http
-	 * @param Loading
+	 * @param $timeout
 	 * @constructor
 	 */
-	function Editor(Editor, DocumentList, REST, i18n, $http, Loading)
+	function Editor(Editor, i18n, $timeout)
 	{
 		return {
 			restrict: 'EC',
@@ -38,6 +35,10 @@
 						else if (newValue == '')
 						{
 							scope.document.attribute = null;
+							$timeout(function () {
+								scope.$emit('Change:Editor:UpdateMenu');
+							});
+
 						}
 					}
 				});
@@ -50,6 +51,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.DocumentList', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.Loading'];
+	Editor.$inject = ['RbsChange.Editor', 'RbsChange.i18n', '$timeout'];
 	angular.module('RbsChange').directive('editorRbsCatalogProduct', Editor);
 })();
