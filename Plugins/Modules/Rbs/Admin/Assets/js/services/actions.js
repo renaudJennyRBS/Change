@@ -159,6 +159,10 @@
 								};
 							}
 						}
+					} else {
+						isSelectionOkFn = function () {
+							return true;
+						};
 					}
 
 					// Build the function that checks if the action can be enabled
