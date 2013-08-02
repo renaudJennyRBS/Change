@@ -34,13 +34,7 @@
 				if (!$el.is('img')) {
 					throw new Error("Directive 'rbs-storage-image' must be used on <img/> elements only.");
 				}
-				var thumbnailType = 's';
-				if (attrs.thumbnail) {
-					thumbnailType = angular.lowercase(attrs.thumbnail);
-				}
-
 				scope.$watch('rbsStorageImage', function (value) {
-					var dimension = attrs.thumbnail.split('x');
 					var width = parseInt(dim[0], 10);
 					var height = parseInt(dim[1], 10);
 					if (value) {
