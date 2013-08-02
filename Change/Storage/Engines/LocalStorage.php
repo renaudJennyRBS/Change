@@ -159,6 +159,31 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
+	 * @return array
+	 */
+	public function stream_flush()
+	{
+		return fflush($this->resource);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function stream_eof()
+	{
+		return feof($this->resource);
+	}
+
+	/**
+	 * @param $offset
+	 * @param int $whence
+	 */
+	public function stream_seek($offset, $whence = SEEK_SET)
+	{
+		return fseek($this->resource, $offset, $whence);
+	}
+
+	/**
 	 * @param array $info (from parse_url)
 	 * @param integer $flags
 	 * @return array mixed

@@ -12,8 +12,11 @@ class ImagickResizerEngine
 	 */
 	public function getImageSize($path)
 	{
-		$imagik = new \Imagick($path);
-		return $imagik->valid() ? array('width' => $imagik->getImageWidth(), 'height' => $imagik->getImageHeight()) : array('height' => null, 'width' => null);
+		$imagik = new \Imagick();
+		$blob = file_get_contents($path);
+		$imagik->readImageBlob($blob);
+		$returnValue = $imagik->valid() ? array('width' => $imagik->getImageWidth(), 'height' => $imagik->getImageHeight()) : array('height' => null, 'width' => null);
+		return $returnValue;
 	}
 
 	/**
@@ -23,7 +26,9 @@ class ImagickResizerEngine
 	 */
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{
-		$imagik = new \Imagick($inputFileName);
+		$imagik = new \Imagick();
+		$blob = file_get_contents($inputFileName);
+		$imagik->readImageBlob($blob);
 		if (!$imagik->valid())
 		{
 			copy($inputFileName, $formattedFileName);
@@ -39,14 +44,18 @@ class ImagickResizerEngine
 		}
 		if ($imagik->getNumberImages() > 1)
 		{
-			copy($inputFileName, $formattedFileName);
+			$imagik = $imagik->coalesceImages();
+			foreach ($imagik as $frame)
+			{
+				$frame->thumbnailImage($width, $height, true);
+				$frame->setImagePage($width, $height, 0, 0);
+			}
+			file_put_contents($formattedFileName, $imagik);
 		}
 		else
 		{
-			$res = fopen($formattedFileName, 'w');
 			$imagik->thumbnailImage($width, $height, true);
-			$imagik->writeImageFile($res);
-			fclose($res);
+			file_put_contents($formattedFileName, $imagik);
 		}
 	}
 

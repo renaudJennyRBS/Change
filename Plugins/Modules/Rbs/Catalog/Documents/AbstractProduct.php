@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
+use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 
@@ -28,6 +29,8 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 			$result = $event->getParam('restResult');
 			if ($result instanceof DocumentResult)
 			{
+				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+				$product = $event->getDocument();
 				$selfLinks = $result->getRelLink('self');
 				$selfLink = array_shift($selfLinks);
 				if ($selfLink instanceof Link)
@@ -38,6 +41,22 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 					$result->addLink($link);
 					$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/Prices/', 'prices');
 					$result->addLink($link);
+					$image = $product->getFirstVisual();
+					if ($image)
+					{
+						$link = array('href' => $image->getPublicURL(512, 512), 'rel' => 'adminthumbnail');
+						$result->addLink($link);
+					}
+				}
+			}
+			elseif ($result instanceof DocumentLink)
+			{
+				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+				$product = $event->getDocument();
+				$image = $product->getFirstVisual();
+				if ($image)
+				{
+					$result->setProperty('adminthumbnail',  $image->getPublicURL(512, 512));
 				}
 			}
 		}, 5);

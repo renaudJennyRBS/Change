@@ -56,7 +56,7 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 			$firstVisual = $product->getFirstVisual();
 			if ($firstVisual instanceof \Rbs\Media\Documents\Image)
 			{
-				$result->setProperty('productVisualId', $firstVisual->getId());
+				$result->setProperty('adminthumbnail', $firstVisual->getPublicURL(512, 512));
 			}
 			$result->setProperty('productLabel', $product->getLabel());
 		}
