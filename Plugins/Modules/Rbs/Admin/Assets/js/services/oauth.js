@@ -782,7 +782,7 @@
 		}
 
 		for (i in query_params) {
-			if (query_params[i] !== undefined && query_params[i] !== '') {
+			if (query_params[i] !== undefined) {
 				if (!header_params[i]) {
 					arr.push([encode(i), encode(query_params[i] + '')]);
 				}
@@ -902,18 +902,12 @@
 	};
 
 	/**
-	 * rfc3986 compatable decode of a string
+	 * rfc3986 compatible decode of a string
 	 *
 	 * @param {String} string
 	 */
 	function OAuth_urlDecode (string){
-		if (!string) {
-			return '';
-		}
-
-		return string.replace(/%[a-fA-F0-9]{2}/ig, function (match) {
-			return String.fromCharCode(parseInt(match.replace('%', ''), 16));
-		});
+		return decodeURIComponent(string);
 	};
 
 
