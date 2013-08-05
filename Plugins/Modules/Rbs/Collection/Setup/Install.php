@@ -22,4 +22,12 @@ class Install
 		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Collection',
 			'\\Rbs\\Collection\\Events\\ListenerAggregate');
 	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function finalize($plugin)
+	{
+		$plugin->setConfigurationEntry('locked', true);
+	}
 }
