@@ -43,5 +43,6 @@ class Install
 	 */
 	public function finalize($plugin)
 	{
+		$plugin->setConfigurationEntry('locked', true);
 	}
 }
