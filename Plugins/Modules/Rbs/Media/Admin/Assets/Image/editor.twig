@@ -1,18 +1,29 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		<div class="control-group property required">
-			<label class="control-label" for="file">{{ i18n('m.rbs.media.document.image.path', ['ucf']) }}</label>
-			<div class="controls">
-				<div class="image-uploader" ng-model="document.path" storage-name="images"></div>
-			</div>
-		</div>
-		{{ forms.field('label', 'String', 'm.rbs.media.document.image.label', true) }}
-		{{ forms.field('alt', 'String', 'm.rbs.media.document.image.alt', false) }}
-		{{ forms.field('localizePath', 'Boolean', 'm.rbs.media.document.image.localizepath', false) }}
+
+		<rbs-field-image
+				property="path"
+				required="true"
+				label="{{ i18nAttr('m.rbs.media.document.image.path', ['ucf']) }}">
+		</rbs-field-image>
+
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.media.document.image.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="alt"
+				label="{{ i18nAttr('m.rbs.media.document.image.alt', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-boolean
+				property="localizePath"
+				label="{{ i18nAttr('m.rbs.media.document.image.localizepath', ['ucf']) }}">
+		</rbs-field-boolean>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
@@ -25,9 +36,17 @@
 		hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.media.document.image.file-informations', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
-		{{ forms.readonly('width', 'm.rbs.media.document.image.width') }}
-		{{ forms.readonly('height', 'm.rbs.media.document.image.height') }}
-		{{ forms.readonly('mimeType', 'm.rbs.media.document.image.mimetype') }}
+
+		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.width', ['ucf']) }}">
+			<span class="uneditable-input">(=document.width | number=)</span>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.height', ['ucf']) }}">
+			<span class="uneditable-input">(=document.height | number=)</span>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.mimetype', ['ucf']) }}">
+			<span class="uneditable-input">(=document.mimetype=)</span>
+		</rbs-field>
+
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
