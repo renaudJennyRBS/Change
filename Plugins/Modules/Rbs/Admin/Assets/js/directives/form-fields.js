@@ -17,6 +17,7 @@
 	registerFieldDirective('PickerMultiple', '<div class="document-picker-multiple"></div>', '.document-picker-multiple');
 	registerFieldDirective('Date', '<date-selector></date-selector>', 'date-selector');
 	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
+	registerFieldDirective('Image', '<div class="image-uploader" storage-name="images"></div>', '.image-uploader');
 
 
 	/**
@@ -138,9 +139,6 @@
 				name = Utils.normalizeAttrName(name);
 				$ipt.attr(name, value);
 				tElement.removeAttr(name);
-			}
-			else {
-				console.log("Attribute ", name, ' (', value, ') is left on field container');
 			}
 		});
 	}
