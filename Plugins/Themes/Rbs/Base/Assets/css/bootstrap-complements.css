@@ -1,0 +1,85 @@
+/* Exceptions */
+.exception {
+	white-space: pre-wrap;
+}
+
+/* Nowrap in dropdown toggles to no have the caret in an other line */
+.dropdown-toggle {
+	white-space: nowrap;
+}
+
+/* Texts in dropdowns */
+.dropdown .navbar-text .caret {
+	vertical-align: middle;
+	margin-top: 0;
+}
+.dropdown-menu > li.dropdown-text {
+	display: block;
+	padding: 3px 20px;
+	line-height: 20px;
+}
+
+/* Grid list */
+.grid-list {
+	list-style-type: none;
+	margin: 0 -7px;
+	padding: 0;
+	display: block;
+}
+.grid-list > li {
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+.grid-list .grid-list-cell {
+	padding: 10px;
+	margin: 7px;
+}
+
+.grid-list-1 > li {
+	width: 100%;
+}
+.grid-list-2 > li {
+	width: 50%;
+}
+.grid-list-3 > li {
+	width: 33.33333333333333%;
+}
+.grid-list-4 > li {
+	width: 25%;
+}
+.grid-list-5 > li {
+	width: 20%;
+}
+.grid-list-6 > li {
+	width: 16.666666666666664%;
+}
+
+@media (max-width: 992px) {
+	.grid-list-4 > li,
+	.grid-list-5 > li,
+	.grid-list-6 > li {
+		width: 33.33333333333333%;
+	}
+}
+@media (max-width: 768px) {
+	.grid-list-3 > li,
+	.grid-list-4 > li,
+	.grid-list-5 > li,
+	.grid-list-6 > li {
+		width: 50%;
+	}
+}
+@media (max-width: 544px) {
+	.grid-list-1 > li,
+	.grid-list-3 > li,
+	.grid-list-4 > li,
+	.grid-list-5 > li,
+	.grid-list-6 > li {
+		width: 100%;
+	}
+}
+
+.grid-list-bordered .grid-list-cell {
+	border: 1px solid #ddd;
+}
