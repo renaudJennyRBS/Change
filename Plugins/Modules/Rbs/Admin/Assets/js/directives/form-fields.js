@@ -33,7 +33,6 @@
 			replace    : true,
 			transclude : true,
 			template   : fieldTemplate(''),
-			priority   : 1,
 
 			compile : function (tElement, tAttrs, transcludeFn) {
 				var $lbl = tElement.find('label').first(),
@@ -73,11 +72,10 @@
 				replace    : true,
 				transclude : true,
 				template   : fieldTemplate(tpl + '<div ng-transclude=""></div>'),
-				// Should be executed before any other directives eventually defined on the element:
-				priority   : 1,
 
 				compile : function (tElement, tAttrs) {
 					rbsFieldCompile(tElement, tAttrs, selector, Utils);
+					return function () {};
 				}
 
 			};
@@ -112,7 +110,7 @@
 		}
 
 		// Bind label and input field (unique 'for' attribute).
-		fieldId = 'rbs_field_' + property.replace(/[^a-z0-9]/ig, '') + '_' + (++fieldIdCounter);
+		fieldId = 'rbs_field_' + property.replace(/[^a-z0-9]/ig, '_') + '_' + (++fieldIdCounter);
 		$lbl.html(tAttrs.label).attr('for', fieldId);
 		$ipt.attr('id', fieldId);
 		$ipt.attr('input-id', fieldId);
@@ -123,21 +121,41 @@
 		// Init input field
 		$ipt.attr('ng-model', ngModel);
 
-		// Copy most attributes to the input field
+		// Transfer most attributes to the input field
 		angular.forEach(tAttrs, function (value, name) {
 			if (name === 'required') {
-				$ipt.attr('required', 'required');
-				tElement.addClass('required');
+				if (value === 'true' || value === 'required') {
+					$ipt.attr('required', 'required');
+					tElement.addClass('required');
+				}
+				tElement.removeAttr(name);
 			}
 			else if (name === 'inputClass') {
 				$ipt.addClass(value);
+				tElement.removeAttr(name);
 			}
-			else if (name !== 'id' && name !== 'class' && name !== 'property' && name !== 'label' && name.charAt(0) !== '$') {
+			else if (shouldTransferAttribute(name)) {
 				name = Utils.normalizeAttrName(name);
 				$ipt.attr(name, value);
 				tElement.removeAttr(name);
 			}
+			else {
+				console.log("Attribute ", name, ' (', value, ') is left on field container');
+			}
 		});
+	}
+
+
+	function shouldTransferAttribute (name) {
+		return name !== 'id'
+			&& name !== 'class'
+			&& name !== 'property'
+			&& name !== 'label'
+			&& name !== 'ngHide' && name !== 'dataNgHide'
+			&& name !== 'ngShow' && name !== 'dataNgShow'
+			&& name !== 'ngIf' && name !== 'dataNgIf'
+			&& name !== 'ngSwitchWhen' && name !== 'dataNgSwitchWhen'
+			&& name.charAt(0) !== '$';
 	}
 
 })();
