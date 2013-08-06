@@ -50,6 +50,15 @@
 					mInput = $(elm).find('[data-role="input-minute"]').first(),
 					datePicker;
 
+				// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
+				// so that the binding with the '<label/>' element works as expected.
+				// (see Directives in 'Rbs/Admin/Assets/js/directives/form-fields.js').
+				if (attrs.id && attrs.id === attrs.inputId) {
+					dInput.attr('id', attrs.id);
+					elm.removeAttr('id');
+					elm.removeAttr('input-id');
+				}
+
 				scope.openTimeZoneSelector = function ($event) {
 					Dialog.embed(
 						$(elm).find('.timeZoneSelectorContainer'),
@@ -88,14 +97,14 @@
 
 				ngModel.$render = function () {
 					if (ngModel.$viewValue && !(angular.isNumber(ngModel.$viewValue) && isNaN(ngModel.$viewValue))) {
+						var date = moment.utc(ngModel.$viewValue).tz(scope.timeZone);
 						if (isNativeDatePickerAvailable) {
-							dInput.val(moment(ngModel.$viewValue).format('YYYY-MM-DD'));
+							dInput.val(date.format('YYYY-MM-DD'));
 						} else {
-							dInput.datepicker('setValue', ngModel.$viewValue);
+							dInput.datepicker('setDate', moment.utc([date.year(), date.month(), date.day()]).toDate());
 						}
-						var date = new Date(ngModel.$viewValue);
-						hInput.val(date.getHours());
-						mInput.val(date.getMinutes());
+						hInput.val(date.hours());
+						mInput.val(date.minutes());
 					} else {
 						dInput.val(null);
 						hInput.val('0');

@@ -9,12 +9,14 @@
 	registerFieldDirective('Text', '<input type="text"/>', 'input');
 	registerFieldDirective('Email', '<input type="email"/>', 'input');
 	registerFieldDirective('Url', '<input type="url"/>', 'input');
-	registerFieldDirective('Number', '<input type="number"/>', 'input');
+	registerFieldDirective('Integer', '<input type="number" class="input-mini" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
+	registerFieldDirective('Float', '<input type="number" class="input-mini" smart-float=""/>', 'input');
 	registerFieldDirective('Boolean', '<switch></switch>', 'switch');
 	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
 	registerFieldDirective('Picker', '<div class="document-picker-single"></div>', '.document-picker-single');
 	registerFieldDirective('PickerMultiple', '<div class="document-picker-multiple"></div>', '.document-picker-multiple');
 	registerFieldDirective('Date', '<date-selector></date-selector>', 'date-selector');
+	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
 
 
 	/**
@@ -89,6 +91,7 @@
 	 * @param tAttrs
 	 * @param inputSelector
 	 * @param Utils
+	 * @param inputIdSelector
 	 */
 	function rbsFieldCompile (tElement, tAttrs, inputSelector, Utils) {
 		if (! tAttrs.property) {
@@ -112,6 +115,7 @@
 		fieldId = 'rbs_field_' + property.replace(/[^a-z0-9]/ig, '') + '_' + (++fieldIdCounter);
 		$lbl.html(tAttrs.label).attr('for', fieldId);
 		$ipt.attr('id', fieldId);
+		$ipt.attr('input-id', fieldId);
 
 		// CSS class for Correction
 		tElement.attr('ng-class', '{\'success\': hasCorrectionOnProperty(\'' + property + '\')}');
