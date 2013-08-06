@@ -168,7 +168,10 @@
 			Breadcrumb.unfreeze();
 			MainMenu.unfreeze();
 			$picker.hide();
-			documentList.$destroy();
+			if (documentList) {
+				// 'documentList' may be null if the selector has not been open.
+				documentList.$destroy();
+			}
 			$('#document-picker-backdrop').hide();
 		};
 
