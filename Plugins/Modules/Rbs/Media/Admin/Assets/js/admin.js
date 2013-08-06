@@ -1,24 +1,22 @@
-(function ()
-{
+(function () {
+
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.config(['$routeProvider', function ($routeProvider)
-	{
-		$routeProvider.when('/Rbs/Media', { redirectTo: '/Rbs/Media/Image' })
-			.when('/Rbs/Media/Image', { templateUrl: 'Rbs/Media/Image/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Media/Image/:id/:LCID', { templateUrl: 'Rbs/Media/Image/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Media/Image/:id', { templateUrl: 'Rbs/Media/Image/form.twig', reloadOnSearch: false });
-	}]);
-
+	/**
+	 * Routes and URL definitions.
+	 */
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.register('Rbs_Media_Image', {
-				'form': '/Rbs/Media/Image/:id/:LCID',
-				'list': '/Rbs/Media/Image/:LCID',
-				'i18n': '/Rbs/Media/Image/:id/:LCID/translate-from/:fromLCID'
-			});
+			$delegate
+			.model('Rbs_Media_Image')
+				.route('new' , 'Rbs/Media/Image/new', 'Rbs/Media/Image/form.twig')
+				.route('form', 'Rbs/Media/Image/:id/:LCID', 'Rbs/Media/Image/form.twig')
+				.route('list', 'Rbs/Media/Image/', 'Rbs/Media/Image/list.twig')
+			;
 			return $delegate;
 		}]);
 	}]);
