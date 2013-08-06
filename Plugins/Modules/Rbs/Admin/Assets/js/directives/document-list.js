@@ -777,8 +777,6 @@
 					//
 
 
-					scope.disablePagination = attrs.disablePagination === 'true';
-
 					search = $location.search();
 					scope.pagination = {
 						offset : search.offset || 0,
@@ -938,8 +936,10 @@
 					function setExternalCollection (collection) {
 						if (angular.isObject(collection) && collection.pagination && collection.resources) {
 							documentCollectionLoadedCallback(collection);
+							scope.disablePagination = false;
 						} else {
 							replaceCollection(collection);
+							scope.disablePagination = true;
 						}
 					}
 

@@ -1,28 +1,38 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.picker('website', 'Rbs_Website_Website',
-			'm.rbs.website.document.topic.website',
-			true, 'm.rbs.website.document.topic.website-help',
-			'm.rbs.website.document.staticpage.topic-picker-title') }}
 
-		{{ forms.field('label', 'String', 'm.rbs.website.document.topic.label', true) }}
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.website.document.topic.label', ['ucf']) }}">
+		</rbs-field-text>
 
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('title')}">
-			<label class="control-label" for="title">{{ i18n('m.rbs.website.document.topic.title', ['ucf']) }}</label>
-			<div class="controls">
-				<input type="text" rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}" id="title" name="title" required class="input-block-level" ng-model="document.title"/>
-			</div>
-		</div>
+		<rbs-field-text
+				property="title" required="true"
+				rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.website.document.topic.title', ['ucf']) }}">
+		</rbs-field-text>
 
-		{{ forms.field('pathPart', 'String', 'm.rbs.website.document.topic.pathPart',
-			false, 'm.rbs.website.document.topic.pathPart-help') }}
+		<rbs-field-text
+				property="pathPart"
+				label="{{ i18nAttr('m.rbs.website.document.topic.pathPart', ['ucf']) }}">
+		</rbs-field-text>
 
-		{{ forms.readonly('indexPage.label', 'm.rbs.website.document.topic.indexpage',
-			'm.rbs.website.document.topic.indexpage-help') }}
+		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr('m.rbs.website.document.topic.indexpage', ['ucf']) }}">
+			<span class="uneditable-input">(=document.indexPage.label=)</span>
+		</rbs-field>
+
+		<hr/>
+
+		<rbs-field-picker
+				property="website" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.website', ['ucf']) }}"
+				accepted-model="Rbs_Website_Website"
+				selector-title="{{ i18nAttr('m.rbs.website.document.topic.website-picker-title', ['ucf']) }}"
+				allow-creation="false">
+			<div class="help-block">{{ i18n('m.rbs.website.document.topic.website-help', ['ucf']) }}</div>
+		</rbs-field-picker>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

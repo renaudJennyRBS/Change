@@ -1,13 +1,19 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.website.document.menu.label', true) }}
 
-		{{ forms.picker('website', 'Rbs_Website_Website', 'm.rbs.website.document.menu.website',
-			true, null, 'm.rbs.website.document.menu.website-picker-title') }}
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.website.document.menu.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker
+				property="website" required="true" label="{{ i18nAttr('m.rbs.website.document.menu.website', ['ucf']) }}"
+				accepted-model="Rbs_Website_Website"
+				selector-title="{{ i18nAttr('m.rbs.website.document.menu.website-picker-title', ['ucf']) }}"
+				allow-creation="false">
+		</rbs-field-picker>
 
 	</fieldset>
 
@@ -15,24 +21,17 @@
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.document.menu.section-items', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<div class="control-group property" ng-class="{'success': hasCorrectionOnProperty('items')}">
-			<label class="control-label" for="items">{{ i18n('m.rbs.website.document.menu.items', ['ucf']) }}</label>
-			<div class="controls">
-				<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
-				<token-list class="rows" items="document.items" label-property="title"></token-list>
-				<a href="javascript:;" ng-click="toggleAddItemUI($event)"><i ng-class="{true:'icon-chevron-up', false:'icon-chevron-down'}[addItemUIShown]"></i> Ajouter</a>
-			</div>
-		</div>
-
+		<rbs-field label="{{ i18nAttr('m.rbs.website.document.menu.items', ['ucf']) }}">
+			<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
+			<token-list class="rows" items="document.items" label-property="title"></token-list>
+			<a href="javascript:;" ng-click="toggleAddItemUI($event)"><i ng-class="{true:'icon-chevron-up', false:'icon-chevron-down'}[addItemUIShown]"></i>
+				{{ i18n('m.rbs.website.document.menu.add-items', ['ucf']) }}</a>
+		</rbs-field>
 
 		<div class="well" ng-if="addItemUIShown">
 			<button type="button" class="close pull-right" ng-click="toggleAddItemUI($event)">&times;</button>
-			<h5>Ajouter une entrée au menu</h5>
-			<span class="help-block">
-				<strong>Vous pouvez sélectionner un Document publiable ou saisir les informations de l'entrée de menu manuellement.</strong><br/>
-				Après avoir choisi un document, il est possible de modifier certains paramètres comme le titre à afficher
-				dans le menu.
-			</span>
+			<h5>{{ i18n('m.rbs.website.document.menu.add-item', ['ucf']) }}</h5>
+			<span class="help-block">{{ i18n('m.rbs.website.document.menu.add-item-help', ['ucf']) }}</span>
 			<div class="control-group">
 				<label class="control-label" for="items">{{ i18n('m.rbs.website.document.menu.select-document', ['ucf']) }}</label>
 				<div class="controls">
@@ -40,7 +39,7 @@
 					     allow-creation="false"
 					     select-model="{publishable:'true', root:'true'}"
 					     ng-model="add.selectedDocument"
-					     selector-title="Sélectionner un document à ajouter au menu"
+					     selector-title="{{ i18nAttr('m.rbs.website.document.menu.select-document-to-add-to-menu', ['ucf']) }}"
 					     ng-change="onDocumentSelected(add.selectedDocument)">
 					</div>
 				</div>
@@ -65,7 +64,8 @@
 
 			<div class="control-group">
 				<div class="controls">
-					<button type="button" class="btn" ng-click="addItem()"><i class="icon-plus"></i> Ajouter cet élément au menu</button>
+					<button type="button" class="btn" ng-click="addItem()"><i class="icon-plus"></i>
+						{{ i18n('m.rbs.website.document.menu.add-this-element', ['ucf']) }}</button>
 				</div>
 			</div>
 

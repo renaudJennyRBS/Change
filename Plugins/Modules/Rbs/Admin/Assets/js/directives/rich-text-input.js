@@ -67,7 +67,7 @@
 							'<div class="media-picker"></div>' +
 							'<div class="link-picker"></div>' +
 
-							'<div id="rbsInputMarkdownAceEditor(=editorId=)"></div>' +
+							'<div data-role="ace-editor"></div>' +
 						'</div>' +
 						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview"></div>' +
 					'</div>' +
@@ -86,7 +86,9 @@
 					};
 
 				scope.editorId = ++aceEditorIdCounter;
+
 				id = "rbsInputMarkdownAceEditor" + scope.editorId;
+				element.find('[data-role="ace-editor"]').attr('id', id);
 
 				// Initialize ACE editor when the scope has been completely applied.
 				function initEditor () {
@@ -98,6 +100,15 @@
 					session.setFoldStyle("manual");
 					editor.setShowFoldWidgets(true);
 					editor.renderer.setShowGutter(false);
+
+					// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
+					// so that the binding with the '<label/>' element works as expected.
+					// (see Directives in 'Rbs/Admin/Assets/js/directives/form-fields.js').
+					if (attrs.id && attrs.id === attrs.inputId) {
+						element.find('textarea.ace_text-input').attr('id', attrs.id);
+						element.removeAttr('id');
+						element.removeAttr('input-id');
+					}
 
 					$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
 

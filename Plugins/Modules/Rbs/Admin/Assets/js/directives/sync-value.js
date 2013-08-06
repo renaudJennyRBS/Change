@@ -8,6 +8,8 @@
 			restrict : 'A',
 			scope    : true,
 			require  : 'ngModel',
+			// Lower priority so that the <rbs-field-*/> Directives can compile before this one.
+			priority : -1000,
 
 			link : function linkFn (scope, elm, attrs, ngModel) {
 				var	source = attrs.rbsSyncValue,
