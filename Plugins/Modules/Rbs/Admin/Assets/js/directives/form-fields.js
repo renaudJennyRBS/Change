@@ -6,9 +6,9 @@
 		fieldIdCounter = 0;
 
 
-	registerFieldDirective('Text', '<input type="text"/>', 'input');
+	registerFieldDirective('Text', '<input type="text" class="input-block-level"/>', 'input');
 	registerFieldDirective('Email', '<input type="email"/>', 'input');
-	registerFieldDirective('Url', '<input type="url"/>', 'input');
+	registerFieldDirective('Url', '<input type="url" class="input-block-level"/>', 'input');
 	registerFieldDirective('Integer', '<input type="number" class="input-mini" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
 	registerFieldDirective('Float', '<input type="number" class="input-mini" smart-float=""/>', 'input');
 	registerFieldDirective('Boolean', '<switch></switch>', 'switch');
