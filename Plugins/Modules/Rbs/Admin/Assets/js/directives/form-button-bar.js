@@ -13,9 +13,7 @@
 
 			link : function (scope, element) {
 
-				Settings.ready().then(function () {
-					scope.actionAfterSave = Settings.get('editorActionAfterSave', 'list');
-				});
+				scope.actionAfterSave = Settings.get('editorActionAfterSave', 'list');
 
 				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
 				var shouldLoadContents = true;
