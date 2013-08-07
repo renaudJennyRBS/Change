@@ -40,10 +40,8 @@
 
 			link : function (scope, elm, attrs, ngModel) {
 
-				Settings.ready().then(function () {
-					scope.timeZone = Settings.get('TimeZone');
-					loadTimeZoneInfo(scope.timeZone);
-				});
+				scope.timeZone = Settings.get('TimeZone');
+				loadTimeZoneInfo(scope.timeZone);
 
 				var	dInput = $(elm).find('[data-role="input-date"]').first(),
 					hInput = $(elm).find('[data-role="input-hour"]').first(),

@@ -23,4 +23,5 @@
 	</key>
 	<key id="usertag-cannot-be-modified" format="html"><![CDATA[This property can only be defined when creating the tag.]]>
 	</key>
+	<key id="child-tags-count">{'0':'No child tags.', 'one':'One child tag:', 'other':'{} child tags:'}</key>
 </i18n>
