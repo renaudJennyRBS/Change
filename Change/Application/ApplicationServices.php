@@ -28,6 +28,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->registerI18nManager($dl);
 		$this->registerPluginManager($dl);
 		$this->registerStorageManager($dl);
+		$this->registerMailManager($dl);
 
 		parent::__construct($dl);
 
@@ -54,6 +55,8 @@ class ApplicationServices extends \Zend\Di\Di
 		$im->setParameters('Change\Storage\StorageManager', array(
 			'configuration' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace()));
+
+		$im->setParameters('Change\Mail\MailManager', array('configuration' => $application->getConfiguration()));
 	}
 
 	/**
@@ -92,7 +95,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 			->addMethod('setSharedEventManager', true)
 			->addMethodParameter('setSharedEventManager',
-			'sharedEventManager', array('type' => 'Change\Events\SharedEventManager', 'required' => true));
+				'sharedEventManager', array('type' => 'Change\Events\SharedEventManager', 'required' => true));
 
 		$dl->addDefinition($cl);
 	}
@@ -104,10 +107,10 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Transaction\TransactionManager');
 		$cl->setInstantiator('__construct')
-		->addMethod('__construct', true)
-		->addMethod('setSharedEventManager')
-		->addMethodParameter('setSharedEventManager', 'sharedEventManager',
-			array('type' => 'Change\Events\SharedEventManager', 'required' => true));
+			->addMethod('__construct', true)
+			->addMethod('setSharedEventManager')
+			->addMethodParameter('setSharedEventManager', 'sharedEventManager',
+				array('type' => 'Change\Events\SharedEventManager', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
@@ -180,6 +183,24 @@ class ApplicationServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @param \Zend\Di\DefinitionList $dl
+	 */
+	protected function registerMailManager($dl)
+	{
+		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Mail\MailManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+
+			->addMethod('setConfiguration', true)
+			->addMethodParameter('setConfiguration', 'configuration',
+				array('type' => 'Change\Configuration\Configuration', 'required' => true))
+
+			->addMethod('setLogging', true)
+			->addMethodParameter('setLogging', 'logging', array('type' => 'Change\Logging\Logging', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
 	 * @api
 	 * @return \Change\Application
 	 */
@@ -240,5 +261,14 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getStorageManager()
 	{
 		return $this->get('Change\Storage\StorageManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Mail\MailManager
+	 */
+	public function getMailManager()
+	{
+		return $this->get('Change\Mail\MailManager');
 	}
 }
