@@ -162,18 +162,33 @@
 						routeDefFn(name, route, rule);
 						return this;
 					},
+
 					'model' : function (modelName) {
 						currentModelName = modelName;
 						return this;
 					},
+
 					'routesForModels' : function (modelNames) {
 						var self = this;
 						angular.forEach(modelNames, function (model) {
 							var baseRouteTpl = model.replace(/_/g, '/');
 							self.model(model)
-								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
-								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
 								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
+								.route('form', baseRouteTpl + '/:id', baseRouteTpl + '/form.twig')
+								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+							;
+						});
+						return this;
+					},
+
+					'routesForLocalizedModels' : function (modelNames) {
+						var self = this;
+						angular.forEach(modelNames, function (model) {
+							var baseRouteTpl = model.replace(/_/g, '/');
+							self.model(model)
+								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
+								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
+								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
 							;
 						});
 						return this;
