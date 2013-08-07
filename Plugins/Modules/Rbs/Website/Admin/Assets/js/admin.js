@@ -82,7 +82,7 @@
 				.route('home', 'Rbs/Website/', { 'redirectTo': 'Rbs/Website/Website/'})
 			;
 
-			$delegate.routesForModels([
+			$delegate.routesForLocalizedModels([
 				'Rbs_Website_Website',
 				'Rbs_Website_Topic',
 				'Rbs_Website_StaticPage',
