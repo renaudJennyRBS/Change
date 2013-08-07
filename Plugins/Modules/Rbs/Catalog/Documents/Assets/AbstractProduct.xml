@@ -7,11 +7,8 @@
 		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" />
 		<property name="pictograms" type="DocumentArray" document-type="Rbs_Media_Image" />
 		<property name="brand" type="Document" document-type="Rbs_Brand_Brand" />
-		<property name="shippedIn" type="String" />
-		<property name="minOrderQuantity" type="Integer" default-value="1" required="true" />
-		<property name="maxOrderQuantity" type="Integer" />
 		<property name="code" type="String" />
-		<property name="sku" type="String" />
+		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" />
 		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
 		<property name="attributeValues" type="JSON" />
 	</properties>

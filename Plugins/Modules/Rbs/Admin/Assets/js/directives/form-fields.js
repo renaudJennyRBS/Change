@@ -106,8 +106,8 @@
 			property = tAttrs.property;
 			ngModel = 'document.' + property;
 		} else {
+			ngModel = tAttrs.property;
 			property = tAttrs.property.substr(p + 1);
-			ngModel = property;
 		}
 
 		// Bind label and input field (unique 'for' attribute).

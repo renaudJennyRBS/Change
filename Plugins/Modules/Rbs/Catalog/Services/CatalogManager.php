@@ -28,6 +28,22 @@ class CatalogManager
 	}
 
 	/**
+	 * @return DocumentServices
+	 */
+	protected function getDocumentServices()
+	{
+		return $this->commerceServices->getDocumentServices();
+	}
+
+	/**
+	 * @return ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->commerceServices->getApplicationServices();
+	}
+
+	/**
 	 * Add the product in a category for the given condition/priority.
 	 *
 	 * @api

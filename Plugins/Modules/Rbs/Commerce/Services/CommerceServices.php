@@ -53,14 +53,16 @@ class CommerceServices extends Di
 
 		$this->registerTaxManager($dl);
 		$this->registerPriceManager($dl);
-		$this->registerCatalogManager($dl)
-		;
+		$this->registerCatalogManager($dl);
+		$this->registerStockManager($dl);
 		parent::__construct($dl);
 
 		$im = $this->instanceManager();
 		$im->setParameters('Rbs\Price\Services\TaxManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Price\Services\PriceManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Catalog\Services\CatalogManager', array('commerceServices' => $this));
+		$im->setParameters('Rbs\Stock\Services\StockManager', array('commerceServices' => $this));
+
 	}
 
 	/**
@@ -96,6 +98,19 @@ class CommerceServices extends Di
 	protected function registerPriceManager($dl)
 	{
 		$cl = new ClassDefinition('Rbs\Price\Services\PriceManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('setCommerceServices', true)
+			->addMethodParameter('setCommerceServices', 'commerceServices',
+				array('type' => 'Rbs\Commerce\Services\CommerceServices', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
+	 * @param DefinitionList $dl
+	 */
+	protected function registerStockManager($dl)
+	{
+		$cl = new ClassDefinition('Rbs\Stock\Services\StockManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('setCommerceServices', true)
 			->addMethodParameter('setCommerceServices', 'commerceServices',
@@ -202,6 +217,14 @@ class CommerceServices extends Di
 	public function getCatalogManager()
 	{
 		return $this->get('Rbs\Catalog\Services\CatalogManager');
+	}
+
+	/**
+	 * @return \Rbs\Stock\Services\StockManager
+	 */
+	public function getStockManager()
+	{
+		return $this->get('Rbs\Stock\Services\StockManager');
 	}
 
 	/**
