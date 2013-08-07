@@ -330,6 +330,10 @@
 			});
 		});
 
+		$rootScope.logout = function () {
+			User.logout();
+		};
+
 	}]);
 
 
