@@ -332,4 +332,12 @@
 
 	}]);
 
+
+	/**
+	 * Remove main loading mask.
+	 */
+	app.run(function () {
+		$('#chg_loading_mask').remove();
+	});
+
 })( window.jQuery );
