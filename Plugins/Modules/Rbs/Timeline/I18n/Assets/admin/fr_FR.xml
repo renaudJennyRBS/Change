@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.timeline.admin" lcid="fr_FR">
+	<key id="message-list">Timeline</key>
+	<key id="leave-a-comment-for-document-legend">poster un commentaire sur ce document</key>
+	<key id="leave-a-comment-write">écrire</key>
+	<key id="leave-a-comment-preview">prévisualiser</key>
+	<key id="leave-a-comment-placeholder">écrire un commentaire.</key>
+	<key id="leave-a-comment-helper">le format utilisé est le Markdown. Utilisez le @ pour désigner une personne (elle sera avertie du nouveau commentaire).</key>
+	<key id="leave-a-comment-submit">commenter</key>
+	<key id="leave-a-comment-update">mettre à jour</key>
+	<key id="edited-comment">message modifié le : </key>
+</i18n>

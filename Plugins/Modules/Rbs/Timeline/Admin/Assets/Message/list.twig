@@ -1,0 +1,15 @@
+<div data-ng-controller="Rbs_Timeline_Message_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.timeline.document.message-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Timeline_Message" filter-query="query" text-search="textSearch"></search-filters>
+
+	<rbs-document-list data-dlid="DLRbsMessage1"
+	                   model="Rbs_Timeline_Message"
+	                   filter-query="query">
+
+		<column name="contextid" align="center"></column>
+		<column name="message" primary="true"></column>
+		<preview>
+			(= doc.message =)
+		</preview>
+	</rbs-document-list>
+</div>

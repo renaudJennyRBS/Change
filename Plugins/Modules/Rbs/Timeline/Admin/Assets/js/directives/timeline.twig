@@ -1,0 +1,35 @@
+<div class="leave-message">
+	<form>
+		<fieldset>
+			<legend>{{ i18n('m.rbs.timeline.admin.leave-a-comment-for-document-legend', ['ucf']) }}</legend>
+			<rbs-rich-text-input data-ng-model="newComment" class="input-block-level"></rbs-rich-text-input>
+			<span class="help-block">{{ i18n('m.rbs.timeline.admin.leave-a-comment-helper', ['ucf']) }}</span>
+			<button type="button" data-ng-click="comment()" class="btn btn-success">{{ i18n('m.rbs.timeline.admin.leave-a-comment-submit', ['ucf']) }}</button>
+		</fieldset>
+	</form>
+</div>
+<div>
+	<div data-ng-repeat="message in timelineMessages">
+		<div class="media">
+			<a class="pull-left" href="#">
+				<img style="width: 64px; height: 64px;" class="media-object" data-ng-src="(= message.avatar =)">
+			</a>
+			<div class="media-body well well-small">
+				<h4 class="media-heading">(= message.authorName =) <small><a href="">@userIdentifier</a></small></h4>
+				<span class="pull-right">(= message.creationDate | date:'medium' =)</span>
+				<div ng-if="message.authorId === user.id" class="message-tools pull-right">
+					<i data-ng-click="editMessage(message)" class="icon-edit"></i>
+					<i data-ng-click="removeMessage(message)" class="icon-remove-circle"></i>
+				</div>
+				<div ng-if="!message.editMode" class="message-content" data-ng-bind-html-unsafe="message.message.h"></div>
+				<div ng-if="!message.editMode && message.creationDate !== message.modificationDate">
+					<small>{{ i18n('m.rbs.timeline.admin.edited-comment', ['ucf']) }} (= message.modificationDate | date:'medium' =)</small>
+				</div>
+				<div ng-if="message.editMode">
+					<rbs-rich-text-input data-ng-model="message.message" class="input-block-level" rows="3"></rbs-rich-text-input>
+					<button type="button" data-ng-click="updateMessage(message)" class="btn btn-success">{{ i18n('m.rbs.timeline.admin.leave-a-comment-update', ['ucf']) }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
