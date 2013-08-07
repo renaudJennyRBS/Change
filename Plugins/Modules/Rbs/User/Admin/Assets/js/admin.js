@@ -1,100 +1,38 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
+	/**
+	 * Routes and URL definitions.
+	 */
+	app.config(['$provide', function ($provide)
+	{
+		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
+		{
+			$delegate.model('Rbs_User_User')
+				.route('applications', 'Rbs/User/User/:id/Applications/', 'Rbs/User/User/applications.twig')
+				.route('permission'  , 'Rbs/User/User/:id/Permissions/' , 'Rbs/User/User/permission.twig')
+			;
 
-	app.config(['$routeProvider', function ($routeProvider) {
-		$routeProvider
+			$delegate.model('Rbs_User_Group')
+				.route('permission'  , 'Rbs/User/Group/:id/Permissions/', 'Rbs/User/User/permission.twig')
+			;
 
-		// User
+			$delegate.model(null)
+				.route('home', 'Rbs/User/', { 'redirectTo': 'Rbs/User/User/'})
+			;
 
-		. when(
-			'/Rbs/User',
-			{
-				templateUrl : 'Rbs/User/User/list.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/User',
-			{
-				templateUrl : 'Rbs/User/User/list.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/User/:id',
-			{
-				templateUrl : 'Rbs/User/User/form.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/Profile',
-			{
-				templateUrl : 'Rbs/User/Profile/profile.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/User/:id/Applications/',
-			{
-				templateUrl: 'Rbs/User/User/applications.twig',
-				reloadOnSearch: false
-			})
-
-		. when(
-			'/Rbs/User/Group',
-			{
-				templateUrl : 'Rbs/User/Group/list.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/Group/:id',
-			{
-				templateUrl : 'Rbs/User/Group/form.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/User/:id/Permission/',
-			{
-				templateUrl : 'Rbs/User/User/permission.twig',
-				reloadOnSearch : false
-			})
-
-		. when(
-			'/Rbs/User/Group/:id/Permission/',
-			{
-				templateUrl : 'Rbs/User/User/permission.twig',
-				reloadOnSearch : false
-			})
-		;
-	}]);
-
-
-	app.config(['$provide', function ($provide) {
-		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
-
-			// User
-			$delegate.register('Rbs_User_User', {
-				'form'  : '/Rbs/User/User/:id',
-				'list'  : '/Rbs/User/User',
-				'applications' : '/Rbs/User/User/:id/Applications/',
-				'permission' : '/Rbs/User/User/:id/Permission/'
-			});
-			// Group
-			$delegate.register('Rbs_User_Group', {
-				'form'  : '/Rbs/User/Group/:id',
-				'list'  : '/Rbs/User/Group',
-				'permission' : '/Rbs/User/Group/:id/Permission/'
-			});
+			$delegate.routesForModels([
+				'Rbs_User_User',
+				'Rbs_User_Group'
+			]);
 
 			return $delegate;
-
 		}]);
 	}]);
+
 
 	function ChangeUserUserLoginController($scope, Workspace, OAuthService, NotificationCenter) {
 		Workspace.hideMenus();
