@@ -11,12 +11,16 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate
-			.model('Rbs_Media_Image')
+			$delegate.model('Rbs_Media_Image')
 				.route('new' , 'Rbs/Media/Image/new', 'Rbs/Media/Image/form.twig')
 				.route('form', 'Rbs/Media/Image/:id/:LCID', 'Rbs/Media/Image/form.twig')
 				.route('list', 'Rbs/Media/Image/', 'Rbs/Media/Image/list.twig')
 			;
+
+			$delegate.model(null)
+				.route('home', 'Rbs/Media/', { 'redirectTo': 'Rbs/Media/Image/'})
+			;
+
 			return $delegate;
 		}]);
 	}]);
