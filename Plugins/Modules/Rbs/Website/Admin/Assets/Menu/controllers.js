@@ -70,7 +70,6 @@
 	 */
 	function FormController($scope, FormsManager, Breadcrumb, i18n, $routeParams, REST)
 	{
-		console.log("$routeParams=", $routeParams);
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
 			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
@@ -82,7 +81,6 @@
 				throw new Error("Parameter 'websiteId' should be an integer.");
 			}
 			REST.resource('Rbs_Website_Website', websiteId).then(function (website) {
-				console.log(website.label, website.url('menus'));
 				Breadcrumb.setPath([[website.label, website.url('menus')]]);
 				FormsManager.initResource($scope, 'Rbs_Website_Menu');
 			});
