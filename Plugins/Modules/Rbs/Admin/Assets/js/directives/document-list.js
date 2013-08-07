@@ -254,13 +254,17 @@
 			// Loop through all the columns and build header et body cells.
 			while (columns.length) {
 				column = columns.shift(0);
-
 				p = column.name.indexOf('.');
 				if (p === -1) {
 					column.valuePath = column.name;
 				} else {
 					column.valuePath = column.name;
 					column.name = column.name.substring(0, p);
+				}
+
+				if (!column.sort)
+				{
+					column.sort = column.name;
 				}
 
 				switch (column.format) {
@@ -302,19 +306,19 @@
 						toggleDateBtn = '';
 					}
 
-					htmlTh = '<th ng-if="isSortable(\'' + column.name + '\')" ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + toggleDateBtn;
+					htmlTh = '<th ng-if="isSortable(\'' + column.sort + '\')" ng-class="{\'sorted\':isSortedOn(\'' + column.sort + '\')}">' + toggleDateBtn;
 
 					if (column.localSort === 'true') {
-						htmlTh += '<a href="javascript:;" ng-click="toggleLocalSort(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+						htmlTh += '<a href="javascript:;" ng-click="toggleLocalSort(\'' + column.sort + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
 					} else {
-						htmlTh += '<a href ng-click="clearLocalSort()" ng-href="(= headerUrl(\'' + column.name + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+						htmlTh += '<a href ng-click="clearLocalSort()" ng-href="(= headerUrl(\'' + column.sort + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
 					}
 
 					htmlTh +=
-						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.name + '\')"></i>' +
-						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.name + '\')"></i>' +
+						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.sort + '\')"></i>' +
+						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.sort + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + toggleDateBtn + column.name + '</th>';
+						'<th ng-if="!isSortable(\'' + column.sort + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + toggleDateBtn + column.name + '</th>';
 
 					$th = $(htmlTh);
 				}

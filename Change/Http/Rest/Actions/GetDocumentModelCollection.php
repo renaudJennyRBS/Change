@@ -50,9 +50,42 @@ class GetDocumentModelCollection
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Http\Rest\Result\CollectionResult $result
+	 * @param \Change\Documents\ModelManager $mm
+	 * @param bool $includeDoc
+	 */
+	protected function addSortablePropertiesForModel($model, $result, $mm, $parentName = null)
+	{
+		if ($model instanceof \Change\Documents\AbstractModel)
+		{
+			foreach ($model->getProperties() as $property)
+			{
+				if (!$property->getStateless())
+				{
+					if (in_array($property->getType(), $this->sortablePropertyTypes))
+					{
+						if (!$property->getLocalized() || $parentName === null)
+						{
+							// Localized properties are not sortable on sub model
+							$name = $parentName ?  $parentName . '.' . $property->getName() : $property->getName();
+							$result->addAvailableSort($name);
+						}
+					}
+					else if (!$parentName && $property->getType() === Property::TYPE_DOCUMENT)
+					{
+						$this->addSortablePropertiesForModel($mm->getModelByName($property->getDocumentType()), $result, $mm, $property->getName());
+					}
+				}
+			}
+		}
+
+	}
+
+	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractModel $model
-	 * @return \Change\Http\Rest\Result\DocumentResult
+	 * @return \Change\Http\Rest\Result\CollectionResult
 	 */
 	protected function generateResult($event, $model)
 	{
@@ -75,17 +108,13 @@ class GetDocumentModelCollection
 		{
 			$result->setDesc($desc);
 		}
-		foreach ($model->getProperties() as $property)
-		{
-			if (!$property->getStateless() && in_array($property->getType(), $this->sortablePropertyTypes))
-			{
-				$result->addAvailableSort($property->getName());
-			}
-		}
+
+
+		$this->addSortablePropertiesForModel($model, $result,  $event->getDocumentServices()->getModelManager());
+
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
 		$result->addLink($selfLink);
-
 		if ($model->isStateless())
 		{
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
@@ -112,6 +141,7 @@ class GetDocumentModelCollection
 		}
 
 		$sc = $qb->query();
+
 		$row = $sc->getFirstResult();
 		if ($row && $row['count'])
 		{
@@ -149,45 +179,80 @@ class GetDocumentModelCollection
 
 			if ($model->hasDescendants())
 			{
-				$qb->where($fb->in($fb->getDocumentColumn('model'), $model->getName(), $model->getDescendantsNames()));
+				$qb->where($fb->in($fb->getDocumentColumn('model', $table), $model->getName(), $model->getDescendantsNames()));
 			}
 			else
 			{
-				$qb->where($fb->eq($fb->getDocumentColumn('model'), $fb->string($model->getName())));
+				$qb->where($fb->eq($fb->getDocumentColumn('model', $table), $fb->string($model->getName())));
 			}
 
-			if ($result->getSort() && ($property = $model->getProperty($result->getSort())) !== null)
+			$sortInfo = explode('.', $result->getSort());
+			if (count($sortInfo))
 			{
-				if ($property->getLocalized())
+				$property = $model->getProperty(array_shift($sortInfo));
+				if ($property)
 				{
-					$LCID = $event->getRequest()->getLCID();
-					$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
+					$orderColumn = null;
+					if (count($sortInfo) && $property->getType() === Property::TYPE_DOCUMENT)
+					{
+						$sortModel = $event->getDocumentServices()->getModelManager()->getModelByName($property->getDocumentType());
+						$sortPropertyName = array_shift($sortInfo);
+						if ($sortModel && $sortModel->isEditable() && $sortModel->hasProperty($sortPropertyName))
+						{
+							$sortProperty = $sortModel->getProperty($sortPropertyName);
+							if (!$sortProperty->getLocalized())
+							{
+								// Join on model table
+								$modelTable = $fb->getDocumentTable($sortModel->getRootName());
+								$qb->innerJoin($modelTable, $fb->eq(
+									$fb->getDocumentColumn($property->getName(), $table),
+									$fb->getDocumentColumn('id', $modelTable)
+								));
+								$orderColumn = $fb->getDocumentColumn($sortPropertyName, $modelTable);
+							}
+						}
+					}
+					else
+					{
+						if ($property->getLocalized())
+						{
+							$LCID = $event->getRequest()->getLCID();
+							$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
 
-					$qb->leftJoin($i18nTable,
-						$fb->logicAnd(
-							$fb->eq($fb->getDocumentColumn('id', $table), $fb->getDocumentColumn('id', $i18nTable)),
-							$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $fb->string($LCID))
-						)
-					);
+							$qb->leftJoin($i18nTable,
+								$fb->logicAnd(
+									$fb->eq($fb->getDocumentColumn('id', $table), $fb->getDocumentColumn('id', $i18nTable)),
+									$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $fb->string($LCID))
+								)
+							);
+						}
+
+						if ($property->getName() == 'id' || $property->getName() == 'model')
+						{
+							$orderColumn = $fb->column($property->getName());
+						}
+						else
+						{
+							$orderColumn = $fb->getDocumentColumn($property->getName());
+						}
+					}
+
+
+					if ($orderColumn)
+					{
+						if ($result->getDesc())
+						{
+							$qb->orderDesc($orderColumn);
+						}
+						else
+						{
+							$qb->orderAsc($orderColumn);
+						}
+					}
+
 				}
 
-				if ($property->getName() == 'id' || $property->getName() == 'model')
-				{
-					$orderColumn = $fb->column($property->getName());
-				}
-				else
-				{
-					$orderColumn = $fb->getDocumentColumn($property->getName());
-				}
 
-				if ($result->getDesc())
-				{
-					$qb->orderDesc($orderColumn);
-				}
-				else
-				{
-					$qb->orderAsc($orderColumn);
-				}
 			}
 			$extraColumn = $event->getRequest()->getQuery('column', array());
 			$sc = $qb->query();
