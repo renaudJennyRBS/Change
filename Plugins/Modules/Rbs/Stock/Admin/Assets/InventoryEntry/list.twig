@@ -1,0 +1,16 @@
+<div data-ng-controller="Rbs_Stock_InventoryEntry_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Stock_InventoryEntry" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div>
+		<a href="Rbs/Stock/InventoryEntry/new">{{ i18n('m.rbs.stock.admin.js.inventoryentry-create', ['ucf']) }}</a>
+	</div>
+
+	<rbs-document-list data-dlid="DLRbsStockInventoryEntry"
+	               model="Rbs_Stock_InventoryEntry"
+	               filter-query="query">
+		<column name="sku" sort="sku.code" primary="true">(= doc.sku.label =)</column>
+		<column name="level"></column>
+
+	</rbs-document-list>
+</div>

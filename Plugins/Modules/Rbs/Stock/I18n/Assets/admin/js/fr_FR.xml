@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.stock.admin.js" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="module-name">gestion des stocks</key>
+	<key id="inventoryentry-list">stocks</key>
+	<key id="inventoryentry-create">définir un stock</key>
+	<key id="sku-list">SKU</key>
+	<key id="sku-create">ajouter un SKU</key>
+</i18n>

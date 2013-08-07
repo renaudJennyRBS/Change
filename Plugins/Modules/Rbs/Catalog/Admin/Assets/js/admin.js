@@ -1,49 +1,36 @@
 (function ()
 {
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.config(['$routeProvider', function ($routeProvider)
-	{
-		$routeProvider.when('/Rbs/Catalog', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product/', { templateUrl: 'Rbs/Catalog/Product/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product/:id/Prices/', { templateUrl: 'Rbs/Catalog/Product/product-prices.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Product/categories.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product/:id/:LCID', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Product/:id', { templateUrl: 'Rbs/Catalog/Product/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Category', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Category/:id/ProductCategorization/', { templateUrl: 'Rbs/Catalog/Category/products.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Category/:id/:LCID', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Category/:id', { templateUrl: 'Rbs/Catalog/Category/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/nav/', { templateUrl: 'Rbs/Catalog/Category/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Attribute/', { templateUrl: 'Rbs/Catalog/Attribute/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Attribute/:id/:LCID', { templateUrl: 'Rbs/Catalog/Attribute/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Catalog/Attribute/:id', { templateUrl: 'Rbs/Catalog/Attribute/form.twig', reloadOnSearch: false });
-	}]);
-
+	/**
+	 * Routes and URL definitions.
+	 */
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.register('Rbs_Catalog_Category', {
-				'form': '/Rbs/Catalog/Category/:id/:LCID',
-				'list': '/Rbs/Catalog/Category/:LCID',
-				'i18n': '/Rbs/Catalog/Category/:id/:LCID/translate-from/:fromLCID',
-				'productcategorizations': 'Rbs/Catalog/Category/:id/ProductCategorization/',
-				'tree': '/Rbs/Catalog/nav/?tn=:id'
-			});
-			$delegate.register('Rbs_Catalog_Product', {
-				'form': '/Rbs/Catalog/Product/:id/:LCID',
-				'list': '/Rbs/Catalog/Product/',
-				'i18n': '/Rbs/Catalog/Product/:id/:LCID/translate-from/:fromLCID',
-				'productcategorizations': 'Rbs/Catalog/Product/:id/ProductCategorization/',
-				'prices': 'Rbs/Catalog/Product/:id/Prices/'
-			});
-			$delegate.register('Rbs_Catalog_Attribute', {
-				'form': '/Rbs/Catalog/Attribute/:id/:LCID',
-				'list': '/Rbs/Catalog/Attribute/',
-				'i18n': '/Rbs/Catalog/Attribute/:id/:LCID/translate-from/:fromLCID'
-			});
+			$delegate.model('Rbs_Catalog_Product')
+				.route('productcategorizations', 'Rbs/Catalog/Product/:id/ProductCategorization/', 'Rbs/Catalog/Product/categories.twig')
+				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Rbs/Catalog/Product/product-prices.twig');
+
+			$delegate.model('Rbs_Catalog_Category')
+				.route('productcategorizations', 'Rbs/Catalog/Category/:id/ProductCategorization/', 'Rbs/Catalog/Category/products.twig');
+
+
+			$delegate.model(null)
+				.route('home', 'Rbs/Catalog/', { 'redirectTo': 'Rbs/Catalog/Product/'})
+				.route('nav', '/Rbs/Catalog/nav/', 'Rbs/Catalog/Category/list.twig');
+
+			$delegate.routesForLocalizedModels([
+				'Rbs_Catalog_Product',
+				'Rbs_Catalog_Category',
+				'Rbs_Catalog_Attribute'
+			]);
+			
 			return $delegate;
 		}]);
+
 	}]);
 })();
