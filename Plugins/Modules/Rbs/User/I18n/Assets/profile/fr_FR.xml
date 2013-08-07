@@ -13,4 +13,7 @@
 	<key id="internationalization">internationalisation</key>
 	<key id="lists">affichage des listes</key>
 	<key id="editors">éditeurs</key>
+	<key id="personnal-info">informations personnelles</key>
+	<key id="warning">attention !</key>
+	<key id="change-language-warning">après avoir changé de langue, vous devrez vider les caches de votre navigateur et recharger la page.</key>
 </i18n>
