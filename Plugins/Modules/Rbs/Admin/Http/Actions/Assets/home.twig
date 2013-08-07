@@ -36,6 +36,31 @@
 	<link href="Rbs/Admin/menu/menu.css" rel="stylesheet"/>
 	<link href="Rbs/Admin/dashboard/dashboard.css" rel="stylesheet"/>
 
+	<style type="text/css">
+		#chg_loading_mask {
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 10000;
+			background: white;
+		}
+		#chg_loading_mask > div {
+			margin: 100px auto;
+			width: 460px;
+			color: #444444;
+			font-size: 14pt;
+			text-align: center;
+		}
+		#chg_loading_mask .progress {
+			margin: 1em 0;
+		}
+		#chg_loading_mask small {
+			color: #999999;
+		}
+	</style>
+
     <!-- modules -->
 {% for node in resources.header %}
 	{{ node|raw }}
@@ -49,6 +74,16 @@
 </head>
 
 <body data-ng-controller="Change.RootController">
+	<div id="chg_loading_mask">
+		<div>
+			<img alt="Logo RBS Change" src="Rbs/Admin/img/logo-rbs-change@2x.png">
+			<div class="progress progress-striped active">
+				<div class="bar" style="width: 100%;"></div>
+			</div>
+			<div>Chargement en cours...</div>
+			<small>Merci de bien vouloir patienter quelques secondes :)</small>
+		</div>
+	</div>
     <div full-screen-toggle id="fullScreenBar">
         <i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran.
 	</div>
