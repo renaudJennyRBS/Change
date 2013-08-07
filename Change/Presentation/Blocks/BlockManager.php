@@ -2,10 +2,8 @@
 namespace Change\Presentation\Blocks;
 
 use Change\Documents\DocumentServices;
-use Change\Events\SharedEventManager;
 use Change\Http\Web\Result\BlockResult;
 use Change\Presentation\PresentationServices;
-use Zend\EventManager\EventManager;
 
 /**
  * @name \Change\Presentation\Blocks\BlockManager

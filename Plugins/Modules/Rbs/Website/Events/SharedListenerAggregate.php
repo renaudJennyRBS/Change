@@ -3,6 +3,7 @@ namespace Rbs\Website\Events;
 
 use Rbs\Website\Events\WebsiteResolver;
 use Change\Documents\Events\Event as DocumentEvent;
+use Rbs\Website\RichText\MarkdownParser;
 
 /**
 * @name \Rbs\Website\Events\SharedListenerAggregate
@@ -47,6 +48,8 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 			$resolver->resolve($event);
 		};
 		$events->attach('Documents', DocumentEvent::EVENT_DISPLAY_PAGE, $callback, 5);
+
+		$events->attach('Presentation.RichText', 'GetParser', array($this, 'getRichTextParser'));
 	}
 
 	/**
@@ -79,6 +82,19 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		}
 	}
 
+	/**
+	 * @param \Change\Presentation\RichText\Event $event
+	 */
+	public function getRichTextParser(\Change\Presentation\RichText\Event $event)
+	{
+		if ($event->getProfile() === 'Website')
+		{
+			if ($event->getEditor() === 'Markdown')
+			{
+				$event->setParser(new MarkdownParser($event->getDocumentServices()));
+			}
+		}
+	}
 
 	/**
 	 * Detach all previously attached listeners

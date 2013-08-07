@@ -191,7 +191,11 @@
 					if ($(e.target).data('role') === 'preview') {
 						$previewEl.empty();
 						scope.previewing = true;
-						REST.postAction('md2html', editor.getValue()).then(function (data) {
+						var params = {
+							'profile': (attrs.previewProfile || 'Website'),
+							'editor' : 'Markdown'
+						};
+						REST.postAction('renderRichText', editor.getValue(), params).then(function (data) {
 							$previewEl.html(data.html);
 							scope.previewing = false;
 						});

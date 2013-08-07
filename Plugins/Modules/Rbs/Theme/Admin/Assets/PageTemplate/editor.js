@@ -23,7 +23,10 @@
 			{
 				Editor.initScope(scope, elm, function ()
 				{
-					scope.document.theme = Breadcrumb.getCurrentNode();
+					var currentNode = Breadcrumb.getCurrentNode();
+					if (currentNode.model === 'Rbs_Theme_Theme') {
+						scope.document.theme = currentNode;
+					}
 				});
 			}
 		};

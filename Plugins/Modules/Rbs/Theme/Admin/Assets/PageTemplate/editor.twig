@@ -1,10 +1,19 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.theme.document.pagetemplate.label', true) }}
+
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.theme.document.pagetemplate.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker ng-show="document.isNew()"
+				property="theme" required="true" label="{{ i18nAttr('m.rbs.theme.document.pagetemplate.theme', ['ucf']) }}"
+				accepted-model="Rbs_Theme_Theme"
+				selector-title="{{ i18nAttr('m.rbs.theme.document.pagetemplate.theme-picker-title', ['ucf']) }}"
+				allow-creation="false">
+		</rbs-field-picker>
 
 		<ul class="nav nav-tabs" id="contentsTab">
 			<li class="active"><a href="javascript:;" data-target="#html" data-toggle="tab">

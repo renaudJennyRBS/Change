@@ -3,7 +3,7 @@
 	var app = angular.module('RbsChange');
 
 	app.config(['$provide', function ($provide) {
-		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', function (Utils) {
+		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider) {
 
 			this.$get = function() {
 				var urls = {};
@@ -13,6 +13,43 @@
 						url = { 'form': url };
 					}
 					urls[modelName] = angular.extend(urls[modelName] || {}, url);
+				};
+
+				var defaultRule = {
+					reloadOnSearch : false,
+					resolve : {
+						user : ['RbsChange.Settings', function (Settings) {
+							return Settings.ready();
+						}]
+					}
+				};
+
+				var currentModelName = null;
+				var routeDefFn = function (name, route, rule) {
+					var urls, p;
+
+					if (route.charAt(0) !== '/') {
+						route = '/' + route;
+					}
+
+					if (currentModelName) {
+						urls = {};
+						urls[name] = route;
+						register(currentModelName, urls);
+					}
+
+					if (angular.isString(rule)) {
+						rule = {
+							templateUrl : rule
+						};
+					}
+					if (! rule.redirectTo) {
+						rule = angular.extend({}, defaultRule, rule);
+					}
+					if ((p = route.indexOf('?')) !== -1) {
+						route = route.substring(0, p);
+					}
+					$routeProvider.when(route, rule);
 				};
 
 
@@ -121,6 +158,27 @@
 				return {
 					'register'   : register,
 
+					'route' : function (name, route, rule) {
+						routeDefFn(name, route, rule);
+						return this;
+					},
+					'model' : function (modelName) {
+						currentModelName = modelName;
+						return this;
+					},
+					'routesForModels' : function (modelNames) {
+						var self = this;
+						angular.forEach(modelNames, function (model) {
+							var baseRouteTpl = model.replace(/_/g, '/');
+							self.model(model)
+								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
+								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
+							;
+						});
+						return this;
+					},
+
 					'getListUrl' : function (doc, params) {
 						return getNamedUrl(doc, params, 'list');
 					},
@@ -160,7 +218,7 @@
 			if (Utils.isDocument(doc)) {
 				url = doc.url(urlName);
 			} else if (Utils.isModelName(doc)) {
-				url = UrlManager.getFormUrl(doc, urlName ? urlName : {'id': 'new'});
+				url = UrlManager.getUrl(doc, null, urlName);
 			} else {
 				return 'javascript:;';
 			}
