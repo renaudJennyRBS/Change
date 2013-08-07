@@ -59,7 +59,7 @@ class StockManager
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryItem');
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
 		$query->andPredicates(
 			$query->eq('sku', $sku),
 			$query->eq('warehouse', $warehouse)

@@ -1,29 +1,28 @@
 (function ()
 {
+
+
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.config(['$routeProvider', function ($routeProvider)
-	{
-		$routeProvider.when('/Rbs/Stock/', { templateUrl: 'Rbs/Stock/InventoryEntry/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Stock/Sku/', { templateUrl: 'Rbs/Stock/Sku/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Stock/Sku/:id', { templateUrl: 'Rbs/Stock/Sku/form.twig', reloadOnSearch: false })
-			.when('/Rbs/Stock/InventoryEntry/', { templateUrl: 'Rbs/Stock/InventoryEntry/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Stock/InventoryEntry/:id', { templateUrl: 'Rbs/Stock/InventoryEntry/form.twig', reloadOnSearch: false });
-	}]);
-
+	/**
+	 * Routes and URL definitions.
+	 */
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.register('Rbs_Stock_Sku', {
-				'list': '/Rbs/Stock/Sku/',
-				'form': '/Rbs/Stock/Sku/:id/'
-			});
-			$delegate.register('Rbs_Stock_InventoryEntry', {
-				'list': '/Rbs/Stock/InventoryEntry/',
-				'form': '/Rbs/Stock/InventoryEntry/:id'
-			});
+			$delegate.model(null)
+				.route('home', 'Rbs/Stock/', { 'redirectTo': 'Rbs/Stock/InventoryEntry/'});
+
+			$delegate.routesForModels([
+				'Rbs_Stock_Sku',
+				'Rbs_Stock_InventoryEntry'
+			]);
+
 			return $delegate;
 		}]);
+
 	}]);
 })();

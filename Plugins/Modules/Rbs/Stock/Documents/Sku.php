@@ -48,6 +48,26 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	}
 
 	/**
+	 * @param $value
+	 * @param string $unit
+	 */
+	public function setMass($value, $unit = self::UNIT_MASS_KG)
+	{
+		if (!is_numeric($value))
+		{
+			throw new \InvalidArgumentException('value has to be numeric', 999999);
+		}
+		if (!$this->massConversion[$unit])
+		{
+			throw new \InvalidArgumentException('unknown unit' . $unit, 999999);
+		}
+		$props = $this->getPhysicalProperties();
+		$props['mass'] = array('value' => $value, 'unit' => $unit);
+		$this->setPhysicalProperties($props);
+		return $this;
+	}
+
+	/**
 	 * @param string $toUnit
 	 * @return float
 	 */
@@ -66,6 +86,36 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 			}
 		}
 		return $fromUnit == $toUnit ? $value : $this->lengthConversion[$fromUnit][$toUnit] * $value;
+	}
+
+	/**
+	 * @param $type
+	 * @param $value
+	 * @param $unit
+	 */
+	protected function setLengthValue($type, $value, $unit)
+	{
+		if (!is_numeric($value))
+		{
+			throw new \InvalidArgumentException('value has to be numeric', 999999);
+		}
+		if (!$this->lengthConversion[$unit])
+		{
+			throw new \InvalidArgumentException('unknown unit ' . $unit, 999999);
+		}
+		$props = $this->getPhysicalProperties();
+		$props[$type] = array('value' => $value, 'unit' => $unit);
+		$this->setPhysicalProperties($props);
+		return $this;
+	}
+
+	/**
+	 * @param $value
+	 * @param string $unit
+	 */
+	public function setLength($value, $unit = self::UNIT_LENGTH_M)
+	{
+		return $this->setLengthValue('length', $value, $unit);
 	}
 
 	/**
@@ -90,6 +140,15 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	}
 
 	/**
+	 * @param $value
+	 * @param string $unit
+	 */
+	public function setWidth($value, $unit = self::UNIT_LENGTH_M)
+	{
+		return $this->setLengthValue('width', $value, $unit);
+	}
+
+	/**
 	 * @param string $toUnit
 	 * @return float
 	 */
@@ -108,6 +167,15 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 			}
 		}
 		return $fromUnit == $toUnit ? $value : $this->lengthConversion[$fromUnit][$toUnit] * $value;
+	}
+
+	/**
+	 * @param $value
+	 * @param string $unit
+	 */
+	public function setHeight($value, $unit = self::UNIT_LENGTH_M)
+	{
+		return $this->setLengthValue('height', $value, $unit);
 	}
 
 	/**
@@ -141,11 +209,17 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		}
 	}
 
+	/**
+	 * Check unicity
+	 */
 	public function onUpdate()
 	{
 		$this->checkUnicity();
 	}
 
+	/**
+	 * Check unicity
+	 */
 	public function onCreate()
 	{
 		$this->checkUnicity();
