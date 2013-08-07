@@ -63,7 +63,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		try
 		{
-			$manager->affectId($document);
+			$manager->assignId($document);
 			$this->fail('RuntimeException: Transaction not started');
 		}
 		catch (\RuntimeException $e)
@@ -103,7 +103,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document->getId());
-		$manager->affectId($document);
+		$manager->assignId($document);
 		$this->assertGreaterThan(0, $document->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document->getPersistentState());
 		
@@ -112,14 +112,14 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$document2 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document2->getId());
 		$document2->initialize($definedId);
-		$manager->affectId($document2);
+		$manager->assignId($document2);
 		$this->assertEquals($definedId, $document2->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document2->getPersistentState());
 
 		/* @var $document3 \Project\Tests\Documents\Basic */
 		$document3 = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertLessThan(0, $document3->getId());
-		$manager->affectId($document3);
+		$manager->assignId($document3);
 		$this->assertEquals($definedId + 1, $document3->getId());
 		$this->assertEquals(DocumentManager::STATE_NEW, $document3->getPersistentState());
 		
@@ -171,7 +171,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($manager->getDocumentInstance($tmpId));
 		$this->assertNull($manager->getDocumentInstance(-5000));
 
-		$manager->affectId($newDoc);
+		$manager->assignId($newDoc);
 		
 		$finalId = $newDoc->getId();
 		$this->assertGreaterThan(0, $finalId);
@@ -196,7 +196,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('fr_FR', $localizedI18nPartFr->getLCID());
 		$this->assertEquals(DocumentManager::STATE_NEW, $localizedI18nPartFr->getPersistentState());
 		
-		$manager->affectId($localized);
+		$manager->assignId($localized);
 		$manager->insertDocument($localized);
 		$this->assertEquals(DocumentManager::STATE_LOADED, $localized->getPersistentState());
 		
@@ -249,16 +249,16 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basic = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 
-		$manager->affectId($sd1);
+		$manager->assignId($sd1);
 		$manager->insertDocument($sd1);
 
-		$manager->affectId($sd2);
+		$manager->assignId($sd2);
 		$manager->insertDocument($sd2);
 
 		$basic->getPDocArr()->add($sd1);
 		$basic->getPDocArr()->add($sd2);
 
-		$manager->affectId($basic);
+		$manager->assignId($basic);
 		$manager->insertDocument($basic);
 		
 		$ids = $manager->getPropertyDocumentIds($basic, 'pDocArr');

@@ -301,7 +301,7 @@ class DocumentManager
 	 * @throws \RuntimeException
 	 * @return integer
 	 */
-	public function affectId(AbstractDocument $document)
+	public function assignId(AbstractDocument $document)
 	{
 		if (!$this->inTransaction)
 		{
