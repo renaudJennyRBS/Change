@@ -1095,11 +1095,11 @@
 						return q.promise;
 					},
 
-					'postAction' : function (actionName, content) {
+					'postAction' : function (actionName, content, params) {
 						var	q = $q.defer(),
 							url;
 
-						url = REST_BASE_URL + 'actions/' + actionName + '/';
+						url = Utils.makeUrl(REST_BASE_URL + 'actions/' + actionName + '/', params);
 
 						$http.post(url, content, getHttpConfig())
 							.success(function restActionSuccessCallback (data) {

@@ -1,8 +1,7 @@
 <?php
 namespace Rbs\Admin\Events;
+use Rbs\Admin\MarkdownParser;
 
-use Rbs\Website\Events\WebsiteResolver;
-use Change\Documents\Events\Event as DocumentEvent;
 
 /**
 * @name \Rbs\Admin\Events\SharedListenerAggregate
@@ -20,6 +19,7 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 	public function attachShared(\Zend\EventManager\SharedEventManagerInterface $events)
 	{
 		$events->attach('Http.Rest', 'http.action', array($this, 'registerActions'));
+		$events->attach('Presentation.RichText', 'GetParser', array($this, 'getRichTextParser'));
 	}
 
 	/**
@@ -41,6 +41,19 @@ class SharedListenerAggregate implements \Zend\EventManager\SharedListenerAggreg
 		}
 	}
 
+	/**
+	 * @param \Change\Presentation\RichText\Event $event
+	 */
+	public function getRichTextParser(\Change\Presentation\RichText\Event $event)
+	{
+		if ($event->getProfile() === 'Admin')
+		{
+			if ($event->getEditor() === 'Markdown')
+			{
+				$event->setParser(new MarkdownParser($event->getDocumentServices()));
+			}
+		}
+	}
 
 	/**
 	 * Detach all previously attached listeners
