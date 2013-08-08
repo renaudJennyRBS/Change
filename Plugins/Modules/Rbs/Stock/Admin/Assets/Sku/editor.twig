@@ -13,44 +13,44 @@
 			label="{{ i18nAttr('m.rbs.stock.document.sku.physicalProperties', ['ucf']) }}">
 			<div class="control-group">
 				<div class="input-prepend">
-					<span class="add-on">m</span>
-					<input class="input-mini" data-ng-model="document.physicalProperties.mass.value" smart-float="" type="text" placeholder="mass">
+					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.mass-abbr') }}</span>
+					<input class="input-mini" data-ng-model="document.physicalProperties.mass.value" smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.mass') }}">
 				</div>
 				<select class="input-mini" ng-model="document.physicalProperties.mass.unit">
-					<option value="kg">kg</option>
-					<option value="g">g</option>
-					<option value="lbs">lbs</option>
+					<option value="kg">{{ i18n('m.rbs.stock.admin.js.kg-abbr') }}</option>
+					<option value="g">{{ i18n('m.rbs.stock.admin.js.g-abbr') }}</option>
+					<option value="lbs">{{ i18n('m.rbs.stock.admin.js.lbs-abbr') }}</option>
 				</select>
 			</div>
 			<div class="control-group">
 				<div class="input-prepend">
-					<span class="add-on">l</span>
-					<input class="input-mini" smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="length">
+					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.length-abbr') }}</span>
+					<input class="input-mini" smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.length') }}">
 				</div>
 				<select class="input-mini" ng-model="document.physicalProperties.length.unit">
-					<option value="cm">cm</option>
-					<option value="m">m</option>
-					<option value="in">in</option>
+					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
 				</select>
 				<span>x</span>
 				<div class="input-prepend">
-					<span class="add-on">w</span>
-					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="width">
+					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.width-abbr') }}</span>
+					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.width') }}">
 				</div>
 				<select class="input-mini" ng-model="document.physicalProperties.width.unit">
-					<option value="cm">cm</option>
-					<option value="m">m</option>
-					<option value="in">in</option>
+					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
 				</select>
 				<span>x</span>
 				<div class="input-prepend">
-					<span class="add-on">h</span>
-					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="height">
+					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.height-abbr') }}</span>
+					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.height') }}">
 				</div>
 				<select class="input-mini" ng-model="document.physicalProperties.height.unit">
-					<option value="cm">cm</option>
-					<option value="m">m</option>
-					<option value="in">in</option>
+					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
 				</select>
 			</div>
 		</rbs-field>

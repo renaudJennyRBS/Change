@@ -4,6 +4,8 @@ namespace Rbs\Catalog\Documents;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
+use Change\Stdlib\String;
+use Rbs\Commerce\Services\CommerceServices;
 
 /**
  * @name \Rbs\Catalog\Documents\AbstractProduct
@@ -78,6 +80,41 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 			$normalizedAttributeValues =  $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
 			$this->setAttributeValues($normalizedAttributeValues);
 		}
+		if ($this->getNewSkuOnCreation())
+		{
+			$tm = $this->getApplicationServices()->getTransactionManager();
+			$sku = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+			try
+			{
+				$tm->begin();
+				$sku->setCode($this->buildSkuCodeFromLabel());
+				$sku->save();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+			$this->setSku($sku);
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function buildSkuCodeFromLabel()
+	{
+		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$retry = 0;
+		$baseCode = String::subString(preg_replace('/\s+/', '-', String::stripAccents(String::toUpper($this->getLabel()))), 0, 80);
+		$skuCode = $baseCode;
+		$sku = $cs->getStockManager()->getSkuByCode($skuCode);
+		while($sku && $retry < 100)
+		{
+			$skuCode = String::subString($baseCode, 0, 73) . '-' . String::toUpper(String::random(6, false));
+			$sku = $cs->getStockManager()->getSkuByCode($skuCode);
+		}
+		return $skuCode;
 	}
 
 	protected function onUpdate()
@@ -94,5 +131,26 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 		}
 	}
 
+	/**
+	 * @var boolean
+	 */
+	protected $newSkuOnCreation = true;
 
+	/**
+	 * @return boolean
+	 */
+	public function getNewSkuOnCreation()
+	{
+		return $this->newSkuOnCreation;
+	}
+
+	/**
+	 * @param boolean $newSkuOnCreation
+	 * @return $this
+	 */
+	public function setNewSkuOnCreation($newSkuOnCreation)
+	{
+		$this->newSkuOnCreation = $newSkuOnCreation;
+		return $this;
+	}
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Stock\Documents;
 
+use Rbs\Commerce\Services\CommerceServices;
+
 /**
  * @name \Rbs\Stock\Documents\Sku
  */
@@ -201,9 +203,9 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	 */
 	protected function checkUnicity()
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), $this->getDocumentModel());
-		$query->andPredicates($query->eq('code', $this->getCode()));
-		if ($query->getCountDocuments() > 0)
+		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$sku = $cs->getStockManager()->getSkuByCode($this->getCode());
+		if (($sku instanceof \Rbs\Stock\Documents\Sku) && $this->getId() != $sku->getId())
 		{
 			throw new \RuntimeException('A SKU with the same code already exists', 999999);
 		}
@@ -214,7 +216,10 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	 */
 	public function onUpdate()
 	{
-		$this->checkUnicity();
+		if ($this->isPropertyModified('code'))
+		{
+			$this->checkUnicity();
+		}
 	}
 
 	/**

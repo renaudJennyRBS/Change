@@ -1,13 +1,80 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.collection.document.collection.label', true) }}
-		{{ forms.field('code', 'String', 'm.rbs.collection.document.collection.code', true) }}
-		{{ forms.pickerMultiple('items', 'Rbs_Collection_Item', 'm.rbs.collection.document.item-list',
-		false, null, 'm.rbs.collection.document.item.item-picker-title') }}
+
+		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.collection.document.collection.collection-locked-warning') }}</p>
+
+		<rbs-field-text
+			property="label"
+			required="true"
+			label="{{ i18nAttr('m.rbs.collection.document.collection.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+				data-ng-disabled="document.locked"
+				property="code"
+				required="true"
+				label="{{ i18nAttr('m.rbs.collection.document.collection.code', ['ucf']) }}">
+		</rbs-field-text>
+
+		<div ng-show="document.id > 0">
+		<h3>{{ i18n('m.rbs.collection.document.collection.items', ['ucf']) }}</h3>
+
+			<table data-ng-show="document.items.length > 0" class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							{{ i18n('m.rbs.collection.document.item.label', ['ucf']) }}
+
+						</th>
+						<th>
+							{{ i18n('m.rbs.collection.document.item.value', ['ucf']) }}
+						</th>
+						<th>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="item in document.items">
+						<td>
+							<a class="btn-link" ng-click="cascadeEditItem($index)">(= item.label =)</a>
+						</td>
+						<td>
+							(= item.value =)
+						</td>
+						<td style="width:160px">
+							<rbs-kb-switch>
+								<button style="width:36px"  ng-disabled="$first" rbs-kb-when="shift" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="moveTop($index)">
+									<i class="icon-step-forward icon-rotate-270"></i>
+								</button>
+								<button style="width:36px"  ng-disabled="$first"  rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="moveUp($index)">
+									<i class="icon-play icon-rotate-270"></i>
+								</button>
+							</rbs-kb-switch>
+							<rbs-kb-switch>
+								<button style="width:36px"   ng-disabled="$last" rbs-kb-when="shift" ng-disabled="doc.position ==  -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="moveBottom($index)">
+									<i class="icon-step-forward icon-rotate-90"></i>
+								</button>
+								<button style="width:36px"  ng-disabled="$last" rbs-kb-default="" ng-disabled="doc.position == -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="moveDown($index)">
+									<i class="icon-play icon-rotate-90"></i>
+								</button>
+							</rbs-kb-switch>
+							<button style="width:36px" class="btn"  ng-click="cascadeEditItem($index)" type="button">
+								<i class="icon-pencil"></i>
+							</button>
+							<button style="width:36px"  ng-hide="item.locked" class="btn btn-danger" type="button" ng-click="remove($index)">
+								<i class="icon-remove"></i>
+							</button>
+							<button style="width:36px"  disabled="true" ng-show="item.locked" class="btn btn-info" type="button">
+								<i class="icon-lock"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<a data-ng-click="cascadeCreateItem()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.collection.admin.js.item-create', ['ucf']) }}</a>
+		</div>
 	</fieldset>
 	<form-button-bar></form-button-bar>
 </form>
