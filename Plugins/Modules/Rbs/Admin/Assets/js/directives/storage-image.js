@@ -41,18 +41,23 @@
 						if (/^\d+$/.test(value)) {
 							REST.resource(parseInt(value, 10)).then(function (image) {
 								elm.attr('src', image.META$.actions['resizeurl'].href + '?maxWidth=' + width + '&maxHeight=' + height);
+								elm.show();
 							});
 						}
-						else if (angular.isObject(value)) {
+						else if (angular.isObject(value) && value.META$ && value.META$.actions && value.META$.actions['resizeurl']) {
 							elm.attr('src', value.META$.actions['resizeurl'].href + '?maxWidth=' + width + '&maxHeight=' + height);
+							elm.show();
 						}
 						else if (angular.isString(value)) {
 							elm.attr('src', value + '?maxWidth=' + width + '&maxHeight=' + height);
+							elm.show();
 						}
-						elm.show();
+						else {
+							elm.remove();
+						}
 					}
 					else {
-						elm.hide();
+						elm.remove();
 					}
 				});
 
