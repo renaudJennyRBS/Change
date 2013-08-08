@@ -158,7 +158,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Richtext",
 		"parameters" : {
-			"content" : "<div class="text-right">Propulsé par <a class=\"link\" href=\"http://www.rbschange.fr\">RBS Change</a></div>"
+			"content" : "<div class=\"text-right\">Propulsé par <a class=\"link\" href=\"http://www.rbschange.fr\">RBS Change</a></div>"
 		}
 	}
 }
