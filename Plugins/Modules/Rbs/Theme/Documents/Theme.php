@@ -9,6 +9,11 @@ use Change\Presentation\Layout\Layout;
 class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Presentation\Interfaces\Theme
 {
 	/**
+	 * @var array
+	 */
+	private $cssVariables;
+
+	/**
 	 * @var \Change\Presentation\Themes\ThemeManager
 	 */
 	protected $themeManager;
@@ -101,7 +106,16 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
 		$path = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
 
-		$res = new \Change\Presentation\Themes\FileResource($path);
+		$res = null;
+		if (substr($resourcePath, -4) === '.css')
+		{
+			$res = new \Rbs\Theme\Std\CssFileResource($path, $this->getCssVariables());
+		}
+		if ($res === null)
+		{
+			$res = new \Change\Presentation\Themes\FileResource($path);
+		}
+
 		if ($res->isValid())
 		{
 			return $res;
@@ -109,5 +123,29 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 
 		$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
 		return $parentTheme->getResource($resourcePath);
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getCssVariables()
+	{
+		if ($this->cssVariables === null)
+		{
+			$this->cssVariables = array();
+			$variablesRes = $this->getResource('variables.json');
+			if ($variablesRes->isValid())
+			{
+				$variables = json_decode($variablesRes->getContent(), true);
+				if (is_array($variables))
+				{
+					foreach ($variables as $name => $value)
+					{
+						$this->cssVariables['var(' . $name . ')'] = $value;
+					}
+				}
+			}
+		}
+		return $this->cssVariables;
 	}
 }
