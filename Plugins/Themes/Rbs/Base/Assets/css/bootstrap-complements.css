@@ -3,6 +3,12 @@
 	white-space: pre-wrap;
 }
 
+/* Homogenize row margins */
+.row {
+	margin-right: -15px;
+	margin-left: -15px;
+}
+
 /* Nowrap in dropdown toggles to no have the caret in an other line */
 .dropdown-toggle {
 	white-space: nowrap;
