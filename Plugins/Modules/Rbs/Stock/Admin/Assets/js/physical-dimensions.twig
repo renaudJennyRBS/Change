@@ -1,0 +1,34 @@
+<div>
+	<div class="control-group">
+		<div class="input-prepend">
+			<span class="add-on">m</span>
+			<input class="input-mini" data-ng-model="data.mass" smart-float="" type="text" placeholder="mass">
+		</div>
+		<select class="input-mini" ng-model="data.massUnit">
+			<option value="kg">kg</option>
+			<option value="g">g</option>
+			<option value="lbs">lbs</option>
+		</select>
+	</div>
+	<div class="control-group">
+		<div class="input-prepend">
+			<span class="add-on">l</span>
+			<input class="input-mini" smart-float="" ng-model="data.length" min="0" type="number" placeholder="text">
+		</div>
+		<span>x</span>
+		<div class="input-prepend">
+			<span class="add-on">w</span>
+			<input class="input-mini" smart-float="" data-ng-model="data.width" min="0" type="number" placeholder="text">
+		</div>
+		<span>x</span>
+		<div class="input-prepend">
+			<span class="add-on">h</span>
+			<input class="input-mini" smart-float="" data-ng-model="data.height" min="0" type="number" placeholder="text">
+		</div>
+		<select class="input-mini" ng-model="data.lengthUnit">
+			<option value="cm">cm</option>
+			<option value="m">m</option>
+			<option value="in">in</option>
+		</select>
+	</div>
+</div>

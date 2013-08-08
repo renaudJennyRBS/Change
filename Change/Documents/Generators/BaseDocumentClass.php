@@ -287,6 +287,11 @@ class BaseDocumentClass
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' !== null && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
 			}
+			elseif ($property->getType() === 'Document' || $property->getType() === 'DocumentId')
+			{
+				$memberValue = ' = 0;';
+				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': unset($this->modifiedProperties[\''.$propertyName.'\']); return;';
+			}
 			else
 			{
 				$memberValue = ' = null;';
@@ -1207,7 +1212,7 @@ class BaseDocumentClass
 	{
 		if ($this->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADING)
 		{
-			' . $mn . ' = ' . $var . ' === null ? null : intval(' . $var . ');
+			' . $mn . ' = max(0, intval(' . $var . '));
 			return $this;
 		}
 		if (' . $var . ' instanceof ' . $ct . ')
@@ -1222,7 +1227,7 @@ class BaseDocumentClass
 			throw new \InvalidArgumentException(\'Argument 1 must be an ' . $ct . '\', 52005);
 		}
 		$this->load();
-		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : null;
+		$newId = (' . $var . ' !== null) ? ' . $var . '->getId() : 0;
 		if (' . $mn . ' !== $newId)
 		{
 			if (array_key_exists(' . $en . ', $this->modifiedProperties))

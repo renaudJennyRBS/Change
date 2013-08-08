@@ -111,23 +111,29 @@ class DocumentLocalizedClass
 		$code = '';
 		foreach ($properties as $property)
 		{
+			$memberValue = ' = null;';
 			$propertyName = $property->getName();
 			/* @var $property \Change\Documents\Generators\Property */
 			if ($propertyName !== 'LCID')
 			{
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': unset($this->modifiedProperties[\''.$propertyName.'\']); return;';
 			}
+
 			if ($property->getType() === 'RichText')
 			{
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' !== null && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
+			}
+			elseif ($property->getType() === 'DocumentId')
+			{
+				$memberValue = ' = 0;';
 			}
 
 			$code .= '
 	/**
 	 * @var ' . $this->getCommentaryMemberType($property) . '
 	 */
-	private $' . $property->getName() . ';' . PHP_EOL;
+	private $' . $property->getName() . $memberValue . PHP_EOL;
 		}
 
 		if (count($modifiedProperties))

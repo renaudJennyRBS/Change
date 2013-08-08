@@ -25,7 +25,7 @@ class ActionsResolver
 		$this->resolver = $resolver;
 		$this->registerActionClass('collectionItems', '\Change\Http\Rest\Actions\GetCollectionItems');
 		$this->registerActionClass('collectionCodes', '\Change\Http\Rest\Actions\GetCollectionCodes');
-		$this->registerActionClass('md2html', '\Change\Http\Rest\Actions\Md2Html');
+		$this->registerActionClass('renderRichText', '\Change\Http\Rest\Actions\RenderRichText');
 	}
 
 	/**

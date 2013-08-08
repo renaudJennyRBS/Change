@@ -67,7 +67,7 @@
 							'<div class="media-picker"></div>' +
 							'<div class="link-picker"></div>' +
 
-							'<div id="rbsInputMarkdownAceEditor(=editorId=)"></div>' +
+							'<div data-role="ace-editor"></div>' +
 						'</div>' +
 						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview"></div>' +
 					'</div>' +
@@ -86,7 +86,9 @@
 					};
 
 				scope.editorId = ++aceEditorIdCounter;
+
 				id = "rbsInputMarkdownAceEditor" + scope.editorId;
+				element.find('[data-role="ace-editor"]').attr('id', id);
 
 				// Initialize ACE editor when the scope has been completely applied.
 				function initEditor () {
@@ -98,6 +100,15 @@
 					session.setFoldStyle("manual");
 					editor.setShowFoldWidgets(true);
 					editor.renderer.setShowGutter(false);
+
+					// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
+					// so that the binding with the '<label/>' element works as expected.
+					// (see Directives in 'Rbs/Admin/Assets/js/directives/form-fields.js').
+					if (attrs.id && attrs.id === attrs.inputId) {
+						element.find('textarea.ace_text-input').attr('id', attrs.id);
+						element.removeAttr('id');
+						element.removeAttr('input-id');
+					}
 
 					$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
 
@@ -171,7 +182,6 @@
 					// This call is required for the editor to fix all of
 					// its inner structure for adapting to a change in size
 					editor.resize();
-					console.log(newHeight, " -- ", $editorTab.outerHeight());
 					$previewEl.css('min-height', $editorTab.outerHeight()+"px");
 				}
 
@@ -181,7 +191,11 @@
 					if ($(e.target).data('role') === 'preview') {
 						$previewEl.empty();
 						scope.previewing = true;
-						REST.postAction('md2html', editor.getValue()).then(function (data) {
+						var params = {
+							'profile': (attrs.previewProfile || 'Website'),
+							'editor' : 'Markdown'
+						};
+						REST.postAction('renderRichText', editor.getValue(), params).then(function (data) {
 							$previewEl.html(data.html);
 							scope.previewing = false;
 						});
@@ -406,7 +420,7 @@
 	/**
 	 * Media selector
 	 */
-	app.directive('rbsRichTextInputMediaSelector', [function () {
+	app.directive('rbsRichTextInputMediaSelector', [ function () {
 		return {
 			restrict : 'E',
 			scope    : false,
@@ -415,10 +429,10 @@
 				'<div class="inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
 					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list class="grid-xsmall" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
+					'<rbs-document-list class="grid-small" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
 						'<column name="path" thumbnail="XS"></column>' +
 						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
-							'<img rbs-storage-image="doc.path" thumbnail="XS"/>' +
+							'<img rbs-storage-image="doc" thumbnail="XS"/>' +
 							'<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>' +
 						'</grid-item>' +
 					'</rbs-document-list>' +
@@ -430,7 +444,7 @@
 	/**
 	 * Document selector for links
 	 */
-	app.directive('rbsRichTextInputLinkSelector', ['RbsChange.REST', function (REST) {
+	app.directive('rbsRichTextInputLinkSelector', [ function () {
 		return {
 			restrict : 'E',
 			scope    : true,
@@ -439,8 +453,8 @@
 				'<div class="inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
 					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
-					'<select ng-options="model.name as model.label group by model.plugin for model in models" ng-model="selectedModel"></select>' +
-					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="Change_Document" collection-url="(=collectionUrl=)" toolbar="false" extend="picker">' +
+					'<rbs-model-selector filter="{publishable:true}" model="selectedModel"></rbs-model-selector>' +
+					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="(= selectedModel.name =)" toolbar="false" extend="picker">' +
 						'<column name="label" label="Label">' +
 							'<a href="javascript:;" ng-click="extend.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
 						'</column>' +
@@ -448,27 +462,6 @@
 				'</div>',
 
 			link : function (scope, element) {
-				// FIXME Load models from the server
-				scope.models = [
-					{
-						"name"   : "Rbs_Website_Page",
-						"label"  : "Page",
-						"plugin" : "Sites et pages"
-					},
-					{
-						"name"   : "Rbs_Website_Website",
-						"label"  : "Site web",
-						"plugin" : "Sites et pages"
-					}
-				];
-
-				scope.selectedModel = scope.models[0].name;
-
-				scope.$watch('selectedModel', function (model) {
-					if (model) {
-						scope.collectionUrl = REST.getCollectionUrl(model);
-					}
-				});
 			}
 		};
 	}]);

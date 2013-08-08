@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="c.oauth" lcid="en_US">
+	<key id="login">login</key>
+	<key id="password">password</key>
+	<key id="authorize-application">authorize application to access your account</key>
+	<key id="authorize">authorize</key>
+	<key id="invalid-credentials">invalid login/password</key>
+	<key id="application-name">application</key>
+</i18n>

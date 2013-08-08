@@ -232,7 +232,8 @@
 			    params,
 				q,
 				ctx,
-				resource;
+				resource,
+				documentId;
 
 			// Install event handlers.
 
@@ -271,7 +272,7 @@
 				} else if (angular.isObject(ctx.queryParam)) {
 					params = ctx.queryParam;
 				} else {
-					params = { "id" : "new" };
+					params = { "id" : 0 };
 				}
 			} else {
 				params = $routeParams;
@@ -280,15 +281,16 @@
 			// Is 'rest' parameter a Model name?
 			if (Utils.isModelName(rest)) {
 
-				if (params.id === 'new' || (angular.isNumber(params.id) && params.id < 0)) {
+				documentId = parseInt(params.id, 10);
+				if (! isNaN(documentId) && documentId > 0) {
+					promise = REST.resource(rest, documentId, params.LCID);
+				} else {
 					q = $q.defer();
 					promise = q.promise;
 					resource = (ctx && ctx.document) ? ctx.document : REST.newResource(rest, scope.language);
 					$timeout(function () {
 						q.resolve(resource);
 					});
-				} else {
-					promise = REST.resource(rest, params.id, params.LCID);
 				}
 
 			} else {

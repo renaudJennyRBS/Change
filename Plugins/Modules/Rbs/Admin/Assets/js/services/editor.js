@@ -475,15 +475,19 @@
 
 
 		this.initScope = function scopeWatchOriginal (scope, element, callback) {
+
+
+			function updateEditorMenu () {
+				scope.menu = compileSectionsAndFields(element);
+				MainMenu.build(scope);
+			}
+
 			// Wait for the document to be loaded...
 			scope.$watch('original', function () {
 				if (Utils.isDocument(scope.original)) {
 					prepareScope(scope, element);
 					if (element) {
-						$timeout(function () {
-							scope.menu = compileSectionsAndFields(element);
-							MainMenu.build(scope);
-						});
+						updateEditorMenu();
 					}
 
 					var promises = [
@@ -537,6 +541,11 @@
 					});
 				}
 			}, true);
+
+
+			scope.$on('Change:Editor:UpdateMenu', function () {
+				updateEditorMenu();
+			});
 		};
 
 	}

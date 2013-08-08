@@ -2,6 +2,7 @@
 namespace Change\Presentation;
 
 use Change\Application\ApplicationServices;
+use Change\Presentation\RichText\RichTextManager;
 use Change\Presentation\Templates\TemplateManager;
 use Change\Presentation\Themes\ThemeManager;
 use Change\Presentation\Blocks\BlockManager;
@@ -32,12 +33,15 @@ class PresentationServices extends Di
 		$this->registerTemplateManager($dl);
 		$this->registerThemeManager($dl);
 		$this->registerBlockManager($dl);
+		$this->registerRichTextManager($dl);
 		parent::__construct($dl);
 
 		$im = $this->instanceManager();
 		$im->setParameters('Change\Presentation\Templates\TemplateManager', array('presentationServices' => $this));
 		$im->setParameters('Change\Presentation\Themes\ThemeManager', array('presentationServices' => $this));
 		$im->setParameters('Change\Presentation\Blocks\BlockManager', array('presentationServices' => $this));
+
+		$im->setParameters('Change\Presentation\RichText\RichTextManager', array('presentationServices' => $this));
 	}
 
 	/**
@@ -80,6 +84,19 @@ class PresentationServices extends Di
 	}
 
 	/**
+	 * @param DefinitionList $dl
+	 */
+	protected function registerRichTextManager($dl)
+	{
+		$cl = new ClassDefinition('Change\Presentation\RichText\RichTextManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('setPresentationServices', true)
+			->addMethodParameter('setPresentationServices', 'presentationServices',
+				array('type' => 'Change\Presentation\PresentationServices', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
 	 * @return ApplicationServices
 	 */
 	public function getApplicationServices()
@@ -110,4 +127,13 @@ class PresentationServices extends Di
 	{
 		return $this->get('Change\Presentation\Blocks\BlockManager');
 	}
+
+	/**
+	 * @return RichTextManager
+	 */
+	public function getRichTextManager()
+	{
+		return $this->get('Change\Presentation\RichText\RichTextManager');
+	}
+
 }

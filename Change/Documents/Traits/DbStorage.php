@@ -118,7 +118,7 @@ trait DbStorage
 		$document = $this;
 
 		$dm = $this->getDocumentManager();
-		$dm->affectId($document);
+		$dm->assignId($document);
 		$dm->insertDocument($document);
 		if ($document instanceof Localizable)
 		{

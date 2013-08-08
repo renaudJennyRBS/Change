@@ -114,7 +114,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			new Query($this->getDocumentServices(), 'Project_Tests_Invalid');
-			$this->fail('Argument 2 must by a valid AbstractModel');
+			$this->fail('Exception expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
@@ -253,7 +253,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getPropertyBuilder('invalid');
-			$this->fail('Argument 1 must be a valid Property');
+			$this->fail('Exception expected');
 
 		}
 		catch (\InvalidArgumentException $e)
@@ -274,7 +274,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getModelBuilder('Project_Tests_Invalid', 'pDocId');
-			$this->fail('Argument 1 must by a valid model');
+			$this->fail('Exception expected');
 
 		}
 		catch (\InvalidArgumentException $e)
@@ -285,7 +285,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getModelBuilder('Project_Tests_Localized', 'invalid');
-			$this->fail('Argument 2 must be a valid Property');
+			$this->fail('Exception expected');
 
 		}
 		catch (\InvalidArgumentException $e)
@@ -306,8 +306,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getPropertyModelBuilder('invalid', 'Project_Tests_Localized', 'pInt');
-			$this->fail('Argument 1 must by a valid Property');
-
+			$this->fail('Exception expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
@@ -317,7 +316,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getPropertyModelBuilder('pDocId', 'Project_Tests_Invalid', 'pInt');
-			$this->fail('Argument 2 must be a valid document model');
+			$this->fail('Exception expected');
 
 		}
 		catch (\InvalidArgumentException $e)
@@ -328,8 +327,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getPropertyModelBuilder('pDocId', 'Project_Tests_Localized', 'invalid');
-			$this->fail('Argument 3 must be a valid Property');
-
+			$this->fail('Exception expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
@@ -339,8 +337,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getPropertyModelBuilder('pDocArr', 'Project_Tests_Localized', 'pDocArr');
-			$this->fail('Invalid Properties type: DocumentArray');
-
+			$this->fail('Exception expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
@@ -360,7 +357,7 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$builder->getColumn('invalid');
-			$this->fail('Argument 1 must be a valid property');
+			$this->fail('Exception expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
@@ -385,15 +382,8 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', ($p = $builder->getValueAsParameter(null, $builder->getModel()->getProperty('pInt'))));
 		$this->assertEquals(\Change\Db\ScalarType::INTEGER, $p->getType());
 
-		try
-		{
-			$builder->getValueAsParameter('invalid', 12);
-			$this->fail('Argument 2 must be a valid type');
-		}
-		catch (\InvalidArgumentException $e)
-		{
-			$this->assertStringStartsWith('Argument 2 must be a valid', $e->getMessage());
-		}
+		$this->assertInstanceOf('\Change\Db\Query\Expressions\Parameter', ($p = $builder->getValueAsParameter('invalid', 12)));
+		$this->assertEquals(\Change\Db\ScalarType::STRING, $p->getType());
 	}
 
 	/**

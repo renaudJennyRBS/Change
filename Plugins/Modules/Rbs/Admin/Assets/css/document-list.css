@@ -118,7 +118,7 @@ td .correction {
 		height: 90px;
 	}
 
-	.grid-xsmall .thumbnail-grid {
+	.grid-xsmall .thumbnail-grid > li {
 		width: 10%;
 	}
 	.grid-xsmall .thumbnail-grid > li:first-child {

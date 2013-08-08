@@ -27,10 +27,10 @@
 			$scope.websites = result.resources;
 
 			// Only one website? Select it.
-			if ($scope.websites.length === 1 && ! $routeParams.websiteId) {
+			if ($scope.websites.length === 1 && ! $routeParams.id) {
 				$location.path($scope.websites[0].url('menus'));
-			} else if ($routeParams.websiteId) {
-				var websiteId = parseInt($routeParams.websiteId, 10);
+			} else if ($routeParams.id) {
+				var websiteId = parseInt($routeParams.id, 10);
 				if (isNaN(websiteId)) {
 					throw new Error("Parameter 'websiteId' should be an integer.");
 				}
@@ -75,13 +75,12 @@
 			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
 		]);
 
-		if ($routeParams.websiteId) {
-			var websiteId = parseInt($routeParams.websiteId, 10);
+		if ($routeParams.website) {
+			var websiteId = parseInt($routeParams.website, 10);
 			if (isNaN(websiteId)) {
 				throw new Error("Parameter 'websiteId' should be an integer.");
 			}
 			REST.resource('Rbs_Website_Website', websiteId).then(function (website) {
-				console.log(website.label, website.url('menus'));
 				Breadcrumb.setPath([[website.label, website.url('menus')]]);
 				FormsManager.initResource($scope, 'Rbs_Website_Menu');
 			});

@@ -330,6 +330,18 @@
 			});
 		});
 
+		$rootScope.logout = function () {
+			User.logout();
+		};
+
 	}]);
+
+
+	/**
+	 * Remove main loading mask.
+	 */
+	app.run(function () {
+		$('#chg_loading_mask').remove();
+	});
 
 })( window.jQuery );

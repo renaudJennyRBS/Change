@@ -26,4 +26,5 @@
 	</key>
 	<key id="usertag-cannot-be-modified" format="html"><![CDATA[Cette information ne peut être définie qu'à la création d'une étiquette.]]>
 	</key>
+	<key id="child-tags-count">{'0':'Aucune sous-étiquette.', 'one':'Une sous-étiquette :', 'other':'{} sous-étiquettes :'}</key>
 </i18n>

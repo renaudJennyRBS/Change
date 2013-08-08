@@ -1,15 +1,23 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.website.document.website.label', true) }}
 
-        {{ forms.field('baseurl', 'String', 'm.rbs.website.document.website.baseurl', true, 'm.rbs.website.document.website.baseurl-help') }}
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.website.document.website.label', ['ucf']) }}">
+		</rbs-field-text>
 
-		{{ forms.readonly('indexPage.label', 'm.rbs.website.document.website.indexpage',
-			'm.rbs.website.document.website.indexpage-help') }}
+		<rbs-field-url
+				property="baseurl" required="true"
+				label="{{ i18nAttr('m.rbs.website.document.website.baseurl', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.website.document.website.baseurl-help', ['ucf']) }}</span>
+		</rbs-field-url>
+
+		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr('m.rbs.website.document.website.indexpage', ['ucf']) }}">
+			<span class="uneditable-input">(=document.indexPage.label=)</span>
+		</rbs-field>
+
 	</fieldset>
 
 	<fieldset

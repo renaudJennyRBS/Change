@@ -5,29 +5,16 @@
 	var app = angular.module('RbsChange');
 
 
-	//-------------------------------------------------------------------------
-	//
-	// Routing and URL
-	//
-	//-------------------------------------------------------------------------
-
-
-	app.config(['$routeProvider', function ($routeProvider) {
-		// Angular's routes.
-		$routeProvider
-		. when('/Rbs/Tag'    , { templateUrl : 'Rbs/Tag/Tag/list.twig', reloadOnSearch : false })
-		. when('/Rbs/Tag/:id', { templateUrl : 'Rbs/Tag/Tag/form.twig', reloadOnSearch : false })
-		;
-	}]);
-
-	app.config(['$provide', function ($provide) {
-		// Change's URL.
-		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate) {
-			$delegate.register('Rbs_Tag_Tag', {
-				'form'  : '/Rbs/Tag/:id',
-				'list'  : '/Rbs/Tag',
-				'tree'  : '/Rbs/Tag/?tn=:id'
-			});
+	/**
+	 * Routes and URL definitions.
+	 */
+	app.config(['$provide', function ($provide)
+	{
+		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
+		{
+			$delegate.model('Rbs_Tag_Tag').route('tree', 'Rbs/Tag/?tn=:id', 'Rbs/Tag/Tag/list.twig');
+			$delegate.model(null).route('home', 'Rbs/Tag/', { 'redirectTo': 'Rbs/Tag/Tag/'});
+			$delegate.routesForModels(['Rbs_Tag_Tag']);
 			return $delegate;
 		}]);
 	}]);

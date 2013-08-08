@@ -48,9 +48,9 @@
 	app.controller('Rbs_Catalog_Attribute_FormController', FormController);
 
 
-	app.directive('rbsAttributeEditor', ['RbsChange.REST', 'RbsChange.Utils', rbsAttributeEditorDirective]);
+	app.directive('rbsAttributeEditor', ['RbsChange.REST', 'RbsChange.Utils', '$timeout', rbsAttributeEditorDirective]);
 
-	function rbsAttributeEditorDirective (REST, Utils) {
+	function rbsAttributeEditorDirective (REST, Utils, $timeout) {
 
 		return {
 			restrict : 'E',
@@ -101,6 +101,9 @@
 							assocValues(scope.attributes);
 						}
 					}
+					$timeout(function () {
+						scope.$emit('Change:Editor:UpdateMenu');
+					});
 				}
 
 				function assocValues(attributes) {

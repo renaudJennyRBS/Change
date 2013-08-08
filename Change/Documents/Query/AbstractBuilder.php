@@ -487,8 +487,16 @@ abstract class AbstractBuilder
 		{
 			$value = $value->getDocumentId();
 		}
+		elseif (is_object($value) && is_callable(array($value, 'getId')))
+		{
+			$value = call_user_func(array($value, 'getId'));
+		}
 
-		if ($type === null)
+		if ($type instanceof Property)
+		{
+			$type = $type->getType();
+		}
+		elseif (!is_string($type))
 		{
 			if (is_int($value))
 			{
@@ -512,18 +520,12 @@ abstract class AbstractBuilder
 			}
 		}
 
-		if (is_string($type))
+		if ($value === null && in_array($type, array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
 		{
-			$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type);
+			$value = 0;
 		}
-		elseif ($type instanceof Property)
-		{
-			$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type->getType());
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid type', 999999);
-		}
+
+		$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type);
 
 		$name = '_p' . $this->getQuery()->getNextAliasCounter();
 		$parameter = $this->getFragmentBuilder()->typedParameter($name, $dbType);

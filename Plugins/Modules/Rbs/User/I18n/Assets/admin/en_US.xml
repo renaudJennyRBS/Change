@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.user.admin" lcid="en_US">
+	<key id="token">token</key>
+	<key id="application">application</key>
+	<key id="realm">realm</key>
+	<key id="creation-date">création date</key>
+	<key id="validity-date">validity date</key>
+	<key id="revoke-token">revoke</key>
+	<key id="applications-list-sub-title">applications</key>
+	<key id="applications">applications</key>
+	<key id="current-password">current password</key>
+	<key id="new-password">new password</key>
+	<key id="permission">permission</key>
+	<key id="permission-rule">permission rule</key>
+	<key id="permission-rules-sub-title">permission rules</key>
+	<key id="permission-roles">roles</key>
+	<key id="permission-privileges">privileges</key>
+	<key id="permission-role">role</key>
+	<key id="permission-resource">resource</key>
+	<key id="permission-resources">resources</key>
+	<key id="permission-privilege">privilege</key>
+	<key id="new-permission-rules">new permission rules</key>
+	<key id="remove-permission-rule">remove</key>
+	<key id="remove-all-permission-rules">remove all rules</key>
+	<key id="customise">customize</key>
+	<key id="add">add</key>
+</i18n>

@@ -55,6 +55,9 @@
 						else {
 							item.url = scope.add.url;
 						}
+						if (! scope.document.items) {
+							scope.document.items = [];
+						}
 						scope.document.items.push(item);
 
 						scope.add.selectedDocument = null;

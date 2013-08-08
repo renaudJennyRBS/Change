@@ -2,5 +2,5 @@
 <i18n baseKey="m.rbs.tag.document" lcid="en_US">
 	<key id="tag">tag</key>
 	<key id="tag-list">tags list</key>
-	<key id="tag-create">create a tag</key>
+	<key id="tag-create">add tag</key>
 </i18n>
