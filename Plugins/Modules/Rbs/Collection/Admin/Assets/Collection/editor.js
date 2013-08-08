@@ -72,7 +72,7 @@
 				};
 
 				scope.cascadeEditItem = function(index){
-					FormsManager.cascade('Rbs/Collection/Item/form.twig', {id:scope.document.items[index].id}, function(doc){scope.document.items.push(doc);}, scope.document.label);
+					FormsManager.cascade('Rbs/Collection/Item/form.twig', {id:scope.document.items[index].id}, function(doc){scope.document.items[index] = doc;}, scope.document.label);
 				};
 
 			}
