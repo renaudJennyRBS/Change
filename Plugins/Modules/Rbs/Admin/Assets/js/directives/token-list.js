@@ -29,12 +29,18 @@
 					dragging, isHandle, startIndex, stopIndex,
 					placeholder = $('<li class="sortable-placeholder"/>');
 
+				var labelProperties = labelProperty.split(',');
+
 				scope.readonly = attrs.readonly ? true : false;
 				scope.disableReordering = attrs.disableReordering ? true : false;
 
-
 				scope.getItemLabel = function (item) {
-					var val = item[labelProperty];
+					for (var i = 0; i < labelProperties.length; i++) {
+						if (labelProperties[i] in item) {
+							var val = item[labelProperties[i]];
+							break;
+						}
+					}
 
 					if (attrs.labelExpr) {
 						val = attrs.labelExpr.replace(/\{(\w+)\}/g, function (match, property) {
