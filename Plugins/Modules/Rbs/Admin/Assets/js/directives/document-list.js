@@ -191,6 +191,8 @@
 		 * @param dlid
 		 * @param tElement
 		 * @param tAttrs
+		 * @param undefinedColumnLabels
+		 * @param localActions
 		 * @returns {Object}
 		 */
 		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels, localActions) {
