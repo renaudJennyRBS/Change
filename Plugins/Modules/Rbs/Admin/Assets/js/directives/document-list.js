@@ -20,7 +20,7 @@
 		__preview = {},
 		__gridItems = {},
 		__quickActions = {},
-		// FIXME: Hard-coded values here.
+		__actions = {},
 		PAGINATION_DEFAULT_LIMIT = 20,
 		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
 		testerEl = $('#rbs-document-list-tester'),
@@ -318,7 +318,7 @@
 						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.sort + '\')"></i>' +
 						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.sort + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.sort + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + toggleDateBtn + column.name + '</th>';
+						'<th ng-if="!isSortable(\'' + column.name + '\')">' + toggleDateBtn + '<span ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</span></th>';
 
 					$th = $(htmlTh);
 				}
@@ -581,37 +581,75 @@
 						);
 					};
 
+
+					scope.hasColumn = function (columnName) {
+						return angular.isObject(scope.columns[columnName]);
+					};
+
+
+
 					//
 					// Document selection.
 					//
 
-
-					scope.allSelected = {
-						'cb' : false
-					};
-					scope.$watch('allSelected', function (value) {
-						angular.forEach(scope.collection, function (doc) {
-							doc.selected = scope.allSelected.cb;
-						});
-					}, true);
+					scope.selectionEnabled = scope.hasColumn('selectable');
 
 					function updateSelectedDocuments () {
 						scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
 						scope.$emit('Change:DocumentList:' + dlid + ':CollectionChanged', scope.collection);
 					}
 
-					scope.$watch('collection', updateSelectedDocuments, true);
-					updateSelectedDocuments();
+					if (scope.selectionEnabled)
+					{
+						scope.allSelected = {
+							'cb' : false
+						};
+						scope.$watch('allSelected', function (value) {
+							angular.forEach(scope.collection, function (doc) {
+								doc.selected = scope.allSelected.cb;
+							});
+						}, true);
+
+						scope.$watch('collection', updateSelectedDocuments, true);
+						updateSelectedDocuments();
+					}
 
 
 					//
 					// Actions.
 					//
 
+					// Locally defined actions.
+					var localActions = {};
+					angular.forEach(__actions[dlid], function (action) {
+						if (! action.name) {
+							throw new Error("Actions defined in <rbs-document-list/> should have a 'name' parameter.");
+						}
+						if (localActions[action.name]) {
+							throw new Error("Parameter 'name' for actions defined in <rbs-document-list/> should be unique.");
+						}
 
-					scope.hasColumn = function (columnName) {
-						return angular.isObject(scope.columns[columnName]);
-					};
+						localActions[action.name] = action;
+						Actions.register({
+							name        : (dlid + '_' + action.name),
+							models      : action.models || '*',
+							description : action.description,
+							label       : action.label,
+							icon        : action.icon,
+							selection   : action.selection,
+
+							execute : ['$extend', '$docs', function ($extend, $docs) {
+								if (angular.isFunction($extend[action.name])) {
+									$extend[action.name]($docs);
+								}
+								else {
+									throw new Error("Method '" + this.name + "' is not defined in '$extend'.");
+								}
+							}]
+						});
+					});
+
+					delete __actions[dlid];
 
 
 					scope.actions = [];
@@ -621,22 +659,46 @@
 						if (! scope.hasColumn('nodeOrder') ) {
 							actionList = actionList.replace('nodeOrder', '');
 						}
+
 						angular.forEach(actionList.split(/ +/), function (action) {
-							scope.actions.push({
-								"type" : "single",
-								"name" : action
-							});
+							// Locally defined action?
+							if (localActions[action]) {
+								var actionId = dlid + '_' + action;
+								if (localActions[action].display) {
+									actionId += '(' + localActions[action].display + ')';
+								}
+								else if (localActions[action].icon) {
+									actionId += '(icon+label)';
+								}
+								scope.actions.push({
+									"type" : "single",
+									"name" : actionId
+								});
+							}
+							else {
+								scope.actions.push({
+									"type" : "single",
+									"name" : action
+								});
+							}
 						});
 					}
-
 
 					scope.executeAction = function (actionName, doc, $event) {
 						return Actions.execute(actionName, {
 							'$docs'   : [ doc ],
 							'$target' : $event.target,
-							'$scope'  : scope
+							'$scope'  : scope,
+							'$extend' : scope.extend
 						});
 					};
+
+					// Unregisters the locally defined actions from the Actions service (called from $on('$destroy')).
+					function unregisterLocalActions() {
+						angular.forEach(localActions, function (action) {
+							Actions.unregister(dlid + '_' + action.name);
+						});
+					}
 
 
 					scope.remove = function (doc, $event) {
@@ -694,6 +756,7 @@
 					previewCache = $cacheFactory('chgRbsDocumentListPreview_' + dlid);
 					scope.$on('$destroy', function () {
 						previewCache.destroy();
+						unregisterLocalActions();
 					});
 
 					scope.preview = function (index, $event) {
@@ -1015,14 +1078,11 @@
 						} else if (attrs.tree) {
 							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
-						} else if (attrs.model) {
+						} else {
 							if (attrs.childrenProperty) {
-								console.log("attrs.childrenProperty=", attrs.childrenProperty);
 								var currentNode = Breadcrumb.getCurrentNode();
-								console.log("currentNode=", currentNode);
 								if (currentNode) {
 									var children = currentNode[attrs.childrenProperty];
-									console.log("children=", children);
 									documentCollectionLoadedCallback({
 										'resources' : children,
 										'pagination': {
@@ -1032,8 +1092,8 @@
 								} else {
 									Loading.start();
 									if (attrs.collectionUrl) {
-										promise = REST.collection(attrs.collectionUrl, params);
-									} else {
+										promise = REST.collection(scope.collectionUrl, params);
+									} else if (attrs.model) {
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1054,8 +1114,8 @@
 									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
 								} else {
 									if (attrs.collectionUrl) {
-										promise = REST.collection(attrs.collectionUrl, params);
-									} else {
+										promise = REST.collection(scope.collectionUrl, params);
+									} else if (attrs.model) {
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1150,7 +1210,7 @@
 
 					if (elm.is('[collection-url]')) {
 						attrs.$observe('collectionUrl', function (value) {
-							if (value) {
+							if (scope.collectionUrl) {
 								reload();
 							}
 						});
@@ -1199,7 +1259,6 @@
 						});
 
 						function errorFn (error) {
-							console.error(error);
 							successFn();
 						}
 
@@ -1209,12 +1268,10 @@
 							if (elm.is('[model]')) {
 								// No model value yet?
 								if (attrs.model) {
-									console.log("MODEL OK -> LOAD");
 									initialLoad();
 								}
 								else {
 									attrs.$observe('model', function (model) {
-										console.log("MODEL changed: ", model);
 										if (model) {
 											initialLoad();
 										}
@@ -1222,7 +1279,6 @@
 								}
 							}
 							else {
-								console.log("NO MODEL attr");
 								initialLoad();
 							}
 						}
@@ -1245,7 +1301,6 @@
 
 					function initialLoad () {
 						if (scope.externalCollection) {
-							console.log("DocumentList " + dlid + ": collection is loaded from the outside.");
 							return;
 						}
 						if (attrs.tree) {
@@ -1322,7 +1377,6 @@
 
 					scope.$watch('filterQuery', watchQueryFn, true);
 					scope.$watch('loadQuery', watchQueryFn, true);
-
 
 					var lastQuickActionsShown = null;
 					if (Device.isMultiTouch()) {
@@ -1467,7 +1521,6 @@
 
 				dlid = tElement.parent().data('dlid');
 				if (!dlid) {
-					console.log("data-dlid=", dlid, tElement);
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__quickActions[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
@@ -1476,5 +1529,32 @@
 		};
 
 	}]);
+
+
+
+	app.directive('action', [function () {
+
+		return {
+			restrict : 'E',
+			require  : '^rbsDocumentList',
+
+			compile : function (tElement, tAttrs) {
+
+				var dlid;
+
+				dlid = tElement.parent().data('dlid');
+				if (!dlid) {
+					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
+				}
+
+				if (!__actions.hasOwnProperty(dlid)) {
+					__actions[dlid] = [];
+				}
+				__actions[dlid].push(tAttrs);
+			}
+		};
+
+	}]);
+
 
 })(window.jQuery);

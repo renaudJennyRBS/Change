@@ -8,7 +8,7 @@
 		<a class="btn" href go-up-in-tree></a>
 	</div>
 
-	<clipboard-add-widget selected="selectedDocuments"></clipboard-add-widget>
+	<clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></clipboard-add-widget>
 
 	<div class="btn-virtual-group" data-ng-repeat="item in actions" data-ng-switch="item.type">
 		<div data-ng-switch-when="single" class="btn-group">
@@ -19,7 +19,7 @@
 			        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 		</div>
 		<div data-ng-switch-when="group" class="btn-group">
-			<button data-ng-repeat="action in item.actions" data-bind-action="(= action =)" data-bind-action-embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
+			<button data-ng-repeat="action in item.actions" rbs-bind-action="(= action =)" embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
 		</div>
 	</div>
 

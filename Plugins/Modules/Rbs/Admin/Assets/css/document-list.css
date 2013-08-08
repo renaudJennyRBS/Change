@@ -483,3 +483,6 @@ rbs-document-list th .btn-mini {
 	top: -2px;
 }
 
+rbs-document-list .btn-toolbar {
+	min-height: 29px;
+}

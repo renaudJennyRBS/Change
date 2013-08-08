@@ -66,6 +66,7 @@
 							var params = {}, iconElm, iconElmClass;
 
 							params.$scope  = scope;
+							params.$extend = scope.extend;
 							params.$target = $(this);
 							params.$event  = e;
 							params.$docs   = scope.selectedDocuments;
