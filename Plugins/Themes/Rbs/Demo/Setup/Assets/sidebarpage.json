@@ -96,6 +96,7 @@
 	"footerTop1" : {
 		"id" : "footerTop1",
 		"type" : "block",
+		"name" : "",
 		"parameters" : {
 		}
 	},

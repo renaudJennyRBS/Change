@@ -2,7 +2,7 @@
 	{% import _self as menu %}
 	<li{% if item.isInPath or item.isCurrent %} class="active"{% endif %}>
 		<a href="{{ item.url }}">{{ item.label }}</a>
-		<ul class="nav sub-menu">
+		<ul class="bullet">
 			{% for child in item.getChildren %}
 				{{ menu.item(child) }}
 			{% endfor %}
@@ -18,7 +18,7 @@
 		</h3>
 	{% endif %}
 	{% if root.hasChild %}
-		<ul class="nav nav-vertical">
+		<ul class="bullet">
 			{% for child in root.children %}
 				{{ menu.item(child) }}
 			{% endfor %}
