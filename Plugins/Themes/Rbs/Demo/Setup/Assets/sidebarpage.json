@@ -12,7 +12,7 @@
 	"headerTop2" : {
 		"id" : "headerTop2",
 		"type" : "block",
-		"name" : "Project_Dev_XhtmlTemplate",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
 		"parameters" : {
 			"templateName" : "xhtml-user.twig"
 		}
@@ -20,7 +20,7 @@
 	"headerTop3" : {
 		"id" : "headerTop3",
 		"type" : "block",
-		"name" : "Project_Dev_XhtmlTemplate",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
 		"parameters" : {
 			"templateName" : "xhtml-cart.twig"
 		}
@@ -28,7 +28,7 @@
 	"headerTop4" : {
 		"id" : "headerTop4",
 		"type" : "block",
-		"name" : "Project_Dev_XhtmlTemplate",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
 		"parameters" : {
 			"templateName" : "xhtml-switchlang.twig"
 		}
@@ -62,7 +62,7 @@
 	"contentTop2" : {
 		"id" : "contentTop2",
 		"type" : "block",
-		"name" : "Project_Dev_XhtmlTemplate",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
 		"parameters" : {
 			"templateName" : "xhtml-search.twig"
 		}
