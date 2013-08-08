@@ -4,4 +4,5 @@
 	<key id="label">nom du groupe</key>
 	<key id="realm">realm</key>
 	<key id="group-picker-title">>sélectionner les groupes</key>
+	<key id="identifier">identifiant de l'interface d'administration</key>
 </i18n>

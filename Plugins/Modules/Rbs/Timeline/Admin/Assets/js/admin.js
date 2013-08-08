@@ -29,6 +29,19 @@
 				reloadOnSearch : false
 			})
 
+			. when(
+			'/Rbs/Timeline/Resume',
+			{
+				templateUrl : 'Rbs/Timeline/Resume/list.twig',
+				reloadOnSearch : false
+			})
+
+			. when(
+			'/Rbs/Timeline/Resume/:id',
+			{
+				templateUrl : 'Rbs/Timeline/Resume/resume.twig',
+				reloadOnSearch : false
+			})
 		;
 	}]);
 

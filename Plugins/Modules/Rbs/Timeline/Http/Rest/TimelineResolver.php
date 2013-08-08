@@ -5,8 +5,7 @@ use \Change\Http\Event;
 use \Change\Http\Rest\Request;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
-use Rbs\Timeline\Http\Rest\Actions\AddDocumentMessage;
-use Rbs\Timeline\Http\Rest\Actions\GetDocumentMessages;
+use Rbs\Timeline\Http\Rest\Actions\GetIdentifiers;
 
 class TimelineResolver {
 
@@ -21,6 +20,16 @@ class TimelineResolver {
 	function __construct(Resolver $resolver)
 	{
 		$this->resolver = $resolver;
+	}
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @param string[] $namespaceParts
+	 * @return string[]
+	 */
+	public function getNextNamespace($event, $namespaceParts)
+	{
+		return array('userOrGroupIdentifiers');
 	}
 
 	/**
@@ -49,9 +58,9 @@ class TimelineResolver {
 		elseif ($nbParts == 1)
 		{
 			$actionName = $resourceParts[0];
-			if ($actionName === 'documentMessages')
+			if ($actionName === 'userOrGroupIdentifiers')
 			{
-				$action = new GetDocumentMessages();
+				$action = new GetIdentifiers();
 				$event->setAction(function($event) use($action) {$action->execute($event);});
 				/*
 				$authorisation = function() use ($event)

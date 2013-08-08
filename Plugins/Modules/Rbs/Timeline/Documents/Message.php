@@ -1,6 +1,6 @@
 <?php
 namespace Rbs\Timeline\Documents;
-use Change\Presentation\Markdown\MarkdownParser;
+use Change\Presentation\PresentationServices;
 
 /**
  * @name \Rbs\Timeline\Documents\Message
@@ -28,8 +28,8 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 	 */
 	private function transformMarkdownToHtml()
 	{
-		$mdParser = new MarkdownParser($this->getDocumentManager()->getDocumentServices());
-		$this->getMessage()->setHtml($mdParser->transform($this->getMessage()->getRawText()));
+		$ps = new PresentationServices($this->getApplicationServices());
+		$ps->getRichTextManager()->render($this->getMessage(), 'Admin');
 	}
 
 	/**
@@ -70,7 +70,8 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				//Add AuthorName and AuthorId
 				$result->setProperty('authorId', $message->getAuthorId());
 				$result->setProperty('authorName', $message->getAuthorName());
-				//For avatar
+				$result->setProperty('authorResumeLink', 'Rbs/Timeline/Resume/' . $message->getAuthorId());
+				//For avatar & identifier
 				$dm = $message->getDocumentManager();
 				$user = $dm->getDocumentInstance($message->getAuthorId(), $dm->getModelManager()->getModelByName('Rbs_User_User'));
 
@@ -83,6 +84,10 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 					if (isset($profile['avatar']) && $profile['avatar'] !== null)
 					{
 						$avatar = $profile['avatar'];
+					}
+					if($user->getIdentifier())
+					{
+						$result->setProperty('authorIdentifier', $user->getIdentifier());
 					}
 				}
 				$result->setProperty('avatar', $avatar);

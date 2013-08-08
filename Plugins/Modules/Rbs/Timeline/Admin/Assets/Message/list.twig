@@ -6,10 +6,17 @@
 	                   model="Rbs_Timeline_Message"
 	                   filter-query="query">
 
-		<column name="contextid" align="center"></column>
-		<column name="message" primary="true"></column>
+		<column name="avatar" align='center'>
+			<img ng-src="(= doc.avatar =)" style="width:64px; height:64px;">
+		</column>
+		<column name="message" primary="true">
+			(= doc.message.h |  ellipsis:20 =)
+		</column>
+		<column name="identifier">
+			@(= identifier =)
+		</column>
 		<preview>
-			(= doc.message =)
+			(= doc.message.h =)
 		</preview>
 	</rbs-document-list>
 </div>

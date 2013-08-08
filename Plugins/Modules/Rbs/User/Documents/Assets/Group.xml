@@ -6,5 +6,12 @@
 		<property name="realm" type="String">
 			<dboptions length="128" />
 		</property>
+
+		<property name="identifier" type="String">
+			<dboptions length="50" />
+			<constraint name="maxSize" max="50" />
+			<constraint name="unique" />
+			<constraint name="matches" pattern="/^[a-z][a-z0-9_\-]{1,49}$/" />
+		</property>
 	</properties>
 </document>

@@ -1,0 +1,26 @@
+<div data-ng-controller="Rbs_Timeline_Resume_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.timeline.document.resume-list', ['ucf']) }}"></page-header>
+	<h3>{{ i18n('m.rbs.timeline.document.users', ['ucf']) }}</h3>
+	<div data-ng-repeat="user in users">
+		<div class="media">
+			<a class="pull-left" href="#">
+				<img style="width: 64px; height: 64px;" class="media-object" data-ng-src="(= user.avatar =)">
+			</a>
+			<div class="media-body well well-small">
+				<h4 class="media-heading">@(= user.identifier =)</h4>
+				<small><a data-ng-href="(= user.resumeLink =)">(= user.name =)</a></small>
+			</div>
+		</div>
+	</div>
+	<h3>{{ i18n('m.rbs.timeline.document.groups', ['ucf']) }}</h3>
+	<div data-ng-repeat="group in groups">
+		<div class="media">
+			<a class="pull-left" href="#">
+				<img style="width: 64px; height: 64px;" class="media-object" data-ng-src="(= group.avatar =)">
+			</a>
+			<div class="media-body well well-small">
+				<h4 class="media-heading">@+(= group.identifier =) <small ng-if="group.name"><a href="">(= group.name =)</a></small></h4>
+			</div>
+		</div>
+	</div>
+</div>

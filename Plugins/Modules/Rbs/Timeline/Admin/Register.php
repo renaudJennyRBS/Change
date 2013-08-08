@@ -23,7 +23,8 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Timeline/js/admin.js">​</script>
 	<script type="text/javascript" src="Rbs/Timeline/js/directives/timeline.js">​</script>
 	<script type="text/javascript" src="Rbs/Timeline/Message/controllers.js">​</script>
-	<script type="text/javascript" src="Rbs/Timeline/Message/editor.js">​</script>');
+	<script type="text/javascript" src="Rbs/Timeline/Message/editor.js">​</script>
+	<script type="text/javascript" src="Rbs/Timeline/Resume/controllers.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
 /*
 			$header = array('
