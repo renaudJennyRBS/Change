@@ -57,9 +57,10 @@
 		 * Build the HTML used in the "Quick actions" toolbar.
 		 * @param dlid
 		 * @param tAttrs
+		 * @param localActions
 		 * @returns {string}
 		 */
-		function buildQuickActionsHtml (dlid, tAttrs) {
+		function buildQuickActionsHtml (dlid, tAttrs, localActions) {
 			var	actionDivider = '<span class="divider">|</span>',
 				html,
 				quickActionsHtml;
@@ -127,6 +128,10 @@
 						return buildDefault();
 					}
 
+					if (localActions.hasOwnProperty(actionName)) {
+						actionName = dlid + '_' + actionName;
+					}
+
 					var actionObject = Actions.get(actionName);
 					if (actionObject !== null) {
 						return buildOtherAction(actionObject);
@@ -144,13 +149,51 @@
 
 
 		/**
+		 * @param dlid
+		 * @returns {Object}
+		 */
+		function initLocalActions (dlid) {
+			var	localActions = {};
+			angular.forEach(__actions[dlid], function (action) {
+				if (! action.name) {
+					throw new Error("Actions defined in <rbs-document-list/> should have a 'name' parameter.");
+				}
+				if (localActions[action.name]) {
+					throw new Error("Parameter 'name' for actions defined in <rbs-document-list/> should be unique.");
+				}
+
+				localActions[action.name] = action;
+				Actions.register({
+					name        : (dlid + '_' + action.name),
+					models      : action.models || '*',
+					description : action.description,
+					label       : action.label,
+					icon        : action.icon,
+					selection   : action.selection,
+
+					execute : ['$extend', '$docs', function ($extend, $docs) {
+						if (angular.isFunction($extend[action.name])) {
+							$extend[action.name]($docs);
+						}
+						else {
+							throw new Error("Method '" + this.name + "' is not defined in '$extend'.");
+						}
+					}]
+				});
+			});
+			delete __actions[dlid];
+			return localActions;
+		}
+
+
+		/**
 		 * Initialize columns for <rbs-document-list/>
 		 * @param dlid
 		 * @param tElement
 		 * @param tAttrs
-		 * @returns {Array}
+		 * @returns {Object}
 		 */
-		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels) {
+		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels, localActions) {
 			var	columns, column,
 				$th, $td, $head, $body, html, p, td,
 				result = {
@@ -387,7 +430,7 @@
 
 				// The primary column has extra links for preview, edit and delete.
 				if (column.primary) {
-					html = buildQuickActionsHtml(dlid, tAttrs);
+					html = buildQuickActionsHtml(dlid, tAttrs, localActions);
 					if (html !== null) {
 						testerEl.html(html);
 						$td.find('.primary-cell').prepend(html);
@@ -473,14 +516,16 @@
 			 */
 			compile : function (tElement, tAttrs) {
 
-				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columnResult;
+				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columnResult, localActions;
 
 				dlid = tElement.data('dlid');
 				if (!dlid) {
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 
-				columnResult = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels);
+				localActions = initLocalActions(dlid);
+
+				columnResult = initColumns(dlid, tElement, tAttrs, undefinedColumnLabels, localActions);
 
 				gridModeAvailable = initGrid(dlid, tElement);
 
@@ -620,40 +665,15 @@
 					//
 
 					// Locally defined actions.
-					var localActions = {};
-					angular.forEach(__actions[dlid], function (action) {
-						if (! action.name) {
-							throw new Error("Actions defined in <rbs-document-list/> should have a 'name' parameter.");
+					var	actionList = elm.is('[actions]') ? attrs.actions : 'default';
+					angular.forEach(localActions, function (action) {
+						if (actionList.length) {
+							actionList += ' ' + action.name;
 						}
-						if (localActions[action.name]) {
-							throw new Error("Parameter 'name' for actions defined in <rbs-document-list/> should be unique.");
-						}
-
-						localActions[action.name] = action;
-						Actions.register({
-							name        : (dlid + '_' + action.name),
-							models      : action.models || '*',
-							description : action.description,
-							label       : action.label,
-							icon        : action.icon,
-							selection   : action.selection,
-
-							execute : ['$extend', '$docs', function ($extend, $docs) {
-								if (angular.isFunction($extend[action.name])) {
-									$extend[action.name]($docs);
-								}
-								else {
-									throw new Error("Method '" + this.name + "' is not defined in '$extend'.");
-								}
-							}]
-						});
 					});
-
-					delete __actions[dlid];
 
 
 					scope.actions = [];
-					var actionList = elm.is('[actions]') ? attrs.actions : 'default';
 					if (actionList.length) {
 						actionList = actionList.replace('default', DEFAULT_ACTIONS);
 						if (! scope.hasColumn('nodeOrder') ) {
