@@ -1,0 +1,88 @@
+{
+	"main-background-color": "#fff",
+	"main-background-second-color": "#eee",
+	"main-text-color": "#393a41",
+	"main-light-text-color": "#999",
+	"main-link-color": "#9eb110",
+	"main-link-hover-color": "#5e6469",
+	"main-link-current-color": "#1f1f1f",
+	"main-bullet-shadow-color": "#aaa",
+	"main-border-image": "url(../img/grey-pixel.png)",
+	"main-border-color": "#ddd",
+	"main-disabled-text-color": "#aaafaa",
+	"main-disabled-background-color": "#eeefee",
+
+	"inverse-background-color": "#5e6469",
+	"inverse-background-second-color": "#202020",
+	"inverse-text-color": "#fff",
+	"inverse-link-color": "#ac3",
+	"inverse-link-hover-color": "#cdd",
+	"inverse-bullet-shadow-color": "#000",
+	"inverse-border-image": "url(../img/darkgrey-pixel.png)",
+	"inverse-border-color": "#555a5e",
+
+	"primary-background-color": "#deeeff",
+	"primary-text-color": "#428bca",
+	"success-background-color": "#dff0d8",
+	"success-text-color": "#468847",
+	"danger-background-color": "#f2dede",
+	"danger-text-color": "#b94a48",
+	"warning-background-color": "#fcf8e3",
+	"warning-text-color": "#c09853",
+	"info-background-color": "#d9edf7",
+	"info-text-color": "#3a87ad",
+
+	"highlight-background-color": "#ffff00",
+	"highlight-text-color": "#000000",
+
+	"heading-one-color": "#1f1f1f",
+	"heading-two-color": "#393a41",
+	"heading-three-color": "#5e6469",
+
+	"alternate-even-color": "#f4f4f4",
+	"alternate-odd-color": "#fbfbfb",
+
+	"set-border-color": "#b1c903",
+	"field-background-color": "#fff",
+	"field-border-color": "#ddd",
+	"field-text-color": "#393a41",
+
+	"grad-default-first-color": "#fff",
+	"grad-default-second-color": "#e9e9e9",
+	"grad-default-text-color": "#393a41",
+	"grad-default-link-color": "#9eb110",
+
+	"grad-primary-first-color": "#c3dc05",
+	"grad-primary-second-color": "#9fb210",
+	"grad-primary-text-color": "#fff",
+	"grad-primary-link-color": "#fff",
+
+	"grad-warning-first-color": "#fbb450",
+	"grad-warning-second-color": "#f89406",
+	"grad-warning-text-color": "#fff",
+	"grad-warning-link-color": "#fff",
+
+	"grad-danger-first-color": "#ee5f5b",
+	"grad-danger-second-color": "#bd362f",
+	"grad-danger-text-color": "#fff",
+	"grad-danger-link-color": "#fff",
+
+	"grad-success-first-color": "#62c462",
+	"grad-success-second-color": "#51a351",
+	"grad-success-text-color": "#fff",
+	"grad-success-link-color": "#fff",
+
+	"grad-info-first-color": "#5bc0de",
+	"grad-info-second-color": "#2f96b4",
+	"grad-info-text-color": "#fff",
+	"grad-info-link-color": "#fff",
+
+	"btn-default-border-colors": "rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25)",
+	"btn-hover-gradient": "rgba(255, 255, 255, 0.35) 10%, rgba(255, 255, 255, 0.20) 20%, rgba(255, 255, 255, 0) 49%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.10) 80%, rgba(0, 0, 0, 0.20) 100%",
+	"btn-disabled-gradient": "rgba(175, 175, 175, 0.50) 10%, rgba(150, 150, 150, 0.50) 20%, rgba(125, 125, 125, 0.50) 50%, rgba(100, 100, 100, 0.50) 80%, rgba(75, 75, 75, 0.50) 100%",
+	"btn-disabled-border-colors": "rgba(100, 100, 100, 0.50) rgba(100, 100, 100, 0.50) rgba(100, 100, 100, 1)",
+	"striped-gradient": "rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent",
+
+	"loading-image": "url(/media/frontoffice/solrsearch/indicator.gif)",
+	"thread-image": "url(../img/thread-icon.png)"
+}

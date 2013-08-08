@@ -1,5 +1,3 @@
 @import url('bootstrap.min.css');
-@import url('bootstrap-responsive.min.css');
-.exception {
-	white-space: pre-wrap;
-}
+@import url('bootstrap-complements.css');
+@import url('font-awesome.css');

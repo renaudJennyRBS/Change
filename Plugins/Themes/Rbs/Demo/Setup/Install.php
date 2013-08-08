@@ -13,7 +13,7 @@ class Install
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
@@ -42,12 +42,13 @@ class Install
 			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
 			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
-			$pageTemplate->setLabel('Sample');
-			$html = file_get_contents(__DIR__ . '/Assets/Sample.twig');
+			$pageTemplate->setLabel('Sidebar');
+			$html = file_get_contents(__DIR__ . '/Assets/sidebarpage.twig');
 			$pageTemplate->setHtml($html);
-			$json = file_get_contents(__DIR__ . '/Assets/Sample.json');
+			$json = file_get_contents(__DIR__ . '/Assets/sidebarpage.json');
 			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
-			$pageTemplate->setHtmlForBackoffice('<div data-editable-zone-id="zoneEditable1"></div>');
+			$boHtml = file_get_contents(__DIR__ . '/Assets/sidebarpage-bo.twig');
+			$pageTemplate->setHtmlForBackoffice($boHtml);
 			$pageTemplate->setActive(true);
 			$pageTemplate->save();
 

@@ -3,4 +3,6 @@
 	<key id="productlist">produits d'une catégorie</key>
 	<key id="productlist-category">catégorie</key>
 	<key id="productlist-function">Liste des produits d'une catégorie</key>
+	<key id="productlist-items-per-line">produits par ligne</key>
+	<key id="productlist-items-per-page">produits par page</key>
 </i18n>

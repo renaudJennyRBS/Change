@@ -24,6 +24,8 @@ class Category extends Block
 		$parameters->addParameterMeta('categoryId', Property::TYPE_INTEGER, true);
 		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, true);
 		$parameters->addParameterMeta('conditionId', Property::TYPE_INTEGER, false);
+		$parameters->addParameterMeta('itemsPerLine', Property::TYPE_INTEGER, true);
+		$parameters->addParameterMeta('itemsPerPage', Property::TYPE_INTEGER, true);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('categoryId') === null)
@@ -71,10 +73,11 @@ class Category extends Block
 			$category = $documentManager->getDocumentInstance($categoryId);
 			$attributes['title'] = $category->getTitle();
 
-			//TODO for development only
+			//TODO: for development only
 			$commerceServices->setBillingArea($category->getWebStore()->getBillingAreas()[0]);
 			$commerceServices->setZone('FRC');
 
+			//TODO: handle pagination
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductCategorization', 'product');
@@ -112,6 +115,8 @@ class Category extends Block
 				$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
 			}
 			$attributes['rows'] = $rows;
+
+			$attributes['itemsPerLine'] = $parameters->getItemsPerLine();
 			return 'category.twig';
 		}
 		return null;

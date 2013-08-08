@@ -55,9 +55,9 @@ class TwitterBootstrapHtml
 			{
 				switch ($vi[$i])
 				{
-					case 'D' : $classes[] = 'visible-desktop'; break;
-					case 'P' : $classes[] = 'visible-phone'; break;
-					case 'T' : $classes[] = 'visible-tablet'; break;
+					case 'D' : $classes[] = 'visible-lg'; break;
+					case 'P' : $classes[] = 'visible-sm'; break;
+					case 'T' : $classes[] = 'visible-md'; break;
 				}
 			}
 			if (count($classes))
@@ -89,7 +89,6 @@ class TwitterBootstrapHtml
 			}
 			elseif ($item instanceof Container)
 			{
-				$this->fluid = $item->getGridMode() == 'fluid';
 				$container = $pageLayout->getById($item->getId());
 				if ($container instanceof Container)
 				{
@@ -107,7 +106,6 @@ class TwitterBootstrapHtml
 
 	/**
 	 * @param Item $item
-	 * @param Container $container
 	 * @param Callable $callableTwigBlock
 	 * @return string|null
 	 */
@@ -125,23 +123,20 @@ class TwitterBootstrapHtml
 		}
 		if ($item instanceof Cell)
 		{
-			return '<div data-id="' . $item->getId() . '" class="span' . $item->getSize() . '">' . $innerHTML . '</div>';
+			return '<div data-id="' . $item->getId() . '" class="col-lg-' . $item->getSize() . '">' . $innerHTML . '</div>';
 		}
 		elseif ($item instanceof Row)
 		{
-			$class = $this->fluid ? 'row-fluid' : 'row';
+			$class = 'row';
 			return
 				'<div class="' . $class . '" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML
 				. '</div>';
 		}
 		elseif ($item instanceof Container)
 		{
-			$class = $this->fluid ? 'container-fluid' : 'container';
-			return
-				'<div class="' . $class . '" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML
-				. '</div>';
+			//return '<div data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML . '</div>';
+			return $innerHTML;
 		}
 		return (!empty($innerHTML)) ? $innerHTML : null;
 	}
-
 }
