@@ -180,7 +180,7 @@ class MailManager
 				}
 				else
 				{
-					$this->getLogging()->warn(get_class($this) . ' try to send not existing file ('.$file.')');
+					$this->getLogging()->warn(get_class($this) . ' try to send not existing file (' . $file . ')');
 				}
 			}
 		}
@@ -203,6 +203,8 @@ class MailManager
 	 */
 	public function send($message)
 	{
+		$this->prepareFakeMail($message);
+
 		$transport = $this->getTransport();
 		$transport->send($message);
 	}
@@ -249,5 +251,73 @@ class MailManager
 		}
 
 		return $transport;
+	}
+
+	/**
+	 * @param ZendMessage $message
+	 * @return ZendMessage
+	 */
+	protected function prepareFakeMail($message)
+	{
+		$fakemail = $this->getConfiguration()->getEntry('Change/Mail/fakemail', null);
+		if ($fakemail !== null)
+		{
+			$currentCc = $message->getCc();
+			$currentBcc = $message->getBcc();
+			$currentTo = $message->getTo();
+			$currentSubject = $message->getSubject();
+
+			$newSubject = '[FAKE] ' . $currentSubject . ' [To : ';
+			$i = 0;
+			foreach ($currentTo as $to)
+			{
+				if ($i > 0)
+				{
+					$newSubject .= ', ';
+				}
+				$newSubject .= $to->getEmail();
+				++$i;
+			}
+			$newSubject .= ']';
+
+			$i = 0;
+			$newCc = '';
+			foreach ($currentCc as $cc)
+			{
+				if ($i > 0)
+				{
+					$newCc .= ', ';
+				}
+				$newCc .= $cc->getEmail();
+				++$i;
+			}
+			if ($newCc != '')
+			{
+				$newSubject .= '[Cc : ' . $newCc .']';
+			}
+
+			$i = 0;
+			$newBcc = '';
+			foreach ($currentBcc as $bcc)
+			{
+				if ($i > 0)
+				{
+					$newBcc .= ', ';
+				}
+				$newBcc .= $bcc->getEmail();
+				++$i;
+			}
+			if ($newBcc != '')
+			{
+				$newSubject .= '[Bcc : ' . $newBcc .']';
+			}
+
+			$message->setSubject($newSubject);
+			$message->setTo($fakemail);
+			$message->setCc(array());
+			$message->setBcc(array());
+		}
+
+		return $message;
 	}
 }

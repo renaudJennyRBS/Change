@@ -1,6 +1,7 @@
 <?php
 namespace ChangeTests\Change\Mail;
 
+use ChangeTests\Change\Mail\TestAssets\FakeMailManager;
 use ChangeTests\Change\TestAssets\TestCase;
 
 /**
@@ -116,4 +117,46 @@ class MailManagerTest extends TestCase
 		$this->assertEquals('version 4.0', $h->getFieldValue());
 	}
 
+	public function testPrepareFakeMail()
+	{
+		$application = $this->getApplication();
+		$configuration = $application->getConfiguration();
+
+		$mailManager = new FakeMailManager();
+		$mailManager->setConfiguration($configuration);
+
+		$from = array('fromtest@rbschange.fr');
+		$to = array('totest@rbschange.fr');
+		$cc = array('cctest@rbschange.fr');
+		$bcc = array('bcctest@rbschange.fr');
+		$subject = 'Le retour de Chuck Norris';
+		$body = 'Chuck Norris est de retour !';
+
+		$message = $mailManager->prepareMessage($from, $to, $subject, $body, null, $cc, $bcc);
+		$message = $mailManager->prepareFakeMail($message);
+
+		$this->assertTrue($message->getTo()->has('totest@rbschange.fr'));
+		$this->assertEquals($subject, $message->getSubject());
+		$this->assertEquals(1, $message->getCc()->count());
+		$this->assertEquals(1, $message->getBcc()->count());
+
+		$configuration->addVolatileEntry('Change/Mail/fakemail', 'loic.couturier@rbs.fr');
+		$message = $mailManager->prepareFakeMail($message);
+
+		$this->assertFalse($message->getTo()->has('totest@rbschange.fr'));
+		$this->assertTrue($message->getTo()->has('loic.couturier@rbs.fr'));
+		$this->assertEquals('[FAKE] ' . $subject . ' [To : totest@rbschange.fr][Cc : cctest@rbschange.fr][Bcc : bcctest@rbschange.fr]', $message->getSubject());
+		$this->assertEquals(0, $message->getCc()->count());
+		$this->assertEquals(0, $message->getBcc()->count());
+
+		$configuration->addVolatileEntry('Change/Mail/fakemail', array('loic.couturier@rbs.fr', 'franck.stauffer@rbs.fr'));
+		$to = array('totest@rbschange.fr', 'totest2@rbschange.fr');
+
+		$message = $mailManager->prepareMessage($from, $to, $subject, $body, null, $cc, $bcc);
+		$message = $mailManager->prepareFakeMail($message);
+
+		$this->assertTrue($message->getTo()->has('loic.couturier@rbs.fr'));
+		$this->assertTrue($message->getTo()->has('franck.stauffer@rbs.fr'));
+		$this->assertEquals('[FAKE] ' . $subject . ' [To : totest@rbschange.fr, totest2@rbschange.fr][Cc : cctest@rbschange.fr][Bcc : bcctest@rbschange.fr]', $message->getSubject());
+	}
 }
