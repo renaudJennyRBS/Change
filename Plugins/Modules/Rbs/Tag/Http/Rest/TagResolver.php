@@ -25,7 +25,7 @@ class TagResolver {
 		$modelName = $pathParts[1] . '_' . $pathParts[2] . '_' .$pathParts[3];
 		$method = $event->getRequest()->getMethod();
 
-		if ($modelName === 'Rbs_Tag_Tag' && $nbParts === 7)
+		if ($modelName === 'Rbs_Tag_Tag' && $nbParts === 6)
 		{
 			if ($pathParts[$nbParts-1] !== 'documents')
 			{

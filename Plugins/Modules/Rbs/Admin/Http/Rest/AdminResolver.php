@@ -6,6 +6,7 @@ use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
+use Rbs\Admin\Http\Rest\Actions\TagsInfo;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
 /**
@@ -77,12 +78,19 @@ class AdminResolver
 					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 				}
 			}
-			if ($actionName === 'currentTasks')
+			else if ($actionName === 'currentTasks')
 			{
 				$event->setAction(function($event) {
 					(new CurrentTasks())->execute($event);
 				});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			else if ($actionName === 'tagsInfo')
+			{
+				$event->setAction(function($event) {
+					(new TagsInfo())->execute($event);
+				});
+				//$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}
 	}

@@ -239,6 +239,11 @@
 				};
 
 
+				this.unregister = function (name) {
+					delete this.actions['_' + name.replace('.', '-')];
+				};
+
+
 				this.get = function (actionName) {
 					var method = '_' + actionName.replace('.', '-');
 					if (method in this.actions) {

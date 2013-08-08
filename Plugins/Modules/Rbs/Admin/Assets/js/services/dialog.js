@@ -206,7 +206,7 @@
 						$.get(url, function (data) {
 							$compile(data)(theScope, function (clone) {
 								$timeout(function() {
-									$el.html(clone);
+									$el.empty().append(clone);
 								});
 							});
 						});
@@ -225,6 +225,10 @@
 					if (self.$embeddedEl !== null) {
 						$embeddedModalBackdrop.fadeOut('fast');
 						self.$embeddedEl.fadeOut('fast', function () {
+							// Remove any <rbs-document-list/> elements.
+							self.$embeddedEl.find('rbs-document-list').each(function () {
+								angular.element($(this)).scope().$destroy();
+							});
 							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
 							self.$embeddedEl = null;
 							$timeout(function () {

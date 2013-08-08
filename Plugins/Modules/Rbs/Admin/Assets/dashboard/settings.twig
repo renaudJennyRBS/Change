@@ -1,0 +1,13 @@
+<header class="clearfix">
+	<button ng-click="closeEmbeddedModal()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
+	<h3>Configuration du tableau de bord</h3>
+</header>
+
+<fieldset>
+	<legend>Étiquettes</legend>
+	<rbs-field-picker-multiple property="dashboardSettings.tags" accepted-model="Rbs_Tag_Tag"></rbs-field-picker-multiple>
+</fieldset>
+
+<div class="form-actions">
+	<button class="btn btn-primary" type="button" ng-click="saveSettings()">Enregistrer</button>
+</div>

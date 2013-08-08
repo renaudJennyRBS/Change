@@ -20,6 +20,7 @@
 	padding: 10px 14px;
 	font-weight: bold;
 	vertical-align: top;
+	cursor: pointer;
 }
 .dashboard .small-indicators span:after {
 	content: "";
@@ -42,6 +43,9 @@
 .dashboard .small-indicators span > i {
 	font-size: 30pt;
 	float: left;
+}
+.dashboard .small-indicators span > i:before {
+	cursor: pointer;
 }
 
 .dashboard .indicator {
