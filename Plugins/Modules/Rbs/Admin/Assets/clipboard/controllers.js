@@ -55,6 +55,9 @@
 				angular.forEach($docs, function (doc) {
 					Clipboard.remove(doc);
 				});
+			},
+			'clearClipboard' : function () {
+				Clipboard.clear();
 			}
 		};
 
