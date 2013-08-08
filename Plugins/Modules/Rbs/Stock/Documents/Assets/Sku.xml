@@ -8,7 +8,9 @@
 		<property name="code" type="String" required="true">
 			<dboptions length="80" />
 		</property>
-		<property name="unit" type="Integer" default-value="0" />
+		<property name="unit" type="String" default-value="PC">
+			<dboptions length="80" />
+		</property>
 		<property name="quantityIncrement" type="Integer" default-value="1" required="true" />
 		<property name="minQuantity" type="Integer" default-value="1" required="true" />
 		<property name="maxQuantity" type="Integer" />

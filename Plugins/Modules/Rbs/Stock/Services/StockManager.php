@@ -175,4 +175,14 @@ class StockManager
 	{
 
 	}
+
+	/**
+	 * @return \Rbs\Stock\Documents\Sku
+	 */
+	public function getSkuByCode($code)
+	{
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_Sku');
+		$query->andPredicates($query->eq('code', $code));
+		return $query->getFirstDocument();
+	}
 }

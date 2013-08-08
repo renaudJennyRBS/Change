@@ -18,12 +18,22 @@
 			input-class="input-block-level">
 		</rbs-field-text>
 
+		<rbs-field-boolean
+			ng-cloak=""
+			ng-hide="document.id > 0"
+			property="newSkuOnCreation"
+			label="{{ i18nAttr('m.rbs.catalog.document.product.newskuoncreation', ['ucf']) }}">
+		</rbs-field-boolean>
+
 		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.catalog.document.product.sku', ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
 			selector-title="{{ i18nAttr('m.rbs.catalog.document.product.sku-picker-title', ['ucf']) }}"
 			allow-creation="true"
-			allow-edition="true">
+			allow-edition="true"
+			ng-hide="document.newSkuOnCreation && document.id <= 0" />
 		</rbs-field-picker>
+
+
 
 		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr('m.rbs.catalog.document.product.visuals', ['ucf']) }}"
 			accepted-model="Rbs_Media_Image"
