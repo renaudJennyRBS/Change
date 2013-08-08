@@ -1,18 +1,11 @@
-/**
- * User: fredericbonjour
- * Date: 03/06/13
- * Time: 16:31
- * To change this template use File | Settings | File Templates.
- */
+(function ($) {
 
-(function ()
-{
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
 	/**
-	 * Controller for list.
+	 * Controller for Dashboard.
 	 *
 	 * @param $scope
 	 * @param Workspace
@@ -20,9 +13,12 @@
 	 * @param MainMenu
 	 * @param i18n
 	 * @param REST
+	 * @param Dialog
+	 * @param Settings
+	 * @param UrlManager
 	 * @constructor
 	 */
-	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST)
+	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager)
 	{
 		Breadcrumb.resetLocation();
 
@@ -53,6 +49,82 @@
 				"link"   : ""
 			}
 		];
+
+
+		var $embedContainer = $('#chgDashboardEmbedContainer');
+
+		//
+		// Settings
+		//
+
+		var settings;
+
+		function refreshDashboard() {
+			settings = angular.copy(Settings.get('dashboard', {}));
+			if (settings.tags && settings.tags.length) {
+				REST.call(REST.getBaseUrl('admin/tagsInfo/'), {'tags':settings.tags}, REST.collectionTransformer()).then(function (result) {
+					settings.tags = result;
+					$scope.dashboardSettings = settings;
+				});
+			} else {
+				$scope.dashboardSettings = settings;
+			}
+		}
+		refreshDashboard();
+
+		$scope.showDashboardSettings = function ($event) {
+			Dialog.embed(
+				$embedContainer,
+				'Rbs/Admin/dashboard/settings.twig',
+				$scope,
+				{ 'pointedElement' : $event.target }
+			);
+		};
+
+		$scope.saveSettings = function () {
+			var dashboard = {
+				tags : []
+			};
+			angular.forEach($scope.dashboardSettings.tags, function (tag) {
+				if (angular.isObject(tag) && tag.id) {
+					dashboard.tags.push(tag.id);
+				}
+			});
+			Settings.set('dashboard', dashboard, true).then(function () {
+				Dialog.closeEmbedded();
+				refreshDashboard();
+			});
+		};
+
+
+		//
+		// Tags
+		//
+
+		$scope.showTaggedDocuments = function (tag, $event) {
+			$scope.selectedTag = tag;
+			$scope.taggedDocumentsUrl = REST.getResourceUrl(tag) + '/documents/';
+			Dialog.embed(
+				$embedContainer,
+				'Rbs/Admin/dashboard/tags.twig',
+				$scope,
+				{ 'pointedElement' : $event.target }
+			);
+		};
+
+
+		//
+		// Tasks
+		//
+
+		$scope.showTasks = function ($event) {
+			Dialog.embed(
+				$embedContainer,
+				'Rbs/Admin/dashboard/tasks.twig',
+				$scope,
+				{ 'pointedElement' : $event.target }
+			);
+		};
 
 		$scope.reloadTasks = function () {
 			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column':['document','taskCode','status']}, REST.collectionTransformer()).then(function (result) {
@@ -91,8 +163,11 @@
 		'RbsChange.Breadcrumb',
 		'RbsChange.MainMenu',
 		'RbsChange.i18n',
-		'RbsChange.REST'
+		'RbsChange.REST',
+		'RbsChange.Dialog',
+		'RbsChange.Settings',
+		'RbsChange.UrlManager'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);
 
-})();
+})(window.jQuery);

@@ -1,0 +1,17 @@
+<header class="clearfix">
+	<button ng-click="closeEmbeddedModal()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
+	<h3><i class="icon-tag"></i> (= selectedTag.label =)</h3>
+</header>
+
+<rbs-document-list data-dlid="DLRbsDashboardTaggedDocumentsList"
+                   collection-url="(= taggedDocumentsUrl =)"
+                   selectable="true"
+                   extend="taggedDocumentsList"
+                   on-reload="reloadTaggedDocuments()"
+                   quick-actions=""
+                   actions="">
+
+	<column name="path" thumbnail="XS" thumbnail-path="doc" label="<i class='icon-picture'></i>"></column>
+	<column name="label" primary="true" label="Document"></column>
+
+</rbs-document-list>

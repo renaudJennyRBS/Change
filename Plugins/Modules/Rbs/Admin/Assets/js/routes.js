@@ -11,15 +11,25 @@
 
 	var app = angular.module('RbsChange');
 
+
+
+	/**
+	 * Routes and URL definitions.
+	 */
+	app.config(['$provide', function ($provide)
+	{
+		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
+		{
+			$delegate.model(null).route('dashboard', '/', 'Rbs/Admin/dashboard/dashboard.twig');
+			return $delegate;
+		}]);
+	}]);
+
+
+
 	app.config(['$routeProvider', function ($routeProvider)
 	{
 		$routeProvider
-		. when(
-			'/',
-			{
-				templateUrl : 'Rbs/Admin/dashboard/dashboard.twig',
-				reloadOnSearch : false
-			})
 		. when(
 			'/404',
 			{
