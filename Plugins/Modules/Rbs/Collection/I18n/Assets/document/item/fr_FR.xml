@@ -2,5 +2,10 @@
 <i18n baseKey="m.rbs.collection.document.item" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
 	<key id="value">valeur</key>
+	<key id="locked">vérrouillé</key>
 	<key id="item-picker-title">Sélectionner les éléments</key>
+	<key id="item-locked-warning" format="html">
+		<![CDATA[<span class="label label-important">Attention!</span> Cet élément est vérouillé car il est utilisé par l'un des plugins de votre installation.
+			Vous ne pourrez donc pas le supprimer, ni changer sa valeur.]]>
+	</key>
 </i18n>

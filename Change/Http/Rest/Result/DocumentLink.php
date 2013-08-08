@@ -162,6 +162,24 @@ class DocumentLink extends Link
 	}
 
 	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getProperty($name, $defaultValue = null)
+	{
+		return isset($this->properties[$name]) ? $this->properties[$name] : $defaultValue;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		return $this->document;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function toArray()

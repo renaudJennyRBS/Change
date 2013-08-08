@@ -3,6 +3,8 @@ namespace Rbs\Collection\Documents;
 
 use Change\Documents\Events\Event;
 use Change\Documents\Query\Query;
+use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\Result\DocumentLink;
 use Change\I18n\PreparedKey;
 
 /**
@@ -65,5 +67,81 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 			}
 		};
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), $callback, 3);
+		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
+			$result = $event->getParam('restResult');
+			if ($result instanceof DocumentResult)
+			{
+				/* @var $product \Rbs\Collection\Documents\Collection */
+				$collection = $event->getDocument();
+				foreach ($result->getProperty('items') as $item)
+				{
+					/* @var $item DocumentLink */
+					$item->setProperty('value', $item->getDocument()->getValue());
+					$item->setProperty('locked', $item->getDocument()->getLocked());
+				}
+			}
+		}, 5);
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 */
+	protected function onUpdate()
+	{
+		if ($this->isPropertyModified('code') && $this->getLocked())
+		{
+			$this->setCode($this->getCodeOldValue());
+		}
+		if ($this->isPropertyModified('items'))
+		{
+			foreach (array_diff($this->getItemsOldValueIds(), $this->getItemsIds()) as $removedIds)
+			{
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $this->getDocumentManager()->getDocumentInstance($removedIds);
+				if ($item->getLocked())
+				{
+					throw new \RuntimeException('can not removed locked item from collection', 999999);
+				}
+				$tm = $this->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$tm->begin();
+					$item->delete();
+					$tm->commit();
+				}
+				catch (\Exception $e)
+				{
+					throw $tm->rollBack($e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 */
+	protected function onDelete()
+	{
+		if ($this->getLocked())
+		{
+			throw new \RuntimeException('can not delete locked collection', 999999);
+		}
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			foreach ($this->getItems() as $item)
+			{
+				$item->setLocked(false);
+				$item->delete();
+			}
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
 	}
 }

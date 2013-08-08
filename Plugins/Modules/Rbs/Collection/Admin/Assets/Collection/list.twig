@@ -6,10 +6,11 @@
 	</div>
 
 	<rbs-document-list data-dlid="DLCollection1"
-	               publishable="true"
 	               model="Rbs_Collection_Collection"
 	               filter-query="query">
-		<column name="label" primary="true"></column>
+		<column name="label" primary="true">
+			(= doc.label =)
+		</column>
 		<column name="code"></column>
 	</rbs-document-list>
 </div>
