@@ -2,7 +2,6 @@
 	"zoneEditable1": {
 		"id": "zoneEditable1",
 		"grid": 12,
-		"gridMode": "fluid",
 		"type": "container",
 		"parameters": {
 		},
