@@ -1,12 +1,91 @@
-<h1>{{ title }}</h1>
-<table width="100%">
-	<tr>
-		<th width="50%">Produit</th><th width="25%">Prix HT</th><th width="25%">Prix TTC</th>
-	</tr>
-	{% for row in rows %}
-		<tr>
-			<td><a href="{{ row.url }}"> {{ row.title }}</a></td>
-			<td>{{ formatPrice(row.price) }}</td><td>{{ formatPrice(row.priceTTC) }}</td>
-		</tr>
-	{% endfor %}
-</table>
+<h1 id="product-list-title">{{ title }}</h1>
+
+<div class="normal productlist-options">
+	<form class="form-horizontal" action="http://site36.intportgchange.fr/fr/action/ecomextended/UpdateBlockConfig">
+		<div class="form-group">
+			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_terms">Votre recherche</label>
+			<div class="col-sm-8 col-lg-9 controls">
+				<div class="row">
+					<div class="col-sm-6 col-lg-8">
+						<input class="form-control" name="terms" type="text" id="f_ecomextended_productterms" title="" value="" size="35"/>
+					</div>
+					<div class="col-sm-6 col-lg-4">
+						<select class="form-control" name="op" nopreamble="true">
+							<option value="AND" selected="selected">Tous les mots</option>
+							<option value="OR">Un des mots</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_sort">Trier par</label>
+			<div class="col-sm-8 col-lg-9 controls">
+				<select class="form-control" name="sort" id="f_ecomextended_sort">
+					<option value="position_vol_int_asc" selected="selected"></option>
+					<option value="sortable_date_idx_dt">Nouveautés</option>
+					<option value="f_13738_vol_float">Note</option>
+					<option value="f_price_13203_vol_float">+ cher au - cher</option>
+					<option value="f_price_13203_vol_float_asc">- cher au + cher</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-4 col-lg-3"></div>
+			<div class="col-sm-8 col-lg-9">
+				<input type="submit" class="btn btn-primary" value="Rechercher"/>
+				<input type="hidden" name="key" value="ecomextended_BlockProductList"/>
+			</div>
+		</div>
+	</form>
+</div>
+
+<form action="#product-list-title" method="post">
+	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
+		{% for row in rows %}
+			<li>
+				<ul class="grid-list-cell">
+					<li>
+						<label for="catalogParam_selected_product_13364">
+							<input type="checkbox" id="catalogParam_selected_product_13364"
+								name="catalogParam[selected_product][13364]" value="13364"/> Sélectionner </label>
+					</li>
+					<li class="product-visual">
+						<a title="Voir la fiche {{ row.title }}" class="link" href="{{ row.url }}">
+							<img lang="fr" xml:lang="fr" alt=""
+								src="http://site36.intportgchange.fr/publicmedia/formatted/132/41/fr/DUCK-HUNT-BOX.jpg;maxh=120,maxw=160.jpg" /></a>
+						<div class="pictograms-container">
+						</div>
+					</li>
+					<li class="product-label">
+						<a title="Voir la fiche {{ row.title }}" class="link" href="{{ row.url }}">{{ row.title }}</a>
+					</li>
+					<li class="product-availability">
+						Peu de stock
+					</li>
+					<li class="product-rating">
+						<ul class="star-rating small-star inline-rating" id="change-starrating-0">
+							<li class="current-rating rating-100 star">5 étoile(s)</li>
+						</ul>
+					</li>
+					<li class="product-price price">{{ formatPrice(row.price) }} <span class="tax-mode">HT</span></li>
+					<li class="product-price price">{{ formatPrice(row.priceTTC) }}  <span class="tax-mode">TTC</span></li>
+					<li class="product-add">
+						<button type="submit" name="catalogParam[addToCart][13364]" class="btn btn-primary btn-small" value="1"
+							onclick="catalog_openAddToCartPopin('13340', '13364'); return false;">
+							<i class="icon-shopping-cart"></i> Ajouter au panier
+						</button>
+					</li>
+				</ul>
+			</li>
+		{% endfor %}
+	{% endspaceless %}</ul>
+
+	<p class="buttons">
+		<input type="hidden" name="catalogParam[formBlockId]" value="productListb_11"/>
+		<input type="hidden" name="refererPageId" value="13336"/>
+		Actions sur la sélection : <input class="btn btn-primary" name="catalogParam[addToCart]" type="submit" value="Ajouter au panier"/>
+		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>
+		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
+	</p></form>
+</form>

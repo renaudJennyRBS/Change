@@ -21,7 +21,7 @@ class MenuInformation extends Information
 		$ucf = array('ucf');
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.menu', $ucf));
-		$this->addInformationMeta('templateName', Property::TYPE_STRING, true, 'menu.twig')
+		$this->addInformationMeta('templateName', Property::TYPE_STRING, true, 'menu-vertical.twig')
 			->setLabel($i18nManager->trans('m.rbs.website.blocks.menu-templatename', $ucf));
 		$this->addInformationMeta('documentId', Property::TYPE_DOCUMENT)->setAllowedModelsNames(array('Rbs_Website_Section',
 			'Rbs_Website_Menu'))->setLabel($i18nManager->trans('m.rbs.website.blocks.menu-documentid', $ucf));

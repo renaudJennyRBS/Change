@@ -3,7 +3,7 @@
 	<li>
 		<a href="{{ item.url }}">{{ item.label }}</a>
 		{% if item.hasChild %}
-			<ul class="regular">
+			<ul class="bullet">
 				{% for child in item.getChildren %}
 					{{ menu.item(child) }}
 				{% endfor %}
@@ -13,11 +13,13 @@
 {% endmacro %}
 {% import _self as menu %}
 
-{% if parameters.showTitle == true %}
-	<h1><a href="">{{ i18n('m.rbs.website.fo.home',['ucf']) }}</a></h1>
-{% endif %}
-<ul class="regular">
-	{% for child in root.children %}
-		{{ menu.item(child) }}
-	{% endfor %}
-</ul>
+<nav>
+	{% if parameters.showTitle == true %}
+		<h1>{{ i18n('m.rbs.website.fo.home',['ucf']) }}</h1>
+	{% endif %}
+	<ul class="bullet">
+		{% for child in root.children %}
+			{{ menu.item(child) }}
+		{% endfor %}
+	</ul>
+</nav>

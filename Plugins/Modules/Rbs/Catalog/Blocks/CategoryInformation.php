@@ -22,6 +22,10 @@ class CategoryInformation extends Information
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist'));
 		$this->addInformationMeta('categoryId', Property::TYPE_INTEGER, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-category', $ucf));
+		$this->addInformationMeta('itemsPerLine', Property::TYPE_INTEGER, true, 3)
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-items-per-line', $ucf));
+		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 9)
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-items-per-page', $ucf));
 		$this->setFunctions(array('Rbs_Catalog_Category' => 'Liste des produits d\'une catégorie'));
 	}
 }

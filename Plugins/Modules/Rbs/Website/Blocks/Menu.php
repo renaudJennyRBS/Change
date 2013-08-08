@@ -75,6 +75,7 @@ class Menu extends Block
 			/* @var $urlManager \Change\Http\Web\UrlManager */
 			$urlManager = $event->getUrlManager();
 			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path, $urlManager);
+			$attributes['uniqueId'] = uniqid();
 		}
 		return $parameters->getTemplateName();
 	}

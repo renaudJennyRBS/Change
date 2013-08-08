@@ -1,0 +1,36 @@
+{% macro item(item) %}
+	{% import _self as menu %}
+	<li class="{% if item.hasChild %}dropdown{% endif %} {% if item.isInPath or item.isCurrent %}active{% endif %}">
+		<a href="{{ item.url }}"{% if item.hasChild %} data-toggle="dropdown" class="dropdown-toggle"{% endif %}>{{ item.label }}{% if item.hasChild %} <b class="caret"></b>{% endif %}</a>
+		{% if item.hasChild %}
+			<ul class="dropdown-menu">
+				{% for child in item.getChildren %}
+					{{ menu.item(child) }}
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</li>
+{% endmacro %}
+{% import _self as menu %}
+
+<nav class="navbar navbar-inverse">
+	{% if root.hasChild %}
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-{{ uniqueId }}">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+	{% endif %}
+	<{% if root.url %}a href="{{ root.url }}"{% else %}span{% endif %} class="navbar-brand {% if parameters.showTitle != true %}visible-sm{% endif %}">
+		{{ root.label }}
+	</{% if root.url %}a{% else %}span{% endif %}>
+	{% if root.hasChild %}
+		<div class="nav-collapse collapse navbar-responsive-collapse-{{ uniqueId }}">
+			<ul class="nav navbar-nav">
+				{% for child in root.children %}
+					{{ menu.item(child) }}
+				{% endfor %}
+			</ul>
+		</div>
+	{% endif %}
+</nav>

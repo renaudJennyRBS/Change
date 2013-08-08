@@ -3,11 +3,21 @@
 {% else %}
 <form method="post" id="Login" action="Action/Rbs/User/Login">
 	<input type="hidden" name="realm" value="{{ parameters.realm }}">
-	<h2>Connectez-vous</h2>
-	<input type="text" name="login" class="input-block-level" placeholder="Identifiant">
-	<input type="password" name="password" class="input-block-level" placeholder="Mot de passe">
-	<label class="checkbox"><input type="checkbox" value="remember-me"> Rester connecté</label>
-	<button class="btn btn-large btn-primary" type="submit">Se connecter</button>
+	<fieldset>
+		<legend>Connectez-vous</legend>
+		<div class="form-group">
+			<label for="exampleInputEmail">Login</label>
+			<input type="text" name="login" class="form-control" placeholder="Identifiant">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputEmail">Mot de passe</label>
+			<input type="password" name="password" class="form-control" placeholder="Mot de passe">
+		</div>
+		<div class="checkbox">
+			<label><input type="checkbox" value="remember-me"> Rester connecté</label>
+		</div>
+		<button class="btn btn-primary" type="submit">Se connecter</button>
+	</fieldset>
 </form>
 <script type="text/javascript">
 	$('#Login').submit(function() {
