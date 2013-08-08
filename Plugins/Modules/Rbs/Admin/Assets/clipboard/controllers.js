@@ -39,20 +39,23 @@
 	}]);
 
 	/**
-	 * @name ChangeAdminClipboardController
+	 * @name Rbs_Admin_ClipboardController
 	 */
-	function ChangeAdminClipboardController ($scope, DocumentList, Breadcrumb, Clipboard, MainMenu) {
-
-		var DL = DocumentList.initScope($scope);
-
-		DL.addActions([['clipboard.clear']]);
-
+	function ChangeAdminClipboardController ($scope, Breadcrumb, Clipboard, MainMenu) {
 		Breadcrumb.resetLocation([["Presse-papier", "clipboard"]]);
 
-		DL.documents = Clipboard.values;
+		$scope.clipboardItems = Clipboard.values;
 
 		$scope.removeFromSelection = function (doc) {
 			Clipboard.remove(doc);
+		};
+
+		$scope.clipboardList = {
+			'removeFromClipboard' : function ($docs) {
+				angular.forEach($docs, function (doc) {
+					Clipboard.remove(doc);
+				});
+			}
 		};
 
 		MainMenu.loadModuleMenu("Rbs_Admin_clipboard");
@@ -60,7 +63,6 @@
 
 	ChangeAdminClipboardController.$inject = [
 		'$scope',
-		'RbsChange.DocumentList',
 		'RbsChange.Breadcrumb',
 		'RbsChange.Clipboard',
 		'RbsChange.MainMenu'
