@@ -48,16 +48,16 @@
 		}
 		#chg_loading_mask > div {
 			margin: 100px auto;
-			width: 460px;
-			color: #444444;
+			width: 400px;
+			border-radius: 10px;
+			background: #F5F5F5;
+			color: black;
 			font-size: 14pt;
 			text-align: center;
+			padding: 1em;
 		}
-		#chg_loading_mask .progress {
+		#chg_loading_mask > div > div {
 			margin: 1em 0;
-		}
-		#chg_loading_mask small {
-			color: #999999;
 		}
 	</style>
 
@@ -76,12 +76,9 @@
 <body data-ng-controller="Change.RootController">
 	<div id="chg_loading_mask">
 		<div>
-			<img alt="Logo RBS Change" src="Rbs/Admin/img/logo-rbs-change@2x.png">
-			<div class="progress progress-striped active">
-				<div class="bar" style="width: 100%;"></div>
-			</div>
-			<div>Chargement en cours...</div>
-			<small>Merci de bien vouloir patienter quelques secondes :)</small>
+			<img alt="Logo RBS Change" style="width:100px;height:100px;" src="Rbs/Admin/img/logo-change-black@2x.png"/>
+			<div>Merci de bien vouloir patienter<br/>quelques secondes :)</div>
+			<img src="Rbs/Admin/img/ajax-loader-round.gif"/>
 		</div>
 	</div>
     <div full-screen-toggle id="fullScreenBar">
@@ -153,8 +150,6 @@
 
     <!-- TODO -->
     <script type="text/javascript" src="Rbs/Admin/js/help.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/routes.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/timezone-selector.js"></script>
     <script type="text/javascript" src="Rbs/Admin/menu/menu.js"></script>
     <script type="text/javascript" src="Rbs/Admin/clipboard/controllers.js"></script>
     <script type="text/javascript" src="Rbs/Admin/dashboard/controllers.js"></script>
@@ -231,7 +226,9 @@
 
     <script type="text/javascript" src="Rbs/Admin/js/filters/rbschange.filters.js"></script>
 
-    <!-- modules -->
+	<script type="text/javascript" src="Rbs/Admin/js/routes.js"></script>
+
+	<!-- modules -->
 {% for node in resources.body %}
 	{{ node|raw }}
 {% endfor %}
