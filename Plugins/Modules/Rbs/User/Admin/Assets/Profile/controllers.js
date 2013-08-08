@@ -6,12 +6,13 @@
 
 	/**
 	 * @param $scope
-	 * @param $rootScope
 	 * @param Breadcrumb
 	 * @param REST
 	 * @param MainMenu
 	 * @param $http
 	 * @param i18n
+	 * @param User
+	 * @param PaginationPageSizes
 	 * @constructor
 	 */
 	function RbsUserProfileController($scope, Breadcrumb, REST, MainMenu, $http, i18n, User, PaginationPageSizes)
