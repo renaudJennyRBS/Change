@@ -13,6 +13,16 @@ use Change\Presentation\Blocks\Standard\Block;
 class Menu extends Block
 {
 	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
+	 * @var \Change\Http\Web\UrlManager
+	 */
+	protected $urlManager;
+
+	/**
 	 * @api
 	 * Set Block Parameters on $event
 	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
@@ -72,9 +82,9 @@ class Menu extends Block
 			{
 				$path = array();
 			}
-			/* @var $urlManager \Change\Http\Web\UrlManager */
-			$urlManager = $event->getUrlManager();
-			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path, $urlManager);
+			$this->urlManager = $event->getUrlManager();
+			$this->i18nManager = $event->getPresentationServices()->getApplicationServices()->getI18nManager();
+			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
 			$attributes['uniqueId'] = uniqid();
 		}
 		return $parameters->getTemplateName();
@@ -86,10 +96,9 @@ class Menu extends Block
 	 * @param integer $maxLevel
 	 * @param null|\Rbs\Website\Documents\Page $currentPage
 	 * @param \Rbs\Website\Documents\Section[] $path
-	 * @param \Change\Http\Web\UrlManager $urlManager
 	 * @return \Rbs\Website\Menu\MenuEntry
 	 */
-	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path, $urlManager)
+	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path)
 	{
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
@@ -100,7 +109,7 @@ class Menu extends Block
 		{
 			if ($doc->getIndexPageId())
 			{
-				$entry->setUrl($urlManager->getCanonicalByDocument($doc, $website));
+				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
 			}
 			if (count($path) && in_array($doc, $path))
 			{
@@ -109,7 +118,7 @@ class Menu extends Block
 		}
 		else
 		{
-			$entry->setUrl($urlManager->getCanonicalByDocument($doc, $website));
+			$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
 			if ($currentPage === $doc)
 			{
 				$entry->setCurrent(true);
@@ -127,7 +136,7 @@ class Menu extends Block
 				{
 					foreach ($tn->setTreeManager($treeManager)->getChildren() as $child)
 					{
-						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel-1, $currentPage, $path, $urlManager));
+						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel-1, $currentPage, $path));
 					}
 				}
 			}
@@ -135,8 +144,38 @@ class Menu extends Block
 			{
 				foreach ($doc->getItems() as $item)
 				{
-					//TODO
-					//$entry->addChild($this->getMenuEntry($child->getDocument(), $maxLevel-1, $page, $path, $urlManager));
+					if (isset($item['documentId']))
+					{
+						$subDoc = $doc->getDocumentServices()->getDocumentManager()->getDocumentInstance($item['documentId']);
+						if ($subDoc)
+						{
+							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel-1, $currentPage, $path);
+							if (isset($item['titleKey']))
+							{
+								$subEntry->setLabel($this->i18nManager->trans($item['titleKey'], ['ucf']));
+							}
+							elseif (isset($item['title']))
+							{
+								$subEntry->setLabel($item['title']);
+							}
+
+							$entry->addChild($subEntry);
+						}
+					}
+					elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
+					{
+						$subEntry = new \Rbs\Website\Menu\MenuEntry();
+						if (isset($item['titleKey']))
+						{
+							$subEntry->setLabel($this->i18nManager->trans($item['titleKey'], ['ucf']));
+						}
+						else
+						{
+							$subEntry->setLabel($item['title']);
+						}
+						$subEntry->setUrl($item['url']);
+						$entry->addChild($subEntry);
+					}
 				}
 			}
 		}
