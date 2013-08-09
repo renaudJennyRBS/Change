@@ -68,6 +68,12 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 				{
 					$result->setProperty('adminthumbnail',  $image->getPublicURL(512, 512));
 				}
+				$link = $result->getProperty('sku');
+				if ($link instanceof DocumentLink)
+				{
+					$link->setProperty('code', $link->getDocument()->getCode());
+				}
+
 			}
 		}, 5);
 	}

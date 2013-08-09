@@ -12,7 +12,6 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_Catalog_Product')
-				.route('productcategorizations', 'Rbs/Catalog/Product/:id/ProductCategorization/', 'Rbs/Catalog/Product/categories.twig')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Rbs/Catalog/Product/product-prices.twig');
 
 			$delegate.model('Rbs_Catalog_Category')

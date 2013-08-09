@@ -1,0 +1,40 @@
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="document.product.label"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.product', ['ucf']) }}"
+			disabled="product">
+		</rbs-field-text>
+
+		<rbs-field-text ng-if="document.category" property="document.category.label"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}"
+			disabled="category">
+		</rbs-field-text>
+
+		<rbs-field-picker ng-if="!document.category" property="document.category"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}"
+			allow-edition="true"
+			allow-creation="false"
+			accepted-model="Rbs_Catalog_Category"
+			selector-title="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category-picker-title', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-boolean
+			property="active"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.active', ['ucf']) }}">
+		</rbs-field-boolean>
+		<rbs-field-date
+			property="startActivation"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.startactivation', ['ucf']) }}">
+		</rbs-field-date>
+
+		<rbs-field-date
+			property="endactivation"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.endactivation', ['ucf']) }}">
+		</rbs-field-date>
+
+	</fieldset>
+	<form-button-bar></form-button-bar>
+</form>

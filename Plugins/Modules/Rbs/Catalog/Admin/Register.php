@@ -28,6 +28,8 @@ class Register implements ListenerAggregateInterface
 	<script type="text/javascript" src="Rbs/Catalog/Category/editor.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Product/editor.js">​</script>
+	<script type="text/javascript" src="Rbs/Catalog/ProductCategorization/controllers.js">​</script>
+	<script type="text/javascript" src="Rbs/Catalog/ProductCategorization/editor.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Attribute/controllers.js">​</script>
 	<script type="text/javascript" src="Rbs/Catalog/Attribute/editor.js">​</script>');
 			$event->setParam('body', array_merge($event->getParam('body'), $body));
