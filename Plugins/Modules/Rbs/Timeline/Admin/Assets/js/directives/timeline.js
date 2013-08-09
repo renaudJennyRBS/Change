@@ -37,7 +37,6 @@
 							}
 						]
 					}).then(function (result){
-							console.log(result);
 							scope.timelineMessages = result.resources;
 						});
 				}
@@ -78,7 +77,7 @@
 
 				scope.$watch('newComment', function (){
 					var text = scope.newComment;
-					var regexp = /@[a-z0-9_\-]+$/i;
+					var regexp = /@[a-z0-9_\-]+/i;
 					if (regexp.test(text))
 					{
 						console.log('an indentifier!');

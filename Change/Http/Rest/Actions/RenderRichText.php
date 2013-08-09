@@ -49,7 +49,7 @@ class RenderRichText
 		{
 			$presentationServices = new PresentationServices($event->getApplicationServices());
 		}
-		$event->setResult($this->generateResult($presentationServices->getRichTextManager()->render($richText, $profile, ['documentServices' => $event->getDocumentServices()])));
+		$event->setResult($this->generateResult($presentationServices->getRichTextManager()->setDocumentServices($event->getDocumentServices())->render($richText, $profile)));
 	}
 
 	/**

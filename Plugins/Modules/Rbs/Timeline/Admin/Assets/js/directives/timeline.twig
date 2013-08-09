@@ -2,7 +2,7 @@
 	<form>
 		<fieldset>
 			<legend>{{ i18n('m.rbs.timeline.admin.leave-a-comment-for-document-legend', ['ucf']) }}</legend>
-			<rbs-rich-text-input data-ng-model="newComment" class="input-block-level"></rbs-rich-text-input>
+			<rbs-rich-text-input data-ng-model="newComment" class="input-block-level" preview-profile="Admin"></rbs-rich-text-input>
 			<span class="help-block">{{ i18n('m.rbs.timeline.admin.leave-a-comment-helper', ['ucf']) }}</span>
 			<button type="button" data-ng-click="comment()" class="btn btn-success">{{ i18n('m.rbs.timeline.admin.leave-a-comment-submit', ['ucf']) }}</button>
 		</fieldset>
@@ -26,7 +26,7 @@
 					<small>{{ i18n('m.rbs.timeline.admin.edited-comment', ['ucf']) }} (= message.modificationDate | date:'medium' =)</small>
 				</div>
 				<div ng-if="message.editMode">
-					<rbs-rich-text-input data-ng-model="message.message" class="input-block-level" rows="3"></rbs-rich-text-input>
+					<rbs-rich-text-input data-ng-model="message.message" class="input-block-level" preview-profile="Admin"></rbs-rich-text-input>
 					<button type="button" data-ng-click="updateMessage(message)" class="btn btn-success">{{ i18n('m.rbs.timeline.admin.leave-a-comment-update', ['ucf']) }}</button>
 				</div>
 			</div>

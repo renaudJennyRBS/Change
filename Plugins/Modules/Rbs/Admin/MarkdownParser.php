@@ -15,6 +15,27 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	 */
 	public function parse($rawText, $context)
 	{
+
+		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches){
+			if ($matches[1] === '@')
+			{
+				$model = 'Rbs_User_User';
+			}
+			else if ($matches[1] === '@+')
+			{
+				$model = 'Rbs_User_Group';
+			}
+			$dqb = new \Change\Documents\Query\Query($this->documentServices, $model);
+			$pb = $dqb->getPredicateBuilder();
+			$dqb->andPredicates($pb->eq($pb->columnProperty('identifier'), $matches[2]));
+			$result = $dqb->getFirstDocument();
+
+			if ($result)
+			{
+				return '['. $matches[1] . $matches[2] . '](' . $result->getId() . ',profile "' . $matches[1] . $matches[2] . '")';
+			}
+			return $matches[1] . $matches[2];
+		}, $rawText);
 		return $this->transform($rawText);
 	}
 
@@ -26,30 +47,28 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	protected function _doAnchors_inline_callback($matches)
 	{
 		$link_text  = $this->runSpanGamut($matches[2]);
-		$documentId = $matches[3] == '' ? $matches[4] : $matches[3];
-
-		$params = explode(',', $documentId);
-		$model = null;
-
-		if (count($params) === 1)
+		$url = $matches[3] == '' ? $matches[4] : $matches[3];
+		$params = array();
+		if (!preg_match('/^(\d+)(,[a-z0-9\-_]+)?$/i', $url, $params))
 		{
-			$id = $params[0];
+			return parent::_doAnchors_inline_callback($matches);
 		}
-		elseif (count($params) === 2)
-		{
-			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
-			$id = $params[1];
-		}
+		$id = $params[1];
 
 		/* @var $document \Change\Documents\AbstractDocument */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
 
 		if (!$document)
 		{
-			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $documentId . '</span>');
+			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $url . '</span>');
 		}
 
-		$result = "<a document-href=\"" . $document->getDocumentModelName() . "," . $document->getId() . "\"";
+		$result = '<a href rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
+		if (count($params) === 3)
+		{
+			$result .= ',' . $params[2];
+		}
+		$result .= '"';
 
 		$link_text = $this->runSpanGamut($link_text);
 		if (! $link_text && $document instanceof Editable)

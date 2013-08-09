@@ -61,31 +61,15 @@ class MarkdownParser extends \Michelf\Markdown {
 		$alt_text = $this->encodeAttribute($alt_text);
 
 		$params = explode(',', $mediaId);
-		$model = null;
-
+		//FIXME handle external image
+		$id = $params[0];
 		if (count($params) === 2)
 		{
-			if (is_numeric($params[0]))
-			{
-				$id = $params[0];
-				$params = $params[1];
-			}
-			else
-			{
-				$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
-				$id = $params[1];
-				$params = null;
-			}
-		}
-		elseif (count($params) === 3)
-		{
-			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
-			$id = $params[1];
-			$params = $params[2];
+			$params = $params[1];
 		}
 
 		/* @var $image \Rbs\Media\Documents\Image */
-		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
 		if (!$image)
 		{
 			return $this->hashPart('<span class="label label-important">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');

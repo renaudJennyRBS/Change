@@ -389,7 +389,7 @@
 				}
 
 				scope.mdInsertMedia = function (media) {
-					scope.mdInsertText(buildMdImageTag(media.model + ',' + media.id, media.label));
+					scope.mdInsertText(buildMdImageTag(media.id, media.label));
 				};
 
 
@@ -408,7 +408,7 @@
 				}
 
 				scope.mdInsertDocumentLink = function (doc) {
-					scope.mdInsertText(buildMdLinkTag(doc.model + ',' + doc.id, doc.label));
+					scope.mdInsertText(buildMdLinkTag(doc.id, doc.label));
 				};
 
 			}

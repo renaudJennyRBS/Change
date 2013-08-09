@@ -2,47 +2,23 @@
 
 	var app = angular.module('RbsChange');
 
+	/**
+	 * Routes and URL definitions.
+	 */
+	app.config(['$provide', function ($provide)
+	{
+		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
+		{
+			$delegate.model(null).route('resumes', 'Rbs/Timeline/Resume', 'Rbs/Timeline/Resume/list.twig')
+				.route('resume', 'Rbs/Timeline/Resume/:id', 'Rbs/Timeline/Resume/resume.twig');
+			$delegate.model(null).route('home', 'Rbs/Timeline/', { 'redirectTo': 'Rbs/Timeline/Message/'});
 
-	app.config(['$routeProvider', function ($routeProvider) {
-		$routeProvider
+			$delegate.routesForModels([
+				'Rbs_Timeline_Message'
+			]);
 
-			// Timeline
-
-			. when(
-			'/Rbs/Timeline',
-			{
-				templateUrl : 'Rbs/Timeline/Message/list.twig',
-				reloadOnSearch : false
-			})
-
-			. when(
-			'/Rbs/Timeline/Message',
-			{
-				templateUrl : 'Rbs/Timeline/Message/list.twig',
-				reloadOnSearch : false
-			})
-
-			. when(
-			'/Rbs/Timeline/Message/:id',
-			{
-				templateUrl : 'Rbs/Timeline/Message/timeline.twig',
-				reloadOnSearch : false
-			})
-
-			. when(
-			'/Rbs/Timeline/Resume',
-			{
-				templateUrl : 'Rbs/Timeline/Resume/list.twig',
-				reloadOnSearch : false
-			})
-
-			. when(
-			'/Rbs/Timeline/Resume/:id',
-			{
-				templateUrl : 'Rbs/Timeline/Resume/resume.twig',
-				reloadOnSearch : false
-			})
-		;
+			return $delegate;
+		}]);
 	}]);
 
 	//-------------------------------------------------------------------------

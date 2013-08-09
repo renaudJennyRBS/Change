@@ -29,7 +29,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 	private function transformMarkdownToHtml()
 	{
 		$ps = new PresentationServices($this->getApplicationServices());
-		$ps->getRichTextManager()->render($this->getMessage(), 'Admin');
+		$ps->getRichTextManager()->setDocumentServices($this->getDocumentServices())->render($this->getMessage(), 'Admin');
 	}
 
 	/**
