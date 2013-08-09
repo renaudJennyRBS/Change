@@ -4,4 +4,5 @@
 	<key id="resume-list">Identifiant des utilisateurs et groupes d'utilisateurs</key>
 	<key id="users">utilisateurs</key>
 	<key id="groups">groupe d'utilisateurs</key>
+	<key id="context-unavailable">Le document n'est plus disponible</key>
 </i18n>

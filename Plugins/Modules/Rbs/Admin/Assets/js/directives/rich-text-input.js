@@ -3,14 +3,13 @@
 	"use strict";
 
 	var app = angular.module('RbsChange'),
-		MIN_HEIGHT = 150;
+		MIN_HEIGHT = 150,
+		editorIdCounter = 0;
 
 	/**
 	 * RichText input field.
 	 */
 	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', '$compile', function ($timeout, REST, Utils, $compile) {
-
-		var	aceEditorIdCounter = 0;
 
 		return {
 			restrict : 'EC',
@@ -62,10 +61,22 @@
 									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
 								'</div>' +
 
+								// Users
+								'<div class="btn-group">' +
+									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'user\'}" ng-click="toggleSelector(\'user\')"><i class="icon-user"></i></button>' +
+								'</div>' +
+
+								// Groups
+								'<div class="btn-group">' +
+									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'usergroup\'}" ng-click="toggleSelector(\'usergroup\')"><i class="icon-group"></i></button>' +
+								'</div>' +
+
 							'</div>' +
 
 							'<div class="media-picker"></div>' +
 							'<div class="link-picker"></div>' +
+							'<div class="user-picker"></div>' +
+							'<div class="usergroup-picker"></div>' +
 
 							'<div data-role="ace-editor"></div>' +
 						'</div>' +
@@ -82,10 +93,12 @@
 					$editorTab,
 					$selectors = {
 						'media' : element.find('div.media-picker'),
-						'link'  : element.find('div.link-picker')
+						'link'  : element.find('div.link-picker'),
+						'user'  : element.find('div.user-picker'),
+						'usergroup'  : element.find('div.usergroup-picker')
 					};
 
-				scope.editorId = ++aceEditorIdCounter;
+				scope.editorId = ++editorIdCounter;
 
 				id = "rbsInputMarkdownAceEditor" + scope.editorId;
 				element.find('[data-role="ace-editor"]').attr('id', id);
@@ -335,10 +348,15 @@
 						$event.preventDefault();
 						scope.mdInsertMedia(doc);
 					},
-					"insertDocumentLink" : function (doc, $event) {
+					"insertDocumentLink" : function (doc, $event, route) {
 						$event.stopPropagation();
 						$event.preventDefault();
-						scope.mdInsertDocumentLink(doc);
+						scope.mdInsertDocumentLink(doc, route);
+					},
+					"insertIdentifier" : function (doc, $event, profile) {
+						$event.stopPropagation();
+						$event.preventDefault();
+						scope.mdInsertIdentifier(doc, profile);
 					}
 				};
 
@@ -407,10 +425,31 @@
 					return '[' + text + '](' + href + ' "' + title + '")';
 				}
 
-				scope.mdInsertDocumentLink = function (doc) {
-					scope.mdInsertText(buildMdLinkTag(doc.id, doc.label));
+				scope.mdInsertDocumentLink = function (doc, route) {
+					var href = doc.id;
+					if (doc.LCID)
+					{
+						href += ',' + doc.LCID;
+					}
+					if (route)
+					{
+						href += ',' + route;
+					}
+					scope.mdInsertText(buildMdLinkTag(href, doc.label));
 				};
 
+				scope.mdInsertIdentifier = function (doc, profile) {
+					REST.resource(doc.id).then(function (userOrGroup){
+						if(profile === 'user')
+						{
+							scope.mdInsertText('@' + userOrGroup.identifier);
+						}
+						else if(profile === 'usergroup')
+						{
+							scope.mdInsertText('@+' + userOrGroup.identifier);
+						}
+					});
+				};
 			}
 
 		};
@@ -429,14 +468,18 @@
 				'<div class="inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
 					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list class="grid-small" data-dlid="rbsRichTextInputMediaPicker" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
+					'<rbs-document-list class="grid-small" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
 						'<column name="path" thumbnail="XS"></column>' +
 						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
 							'<img rbs-storage-image="doc" thumbnail="XS"/>' +
 							'<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>' +
 						'</grid-item>' +
 					'</rbs-document-list>' +
-				'</div>'
+				'</div>',
+
+			compile : function (tElement) {
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+			}
 		};
 	}]);
 
@@ -454,17 +497,73 @@
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
 					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-model-selector filter="{publishable:true}" model="selectedModel"></rbs-model-selector>' +
-					'<rbs-document-list data-dlid="rbsRichTextInputDocumentLinkPicker" display="list" model="(= selectedModel.name =)" toolbar="false" extend="picker">' +
+					'<rbs-document-list display="list" model="(= selectedModel.name =)" toolbar="false" extend="picker">' +
 						'<column name="label" label="Label">' +
 							'<a href="javascript:;" ng-click="extend.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
 						'</column>' +
 					'</rbs-document-list>' +
 				'</div>',
 
-			link : function (scope, element) {
+			compile : function (tElement) {
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
 			}
 		};
 	}]);
 
+	/**
+	 * Document selector for users
+	 */
+	app.directive('rbsRichTextInputUserSelector', [ function () {
+		return {
+			restrict : 'E',
+			scope    : true,
+			// TODO Localization
+			template :
+				'<div class="inner-selector">' +
+					'<button type="button" class="close pull-right" ng-click="closeSelector(\'user\')">&times;</button>' +
+					'<h4>Sélectionner un utilisateur à insérer dans l\'éditeur ci-dessous</h4>' +
+					'<rbs-document-list model="Rbs_User_User" toolbar="false" extend="picker">' +
+					'<column name="identifier">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">@(= doc.identifier =)</a>' +
+					'</column>' +
+					'<column name="pseudonym">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">(= doc.pseudonym =)</a>' +
+					'</column>' +
+					'</rbs-document-list>' +
+					'</div>',
+
+			compile : function (tElement) {
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+			}
+		};
+	}]);
+
+	/**
+	 * Document selector for user groups
+	 */
+	app.directive('rbsRichTextInputUsergroupSelector', [ function () {
+		return {
+			restrict : 'E',
+			scope    : true,
+			// TODO Localization
+			template :
+				'<div class="inner-selector">' +
+					'<button type="button" class="close pull-right" ng-click="closeSelector(\'usergroup\')">&times;</button>' +
+					'<h4>Sélectionner un groupe d\'utilisateurs à insérer dans l\'éditeur ci-dessous</h4>' +
+					'<rbs-document-list model="Rbs_User_Group" toolbar="false" extend="picker">' +
+					'<column name="identifier">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'usergroup\')">@+(= doc.identifier =)</a>' +
+					'</column>' +
+					'<column name="label">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'usergroup\')">(= doc.label =)</a>' +
+					'</column>' +
+					'</rbs-document-list>' +
+					'</div>',
+
+			compile : function (tElement) {
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+			}
+		};
+	}]);
 
 })(window.jQuery, ace);

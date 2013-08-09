@@ -37,7 +37,7 @@
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.timeline.admin.js.module-name | ucf'), "Rbs/Timline"]
+			[i18n.trans('m.rbs.timeline.admin.js.module-name | ucf'), "Rbs/Timeline"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Timeline_Message');
 	}

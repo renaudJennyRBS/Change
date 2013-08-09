@@ -44,7 +44,6 @@
 
 		$rootScope.$on(Events.EditorFormButtonBarContents, function (event, args) {
 			if (args.document.model !== 'Rbs_Timeline_Message') {
-				//args.contents.push('<div>' + i18n.trans('m.rbs.tag.admin.js.tags | ucf')  + '<rbs-tag-selector ng-model="document.META$.tags"></rbs-tag-selector></div>');
 				args.contents.push('<timeline docid="' + args.document.id + '"></timeline>');
 			}
 		});

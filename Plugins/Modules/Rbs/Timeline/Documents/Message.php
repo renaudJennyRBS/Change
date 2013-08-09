@@ -70,7 +70,13 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				//Add AuthorName and AuthorId
 				$result->setProperty('authorId', $message->getAuthorId());
 				$result->setProperty('authorName', $message->getAuthorName());
-				$result->setProperty('authorResumeLink', 'Rbs/Timeline/Resume/' . $message->getAuthorId());
+				//Add contextModel if document exist
+				$contextDocument = $message->getContextIdInstance();
+				if ($contextDocument)
+				{
+					/* @var $contextDocument \Change\Documents\AbstractDocument */
+					$result->setProperty('contextModel', $contextDocument->getDocumentModelName());
+				}
 				//For avatar & identifier
 				$dm = $message->getDocumentManager();
 				$user = $dm->getDocumentInstance($message->getAuthorId(), $dm->getModelManager()->getModelByName('Rbs_User_User'));

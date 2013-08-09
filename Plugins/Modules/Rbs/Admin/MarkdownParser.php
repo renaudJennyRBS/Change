@@ -15,8 +15,9 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	 */
 	public function parse($rawText, $context)
 	{
-
+		//replace @xxx and @+xxx by a linked user or user group if exist.
 		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches){
+			//                                1111  222222222222
 			if ($matches[1] === '@')
 			{
 				$model = 'Rbs_User_User';
@@ -36,6 +37,17 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			}
 			return $matches[1] . $matches[2];
 		}, $rawText);
+
+		//replace #xxx by a linked resource if exist.
+		$rawText = preg_replace_callback('/\B(#)(\d+)\b/', function ($matches){
+			//                                1  222
+			$document = $this->documentServices->getDocumentManager()->getDocumentInstance($matches[2]);
+			if ($document)
+			{
+				return '['. $matches[1] . $matches[2] . '](' . $document->getId() . ' "' . $matches[1] . $matches[2] . '")';
+			}
+			return $matches[1] . $matches[2];
+		}, $rawText);
 		return $this->transform($rawText);
 	}
 
@@ -49,11 +61,14 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		$link_text  = $this->runSpanGamut($matches[2]);
 		$url = $matches[3] == '' ? $matches[4] : $matches[3];
 		$params = array();
-		if (!preg_match('/^(\d+)(,[a-z0-9\-_]+)?$/i', $url, $params))
+		if (!preg_match('/^(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-z0-9\-_]+))?$/i', $url, $params))
+			//              111    33333333333333333      555555555555
 		{
 			return parent::_doAnchors_inline_callback($matches);
 		}
 		$id = $params[1];
+		$lcid = $params[3];
+		$route = $params[5];
 
 		/* @var $document \Change\Documents\AbstractDocument */
 		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
@@ -63,10 +78,14 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $url . '</span>');
 		}
 
-		$result = '<a href rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
-		if (count($params) === 3)
+		$result = '<a href rbs-document-popover rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
+		if ($lcid)
 		{
-			$result .= ',' . $params[2];
+			$result .= ',' . $lcid;
+		}
+		if ($route)
+		{
+			$result .= ',' . $route;
 		}
 		$result .= '"';
 

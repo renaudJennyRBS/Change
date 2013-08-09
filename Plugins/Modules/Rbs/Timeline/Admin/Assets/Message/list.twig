@@ -6,17 +6,23 @@
 	                   model="Rbs_Timeline_Message"
 	                   filter-query="query">
 
-		<column name="avatar" align='center'>
+		<column name="avatar" align='center' width="64">
 			<img ng-src="(= doc.avatar =)" style="width:64px; height:64px;">
 		</column>
 		<column name="message" primary="true">
-			(= doc.message.h |  ellipsis:20 =)
+			<span data-ng-bind-html-unsafe="doc.message.h | ellipsis:130"></span>
+		</column>
+		<column name="contextId">
+			<a ng-if="doc.contextModel" href rbs-document-popover rbs-document-href="(= doc.contextModel =),(= doc.contextId =)">#(= doc.contextId =)</a>
+			<div ng-if="!doc.contextModel">
+				<em title="{{ i18nAttr('m.rbs.timeline.document.context-unavailable', ['ucf']) }}">#(= doc.contextId =)</em>
+			</div>
 		</column>
 		<column name="identifier">
-			@(= identifier =)
+			@(= doc.authorIdentifier =)
 		</column>
 		<preview>
-			(= doc.message.h =)
+			<span data-ng-bind-html-unsafe="doc.message.h"></span>
 		</preview>
 	</rbs-document-list>
 </div>
