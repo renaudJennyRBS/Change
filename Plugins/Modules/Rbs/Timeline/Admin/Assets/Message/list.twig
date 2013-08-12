@@ -1,0 +1,28 @@
+<div data-ng-controller="Rbs_Timeline_Message_ListController">
+	<page-header title="{{ i18nAttr('m.rbs.timeline.document.message-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Timeline_Message" filter-query="query" text-search="textSearch"></search-filters>
+
+	<rbs-document-list data-dlid="DLRbsMessage1"
+	                   model="Rbs_Timeline_Message"
+	                   filter-query="query">
+
+		<column name="avatar" align='center' width="64">
+			<img ng-src="(= doc.avatar =)" style="width:64px; height:64px;">
+		</column>
+		<column name="message" primary="true">
+			<span data-ng-bind-html-unsafe="doc.message.h | ellipsis:130"></span>
+		</column>
+		<column name="contextId">
+			<a ng-if="doc.contextModel" href rbs-document-popover rbs-document-href="(= doc.contextModel =),(= doc.contextId =)">#(= doc.contextId =)</a>
+			<div ng-if="!doc.contextModel">
+				<em title="{{ i18nAttr('m.rbs.timeline.document.context-unavailable', ['ucf']) }}">#(= doc.contextId =)</em>
+			</div>
+		</column>
+		<column name="identifier">
+			@(= doc.authorIdentifier =)
+		</column>
+		<preview>
+			<span data-ng-bind-html-unsafe="doc.message.h"></span>
+		</preview>
+	</rbs-document-list>
+</div>

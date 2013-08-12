@@ -15,6 +15,39 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	 */
 	public function parse($rawText, $context)
 	{
+		//replace @xxx and @+xxx by a linked user or user group if exist.
+		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches){
+			//                                1111  222222222222
+			if ($matches[1] === '@')
+			{
+				$model = 'Rbs_User_User';
+			}
+			else if ($matches[1] === '@+')
+			{
+				$model = 'Rbs_User_Group';
+			}
+			$dqb = new \Change\Documents\Query\Query($this->documentServices, $model);
+			$pb = $dqb->getPredicateBuilder();
+			$dqb->andPredicates($pb->eq($pb->columnProperty('identifier'), $matches[2]));
+			$result = $dqb->getFirstDocument();
+
+			if ($result)
+			{
+				return '['. $matches[1] . $matches[2] . '](' . $result->getId() . ',profile "' . $matches[1] . $matches[2] . '")';
+			}
+			return $matches[1] . $matches[2];
+		}, $rawText);
+
+		//replace #xxx by a linked resource if exist.
+		$rawText = preg_replace_callback('/\B(#)(\d+)\b/', function ($matches){
+			//                                1  222
+			$document = $this->documentServices->getDocumentManager()->getDocumentInstance($matches[2]);
+			if ($document)
+			{
+				return '['. $matches[1] . $matches[2] . '](' . $document->getId() . ' "' . $matches[1] . $matches[2] . '")';
+			}
+			return $matches[1] . $matches[2];
+		}, $rawText);
 		return $this->transform($rawText);
 	}
 
@@ -26,30 +59,35 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	protected function _doAnchors_inline_callback($matches)
 	{
 		$link_text  = $this->runSpanGamut($matches[2]);
-		$documentId = $matches[3] == '' ? $matches[4] : $matches[3];
-
-		$params = explode(',', $documentId);
-		$model = null;
-
-		if (count($params) === 1)
+		$url = $matches[3] == '' ? $matches[4] : $matches[3];
+		$params = array();
+		if (!preg_match('/^(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-z0-9\-_]+))?$/i', $url, $params))
+			//              111    33333333333333333      555555555555
 		{
-			$id = $params[0];
+			return parent::_doAnchors_inline_callback($matches);
 		}
-		elseif (count($params) === 2)
-		{
-			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
-			$id = $params[1];
-		}
+		$id = $params[1];
+		$lcid = $params[3];
+		$route = $params[5];
 
 		/* @var $document \Change\Documents\AbstractDocument */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
 
 		if (!$document)
 		{
-			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $documentId . '</span>');
+			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $url . '</span>');
 		}
 
-		$result = "<a document-href=\"" . $document->getDocumentModelName() . "," . $document->getId() . "\"";
+		$result = '<a href rbs-document-popover rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
+		if ($lcid)
+		{
+			$result .= ',' . $lcid;
+		}
+		if ($route)
+		{
+			$result .= ',' . $route;
+		}
+		$result .= '"';
 
 		$link_text = $this->runSpanGamut($link_text);
 		if (! $link_text && $document instanceof Editable)

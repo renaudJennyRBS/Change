@@ -53,12 +53,14 @@ class Install
 				$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group->setLabel('Backoffice');
 				$group->setRealm('Rbs_Admin');
+				$group->setIdentifier('backoffice');
 				$group->create();
 
 				/* @var $group2 \Rbs\User\Documents\Group */
 				$group2 = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group2->setLabel('Site Web');
 				$group2->setRealm('web');
+				$group2->setIdentifier('web');
 				$group2->create();
 
 				/* @var $user \Rbs\User\Documents\User */
@@ -67,6 +69,7 @@ class Install
 				$user->setEmail('admin@temporary.fr');
 				$user->setLogin('admin');
 				$user->setPassword('admin');
+				$user->setIdentifier('admin');
 				$user->setActive(true);
 				$user->setGroups(array($group, $group2));
 				$user->create();

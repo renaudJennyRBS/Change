@@ -45,6 +45,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param DocumentServices $documentServices
+	 * @return $this
 	 */
 	public function setDocumentServices(DocumentServices $documentServices)
 	{
@@ -53,6 +54,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
 		}
+		return $this;
 	}
 
 	/**
@@ -96,10 +98,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 		$event = new Event(static::EVENT_GET_PARSER, $this);
 		$event->setProfile($profile);
 		$event->setEditor($richText->getEditor());
-		if (isset($context['documentServices']) && $context['documentServices'] instanceof DocumentServices)
-		{
-			$event->setDocumentServices($context['documentServices']);
-		}
+		$event->setDocumentServices($this->getDocumentServices());
 		$event->setContext($context);
 		$eventManager->trigger($event);
 
