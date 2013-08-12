@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.tag" lcid="en_US">
+	<key id="no-tags">none</key>
+	<key id="tags">tags</key>
+</i18n>
