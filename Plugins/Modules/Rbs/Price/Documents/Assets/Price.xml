@@ -4,7 +4,7 @@
 	icon="folder" editable="true" activable="true">
 	<properties>
 		<property name="label" stateless="true" />
-		<property name="product" type="Document" document-type="Rbs_Catalog_AbstractProduct" required="true" />
+		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" required="true" />
 		<property name="webStore" type="Document" document-type="Rbs_Store_WebStore" required="true" />
 		<property name="billingArea" type="Document" document-type="Rbs_Price_BillingArea" required="true" />
 		<property name="targetId" type="DocumentId" />

@@ -5,96 +5,80 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		<div class="control-group property required" data-ng-hide="hideProduct"
-			data-ng-class="{'success': hasCorrectionOnProperty('document')}">
-			<label class="control-label" for="product">{{ i18n('m.rbs.price.document.price.product', ['ucf']) }}</label>
-			<div class="controls">
-				<div class="document-picker-single"
-					ng-model="document.product"
-					disabled="true"
-					accepted-model="Rbs_Catalog_Product"
-					property-label="{{ i18nAttr('m.rbs.price.document.price.product', ['ucf']) }}"
-					selector-title="{{ i18nAttr('m.rbs.price.document.price.product-picker-title', ['ucf']) }}"
-					allow-edition="true"
-					allow-creation="false">
-				</div>
-			</div>
-		</div>
-		<div class="control-group property required">
-			<label class="control-label" for="webStore">
-				{{ i18n('m.rbs.price.document.price.webstore', ['ucf']) }}
-			</label>
 
-			<div class="controls">
-				<select data-ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
-					<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
-				</select>
-			</div>
-		</div>
+		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.price.document.price.sku', ['ucf']) }}"
+			accepted-model="Rbs_Stock_Sku"
+			selector-title="{{ i18nAttr('m.rbs.price.document.price.sku-picker-title', ['ucf']) }}"
+			allow-edition="true"
+			allow-creation="false"
+			require="true"
+			ng-hide="hideSku">
+		</rbs-field-picker>
 
-		<div class="control-group property required">
-			<label class="control-label" data-not-a-property="" for="selectWebStores">
-				{{ i18n('m.rbs.price.document.price.billingarea', ['ucf']) }}
-			</label>
+		<rbs-field
+			required="true"
+			label="{{ i18nAttr('m.rbs.price.document.price.webstore', ['ucf']) }}">
+			<select ng-required="true" data-ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
+				<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
 
-			<div class="controls">
-				<div>
-					<select ng-model="document.billingArea" ng-disabled="!document.webStore"
-						rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
-						rbs-items-collection-params="webStoreId:(=document.webStore=)">
-						<option value=""> {{ i18n('m.rbs.price.admin.js.select-billingarea', ['ucf']) }}</option>
-					</select>
-				</div>
-				<table data-ng-show="taxInfo" class="table table-striped">
-					<thead>
-					<th>{{ i18n('m.rbs.price.document.tax', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.price.document.tax.category', ['ucf']) }}</th>
-					</thead>
-					<tbody>
-					<tr data-ng-repeat="tax in taxInfo">
-						<td>(=tax.code=)<br/>
-							<small>(=tax.label=)</small>
-						</td>
-						<td>
-							<select data-ng-model="document.taxCategories[tax.code]" class="input-medium" data-ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
-								<option value="">{{ i18n('m.rbs.price.document.tax.not-applicable', ['ucf']) }}</option>
-							</select>
-						</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<hr/>
-		<div class="control-group property required">
-			<label class="control-label" for="boValue">{{ i18n('m.rbs.price.document.price.basevalue', ['ucf']) }}</label>
+		<rbs-field
+			required="true"
+			label="{{ i18nAttr('m.rbs.price.document.price.billingarea', ['ucf']) }}">
+			<select ng-required="true" data-ng-model="document.billingArea"
+				rbs-items-collection-params="webStoreId:(=document.webStore=)"
+				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
+				<option value=""> {{ i18n('m.rbs.price.admin.js.select-billingarea', ['ucf']) }}</option>
+			</select>
+			<table data-ng-show="taxInfo" class="table table-striped">
+				<thead>
+				<th>{{ i18n('m.rbs.price.document.tax', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.document.tax.category', ['ucf']) }}</th>
+				</thead>
+				<tbody>
+				<tr data-ng-repeat="tax in taxInfo">
+					<td>(=tax.code=)<br/>
+						<small>(=tax.label=)</small>
+					</td>
+					<td>
+						<select data-ng-model="document.taxCategories[tax.code]" class="input-medium" data-ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
+							<option value="">{{ i18n('m.rbs.price.document.tax.not-applicable', ['ucf']) }}</option>
+						</select>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</rbs-field>
 
-			<div class="controls">
-				<rbs-price-input data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)" />
-			</div>
-		</div>
-
-		<div class="control-group property">
-			<label class="control-label" for="ecoTax">{{ i18n('m.rbs.price.document.price.ecotax', ['ucf']) }}</label>
-
-			<div class="controls">
-				<rbs-price-input data-ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)" />
-			</div>
-		</div>
 		<hr/>
 
-		{{ forms.field('discountDetail', 'String', 'm.rbs.price.document.price.discountdetail', false) }}
+		<rbs-field
+			required="true"
+			label="{{ i18nAttr('m.rbs.price.document.price.basevalue', ['ucf']) }}">
+			<rbs-price-input  data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
+				data-price-with-tax="(=billingArea.boEditWithTax=)" />
+		</rbs-field>
 
-		<div class="control-group property">
-			<label class="control-label" for="boDiscountValue">{{ i18n('m.rbs.price.document.price.finalvalue', ['ucf']) }}</label>
+		<rbs-field
+			label="{{ i18nAttr('m.rbs.price.document.price.ecoTax', ['ucf']) }}">
+			<rbs-price-input data-ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
+				data-price-with-tax="(=billingArea.boEditWithTax=)" />
+		</rbs-field>
 
-			<div class="controls">
-				<rbs-price-input data-ng-model="document.boDiscountValue" data-currency-code="(=billingArea.currencyCode=)"
-					data-price-with-tax="(=billingArea.boEditWithTax=)" />
-			</div>
-		</div>
+		<hr/>
+
+		<rbs-field-text
+			property="discountDetail"
+			label="{{ i18nAttr('m.rbs.price.document.price.discountdetail', ['ucf']) }}"
+			input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field
+			label="{{ i18nAttr('m.rbs.price.document.price.finalvalue', ['ucf']) }}">
+			<rbs-price-input data-ng-model="document.boDiscountValue" data-currency-code="(=billingArea.currencyCode=)"
+				data-price-with-tax="(=billingArea.boEditWithTax=)" />
+		</rbs-field>
 
 		<hr/>
 		<span class="help-block">
@@ -142,11 +126,14 @@
 		</div>
 
 		<hr/>
+
 		<span class="help-block">
 			{{ i18n('m.rbs.price.document.price.threshold-section-help', ['ucf']) }}
 		</span>
-
-		{{ forms.field('thresholdMin', 'Integer', 'm.rbs.price.document.price.thresholdmin', false) }}
+		<rbs-field-integer
+			property="thresholdMin"
+			label="{{ i18nAttr('m.rbs.price.document.price.thresholdmin', ['ucf']) }}">
+		</rbs-field-integer>
 	</fieldset>
 
 	<fieldset

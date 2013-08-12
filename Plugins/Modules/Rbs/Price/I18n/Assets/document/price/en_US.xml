@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.price.document.price" lcid="en_US">
 	<include id="m.rbs.generic.document" />
-	<key id="product">product</key>
-	<key id="product-picker-title">select a product</key>
+	<key id="sku">SKU</key>
+	<key id="sku-picker-title">select a SKU</key>
 	<key id="webstore">store</key>
 	<key id="billingarea">pricing zone</key>
 	<key id="taxcategories">tax categories</key>

@@ -98,15 +98,16 @@ class PriceManager
 	 */
 	protected function getDefaultPriceByProduct($commerceServices, $product, $webStore, $options)
 	{
+		$sku = $product->getSku();
 		$billingArea = $commerceServices->getBillingArea();
-		if ($billingArea == null || $webStore == null)
+		if ($billingArea == null || $webStore == null || $sku == null)
 		{
 			return null;
 		}
 		$quantity = isset($options['quantity']) ? intval($options['quantity']) : 1;
 
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_Price');
-		$and = array($query->activated(), $query->eq('product', $product),
+		$and = array($query->activated(), $query->eq('sku', $sku),
 			$query->eq('webStore', $webStore), $query->eq('billingArea', $billingArea),
 			$query->lte('thresholdMin', $quantity));
 
