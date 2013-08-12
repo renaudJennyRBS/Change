@@ -7,6 +7,7 @@ use Change\Http\Rest\Request;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
+use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
 /**
@@ -89,6 +90,13 @@ class AdminResolver
 			{
 				$event->setAction(function($event) {
 					(new TagsInfo())->execute($event);
+				});
+				//$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			else if ($actionName === 'documentPreview')
+			{
+				$event->setAction(function($event) {
+					(new DocumentPreview())->execute($event);
 				});
 				//$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
