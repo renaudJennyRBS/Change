@@ -1121,7 +1121,6 @@
 								}
 							} else if (! attrs.parentProperty) {
 								Loading.start();
-
 								if (scope.currentFilter) {
 									var query = {
 										"model" : attrs.model,
@@ -1210,6 +1209,7 @@
 						if (paginationChanged || sortChanged || filterChanged) {
 							reload();
 						}
+
 					}, true);
 
 
@@ -1231,7 +1231,7 @@
 					}
 
 					if (elm.is('[collection-url]')) {
-						attrs.$observe('collectionUrl', function (value) {
+						attrs.$observe('collectionUrl', function () {
 							if (scope.collectionUrl) {
 								reload();
 							}
@@ -1355,7 +1355,7 @@
 							// the list should not be loaded now: it will be when these objects are $watched.
 							// And it works the same way with "sort" parameter in the URL:
 							// the $watch() on $location.search() will load the query.
-							if (! elm.is('[load-query]') && ! elm.is('[collection-url]') && ! search['sort']) {
+							if (! elm.is('[load-query]') && ! elm.is('[collection-url]') && ! search['sort'] && ! search['filter']) {
 								reload();
 							}
 						}
