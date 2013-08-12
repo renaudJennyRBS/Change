@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Timeline\Documents;
 use Change\Presentation\PresentationServices;
+use Change\User\ProfileManager;
 
 /**
  * @name \Rbs\Timeline\Documents\Message
@@ -53,10 +54,12 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				if ($user)
 				{
 					/* @var $user \Rbs\User\Documents\User */
-					$profile = $user->getMeta('profile_Rbs_Admin');
-					if (isset($profile['avatar']) && $profile['avatar'] !== null)
+					$pm = new ProfileManager();
+					$pm->setDocumentServices($message->getDocumentServices());
+					$profile = $pm->loadProfile($user, 'Rbs_Admin');
+					if ($profile && $profile->getPropertyValue('avatar'))
 					{
-						$avatar = $profile['avatar'];
+						$avatar = $profile->getPropertyValue('avatar');
 					}
 				}
 				$result->setProperty('avatar', $avatar);
@@ -86,10 +89,12 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				if ($user)
 				{
 					/* @var $user \Rbs\User\Documents\User */
-					$profile = $user->getMeta('profile_Rbs_Admin');
-					if (isset($profile['avatar']) && $profile['avatar'] !== null)
+					$pm = new ProfileManager();
+					$pm->setDocumentServices($message->getDocumentServices());
+					$profile = $pm->loadProfile($user, 'Rbs_Admin');
+					if ($profile && $profile->getPropertyValue('avatar'))
 					{
-						$avatar = $profile['avatar'];
+						$avatar = $profile->getPropertyValue('avatar');
 					}
 					if($user->getIdentifier())
 					{

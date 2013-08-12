@@ -2,6 +2,7 @@
 namespace Rbs\Timeline\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\ArrayResult;
+use Change\User\ProfileManager;
 use Zend\Http\Response as HttpResponse;
 /**
  * @name \Rbs\Timeline\Http\Rest\Actions\GetIdentifiers
@@ -16,7 +17,6 @@ class GetIdentifiers
 	{
 		$autocomplete = $event->getRequest()->getQuery('autocomplete');
 		$result = new ArrayResult();
-
 		if (substr($autocomplete, 0, 1) === '@')
 		{
 			$identifier = '';
@@ -40,16 +40,17 @@ class GetIdentifiers
 				{
 					//TODO hardcoded value for default avatar url
 					$avatar = 'Rbs/Admin/img/user-default.png';
-					$profile = $userOrGroup->getMeta('profile_Rbs_Admin');
-					if (isset($profile['avatar']) && $profile['avatar'] !== null)
+					$pm = new ProfileManager();
+					$pm->setDocumentServices($event->getDocumentServices());
+					$profile = $pm->loadProfile($userOrGroup, 'Rbs_Admin');
+					if ($profile && $profile->getPropertyValue('avatar'))
 					{
-						$avatar = $profile['avatar'];
+						$avatar = $profile->getPropertyValue('avatar');
 					}
 					$identifiersFiltered[] = [
 						'identifier' => $userOrGroup->getIdentifier(),
 						'avatar' => $avatar,
-						'name' => $userOrGroup->getLabel(),
-						'resumeLink' => 'Rbs/Timeline/Resume/' . $userOrGroup->getId()
+						'name' => $userOrGroup->getLabel()
 					];
 				}
 			}

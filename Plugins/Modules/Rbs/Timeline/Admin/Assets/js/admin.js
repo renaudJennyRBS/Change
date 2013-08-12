@@ -9,8 +9,6 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model(null).route('resumes', 'Rbs/Timeline/Resume', 'Rbs/Timeline/Resume/list.twig')
-				.route('resume', 'Rbs/Timeline/Resume/:id', 'Rbs/Timeline/Resume/resume.twig');
 			$delegate.model(null).route('home', 'Rbs/Timeline/', { 'redirectTo': 'Rbs/Timeline/Message/'});
 
 			$delegate.routesForModels([
