@@ -183,6 +183,10 @@
 						};
 					} else {
 						isModelOkFn = function (docs) {
+							if (angular.isUndefined(docs))
+							{
+								return true;
+							}
 							var i;
 							for (i=0 ; i<docs.length ; i++) {
 								if ( ! Utils.isModel.apply(Utils, [docs[i], actionObject.models]) ) {

@@ -105,9 +105,12 @@
 	 * @param i18n
 	 * @param $http
 	 * @param ArrayUtils
+	 * @param MainMenu
+	 * @param Breadcrumb
+	 * @param $q
 	 * @constructor
 	 */
-	function PermissionController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils, MainMenu, Breadcrumb)
+	function PermissionController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils, MainMenu, Breadcrumb, $q)
 	{
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
@@ -150,20 +153,19 @@
 						);
 					}
 				}
-			}
-		};
-
-		//TODO will be replaced by the action (in List actions) coded below
-		$scope.removeAllPermissionRules = function () {
-			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
-			{
-				var url = REST.getBaseUrl('user/removePermissionRule/');
-				angular.forEach($scope.permissionRules, function (permissionRule){
-					$http.post(url, { 'rule_id': permissionRule.rule_id }).success(function (){
-							ArrayUtils.removeValue($scope.permissionRules, permissionRule);
-						}
-					);
-				});
+			},
+			'removeAllPermissionRules': function () {
+				if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
+				{
+					var url = REST.getBaseUrl('user/removePermissionRule/');
+					var promises = [];
+					angular.forEach($scope.permissionRules, function (permissionRule){
+						promises.push($http.post(url, { 'rule_id': permissionRule.rule_id }));
+					});
+					$q.all(promises).then(function (){
+						$scope.reloadPermissions();
+					});
+				}
 			}
 		};
 
@@ -191,35 +193,7 @@
 		]);
 	}
 
-	PermissionController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb'];
+	PermissionController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb', '$q'];
 	app.controller('Rbs_User_User_PermissionController', PermissionController);
 
-	/**
-	 * List actions.
-	 * TODO keep this code for a future usage
-	 */
-	app.config(['$provide', function ($provide) {
-		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', '$q', function (Actions, REST, $http, i18n, $q) {
-			Actions.register({
-				name: 'Rbs_User_RemoveAllPermissions',
-				models: '',
-				label: i18n.trans('m.rbs.user.admin.js.remove-all-permission-rules'),
-				selection: 0,
-				execute: ['$scope', function ($scope) {
-					if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
-					{
-						var url = REST.getBaseUrl('user/removePermissionRule/');
-						var promises = [];
-						angular.forEach($scope.permissionRules, function (permissionRule){
-							promises.push($http.post(url, { 'rule_id': permissionRule.rule_id }));
-						});
-						$q.all(promises).then(function (){
-							$scope.reloadPermissions();
-						});
-					}
-				}]
-			});
-			return Actions;
-		}]);
-	}]);
 })();
