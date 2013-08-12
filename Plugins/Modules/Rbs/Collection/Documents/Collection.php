@@ -67,20 +67,6 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 			}
 		};
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), $callback, 3);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			if ($result instanceof DocumentResult)
-			{
-				/* @var $product \Rbs\Collection\Documents\Collection */
-				$collection = $event->getDocument();
-				foreach ($result->getProperty('items') as $item)
-				{
-					/* @var $item DocumentLink */
-					$item->setProperty('value', $item->getDocument()->getValue());
-					$item->setProperty('locked', $item->getDocument()->getLocked());
-				}
-			}
-		}, 5);
 	}
 
 	/**

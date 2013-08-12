@@ -7,6 +7,7 @@ use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
+use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\UrlManager;
 
 /**
@@ -43,7 +44,7 @@ class DocumentLink extends Link
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $action
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action = self::MODE_LINK)
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action = self::MODE_LINK, $extraColumns = array())
 	{
 		$this->document = $document;
 		$this->mode = $action;
@@ -52,6 +53,10 @@ class DocumentLink extends Link
 			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();
 		}
 		parent::__construct($urlManager, $this->buildPathInfo());
+		if ($action == self::MODE_PROPERTY)
+		{
+			$this->addResourceItemInfos($extraColumns);
+		}
 	}
 
 	protected function buildPathInfo()
@@ -239,47 +244,47 @@ class DocumentLink extends Link
 	 * @param array $extraColumn
 	 * @return $this
 	 */
-	public function addResourceItemInfos(AbstractDocument $document, UrlManager $urlManager, $extraColumn = array())
+	protected function addResourceItemInfos($extraColumn = array())
 	{
-		$dm = $document->getDocumentManager();
-		$eventManager = $document->getEventManager();
+		$dm = $this->document->getDocumentManager();
+		$eventManager = $this->document->getEventManager();
 		if ($this->getLCID())
 		{
 			$dm->pushLCID($this->getLCID());
 		}
 
-		$model = $document->getDocumentModel();
+		$model =  $this->document->getDocumentModel();
 
 		$this->setProperty($model->getProperty('creationDate'));
 		$this->setProperty($model->getProperty('modificationDate'));
 
-		if ($document instanceof Editable)
+		if ($this->document instanceof Editable)
 		{
 			$this->setProperty($model->getProperty('label'));
 			$this->setProperty($model->getProperty('documentVersion'));
 		}
 
-		if ($document instanceof Publishable)
+		if ($this->document instanceof Publishable)
 		{
 			$this->setProperty($model->getProperty('publicationStatus'));
 		}
-		elseif ($document instanceof Activable)
+		elseif ($this->document instanceof Activable)
 		{
 			$this->setProperty($model->getProperty('active'));
 		}
 
-		if ($document instanceof Localizable)
+		if ($this->document instanceof Localizable)
 		{
 			$this->setProperty($model->getProperty('refLCID'));
 			$this->setProperty($model->getProperty('LCID'));
 		}
 
-		if ($document instanceof Correction)
+		if ($this->document instanceof Correction)
 		{
 			/* @var $document AbstractDocument|Correction */
-			if ($document->hasCorrection())
+			if ( $this->document->hasCorrection())
 			{
-				$l = new DocumentActionLink($urlManager, $document, 'correction');
+				$l = new DocumentActionLink($this->urlManager, $this->document, 'correction');
 				$this->setProperty('actions', array($l));
 			}
 		}
@@ -296,8 +301,13 @@ class DocumentLink extends Link
 			}
 		}
 
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document,
-			array('restResult' => $this, 'extraColumn' => $extraColumn, 'urlManager' => $urlManager));
+		if ($this->document instanceof RestfulDocumentInterface)
+		{
+			$this->document->updateRestDocumentLink($this, $extraColumn);
+		}
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this->document,
+			array('restResult' => $this, 'extraColumn' => $extraColumn, 'urlManager' => $this->urlManager));
 		$eventManager->trigger($documentEvent);
 
 		if ($this->getLCID())

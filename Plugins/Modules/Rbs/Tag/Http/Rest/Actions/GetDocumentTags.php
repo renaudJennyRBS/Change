@@ -74,8 +74,7 @@ class GetDocumentTags
 
 		foreach ($collection as $document)
 		{
-			$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-			$result->addResource($l->addResourceItemInfos($document, $urlManager, array('color', 'userTag')));
+			$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, array('color', 'userTag')));
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

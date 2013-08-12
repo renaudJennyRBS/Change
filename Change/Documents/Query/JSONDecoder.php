@@ -164,7 +164,11 @@ class JSONDecoder
 					}
 					else
 					{
-						$query->addOrder($orderInfo['property'], $asc);
+						$property = $query->getModel()->getProperty($orderInfo['property']);
+						if ($property)
+						{
+							$query->addOrder($property->getName(), $asc);
+						}
 					}
 				}
 				else

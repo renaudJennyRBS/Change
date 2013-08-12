@@ -119,10 +119,6 @@ class ValueConverter
 					if ($this->urlManager)
 					{
 						$restValue = new DocumentLink($this->getUrlManager(), $propertyValue, DocumentLink::MODE_PROPERTY);
-						if ($propertyValue instanceof Editable)
-						{
-							$restValue->setProperty('label', $propertyValue->getLabel());
-						}
 					}
 					else
 					{
@@ -151,10 +147,6 @@ class ValueConverter
 								throw new \RuntimeException('Invalid DocumentArray value', 70001);
 							}
 							$restValue = new DocumentLink($urlManager, $doc, DocumentLink::MODE_PROPERTY);
-							if ($doc instanceof Editable)
-							{
-								$restValue->setProperties(array('label' => $doc->getLabel()));
-							}
 							return $restValue;
 						}, $propertyValue);
 					}

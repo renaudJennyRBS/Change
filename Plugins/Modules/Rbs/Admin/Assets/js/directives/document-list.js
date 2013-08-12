@@ -363,7 +363,7 @@
 						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.sort + '\')"></i>' +
 						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.sort + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.name + '\')">' + toggleDateBtn + '<span ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</span></th>';
+						'<th ng-if="!isSortable(\'' + column.sort + '\')">' + toggleDateBtn + '<span ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</span></th>';
 
 					$th = $(htmlTh);
 				}

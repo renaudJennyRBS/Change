@@ -58,9 +58,9 @@
 			collection-url="(=productsUrl=)"
 			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
 			use-properties="title">
-			<column name="visuals" thumbnail="S" thumbnail-path="doc.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.productvisual', ['ucf']) }}"></column>
+			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.productvisual', ['ucf']) }}"></column>
 			<column name="productLabel" primary="true">
-				<strong><a href ng-href="(= doc | documentURL =)">(= doc.productLabel =)</a></strong>
+				<strong><a href ng-href="(= doc | documentURL =)">(= doc.product.label =)</a></strong>
 			</column>
 			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.category.sort-order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">

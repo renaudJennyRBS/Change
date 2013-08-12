@@ -97,9 +97,7 @@ class GetTreeNodeAncestors
 			$document = $node->getDocument();
 			if ($document)
 			{
-				$t = new TreeNodeLink($urlManager, $node);
-				$t->getDocumentLink()->addResourceItemInfos($document, $urlManager);
-				$result->addResource($t);
+				$result->addResource(new TreeNodeLink($urlManager, $node));
 			}
 		}
 

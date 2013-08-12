@@ -33,8 +33,6 @@
 			ng-hide="document.newSkuOnCreation && document.id <= 0" />
 		</rbs-field-picker>
 
-
-
 		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr('m.rbs.catalog.document.product.visuals', ['ucf']) }}"
 			accepted-model="Rbs_Media_Image"
 			selector-title="{{ i18nAttr('m.rbs.catalog.document.product.visuals-picker-title', ['ucf']) }}"
@@ -48,7 +46,6 @@
 		</rbs-field-picker-multiple>
 
 	</fieldset>
-
 
 	<fieldset data-ng-show="section=='attributes'"
 			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.section-attributes', ['ucf']) }}"
@@ -79,11 +76,54 @@
 		</rbs-field-date>
 	</fieldset>
 
+	<fieldset data-ng-show="section=='categorization'"
+		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.productcategorization', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
+		<table data-ng-show="categorizations.length > 0" class="table table-striped">
+			<thead>
+			<tr>
+				<th>
+					{{ i18n('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}
+				</th>
+				<th>
+					{{ i18n('m.rbs.catalog.document.category.highlight', ['ucf']) }}
+				</th>
+				<th>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="cat in categorizations">
+					<td>
+						<a class="btn-link" ng-click="cascadeEditCategorization(cat)">(= cat.category.label =)</a>
+					</td>
+					<td>
+						<switch ng-model="cat.isHighlighted" ng-change="toggleHighlight(cat)"></switch>
+					</td>
+					<td style="width:160px; text-align: right">
+
+						<button style="width:36px" class="btn"  ng-click="cascadeEditCategorization(cat)" type="button">
+							<i class="icon-pencil"></i>
+						</button>
+						<button style="width:36px" class="btn btn-danger" type="button" ng-click="deleteCategorization(cat)">
+							<i class="icon-remove"></i>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<a data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
+
+
+	</fieldset>
+
+
 	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
+
 
 	<form-button-bar></form-button-bar>
 </form>

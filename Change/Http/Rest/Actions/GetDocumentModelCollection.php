@@ -261,8 +261,7 @@ class GetDocumentModelCollection
 			$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
 			foreach ($collection as $document)
 			{
-				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-				$result->addResource($l->addResourceItemInfos($document, $urlManager, $extraColumn));
+				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}
 

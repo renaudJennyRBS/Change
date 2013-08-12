@@ -20,92 +20,65 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 * @param DocumentResult $documentResult
 	 */
-	protected function attachEvents($eventManager)
+	public function updateRestDocumentResult($documentResult)
 	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			/* @var $document \Rbs\Catalog\Documents\ProductCategorization */
-			$document = $event->getDocument();
-			if ($result instanceof DocumentResult)
-			{
-
-				$document->onProductCategorizationResult($event);
-			}
-			else if ($result instanceof DocumentLink)
-			{
-				$document->onProductCategorizationLink($event);
-			}
-		}, 5);
+		parent::updateRestDocumentResult($documentResult);
+		$um = $documentResult->getUrlManager();
+		$selfLink = $documentResult->getRelLink('self')[0];
+		$pathInfo = $selfLink->getPathInfo();
+		if ($this->isHighlighted())
+		{
+			$documentResult->addAction(new Link($um, $pathInfo .  '/downplay', 'downplay'));
+		}
+		else
+		{
+			$documentResult->addAction(new Link($um, $pathInfo . '/highlight', 'highlight'));
+		}
+		$documentResult->addAction(new Link($um, $pathInfo . '/moveup', 'moveup'));
+		$documentResult->addAction(new Link($um, $pathInfo . '/movedown', 'movedown'));
+		$documentResult->addAction(new Link($um, $pathInfo . '/highlighttop', 'highlighttop'));
+		$documentResult->addAction(new Link($um, $pathInfo . '/highlightbottom', 'highlightbottom'));
 	}
 
 	/**
-	 * @param Event $event
+	 * @param DocumentLink $documentLink
+	 * @param Array
 	 */
-	public function onProductCategorizationLink($event)
+	public function updateRestDocumentLink($documentLink, $extraColumn)
 	{
-		/* @var $document \Rbs\Catalog\Documents\ProductCategorization */
-		$document = $event->getDocument();
-		/* @var $result \Change\Http\Rest\Result\DocumentLink */
-		$result = $event->getParam('restResult');
-		$product = $document->getProduct();
+		parent::updateRestDocumentLink($documentLink, $extraColumn);
+		$urlManager = $documentLink->getUrlManager();
+		$product = $this->getProduct();
 		if ($product instanceof \Rbs\Catalog\Documents\AbstractProduct)
 		{
-			$firstVisual = $product->getFirstVisual();
-			if ($firstVisual instanceof \Rbs\Media\Documents\Image)
-			{
-				$result->setProperty('adminthumbnail', $firstVisual->getPublicURL(512, 512));
-			}
-			$result->setProperty('productLabel', $product->getLabel());
+			$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY ));
 		}
-		$category = $document->getCategory();
+		$category = $this->getCategory();
 		if ($category instanceof \Rbs\Catalog\Documents\Category)
 		{
-			$result->setProperty('categoryLabel', $category->getLabel());
+			$documentLink->setProperty('category', new DocumentLink($urlManager, $category, DocumentLink::MODE_PROPERTY ));
 		}
-		$result->setProperty('isHighlighted', $document->isHighlighted());
-		$result->setProperty('position', $document->getPosition());
-		$actions = array();
-		$docLink = new DocumentLink($result->getUrlManager(), $document);
 
-		if ($document->isHighlighted())
+
+		$documentLink->setProperty('isHighlighted', $this->isHighlighted());
+		$documentLink->setProperty('position', $this->getPosition());
+
+		$pathInfo = $documentLink->getPathInfo();
+
+		if ($this->isHighlighted())
 		{
-			$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/downplay', 'downplay'))->toArray();
+			$actions[] = (new Link($urlManager, $pathInfo . '/downplay', 'downplay'))->toArray();
 		}
 		else
 		{
-			$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/highlight', 'highlight'))->toArray();
+			$actions[] = (new Link($urlManager, $pathInfo . '/highlight', 'highlight'))->toArray();
 		}
-		$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/moveup', 'moveup'))->toArray();
-		$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/movedown', 'movedown'))->toArray();
-		$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/highlighttop', 'highlighttop'))->toArray();
-		$actions[] = (new Link($result->getUrlManager(), $docLink->getPathInfo() . '/highlightbottom', 'highlightbottom'))->toArray();
-		$result->setProperty('actions', $actions);
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onProductCategorizationResult(Event $event)
-	{
-		/* @var $document \Rbs\Catalog\Documents\ProductCategorization */
-		$document = $event->getDocument();
-		/* @var $result \Change\Http\Rest\Result\DocumentResult */
-		$result = $event->getParam('restResult');
-		$docLink = new DocumentLink($event->getParam('urlManager'), $document);
-		if ($document->isHighlighted())
-		{
-			$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/downplay', 'downplay'));
-		}
-		else
-		{
-			$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/highlight', 'highlight'));
-		}
-		$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/moveup', 'moveup'));
-		$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/movedown', 'movedown'));
-		$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/highlighttop', 'highlighttop'));
-		$result->addAction(new Link($event->getParam('urlManager'), $docLink->getPathInfo() . '/highlightbottom', 'highlightbottom'));
+		$actions[] = (new Link($urlManager, $pathInfo . '/moveup', 'moveup'))->toArray();
+		$actions[] = (new Link($urlManager, $pathInfo . '/movedown', 'movedown'))->toArray();
+		$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
+		$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
+		$documentLink->setProperty('actions', $actions);
 	}
 }

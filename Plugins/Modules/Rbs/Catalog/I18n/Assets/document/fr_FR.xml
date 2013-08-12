@@ -4,22 +4,10 @@
 	<key id="product">produit</key>
 	<key id="product-list">produits</key>
 	<key id="product-create">ajouter un produit</key>
-	<key id="billingarea">zone de tarification</key>
-	<key id="billingarea-list">zones de tarification</key>
-	<key id="billingarea-create">ajouter une zone de tarification</key>
 	<key id="category">catégorie</key>
 	<key id="category-list">catégories</key>
 	<key id="category-create">créer une catégorie</key>
-	<key id="price">prix</key>
-	<key id="price-list">prix</key>
-	<key id="price-create">ajouter un prix</key>
-	<key id="currency">devise</key>
-	<key id="currency-list">devises</key>
-	<key id="currency-create">ajouter une devise</key>
-	<key id="tax">taxe</key>
-	<key id="tax-list">taxes</key>
-	<key id="tax-create">ajouter une taxe</key>
-
+	<key id="productcategorization">catégorisation</key>
 	<key id="attribute">attribut</key>
 	<key id="attribute-create">ajouter un attribut</key>
 	<key id="attribute-list">attributs</key>

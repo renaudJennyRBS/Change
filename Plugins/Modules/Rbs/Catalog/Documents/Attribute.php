@@ -20,30 +20,21 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	const TYPE_GROUP = 'Group';
 	const TYPE_PROPERTY = 'Property';
 
-	protected function attachEvents($eventManager)
+	public function updateRestDocumentResult($documentResult)
 	{
-		parent::attachEvents($eventManager);
+		parent::updateRestDocumentResult($documentResult);
+		$documentResult->setProperty('editorDefinition', (new AttributeEngine($this->getDocumentServices()))->buildEditorDefinition($this));
+	}
 
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			if ($result instanceof DocumentLink)
-			{
-				$extraColumn = $event->getParam('extraColumn', array());
-				if (in_array('valueTypeFormatted', $extraColumn))
-				{
-					/* @var $attribute Attribute */
-					$attribute = $event->getDocument();
-					$fv = $attribute->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.document.attribute.type-' .strtolower($attribute->getValueType()), array('ucf'));
-					$result->setProperty('valueTypeFormatted', $fv);
-				}
-			}
-			elseif ($result instanceof DocumentResult)
-			{
-				/* @var $attribute Attribute */
-				$attribute = $event->getDocument();
-				$result->setProperty('editorDefinition', (new AttributeEngine($attribute->getDocumentServices()))->buildEditorDefinition($attribute));
-			}
-		}, 5);
+	public function updateRestDocumentLink($documentLink, $extraColumn)
+	{
+		parent::updateRestDocumentLink($documentLink, $extraColumn);
+		if (in_array('valueTypeFormatted', $extraColumn))
+		{
+			/* @var $attribute Attribute */
+			$fv = $this->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.document.attribute.type-' . strtolower($this->getValueType()), array('ucf'));
+			$documentLink->setProperty('valueTypeFormatted', $fv);
+		}
 	}
 
 	/**

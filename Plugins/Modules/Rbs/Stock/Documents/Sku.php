@@ -254,4 +254,10 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 			throw $tm->rollBack($e);
 		}
 	}
+
+	public function updateRestDocumentLink($documentLink, $extraColumn)
+	{
+		parent::updateRestDocumentLink($documentLink, $extraColumn);
+		$documentLink->setProperty('code',  $this->getCode());
+	}
 }
