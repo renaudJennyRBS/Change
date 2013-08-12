@@ -21,7 +21,7 @@
 			</div>
 			<div class="control-group property">
 				<label class="control-label" data-not-a-property="" for="selectWebStores">
-					{{ i18n('m.rbs.catalog.admin.js.billingarea', ['ucf']) }}
+					{{ i18n('m.rbs.price.document.billingarea', ['ucf']) }}
 				</label>
 				<div class="controls">
 					<select ng-model="params.areaId" ng-disabled="!params.webStoreId" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
@@ -49,8 +49,8 @@
 				</div>
 			</div>
 		<div>
-			<a href="(= 'Rbs_Price_Price' | documentURL =)?productId=(=product.id=)" ng-click="cascadeCreatePrice()">
-				{{ i18nAttr('m.rbs.catalog.document.price-create', ['ucf']) }}
+			<a href="Rbs/Price/Price/new?productId=(=product.id=)" ng-click="cascadeCreatePrice()">
+				{{ i18nAttr('m.rbs.price.admin.js.price-create', ['ucf']) }}
 			</a>
 
 			<div>

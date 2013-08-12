@@ -42,7 +42,7 @@ class PriceResult
 		$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Price_Price');
 		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), $model);
 
-		$conditions = array($query->eq('product', $product));
+		$conditions = array($query->eq('sku', $product->getSku()));
 		if ($areaId)
 		{
 			$conditions[] = $query->eq('billingArea', $areaId);

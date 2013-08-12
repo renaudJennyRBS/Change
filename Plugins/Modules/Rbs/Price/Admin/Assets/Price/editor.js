@@ -16,7 +16,7 @@
 					if (!scope.document.product && $routeParams.productId)
 					{
 						REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.productId).then(function(product){
-							scope.document.product = product;
+							scope.document.sku = product.sku;
 						});
 					}
 					if (!scope.document.taxCategories)
