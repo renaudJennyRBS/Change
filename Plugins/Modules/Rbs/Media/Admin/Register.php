@@ -19,6 +19,9 @@ class Register implements ListenerAggregateInterface
 	{
 		$events->attach(Event::EVENT_RESOURCES, function(Event $event)
 		{
+			$header =  array('<link href="Rbs/Media/css/admin.css" rel="stylesheet"/>');
+			$event->setParam('header', array_merge($event->getParam('header'), $header));
+
 			$body = array('
 	<script type="text/javascript" src="Rbs/Media/js/admin.js">​</script>
 	<script type="text/javascript" src="Rbs/Media/Image/controllers.js">​</script>

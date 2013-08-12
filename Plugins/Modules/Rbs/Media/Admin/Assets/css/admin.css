@@ -1,0 +1,25 @@
+rbs-document-list .width-column {
+	margin-right: 10px;
+	line-height: 12px;
+}
+
+rbs-document-list .height-column {
+	position: relative;
+	left: -16px;
+	top: 1px;
+	line-height: 12px;
+}
+
+rbs-document-list .height-column:before {
+	content: "×";
+	background: white;
+	border: 1px solid #dddddd;
+	border-radius: 30px;
+	padding: 5px;
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	line-height: 8px;
+	text-align: center;
+	margin-right: 5px;
+}
