@@ -31,45 +31,32 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	}
 
 	/**
-	 * Width in px
 	 *
-	 * @api
-	 * @return integer
 	 */
-	public function getWidth()
+	public function onUpdate()
 	{
-		return $this->getImageSize()['width'];
+		$this->updateImageSizeProperties();
 	}
 
 	/**
-	 * @param integer $width
-	 * @return $this
-	 */
-	public function setWidth($width)
-	{
-		// TODO: Implement setWidth() method.
-		return $this;
-	}
-
-	/**
-	 * Height in px
 	 *
-	 * @api
-	 * @return integer
 	 */
-	public function getHeight()
+	public function onCreate()
 	{
-		return $this->getImageSize()['height'];
+		$this->updateImageSizeProperties();
 	}
 
 	/**
-	 * @param integer $height
-	 * @return $this
+	 *
 	 */
-	public function setHeight($height)
+	protected function updateImageSizeProperties()
 	{
-		// TODO: Implement setHeight() method.
-		return $this;
+		if ($this->isPropertyModified('path'))
+		{
+			$size = $this->getImageSize();
+			$this->setHeight($size['height']);
+			$this->setWidth($size['width']);
+		}
 	}
 
 	/**

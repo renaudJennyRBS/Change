@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	icon="folder" localized="true" editable="true" activable="true">
 	<properties>
-		<property name="path" type="StorageUri" localized="true" />
-		<property name="localizePath" type="Boolean" default-value="false" />
+		<property name="path" type="StorageUri" />
 		<property name="alt" type="String" localized="true" />
-		<property name="width" type="Integer" stateless="true" />
-		<property name="height" type="Integer" stateless="true" />
+		<property name="width" type="Integer" />
+		<property name="height" type="Integer" />
 		<property name="mimeType" type="String" stateless="true" />
 	</properties>
 </document>
