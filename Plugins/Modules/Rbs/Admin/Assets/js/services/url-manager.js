@@ -16,12 +16,13 @@
 				};
 
 				var defaultRule = {
-					reloadOnSearch : false,
+					// Ensure that the user's settings are loaded before executing each route.
 					resolve : {
 						user : ['RbsChange.Settings', function (Settings) {
 							return Settings.ready();
 						}]
-					}
+					},
+					reloadOnSearch : false
 				};
 
 				var currentModelName = null;
@@ -39,11 +40,9 @@
 					}
 
 					if (angular.isString(rule)) {
-						rule = {
-							templateUrl : rule
-						};
+						rule = { 'templateUrl' : rule };
 					}
-					if (! rule.redirectTo) {
+					if (! rule.hasOwnProperty('redirectTo')) {
 						rule = angular.extend({}, defaultRule, rule);
 					}
 					if ((p = route.indexOf('?')) !== -1) {
@@ -54,8 +53,7 @@
 
 
 				var getUrl = function (doc, name) {
-					var model,
-					    out;
+					var	model, out;
 
 					if (angular.isObject(doc) && angular.isDefined(doc.model)) {
 						model = doc.model;
@@ -70,7 +68,6 @@
 						if (name && out.hasOwnProperty(name)) {
 							return out[name];
 						} else if (name === 'i18n' && out.hasOwnProperty('form')) {
-							//console.warn("No 'i18n' URL found for ", doc, ". Used 'form' URL instead.");
 							return out['form'];
 						} else if (angular.isString(out)) {
 							return out;
