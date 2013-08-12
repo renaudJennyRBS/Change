@@ -3,9 +3,10 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="alt">alternate text</key>
 	<key id="path">file</key>
-	<key id="localizepath">translate file</key>
 	<key id="width">width</key>
 	<key id="height">height</key>
 	<key id="mimetype">MIME type</key>
 	<key id="file-informations">file information</key>
-</i18n>
+	<key id="dimensions">dimensions</key>
+	<key id="megapixels">megapixels</key>
+	<key id="file">file</key></i18n>

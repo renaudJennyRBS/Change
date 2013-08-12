@@ -21,7 +21,6 @@
 			},
 
 			'get' : function (key, defaultValue) {
-				console.log("Settings.get(", key, ") : ", user.profile[key]);
 				return user.profile[key] || defaultValue;
 			},
 

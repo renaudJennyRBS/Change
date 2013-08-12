@@ -566,4 +566,221 @@
 		};
 	}]);
 
+	/**
+	 * Builds the 'href' attribute based on a value of the form: model,id[,LCID[,routeName]].
+	 */
+	app.directive('rbsDocumentHref', ['RbsChange.UrlManager', 'RbsChange.Settings', function (UrlManager, Settings) {
+		return {
+
+			restrict : 'A',
+			priority : 1001,
+			require  : 'rbsDocumentHref',
+
+			controller : ['$scope', '$attrs', function ($scope, $attrs)
+			{
+				var matches = $attrs.rbsDocumentHref.match(/^([a-zA-Z0-9]+_[a-zA-Z0-9]+_[a-zA-Z0-9]+),(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-zA-Z0-9\-_]+))?$/);
+				//                                            11111111111111111111111111111111111111   222    444444444444444444     666666666666666
+				if (matches === null) {
+					throw new Error("Attribute 'rbs-document-href' has an invalid value. Should be: 'model,id[,LCID[,routeName]]'.");
+				}
+				this.doc = {
+					"model" : matches[1],
+					"id" : matches[2],
+					"LCID" : matches[4] || Settings.get('LCID'),
+					"route" : matches[6] || 'form'
+				};
+			}],
+
+			link : function (scope, element, attrs, ctrl)
+			{
+				if (! element.is('a')) {
+					console.warn("Directive 'rbs-document-href' only works on <a></a> elements.");
+				}
+				if (! attrs.rbsDocumentHref) {
+					throw new Error("Attribute 'rbs-document-href' must not be empty.");
+				}
+
+				element.attr('href', UrlManager.getUrl(ctrl.doc, null, ctrl.doc.route));
+			}
+
+		};
+	}]);
+
+
+	/**
+	 *
+	 */
+	app.directive('rbsDocumentPopover', ['$timeout', '$q', 'RbsChange.Settings', 'RbsChange.REST', function ($timeout, $q, Settings, REST) {
+
+		var popovers = [],
+			POPOVER_WIDTH = 200;
+
+		$(window.document).on('click.rbsDocumentPopover.close', function () {
+			angular.forEach(popovers, function (popover) {
+				if (popover.visible) {
+					popover.element.popover('hide');
+					popover.visible = false;
+				}
+			});
+		});
+
+		function registerPopover (elm) {
+			var popover = {
+				element : elm,
+				index : popovers.length,
+				visible : null
+			};
+			popovers.push(popover);
+			return popover;
+		}
+
+		function unregisterPopover (popover) {
+			var index = popover.index;
+			if (index >= 0 && index < popovers.length) {
+				popovers.splice(index, 1);
+			}
+		}
+
+		return {
+
+			restrict : 'A',
+			priority : 1000,
+			require  : '?rbsDocumentHref',
+
+			link : function (scope, element, attrs, ctrl)
+			{
+				var	doc,
+					popoverReady = false,
+					popover,
+					delay = 500,
+					trigger = attrs.trigger || 'hover',
+					triggerSelector = null,
+
+					popoverReadyPromise = null,
+					popoverTimer = null;
+
+				if (attrs.delay) {
+					var d = parseInt(attrs.delay, 10);
+					if (! isNaN(d)) {
+						delay = d;
+					}
+				}
+
+				if (ctrl) {
+					doc = ctrl.doc;
+				}
+				else {
+					var matches = attrs.rbsDocumentPopover.match(/^([a-zA-Z0-9]+_[a-zA-Z0-9]+_[a-zA-Z0-9]+),(\d+)$/);
+					//                                              11111111111111111111111111111111111111   222
+					if (matches === null) {
+						throw new Error("Attribute 'rbs-document-popover' has an invalid value. Should be: 'model,id'.");
+					}
+					doc = {
+						"model" : matches[1],
+						"id" : matches[2],
+						// We assume that the preview is always rendered with the UI's language.
+						"LCID" : Settings.get('LCID')
+					};
+				}
+
+				if (trigger !== 'hover' && trigger !== 'click') {
+					throw new Error("Invalid 'trigger' attribute: should be 'click' or 'hover'.");
+				}
+
+				if (trigger === 'click' && element.is('a')) {
+					element.append(' <i class="icon-eye-open document-preview-trigger"></i>');
+					triggerSelector = '.document-preview-trigger';
+				}
+
+				function preparePopover (reload, x)
+				{
+					if (! popoverReady || reload)
+					{
+						var defered = $q.defer();
+
+						// Destroy existing popover before rebuilding it.
+						if (popoverReady && reload) {
+							element.popover('destroy');
+						}
+
+						// Determine the best placement of the popover
+						// based on the event's X and Y and on the screen's size.
+						var placement = 'bottom';
+						if (x < POPOVER_WIDTH) {
+							placement = 'right';
+						}
+						else if (x > ($(document).width()-POPOVER_WIDTH)) {
+							placement = 'left';
+						}
+
+						REST.call(REST.getBaseUrl('admin/documentPreview'), {"id": doc.id}).then(function (result) {
+							var options = {
+								'container' : 'body',
+								'placement' : placement,
+								'trigger'   : 'manual',
+								'html'      : true
+							};
+							element.popover(angular.extend(options, result));
+							defered.resolve();
+						});
+						popoverReadyPromise = defered.promise;
+						popoverReady = true;
+					}
+					return popoverReadyPromise;
+				}
+
+				if (doc)
+				{
+					popover = registerPopover(element);
+					scope.$on('$destroy', function () {
+						unregisterPopover(popover);
+					});
+
+					if (trigger === 'hover') {
+						element.on('hover.rbsDocumentPopover', triggerSelector, function (event) {
+							event.preventDefault();
+							event.stopPropagation();
+
+							if (event.type === 'mouseenter' && ! popover.visible) {
+								popoverTimer = $timeout(function () {
+									preparePopover(event.shiftKey, event.pageX).then(function () {
+										element.popover('show');
+										popover.visible = true;
+										popoverTimer = null;
+									});
+								}, delay);
+							} else if (event.type === 'mouseleave') {
+								if (popover.visible) {
+									element.popover('hide');
+								} else {
+									$timeout.cancel(popoverTimer);
+								}
+								popover.visible = false;
+							}
+						});
+					}
+					else {
+						element.on('click.rbsDocumentPopover', triggerSelector, function (event) {
+							event.preventDefault();
+							event.stopPropagation();
+
+							if (! popover.visible) {
+								$timeout(function () {
+									preparePopover(event.shiftKey, event.pageX).then(function () {
+										element.popover('show');
+										popover.visible = true;
+									});
+								});
+							} else {
+								element.popover('hide');
+								popover.visible = false;
+							}
+						});
+					}
+				}
+			}
+
+		};
+	}]);
+
 })(window.jQuery, ace);

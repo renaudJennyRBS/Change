@@ -375,6 +375,10 @@ a.action:first-child {
 	border-bottom: 1px dashed #DDD;
 }
 
+rbs-document-list tr td.preview .dl-horizontal dt {
+	clear: none;
+}
+
 
 a.danger:hover {
 	color: red;
