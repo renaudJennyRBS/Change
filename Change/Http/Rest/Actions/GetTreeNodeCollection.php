@@ -107,9 +107,7 @@ class GetTreeNodeCollection
 			{
 				continue;
 			}
-			$t = new TreeNodeLink($urlManager, $node);
-			$t->getDocumentLink()->addResourceItemInfos($document, $urlManager, $extraColumn);
-			$result->addResource($t);
+			$result->addResource(new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_PROPERTY, $extraColumn));
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

@@ -40,8 +40,7 @@ class CurrentTasks
 			$extraColumn = $event->getRequest()->getQuery('column', array());
 			foreach ($query->getDocuments($result->getOffset(), $result->getLimit()) as $document)
 			{
-				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-				$result->addResource($l->addResourceItemInfos($document, $urlManager, $extraColumn));
+				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}
 		$event->setResult($result);

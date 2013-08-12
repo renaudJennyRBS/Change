@@ -71,13 +71,8 @@ class GetDocument
 	{
 		$urlManager = $event->getUrlManager();
 
-		$result = new DocumentResult();
-		$documentLink = new DocumentLink($urlManager, $document);
-		$result->addLink($documentLink);
-
-		$modelLink = new ModelLink($urlManager, array('name' => $document->getDocumentModelName()), false);
-		$modelLink->setRel('model');
-		$result->addLink($modelLink);
+		$result = new DocumentResult($urlManager,  $document);
+		$documentLink = $result->getRelLink('self')[0];
 
 		if ($document->getTreeName())
 		{
@@ -92,15 +87,13 @@ class GetDocument
 
 		$model = $document->getDocumentModel();
 
-		$properties = array();
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
 			$c = new PropertyConverter($document, $property, $urlManager);
-			$properties[$name] = $c->getRestValue();
+			$result->setProperty($name, $c->getRestValue());
 		}
 
-		$result->setProperties($properties);
 		$this->addCorrection($result, $document, $urlManager);
 
 		$event->setResult($result);

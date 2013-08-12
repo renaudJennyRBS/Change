@@ -17,13 +17,13 @@ class GetCurrentUser
 	public function execute($event)
 	{
 
-		$result = new DocumentResult();
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$properties = array(
 			'id' => $user->getId(),
 			'pseudonym' => $user->getName()
 		);
 
+		$result = new DocumentResult($event->getUrlManager(), $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($user->getId()));
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 

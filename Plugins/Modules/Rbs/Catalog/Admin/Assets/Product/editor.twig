@@ -95,7 +95,7 @@
 			<tbody>
 				<tr data-ng-repeat="cat in categorizations">
 					<td>
-						<a class="btn-link" ng-click="cascadeEditCategorization(cat)">(= cat.categoryLabel =)</a>
+						<a class="btn-link" ng-click="cascadeEditCategorization(cat)">(= cat.category.label =)</a>
 					</td>
 					<td>
 						<switch ng-model="cat.isHighlighted" ng-change="toggleHighlight(cat)"></switch>

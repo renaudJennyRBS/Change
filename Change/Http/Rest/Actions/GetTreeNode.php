@@ -65,9 +65,7 @@ class GetTreeNode
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
 		if ($document)
 		{
-			$dl = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-			$dl->addResourceItemInfos($document, $urlManager);
-			$result->setProperty('document', $dl);
+			$result->setProperty('document',  new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY));
 		}
 
 		$treeNodeLink = new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_LINK);

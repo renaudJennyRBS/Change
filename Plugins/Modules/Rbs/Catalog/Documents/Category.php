@@ -40,26 +40,17 @@ class Category extends \Compilation\Rbs\Catalog\Documents\Category
 		return array();
 	}
 
-	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
-	 */
-	protected function attachEvents($eventManager)
+	public function updateRestDocumentResult($documentResult)
 	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			if ($result instanceof DocumentResult)
-			{
-				$selfLinks = $result->getRelLink('self');
-				$selfLink = array_shift($selfLinks);
-				if ($selfLink instanceof Link)
-				{
-					$pathParts = explode('/', $selfLink->getPathInfo());
-					array_pop($pathParts);
-					$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/ProductCategorization/', 'productcategorizations');
-					$result->addLink($link);
-				}
-			}
-		}, 5);
+		parent::updateRestDocumentResult($documentResult);
+		$selfLinks = $documentResult->getRelLink('self');
+		$selfLink = array_shift($selfLinks);
+		if ($selfLink instanceof Link)
+		{
+			$pathParts = explode('/', $selfLink->getPathInfo());
+			array_pop($pathParts);
+			$link = new Link($documentResult->getUrlManager(), implode('/', $pathParts) . '/ProductCategorization/', 'productcategorizations');
+			$documentResult->addLink($link);
+		}
 	}
 }

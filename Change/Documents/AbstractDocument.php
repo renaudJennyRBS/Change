@@ -1,6 +1,9 @@
 <?php
 namespace Change\Documents;
 
+use Change\Http\Rest\DocumentLink;
+use Change\Http\Rest\DocumentResult;
+use Change\Http\Rest\RestfulDocumentInterface;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
 
@@ -8,7 +11,7 @@ use Zend\EventManager\EventsCapableInterface;
  * @name \Change\Documents\AbstractDocument
  * @api
  */
-abstract class AbstractDocument implements \Serializable, EventsCapableInterface
+abstract class AbstractDocument implements \Serializable, EventsCapableInterface, RestfulDocumentInterface
 {		
 	/**
 	 * @var integer
@@ -491,4 +494,19 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	abstract public function create();
 
 	abstract public function delete();
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	public function updateRestDocumentResult($documentResult)
+	{
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param Array
+	 */
+	public function updateRestDocumentLink($documentLink, $extraColumn)
+	{
+	}
 }

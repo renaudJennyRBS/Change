@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Result;
 
 /**
@@ -28,10 +29,38 @@ class DocumentResult extends Result
 	 */
 	protected $actions = array();
 
-	public function __construct()
+	/**
+	 * @var \Change\Documents\AbstractDocument
+	 */
+	protected $document;
+
+	/**
+	 * @var \Change\Http\UrlManager
+	 */
+	protected $urlManager;
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function __construct($urlManager, $document)
 	{
 		$this->links = new Links();
 		$this->actions = new Links();
+		$this->setUrlManager($urlManager);
+		$this->setDocument($document);
+
+		$documentLink = new DocumentLink($urlManager, $document);
+		$this->addLink($documentLink);
+
+		$modelLink = new ModelLink($urlManager, array('name' => $document->getDocumentModelName()), false);
+		$modelLink->setRel('model');
+		$this->addLink($modelLink);
+
+		if ($document instanceof RestfulDocumentInterface)
+		{
+			$document->updateRestDocumentResult($this);
+		}
 	}
 
 	/**
@@ -237,5 +266,37 @@ class DocumentResult extends Result
 			}
 		}
 		return $value;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function setDocument($document)
+	{
+		$this->document = $document;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		return $this->document;
+	}
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 */
+	public function setUrlManager($urlManager)
+	{
+		$this->urlManager = $urlManager;
+	}
+
+	/**
+	 * @return \Change\Http\UrlManager
+	 */
+	public function getUrlManager()
+	{
+		return $this->urlManager;
 	}
 }

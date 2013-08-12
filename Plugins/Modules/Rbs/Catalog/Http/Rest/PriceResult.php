@@ -87,8 +87,7 @@ class PriceResult
 			foreach ($collection as $document)
 			{
 				/* @var $document \Rbs\Price\Documents\Price */
-				$l = new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY);
-				$result->addResource($l->addResourceItemInfos($document, $urlManager, $extraColumn));
+				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}
 		$result->setAvailableSorts(array('boValue', 'boDiscountValue', 'thresholdMin', 'priority', 'startActivation', 'endActivation', 'modificationDate', 'webStore', 'billingArea'));

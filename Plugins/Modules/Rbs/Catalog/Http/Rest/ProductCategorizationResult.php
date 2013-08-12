@@ -1,11 +1,9 @@
 <?php
 namespace Rbs\Catalog\Http\Rest;
 
-use Change\Documents\Events\Event;
 use Change\Http\Rest\Actions\DocumentQuery;
 use Change\Http\Rest\Result\ArrayResult;
 use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\Link;
 use Zend\Stdlib\Parameters;
 
 /**
