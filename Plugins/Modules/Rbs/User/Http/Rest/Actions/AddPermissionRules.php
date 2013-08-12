@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\User\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\Result\ArrayResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -38,7 +38,7 @@ class AddPermissionRules
 			}
 		}
 
-		$result = new DocumentResult();
+		$result = new ArrayResult();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 		$event->setResult($result);
