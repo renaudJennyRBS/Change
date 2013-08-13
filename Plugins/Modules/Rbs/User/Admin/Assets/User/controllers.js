@@ -73,20 +73,26 @@
 
 		$scope.reloadTokens();
 
-		$scope.tokenList = {
-			'revokeToken': function(token){
-				if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-revoke-token | ucf', { 'token': token.token })))
-				{
-					var url = REST.getBaseUrl('user/revokeToken/');
-					$http.post(url, { 'token': token.token }).success(function (){
-							ArrayUtils.removeValue($scope.tokens, token);
-						}
-					);
-				}
+		$scope.revokeToken = function(token){
+			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-revoke-token | ucf', { 'token': token.token })))
+			{
+				var url = REST.getBaseUrl('user/revokeToken/');
+				$http.post(url, { 'token': token.token }).success(function (){
+						ArrayUtils.removeValue($scope.tokens, token);
+					}
+				);
 			}
 		};
 
-		MainMenu.loadModuleMenu('Rbs_User');
+		$scope.displayToken = function(token){
+			$scope.tokenToDisplay = token.token;
+		};
+
+		//sort
+		$scope.predicate = 'application';
+		$scope.reverse = false;
+		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
+
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
 		]);
@@ -140,32 +146,31 @@
 			}
 		};
 
-		$scope.permissionList = {
-			'removePermissionRule': function (permissionRuleToRemove){
-				if (permissionRuleToRemove.rule_id)
-				{
-					if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-permission-rule | ucf', permissionRuleToRemove)))
-					{
-						var url = REST.getBaseUrl('user/removePermissionRule/');
-						$http.post(url, { 'rule_id': permissionRuleToRemove.rule_id }).success(function (){
-								ArrayUtils.removeValue($scope.permissionRules, permissionRuleToRemove);
-							}
-						);
-					}
-				}
-			},
-			'removeAllPermissionRules': function () {
-				if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
+		$scope.removePermissionRule = function (permissionRuleToRemove){
+			if (permissionRuleToRemove.rule_id)
+			{
+				if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-permission-rule | ucf', permissionRuleToRemove)))
 				{
 					var url = REST.getBaseUrl('user/removePermissionRule/');
-					var promises = [];
-					angular.forEach($scope.permissionRules, function (permissionRule){
-						promises.push($http.post(url, { 'rule_id': permissionRule.rule_id }));
-					});
-					$q.all(promises).then(function (){
-						$scope.reloadPermissions();
-					});
+					$http.post(url, { 'rule_id': permissionRuleToRemove.rule_id }).success(function (){
+							ArrayUtils.removeValue($scope.permissionRules, permissionRuleToRemove);
+						}
+					);
 				}
+			}
+		};
+
+		$scope.removeAllPermissionRules = function () {
+			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
+			{
+				var url = REST.getBaseUrl('user/removePermissionRule/');
+				var promises = [];
+				angular.forEach($scope.permissionRules, function (permissionRule){
+					promises.push($http.post(url, { 'rule_id': permissionRule.rule_id }));
+				});
+				$q.all(promises).then(function (){
+					$scope.reloadPermissions();
+				});
 			}
 		};
 
@@ -186,6 +191,11 @@
 			delete($scope.permissionPrivileges['*']);
 		});
 		$scope.showPrivileges = false;
+
+		//sort
+		$scope.predicate = 'role';
+		$scope.reverse = false;
+		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
 
 		MainMenu.loadModuleMenu('Rbs_User');
 		Breadcrumb.resetLocation([
