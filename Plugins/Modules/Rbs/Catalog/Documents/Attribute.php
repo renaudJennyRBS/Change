@@ -20,13 +20,20 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	const TYPE_GROUP = 'Group';
 	const TYPE_PROPERTY = 'Property';
 
-	public function updateRestDocumentResult($documentResult)
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	protected  function updateRestDocumentResult($documentResult)
 	{
 		parent::updateRestDocumentResult($documentResult);
 		$documentResult->setProperty('editorDefinition', (new AttributeEngine($this->getDocumentServices()))->buildEditorDefinition($this));
 	}
 
-	public function updateRestDocumentLink($documentLink, $extraColumn)
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param $extraColumn
+	 */
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 		if (in_array('valueTypeFormatted', $extraColumn))

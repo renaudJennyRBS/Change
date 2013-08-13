@@ -22,10 +22,11 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 	/**
 	 * @param DocumentResult $documentResult
 	 */
-	public function updateRestDocumentResult($documentResult)
+	protected function updateRestDocumentResult($documentResult)
 	{
 		parent::updateRestDocumentResult($documentResult);
 		$um = $documentResult->getUrlManager();
+		/* @var $selfLink DocumentLink */
 		$selfLink = $documentResult->getRelLink('self')[0];
 		$pathInfo = $selfLink->getPathInfo();
 		if ($this->isHighlighted())
@@ -46,7 +47,7 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 	 * @param DocumentLink $documentLink
 	 * @param Array
 	 */
-	public function updateRestDocumentLink($documentLink, $extraColumn)
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 		$urlManager = $documentLink->getUrlManager();

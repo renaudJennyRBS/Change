@@ -92,35 +92,10 @@ class GetLocalizedDocument
 	{
 		$urlManager = $event->getUrlManager();
 		$result = new DocumentResult($urlManager, $document);
-		$documentLink = $result->getRelLink('self')[0];
-
-		if ($document->getTreeName())
-		{
-			$tn = $event->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
-			if ($tn)
-			{
-				$l = new TreeNodeLink($urlManager, $tn, TreeNodeLink::MODE_LINK);
-				$l->setRel('node');
-				$result->addLink($l);
-			}
-		}
-
-		$model = $document->getDocumentModel();
-
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			$c = new PropertyConverter($document, $property, $urlManager);
-			$result->setProperty($name, $c->getRestValue());
-		}
-
-		$this->addCorrection($result, $document, $urlManager);
-
 		$event->setResult($result);
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result,
-			'urlManager' => $urlManager));
-		$document->getEventManager()->trigger($documentEvent);
 
+		/* @var $documentLink DocumentLink */
+		$documentLink = $result->getRelLink('self')[0];
 
 		$i18n = array();
 		/* @var $document AbstractDocument|Localizable */
@@ -138,7 +113,6 @@ class GetLocalizedDocument
 		{
 			$result->setHeaderContentLocation($href);
 		}
-
 		return $result;
 	}
 

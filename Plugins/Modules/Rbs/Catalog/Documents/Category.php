@@ -40,7 +40,10 @@ class Category extends \Compilation\Rbs\Catalog\Documents\Category
 		return array();
 	}
 
-	public function updateRestDocumentResult($documentResult)
+	/**
+	 * @param DocumentResult $documentResult
+	 */
+	protected function updateRestDocumentResult($documentResult)
 	{
 		parent::updateRestDocumentResult($documentResult);
 		$selfLinks = $documentResult->getRelLink('self');

@@ -55,7 +55,7 @@ class DocumentLink extends Link
 		parent::__construct($urlManager, $this->buildPathInfo());
 		if ($action == self::MODE_PROPERTY)
 		{
-			$this->addResourceItemInfos($extraColumns);
+			$document->populateRestDocumentLink($this, $extraColumns);
 		}
 	}
 
@@ -303,7 +303,7 @@ class DocumentLink extends Link
 
 		if ($this->document instanceof RestfulDocumentInterface)
 		{
-			$this->document->updateRestDocumentLink($this, $extraColumn);
+			$this->document->populateRestDocumentLink($this, $extraColumn);
 		}
 
 		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this->document,
