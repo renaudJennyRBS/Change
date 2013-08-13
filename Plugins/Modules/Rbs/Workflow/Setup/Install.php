@@ -16,17 +16,11 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/WorkflowManager/Rbs_Workflow',
-			'\\Rbs\\Workflow\\Events\\ListenerAggregate');
-
 		$config->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
-			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\ListenerAggregate');
+			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\Listeners');
 
 		$config->addPersistentEntry('Change/Events/Workflow/correctionPublicationProcess/Rbs_Workflow',
-			'\\Rbs\\Workflow\\Tasks\\CorrectionPublicationProcess\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Workflow',
-			'\\Rbs\\Workflow\\Events\\SharedListenerAggregate');
+			'\\Rbs\\Workflow\\Tasks\\CorrectionPublicationProcess\\Listeners');
 	}
 
 	/**

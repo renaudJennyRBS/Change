@@ -5,6 +5,9 @@ use Change\Documents\DocumentServices;
 use Change\Presentation\PresentationServices;
 use Change\Presentation\RichText\Event;
 
+/**
+ * @name \Change\Presentation\RichText\RichTextManager
+ */
 class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 {
 

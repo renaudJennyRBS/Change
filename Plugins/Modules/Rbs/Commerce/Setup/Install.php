@@ -22,20 +22,12 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\\Rbs\\Commerce\\Http\\Web\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\\Rbs\\Commerce\\Http\\Rest\\ListenerAggregate');
 
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \Exception
-	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
-	{
+        $config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Rest\Listeners');
+		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Web\Listeners');
+        $config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Commerce', '\Rbs\Commerce\Events\Admin\Listeners');
+        $config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Commerce', '\Rbs\Commerce\Events\CollectionManager\Listeners');
+        $config->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 	}
 
 	/**

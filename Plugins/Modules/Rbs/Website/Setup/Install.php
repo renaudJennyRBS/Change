@@ -16,17 +16,6 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Website',
-				'\\Rbs\\Website\\Admin\\Register');
-
-		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_Website',
-			'\\Rbs\\Website\\Blocks\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Website',
-				'\\Rbs\\Website\\Events\\SharedListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/Commands/Rbs_Website', '\\Rbs\\Website\\Commands\\ListenerAggregate');
-
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 

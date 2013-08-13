@@ -8,27 +8,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application)
-	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_User', '\\Rbs\\User\\Blocks\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_User', '\\Rbs\\User\\Admin\\Register');
-
-
-		$config->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_User', '\\Rbs\\User\\Events\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_User', '\\Rbs\\User\\Web\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_User', '\\Rbs\\User\\Http\\Rest\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/ProfileManager/Rbs_User', '\\Rbs\\User\\Profile\\ListenerAggregate');
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
