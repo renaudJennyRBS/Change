@@ -59,7 +59,7 @@ class DocumentResult extends Result
 
 		if ($document instanceof RestfulDocumentInterface)
 		{
-			$document->updateRestDocumentResult($this);
+			$document->populateRestDocumentResult($this);
 		}
 	}
 

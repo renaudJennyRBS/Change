@@ -72,34 +72,9 @@ class GetDocument
 		$urlManager = $event->getUrlManager();
 
 		$result = new DocumentResult($urlManager,  $document);
-		$documentLink = $result->getRelLink('self')[0];
-
-		if ($document->getTreeName())
-		{
-			$tn = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
-			if ($tn)
-			{
-				$l = new TreeNodeLink($urlManager, $tn, TreeNodeLink::MODE_LINK);
-				$l->setRel('node');
-				$result->addLink($l);
-			}
-		}
-
-		$model = $document->getDocumentModel();
-
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			$c = new PropertyConverter($document, $property, $urlManager);
-			$result->setProperty($name, $c->getRestValue());
-		}
-
-		$this->addCorrection($result, $document, $urlManager);
-
 		$event->setResult($result);
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $document, array('restResult' => $result,
-			'urlManager' => $urlManager));
-		$document->getEventManager()->trigger($documentEvent);
+		/* @var $documentLink DocumentLink */
+		$documentLink = $result->getRelLink('self')[0];
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
@@ -109,24 +84,5 @@ class GetDocument
 			$result->setHeaderContentLocation($href);
 		}
 		return $result;
-	}
-
-	/**
-	 * @param DocumentResult $result
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\UrlManager $urlManager
-	 */
-	protected function addCorrection($result, $document, $urlManager)
-	{
-		if ($document->getDocumentModel()->useCorrection())
-		{
-			/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
-			$correction = $document->getCurrentCorrection();
-			if ($correction)
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'correction');
-				$result->addAction($l);
-			}
-		}
 	}
 }

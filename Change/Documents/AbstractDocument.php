@@ -1,9 +1,17 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Interfaces\Activable;
+use Change\Documents\Interfaces\Correction;
+use Change\Documents\Interfaces\Editable;
+use Change\Documents\Interfaces\Localizable;
+use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\DocumentLink;
 use Change\Http\Rest\DocumentResult;
+use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\RestfulDocumentInterface;
+use Change\Http\Rest\Result\DocumentActionLink;
+use Change\Http\Rest\Result\TreeNodeLink;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
 
@@ -498,15 +506,136 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
 	 */
-	public function updateRestDocumentResult($documentResult)
+	public function populateRestDocumentResult($documentResult)
 	{
+		$documentLink = $documentResult->getRelLink('self')[0];
+		$um = $documentResult->getUrlManager();
+		if ($this->getTreeName())
+		{
+			$tn = $this->getDocumentServices()->getTreeManager()->getNodeByDocument($this);
+			if ($tn)
+			{
+				$l = new TreeNodeLink($um, $tn, TreeNodeLink::MODE_LINK);
+				$l->setRel('node');
+				$documentResult->addLink($l);
+			}
+		}
+
+		$model = $this->getDocumentModel();
+
+		foreach ($model->getProperties() as $name => $property)
+		{
+			/* @var $property \Change\Documents\Property */
+			$c = new PropertyConverter($this, $property, $um);
+			$documentResult->setProperty($name, $c->getRestValue());
+		}
+
+		if ($this->getDocumentModel()->useCorrection())
+		{
+			/* @var $this \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
+			$correction = $this->getCurrentCorrection();
+			if ($correction)
+			{
+				$l = new DocumentActionLink($um, $this, 'correction');
+				$documentResult->addAction($l);
+			}
+		}
+
+		$this->updateRestDocumentResult($documentResult);
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this, array('restResult' => $documentResult,
+			'urlManager' => $um));
+		$this->getEventManager()->trigger($documentEvent);
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	protected function updateRestDocumentResult($documentResult)
+	{
+
 	}
 
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
 	 * @param Array
 	 */
-	public function updateRestDocumentLink($documentLink, $extraColumn)
+	public function populateRestDocumentLink($documentLink, $extraColumn)
 	{
+		$dm = $this->getDocumentManager();
+		$eventManager = $this->getEventManager();
+		if ($documentLink->getLCID())
+		{
+			$dm->pushLCID($documentLink->getLCID());
+		}
+
+		$model =  $this->getDocumentModel();
+
+		$documentLink->setProperty($model->getProperty('creationDate'));
+		$documentLink->setProperty($model->getProperty('modificationDate'));
+
+		if ($this instanceof Editable)
+		{
+			$documentLink->setProperty($model->getProperty('label'));
+			$documentLink->setProperty($model->getProperty('documentVersion'));
+		}
+
+		if ($this instanceof Publishable)
+		{
+			$documentLink->setProperty($model->getProperty('publicationStatus'));
+		}
+		elseif ($this instanceof Activable)
+		{
+			$documentLink->setProperty($model->getProperty('active'));
+		}
+
+		if ($this instanceof Localizable)
+		{
+			$documentLink->setProperty($model->getProperty('refLCID'));
+			$documentLink->setProperty($model->getProperty('LCID'));
+		}
+
+		if ($this instanceof Correction)
+		{
+			/* @var $document AbstractDocument|Correction */
+			if ($this->hasCorrection())
+			{
+				$l = new DocumentActionLink($documentLink->getUrlManager(), $this, 'correction');
+				$documentLink->setProperty('actions', array($l));
+			}
+		}
+
+		if (is_array($extraColumn) && count($extraColumn))
+		{
+			foreach ($extraColumn as $propertyName)
+			{
+				$property = $model->getProperty($propertyName);
+				if ($property)
+				{
+					$documentLink->setProperty($property);
+				}
+			}
+		}
+
+		$this->updateRestDocumentLink($documentLink, $extraColumn);
+
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this,
+			array('restResult' => $documentLink, 'extraColumn' => $extraColumn, 'urlManager' => $documentLink->getUrlManager()));
+		$eventManager->trigger($documentEvent);
+
+		if ($documentLink->getLCID())
+		{
+			$dm->popLCID();
+		}
+		return $this;
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param Array
+	 */
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	{
+
 	}
 }

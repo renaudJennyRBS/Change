@@ -255,7 +255,11 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		}
 	}
 
-	public function updateRestDocumentLink($documentLink, $extraColumn)
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param $extraColumn
+	 */
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 		$documentLink->setProperty('code',  $this->getCode());
