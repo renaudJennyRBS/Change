@@ -1,20 +1,41 @@
 <div data-ng-controller="Rbs_User_User_PermissionController">
 	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.permission-rules-sub-title', ['ucf']) }}"></page-header><br />
-	<rbs-document-list data-dlid="DLRbsUserPermissionList"
-		collection="permissionRules"
-		selectable="false"
-		extend="permissionList"
-		modification-date="false"
-		on-reload="reloadPermissions()">
-		<action name="removeAllPermissionRules" label="{{ i18nAttr('m.rbs.user.admin.remove-all-permission-rules', ['ucf']) }}"></action>
-		<column name="role" local-sort="true" primary="true" label="{{ i18nAttr('m.rbs.user.admin.permission-role', ['ucf']) }}"></column>
-		<column name="privilege" local-sort="true" label="{{ i18nAttr('m.rbs.user.admin.permission-privilege', ['ucf']) }}"></column>
-		<column name="resource_id" local-sort="true" label="{{ i18nAttr('m.rbs.user.admin.permission-resource', ['ucf']) }}"></column>
-		<column name="removePermission" align="center">
-			<button class="btn btn-danger btn-small" data-ng-click="extend.removePermissionRule(doc)">{{ i18n('m.rbs.user.admin.remove-permission-rule', ['ucf']) }}</button>
-		</column>
-		<quick-actions></quick-actions>
-	</rbs-document-list>
+	<table class="document-list table table-condensed table-bordered table-striped table-hover token">
+		<thead>
+			<tr>
+				<th data-ng-class="{'sorted':isSortedOn('role')}">
+					<a href="" data-ng-click="predicate = 'role'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission-role', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('role')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('role')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('privilege')}">
+					<a href="" data-ng-click="predicate = 'privilege'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission-privilege', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('privilege')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('privilege')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('resource_id')}">
+					<a href="" data-ng-click="predicate = 'resource_id'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission-resource', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('resource_id')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('resource_id')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th><button class="btn btn-danger btn-small" data-ng-click="removeAllPermissionRules()">{{ i18n('m.rbs.user.admin.remove-all-permission-rules', ['ucf']) }}</button></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr data-ng-repeat="permissionRule in permissionRules | orderBy:predicate:reverse" class="normal-row">
+				<td>(= permissionRule.role =)</td>
+				<td>(= permissionRule.privilege =)</td>
+				<td>(= permissionRule.resource_id =)</td>
+				<td><button class="btn btn-danger btn-small" data-ng-click="removePermissionRule(permissionRule)">{{ i18n('m.rbs.user.admin.remove-permission-rule', ['ucf']) }}</button></td>
+			</tr>
+		</tbody>
+	</table>
 
 	<h4>{{ i18n('m.rbs.user.admin.new-permission-rules', ['ucf']) }}</h4>
 	<form name="form" data-ng-submit="submit()" >
