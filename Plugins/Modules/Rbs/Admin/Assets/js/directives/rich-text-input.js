@@ -467,6 +467,30 @@
 	}]);
 
 
+	function parseRbsDocumentHref (href) {
+		var doc, matches;
+
+		matches = href.match(/^([a-zA-Z0-9]+_[a-zA-Z0-9]+_[a-zA-Z0-9]+),(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-zA-Z0-9\-_]+))?$/);
+		//                      11111111111111111111111111111111111111   222    44444444444444444      666666666666666
+		if (matches === null) {
+			return null;
+		}
+
+		doc = {
+			"model" : matches[1],
+			"id" : matches[2]
+		};
+		if (matches[4]) {
+			doc.LCID = matches[4];
+		}
+		if (matches[6]) {
+			doc.route = matches[6];
+		}
+
+		return doc;
+	}
+
+
 	/**
 	 * Builds the 'href' attribute based on a value of the form: model,id[,LCID[,routeName]].
 	 */
@@ -475,33 +499,24 @@
 
 			restrict : 'A',
 			priority : 1001,
-			require  : 'rbsDocumentHref',
 
-			controller : ['$scope', '$attrs', function ($scope, $attrs)
-			{
-				var matches = $attrs.rbsDocumentHref.match(/^([a-zA-Z0-9]+_[a-zA-Z0-9]+_[a-zA-Z0-9]+),(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-zA-Z0-9\-_]+))?$/);
-				//                                            11111111111111111111111111111111111111   222    444444444444444444     666666666666666
-				if (matches === null) {
-					throw new Error("Attribute 'rbs-document-href' has an invalid value. Should be: 'model,id[,LCID[,routeName]]'.");
-				}
-				this.doc = {
-					"model" : matches[1],
-					"id" : matches[2],
-					"LCID" : matches[4] || Settings.get('LCID'),
-					"route" : matches[6] || 'form'
-				};
-			}],
-
-			link : function (scope, element, attrs, ctrl)
+			link : function (scope, element, attrs)
 			{
 				if (! element.is('a')) {
 					console.warn("Directive 'rbs-document-href' only works on <a></a> elements.");
 				}
 				if (! attrs.rbsDocumentHref) {
-					throw new Error("Attribute 'rbs-document-href' must not be empty.");
+					throw new Error("Attribute 'rbs-document-href' must not be empty. Should be: 'model,id[,LCID[,routeName]]");
 				}
 
-				element.attr('href', UrlManager.getUrl(ctrl.doc, null, ctrl.doc.route));
+				attrs.$observe('rbsDocumentHref', function (href) {
+					console.log("href=", href);
+					var doc = parseRbsDocumentHref(href);
+					if (doc !== null) {
+						doc.LCID = doc.LCID || Settings.get('LCID');
+						element.attr('href', UrlManager.getUrl(doc, null, doc.route || 'form'));
+					}
+				});
 			}
 
 		};
@@ -514,8 +529,10 @@
 	app.directive('rbsDocumentPopover', ['$timeout', '$q', 'RbsChange.Settings', 'RbsChange.REST', function ($timeout, $q, Settings, REST) {
 
 		var popovers = [],
-			POPOVER_WIDTH = 200;
+			POPOVER_WIDTH = 200,
+			POPOVER_DEFAULT_DELAY = 500;
 
+		// Close all registered popovers when
 		$(window.document).on('click.rbsDocumentPopover.close', function () {
 			angular.forEach(popovers, function (popover) {
 				if (popover.visible) {
@@ -546,67 +563,138 @@
 
 			restrict : 'A',
 			priority : 1000,
-			require  : '?rbsDocumentHref',
 
-			link : function (scope, element, attrs, ctrl)
+			link : function (scope, element, attrs)
 			{
-				var	doc,
+				var	valueAttr = null,
+					doc,
 					popoverReady = false,
 					popover,
-					delay = 500,
+					delay = POPOVER_DEFAULT_DELAY, d,
 					trigger = attrs.trigger || 'hover',
 					triggerSelector = null,
-
 					popoverReadyPromise = null,
 					popoverTimer = null;
 
-				if (attrs.delay) {
-					var d = parseInt(attrs.delay, 10);
-					if (! isNaN(d)) {
-						delay = d;
-					}
-				}
-
-				if (ctrl) {
-					doc = ctrl.doc;
-				}
-				else {
-					var matches = attrs.rbsDocumentPopover.match(/^([a-zA-Z0-9]+_[a-zA-Z0-9]+_[a-zA-Z0-9]+),(\d+)$/);
-					//                                              11111111111111111111111111111111111111   222
-					if (matches === null) {
-						throw new Error("Attribute 'rbs-document-popover' has an invalid value. Should be: 'model,id'.");
-					}
-					doc = {
-						"model" : matches[1],
-						"id" : matches[2],
-						// We assume that the preview is always rendered with the UI's language.
-						"LCID" : Settings.get('LCID')
-					};
-				}
-
+				// Initialize popover's trigger.
 				if (trigger !== 'hover' && trigger !== 'click') {
 					throw new Error("Invalid 'trigger' attribute: should be 'click' or 'hover'.");
 				}
-
 				if (trigger === 'click' && element.is('a')) {
 					element.append(' <i class="icon-eye-open document-preview-trigger"></i>');
 					triggerSelector = '.document-preview-trigger';
 				}
 
+				// Initialize delay.
+				if (attrs.delay) {
+					d = parseInt(attrs.delay, 10);
+					if (! isNaN(d)) {
+						delay = d;
+					}
+				}
+
+				// This directive can work well if the 'rbs-document-href' directive is present.
+				if (attrs.rbsDocumentPopover) {
+					valueAttr = 'rbsDocumentPopover';
+				} else if (attrs.rbsDocumentHref) {
+					valueAttr = 'rbsDocumentHref';
+				} else {
+					throw new Error("Unable to find Document information. Please provide one of these attributes: 'rbs-document-popover' or 'rbs-document-href'.");
+				}
+
+				attrs.$observe(valueAttr, function (href) {
+					// Document information has changed:
+					// destroy popover so that it can be rebuilt correctly with its new content.
+					if (popover) {
+						element.popover('destroy');
+					}
+					popoverReady = false;
+					doc = parseRbsDocumentHref(href);
+				});
+
+
+				// Popover registration:
+				// registered popovers will be closed when a click occurs outside them.
+				popover = registerPopover(element);
+				scope.$on('$destroy', function () {
+					unregisterPopover(popover);
+				});
+
+				// Install event handlers
+
+				if (trigger === 'hover') {
+					element.on('hover.rbsDocumentPopover', triggerSelector, function (event) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						// Nothing to do if document information is unavailable.
+						if (!doc) {
+							return;
+						}
+
+						if (event.type === 'mouseenter' && ! popover.visible) {
+							popoverTimer = $timeout(function () {
+								preparePopover(event.shiftKey, event.pageX).then(function () {
+									element.popover('show');
+									popover.visible = true;
+									popoverTimer = null;
+								});
+							}, delay);
+						}
+						else if (event.type === 'mouseleave') {
+							if (popover.visible) {
+								element.popover('hide');
+							}
+							else {
+								$timeout.cancel(popoverTimer);
+							}
+							popover.visible = false;
+						}
+					});
+				}
+				else {
+					element.on('click.rbsDocumentPopover', triggerSelector, function (event) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						// Nothing to do if document information is unavailable.
+						if (!doc) {
+							return;
+						}
+
+						if (popover.visible) {
+							element.popover('hide');
+							popover.visible = false;
+						}
+						else {
+							$timeout(function () {
+								preparePopover(event.shiftKey, event.pageX).then(function () {
+									element.popover('show');
+									popover.visible = true;
+								});
+							}); // no delay for click triggers
+						}
+					});
+				}
+
+				// Popover preparation:
+				// load its content and determine the bast placement for it.
+				// Returns a Promise, resolved when the popover is ready to be displayed.
+
 				function preparePopover (reload, x)
 				{
 					if (! popoverReady || reload)
 					{
-						var defered = $q.defer();
+						var	defered = $q.defer(),
+							placement = 'bottom';
 
 						// Destroy existing popover before rebuilding it.
 						if (popoverReady && reload) {
 							element.popover('destroy');
 						}
 
-						// Determine the best placement of the popover
-						// based on the event's X and Y and on the screen's size.
-						var placement = 'bottom';
+						// Determine the best placement for the popover
+						// based on the event's X and the screen's size.
 						if (x < POPOVER_WIDTH) {
 							placement = 'right';
 						}
@@ -614,6 +702,9 @@
 							placement = 'left';
 						}
 
+						// The following REST action will search for the following template:
+						// - name: popover-preview.twig
+						// - location: where other templates for the document (list.twig and editor.twig) are.
 						REST.call(REST.getBaseUrl('admin/documentPreview'), {"id": doc.id}).then(function (result) {
 							var options = {
 								'container' : 'body',
@@ -628,56 +719,6 @@
 						popoverReady = true;
 					}
 					return popoverReadyPromise;
-				}
-
-				if (doc)
-				{
-					popover = registerPopover(element);
-					scope.$on('$destroy', function () {
-						unregisterPopover(popover);
-					});
-
-					if (trigger === 'hover') {
-						element.on('hover.rbsDocumentPopover', triggerSelector, function (event) {
-							event.preventDefault();
-							event.stopPropagation();
-
-							if (event.type === 'mouseenter' && ! popover.visible) {
-								popoverTimer = $timeout(function () {
-									preparePopover(event.shiftKey, event.pageX).then(function () {
-										element.popover('show');
-										popover.visible = true;
-										popoverTimer = null;
-									});
-								}, delay);
-							} else if (event.type === 'mouseleave') {
-								if (popover.visible) {
-									element.popover('hide');
-								} else {
-									$timeout.cancel(popoverTimer);
-								}
-								popover.visible = false;
-							}
-						});
-					}
-					else {
-						element.on('click.rbsDocumentPopover', triggerSelector, function (event) {
-							event.preventDefault();
-							event.stopPropagation();
-
-							if (! popover.visible) {
-								$timeout(function () {
-									preparePopover(event.shiftKey, event.pageX).then(function () {
-										element.popover('show');
-										popover.visible = true;
-									});
-								});
-							} else {
-								element.popover('hide');
-								popover.visible = false;
-							}
-						});
-					}
 				}
 			}
 
