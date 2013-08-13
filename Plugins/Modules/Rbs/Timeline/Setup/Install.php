@@ -16,11 +16,6 @@ class Install
 	{
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
-
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Timeline',
-			'\\Rbs\\Timeline\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Timeline',
-			'\\Rbs\\Timeline\\Http\\Rest\\ListenerAggregate');
 	}
 
 	/**

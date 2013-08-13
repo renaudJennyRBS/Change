@@ -1,4 +1,5 @@
 {
-	"vendor":"Rbs",
-	"name":"Timeline"
+	"vendor": "Rbs",
+	"name": "Timeline",
+	"package": "Core"
 }
