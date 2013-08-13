@@ -6,12 +6,6 @@ namespace Rbs\Timeline\Setup;
  */
 class Install
 {
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
@@ -28,17 +22,6 @@ class Install
 		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Timeline',
 			'\\Rbs\\Timeline\\Http\\Rest\\ListenerAggregate');
 	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \Exception
-	 */
-//	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
-//	{
-//	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

@@ -50,6 +50,12 @@ class Listeners implements ListenerAggregateInterface
 			'Rbs/Store/js/admin.js',
 			'Rbs/Store/WebStore/controllers.js',
 			'Rbs/Store/WebStore/editor.js',
+			'Rbs/Stock/js/admin.js',
+			'Rbs/Stock/js/directives.js',
+			'Rbs/Stock/Sku/controllers.js',
+			'Rbs/Stock/Sku/editor.js',
+			'Rbs/Stock/InventoryEntry/controllers.js',
+			'Rbs/Stock/InventoryEntry/editor.js'
 		);
 
 		$header = array('
@@ -73,8 +79,9 @@ class Listeners implements ListenerAggregateInterface
 					'keywords' => $i18nManager->trans('m.rbs.price.admin.js.module-keywords')),
 				array('label' => $i18nManager->trans('m.rbs.store.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/Store', 'section' => 'ecommerce',
-					'keywords' => $i18nManager->trans('m.rbs.store.admin.js.module-keywords'))
-
+					'keywords' => $i18nManager->trans('m.rbs.store.admin.js.module-keywords')),
+				array('label' => $i18nManager->trans('m.rbs.stock.admin.js.module-name', array('ucf')),
+					'url' => 'Rbs/Stock', 'section' => 'ecommerce', 'keywords' => $i18nManager->trans('m.rbs.stock.admin.js.module-keywords'))
 			)
 		);
 
