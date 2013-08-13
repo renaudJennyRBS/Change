@@ -12,7 +12,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.routesForLocalizedModels(['Rbs_Media_Image']);
-			$delegate.model(null).route('home', 'Rbs/Media/', { 'redirectTo': 'Rbs/Media/Image/'});
+			$delegate.model(null).route('home', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
 			return $delegate;
 		}]);
 	}]);
