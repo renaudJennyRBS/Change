@@ -11,23 +11,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application)
-	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Catalog', '\\Rbs\\Catalog\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Catalog',
-			'\\Rbs\\Catalog\\Collection\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Catalog',
-			'\\Rbs\\Catalog\\Http\\Rest\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_Catalog', '\\Rbs\\Catalog\\Blocks\\ListenerAggregate');
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices

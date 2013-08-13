@@ -77,7 +77,7 @@ class HasTagTest extends \ChangeTests\Change\TestAssets\TestCase
 		$json = array('model' => 'Rbs_Generic_Folder', 'where' => array('and' => array(array('op' => 'hasTag', 'tag' => 1))));
 
 		$dbProvider = $this->getApplicationServices()->getDbProvider();
-		$la = new \Rbs\Tag\Db\ListenerAggregate();
+		$la = new \Rbs\Generic\Events\Db\Listeners();
 		$la->attach($dbProvider->getEventManager());
 
 		$JSONDecoder = new \Change\Documents\Query\JSONDecoder();

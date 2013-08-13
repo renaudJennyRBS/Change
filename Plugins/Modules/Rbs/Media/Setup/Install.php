@@ -26,9 +26,6 @@ class Install
 			'baseURL' => "/index.php"
 		), $images);
 		$config->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::INSTANCE);
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Media', '\\Rbs\\Media\\Http\\Rest\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_Media', '\\Rbs\\Media\\Http\\Web\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Media', '\\Rbs\\Media\\Admin\\Register');
 	}
 
 

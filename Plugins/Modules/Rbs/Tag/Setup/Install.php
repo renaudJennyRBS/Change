@@ -10,34 +10,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application)
-	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Tag',
-			'\\Rbs\\Tag\\Http\\Rest\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Tag',
-			'\\Rbs\\Tag\\Admin\\Register');
-
-		$config->addPersistentEntry('Change/Events/Db/Rbs_Tag',
-			'\\Rbs\\Tag\\Db\\ListenerAggregate');
-	}
-
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
@@ -48,7 +20,6 @@ class Install
 		$this->initializeTables($applicationServices);
 		$this->createDefaultTags($applicationServices, $documentServices);
 	}
-
 
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices

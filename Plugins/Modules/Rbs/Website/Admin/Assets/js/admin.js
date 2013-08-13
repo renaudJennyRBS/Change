@@ -79,7 +79,7 @@
 			;
 
 			$delegate.model(null)
-				.route('home', 'Rbs/Website/', { 'redirectTo': 'Rbs/Website/Website/'})
+				.route('home', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Website/'})
 			;
 
 			$delegate.routesForLocalizedModels([

@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="{{ lang }}" data-ng-app="RbsChange">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>RBS Change</title>
-    <base href="{{ baseURL }}" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>RBS Change</title>
+	<base href="{{ baseURL }}" />
 
-    <link rel="icon" type="image/png" href="Rbs/Admin/img/rbschange-favicon.png" />
+	<link rel="icon" type="image/png" href="Rbs/Admin/img/rbschange-favicon.png" />
 
-    <!-- Apple customization... -->
-    <link rel="apple-touch-icon" href="Rbs/Admin/img/rbschange-apple-touch-icon.png" />
-    <!-- Well, we like Microsoft too! -->
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <meta name="msapplication-TileImage" content="Rbs/Admin/img/rbschange-metro-icon.png" />
-    <meta name="msapplication-TileColor" content="#B1C903"/>
-    <!-- See http://relogo.org/ -->
-    <link rel="logo" type="image/svg" href="Rbs/Admin/img/rbschange-logo.svg" />
+	<!-- Apple customization... -->
+	<link rel="apple-touch-icon" href="Rbs/Admin/img/rbschange-apple-touch-icon.png" />
+	<!-- Well, we like Microsoft too! -->
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta name="msapplication-TileImage" content="Rbs/Admin/img/rbschange-metro-icon.png" />
+	<meta name="msapplication-TileColor" content="#B1C903" />
+	<!-- See http://relogo.org/ -->
+	<link rel="logo" type="image/svg" href="Rbs/Admin/img/rbschange-logo.svg" />
 
-    <link href="Rbs/Admin/lib/bootstrap/css/bootstrap.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/lib/FontAwesome/css/font-awesome.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/dockable.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/document-list.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/document-picker.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/forms.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/help.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/rbschange.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/rich-text.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/search-filters.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/structure-editor.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/timezone-selector.css" rel="stylesheet"/>
-    <link href="Rbs/Admin/css/token-list.css" rel="stylesheet"/>
-	<link href="Rbs/Admin/menu/menu.css" rel="stylesheet"/>
-	<link href="Rbs/Admin/dashboard/dashboard.css" rel="stylesheet"/>
+	<link href="Rbs/Admin/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/FontAwesome/css/font-awesome.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/dockable.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/document-list.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/document-picker.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/forms.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/help.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/rbschange.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/rich-text.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/search-filters.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/structure-editor.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/timezone-selector.css" rel="stylesheet" />
+	<link href="Rbs/Admin/css/token-list.css" rel="stylesheet" />
+	<link href="Rbs/Admin/menu/menu.css" rel="stylesheet" />
+	<link href="Rbs/Admin/dashboard/dashboard.css" rel="stylesheet" />
 
 	<style type="text/css">
 		#chg_loading_mask {
@@ -46,6 +46,7 @@
 			z-index: 10000;
 			background: white;
 		}
+
 		#chg_loading_mask > div {
 			margin: 100px auto;
 			width: 400px;
@@ -56,15 +57,16 @@
 			text-align: center;
 			padding: 1em;
 		}
+
 		#chg_loading_mask > div > div {
 			margin: 1em 0;
 		}
 	</style>
 
-    <!-- modules -->
-{% for node in resources.header %}
-	{{ node|raw }}
-{% endfor %}
+	<!-- modules -->
+	{% for node in resources.header %}
+		{{ node|raw }}
+	{% endfor %}
 
 	<script type="text/javascript">
 		var __change = {};
@@ -76,161 +78,164 @@
 <body data-ng-controller="Change.RootController">
 	<div id="chg_loading_mask">
 		<div>
-			<img alt="Logo RBS Change" style="width:100px;height:100px;" src="Rbs/Admin/img/logo-change-black@2x.png"/>
-			<div>Merci de bien vouloir patienter<br/>quelques secondes :)</div>
-			<img src="Rbs/Admin/img/ajax-loader-round.gif"/>
+			<img alt="Logo RBS Change" style="width:100px;height:100px;" src="Rbs/Admin/img/logo-change-black@2x.png" />
+
+			<div>Merci de bien vouloir patienter<br />quelques secondes :)</div>
+			<img src="Rbs/Admin/img/ajax-loader-round.gif" />
 		</div>
 	</div>
-    <div full-screen-toggle id="fullScreenBar">
-        <i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran.
+	<div full-screen-toggle id="fullScreenBar">
+		<i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode
+		plein-écran.
 	</div>
 
-    {% include 'header.twig' %}
-    {% include 'menu.twig' %}
+	{% include 'header.twig' %}
+	{% include 'menu.twig' %}
 
-    <div class="container-fluid" id="mainWrapper">
+	<div class="container-fluid" id="mainWrapper">
 
-        <div class="row-fluid clearfix" id="mainToolbar">
-            <div class="btn-toolbar">
-                <button type="button" loading-indicator-button="" class="btn btn-large"></button>
-                <clipboard-widget></clipboard-widget>
-                <button full-screen-toggle type="button" class="btn btn-large" title="Basculer en mode plein écran"></button>
-            </div>
-            <breadcrumb></breadcrumb>
-        </div>
+		<div class="row-fluid clearfix" id="mainToolbar">
+			<div class="btn-toolbar">
+				<button type="button" loading-indicator-button="" class="btn btn-large"></button>
+				<clipboard-widget></clipboard-widget>
+				<button full-screen-toggle type="button" class="btn btn-large" title="Basculer en mode plein écran"></button>
+			</div>
+			<breadcrumb></breadcrumb>
+		</div>
 
-        <div class="row-fluid">
-            <div class="span3" id="leftContainer" ng-swipe-right="menu.open()">
-                <div id="mainMenu"></div>
-            </div>
-            <div class="span9" id="mainContainer">
-                <notification-center></notification-center>
-                <div id="helpListTop"></div>
-                <div id="workspace" class="ng-view"></div>
-                <div id="helpListBottom"></div>
-            </div>
-        </div>
-    </div>
+		<div class="row-fluid">
+			<div class="span3" id="leftContainer" ng-swipe-right="menu.open()">
+				<div id="mainMenu"></div>
+			</div>
+			<div class="span9" id="mainContainer">
+				<notification-center></notification-center>
+				<div id="helpListTop"></div>
+				<div id="workspace" class="ng-view"></div>
+				<div id="helpListBottom"></div>
+			</div>
+		</div>
+	</div>
 
-    <footer class="container-fluid">
-        <div class="row-fluid">
+	<footer class="container-fluid">
+		<div class="row-fluid">
 			<span class="span3"></span>
 			<span class="span9">
-				<a onclick="window.open(this.href); return false;" href="http://www.rbschange.com">RBS Change</a> est un CMS e-commerce open-source edité par la société <a onclick="window.open(this.href); return false" href="http://www.rbs.fr">Ready Business System</a>.
+				<a onclick="window.open(this.href); return false;" href="http://www.rbschange.com">RBS Change</a> est un CMS e-commerce open-source edité par la société <a
+					onclick="window.open(this.href); return false" href="http://www.rbs.fr">Ready Business System</a>.
 			</span>
-        </div>
-    </footer>
+		</div>
+	</footer>
 
-    <script type="text/javascript" src="Rbs/Admin/lib/script.min.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/script.min.js"></script>
 
-    <!-- TODO Include minified JS -->
-    <script type="text/javascript" src="Rbs/Admin/lib/jquery.min.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/jstree/jquery.cookie.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/jstree/jquery.jstree.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular/angular.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular/angular-resource.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular/angular-sanitize.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular/angular-mobile.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular/angular-cookies.js"></script>
+	<!-- TODO Include minified JS -->
+	<script type="text/javascript" src="Rbs/Admin/lib/jquery.min.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/jstree/jquery.cookie.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/jstree/jquery.jstree.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/angular.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/angular-resource.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/angular-sanitize.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/angular-mobile.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular/angular-cookies.js"></script>
 
-    <!-- TODO -->
-    <script type="text/javascript" src="Rbs/Admin/lib/angular-strap/angular-strap.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/diff_match_patch/diff_match_patch.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/angular-local-storage/localStorageModule.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/ace/ace.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/moment/moment.min.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
+	<!-- TODO -->
+	<script type="text/javascript" src="Rbs/Admin/lib/angular-strap/angular-strap.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/diff_match_patch/diff_match_patch.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/angular-local-storage/localStorageModule.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/ace/ace.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment.min.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
 
-    <script type="text/javascript" src="Rbs/Admin/js/rbschange.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/rbschange.js"></script>
 
-    <script type="text/javascript" src="Rbs/Admin/i18n.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/i18n.js"></script>
 
-    <!-- TODO -->
-    <script type="text/javascript" src="Rbs/Admin/js/help.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/menu/menu.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/clipboard/controllers.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/dashboard/controllers.js"></script>
+	<!-- TODO -->
+	<script type="text/javascript" src="Rbs/Admin/js/help.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/menu/menu.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/clipboard/controllers.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/dashboard/controllers.js"></script>
 
-    <script type="text/javascript" src="Rbs/Admin/js/directives/ace-editor.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/apply-correction-options.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/bind-action.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/breadcrumb.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/clipboard-add-widget.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/clipboard-widget.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/correction-viewer.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/date-selector.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/disable-on-click.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/dockable.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-list.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-list-toolbar.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-localization-options.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-pickers.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-system-info-section.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/drop-files-zone.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/form-button-bar.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/form-fields.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/go-up-in-tree.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/form-simple-filter.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/help.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/image-uploader.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/input-typeahead.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/loading-message.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/mask.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/document-select.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/model-selector.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/notification-center.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/page-header.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/pagination-toolbar.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/reorder-panel.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/rich-text.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/rich-text-input.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/search-filters.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/status-switch.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/status.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/structure-editor.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/switch.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/sync-value.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/storage-image.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/token-list.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/tip.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/directives/tree-view.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/ace-editor.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/apply-correction-options.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/bind-action.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/breadcrumb.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/clipboard-add-widget.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/clipboard-widget.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/correction-viewer.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/date-selector.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/disable-on-click.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/dockable.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-list.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-list-toolbar.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-localization-options.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-pickers.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-system-info-section.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/drop-files-zone.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/form-button-bar.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/form-fields.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/go-up-in-tree.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/form-simple-filter.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/help.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/image-uploader.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/input-typeahead.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/loading-message.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/mask.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/document-select.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/model-selector.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/notification-center.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/page-header.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/pagination-toolbar.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/reorder-panel.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/rich-text.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/rich-text-input.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/search-filters.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/status-switch.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/status.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/structure-editor.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/switch.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/sync-value.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/storage-image.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/token-list.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/tip.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/directives/tree-view.js"></script>
 
-    <script type="text/javascript" src="Rbs/Admin/js/services/keyboard.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/actions.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/array.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/base64.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/breadcrumb.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/clipboard.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/dialog.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/document-list.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/editor.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/error-formatter.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/forms-manager.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/fullscreen.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/i18n.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/loading.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/main-menu.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/models.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/notification-center.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/oauth.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/rest.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/keyboard.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/actions.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/array.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/base64.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/breadcrumb.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/clipboard.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/dialog.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/document-list.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/editor.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/error-formatter.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/forms-manager.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/fullscreen.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/i18n.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/loading.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/main-menu.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/models.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/notification-center.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/oauth.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/rest.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/query.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/saved-searches.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/settings.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/url-manager.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/utils.js"></script>
-    <script type="text/javascript" src="Rbs/Admin/js/services/workspace.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/settings.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/url-manager.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/utils.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/services/workspace.js"></script>
 
-    <script type="text/javascript" src="Rbs/Admin/js/filters/rbschange.filters.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/js/filters/rbschange.filters.js"></script>
 
 	<script type="text/javascript" src="Rbs/Admin/js/routes.js"></script>
 
 	<!-- modules -->
-{% for node in resources.body %}
-	{{ node|raw }}
-{% endfor %}
+	{% for node in resources.body %}
+		<script type="text/javascript" src="{{ node }}"></script>
+	{% endfor %}
 </body>
 </html>

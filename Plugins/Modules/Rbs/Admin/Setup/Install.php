@@ -27,9 +27,6 @@ class Install
 		/* @var $config \Change\Configuration\EditableConfiguration */
 		$config = $application->getConfiguration();
 
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Admin',
-			'\\Rbs\\Admin\\Http\\Rest\\ListenerAggregate');
-
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 
@@ -45,18 +42,6 @@ class Install
 			throw new \RuntimeException('Invalid document root path: ' . $documentRootPath .
 			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
 		}
-
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Admin', '\\Rbs\\Admin\\Register');
-
-		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Admin',
-			'\\Rbs\\Admin\\Events\\ListenerAggregate');
-
-
-		$config->addPersistentEntry('Change/Events/ProfileManager/Rbs_Admin', '\\Rbs\\Admin\\Profile\\ListenerAggregate');
-
-		$config->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Admin',
-			'\\Rbs\\Admin\\Events\\SharedListenerAggregate');
-
 	}
 
 	/**

@@ -8,25 +8,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 */
-	//	public function initialize($plugin)
-	//	{
-	//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application)
-	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Stock', '\\Rbs\\Stock\\Admin\\Register');
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
@@ -36,6 +17,8 @@ class Install
 	{
 		$schema = new Schema($applicationServices->getDbProvider()->getSchemaManager());
 		$schema->generate();
+		$applicationServices->getDbProvider()->closeConnection();
+
 		$tm = $applicationServices->getTransactionManager();
 		try
 		{

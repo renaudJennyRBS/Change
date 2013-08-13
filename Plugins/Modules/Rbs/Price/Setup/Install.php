@@ -8,20 +8,6 @@ class Install
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application)
-	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Price', '\\Rbs\\Price\\Admin\\Register');
-		$config->addPersistentEntry('Change/Events/CollectionManager/Rbs_Price', '\\Rbs\\Price\\Collection\\ListenerAggregate');
-		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Price', '\\Rbs\\Price\\Http\\rest\\ListenerAggregate');
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
