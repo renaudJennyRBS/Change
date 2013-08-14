@@ -205,8 +205,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			$relativeTargetPath = 'js' . DIRECTORY_SEPARATOR . $name . '.js';
 			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
 			\Change\Stdlib\File::write($targetPath, $asset->dump());
-			$scripts[] = '/' . $relativeTargetPath;
-
+			$scripts[] = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativeTargetPath);
 		}
 		return $scripts;
 	}
@@ -232,7 +231,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			$relativeTargetPath = 'css' . DIRECTORY_SEPARATOR . $name . '.css';
 			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
 			\Change\Stdlib\File::write($targetPath, $asset->dump());
-			$scripts[] = '/' . $relativeTargetPath;
+			$scripts[] = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativeTargetPath);
 		}
 		return $scripts;
 	}
