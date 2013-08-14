@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Result;
 
@@ -298,5 +299,26 @@ class DocumentResult extends Result
 	public function getUrlManager()
 	{
 		return $this->urlManager;
+	}
+
+	public function getBaseUrl($includeLang = false)
+	{
+		$baseUrl = null;
+		$selfLinks = $this->getRelLink('self');
+		$selfLink = array_shift($selfLinks);
+		if ($selfLink instanceof Link)
+		{
+			if (($this->document instanceof Localizable) && !$includeLang)
+			{
+				$pathParts = explode('/', $selfLink->getPathInfo());
+				array_pop($pathParts);
+				$baseUrl = implode('/', $pathParts);
+			}
+			else
+			{
+				$baseUrl = $selfLink->getPathInfo();
+			}
+		}
+		return $baseUrl;
 	}
 }

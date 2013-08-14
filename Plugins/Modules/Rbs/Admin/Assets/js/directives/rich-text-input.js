@@ -522,7 +522,7 @@
 				'<div class="inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'user\')">&times;</button>' +
 					'<h4>Sélectionner un utilisateur à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list model="Rbs_User_User" toolbar="false" extend="picker">' +
+					'<rbs-document-list model="Rbs_User_User" query="userListQuery" toolbar="false" extend="picker">' +
 					'<column name="identifier">' +
 					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">@(= doc.identifier =)</a>' +
 					'</column>' +
@@ -532,6 +532,7 @@
 					'</rbs-document-list>' +
 					'</div>',
 
+			//TODO filter the user, include only activated user.
 			compile : function (tElement) {
 				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
 			}
