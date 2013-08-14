@@ -15,7 +15,7 @@ body {
 	border-right: 1px solid var(main-border-color);
 	border-left: 1px solid var(main-border-color);
 	margin-bottom: 15px;
-	padding: 0 7px;
+	padding: 0 15px;
 }
 
 #header-middle {
@@ -93,7 +93,8 @@ body {
 #sidebar-column .row:not(:last-child),
 #content-column .row:not(:last-child),
 [data-type="block"]:not(:last-child),
-[data-type="block"]:not(:last-child) {
+[data-type="block"]:not(:last-child),
+.thumbnail {
 	margin-bottom: 15px;
 }
 
@@ -191,6 +192,10 @@ h6,
 	max-height: 100%;
 }
 
+.list-inline {
+	margin-left: -5px;
+}
+
 ul.bullet > li::before {
 	content: "» ";
 	font-size: 1.3em;
@@ -213,10 +218,17 @@ ol.bullet > li::before {
 	color: var(danger-text-color);
 }
 
-.document-list .odd {
+.document-list > * {
+	padding: 15px;
+	margin: 0;
+}
+.document-list > * > :last-child {
+	margin-bottom: 0;
+}
+.document-list > :nth-child(2n) {
 	background: var(alternate-odd-color);
 }
-.document-list .even {
+.document-list > :nth-child(2n+1) {
 	background: var(alternate-even-color);
 }
 
@@ -317,6 +329,27 @@ form .description {
 }
 td.price {
 	text-align: right;
+}
+
+/** Misc elements */
+.grid-list-bordered .grid-list-cell {
+	border-color: var(main-border-color);
+}
+
+.tab-content {
+	border: 1px solid var(main-border-color);
+	border-top: 0;
+}
+.tab-pane {
+	padding-top: 20px;
+}
+.tab-pane :first-child {
+	margin-top: 0;
+}
+
+.panel-heading :last-child,
+.panel-footer :last-child {
+	margin-bottom: 0;
 }
 
 /** Product list, comparison list, shelf list */

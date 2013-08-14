@@ -1,0 +1,29 @@
+/* Visuals */
+.visuals {
+	text-align: center;
+}
+.visuals img {
+	max-width: 100%;
+}
+.visuals .full-visuals {
+	height: 405px;
+	line-height: 405px;
+}
+.visuals .full-visuals li:first-child {
+	display: block;
+}
+.visuals .full-visuals li {
+	display: none;
+}
+
+.visuals .thumbnail-visuals li {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	min-width: 80px;
+	height: 60px;
+	line-height: 56px;
+	margin: 3px;
+	cursor: pointer;
+	vertical-align: middle;
+}

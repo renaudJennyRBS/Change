@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	{% for headline in pageresult.head %}
 		{{ headline|raw }}
 	{% endfor %}
@@ -8,42 +9,39 @@
 	<link rel="stylesheet" href="Theme/Rbs/Demo/css/screen.css" type="text/css" />
 	<script src="Theme/Rbs/Demo/js/jquery-1.8.2.min.js" type="text/javascript"></script>
 	<script src="Theme/Rbs/Demo/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="Theme/Rbs/Demo/js/bootstrap-complements.js" type="text/javascript"></script>
 	<script src="Theme/Rbs/Demo/js/default.js" type="text/javascript"></script>
 </head>
 <body>
 <header id="header">
 	<div id="header-top" class="main-grad">
 		<div class="row">
-			<div class="col-sm-12 col-lg-7"><!-- headerTop1 --></div>
-			<div class="col-sm-5 col-lg-2"><!-- headerTop2 --></div>
-			<div class="col-sm-5 col-lg-2"><!-- headerTop3 --></div>
-			<div class="col-sm-2 col-lg-1"><!-- headerTop4 --></div>
+			<div class="col-sm-12 col-md-7"><!-- headerTop1 --></div>
+			<div class="col-sm-5 col-md-2"><!-- headerTop2 --></div>
+			<div class="col-sm-5 col-md-2"><!-- headerTop3 --></div>
+			<div class="col-sm-2 col-md-1"><!-- headerTop4 --></div>
 		</div>
 	</div>
 	<div id="header-middle">
-		<div class="row">
-			<div class="col-lg-12"><!-- headerMiddle1 --></div>
-		</div>
+		<!-- headerMiddle1 -->
 	</div>
 	<div id="header-bottom">
-		<div class="row">
-			<div class="col-lg-12"><!-- headerBottom1 --></div>
-		</div>
+		<!-- headerBottom1 -->
 	</div>
 </header>
 <div id="content">
 	<section id="content-top">
 		<div class="row">
-			<div class="col-sm-9 col-lg-9"><!-- contentTop1 --></div>
-			<div class="col-sm-3 col-lg-3"><!-- contentTop2 --></div>
+			<div class="col-sm-9 col-md-9"><!-- contentTop1 --></div>
+			<div class="col-sm-3 col-md-3"><!-- contentTop2 --></div>
 		</div>
 	</section>
 	<section id="content-middle">
 		<div class="row">
-			<main class="col-sm-9 col-sm-push-3 col-lg-9 col-lg-push-3" id="content-column">
+			<main class="col-sm-9 col-sm-push-3 col-md-push-3 col-lg-push-3" id="content-column">
 				<!-- mainContent -->
 			</main>
-			<aside class="col-sm-3 col-sm-pull-9 col-lg-3 col-lg-pull-9" id="sidebar-column">
+			<aside class="col-sm-3 col-sm-pull-9 col-md-pull-9 col-lg-pull-9" id="sidebar-column">
 				<!-- contentMiddle1 -->
 				<!-- sidebarContent -->
 			</aside>
@@ -52,30 +50,28 @@
 </div>
 <footer id="footer">
 	<div id="footer-top">
-		<div class="row">
-			<div class="col-lg-12"><!-- footerTop1 --></div>
-		</div>
+		<div><!-- footerTop1 --></div>
 	</div>
 	<div id="footer-middle" class="inverse-grad">
 		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-md-6">
 				<div class="row">
-					<div class="col-sm-6 col-lg-6"><!-- footerMiddle1 --></div>
-					<div class="col-sm-6 col-lg-6"><!-- footerMiddle2 --></div>
+					<div class="col-sm-6"><!-- footerMiddle1 --></div>
+					<div class="col-sm-6"><!-- footerMiddle2 --></div>
 				</div>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-md-6">
 				<div class="row">
-					<div class="col-sm-6 col-lg-6"><!-- footerMiddle3 --></div>
-					<div class="col-sm-6 col-lg-6"><!-- footerMiddle4 --></div>
+					<div class="col-sm-6"><!-- footerMiddle3 --></div>
+					<div class="col-sm-6"><!-- footerMiddle4 --></div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="footer-bottom">
 		<div class="row">
-			<div class="col-sm-6 col-lg-6"><!-- footerBottom1 --></div>
-			<div class="col-sm-6 col-lg-6"><!-- footerBottom2 --></div>
+			<div class="col-sm-6"><!-- footerBottom1 --></div>
+			<div class="col-sm-6"><!-- footerBottom2 --></div>
 		</div>
 	</div>
 </footer>

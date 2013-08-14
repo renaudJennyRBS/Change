@@ -3,6 +3,11 @@
 	white-space: pre-wrap;
 }
 
+/* Use this class to hide elements when JavaScript is not activated. */
+.js {
+	display: none !important;
+}
+
 /* Homogenize row margins */
 .row {
 	margin-right: -15px;
@@ -23,6 +28,25 @@
 	display: block;
 	padding: 3px 20px;
 	line-height: 20px;
+}
+
+/* list-inline on dl */
+.list-inline > dt,
+.list-inline > dd {
+	display: inline-block;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.list-inline > dt:after {
+	content: " : ";
+}
+
+/* list-divided */
+.list-inline.list-divided > li:not(:first-child):before,
+.list-inline.list-divided > dt:not(:first-child):before {
+	content: "|";
+	padding-right: 10px;
+	font-weight: normal;
 }
 
 /* Grid list */
