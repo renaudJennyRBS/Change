@@ -59,10 +59,8 @@ class Listeners implements ListenerAggregateInterface
 			'Rbs/Theme/PageTemplate/editor.js',
 			'Rbs/Theme/Theme/controllers.js',
 			'Rbs/Theme/Theme/editor.js',
-			'Rbs/Timeline/js/admin.js',
-			'Rbs/User/js/admin.js',
 			'Rbs/Timeline/js/directives/timeline.js',
-			'Rbs/Timeline/Message/controllers.js',
+			'Rbs/User/js/admin.js',
 			'Rbs/User/User/controllers.js',
 			'Rbs/User/User/editor.js',
 			'Rbs/User/Group/controllers.js',
@@ -85,6 +83,7 @@ class Listeners implements ListenerAggregateInterface
 		$header = array('
 	<link href="Rbs/Media/css/admin.css" rel="stylesheet"/>
 	<link href="Rbs/Tag/css/admin.css" rel="stylesheet"/>
+	<link href="Rbs/Timeline/css/admin.css" rel="stylesheet"/>
 	<link href="Rbs/Website/css/admin.css" rel="stylesheet"/>');
 
 		$menu = array(
@@ -110,8 +109,6 @@ class Listeners implements ListenerAggregateInterface
 					'keywords' => $i18nManager->trans('m.rbs.tag.admin.js.module-keywords')),
 				array('label' => $i18nManager->trans('m.rbs.theme.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/Theme', 'section' => 'cms'),
-				array('label' => $i18nManager->trans('m.rbs.timeline.admin.js.module-name', array('ucf')),
-					'url' => 'Rbs/Timeline', 'section' => 'admin', 'keywords' => $i18nManager->trans('m.rbs.timeline.admin.js.module-keywords')),
 				array('label' => $i18nManager->trans('m.rbs.user.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/User', 'section' => 'admin',
 					'keywords' => $i18nManager->trans('m.rbs.user.admin.js.module-keywords')),

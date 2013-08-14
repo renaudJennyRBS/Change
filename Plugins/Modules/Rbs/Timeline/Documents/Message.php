@@ -33,7 +33,10 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		$ps->getRichTextManager()->setDocumentServices($this->getDocumentServices())->render($this->getMessage(), 'Admin');
 	}
 
-	public function updateRestDocumentResult($documentResult)
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	protected function updateRestDocumentResult($documentResult)
 	{
 		parent::updateRestDocumentResult($documentResult);
 		/* @var $message \Rbs\Timeline\Documents\Message */
@@ -58,7 +61,11 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		$documentResult->setProperty('avatar', $avatar);
 	}
 
-	public function updateRestDocumentLink($documentLink, $extraColumn)
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param $extraColumn
+	 */
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 		/* @var $message \Rbs\Timeline\Documents\Message */

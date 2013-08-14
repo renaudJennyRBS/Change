@@ -4,14 +4,14 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('timeline', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', 'RbsChange.User', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http, User) {
+	app.directive('rbsTimeline', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', 'RbsChange.User', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http, User) {
 
 		return {
-			restrict: 'E',
+			restrict: 'A',
 
 			templateUrl: 'Rbs/Timeline/js/directives/timeline.twig',
 
-			link : function (scope, element, attributes) {
+			link : function (scope, elm, attrs) {
 
 				function reloadMessages(){
 					scope.timelineMessages = [];
@@ -25,7 +25,7 @@
 										'property': 'contextId'
 									},
 									'rexp': {
-										'value': attributes.docid
+										'value': scope.document.id
 									}
 								}
 							]
@@ -41,17 +41,22 @@
 						});
 				}
 
-				reloadMessages();
+				scope.$watch('document', function (doc, oldDoc){
+					if (doc){
+						reloadMessages();
+					}
+				});
 
-				//new comment
-				scope.newComment = "";
-				scope.comment = function (){
+				//new message
+				scope.newMessage = "";
+				scope.sendMessage = function (){
 					var url = REST.getBaseUrl('resources/Rbs/Timeline/Message/');
 					$http.post(url, {
-						'contextId': attributes.docid,
-						'message': this.newComment,
+						'contextId': scope.document.id,
+						'message': scope.newMessage,
 						'label': ' '
 					}).success(function (){
+							scope.newMessage = "";
 							reloadMessages();
 						});
 				};
