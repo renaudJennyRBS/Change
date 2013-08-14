@@ -1,28 +1,31 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.brand.document.brand.label', true) }}
-		{{ forms.field('description', 'LongString', 'm.rbs.brand.document.brand.description', false) }}
-		{{ forms.picker('visual', 'Rbs_Media_Image', 'm.rbs.catalog.document.product.visual',
-			false, null, 'm.rbs.brand.document.brand.select-visual', true)
-		}}
-		{{ forms.field('websiteUrl', 'Url', 'm.rbs.brand.document.brand.websiteurl', false) }}
-		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.rbs.brand.document.brand.startpublication', ['ucf']) }}</label>
-			<div class="controls">
-				<date-selector data-ng-model="document.startPublication" name="startPublication"></date-selector>
-			</div>
-		</div>
 
-		<div class="control-group property">
-			<label class="control-label" for="beginDate">{{ i18n('m.rbs.brand.document.brand.endpublication', ['ucf'])}}</label>
-			<div class="controls">
-				<date-selector data-ng-model="document.endPublication" name="endPublication"></date-selector>
-			</div>
-		</div>
+		<rbs-field-text property="label" required="true" input-class="input-block-level"
+			label="{{ i18nAttr('m.rbs.brand.document.brand.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-rich-text property="description" required="false" input-class="input-block-level"
+			label="{{ i18nAttr('m.rbs.brand.document.brand.description', ['ucf']) }}">
+		</rbs-field-rich-text>
+
+		<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.catalog.document.product.visual', ['ucf']) }}"
+			accepted-model="Rbs_Media_Image" allow-creation="true" allow-edition="true"
+			selector-title="{{ i18nAttr('m.rbs.brand.document.brand.select-visual', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-url property="websiteUrl" required="false" input-class="input-block-level"
+			label="{{ i18nAttr('m.rbs.brand.document.brand.websiteurl', ['ucf']) }}">
+		</rbs-field-url>
+
+		<rbs-field-date property="startPublication"
+			label="{{ i18nAttr('m.rbs.brand.document.brand.startPublication', ['ucf']) }}">
+		</rbs-field-date>
+
+		<rbs-field-date property="endPublication" label="{{ i18nAttr('m.rbs.brand.document.brand.endPublication', ['ucf']) }}">
+		</rbs-field-date>
 	</fieldset>
 
 	<fieldset
