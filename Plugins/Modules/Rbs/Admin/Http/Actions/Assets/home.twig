@@ -64,9 +64,10 @@
 	</style>
 
 	<!-- modules -->
-	{% for node in resources.header %}
-		{{ node|raw }}
+	{% for href in styles %}
+		<link rel="stylesheet" href="{{ href }}"></link>
 	{% endfor %}
+
 
 	<script type="text/javascript">
 		var __change = {};
@@ -234,8 +235,8 @@
 	<script type="text/javascript" src="Rbs/Admin/js/routes.js"></script>
 
 	<!-- modules -->
-	{% for node in resources.body %}
-		<script type="text/javascript" src="{{ node }}"></script>
+	{% for src in scripts %}
+		<script type="text/javascript" src="{{ src }}"></script>
 	{% endfor %}
 </body>
 </html>

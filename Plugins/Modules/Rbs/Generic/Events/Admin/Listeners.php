@@ -1,6 +1,10 @@
 <?php
 namespace Rbs\Generic\Events\Admin;
 
+use Assetic\Asset\AssetCollection;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\GlobAsset;
+use Change\Plugins\Plugin;
 use Rbs\Admin\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -26,65 +30,31 @@ class Listeners implements ListenerAggregateInterface
 		$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
 		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
 
-		$body = array(
-			'Rbs/Admin/lib/moment/i18n/' . $lcid . '.js',
-			'Rbs/Admin/lib/angular/i18n/angular-locale_' . $lcid . '.js',
-			'Rbs/Collection/js/admin.js',
-			'Rbs/Collection/js/directives.js',
-			'Rbs/Collection/Collection/controllers.js',
-			'Rbs/Collection/Collection/editor.js',
-			'Rbs/Collection/Item/controllers.js',
-			'Rbs/Collection/Item/editor.js',
-			'Rbs/Geo/js/admin.js',
-			'Rbs/Geo/Zone/controllers.js',
-			'Rbs/Geo/Zone/editor.js',
-			'Rbs/Geo/Country/controllers.js',
-			'Rbs/Geo/Country/editor.js',
-			'Rbs/Geo/TerritorialUnit/controllers.js',
-			'Rbs/Geo/TerritorialUnit/editor.js',
-			'Rbs/Media/js/admin.js',
-			'Rbs/Media/Image/controllers.js',
-			'Rbs/Media/Image/editor.js',
-			'Rbs/Plugins/js/admin.js',
-			'Rbs/Plugins/js/services/plugins.js',
-			'Rbs/Plugins/Installed/controllers.js',
-			'Rbs/Plugins/Registered/controllers.js',
-			'Rbs/Plugins/New/controllers.js',
-			'Rbs/Tag/js/admin.js',
-			'Rbs/Tag/js/directives.js',
-			'Rbs/Tag/Tag/controllers.js',
-			'Rbs/Tag/Tag/editor.js',
-			'Rbs/Theme/js/admin.js',
-			'Rbs/Theme/PageTemplate/controllers.js',
-			'Rbs/Theme/PageTemplate/editor.js',
-			'Rbs/Theme/Theme/controllers.js',
-			'Rbs/Theme/Theme/editor.js',
-			'Rbs/Timeline/js/directives/timeline.js',
-			'Rbs/User/js/admin.js',
-			'Rbs/User/User/controllers.js',
-			'Rbs/User/User/editor.js',
-			'Rbs/User/Group/controllers.js',
-			'Rbs/User/Group/editor.js',
-			'Rbs/User/Profile/controllers.js',
-			'Rbs/Website/js/admin.js',
-			'Rbs/Website/StaticPage/controllers.js',
-			'Rbs/Website/StaticPage/editor.js',
-			'Rbs/Website/FunctionalPage/controllers.js',
-			'Rbs/Website/FunctionalPage/editor.js',
-			'Rbs/Website/Topic/controllers.js',
-			'Rbs/Website/Topic/editor.js',
-			'Rbs/Website/Website/controllers.js',
-			'Rbs/Website/Website/editor.js',
-			'Rbs/Website/Menu/controllers.js',
-			'Rbs/Website/Menu/editor.js',
-			'Rbs/Website/SectionPageFunction/controllers.js'
-		);
+		$manager = $event->getManager();
+		$i18nManager = $manager->getApplicationServices()->getI18nManager();
+		$pm = $manager->getApplicationServices()->getPluginManager();
+		foreach ($pm->getInstalledPlugins() as $plugin)
+		{
+			if ($plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
+			{
+				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-		$header = array('
-	<link href="Rbs/Media/css/admin.css" rel="stylesheet"/>
-	<link href="Rbs/Tag/css/admin.css" rel="stylesheet"/>
-	<link href="Rbs/Timeline/css/admin.css" rel="stylesheet"/>
-	<link href="Rbs/Website/css/admin.css" rel="stylesheet"/>');
+				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
+				$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+			}
+		}
+
+		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
+		if ($plugin)
+		{
+			$jsAssets = new AssetCollection([
+				new FileAsset($plugin->getBasePath() . '/Assets/lib/moment/i18n/' . $lcid . '.js'),
+				new FileAsset($plugin->getBasePath() . '/Assets/lib/angular/i18n/angular-locale_' . $lcid . '.js')
+				]
+			);
+			$manager->getJsAssetManager()->set('i18n', $jsAssets);
+		}
 
 		$menu = array(
 			'sections' => array(
@@ -119,8 +89,6 @@ class Listeners implements ListenerAggregateInterface
 			)
 		);
 
-		$event->setParam('header', array_merge($event->getParam('header'), $header));
-		$event->setParam('body', array_merge($event->getParam('body', array()), $body));
 		$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 	}
 
