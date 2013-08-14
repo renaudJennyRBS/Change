@@ -109,7 +109,7 @@ class Listeners implements ListenerAggregateInterface
 						{
 							$event->setAction(function ($event)
 							{
-								(new \Rbs\Tag\Http\Rest\Actions\GetDocumentTags())->execute($event);
+								(new \Rbs\Tag\Http\Rest\Actions\GetTaggedDocuments())->execute($event);
 							});
 						}
 					}
