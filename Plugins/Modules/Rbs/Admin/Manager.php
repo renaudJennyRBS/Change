@@ -1,9 +1,10 @@
 <?php
 namespace Rbs\Admin;
 
+use Assetic\AssetManager;
+use Assetic\Factory\AssetFactory;
 use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
-use Zend\EventManager\EventManager;
 
 /**
  * @name \Rbs\Admin\Manager
@@ -11,6 +12,17 @@ use Zend\EventManager\EventManager;
 class Manager implements \Zend\EventManager\EventsCapableInterface
 {
 	use \Change\Events\EventsCapableTrait;
+
+	/**
+	 * @var \Assetic\AssetManager
+	 */
+	protected $jsAssetManager;
+
+	/**
+	 * @var \Assetic\AssetManager
+	 */
+	protected $cssAssetManager;
+
 
 	/**
 	 * @var ApplicationServices
@@ -46,6 +58,9 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$this->setDocumentServices($documentServices);
 		}
+		$this->jsAssetManager = new AssetManager();
+		$this->cssAssetManager = new AssetManager();
+
 	}
 
 	/**
@@ -116,6 +131,14 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return \Assetic\AssetManager
+	 */
+	public function getCssAssetManager()
+	{
+		return $this->cssAssetManager;
+	}
+
+	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -162,12 +185,71 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return array
+	 */
+	protected function prepareScriptAssets()
+	{
+		$scripts = array();
+		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
+		$am = $this->getJsAssetManager();
+		foreach ($am->getNames() as $name)
+		{
+			$asset = $am->get($name);
+			if ($asset instanceof \Assetic\Asset\AssetCollection)
+			{
+				if (count($asset->all()) === 0)
+				{
+					continue;
+				}
+			}
+			$relativeTargetPath = 'js' . DIRECTORY_SEPARATOR . $name . '.js';
+			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
+			\Change\Stdlib\File::write($targetPath, $asset->dump());
+			$scripts[] = '/' . $relativeTargetPath;
+
+		}
+		return $scripts;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function prepareCssAssets()
+	{
+		$scripts = array();
+		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
+		$am = $this->getCssAssetManager();
+		foreach ($am->getNames() as $name)
+		{
+			$asset = $am->get($name);
+			if ($asset instanceof \Assetic\Asset\AssetCollection)
+			{
+				if (count($asset->all()) === 0)
+				{
+					continue;
+				}
+			}
+			$relativeTargetPath = 'css' . DIRECTORY_SEPARATOR . $name . '.css';
+			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
+			\Change\Stdlib\File::write($targetPath, $asset->dump());
+			$scripts[] = '/' . $relativeTargetPath;
+		}
+		return $scripts;
+	}
+
+	/**
 	 * @param string $pathName
 	 * @param array $attributes
 	 * @return string
 	 */
 	public function renderTemplateFile($pathName, array $attributes)
 	{
+		$scripts = $this->prepareScriptAssets();
+		$attributes = ['scripts' => $scripts] + $attributes;
+
+		$styles = $this->prepareCssAssets();
+		$attributes = ['styles' => $styles] + $attributes;
+
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
 
 		// Include Twig macros for forms.
@@ -188,5 +270,13 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			$twig->addExtension($extension);
 		}
 		return $twig->render(basename($pathName), $attributes);
+	}
+
+	/**
+	 * @return \Assetic\AssetManager
+	 */
+	public function getJsAssetManager()
+	{
+		return $this->jsAssetManager;
 	}
 }

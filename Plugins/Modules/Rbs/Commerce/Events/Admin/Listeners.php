@@ -1,6 +1,9 @@
 <?php
 namespace Rbs\Commerce\Events\Admin;
 
+use Assetic\Asset\AssetCollection;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\GlobAsset;
 use Rbs\Admin\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -23,44 +26,20 @@ class Listeners implements ListenerAggregateInterface
 
 	public function registerResources(Event $event)
 	{
-		$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
+		$manager = $event->getManager();
+		$i18nManager = $manager->getApplicationServices()->getI18nManager();
+		$pm = $manager->getApplicationServices()->getPluginManager();
+		foreach ($pm->getInstalledPlugins() as $plugin)
+		{
+			if ($plugin->getPackage() == "ECom")
+			{
+				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-		$body = array(
-			'Rbs/Brand/js/admin.js',
-			'Rbs/Brand/Brand/controllers.js',
-			'Rbs/Brand/Brand/editor.js',
-			'Rbs/Catalog/js/admin.js',
-			'Rbs/Catalog/Category/controllers.js',
-			'Rbs/Catalog/Category/editor.js',
-			'Rbs/Catalog/Product/controllers.js',
-			'Rbs/Catalog/Product/editor.js',
-			'Rbs/Catalog/ProductCategorization/controllers.js',
-			'Rbs/Catalog/ProductCategorization/editor.js',
-			'Rbs/Catalog/Attribute/controllers.js',
-			'Rbs/Catalog/Attribute/editor.js',
-			'Rbs/Price/js/admin.js',
-			'Rbs/Price/js/directives.js',
-			'Rbs/Price/Price/controllers.js',
-			'Rbs/Price/Price/editor.js',
-			'Rbs/Price/Price/price-list.js',
-			'Rbs/Price/Tax/controllers.js',
-			'Rbs/Price/Tax/editor.js',
-			'Rbs/Price/BillingArea/controllers.js',
-			'Rbs/Price/BillingArea/editor.js',
-			'Rbs/Store/js/admin.js',
-			'Rbs/Store/WebStore/controllers.js',
-			'Rbs/Store/WebStore/editor.js',
-			'Rbs/Stock/js/admin.js',
-			'Rbs/Stock/js/directives.js',
-			'Rbs/Stock/Sku/controllers.js',
-			'Rbs/Stock/Sku/editor.js',
-			'Rbs/Stock/InventoryEntry/controllers.js',
-			'Rbs/Stock/InventoryEntry/editor.js'
-		);
-
-		$header = array('
-    <link href="Rbs/Catalog/css/admin.css" rel="stylesheet"/>
-    <link href="Rbs/Price/css/admin.css" rel="stylesheet"/>');
+				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
+				$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+			}
+		}
 
 		$menu = array(
 			'sections' => array(
@@ -85,8 +64,6 @@ class Listeners implements ListenerAggregateInterface
 			)
 		);
 
-		$event->setParam('header', array_merge($event->getParam('header'), $header));
-		$event->setParam('body', array_merge($event->getParam('body', array()), $body));
 		$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 	}
 
