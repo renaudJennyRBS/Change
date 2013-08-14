@@ -24,9 +24,13 @@ class Listeners implements ListenerAggregateInterface
 		{
 			if ($event->getEditor() === 'Markdown')
 			{
-				if ($event->getProfile() === 'Admin' || $event->getProfile() === 'Website')
+				if ($event->getProfile() === 'Admin')
 				{
 					$event->setParser(new \Rbs\Admin\MarkdownParser($event->getDocumentServices()));
+				}
+				elseif ($event->getProfile() === 'Website')
+				{
+					$event->setParser(new \Rbs\Website\RichText\MarkdownParser($event->getDocumentServices()));
 				}
 			}
 		};
