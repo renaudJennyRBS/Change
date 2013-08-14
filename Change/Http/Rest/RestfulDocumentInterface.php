@@ -16,4 +16,10 @@ interface RestfulDocumentInterface
 	 * @param Array
 	 */
 	public function populateRestDocumentLink($documentLink, $extraColumn);
+
+	/**
+	 * @param \Change\Http\Event  $event
+	 * @return $this|false on error
+	 */
+	public function populateDocumentFromRestEvent(\Change\Http\Event $event);
 }

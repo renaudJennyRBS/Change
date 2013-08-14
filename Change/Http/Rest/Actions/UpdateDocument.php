@@ -2,10 +2,8 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Localizable;
-use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\UpdateDocument
@@ -64,9 +62,11 @@ class UpdateDocument
 		try
 		{
 			$transactionManager->begin();
-
-			$this->update($event, $document, $properties);
-
+			$result = $document->populateDocumentFromRestEvent($event);
+			if ($result)
+			{
+				$this->update($event, $document, $properties);
+			}
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)
@@ -83,28 +83,6 @@ class UpdateDocument
 	 */
 	protected function update($event, $document, $properties)
 	{
-		$urlManager = $event->getUrlManager();
-		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if (array_key_exists($name, $properties))
-			{
-				try
-				{
-					$c = new PropertyConverter($document, $property, $urlManager);
-					$c->setPropertyValue($properties[$name]);
-				}
-				catch (\Exception $e)
-				{
-					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
-					$errorResult->setData(array('name' => $name, 'value' => $properties[$name], 'type' => $property->getType()));
-					$errorResult->addDataValue('document-type', $property->getDocumentType());
-					$event->setResult($errorResult);
-					return;
-				}
-			}
-		}
-
 		try
 		{
 			$document->update();

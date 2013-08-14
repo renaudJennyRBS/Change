@@ -11,9 +11,11 @@ use Change\Http\Rest\DocumentResult;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Rest\Result\DocumentActionLink;
+use Change\Http\Rest\Result\ErrorResult;
 use Change\Http\Rest\Result\TreeNodeLink;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
+use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Change\Documents\AbstractDocument
@@ -508,7 +510,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function populateRestDocumentResult($documentResult)
 	{
-		$documentLink = $documentResult->getRelLink('self')[0];
 		$um = $documentResult->getUrlManager();
 		if ($this->getTreeName())
 		{
@@ -637,5 +638,79 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 
+	}
+
+	protected $ignoredPropertiesForRestEvents = array('model');
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @return $this | false on error
+	 */
+	public function populateDocumentFromRestEvent(\Change\Http\Event $event)
+	{
+		$data = $event->getRequest()->getPost()->toArray();
+		foreach ($data as $name => $value)
+		{
+			if (!in_array($name, $this->ignoredPropertiesForRestEvents))
+			{
+				$result = $this->processRestData($name, $value, $event);
+				if ($result === false)
+				{
+					return false;
+				}
+			}
+		}
+		$documentEvent = new \Change\Documents\Events\Event('populateDocumentFromRestEvent', $this,
+			array('restEvent' => $event));
+		$this->getEventManager()->trigger($documentEvent);
+
+		return $event->getResult() instanceof ErrorResult ? false : $this;
+	}
+
+	/**
+	 * Process the incoming REST data $name and set it to $value
+	 *
+	 * @param $name
+	 * @param $value
+	 * @param $event
+	 * @return bool
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		$property = $this->getDocumentModel()->getProperty($name);
+		if ($property)
+		{
+			if ($name == 'id' && intval($value) > 0 && $this->isNew())
+			{
+				$value = intval($value);
+				$existingDocument = $this->getDocumentManager()->getDocumentInstance($value);
+				if ($existingDocument)
+				{
+					$errorResult = new ErrorResult('DOCUMENT-ALREADY-EXIST', 'document already exist', HttpResponse::STATUS_CODE_409);
+					$errorResult->setData(array('document-id' => $value));
+					$errorResult->addDataValue('model-name', $this->getDocumentModelName());
+					$event->setResult($errorResult);
+					return false;
+				}
+				$this->initialize($value);
+			}
+			else
+			{
+				try
+				{
+					$c = new PropertyConverter($this, $property);
+					$c->setPropertyValue($value);
+				}
+				catch (\Exception $e)
+				{
+					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
+					$errorResult->setData(array('name' => $name, 'value' => $value, 'type' => $property->getType()));
+					$errorResult->addDataValue('document-type', $property->getDocumentType());
+					$event->setResult($errorResult);
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

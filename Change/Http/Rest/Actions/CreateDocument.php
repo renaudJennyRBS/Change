@@ -2,12 +2,10 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\CreateDocument
@@ -57,54 +55,48 @@ class CreateDocument
 			$document->initialize($documentId);
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
-		if ($document instanceof Editable)
-		{
-			if (!isset($properties['authorId']) || intval($properties['authorId']) === 0)
-			{
-				$user = $event->getAuthenticationManager()->getCurrentUser();
-				$properties['authorId'] = $user->getId();
-				$properties['authorName'] = $user->getName();
-			}
-		}
 
-		if ($document instanceof Localizable)
+
+		$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : $event->getApplicationServices()->getI18nManager()->getLCID();
+		if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
-			$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : null;
-			if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
-			{
-				$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
-				$errorResult = new ErrorResult('INVALID-LCID', 'Invalid refLCID property value', HttpResponse::STATUS_CODE_409);
-				$errorResult->addDataValue('value', $LCID);
-				$errorResult->addDataValue('supported-LCID', $supported);
-				$event->setResult($errorResult);
-				return;
-			}
-			$event->setParam('LCID', $LCID);
+			$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
+			$errorResult = new ErrorResult('INVALID-LCID', 'Invalid refLCID property value', HttpResponse::STATUS_CODE_409);
+			$errorResult->addDataValue('value', $LCID);
+			$errorResult->addDataValue('supported-LCID', $supported);
+			$event->setResult($errorResult);
+			return;
 		}
-		else
-		{
-			$LCID = null;
-		}
+		$event->setParam('LCID', $LCID);
+
 
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
+			$documentManager->pushLCID($LCID);
+			$pop = true;
 			$transactionManager->begin();
-			if ($LCID)
+			$result = $document->populateDocumentFromRestEvent($event);
+			if ($result)
 			{
-				$documentManager->pushLCID($LCID);
+				if ($document instanceof Editable)
+				{
+					$authorId = $document->getAuthorId();
+					if (!$authorId)
+					{
+						$user = $event->getAuthenticationManager()->getCurrentUser();
+						$document->setAuthorId($user->getId());
+						$document->setAuthorName($user->getName());
+					}
+				}
 				$this->create($event, $document, $properties);
-				$documentManager->popLCID();
 			}
-			else
-			{
-				$this->create($event, $document, $properties);
-			}
-
 			$transactionManager->commit();
+			$documentManager->popLCID();
 		}
 		catch (\Exception $e)
 		{
+			if ($pop) $documentManager->popLCID();
 			throw $transactionManager->rollBack($e);
 		}
 	}
@@ -118,28 +110,6 @@ class CreateDocument
 	 */
 	protected function create($event, $document, $properties)
 	{
-		$urlManager = $event->getUrlManager();
-		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if (array_key_exists($name, $properties))
-			{
-				try
-				{
-					$c = new PropertyConverter($document, $property, $urlManager);
-					$c->setPropertyValue($properties[$name]);
-				}
-				catch (\Exception $e)
-				{
-					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
-					$errorResult->setData(array('name' => $name, 'value' => $properties[$name], 'type' => $property->getType()));
-					$errorResult->addDataValue('document-type', $property->getDocumentType());
-					$event->setResult($errorResult);
-					return;
-				}
-			}
-		}
-
 		try
 		{
 			$document->create();

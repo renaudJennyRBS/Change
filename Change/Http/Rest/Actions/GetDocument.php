@@ -1,16 +1,10 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\PropertyConverter;
-use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
-use Change\Http\Rest\Result\ModelLink;
 use Change\Http\Rest\Result\TreeNodeLink;
-use Change\Logging\Logging;
 use Zend\Http\Response as HttpResponse;
 
 /**
