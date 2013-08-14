@@ -96,7 +96,7 @@ class GetCorrection
 	protected function doGetCorrection($event, $document, $correction)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new DocumentCorrectionResult();
+		$result = new DocumentCorrectionResult($event->getUrlManager(), $document);
 
 		$documentLink = new DocumentLink($urlManager, $document);
 		$documentLink->setRel('resource');
