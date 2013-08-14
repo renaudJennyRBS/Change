@@ -3,7 +3,7 @@ namespace Rbs\Website\RichText;
 use Change\Presentation\RichText\ParserInterface;
 
 /**
- * @name \Rbs\Admin\MarkdownParser
+ * @name \Rbs\Website\RichText\MarkdownParser
  */
 class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implements ParserInterface
 {
@@ -80,5 +80,24 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		return $this->hashPart($result);
 	}
 
+	/**
+	 * @param $matches
+	 * @return string
+	 */
+	protected function _doLists_callback($matches)
+	{
+		// Re-usable patterns to match list item bullets and number markers:
+		$marker_ul_re  = '[*+-]';
+		$marker_ol_re  = '\d+[\.]';
 
+		$list = $matches[1];
+		$list_type = preg_match("/$marker_ul_re/", $matches[4]) ? "ul" : "ol";
+
+		$marker_any_re = ($list_type == "ul" ? $marker_ul_re : $marker_ol_re);
+
+		$list .= "\n";
+		$result = $this->processListItems($list, $marker_any_re);
+		$result = $this->hashBlock("<$list_type class=\"bullet\">\n" . $result . "</$list_type>");
+		return "\n". $result ."\n\n";
+	}
 }
