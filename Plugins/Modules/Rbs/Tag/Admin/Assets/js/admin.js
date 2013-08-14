@@ -154,7 +154,7 @@
 
 		return {
 
-			'getList' : function (moduleName) {
+			'getList' : function () {
 				var tags = [];
 				REST.collection('Rbs_Tag_Tag', {'column': ['color','userTag'], 'limit': 100}).then(function (result) {
 					angular.forEach(result.resources, function (r) {
