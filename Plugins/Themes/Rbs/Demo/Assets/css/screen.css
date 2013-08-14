@@ -1,5 +1,6 @@
 @import url('bootstrap.min.css');
+@import url('font-awesome.css');
 @import url('bootstrap-complements.css');
 @import url('bootstrap-overrides.css');
-@import url('font-awesome.css');
+@import url('macros.css');
 @import url('styles.css');

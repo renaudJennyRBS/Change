@@ -92,6 +92,11 @@ pre {
 	border-color: var(main-border-color);
 }
 
+table td[class^="col-"],
+table th[class^="col-"] {
+	position: static;
+}
+
 .table > thead > tr > th,
 .table > tbody > tr > th,
 .table > tfoot > tr > th {
@@ -735,11 +740,12 @@ a:focus .caret {
 	border-color: var(main-border-color);
 }
 
+a.list-group-item {
+	color: var(main-text-color);
+}
+
 a.list-group-item .list-group-item-heading {
 	color: var(main-link-color);
-}
-a.list-group-item .list-group-item-text {
-	color: var(main-text-color);
 }
 
 a.list-group-item:hover,
@@ -747,7 +753,9 @@ a.list-group-item:focus {
 	background-color: var(main-background-second-color);
 }
 
-a.list-group-item.active {
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
 	color: var(grad-primary-text-color);
 	background-color: var(grad-primary-first-color);
 	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
@@ -755,7 +763,9 @@ a.list-group-item.active {
 	border-color: var(main-border-color);
 }
 
-a.list-group-item.active .list-group-item-text {
+.list-group-item.active .list-group-item-text,
+.list-group-item.active:hover .list-group-item-text,
+.list-group-item.active:focus .list-group-item-text {
 	color: var(grad-primary-text-color);
 }
 
@@ -765,7 +775,8 @@ a.list-group-item.active .list-group-item-text {
 	border-radius: 0;
 }
 
-.panel .panel-title {
+.panel .panel-title,
+.panel-group .accordion-toggle {
 	color: inherit;
 }
 
@@ -775,8 +786,15 @@ a.list-group-item.active .list-group-item-text {
 	border-top-color: var(main-border-color);
 	border-radius: 0;
 }
+.panel-primary .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(main-border-color);
+}
+.panel-primary .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(main-border-color);
+}
 
-.panel-primary {
+.panel-primary,
+.panel-primary .img-thumbnail {
 	border-color: var(primary-text-color);
 }
 
@@ -786,8 +804,15 @@ a.list-group-item.active .list-group-item-text {
 	background-color: var(primary-background-color);
 	border-color: var(primary-text-color);
 }
+.panel-primary .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(primary-text-color);
+}
+.panel-primary .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(primary-text-color);
+}
 
-.panel-success {
+.panel-success,
+.panel-success .img-thumbnail {
 	border-color: var(success-text-color);
 }
 
@@ -798,7 +823,15 @@ a.list-group-item.active .list-group-item-text {
 	border-color: var(success-text-color);
 }
 
-.panel-warning {
+.panel-success .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(success-text-color);
+}
+.panel-success .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(success-text-color);
+}
+
+.panel-warning,
+.panel-warning .img-thumbnail {
 	border-color: var(warning-text-color);
 }
 
@@ -809,7 +842,15 @@ a.list-group-item.active .list-group-item-text {
 	border-color: var(warning-text-color);
 }
 
-.panel-danger {
+.panel-warning .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(warning-text-color);
+}
+.panel-warning .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(warning-text-color);
+}
+
+.panel-danger,
+.panel-danger .img-thumbnail {
 	border-color: var(danger-text-color);
 }
 
@@ -820,7 +861,15 @@ a.list-group-item.active .list-group-item-text {
 	border-color: var(danger-text-color);
 }
 
-.panel-info {
+.panel-danger .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(danger-text-color);
+}
+.panel-danger .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(danger-text-color);
+}
+
+.panel-info,
+.panel-info .img-thumbnail {
 	border-color: var(info-text-color);
 }
 
@@ -829,6 +878,13 @@ a.list-group-item.active .list-group-item-text {
 	color: var(info-text-color);
 	background-color: var(info-background-color);
 	border-color: var(info-text-color);
+}
+
+.panel-info .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(info-text-color);
+}
+.panel-info .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(info-text-color);
 }
 
 .well {
@@ -872,6 +928,11 @@ a.list-group-item.active .list-group-item-text {
 }
 
 .nav-tabs > li > a:hover {
+	border-color: var(main-border-color);
+}
+
+.nav-tabs > li > a:focus {
+	outline: none;
 	border-color: var(main-border-color);
 }
 
@@ -930,6 +991,11 @@ a.list-group-item.active .list-group-item-text {
 	margin-bottom: 15px;
 }
 
+.navbar-collapse,
+.navbar-form {
+	border-color: var(main-border-color);
+}
+
 .navbar .navbar-text,
 .navbar-brand {
 	color: var(main-text-color);
@@ -938,6 +1004,26 @@ a.list-group-item.active .list-group-item-text {
 .navbar-nav > li > a,
 a.navbar-brand {
 	color: var(main-link-color);
+}
+
+.navbar-brand {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.navbar-toggle {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.navbar-collapse,
+.navbar-header {
+	padding-left: 0;
+	padding-right: 0;
+}
+.navbar-nav,
+.navbar-form {
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .navbar-nav > li > a:hover,
@@ -1002,6 +1088,11 @@ a.navbar-brand:focus,
 	background-color: var(inverse-background-color);
 	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
 	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+	border-color: var(inverse-border-color);
+}
+
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
 	border-color: var(inverse-border-color);
 }
 
@@ -1508,26 +1599,6 @@ a.badge:focus {
 	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-info-first-color), var(grad-info-second-color));
 }
 
-.accordion-group {
-	border-color: var(main-border-color);
-}
-
-.accordion-toggle {
-	color: var(grad-default-text-color);
-	background-color: var(grad-default-first-color);
-	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
-	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
-	border-radius: 4px 4px 0 0;
-}
-
-.accordion-toggle.collapsed {
-	border-radius: 4px;
-}
-
-.accordion-inner {
-	border-color: var(main-border-color);
-}
-
 .carousel-control,
 .carousel-control:hover,
 .carousel-control:focus,
@@ -1546,8 +1617,4 @@ a.badge:focus {
 .jumbotron {
 	background-color: var(main-background-second-color);
 	border-radius: 0;
-}
-
-.grid-list-bordered .grid-list-cell {
-	border-color: 1px solid var(main-border-color);
 }
