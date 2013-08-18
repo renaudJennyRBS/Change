@@ -3,9 +3,10 @@ namespace Rbs\Collection\Documents;
 
 use Change\Documents\Events\Event;
 use Change\Documents\Query\Query;
-use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\ErrorResult;
 use Change\I18n\PreparedKey;
+use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Rbs\Collection\Documents\Collection
@@ -129,5 +130,29 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 		{
 			throw $tm->rollBack($e);
 		}
+	}
+
+	/**
+	 * @param $name
+	 * @param $value
+	 * @param \Change\Http\Event $event
+	 * @return bool
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		$result = parent::processRestData($name, $value, $event);
+		if ($this->isPropertyModified('code') && $this->getLocked() === true)
+		{
+			$result = new ErrorResult('COLLECTION-LOCKED', 'Can not modify the code of a locked collection', HttpResponse::STATUS_CODE_409);
+			$event->setResult($result);
+			return false;
+		}
+		if ($this->isPropertyModified('locked') && $this->getLockedOldValue() === true)
+		{
+			$result = new ErrorResult('COLLECTION-LOCKED', 'Can not unlock locked collection', HttpResponse::STATUS_CODE_409);
+			$event->setResult($result);
+			return false;
+		}
+		return $result;
 	}
 }
