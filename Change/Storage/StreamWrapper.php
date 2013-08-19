@@ -37,8 +37,8 @@ class StreamWrapper
 	protected $storage;
 
 	/**
-	 * @param   integer     $mask   The bitmask
-	 * @param   integer     $flag   The flag to check
+	 * @param   integer $mask   The bitmask
+	 * @param   integer $flag   The flag to check
 	 * @return  boolean
 	 */
 	protected function maskHasFlag($mask, $flag)
@@ -52,7 +52,6 @@ class StreamWrapper
 	 */
 	public function __construct()
 	{
-
 	}
 
 	/**
@@ -70,9 +69,9 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_open — Opens file or URL
-	 * @param   string   $path          Specifies the URL that was passed to the original function.
-	 * @param   string   $mode          The mode used to open the file, as detailed for fopen().
-	 * @param   integer  $options       Holds additional flags set by the streams API. It can hold one or more of
+	 * @param   string $path          Specifies the URL that was passed to the original function.
+	 * @param   string $mode          The mode used to open the file, as detailed for fopen().
+	 * @param   integer $options       Holds additional flags set by the streams API. It can hold one or more of
 	 *                                      the following values OR'd together.
 	 *                                      STREAM_USE_PATH         If path is relative, search for the resource using
 	 *                                                              the include_path.
@@ -80,7 +79,7 @@ class StreamWrapper
 	 *                                                              errors using trigger_error() during opening of the
 	 *                                                              stream. If this flag is not set, you should not raise
 	 *                                                              any errors.
-	 * @param   string   $opened_path   If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path
+	 * @param   string $opened_path   If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path
 	 *                                  should be set to the full path of the file/resource that was actually opened.
 	 * @return  boolean                 Returns TRUE on success or FALSE on failure.
 	 */
@@ -88,9 +87,8 @@ class StreamWrapper
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->stream_open($infos, $mode, $options, $opened_path, $this->context);
+			$this->storage = static::$storageManager->getStorageByStorageURI($path);
+			return $this->getCurrentStorage()->stream_open($mode, $options, $opened_path, $this->context);
 		}
 		catch (\Exception $e)
 		{
@@ -104,7 +102,7 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_read — Read from stream
-	 * @param   integer  $count     How many bytes of data from the current position should be returned.
+	 * @param   integer $count     How many bytes of data from the current position should be returned.
 	 * @return  string              If there are less than count bytes available, return as many as are available.
 	 *                              If no more data is available, return either FALSE or an empty string.
 	 */
@@ -116,7 +114,7 @@ class StreamWrapper
 	/**
 	 * streamWrapper::stream_write — Write to stream
 	 * Emits E_WARNING if call to this method fails (i.e. not implemented).
-	 * @param   string  $data   Should be stored into the underlying stream.
+	 * @param   string $data   Should be stored into the underlying stream.
 	 * @return  integer         Should return the number of bytes that were successfully stored, or 0 if none could be stored.
 	 */
 	public function stream_write($data)
@@ -159,7 +157,7 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::url_stat — Retrieve information about a file
-	 * @param   string  $path   The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL.
+	 * @param   string $storageURI   The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL.
 	 *                          Other URL forms are not supported.
 	 * @param   integer $flags  Holds additional flags set by the streams API. It can hold one or more of the following
 	 *                          values OR'd together.
@@ -174,17 +172,12 @@ class StreamWrapper
 	 * @return  array           Should return as many elements as stat() does. Unknown or unavailable values should be set to a
 	 *                          rational value (usually 0).
 	 */
-	public function url_stat($path, $flags)
+	public function url_stat($storageURI, $flags)
 	{
-		$infos = parse_url($path);
-		$storage = static::$storageManager->getStorageByName($infos['host']);
+		$storage = static::$storageManager->getStorageByStorageURI($storageURI);
 		if ($storage)
 		{
-			if (!isset($infos['path']))
-			{
-				$infos['path'] = '/';
-			}
-			return $storage->url_stat($infos, $flags);
+			return $storage->url_stat($flags);
 		}
 		elseif ($this->maskHasFlag($flags, STREAM_URL_STAT_QUIET))
 		{
@@ -192,23 +185,22 @@ class StreamWrapper
 		}
 		else
 		{
-			trigger_error('Storage not found: ' . $infos['host'], E_USER_WARNING);
+			trigger_error('Storage not found for: ' . $storageURI, E_USER_WARNING);
 		}
 	}
 
 	/**
 	 * streamWrapper::dir_opendir — Open directory handle
-	 * @param   string   $path      Specifies the URL that was passed to {@see opendir()}.
-	 * @param   integer  $options   Whether or not to enforce safe_mode (0x04).
+	 * @param   string $storageURI      Specifies the URL that was passed to {@see opendir()}.
+	 * @param   integer $options   Whether or not to enforce safe_mode (0x04).
 	 * @return  boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	public function dir_opendir($path, $options)
+	public function dir_opendir($storageURI, $options)
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->dir_opendir($infos, $options);
+			$this->storage = static::$storageManager->getStorageByStorageURI($storageURI);
+			return $this->getCurrentStorage()->dir_opendir($options);
 		}
 		catch (\Exception $e)
 		{
@@ -216,6 +208,7 @@ class StreamWrapper
 			return false;
 		}
 	}
+
 	/**
 	 * streamWrapper::dir_readdir — Read entry from directory handle
 	 * @return  string|false    Should return string representing the next filename, or FALSE if there is no next file.
@@ -245,16 +238,15 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::unlink — Delete a file
-	 * @param   string   $path  The file URL which should be deleted.
+	 * @param   string $storageURI  The file URL which should be deleted.
 	 * @return  boolean         Returns TRUE on success or FALSE on failure.
 	 */
-	public function unlink($path)
+	public function unlink($storageURI)
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->unlink($infos);
+			$this->storage = static::$storageManager->getStorageByStorageURI($storageURI);
+			return $this->getCurrentStorage()->unlink();
 		}
 		catch (\Exception $e)
 		{
@@ -263,21 +255,19 @@ class StreamWrapper
 		}
 	}
 
-
 	/**
 	 * streamWrapper::mkdir — Create a directory
-	 * @param   string   $path      Directory which should be created.
-	 * @param   integer  $mode      The value passed to {@see mkdir()}.
-	 * @param   integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+	 * @param   string $storageURI      Directory which should be created.
+	 * @param   integer $mode      The value passed to {@see mkdir()}.
+	 * @param   integer $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	public function mkdir($path, $mode, $options)
+	public function mkdir($storageURI, $mode, $options)
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->mkdir($infos, $mode, $options);
+			$this->storage = static::$storageManager->getStorageByStorageURI($storageURI);
+			return $this->getCurrentStorage()->mkdir($mode, $options);
 		}
 		catch (\Exception $e)
 		{
@@ -288,17 +278,16 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::rename — Renames a file or directory
-	 * @param   string   $path_from     The URL to the current file.
-	 * @param   string   $path_to       The URL which the $path_from should be renamed to.
+	 * @param   string $fromStorageURI     The URL to the current file.
+	 * @param   string $toStorageURI       The URL which the $path_from should be renamed to.
 	 * @return  boolean                 Returns TRUE on success or FALSE on failure.
 	 */
-	public function rename($path_from, $path_to)
+	public function rename($fromStorageURI, $toStorageURI)
 	{
 		try
 		{
-			$infos = parse_url($path_from);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->rename($infos, $path_to);
+			$this->storage = static::$storageManager->getStorageByStorageURI($fromStorageURI);
+			return $this->getCurrentStorage()->rename($toStorageURI);
 		}
 		catch (\Exception $e)
 		{
@@ -309,17 +298,16 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::rmdir — Removes a directory
-	 * @param   string   $path      The directory URL which should be removed.
-	 * @param   integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+	 * @param   string $storageURI      The directory URL which should be removed.
+	 * @param   integer $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	public function rmdir($path, $options)
+	public function rmdir($storageURI, $options)
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->rmdir($infos, $options);
+			$this->storage = static::$storageManager->getStorageByStorageURI($storageURI);
+			return $this->getCurrentStorage()->rmdir($options);
 		}
 		catch (\Exception $e)
 		{
@@ -330,7 +318,7 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_cast — Retrieve the underlaying resource
-	 * @param   integer  $cast_as   Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast()
+	 * @param   integer $cast_as   Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast()
 	 *                              or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
 	 * @return  resource            Should return the underlying stream resource used by the wrapper, or FALSE.
 	 */
@@ -340,8 +328,6 @@ class StreamWrapper
 		//TODO Not Implemented
 		return false;
 	}
-
-
 
 	/**
 	 * streamWrapper::stream_eof — Tests for end-of-file on a file pointer
@@ -365,7 +351,7 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_lock — Advisory file locking
-	 * @param   integer  $operation     operation is one of the following:
+	 * @param   integer $operation     operation is one of the following:
 	 *                                      LOCK_SH to acquire a shared lock (reader).
 	 *                                      LOCK_EX to acquire an exclusive lock (writer).
 	 *                                      LOCK_UN to release a lock (shared or exclusive).
@@ -381,16 +367,16 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_metadata — Change stream options
-	 * @param   string   $path      The file path or URL to set metadata. Note that in the case of a URL,
+	 * @param   string $storageURI      The file path or URL to set metadata. Note that in the case of a URL,
 	 *                              it must be a :// delimited URL. Other URL forms are not supported.
-	 * @param   integer  $option    One of:
+	 * @param   integer $option    One of:
 	 *                                  STREAM_META_TOUCH (The method was called in response to touch())
 	 *                                  STREAM_META_OWNER_NAME (The method was called in response to chown() with string parameter)
 	 *                                  STREAM_META_OWNER (The method was called in response to chown())
 	 *                                  STREAM_META_GROUP_NAME (The method was called in response to chgrp())
 	 *                                  STREAM_META_GROUP (The method was called in response to chgrp())
 	 *                                  STREAM_META_ACCESS (The method was called in response to chmod())
-	 * @param   integer  $var       If option is
+	 * @param   integer $var       If option is
 	 *                                  PHP_STREAM_META_TOUCH: Array consisting of two arguments of the touch() function.
 	 *                                  PHP_STREAM_META_OWNER_NAME or PHP_STREAM_META_GROUP_NAME: The name of the owner
 	 *                                      user/group as string.
@@ -398,13 +384,12 @@ class StreamWrapper
 	 *                                  PHP_STREAM_META_ACCESS: The argument of the chmod() as integer.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
 	 */
-	public function stream_metadata($path, $option, $var)
+	public function stream_metadata($storageURI, $option, $var)
 	{
 		try
 		{
-			$infos = parse_url($path);
-			$this->storage = static::$storageManager->getStorageByName($infos['host']);
-			return $this->getCurrentStorage()->stream_metadata($infos, $option, $var);
+			$this->storage = static::$storageManager->getStorageByStorageURI($storageURI);
+			return $this->getCurrentStorage()->stream_metadata($option, $var);
 		}
 		catch (\Exception $e)
 		{
@@ -415,8 +400,8 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_seek — Seeks to specific location in a stream
-	 * @param   integer  $offset    The stream offset to seek to.
-	 * @param   integer  $whence    Possible values:
+	 * @param   integer $offset    The stream offset to seek to.
+	 * @param   integer $whence    Possible values:
 	 *                                  SEEK_SET - Set position equal to offset bytes.
 	 *                                  SEEK_CUR - Set position to current location plus offset.
 	 *                                  SEEK_END - Set position to end-of-file plus offset.
@@ -429,15 +414,15 @@ class StreamWrapper
 
 	/**
 	 * streamWrapper::stream_set_option
-	 * @param   integer  $option    One of:
+	 * @param   integer $option    One of:
 	 *                                  STREAM_OPTION_BLOCKING (The method was called in response to stream_set_blocking())
 	 *                                  STREAM_OPTION_READ_TIMEOUT (The method was called in response to stream_set_timeout())
 	 *                                  STREAM_OPTION_WRITE_BUFFER (The method was called in response to stream_set_write_buffer())
-	 * @param   integer  $arg1      If option is
+	 * @param   integer $arg1      If option is
 	 *                                  STREAM_OPTION_BLOCKING: requested blocking mode (1 meaning block 0 not blocking).
 	 *                                  STREAM_OPTION_READ_TIMEOUT: the timeout in seconds.
 	 *                                  STREAM_OPTION_WRITE_BUFFER: buffer mode (STREAM_BUFFER_NONE or STREAM_BUFFER_FULL).
-	 * @param   integer  $arg2      If option is
+	 * @param   integer $arg2      If option is
 	 *                                  STREAM_OPTION_BLOCKING: This option is not set.
 	 *                                  STREAM_OPTION_READ_TIMEOUT: the timeout in microseconds.
 	 *                                  STREAM_OPTION_WRITE_BUFFER: the requested buffer size.
@@ -456,8 +441,7 @@ class StreamWrapper
 	 */
 	public function stream_tell()
 	{
-		//TODO Not Implemented
-		return 0;
+		return $this->getCurrentStorage()->stream_tell();
 	}
 
 	/**
@@ -467,7 +451,6 @@ class StreamWrapper
 	 */
 	public function stream_truncate($new_size)
 	{
-		//TODO Not Implemented
-		return false;
+		return $this->getCurrentStorage()->stream_truncate($new_size);
 	}
 }

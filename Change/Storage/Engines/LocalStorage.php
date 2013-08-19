@@ -100,17 +100,16 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param array $parsedUrl
 	 * @param string $mode
 	 * @param integer $options
 	 * @param string $opened_path
 	 * @param resource $context
 	 * @return boolean
 	 */
-	public function stream_open($parsedUrl, $mode, $options, &$opened_path, &$context)
+	public function stream_open($mode, $options, &$opened_path, &$context)
 	{
-		$this->dbPath = $this->buildDbPath($parsedUrl);
-		$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
+		$this->dbPath = $this->buildDbPath($this->parsedURL);
+		$fileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		\Change\StdLib\File::mkdir(dirname($fileName));
 		$this->resource = @fopen($fileName, $mode);
 		return is_resource($this->resource);
@@ -184,13 +183,16 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param array $info (from parse_url)
 	 * @param integer $flags
 	 * @return array mixed
 	 */
-	public function url_stat($info, $flags)
+	public function url_stat($flags)
 	{
-		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $info['path']);
+		if (!isset($this->parsedURL['path']))
+		{
+			$this->parsedURL['path'] = '/';
+		}
+		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		if ((STREAM_URL_STAT_QUIET & $flags) === STREAM_URL_STAT_QUIET)
 		{
 			if (!file_exists($filename))
@@ -202,13 +204,12 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param array $parsedUrl
 	 * @param integer $options
 	 * @return boolean
 	 */
-	public function dir_opendir($parsedUrl, $options)
+	public function dir_opendir($options)
 	{
-		$this->dbPath = isset($parsedUrl['path']) ? $parsedUrl['path'] : '/';
+		$this->dbPath = isset($this->parsedURL['path']) ? $this->parsedURL['path'] : '/';
 		$dirName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->dbPath);
 		$this->resource = @opendir($dirName);
 		return is_resource($this->resource);
@@ -241,52 +242,38 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param array $parsedUrl
 	 * @return  boolean Returns TRUE on success or FALSE on failure.
 	 */
-	public function unlink($parsedUrl)
+	public function unlink()
 	{
-		$filename = $this->basePath;
-		if (isset($parsedUrl['path']))
-		{
-			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
-		}
+		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		if ($this->useDBStat)
 		{
-			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($parsedUrl), null);
+			$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($this->parsedURL), null);
 		}
 		return @unlink($filename);
 	}
 
 	/**
-	 * @param array $parsedUrl
 	 * @param   integer  $mode      The value passed to {@see mkdir()}.
 	 * @param   integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	public function mkdir($parsedUrl, $mode, $options)
+	public function mkdir($mode, $options)
 	{
-		$filename = $this->basePath;
-		if (isset($parsedUrl['path']))
-		{
-			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
-		}
+		$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
 		return @mkdir($filename, $mode, $recursive);
 	}
 
 	/**
-	 * @param array $parsedUrlFrom The URL to the current file.
 	 * @param string $pathTo The URL which the $path_from should be renamed to.
+	 * @throws \RuntimeException
 	 * @return  boolean Returns TRUE on success or FALSE on failure.
 	 */
-	public function rename($parsedUrlFrom, $pathTo)
+	public function rename($pathTo)
 	{
-		$fromFileName = $this->basePath;
-		if (isset($parsedUrlFrom['path']))
-		{
-			$fromFileName .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrlFrom['path']);
-		}
+		$fromFileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		if (!file_exists($fromFileName))
 		{
 			throw new \RuntimeException('Invalid From file', 999999);
@@ -299,12 +286,8 @@ class LocalStorage extends AbstractStorage
 
 		if ($toItem->getStorageEngine()->getName() === $this->getName())
 		{
-			$parsedUrlTo = parse_url($pathTo);
-			$toFileName = $this->basePath;
-			if (isset($parsedUrlTo['path']))
-			{
-				$toFileName .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrlTo['path']);
-			}
+			$parsedUrlTo = $toItem->getStorageEngine()->getParsedURL();
+			$toFileName = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $parsedUrlTo['path']);
 			return @rename($fromFileName, $toFileName);
 		}
 
@@ -334,24 +317,18 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param array $parsedUrl
 	 * @param integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	public function rmdir($parsedUrl, $options)
+	public function rmdir($options)
 	{
-		$filename = $this->basePath;
-		if (isset($parsedUrl['path']))
-		{
-			$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
-		}
+		$filename = $this->basePath .  str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		//TODO Recursive ?
 		$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
 		return @rmdir($filename);
 	}
 
 	/**
-	 * @param   array   $parsedUrl
 	 * @param   integer  $option    One of:
 	 *                                  STREAM_META_TOUCH (The method was called in response to touch())
 	 *                                  STREAM_META_OWNER_NAME (The method was called in response to chown() with string parameter)
@@ -367,19 +344,15 @@ class LocalStorage extends AbstractStorage
 	 *                                  PHP_STREAM_META_ACCESS: The argument of the chmod() as integer.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
 	 */
-	public function stream_metadata($parsedUrl, $option, $var)
+	public function stream_metadata($option, $var)
 	{
 		if ($option === STREAM_META_TOUCH)
 		{
-			$filename = $this->basePath;
-			if (isset($parsedUrl['path']))
-			{
-				$filename .= str_replace('/', DIRECTORY_SEPARATOR, $parsedUrl['path']);
-			}
+			$filename = $this->basePath . str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 			if ($this->useDBStat)
 			{
 				$infos = array('stats' => @stat($filename));
-				$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($parsedUrl), $infos);
+				$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($this->parsedURL), $infos);
 			}
 			return @touch($filename, isset($var[0])? $var[0] : null, isset($var[1])? $var[1] : null);
 		}
@@ -387,10 +360,29 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param $parsedUrl
+	 * @param array $parsedUrl
+	 * @return string
 	 */
 	protected function buildDbPath($parsedUrl)
 	{
 		return isset($parsedUrl['query']) ? $parsedUrl['path'] . '?' . $parsedUrl['query'] : $parsedUrl['path'];
+	}
+
+	/**
+	 * @return  integer     Should return the current position of the stream.
+	 */
+	public function stream_tell()
+	{
+		return ftell($this->resource);
+	}
+
+	/**
+	 * @param integer $new_size
+	 * @return boolean Returns TRUE on success or FALSE on failure.
+	 */
+	public function stream_truncate($new_size)
+	{
+		$this->updateDBStat = true;
+		return ftruncate($this->resource, $new_size);
 	}
 }

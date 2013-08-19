@@ -51,7 +51,15 @@ abstract class AbstractStorage
 	 */
 	protected $updateDBStat = false;
 
+	/**
+	 * @var array
+	 */
+	protected $parsedURL = array();
 
+	/**
+	 * @param string $name
+	 * @param array $config
+	 */
 	function __construct($name, array $config)
 	{
 		$this->setName($name);
@@ -79,6 +87,24 @@ abstract class AbstractStorage
 	public function getName()
 	{
 		return $this->name;
+	}
+
+	/**
+	 * @param array $parsedURL
+	 * @return $this
+	 */
+	public function setParsedURL($parsedURL)
+	{
+		$this->parsedURL = $parsedURL;
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getParsedURL()
+	{
+		return $this->parsedURL;
 	}
 
 	/**
@@ -124,14 +150,13 @@ abstract class AbstractStorage
 	abstract public function normalizePath($path);
 
 	/**
-	 * @param array $parsedUrl
 	 * @param string $mode
 	 * @param integer $options
 	 * @param string $opened_path
 	 * @param resource $context
 	 * @return boolean
 	 */
-	abstract public function stream_open($parsedUrl, $mode, $options, &$opened_path, &$context);
+	abstract public function stream_open($mode, $options, &$opened_path, &$context);
 
 	/**
 	 * @param integer $count
@@ -171,19 +196,17 @@ abstract class AbstractStorage
 	abstract public function stream_close();
 
 	/**
-	 * @param array $info (from parse_url)
 	 * @param integer $flags
 	 * @return array mixed
 	 */
-	abstract public function url_stat($info, $flags);
+	abstract public function url_stat($flags);
 
 
 	/**
-	 * @param array $parsedUrl
 	 * @param integer $options
 	 * @return boolean
 	 */
-	abstract public function dir_opendir($parsedUrl, $options);
+	abstract public function dir_opendir($options);
 
 	/**
 	 * @return  string|false
@@ -206,32 +229,28 @@ abstract class AbstractStorage
 	 * @param array $parsedUrl
 	 * @return  boolean Returns TRUE on success or FALSE on failure.
 	 */
-	abstract public function unlink($parsedUrl);
+	abstract public function unlink();
 
 	/**
-	 * @param array $parsedUrl
 	 * @param   integer  $mode      The value passed to {@see mkdir()}.
 	 * @param   integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	abstract public function mkdir($parsedUrl, $mode, $options);
+	abstract public function mkdir($mode, $options);
 
 	/**
-	 * @param array $parsedUrlFrom The URL to the current file.
 	 * @param string $pathTo The URL which the $path_from should be renamed to.
 	 * @return  boolean Returns TRUE on success or FALSE on failure.
 	 */
-	abstract public function rename($parsedUrlFrom, $pathTo);
+	abstract public function rename($pathTo);
 
 	/**
-	 * @param array $parsedUrl
 	 * @param integer  $options   A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return boolean             Returns TRUE on success or FALSE on failure.
 	 */
-	abstract public function rmdir($parsedUrl, $options);
+	abstract public function rmdir($options);
 
 	/**
-	 * @param   array   $parsedUrl
 	 * @param   integer  $option    One of:
 	 *                                  STREAM_META_TOUCH (The method was called in response to touch())
 	 *                                  STREAM_META_OWNER_NAME (The method was called in response to chown() with string parameter)
@@ -247,5 +266,16 @@ abstract class AbstractStorage
 	 *                                  PHP_STREAM_META_ACCESS: The argument of the chmod() as integer.
 	 * @return  boolean             Returns TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
 	 */
-	abstract public function stream_metadata($parsedUrl, $option, $var);
+	abstract public function stream_metadata($option, $var);
+
+	/**
+	 * @return  integer     Should return the current position of the stream.
+	 */
+	abstract public function stream_tell();
+
+	/**
+	 * @param integer $new_size
+	 * @return boolean Returns TRUE on success or FALSE on failure.
+	 */
+	abstract public function stream_truncate($new_size);
 }
