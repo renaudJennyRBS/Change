@@ -27,13 +27,14 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 				$model = 'Rbs_User_Group';
 			}
 			$dqb = new \Change\Documents\Query\Query($this->documentServices, $model);
-			$pb = $dqb->getPredicateBuilder();
-			$dqb->andPredicates($pb->eq($pb->columnProperty('identifier'), $matches[2]));
+			$dqb->andPredicates(
+				$dqb->eq('identifier', $matches[2]),
+				$dqb->activated());
 			$result = $dqb->getFirstDocument();
 
 			if ($result)
 			{
-				return '['. $matches[1] . $matches[2] . '](' . $result->getId() . ',profile "' . $matches[1] . $matches[2] . '")';
+				return '['. $matches[1] . $matches[2] . '](' . $result->getId() . ',public-profile "' . $matches[1] . $matches[2] . '")';
 			}
 			return $matches[1] . $matches[2];
 		}, $rawText);

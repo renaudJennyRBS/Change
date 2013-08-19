@@ -206,4 +206,62 @@
 	PermissionController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb', '$q'];
 	app.controller('Rbs_User_User_PermissionController', PermissionController);
 
+	/**
+	 * Public Profile for user identifier popover (on @)
+	 *
+	 * @param $scope
+	 * @param $routeParams
+	 * @param REST
+	 * @param i18n
+	 * @param $http
+	 * @constructor
+	 */
+	function PublicProfileController($scope, $routeParams, REST, i18n, $http)
+	{
+		Workspace.collapseLeftSidebar();
+
+		Breadcrumb.setLocation([
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"]
+		]);
+
+		$scope.$on('$destroy', function () {
+			Workspace.restore();
+		});
+
+		REST.resource($routeParams.id).then(function (user){
+			$scope.document = user;
+			var url = user.META$.links.profiles.href;
+			$http.get(url).success(function (profiles){
+				$scope.profile = profiles.Rbs_Admin;
+			});
+		});
+	}
+
+	PublicProfileController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http'];
+	app.controller('Rbs_User_User_PublicProfileController', PublicProfileController);
+
+	/**
+	 * Popover preview
+	 *
+	 * @param $scope
+	 * @param REST
+	 * @param i18n
+	 * @param $http
+	 * @constructor
+	 */
+	function PopoverPreviewController($scope, REST, i18n, $http)
+	{
+		/*
+		REST.resource($routeParams.id).then(function (user){
+			$scope.document = user;
+			var url = user.META$.links.profiles.href;
+			$http.get(url).success(function (profiles){
+				$scope.profile = profiles.Rbs_Admin;
+			});
+		});
+		*/
+	}
+
+	PopoverPreviewController.$inject = ['$scope', 'RbsChange.REST', 'RbsChange.i18n', '$http'];
+	app.controller('Rbs_User_User_PopoverPreviewController', PopoverPreviewController);
 })();

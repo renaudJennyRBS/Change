@@ -12,8 +12,9 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_User_User')
-				.route('applications', 'Rbs/User/User/:id/Applications/', 'Rbs/User/User/applications.twig')
-				.route('permission'  , 'Rbs/User/User/:id/Permissions/' , 'Rbs/User/User/permission.twig')
+				.route('applications'  , 'Rbs/User/User/:id/Applications/', 'Rbs/User/User/applications.twig')
+				.route('permission'    , 'Rbs/User/User/:id/Permissions/' , 'Rbs/User/User/permission.twig')
+				.route('public-profile', 'Rbs/User/User/:id/PublicProfile', 'Rbs/User/User/public-profile.twig')
 			;
 
 			$delegate.model('Rbs_User_Group').route('permission'  , 'Rbs/User/Group/:id/Permissions/', 'Rbs/User/User/permission.twig');

@@ -63,6 +63,15 @@ class Listeners implements ListenerAggregateInterface
 				});
 				return;
 			}
+			else if (preg_match('#^resources/Rbs/User/User/([0-9]+)/Profiles/$#', $relativePath, $matches))
+			{
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\User\Http\Rest\Actions\Profiles())->execute($event);
+				});
+				return;
+			}
 			else if (preg_match('#^resources/Rbs/Workflow/Task/([0-9]+)/execute$#', $relativePath, $matches))
 			{
 				$task = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($matches[1]);

@@ -14,6 +14,8 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_LOAD = 'load';
 
+	const EVENT_PROFILES = 'profiles';
+
 	const EVENT_SAVE = 'save';
 
 	/**
@@ -60,6 +62,22 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 			return $config->getEntry('Change/Events/ProfileManager', array());
 		}
 		return array();
+	}
+
+	/**
+	 * @param $user
+	 * @return string[]
+	 */
+	public function getProfileNames()
+	{
+		$event = new \Zend\EventManager\Event(static::EVENT_PROFILES, $this);
+		$this->getEventManager()->trigger($event);
+		$profiles = $event->getParam('profiles');
+		if (is_array($profiles))
+		{
+			return $profiles;
+		}
+		return [];
 	}
 
 	/**

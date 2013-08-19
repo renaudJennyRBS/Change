@@ -22,6 +22,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$events->attach(array(ProfileManager::EVENT_LOAD), array($this, 'onLoad'), 5);
 		$events->attach(array(ProfileManager::EVENT_SAVE), array($this, 'onSave'), 5);
+		$events->attach(array(ProfileManager::EVENT_PROFILES), array($this, 'onProfiles'), 5);
 	}
 
 	/**
@@ -160,5 +161,15 @@ class Listeners implements ListenerAggregateInterface
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onProfiles(Event $event)
+	{
+		$profiles = $event->getParam('profiles', []);
+		$profiles = ['Change_User', 'Rbs_Admin'] + $profiles;
+		$event->setParam('profiles', $profiles);
 	}
 }

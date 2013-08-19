@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\User\Documents;
 
+use Change\Http\Rest\Result\Link;
 use Change\Stdlib\String;
 
 /**
@@ -167,5 +168,15 @@ class User extends \Compilation\Rbs\User\Documents\User
 		{
 			$this->setPasswordHash($this->hashPassword($this->password));
 		}
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	protected function updateRestDocumentResult($documentResult)
+	{
+		parent::updateRestDocumentResult($documentResult);
+		$um = $documentResult->getUrlManager();
+		$documentResult->addLink(new Link($um, $documentResult->getBaseUrl() . '/Profiles/', 'profiles'));
 	}
 }

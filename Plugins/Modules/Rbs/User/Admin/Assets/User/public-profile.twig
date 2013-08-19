@@ -1,0 +1,24 @@
+<div data-ng-controller="Rbs_User_User_PublicProfileController">
+	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public-profile-sub-title', ['ucf']) }}"></page-header>
+	<div class="media-body well well-small">
+		<img style="width: 128px; height: 128px;" class="media-object" data-ng-src="(= profile.avatar =)" />
+		<h4 class="media-heading">(= document.pseudonym =) <small ng-if="document.identifier">@(= document.identifier =)</small></h4>
+		<div class="well">
+			<dl class="dl-horizontal">
+				<dt>{{ i18n('m.rbs.user.document.user.pseudonym', ['ucf']) }}</dt>
+				<dd>(= document.pseudonym =)</dd>
+				<dt>{{ i18n('m.rbs.user.document.user.email', ['ucf']) }}</dt>
+				<dd>(= document.email =)</dd>
+				<dt>{{ i18n('m.rbs.user.document.user.active', ['ucf']) }}</dt>
+				<dd><switch disabled ng-model="document.active"></switch></dd>
+			</dl>
+		</div>
+		<div class="well">
+			<h4>{{ i18n('m.rbs.user.document.group-list', ['ucf']) }}</h4>
+			<div data-ng-repeat="group in document.groups">
+				<a rbs-document-popover rbs-document-href="Rbs_User_Group,(= group.id =)">(= group.label =)</a>
+			</div>
+		</div>
+	</div>
+
+</div>

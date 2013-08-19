@@ -1,0 +1,21 @@
+<div class="media">
+	<a class="pull-left" rbs-document-popover rbs-document-href="Rbs_User_User,(= message.authorId =),public-profile">
+		<img style="width: 64px; height: 64px;" class="media-object" data-ng-src="(= message.avatar =)" />
+	</a>
+	<div class="media-body well well-small">
+		<h4 class="media-heading">(= message.authorName =) <small ng-if="message.authorIdentifier"><a rbs-document-popover="{trigger: 'click'}" rbs-document-href="Rbs_User_User,(= message.authorId =),public-profile">@(= message.authorIdentifier =)</a></small></h4>
+		<span class="pull-right">(= message.creationDate | date:'medium' =)</span>
+		<div ng-if="message.authorId === user.id" class="message-tools">
+			<i data-ng-click="editMessage(message)" class="icon-edit"></i>
+			<i data-ng-click="removeMessage(message)" class="icon-remove-circle"></i>
+		</div>
+		<div class="message-content"></div>
+		<div ng-if="!message.editMode && message.creationDate !== message.modificationDate">
+			<small>{{ i18n('m.rbs.timeline.admin.edited-message', ['ucf']) }} (= message.modificationDate | date:'medium' =)</small>
+		</div>
+		<div ng-if="message.editMode">
+			<rbs-rich-text-input data-ng-model="message.message" class="input-block-level" preview-profile="Admin"></rbs-rich-text-input>
+			<button type="button" data-ng-click="updateMessage(message)" class="btn btn-success">{{ i18n('m.rbs.timeline.admin.leave-a-message-update', ['ucf']) }}</button>
+		</div>
+	</div>
+</div>
