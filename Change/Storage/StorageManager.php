@@ -118,7 +118,7 @@ class StorageManager
 
 	/**
 	 * @param string $name
-	 * @return \Change\Storage\Engines\AbstractStorage|null
+	 * @return Engines\AbstractStorage|null
 	 */
 	public function getStorageByName($name)
 	{
@@ -129,7 +129,7 @@ class StorageManager
 			{
 				$className = $config['class'];
 				$storageEngine = new $className($name, $config);
-				if ($storageEngine instanceof \Change\Storage\Engines\AbstractStorage)
+				if ($storageEngine instanceof Engines\AbstractStorage)
 				{
 					$storageEngine->setStorageManager($this);
 					return $storageEngine;
@@ -150,22 +150,44 @@ class StorageManager
 	}
 
 	/**
-	 * @param $url
+	 * @param string $storageURI
+	 * @return Engines\AbstractStorage|null
+	 */
+	public function getStorageByStorageURI($storageURI)
+	{
+		if ($storageURI && (strpos($storageURI, 'change:') === 0))
+		{
+			$parsedURL = parse_url($storageURI);
+			if (is_array($parsedURL) && $parsedURL['scheme'] === static::DEFAULT_SCHEME && isset($parsedURL['host']))
+			{
+				$storageEngine = $this->getStorageByName($parsedURL['host']);
+				if ($storageEngine)
+				{
+					if (!isset($parsedURL['path']))
+					{
+						$parsedURL['path'] = '/';
+					}
+					$storageEngine->setParsedURL($parsedURL);
+					return $storageEngine;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param $storageURI
 	 * @return \Change\Storage\ItemInfo|null
 	 */
-	public function getItemInfo($url)
+	public function getItemInfo($storageURI)
 	{
-		$infos = parse_url($url);
-		if ($infos !== false && $infos['scheme'] === static::DEFAULT_SCHEME && isset($infos['host']) && isset($infos['path']))
+		$storageEngine = $this->getStorageByStorageURI($storageURI);
+		if ($storageEngine)
 		{
-			$name = $infos['host'];
-			$storageEngine = $this->getStorageByName($name);
-			if ($storageEngine)
-			{
-				$itemInfo = new ItemInfo($url);
-				$itemInfo->setStorageEngine($storageEngine);
-				return $itemInfo;
-			}
+
+			$itemInfo = new ItemInfo($storageURI);
+			$itemInfo->setStorageEngine($storageEngine);
+			return $itemInfo;
 		}
 		return null;
 	}
@@ -218,6 +240,39 @@ class StorageManager
 			return array('id' => intval($datas['item_id']), 'infos' => ($infos ? $infos : array()));
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $startPath
+	 * @return array<array<id => integer, path => string, infos => array>>
+	 */
+	public function getItemDbInfos($name, $startPath)
+	{
+		$sqb = $this->getDbProvider()->getNewQueryBuilder('StorageManager::getItemDbInfos');
+		if (!$sqb->isCached())
+		{
+			$fb = $sqb->getFragmentBuilder();
+			$sqb->select($fb->alias($fb->column('item_id'), 'id'),
+				$fb->alias($fb->column('infos'), 'infos'),
+				$fb->alias($fb->column('store_path'), 'path'));
+			$sqb->from($fb->table('change_storage'));
+
+			$sqb->andWhere($fb->logicAnd(
+				$fb->eq($fb->column('store_name'), $fb->parameter('name')),
+				$fb->like($fb->column('store_path'), $fb->parameter('startPath'), \Change\Db\Query\Predicates\Like::BEGIN, true)));
+		}
+		$sq = $sqb->query();
+		$sq->bindParameter('name', $name);
+		$sq->bindParameter('startPath', $startPath);
+		$result = array();
+		$rows = $sq->getResults($sq->getRowsConverter()->addIntCol('id')->addStrCol('path')->addTxtCol('infos'));
+		foreach ($rows as $row)
+		{
+			$row['infos'] = isset($row['infos']) ? json_decode($row['infos'], true) : array();
+			$result[] = $row;
+		}
+		return $result;
 	}
 
 	/**
@@ -318,7 +373,7 @@ class StorageManager
 				$fb->eq($fb->column('store_name'), $fb->parameter('name')),
 				$fb->eq($fb->column('store_path'), $fb->parameter('path'))));
 		}
-		$dq = $dqb->updateQuery();
+		$dq = $dqb->deleteQuery();
 		$dq->bindParameter('name', $name);
 		$dq->bindParameter('path', $path);
 		$dq->execute();
