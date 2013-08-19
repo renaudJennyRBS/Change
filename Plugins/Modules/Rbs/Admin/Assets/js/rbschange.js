@@ -6,7 +6,7 @@
 	$.fn.reverse = [].reverse;
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngResource', 'ngSanitize', 'ngMobile', 'ngCookies', 'OAuthModule']);
+	var app = angular.module('RbsChange', ['ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule']);
 
 
 	//-------------------------------------------------------------------------

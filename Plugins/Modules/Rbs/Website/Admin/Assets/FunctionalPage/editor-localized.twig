@@ -39,7 +39,7 @@
 			<div class="controls">
 				<rich-text-toolbar></rich-text-toolbar>
 				<div class="rich-text-editor" id="summary" name="summary" data-ng-model="document.summary"></div>
-				<div data-chg-if="referenceDocument" class="localization-help" data-ng-bind-html-unsafe="referenceDocument.summary"></div>
+				<div data-chg-if="referenceDocument" class="localization-help" ng-bind-html="referenceDocument.summary"></div>
 			</div>
 		</div>
 

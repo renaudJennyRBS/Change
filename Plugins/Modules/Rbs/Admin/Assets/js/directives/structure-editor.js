@@ -1971,7 +1971,7 @@
 
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings" ng-click="selectBlock($event)">' +
-					'<i class="icon-th-large"></i> <span data-ng-bind-html-unsafe="item.label | niceBlockName"></span>' +
+					'<i class="icon-th-large"></i> <span ng-bind-html="item.label | niceBlockName"></span>' +
 				'</div>',
 
 			"link" : function seBlockTemplateLinkFn (scope, element, attrs, ctrl) {
@@ -2127,7 +2127,7 @@
 
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings" block-label="{{item.label}}" block-type="document" ng-click="selectBlock($event)">' +
-					'<i class="icon-file"></i> <span data-ng-bind-html-unsafe="item.label | niceBlockName"></span>' +
+					'<i class="icon-file"></i> <span ng-bind-html="item.label | niceBlockName"></span>' +
 				'</div>',
 
 			"link" : function seBlockDocumentLinkFn (scope, element, attrs, ctrl) {
