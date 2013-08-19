@@ -3,7 +3,7 @@
 	<include id="m.rbs.website.document"/>
 	<include id="m.rbs.website.functions"/>
 	<key id="module-name">sites et pages</key>
-	<key id="module-keywords">sites,pages,gabarits,modèles,templates,rubriques,blocs</key>
+	<key id="module-keywords">sites,pages,gabarits,modèles,templates,rubriques,blocs,menus,navigation,texte,arborescence,plan</key>
 	<key id="host-name">nom d'hôte</key>
 	<key id="open-page-editor-warning"><![CDATA[<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.</strong>
 		<ul>

@@ -354,16 +354,16 @@
 					htmlTh = '<th ng-if="isSortable(\'' + column.sort + '\')" ng-class="{\'sorted\':isSortedOn(\'' + column.sort + '\')}">' + toggleDateBtn;
 
 					if (column.localSort === 'true') {
-						htmlTh += '<a href="javascript:;" ng-click="toggleLocalSort(\'' + column.sort + '\')" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+						htmlTh += '<a href="javascript:;" ng-click="toggleLocalSort(\'' + column.sort + '\')" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</a>';
 					} else {
-						htmlTh += '<a href ng-click="clearLocalSort()" ng-href="(= headerUrl(\'' + column.sort + '\') =)" ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</a>';
+						htmlTh += '<a href ng-click="clearLocalSort()" ng-href="(= headerUrl(\'' + column.sort + '\') =)" ng-bind-html="columns.' + column.name + '.label">' + column.name + '</a>';
 					}
 
 					htmlTh +=
 						'<i class="column-sort-indicator" ng-class="{true:\'icon-sort-down\', false:\'icon-sort-up\'}[isSortDescending()]" ng-if="isSortedOn(\'' + column.sort + '\')"></i>' +
 						'<i class="column-sort-indicator icon-sort" ng-if="!isSortedOn(\'' + column.sort + '\')"></i>' +
 						'</th>' +
-						'<th ng-if="!isSortable(\'' + column.sort + '\')">' + toggleDateBtn + '<span ng-bind-html-unsafe="columns.' + column.name + '.label">' + column.name + '</span></th>';
+						'<th ng-if="!isSortable(\'' + column.sort + '\')">' + toggleDateBtn + '<span ng-bind-html="columns.' + column.name + '.label">' + column.name + '</span></th>';
 
 					$th = $(htmlTh);
 				}
@@ -988,7 +988,7 @@
 					};
 
 					scope.isSortable = function (columnName) {
-						return ArrayUtils.inArray(columnName, scope.sortable) !== -1 || scope.columns[columnName].localSort === 'true';
+						return ArrayUtils.inArray(columnName, scope.sortable) !== -1 || (scope.columns[columnName] && scope.columns[columnName].localSort === 'true');
 					};
 
 					scope.isSortedOn = function (columnName) {

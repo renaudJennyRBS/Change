@@ -56,11 +56,11 @@
 	 *
 	 * @param needle The string to be highlighted in the filter input.
 	 *
-	 * @return HTML string (use with ng-bind-html-unsafe).
+	 * @return HTML string (use with ng-bind-html).
 	 *
 	 * @example
 	 * <code>
-	 * <span ng-bind-html-unsafe="product.label | highlight:'polo'"></span>
+	 * <span ng-bind-html="product.label | highlight:'polo'"></span>
 	 * </code>
 	 */
 	app.filter('highlight', function () {
@@ -133,7 +133,7 @@
 	 *
 	 * @param doc Document instance.
 	 *
-	 * @return HTML string (use with ng-bind-html-unsafe).
+	 * @return HTML string (use with ng-bind-html).
 	 */
 	app.filter('documentSystemLabels', function () {
 
@@ -188,7 +188,7 @@
 	/**
 	 * Renders an empty label with a hyphen (by default).
 	 *
-	 * @return HTML string (use with ng-bind-html-unsafe).
+	 * @return HTML string (use with ng-bind-html).
 	 */
 	app.filter('emptyLabel', function () {
 
@@ -235,7 +235,7 @@
 	/**
 	 * Returns a formatted and human readable file size from an input value in bytes.
 	 *
-	 * @return HTML string (use with ng-bind-html-unsafe).
+	 * @return HTML string (use with ng-bind-html).
 	 */
 	app.filter('fileSize', function () {
 

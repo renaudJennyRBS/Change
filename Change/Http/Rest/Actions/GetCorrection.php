@@ -4,6 +4,7 @@ namespace Change\Http\Rest\Actions;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\DocumentCorrectionResult;
 use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\DocumentResult;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Rest\PropertyConverter;
 
