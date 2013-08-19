@@ -27,9 +27,11 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 				$model = 'Rbs_User_Group';
 			}
 			$dqb = new \Change\Documents\Query\Query($this->documentServices, $model);
-			$dqb->andPredicates(
-				$dqb->eq('identifier', $matches[2]),
-				$dqb->activated());
+			$dqb->andPredicates($dqb->eq('identifier', $matches[2]));
+			if ($model === 'Rbs_User_User')
+			{
+				$dqb->andPredicates($dqb->activated());
+			}
 			$result = $dqb->getFirstDocument();
 
 			if ($result)

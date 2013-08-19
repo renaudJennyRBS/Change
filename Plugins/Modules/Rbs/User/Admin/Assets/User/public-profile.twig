@@ -13,11 +13,16 @@
 				<dd><switch disabled ng-model="document.active"></switch></dd>
 			</dl>
 		</div>
-		<div class="well">
+		<div>
 			<h4>{{ i18n('m.rbs.user.document.group-list', ['ucf']) }}</h4>
-			<div data-ng-repeat="group in document.groups">
-				<a rbs-document-popover rbs-document-href="Rbs_User_Group,(= group.id =)">(= group.label =)</a>
-			</div>
+			<rbs-document-list data-dlid="DLGroup1"
+				model="Rbs_User_Group"
+				modification-date="false"
+				filter-query="query">
+				<column name="label" primary="true"></column>
+				<column name="realm"></column>
+				<quick-actions></quick-actions>
+			</rbs-document-list>
 		</div>
 	</div>
 
