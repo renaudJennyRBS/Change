@@ -88,7 +88,7 @@ class Listeners implements ListenerAggregateInterface
 
 					$event->setAuthorization(function ($event)
 					{
-						(new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->canExecuteTask($event);
+						return (new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->canExecuteTask($event);
 					});
 				}
 				return;
