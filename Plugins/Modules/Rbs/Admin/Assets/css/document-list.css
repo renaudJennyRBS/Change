@@ -361,19 +361,33 @@ a.action:first-child {
 	margin-left: 0;
 }
 
-.table-striped.document-list tbody tr td.preview {
-	background: #F0F8F8;
+.table-striped.document-list tbody tr.preview td.preview {
+	padding: 0;
 }
-.table-striped.document-list tbody tr.preview td {
-	border-top: none;
+.table-striped.document-list tbody tr td.preview button.close {
+	margin: 5px;
 }
 
-.table-striped.document-list tbody tr.has-preview td {
-	border-bottom: 1px solid #DDD;
+.table-striped.document-list tbody tr.preview td.preview .inner {
+	position: relative;
+	padding: 5px;
 }
-.table-striped.document-list tbody tr.has-preview td.preview {
-	border-bottom: 1px dashed #DDD;
+
+rbs-document-list tr.preview td.preview .preview-indicator {
+	display: none;
+	position: absolute;
+	top: -7px;
+	left: 280px;
+	width: 10px;
+	height: 10px;
+	border-top: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
 }
+
 
 rbs-document-list tr td.preview .dl-horizontal dt {
 	clear: none;

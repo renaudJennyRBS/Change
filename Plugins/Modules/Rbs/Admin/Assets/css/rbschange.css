@@ -1509,3 +1509,9 @@ th label {
 .well h5 {
 	margin-top: 0;
 }
+
+.absolute-top-left {
+	position: absolute;
+	top: 0;
+	left: 0;
+}

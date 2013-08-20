@@ -231,7 +231,7 @@
 					"align"  : "center",
 					"width"  : "30px",
 					"label"  : '<input type="checkbox" ng-model="allSelected.cb"/>',
-					"content": '<input type="checkbox" ng-model="doc.selected"/>',
+					"content": '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="doc.selected"/>',
 					"dummy"  : true
 				});
 			}
@@ -285,14 +285,22 @@
 				if (__preview[dlid]['class']) {
 					td.addClass(__preview[dlid]['class']);
 				}
-				if (__preview[dlid]['style']) {
+				/*if (__preview[dlid]['style']) {
 					td.attr('style', __preview[dlid]['style']);
-				}
+				}*/
 
 				if (!__preview[dlid].contents) {
 					__preview[dlid].contents = '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>';
 				}
-				td.html('<button type="button" class="close pull-right" ng-click="preview(doc, $event)">&times;</button>' + __preview[dlid].contents);
+
+				td.html(
+					'<div class="inner" style="' + (__preview[dlid]['style'] || '') + '">' +
+						'<button type="button" class="close pull-right" ng-click="preview(doc, $event)">&times;</button>' +
+						'<div class="preview-indicator"></div>' +
+						__preview[dlid].contents +
+					'</div>'
+				);
+
 				result.preview = true;
 			}
 
@@ -378,18 +386,24 @@
 				// Create body cell
 				if (column.content) {
 
-					// Allow the use of "converted(<property>)" instead of "getConvertedValue(<property>, <columnName>)"
-					// in column templates that have a converter defined on them.
-					column.content = column.content.replace(/converted\s*\(\s*([a-zA-Z0-9\.]+)\s*\)/, 'getConvertedValue($1, "' + column.name + '")');
-
-					html = '<td ng-class="{' + (column.primary ? '\'preview\':hasPreview(doc),' : '') + '\'sorted\':isSortedOn(\'' + column.name + '\')}">';
-					if (column.primary) {
-						html += '<div class="primary-cell">' + column.content + '</div>';
-					} else {
-						html += column.content;
+					if (column.name === 'selectable') {
+						html = '<td ng-click="doc.selected = ! doc.selected" style="cursor:pointer;">' + column.content + '</td>';
+						$td = $(html);
 					}
-					html += '</td>';
-					$td = $(html);
+					else {
+						// Allow the use of "converted(<property>)" instead of "getConvertedValue(<property>, <columnName>)"
+						// in column templates that have a converter defined on them.
+						column.content = column.content.replace(/converted\s*\(\s*([a-zA-Z0-9\.]+)\s*\)/, 'getConvertedValue($1, "' + column.name + '")');
+
+						html = '<td ng-class="{' + (column.primary ? '\'preview\':hasPreview(doc),' : '') + '\'sorted\':isSortedOn(\'' + column.name + '\')}">';
+						if (column.primary) {
+							html += '<div class="primary-cell">' + column.content + '</div>';
+						} else {
+							html += column.content;
+						}
+						html += '</td>';
+						$td = $(html);
+					}
 
 				} else {
 
@@ -428,7 +442,6 @@
 						'position'  : 'relative'
 					});
 				}
-
 
 				// The primary column has extra links for preview, edit and delete.
 				if (column.primary) {
