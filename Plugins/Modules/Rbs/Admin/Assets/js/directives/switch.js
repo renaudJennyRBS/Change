@@ -60,7 +60,6 @@
 
 				function toggleState () {
 					ngModel.$setViewValue(isON() ? valueOff : valueOn);
-					console.log("value=", ngModel.$viewValue);
 					ngModel.$render();
 				}
 
