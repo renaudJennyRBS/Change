@@ -124,4 +124,75 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$theme = $pm->getTheme('Project', 'Tests');
 		$this->assertTrue($theme->getActivated());
 	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDeactivateLockedModule()
+	{
+		$pm = $this->getApplicationServices()->getPluginManager();
+		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
+		//because there is nothing in plugins table
+		//register and fake the install of plugins (they are not already in database, but just in compiled file)
+		//fake the install consist to set Activated and set Configured true.
+		$module = $pm->getModule('Project', 'Tests');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $module);
+		$pm->register($module);
+		$module->setActivated(true);
+		$module->setConfigured(true);
+		$pm->update($module);
+
+		//Plugins module is just compiled too, but we just need to register it in case of compile before asking an action of it
+		$pluginsModule = $pm->getModule('Rbs', 'Plugins');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $pluginsModule);
+		$pm->register($pluginsModule);
+
+		$module = $pm->getModule('Project', 'Tests');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $module);
+		$module->setConfigurationEntry('locked', true);
+		$this->assertTrue($module->getActivated());
+		$module->setActivated(false);
+
+		$event = new Event();
+		$event->setApplicationServices($this->getApplicationServices());
+		$paramArray = array('plugin' => $module->toArray());
+		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
+		$changePluginActivation = new \Rbs\Plugins\Http\Rest\Actions\ChangePluginActivation();
+		//Try to deactivate a locked plugin raise an InvalidArgumentException
+		$changePluginActivation->execute($event);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDeactivateLockedTheme()
+	{
+		$pm = $this->getApplicationServices()->getPluginManager();
+		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
+		//because there is nothing in plugins table
+		//register and fake the install of plugins (they are not already in database, but just in compiled file)
+		//fake the install consist to set Activated and set Configured true.
+		$theme = $pm->getTheme('Project', 'Tests');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $theme);
+		$pm->register($theme);
+		$theme->setActivated(true);
+		$theme->setConfigured(true);
+		$pm->update($theme);
+
+		//Theme part
+		$theme = $pm->getTheme('Project', 'Tests');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $theme);
+		$theme->setConfigurationEntry('locked', true);
+		$this->assertTrue($theme->getActivated());
+		$theme->setActivated(false);
+
+		$event = new Event();
+		$event->setApplicationServices($this->getApplicationServices());
+		$paramArray = array('plugin' => $theme->toArray());
+		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
+		$changePluginActivation = new \Rbs\Plugins\Http\Rest\Actions\ChangePluginActivation();
+		//Try to deactivate a locked plugin raise an InvalidArgumentException
+		$this->setExpectedException('\InvalidArgumentException');
+		$changePluginActivation->execute($event);
+	}
 }
