@@ -55,5 +55,19 @@
 	<key id="save-error">Save has failed.</key>
 
 	<key id="tip-dismiss-thank-you">Thanks, do not display this message anymore!</key>
+	<key id="correction-confirm-delete">Do you really want to delete the Correction?</key>
+
+	<key id="status-draft">draft</key>
+	<key id="status-frozen">frozen</key>
+	<key id="status-validcontent">validated content</key>
+	<key id="status-valid">validated</key>
+	<key id="status-validation">to validate</key>
+	<key id="status-unpublishable">unpublishable</key>
+	<key id="status-publishable">publishable</key>
+	<key id="status-filed">filed</key>
+
+	<key id="yes">yes</key>
+	<key id="no">no</key>
+	<key id="confirmation">confirmation</key>
 
 </i18n>

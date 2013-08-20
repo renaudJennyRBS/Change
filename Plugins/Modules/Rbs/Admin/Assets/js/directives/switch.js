@@ -16,33 +16,31 @@
 	 *
 	 * @example: <code><switch confirm-off="Are you sure to disable this element?" ng-model="myModel.active"/></code>
 	 */
-	app.directive('switch', ['RbsChange.Dialog', function (Dialog) {
+	app.directive('switch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n) {
 		return {
 			restrict : 'E',
 
 			template : '<div class="switch-on-off switch">' +
 				'<div class="switch-button"></div>' +
-				'<label class="on">(= labelOn =)</label>' +
-				'<label class="off">(= labelOff =)</label>' +
+				'<label class="on" ng-bind-html="labelOn"></label>' +
+				'<label class="off" ng-bind-html="labelOff"></label>' +
 				'</div>',
 
-			require: 'ng-model',
+			require: 'ngModel',
 
 			replace: true,
 
-			// Create isolated scope
 			scope: true,
 
 			link : function (scope, elm, attrs, ngModel) {
 				var sw = $(elm), valueOff, valueOn, acceptedValuesOn, confirmTitle;
 
-				// FIXME Localization
-				scope.labelOn = attrs.labelOn || 'oui';
-				scope.labelOff = attrs.labelOff || 'non';
+				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.admin.js.yes');
+				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.admin.js.no');
 				valueOff = attrs.valueOff || false;
 				valueOn = attrs.valueOn || true;
 				acceptedValuesOn = attrs.acceptedValuesOn || [];
-				confirmTitle = attrs.confirmTitle || 'Confirmation';
+				confirmTitle = attrs.confirmTitle || i18n.trans('m.rbs.admin.admin.js.confirmation | ucf');
 
 				ngModel.$render = function () {
 					if (isON()) {
@@ -62,6 +60,7 @@
 
 				function toggleState () {
 					ngModel.$setViewValue(isON() ? valueOff : valueOn);
+					console.log("value=", ngModel.$viewValue);
 					ngModel.$render();
 				}
 
