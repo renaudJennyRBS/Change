@@ -2,6 +2,7 @@
 namespace Rbs\Timeline\Documents;
 use Change\Presentation\PresentationServices;
 use Change\User\ProfileManager;
+use Rbs\User\Events\AuthenticatedUser;
 
 /**
  * @name \Rbs\Timeline\Documents\Message
@@ -52,7 +53,8 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 			/* @var $user \Rbs\User\Documents\User */
 			$pm = new ProfileManager();
 			$pm->setDocumentServices($message->getDocumentServices());
-			$profile = $pm->loadProfile($user, 'Rbs_Admin');
+			$authenticatedUser = new AuthenticatedUser($user);
+			$profile = $pm->loadProfile($authenticatedUser, 'Rbs_Admin');
 			if ($profile && $profile->getPropertyValue('avatar'))
 			{
 				$avatar = $profile->getPropertyValue('avatar');
@@ -93,7 +95,8 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 			/* @var $user \Rbs\User\Documents\User */
 			$pm = new ProfileManager();
 			$pm->setDocumentServices($message->getDocumentServices());
-			$profile = $pm->loadProfile($user, 'Rbs_Admin');
+			$authenticatedUser = new AuthenticatedUser($user);
+			$profile = $pm->loadProfile($authenticatedUser, 'Rbs_Admin');
 			if ($profile && $profile->getPropertyValue('avatar'))
 			{
 				$avatar = $profile->getPropertyValue('avatar');
