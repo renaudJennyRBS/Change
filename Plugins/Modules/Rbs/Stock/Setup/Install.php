@@ -19,32 +19,36 @@ class Install
 		$schema->generate();
 		$applicationServices->getDbProvider()->closeConnection();
 
-		$tm = $applicationServices->getTransactionManager();
-		try
+		$cm = new \Change\Collection\CollectionManager();
+		$cm->setDocumentServices($documentServices);
+		if ($cm->getCollection('Rbs_Stock_Collection_Unit') === null)
 		{
-			$tm->begin();
-			/* @var $item \Rbs\Collection\Documents\Item */
-			$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-			$item->setValue('PC');
-			$item->setLabel('pc.');
-			$item->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.unit-piece', array('ucf')));
-			$item->setLocked(true);
-			$item->save();
+			$tm = $applicationServices->getTransactionManager();
+			try
+			{
+				$tm->begin();
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item->setValue('PC');
+				$item->setLabel('pc.');
+				$item->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.unit-piece', array('ucf')));
+				$item->setLocked(true);
+				$item->save();
 
-			/* @var $collection \Rbs\Collection\Documents\Collection */
-			$collection = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
-			$collection->setLabel('SKU Units');
-			$collection->setCode('Rbs_Stock_Collection_Unit');
-			$collection->setLocked(true);
-			$collection->getItems()->add($item);
-			$collection->save();
-			$tm->commit();
+				/* @var $collection \Rbs\Collection\Documents\Collection */
+				$collection = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$collection->setLabel('SKU Units');
+				$collection->setCode('Rbs_Stock_Collection_Unit');
+				$collection->setLocked(true);
+				$collection->getItems()->add($item);
+				$collection->save();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
 		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
-
 	}
 
 	/**

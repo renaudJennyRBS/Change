@@ -1,10 +1,12 @@
 <?php
 namespace Rbs\Price\Std;
 
+use  Rbs\Commerce\Interfaces\TaxApplication as TaxApplicationInterfaces;
+
 /**
  * @name \Rbs\Price\Std\TaxApplication
  */
-class TaxApplication
+class TaxApplication implements TaxApplicationInterfaces
 {
 	/**
 	 * @var \Rbs\Commerce\Interfaces\Tax

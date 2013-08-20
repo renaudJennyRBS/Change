@@ -73,10 +73,6 @@ class Category extends Block
 			$category = $documentManager->getDocumentInstance($categoryId);
 			$attributes['title'] = $category->getTitle();
 
-			//TODO: for development only
-			$commerceServices->setBillingArea($category->getWebStore()->getBillingAreas()[0]);
-			$commerceServices->setZone('FRC');
-
 			//TODO: handle pagination
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
