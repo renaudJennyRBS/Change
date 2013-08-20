@@ -87,7 +87,7 @@
 							contentEl.append(cloneElm);
 						})
 					}
-				});
+				}, true);
 
 				//edit and remove
 				scope.user = User.get();

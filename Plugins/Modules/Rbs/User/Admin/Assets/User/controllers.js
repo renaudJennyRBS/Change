@@ -214,9 +214,11 @@
 	 * @param REST
 	 * @param i18n
 	 * @param $http
+	 * @param Workspace
+	 * @param Breadcrumb
 	 * @constructor
 	 */
-	function PublicProfileController($scope, $routeParams, REST, i18n, $http)
+	function PublicProfileController($scope, $routeParams, REST, i18n, $http, Workspace, Breadcrumb)
 	{
 		Workspace.collapseLeftSidebar();
 
@@ -230,6 +232,32 @@
 
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
+			//Groups
+			$scope.query = {
+				'model': 'Rbs_User_Group',
+				'join': [
+					{
+						'model': 'Rbs_User_User',
+						'name': 'juser',
+						'property': 'groups'
+					}
+				],
+				'where': {
+					'and': [
+						{
+							'op': 'eq',
+							'lexp': {
+								'property': 'id',
+								'join': 'juser'
+							},
+							'rexp': {
+								'value': user.id
+							}
+						}
+					]
+				}
+			};
+			//Profiles
 			var url = user.META$.links.profiles.href;
 			$http.get(url).success(function (profiles){
 				$scope.profile = profiles.Rbs_Admin;
@@ -237,7 +265,7 @@
 		});
 	}
 
-	PublicProfileController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http'];
+	PublicProfileController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.Workspace', 'RbsChange.Breadcrumb'];
 	app.controller('Rbs_User_User_PublicProfileController', PublicProfileController);
 
 	/**
