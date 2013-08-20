@@ -230,7 +230,7 @@
 					"name"   : "selectable",
 					"align"  : "center",
 					"width"  : "30px",
-					"label"  : '<input type="checkbox" ng-model="allSelected.cb"/>',
+					"label"  : '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="allSelected.cb"/>',
 					"content": '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="doc.selected"/>',
 					"dummy"  : true
 				});
@@ -349,7 +349,7 @@
 
 				// Create header cell
 				if (column.name === 'selectable') {
-					$th = $('<th>' + column.label + '</th>');
+					$th = $('<th ng-click="allSelected.cb = ! allSelected.cb" style="cursor:pointer;">' + column.label + '</th>');
 				} else {
 					var toggleDateBtn, htmlTh;
 
