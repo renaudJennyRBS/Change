@@ -20,9 +20,9 @@
 			[i18n.trans('m.rbs.theme.admin.js.module-name | ucf'), "Rbs/Theme"]
 		]);
 
-		if ($routeParams.theme)
+		if ($routeParams.id)
 		{
-			REST.resource($routeParams.theme).then(function (theme)
+			REST.resource('Rbs_Theme_Theme', $routeParams.id).then(function (theme)
 			{
 				Breadcrumb.setPath([theme]);
 			});
