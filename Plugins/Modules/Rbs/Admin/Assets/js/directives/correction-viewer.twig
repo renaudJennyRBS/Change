@@ -34,7 +34,7 @@
 				<th scope="row">(=line.id=)</th>
 				<td style="vertical-align: top">(=line.original=)</td>
 				<td style="vertical-align: top" ng-switch="advancedDiffs">
-					<div ng-switch-when="true" ng-bind-html="line.current | diff:line.original"></div>
+					<div ng-switch-when="true" class="diffs" ng-bind-html="line.current | diff:line.original"></div>
 					<div ng-switch-when="false">(=line.current=)</div>
 				</td>
 			</tr>
