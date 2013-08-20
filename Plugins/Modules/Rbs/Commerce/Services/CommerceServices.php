@@ -11,7 +11,7 @@ use Zend\Di\Di;
 /**
  * @name \Rbs\Commerce\Services\CommerceServices
  */
-class CommerceServices extends Di
+class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInterface
 {
 	use EventsCapableTrait;
 
@@ -36,6 +36,16 @@ class CommerceServices extends Di
 	protected $zone;
 
 	/**
+	 * @var string
+	 */
+	protected $cartIdentifier;
+
+	/**
+	 * @var boolean
+	 */
+	protected $loaded = false;
+
+	/**
 	 * @param ApplicationServices $applicationServices
 	 * @param DocumentServices $documentServices
 	 */
@@ -55,6 +65,7 @@ class CommerceServices extends Di
 		$this->registerPriceManager($dl);
 		$this->registerCatalogManager($dl);
 		$this->registerStockManager($dl);
+		$this->registerCartManager($dl);
 		parent::__construct($dl);
 
 		$im = $this->instanceManager();
@@ -62,7 +73,7 @@ class CommerceServices extends Di
 		$im->setParameters('Rbs\Price\Services\PriceManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Catalog\Services\CatalogManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Stock\Services\StockManager', array('commerceServices' => $this));
-
+		$im->setParameters('Rbs\Commerce\Cart\CartManager', array('commerceServices' => $this));
 	}
 
 	/**
@@ -77,7 +88,6 @@ class CommerceServices extends Di
 				array('type' => 'Rbs\Commerce\Services\CommerceServices', 'required' => true));
 		$dl->addDefinition($cl);
 	}
-
 
 	/**
 	 * @param DefinitionList $dl
@@ -111,6 +121,19 @@ class CommerceServices extends Di
 	protected function registerStockManager($dl)
 	{
 		$cl = new ClassDefinition('Rbs\Stock\Services\StockManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('setCommerceServices', true)
+			->addMethodParameter('setCommerceServices', 'commerceServices',
+				array('type' => 'Rbs\Commerce\Services\CommerceServices', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
+	 * @param DefinitionList $dl
+	 */
+	protected function registerCartManager($dl)
+	{
+		$cl = new ClassDefinition('Rbs\Commerce\Cart\CartManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('setCommerceServices', true)
 			->addMethodParameter('setCommerceServices', 'commerceServices',
@@ -160,6 +183,26 @@ class CommerceServices extends Di
 	}
 
 	/**
+	 * @param \Callable|null $loaderCallback
+	 * @return $this
+	 */
+	public function setLoaderCallback($loaderCallback)
+	{
+		$this->loaderCallback = $loaderCallback;
+		return $this;
+	}
+
+	protected function load()
+	{
+		if (!$this->loaded)
+		{
+			$this->loaded = true;
+			$em = $this->getEventManager();
+			$em->trigger('load', $this, array('commerceServices' => $this));
+		}
+	}
+
+	/**
 	 * @param string $zone
 	 * @return $this
 	 */
@@ -174,6 +217,7 @@ class CommerceServices extends Di
 	 */
 	public function getZone()
 	{
+		$this->load();
 		return $this->zone;
 	}
 
@@ -192,7 +236,27 @@ class CommerceServices extends Di
 	 */
 	public function getBillingArea()
 	{
+		$this->load();
 		return $this->billingArea;
+	}
+
+	/**
+	 * @param string $cartIdentifier
+	 * @return $this
+	 */
+	public function setCartIdentifier($cartIdentifier)
+	{
+		$this->cartIdentifier = $cartIdentifier;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCartIdentifier()
+	{
+		$this->load();
+		return $this->cartIdentifier;
 	}
 
 	/**
@@ -225,6 +289,14 @@ class CommerceServices extends Di
 	public function getStockManager()
 	{
 		return $this->get('Rbs\Stock\Services\StockManager');
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartManager
+	 */
+	public function getCartManager()
+	{
+		return $this->get('Rbs\Commerce\Cart\CartManager');
 	}
 
 	/**
