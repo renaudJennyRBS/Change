@@ -1515,6 +1515,10 @@ th label {
 	top: 0;
 	left: 0;
 }
+.absolute-bottom {
+	position: absolute;
+	bottom: 0;
+}
 
 .diffs del {
 	color: red;

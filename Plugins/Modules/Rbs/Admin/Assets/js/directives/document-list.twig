@@ -34,7 +34,7 @@
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu">
-			<li ng-repeat="c in sortable"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
+			<li ng-repeat="c in sortable" ng-hide="! columns[c].label"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
 		</ul>
 	</div>
 
