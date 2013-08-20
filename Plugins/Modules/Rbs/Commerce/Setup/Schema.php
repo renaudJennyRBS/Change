@@ -23,7 +23,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			$schemaManager = $this->getSchemaManager();
 			$this->tables[static::CART_TABLE] = $td = $schemaManager->newTableDefinition(static::CART_TABLE);
 			$td->addField($schemaManager->newIntegerFieldDefinition('id')->setNullable(false)->setAutoNumber(true))
-				->addField($schemaManager->newTimeStampFieldDefinition('creation_date')->setNullable(false))
+				->addField($schemaManager->newDateFieldDefinition('creation_date')->setNullable(false))
 				->addField($schemaManager->newTimeStampFieldDefinition('last_update')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('identifier', array('length' => 40))->setNullable(true))
 				->addField($schemaManager->newIntegerFieldDefinition('owner_id')->setNullable(false)->setDefaultValue('0'))
