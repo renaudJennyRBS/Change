@@ -66,4 +66,8 @@
 	<key id="status-publishable">publiable</key>
 	<key id="status-filed">archivé</key>
 
+	<key id="yes">oui</key>
+	<key id="no">non</key>
+	<key id="confirmation">confirmation</key>
+
 </i18n>

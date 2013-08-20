@@ -11,9 +11,9 @@
 			<a href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> {{ i18n('m.rbs.website.document.topic.properties', ['ucf']) }}</a>
 		</span>
 
-		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL=)">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new'=)">{{ i18n('m.rbs.website.document.staticpage-create', ['ucf']) }}</a>
 		|
-		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL=)">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL:'new'=)">{{ i18n('m.rbs.website.document.topic-create', ['ucf']) }}</a>
 	</div>
 
 	<div ng-if="sectionFunctions && showFunctions" class="well well-small">

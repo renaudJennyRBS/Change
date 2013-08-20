@@ -45,7 +45,9 @@ td .correction {
 	list-style: none;
 	*zoom: 1;
 	margin-left: -19px;
+	margin-top: 0px;
 	position: relative;
+	top: -18px;
 }
 
 .thumbnail-grid:before {
@@ -143,14 +145,13 @@ td .correction {
 }
 
 .thumbnail-grid li .inner {
-	height: 220px;
+	height: 187px;
 	overflow: hidden;
 	border: 5px solid #eee;
 	margin-left: 20px;
 	border-radius: 3px;
 	position: relative;
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
-	line-height: 190px;
 	text-align: center;
 	background: white;
 }
@@ -199,6 +200,7 @@ td .correction {
 	clear: both;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 	opacity: 0.95;
+	line-height: 1em;
 }
 
 
@@ -361,19 +363,33 @@ a.action:first-child {
 	margin-left: 0;
 }
 
-.table-striped.document-list tbody tr td.preview {
-	background: #F0F8F8;
+.table-striped.document-list tbody tr.preview td.preview {
+	padding: 0;
 }
-.table-striped.document-list tbody tr.preview td {
-	border-top: none;
+.table-striped.document-list tbody tr td.preview button.close {
+	margin: 5px;
 }
 
-.table-striped.document-list tbody tr.has-preview td {
-	border-bottom: 1px solid #DDD;
+.table-striped.document-list tbody tr.preview td.preview .inner {
+	position: relative;
+	padding: 5px;
 }
-.table-striped.document-list tbody tr.has-preview td.preview {
-	border-bottom: 1px dashed #DDD;
+
+rbs-document-list tr.preview td.preview .preview-indicator {
+	display: none;
+	position: absolute;
+	top: -7px;
+	left: 280px;
+	width: 10px;
+	height: 10px;
+	border-top: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
 }
+
 
 rbs-document-list tr td.preview .dl-horizontal dt {
 	clear: none;
