@@ -116,9 +116,6 @@
 		$ipt.attr('id', fieldId);
 		$ipt.attr('input-id', fieldId);
 
-		// CSS class for Correction
-		tElement.attr('ng-class', '{\'success\': hasCorrectionOnProperty(\'' + property + '\')}');
-
 		// Init input field
 		$ipt.attr('ng-model', ngModel);
 

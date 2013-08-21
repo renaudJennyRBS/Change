@@ -356,13 +356,6 @@
 				return Utils.hasStatus.apply(Utils, args);
 			};
 
-			scope.hasCorrectionOnProperty = function hasCorrectionOnPropertyFn (property) {
-				return scope.document &&
-					scope.document.META$ &&
-					scope.document.META$.correction &&
-					ArrayUtils.inArray(property, scope.document.META$.correction.propertiesNames) !== -1;
-			};
-
 			scope.hasCorrection = function hasCorrectionFn () {
 				return Utils.hasCorrection(scope.document);
 			};
@@ -530,6 +523,12 @@
 								scope.initSection(section);
 								initializedSections[section] = true;
 							}
+						}
+
+						if (Utils.hasCorrection(scope.original)) {
+							angular.forEach(scope.original.META$.correction.propertiesNames, function (property) {
+								element.find('[property="' + property + '"]').addClass('success');
+							});
 						}
 
 						scope.$watch('section', function (section) {
