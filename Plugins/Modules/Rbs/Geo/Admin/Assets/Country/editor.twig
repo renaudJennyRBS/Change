@@ -1,18 +1,31 @@
-{% import "@Admin/forms.twig" as forms %}
-
-<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
-	<fieldset data-ng-show="section==''"
+<form name="form" ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.geo.document.country.label', true) }}
-		{{ forms.field('code', 'String', 'm.rbs.geo.document.country.code', true) }}
-		{{ forms.field('title', 'String', 'm.rbs.geo.document.country.title', false) }}
+
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.geo.document.country.label', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="code" required="true"
+				label="{{ i18nAttr('m.rbs.geo.document.country.code', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="title"
+				label="{{ i18nAttr('m.rbs.geo.document.country.title', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+	<fieldset ng-show="section=='systeminfo'"
+	          data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
