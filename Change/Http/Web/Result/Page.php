@@ -17,7 +17,7 @@ class Page extends Result
 	/**
 	 * @var array
 	 */
-	protected $head = array();
+	protected $htmlHead = array();
 
 	/**
 	 * @var Layout
@@ -81,7 +81,7 @@ class Page extends Result
 	 */
 	public function addHeadAsString($headString)
 	{
-		$this->head[] = $headString;
+		$this->htmlHead[] = $headString;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Page extends Result
 	 */
 	public function addNamedHeadAsString($name, $headString)
 	{
-		$this->head[$name] = $headString;
+		$this->htmlHead[$name] = $headString;
 	}
 
 	/**
@@ -180,14 +180,13 @@ class Page extends Result
 		return ($this->renderer && is_callable($this->renderer));
 	}
 
-
 	/**
 	 * Used by template
 	 * @return array
 	 */
 	public function getHead()
 	{
-		return $this->head;
+		return $this->htmlHead;
 	}
 
 	/**

@@ -17,6 +17,11 @@ class DummyResizerEngine
 	 */
 	public function getImageSize($path)
 	{
-		return array('height' => null, 'width' => null);
+		$result = getimagesize($path);
+		if ($result === false)
+		{
+			$result = getimagesizefromstring(file_get_contents($path));
+		}
+		return $result ? array('width' => $result[0], 'height' => $result[1]) : array('height' => null, 'width' => null);
 	}
 }

@@ -97,7 +97,9 @@ class Category extends Block
 			{
 				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
 				$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
-				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null );
+				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
+				$visual = $product->getFirstVisual();
+				$row['visual'] = $visual ? $visual->getPath() : null;
 				$price = $priceManager ? $priceManager->getPriceByProduct($product, $webStore) : null;
 				if ($price)
 				{

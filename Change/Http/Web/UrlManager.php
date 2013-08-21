@@ -27,6 +27,11 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $website;
 
 	/**
+	 * @var \Change\Presentation\Interfaces\Section|null
+	 */
+	protected $section;
+
+	/**
 	 * @var string
 	 */
 	protected $LCID;
@@ -96,6 +101,24 @@ class UrlManager extends \Change\Http\UrlManager
 	public function getWebsite()
 	{
 		return $this->website;
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @return $this
+	 */
+	public function setSection($section)
+	{
+		$this->section = $section;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section|null
+	 */
+	public function getSection()
+	{
+		return $this->section;
 	}
 
 	/**
@@ -231,6 +254,10 @@ class UrlManager extends \Change\Http\UrlManager
 		if (!is_numeric($document) && !($document instanceof \Change\Documents\AbstractDocument))
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument or integer', 999999);
+		}
+		if ($section === null)
+		{
+			$section = $this->getSection();
 		}
 		if (!($section instanceof \Change\Presentation\Interfaces\Section))
 		{
