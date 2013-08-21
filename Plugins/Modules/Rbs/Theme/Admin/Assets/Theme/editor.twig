@@ -1,15 +1,23 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('name', 'String', 'm.rbs.theme.document.theme.name',
-			true, 'm.rbs.theme.document.theme.name-help') }}
 
-		{{ forms.field('label', 'String', 'm.rbs.theme.document.theme.label', true) }}
+		<rbs-field-text
+			property="name" required="true"
+			label="{{ i18nAttr('m.rbs.theme.document.theme.name', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.theme.document.theme.name-help') }}</span>
+		</rbs-field-text>
 
-		{{ forms.picker('parentTheme', 'Rbs_Theme_Theme', 'm.rbs.theme.document.theme.parent-theme', false) }}
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.theme.document.theme.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker property="parentTheme" required="false" label="{{ i18nAttr('m.rbs.theme.document.theme.parent-theme', ['ucf']) }}"
+			accepted-model="Rbs_Theme_Theme"
+			allow-edition="true">
+		</rbs-field-picker>
 	</fieldset>
 
 	<fieldset

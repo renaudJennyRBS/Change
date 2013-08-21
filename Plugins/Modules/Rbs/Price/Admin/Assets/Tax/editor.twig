@@ -1,11 +1,18 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.price.document.tax.label', true) }}
-		{{ forms.field('code', 'String', 'm.rbs.price.document.tax.code', false) }}
+
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.price.document.tax.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="code" required="false"
+			label="{{ i18nAttr('m.rbs.price.document.tax.code', ['ucf']) }}">
+		</rbs-field-text>
+
 		<div class="control-group property">
 			<label class="control-label" for="rounding">
 				{{ i18n('m.rbs.price.document.tax.rounding', ['ucf']) }}
@@ -16,7 +23,13 @@
 				<span class="help-block"> {{ i18n('m.rbs.price.document.tax.rounding-help') }}</span>
 			</div>
 		</div>
-		{{ forms.field('cascading', 'Boolean', 'm.rbs.price.document.tax.cascading', false, 'm.rbs.price.document.tax.cascading-help') }}
+
+		<rbs-field-boolean
+			property="cascading"
+			label="{{ i18nAttr('m.rbs.price.document.tax.cascading', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.price.document.tax.cascading-help') }}</span>
+		</rbs-field-boolean>
+
 		<h3>{{ i18n('m.rbs.price.document.tax.data', ['ucf']) }}</h3>
 		<table class="table table-striped">
 			<thead>

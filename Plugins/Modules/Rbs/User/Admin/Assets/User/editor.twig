@@ -1,27 +1,51 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('login', 'String', 'm.rbs.user.document.user.login', true) }}
-		{{ forms.field('email', 'String', 'm.rbs.user.document.user.email', true) }}
-		{{ forms.field('label', 'String', 'm.rbs.user.document.user.label', true) }}
-		{{ forms.field('identifier', 'String', 'm.rbs.user.document.user.identifier', true) }}
-		{{ forms.pickerMultiple('groups', 'Rbs_User_Group', 'm.rbs.user.document.group-list',
-		false, null, 'm.rbs.user.document.group.group-picker-title') }}
+
+		<rbs-field-text
+			property="login" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.user.login', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="email" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.user.email', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.user.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="identifier" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.user.identifier', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker-multiple property="groups" required="false" label="{{ i18nAttr('m.rbs.user.document.group-list', ['ucf']) }}"
+			accepted-model="Rbs_Price_BillingArea"
+			selector-title="{{ i18nAttr('m.rbs.user.document.group.group-picker-title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='security'"
 		data-form-section-label="{{ i18nAttr('m.rbs.user.document.user.security', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.readonly('hashMethod', 'm.rbs.user.document.user.hashMethod') }}
-		<div data-ng-if="document.isNew()">
-		{{ forms.field('password', 'String', 'm.rbs.user.document.user.password', true) }}
-		</div>
-		<div data-ng-if="!document.isNew()">
-		{{ forms.field('password', 'String', 'm.rbs.user.admin.new-password') }}
-		</div>
+
+		<rbs-field-text readonly="true" property="hashMethod"
+			label="{{ i18nAttr('m.rbs.user.document.user.hashMethod', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="password" required="true" ng-if="document.isNew()"
+			label="{{ i18nAttr('m.rbs.user.document.user.password', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="password" ng-if="!document.isNew()"
+			label="{{ i18nAttr('m.rbs.user.admin.new-password', ['ucf']) }}">
+		</rbs-field-text>
+
 	</fieldset>
 
 	<fieldset

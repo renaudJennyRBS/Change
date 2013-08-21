@@ -1,12 +1,18 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.store.document.webstore.label', true) }}
-		{{ forms.pickerMultiple('billingAreas', 'Rbs_Price_BillingArea', 'm.rbs.store.document.webstore.billingareas',
-			true, null, 'm.rbs.store.document.webstore.billingareas-picker-title') }}
+
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.store.document.webstore.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker-multiple property="billingAreas" required="true" label="{{ i18nAttr('m.rbs.store.document.webstore.billingareas', ['ucf']) }}"
+			accepted-model="Rbs_Price_BillingArea"
+			selector-title="{{ i18nAttr('m.rbs.store.document.webstore.billingareas-picker-title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+
 	</fieldset>
 
 	<fieldset
