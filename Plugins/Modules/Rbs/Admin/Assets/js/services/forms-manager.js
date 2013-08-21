@@ -63,6 +63,8 @@
 				idStack.push(queryParam.id);
 			}
 
+			$ws = $('#workspace'); // Please keep this here even if it is declared above.
+
 			// Slides up the current form.
 			$form = $ws.children('.document-form').last();
 			$form.slideUp('fast');
@@ -119,8 +121,9 @@
 			});
 			idStack.push(doc.id);
 
+			$ws = $('#workspace'); // Please keep this here even if it is declared above.
+
 			// Slides up the current form.
-			// TODO Use CSS3 transition if possible.
 			$form = $ws.children('.document-form').last();
 			$form.slideUp('fast');
 
