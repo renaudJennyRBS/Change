@@ -1,18 +1,48 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.geo.document.territorialunit.label', true) }}
-		{{ forms.field('code', 'String', 'm.rbs.geo.document.territorialunit.code', true) }}
-		{{ forms.field('title', 'String', 'm.rbs.geo.document.territorialunit.title', false) }}
+
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr('m.rbs.geo.document.territorialunit.label', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="code" required="true"
+				label="{{ i18nAttr('m.rbs.geo.document.territorialunit.code', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="title"
+				label="{{ i18nAttr('m.rbs.geo.document.territorialunit.title', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
 		<div class="alert alert-danger">TODO: liste des types.</div>
-		{{ forms.field('unitType', 'String', 'm.rbs.geo.document.territorialunit.unittype', true) }}
-		{{ forms.picker('country', 'Rbs_Geo_Country', 'm.rbs.geo.document.territorialunit.country',
-			true, null, 'm.rbs.geo.document.territorialunit.country-picker-title') }}
-		{{ forms.picker('unitParent', 'Rbs_Geo_TerritorialUnit', 'm.rbs.geo.document.territorialunit.unitparent',
-			false, null, 'm.rbs.geo.document.territorialunit.unitparent-picker-title') }}
+
+		<rbs-field-text
+				property="unitType" required="true"
+				label="{{ i18nAttr('m.rbs.geo.document.territorialunit.unittype', ['ucf']) }}"
+				input-class="input-block-level">
+		</rbs-field-text>
+
+		<rbs-field-picker
+				property="country" required="true" label="{{ i18nAttr('m.rbs.geo.document.territorialunit.country', ['ucf']) }}"
+				accepted-model="Rbs_Geo_Country"
+				selector-title="{{ i18nAttr('m.rbs.geo.document.territorialunit.country-picker-title', ['ucf']) }}"
+				allow-creation="false">
+		</rbs-field-picker>
+
+		<rbs-field-picker
+				property="unitParent" label="{{ i18nAttr('m.rbs.geo.document.territorialunit.unitparent', ['ucf']) }}"
+				accepted-model="Rbs_Geo_TerritorialUnit"
+				selector-title="{{ i18nAttr('m.rbs.geo.document.territorialunit.unitparent-picker-title', ['ucf']) }}"
+				allow-creation="false">
+		</rbs-field-picker>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
