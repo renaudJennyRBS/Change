@@ -18,7 +18,7 @@
 			;
 
 			$delegate.model('Rbs_User_Group').route('permission'  , 'Rbs/User/Group/:id/Permissions/', 'Rbs/User/User/permission.twig');
-			$delegate.model(null).route('home', 'Rbs/User/', { 'redirectTo': 'Rbs/User/User/'});
+			$delegate.model(null).route('home', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});
 			$delegate.model(null).route('userProfile', 'Rbs/User/Profile', 'Rbs/User/Profile/profile.twig');
 
 			$delegate.routesForModels([
