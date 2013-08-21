@@ -197,7 +197,7 @@
 		 */
 		function initColumns (dlid, tElement, tAttrs, undefinedColumnLabels, localActions) {
 			var	columns, column,
-				$th, $td, $head, $body, html, p, td,
+				$th, $td, $head, $body, html, p, inner,
 				result = {
 					'columns' : {},
 					'preview' : false
@@ -281,26 +281,14 @@
 			}
 
 			if (__preview[dlid]) {
-				td = tElement.find('tbody tr td.preview');
+				inner = tElement.find('tbody tr td.preview .inner');
 				if (__preview[dlid]['class']) {
-					td.addClass(__preview[dlid]['class']);
+					inner.addClass(__preview[dlid]['class']);
 				}
-				/*if (__preview[dlid]['style']) {
-					td.attr('style', __preview[dlid]['style']);
-				}*/
-
-				if (!__preview[dlid].contents) {
-					__preview[dlid].contents = '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>';
+				if (__preview[dlid]['style']) {
+					inner.attr('style', __preview[dlid]['style']);
 				}
-
-				td.html(
-					'<div class="inner" style="' + (__preview[dlid]['style'] || '') + '">' +
-						'<button type="button" class="close pull-right" ng-click="preview(doc, $event)">&times;</button>' +
-						'<div class="preview-indicator"></div>' +
-						__preview[dlid].contents +
-					'</div>'
-				);
-
+				inner.find('[data-role="preview-contents"]').replaceWith(__preview[dlid].contents || '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>');
 				result.preview = true;
 			}
 
@@ -855,6 +843,17 @@
 						current = scope.collection[index];
 						next = (scope.collection.length > (index+1)) ? scope.collection[index+1] : null;
 						return (next && next.__dlPreview && next.id === current.id) ? true : false;
+					};
+
+					scope.closeAllPreviews = function () {
+						var i = 0;
+						while (i < scope.collection.length) {
+							if (scope.isPreview(scope.collection[i])) {
+								scope.collection.splice(i, 1);
+							} else {
+								i++;
+							}
+						}
 					};
 
 
