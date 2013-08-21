@@ -5,7 +5,7 @@
 			<li class="nav-header">{{ i18n('m.rbs.media.menu.selected-tags', ['ucf']) }}</li>
 		</ul>
 		<div class="nav-list">
-			<div class="muted" style="text-align:right;line-height:14px;"><small>{{ i18n('m.rbs.media.menu.selected-tags-message', ['ucf']) }} <i class="icon-arrow-right"></i></small></div>
+			<div class="muted" style="text-align:right;line-height:14px;margin-bottom:4px;"><small>{{ i18n('m.rbs.media.menu.selected-tags-message', ['ucf']) }} <i class="icon-arrow-right"></i></small></div>
 			<span
 				ng-repeat="tag in selectedTags"
 				on-remove="unselectTag(tag)"

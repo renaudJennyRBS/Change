@@ -16,7 +16,8 @@
 	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
+			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
 		]);
 
 		MainMenu.loadModuleMenu('Rbs_User');
@@ -37,7 +38,8 @@
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
+			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
+			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_User_User');
 	}

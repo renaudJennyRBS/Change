@@ -16,8 +16,7 @@
 	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.store.admin.js.module-name | ucf'), "Rbs/Store/"],
-			[i18n.trans('m.rbs.store.admin.js.webstore-list | ucf'), "Rbs/Store/WebStore/"]
+			[i18n.trans('m.rbs.store.admin.js.module-name | ucf'), "Rbs/Store/"]
 		]);
 
 		MainMenu.loadModuleMenu('Rbs_Store');
@@ -38,8 +37,7 @@
 	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.store.admin.js.module-name | ucf'), "Rbs/Store/"],
-			[i18n.trans('m.rbs.store.admin.js.webstore-list | ucf'), "Rbs/Store/WebStore/"]
+			[i18n.trans('m.rbs.store.admin.js.module-name | ucf'), "Rbs/Store/"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Store_WebStore');
 	}

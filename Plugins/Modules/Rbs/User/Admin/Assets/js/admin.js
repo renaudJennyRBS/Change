@@ -22,7 +22,7 @@
 				.route('public-profile', 'Rbs/User/Group/:id/PublicProfile', 'Rbs/User/Group/public-profile.twig')
 			;
 
-			$delegate.model(null).route('home', 'Rbs/User/', { 'redirectTo': 'Rbs/User/User/'});
+			$delegate.model(null).route('home', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});
 			$delegate.model(null).route('userProfile', 'Rbs/User/Profile', 'Rbs/User/Profile/profile.twig');
 
 			$delegate.routesForModels([
