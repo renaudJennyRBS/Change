@@ -1,44 +1,48 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		{{ forms.picker('website', 'Rbs_Website_Website',
-			'm.rbs.website.document.functionalpage.website',
-			true, 'm.rbs.website.document.functionalpage.website-help',
-			'm.rbs.website.document.functionalpage.website-picker-title') }}
+		<rbs-field-picker property="website" required="true" label="{{ i18nAttr('m.rbs.website.document.functionalpage.website', ['ucf']) }}"
+			accepted-model="Rbs_Website_Website"
+			selector-title="{{ i18nAttr('m.rbs.website.document.functionalpage.website-picker-title', ['ucf']) }}"
+			allow-edition="true">
+			<span class="help-block">{{ i18n('m.rbs.website.document.functionalpage.website-picker-title', ['ucf']) }}</span>
+		</rbs-field-picker>
 
 		<hr />
 
-		{{ forms.field('label', 'String', 'm.rbs.website.document.functionalpage.label', true) }}
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.website.document.functionalpage.label', ['ucf']) }}">
+		</rbs-field-text>
 
-		<div class="control-group required property" data-ng-class="{'success': hasCorrectionOnProperty('title')}">
-			<label class="control-label" for="title">{{ i18n('m.rbs.website.document.functionalpage.title', ['ucf']) }}</label>
-			<div class="controls">
-				<input type="text" rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.functionalpage.synchronize-title-label', ['ucf']) }}" id="title" name="title" required class="input-block-level" ng-model="document.title"/>
-			</div>
-		</div>
+		<rbs-field-text label="{{ i18nAttr('m.rbs.website.document.functionalpage.title', ['ucf']) }}"
+			property="title"
+			rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.website.document.functionalpage.synchronize-title-label', ['ucf']) }}"
+			required="true">
+		</rbs-field-text>
 
-		{{ forms.picker('pageTemplate', 'Rbs_Theme_PageTemplate', 'm.rbs.website.document.functionalpage.pagetemplate',
-			true, null, 'm.rbs.website.document.functionalpage.pagetemplate-picker-title') }}
+		<rbs-field-picker property="pageTemplate" required="true" label="{{ i18nAttr('m.rbs.website.document.functionalpage.pagetemplate', ['ucf']) }}"
+			accepted-model="Rbs_Theme_PageTemplate"
+			selector-title="{{ i18nAttr('m.rbs.website.document.functionalpage.pagetemplate-picker-title', ['ucf']) }}"
+			allow-edition="true">
+		</rbs-field-picker>
 
 		<hr />
 
-		<div class="control-group">
-			<label class="control-label" for="editableContent">{{ i18n('m.rbs.website.document.functionalpage.editablecontent', ['ucf']) }}</label>
-			<div class="controls">
-				<button class="btn" id="editableContent" type="button" data-ng-click="editPage($event, document)">
-					<i class="icon-edit"></i>
-					{{ i18n('m.rbs.website.document.functionalpage.open-page-editor', ['ucf']) }}
-				</button>
-				<span class="help-block">
-					{{ i18n('m.rbs.website.document.functionalpage.content-zones', ['ucf', 'lab']) }}
-					<span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span>
-				</span>
-			</div>
-		</div>
+		<rbs-field label="{{ i18nAttr('m.rbs.website.document.functionalpage.editablecontent', ['ucf']) }}">
+			<button class="btn" type="button" data-ng-click="editPage($event, document)">
+				<i class="icon-edit"></i>
+				{{ i18n('m.rbs.website.document.functionalpage.open-page-editor', ['ucf']) }}
+			</button>
+			<span class="help-block">
+				{{ i18n('m.rbs.website.document.functionalpage.content-zones', ['ucf', 'lab']) }}
+				<span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span>
+			</span>
+		</rbs-field>
+
 		<div data-role="edit-page-contents-confirmation"></div>
 
 		<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
