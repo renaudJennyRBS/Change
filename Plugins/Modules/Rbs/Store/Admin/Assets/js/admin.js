@@ -1,24 +1,20 @@
-(function ()
-{
+(function () {
+
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
-	app.config(['$routeProvider', function ($routeProvider)
-	{
-		$routeProvider
-			.when('/Rbs/Store/', { templateUrl: 'Rbs/Store/WebStore/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Store/WebStore/', { templateUrl: 'Rbs/Store/WebStore/list.twig', reloadOnSearch: false })
-			.when('/Rbs/Store/WebStore/:id', { templateUrl: 'Rbs/Store/WebStore/form.twig', reloadOnSearch: false });
-	}]);
-
+	/**
+	 * Routes and URL definitions.
+	 */
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.register('Rbs_Store_WebStore', {
-				'form': '/Rbs/Store/WebStore/:id',
-				'list': '/Rbs/Store/WebStore/'
-			});
+			$delegate.model(null).route('home', 'Rbs/Store/', { 'redirectTo': 'Rbs/Store/WebStore/'});
+			$delegate.routesForModels(['Rbs_Store_WebStore']);
 			return $delegate;
 		}]);
 	}]);
+
 })();
