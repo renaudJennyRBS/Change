@@ -1,6 +1,3 @@
-{% import "@Admin/forms.twig" as forms %}
-{% import "@Price/forms.twig" as priceforms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
@@ -11,7 +8,7 @@
 			selector-title="{{ i18nAttr('m.rbs.price.document.price.sku-picker-title', ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"
-			require="true"
+			required="true"
 			ng-hide="hideSku">
 		</rbs-field-picker>
 
