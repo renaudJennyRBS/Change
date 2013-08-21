@@ -18,7 +18,7 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.geo.admin.js.module-name | ucf'), "Rbs/Geo"],
-			[i18n.trans('m.rbs.geo.admin.js.territorialunit-list | ucf'), "Rbs/Geo/TerritorialUnit"]
+			[i18n.trans('m.rbs.geo.admin.js.territorialunit-list | ucf'), "Rbs/Geo/TerritorialUnit/"]
 		]);
 		MainMenu.loadModuleMenu('Rbs_Geo');
 	}
