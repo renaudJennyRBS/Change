@@ -14,6 +14,10 @@ class GDResizerEngine
 	public function getImageSize($path)
 	{
 		$result = getimagesize($path);
+		if ($result === false)
+		{
+			$result = getimagesizefromstring(file_get_contents($path));
+		}
 		return $result ? array('width' => $result[0], 'height' => $result[1]) : array('height' => null, 'width' => null);
 	}
 
@@ -25,11 +29,18 @@ class GDResizerEngine
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{
 		$sizeInfo = getimagesize($inputFileName);
+		$inputBlob = null;
 		if ($sizeInfo === false)
 		{
-			copy($inputFileName, $formattedFileName);
-			return;
+			$inputBlob = file_get_contents($inputFileName);
+			$sizeInfo = getimagesizefromstring($inputBlob);
+			if ($sizeInfo === false)
+			{
+				copy($inputFileName, $formattedFileName);
+				return;
+			}
 		}
+
 		$imageType = $sizeInfo[2];
 		list ($width, $height) = $this->computeImageSize($sizeInfo[0], $sizeInfo[1], $maxWidth, $maxHeight);
 		if ($width == $sizeInfo[0] && $height == $sizeInfo[1])
@@ -46,7 +57,8 @@ class GDResizerEngine
 				}
 				else
 				{
-					$imageSrc = imagecreatefromgif($inputFileName);
+					$imageSrc = $inputBlob ? imagecreatefromstring($inputBlob) : imagecreatefromgif($inputFileName);
+					$inputBlob = null;
 					$colorTransparent = imagecolortransparent($imageSrc);
 					$imageFormatted = imagecreate($width, $height);
 					imagepalettecopy($imageFormatted, $imageSrc);
@@ -57,7 +69,8 @@ class GDResizerEngine
 				}
 				break;
 			case IMAGETYPE_PNG:
-				$imageSrc = imagecreatefrompng($inputFileName);
+				$imageSrc = $inputBlob ? imagecreatefromstring($inputBlob) : imagecreatefrompng($inputFileName);
+				$inputBlob = null;
 				$imageFormatted = imagecreatetruecolor($width, $height);
 				imageAlphaBlending($imageFormatted, false);
 				imageSaveAlpha($imageFormatted, true);
@@ -65,7 +78,8 @@ class GDResizerEngine
 				imagepng($imageFormatted, $formattedFileName);
 				break;
 			case IMAGETYPE_JPEG :
-				$imageSrc = imagecreatefromjpeg($inputFileName);
+				$imageSrc = $inputBlob ? imagecreatefromstring($inputBlob) : imagecreatefromjpeg($inputFileName);
+				$inputBlob = null;
 				$imageFormatted = imagecreatetruecolor($width, $height);
 				imagecopyresampled($imageFormatted, $imageSrc, 0, 0, 0, 0, $width, $height, $sizeInfo[0], $sizeInfo[1]);
 				imagejpeg($imageFormatted, $formattedFileName, 90);

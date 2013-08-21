@@ -194,29 +194,34 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	public function imageURL($image, $maxWidth = 0, $maxHeight = 0)
 	{
-		if (is_numeric($image))
-		{
-			$image = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($image);
-		}
 		if (is_array($maxWidth))
 		{
 			$size = array_values($maxWidth);
 			$maxWidth = isset($size[0]) ? $size[0] : 0;
 			$maxHeight = isset($size[1]) ? $size[1] : $maxHeight;
 		}
-		if (is_string($image) && strpos($image, 'change://') === 0)
+
+		if (is_numeric($image))
 		{
-			$storageManager = $this->getApplicationServices()->getStorageManager();
-			$storageURI = new \Zend\Uri\Uri($image);
-			$storageURI->setQuery(array('max-width' => intval($maxWidth), 'max-height' => intval($maxHeight)));
-			$url = $storageURI->normalize()->toString();
-			return $storageManager->getPublicURL($url);
+			$image = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($image);
 		}
-		elseif ($image instanceof \Rbs\Media\Documents\Image)
+		elseif (is_string($image))
+		{
+			if (strpos($image, 'change://') === 0)
+			{
+				$storageManager = $this->getApplicationServices()->getStorageManager();
+				$storageURI = new \Zend\Uri\Uri($image);
+				$storageURI->setQuery(array('max-width' => intval($maxWidth), 'max-height' => intval($maxHeight)));
+				$url = $storageURI->normalize()->toString();
+				return $storageManager->getPublicURL($url);
+			}
+			return $image;
+		}
+
+		if ($image instanceof \Rbs\Media\Documents\Image)
 		{
 			return $image->getPublicURL(intval($maxWidth), intval($maxHeight));
 		}
-		else
 		return '';
 	}
 

@@ -17,7 +17,7 @@ class Resizer
 		{
 			$this->resizeEngine = new ImagickResizerEngine();
 		}
-		else if (function_exists('getimagesize'))
+		else if (function_exists('gd_info'))
 		{
 			$this->resizeEngine = new GDResizerEngine();
 		}
