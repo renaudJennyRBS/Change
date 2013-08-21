@@ -18,7 +18,7 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.media.admin.js.module-name | ucf'), "Rbs/Media"],
-			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image"]
+			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image/"]
 		]);
 		MainMenu.loadModuleMenu('Rbs_Media');
 	}
@@ -39,7 +39,7 @@
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.media.admin.js.module-name | ucf'), "Rbs/Media"],
-			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image"]
+			[i18n.trans('m.rbs.media.admin.js.image-list | ucf'), "Rbs/Media/Image/"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Media_Image');
 	}

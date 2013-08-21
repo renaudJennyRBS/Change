@@ -154,12 +154,15 @@
 
 		return {
 
-			'getList' : function () {
+			'getList' : function (defered) {
 				var tags = [];
 				REST.collection('Rbs_Tag_Tag', {'column': ['color','userTag'], 'limit': 100}).then(function (result) {
 					angular.forEach(result.resources, function (r) {
 						tags.push(r);
 					});
+					if (defered) {
+						defered.resolve(tags);
+					}
 				});
 				return tags;
 			},
