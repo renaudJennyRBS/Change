@@ -17,9 +17,10 @@
 		}]);
 	}]);
 
-	app.controller('Rbs_Media_Menu_Controller', ['$scope', '$location', '$filter', 'RbsChange.TagService', 'RbsChange.ArrayUtils', function ($scope, $location, $filter, TagService, ArrayUtils) {
+	app.controller('Rbs_Media_Menu_Controller', ['$q', '$scope', '$location', '$filter', 'RbsChange.TagService', 'RbsChange.ArrayUtils', function ($q, $scope, $location, $filter, TagService, ArrayUtils) {
 
-		$scope.tags = TagService.getList('Rbs_Media');
+		var tagsLoadedDefered = $q.defer();
+		$scope.tags = TagService.getList(tagsLoadedDefered);
 		$scope.selectedTags = [];
 
 		function updateFilter () {
@@ -29,6 +30,27 @@
 		$scope.$watch('filterTags', updateFilter, true);
 		$scope.$watch('tags', updateFilter, true);
 
+		tagsLoadedDefered.promise.then(function () {
+			var filter = $location.search()['filter'];
+			if (filter && filter.indexOf('hasTag:') === 0) {
+				angular.forEach(filter.substring(7).split(/,/), function (tagId) {
+					var tag = getTagById(parseInt(tagId, 10));
+					if (tag) {
+						$scope.selectTag(tag);
+					}
+				});
+			}
+		});
+
+		function getTagById (id) {
+			var i;
+			for (i=0 ; i<$scope.tags.length ; i++) {
+				if ($scope.tags[i].id === id) {
+					return $scope.tags[i];
+				}
+			}
+			return null;
+		}
 
 		function updateUrl () {
 			var ids = [];
@@ -36,9 +58,9 @@
 				ids.push(tag.id);
 			});
 			if (ids.length) {
-				$location.url('Rbs/Media/Image?filter=hasTag:' + ids.join(','));
+				$location.url('Rbs/Media/Image/?filter=hasTag:' + ids.join(','));
 			} else {
-				$location.url('Rbs/Media/Image');
+				$location.url('Rbs/Media/Image/');
 			}
 		}
 
@@ -46,7 +68,6 @@
 			if (ArrayUtils.inArray(tag, $scope.selectedTags) === -1) {
 				$scope.selectedTags.push(tag);
 			}
-			console.log($scope.selectedTags);
 			updateUrl();
 		};
 
