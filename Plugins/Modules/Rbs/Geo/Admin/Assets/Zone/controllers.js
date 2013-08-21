@@ -18,7 +18,7 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.geo.admin.js.module-name | ucf'), "Rbs/Geo"],
-			[i18n.trans('m.rbs.geo.admin.js.zone-list | ucf'), "Rbs/Geo/Zone"]
+			[i18n.trans('m.rbs.geo.admin.js.zone-list | ucf'), "Rbs/Geo/Zone/"]
 		]);
 		MainMenu.loadModuleMenu('Rbs_Geo');
 	}
@@ -39,7 +39,7 @@
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.geo.admin.js.module-name | ucf'), "Rbs/Geo"],
-			[i18n.trans('m.rbs.geo.admin.js.zone-list | ucf'), "Rbs/Geo/Zone"]
+			[i18n.trans('m.rbs.geo.admin.js.zone-list | ucf'), "Rbs/Geo/Zone/"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Geo_Zone');
 	}
