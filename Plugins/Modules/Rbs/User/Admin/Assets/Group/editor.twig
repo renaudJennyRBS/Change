@@ -4,9 +4,21 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		{{ forms.field('label', 'String', 'm.rbs.user.document.group.label', true) }}
-		{{ forms.field('realm', 'String', 'm.rbs.user.document.group.realm', true) }}
-		{{ forms.field('identifier', 'String', 'm.rbs.user.document.group.identifier', true) }}
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.group.label', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="realm" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.group.realm', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="identifier" required="true"
+			label="{{ i18nAttr('m.rbs.user.document.group.identifier', ['ucf']) }}">
+		</rbs-field-text>
+
 	</fieldset>
 
 	<fieldset
