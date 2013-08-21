@@ -63,7 +63,7 @@ class Listeners implements ListenerAggregateInterface
 			),
 			'entries' => array(
 				array('label' => $i18nManager->trans('m.rbs.collection.admin.js.module-name', array('ucf')),
-					'url' => 'Rbs/Collection/Collection', 'section' => 'admin',
+					'url' => 'Rbs/Collection', 'section' => 'admin',
 					'keywords' => $i18nManager->trans('m.rbs.collection.admin.js.module-keywords')),
 				array('label' => $i18nManager->trans('m.rbs.geo.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/Geo', 'section' => 'admin',
