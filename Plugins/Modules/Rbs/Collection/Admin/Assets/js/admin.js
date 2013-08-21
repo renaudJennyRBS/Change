@@ -12,7 +12,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model(null)
-				.route('home', 'Rbs/Collection/', { 'redirectTo': 'Rbs/Collection/Collection/'});
+				.route('home', 'Rbs/Collection', { 'redirectTo': 'Rbs/Collection/Collection/'});
 
 			$delegate.routesForModels([
 				'Rbs_Collection_Collection'
