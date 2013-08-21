@@ -13,7 +13,7 @@
 		{
 
 			$delegate.model(null)
-				.route('home', 'Rbs/Price/', { 'redirectTo': 'Rbs/Price/Price/'});
+				.route('home', 'Rbs/Price', { 'redirectTo': 'Rbs/Price/Price/'});
 
 			$delegate.routesForModels([
 				'Rbs_Price_Tax',
