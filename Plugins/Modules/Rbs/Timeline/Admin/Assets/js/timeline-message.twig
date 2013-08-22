@@ -3,7 +3,7 @@
 		<img style="width: 64px; height: 64px;" class="media-object" data-ng-src="(= message.avatar =)" />
 	</a>
 	<div class="media-body well well-small">
-		<h4 class="media-heading">(= message.authorName =) <small ng-if="message.authorIdentifier"><a rbs-document-popover="{trigger: 'click'}" rbs-document-href="Rbs_User_User,(= message.authorId =),public-profile">@(= message.authorIdentifier =)</a></small></h4>
+		<h4 class="media-heading">(= message.authorName =) <small ng-if="message.authorIdentifier"><a rbs-document-popover rbs-document-href="Rbs_User_User,(= message.authorId =),public-profile">@(= message.authorIdentifier =)</a></small></h4>
 		<span class="pull-right">(= message.creationDate | date:'medium' =)</span>
 		<div ng-if="message.authorId === user.id" class="message-tools">
 			<i data-ng-click="editMessage(message)" class="icon-edit"></i>

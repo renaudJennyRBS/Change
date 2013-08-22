@@ -626,7 +626,7 @@
 	/**
 	 *
 	 */
-	app.directive('rbsDocumentPopover', ['$timeout', '$q', 'RbsChange.Settings', 'RbsChange.REST', function ($timeout, $q, Settings, REST) {
+	app.directive('rbsDocumentPopover', ['$timeout', '$q', 'RbsChange.Settings', 'RbsChange.REST', '$compile', function ($timeout, $q, Settings, REST, $compile) {
 
 		var popovers = [],
 			POPOVER_WIDTH = 200,
@@ -812,7 +812,12 @@
 								'trigger'   : 'manual',
 								'html'      : true
 							};
+							//content need to be compiled
+							$compile(result.content)(scope, function(cloneElm){
+								result.content = cloneElm;
+							});
 							element.popover(angular.extend(options, result));
+
 							defered.resolve();
 						});
 						popoverReadyPromise = defered.promise;

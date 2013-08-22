@@ -281,15 +281,15 @@
 	 */
 	function PopoverPreviewController($scope, REST, i18n, $http)
 	{
-		/*
-		REST.resource($routeParams.id).then(function (user){
-			$scope.document = user;
-			var url = user.META$.links.profiles.href;
-			$http.get(url).success(function (profiles){
-				$scope.profile = profiles.Rbs_Admin;
+		$scope.$watch('message', function (message){
+			REST.resource(message.authorId).then(function(user){
+				$scope.document = user;
+				var url = user.META$.links.profiles.href;
+				$http.get(url).success(function (profiles){
+					$scope.profile = profiles.Rbs_Admin;
+				});
 			});
 		});
-		*/
 	}
 
 	PopoverPreviewController.$inject = ['$scope', 'RbsChange.REST', 'RbsChange.i18n', '$http'];

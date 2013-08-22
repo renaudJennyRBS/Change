@@ -10,12 +10,10 @@
 			restrict: 'A',
 
 			templateUrl: 'Rbs/Timeline/js/timeline.twig',
-
-			link : function (scope, elm, attrs) {
-
-				scope.reloadMessages = function reloadMessages(){
-					console.log('reload !');
-					scope.timelineMessages = [];
+			require: 'rbsTimeline',
+			controller: ['$scope', function ($scope){
+				this.reload = function (){
+					$scope.timelineMessages = [];
 					REST.query({
 						'model': 'Rbs_Timeline_Message',
 						'where': {
@@ -26,7 +24,7 @@
 										'property': 'contextId'
 									},
 									'rexp': {
-										'value': scope.document.id
+										'value': $scope.document.id
 									}
 								}
 							]
@@ -38,13 +36,16 @@
 							}
 						]
 					}).then(function (result){
-							scope.timelineMessages = result.resources;
+							$scope.timelineMessages = result.resources;
 						});
-				};
+				}
+			}],
+
+			link : function (scope, elm, attrs, rbsTimeline) {
 
 				scope.$watch('document', function (doc, oldDoc){
 					if (doc){
-						scope.reloadMessages();
+						rbsTimeline.reload();
 					}
 				});
 
@@ -58,7 +59,7 @@
 						'label': ' '
 					}).success(function (){
 							scope.newMessage = "";
-							scope.reloadMessages();
+							rbsTimeline.reload();
 						});
 				};
 
@@ -74,20 +75,19 @@
 
 			templateUrl: 'Rbs/Timeline/js/timeline-message.twig',
 			scope: {
-				message: '=',
-				//FIXME reload messages doesn't work!
-				reloadMessages: '&'
+				message: '='
 			},
+			require: '^rbsTimeline',
 
-			link : function (scope, elm, attrs) {
+			link : function (scope, elm, attrs, rbsTimeline) {
 				var contentEl = elm.find('.message-content').first();
 				scope.$watch('message', function (message){
-					if (message){
+					if (message && contentEl.children().length === 0){
 						$compile(message.message.h)(scope, function (cloneElm){
 							contentEl.append(cloneElm);
 						})
 					}
-				}, true);
+				});
 
 				//edit and remove
 				scope.user = User.get();
@@ -99,13 +99,13 @@
 
 				scope.updateMessage = function(message){
 					REST.save(message).then(function(){
-						scope.reloadMessages();
+						rbsTimeline.reload();
 					});
 				};
 
 				scope.removeMessage = function(message){
 					REST.delete(message).then(function(){
-						scope.reloadMessages();
+						rbsTimeline.reload();
 					});
 				};
 			}
