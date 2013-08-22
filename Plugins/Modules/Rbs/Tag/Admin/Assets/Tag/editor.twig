@@ -1,5 +1,3 @@
-{% import "@Admin/forms.twig" as forms %}
-
 <form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
 	<fieldset data-ng-show="section==''"
 	          data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
@@ -11,42 +9,42 @@
 			</div>
 		</div>
 
-		{{ forms.field('label', 'String', 'm.rbs.tag.document.tag.label', true) }}
+		<rbs-field-text property="label" required="true" input-class="input-block-level"
+		                label="{{ i18nAttr('m.rbs.tag.document.tag.label', ['ucf']) }}">
+		</rbs-field-text>
 
-		<div class="control-group property required"
-		     data-ng-class="{'success': hasCorrectionOnProperty('color')}">
-			<label class="control-label" for="color">{{ i18n('m.rbs.tag.document.tag.color', ['ucf']) }}</label>
-			<div class="controls">
-				<rbs-tag-color-selector ng-model="document.color" icon-size="icon-2x"></rbs-tag-color-selector>
+		<rbs-field property="color" required="true" label="{{ i18nAttr('m.rbs.tag.document.tag.color', ['ucf']) }}">
+			<rbs-tag-color-selector ng-model="document.color" icon-size="icon-2x"></rbs-tag-color-selector>
 				<span class="help-block">
 					{{ i18n('m.rbs.tag.document.tag.color-help') }}
 				</span>
-			</div>
-		</div>
+		</rbs-field>
 
-		<div class="control-group property"
-		     data-ng-class="{'success': hasCorrectionOnProperty('userTag')}">
-			<label class="control-label" for="userTag">{{ i18n('m.rbs.tag.document.tag.usertag', ['ucf']) }}</label>
-			<div class="controls">
-				<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
+		<rbs-field property="userTag" required="true" label="{{ i18nAttr('m.rbs.tag.document.tag.usertag', ['ucf']) }}">
+			<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
+			<span class="help-block">
+				{{ i18n('m.rbs.tag.document.tag.usertag-help') }}
+			</span>
+			<span class="help-block" ng-if="! document.isNew()">
+				{{ i18n('m.rbs.tag.document.tag.usertag-cannot-be-modified') }}
+			</span>
+		</rbs-field>
+
+		<rbs-field property="module" label="{{ i18nAttr('m.rbs.tag.document.tag.module', ['ucf']) }}">
+			<select ng-model="document.module" rbs-items-from-collection="modules"></select>
+		</rbs-field>
+
+		<rbs-field-picker-multiple
+				property="children" label="{{ i18nAttr('m.rbs.tag.document.tag.children', ['ucf']) }}"
+				accepted-model="Rbs_Tag_Tag"
+				selector-title="{{ i18nAttr('m.rbs.tag.document.tag.children-selector-title', ['ucf']) }}"
+				allow-creation="true"
+				picker="model">
 				<span class="help-block">
-					{{ i18n('m.rbs.tag.document.tag.usertag-help') }}
+					{{ i18n('m.rbs.tag.document.tag.children-help') }}
 				</span>
-				<span class="help-block" ng-if="! document.isNew()">
-					{{ i18n('m.rbs.tag.document.tag.usertag-cannot-be-modified') }}
-				</span>
-			</div>
-		</div>
+		</rbs-field-picker-multiple>
 
-		<div class="control-group property"
-		     data-ng-class="{'success': hasCorrectionOnProperty('module')}">
-			<label class="control-label" for="module">{{ i18n('m.rbs.tag.document.tag.module', ['ucf']) }}</label>
-			<div class="controls">
-				<select ng-model="document.module" rbs-items-from-collection="modules"></select>
-			</div>
-		</div>
-
-		{{ forms.pickerMultiple('children', 'Rbs_Tag_Tag', 'm.rbs.tag.document.tag.children', false, 'm.rbs.tag.document.tag.children-help', 'm.rbs.tag.document.tag.children-selector-title', true) }}
 	</fieldset>
 	<form-button-bar></form-button-bar>
 </form>
