@@ -3,6 +3,7 @@ namespace Rbs\User\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\ArrayResult;
 use Change\User\ProfileManager;
+use Rbs\User\Events\AuthenticatedUser;
 
 /**
  * @name \Rbs\User\Http\Rest\Actions\Profiles
@@ -20,7 +21,8 @@ class Profiles
 		{
 			foreach ($pm->getProfileNames() as $profileName)
 			{
-				$profile = $pm->loadProfile($user, $profileName);
+				$authenticatedUser = new AuthenticatedUser($user);
+				$profile = $pm->loadProfile($authenticatedUser, $profileName);
 				if ($profile instanceof \Change\User\ProfileInterface)
 				{
 					$data[$profileName] = [];
