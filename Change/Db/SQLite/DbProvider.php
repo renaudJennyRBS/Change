@@ -97,6 +97,8 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$this->schemaManager->closeConnection();
 		}
+		$this->getLogging()->info('Close Connection: (S: ' . $this->timers['select'] . ', IUD: ' . $this->timers['exec'] . ')');
+		$this->timers['exec'] = $this->timers['select'] = 0;
 	}
 	
 	/**
@@ -150,17 +152,18 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if (!$this->inTransaction())
 			{
-				$this->logging->warn(__METHOD__ . " called while not in transaction");
+				$this->getLogging()->warn(__METHOD__ . " called while not in transaction");
 			}
 			else
 			{
 				$this->getDriver()->commit();
+				$this->inTransaction = false;
 				$duration = round(microtime(true) - $this->timers['bt'], 4);
+				$this->getLogging()->info('commit: ' . number_format($duration, 3) . 's');
 				if ($duration > $this->timers['longTransaction'])
 				{
-					$this->logging->warn('Long Transaction detected ' . number_format($duration, 3) . 's > ' . $this->timers['longTransaction']);
+					$this->getLogging()->warn('Long Transaction detected > ' . $this->timers['longTransaction']);
 				}
-				$this->inTransaction = false;
 			}
 		}
 	}
@@ -175,12 +178,18 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if (!$this->inTransaction())
 			{
-				$this->logging->warn(__METHOD__ . " called while not in transaction");
+				$this->getLogging()->warn(__METHOD__ . " called while not in transaction");
 			}
 			else
 			{
 				$this->inTransaction = false;
 				$this->getDriver()->rollBack();
+				$duration = round(microtime(true) - $this->timers['bt'], 4);
+				$this->getLogging()->info('rollBack: ' . number_format($duration, 3) . 's');
+				if ($duration > $this->timers['longTransaction'])
+				{
+					$this->getLogging()->warn('Long Transaction detected > ' . $this->timers['longTransaction']);
+				}
 			}
 		}
 	}
@@ -224,7 +233,6 @@ class DbProvider extends \Change\Db\DbProvider
 		if ($selectQuery->getCachedSql() === null)
 		{
 			$selectQuery->setCachedSql($this->buildQuery($selectQuery));
-			$this->logging->info(__METHOD__ . ': ' . $selectQuery->getCachedSql());
 		}
 		
 		$statement = $this->prepareStatement($selectQuery->getCachedSql());
@@ -234,6 +242,7 @@ class DbProvider extends \Change\Db\DbProvider
 			$value = $this->phpToDB($selectQuery->getParameterValue($parameter->getName()), $parameter->getType());
 			$statement->bindValue($this->buildSQLFragment($parameter), $value);
 		}
+		$this->timers['select']++;
 		$statement->execute();
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);
 	}
@@ -247,7 +256,6 @@ class DbProvider extends \Change\Db\DbProvider
 		if ($query->getCachedSql() === null)
 		{
 			$query->setCachedSql($this->buildQuery($query));
-			$this->logging->info(__METHOD__ . ': ' . $query->getCachedSql());
 		}
 		
 		$statement = $this->prepareStatement($query->getCachedSql());
@@ -255,9 +263,9 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			/* @var $parameter \Change\Db\Query\Expressions\Parameter */
 			$value = $this->phpToDB($query->getParameterValue($parameter->getName()), $parameter->getType());
-			$this->logging->info($parameter->getName() . ' = ' . var_export($value, true));
 			$statement->bindValue($this->buildSQLFragment($parameter), $value);
 		}
+		$this->timers['exec']++;
 		$statement->execute();
 		return $statement->rowCount();
 	}
