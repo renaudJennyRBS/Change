@@ -7,17 +7,6 @@ namespace Rbs\Commerce\Interfaces;
 interface CartTax extends \Serializable
 {
 	/**
-	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @return $this
-	 */
-	public function setCart($cart);
-
-	/**
-	 * @return \Rbs\Commerce\Interfaces\Cart
-	 */
-	public function getCart();
-
-	/**
 	 * @return Tax
 	 */
 	public function getTax();

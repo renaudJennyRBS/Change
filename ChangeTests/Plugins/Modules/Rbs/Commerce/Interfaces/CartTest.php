@@ -3,7 +3,7 @@ namespace ChangeTests\Modules\Commerce\Interfaces;
 
 use Rbs\Commerce\Interfaces\Cart;
 
-class CartTest extends \ChangeTests\Change\TestAssets\TestCase
+class CartTest extends \PHPUnit_Framework_TestCase
 {
 	public function testConstructor()
 	{

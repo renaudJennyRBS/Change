@@ -135,7 +135,6 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function execute($sql)
 	{
-		$this->logging->info(__METHOD__ . ': ' . $sql);
 		return $this->getDriver()->exec($sql);
 	}
 

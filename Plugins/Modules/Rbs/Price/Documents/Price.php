@@ -7,7 +7,7 @@ use Change\Http\Rest\Result\DocumentResult;
 /**
  * @name \Rbs\Price\Documents\Price
  */
-class Price extends \Compilation\Rbs\Price\Documents\Price
+class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Commerce\Interfaces\Price
 {
 	/**
 	 * @return string

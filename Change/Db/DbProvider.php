@@ -140,6 +140,7 @@ abstract class DbProvider
 		$this->configuration = $configuration;
 		$this->connectionInfos = $connectionInfos;
 		$this->timers = array('init' => microtime(true),
+			'select' => 0, 'exec' => 0,
 			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
 	}
 
