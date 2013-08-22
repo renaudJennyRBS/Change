@@ -7,25 +7,9 @@ namespace Rbs\Commerce\Interfaces;
 interface CartItem extends \Serializable
 {
 	/**
-	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @return $this
-	 */
-	public function setCart($cart);
-
-	/**
-	 * @return \Rbs\Commerce\Interfaces\Cart
-	 */
-	public function getCart();
-
-	/**
-	 * @return integer
-	 */
-	public function getLineNumber();
-
-	/**
 	 * @return string
 	 */
-	public function getSKUCode();
+	public function getCodeSKU();
 
 	/**
 	 * @return float
@@ -43,7 +27,7 @@ interface CartItem extends \Serializable
 	public function getCartTaxes();
 
 	/**
-	 * @return array[]
+	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();
 }

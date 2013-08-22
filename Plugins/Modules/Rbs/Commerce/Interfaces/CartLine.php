@@ -7,17 +7,6 @@ namespace Rbs\Commerce\Interfaces;
 interface CartLine extends \Serializable
 {
 	/**
-	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @return $this
-	 */
-	public function setCart($cart);
-
-	/**
-	 * @return \Rbs\Commerce\Interfaces\Cart
-	 */
-	public function getCart();
-
-	/**
 	 * @return integer
 	 */
 	public function getNumber();
@@ -43,7 +32,7 @@ interface CartLine extends \Serializable
 	public function getItems();
 
 	/**
-	 * @return array[]
+	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();
 }

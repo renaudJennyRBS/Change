@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
+use Change\Documents\AbstractDocument;
+use Change\Documents\DocumentWeakReference;
 use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
 use Rbs\Commerce\Services\CommerceServices;
 
@@ -142,5 +144,46 @@ class CartStorage
 		{
 			throw $tm->rollBack($e);
 		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array|\Change\Documents\DocumentWeakReference|mixed
+	 */
+	public function getSerializableValue($value)
+	{
+		if ($value instanceof AbstractDocument)
+		{
+			return new DocumentWeakReference($value);
+		}
+		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
+		{
+			foreach ($value as $k => $v)
+			{
+				$value[$k] = $this->getSerializableValue($v);
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @return array|\Change\Documents\DocumentWeakReference|mixed
+	 */
+	public function restoreSerializableValue($value, CommerceServices $commerceServices)
+	{
+		if ($value instanceof DocumentWeakReference)
+		{
+			return $value->getDocument($commerceServices->getDocumentServices()->getDocumentManager());
+		}
+		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
+		{
+			foreach ($value as $k => $v)
+			{
+				$value[$k] = $this->restoreSerializableValue($v, $commerceServices);
+			}
+		}
+		return $value;
 	}
 }
