@@ -18,6 +18,7 @@
 				    path = [],
 				    fullPath = [],
 				    resource = null,
+					resourceModifier = null,
 				    disabled = false,
 				    frozen = false,
 				    breadcrumbService,
@@ -58,7 +59,7 @@
 
 					setLocation : function (loc) {
 						if ( ! frozen && ! angular.equals(location, loc) ) {
-							location = loc;
+							location = angular.copy(loc);
 							update();
 						}
 					},
@@ -74,7 +75,7 @@
 
 					setPath : function (p) {
 						if ( ! frozen && ! angular.equals(path, p) ) {
-							path = p;
+							path = angular.copy(p);
 							update();
 						}
 					},
@@ -112,13 +113,13 @@
 
 					setResource : function (res) {
 						if ( ! angular.equals(resource, res) ) {
-							resource = res;
+							resource = angular.copy(res);
 							update();
 						}
 					},
 
 					setResourceModifier : function (string) {
-						console.warn("Implement Breadcrumb.setResourceModifier() :)");
+						resourceModifier = string;
 					},
 
 					ready : function () {
@@ -160,6 +161,10 @@
 							fullPath.push(resource);
 						}
 
+						if (resourceModifier) {
+							fullPath.push(resourceModifier);
+						}
+
 						// Updates window title:
 						// RBS Change / <module's name> / <last path element>
 						// RBS Change / <module's name>
@@ -189,6 +194,7 @@
 						'currentNode' : breadcrumbService.getCurrentNode(),
 						'location'    : location,
 						'resource'    : resource,
+						'resourceModifier' : resourceModifier,
 						'website'     : breadcrumbService.getWebsite(),
 						'disabled'    : disabled,
 						'frozen'      : frozen

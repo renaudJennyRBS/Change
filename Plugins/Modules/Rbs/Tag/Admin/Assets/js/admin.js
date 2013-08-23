@@ -13,7 +13,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_Tag_Tag').route('tree', 'Rbs/Tag/?tn=:id', 'Rbs/Tag/Tag/list.twig');
-			$delegate.model(null).route('home', 'Rbs/Tag/', { 'redirectTo': 'Rbs/Tag/Tag/'});
+			$delegate.model('Rbs_Tag').route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'});
 			$delegate.routesForModels(['Rbs_Tag_Tag']);
 			return $delegate;
 		}]);
@@ -54,7 +54,7 @@
 		});
 
 		// Load tags of the document being edited in an Editor.
-		$rootScope.$on(Events.EditorReady, function (event, args) {
+		$rootScope.$on(Events.EditorLoaded, function (event, args) {
 			var doc = args.document;
 			if (doc.model !== 'Rbs_Tag_Tag') {
 				args.promises.push(doc.loadTags());

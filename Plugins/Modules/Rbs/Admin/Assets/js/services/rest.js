@@ -109,7 +109,7 @@
 						var doc = this, p;
 
 						if (doc.getTagsUrl() !== null) {
-							p = $http.get(doc.getTagsUrl(),getHttpConfig(transformResponseCollectionFn));
+							p = $http.get(doc.getTagsUrl(), getHttpConfig(transformResponseCollectionFn));
 							p.success(function (result) {
 								angular.forEach(result.resources, function (r) {
 									doc.META$.tags.push(r);
@@ -118,7 +118,9 @@
 							return p;
 						}
 					}
-					return null;
+					var q = $q.defer();
+					q.resolve();
+					return q.promise;
 				};
 
 				ChangeDocument.prototype.getTags = function () {

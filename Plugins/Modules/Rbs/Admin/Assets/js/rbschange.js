@@ -31,6 +31,10 @@
 	 */
 	app.constant('RbsChange.Events', {
 
+		// Raised when an Editor has finished loading its document and the Breadcrumb is loaded.
+		// Single argument is the edited document.
+		'EditorLoaded'                   : 'Change:Editor.Loaded',
+
 		// Raised when an Editor is ready (its document and the Breadcrumb are loaded).
 		// Single argument is the edited document.
 		'EditorReady'                    : 'Change:Editor.Ready',

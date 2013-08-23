@@ -1,33 +1,22 @@
 (function () {
 
-	function editorFn (Editor) {
+	"use strict";
+
+	function editorFn () {
 
 		return {
-			restrict : 'EC',
-
+			restrict : 'C',
 			templateUrl : 'Rbs/Tag/Tag/editor.twig',
-
 			replace : true,
+			require : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope : {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link : function (scope, elm) {
-				Editor.initScope(scope, elm, function () {
-					scope.saveAsChildOf('auto', 'children');
-				});
+			link : function (scope, element, attrs, editorCtrl) {
+				editorCtrl.init('Rbs_Tag_Tag');
 			}
 		};
 
 	}
 
-	editorFn.$inject = ['RbsChange.Editor'];
-
-	angular.module('RbsChange').directive('editorChangeTagTag', editorFn);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsTagTag', editorFn);
 
 })();

@@ -10,7 +10,7 @@
 	var counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, ArrayUtils, MainMenu, FormsManager, Breadcrumb, Clipboard, $http, $compile) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, editorCtrl, multiple, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
 
 		var	$el = $(iElement),
 			inputEl = $el.find('input[name=label]'),
@@ -77,36 +77,28 @@
 		// Edit or create
 
 		scope.createDocument = function () {
-			FormsManager.cascade(
-				getFormUrl(),
-				null,
+			editorCtrl.cascade(
+				getFormModel(),
+				getCreateLabel(),
 				function (doc) {
 					scope.selectDocument(doc);
-				},
-				getCreateLabel()
+				}
 			);
 		};
 
-		scope.editSelectedDocument = function ($event) {
-			var doc, msg;
+		scope.editSelectedDocument = function () {
+			var doc;
 			doc = ngModel.$viewValue;
-			msg = FormsManager.cascade(
-				getFormUrl(),
-				{
-					'id'   : doc.id,
-					'LCID' : (doc.LCID || scope.language)
-				},
+
+			editorCtrl.cascade(
+				doc,
+				getEditLabel(),
 				function (editedDoc) {
 					if (!angular.equals(doc, editedDoc)) {
 						scope.selectDocument(editedDoc);
 					}
-				},
-				getEditLabel()
+				}
 			);
-			if (msg) {
-				// TODO Use a nicer way to inform the user :)
-				window.alert(msg);
-			}
 		};
 
 		// Selection
@@ -288,32 +280,34 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
 		return {
 
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-single.twig',
-			require     : 'ngModel',
+			require     : ['ngModel', '^rbsDocumentEditor'],
 			scope       : true,
 
-			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, ArrayUtils, MainMenu, FormsManager, Breadcrumb, Clipboard, $http, $compile);
+			link : function (scope, iElement, attrs, controllers) {
+				var ngModel = controllers[0], editorCtrl = controllers[1];
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, editorCtrl, false, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
 		return {
 
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-multiple.twig',
-			require     : 'ngModel',
+			require     : ['ngModel', '^rbsDocumentEditor'],
 			scope       : true,
 
-			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, ArrayUtils, MainMenu, FormsManager, Breadcrumb, Clipboard, $http, $compile);
+			link : function (scope, iElement, attrs, controllers) {
+				var ngModel = controllers[0], editorCtrl = controllers[1];
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, editorCtrl, true, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};

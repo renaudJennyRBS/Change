@@ -43,4 +43,49 @@
 	];
 	angular.module('RbsChange').directive('editorRbsMediaImage', EditorFn);
 
+
+
+
+
+
+	function rbsMediaImageEditor (REST)
+	{
+		return {
+			restrict: 'C',
+			templateUrl: 'Rbs/Media/Image/editor.twig',
+			replace : true,
+			require : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl) {
+				editorCtrl.init('Rbs_Media_Image');
+
+				scope.upload = function ($event) {
+					var button = $($event.target);
+					button.attr('disabled', 'disabled');
+					REST.upload(element.find('#file')).then(
+						function (data) {
+							button.removeAttr('disabled');
+						},
+						function () {
+							button.removeAttr('disabled');
+						}
+					);
+				};
+
+				scope.$watch('document.path', function (path) {
+					if (path && ! scope.document.label) {
+						var fileName = angular.element(element.find('.image-uploader').first()).scope().fileName;
+						scope.document.label = fileName.replace(/(\.png|\.gif|\.jpg|\.jpeg)$/i, '');
+					}
+				});
+			}
+		};
+	}
+
+	rbsMediaImageEditor.$inject = [
+		'RbsChange.REST'
+	];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsMediaImage', rbsMediaImageEditor);
+
+
 })(window.jQuery);

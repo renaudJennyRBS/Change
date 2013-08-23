@@ -36,10 +36,10 @@
 	 */
 	function FormController($scope, FormsManager, Breadcrumb, i18n)
 	{
-		Breadcrumb.resetLocation([
+		/*Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.tag.admin.js.module-name | ucf'), "Rbs/Tag"]
 		]);
-		FormsManager.initResource($scope, 'Rbs_Tag_Tag');
+		FormsManager.initResource($scope, 'Rbs_Tag_Tag');*/
 	}
 
 	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];

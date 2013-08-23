@@ -104,6 +104,10 @@
 						html += getEntryHtml(breadcrumbData.resource, breadcrumbData.disabled, true);
 					}
 
+					if (breadcrumbData.resourceModifier) {
+						html += getEntryHtml(breadcrumbData.resourceModifier, breadcrumbData.disabled, true);
+					}
+
 					elm.html(html);
 				}
 
@@ -117,5 +121,86 @@
 
 	}]);
 
+
+	angular.module('RbsChange').directive('rbsBreadcrumbConfig', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+
+		return {
+			restrict : 'E',
+			scope : true,
+			require  : '^rbsWorkspaceConfig',
+
+			controller : ['$scope', function ($scope) {
+
+				var bc = {
+					'Location' : [],
+					'Path' : []
+				};
+
+				this.add = function (type, index, text, href) {
+					bc[type][index] = [text, href];
+					if (bc[type].length === $scope.counts[type]) {
+						Breadcrumb['set' + type](bc[type]);
+					}
+				};
+
+			}],
+
+			compile : function (tElement) {
+				tElement.hide();
+				return function linkFn (scope, element) {
+					scope.counts = {
+						'Location' : element.find('location').length,
+						'Path' : element.find('path').length
+					};
+				};
+			}
+		};
+
+	}]);
+
+	angular.module('RbsChange').directive('location', function () {
+		return {
+			restrict : 'E',
+			require  : '?^rbsBreadcrumbConfig',
+			link : function (scope, element, attrs, rbsBreadcrumbUpdate) {
+				if (rbsBreadcrumbUpdate) {
+					attrs.$observe('href', function (href) {
+						rbsBreadcrumbUpdate.add('Location', element.index(), element.text(), href);
+					});
+				}
+			}
+		};
+	});
+
+	angular.module('RbsChange').directive('path', function () {
+		return {
+			restrict : 'E',
+			require  : '?^rbsBreadcrumbConfig',
+			link : function (scope, element, attrs, rbsBreadcrumbUpdate) {
+				if (rbsBreadcrumbUpdate) {
+					attrs.$observe('href', function (href) {
+						rbsBreadcrumbUpdate.add('Path', element.index()-element.prevAll('location').length, element.text(), href);
+					});
+				}
+			}
+		};
+	});
+
+
+
+	angular.module('RbsChange').directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
+
+		return {
+			restrict : 'E',
+			scope : true,
+
+			controller : ['$scope', '$attrs', function ($scope, $attrs) {
+				if ($attrs.menu) {
+					MainMenu.load($attrs.menu);
+				}
+			}]
+		};
+
+	}]);
 
 })();

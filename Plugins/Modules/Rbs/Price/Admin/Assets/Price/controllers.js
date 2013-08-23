@@ -34,7 +34,7 @@
 	 * @param FormsManager
 	 * @param i18n
 	 * @constructor
-	 */
+	 *
 	function FormController($scope, Breadcrumb, FormsManager, i18n)
 	{
 		Breadcrumb.setLocation([
@@ -46,4 +46,5 @@
 
 	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
 	app.controller('Rbs_Price_Price_FormController', FormController);
+	*/
 })();

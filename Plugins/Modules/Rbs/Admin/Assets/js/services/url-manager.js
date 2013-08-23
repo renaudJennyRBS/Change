@@ -220,8 +220,7 @@
 
 	// Filters
 
-
-	app.filter('documentURL', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
+	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName, clearParams) {
 			var	url,
@@ -229,7 +228,7 @@
 
 			if (Utils.isDocument(doc)) {
 				url = doc.url(urlName);
-			} else if (Utils.isModelName(doc)) {
+			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
 				url = UrlManager.getUrl(doc, null, urlName);
 			} else {
 				return 'javascript:;';
@@ -241,7 +240,15 @@
 			return url;
 		};
 
-	}]);
+	}];
+
+	app.filter('rbsURL', urlFilter);
+
+	/**
+	 * @deprecated
+	 */
+	app.filter('documentURL', urlFilter);
+
 
 	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
