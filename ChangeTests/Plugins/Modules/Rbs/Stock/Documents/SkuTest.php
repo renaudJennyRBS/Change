@@ -4,6 +4,11 @@ use \Rbs\Stock\Documents\Sku;
 
 class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	/**
+	 * @var Sku
+	 */
+	protected $sku;
+
 	public static function setUpBeforeClass()
 	{
 		static::initDocumentsDb();
@@ -17,12 +22,14 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function setUp()
 	{
 		parent::setUp();
+		$this->sku = $this->createASku();
 	}
 
 	protected function tearDown()
 	{
-		parent::tearDown();
+		$this->deleteASku($this->sku);
 		$this->closeDbConnection();
+		parent::tearDown();
 	}
 
 	public function testGetSetMass()
@@ -300,5 +307,93 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	}
 
+	public function testOnCreate()
+	{
+		//just testing if that throw an exception if we try to save a new sku with an existing code
+		$this->setExpectedException('\RuntimeException', 'A SKU with the same code already exists');
+		$this->createASku();
+	}
 
+	public function testOnUpdate()
+	{
+		$dm = $this->getDocumentServices()->getDocumentManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		//first try a simple update
+		$this->sku->setCode('DJShadow');
+		try
+		{
+			$tm->begin();
+			$this->sku->update();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$sku = $dm->getDocumentInstance($this->sku->getId());
+		/* @var $sku Sku */
+		$this->assertEquals('DJShadow', $sku->getCode());
+
+		//now try to update our sku with a code but another sku use it already
+		$this->createASku('Fresh');
+		$this->sku->setCode('Fresh');
+		$this->setExpectedException('\RuntimeException', 'A SKU with the same code already exists');
+		$this->sku->update();
+	}
+
+	public function testUpdateRestDocumentLink()
+	{
+		$documentLink = new \Change\Http\Rest\Result\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()),
+			$this->sku, \Change\Http\Rest\Result\DocumentLink::MODE_PROPERTY);
+		$result = $documentLink->toArray();
+		$this->assertArrayHasKey('code', $result);
+		$this->assertNotNull($result['code']);
+		$this->assertEquals('test', $result['code']);
+	}
+
+	/**
+	 * @return Sku
+	 * @throws \Exception
+	 */
+	protected function createASku($code = 'test')
+	{
+		$dm = $this->getDocumentServices()->getDocumentManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+
+		/* @var $sku Sku */
+		$sku = $dm->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+		$sku->setCode($code);
+		try
+		{
+			$tm->begin();
+			$sku->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$this->assertTrue($sku->getId() > 0);
+		return $sku;
+	}
+
+	/**
+	 * @param Sku $sku
+	 * @throws \Exception
+	 */
+	protected function deleteASku($sku)
+	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+
+		try
+		{
+			$tm->begin();
+			$sku->delete();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
 }
