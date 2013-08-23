@@ -103,35 +103,36 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param $extraColumn
 	 */
-	protected function attachEvents($eventManager)
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			/* @var $document Image */
-			$document = $event->getDocument();
-			if ($result instanceof DocumentResult)
-			{
-				$link = array('rel' => 'publicurl', 'href' => $document->getPublicURL());
-				$result->addLink($link);
-				$selfLinks = $result->getRelLink('self');
-				$selfLink = array_shift($selfLinks);
-				if ($selfLink instanceof Link)
-				{
-					$pathParts = explode('/', $selfLink->getPathInfo());
-					array_pop($pathParts);
-					$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl');
-					$result->addAction($link);
-				}
-			}
-			else if ($result instanceof DocumentLink)
-			{
-				$pathParts = explode('/', $result->getPathInfo());
-				array_pop($pathParts);
-				$result->setProperty('actions', array(new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl')));
-			}
-		}, 5);
+		parent::updateRestDocumentLink($documentLink, $extraColumn);
+		$pathParts = explode('/', $documentLink->getPathInfo());
+		array_pop($pathParts);
+		$documentLink->setProperty('actions', array(new Link($documentLink->getUrlManager(), implode('/', $pathParts) . '/resize', 'resizeurl')));
 	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 */
+	protected function updateRestDocumentResult($documentResult)
+	{
+		parent::updateRestDocumentResult($documentResult);
+		/* @var $document Image */
+		$document = $documentResult->getDocument();
+		$link = array('rel' => 'publicurl', 'href' => $document->getPublicURL());
+		$documentResult->addLink($link);
+		$selfLinks = $documentResult->getRelLink('self');
+		$selfLink = array_shift($selfLinks);
+		if ($selfLink instanceof Link)
+		{
+			$pathParts = explode('/', $selfLink->getPathInfo());
+			array_pop($pathParts);
+			$link = new Link($documentResult->getUrlManager(), implode('/', $pathParts) . '/resize', 'resizeurl');
+			$documentResult->addAction($link);
+		}
+	}
+
 }
