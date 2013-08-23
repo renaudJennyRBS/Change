@@ -1220,24 +1220,6 @@
 
 				}
 
-
-				// Initialize workspace --------------------------------------------------------------------------------
-
-				// Change collapse the left sidebar to give more space to the editor.
-				// TODO Collapse sidebar in the controller instead of here.
-				Workspace.collapseLeftSidebar();
-				MainMenu.hide();
-
-				// Reset fullscreen mode when we quit the page editor.
-				scope.$on('$destroy', function () {
-					dropZoneIndicator.hide();
-					Workspace.removeResizeHandler("StructureEditor");
-					Workspace.expandLeftSidebar();
-					blockPropertiesPopup.hide();
-					MainMenu.show();
-				});
-
-
 				// Resize handler --------------------------------------------------------------------------------------
 
 				function resizeHandler () {

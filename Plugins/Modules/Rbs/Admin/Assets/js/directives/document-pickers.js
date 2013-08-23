@@ -10,7 +10,7 @@
 	var counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, editorCtrl, multiple, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
 
 		var	$el = $(iElement),
 			inputEl = $el.find('input[name=label]'),
@@ -77,7 +77,7 @@
 		// Edit or create
 
 		scope.createDocument = function () {
-			editorCtrl.cascade(
+			EditorManager.cascade(
 				getFormModel(),
 				getCreateLabel(),
 				function (doc) {
@@ -90,7 +90,7 @@
 			var doc;
 			doc = ngModel.$viewValue;
 
-			editorCtrl.cascade(
+			EditorManager.cascade(
 				doc,
 				getEditLabel(),
 				function (editedDoc) {
@@ -280,34 +280,32 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-single.twig',
-			require     : ['ngModel', '^rbsDocumentEditor'],
+			require     : 'ngModel',
 			scope       : true,
 
-			link : function (scope, iElement, attrs, controllers) {
-				var ngModel = controllers[0], editorCtrl = controllers[1];
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, editorCtrl, false, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+			link : function (scope, iElement, attrs, ngModel) {
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', '$http', '$compile', 'RbsChange.Utils', 'RbsChange.REST', '$filter', function (Clipboard, ArrayUtils, FormsManager, Breadcrumb, MainMenu, $http, $compile, Utils, REST, $filter) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-multiple.twig',
-			require     : ['ngModel', '^rbsDocumentEditor'],
+			require     : 'ngModel',
 			scope       : true,
 
-			link : function (scope, iElement, attrs, controllers) {
-				var ngModel = controllers[0], editorCtrl = controllers[1];
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, editorCtrl, true, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+			link : function (scope, iElement, attrs, ngModel) {
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};

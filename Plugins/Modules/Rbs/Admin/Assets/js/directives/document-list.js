@@ -44,14 +44,14 @@
 		'RbsChange.NotificationCenter',
 		'RbsChange.Device',
 		'RbsChange.Settings',
-		'RbsChange.FormsManager',
+		'RbsChange.EditorManager',
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, FormsManager, Events, PaginationPageSizes) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -613,7 +613,7 @@
 
 
 					scope.cascadeEdit = function (doc) {
-						FormsManager.cascadeEditor(
+						EditorManager.cascadeEditor(
 							doc,
 							scope.cascadeEdition
 						);
@@ -621,7 +621,7 @@
 
 					scope.cascadeDuplicate = function (doc) {
 						REST.resource(doc).then(function (fullDoc) {
-								FormsManager.cascadeEditor(
+								EditorManager.cascadeEditor(
 									Utils.duplicateDocument(fullDoc),
 									scope.cascadeEdition
 								);
