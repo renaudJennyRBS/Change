@@ -8,7 +8,6 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
-	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n

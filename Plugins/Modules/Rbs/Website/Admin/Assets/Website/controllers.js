@@ -8,13 +8,12 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
-	 * @param DocumentList
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
 	 * @constructor
 	 */
-	function ListController($scope, DocumentList, Breadcrumb, MainMenu, i18n)
+	function ListController($scope, Breadcrumb, MainMenu, i18n)
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
@@ -25,7 +24,7 @@
 	}
 
 	ListController.$inject =
-		['$scope', 'RbsChange.DocumentList', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
+		['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Rbs_Website_Website_ListController', ListController);
 
 	/**
