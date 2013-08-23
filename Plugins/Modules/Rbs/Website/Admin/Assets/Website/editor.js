@@ -1,31 +1,22 @@
 (function () {
 
-	function changeEditorWebsiteWebsite (Editor) {
+	"use strict";
+
+	function changeEditorWebsiteWebsite () {
 
 		return {
 			restrict : 'EC',
-
 			templateUrl : 'Rbs/Website/Website/editor.twig',
+			replace : true,
+			require : 'rbsDocumentEditor',
 
-			replace: true,
-
-			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link : function (scope, elm, attrs) {
-				Editor.initScope(scope, elm);
+			link : function (scope, elm, attrs, editorCtrl) {
+				editorCtrl.init('Rbs_Website_Website');
 			}
 		};
 
 	}
 
-	changeEditorWebsiteWebsite.$inject = ['RbsChange.Editor'];
-
-	angular.module('RbsChange').directive('changeEditorWebsiteWebsite', changeEditorWebsiteWebsite);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteWebsite', changeEditorWebsiteWebsite);
 
 })();

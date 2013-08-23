@@ -71,14 +71,7 @@
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Rbs/Website/SectionPageFunction/list.twig')
 			;
 
-			$delegate.model('Rbs_Website_StaticPage')
-				.route('editor', 'Rbs/Website/StaticPage/:id/:LCID/editor', 'Rbs/Website/StaticPage/content-editor.twig')
-			;
-			$delegate.model('Rbs_Website_FunctionalPage')
-				.route('editor', 'Rbs/Website/FunctionalPage/:id/:LCID/editor', 'Rbs/Website/FunctionalPage/content-editor.twig')
-			;
-
-			$delegate.model(null)
+			$delegate.model('Rbs_Website')
 				.route('home', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Website/'})
 			;
 

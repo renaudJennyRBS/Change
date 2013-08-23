@@ -2,33 +2,30 @@
 
 	"use strict";
 
-	function changeEditorWebsiteMenu(Editor, Breadcrumb, REST) {
+	function changeEditorWebsiteMenu(Breadcrumb, REST) {
 
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
 			ALL_REGEXP = /^.+$/;
 
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Website/Menu/editor.twig',
-			replace: true,
+			restrict    : 'EC',
+			templateUrl : 'Rbs/Website/Menu/editor.twig',
+			replace     : true,
+			require     : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link: function (scope, elm, attrs) {
+			link: function (scope, element, attrs, editorCtrl) {
 				scope.add = {};
 				scope.add.titlePattern = ALL_REGEXP;
 				scope.addItemUIShown = false;
 
-				Editor.initScope(scope, elm, function () {
+				scope.onReady = function () {
 					if (!scope.document.website && Breadcrumb.getCurrentNode()) {
 						scope.document.website = Breadcrumb.getCurrentNode();
 					}
+
+					var website = scope.document.website;
+					Breadcrumb.setPath([[website.label, website.url('menus')]]);
+
 
 					scope.toggleAddItemUI = function ($event) {
 						$event.preventDefault();
@@ -63,12 +60,14 @@
 						scope.add.selectedDocument = null;
 					};
 
-				});
+				};
+
+				editorCtrl.init('Rbs_Website_Menu');
 			}
 		};
 	}
 
-	changeEditorWebsiteMenu.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb', 'RbsChange.REST'];
+	changeEditorWebsiteMenu.$inject = ['RbsChange.Breadcrumb', 'RbsChange.REST'];
 
-	angular.module('RbsChange').directive('editorChangeWebsiteMenu', changeEditorWebsiteMenu);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteMenu', changeEditorWebsiteMenu);
 })();

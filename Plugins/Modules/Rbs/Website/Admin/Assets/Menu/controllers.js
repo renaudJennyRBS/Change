@@ -59,36 +59,5 @@
 	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n', 'RbsChange.Query', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.Utils'];
 	app.controller('Rbs_Website_Menu_ListController', ListController);
 
-	//-------------------------------------------------------------------------
-
-	/**
-	 * @param $scope
-	 * @param FormsManager
-	 * @param Breadcrumb
-	 * @param i18n
-	 * @constructor
-	 */
-	function FormController($scope, FormsManager, Breadcrumb, i18n, $routeParams, REST)
-	{
-		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
-		]);
-
-		if ($routeParams.website) {
-			var websiteId = parseInt($routeParams.website, 10);
-			if (isNaN(websiteId)) {
-				throw new Error("Parameter 'websiteId' should be an integer.");
-			}
-			REST.resource('Rbs_Website_Website', websiteId).then(function (website) {
-				Breadcrumb.setPath([[website.label, website.url('menus')]]);
-				FormsManager.initResource($scope, 'Rbs_Website_Menu');
-			});
-		}
-
-	}
-
-	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n', '$routeParams', 'RbsChange.REST'];
-	app.controller('Rbs_Website_Menu_FormController', FormController);
 
 })();

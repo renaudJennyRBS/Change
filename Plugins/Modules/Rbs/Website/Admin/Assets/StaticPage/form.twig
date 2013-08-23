@@ -1,27 +1,13 @@
-<div class="document-form" data-ng-controller="Rbs_Website_StaticPage_FormController">
+<div class="document-form">
 	<page-header sub-title="{{ i18nAttr('m.rbs.website.document.staticpage', ['ucf']) }}"></page-header>
 
-	<div data-ng-switch="isReferenceLanguage">
-		<div data-ng-switch-when="true">
-			<div class="document-editor change-editor-website-page"
-				document="document"
-				reference-document="referenceDocument"
-				language="language"
-				section="section"
-				on-save="onSave(document)"
-				on-cancel="onCancel()">
-			</div>
-		</div>
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">Sites et pages</location>
+			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">Pages de contenu</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
 
-		<div data-ng-switch-when="false">
-			<div class="document-editor change-editor-website-page-localized"
-				document="document"
-				reference-document="referenceDocument"
-				language="language"
-				section="section"
-				on-save="onSave(document)"
-				on-cancel="onCancel()">
-			</div>
-		</div>
-	</div>
+	<div class="rbs-document-editor rbs-document-editor-rbs-website-staticpage"></div>
+
 </div>

@@ -2,32 +2,37 @@
 
 	"use strict";
 
-	function changeEditorWebsiteFunctionalPage (Editor, $rootScope, $location, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService, FormsManager, REST, $q) {
+	function changeEditorWebsiteFunctionalPage ($rootScope, $location, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService, REST, $q) {
 
 		return {
 			restrict    : 'C',
 			templateUrl : 'Rbs/Website/FunctionalPage/editor.twig',
 			replace     : true,
+			require     : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope : {
-				original : '=document',
-				referenceDocument : '=',
-				onSave   : '&',
-				onCancel : '&',
-				section  : '=',
-				language : '='
-			},
+			link: function (scope, elm, attrs, editorCtrl) {
 
-			link: function (scope, elm) {
-
-				Editor.initScope(scope, elm, function () {
+				scope.onReady = function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
 
 					}
-				});
+				};
+
+				scope.initSection = function (sectionName) {
+					if (sectionName === 'content') {
+						if (scope.document.pageTemplate)
+						{
+							REST.resource(scope.document.pageTemplate).then(function (template)
+							{
+								scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
+							});
+						}
+					}
+				};
+
+				editorCtrl.init('Rbs_Website_FunctionalPage');
 
 				$rootScope.$watch('website', function (website) {
 					if (scope.document && ! scope.document.website) {
@@ -106,30 +111,29 @@
 	var app = angular.module('RbsChange');
 
 	changeEditorWebsiteFunctionalPage.$inject = [
-		'RbsChange.Editor', '$rootScope',
+		'$rootScope',
 		'$location',
 		'RbsChange.Dialog',
 		'RbsChange.UrlManager',
 		'RbsChange.Breadcrumb',
 		'RbsChange.i18n',
 		'structureEditorService',
-		'RbsChange.FormsManager',
 		'RbsChange.REST',
 		'$q'
 	];
-	app.directive('changeEditorWebsiteFunctionalPage', changeEditorWebsiteFunctionalPage);
+	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
 
 
 	/**
 	 * Localized version of the editor.
 	 */
-	function changeEditorWebsiteFunctionalPageLocalized (Editor, $location, Dialog, UrlManager) {
-		var directive = changeEditorWebsiteFunctionalPage (Editor, $location, Dialog, UrlManager);
+	function changeEditorWebsiteFunctionalPageLocalized ($location, Dialog, UrlManager) {
+		var directive = changeEditorWebsiteFunctionalPage ($location, Dialog, UrlManager);
 		directive.templateUrl = 'Rbs/Website/FunctionalPage/editor-localized.twig';
 		return directive;
 	}
 
 	changeEditorWebsiteFunctionalPageLocalized.$inject = changeEditorWebsiteFunctionalPage.$inject;
-	app.directive('changeEditorWebsiteFunctionalPageLocalized', changeEditorWebsiteFunctionalPageLocalized);
+	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpageLocalized', changeEditorWebsiteFunctionalPageLocalized);
 
 })();
