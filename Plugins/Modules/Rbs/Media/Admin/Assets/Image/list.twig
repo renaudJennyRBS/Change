@@ -6,9 +6,12 @@
 		<a href="(= 'Rbs_Media_Image' | documentURL:'new' =)">{{ i18n('m.rbs.media.document.image-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsMediaImage" model="Rbs_Media_Image" filter-query="query" use-properties="width height">
+	<rbs-document-list data-dlid="DLRbsMediaImage" model="Rbs_Media_Image" filter-query="query" use-properties="width height alt">
 		<column name="path" thumbnail="XS" thumbnail-path="doc"></column>
-		<column name="label" primary="true"></column>
+		<column name="label" primary="true">
+			<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+			<div ng-if="doc.alt"><small>(= doc.alt =)</small></div>
+		</column>
 		<column name="width" width="70px" align="right"><span class="width-column">(= doc.width | number =)</span></column>
 		<column name="height" width="70px"><span class="height-column">(= doc.height | number =)</span></column>
 		<column name="megapixels" width="70px" align="right" label="Mpx">
@@ -24,6 +27,8 @@
 					<dd>(= doc.width | number =) &times; (= doc.height | number =) <abbr title="Pixels">px</abbr></dd>
 					<dt>{{ i18n('m.rbs.media.document.image.megapixels', ['ucf']) }}</dt>
 					<dd>(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.document.image.megapixels', ['ucf']) }}">Mpx</abbr></dd>
+					<dt>{{ i18n('m.rbs.media.document.image.alt', ['ucf']) }}</dt>
+					<dd>(= doc.alt =)</dd>
 					<dt>{{ i18n('m.rbs.media.document.image.file', ['ucf']) }}</dt>
 					<dd>(= doc.path.storageURI =)</dd>
 					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>
