@@ -1,58 +1,12 @@
-(function ($)
-{
+(function ($) {
+
 	"use strict";
-
-	function EditorFn (Editor, REST)
-	{
-		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Media/Image/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
-			{
-				Editor.initScope(scope, elm);
-
-				scope.upload = function ($event) {
-					var button = $($event.target);
-					button.attr('disabled', 'disabled');
-					REST.upload(elm.find('#file')).then(
-						function (data) {
-							button.removeAttr('disabled');
-						},
-						function () {
-							button.removeAttr('disabled');
-						}
-					);
-				};
-
-				scope.$watch('document.path', function (path) {
-					if (path && ! scope.document.label) {
-						var fileName = angular.element(elm.find('.image-uploader').first()).scope().fileName;
-						scope.document.label = fileName.replace(/(\.png|\.gif|\.jpg|\.jpeg)$/i, '');
-					}
-				});
-			}
-		};
-	}
-
-	EditorFn.$inject = [
-		'RbsChange.Editor',
-		'RbsChange.REST'
-	];
-	angular.module('RbsChange').directive('editorRbsMediaImage', EditorFn);
-
-
-
-
-
 
 	function rbsMediaImageEditor (REST)
 	{
 		return {
-			restrict: 'C',
-			templateUrl: 'Rbs/Media/Image/editor.twig',
+			restrict : 'C',
+			templateUrl : 'Rbs/Media/Image/editor.twig',
 			replace : true,
 			require : 'rbsDocumentEditor',
 
@@ -63,7 +17,7 @@
 					var button = $($event.target);
 					button.attr('disabled', 'disabled');
 					REST.upload(element.find('#file')).then(
-						function (data) {
+						function () {
 							button.removeAttr('disabled');
 						},
 						function () {
@@ -82,10 +36,7 @@
 		};
 	}
 
-	rbsMediaImageEditor.$inject = [
-		'RbsChange.REST'
-	];
+	rbsMediaImageEditor.$inject = [ 'RbsChange.REST' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsMediaImage', rbsMediaImageEditor);
-
 
 })(window.jQuery);
