@@ -8,7 +8,7 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model(null)
+			$delegate.model('Rbs_Brand')
 				.route('home', 'Rbs/Brand', { 'redirectTo': 'Rbs/Brand/Brand/'});
 
 			$delegate.routesForLocalizedModels([
@@ -17,5 +17,7 @@
 			return $delegate;
 		}]);
 	}]);
+
+	__change.createEditorForModel('Rbs_Brand_Brand');
 
 })();
