@@ -1,4 +1,4 @@
-<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+<form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
@@ -62,7 +62,7 @@
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-zone', ['ucf']) }}
 				<br />
 				<span>
-					<input name="newZoneName" class="input-mini" type="text" data-ng-model="newZoneName" />
+					<input name="newZoneName" class="input-mini" type="text" ng-model="newZoneName" />
 					<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
 					<p class="text-error" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
 				</span>
@@ -73,7 +73,7 @@
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-category', ['ucf']) }}
 				<br />
 				<span>
-					<input name="newCategoryName" class="input-mini" type="text" data-ng-model="newCategoryName" />
+					<input name="newCategoryName" class="input-mini" type="text" ng-model="newCategoryName" />
 					<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
 				</span>
 				<p class="text-error" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>

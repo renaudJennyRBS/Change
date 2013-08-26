@@ -4,6 +4,10 @@
 
 	var app = angular.module('RbsChange');
 
+
+	// Register default editors for 'Rbs_Price_BillingArea'.
+	__change.createEditorForModel('Rbs_Price_BillingArea');
+
 	/**
 	 * Routes and URL definitions.
 	 */
@@ -12,7 +16,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 
-			$delegate.model(null)
+			$delegate.model('Rbs_Price')
 				.route('home', 'Rbs/Price', { 'redirectTo': 'Rbs/Price/Price/'});
 
 			$delegate.routesForModels([

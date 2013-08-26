@@ -2,22 +2,23 @@
 {
 	"use strict";
 
-	function Editor(Editor)
+	function Editor ()
 	{
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Price/Tax/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
+			restrict : 'C',
+			templateUrl : 'Rbs/Price/Tax/editor.twig',
+			require : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl)
 			{
-				Editor.initScope(scope, elm, function(){
+				scope.onReady = function(){
 					if (!scope.document.data)
 					{
 						scope.document.data = {c:[], z:[], r:[]};
 					}
-				});
+				};
+
+				editorCtrl.init('Rbs_Price_Tax');
 
 				scope.makeDefaultZone = function(defaultIndex){
 					// Order the zone list
@@ -57,7 +58,7 @@
 						value.push(0);
 					});
 					scope.newZoneName = null;
-				}
+				};
 
 				scope.$watch('newCategoryName', function(newValue, oldValue){
 					if (newValue !== oldValue){
@@ -82,6 +83,5 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor'];
-	angular.module('RbsChange').directive('editorRbsPriceTax', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsPriceTax', Editor);
 })();

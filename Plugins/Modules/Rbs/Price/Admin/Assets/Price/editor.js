@@ -7,7 +7,7 @@
 		return {
 			restrict: 'EC',
 			templateUrl: 'Rbs/Price/Price/editor.twig',
-			replace: true,
+			replace : false,
 			require : 'rbsDocumentEditor',
 
 
