@@ -26,27 +26,6 @@
 	app.controller('Rbs_User_Group_ListController', ListController);
 
 	/**
-	 * Controller for form.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param FormsManager
-	 * @param i18n
-	 * @constructor
-	 */
-	function FormController($scope, FormsManager, Breadcrumb, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.group-list | ucf'), "Rbs/User/Group"]
-		]);
-		FormsManager.initResource($scope, 'Rbs_User_Group');
-	}
-
-	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Rbs_User_Group_FormController', FormController);
-
-	/**
 	 * Public Profile for group identifier popover (on @)
 	 *
 	 * @param $scope

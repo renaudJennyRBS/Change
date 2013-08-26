@@ -27,27 +27,6 @@
 	app.controller('Rbs_User_User_ListController', ListController);
 
 	/**
-	 * Controller for form.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param FormsManager
-	 * @param i18n
-	 * @constructor
-	 */
-	function FormController($scope, FormsManager, Breadcrumb, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
-		]);
-		FormsManager.initResource($scope, 'Rbs_User_User');
-	}
-
-	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Rbs_User_User_FormController', FormController);
-
-	/**
 	 * Controller for applications.
 	 *
 	 * @param $scope
