@@ -8,7 +8,7 @@ use Change\Presentation\PresentationServices;
 /**
  * @name \Rbs\Generic\Presentation\Twig\Extension
  */
-class Extension  implements \Twig_ExtensionInterface
+class Extension implements \Twig_ExtensionInterface
 {
 
 	/**
@@ -54,7 +54,6 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	public function initRuntime(\Twig_Environment $environment)
 	{
-
 	}
 
 	/**
@@ -101,8 +100,11 @@ class Extension  implements \Twig_ExtensionInterface
 	{
 		return array(
 			new \Twig_SimpleFunction('imageURL', array($this, 'imageURL')),
-			new \Twig_SimpleFunction('documentURL', array($this, 'documentURL')),
+			new \Twig_SimpleFunction('canonicalURL', array($this, 'canonicalURL')),
+			new \Twig_SimpleFunction('contextualURL', array($this, 'contextualURL')),
 			new \Twig_SimpleFunction('currentURL', array($this, 'currentURL')),
+			new \Twig_SimpleFunction('ajaxURL', array($this, 'ajaxURL')),
+			new \Twig_SimpleFunction('functionURL', array($this, 'functionURL'))
 		);
 	}
 
@@ -227,25 +229,53 @@ class Extension  implements \Twig_ExtensionInterface
 
 	/**
 	 * @param \Change\Documents\AbstractDocument|integer $document
-	 * @param \Change\Presentation\Interfaces\Section|null $section
+	 * @param \Change\Presentation\Interfaces\Website|integer|null $website
 	 * @param array $query
 	 * @param string|null $LCID
-	 * @return string
+	 * @return string|null
 	 */
-	public function documentURL($document, $section, $query = array(), $LCID = null)
+	public function canonicalURL($document, $website, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
-			if ($section === null || $section instanceof \Change\Presentation\Interfaces\Website)
+			if (is_numeric($website))
 			{
-				$this->getUrlManager()->getCanonicalByDocument($document, $section, $query, $LCID)->normalize()->toString();
+				$website = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($website);
 			}
-			elseif ($section instanceof \Change\Presentation\Interfaces\Section)
+			if ($website instanceof \Change\Presentation\Interfaces\Section)
+			{
+				$website = $website->getWebsite();
+			}
+			if ($website === null || $website instanceof \Change\Presentation\Interfaces\Website)
+			{
+				$this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument|integer $document
+	 * @param \Change\Presentation\Interfaces\Section|integer|null $section
+	 * @param array $query
+	 * @param string|null $LCID
+	 * @return string|null
+	 */
+	public function contextualURL($document, $section, $query = array(), $LCID = null)
+	{
+		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
+		{
+			if (is_numeric($section))
+			{
+				$section = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($section);
+			}
+
+			if ($section === null || $section instanceof \Change\Presentation\Interfaces\Section)
 			{
 				$this->getUrlManager()->getByDocument($document, $section, $query, $LCID)->normalize()->toString();
 			}
 		}
-		return '';
+		return null;
 	}
 
 	/**
@@ -266,4 +296,77 @@ class Extension  implements \Twig_ExtensionInterface
 		}
 		return $uri->normalize()->toString();
 	}
+
+	/**
+	 * @param string $module
+	 * @param string $action
+	 * @param array $query
+	 * @return string
+	 */
+	public function ajaxURL($module, $action, $query = array())
+	{
+		$module = is_array($module) ? $module : explode('_', $module);
+		$action = is_array($action) ? $action : array($action);
+		$pathInfo = array_merge(array('Action'), $module, $action);
+		return $this->getUrlManager()->getByPathInfo($pathInfo, $query)->normalize()->toString();
+	}
+
+	/**
+	 * @param $functionCode
+	 * @param \Change\Presentation\Interfaces\Section|null $section
+	 * @param array $query
+	 * @return null|string
+	 */
+	public function functionURL($functionCode, $section = null, $query = array())
+	{
+		if ($section === null)
+		{
+			$section = $this->getUrlManager()->getSection() ? $this->getUrlManager()->getSection() : $this->getUrlManager()
+				->getWebsite();
+		}
+
+		if ($section instanceof \Change\Presentation\Interfaces\Section)
+		{
+			$sectionIds = array_map(function (\Change\Presentation\Interfaces\Section $section)
+			{
+				return $section->getId();
+			}, $section->getSectionPath());
+
+			$q = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+			$q->andPredicates($q->eq('functionCode', $functionCode), $q->in('section', $sectionIds));
+			$sectionPageFunctions = $q->getDocuments();
+			if ($sectionPageFunctions->count())
+			{
+				$query['sectionPageFunction'] = $functionCode;
+
+				if ($sectionPageFunctions->count() === 1)
+				{
+					/* @var $sectionPageFunction \Rbs\Website\Documents\SectionPageFunction */
+					$sectionPageFunction = $sectionPageFunctions[0];
+					$page = $sectionPageFunction->getPage();
+					$section = $sectionPageFunction->getSection();
+
+					return $this->getUrlManager()->getByDocument($page, $section, $query)->normalize()->toString();
+				}
+				else
+				{
+					foreach (array_reverse($sectionIds) as $sectionId)
+					{
+						/* @var $sectionPageFunction \Rbs\Website\Documents\SectionPageFunction */
+						foreach ($sectionPageFunctions as $sectionPageFunction)
+						{
+							if ($sectionId === $sectionPageFunction->getSection()->getId())
+							{
+								$page = $sectionPageFunction->getPage();
+								$section = $sectionPageFunction->getSection();
+								return $this->getUrlManager()->getByDocument($page, $section, $query)->normalize()->toString();
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 }

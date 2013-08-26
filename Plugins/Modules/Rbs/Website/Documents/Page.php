@@ -3,6 +3,7 @@ namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
 use Change\Http\Web\Events\PageEvent;
+use Change\Http\Web\Result\HtmlHeaderElement;
 use Change\Http\Web\Result\Page as PageResult;
 use Change\Presentation\Layout\Layout;
 use Zend\Http\Response as HttpResponse;
@@ -55,6 +56,10 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 
 		$result = new PageResult($page->getIdentifier());
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+
+		$headElement = new HtmlHeaderElement('title');
+		$headElement->setContent($this->getTitle());
+		$result->addNamedHeadAsString('title', $headElement);
 
 		$pageEvent->getPresentationServices()->getThemeManager()->setCurrent($pageTemplate->getTheme());
 		$pageTemplate = $page->getPageTemplate();
