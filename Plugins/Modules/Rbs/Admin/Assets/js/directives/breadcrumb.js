@@ -147,7 +147,7 @@
 
 			compile : function (tElement) {
 				tElement.hide();
-				return function linkFn (scope, element, attrs) {
+				return function linkFn (scope, element) {
 					scope.counts = {
 						'Location' : element.find('location').length,
 						'Path' : element.find('path').length
@@ -162,10 +162,10 @@
 		return {
 			restrict : 'E',
 			require  : '?^rbsBreadcrumbConfig',
-			link : function (scope, element, attrs, rbsBreadcrumbUpdate) {
-				if (rbsBreadcrumbUpdate) {
+			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
+				if (rbsBreadcrumbConfig) {
 					attrs.$observe('href', function (href) {
-						rbsBreadcrumbUpdate.add('Location', element.index(), element.text(), href);
+						rbsBreadcrumbConfig.add('Location', element.index(), element.text(), href);
 					});
 				}
 			}
@@ -176,17 +176,15 @@
 		return {
 			restrict : 'E',
 			require  : '?^rbsBreadcrumbConfig',
-			link : function (scope, element, attrs, rbsBreadcrumbUpdate) {
-				if (rbsBreadcrumbUpdate) {
+			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
+				if (rbsBreadcrumbConfig) {
 					attrs.$observe('href', function (href) {
-						rbsBreadcrumbUpdate.add('Path', element.index()-element.prevAll('location').length, element.text(), href);
+						rbsBreadcrumbConfig.add('Path', element.index()-element.prevAll('location').length, element.text(), href);
 					});
 				}
 			}
 		};
 	});
-
-
 
 	angular.module('RbsChange').directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
 

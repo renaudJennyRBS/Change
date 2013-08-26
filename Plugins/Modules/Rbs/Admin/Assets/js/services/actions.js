@@ -472,7 +472,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.resourceActionThenReload('startValidation', doc);
+							var promise = REST.executeTaskByCodeOnDocument('requestValidation', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);

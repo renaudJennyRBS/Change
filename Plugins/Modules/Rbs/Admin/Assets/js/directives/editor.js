@@ -728,7 +728,6 @@
 
 			var	$ws = $('#workspace'),
 				cascadeContextStack = [],
-				self = this,
 				idStack = [];
 
 			/**
@@ -755,9 +754,14 @@
 						lineHeight: ((1 + ((i+1)/collapsed.length*0.2))*100)+'%'
 					});
 				});
-				if (self.isCascading()) {
+				if (isCascadingFn()) {
 					$ws.children('.document-form').last().addClass('cascading-forms-last');
 				}
+			}
+
+
+			function isCascadingFn () {
+				return cascadeContextStack.length > 0;
 			}
 
 
@@ -769,7 +773,7 @@
 				 * @returns {Boolean}
 				 */
 				'isCascading' : function () {
-					return cascadeContextStack.length > 0;
+					return isCascadingFn();
 				},
 
 				'getCurrentContext' : function () {

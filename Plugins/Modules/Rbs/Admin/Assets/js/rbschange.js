@@ -111,7 +111,7 @@
 		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, ''), function ()
 		{
 			return {
-				restrict : 'EC',
+				restrict : 'C',
 				templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
 				replace : true,
 				require : 'rbsDocumentEditor',
