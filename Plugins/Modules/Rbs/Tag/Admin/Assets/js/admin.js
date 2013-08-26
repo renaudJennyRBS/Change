@@ -20,6 +20,9 @@
 	}]);
 
 
+	__change.createEditorForModel('Rbs_Tag_Tag');
+
+
 	//-------------------------------------------------------------------------
 	//
 	// Configuration and handlers.
