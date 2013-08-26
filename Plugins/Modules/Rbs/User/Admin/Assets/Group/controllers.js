@@ -5,27 +5,6 @@
 	var app = angular.module('RbsChange');
 
 	/**
-	 * Controller for list.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param MainMenu
-	 * @constructor
-	 */
-	function ListController($scope, Breadcrumb, MainMenu, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.group-list | ucf'), "Rbs/User/Group"]
-		]);
-
-		MainMenu.loadModuleMenu('Rbs_User');
-	}
-
-	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_User_Group_ListController', ListController);
-
-	/**
 	 * Public Profile for group identifier popover (on @)
 	 *
 	 * @param $scope

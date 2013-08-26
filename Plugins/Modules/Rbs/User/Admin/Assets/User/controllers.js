@@ -5,28 +5,6 @@
 	var app = angular.module('RbsChange');
 
 	/**
-	 * Controller for list.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param MainMenu
-	 * @param i18n
-	 * @constructor
-	 */
-	function ListController($scope, Breadcrumb, MainMenu, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
-		]);
-
-		MainMenu.loadModuleMenu('Rbs_User');
-	}
-
-	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_User_User_ListController', ListController);
-
-	/**
 	 * Controller for applications.
 	 *
 	 * @param $scope
