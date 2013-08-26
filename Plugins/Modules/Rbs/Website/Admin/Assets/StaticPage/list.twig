@@ -1,6 +1,13 @@
-<div data-ng-controller="Rbs_Website_StaticPage_ListController">
-	<page-header title="{{ i18nAttr('m.rbs.website.document.staticpage-list', ['ucf']) }}" filter-query="query"></page-header>
+<div>
 
+	<rbs-workspace-config menu="Rbs_Website">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">Sites et pages</location>
+			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">Pages de contenu</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<page-header title="{{ i18nAttr('m.rbs.website.document.staticpage-list', ['ucf']) }}" filter-query="query"></page-header>
 	<search-filters model="Rbs_Website_Website" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
@@ -22,4 +29,5 @@
 		<column name="label" primary="true"></column>
 
 	</rbs-document-list>
+
 </div>

@@ -1,7 +1,12 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
+
+	// Register default editor for Website/Website.
+	__change.createEditorForModel('Rbs_Website_Website');
 
 
 	/**

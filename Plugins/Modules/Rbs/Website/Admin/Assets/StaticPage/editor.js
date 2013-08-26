@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsitePage ($rootScope, $location, REST, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService) {
+	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb, structureEditorService) {
 
 		return {
 			restrict    : 'C',
@@ -56,12 +56,8 @@
 
 	changeEditorWebsitePage.$inject = [
 		'$rootScope',
-		'$location',
 		'RbsChange.REST',
-		'RbsChange.Dialog',
-		'RbsChange.UrlManager',
 		'RbsChange.Breadcrumb',
-		'RbsChange.i18n',
 		'structureEditorService'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);

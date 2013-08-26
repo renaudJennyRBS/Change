@@ -10,7 +10,7 @@
 			replace     : true,
 			require     : 'rbsDocumentEditor',
 
-			link: function (scope, elm, attrs, editorCtrl) {
+			link : function (scope, elm, attrs, editorCtrl) {
 
 				scope.onReady = function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
