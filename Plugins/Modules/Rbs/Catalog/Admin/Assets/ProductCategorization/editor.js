@@ -1,33 +1,22 @@
 (function () {
 
-	function editorChangeCatalogProductCategorization(Editor) {
+	"use strict";
+
+	function editorRbsCatalogProductCategorization() {
 
 		return {
 			restrict : 'EC',
-
 			templateUrl : 'Rbs/Catalog/ProductCategorization/editor.twig',
-
 			replace: true,
+			require : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link : function (scope, elm, attrs) {
-				Editor.initScope(scope, elm, function(){
-					console.log(scope);
-				});
+			link : function (scope, elm, attrs, editorCtrl) {
+				editorCtrl.init('Rbs_Catalog_ProductCategorization');
 			}
 		};
 
 	}
 
-	editorChangeCatalogProductCategorization.$inject = ['RbsChange.Editor'];
-
-	angular.module('RbsChange').directive('editorChangeCatalogProductCategorization', editorChangeCatalogProductCategorization);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductCategorization', editorRbsCatalogProductCategorization);
 
 })();

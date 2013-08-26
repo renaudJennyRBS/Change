@@ -1,9 +1,12 @@
-<div class="document-form" data-ng-controller="Rbs_Catalog_Product_FormController">
+<div class="document-form">
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.catalog.document.product', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-rbs-catalog-product"
-		document="document"
-		section="section"
-		on-save="onSave(document)"
-		on-cancel="onCancel()">
-	</div>
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">Catalogue</location>
+			<location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">Produits</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div class="rbs-document-editor rbs-document-editor-rbs-catalog-product"></div>
 </div>

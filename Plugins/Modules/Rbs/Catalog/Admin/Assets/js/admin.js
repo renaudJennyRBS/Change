@@ -16,7 +16,7 @@
 				.route('productcategorizations', 'Rbs/Catalog/Category/:id/ProductCategorization/', 'Rbs/Catalog/Category/products.twig')
 				.route('tree', 'Rbs/Catalog/nav/?tn=:id', 'Rbs/Catalog/Category/list.twig');
 
-			$delegate.model(null).route('home', 'Rbs/Catalog/', { 'redirectTo': 'Rbs/Catalog/Product/'});
+			$delegate.model('Rbs_Catalog').route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 
 			$delegate.routesForLocalizedModels([
 				'Rbs_Catalog_Product',

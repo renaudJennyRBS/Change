@@ -2,21 +2,20 @@
 {
 	"use strict";
 
-	function Editor(Editor, REST, i18n, $http)
+	function Editor()
 	{
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Catalog/Category/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
+			restrict : 'EC',
+			templateUrl : 'Rbs/Catalog/Category/editor.twig',
+			replace : true,
+			require : 'rbsDocumentEditor',
+
+			link : function (scope, elm, attrs, editorCtrl)
 			{
-				Editor.initScope(scope, elm);
+				editorCtrl.init('Rbs_Catalog_Category');
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.REST', 'RbsChange.i18n', '$http'];
-	angular.module('RbsChange').directive('editorRbsCatalogCategory', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCategory', Editor);
 })();

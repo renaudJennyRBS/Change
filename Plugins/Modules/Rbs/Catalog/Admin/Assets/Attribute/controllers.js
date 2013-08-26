@@ -26,27 +26,6 @@
 	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
 	app.controller('Rbs_Catalog_Attribute_ListController', ListController);
 
-	/**
-	 * Controller for form.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param FormsManager
-	 * @param i18n
-	 * @constructor
-	 */
-	function FormController($scope, Breadcrumb, FormsManager, i18n)
-	{
-		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.attribute-list | ucf'), "Rbs/Catalog/Attribute/"]
-		]);
-		FormsManager.initResource($scope, 'Rbs_Catalog_Attribute');
-	}
-
-	FormController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.i18n'];
-	app.controller('Rbs_Catalog_Attribute_FormController', FormController);
-
 
 	app.directive('rbsAttributeEditor', ['RbsChange.REST', 'RbsChange.Utils', '$timeout', rbsAttributeEditorDirective]);
 

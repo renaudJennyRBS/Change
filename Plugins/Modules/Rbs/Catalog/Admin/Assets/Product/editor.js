@@ -3,47 +3,55 @@
 	"use strict";
 
 	/**
-	 * @param Editor
-	 * @param i18n
 	 * @param $timeout
+	 * @param $http
+	 * @param Loading
+	 * @param REST
 	 * @constructor
 	 */
-	function Editor(Editor, i18n, $timeout, $http, Loading, REST, FormsManager)
+	function Editor($timeout, $http, Loading, REST)
 	{
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Catalog/Product/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
-			{
-				var loadCategorizations = function(){
-					REST.collection(scope.document.META$.links['productcategorizations'].href).then(function(result){
-						if (angular.isObject(result) && result.hasOwnProperty('resources'))
-						{
-							scope.categorizations = result.resources;
-							Loading.stop();
-						}
-					});
-				};
+			restrict : 'EC',
+			templateUrl : 'Rbs/Catalog/Product/editor.twig',
+			replace : true,
+			require : 'rbsDocumentEditor',
 
-				Editor.initScope(scope, elm, function() {
+			link: function (scope, elm, attrs, editorCtrl)
+			{
+				scope.onReady = function() {
 					if (!angular.isArray(scope.document.attributeValues))
 					{
 						scope.document.attributeValues = [];
 					}
 					loadCategorizations();
-				});
+				};
+
+				editorCtrl.init('Rbs_Catalog_Product');
+
+
+				function loadCategorizations () {
+					if (scope.document.META$.links.hasOwnProperty('productcategorizations')) {
+						REST.collection(scope.document.META$.links['productcategorizations'].href).then(function(result){
+							if (angular.isObject(result) && result.hasOwnProperty('resources'))
+							{
+								scope.categorizations = result.resources;
+							}
+						});
+					}
+					else {
+						scope.categorizations = [];
+					}
+				}
 
 				scope.cascadeEditCategorization = function(cat){
-					FormsManager.cascade('Rbs/Catalog/ProductCategorization/form.twig', {id:cat.id}, function(doc){loadCategorizations()}, scope.document.label);
+					scope.cascade(cat, scope.document.label, function(doc){loadCategorizations();});
 				};
 
 				scope.cascadeCreateCategorization = function(doc){
 					var newCat = REST.newResource('Rbs_Catalog_ProductCategorization');
 					newCat.product = scope.document;
-					scope.cascadeCreate(newCat, scope.document.label, function(doc){loadCategorizations()});
+					scope.cascade(newCat, scope.document.label, function(doc){loadCategorizations()});
 				};
 
 				scope.toggleHighlight = function(doc){
@@ -59,24 +67,23 @@
 					if (url)
 					{
 						Loading.start();
-						$http.get(url).success(function (data)
-						{
-							loadCategorizations();
-							Loading.stop();
-						}).error(function errorCallback(data, status)
-						{
-							Loading.stop();
-						});
+						$http.get(url)
+							.success(function (data) {
+								loadCategorizations();
+								Loading.stop();
+							})
+							.error(function errorCallback(data, status) {
+								Loading.stop();
+							}
+						);
 					}
 				};
 
 				scope.deleteCategorization = function(doc){
-					REST.delete(doc).then(function(){
+					REST['delete'](doc).then(function(){
 						loadCategorizations();
 					});
 				};
-
-
 
 
 				scope.$watch('document.attribute', function(newValue, oldValue){
@@ -97,16 +104,10 @@
 					}
 				});
 
-
-
-				// Prices.
-				scope.createActions = [
-					{ 'label': i18n.trans('m.rbs.catalog.admin.js.price | ucf'), 'url': 'Rbs/Catalog/Price/new', 'icon': 'file' }
-				];
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.i18n', '$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.FormsManager'];
-	angular.module('RbsChange').directive('editorRbsCatalogProduct', Editor);
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
 })();
