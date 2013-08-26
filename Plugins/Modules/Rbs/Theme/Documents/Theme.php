@@ -48,14 +48,23 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getTemplateBasePath()
+	{
+		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
+		$path = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
+		return $path;
+	}
+
+	/**
 	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
 	 */
 	public function setModuleContent($moduleName, $pathName, $content)
 	{
-		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		$path = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName, $moduleName, $pathName);
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, $content);
 	}
@@ -63,18 +72,11 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	/**
 	 * @param string $moduleName
 	 * @param string $fileName
-	 * @return string|null
+	 * @return string
 	 */
 	public function getBlockTemplatePath($moduleName, $fileName)
 	{
-		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		$path = $this->getWorkspace()->appPath('Themes',$themeVendor, $shortThemeName, $moduleName, 'Blocks', $fileName);
-		if ((file_exists($path)))
-		{
-			return $path;
-		}
-		$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
-		return $parentTheme->getBlockTemplatePath($moduleName, $fileName);
+		return $this->getWorkspace()->composePath($moduleName, 'Blocks', $fileName);
 	}
 
 	/**

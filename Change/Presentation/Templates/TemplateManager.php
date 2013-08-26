@@ -89,4 +89,22 @@ class TemplateManager
 		}
 		return $twig->render(basename($pathName), $attributes);
 	}
+
+	/**
+	 * @param string $relativePath
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function renderThemeTemplateFile($relativePath, array $attributes)
+	{
+		$paths = $this->getPresentationServices()->getThemeManager()->getThemeBasePaths();
+		$loader = new \Twig_Loader_Filesystem($paths);
+		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+		$twig->addExtension(new Twig\Extension($this->getPresentationServices()->getApplicationServices()));
+		foreach ($this->getExtensions() as $extension)
+		{
+			$twig->addExtension($extension);
+		}
+		return $twig->render($relativePath, $attributes);
+	}
 }

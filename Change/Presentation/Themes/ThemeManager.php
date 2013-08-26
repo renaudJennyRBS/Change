@@ -13,7 +13,8 @@ use Zend\EventManager\EventManager;
  */
 class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait {
+	use EventsCapableTrait
+	{
 		EventsCapableTrait::attachEvents as defaultAttachEvents;
 	}
 
@@ -31,7 +32,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
-
 
 	/**
 	 * @var Theme
@@ -56,7 +56,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		$this->presentationServices = $presentationServices;
 		if ($this->sharedEventManager === null)
 		{
-			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()->getSharedEventManager());
+			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()
+				->getSharedEventManager());
 		}
 	}
 
@@ -124,7 +125,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function dispatchLoading($themeName)
 	{
-		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName, 'documentServices' => $this->getDocumentServices()));
+		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName,
+			'documentServices' => $this->getDocumentServices()));
 		$callback = function ($result)
 		{
 			return ($result instanceof Theme);
@@ -235,15 +237,50 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$theme = $this->getDefault();
 		}
-		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
-		while ($it->valid()) {
+		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
+			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
+		while ($it->valid())
+		{
 			/* @var $current \RecursiveDirectoryIterator */
 			$current = $it->current();
 			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0)
 			{
-				$theme->setModuleContent($plugin->getName(), $current->getSubPathname(), file_get_contents($current->getPathname()));
+				$theme->setModuleContent($plugin->getName(), $current->getSubPathname(),
+					file_get_contents($current->getPathname()));
 			}
 			$it->next();
 		}
+	}
+
+	/**
+	 * @api
+	 * @return string[]
+	 */
+	public function getThemeBasePaths()
+	{
+		$paths = array();
+		$theme = $this->getCurrent();
+		while (true)
+		{
+			$basePath = $theme->getTemplateBasePath();
+			if (is_dir($basePath))
+			{
+				$paths[] = $basePath;
+			}
+
+			if ($theme === $this->getDefault())
+			{
+				break;
+			}
+			elseif ($theme->getParentTheme())
+			{
+				$theme = $theme->getParentTheme();
+			}
+			else
+			{
+				$theme = $this->getDefault();
+			}
+		}
+		return $paths;
 	}
 }

@@ -71,13 +71,22 @@ class DefaultTheme implements Theme
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getTemplateBasePath()
+	{
+		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
+		return $path;
+	}
+
+	/**
 	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
 	 */
 	public function setModuleContent($moduleName, $pathName, $content)
 	{
-		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName, $moduleName, $pathName);
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, $content);
 	}
@@ -85,12 +94,11 @@ class DefaultTheme implements Theme
 	/**
 	 * @param string $moduleName
 	 * @param string $fileName
-	 * @return string|null
+	 * @return string
 	 */
 	public function getBlockTemplatePath($moduleName, $fileName)
 	{
-		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName, $moduleName, 'Blocks', $fileName);
-		return (file_exists($path)) ? $path : null;
+		return $this->getWorkspace()->composePath($moduleName, 'Blocks', $fileName);
 	}
 
 	/**
