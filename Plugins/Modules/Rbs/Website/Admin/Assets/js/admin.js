@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	// Register default editor for Website/Website.
+	// Register default editor for 'Rbs_Website_Website' Model.
 	__change.createEditorForModel('Rbs_Website_Website');
 
 

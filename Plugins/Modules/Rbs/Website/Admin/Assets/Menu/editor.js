@@ -10,7 +10,7 @@
 		return {
 			restrict    : 'EC',
 			templateUrl : 'Rbs/Website/Menu/editor.twig',
-			replace     : true,
+			replace     : false,
 			require     : 'rbsDocumentEditor',
 
 			link: function (scope, element, attrs, editorCtrl) {

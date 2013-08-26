@@ -7,7 +7,7 @@
 		return {
 			restrict    : 'EC',
 			templateUrl : 'Rbs/Website/Topic/editor.twig',
-			replace     : true,
+			replace     : false,
 			require     : 'rbsDocumentEditor',
 
 			link : function (scope, elm, attrs, editorCtrl) {
