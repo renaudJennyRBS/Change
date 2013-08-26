@@ -106,6 +106,30 @@
 	}]);
 
 
+	__change.createEditorForModel = function (modelName, linkFn) {
+
+		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, ''), function ()
+		{
+			return {
+				restrict : 'EC',
+				templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
+				replace : true,
+				require : 'rbsDocumentEditor',
+
+				link : function (scope, element, attrs, editorCtrl)
+				{
+					if (angular.isFunction(linkFn)) {
+						linkFn.apply(this, [scope, element, attrs, editorCtrl]);
+					}
+					editorCtrl.init(modelName);
+				}
+			};
+		});
+
+	};
+
+
+
 	//-------------------------------------------------------------------------
 	//
 	// Directives.

@@ -147,7 +147,7 @@
 
 			compile : function (tElement) {
 				tElement.hide();
-				return function linkFn (scope, element) {
+				return function linkFn (scope, element, attrs) {
 					scope.counts = {
 						'Location' : element.find('location').length,
 						'Path' : element.find('path').length
@@ -196,7 +196,7 @@
 
 			controller : ['$scope', '$attrs', function ($scope, $attrs) {
 				if ($attrs.menu) {
-					MainMenu.load($attrs.menu);
+					MainMenu.loadModuleMenu($attrs.menu);
 				}
 			}]
 		};

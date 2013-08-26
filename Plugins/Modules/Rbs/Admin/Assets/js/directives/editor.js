@@ -722,162 +722,168 @@
 	//
 
 
+	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager () {
 
-	app.service('RbsChange.EditorManager', ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events, Settings) {
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events, Settings) {
 
-		var	$ws = $('#workspace'),
-			cascadeContextStack = [],
-			self = this,
-			idStack = [];
+			var	$ws = $('#workspace'),
+				cascadeContextStack = [],
+				self = this,
+				idStack = [];
 
-
-		/**
-		 * When the route changes, we need to clean up any cascading process.
-		 */
-		$rootScope.$on('$routeChangeSuccess', function () {
-			cascadeContextStack = [];
-		});
-
-		$rootScope.$on('$routeChangeStart', function () {
-			Breadcrumb.unfreeze();
-		});
-
-		/**
-		 * Returns true if we are in a cascading process, false otherwise.
-		 *
-		 * @returns {Boolean}
-		 */
-		this.isCascading = function () {
-			return cascadeContextStack.length > 0;
-		};
-
-		this.getCurrentContext = function () {
-			return cascadeContextStack.length ? cascadeContextStack[cascadeContextStack.length-1] : null;
-		};
-
-		this.cascade = function (doc, collapsedTitle, saveCallback) {
-			var $form, formUrl;
-
-			if (Utils.isModelName(doc)) {
-				doc = REST.newResource(doc);
-			}
-
-			if (!doc || !Utils.isDocument(doc)) {
-				throw new Error("Please provide a valid Document.");
-			}
-
-			// Check circular cascade:
-			if (ArrayUtils.inArray(doc.id, idStack) !== -1) {
-				throw new Error("Circular cascade error: Document " + doc.id + " is already being edited in a cascaded Editor.");
-			}
-
-			// Freeze the Breadcrumb to prevent any other controller from modifying it.
-			Breadcrumb.freeze();
-
-			// Create cascade context.
-			cascadeContextStack.push({
-				'saveCallback' : saveCallback,
-				'document'     : doc
+			/**
+			 * When the route changes, we need to clean up any cascading process.
+			 */
+			$rootScope.$on('$routeChangeSuccess', function () {
+				cascadeContextStack = [];
 			});
-			this.startEditSession(doc);
 
-			$ws = $('#workspace'); // Please keep this here even if it is declared above.
+			$rootScope.$on('$routeChangeStart', function () {
+				Breadcrumb.unfreeze();
+			});
 
-			// Slides up the current form.
-			$form = $ws.children('.document-form').last();
-			$form.slideUp('fast');
 
-			// Load and insert the new cascaded form.
-			formUrl = doc.model.replace(/_/g, '/') + '/form.twig';
-			$http.get(formUrl)
-				.success(function (html) {
-					// Create a new isolated scope for the new form.
-					var scope = $rootScope.$new(true);
-					console.log("Controller: new isolated scope created for cascaded Editor: ", scope.$id);
-					if (doc.LCID) {
-						scope.language = doc.LCID;
-					}
-					scope.section = '';
-
-					$ws.append('<div class="cascading-forms-collapsed">' + collapsedTitle + '</div>');
-
-					$compile(html)(scope, function (cloneEl) {
-						$ws.append(cloneEl);
+			function updateCollapsedForms () {
+				// "Shrink" older forms.
+				var collapsed = $ws.find('.cascading-forms-collapsed');
+				collapsed.each(function (i) {
+					$(this).removeClass('cascading-forms-last').css({
+						margin    : '0 ' + ((collapsed.length - i)*15)+'px',
+						opacity   : (0.7 + ((i+1)/collapsed.length*0.3)),
+						zIndex    : i + 1,
+						fontSize  : ((1 + ((i+1)/collapsed.length*0.2))*100)+'%',
+						lineHeight: ((1 + ((i+1)/collapsed.length*0.2))*100)+'%'
 					});
-					MainMenu.pushContents();
+				});
+				if (self.isCascading()) {
+					$ws.children('.document-form').last().addClass('cascading-forms-last');
+				}
+			}
+
+
+			return {
+
+				/**
+				 * Returns true if we are in a cascading process, false otherwise.
+				 *
+				 * @returns {Boolean}
+				 */
+				'isCascading' : function () {
+					return cascadeContextStack.length > 0;
+				},
+
+				'getCurrentContext' : function () {
+					return cascadeContextStack.length ? cascadeContextStack[cascadeContextStack.length-1] : null;
+				},
+
+				'cascade' : function (doc, collapsedTitle, saveCallback) {
+					var $form, formUrl;
+
+					if (Utils.isModelName(doc)) {
+						doc = REST.newResource(doc);
+					}
+
+					if (!doc || !Utils.isDocument(doc)) {
+						throw new Error("Please provide a valid Document.");
+					}
+
+					// Check circular cascade:
+					if (ArrayUtils.inArray(doc.id, idStack) !== -1) {
+						throw new Error("Circular cascade error: Document " + doc.id + " is already being edited in a cascaded Editor.");
+					}
+
+					// Freeze the Breadcrumb to prevent any other controller from modifying it.
+					Breadcrumb.freeze();
+
+					// Create cascade context.
+					cascadeContextStack.push({
+						'saveCallback' : saveCallback,
+						'document'     : doc
+					});
+					this.startEditSession(doc);
+
+					$ws = $('#workspace'); // Please keep this here even if it is declared above.
+
+					// Slides up the current form.
+					$form = $ws.children('.document-form').last();
+					$form.slideUp('fast');
+
+					// Load and insert the new cascaded form.
+					formUrl = doc.model.replace(/_/g, '/') + '/form.twig';
+					$http.get(formUrl)
+						.success(function (html) {
+							// Create a new isolated scope for the new form.
+							var scope = $rootScope.$new(true);
+							console.log("Controller: new isolated scope created for cascaded Editor: ", scope.$id);
+							if (doc.LCID) {
+								scope.language = doc.LCID;
+							}
+							scope.section = '';
+
+							$ws.append('<div class="cascading-forms-collapsed">' + collapsedTitle + '</div>');
+
+							$compile(html)(scope, function (cloneEl) {
+								$ws.append(cloneEl);
+							});
+							MainMenu.pushContents();
+
+							updateCollapsedForms();
+							$ws.find(':input').first().focus();
+						}
+					);
+
+					return null;
+				},
+
+
+				/**
+				 * Uncascade (cancel) the current form and go back to the previous form,
+				 * without any changes on it.
+				 */
+				'uncascade' : function (doc) {
+					var	ctx = cascadeContextStack.pop(),
+						$form;
+
+					if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
+						ctx.saveCallback(doc);
+					}
+
+					idStack.pop();
+
+					// Remove the last from and destroy its associated scope.
+					$form = $ws.children('.document-form').last();
+					angular.element($form).scope().$destroy();
+					$form.remove();
+					$ws.children('.cascading-forms-collapsed').last().remove();
+
+					// Display the last form.
+					$form = $ws.children('.document-form').last();
+					$form.fadeIn('fast');
+
+					// Restore previous menu.
+					MainMenu.popContents();
+
+					// If all cascades are finished, unfreeze the Breadcrumb to allow modifications on it.
+					if (cascadeContextStack.length === 0) {
+						Breadcrumb.unfreeze();
+					}
 
 					updateCollapsedForms();
-					$ws.find(':input').first().focus();
+				},
+
+				'startEditSession' : function (doc) {
+					idStack.push(doc.id);
+				},
+
+				'stopEditSession' : function () {
+					idStack.pop();
 				}
-			);
 
-			return null;
-		};
+			};
 
+		}];
 
-		/**
-		 * Uncascade (cancel) the current form and go back to the previous form,
-		 * without any changes on it.
-		 */
-		this.uncascade = function (doc) {
-			var	ctx = cascadeContextStack.pop(),
-				$form;
-
-			if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
-				ctx.saveCallback(doc);
-			}
-
-			idStack.pop();
-
-			// Remove the last from and destroy its associated scope.
-			$form = $ws.children('.document-form').last();
-			angular.element($form).scope().$destroy();
-			$form.remove();
-			$ws.children('.cascading-forms-collapsed').last().remove();
-
-			// Display the last form.
-			$form = $ws.children('.document-form').last();
-			$form.fadeIn('fast');
-
-			// Restore previous menu.
-			MainMenu.popContents();
-
-			// If all cascades are finished, unfreeze the Breadcrumb to allow modifications on it.
-			if (cascadeContextStack.length === 0) {
-				Breadcrumb.unfreeze();
-			}
-
-			updateCollapsedForms();
-		};
-
-
-		function updateCollapsedForms () {
-			// "Shrink" older forms.
-			var collapsed = $ws.find('.cascading-forms-collapsed');
-			collapsed.each(function (i) {
-				$(this).removeClass('cascading-forms-last').css({
-					margin    : '0 ' + ((collapsed.length - i)*15)+'px',
-					opacity   : (0.7 + ((i+1)/collapsed.length*0.3)),
-					zIndex    : i + 1,
-					fontSize  : ((1 + ((i+1)/collapsed.length*0.2))*100)+'%',
-					lineHeight: ((1 + ((i+1)/collapsed.length*0.2))*100)+'%'
-				});
-			});
-			if (self.isCascading()) {
-				$ws.children('.document-form').last().addClass('cascading-forms-last');
-			}
-		}
-
-		this.startEditSession = function (doc) {
-			idStack.push(doc.id);
-		};
-
-
-		this.stopEditSession = function () {
-			idStack.pop();
-		};
-
-	}]);
+	});
 
 
 		// Validators directives.
