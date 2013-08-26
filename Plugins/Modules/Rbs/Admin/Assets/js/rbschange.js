@@ -113,7 +113,7 @@
 			return {
 				restrict : 'C',
 				templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
-				replace : true,
+				replace : false,
 				require : 'rbsDocumentEditor',
 
 				link : function (scope, element, attrs, editorCtrl)
