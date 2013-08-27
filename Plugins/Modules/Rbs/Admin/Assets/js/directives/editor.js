@@ -28,11 +28,10 @@
 				 */
 				this.init = function (modelName)
 				{
-					Loading.start("Loading document..."); // FIXME
+					Loading.start(i18n.trans('m.rbs.admin.admin.js | ucf'));
 
-					var document, documentId, promise, defered, ctx;
+					var document, documentId = 0, promise, defered, ctx;
 
-					console.log("rbsDocumentEditor/controller/init: cascade: ", EditorManager.isCascading());
 					if (EditorManager.isCascading()) {
 						ctx = EditorManager.getCurrentContext();
 						if (ctx.document) {
@@ -47,22 +46,24 @@
 							documentId = ctx.queryParam.id;
 						}
 					}
-					else {
-						documentId = parseInt($routeParams.id, 10);
-					}
-					console.log("rbsDocumentEditor/controller/init: document: ", document);
-					console.log("rbsDocumentEditor/controller/init: documentId: ", documentId);
-
-					if (! isNaN(documentId) && documentId > 0) {
-						promise = REST.resource(modelName, documentId, $routeParams.LCID);
-					}
-					else {
-						defered = $q.defer();
-						promise = defered.promise;
-						if (! document) {
-							document = REST.newResource(modelName, Settings.get('LCID'));
+					else if (! angular.isFunction ($scope.initDocument) || ! (promise = $scope.initDocument())) {
+						if ($routeParams.hasOwnProperty('id')) {
+							documentId = parseInt($routeParams.id, 10);
 						}
-						defered.resolve(document);
+					}
+
+					if (! promise) {
+						if (! isNaN(documentId) && documentId > 0) {
+							promise = REST.resource(modelName, documentId, $routeParams.LCID);
+						}
+						else {
+							defered = $q.defer();
+							promise = defered.promise;
+							if (! document) {
+								document = REST.newResource(modelName, Settings.get('LCID'));
+							}
+							defered.resolve(document);
+						}
 					}
 
 					promise.then(function (doc) {
@@ -205,7 +206,7 @@
 
 				function getSectionOfField (fieldName) {
 					var result = null;
-					angular.forEach($scope.menu, function (entry) {
+					angular.forEach($scope._chgMenu, function (entry) {
 						if (entry.type === 'section') {
 							angular.forEach(entry.fields, function (field) {
 								if (field.id === fieldName) {
@@ -217,18 +218,25 @@
 					return result;
 				}
 
+
 				function markFieldAsInvalid (fieldName, messages) {
+					$element
+						.find('.control-group[property="'+fieldName+'"]').addClass('error')
+						.find('.controls :input').first().focus();
 					getSectionOfField(fieldName).invalid.push(fieldName);
 				}
 
+
 				function clearInvalidFields () {
 					$element.find('.control-group.property.error').removeClass('error');
-					angular.forEach($scope.menu, function (entry) {
+					angular.forEach($scope._chgMenu, function (entry) {
 						if (entry.type === 'section') {
 							ArrayUtils.clear(entry.invalid);
 						}
 					});
 				}
+				this.clearInvalidFields = clearInvalidFields;
+
 
 				function saveSuccessHandler (doc) {
 					var	postSavePromises = [], result;
@@ -279,27 +287,22 @@
 
 				function saveErrorHandler (reason) {
 					saveOperation("error");
-					NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.save-error'), reason);
+					NotificationCenter.error(
+						i18n.trans('m.rbs.admin.admin.js.save-error'),
+						reason,
+						{
+							$propertyInfoProvider : $scope._chgFieldsInfo
+						});
 
 					if (angular.isObject(reason) && angular.isObject(reason.data)) {
 
 						if (angular.isObject(reason.data['properties-errors'])) {
 							angular.forEach(reason.data['properties-errors'], function (messages, propertyName) {
-								// FIXME for attribute is not the property name anymore
-								$element.find('label[for="'+propertyName+'"]').each(function () {
-									$(this).closest('.control-group.property').addClass('error');
-									$(this).nextAll('.controls').find(':input').first().focus();
-								});
 								markFieldAsInvalid(propertyName, messages);
 							});
 						}
 						else if (reason.code === "INVALID-VALUE-TYPE") {
 							var propertyName = reason.data.name;
-							// FIXME for attribute is not the property name anymore
-							$element.find('label[for="'+propertyName+'"]').each(function () {
-								$(this).closest('.control-group.property').addClass('error');
-								$(this).nextAll('.controls').find(':input').first().focus();
-							});
 							markFieldAsInvalid(propertyName, reason.message);
 						}
 					}
@@ -351,7 +354,7 @@
 							"promises" : loadedPromises
 						});
 
-						// At this point, `$scope.document` has been loaded and may have been tweaked by the `onReady()`
+						// At this point, `$scope.document` has been loaded and may have been tweaked by the `onLoad()`
 						// function in the Scope (if present) and by the handlers listening on `Events.EditorReady`.
 						// We consider that the document is now ready: we make a copy of it to create the reference
 						// document used to check for changes in the editor.
@@ -451,11 +454,9 @@
 				 * @param section
 				 */
 				function initSectionOnce (section) {
-					console.log("rbsDocumentEditor/controller/initSectionOnce()? section=", section);
 					if (! initializedSections[section] && angular.isFunction($scope.initSection)) {
 						$scope.initSection(section);
 						initializedSections[section] = true;
-						console.log("rbsDocumentEditor/controller/initSectionOnce() section ", section, " has been initialized.");
 					}
 				}
 
@@ -524,12 +525,12 @@
 
 						menu.push(entry);
 
-						// TODO Fields may be outside of a "div.control-group"
-						$fs.find('div.control-group.property').each(function (index, ctrlGrp) {
+						$fs.find('[property]').each(function (index, ctrlGrp) {
 							var $ctrlGrp = $(ctrlGrp),
-								$lbl = $ctrlGrp.find('label[for]').first();
+								$lbl = $ctrlGrp.find('label[for]').first(),
+								propertyName = $ctrlGrp.attr('property');
 
-							fields[$lbl.attr('for')] = {
+							fields[propertyName] = {
 								'label'   : $lbl.text(),
 								'section' :
 								{
@@ -539,21 +540,22 @@
 							};
 
 							entry.fields.push({
-								'id'    : $lbl.attr('for'),
+								'id'    : propertyName,
 								'label' : $lbl.text()
 							});
 							if ($ctrlGrp.hasClass('required')) {
-								entry.required.push($lbl.attr('for'));
+								entry.required.push(propertyName);
 							}
 							if ($ctrlGrp.hasClass(CORRECTION_CSS_CLASS)) {
-								entry.corrected.push($lbl.attr('for'));
+								entry.corrected.push(propertyName);
 							}
 						});
 
 					});
 
-					$scope.menu = menu;
-					MainMenu.build($scope);
+					$scope._chgFieldsInfo = fields;
+					$scope._chgMenu = menu;
+					MainMenu.build($scope._chgMenu, $scope);
 				}
 
 			}],
@@ -588,6 +590,8 @@
 					scope.reset = function resetFn () {
 						scope.document = angular.copy(scope.original);
 						scope.saveProgress.error = false;
+						CTRL.clearInvalidFields();
+						NotificationCenter.clear();
 					};
 
 
@@ -818,7 +822,6 @@
 						.success(function (html) {
 							// Create a new isolated scope for the new form.
 							var scope = $rootScope.$new(true);
-							console.log("Controller: new isolated scope created for cascaded Editor: ", scope.$id);
 							if (doc.LCID) {
 								scope.language = doc.LCID;
 							}
