@@ -31,7 +31,7 @@
 					}
 				};
 
-				editorCtrl.init('Rbs_Website_FunctionalPage');
+				editorCtrl.init('Rbs_Website_StaticPage');
 
 				// This is for the "undo" dropdown menu:
 				// Each item automatically activates its previous siblings.
