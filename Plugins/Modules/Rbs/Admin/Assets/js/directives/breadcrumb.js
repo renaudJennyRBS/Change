@@ -2,11 +2,12 @@
 
 	"use strict";
 
-	var modelIcons = {
-		//'Rbs_Website_Website' : 'icon-home'
-	};
+	var app = angular.module('RbsChange'),
+		modelIcons = {
+			//'Rbs_Website_Website' : 'icon-home'
+		};
 
-	angular.module('RbsChange').directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
+	app.directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
 
 		return {
 			restrict : 'E',
@@ -122,12 +123,27 @@
 	}]);
 
 
-	angular.module('RbsChange').directive('rbsBreadcrumbConfig', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+	app.directive('location', function () {
+		return {
+			restrict : 'E',
+			require : '?^rbsBreadcrumbConfig',
+			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
+				if (rbsBreadcrumbConfig) {
+					attrs.$observe('href', function (href) {
+						rbsBreadcrumbConfig.add('Location', element.index(), element.text(), href);
+					});
+				}
+			}
+		};
+	});
+
+
+	app.directive('rbsBreadcrumbConfig', ['RbsChange.Breadcrumb', function (Breadcrumb) {
 
 		return {
 			restrict : 'E',
 			scope : true,
-			require  : '^rbsWorkspaceConfig',
+			require : '^rbsWorkspaceConfig',
 
 			controller : ['$scope', function ($scope) {
 
@@ -158,24 +174,11 @@
 
 	}]);
 
-	angular.module('RbsChange').directive('location', function () {
-		return {
-			restrict : 'E',
-			require  : '?^rbsBreadcrumbConfig',
-			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
-				if (rbsBreadcrumbConfig) {
-					attrs.$observe('href', function (href) {
-						rbsBreadcrumbConfig.add('Location', element.index(), element.text(), href);
-					});
-				}
-			}
-		};
-	});
 
-	angular.module('RbsChange').directive('path', function () {
+	app.directive('path', function () {
 		return {
 			restrict : 'E',
-			require  : '?^rbsBreadcrumbConfig',
+			require : '?^rbsBreadcrumbConfig',
 			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
 				if (rbsBreadcrumbConfig) {
 					attrs.$observe('href', function (href) {
@@ -186,12 +189,11 @@
 		};
 	});
 
-	angular.module('RbsChange').directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
 
+	app.directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
 		return {
 			restrict : 'E',
 			scope : true,
-
 			controller : ['$scope', '$attrs', function ($scope, $attrs) {
 				if ($attrs.menu) {
 					MainMenu.loadModuleMenu($attrs.menu);

@@ -33,12 +33,12 @@
 
 					disable : function () {
 						disabled = true;
-						broadcastEvent();
+						broadcastEvent('Disable');
 					},
 
 					enable : function () {
 						disabled = false;
-						broadcastEvent();
+						broadcastEvent('Enable');
 					},
 
 					isDisabled : function () {
@@ -60,23 +60,23 @@
 					setLocation : function (loc) {
 						if ( ! frozen && ! angular.equals(location, loc) ) {
 							location = angular.copy(loc);
-							update();
+							update('Location');
 						}
 					},
 
 					resetLocation : function (loc) {
 						if ( ! frozen && (path.length || ! angular.equals(location, loc) || ! loc) ) {
-							location = loc || [];
+							location = loc ? angular.copy(loc) : [];
 							ArrayUtils.clear(path);
 							resource = null;
-							update();
+							update('Location');
 						}
 					},
 
 					setPath : function (p) {
 						if ( ! frozen && ! angular.equals(path, p) ) {
 							path = angular.copy(p);
-							update();
+							update('TreePath');
 						}
 					},
 
@@ -114,7 +114,7 @@
 					setResource : function (res) {
 						if ( ! angular.equals(resource, res) ) {
 							resource = angular.copy(res);
-							update();
+							update('Resource');
 						}
 					},
 
@@ -135,7 +135,7 @@
 				};
 
 
-				function update () {
+				function update (what) {
 					var i,
 					    last,
 					    module,
@@ -181,7 +181,7 @@
 						}
 						$document[0].title = title.join(breadcrumbService.windowTitleDivider);
 
-						broadcastEvent();
+						broadcastEvent(what);
 					}
 
 				}
@@ -202,9 +202,11 @@
 				}
 
 
-				function broadcastEvent () {
+				function broadcastEvent (what) {
 					if (!loading) {
-						$rootScope.$broadcast('Change:TreePathChanged', buildEventData());
+						var data = buildEventData();
+						$rootScope.$broadcast('Change:BreadcrumbChanged', data);
+						$rootScope.$broadcast('Change:' + what + 'Changed', data);
 					}
 				}
 
@@ -233,7 +235,6 @@
 
 								// Success:
 								function (treeNode) {
-
 									if (Utils.isTreeNode(treeNode)) {
 										// Load tree ancestors of the current TreeNode to update the breadcrumb.
 										REST.treeAncestors(treeNode).then(
@@ -261,8 +262,8 @@
 
 								// Error:
 								function () {
-									rejectPendingQs();
 									loading = false;
+									rejectPendingQs();
 								}
 							);
 						} else {
