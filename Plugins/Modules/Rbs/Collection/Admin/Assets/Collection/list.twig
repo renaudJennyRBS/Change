@@ -17,5 +17,12 @@
 	               filter-query="query">
 		<column name="label" primary="true"></column>
 		<column name="code"></column>
+
+		<preview>
+			<ul style="margin-bottom: 0;">
+				<li ng-repeat="item in doc.items">(= item.label =) <span class="muted">((= item.value =))</span></li>
+			</ul>
+		</preview>
 	</rbs-document-list>
+
 </div>
