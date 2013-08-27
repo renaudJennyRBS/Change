@@ -1,13 +1,10 @@
-(function ($) {
+(function () {
 
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
-	app.directive('rbsPhysicalDimensionsInput', [
-		rbsPhysicalDimensionsInputDirective
-	]);
+	app.directive('rbsPhysicalDimensionsInput', rbsPhysicalDimensionsInputDirective);
 
 	function rbsPhysicalDimensionsInputDirective () {
 
@@ -23,16 +20,11 @@
 				scope.massUnit = 'm';
 				scope.lengthUnit = '';
 				scope.data = {
-					mass:{value:null, unit:scope.massUnit},
-					length:{value:null, unit:scope.lengthUnit},
-
+					mass: {value: null, unit: scope.massUnit},
+					length: {value: null, unit: scope.lengthUnit}
 				};
-				scope.$watch('ngModel.$modelValue',function(newValue){
-					console.log(ngModel);
-				});
-
-
 			}
-		}
-	};
-})(window.jQuery);
+		};
+	}
+
+})();
