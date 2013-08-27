@@ -122,29 +122,6 @@
 
 
 	/**
-	 * Controller for list.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param MainMenu
-	 * @param i18n
-	 * @constructor
-	 */
-	function ListController($scope, Breadcrumb, MainMenu, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
-		]);
-
-		MainMenu.loadModuleMenu('Rbs_Catalog');
-	}
-
-	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_Catalog_Product_ListController', ListController);
-
-
-	/**
 	 * List actions.
 	 */
 	app.config(['$provide', function ($provide) {

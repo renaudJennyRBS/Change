@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_Catalog_Category_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Catalog">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Category'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.document.category-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.document.category-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_Category" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -13,7 +21,7 @@
 			|| [action default]
 		</quick-actions>
 
-		<column name="visual" thumbnail="XS" thumbnail-path="doc.visuals.id">
+		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id">
 		</column>
 		<column name="label" primary="true">
 			<strong><a href ng-href="(= doc | documentURL:'tree' =)">(= doc.label =)</a></strong>

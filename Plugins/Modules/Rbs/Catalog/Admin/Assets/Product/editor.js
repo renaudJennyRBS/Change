@@ -12,9 +12,9 @@
 	function Editor($timeout, $http, Loading, REST)
 	{
 		return {
-			restrict : 'EC',
+			restrict : 'C',
 			templateUrl : 'Rbs/Catalog/Product/editor.twig',
-			replace : true,
+			replace : false,
 			require : 'rbsDocumentEditor',
 
 			link: function (scope, elm, attrs, editorCtrl)

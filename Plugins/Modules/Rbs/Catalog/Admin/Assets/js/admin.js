@@ -1,8 +1,14 @@
-(function ()
-{
+(function () {
 	"use strict";
 
 	var app = angular.module('RbsChange');
+
+
+	// Register default Editors.
+	__change.createEditorForModel('Rbs_Catalog_ProductCategorization');
+	__change.createEditorForModel('Rbs_Catalog_Category');
+	__change.createEditorForModel('Rbs_Catalog_Attribute');
+
 
 	/**
 	 * Routes and URL definitions.
@@ -28,4 +34,5 @@
 		}]);
 
 	}]);
+
 })();
