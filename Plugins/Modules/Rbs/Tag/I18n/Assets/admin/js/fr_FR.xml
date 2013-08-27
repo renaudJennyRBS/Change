@@ -9,5 +9,6 @@
 	<key id="tag-not-saved">cette étiquette sera réellement créée lors de la validation du formulaire</key>
 	<key id="enter-selects-first-tag">[Entrée] pour sélectionner la première étiquette</key>
 	<key id="usertag-text">cette étiquette est personnelle et ne peut être utilisée que par vous</key>
-	<key id="applying-tags">assignation des tags</key>
+	<key id="applying-tags">assignation des étiquettes</key>
+	<key id="manage-tags">gérer les étiquettes</key>
 </i18n>
