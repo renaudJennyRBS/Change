@@ -12,7 +12,6 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Tag_Tag').route('tree', 'Rbs/Tag/?tn=:id', 'Rbs/Tag/Tag/list.twig');
 			$delegate.model('Rbs_Tag').route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'});
 			$delegate.routesForModels(['Rbs_Tag_Tag']);
 			return $delegate;

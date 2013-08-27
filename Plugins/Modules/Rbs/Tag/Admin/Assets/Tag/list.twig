@@ -19,7 +19,7 @@
 	                   filter-query="query">
 
 		<column name="label" primary="true">
-			<a href ng-href="(= doc | documentURL:'tree' =)"><span rbs-tag="doc"></span></a>
+			<a href ng-href="(= doc | documentURL:'form' =)"><span rbs-tag="doc"></span></a>
 			<span ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
 		</column>
 
