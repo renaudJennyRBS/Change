@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_Media_Image_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Media">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Media'|rbsURL:'home' =)">{{ i18n('m.rbs.media.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Media_Image'|rbsURL:'list' =)">{{ i18n('m.rbs.media.admin.js.image-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.media.document.image-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Media_Image" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -47,4 +55,5 @@
 		</grid-item>
 
 	</rbs-document-list>
+
 </div>
