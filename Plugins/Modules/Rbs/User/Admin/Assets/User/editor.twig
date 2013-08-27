@@ -34,6 +34,13 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.user.document.user.security', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
+		<div class="clearfix">
+			<span class="pull-right">
+				<a href ng-href="(= document|documentURL:'applications' =)">Applications</a> |
+				<a href ng-href="(= document|documentURL:'permission' =)">Permissions</a>
+			</span>
+		</div>
+
 		<rbs-field-text readonly="true" property="hashMethod"
 			label="{{ i18nAttr('m.rbs.user.document.user.hashMethod', ['ucf']) }}">
 		</rbs-field-text>
