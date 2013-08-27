@@ -11,7 +11,7 @@
 			require : 'rbsDocumentEditor',
 
 
-			link: function (scope, elm, attrs, editorCtrl)
+			link : function (scope, elm, attrs, editorCtrl)
 			{
 				scope.onReady = function(){
 					if (!scope.document.product && $routeParams.productId)
@@ -200,4 +200,5 @@
 
 	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsPricePrice', Editor);
+
 })();
