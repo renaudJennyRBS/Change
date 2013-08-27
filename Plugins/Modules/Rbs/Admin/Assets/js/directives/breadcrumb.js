@@ -112,7 +112,7 @@
 					elm.html(html);
 				}
 
-				scope.$on('Change:TreePathChanged', function (event, breadcrumbData) {
+				scope.$on('Change:BreadcrumbChanged', function (event, breadcrumbData) {
 					update(breadcrumbData);
 				});
 
