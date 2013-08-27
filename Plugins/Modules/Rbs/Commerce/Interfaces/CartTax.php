@@ -36,4 +36,9 @@ interface CartTax extends \Serializable
 	 * @return $this
 	 */
 	public function fromTaxApplication($taxApplication);
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

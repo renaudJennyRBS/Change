@@ -59,5 +59,13 @@ class FakeBillingArea_451235 implements \Rbs\Commerce\Interfaces\BillingArea
 	{
 		return array();
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getCode()
+	{
+		return 'BA';
+	}
 }
 

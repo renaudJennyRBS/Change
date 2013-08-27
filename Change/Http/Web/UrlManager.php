@@ -285,7 +285,6 @@ class UrlManager extends \Change\Http\UrlManager
 		if ($section instanceof \Change\Presentation\Interfaces\Website)
 		{
 			$website = $section;
-			$section = null;
 		}
 		else
 		{
@@ -483,8 +482,6 @@ class UrlManager extends \Change\Http\UrlManager
 		//TODO Detect valid rule by queryParameters analysis
 		return null;
 	}
-
-
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider

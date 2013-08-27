@@ -4,8 +4,8 @@ namespace Rbs\Commerce\Cart;
 use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
 
 /**
-* @name \Rbs\Commerce\Cart\CartLine
-*/
+ * @name \Rbs\Commerce\Cart\CartLine
+ */
 class CartLine implements CartLineInterfaces
 {
 	/**
@@ -146,7 +146,7 @@ class CartLine implements CartLineInterfaces
 
 	/**
 	 * @param $codeSKU
-	 * @return CartItem|null
+	 * @return \Rbs\Commerce\Cart\CartItem|null
 	 */
 	public function getItemByCodeSKU($codeSKU)
 	{
@@ -161,23 +161,31 @@ class CartLine implements CartLineInterfaces
 	}
 
 	/**
-	 * @param CartItem $item
+	 * @param \Rbs\Commerce\Cart\CartItem $item
 	 * @throws \RuntimeException
-	 * @return CartItem
+	 * @throws \InvalidArgumentException
+	 * @return \Rbs\Commerce\Cart\CartItem
 	 */
-	public function appendItem(CartItem $item)
+	public function appendItem(\Rbs\Commerce\Interfaces\CartItem $item)
 	{
-		if ($this->getItemByCodeSKU($item->getCodeSKU()))
+		if ($item instanceof CartItem)
 		{
-			throw new \RuntimeException('Duplicate item code SKU: ' . $item->getCodeSKU(), 999999);
+			if ($this->getItemByCodeSKU($item->getCodeSKU()))
+			{
+				throw new \RuntimeException('Duplicate item code SKU: ' . $item->getCodeSKU(), 999999);
+			}
+			$this->items[] = $item;
+			return $item;
 		}
-		$this->items[] = $item;
-		return $item;
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
+		}
 	}
 
 	/**
 	 * @param string $codeSKU
-	 * @return CartItem|null
+	 * @return \Rbs\Commerce\Cart\CartItem|null
 	 */
 	public function removeItemByCodeSKU($codeSKU)
 	{
@@ -218,7 +226,7 @@ class CartLine implements CartLineInterfaces
 	 */
 	public function serialize()
 	{
-		$serializedData = array('number' =>  $this->number,
+		$serializedData = array('number' => $this->number,
 			'key' => $this->key,
 			'quantity' => $this->quantity,
 			'designation' => $this->designation,
@@ -238,6 +246,8 @@ class CartLine implements CartLineInterfaces
 		$this->serializedData = unserialize($serialized);
 	}
 
+
+
 	protected function restoreSerializedData(Cart $cart)
 	{
 		$serializedData = (new CartStorage())->restoreSerializableValue($this->serializedData, $cart->getCommerceServices());
@@ -255,7 +265,25 @@ class CartLine implements CartLineInterfaces
 		}
 	}
 
-	function __toString()
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = array('number' => $this->number,
+			'key' => $this->key,
+			'quantity' => $this->quantity,
+			'designation' => $this->designation,
+			'items' => array(),
+			'options' => $this->getOptions()->toArray());
+		foreach($this->items as $item)
+		{
+			$array['items'][] = $item->toArray();
+		}
+		return $array;
+	}
+
+	public function __toString()
 	{
 		return $this->number . ') ' . $this->designation . ' [' . $this->key . ']';
 	}

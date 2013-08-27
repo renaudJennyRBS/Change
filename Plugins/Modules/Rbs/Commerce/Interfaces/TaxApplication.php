@@ -31,4 +31,10 @@ interface TaxApplication
 	 * @return float
 	 */
 	public function getValue();
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartTax $cartTax
+	 * @return $this
+	 */
+	public function fromCartTax($cartTax);
 }

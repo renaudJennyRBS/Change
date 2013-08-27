@@ -91,6 +91,6 @@ class AjaxResult extends \Change\Http\Result
 	 */
 	function __toString()
 	{
-		return json_encode($this->toArray());
+		return \Zend\Json\Json::encode($this->toArray());
 	}
 }

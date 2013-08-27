@@ -40,7 +40,21 @@ class GeneratePathRule
 			{
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
 				$urlManager->setAbsoluteUrl(true);
-				$uri = $urlManager->getByPathInfo($newPathRule->getRelativePath(), $pathRule->getQueryParameters());
+				$queryParameters = $pathRule->getQueryParameters();
+
+				//Remove parameters stored in new pathRule
+				$removeQueryParameters = $newPathRule->getQueryParameters();
+				if (count($removeQueryParameters))
+				{
+					foreach ($removeQueryParameters as $name => $value)
+					{
+						if (isset($queryParameters[$name]) && $queryParameters[$name] == $value)
+						{
+							unset($queryParameters[$name]);
+						}
+					}
+				}
+				$uri = $urlManager->getByPathInfo($newPathRule->getRelativePath(), $queryParameters);
 				$pathRule->setLocation($uri->normalize()->toString());
 				$action = new RedirectPathRule();
 				$action->execute($event);

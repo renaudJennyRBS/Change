@@ -30,4 +30,9 @@ interface CartItem extends \Serializable
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

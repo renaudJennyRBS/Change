@@ -90,13 +90,32 @@ class TaxManager
 
 	/**
 	 * @param float $value
+	 * @param $taxCategories
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param string $zone
 	 * @param array<taxCode => category> $taxCategories
 	 * @return \Rbs\Price\Std\TaxApplication[]
 	 */
-	public function getTaxByValue($value, $taxCategories)
+	public function getTaxByValue($value, $taxCategories, $billingArea = null, $zone = null)
 	{
-		$taxRates = $this->getTaxRates($taxCategories, $this->getCommerceServices()->getBillingArea()->getTaxes(),
-			$this->getCommerceServices()->getZone());
+		if ($billingArea === null)
+		{
+			$billingArea =  $this->getCommerceServices()->getBillingArea();
+			if ($billingArea === null)
+			{
+				return array();
+			}
+		}
+
+		if ($zone === null)
+		{
+			$zone = $this->getCommerceServices()->getZone();
+			if ($zone === null)
+			{
+				return array();
+			}
+		}
+		$taxRates = $this->getTaxRates($taxCategories, $billingArea->getTaxes(), $zone);
 		foreach($taxRates as $taxApplication)
 		{
 			$taxApplication->setValue($taxApplication->getRate() * $value);
@@ -107,14 +126,34 @@ class TaxManager
 	/**
 	 * @param float $valueWithTax
 	 * @param array<taxCode => category> $taxCategories
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param string $zone
 	 * @return \Rbs\Price\Std\TaxApplication[]
 	 */
-	public function getTaxByValueWithTax($valueWithTax, $taxCategories)
+	public function getTaxByValueWithTax($valueWithTax, $taxCategories, $billingArea = null, $zone = null)
 	{
-		$taxRates = $this->getTaxRates($taxCategories, $this->getCommerceServices()->getBillingArea()->getTaxes(),
-			$this->getCommerceServices()->getZone());
+		if ($billingArea === null)
+		{
+			$billingArea =  $this->getCommerceServices()->getBillingArea();
+			if ($billingArea === null)
+			{
+				return array();
+			}
+		}
 
+		if ($zone === null)
+		{
+			$zone = $this->getCommerceServices()->getZone();
+			if ($zone === null)
+			{
+				return array();
+			}
+		}
+
+		$taxRates = $this->getTaxRates($taxCategories, $billingArea->getTaxes(), $zone);
 		$value = $valueWithTax  / ( 1 + $this->getEffectiveRate($taxRates));
+
+		/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
 		foreach($taxRates as $taxApplication)
 		{
 			$taxApplication->setValue($taxApplication->getRate() * $value);
@@ -132,6 +171,7 @@ class TaxManager
 		$valueWithTax = $value;
 		if (is_array($taxApplications) && count($taxApplications))
 		{
+			/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
 			foreach ($taxApplications as $taxApplication)
 			{
 				$valueWithTax += $taxApplication->getValue();

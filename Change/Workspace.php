@@ -147,6 +147,50 @@ class Workspace
 	}
 
 	/**
+	 * @api
+	 * @param string|string[] $part1
+	 * @param string|string[] $_ [optional]
+	 * return string
+	 */
+	public function composePath($partPart1, $_ = null)
+	{
+		$path = '';
+		foreach (func_get_args() as $pathPartArg)
+		{
+			if (is_array($pathPartArg))
+			{
+				$pathPart = call_user_func_array(array($this, 'composePath'), $pathPartArg);
+			}
+			else
+			{
+				$pathPart = strval($pathPartArg);
+			}
+
+			if ($pathPart !== '')
+			{
+				if (DIRECTORY_SEPARATOR !== '/')
+				{
+					$pathPart = str_replace('/', DIRECTORY_SEPARATOR, $pathPart);
+				}
+
+				if ($path !== '')
+				{
+					$pathPart = trim($pathPart, DIRECTORY_SEPARATOR);
+					if ($pathPart !== '')
+					{
+						$path .= DIRECTORY_SEPARATOR . $pathPart;
+					}
+				}
+				else
+				{
+					$path .= $pathPart;
+				}
+			}
+		}
+		return $path;
+	}
+
+	/**
 	 * @param string[] $pathComponents
 	 * @return string
 	 */

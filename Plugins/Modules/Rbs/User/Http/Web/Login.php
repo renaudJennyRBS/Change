@@ -28,7 +28,7 @@ class Login
 		$request = $event->getRequest();
 		if ($request->getMethod() === 'POST')
 		{
-			if (strpos($request->getPath(), 'Action/Rbs/User/HttpLogin') !== false)
+			if (strpos($request->getPath(), 'Action/Rbs/User/Login') !== false)
 			{
 				$this->login($event);
 			}

@@ -58,16 +58,20 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	 */
 	public function onPopulatePathRule(Event $event)
 	{
-		/* @var $pathRule \Change\Http\Web\PathRule */
-		$pathRule = $event->getParam('pathRule');
-
-		$relativePath = $this->getTitle() . '.' . $this->getId() . '.html';
-		$section = $this->getSection();
-		if ($section !== null && $section->getPathPart())
+		$document = $event->getDocument();
+		if ($document instanceof StaticPage)
 		{
-			$relativePath = $section->getPathPart() . '/' . $relativePath;
+			/* @var $pathRule \Change\Http\Web\PathRule */
+			$pathRule = $event->getParam('pathRule');
+
+			$relativePath = $document->getTitle() . '.' . $document->getId() . '.html';
+			$section = $document->getSection();
+			if ($section instanceof Topic && $section->getPathPart())
+			{
+				$relativePath = $section->getPathPart() . '/' . $relativePath;
+			}
+			$pathRule->setRelativePath($relativePath);
 		}
-		$pathRule->setRelativePath($relativePath);
 	}
 
 	/**
@@ -84,23 +88,6 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	}
 
 	/**
-	 * @see \Rbs\Website\Documents\Page::onPrepare()
-	 * @param \Change\Http\Web\Events\PageEvent $pageEvent
-	 * @return \Change\Http\Web\Result\Page|null
-	 */
-	public function onPrepare($pageEvent)
-	{
-		$result = parent::onPrepare($pageEvent);
-		if ($result)
-		{
-			$headElement = new HtmlHeaderElement('title');
-			$headElement->setContent('Page: ' . $this->getTitle());
-			$result->addNamedHeadAsString('title', $headElement);
-		}
-		return $result;
-	}
-
-	/**
 	 * @return \Change\Presentation\Interfaces\Section[]
 	 */
 	public function getPublicationSections()
@@ -111,9 +98,10 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $publicationSections
+	 * @return $this
 	 */
 	public function setPublicationSections($publicationSections)
 	{
-		// TODO: Implement setPublicationSections() method.
+		return $this;
 	}
 }

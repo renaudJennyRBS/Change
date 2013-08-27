@@ -9,6 +9,11 @@ interface BillingArea
 	/**
 	 * @return string
 	 */
+	public function getCode();
+
+	/**
+	 * @return string
+	 */
 	public function getCurrencyCode();
 
 	/**

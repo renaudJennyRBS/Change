@@ -97,6 +97,10 @@ class Controller extends \Change\Http\Controller
 			{
 				$response->setContent($result->getContent());
 			}
+			elseif ($result instanceof \Change\Http\Web\Result\AjaxResult)
+			{
+				$response->setContent(\Zend\Json\Json::encode($result->toArray()));
+			}
 			else
 			{
 				$callable = array($result, 'toHtml');

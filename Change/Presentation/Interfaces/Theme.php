@@ -32,7 +32,7 @@ interface Theme
 	/**
 	 * @param string $moduleName
 	 * @param string $fileName
-	 * @return string|null
+	 * @return string
 	 */
 	public function getBlockTemplatePath($moduleName, $fileName);
 
@@ -48,4 +48,9 @@ interface Theme
 	 * @return \Change\Presentation\Interfaces\ThemeResource
 	 */
 	public function getResource($resourcePath);
+
+	/**
+	 * @return string
+	 */
+	public function getTemplateBasePath();
 }

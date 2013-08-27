@@ -192,7 +192,7 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 		return $this;
 	}
 
-	protected function load()
+	public function load()
 	{
 		if (!$this->loaded)
 		{
@@ -200,6 +200,13 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 			$em = $this->getEventManager();
 			$em->trigger('load', $this, array('commerceServices' => $this));
 		}
+	}
+
+	public function save()
+	{
+		$this->loaded = true;
+		$em = $this->getEventManager();
+		$em->trigger('save', $this, array('commerceServices' => $this));
 	}
 
 	/**

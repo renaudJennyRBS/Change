@@ -56,17 +56,21 @@ class PriceManager
 	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @return null|Price
 	 */
-	public function getPriceByProduct($product, $webStore, $options = array())
+	public function getPriceByProduct($product, $webStore, $options = array(), \Rbs\Commerce\Interfaces\BillingArea $billingArea = null)
 	{
 		$commerceServices = $this->getCommerceServices();
-		$price = $this->triggerGetPriceByProduct($commerceServices, $product, $webStore, $options);
-		if ($price === false)
+		if ($billingArea === null)
 		{
-			return $this->getDefaultPriceByProduct($commerceServices, $product, $webStore, $options);
+			$billingArea = $commerceServices->getBillingArea();
 		}
-
+		$price = $this->triggerGetPriceByProduct($commerceServices, $product, $webStore, $options, $billingArea);
+		if ($price === false && $product->getSku() && $billingArea)
+		{
+			return $this->getDefaultPriceBySku($product->getSku(), $webStore, $options, $billingArea);
+		}
 		return $price;
 	}
 
@@ -75,13 +79,15 @@ class PriceManager
 	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @return null|Price|boolean
 	 */
-	protected function triggerGetPriceByProduct($commerceServices, $product, $webStore, $options)
+	protected function triggerGetPriceByProduct($commerceServices, $product, $webStore, $options, $billingArea)
 	{
 		$ev = $commerceServices->getEventManager();
 		$arguments = $ev->prepareArgs($options);
 		$arguments['product'] = $product;
+		$arguments['billingArea'] = $billingArea;
 		$arguments['webStore'] = $webStore;
 		$arguments['commerceServices'] = $commerceServices;
 		$arguments['price'] = false;
@@ -90,17 +96,60 @@ class PriceManager
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * Standard Options : quantity,
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @return null|Price
 	 */
-	protected function getDefaultPriceByProduct($commerceServices, $product, $webStore, $options)
+	public function getPriceBySku($sku, $webStore, $options = array(), \Rbs\Commerce\Interfaces\BillingArea $billingArea = null)
 	{
-		$sku = $product->getSku();
-		$billingArea = $commerceServices->getBillingArea();
-		if ($billingArea == null || $webStore == null || $sku == null)
+		$commerceServices = $this->getCommerceServices();
+		if ($billingArea === null)
+		{
+			$billingArea = $commerceServices->getBillingArea();
+		}
+
+		$price = $this->triggerGetPriceBySku($commerceServices, $sku, $webStore, $options, $billingArea);
+		if ($price === false && $sku && $billingArea)
+		{
+			return $this->getDefaultPriceBySku($sku, $webStore, $options, $billingArea);
+		}
+		return $price;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
+	 * @param array<optionName => optionValue> $options
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @return null|Price|boolean
+	 */
+	protected function triggerGetPriceBySku($commerceServices, $sku, $webStore, $options, $billingArea)
+	{
+		$ev = $commerceServices->getEventManager();
+		$arguments = $ev->prepareArgs($options);
+		$arguments['sku'] = $sku;
+		$arguments['billingArea'] = $billingArea;
+		$arguments['webStore'] = $webStore;
+		$arguments['commerceServices'] = $commerceServices;
+		$arguments['price'] = false;
+		$ev->trigger('getPriceBySku', $this, $arguments);
+		return $arguments['price'];
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
+	 * @param array<optionName => optionValue> $options
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @return null|Price
+	 */
+	protected function getDefaultPriceBySku($sku, $webStore, $options, $billingArea)
+	{
+		if ($billingArea === null || $webStore === null || $sku === null)
 		{
 			return null;
 		}
@@ -162,5 +211,16 @@ class PriceManager
 			return $nf->formatCurrency($value, $cs->getBillingArea()->getCurrencyCode());
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $code
+	 * @return \Rbs\Commerce\Interfaces\BillingArea|null
+	 */
+	public function getBillingAreaByCode($code)
+	{
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_BillingArea');
+		$query->andPredicates($query->eq('code', $code));
+		return $query->getFirstDocument();
 	}
 }

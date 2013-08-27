@@ -88,16 +88,13 @@ class CartStorage
 		if ($cartInfo)
 		{
 			$cart = unserialize($cartInfo['cart_data']);
-			if ($cart instanceof CartInterfaces)
+			if ($cart instanceof Cart)
 			{
 				$cart->setCommerceServices($commerceServices);
-				if ($cart instanceof Cart)
-				{
-					$cart->setOwnerId($cartInfo['owner_id'])
-						->setIdentifier($identifier)
-						->setLocked($cartInfo['locked']);
-					return $cart;
-				}
+				$cart->setOwnerId($cartInfo['owner_id'])
+					->setIdentifier($identifier)
+					->setLocked($cartInfo['locked']);
+
 				$cart->lastUpdate($cartInfo['last_update']);
 				return $cart;
 			}
@@ -106,10 +103,10 @@ class CartStorage
 	}
 
 	/**
-	 * @param CartInterfaces $cart
+	 * @param Cart $cart
 	 * @throws \Exception
 	 */
-	public function saveCart(CartInterfaces $cart)
+	public function saveCart(Cart $cart)
 	{
 		$cart->lastUpdate(new \DateTime());
 		$applicationServices = $cart->getCommerceServices()->getApplicationServices();

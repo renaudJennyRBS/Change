@@ -35,4 +35,28 @@ interface CartLine extends \Serializable
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();
+
+	/**
+	 * @param $codeSKU
+	 * @return \Rbs\Commerce\Interfaces\CartItem|null
+	 */
+	public function getItemByCodeSKU($codeSKU);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItem $item
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function appendItem(\Rbs\Commerce\Interfaces\CartItem $item);
+
+	/**
+	 * @param string $codeSKU
+	 * @return \Rbs\Commerce\Interfaces\CartItem|null
+	 */
+	public function removeItemByCodeSKU($codeSKU);
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

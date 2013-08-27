@@ -71,6 +71,7 @@ class Category extends Block
 
 			/* @var $category \Rbs\Catalog\Documents\Category */
 			$category = $documentManager->getDocumentInstance($categoryId);
+			$attributes['category'] = $category;
 			$attributes['title'] = $category->getTitle();
 
 			//TODO: handle pagination

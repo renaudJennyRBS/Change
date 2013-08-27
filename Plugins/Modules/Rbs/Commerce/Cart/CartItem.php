@@ -4,8 +4,8 @@ namespace Rbs\Commerce\Cart;
 use Rbs\Commerce\Interfaces\CartItem as CartItemInterfaces;
 
 /**
-* @name \Rbs\Commerce\Cart\CartItem
-*/
+ * @name \Rbs\Commerce\Cart\CartItem
+ */
 class CartItem implements CartItemInterfaces
 {
 
@@ -105,6 +105,23 @@ class CartItem implements CartItemInterfaces
 	}
 
 	/**
+	 * @param CartTax[] $cartTaxes
+	 * @return $this
+	 */
+	public function setCartTaxes($cartTaxes)
+	{
+		$this->cartTaxes = array();
+		if (is_array($cartTaxes))
+		{
+			foreach ($cartTaxes as $cartTax)
+			{
+				$this->appendCartTaxes($cartTax);
+			}
+		}
+		return $this;
+	}
+
+	/**
 	 * @return CartTax[]
 	 */
 	public function getCartTaxes()
@@ -174,5 +191,24 @@ class CartItem implements CartItemInterfaces
 			/* @var $cartTax CartTax */
 			$cartTax->setCart($cart);
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = array(
+			'codeSKU' => $this->codeSKU,
+			'reservationQuantity' => $this->reservationQuantity,
+			'priceValue' => $this->priceValue,
+			'cartTaxes' => array(),
+			'options' => $this->getOptions()->toArray());
+
+		foreach ($this->cartTaxes as $cartTax)
+		{
+			$array['cartTaxes'][] = $cartTax->toArray();
+		}
+		return $array;
 	}
 }

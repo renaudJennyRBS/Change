@@ -1,5 +1,5 @@
+{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 <h1 id="product-list-title">{{ title }}</h1>
-
 <div class="normal productlist-options">
 	<form class="form-horizontal" action="http://site36.intportgchange.fr/fr/action/ecomextended/UpdateBlockConfig">
 		<div class="form-group">
@@ -40,19 +40,20 @@
 	</form>
 </div>
 
-<form action="#product-list-title" method="post">
+<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
+	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
 	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
 		{% for row in rows %}
 			<li>
 				<ul class="grid-list-cell">
 					<li>
-						<label for="catalogParam_selected_product_13364">
-							<input type="checkbox" id="catalogParam_selected_product_13364"
-								name="catalogParam[selected_product][13364]" value="13364"/> Sélectionner </label>
+						<label for="category_product_{{ row.id }}">
+							<input type="checkbox" id="category_product_{{ row.id }}"
+								name="selected_product[]" value="{{ row.id }}"/> Sélectionner </label>
 					</li>
 					<li class="product-visual">
 						<a title="Voir la fiche {{ row.title }}" class="link" href="{{ row.url }}">
-							<img lang="fr" xml:lang="fr" alt="" src="{{ imageURL(row.visual, 160, 120) }}" /></a>
+							<img alt="" src="{{ catalogMacros.categoryThumbnailURL(row.visual) }}" /></a>
 						<div class="pictograms-container">
 						</div>
 					</li>
@@ -70,8 +71,8 @@
 					<li class="product-price price">{{ formatPrice(row.price) }} <span class="tax-mode">HT</span></li>
 					<li class="product-price price">{{ formatPrice(row.priceTTC) }}  <span class="tax-mode">TTC</span></li>
 					<li class="product-add">
-						<button type="submit" name="catalogParam[addToCart][13364]" class="btn btn-primary btn-small" value="1"
-							onclick="catalog_openAddToCartPopin('13340', '13364'); return false;">
+						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}"
+							onclick="alert('{{ row.id }}');">
 							<i class="icon-shopping-cart"></i> Ajouter au panier
 						</button>
 					</li>
@@ -80,11 +81,13 @@
 		{% endfor %}
 	{% endspaceless %}</ul>
 
+	<!--
 	<p class="buttons">
-		<input type="hidden" name="catalogParam[formBlockId]" value="productListb_11"/>
-		<input type="hidden" name="refererPageId" value="13336"/>
-		Actions sur la sélection : <input class="btn btn-primary" name="catalogParam[addToCart]" type="submit" value="Ajouter au panier"/>
+		<input type="hidden" name="from" value="{{ currentURL() }}" />
+		Actions sur la sélection :
+		<button type="submit" name="add" class="btn btn-primary" value="selected"><i class="icon-shopping-cart"></i> Ajouter au panier</button>
 		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>
 		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
-	</p></form>
+	</p>
+	-->
 </form>
