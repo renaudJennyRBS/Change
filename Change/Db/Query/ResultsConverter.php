@@ -19,6 +19,12 @@ class ResultsConverter
 	 */
 	protected $fieldsTypes;
 
+
+	/**
+	 * @var string
+	 */
+	protected $indexBy;
+
 	/**
 	 * @var bool
 	 */
@@ -240,13 +246,46 @@ class ResultsConverter
 		return $this;
 	}
 
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function indexBy($name)
+	{
+		if (is_string($name) && isset($this->fieldsTypes[$name]))
+		{
+			$this->indexBy = $name;
+		}
+		else
+		{
+			$this->indexBy = null;
+		}
+		return $this;
+	}
+
 	function __invoke(array $data)
 	{
 		if (count($this->fieldsTypes))
 		{
 			if (\Zend\Stdlib\ArrayUtils::isList($data))
 			{
-				return array_map(array($this, 'normalizeRow'), $data);
+				if (null !== $this->indexBy)
+				{
+					$indexColumn = $this->indexBy;
+					$indexDbType = $this->fieldsTypes[$indexColumn];
+					$converter = $this->converter;
+					$callback = function($result, $row) use ($indexColumn, $indexDbType, $converter)
+					{
+						$index = $converter($row[$indexColumn], $indexDbType);
+						$result[$index] =  $this->normalizeRow($row);
+						return $result;
+					};
+					return array_reduce($data, $callback, array());
+				}
+				else
+				{
+					return array_map(array($this, 'normalizeRow'), $data);
+				}
 			}
 			else
 			{
