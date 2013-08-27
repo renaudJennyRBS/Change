@@ -1,38 +1,30 @@
-(function ()
-{
+(function () {
+
 	"use strict";
 
-	function editorRbsThemePageTemplate(Editor, Breadcrumb)
+	function editorRbsThemePageTemplate(Breadcrumb)
 	{
 		return {
-			restrict: 'EC',
+			restrict : 'C',
+			templateUrl : 'Rbs/Theme/PageTemplate/editor.twig',
+			replace : false,
+			require : 'rbsDocumentEditor',
 
-			templateUrl: 'Rbs/Theme/PageTemplate/editor.twig',
-
-			replace: true,
-
-			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link: function (scope, elm)
+			link : function (scope, element, attrs, editorCtrl)
 			{
-				Editor.initScope(scope, elm, function ()
-				{
+				scope.onReady = function () {
 					var currentNode = Breadcrumb.getCurrentNode();
 					if (currentNode.model === 'Rbs_Theme_Theme') {
 						scope.document.theme = currentNode;
 					}
-				});
+				};
+
+				editorCtrl.init('Rbs_Theme_PageTemplate');
 			}
 		};
 	}
 
-	editorRbsThemePageTemplate.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb'];
+	editorRbsThemePageTemplate.$inject = ['RbsChange.Breadcrumb'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemePageTemplate', editorRbsThemePageTemplate);
 
-	angular.module('RbsChange').directive('editorRbsThemePageTemplate', editorRbsThemePageTemplate);
 })();
