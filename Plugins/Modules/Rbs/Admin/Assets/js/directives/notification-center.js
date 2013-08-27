@@ -1,14 +1,16 @@
 (function () {
+
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
 	app.directive('notificationCenter', ['$filter', '$compile', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', function ($filter, $compile, NotificationCenter, ErrorFormatter) {
+
 		return {
-
 			restrict    : 'E',
-			templateUrl: 'Rbs/Admin/js/directives/notification-center.html',
+			templateUrl : 'Rbs/Admin/js/directives/notification-center.html',
 
-			link : function (scope, element, attrs) {
-
+			link : function (scope) {
 				scope.notifications = NotificationCenter.notifications;
 
 				scope.formatErrorMessage = function (notification) {
@@ -19,7 +21,6 @@
 				scope.remove = function (index) {
 					NotificationCenter.remove(index);
 				};
-
 			}
 
 		};
