@@ -2,34 +2,29 @@
 
 	"use strict";
 
-	function changeEditorWebsiteTopic (Editor, Breadcrumb) {
+	function changeEditorWebsiteTopic (Breadcrumb) {
 
 		return {
 			restrict    : 'EC',
 			templateUrl : 'Rbs/Website/Topic/editor.twig',
-			replace     : true,
+			replace     : false,
+			require     : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope : {
-				original : '=document',
-				onSave   : '&',
-				onCancel : '&',
-				section  : '='
-			},
-
-			link : function (scope, elm) {
-				Editor.initScope(scope, elm, function () {
+			link : function (scope, elm, attrs, editorCtrl) {
+				scope.onLoad = function () {
 					if (!scope.document.website) {
 						scope.document.website = Breadcrumb.getWebsite();
 					}
-				});
+				};
+
+				editorCtrl.init('Rbs_Website_Topic');
 			}
 		};
 
 	}
 
-	changeEditorWebsiteTopic.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb'];
+	changeEditorWebsiteTopic.$inject = ['RbsChange.Breadcrumb'];
 
-	angular.module('RbsChange').directive('changeEditorWebsiteTopic', changeEditorWebsiteTopic);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteTopic', changeEditorWebsiteTopic);
 
 })();

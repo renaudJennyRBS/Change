@@ -84,10 +84,15 @@
 	function rbsKbSwitch(Keyboard)
 	{
 		return {
-			restrict: 'EAC',
-			link: function (scope, elm)
+			restrict : 'EAC',
+			link : function (scope, elm)
 			{
 				var when, whenCounter, def;
+
+				// shortcut rbs-kb-alt="" instead of rbs-kb-when="alt"
+				elm.find('[rbs-kb-alt]').each(function () {
+					$(this).removeAttr('rbs-kb-alt').attr('rbs-kb-when', 'alt');
+				});
 
 				when = elm.find('[rbs-kb-when]');
 				whenCounter = 0;

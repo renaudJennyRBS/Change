@@ -1,9 +1,11 @@
-<div class="document-form" data-ng-controller="Rbs_Theme_Theme_FormController">
+<div class="document-form">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.js.module-name', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.theme.document.theme', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-rbs-theme-theme"
-		document="document"
-		section="section"
-		on-save="onSave(document)"
-		on-cancel="onCancel()">
-	</div>
+	<div class="rbs-document-editor rbs-document-editor-rbs-theme-theme"></div>
 </div>

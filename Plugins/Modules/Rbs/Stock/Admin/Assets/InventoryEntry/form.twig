@@ -1,9 +1,13 @@
-<div class="document-form" data-ng-controller="Rbs_Stock_InventoryEntry_FormController">
+<div class="document-form">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Stock'|rbsURL:'home' =)">{{ i18n('m.rbs.stock.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Stock_InventoryEntry'|rbsURL:'list' =)">{{ i18n('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.stock.document.inventoryentry', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-rbs-stock-inventoryEntry"
-		document="document"
-		section="section"
-		on-save="onSave(document)"
-		on-cancel="onCancel()">
-	</div>
+	<div class="rbs-document-editor rbs-document-editor-rbs-stock-inventory-entry"></div>
+
 </div>

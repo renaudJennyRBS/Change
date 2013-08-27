@@ -1,6 +1,13 @@
-<div class="document-form" data-ng-controller="Rbs_Catalog_Attribute_FormController">
+<div class="document-form">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.document.attribute-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.catalog.document.attribute', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-rbs-catalog-attribute" document="document" section="section"
-		on-save="onSave(document)" on-cancel="onCancel()">
-	</div>
+
+	<div class="rbs-document-editor rbs-document-editor-rbs-catalog-attribute"></div>
 </div>

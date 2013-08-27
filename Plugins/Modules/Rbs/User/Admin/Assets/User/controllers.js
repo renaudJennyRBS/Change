@@ -5,49 +5,6 @@
 	var app = angular.module('RbsChange');
 
 	/**
-	 * Controller for list.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param MainMenu
-	 * @param i18n
-	 * @constructor
-	 */
-	function ListController($scope, Breadcrumb, MainMenu, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
-		]);
-
-		MainMenu.loadModuleMenu('Rbs_User');
-	}
-
-	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n'];
-	app.controller('Rbs_User_User_ListController', ListController);
-
-	/**
-	 * Controller for form.
-	 *
-	 * @param $scope
-	 * @param Breadcrumb
-	 * @param FormsManager
-	 * @param i18n
-	 * @constructor
-	 */
-	function FormController($scope, FormsManager, Breadcrumb, i18n)
-	{
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"],
-			[i18n.trans('m.rbs.user.admin.js.user-list | ucf'), "Rbs/User/User/"]
-		]);
-		FormsManager.initResource($scope, 'Rbs_User_User');
-	}
-
-	FormController.$inject = ['$scope', 'RbsChange.FormsManager', 'RbsChange.Breadcrumb', 'RbsChange.i18n'];
-	app.controller('Rbs_User_User_FormController', FormController);
-
-	/**
 	 * Controller for applications.
 	 *
 	 * @param $scope
@@ -56,14 +13,15 @@
 	 * @param i18n
 	 * @param $http
 	 * @param ArrayUtils
-	 * @param MainMenu
 	 * @param Breadcrumb
 	 * @constructor
 	 */
-	function ApplicationsController($scope, $routeParams, REST, i18n, $http, ArrayUtils, MainMenu, Breadcrumb)
+	function ApplicationsController($scope, $routeParams, REST, i18n, $http, ArrayUtils, Breadcrumb)
 	{
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
+			Breadcrumb.setPath([[user.label, user.url()], 'Applications']);
+			Breadcrumb.setResource(null);
 		});
 
 		$scope.reloadTokens = function (){
@@ -94,13 +52,9 @@
 		$scope.predicate = 'application';
 		$scope.reverse = false;
 		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
-
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
-		]);
 	}
 
-	ApplicationsController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb'];
+	ApplicationsController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb'];
 	app.controller('Rbs_User_User_ApplicationsController', ApplicationsController);
 
 	/**
@@ -122,6 +76,8 @@
 	{
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
+			Breadcrumb.setPath([[user.label, user.url()], 'Permissions']);
+			Breadcrumb.setResource(null);
 		});
 
 		$scope.reloadPermissions = function (){
@@ -200,9 +156,6 @@
 		$scope.isSortedOn = function (column) { return column == $scope.predicate; };
 
 		MainMenu.loadModuleMenu('Rbs_User');
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User/User"]
-		]);
 	}
 
 	PermissionController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb', '$q'];

@@ -12,11 +12,15 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.routesForLocalizedModels(['Rbs_Media_Image']);
-			$delegate.model(null).route('home', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
+			$delegate.model('Rbs_Media').route('home', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
 			return $delegate;
 		}]);
 	}]);
 
+
+	/**
+	 * Controller for tag-based menu.
+	 */
 	app.controller('Rbs_Media_Menu_Controller', ['$q', '$scope', '$location', '$filter', 'RbsChange.TagService', 'RbsChange.ArrayUtils', function ($q, $scope, $location, $filter, TagService, ArrayUtils) {
 
 		var tagsLoadedDefered = $q.defer();

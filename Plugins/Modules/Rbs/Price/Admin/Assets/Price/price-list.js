@@ -1,15 +1,17 @@
-(function ()
-{
-	angular.module('RbsChange').directive('rbsPriceList', ['RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading', 'RbsChange.FormsManager',
-		function (i18n, REST, Loading, FormsManager)
+(function () {
+
+	"use strict";
+
+	angular.module('RbsChange').directive('rbsPriceList', ['RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading', 'RbsChange.EditorManager',
+		function (i18n, REST, Loading, EditorManager)
 	{
 		return {
-			restrict: 'E',
-			templateUrl: 'Rbs/Catalog/Price/price-list.twig',
-			replace: false,
-			scope: { product: '=' },
+			restrict : 'E',
+			templateUrl : 'Rbs/Catalog/Price/price-list.twig',
+			replace : false,
+			scope : { product : '=' },
 
-			link: function (scope, elm, attrs) {
+			link : function (scope, elm, attrs) {
 				scope.List = {};
 				scope.webStoresLoading = true;
 				Loading.start(i18n.trans('m.rbs.store.admin.js.webstore-list-loading'));
@@ -95,7 +97,7 @@
 					price.webStore = scope.List.selectedWebStore;
 					price.billingArea = scope.List.selectedBillingArea;
 					price.product = scope.product;
-					FormsManager.cascadeEditor(price, scope.product.label);
+					EditorManager.cascade(price, scope.product.label);
 				};
 			}
 		};

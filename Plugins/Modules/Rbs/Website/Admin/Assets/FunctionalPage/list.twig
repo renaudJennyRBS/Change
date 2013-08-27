@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_Website_FunctionalPage_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Website">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">Sites et pages</location>
+			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">Pages fonctionnelles</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.website.document.functionalpage-list', ['ucf']) }}"></page-header>
 
 	<div rbs-tip="Rbs_Website_FunctionalPageListHeader">

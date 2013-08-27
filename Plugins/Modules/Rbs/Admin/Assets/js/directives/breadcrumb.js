@@ -2,11 +2,12 @@
 
 	"use strict";
 
-	var modelIcons = {
-		//'Rbs_Website_Website' : 'icon-home'
-	};
+	var app = angular.module('RbsChange'),
+		modelIcons = {
+			//'Rbs_Website_Website' : 'icon-home'
+		};
 
-	angular.module('RbsChange').directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
+	app.directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
 
 		return {
 			restrict : 'E',
@@ -104,10 +105,14 @@
 						html += getEntryHtml(breadcrumbData.resource, breadcrumbData.disabled, true);
 					}
 
+					if (breadcrumbData.resourceModifier) {
+						html += getEntryHtml(breadcrumbData.resourceModifier, breadcrumbData.disabled, true);
+					}
+
 					elm.html(html);
 				}
 
-				scope.$on('Change:TreePathChanged', function (event, breadcrumbData) {
+				scope.$on('Change:BreadcrumbChanged', function (event, breadcrumbData) {
 					update(breadcrumbData);
 				});
 
@@ -117,5 +122,85 @@
 
 	}]);
 
+
+	app.directive('location', function () {
+		return {
+			restrict : 'E',
+			require : '?^rbsBreadcrumbConfig',
+			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
+				if (rbsBreadcrumbConfig) {
+					attrs.$observe('href', function (href) {
+						rbsBreadcrumbConfig.add('Location', element.index(), element.text(), href);
+					});
+				}
+			}
+		};
+	});
+
+
+	app.directive('rbsBreadcrumbConfig', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+
+		return {
+			restrict : 'E',
+			scope : true,
+			require : '^rbsWorkspaceConfig',
+
+			controller : ['$scope', function ($scope) {
+
+				var bc = {
+					'Location' : [],
+					'Path' : []
+				};
+
+				this.add = function (type, index, text, href) {
+					bc[type][index] = [text, href];
+					if (bc[type].length === $scope.counts[type]) {
+						Breadcrumb['set' + type](bc[type]);
+					}
+				};
+
+			}],
+
+			compile : function (tElement) {
+				tElement.hide();
+				return function linkFn (scope, element) {
+					scope.counts = {
+						'Location' : element.find('location').length,
+						'Path' : element.find('path').length
+					};
+				};
+			}
+		};
+
+	}]);
+
+
+	app.directive('path', function () {
+		return {
+			restrict : 'E',
+			require : '?^rbsBreadcrumbConfig',
+			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
+				if (rbsBreadcrumbConfig) {
+					attrs.$observe('href', function (href) {
+						rbsBreadcrumbConfig.add('Path', element.index()-element.prevAll('location').length, element.text(), href);
+					});
+				}
+			}
+		};
+	});
+
+
+	app.directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
+		return {
+			restrict : 'E',
+			scope : true,
+			controller : ['$scope', '$attrs', function ($scope, $attrs) {
+				if ($attrs.menu) {
+					MainMenu.loadModuleMenu($attrs.menu);
+				}
+			}]
+		};
+
+	}]);
 
 })();

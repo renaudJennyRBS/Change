@@ -2,25 +2,21 @@
 {
 	"use strict";
 
-	function Editor(Editor)
-	{
+	function Editor () {
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Stock/Sku/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
+			restrict : 'C',
+			templateUrl : 'Rbs/Stock/Sku/editor.twig',
+			replace : false,
+			require : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl)
 			{
-				Editor.initScope(scope, elm);
 				scope.data = {lengthUnit:'m'};
-				scope.$watch('document.physicalProperties', function(newValue){
-					console.log(newValue);
-				}, true);
+				editorCtrl.init('Rbs_Stock_Sku');
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor'];
-	angular.module('RbsChange').directive('editorRbsStockSku', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsStockSku', Editor);
+
 })();

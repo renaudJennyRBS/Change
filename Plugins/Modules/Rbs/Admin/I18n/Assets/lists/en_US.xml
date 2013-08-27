@@ -17,4 +17,6 @@
 	<key id="pagination-pages">{'one': 'one page', 'other': '{} pages'}</key>
 	<key id="on">on</key>
 	<key id="per-page">per page</key>
+	<key id="close-preview">close preview</key>
+	<key id="close-all-previews">close all previews</key>
 </i18n>

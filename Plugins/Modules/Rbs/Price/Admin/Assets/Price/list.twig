@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_Price_Price_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Price">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Price'|rbsURL:'home' =)">{{ i18n('m.rbs.price.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Price_Price'|rbsURL:'list' =)">{{ i18n('m.rbs.price.admin.js.price-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.price.admin.js.price-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Price_Price" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -12,4 +20,5 @@
 		<column name="sku" sort="sku.code">(=doc.sku.code=)</column>
 		<column name="webStore" sort="webStore.label">(=doc.webStore.label=)</column>
 	</rbs-document-list>
+
 </div>

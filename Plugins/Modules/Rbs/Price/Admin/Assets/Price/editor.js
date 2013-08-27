@@ -2,17 +2,18 @@
 {
 	"use strict";
 
-	function Editor(Editor, REST, $routeParams)
+	function Editor(REST, $routeParams, Settings)
 	{
 		return {
 			restrict: 'EC',
 			templateUrl: 'Rbs/Price/Price/editor.twig',
-			replace: true,
-			// Create isolated scope
-			scope: { original: '=document', onSave: '&', onCancel: '&', section: '=' },
-			link: function (scope, elm)
+			replace : false,
+			require : 'rbsDocumentEditor',
+
+
+			link : function (scope, elm, attrs, editorCtrl)
 			{
-				Editor.initScope(scope, elm, function(){
+				scope.onReady = function(){
 					if (!scope.document.product && $routeParams.productId)
 					{
 						REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.productId).then(function(product){
@@ -52,8 +53,9 @@
 						scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
 					}
 
+				};
 
-				});
+				editorCtrl.init('Rbs_Price_Price');
 
 				scope.$watch('document.webStore', function(newValue, oldValue){
 					if (!angular.isUndefined(newValue))
@@ -81,7 +83,7 @@
 						{
 							REST.resource('Rbs_Price_BillingArea', newValue).then(function(res){
 								scope.billingArea = res;
-							})
+							});
 						}
 
 						if (!angular.isObject(scope.document.billingArea))
@@ -99,20 +101,37 @@
 					}
 				});
 
+
+
+				var _timeZone = Settings.get('TimeZone');
+
+				function now () {
+					console.log("using tz: ", _timeZone);
+					console.log("now 1=", moment.utc());
+					console.log("now 2=", moment.utc().tz(_timeZone));
+					console.log("now 3=", moment.utc().tz(_timeZone).toDate());
+					return moment.utc().tz(_timeZone);
+				}
+
+				scope.$on('Change:TimeZoneChanged', function (event, tz) {
+					_timeZone = tz;
+				});
+
+
 				scope.activationNow = function(){
-					scope.document.startActivation = moment().toDate();
+					scope.document.startActivation = now().toDate();
 				};
 
 				scope.activationTomorrow = function(){
-					scope.document.startActivation = moment().startOf('d').add('d', 1).toDate();
+					scope.document.startActivation = now().startOf('d').add('d', 1).toDate();
 				};
 
 				scope.activationNextMonday = function(){
-					scope.document.startActivation = moment().add('w', 1).startOf('w').startOf('d').toDate();
+					scope.document.startActivation = now().add('w', 1).startOf('w').startOf('d').toDate();
 				};
 
 				scope.activationNextMonth = function(){
-					scope.document.startActivation = moment().add('M', 1).startOf('M').startOf('d').toDate();
+					scope.document.startActivation = now().add('M', 1).startOf('M').startOf('d').toDate();
 				};
 
 				scope.$watch('document.startActivation', function(newValue, oldValue){
@@ -179,6 +198,7 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.Editor', 'RbsChange.REST', '$routeParams'];
-	angular.module('RbsChange').directive('editorRbsPricePrice', Editor);
+	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsPricePrice', Editor);
+
 })();

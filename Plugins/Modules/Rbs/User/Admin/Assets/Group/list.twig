@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_User_Group_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_User">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_User'|rbsURL:'home' =)">Utilisateurs</location>
+			<location href="(= 'Rbs_User_Group'|rbsURL:'list' =)">Groupes</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.user.document.group-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_User_Group" filter-query="query" text-search="textSearch"></search-filters>
 	<div>
@@ -17,4 +25,5 @@
 		<column name="label" primary="true"></column>
 		<column name="realm"></column>
 	</rbs-document-list>
+
 </div>

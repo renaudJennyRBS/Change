@@ -156,6 +156,14 @@
 
 
 		/**
+		 * Indicates whether the given `string` represents a Model name or not.
+		 */
+		isModuleName : function (string) {
+			return angular.isString(string) && (/^\w+_\w+$/).test(string);
+		},
+
+
+		/**
 		 * Tells whether the given Resource is new or not.
 		 * Newly created resources have a negative ID.
 		 */

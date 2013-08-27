@@ -1,4 +1,5 @@
 {% macro price(name, label, required, roundable, help) %}
+	<!-- FIXME Use Directive from 'form-fields.js' instead -->
 	<div class="control-group property{% if required %} required{% endif %}"
 		data-ng-class="{'success': hasCorrectionOnProperty('{{ name }}')}">
 		<label class="control-label" for="{{ name }}">{{ i18n(label, ['ucf']) }}</label>

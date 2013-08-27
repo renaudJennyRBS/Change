@@ -1,9 +1,11 @@
-<div class="document-form" data-ng-controller="Rbs_Tag_Tag_FormController">
+<div class="document-form">
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.tag.document.tag', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-change-tag-tag"
-	     document="document"
-	     section="section"
-	     on-save="onSave(document)"
-	     on-cancel="onCancel()">
-	</div>
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Tag'|rbsURL:'home' =)">Étiquettes</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div class="rbs-document-editor rbs-document-editor-rbs-tag-tag"></div>
 </div>

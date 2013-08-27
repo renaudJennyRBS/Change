@@ -1,4 +1,12 @@
-<div data-ng-controller="Rbs_Price_Tax_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Price">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Price'|rbsURL:'home' =)">{{ i18n('m.rbs.price.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Price_Tax'|rbsURL:'list' =)">{{ i18n('m.rbs.price.admin.js.tax-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.price.admin.js.tax-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Price_Tax" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -11,4 +19,5 @@
 	               filter-query="query">
 		<column name="label" primary="true"></column>
 	</rbs-document-list>
+
 </div>

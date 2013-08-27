@@ -15,7 +15,7 @@
 
 		    buildMenuNgTemplate =
 		       '<ul class="nav nav-list">' +
-		          '<div ng-repeat="entry in menu" ng-switch="entry.type">' +
+		          '<div ng-repeat="entry in _chgMenu" ng-switch="entry.type">' +
 		             '<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
 		             '<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
 		                '<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
@@ -196,7 +196,7 @@
 		 *
 		 * @param scope The scope into which the contents should be compiled.
 		 */
-		this.build = function (scope) {
+		this.build = function (menuObject, scope) {
 			if (this.frozen) {
 				return null;
 			}
@@ -208,17 +208,17 @@
 			currentUrl = null;
 			currentScope = scope;
 
-			if (angular.isArray(scope.menu)) {
+			if (angular.isArray(menuObject)) {
 				if ( ! angular.isFunction(scope.__mainMenuSetSection) ) {
 					scope.__mainMenuSetSection = function (sec) {
 						scope.section = sec;
 					};
 				}
 				html = buildMenuNgTemplate;
-			} else if (angular.isString(scope.menu)) {
-				html = scope.menu;
-			} else if (angular.isFunction(scope.menu)) {
-				html = scope.menu();
+			} else if (angular.isString(menuObject)) {
+				html = menuObject;
+			} else if (angular.isFunction(menuObject)) {
+				html = menuObject();
 			} else {
 				console.error("Could not build MainMenu: scope.menu must be an Array, a String or a Function.");
 			}

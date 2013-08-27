@@ -2,32 +2,33 @@
 
 	"use strict";
 
-	function changeEditorWebsiteMenu(Editor, Breadcrumb, REST) {
+	function changeEditorWebsiteMenu(Breadcrumb, REST, $routeParams, $q) {
 
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
 			ALL_REGEXP = /^.+$/;
 
 		return {
-			restrict: 'EC',
-			templateUrl: 'Rbs/Website/Menu/editor.twig',
-			replace: true,
+			restrict    : 'EC',
+			templateUrl : 'Rbs/Website/Menu/editor.twig',
+			replace     : false,
+			require     : 'rbsDocumentEditor',
 
-			// Create isolated scope
-			scope: {
-				original: '=document',
-				onSave: '&',
-				onCancel: '&',
-				section: '='
-			},
-
-			link: function (scope, elm, attrs) {
+			link : function (scope, element, attrs, editorCtrl) {
 				scope.add = {};
 				scope.add.titlePattern = ALL_REGEXP;
 				scope.addItemUIShown = false;
 
-				Editor.initScope(scope, elm, function () {
-					if (!scope.document.website && Breadcrumb.getCurrentNode()) {
-						scope.document.website = Breadcrumb.getCurrentNode();
+				scope.onReady = function () {
+					var website = scope.document.website;
+					if (website) {
+						Breadcrumb.setPath([[website.label, website.url('menus')]]);
+					}
+					else {
+						scope.$watch('document.website', function (website, old) {
+							if (website && website !== old) {
+								Breadcrumb.setPath([[website.label, website.url('menus')]]);
+							}
+						}, true);
 					}
 
 					scope.toggleAddItemUI = function ($event) {
@@ -63,12 +64,38 @@
 						scope.add.selectedDocument = null;
 					};
 
-				});
+				};
+
+
+				scope.initDocument = function () {
+					// Edition ('id' is present): let the Editor does his job and load the Document!
+					if ($routeParams.hasOwnProperty('id')) {
+						return null;
+					}
+
+					// Creation: we need to load the 'parent' Website to init the new Menu with it.
+					var	defer = $q.defer(),
+						menu = REST.newResource('Rbs_Website_Menu');
+
+					if ($routeParams.hasOwnProperty('website')) {
+						REST.resource('Rbs_Website_Website', $routeParams.website).then(function (website) {
+							menu.website = website;
+							defer.resolve(menu);
+						});
+					}
+					else {
+						defer.resolve(menu);
+					}
+					return defer.promise;
+				};
+
+				editorCtrl.init('Rbs_Website_Menu');
+
 			}
 		};
 	}
 
-	changeEditorWebsiteMenu.$inject = ['RbsChange.Editor', 'RbsChange.Breadcrumb', 'RbsChange.REST'];
+	changeEditorWebsiteMenu.$inject = ['RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams', '$q'];
 
-	angular.module('RbsChange').directive('editorChangeWebsiteMenu', changeEditorWebsiteMenu);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteMenu', changeEditorWebsiteMenu);
 })();

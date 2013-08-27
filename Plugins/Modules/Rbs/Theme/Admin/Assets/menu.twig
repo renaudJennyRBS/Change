@@ -1,10 +1,9 @@
 <div ng-controller="Rbs_Theme_MenuController">
 
 	<ul class="nav nav-list">
-		<li class="nav-header">Thème</li>
-		<li><a href="Rbs/Theme/Theme">Tous les thèmes</a></li>
+		<li><a href="Rbs/Theme/Theme/">{{ i18n('m.rbs.theme.admin.js.theme-list', ['ucf']) }}</a></li>
 		<li class="divider"></li>
-		<li ng-repeat="theme in themes"><a href="Rbs/Theme/Theme/(=theme.id=)/Templates">(=theme.label=)</a></li>
+		<li ng-repeat="theme in themes"><a href="Rbs/Theme/Theme/(=theme.id=)/Templates/">(=theme.label=)</a></li>
 	</ul>
 
 </div>

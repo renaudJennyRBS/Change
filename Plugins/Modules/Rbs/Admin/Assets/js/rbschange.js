@@ -31,6 +31,10 @@
 	 */
 	app.constant('RbsChange.Events', {
 
+		// Raised when an Editor has finished loading its document and the Breadcrumb is loaded.
+		// Single argument is the edited document.
+		'EditorLoaded'                   : 'Change:Editor.Loaded',
+
 		// Raised when an Editor is ready (its document and the Breadcrumb are loaded).
 		// Single argument is the edited document.
 		'EditorReady'                    : 'Change:Editor.Ready',
@@ -100,6 +104,30 @@
 		// ... but do NOT sign OAuth requests.
 		OAuth.setSignedUrlPatternExclude(oauthUrl);
 	}]);
+
+
+	__change.createEditorForModel = function (modelName, linkFn) {
+
+		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, ''), function ()
+		{
+			return {
+				restrict : 'C',
+				templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
+				replace : false,
+				require : 'rbsDocumentEditor',
+
+				link : function (scope, element, attrs, editorCtrl)
+				{
+					if (angular.isFunction(linkFn)) {
+						linkFn.apply(this, [scope, element, attrs, editorCtrl]);
+					}
+					editorCtrl.init(modelName);
+				}
+			};
+		});
+
+	};
+
 
 
 	//-------------------------------------------------------------------------

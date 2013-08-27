@@ -10,25 +10,25 @@
 			restrict: 'E',
 
 			templateUrl: 'Rbs/Admin/js/directives/form-button-bar.twig',
+			require : '^rbsDocumentEditor',
 
-			link : function (scope, element) {
+			link : function (scope, element, attrs, editorCtrl) {
 
 				scope.actionAfterSave = Settings.get('editorActionAfterSave', 'list');
 
 				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
 				var shouldLoadContents = true;
-				scope.$watch('document', function (doc) {
-					if (shouldLoadContents && doc) {
+				scope.$on(Events.EditorReady, function (event, args) {
+					if (shouldLoadContents) {
+
 						shouldLoadContents = false;
 						var contents = [];
 						$rootScope.$broadcast(Events.EditorFormButtonBarContents, {
 							'contents' : contents,
-							'document' : doc
+							'document' : args.document
 						});
 						if (contents.length) {
-							$compile(contents.join(''))(scope, function (clone) {
-								element.find('[data-role="preContents"]').empty().append(clone);
-							});
+							element.find('[data-role="preContents"]').empty().append($compile(contents.join(''))(scope));
 						}
 					}
 				});

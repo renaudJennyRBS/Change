@@ -113,11 +113,7 @@
 		// Bind label and input field (unique 'for' attribute).
 		fieldId = 'rbs_field_' + property.replace(/[^a-z0-9]/ig, '_') + '_' + (++fieldIdCounter);
 		$lbl.html(tAttrs.label).attr('for', fieldId);
-		$ipt.attr('id', fieldId);
-		$ipt.attr('input-id', fieldId);
-
-		// CSS class for Correction
-		tElement.attr('ng-class', '{\'success\': hasCorrectionOnProperty(\'' + property + '\')}');
+		$ipt.attr('id', fieldId).attr('input-id', fieldId).attr('name', property);
 
 		// Init input field
 		$ipt.attr('ng-model', ngModel);
