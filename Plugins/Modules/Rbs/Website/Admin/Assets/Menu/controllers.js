@@ -18,7 +18,7 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu"]
+			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu/"]
 		]);
 
 		$scope.selectedWebsite = null;
@@ -29,14 +29,17 @@
 			// Only one website? Select it.
 			if ($scope.websites.length === 1 && ! $routeParams.id) {
 				$location.path($scope.websites[0].url('menus'));
-			} else if ($routeParams.id) {
-				var websiteId = parseInt($routeParams.id, 10);
-				if (isNaN(websiteId)) {
-					throw new Error("Parameter 'websiteId' should be an integer.");
+			}
+			else {
+				if ($routeParams.id) {
+					var websiteId = parseInt($routeParams.id, 10);
+					if (isNaN(websiteId)) {
+						throw new Error("Parameter 'websiteId' should be an integer.");
+					}
+					$scope.selectedWebsite = Utils.getById($scope.websites, websiteId);
+					Breadcrumb.setPath([$scope.selectedWebsite]);
+					loadMenuList(websiteId);
 				}
-				loadMenuList(websiteId);
-				$scope.selectedWebsite = Utils.getById($scope.websites, websiteId);
-				Breadcrumb.setPath([$scope.selectedWebsite]);
 				registerWatches();
 			}
 		});
@@ -47,7 +50,7 @@
 
 		function registerWatches () {
 			$scope.$watch('selectedWebsite', function (website, oldValue) {
-				if (website !== oldValue) {
+				if (website && website !== oldValue) {
 					$location.path(website.url('menus'));
 				}
 			}, true);

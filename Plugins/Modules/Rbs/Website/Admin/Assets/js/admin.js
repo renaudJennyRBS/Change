@@ -89,6 +89,7 @@
 			]);
 
 			$delegate.model('Rbs_Website_Menu')
+				.route('new', 'Rbs/Website/Website/:website/Menus/new', 'Rbs/Website/Menu/form.twig')
 				.route('form', 'Rbs/Website/Website/:website/Menus/:id/:LCID', 'Rbs/Website/Menu/form.twig')
 			;
 
