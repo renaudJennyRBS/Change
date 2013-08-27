@@ -1,4 +1,11 @@
-<div data-ng-controller="Rbs_Collection_Collection_ListController">
+<div>
+
+	<rbs-workspace-config menu="Rbs_Collection">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Collection'|rbsURL:'home' =)">{{ i18n('m.rbs.collection.admin.js.module-name', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header title="{{ i18nAttr('m.rbs.collection.document.collection-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Collection_Collection" filter-query="query" text-search="textSearch"></search-filters>
 	<div>

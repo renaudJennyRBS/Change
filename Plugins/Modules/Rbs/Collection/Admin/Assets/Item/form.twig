@@ -1,9 +1,4 @@
-<div class="document-form" data-ng-controller="Rbs_Collection_Item_FormController">
+<div class="document-form">
 	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.collection.document.item', ['ucf']) }}"></page-header>
-	<div class="document-editor editor-change-collection-item"
-		document="document"
-		section="section"
-		on-save="onSave(document)"
-		on-cancel="onCancel()">
-	</div>
+	<div class="rbs-document-editor rbs-document-editor-rbs-collection-item"></div>
 </div>
