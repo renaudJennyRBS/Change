@@ -46,7 +46,7 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			$cart = $event->getParam('cart');
-			if ($cart instanceof \Rbs\Commerce\Interfaces\Cart && $cart->getCommerceServices() instanceof \Rbs\Commerce\Services\CommerceServices)
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices() instanceof \Rbs\Commerce\Services\CommerceServices)
 			{
 				(new \Rbs\Commerce\Cart\CartStorage())->saveCart($cart);
 			}

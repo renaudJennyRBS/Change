@@ -49,9 +49,17 @@ interface Cart extends \Serializable
 	public function getLines();
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\CartItem[]
+	 * @param string $lineKey
+	 * @return \Rbs\Commerce\Interfaces\CartLine|null
 	 */
-	public function getItems();
+	public function getLineByKey($lineKey);
+
+	/**
+	 * @param string $lineKey
+	 * @return \Rbs\Commerce\Interfaces\CartLine|null
+	 */
+	public function removeLineByKey($lineKey);
+
 
 	/**
 	 * @return \Rbs\Commerce\Interfaces\BillingArea|null
@@ -62,4 +70,58 @@ interface Cart extends \Serializable
 	 * @return string|null
 	 */
 	public function getZone();
+
+	/**
+	 * @param CartLineConfig $cartLineConfig
+	 * @param float $quantity
+	 * @return \Rbs\Commerce\Interfaces\CartLine
+	 */
+	public function getNewLine(\Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig, $quantity);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function getNewItem(\Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartLine $line
+	 * @param integer $lineNumber
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Interfaces\CartLine
+	 */
+	public function insertLineAt(CartLine $line, $lineNumber = 1);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartLine $line
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Interfaces\CartLine
+	 */
+	public function appendLine(CartLine $line);
+
+	/**
+	 * @param string $lineKey
+	 * @param float $newQuantity
+	 * @return CartLine|null
+	 */
+	public function updateLineQuantity($lineKey, $newQuantity);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItem $item
+	 * @param float $priceValue
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function updateItemPrice($item, $priceValue);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItem $item
+	 * @param TaxApplication[] $taxApplicationArray
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function updateItemTaxes($item, $taxApplicationArray);
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

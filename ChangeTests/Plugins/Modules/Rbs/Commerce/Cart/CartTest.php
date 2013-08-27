@@ -1,6 +1,11 @@
 <?php
 namespace ChangeTests\Modules\Commerce\Cart;
 
+include_once(__DIR__ . '/Assets/TestCartLineConfig.php');
+include_once(__DIR__ . '/Assets/TestCartItemConfig.php');
+
+use ChangeTests\Modules\Commerce\Cart\Assets\TestCartItemConfig;
+use ChangeTests\Modules\Commerce\Cart\Assets\TestCartLineConfig;
 
 use Rbs\Commerce\Cart\Cart;
 use Rbs\Commerce\Services\CommerceServices;
@@ -43,12 +48,16 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $ba \Rbs\Price\Documents\BillingArea */
 		$ba = $this->getNewReadonlyDocument('Rbs_Price_BillingArea', 100);
 		$tax = $this->getNewReadonlyDocument('Rbs_Price_Tax', 101);
-		$cart->setBillingArea($ba);
-		$l = $cart->appendLine($cart->getNewLine('k1', 'designation', 2.5, array('opt' => 'testOpt')));
-
 		$taxApplication  = new TaxApplication($tax, 'cat', 'ZTEST', 0.1);
 		$taxApplication->setValue(0.078);
-		$l->appendItem($cart->getNewItem('skTEST', 5.3, array($taxApplication), 2,  array('iOpt' => 'testIOpt')));
+		$cart->setBillingArea($ba);
+
+		$cartItemConf = new TestCartItemConfig('skTEST', 2, 5.3, array($taxApplication), array('iOpt' => 'testIOpt'));
+
+
+		$cartLineConf = new TestCartLineConfig('k1', 'designation', array($cartItemConf), array('opt' => 'testOpt'));
+
+		$cart->appendLine($cart->getNewLine($cartLineConf, 2.5));
 
 		$serialized = serialize($cart);
 
@@ -78,8 +87,6 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$item =  $l->getItemByCodeSKU('skTEST');
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartItem', $item);
 
-		$this->assertCount(1, $cart2->getItems());
-		$this->assertSame($item, $cart2->getItems()[0]);
 		$this->assertEquals(5.3, $item->getPriceValue());
 		$this->assertEquals(2, $item->getReservationQuantity());
 		$this->assertEquals('testIOpt', $item->getOptions()->get('iOpt'));

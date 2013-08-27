@@ -143,4 +143,18 @@ class CartTax implements CartTaxInterfaces
 		$this->rate = $serializedData['rate'];
 		$this->value = $serializedData['value'];
 	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = array(
+			'tax' => $this->tax ? $this->tax->getCode() : null,
+			'category' => $this->category,
+			'zone' => $this->zone,
+			'rate' => $this->rate,
+			'value' => $this->value);
+		return $array;
+	}
 }

@@ -174,4 +174,12 @@ class TestBillingArea implements \Rbs\Commerce\Interfaces\BillingArea
 	{
 		return $this->taxes;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getCode()
+	{
+		return 'BA';
+	}
 }

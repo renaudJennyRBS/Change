@@ -40,7 +40,8 @@
 	</form>
 </div>
 
-<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductsToCart') }}" method="post">
+<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
+	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
 	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
 		{% for row in rows %}
 			<li>
@@ -70,7 +71,7 @@
 					<li class="product-price price">{{ formatPrice(row.price) }} <span class="tax-mode">HT</span></li>
 					<li class="product-price price">{{ formatPrice(row.priceTTC) }}  <span class="tax-mode">TTC</span></li>
 					<li class="product-add">
-						<button name="add" type="button" class="btn btn-primary btn-small" value="{{ row.id }}"
+						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}"
 							onclick="alert('{{ row.id }}');">
 							<i class="icon-shopping-cart"></i> Ajouter au panier
 						</button>
@@ -80,11 +81,13 @@
 		{% endfor %}
 	{% endspaceless %}</ul>
 
+	<!--
 	<p class="buttons">
 		<input type="hidden" name="from" value="{{ currentURL() }}" />
 		Actions sur la sélection :
 		<button type="submit" name="add" class="btn btn-primary" value="selected"><i class="icon-shopping-cart"></i> Ajouter au panier</button>
 		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>
 		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
-	</p></form>
+	</p>
+	-->
 </form>

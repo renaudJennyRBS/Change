@@ -29,7 +29,8 @@ class Listeners implements ListenerAggregateInterface
 			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
 			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 
-			$commerceServices->getEventManager()->attach('load', function (\Zend\EventManager\Event $event)
+			$commerceServices->getEventManager()->attach('load',
+				function (\Zend\EventManager\Event $event)
 				{
 					/* @var $commerceServices CommerceServices */
 					$commerceServices = $event->getParam('commerceServices');
@@ -60,8 +61,27 @@ class Listeners implements ListenerAggregateInterface
 						$commerceServices->setBillingArea($documentServices->getDocumentManager()
 							->getDocumentInstance($session['billingAreaId'], $billingAreaModel));
 					}
-				}
-				, 5);
+				}, 5);
+
+			$commerceServices->getEventManager()->attach('save',
+				function (\Zend\EventManager\Event $event)
+				{
+					/* @var $commerceServices CommerceServices */
+					$commerceServices = $event->getParam('commerceServices');
+					$session = new \Zend\Session\Container('Rbs_Commerce');
+					$session['initialized'] = true;
+					$session['cartIdentifier'] = $commerceServices->getCartIdentifier();
+					$billingArea = $commerceServices->getBillingArea();
+					if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+					{
+						$session['billingAreaId'] = $billingArea->getId();
+					}
+					else
+					{
+						$session['billingAreaId'] = null;
+					}
+					$session['zone'] = $commerceServices->getZone();
+				}, 5);
 		};
 		$events->attach(\Change\Http\Event::EVENT_REQUEST, $callback, 5);
 	}

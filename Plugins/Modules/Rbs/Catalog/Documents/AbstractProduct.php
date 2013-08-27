@@ -10,7 +10,7 @@ use Rbs\Commerce\Services\CommerceServices;
 /**
  * @name \Rbs\Catalog\Documents\AbstractProduct
  */
-class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
+class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct implements \Rbs\Commerce\Interfaces\CartLineConfigCapable
 {
 	/**
 	 * @return \Rbs\Media\Documents\Image|null
@@ -162,5 +162,13 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 	{
 		$this->newSkuOnCreation = $newSkuOnCreation;
 		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Catalog\Std\ProductCartLineConfig
+	 */
+	public function getCartLineConfig()
+	{
+		return new \Rbs\Catalog\Std\ProductCartLineConfig($this);
 	}
 }

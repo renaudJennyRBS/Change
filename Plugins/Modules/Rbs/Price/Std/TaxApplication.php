@@ -114,4 +114,17 @@ class TaxApplication implements TaxApplicationInterfaces
 	{
 		return $this->value;
 	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartTax $cartTax
+	 * @return $this
+	 */
+	public function fromCartTax($cartTax)
+	{
+		$this->tax = $cartTax->getTax();
+		$this->category = $cartTax->getCategory();
+		$this->zone = $cartTax->getZone();
+		$this->rate = $cartTax->getRate();
+		$this->value = $cartTax->getValue();
+	}
 }

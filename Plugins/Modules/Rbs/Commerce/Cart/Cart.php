@@ -2,6 +2,9 @@
 namespace Rbs\Commerce\Cart;
 
 use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
+use Rbs\Commerce\Interfaces\CartItem as CartItemInterfaces;
+use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
+
 use Rbs\Commerce\Interfaces\TaxApplication;
 use Rbs\Commerce\Services\CommerceServices;
 
@@ -206,66 +209,95 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param $lineKey
-	 * @param string $designation
+	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
 	 * @param float $quantity
-	 * @param array $options
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function getNewLine($lineKey, $designation = null, $quantity = 1.0, array $options = null)
+	public function getNewLine(\Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig, $quantity)
 	{
-		$line = new CartLine($lineKey);
-		$line->setDesignation($designation);
-		$line->setQuantity(floatval($quantity));
-		if (is_array($options))
+		$line = new CartLine($cartLineConfig->getKey());
+		$line->setDesignation($cartLineConfig->getDesignation());
+		$line->setQuantity($quantity);
+		if (is_array($cartLineConfig->getOptions()))
 		{
-			$line->getOptions()->fromArray($options);
+			$line->getOptions()->fromArray($cartLineConfig->getOptions());
+		}
+		$itemConfig = $cartLineConfig->getItemConfigArray();
+		if ($itemConfig instanceof \Rbs\Commerce\Interfaces\CartItemConfig)
+		{
+			$line->appendItem($this->getNewItem($itemConfig));
+		}
+		elseif (is_array($itemConfig))
+		{
+			foreach ($itemConfig as $ic)
+			{
+				if ($ic instanceof \Rbs\Commerce\Interfaces\CartItemConfig)
+				{
+					$line->appendItem($this->getNewItem($ic));
+				}
+			}
 		}
 		return $line;
 	}
 
 	/**
-	 * @param CartLine $line
+	 * @param CartLineInterfaces $line
 	 * @param integer $lineNumber
 	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function insertLineAt(CartLine $line, $lineNumber = 1)
+	public function insertLineAt(CartLineInterfaces $line, $lineNumber = 1)
 	{
-		$lastLineNumber = count($this->lines);
-		if ($lineNumber < 1 || $lineNumber > $lastLineNumber)
+		if ($line instanceof CartLine)
 		{
-			return $this->appendLine($line);
+			$lastLineNumber = count($this->lines);
+			if ($lineNumber < 1 || $lineNumber > $lastLineNumber)
+			{
+				return $this->appendLine($line);
+			}
+			if ($this->getLineByKey($line->getKey()))
+			{
+				throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
+			}
+			$idx = $lineNumber - 1;
+			$this->lines = array_merge(array_slice($this->lines, 0, $idx), array($line), array_slice($this->lines, $idx));
+			for (; $idx <= $lastLineNumber; $idx++)
+			{
+				/* @var $l CartLine */
+				$l = $this->lines[$idx];
+				$l->setNumber($idx + 1);
+			}
+			return $line;
 		}
-		if ($this->getLineByKey($line->getKey()))
+		else
 		{
-			throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
+			throw new \InvalidArgumentException('Argument 1 should be a CartLine', 999999);
 		}
-		$idx = $lineNumber - 1;
-		$this->lines = array_merge(array_slice($this->lines, 0, $idx), array($line), array_slice($this->lines, $idx));
-		for (; $idx <= $lastLineNumber; $idx++)
-		{
-			/* @var $l CartLine */
-			$l = $this->lines[$idx];
-			$l->setNumber($idx + 1);
-		}
-		return $line;
 	}
 
 	/**
-	 * @param CartLine $line
+	 * @param CartLineInterfaces $line
 	 * @throws \RuntimeException
+	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function appendLine(CartLine $line)
+	public function appendLine(CartLineInterfaces $line)
 	{
-		if ($this->getLineByKey($line->getKey()))
+		if ($line instanceof CartLine)
 		{
-			throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
+			if ($this->getLineByKey($line->getKey()))
+			{
+				throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
+			}
+			$this->lines[] = $line;
+			$line->setNumber(count($this->lines));
+			return $line;
 		}
-		$this->lines[] = $line;
-		$line->setNumber(count($this->lines));
-		return $line;
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 should be a CartLine', 999999);
+		}
 	}
 
 	/**
@@ -293,38 +325,49 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @return CartItem[]
+	 * @param string $lineKey
+	 * @return \Rbs\Commerce\Cart\CartLine|null
 	 */
-	public function getItems()
+	public function removeLineByKey($lineKey)
 	{
-		$items = array();
-		foreach ($this->getLines() as $line)
+		$line = $this->getLineByKey($lineKey);
+		if ($line)
 		{
-			$items = array_merge($items, $line->getItems());
+			return $this->removeLineByNumber($line->getNumber());
 		}
-		return $items;
+		return $line;
 	}
 
 	/**
-	 * @param string $codeSKU
-	 * @param float $priceValue
-	 * @param TaxApplication|TaxApplication[] $taxApplication
-	 * @param float $reservationQuantity
-	 * @param array $options
-	 * @throws \InvalidArgumentException
+	 * @param string $lineKey
+	 * @param float $newQuantity
+	 * @return CartLine|null
+	 */
+	public function updateLineQuantity($lineKey, $newQuantity)
+	{
+		$line = $this->getLineByKey($lineKey);
+		if ($line)
+		{
+			return $line->setQuantity(floatval($newQuantity));
+		}
+		return $line;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig
 	 * @return CartItem
 	 */
-	public function getNewItem($codeSKU, $priceValue = 0.0, $taxApplication = null, $reservationQuantity = 1.0,
-		array $options = null)
+	public function getNewItem(\Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig)
 	{
-		$item = new CartItem($codeSKU);
-		$item->setPriceValue(floatval($priceValue));
-		$item->setReservationQuantity(floatval($reservationQuantity));
-		if (is_array($options))
+		$item = new CartItem($cartItemConfig->getCodeSKU());
+		$item->setPriceValue(floatval($cartItemConfig->getPriceValue()));
+		$item->setReservationQuantity(floatval($cartItemConfig->getReservationQuantity()));
+		if (is_array($cartItemConfig->getOptions()))
 		{
-			$item->getOptions()->fromArray($options);
+			$item->getOptions()->fromArray($cartItemConfig->getOptions());
 		}
 
+		$taxApplication = $cartItemConfig->getTaxApplication();
 		if ($taxApplication instanceof TaxApplication)
 		{
 			$cartTax = new CartTax();
@@ -341,17 +384,53 @@ class Cart implements CartInterfaces
 					$cartTax->fromTaxApplication($taxApp);
 					$item->appendCartTaxes($cartTax);
 				}
-				else
-				{
-					throw new \InvalidArgumentException('Argument 3 should be a TaxApplication[]', 999999);
-				}
 			}
 		}
-		elseif ($taxApplication !== null)
-		{
-			throw new \InvalidArgumentException('Argument 3 should be a TaxApplication', 999999);
-		}
 		return $item;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItem $item
+	 * @param float $priceValue
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function updateItemPrice($item, $priceValue)
+	{
+		if ($item instanceof CartItem)
+		{
+			$item->setPriceValue(floatval($priceValue));
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartItem $item
+	 * @param TaxApplication[] $taxApplicationArray
+	 * @return \Rbs\Commerce\Interfaces\CartItem
+	 */
+	public function updateItemTaxes($item, $taxApplicationArray)
+	{
+		if ($item instanceof CartItem)
+		{
+			$cartTaxes = array();
+			foreach ($taxApplicationArray as $taxApplication)
+			{
+				if ($taxApplication instanceof TaxApplication)
+				{
+					$cartTax = new CartTax();
+					$cartTax->fromTaxApplication($taxApplication);
+					$cartTaxes[] = $cartTax;
+				}
+			}
+			$item->setCartTaxes($cartTaxes);
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
+		}
 	}
 
 	/**
@@ -431,5 +510,27 @@ class Cart implements CartInterfaces
 			/* @var $line CartLine */
 			$line->setCart($this);
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = array(
+			'identifier' => $this->identifier,
+			'billingArea' => $this->billingArea ? $this->billingArea->getCode() : null,
+			'zone' => $this->zone,
+			'locked' => $this->locked,
+			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
+			'ownerId' => $this->ownerId,
+			'context' => $this->getContext()->toArray(),
+			'lines' => array());
+
+		foreach($this->lines as $line)
+		{
+			$array['lines'][] = $line->toArray();
+		}
+		return $array;
 	}
 }
