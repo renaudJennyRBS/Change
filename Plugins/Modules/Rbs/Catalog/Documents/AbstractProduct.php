@@ -116,7 +116,7 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 	 */
 	protected function buildSkuCodeFromLabel()
 	{
-		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$cs = new \Rbs\Commerce\Services\CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
 		$retry = 0;
 		$baseCode = String::subString(preg_replace('/\s+/', '-', String::stripAccents(String::toUpper($this->getLabel()))), 0, 80);
 		$skuCode = $baseCode;
