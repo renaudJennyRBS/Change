@@ -67,6 +67,10 @@ class MarkdownParser extends \Michelf\Markdown {
 		{
 			$params = $params[1];
 		}
+		else
+		{
+			$params = '';
+		}
 
 		/* @var $image \Rbs\Media\Documents\Image */
 		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
@@ -76,7 +80,7 @@ class MarkdownParser extends \Michelf\Markdown {
 		}
 
 		$matches = array();
-		if ($params && preg_match('/^(\d+)x(\d+)$/', $params, $matches))
+		if ($params && preg_match('/^(\d+)[x\*](\d+)$/', $params, $matches))
 		{
 			$url = $image->getPublicURL($matches[1], $matches[2]);
 		}
