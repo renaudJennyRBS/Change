@@ -85,7 +85,7 @@
 			<img src="Rbs/Admin/img/ajax-loader-round.gif" />
 		</div>
 	</div>
-	<div full-screen-toggle id="fullScreenBar">
+	<div rbs-fullscreen-toggle id="fullScreenBar">
 		<i class="icon"></i>Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode
 		plein-écran.
 	</div>
@@ -99,7 +99,7 @@
 			<div class="btn-toolbar">
 				<button type="button" loading-indicator-button="" class="btn btn-large"></button>
 				<clipboard-widget></clipboard-widget>
-				<button full-screen-toggle type="button" class="btn btn-large" title="Basculer en mode plein écran"></button>
+				<button rbs-fullscreen-toggle type="button" class="btn btn-large" title="Basculer en mode plein écran"></button>
 			</div>
 			<breadcrumb></breadcrumb>
 		</div>
@@ -107,6 +107,7 @@
 		<div class="row-fluid">
 			<div class="span3" id="leftContainer" ng-swipe-right="menu.open()">
 				<div id="mainMenu"></div>
+				<div id="dockables"></div>
 			</div>
 			<div class="span9" id="mainContainer">
 				<notification-center></notification-center>
@@ -215,7 +216,6 @@
 	<script type="text/javascript" src="Rbs/Admin/js/services/clipboard.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/dialog.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/error-formatter.js"></script>
-	<script type="text/javascript" src="Rbs/Admin/js/services/fullscreen.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/i18n.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/loading.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/js/services/main-menu.js"></script>

@@ -9,7 +9,7 @@
 	/**
 	 * RichText input field.
 	 */
-	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', '$compile', function ($timeout, REST, Utils, $compile) {
+	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', function ($timeout, REST, Utils, Device, $compile) {
 
 		return {
 			restrict : 'EC',
@@ -17,7 +17,7 @@
 			// TODO Localization
 			template :
 				'<div class="tabbable">' +
-					'<ul class="nav nav-tabs" style="margin-bottom: 0">' +
+					'<ul ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">' +
 						'<li class="active"><a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">Éditeur</a></li>' +
 						'<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">Aperçu <i ng-show="previewing" class="icon-spinner icon-spin"></i></a></li>' +
 					'</ul>' +
@@ -25,9 +25,13 @@
 						'<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">' +
 							'<div class="btn-toolbar">' +
 
+								'<button ng-if="!useTabs" type="button" class="btn btn-small pull-right" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
+
+								// TODO Remove 'ng-disabled="useTextarea"' when Textarea is fully supported
+
 								// Headings
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">Titre <span class="caret"></span></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">Titre <span class="caret"></span></button>' +
 									'<ul class="dropdown-menu">' +
 										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(0)">Supprimer</a></li>' +
 										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(1)">Niveau 1</a></li>' +
@@ -41,34 +45,34 @@
 
 								// Bold, italic, ...
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-click="mdBold()"><i class="icon-bold"></i></button>' +
-									'<button type="button" class="btn btn-small" ng-click="mdItalic()"><i class="icon-italic"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-click="mdBold()"><i class="icon-bold"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-click="mdItalic()"><i class="icon-italic"></i></button>' +
 								'</div>' +
 
 								// Undo/redo
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-click="mdUndo()"><i class="icon-undo"></i></button>' +
-									'<button type="button" class="btn btn-small" ng-click="mdRedo()"><i class="icon-repeat"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-click="mdUndo()"><i class="icon-undo"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-click="mdRedo()"><i class="icon-repeat"></i></button>' +
 								'</div>' +
 
 								// Media
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'media\'}" ng-click="toggleSelector(\'media\')"><i class="icon-picture"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'media\'}" ng-click="toggleSelector(\'media\')"><i class="icon-picture"></i></button>' +
 								'</div>' +
 
 								// Links
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
 								'</div>' +
 
 								// Users
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'user\'}" ng-click="toggleSelector(\'user\')"><i class="icon-user"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'user\'}" ng-click="toggleSelector(\'user\')"><i class="icon-user"></i></button>' +
 								'</div>' +
 
 								// Groups
 								'<div class="btn-group">' +
-									'<button type="button" class="btn btn-small" ng-class="{active:currentSelector==\'usergroup\'}" ng-click="toggleSelector(\'usergroup\')"><i class="icon-group"></i></button>' +
+									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'usergroup\'}" ng-click="toggleSelector(\'usergroup\')"><i class="icon-group"></i></button>' +
 								'</div>' +
 
 							'</div>' +
@@ -80,7 +84,10 @@
 
 							'<div data-role="ace-editor"></div>' +
 						'</div>' +
-						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview"></div>' +
+						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">' +
+							'<button ng-if="!useTabs" type="button" class="btn btn-small pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>' +
+							'<div class="preview-content"></div>' +
+						'</div>' +
 					'</div>' +
 				'</div>',
 
@@ -88,15 +95,38 @@
 
 				var	editor,
 					session,
+					$textarea,
 					id,
-					$previewEl = element.find('div[data-role="preview-container"]'),
+					$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
 					$editorTab,
-					$selectors = {
-						'media' : element.find('div.media-picker'),
-						'link'  : element.find('div.link-picker'),
-						'user'  : element.find('div.user-picker'),
-						'usergroup'  : element.find('div.usergroup-picker')
-					};
+					$selectorsContainer,
+					$selectors;
+
+				scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
+
+				function ensureSelectorsReady () {
+					if (! $selectors) {
+
+						var seEditor = element.closest('structure-editor');
+						if (seEditor.length === 1) {
+							$selectorsContainer = seEditor.find('.rich-text-input-selectors-container').first();
+							$selectorsContainer.append(
+								'<div class="media-picker"></div>' +
+								'<div class="link-picker"></div>' +
+								'<div class="user-picker"></div>' +
+								'<div class="usergroup-picker"></div>'
+							);
+						} else {
+							$selectorsContainer = element;
+						}
+						$selectors = {
+							'media' : $selectorsContainer.find('div.media-picker'),
+							'link' : $selectorsContainer.find('div.link-picker'),
+							'user' : $selectorsContainer.find('div.user-picker'),
+							'usergroup' : $selectorsContainer.find('div.usergroup-picker')
+						};
+					}
+				}
 
 				scope.editorId = ++editorIdCounter;
 
@@ -104,7 +134,7 @@
 				element.find('[data-role="ace-editor"]').attr('id', id);
 
 				// Initialize ACE editor when the scope has been completely applied.
-				function initEditor () {
+				function initWithAceEditor () {
 					editor = ace.edit(id);
 					session = editor.getSession();
 					session.setMode("ace/mode/markdown");
@@ -170,19 +200,89 @@
 
 					ngModel.$render();
 				}
-				$timeout(initEditor);
 
 
-				// Drag and drop image from the media picker in the editor:
-				// We simply build the "Text" data transfer with the Markdown representation of the image,
-				// and we're done!
-				$(element).on({
-					'dragstart' : function (event) {
-						var draggedEl = $(this);
-						event.dataTransfer.setData('Text', buildMdImageTag(draggedEl.data('mediaPath'), draggedEl.data('mediaLabel')));
-						event.dataTransfer.effectAllowed = "copyMove";
+				// Initialize Textarea-based editor.
+				function initWithTextarea () {
+
+					$textarea = $('<textarea></textarea>');
+					$('#' + id).append($textarea);
+
+					// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
+					// so that the binding with the '<label/>' element works as expected.
+					// (see Directives in 'Rbs/Admin/Assets/js/directives/form-fields.js').
+					if (attrs.id && attrs.id === attrs.inputId) {
+						$textarea.attr('id', attrs.id);
+						element.removeAttr('id');
+						element.removeAttr('input-id');
 					}
-				}, '.media-picker .inner');
+
+					$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
+
+					ngModel.$render = function() {
+						if (angular.isObject(ngModel.$viewValue))
+						{
+							$textarea.val(ngModel.$viewValue.t);
+						}
+						else
+						{
+							$textarea.val(ngModel.$viewValue);
+						}
+					};
+
+					$textarea.on('change', function () {
+						$timeout(function () {
+							if (angular.isObject(ngModel.$viewValue))
+							{
+								ngModel.$viewValue.t = $textarea.val();
+								ngModel.$setViewValue(ngModel.$viewValue);
+							}
+							else
+							{
+								ngModel.$setViewValue($textarea.val());
+							}
+						});
+					});
+
+					$textarea.on("focus", function() {
+						element.addClass('focused');
+					});
+
+					$textarea.on("blur", function() {
+						element.removeClass('focused');
+					});
+
+					$textarea.on("drop", function (event) {
+						event.stopPropagation();
+						event.preventDefault();
+					});
+
+					ngModel.$render();
+				}
+
+
+				function canUseAceEditor () {
+					return ! Device.isMultiTouch();
+				}
+
+				scope.useTextarea = ! canUseAceEditor();
+
+				$timeout(function () {
+					if (canUseAceEditor()) {
+						initWithAceEditor();
+					} else {
+						initWithTextarea();
+					}
+				});
+
+
+				function getEditorContent () {
+					if (canUseAceEditor()) {
+						return editor.getValue();
+					} else {
+						return $textarea.val();
+					}
+				}
 
 
 				// Auto-height.
@@ -199,6 +299,14 @@
 				}
 
 
+				scope.preview = function () {
+					element.find('a[data-toggle="tab"][data-role="preview"]').tab('show');
+				};
+
+				scope.closePreview = function () {
+					element.find('a[data-toggle="tab"][data-role="editor"]').tab('show');
+				};
+
 				// Tabs and preview.
 				element.find('a[data-toggle="tab"]').on('show', function (e) {
 					if ($(e.target).data('role') === 'preview') {
@@ -208,7 +316,7 @@
 							'profile': (attrs.previewProfile || 'Website'),
 							'editor' : 'Markdown'
 						};
-						REST.postAction('renderRichText', editor.getValue(), params).then(function (data) {
+						REST.postAction('renderRichText', getEditorContent(), params).then(function (data) {
 							$previewEl.html(data.html);
 							scope.previewing = false;
 						});
@@ -244,7 +352,7 @@
 						if (range.start.row < (lineCount-1)) {
 							er = range.end.row + 1;
 							line = session.getLine(er);
-							ec = l;
+							ec = l; // FIXME 'l' or 'line' ? :(
 						}
 					}
 
@@ -383,6 +491,8 @@
 						return;
 					}
 
+					ensureSelectorsReady();
+
 					scope.closeSelector(scope.currentSelector);
 					scope.currentSelector = name;
 					if (name && $selectors[name]) {
@@ -427,10 +537,12 @@
 
 				scope.mdInsertDocumentLink = function (doc, route) {
 					var href = doc.id;
+					/*
+					TODO See if MarkdownParser can handle this.
 					if (doc.LCID)
 					{
 						href += ',' + doc.LCID;
-					}
+					}*/
 					if (route)
 					{
 						href += ',' + route;
@@ -465,12 +577,12 @@
 			scope    : false,
 			// TODO Localization
 			template :
-				'<div class="inner-selector">' +
+				'<div class="rbs-rich-text-input-inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
 					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-document-list class="grid-small" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
 						'<column name="path" thumbnail="XS"></column>' +
-						'<grid-item data-media-id="(=doc.id=)" data-media-label="(=doc.label=)" data-media-path="(=doc.path=)">' +
+						'<grid-item>' +
 							'<img rbs-storage-image="doc" thumbnail="XS"/>' +
 							'<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>' +
 						'</grid-item>' +
@@ -493,7 +605,7 @@
 			scope    : true,
 			// TODO Localization
 			template :
-				'<div class="inner-selector">' +
+				'<div class="rbs-rich-text-input-inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
 					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-model-selector filter="{publishable:true}" model="selectedModel"></rbs-model-selector>' +
@@ -519,7 +631,7 @@
 			scope    : true,
 			// TODO Localization
 			template :
-				'<div class="inner-selector">' +
+				'<div class="rbs-rich-text-input-inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'user\')">&times;</button>' +
 					'<h4>Sélectionner un utilisateur à insérer dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-document-list model="Rbs_User_User" query="userListQuery" toolbar="false" extend="picker">' +
@@ -530,7 +642,7 @@
 					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">(= doc.pseudonym =)</a>' +
 					'</column>' +
 					'</rbs-document-list>' +
-					'</div>',
+				'</div>',
 
 			//TODO filter the user, include only activated user.
 			compile : function (tElement) {
@@ -548,7 +660,7 @@
 			scope    : true,
 			// TODO Localization
 			template :
-				'<div class="inner-selector">' +
+				'<div class="rbs-rich-text-input-inner-selector">' +
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'usergroup\')">&times;</button>' +
 					'<h4>Sélectionner un groupe d\'utilisateurs à insérer dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-document-list model="Rbs_User_Group" toolbar="false" extend="picker">' +
@@ -559,7 +671,7 @@
 					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'usergroup\')">(= doc.label =)</a>' +
 					'</column>' +
 					'</rbs-document-list>' +
-					'</div>',
+				'</div>',
 
 			compile : function (tElement) {
 				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);

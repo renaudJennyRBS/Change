@@ -6,6 +6,7 @@
 		//blockPropertiesLinkBorder,
 		dropZoneIndicator,
 		blockPropertiesPopup,
+		blockPropertiesPopupShown = false,
 		lastSelectedBlock = null,
 
 		app = angular.module('RbsChange'),
@@ -19,7 +20,6 @@
 		highlightMargin = 2,
 		highlightBorder = 5;
 
-	// Append some visual decorations :)
 	$('body').append(
 		'<div id="structure-editor-block-properties-popup" class="dockable" style="display:none;"></div>' +
 		'<div id="structure-editor-dropzone-indicator"><span class="content"></span><i class="icon-arrow-right"></i></div>'
@@ -44,6 +44,7 @@
 		}
 
 		blockPropertiesPopup.show();
+		blockPropertiesPopupShown = true;
 
 		lastSelectedBlock = blockEl;
 	}
@@ -51,6 +52,7 @@
 
 	function closeBlockSettingsEditor () {
 		blockPropertiesPopup.hide();
+		blockPropertiesPopupShown = false;
 	}
 
 
@@ -127,8 +129,7 @@
 
 
 		this.initItem = function initItem (scope, container, item, atIndex) {
-			console.log("Init Item: ", item);
-			var html = null, newEl = null;
+			var html = null, newEl;
 
 			switch (item.type) {
 			case 'block' :
@@ -152,14 +153,14 @@
 				container.removeClass('empty');
 			}
 
-			$compile(html)(scope, function (cloneEl) {
-				if (angular.isUndefined(atIndex) || atIndex === -1 || atIndex > container.children().length-1) {
-					container.append(cloneEl);
-				} else {
-					$(container.children()[atIndex]).before(cloneEl);
-				}
-				newEl = cloneEl;
-			});
+			newEl = $(html);
+
+			if (angular.isUndefined(atIndex) || atIndex === -1 || atIndex > container.children().length-1) {
+				container.append(newEl);
+			} else {
+				$(container.children()[atIndex]).before(newEl);
+			}
+			$compile(newEl)(scope);
 
 			return newEl;
 		};
@@ -171,8 +172,6 @@
 			}
 			if (item.name === RICH_TEXT_BLOCK_NAME) {
 				return this.initRichText(item);
-			} else if (item.name === ADVANCED_TEXT_BLOCK_NAME) {
-				return this.initFormattedText(item);
 			} else {
 				var className = 'se-block-template';
 				return '<div class="' + className + '" data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
@@ -180,14 +179,7 @@
 		};
 
 		this.initRichText = function initRichText (item) {
-			var content = (item.parameters && item.parameters.content) ? item.parameters.content : '';
-			return '<div class="se-rich-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '">' + content + '</div>';
-		};
-
-		this.initFormattedText = function initFormattedText (item) {
-			console.log("initFormattedText");
-			var content = (item.parameters && item.parameters.content) ? item.parameters.content : '';
-			return '<div class="se-formatted-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '">' + content + '</div>';
+			return '<div class="se-markdown-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
 		this.initRow = function initRow (item) {
@@ -482,6 +474,7 @@
 					'</div>' +
 					'<div class="btn-group" ng-transclude></div>' +
 				'</div>' +
+				'<div class="rich-text-input-selectors-container"></div>' +
 				'<div class="structure-editor"></div>',
 
 
@@ -511,7 +504,8 @@
 				 * @returns {*}
 				 */
 				this.selectBlock = function selectBlock (blockEl, params) {
-					if (selectedBlock !== blockEl) {
+					var shouldUpdate = selectedBlock !== blockEl;
+					if (shouldUpdate) {
 						if (selectedBlock !== null) {
 							selectedBlock.removeClass('active');
 						}
@@ -519,7 +513,10 @@
 						selectedBlock.addClass('active');
 					}
 
-					this.showBlockSettingsEditor(selectedBlock, params);
+					if (! blockPropertiesPopupShown || shouldUpdate) {
+						this.showBlockSettingsEditor(selectedBlock, params);
+					}
+
 					return blockEl;
 				};
 
@@ -582,7 +579,7 @@
 						$timeout(function () {
 							var inputs = blockPropertiesPopup.find('input[type="text"]');
 							if (inputs.length) {
-								inputs.focus();
+								inputs[0].focus();
 							}
 						});
 					}
@@ -853,7 +850,6 @@
 							}
 						} else {
 							isValid = false;
-							console.log("chooser", blockEl);
 						}
 					});
 				}
@@ -1233,10 +1229,14 @@
 
 				Workspace.addResizeHandler("StructureEditor", resizeHandler);
 
-				scope.$on('Change:Workspace:SidebarExpanded', resizeHandler);
-				scope.$on('Change:Workspace:SidebarCollapsed', resizeHandler);
+				scope.$on('Change:FullScreen:On', resizeHandler);
+				scope.$on('Change:FullScreen:Off', resizeHandler);
 
 				resizeHandler();
+
+				scope.$on('$destroy', function () {
+					closeBlockSettingsEditor();
+				});
 
 			}
 
@@ -1430,13 +1430,13 @@
 						isLastCol = (index === scope.columns.length -1);
 
 					if (isLastCol && scope.totalColumns < gridSize) {
-						offset = $event.shiftKey ? gridSize - scope.totalColumns : 1;
+						offset = $event.altKey ? gridSize - scope.totalColumns : 1;
 					} else {
 						if (scope.columns[index+1] && scope.columns[index+1].offset >= 1) {
-							offset = $event.shiftKey ? scope.columns[index+1].offset : 1;
+							offset = $event.altKey ? scope.columns[index+1].offset : 1;
 							scope.columns[index+1].offset -= offset;
 						} else if (scope.totalColumns < gridSize) {
-							offset = $event.shiftKey ? gridSize - scope.totalColumns : 1;
+							offset = $event.altKey ? gridSize - scope.totalColumns : 1;
 						}
 					}
 
@@ -1452,7 +1452,7 @@
 						$event.stopPropagation();
 					}
 
-					var offset = $event.shiftKey ? scope.columns[index].offset : 1;
+					var offset = $event.altKey ? scope.columns[index].offset : 1;
 					scope.columns[index].offset -= offset;
 					if (scope.columns[index + 1]) {
 						scope.columns[index + 1].offset += offset;
@@ -1483,7 +1483,7 @@
 
 					// If the Shift key is pressed,
 					// find all the offsets that can be removed in favour of the column width.
-					if ($event.shiftKey) {
+					if ($event.altKey) {
 						offsetToRemove = column.offset || 0;
 						if (nextColumn) {
 							nextOffsetToRemove = nextColumn.offset || 0;
@@ -1719,19 +1719,21 @@
 			"template"   :
 				'<div class="btn-toolbar">' +
 					'<div class="btn-group">' +
-						'<button class="btn btn-small" disabled="disabled"><i class="icon-plus"></i> bloc</button>' +
+						'<button class="btn btn-small" disabled="disabled"><i class="icon-plus"></i></button>' +
 						'<button class="btn btn-small" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
 						'<button class="btn btn-small" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
 						'<button class="btn btn-small" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
 						'<button class="btn btn-small" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
 					'</div>' +
-					'<button class="btn btn-small btn-danger" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
+					'<button class="btn btn-small btn-danger pull-right" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
 				'</div>' +
 				'<div class="btn-toolbar">' +
 					'<h6>Visibilité</h6>' +
-					'<button class="btn btn-small" ng-click="toggleVisibility(\'D\')" ng-class="{\'btn-success active\': isVisibleFor(\'D\')}">Ordinateurs</button>' +
-					'<button class="btn btn-small" ng-click="toggleVisibility(\'T\')" ng-class="{\'btn-success active\': isVisibleFor(\'T\')}">Tablettes</button>' +
-					'<button class="btn btn-small" ng-click="toggleVisibility(\'P\')" ng-class="{\'btn-success active\': isVisibleFor(\'P\')}">Mobiles</button>' +
+					'<div style="text-align: center;">' +
+						'<button class="btn btn-mini" ng-click="toggleVisibility(\'D\')" ng-class="{\'btn-success active\': isVisibleFor(\'D\')}">Ordinateurs</button>' +
+						'<button class="btn btn-mini" ng-click="toggleVisibility(\'T\')" ng-class="{\'btn-success active\': isVisibleFor(\'T\')}">Tablettes</button>' +
+						'<button class="btn btn-mini" ng-click="toggleVisibility(\'P\')" ng-class="{\'btn-success active\': isVisibleFor(\'P\')}">Mobiles</button>' +
+					'</div>' +
 				'</div>' +
 				'<div class="btn-toolbar" ng-show="isInColumnLayout()">' +
 					'<button class="btn btn-small pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
@@ -1749,7 +1751,7 @@
 						'<div ng-switch="param.type" class="controls">' +
 							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Integer" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
 							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Document" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
-							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" ng-model="item.parameters[param.name]"/>' +
+							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
 							'<switch id="block_{{block.id}}_param_{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
 						'</div>' +
 					'</div>' +
@@ -1926,8 +1928,6 @@
 					}
 				});
 
-
-
 			}
 
 		};
@@ -2031,7 +2031,7 @@
 			"template" :
 				'<header>Choisissez le type de bloc à ajouter :</header>' +
 
-				'<select ng-options="mod for mod in modules" ng-model="selectedModule"></select>' +
+				'<select ng-options="mod for mod in modules" ng-model="selectedModule" class="input-block-level"></select>' +
 				'<button class="btn btn-block" type="button" ng-click="makeBlock($event, block)" ng-repeat="block in blocks[selectedModule]">' +
 					'<i class="{{block.name}} icon-large"></i> {{block.label}}' +
 				'</button>',
@@ -2155,7 +2155,6 @@
 			"link" : function seBlockDocumentLinkFn (scope, element, attrs) {
 				var originalItem = scope.controller.getItemById(element.data('id'));
 				scope.block = angular.copy(originalItem);
-				console.log(scope.block, originalItem);
 
 				scope.hasChanged = function () {
 					return ! angular.equals(scope.block, originalItem);
@@ -2166,7 +2165,6 @@
 				};
 
 				scope.submit = function () {
-					console.log("Block param submit: ", scope.block);
 					angular.extend(originalItem, scope.block);
 					scope.controller.notifyChange("changeSettings", "block", element);
 				};
@@ -2243,43 +2241,64 @@
 	}]);
 
 
-
 	//-------------------------------------------------------------------------
 	//
-	// Block rich text.
+	// Markdown text.
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seFormattedText', function () {
+	app.directive('seMarkdownText', [ function () {
 
 		return {
 
 			"restrict"   : 'C',
 			"scope"      : {}, // isolated scope is required
 			"require"    : '^structureEditor',
-			//"transclude" : true,
+			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div draggable="true" ng-click="selectBlock($event)" class="block"></div>',
+			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text"></rbs-rich-text-input></div>',
 
-			"link" : function seFormattedTextLinkFn (scope, element, attrs, ctrl) {
-				element.attr('block-label', "Texte formatté");
-				element.attr('block-type', "formatted-text");
+			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
+				element.attr('block-label', "Markdown");
+				element.attr('block-type', "rich-text");
 
-				scope.saveItem = function (item) {
-					console.log("Saving formatted text: ", item);
-					element.html("totototot");
-				};
+				var item = ctrl.getItemById(element.data('id'));
+				if (! item.parameters) {
+					item.parameters = {
+						'contentType' : 'Markdown',
+						'content' : ''
+					};
+				}
+				scope.text = item.parameters.content;
+
+				scope.$watch('text', function (text, old) {
+					if (text !== old) {
+						scope.saveItem(item);
+					}
+				});
 
 				scope.selectBlock = function ($event) {
 					$event.stopPropagation();
 					ctrl.selectBlock(element);
 				};
 
+
+				scope.initItem = function (item) {
+					item.parameters = {
+						'contentType': 'Markdown'
+					};
+				};
+
+				scope.saveItem = function (item) {
+					if (item) {
+						angular.extend(item.parameters, {'content': scope.text});
+					}
+				};
 			}
 
 		};
 
-	});
+	}]);
 
 
 	//-------------------------------------------------------------------------
@@ -2297,27 +2316,6 @@
 			"replace"    : true,
 
 			"template"   : '<rich-text-toolbar></rich-text-toolbar>'
-
-		};
-
-	});
-
-
-	//-------------------------------------------------------------------------
-	//
-	// Block rich text settings.
-	//
-	//-------------------------------------------------------------------------
-
-	app.directive('seFormattedTextSettings', function () {
-
-		return {
-
-			"restrict"   : 'C',
-			"scope"      : true,
-			"replace"    : true,
-
-			"template"   : '<ace-editor mode="markdown"></ace-editor>'
 
 		};
 
