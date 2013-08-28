@@ -572,9 +572,6 @@
 								if (columnName in modelInfo.properties) {
 									scope.columns[columnName].label = modelInfo.properties[columnName].label;
 								}
-								else {
-									console.warn('[Rbs/Admin/Assets/js/directives/document-list.js] ' + columnName + ' does not exist in model infos properties!');
-								}
 							});
 						});
 					}
