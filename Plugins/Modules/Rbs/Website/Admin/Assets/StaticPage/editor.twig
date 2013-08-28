@@ -1,5 +1,5 @@
-<form ng-submit="submit()" class="form-horizontal">
-	<fieldset data-ng-show="section==''"
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
@@ -33,7 +33,7 @@
 
 	</fieldset>
 
-	<fieldset data-ng-show="section=='content'"
+	<fieldset ng-show="section=='content'"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.document.staticpage.editableContent', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<structure-editor name="contents"
@@ -42,14 +42,14 @@
 		</structure-editor>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='systeminfo'"
+	<fieldset ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
 	<fieldset
-		data-ng-show="section=='timeline'"
+		ng-show="section=='timeline'"
 		data-form-section-label="{{ i18nAttr('m.rbs.timeline.admin.message-list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
 		rbs-timeline>
