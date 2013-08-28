@@ -29,6 +29,15 @@
 			}
 		});
 
+		$scope.$watch('filterModules', function (filter) {
+			if (filter && angular.lowercase(filter.replace(/\s+/g, '')) === 'chucknorris') {
+				$scope.chuckUrl = 'Rbs/Admin/img/chuck.jpg';
+			}
+			else {
+				$scope.chuckUrl = null;
+			}
+		});
+
 		$scope.open = function () {
 			$menu.addClass('show');
 			if (!Device.isMultiTouch()) {
@@ -55,20 +64,9 @@
 			$filterInput.focus();
 		};
 
-		$scope.filterKeydown = function ($event) {
-			if ($event.keyCode === 27) {
-				if (!$scope.filterModules || !$scope.filterModules.length) {
-					this.close();
-				} else {
-					$timeout(function () {
-						$scope.filterModules = '';
-					});
-				}
-			}
-		};
-
 		$scope.go = function () {
-			var found = $filter('filter')(this.modules, $scope.filterModules);
+			var found = $filter('filter')($scope.menu.entries, $scope.filterModules);
+			console.log("go: ", $scope.filterModules, found);
 			if (found.length === 1) {
 				this.close();
 				$location.path(found[0].url);

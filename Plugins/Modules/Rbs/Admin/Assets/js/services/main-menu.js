@@ -129,7 +129,8 @@
 
 		this.popContents = function () {
 			if (!this.frozen) {
-				this.build(contentsStack.pop());
+				var scope = contentsStack.pop();
+				this.build(scope._chgMenu, scope);
 			}
 		};
 
@@ -194,6 +195,7 @@
 		/**
 		 * Builds the menu contents from the given entries.
 		 *
+		 * @param menuObject Menu object that defines the menu (see directives/editor.js).
 		 * @param scope The scope into which the contents should be compiled.
 		 */
 		this.build = function (menuObject, scope) {
