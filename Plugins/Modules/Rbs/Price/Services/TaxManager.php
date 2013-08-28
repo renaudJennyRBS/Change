@@ -49,13 +49,13 @@ class TaxManager
 	}
 
 	/**
-	 * @param \Rbs\Price\Std\TaxApplication[] $taxApplicationArray
+	 * @param \Rbs\Commerce\Interfaces\TaxApplication[] $taxApplicationArray
 	 * @return float
 	 */
 	protected function getEffectiveRate($taxApplicationArray)
 	{
 		$effectiveRate = 0.0;
-		array_walk($taxApplicationArray, function(\Rbs\Price\Std\TaxApplication $taxApplication, $key) use (&$effectiveRate) {$effectiveRate += $taxApplication->getRate();});
+		array_walk($taxApplicationArray, function(\Rbs\Commerce\Interfaces\TaxApplication $taxApplication, $key) use (&$effectiveRate) {$effectiveRate += $taxApplication->getRate();});
 		return $effectiveRate;
 	}
 
@@ -68,7 +68,7 @@ class TaxManager
 	 */
 	protected function getTaxRates($taxCategories, $taxes, $zone)
 	{
-		/* @var $taxRates \Rbs\Price\Std\TaxApplication[] */
+		/* @var $taxRates \Rbs\Commerce\Interfaces\TaxApplication[] */
 		$taxRates = array();
 		foreach($taxes as $tax)
 		{
@@ -94,7 +94,7 @@ class TaxManager
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
 	 * @param array<taxCode => category> $taxCategories
-	 * @return \Rbs\Price\Std\TaxApplication[]
+	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
 	 */
 	public function getTaxByValue($value, $taxCategories, $billingArea = null, $zone = null)
 	{
@@ -128,7 +128,7 @@ class TaxManager
 	 * @param array<taxCode => category> $taxCategories
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
-	 * @return \Rbs\Price\Std\TaxApplication[]
+	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
 	 */
 	public function getTaxByValueWithTax($valueWithTax, $taxCategories, $billingArea = null, $zone = null)
 	{
@@ -163,7 +163,7 @@ class TaxManager
 
 	/**
 	 * @param float $value
-	 * @param \Rbs\Price\Std\TaxApplication[] $taxApplications
+	 * @param \Rbs\Commerce\Interfaces\TaxApplication[] $taxApplications
 	 * @return float
 	 */
 	public function getValueWithTax($value, $taxApplications)
@@ -171,12 +171,27 @@ class TaxManager
 		$valueWithTax = $value;
 		if (is_array($taxApplications) && count($taxApplications))
 		{
-			/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
+			/* @var $taxApplication \Rbs\Commerce\Interfaces\TaxApplication */
 			foreach ($taxApplications as $taxApplication)
 			{
 				$valueWithTax += $taxApplication->getValue();
 			}
 		}
 		return $valueWithTax;
+	}
+
+	/**
+	 * @param float $rate
+	 * @return null|string
+	 */
+	public function formatRate($rate)
+	{
+		if ($rate !== null)
+		{
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::PERCENT);
+			$nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 3);
+			return $nf->format($rate);
+		}
+		return null;
 	}
 }

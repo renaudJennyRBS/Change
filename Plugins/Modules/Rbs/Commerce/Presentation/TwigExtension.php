@@ -83,7 +83,8 @@ class TwigExtension  implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('formatPrice', array($this, 'formatPrice'))
+			new \Twig_SimpleFunction('formatPrice', array($this, 'formatPrice')),
+			new \Twig_SimpleFunction('formatRate', array($this, 'formatRate'))
 		);
 	}
 
@@ -115,14 +116,28 @@ class TwigExtension  implements \Twig_ExtensionInterface
 
 	/**
 	 * @param float $value
+	 * @param string|null $currencyCode
 	 * @return string
 	 */
-	public function formatPrice($value)
+	public function formatPrice($value, $currencyCode = null)
 	{
 		if ($value === null || !is_numeric($value))
 		{
 			return '';
 		}
-		return $this->getCommerceServices()->getPriceManager()->formatValue($value);
+		return $this->getCommerceServices()->getPriceManager()->formatValue($value, $currencyCode);
+	}
+
+	/**
+	 * @param float $rate
+	 * @return string
+	 */
+	public function formatRate($rate)
+	{
+		if ($rate === null || !is_numeric($rate))
+		{
+			return '';
+		}
+		return $this->getCommerceServices()->getTaxManager()->formatRate($rate);
 	}
 }

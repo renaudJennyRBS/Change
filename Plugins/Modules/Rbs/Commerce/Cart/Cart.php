@@ -360,7 +360,7 @@ class Cart implements CartInterfaces
 	public function getNewItem(\Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig)
 	{
 		$item = new CartItem($cartItemConfig->getCodeSKU());
-		$item->setPriceValue(floatval($cartItemConfig->getPriceValue()));
+		$item->setPriceValue($cartItemConfig->getPriceValue());
 		$item->setReservationQuantity(floatval($cartItemConfig->getReservationQuantity()));
 		if (is_array($cartItemConfig->getOptions()))
 		{
@@ -398,7 +398,7 @@ class Cart implements CartInterfaces
 	{
 		if ($item instanceof CartItem)
 		{
-			$item->setPriceValue(floatval($priceValue));
+			$item->setPriceValue($priceValue);
 		}
 		else
 		{
@@ -431,6 +431,38 @@ class Cart implements CartInterfaces
 		{
 			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
 		}
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\CartTax[]
+	 */
+	public function getTaxes()
+	{
+		/* @var $taxes CartTax[] */
+		$taxes = array();
+		foreach ($this->lines as $line)
+		{
+			$qtt = $line->getQuantity();
+			foreach ($line->getItems() as $item)
+			{
+				foreach ($item->getCartTaxes() as $cartTax)
+				{
+					$key = ($cartTax->getTax() ? $cartTax->getTax()->getCode() : '') . '/' . $cartTax->getCategory();
+					if (!isset($taxes[$key]))
+					{
+						$tax = clone($cartTax);
+						$tax->setValue($tax->getValue() * $qtt);
+						$taxes[$key] = $tax;
+					}
+					else
+					{
+						$tax = $taxes[$key];
+						$tax->addValue($cartTax->getValue() * $qtt);
+					}
+				}
+			}
+		}
+		return array_values($taxes);
 	}
 
 	/**

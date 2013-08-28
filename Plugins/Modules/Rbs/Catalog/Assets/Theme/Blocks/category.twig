@@ -42,6 +42,8 @@
 
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
 	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
+	<input type="hidden" name="quantity" value="1" />
+	<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
 	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
 		{% for row in rows %}
 			<li>
@@ -71,9 +73,8 @@
 					<li class="product-price price">{{ formatPrice(row.price) }} <span class="tax-mode">HT</span></li>
 					<li class="product-price price">{{ formatPrice(row.priceTTC) }}  <span class="tax-mode">TTC</span></li>
 					<li class="product-add">
-						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}"
-							onclick="alert('{{ row.id }}');">
-							<i class="icon-shopping-cart"></i> Ajouter au panier
+						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
+							<i class="icon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart') }}
 						</button>
 					</li>
 				</ul>

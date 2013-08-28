@@ -166,7 +166,7 @@ class CartLine implements CartLineInterfaces
 	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Cart\CartItem
 	 */
-	public function appendItem(\Rbs\Commerce\Interfaces\CartItem $item)
+	public function appendItem($item)
 	{
 		if ($item instanceof CartItem)
 		{
@@ -221,7 +221,6 @@ class CartLine implements CartLineInterfaces
 
 	/**
 	 * String representation of object
-	 * @link http://php.net/manual/en/serializable.serialize.php
 	 * @return string the string representation of the object or null
 	 */
 	public function serialize()
@@ -237,7 +236,6 @@ class CartLine implements CartLineInterfaces
 
 	/**
 	 * Constructs the object
-	 * @link http://php.net/manual/en/serializable.unserialize.php
 	 * @param string $serialized
 	 * @return void
 	 */
@@ -245,8 +243,6 @@ class CartLine implements CartLineInterfaces
 	{
 		$this->serializedData = unserialize($serialized);
 	}
-
-
 
 	protected function restoreSerializedData(Cart $cart)
 	{
@@ -276,7 +272,7 @@ class CartLine implements CartLineInterfaces
 			'designation' => $this->designation,
 			'items' => array(),
 			'options' => $this->getOptions()->toArray());
-		foreach($this->items as $item)
+		foreach ($this->items as $item)
 		{
 			$array['items'][] = $item->toArray();
 		}
@@ -286,5 +282,64 @@ class CartLine implements CartLineInterfaces
 	public function __toString()
 	{
 		return $this->number . ') ' . $this->designation . ' [' . $this->key . ']';
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getUnitPriceValue()
+	{
+		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item)
+		{
+			if ($item->getPriceValue() !== null)
+			{
+				return $result + $item->getPriceValue();
+			}
+			return $result;
+		});
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue()
+	{
+		$quantity = $this->getQuantity();
+		if ($quantity)
+		{
+			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item) use ($quantity)
+			{
+				if ($item->getPriceValue() !== null)
+				{
+					return $result + ($item->getPriceValue() * $quantity);
+				}
+				return $result;
+			});
+		}
+		return null;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax()
+	{
+		$quantity = $this->getQuantity();
+		if ($quantity)
+		{
+			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item) use ($quantity)
+			{
+				if ($item->getPriceValue() !== null)
+				{
+					$tax = array_reduce($item->getCartTaxes(), function ($result, \Rbs\Commerce\Cart\CartTax $cartTax) use ($quantity)
+					{
+						return $result + $cartTax->getValue() * $quantity;
+					}, 0.0);
+					return $result + ($item->getPriceValue() * $quantity) + $tax;
+				}
+				return $result;
+			});
+		}
+		return null;
 	}
 }

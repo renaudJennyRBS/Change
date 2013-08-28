@@ -5,7 +5,7 @@ use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 use Change\Stdlib\String;
-use Rbs\Commerce\Services\CommerceServices;
+
 
 /**
  * @name \Rbs\Catalog\Documents\AbstractProduct
@@ -93,6 +93,8 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 		if ($this->getNewSkuOnCreation())
 		{
 			$tm = $this->getApplicationServices()->getTransactionManager();
+
+			/* @var $sku \Rbs\Stock\Documents\Sku */
 			$sku = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
 			try
 			{
@@ -165,10 +167,21 @@ class AbstractProduct extends \Compilation\Rbs\Catalog\Documents\AbstractProduct
 	}
 
 	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param array $parameters
 	 * @return \Rbs\Catalog\Std\ProductCartLineConfig
 	 */
-	public function getCartLineConfig()
+	public function getCartLineConfig(\Rbs\Commerce\Services\CommerceServices $commerceServices, array $parameters)
 	{
-		return new \Rbs\Catalog\Std\ProductCartLineConfig($this);
+		$cartLineConfig = new \Rbs\Catalog\Std\ProductCartLineConfig($this);
+		$options = isset($parameters['options']) ? $parameters['options'] : array();
+		if (is_array($options))
+		{
+			foreach ($options as $optName => $optValue)
+			{
+				$cartLineConfig->setOption($optName, $optValue);
+			}
+		}
+		return $cartLineConfig;
 	}
 }

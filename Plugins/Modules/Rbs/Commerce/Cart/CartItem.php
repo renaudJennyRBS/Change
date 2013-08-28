@@ -8,19 +8,18 @@ use Rbs\Commerce\Interfaces\CartItem as CartItemInterfaces;
  */
 class CartItem implements CartItemInterfaces
 {
-
 	/**
 	 * @var string
 	 */
 	protected $codeSKU;
 
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	protected $reservationQuantity;
 
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	protected $priceValue;
 
@@ -69,17 +68,17 @@ class CartItem implements CartItemInterfaces
 	}
 
 	/**
-	 * @param float $reservationQuantity
+	 * @param float|null $reservationQuantity
 	 * @return $this
 	 */
 	public function setReservationQuantity($reservationQuantity)
 	{
-		$this->reservationQuantity = $reservationQuantity;
+		$this->reservationQuantity = ($reservationQuantity === null) ? $reservationQuantity : floatval($reservationQuantity);
 		return $this;
 	}
 
 	/**
-	 * @return float
+	 * @return float|null
 	 */
 	public function getReservationQuantity()
 	{
@@ -87,17 +86,17 @@ class CartItem implements CartItemInterfaces
 	}
 
 	/**
-	 * @param float $priceValue
+	 * @param float|null $priceValue
 	 * @return $this
 	 */
 	public function setPriceValue($priceValue)
 	{
-		$this->priceValue = $priceValue;
+		$this->priceValue = ($priceValue === null) ? $priceValue : floatval($priceValue);
 		return $this;
 	}
 
 	/**
-	 * @return float
+	 * @return float|null
 	 */
 	public function getPriceValue()
 	{

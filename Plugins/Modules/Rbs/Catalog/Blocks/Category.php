@@ -94,14 +94,16 @@ class Category extends Block
 
 			$rows = array();
 			$webStore = $category->getWebStore();
+			$webStoreId = $webStore ? $webStore->getId() : 0;
+			$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
 			foreach ($query->getDocuments() as $product)
 			{
 				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
-				$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
+				$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;
-				$price = $priceManager ? $priceManager->getPriceByProduct($product, $webStore) : null;
+				$price = $priceManager ? $priceManager->getPriceByProduct($product, $webStoreId) : null;
 				if ($price)
 				{
 					$row['price'] = $price->getValue();

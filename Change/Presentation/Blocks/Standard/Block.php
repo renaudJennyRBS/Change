@@ -75,7 +75,7 @@ class Block
 		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
 		$event->setBlockResult($result);
 
-		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters()));
+		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters(), 'blockId' => $blockLayout->getId()));
 		$templateName = $this->execute($event, $attributes);
 
 		if (is_string($templateName) && !$result->getHtmlCallback())

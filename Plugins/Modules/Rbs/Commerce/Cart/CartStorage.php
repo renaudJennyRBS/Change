@@ -3,20 +3,22 @@ namespace Rbs\Commerce\Cart;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentWeakReference;
-use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
 use Rbs\Commerce\Services\CommerceServices;
 
 /**
-* @name \Rbs\Commerce\Cart\CartStorage
-*/
+ * @name \Rbs\Commerce\Cart\CartStorage
+ */
 class CartStorage
 {
 	/**
 	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param string $zone
+	 * @param array $context
 	 * @throws \Exception
 	 * @return Cart
 	 */
-	public function getNewCart(CommerceServices $commerceServices)
+	public function getNewCart(CommerceServices $commerceServices, $billingArea, $zone, $context)
 	{
 		$tm = $commerceServices->getApplicationServices()->getTransactionManager();
 		$cart = null;
@@ -40,9 +42,26 @@ class CartStorage
 			$identifier = sha1($id . '-' . $date->getTimestamp());
 			$cart = new Cart($identifier, $commerceServices);
 			$cart->lastUpdate($date);
-			$cart->setBillingArea($commerceServices->getBillingArea());
-			$cart->setZone($commerceServices->getZone());
-
+			if ($billingArea instanceof \Rbs\Commerce\Interfaces\BillingArea)
+			{
+				$cart->setBillingArea($billingArea);
+			}
+			else
+			{
+				$cart->setBillingArea($commerceServices->getBillingArea());
+			}
+			if (is_string($zone))
+			{
+				$cart->setZone($zone);
+			}
+			else
+			{
+				$cart->setZone($commerceServices->getZone());
+			}
+			if (is_array($context) && count($context))
+			{
+				$cart->getContext()->fromArray($context);
+			}
 			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
@@ -135,6 +154,114 @@ class CartStorage
 			$uq->bindParameter('locked', false);
 			$uq->execute();
 
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @param Cart $cart
+	 * @param integer $ownerId
+	 * @throws \Exception
+	 */
+	public function lockCart(Cart $cart, $ownerId = null)
+	{
+		$cart->lastUpdate(new \DateTime());
+		if ($ownerId !== null)
+		{
+			$cart->setOwnerId($ownerId);
+		}
+
+		$applicationServices = $cart->getCommerceServices()->getApplicationServices();
+		$tm = $applicationServices->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->table('rbs_commerce_dat_cart'));
+			$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
+			$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
+			$qb->assign($fb->column('locked'), $fb->booleanParameter('locked'));
+			$qb->where(
+				$fb->logicAnd(
+					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+					$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+				)
+			);
+
+			$uq = $qb->updateQuery();
+			$uq->bindParameter('lastUpdate', $cart->lastUpdate());
+			$uq->bindParameter('ownerId', $cart->getOwnerId());
+			$uq->bindParameter('locked', true);
+			$uq->bindParameter('identifier', $cart->getIdentifier());
+			$uq->bindParameter('whereLocked', false);
+			$uq->execute();
+
+			$tm->commit();
+			$cart->setLocked(true);
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @param Cart $cart
+	 * @throws \Exception
+	 */
+	public function deleteCart(Cart $cart)
+	{
+		$applicationServices = $cart->getCommerceServices()->getApplicationServices();
+		$tm = $applicationServices->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->table('rbs_commerce_dat_cart'));
+			$qb->where(
+				$fb->logicAnd(
+					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+					$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+				)
+			);
+			$uq = $qb->deleteQuery();
+			$uq->bindParameter('identifier', $cart->getIdentifier());
+			$uq->bindParameter('whereLocked', false);
+			$uq->execute();
+			$tm->commit();
+			$cart->setLocked(true);
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @param string $identifier
+	 * @param CommerceServices $commerceServices
+	 * @throws \Exception
+	 */
+	public function purgeCart($identifier, CommerceServices $commerceServices)
+	{
+		$applicationServices = $commerceServices->getApplicationServices();
+		$tm = $applicationServices->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->table('rbs_commerce_dat_cart'));
+			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+			$uq = $qb->deleteQuery();
+			$uq->bindParameter('identifier', $identifier);
+			$uq->execute();
 			$tm->commit();
 		}
 		catch (\Exception $e)

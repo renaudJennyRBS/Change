@@ -85,6 +85,26 @@ class CartTax implements CartTaxInterfaces
 	}
 
 	/**
+	 * @param float $value
+	 * @return $this
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
+		return $this;
+	}
+
+	/**
+	 * @param float $add
+	 * @return $this
+	 */
+	public function addValue($add)
+	{
+		$this->value += $add;
+		return $this;
+	}
+
+	/**
 	 * @return float
 	 */
 	public function getValue()

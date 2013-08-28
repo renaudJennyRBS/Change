@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
+use Zend\Form\Annotation\AbstractArrayAnnotation;
+
 /**
  * @name \Rbs\Commerce\Cart\CartManager
  */
@@ -86,13 +88,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param string $zone
+	 * @param array $context
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\Cart
 	 */
-	public function getNewCart()
+	public function getNewCart($billingArea = null, $zone = null, array $context = array())
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('commerceServices' => $this->getCommerceServices()));
+		$args = $em->prepareArgs(
+			array('commerceServices' => $this->getCommerceServices(),
+				'billingArea' => $billingArea, 'zone' => $zone, 'context' => $context));
 		$this->getEventManager()->trigger('getNewCart', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
@@ -116,14 +123,38 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLineConfigCapable $key
+	 * @param integer $ownerId
+	 * @return bool
+	 */
+	public function lockCart(\Rbs\Commerce\Interfaces\Cart $cart, $ownerId)
+	{
+		if (!$cart->isLocked())
+		{
+			try
+			{
+				$em = $this->getEventManager();
+				$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId, 'commerceServices' => $this->getCommerceServices()));
+				$this->getEventManager()->trigger('lockCart', $this, $args);
+				return $cart->isLocked();
+			}
+			catch (\Exception $e)
+			{
+				$this->getApplicationServices()->getLogging()->exception($e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $key
 	 * @return \Rbs\Commerce\Interfaces\CartLine|null
 	 */
 	public function getLineByKey(\Rbs\Commerce\Interfaces\Cart $cart, $key)
 	{
-		if ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
+		if ($key instanceof \Rbs\Commerce\Interfaces\CartLine)
 		{
-			$lineKey = $key->getCartLineConfig()->getKey();
+			$lineKey = $key->getKey();
 		}
 		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
@@ -138,18 +169,13 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @param \Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLineConfigCapable $cartLineConfig
+	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
 	 * @param float $quantity
 	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
 	public function addLine(\Rbs\Commerce\Interfaces\Cart $cart, $cartLineConfig, $quantity = 1.0)
 	{
-		if ($cartLineConfig instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
-		{
-			$cartLineConfig = $cartLineConfig->getCartLineConfig();
-		}
-
 		if ($cartLineConfig instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
 			$line = $cart->getNewLine($cartLineConfig, $quantity);
@@ -165,7 +191,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLineConfigCapable $key
+	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $key
 	 * @param float $newQuantity
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
@@ -175,10 +201,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		if ($key instanceof \Rbs\Commerce\Interfaces\CartLine)
 		{
 			$lineKey = $key->getKey();
-		}
-		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
-		{
-			$lineKey = $key->getCartLineConfig()->getKey();
 		}
 		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
@@ -203,7 +225,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLineConfigCapable $key
+	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $key
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
@@ -212,10 +234,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		if ($key instanceof \Rbs\Commerce\Interfaces\CartLine)
 		{
 			$lineKey = $key->getKey();
-		}
-		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
-		{
-			$lineKey = $key->getCartLineConfig()->getKey();
 		}
 		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
@@ -239,13 +257,15 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	protected function refreshCartLine(\Rbs\Commerce\Interfaces\Cart $cart, \Rbs\Commerce\Interfaces\CartLine $line)
 	{
+		$cartWebStoreId = $cart->getContext()->get('webStoreId');
+		$lineWebStoreId = $line->getOptions()->get('webStoreId', $cartWebStoreId);
 		foreach ($line->getItems() as $item)
 		{
 			$sku = $this->commerceServices->getStockManager()->getSkuByCode($item->getCodeSKU());
 			if ($sku)
 			{
 				$options = array('quantity' => $item->getReservationQuantity() * $line->getQuantity());
-				$webStoreId = $item->getOptions()->get('webStoreId', $line->getOptions()->get('webStoreId'));
+				$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
 				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $options, $cart->getBillingArea());
 				if ($price)
 				{
@@ -256,5 +276,45 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @return \Rbs\Commerce\Cart\CartReservation[]
+	 */
+	public function getReservations(\Rbs\Commerce\Interfaces\Cart $cart)
+	{
+		/* @var $cartReservations \Rbs\Commerce\Cart\CartReservation[] */
+		$cartReservations = array();
+		$cartWebStoreId = $cart->getContext()->get('webStoreId');
+		foreach ($cart->getLines() as $line)
+		{
+			$lineQuantity = $line->getQuantity();
+			if ($lineQuantity)
+			{
+				$lineWebStoreId = $line->getOptions()->get('webStoreId', $cartWebStoreId);
+				foreach ($line->getItems() as $item)
+				{
+					if ($item->getReservationQuantity())
+					{
+						$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
+						$codeSKU = $item->getCodeSKU();
+						$key = $codeSKU . '/' . $codeSKU;
+						$resQtt = $lineQuantity * $item->getReservationQuantity();
+						if (isset($cartReservations[$key]))
+						{
+							$reservation = $cartReservations[$key];
+							$reservation->addQuantity($resQtt);
+						}
+						else
+						{
+							$reservation = new \Rbs\Commerce\Cart\CartReservation($cart->getIdentifier(), $codeSKU);
+							$cartReservations[$key] = $reservation->setWebStoreId($webStoreId)->setQuantity($resQtt);
+						}
+					}
+				}
+			}
+		}
+		return array_values($cartReservations);
 	}
 }

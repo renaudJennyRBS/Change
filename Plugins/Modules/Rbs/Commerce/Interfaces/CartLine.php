@@ -47,13 +47,28 @@ interface CartLine extends \Serializable
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\CartItem
 	 */
-	public function appendItem(\Rbs\Commerce\Interfaces\CartItem $item);
+	public function appendItem($item);
 
 	/**
 	 * @param string $codeSKU
 	 * @return \Rbs\Commerce\Interfaces\CartItem|null
 	 */
 	public function removeItemByCodeSKU($codeSKU);
+
+	/**
+	 * @return float|null
+	 */
+	public function getUnitPriceValue();
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue();
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax();
 
 	/**
 	 * @return array
