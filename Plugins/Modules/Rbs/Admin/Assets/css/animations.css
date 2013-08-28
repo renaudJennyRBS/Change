@@ -1,0 +1,37 @@
+/**
+ * Animation for ng-repeat
+ */
+
+.repeat-animation.ng-enter,
+.repeat-animation.ng-leave,
+.repeat-animation.ng-move {
+	-webkit-transition: 0.2s linear all;
+	-moz-transition: 0.2s linear all;
+	-o-transition: 0.2s linear all;
+	transition: 0.2s linear all;
+}
+
+.repeat-animation.ng-enter {
+	height: 0;
+	opacity: 0;
+}
+.repeat-animation.ng-enter.ng-enter-active {
+	height: 20px;
+	opacity: 1;
+}
+
+.repeat-animation.ng-leave {
+	height: 20px;
+	opacity: 1;
+}
+.repeat-animation.ng-leave.ng-leave-active {
+	height: 0;
+	opacity: 0;
+}
+
+.repeat-animation.ng-move {
+	opacity: 0.5;
+}
+.repeat-animation.ng-move.ng-move-active {
+	opacity: 1;
+}
