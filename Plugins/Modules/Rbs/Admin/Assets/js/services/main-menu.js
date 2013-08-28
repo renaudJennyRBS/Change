@@ -203,6 +203,8 @@
 				return null;
 			}
 
+			$el.hide();
+
 			var self = this,
 			    html;
 
@@ -230,6 +232,7 @@
 				$el.append(clone);
 
 				$timeout(function () {
+					$el.show();
 					self.updateLinks();
 				});
 
