@@ -1,0 +1,38 @@
+<h1>{{ product.title }}</h1>
+<p>TODO: Détail du produit</p>
+<script type="text/javascript">
+	var script{{ blockId }} = {
+		webStoreId: {{ parameters.webStoreId }},
+		cartURL: "{{ functionURL('Rbs_Commerce_Cart') }}",
+		addProduct : function(button) {
+			var url = button.form.action;
+			var productId = button.value;
+			var cartURL = this.cartURL;
+			var webStoreId = this.webStoreId;
+			var quantity =  button.form.elements.namedItem("quantity").value;
+
+			jQuery.ajax({
+				type: "POST",
+				url: url,
+				data: {product: productId, quantity: quantity, options: {webStoreId: webStoreId} },
+				dataType: 'json',
+				success: function(data, textStatus, jqXHR) {
+					window.location.href = cartURL;
+				},
+				error: function(jqXHR, textStatus, errorThrown ) {
+					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
+				}
+			})
+		}
+	}
+</script>
+
+<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
+	<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
+	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
+	<input type="text" name="quantity" value="5">
+	<button name="product" type="button" class="btn btn-primary btn-small" value="{{ parameters.productId }}"
+		onclick="script{{ blockId }}.addProduct(this)">
+		<i class="icon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart') }}
+	</button>
+</form>

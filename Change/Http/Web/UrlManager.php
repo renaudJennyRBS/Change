@@ -652,4 +652,12 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 		return $this;
 	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getAbsoluteUrl()
+	{
+		return $this->absoluteUrl;
+	}
 }

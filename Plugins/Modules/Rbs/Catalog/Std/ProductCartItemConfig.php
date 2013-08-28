@@ -14,12 +14,12 @@ class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
 	/**
 	 * @var float
 	 */
-	protected $reservationQuantity = 0.0;
+	protected $reservationQuantity;
 
 	/**
 	 * @var float
 	 */
-	protected $priceValue = 0.0;
+	protected $priceValue;
 
 	/**
 	 * @var \Rbs\Price\Std\TaxApplication[]
@@ -37,7 +37,7 @@ class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
 	function __construct(\Rbs\Stock\Documents\Sku $sku)
 	{
 		$this->codeSKU = $sku->getCode();
-		$this->reservationQuantity = floatval(max(1, $sku->getMinQuantity()));
+		$this->setReservationQuantity($sku->getMinQuantity());
 		$this->options['skuId'] = $sku->getId();
 	}
 
@@ -60,17 +60,17 @@ class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
 	}
 
 	/**
-	 * @param float $reservationQuantity
+	 * @param float|null $reservationQuantity
 	 * @return $this
 	 */
 	public function setReservationQuantity($reservationQuantity)
 	{
-		$this->reservationQuantity = floatval($reservationQuantity);
+		$this->reservationQuantity = $reservationQuantity === null ? $reservationQuantity : floatval($reservationQuantity);
 		return $this;
 	}
 
 	/**
-	 * @return float
+	 * @return float|null
 	 */
 	public function getReservationQuantity()
 	{
@@ -78,17 +78,17 @@ class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
 	}
 
 	/**
-	 * @param float $priceValue
+	 * @param float|null $priceValue
 	 * @return $this
 	 */
 	public function setPriceValue($priceValue)
 	{
-		$this->priceValue = $priceValue;
+		$this->priceValue = $priceValue === null ? $priceValue : floatval($priceValue);
 		return $this;
 	}
 
 	/**
-	 * @return float
+	 * @return float|null
 	 */
 	public function getPriceValue()
 	{

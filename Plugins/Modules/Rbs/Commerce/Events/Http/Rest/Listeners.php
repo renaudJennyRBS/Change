@@ -24,6 +24,12 @@ class Listeners implements ListenerAggregateInterface
 		{
 			$commerceServices = new CommerceServices($event->getApplicationServices(), $event->getDocumentServices());
 			$event->setParam('commerceServices', $commerceServices);
+
+			$resolver = $event->getController()->getActionResolver();
+			if ($resolver instanceof \Change\Http\Rest\Resolver)
+			{
+				$resolver->addResolverClasses('commerce', '\Rbs\Commerce\Http\Rest\CommerceResolver');
+			}
 		};
 		$events->attach(Event::EVENT_REQUEST, $callback, 5);
 

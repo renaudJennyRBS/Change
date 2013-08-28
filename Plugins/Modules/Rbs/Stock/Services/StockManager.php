@@ -173,16 +173,34 @@ class StockManager
 	 */
 	public function getReservationLevel($sku, $store)
 	{
-
 	}
 
+	protected $skuIds = array();
+
 	/**
-	 * @return \Rbs\Stock\Documents\Sku
+	 * @param string $code
+	 * @return \Rbs\Stock\Documents\Sku|null
 	 */
 	public function getSkuByCode($code)
 	{
+		if (!is_string($code))
+		{
+			return null;
+		}
+		if (array_key_exists($code, $this->skuIds))
+		{
+			$skuId = $this->skuIds[$code];
+			if (is_int($skuId))
+			{
+				return $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($skuId);
+			}
+			return null;
+		}
+
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_Sku');
 		$query->andPredicates($query->eq('code', $code));
-		return $query->getFirstDocument();
+		$sku = $query->getFirstDocument();
+		$this->skuIds[$code] = ($sku) ? $sku->getId() : null;
+		return $sku;
 	}
 }

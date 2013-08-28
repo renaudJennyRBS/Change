@@ -120,6 +120,12 @@ interface Cart extends \Serializable
 	 */
 	public function updateItemTaxes($item, $taxApplicationArray);
 
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\CartTax[]
+	 */
+	public function getTaxes();
+
 	/**
 	 * @return array
 	 */

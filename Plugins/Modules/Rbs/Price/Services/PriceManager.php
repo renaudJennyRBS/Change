@@ -200,15 +200,19 @@ class PriceManager
 
 	/**
 	 * @param float|null $value
+	 * @param string|null $currencyCode
 	 * @return null|string
 	 */
-	public function formatValue($value)
+	public function formatValue($value, $currencyCode = null)
 	{
 		if ($value !== null)
 		{
-			$cs = $this->getCommerceServices();
-			$nf = new \NumberFormatter($cs->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
-			return $nf->formatCurrency($value, $cs->getBillingArea()->getCurrencyCode());
+			if ($currencyCode === null)
+			{
+				$currencyCode = $this->getCommerceServices()->getBillingArea()->getCurrencyCode();
+			}
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			return $nf->formatCurrency($value, $currencyCode);
 		}
 		return null;
 	}

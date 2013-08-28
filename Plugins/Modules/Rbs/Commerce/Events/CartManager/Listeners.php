@@ -24,7 +24,10 @@ class Listeners implements ListenerAggregateInterface
 			$cs = $event->getParam('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 			{
-				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->getNewCart($cs));
+				$billingArea = $event->getParam('billingArea', null);
+				$zone =  $event->getParam('zone', null);
+				$context =  $event->getParam('context', array());
+				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->getNewCart($cs, $billingArea, $zone, $context));
 			}
 		};
 		$events->attach('getNewCart', $callback, 5);
@@ -46,12 +49,24 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			$cart = $event->getParam('cart');
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices() instanceof \Rbs\Commerce\Services\CommerceServices)
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices())
 			{
 				(new \Rbs\Commerce\Cart\CartStorage())->saveCart($cart);
 			}
 		};
 		$events->attach('saveCart', $callback, 5);
+
+
+		$callback = function (Event $event)
+		{
+			$cart = $event->getParam('cart');
+			$ownerId =  $event->getParam('ownerId', null);
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices())
+			{
+				(new \Rbs\Commerce\Cart\CartStorage())->lockCart($cart, $ownerId);
+			}
+		};
+		$events->attach('lockCart', $callback, 5);
 	}
 
 	/**

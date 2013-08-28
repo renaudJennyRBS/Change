@@ -123,16 +123,27 @@ class Controller extends \Change\Http\Controller
 	 */
 	public function notFound($event)
 	{
-		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error404');
-		$event->setParam('page', $page);
-		$this->doSendResult($this->getEventManager(), $event);
-		$result = $event->getResult();
-		if ($result !== null)
+		$accept = $event->getRequest()->getHeader('Accept');
+		if ($accept instanceof \Zend\Http\Header\Accept)
 		{
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
-			return $result;
+			/* @var $acceptFieldValuePart \Zend\Http\Header\Accept\FieldValuePart\AcceptFieldValuePart */
+			foreach ($accept->getPrioritized() as $acceptFieldValuePart)
+			{
+				if ($acceptFieldValuePart->getSubtype() === 'html')
+				{
+					$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error404');
+					$event->setParam('page', $page);
+					$this->doSendResult($this->getEventManager(), $event);
+					$result = $event->getResult();
+					if ($result !== null)
+					{
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
+						return $result;
+					}
+					break;
+				}
+			}
 		}
-
 		return parent::notFound($event);
 	}
 
@@ -143,14 +154,26 @@ class Controller extends \Change\Http\Controller
 	 */
 	public function error($event)
 	{
-		$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error500');
-		$event->setParam('page', $page);
-		$this->doSendResult($this->getEventManager(), $event);
-		$result = $event->getResult();
-		if ($result !== null)
+		$accept = $event->getRequest()->getHeader('Accept');
+		if ($accept instanceof \Zend\Http\Header\Accept)
 		{
-			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
-			return $result;
+			/* @var $acceptFieldValuePart \Zend\Http\Header\Accept\FieldValuePart\AcceptFieldValuePart */
+			foreach ($accept->getPrioritized() as $acceptFieldValuePart)
+			{
+				if ($acceptFieldValuePart->getSubtype() === 'html')
+				{
+					$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error500');
+					$event->setParam('page', $page);
+					$this->doSendResult($this->getEventManager(), $event);
+					$result = $event->getResult();
+					if ($result !== null)
+					{
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
+						return $result;
+					}
+					break;
+				}
+			}
 		}
 		return parent::error($event);
 	}

@@ -337,6 +337,9 @@ class Extension implements \Twig_ExtensionInterface
 			$sectionPageFunctions = $q->getDocuments();
 			if ($sectionPageFunctions->count())
 			{
+				$urlManager = $this->getUrlManager();
+				$absoluteUrl = $urlManager->getAbsoluteUrl();
+
 				$query['sectionPageFunction'] = $functionCode;
 
 				if ($sectionPageFunctions->count() === 1)
@@ -346,7 +349,9 @@ class Extension implements \Twig_ExtensionInterface
 					$page = $sectionPageFunction->getPage();
 					$section = $sectionPageFunction->getSection();
 
-					return $this->getUrlManager()->getByDocument($page, $section, $query)->normalize()->toString();
+					$functionURL = $urlManager->setAbsoluteUrl(true)->getByDocument($page, $section, $query)->normalize()->toString();
+					$urlManager->setAbsoluteUrl($absoluteUrl);
+					return $functionURL;
 				}
 				else
 				{
@@ -359,7 +364,9 @@ class Extension implements \Twig_ExtensionInterface
 							{
 								$page = $sectionPageFunction->getPage();
 								$section = $sectionPageFunction->getSection();
-								return $this->getUrlManager()->getByDocument($page, $section, $query)->normalize()->toString();
+								$functionURL = $urlManager->setAbsoluteUrl(true)->getByDocument($page, $section, $query)->normalize()->toString();
+								$urlManager->setAbsoluteUrl($absoluteUrl);
+								return $functionURL;
 							}
 						}
 					}
