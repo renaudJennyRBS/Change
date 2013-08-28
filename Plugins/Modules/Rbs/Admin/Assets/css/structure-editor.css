@@ -42,7 +42,7 @@
 
 
 .structure-editor .se-rich-text.block,
-.structure-editor .se-formatted-text.block{
+.structure-editor .se-formatted-text.block {
 	cursor: pointer;
 	padding: 4px;
 	background: white;
@@ -59,6 +59,22 @@
 	background: #FFFFF8;
 	cursor: default;
 }
+
+
+.structure-editor .se-markdown-text.block {
+	border: 3px solid rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+}
+.structure-editor .se-markdown-text.block.active {
+	border: 3px solid rgb(243,197,27);
+	cursor: default;
+}
+.structure-editor rbs-rich-text-input .ace_editor {
+	border: none;
+	box-shadow: none;
+	outline: 0 none;
+}
+
 
 .structure-editor .se-rich-text.block > *:first-child,
 .structure-editor .se-formatted-text.block > *:first-child{
@@ -398,6 +414,12 @@
 .structure-editor .se-rich-text.active[data-visibility *= "T"]:after {
 	right: 1px;
 	top: 1px;
+}
+
+.structure-editor .block.se-markdown-text[data-visibility *= "D"]:after,
+.structure-editor .block.se-markdown-text[data-visibility *= "P"]:after,
+.structure-editor .block.se-markdown-text[data-visibility *= "T"]:after {
+	top: 40px;
 }
 
 .structure-editor .block[data-visibility="D"]:after {

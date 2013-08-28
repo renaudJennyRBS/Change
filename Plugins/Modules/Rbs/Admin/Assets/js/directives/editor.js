@@ -402,6 +402,7 @@
 
 					initCorrection();
 					initMenu();
+					$element.css('display', 'block');
 
 					Loading.stop();
 
@@ -566,7 +567,8 @@
 				// Initialize required form attributes.
 				tElement
 					.attr('novalidate', '')
-					.attr('name', 'form');
+					.attr('name', 'form')
+					.css('display', 'none');
 
 				/**
 				 * Editor's linking function.

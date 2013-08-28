@@ -135,7 +135,7 @@ rbs-rich-text-input .btn-toolbar {
 	padding: 5px;
 }
 
-rbs-rich-text-input .inner-selector .pagination ul > .disabled > a {
+.rbs-rich-text-input-inner-selector .pagination ul > .disabled > a {
 	background: white;
 }
 
@@ -148,30 +148,44 @@ rbs-rich-text-input .tab-pane[data-role="preview-container"] h6 {
 	margin-top: 0;
 }
 
-rbs-rich-text-input .inner-selector {
+.rbs-rich-text-input-inner-selector {
 	padding: 10px 15px;
 	background: #444;
 	color: white;
 }
 
-rbs-rich-text-input .inner-selector .table {
+.rbs-rich-text-input-inner-selector .table {
 	color: #333333;
 }
 
-rbs-rich-text-input .inner-selector h4 {
+.rbs-rich-text-input-inner-selector h4 {
 	margin: 0;
 }
 
-rbs-rich-text-input .inner-selector button.close {
+.rbs-rich-text-input-inner-selector button.close {
 	color: white;
 	opacity: 0.4;
 }
 
-rbs-rich-text-input .inner-selector button.close:hover {
+.rbs-rich-text-input-inner-selector button.close:hover {
 	opacity: 0.8;
 }
 
 rbs-rich-text-input th,
-rbs-rich-text-input td {
+rbs-rich-text-input td,
+.rbs-rich-text-input-inner-selector th,
+.rbs-rich-text-input-inner-selector td {
 	background: white;
 }
+
+
+rbs-rich-text-input textarea {
+	display: block;
+	min-height: 150px;
+	font-family: "Courier New";
+	width: 100%;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
