@@ -33,6 +33,11 @@ interface Cart extends \Serializable
 	public function isLocked();
 
 	/**
+	 * @return boolean
+	 */
+	public function isEmpty();
+
+	/**
 	 * @param \DateTime|null $lastUpdate
 	 * @return \DateTime
 	 */
@@ -60,11 +65,27 @@ interface Cart extends \Serializable
 	 */
 	public function removeLineByKey($lineKey);
 
+	/**
+	 * @param \Rbs\Commerce\Interfaces\BillingArea|null $billingArea
+	 * @return $this
+	 */
+	public function setBillingArea($billingArea);
 
 	/**
 	 * @return \Rbs\Commerce\Interfaces\BillingArea|null
 	 */
 	public function getBillingArea();
+
+	/**
+	 * @return string|null
+	 */
+	public function getCurrencyCode();
+
+	/**
+	 * @param string|null $zone
+	 * @return $this
+	 */
+	public function setZone($zone);
 
 	/**
 	 * @return string|null
@@ -120,11 +141,20 @@ interface Cart extends \Serializable
 	 */
 	public function updateItemTaxes($item, $taxApplicationArray);
 
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue();
 
 	/**
 	 * @return \Rbs\Commerce\Interfaces\CartTax[]
 	 */
 	public function getTaxes();
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax();
 
 	/**
 	 * @return array

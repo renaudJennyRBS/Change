@@ -1,0 +1,13 @@
+<tr id="{{ blockId }}_{{ cartLine.key }}" data-line-key="{{ cartLine.key }}">
+	<td>{{ cartLine.number }}</td>
+	<td>{{ cartLine.designation }}</td>
+	<td>{{ formatPrice(cartLine.unitPriceValue) }}</td>
+	<td>{{ cartLine.quantity }}</td>
+	<td>{{ formatPrice(cartLine.priceValue) }}</td>
+	<td>{{ formatPrice(cartLine.priceValueWithTax) }}</td>
+	<td>
+		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.deleteLine(this)" value="{{ cartLine.key }}">Supprimer</>
+		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.updateLine(this)" value="{{ cartLine.key }}">Mettre à jour</>
+	</td>
+</tr>
+

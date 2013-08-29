@@ -43,7 +43,8 @@
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
 	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
 	<input type="hidden" name="quantity" value="1" />
-	<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
+	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
 	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
 		{% for row in rows %}
 			<li>
@@ -84,7 +85,6 @@
 
 	<!--
 	<p class="buttons">
-		<input type="hidden" name="from" value="{{ currentURL() }}" />
 		Actions sur la sélection :
 		<button type="submit" name="add" class="btn btn-primary" value="selected"><i class="icon-shopping-cart"></i> Ajouter au panier</button>
 		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>

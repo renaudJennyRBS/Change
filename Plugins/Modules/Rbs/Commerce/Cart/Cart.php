@@ -2,9 +2,7 @@
 namespace Rbs\Commerce\Cart;
 
 use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
-use Rbs\Commerce\Interfaces\CartItem as CartItemInterfaces;
 use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
-
 use Rbs\Commerce\Interfaces\TaxApplication;
 use Rbs\Commerce\Services\CommerceServices;
 
@@ -24,12 +22,12 @@ class Cart implements CartInterfaces
 	protected $identifier;
 
 	/**
-	 * @var \Rbs\Commerce\Interfaces\BillingArea
+	 * @var \Rbs\Commerce\Interfaces\BillingArea|null
 	 */
 	protected $billingArea;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	protected $zone;
 
@@ -147,6 +145,58 @@ class Cart implements CartInterfaces
 	public function isLocked()
 	{
 		return $this->locked;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\BillingArea|null $billingArea
+	 * @return $this
+	 */
+	public function setBillingArea($billingArea)
+	{
+		$this->billingArea = $billingArea;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\BillingArea|null
+	 */
+	public function getBillingArea()
+	{
+		return $this->billingArea;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getCurrencyCode()
+	{
+		return $this->billingArea ? $this->billingArea->getCurrencyCode() : null;
+	}
+
+	/**
+	 * @param string|null $zone
+	 * @return $this
+	 */
+	public function setZone($zone)
+	{
+		$this->zone = $zone;
+		return $this;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getZone()
+	{
+		return $this->zone;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isEmpty()
+	{
+		return count($this->lines) === 0;
 	}
 
 	/**
@@ -392,6 +442,7 @@ class Cart implements CartInterfaces
 	/**
 	 * @param \Rbs\Commerce\Interfaces\CartItem $item
 	 * @param float $priceValue
+	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Interfaces\CartItem
 	 */
 	public function updateItemPrice($item, $priceValue)
@@ -409,6 +460,7 @@ class Cart implements CartInterfaces
 	/**
 	 * @param \Rbs\Commerce\Interfaces\CartItem $item
 	 * @param TaxApplication[] $taxApplicationArray
+	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Interfaces\CartItem
 	 */
 	public function updateItemTaxes($item, $taxApplicationArray)
@@ -434,30 +486,59 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\CartTax[]
+	 * @return float|null
+	 */
+	public function getPriceValue()
+	{
+		$price = null;
+		foreach ($this->lines as $line)
+		{
+			$lineQuantity = $line->getQuantity();
+			if ($lineQuantity)
+			{
+				foreach ($line->getItems() as $item)
+				{
+					if ($item->getPriceValue() !== null)
+					{
+						$price += $item->getPriceValue() * $lineQuantity;
+					}
+				}
+			}
+		}
+		return $price;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
 	 */
 	public function getTaxes()
 	{
-		/* @var $taxes CartTax[] */
+		/* @var $taxes \Rbs\Price\Std\TaxApplication[] */
 		$taxes = array();
 		foreach ($this->lines as $line)
 		{
-			$qtt = $line->getQuantity();
-			foreach ($line->getItems() as $item)
+			$lineQuantity = $line->getQuantity();
+			if ($lineQuantity)
 			{
-				foreach ($item->getCartTaxes() as $cartTax)
+				foreach ($line->getItems() as $item)
 				{
-					$key = ($cartTax->getTax() ? $cartTax->getTax()->getCode() : '') . '/' . $cartTax->getCategory();
-					if (!isset($taxes[$key]))
+					if ($item->getPriceValue() !== null)
 					{
-						$tax = clone($cartTax);
-						$tax->setValue($tax->getValue() * $qtt);
-						$taxes[$key] = $tax;
-					}
-					else
-					{
-						$tax = $taxes[$key];
-						$tax->addValue($cartTax->getValue() * $qtt);
+						foreach ($item->getCartTaxes() as $cartTax)
+						{
+							$key = ($cartTax->getTax() ? $cartTax->getTax()->getCode() : '') . '/' . $cartTax->getCategory();
+							if (!isset($taxes[$key]))
+							{
+								$tax = new \Rbs\Price\Std\TaxApplication($cartTax->getTax(), $cartTax->getCategory(), $cartTax->getZone(), $cartTax->getRate());
+								$tax->setValue($cartTax->getValue() * $lineQuantity);
+								$taxes[$key] = $tax;
+							}
+							else
+							{
+								$tax = $taxes[$key];
+								$tax->addValue($cartTax->getValue() * $lineQuantity);
+							}
+						}
 					}
 				}
 			}
@@ -466,39 +547,16 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
-	 * @return $this
+	 * @return float|null
 	 */
-	public function setBillingArea($billingArea)
+	public function getPriceValueWithTax()
 	{
-		$this->billingArea = $billingArea;
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Commerce\Interfaces\BillingArea
-	 */
-	public function getBillingArea()
-	{
-		return $this->billingArea;
-	}
-
-	/**
-	 * @param string $zone
-	 * @return $this
-	 */
-	public function setZone($zone)
-	{
-		$this->zone = $zone;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getZone()
-	{
-		return $this->zone;
+		$price = $this->getPriceValue();
+		if ($price !== null)
+		{
+			return $this->commerceServices->getTaxManager()->getValueWithTax($price, $this->getTaxes());
+		}
+		return null;
 	}
 
 	/**
@@ -559,7 +617,7 @@ class Cart implements CartInterfaces
 			'context' => $this->getContext()->toArray(),
 			'lines' => array());
 
-		foreach($this->lines as $line)
+		foreach ($this->lines as $line)
 		{
 			$array['lines'][] = $line->toArray();
 		}
