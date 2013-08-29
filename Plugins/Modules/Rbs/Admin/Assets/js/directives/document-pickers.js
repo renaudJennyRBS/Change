@@ -10,13 +10,16 @@
 	var counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout) {
 
 		var	$el = $(iElement),
 			inputEl = $el.find('input[name=label]'),
 			documentList,
 			$picker = $el.find('.document-picker-embedded'),
-			$pickerContents = $picker.find('[data-role="picker-contents"]');
+			$pickerContents = $picker.find('[data-role="picker-contents"]'),
+			embedded = false;
+
+		scope.inputCssClass = attrs.inputCssClass;
 
 		// Initialize ngModel
 
@@ -115,6 +118,12 @@
 				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 			}
 
+			if (attrs.embedIn && ! embedded) {
+				$(attrs.embedIn).append($picker);
+				$picker.css('margin-left', '0px');
+				embedded = true;
+			}
+
 			$http.get(url).success(function (html) {
 				var $html = $(html), $dl;
 
@@ -125,7 +134,6 @@
 				}
 
 				$dl.attr('actions', '');
-				// MMM $dl.attr('selectable', 'false');
 				$dl.attr('selectable', multiple);
 
 				if ($dl.find('quick-actions').length) {
@@ -135,7 +143,7 @@
 						$dl.append(
 							'<quick-actions>' +
 								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> tout remplacer par cet élément</a>' +
-								'</quick-actions>'
+							'</quick-actions>'
 						);
 					} else {
 						$dl.append('<quick-actions></quick-actions>');
@@ -150,10 +158,10 @@
 				documentList = angular.element($dl).scope();
 
 			}).error(function (data) {
-					$('#document-picker-backdrop').show();
-					$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
-					$picker.show();
-				});
+				$('#document-picker-backdrop').show();
+				$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
+				$picker.show();
+			});
 		};
 
 		scope.closeSelector = function () {
@@ -280,7 +288,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', '$timeout', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, $timeout) {
 		return {
 
 			restrict    : 'EAC',
@@ -289,14 +297,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', '$timeout', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, $timeout) {
 		return {
 
 			restrict    : 'EAC',
@@ -305,7 +313,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout);
 			}
 
 		};
