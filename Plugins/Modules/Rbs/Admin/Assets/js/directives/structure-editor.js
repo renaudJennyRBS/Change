@@ -452,7 +452,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('structureEditor', ['$timeout', '$compile', 'RbsChange.Workspace', 'RbsChange.MainMenu', 'structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.NotificationCenter', function ($timeout, $compile, Workspace, MainMenu, structureEditorService, ArrayUtils, NotificationCenter) {
+	app.directive('structureEditor', ['$timeout', '$compile', 'RbsChange.Workspace', 'RbsChange.MainMenu', 'structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.NotificationCenter', function ($timeout, $compile, Workspace, MainMenu, structureEditorService, ArrayUtils, Utils, NotificationCenter) {
 
 		return {
 
@@ -475,6 +475,8 @@
 					'<div class="btn-group" ng-transclude></div>' +
 				'</div>' +
 				'<div class="rich-text-input-selectors-container"></div>' +
+				'<div id="se-picker-container"></div>' +
+				//'<pre>(= items | json =)</pre>' +
 				'<div class="structure-editor"></div>',
 
 
@@ -1708,7 +1710,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.directive('seBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.REST', '$rootScope', function (structureEditorService, Workspace, ArrayUtils, REST, $rootScope) {
+	app.directive('seBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope) {
 
 		var blockPropertiesCache = {};
 
@@ -1741,18 +1743,21 @@
 				'</div>' +
 				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-{{formDirection}}">' +
 					'<div class="control-group" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_{{block.id}}_label">Libellé du bloc</label>' +
+						'<label class="control-label" for="block_{{item.id}}_label">Libellé du bloc</label>' +
 						'<div class="controls">' +
-							'<input class="input-block-level" id="block_{{block.id}}_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
+							'<input class="input-block-level" id="block_{{item.id}}_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
 						'</div>' +
 					'</div>' +
 					'<div class="control-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_{{block.id}}_param_{{param.name}}">{{param.label}}</label>' +
+						'<label class="control-label" for="block_{{item.id}}_param_{{param.name}}">{{param.label}}</label>' +
 						'<div ng-switch="param.type" class="controls">' +
-							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Integer" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
-							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Document" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
-							'<input id="block_{{block.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
-							'<switch id="block_{{block.id}}_param_{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
+							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Integer" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
+
+							// FIXME allowedModelNames
+							'<div ng-switch-when="Document" class="document-picker-single" input-css-class="input-small" ng-model="item.parameters[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+
+							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
+							'<switch id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
 						'</div>' +
 					'</div>' +
 					'<div ng-transclude=""></div>' +
@@ -1784,14 +1789,13 @@
 
 				// Put default values in the block's parameters
 				function fillDefaultValues (parameters) {
-
 					scope.blockParameters = angular.copy(parameters);
 					forEach(parameters, function (param) {
-						if (angular.isUndefined(scope.item.parameters[param.name])) {
-							scope.item.parameters[param.name] = param.defaultValue;
+						if (angular.isUndefined(scope.originalItem.parameters[param.name])) {
+							scope.originalItem.parameters[param.name] = param.defaultValue;
 						}
 					});
-
+					scope.item = angular.copy(scope.originalItem);
 				}
 
 				if (scope.item.name && scope.item.name !== 'row' && scope.item.name !== 'cell') {
@@ -1912,9 +1916,29 @@
 				};
 
 				scope.submit = function () {
+
+					// Transform Documents into a lightweight representation (id, model, label, LCID).
+					angular.forEach(scope.item.parameters, function (value, name) {
+						if (Utils.isDocument(value)) {
+							scope.item.parameters[name] = Utils.simpleRepresentation(value);
+						}
+					});
+
 					angular.extend(scope.originalItem, scope.item);
+
+					// Remove empty values.
+					angular.forEach(scope.originalItem.parameters, function (value, name) {
+						if (! scope.item.parameters[name]) {
+							delete scope.originalItem.parameters[name];
+						}
+					});
+
 					scope.item = angular.copy(scope.originalItem);
 					scope.controller.notifyChange("changeSettings", "block", element);
+				};
+
+				scope.chooseDocument = function (param) {
+					console.log("chooseDocument: ", param);
 				};
 
 				$rootScope.$on('Change:Workspace:Pinned', function (event, el) {

@@ -155,6 +155,22 @@
 		},
 
 
+		simpleRepresentation : function (doc) {
+			if (this.isDocument(doc)) {
+				var out = {
+					'id' : doc.id,
+					'model' : doc.model,
+					'label' : doc.label || (doc.model+'/'+doc.id)
+				};
+				if (doc.LCID) {
+					out.LCID = doc.LCID;
+				}
+				return out;
+			}
+			return doc;
+		},
+
+
 		/**
 		 * Indicates whether the given `string` represents a Model name or not.
 		 */
