@@ -21,9 +21,10 @@ class ExecuteTask
 	public function addTasks(DocumentEvent $event)
 	{
 		$result = $event->getParam('restResult');
+		$document = $event->getDocument();
+
 		if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$document = $event->getDocument();
 			if ($document instanceof Publishable || $document instanceof Correction)
 			{
 				/* @var $document \Change\Documents\AbstractDocument */
@@ -53,6 +54,44 @@ class ExecuteTask
 					$l = new Link($urlManager, $pathInfo, 'execute');
 					$result->addAction($l);
 				}
+			}
+		}
+		else if ($result instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$actions = $result->getProperty('actions', array());
+			if ($document instanceof Publishable || $document instanceof Correction)
+			{
+				/* @var $document \Change\Documents\AbstractDocument */
+				$urlManager = $event->getParam('urlManager');
+				$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Workflow_Task');
+				$LCID = $result->getProperty('LCID');
+				$query->andPredicates(
+					$query->eq('document', $document),
+					isset($LCID) ? $query->eq('documentLCID', $LCID) : $query->isNull('documentLCID'),
+					$query->eq('status', WorkItem::STATUS_ENABLED));
+				$taskArray = $query->getDocuments();
+				foreach ($taskArray as $task)
+				{
+					/* @var $task Task */
+					$pathInfo = 'resources/Rbs/Workflow/Task/' . $task->getId();
+					$l = new Link($urlManager, $pathInfo, $task->getTaskCode());
+					$actions[] = $l->toArray();
+				}
+			}
+			elseif ($document instanceof Task)
+			{
+				if ($document->getStatus() === WorkItem::STATUS_ENABLED)
+				{
+					$urlManager = $event->getParam('urlManager');
+					/* @var $task Task */
+					$pathInfo = 'resources/Rbs/Workflow/Task/' . $document->getId() . '/execute';
+					$l = new Link($urlManager, $pathInfo, 'execute');
+					$actions[] = $l->toArray();
+				}
+			}
+			if (count($actions))
+			{
+				$result->setProperty('actions', $actions);
 			}
 		}
 	}
