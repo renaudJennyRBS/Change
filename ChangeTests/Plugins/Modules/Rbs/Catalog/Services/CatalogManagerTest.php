@@ -37,7 +37,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$tm  = $this->getApplicationServices()->getTransactionManager();
 		$tm->begin();
 		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-		/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setRefLCID('fr_FR');
 		$product->setLabel('Test product');
 		$product->setTitle('Test product');
@@ -97,7 +97,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		for ($i = 0; $i < 10; $i++)
 		{
 			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-			/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);
 			$product->setTitle($i);
@@ -282,7 +282,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		for ($i = 0; $i < 10; $i++)
 		{
 			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-			/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);
 			$product->setTitle($i);

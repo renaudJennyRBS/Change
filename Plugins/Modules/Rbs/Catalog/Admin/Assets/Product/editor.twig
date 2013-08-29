@@ -46,10 +46,10 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='attributes'"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.section-attributes', ['ucf']) }}"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-attributes', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.abstractproduct.attribute', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.product.attribute', ['ucf']) }}">
 			<select ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
 				<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
 			</select>

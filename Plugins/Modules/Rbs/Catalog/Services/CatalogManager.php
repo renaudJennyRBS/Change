@@ -47,13 +47,13 @@ class CatalogManager
 	 * Add the product in a category for the given condition/priority.
 	 *
 	 * @api
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @return \Rbs\Catalog\Documents\ProductCategorization
 	 * @throws \Exception
 	 */
-	public function addProductInCategory(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function addProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
 	{
 		$ds = $this->getCommerceServices()->getDocumentServices();
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
@@ -82,11 +82,11 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param $condition
 	 */
-	public function removeProductFromCategory(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function removeProductFromCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
 	{
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		try
@@ -110,12 +110,12 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @return \Rbs\Catalog\Documents\ProductCategorization|null
 	 */
-	public function getProductCategorization(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function getProductCategorization(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
 	{
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$query->andPredicates($query->eq('product', $product), $query->eq('category', $category), $query->eq('condition', $condition));
@@ -126,12 +126,12 @@ class CatalogManager
 	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
 	 *
 	 * @api
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $before
+	 * @param \Rbs\Catalog\Documents\Product $before
 	 */
-	public function highlightProductInCategory(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition = null, $before = null)
+	public function highlightProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null, $before = null)
 	{
 		$productCategorization = $this->getProductCategorization($product, $category, $condition);
 		if (!$productCategorization)
@@ -139,7 +139,7 @@ class CatalogManager
 			throw new \RuntimeException("Product to highlight is not in category", 999999);
 		}
 		$beforeProductCategorization = null;
-		if ($before instanceof \Rbs\Catalog\Documents\AbstractProduct)
+		if ($before instanceof \Rbs\Catalog\Documents\Product)
 		{
 			$beforeProductCategorization = $this->getProductCategorization($before, $category, $condition);
 		}
@@ -150,11 +150,11 @@ class CatalogManager
 	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
 	 *
 	 * @api
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 */
-	public function downplayProductInCategory(\Rbs\Catalog\Documents\AbstractProduct $product, \Rbs\Catalog\Documents\Category $category, $condition = null)
+	public function downplayProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null)
 	{
 		$productCategorization = $this->getProductCategorization($product, $category, $condition);
 		if (!$productCategorization)

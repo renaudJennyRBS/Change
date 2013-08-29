@@ -12,7 +12,7 @@ class ProductItem implements \Serializable
 	protected $data = array();
 
 	/**
-	 * @var \Rbs\Catalog\Documents\AbstractProduct|boolean|null
+	 * @var \Rbs\Catalog\Documents\Product|boolean|null
 	 */
 	private $product = false;
 
@@ -96,7 +96,7 @@ class ProductItem implements \Serializable
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Documents\AbstractProduct|null
+	 * @return \Rbs\Catalog\Documents\Product|null
 	 */
 	protected function getProduct()
 	{
@@ -107,7 +107,7 @@ class ProductItem implements \Serializable
 			if ($productId && (null != ($dm = $this->getDocumentManager())))
 			{
 				$product = $dm->getDocumentInstance($productId);
-				if ($product instanceof \Rbs\Catalog\Documents\AbstractProduct)
+				if ($product instanceof \Rbs\Catalog\Documents\Product)
 				{
 					$this->product = $product;
 				}

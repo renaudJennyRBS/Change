@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.document.product" lcid="fr_FR">
-	<include id="m.rbs.catalog.document.abstractproduct"/>
+	<include id="m.rbs.generic.document"/>
+	<key id="description">description</key>
+	<key id="categories">catégories</key>
+	<key id="categories-picker-title">sélectionner les catégories</key>
+	<key id="add-categories">ajouter des catégories</key>
+	<key id="visual">visuel</key>
+	<key id="visuals">visuels</key>
+	<key id="visuals-picker-title">sélectionner les visuels</key>
+	<key id="no-visual">aucun visuel défini</key>
+	<key id="pictograms">pictogrammes</key>
+	<key id="pictograms-picker-title">sélectionner les pictogrammes</key>
+	<key id="brand">marque</key>
+	<key id="brand-picker-title">sélectionner la marque</key>
+	<key id="shippedin">délai d'expédition</key>
+	<key id="shippedin-help">Délai d'expédition affiché sur le site.</key>
+	<key id="sku">code SKU</key>
+	<key id="minorderquantity">quantité minimum</key>
+	<key id="minorderquantity-help">Quantité minimum de ce produit que l'on peut commander.</key>
+	<key id="maxorderquantity">quantité maximum</key>
+	<key id="maxorderquantity-help">Quantité maximum de ce produit que l'on peut commander.</key>
+	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des catégories.</key>
+	<key id="prices">prix</key>
+
+	<key id="attribute">jeu d'attributs</key>
+	<key id="section-attributes">Attributs étendus</key>
+
 	<key id="price-section-help" format="html">
 		<![CDATA[<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.</strong> Un même produit qui apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.</p>
 		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>

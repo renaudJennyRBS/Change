@@ -53,7 +53,7 @@ class PriceManager
 
 	/**
 	 * Standard Options : quantity,
-	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
@@ -76,7 +76,7 @@ class PriceManager
 
 	/**
 	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param array<optionName => optionValue> $options
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
