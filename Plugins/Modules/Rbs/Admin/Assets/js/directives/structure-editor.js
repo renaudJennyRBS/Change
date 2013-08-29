@@ -462,7 +462,6 @@
 			"transclude" : true,
 			"template"   :
 				'<div class="btn-toolbar">' +
-					'<button type="button" class="btn pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
 					'<div class="btn-group">' +
 						'<button type="button" ng-disabled="!undoData.length" class="btn" ng-click="undo(0)"><i class="icon-undo"></i> Défaire</button>' +
 						'<button type="button" ng-disabled="!undoData.length" class="btn dropdown-toggle" data-toggle="dropdown">' +
@@ -473,6 +472,7 @@
 						'</ul>' +
 					'</div>' +
 					'<div class="btn-group" ng-transclude></div>' +
+					'<button type="button" class="btn pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
 				'</div>' +
 				'<div class="rich-text-input-selectors-container"></div>' +
 				'<div id="se-picker-container"></div>' +
@@ -2280,7 +2280,7 @@
 			"require"    : '^structureEditor',
 			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text"></rbs-rich-text-input></div>',
+			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text" selectors="media links"></rbs-rich-text-input></div>',
 
 			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");

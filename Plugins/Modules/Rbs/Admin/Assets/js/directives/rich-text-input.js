@@ -56,22 +56,22 @@
 								'</div>' +
 
 								// Media
-								'<div class="btn-group">' +
+								'<div class="btn-group" ng-if="availableSelectors.media">' +
 									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'media\'}" ng-click="toggleSelector(\'media\')"><i class="icon-picture"></i></button>' +
 								'</div>' +
 
 								// Links
-								'<div class="btn-group">' +
+								'<div class="btn-group" ng-if="availableSelectors.links">' +
 									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
 								'</div>' +
 
 								// Users
-								'<div class="btn-group">' +
+								'<div class="btn-group" ng-if="availableSelectors.users">' +
 									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'user\'}" ng-click="toggleSelector(\'user\')"><i class="icon-user"></i></button>' +
 								'</div>' +
 
 								// Groups
-								'<div class="btn-group">' +
+								'<div class="btn-group" ng-if="availableSelectors.usergroups">' +
 									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'usergroup\'}" ng-click="toggleSelector(\'usergroup\')"><i class="icon-group"></i></button>' +
 								'</div>' +
 
@@ -100,9 +100,19 @@
 					$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
 					$editorTab,
 					$selectorsContainer,
-					$selectors;
+					$selectors,
+					selectorNames = ['media', 'links', 'users', 'usergroups'];
 
 				scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
+
+				// Init available selectors.
+				(function () {
+					scope.availableSelectors = {};
+					var selectors = ' '+attrs.selectors+' ';
+					angular.forEach(selectorNames, function (sel) {
+						scope.availableSelectors[sel] = angular.isUndefined(attrs.selectors) || selectors.indexOf(' ' + sel + ' ') !== -1;
+					});
+				})();
 
 				function ensureSelectorsReady () {
 					if (! $selectors) {
