@@ -22,7 +22,7 @@
 		__quickActions = {},
 		__actions = {},
 		PAGINATION_DEFAULT_LIMIT = 20,
-		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
+		DEFAULT_ACTIONS = 'requestValidation contentValidation publicationValidation freeze(icon) unfreeze(icon) delete(icon)',
 		testerEl = $('#rbs-document-list-tester'),
 		forEach = angular.forEach;
 
@@ -218,7 +218,7 @@
 					"name"   : "publicationStatus",
 					"align"  : "center",
 					"width"  : "30px",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
+					"label"  : i18n.trans('m.rbs.admin.admin.js.status-minified | ucf'),
 					"content": '<status ng-model="doc"/>',
 					"dummy"  : true
 				});

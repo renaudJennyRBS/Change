@@ -19,7 +19,12 @@
 			        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 		</div>
 		<div data-ng-switch-when="group" class="btn-group">
-			<button data-ng-repeat="action in item.actions" rbs-bind-action="(= action =)" embed-dialog="(= embeddedActionsOptionsContainerId =)" class="btn" type="button"></button>
+			<button data-ng-repeat="action in item.actions"
+			        class="btn" type="button"
+			        rbs-bind-action="(= action =)"
+			        collection="collection"
+			        selection="selectedDocuments"
+			        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 		</div>
 	</div>
 

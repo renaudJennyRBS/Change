@@ -14,8 +14,8 @@
 		var messages = {
 			'DRAFT'       : "Brouillon",
 			'PUBLISHABLE' : "Publiable",
-			'DEACTIVATED' : "Désactivé",
-			'VALIDATION'  : "Workflow en cours",
+			'FROZEN'      : "Gelé",
+			'VALIDATION'  : "Validation en cours",
 			'ACTIVE'      : "Activé"
 		};
 

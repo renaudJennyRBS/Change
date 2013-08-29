@@ -18,6 +18,7 @@
 	<key id="modification-date">date modified</key>
 	<key id="activated">activated</key>
 	<key id="status">state</key>
+	<key id="status-minified">st.</key>
 	<key id="order">order</key>
 
 	<key id="preview">preview</key>
@@ -39,6 +40,9 @@
 
 	<key id="action-publish">publish</key>
 	<key id="action-publish-help">publish selected documents</key>
+
+	<key id="action-contentvalidation">validate content</key>
+	<key id="action-contentvalidation-help">validate the content of the selected documents</key>
 
 	<key id="action-delete">delete</key>
 	<key id="action-delete-help">delete selected documents</key>

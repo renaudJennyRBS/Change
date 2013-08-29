@@ -38,17 +38,23 @@
 						}
 
 						actionObject = Actions.get(actionName);
-						if (!actionObject) {
+						if (! actionObject) {
 							console.log('[Rbs/Admin/Assets/js/directives/bind-action.js] ' + actionName + ' does not exist!');
 							return;
 						}
 
 						// Update UI
-						if (params.indexOf('icon') !== -1) {
-							elm.html('<i class="' + actionObject.icon + '"></i>');
-						} else if (params.indexOf('icon+label') !== -1) {
+						if (params.indexOf('icon+label') !== -1) {
 							elm.html('<i class="' + actionObject.icon + '"></i> ' + actionObject.label);
-						} else {
+						}
+						else if (params.indexOf('label+icon') !== -1) {
+							elm.html(actionObject.label + ' <i class="' + actionObject.icon + '"></i>');
+						}
+						else if (params.indexOf('icon') !== -1) {
+							elm.html('<i class="' + actionObject.icon + '"></i>');
+							elm.attr('title', actionObject.label);
+						}
+						else {
 							elm.html(actionObject.label);
 						}
 

@@ -99,6 +99,10 @@
 					return Utils.hasCorrection(this);
 				};
 
+				ChangeDocument.prototype.isActionAvailable = function (actionName) {
+					return angular.isObject(this.META$.actions) && this.META$.actions.hasOwnProperty(actionName);
+				};
+
 				ChangeDocument.prototype.getTagsUrl = function () {
 					return this.META$.links['self'] ? this.META$.links['self'].href + '/tags/' : null;
 				};

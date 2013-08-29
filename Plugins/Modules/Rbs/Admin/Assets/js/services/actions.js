@@ -17,7 +17,6 @@
 					this.actionsForModel = {
 						'all': []
 					};
-					this.actionGroups = {};
 				};
 
 				this.reset();
@@ -293,22 +292,6 @@
 				};
 
 
-				this.group = function (groupName, chooserFn) {
-					this.actionGroups[groupName] = chooserFn;
-				};
-
-
-				this.isGroup = function (groupName) {
-					return groupName in this.actionGroups;
-				};
-
-
-				this.getActionForGroup = function (groupName, $docs) {
-					return this.actionGroups[groupName].call(this, $docs);
-				};
-
-
-
 				// ====== Default actions ======
 
 
@@ -418,14 +401,14 @@
 
 
 				/**
-				 * Action: activate
+				 * Action: freeze
 				 */
 				this.register({
-					name        : 'activate',
+					name        : 'freeze',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-activate | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-activate-help | ucf'),
-					icon        : "icon-play",
+					label       : i18n.trans('m.rbs.admin.admin.js.action-freeze | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-freeze-help | ucf'),
+					icon        : "icon-pause",
 					selection   : "+",
 					loading     : true,
 
@@ -434,7 +417,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.resourceActionThenReload('activate', doc);
+							var promise = REST.executeTaskByCodeOnDocument('freeze', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -446,7 +429,7 @@
 
 					isEnabled : function ($docs) {
 						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.hasStatus($docs[i], 'DEACTIVATED')) {
+							if ( ! $docs[i].isActionAvailable('freeze') ) {
 								return false;
 							}
 						}
@@ -456,10 +439,48 @@
 
 
 				/**
-				 * Action: startValidation
+				 * Action: unfreeze
 				 */
 				this.register({
-					name        : 'startValidation',
+					name        : 'unfreeze',
+					models      : '*',
+					label       : i18n.trans('m.rbs.admin.admin.js.action-unfreeze | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-unfreeze-help | ucf'),
+					icon        : "icon-play",
+					selection   : "+",
+					loading     : true,
+
+					execute : ['$docs', function ($docs) {
+
+						var promises = [];
+						// Call one REST request per document to activate and store the resulting Promise.
+						angular.forEach($docs, function (doc) {
+							var promise = REST.executeTaskByCodeOnDocument('unfreeze', doc);
+							promises.push(promise);
+							promise.then(function (updatedDoc) {
+								angular.extend(doc, updatedDoc);
+							});
+						});
+						return $q.all(promises);
+
+					}],
+
+					isEnabled : function ($docs) {
+						for (var i=0 ; i<$docs.length ; i++) {
+							if ( ! $docs[i].isActionAvailable('unfreeze') ) {
+								return false;
+							}
+						}
+						return true;
+					}
+				});
+
+
+				/**
+				 * Action: requestValidation
+				 */
+				this.register({
+					name        : 'requestValidation',
 					models      : '*',
 					label       : i18n.trans('m.rbs.admin.admin.js.action-validate | ucf'),
 					description : i18n.trans('m.rbs.admin.admin.js.action-validate-help | ucf'),
@@ -484,7 +505,7 @@
 
 					isEnabled : function ($docs) {
 						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.hasStatus($docs[i], 'DRAFT') ) {
+							if ( ! $docs[i].isActionAvailable('requestValidation') ) {
 								return false;
 							}
 						}
@@ -494,10 +515,10 @@
 
 
 				/**
-				 * Action: startPublication
+				 * Action: publicationValidation
 				 */
 				this.register({
-					name        : 'startPublication',
+					name        : 'publicationValidation',
 					models      : '*',
 					label       : i18n.trans('m.rbs.admin.admin.js.action-publish | ucf'),
 					description : i18n.trans('m.rbs.admin.admin.js.action-publish-help | ucf'),
@@ -510,7 +531,7 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							var promise = REST.resourceActionThenReload('startPublication', doc);
+							var promise = REST.executeTaskByCodeOnDocument('publicationValidation', doc);
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
 								angular.extend(doc, updatedDoc);
@@ -522,7 +543,45 @@
 
 					isEnabled : function ($docs) {
 						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.hasStatus($docs[i], 'VALIDATION') ) {
+							if ( ! $docs[i].isActionAvailable('publicationValidation') ) {
+								return false;
+							}
+						}
+						return true;
+					}
+				});
+
+
+				/**
+				 * Action: contentValidation
+				 */
+				this.register({
+					name        : 'contentValidation',
+					models      : '*',
+					label       : i18n.trans('m.rbs.admin.admin.js.action-contentvalidation | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-contentvalidation-help | ucf'),
+					icon        : "icon-rss",
+					selection   : "+",
+					loading     : true,
+
+					execute : ['$docs', function ($docs) {
+
+						var promises = [];
+						// Call one REST request per document to activate and store the resulting Promise.
+						angular.forEach($docs, function (doc) {
+							var promise = REST.executeTaskByCodeOnDocument('contentValidation', doc);
+							promises.push(promise);
+							promise.then(function (updatedDoc) {
+								angular.extend(doc, updatedDoc);
+							});
+						});
+						return $q.all(promises);
+
+					}],
+
+					isEnabled : function ($docs) {
+						for (var i=0 ; i<$docs.length ; i++) {
+							if ( ! $docs[i].isActionAvailable('contentValidation') ) {
 								return false;
 							}
 						}
@@ -623,46 +682,6 @@
 
 
 				/**
-				 * Action: deactivate
-				 * @param docs Documents on which the action should be applied.
-				 */
-				this.register({
-					name        : 'deactivate',
-					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-deactivate | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-deactivate-help | ucf'),
-					icon        : "icon-pause",
-					selection   : "+",
-					loading     : true,
-
-					execute : ['$docs', function ($docs) {
-
-						var promises = [];
-						// Call one REST request per document to remove and store the resulting Promise.
-						angular.forEach($docs, function (doc) {
-							var promise = REST.resourceActionThenReload('deactivate', doc);
-							promises.push(promise);
-							promise.then(function (updatedDoc) {
-								doc.publicationStatus = updatedDoc.publicationStatus;
-							});
-						});
-						return $q.all(promises);
-
-					}],
-
-					isEnabled : function ($docs) {
-						for (var i=0 ; i<$docs.length ; i++) {
-							if ( ! Utils.hasStatus($docs[i], 'ACTIVE', 'PUBLISHABLE') ) {
-								return false;
-							}
-						}
-						return true;
-					}
-				});
-
-
-
-				/**
 				 * Action: reorder
 				 */
 				this.register({
@@ -692,29 +711,6 @@
 					}
 
 				});
-
-
-
-				this.group('groupPublishDocument', function (docs) {
-					var status = docs.length ? docs[0].publicationStatus : null;
-
-					for (var i=1 ; i<docs.length ; i++) {
-						if (docs[i].publicationStatus !== status) {
-							status = null;
-							break;
-						}
-					}
-
-					switch (status) {
-					case 'DRAFT':
-						return this.get('startValidation');
-					case 'VALIDATION':
-						return this.get('startPublication');
-					default:
-						return this.get('activate');
-					}
-				});
-
 
 			}
 
