@@ -54,17 +54,21 @@ class Install
 
 			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
 
-			/* @var $mailTemplate \Rbs\Theme\Documents\MailTemplate */
-			$mailTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
-			$mailTemplate->setTheme($theme);
-			$mailTemplate->setLabel('Timeline mention notification');
-			$mailTemplate->setCode('timeline_mention_notification');
-			$mailTemplate->setLCID('fr_FR');
-			$mailTemplate->setSubject('Un message vous mentionne');
-			$html = file_get_contents(__DIR__ . '/Assets/timeline-message-mail-notification-fr.twig');
-			$mailTemplate->setContent($html);
-			$mailTemplate->setActive(true);
-			$mailTemplate->save();
+			$i18nManager = $applicationServices->getI18nManager();
+			$templatePath = __DIR__ . '/Assets/timeline-message-mail-notification-' . $i18nManager->getLCID() . '.twig';
+			if (file_exists($templatePath))
+			{
+				/* @var $mailTemplate \Rbs\Theme\Documents\MailTemplate */
+				$mailTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
+				$mailTemplate->setTheme($theme);
+				$mailTemplate->setLabel('Timeline mention notification');
+				$mailTemplate->setCode('timeline_mention_notification');
+				$mailTemplate->getCurrentLocalization()->setSubject($i18nManager->trans('t.rbs.demo.setup.timeline-message-mail-notification-subject'));
+				$html = file_get_contents($templatePath);
+				$mailTemplate->getCurrentLocalization()->setContent($html);
+				$mailTemplate->getCurrentLocalization()->setActive(true);
+				$mailTemplate->save();
+			}
 
 			$transactionManager->commit();
 		}

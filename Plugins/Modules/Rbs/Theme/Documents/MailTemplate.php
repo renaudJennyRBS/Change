@@ -14,4 +14,20 @@ class MailTemplate extends \Compilation\Rbs\Theme\Documents\MailTemplate impleme
 	{
 		return $this->getLabel();
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getContent()
+	{
+		return $this->getCurrentLocalization()->getContent();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSubject()
+	{
+		return $this->getCurrentLocalization()->getSubject();
+	}
 }
