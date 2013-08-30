@@ -22,7 +22,7 @@
 		__quickActions = {},
 		__actions = {},
 		PAGINATION_DEFAULT_LIMIT = 20,
-		DEFAULT_ACTIONS = 'startValidation activate delete(icon)',
+		DEFAULT_ACTIONS = 'requestValidation publicationValidation freeze(icon) unfreeze(icon) delete(icon)',
 		testerEl = $('#rbs-document-list-tester'),
 		forEach = angular.forEach;
 
@@ -33,6 +33,7 @@
 		'$filter',
 		'$rootScope',
 		'$location',
+		'$timeout',
 		'$cacheFactory',
 		'RbsChange.i18n',
 		'RbsChange.REST',
@@ -51,7 +52,7 @@
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -75,7 +76,11 @@
 				if (__preview[dlid]) {
 					return buildPreviewAction() + actionDivider + buildEditAction() + actionDivider + buildDeleteAction();
 				}
-				return buildEditAction() + actionDivider + buildDeleteAction();
+				var out = buildEditAction() + actionDivider + buildDeleteAction();
+				if (tAttrs.publishable === 'true') {
+					out += actionDivider + buildWorkflowAction();
+				}
+				return out;
 			}
 
 			function buildDeleteAction () {
@@ -106,11 +111,20 @@
 				return '<a href="javascript:" ng-click="preview(doc, $event)"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-chevron-up\':hasPreview($index), \'icon-chevron-down\':!hasPreview($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
 			}
 
+			function buildWorkflowAction () {
+				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i ng-class="{\'icon-chevron-up\':hasWorkflow($index), \'icon-chevron-down\':!hasWorkflow($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
+			}
+
 			if (__quickActions[dlid]) {
 				if (__quickActions[dlid].divider) {
 					actionDivider = __quickActions[dlid].divider;
 				}
 				quickActionsHtml = __quickActions[dlid].contents;
+
+				if (tAttrs.publishable === 'true') {
+					quickActionsHtml += actionDivider + 'workflow';
+				}
+
 				if (! quickActionsHtml.length) {
 					return null;
 				}
@@ -126,6 +140,9 @@
 					}
 					if (actionName === 'default') {
 						return buildDefault();
+					}
+					if (actionName === 'workflow') {
+						return buildWorkflowAction();
 					}
 
 					if (localActions.hasOwnProperty(actionName)) {
@@ -218,8 +235,8 @@
 					"name"   : "publicationStatus",
 					"align"  : "center",
 					"width"  : "30px",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.status | ucf'),
-					"content": '<status ng-model="doc"/>',
+					"label"  : i18n.trans('m.rbs.admin.admin.js.status-minified | ucf'),
+					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc"/></a>',
 					"dummy"  : true
 				});
 			}
@@ -446,7 +463,7 @@
 					}
 				}
 
-				$td.attr('ng-if', "! isPreview(doc)");
+				$td.attr('ng-if', "isNormalCell(doc)");
 				$body.append($td);
 			}
 
@@ -747,9 +764,9 @@
 					function doPreview (index, currentItem, newItem) {
 						var previewPromises = [];
 						delete currentItem.__dlPreviewLoading;
-						// Copy the current's META$ information into the newly loaded document.
-						//angular.extend(doc.META$, current.META$);
 						newItem.__dlPreview = true;
+						// Store reference to the original document.
+						newItem.__document = currentItem;
 
 						$rootScope.$broadcast(Events.DocumentListPreview, {
 							"document" : newItem,
@@ -780,7 +797,9 @@
 					});
 
 					scope.preview = function (index, $event) {
-						$event.preventDefault();
+						if ($event) {
+							$event.preventDefault();
+						}
 
 						if (angular.isObject(index)) {
 							if (scope.isPreview(index)) {
@@ -797,7 +816,7 @@
 							return;
 						}
 
-						cachedDoc = $event.shiftKey ? null : previewCache.get(current.id);
+						cachedDoc = ($event && $event.shiftKey) ? null : previewCache.get(current.id);
 						if (cachedDoc) {
 							scope.collection.splice(index+1, 0, cachedDoc);
 						} else {
@@ -842,6 +861,7 @@
 						return (next && next.__dlPreview && next.id === current.id) ? true : false;
 					};
 
+
 					scope.closeAllPreviews = function () {
 						var i = 0;
 						while (i < scope.collection.length) {
@@ -851,6 +871,44 @@
 								i++;
 							}
 						}
+					};
+
+
+					scope.isNormalCell = function (doc) {
+						return ! scope.isPreview(doc) && ! scope.isWorkflow(doc);
+					};
+
+
+					scope.showWorkflow = function (index) {
+						var	current = scope.collection[index],
+							newItem;
+
+						// Close workflow UI
+						if (scope.hasWorkflow(current)) {
+							delete current.__hasWorkflow;
+							scope.collection.splice(index+1, 1);
+						}
+						// Show workflow UI
+						else {
+							current.__hasWorkflow = true;
+							newItem = angular.copy(current);
+							newItem.__document = current;
+							newItem.__workflow = true;
+							scope.collection.splice(index+1, 0, newItem);
+						}
+					};
+
+
+					scope.isWorkflow = function (doc) {
+						return doc && doc.__workflow === true;
+					};
+
+
+					scope.hasWorkflow = function (doc) {
+						if (angular.isNumber(doc)) {
+							doc = scope.collection[doc];
+						}
+						return doc && doc.__hasWorkflow === true;
 					};
 
 
@@ -1069,7 +1127,6 @@
 						Breadcrumb.setResource(null);
 
 						// Available sortable columns
-						// FIXME: remove default value here when the server sends this info.
 						scope.sortable = response.pagination.availableSort || [];
 						if (scope.hasColumn('nodeOrder')) {
 							scope.sortable.push('nodeOrder');

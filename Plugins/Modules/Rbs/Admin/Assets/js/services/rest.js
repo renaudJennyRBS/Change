@@ -99,6 +99,10 @@
 					return Utils.hasCorrection(this);
 				};
 
+				ChangeDocument.prototype.isActionAvailable = function (actionName) {
+					return angular.isObject(this.META$.actions) && this.META$.actions.hasOwnProperty(actionName);
+				};
+
 				ChangeDocument.prototype.getTagsUrl = function () {
 					return this.META$.links['self'] ? this.META$.links['self'].href + '/tags/' : null;
 				};
@@ -813,6 +817,7 @@
 						var q = $q.defer();
 
 						function doExecute (taskObj) {
+							// TODO Handle error here if actions does not exist.
 							$http.post(taskObj.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
 								.success(function (taskObj) {
 									angular.extend(task, taskObj);

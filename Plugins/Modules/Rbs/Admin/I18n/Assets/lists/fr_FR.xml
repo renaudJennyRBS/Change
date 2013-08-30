@@ -5,6 +5,7 @@
 	<key id="reverseSort">inverser</key>
 
 	<key id="this-list-is-empty">Cette liste est vide.</key>
+	<key id="loading">Chargement en cours...</key>
 	<key id="you-can">vous pouvez</key>
 	<key id="create-elements-with-buttons">créer des éléments en utilisant les boutons ci-dessus</key>
 	<key id="clear-search-filters">effacer les filtres de recherche</key>

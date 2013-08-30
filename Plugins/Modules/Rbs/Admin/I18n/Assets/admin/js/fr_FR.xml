@@ -18,9 +18,11 @@
 	<key id="modification-date">dernière modif.</key>
 	<key id="activated">activé</key>
 	<key id="status">état</key>
+	<key id="status-minified">ét.</key>
 	<key id="order">ordre</key>
 
 	<key id="preview">aperçu</key>
+	<key id="workflow">validation</key>
 	<key id="edit">éditer</key>
 	<key id="delete">supprimer</key>
 
@@ -31,14 +33,17 @@
 	<key id="action-validate">valider</key>
 	<key id="action-validate-help">valider les documents sélectionnés</key>
 
-	<key id="action-activate">activer</key>
-	<key id="action-activate-help">activer les documents sélectionnés</key>
+	<key id="action-unfreeze">dégeler</key>
+	<key id="action-unfreeze-help">dégeler les documents sélectionnés</key>
 
-	<key id="action-deactivate">désactiver</key>
-	<key id="action-deactivate-help">désactiver les documents sélectionnés</key>
+	<key id="action-freeze">geler</key>
+	<key id="action-freeze-help">geler les documents sélectionnés</key>
 
 	<key id="action-publish">publier</key>
 	<key id="action-publish-help">publier les documents sélectionnés</key>
+
+	<key id="action-contentvalidation">valider contenu</key>
+	<key id="action-contentvalidation-help">valider le contenu des documents sélectionnés</key>
 
 	<key id="action-delete">supprimer</key>
 	<key id="action-delete-help">supprimer les documents sélectionnés</key>
