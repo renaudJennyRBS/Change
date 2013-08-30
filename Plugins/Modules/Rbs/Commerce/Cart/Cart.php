@@ -37,6 +37,11 @@ class Cart implements CartInterfaces
 	protected $ownerId = 0;
 
 	/**
+	 * @var integer
+	 */
+	protected $webStoreId = 0;
+
+	/**
 	 * @var boolean
 	 */
 	protected $locked = false;
@@ -112,21 +117,39 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param int|null $ownerId
+	 * @param integer $ownerId
 	 * @return $this
 	 */
 	public function setOwnerId($ownerId)
 	{
-		$this->ownerId = $ownerId;
+		$this->ownerId = intval($ownerId);
 		return $this;
 	}
 
 	/**
-	 * @return integer|null
+	 * @return integer
 	 */
 	public function getOwnerId()
 	{
 		return $this->ownerId;
+	}
+
+	/**
+	 * @param integer $webStoreId
+	 * @return $this
+	 */
+	public function setWebStoreId($webStoreId)
+	{
+		$this->webStoreId = intval($webStoreId);
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getWebStoreId()
+	{
+		return $this->webStoreId;
 	}
 
 	/**
@@ -614,6 +637,7 @@ class Cart implements CartInterfaces
 			'locked' => $this->locked,
 			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
 			'ownerId' => $this->ownerId,
+			'webStoreId' => $this->webStoreId,
 			'context' => $this->getContext()->toArray(),
 			'lines' => array());
 

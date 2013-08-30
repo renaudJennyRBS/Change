@@ -23,9 +23,14 @@ interface Cart extends \Serializable
 	public function getIdentifier();
 
 	/**
-	 * @return integer|null
+	 * @return integer
 	 */
 	public function getOwnerId();
+
+	/**
+	 * @return integer
+	 */
+	public function getWebStoreId();
 
 	/**
 	 * @return boolean

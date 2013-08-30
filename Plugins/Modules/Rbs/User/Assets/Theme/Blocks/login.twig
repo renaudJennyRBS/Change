@@ -3,6 +3,7 @@
 {% else %}
 <form method="post" id="Login" action="Action/Rbs/User/Login">
 	<input type="hidden" name="realm" value="{{ parameters.realm }}">
+	<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
 	<fieldset>
 		<legend>Connectez-vous</legend>
 		<div class="form-group">
@@ -19,29 +20,4 @@
 		<button class="btn btn-primary" type="submit">Se connecter</button>
 	</fieldset>
 </form>
-<script type="text/javascript">
-	$('#Login').submit(function() {
-		var form = $(this);
-		var data = form.serialize();
-		$.ajax({
-			type: "POST",
-			url: $(this).attr('action'),
-			data: data,
-			dataType: 'json',
-			success: function(data, textStatus, jqXHR)
-			{
-				if ('accessorId' in data)
-				{
-					window.location.reload();
-				}
-				else
-				{
-					window.alert(data.error);
-				}
-
-			}
-		});
-		return false;
-	});
-</script>
 {% endif %}

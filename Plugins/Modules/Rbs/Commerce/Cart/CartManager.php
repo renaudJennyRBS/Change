@@ -289,8 +289,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	protected function refreshCartLine(\Rbs\Commerce\Interfaces\Cart $cart, \Rbs\Commerce\Interfaces\CartLine $line)
 	{
-		$cartWebStoreId = $cart->getContext()->get('webStoreId');
-		$lineWebStoreId = $line->getOptions()->get('webStoreId', $cartWebStoreId);
+		$lineWebStoreId = $line->getOptions()->get('webStoreId', $cart->getWebStoreId());
 		foreach ($line->getItems() as $item)
 		{
 			$sku = $this->commerceServices->getStockManager()->getSkuByCode($item->getCodeSKU());
@@ -318,7 +317,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		/* @var $cartReservations \Rbs\Commerce\Cart\CartReservation[] */
 		$cartReservations = array();
-		$cartWebStoreId = $cart->getContext()->get('webStoreId');
+		$cartWebStoreId = $cart->getWebStoreId();
 		foreach ($cart->getLines() as $line)
 		{
 			$lineQuantity = $line->getQuantity();
@@ -331,7 +330,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
 						$codeSKU = $item->getCodeSKU();
-						$key = $codeSKU . '/' . $codeSKU;
+						$key = $codeSKU . '/' . $webStoreId;
 						$resQtt = $lineQuantity * $item->getReservationQuantity();
 						if (isset($cartReservations[$key]))
 						{

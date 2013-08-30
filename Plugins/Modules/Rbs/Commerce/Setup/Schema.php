@@ -27,6 +27,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newTimeStampFieldDefinition('last_update')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('identifier', array('length' => 40))->setNullable(true))
 				->addField($schemaManager->newIntegerFieldDefinition('owner_id')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newLobFieldDefinition('cart_data')->setNullable(true))
 				->addField($schemaManager->newBooleanFieldDefinition('locked')->setNullable(false)->setDefaultValue('0'))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
