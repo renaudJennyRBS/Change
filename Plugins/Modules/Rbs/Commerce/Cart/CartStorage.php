@@ -3,6 +3,7 @@ namespace Rbs\Commerce\Cart;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentWeakReference;
+use Rbs\Commerce\Interfaces\BillingArea;
 use Rbs\Commerce\Services\CommerceServices;
 
 /**
@@ -12,13 +13,13 @@ class CartStorage
 {
 	/**
 	 * @param CommerceServices $commerceServices
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param BillingArea $billingArea
 	 * @param string $zone
 	 * @param array $context
 	 * @throws \Exception
 	 * @return Cart
 	 */
-	public function getNewCart(CommerceServices $commerceServices, $billingArea, $zone, $context)
+	public function getNewCart(CommerceServices $commerceServices, $billingArea = null, $zone = null, array $context = array())
 	{
 		$tm = $commerceServices->getApplicationServices()->getTransactionManager();
 		$cart = null;
@@ -29,20 +30,51 @@ class CartStorage
 			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$date = new \DateTime();
-			$qb->insert($fb->table('rbs_commerce_dat_cart'), $fb->column('creation_date'), $fb->column('last_update'));
+
+			if (isset($context['ownerId']))
+			{
+				$ownerId = intval($context['ownerId']);
+				unset($context['ownerId']);
+			}
+			else
+			{
+				$ownerId = 0;
+			}
+
+			if (isset($context['webStoreId']))
+			{
+				$webStoreId = intval($context['webStoreId']);
+				unset($context['webStoreId']);
+			}
+			else
+			{
+				$webStoreId = 0;
+			}
+
+			$qb->insert($fb->table('rbs_commerce_dat_cart'),
+				$fb->column('creation_date'), $fb->column('last_update'),
+				$fb->column('owner_id'), $fb->column('store_id'));
 			$qb->addValue($fb->dateTimeParameter('creationDate'));
 			$qb->addValue($fb->dateTimeParameter('lastUpdate'));
+			$qb->addValue($fb->integerParameter('ownerId'));
+			$qb->addValue($fb->integerParameter('webStoreId'));
+
 			$iq = $qb->insertQuery();
 			$iq->bindParameter('creationDate', $date);
 			$iq->bindParameter('lastUpdate', $date);
+			$iq->bindParameter('ownerId', $ownerId);
+			$iq->bindParameter('webStoreId', $webStoreId);
 			$iq->execute();
 
 			$id = $iq->getDbProvider()->getLastInsertId('rbs_commerce_dat_cart');
+			$context['storageId'] = $id;
 
 			$identifier = sha1($id . '-' . $date->getTimestamp());
 			$cart = new Cart($identifier, $commerceServices);
 			$cart->lastUpdate($date);
-			if ($billingArea instanceof \Rbs\Commerce\Interfaces\BillingArea)
+			$cart->setOwnerId($ownerId)->setWebStoreId($webStoreId);
+
+			if ($billingArea instanceof BillingArea)
 			{
 				$cart->setBillingArea($billingArea);
 			}
@@ -58,10 +90,11 @@ class CartStorage
 			{
 				$cart->setZone($commerceServices->getZone());
 			}
-			if (is_array($context) && count($context))
+			if (count($context))
 			{
 				$cart->getContext()->fromArray($context);
 			}
+
 			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
@@ -95,7 +128,8 @@ class CartStorage
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('locked'), $fb->column('last_update'));
+			$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id'),
+				$fb->column('locked'), $fb->column('last_update'));
 			$qb->from($fb->table('rbs_commerce_dat_cart'));
 			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
 		}
@@ -103,7 +137,9 @@ class CartStorage
 		$sq->bindParameter('identifier', $identifier);
 
 		$cartInfo = $sq->getFirstResult($sq->getRowsConverter()->addLobCol('cart_data')
-			->addIntCol('owner_id')->addBoolCol('locked')->addDtCol('last_update'));
+			->addIntCol('owner_id', 'store_id')
+			->addBoolCol('locked')->addDtCol('last_update'));
+
 		if ($cartInfo)
 		{
 			$cart = unserialize($cartInfo['cart_data']);
@@ -111,6 +147,7 @@ class CartStorage
 			{
 				$cart->setCommerceServices($commerceServices);
 				$cart->setOwnerId($cartInfo['owner_id'])
+					->setWebStoreId($cartInfo['store_id'])
 					->setIdentifier($identifier)
 					->setLocked($cartInfo['locked']);
 
@@ -139,6 +176,7 @@ class CartStorage
 			$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
 			$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
 			$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
+			$qb->assign($fb->column('store_id'), $fb->integerParameter('webStoreId'));
 			$qb->where(
 				$fb->logicAnd(
 					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
@@ -150,6 +188,7 @@ class CartStorage
 			$uq->bindParameter('lastUpdate', $cart->lastUpdate());
 			$uq->bindParameter('cartData', serialize($cart));
 			$uq->bindParameter('ownerId', $cart->getOwnerId());
+			$uq->bindParameter('webStoreId', $cart->getWebStoreId());
 			$uq->bindParameter('identifier', $cart->getIdentifier());
 			$uq->bindParameter('locked', false);
 			$uq->execute();

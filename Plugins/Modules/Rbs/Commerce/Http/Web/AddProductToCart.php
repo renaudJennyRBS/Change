@@ -27,38 +27,61 @@ class AddProductToCart
 	public function add(CommerceServices $commerceServices, Event $event)
 	{
 		$request = $event->getRequest();
-		$args = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-		if (isset($args['product']))
+		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
+		if (isset($arguments['product']))
 		{
-			$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($args['product']);
+			$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($arguments['product']);
 			if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
 			{
-				$cartLineConfig = $product->getCartLineConfig($commerceServices, $args);
-				$quantity = max(1.0, isset($args['quantity']) ? floatval($args['quantity']) : 1.0);
-
-				$cartManager = $commerceServices->getCartManager();
-				$cartIdentifier = $commerceServices->getCartIdentifier();
-				$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
-				if (!($cart instanceof \Rbs\Commerce\Interfaces\Cart))
+				$cartLineConfig = $product->getCartLineConfig($commerceServices, $arguments);
+				if ($cartLineConfig && count($cartLineConfig->getItemConfigArray()))
 				{
-					$cart = $commerceServices->getCartManager()->getNewCart();
-					$commerceServices->setCartIdentifier($cart->getIdentifier());
-					$commerceServices->save();
-				}
+					$cartManager = $commerceServices->getCartManager();
+					$cartIdentifier = $commerceServices->getCartIdentifier();
+					$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
+					if (!($cart instanceof \Rbs\Commerce\Interfaces\Cart))
+					{
+						$webStoreId = 0;
+						if (isset($arguments['webStoreId']))
+						{
+							$webStoreId = intval($arguments['webStoreId']);
+						}
+						elseif (isset($arguments['options']['webStoreId']))
+						{
+							$webStoreId = intval($arguments['options']['webStoreId']);
+						}
 
-				$line = $cartManager->getLineByKey($cart, $cartLineConfig->getKey());
-				if ($line)
-				{
-					$cartManager->updateLineQuantityByKey($cart, $cartLineConfig->getKey(), $line->getQuantity() + $quantity);
-				}
-				else
-				{
-					$line = $cartManager->addLine($cart, $cartLineConfig, $quantity);
-				}
-				$cartManager->saveCart($cart);
+						if (!$webStoreId)
+						{
+							$e = new \RuntimeException('Web Store is not defined.', 999999);
+							$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
+							throw $e;
+						}
 
-				$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
-				$event->setResult($result);
+						$context = array('webStoreId' => $webStoreId);
+						$context['ownerId'] = $event->getAuthenticationManager()->getCurrentUser()->getId();
+
+						$cart = $commerceServices->getCartManager()->getNewCart(null, null, $context);
+
+						$commerceServices->setCartIdentifier($cart->getIdentifier());
+						$commerceServices->save();
+					}
+
+					$quantity = max(1.0, isset($arguments['quantity']) ? floatval($arguments['quantity']) : 1.0);
+					$line = $cartManager->getLineByKey($cart, $cartLineConfig->getKey());
+					if ($line)
+					{
+						$cartManager->updateLineQuantityByKey($cart, $cartLineConfig->getKey(), $line->getQuantity() + $quantity);
+					}
+					else
+					{
+						$line = $cartManager->addLine($cart, $cartLineConfig, $quantity);
+					}
+					$cartManager->saveCart($cart);
+
+					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
+					$event->setResult($result);
+				}
 			}
 		}
 	}

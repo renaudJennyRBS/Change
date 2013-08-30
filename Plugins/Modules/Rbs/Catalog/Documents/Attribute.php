@@ -13,6 +13,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	const TYPE_BOOLEAN = 'Boolean';
 	const TYPE_INTEGER = 'Integer';
 	const TYPE_DOCUMENT = 'Document';
+	const TYPE_DOCUMENTARRAY = 'DocumentArray';
 	const TYPE_FLOAT = 'Float';
 	const TYPE_DATETIME = 'DateTime';
 	const TYPE_CODE = 'Code';

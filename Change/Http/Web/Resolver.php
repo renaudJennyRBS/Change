@@ -120,6 +120,7 @@ class Resolver extends BaseResolver
 					$action->execute($event);
 				};
 				$event->setAction($action);
+				$event->setAuthorization(function() {return true;});
 				return;
 			}
 
