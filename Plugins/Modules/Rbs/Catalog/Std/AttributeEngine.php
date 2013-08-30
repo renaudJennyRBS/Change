@@ -65,6 +65,7 @@ class AttributeEngine
 		$rows = $query->getResults($query->getRowsConverter()->addIntCol('attribute_id', 'integer_value')
 			->addStrCol('valueType', 'string_value')->addNumCol('float_value')->addDtCol('date_value')->addTxtCol('text_value'));
 		$values = array();
+		
 		foreach ($rows as $row)
 		{
 			$val = array('id' => $row['attribute_id'], 'valueType' => $row['valueType']);
@@ -386,6 +387,11 @@ class AttributeEngine
 				case \Change\Documents\Property::TYPE_DOCUMENT :
 				case \Change\Documents\Property::TYPE_DOCUMENTID :
 					$definition['type'] = Attribute::TYPE_DOCUMENT;
+					$definition['documentType'] = ($property->getDocumentType()) ? $property->getDocumentType() : '';
+					break;
+				case \Change\Documents\Property::TYPE_DOCUMENTARRAY :
+					$definition['type'] = Attribute::TYPE_DOCUMENTARRAY;
+					$definition['documentType'] = ($property->getDocumentType()) ? $property->getDocumentType() : '';
 					break;
 				case \Change\Documents\Property::TYPE_STRING :
 					$definition['type'] = Attribute::TYPE_CODE;

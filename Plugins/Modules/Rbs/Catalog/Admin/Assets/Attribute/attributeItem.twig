@@ -15,7 +15,12 @@
 				<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attribute.required" id="(= attribute.id =)" ng-model="attribute.value.value" />
 				<div class="document-picker-single" data-ng-switch-when="Document"
 						ng-model="attribute.value.value" ng-required="attribute.required"
-						property-label="" selector-title=""
+						property-label="" selector-title="" accepted-model="(= attribute.documentType =)"
+						allow-edition="false" allow-creation="false">
+				</div>
+				<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
+						ng-model="attribute.value.value" ng-required="attribute.required"
+						property-label="" selector-title="" accepted-model="(= attribute.documentType =)"
 						allow-edition="false" allow-creation="false">
 				</div>
 				<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attribute.required" id="(= attribute.id =)" ng-model="attribute.value.value" preview-profile="Website"></rbs-rich-text-input>
