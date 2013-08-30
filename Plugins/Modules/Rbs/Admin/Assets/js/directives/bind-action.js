@@ -94,10 +94,6 @@
 											iconElm.removeClass('icon-spinner icon-spin').addClass(iconElmClass);
 										}
 										elm.removeAttr('disabled');
-										/*if (attrs.bindActionSuccess) {
-											scope._actionSuccessResult = value;
-											scope.$eval(attrs.bindActionSuccess);
-										}*/
 									},
 									// Error
 									function (reason) {
@@ -105,10 +101,6 @@
 											iconElm.removeClass('icon-spinner icon-spin').addClass(iconElmClass);
 										}
 										elm.removeAttr('disabled');
-										/*if (attrs.bindActionError) {
-											scope._actionErrorReason = reason;
-											scope.$eval(attrs.bindActionError);
-										}*/
 									}
 								);
 							});

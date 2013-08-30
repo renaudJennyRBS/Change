@@ -1,0 +1,128 @@
+<div>
+	<i class="icon-time icon-4x"></i>
+	<h4>Processus de validation (workflow)</h4>
+	<h5>
+
+		<span ng-switch="document.publicationStatus">
+			<span ng-switch-when="DRAFT">
+				Ce document est à l'état de brouillon.
+			</span>
+			<span ng-switch-when="FROZEN">
+				Ce document a été gelé et n'est donc pas visible sur le site web.
+			</span>
+			<span ng-switch-when="FILED">
+				Ce document a été archivé.
+				Il peut toutefois être affiché sur le site web dans les blocs qui gèrent les archives.
+			</span>
+			<span ng-switch-when="VALIDATION">
+				Le contenu de ce document doit être validé avant qu'il ne puisse être publié sur le site web.
+			</span>
+			<span ng-switch-when="VALIDCONTENT">
+				Le contenu de ce document a été validé : il ne reste qu'à valider sa publication.
+			</span>
+			<span ng-switch-when="UNPUBLISHABLE">
+				Ce document <strong>n'est pas</strong> prêt pour être publié sur le site web.
+			</span>
+			<span ng-switch-when="PUBLISHABLE">
+				Ce document est prêt pour être publié sur le site web.
+			</span>
+		</span>
+	</h5>
+
+	<form name="wfForm" ng-submit="submit()" ng-switch="data.action">
+
+		<div class="control-group" ng-switch-when="requestValidation">
+			<div class="controls">
+				<button type="submit" class="btn"><i class="icon-bullhorn"></i> Demander la validation</button>
+			</div>
+		</div>
+
+		<div ng-switch-when="contentValidation">
+
+			<div class="control-group">
+				<div class="control-group">
+					<div class="controls">
+						<p>
+							<div style="color: green"><i class="icon-ok"></i> Demande de validation effectuée</div>
+						</p>
+						<p>
+							Pour valider le contenu de ce document, vous pouvez
+							<rbs-kb-switch>
+								<a rbs-kb-default="" href ng-href="(= document|documentURL:'form' =)">ouvrir l'éditeur du document</a>
+								<a rbs-kb-when="meta" href ng-href="(= document|documentURL:'form' =)" target="_blank">ouvrir l'éditeur du document dans un nouvel onglet <i class="icon-external-link"></i></a>
+							</rbs-kb-switch>.
+						</p>
+						<p>
+							<label class="radio">
+								<input type="radio" name="contentAction" ng-model="data.contentAction" value="accept" checked/> Accepté
+							</label>
+							<label class="radio">
+								<input type="radio" name="contentAction" ng-model="data.contentAction" value="reject"/> Refusé
+							</label>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if="data.contentAction == 'reject'">
+				<div class="control-group required">
+					<label class="control-label" for="rejectContentField">Motif du refus</label>
+					<div class="controls">
+						<input type="text" auto-focus="" placeholder="Pourquoi refusez-vous le contenu de ce document ?" id="rejectContentField" required="required" class="input-block-level" ng-model="data.rejectReason"/>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" ng-disabled="wfForm.$invalid" class="btn btn-danger">Refuser le contenu</button>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if="data.contentAction == 'accept'">
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" class="btn btn-success">Valider le contenu</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="control-group" ng-switch-when="publicationValidation">
+			<div class="controls">
+				<p>
+					<div style="color: green"><i class="icon-ok"></i> Demande de validation effectuée</div>
+					<div style="color: green"><i class="icon-ok"></i> Contenu validé</div>
+				</p>
+				<button type="submit" class="btn btn-success">Valider la publication</button>
+			</div>
+		</div>
+
+		<div class="control-group" ng-switch-when="freeze">
+			<div class="controls">
+				<p>
+					<div style="color: green"><i class="icon-ok"></i> Demande de validation effectuée</div>
+					<div style="color: green"><i class="icon-ok"></i> Contenu validé</div>
+					<div style="color: green"><i class="icon-ok"></i> Publication validée</div>
+				</p>
+				<p>Vous pouvez geler ce document : son affichage sur le site web sera alors désactivé.</p>
+				<button type="submit" class="btn btn-info"><i class="icon-pause"></i> Geler le document</button>
+			</div>
+		</div>
+
+		<div class="control-group" ng-switch-when="unfreeze">
+			<div class="controls">
+				<p>
+					<div style="color: green"><i class="icon-ok"></i> Demande de validation effectuée</div>
+					<div style="color: green"><i class="icon-ok"></i> Contenu validé</div>
+					<div style="color: green"><i class="icon-ok"></i> Publication validée</div>
+					<div style="color: darkred"><i class="icon-pause"></i> Document gelé</div>
+				</p>
+				<p>Ce document est gelé : son affichage sur le site web a été désactivé temporairement. Pour le rendre de nouveau visible, vous pouvez le dégeler.</p>
+				<button type="submit" class="btn btn-success"><i class="icon-play"></i> Dégeler le document</button>
+			</div>
+		</div>
+
+	</form>
+
+</div>

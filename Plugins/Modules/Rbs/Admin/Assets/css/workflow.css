@@ -1,0 +1,187 @@
+.rbs-document-workflow-actions {
+	padding: 10px 10px 5px 70px;
+	position: relative;
+	background: #F5F5F5;
+	border: 5px solid #bbbbbb;
+}
+
+.rbs-document-workflow-actions > i {
+	position: absolute;
+	left: 10px;
+	top: 5px;
+	color: #bbbbbb;
+}
+
+.rbs-document-workflow-actions h4 {
+	text-transform: uppercase;
+	color: #bbbbbb;
+	font-size: 18px;
+	margin-top: 0;
+}
+
+
+.bullet-status {
+	display: inline-block;
+	position: relative;
+	width: 18px;
+	height: 18px;
+	box-shadow: inset 0 0 4px rgba(0,0,0,0.4), inset 0 -5px 0 rgba(0,0,0,0.07);
+	border: 1px solid rgba(0,0,0,0.5);
+	border-radius: 2px;
+	-webkit-transition: background 0.2s ease;
+	-moz-transition: background 0.2s ease;
+	-ms-transition: background 0.2s ease;
+	-o-transition: background 0.2s ease;
+	transition: background 0.2s ease;
+	cursor: pointer;
+}
+
+.bullet-status .overlay {
+	position: absolute;
+
+	color: white;
+	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+	font-size: 6pt;
+	font-weight: bold;
+	padding: 0;
+	line-height: 11pt;
+
+	top: 6px;
+	left: 6px;
+	height: 13px;
+	width: 13px;
+
+	background: #FFFFFF;
+
+	border: 2px solid rgba(0, 0, 0, 0.75);
+	border-radius: 10px;
+
+	color: black;
+	opacity: 0.85;
+
+	text-align: center;
+}
+
+.bullet-status .overlay.correction {
+	border-color: rgba(128, 0, 0, 0.75);
+	color: rgb(128,0,0);
+}
+
+.bullet-status.small {
+	width: 12px;
+	height: 12px;
+	border-radius: 7px;
+	box-shadow: inset 0 0 4px rgba(0,0,0,0.4), inset 0 -3px 0 rgba(0,0,0,0.1);
+}
+
+.bullet-status.PUBLISHABLE {
+	border-radius: 10px;
+	background: #B1EA37;
+}
+
+.bullet-status.VALIDCONTENT {
+	background: #B1EA37;
+}
+
+.bullet-status.DRAFT {
+	background: white;
+}
+
+.bullet-status.UNPUBLISHABLE {
+	background: #ff001a;
+}
+
+.bullet-status.FROZEN {
+	border-radius: 10px;
+	background: #33BBFF;
+}
+
+.bullet-status.FILED {
+	border-radius: 10px;
+	background: #a277c7;
+}
+
+.bullet-status.VALIDATION {
+	background: #efa700;
+}
+
+.table-striped.document-list tbody td.workflow {
+	padding: 0;
+}
+
+.table-striped.document-list tbody td.workflow .inner {
+	position: relative;
+}
+
+rbs-document-list td.workflow .workflow-indicator {
+	position: absolute;
+	top: -7px;
+	left: 280px;
+	width: 10px;
+	height: 10px;
+	border-top: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	background: #bbbdcc;/*#eef0ff;*/
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}
+
+
+/* Colors for each status */
+
+.rbs-document-workflow-actions.PUBLISHABLE,
+.rbs-document-workflow-actions.VALIDCONTENT {
+	background: #eefff0;
+	border-color: #88BB88;
+}
+rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
+rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
+	background: #88BB88;
+}
+.rbs-document-workflow-actions.PUBLISHABLE h4,
+.rbs-document-workflow-actions.PUBLISHABLE > i,
+.rbs-document-workflow-actions.VALIDCONTENT h4,
+.rbs-document-workflow-actions.VALIDCONTENT > i {
+	color: #88BB88;
+}
+
+
+.rbs-document-workflow-actions.VALIDATION {
+	background: #faf5f0;
+	border-color: #CCBB88;
+}
+rbs-document-list td.workflow .workflow-indicator.VALIDATION {
+	background: #CCBB88;
+}
+.rbs-document-workflow-actions.VALIDATION h4,
+.rbs-document-workflow-actions.VALIDATION > i {
+	color: #CCBB88;
+}
+
+
+.rbs-document-workflow-actions.UNPUBLISHABLE {
+	background: #faf0f0;
+	border-color: #CC8888;
+}
+rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
+	background: #CC8888;
+}
+.rbs-document-workflow-actions.UNPUBLISHABLE h4,
+.rbs-document-workflow-actions.UNPUBLISHABLE > i {
+	color: #CC8888;
+}
+
+
+.rbs-document-workflow-actions.FROZEN {
+	background: #e0f0ff;
+	border-color: #66aacc;
+}
+rbs-document-list td.workflow .workflow-indicator.FROZEN {
+	background: #66aacc;
+}
+.rbs-document-workflow-actions.FROZEN h4,
+.rbs-document-workflow-actions.FROZEN > i {
+	color: #66aacc;
+}

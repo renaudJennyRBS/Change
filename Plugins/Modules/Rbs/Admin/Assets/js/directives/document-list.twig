@@ -57,11 +57,6 @@
 			<tr>
 			</tr>
 		</thead>
-		<tbody ng-if="collection.length == 0 && !loading">
-			<tr class="empty-row">
-				<td data-colspan="auto">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
-			</tr>
-		</tbody>
 		<tbody>
 			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'success': isLastCreated(doc), 'selected': doc.selected}">
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)">
@@ -74,6 +69,22 @@
 						<div data-role="preview-contents"></div>
 					</div>
 				</td>
+				<td class="workflow" data-colspan="auto" ng-if="isWorkflow(doc)">
+					<div class="inner">
+						<div class="workflow-indicator"></div>
+						<div class="rbs-document-workflow-actions" document="doc.__document"></div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<tbody ng-show="loading">
+			<tr class="empty-row">
+				<td data-colspan="auto"><i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.admin.lists.loading', ['ucf']) }}</td>
+			</tr>
+		</tbody>
+		<tbody ng-if="collection.length == 0 && !loading">
+			<tr class="empty-row">
+				<td data-colspan="auto"><i class="icon-frown"></i> {{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
 		</tbody>
 	</table>

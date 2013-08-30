@@ -6,7 +6,9 @@
 	$.fn.reverse = [].reverse;
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngAnimate', 'ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule']);
+	// TODO Re-enable 'ngAnimate' module when it is bug free:
+	// https://github.com/angular/angular.js/issues/3613
+	var app = angular.module('RbsChange', [/*'ngAnimate', */'ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule']);
 
 
 	//-------------------------------------------------------------------------

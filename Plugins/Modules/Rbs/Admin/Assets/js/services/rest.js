@@ -817,6 +817,7 @@
 						var q = $q.defer();
 
 						function doExecute (taskObj) {
+							// TODO Handle error here if actions does not exist.
 							$http.post(taskObj.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
 								.success(function (taskObj) {
 									angular.extend(task, taskObj);

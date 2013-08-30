@@ -5,6 +5,7 @@
 	<key id="reverseSort">reverse</key>
 
 	<key id="this-list-is-empty">This list is empty!</key>
+	<key id="loading">Loading...</key>
 	<key id="you-can">you can</key>
 	<key id="create-elements-with-buttons">create new elements using the commands above</key>
 	<key id="clear-search-filters">clear search filters</key>
