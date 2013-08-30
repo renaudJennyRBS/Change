@@ -15,6 +15,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		{
 			$this->transformMarkdownToHtml();
 		}
+		$this->notifyTargetedUsers();
 	}
 
 	protected function onUpdate()
@@ -23,6 +24,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		{
 			$this->transformMarkdownToHtml();
 		}
+		$this->notifyTargetedUsers();
 	}
 
 	/**
@@ -32,6 +34,50 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 	{
 		$ps = new PresentationServices($this->getApplicationServices());
 		$ps->getRichTextManager()->setDocumentServices($this->getDocumentServices())->render($this->getMessage(), 'Admin');
+	}
+
+	protected function notifyTargetedUsers()
+	{
+		//first find targeted users by their identifiers
+		$matches = [];
+		preg_match_all('/\B(@\+?)([a-z0-9_\-]+)/i', $this->getMessage()->getRawText(), $matches, PREG_SET_ORDER);
+		$userIdentifiers = [];
+		$groupIdentifiers = [];
+		foreach($matches as $match)
+		{
+			if ($match[1] === '@')
+			{
+				$userIdentifiers[] = $match[2];
+			}
+			else if($match[1] === '@+')
+			{
+				$groupIdentifiers[] = $match[2];
+			}
+		}
+		//now get user from user identifiers and send a mail
+		foreach($userIdentifiers as $userIdentifier)
+		{
+			$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_User_User');
+			$user = $dqb->andPredicates($dqb->eq('identifier', $userIdentifier))->getFirstDocument();
+			if ($user)
+			{
+				/* @var $user \Rbs\User\Documents\User */
+				$params = [
+					'documentLabel' => $this->getContextIdInstance()->getLabel(),
+					'authorName' => $this->getAuthorName(),
+					'message' => $this->getMessage()->getRawText()
+				];
+				$jm = new \Change\Job\JobManager();
+				$jm->setApplicationServices($this->getApplicationServices());
+				$arguments = [
+					'params' => $params,
+					'to' => [$user->getEmail()],
+					'templateCode' => 'timeline_mention_notification'
+				];
+				$jm->createNewJob('Rbs_Timeline_SendTemplateMail', $arguments);
+			}
+		}
+		//TODO: do the same things for user group
 	}
 
 	/**

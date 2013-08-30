@@ -20,6 +20,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 
 	const DEFAULT_THEME_NAME = 'Rbs_Base';
 	const EVENT_LOADING = 'loading';
+	const EVENT_MAIL_TEMPLATE_LOADING = 'mail.template.loading';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
 
@@ -282,5 +283,22 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $paths;
+	}
+
+	/**
+	 * @param string $code
+	 * @param \Change\Presentation\Interfaces\Theme $theme
+	 * @return \Change\Presentation\Interfaces\MailTemplate
+	 */
+	public function getMailTemplate($code, $theme)
+	{
+		$event = new Event(static::EVENT_MAIL_TEMPLATE_LOADING, $this, array('code' => $code, 'theme' => $theme,
+			'documentServices' => $this->getDocumentServices()));
+		$callback = function ($result)
+		{
+			return ($result instanceof \Change\Presentation\Interfaces\MailTemplate);
+		};
+		$results = $this->getEventManager()->triggerUntil($event, $callback);
+		return ($results->stopped() && ($results->last() instanceof \Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
 	}
 }

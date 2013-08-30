@@ -46,6 +46,19 @@ class Event extends \Zend\EventManager\Event
 		$this->setParam('executionStatus', JobInterface::STATUS_SUCCESS);
 	}
 
+	public function reported(\DateTime $reportedAt)
+	{
+		$this->setParam('executionStatus', JobInterface::STATUS_WAITING);
+
+		$arguments = $this->getParam('arguments');
+		if (!is_array($arguments))
+		{
+			$arguments = array();
+		}
+		$arguments['reportedAt'] = $reportedAt;
+		$this->setParam('arguments', $arguments);
+	}
+
 	public function failed($error)
 	{
 		if ($error)
