@@ -15,7 +15,7 @@ class MemoryInstance
 		/* @var $doc \Project\Tests\Documents\Basic */
 		$doc = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$doc->setPStr('lab 5001');
-		$doc->initialize(5001, \Change\Documents\DocumentManager::STATE_LOADED);
+		$doc->initialize(5001, \Change\Documents\AbstractDocument::STATE_LOADED);
 		return $doc;
 	}
 
@@ -28,8 +28,8 @@ class MemoryInstance
 		/* @var $doc \Project\Tests\Documents\Localized */
 		$doc = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$doc->setPStr('lab 5002');
-		$doc->setPLStr('Localized 5002');
-		$doc->initialize(5002, \Change\Documents\DocumentManager::STATE_LOADED);
+		$doc->getCurrentLocalization()->setPLStr('Localized 5002');
+		$doc->initialize(5002, \Change\Documents\AbstractDocument::STATE_LOADED);
 		return $doc;
 	}
 }

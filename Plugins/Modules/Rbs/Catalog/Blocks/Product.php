@@ -72,7 +72,6 @@ class Product extends Block
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
 				$attributes['product'] = $product;
-				$attributes['title'] = $product->getTitle();
 				return 'product.twig';
 			}
 		}

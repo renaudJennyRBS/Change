@@ -19,8 +19,8 @@ class Collections
 		{
 			$i18n = $documentServices->getApplicationServices()->getI18nManager();
 			$collection = array(
-				'title' => new I18nString($i18n, 'm.rbs.catalog.document.abstractproduct.title', array('ucf')),
-				'label' => new I18nString($i18n, 'm.rbs.catalog.document.abstractproduct.label', array('ucf'))
+				'title' => new I18nString($i18n, 'm.rbs.catalog.document.product.title', array('ucf')),
+				'label' => new I18nString($i18n, 'm.rbs.catalog.document.product.label', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);

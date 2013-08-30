@@ -45,10 +45,10 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @return Attribute[]|\Change\Documents\AbstractDocument|mixed|null
 	 */
-	public function getValue(\Rbs\Catalog\Documents\AbstractProduct $product)
+	public function getValue(\Rbs\Catalog\Documents\Product $product)
 	{
 		$vt = $this->getValueType();
 		if ($vt === static::TYPE_PROPERTY)

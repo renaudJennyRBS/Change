@@ -69,4 +69,12 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 		}
 		return $result;
 	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getTitle()
+	{
+		return $this->getCurrentLocalization()->getTitle();
+	}
 }

@@ -436,6 +436,38 @@ abstract class AbstractModel
 
 	/**
 	 * @api
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param string $propertyName
+	 * @param mixed $defaultValue [optional]
+	 * @return mixed|null
+	 */
+	public function getPropertyValue(AbstractDocument $document, $propertyName, $defaultValue = null)
+	{
+		if ($this->hasProperty($propertyName))
+		{
+			return $this->properties[$propertyName]->getValue($document);
+		}
+		return $defaultValue;
+	}
+
+	/**
+	 * @api
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param string $propertyName
+	 * @param mixed $value
+	 * @return $this
+	 */
+	public function setPropertyValue(AbstractDocument $document, $propertyName, $value)
+	{
+		if ($this->hasProperty($propertyName))
+		{
+			return $this->properties[$propertyName]->setValue($document, $value);
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getPropertiesNames()

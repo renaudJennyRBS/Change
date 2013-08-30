@@ -37,10 +37,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$tm  = $this->getApplicationServices()->getTransactionManager();
 		$tm->begin();
 		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-		/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setRefLCID('fr_FR');
 		$product->setLabel('Test product');
-		$product->setTitle('Test product');
+		$product->getCurrentLocalization()->setTitle('Test product');
 		$product->save();
 
 		$category = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Category');
@@ -97,10 +97,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		for ($i = 0; $i < 10; $i++)
 		{
 			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-			/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);
-			$product->setTitle($i);
+			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
 			$this->cm->addProductInCategory($product, $category, $condition);
 			$products[] = $product;
@@ -282,10 +282,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		for ($i = 0; $i < 10; $i++)
 		{
 			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-			/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);
-			$product->setTitle($i);
+			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
 			$this->cm->addProductInCategory($product, $category, $condition);
 			$products[] = $product;

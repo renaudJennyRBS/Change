@@ -191,24 +191,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
-	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $key
+	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $lineKey
 	 * @param float $newQuantity
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
-	public function updateLineQuantityByKey(\Rbs\Commerce\Interfaces\Cart $cart, $key, $newQuantity)
+	public function updateLineQuantityByKey(\Rbs\Commerce\Interfaces\Cart $cart, $lineKey, $newQuantity)
 	{
-		if ($key instanceof \Rbs\Commerce\Interfaces\CartLine)
+		if ($lineKey instanceof \Rbs\Commerce\Interfaces\CartLine)
 		{
-			$lineKey = $key->getKey();
+			$lineKey = $lineKey->getKey();
 		}
-		elseif ($key instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
+		elseif ($lineKey instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
-			$lineKey = $key->getKey();
+			$lineKey = $lineKey->getKey();
 		}
 		else
 		{
-			$lineKey = strval($key);
+			$lineKey = strval($lineKey);
 		}
 
 		$line = $cart->updateLineQuantity($lineKey, $newQuantity);
@@ -221,6 +221,38 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			throw new \RuntimeException('Cart line not found for key: ' . $lineKey , 999999);
 		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $lineKey
+	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
+	 * @return null|\Rbs\Commerce\Interfaces\CartLine
+	 */
+	public function updateLineByKey($cart, $lineKey, $cartLineConfig)
+	{
+		if ($lineKey instanceof \Rbs\Commerce\Interfaces\CartLine)
+		{
+			$lineKey = $lineKey->getKey();
+		}
+		elseif ($lineKey instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
+		{
+			$lineKey = $lineKey->getKey();
+		}
+		else
+		{
+			$lineKey = strval($lineKey);
+		}
+
+		$line = $cart->getLineByKey($lineKey);
+		if ($line && !$cart->getLineByKey($cartLineConfig->getKey()))
+		{
+			$newLine = $cart->getNewLine($cartLineConfig, $line->getQuantity());
+			$cart->insertLineAt($newLine, $line->getNumber());
+			$cart->removeLineByKey($lineKey);
+			return $newLine;
+		}
+		return null;
 	}
 
 	/**

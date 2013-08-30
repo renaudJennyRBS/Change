@@ -6,8 +6,6 @@ use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\DocumentLink;
-use Change\Http\Rest\DocumentResult;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Rest\Result\DocumentActionLink;
@@ -22,11 +20,25 @@ use Zend\Http\Response as HttpResponse;
  * @api
  */
 abstract class AbstractDocument implements \Serializable, EventsCapableInterface, RestfulDocumentInterface
-{		
+{
+	const STATE_NEW = 1;
+
+	const STATE_INITIALIZED = 2;
+
+	const STATE_LOADING = 3;
+
+	const STATE_LOADED = 4;
+
+	const STATE_SAVING = 5;
+
+	const STATE_DELETED = 6;
+
+	const STATE_DELETING = 7;
+
 	/**
 	 * @var integer
 	 */
-	private $persistentState = DocumentManager::STATE_NEW;
+	private $persistentState = self::STATE_NEW;
 
 	/**
 	 * @var integer
@@ -266,11 +278,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	public function reset()
 	{
 		$this->unsetProperties();
-		if ($this->persistentState === DocumentManager::STATE_LOADED)
+		if ($this->persistentState === static::STATE_LOADED)
 		{
-			$this->persistentState = DocumentManager::STATE_INITIALIZED;
+			$this->persistentState = static::STATE_INITIALIZED;
 		}
-		elseif($this->persistentState === DocumentManager::STATE_NEW)
+		elseif($this->persistentState === static::STATE_NEW)
 		{
 			$this->setDefaultValues($this->documentModel);
 		}
@@ -289,7 +301,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function setDefaultValues(AbstractModel $documentModel)
 	{
-		$this->persistentState = DocumentManager::STATE_NEW;
+		$this->persistentState = static::STATE_NEW;
 		foreach ($documentModel->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Property */
@@ -301,7 +313,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 	
 	/**
-	 * Persistent state list: \Change\Documents\DocumentManager::STATE_*
+	 * Persistent state list: static::STATE_*
 	 * @api
 	 * @return integer
 	 */
@@ -311,7 +323,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
-	 * Persistent state list: \Change\Documents\DocumentManager::STATE_*
+	 * Persistent state list: static::STATE_*
 	 * @api
 	 * @param integer $newValue
 	 * @return integer oldState
@@ -321,14 +333,16 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		$oldState = $this->persistentState;
 		switch ($newValue) 
 		{
-			case DocumentManager::STATE_LOADED:
+			case static::STATE_LOADED:
 				$this->clearModifiedProperties();
-			case DocumentManager::STATE_NEW:
-			case DocumentManager::STATE_INITIALIZED:
-			case DocumentManager::STATE_LOADING:
-			case DocumentManager::STATE_DELETING:
-			case DocumentManager::STATE_DELETED:
-			case DocumentManager::STATE_SAVING:
+				$this->persistentState = $newValue;
+				break;
+			case static::STATE_NEW:
+			case static::STATE_INITIALIZED:
+			case static::STATE_LOADING:
+			case static::STATE_DELETING:
+			case static::STATE_DELETED:
+			case static::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;
 		}
@@ -341,7 +355,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function isDeleted()
 	{
-		return $this->persistentState === DocumentManager::STATE_DELETED;
+		return $this->persistentState === static::STATE_DELETED;
 	}
 	
 	/**
@@ -350,9 +364,18 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function isNew()
 	{
-		return $this->persistentState === DocumentManager::STATE_NEW;
+		return $this->persistentState === static::STATE_NEW;
 	}
-	
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isLoaded()
+	{
+		return $this->persistentState === static::STATE_LOADED;
+	}
+
 	/**
 	 * @api
 	 * @return integer
@@ -446,33 +469,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 		return $this->getDocumentModelName().' '.$this->getId();
 	}
-		
-
-	
-	/**
-	 * @api
-	 * @return \DateTime
-	 */
-	abstract public function getCreationDate();
-	
-	/**
-	 * @api
-	 * @param \DateTime $creationDate
-	 */
-	abstract public function setCreationDate($creationDate);
-	
-	/**
-	 * @api
-	 * @return \DateTime
-	 */
-	abstract public function getModificationDate();
-	
-	/**
-	 * @api
-	 * @param \DateTime $modificationDate
-	 */
-	abstract public function setModificationDate($modificationDate);
-
 
 	// Tree
 
@@ -643,8 +639,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected $ignoredPropertiesForRestEvents = array('model');
 
 	/**
+	 * Return false on error
 	 * @param \Change\Http\Event $event
-	 * @return $this | false on error
+	 * @return $this|boolean
 	 */
 	public function populateDocumentFromRestEvent(\Change\Http\Event $event)
 	{

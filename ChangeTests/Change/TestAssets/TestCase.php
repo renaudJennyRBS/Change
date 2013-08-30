@@ -180,7 +180,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	 * @param integer $id
 	 * @return \Change\Documents\AbstractDocument
 	 */
-	protected function getNewReadonlyDocument($modelName, $id)
+	protected function getNewReadonlyDocument($modelName, $id, $persistentState = \Change\Documents\AbstractDocument::STATE_LOADED)
 	{
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		$doc = $dm->getNewDocumentInstanceByModelName($modelName);
@@ -189,7 +189,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 			$doc->setRefLCID($dm->getLCID());
 			$doc->getCurrentLocalization();
 		}
-		$doc->initialize($id, \Change\Documents\DocumentManager::STATE_LOADED);
+		$doc->initialize($id, $persistentState);
 		return $doc;
 	}
 }

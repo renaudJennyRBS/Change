@@ -32,7 +32,7 @@
 		if (!$scope.product)
 		{
 			Loading.start();
-			REST.resource('Rbs_Catalog_AbstractProduct', $routeParams.id).then(function(product){
+			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
 				Loading.stop();
 				Breadcrumb.setLocation([
 					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],

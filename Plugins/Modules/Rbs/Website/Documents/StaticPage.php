@@ -2,7 +2,6 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Web\Result\HtmlHeaderElement;
 
 /**
  * @name \Rbs\Website\Documents\StaticPage

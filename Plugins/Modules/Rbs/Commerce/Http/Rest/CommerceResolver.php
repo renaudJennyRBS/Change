@@ -6,6 +6,7 @@ use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
 use Rbs\Commerce\Http\Rest\Action\GetCart;
 use Rbs\Commerce\Http\Rest\Action\InsertCart;
+use Rbs\Commerce\Http\Rest\Action\UpdateCart;
 
 /**
  * @name \Rbs\Commerce\Http\Rest\CommerceResolver
@@ -77,6 +78,11 @@ class CommerceResolver
 			if ($method === Request::METHOD_GET)
 			{
 				$event->setAction(function($event) {(new GetCart())->execute($event);});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			elseif ($method === Request::METHOD_PUT)
+			{
+				$event->setAction(function($event) {(new UpdateCart())->execute($event);});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}

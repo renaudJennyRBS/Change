@@ -45,12 +45,12 @@ class AttributeEngine
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @return array
 	 */
 	public function getAttributeValues($product)
 	{
-		$productId = ($product instanceof \Rbs\Catalog\Documents\AbstractProduct) ? $product->getId() : intval($product);
+		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('attribute_id'), $fb->alias($fb->getDocumentColumn('valueType'), 'valueType'),
@@ -101,12 +101,12 @@ class AttributeEngine
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct|integer $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param array $values
 	 */
 	public function setAttributeValues($product, $values)
 	{
-		$productId = ($product instanceof \Rbs\Catalog\Documents\AbstractProduct) ? $product->getId() : intval($product);
+		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
 		if (is_array($values))
 		{
 			$defined = $this->getDefinedAttributesValues($productId);
@@ -444,12 +444,12 @@ class AttributeEngine
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $attributeValues
 	 * @return null
 	 * @return array
 	 */
-	public function normalizeAttributeValues(\Rbs\Catalog\Documents\AbstractProduct $product, $attributeValues)
+	public function normalizeAttributeValues(\Rbs\Catalog\Documents\Product $product, $attributeValues)
 	{
 		$normalizedValues = array();
 		if (is_array($attributeValues) && count($attributeValues))
@@ -515,7 +515,7 @@ class AttributeEngine
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $attributeValues
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @return array

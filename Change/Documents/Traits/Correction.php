@@ -10,10 +10,14 @@ use Change\Documents\Interfaces\Publishable;
 
 /**
  * @name \Change\Documents\Traits\Correction
- * From \Change\Documents\AbstractDocument
+ *
+ * @see \Change\Documents\AbstractDocument
  * @method integer getId()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method \Change\Documents\DocumentManager getDocumentManager()
+ *
+ * @see \Change\Documents\Traits\DbStorage
+ * @method updateDocument()
  */
 trait Correction
 {
@@ -37,9 +41,9 @@ trait Correction
 	 */
 	protected function getCorrectionLCID()
 	{
-		if ($this instanceof Localizable && $this->getLCID() != $this->getLCID())
+		if ($this instanceof Localizable && $this->getRefLCID() != $this->getCurrentLocalization()->getLCID())
 		{
-			return $this->getLCID();
+			return $this->getCurrentLocalization()->getLCID();
 		}
 		return CorrectionInstance::NULL_LCID_KEY;
 	}
@@ -99,6 +103,11 @@ trait Correction
 		return false;
 	}
 
+	public function updateMergedDocument()
+	{
+		$this->updateDocument();
+	}
+
 	/**
 	 * @return boolean
 	 */
@@ -132,7 +141,8 @@ trait Correction
 		{
 			if ($document instanceof Publishable)
 			{
-				if (!in_array($document->getPublicationStatus(), $document->getValidPublicationStatusForCorrection()))
+				$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
+				if (!in_array($publicationStatus, $document->getValidPublicationStatusForCorrection()))
 				{
 					return;
 				}
@@ -239,49 +249,6 @@ trait Correction
 		{
 			$correction = $this->createNewCorrectionInstance($correctionLCID);
 			$correction->setId($row['correction_id']);
-			$correction->setStatus($row['status']);
-			$correction->setCreationDate($row['creationdate']);
-			$correction->setPublicationDate($row['publicationdate']);
-			$correction->setDatas($row['datas'] ? unserialize($row['datas']) : array());
-			$correction->setModified(false);
-			return $correction;
-		}
-		return null;
-	}
-
-
-	/**
-	 * TODO Not used
-	 * @param integer $correctionId
-	 * @return CorrectionInstance|null
-	 */
-	protected function getCorrectionInstance($correctionId)
-	{
-		$qb = $this->getDocumentManager()->getApplicationServices()->getDbProvider()->getNewQueryBuilder('getCorrection');
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select('lcid', 'status', 'creationdate', 'publicationdate', 'datas')
-				->from($fb->getDocumentCorrectionTable())
-				->where(
-					$fb->logicAnd(
-						$fb->eq($fb->column('correction_id'), $fb->integerParameter('correctionId')),
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
-						$fb->neq($fb->column('status'), $fb->string('FILED'))
-					)
-				);
-		}
-		$sq = $qb->query();
-		$sq->bindParameter('correctionId', $correctionId);
-		$sq->bindParameter('id', $this->getId());
-
-		$row = $sq->getFirstResult($sq->getRowsConverter()->addStrCol('lcid', 'status')
-			->addDtCol('creationdate', 'publicationdate')->addLobCol('datas'));
-
-		if ($row)
-		{
-			$correction = $this->createNewCorrectionInstance($row['lcid']);
-			$correction->setId($correctionId);
 			$correction->setStatus($row['status']);
 			$correction->setCreationDate($row['creationdate']);
 			$correction->setPublicationDate($row['publicationdate']);

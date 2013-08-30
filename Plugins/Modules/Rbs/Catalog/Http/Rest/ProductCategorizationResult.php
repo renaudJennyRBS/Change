@@ -279,7 +279,7 @@ class ProductCategorizationResult
 				foreach ($event->getRequest()->getPost('documentIds') as $id)
 				{
 					$product = $dm->getDocumentInstance($id);
-					if ($product instanceof \Rbs\Catalog\Documents\AbstractProduct)
+					if ($product instanceof \Rbs\Catalog\Documents\Product)
 					{
 						$cat = $cm->getProductCategorization($product, $category, $condition);
 						if (!$cat)

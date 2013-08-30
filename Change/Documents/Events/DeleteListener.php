@@ -138,9 +138,6 @@ class DeleteListener
 		//Remove TreeNode
 		$documentServices->getTreeManager()->deleteDocumentNode($document);
 
-		//Remove Metas
-		$documentServices->getDocumentManager()->saveMetas($document, null);
-
 		$jobManager = new \Change\Job\JobManager();
 		$jobManager->setApplicationServices($documentServices->getApplicationServices());
 		$jobManager->setDocumentServices($documentServices);

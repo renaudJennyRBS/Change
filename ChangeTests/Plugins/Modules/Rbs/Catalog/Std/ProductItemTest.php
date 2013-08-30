@@ -43,11 +43,11 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		$o = new ProductItem(array('id' => 800, 'test' => 'ok'));
 		$o->setDocumentManager($this->getDocumentServices()->getDocumentManager());
 
-		$product->setTitle('title property');
+		$product->getCurrentLocalization()->setTitle('title property');
 		$this->assertEquals('ok', $o->test());
 		$this->assertEquals(800, $o->id());
 		$this->assertEquals('title property', $o->title());
-		$product->setTitle('title property modified');
+		$product->getCurrentLocalization()->setTitle('title property modified');
 		$this->assertEquals('title property', $o->title());
 
 		$baseUrl = 'http://localhost/index.php';

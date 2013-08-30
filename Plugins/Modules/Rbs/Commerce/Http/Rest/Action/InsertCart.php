@@ -26,6 +26,7 @@ class InsertCart
 			{
 				$billingArea = null;
 			}
+
 			$zone = (isset($args['zone'])) ? strval($args['zone']) : null;
 			$context = isset($args['context']) && is_array($args['context']) ? $args['context'] : array();
 			$cart = $commerceServices->getCartManager()->getNewCart($billingArea, $zone, $context);

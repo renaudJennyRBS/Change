@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Documents;
 
-use Change\Documents\Events\Event;
 use Change\Http\Web\Events\PageEvent;
 use Change\Http\Web\Result\HtmlHeaderElement;
 use Change\Http\Web\Result\Page as PageResult;
@@ -19,7 +18,7 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	 */
 	public function getIdentifier()
 	{
-		return $this->getId() . ',' . $this->getLCID();
+		return $this->getId() . ',' . $this->getCurrentLCID();
 	}
 
 	/**
@@ -28,7 +27,7 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	 */
 	public function getContentLayout()
 	{
-		return new Layout($this->getEditableContent());
+		return new Layout($this->getCurrentLocalization()->getEditableContent());
 	}
 
 	/**
@@ -105,9 +104,10 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				$pageLayout = $result->getContentLayout();
 
 				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
-				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
+				$callableTwigBlock = function (\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
 				{
-					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
+					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', '
+					. var_export($twitterBootstrapHtml->getBlockClass($item), true) . ')|raw }}';
 				};
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
 
@@ -133,5 +133,23 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	{
 		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
 		$eventManager->attach(\Change\Presentation\Interfaces\Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
+	}
+
+	/**
+	 * @see \Change\Presentation\Interfaces\Page::getModificationDate()
+	 * @return \DateTime
+	 */
+	public function getModificationDate()
+	{
+		return $this->getCurrentLocalization()->getModificationDate();
+	}
+
+	/**
+	 * @see \Change\Presentation\Interfaces\Page::getModificationDate()
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->getCurrentLocalization()->getTitle();
 	}
 }

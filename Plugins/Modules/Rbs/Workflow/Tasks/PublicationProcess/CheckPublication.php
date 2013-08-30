@@ -27,7 +27,7 @@ class CheckPublication
 		$document = $workItem->getWorkflowInstance()->getDocument();
 		if ($document instanceof Publishable)
 		{
-			$publicationStatus = $document->getPublicationStatus();
+			$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
 			if ($publicationStatus === Publishable::STATUS_VALID ||
 				$publicationStatus === Publishable::STATUS_UNPUBLISHABLE ||
 				$publicationStatus === Publishable::STATUS_PUBLISHABLE)
@@ -43,9 +43,10 @@ class CheckPublication
 				{
 					$reason = null;
 					$newPublicationStatus = Publishable::STATUS_PUBLISHABLE;
-					if ($document->getEndPublication())
+					$endPublication = $document->getDocumentModel()->getPropertyValue($document, 'endPublication');
+					if ($endPublication)
 					{
-						$ctx['fileDeadLine'] = $document->getEndPublication()->format(\DateTime::ISO8601);
+						$ctx['fileDeadLine'] = $endPublication->format(\DateTime::ISO8601);
 					}
 					elseif (isset($ctx['fileDeadLine']))
 					{
@@ -81,7 +82,7 @@ class CheckPublication
 	{
 		if ($document instanceof Localizable)
 		{
-			$metaKey = 'Unpublishable_Reason_' . $document->getLCID();
+			$metaKey = 'Unpublishable_Reason_' . $document->getCurrentLCID();
 		}
 		else
 		{

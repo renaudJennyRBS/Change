@@ -31,7 +31,7 @@ class Install
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('PC');
 				$item->setLabel('pc.');
-				$item->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.unit-piece', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.unit-piece', array('ucf')));
 				$item->setLocked(true);
 				$item->save();
 

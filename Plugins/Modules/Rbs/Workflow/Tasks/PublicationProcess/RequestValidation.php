@@ -21,7 +21,8 @@ class RequestValidation
 		$document = $workItem->getWorkflowInstance()->getDocument();
 		if ($document instanceof Publishable)
 		{
-			if ($document->getPublicationStatus() === Publishable::STATUS_DRAFT)
+			$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
+			if ($publicationStatus === Publishable::STATUS_DRAFT)
 			{
 				$documentServices = $document->getDocumentServices();
 				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();

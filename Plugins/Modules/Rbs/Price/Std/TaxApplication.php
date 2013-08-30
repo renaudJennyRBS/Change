@@ -108,6 +108,16 @@ class TaxApplication implements TaxApplicationInterfaces
 	}
 
 	/**
+	 * @param float $add
+	 * @return $this
+	 */
+	public function addValue($add)
+	{
+		$this->value += $add;
+		return $this;
+	}
+
+	/**
 	 * @return float
 	 */
 	public function getValue()

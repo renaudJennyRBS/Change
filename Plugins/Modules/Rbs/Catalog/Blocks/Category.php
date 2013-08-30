@@ -98,7 +98,7 @@ class Category extends Block
 			$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
 			foreach ($query->getDocuments() as $product)
 			{
-				/* @var $product \Rbs\Catalog\Documents\AbstractProduct */
+				/* @var $product \Rbs\Catalog\Documents\Product */
 				$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
 				$visual = $product->getFirstVisual();

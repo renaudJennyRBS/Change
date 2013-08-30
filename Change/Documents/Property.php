@@ -259,7 +259,7 @@ class Property
 		{
 			case self::TYPE_INTEGER:
 			case self::TYPE_DECIMAL:
-			case self::TYPE_DOUBLE:
+			case self::TYPE_FLOAT:
 				return true;
 			default:
 				return false;
@@ -273,7 +273,7 @@ class Property
 	 */
 	public function isDocument()
 	{
-		return ($this->type === self::TYPE_DOCUMENT || $this->type === self::TYPE_DOCUMENTARRAY);;
+		return ($this->type === self::TYPE_DOCUMENT || $this->type === self::TYPE_DOCUMENTARRAY);
 	}
 
 	/**
@@ -528,53 +528,74 @@ class Property
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
 	 * @return mixed
 	 */
-	public function getValue($document)
+	public function getValue(\Change\Documents\AbstractDocument $document)
 	{
 		if ($this->name === 'model')
 		{
-			$getter = 'getDocumentModelName';
+			return $document->getDocumentModelName();
 		}
 		else
 		{
 			$getter = 'get' . ucfirst($this->name);
+			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				return call_user_func(array($document->getCurrentLocalization(), $getter));
+			}
+			else
+			{
+				return call_user_func(array($document, $getter));
+			}
 		}
-		return call_user_func(array($document, $getter));
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return mixed
 	 */
-	public function getOldValue($document)
+	public function getOldValue(\Change\Documents\AbstractDocument $document)
 	{
 		if ($this->name === 'id')
 		{
-			$getter = 'getId';
+			return $document->getId();
 		}
 		elseif ($this->name === 'model')
 		{
-			$getter = 'getDocumentModelName';
+			return $document->getDocumentModelName();
 		}
 		else
 		{
 			$getter = 'get' . ucfirst($this->name).'OldValue';
+			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				return call_user_func(array($document->getCurrentLocalization(), $getter));
+			}
+			else
+			{
+				return call_user_func(array($document, $getter));
+			}
 		}
-		return call_user_func(array($document, $getter));
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
 	 * @param mixed $value
 	 */
-	public function setValue($document, $value)
+	public function setValue(\Change\Documents\AbstractDocument $document, $value)
 	{
 		if ($this->name !== 'id' && $this->name !== 'model')
 		{
 			$setter = 'set' . ucfirst($this->name);
-			call_user_func(array($document, $setter), $value);
+			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				call_user_func(array($document->getCurrentLocalization(), $setter), $value);
+			}
+			else
+			{
+				call_user_func(array($document, $setter), $value);
+			}
 		}
 	}
 

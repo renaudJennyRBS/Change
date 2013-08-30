@@ -47,7 +47,7 @@ class Cart extends Block
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
 			$commerceServices = $event->getParam('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
-			if ($cart && count($cart->getLines()))
+			if ($cart && !$cart->isEmpty())
 			{
 				$attributes['cart'] = $cart;
 				return 'cart.twig';

@@ -81,13 +81,7 @@ class CreateDocument
 			{
 				if ($document instanceof Editable)
 				{
-					$authorId = $document->getAuthorId();
-					if (!$authorId)
-					{
-						$user = $event->getAuthenticationManager()->getCurrentUser();
-						$document->setAuthorId($user->getId());
-						$document->setAuthorName($user->getName());
-					}
+					$document->setOwnerUser($event->getAuthenticationManager()->getCurrentUser());
 				}
 				$this->create($event, $document, $properties);
 			}

@@ -27,11 +27,11 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	protected $itemConfigArray = array();
 
 	/**
-	 * @param \Rbs\Catalog\Documents\AbstractProduct $product
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 */
-	function __construct(\Rbs\Catalog\Documents\AbstractProduct $product )
+	function __construct(\Rbs\Catalog\Documents\Product $product )
 	{
-		$this->designation = $product->getTitle();
+		$this->designation = $product->getCurrentLocalization()->getTitle();
 		$this->key = strval($product->getId());
 		$this->options['productId'] = $product->getId();
 		if ($product->getSku())

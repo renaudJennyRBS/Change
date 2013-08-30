@@ -537,6 +537,10 @@ class Property
 	 */
 	public function makeLocalized($localized)
 	{
+		if ($this->stateless)
+		{
+			$localized = null;
+		}
 		$this->localized = $localized;
 	}
 

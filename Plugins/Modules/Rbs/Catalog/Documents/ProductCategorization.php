@@ -52,7 +52,7 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 		$urlManager = $documentLink->getUrlManager();
 		$product = $this->getProduct();
-		if ($product instanceof \Rbs\Catalog\Documents\AbstractProduct)
+		if ($product instanceof \Rbs\Catalog\Documents\Product)
 		{
 			$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY ));
 		}

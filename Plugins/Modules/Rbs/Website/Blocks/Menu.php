@@ -103,7 +103,7 @@ class Menu extends Block
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$entry->setLabel($doc->getTitle());
+			$entry->setLabel($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
 		}
 		if ($doc instanceof \Rbs\Website\Documents\Section)
 		{

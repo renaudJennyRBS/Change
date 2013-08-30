@@ -12,6 +12,17 @@
 					window.location.reload();
 				}
 			})
+		},
+		updateLine : function(button) {
+			jQuery.ajax({
+				type: "POST",
+				url: "Action/Rbs/Commerce/UpdateCartLine",
+				data: {lineKey: lineKey, delete: true},
+				dataType: 'json',
+				success: function(data, textStatus, jqXHR) {
+					window.location.reload();
+				}
+			})
 		}
 	}
 </script>
@@ -29,15 +40,7 @@
 	</thead>
 	<tbody>
 {% for cartLine in cart.lines %}
-	<tr id="{{ blockId }}_{{ cartLine.key }}" data-line-key="{{ cartLine.key }}">
-		<td>{{ cartLine.number }}</td>
-		<td>{{ cartLine.designation }}</td>
-		<td>{{ formatPrice(cartLine.unitPriceValue) }}</td>
-		<td>{{ cartLine.quantity }}</td>
-		<td>{{ formatPrice(cartLine.priceValue) }}</td>
-		<td>{{ formatPrice(cartLine.priceValueWithTax) }}</td>
-		<td><button type="button" class="btn btn-small" onclick="script{{ blockId }}.deleteLine(this.value)" value="{{ cartLine.key }}">Supprimer</></td>
-	</tr>
+	{% include 'Rbs_Commerce/Blocks/cart-line.twig' %}
 {% endfor %}
 	</tbody>
 </table>
@@ -61,3 +64,9 @@
 {% endfor %}
 	</tbody>
 </table>
+
+<ol>
+	<li>Montant : {{ formatPrice(cart.priceValue) }}</li>
+	<li>Montant TTC : {{ formatPrice(cart.priceValueWithTax) }}</li>
+</ol>
+

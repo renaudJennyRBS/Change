@@ -80,19 +80,30 @@ class UpdateCartLine
 				if ($cartLine)
 				{
 					$parameters = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-					$options = isset($parameters['options']) ? $parameters['options'] : array();
-					if (is_array($options))
+					$cartManager = $commerceServices->getCartManager();
+					if (isset($parameters['product']))
 					{
-						foreach ($options as $optName => $optValue)
+						$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters['product']);
+						if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
 						{
-							$cartLine->getOptions()->set($optName, $optValue);
+							$cartLineConfig = $product->getCartLineConfig($commerceServices, $parameters);
+							if (($oldLine = $cart->getLineByKey($cartLineConfig->getKey())) !== null)
+							{
+								$e = new \RuntimeException('Duplicate Line: ' . $oldLine->getNumber() , 999999);
+								$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
+								throw $e;
+							}
+
+							$cartLine = $cartManager->updateLineByKey($cart, $lineKey, $cartLineConfig);
+							$lineKey = $cartLine->getKey();
 						}
 					}
-					$cartManager = $commerceServices->getCartManager();
+
 					if (isset($parameters['quantity']))
 					{
 						$cartManager->updateLineQuantityByKey($cart, $lineKey, floatval($parameters['quantity']));
 					}
+
 					$cartManager->saveCart($cart);
 					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray()));
 					$event->setResult($result);

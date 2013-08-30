@@ -59,17 +59,17 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedDoc->initialize(1005);
 		$localizedDoc->setPStr('test 1005');
-		$localizedDoc->setPLStr('text un');
+		$localizedDoc->getCurrentLocalization()->setPLStr('text un');
 		$localizedDoc->setPInt(1001);
-		$localizedDoc->setPLInt(1001);
+		$localizedDoc->getCurrentLocalization()->setPLInt(1001);
 		$localizedDoc->setPDocInst($dm->getDocumentInstance(1000));
 		$localizedDoc->setPDocArr(array($dm->getDocumentInstance(1000), $dm->getDocumentInstance(1002)));
 		$localizedDoc->save();
 		$dm->popLCID();
 
 		$dm->pushLCID('en_US');
-		$localizedDoc->setPLStr('text one');
-		$localizedDoc->setPLInt(1002);
+		$localizedDoc->getCurrentLocalization()->setPLStr('text one');
+		$localizedDoc->getCurrentLocalization()->setPLInt(1002);
 		$localizedDoc->save();
 		$dm->popLCID();
 
@@ -77,15 +77,15 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedDoc->initialize(1006);
 		$localizedDoc->setPStr('test 1006');
-		$localizedDoc->setPLStr('text two');
-		$localizedDoc->setPLInt(7);
+		$localizedDoc->getCurrentLocalization()->setPLStr('text two');
+		$localizedDoc->getCurrentLocalization()->setPLInt(7);
 		$localizedDoc->setPDocInst($dm->getDocumentInstance(1001));
 		$localizedDoc->setPDocArr(array($dm->getDocumentInstance(1002)));
 		$localizedDoc->save();
 		$dm->popLCID();
 
 		$dm->pushLCID('en_US');
-		$localizedDoc->setPLStr('text one');
+		$localizedDoc->getCurrentLocalization()->setPLStr('text one');
 		$localizedDoc->save();
 		$dm->popLCID();
 	}

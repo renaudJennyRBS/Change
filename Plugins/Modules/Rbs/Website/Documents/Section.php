@@ -103,4 +103,22 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		$sections[] = $this;
 		return $sections;
 	}
+
+	/**
+	 * @see \Change\Presentation\Interfaces\Section::getTitle()
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->getCurrentLocalization()->getTitle();
+	}
+
+	/**
+	 * @see \Change\Presentation\Interfaces\Section::getPathPart()
+	 * @return string
+	 */
+	public function getPathPart()
+	{
+		return $this->getCurrentLocalization()->getPathPart();
+	}
 }
