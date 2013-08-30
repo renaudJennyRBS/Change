@@ -3,6 +3,9 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Publishable
+ * @method integer getId()
+ * @method \Change\Documents\AbstractModel getDocumentModel()
+ * @method \Change\Documents\DocumentServices getDocumentServices()
  */
 interface Publishable
 {
@@ -23,71 +26,11 @@ interface Publishable
 	const STATUS_FILED = 'FILED';
 
 	/**
-	 * @api
-	 * @return integer
-	 */
-	public function getId();
-
-	/**
-	 * @api
-	 * @return \Change\Documents\AbstractModel
-	 */
-	public function getDocumentModel();
-
-	/**
-	 * @api
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices();
-
-	/**
-	 * @api
-	 * @return string
-	 */
-	public function getPublicationStatus();
-	
-	/**
-	 * @api
-	 * @param string $publicationStatus
-	 */
-	public function setPublicationStatus($publicationStatus);
-
-	/**
 	 * Return valid PublicationStatus for correction system
 	 * @api
 	 * @return string[]
 	 */
 	public function getValidPublicationStatusForCorrection();
-	
-	/**
-	 * @api
-	 * @return \DateTime|null
-	 */
-	public function getStartPublication();
-		
-	/**
-	 * @api
-	 * @param \DateTime|null $startPublication
-	 */
-	public function setStartPublication($startPublication);
-	
-	/**
-	 * @api
-	 * @return \DateTime|null
-	 */
-	public function getEndPublication();
-	
-	/**
-	 * @api
-	 * @param \DateTime|null $endPublication
-	 */
-	public function setEndPublication($endPublication);
-
-	/**
-	 * @api
-	 * @return string
-	 */
-	public function getTitle();
 
 	/**
 	 * @api

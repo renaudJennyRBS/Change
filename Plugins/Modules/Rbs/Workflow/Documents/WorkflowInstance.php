@@ -422,7 +422,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 				$task->setPrivilege($document->getDocumentModelName());
 				if ($document instanceof \Change\Documents\Interfaces\Localizable)
 				{
-					$task->setDocumentLCID($document->getLCID());
+					$task->setDocumentLCID($document->getCurrentLCID());
 				}
 			}
 

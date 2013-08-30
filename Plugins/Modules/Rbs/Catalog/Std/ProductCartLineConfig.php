@@ -31,7 +31,7 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	 */
 	function __construct(\Rbs\Catalog\Documents\Product $product )
 	{
-		$this->designation = $product->getTitle();
+		$this->designation = $product->getCurrentLocalization()->getTitle();
 		$this->key = strval($product->getId());
 		$this->options['productId'] = $product->getId();
 		if ($product->getSku())

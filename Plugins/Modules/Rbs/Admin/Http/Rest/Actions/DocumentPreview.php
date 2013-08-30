@@ -43,7 +43,7 @@ class DocumentPreview
 
 		if ($document instanceof Publishable)
 		{
-			$title = $document->getTitle();
+			$title = $document->getDocumentModel()->getPropertyValue($document, 'title');
 		}
 		elseif ($document instanceof Editable)
 		{

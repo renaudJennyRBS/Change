@@ -27,7 +27,8 @@ class ContentValidation
 		$document = $workItem->getWorkflowInstance()->getDocument();
 		if ($document instanceof Publishable)
 		{
-			if ($document->getPublicationStatus() === Publishable::STATUS_VALIDATION)
+			$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
+			if ($publicationStatus === Publishable::STATUS_VALIDATION)
 			{
 				$documentServices = $document->getDocumentServices();
 				$newPublicationStatus = Publishable::STATUS_VALIDCONTENT;

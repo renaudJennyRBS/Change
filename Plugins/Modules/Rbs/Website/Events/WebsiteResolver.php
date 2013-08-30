@@ -46,7 +46,7 @@ class WebsiteResolver
 							$request->setLCID($LCID);
 							$event->setParam('website', $website);
 							$event->getUrlManager()->setBasePath($websitePathPart);
-							$website->setScriptName($script);
+							$website->getCurrentLocalization()->setScriptName($script);
 							return;
 						}
 					}
@@ -70,8 +70,8 @@ class WebsiteResolver
 					$request->setLCID($LCID);
 					$event->setParam('website', $website);
 					$event->getUrlManager()->setBasePath($websitePathPart);
-					$website->setScriptName($script);
-					$website->setHostName($hostName);
+					$website->getCurrentLocalization()->setScriptName($script);
+					$website->getCurrentLocalization()->setHostName($hostName);
 				}
 			}
 		}

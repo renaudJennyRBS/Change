@@ -22,7 +22,6 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 	}
 
-
 	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */

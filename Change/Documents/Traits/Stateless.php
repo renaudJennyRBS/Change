@@ -1,8 +1,10 @@
 <?php
 namespace Change\Documents\Traits;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentManager;
 use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\PropertiesValidationException;
 
 /**
  * @name \Change\Documents\Traits\Stateless
@@ -23,10 +25,10 @@ trait Stateless
 	 */
 	public function load()
 	{
-		if ($this->getPersistentState() === DocumentManager::STATE_INITIALIZED)
+		if ($this->getPersistentState() === AbstractDocument::STATE_INITIALIZED)
 		{
 			$this->doLoad();
-			$this->setPersistentState(DocumentManager::STATE_LOADED);
+			$this->setPersistentState(AbstractDocument::STATE_LOADED);
 			$event = new DocumentEvent(DocumentEvent::EVENT_LOADED, $this);
 			$this->getEventManager()->trigger($event);
 		}
@@ -44,7 +46,7 @@ trait Stateless
 	 */
 	public function save()
 	{
-		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
+		if ($this->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			$this->create();
 		}
@@ -59,7 +61,7 @@ trait Stateless
 	 */
 	public function create()
 	{
-		if ($this->getPersistentState() !== DocumentManager::STATE_NEW)
+		if ($this->getPersistentState() !== AbstractDocument::STATE_NEW)
 		{
 			throw new \RuntimeException('Document is not new', 51001);
 		}
@@ -75,14 +77,14 @@ trait Stateless
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
+			$e = new PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
 
 		$this->doCreate();
 
-		$this->setPersistentState(DocumentManager::STATE_LOADED);
+		$this->setPersistentState(AbstractDocument::STATE_LOADED);
 		$event = new DocumentEvent(DocumentEvent::EVENT_CREATED, $this);
 		$this->getEventManager()->trigger($event);
 	}
@@ -98,7 +100,7 @@ trait Stateless
 	 */
 	public function update()
 	{
-		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
+		if ($this->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			throw new \RuntimeException('Document is new', 51002);
 		}
@@ -115,7 +117,7 @@ trait Stateless
 		$propertiesErrors = $event->getParam('propertiesErrors');
 		if (is_array($propertiesErrors) && count($propertiesErrors))
 		{
-			$e = new \Change\Documents\PropertiesValidationException('Invalid document properties.', 52000);
+			$e = new PropertiesValidationException('Invalid document properties.', 52000);
 			$e->setPropertiesErrors($propertiesErrors);
 			throw $e;
 		}
@@ -123,7 +125,7 @@ trait Stateless
 		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 
 		$this->doUpdate();
-		$this->setPersistentState(DocumentManager::STATE_LOADED);
+		$this->setPersistentState(AbstractDocument::STATE_LOADED);
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
 		$this->getEventManager()->trigger($event);
@@ -141,14 +143,14 @@ trait Stateless
 	public function delete()
 	{
 		//Already deleted
-		if ($this->getPersistentState() === DocumentManager::STATE_DELETED
-			|| $this->getPersistentState() === DocumentManager::STATE_DELETING
+		if ($this->getPersistentState() === AbstractDocument::STATE_DELETED
+			|| $this->getPersistentState() === AbstractDocument::STATE_DELETING
 		)
 		{
 			return;
 		}
 
-		if ($this->getPersistentState() === DocumentManager::STATE_NEW)
+		if ($this->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			throw new \RuntimeException('Document is new', 51002);
 		}
@@ -163,7 +165,7 @@ trait Stateless
 
 
 		$this->doDelete();
-		$this->setPersistentState(DocumentManager::STATE_DELETED);
+		$this->setPersistentState(AbstractDocument::STATE_DELETED);
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_DELETED, $this);
 		$this->getEventManager()->trigger($event);

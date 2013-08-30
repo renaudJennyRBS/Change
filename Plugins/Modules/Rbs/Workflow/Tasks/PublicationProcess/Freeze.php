@@ -21,7 +21,8 @@ class Freeze
 		$document = $workItem->getWorkflowInstance()->getDocument();
 		if ($document instanceof Publishable)
 		{
-			if ($document->getPublicationStatus() === Publishable::STATUS_PUBLISHABLE)
+			$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
+			if ($publicationStatus === Publishable::STATUS_PUBLISHABLE)
 			{
 				$documentServices = $document->getDocumentServices();
 				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();

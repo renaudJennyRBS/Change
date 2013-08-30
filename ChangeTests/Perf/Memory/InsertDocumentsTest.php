@@ -56,7 +56,7 @@ class InsertDocumentsTest extends \ChangeTests\Change\TestAssets\TestCase
 				$count++;
 				/* @var $item \Rbs\Collection\Documents\Item */
 				$item = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-				$item->setValue($it)->setLabel('item: ' . $count)->setTitle('titre: ' . $count);
+				$item->setValue($it)->setLabel('item: ' . $count)->getCurrentLocalization()->setTitle('titre: ' . $count);
 				$item->save();
 				$items[] = $item;
 			}

@@ -7,10 +7,6 @@ use Change\Documents\Interfaces\Publishable;
  * @method integer getId()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method \Change\Documents\DocumentManager getDocumentManager()
- * @method string getPublicationStatus()
- * @method setPublicationStatus($publicationStatus)
- * @method \DateTime|null getStartPublication()
- * @method \DateTime|null getEndPublication()
  * @method update()
  *
  * @method \Change\Presentation\Interfaces\Section[] getPublicationSections()
@@ -19,6 +15,40 @@ use Change\Documents\Interfaces\Publishable;
 trait Publication
 {
 	/**
+	 * @return string|null
+	 */
+	protected function getCurrentPublicationStatus()
+	{
+		return $this->getDocumentModel()->getPropertyValue($this, 'publicationStatus');
+	}
+
+	/**
+	 * @param string $publicationStatus
+	 * @return $this
+	 */
+	protected function setCurrentPublicationStatus($publicationStatus)
+	{
+		$this->getDocumentModel()->setPropertyValue($this, 'publicationStatus', $publicationStatus);
+		return $this;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	protected function getCurrentStartPublication()
+	{
+		return $this->getDocumentModel()->getPropertyValue($this, 'startPublication');
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	protected function getCurrentEndPublication()
+	{
+		return $this->getDocumentModel()->getPropertyValue($this, 'endPublication');
+	}
+
+	/**
 	 * @see \Change\Documents\Interfaces\Publishable::published
 	 * @api
 	 * @param \DateTime $at
@@ -26,10 +56,10 @@ trait Publication
 	 */
 	public function published(\DateTime $at = null)
 	{
-		if (Publishable::STATUS_PUBLISHABLE === $this->getPublicationStatus())
+		if (Publishable::STATUS_PUBLISHABLE === $this->getCurrentPublicationStatus())
 		{
-			$st = $this->getStartPublication();
-			$ep = $this->getEndPublication();
+			$st = $this->getCurrentStartPublication();
+			$ep = $this->getCurrentEndPublication();
 			$test = ($at === null) ? new \DateTime(): $at;
 			return (null === $st || $st <= $test) && (null === $ep || $test < $ep);
 		}
@@ -54,9 +84,9 @@ trait Publication
 	 */
 	public function updatePublicationStatus($newPublicationStatus)
 	{
-		if ($this->getPublicationStatus() !== $newPublicationStatus)
+		if ($this->getCurrentPublicationStatus() !== $newPublicationStatus)
 		{
-			$this->setPublicationStatus($newPublicationStatus);
+			$this->setCurrentPublicationStatus($newPublicationStatus);
 			$this->update();
 		}
 	}

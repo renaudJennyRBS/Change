@@ -830,7 +830,7 @@ class TreeManager
 		$q2->bindParameter('id', $document->getId());
 		if ($q2->execute())
 		{
-			if ($document->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADED)
+			if ($document->getPersistentState() == AbstractDocument::STATE_LOADED)
 			{
 				$document->setTreeName($treeName);
 				$document->removeOldPropertyValue('treeName');
@@ -853,7 +853,7 @@ class TreeManager
 		if ($this->getDocumentServices()->getDocumentManager()->isInCache($id))
 		{
 			$subDoc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($id, $model);
-			if ($subDoc->getPersistentState() == \Change\Documents\DocumentManager::STATE_LOADED)
+			if ($subDoc->getPersistentState() == AbstractDocument::STATE_LOADED)
 			{
 				$subDoc->setTreeName(null);
 				$subDoc->removeOldPropertyValue('treeName');

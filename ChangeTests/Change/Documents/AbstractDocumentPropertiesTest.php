@@ -42,25 +42,30 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	{
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
 		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-
-		$this->assertNull($localizedDoc->getPLStr());
+		$this->assertFalse(method_exists($localizedDoc, 'getPLStr'));
+		$this->assertFalse(method_exists($localizedDoc, 'setPLStr'));
+		$cl = $localizedDoc->getCurrentLocalization();
+		$this->assertNull($cl->getPLStr());
 		$this->assertFalse($localizedDoc->isPropertyModified('pLStr'));
-		$this->assertSame($localizedDoc, $localizedDoc->setPLStr('toto'));
-		$this->assertEquals('toto', $localizedDoc->getPLStr());
-		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
-		$localizedDoc->setPLStr(null);
-		$this->assertNull($localizedDoc->getPLStr());
+		$this->assertFalse($cl->isPropertyModified('pLStr'));
 
-		$this->assertNull($localizedDoc->getPLStrOldValue());
-		$localizedDoc->setPLStr('default');
+		$this->assertSame($cl, $cl->setPLStr('toto'));
+		$this->assertEquals('toto', $cl->getPLStr());
 		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
+		$this->assertTrue($cl->isPropertyModified('pLStr'));
+		$cl->setPLStr(null);
+		$this->assertNull($cl->getPLStr());
+
+		$this->assertNull($cl->getPLStrOldValue());
+		$cl->setPLStr('default');
+		$this->assertTrue($cl->isPropertyModified('pLStr'));
 		$localizedDoc->removeOldPropertyValue('pLStr');
 		$this->assertFalse($localizedDoc->isPropertyModified('pLStr'));
 
-		$localizedDoc->setPLStr(null);
-		$this->assertNull($localizedDoc->getPLStr());
+		$cl->setPLStr(null);
+		$this->assertNull($cl->getPLStr());
 		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
-		$this->assertEquals('default', $localizedDoc->getPLStrOldValue());
+		$this->assertEquals('default', $cl->getPLStrOldValue());
 	}
 
 	public function testBooleanPropertyAccessors()
@@ -83,18 +88,24 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
 		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-		$this->assertNull($localizedDoc->getPLBool());
-		$this->assertFalse($localizedDoc->isPropertyModified('pLBool'));
-		$this->assertSame($localizedDoc, $localizedDoc->setPLBool(true));
-		$this->assertTrue($localizedDoc->getPLBool());
-		$this->assertTrue($localizedDoc->isPropertyModified('pLBool'));
-		$localizedDoc->setPLBool(false);
-		$this->assertFalse($localizedDoc->getPLBool());
-		$this->assertTrue($localizedDoc->isPropertyModified('pLBool'));
+		$this->assertFalse(method_exists($localizedDoc, 'getPLBool'));
+		$this->assertFalse(method_exists($localizedDoc, 'setPLBool'));
+		$cl = $localizedDoc->getCurrentLocalization();
 
-		$localizedDoc->setPLBool(null);
-		$this->assertNull($localizedDoc->getPLBool());
+		$this->assertNull($cl->getPLBool());
+		$this->assertFalse($cl->isPropertyModified('pLBool'));
 		$this->assertFalse($localizedDoc->isPropertyModified('pLBool'));
+		$this->assertSame($cl, $cl->setPLBool(true));
+		$this->assertTrue($cl->getPLBool());
+		$this->assertTrue($cl->isPropertyModified('pLBool'));
+		$this->assertTrue($localizedDoc->isPropertyModified('pLBool'));
+		$cl->setPLBool(false);
+		$this->assertFalse($cl->getPLBool());
+		$this->assertTrue($cl->isPropertyModified('pLBool'));
+
+		$cl->setPLBool(null);
+		$this->assertNull($cl->getPLBool());
+		$this->assertFalse($cl->isPropertyModified('pLBool'));
 	}
 
 	public function testIntegerPropertyAccessors()
@@ -252,18 +263,23 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
 		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
-		$this->assertNull($localizedDoc->getPLJson());
+		$this->assertFalse(method_exists($localizedDoc, 'getPLJson'));
+		$this->assertFalse(method_exists($localizedDoc, 'setPLJson'));
+		$cl = $localizedDoc->getCurrentLocalization();
+
+		$this->assertNull($cl->getPLJson());
+		$this->assertFalse($cl->isPropertyModified('pLJson'));
 		$this->assertFalse($localizedDoc->isPropertyModified('pLJson'));
 
 		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
-		$json = '{"toto":"youpi","plop":12.2,"1":"test"}';
-		$this->assertSame($localizedDoc, $localizedDoc->setPLJson($data));
-		$this->assertEquals($data, $localizedDoc->getPLJson());
-		$this->assertEquals($json, $localizedDoc->getPLJsonString());
+		$this->assertSame($cl, $cl->setPLJson($data));
+		$this->assertEquals($data, $cl->getPLJson());
+
+		$this->assertTrue($cl->isPropertyModified('pLJson'));
 		$this->assertTrue($localizedDoc->isPropertyModified('pLJson'));
-		$localizedDoc->setPLJson(null);
+		$cl->setPLJson(null);
 		$this->assertFalse($localizedDoc->isPropertyModified('pLJson'));
-		$this->assertNull($localizedDoc->getPLJson());
+		$this->assertNull($cl->getPLJson());
 	}
 
 	public function testXMLPropertyAccessors()
@@ -272,22 +288,16 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPXml());
+		$this->assertFalse($basicDoc->isPropertyModified('pXml'));
 
 		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root><test id=\"tutu\" tata=\"titi\">Toto</test></root>\n";
 		$this->assertSame($basicDoc, $basicDoc->setPXml($xml));
-		$this->assertEquals($xml, $basicDoc->getPXml());
-		$domDoc = $basicDoc->getPXmlDOMDocument();
-		$this->assertInstanceOf('DOMDocument', $domDoc);
-		$node = $domDoc->getElementsByTagName('test')->item(0);
-		$node->removeAttribute('tata');
-		$node->removeAttribute('id');
-		$node->setAttribute('titi', 'tutu');
-		$this->assertSame($basicDoc, $basicDoc->setPXmlDOMDocument($domDoc));
-		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root><test titi=\"tutu\">Toto</test></root>\n";
+		$this->assertTrue($basicDoc->isPropertyModified('pXml'));
 		$this->assertEquals($xml, $basicDoc->getPXml());
 
 		$basicDoc->setPXml(null);
 		$this->assertNull($basicDoc->getPXml());
+		$this->assertFalse($basicDoc->isPropertyModified('pLJson'));
 	}
 
 	public function testRichtextPropertyAccessors()
@@ -295,12 +305,14 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
+		$string = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 1000);
+
 		$this->assertInstanceOf('Change\Documents\RichtextProperty', $basicDoc->getPRt());
 		$this->assertTrue($basicDoc->getPRt()->isEmpty());
 		$this->assertFalse($basicDoc->getPRt()->isModified());
 		$this->assertFalse($basicDoc->isPropertyModified('pRt'));
 
-		$string = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 1000);
+
 		$basicDoc->getPRt()->setRawText($string);
 		$this->assertSame($string, $basicDoc->getPRt()->getRawText());
 		$this->assertTrue($basicDoc->isPropertyModified('pRt'));
@@ -310,6 +322,32 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$this->assertTrue($basicDoc->getPRt()->isEmpty());
 		$this->assertFalse($basicDoc->getPRt()->isModified());
 		$this->assertFalse($basicDoc->isPropertyModified('pRt'));
+
+
+		/* @var $localizedDoc \Project\Tests\Documents\Localized */
+		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$this->assertFalse(method_exists($localizedDoc, 'getPLRt'));
+		$this->assertFalse(method_exists($localizedDoc, 'setPLRt'));
+		$cl = $localizedDoc->getCurrentLocalization();
+
+		$this->assertInstanceOf('Change\Documents\RichtextProperty', $cl->getPLRt());
+		$this->assertTrue($cl->getPLRt()->isEmpty());
+		$this->assertFalse($cl->getPLRt()->isModified());
+		$this->assertFalse($cl->isPropertyModified('pLRt'));
+		$this->assertFalse($localizedDoc->isPropertyModified('pLRt'));
+
+		$cl->getPLRt()->setRawText($string);
+		$this->assertSame($string, $cl->getPLRt()->getRawText());
+		$this->assertTrue($localizedDoc->isPropertyModified('pLRt'));
+		$this->assertTrue($cl->isPropertyModified('pLRt'));
+
+		$this->assertTrue($cl->getPLRt()->isModified());
+		$this->assertSame($cl, $cl->setPLRt(null));
+
+		$this->assertInstanceOf('Change\Documents\RichtextProperty', $cl->getPLRt());
+		$this->assertTrue($cl->getPLRt()->isEmpty());
+		$this->assertFalse($cl->getPLRt()->isModified());
+		$this->assertFalse($localizedDoc->isPropertyModified('pLRt'));
 	}
 
 	public function testLobPropertyAccessors()
@@ -352,7 +390,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 200);
 		$doc1->setPStr('Doc1');
-		$doc1->setPLStr('Doc1 loc');
+		//$doc1->setPLStr('Doc1 loc');
 		$doc1Id = $doc1->getId();
 
 		$this->assertSame(0, $basicDoc->getPDocId());
@@ -378,7 +416,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 201);
 		$doc1->setPStr('Doc1');
-		$doc1->setPLStr('Doc1 loc');
+		//$doc1->setPLStr('Doc1 loc');
 		$doc1Id = $doc1->getId();
 
 		$this->assertNull($basicDoc->getPDocInst());
@@ -404,19 +442,19 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 202);
 		$doc1->setPStr('Doc1');
-		$doc1->setPLStr('Doc1 loc');
+		//$doc1->setPLStr('Doc1 loc');
 		$doc1Id = $doc1->getId();
 
 		/* @var $doc2 \Project\Tests\Documents\Localized */
 		$doc2 = $this->getNewReadonlyDocument('Project_Tests_Localized', 203);
 		$doc2->setPStr('Doc2');
-		$doc2->setPLStr('Doc2 loc');
+		//$doc2->setPLStr('Doc2 loc');
 		$doc2Id = $doc2->getId();
 
 		/* @var $doc3 \Project\Tests\Documents\Localized */
 		$doc3 = $this->getNewReadonlyDocument('Project_Tests_Localized', 204);
 		$doc3->setPStr('Doc3');
-		$doc3->setPLStr('Doc3 loc');
+		//$doc3->setPLStr('Doc3 loc');
 		$doc3Id = $doc3->getId();
 
 		$this->assertInstanceOf('\Change\Documents\DocumentArrayProperty', $basicDoc->getPDocArr());

@@ -537,22 +537,22 @@ class Correction
 	}
 
 	/**
-	 * @param AbstractDocument $document
+	 * @param AbstractDocument|\Change\Documents\Interfaces\Correction $document
 	 * @throws \Exception
 	 */
 	protected function doMergeCorrection($document)
 	{
-		$document->setModificationDate(new \DateTime());
+		$document->getDocumentModel()->setPropertyValue($document, 'modificationDate', new \DateTime());
 		if ($document instanceof Editable)
 		{
-			$document->nextDocumentVersion();
+			$p = $document->getDocumentModel()->getProperty('documentVersion');
+			$p->setValue($document, max(0, $p->getValue($document)) + 1);
 		}
 
 		$this->setStatus(static::STATUS_FILED);
 		$this->setPublicationDate(new \DateTime());
 
-		$dm = $this->getDocumentManager();
-		$dm->updateDocument($document);
+		$document->updateMergedDocument();
 
 		if ($document instanceof Localizable)
 		{

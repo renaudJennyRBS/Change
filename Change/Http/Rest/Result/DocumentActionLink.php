@@ -120,7 +120,7 @@ class DocumentActionLink extends Link
 		if ($document instanceof Localizable)
 		{
 			/* @var $document Localizable|AbstractDocument */
-			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();
+			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getCurrentLCID();
 		}
 		parent::__construct($urlManager, $this->buildPathInfo(), $this->action);
 	}

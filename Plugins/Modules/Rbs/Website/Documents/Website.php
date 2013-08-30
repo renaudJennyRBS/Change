@@ -47,23 +47,24 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	 */
 	public function setBaseurl($url)
 	{
+		$currentLocalisation = $this->getCurrentLocalization();
 		$url = new Http($url);
-		$this->setHostName($url->getHost());
-		$this->setPort($url->getPort());
+		$currentLocalisation->setHostName($url->getHost());
+		$currentLocalisation->setPort($url->getPort());
 		$fullPath = $url->getPath();
 		$index = strpos($fullPath, '.php');
 		if ($index !== false)
 		{
 			$script = substr($fullPath, 0, $index + 4);
 			$path = trim(substr($fullPath, $index + 4), '/');
-			$this->setPathPart($path ? $path : null);
-			$this->setScriptName($script ? $script : null);
+			$currentLocalisation->setPathPart($path ? $path : null);
+			$currentLocalisation->setScriptName($script ? $script : null);
 		}
 		else
 		{
 			$path = trim($url->getPath(), '/');
-			$this->setPathPart($path ? $path : null);
-			$this->setScriptName(null);
+			$currentLocalisation->setPathPart($path ? $path : null);
+			$currentLocalisation->setScriptName(null);
 		}
 		return $this;
 	}
@@ -117,5 +118,37 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 			}
 		};
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, $callback);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLCID()
+	{
+		return $this->getCurrentLCID();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHostName()
+	{
+		return $this->getCurrentLocalization()->getHostName();
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getPort()
+	{
+		return $this->getCurrentLocalization()->getPort();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getScriptName()
+	{
+		return $this->getCurrentLocalization()->getScriptName();
 	}
 }

@@ -103,13 +103,7 @@ class CreateLocalizedDocument
 				{
 					if ($document instanceof Editable)
 					{
-						$authorId = $document->getAuthorId();
-						if (!$authorId)
-						{
-							$user = $event->getAuthenticationManager()->getCurrentUser();
-							$document->setAuthorId($user->getId());
-							$document->setAuthorName($user->getName());
-						}
+						$document->setOwnerUser($event->getAuthenticationManager()->getCurrentUser());
 					}
 					$this->create($event, $document, $properties);
 				}
@@ -137,7 +131,7 @@ class CreateLocalizedDocument
 		try
 		{
 			$document->save();
-			$event->setParam('LCID', $document->getLCID());
+			$event->setParam('LCID', $document->getCurrentLCID());
 
 			$getLocalizedDocument = new GetLocalizedDocument();
 			$getLocalizedDocument->execute($event);

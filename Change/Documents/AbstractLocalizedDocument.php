@@ -20,7 +20,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	/**
 	 * @var integer
 	 */
-	private $persistentState = DocumentManager::STATE_NEW;
+	private $persistentState = AbstractDocument::STATE_NEW;
 
 	/**
 	 * @var array
@@ -56,7 +56,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	/**
 	 * @param integer $id
 	 * @param string $lcid
-	 * @param integer $persistentState DocumentManager::STATE_*
+	 * @param integer $persistentState \Change\Documents\AbstractDocument::STATE_*
 	 */
 	public function initialize($id, $lcid, $persistentState = null)
 	{
@@ -86,7 +86,7 @@ abstract class AbstractLocalizedDocument implements \Serializable
 
 
 	/**
-	 * \Change\Documents\DocumentManager::STATE_*
+	 * Return \Change\Documents\AbstractDocument::STATE_*
 	 * @return integer
 	 */
 	public final function getPersistentState()
@@ -99,12 +99,11 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	 */
 	public function isNew()
 	{
-		return $this->getPersistentState() === DocumentManager::STATE_NEW;
+		return $this->getPersistentState() === AbstractDocument::STATE_NEW;
 	}
 
 	/**
-	 * \Change\Documents\DocumentManager::STATE_*
-	 * @param integer $newValue
+	 * @param integer $newValue \Change\Documents\AbstractDocument::STATE_*
 	 * @return integer
 	 */
 	public final function setPersistentState($newValue)
@@ -112,17 +111,62 @@ abstract class AbstractLocalizedDocument implements \Serializable
 		$oldState = $this->persistentState;
 		switch ($newValue)
 		{
-			case DocumentManager::STATE_LOADED:
+			case AbstractDocument::STATE_LOADED:
 				$this->clearModifiedProperties();
-			case DocumentManager::STATE_NEW:
-			case DocumentManager::STATE_LOADING:
-			case DocumentManager::STATE_DELETED:
-			case DocumentManager::STATE_DELETING:
-			case DocumentManager::STATE_SAVING:
+				$this->persistentState = $newValue;
+				break;
+			case AbstractDocument::STATE_NEW:
+			case AbstractDocument::STATE_LOADING:
+			case AbstractDocument::STATE_DELETED:
+			case AbstractDocument::STATE_DELETING:
+			case AbstractDocument::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
+	}
+
+	/**
+	 * @param mixed $inputValue
+	 * @param string $propertyType
+	 * @return bool|\DateTime|float|int|null|string
+	 */
+	protected function convertToInternalValue($inputValue, $propertyType)
+	{
+		switch ($propertyType)
+		{
+			case Property::TYPE_DATE:
+				$inputValue = is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')) : $inputValue;
+				return ($inputValue instanceof \DateTime) ? \DateTime::createFromFormat('Y-m-d', $inputValue->format('Y-m-d'), new \DateTimeZone('UTC'))->setTime(0, 0) : null;
+
+			case Property::TYPE_DATETIME:
+				return is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')): (($inputValue instanceof \DateTime) ? $inputValue : null);
+
+			case Property::TYPE_BOOLEAN:
+				return ($inputValue === null) ? $inputValue : (bool)$inputValue;
+
+			case Property::TYPE_INTEGER:
+				return ($inputValue === null) ? $inputValue : intval($inputValue);
+
+			case Property::TYPE_FLOAT:
+			case Property::TYPE_DECIMAL:
+				return ($inputValue === null) ? $inputValue : floatval($inputValue);
+
+			case Property::TYPE_DOCUMENTID :
+				if (is_object($inputValue) && is_callable(array($inputValue, 'getId')))
+				{
+					$inputValue = call_user_func(array($inputValue, 'getId'));
+				}
+				return max(0, intval($inputValue));
+			case Property::TYPE_JSON:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
+
+			case Property::TYPE_OBJECT:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : serialize($inputValue);
+
+			default:
+				return $inputValue === null ? $inputValue : strval($inputValue);
+		}
 	}
 
 	/**

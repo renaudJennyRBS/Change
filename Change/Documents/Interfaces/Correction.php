@@ -3,27 +3,12 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Correction
+ * @method integer getId()
+ * @method \Change\Documents\AbstractModel getDocumentModel()
+ * @method \Change\Documents\DocumentServices getDocumentServices()
  */
 interface Correction
 {
-	/**
-	 * @api
-	 * @return integer
-	 */
-	public function getId();
-
-	/**
-	 * @api
-	 * @return \Change\Documents\AbstractModel
-	 */
-	public function getDocumentModel();
-
-	/**
-	 * @api
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices();
-
 	/**
 	 * @return boolean
 	 */
@@ -44,4 +29,7 @@ interface Correction
 	 * @throws \InvalidArgumentException
 	 */
 	public function mergeCurrentCorrection();
+
+
+	public function updateMergedDocument();
 }

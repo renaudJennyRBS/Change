@@ -27,9 +27,10 @@ class ValidateListener
 		if ($event instanceof DocumentEvent)
 		{
 			$document = $event->getDocument();
+			$this->propertiesErrors = array();
+
 			$this->updateSystemProperties($document);
 
-			$this->propertiesErrors = array();
 			$this->validateProperties($document);
 
 			if ($event->getName() === DocumentEvent::EVENT_UPDATE && $document instanceof Editable)
@@ -50,19 +51,28 @@ class ValidateListener
 	 */
 	protected function updateSystemProperties($document)
 	{
-		if ($document->getCreationDate() === null)
+		$p = $document->getDocumentModel()->getProperty('creationDate');
+		if ($p && $p->getValue($document) === null)
 		{
-			$document->setCreationDate(new \DateTime());
+			$p->setValue($document, new \DateTime());
 		}
 
-		if ($document->getModificationDate() === null)
+		$p = $document->getDocumentModel()->getProperty('modificationDate');
+		if ($p && $p->getValue($document) === null)
 		{
-			$document->setModificationDate(new \DateTime());
+			$p->setValue($document, new \DateTime());
 		}
 
-		if ($document->getPersistentState() === DocumentManager::STATE_NEW && $document instanceof Localizable)
+		if ($document->getPersistentState() === AbstractDocument::STATE_NEW && $document instanceof Localizable)
 		{
-			$document->setRefLCID($document->getLCID());
+			if ($document->getRefLCID() === null)
+			{
+				$document->setRefLCID($document->getCurrentLCID());
+			}
+			elseif ($document->getRefLCID() !== $document->getCurrentLCID())
+			{
+				$this->addPropertyError('refLCID', new PreparedKey('c.constraints.isinvalidfield', array('ucf')));
+			}
 		}
 	}
 

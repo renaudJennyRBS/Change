@@ -1,6 +1,7 @@
 <?php
 namespace Change\Documents\Traits;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentManager;
 
 /**
@@ -50,7 +51,10 @@ trait Localized
 	 * @api
 	 * @return string
 	 */
-	abstract public function getLCID();
+	public function getCurrentLCID()
+	{
+		return $this->getDocumentManager()->getLCID();
+	}
 
 	/**
 	 * @api
@@ -84,7 +88,7 @@ trait Localized
 
 		foreach ($this->localizedPartArray as $LCID => $localizedPart)
 		{
-			if (!in_array($LCID, $this->LCIDArray) && $localizedPart->getPersistentState() === DocumentManager::STATE_LOADED)
+			if (!in_array($LCID, $this->LCIDArray) && $localizedPart->getPersistentState() === AbstractDocument::STATE_LOADED)
 			{
 				$this->LCIDArray[] = $LCID;
 			}
@@ -102,7 +106,7 @@ trait Localized
 		$className = $model->getLocalizedDocumentClassName();
 		/* @var $localizedPart \Change\Documents\AbstractLocalizedDocument */
 		$localizedPart = new $className($model);
-		$localizedPart->initialize($this->getId(), $LCID, DocumentManager::STATE_NEW);
+		$localizedPart->initialize($this->getId(), $LCID, AbstractDocument::STATE_NEW);
 		return $localizedPart;
 	}
 
@@ -114,7 +118,7 @@ trait Localized
 		$LCID = $currentLocalizedPart->getLCID();
 		$model = $this->getDocumentModel();
 
-		$currentLocalizedPart->setPersistentState(DocumentManager::STATE_LOADING);
+		$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_LOADING);
 
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('Localized::loadLocalizedPart' . $model->getName());
 
@@ -156,15 +160,15 @@ trait Localized
 					$property->setValue($this, $propVal);
 				}
 			}
-			$currentLocalizedPart->setPersistentState(DocumentManager::STATE_LOADED);
+			$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_LOADED);
 		}
-		elseif ($this->getPersistentState() == DocumentManager::STATE_DELETED)
+		elseif ($this->getPersistentState() == AbstractDocument::STATE_DELETED)
 		{
-			$currentLocalizedPart->setPersistentState(DocumentManager::STATE_DELETED);
+			$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_DELETED);
 		}
 		else
 		{
-			$currentLocalizedPart->setPersistentState(DocumentManager::STATE_NEW);
+			$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_NEW);
 		}
 	}
 
@@ -178,15 +182,6 @@ trait Localized
 				$property->setValue($this, $property->getDefaultValue());
 			}
 		}
-	}
-
-	/**
-	 * @api
-	 * @return string
-	 */
-	protected function getCurrentLCID()
-	{
-		return $this->getDocumentManager()->getLCID();
 	}
 
 	/**
@@ -209,12 +204,12 @@ trait Localized
 			$localizedPart = $this->getLocalizedDocumentInstanceByDocument($LCID);
 			$this->localizedPartArray[$LCID] = $localizedPart;
 
-			if ($this->getPersistentState() != DocumentManager::STATE_NEW)
+			if ($this->getPersistentState() != AbstractDocument::STATE_NEW)
 			{
 				$this->loadCurrentLocalizedPart($localizedPart);
 			}
 
-			if ($localizedPart->getPersistentState() === DocumentManager::STATE_NEW)
+			if ($localizedPart->getPersistentState() === AbstractDocument::STATE_NEW)
 			{
 				$this->setDefaultLocalizedValues();
 			}
@@ -233,6 +228,46 @@ trait Localized
 
 	/**
 	 * @api
+	 * @return \Change\Documents\AbstractLocalizedDocument
+	 */
+	public function getRefLocalization()
+	{
+		if ($this->getRefLCID() === null)
+		{
+			$this->setRefLCID($this->getCurrentLCID());
+		}
+
+		$LCID = $this->getRefLCID();
+		if (!isset($this->localizedPartArray[$LCID]))
+		{
+			$localizedPart = $this->getLocalizedDocumentInstanceByDocument($LCID);
+			$this->localizedPartArray[$LCID] = $localizedPart;
+
+			if ($this->getPersistentState() != AbstractDocument::STATE_NEW)
+			{
+				$this->loadCurrentLocalizedPart($localizedPart);
+			}
+
+			if ($localizedPart->getPersistentState() === AbstractDocument::STATE_NEW)
+			{
+				$this->setDefaultLocalizedValues();
+			}
+		}
+		else
+		{
+			$localizedPart = $this->localizedPartArray[$LCID];
+		}
+
+		if ($this->currentLCID === null)
+		{
+			$this->currentLCID = $LCID;
+		}
+
+		return $localizedPart;
+	}
+
+	/**
+	 * @api
 	 * @throws \RuntimeException if current LCID = refLCID
 	 */
 	public function deleteCurrentLocalization()
@@ -242,7 +277,7 @@ trait Localized
 		{
 			throw new \RuntimeException('Unable to delete refLCID: ' .  $this->getRefLCID(), 51014);
 		}
-		if ($localizedPart->getPersistentState() === DocumentManager::STATE_LOADED)
+		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_LOADED)
 		{
 			$this->deleteLocalizedPart($localizedPart);
 		}
@@ -254,7 +289,7 @@ trait Localized
 	public function saveCurrentLocalization()
 	{
 		$localizedPart = $this->getCurrentLocalization();
-		if ($localizedPart->getPersistentState() === DocumentManager::STATE_NEW)
+		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			$this->insertLocalizedPart($localizedPart);
 		}
@@ -297,7 +332,7 @@ trait Localized
 	 */
 	public function insertLocalizedPart(\Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
-		if ($localizedPart->getPersistentState() != DocumentManager::STATE_NEW)
+		if ($localizedPart->getPersistentState() != AbstractDocument::STATE_NEW)
 		{
 			throw new \InvalidArgumentException(
 				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
@@ -311,7 +346,7 @@ trait Localized
 		{
 			$localizedPart->initialize($this->getId(), $localizedPart->getLCID());
 		}
-		$localizedPart->setPersistentState(DocumentManager::STATE_SAVING);
+		$localizedPart->setPersistentState(AbstractDocument::STATE_SAVING);
 
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
@@ -336,7 +371,7 @@ trait Localized
 			}
 		}
 		$iq->execute();
-		$localizedPart->setPersistentState(DocumentManager::STATE_LOADED);
+		$localizedPart->setPersistentState(AbstractDocument::STATE_LOADED);
 	}
 
 	/**
@@ -345,7 +380,7 @@ trait Localized
 	 */
 	public function updateLocalizedPart(\Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
-		if ($localizedPart->getPersistentState() != DocumentManager::STATE_LOADED)
+		if ($localizedPart->getPersistentState() != AbstractDocument::STATE_LOADED)
 		{
 			throw new \InvalidArgumentException(
 				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
@@ -355,7 +390,7 @@ trait Localized
 			$localizedPart->initialize($this->getId(), $localizedPart->getLCID());
 		}
 
-		$localizedPart->setPersistentState(DocumentManager::STATE_SAVING);
+		$localizedPart->setPersistentState(AbstractDocument::STATE_SAVING);
 
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
@@ -396,7 +431,7 @@ trait Localized
 			$uq->execute();
 		}
 
-		$localizedPart->setPersistentState(DocumentManager::STATE_LOADED);
+		$localizedPart->setPersistentState(AbstractDocument::STATE_LOADED);
 	}
 
 	/**
@@ -431,7 +466,7 @@ trait Localized
 		{
 			foreach ($this->localizedPartArray as $LCID => $localizedPart)
 			{
-				$localizedPart->setPersistentState(DocumentManager::STATE_DELETED);
+				$localizedPart->setPersistentState(AbstractDocument::STATE_DELETED);
 			}
 			$this->LCIDArray = array();
 		}
@@ -440,7 +475,7 @@ trait Localized
 			$LCID = $localizedPart->getLCID();
 			if ($this->localizedPartArray[$LCID] === $localizedPart)
 			{
-				$localizedPart->setPersistentState(DocumentManager::STATE_DELETED);
+				$localizedPart->setPersistentState(AbstractDocument::STATE_DELETED);
 				if ($this->LCIDArray !== null)
 				{
 					$this->LCIDArray = array_values(array_diff($this->LCIDArray, array($LCID)));
@@ -451,6 +486,6 @@ trait Localized
 
 	public function resetCurrentLocalized()
 	{
-		unset($this->localizedPartArray[$this->getLCID()]);
+		unset($this->localizedPartArray[$this->getCurrentLCID()]);
 	}
 }

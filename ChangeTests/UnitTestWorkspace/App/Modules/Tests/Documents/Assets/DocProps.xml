@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd">
+	<properties>
+		<property name="pDocId" type="DocumentId" />
+		<property name="pDocInst" type="Document" document-type="Project_Tests_DocProps" />
+		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_DocProps"/>
+	</properties>
+</document>

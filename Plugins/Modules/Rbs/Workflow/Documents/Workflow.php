@@ -28,7 +28,7 @@ class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \
 	 */
 	public function getStartDate()
 	{
-		return $this->getStartPublication();
+		return $this->getStartActivation();
 	}
 
 	/**
@@ -36,7 +36,7 @@ class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \
 	 */
 	public function getEndDate()
 	{
-		return $this->getEndPublication();
+		return $this->getEndActivation();
 	}
 
 	/**

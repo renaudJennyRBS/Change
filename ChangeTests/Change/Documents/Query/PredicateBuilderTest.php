@@ -62,17 +62,17 @@ class PredicateBuilderTest extends TestCase
 		$localizedDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedDoc->initialize(1005);
 		$localizedDoc->setPStr('test 1005');
-		$localizedDoc->setPLStr('text un');
+		$localizedDoc->getCurrentLocalization()->setPLStr('text un');
 		$localizedDoc->setPInt(1001);
-		$localizedDoc->setPLInt(1001);
+		$localizedDoc->getCurrentLocalization()->setPLInt(1001);
 		$localizedDoc->setPDocInst($dm->getDocumentInstance(1000));
 		$localizedDoc->setPDocArr(array($dm->getDocumentInstance(1000), $dm->getDocumentInstance(1002)));
 		$localizedDoc->save();
 		$dm->popLCID();
 
 		$dm->pushLCID('en_US');
-		$localizedDoc->setPLStr('text one');
-		$localizedDoc->setPLInt(1002);
+		$localizedDoc->getCurrentLocalization()->setPLStr('text one');
+		$localizedDoc->getCurrentLocalization()->setPLInt(1002);
 		$localizedDoc->save();
 		$dm->popLCID();
 
@@ -80,15 +80,15 @@ class PredicateBuilderTest extends TestCase
 		$localizedDoc = $dm->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$localizedDoc->initialize(1006);
 		$localizedDoc->setPStr('test 1006');
-		$localizedDoc->setPLStr('text two');
-		$localizedDoc->setPLInt(7);
+		$localizedDoc->getCurrentLocalization()->setPLStr('text two');
+		$localizedDoc->getCurrentLocalization()->setPLInt(7);
 		$localizedDoc->setPDocInst($dm->getDocumentInstance(1001));
 		$localizedDoc->setPDocArr(array($dm->getDocumentInstance(1002)));
 		$localizedDoc->save();
 		$dm->popLCID();
 
 		$dm->pushLCID('en_US');
-		$localizedDoc->setPLStr('text one');
+		$localizedDoc->getCurrentLocalization()->setPLStr('text one');
 		$localizedDoc->save();
 		$dm->popLCID();
 
@@ -131,7 +131,7 @@ class PredicateBuilderTest extends TestCase
 		$corDoc->initialize(3001);
 		$corDoc->setLabel('C1');
 		$corDoc->save();
-		$corDoc->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
+		$corDoc->getCurrentLocalization()->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE);
 		$corDoc->save();
 	}
 
@@ -171,15 +171,17 @@ class PredicateBuilderTest extends TestCase
 		$predicate = $pb->logicAnd(array($pb->eq('id', 1001), $pb->eq('pInt', 1001), $pb->eq('id', 1001)));
 		$this->assertCount(3, $predicate->getArguments());
 
+
 		try
 		{
-			$str = 'Argument 1 must be a valid InterfaceSQLFragment';
+
 			$pb->logicAnd(11);
-			$this->fail($str);
+			$this->fail('InvalidArgumentException expected');
 
 		}
 		catch (\InvalidArgumentException $e)
 		{
+			$str = 'Argument 1 must be a valid InterfaceSQLFragment';
 			$this->assertEquals($str, $e->getMessage());
 		}
 
@@ -215,13 +217,14 @@ class PredicateBuilderTest extends TestCase
 
 		try
 		{
-			$str = 'Argument 1 must be a valid InterfaceSQLFragment';
+
 			$pb->logicOr(11);
-			$this->fail($str);
+			$this->fail('InvalidArgumentException expected');
 
 		}
 		catch (\InvalidArgumentException $e)
 		{
+			$str = 'Argument 1 must be a valid InterfaceSQLFragment';
 			$this->assertEquals($str, $e->getMessage());
 		}
 
@@ -248,15 +251,15 @@ class PredicateBuilderTest extends TestCase
 		$this->assertCount(1, $ids);
 		$this->assertContains(1005, $ids);
 
+
 		try
 		{
-			$str = 'Argument 1 must be a valid property';
 			$pb->eq('invalid', 'text un');
-			$this->fail($str);
-
+			$this->fail('InvalidArgumentException expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
+			$str = 'Argument 1 must be a valid property';
 			$this->assertEquals($str, $e->getMessage());
 		}
 	}
@@ -395,18 +398,20 @@ class PredicateBuilderTest extends TestCase
 		$this->assertContains(1000, $ids);
 		$this->assertContains(1001, $ids);
 
+
 		try
 		{
-			$str = 'Right Hand Expression must be a ExpressionList with one element or more';
+
 			$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
 			$pb = $builder->getPredicateBuilder();
 			$predicate = $pb->in('id', array());
 			$builder->andPredicates($predicate);
 			$builder->getDocuments()->ids();
-			$this->fail($str);
+			$this->fail('RuntimeException expected');
 		}
 		catch (\RuntimeException $e)
 		{
+			$str = 'Right Hand Expression must be a ExpressionList with one element or more';
 			$this->assertEquals($str, $e->getMessage());
 		}
 	}
