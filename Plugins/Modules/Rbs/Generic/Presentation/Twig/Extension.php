@@ -321,59 +321,18 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		if ($section === null)
 		{
-			$section = $this->getUrlManager()->getSection() ? $this->getUrlManager()->getSection() : $this->getUrlManager()
-				->getWebsite();
+			$section = $this->getUrlManager()->getSection();
+			if ($section === null)
+			{
+				$section = $this->getUrlManager()->getWebsite();
+			}
 		}
 
 		if ($section instanceof \Change\Presentation\Interfaces\Section)
 		{
-			$sectionIds = array_map(function (\Change\Presentation\Interfaces\Section $section)
-			{
-				return $section->getId();
-			}, $section->getSectionPath());
-
-			$q = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
-			$q->andPredicates($q->eq('functionCode', $functionCode), $q->in('section', $sectionIds));
-			$sectionPageFunctions = $q->getDocuments();
-			if ($sectionPageFunctions->count())
-			{
-				$urlManager = $this->getUrlManager();
-				$absoluteUrl = $urlManager->getAbsoluteUrl();
-
-				$query['sectionPageFunction'] = $functionCode;
-
-				if ($sectionPageFunctions->count() === 1)
-				{
-					/* @var $sectionPageFunction \Rbs\Website\Documents\SectionPageFunction */
-					$sectionPageFunction = $sectionPageFunctions[0];
-					$page = $sectionPageFunction->getPage();
-					$section = $sectionPageFunction->getSection();
-
-					$functionURL = $urlManager->setAbsoluteUrl(true)->getByDocument($page, $section, $query)->normalize()->toString();
-					$urlManager->setAbsoluteUrl($absoluteUrl);
-					return $functionURL;
-				}
-				else
-				{
-					foreach (array_reverse($sectionIds) as $sectionId)
-					{
-						/* @var $sectionPageFunction \Rbs\Website\Documents\SectionPageFunction */
-						foreach ($sectionPageFunctions as $sectionPageFunction)
-						{
-							if ($sectionId === $sectionPageFunction->getSection()->getId())
-							{
-								$page = $sectionPageFunction->getPage();
-								$section = $sectionPageFunction->getSection();
-								$functionURL = $urlManager->setAbsoluteUrl(true)->getByDocument($page, $section, $query)->normalize()->toString();
-								$urlManager->setAbsoluteUrl($absoluteUrl);
-								return $functionURL;
-							}
-						}
-					}
-				}
-			}
+			$uri = $this->getUrlManager()->getByFunction($functionCode, $section , $query);
+			return $uri ? $uri->normalize()->toString() : null;
 		}
 		return null;
 	}
-
 }
