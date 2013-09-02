@@ -96,7 +96,7 @@
 	<div ng-switch-when="VALIDATION">
 		<button type="button" class="btn btn-primary btn-headline" ng-disabled="reject" ng-click="contentValidation()"><i class="icon-ok"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
 		<button type="button" class="btn btn-danger btn-headline" ng-class="{'active':reject}" ng-click="reject = ! reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.correction.button-reject') }}</button>
-		<div ng-show="reject" ng-form="" name="rejectForm" class="margin-top">
+		<div ng-if="reject" ng-form="" name="rejectForm" class="margin-top">
 			{{ i18n('m.rbs.admin.correction.please-provide-reason', ['ucf']) }}
 			<input type="text" auto-focus="true" class="input-block-level" ng-required="true" ng-model="rejectMessage"/>
 			<button type="button" class="btn btn-danger" ng-disabled="rejectForm.$invalid" ng-click="rejectContentValidation(rejectMessage)"><i class="icon-ban-circle"></i> {{ i18n('m.rbs.admin.correction.reject-correction', ['ucf']) }}</button>
