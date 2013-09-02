@@ -57,6 +57,11 @@ class Cart implements CartInterfaces
 	protected $context;
 
 	/**
+	 * @var CartError[]
+	 */
+	protected $errors = array();
+
+	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $lines = array();
@@ -221,6 +226,51 @@ class Cart implements CartInterfaces
 	{
 		return count($this->lines) === 0;
 	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartError[] $errors
+	 * @return $this
+	 */
+	public function setErrors(array $errors)
+	{
+		$this->errors = array();
+		foreach ($errors as $error)
+		{
+			$this->addError($error);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return CartError[]
+	 */
+	public function getErrors()
+	{
+		return $this->errors;
+	}
+
+	/**
+	 * @param CartError $error
+	 * @return $this
+	 */
+	public function addError($error)
+	{
+		if ($error instanceof CartError)
+		{
+			$this->errors[] = $error;
+		}
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasError()
+	{
+		return count($this->errors) > 0;
+	}
+
 
 	/**
 	 * @param \DateTime|null $lastUpdate

@@ -157,6 +157,28 @@ interface Cart extends \Serializable
 	public function getTaxes();
 
 	/**
+	 * @param \Rbs\Commerce\Interfaces\CartError[] $errors
+	 * @return $this
+	 */
+	public function setErrors(array $errors);
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\CartError $error
+	 * @return $this
+	 */
+	public function addError($error);
+
+	/**
+	 * @return boolean
+	 */
+	public function hasError();
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\CartError[]
+	 */
+	public function getErrors();
+
+	/**
 	 * @return float|null
 	 */
 	public function getPriceValueWithTax();
