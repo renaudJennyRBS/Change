@@ -37,7 +37,7 @@ class ProductCartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 	function __construct(\Rbs\Stock\Documents\Sku $sku)
 	{
 		$this->codeSKU = $sku->getCode();
-		$this->setReservationQuantity($sku->getMinQuantity());
+		$this->setReservationQuantity($sku->getMinQuantity() === null ? 1.0 : $sku->getMinQuantity());
 		$this->options['skuId'] = $sku->getId();
 	}
 

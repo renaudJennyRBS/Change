@@ -57,6 +57,11 @@ class Cart implements CartInterfaces
 	protected $context;
 
 	/**
+	 * @var CartError[]
+	 */
+	protected $errors = array();
+
+	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $lines = array();
@@ -221,6 +226,51 @@ class Cart implements CartInterfaces
 	{
 		return count($this->lines) === 0;
 	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartError[] $errors
+	 * @return $this
+	 */
+	public function setErrors(array $errors)
+	{
+		$this->errors = array();
+		foreach ($errors as $error)
+		{
+			$this->addError($error);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return CartError[]
+	 */
+	public function getErrors()
+	{
+		return $this->errors;
+	}
+
+	/**
+	 * @param CartError $error
+	 * @return $this
+	 */
+	public function addError($error)
+	{
+		if ($error instanceof CartError)
+		{
+			$this->errors[] = $error;
+		}
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasError()
+	{
+		return count($this->errors) > 0;
+	}
+
 
 	/**
 	 * @param \DateTime|null $lastUpdate
@@ -433,32 +483,39 @@ class Cart implements CartInterfaces
 	public function getNewItem(\Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig)
 	{
 		$item = new CartItem($cartItemConfig->getCodeSKU());
-		$item->setPriceValue($cartItemConfig->getPriceValue());
-		$item->setReservationQuantity(floatval($cartItemConfig->getReservationQuantity()));
 		if (is_array($cartItemConfig->getOptions()))
 		{
 			$item->getOptions()->fromArray($cartItemConfig->getOptions());
 		}
+		$item->setReservationQuantity($cartItemConfig->getReservationQuantity());
 
-		$taxApplication = $cartItemConfig->getTaxApplication();
-		if ($taxApplication instanceof TaxApplication)
+		if ($cartItemConfig->getPriceValue() !== null)
 		{
-			$cartTax = new CartTax();
-			$cartTax->fromTaxApplication($taxApplication);
-			$item->appendCartTaxes($cartTax);
-		}
-		elseif (is_array($taxApplication))
-		{
-			foreach ($taxApplication as $taxApp)
+			$item->getOptions()->set('lockedPrice', $item->getOptions()->get('lockedPrice', true));
+
+			$item->setPriceValue($cartItemConfig->getPriceValue());
+
+			$taxApplication = $cartItemConfig->getTaxApplication();
+			if ($taxApplication instanceof TaxApplication)
 			{
-				if ($taxApp instanceof TaxApplication)
+				$cartTax = new CartTax();
+				$cartTax->fromTaxApplication($taxApplication);
+				$item->appendCartTaxes($cartTax);
+			}
+			elseif (is_array($taxApplication))
+			{
+				foreach ($taxApplication as $taxApp)
 				{
-					$cartTax = new CartTax();
-					$cartTax->fromTaxApplication($taxApp);
-					$item->appendCartTaxes($cartTax);
+					if ($taxApp instanceof TaxApplication)
+					{
+						$cartTax = new CartTax();
+						$cartTax->fromTaxApplication($taxApp);
+						$item->appendCartTaxes($cartTax);
+					}
 				}
 			}
 		}
+
 		return $item;
 	}
 
