@@ -419,7 +419,10 @@ trait DbStorage
 				$p->setValue($this, max(0, $p->getValue($this)) + 1);
 			}
 
-			$this->updateDocument();
+			if ($this->getPersistentState() == AbstractDocument::STATE_LOADED)
+			{
+				$this->updateDocument();
+			}
 
 			if ($this instanceof Localizable)
 			{
@@ -433,13 +436,8 @@ trait DbStorage
 	 * @throws \InvalidArgumentException
 	 * @return boolean
 	 */
-	public function updateDocument()
+	protected function updateDocument()
 	{
-		if ($this->getPersistentState() != AbstractDocument::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $this->getPersistentState(), 51009);
-		}
-
 		$dbp = $this->getDbProvider();
 		if (!$dbp->getTransactionManager()->started())
 		{
