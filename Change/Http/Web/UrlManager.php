@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Web;
 
+use Change\Documents\AbstractDocument;
+
 /**
  * @name \Change\Http\Web\UrlManager
  */
@@ -292,6 +294,45 @@ class UrlManager extends \Change\Http\UrlManager
 		}
 		$pathInfo = $this->getPathInfo($document, $website, $LCID, $section, $queryParameters);
 		return $this->getByPathInfoForWebsite($website, $LCID, $pathInfo, $queryParameters->getArrayCopy());
+	}
+
+	/**
+	 * @param string $functionCode
+	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @param array $query
+	 * @return \Zend\Uri\Http|null
+	 */
+	public function getByFunction($functionCode, $section = null, $query = array())
+	{
+		$uri = null;
+		if (!is_string($functionCode) || empty($functionCode))
+		{
+			return $uri;
+		}
+
+		if ($section === null)
+		{
+			$section = $this->getSection() ? $this->getSection() : $this->getWebsite();
+		}
+
+		if ($section instanceof AbstractDocument)
+		{
+			$em = $section->getEventManager();
+			$args = array('functionCode' => $functionCode);
+			$event = new \Change\Documents\Events\Event('getPageByFunction', $section, $args);
+			$em->trigger($event);
+			$page = $event->getParam('page');
+			if ($page instanceof AbstractDocument)
+			{
+				$section = $event->getParam('section', $section);
+				$query['sectionPageFunction'] = $functionCode;
+				$absoluteUrl = $this->getAbsoluteUrl();
+				$this->setAbsoluteUrl(true);
+				$uri = $this->getByDocument($page, $section, $query);
+				$this->setAbsoluteUrl($absoluteUrl);
+			}
+		}
+		return $uri;
 	}
 
 	/**
@@ -639,6 +680,8 @@ class UrlManager extends \Change\Http\UrlManager
 		$iq->execute();
 		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
 	}
+
+
 
 	/**
 	 * @param bool $absoluteUrl

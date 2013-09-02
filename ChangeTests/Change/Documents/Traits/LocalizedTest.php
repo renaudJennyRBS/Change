@@ -88,4 +88,35 @@ class LocalizedTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertSame($loaded, $deleted);
 		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
+
+	public function testUpdate()
+	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
+		$manager = $this->getDocumentManager();
+		/* @var $localized \Project\Tests\Documents\Localized */
+		$localized = $manager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$localized->setPStr('Required');
+		$localized->getCurrentLocalization()->setPLStr('Required');
+		$localized->create();
+
+		$manager->reset();
+
+		/* @var $localized2 \Project\Tests\Documents\Localized */
+		$localized2 = $manager->getDocumentInstance($localized->getId());
+		$this->assertNotSame($localized, $localized2);
+		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $localized2->getPersistentState());
+		$this->assertEquals($localized->getId(), $localized2->getId());
+		$localized2->getCurrentLocalization()->setPLStr('Required 2');
+
+		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $localized2->getPersistentState());
+		$this->assertTrue($localized2->hasModifiedProperties());
+		$this->assertEquals(array('pLStr'), $localized2->getModifiedPropertyNames());
+		$localized2->update();
+
+		$this->assertFalse($localized2->hasModifiedProperties());
+		$this->assertCount(0, $localized2->getModifiedPropertyNames());
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
+	}
 }
