@@ -41,58 +41,12 @@ class PriceManager
 		return $this->commerceServices->getDocumentServices();
 	}
 
-
-
 	/**
 	 * @return ApplicationServices
 	 */
 	protected function getApplicationServices()
 	{
 		return $this->commerceServices->getApplicationServices();
-	}
-
-	/**
-	 * Standard Options : quantity,
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
-	 * @param array<optionName => optionValue> $options
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
-	 * @return null|Price
-	 */
-	public function getPriceByProduct($product, $webStore, $options = array(), \Rbs\Commerce\Interfaces\BillingArea $billingArea = null)
-	{
-		$commerceServices = $this->getCommerceServices();
-		if ($billingArea === null)
-		{
-			$billingArea = $commerceServices->getBillingArea();
-		}
-		$price = $this->triggerGetPriceByProduct($commerceServices, $product, $webStore, $options, $billingArea);
-		if ($price === false && $product->getSku() && $billingArea)
-		{
-			return $this->getDefaultPriceBySku($product->getSku(), $webStore, $options, $billingArea);
-		}
-		return $price;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
-	 * @param array<optionName => optionValue> $options
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
-	 * @return null|Price|boolean
-	 */
-	protected function triggerGetPriceByProduct($commerceServices, $product, $webStore, $options, $billingArea)
-	{
-		$ev = $commerceServices->getEventManager();
-		$arguments = $ev->prepareArgs($options);
-		$arguments['product'] = $product;
-		$arguments['billingArea'] = $billingArea;
-		$arguments['webStore'] = $webStore;
-		$arguments['commerceServices'] = $commerceServices;
-		$arguments['price'] = false;
-		$ev->trigger('getPriceByProduct', $this, $arguments);
-		return $arguments['price'];
 	}
 
 	/**

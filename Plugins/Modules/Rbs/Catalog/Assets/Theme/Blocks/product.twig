@@ -1,5 +1,9 @@
 <h1>{{ product.currentLocalization.title }}</h1>
 <p>TODO: Détail du produit</p>
+<ul>
+	<li>Prix : {{ formatPrice(cartLineConfig.priceValue) }}</li>
+	<li>Prix TTC : {{ formatPrice(cartLineConfig.priceValueWithTax) }}</li>
+</ul>
 <script type="text/javascript">
 	var script{{ blockId }} = {
 		webStoreId: {{ parameters.webStoreId }},

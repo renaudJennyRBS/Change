@@ -177,6 +177,9 @@ class CartStorage
 			$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
 			$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
 			$qb->assign($fb->column('store_id'), $fb->integerParameter('webStoreId'));
+			$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
+			$qb->assign($fb->column('price_value'), $fb->decimalParameter('priceValue'));
+			$qb->assign($fb->column('price_value_with_tax'), $fb->decimalParameter('priceValueWithTax'));
 			$qb->where(
 				$fb->logicAnd(
 					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
@@ -189,6 +192,9 @@ class CartStorage
 			$uq->bindParameter('cartData', serialize($cart));
 			$uq->bindParameter('ownerId', $cart->getOwnerId());
 			$uq->bindParameter('webStoreId', $cart->getWebStoreId());
+			$uq->bindParameter('lineCount', count($cart->getLines()));
+			$uq->bindParameter('priceValue', $cart->getPriceValue());
+			$uq->bindParameter('priceValueWithTax', $cart->getPriceValueWithTax());
 			$uq->bindParameter('identifier', $cart->getIdentifier());
 			$uq->bindParameter('locked', false);
 			$uq->execute();
