@@ -2,7 +2,8 @@
 <script type="text/javascript">
 	var script{{ blockId }} = {
 		cartIdentifier: "{{ cart.identifier }}",
-		deleteLine : function(lineKey) {
+		deleteLine : function(button) {
+			var lineKey = button.value;
 			jQuery.ajax({
 				type: "POST",
 				url: "Action/Rbs/Commerce/UpdateCartLine",
@@ -14,10 +15,12 @@
 			})
 		},
 		updateLine : function(button) {
+			var newQuantity = parseInt(button.getAttribute('data-quantity'), 10) + 1;
+			var lineKey = button.value;
 			jQuery.ajax({
 				type: "POST",
 				url: "Action/Rbs/Commerce/UpdateCartLine",
-				data: {lineKey: lineKey, delete: true},
+				data: {lineKey: lineKey, quantity: newQuantity},
 				dataType: 'json',
 				success: function(data, textStatus, jqXHR) {
 					window.location.reload();

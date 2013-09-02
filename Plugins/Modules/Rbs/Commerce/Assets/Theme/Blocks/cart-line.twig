@@ -7,7 +7,7 @@
 	<td>{{ formatPrice(cartLine.priceValueWithTax) }}</td>
 	<td>
 		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.deleteLine(this)" value="{{ cartLine.key }}">Supprimer</>
-		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.updateLine(this)" value="{{ cartLine.key }}">Mettre à jour</>
+		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.updateLine(this)" value="{{ cartLine.key }}" data-quantity="{{ cartLine.quantity }}">Mettre à jour</>
 	</td>
 </tr>
 

@@ -57,7 +57,6 @@ class UpdateCartLine
 				if ($cartLine)
 				{
 					$cartManager = $commerceServices->getCartManager();
-					$cartManager->updateLineQuantityByKey($cart, $lineKey, 0);
 					$cart->removeLineByKey($lineKey);
 					$cartManager->saveCart($cart);
 					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray()));

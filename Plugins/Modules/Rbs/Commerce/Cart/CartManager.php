@@ -88,6 +88,27 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * Return Merged cart
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @param \Rbs\Commerce\Interfaces\Cart $cartToMerge
+	 * @return \Rbs\Commerce\Interfaces\Cart
+	 */
+	public function mergeCart($cart, $cartToMerge)
+	{
+		if ($cart instanceof \Rbs\Commerce\Interfaces\Cart && $cartToMerge instanceof \Rbs\Commerce\Interfaces\Cart)
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(array('cart' => $cart, 'cartToMerge' => $cartToMerge, 'commerceServices' => $this->getCommerceServices()));
+			$this->getEventManager()->trigger('mergeCart', $this, $args);
+			if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)
+			{
+				return $args['cart'];
+			}
+		}
+		return $cart;
+	}
+
+	/**
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
 	 * @param array $context
@@ -123,6 +144,34 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @return boolean
+	 */
+	public function validCart(\Rbs\Commerce\Interfaces\Cart $cart)
+	{
+		try
+		{
+			$cart->setErrors(array());
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(array('cart' => $cart, 'errors' => new \ArrayObject(), 'commerceServices' => $this->getCommerceServices()));
+			$this->getEventManager()->trigger('validCart', $this, $args);
+
+			if (isset($args['errors']) && (is_array($args['errors']) || $args['errors'] instanceof \Traversable))
+			{
+				foreach ($args['errors'] as $error)
+				{
+					$cart->addError($error);
+				}
+			}
+		}
+		catch (\Exception $e)
+		{
+			$cart->addError(new CartError($e->getMessage()));
+		}
+		return !$cart->hasError();
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
 	 * @param integer $ownerId
 	 * @return bool
 	 */
@@ -132,9 +181,12 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			try
 			{
-				$em = $this->getEventManager();
-				$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId, 'commerceServices' => $this->getCommerceServices()));
-				$this->getEventManager()->trigger('lockCart', $this, $args);
+				if ($this->validCart($cart))
+				{
+					$em = $this->getEventManager();
+					$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId, 'commerceServices' => $this->getCommerceServices()));
+					$this->getEventManager()->trigger('lockCart', $this, $args);
+				}
 				return $cart->isLocked();
 			}
 			catch (\Exception $e)
@@ -296,14 +348,17 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			if ($sku)
 			{
 				$options = array('quantity' => $item->getReservationQuantity() * $line->getQuantity());
-				$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
-				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $options, $cart->getBillingArea());
-				if ($price)
+				if (!$item->getOptions()->get('lockedPrice', false))
 				{
-					$priceValue = $price->getValue();
-					$cart->updateItemPrice($item, $priceValue);
-					$taxApplicationArray = $this->commerceServices->getTaxManager()->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone());
-					$cart->updateItemTaxes($item, $taxApplicationArray);
+					$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
+					$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $options, $cart->getBillingArea());
+					if ($price)
+					{
+						$priceValue = $price->getValue();
+						$cart->updateItemPrice($item, $priceValue);
+						$taxApplicationArray = $this->commerceServices->getTaxManager()->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone());
+						$cart->updateItemTaxes($item, $taxApplicationArray);
+					}
 				}
 			}
 		}
@@ -318,29 +373,32 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		/* @var $cartReservations \Rbs\Commerce\Cart\CartReservation[] */
 		$cartReservations = array();
 		$cartWebStoreId = $cart->getWebStoreId();
-		foreach ($cart->getLines() as $line)
+		if ($cartWebStoreId)
 		{
-			$lineQuantity = $line->getQuantity();
-			if ($lineQuantity)
+			foreach ($cart->getLines() as $line)
 			{
-				$lineWebStoreId = $line->getOptions()->get('webStoreId', $cartWebStoreId);
-				foreach ($line->getItems() as $item)
+				$lineQuantity = $line->getQuantity();
+				if ($lineQuantity)
 				{
-					if ($item->getReservationQuantity())
+					$lineWebStoreId = $line->getOptions()->get('webStoreId', $cartWebStoreId);
+					foreach ($line->getItems() as $item)
 					{
-						$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
-						$codeSKU = $item->getCodeSKU();
-						$key = $codeSKU . '/' . $webStoreId;
-						$resQtt = $lineQuantity * $item->getReservationQuantity();
-						if (isset($cartReservations[$key]))
+						if ($item->getReservationQuantity())
 						{
-							$reservation = $cartReservations[$key];
-							$reservation->addQuantity($resQtt);
-						}
-						else
-						{
-							$reservation = new \Rbs\Commerce\Cart\CartReservation($cart->getIdentifier(), $codeSKU);
-							$cartReservations[$key] = $reservation->setWebStoreId($webStoreId)->setQuantity($resQtt);
+							$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
+							$codeSKU = $item->getCodeSKU();
+							$key = $codeSKU . '/' . $webStoreId;
+							$resQtt = $lineQuantity * $item->getReservationQuantity();
+							if (isset($cartReservations[$key]))
+							{
+								$reservation = $cartReservations[$key];
+								$reservation->addQuantity($resQtt);
+							}
+							else
+							{
+								$reservation = new \Rbs\Commerce\Cart\CartReservation($cart->getIdentifier(), $codeSKU);
+								$cartReservations[$key] = $reservation->setWebStoreId($webStoreId)->setQuantity($resQtt);
+							}
 						}
 					}
 				}
