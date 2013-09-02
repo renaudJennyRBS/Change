@@ -77,4 +77,29 @@ class TestCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 		$this->options[$name] = $value;
 		return $this;
 	}
+
+	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @return $this
+	 */
+	public function evaluatePrice($commerceServices)
+	{
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue()
+	{
+		return null;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax()
+	{
+		return null;
+	}
 }

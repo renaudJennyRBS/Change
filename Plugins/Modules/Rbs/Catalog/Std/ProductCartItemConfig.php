@@ -2,9 +2,9 @@
 namespace Rbs\Catalog\Std;
 
 /**
-* @name \Rbs\Catalog\Std\ProductCartItemConfig
-*/
-class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
+ * @name \Rbs\Catalog\Std\ProductCartItemConfig
+ */
+class ProductCartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 {
 	/**
 	 * @var string
@@ -104,6 +104,23 @@ class ProductCartItemConfig implements  \Rbs\Commerce\Interfaces\CartItemConfig
 		if ($taxApplication !== null)
 		{
 			$this->taxApplication[] = $taxApplication;
+		}
+		return $this;
+	}
+
+	/**
+	 * @param \Rbs\Price\Std\TaxApplication[] $taxApplication
+	 * @return $this
+	 */
+	public function setTaxApplication(array $taxApplication)
+	{
+		$this->taxApplication = array();
+		if (count($taxApplication))
+		{
+			foreach ($taxApplication as $tax)
+			{
+				$this->addTaxApplication($tax);
+			}
 		}
 		return $this;
 	}

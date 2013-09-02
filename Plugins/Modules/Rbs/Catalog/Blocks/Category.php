@@ -82,37 +82,28 @@ class Category extends Block
 				$subQuery->eq('category', $categoryId), $conditionId ? $subQuery->eq('condition', $conditionId) : $subQuery->isNull('condition'));
 			$subQuery->addOrder('position', true);
 
-			$priceManager = $taxManager = null;
-			if ($commerceServices->getBillingArea())
-			{
-				$priceManager = $commerceServices->getPriceManager();
-				if ($commerceServices->getZone())
-				{
-					$taxManager = $commerceServices->getTaxManager();
-				}
-			}
-
 			$rows = array();
 			$webStore = $category->getWebStore();
 			$webStoreId = $webStore ? $webStore->getId() : 0;
 			$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
+
+			/* @var $product \Rbs\Catalog\Documents\Product */
 			foreach ($query->getDocuments() as $product)
 			{
-				/* @var $product \Rbs\Catalog\Documents\Product */
 				$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;
-				$price = $priceManager ? $priceManager->getPriceByProduct($product, $webStoreId) : null;
-				if ($price)
+
+				$cartLineConfig = $product->getCartLineConfig($commerceServices, array('options' => array('webStoreId' => $webStoreId)));
+				if ($cartLineConfig)
 				{
-					$row['price'] = $price->getValue();
-					if ($taxManager)
-					{
-						$taxApplications = $taxManager->getTaxByValue($price->getValue(), $price->getTaxCategories());
-						$row['priceTTC'] = $taxManager->getValueWithTax($price->getValue(), $taxApplications);
-					}
+					$cartLineConfig->setOption('quantity', 1.0);
+					$cartLineConfig->evaluatePrice($commerceServices, array('quantity' => 1.0));
+					$row['price'] = $cartLineConfig->getPriceValue();
+					$row['priceTTC'] = $cartLineConfig->getPriceValueWithTax();
 				}
+
 				$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
 			}
 			$attributes['rows'] = $rows;

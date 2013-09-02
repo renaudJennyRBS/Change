@@ -71,7 +71,15 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
+
 				$attributes['product'] = $product;
+				$cartLineConfig = $product->getCartLineConfig($commerceServices, array('options' => array('webStoreId' => $parameters->getWebStoreId())));
+				if ($cartLineConfig)
+				{
+					$cartLineConfig->setOption('quantity', 1.0);
+					$cartLineConfig->evaluatePrice($commerceServices, array('quantity' => 1.0));
+					$attributes['cartLineConfig'] = $cartLineConfig;
+				}
 				return 'product.twig';
 			}
 		}
