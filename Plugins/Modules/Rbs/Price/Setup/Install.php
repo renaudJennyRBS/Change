@@ -115,10 +115,68 @@ class Install
 				$QST->save();
 			}
 
+			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$cm = new \Change\Collection\CollectionManager();
+			$cm->setDocumentServices($documentServices);
+			$taxTitle = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
+
+			if ($taxTitle === null)
+			{
+				/* @var $taxTitle \Rbs\Collection\Documents\Collection */
+				$taxTitle = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$taxTitle->setLocked(true);
+				$taxTitle->setLabel('Tax Title');
+				$taxTitle->setCode('Rbs_Price_Collection_TaxTitle');
+
+
+				/* @var $title \Rbs\Collection\Documents\Item */
+				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title->setValue('GST');
+				$title->setLabel('Goods and Services Tax');
+				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.gst'));
+				$title->create();
+				$taxTitle->getItems()->add($title);
+
+				/* @var $title \Rbs\Collection\Documents\Item */
+				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title->setValue('PST');
+				$title->setLabel('Provincial Sales Taxes (CANADA)');
+				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.pst'));
+				$title->create();
+				$taxTitle->getItems()->add($title);
+
+				/* @var $title \Rbs\Collection\Documents\Item */
+				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title->setValue('HST');
+				$title->setLabel('Harmonized Sales Tax (CANADA)');
+				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.hst'));
+				$title->create();
+				$taxTitle->getItems()->add($title);
+
+				/* @var $title \Rbs\Collection\Documents\Item */
+				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title->setValue('QST');
+				$title->setLabel('Quebec Sales Tax (CANADA)');
+				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.qst'));
+				$title->create();
+				$taxTitle->getItems()->add($title);
+
+				/* @var $title \Rbs\Collection\Documents\Item */
+				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title->setValue('TVAFR');
+				$title->setLabel('Taxe sur la valeur ajoutée');
+				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.tvafr'));
+				$title->create();
+				$taxTitle->getItems()->add($title);
+
+				$taxTitle->create();
+			}
+
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
+			$documentServices->getApplicationServices()->getLogging()->exception($e);
 			$tm->rollBack($e);
 		}
 	}

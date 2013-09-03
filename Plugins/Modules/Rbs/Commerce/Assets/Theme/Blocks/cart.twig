@@ -52,16 +52,14 @@
 <table summary="" style="width: 100%">
 	<thead>
 	<tr>
-		<th>Tax</th>
-		<th>%</th>
+		<th>Taxe</th>
 		<th>value</th>
 	</tr>
 	</thead>
 	<tbody>
 {% for cartTax in cart.taxes %}
 	<tr>
-		<td>{{ cartTax.tax.code }}</td>
-		<td>{{ formatRate(cartTax.rate) }}</td>
+		<td>{{ taxTitle(cartTax.tax) }} ({{ formatRate(cartTax.rate) }})</td>
 		<td>{{ formatPrice(cartTax.value) }}</td>
 	</tr>
 {% endfor %}

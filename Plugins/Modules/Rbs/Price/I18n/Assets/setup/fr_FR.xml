@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.price.setup" lcid="fr_FR">
+	<key id="gst">Goods and Services Tax</key>
+	<key id="pst">Provincial Sales Taxes</key>
+	<key id="hst">Harmonized Sales Tax</key>
+	<key id="qst">Quebec Sales Tax</key>
+	<key id="tvafr">TVA</key>
+</i18n>

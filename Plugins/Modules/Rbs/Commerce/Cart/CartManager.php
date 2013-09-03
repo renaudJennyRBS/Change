@@ -144,15 +144,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @param integer $lockForOwnerId
 	 * @return boolean
 	 */
-	public function validCart(\Rbs\Commerce\Interfaces\Cart $cart)
+	public function validCart(\Rbs\Commerce\Interfaces\Cart $cart, $lockForOwnerId = null)
 	{
 		try
 		{
 			$cart->setErrors(array());
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('cart' => $cart, 'errors' => new \ArrayObject(), 'commerceServices' => $this->getCommerceServices()));
+			$args = $em->prepareArgs(array('cart' => $cart, 'errors' => new \ArrayObject(),
+				'lockForOwnerId' => $lockForOwnerId,
+				'commerceServices' => $this->getCommerceServices()));
 			$this->getEventManager()->trigger('validCart', $this, $args);
 
 			if (isset($args['errors']) && (is_array($args['errors']) || $args['errors'] instanceof \Traversable))
@@ -181,7 +184,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			try
 			{
-				if ($this->validCart($cart))
+				if ($this->validCart($cart, $ownerId))
 				{
 					$em = $this->getEventManager();
 					$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId, 'commerceServices' => $this->getCommerceServices()));

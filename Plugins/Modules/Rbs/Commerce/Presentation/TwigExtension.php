@@ -84,7 +84,8 @@ class TwigExtension  implements \Twig_ExtensionInterface
 	{
 		return array(
 			new \Twig_SimpleFunction('formatPrice', array($this, 'formatPrice')),
-			new \Twig_SimpleFunction('formatRate', array($this, 'formatRate'))
+			new \Twig_SimpleFunction('formatRate', array($this, 'formatRate')),
+			new \Twig_SimpleFunction('taxTitle', array($this, 'taxTitle'))
 		);
 	}
 
@@ -139,5 +140,14 @@ class TwigExtension  implements \Twig_ExtensionInterface
 			return '';
 		}
 		return $this->getCommerceServices()->getTaxManager()->formatRate($rate);
+	}
+
+	/**
+	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax
+	 * @return string
+	 */
+	public function taxTitle($tax)
+	{
+		return $this->getCommerceServices()->getTaxManager()->taxTitle($tax);
 	}
 }

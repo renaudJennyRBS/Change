@@ -1,0 +1,65 @@
+<?php
+namespace Rbs\Commerce\Cart;
+
+use Rbs\Commerce\Interfaces\Cart;
+
+/**
+* @name \Rbs\Commerce\Cart\DefaultCartValidation
+*/
+class DefaultCartValidation
+{
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function execute(\Zend\EventManager\Event $event)
+	{
+
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart && !$cart->isEmpty())
+		{
+			$i18nManager = $cart->getCommerceServices()->getApplicationServices()->getI18nManager();
+
+			/* @var $errors \ArrayObject */
+			$errors = $event->getParams('errors');
+
+			if (!$cart->getWebStoreId())
+			{
+				$message = $i18nManager->trans('m.rbs.commerce.errors.cart-without-webstore', array('ucf'));
+				$err = new CartError($message, null);
+				$errors[] = $err;
+				return;
+			}
+
+			foreach ($cart->getLines() as $line)
+			{
+				if (!$line->getQuantity())
+				{
+					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-quantity', array('ucf'), array('number' => $line->getNumber()));
+					$err = new CartError($message, $line->getKey());
+					$errors[] = $err;
+				}
+				elseif (count($line->getItems()) === 0)
+				{
+					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-sku', array('ucf'), array('number' => $line->getNumber()));
+					$err = new CartError($message, $line->getKey());
+					$errors[] = $err;
+				}
+				elseif ($line->getUnitPriceValue() === null)
+				{
+					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-price', array('ucf'), array('number' => $line->getNumber()));
+					$err = new CartError($message, $line->getKey());
+					$errors[] = $err;
+				}
+			}
+
+			$reservations = $cart->getCommerceServices()->getCartManager()->getReservations($cart);
+			$unreserved = $cart->getCommerceServices()->getStockManager()->setReservations($reservations);
+			if (count($unreserved))
+			{
+				$message = $i18nManager->trans('m.rbs.commerce.errors.cart-reservation-error', array('ucf'));
+				$err = new CartError($message);
+				$errors[] = $err;
+			}
+		}
+	}
+}

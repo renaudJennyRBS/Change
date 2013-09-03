@@ -651,7 +651,8 @@ class Cart implements CartInterfaces
 			'zone' => $this->zone,
 			'ownerId' => $this->ownerId,
 			'context' => $this->context,
-			'lines' => $this->lines);
+			'lines' => $this->lines,
+			'errors' => $this->errors);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
 
@@ -675,6 +676,7 @@ class Cart implements CartInterfaces
 		$this->ownerId = $serializedData['ownerId'];
 		$this->context = $serializedData['context'];
 		$this->lines = $serializedData['lines'];
+		$this->errors = $serializedData['errors'];
 		foreach ($this->lines as $line)
 		{
 			/* @var $line CartLine */
