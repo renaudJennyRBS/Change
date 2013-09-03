@@ -18,7 +18,8 @@
 
 			link : function (scope, element, attrs) {
 
-				var lastUpdatedDoc = null;
+				var	lastUpdatedDoc = null,
+					oldCssClass = null;
 
 				scope.data = {
 					rejectReason : '',
@@ -26,11 +27,11 @@
 					action : ''
 				};
 
-				var oldCssClass = null;
 
 				function freezeUI () {
 					element.find('button').attr('disabled', 'disabled');
 				}
+
 
 				function unfreezeUI (error) {
 					element.find('button').removeAttr('disabled');
@@ -49,6 +50,7 @@
 					}
 				}
 
+
 				function accept (actionName) {
 					freezeUI();
 					REST.executeTaskByCodeOnDocument(actionName, scope.document).then(
@@ -62,6 +64,7 @@
 					);
 				}
 
+
 				function reject (actionName, reason) {
 					freezeUI();
 					REST.executeTaskByCodeOnDocument(actionName, scope.document, {'reason': reason}).then(
@@ -74,6 +77,23 @@
 						unfreezeUI
 					);
 				}
+
+
+				function publicationDatesChanged () {
+					return ! angular.equals(scope.data.startPublication, scope.document.startPublication) || ! angular.equals(scope.data.endPublication, scope.document.endPublication);
+				}
+
+
+				function doSubmit () {
+					console.log("executing task ", scope.data.action);
+					if (scope.data.action === 'contentValidation' && scope.data.contentAction === 'reject') {
+						reject(scope.data.action, scope.data.rejectReason);
+					}
+					else {
+						accept(scope.data.action);
+					}
+				}
+
 
 				scope.$watch('document', function documentChanged (doc) {
 					if (doc) {
@@ -89,6 +109,9 @@
 							});
 						}
 
+						scope.data.startPublication = doc.startPublication;
+						scope.data.endPublication = doc.endPublication;
+
 						if (oldCssClass) {
 							element.prev('.workflow-indicator').addBack().removeClass(oldCssClass);
 						}
@@ -97,18 +120,29 @@
 					}
 				}, true);
 
+
 				scope.submit = function () {
-					if (scope.data.action === 'contentValidation' && scope.data.contentAction === 'reject') {
-						reject(scope.data.action, scope.data.rejectReason);
+					// When validating the publication, we need to save the 'startPublication' and 'endPublication'
+					// properties on the Document before executing the workflow task.
+					if (scope.data.action === 'publicationValidation' && publicationDatesChanged()) {
+						console.log("publicationValidation: saving Document with ", scope.data.startPublication, scope.data.endPublication);
+						scope.document.startPublication = scope.data.startPublication;
+						scope.document.endPublication = scope.data.endPublication;
+						REST.save(scope.document, null, ['startPublication', 'endPublication']).then(function (updated) {
+							angular.extend(scope.document, updated);
+							doSubmit();
+						});
 					}
 					else {
-						accept(scope.data.action);
+						doSubmit();
 					}
 				};
+
 
 				scope.closeWorkflow = function () {
 					scope.onClose();
 				};
+
 
 				scope.runWholeWorkflow = function () {
 					freezeUI();
@@ -156,6 +190,7 @@
 
 					return defer.promise;
 				};
+
 
 				scope.hasProgressInfo = function () {
 					return scope.data.progress !== undefined;
