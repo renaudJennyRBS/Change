@@ -90,7 +90,7 @@ class Category extends Block
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			foreach ($query->getDocuments() as $product)
 			{
-				$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
+				$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;

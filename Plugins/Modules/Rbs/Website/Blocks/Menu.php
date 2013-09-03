@@ -49,6 +49,11 @@ class Menu extends Block
 			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
 			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
+
+		if ($parameters->getParameter('documentId') === null)
+		{
+			$parameters->setParameterValue('documentId', $parameters->getParameter('sectionId'));
+		}
 		return $parameters;
 	}
 

@@ -168,11 +168,14 @@ class StockManager
 	}
 
 	/**
-	 * @param $sku
-	 * @param $store
+	 * Return not reserved quantity
+	 * @param \Rbs\Stock\Interfaces\Reservation[] $reservations
+	 * @return \Rbs\Stock\Interfaces\Reservation[]
 	 */
-	public function getReservationLevel($sku, $store)
+	public function setReservations(array $reservations)
 	{
+
+		return array();
 	}
 
 	protected $skuIds = array();
@@ -203,4 +206,6 @@ class StockManager
 		$this->skuIds[$code] = ($sku) ? $sku->getId() : null;
 		return $sku;
 	}
+
+
 }
