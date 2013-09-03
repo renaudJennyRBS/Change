@@ -332,6 +332,15 @@
 	}]);
 
 
+	app.directive('rbsAdvancedMode', ['RbsChange.i18n', function (i18n) {
+		return {
+			'restrict'   : 'E',
+			'transclude' : true,
+			'template'   : '<div class="advanced-mode"><div class="separator"></div><div class="inner"><h4>' + i18n.trans('m.rbs.admin.admin.js.advanced-mode') + '</h4><div ng-transclude=""></div></div></div>',
+			'replace'    : true
+		};
+	}]);
+
 
 	//-------------------------------------------------------------------------
 	//

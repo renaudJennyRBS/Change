@@ -774,34 +774,36 @@
 						}
 
 						if (! doc.META$.actions || ! doc.META$.actions.hasOwnProperty(taskCode)) {
-							throw new Error("Action '" + taskCode + "' is not available for Document '" + doc.id + "'.");
+							q.reject("Action '" + taskCode + "' is not available for Document '" + doc.id + "'.");
 						}
+						else {
+							// Load the Task Document
+							// TODO Optimize:
+							// Can we call 'execute' directly with '/execute' at the end of the Task URL?
+							$http.get(doc.META$.actions[taskCode].href, getHttpConfig(transformResponseResourceFn))
 
-						// Load the Task Document
-						// TODO Optimize:
-						// Can we call 'execute' directly with '/execute' at the end of the Task URL?
-						$http.get(doc.META$.actions[taskCode].href, getHttpConfig(transformResponseResourceFn))
+								.success(function (task) {
 
-							.success(function (task) {
-
-								// Execute Task.
-								rest.executeTask(task, params).then(
-									// Success
-									function (task) {
-										// Task has been executed and we don't need it here anymore.
-										rest.resource(doc).then(function (updatedDoc) {
-											resolveQ(q, updatedDoc);
+									// Execute Task.
+									rest.executeTask(task, params).then(
+										// Success
+										function (task) {
+											// Task has been executed and we don't need it here anymore.
+											rest.resource(doc).then(function (updatedDoc) {
+												resolveQ(q, updatedDoc);
+											});
+										},
+										// Error
+										function (data) {
+											rejectQ(q, data);
 										});
-									},
-									// Error
-									function (data) {
-										rejectQ(q, data);
-									});
-							})
+								})
 
-							.error(function (data) {
-								rejectQ(q, data);
-							});
+								.error(function (data) {
+									rejectQ(q, data);
+								}
+							);
+						}
 
 						return q.promise;
 					},
@@ -817,15 +819,19 @@
 						var q = $q.defer();
 
 						function doExecute (taskObj) {
-							// TODO Handle error here if actions does not exist.
-							$http.post(taskObj.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
-								.success(function (taskObj) {
-									angular.extend(task, taskObj);
-									resolveQ(q, taskObj);
-								})
-								.error(function (data) {
-									rejectQ(q, data);
-								});
+							if (taskObj.META$.actions['execute']) {
+								$http.post(taskObj.META$.actions['execute'].href, params, getHttpConfig(transformResponseResourceFn))
+									.success(function (taskObj) {
+										angular.extend(task, taskObj);
+										resolveQ(q, taskObj);
+									})
+									.error(function (data) {
+										rejectQ(q, data);
+									});
+							}
+							else {
+								rejectQ(q, 'Could not execute task ' + taskObj.id);
+							}
 						}
 
 						if (task.META$.actions['execute']) {

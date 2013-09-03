@@ -121,8 +121,8 @@
 				}
 				quickActionsHtml = __quickActions[dlid].contents;
 
-				if (tAttrs.publishable === 'true') {
-					quickActionsHtml += actionDivider + 'workflow';
+				if (tAttrs.publishable === 'true' && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
+					quickActionsHtml += actionDivider + '[action workflow]';
 				}
 
 				if (! quickActionsHtml.length) {
@@ -235,7 +235,7 @@
 					"name"   : "publicationStatus",
 					"align"  : "center",
 					"width"  : "30px",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.status-minified | ucf'),
+					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.admin.js.status | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.status-minified | ucf') + '</abbr>',
 					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc"/></a>',
 					"dummy"  : true
 				});
@@ -899,6 +899,13 @@
 					};
 
 
+					scope.closeWorkflow = function (index) {
+						var	current = scope.collection[index-1];
+						delete current.__hasWorkflow;
+						scope.collection.splice(index, 1);
+					};
+
+
 					scope.isWorkflow = function (doc) {
 						return doc && doc.__workflow === true;
 					};
@@ -1454,11 +1461,9 @@
 					}
 
 
-					function watchQueryFn (query, oldValue) {
-						if (query !== oldValue) {
+					function watchQueryFn (query) {
+						if (! angular.equals(query, queryObject)) {
 							queryObject = angular.copy(query);
-							reload();
-						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();
 						}
 					}
