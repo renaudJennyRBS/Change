@@ -462,6 +462,16 @@ class Cart implements CartInterfaces
 	}
 
 	/**
+	 * @return \Rbs\Commerce\Interfaces\CartLine[]
+	 */
+	public function removeAllLines()
+	{
+		$removed = $this->lines;
+		$this->lines = array();
+		return $removed;
+	}
+
+	/**
 	 * @param string $lineKey
 	 * @param float $newQuantity
 	 * @return CartLine|null

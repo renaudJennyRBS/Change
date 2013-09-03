@@ -23,9 +23,21 @@ interface Cart extends \Serializable
 	public function getIdentifier();
 
 	/**
+	 * @param integer $ownerId
+	 * @return $this
+	 */
+	public function setOwnerId($ownerId);
+
+	/**
 	 * @return integer
 	 */
 	public function getOwnerId();
+
+	/**
+	 * @param integer $webStoreId
+	 * @return $this
+	 */
+	public function setWebStoreId($webStoreId);
 
 	/**
 	 * @return integer
@@ -69,6 +81,11 @@ interface Cart extends \Serializable
 	 * @return \Rbs\Commerce\Interfaces\CartLine|null
 	 */
 	public function removeLineByKey($lineKey);
+
+	/**
+	 * @return \Rbs\Commerce\Interfaces\CartLine[]
+	 */
+	public function removeAllLines();
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\BillingArea|null $billingArea

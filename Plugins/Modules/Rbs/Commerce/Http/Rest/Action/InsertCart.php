@@ -31,11 +31,57 @@ class InsertCart
 			$context = isset($args['context']) && is_array($args['context']) ? $args['context'] : array();
 			$cart = $commerceServices->getCartManager()->getNewCart($billingArea, $zone, $context);
 			$event->setParam('cartIdentifier', $cart->getIdentifier());
+
+			if (isset($args['webStoreId']) || isset($args['ownerId']) || isset($args['lines']))
+			{
+				$this->populateCart($commerceServices, $cart, $args);
+				$commerceServices->getCartManager()->saveCart($cart);
+			}
+
+
 			(new GetCart())->execute($event);
+
 			$result = $event->getResult();
 			if ($result instanceof CartResult)
 			{
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\Interfaces\Cart $cart
+	 * @param array $cartData
+	 */
+	protected function populateCart($commerceServices, $cart, $cartData)
+	{
+		if (isset($cartData['webStoreId']))
+		{
+			$cart->setWebStoreId($cartData['webStoreId']);
+		}
+		elseif (array_key_exists('webStoreId', $cartData))
+		{
+			$cart->setWebStoreId(null);
+		}
+
+		if (isset($cartData['ownerId']))
+		{
+			$cart->setOwnerId($cartData['ownerId']);
+		}
+		elseif (array_key_exists('ownerId', $cartData))
+		{
+			$cart->setOwnerId(null);
+		}
+
+		if (isset($cartData['lines']) && is_array($cartData['lines']))
+		{
+			$cm = $commerceServices->getCartManager();
+			$cart->removeAllLines();
+			foreach ($cartData['lines'] as $lineData)
+			{
+				$configLine = new \Rbs\Commerce\Cart\CartLineConfig($commerceServices, $lineData);
+				$cm->addLine($cart, $configLine, $configLine->getQuantity());
 			}
 		}
 	}
