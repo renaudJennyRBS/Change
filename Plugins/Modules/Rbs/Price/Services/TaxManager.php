@@ -32,47 +32,7 @@ class TaxManager
 		return $this->commerceServices;
 	}
 
-	/**
-	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax$tax
-	 * @return string
-	 */
-	public function taxTitle($tax)
-	{
-		$taxCode = null;
-		if ($tax instanceof \Rbs\Commerce\Interfaces\Tax)
-		{
-			$taxCode = $tax->getCode();
-		}
-		elseif (is_numeric($tax))
-		{
-			$taxDoc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($tax);
-			if ($taxDoc instanceof \Rbs\Commerce\Interfaces\Tax)
-			{
-				$taxCode = $taxDoc->getCode();
-			}
-		}
-		elseif (is_string($tax))
-		{
-			$taxCode = $tax;
-		}
 
-		if ($taxCode)
-		{
-			$cm = new \Change\Collection\CollectionManager();
-			$cm->setDocumentServices($this->getDocumentServices());
-			$collection = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
-			if ($collection)
-			{
-				$item = $collection->getItemByValue($taxCode);
-				if ($item)
-				{
-					return $item->getTitle();
-				}
-			}
-			return $taxCode;
-		}
-		return strval($tax);
-	}
 
 	/**
 	 * @return DocumentServices
@@ -235,5 +195,77 @@ class TaxManager
 			return $nf->format($rate);
 		}
 		return null;
+	}
+
+	protected $taxCodeIds = array();
+
+	/**
+	 * @param string $taxCode
+	 * @return \Rbs\Commerce\Interfaces\Tax|null
+	 */
+	public function getTaxByCode($taxCode)
+	{
+		if (!is_string($taxCode))
+		{
+			return null;
+		}
+
+		if (array_key_exists($taxCode, $this->taxCodeIds))
+		{
+			$taxCodeId = $this->taxCodeIds[$taxCode];
+			if (is_int($taxCodeId))
+			{
+				return $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($taxCodeId);
+			}
+			return null;
+		}
+
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_Tax');
+		$query->andPredicates($query->eq('code', $taxCode));
+		$tax = $query->getFirstDocument();
+		$this->taxCodeIds[$taxCode] = ($tax) ? $tax->getId() : null;
+		return $tax;
+	}
+
+	/**
+	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax$tax
+	 * @return string
+	 */
+	public function taxTitle($tax)
+	{
+		$taxCode = null;
+		if ($tax instanceof \Rbs\Commerce\Interfaces\Tax)
+		{
+			$taxCode = $tax->getCode();
+		}
+		elseif (is_numeric($tax))
+		{
+			$taxDoc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($tax);
+			if ($taxDoc instanceof \Rbs\Commerce\Interfaces\Tax)
+			{
+				$taxCode = $taxDoc->getCode();
+			}
+		}
+		elseif (is_string($tax))
+		{
+			$taxCode = $tax;
+		}
+
+		if ($taxCode)
+		{
+			$cm = new \Change\Collection\CollectionManager();
+			$cm->setDocumentServices($this->getDocumentServices());
+			$collection = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
+			if ($collection)
+			{
+				$item = $collection->getItemByValue($taxCode);
+				if ($item)
+				{
+					return $item->getTitle();
+				}
+			}
+			return $taxCode;
+		}
+		return strval($tax);
 	}
 }
