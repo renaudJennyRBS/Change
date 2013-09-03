@@ -43,7 +43,8 @@
 			<rbs-advanced-mode>
 				<p>{{ i18n('m.rbs.admin.workflow.run-all-steps-message') }}</p>
 				<p><button type="button" class="btn btn-danger" ng-click="runWholeWorkflow()"><i class="icon-fast-forward"></i> {{ i18n('m.rbs.admin.workflow.run-all-steps-button', ['ucf']) }}</button></p>
-			</rbs-advanced-mode></div>
+			</rbs-advanced-mode>
+		</div>
 
 		<div ng-switch-when="contentValidation">
 
@@ -98,14 +99,32 @@
 
 		</div>
 
-		<div class="control-group" ng-switch-when="publicationValidation">
-			<div class="controls">
-				<p>
-					<div style="color: green"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.workflow.request-validation-done', ['ucf']) }}</div>
-					<div style="color: green"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.workflow.content-validated', ['ucf']) }}</div>
-				</p>
-				<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-				<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.workflow.accept-publication', ['ucf']) }}</button>
+		<div ng-switch-when="publicationValidation">
+			<div class="control-group">
+				<div class="controls">
+					<p>
+						<div style="color: green"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.workflow.request-validation-done', ['ucf']) }}</div>
+						<div style="color: green"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.workflow.content-validated', ['ucf']) }}</div>
+					</p>
+				</div>
+			</div>
+			<div class="control-group" style="margin:0;">
+				<label class="control-label">Début</label>
+				<div class="controls">
+					<date-selector ng-model="data.startPublication"></date-selector>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Fin</label>
+				<div class="controls">
+					<date-selector ng-model="data.endPublication"></date-selector>
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
+					<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.workflow.accept-publication', ['ucf']) }}</button>
+				</div>
 			</div>
 		</div>
 
@@ -157,7 +176,6 @@
 			</div>
 		</div>
 
-
 		<div class="progress" ng-if="hasProgressInfo()">
 			<div class="bar" style="width: (= data.progress =)%;"></div>
 		</div>
@@ -169,7 +187,6 @@
 		</div>
 
 	</form>
-
 
 	<div ng-if="data.helpShown" class="workflow-help">
 		<div class="step" ng-class="{'current': data.action=='requestValidation'}">
@@ -232,6 +249,5 @@
 			</div>
 		</div>
 	</div>
-
 
 </div>
