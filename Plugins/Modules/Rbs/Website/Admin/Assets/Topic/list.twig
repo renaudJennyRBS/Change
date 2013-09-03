@@ -54,7 +54,7 @@
 
 		<column name="label" label="Libellé" primary="true">
 			<strong ng-if="doc.is('Rbs_Website_StaticPage')"><a title="Éditer le contenu de la page"
-			   href ng-href="(= doc | documentURL:'editor' =)">(=doc.label=)</a></strong>
+			   href ng-href="(= doc | documentURL:'form' =)">(=doc.label=)</a></strong>
 			<span ng-if="doc.is('Rbs_Website_Topic')"><strong><a title="Naviguer vers le contenu de la rubrique"
 			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></strong>
 				<i class="icon-rbs-navigate-to"></i>
