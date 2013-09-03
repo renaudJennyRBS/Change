@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.workflow" lcid="fr_FR">
+
+	<key id="status-draft">brouillon</key>
+	<key id="status-frozen">gelé</key>
+	<key id="status-validcontent">contenu validé</key>
+	<key id="status-valid">validé</key>
+	<key id="status-validation">à valider</key>
+	<key id="status-unpublishable">non-publiable</key>
+	<key id="status-publishable">publiable</key>
+	<key id="status-filed">archivé</key>
+
+	<key id="title">Processus de validation (workflow)</key>
+	<key id="draft-description" format="html">Ce document est à l'état de brouillon.</key>
+	<key id="frozen-description" format="html">Ce document a été gelé et n'est donc pas visible sur le site web.</key>
+	<key id="filed-description" format="html"><![CDATA[Ce document a été archivé.<br/>Il peut toutefois être affiché sur le site web dans les blocs qui gèrent les archives.]]></key>
+	<key id="validation-description" format="html">Le contenu de ce document doit être validé avant qu'il ne puisse être publié sur le site web.</key>
+	<key id="validcontent-description" format="html">Le contenu de ce document a été validé : il ne reste qu'à valider sa publication.</key>
+	<key id="unpublishable-description" format="html"><![CDATA[Ce document <strong>n'est pas</strong> prêt pour être publié sur le site web.]]></key>
+	<key id="publishable-description" format="html">Ce document est prêt pour être publié sur le site web.</key>
+
+	<key id="request-validation">demander la validation</key>
+	<key id="run-all-steps-message" format="html"><![CDATA[Vous avez la possibilité d'exécuter toutes les étapes du processus de validation en une seule fois en cliquant sur le bouton <strong>Publier tout de suite</strong> ci-dessous. Cliquez sur le bouton <strong>Aide</strong> pour en savoir plus sur le fonctionnement du processus de validation.]]></key>
+	<key id="run-all-steps-button">publier tout de suite</key>
+
+	<key id="request-validation-done">demande de validation effectuée</key>
+	<key id="content-validated">contenu validé</key>
+	<key id="publication-validated">publication validée</key>
+	<key id="to-validate-content-you-can">pour valider le contenu de ce document, vous pouvez</key>
+	<key id="open-document-editor">ouvrir l'éditeur du document</key>
+	<key id="open-document-editor-in-new-tab">ouvrir l'éditeur du document dans un nouvel onglet</key>
+
+	<key id="accepted">accepté</key>
+	<key id="rejected">refusé</key>
+	<key id="accept">accepter</key>
+	<key id="reject">refuser</key>
+	<key id="freeze">geler</key>
+	<key id="unfreeze">dégeler</key>
+
+	<key id="reject-reason">motif du refus</key>
+	<key id="why-do-you-reject-content">pourquoi refusez-vous le contenu de ce document ?</key>
+	<key id="reject-content">refuser le contenu</key>
+	<key id="accept-content">valider le contenu</key>
+	<key id="accept-publication">valider la publication</key>
+
+	<key id="you-can-freeze-document" format="html">Vous pouvez geler ce document : son affichage sur le site web sera alors désactivé.</key>
+	<key id="freeze-document">geler le document</key>
+	<key id="unfreeze-document">dégeler le document</key>
+	<key id="frozen-document">document gelé</key>
+	<key id="this-document-is-frozen" format="html">Ce document est gelé : son affichage sur le site web a été désactivé temporairement. Pour le rendre de nouveau visible, vous pouvez le dégeler.</key>
+	<key id="modified-content-correction" format="html"><![CDATA[Contenu modifié &rarr; correction]]></key>
+	<key id="caution">attention</key>
+	<key id="document-has-been-modified-since-its-publication" format="html">Le document a été modifié depuis sa publication : les modifications ne seront pas visibles tant que la Correction n'aura pas été validée.</key>
+	<key id="to-validate-correction-please-go-to">pour valider la Correction, veuillez vous rendre sur</key>
+	<key id="document-editor">l'éditeur du Document</key>
+	<key id="to-check-modified-properties" format="html"><![CDATA[afin de <strong>vérifier les propriétés qui ont été modifiées</strong>]]></key>
+
+	<key id="action-has-failed">l'action a échoué</key>
+
+	<key id="help-draft-explain" format="html"><![CDATA[Lorsqu'un Document à l'état de <strong>brouillon</strong> vous semble correct, et lorsque vous souhaitez le publier sur le site web, vous pouvez faire une <strong>demande de validation</strong>.]]></key>
+	<key id="help-validation-explain" format="html"><![CDATA[Le Document est ici en <strong>attente de validation</strong> de son contenu.<ul><li><strong>{{ i18n('m.rbs.admin.workflow.', ['ucf']) }}Refuser</strong> : {{ i18n('m.rbs.admin.workflow.', ['ucf']) }}le Document repassera à l'état de <strong>brouillon</strong> ;</li><li><strong>{{ i18n('m.rbs.admin.workflow.', ['ucf']) }}Accepter</strong> : {{ i18n('m.rbs.admin.workflow.', ['ucf']) }}il restera alors à <strong>valider la publication</strong> du Document.</li></ul>]]></key>
+	<key id="help-validcontent-explain" format="html"><![CDATA[Le contenu du Document a été validé, il faut maintenant <strong>valider sa publication</strong> sur le site web.]]></key>
+	<key id="help-publishable-explain" format="html"><![CDATA[Ici, toutes les conditions requises pour l'affichage du Document sont validées.<br/>Il est possible d'empêcher son affichage en <strong>gelant</strong> le Document.]]></key>
+	<key id="help-frozen-explain" format="html"><![CDATA[Le Document a été gelé pour empêcher son affichage sur le site web.<br/>Il est possible de réactiver son affichage en <strong>dégelant</strong> le Document.]]></key>
+
+</i18n>

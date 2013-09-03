@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.admin.admin.js" lcid="fr_FR">
+	<include id="m.rbs.admin.workflow"/>
 	<key id="submit">valider</key>
 	<key id="cancel">annuler</key>
 	<key id="confirm">confirmation</key>
@@ -62,17 +63,11 @@
 	<key id="tip-dismiss-thank-you">Merci, ne plus afficher ce message !</key>
 	<key id="correction-confirm-delete">Souhaitez-vous réellement supprimer la Correction ?</key>
 
-	<key id="status-draft">brouillon</key>
-	<key id="status-frozen">gelé</key>
-	<key id="status-validcontent">contenu validé</key>
-	<key id="status-valid">validé</key>
-	<key id="status-validation">à valider</key>
-	<key id="status-unpublishable">non-publiable</key>
-	<key id="status-publishable">publiable</key>
-	<key id="status-filed">archivé</key>
-
 	<key id="yes">oui</key>
 	<key id="no">non</key>
 	<key id="confirmation">confirmation</key>
+	<key id="help">aide</key>
+
+	<key id="advanced-mode">mode avancé</key>
 
 </i18n>

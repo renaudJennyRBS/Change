@@ -121,8 +121,8 @@
 				}
 				quickActionsHtml = __quickActions[dlid].contents;
 
-				if (tAttrs.publishable === 'true') {
-					quickActionsHtml += actionDivider + 'workflow';
+				if (tAttrs.publishable === 'true' && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
+					quickActionsHtml += actionDivider + '[action workflow]';
 				}
 
 				if (! quickActionsHtml.length) {
@@ -899,6 +899,13 @@
 					};
 
 
+					scope.closeWorkflow = function (index) {
+						var	current = scope.collection[index-1];
+						delete current.__hasWorkflow;
+						scope.collection.splice(index, 1);
+					};
+
+
 					scope.isWorkflow = function (doc) {
 						return doc && doc.__workflow === true;
 					};
@@ -1454,11 +1461,9 @@
 					}
 
 
-					function watchQueryFn (query, oldValue) {
-						if (query !== oldValue) {
+					function watchQueryFn (query) {
+						if (! angular.equals(query, queryObject)) {
 							queryObject = angular.copy(query);
-							reload();
-						} else if (angular.isDefined(query) || angular.isDefined(oldValue)) {
 							reload();
 						}
 					}
