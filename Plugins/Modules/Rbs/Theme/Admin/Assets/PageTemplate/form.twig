@@ -1,9 +1,19 @@
 <div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.theme.document.pagetemplate', ['ucf']) }}"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.rbs.theme.document.pagetemplate', ['ucf']) }}"></page-header>
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">Thèmes</location>
+			<location href="(= 'Rbs_Theme_PageTemplate'|rbsURL:'list' =)">Modèles de page</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<div class="document-editor editor-rbs-theme-page-template"
 		document="document"
 		section="section"
 		on-save="onSave(document)"
 		on-cancel="onCancel()">
 	</div>
+
+	<div class="rbs-document-editor rbs-document-editor-rbs-theme-page-template"></div>
 </div>

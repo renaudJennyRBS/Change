@@ -9,12 +9,10 @@
 			'contains'   : 'any'
 		};
 
-	function searchFiltersDirectiveFn ($timeout, ArrayUtils, Utils, REST, Breadcrumb, SavedSearches) {
+	function searchFiltersDirectiveFn ($timeout, ArrayUtils, Utils, REST, Breadcrumb, SavedSearches, i18n, $http, $q, $compile) {
 
 		return {
 			"restrict"    : 'E',
-			"replace"     : true,
-			"templateUrl" : 'Rbs/Admin/js/directives/search-filters.twig',
 
 			"scope" : {
 				"model" : "@",
@@ -22,13 +20,14 @@
 				"textSearch" : "="
 			},
 
-			"link" : function postLink(scope, elm) {
+			"link" : function postLink(scope, elm, attrs) {
 
 				if (! elm.is('[model]')) {
 					throw new Error("Please provide a 'model' attribute with a valid Model name.");
 				}
 
-				var modelMeta;
+				var	modelMeta,
+					loaded = false;
 
 				scope.availableFilters = {};
 				scope.appliedFilters   = [];
@@ -36,15 +35,33 @@
 				scope.treePolicy       = Breadcrumb.getCurrentNode() ? "descendantOf" : "all";
 				scope.appliedFiltersOriginal = angular.copy(scope.appliedFilters);
 
-				scope.$watch('textSearch', initSearch, true);
+
+				// Wait for 'model' attribute to be evaluated and available.
+				attrs.$observe('model', function (value) {
+					if (value) {
+						// Watch for 'textSearch' changes:
+						// It will be fired even if 'textSearch' has changed before 'model' attribute is ready.
+						scope.$watch('textSearch', function (value) {
+							if (value) {
+								if (! loaded) {
+									load().then(search);
+								}
+								else {
+									search();
+								}
+							}
+						}, true);
+					}
+				});
 
 
-				//
-				// Load Model's information.
-				//
+				/**
+				 * Load Model's information.
+				 */
 				function loadModelsInfo () {
-					var promise = REST.modelInfo(scope.model)
-					promise.then(function (modelInfo) {
+					var promise = REST.modelInfo(scope.model);
+					promise.then(function (modelInfo)
+					{
 						modelMeta = modelInfo.metas;
 
 						if (modelMeta.publishable && ! modelInfo.properties.hasOwnProperty("published")) {
@@ -55,30 +72,18 @@
 						}
 
 						forEach(modelInfo.properties, function (propertyObj, name) {
-
 							propertyObj.name = name;
-
-							// FIXME Localization
 							if (name === 'publicationStatus') {
 								propertyObj.possibleValues = [
-									{ "value" : "DRAFT",       "label" : "Brouillon" },
-									{ "value" : "DEACTIVATED", "label" : "Désactivé" },
-									{ "value" : "PUBLISHABLE", "label" : "Publiable" },
-									{ "value" : "ACTIVE",      "label" : "Activé" },
-									{ "value" : "VALIDATION",  "label" : "En cours de validation"}
+									{ "value" : "DRAFT", "label" : i18n.trans('m.rbs.admin.admin.js.status-draft') },
+									{ "value" : "VALIDATION", "label" : i18n.trans('m.rbs.admin.admin.js.status-validation') },
+									{ "value" : "VALIDCONTENT", "label" : i18n.trans('m.rbs.admin.admin.js.status-validcontent') },
+									{ "value" : "PUBLISHABLE", "label" : i18n.trans('m.rbs.admin.admin.js.status-publishable') },
+									{ "value" : "UNPUBLISHABLE", "label" : i18n.trans('m.rbs.admin.admin.js.status-unpublishable') },
+									{ "value" : "FROZEN", "label" : i18n.trans('m.rbs.admin.admin.js.status-frozen') },
+									{ "value" : "FILED", "label" : i18n.trans('m.rbs.admin.admin.js.status-filed') }
 								];
 							}
-
-							// FIXME Find another way to determine which selector to use?
-							if (propertyObj.type === 'Document') {
-								switch (propertyObj.documentType) {
-									case 'Rbs_Website_Website' :
-									case 'Rbs_Theme_PageTemplate' :
-										propertyObj.selectorType = 'dropdown';
-										break;
-								}
-							}
-
 						});
 
 						scope.availableFilters = modelInfo.properties;
@@ -87,21 +92,39 @@
 				}
 
 
-				function initSearch (textSearch) {
-					if (textSearch) {
-						loadModelsInfo().then(function () {
-							elm.show();
-							if (textSearch === '...') {
-								textSearch = '';
-							}
-							ArrayUtils.clear(scope.appliedFilters);
-							parseQuery(textSearch);
+				/**
+				 * Load template and Model's information.
+				 */
+				function load () {
+					var all,
+						promises = [
+							$http.get('Rbs/Admin/js/directives/search-filters.twig', {'cache': true}),
+							loadModelsInfo()
+						];
+					all = $q.all(promises);
+					all.then(function (results) {
+						elm.append($compile(results[0].data)(scope));
+					});
+					loaded = true;
+					return all;
+				}
 
-							// Apply filter if there is a value.
-							if (textSearch) {
-								scope.applyFilters();
-							}
-						});
+
+				/**
+				 * Launch search on the value in 'textSearch'.
+				 */
+				function search () {
+					elm.show();
+
+					if (scope.textSearch === '...') {
+						scope.textSearch = '';
+					}
+					ArrayUtils.clear(scope.appliedFilters);
+					parseQuery(scope.textSearch);
+
+					// Apply filter if there is a value.
+					if (scope.textSearch) {
+						scope.applyFilters();
 					}
 				}
 
@@ -279,52 +302,54 @@
 					forEach(scope.appliedFilters, function (applied) {
 
 						if (applied.filter.name === 'published') {
-
 							where.push({
 								"op" : applied.value ? "published" : "notPublished"
 							});
-
-						} else {
-
+						}
+						else {
 							var value = applied.value;
-							if (applied.filter.possibleValues && angular.isObject(value) && value.value) {
-								value = value.value;
+							if (angular.isDefined(value) && value !== null) {
+								if (applied.filter.possibleValues && angular.isObject(value) && value.value) {
+									value = value.value;
+								}
+
+								if (applied.filter.type === 'Document') {
+									applied.op = 'eq';
+								}
+								if (Utils.isDocument(value)) {
+									value = value.id;
+								}
+
+								// Simple operators:
+
+								switch (applied.op) {
+								case 'eq'  :
+								case 'neq' :
+								case 'gt'  :
+								case 'gte' :
+								case 'lt'  :
+								case 'lte' :
+									where.push({
+										"op"   : applied.op,
+										"lexp" : { "property" : applied.filter.name },
+										"rexp" : { "value"    : value }
+									});
+									break;
+
+								// "like" operators:
+
+								case 'contains'   :
+								case 'beginsWith' :
+								case 'endsWith'   :
+									where.push({
+										"op"   : "like",
+										"lexp" : { "property" : applied.filter.name },
+										"rexp" : { "value"    : value },
+										"mode" : likeModes[applied.op]
+									});
+									break;
+								}
 							}
-
-							if (Utils.isDocument(value)) {
-								value = value.id;
-							}
-
-							// Simple operators:
-
-							switch (applied.op) {
-							case 'eq'  :
-							case 'neq' :
-							case 'gt'  :
-							case 'gte' :
-							case 'lt'  :
-							case 'lte' :
-								where.push({
-									"op"   : applied.op,
-									"lexp" : { "property" : applied.filter.name },
-									"rexp" : { "value"    : value }
-								});
-								break;
-
-							// "like" operators:
-
-							case 'contains'   :
-							case 'beginsWith' :
-							case 'endsWith'   :
-								where.push({
-									"op"   : "like",
-									"lexp" : { "property" : applied.filter.name },
-									"rexp" : { "value"    : value },
-									"mode" : likeModes[applied.op]
-								});
-								break;
-							}
-
 						}
 					});
 
@@ -387,6 +412,10 @@
 			'RbsChange.REST',
 			'RbsChange.Breadcrumb',
 			'RbsChange.SavedSearches',
+			'RbsChange.i18n',
+			'$http',
+			'$q',
+			'$compile',
 			searchFiltersDirectiveFn
 		]
 	);

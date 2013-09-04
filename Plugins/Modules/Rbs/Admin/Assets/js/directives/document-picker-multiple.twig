@@ -35,7 +35,7 @@
 
 <div class="document-picker-embedded" style="display: none;">
 	<header class="clearfix">
-		<form class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
+		<form ng-if="allowSearchFilters" class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
 			<div class="input-append">
 				<!--TODO localization-->
 				<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
@@ -48,7 +48,7 @@
 		<h4>(=selectorTitle=)</h4>
 	</header>
 
-	<search-filters model="(= acceptedModel || dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
+	<search-filters ng-if="allowSearchFilters" model="(= acceptedModel || dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="well well-small" ng-show="! acceptedModel">
 		<label style="display: inline-block" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
