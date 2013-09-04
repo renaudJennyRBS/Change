@@ -159,7 +159,10 @@ class GetTaggedDocuments
 			$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
 			foreach ($collection as $document)
 			{
-				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY));
+				if ($document)
+				{
+					$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY));
+				}
 			}
 		}
 
