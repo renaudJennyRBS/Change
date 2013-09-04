@@ -164,44 +164,62 @@
 			);
 		};
 
+		function getNotificationQuery(status)
+		{
+			return {
+				'model': 'Rbs_Notification_Notification',
+				'where': {
+					'and': [
+						{
+							'op': 'eq',
+							'lexp': {
+								'property': 'userId'
+							},
+							'rexp': {
+								'value': User.get().id
+							}
+						},
+						{
+							'op': 'eq',
+							'lexp': {
+								'property': 'status'
+							},
+							'rexp': {
+								'value': status
+							}
+						}
+					]
+				}
+			};
+		}
+
 		$scope.notificationType = 'new';
 
-		$scope.notificationsQuery = {
-			'model': 'Rbs_Notification_Notification',
-			'where': {
-				'and': [
-					{
-						'op': 'eq',
-						'lexp': {
-							'property': 'userId'
-						},
-						'rexp': {
-							'value': User.get().id
-						}
-					},
-					{
-						'op': 'eq',
-						'lexp': {
-							'property': 'status'
-						},
-						'rexp': {
-							'value': $scope.notificationType
-						}
-					}
-				]
-			}
-		};
+		function reloadNotificationsQuery()
+		{
+			REST.query(getNotificationQuery('new')).then(function (data){
+				$scope.newNotificationCount = data.pagination.count;
+			});
+		}
+		reloadNotificationsQuery();
 
-		//$scope.notifications = REST.query($scope.notificationsQuery);
+		$scope.$watch('notificationType', function (){
+			$scope.notificationsQuery = getNotificationQuery($scope.notificationType);
+		});
 
 		$scope.notificationList = {
 			'readNotification': function (notification) {
 				notification.status = 'read';
 				REST.save(notification);
+				reloadNotificationsQuery();
 			},
 			'deleteNotification': function (notification) {
 				notification.status = 'deleted';
 				REST.save(notification);
+				reloadNotificationsQuery();
+			},
+			getNotificationType: function() {
+				return $scope.notificationType;
 			}
 		};
 

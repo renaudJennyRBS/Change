@@ -19,7 +19,7 @@
 	<column name="message">
 		(= doc.message =)
 		<div class="pull-right">
-			<button type="button" class="btn btn-small btn-success" ng-click="extend.readNotification(doc)"><i class="icon-ok"></i></button>
+			<button ng-if="extend.getNotificationType() === 'new'" type="button" class="btn btn-small btn-success" ng-click="extend.readNotification(doc)"><i class="icon-ok"></i></button>
 			<button type="button" class="btn btn-small btn-danger" ng-click="extend.deleteNotification(doc)"><i class="icon-ban-circle"></i></button>
 		</div>
 	</column>
