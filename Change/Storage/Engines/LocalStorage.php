@@ -94,9 +94,7 @@ class LocalStorage extends AbstractStorage
 	 */
 	public function normalizePath($path)
 	{
-		$search = array(DIRECTORY_SEPARATOR, '%', ' ', ':', '*', '?', '"', '<', '>', '|');
-		$replace = array('/', '_', '_', '_', '_', '_', '_', '_', '_', '_');
-		return str_replace($search, $replace, $path);
+		return preg_replace('#[^a-zA-Z0-9/]+#', '_', \Change\Stdlib\String::stripAccents(str_replace(DIRECTORY_SEPARATOR, '/', $path)));
 	}
 
 	/**
