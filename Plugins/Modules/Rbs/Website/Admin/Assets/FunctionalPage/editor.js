@@ -10,13 +10,12 @@
 			replace     : false,
 			require     : 'rbsDocumentEditor',
 
-			link : function (scope, elm, attrs, editorCtrl) {
+			link : function (scope, element, attrs, editorCtrl) {
 
 				scope.onReady = function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
-
 					}
 				};
 
@@ -30,9 +29,20 @@
 							});
 						}
 					}
+					else if (sectionName === 'functions') {
+						initPageFunctions();
+					}
 				};
 
 				editorCtrl.init('Rbs_Website_FunctionalPage');
+
+				// This is for the "undo" dropdown menu:
+				// Each item automatically activates its previous siblings.
+				$('[data-role=undo-menu]').on('mouseenter', 'li', function ()
+				{
+					$(this).siblings().removeClass('active');
+					$(this).prevAll().addClass('active');
+				});
 
 				$rootScope.$watch('website', function (website) {
 					if (scope.document && ! scope.document.website) {
@@ -75,19 +85,12 @@
 					return counter > 0;
 				};
 
-				scope.initSection = function (sectionName) {
-					if (sectionName === 'functions') {
-						initPageFunctions();
-					}
-				};
-
-
 				scope.editPage = function ($event, page) {
 					if (scope.isUnchanged()) {
 						$location.path(UrlManager.getUrl(page, 'editor'));
 					} else {
 						Dialog.confirmEmbed(
-							elm.find('[data-role="edit-page-contents-confirmation"]'),
+							element.find('[data-role="edit-page-contents-confirmation"]'),
 							i18n.trans('m.rbs.admin.admin.js.confirm | ucf'),
 							i18n.trans('m.rbs.website.admin.js.open-page-editor-warning'),
 							scope,
