@@ -12,7 +12,7 @@
 
 			link : function (scope, element, attrs, editorCtrl)
 			{
-				scope.onReady = function () {
+				scope.onLoad = function () {
 					var currentNode = Breadcrumb.getCurrentNode();
 					if (currentNode.model === 'Rbs_Theme_Theme') {
 						scope.document.theme = currentNode;
