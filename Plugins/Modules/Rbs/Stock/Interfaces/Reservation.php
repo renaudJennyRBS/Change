@@ -9,15 +9,10 @@ interface Reservation
 	/**
 	 * @return string
 	 */
-	public function getTargetIdentifier();
-
-	/**
-	 * @return string
-	 */
 	public function getCodeSku();
 
 	/**
-	 * @return float
+	 * @return integer
 	 */
 	public function getQuantity();
 
@@ -25,4 +20,9 @@ interface Reservation
 	 * @return integer
 	 */
 	public function getWebStoreId();
+
+	/**
+	 * @return string
+	 */
+	public function getKey();
 }

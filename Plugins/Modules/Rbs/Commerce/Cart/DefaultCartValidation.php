@@ -1,26 +1,25 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Rbs\Commerce\Interfaces\Cart;
-
 /**
 * @name \Rbs\Commerce\Cart\DefaultCartValidation
 */
 class DefaultCartValidation
 {
 	/**
+	 * Event Params: cart, errors, lockForOwnerId, commerceServices
 	 * @param \Zend\EventManager\Event $event
 	 */
 	public function execute(\Zend\EventManager\Event $event)
 	{
 
 		$cart = $event->getParam('cart');
-		if ($cart instanceof Cart && !$cart->isEmpty())
+		if ($cart instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
 			$i18nManager = $cart->getCommerceServices()->getApplicationServices()->getI18nManager();
 
 			/* @var $errors \ArrayObject */
-			$errors = $event->getParams('errors');
+			$errors = $event->getParam('errors');
 
 			if (!$cart->getWebStoreId())
 			{
@@ -53,12 +52,19 @@ class DefaultCartValidation
 			}
 
 			$reservations = $cart->getCommerceServices()->getCartManager()->getReservations($cart);
-			$unreserved = $cart->getCommerceServices()->getStockManager()->setReservations($reservations);
-			if (count($unreserved))
+			if (count($reservations))
 			{
-				$message = $i18nManager->trans('m.rbs.commerce.errors.cart-reservation-error', array('ucf'));
-				$err = new CartError($message);
-				$errors[] = $err;
+				$unreserved = $cart->getCommerceServices()->getStockManager()->setReservations($cart->getIdentifier(), $reservations);
+				if (count($unreserved))
+				{
+					$message = $i18nManager->trans('m.rbs.commerce.errors.cart-reservation-error', array('ucf'));
+					$err = new CartError($message);
+					$errors[] = $err;
+				}
+			}
+			else
+			{
+				$cart->getCommerceServices()->getStockManager()->unsetReservations($cart->getIdentifier());
 			}
 		}
 	}

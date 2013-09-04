@@ -14,7 +14,7 @@ class CartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 	protected $codeSKU;
 
 	/**
-	 * @var float
+	 * @var integer
 	 */
 	protected $reservationQuantity;
 
@@ -82,17 +82,17 @@ class CartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 	}
 
 	/**
-	 * @param float|null $reservationQuantity
+	 * @param integer|null $reservationQuantity
 	 * @return $this
 	 */
 	public function setReservationQuantity($reservationQuantity)
 	{
-		$this->reservationQuantity = $reservationQuantity === null ? $reservationQuantity : floatval($reservationQuantity);
+		$this->reservationQuantity = $reservationQuantity === null ? $reservationQuantity : intval($reservationQuantity);
 		return $this;
 	}
 
 	/**
-	 * @return float|null
+	 * @return integer|null
 	 */
 	public function getReservationQuantity()
 	{

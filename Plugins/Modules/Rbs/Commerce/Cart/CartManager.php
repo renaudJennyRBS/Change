@@ -136,6 +136,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if (!$cart->isLocked())
 		{
+			$this->validCart($cart);
+
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(array('cart' => $cart, 'commerceServices' => $this->getCommerceServices()));
 			$this->getEventManager()->trigger('saveCart', $this, $args);
@@ -152,10 +154,12 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		try
 		{
 			$cart->setErrors(array());
+
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(array('cart' => $cart, 'errors' => new \ArrayObject(),
 				'lockForOwnerId' => $lockForOwnerId,
 				'commerceServices' => $this->getCommerceServices()));
+
 			$this->getEventManager()->trigger('validCart', $this, $args);
 
 			if (isset($args['errors']) && (is_array($args['errors']) || $args['errors'] instanceof \Traversable))
@@ -225,11 +229,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
 	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
-	 * @param float $quantity
+	 * @param integer $quantity
 	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
-	public function addLine(\Rbs\Commerce\Interfaces\Cart $cart, $cartLineConfig, $quantity = 1.0)
+	public function addLine(\Rbs\Commerce\Interfaces\Cart $cart, $cartLineConfig, $quantity = 1)
 	{
 		if ($cartLineConfig instanceof \Rbs\Commerce\Interfaces\CartLineConfig)
 		{
@@ -247,7 +251,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
 	 * @param string|\Rbs\Commerce\Interfaces\CartLineConfig|\Rbs\Commerce\Interfaces\CartLine $lineKey
-	 * @param float $newQuantity
+	 * @param integer $newQuantity
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
@@ -389,24 +393,23 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						if ($item->getReservationQuantity())
 						{
 							$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
-							$codeSKU = $item->getCodeSKU();
-							$key = $codeSKU . '/' . $webStoreId;
+							$res = new \Rbs\Commerce\Cart\CartReservation($item->getCodeSKU(), $webStoreId);
+							$key = $res->getKey();
 							$resQtt = $lineQuantity * $item->getReservationQuantity();
 							if (isset($cartReservations[$key]))
 							{
-								$reservation = $cartReservations[$key];
-								$reservation->addQuantity($resQtt);
+								$res = $cartReservations[$key];
+								$res->addQuantity($resQtt);
 							}
 							else
 							{
-								$reservation = new \Rbs\Commerce\Cart\CartReservation($cart->getIdentifier(), $codeSKU);
-								$cartReservations[$key] = $reservation->setWebStoreId($webStoreId)->setQuantity($resQtt);
+								$cartReservations[$key] = $res->setQuantity($resQtt);
 							}
 						}
 					}
 				}
 			}
 		}
-		return array_values($cartReservations);
+		return $cartReservations;
 	}
 }

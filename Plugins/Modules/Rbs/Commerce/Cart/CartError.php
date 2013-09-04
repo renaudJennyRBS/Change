@@ -41,4 +41,9 @@ class CartError implements \Rbs\Commerce\Interfaces\CartError
 	{
 		return $this->lineKey;
 	}
+
+	public function toArray()
+	{
+		return array('message'=>$this->message, 'lineKey' => $this->lineKey);
+	}
 }
