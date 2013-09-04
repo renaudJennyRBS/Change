@@ -6,6 +6,7 @@
 		<property name="category" type="Document" document-type="Rbs_Catalog_Category" />
 		<property name="product" type="Document" document-type="Rbs_Catalog_Product" />
 		<property name="condition" type="Document" document-type="Rbs_Catalog_Condition" />
+		<property name="canonical" type="Boolean" default-value="false" />
 		<property name="position" type="Integer" default-value="0">
 			<constraint name="max" max="0" />
 		</property>

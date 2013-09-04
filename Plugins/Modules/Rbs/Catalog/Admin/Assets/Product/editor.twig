@@ -87,6 +87,9 @@
 					{{ i18n('m.rbs.catalog.document.category.highlight', ['ucf']) }}
 				</th>
 				<th>
+					{{ i18n('m.rbs.catalog.document.productcategorization.canonical', ['ucf']) }}
+				</th>
+				<th>
 				</th>
 			</tr>
 			</thead>
@@ -98,9 +101,9 @@
 					<td>
 						<switch ng-model="cat.isHighlighted" ng-change="toggleHighlight(cat)"></switch>
 					</td>
+					<td>(= cat.canonical|rbsBoolean =)</td>
 					<td style="width:160px; text-align: right">
-
-						<button style="width:36px" class="btn"  ng-click="cascadeEditCategorization(cat)" type="button">
+						<button style="width:36px" class="btn" ng-click="cascadeEditCategorization(cat)" type="button">
 							<i class="icon-pencil"></i>
 						</button>
 						<button style="width:36px" class="btn btn-danger" type="button" ng-click="deleteCategorization(cat)">
@@ -110,18 +113,14 @@
 				</tr>
 			</tbody>
 		</table>
-		<a href data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
-
-
+		<a href data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
 	</fieldset>
-
 
 	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
-
 
 	<form-button-bar></form-button-bar>
 </form>

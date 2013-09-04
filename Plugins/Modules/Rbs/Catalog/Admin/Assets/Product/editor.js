@@ -29,7 +29,6 @@
 
 				editorCtrl.init('Rbs_Catalog_Product');
 
-
 				function loadCategorizations () {
 					if (scope.document.META$.links.hasOwnProperty('productcategorizations')) {
 						REST.collection(scope.document.META$.links['productcategorizations'].href).then(function(result){
@@ -85,7 +84,6 @@
 					});
 				};
 
-
 				scope.$watch('document.attribute', function(newValue, oldValue){
 					if (!angular.isUndefined(newValue))
 					{
@@ -99,11 +97,9 @@
 							$timeout(function () {
 								scope.$emit('Change:Editor:UpdateMenu');
 							});
-
 						}
 					}
 				});
-
 			}
 		};
 	}
