@@ -234,7 +234,7 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param string|null $LCID
 	 * @return string|null
 	 */
-	public function canonicalURL($document, $website, $query = array(), $LCID = null)
+	public function canonicalURL($document, $website = null, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
@@ -248,7 +248,7 @@ class Extension implements \Twig_ExtensionInterface
 			}
 			if ($website === null || $website instanceof \Change\Presentation\Interfaces\Website)
 			{
-				$this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
+				return $this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
 			}
 		}
 		return null;
@@ -261,7 +261,7 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param string|null $LCID
 	 * @return string|null
 	 */
-	public function contextualURL($document, $section, $query = array(), $LCID = null)
+	public function contextualURL($document, $section = null, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
@@ -272,7 +272,7 @@ class Extension implements \Twig_ExtensionInterface
 
 			if ($section === null || $section instanceof \Change\Presentation\Interfaces\Section)
 			{
-				$this->getUrlManager()->getByDocument($document, $section, $query, $LCID)->normalize()->toString();
+				return $this->getUrlManager()->getByDocument($document, $section, $query, $LCID)->normalize()->toString();
 			}
 		}
 		return null;
