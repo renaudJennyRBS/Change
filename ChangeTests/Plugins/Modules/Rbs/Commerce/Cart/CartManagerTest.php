@@ -107,27 +107,27 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$identifier = $cm->getCommerceServices()->getCartIdentifier();
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
-		$ciconf = new TestCartItemConfig('sku1', 1.1, 2.5, array(), array('p2' => 2));
+		$ciconf = new TestCartItemConfig('sku1', 55, 2.5, array(), array('p2' => 2));
 
 		$clconf = new TestCartLineConfig('k1', 'designation', array($ciconf), array('p1' => 1));
-		$line = $cm->addLine($cart, $clconf, 5.3);
+		$line = $cm->addLine($cart, $clconf, 53);
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\CartLine', $line);
 		$this->assertEquals(1, $line->getNumber());
 		$this->assertSame($line, $cart->getLineByKey('k1'));
 		$this->assertEquals('designation', $line->getDesignation());
-		$this->assertEquals(5.3, $line->getQuantity());
+		$this->assertEquals(53, $line->getQuantity());
 		$this->assertEquals(1, $line->getOptions()->get('p1'));
 
 		$this->assertNull($line->getItemByCodeSKU('sku2'));
 		$item = $line->getItemByCodeSKU('sku1');
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\CartItem', $item);
-		$this->assertEquals(1.1, $item->getReservationQuantity());
+		$this->assertEquals(55, $item->getReservationQuantity());
 		$this->assertEquals(2.5, $item->getPriceValue());
 		$this->assertEquals(2, $item->getOptions()->get('p2'));
 
 		try
 		{
-			$cm->addLine($cart, $clconf, 1.0);
+			$cm->addLine($cart, $clconf, 1);
 			$this->fail('RuntimeException expected');
 		}
 		catch (\RuntimeException $e)
@@ -137,7 +137,7 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		try
 		{
-			$cm->addLine($cart, 'k1', 1.0);
+			$cm->addLine($cart, 'k1', 1);
 			$this->fail('InvalidArgumentException expected');
 		}
 		catch (\InvalidArgumentException $e)
@@ -148,13 +148,13 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertSame($line, $cm->getLineByKey($cart, 'k1'));
 		$this->assertNull($cm->getLineByKey($cart, 'k2'));
 
-		$line3 = $cm->updateLineQuantityByKey($cart, 'k1', 8.7);
+		$line3 = $cm->updateLineQuantityByKey($cart, 'k1', 87);
 		$this->assertSame($line, $line3);
-		$this->assertEquals(8.7, $line->getQuantity());
+		$this->assertEquals(87, $line->getQuantity());
 
 		try
 		{
-			$cm->updateLineQuantityByKey($cart, 'k2', 8.7);
+			$cm->updateLineQuantityByKey($cart, 'k2', 87);
 			$this->fail('RuntimeException expected');
 		}
 		catch (\RuntimeException $e)

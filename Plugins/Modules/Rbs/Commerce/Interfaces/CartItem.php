@@ -12,7 +12,7 @@ interface CartItem extends \Serializable
 	public function getCodeSKU();
 
 	/**
-	 * @return float|null
+	 * @return integer|null
 	 */
 	public function getReservationQuantity();
 

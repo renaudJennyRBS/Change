@@ -14,7 +14,7 @@ class CartItem implements CartItemInterfaces
 	protected $codeSKU;
 
 	/**
-	 * @var float|null
+	 * @var integer|null
 	 */
 	protected $reservationQuantity;
 
@@ -68,17 +68,17 @@ class CartItem implements CartItemInterfaces
 	}
 
 	/**
-	 * @param float|null $reservationQuantity
+	 * @param integer|null $reservationQuantity
 	 * @return $this
 	 */
 	public function setReservationQuantity($reservationQuantity)
 	{
-		$this->reservationQuantity = ($reservationQuantity === null) ? $reservationQuantity : floatval($reservationQuantity);
+		$this->reservationQuantity = ($reservationQuantity === null) ? $reservationQuantity : intval($reservationQuantity);
 		return $this;
 	}
 
 	/**
-	 * @return float|null
+	 * @return integer|null
 	 */
 	public function getReservationQuantity()
 	{

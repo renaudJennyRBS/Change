@@ -12,13 +12,13 @@ interface CartItemConfig
 	public function getCodeSKU();
 
 	/**
-	 * @param float|null $reservationQuantity
+	 * @param integer|null $reservationQuantity
 	 * @return $this
 	 */
 	public function setReservationQuantity($reservationQuantity);
 
 	/**
-	 * @return float|null
+	 * @return integer|null
 	 */
 	public function getReservationQuantity();
 

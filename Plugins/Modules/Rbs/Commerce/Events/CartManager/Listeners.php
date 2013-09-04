@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Commerce\Events\CartManager;
 
+use Rbs\Commerce\Cart\DefaultCartValidation;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -67,6 +68,12 @@ class Listeners implements ListenerAggregateInterface
 			}
 		};
 		$events->attach('lockCart', $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			(new DefaultCartValidation())->execute($event);
+		};
+		$events->attach('validCart', $callback, 5);
 	}
 
 	/**

@@ -289,7 +289,7 @@ class SelectQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Closure|array $rowsConverter
+	 * @param mixed $rowsConverter Should be callable or null
 	 * @return array rows
 	 */
 	public function getResults($rowsConverter = null)
@@ -304,7 +304,7 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Closure|array $rowConverter
+	 * @param mixed $rowConverter Should be callable or null
 	 * @return array|mixed|null row
 	 */
 	public function getFirstResult($rowConverter = null)
