@@ -946,6 +946,7 @@ li.active .muted {
 	line-height: 20px;
 }
 
+td > a > .bullet-status,
 td > .bullet-status {
 	vertical-align: middle;
 }
