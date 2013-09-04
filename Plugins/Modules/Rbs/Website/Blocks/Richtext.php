@@ -38,13 +38,14 @@ class Richtext extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$context = array('website' => $event->getUrlManager()->getWebsite());
 		$richText = new \Change\Documents\RichtextProperty();
 		$richText->setRawText($event->getBlockParameters()->getParameter('content'));
 		$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
 		$attributes['htmlContent'] = $event->getPresentationServices()
 			->getRichTextManager()
 			->setDocumentServices($event->getDocumentServices())
-			->render($richText, "Website");
+			->render($richText, 'Website', $context);
 		return 'richtext.twig';
 	}
 }
