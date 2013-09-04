@@ -608,7 +608,7 @@ class BaseDocumentClass
 		{
 			$code[] = '
 	/**
-	 * @return ' . $ct . '
+	 * @return \Change\Presentation\Interfaces\Section[]
 	 */
 	public function get' . $un . '()
 	{
@@ -616,7 +616,7 @@ class BaseDocumentClass
 	}
 
 	/**
-	 * @param ' . $ct . ' ' . $var . '
+	 * @param \Change\Presentation\Interfaces\Section[] ' . $var . '
 	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
