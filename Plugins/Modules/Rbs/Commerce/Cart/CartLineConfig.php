@@ -37,7 +37,7 @@ class CartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	protected $priceValueWithTax;
 
 	/**
-	 * @var float
+	 * @var integer
 	 */
 	protected $quantity;
 
@@ -145,7 +145,7 @@ class CartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	}
 
 	/**
-	 * @return float|null
+	 * @return integer|null
 	 */
 	public function getQuantity()
 	{

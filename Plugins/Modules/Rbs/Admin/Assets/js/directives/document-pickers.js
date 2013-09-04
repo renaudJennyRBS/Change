@@ -6,18 +6,22 @@
 		$('body').append('<div id="document-picker-backdrop"/>');
 	}
 
-	var app = angular.module('RbsChange');
-	var counter = 0;
+	var	app = angular.module('RbsChange'),
+		counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
 
 		var	$el = $(iElement),
 			inputEl = $el.find('input[name=label]'),
 			documentList,
 			$picker = $el.find('.document-picker-embedded'),
 			$pickerContents = $picker.find('[data-role="picker-contents"]'),
-			embedded = false;
+			embedded = false,
+			embedSelector = null,
+			first;
+
+		scope.allowSearchFilters = $el.closest('form.search-filters').length === 0;
 
 		scope.inputCssClass = attrs.inputCssClass;
 
@@ -53,10 +57,6 @@
 			}
 		}
 
-		function getFormUrl () {
-			return getFormModel().replace(/_/g, '/') + '/form.twig';
-		}
-
 		function getCreateLabel () {
 			return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : création d'un nouvel élément";
 		}
@@ -69,7 +69,7 @@
 		// Clipboard
 
 		scope.clipboardValues = Clipboard.values;
-		var first = scope.clipboardValues[0];
+		first = scope.clipboardValues[0];
 		if (first) {
 			scope.clipboardFirstLabel = ' (' + first.label + ')';
 		} else {
@@ -118,8 +118,13 @@
 				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 			}
 
-			if (attrs.embedIn && ! embedded) {
-				$(attrs.embedIn).append($picker);
+			if (attrs.embedIn) {
+				embedSelector = iElement.attr('embed-in');
+				console.log("embedSelector=", embedSelector);
+			}
+
+			if (embedSelector && ! embedded) {
+				$(embedSelector).append($picker);
 				$picker.css('margin-left', '0px');
 				embedded = true;
 			}
@@ -288,7 +293,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', '$timeout', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, $timeout) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
@@ -297,14 +302,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', '$timeout', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, $timeout) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
@@ -313,7 +318,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, $timeout);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
 			}
 
 		};

@@ -100,7 +100,7 @@ class UpdateCartLine
 
 					if (isset($parameters['quantity']))
 					{
-						$cartManager->updateLineQuantityByKey($cart, $lineKey, floatval($parameters['quantity']));
+						$cartManager->updateLineQuantityByKey($cart, $lineKey, intval($parameters['quantity']));
 					}
 
 					$cartManager->saveCart($cart);

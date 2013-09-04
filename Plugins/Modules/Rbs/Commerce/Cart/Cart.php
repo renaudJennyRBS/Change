@@ -333,7 +333,7 @@ class Cart implements CartInterfaces
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
-	 * @param float $quantity
+	 * @param integer $quantity
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
 	public function getNewLine(\Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig, $quantity)
@@ -473,7 +473,7 @@ class Cart implements CartInterfaces
 
 	/**
 	 * @param string $lineKey
-	 * @param float $newQuantity
+	 * @param integer $newQuantity
 	 * @return CartLine|null
 	 */
 	public function updateLineQuantity($lineKey, $newQuantity)
@@ -481,7 +481,7 @@ class Cart implements CartInterfaces
 		$line = $this->getLineByKey($lineKey);
 		if ($line)
 		{
-			return $line->setQuantity(floatval($newQuantity));
+			return $line->setQuantity(intval($newQuantity));
 		}
 		return $line;
 	}
@@ -708,11 +708,17 @@ class Cart implements CartInterfaces
 			'ownerId' => $this->ownerId,
 			'webStoreId' => $this->webStoreId,
 			'context' => $this->getContext()->toArray(),
+			'errors' => array(),
 			'lines' => array());
 
 		foreach ($this->lines as $line)
 		{
 			$array['lines'][] = $line->toArray();
+		}
+
+		foreach ($this->errors as $error)
+		{
+			$array['errors'][] = $error->toArray();
 		}
 		return $array;
 	}

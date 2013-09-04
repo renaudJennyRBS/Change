@@ -19,7 +19,7 @@ class CartLine implements CartLineInterfaces
 	protected $key;
 
 	/**
-	 * @var float
+	 * @var integer
 	 */
 	protected $quantity;
 
@@ -101,7 +101,7 @@ class CartLine implements CartLineInterfaces
 	}
 
 	/**
-	 * @param float $quantity
+	 * @param integer $quantity
 	 * @return $this
 	 */
 	public function setQuantity($quantity)
@@ -111,7 +111,7 @@ class CartLine implements CartLineInterfaces
 	}
 
 	/**
-	 * @return float
+	 * @return integer
 	 */
 	public function getQuantity()
 	{

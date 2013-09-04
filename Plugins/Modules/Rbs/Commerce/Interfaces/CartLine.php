@@ -17,7 +17,7 @@ interface CartLine extends \Serializable
 	public function getKey();
 
 	/**
-	 * @return float
+	 * @return integer
 	 */
 	public function getQuantity();
 

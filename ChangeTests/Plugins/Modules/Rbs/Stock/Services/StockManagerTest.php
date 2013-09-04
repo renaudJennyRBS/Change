@@ -13,7 +13,10 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public static function setUpBeforeClass()
 	{
-		static::initDocumentsDb();
+		$appServices = static::initDocumentsDb();
+		$schema = new \Rbs\Stock\Setup\Schema($appServices->getDbProvider()->getSchemaManager());
+		$schema->generate();
+		$appServices->getDbProvider()->closeConnection();
 	}
 
 	public static function tearDownAfterClass()
@@ -76,5 +79,73 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
 		$query->eq('sku', $sku);
 		$this->assertEquals(1, $query->getCountDocuments());
+	}
+
+	public function testInventoryMovement()
+	{
+		$sku = $this->getTestSku();
+		$entry = $this->sm->setInventory(10, $sku);
+
+		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
+		$this->assertGreaterThan(0, $mvtId);
+
+		$mvtId2 = $this->sm->addInventoryMovement(-2, $sku);
+		$this->assertGreaterThan($mvtId, $mvtId2);
+
+		$level = $this->sm->getInventoryLevel($sku, null);
+		$this->assertEquals(3, $level);
+	}
+
+	public function testReservation()
+	{
+		$sku = $this->getTestSku();
+		$entry = $this->sm->setInventory(100, $sku);
+
+		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
+		$this->assertGreaterThan(0, $mvtId);
+
+		$mvtId2 = $this->sm->addInventoryMovement(-15, $sku);
+		$this->assertGreaterThan($mvtId, $mvtId2);
+
+		$targetIdentifier = \Change\Stdlib\String::random(40);
+
+		$res1 = new \Rbs\Stock\Std\Reservation();
+		$res1->setWebStoreId(999)->setCodeSku($sku->getCode())->setQuantity(8);
+
+		$result = $this->sm->setReservations($targetIdentifier, array($res1));
+		$this->assertCount(0, $result);
+
+		$reservations = $this->sm->getReservations($targetIdentifier);
+		$this->assertCount(1, $reservations);
+		/* @var $reservation \Rbs\Stock\Interfaces\Reservation */
+		$reservation = $reservations[0];
+		$this->assertInstanceOf('\Rbs\Stock\Interfaces\Reservation', $reservation);
+		$this->assertEquals(999, $reservation->getWebStoreId());
+		$this->assertEquals($sku->getCode(), $reservation->getCodeSku());
+		$this->assertEquals(8, $reservation->getQuantity());
+
+		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->assertEquals(72, $level);
+
+		$res1->setQuantity(18);
+		$result = $this->sm->setReservations($targetIdentifier, array($res1));
+		$this->assertCount(0, $result);
+
+		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->assertEquals(62, $level);
+
+		$result = $this->sm->setReservations('targetIdentifier', array($res1));
+		$this->assertCount(0, $result);
+
+		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->assertEquals(62 - 18, $level);
+
+		$this->sm->unsetReservations('targetIdentifier');
+		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->assertEquals(62, $level);
+
+		$this->sm->unsetReservations($targetIdentifier);
+		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->assertEquals(80, $level);
 	}
 }

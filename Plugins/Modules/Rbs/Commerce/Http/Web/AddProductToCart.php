@@ -67,7 +67,7 @@ class AddProductToCart
 						$commerceServices->save();
 					}
 
-					$quantity = max(1.0, isset($arguments['quantity']) ? floatval($arguments['quantity']) : 1.0);
+					$quantity = max(1, (isset($arguments['quantity']) ? intval($arguments['quantity']) : 1));
 					$line = $cartManager->getLineByKey($cart, $cartLineConfig->getKey());
 					if ($line)
 					{

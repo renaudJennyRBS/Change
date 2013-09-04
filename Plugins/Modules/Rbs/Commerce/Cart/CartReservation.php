@@ -9,11 +9,6 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	/**
 	 * @var string
 	 */
-	protected $cartIdentifier;
-
-	/**
-	 * @var string
-	 */
 	protected $codeSku;
 
 	/**
@@ -22,31 +17,23 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	protected $webStoreId;
 
 	/**
-	 * @var float
+	 * @var integer
 	 */
 	protected $quantity;
 
 	/**
-	 * @var float
+	 * @var integer
 	 */
 	protected $quantityNotReserved;
 
 	/**
-	 * @param string $cartIdentifier
 	 * @param string $codeSku
+	 * @param integer $webStoreId
 	 */
-	function __construct($cartIdentifier, $codeSku)
+	public function __construct($codeSku, $webStoreId)
 	{
-		$this->cartIdentifier = $cartIdentifier;
 		$this->codeSku = $codeSku;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTargetIdentifier()
-	{
-		return $this->cartIdentifier;
+		$this->webStoreId = $webStoreId;
 	}
 
 	/**
@@ -58,7 +45,7 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	}
 
 	/**
-	 * @param float $quantity
+	 * @param integer $quantity
 	 * @return $this
 	 */
 	public function setQuantity($quantity)
@@ -68,7 +55,7 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	}
 
 	/**
-	 * @param float $add
+	 * @param integer $add
 	 * @return $this
 	 */
 	public function addQuantity($add)
@@ -78,7 +65,7 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	}
 
 	/**
-	 * @return float
+	 * @return integer
 	 */
 	public function getQuantity()
 	{
@@ -104,7 +91,7 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	}
 
 	/**
-	 * @param float $quantityNotReserved
+	 * @param integer $quantityNotReserved
 	 * @return $this
 	 */
 	public function setQuantityNotReserved($quantityNotReserved)
@@ -114,12 +101,31 @@ class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 	}
 
 	/**
-	 * @return float
+	 * @return integer
 	 */
 	public function getQuantityNotReserved()
 	{
 		return $this->quantityNotReserved;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getKey()
+	{
+		return $this->codeSku .'/' . $this->webStoreId;
+	}
 
+	/**
+	 * @param \Rbs\Stock\Interfaces\Reservation $reservation
+	 * @return boolean
+	 */
+	public function isSame($reservation)
+	{
+		if ($reservation instanceof \Rbs\Stock\Interfaces\Reservation)
+		{
+			return $this->getKey() == ($reservation->getCodeSku() . '/' . $reservation->getWebStoreId());
+		}
+		return false;
+	}
 }

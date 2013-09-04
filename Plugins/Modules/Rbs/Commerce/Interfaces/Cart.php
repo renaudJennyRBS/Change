@@ -116,7 +116,7 @@ interface Cart extends \Serializable
 
 	/**
 	 * @param CartLineConfig $cartLineConfig
-	 * @param float $quantity
+	 * @param integer $quantity
 	 * @return \Rbs\Commerce\Interfaces\CartLine
 	 */
 	public function getNewLine(\Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig, $quantity);
@@ -144,7 +144,7 @@ interface Cart extends \Serializable
 
 	/**
 	 * @param string $lineKey
-	 * @param float $newQuantity
+	 * @param integer $newQuantity
 	 * @return CartLine|null
 	 */
 	public function updateLineQuantity($lineKey, $newQuantity);
