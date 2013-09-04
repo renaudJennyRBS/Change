@@ -1,3 +1,23 @@
+/**
+ * Fixes
+ */
+
+/* Gliphicons: fix paths (font/ instead of fonts/) */
+@font-face {
+	font-family: 'Glyphicons Halflings';
+	src: url('../font/glyphicons-halflings-regular.eot');
+	src: url('../font/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../font/glyphicons-halflings-regular.woff') format('woff'), url('../font/glyphicons-halflings-regular.ttf') format('truetype'), url('../font/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+/* Move navbar under popup menus (z-index 999 instead of 1000) */
+.navbar {
+	z-index: 999;
+}
+
+/**
+ * New elements
+ */
+
 /* Exceptions */
 .exception {
 	white-space: pre-wrap;
