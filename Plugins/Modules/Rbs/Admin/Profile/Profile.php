@@ -13,7 +13,9 @@ class Profile extends \Change\User\AbstractProfile
 			'avatar' => 'Rbs/Admin/img/chuck.jpg',
 			'pagingSize' => 10,
 			'documentListViewMode' => 'list',
-			'editorActionAfterSave' => 'stay'
+			'editorActionAfterSave' => 'stay',
+			'notificationMailInterval' => '',
+			'dateOfLastNotificationMailSent' => 0
 		);
 	}
 
@@ -30,6 +32,7 @@ class Profile extends \Change\User\AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('avatar', 'pagingSize', 'documentListViewMode', 'editorActionAfterSave', 'dashboard');
+		return array('avatar', 'pagingSize', 'documentListViewMode', 'editorActionAfterSave', 'dashboard',
+			'notificationMailInterval', 'dateOfLastNotificationMailSent');
 	}
 }

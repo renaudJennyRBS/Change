@@ -16,10 +16,10 @@
 
 	<div class="small-indicators">
 		<img ng-src="(= user.profile.avatar =)" style="width: 62px; height: 62px;"/>
-		<span>
+		<span ng-click="showNotifications($event)">
 			<i class="icon-exclamation-sign"></i>
 			<div>Notifications</div>
-			<div class="value">14</div>
+			<div class="value">(= notifications.pagination.count =)</div>
 		</span>
 		<span ng-click="showTasks($event)">
 			<i class="icon-tasks"></i>

@@ -16,7 +16,6 @@ class MailTemplateResolver
 		$theme = $event->getParam('theme');
 		/* @var $documentServices \Change\Documents\DocumentServices */
 		$documentServices = $event->getParam('documentServices');
-		$documentServices->getApplicationServices()->getLogging()->fatal(var_export([$code, $theme->getLabel()], true));
 		if ($code && $theme && $documentServices)
 		{
 			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.timeline.document.message" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="contextId">Identifiant du context</key>
+	<key id="contextId">context identifier</key>
 	<key id="message">message</key>
-	<key id="notification-mention-message">un message de la timeline vous mentionne</key>
+	<key id="notification-mention-message">a timeline message mention you</key>
 </i18n>

@@ -16,9 +16,10 @@
 	 * @param Dialog
 	 * @param Settings
 	 * @param UrlManager
+	 * @param User
 	 * @constructor
 	 */
-	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager)
+	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager, User)
 	{
 		Breadcrumb.resetLocation();
 
@@ -151,6 +152,59 @@
 
 		};
 
+		//
+		// Notifications
+		//
+		$scope.showNotifications = function ($event) {
+			Dialog.embed(
+				$embedContainer,
+				'Rbs/Admin/dashboard/notifications.twig',
+				$scope,
+				{ 'pointedElement' : $event.target }
+			);
+		};
+
+		$scope.notificationType = 'new';
+
+		$scope.notificationsQuery = {
+			'model': 'Rbs_Notification_Notification',
+			'where': {
+				'and': [
+					{
+						'op': 'eq',
+						'lexp': {
+							'property': 'userId'
+						},
+						'rexp': {
+							'value': User.get().id
+						}
+					},
+					{
+						'op': 'eq',
+						'lexp': {
+							'property': 'status'
+						},
+						'rexp': {
+							'value': $scope.notificationType
+						}
+					}
+				]
+			}
+		};
+
+		//$scope.notifications = REST.query($scope.notificationsQuery);
+
+		$scope.notificationList = {
+			'readNotification': function (notification) {
+				notification.status = 'read';
+				REST.save(notification);
+			},
+			'deleteNotification': function (notification) {
+				notification.status = 'deleted';
+				REST.save(notification);
+			}
+		};
+
 		$scope.$on('$destroy', function () {
 			Workspace.restore();
 			MainMenu.show();
@@ -166,7 +220,8 @@
 		'RbsChange.REST',
 		'RbsChange.Dialog',
 		'RbsChange.Settings',
-		'RbsChange.UrlManager'
+		'RbsChange.UrlManager',
+		'RbsChange.User'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);
 

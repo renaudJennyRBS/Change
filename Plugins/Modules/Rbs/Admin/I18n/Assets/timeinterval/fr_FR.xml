@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.timeinterval" lcid="fr_FR">
+	<key id="days">jours</key>
+	<key id="hours">heures</key>
+	<key id="minutes">minutes</key>
+</i18n>

@@ -54,27 +54,61 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				$groupIdentifiers[] = $match[2];
 			}
 		}
-		//now get user from user identifiers and send a mail
+
+		$profileManager = new \Change\User\ProfileManager();
+		$profileManager->setDocumentServices($this->getDocumentServices());
+		$i18nManager = $this->getApplicationServices()->getI18nManager();
+		//now get user from user identifiers and create notification or send a mail
 		foreach($userIdentifiers as $userIdentifier)
 		{
 			$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_User_User');
 			$user = $dqb->andPredicates($dqb->eq('identifier', $userIdentifier))->getFirstDocument();
 			if ($user)
 			{
+				$authenticatedUser = new \Rbs\User\Events\AuthenticatedUser($user);
 				/* @var $user \Rbs\User\Documents\User */
 				$params = [
 					'documentLabel' => $this->getContextIdInstance()->getLabel(),
 					'authorName' => $this->getAuthorName(),
 					'message' => $this->getMessage()->getRawText()
 				];
-				$jm = new \Change\Job\JobManager();
-				$jm->setApplicationServices($this->getApplicationServices());
-				$arguments = [
-					'params' => $params,
-					'to' => [$user->getEmail()],
-					'templateCode' => 'timeline_mention_notification'
-				];
-				$jm->createNewJob('Rbs_Timeline_SendTemplateMail', $arguments);
+
+				$userProfile = $profileManager->loadProfile($authenticatedUser, 'Change_User');
+				$lcid = $userProfile->getPropertyValue('LCID') != null ? $userProfile->getPropertyValue('LCID') : $i18nManager->getDefaultLCID();
+				$this->getDocumentManager()->pushLCID($lcid);
+				$notification = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Notification_Notification');
+				/* @var $notification \Rbs\Notification\Documents\Notification */
+				$notification->setUserId($user->getId());
+				$notification->setCode('timeline_mention');
+				$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($lcid, 'm.rbs.timeline.document.message.notification-mention-message', ['ucf'], $params));
+				$notification->setParams($params);
+				$tm = $this->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$tm->begin();
+					$notification->save();
+					$tm->commit();
+				}
+				catch (\Exception $e)
+				{
+					throw $tm->rollBack($e);
+				}
+				$this->getDocumentManager()->popLCID();
+
+				//check user profile for mail notification time interval
+				//if time interval is not set, create a job to send directly a mail
+				$adminProfile = $profileManager->loadProfile($authenticatedUser, 'Rbs_Admin');
+				if (!$adminProfile->getPropertyValue('notificationMailInterval'))
+				{
+					$jm = new \Change\Job\JobManager();
+					$jm->setApplicationServices($this->getApplicationServices());
+					$arguments = [
+						'params' => $params,
+						'to' => [$user->getEmail()],
+						'templateCode' => 'timeline_mention'
+					];
+					$jm->createNewJob('Rbs_Timeline_SendTemplateMail', $arguments);
+				}
 			}
 		}
 		//TODO: do the same things for user group

@@ -1,0 +1,12 @@
+<html>
+<body>
+	<h3>You've asked to be notified by mail of your unread notifications</h3>
+	<p>You've got {{ notifications | length }} unread notifications</p>
+	{% for notification in notifications %}
+		<p>
+			{{ notification['message'] }}
+		</p>
+		<small>Send: {{ notification['creationDate'] | date('m/d/Y H:i', timezone) }}</small>
+	{% endfor %}
+</body>
+</html>

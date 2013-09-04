@@ -1,0 +1,27 @@
+<header class="clearfix">
+	<button ng-click="closeEmbeddedModal()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
+	<h3><i class="icon-exclamation-sign"></i> Notifications</h3>
+</header>
+
+<div class="btn-group" data-toggle="buttons-radio">
+	<button type="button" class="btn btn-primary" data-ng-click="notificationType = 'new'">Nouvelles</button>
+	<button type="button" class="btn btn-primary" data-ng-click="notificationType = 'read'">Lues</button>
+</div>
+
+<rbs-document-list data-dlid="DLRbsDashboardNewNotificationsList"
+	model="Rbs_Notification_Notification"
+	load-query="notificationsQuery"
+	selectable="false"
+	extend="notificationList"
+	quick-actions=""
+	actions=""
+	modification-date="false">
+	<column name="message">
+		(= doc.message =)
+		<div class="pull-right">
+			<button type="button" class="btn btn-small btn-success" ng-click="extend.readNotification(doc)"><i class="icon-ok"></i></button>
+			<button type="button" class="btn btn-small btn-danger" ng-click="extend.deleteNotification(doc)"><i class="icon-ban-circle"></i></button>
+		</div>
+	</column>
+	<column name="creationDate" format="date"></column>
+</rbs-document-list>
