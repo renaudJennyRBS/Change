@@ -3,5 +3,5 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="contextId">Identifiant du context</key>
 	<key id="message">message</key>
-	<key id="notification-mention-message">un message de la timeline vous mentionne</key>
+	<key id="notification-mention-message">un message de {authorName} concernant le document "{documentLabel}" vous mentionne</key>
 </i18n>

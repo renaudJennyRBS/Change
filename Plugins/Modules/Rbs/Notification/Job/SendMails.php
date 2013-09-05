@@ -22,8 +22,6 @@ class SendMails
 		if ($template)
 		{
 			//first check users want be notified by mail
-			//TODO: try to query users with 'notificationMailInterval' set to something in their Rbs_Admin profile
-			//TODO: now just all users
 			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_User');
 			$dqb->andPredicates($dqb->activated());
 			$users = $dqb->getDocuments();
