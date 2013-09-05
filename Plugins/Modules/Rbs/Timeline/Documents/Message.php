@@ -91,6 +91,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				}
 				catch (\Exception $e)
 				{
+					$this->getDocumentManager()->popLCID();
 					throw $tm->rollBack($e);
 				}
 				$this->getDocumentManager()->popLCID();

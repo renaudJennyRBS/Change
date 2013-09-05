@@ -18,52 +18,64 @@
 			},
 			templateUrl: 'Rbs/Admin/js/directives/time-interval-input.twig',
 
-			compile : function (tElement, tAttrs, transcludeFn) {
+			link : function(scope, elm, attrs) {
+				scope.durations = { years: 0, months: 0, weeks: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+				if (angular.isDefined(attrs.show))
+				{
+					scope.show = {};
+					var elements = attrs.show.split(',');
+					angular.forEach(elements, function(element){
+						scope.show[element] = true;
+					});
+				}
+				else
+				{
+					//if show is not defined, show all
+					angular.forEach(scope.durations, function(element){
+						scope.show[element] = true;
+					});
+				}
 
-				//TODO: let choose wich input you want (year, month, days, hours, minutes, seconds, etc...)
+				//time interval is ISO 8601 string (like P3Y6M4DT12H30M5S) for 3 years, 6 months,  day and 10 hours
+				var mtiRegexp = /^P([0-9]?[.,]?[0-9]+)Y([0-9]?[.,]?[0-9]+)M([0-9]?[.,]?[0-9]+)W([0-9]?[.,]?[0-9]+)DT([0-9]?[.,]?[0-9]+)H([0-9]?[.,]?[0-9]+)M([0-9]?[.,]?[0-9]+)S$/;
+				//                  11111111111111111   22222222222222222   33333333333333333    44444444444444444   55555555555555555   66666666666666666   77777777777777777
+				if (mtiRegexp.test(scope.ngModel))
+				{
+					var matches = scope.ngModel.match(mtiRegexp);
+					scope.durations.years = parseInt(matches[1], 10);
+					scope.durations.months = parseInt(matches[2], 10);
+					scope.durations.weeks = parseInt(matches[3], 10);
+					scope.durations.days = parseInt(matches[4], 10);
+					scope.durations.hours = parseInt(matches[5], 10);
+					scope.durations.minutes = parseInt(matches[6], 10);
+					scope.durations.seconds = parseInt(matches[7], 10);
+				}
 
-				return function(scope, elm, attrs) {
-					//time interval is ISO 8601 string (like P1DT10H0M) for 1 day and 10 hours
-					var mtiRegexp = /^P([0-9]+)DT([0-9]+)H([0-9]+)M$/;
-					//                  111111    222222   333333
-					if (mtiRegexp.test(scope.ngModel))
+				function makeISO8601Duration()
+				{
+					//check if all fileds are 0, an return empty string
+					var makeDuration = false;
+					angular.forEach(scope.durations, function(duration){
+						if (duration != 0)
+						{
+							makeDuration = true;
+						}
+					});
+					if (makeDuration)
 					{
-						var matches = scope.ngModel.match(mtiRegexp);
-						scope.days = parseInt(matches[1], 10);
-						scope.hours = parseInt(matches[2], 10);
-						scope.minutes = parseInt(matches[3], 10);
+						return 'P' + scope.durations.years + 'Y' + scope.durations.months + 'M' + scope.durations.weeks + 'W' +
+							scope.durations.days + 'DT' +
+							scope.durations.hours + 'H' + scope.durations.minutes + 'M' + scope.durations.seconds + 'S';
 					}
 					else
 					{
-						scope.days = 0;
-						scope.hours = 0;
-						scope.minutes = 0;
-					}
-
-					scope.$watch('days', function (){
-						scope.ngModel = makeISO8601Duration();
-					});
-					scope.$watch('hours', function (){
-						scope.ngModel = makeISO8601Duration();
-					});
-					scope.$watch('minutes', function (){
-						scope.ngModel = makeISO8601Duration();
-					});
-
-					function makeISO8601Duration()
-					{
-						if (scope.days || scope.hours || scope.minutes)
-						{
-							return 'P' + scope.days + 'DT' +
-								scope.hours + 'H' +
-								scope.minutes + 'M';
-						}
-						else
-						{
-							return '';
-						}
+						return '';
 					}
 				}
+
+				scope.$watchCollection('durations', function (){
+					scope.ngModel = makeISO8601Duration();
+				});
 			}
 		};
 

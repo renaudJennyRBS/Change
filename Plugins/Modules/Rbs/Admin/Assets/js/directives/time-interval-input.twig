@@ -1,15 +1,31 @@
 <label class="control-label">(= label =)</label>
 <div class="controls">
-	<div class="input-prepend">
+	<div class="input-prepend" ng-if="show.years">
+		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.years', ['ucf']) }}</span>
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.years" />
+	</div>
+	<div class="input-prepend" ng-if="show.months">
+		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.months', ['ucf']) }}</span>
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.months" />
+	</div>
+	<div class="input-prepend" ng-if="show.weeks">
+		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.weeks', ['ucf']) }}</span>
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.weeks" />
+	</div>
+	<div class="input-prepend" ng-if="show.days">
 		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.days', ['ucf']) }}</span>
-		<input class="input-mini" type="number" min="0" data-ng-model="days" />
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.days" />
 	</div>
-	<div class="input-prepend">
+	<div class="input-prepend" ng-if="show.hours">
 		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.hours', ['ucf']) }}</span>
-		<input class="input-mini" type="number" min="0" data-ng-model="hours" />
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.hours" />
 	</div>
-	<div class="input-prepend">
+	<div class="input-prepend" ng-if="show.minutes">
 		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.minutes', ['ucf']) }}</span>
-		<input class="input-mini" type="number" min="0" data-ng-model="minutes" />
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.minutes" />
+	</div>
+	<div class="input-prepend" ng-if="show.seconds">
+		<span class="add-on">{{ i18n('m.rbs.admin.timeinterval.seconds', ['ucf']) }}</span>
+		<input class="input-mini" type="number" min="0" data-ng-model="durations.seconds" />
 	</div>
 </div>

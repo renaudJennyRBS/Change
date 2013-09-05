@@ -17,6 +17,6 @@
 	<key id="warning">attention !</key>
 	<key id="change-language-warning">après avoir changé de langue, vous devrez vider les caches de votre navigateur et recharger la page.</key>
 	<key id="notification">notification</key>
-	<key id="notification-time-interval">interval de temps entre les mails de notifications</key>
-	<key id="notification-time-interval-helper">indiquez ici l'interval de temps (fréquence) où vous souhaitez recevoir un email regroupant les notifications qui vous sont destinées. Si vous laissez tous les champs à zéro, un email vous sera potentiellement envoyé à chaque notification (ceci dépendra de la notification)</key>
+	<key id="notification-time-interval">intervalle des emails</key>
+	<key id="notification-time-interval-helper">indiquez ici l'intervalle de temps (fréquence) où vous souhaitez recevoir un email regroupant les notifications qui vous sont destinées. Si vous laissez tous les champs à zéro, un email vous sera potentiellement envoyé à chaque notification (ceci dépendra de la notification)</key>
 </i18n>
