@@ -18,6 +18,11 @@
 	}]);
 
 
+	app.run(['$templateCache', function($templateCache) {
+		$templateCache.put('picker-item-Rbs_Media_Image.html', '<img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =))');
+	}]);
+
+
 	/**
 	 * Controller for tag-based menu.
 	 */

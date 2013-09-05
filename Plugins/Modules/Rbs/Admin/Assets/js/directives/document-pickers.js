@@ -309,7 +309,7 @@
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
@@ -317,10 +317,16 @@
 			require     : 'ngModel',
 			scope       : true,
 
-			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
-			}
+			compile : function (tElement, tAttrs)
+			{
+				if (tAttrs.acceptedModel && Utils.isModelName(tAttrs.acceptedModel)) {
+					tElement.find('token-list').first().attr('item-template', 'picker-item-' + tAttrs.acceptedModel + '.html');
+				}
 
+				return function (scope, iElement, attrs, ngModel) {
+					documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+				};
+			}
 		};
 	}]);
 
