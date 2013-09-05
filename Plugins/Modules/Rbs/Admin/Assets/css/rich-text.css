@@ -148,8 +148,8 @@ rbs-rich-text-input .tab-pane[data-role="preview-container"] h6 {
 	margin-top: 0;
 }
 
-rbs-rich-text-input .tab-pane[data-role="preview-container"] .preview-content p:last-child {
-	margin-bottom: 0;
+rbs-rich-text-input .tab-content {
+	background: white;
 }
 
 .rbs-rich-text-input-inner-selector {
