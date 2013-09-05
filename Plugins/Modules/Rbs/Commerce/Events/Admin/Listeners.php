@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Commerce\Events\Admin;
 
-use Assetic\Asset\AssetCollection;
-use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
 use Rbs\Admin\Event;
 use Zend\EventManager\EventManagerInterface;
@@ -33,7 +31,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			if ($plugin->getPackage() == "ECom")
 			{
-				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+				$jsAssets = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/*/*.js');
 				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
 				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
@@ -60,7 +58,15 @@ class Listeners implements ListenerAggregateInterface
 					'url' => 'Rbs/Store', 'section' => 'ecommerce',
 					'keywords' => $i18nManager->trans('m.rbs.store.admin.js.module-keywords')),
 				array('label' => $i18nManager->trans('m.rbs.stock.admin.js.module-name', array('ucf')),
-					'url' => 'Rbs/Stock', 'section' => 'ecommerce', 'keywords' => $i18nManager->trans('m.rbs.stock.admin.js.module-keywords'))
+					'url' => 'Rbs/Stock', 'section' => 'ecommerce',
+					'keywords' => $i18nManager->trans('m.rbs.stock.admin.js.module-keywords')),
+
+				array('label' => $i18nManager->trans('m.rbs.order.admin.js.module-name', array('ucf')),
+					'url' => 'Rbs/Order', 'section' => 'ecommerce',
+					'keywords' => $i18nManager->trans('m.rbs.order.admin.js.module-keywords')),
+				array('label' => $i18nManager->trans('m.rbs.payment.admin.js.module-name', array('ucf')),
+					'url' => 'Rbs/Payment', 'section' => 'ecommerce',
+					'keywords' => $i18nManager->trans('m.rbs.payment.admin.js.module-keywords')),
 			)
 		);
 

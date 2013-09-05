@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.order.document.order" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+
+	<key id="ownerid">propriétaire</key>
+	<key id="select-ownerid">séléctionner le propriétaire</key>
+
+	<key id="code">code reference</key>
+	<key id="webstoreid">boutique</key>
+	<key id="select-webstoreid">séléctionner une boutique</key>
+
+	<key id="contextdata">information générales</key>
+
+	<key id="linesdata">lignes</key>
+
+	<key id="amount">montant</key>
+	<key id="amountwithtax">montant TTC</key>
+	<key id="currencycode">devise</key>
+
+	<key id="processingstatus">état</key>
+
+	<key id="shippingstatus">état de livraison</key>
+
+	<key id="paymentstatus">état de facturation</key>
+	
+</i18n>

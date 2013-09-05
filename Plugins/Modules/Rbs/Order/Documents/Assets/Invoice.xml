@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
+	<properties>
+		<property name="code" type="String" />
+		<property name="order" type="Document" document-type="Rbs_Order_Order" />
+		<property name="transaction" type="Document" document-type="Rbs_Payment_Transaction" />
+		<property name="amount" type="Decimal" />
+		<property name="amountWithTax" type="Decimal" />
+		<property name="currencyCode" type="String">
+			<dboptions length="3" />
+		</property>
+	</properties>
+</document>
