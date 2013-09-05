@@ -11,10 +11,21 @@ class StockManager
 {
 	const INVENTORY_UNIT_PIECE = 0;
 
+	const UNLIMITED_LEVEL = 1000000;
+
+	const THRESHOLD_AVAILABLE = 'AVAILABLE';
+
+	const THRESHOLD_UNAVAILABLE = 'UNAVAILABLE';
+
 	/**
 	 * @var CommerceServices
 	 */
 	protected $commerceServices;
+
+	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
 
 	/**
 	 * @param CommerceServices $commerceServices
@@ -50,6 +61,20 @@ class StockManager
 	{
 		return $this->commerceServices->getApplicationServices();
 	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	protected function getCollectionManager()
+	{
+		if ($this->collectionManager === null)
+		{
+			$this->collectionManager = new \Change\Collection\CollectionManager();
+			$this->collectionManager->setDocumentServices($this->getDocumentServices());
+		}
+		return $this->collectionManager;
+	}
+
 
 	/**
 	 * @param \Rbs\Stock\Documents\Sku $sku
@@ -133,11 +158,16 @@ class StockManager
 
 	/**
 	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param $store
+	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @return integer
 	 */
-	public function getInventoryLevel($sku, $store)
+	public function getInventoryLevel(\Rbs\Stock\Documents\Sku $sku, $store)
 	{
+		if ($sku->getUnlimitedInventory())
+		{
+			return static::UNLIMITED_LEVEL;
+		}
+
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
 		$query->andPredicates($query->eq('sku', $sku), $query->eq('warehouse', 0));
 		$dbQueryBuilder = $query->dbQueryBuilder();
@@ -164,12 +194,67 @@ class StockManager
 
 		if ($store)
 		{
-			$skuId = ($sku instanceof \Change\Documents\AbstractDocument) ? $sku->getId() : intval($sku);
+			$skuId = $sku->getId();
 			$storeId = ($store instanceof \Change\Documents\AbstractDocument)? $store->getId() : intval($store);
 			return $level + $movement - $this->getReservedQuantity($skuId, $storeId);
 		}
-
 		return $level + $movement;
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @param integer|\Rbs\Store\Documents\WebStore $store
+	 * @param integer $level
+	 * @return string
+	 */
+	public function getInventoryThreshold(\Rbs\Stock\Documents\Sku $sku, $store, $level = null)
+	{
+		if ($level === null)
+		{
+			$level = $this->getInventoryLevel($sku, $store);
+		}
+		$thresholds = $sku->getThresholds();
+		if (!is_array($thresholds) || !count($thresholds))
+		{
+			$thresholds = $sku->getDefaultThresholds();
+		}
+
+		foreach ($thresholds as $threshold)
+		{
+			if ($level <= $threshold['l'])
+			{
+				return $threshold['c'];
+			}
+		}
+		return $level > 0 ? static::THRESHOLD_AVAILABLE : static::THRESHOLD_UNAVAILABLE;
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @param integer|\Rbs\Store\Documents\WebStore $store
+	 * @param string $threshold
+	 * @return string|null
+	 */
+	public function getInventoryThresholdTitle(\Rbs\Stock\Documents\Sku $sku, $store, $threshold = null)
+	{
+		if ($threshold === null)
+		{
+			$threshold = $this->getInventoryThreshold($sku, $store);
+		}
+		if ($threshold)
+		{
+			$cm = $this->getCollectionManager();
+			$collection = $cm->getCollection('Rbs_Stock_Collection_Threshold');
+			if ($collection)
+			{
+				$item = $collection->getItemByValue($threshold);
+				if ($item)
+				{
+					return $item->getTitle();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

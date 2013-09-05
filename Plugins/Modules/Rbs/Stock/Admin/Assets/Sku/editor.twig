@@ -87,6 +87,11 @@
 			<span class="help-block">{{ i18n('m.rbs.stock.document.sku.unlimitedinventory-help') }}</span>
 		</rbs-field-boolean>
 
+		<rbs-field label="{{ i18nAttr('m.rbs.stock.document.sku.thresholds', ['ucf']) }}">
+			<rbs-thresholds-editor thresholds-values="document.thresholds">
+			</rbs-thresholds-editor>
+		</rbs-field>
+
 		<rbs-field-boolean
 			property="allowBackorders"
 			label="{{ i18nAttr('m.rbs.stock.document.sku.allowbackorders', ['ucf']) }}">
