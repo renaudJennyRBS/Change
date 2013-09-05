@@ -181,6 +181,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param string $collectionCode
 	 * @param integer $numberOfItems
 	 * @param boolean $locked
+	 * @throws \Exception
 	 * @return \Rbs\Collection\Documents\Collection
 	 */
 	protected function createACollection($collectionCode, $numberOfItems, $locked = false)
@@ -203,8 +204,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot create collection ' . $collectionCode . ' with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		return $collection;
 	}
@@ -212,6 +212,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @param string $prefix
 	 * @param integer $numberOfItems
+	 * @throws \Exception
 	 * @return array
 	 */
 	protected function createItems($prefix, $numberOfItems)
@@ -234,8 +235,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 			catch (\Exception $e)
 			{
-				$tm->rollBack($e);
-				$this->fail('cannot create item with this error: ' . $e->getMessage());
+				throw $tm->rollBack($e);
 			}
 		}
 		return $items;
