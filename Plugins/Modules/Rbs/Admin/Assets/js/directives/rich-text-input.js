@@ -62,7 +62,8 @@
 
 								// Links
 								'<div class="btn-group" ng-if="availableSelectors.links">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
+									'<button type="button" title="Insérer un lien interne" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
+									'<button type="button" title="Insérer un lien externe" ng-disabled="useTextarea" class="btn btn-small" ng-click="insertExternalLink()"><i class="icon-external-link"></i></button>' +
 								'</div>' +
 
 								// Users
@@ -571,6 +572,12 @@
 							scope.mdInsertText('@+' + userOrGroup.identifier);
 						}
 					});
+				};
+
+				scope.insertExternalLink = function () {
+					var	href = prompt("Veuillez saisir l'adresse de la page à lier"),
+						title = prompt("Veuillez saisir le titre du lien (optionnel)");
+					scope.mdInsertText(buildMdLinkTag(href, title || href));
 				};
 			}
 
