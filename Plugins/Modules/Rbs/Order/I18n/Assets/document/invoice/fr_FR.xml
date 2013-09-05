@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.order.document.invoice" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="code">code reference</key>
 	<key id="order">commande</key>
 	<key id="select-order">séléctionner une commande</key>
 	<key id="transaction">transaction banquaire</key>
