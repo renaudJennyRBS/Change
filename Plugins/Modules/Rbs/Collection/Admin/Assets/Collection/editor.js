@@ -61,9 +61,12 @@
 				};
 
 				scope.cascadeEditItem = function(index){
-					EditorManager.cascade(scope.document.items[index], scope.document.label, function(doc){scope.document.items[index] = doc;});
+					REST.resource(scope.document.items[index]).then(
+						function(doc) {
+							scope.cascadeEdit(doc, scope.document.label, function(doc){scope.document.items[index] = doc;});
+						}
+					)
 				};
-
 			}
 		};
 

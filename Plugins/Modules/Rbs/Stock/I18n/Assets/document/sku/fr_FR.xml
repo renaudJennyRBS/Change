@@ -15,4 +15,14 @@
 	<key id="allowbackorders-help">Lorsque cette option est activée, le produit peut être commandé même lorsqu'il est en rupture en prévision d'un réassort futur.</key>
 	<key id="allowquantitysplit">Livraison fractionnée</key>
 	<key id="allowquantitysplit-help">Lorsque cette option est activée, les lignes de commandes correspondant à ce SKU pourront être livrées en plusieurs colis.</key>
+
+	<key id="thresholds">Seuils</key>
+	<key id="threshold-less-or-equals">Inférieur ou égale à</key>
+	<key id="threshold-use">utiliser</key>
+	<key id="threshold-add">Ajouter un seuil</key>
+	<key id="threshold-remove">Supprimer</key>
+
+	<key id="threshold-available">en stock</key>
+	<key id="threshold-low">peu de stock</key>
+	<key id="threshold-unavailable">en rupture</key>
 </i18n>

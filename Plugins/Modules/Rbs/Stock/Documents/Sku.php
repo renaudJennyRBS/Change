@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Stock\Documents;
 
+use Change\Documents\AbstractModel;
 use Rbs\Commerce\Services\CommerceServices;
 
 /**
@@ -18,14 +19,14 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 
 	protected $massConversion = [
 		'g' => ['kg' => 0.001, 'lbs' => 0.0022046226218487757],
-		'kg' => ['g' => 1000, 'lbs' =>  2.2046226218487757],
-		'lbs' => ['g' =>  453.59237, 'kg' => 0.45359237]
+		'kg' => ['g' => 1000, 'lbs' => 2.2046226218487757],
+		'lbs' => ['g' => 453.59237, 'kg' => 0.45359237]
 	];
 
 	protected $lengthConversion = [
 		'cm' => ['m' => 0.01, 'in' => 0.39370078740157477],
-		'm' => ['cm' => 100, 'in' =>  39.370078740157477],
-		'in' => ['cm' =>  2.54, 'm' => 0.0254]
+		'm' => ['cm' => 100, 'in' => 39.370078740157477],
+		'in' => ['cm' => 2.54, 'm' => 0.0254]
 	];
 
 	/**
@@ -256,12 +257,28 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getDefaultThresholds()
+	{
+		return array(array('l' => 0, 'c' => \Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE),
+			array('l' => \Rbs\Stock\Services\StockManager::UNLIMITED_LEVEL,
+				'c' => \Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE));
+	}
+
+	public function setDefaultValues(AbstractModel $documentModel)
+	{
+		parent::setDefaultValues($documentModel);
+		$this->setThresholds($this->getDefaultThresholds());
+	}
+
+	/**
 	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
 	 * @param $extraColumn
 	 */
 	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		$documentLink->setProperty('code',  $this->getCode());
+		$documentLink->setProperty('code', $this->getCode());
 	}
 }
