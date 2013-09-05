@@ -25,6 +25,13 @@ class Listeners implements ListenerAggregateInterface
 			return $resolver->resolve($event);
 		};
 		$events->attach(ThemeManager::EVENT_LOADING, $callback, 1);
+
+		$callback = function (\Zend\EventManager\Event $event)
+		{
+			$resolver = new \Rbs\Theme\Events\MailTemplateResolver();
+			return $resolver->resolve($event);
+		};
+		$events->attach(ThemeManager::EVENT_MAIL_TEMPLATE_LOADING, $callback, 1);
 	}
 
 	/**

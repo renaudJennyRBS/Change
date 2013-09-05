@@ -48,12 +48,21 @@ class Listeners implements ListenerAggregateInterface
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
 		if ($plugin)
 		{
-			$jsAssets = new AssetCollection([
-				new FileAsset($plugin->getBasePath() . '/Assets/lib/moment/i18n/' . $lcid . '.js'),
-				new FileAsset($plugin->getBasePath() . '/Assets/lib/angular/i18n/angular-locale_' . $lcid . '.js')
-				]
-			);
-			$manager->getJsAssetManager()->set('i18n', $jsAssets);
+			$jsAssets = new AssetCollection();
+			$path = $plugin->getBasePath() . '/Assets/lib/moment/i18n/' . $lcid . '.js';
+			if (file_exists($path))
+			{
+				$jsAssets->add(new FileAsset($path));
+			}
+			$path = $plugin->getBasePath() . '/Assets/lib/angular/i18n/angular-locale_' . $lcid . '.js';
+			if (file_exists($path))
+			{
+				$jsAssets->add(new FileAsset($path));
+			}
+			if (count($jsAssets->all()))
+			{
+				$manager->getJsAssetManager()->set('i18n', $jsAssets);
+			}
 		}
 
 		$menu = array(

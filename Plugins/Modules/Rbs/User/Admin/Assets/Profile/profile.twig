@@ -35,6 +35,17 @@
 	</fieldset>
 
 	<fieldset>
+		<legend>{{ i18n('m.rbs.user.profile.notification', ['ucf']) }}</legend>
+		<div class="control-group">
+			<rbs-time-interval-input label="{{ i18nAttr("m.rbs.user.profile.notification-time-interval", ["ucf"]) }}"
+				ng-model="user.profile.notificationMailInterval" show="days,hours,minutes"></rbs-time-interval-input>
+			<span class="help-block">
+				{{ i18n('m.rbs.user.profile.notification-time-interval-helper', ['ucf']) }}
+			</span>
+		</div>
+	</fieldset>
+
+	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.lists', ['ucf']) }}</legend>
 
 		<div class="control-group">

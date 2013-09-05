@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="t.rbs.demo.setup" lcid="en_US">
+	<key id="timeline-message-mail-subject">A message mentionning you</key>
+	<key id="notification-mail-subject">New notifications</key>
+</i18n>

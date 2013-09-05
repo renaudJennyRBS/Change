@@ -457,8 +457,8 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new Property($model, 'documentVersion');
 		$p->validate();
 		$this->assertEquals('Integer', $p->getType());
-		$this->assertEquals('0', $p->getDefaultValue());
-		$this->assertTrue($p->getRequired());
+		$this->assertNull($p->getDefaultValue());
+		$this->assertNull($p->getRequired());
 
 
 		$p = new Property($model, 'title', 'Integer');

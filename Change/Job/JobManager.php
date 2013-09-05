@@ -215,10 +215,6 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 			$lastModificationDate = new \DateTime();
 		}
 
-		if ($status !== JobInterface::STATUS_RUNNING && $status !== JobInterface::STATUS_SUCCESS)
-		{
-			$status =  JobInterface::STATUS_FAILED;
-		}
 
 		if (is_array($arguments) && count($arguments))
 		{
@@ -227,6 +223,18 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		else
 		{
 			$arguments = null;
+		}
+
+		if ($status !== JobInterface::STATUS_RUNNING && $status !== JobInterface::STATUS_SUCCESS)
+		{
+			if ($status === JobInterface::STATUS_WAITING
+				&& isset($arguments['reportedAt']) && $arguments['reportedAt'] instanceof \DateTime)
+			{
+				$this->reportJob($job, $arguments);
+				return;
+			}
+
+			$status =  JobInterface::STATUS_FAILED;
 		}
 
 		$transactionManager = $this->getApplicationServices()->getTransactionManager();
@@ -271,6 +279,63 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$job->setArguments($arguments);
 			}
+		}
+	}
+
+	/**
+	 * @api
+	 * @param JobInterface $job
+	 * @param array $arguments
+	 * @throws \Exception
+	 */
+	protected function reportJob($job, $arguments)
+	{
+		if ($job->getId() <= 0)
+		{
+			return;
+		}
+
+		$reportedAt = $arguments['reportedAt'];
+		unset($arguments['reportedAt']);
+
+		$lastModificationDate = new \DateTime();
+		$status =  JobInterface::STATUS_WAITING;
+
+		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+
+			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update('change_job');
+			$qb->assign($fb->column('status'), $fb->parameter('status'));
+			$qb->assign($fb->column('start_date'), $fb->dateTimeParameter('startDate'));
+			$qb->assign($fb->column('last_modification_date'), $fb->dateTimeParameter('lastModificationDate'));
+			$qb->assign($fb->column('arguments'), $fb->lobParameter('arguments'));
+			$qb->where($fb->eq($fb->column('id'),$fb->integerParameter('id')));
+
+			$uq = $qb->updateQuery();
+			$uq->bindParameter('status', $status);
+			$uq->bindParameter('startDate', $reportedAt);
+			$uq->bindParameter('lastModificationDate', $lastModificationDate);
+			$uq->bindParameter('arguments', \Zend\Json\Json::encode($arguments));
+			$uq->bindParameter('id', $job->getId());
+			$uq->execute();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+
+		if ($job instanceof Job)
+		{
+			$job->setStatus($status);
+			$job->setLastModificationDate($lastModificationDate);
+			$job->setStartDate($reportedAt);
+			$job->setArguments($arguments);
 		}
 	}
 

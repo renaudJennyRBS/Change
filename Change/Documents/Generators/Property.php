@@ -594,8 +594,6 @@ class Property
 				break;
 			case 'documentVersion':
 				$this->type = 'Integer';
-				$this->defaultValue = '0';
-				$this->required = true;
 				break;
 			case 'publicationStatus':
 				$this->type = 'String';

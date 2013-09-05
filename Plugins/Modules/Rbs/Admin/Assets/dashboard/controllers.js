@@ -16,9 +16,10 @@
 	 * @param Dialog
 	 * @param Settings
 	 * @param UrlManager
+	 * @param User
 	 * @constructor
 	 */
-	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager)
+	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager, User)
 	{
 		Breadcrumb.resetLocation();
 
@@ -151,6 +152,77 @@
 
 		};
 
+		//
+		// Notifications
+		//
+		$scope.showNotifications = function ($event) {
+			Dialog.embed(
+				$embedContainer,
+				'Rbs/Admin/dashboard/notifications.twig',
+				$scope,
+				{ 'pointedElement' : $event.target }
+			);
+		};
+
+		function getNotificationQuery(status)
+		{
+			return {
+				'model': 'Rbs_Notification_Notification',
+				'where': {
+					'and': [
+						{
+							'op': 'eq',
+							'lexp': {
+								'property': 'userId'
+							},
+							'rexp': {
+								'value': User.get().id
+							}
+						},
+						{
+							'op': 'eq',
+							'lexp': {
+								'property': 'status'
+							},
+							'rexp': {
+								'value': status
+							}
+						}
+					]
+				}
+			};
+		}
+
+		$scope.notificationType = 'new';
+
+		function reloadNotificationsQuery()
+		{
+			REST.query(getNotificationQuery('new')).then(function (data){
+				$scope.newNotificationCount = data.pagination.count;
+			});
+		}
+		reloadNotificationsQuery();
+
+		$scope.$watch('notificationType', function (){
+			$scope.notificationsQuery = getNotificationQuery($scope.notificationType);
+		});
+
+		$scope.notificationList = {
+			'readNotification': function (notification) {
+				notification.status = 'read';
+				REST.save(notification);
+				reloadNotificationsQuery();
+			},
+			'deleteNotification': function (notification) {
+				notification.status = 'deleted';
+				REST.save(notification);
+				reloadNotificationsQuery();
+			},
+			getNotificationType: function() {
+				return $scope.notificationType;
+			}
+		};
+
 		$scope.$on('$destroy', function () {
 			Workspace.restore();
 			MainMenu.show();
@@ -166,7 +238,8 @@
 		'RbsChange.REST',
 		'RbsChange.Dialog',
 		'RbsChange.Settings',
-		'RbsChange.UrlManager'
+		'RbsChange.UrlManager',
+		'RbsChange.User'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);
 

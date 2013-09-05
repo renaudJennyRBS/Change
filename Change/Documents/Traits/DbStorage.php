@@ -796,10 +796,42 @@ trait DbStorage
 				$this->modifiedMetas = true;
 			}
 		}
-		elseif (!isset($this->metas[$name]) || $this->metas[$name] != $value)
+		elseif (!isset($this->metas[$name]) || $this->differentValues($this->metas[$name], $value))
 		{
 			$this->metas[$name] = $value;
 			$this->modifiedMetas = true;
 		}
+
+	}
+
+	/**
+	 * compare two values, especially if their are two array
+	 * because try to compare two arrays with != return something strange
+	 * like 0 == 'abcd' return true...
+	 * @param $a
+	 * @param $b
+	 * @return bool
+	 */
+	protected function differentValues($a, $b)
+	{
+		if ($a != $b)
+		{
+			return true;
+		}
+		elseif (is_numeric($a) || is_numeric($b))
+		{
+			return strval($a) !== strval($b);
+		}
+		elseif (is_array($a) && is_array($b))
+		{
+			foreach ($a as $key => $value)
+			{
+				if (!isset($b[$key]) || $this->differentValues($value, $b[$key]))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

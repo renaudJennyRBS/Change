@@ -199,6 +199,30 @@ class MailManager
 	}
 
 	/**
+	 * @param \Change\Presentation\Interfaces\MailTemplate $template
+	 * @param array $params
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @param array $from
+	 * @param array $to
+	 * @param array|null $cc
+	 * @param array|null $bcc
+	 * @param array|null $replyTo
+	 * @return Message
+	 */
+	public function composeTemplateMessage($template, $params, $urlManager, $from, $to, $cc = [], $bcc = [], $replyTo = [])
+	{
+		$loader = new \Twig_Loader_String();
+		$twig = new \Twig_Environment($loader);
+		$html = $twig->render($template->getContent(), $params);
+		$message = $this->prepareMessage($from, $to, $template->getSubject(), $html, null, $cc, $bcc, $replyTo);
+		$headers = [
+			'Content-type' => 'text/html; charset=utf-8'
+		];
+		$this->prepareHeader($message, $headers);
+		return $message;
+	}
+
+	/**
 	 * @param ZendMessage $message
 	 */
 	public function send($message)

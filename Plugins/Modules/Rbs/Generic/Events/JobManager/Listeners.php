@@ -24,6 +24,18 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Workflow\Job\ExecuteDeadLineTask())->execute($event);
 		};
 		$events->attach('process_Rbs_Workflow_ExecuteDeadLineTask', $callback, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Timeline\Job\SendTemplateMail())->execute($event);
+		};
+		$events->attach('process_Rbs_Timeline_SendTemplateMail', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Notification\Job\SendMails())->execute($event);
+		};
+		$events->attach('process_Rbs_Notification_SendMails', $callBack, 5);
 	}
 
 	/**

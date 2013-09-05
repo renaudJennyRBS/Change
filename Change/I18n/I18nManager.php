@@ -536,7 +536,17 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 			// Themes.
-			// TODO
+			if (is_dir($workspace->pluginsThemesPath()))
+			{
+				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsThemesPath(), '*', '*', 'I18n', 'Assets'));
+				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
+						 $path)
+				{
+					$parts = explode(DIRECTORY_SEPARATOR, $path);
+					$count = count($parts);
+					$this->packageList[strtolower('t.' . $parts[$count - 4] . '.' . $parts[$count - 3])] = $path;
+				}
+			}
 		}
 
 		$collectionPath = null;
