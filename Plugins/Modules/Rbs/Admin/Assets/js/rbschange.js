@@ -141,7 +141,7 @@
 		return {
 			'restrict'   : 'A',
 			link : function (scope, elm) {
-				elm.text('RBS Change version ' + version);
+				elm.html('RBS Change version ' + version + '<small style="display: block;">AngularJS ' + angular.version.full + ' | jQuery ' + $.fn.jquery + '</small>');
 			}
 		};
 	}]);
