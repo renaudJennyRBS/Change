@@ -125,9 +125,15 @@
 				if (tag && documents && documents.length) {
 					$timeout(function () {
 						Loading.start(i18n.trans('m.rbs.tag.admin.js.applying-tags | ucf | etc'));
-						affectTagToDocuments(JSON.parse(tag), documents).then(function () {
-							Loading.stop();
-						});
+						affectTagToDocuments(JSON.parse(tag), documents).then(
+							function () {
+								Loading.stop();
+							},
+							function () {
+								// TODO Notify user.
+								Loading.stop();
+							}
+						);
 					});
 				}
 			}
