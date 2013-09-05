@@ -50,6 +50,12 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			$id = $params[1];
 		}
 
+		// If the id is not numeric, this is an external link, so use de default link rendering.
+		if (!is_numeric($id))
+		{
+			return parent::_doAnchors_inline_callback($matches);
+		}
+
 		/* @var $document \Change\Documents\AbstractDocument */
 		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
 

@@ -80,7 +80,9 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function getFilters()
 	{
-		return array();
+		return array(
+			new \Twig_SimpleFilter('richText', array($this, 'richText'), array('is_safe' => array('all')))
+		);
 	}
 
 	/**
@@ -339,5 +341,22 @@ class Extension implements \Twig_ExtensionInterface
 			return $uri ? $uri->normalize()->toString() : null;
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\RichtextProperty $richText
+	 * @return string
+	 */
+	public function richText($richText)
+	{
+		if ($richText instanceof \Change\Documents\RichtextProperty)
+		{
+			$context = array('website' => $this->getUrlManager()->getWebsite());
+			return $this->getPresentationServices()
+				->getRichTextManager()
+				->setDocumentServices($this->getDocumentServices())
+				->render($richText, "Website", $context);
+		}
+		return htmlspecialchars($richText);
 	}
 }
