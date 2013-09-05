@@ -22,7 +22,7 @@ class Exception extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('message', Property::TYPE_STRING, true);
+		$parameters->addParameterMeta('message');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$exception = $event->getParam('Exception');
 		if ($exception instanceof \Exception)
