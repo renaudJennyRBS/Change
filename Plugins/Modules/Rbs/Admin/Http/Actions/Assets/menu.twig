@@ -9,19 +9,26 @@
 		</div>
 	</div>
 
+	<ul class="nav nav-list">
+		<li><a ng-click="close()" href="./"><i class="icon-tasks"></i> {{ i18nAttr('m.rbs.admin.menu.dashboard', ['ucf']) }}</a></li>
+		<li class="divider"></li>
+
+	</ul>
+
 	<div class="nav-list">
 		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18n('m.rbs.admin.menu.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a>
 		<form class="rbs-form-simple-filter" on-escape="close()" filter="filterModules" on-enter="go()"></form>
 	</div>
 
+	<div class="nav-list muted fade-animation" ng-if="filterResults.length == 1" style="line-height: 14px; margin: 8px 0;">
+		<small>Appuyez sur <strong class="kb">Entrée</strong> pour vous rendre à<br/>
+			<strong>(= filterResults[0].label =)</strong>.</small>
+	</div>
+
 	<div ng-switch="chuckUrl">
 		<div ng-switch-when="null">
-			<ul class="nav nav-list">
-				<li><a ng-click="close()" href="./"><i class="icon-tasks"></i> {{ i18nAttr('m.rbs.admin.menu.dashboard', ['ucf']) }}</a></li>
-			</ul>
-
 			<ul class="nav nav-list" ng-repeat="s in menu.sections | orderBy:'label'">
-				<li class="divider"></li>
+				<li ng-if="! $first" class="divider"></li>
 				<li class="nav-header">(= s.label =)</li>
 				<li class="repeat-animation" ng-repeat="m in menu.entries | filter:{'section':s.code} | filter:filterModules | orderBy:'label'">
 					<a href ng-click="close()" ng-href="(= m.url =)" ng-bind-html="m.label"></a>
