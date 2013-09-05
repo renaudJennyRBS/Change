@@ -36,7 +36,7 @@
 					<dt>{{ i18n('m.rbs.media.document.image.megapixels', ['ucf']) }}</dt>
 					<dd>(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.document.image.megapixels', ['ucf']) }}">Mpx</abbr></dd>
 					<dt>{{ i18n('m.rbs.media.document.image.alt', ['ucf']) }}</dt>
-					<dd>(= doc.alt =)</dd>
+					<dd>(= doc.alt | emptyLabel =)</dd>
 					<dt>{{ i18n('m.rbs.media.document.image.file', ['ucf']) }}</dt>
 					<dd>(= doc.path.storageURI =)</dd>
 					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>
