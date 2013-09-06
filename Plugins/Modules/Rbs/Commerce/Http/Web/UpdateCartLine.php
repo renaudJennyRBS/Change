@@ -8,12 +8,14 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Rbs\Commerce\Http\Web\UpdateCartLine
  */
-class UpdateCartLine
+class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
 	 * @param Event $event
+	 * @throws \RuntimeException
+	 * @return mixed
 	 */
-	public static function executeByName(Event $event)
+	public function execute(Event $event)
 	{
 		$commerceServices = $event->getParam('commerceServices');
 		if ($commerceServices instanceof CommerceServices)
@@ -21,17 +23,18 @@ class UpdateCartLine
 			$request = $event->getRequest();
 			if ($request->isDelete() || $request->getPost('delete', $request->getQuery('delete')))
 			{
-				(new self())->delete($commerceServices, $event);
+				$this->delete($commerceServices, $event);
 				return;
 			}
 			else
 			{
-				(new self())->update($commerceServices, $event);
+				$this->update($commerceServices, $event);
 				return;
 			}
 		}
 		throw new \RuntimeException('Unable to get CommerceServices', 999999);
 	}
+
 
 	/**
 	 * @param CommerceServices $commerceServices
@@ -59,7 +62,7 @@ class UpdateCartLine
 					$cartManager = $commerceServices->getCartManager();
 					$cart->removeLineByKey($lineKey);
 					$cartManager->saveCart($cart);
-					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray()));
+					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray()));
 					$event->setResult($result);
 				}
 			}
@@ -104,7 +107,7 @@ class UpdateCartLine
 					}
 
 					$cartManager->saveCart($cart);
-					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray()));
+					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray()));
 					$event->setResult($result);
 				}
 			}

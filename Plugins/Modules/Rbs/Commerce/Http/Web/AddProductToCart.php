@@ -8,20 +8,20 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Rbs\Commerce\Http\Web\AddProductToCart
  */
-class AddProductToCart
+class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
 	 * @param Event $event
+	 * @return mixed
 	 */
-	public static function executeByName(Event $event)
+	public function execute(Event $event)
 	{
 		$commerceServices = $event->getParam('commerceServices');
 		if ($commerceServices instanceof CommerceServices)
 		{
-			(new self())->add($commerceServices, $event);
+			$this->add($commerceServices, $event);
 			return;
 		}
-		throw new \RuntimeException('Unable to get CommerceServices', 999999);
 	}
 
 	public function add(CommerceServices $commerceServices, Event $event)
@@ -79,7 +79,7 @@ class AddProductToCart
 					}
 					$cartManager->saveCart($cart);
 
-					$result = new \Change\Http\Web\Result\AjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
+					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
 					$event->setResult($result);
 				}
 			}

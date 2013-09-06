@@ -1,0 +1,34 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker property="connector" label="{{ i18nAttr('m.rbs.payment.document.transaction.connector', ['ucf']) }}"
+				accepted-model="Rbs_Payment_Connector" allow-creation="false" allow-edition="true"
+				selector-title="{{ i18nAttr('m.rbs.payment.document.transaction.select-connector', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-text property="targetIdentifier" required="true" input-class="input-block-level"
+			label="{{ i18nAttr('m.rbs.payment.document.transaction.targetidentifier', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr('m.rbs.payment.document.transaction.currencycode', ['ucf']) }}">
+			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
+		</rbs-field>
+
+		<rbs-field-float
+				property="amount"
+				label="{{ i18nAttr('m.rbs.payment.document.transaction.amount', ['ucf']) }}"
+				max-length="9" input-class="input-mini">
+		</rbs-field-float>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

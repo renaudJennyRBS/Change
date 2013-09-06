@@ -2,6 +2,7 @@
 namespace Change\Http\Web\Actions;
 
 use Change\Http\Web\Event;
+use Zend\Authentication\Storage\Session;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -16,6 +17,8 @@ class ExecuteByName
 	 */
 	public function execute($event)
 	{
+		$defaultRedirectLocation = $event->getRequest()->getPost('redirectLocation', $event->getRequest()->getQuery('redirectLocation'));
+		$defaultErrorLocation = $event->getRequest()->getPost('errorLocation', $event->getRequest()->getQuery('errorLocation', $defaultRedirectLocation));
 		try
 		{
 			$action = $event->getParam('action');
@@ -24,7 +27,7 @@ class ExecuteByName
 				$className = '\\' . $action[0] . '\\' . $action[1] . '\\Http\\Web\\' .str_replace('/', '\\', $action[2]);
 				if (class_exists($className))
 				{
-					$callable = array($className, 'executeByName');
+					$callable = new $className();
 					if (is_callable($callable))
 					{
 						call_user_func($callable, $event);
@@ -32,7 +35,7 @@ class ExecuteByName
 				}
 			}
 
-			$redirectLocation = $event->getRequest()->getPost('redirectLocation', $event->getRequest()->getQuery('redirectLocation'));
+			$redirectLocation = $event->getParam('redirectLocation', $defaultRedirectLocation);
 			if ($redirectLocation)
 			{
 				$result = new \Change\Http\Result(HttpResponse::STATUS_CODE_302);
@@ -56,6 +59,22 @@ class ExecuteByName
 			if ($event->getApplicationServices()->getApplication()->inDevelopmentMode())
 			{
 				$result->setEntry('trace', $e->getTraceAsString());
+			}
+
+			$errorLocation = $event->getParam('errorLocation', $defaultErrorLocation);
+			if ($errorLocation)
+			{
+				$errorMessage = $result->toArray();
+
+				$url = new \Zend\Uri\Http($errorLocation);
+				$query = $url->getQueryAsArray();
+				$query['errId'] = uniqid('err', true);
+				$url->setQuery($query);
+
+				$result = new \Change\Http\Result(HttpResponse::STATUS_CODE_302);
+				$session = new \Zend\Session\Container('Change_Errors');
+				$session[$query['errId']] = $errorMessage;
+				$result->setHeaderLocation($url->toString());
 			}
 			$event->setResult($result);
 		}

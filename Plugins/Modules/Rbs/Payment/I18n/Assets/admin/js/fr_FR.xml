@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.payment.admin.js" lcid="fr_FR">
+	<include id="m.rbs.payment.document"/>
+	<key id="module-name">paiements</key>
+	<key id="module-keywords">paiements,transactions</key>
+</i18n>
