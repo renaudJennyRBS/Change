@@ -21,7 +21,7 @@ hr {
 }
 
 .text-muted {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 }
 
 .text-primary,
@@ -45,6 +45,8 @@ hr {
 	color: var(info-text-color);
 }
 
+small,
+.small,
 h1 small,
 h2 small,
 h3 small,
@@ -56,8 +58,9 @@ h6 small,
 .h3 small,
 .h4 small,
 .h5 small,
-.h6 small {
-	color: var(main-text-second-color);
+.h6 small,
+blockquote small {
+	color: var(main-light-text-color);
 }
 
 .page-header {
@@ -72,17 +75,12 @@ abbr[data-original-title] {
 blockquote {
 	border-left-color: var(main-border-color);
 }
-
-blockquote small {
-	color: var(main-text-second-color);
-}
-
 blockquote.pull-right {
 	border-right-color: var(main-border-color);
 }
 
 code {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 	background-color: var(main-background-second-color);
 }
 
@@ -242,19 +240,19 @@ legend {
 }
 
 .form-control:-moz-placeholder {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 }
 
 .form-control::-moz-placeholder {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 }
 
 .form-control:-ms-input-placeholder {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 }
 
 .form-control::-webkit-input-placeholder {
-	color: var(main-text-second-color);
+	color: var(main-light-text-color);
 }
 
 .form-control {
