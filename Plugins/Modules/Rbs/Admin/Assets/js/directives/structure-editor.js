@@ -545,8 +545,8 @@
 						item = this.getItemById(blockEl.data('id')),
 						shouldFocus = true;
 
-					if (blockEl.is('.se-rich-text')) {
-						elName = "se-rich-text-settings";
+					if (blockEl.is('.se-markdown-text')) {
+						//elName = "se-rich-text-settings";
 						shouldFocus = false;
 					} else if (blockEl.is('.se-formatted-text')) {
 						elName = "se-formatted-text-settings";
@@ -800,7 +800,7 @@
 				};
 
 				this.isRichText = function isInColumnLayout (el) {
-					return el.is('.se-rich-text');
+					return el.is('.se-markdown-text');
 				};
 
 
@@ -1357,7 +1357,7 @@
 							);
 						} catch (e) {
 							// FIXME
-						};
+						}
 					} else {
 						structureEditorService.highlightBlock(null);
 					}
@@ -1901,10 +1901,11 @@
 				};
 
 				scope.removeBlock = function () {
-					// TODO Ask confirmation
-					var block = scope.controller.getSelectedBlock();
-					scope.controller.removeBlock(block);
-					scope.controller.notifyChange("remove", "block", block);
+					if (window.confirm("Souhaitez-vous réellement supprimer ce bloc ?")) {
+						var block = scope.controller.getSelectedBlock();
+						scope.controller.removeBlock(block);
+						scope.controller.notifyChange("remove", "block", block);
+					}
 				};
 
 				scope.hasChanged = function () {
@@ -1913,6 +1914,8 @@
 
 				scope.revert = function () {
 					scope.item = angular.copy(scope.originalItem);
+					var block = scope.controller.getSelectedBlock();
+					block.attr('data-visibility', scope.item.visibility);
 				};
 
 				scope.submit = function () {
@@ -1935,10 +1938,6 @@
 
 					scope.item = angular.copy(scope.originalItem);
 					scope.controller.notifyChange("changeSettings", "block", element);
-				};
-
-				scope.chooseDocument = function (param) {
-					console.log("chooseDocument: ", param);
 				};
 
 				$rootScope.$on('Change:Workspace:Pinned', function (event, el) {
@@ -2012,10 +2011,8 @@
 			"replace"  : true,
 
 			"template" :
-				'<div class="block">' +
-					'<button class="btn-block btn-new-block" type="button" ng-click="selectBlock($event)">' +
-						'<i class="icon-question-sign"></i> Nouv. bloc' +
-					'</button>' +
+				'<div draggable="true" class="block" ng-click="selectBlock($event)">' +
+					'<i class="icon-question-sign"></i> Nouv. bloc' +
 				'</div>',
 
 			"link" : function seBlockChooserLinkFn (scope, element, attrs, ctrl) {
@@ -2041,9 +2038,6 @@
 	//
 	//-------------------------------------------------------------------------
 
-	var blockIcons = {
-		'Rbs_Website_Richtext': 'icon-align-left',
-	};
 
 	app.directive('seBlockChooserSettings', ['RbsChange.REST', 'RbsChange.ArrayUtils', function (REST, ArrayUtils) {
 
@@ -2201,72 +2195,6 @@
 
 	//-------------------------------------------------------------------------
 	//
-	// Block rich text.
-	//
-	//-------------------------------------------------------------------------
-
-	app.directive('seRichText', ['RbsChange.RichTextEditorService', function (RichTextEditorService) {
-
-		return {
-
-			"restrict"   : 'C',
-			"scope"      : {}, // isolated scope is required
-			"require"    : '^structureEditor',
-			"transclude" : true,
-			"replace"    : true,
-			"template"   : '<div contenteditable="true" draggable="true" ng-click="selectBlock($event)" class="block" ng-transclude></div>',
-
-			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
-				element.attr('block-label', "Texte riche");
-				element.attr('block-type', "rich-text");
-
-				var contents, selected = false;
-
-				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
-					if (!selected) {
-						selected = true;
-						element.removeAttr('draggable');
-						ctrl.selectBlock(element);
-						contents = element.html();
-						RichTextEditorService.setEditor(element);
-					}
-				};
-
-				element.blur(function () {
-					selected = false;
-					element.attr('draggable', 'true');
-					if (contents !== element.html()) {
-						scope.saveItem(ctrl.getItemById(element.data('id')));
-						ctrl.notifyChange("changeText", "contents", element, null);
-					}
-				});
-
-				scope.initItem = function (item) {
-					item.parameters = {};
-				};
-
-				scope.saveItem = function (item) {
-					if (item) {
-						angular.extend(item.parameters, {'content': element.html()});
-					}
-				};
-
-				scope.richTextCommandExecuted = function (command) {
-					//scope.saveItem(ctrl.getItemById(element.data('id')));
-					ctrl.notifyChange("changeText", command.label, element, null);
-					contents = element.html();
-				};
-
-			}
-
-		};
-
-	}]);
-
-
-	//-------------------------------------------------------------------------
-	//
 	// Markdown text.
 	//
 	//-------------------------------------------------------------------------
@@ -2323,27 +2251,6 @@
 		};
 
 	}]);
-
-
-	//-------------------------------------------------------------------------
-	//
-	// Block rich text settings.
-	//
-	//-------------------------------------------------------------------------
-
-	app.directive('seRichTextSettings', function () {
-
-		return {
-
-			"restrict"   : 'C',
-			"scope"      : true,
-			"replace"    : true,
-
-			"template"   : '<rich-text-toolbar></rich-text-toolbar>'
-
-		};
-
-	});
 
 
 })(window.jQuery);
