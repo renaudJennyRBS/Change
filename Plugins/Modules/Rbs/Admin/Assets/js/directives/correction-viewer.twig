@@ -64,7 +64,7 @@
 <div ng-if="correctionInfo.status == 'VALID'">
 	<div class="alert alert-success">
 		{{ i18n('m.rbs.admin.correction.correction-will-be-published-on', ['ucf']) }}
-		<strong>(= correctionInfo.publicationDate | rbsDateTime =)</strong> <span class="muted" rbs-time-ago="correctionInfo.publicationDate">({time})</span>
+		<strong>(= correctionInfo.publicationDate | rbsDateTime =)</strong> <time class="muted" datetime="(= correctionInfo.publicationDate =)" display="relative">({time})</time>
 	</div>
 </div>
 
