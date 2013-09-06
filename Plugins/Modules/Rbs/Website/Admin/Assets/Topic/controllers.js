@@ -247,8 +247,11 @@
 							$scope.document.groups = data.resources;
 						});
 				}
+				$scope.restrict = data.userIds.length > 0 || data.groupIds.length > 0;
 			});
 		};
+
+		$scope.changeRestrict = function (){ $scope.restrict = !$scope.restrict; };
 
 		REST.resource($routeParams.id).then(function (section){
 			$scope.document = section;
@@ -264,11 +267,18 @@
 			var url = REST.getBaseUrl('Rbs/Website/UpdateSectionPermissionRules');
 			var sectionId = $scope.document.id;
 			var websiteId = $scope.document.model == 'Rbs_Website_Website' ? $scope.document.id : $scope.document.website.id;
+			var restrictions = false;
+			if ($scope.restrict)
+			{
+				restrictions = {
+					users: $scope.document.users,
+					groups: $scope.document.groups
+				};
+			}
 			var params = {
 				sectionId: sectionId,
 				websiteId: websiteId,
-				users: $scope.document.users,
-				groups: $scope.document.groups
+				restrictions: restrictions
 			};
 
 			$http.post(url, params).success(function(){

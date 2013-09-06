@@ -1,18 +1,23 @@
 <div data-ng-controller="Rbs_Website_Topic_PermissionController">
 	<page-header sub-title="{{ i18nAttr('m.rbs.website.document.topic.permission-rules-sub-title', ['ucf']) }}"></page-header><br />
 
-	<h4>{{ i18n('m.rbs.website.document.topic.permission-restrictions', ['ucf']) }}</h4>
-	<rbs-field-picker-multiple
-		property="users" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.users', ['ucf']) }}"
-		accepted-model="Rbs_User_User"
-		selector-title="{{ i18nAttr('m.rbs.website.document.topic.users-picker-title', ['ucf']) }}"
-		allow-creation="false">
-	</rbs-field-picker-multiple>
-	<rbs-field-picker-multiple
-		property="groups" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.groups', ['ucf']) }}"
-		accepted-model="Rbs_User_Group"
-		selector-title="{{ i18nAttr('m.rbs.website.document.topic.groups-picker-title', ['ucf']) }}"
-		allow-creation="false">
-	</rbs-field-picker-multiple>
-	<button class="btn" data-ng-click="updatePermissionRules()">{{ i18n('m.rbs.website.document.topic.update-permission-rules', ['ucf']) }}</button>
+	<h4>{{ i18n('m.rbs.website.document.topic.permission-restrictions', ['ucf', 'lab']) }} <switch ng-model="restrict" ng-click="changeRestrict()"></switch></h4>
+	<div ng-if="restrict">
+		<rbs-field-picker-multiple
+			property="users" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.users', ['ucf']) }}"
+			accepted-model="Rbs_User_User"
+			selector-title="{{ i18nAttr('m.rbs.website.document.topic.users-picker-title', ['ucf']) }}"
+			allow-creation="false">
+		</rbs-field-picker-multiple>
+		<rbs-field-picker-multiple
+			property="groups" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.groups', ['ucf']) }}"
+			accepted-model="Rbs_User_Group"
+			selector-title="{{ i18nAttr('m.rbs.website.document.topic.groups-picker-title', ['ucf']) }}"
+			allow-creation="false">
+		</rbs-field-picker-multiple>
+		<button class="btn" data-ng-click="updatePermissionRules()">{{ i18n('m.rbs.website.document.topic.update-permission-rules', ['ucf']) }}</button>
+	</div>
+	<div>
+		<button ng-if="!restrict" class="btn" data-ng-click="updatePermissionRules()">{{ i18n('m.rbs.website.document.topic.save', ['ucf']) }}</button>
+	</div>
 </div>

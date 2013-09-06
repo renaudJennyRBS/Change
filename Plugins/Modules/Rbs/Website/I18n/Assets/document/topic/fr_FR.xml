@@ -24,5 +24,6 @@
 	<key id="users-picker-title">sélectionner les utilisateurs</key>
 	<key id="groups">groupes d'utilisateurs</key>
 	<key id="groups-picker-title">sélectionner les groupes d'utilisateurs</key>
+	<key id="save">enregistrer</key>
 	<key id="update-permission-rules">enregistrer les règles</key>
 </i18n>

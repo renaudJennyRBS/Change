@@ -302,21 +302,28 @@ class PermissionsManager
 		return $sq->getResults($sq->getRowsConverter()->addIntCol('accessor_id'));
 	}
 
-	public function deleteWebRule($sectionId, $websiteId, $accessorId = 0)
+	public function deleteWebRules($sectionId, $websiteId, $accessorIds = [])
 	{
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('hasWebPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->getSqlMapping()->getWebPermissionRuleTable());
-			$qb->where($fb->logicAnd(
-				$fb->eq($fb->column('accessor_id'), $fb->integerParameter('accessorId')),
+			$logicAnd = $fb->logicAnd(
 				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
 				$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
-			));
+			);
+			if (count($accessorIds))
+			{
+				$logicAnd->addArgument(
+					//TODO: find a good way to bind an array
+					$fb->in($fb->column('accessor_id'), $accessorIds)
+				);
+			}
+			$qb->where($logicAnd);
 		}
 		$dq = $qb->deleteQuery();
-		$dq->bindParameter('accessorId', intval($accessorId));
+//		$dq->bindParameter('accessorId', $accessorIds);
 		$dq->bindParameter('sectionId', intval($sectionId));
 		$dq->bindParameter('websiteId', intval($websiteId));
 		$tm = $this->getApplicationServices()->getTransactionManager();
