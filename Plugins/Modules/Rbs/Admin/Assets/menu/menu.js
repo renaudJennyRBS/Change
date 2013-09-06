@@ -36,6 +36,7 @@
 			else {
 				$scope.chuckUrl = null;
 			}
+			$scope.filterResults = $filter('filter')($scope.menu.entries, $scope.filterModules);
 		});
 
 		$scope.open = function () {
@@ -65,11 +66,9 @@
 		};
 
 		$scope.go = function () {
-			var found = $filter('filter')($scope.menu.entries, $scope.filterModules);
-			console.log("go: ", $scope.filterModules, found);
-			if (found.length === 1) {
+			if ($scope.filterResults.length === 1) {
 				this.close();
-				$location.path(found[0].url);
+				$location.path($scope.filterResults[0].url);
 			}
 		};
 

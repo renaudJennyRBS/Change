@@ -36,6 +36,11 @@
 	<fieldset ng-show="section=='content'"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.document.staticpage.editableContent', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<div rbs-tip="Rbs_PageEditor_Markdown">
+			{{ i18n('m.rbs.admin.tips.rbs-pageeditor-markdown') }}
+		</div>
+
 		<structure-editor name="contents"
 		                  ng-model="document.editableContent"
 		                  template="(=pageTemplate=)">

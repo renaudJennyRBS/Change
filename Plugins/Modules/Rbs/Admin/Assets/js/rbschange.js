@@ -6,9 +6,7 @@
 	$.fn.reverse = [].reverse;
 
 	// Declares the main module and its dependencies.
-	// TODO Re-enable 'ngAnimate' module when it is bug free:
-	// https://github.com/angular/angular.js/issues/3613
-	var app = angular.module('RbsChange', [/*'ngAnimate', */'ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule']);
+	var app = angular.module('RbsChange', ['ngAnimate', 'ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule']);
 
 
 	//-------------------------------------------------------------------------
@@ -143,7 +141,7 @@
 		return {
 			'restrict'   : 'A',
 			link : function (scope, elm) {
-				elm.text('RBS Change version ' + version);
+				elm.html('RBS Change version ' + version + '<small style="display: block;">AngularJS ' + angular.version.full + ' | jQuery ' + $.fn.jquery + '</small>');
 			}
 		};
 	}]);

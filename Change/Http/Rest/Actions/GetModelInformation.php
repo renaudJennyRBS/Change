@@ -95,6 +95,7 @@ class GetModelInformation
 			$result->setMeta('frontofficeIndexable', $model->isFrontofficeIndexable());
 			$result->setMeta('localized', $model->isLocalized());
 			$result->setMeta('publishable', $model->isPublishable());
+			$result->setMeta('activable', $model->isActivable());
 			$result->setMeta('stateless', $model->isStateless());
 			$result->setMeta('abstract', $model->isAbstract());
 			$result->setMeta('useCorrection', $model->useCorrection());

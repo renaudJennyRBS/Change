@@ -131,6 +131,8 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 				$pathParts = explode('/', $result->getPathInfo());
 				array_pop($pathParts);
 				$result->setProperty('actions', array(new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl')));
+				$result->setProperty('width', $document->getWidth());
+				$result->setProperty('height', $document->getHeight());
 			}
 		}, 5);
 	}

@@ -1,13 +1,16 @@
 (function () {
 
+	"use strict";
+
 	angular.module('RbsChange').directive('documentSystemInfoSection', function () {
 
 		return {
 			restrict    : 'A',
-			templateUrl: 'Rbs/Admin/js/directives/document-system-info-section.twig',
+			templateUrl : 'Rbs/Admin/js/directives/document-system-info-section.twig',
 			replace     : false,
 
-			link : function (scope, elm, attrs) {
+			link : function (scope, iElement, iAttrs)
+			{
 			}
 
 		};

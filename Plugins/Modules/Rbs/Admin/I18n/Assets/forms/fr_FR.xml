@@ -31,4 +31,8 @@
 	<key id="picker-choose-model-to-select">type de documents à sélectionner :</key>
 
 	<key id="click-to-select-another-image">cliquer pour sélectionner une autre image depuis votre ordinateur</key>
+
+	<key id="activation">activation</key>
+	<key id="validation">validation</key>
+	<key id="localisation">localisation</key>
 </i18n>

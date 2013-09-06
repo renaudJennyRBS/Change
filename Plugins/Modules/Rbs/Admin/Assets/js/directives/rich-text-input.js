@@ -25,7 +25,10 @@
 						'<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">' +
 							'<div class="btn-toolbar">' +
 
-								'<button ng-if="!useTabs" type="button" class="btn btn-small pull-right" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
+								'<span class="pull-right">' +
+									'<button ng-if="!useTabs" type="button" class="btn btn-small" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
+									'<button type="button" class="btn btn-small btn-info" ng-click="openHelp()"><i class="icon-info-sign"></i></button>' +
+								'</span>' +
 
 								// TODO Remove 'ng-disabled="useTextarea"' when Textarea is fully supported
 
@@ -62,7 +65,8 @@
 
 								// Links
 								'<div class="btn-group" ng-if="availableSelectors.links">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
+									'<button type="button" title="Insérer un lien interne" ng-disabled="useTextarea" class="btn btn-small" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
+									'<button type="button" title="Insérer un lien externe" ng-disabled="useTextarea" class="btn btn-small" ng-click="insertExternalLink()"><i class="icon-external-link"></i></button>' +
 								'</div>' +
 
 								// Users
@@ -100,19 +104,19 @@
 					$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
 					$editorTab,
 					$selectorsContainer,
-					$selectors,
-					selectorNames = ['media', 'links', 'users', 'usergroups'];
+					$selectors;
 
 				scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
 
 				// Init available selectors.
-				(function () {
-					scope.availableSelectors = {};
-					var selectors = ' '+attrs.selectors+' ';
-					angular.forEach(selectorNames, function (sel) {
-						scope.availableSelectors[sel] = angular.isUndefined(attrs.selectors) || selectors.indexOf(' ' + sel + ' ') !== -1;
-					});
-				})();
+				scope.availableSelectors = {
+					'media' : true,
+					'links' : true
+				};
+				if (attrs.profile === 'Admin') {
+					scope.availableSelectors.users = true;
+					scope.availableSelectors.usergroups = true;
+				}
 
 				function ensureSelectorsReady () {
 					if (! $selectors) {
@@ -571,6 +575,21 @@
 							scope.mdInsertText('@+' + userOrGroup.identifier);
 						}
 					});
+				};
+
+				scope.insertExternalLink = function () {
+					var	href = prompt("Veuillez saisir l'adresse de la page à lier"),
+						title = prompt("Veuillez saisir le titre du lien (optionnel)");
+					scope.mdInsertText(buildMdLinkTag(href, title || href));
+				};
+
+
+				//
+				// Help
+				//
+
+				scope.openHelp = function () {
+					window.open('http://fr.wikipedia.org/wiki/Markdown#Quelques_exemples', 'rbsChangeHelp', 'width=800,height=600,scrollbars=yes,resizable=yes');
 				};
 			}
 
