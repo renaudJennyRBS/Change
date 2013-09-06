@@ -1,9 +1,13 @@
 <div>
 	<div class="leave-message">
 		<legend>{{ i18n('m.rbs.timeline.admin.leave-a-message-for-document-legend', ['ucf']) }}</legend>
-		<rbs-rich-text-input data-ng-model="newMessage" class="input-block-level" preview-profile="Admin"></rbs-rich-text-input>
-		<span class="help-block">{{ i18n('m.rbs.timeline.admin.leave-a-message-helper', ['ucf']) }}</span>
-		<button type="button" data-ng-click="sendMessage()" class="btn btn-success message-send-button">{{ i18n('m.rbs.timeline.admin.leave-a-message-submit', ['ucf']) }}</button>
+		<div rbs-tip="RbsTimelineMentionUsers" class="margin-top">
+			{{ i18n('m.rbs.timeline.admin.leave-a-message-helper', ['ucf']) }}
+		</div>
+		<rbs-rich-text-input ng-model="newMessage" class="input-block-level" profile="Admin"></rbs-rich-text-input>
+		<div class="btn-toolbar">
+			<button type="button" ng-click="sendMessage()" class="btn btn-success message-send-button">{{ i18n('m.rbs.timeline.admin.leave-a-message-submit', ['ucf']) }}</button>
+		</div>
 	</div>
 	<div>
 		<div data-role="message-list" data-ng-repeat="message in timelineMessages">

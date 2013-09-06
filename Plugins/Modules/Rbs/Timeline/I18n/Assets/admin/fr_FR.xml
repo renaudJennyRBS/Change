@@ -5,10 +5,10 @@
 	<key id="leave-a-message-write">écrire</key>
 	<key id="leave-a-message-preview">prévisualiser</key>
 	<key id="leave-a-message-placeholder">écrire un message.</key>
-	<key id="leave-a-message-helper">le format utilisé est le Markdown.
-		Utilisez le @ pour désigner une personne (elle sera avertie du nouveau message).
-		Le @+ pour désigner un groupe (tous les membres de ce groupe seront averties du nouveau message).</key>
-	<key id="leave-a-message-submit">envoyer le message</key>
+	<key id="leave-a-message-helper" format="html"><![CDATA[<h4>Mentionner des utilisateurs</h4>
+	Utilisez le caractère <strong>@</strong> pour désigner une personne
+	ou <strong>@+</strong> pour désigner un groupe de personnes.<br/>Les personnes ainsi mentionnées seront averties du nouveau message.]]></key>
+	<key id="leave-a-message-submit">poster le message</key>
 	<key id="leave-a-message-update">mettre à jour</key>
 	<key id="edited-message">message modifié le : </key>
 </i18n>
