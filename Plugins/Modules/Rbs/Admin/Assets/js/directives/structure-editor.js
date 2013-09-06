@@ -2280,7 +2280,7 @@
 			"require"    : '^structureEditor',
 			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text" selectors="media links"></rbs-rich-text-input></div>',
+			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text" profile="Website"></rbs-rich-text-input></div>',
 
 			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");

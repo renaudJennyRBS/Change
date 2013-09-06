@@ -104,19 +104,19 @@
 					$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
 					$editorTab,
 					$selectorsContainer,
-					$selectors,
-					selectorNames = ['media', 'links', 'users', 'usergroups'];
+					$selectors;
 
 				scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
 
 				// Init available selectors.
-				(function () {
-					scope.availableSelectors = {};
-					var selectors = ' '+attrs.selectors+' ';
-					angular.forEach(selectorNames, function (sel) {
-						scope.availableSelectors[sel] = angular.isUndefined(attrs.selectors) || selectors.indexOf(' ' + sel + ' ') !== -1;
-					});
-				})();
+				scope.availableSelectors = {
+					'media' : true,
+					'links' : true
+				};
+				if (attrs.profile === 'Admin') {
+					scope.availableSelectors.users = true;
+					scope.availableSelectors.usergroups = true;
+				}
 
 				function ensureSelectorsReady () {
 					if (! $selectors) {
