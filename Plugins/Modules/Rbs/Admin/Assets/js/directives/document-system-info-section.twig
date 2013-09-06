@@ -1,50 +1,63 @@
-<div class="control-group">
-	<label class="control-label">{{ i18n('m.rbs.generic.document.id',['ucf']) }}</label>
-	<div class="controls">
-		<span class="uneditable-input input-small">(=document.id=)</span>
-		<span class="muted" ng-if="document.id < 0">{{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span>
-	</div>
-</div>
+<rbs-field label="{{ i18nAttr('m.rbs.generic.document.id',['ucf']) }}">
+	<span class="uneditable-input input-small">(=document.id=)</span>
+	<span class="muted" ng-if="document.id < 0">{{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span>
+</rbs-field>
 
-<div class="control-group">
-	<label class="control-label">{{ i18n('m.rbs.generic.document.model',['ucf']) }}</label>
-	<div class="controls">
-		<span class="uneditable-input input-xlarge">(=document.model=)</span>
-	</div>
-</div>
+<rbs-field label="{{ i18nAttr('m.rbs.generic.document.model',['ucf']) }}">
+	<span class="uneditable-input input-xlarge">(=document.model=)</span>
+</rbs-field>
 
-<hr/>
-<h4>Localisation</h4>
+<!-- Localizable -->
 
-<div class="control-group" ng-if="document.refLCID">
-	<label class="control-label">{{ i18n('m.rbs.admin.languages',['ucf']) }}</label>
-	<div class="controls">
-		<span class="label label-success"><i class="icon-book"></i> (=document.refLCID=)</span>
-		<span data-ng-repeat="l in document.META$.locales" data-ng-show="l.id != document.refLCID" class="label">(=l.label=)</span>
-	</div>
-</div>
-
-<div ng-if="document.publicationStatus">
+<div ng-if="modelInfo.metas.localized">
 	<hr/>
-	<h4>Validation</h4>
-	<div class="control-group">
-		<label class="control-label">{{ i18n('m.rbs.generic.document.publicationstatus',['ucf']) }}</label>
-		<div class="controls">
-			<span class="uneditable-input"><status ng-model="document" class="small"></status> (=document.publicationStatus=)</span>
-		</div>
-	</div>
+	<h4>{{ i18n('m.rbs.admin.forms.localisation',['ucf']) }}</h4>
 
-	<div class="control-group">
-		<label class="control-label">{{ i18n('m.rbs.generic.document.startpublication',['ucf']) }}</label>
-		<div class="controls">
-			<date-selector ng-model="document.startPublication"></date-selector>
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">{{ i18n('m.rbs.generic.document.endpublication',['ucf']) }}</label>
-		<div class="controls">
-			<date-selector ng-model="document.endPublication"></date-selector>
-		</div>
-	</div>
+	<rbs-field ng-if="document.refLCID" label="{{ i18nAttr('m.rbs.admin.languages',['ucf']) }}">
+		<span class="uneditable-input input-xlarge"><i class="icon-book"></i> (=document.refLCID=)
+			<span ng-repeat="l in document.META$.locales" ng-show="l.id != document.refLCID">(=l.label=)</span>
+		</span>
+	</rbs-field>
+</div>
 
+<!-- Publishable -->
+
+<div ng-if="modelInfo.metas.publishable">
+	<hr/>
+	<h4>{{ i18n('m.rbs.admin.forms.validation',['ucf']) }}</h4>
+
+	<rbs-field label="{{ i18nAttr('m.rbs.generic.document.publicationstatus',['ucf']) }}">
+		<span class="uneditable-input"><status ng-model="document" class="small"></status> (=document.publicationStatus=)</span>
+	</rbs-field>
+
+	<rbs-field-date
+			label="{{ i18nAttr('m.rbs.generic.document.startpublication',['ucf']) }}"
+			property="startPublication">
+	</rbs-field-date>
+
+	<rbs-field-date
+			label="{{ i18nAttr('m.rbs.generic.document.endpublication',['ucf']) }}"
+			property="endPublication">
+	</rbs-field-date>
+</div>
+
+<!-- Activable -->
+
+<div ng-if="modelInfo.metas.activable">
+	<hr/>
+	<h4>{{ i18n('m.rbs.admin.forms.activation',['ucf']) }}</h4>
+	<rbs-field-boolean
+			property="active"
+			label="{{ i18nAttr('m.rbs.generic.document.active', ['ucf']) }}">
+	</rbs-field-boolean>
+
+	<rbs-field-date
+			label="{{ i18nAttr('m.rbs.generic.document.startactivation',['ucf']) }}"
+			property="startActivation">
+	</rbs-field-date>
+
+	<rbs-field-date
+			label="{{ i18nAttr('m.rbs.generic.document.endactivation',['ucf']) }}"
+			property="endActivation">
+	</rbs-field-date>
 </div>
