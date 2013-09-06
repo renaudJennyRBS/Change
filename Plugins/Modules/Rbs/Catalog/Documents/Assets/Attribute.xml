@@ -4,6 +4,7 @@
 		editable="true" localized="true">
 	<properties>
 		<property name="title" type="String" localized="true" />
+		<property name="description" type="RichText" localized="true" />
 		<property name="valueType" type="String" default-value="Code" required="true">
 			<dboptions length="10" />
 			<constraint name="enum" fromList="Rbs_Catalog_Collection_AttributeValueTypes" />
@@ -16,5 +17,7 @@
 		</property>
 		<property name="productProperty" type="String" />
 		<property name="attributes" type="DocumentArray" document-type="Rbs_Catalog_Attribute" />
+		<property name="visibility" type="JSON" />
+		<property name="documentType" type="String" />
 	</properties>
 </document>

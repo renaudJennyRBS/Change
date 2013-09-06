@@ -36,6 +36,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_Collection_AttributeSet':
 					(new \Rbs\Catalog\Collection\Collections())->addAttributeSet($event);
 					break;
+				case 'Rbs_Catalog_Collection_AttributeVisibility':
+					(new \Rbs\Catalog\Collection\Collections())->addAttributeVisibility($event);
+					break;
 				case 'Rbs_Price_Collection_BillingAreasForWebStore':
 					(new \Rbs\Price\Collection\Collections())->addBillingAreasForWebStore($event);
 					break;
@@ -59,6 +62,7 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Catalog_Collection_AttributeValueTypes';
 			$codes[] = 'Rbs_Catalog_Collection_AttributeCollections';
 			$codes[] = 'Rbs_Catalog_Collection_AttributeSet';
+			$codes[] = 'Rbs_Catalog_Collection_AttributeVisibility';
 			$codes[] = 'Rbs_Price_Collection_BillingAreasForWebStore';
 			$codes[] = 'Rbs_Price_Collection_Iso4217';
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';

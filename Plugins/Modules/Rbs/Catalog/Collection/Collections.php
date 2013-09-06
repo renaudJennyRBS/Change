@@ -101,4 +101,23 @@ class Collections
 			$event->stopPropagation();
 		}
 	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addAttributeVisibility(\Zend\EventManager\Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$collection = array(
+				'specifications' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-specifications', array('ucf')),
+				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-comparisons', array('ucf'))
+			);
+			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
 }
