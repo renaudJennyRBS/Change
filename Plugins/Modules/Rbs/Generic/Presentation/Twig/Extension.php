@@ -286,10 +286,15 @@ class Extension implements \Twig_ExtensionInterface
 	public function currentURL($query = array(), $fragment = null)
 	{
 		$uri = $this->getUrlManager()->getSelf();
+		$oldQuery = $uri->getQueryAsArray();
+		unset($oldQuery['errId']);
+
 		if (is_array($query) && count($query))
 		{
-			$uri->setQuery(array_merge($uri->getQueryAsArray(), $query));
+			$oldQuery = array_merge($oldQuery, $query);
+
 		}
+		$uri->setQuery($oldQuery);
 		if ($fragment)
 		{
 			$uri->setFragment($fragment);

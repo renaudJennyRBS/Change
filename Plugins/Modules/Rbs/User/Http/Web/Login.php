@@ -1,37 +1,25 @@
 <?php
 namespace Rbs\User\Http\Web;
 
-use Change\Http\Event;
+use Change\Http\Web\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
 * @name \Rbs\User\Http\Web\Login
 */
-class Login
+class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	const DEFAULT_NAMESPACE = 'Authentication';
 
 	/**
 	 * @param Event $event
+	 * @return mixed
 	 */
-	public static function executeByName(Event $event)
+	public function execute(Event $event)
 	{
 		if ($event->getRequest()->getMethod() === 'POST')
 		{
-			$a = new self();
-			$a->login($event);
-		}
-	}
-
-	public function execute(Event $event)
-	{
-		$request = $event->getRequest();
-		if ($request->getMethod() === 'POST')
-		{
-			if (strpos($request->getPath(), 'Action/Rbs/User/Login') !== false)
-			{
-				$this->login($event);
-			}
+			$this->login($event);
 		}
 	}
 
