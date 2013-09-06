@@ -1,6 +1,4 @@
-<div class="control-group property" data-ng-class="{'required': attribute.required}">
-	<label class="control-label" for="(= attribute.id =)">(= attribute.label =)</label>
-	<div class="controls">
+<rbs-field label="(= attribute.label =)" data-ng-class="{'required': attribute.required}">
 		<div ng-if="attribute.collectionCode">
 			<select ng-model="attribute.value.value" rbs-items-from-collection="(= attribute.collectionCode =)">
 				<option value=""></option>
@@ -26,5 +24,4 @@
 				<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attribute.required" id="(= attribute.id =)" ng-model="attribute.value.value" profile="Website"></rbs-rich-text-input>
 			</div>
 		</div>
-	</div>
-</div>
+</rbs-field>
