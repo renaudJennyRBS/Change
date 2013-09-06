@@ -200,4 +200,13 @@ class SqlMapping
 	{
 		return 'change_permission_rule';
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getWebPermissionRuleTable()
+	{
+		return 'change_web_permission_rule';
+	}
 }

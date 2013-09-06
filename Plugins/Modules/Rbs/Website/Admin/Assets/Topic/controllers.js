@@ -188,4 +188,97 @@
 	];
 	app.controller('Rbs_Website_Topic_ListController', ListController);
 
+	/**
+	 * Controller for permission.
+	 *
+	 * @param $scope
+	 * @param $routeParams
+	 * @param $location
+	 * @param REST
+	 * @param i18n
+	 * @param $http
+	 * @param ArrayUtils
+	 * @param MainMenu
+	 * @param Breadcrumb
+	 * @param $q
+	 * @constructor
+	 */
+	function PermissionController($scope, $routeParams, $location, REST, i18n, $http, ArrayUtils, MainMenu, Breadcrumb, $q)
+	{
+		$scope.reloadPermissions = function (sectionId, websiteId){
+			var url = REST.getBaseUrl('Rbs/Website/SectionPermissionRules?sectionId=' + sectionId + '&websiteId=' + websiteId);
+			$http.get(url).success(function (data){
+				if (data.userIds.length > 0)
+				{
+					REST.query({
+						model: 'Rbs_User_User',
+						where: {
+							and: [
+								{
+									op: 'in',
+									lexp: {
+										property: 'id'
+									},
+									rexp: data.userIds
+								}
+							]
+						}
+					}).then(function (data){
+							$scope.document.users = data.resources;
+						});
+				}
+
+				if (data.groupIds.length > 0)
+				{
+					REST.query({
+						model: 'Rbs_User_Group',
+						where: {
+							and: [
+								{
+									op: 'in',
+									lexp: {
+										property: 'id'
+									},
+									rexp: data.groupIds
+								}
+							]
+						}
+					}).then(function (data){
+							$scope.document.groups = data.resources;
+						});
+				}
+			});
+		};
+
+		REST.resource($routeParams.id).then(function (section){
+			$scope.document = section;
+			Breadcrumb.setPath([[section.label, section.url()], 'Permissions']);
+			Breadcrumb.setResource(null);
+			var sectionId = $scope.document.id;
+			var websiteId = $scope.document.model == 'Rbs_Website_Website' ? $scope.document.id : $scope.document.website.id;
+			$scope.reloadPermissions(sectionId, websiteId);
+		});
+
+		$scope.updatePermissionRules = function (){
+
+			var url = REST.getBaseUrl('Rbs/Website/UpdateSectionPermissionRules');
+			var sectionId = $scope.document.id;
+			var websiteId = $scope.document.model == 'Rbs_Website_Website' ? $scope.document.id : $scope.document.website.id;
+			var params = {
+				sectionId: sectionId,
+				websiteId: websiteId,
+				users: $scope.document.users,
+				groups: $scope.document.groups
+			};
+
+			$http.post(url, params).success(function(){
+				$scope.reloadPermissions(sectionId, websiteId);
+			});
+		};
+
+		MainMenu.loadModuleMenu('Rbs_Website');
+	}
+
+	PermissionController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', 'RbsChange.Breadcrumb', '$q'];
+	app.controller('Rbs_Website_Topic_PermissionController', PermissionController);
 })();

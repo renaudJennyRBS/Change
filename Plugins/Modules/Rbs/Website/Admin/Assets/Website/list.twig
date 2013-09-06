@@ -18,6 +18,11 @@
 	               model="Rbs_Website_Website"
 	               filter-query="query"
 	               actions="default">
+
+		<quick-actions>
+			[action default] || <a href="(= doc | documentURL : 'permission' =)">{{ i18nAttr('m.rbs.website.document.topic.permission') }}</a>
+		</quick-actions>
+
 		<column name="label" primary="true">
 			<strong><a href ng-href="(= doc|documentURL:'tree'=)">(= doc.label =)</a></strong>
 			<i class="icon-rbs-navigate-to"></i>

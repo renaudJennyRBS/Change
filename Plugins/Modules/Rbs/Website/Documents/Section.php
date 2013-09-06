@@ -2,6 +2,8 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
+use Change\Documents\TreeNode;
+use Change\Permissions\PermissionsManager;
 use Rbs\Website\Documents\FunctionalPage;
 
 /**
@@ -54,6 +56,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	{
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 		$eventManager->attach('getPageByFunction', array($this, 'getPageByFunction'), 10);
+		$eventManager->attach(Event::EVENT_NODE_UPDATED, array($this, 'onNodeUpdated'), 10);
 	}
 
 	/**
@@ -117,6 +120,32 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 						}
 					}
 				}
+			}
+		}
+	}
+
+	public function onNodeUpdated(Event $event)
+	{
+		$node = $event->getParam('node');
+		if ($node instanceof TreeNode)
+		{
+			/* @var $section \Rbs\Website\Documents\Section */
+			$section = $event->getDocument();
+			$applicationServices = $section->getDocumentServices()->getApplicationServices();
+			$permissionManager = new PermissionsManager();
+			$permissionManager->setApplicationServices($applicationServices);
+
+			$accessorIds = $permissionManager->getSectionAccessorIds($node->getParentId(), $section->getWebsite()->getId());
+			if (count($accessorIds))
+			{
+				foreach ($accessorIds as $accessorId)
+				{
+					$permissionManager->addWebRule($section->getId(), $section->getWebsite()->getId(), $accessorId);
+				}
+			}
+			else
+			{
+				$permissionManager->addWebRule($section->getId(), $section->getWebsite()->getId());
 			}
 		}
 	}

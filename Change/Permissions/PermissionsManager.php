@@ -215,4 +215,120 @@ class PermissionsManager
 		$rule_id = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('rule_id'));
 		return $rule_id > 0;
 	}
+
+	/**
+	 * @param integer $sectionId
+	 * @param integer $websiteId
+	 * @param integer $accessorId
+	 * @throws \Exception
+	 */
+	public function addWebRule($sectionId, $websiteId, $accessorId = 0)
+	{
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('addNewPermissionRule');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->insert($fb->table($fb->getSqlMapping()->getWebPermissionRuleTable()));
+			$qb->addColumns($fb->column('accessor_id'), $fb->column('section_id'), $fb->column('website_id'));
+			$qb->addValues($fb->integerParameter('accessorId'), $fb->integerParameter('sectionId')
+				, $fb->integerParameter('websiteId'));
+		}
+		$iq = $qb->insertQuery();
+		$iq->bindParameter('accessorId', intval($accessorId));
+		$iq->bindParameter('sectionId', intval($sectionId));
+		$iq->bindParameter('websiteId', intval($websiteId));
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$iq->execute();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @param integer $sectionId
+	 * @param integer $websiteId
+	 * @param integer $accessorId
+	 * @return boolean
+	 */
+	public function hasWebRule($sectionId, $websiteId, $accessorId = 0)
+	{
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('hasWebPermissionRule');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('rule_id'));
+			$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('accessor_id'), $fb->integerParameter('accessorId')),
+				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
+			));
+		}
+		$sq = $qb->query();
+		$sq->bindParameter('accessorId', intval($accessorId));
+		$sq->bindParameter('sectionId', intval($sectionId));
+		$sq->bindParameter('websiteId', intval($websiteId));
+		$rule_id = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('rule_id'));
+		return $rule_id > 0;
+	}
+
+	/**
+	 * @param integer $sectionId
+	 * @param integer $websiteId
+	 * @return integer[]
+	 */
+	public function getSectionAccessorIds($sectionId, $websiteId)
+	{
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('getWebPermissionRule');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('accessor_id'));
+			$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
+			));
+		}
+		$sq = $qb->query();
+		$sq->bindParameter('sectionId', intval($sectionId));
+		$sq->bindParameter('websiteId', intval($websiteId));
+		return $sq->getResults($sq->getRowsConverter()->addIntCol('accessor_id'));
+	}
+
+	public function deleteWebRule($sectionId, $websiteId, $accessorId = 0)
+	{
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('hasWebPermissionRule');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->getSqlMapping()->getWebPermissionRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('accessor_id'), $fb->integerParameter('accessorId')),
+				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
+			));
+		}
+		$dq = $qb->deleteQuery();
+		$dq->bindParameter('accessorId', intval($accessorId));
+		$dq->bindParameter('sectionId', intval($sectionId));
+		$dq->bindParameter('websiteId', intval($websiteId));
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$dq->execute();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
 }

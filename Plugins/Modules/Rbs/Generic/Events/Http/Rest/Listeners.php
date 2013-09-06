@@ -176,6 +176,18 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Website\Http\Rest\Actions\PagesForFunction())->execute($event);
 					});
 					break;
+				case 'Rbs/Website/SectionPermissionRules' :
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Website\Http\Rest\Actions\SectionPermissionRules())->execute($event);
+					});
+					break;
+				case 'Rbs/Website/UpdateSectionPermissionRules' :
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Website\Http\Rest\Actions\UpdateSectionPermissionRules())->execute($event);
+					});
+					break;
 				case 'Rbs/ModelsInfo' :
 					$event->setAction(function ($event)
 					{

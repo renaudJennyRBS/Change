@@ -18,6 +18,8 @@ class Event extends \Zend\EventManager\Event
 
 	const EVENT_DISPLAY_PAGE    = 'http.web.displayPage';
 
+	const EVENT_NODE_UPDATED       	= 'node.updated';
+
 	/**
 	 * @throws \RuntimeException
 	 * @return \Change\Documents\AbstractDocument
