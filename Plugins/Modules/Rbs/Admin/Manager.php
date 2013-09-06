@@ -61,6 +61,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$this->jsAssetManager = new AssetManager();
 		$this->cssAssetManager = new AssetManager();
 
+		$this->addExtension(new \Rbs\Admin\Presentation\Twig\Extension($this));
 	}
 
 	/**
