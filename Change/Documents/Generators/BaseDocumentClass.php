@@ -251,7 +251,7 @@ class BaseDocumentClass
 	 */
 	public function activated(\DateTime $at = null)
 	{
-		if ($this->getActive())
+		if ($this->getDocumentModel()->getPropertyValue($this, \'active\'))
 		{
 			$st = $this->getCurrentStartActivation();
 			$ep = $this->getCurrentEndActivation();
