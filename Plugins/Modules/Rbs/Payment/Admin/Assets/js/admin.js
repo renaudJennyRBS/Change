@@ -13,6 +13,7 @@
 
 			$delegate.routesForModels([
 				'Rbs_Payment_Connector',
+				'Rbs_Payment_DeferredConnector',
 				'Rbs_Payment_Transaction'
 			]);
 
@@ -20,7 +21,6 @@
 		}]);
 	}]);
 
-	__change.createEditorForModel('Rbs_Payment_Connector');
+	__change.createEditorForModel('Rbs_Payment_DeferredConnector');
 	__change.createEditorForModel('Rbs_Payment_Transaction');
-
 })();

@@ -10,7 +10,7 @@
 	<search-filters model="Rbs_Payment_Connector" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href ng-href="(= 'Rbs_Payment_Connector' | documentURL:'new' =)">{{ i18n('m.rbs.payment.admin.js.connector-create', ['ucf']) }}</a>
+		{{ createLinks('Rbs_Payment_Connector') }}
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsPaymentConnector"
