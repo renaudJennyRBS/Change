@@ -16,6 +16,6 @@ class RichtextInformation  extends \Change\Presentation\Blocks\Information
 		parent::__construct($name);
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.richtext'));
-		$this->addInformationMeta('contentType', Property::TYPE_STRING, true, 'html');
+		$this->addInformationMeta('contentType', Property::TYPE_STRING, true, 'Markdown');
 	}
 }

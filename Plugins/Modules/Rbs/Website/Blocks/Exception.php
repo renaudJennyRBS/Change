@@ -28,8 +28,7 @@ class Exception extends Block
 		if ($exception instanceof \Exception)
 		{
 			$message = 'Exception (code ' . $exception->getCode() . ') : ' . $exception->getMessage();
-			$configuration = $event->getPresentationServices()->getApplicationServices()->getApplication()->getConfiguration();
-			if ($configuration->getEntry('Rbs/Application/development-mode'))
+			if ($parameters->getParameter('showStackTrace'))
 			{
 				$message .= PHP_EOL . $exception->getTraceAsString();
 			}

@@ -7,4 +7,13 @@
 	<key id="menu-maxlevel">profondeur maximale</key>
 	<key id="menu-showtitle">afficher le titre</key>
 	<key id="sitemap">plan du site</key>
+
+	<key id="exception">exception</key>
+	<key id="exception-show-stack-trace">afficher la stack trace</key>
+
+	<key id="error">erreur</key>
+	<key id="error-codehttp">code d'erreur http</key>
+	<key id="function-error-404">Page non trouvée</key>
+	<key id="function-error-403">Acces refusé</key>
+	<key id="function-error-500">Erreur interne de l'application</key>
 </i18n>

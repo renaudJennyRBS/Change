@@ -2,9 +2,13 @@
 namespace Change\Http\Web;
 
 use Change\Application\ApplicationServices;
+use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentServices;
-use Change\Presentation\PresentationServices;
+use Change\Http\Request;
 use Change\Http\Result;
+use Change\Http\Web\Event;
+use Change\Presentation\Interfaces\Page;
+use Change\Presentation\PresentationServices;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
@@ -118,12 +122,12 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param Event $event
-	 * @return Result
+	 * @param Request $request
+	 * @return boolean
 	 */
-	public function notFound($event)
+	protected function acceptHtml($request)
 	{
-		$accept = $event->getRequest()->getHeader('Accept');
+		$accept = $request->getHeader('Accept');
 		if ($accept instanceof \Zend\Http\Header\Accept)
 		{
 			/* @var $acceptFieldValuePart \Zend\Http\Header\Accept\FieldValuePart\AcceptFieldValuePart */
@@ -131,20 +135,56 @@ class Controller extends \Change\Http\Controller
 			{
 				if ($acceptFieldValuePart->getSubtype() === 'html')
 				{
-					$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error404');
-					$event->setParam('page', $page);
-					$this->doSendResult($this->getEventManager(), $event);
-					$result = $event->getResult();
-					if ($result !== null)
-					{
-						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
-						return $result;
-					}
-					break;
+					return true;
 				}
 			}
 		}
+		return false;
+	}
+
+	/**
+	 * @param Event $event
+	 * @return Result
+	 */
+	public function notFound($event)
+	{
+		if ($this->acceptHtml($event->getRequest()))
+		{
+			$result = $this->getFunctionalResult($event, 'Error_404');
+			if ($result !== null)
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
+				return $result;
+			}
+		}
 		return parent::notFound($event);
+	}
+
+	public function unauthorized(\Change\Http\Event $event)
+	{
+		if ($this->acceptHtml($event->getRequest()))
+		{
+			$result = $this->getFunctionalResult($event, 'Error_401');
+			if ($result !== null)
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_401);
+				return $result;
+			}
+		}
+		return parent::unauthorized($event);
+	}
+
+	public function forbidden(\Change\Http\Event $event)
+	{
+		if ($this->acceptHtml($event->getRequest()))
+		{
+			$result = $this->getFunctionalResult($event, 'Error_403');
+			if ($result !== null)
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_403);
+				return $result;
+			}
+		}
 	}
 
 	/**
@@ -162,10 +202,7 @@ class Controller extends \Change\Http\Controller
 			{
 				if ($acceptFieldValuePart->getSubtype() === 'html')
 				{
-					$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()->getThemeManager(), 'error500');
-					$event->setParam('page', $page);
-					$this->doSendResult($this->getEventManager(), $event);
-					$result = $event->getResult();
+					$result = $this->getFunctionalResult($event, 'Error_500');
 					if ($result !== null)
 					{
 						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_500);
@@ -176,6 +213,35 @@ class Controller extends \Change\Http\Controller
 			}
 		}
 		return parent::error($event);
+	}
+
+	/**
+	 * @param Event $event
+	 * @param string $functionCode
+	 * @return \Change\Http\Result
+	 */
+	protected function getFunctionalResult($event, $functionCode)
+	{
+		$page = null;
+		$website = $event->getWebsite();
+		if ($website instanceof AbstractDocument)
+		{
+			$em = $website->getEventManager();
+			$args = array('functionCode' => $functionCode);
+			$docEvent = new \Change\Documents\Events\Event('getPageByFunction', $website, $args);
+			$em->trigger($docEvent);
+			$page = $docEvent->getParam('page');
+		}
+
+		if (!($page instanceof Page))
+		{
+			$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()
+				->getThemeManager(), $functionCode);
+		}
+
+		$event->setParam('page', $page);
+		$this->doSendResult($this->getEventManager(), $event);
+		return $event->getResult();
 	}
 
 	/**

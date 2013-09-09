@@ -105,9 +105,14 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 						if (isset($pageBySections[$sectionId]))
 						{
 							$page = $this->getDocumentManager()->getDocumentInstance($pageBySections[$sectionId]);
+							/* @var $section \Change\Presentation\Interfaces\Section */
 							$section = $this->getDocumentManager()->getDocumentInstance($sectionId);
 							$event->setParam('page', $page);
 							$event->setParam('section', $section);
+							if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+							{
+								$page->setSection($section);
+							}
 							return;
 						}
 					}
