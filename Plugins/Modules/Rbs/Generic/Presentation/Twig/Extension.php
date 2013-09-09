@@ -81,7 +81,12 @@ class Extension implements \Twig_ExtensionInterface
 	public function getFilters()
 	{
 		return array(
-			new \Twig_SimpleFilter('richText', array($this, 'richText'), array('is_safe' => array('all')))
+			new \Twig_SimpleFilter('richText', array($this, 'richText'), array('is_safe' => array('all'))),
+			new \Twig_SimpleFilter('transDate', array($this, 'transDate')),
+			new \Twig_SimpleFilter('transDateTime', array($this, 'transDateTime')),
+			new \Twig_SimpleFilter('boolean', array($this, 'boolean')),
+			new \Twig_SimpleFilter('float', array($this, 'float')),
+			new \Twig_SimpleFilter('integer', array($this, 'integer'))
 		);
 	}
 
@@ -357,6 +362,77 @@ class Extension implements \Twig_ExtensionInterface
 				->setDocumentServices($this->getDocumentServices())
 				->render($richText, "Website", $context);
 		}
-		return htmlspecialchars($richText);
+		return htmlspecialchars(strval($richText));
+	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 * @return string
+	 */
+	public function transDate($dateTime)
+	{
+		if ($dateTime instanceof \DateTime)
+		{
+			return $this->getApplicationServices()->getI18nManager()->transDate($dateTime);
+		}
+		return htmlspecialchars(strval($dateTime));
+	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 * @return string
+	 */
+	public function transDateTime($dateTime)
+	{
+		if ($dateTime instanceof \DateTime)
+		{
+			return $this->getApplicationServices()->getI18nManager()->transDateTime($dateTime);
+		}
+		return htmlspecialchars(strval($dateTime));
+	}
+
+	/**
+	 * @param boolean $boolean
+	 * @return string
+	 */
+	public function boolean($boolean)
+	{
+		if ($boolean === true)
+		{
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.yes', array('ucf'));
+		}
+		elseif ($boolean === false)
+		{
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.no', array('ucf'));
+		}
+		return htmlspecialchars(strval($boolean));
+	}
+
+	/**
+	 * @param float $float
+	 * @return string
+	 */
+	public function float($float)
+	{
+		if (is_numeric($float))
+		{
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::DECIMAL);
+			return $nf->format($float);
+		}
+		return htmlspecialchars(strval($float));
+	}
+
+	/**
+	 * @param integer $integer
+	 * @return string
+	 */
+	public function integer($integer)
+	{
+		if (is_numeric($integer))
+		{
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::DEFAULT_STYLE);
+			return $nf->format($integer);
+		}
+		return htmlspecialchars(strval($integer));
 	}
 }
