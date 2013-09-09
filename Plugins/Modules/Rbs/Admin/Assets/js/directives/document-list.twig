@@ -44,7 +44,7 @@
 	</div>
 
 	<div class="btn-group pull-right">
-		<button type="button" class="btn" ng-disabled="loading" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}"><i ng-class="{'icon-spin':loading}" class="icon-refresh"></i></button>
+		<button type="button" class="btn" ng-disabled="busy" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}"><i ng-class="{'icon-spin':busy}" class="icon-refresh"></i></button>
 	</div>
 </div>
 
@@ -58,7 +58,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'success': isLastCreated(doc), 'selected': doc.selected}">
+			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'error': hasErrors(doc), 'selected': doc.selected}">
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)">
 					<div class="inner">
 						<div class="rbs-kb-switch pull-right">
@@ -77,12 +77,12 @@
 				</td>
 			</tr>
 		</tbody>
-		<tbody ng-show="loading">
+		<tbody ng-show="busy">
 			<tr class="empty-row">
 				<td data-colspan="auto"><i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.admin.lists.loading', ['ucf']) }}</td>
 			</tr>
 		</tbody>
-		<tbody ng-if="collection.length == 0 && !loading">
+		<tbody ng-if="collection.length == 0 && !busy">
 			<tr class="empty-row">
 				<td data-colspan="auto"><i class="icon-frown"></i> {{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</td>
 			</tr>
@@ -90,7 +90,7 @@
 	</table>
 
 	<div ng-switch-when="grid">
-		<div ng-if="collection.length == 0 && !loading" class="empty-row">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</div>
+		<div ng-if="collection.length == 0 && !busy" class="empty-row">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</div>
 		<ul class="thumbnail-grid clearfix">
 			<li ng-repeat="doc in collection"
 			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
@@ -105,7 +105,7 @@
 
 </div>
 
-<footer class="rbsc-list-footer clearfix" ng-hide="(! collection.length && ! loading) || disablePagination">
+<footer class="rbsc-list-footer clearfix" ng-hide="(! collection.length && ! busy) || disablePagination">
 
 		<div class="pull-right">
 			<div class="pagination pagination-small" style="display: block; margin: 0;">

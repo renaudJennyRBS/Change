@@ -29,6 +29,7 @@
 	<rbs-document-list data-dlid="DLRbsWebsiteTopicList"
 	               publishable="true"
 	               tree="Rbs_Website"
+	               extend="listExtend"
 	               filter-query="query">
 
 		<quick-actions>
@@ -52,12 +53,18 @@
 		</column>
 
 		<column name="label" label="Libellé" primary="true">
-			<strong ng-if="doc.is('Rbs_Website_StaticPage')"><a title="Éditer le contenu de la page"
-			   href ng-href="(= doc | documentURL:'form' =)">(=doc.label=)</a></strong>
+			<strong ng-if="doc.is('Rbs_Website_StaticPage')"><a href ng-href="(= doc | documentURL:'form' =)">(=doc.label=)</a></strong>
 			<span ng-if="doc.is('Rbs_Website_Topic')"><strong><a title="Naviguer vers le contenu de la rubrique"
 			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></strong>
 				<i class="icon-rbs-navigate-to"></i>
 			</span>
+		</column>
+
+		<column name="functions" width="32px" label="Index">
+			<button type="button" class="btn" ng-disabled="busy" ng-if="doc.is('Rbs_Website_StaticPage')" ng-class="{'btn-success':extend.isIndexPage(doc)}" ng-click="extend.setIndexPage(doc)">
+				<i ng-class="{true: 'icon-circle', false: 'icon-circle-blank'}[extend.isIndexPage(doc)]"></i>
+			</button>
+
 		</column>
 
 	</rbs-document-list>
