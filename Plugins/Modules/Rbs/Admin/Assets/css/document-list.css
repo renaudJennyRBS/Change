@@ -505,3 +505,8 @@ rbs-document-list th .btn-mini {
 rbs-document-list .btn-toolbar {
 	min-height: 29px;
 }
+
+
+rbs-document-list td .label.pull-right {
+	margin-left: 3px;
+}

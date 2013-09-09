@@ -258,7 +258,7 @@
 				columns.push({
 					"name"  : "nodeOrder",
 					"align"  : "right",
-					"width"  : "90px",
+					"width"  : "70px",
 					"label"  : i18n.trans('m.rbs.admin.admin.js.order | ucf'),
 					"content": '(=doc.META$.treeNode.nodeOrder | number=)'
 				});
@@ -1155,7 +1155,7 @@
 
 						var promise, params;
 
-						scope.loading = true;
+						scope.busy = true;
 
 						params = {
 							'offset' : scope.pagination.offset,
@@ -1236,7 +1236,7 @@
 
 
 					function stopLoading (reason) {
-						scope.loading = false;
+						scope.busy = false;
 						Loading.stop();
 						if (reason) {
 							NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.loading-list-error | ucf'), reason);
@@ -1494,6 +1494,22 @@
 					scope.toggleRelativeDates = function (column) {
 						scope.dateDisplay[column] = scope.dateDisplay[column] === 'relative' ? '' : 'relative';
 					};
+
+
+					scope.setBusy = function () {
+						scope.busy = true;
+					};
+
+					scope.setNotBusy = function () {
+						scope.busy = false;
+					};
+
+					scope.hasErrors = function (doc) {
+						return scope.extend
+							&& angular.isFunction(scope.extend.getDocumentErrors)
+							&& scope.extend.getDocumentErrors(doc) !== null;
+					};
+
 				};
 
 			}

@@ -18,3 +18,9 @@
 .jstree-bootstrap li[rel="Rbs_Website_Topic"].jstree-open > a ins:before    { content: "\f07c"; }
 .jstree-bootstrap li[rel="Rbs_Website_Topic/0"] > a ins:before              { content: "\f114"; }
 .jstree-bootstrap li[rel="Rbs_Website_Topic/0"].jstree-open > a ins:before  { content: "\f115"; }
+
+
+table.document-list td .index-page .icon-2x {
+	opacity: 1;
+	color: #B94A48;
+}

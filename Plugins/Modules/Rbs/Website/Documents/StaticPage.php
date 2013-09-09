@@ -2,6 +2,7 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
+use Change\Documents\Query\Query;
 
 /**
  * @name \Rbs\Website\Documents\StaticPage
@@ -102,5 +103,27 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	public function setPublicationSections($publicationSections)
 	{
 		return $this;
+	}
+
+
+	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	{
+		parent::updateRestDocumentLink($documentLink, $extraColumn);
+		if (in_array('functions', $extraColumn)) {
+			$document = $documentLink->getDocument();
+			$query = new Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+			$query->andPredicates(
+				$query->eq('page', $documentLink->getDocument()),
+				$query->eq('section', $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document)->getParentId())
+			);
+			$functions = array();
+			$funcDocs = $query->getDocuments();
+			foreach ($funcDocs as $func)
+			{
+				/* @var $func \Compilation\Change\Website\Documents\SectionPageFunction */
+				$functions[] = $func->getFunctionCode();
+			}
+			$documentLink->setProperty('functions',  $functions);
+		}
 	}
 }
