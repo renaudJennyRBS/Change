@@ -4,7 +4,7 @@
 	{% for item in thread %}
 		<li{% if loop.last %} class="active"{% endif %}>
 			{% if item.hasUrl %}<a href="{{ item.url }}">{% endif %}
-				{{ item.label }}
+				{{ item.title }}
 			{% if item.hasUrl %}</a>{% endif %}
 		</li>
 	{% endfor %}

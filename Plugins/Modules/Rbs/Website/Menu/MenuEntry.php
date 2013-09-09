@@ -9,7 +9,7 @@ class MenuEntry
 	/**
 	 * @var string
 	 */
-	protected $label;
+	protected $title;
 
 	/**
 	 * @var string
@@ -35,18 +35,18 @@ class MenuEntry
 	 * @param string $label
 	 * @return $this
 	 */
-	public function setLabel($label)
+	public function setTitle($label)
 	{
-		$this->label = $label;
+		$this->title = $label;
 		return $this;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getLabel()
+	public function getTitle()
 	{
-		return $this->label;
+		return $this->title;
 	}
 
 	/**

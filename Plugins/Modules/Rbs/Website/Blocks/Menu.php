@@ -108,7 +108,7 @@ class Menu extends Block
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$entry->setLabel($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
+			$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
 		}
 		if ($doc instanceof \Rbs\Website\Documents\Section)
 		{
@@ -157,11 +157,11 @@ class Menu extends Block
 							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel-1, $currentPage, $path);
 							if (isset($item['titleKey']))
 							{
-								$subEntry->setLabel($this->i18nManager->trans($item['titleKey'], ['ucf']));
+								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
 							}
 							elseif (isset($item['title']))
 							{
-								$subEntry->setLabel($item['title']);
+								$subEntry->setTitle($item['title']);
 							}
 
 							$entry->addChild($subEntry);
@@ -172,11 +172,11 @@ class Menu extends Block
 						$subEntry = new \Rbs\Website\Menu\MenuEntry();
 						if (isset($item['titleKey']))
 						{
-							$subEntry->setLabel($this->i18nManager->trans($item['titleKey'], ['ucf']));
+							$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
 						}
 						else
 						{
-							$subEntry->setLabel($item['title']);
+							$subEntry->setTitle($item['title']);
 						}
 						$subEntry->setUrl($item['url']);
 						$entry->addChild($subEntry);
