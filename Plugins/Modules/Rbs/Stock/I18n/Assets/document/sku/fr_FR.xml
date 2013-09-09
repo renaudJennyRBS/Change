@@ -25,4 +25,7 @@
 	<key id="threshold-available">en stock</key>
 	<key id="threshold-low">peu de stock</key>
 	<key id="threshold-unavailable">en rupture</key>
+
+	<key id="virtual">virtuel</key>
+	<key id="virtual-help">Ne possede pas de propriétés physique, et ne necéssite pas de livraison.</key>
 </i18n>
