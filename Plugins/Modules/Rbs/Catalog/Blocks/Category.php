@@ -21,11 +21,12 @@ class Category extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('categoryId', Property::TYPE_INTEGER, true);
-		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, true);
-		$parameters->addParameterMeta('conditionId', Property::TYPE_INTEGER, false);
-		$parameters->addParameterMeta('itemsPerLine', Property::TYPE_INTEGER, true);
-		$parameters->addParameterMeta('itemsPerPage', Property::TYPE_INTEGER, true);
+		$parameters->addParameterMeta('categoryId');
+		$parameters->addParameterMeta('sectionId');
+		$parameters->addParameterMeta('conditionId');
+		$parameters->addParameterMeta('contextualUrls', true);
+		$parameters->addParameterMeta('itemsPerLine', 3);
+		$parameters->addParameterMeta('itemsPerPage', 9);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('categoryId') === null)
@@ -90,18 +91,23 @@ class Category extends Block
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			foreach ($query->getDocuments() as $product)
 			{
-				$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
+				if ($parameters->getParameter('contextualUrls'))
+				{
+					$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
+				}
+				else
+				{
+					$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
+				}
 				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;
 
-				$cartLineConfig = $product->getCartLineConfig($commerceServices, array('options' => array('webStoreId' => $webStoreId)));
-				if ($cartLineConfig)
+				$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
+				if ($productPresentation)
 				{
-					$cartLineConfig->setOption('quantity', 1.0);
-					$cartLineConfig->evaluatePrice($commerceServices, array('quantity' => 1.0));
-					$row['price'] = $cartLineConfig->getPriceValue();
-					$row['priceTTC'] = $cartLineConfig->getPriceValueWithTax();
+					$productPresentation->evaluate();
+					$row['productPresentation'] = $productPresentation;
 				}
 
 				$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);

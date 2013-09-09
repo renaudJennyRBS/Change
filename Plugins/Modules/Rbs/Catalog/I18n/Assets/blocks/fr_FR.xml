@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.blocks" lcid="fr_FR">
-	<key id="productlist-label">produits d'une catégorie</key>
-	<key id="productlist-category">catégorie</key>
-	<key id="productlist-function">Liste des produits d'une catégorie</key>
-	<key id="productlist-items-per-line">produits par ligne</key>
-	<key id="productlist-items-per-page">produits par page</key>
+	<key id="category-label">produits d'une catégorie</key>
+	<key id="category-category">catégorie</key>
+	<key id="category-function">Liste des produits d'une catégorie</key>
+	<key id="category-contextual-urls">détail des produits dans la catégorie</key>
+	<key id="category-items-per-line">produits par ligne</key>
+	<key id="category-items-per-page">produits par page</key>
 
 	<key id="product-label">détail du produit</key>
 	<key id="product-product">produit</key>
 	<key id="product-function">détail d'un produit</key>
+	<key id="product-activate-zoom">activer le zoom</key>
+	<key id="product-attributes-display-mode">affichage des attributs</key>
 </i18n>

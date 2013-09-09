@@ -1,7 +1,8 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 <h1 id="product-list-title">{{ title }}</h1>
-<div class="normal productlist-options">
-	<form class="form-horizontal" action="http://site36.intportgchange.fr/fr/action/ecomextended/UpdateBlockConfig">
+<!-- TODO: product filters -->
+<!--<div class="normal productlist-options">
+	<form class="form-horizontal" action="TODO:search">
 		<div class="form-group">
 			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_terms">Votre recherche</label>
 			<div class="col-sm-8 col-lg-9 controls">
@@ -31,14 +32,13 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-sm-4 col-lg-3"></div>
-			<div class="col-sm-8 col-lg-9">
+			<div class="col-sm-8 col-sm-offset-4 col-lg-9 col-lg-offset-3">
 				<input type="submit" class="btn btn-primary" value="Rechercher"/>
 				<input type="hidden" name="key" value="ecomextended_BlockProductList"/>
 			</div>
 		</div>
 	</form>
-</div>
+</div>-->
 
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
 	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
@@ -49,33 +49,54 @@
 		{% for row in rows %}
 			<li>
 				<ul class="grid-list-cell">
-					<li>
+					<!-- TODO: favorites and comparisons -->
+					<!--<li>
 						<label for="category_product_{{ row.id }}">
-							<input type="checkbox" id="category_product_{{ row.id }}"
-								name="selected_product[]" value="{{ row.id }}"/> Sélectionner </label>
-					</li>
+							<input type="checkbox" id="category_product_{{ row.id }}" name="selected_product[]"
+								value="{{ row.id }}" />
+							{{ i18n('m.rbs.catalog.fo.select', ['ucf']) }}
+						</label>
+					</li>-->
 					<li class="product-visual">
-						<a title="Voir la fiche {{ row.title }}" class="link" href="{{ row.url }}">
+						<a title="{{ i18n('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+							href="{{ row.url }}">
 							<img alt="" src="{{ catalogMacros.categoryThumbnailURL(row.visual) }}" /></a>
 						<div class="pictograms-container">
 						</div>
 					</li>
 					<li class="product-label">
-						<a title="Voir la fiche {{ row.title }}" class="link" href="{{ row.url }}">{{ row.title }}</a>
+						<a title="{{ i18n('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+							href="{{ row.url }}">{{ row.title }}</a>
 					</li>
 					<li class="product-availability">
-						Peu de stock
+						{{ row.productPresentation.stock.thresholdTitle }}
 					</li>
-					<li class="product-rating">
-						<ul class="star-rating small-star inline-rating" id="change-starrating-0">
-							<li class="current-rating rating-100 star">5 étoile(s)</li>
-						</ul>
+					<!-- TODO: handle rating -->
+					<!--<li class="product-rating">
+						5 étoile(s)
+					</li>-->
+					<li class="product-price price">
+						{{ formatPrice(row.productPresentation.priceValueWithTax) }}
+						<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</span>
+						{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
+							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+								{{ formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) }}
+							</del>
+						{% endif %}
 					</li>
-					<li class="product-price price">{{ formatPrice(row.price) }} <span class="tax-mode">HT</span></li>
-					<li class="product-price price">{{ formatPrice(row.priceTTC) }}  <span class="tax-mode">TTC</span></li>
+					<li class="product-price price">
+						{{ formatPrice(row.productPresentation.priceValue) }}
+						<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
+						{% if row.productPresentation.priceValueWithoutDiscount %}
+							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+								{{ formatPrice(row.productPresentation.priceValueWithoutDiscount) }}
+							</del>
+						{% endif %}
+					</li>
 					<li class="product-add">
 						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
-							<i class="icon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart') }}
+							<i class="glyphicon glyphicon-shopping-cart"></i>
+							{{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
 						</button>
 					</li>
 				</ul>
@@ -83,12 +104,11 @@
 		{% endfor %}
 	{% endspaceless %}</ul>
 
-	<!--
-	<p class="buttons">
+	<!-- TODO: favorites and comparisons -->
+	<!--<p class="buttons">
 		Actions sur la sélection :
 		<button type="submit" name="add" class="btn btn-primary" value="selected"><i class="icon-shopping-cart"></i> Ajouter au panier</button>
 		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>
 		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
-	</p>
-	-->
+	</p>-->
 </form>

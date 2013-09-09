@@ -1,42 +1,60 @@
-<h1>{{ product.currentLocalization.title }}</h1>
-<p>TODO: Détail du produit</p>
-<ul>
-	<li>Prix : {{ formatPrice(cartLineConfig.priceValue) }}</li>
-	<li>Prix TTC : {{ formatPrice(cartLineConfig.priceValueWithTax) }}</li>
-</ul>
 <script type="text/javascript">
-	var script{{ blockId }} = {
-		webStoreId: {{ parameters.webStoreId }},
-		cartURL: "{{ functionURL('Rbs_Commerce_Cart') }}",
-		addProduct : function(button) {
-			var url = button.form.action;
-			var productId = button.value;
-			var cartURL = this.cartURL;
-			var webStoreId = this.webStoreId;
-			var quantity =  button.form.elements.namedItem("quantity").value;
-
-			jQuery.ajax({
-				type: "POST",
-				url: url,
-				data: {product: productId, quantity: quantity, options: {webStoreId: webStoreId} },
-				dataType: 'json',
-				success: function(data, textStatus, jqXHR) {
-					window.location.href = cartURL;
-				},
-				error: function(jqXHR, textStatus, errorThrown ) {
-					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
-				}
-			})
-		}
-	}
+	var script{{ blockId }} = {};
 </script>
 
-<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
-	<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
-	<input type="text" name="quantity" value="5">
-	<button name="product" type="button" class="btn btn-primary btn-small" value="{{ parameters.productId }}"
-		onclick="script{{ blockId }}.addProduct(this)">
-		<i class="icon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart') }}
-	</button>
-</form>
+{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+<article itemscope="" itemtype="http://schema.org/Product" class="product-details">
+	<header>
+		{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}
+	</header>
+
+	<div class="row">
+		<div class="col-sm-6 col-md-8">
+			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
+		</div>
+		<div class="col-sm-6 col-md-4">
+			{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
+
+			<!-- TODO: handle reviews and rating -->
+			<!--<p class="rating">
+				<a href="#comments-13450">Soyez le premier à commenter ce produit.</a>
+			</p>
+			<p itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/Rating" class="rating">
+				<meta itemprop="worstRating" content="1" />
+				<span itemprop="ratingValue">2,5</span> étoiles sur
+				<span itemprop="bestRating">5</span>
+				(<a href="#comments-13450"><span itemprop="ratingCount">4</span> avis</a>)
+			</p>-->
+
+			<!-- TODO: link sharing -->
+			<!--<ul class="list-inline share-list">
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12259.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/51/fr/digg_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12261.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/52/fr/facebook_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12263.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/53/fr/delicious_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12265.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/54/fr/google_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12267.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/55/fr/twitter_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12269.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" onclick="accessibleAddToFavorite(this); return false;" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/56/fr/favorites_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12271.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" onclick="accessiblePrint(this); return false;" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/57/fr/print_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+				<li>
+					<a href="http://site36.intportgchange.fr/fr/partage-de-lien/site-12273.html?title=classic%20(1989)%20de%20Nintendo%2C%20Portables%20%3A%20Site%20de%20d%C3%A9monstration&amp;url=http%3A%2F%2Fsite36.intportgchange.fr%2Ffr%2Fcatalog%2Fclassic-1989%2C13450.html%3FcatalogParam%255BshopId%255D%3D13232" rel="nofollow"><img src="http://site36.intportgchange.fr/publicmedia/formatted/122/58/fr/email_16x16.png;h=16,w=16.png" alt=""></a>
+				</li>
+			</ul>-->
+		</div>
+	</div>
+
+	{% include 'Rbs_Catalog/Blocks/Product/description.twig' %}
+</article>

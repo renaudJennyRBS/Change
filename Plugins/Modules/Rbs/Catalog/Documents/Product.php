@@ -187,6 +187,16 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	}
 
 	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param integer $webStoreId
+	 * @return \Rbs\Catalog\Std\ProductPresentation
+	 */
+	public function getPresentation(\Rbs\Commerce\Services\CommerceServices $commerceServices, $webStoreId)
+	{
+		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
+	}
+
+	/**
 	 * @return \Change\Presentation\Interfaces\Section[]
 	 */
 	public function getPublicationSections()

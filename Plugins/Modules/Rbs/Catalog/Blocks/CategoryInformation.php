@@ -19,13 +19,15 @@ class CategoryInformation extends Information
 		parent::__construct($name);
 		$ucf = array('ucf');
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-label'));
-		$this->addInformationMeta('categoryId', Property::TYPE_INTEGER, false, null)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-category', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.category-label'));
+		$this->addInformationMeta('categoryId', Property::TYPE_DOCUMENT, false, null)
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.category-category', $ucf));
+		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.category-contextual-urls', $ucf));
 		$this->addInformationMeta('itemsPerLine', Property::TYPE_INTEGER, true, 3)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-items-per-line', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.category-items-per-line', $ucf));
 		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 9)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.productlist-items-per-page', $ucf));
-		$this->setFunctions(array('Rbs_Catalog_Category' => $i18nManager->trans('m.rbs.catalog.blocks.productlist-function', $ucf)));
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.category-items-per-page', $ucf));
+		$this->setFunctions(array('Rbs_Catalog_Category' => $i18nManager->trans('m.rbs.catalog.blocks.category-function', $ucf)));
 	}
 }

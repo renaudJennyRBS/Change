@@ -9,4 +9,6 @@
 	<key id="role-publisher">publicateur</key>
 	<key id="role-administrator">administrateur</key>
 	<key id="any-privilege">tous</key>
+	<key id="yes">oui</key>
+	<key id="no">non</key>
 </i18n>
