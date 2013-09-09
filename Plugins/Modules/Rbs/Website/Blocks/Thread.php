@@ -69,7 +69,7 @@ class Thread extends Block
 					continue;
 				}
 				$entry = new \Rbs\Website\Menu\MenuEntry();
-				$entry->setLabel($section->getTitle());
+				$entry->setTitle($section->getTitle());
 				if ($section->getIndexPageId())
 				{
 					$entry->setUrl($urlManager->getCanonicalByDocument($section, $website));
@@ -83,7 +83,7 @@ class Thread extends Block
 		if ($page instanceof \Rbs\Website\Documents\Page && $lastSection && $lastSection->getIndexPageId() !== $page->getId())
 		{
 			$entry = new \Rbs\Website\Menu\MenuEntry();
-			$entry->setLabel($page->getTitle());
+			$entry->setTitle($page->getTitle());
 			$entry->setInPath(true);
 			$entry->setCurrent(true);
 			$thread[] = $entry;

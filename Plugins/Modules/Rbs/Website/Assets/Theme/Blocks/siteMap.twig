@@ -1,7 +1,7 @@
 {% macro item(item) %}
 	{% import _self as menu %}
 	<li>
-		<a href="{{ item.url }}">{{ item.label }}</a>
+		<a href="{{ item.url }}">{{ item.title }}</a>
 		{% if item.hasChild %}
 			<ul class="bullet">
 				{% for child in item.getChildren %}

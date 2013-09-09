@@ -2,7 +2,7 @@
 	{% import _self as menu %}
 	<li class="{% if item.hasChild %}dropdown{% endif %} {% if item.isInPath or item.isCurrent %}active{% endif %}"
 		xmlns="http://www.w3.org/1999/html">
-		<a href="{{ item.url }}"{% if item.hasChild %} data-toggle="dropdown" class="dropdown-toggle"{% endif %}>{{ item.label }}{% if item.hasChild %} <b class="caret"></b>{% endif %}</a>
+		<a href="{{ item.url }}"{% if item.hasChild %} data-toggle="dropdown" class="dropdown-toggle"{% endif %}>{{ item.title }}{% if item.hasChild %} <b class="caret"></b>{% endif %}</a>
 		{% if item.hasChild %}
 			<ul class="dropdown-menu">
 				{% for child in item.getChildren %}
@@ -25,7 +25,7 @@
 		</button>
 	{% endif %}
 	<{% if root.url %}a href="{{ root.url }}"{% else %}span{% endif %} class="navbar-brand {% if parameters.showTitle != true %}visible-sm{% endif %}">
-		{{ root.label }}
+		{{ root.title }}
 	</{% if root.url %}a{% else %}span{% endif %}>
 	</div>
 	{% if root.hasChild %}

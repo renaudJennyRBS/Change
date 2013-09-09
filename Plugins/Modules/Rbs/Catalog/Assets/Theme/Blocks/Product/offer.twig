@@ -62,21 +62,21 @@
 		{% if productPresentation.priceValue %}
 			<ul class="list-unstyled main-price">
 				<li class="price">
+					{{ formatPrice(productPresentation.priceValue) }}
+					<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
+					{% if productPresentation.priceValueWithoutDiscount %}
+						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+							{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
+						</del>
+					{% endif %}
+				</li>
+				<li class="price">
 					<meta itemprop="priceCurrency" content="EUR" />
 					<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
 					<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</span>
 					{% if productPresentation.priceValueWithoutDiscountWithTax %}
 						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
 							{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
-						</del>
-					{% endif %}
-				</li>
-				<li class="price">
-					{{ formatPrice(productPresentation.priceValue) }}
-					<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
-					{% if productPresentation.priceValueWithoutDiscount %}
-						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
-							{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
 						</del>
 					{% endif %}
 				</li>

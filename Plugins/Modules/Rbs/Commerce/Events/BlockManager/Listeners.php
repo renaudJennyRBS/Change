@@ -23,6 +23,7 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Catalog_Category', true, $events);
 		new RegisterByBlockName('Rbs_Catalog_Product', true, $events);
 		new RegisterByBlockName('Rbs_Commerce_Cart', true, $events);
+		new RegisterByBlockName('Rbs_Commerce_ShortCart', true, $events);
 	}
 
 	/**
