@@ -21,5 +21,10 @@
 	<key id="shippingstatus">état de livraison</key>
 
 	<key id="paymentstatus">état de facturation</key>
-	
+
+	<key id="section-lines">lignes</key>
+
+	<key id="add-product">ajouter un produit</key>
+	<key id="add-product-quantity">quantité</key>
+	<key id="add">ajouter</key>
 </i18n>

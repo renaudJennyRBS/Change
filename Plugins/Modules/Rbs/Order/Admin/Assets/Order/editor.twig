@@ -33,17 +33,36 @@
 					data-price-with-tax="true" data-currency-code="(=document.currencyCode=)" />
 		</rbs-field>
 
-		<rbs-field-text property="processingStatus" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.order.document.order.processingstatus', ['ucf']) }}">
-		</rbs-field-text>
+		<div ng-if="document.id > 0">
+			<div class="control-group">
+				<label class="control-label">{{ i18n('m.rbs.order.document.order.processingstatus',['ucf']) }}</label>
+				<div class="controls">
+					<span class="uneditable-input input-xlarge">(=document.processingStatus=)</span>
+				</div>
+			</div>
 
-		<rbs-field-text property="paymentStatus" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.order.document.order.paymentstatus', ['ucf']) }}">
-		</rbs-field-text>
+			<div class="control-group">
+				<label class="control-label">{{ i18n('m.rbs.order.document.order.paymentstatus',['ucf']) }}</label>
+				<div class="controls">
+					<span class="uneditable-input input-xlarge">(=document.paymentStatus=)</span>
+				</div>
+			</div>
 
-		<rbs-field-text property="shippingStatus" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.order.document.order.shippingstatus', ['ucf']) }}">
-		</rbs-field-text>
+			<div class="control-group">
+				<label class="control-label">{{ i18n('m.rbs.order.document.order.shippingstatus',['ucf']) }}</label>
+				<div class="controls">
+					<span class="uneditable-input input-xlarge">(=document.shippingStatus=)</span>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='lines'"
+			data-form-section-label="{{ i18nAttr('m.rbs.order.document.order.section-lines', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-lines-editor lines-data="document.linesData">
+		</rbs-lines-editor>
 	</fieldset>
 
 	<fieldset
