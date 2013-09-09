@@ -80,7 +80,14 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function getFilters()
 	{
-		return array();
+		return array(
+			new \Twig_SimpleFilter('richText', array($this, 'richText'), array('is_safe' => array('all'))),
+			new \Twig_SimpleFilter('transDate', array($this, 'transDate')),
+			new \Twig_SimpleFilter('transDateTime', array($this, 'transDateTime')),
+			new \Twig_SimpleFilter('boolean', array($this, 'boolean')),
+			new \Twig_SimpleFilter('float', array($this, 'float')),
+			new \Twig_SimpleFilter('integer', array($this, 'integer'))
+		);
 	}
 
 	/**
@@ -234,7 +241,7 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param string|null $LCID
 	 * @return string|null
 	 */
-	public function canonicalURL($document, $website, $query = array(), $LCID = null)
+	public function canonicalURL($document, $website = null, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
@@ -248,7 +255,7 @@ class Extension implements \Twig_ExtensionInterface
 			}
 			if ($website === null || $website instanceof \Change\Presentation\Interfaces\Website)
 			{
-				$this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
+				return $this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
 			}
 		}
 		return null;
@@ -261,7 +268,7 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param string|null $LCID
 	 * @return string|null
 	 */
-	public function contextualURL($document, $section, $query = array(), $LCID = null)
+	public function contextualURL($document, $section = null, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
@@ -272,7 +279,7 @@ class Extension implements \Twig_ExtensionInterface
 
 			if ($section === null || $section instanceof \Change\Presentation\Interfaces\Section)
 			{
-				$this->getUrlManager()->getByDocument($document, $section, $query, $LCID)->normalize()->toString();
+				return $this->getUrlManager()->getByDocument($document, $section, $query, $LCID)->normalize()->toString();
 			}
 		}
 		return null;
@@ -339,5 +346,93 @@ class Extension implements \Twig_ExtensionInterface
 			return $uri ? $uri->normalize()->toString() : null;
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\RichtextProperty $richText
+	 * @return string
+	 */
+	public function richText($richText)
+	{
+		if ($richText instanceof \Change\Documents\RichtextProperty)
+		{
+			$context = array('website' => $this->getUrlManager()->getWebsite());
+			return $this->getPresentationServices()
+				->getRichTextManager()
+				->setDocumentServices($this->getDocumentServices())
+				->render($richText, "Website", $context);
+		}
+		return htmlspecialchars(strval($richText));
+	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 * @return string
+	 */
+	public function transDate($dateTime)
+	{
+		if ($dateTime instanceof \DateTime)
+		{
+			return $this->getApplicationServices()->getI18nManager()->transDate($dateTime);
+		}
+		return htmlspecialchars(strval($dateTime));
+	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 * @return string
+	 */
+	public function transDateTime($dateTime)
+	{
+		if ($dateTime instanceof \DateTime)
+		{
+			return $this->getApplicationServices()->getI18nManager()->transDateTime($dateTime);
+		}
+		return htmlspecialchars(strval($dateTime));
+	}
+
+	/**
+	 * @param boolean $boolean
+	 * @return string
+	 */
+	public function boolean($boolean)
+	{
+		if ($boolean === true)
+		{
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.yes', array('ucf'));
+		}
+		elseif ($boolean === false)
+		{
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.no', array('ucf'));
+		}
+		return htmlspecialchars(strval($boolean));
+	}
+
+	/**
+	 * @param float $float
+	 * @return string
+	 */
+	public function float($float)
+	{
+		if (is_numeric($float))
+		{
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::DECIMAL);
+			return $nf->format($float);
+		}
+		return htmlspecialchars(strval($float));
+	}
+
+	/**
+	 * @param integer $integer
+	 * @return string
+	 */
+	public function integer($integer)
+	{
+		if (is_numeric($integer))
+		{
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::DEFAULT_STYLE);
+			return $nf->format($integer);
+		}
+		return htmlspecialchars(strval($integer));
 	}
 }

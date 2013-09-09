@@ -52,6 +52,19 @@ class Install
 			$pageTemplate->setActive(true);
 			$pageTemplate->save();
 
+			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate->setTheme($theme);
+			$pageTemplate->setLabel('No Sidebar');
+			$html = file_get_contents(__DIR__ . '/Assets/nosidebarpage.twig');
+			$pageTemplate->setHtml($html);
+			$json = file_get_contents(__DIR__ . '/Assets/nosidebarpage.json');
+			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
+			$boHtml = file_get_contents(__DIR__ . '/Assets/nosidebarpage-bo.twig');
+			$pageTemplate->setHtmlForBackoffice($boHtml);
+			$pageTemplate->setActive(true);
+			$pageTemplate->save();
+
 			$i18nManager = $applicationServices->getI18nManager();
 			//mail template for Timeline message
 			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');

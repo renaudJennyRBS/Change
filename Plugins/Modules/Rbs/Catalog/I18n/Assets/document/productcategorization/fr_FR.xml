@@ -4,6 +4,7 @@
 	<key id="product">produit</key>
 	<key id="category">catégorie</key>
 	<key id="productcategorization">catégorisation</key>
+	<key id="canonical">catégorie principale</key>
 	<key id="productvisual">visuel du produit</key>
 	<key id="productlabel">libellé du produit</key>
 </i18n>

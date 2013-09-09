@@ -1,0 +1,9 @@
+{% for document in item.value %}
+	{% if document.getDocumentModelName() == 'Rbs_Media_Image' %}
+		<img src="{{ catalogMacros.attributeThumbnailURL(document) }}" alt="{{ document.alt }}" />
+	{% elseif document.getDocumentModel().isPublishable() %}
+		<a href="{{ canonicalURL(item.value) }}">{{ document.title }}</a>
+	{% elseif document.getDocumentModel().hasProperty('title') %}
+		{{ document.title }}
+	{% endif %}
+{% endfor %}

@@ -417,6 +417,10 @@ class AttributeEngine
 					return null;
 			}
 		}
+		elseif (Attribute::TYPE_DOCUMENT == $vt)
+		{
+			$definition['documentType'] = ($attribute->getDocumentType()) ? $attribute->getDocumentType() : '';
+		}
 
 		if (($dv = $attribute->getDefaultValue()) !== null)
 		{
@@ -503,6 +507,9 @@ class AttributeEngine
 						break;
 					case Attribute::TYPE_DATETIME:
 						$value = (new \DateTime($value, $utcTimeZone))->format(\DateTime::ISO8601);
+						break;
+					case Attribute::TYPE_TEXT:
+						$value = (new \Change\Documents\RichtextProperty($value))->toArray();
 						break;
 				}
 				$normalizedValues[] = array('id' => $id, 'valueType' => $valueType, 'value' => $value);

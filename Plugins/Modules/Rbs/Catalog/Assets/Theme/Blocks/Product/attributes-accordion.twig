@@ -1,0 +1,26 @@
+<div class="panel-group" id="block-{{ blockId }}-attribute-group-accordion">
+	{% for group in attributesConfig %}
+		<div class="panel">
+			<div class="panel-heading">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#block-{{ blockId }}-attribute-group-accordion" href="#block-{{ blockId }}-attribute-group-{{ loop.index }}">
+					{{ group.title }}
+				</a>
+			</div>
+			<div id="block-{{ blockId }}-attribute-group-{{ loop.index }}" class="panel-collapse collapse{% if loop.index == 1 %} in{% endif %}">
+				<div class="panel-body">
+					<dl class="dl-horizontal">
+						{% for item in group.items %}
+							<dt>
+								{{ item.title }}
+								{% if item['description'] is defined %}
+									<div class="small">{{ item.description|richText }}</div>
+								{% endif %}
+							</dt>
+							<dd>{% include item.template %}</dd>
+						{% endfor %}
+					</dl>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+</div>

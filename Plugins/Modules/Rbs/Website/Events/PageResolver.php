@@ -26,7 +26,7 @@ class PageResolver
 			{
 				if ($document instanceof Publishable)
 				{
-					$section = $document->getCanonicalSection();
+					$section = $document->getCanonicalSection($event->getParam('website'));
 				}
 
 				if (!($section instanceof Section))

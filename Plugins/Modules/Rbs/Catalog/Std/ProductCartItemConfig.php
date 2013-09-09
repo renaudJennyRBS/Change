@@ -148,7 +148,14 @@ class ProductCartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 	 */
 	public function setOption($name, $value)
 	{
-		$this->options[$name] = $value;
+		if ($value === null)
+		{
+			unset($this->options[$name]);
+		}
+		else
+		{
+			$this->options[$name] = $value;
+		}
 		return $this;
 	}
 

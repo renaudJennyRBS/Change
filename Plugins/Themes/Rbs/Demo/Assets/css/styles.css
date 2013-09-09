@@ -291,16 +291,6 @@ form .description {
 	/*font-size: 12px;*/
 }
 
-/*input.date-picker {
-	padding-right: 20px;
-	background-image: url(/media/changeicons/small/calendar.png);
-	background-position: right center;
-	background-repeat: no-repeat;
-}
-#ui-datepicker-div {
-	z-index: 10000 !important;
-}*/
-
 /** Blocks */
 .switch-language .dropdown-menu {
 	min-width: 80px;
@@ -396,16 +386,16 @@ td.price {
 .product-list .product-rating {
 	height: 15px;
 	font-size: 0.7em;
-	line-height: 15px;
+	line-height: 20px;
 	vertical-align: middle;
 }
 .product-list .product-price {
-	height: 15px;
+	height: 20px;
 }
 .product-list .product-add,
 .products-comparison-list .product-add {
 	margin-top: 5px;
-	height: 29px;
+	height: 35px;
 }
 .shelf-list .shelf-description {
 	height: 53px;
@@ -428,24 +418,63 @@ td.price {
 }
 
 /** Product detail */
-.modules-catalog-product .columns {
-	margin-top: 3px;
+.product-details .main-price .price {
+	font-size: 1.4em;
 }
-.modules-catalog-product .columns > :not(:last-child) {
-	border-right: 1px var(main-border-color) solid;
-}
-.modules-catalog-product .additionnal-visuals li {
-	border: 1px var(main-border-color) solid;
-}
-.modules-catalog-product .availability {
+
+.product-details .visuals {
+	position: relative;
 	text-align: center;
 }
-.modules-catalog-product .availability .level {
-	font-weight: bold;
-	font-size: 20px;
+.product-details img {
+	max-width: 100%;
 }
-.modules-catalog .main-price .price {
-	font-size: 1.4em;
+.product-details .full-visuals {
+	height: 405px;
+	line-height: 405px;
+}
+.product-details .full-visuals li:first-child {
+	display: block;
+}
+.product-details .full-visuals li {
+	display: none;
+}
+.product-details .full-visuals a {
+	display: block;
+}
+.product-details .full-visuals a img {
+	cursor: crosshair;
+}
+.product-details .thumbnail-visuals li {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	width: 80px;
+	height: 60px;
+	line-height: 58px;
+	margin: 3px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+.product-details .thumbnail-visuals img {
+	display: inline-block;
+}
+.product-details .zoomDiv {
+	z-index: 100;
+	position: absolute;
+	top: 0px;
+	right: -330px;
+	width: 330px;
+	height: 405px;
+	background: var(main-background-color);
+	border: 1px solid var(main-border-color);
+	text-align: center;
+	overflow: hidden;
+	box-shadow: 0 0 7px var(main-border-color), 0 0 15px var(main-border-color);
+}
+.product-details .zoomDiv img {
+	position: absolute;
+	max-width: none;
 }
 
 /** Order process */

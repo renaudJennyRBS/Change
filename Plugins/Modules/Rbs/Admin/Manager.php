@@ -258,11 +258,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			->pluginsModulesPath('Rbs', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Admin');
 
-		// TODO: register macros from other plugins.
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()
-			->pluginsModulesPath('Rbs', 'Price', 'Admin', 'Assets');
-		$loader->addPath($formsMacroPath, 'Price');
-
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
 		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getApplicationServices()));
 		foreach ($this->getExtensions() as $extension)

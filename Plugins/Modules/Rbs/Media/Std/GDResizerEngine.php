@@ -65,7 +65,9 @@ class GDResizerEngine
 					imagefill($imageFormatted, 0, 0, $colorTransparent);
 					imagecolortransparent($imageFormatted, $colorTransparent);
 					imagecopyresized($imageFormatted, $imageSrc, 0, 0, 0, 0, $width, $height, $sizeInfo[0], $sizeInfo[1]);
-					imagegif($imageFormatted, $formattedFileName);
+					ob_start();
+					imagegif($imageFormatted, null);
+					file_put_contents($formattedFileName, ob_get_clean());
 				}
 				break;
 			case IMAGETYPE_PNG:
@@ -75,14 +77,18 @@ class GDResizerEngine
 				imageAlphaBlending($imageFormatted, false);
 				imageSaveAlpha($imageFormatted, true);
 				imagecopyresampled($imageFormatted, $imageSrc, 0, 0, 0, 0, $width, $height, $sizeInfo[0], $sizeInfo[1]);
-				imagepng($imageFormatted, $formattedFileName);
+				ob_start();
+				imagepng($imageFormatted, null);
+				file_put_contents($formattedFileName, ob_get_clean());
 				break;
 			case IMAGETYPE_JPEG :
 				$imageSrc = $inputBlob ? imagecreatefromstring($inputBlob) : imagecreatefromjpeg($inputFileName);
 				$inputBlob = null;
 				$imageFormatted = imagecreatetruecolor($width, $height);
 				imagecopyresampled($imageFormatted, $imageSrc, 0, 0, 0, 0, $width, $height, $sizeInfo[0], $sizeInfo[1]);
-				imagejpeg($imageFormatted, $formattedFileName, 90);
+				ob_start();
+				imagejpeg($imageFormatted, null, 90);
+				file_put_contents($formattedFileName, ob_get_clean());
 				break;
 			default:
 				copy($inputFileName, $formattedFileName);

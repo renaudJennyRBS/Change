@@ -1,0 +1,59 @@
+<script type="text/javascript">
+	script{{ blockId }}.visuals = {
+		showVisual: function(visualId) {
+			jQuery("#visuals-{{ blockId }} [id^='full-visual']").hide();
+			jQuery('#full-visual-{{ blockId }}-'+visualId).show();
+			return false;
+		},
+		startZoom: function(node) {
+			var jNode = jQuery(node);
+			var zoomDiv = jQuery('<div class="zoomDiv"><img src="' + node.getAttribute('href') + '" alt="" /></div>');
+			jNode.after(zoomDiv);
+
+			var image = jNode.children('img');
+			var bigImage = zoomDiv.children('img');
+			var scaleX = (bigImage.width() / image.width());
+			var scaleY = (bigImage.height() / image.height());
+			var offset = image.offset();
+
+			jNode.mousemove(function(e){
+				bigImage.css({
+					top: Math.max(zoomDiv.height()-bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
+					left: Math.max(zoomDiv.width()-bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
+				});
+			});
+
+			jNode.mouseout(function () {
+				jQuery('.zoomDiv').remove();
+				jNode.unbind('mousemove');
+				jNode.unbind('mouseout');
+			});
+		}
+	}
+</script>
+
+{% if product.visuals|length > 0 %}
+	<div class="visuals" id="visuals-{{ blockId }}">
+		<ul class="list-unstyled full-visuals">
+			{% for visual in product.visuals %}
+				<li id="full-visual-{{ blockId }}-{{ visual.id }}">
+					{% if activateZoom %}<a href="{{ imageURL(visual) }}"
+						onmouseover="script{{ blockId }}.visuals.startZoom(this)">{% endif %}
+						<img itemprop="image" src="{{ catalogMacros.detailVisualURL(visual) }}" alt="" />
+					{% if activateZoom %}</a>{% endif %}
+				</li>
+			{% endfor %}
+		</ul>
+		{% if product.visuals|length > 1 %}
+			<ul class="list-inline thumbnail-visuals">
+				{% for visual in product.visuals %}
+					<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
+						title="{{ i18n('m.rbs.catalog.fo.click-to-show-image', ['ucf']) }}">
+						<img src="{{ catalogMacros.detailThumbnailURL(visual) }}" alt=""
+							onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
+{% endif %}

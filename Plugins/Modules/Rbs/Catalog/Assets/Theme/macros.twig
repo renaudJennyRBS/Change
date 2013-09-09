@@ -1,3 +1,4 @@
-{% macro categoryThumbnailURL(visual) %}
-{{ imageURL(visual, 160, 120) }}
-{% endmacro %}
+{% macro categoryThumbnailURL(visual) %}{{ imageURL(visual, 160, 120) }}{% endmacro %}
+{% macro detailVisualURL(visual) %}{{ imageURL(visual, 540, 405) }}{% endmacro %}
+{% macro detailThumbnailURL(visual) %}{{ imageURL(visual, 80, 60) }}{% endmacro %}
+{% macro attributeThumbnailURL(visual) %}{{ imageURL(visual, 160, 120) }}{% endmacro %}

@@ -29,6 +29,11 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	protected $options = array();
 
 	/**
+	 * @var array
+	 */
+	protected $prices = array();
+
+	/**
 	 * @var ProductCartItemConfig[]
 	 */
 	protected $itemConfigArray = array();
@@ -36,7 +41,7 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 */
-	function __construct(\Rbs\Catalog\Documents\Product $product )
+	function __construct(\Rbs\Catalog\Documents\Product $product)
 	{
 		$this->designation = $product->getCurrentLocalization()->getTitle();
 		$this->key = strval($product->getId());
@@ -127,6 +132,8 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	 */
 	public function evaluatePrice($commerceServices, $options = array())
 	{
+		$this->prices = array();
+
 		if (isset($options['quantity']))
 		{
 			$this->quantity = floatval($options['quantity']);
@@ -144,7 +151,6 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 		{
 			$webStoreId = null;
 		}
-
 
 		if (count($this->itemConfigArray))
 		{
@@ -172,6 +178,13 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 							{
 								$item->setTaxApplication($commerceServices->getTaxManager()->getTaxByValue($item->getPriceValue(), $price->getTaxCategories()));
 							}
+
+							$item->setOption('ecoTax', $price->getEcoTax());
+							$oldValue = $price->getValueWithoutDiscount();
+							if ($oldValue !== null)
+							{
+								$item->setOption('valueWithoutDiscount', $oldValue);
+							}
 						}
 					}
 				}
@@ -185,19 +198,23 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	 */
 	public function getPriceValue()
 	{
-		$quantity = $this->quantity;
-		if ($quantity)
+		if (!array_key_exists('getPriceValue', $this->prices))
 		{
-			return array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
+			$this->prices['getPriceValue'] = null;
+			$quantity = $this->quantity;
+			if ($quantity)
 			{
-				if ($item->getPriceValue() !== null)
+				$this->prices['getPriceValue'] = array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
 				{
-					return $result + ($item->getPriceValue() * $quantity);
-				}
-				return $result;
-			});
+					if ($item->getPriceValue() !== null)
+					{
+						return $result + ($item->getPriceValue() * $quantity);
+					}
+					return $result;
+				});
+			}
 		}
-		return null;
+		return $this->prices['getPriceValue'];
 	}
 
 	/**
@@ -205,22 +222,102 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	 */
 	public function getPriceValueWithTax()
 	{
-		$quantity = $this->quantity;
-		if ($quantity)
+		if (!array_key_exists('getPriceValueWithTax', $this->prices))
 		{
-			return array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
+			$this->prices['getPriceValueWithTax'] = null;
+			$quantity = $this->quantity;
+			if ($quantity)
 			{
-				if ($item->getPriceValue() !== null)
+				$this->prices['getPriceValueWithTax'] = array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
 				{
-					$tax = array_reduce($item->getTaxApplication(), function ($result, TaxApplication $cartTax) use ($quantity)
+					if ($item->getPriceValue() !== null)
 					{
-						return $result + $cartTax->getValue() * $quantity;
-					}, 0.0);
-					return $result + ($item->getPriceValue() * $quantity) + $tax;
-				}
-				return $result;
-			});
+						$tax = array_reduce($item->getTaxApplication(), function ($result, TaxApplication $cartTax) use ($quantity)
+						{
+							return $result + $cartTax->getValue() * $quantity;
+						}, 0.0);
+						return $result + ($item->getPriceValue() * $quantity) + $tax;
+					}
+					return $result;
+				});
+			}
 		}
-		return null;
+		return $this->prices['getPriceValueWithTax'];
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithoutDiscount()
+	{
+		if (!array_key_exists('getPriceValueWithoutDiscount', $this->prices))
+		{
+			$this->prices['getPriceValueWithoutDiscount'] = null;
+			$quantity = $this->quantity;
+			if ($quantity)
+			{
+				$this->prices['getPriceValueWithoutDiscount'] = array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
+				{
+					if ($item->getOption('valueWithoutDiscount') !== null)
+					{
+						return $result + ($item->getOption('valueWithoutDiscount') * $quantity);
+					}
+					return $result;
+				});
+			}
+		}
+		return $this->prices['getPriceValueWithoutDiscount'];
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithoutDiscountWithTax()
+	{
+		if (!array_key_exists('getPriceValueWithoutDiscountWithTax', $this->prices))
+		{
+			$this->prices['getPriceValueWithoutDiscountWithTax'] = null;
+			$quantity = $this->quantity;
+			if ($quantity)
+			{
+				$this->prices['getPriceValueWithoutDiscountWithTax'] = array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
+				{
+					if (($value = $item->getOption('valueWithoutDiscount')) !== null)
+					{
+						$tax = array_reduce($item->getTaxApplication(), function ($result, TaxApplication $cartTax) use ($quantity, $value)
+						{
+							return $result + $value * $cartTax->getRate() * $quantity;
+						}, 0.0);
+						return $result + ($value * $quantity) + $tax;
+					}
+					return $result;
+				});
+			}
+		}
+		return $this->prices['getPriceValueWithoutDiscountWithTax'];
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getEcoTaxValue()
+	{
+		if (!array_key_exists('getEcoTaxValue', $this->prices))
+		{
+			$this->prices['getEcoTaxValue'] = null;
+			$quantity = $this->quantity;
+			if ($quantity)
+			{
+				$this->prices['getEcoTaxValue'] = array_reduce($this->itemConfigArray, function ($result, ProductCartItemConfig $item) use ($quantity)
+				{
+					if ($item->getOption('ecoTax') !== null)
+					{
+						return $result + ($item->getOption('ecoTax') * $quantity);
+					}
+					return $result;
+				});
+			}
+		}
+		return $this->prices['getEcoTaxValue'];
 	}
 }

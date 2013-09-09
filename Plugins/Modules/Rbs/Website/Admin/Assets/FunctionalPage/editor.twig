@@ -1,5 +1,5 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
-	<fieldset data-ng-show="section==''"
+	<fieldset ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
@@ -30,27 +30,12 @@
 			allow-edition="true">
 		</rbs-field-picker>
 
-		<hr />
-
-		<rbs-field label="{{ i18nAttr('m.rbs.website.document.functionalpage.editablecontent', ['ucf']) }}">
-			<button class="btn" type="button" data-ng-click="editPage($event, document)">
-				<i class="icon-edit"></i>
-				{{ i18n('m.rbs.website.document.functionalpage.open-page-editor', ['ucf']) }}
-			</button>
-			<span class="help-block">
-				{{ i18n('m.rbs.website.document.functionalpage.content-zones', ['ucf', 'lab']) }}
-				<span ng-repeat="zone in editableContentInfo" class="label">(=zone=)</span>
-			</span>
-		</rbs-field>
-
-		<div data-role="edit-page-contents-confirmation"></div>
-
 		<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
 			{{ i18n('m.rbs.website.document.functionalpage.functional-page-editor-help') }}
 		</div>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='functions'"
+	<fieldset ng-show="section=='functions'"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.document.functionalpage.functions', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
@@ -93,7 +78,7 @@
 
 	</fieldset>
 
-	<fieldset data-ng-show="section=='content'"
+	<fieldset ng-show="section=='content'"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.document.functionalpage.editableContent', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<structure-editor name="contents"

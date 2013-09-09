@@ -32,20 +32,4 @@ interface CartLineConfig
 	 * @return $this
 	 */
 	public function setOption($name, $value);
-
-	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 * @return $this
-	 */
-	public function evaluatePrice($commerceServices);
-
-	/**
-	 * @return float|null
-	 */
-	public function getPriceValue();
-
-	/**
-	 * @return float|null
-	 */
-	public function getPriceValueWithTax();
 }

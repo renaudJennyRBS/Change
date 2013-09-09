@@ -40,14 +40,12 @@ class Parameters
 
 	/**
 	 * @param string $name
-	 * @param string $type
-	 * @param bool $required
 	 * @param mixed $defaultValue
 	 * @return ParameterMeta
 	 */
-	public function addParameterMeta($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
+	public function addParameterMeta($name, $defaultValue = null)
 	{
-		$parameterMeta = new ParameterMeta($name, $type, $required, $defaultValue);
+		$parameterMeta = new ParameterMeta($name, $defaultValue);
 		$key = $this->ucLower($name);
 		$this->parametersMeta[$key] = $parameterMeta;
 		return $parameterMeta;

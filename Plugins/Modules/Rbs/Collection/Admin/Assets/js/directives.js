@@ -245,10 +245,9 @@
 						scope.List.loading = false;
 						scope.List.items = data.items;
 						scope.List.values = {};
-						angular.forEach(data.items, function(item){
-							scope.List.values[item.value] = scope.isChecked(item.value);
+						angular.forEach(data.items, function(item, value){
+							scope.List.values[value] = scope.isChecked(value);
 						});
-
 					});
 
 					scope.checkboxChange = function (value){

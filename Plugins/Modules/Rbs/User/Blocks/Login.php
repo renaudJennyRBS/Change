@@ -22,10 +22,10 @@ class Login extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('login', Property::TYPE_STRING, true);
-		$parameters->addParameterMeta('password', Property::TYPE_STRING, true);
-		$parameters->addParameterMeta('realm', Property::TYPE_STRING, true, 'web');
-		$parameters->addParameterMeta('accessorId', Property::TYPE_INTEGER, false);
+		$parameters->addParameterMeta('login');
+		$parameters->addParameterMeta('password');
+		$parameters->addParameterMeta('realm', 'web');
+		$parameters->addParameterMeta('accessorId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();

@@ -5,6 +5,7 @@ use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 use Change\Stdlib\String;
+
 /**
  * @name \Rbs\Catalog\Documents\Product
  */
@@ -183,5 +184,87 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			}
 		}
 		return $cartLineConfig;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param integer $webStoreId
+	 * @return \Rbs\Catalog\Std\ProductPresentation
+	 */
+	public function getPresentation(\Rbs\Commerce\Services\CommerceServices $commerceServices, $webStoreId)
+	{
+		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
+	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Section[]
+	 */
+	public function getPublicationSections()
+	{
+		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Section');
+		$pcb = $dqb->getModelBuilder('Rbs_Catalog_Category', 'section')
+			->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
+		$pb = $pcb->getPredicateBuilder();
+		$pcb->andPredicates($pb->activated(), $pb->eq('product', $this));
+		return $dqb->getDocuments()->toArray();
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @return \Change\Presentation\Interfaces\Section|null
+	 */
+	public function getCanonicalSection(\Change\Presentation\Interfaces\Website $website = null)
+	{
+		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Section');
+		$pb = $dqb->getPredicateBuilder();
+		if ($website)
+		{
+			$or = $pb->logicOr($pb->eq('id', $website->getId()), $pb->descendantOf($website->getId()));
+			$dqb->andPredicates($pb->published(), $or);
+		}
+		else
+		{
+			$dqb->andPredicates($pb->published());
+		}
+
+		$cqb = $dqb->getModelBuilder('Rbs_Catalog_Category', 'section');
+		$cqb->andPredicates($cqb->published());
+
+		$pcb = $cqb->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
+		$pb = $pcb->getPredicateBuilder();
+		$pcb->andPredicates($pb->activated(), $pb->eq('product', $this));
+
+		$pcb->addOrder('canonical', false);
+		return $dqb->getFirstDocument();
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @return \Rbs\Catalog\Documents\Category[]
+	 */
+	public function getPublishedCategories(\Change\Presentation\Interfaces\Website $website = null)
+	{
+		$cqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Catalog_Category');
+		$cqb->andPredicates($cqb->published());
+
+		$sqb = $cqb->getPropertyBuilder('section');
+		$pb = $sqb->getPredicateBuilder();
+		if ($website)
+		{
+			$or = $pb->logicOr($pb->eq('id', $website->getId()), $pb->descendantOf($website->getId()));
+			$sqb->andPredicates($pb->published(), $or);
+		}
+		else
+		{
+			$sqb->andPredicates($pb->published());
+		}
+
+		$pqb = $cqb->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
+		$pb = $pqb->getPredicateBuilder();
+		$pqb->andPredicates($pb->activated(), $pb->eq('product', $this));
+
+		$pqb->addOrder('canonical', false);
+		$cqb->addOrder('label', false);
+		return $cqb->getDocuments()->toArray();
 	}
 }

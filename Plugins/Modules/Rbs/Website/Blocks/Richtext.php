@@ -22,8 +22,8 @@ class Richtext extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('content', Property::TYPE_LONGSTRING);
-		$parameters->addParameterMeta('contentType', Property::TYPE_STRING, true, 'html');
+		$parameters->addParameterMeta('content');
+		$parameters->addParameterMeta('contentType', 'html');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		return $parameters;
 	}

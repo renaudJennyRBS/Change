@@ -14,40 +14,18 @@ class ParameterMeta
 	protected $name;
 
 	/**
-	 * @var string
-	 */
-	protected $type = Property::TYPE_STRING;
-
-	/**
-	 * @var boolean
-	 */
-	protected $required = false;
-
-	/**
 	 * @var mixed|null
 	 */
 	protected $defaultValue;
 
 	/**
 	 * @param string $name
-	 * @param string $type
-	 * @param boolean $required
 	 * @param mixed $defaultValue
 	 */
-	function __construct($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
+	function __construct($name, $defaultValue = null)
 	{
 		$this->name = $name;
-		$this->type = $type;
-		$this->required = $required;
 		$this->defaultValue = $defaultValue;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getType()
-	{
-		return $this->type;
 	}
 
 	/**
@@ -74,23 +52,5 @@ class ParameterMeta
 	public function getDefaultValue()
 	{
 		return $this->defaultValue;
-	}
-
-	/**
-	 * @param boolean $required
-	 * @return $this
-	 */
-	public function setRequired($required)
-	{
-		$this->required = $required;
-		return $this;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getRequired()
-	{
-		return $this->required;
 	}
 }

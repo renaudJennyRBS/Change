@@ -33,13 +33,13 @@ class Menu extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('templateName', Property::TYPE_STRING, true, 'menu-vertical.twig');
-		$parameters->addParameterMeta('showTitle', Property::TYPE_BOOLEAN, true, false);
-		$parameters->addParameterMeta('documentId', Property::TYPE_DOCUMENT);
-		$parameters->addParameterMeta('maxLevel', Property::TYPE_INTEGER, true, 1);
-		$parameters->addParameterMeta('pageId', Property::TYPE_INTEGER, false, null);
-		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, false, null);
-		$parameters->addParameterMeta('websiteId', Property::TYPE_INTEGER, false, null);
+		$parameters->addParameterMeta('templateName', 'menu-vertical.twig');
+		$parameters->addParameterMeta('showTitle', false);
+		$parameters->addParameterMeta('documentId');
+		$parameters->addParameterMeta('maxLevel', 1);
+		$parameters->addParameterMeta('pageId');
+		$parameters->addParameterMeta('sectionId');
+		$parameters->addParameterMeta('websiteId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');

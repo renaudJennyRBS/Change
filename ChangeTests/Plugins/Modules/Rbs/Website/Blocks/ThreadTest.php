@@ -62,22 +62,16 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$meta = $parameters->getParameterMeta('separator');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
-		$this->assertEquals(Property::TYPE_STRING, $meta->getType());
-		$this->assertTrue($meta->getRequired());
 		$this->assertEquals('/', $meta->getDefaultValue());
 		$this->assertEquals('>', $parameters->separator);
 
 		$meta = $parameters->getParameterMeta('templateName');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
-		$this->assertEquals(Property::TYPE_STRING, $meta->getType());
-		$this->assertTrue($meta->getRequired());
 		$this->assertEquals('thread.twig', $meta->getDefaultValue());
 		$this->assertEquals('thread.twig', $parameters->templateName);
 
 		$meta = $parameters->getParameterMeta('pageId');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
-		$this->assertEquals(Property::TYPE_INTEGER, $meta->getType());
-		$this->assertFalse($meta->getRequired());
 		$this->assertNull($meta->getDefaultValue());
 		$this->assertEquals(123, $parameters->pageId);
 		$this->assertEquals(123, $parameters->getPageId());
@@ -85,8 +79,6 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$meta = $parameters->getParameterMeta('sectionId');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
-		$this->assertEquals(Property::TYPE_INTEGER, $meta->getType());
-		$this->assertFalse($meta->getRequired());
 		$this->assertNull($meta->getDefaultValue());
 		$this->assertEquals(789, $parameters->sectionId);
 		return $event;

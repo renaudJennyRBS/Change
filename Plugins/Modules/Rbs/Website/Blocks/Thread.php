@@ -22,10 +22,10 @@ class Thread extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('templateName', Property::TYPE_STRING, true, 'thread.twig');
-		$parameters->addParameterMeta('separator', Property::TYPE_STRING, true, '/');
-		$parameters->addParameterMeta('pageId', Property::TYPE_INTEGER, false, null);
-		$parameters->addParameterMeta('sectionId', Property::TYPE_INTEGER, false, null);
+		$parameters->addParameterMeta('templateName', 'thread.twig');
+		$parameters->addParameterMeta('separator', '/');
+		$parameters->addParameterMeta('pageId');
+		$parameters->addParameterMeta('sectionId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$page = $event->getParam('page');

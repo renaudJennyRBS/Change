@@ -1,3 +1,27 @@
+/**
+ * Fixes
+ */
+
+/* Move navbar under popup menus (z-index 999 instead of 1000) */
+.navbar {
+	z-index: 999;
+}
+
+/* Homogenize row margins */
+.row {
+	margin-right: -15px;
+	margin-left: -15px;
+}
+
+/* To view the full text of dt elements... */
+.dl-horizontal dt {
+	white-space: normal;
+}
+
+/**
+ * New elements
+ */
+
 /* Exceptions */
 .exception {
 	white-space: pre-wrap;
@@ -8,13 +32,18 @@
 	display: none !important;
 }
 
-/* Homogenize row margins */
-.row {
-	margin-right: -15px;
-	margin-left: -15px;
+/* Small descriptions (when we can't use a <small>, like around a block tag). */
+.small {
+	font-size: 85%;
 }
 
-/* Nowrap in dropdown toggles to no have the caret in an other line */
+/* Small complementary text in dt */
+.dl-horizontal dt small,
+.dl-horizontal dt .small {
+	font-weight: normal;
+}
+
+/* Nowrap in dropdown toggles to no have the caret in an other line. */
 .dropdown-toggle {
 	white-space: nowrap;
 }

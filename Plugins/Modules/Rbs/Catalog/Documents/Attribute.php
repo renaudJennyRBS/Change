@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
+use Change\Documents\AbstractModel;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Rbs\Catalog\Std\AttributeEngine;
@@ -88,5 +89,23 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param AbstractModel $documentModel
+	 */
+	public function setDefaultValues(AbstractModel $documentModel)
+	{
+		parent::setDefaultValues($documentModel);
+		$this->setAttributes(array('specifications', 'comparisons'));
+	}
+
+	/**
+	 * @param string $visibility
+	 * @return string
+	 */
+	public function isVisibleFor($visibility)
+	{
+		return in_array($visibility, $this->getVisibility());
 	}
 }

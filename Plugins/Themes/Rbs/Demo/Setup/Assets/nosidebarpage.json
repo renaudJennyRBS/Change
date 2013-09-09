@@ -1,0 +1,147 @@
+{
+	"headerTop1" : {
+		"id" : "headerTop1",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 1,
+			"templateName" : "menu-inline.twig"
+		}
+	},
+	"headerTop2" : {
+		"id" : "headerTop2",
+		"type" : "block",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"parameters" : {
+			"templateName" : "xhtml-user.twig"
+		}
+	},
+	"headerTop3" : {
+		"id" : "headerTop3",
+		"type" : "block",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"parameters" : {
+			"templateName" : "xhtml-cart.twig"
+		}
+	},
+	"headerTop4" : {
+		"id" : "headerTop4",
+		"type" : "block",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"parameters" : {
+			"templateName" : "xhtml-switchlang.twig"
+		}
+	},
+	"headerMiddle1" : {
+		"id" : "headerMiddle1",
+		"type" : "block",
+		"name" : "Rbs_Website_Richtext",
+		"parameters" : {
+			"content" : "<a class=\"brand logo\" href=\"#\"><img src=\"Theme/Rbs/Demo/img/logo.png\" alt=\"\" /></a>"
+		}
+	},
+	"headerBottom1" : {
+		"id" : "headerBottom1",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 2,
+			"templateName" : "menu-scroll-inverse.twig"
+		}
+	},
+
+	"contentTop1" : {
+		"id" : "contentTop1",
+		"type" : "block",
+		"name" : "Rbs_Website_Thread",
+		"parameters" : {
+		}
+	},
+	"contentTop2" : {
+		"id" : "contentTop2",
+		"type" : "block",
+		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"parameters" : {
+			"templateName" : "xhtml-search.twig"
+		}
+	},
+	"mainContent" : {
+		"id" : "mainContent",
+		"grid" : 9,
+		"type" : "container",
+		"parameters" : {
+		}
+	},
+
+	"footerTop1" : {
+		"id" : "footerTop1",
+		"type" : "block",
+		"name" : "",
+		"parameters" : {
+		}
+	},
+	"footerMiddle1" : {
+		"id" : "footerMiddle1",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 1,
+			"templateName" : "menu-vertical.twig",
+			"showTitle" : true
+		}
+	},
+	"footerMiddle2" : {
+		"id" : "footerMiddle2",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 1,
+			"templateName" : "menu-vertical.twig",
+			"showTitle" : false
+		}
+	},
+	"footerMiddle3" : {
+		"id" : "footerMiddle3",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 2,
+			"templateName" : "menu-vertical.twig",
+			"showTitle" : true
+		}
+	},
+	"footerMiddle4" : {
+		"id" : "footerMiddle4",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 3,
+			"templateName" : "menu-vertical.twig",
+			"showTitle" : true
+		}
+	},
+	"footerBottom1" : {
+		"id" : "footerBottom1",
+		"type" : "block",
+		"name" : "Rbs_Website_Menu",
+		"parameters" : {
+			"documentId" : 100019,
+			"maxLevel" : 1,
+			"templateName" : "menu-inline.twig"
+		}
+	},
+	"footerBottom2" : {
+		"id" : "footerBottom2",
+		"type" : "block",
+		"name" : "Rbs_Website_Richtext",
+		"parameters" : {
+			"content" : "<div class=\"text-right\">Propulsé par <a class=\"link\" href=\"http://www.rbschange.fr\">RBS Change</a></div>"
+		}
+	}
+}

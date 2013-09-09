@@ -12,6 +12,16 @@
 			<div class="help-block">{{ i18n('m.rbs.catalog.document.attribute.title-help', ['ucf']) }}</div>
 		</rbs-field-text>
 
+		<rbs-field-rich-text property="description" input-class="input-block-level"
+			label="{{ i18nAttr('m.rbs.catalog.document.attribute.description', ['ucf']) }}">
+			<div class="help-block">{{ i18n('m.rbs.catalog.document.attribute.description-help', ['ucf']) }}</div>
+		</rbs-field-rich-text>
+
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.attribute.visibility', ['ucf']) }}">
+			<rbs-collection-multiple-item-selector ng-model="document.visibility"
+				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
+		</rbs-field>
+
 		<rbs-field required="true" label="{{ i18nAttr('m.rbs.catalog.document.attribute.valuetype', ['ucf']) }}">
 			<select ng-model="document.valueType" required="required"
 				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes"></select>
@@ -49,6 +59,12 @@
 				<rbs-field-boolean property="localizedValue"
 					label="{{ i18nAttr('m.rbs.catalog.document.attribute.localizedvalue', ['ucf']) }}">
 				</rbs-field-boolean>
+			</div>
+
+			<div data-ng-show="document.valueType == 'Document'">
+				<rbs-field-text property="documentType"
+					label="{{ i18nAttr('m.rbs.catalog.document.attribute.documenttype', ['ucf']) }}">
+				</rbs-field-text>
 			</div>
 		</div>
 

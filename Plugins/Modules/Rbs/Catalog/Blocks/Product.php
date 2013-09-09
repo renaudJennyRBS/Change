@@ -21,11 +21,12 @@ class Product extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('productId', Property::TYPE_INTEGER, true);
-		$parameters->addParameterMeta('webStoreId', Property::TYPE_INTEGER, true);
-		$parameters->addParameterMeta('categoryId', Property::TYPE_INTEGER, false);
+		$parameters->addParameterMeta('productId');
+		$parameters->addParameterMeta('webStoreId');
+		$parameters->addParameterMeta('categoryId');
+		$parameters->addParameterMeta('activateZoom', true);
+		$parameters->addParameterMeta('attributesDisplayMode', 'table');
 		$parameters->setLayoutParameters($event->getBlockLayout());
-
 		if ($parameters->getParameter('productId') === null)
 		{
 			$document = $event->getParam('document');
@@ -46,8 +47,6 @@ class Product extends Block
 			$categoryId = $request->getQuery('categoryId');
 			if ($categoryId) {$parameters->setParameterValue('categoryId', $categoryId);}
 		}
-		$password = $request->getPost('password');
-		if ($password) {$parameters->setParameterValue('password', $password);}
 		return $parameters;
 	}
 
@@ -71,15 +70,36 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-
+				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
+				$attributes['activateZoom'] = $parameters->getParameter('activateZoom');
 				$attributes['product'] = $product;
-				$cartLineConfig = $product->getCartLineConfig($commerceServices, array('options' => array('webStoreId' => $parameters->getWebStoreId())));
-				if ($cartLineConfig)
+				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
+
+				// Categories.
+				$attributes['categories'] = $product->getPublishedCategories($event->getParam('website'));
+
+				// Cart line configs.
+				$productPresentation = $product->getPresentation($commerceServices, $parameters->getWebStoreId());
+				if ($productPresentation)
 				{
-					$cartLineConfig->setOption('quantity', 1.0);
-					$cartLineConfig->evaluatePrice($commerceServices, array('quantity' => 1.0));
-					$attributes['cartLineConfig'] = $cartLineConfig;
+					$productPresentation->evaluate();
+					$attributes['productPresentation'] = $productPresentation;
 				}
+
+				// Attributes.
+				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
+				$attributePresentation = new \Rbs\Catalog\Std\AttributePresentation($product);
+				$attributes['attributesConfig'] = $attributePresentation->getConfiguration('specifications');
+
+				// Description.
+				$richText = new \Change\Documents\RichtextProperty();
+				$richText->setRawText($event->getBlockParameters()->getParameter('content'));
+				$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
+				$attributes['htmlContent'] = $event->getPresentationServices()
+					->getRichTextManager()
+					->setDocumentServices($event->getDocumentServices())
+					->render($richText, "Website");
+
 				return 'product.twig';
 			}
 		}

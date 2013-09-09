@@ -126,7 +126,8 @@ class LocalImageStorage extends LocalStorage
 				{
 					$this->getStorageManager()->setItemDbInfo($this->getName(), $this->buildDbPath($this->parsedURL), null);
 				}
-				return @touch($fileName, isset($var[0])? $var[0] : null, isset($var[1])? $var[1] : null);
+				\Change\Stdlib\File::mkdir(dirname($fileName));
+				return touch($fileName, isset($var[0])? $var[0] : null, isset($var[1])? $var[1] : null);
 			}
 			else
 			{

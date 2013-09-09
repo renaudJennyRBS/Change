@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
-use Change\Documents\Events\Event;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
@@ -64,6 +63,7 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 
 
 		$documentLink->setProperty('isHighlighted', $this->isHighlighted());
+		$documentLink->setProperty('canonical', $this->getCanonical());
 		$documentLink->setProperty('position', $this->getPosition());
 
 		$pathInfo = $documentLink->getPathInfo();

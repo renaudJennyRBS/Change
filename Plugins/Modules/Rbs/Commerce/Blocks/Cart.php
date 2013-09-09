@@ -21,7 +21,7 @@ class Cart extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('cartIdentifier', Property::TYPE_INTEGER, true);
+		$parameters->addParameterMeta('cartIdentifier');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{

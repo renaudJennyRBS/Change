@@ -297,7 +297,7 @@ abstract class AbstractBuilder
 		}
 
 		$modelProperty = $model->getProperty(($modelPropertyName instanceof Property) ? $modelPropertyName->getName() : $modelPropertyName);
-		if ( $modelProperty === null ||  $modelProperty->getStateless() || $modelProperty->getLocalized())
+		if ($modelProperty === null || $modelProperty->getStateless() || $modelProperty->getLocalized())
 		{
 			throw new \InvalidArgumentException('Argument 3 must be a valid Property', 999999);
 		}
