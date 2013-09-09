@@ -1,0 +1,30 @@
+<div class="dropdown">
+	<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+		<i class="glyphicon glyphicon-shopping-cart"></i>
+		{{ i18n('m.rbs.commerce.tpl.my-cart', ['ucf']) }}
+		<span class="badge">{{ cart.lines|length }}</span>
+		<b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="dropdown-text">
+			{{ cart.lines|length }}
+			{% if cart.lines|length == 1 %}
+				{{ i18n('m.rbs.commerce.tpl.article') }}
+			{% else %}
+				{{ i18n('m.rbs.commerce.tpl.articles') }}
+			{% endif %}
+		</li>
+		<li class="divider"></li>
+		<li class="dropdown-text price">
+			{{ formatPrice(cart.priceValue) }}
+			<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
+		</li>
+		<li class="dropdown-text price">
+			{{ formatPrice(cart.priceValueWithTax) }}
+			<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</span>
+		</li>
+		<li class="dropdown-text">{{ i18n('m.rbs.commerce.tpl.excluding-fees') }}</li>
+		<li class="divider"></li>
+		<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.tpl.view-my-cart', ['ucf']) }}</a></li>
+	</ul>
+</div>

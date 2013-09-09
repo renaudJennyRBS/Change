@@ -20,9 +20,8 @@
 	"headerTop3" : {
 		"id" : "headerTop3",
 		"type" : "block",
-		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"name" : "Rbs_Commerce_ShortCart",
 		"parameters" : {
-			"templateName" : "xhtml-cart.twig"
 		}
 	},
 	"headerTop4" : {
