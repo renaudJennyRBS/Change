@@ -198,7 +198,7 @@ class BaseDocumentClass
 	public function setOwnerUser(\Change\User\UserInterface $user)
 	{
 		$cl = $this->getCurrentLocalization();
-		if ($cl->getAuthorId() === null)
+		if (!$cl->getAuthorId())
 		{
 			$cl->setAuthorId($user->getId())->setAuthorName($user->getName());
 		}
@@ -213,7 +213,7 @@ class BaseDocumentClass
 	 */
 	public function setOwnerUser(\Change\User\UserInterface $user)
 	{
-		if ($this->getAuthorId() === null)
+		if (!$this->getAuthorId())
 		{
 			$this->setAuthorId($user->getId())->setAuthorName($user->getName());
 		}
