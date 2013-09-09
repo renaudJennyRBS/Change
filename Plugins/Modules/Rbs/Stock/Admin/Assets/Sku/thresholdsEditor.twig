@@ -1,11 +1,15 @@
 <div data-ng-repeat="threshold in thresholds">
-	<a ng-show="$first || (threshold.l - thresholds[$index-1].l) > 1"
+	<small>
+		<a ng-show="$first || (threshold.l - thresholds[$index-1].l) > 1"
 			href="javascript:;" ng-click="createThreshold($index)"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.stock.document.sku.threshold-add') }}</a>
+	</small>
 	<div>
 		<span ng-show="threshold.l < 1000000">{{ i18n('m.rbs.stock.document.sku.threshold-less-or-equals') }}
 			<input type="number" ng-model="threshold.l" style="width: 80px;" ng-blur="sortThreshold()"/></span>
 		<span ng-show="threshold.l >= 1000000">{{ i18n('m.rbs.stock.document.sku.unlimitedinventory', ['ucf']) }}</span>
 		, {{ i18n('m.rbs.stock.document.sku.threshold-use') }} <select ng-model="threshold.c" rbs-items-from-collection="Rbs_Stock_Collection_Threshold"></select>
-		<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$last"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.stock.document.sku.threshold-remove') }}</a>
+		<small>
+			<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$last"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.stock.document.sku.threshold-remove') }}</a>
+		</small>
 	</div>
 </div>

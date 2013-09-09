@@ -1,0 +1,12 @@
+<div ng-repeat="line in lines">
+
+</div>
+
+<rbs-field-picker property="newProduct" label="{{ i18nAttr('m.rbs.order.document.order.add-product', ['ucf']) }}"
+		accepted-model="Rbs_Catalog_Product" allow-edition="true"
+		selector-title="{{ i18nAttr('m.rbs.order.document.order.select-add-product', ['ucf']) }}">
+	<br />
+	<span> {{ i18n('m.rbs.order.document.order.add-product-quantity', ['ucf']) }}</span>
+	<input class="input-mini" type="number" ng-model="newQuantity" min="1" />
+	<button type="button" class="btn" ng-click="addProduct(newProduct, newQuantity)">{{ i18n('m.rbs.order.document.order.add', ['ucf']) }}</button>
+</rbs-field-picker>

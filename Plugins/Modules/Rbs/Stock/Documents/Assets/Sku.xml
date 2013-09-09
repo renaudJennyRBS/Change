@@ -15,6 +15,7 @@
 		<property name="minQuantity" type="Integer" default-value="1" required="true" />
 		<property name="maxQuantity" type="Integer" />
 		<property name="thresholds" type="JSON" />
+		<property name="virtual" type="Boolean" default-value="false" />
 		<property name="physicalProperties" type="JSON" />
 		<property name="allowQuantitySplit" type="Boolean" default-value="false" />
 		<property name="unlimitedInventory" type="Boolean" default-value="false" />

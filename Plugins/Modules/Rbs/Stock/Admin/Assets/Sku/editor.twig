@@ -3,14 +3,16 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text
-			property="code"
-			label="{{ i18nAttr('m.rbs.stock.document.sku.code', ['ucf']) }}"
-			max-length="80"
-			input-class="input-block-level">
+		<rbs-field-text property="code" label="{{ i18nAttr('m.rbs.stock.document.sku.code', ['ucf']) }}"
+			max-length="80" input-class="input-block-level">
 		</rbs-field-text>
-		<rbs-field
-			label="{{ i18nAttr('m.rbs.stock.document.sku.physicalProperties', ['ucf']) }}">
+
+		<rbs-field-boolean
+				property="virtual" label="{{ i18nAttr('m.rbs.stock.document.sku.virtual', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.stock.document.sku.virtual-help') }}</span>
+		</rbs-field-boolean>
+
+		<rbs-field ng-hide="document.virtual" label="{{ i18nAttr('m.rbs.stock.document.sku.physicalProperties', ['ucf']) }}">
 			<div class="control-group">
 				<div class="input-prepend">
 					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.mass-abbr') }}</span>
@@ -81,22 +83,21 @@
 			label="{{ i18nAttr('m.rbs.stock.document.sku.maxquantity', ['ucf']) }}">
 		</rbs-field-integer>
 
-		<rbs-field-boolean
-			property="unlimitedInventory"
+		<rbs-field-boolean property="unlimitedInventory"
 			label="{{ i18nAttr('m.rbs.stock.document.sku.unlimitedinventory', ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.document.sku.unlimitedinventory-help') }}</span>
+		</rbs-field-boolean>
+
+		<rbs-field-boolean ng-hide="document.unlimitedInventory"
+				property="allowBackorders"
+				label="{{ i18nAttr('m.rbs.stock.document.sku.allowbackorders', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.stock.document.sku.allowbackorders-help') }}</span>
 		</rbs-field-boolean>
 
 		<rbs-field label="{{ i18nAttr('m.rbs.stock.document.sku.thresholds', ['ucf']) }}">
 			<rbs-thresholds-editor thresholds-values="document.thresholds">
 			</rbs-thresholds-editor>
 		</rbs-field>
-
-		<rbs-field-boolean
-			property="allowBackorders"
-			label="{{ i18nAttr('m.rbs.stock.document.sku.allowbackorders', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.stock.document.sku.allowbackorders-help') }}</span>
-		</rbs-field-boolean>
 
 		<rbs-field-boolean
 			property="allowQuantitySplit"
