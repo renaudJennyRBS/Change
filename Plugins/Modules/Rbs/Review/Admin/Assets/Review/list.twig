@@ -1,0 +1,34 @@
+<div>
+
+	<rbs-workspace-config menu="Rbs_Review">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Review'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.review.document.review-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<page-header title="{{ i18nAttr('m.rbs.review.document.review-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Review_Review" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div>
+		<a href ng-href="(= 'Rbs_Review_Review' | documentURL:'new' =)">{{ i18n('m.rbs.review.document.review-create', ['ucf']) }}</a>
+	</div>
+
+	<rbs-document-list data-dlid="DLRbsReviewReview"
+	               model="Rbs_Review_Review"
+	               publishable="true"
+	               filter-query="query">
+		<column name="content" primary="true">
+			<p ng-bind-html="doc.content.h"></p>
+		</column>
+		<column name="promoted">
+			<switch ng-model="doc.promoted" disabled></switch>
+		</column>
+		<column name="reviewDate" format="date"></column>
+		<preview style="min-height: 200px">
+			<div>
+				<h4>(= doc.pseudonym =)</h4>
+				<p ng-bind-html="doc.content.h"></p>
+			</div>
+		</preview>
+	</rbs-document-list>
+</div>
