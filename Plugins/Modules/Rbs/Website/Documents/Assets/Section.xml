@@ -10,6 +10,9 @@
 		<property name="indexPage" type="Document" document-type="Rbs_Website_Page" stateless="true" />
 		<property name="allowedTemplateNames" type="JSON"/>
 
+		<property name="authorizedUsers" type="DocumentArray" document-type="Rbs_User_User" stateless="true" />
+		<property name="authorizedGroups" type="DocumentArray" document-type="Rbs_User_Group" stateless="true" />
+
 		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
 		<property name="defaultSkin" type="Document" document-type="Rbs_Skin_Skin" />
 		-->

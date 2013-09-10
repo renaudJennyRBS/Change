@@ -198,4 +198,126 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	{
 		return $this->getCurrentLocalization()->getPathPart();
 	}
+
+	protected function onUpdate()
+	{
+		$this->saveAuthorizedAccessors();
+	}
+
+	protected function saveAuthorizedAccessors()
+	{
+		$authorizedUsers = $this->getAuthorizedUsers();
+		$authorizedGroups = $this->getAuthorizedGroups();
+
+		$this->getPermissionManager()->deleteWebRules($this->getId(), $this->getWebsite()->getId());
+		foreach ($authorizedUsers as $authorizedUser)
+		{
+			/* @var $authorizedUser \Rbs\User\Documents\User */
+			$this->getPermissionManager()->addWebRule($this->getId(), $this->getWebsite()->getId(), $authorizedUser->getId());
+		}
+		foreach ($authorizedGroups as $authorizedGroup)
+		{
+			/* @var $authorizedGroup \Rbs\User\Documents\Group */
+			$this->getPermissionManager()->addWebRule($this->getId(), $this->getWebsite()->getId(), $authorizedGroup->getId());
+		}
+		//if no accessor is set, set public access
+		if (!count($this->getAuthorizedUsers()) && !count($this->getAuthorizedGroups()))
+		{
+			$this->getPermissionManager()->addWebRule($this->getId(), $this->getWebsite()->getId());
+		}
+	}
+
+	//Authorized Users and groups
+
+	/**
+	 * @var \Rbs\User\Documents\User[]
+	 */
+	protected $authorizedUsers = null;
+
+	/**
+	 * @var \Rbs\User\Documents\Group[]
+	 */
+	protected $authorizedGroups = null;
+
+	/**
+	 * @var PermissionsManager
+	 */
+	protected $permissionManager;
+
+	/**
+	 * @return PermissionsManager
+	 */
+	public function getPermissionManager()
+	{
+		if (!$this->permissionManager)
+		{
+			$this->permissionManager = new PermissionsManager();
+			$this->permissionManager->setApplicationServices($this->getApplicationServices());
+		}
+		return $this->permissionManager;
+	}
+
+	/**
+	 * @return \Rbs\User\Documents\User[]|null
+	 */
+	public function getAuthorizedUsers()
+	{
+		if (!is_array($this->authorizedUsers))
+		{
+			$this->authorizedUsers = $this->getAuthorizedAccessors('Rbs_User_User');
+		}
+		return $this->authorizedUsers;
+	}
+
+	/**
+	 * @param \Rbs\User\Documents\User $authorizedUsers
+	 * @return $this
+	 */
+	public function setAuthorizedUsers($authorizedUsers)
+	{
+		$this->authorizedUsers = $authorizedUsers;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\User\Documents\Group[]|null
+	 */
+	public function getAuthorizedGroups()
+	{
+		if (!is_array($this->authorizedGroups))
+		{
+			$this->authorizedGroups = $this->getAuthorizedAccessors('Rbs_User_Group');
+		}
+		return $this->authorizedGroups;
+	}
+
+	/**
+	 * @param \Rbs\User\Documents\Group[] $authorizedGroups
+	 * @return $this
+	 */
+	public function setAuthorizedGroups($authorizedGroups)
+	{
+		$this->authorizedGroups = $authorizedGroups;
+		return $this;
+	}
+
+	/**
+	 * @param string $model null|Rbs_User_User|Rbs_User_Group
+	 * @return array
+	 */
+	protected function getAuthorizedAccessors($model)
+	{
+		$accessorIds = $this->getPermissionManager()->getSectionAccessorIds($this->getId(), $this->getWebsite()->getId(), $model);
+		$accessors = [];
+		foreach ($accessorIds as $accessorId)
+		{
+			$accessor = $this->getDocumentManager()->getDocumentInstance($accessorId);
+			if ($accessor instanceof \Change\Documents\AbstractDocument)
+			{
+				$accessors[] = $accessor;
+			}
+		}
+		return $accessors;
+	}
+
 }

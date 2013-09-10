@@ -281,25 +281,40 @@ class PermissionsManager
 	/**
 	 * @param integer $sectionId
 	 * @param integer $websiteId
+	 * @param string $model null|Rbs_User_User|Rbs_User_Group
 	 * @return integer[]
 	 */
-	public function getSectionAccessorIds($sectionId, $websiteId)
+	public function getSectionAccessorIds($sectionId, $websiteId, $model = null)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('getWebPermissionRule');
-		if (!$qb->isCached())
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('accessor_id'));
+		$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
+		$logicAnd = $fb->logicAnd(
+			$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+			$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
+		);
+		if ($model)
 		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('accessor_id'));
-			$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
-			$qb->where($fb->logicAnd(
-				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
-				$fb->eq($fb->column('website_id'), $fb->parameter('websiteId'))
+			$qb->innerJoin($fb->table($fb->getSqlMapping()->getDocumentIndexTableName()), $fb->eq(
+				$fb->column('accessor_id', $fb->getSqlMapping()->getWebPermissionRuleTable()),
+				$fb->column('document_id', $fb->getSqlMapping()->getDocumentIndexTableName())
+			));
+			$logicAnd->addArgument($fb->eq(
+				$fb->column('document_model', $fb->getSqlMapping()->getDocumentIndexTableName()),
+				$fb->parameter('model')
 			));
 		}
+		$qb->where($logicAnd);
 		$sq = $qb->query();
 		$sq->bindParameter('sectionId', intval($sectionId));
 		$sq->bindParameter('websiteId', intval($websiteId));
-		return $sq->getResults($sq->getRowsConverter()->addIntCol('accessor_id'));
+		if ($model)
+		{
+			$sq->bindParameter('model', $model);
+		}
+		$test = $sq->getResults($sq->getRowsConverter()->addIntCol('accessor_id'));
+		return $test;
 	}
 
 	public function deleteWebRules($sectionId, $websiteId, $accessorIds = [])
