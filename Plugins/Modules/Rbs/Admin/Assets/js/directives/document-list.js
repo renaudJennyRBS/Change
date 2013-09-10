@@ -280,7 +280,7 @@
 					"align"  : "center",
 					"width"  : "90px",
 					"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
-					"content": '<status-switch document="doc"/>',
+					"content": '<activate-switch document="doc"/>',
 					"dummy"  : true
 				});
 			}

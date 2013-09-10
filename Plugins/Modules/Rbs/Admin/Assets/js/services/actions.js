@@ -712,6 +712,86 @@
 
 				});
 
+
+
+
+				/**
+				 * Action: activate
+				 */
+				this.register({
+					name        : 'activate',
+					models      : '*',
+					label       : i18n.trans('m.rbs.admin.admin.js.action-activate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-activate-help | ucf'),
+					icon        : "icon-play",
+					selection   : "+",
+					loading     : true,
+
+					execute : ['$docs', function ($docs) {
+						var promises = [];
+						// Call one REST request per document to activate and store the resulting Promise.
+						angular.forEach($docs, function (doc) {
+							doc.active = true;
+							var promise = REST.save(doc);
+							promises.push(promise);
+							promise.then(function (updatedDoc) {
+								angular.extend(doc, updatedDoc);
+							});
+						});
+						return $q.all(promises);
+
+					}],
+
+					isEnabled : function ($docs) {
+						for (var i=0 ; i<$docs.length ; i++) {
+							if ($docs[i].active) {
+								return false;
+							}
+						}
+						return true;
+					}
+				});
+
+
+				/**
+				 * Action: deactivate
+				 */
+				this.register({
+					name        : 'deactivate',
+					models      : '*',
+					label       : i18n.trans('m.rbs.admin.admin.js.action-deactivate | ucf'),
+					description : i18n.trans('m.rbs.admin.admin.js.action-deactivate-help | ucf'),
+					icon        : "icon-play",
+					selection   : "+",
+					loading     : true,
+
+					execute : ['$docs', function ($docs) {
+						var promises = [];
+						// Call one REST request per document to activate and store the resulting Promise.
+						angular.forEach($docs, function (doc) {
+							doc.active = false;
+							var promise = REST.save(doc);
+							promises.push(promise);
+							promise.then(function (updatedDoc) {
+								angular.extend(doc, updatedDoc);
+							});
+						});
+						return $q.all(promises);
+
+					}],
+
+					isEnabled : function ($docs) {
+						for (var i=0 ; i<$docs.length ; i++) {
+							if (! $docs[i].active) {
+								return false;
+							}
+						}
+						return true;
+					}
+				});
+
+
+
 			}
 
 			return new Actions();
