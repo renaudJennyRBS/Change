@@ -22,7 +22,9 @@
 		__quickActions = {},
 		__actions = {},
 		PAGINATION_DEFAULT_LIMIT = 20,
-		DEFAULT_ACTIONS = 'requestValidation publicationValidation freeze(icon) unfreeze(icon) delete(icon)',
+		DEFAULT_ACTIONS = 'delete(icon)',
+		DEFAULT_PUBLISHABLE_ACTIONS = 'requestValidation publicationValidation freeze(icon) unfreeze(icon) delete(icon)',
+		DEFAULT_ACTIVABLE_ACTIONS = 'activate deactivate delete(icon)',
 		testerEl = $('#rbs-document-list-tester'),
 		forEach = angular.forEach;
 
@@ -692,7 +694,16 @@
 
 					scope.actions = [];
 					if (actionList.length) {
-						actionList = actionList.replace('default', DEFAULT_ACTIONS);
+						if (attrs.publishable === 'true') {
+							actionList = actionList.replace('default', DEFAULT_PUBLISHABLE_ACTIONS);
+						}
+						else if (attrs.activable === 'true') {
+							actionList = actionList.replace('default', DEFAULT_ACTIVABLE_ACTIONS);
+						}
+						else {
+							actionList = actionList.replace('default', DEFAULT_ACTIONS);
+						}
+
 						if (! scope.hasColumn('nodeOrder') ) {
 							actionList = actionList.replace('nodeOrder', '');
 						}

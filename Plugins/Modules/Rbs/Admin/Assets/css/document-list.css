@@ -483,7 +483,7 @@ rbs-document-list tr td .quick-actions-touch .handle-close {
 
 rbs-document-list .table td .primary-cell {
 	position: relative;
-	min-width: 170px;
+	min-width: 120px;
 }
 
 rbs-document-list .table thead th {
