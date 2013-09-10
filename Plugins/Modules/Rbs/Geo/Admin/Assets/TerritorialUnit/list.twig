@@ -14,7 +14,7 @@
 		<a href ng-href="(= 'Rbs_Geo_TerritorialUnit' | documentURL:'new' =)">{{ i18n('m.rbs.geo.document.territorialunit-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLGeoTerritorialUnit" publishable="false" model="Rbs_Geo_TerritorialUnit" filter-query="query">
+	<rbs-document-list data-dlid="DLGeoTerritorialUnit" model="Rbs_Geo_TerritorialUnit" filter-query="query">
 		<column name="label" label="{{ i18n('m.rbs.geo.document.territorialunit.label', ['ucf']) }}" primary="true"></column>
 	</rbs-document-list>
 </div>
