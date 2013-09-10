@@ -324,7 +324,12 @@
 					$scope.language = $scope.document.LCID || Settings.get('LCID');
 					$scope.parentId = $routeParams.parentId || null;
 
-					Breadcrumb.setResource($scope.document);
+					if ($scope.document.isNew()) {
+						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
+					}
+					else {
+						Breadcrumb.setResource($scope.document);
+					}
 
 					EditorManager.startEditSession($scope.document);
 
