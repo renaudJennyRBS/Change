@@ -69,13 +69,11 @@
 				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Rbs/Website/Topic/list.twig')
 				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Rbs/Website/SectionPageFunction/list.twig')
 				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Rbs/Website/Menu/list.twig')
-				.route('permission', 'Rbs/Website/Website/:id/Permissions/', 'Rbs/Website/Topic/permission.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')
 				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Rbs/Website/Topic/list.twig')
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Rbs/Website/SectionPageFunction/list.twig')
-				.route('permission', 'Rbs/Website/Topic/:id/Permissions/', 'Rbs/Website/Topic/permission.twig')
 			;
 
 			$delegate.model('Rbs_Website')
