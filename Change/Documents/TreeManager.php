@@ -1,6 +1,7 @@
 <?php
 namespace Change\Documents;
 
+use Change\Documents\Events\Event;
 use Zend\Form\Annotation\AbstractArrayAnnotation;
 
 /**
@@ -438,6 +439,7 @@ class TreeManager
 			$rootNode = $this->getNodeByDocument($document);
 			if ($rootNode)
 			{
+				$this->dispatchNodeUpdated($document, $rootNode);
 				return $rootNode;
 			}
 		}
@@ -506,6 +508,7 @@ class TreeManager
 		if ($node)
 		{
 			$parentNode->setChildrenCount($countChildren + 1);
+			$this->dispatchNodeUpdated($document, $node);
 			return $node;
 		}
 		throw new \RuntimeException('Unable to insert node: ' . $document->getId() . ' in tree ' . $treeName, 53002);
@@ -830,12 +833,18 @@ class TreeManager
 		$q2->bindParameter('id', $document->getId());
 		if ($q2->execute())
 		{
-			if ($document->getPersistentState() == AbstractDocument::STATE_LOADED)
+			if ($document->getPersistentState() != AbstractDocument::STATE_INITIALIZED)
 			{
 				$document->setTreeName($treeName);
 				$document->removeOldPropertyValue('treeName');
 			}
 		}
+	}
+
+	protected function dispatchNodeUpdated(AbstractDocument $document, TreeNode $node = null)
+	{
+		$event = new Event(Event::EVENT_NODE_UPDATED, $document, array('node' => $node));
+		$document->getEventManager()->trigger($event);
 	}
 
 	/**
@@ -1144,6 +1153,7 @@ class TreeManager
 		if ($document)
 		{
 			$this->updateDocumentTreeName($document, null);
+			$this->dispatchNodeUpdated($document, null);
 		}
 
 		if ($node->getParentId())

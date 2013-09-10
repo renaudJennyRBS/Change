@@ -157,6 +157,14 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 					->setNullable(false)->setDefaultValue('*'))
 				->addKey($this->newPrimaryKey()->addField($td->getField('rule_id')))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_web_permission_rule'] = $td = $schemaManager->newTableDefinition('change_web_permission_rule');
+			$td->addField($schemaManager->newIntegerFieldDefinition('rule_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newIntegerFieldDefinition('accessor_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newIntegerFieldDefinition('section_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
+				->addKey($this->newPrimaryKey()->addField($td->getField('rule_id')))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}
