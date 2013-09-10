@@ -58,6 +58,12 @@
 	<key id="action-add-to-clipboard">ajouter au Presse-papier</key>
 	<key id="action-add-to-clipboard-help">ajouter les documents sélectionnés au Presse-papier</key>
 
+	<key id="action-activate">activer</key>
+	<key id="action-validate-help">activer les documents sélectionnés</key>
+
+	<key id="action-deactivate">désactiver</key>
+	<key id="action-devalidate-help">désactiver les documents sélectionnés</key>
+
 	<key id="save-error">L'enregistrement a échoué</key>
 
 	<key id="tip-dismiss-thank-you">Merci, ne plus afficher ce message !</key>

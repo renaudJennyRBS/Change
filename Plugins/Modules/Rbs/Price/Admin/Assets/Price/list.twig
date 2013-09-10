@@ -14,9 +14,9 @@
 		<a href ng-href="(= 'Rbs_Price_Price' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.js.price-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price"  filter-query="query">
-		<column name="boValue" primary="true">(=doc.formattedBoValue=)</column>
-		<column name="boDiscountValue">(=doc.formattedBoDiscountValue=)</column>
+	<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-query="query" actions="default" activable="true">
+		<column name="boValue" align="right" width="90px"><a href ng-href="(=doc|documentURL=)">(=doc.formattedBoValue=)</a></column>
+		<column name="boDiscountValue" align="right">(=doc.formattedBoDiscountValue=)</column>
 		<column name="sku" sort="sku.code">(=doc.sku.code=)</column>
 		<column name="webStore" sort="webStore.label">(=doc.webStore.label=)</column>
 	</rbs-document-list>

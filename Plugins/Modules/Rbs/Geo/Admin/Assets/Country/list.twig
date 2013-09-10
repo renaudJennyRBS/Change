@@ -14,7 +14,7 @@
 		<a href ng-href="(= 'Rbs_Geo_Country' | documentURL:'new' =)">{{ i18n('m.rbs.geo.document.country-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLGeoCountry" publishable="false" model="Rbs_Geo_Country" filter-query="query">
+	<rbs-document-list data-dlid="DLGeoCountry" model="Rbs_Geo_Country" filter-query="query">
 		<column name="label" label="{{ i18n('m.rbs.geo.document.country.label', ['ucf']) }}" primary="true"></column>
 	</rbs-document-list>
 </div>
