@@ -80,8 +80,8 @@ class SendMails
 			}
 		}
 
-		//reschedule the job in 1 minute
-		$reportDate = (new \DateTime())->add(new \DateInterval('PT1M'));
+		//reschedule the job in 1 hour
+		$reportDate = (new \DateTime())->add(new \DateInterval('PT1H'));
 		$event->reported($reportDate);
 	}
 }
