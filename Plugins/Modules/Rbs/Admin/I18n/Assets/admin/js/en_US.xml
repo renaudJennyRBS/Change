@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.admin.admin.js" lcid="fr_FR">
+<i18n baseKey="m.rbs.admin.admin.js" lcid="en_US">
+	<include id="m.rbs.admin.workflow"/>
 	<key id="submit">submit</key>
 	<key id="cancel">cancel</key>
 	<key id="confirm">confirm</key>
 	<key id="home">home</key>
 	<key id="loading-document">loading document...</key>
 	<key id="document-is-already-being-edited">this document is already being edited.</key>
-	<key id="new">new document...</key>
+	<key id="new-element">new item</key>
 	<key id="not-defined">undefined</key>
 	<key id="loading-list">loading list...</key>
 	<key id="loading-list-error">there was an error loading the list.</key>
@@ -33,11 +34,11 @@
 	<key id="action-validate">validate</key>
 	<key id="action-validate-help">validate selected documents</key>
 
-	<key id="action-activate">activate</key>
-	<key id="action-activate-help">activate selected documents</key>
+	<key id="action-unfreeze">freeze</key>
+	<key id="action-unfreeze-help">freeze selected documents</key>
 
-	<key id="action-deactivate">deactivate</key>
-	<key id="action-deactivate-help">deactivate selected documents</key>
+	<key id="action-freeze">unfreeze</key>
+	<key id="action-freeze-help">unfreeze selected documents</key>
 
 	<key id="action-publish">publish</key>
 	<key id="action-publish-help">publish selected documents</key>
@@ -57,23 +58,22 @@
 	<key id="action-add-to-clipboard">add to Clipboard</key>
 	<key id="action-add-to-clipboard-help">add selected documents to Clipboard</key>
 
+	<key id="action-activate">activate</key>
+	<key id="action-activate-help">activate selected documents</key>
+
+	<key id="action-deactivate">deactivate</key>
+	<key id="action-deactivate-help">deactivate selected documents</key>
+
 	<key id="save-error">Save has failed.</key>
 
 	<key id="tip-dismiss-thank-you">Thanks, do not display this message anymore!</key>
 	<key id="correction-confirm-delete">Do you really want to delete the Correction?</key>
 
-	<key id="status-draft">draft</key>
-	<key id="status-frozen">frozen</key>
-	<key id="status-validcontent">validated content</key>
-	<key id="status-valid">validated</key>
-	<key id="status-validation">to validate</key>
-	<key id="status-unpublishable">unpublishable</key>
-	<key id="status-publishable">publishable</key>
-	<key id="status-filed">filed</key>
-
 	<key id="yes">yes</key>
 	<key id="no">no</key>
 	<key id="confirmation">confirmation</key>
 	<key id="help">help</key>
+
+	<key id="advanced-mode">advanced mode</key>
 
 </i18n>

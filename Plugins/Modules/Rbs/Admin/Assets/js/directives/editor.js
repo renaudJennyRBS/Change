@@ -275,6 +275,11 @@
 						} else {
 							$rootScope.$broadcast('Change:DocumentSaved', doc);
 						}
+
+						// If a Document has been created, we redirect to the URL of the new Document.
+						if ($scope._isNew) {
+							$location.path(doc.url());
+						}
 					}
 
 					if (postSavePromises.length) {
@@ -324,7 +329,13 @@
 					$scope.language = $scope.document.LCID || Settings.get('LCID');
 					$scope.parentId = $routeParams.parentId || null;
 
-					Breadcrumb.setResource($scope.document);
+					$scope._isNew = $scope.document.isNew();
+					if ($scope._isNew) {
+						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
+					}
+					else {
+						Breadcrumb.setResource($scope.document);
+					}
 
 					EditorManager.startEditSession($scope.document);
 
