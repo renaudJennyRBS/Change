@@ -3,6 +3,7 @@ namespace Rbs\Website\Events;
 
 use Change\Http\Web\Event;
 use Rbs\Website\Documents\Website;
+use Zend\Http\Response;
 
 /**
  * @package Rbs\Website
@@ -18,9 +19,11 @@ class WebsiteResolver
 		$data = $this->getWebsiteDatas($event);
 		if (count($data))
 		{
-			$script = $event->getUrlManager()->getScript();
+			$urlManager = $event->getUrlManager();
+			$script = $urlManager->getScript();
 			$request = $event->getRequest();
 			$path = $request->getPath();
+
 			if ($script && strpos($path, $script) === 0)
 			{
 				$path = ($path === $script) ? null : substr($path, strlen($script));
@@ -30,48 +33,72 @@ class WebsiteResolver
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$mm = $event->getDocumentServices()->getModelManager();
 			$dm = $event->getDocumentServices()->getDocumentManager();
+
+			$currentWebsite = null;
 			foreach ($data as $row)
 			{
 				if ($hostName === $row['hostName'])
 				{
-					$websitePathPart = $row['pathPart'];
 					if ($this->isBasePath($path, $row['pathPart']))
 					{
 						$model = $mm->getModelByName($row['model']);
-						$website = $dm->getDocumentInstance(intval($row['id']), $model);
-						if ($website instanceof Website)
+						$currentWebsite = $dm->getDocumentInstance(intval($row['id']), $model);
+						if ($currentWebsite instanceof Website)
 						{
 							$LCID = $row['LCID'];
 							$i18nManager->setLCID($LCID);
 							$request->setLCID($LCID);
-							$event->setParam('website', $website);
-							$event->getUrlManager()->setBasePath($websitePathPart);
-							$website->getCurrentLocalization()->setScriptName($script);
-							return;
+							break;
+						}
+						else
+						{
+							$currentWebsite = null;
 						}
 					}
 				}
 			}
 
-			$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
-			$singleWebsite = $cfg->getEntry('Rbs/Http/Web/SingleWebsite', true);
-
-			if ($singleWebsite)
+			if ($currentWebsite === null)
 			{
-				$row = 	$data[0];
-				$model = $mm->getModelByName($row['model']);
-				$website = $dm->getDocumentInstance(intval($row['id']), $model);
-				if ($website instanceof Website)
+				$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
+				$singleWebsite = $cfg->getEntry('Rbs/Http/Web/SingleWebsite', true);
+				if ($singleWebsite)
 				{
-					$websitePathPart = $row['pathPart'];
-					$LCID = $row['LCID'];
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$i18nManager->setLCID($LCID);
-					$request->setLCID($LCID);
-					$event->setParam('website', $website);
-					$event->getUrlManager()->setBasePath($websitePathPart);
-					$website->getCurrentLocalization()->setScriptName($script);
-					$website->getCurrentLocalization()->setHostName($hostName);
+					$row = 	$data[0];
+					$model = $mm->getModelByName($row['model']);
+					$currentWebsite = $dm->getDocumentInstance(intval($row['id']), $model);
+					if ($currentWebsite instanceof Website)
+					{
+						$LCID = $row['LCID'];
+						$i18nManager = $event->getApplicationServices()->getI18nManager();
+						$i18nManager->setLCID($LCID);
+						$request->setLCID($LCID);
+
+					}
+				}
+			}
+
+			if ($currentWebsite instanceof Website)
+			{
+				$event->setParam('website', $currentWebsite);
+				$urlManager->setWebsite($currentWebsite);
+				$stdUrlManager = $currentWebsite->getUrlManager($i18nManager->getLCID());
+				if ($stdUrlManager->getScript() != $urlManager->getScript() ||
+					$stdUrlManager->getBasePath() || $urlManager->getBasePath() || $hostName != $currentWebsite->getHostName())
+				{
+					if ($path === '/')
+					{
+						$stdUrlManager->setAbsoluteUrl(true);
+						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
+						$result->setHeaderLocation($stdUrlManager->getByPathInfo(''));
+						$event->setResult($result);
+					}
+					else
+					{
+						$urlManager->setScript($stdUrlManager->getScript());
+						$urlManager->setBasePath($stdUrlManager->getBasePath());
+						$event->setResult($event->getController()->notFound($event));
+					}
 				}
 			}
 		}

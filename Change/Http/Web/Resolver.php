@@ -25,11 +25,10 @@ class Resolver extends BaseResolver
 	public function resolve($event)
 	{
 		$website = $event->getWebsite();
+
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
-			$urlManager = $event->getUrlManager();
-			$urlManager->setWebsite($website);
 			$event->setParam('pathRule', $pathRule);
 			$dm = $event->getDocumentServices()->getDocumentManager();
 			$document = $dm->getDocumentInstance($pathRule->getDocumentId());

@@ -7,10 +7,9 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * TODO Sample
- * @name \Rbs\Website\Blocks\Richtext
+ * @name \Rbs\Website\Blocks\Error
  */
-class Richtext extends Block
+class Error extends Block
 {
 	/**
 	 * @api
@@ -23,8 +22,7 @@ class Richtext extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('content');
-		$parameters->addParameterMeta('contentType', 'Markdown');
+		$parameters->addParameterMeta('codeHttp', 404);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		return $parameters;
 	}
@@ -39,14 +37,6 @@ class Richtext extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$context = array('website' => $event->getUrlManager()->getWebsite());
-		$richText = new \Change\Documents\RichtextProperty();
-		$richText->setRawText($event->getBlockParameters()->getParameter('content'));
-		$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
-		$attributes['htmlContent'] = $event->getPresentationServices()
-			->getRichTextManager()
-			->setDocumentServices($event->getDocumentServices())
-			->render($richText, 'Website', $context);
-		return 'richtext.twig';
+		return 'error.twig';
 	}
 }

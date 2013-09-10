@@ -1,6 +1,6 @@
 {
-	"zoneEditable1": {
-		"id": "zoneEditable1",
+	"mainContent": {
+		"id": "mainContent",
 		"grid": 12,
 		"type": "container",
 		"parameters": {

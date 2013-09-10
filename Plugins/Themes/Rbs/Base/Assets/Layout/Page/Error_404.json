@@ -1,6 +1,6 @@
 {
-	"zoneEditable1": {
-		"id": "zoneEditable1",
+	"mainContent": {
+		"id": "mainContent",
 		"grid": 12,
 		"type": "container",
 		"parameters": {
@@ -11,6 +11,7 @@
 				"type": "block",
 				"name": "Rbs_Website_Richtext",
 				"parameters": {
+					"contentType" : "Markdown",
 					"content": "Oups!, cette page n'est pas disponible."
 				}
 			}

@@ -23,13 +23,14 @@ class Exception extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('message');
+		$parameters->addParameterMeta('showStackTrace', true);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$exception = $event->getParam('Exception');
+
 		if ($exception instanceof \Exception)
 		{
 			$message = 'Exception (code ' . $exception->getCode() . ') : ' . $exception->getMessage();
-			$configuration = $event->getPresentationServices()->getApplicationServices()->getApplication()->getConfiguration();
-			if ($configuration->getEntry('Rbs/Application/development-mode'))
+			if ($parameters->getParameter('showStackTrace'))
 			{
 				$message .= PHP_EOL . $exception->getTraceAsString();
 			}
