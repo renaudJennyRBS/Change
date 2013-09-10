@@ -23,8 +23,10 @@ class Exception extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('message');
+		$parameters->addParameterMeta('showStackTrace', true);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$exception = $event->getParam('Exception');
+
 		if ($exception instanceof \Exception)
 		{
 			$message = 'Exception (code ' . $exception->getCode() . ') : ' . $exception->getMessage();

@@ -222,26 +222,34 @@ class Controller extends \Change\Http\Controller
 	 */
 	protected function getFunctionalResult($event, $functionCode)
 	{
-		$page = null;
-		$website = $event->getWebsite();
-		if ($website instanceof AbstractDocument)
+		try
 		{
-			$em = $website->getEventManager();
-			$args = array('functionCode' => $functionCode);
-			$docEvent = new \Change\Documents\Events\Event('getPageByFunction', $website, $args);
-			$em->trigger($docEvent);
-			$page = $docEvent->getParam('page');
-		}
+			$page = null;
+			$website = $event->getWebsite();
+			if ($website instanceof AbstractDocument)
+			{
+				$em = $website->getEventManager();
+				$args = array('functionCode' => $functionCode);
+				$docEvent = new \Change\Documents\Events\Event('getPageByFunction', $website, $args);
+				$em->trigger($docEvent);
+				$page = $docEvent->getParam('page');
+			}
 
-		if (!($page instanceof Page))
+			if (!($page instanceof Page))
+			{
+				$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()
+					->getThemeManager(), $functionCode);
+			}
+
+			$event->setParam('page', $page);
+			$this->doSendResult($this->getEventManager(), $event);
+			return $event->getResult();
+		}
+		catch (\Exception $e)
 		{
-			$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()
-				->getThemeManager(), $functionCode);
+			$event->getApplicationServices()->getLogging()->exception($e);
 		}
-
-		$event->setParam('page', $page);
-		$this->doSendResult($this->getEventManager(), $event);
-		return $event->getResult();
+		return null;
 	}
 
 	/**
