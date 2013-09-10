@@ -317,9 +317,6 @@ form .description {
 	font-size: 0.8em;
 	margin-left: 8px;
 }
-td.price {
-	text-align: right;
-}
 
 /** Misc elements */
 .grid-list-bordered .grid-list-cell {
