@@ -75,5 +75,6 @@
 	<key id="help">aide</key>
 
 	<key id="advanced-mode">mode avancé</key>
-
+	<key id="move-up">déplacer vers le haut</key>
+	<key id="move-down">déplacer vers le bas</key>
 </i18n>
