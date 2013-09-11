@@ -20,20 +20,19 @@ class Listeners implements ListenerAggregateInterface
 	public function attach(EventManagerInterface $events)
 	{
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
-
 		$callback = function (Event $event)
 		{
 			(new \Rbs\User\Http\Web\Login())->authenticate($event);
-			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getPresentationServices(), $event->getDocumentServices(), $event->getUrlManager());
-			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 		};
 		$events->attach(Event::EVENT_AUTHENTICATE, $callback, 5);
 
 		$callback = function (Event $event)
 		{
+			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getPresentationServices(), $event->getDocumentServices(), $event->getUrlManager());
+			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 			(new \Rbs\Website\Events\WebsiteResolver())->resolve($event);
 		};
-		$events->attach(Event::EVENT_REQUEST, $callback, 5);
+		$events->attach(Event::EVENT_REQUEST, $callback, 10);
 	}
 
 	/**

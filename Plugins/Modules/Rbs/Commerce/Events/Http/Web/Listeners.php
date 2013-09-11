@@ -83,7 +83,7 @@ class Listeners implements ListenerAggregateInterface
 					$session['zone'] = $commerceServices->getZone();
 				}, 5);
 		};
-		$events->attach(\Change\Http\Event::EVENT_REQUEST, $callback, 5);
+		$events->attach(\Change\Http\Event::EVENT_REQUEST, $callback, 10);
 	}
 
 	/**
