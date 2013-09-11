@@ -63,7 +63,7 @@
 			<ul class="list-unstyled main-price">
 				<li class="price">
 					{{ formatPrice(productPresentation.priceValue) }}
-					<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
+					<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
 					{% if productPresentation.priceValueWithoutDiscount %}
 						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
 							{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
@@ -73,7 +73,7 @@
 				<li class="price">
 					<meta itemprop="priceCurrency" content="EUR" />
 					<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
-					<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</span>
+					<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
 					{% if productPresentation.priceValueWithoutDiscountWithTax %}
 						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
 							{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
