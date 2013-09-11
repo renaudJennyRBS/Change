@@ -77,19 +77,19 @@
 					</li>-->
 					<li class="product-price price">
 						{{ formatPrice(row.productPresentation.priceValue) }}
-						<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</span>
+						<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
 						{% if row.productPresentation.priceValueWithoutDiscount %}
 							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
-								{{ formatPrice(row.productPresentation.priceValueWithoutDiscount) }}
+								{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
 							</del>
 						{% endif %}
 					</li>
 					<li class="product-price price">
 						{{ formatPrice(row.productPresentation.priceValueWithTax) }}
-						<span class="tax-mode">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</span>
+						<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
 						{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
 							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
-								{{ formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) }}
+								{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
 							</del>
 						{% endif %}
 					</li>
@@ -112,3 +112,5 @@
 		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
 	</p>-->
 </form>
+
+{% include 'Rbs_Generic/pagination.twig' %}
