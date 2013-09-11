@@ -17,11 +17,11 @@
 		<li class="divider"></li>
 		<li class="dropdown-text price">
 			{{ formatPrice(cart.priceValue) }}
-			<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+			<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
 		</li>
 		<li class="dropdown-text price">
 			{{ formatPrice(cart.priceValueWithTax) }}
-			<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+			<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
 		</li>
 		<li class="dropdown-text">{{ i18n('m.rbs.commerce.tpl.excluding-fees') }}</li>
 		<li class="divider"></li>

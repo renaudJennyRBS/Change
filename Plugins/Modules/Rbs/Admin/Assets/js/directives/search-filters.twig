@@ -17,7 +17,7 @@
 		<div class="filters">
 
 			<div class="filter" ng-repeat="applied in appliedFilters">
-				<button class="btn rounded-icon" type="button" ng-click="removeFilter($index)" title="{{ i18n('m.rbs.admin.filters.deleteThisFilter', ['ucf']) }}"><i class="icon-minus"></i></button>
+				<button class="btn rounded-icon" type="button" ng-click="removeFilter($index)" title="{{ i18nAttr('m.rbs.admin.filters.deleteThisFilter', ['ucf']) }}"><i class="icon-minus"></i></button>
 				<select ng-model="applied.filter" ng-options="f.label for (name,f) in availableFilters"></select>
 
 				<div ng-switch="applied.filter.type" style="display: inline-block; vertical-align: top;">

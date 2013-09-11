@@ -58,14 +58,14 @@
 						</label>
 					</li>-->
 					<li class="product-visual">
-						<a title="{{ i18n('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+						<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
 							href="{{ row.url }}">
 							<img alt="" src="{{ catalogMacros.categoryThumbnailURL(row.visual) }}" /></a>
 						<div class="pictograms-container">
 						</div>
 					</li>
 					<li class="product-label">
-						<a title="{{ i18n('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+						<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
 							href="{{ row.url }}">{{ row.title }}</a>
 					</li>
 					<li class="product-availability">
@@ -77,18 +77,18 @@
 					</li>-->
 					<li class="product-price price">
 						{{ formatPrice(row.productPresentation.priceValue) }}
-						<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
 						{% if row.productPresentation.priceValueWithoutDiscount %}
-							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
 								{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
 							</del>
 						{% endif %}
 					</li>
 					<li class="product-price price">
 						{{ formatPrice(row.productPresentation.priceValueWithTax) }}
-						<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
 						{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
-							<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
 								{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
 							</del>
 						{% endif %}
