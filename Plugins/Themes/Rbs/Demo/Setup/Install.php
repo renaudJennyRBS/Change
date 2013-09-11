@@ -94,7 +94,7 @@ class Install
 			foreach ($availableLCID as $lcid)
 			{
 				$templatePath = __DIR__ . '/Assets/notification-mail-' . $lcid . '.twig';
-				if ($templatePath)
+				if (file_exists($templatePath))
 				{
 					$documentServices->getDocumentManager()->pushLCID($lcid);
 					$currentLocalization = $mailTemplate->getCurrentLocalization();
