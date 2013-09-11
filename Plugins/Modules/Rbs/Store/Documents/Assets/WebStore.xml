@@ -4,5 +4,8 @@
 	editable="true" tree-name="Rbs_Store">
 	<properties>
 		<property name="billingAreas" type="DocumentArray" document-type="Rbs_Price_BillingArea" required="true" />
+		<property name="displayPrices" type="Boolean" default-value="true" />
+		<property name="displayPricesWithTax" type="Boolean" default-value="true" />
+		<property name="orderProcess" type="Document" document-type="Rbs_Order_Process" />
 	</properties>
 </document>

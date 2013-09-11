@@ -18,7 +18,6 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $price \Rbs\Price\Documents\Price */
 		$price = $dm->getNewDocumentInstanceByModelName('Rbs_Price_Price');
 
-
 		/* @var $tax \Rbs\Price\Documents\Tax */
 		$tax = $this->getNewReadonlyDocument('Rbs_Price_Tax', 99);
 		$tax->setCode('TAX');
@@ -32,30 +31,23 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 		$price->setBillingArea($ba);
 
 		$this->assertNull($price->getValue());
-		$this->assertNull($price->getValueWithoutDiscount());
+		$this->assertNull($price->getBoValue());
 		$price->setTaxCategories(array('TAX' => 'N'));
 
 		// If there is no valueWithoutDiscount, get/setBaseValue() are based on the value.
 		$price->setBoValue(10.2);
-		$price->setBoDiscountValue(null);
 		$this->assertTrue($price->applyBoValues());
-
-
 		$this->assertEquals(10.2, $price->getBoValue());
 
 
 		$this->assertTrue($price->getBoEditWithTax());
 		$this->assertEquals(8.5, $price->getValue());
-		$this->assertNull($price->getValueWithoutDiscount());
 
 
-		$price->setBoValue(10.2);
-		$price->setBoDiscountValue(8.5);
+		$price->setBoValue(8.5);
 		$price->applyBoValues();
-		$this->assertEquals(10.2, $price->getBoValue());
-		$this->assertEquals(8.5, $price->getBoDiscountValue());
+		$this->assertEquals(8.5, $price->getBoValue());
 
 		$this->assertEquals(7.0833, $price->getValue(), '', 0.001);
-		$this->assertEquals(8.5, $price->getValueWithoutDiscount());
 	}
 }

@@ -13,6 +13,23 @@
 			selector-title="{{ i18nAttr('m.rbs.store.document.webstore.billingareas-picker-title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
+		<rbs-field-boolean
+				property="displayPrices"
+				label="{{ i18nAttr('m.rbs.store.document.webstore.displayprices', ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-boolean
+				property="displayPricesWithTax"
+				label="{{ i18nAttr('m.rbs.store.document.webstore.displaypriceswithtax', ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-picker property="orderProcess" label="{{ i18nAttr('m.rbs.store.document.webstore.orderprocess', ['ucf']) }}"
+				accepted-model="Rbs_Order_Process"
+				selector-title="{{ i18nAttr('m.rbs.store.document.webstore.select-orderprocess', ['ucf']) }}"
+				allow-edition="true"
+				allow-creation="false">
+		</rbs-field-picker>
+
 	</fieldset>
 
 	<fieldset

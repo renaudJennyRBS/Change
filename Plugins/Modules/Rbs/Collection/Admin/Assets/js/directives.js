@@ -18,6 +18,7 @@
 				var collectionLoaded = false;
 				var paramsAttrReady = elm.is('[rbs-items-collection-params]') ? false : true;
 				var items, itemsFilter;
+
 				if (!paramsAttrReady)
 				{
 					// It seems that $observe always gets called *before* $render
@@ -31,6 +32,7 @@
 						}
 					});
 				}
+
 				// Load Collection's items.
 				function loadCollection () {
 					if (!ngModelReady || !paramsAttrReady || collectionLoaded)

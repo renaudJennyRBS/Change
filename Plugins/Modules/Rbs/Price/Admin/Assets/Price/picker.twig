@@ -1,0 +1,17 @@
+<div ng-controller="rbsPriceBasePriceSelector">
+	<rbs-document-list data-dlid="DLDocumentPickerBasePriceSelector"
+				   model="{{ query.model }}" load-query="priceBaseQuery"
+				   filter-query="query" extend="picker" actions="">
+		<column name="label" primary="true">
+			{% if (query.multiple) %}
+			<span class="pull-right">
+				<!--TODO localization-->
+				<button type="button" class="btn btn-mini" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
+			</span>
+			{% endif %}
+			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
+		</column>
+		<column name="sku.label" ></column>
+	</rbs-document-list>
+	<!-- collection-url=" -->
+</div>

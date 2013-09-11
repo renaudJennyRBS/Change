@@ -354,11 +354,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$sku = $this->commerceServices->getStockManager()->getSkuByCode($item->getCodeSKU());
 			if ($sku)
 			{
-				$options = array('quantity' => $item->getReservationQuantity() * $line->getQuantity());
 				if (!$item->getOptions()->get('lockedPrice', false))
 				{
 					$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
-					$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $options, $cart->getBillingArea());
+					$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $cart->getBillingArea());
 					if ($price)
 					{
 						$priceValue = $price->getValue();

@@ -131,6 +131,9 @@
 				$ipt.addClass(value);
 				tElement.removeAttr(name);
 			}
+			else if (name === 'label') {
+				$ipt.attr('property-label', value);
+			}
 			else if (shouldTransferAttribute(name)) {
 				name = Utils.normalizeAttrName(name);
 				$ipt.attr(name, value);

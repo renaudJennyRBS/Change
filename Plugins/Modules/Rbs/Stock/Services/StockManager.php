@@ -176,7 +176,7 @@ class StockManager
 		$docTable = $query->getTableAliasName();
 		$mvtTable = $fb->table('rbs_stock_dat_mvt');
 
-		$dbQueryBuilder->innerJoin($mvtTable, $fb->logicAnd(
+		$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
 			$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
 			$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
 		));
@@ -185,8 +185,6 @@ class StockManager
 
 		$dbQueryBuilder->addColumn($level);
 		$dbQueryBuilder->addColumn($sum);
-
-
 
 		$result = $dbQueryBuilder->query()->getFirstResult();
 		$level = intval($result['level']);

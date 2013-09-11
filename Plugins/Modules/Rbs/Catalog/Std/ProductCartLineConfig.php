@@ -168,8 +168,7 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 					$sku = $commerceServices->getStockManager()->getSkuByCode($item->getCodeSKU());
 					if ($sku)
 					{
-						$options = array('quantity' => $item->getReservationQuantity() * $this->quantity);
-						$price = $commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $options);
+						$price = $commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId);
 						if ($price)
 						{
 							$priceValue = $price->getValue();
@@ -180,10 +179,10 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 							}
 
 							$item->setOption('ecoTax', $price->getEcoTax());
-							$oldValue = $price->getValueWithoutDiscount();
-							if ($oldValue !== null)
+							$oldValue = $price->getBasePrice();
+							if ($oldValue !== null && $oldValue->activated())
 							{
-								$item->setOption('valueWithoutDiscount', $oldValue);
+								$item->setOption('valueWithoutDiscount', $oldValue->getValue());
 							}
 						}
 					}
