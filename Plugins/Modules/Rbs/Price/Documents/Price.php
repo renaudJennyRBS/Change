@@ -32,11 +32,11 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 		return $this;
 	}
 
-
 	/**
+	 * @param array $arguments
 	 * @return float
 	 */
-	public function getValue()
+	public function getValue(array $arguments = null)
 	{
 		return $this->getDefaultValue();
 	}
