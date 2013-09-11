@@ -1030,8 +1030,7 @@
 							positionBlockSettingsEditor(null); // update
 
 							if (containerOfDraggedEl.children().length === 0) {
-								containerOfDraggedEl.addClass('empty');
-								containerOfDraggedEl.html('vide');
+								self.createBlock(containerOfDraggedEl);
 							}
 
 							self.notifyChange("move", "block", draggedEl, {'from': containerOfDraggedEl, 'to': dropTarget});
@@ -1326,7 +1325,7 @@
 					'</button>' +
 				'</div>',
 
-			"link" : function seRowLinkFn (scope, elm, attrs) {
+			"link" : function seRowSettingsLinkFn (scope, elm, attrs) {
 				var	ctrl = scope.controller,
 					rowEl = ctrl.getSelectedBlock(),
 					gridSize = attrs.gridSize || DEFAULT_GRID_SIZE,
@@ -1710,7 +1709,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.directive('seBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope) {
+	app.directive('seBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog) {
 
 		var blockPropertiesCache = {};
 
@@ -1901,11 +1900,16 @@
 				};
 
 				scope.removeBlock = function () {
-					if (window.confirm("Souhaitez-vous réellement supprimer ce bloc ?")) {
-						var block = scope.controller.getSelectedBlock();
+					var block = scope.controller.getSelectedBlock();
+					Dialog.confirmLocal(
+						block,
+						"Supprimer le bloc ?",
+						"<strong>Vous êtes sur le point de supprimer le bloc ci-dessous.</strong>",
+						{"placement": "top"}
+					).then(function () {
 						scope.controller.removeBlock(block);
 						scope.controller.notifyChange("remove", "block", block);
-					}
+					});
 				};
 
 				scope.hasChanged = function () {
