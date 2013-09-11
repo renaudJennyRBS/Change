@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.geo.admin.js" lcid="en_US">
+	<include id="m.rbs.geo.document"/>
+	<key id="module-name">geographical zones</key>
+	<key id="module-keywords">zones,countries,addresses,states,provinces</key>
+</i18n>
