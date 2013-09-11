@@ -509,9 +509,11 @@
 							.success(function restResourceSuccessCallback (data) {
 								if (Utils.hasCorrection(data)) {
 									self.loadCorrection(data).then(function (doc) {
+										doc.META$.loaded = true;
 										resolveQ(q, doc);
 									});
 								} else {
+									data.META$.loaded = true;
 									resolveQ(q, data);
 								}
 							})
@@ -530,6 +532,36 @@
 						digest();
 
 						return q.promise;
+					},
+
+
+					/**
+					 * Ensures that the given doc has been fully loaded.
+					 *
+					 * @param model
+					 * @param id
+					 * @param lcid
+					 * @returns {*}
+					 */
+					'ensureLoaded' : function (model, id, lcid) {
+						if (this.isFullyLoaded(model)) {
+							console.log("Doc ", model, " already loaded");
+							var q = $q.defer();
+							resolveQ(q, model);
+							return q.promise;
+						}
+						return this.resource(model, id, lcid);
+					},
+
+
+					/**
+					 * Tells if the given doc has already been fully loaded.
+					 *
+					 * @param doc
+					 * @returns {*|boolean}
+					 */
+					'isFullyLoaded' : function (doc) {
+						return Utils.isDocument(doc) && doc.META$.loaded === true;
 					},
 
 
