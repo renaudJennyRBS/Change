@@ -28,7 +28,7 @@ class CatalogManager
 	}
 
 	/**
-	 * @return DocumentServices
+	 * @return \Change\Documents\DocumentServices
 	 */
 	protected function getDocumentServices()
 	{
@@ -36,7 +36,7 @@ class CatalogManager
 	}
 
 	/**
-	 * @return ApplicationServices
+	 * @return \Change\Application\ApplicationServices
 	 */
 	protected function getApplicationServices()
 	{
@@ -85,6 +85,7 @@ class CatalogManager
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param $condition
+	 * @throws \Exception
 	 */
 	public function removeProductFromCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
 	{
@@ -124,12 +125,12 @@ class CatalogManager
 
 	/**
 	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
-	 *
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @param \Rbs\Catalog\Documents\Product $before
+	 * @throws \RuntimeException
 	 */
 	public function highlightProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null, $before = null)
 	{
@@ -148,11 +149,11 @@ class CatalogManager
 
 	/**
 	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
-	 *
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\Category $category
 	 * @param \Rbs\Catalog\Documents\Condition $condition
+	 * @throws \RuntimeException
 	 */
 	public function downplayProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null)
 	{
@@ -218,8 +219,10 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
-	 * @param $before
+	 * @param \Rbs\Catalog\Documents\ProductCategorization|null $beforeProductCategorization
+	 * @throws \RuntimeException
 	 * @throws \Exception
+	 * @internal param $before
 	 */
 	public function highlightProductCategorization($productCategorization, $beforeProductCategorization = null)
 	{
@@ -375,6 +378,7 @@ class CatalogManager
 	 * @api
 	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function moveProductCategorizationUp($productCategorization)
 	{
@@ -452,6 +456,7 @@ class CatalogManager
 		{
 			return;
 		}
+		/* @var $topProductCategorization \Rbs\Catalog\Documents\ProductCategorization */
 		if ($topProductCategorization->getId() == $productCategorization->getId())
 		{
 			return;
@@ -479,6 +484,7 @@ class CatalogManager
 
 	/**
 	 * @param  \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @throws \RuntimeException
 	 */
 	public function deleteProductCategorization($productCategorization)
 	{

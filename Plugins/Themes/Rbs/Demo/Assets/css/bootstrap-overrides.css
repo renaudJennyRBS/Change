@@ -104,7 +104,6 @@ table th[class^="col-"] {
 	border: none;
 	color: var(inverse-text-color);
 	font-weight: normal;
-	text-align: center;
 }
 
 .table > thead > tr > th a,

@@ -59,6 +59,11 @@
 	line-height: 20px;
 }
 
+/* Vertical-align on tables */
+.table.table-vertical-middle tr td {
+	vertical-align: middle;
+}
+
 /* list-inline on dl */
 .list-inline > dt,
 .list-inline > dd {

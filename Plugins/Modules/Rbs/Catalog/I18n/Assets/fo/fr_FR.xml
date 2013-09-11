@@ -2,7 +2,9 @@
 <i18n baseKey="m.rbs.catalog.fo" lcid="fr_FR">
 	<key id="select">sélectionner</key>
 	<key id="view-product-details">voir la fiche {product}</key>
+	<key id="with-tax">toutes taxes comprises</key>
 	<key id="with-tax-abbr">TTC</key>
+	<key id="without-tax">hors taxes</key>
 	<key id="without-tax-abbr">HT</key>
 	<key id="reference">référence</key>
 	<key id="brand">marque</key>

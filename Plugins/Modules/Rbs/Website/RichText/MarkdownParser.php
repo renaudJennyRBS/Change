@@ -40,6 +40,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		$params = explode(',', $documentId);
 		$model = null;
 
+		$id = null;
 		if (count($params) === 1)
 		{
 			$id = $params[0];
@@ -61,7 +62,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 
 		if (!$document)
 		{
-			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $documentId . '</span>');
+			return $this->hashPart('<span class="label label-danger">Invalid Document: ' . $documentId . '</span>');
 		}
 
 		if ($this->website)

@@ -27,6 +27,10 @@ class Category extends Block
 		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
+		$parameters->addParameterMeta('pageNumber', 1);
+
+		$request = $event->getHttpRequest();
+		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('categoryId') === null)
@@ -75,42 +79,63 @@ class Category extends Block
 			$attributes['category'] = $category;
 			$attributes['title'] = $category->getTitle();
 
-			//TODO: handle pagination
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
+			$query->andPredicates($query->published());
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductCategorization', 'product');
 			$subQuery->andPredicates(
-				$subQuery->eq('category', $categoryId), $conditionId ? $subQuery->eq('condition', $conditionId) : $subQuery->isNull('condition'));
+				$subQuery->eq('category', $categoryId),
+				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
+				$subQuery->activated()
+			);
 			$subQuery->addOrder('position', true);
+			$query->addOrder('title', true); // TODO: handle sorting.
 
 			$rows = array();
-			$webStore = $category->getWebStore();
-			$webStoreId = $webStore ? $webStore->getId() : 0;
-			$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
-
-			/* @var $product \Rbs\Catalog\Documents\Product */
-			foreach ($query->getDocuments() as $product)
+			$totalCount = $query->getCountDocuments();
+			if ($totalCount)
 			{
-				if ($parameters->getParameter('contextualUrls'))
-				{
-					$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
-				}
-				else
-				{
-					$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
-				}
-				$row = array('id' => $product->getId(), 'url' => $url, 'price' => null,'priceTTC' => null);
-				$visual = $product->getFirstVisual();
-				$row['visual'] = $visual ? $visual->getPath() : null;
+				$itemsPerPage = $parameters->getParameter('itemsPerPage');
+				$pageCount = ceil($totalCount / $itemsPerPage);
+				$pageNumber = $parameters->getParameter('pageNumber');
 
-				$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
-				if ($productPresentation)
+				if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
 				{
-					$productPresentation->evaluate();
-					$row['productPresentation'] = $productPresentation;
+					$pageNumber = 1;
 				}
+				$attributes['pageNumber'] = $pageNumber;
+				$attributes['totalCount'] = $totalCount;
+				$attributes['pageCount'] = $pageCount;
 
-				$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
+				$webStore = $category->getWebStore();
+				$webStoreId = $webStore ? $webStore->getId() : 0;
+				$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
+
+				/* @var $product \Rbs\Catalog\Documents\Product */
+				foreach ($query->getDocuments(($pageNumber-1)*$itemsPerPage, $itemsPerPage) as $product)
+				{
+					if ($parameters->getParameter('contextualUrls'))
+					{
+						$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
+					}
+					else
+					{
+						$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
+					}
+
+					$row = array('id' => $product->getId(), 'url' => $url);
+					$visual = $product->getFirstVisual();
+					$row['visual'] = $visual ? $visual->getPath() : null;
+
+					$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
+					if ($productPresentation)
+					{
+						$productPresentation->evaluate();
+						$row['productPresentation'] = $productPresentation;
+					}
+
+					$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
+				}
 			}
 			$attributes['rows'] = $rows;
 
@@ -118,5 +143,19 @@ class Category extends Block
 			return 'category.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param integer $pageNumber
+	 * @param integer $pageCount
+	 * @return integer
+	 */
+	protected function fixPageNumber($pageNumber, $pageCount)
+	{
+		if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
+		{
+			return 1;
+		}
+		return $pageNumber;
 	}
 }
