@@ -14,17 +14,39 @@
 			link : function (scope, elm, attrs, editorCtrl)
 			{
 				scope.onReady = function(){
+
 					if (!scope.document.product && $routeParams.productId)
 					{
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
 							scope.document.sku = product.sku;
 						});
 					}
+
+					if (scope.document.isNew() && scope.parentDocument && scope.parentDocument.model == 'Rbs_Price_Price')
+					{
+						scope.document.sku = scope.parentDocument.sku;
+						scope.document.webStore = scope.parentDocument.webStore;
+						scope.document.billingArea = scope.parentDocument.billingArea;
+						scope.document.taxCategories = scope.parentDocument.taxCategories;
+					}
+
 					if (!scope.document.taxCategories)
 					{
 						scope.document.taxCategories = {};
-
 					}
+
+					if (scope.document.webStore)
+					{
+						if (angular.isObject(scope.document.webStore))
+						{
+							scope.webStoreId = scope.document.webStore.id;
+						}
+						else
+						{
+							scope.webStoreId = scope.document.webStore;
+						}
+					}
+
 					if (scope.document.startActivation && scope.document.endActivation)
 					{
 						var startAct = moment(scope.document.startActivation);
@@ -55,44 +77,36 @@
 
 				};
 
-				editorCtrl.init('Rbs_Price_Price');
+				scope.webStoreId = null;
+				scope.billingArea = null;
+				scope.taxInfo = null;
 
 				scope.$watch('document.webStore', function(newValue, oldValue){
-					if (!angular.isUndefined(newValue))
+					if (newValue)
 					{
 						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
 						{
-							scope.document.webStore = newValue.id;
+							scope.webStoreId = newValue.id;
 						}
-						if (!newValue)
+						else
 						{
-							scope.document.billingArea = null;
+							scope.webStoreId = newValue;
 						}
 					}
+					else
+					{
+						scope.webStoreId = null;
+					}
+
 				});
 
 				scope.$watch('document.billingArea', function(newValue, oldValue){
 					if (newValue)
 					{
-						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
-						{
-							scope.document.billingArea = newValue.id;
-							scope.billingArea = newValue;
-						}
-						else if (!angular.isObject(newValue))
-						{
-							REST.resource('Rbs_Price_BillingArea', newValue).then(function(res){
-								scope.billingArea = res;
-							});
-						}
-
-						if (!angular.isObject(scope.document.billingArea))
-						{
-							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:scope.document.billingArea}).then(function(res){
-								scope.taxInfo = res;
-							});
-						}
-
+						var billingAreaId = (angular.isObject(newValue)) ? newValue.id : newValue;
+						REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
+							scope.billingArea = res;
+						});
 					}
 					else
 					{
@@ -101,15 +115,20 @@
 					}
 				});
 
+				scope.$watch('billingArea', function(newValue) {
+					if (newValue)
+					{
+						REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:newValue.id}).then(function(res){
+							scope.taxInfo = res;
+						});
+					}
+				});
 
+				editorCtrl.init('Rbs_Price_Price');
 
 				var _timeZone = Settings.get('TimeZone');
 
 				function now () {
-					console.log("using tz: ", _timeZone);
-					console.log("now 1=", moment.utc());
-					console.log("now 2=", moment.utc().tz(_timeZone));
-					console.log("now 3=", moment.utc().tz(_timeZone).toDate());
 					return moment.utc().tz(_timeZone);
 				}
 

@@ -12,19 +12,15 @@
 			ng-hide="hideSku">
 		</rbs-field-picker>
 
-		<rbs-field
-			required="true"
-			label="{{ i18nAttr('m.rbs.price.document.price.webstore', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.webstore', ['ucf']) }}">
 			<select ng-required="true" data-ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
 				<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
-		<rbs-field
-			required="true"
-			label="{{ i18nAttr('m.rbs.price.document.price.billingarea', ['ucf']) }}">
-			<select ng-required="true" data-ng-model="document.billingArea"
-				rbs-items-collection-params="webStoreId:(=document.webStore=)"
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.billingarea', ['ucf']) }}">
+			<select ng-required="true" data-ng-model="document.billingArea" ng-disabled="!webStoreId"
+				rbs-items-collection-params="webStoreId:(=webStoreId=)"
 				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
 				<option value=""> {{ i18n('m.rbs.price.admin.js.select-billingarea', ['ucf']) }}</option>
 			</select>
@@ -50,9 +46,7 @@
 
 		<hr/>
 
-		<rbs-field
-			required="true"
-			label="{{ i18nAttr('m.rbs.price.document.price.basevalue', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.bovalue', ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
 				data-price-with-tax="(=billingArea.boEditWithTax=)" />
 		</rbs-field>
@@ -65,17 +59,17 @@
 
 		<hr/>
 
-		<rbs-field-text
+		<rbs-field-picker property="basePrice" label="{{ i18nAttr('m.rbs.price.document.price.baseprice', ['ucf']) }}"
+				accepted-model="Rbs_Price_Price" picker="model"
+				selector-title="{{ i18nAttr('m.rbs.price.document.price.select-baseprice', ['ucf']) }}"
+				allow-edition="true" allow-creation="true">
+		</rbs-field-picker>
+
+		<rbs-field-text ng-show="document.basePrice"
 			property="discountDetail"
 			label="{{ i18nAttr('m.rbs.price.document.price.discountdetail', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
-
-		<rbs-field
-			label="{{ i18nAttr('m.rbs.price.document.price.finalvalue', ['ucf']) }}">
-			<rbs-price-input data-ng-model="document.boDiscountValue" data-currency-code="(=billingArea.currencyCode=)"
-				data-price-with-tax="(=billingArea.boEditWithTax=)" />
-		</rbs-field>
 
 		<hr/>
 		<span class="help-block">
@@ -89,7 +83,6 @@
 
 			<div class="controls">
 				<date-selector data-ng-model="document.startActivation" name="startActivation"></date-selector>
-				<pre>(= document.startActivation =)</pre>
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<button data-ng-click="activationNow()" type="button" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.now') }}</button>
@@ -108,7 +101,6 @@
 
 			<div class="controls">
 				<date-selector data-ng-model="document.endActivation" name="endActivation"></date-selector>
-				<pre>(= document.endActivation =)</pre>
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<button data-ng-click="endActivationOneWeek(true)" data-ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1w']" class="btn btn-small">{{ i18n('m.rbs.price.admin.js.add-one-week') }}</button>
@@ -123,16 +115,6 @@
 				</div>
 			</div>
 		</div>
-
-		<hr/>
-
-		<span class="help-block">
-			{{ i18n('m.rbs.price.document.price.threshold-section-help', ['ucf']) }}
-		</span>
-		<rbs-field-integer
-			property="thresholdMin"
-			label="{{ i18nAttr('m.rbs.price.document.price.thresholdmin', ['ucf']) }}">
-		</rbs-field-integer>
 	</fieldset>
 
 	<fieldset

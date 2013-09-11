@@ -13,7 +13,8 @@
 
 			$delegate.routesForModels([
 				'Rbs_Order_Order',
-				'Rbs_Order_Invoice'
+				'Rbs_Order_Invoice',
+				'Rbs_Order_Process'
 			]);
 
 			return $delegate;
@@ -22,4 +23,5 @@
 
 	__change.createEditorForModel('Rbs_Order_Order');
 	__change.createEditorForModel('Rbs_Order_Invoice');
+	__change.createEditorForModel('Rbs_Order_Process');
 })();

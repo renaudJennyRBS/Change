@@ -1,20 +1,20 @@
 <div>
-	<rbs-workspace-config menu="Rbs_Payment">
+	<rbs-workspace-config menu="Rbs_Shipping">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Payment'|rbsURL:'home' =)">{{ i18n('m.rbs.payment.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Payment_Connector'|rbsURL:'list' =)">{{ i18n('m.rbs.payment.admin.js.connector-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Shipping'|rbsURL:'home' =)">{{ i18n('m.rbs.shipping.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Shipping_Mode'|rbsURL:'list' =)">{{ i18n('m.rbs.shipping.admin.js.mode-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.payment.admin.js.connector-list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Payment_Connector" filter-query="query" text-search="textSearch"></search-filters>
+	<page-header title="{{ i18nAttr('m.rbs.shipping.admin.js.mode-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Shipping_Mode" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		{{ createLinks('Rbs_Payment_Connector') }}
+		{{ createLinks('Rbs_Shipping_Mode') }}
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsPaymentConnector"
-			model="Rbs_Payment_Connector" filter-query="query" activable="true">
+	<rbs-document-list data-dlid="DLRbsShippingMode"
+			model="Rbs_Shipping_Mode" filter-query="query" activable="true">
 		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 		<column name="label" primary="true"></column>
 		<column name="code"></column>

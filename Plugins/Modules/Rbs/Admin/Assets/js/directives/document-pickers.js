@@ -10,7 +10,7 @@
 		counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST) {
 
 		var	$el = $(iElement),
 			inputEl = $el.find('input[name=label]'),
@@ -90,18 +90,20 @@
 		};
 
 		scope.editSelectedDocument = function () {
-			var doc;
-			doc = ngModel.$viewValue;
-
-			EditorManager.cascade(
-				doc,
-				getEditLabel(),
-				function (editedDoc) {
-					if (!angular.equals(doc, editedDoc)) {
-						scope.selectDocument(editedDoc);
-					}
+			var srcDoc = ngModel.$viewValue;
+			REST.resource(srcDoc).then(
+				function(doc) {
+					EditorManager.cascade(
+						doc,
+						getEditLabel(),
+						function (editedDoc) {
+							if (!angular.equals(srcDoc, editedDoc)) {
+								scope.selectDocument(editedDoc);
+							}
+						}
+					);
 				}
-			);
+			)
 		};
 
 		// Selection
@@ -293,7 +295,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST) {
 		return {
 
 			restrict    : 'EAC',
@@ -302,14 +304,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST) {
 		return {
 
 			restrict    : 'EAC',
@@ -324,7 +326,7 @@
 				}
 
 				return function (scope, iElement, attrs, ngModel) {
-					documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile);
+					documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST);
 				};
 			}
 		};

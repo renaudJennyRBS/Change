@@ -840,6 +840,8 @@
 							}
 							scope.section = '';
 
+							scope.parentDocument = angular.element($form).scope().document;
+
 							$ws.append('<div class="cascading-forms-collapsed">' + collapsedTitle + '</div>');
 
 							$compile(html)(scope, function (cloneEl) {

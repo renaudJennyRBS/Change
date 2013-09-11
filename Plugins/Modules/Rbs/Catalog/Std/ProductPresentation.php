@@ -113,7 +113,6 @@ class ProductPresentation
 			$sku = $this->product->getSku();
 			if ($sku)
 			{
-				$options = array('quantity' => ($sku->getMinQuantity() === null ? 1.0 : $sku->getMinQuantity()) * $quantity);
 
 				$stm = $this->commerceServices->getStockManager();
 				$level = $stm->getInventoryLevel($sku, $this->webStoreId);
@@ -132,7 +131,7 @@ class ProductPresentation
 				}
 				$this->stock['thresholdTitle'] = $stm->getInventoryThresholdTitle($sku, $this->webStoreId, $threshold);
 
-				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $this->webStoreId, $options);
+				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $this->webStoreId);
 				if ($price)
 				{
 					$priceValue = $price->getValue();
@@ -150,7 +149,8 @@ class ProductPresentation
 							$this->prices['priceWithTax'] += ($priceValue * $quantity) + $tax;
 						}
 
-						$oldValue = $price->getValueWithoutDiscount();
+						$basePrice = $price->getBasePrice();
+						$oldValue = ($basePrice && $basePrice->activated()) ? $basePrice->getValue() : null;
 						if ($oldValue !== null)
 						{
 							$this->prices['priceWithoutDiscount'] += ($oldValue * $quantity);

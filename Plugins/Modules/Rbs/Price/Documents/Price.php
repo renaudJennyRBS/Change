@@ -14,11 +14,10 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 	 */
 	public function getLabel()
 	{
-		$ba = $this->getBillingArea();
-		$webStore = $this->getWebStore();
-		if ($ba && $webStore)
+		if ($this->getBillingArea())
 		{
-			return $webStore->getLabel() . ' (' . $ba->getLabel() . ')';
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			return $nf->formatCurrency($this->getBoValue(), $this->getBillingArea()->getCurrencyCode());
 		}
 		return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.admin.admin.js.new', array('ucf', 'etc'));
 	}
@@ -33,13 +32,23 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 		return $this;
 	}
 
+
+	/**
+	 * @return float
+	 */
+	public function getValue()
+	{
+		return $this->getDefaultValue();
+	}
+
 	/**
 	 * @return boolean
 	 */
 	public function isDiscount()
 	{
-		return ($this->getValueWithoutDiscount() !== null);
+		return $this->getBasePrice() != null;
 	}
+
 
 	/**
 	 * @return boolean
@@ -48,7 +57,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 	{
 		if ($this->getBoValue() !== null)
 		{
-			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
+			$this->updateValuesFromBo($this->getBoValue());
 			return true;
 		}
 		return false;
@@ -85,25 +94,33 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 
 	protected function onCreate()
 	{
-		if ($this->getBoValue() !== null || $this->getBoDiscountValue() !== null)
+		if ($this->getBoValue() !== null)
 		{
-			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
+			$this->updateValuesFromBo($this->getBoValue());
+		}
+		if ($this->getStartActivation() === null)
+		{
+			$this->setStartActivation(new \DateTime());
 		}
 	}
 
 	protected function onUpdate()
 	{
-		if ($this->isPropertyModified('boValue') || $this->isPropertyModified('boDiscountValue'))
+		if ($this->isPropertyModified('boValue'))
 		{
-			$this->updateValuesFromBo($this->getBoValue(), $this->getBoDiscountValue());
+			$this->updateValuesFromBo($this->getBoValue());
+		}
+
+		if ($this->getStartActivation() === null)
+		{
+			$this->setStartActivation(new \DateTime());
 		}
 	}
 
 	/**
 	 * @param float $boValue
-	 * @param float|null $boDiscountValue
 	 */
-	protected function updateValuesFromBo($boValue, $boDiscountValue)
+	protected function updateValuesFromBo($boValue)
 	{
 		$ba = $this->getBillingArea();
 		if ($ba->getBoEditWithTax() && ($taxManager = $this->getBoTaxManager()) !== null)
@@ -121,26 +138,13 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 			$this->setBoEditWithTax(true);
 			$taxCategories = $this->getTaxCategories();
 			$boValue =  $valueCallback($boValue,  $taxCategories);
-			if ($boDiscountValue !== null)
-			{
-				$boDiscountValue =  $valueCallback($boDiscountValue,  $taxCategories);
-			}
 		}
 		else
 		{
 			$this->setBoEditWithTax(false);
 		}
 
-		if ($boDiscountValue !== null)
-		{
-			$this->setValue($boDiscountValue);
-			$this->setValueWithoutDiscount($boValue);
-		}
-		else
-		{
-			$this->setValue($boValue);
-			$this->setValueWithoutDiscount($boDiscountValue);
-		}
+		$this->setDefaultValue($boValue);
 	}
 
 	protected function attachEvents($eventManager)
@@ -153,14 +157,16 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 				/* @var $price \Rbs\Price\Documents\Price */
 				$price = $event->getDocument();
 				$nf = new \NumberFormatter($event->getDocument()->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+
 				$result->setProperty('formattedBoValue', $nf->formatCurrency($price->getBoValue(), $price->getBillingArea()->getCurrencyCode()));
-				if ($price->isDiscount())
+				$basePrice = $price->getBasePrice();
+				if ($basePrice)
 				{
-					$result->setProperty('formattedBoDiscountValue', $nf->formatCurrency($price->getBoDiscountValue(), $price->getBillingArea()->getCurrencyCode()));
+					$result->setProperty('formattedBoBaseValue', $nf->formatCurrency($basePrice->getBoValue(), $basePrice->getBillingArea()->getCurrencyCode()));
 				}
 				else
 				{
-					$result->setProperty('formattedBoDiscountValue', null);
+					$result->setProperty('formattedBoBaseValue', null);
 				}
 			}
 		}, 5);

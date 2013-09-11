@@ -1,0 +1,12 @@
+<div class="document-form">
+	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.order.document.process', ['ucf']) }}"></page-header>
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Order_Process'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.js.process-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div class="rbs-document-editor rbs-document-editor-rbs-order-process"></div>
+</div>
