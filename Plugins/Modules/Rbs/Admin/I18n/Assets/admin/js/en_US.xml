@@ -75,5 +75,6 @@
 	<key id="help">help</key>
 
 	<key id="advanced-mode">advanced mode</key>
-
+	<key id="move-up">move up</key>
+	<key id="move-down">move down</key>
 </i18n>
