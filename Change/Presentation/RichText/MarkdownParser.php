@@ -61,7 +61,6 @@ class MarkdownParser extends \Michelf\Markdown {
 		$alt_text = $this->encodeAttribute($alt_text);
 
 		$params = explode(',', $mediaId);
-		//FIXME handle external image
 		$id = $params[0];
 		if (count($params) === 2)
 		{
@@ -72,11 +71,17 @@ class MarkdownParser extends \Michelf\Markdown {
 			$params = '';
 		}
 
+		// If the id is not numeric, this is an external image, so use de default image rendering.
+		if (!is_numeric($id))
+		{
+			return parent::_doImages_inline_callback($matches);
+		}
+
 		/* @var $image \Rbs\Media\Documents\Image */
 		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
 		if (!$image)
 		{
-			return $this->hashPart('<span class="label label-important">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');
+			return $this->hashPart('<span class="label label-danger">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');
 		}
 
 		$matches = array();
@@ -91,7 +96,7 @@ class MarkdownParser extends \Michelf\Markdown {
 
 		if (!$url)
 		{
-			return $this->hashPart('<span class="label label-important">No public URL for Rbs\Media\Image: ' . $mediaId . '</span>');
+			return $this->hashPart('<span class="label label-danger">No public URL for Rbs\Media\Image: ' . $mediaId . '</span>');
 		}
 
 		$result = "<img src=\"$url\" alt=\"$alt_text\"";
