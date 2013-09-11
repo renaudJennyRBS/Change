@@ -11,4 +11,9 @@
 	<key id="any-privilege">tous</key>
 	<key id="yes">oui</key>
 	<key id="no">non</key>
+	<key id="first-page">première page</key>
+	<key id="last-page">dernière page</key>
+	<key id="previous-page">page précédente</key>
+	<key id="next-page">page suivante</key>
+	<key id="page-x-of-y">page {pageNumber} sur {pageCount}</key>
 </i18n>
