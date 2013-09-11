@@ -11,7 +11,7 @@
 				"type": "block",
 				"name": "Rbs_Website_Exception",
 				"parameters": {
-					"message": "Grave erreur!!"
+					"message": "Grave erreur !!"
 				}
 			}
 		]
