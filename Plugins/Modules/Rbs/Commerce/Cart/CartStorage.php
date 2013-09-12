@@ -289,6 +289,35 @@ class CartStorage
 	}
 
 	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Commerce\Interfaces\Cart $cartToMerge
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function mergeCart($cart, $cartToMerge)
+	{
+		if ($cart->getWebStoreId() == $cartToMerge->getWebStoreId())
+		{
+			$cartManager = $cart->getCommerceServices()->getCartManager();
+
+			foreach ($cartToMerge->getLines() as $lineToMerge)
+			{
+				$currentCartLine = $cart->getLineByKey($lineToMerge->getKey());
+				if ($currentCartLine === null)
+				{
+					$config = new CartLineConfig($cart->getCommerceServices(), $lineToMerge->toArray());
+					$cartManager->addLine($cart, $config, $lineToMerge->getQuantity());
+				}
+				else
+				{
+					$newQuantity = $currentCartLine->getQuantity() + $lineToMerge->getQuantity();
+					$cartManager->updateLineQuantityByKey($cart, $currentCartLine->getKey(), $newQuantity);
+				}
+			}
+		}
+		return $cart;
+	}
+
+	/**
 	 * @param string $identifier
 	 * @param CommerceServices $commerceServices
 	 * @throws \Exception

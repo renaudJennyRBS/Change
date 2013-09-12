@@ -9,4 +9,8 @@
 	<key id="territorialunit">unité territoriale</key>
 	<key id="territorialunit-list">unités territoriales</key>
 	<key id="territorialunit-create">ajouter une unité territoriale</key>
+
+	<key id="addressfields">modèle d'adresse</key>
+	<key id="addressfields-list">modèles d'adresse</key>
+	<key id="addressfields-create">ajouter un modèle d'adresse</key>
 </i18n>

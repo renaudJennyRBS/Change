@@ -182,16 +182,6 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 		return $this->documentServices;
 	}
 
-	/**
-	 * @param \Callable|null $loaderCallback
-	 * @return $this
-	 */
-	public function setLoaderCallback($loaderCallback)
-	{
-		$this->loaderCallback = $loaderCallback;
-		return $this;
-	}
-
 	public function load()
 	{
 		if (!$this->loaded)

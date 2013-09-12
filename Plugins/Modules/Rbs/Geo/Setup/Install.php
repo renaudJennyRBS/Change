@@ -25,7 +25,8 @@ class Install
 				$tm->begin();
 
 				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$collection = $documentServices->getDocumentManager()
+					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 				$collection->setLabel('Territorial Unit Types');
 				$collection->setCode('Rbs_Geo_Collection_UnitType');
 				$collection->setLocked(true);
@@ -34,7 +35,8 @@ class Install
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('STATE');
 				$item->setLabel('state');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.geo.document.territorialunit.unit-state', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
+					->trans('m.rbs.geo.document.territorialunit.unit-state', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -42,7 +44,8 @@ class Install
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('DEPARTEMENT');
 				$item->setLabel('département');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.geo.document.territorialunit.unit-departement', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
+					->trans('m.rbs.geo.document.territorialunit.unit-departement', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -50,25 +53,26 @@ class Install
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('REGION');
 				$item->setLabel('region');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.geo.document.territorialunit.unit-region', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
+					->trans('m.rbs.geo.document.territorialunit.unit-region', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
-
 
 				/* @var $item \Rbs\Collection\Documents\Item */
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('COUNTY');
 				$item->setLabel('county');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.geo.document.territorialunit.unit-county', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
+					->trans('m.rbs.geo.document.territorialunit.unit-county', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
-
 
 				/* @var $item \Rbs\Collection\Documents\Item */
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('PROVINCE');
 				$item->setLabel('province');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.geo.document.territorialunit.unit-province', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
+					->trans('m.rbs.geo.document.territorialunit.unit-province', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -81,7 +85,8 @@ class Install
 			}
 		}
 
-		$countries = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'countries.json'), \Zend\Json\Json::TYPE_ARRAY);
+		$countries = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
+		. 'countries.json'), \Zend\Json\Json::TYPE_ARRAY);
 
 		$tm = $applicationServices->getTransactionManager();
 		try
@@ -89,17 +94,17 @@ class Install
 			$tm->begin();
 			foreach ($countries as $countryData)
 			{
-
-					$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_Country');
-					$query->andPredicates($query->eq('code', $countryData['code']));
-					$country = $query->getFirstDocument();
-					if ($country === null)
-					{
-						$country = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
-						$country->setCode($countryData['code']);
-					}
-					$country->setLabel($countryData['label']);
-					$country->save();
+				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_Country');
+				$query->andPredicates($query->eq('code', $countryData['code']));
+				/* @var $country \Rbs\geo\Documents\Country */
+				$country = $query->getFirstDocument();
+				if ($country === null)
+				{
+					$country = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
+					$country->setCode($countryData['code']);
+				}
+				$country->setLabel($countryData['label']);
+				$country->save();
 			}
 			$tm->commit();
 		}
