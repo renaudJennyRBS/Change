@@ -1,4 +1,3 @@
-<h1>Détail du panier</h1>
 <script type="text/javascript">
 	var script{{ blockId }} = {
 		cartIdentifier: "{{ cart.identifier }}",
@@ -29,45 +28,61 @@
 		}
 	}
 </script>
-<table summary="" style="width: 100%">
-	<thead>
-	<tr>
-		<th>&#160;</th>
-		<th>Désignation</th>
-		<th>Prix Unitaire</th>
-		<th>Quantité</th>
-		<th>Prix</th>
-		<th>Prix TTC</th>
-		<th>&#160;</th>
-	</tr>
-	</thead>
-	<tbody>
-{% for cartLine in cart.lines %}
-	{% include 'Rbs_Commerce/Blocks/cart-line.twig' %}
-{% endfor %}
-	</tbody>
-</table>
+
+<h1>{{ i18n('m.rbs.commerce.tpl.my-cart', ['ucf']) }}</h1>
+
+<div class="table-responsive">
+	<table summary="{{ i18nAttr('m.rbs.commerce.tpl.cart-contents', ['ucf']) }}"
+		class="table table-striped table-vertical-middle">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>{{ i18n('m.rbs.commerce.tpl.designation', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.commerce.tpl.unit-price', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.commerce.tpl.quantity', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.commerce.tpl.total-price', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.commerce.tpl.actions', ['ucf']) }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for cartLine in cart.lines %}
+				{% include 'Rbs_Commerce/Blocks/cart-line.twig' %}
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<table summary="{{ i18nAttr('m.rbs.commerce.tpl.taxes-amount', ['ucf']) }}"
+			class="table table-striped table-bordered">
+			<caption>{{ i18n('m.rbs.commerce.tpl.taxes-amount', ['ucf']) }}</caption>
+			<tbody>
+				{% for cartTax in cart.taxes %}
+					<tr>
+						<td>{{ taxTitle(cartTax.tax) }} ({{ formatRate(cartTax.rate) }})</td>
+						<td class="price">{{ formatPrice(cartTax.value) }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-6">
+		<table summary="" class="table table-striped table-bordered">
+			<tbody>
+				<tr>
+					<td>{{ i18n('m.rbs.commerce.tpl.amount-without-tax', ['ucf']) }}</td>
+					<td class="price">{{ formatPrice(cart.priceValue) }}</td>
+				</tr>
+				<tr>
+					<td>{{ i18n('m.rbs.commerce.tpl.amount-with-tax', ['ucf']) }}</td>
+					<td class="price">{{ formatPrice(cart.priceValueWithTax) }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
 
 
-<table summary="" style="width: 100%">
-	<thead>
-	<tr>
-		<th>Taxe</th>
-		<th>value</th>
-	</tr>
-	</thead>
-	<tbody>
-{% for cartTax in cart.taxes %}
-	<tr>
-		<td>{{ taxTitle(cartTax.tax) }} ({{ formatRate(cartTax.rate) }})</td>
-		<td>{{ formatPrice(cartTax.value) }}</td>
-	</tr>
-{% endfor %}
-	</tbody>
-</table>
 
-<ol>
-	<li>Montant : {{ formatPrice(cart.priceValue) }}</li>
-	<li>Montant TTC : {{ formatPrice(cart.priceValueWithTax) }}</li>
-</ol>
 
