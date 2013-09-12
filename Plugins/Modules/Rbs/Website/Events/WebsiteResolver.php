@@ -93,6 +93,13 @@ class WebsiteResolver
 						$result->setHeaderLocation($stdUrlManager->getByPathInfo(''));
 						$event->setResult($result);
 					}
+					elseif ($hostName != $currentWebsite->getHostName())
+					{
+						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
+						$location = $urlManager->getSelf()->setHost($currentWebsite->getHostName())->normalize()->toString();
+						$result->setHeaderLocation($location);
+						$event->setResult($result);
+					}
 					else
 					{
 						$urlManager->setScript($stdUrlManager->getScript());
