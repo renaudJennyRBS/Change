@@ -8,4 +8,15 @@
 	<key id="article">article</key>
 	<key id="articles">articles</key>
 	<key id="excluding-fees">hors frais de port</key>
+	<key id="update">mettre à jour</key>
+	<key id="remove">supprimer</key>
+	<key id="designation">désignation</key>
+	<key id="unit-price">prix unitaire</key>
+	<key id="quantity">quantité</key>
+	<key id="total-price">prix total</key>
+	<key id="taxes-amount">montant des taxes</key>
+	<key id="amount-without-tax">montant HT</key>
+	<key id="amount-with-tax">montant TTC</key>
+	<key id="cart-contents">contenu du panier</key>
+	<key id="actions">actions</key>
 </i18n>

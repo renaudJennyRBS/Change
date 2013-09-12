@@ -302,6 +302,25 @@ class CartLine implements CartLineInterfaces
 	/**
 	 * @return float|null
 	 */
+	public function getUnitPriceValueWithTax()
+	{
+		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item)
+		{
+			if ($item->getPriceValue() !== null)
+			{
+				$tax = array_reduce($item->getCartTaxes(), function ($result, \Rbs\Commerce\Cart\CartTax $cartTax)
+				{
+					return $result + $cartTax->getValue();
+				}, 0.0);
+				return $result + $item->getPriceValue() + $tax;
+			}
+			return $result;
+		});
+	}
+
+	/**
+	 * @return float|null
+	 */
 	public function getPriceValue()
 	{
 		$quantity = $this->getQuantity();

@@ -28,6 +28,8 @@ class Category extends Block
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
 		$parameters->addParameterMeta('pageNumber', 1);
+		$parameters->addParameterMeta('displayPrices');
+		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
@@ -55,6 +57,23 @@ class Category extends Block
 				}
 			}
 		}
+
+		if ($parameters->getParameter('categoryId') !== null)
+		{
+			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
+			if (!($category instanceof \Rbs\Catalog\Documents\Category))
+			{
+				$parameters->setParameterValue('categoryId', null);
+			}
+			elseif ($parameters->getParameter('displayPrices') === null)
+			{
+				$webStore = $category->getWebStore();
+				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+			}
+		}
+
 		return $parameters;
 	}
 
@@ -97,12 +116,8 @@ class Category extends Block
 			{
 				$itemsPerPage = $parameters->getParameter('itemsPerPage');
 				$pageCount = ceil($totalCount / $itemsPerPage);
-				$pageNumber = $parameters->getParameter('pageNumber');
+				$pageNumber = $this->fixPageNumber($parameters->getParameter('pageNumber'), $pageCount);
 
-				if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
-				{
-					$pageNumber = 1;
-				}
 				$attributes['pageNumber'] = $pageNumber;
 				$attributes['totalCount'] = $totalCount;
 				$attributes['pageCount'] = $pageCount;

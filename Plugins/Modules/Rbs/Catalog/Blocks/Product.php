@@ -26,6 +26,9 @@ class Product extends Block
 		$parameters->addParameterMeta('categoryId');
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
+		$parameters->addParameterMeta('displayPrices');
+		$parameters->addParameterMeta('displayPricesWithTax');
+
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('productId') === null)
 		{
@@ -37,16 +40,43 @@ class Product extends Block
 		}
 
 		$request = $event->getHttpRequest();
-		if ($parameters->getParameter('webStoreId') === null)
-		{
-			$webStoreId = $request->getQuery('webStoreId');
-			if ($webStoreId) {$parameters->setParameterValue('webStoreId', $webStoreId);}
-		}
+		$documentManager = $event->getDocumentServices()->getDocumentManager();
 		if ($parameters->getParameter('categoryId') === null)
 		{
 			$categoryId = $request->getQuery('categoryId');
 			if ($categoryId) {$parameters->setParameterValue('categoryId', $categoryId);}
 		}
+		$category = null;
+		if ($parameters->getParameter('categoryId') !== null)
+		{
+			$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
+			if (!($category instanceof \Rbs\Catalog\Documents\Category))
+			{
+				$parameters->setParameterValue('categoryId', null);
+			}
+		}
+
+		if ($parameters->getParameter('webStoreId') === null)
+		{
+			$webStoreId = $request->getQuery('webStoreId', ($category) ? $category->getWebStoreId() : null);
+			if ($webStoreId) {$parameters->setParameterValue('webStoreId', $webStoreId);}
+		}
+		$webStore = null;
+		if ($parameters->getParameter('webStoreId') !== null)
+		{
+			$webStore = $documentManager->getDocumentInstance($parameters->getParameter('webStoreId'));
+			if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
+			{
+				$parameters->setParameterValue('webStoreId', null);
+			}
+		}
+
+		if ($webStore !== null && $parameters->getParameter('displayPrices') === null)
+		{
+			$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+		}
+
 		return $parameters;
 	}
 
@@ -70,8 +100,11 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
+				//TODO
 				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
 				$attributes['activateZoom'] = $parameters->getParameter('activateZoom');
+				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
+
 				$attributes['product'] = $product;
 				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 
@@ -87,18 +120,8 @@ class Product extends Block
 				}
 
 				// Attributes.
-				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
 				$attributePresentation = new \Rbs\Catalog\Std\AttributePresentation($product);
 				$attributes['attributesConfig'] = $attributePresentation->getConfiguration('specifications');
-
-				// Description.
-				$richText = new \Change\Documents\RichtextProperty();
-				$richText->setRawText($event->getBlockParameters()->getParameter('content'));
-				$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
-				$attributes['htmlContent'] = $event->getPresentationServices()
-					->getRichTextManager()
-					->setDocumentServices($event->getDocumentServices())
-					->render($richText, "Website");
 
 				return 'product.twig';
 			}

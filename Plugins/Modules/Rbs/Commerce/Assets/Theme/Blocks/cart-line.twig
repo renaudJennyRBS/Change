@@ -1,13 +1,43 @@
 <tr id="{{ blockId }}_{{ cartLine.key }}" data-line-key="{{ cartLine.key }}">
 	<td>{{ cartLine.number }}</td>
 	<td>{{ cartLine.designation }}</td>
-	<td>{{ formatPrice(cartLine.unitPriceValue) }}</td>
+	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+		<td class="price">
+			{% if parameters.displayPrices %}
+				{{ formatPrice(cartLine.unitPriceValue) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+			{% endif %}
+			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+			{% if parameters.displayPricesWithTax %}
+				{{ formatPrice(cartLine.unitPriceValueWithTax) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+			{% endif %}
+		</td>
+	{% endif %}
 	<td>{{ cartLine.quantity }}</td>
-	<td>{{ formatPrice(cartLine.priceValue) }}</td>
-	<td>{{ formatPrice(cartLine.priceValueWithTax) }}</td>
+	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+		<td class="price">
+			{% if parameters.displayPrices %}
+				{{ formatPrice(cartLine.priceValue) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+			{% endif %}
+			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+			{% if parameters.displayPricesWithTax %}
+				{{ formatPrice(cartLine.priceValueWithTax) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+			{% endif %}
+		</td>
+	{% endif %}
 	<td>
-		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.deleteLine(this)" value="{{ cartLine.key }}">Supprimer</>
-		<button type="button" class="btn btn-small" onclick="script{{ blockId }}.updateLine(this)" value="{{ cartLine.key }}" data-quantity="{{ cartLine.quantity }}">Mettre à jour</>
+		<button type="button" class="btn btn-default btn-small" onclick="script{{ blockId }}.updateLine(this)"
+			value="{{ cartLine.key }}" data-quantity="{{ cartLine.quantity }}"
+			title="{{ i18nAttr('m.rbs.commerce.tpl.update', ['ucf']) }}">
+			<i class="glyphicon glyphicon-refresh"></i>
+		</button>
+		<button type="button" class="btn btn-default btn-small" onclick="script{{ blockId }}.deleteLine(this)"
+			value="{{ cartLine.key }}" title="{{ i18nAttr('m.rbs.commerce.tpl.remove', ['ucf']) }}">
+			<i class="glyphicon glyphicon-remove"></i>
+		</button>
 	</td>
 </tr>
 
