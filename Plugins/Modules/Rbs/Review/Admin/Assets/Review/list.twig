@@ -17,9 +17,10 @@
 	               model="Rbs_Review_Review"
 	               publishable="true"
 	               filter-query="query">
-		<column name="content" primary="true">
-			<p ng-bind-html="doc.content.h"></p>
+		<column name="target" primary="true">
+			(= doc.target.label =)
 		</column>
+		<column name="pseudonym"></column>
 		<column name="promoted">
 			<switch ng-model="doc.promoted" disabled></switch>
 		</column>

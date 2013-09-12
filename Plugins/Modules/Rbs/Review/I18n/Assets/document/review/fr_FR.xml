@@ -5,8 +5,9 @@
 	<key id="pseudonym">pseudonyme</key>
 	<key id="rating">note</key>
 	<key id="target">document</key>
-	<key id="select-target">>sélectionner un document</key>
+	<key id="select-target">sélectionner un document</key>
 	<key id="promoted">mis en avant</key>
 	<key id="reviewDate">date de l'avis</key>
 	<key id="section">section</key>
+	<key id="select-section">sélectionner une section</key>
 </i18n>

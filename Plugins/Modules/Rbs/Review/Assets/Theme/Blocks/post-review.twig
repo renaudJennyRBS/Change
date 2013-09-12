@@ -1,0 +1,49 @@
+<h2>{{ i18n('m.rbs.review.blocks.review-post', ['ucf']) }}</h2>
+{% if parameters.userId %}
+	{% if parameters.alreadyReviewed %}
+		<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }} <time datetime="{{ parameters.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ parameters.reviewDate | date }}</time></p>
+		{% if parameters.reviewPublished %}
+			<p>{{ i18n('m.rbs.review.blocks.your-review', ['ucf']) }}</p>
+			<!-- TODO add an URL to the detail of this review -->
+		{% else %}
+			<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
+		{% endif %}
+	{% else %}
+		<form method="post" id="Review" action="Action/Rbs/Review/PostReview" class="well well-small">
+			<input type="hidden" name="userId" value="{{ parameters.userId }}">
+			<input type="hidden" name="targetId" value="{{ parameters.targetId }}">
+			<input type="hidden" name="sectionId" value="{{ parameters.sectionId }}">
+			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
+			<fieldset>
+				<div class="form-group">
+					<label for="rbs-review-review-pseudonym">{{ i18n('m.rbs.review.blocks.review-post-pseudonym', ['ucf']) }}</label>
+					<p id="rbs-review-review-pseudonym" class="form-control-static">{{ parameters.pseudonym }}</p>
+				</div>
+				<!-- TODO do something better with jQuery/AngularJS/Bootstrap-UI -->
+				<div class="form-group">
+					<label for="rbs-review-review-rating-value">{{ i18n('m.rbs.review.blocks.review-post-rating', ['ucf']) }}</label>
+					<input id="rbs-review-review-rating-value" type="range" name="rating" min="0" max="100">
+					<span id="rbs-review-review-rating">50/100</span>
+				</div>
+				<div class="form-group">
+					<label for="rbs-review-review-content">{{ i18n('m.rbs.review.blocks.review-post-content', ['ucf']) }}</label>
+					<input id="rbs-review-review-content" type="text" name="content" class="form-control">
+				</div>
+				<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.review.blocks.review-post-submit', ['ucf']) }}</button>
+			</fieldset>
+		</form>
+		<script type="text/javascript">
+			window.onload =  function(){
+				$('#rbs-review-review-rating-value').change(function (){
+					console.log('change');
+					$('#rbs-review-review-rating').html($(this).val() + '/100');
+				});
+			};
+		</script>
+	{% endif %}
+{% else %}
+	<p class="muted">
+		{{ i18n('m.rbs.review.blocks.review-post-not-connected', ['ucf']) }}
+		<!-- add a button or a link to connect user -->
+	</p>
+{% endif %}

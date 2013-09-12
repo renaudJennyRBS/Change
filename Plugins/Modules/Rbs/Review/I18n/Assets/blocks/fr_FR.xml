@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.review.blocks" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="review-list">liste des avis</key>
+	<key id="review-list-document">document</key>
+	<key id="review-list-show-average-rating">afficher la moyenne des notes</key>
+	<key id="review-list-average-parts-count">découpes de la moyenne (histogramme)</key>
+	<key id="review-list-items-per-page">avis par page</key>
+	<key id="average-rating">note moyenne : {averageRating}</key>
+	<key id="average-rating-from-to">note de {from} à {to} : {count}</key>
+	<key id="review-write-by" format="html"><![CDATA[écrit par <a itemprop="author" href="{url}">{author}</a>]]></key>
+	<key id="review-rating" format="html"><![CDATA[note : <span itemprop="ratingValue">{ratingValue}</span> sur <span itemprop="bestRating">{bestRating}</span>]]></key>
+	<key id="review-about" format="html"><![CDATA[À propos de <a itemprop="about" href="{targetUrl}">{targetTitle}</a></small>]]></key>
+	<key id="review-post">donnez votre avis</key>
+	<key id="review-post-pseudonym">pseudonyme</key>
+	<key id="review-post-rating">note</key>
+	<key id="review-post-content">commentaire</key>
+	<key id="review-post-submit">poster</key>
+	<key id="review-post-not-connected">vous devez vous connecter pour donner votre avis</key>
+	<key id="already-reviewed">vous avez déjà noté ce produit</key>
+	<key id="your-review">votre avis</key>
+	<key id="pending-publication">votre avis est en cours de validation par notre équipe</key>
+	<key id="promoted-review-list-target">document</key>
+	<key id="promoted-review-list-mode">mode de mise en avant</key>
+	<key id="promoted-review-list-max-reviews">nombre maximum d'avis affichés</key>
+	<key id="promoted-review-list-reviews">sélection manuel des avis (ignore la stratégie)</key>
+	<key id="promoted-review-list-title-promoted">avis promus</key>
+	<key id="promoted-review-list-title-most-recent">avis les plus récents</key>
+	<key id="promoted-review-list-title-manual-default">avis séléctionnés</key>
+
+</i18n>

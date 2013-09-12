@@ -7,7 +7,7 @@
 			<constraint name="range" min="0" max="100"/>
 		</property>
 		<property name="content" type="RichText" required="true"/>
-		<property name="targetId" type="DocumentId" required="true"/>
+		<property name="target" type="Document" required="true"/>
 		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true"/>
 		<property name="pseudonym" type="String" />
 		<property name="reviewDate" type="DateTime" />

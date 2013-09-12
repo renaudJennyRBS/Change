@@ -1,0 +1,189 @@
+<!-- RSS?
+<ul class="pull-right list-unstyled">
+	<li>
+		<img alt="" src="http://site36.intportgchange.fr/media/frontoffice/rss.gif?cv=51"> <a class="link" href="http://site36.intportgchange.fr/fr/comment/rss/feed,13450.xml">Flux RSS des commentaires</a>
+	</li>
+</ul>
+-->
+<h2 id="comment-toolbar-title">{{ rows | length }} {{ i18n('m.rbs.review.blocks.review-list', ['ucf']) }}</h2>
+{% if parameters.showAverageRating %}
+	{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}
+	{% for ratePart in rateParts %}
+		<div class="progress">
+			<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
+				{{ i18n('m.rbs.review.blocks.average-rating-from-to', ['ucf'], { 'from': ratePart.from , 'to': ratePart.to, 'count': ratePart.count }) }}
+				<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
+			</div>
+		</div>
+	{% endfor %}
+{% endif %}
+<!-- Sort?
+<dl class="list-inline" id="sort-options">
+	<dt>Trier par</dt>
+	<dd>
+		<span>date</span>
+	</dd>
+	<dd>
+		<a href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?sort=relevancy#comment-toolbar-title">pertinence</a>
+	</dd>
+	<dd>
+		<a href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?sort=rating#comment-toolbar-title">notes</a>
+	</dd>
+</dl>
+-->
+<ul class="list-unstyled comment-list">
+	{% for row in rows %}
+		<li>
+			<article id="review-{{ row.id }}" class="panel{% if row.promoted %} panel-success{% endif %}" itemscope="" itemtype="http://schema.org/Review">
+				<!-- img?
+				<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+				-->
+				<header class="panel-heading">
+					<a itemprop="url" rel="nofollow" href="#TODO:URL-du-détail-de-l-avis">{{ loop.index }}.</a>
+					{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': row.pseudonym, 'url': row.url }) }}
+					<span class="divider"> - </span>
+					<time itemprop="dateCreated" datetime="{{ row.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ row.reviewDate | date }}</time>
+					<span class="divider"> - </span>
+						<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+							<meta itemprop="worstRating" content="0" />
+							{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': row.rating, 'bestRating': 100 }) }}
+						</span>
+					<span class="divider"> - </span>
+					<small class="text-muted">
+						{{ i18n('m.rbs.review.blocks.review-about', ['ucf'], { 'targetTitle': row.target.title, 'targetUrl': row.target.url }) }}
+				</header>
+				<div itemprop="reviewBody" class="panel-body">
+					{{ row.content | raw }}
+				</div>
+				<!-- modified?
+				<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
+				-->
+				<!-- comment and evaluation of review
+				<footer class="panel-footer">
+					<p class="evaluation-overview">
+						Soyez le premier à évaluer ce commentaire.
+					</p>
+					<form method="post" action="#comment-14732" id="catalog_commentsb_16_evaluate_14732" enctype="multipart/form-data" class="form-inline">
+						<div>
+							<input name="catalogParam[commentId]" value="14732" id="catalog_commentsb_16_evaluate_14732_commentId" type="hidden" />
+							<span>Ce commentaire vous a-t-il été utile ?</span>
+							<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseful]" id="catalog_commentsb_16_evaluate_14732_rateUseful" class="btn btn-xs btn-success" type="submit"><i class="icon-thumbs-up"></i> Oui</button>
+							<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseless]" id="catalog_commentsb_16_evaluate_14732_rateUseless" class="btn btn-xs btn-warning" type="submit"><i class="icon-thumbs-down"></i> Non</button>
+						</div>
+					</form>
+				</footer>
+				-->
+			</article>
+		</li>
+	{% endfor %}
+
+	<pre>test :</pre>
+	<li>
+		<article id="comment-14739" class="panel panel-primary" itemscope="" itemtype="http://schema.org/Review">
+			<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+			<header class="panel-heading">
+				<a itemprop="url" rel="nofollow" class="link" href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?commentId=14754#comment-14739">2.</a>
+				Écrit par <span itemprop="author">Mario Bros</span>
+				<span class="divider"> - </span>
+				<time itemprop="dateCreated" datetime="2013-08-13T10:37:36">13/08/2013 10:37</time>
+				<span class="divider"> - </span>
+				<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+					<meta itemprop="worstRating" content="1" />
+					<span itemprop="ratingValue">4</span> étoiles sur
+					<span itemprop="bestRating">5</span>
+				</span>
+				<span class="divider"> - </span>
+				<small class="text-muted">À propos de <a itemprop="about" href="#TODO:URL-du-produit">Game boy classic (1989)</a></small>
+			</header>
+			<div itemprop="reviewBody" class="panel-body">
+				<p>gsdfgs</p>
+			</div>
+			<div class="panel-footer">
+				<p class="evaluation-overview">1 internaute sur 1 juge ce commentaire utile.</p>
+				<small class="text-muted">Vous avez déjà évalué ce commentaire.</small>
+			</div>
+		</article>
+	</li>
+	<li>
+		<article id="comment-14740" class="panel" itemscope="" itemtype="http://schema.org/Review">
+			<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+			<header class="panel-heading">
+				<a itemprop="url" rel="nofollow" class="link" href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?commentId=14754#comment-14739">3.</a>
+				Écrit par <span itemprop="author">Mario Bros</span>
+				<span class="divider"> - </span>
+				<time itemprop="dateCreated" datetime="2013-08-13T10:42:05">13/08/2013 10:42</time>
+				<span class="divider"> - </span>
+				<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+					<meta itemprop="worstRating" content="1" />
+					<span itemprop="ratingValue">4</span> étoiles sur
+					<span itemprop="bestRating">5</span>
+				</span>
+				<span class="divider"> - </span>
+				<small class="text-muted">À propos de <a itemprop="about" href="#TODO:URL-du-produit">Game boy classic (1989)</a></small>
+			</header>
+			<div itemprop="reviewBody" class="panel-body">
+				<p>gsdfgs</p>
+			</div>
+			<div class="panel-footer">
+				<p class="evaluation-overview">0 internaute sur 5 juge ce commentaire utile.</p>
+				<small class="text-muted">Vous avez déjà évalué ce commentaire.</small>
+			</div>
+		</article>
+	</li>
+	<li>
+		<article id="comment-14754" class="panel panel-warning" itemscope="" itemtype="http://schema.org/Review">
+			<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+			<header class="panel-heading">
+				<a itemprop="url" rel="nofollow" class="link" href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?commentId=14754#comment-14754">4.</a>
+				Écrit par <span itemprop="author">Mario Bros</span>
+				<span class="divider"> - </span>
+				<time itemprop="dateCreated" datetime="2013-08-13T10:53:25">13/08/2013 10:53</time>
+				<span class="divider"> - </span>
+				<small class="text-muted">À propos de <a itemprop="about" href="#TODO:URL-du-produit">Game boy classic (1989)</a></small>
+			</header>
+			<div itemprop="reviewBody" class="panel-body">
+				<p>Dfqdsfqfsd qsdfq re uyiyu ih trytry.</p>
+				<p>Zerzerzerzer zerzer zeraez rzer zer.</p>
+				<p>Ztyryertyertye ty y rty rty rtyrty rty.</p>
+			</div>
+			<div class="panel-footer">
+				Ce commentaire ne sera publié qu'après validation.
+			</div>
+		</article>
+	</li>
+	<li>
+		<article id="comment-14755" class="panel" itemscope="" itemtype="http://schema.org/Review">
+			<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+			<header class="panel-heading">
+				<a itemprop="url" rel="nofollow" class="link" href="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html?commentId=14754#comment-14739">5.</a>
+				Écrit par <span itemprop="author">Mario Bros</span>
+				<span class="divider"> - </span>
+				<time itemprop="dateCreated" datetime="2013-08-13T10:54:52">13/08/2013 10:54</time>
+				<span class="divider"> - </span>
+				<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+					<meta itemprop="worstRating" content="1" />
+					<span itemprop="ratingValue">1</span> étoile sur
+					<span itemprop="bestRating">5</span>
+				</span>
+				<span class="divider"> - </span>
+				<small class="text-muted">À propos de <a itemprop="about" href="#TODO:URL-du-produit">Game boy classic (1989)</a></small>
+			</header>
+			<div itemprop="reviewBody" class="panel-body">
+				<p>gsd sdfq dfqsdf dffgs</p>
+			</div>
+			<div class="panel-footer">
+				<p class="evaluation-overview">
+					Soyez le premier à évaluer ce commentaire.
+				</p>
+				<form method="post" action="#comment-14732" id="catalog_commentsb_16_evaluate_14732" enctype="multipart/form-data" class="form-inline">
+					<div>
+						<input name="catalogParam[commentId]" value="14732" id="catalog_commentsb_16_evaluate_14732_commentId" type="hidden" />
+						<span>Ce commentaire vous a-t-il été utile ?</span>
+						<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseful]" id="catalog_commentsb_16_evaluate_14732_rateUseful" class="btn btn-xs btn-success" type="submit"><i class="icon-thumbs-up"></i> Oui</button>
+						<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseless]" id="catalog_commentsb_16_evaluate_14732_rateUseless" class="btn btn-xs btn-warning" type="submit"><i class="icon-thumbs-down"></i> Non</button>
+					</div>
+				</form>
+			</div>
+		</article>
+	</li>
+</ul>

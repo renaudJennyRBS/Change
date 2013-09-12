@@ -20,6 +20,10 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
+		new RegisterByBlockName('Rbs_Review_ReviewList', true, $events);
+		new RegisterByBlockName('Rbs_Review_PostReview', true, $events);
+		new RegisterByBlockName('Rbs_Review_PromotedReviewList', true, $events);
+
 		new  RegisterByBlockName('Rbs_User_Login', true, $events);
 
 		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
