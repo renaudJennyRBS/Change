@@ -20,6 +20,13 @@
 				label="{{ i18nAttr('m.rbs.geo.document.country.title', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
+
+		<rbs-field-picker
+				property="addressFields" label="{{ i18nAttr('m.rbs.geo.document.country.addressfields', ['ucf']) }}"
+				accepted-model="Rbs_Geo_AddressFields"
+				selector-title="{{ i18nAttr('m.rbs.geo.document.country.select-addressfields', ['ucf']) }}"
+				allow-creation="false">
+		</rbs-field-picker>
 	</fieldset>
 
 	<fieldset ng-show="section=='systeminfo'"
