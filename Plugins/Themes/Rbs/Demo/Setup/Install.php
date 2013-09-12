@@ -17,12 +17,14 @@ class Install
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
+
 		$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
 		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
 		if ($theme instanceof \Rbs\Theme\Documents\Theme)
 		{
+			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
 			return;
 		}
 
@@ -36,6 +38,8 @@ class Install
 			$theme->setName('Rbs_Demo');
 			$theme->setActive(true);
 			$theme->save();
+
+			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
 
 			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 

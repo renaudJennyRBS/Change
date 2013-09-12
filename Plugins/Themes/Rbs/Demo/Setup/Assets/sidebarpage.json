@@ -12,8 +12,9 @@
 	"headerTop2" : {
 		"id" : "headerTop2",
 		"type" : "block",
-		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"name" : "Rbs_Website_XhtmlTemplate",
 		"parameters" : {
+			"moduleName" : "Rbs_Demo",
 			"templateName" : "xhtml-user.twig"
 		}
 	},
@@ -27,8 +28,9 @@
 	"headerTop4" : {
 		"id" : "headerTop4",
 		"type" : "block",
-		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"name" : "Rbs_Website_XhtmlTemplate",
 		"parameters" : {
+			"moduleName" : "Rbs_Demo",
 			"templateName" : "xhtml-switchlang.twig"
 		}
 	},
@@ -37,7 +39,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Richtext",
 		"parameters" : {
-			"content" : "<a class=\"brand logo\" href=\"#\"><img src=\"Theme/Rbs/Demo/img/logo.png\" alt=\"\" /></a>"
+			"content" : "<div><a class=\"brand logo\" href=\"#\"><img src=\"Theme/Rbs/Demo/img/logo.png\" alt=\"\" /></a></div>"
 		}
 	},
 	"headerBottom1" : {
@@ -61,8 +63,9 @@
 	"contentTop2" : {
 		"id" : "contentTop2",
 		"type" : "block",
-		"name" : "Intportg_Markupsamples_XhtmlTemplate",
+		"name" : "Rbs_Website_XhtmlTemplate",
 		"parameters" : {
+			"moduleName" : "Rbs_Demo",
 			"templateName" : "xhtml-search.twig"
 		}
 	},
