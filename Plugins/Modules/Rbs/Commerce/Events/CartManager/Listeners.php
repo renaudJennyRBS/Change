@@ -57,6 +57,18 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach('saveCart', $callback, 5);
 
+		$callback = function (Event $event)
+		{
+			$cart = $event->getParam('cart');
+			$cartToMerge = $event->getParam('cartToMerge');
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices() && $cartToMerge instanceof \Rbs\Commerce\Interfaces\Cart )
+			{
+				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->mergeCart($cart, $cartToMerge));
+			}
+		};
+		$events->attach('mergeCart', $callback, 5);
+
+
 
 		$callback = function (Event $event)
 		{
@@ -74,6 +86,9 @@ class Listeners implements ListenerAggregateInterface
 			(new DefaultCartValidation())->execute($event);
 		};
 		$events->attach('validCart', $callback, 5);
+
+
+
 	}
 
 	/**
