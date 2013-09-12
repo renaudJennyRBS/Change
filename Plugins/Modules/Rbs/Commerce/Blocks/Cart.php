@@ -22,13 +22,37 @@ class Cart extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('cartIdentifier');
+		$parameters->addParameterMeta('displayPrices');
+		$parameters->addParameterMeta('displayPricesWithTax');
+
 		$parameters->setLayoutParameters($event->getBlockLayout());
+
+		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		$commerceServices = $event->getParam('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-			$commerceServices = $event->getParam('commerceServices');
 			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
 		}
+
+		if ($parameters->getParameter('cartIdentifier') !== null)
+		{
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
+			if (!$cart)
+			{
+				$parameters->setParameterValue('cartIdentifier', null);
+			}
+			elseif ($parameters->getParameter('displayPrices') === null)
+			{
+				$documentManager = $event->getDocumentServices()->getDocumentManager();
+				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
+				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+				{
+					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+				}
+			}
+		}
+
 		return $parameters;
 	}
 

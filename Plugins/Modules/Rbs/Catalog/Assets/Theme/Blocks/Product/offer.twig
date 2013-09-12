@@ -59,27 +59,31 @@
 	{% endblock %}
 
 	{% block prices %}
-		{% if productPresentation.priceValue %}
+		{% if productPresentation.priceValue and (parameters.displayPrices or parameters.displayPricesWithTax) %}
 			<ul class="list-unstyled main-price">
-				<li class="price">
-					{{ formatPrice(productPresentation.priceValue) }}
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-					{% if productPresentation.priceValueWithoutDiscount %}
-						<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-							{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
-						</del>
-					{% endif %}
-				</li>
-				<li class="price">
-					<meta itemprop="priceCurrency" content="EUR" />
-					<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-					{% if productPresentation.priceValueWithoutDiscountWithTax %}
-						<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-							{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
-						</del>
-					{% endif %}
-				</li>
+				{% if parameters.displayPrices %}
+					<li class="price">
+						{{ formatPrice(productPresentation.priceValue) }}
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+						{% if productPresentation.priceValueWithoutDiscount %}
+							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+								{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
+							</del>
+						{% endif %}
+					</li>
+				{% endif %}
+				{% if parameters.displayPricesWithTax %}
+					<li class="price">
+						<meta itemprop="priceCurrency" content="EUR" />
+						<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+						{% if productPresentation.priceValueWithoutDiscountWithTax %}
+							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+								{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
+							</del>
+						{% endif %}
+					</li>
+				{% endif %}
 				{% if productPresentation.ecoTaxValue %}
 					<li class="small">
 						{{ i18n('m.rbs.catalog.fo.including', ['ucf']) }} {{ i18n('m.rbs.catalog.fo.ecotax') }} {{ formatPrice(productPresentation.ecoTaxValue) }}

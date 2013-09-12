@@ -38,9 +38,13 @@
 			<tr>
 				<th>#</th>
 				<th>{{ i18n('m.rbs.commerce.tpl.designation', ['ucf']) }}</th>
-				<th>{{ i18n('m.rbs.commerce.tpl.unit-price', ['ucf']) }}</th>
+				{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+					<th>{{ i18n('m.rbs.commerce.tpl.unit-price', ['ucf']) }}</th>
+				{% endif %}
 				<th>{{ i18n('m.rbs.commerce.tpl.quantity', ['ucf']) }}</th>
-				<th>{{ i18n('m.rbs.commerce.tpl.total-price', ['ucf']) }}</th>
+				{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+					<th>{{ i18n('m.rbs.commerce.tpl.total-price', ['ucf']) }}</th>
+				{% endif %}
 				<th>{{ i18n('m.rbs.commerce.tpl.actions', ['ucf']) }}</th>
 			</tr>
 		</thead>

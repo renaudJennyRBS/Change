@@ -1,21 +1,33 @@
 <tr id="{{ blockId }}_{{ cartLine.key }}" data-line-key="{{ cartLine.key }}">
 	<td>{{ cartLine.number }}</td>
 	<td>{{ cartLine.designation }}</td>
-	<td class="price">
-		{{ formatPrice(cartLine.unitPriceValue) }}
-		<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-		<br />
-		{{ formatPrice(cartLine.unitPriceValueWithTax) }}
-		<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-	</td>
+	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+		<td class="price">
+			{% if parameters.displayPrices %}
+				{{ formatPrice(cartLine.unitPriceValue) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+			{% endif %}
+			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+			{% if parameters.displayPricesWithTax %}
+				{{ formatPrice(cartLine.unitPriceValueWithTax) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+			{% endif %}
+		</td>
+	{% endif %}
 	<td>{{ cartLine.quantity }}</td>
-	<td class="price">
-		{{ formatPrice(cartLine.priceValue) }}
-		<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-		<br />
-		{{ formatPrice(cartLine.priceValueWithTax) }}
-		<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-	</td>
+	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+		<td class="price">
+			{% if parameters.displayPrices %}
+				{{ formatPrice(cartLine.priceValue) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+			{% endif %}
+			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+			{% if parameters.displayPricesWithTax %}
+				{{ formatPrice(cartLine.priceValueWithTax) }}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+			{% endif %}
+		</td>
+	{% endif %}
 	<td>
 		<button type="button" class="btn btn-default btn-small" onclick="script{{ blockId }}.updateLine(this)"
 			value="{{ cartLine.key }}" data-quantity="{{ cartLine.quantity }}"
