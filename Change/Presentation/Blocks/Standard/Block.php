@@ -18,8 +18,8 @@ class Block
 	 * Set Block Parameters on $event
 	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
 	 * Event params includes all params from Http\Event (ex: pathRule and page).
-	 * @param Event $event
-	 * @return Parameters
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	protected function parameterize($event)
 	{
@@ -32,7 +32,7 @@ class Block
 	 * Set Block Parameters on $event
 	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
 	 * Event params includes all params from Http\Event (ex: pathRule and page).
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	public function onParameterize($event)
@@ -67,7 +67,7 @@ class Block
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 */
 	public function onExecute($event)
 	{
@@ -90,6 +90,10 @@ class Block
 			$this->setTemplateRenderer($presentationServices, $result, $attributes->getArrayCopy(), $templateModuleName,
 				$templateName);
 		}
+		if (!$result->getHtmlCallback())
+		{
+			$result->setHtmlCallback(function () { return ''; });
+		}
 	}
 
 	/**
@@ -97,7 +101,7 @@ class Block
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * Required Event method: getBlockLayout(), getBlockParameters(), getBlockResult(),
 	 *        getPresentationServices(), getDocumentServices(), getUrlManager()
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
 	 */
@@ -108,7 +112,7 @@ class Block
 
 	/**
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @param BlockResult $result
+	 * @param \Change\Http\Web\Result\BlockResult $result
 	 * @param array $attributes
 	 * @param string $templateModuleName
 	 * @param string $templateName
@@ -125,5 +129,4 @@ class Block
 		};
 		$result->setHtmlCallback($callback);
 	}
-
 }

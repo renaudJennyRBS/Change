@@ -12,7 +12,7 @@
 				"name": "Rbs_Website_Richtext",
 				"parameters": {
 					"contentType" : "Markdown",
-					"content": "Oups!, cette page n'est pas disponible."
+					"content": "Oups ! Cette page n'est pas disponible."
 				}
 			}
 		]

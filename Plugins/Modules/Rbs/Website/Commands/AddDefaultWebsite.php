@@ -29,6 +29,7 @@ class AddDefaultWebsite
 			$website = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 
 			$website->setLabel('Default Website');
+			$website->getCurrentLocalization()->setTitle('Default Website');
 			$website->setBaseurl($event->getParam('baseURL'));
 			$website->create();
 			$wsn = $documentServices->getTreeManager()->getNodeByDocument($website);

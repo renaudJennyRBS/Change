@@ -63,9 +63,9 @@
 			<ul class="list-unstyled main-price">
 				<li class="price">
 					{{ formatPrice(productPresentation.priceValue) }}
-					<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
 					{% if productPresentation.priceValueWithoutDiscount %}
-						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+						<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
 							{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
 						</del>
 					{% endif %}
@@ -73,9 +73,9 @@
 				<li class="price">
 					<meta itemprop="priceCurrency" content="EUR" />
 					<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
-					<abbr class="tax-mode" title="{{ i18n('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
 					{% if productPresentation.priceValueWithoutDiscountWithTax %}
-						<del title="{{ i18n('m.rbs.catalog.fo.old-price') }}">
+						<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
 							{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
 						</del>
 					{% endif %}

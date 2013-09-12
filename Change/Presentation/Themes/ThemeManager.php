@@ -246,7 +246,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			$current = $it->current();
 			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0)
 			{
-				$theme->setModuleContent($plugin->getName(), $current->getSubPathname(),
+				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
+				$theme->setModuleContent($moduleName, $current->getSubPathname(),
 					file_get_contents($current->getPathname()));
 			}
 			$it->next();
