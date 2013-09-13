@@ -8,8 +8,8 @@
 		<label for="rating-accessible-input-{{ idCounter }}-5" class="option-label">5</label><input id="rating-accessible-input-{{ idCounter }}-5" value="5" {% if reviewStarRating == 5 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
 	</ol>
 {% endif %}
-<ul class="star-rating{% if editionMode %} accessible-hidden{% endif %}{% if small %} small-star{% endif %}{% if inline %} inline-rating{% endif %}" id="rbs-review-starrating-{{ idCounter }}">
-	<li class="current-rating-rating-{{ reviewStarRating }} star">{{ i18n('m.rbs.review.blocks.current-star-rating', ['ucf'], { 'rating': reviewStarRating } ) }}</li>
+<ul class="star-rating{% if editionMode %} accessible-hidden{% endif %}{% if small %} small-star{% endif %}{% if inline %} inline-rating{% endif %}" id="change-starrating-{{ idCounter }}">
+	<li class="current-rating rating-{{ (reviewStarRating * 20) - ((reviewStarRating*20)%10) }} star">{{ i18n('m.rbs.review.blocks.current-star-rating', ['ucf'], { 'rating': reviewStarRating } ) }}</li>
 	{% if editionMode %}
 		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}" class="one-star{% if reviewStarRating == 1 %}clicked{% endif %}">1</a></li>
 		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}" class="one-star{% if reviewStarRating == 2 %}clicked{% endif %}">2</a></li>

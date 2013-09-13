@@ -36,7 +36,7 @@
 						<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
 							<meta itemprop="worstRating" content="0" />
 							{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': row.rating, 'bestRating': 100 }) }}
-							{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'idCounter': loop.index, 'reviewStarRating': row.reviewStarRating } %}
+							{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'idCounter': loop.index, 'reviewRating': row.rating, 'reviewStarRating': row.reviewStarRating } %}
 						</span>
 					<span class="divider"> - </span>
 					<small class="text-muted">
