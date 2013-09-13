@@ -32,7 +32,7 @@ class Listeners implements ListenerAggregateInterface
 			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 			(new \Rbs\Website\Events\WebsiteResolver())->resolve($event);
 		};
-		$events->attach(Event::EVENT_REQUEST, $callback, 10);
+		$events->attach(Event::EVENT_REQUEST, $callback, 5);
 	}
 
 	/**

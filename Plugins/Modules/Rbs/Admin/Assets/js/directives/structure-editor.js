@@ -1935,7 +1935,7 @@
 
 					// Remove empty values.
 					angular.forEach(scope.originalItem.parameters, function (value, name) {
-						if (! scope.item.parameters[name]) {
+						if (scope.item.parameters[name] === null || angular.isUndefined(scope.item.parameters[name])) {
 							delete scope.originalItem.parameters[name];
 						}
 					});

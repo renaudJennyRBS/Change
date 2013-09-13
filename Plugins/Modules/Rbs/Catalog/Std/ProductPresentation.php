@@ -113,7 +113,6 @@ class ProductPresentation
 			$sku = $this->product->getSku();
 			if ($sku)
 			{
-
 				$stm = $this->commerceServices->getStockManager();
 				$level = $stm->getInventoryLevel($sku, $this->webStoreId);
 				$threshold = $stm->getInventoryThreshold($sku, $this->webStoreId, $level);

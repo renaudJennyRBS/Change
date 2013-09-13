@@ -33,8 +33,8 @@ class Category extends Block
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
+
 		if ($parameters->getParameter('categoryId') === null)
 		{
 			$document = $event->getParam('document');
@@ -124,12 +124,20 @@ class Category extends Block
 
 				$webStore = $category->getWebStore();
 				$webStoreId = $webStore ? $webStore->getId() : 0;
-				$productQuery = array('webStoreId' => $webStoreId, 'categoryId' => $categoryId);
+				$contextualUrls = $parameters->getParameter('contextualUrls');
+				if ($contextualUrls)
+				{
+					$productQuery = array('categoryId' => $categoryId);
+				}
+				else
+				{
+					$productQuery = array('webStoreId' => $webStoreId);
+				}
 
 				/* @var $product \Rbs\Catalog\Documents\Product */
 				foreach ($query->getDocuments(($pageNumber-1)*$itemsPerPage, $itemsPerPage) as $product)
 				{
-					if ($parameters->getParameter('contextualUrls'))
+					if ($contextualUrls)
 					{
 						$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
 					}
