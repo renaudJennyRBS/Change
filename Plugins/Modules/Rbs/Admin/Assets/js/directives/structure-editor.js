@@ -1753,7 +1753,7 @@
 							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Integer" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
 
 							// FIXME allowedModelNames
-							'<div ng-switch-when="Document" class="document-picker-single" input-css-class="input-small" ng-model="item.parameters[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentId" class="document-picker-single" input-css-class="input-small" ng-model="item.parameters[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 
 							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
 							'<switch id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
