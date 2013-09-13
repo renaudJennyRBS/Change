@@ -1,0 +1,11 @@
+<h2>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</h2>
+{% if parameters.showChart %}
+	{% for ratePart in rateParts %}
+		<div class="progress">
+			<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
+				{{ i18n('m.rbs.review.blocks.average-rating-from-to', ['ucf'], { 'from': ratePart.from , 'to': ratePart.to, 'count': ratePart.count }) }}
+				<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
+			</div>
+		</div>
+	{% endfor %}
+{% endif %}

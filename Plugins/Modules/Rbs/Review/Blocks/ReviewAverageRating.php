@@ -7,9 +7,9 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Rbs\Review\Blocks\PostReview
+ * @name \Rbs\Review\Blocks\ReviewAverageRating
  */
-class ReviewList extends Block
+class ReviewAverageRating extends Block
 {
 	/**
 	 * @api
@@ -22,9 +22,8 @@ class ReviewList extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('showAverageRating', true);
+		$parameters->addParameterMeta('showChart', true);
 		$parameters->addParameterMeta('averageRatingPartsCount', 5);
-		$parameters->addParameterMeta('reviewsPerPage', 10);
 		$parameters->addParameterMeta('targetId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -51,34 +50,41 @@ class ReviewList extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameterValue('targetId'));
+		$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('targetId'));
+
 		$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
-		//TODO add section of page to predicate?
 		$dqb->andPredicates($dqb->published(), $dqb->eq('target', $target));
-		//TODO add order by positive review
+		$qb = $dqb->dbQueryBuilder();
+		$qb->addColumn($qb->getFragmentBuilder()->alias($dqb->getColumn('rating'), 'rating'));
+		$query = $qb->query();
+		$ratings = $qb->query()->getResults($query->getRowsConverter()->addIntCol('rating'));
+		$attributes['averageRating'] = round(array_sum($ratings)/count($ratings), 2);
 
-		$urlManager = $event->getUrlManager();
-		$rows = [];
-		foreach ($dqb->getDocuments() as $review)
+		if ($parameters->getParameter('showChart'))
 		{
-			/* @var $review \Rbs\Review\Documents\Review */
-			$target = $review->getTarget();
-			/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
-			$rows[] = [
-				'id' => $review->getId(),
-				'pseudonym' => $review->getPseudonym(),
-				'rating' => $review->getRating(),
-				'reviewStarRating' => ceil($review->getRating()*(5/100)),
-				'reviewDate' => $review->getReviewDate(),
-				'content' => $review->getContent()->getHtml(),
-				'promoted' => $review->getPromoted(),
-				'url' => $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite()),
-				//TODO: getLabel for target is not a good thing, find another way
-				'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $review->getSection()->getWebsite()) ]
-			];
+			$parts = $parameters->getParameter('averageRatingPartsCount');
+			$step = 100 / $parts;
+			$rateParts = [];
+			$from = 0;
+			$to = $step - 1;
+			for ($i = 0; $i < $parts; $i++)
+			{
+				$to = floor($to);
+				$from = floor($from);
+				$count = count(array_filter($ratings, function ($rating) use ($from, $to)
+				{
+					return $rating >= $from && $rating <= $to;
+				}));
+				$rateParts[$i] = [ 'count' => $count, 'percent' => ($count / count($ratings)) * 100, 'from' => $from, 'to' => $to];
+				//set $from and $to for the next iteration
+				$from = $to + 1;
+				//if next iteration is the last, set $to to 100
+				$to = $i === $parts - 2 ? 100 : $to + $step;
+			}
+			$attributes['ratePartCount'] = $parts;
+			$attributes['rateParts'] = $rateParts;
 		}
-		$attributes['rows'] = $rows;
 
-		return 'review-list.twig';
+		return 'review-average-rating.twig';
 	}
 }

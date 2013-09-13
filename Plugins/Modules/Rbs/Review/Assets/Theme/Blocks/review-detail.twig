@@ -1,0 +1,77 @@
+<h2>{{ i18n('m.rbs.review.blocks.review-detail', ['ucf']) }}</h2>
+{% if parameters.editionMode %}{# display the edition form if user is authenticated and he is the review author #}
+	{% if review.promoted %}
+		<p>{{ i18n('m.rbs.review.blocks.review-detail-promoted', ['ucf']) }}</p>
+	{% endif %}
+	{% if review.pendingValidation %}
+		<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
+	{% endif %}
+	<form method="post" id="Review" action="Action/Rbs/Review/UpdateReview" class="well well-small">
+		<input type="hidden" name="reviewId" value="{{ review.id }}">
+		<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
+		<fieldset>
+			<div class="form-group">
+				<label for="rbs-review-review-pseudonym">{{ i18n('m.rbs.review.blocks.review-post-pseudonym', ['ucf']) }}</label>
+				<p id="rbs-review-review-pseudonym" class="form-control-static">{{ review.pseudonym }}</p>
+			</div>
+			<!-- TODO do something better with jQuery/AngularJS/Bootstrap-UI -->
+			<div class="form-group">
+				<label for="rbs-review-review-rating-value">{{ i18n('m.rbs.review.blocks.review-post-rating', ['ucf']) }}</label>
+				<input id="rbs-review-review-rating-value" type="range" name="rating" min="0" max="100" value="{{ review.rating }}">
+				<span id="rbs-review-review-rating">{{ review.rating }}/100</span>
+			</div>
+			<div class="form-group">
+				<label for="rbs-review-review-content">{{ i18n('m.rbs.review.blocks.review-post-content', ['ucf']) }}</label>
+				<input id="rbs-review-review-content" type="text" name="content" class="form-control" value="{{ review.content | raw }}">
+			</div>
+			<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.review.blocks.review-post-submit', ['ucf']) }}</button>
+		</fieldset>
+	</form>
+	<script type="text/javascript">
+		window.onload =  function(){
+			$('#rbs-review-review-rating-value').change(function (){
+				$('#rbs-review-review-rating').html($(this).val() + '/100');
+			});
+		};
+	</script>
+{% else %}{# display the review like in the list (with more details) #}
+	<article id="review-{{ review.id }}" class="panel" itemscope="" itemtype="http://schema.org/Review">
+		<!-- img?
+		<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
+		-->
+		<header class="panel-heading">
+			{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': review.pseudonym, 'url': review.url }) }}
+			<span class="divider"> - </span>
+			<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | date }}</time>
+			<span class="divider"> - </span>
+							<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+								<meta itemprop="worstRating" content="0" />
+								{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': review.rating, 'bestRating': 100 }) }}
+							</span>
+			<span class="divider"> - </span>
+			<small class="text-muted">
+				{{ i18n('m.rbs.review.blocks.review-about', ['ucf'], { 'targetTitle': review.target.title, 'targetUrl': review.target.url }) }}
+		</header>
+		<div itemprop="reviewBody" class="panel-body">
+			{{ review.content | raw }}
+		</div>
+		<!-- modified?
+		<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
+		-->
+		<!-- comment and evaluation of review
+		<footer class="panel-footer">
+			<p class="evaluation-overview">
+				Soyez le premier à évaluer ce commentaire.
+			</p>
+			<form method="post" action="#comment-14732" id="catalog_commentsb_16_evaluate_14732" enctype="multipart/form-data" class="form-inline">
+				<div>
+					<input name="catalogParam[commentId]" value="14732" id="catalog_commentsb_16_evaluate_14732_commentId" type="hidden" />
+					<span>Ce commentaire vous a-t-il été utile ?</span>
+					<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseful]" id="catalog_commentsb_16_evaluate_14732_rateUseful" class="btn btn-xs btn-success" type="submit"><i class="icon-thumbs-up"></i> Oui</button>
+					<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseless]" id="catalog_commentsb_16_evaluate_14732_rateUseless" class="btn btn-xs btn-warning" type="submit"><i class="icon-thumbs-down"></i> Non</button>
+				</div>
+			</form>
+		</footer>
+		-->
+	</article>
+{% endif %}

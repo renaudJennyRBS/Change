@@ -6,11 +6,11 @@ use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
- * Class ReviewListInformation
+ * Class ReviewAverageRatingInformation
  * @package Rbs\Review\Blocks
- * @name \Rbs\Review\Blocks\ReviewListInformation
+ * @name \Rbs\Review\Blocks\ReviewAverageRatingInformation
  */
-class ReviewListInformation extends Information
+class ReviewAverageRatingInformation extends Information
 {
 	/**
 	 * @param string $name
@@ -21,10 +21,12 @@ class ReviewListInformation extends Information
 		parent::__construct($name);
 		$ucf = array('ucf');
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list'));
+		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-average-rating'));
 		$this->addInformationMeta('targetId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
-		$this->addInformationMeta('reviewsPerPage', Property::TYPE_INTEGER, true, 10)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-items-per-page', $ucf));
+		$this->addInformationMeta('showChart', Property::TYPE_BOOLEAN, true, true)
+			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-show-average-rating', $ucf));
+		$this->addInformationMeta('averageRatingPartsCount', Property::TYPE_INTEGER, false, 5)
+			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-average-parts-count', $ucf));
 	}
 }

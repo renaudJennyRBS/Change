@@ -92,6 +92,7 @@ class PromotedReviewList extends Block
 					'rating' => $review->getRating(),
 					'reviewDate' => $review->getReviewDate(),
 					'content' => $review->getContent()->getHtml(),
+					'url' => $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite()),
 					//TODO: getLabel for target is not a good things, find another way
 					'target' => ['title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $review->getSection()->getWebsite())]
 				];

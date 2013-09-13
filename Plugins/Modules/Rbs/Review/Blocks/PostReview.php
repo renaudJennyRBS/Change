@@ -2,7 +2,6 @@
 namespace Rbs\Review\Blocks;
 
 use Change\Documents\Property;
-use Change\Http\UrlManager;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -25,8 +24,7 @@ class PostReview extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('targetId');
 		$parameters->addParameterMeta('sectionId');
-		$parameters->addParameterMeta('targetId');
-		$parameters->addParameterMeta('alreadyReviewed');
+		$parameters->addParameterMeta('alreadyReviewed', false);
 		$parameters->addParameterMeta('pseudonym');
 		$parameters->addParameterMeta('content');
 		$parameters->addParameterMeta('rating');
@@ -37,9 +35,10 @@ class PostReview extends Block
 		if ($user->authenticated())
 		{
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
-			$targetFromParameter = $documentManager->getDocumentInstance($parameters->getParameterValue('targetId'));
+			$targetFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('targetId'));
 			$target = $targetFromParameter !== null ? $targetFromParameter : $event->getParam('document');
-			$sectionFromParameter = $documentManager->getDocumentInstance($parameters->getParameterValue('sectionId'));
+			$sectionFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('sectionId'));
+			//TODO take section of the page is it a good thing?
 			$section = $sectionFromParameter !== null ? $sectionFromParameter : $event->getParam('page')->getSection();
 			if ($target instanceof \Change\Documents\AbstractDocument && $section instanceof \Change\Presentation\Interfaces\Section)
 			{
@@ -49,7 +48,6 @@ class PostReview extends Block
 				//find if user has already reviewed this target in this section
 				$reviewModel = $documentManager->getModelManager()->getModelByName('Rbs_Review_Review');
 				$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), $reviewModel);
-				//TODO: replace pseudonym by userId (because if user change his pseudo, he can review a doc again)
 				$dqb->andPredicates(
 					$dqb->eq('target', $target),
 					$dqb->eq('section', $section),
@@ -66,10 +64,7 @@ class PostReview extends Block
 				{
 					/* @var $review \Rbs\Review\Documents\Review */
 					$parameters->setParameterValue('alreadyReviewed', true);
-					$parameters->setParameterValue('reviewPublished', $review->published());
-					//TODO UrlManager on event doesn't work
-					//$parameters->setParameterValue('reviewUrl', $event->getUrlManager()->getCanonicalByDocument($review, $event->getParam('website')));
-					$parameters->setParameterValue('reviewDate', $review->getReviewDate());
+					$parameters->setParameterValue('reviewId', $review->getId());
 				}
 			}
 		}
@@ -90,6 +85,23 @@ class PostReview extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$parameters = $event->getBlockParameters();
+		if ($parameters->getParameter('alreadyReviewed'))
+		{
+			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
+			/* @var $review \Rbs\Review\Documents\Review */
+			$attributes['pendingValidation'] = !$review->published();
+			$attributes['reviewDate'] = $review->getReviewDate();
+			$attributes['reviewRating'] = $review->getRating();
+			$attributes['reviewStarRating'] = ceil($review->getRating()*(5/100));
+			$attributes['reviewUrl'] = $event->getUrlManager()->getCanonicalByDocument($review, $event->getParam('website'));
+		}
+		else
+		{
+			//for edition mode (will show the form and set the star rating engine)
+			$attributes['editionMode'] = true;
+			$attributes['reviewStarRating'] = 4;
+		}
 		return 'post-review.twig';
 	}
 }

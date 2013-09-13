@@ -5,18 +5,7 @@
 	</li>
 </ul>
 -->
-<h2 id="comment-toolbar-title">{{ rows | length }} {{ i18n('m.rbs.review.blocks.review-list', ['ucf']) }}</h2>
-{% if parameters.showAverageRating %}
-	{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}
-	{% for ratePart in rateParts %}
-		<div class="progress">
-			<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
-				{{ i18n('m.rbs.review.blocks.average-rating-from-to', ['ucf'], { 'from': ratePart.from , 'to': ratePart.to, 'count': ratePart.count }) }}
-				<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
-			</div>
-		</div>
-	{% endfor %}
-{% endif %}
+<h2 id="comment-toolbar-title">{{ i18n('m.rbs.review.blocks.review-list-count', ['ucf'], { 'count': rows | length }) }}</h2>
 <!-- Sort?
 <dl class="list-inline" id="sort-options">
 	<dt>Trier par</dt>
@@ -39,7 +28,7 @@
 				<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
 				-->
 				<header class="panel-heading">
-					<a itemprop="url" rel="nofollow" href="#TODO:URL-du-détail-de-l-avis">{{ loop.index }}.</a>
+					<a itemprop="url" rel="nofollow" href="{{ row.url }}">{{ loop.index }}.</a>
 					{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': row.pseudonym, 'url': row.url }) }}
 					<span class="divider"> - </span>
 					<time itemprop="dateCreated" datetime="{{ row.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ row.reviewDate | date }}</time>
@@ -47,6 +36,7 @@
 						<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
 							<meta itemprop="worstRating" content="0" />
 							{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': row.rating, 'bestRating': 100 }) }}
+							{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'idCounter': loop.index, 'reviewStarRating': row.reviewStarRating } %}
 						</span>
 					<span class="divider"> - </span>
 					<small class="text-muted">

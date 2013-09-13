@@ -1,0 +1,20 @@
+{% if editionMode %}
+	<ol class="star-rating-accessible">
+		<label for="rating-accessible-input-{{ idCounter }}-0" class="option-label">0</label><input id="rating-accessible-input-{{ idCounter }}-0" value="0" {% if reviewStarRating == 0 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+		<label for="rating-accessible-input-{{ idCounter }}-1" class="option-label">1</label><input id="rating-accessible-input-{{ idCounter }}-1" value="1" {% if reviewStarRating == 1 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+		<label for="rating-accessible-input-{{ idCounter }}-2" class="option-label">2</label><input id="rating-accessible-input-{{ idCounter }}-2" value="2" {% if reviewStarRating == 2 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+		<label for="rating-accessible-input-{{ idCounter }}-3" class="option-label">3</label><input id="rating-accessible-input-{{ idCounter }}-3" value="3" {% if reviewStarRating == 3 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+		<label for="rating-accessible-input-{{ idCounter }}-4" class="option-label">4</label><input id="rating-accessible-input-{{ idCounter }}-4" value="4" {% if reviewStarRating == 4 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+		<label for="rating-accessible-input-{{ idCounter }}-5" class="option-label">5</label><input id="rating-accessible-input-{{ idCounter }}-5" value="5" {% if reviewStarRating == 5 %}checked="checked{% endif %}" name="rating" class="option-label" type="radio">
+	</ol>
+{% endif %}
+<ul class="star-rating{% if editionMode %} accessible-hidden{% endif %}{% if small %} small-star{% endif %}{% if inline %} inline-rating{% endif %}" id="rbs-review-starrating-{{ idCounter }}">
+	<li class="current-rating-rating-{{ reviewStarRating }} star">{{ i18n('m.rbs.review.blocks.current-star-rating', ['ucf'], { 'rating': reviewStarRating } ) }}</li>
+	{% if editionMode %}
+		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}" class="one-star{% if reviewStarRating == 1 %}clicked{% endif %}">1</a></li>
+		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}" class="one-star{% if reviewStarRating == 2 %}clicked{% endif %}">2</a></li>
+		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-3') }}" class="one-star{% if reviewStarRating == 3 %}clicked{% endif %}">3</a></li>
+		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}" class="one-star{% if reviewStarRating == 4 %}clicked{% endif %}">4</a></li>
+		<li class="star"><a href="#{{ idCounter }}" title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}" class="one-star{% if reviewStarRating == 5 %}clicked{% endif %}">5</a></li>
+	{% endif %}
+</ul>

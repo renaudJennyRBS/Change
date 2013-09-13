@@ -10,12 +10,12 @@
 <ul class="list-unstyled comment-list">
 	{% for row in rows %}
 		<li>
-			<article id="review-{{ row.id }}" class="panel" itemscope="" itemtype="http://schema.org/Review">
+			<article id="review-{{ row.id }}" class="panel panel-success" itemscope="" itemtype="http://schema.org/Review">
 				<!-- img?
 				<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
 				-->
 				<header class="panel-heading">
-					<a itemprop="url" rel="nofollow" href="#TODO:URL-du-détail-de-l-avis">{{ loop.index }}.</a>
+					<a itemprop="url" rel="nofollow" href="{{ row.url }}>{{ loop.index }}.</a>
 					{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': row.pseudonym, 'url': row.url }) }}
 					<span class="divider"> - </span>
 					<time itemprop="dateCreated" datetime="{{ row.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ row.reviewDate | date }}</time>

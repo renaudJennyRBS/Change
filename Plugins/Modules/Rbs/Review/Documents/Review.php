@@ -4,7 +4,7 @@ namespace Rbs\Review\Documents;
 use Change\Presentation\PresentationServices;
 
 /**
- * @name \Rbs\Comment\Documents\Review
+ * @name \Rbs\Review\Documents\Review
  */
 class Review extends \Compilation\Rbs\Review\Documents\Review
 {
@@ -32,6 +32,18 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 		{
 			$this->transformMarkdownToHtml();
 		}
+	}
+
+	/**
+	 * @return array|\Change\Documents\AbstractDocument
+	 */
+	public function getPublicationSections()
+	{
+		if ($this->getSection())
+		{
+			return array($this->getSection());
+		}
+		return array();
 	}
 
 	/**
