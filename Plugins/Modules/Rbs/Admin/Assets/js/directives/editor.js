@@ -274,11 +274,11 @@
 							EditorManager.uncascade(doc);
 						} else {
 							$rootScope.$broadcast('Change:DocumentSaved', doc);
-						}
 
-						// If a Document has been created, we redirect to the URL of the new Document.
-						if ($scope._isNew) {
-							$location.path(doc.url());
+							// If a Document has been created, we redirect to the URL of the new Document.
+							if ($scope._isNew) {
+								$location.path(doc.url());
+							}
 						}
 					}
 
