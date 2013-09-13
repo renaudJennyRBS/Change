@@ -751,7 +751,8 @@
 			 * When the route changes, we need to clean up any cascading process.
 			 */
 			$rootScope.$on('$routeChangeSuccess', function () {
-				cascadeContextStack = [];
+				cascadeContextStack.length = 0;
+				idStack.length = 0;
 			});
 
 			$rootScope.$on('$routeChangeStart', function () {
