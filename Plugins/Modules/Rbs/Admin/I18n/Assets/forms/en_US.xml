@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.admin.forms" lcid="fr_FR">
+	<key id="choose-existent">choose among existing documents</key>
 	<key id="afterSave">upon saving :</key>
 	<key id="afterSaveStay">stay on this form</key>
 	<key id="afterSaveGoList">go back to list</key>
@@ -15,14 +16,22 @@
 	<key id="date-selector-lang">en</key>
 
 	<key id="time-zone-selector-text">You can select a timezone just for this form, until you log out or permanently as your default timezone.</key>
+	<key id="always-use-this-timezone">always use this timezone</key>
+	<key id="current-time-in-selected-timezone">current time in selected timezone:</key>
+	<key id="use">use</key>
+	<key id="always-use">always use</key>
 
+	<key id="picker-no-element">no element</key>
 	<key id="picker-edit-tooltip">edit selection</key>
 	<key id="picker-create-tooltip">create a new document</key>
 	<key id="picker-choose">select...</key>
 	<key id="picker-choose-tooltip">select amongst existing documents...</key>
 	<key id="picker-delete-selection-tooltip">clear selection</key>
 	<key id="picker-take-from-clipboard-tooltip">fill using clipboard(=clipboardFirstLabel=)</key>
+	<key id="picker-choose-model-to-select">document types:</key>
 
 	<key id="click-to-select-another-image">click to select another image from your computer</key>
-
+	<key id="activation">activation</key>
+	<key id="validation">validation</key>
+	<key id="localisation">localization</key>
 </i18n>

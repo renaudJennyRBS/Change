@@ -4,7 +4,7 @@
 	<key id="billingareas">zones de tarification</key>
 	<key id="billingareas-picker-title">sélectionner les zones de tarification</key>
 
-	<key id="displayprices">afficher les prix hors taxe</key>
+	<key id="displayprices">afficher les prix HT</key>
 	<key id="displaypriceswithtax">afficher les prix TTC</key>
 
 	<key id="orderprocess">processus de commande</key>

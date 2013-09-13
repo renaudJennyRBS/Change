@@ -50,7 +50,7 @@ class DocumentLink extends Link
 		$this->mode = $action;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getCurrentLCID();
+			$this->LCID =  $document->getRefLCID();
 		}
 		parent::__construct($urlManager, $this->buildPathInfo());
 		if ($action == self::MODE_PROPERTY)

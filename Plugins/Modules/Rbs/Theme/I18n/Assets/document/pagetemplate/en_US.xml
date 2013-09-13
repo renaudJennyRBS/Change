@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.theme.document.pagetemplate" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="html">HTML</key>
+	<key id="htmlforbackoffice">backoffice HTML</key>
+	<key id="editablecontent">content zones</key>
+	<key id="theme">themes</key>
+</i18n>

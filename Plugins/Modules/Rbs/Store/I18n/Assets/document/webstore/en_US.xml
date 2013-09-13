@@ -3,4 +3,11 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="billingareas">pricing zones</key>
 	<key id="billingareas-picker-title">select pricing zones</key>
+
+	<key id="displayprices">display prices excluding taxes</key>
+	<key id="displaypriceswithtax">display prices including taxes</key>
+
+	<key id="orderprocess">checkout process</key>
+	<key id="select-orderprocess">select a checkout process</key>
+
 </i18n>

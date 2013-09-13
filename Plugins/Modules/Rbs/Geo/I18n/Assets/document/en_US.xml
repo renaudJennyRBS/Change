@@ -9,4 +9,7 @@
 	<key id="territorialunit">territorial unit</key>
 	<key id="territorialunit-list">territorial units</key>
 	<key id="territorialunit-create">add a new territorial unit</key>
+	<key id="addressfields">address format</key>
+	<key id="addressfields-list">address format</key>
+	<key id="addressfields-create">add a new address format</key>
 </i18n>

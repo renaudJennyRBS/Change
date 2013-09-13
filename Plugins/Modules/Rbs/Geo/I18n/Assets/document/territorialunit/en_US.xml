@@ -6,4 +6,9 @@
 	<key id="country-picker-title">select a country</key>
 	<key id="unitparent">parent unit</key>
 	<key id="unitparent-picker-title">select the parent territorial unit</key>
+	<key id="unit-state">state</key>
+	<key id="unit-departement">department</key>
+	<key id="unit-region">region</key>
+	<key id="unit-county">county</key>
+	<key id="unit-province">province</key>
 </i18n>

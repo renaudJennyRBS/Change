@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.geo.document.territorialunit" lcid="en_US">
+	<include id="m.rbs.generic.document"/>
+	<key id="fields">fields</key>
+	<key id="fieldsLayoutData">fields layout</key>
+</i18n>

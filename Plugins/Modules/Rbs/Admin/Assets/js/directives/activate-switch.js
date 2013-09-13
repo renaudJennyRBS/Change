@@ -7,14 +7,14 @@
 	 *
 	 * @example: <code><switch confirm-off="Are you sure to disable this element?" document="myDocument"/></code>
 	 */
-	app.directive('activateSwitch', ['$q', 'RbsChange.Dialog', 'RbsChange.Actions', function ($q, Dialog, Actions) {
+	app.directive('activateSwitch', ['$q', 'RbsChange.Dialog', 'RbsChange.Actions', 'RbsChange.i18n', function ($q, Dialog, Actions, i18n) {
 		return {
 			restrict : 'E',
 
 			template : '<div class="switch-on-off switch" ng-class="{\'busy\':busy}">' +
 				'<div class="switch-button"></div>' +
-				'<label class="on">oui</label>' +
-				'<label class="off">non</label>' +
+				'<label class="on" ng-bind-html="labelOn"></label>' +
+				'<label class="off" ng-bind-html="labelOff"></label>' +
 				'</div>',
 
 			replace : true,
@@ -26,6 +26,8 @@
 
 			link : function (scope, elm, attrs) {
 				var sw = $(elm);
+				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.admin.js.yes');
+				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.admin.js.no');
 
 				scope.$watch('document', function (doc) {
 					if (doc) {
