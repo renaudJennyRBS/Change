@@ -19,7 +19,7 @@
 	               filter-query="query">
 		<column name="label" label="Nom" primary="true"></column>
 		<column name="themes" label="Modèles">
-			<a href ng-href="(= doc | documentURL:'tree' =)">Lister <i class="icon-circle-arrow-right"></i></a>
+			<a href ng-href="(= doc | documentURL:'tree' =)">{{ i18n('m.rbs.theme.document.theme-list-pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 		</column>
 	</rbs-document-list>
 
