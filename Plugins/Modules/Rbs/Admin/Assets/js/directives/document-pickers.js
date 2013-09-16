@@ -44,8 +44,9 @@
 		scope.allowCreation = attrs.allowCreation !== 'false';
 		scope.allowEdition = attrs.allowEdition;
 
-		attrs.$observe('acceptedModel', function (value) {
-			scope.acceptedModel = value;
+		attrs.$observe('acceptedModel', function () {
+			console.log("attrs=", attrs.acceptedModel, ", scope=", iElement.attr('accepted-model'));
+			scope.acceptedModel = iElement.attr('accepted-model');
 		});
 
 		scope.selectModel = attrs.selectModel;
@@ -114,11 +115,11 @@
 			MainMenu.freeze();
 			scope.selectorTitle = attrs.selectorTitle;
 
-			var url;
+			var url, model = iElement.attr('accepted-model');
 			if (attrs.picker === 'model') {
-				url = scope.acceptedModel.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
+				url = model.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + model;
 			} else {
-				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
+				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (model || '');
 			}
 
 			if (attrs.embedIn) {
@@ -295,7 +296,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', function (Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST) {
+	app.directive('documentPickerSingle', ['$timeout', 'RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function ($timeout, Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
 		return {
 
 			restrict    : 'EAC',
@@ -329,6 +330,7 @@
 					documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST);
 				};
 			}
+
 		};
 	}]);
 
