@@ -27,6 +27,8 @@
 					loadCategorizations();
 				};
 
+				scope.attributeGroupId = null;
+
 				editorCtrl.init('Rbs_Catalog_Product');
 
 				function loadCategorizations () {
@@ -84,20 +86,29 @@
 					});
 				};
 
-				scope.$watch('document.attribute', function(newValue, oldValue){
-					if (!angular.isUndefined(newValue))
+				scope.$watch('document.attribute', function(newValue){
+					if (newValue)
 					{
 						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
 						{
-							scope.document.attribute = newValue.id;
+							scope.attributeGroupId = newValue.id;
 						}
-						else if (newValue == '')
+						else
 						{
-							scope.document.attribute = null;
-							$timeout(function () {
-								scope.$emit('Change:Editor:UpdateMenu');
-							});
+							var groupId = parseInt(newValue, 10);
+							if (isNaN(groupId))
+							{
+								scope.attributeGroupId = null;
+							}
+							else
+							{
+								scope.attributeGroupId = groupId;
+							}
 						}
+					}
+					else
+					{
+						scope.attributeGroupId = null;
 					}
 				});
 			}

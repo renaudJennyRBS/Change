@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.setup" lcid="fr_FR">
+	<key id="attr-description">description</key>
+	<key id="attr-visuals">visuels</key>
+	<key id="attr-pictograms">pictogrammes</key>
+	<key id="attr-brand">marque</key>
+	<key id="attr-code">code</key>
+	<key id="attr-genericattributes">Attributs généraux</key>
+</i18n>

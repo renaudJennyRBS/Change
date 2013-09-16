@@ -30,7 +30,12 @@
 		<![CDATA[<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.</strong> Un même produit qui apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.</p>
 		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>
 	</key>
+
 	<key id="category-section-help" format="html">
 		<![CDATA[<p>Les catégories permettent de publier les produits dans les sections du site.</p>]]>
 	</key>
+
+	<key id="section-declination">déclinaison</key>
+	<key id="declinationgroup">spécifications de déclinaison</key>
+	<key id="declinationgroup-picker-title">sélectionner les spécifications de déclinaison</key>
 </i18n>

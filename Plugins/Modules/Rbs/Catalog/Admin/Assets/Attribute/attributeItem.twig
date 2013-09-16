@@ -1,4 +1,4 @@
-<rbs-field label="(= attribute.label =)" data-ng-class="{'required': attribute.required}">
+<rbs-field label="(= attribute.label =)" data-ng-class="{'required': attribute.required}" property="attr_(= attribute.id =)">
 		<div ng-if="attribute.collectionCode">
 			<select ng-model="attribute.value.value" rbs-items-from-collection="(= attribute.collectionCode =)">
 				<option value=""></option>

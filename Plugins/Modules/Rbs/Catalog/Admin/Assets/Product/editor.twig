@@ -55,8 +55,21 @@
 			</select>
 		</rbs-field>
 
-		<rbs-attribute-editor attribute-values="document.attributeValues" attribute-editor="document.attribute">
+		<rbs-attribute-editor attribute-values="document.attributeValues" attribute-editor="attributeGroupId"
+				attribute-product-properties="document">
 		</rbs-attribute-editor>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='declination'"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-declination', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker property="declinationGroup" label="{{ i18nAttr('m.rbs.catalog.document.product.declinationgroup', ['ucf']) }}"
+				accepted-model="Rbs_Stock_DeclinationGroup"
+				selector-title="{{ i18nAttr('m.rbs.catalog.document.product.declinationgroup-picker-title', ['ucf']) }}"
+				allow-creation="true"
+				allow-edition="true">
+		</rbs-field-picker>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='publication'"
