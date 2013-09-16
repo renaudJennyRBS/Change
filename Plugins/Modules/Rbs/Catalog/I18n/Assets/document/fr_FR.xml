@@ -7,8 +7,13 @@
 	<key id="category-list">catégories</key>
 	<key id="category-create">ajouter une catégorie</key>
 	<key id="productcategorization">catégorisation</key>
+
 	<key id="attribute">attribut</key>
 	<key id="attribute-create">ajouter un attribut</key>
 	<key id="attribute-list">attributs</key>
 	<key id="attribute-picker-title">selectionner les attributs du groupe</key>
+
+	<key id="declinationgroup">produit décliné</key>
+	<key id="declinationgroup-create">ajouter un produit décliné</key>
+	<key id="declinationgroup-list">produits décliné</key>
 </i18n>

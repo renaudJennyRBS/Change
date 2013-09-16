@@ -1,0 +1,62 @@
+{
+	"description" : {
+		"title":"m.rbs.catalog.setup.attr-description",
+		"valueType":"Property",
+		"requiredValue":false,
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"description",
+		"visibility":["specifications"]
+	},
+	"visuals" : {
+		"title":"m.rbs.catalog.setup.attr-visuals",
+		"valueType":"Property",
+		"requiredValue":false,
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"visuals",
+		"visibility":["specifications"],
+		"documentType":"Rbs_Media_Image"
+	},
+	"pictograms" : {
+		"title":"m.rbs.catalog.setup.attr-pictograms",
+		"valueType":"Property",
+		"requiredValue":false,
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"pictograms",
+		"visibility":["specifications", "comparisons"],
+		"documentType":"Rbs_Media_Image"
+	},
+	"brand" : {
+		"title":"m.rbs.catalog.setup.attr-brand",
+		"valueType":"Property",
+		"requiredValue":false,
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"brand",
+		"visibility":["specifications", "comparisons"],
+		"documentType":"Rbs_Brand_Brand"
+	},
+	"code" : {
+		"title":"m.rbs.catalog.setup.attr-code",
+		"valueType":"Property",
+		"requiredValue":false,
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"code",
+		"visibility":["specifications", "comparisons"]
+	},
+	"genericAttributes" : {
+		"title":"m.rbs.catalog.setup.attr-genericattributes",
+		"valueType":"Group",
+		"requiredValue":false,
+		"defaultValue":"",
+		"localizedValue":false,
+		"collectionCode":null,
+		"productProperty":"code",
+		"visibility":["specifications", "comparisons"],
+		"documentType":"",
+		"attributes":["visuals", "description", "brand", "pictograms", "code"]
+	}
+}

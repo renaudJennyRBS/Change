@@ -371,6 +371,7 @@ class AttributeEngine
 				$modelName = 'Rbs_Catalog_Product';
 				$propertyName = $attribute->getProductProperty();
 			}
+
 			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
 			if (!$model)
 			{
@@ -382,6 +383,7 @@ class AttributeEngine
 				return null;
 			}
 
+			$definition['propertyName']  = $propertyName;
 			switch ($property->getType())
 			{
 				case \Change\Documents\Property::TYPE_DOCUMENT :

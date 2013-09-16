@@ -1,0 +1,33 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker required="true" property="declinedProduct" label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct', ['ucf']) }}"
+				accepted-model="Rbs_Catalog_Product"
+				selector-title="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct-picker-title', ['ucf']) }}"
+				allow-creation="true"
+				allow-edition="true">
+		</rbs-field-picker>
+
+		<rbs-field required="true" property="attribute"  label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.attribute', ['ucf']) }}">
+			<select ng-required="true" ng-model="document.attribute"
+					rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
+				<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='attributes'"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.section-attributes', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
