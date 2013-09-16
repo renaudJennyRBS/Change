@@ -19,12 +19,36 @@ class CollectionResolver
 		if ($documentServices instanceof DocumentServices)
 		{
 			$code = $event->getParam('code');
+			if ($code === 'Rbs_Collection_Collection_List')
+			{
+				return $this->getCollectionList($event);
+			}
 			$query = new Query($documentServices, 'Rbs_Collection_Collection');
 			$collection = $query->andPredicates($query->eq('code', $code))->getFirstDocument();
 			if ($collection)
 			{
 				$event->setParam('collection', $collection);
 			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function getCollectionList(Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof DocumentServices)
+		{
+			$query = new Query($documentServices, 'Rbs_Collection_Collection');
+			$qb = $query->dbQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->addColumn($fb->alias($fb->getDocumentColumn('code'), 'code'));
+			$qb->addColumn($fb->alias($fb->getDocumentColumn('label'), 'label'));
+			$sq = $qb->query();
+			$collectionItems = $sq->getResults($sq->getRowsConverter()->addStrCol('code', 'label')->singleColumn('label')->indexBy('code'));
+			$collection = new \Change\Collection\CollectionArray($event->getParam('code'), $collectionItems);
+			$event->setParam('collection', $collection);
 		}
 	}
 
@@ -41,6 +65,8 @@ class CollectionResolver
 			{
 				$codes = array();
 			}
+
+			$codes[] = 'Rbs_Collection_Collection_List';
 			$query = new Query($documentServices, 'Rbs_Collection_Collection');
 			$qb = $query->dbQueryBuilder();
 			$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('code'), 'code'));
