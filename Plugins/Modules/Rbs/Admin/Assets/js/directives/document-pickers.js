@@ -19,7 +19,8 @@
 			$pickerContents = $picker.find('[data-role="picker-contents"]'),
 			embedded = false,
 			embedSelector = null,
-			first;
+			first,
+			pickerTpl = attrs.pickerTemplate || 'picker.twig';
 
 		scope.allowSearchFilters = $el.closest('form.search-filters').length === 0;
 
@@ -115,7 +116,7 @@
 
 			var url;
 			if (attrs.picker === 'model') {
-				url = scope.acceptedModel.replace(/_/g, '/') + '/picker.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
+				url = scope.acceptedModel.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 			} else {
 				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (attrs.acceptedModel || '');
 			}
@@ -247,7 +248,6 @@
 			};
 
 			scope.replaceWithSelected = function () {
-				console.log("selection: ", documentList.selectedDocuments);
 				ngModel.$setViewValue(documentList.selectedDocuments);
 				ngModel.$render();
 			};
