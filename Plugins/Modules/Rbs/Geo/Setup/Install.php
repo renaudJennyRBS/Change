@@ -155,7 +155,6 @@ class Install
 					$item->setLabel($country->getLabel());
 					$item->getCurrentLocalization()->setTitle($country->getTitle());
 					$item->save();
-					echo $country->getCode(), PHP_EOL;
 					$collection->getItems()->add($item);
 				}
 				$collection->save();
