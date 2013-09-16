@@ -19,10 +19,11 @@ class InitializePlugin
 		$type = $event->getParam('type');
 		$vendor = $event->getParam('vendor');
 		$name = $event->getParam('name');
+		$package = $event->getParam('package');
 
 		try
 		{
-			$path = $applicationServices->getPluginManager()->initializePlugin($type, $vendor, $name);
+			$path = $applicationServices->getPluginManager()->initializePlugin($type, $vendor, $name, $package);
 			$event->addInfoMessage('Plugin skeleton generated at ' . $path);
 		}
 		catch (\Exception $e)
