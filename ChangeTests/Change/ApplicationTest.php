@@ -32,39 +32,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @runInSeparateProcess
 	 */
-	public function testRegisterReplacerAutoload()
-	{
-		if (!defined('PROJECT_HOME'))
-		{
-			define('PROJECT_HOME',  dirname(dirname(realpath(__DIR__))));
-		}
-		require_once PROJECT_HOME . '/Change/Application.php';
-		require_once 'TestAssets/Application.php';
-
-		$application = new \ChangeTests\Change\TestAssets\Application();
-		$application->registerAutoload();
-
-		$originalInfo = array(
-			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
-			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
-		);
-		$replacingInfos = 	array(
-			array(
-				'name' => '\ChangeTests\Change\TestAssets\InjectingClass',
-				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
-			),
-		);
-		$application->registerReplacerAutoload(true);
-		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
-		$injection->setWorkspace($application->getWorkspace());
-		$injection->compile();
-		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
-		$this->assertEquals($instance->test(), 'InjectingClass');
-	}
-
-	/**
-	 * @runInSeparateProcess
-	 */
 	public function testStart()
 	{
 		if (!defined('PROJECT_HOME'))
@@ -77,21 +44,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 		$application = new \ChangeTests\Change\TestAssets\Application();
 		$application->registerAutoload();
 		$application->start();
-		$originalInfo = array(
-			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
-			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
-		);
-		$replacingInfos = 	array(
-			array(
-				'name' => '\ChangeTests\Change\TestAssets\InjectingClass',
-				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
-			),
-		);
-		$injection = new \Change\Replacer\ClassReplacer($originalInfo, $replacingInfos);
-		$injection->setWorkspace($application->getWorkspace());
-		$injection->compile();
-		$instance = new \ChangeTests\Change\TestAssets\OriginalClass();
-		$this->assertEquals($instance->test(), 'InjectingClass');
+
 		$this->assertTrue(class_exists('\Zend\Stdlib\ErrorHandler'));
 		$this->assertTrue(class_exists('\ZendOAuth\OAuth'));
 		$this->assertTrue(class_exists('\Change\Stdlib\File'));
@@ -111,17 +64,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
 		$application = new \ChangeTests\Change\TestAssets\Application();
 		$application->registerAutoload();
-
-		$originalInfo = array(
-			'name' => '\ChangeTests\Change\TestAssets\OriginalClass',
-			'path' => __DIR__ . '/TestAssets/OriginalClass.php'
-		);
-		$replacingInfos = 	array(
-			array(
-				'name' => '\ChangeTests\Change\TestAssets\InjectingClass',
-				'path' => __DIR__ . '/TestAssets/InjectingClass.php'
-			),
-		);
 	}
 
 

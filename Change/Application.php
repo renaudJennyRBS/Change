@@ -45,25 +45,6 @@ class Application
 	}
 
 	/**
-	 * Replacer-based autoload if you want class replacement to work, this should be the
-	 * last autoload coming from RBS Change you should register
-	 * (it gets prepended to the autoload stack).
-	 */
-	public function registerReplacerAutoload()
-	{
-		$basePath = $this->getWorkspace()->compilationPath('Replacer');
-		spl_autoload_register(function ($className) use($basePath)
-		{
-			$phpFileName = str_replace('\\', '_', $className) . '.php';
-			$phpFilePath = $basePath . DIRECTORY_SEPARATOR . '_' . $phpFileName;
-			if (file_exists($phpFilePath))
-			{
-				require_once $phpFilePath;
-			}
-		}, true, true);
-	}
-
-	/**
 	 * @return \Composer\Autoload\ClassLoader|null
 	 */
 	public function registerCoreAutoload()
@@ -186,16 +167,7 @@ class Application
 					}
 				}
 			}
-			
-			if ($this->inDevelopmentMode())
-			{
-				$replacer = new \Change\Replacer\Replacer($this->getConfiguration(), $this->getWorkspace());
-				$replacer->update();
-			}
-			$this->registerReplacerAutoload();
-
 			$this->dispatchStart();
-
 			$this->started = true;
 		}
 	}
