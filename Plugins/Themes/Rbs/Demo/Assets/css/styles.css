@@ -533,3 +533,16 @@ form .description {
 .payment-failed {
 	color: var(errors-text-color);
 }
+
+.form-group.required .control-label {
+	font-weight: bold;
+}
+.form-group.required .control-label:before {
+	content: " *";
+	color: #b94a48;
+	font-size: 14pt;
+	font-family: Courier New, Courier;
+	position: relative;
+	top: 3px;
+	margin-right: 3px;
+}

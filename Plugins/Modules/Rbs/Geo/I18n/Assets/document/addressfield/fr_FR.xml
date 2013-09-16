@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.geo.document.territorialunit" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="required">requis</key>
+	<key id="match">expression régulière de validation</key>
+	<key id="locked">code vérouillé</key>
+	<key id="locked-warning" format="html">
+	<![CDATA[<span class="label label-important">Attention!</span> Ce champ est vérouillé car il est requis par le sytème d'adresse.
+			Vous ne pourrez donc pas le supprimer, ni changer son code.]]>
+	</key>
+	<key id="collectioncode">valeur de la collection</key>
+	<key id="select-collectioncode">sélectionner une collection</key>
+</i18n>

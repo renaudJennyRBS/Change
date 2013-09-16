@@ -27,7 +27,6 @@
 					console.log("ngModel on rich text OK");
 					// view -> model
 					$el.bind('blur', function () {
-						console.log("blur on rich text: ", $el.html());
 						scope.$apply(function () {
 							ngModel.$setViewValue($el.html());
 						});

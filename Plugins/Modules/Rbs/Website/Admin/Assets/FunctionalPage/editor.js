@@ -59,7 +59,6 @@
 						scope.availableFunctions = results[1].items;
 						scope.warningFunctions = {};
 						scope.$watch('document.allowedFunctionsCode', function () {
-							console.log(scope.document.allowedFunctionsCode);
 							updateFunctionsStatus();
 						}, true);
 					});

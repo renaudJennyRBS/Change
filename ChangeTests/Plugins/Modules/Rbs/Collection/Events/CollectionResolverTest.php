@@ -50,7 +50,8 @@ class CollectionResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$collectionResolver = new \Rbs\Collection\Events\CollectionResolver();
 		$collectionResolver->getCodes($event);
 		$codes = $event->getParam('codes');
-		$this->assertCount(5, $codes);
+		$countCodes = count($codes);
+		$this->assertGreaterThanOrEqual(5, $countCodes);
 
 		$this->assertContains('rbsCollectionTest0', $codes);
 		$this->assertContains('rbsCollectionTest1', $codes);
@@ -63,7 +64,7 @@ class CollectionResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$collectionResolver->getCodes($event);
 		$codes = $event->getParam('codes');
 
-		$this->assertCount(10, $codes);
+		$this->assertCount($countCodes + 5, $codes);
 
 		$this->assertContains('rbsCollectionTest5', $codes);
 		$this->assertContains('rbsCollectionTest6', $codes);
