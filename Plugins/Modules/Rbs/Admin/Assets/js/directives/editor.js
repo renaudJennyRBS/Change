@@ -329,6 +329,10 @@
 					$scope.language = $scope.document.LCID || Settings.get('LCID');
 					$scope.parentId = $routeParams.parentId || null;
 
+					$scope.$on('Change:Editor:UpdateMenu', function () {
+						initMenu();
+					});
+
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
@@ -413,6 +417,7 @@
 
 					initCorrection();
 					initMenu();
+
 					$element.css('display', 'block');
 
 					Loading.stop();
