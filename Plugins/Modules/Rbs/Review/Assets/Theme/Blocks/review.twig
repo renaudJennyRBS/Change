@@ -20,19 +20,70 @@
 	<!-- modified?
 	<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
 	-->
-	<!-- comment and evaluation of review
-	<footer class="panel-footer">
-		<p class="evaluation-overview">
-			Soyez le premier à évaluer ce commentaire.
+	<footer class="panel-footer review-votes" data-votes="{{ review.upvote + review.downvote }}">
+		<p id="review-novote-{{ review.id }}" class="review-novote">
+			{{ i18n('m.rbs.review.blocks.review-novote', ['ucf']) }}
 		</p>
-		<form method="post" action="#comment-14732" id="catalog_commentsb_16_evaluate_14732" enctype="multipart/form-data" class="form-inline">
-			<div>
-				<input name="catalogParam[commentId]" value="14732" id="catalog_commentsb_16_evaluate_14732_commentId" type="hidden" />
-				<span>Ce commentaire vous a-t-il été utile ?</span>
-				<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseful]" id="catalog_commentsb_16_evaluate_14732_rateUseful" class="btn btn-xs btn-success" type="submit"><i class="icon-thumbs-up"></i> Oui</button>
-				<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseless]" id="catalog_commentsb_16_evaluate_14732_rateUseless" class="btn btn-xs btn-warning" type="submit"><i class="icon-thumbs-down"></i> Non</button>
-			</div>
-		</form>
+		<div id="review-vote-thumbs-{{ review.id }}" class="review-vote-thumbs">
+			<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> <span id="{{ review.id }}-upvote">{{ review.upvote }}</span></span>
+			<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> <span id="{{ review.id }}-downvote">{{ review.downvote }}</span></span>
+		</div>
+		<div id="vote-buttons-{{ review.id }}">
+			<input name="reviewId" value="{{ review.id }}" type="hidden" />
+			<span>{{ i18n('m.rbs.review.blocks.review-vote', ['ucf']) }}</span>
+			<button name="voteup" class="btn btn-xs btn-success" type="button" onclick="__change.voteReview('up', {{ review.id }})"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.blocks.review-upvote', ['ucf']) }}</button>
+			<button name="votedown" class="btn btn-xs btn-warning" type="button" onclick="__change.voteReview('down', {{ review.id }})"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
+		</div>
 	</footer>
-	-->
 </article>
+<script type="text/javascript">
+	if (!__change.hasOwnProperty('voteReview'))
+	{
+		__change.voteReview = function (value, reviewId){
+			jQuery.ajax({
+				type: 'POST',
+				url: 'Action/Rbs/Review/VoteReview',
+				data: {
+					reviewId: reviewId,
+					vote: value
+				}
+			}).done(function (data){
+					var votedString = document.cookie.match(/(reviewVotes=([0-9]*,?)*)/);
+					if (data.vote == 'up')
+					{
+						jQuery('#' + reviewId + '-upvote').html('<strong>' + data.upvote + '</strong>');
+					}
+					else if (data.vote == 'down')
+					{
+						jQuery('#' + reviewId + '-downvote').html('<strong>' + data.downvote + '</strong>')
+					}
+					jQuery('#vote-buttons-' + reviewId).hide();
+					jQuery('#review-novote-' + reviewId).hide();
+					jQuery('#review-vote-thumbs-' + reviewId).show();
+					document.cookie = votedString != null ? votedString[1] + ',' + reviewId + ';' : 'reviewVotes=' + reviewId + ';';
+				});
+		};
+	}
+	window.onload = function (){
+		//Hide no vote if review has already votes
+		jQuery('.review-votes').each(function (index, element){
+			if (jQuery(element).data('votes') > 0)
+			{
+				jQuery(element).children('.review-novote').hide();
+			}
+			else
+			{
+				jQuery(element).children('.review-vote-thumbs').hide();
+			}
+		});
+
+		var votedString = document.cookie.match(/reviewVotes=(([0-9]*,?)*)/);
+		if (votedString)
+		{
+			reviewIds = votedString[1].split(',');
+			jQuery.each(reviewIds, function(index, reviewId){
+				jQuery('#vote-buttons-' + reviewId).hide();
+			});
+		}
+	};
+</script>

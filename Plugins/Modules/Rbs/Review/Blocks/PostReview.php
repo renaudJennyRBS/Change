@@ -38,7 +38,6 @@ class PostReview extends Block
 			$targetFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('targetId'));
 			$target = $targetFromParameter !== null ? $targetFromParameter : $event->getParam('document');
 			$sectionFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('sectionId'));
-			//TODO take section of the page is it a good thing?
 			$section = $sectionFromParameter !== null ? $sectionFromParameter : $event->getParam('page')->getSection();
 			if ($target instanceof \Change\Documents\AbstractDocument && $section instanceof \Change\Presentation\Interfaces\Section)
 			{
@@ -86,6 +85,7 @@ class PostReview extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
+		$attributes['notConnected'] = !$parameters->getParameter('userId');
 		if ($parameters->getParameter('alreadyReviewed'))
 		{
 			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));

@@ -1,5 +1,10 @@
 <h2>{{ i18n('m.rbs.review.blocks.review-post', ['ucf']) }}</h2>
-{% if parameters.userId %}
+{% if notConnected %}
+	<p class="muted">
+		{{ i18n('m.rbs.review.blocks.review-post-not-connected', ['ucf']) }}
+		<!-- TODO add a button or a link to connect user -->
+	</p>
+{% else %}
 	{% if parameters.alreadyReviewed %}
 		<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }} <time datetime="{{ reviewDate | date('Y-m-d\TH:i:sO') }}">{{ reviewDate | date }}</time></p>
 		<p>{{ i18n('m.rbs.review.blocks.your-review', ['ucf']) }} <a href="{{ reviewUrl }}">{% include 'Rbs_Review/Blocks/star-rating.twig' %}</a></p>
@@ -29,9 +34,4 @@
 			</fieldset>
 		</form>
 	{% endif %}
-{% else %}
-	<p class="muted">
-		{{ i18n('m.rbs.review.blocks.review-post-not-connected', ['ucf']) }}
-		<!-- TODO add a button or a link to connect user -->
-	</p>
 {% endif %}
