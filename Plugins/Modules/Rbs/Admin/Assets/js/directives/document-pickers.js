@@ -303,7 +303,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['$timeout', 'RbsChange.Clipboard', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', function ($timeout, Clipboard, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile) {
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST) {
 		return {
 
 			restrict    : 'EAC',
