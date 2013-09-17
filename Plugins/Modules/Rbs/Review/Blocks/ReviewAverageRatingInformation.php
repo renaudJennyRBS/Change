@@ -26,7 +26,5 @@ class ReviewAverageRatingInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
 		$this->addInformationMeta('showChart', Property::TYPE_BOOLEAN, true, true)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-show-average-rating', $ucf));
-		$this->addInformationMeta('averageRatingPartsCount', Property::TYPE_INTEGER, false, 5)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-average-parts-count', $ucf));
 	}
 }

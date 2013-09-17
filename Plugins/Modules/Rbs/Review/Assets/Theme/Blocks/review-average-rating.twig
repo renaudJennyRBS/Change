@@ -1,11 +1,20 @@
 <h2>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</h2>
 {% if parameters.showChart %}
-	{% for ratePart in rateParts %}
-		<div class="progress">
-			<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
-				{{ i18n('m.rbs.review.blocks.average-rating-from-to', ['ucf'], { 'from': ratePart.from , 'to': ratePart.to, 'count': ratePart.count }) }}
-				<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
-			</div>
+	<table class="table table-condensed">
+		<div class="container">
+			{% for ratePart in rateParts %}
+				<div class="row">
+					<div class="col-sm-4" title="{{ i18nAttr('m.rbs.review.blocks.average-rating-stars', ['ucf'], { 'stars': loop.index, 'count': ratePart.count }) }}">{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': loop.index } %}</div>
+					<div class="col-sm-8">
+						<div class="progress">
+							<span>ratePart.count</span>
+							<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
+								<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
 		</div>
-	{% endfor %}
+	</table>
 {% endif %}

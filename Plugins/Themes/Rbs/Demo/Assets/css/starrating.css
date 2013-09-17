@@ -12,6 +12,7 @@
 }
 .star-rating-display{
 	color: var(main-light-text-color);
+	letter-spacing: -0.4em;
 }
 .star-rating-display .full {
 	color: var(main-text-color);

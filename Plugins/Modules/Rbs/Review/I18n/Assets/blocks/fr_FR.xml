@@ -6,10 +6,9 @@
 	<key id="review-list">liste des avis</key>
 	<key id="review-list-count">{count} avis</key>
 	<key id="review-list-show-average-rating">afficher la moyenne des notes</key>
-	<key id="review-list-average-parts-count">découpes de la moyenne (histogramme)</key>
 	<key id="review-list-items-per-page">avis par page</key>
 	<key id="average-rating">note moyenne : {averageRating}</key>
-	<key id="average-rating-from-to">note de {from} à {to} : {count}</key>
+	<key id="average-rating-stars">{stars} étoiles : {count}</key>
 	<key id="review-write-by" format="html"><![CDATA[écrit par <a itemprop="author" href="{url}">{author}</a>]]></key>
 	<key id="review-rating" format="html"><![CDATA[note : <span itemprop="ratingValue">{ratingValue}</span> sur <span itemprop="bestRating">{bestRating}</span>]]></key>
 	<key id="review-about" format="html"><![CDATA[À propos de <a itemprop="about" href="{targetUrl}">{targetTitle}</a></small>]]></key>

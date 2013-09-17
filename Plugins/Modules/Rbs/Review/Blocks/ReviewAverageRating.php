@@ -23,7 +23,6 @@ class ReviewAverageRating extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('showChart', true);
-		$parameters->addParameterMeta('averageRatingPartsCount', 5);
 		$parameters->addParameterMeta('targetId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -62,26 +61,16 @@ class ReviewAverageRating extends Block
 
 		if ($parameters->getParameter('showChart'))
 		{
-			$parts = $parameters->getParameter('averageRatingPartsCount');
-			$step = 100 / $parts;
 			$rateParts = [];
-			$from = 0;
-			$to = $step - 1;
-			for ($i = 0; $i < $parts; $i++)
+			for ($i = 0; $i < 5; $i++)
 			{
-				$to = floor($to);
-				$from = floor($from);
-				$count = count(array_filter($ratings, function ($rating) use ($from, $to)
+				$count = count(array_filter($ratings, function ($rating) use ($i)
 				{
-					return $rating >= $from && $rating <= $to;
+					$ratingStars =  ceil($rating*(5/100));
+					return $ratingStars > $i && $ratingStars <= $i + 1;
 				}));
-				$rateParts[$i] = [ 'count' => $count, 'percent' => ($count / count($ratings)) * 100, 'from' => $from, 'to' => $to];
-				//set $from and $to for the next iteration
-				$from = $to + 1;
-				//if next iteration is the last, set $to to 100
-				$to = $i === $parts - 2 ? 100 : $to + $step;
+				$rateParts[$i] = [ 'count' => $count, 'percent' => ($count / count($ratings)) * 100];
 			}
-			$attributes['ratePartCount'] = $parts;
 			$attributes['rateParts'] = $rateParts;
 		}
 

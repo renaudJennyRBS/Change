@@ -8,7 +8,7 @@
 		<span class="divider"> - </span>
 		<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | date }}</time>
 		<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
-			<meta itemprop="worstRating" content="0" />
+			<meta itemprop="worstRating" content="1" />
 			{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': review.reviewStarRating } %}
 		</span>
 		<small class="text-muted">
