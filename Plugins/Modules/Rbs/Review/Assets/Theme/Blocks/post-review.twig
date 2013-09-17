@@ -2,7 +2,7 @@
 {% if parameters.userId %}
 	{% if parameters.alreadyReviewed %}
 		<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }} <time datetime="{{ reviewDate | date('Y-m-d\TH:i:sO') }}">{{ reviewDate | date }}</time></p>
-		<p>{{ i18n('m.rbs.review.blocks.your-review', ['ucf']) }} <a href="{{ reviewUrl }}">{{ reviewRating }}/100</a></p>
+		<p>{{ i18n('m.rbs.review.blocks.your-review', ['ucf']) }} <a href="{{ reviewUrl }}">{% include 'Rbs_Review/Blocks/star-rating.twig' %}</a></p>
 		{% if pendingValidation %}
 			<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
 		{% endif %}
@@ -19,7 +19,7 @@
 				</div>
 				<div class="form-group">
 					<label for="rbs-review-review-rating-value">{{ i18n('m.rbs.review.blocks.review-post-rating', ['ucf']) }}</label>
-					{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'idCounter': 0 } %}
+					{% include 'Rbs_Review/Blocks/star-rating.twig' %}
 				</div>
 				<div class="form-group">
 					<label for="rbs-review-review-content">{{ i18n('m.rbs.review.blocks.review-post-content', ['ucf']) }}</label>

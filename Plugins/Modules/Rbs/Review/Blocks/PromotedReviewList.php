@@ -84,18 +84,7 @@ class PromotedReviewList extends Block
 			foreach ($reviews as $review)
 			{
 				/* @var $review \Rbs\Review\Documents\Review */
-				$target = $review->getTarget();
-				/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
-				$rows[] = [
-					'id' => $review->getId(),
-					'pseudonym' => $review->getPseudonym(),
-					'rating' => $review->getRating(),
-					'reviewDate' => $review->getReviewDate(),
-					'content' => $review->getContent()->getHtml(),
-					'url' => $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite()),
-					//TODO: getLabel for target is not a good things, find another way
-					'target' => ['title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $review->getSection()->getWebsite())]
-				];
+				$rows[] = $review->getInfoForTemplate($urlManager);
 			}
 			$attributes['rows'] = $rows;
 		}

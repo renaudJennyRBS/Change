@@ -64,21 +64,12 @@ class ReviewDetail extends Block
 		$parameters = $event->getBlockParameters();
 		$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
 		/* @var $review \Rbs\Review\Documents\Review */
-		$target = $review->getTarget();
-		/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
 		$urlManager = $event->getUrlManager();
-		$attributes['review'] = [
-			'id' => $review->getId(),
-			'pseudonym' => $review->getPseudonym(),
-			'rating' => $review->getRating(),
-			'reviewDate' => $review->getReviewDate(),
-			'content' => $parameters->getParameter('editionMode') ? $review->getContent()->getRawText() : $review->getContent()->getHtml(),
-			'promoted' => $review->getPromoted(),
-			'url' => $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite()),
-			'pendingValidation' => !$review->published(),
-			//TODO: getLabel for target is not a good thing, find another way
-			'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $review->getSection()->getWebsite()) ]
-		];
+		$attributes['review'] = $review->getInfoForTemplate($urlManager);
+		if ($parameters->getParameter('editionMode'))
+		{
+			$attributes['review']['content'] = $review->getContent()->getRawText();
+		}
 
 		return 'review-detail.twig';
 	}

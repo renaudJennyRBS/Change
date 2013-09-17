@@ -10,46 +10,7 @@
 <ul class="list-unstyled comment-list">
 	{% for row in rows %}
 		<li>
-			<article id="review-{{ row.id }}" class="panel panel-success" itemscope="" itemtype="http://schema.org/Review">
-				<!-- img?
-				<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
-				-->
-				<header class="panel-heading">
-					<a itemprop="url" rel="nofollow" href="{{ row.url }}>{{ loop.index }}.</a>
-					{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': row.pseudonym, 'url': row.url }) }}
-					<span class="divider"> - </span>
-					<time itemprop="dateCreated" datetime="{{ row.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ row.reviewDate | date }}</time>
-					<span class="divider"> - </span>
-						<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
-							<meta itemprop="worstRating" content="0" />
-							{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': row.rating, 'bestRating': 100 }) }}
-						</span>
-					<span class="divider"> - </span>
-					<small class="text-muted">
-						{{ i18n('m.rbs.review.blocks.review-about', ['ucf'], { 'targetTitle': row.target.title, 'targetUrl': row.target.url }) }}
-				</header>
-				<div itemprop="reviewBody" class="panel-body">
-					{{ row.content | raw }}
-				</div>
-				<!-- modified?
-				<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
-				-->
-				<!-- comment and evaluation of review
-				<footer class="panel-footer">
-					<p class="evaluation-overview">
-						Soyez le premier à évaluer ce commentaire.
-					</p>
-					<form method="post" action="#comment-14732" id="catalog_commentsb_16_evaluate_14732" enctype="multipart/form-data" class="form-inline">
-						<div>
-							<input name="catalogParam[commentId]" value="14732" id="catalog_commentsb_16_evaluate_14732_commentId" type="hidden" />
-							<span>Ce commentaire vous a-t-il été utile ?</span>
-							<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseful]" id="catalog_commentsb_16_evaluate_14732_rateUseful" class="btn btn-xs btn-success" type="submit"><i class="icon-thumbs-up"></i> Oui</button>
-							<button name="catalogParam[website_BlockAction_submit][commentsb_16][rateUseless]" id="catalog_commentsb_16_evaluate_14732_rateUseless" class="btn btn-xs btn-warning" type="submit"><i class="icon-thumbs-down"></i> Non</button>
-						</div>
-					</form>
-				</footer>
-				-->
-			</article>
+			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
 		</li>
 	{% endfor %}
 </ul>

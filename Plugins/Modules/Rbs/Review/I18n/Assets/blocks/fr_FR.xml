@@ -38,4 +38,5 @@
 	<key id="star-rating-3">3 étoiles</key>
 	<key id="star-rating-4">4 étoiles</key>
 	<key id="star-rating-5">5 étoiles</key>
+	<key id="review-detail-promoted">cette avis à été mis en avant, si vous l'éditez, il repassera par la phase de validation et risque de perdre son statut.</key>
 </i18n>

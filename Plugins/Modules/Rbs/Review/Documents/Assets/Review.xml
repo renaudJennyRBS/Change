@@ -12,5 +12,7 @@
 		<property name="pseudonym" type="String" />
 		<property name="reviewDate" type="DateTime" />
 		<property name="promoted" type="Boolean" />
+		<property name="upvote" type="Integer" default-value="0"/>
+		<property name="downvote" type="Integer" default-value="0"/>
 	</properties>
 </document>
