@@ -38,4 +38,22 @@
 			return $delegate;
 		}]);
 	}]);
+
+	app.controller('rbsProductCategorizableSelector', function ($scope) {
+		$scope.productCategorizableQuery= { "model": "Rbs_Catalog_Product",
+			"where": {
+				"and" : [
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "categorizable"
+						},
+						"rexp" : {
+							"value": true
+						}
+					}
+				]
+			}
+		};
+	});
 })();

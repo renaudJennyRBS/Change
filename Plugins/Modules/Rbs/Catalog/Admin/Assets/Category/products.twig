@@ -54,7 +54,7 @@
 	</div>
 
 	<div class="control-group" >
-		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_ProductCategorization" publishable="true"
+		<rbs-document-list data-dlid="DLRbsCatalogCategoryProducts" model="Rbs_Catalog_ProductCategorization" activable="true"
 			collection-url="(=productsUrl=)"
 			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromCategory Rbs_Catalog_HighlightProductsInCategory Rbs_Catalog_RemoveHighlightProductsInCategory"
 			use-properties="title">
@@ -108,7 +108,10 @@
 					property-label="{{ i18nAttr('m.rbs.catalog.document.category.products', ['ucf']) }}"
 					selector-title="{{ i18nAttr('m.rbs.catalog.document.category.products-picker-title', ['ucf']) }}"
 					master-label="(= document.label =)"
-					allow-edition="false" allow-creation="false" disable-reordering="true">
+					allow-edition="false"
+					allow-creation="false"
+					disable-reordering="true"
+					picker-template="picker-categorizable.twig">
 				</div>
 
 				<div class="btn-toolbar">

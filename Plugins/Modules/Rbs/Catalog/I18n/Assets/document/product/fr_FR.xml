@@ -4,6 +4,11 @@
 	<key id="description">description</key>
 	<key id="categories">catégories</key>
 	<key id="categories-picker-title">sélectionner les catégories</key>
+
+	<key id="categorizable-warning" format="html">
+		<![CDATA[<span class="label label-important">Attention!</span>, ce produit n'est pas catégorisable.]]>
+	</key>
+
 	<key id="add-categories">ajouter des catégories</key>
 	<key id="visual">visuel</key>
 	<key id="visuals">visuels</key>
