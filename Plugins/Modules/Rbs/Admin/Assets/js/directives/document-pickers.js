@@ -20,7 +20,14 @@
 			embedded = false,
 			embedSelector = null,
 			first,
-			pickerTpl = attrs.pickerTemplate || 'picker.twig';
+			pickerTpl;
+
+		if (attrs.pickerTemplate) {
+			pickerTpl = attrs.pickerTemplate;
+		}
+		else if (attrs.picker) {
+			pickerTpl = "picker.twig";
+		}
 
 		scope.allowSearchFilters = $el.closest('form.search-filters').length === 0;
 
@@ -116,7 +123,7 @@
 			scope.selectorTitle = attrs.selectorTitle;
 
 			var url, model = iElement.attr('accepted-model');
-			if (attrs.picker === 'model') {
+			if (pickerTpl && model) {
 				url = model.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + model;
 			} else {
 				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (model || '');
