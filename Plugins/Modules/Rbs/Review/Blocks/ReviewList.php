@@ -55,7 +55,8 @@ class ReviewList extends Block
 		$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
 		//TODO add section of page to predicate?
 		$dqb->andPredicates($dqb->published(), $dqb->eq('target', $target));
-		//TODO add order by positive review
+		//TODO order on upvote comment, but a formula between upvote and downvote will be better
+		$dqb->addOrder('upvote', false);
 
 		$urlManager = $event->getUrlManager();
 		$rows = [];

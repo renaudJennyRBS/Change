@@ -73,7 +73,8 @@ class PromotedReviewList extends Block
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document));
 				$parameters->setParameterValue('mode', 'recent');
 			}
-			$dqb->addOrder('reviewDate', false);
+			//TODO order on upvote comment, but a formula between upvote and downvote will be better
+			$dqb->addOrder('upvote', false);
 			$reviews = $dqb->getDocuments(0, $parameters->getParameter('maxReviews'));
 		}
 
