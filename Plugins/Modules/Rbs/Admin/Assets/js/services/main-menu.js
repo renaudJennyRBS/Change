@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	app.service('RbsChange.MainMenu', ['$rootScope', '$location', '$timeout', '$compile', '$q', '$http', function ($rootScope, $location, $timeout, $compile, $q, $http) {
+	app.service('RbsChange.MainMenu', ['$rootScope', '$location', '$timeout', '$compile', '$q', '$http', 'RbsChange.REST', 'RbsChange.i18n', function ($rootScope, $location, $timeout, $compile, $q, $http, REST, i18n) {
 
 		var self = this,
 		    $el = $('#mainMenu'),
@@ -14,16 +14,18 @@
 		    contentsStack = [],
 
 		    buildMenuNgTemplate =
-		       '<ul class="nav nav-list">' +
-		          '<div ng-repeat="entry in _chgMenu" ng-switch="entry.type">' +
-		             '<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
-		             '<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
-		                '<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
-		                '<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
-		                '<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +
-		             '</li>' +
-		          '</div>' +
-		       '</ul>';
+				'<div class="box main">' +
+					'<ul class="nav nav-list">' +
+						'<div ng-repeat="entry in _chgMenu" ng-switch="entry.type">' +
+							'<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
+							'<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
+								'<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
+								'<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
+								'<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +
+							'</li>' +
+						'</div>' +
+					'</ul>' +
+				'</div>';
 
 		this.init = function () {
 			// Load main menu when the route changes
@@ -174,6 +176,9 @@
 				currentScope = scope || $rootScope;
 
 				$http.get(url).success(function(data) {
+					if (angular.isString(data)) {
+						data = '<div class="box main">' + data + '</div>';
+					}
 					$compile(data)(currentScope, function (clone) {
 						$timeout(function() {
 							$el.html(clone);
@@ -228,8 +233,8 @@
 			}
 
 			$compile(html)(currentScope, function attachFn(clone) {
-				$el.empty();
-				$el.append(clone);
+				$el.find('.box.main').first().remove();
+				$el.prepend(clone);
 
 				$timeout(function () {
 					$el.show();
@@ -241,6 +246,118 @@
 				}, true);
 			});
 		};
+
+
+		this.add = function (key, contents, scope, title)
+		{
+			var html;
+			title = title || 'Other actions';
+
+			if (angular.isArray(contents)) {
+				html = '<ul class="nav nav-list">';
+				angular.forEach(contents, function (item) {
+					if (angular.isString(item)) {
+						html += '<li>' + item + '</li>';
+					}
+					else if (angular.isObject(item) && item.url && item.text) {
+						html += '<li';
+						if (item.cssClass) {
+							html += ' class="' + item.cssClass + '"';
+						}
+						html += '>';
+						if (item.hasOwnProperty('badge')) {
+							html += '<span class="badge pull-right">' + item.badge + '</span>';
+						}
+						html += '<a href="' + item.url + '">';
+						if (item.icon) {
+							html += '<i class="' + item.icon + '"></i> ';
+						}
+						html += item.text + '</a></li>';
+					}
+					else {
+						console.warn("MainMenu: don't know what to do with item: ", item);
+					}
+				});
+				html += '</ul>';
+			}
+			else {
+				html = contents;
+			}
+
+			if (! angular.isString(html)) {
+				console.error("MainManu: contents should be an Array or a String.");
+			}
+
+			html =
+				'<div class="box" data-key="' + key + '">' +
+				'<ul class="nav nav-list"><li class="nav-header">' + title + '</li></ul>' +
+				html +
+				'</div>';
+			if (scope) {
+				$compile(html)(scope, function (clone) {
+					addBoxContents(key, clone);
+				});
+			}
+			else {
+				addBoxContents(key, html);
+			}
+		};
+
+
+		this.addOtherActions = function (contents, scope) {
+			this.add(
+				"other-actions",
+				contents,
+				scope,
+				i18n.trans('m.rbs.admin.admin.js.other-actions | ucf')
+			);
+		};
+
+
+		this.addTranslations = function (doc) {
+			var self = this;
+			REST.getAvailableLanguages().then(function (langs) {
+				var contents = [];
+				angular.forEach(langs.items, function (item, lcid) {
+					if (lcid === doc.refLCID) {
+						contents.push({
+							'url' : 'javascript:;',
+							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr-title | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
+							'cssClass' : 'disabled',
+							'icon' : 'icon-book'
+						});
+					}
+					else {
+						var translated = doc.isTranslatedIn(lcid);
+						contents.push({
+							'url' : doc.translateUrl(lcid),
+							'text' : item.label,
+							'cssClass' : translated ? 'translated' : 'untranslated',
+							'icon' : translated ? 'icon-ok' : 'icon-warning-sign'
+						});
+					}
+				});
+				self.add(
+					"translations",
+					contents,
+					null,
+					i18n.trans('m.rbs.admin.admin.js.translations | ucf')
+				);
+			});
+		};
+
+
+		function addBoxContents (key, contents) {
+			var	box = $el.find('[data-key="' + key + '"]'),
+				index = box.index();
+			if (index !== -1) {
+				box.after(contents);
+				box.remove();
+			}
+			else {
+				$el.append(contents);
+			}
+		}
 
 
 		/**

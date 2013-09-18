@@ -2,8 +2,8 @@
 
 	"use strict";
 
-	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb, structureEditorService) {
-
+	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb, MainMenu)
+	{
 		return {
 			restrict    : 'C',
 			templateUrl : 'Rbs/Website/StaticPage/editor.twig',
@@ -13,7 +13,6 @@
 			link : function (scope, element, attrs, editorCtrl) {
 
 				scope.onReady = function () {
-					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
 					}
@@ -58,7 +57,7 @@
 		'$rootScope',
 		'RbsChange.REST',
 		'RbsChange.Breadcrumb',
-		'structureEditorService'
+		'RbsChange.MainMenu'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);
 
@@ -66,13 +65,46 @@
 	/**
 	 * Localized version of the editor.
 	 */
-	function changeEditorWebsitePageLocalized ($location, Dialog, UrlManager) {
-		var directive = changeEditorWebsitePage ($location, Dialog, UrlManager);
-		directive.templateUrl = 'Rbs/Website/StaticPage/editor-localized.twig';
-		return directive;
+	function changeEditorWebsitePageTranslate (Workspace, REST)
+	{
+		return {
+			restrict    : 'C',
+			templateUrl : 'Rbs/Website/StaticPage/editor-translate.twig',
+			replace     : false,
+			require     : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl) {
+				//Workspace.collapseLeftSidebar();
+
+				scope.onLoad = function () {
+					if (scope.document.pageTemplate)
+					{
+						REST.resource(scope.document.pageTemplate).then(function (template)
+						{
+							scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
+						});
+					}
+				};
+
+				editorCtrl.init('Rbs_Website_StaticPage');
+				scope.$on('$destroy', function () {
+					Workspace.restore();
+				});
+
+				scope.onReady = function () {
+					REST.resource(scope.document.model, scope.document.id, scope.document.refLCID).then(function (translated) {
+						scope.refDocument = translated;
+					});
+				};
+			}
+		};
 	}
 
-	changeEditorWebsitePageLocalized.$inject = changeEditorWebsitePage.$inject;
-	app.directive('rbsDocumentEditorRbsWebsiteStaticpageLocalized', changeEditorWebsitePageLocalized);
+	changeEditorWebsitePageTranslate.$inject = [
+		'RbsChange.Workspace',
+		'RbsChange.REST'
+	];
+
+	app.directive('rbsDocumentEditorRbsWebsiteStaticpageTranslate', changeEditorWebsitePageTranslate);
 
 })();

@@ -77,4 +77,10 @@
 	<key id="advanced-mode">mode avancé</key>
 	<key id="move-up">déplacer vers le haut</key>
 	<key id="move-down">déplacer vers le bas</key>
+
+	<key id="translations">traductions</key>
+	<key id="other-actions">autres actions</key>
+	<key id="ref-lang-abbr">réf.</key>
+	<key id="ref-lang-abbr-title">langue de référence</key>
+
 </i18n>

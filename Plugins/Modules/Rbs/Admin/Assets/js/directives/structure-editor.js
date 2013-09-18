@@ -82,7 +82,7 @@
 		 * @param zoneEl The element in which the editable content should be created.
 		 * @param zoneObj The zone object definition.
 		 */
-		this.initEditableZone = function initEditableZone (scope, zoneEl, zoneObj) {
+		this.initEditableZone = function initEditableZone (scope, zoneEl, zoneObj, readonly) {
 			zoneEl.html('');
 
 			zoneEl.addClass(zoneObj.gridMode === 'fixed' ? 'container' : 'container-fluid');
@@ -93,7 +93,7 @@
 			zoneEl.attr('data-grid-mode', zoneObj.gridMode);
 
 			forEach(zoneObj.items, function (item) {
-				self.initItem(scope, zoneEl, item);
+				self.initItem(scope, zoneEl, item, -1, readonly);
 			});
 		};
 
@@ -116,10 +116,10 @@
 		};
 
 
-		this.initChildItems = function (scope, elm, item) {
+		this.initChildItems = function (scope, elm, item, readonly) {
 			if (item.items) {
 				forEach(item.items, function (child) {
-					self.initItem(scope, elm, child);
+					self.initItem(scope, elm, child, -1, readonly);
 				});
 			} else {
 				elm.addClass('empty');
@@ -128,12 +128,12 @@
 		};
 
 
-		this.initItem = function initItem (scope, container, item, atIndex) {
+		this.initItem = function initItem (scope, container, item, atIndex, readonly) {
 			var html = null, newEl;
 
 			switch (item.type) {
 			case 'block' :
-				html = this.initBlock(item);
+				html = this.initBlock(item, readonly);
 				break;
 			case 'row' :
 				html = this.initRow(item);
@@ -166,20 +166,20 @@
 		};
 
 
-		this.initBlock = function initBlock (item) {
+		this.initBlock = function initBlock (item, readonly) {
 			if (!item.label) {
 				item.label = item.name;
 			}
 			if (item.name === RICH_TEXT_BLOCK_NAME) {
-				return this.initRichText(item);
+				return this.initRichText(item, readonly);
 			} else {
 				var className = 'se-block-template';
 				return '<div class="' + className + '" data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
 			}
 		};
 
-		this.initRichText = function initRichText (item) {
-			return '<div class="se-markdown-text" data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
+		this.initRichText = function initRichText (item, readonly) {
+			return '<div class="se-markdown-text" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
 		this.initRow = function initRow (item) {
@@ -457,12 +457,12 @@
 		return {
 
 			"restrict"   : 'E',
-			"require"    : 'ngModel',
+			"require"    : ['ngModel', 'structureEditor'],
 			"scope"      : true,
 			"transclude" : true,
 			"template"   :
 				'<div class="btn-toolbar">' +
-					'<div class="btn-group">' +
+					'<div class="btn-group" ng-if="! readOnly">' +
 						'<button type="button" ng-disabled="!undoData.length" class="btn" ng-click="undo(0)"><i class="icon-undo"></i> Défaire</button>' +
 						'<button type="button" ng-disabled="!undoData.length" class="btn dropdown-toggle" data-toggle="dropdown">' +
 							'<span class="caret"></span>' +
@@ -471,6 +471,7 @@
 							'<li data-ng-repeat="entry in undoData"><a href="javascript:;" ng-click="undo($index)"><span class="muted">{{entry.date | date:\'mediumTime\'}}</span> <i class="{{entry.icon}}"></i> {{entry.label}} {{entry.item.label}}</a></li>' +
 						'</ul>' +
 					'</div>' +
+					'<button ng-if="readOnly" type="button" disabled="disabled" class="btn">Lecture seule</button>' +
 					'<div class="btn-group" ng-transclude></div>' +
 					'<button type="button" class="btn pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
 				'</div>' +
@@ -498,6 +499,11 @@
 					lastIndicatorY = 0;
 
 
+				this.isReadOnly = function () {
+					return $attrs.readonly === 'true';
+				};
+				$scope.readOnly = this.isReadOnly();
+
 				/**
 				 * Selects a block.
 				 *
@@ -506,6 +512,9 @@
 				 * @returns {*}
 				 */
 				this.selectBlock = function selectBlock (blockEl, params) {
+					if (this.isReadOnly()) {
+						return;
+					}
 					var shouldUpdate = selectedBlock !== blockEl;
 					if (shouldUpdate) {
 						if (selectedBlock !== null) {
@@ -639,8 +648,11 @@
 						$scope,
 						container,
 						item,
-						atIndex
+						atIndex,
+						this.isReadOnly()
 					);
+
+					console.log("create block: ", $element.attr('readonly') === 'true');
 
 					if (angular.isFunction(block.scope().initItem)) {
 						block.scope().initItem(item);
@@ -786,9 +798,7 @@
 					// If the parent container of the removed block is now empty,
 					// append a Block Chooser.
 					if (parent.children().length === 0) {
-						this.selectBlock(this.createBlock(parent, {
-							'type' : 'block-chooser'
-						}));
+						this.selectBlock( this.createBlock(parent, { 'type' : 'block-chooser' }) );
 					}
 				};
 
@@ -904,155 +914,158 @@
 
 				// Draggable elements
 
-				$($element).on({
+				if (! this.isReadOnly())
+				{
+					$($element).on({
 
-					'dragstart': function (e) {
-						draggedEl = $(this);
-						draggedEl.addClass('dragged');
-						containerOfDraggedEl = draggedEl.parent();
+						'dragstart': function (e) {
+							draggedEl = $(this);
+							draggedEl.addClass('dragged');
+							containerOfDraggedEl = draggedEl.parent();
 
-						e.dataTransfer.setData('Text', draggedEl.data('id'));
-						e.dataTransfer.effectAllowed = "copyMove";
-					},
+							e.dataTransfer.setData('Text', draggedEl.data('id'));
+							e.dataTransfer.effectAllowed = "copyMove";
+						},
 
-					'dragend': function () {
-						draggedEl.removeClass('dragged');
-					}
-
-				}, '.block');
-
-				// Droppable elements
-
-				$($element).on({
-
-					'dragenter': function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-
-						if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
-							structureEditorService.highlightDropTarget($(this));
+						'dragend': function () {
+							draggedEl.removeClass('dragged');
 						}
-					},
 
-					'dragleave': function (e) {
-						e.preventDefault();
-						e.stopPropagation();
+					}, '.block');
 
-						structureEditorService.unhighlightDropTarget($(this));
-						dropZoneIndicator.hide();
-					},
+					// Droppable elements
 
-					'dragover': function (e) {
-						e.dataTransfer.dropEffect = "move";
+					$($element).on({
 
-						e.preventDefault();
-						e.stopPropagation();
+						'dragenter': function (e) {
+							e.preventDefault();
+							e.stopPropagation();
 
-						if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
-							var	mouseY = e.originalEvent.pageY,
-								sameParent = containerOfDraggedEl.data('id') === $(this).data('id'),
-								indicatorY = 0, i, midY, childEl, last, finalDropPosition;
-
-							// Reset indicator position if drop zone has changed
-							// so that it displays at the right position.
-							if (dropTarget !== $(this)) {
-								lastIndicatorY = -1;
+							if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
+								structureEditorService.highlightDropTarget($(this));
 							}
+						},
 
-							dropTarget = $(this);
-							dropPosition = -1;
+						'dragleave': function (e) {
+							e.preventDefault();
+							e.stopPropagation();
 
-							// Loop through all the children of the hovered element to determine
-							// between which blocks the dragged block should be inserted.
+							structureEditorService.unhighlightDropTarget($(this));
+							dropZoneIndicator.hide();
+						},
 
-							for (i=0 ; i<dropTarget.children().length && dropPosition === -1 ; i++) {
-								childEl = $(dropTarget.children()[i]);
-								midY = childEl.offset().top + (childEl.outerHeight() / 2);
-								if (mouseY < midY) {
-									finalDropPosition = dropPosition = i;
-									indicatorY = childEl.offset().top;
+						'dragover': function (e) {
+							e.dataTransfer.dropEffect = "move";
+
+							e.preventDefault();
+							e.stopPropagation();
+
+							if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
+								var	mouseY = e.originalEvent.pageY,
+									sameParent = containerOfDraggedEl.data('id') === $(this).data('id'),
+									indicatorY = 0, i, midY, childEl, last, finalDropPosition;
+
+								// Reset indicator position if drop zone has changed
+								// so that it displays at the right position.
+								if (dropTarget !== $(this)) {
+									lastIndicatorY = -1;
 								}
-							}
 
-							if (dropPosition === -1) {
-								if (dropTarget.children().length) {
-									last = dropTarget.children().last();
-									indicatorY = last.offset().top + last.outerHeight();
-								} else {
-									indicatorY = dropTarget.offset().top;
+								dropTarget = $(this);
+								dropPosition = -1;
+
+								// Loop through all the children of the hovered element to determine
+								// between which blocks the dragged block should be inserted.
+
+								for (i=0 ; i<dropTarget.children().length && dropPosition === -1 ; i++) {
+									childEl = $(dropTarget.children()[i]);
+									midY = childEl.offset().top + (childEl.outerHeight() / 2);
+									if (mouseY < midY) {
+										finalDropPosition = dropPosition = i;
+										indicatorY = childEl.offset().top;
+									}
 								}
-								finalDropPosition = dropTarget.children().length;
-								if (sameParent) {
+
+								if (dropPosition === -1) {
+									if (dropTarget.children().length) {
+										last = dropTarget.children().last();
+										indicatorY = last.offset().top + last.outerHeight();
+									} else {
+										indicatorY = dropTarget.offset().top;
+									}
+									finalDropPosition = dropTarget.children().length;
+									if (sameParent) {
+										finalDropPosition--;
+									}
+								} else if (sameParent && dropPosition > draggedEl.index()) {
 									finalDropPosition--;
 								}
-							} else if (sameParent && dropPosition > draggedEl.index()) {
-								finalDropPosition--;
-							}
 
-							if (lastIndicatorY !== indicatorY) {
-								dropZoneIndicator.find('.content').html(finalDropPosition + 1);
-								dropZoneIndicator.css({
-									'left' : (dropTarget.offset().left - dropZoneIndicator.outerWidth() - 2) + 'px',
-									'top'  : (indicatorY - dropZoneIndicator.outerHeight()/2) + 'px'
-								}).show();
-								lastIndicatorY = indicatorY;
-							}
-						}
-					},
-
-					'drop': function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-
-						dropZoneIndicator.hide();
-
-						if (containerOfDraggedEl.data('id') !== $(this).data('id') || draggedEl.index() !== dropPosition) {
-							if (dropTarget.is('.empty')) {
-								dropTarget.html('');
-								dropTarget.removeClass('empty');
-							}
-
-							if (dropPosition === -1) {
-								dropTarget.append(draggedEl);
-							} else {
-								$(dropTarget.children()[dropPosition]).before(draggedEl);
-							}
-
-							draggedEl.addClass('just-dragged');
-							structureEditorService.terminateHighlight().then(
-								function () {
-									draggedEl.removeClass('just-dragged');
-								},
-								function () {
-									draggedEl.removeClass('just-dragged');
+								if (lastIndicatorY !== indicatorY) {
+									dropZoneIndicator.find('.content').html(finalDropPosition + 1);
+									dropZoneIndicator.css({
+										'left' : (dropTarget.offset().left - dropZoneIndicator.outerWidth() - 2) + 'px',
+										'top'  : (indicatorY - dropZoneIndicator.outerHeight()/2) + 'px'
+									}).show();
+									lastIndicatorY = indicatorY;
 								}
-							);
-							positionBlockSettingsEditor(null); // update
-
-							if (containerOfDraggedEl.children().length === 0) {
-								self.createBlock(containerOfDraggedEl);
 							}
+						},
 
-							self.notifyChange("move", "block", draggedEl, {'from': containerOfDraggedEl, 'to': dropTarget});
-						} else {
-							structureEditorService.highlightBlock(null);
+						'drop': function (e) {
+							e.preventDefault();
+							e.stopPropagation();
+
+							dropZoneIndicator.hide();
+
+							if (containerOfDraggedEl.data('id') !== $(this).data('id') || draggedEl.index() !== dropPosition) {
+								if (dropTarget.is('.empty')) {
+									dropTarget.html('');
+									dropTarget.removeClass('empty');
+								}
+
+								if (dropPosition === -1) {
+									dropTarget.append(draggedEl);
+								} else {
+									$(dropTarget.children()[dropPosition]).before(draggedEl);
+								}
+
+								draggedEl.addClass('just-dragged');
+								structureEditorService.terminateHighlight().then(
+									function () {
+										draggedEl.removeClass('just-dragged');
+									},
+									function () {
+										draggedEl.removeClass('just-dragged');
+									}
+								);
+								positionBlockSettingsEditor(null); // update
+
+								if (containerOfDraggedEl.children().length === 0) {
+									self.createBlock(containerOfDraggedEl);
+								}
+
+								self.notifyChange("move", "block", draggedEl, {'from': containerOfDraggedEl, 'to': dropTarget});
+							} else {
+								structureEditorService.highlightBlock(null);
+							}
 						}
-					}
 
-				}, '.block-container');
+					}, '.block-container');
 
-				// Prevent drop on se-row (temporary?).
+					// Prevent drop on se-row (temporary?).
 
-				$($element).on({
-					'dragenter': function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-					},
-					'dragover': function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-					}
-				}, '.se-row');
+					$($element).on({
+						'dragenter': function (e) {
+							e.preventDefault();
+							e.stopPropagation();
+						},
+						'dragover': function (e) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+					}, '.se-row');
+				}
 
 			},
 
@@ -1065,7 +1078,10 @@
 			 * @param attrs
 			 * @param ngModel
 			 */
-			"link" : function seLinkFn (scope, elm, attrs, ngModel) {
+			"link" : function seLinkFn (scope, elm, attrs, ctrls) {
+
+				var	ngModel = ctrls[0],
+					ctrl = ctrls[1];
 
 				function getDefaultEmptyContent () {
 					var content = {}, blockId = 0;
@@ -1166,7 +1182,8 @@
 										structureEditorService.initEditableZone(
 											scope,
 											editableZone,
-											zone
+											zone,
+											ctrl.isReadOnly()
 										);
 									} else {
 										NotificationCenter.error("Bad template configuration", "Could not find editable zone '" + zone.id + "' in page template.");
@@ -1198,7 +1215,8 @@
 									structureEditorService.initEditableZone(
 										scope,
 										editableZone,
-										zone
+										zone,
+										ctrl.isReadOnly()
 									);
 								}
 
@@ -1258,8 +1276,6 @@
 		return {
 
 			"restrict"   : 'C',
-			"template"   : '<div></div>',
-			"replace"    : true,
 			"require"    : "^structureEditor",
 			"scope"      : {}, // isolated scope is required
 
@@ -1277,7 +1293,7 @@
 					ctrl.selectBlock(elm);
 				});
 
-				structureEditorService.initChildItems(scope, elm, item);
+				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
 			}
 		};
 
@@ -1671,7 +1687,7 @@
 					}
 				};
 
-				structureEditorService.initChildItems(scope, elm, item);
+				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
 			}
 		};
 
@@ -2208,11 +2224,14 @@
 		return {
 
 			"restrict"   : 'C',
-			"scope"      : {}, // isolated scope is required
+			"scope"      : {
+				// isolated scope is required
+				readonly: '@'
+			},
 			"require"    : '^structureEditor',
 			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input use-tabs="false" ng-model="text" profile="Website"></rbs-rich-text-input></div>',
+			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input ng-readonly="readonly" use-tabs="false" ng-model="text" profile="Website"></rbs-rich-text-input></div>',
 
 			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");
@@ -2255,6 +2274,50 @@
 		};
 
 	}]);
+
+
+	app.directive('rbsStructureViewer', function ()
+	{
+		return {
+			'restrict' : 'E',
+			'template' :
+				'<div ng-repeat="zone in zones">' +
+					'<h4>(= zone.id =)</h4>' +
+					'<pre ng-repeat="block in zone.blocks">(= block.parameters.content =)</pre>' +
+				'</div>',
+			'scope' : {
+				'content' : '='
+			},
+
+			'link' : function structureViewerLink (scope, iElement, iAttrs)
+			{
+				function findBlocks (container, blocks) {
+					angular.forEach(container.items, function (item) {
+						if (item.type === 'block') {
+							blocks.push(item);
+						}
+						else {
+							findBlocks(item, blocks);
+						}
+					});
+				}
+
+				scope.$watch('content', function (content, old)
+				{
+					if (content !== old) {
+						var zones = [];
+						// Loop through the editable zones.
+						angular.forEach(content, function (zone) {
+							var blocks = [];
+							findBlocks(zone, blocks);
+							zones.push({"id": zone.id, "blocks": blocks});
+						});
+						scope.zones = zones;
+					}
+				});
+			}
+		};
+	});
 
 
 })(window.jQuery);

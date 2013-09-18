@@ -186,6 +186,7 @@
 								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
 								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+								.route('translate', baseRouteTpl + '/:id/:LCID/translate', baseRouteTpl + '/translate.twig')
 							;
 						});
 						return this;
@@ -203,8 +204,8 @@
 						return getNamedUrl(doc, params, 'form');
 					},
 
-					'getI18nUrl' : function (doc, LCID, fromLCID) {
-						return getNamedUrl(doc, { 'LCID': LCID, 'fromLCID': fromLCID }, 'i18n');
+					'getTranslateUrl' : function (doc, LCID) {
+						return getNamedUrl(doc, { 'LCID': LCID }, 'translate');
 					},
 
 					'getUrl'     : function (doc, params, name) {
@@ -270,7 +271,7 @@
 	}]);
 
 
-	app.filter('documentI18nURL', ['RbsChange.UrlManager', '$log', function documentI18nURLFilter (UrlManager, $log) {
+	app.filter('documentTranslateURL', ['RbsChange.UrlManager', '$log', function documentTranslateURLFilter (UrlManager, $log) {
 
 		return function (doc, LCID, fromLCID) {
 			// This filter may be called while the `doc` is not loaded/instanciated yet.
@@ -278,7 +279,7 @@
 				return 'javascript:;';
 			}
 			try {
-				return UrlManager.getI18nUrl(doc, LCID, fromLCID);
+				return UrlManager.getTranslateUrl(doc, LCID);
 			} catch (e) {
 				$log.error("Error while getting URL for: ", doc, LCID, fromLCID, e);
 				return 'javascript:;';

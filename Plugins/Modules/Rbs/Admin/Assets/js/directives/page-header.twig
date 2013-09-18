@@ -16,19 +16,6 @@
 				ng-if="document.hasCorrection()"
 				title="Date de la correction : (=document.meta('correction.creationDate') | date:'medium'=)"
 				ng-click="openCorrectionViewer()">{{ i18n('m.rbs.admin.correction', ['ucf']) }} <span class="badge">(=document.META$.correction.propertiesNames.length=)</span></button>
-
-			<button type="button" class="btn btn-small language-code disabled" data-ng-show="document && isCascading()"><i class="icon-globe"></i> (=language=)</button>
-
-			<div class="btn-group ng-cloak" data-ng-show="document && ! isCascading() && isLocalized" data-role="choose-locale" title="{{ i18nAttr('m.rbs.admin.this-document-exists-in-multiple-languages', ['ucf']) }}">
-				<button type="button" class="btn btn-small dropdown-toggle language-code" data-toggle="dropdown"><i class="icon-globe"></i> (=language=) <b class="caret"></b></button>
-				<ul class="dropdown-menu pull-right">
-					<li data-ng-repeat="locale in locales">
-						<a href data-ng-href="(= document | documentI18nURL:locale.id:document.refLCID =)"><i data-ng-show="language==locale.id" class="icon-ok"></i> (=locale.label=) <i data-ng-show="locale.isReference" class="icon-book"></i></a>
-					</li>
-					<li class="divider"></li>
-					<li><a href="javascript:;" data-ng-click="openLocalizationOptions()"><i class="icon-globe"></i> {{ i18n('m.rbs.admin.translate', ['ucf', 'etc']) }}</a></li>
-				</ul>
-			</div>
 		</div>
 
 		<status data-ng-show="document && ! isCascading()" data-ng-model="document"/>

@@ -422,6 +422,11 @@
 					initCorrection();
 					initMenu();
 
+					// Add "Translations" menu on the left if the document is localizable.
+					if ($scope.modelInfo.metas.localized) {
+						MainMenu.addTranslations($scope.document, $scope);
+					}
+
 					$element.css('display', 'block');
 
 					Loading.stop();
@@ -574,9 +579,11 @@
 
 					});
 
-					$scope._chgFieldsInfo = fields;
-					$scope._chgMenu = menu;
-					MainMenu.build($scope._chgMenu, $scope);
+					if (menu.length) {
+						$scope._chgFieldsInfo = fields;
+						$scope._chgMenu = menu;
+						MainMenu.build($scope._chgMenu, $scope);
+					}
 				}
 
 			}],
