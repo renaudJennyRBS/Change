@@ -12,7 +12,7 @@
 			require : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl) {
-				
+
 				scope.onReady = function(){
 					if (!angular.isArray(scope.document.fields))
 					{
@@ -51,7 +51,7 @@
 						function(doc) {
 							scope.cascadeEdit(doc, scope.document.label, function(doc){scope.document.fields[index] = doc;});
 						}
-					)
+					);
 				};
 			}
 		};
