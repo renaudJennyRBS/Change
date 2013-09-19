@@ -187,7 +187,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 */
 	public function getTitle()
 	{
-		return $this->getCurrentLocalization()->getTitle();
+		return $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()->getTitle() : $this->getCurrentLocalization()->getTitle();
 	}
 
 	/**

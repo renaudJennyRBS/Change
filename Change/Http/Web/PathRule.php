@@ -336,4 +336,20 @@ class PathRule
 	{
 		return $this->location;
 	}
+
+	/**
+	 * @param string|string[] $part
+	 * @return string
+	 */
+	public function normalizePath($part)
+	{
+		if (is_array($part))
+		{
+			return implode('/', array_map(array($this, 'normalizePath'), $part));
+		}
+		else
+		{
+			return str_replace(array('/', '&', '?', '#', ' '), '-', strval($part));
+		}
+	}
 }

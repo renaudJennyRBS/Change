@@ -73,13 +73,6 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$pathRule = $event->getParam('pathRule');
 			if ($pathRule && $pathRule->getSectionId())
 			{
-				$relativePath = $this->getTitle() . '.' . $this->getId() . '.html';
-				$section = $this->getSection();
-				if ($section !== null && $section->getPathPart())
-				{
-					$relativePath = $section->getPathPart() . '/' . $relativePath;
-				}
-				$pathRule->setRelativePath($relativePath);
 				/* @var $section Section */
 				$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 				$document->setSection($section);
@@ -103,7 +96,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$sectionPageFunction = $queryParameters['sectionPageFunction'];
 			if ($sectionPageFunction)
 			{
-				$relativePath = $document->getTitle() . '.' . $document->getId() . '.html';
+				$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');
 				$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 				if ($section instanceof Topic && $section->getPathPart())
 				{
