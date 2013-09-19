@@ -28,7 +28,6 @@
 				'</div>';
 
 		this.init = function () {
-			// Load main menu when the route changes
 
 			$rootScope.$on('$routeUpdate', function () {
 				self.updateLinks();
@@ -60,7 +59,7 @@
 				currentPath = currentPath.substring(1);
 			}
 
-			$el.find(".nav a[href]:visible").each(function () {
+			$el.find(".box.main .nav a[href]:visible").each(function () {
 				var href = $(this).attr('href'),
 				    matches = href.match(/section=([a-z0-9\-]+)/i),
 				    section = matches ? matches[1] : undefined;
@@ -100,7 +99,7 @@
 				currentPath = currentPath.substring(1);
 			}
 
-			$el.find("a[href]").each(function () {
+			$el.find(".box.main a[href]").each(function () {
 				var href = $(this).attr('href');
 				if (href === currentUrl || href === currentPath || href === absUrl) {
 					$(this).parent().addClass("active");
@@ -268,7 +267,7 @@
 						if (item.hasOwnProperty('badge')) {
 							html += '<span class="badge pull-right">' + item.badge + '</span>';
 						}
-						html += '<a href="' + item.url + '">';
+						html += '<a url-match-class="" href="' + item.url + '">';
 						if (item.icon) {
 							html += '<i class="' + item.icon + '"></i> ';
 						}
@@ -314,7 +313,7 @@
 		};
 
 
-		this.addTranslations = function (doc) {
+		this.addTranslations = function (doc, scope) {
 			var self = this;
 			REST.getAvailableLanguages().then(function (langs) {
 				var contents = [];
@@ -340,7 +339,7 @@
 				self.add(
 					"translations",
 					contents,
-					null,
+					scope,
 					i18n.trans('m.rbs.admin.admin.js.translations | ucf')
 				);
 			});
