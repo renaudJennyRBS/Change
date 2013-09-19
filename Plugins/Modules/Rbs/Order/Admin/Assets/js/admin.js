@@ -21,6 +21,8 @@
 		}]);
 	}]);
 
+	// Register default editors:
+	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Order_Order');
 	__change.createEditorForModel('Rbs_Order_Invoice');
 	__change.createEditorForModel('Rbs_Order_Process');

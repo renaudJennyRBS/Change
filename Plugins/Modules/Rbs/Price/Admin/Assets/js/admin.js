@@ -5,7 +5,8 @@
 	var app = angular.module('RbsChange');
 
 
-	// Register default editors for 'Rbs_Price_BillingArea'.
+	// Register default editors:
+	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Price_BillingArea');
 
 	/**
