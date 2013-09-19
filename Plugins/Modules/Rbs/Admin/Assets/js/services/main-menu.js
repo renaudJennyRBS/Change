@@ -320,9 +320,8 @@
 				angular.forEach(langs.items, function (item, lcid) {
 					if (lcid === doc.refLCID) {
 						contents.push({
-							'url' : 'javascript:;',
+							'url' : doc.url(),
 							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr-title | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
-							'cssClass' : 'disabled',
 							'icon' : 'icon-book'
 						});
 					}

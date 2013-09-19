@@ -16,10 +16,12 @@
 			// Editors are generally alone in the ngView, which creates a new Scope for the loaded template.
 
 			restrict : 'C',
+			priority : -2,
 
-			controller : ['$scope', '$element', function ($scope, $element) {
-
-				var	initializedSections = {};
+			controller : ['$scope', '$element', function ($scope, $element)
+			{
+				var	initializedSections = {},
+					translation = false;
 
 				/**
 				 * Initialize current Editor.
@@ -28,6 +30,9 @@
 				 */
 				this.init = function (modelName)
 				{
+					if ($scope.editMode === 'translate') {
+						translation = true;
+					}
 					Loading.start(i18n.trans('m.rbs.admin.admin.js | ucf'));
 
 					var document, documentId = 0, promise, defered, ctx;
@@ -238,7 +243,8 @@
 				this.clearInvalidFields = clearInvalidFields;
 
 
-				function saveSuccessHandler (doc) {
+				function saveSuccessHandler (doc)
+				{
 					var	postSavePromises = [], result;
 
 					if (!doc.META$.tags) {
@@ -294,7 +300,8 @@
 				}
 
 
-				function saveErrorHandler (reason) {
+				function saveErrorHandler (reason)
+				{
 					saveOperation("error");
 					NotificationCenter.error(
 						i18n.trans('m.rbs.admin.admin.js.save-error'),
@@ -337,6 +344,18 @@
 						initMenu();
 					});
 
+					// Special trick for localized Documents.
+					// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
+					// - the classic Editor (editor.twig)
+					// - or the one used for translation (editor-translate.twig).
+					// Since `ng-switch` creates an *isolated Scope* for the different cases, the Document loaded
+					// in this Directive (`$scope.document`) does not exist in the Scope of `form.twig`.
+					// The following bits copy the reference of `$scope.document` in this parent Scope.
+					var wrappingFormScope = angular.element($element.closest('.document-form')).scope();
+					if (wrappingFormScope.$id !== $scope.$id) {
+						wrappingFormScope.document = $scope.document;
+					}
+
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
@@ -352,6 +371,19 @@
 						REST.modelInfo($scope.document.model)
 					];
 
+					if (translation) {
+						// Load reference Document
+						promises.push(REST.resource($scope.document.model, $scope.document.id, $scope.document.refLCID));
+						promises.push(REST.getAvailableLanguages());
+
+						// Add watch on currentLCID to let the user switch between languages in the editor.
+						$scope.$watch('currentLCID', function (lcid, old) {
+							if (lcid !== old) {
+								$location.url($scope.document.translateUrl(lcid));
+							}
+						});
+					}
+
 					// Editor will be considered ready when:
 					// - Breadcrumb is ready,
 					// - Information about the Documen's Model have been loaded.
@@ -360,7 +392,13 @@
 						$scope.modelInfo = promisesResults[1];
 						delete $scope.modelInfo.links;
 
-						// Call `$scope.onLoad()` is present.
+						if (translation) {
+							$scope.currentLCID = $scope.document.LCID;
+							$scope.refDocument = promisesResults[2];
+							$scope.availableLanguages = promisesResults[3].items;
+						}
+
+						// Call `$scope.onLoad()` if present.
 						if (angular.isFunction($scope.onLoad)) {
 							$scope.onLoad();
 						}
@@ -416,7 +454,8 @@
 				 * Creates the reference document (original) from the current document.
 				 * Triggers the `Events.EditorReady` event.
 				 */
-				function initReferenceDocument () {
+				function initReferenceDocument ()
+				{
 					$scope.original = angular.copy($scope.document);
 
 					initCorrection();
@@ -499,7 +538,8 @@
 				/**
 				 * Updates the main menu according to the Editor.
 				 */
-				function initMenu () {
+				function initMenu ()
+				{
 					var menu = [],
 						fields = {},
 						groups = {},
@@ -589,19 +629,16 @@
 			}],
 
 
-			compile : function (tElement) {
-
-				// Initialize required form attributes.
-				tElement
-					.attr('novalidate', '')
-					.attr('name', 'form')
-					.css('display', 'none');
+			compile : function (tElement)
+			{
+				console.log("editorDirective: compile: tElement=", tElement);
+				tElement.css('display', 'none');
 
 				/**
 				 * Editor's linking function.
 				 */
-				return function linkFn (scope, element, attrs, CTRL) {
-
+				return function linkFn (scope, element, attrs, CTRL)
+				{
 					scope.$on('$destroy', function () {
 						EditorManager.stopEditSession();
 					});
@@ -747,6 +784,79 @@
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
+
+
+
+
+	function editorDirectiveTranslate () {
+
+		return {
+
+			restrict : 'C',
+			// This Directive must be compiled:
+			// - before the 'rbsDocumentEditor' Directive (priority: -2) to do some template transformations
+			// - after the 'rbsDocumentEditor*' Directive, specialized for each Model (default priority: 0).
+			priority : -1,
+
+			compile : function (tElement)
+			{
+				tElement.find('form[transform-layout="true"]').each(function ()
+				{
+					var	$form = $(this),
+						$properties = $form.children('[property]'),
+						$table = $('<table cellpadding="10" width="100%"></table>');
+
+					if ($properties.length) {
+
+						$table.append(
+							'<tr>' +
+								'<td width="50%" valign="top">' +
+									'<select ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableLanguages"></select>' +
+								'</td>' +
+								'<td valign="top" style="border-left: 5px solid silver; background: #F5F5F5;">' +
+									'Langue de référence : (= availableLanguages[refDocument.LCID].label =)' +
+								'</td>' +
+							'</tr>'
+						);
+
+						$properties.each(function ()
+						{
+							var	$prop = $(this),
+								$tr = $('<tr></tr>'),
+								$lcell = $('<td valign="top" width="50%"></td>'),
+								$rcell = $('<td valign="top" width="50%" style="border-left: 5px solid silver; background: #F5F5F5;"></td>'),
+								$refProp,
+								ngModel;
+
+							$table.append($tr);
+							$tr.append($lcell);
+							$tr.append($rcell);
+							$lcell.append($prop);
+
+							$refProp = $prop.clone();
+							$refProp.attr('property', 'refDocument.' + $prop.attr('property'));
+							$refProp.attr('readonly', 'true');
+							ngModel = $refProp.attr('ng-model');
+							if (ngModel) {
+								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
+							}
+							$rcell.append($refProp);
+						});
+
+						$form.prepend($table);
+					}
+
+				});
+			}
+
+		};
+
+	}
+
+	editorDirectiveTranslate.$inject = [];
+
+	app.directive('rbsDocumentEditorTranslate', editorDirectiveTranslate);
+
 
 
 
@@ -925,7 +1035,15 @@
 	});
 
 
-		// Validators directives.
+	app.controller('RbsChangeTranslateEditorController', ['$scope', function ($scope) {
+		$scope.document = {};
+		$scope.editMode = 'translate';
+	}]);
+
+
+
+
+	// Validators directives.
 
 	var INTEGER_REGEXP = /^\-?\d*$/;
 	app.directive('integer', function () {

@@ -3,11 +3,14 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">Sites et pages</location>
-			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">Pages de contenu</location>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.document.staticpage-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div class="rbs-document-editor rbs-document-editor-rbs-website-staticpage"></div>
+	<div ng-switch="editMode">
+		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-staticpage-translate"></div>
+		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-website-staticpage"></div>
+	</div>
 
 </div>

@@ -74,28 +74,16 @@
 			require     : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl) {
-				//Workspace.collapseLeftSidebar();
-
-				scope.onLoad = function () {
-					if (scope.document.pageTemplate)
-					{
-						REST.resource(scope.document.pageTemplate).then(function (template)
-						{
+				scope.onLoad = function ()
+				{
+					// Load PageTemplate Document
+					if (scope.document.pageTemplate) {
+						REST.resource(scope.document.pageTemplate).then(function (template) {
 							scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
 						});
 					}
 				};
-
 				editorCtrl.init('Rbs_Website_StaticPage');
-				scope.$on('$destroy', function () {
-					Workspace.restore();
-				});
-
-				scope.onReady = function () {
-					REST.resource(scope.document.model, scope.document.id, scope.document.refLCID).then(function (translated) {
-						scope.refDocument = translated;
-					});
-				};
 			}
 		};
 	}

@@ -1390,7 +1390,13 @@ th label {
 #mainMenu .translated a {
 	color: #51A351;
 }
+#mainMenu .active.translated a {
+	color: #b8fead;
+}
 
 #mainMenu .untranslated a {
 	color: #B94A48;
+}
+#mainMenu .active.untranslated a {
+	color: #ffd1d5;
 }

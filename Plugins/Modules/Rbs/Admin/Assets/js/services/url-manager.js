@@ -1,6 +1,9 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
+
 
 	app.config(['$provide', function ($provide) {
 		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider) {
@@ -149,7 +152,6 @@
 				};
 
 
-
 				// Public API
 
 				return {
@@ -186,7 +188,7 @@
 								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
 								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
-								.route('translate', baseRouteTpl + '/:id/:LCID/translate', baseRouteTpl + '/translate.twig')
+								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
 							;
 						});
 						return this;
