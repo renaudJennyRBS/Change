@@ -313,6 +313,32 @@
 
 					return deferred.promise;
 
+				},
+
+
+				destroyEmbedded: function () {
+					var self = this,
+						q = $q.defer();
+
+					if (self.$embeddedEl !== null) {
+						$embeddedModalBackdrop.hide();
+						// Remove any <rbs-document-list/> elements.
+						self.$embeddedEl.find('rbs-document-list').each(function () {
+							angular.element($(this)).scope().$destroy();
+						});
+						self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
+						self.$embeddedEl.hide();
+						self.$embeddedEl = null;
+						$timeout(function () {
+							q.resolve();
+						});
+					} else {
+						$timeout(function () {
+							q.resolve();
+						});
+					}
+
+					return q.promise;
 				}
 
 			};
@@ -325,6 +351,13 @@
 
 			dialog.$modal.on('shown', function () {
 				dialog.$modal.find('.modal-footer .btn-primary').focus();
+			});
+
+			// Close any Dialog when the route changes.
+			$rootScope.$on('$routeChangeSuccess', function () {
+				if (dialog.$embeddedEl) {
+					dialog.destroyEmbedded();
+				}
 			});
 
 			return dialog;

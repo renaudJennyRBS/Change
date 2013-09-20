@@ -1,4 +1,5 @@
-<div>
+<div class="document-form">
+	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.geo.document.country', ['ucf']) }}"></page-header>
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
@@ -7,7 +8,8 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.geo.document.country', ['ucf']) }}"></page-header>
-	<div class="rbs-document-editor rbs-document-editor-rbs-geo-country"></div>
-
+	<div ng-switch="editMode">
+		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-geo-country-translate"></div>
+		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-geo-country"></div>
+	</div>
 </div>
