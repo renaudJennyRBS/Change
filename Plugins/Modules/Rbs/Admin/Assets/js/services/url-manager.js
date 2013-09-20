@@ -149,6 +149,13 @@
 						}
 						url = replaceParams(url, params);
 					} else {
+						if (! angular.isObject(params)) {
+							params = {};
+						}
+						if (! params.LCID) {
+							params.LCID = doc.refLCID;
+						}
+
 						url = replaceParams(url, angular.extend({}, doc, params));
 					}
 
