@@ -8,7 +8,6 @@
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Catalog_ProductCategorization');
-	__change.createEditorForModel('Rbs_Catalog_DeclinationGroup');
 
 	__change.createEditorsForLocalizedModel('Rbs_Catalog_Category');
 	__change.createEditorsForLocalizedModel('Rbs_Catalog_Attribute');

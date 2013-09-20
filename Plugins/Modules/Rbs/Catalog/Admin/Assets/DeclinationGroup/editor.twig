@@ -99,7 +99,10 @@
 								<td data-ng-show="row[1].declination">
 									<div data-ng-switch="row[1].id">
 										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
-											<i class="icon-plus-sign"> </i> Ajouter la déclinaison</a>
+											<i class="icon-plus-sign"> </i>
+											<span data-ng-hide="row[1].removed">Ajouter la déclinaison</span>
+											<span data-ng-show="row[1].removed">Restaurer la déclinaison</span>
+										</a>
 										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="selectDeclinationId(row[1].id)">
 											<i class="icon-edit"> </i> Editer</a>
 										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
@@ -108,7 +111,10 @@
 								</td>
 								<td data-ng-hide="row[1].declination">
 										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
-											<i class="icon-plus-sign"> </i> Ajouter le produit</a>
+											<i class="icon-plus-sign"> </i>
+											<span data-ng-hide="row[1].removed">Ajouter le produit</span>
+											<span data-ng-show="row[1].removed">Restaurer le produit</span>
+										</a>
 										<a href="javascript:;" data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
 											<i class="icon-edit"> </i> Editer</a>
 										<span data-ng-show="row[1].id < 0" ng-click="editProduct(row[1])">
