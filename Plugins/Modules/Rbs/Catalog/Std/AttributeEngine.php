@@ -197,7 +197,7 @@ class AttributeEngine
 					$result[3] = $value;
 					break;
 				case Attribute::TYPE_TEXT:
-					$result[4] = $value;
+					$result[4] = (is_array($value)) ? (isset($value['t']) ? $value['t'] : null) : $value;
 					break;
 			}
 		}
