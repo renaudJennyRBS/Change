@@ -1,6 +1,9 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
+
 
 	app.config(['$provide', function ($provide) {
 		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider) {
@@ -138,16 +141,19 @@
 					// If `doc` is a Document object, we try to replace the parameters in the `url` with
 					// the corresponding properties of the Document.
 					if (angular.isString(doc)) {
-						if (angular.isObject(params)) {
-							url = replaceParams(url, params);
+						if (! angular.isObject(params)) {
+							params = {};
 						}
+						if (! params.LCID) {
+							params.LCID = doc.refLCID;
+						}
+						url = replaceParams(url, params);
 					} else {
 						url = replaceParams(url, angular.extend({}, doc, params));
 					}
 
 					return fixUrl(url);
 				};
-
 
 
 				// Public API
@@ -186,6 +192,7 @@
 								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
 								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
 							;
 						});
 						return this;
@@ -203,8 +210,8 @@
 						return getNamedUrl(doc, params, 'form');
 					},
 
-					'getI18nUrl' : function (doc, LCID, fromLCID) {
-						return getNamedUrl(doc, { 'LCID': LCID, 'fromLCID': fromLCID }, 'i18n');
+					'getTranslateUrl' : function (doc, LCID) {
+						return getNamedUrl(doc, { 'LCID': LCID }, 'translate');
 					},
 
 					'getUrl'     : function (doc, params, name) {
@@ -270,7 +277,7 @@
 	}]);
 
 
-	app.filter('documentI18nURL', ['RbsChange.UrlManager', '$log', function documentI18nURLFilter (UrlManager, $log) {
+	app.filter('documentTranslateURL', ['RbsChange.UrlManager', '$log', function documentTranslateURLFilter (UrlManager, $log) {
 
 		return function (doc, LCID, fromLCID) {
 			// This filter may be called while the `doc` is not loaded/instanciated yet.
@@ -278,7 +285,7 @@
 				return 'javascript:;';
 			}
 			try {
-				return UrlManager.getI18nUrl(doc, LCID, fromLCID);
+				return UrlManager.getTranslateUrl(doc, LCID);
 			} catch (e) {
 				$log.error("Error while getting URL for: ", doc, LCID, fromLCID, e);
 				return 'javascript:;';

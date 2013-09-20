@@ -4,11 +4,11 @@
 
 	var app = angular.module('RbsChange');
 
-	// Register default editors.
+	// Register default editors:
+	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Geo_Country');
 	__change.createEditorForModel('Rbs_Geo_TerritorialUnit');
 	__change.createEditorForModel('Rbs_Geo_Zone');
-	__change.createEditorForModel('Rbs_Geo_AddressFields');
 	__change.createEditorForModel('Rbs_Geo_AddressField');
 	__change.createEditorForModel('Rbs_Geo_Address');
 

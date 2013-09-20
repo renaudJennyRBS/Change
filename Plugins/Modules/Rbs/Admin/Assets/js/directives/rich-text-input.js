@@ -23,11 +23,11 @@
 					'</ul>' +
 					'<div class="tab-content">' +
 						'<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">' +
-							'<div class="btn-toolbar">' +
+							'<div class="btn-toolbar" ng-if="! readOnly">' +
 
 								'<span class="pull-right">' +
-									'<button ng-if="!useTabs" type="button" class="btn btn-small" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
 									'<button type="button" class="btn btn-small btn-info" ng-click="openHelp()"><i class="icon-info-sign"></i></button>' +
+									'<button ng-if="!useTabs" type="button" class="btn btn-small" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
 								'</span>' +
 
 								// TODO Remove 'ng-disabled="useTextarea"' when Textarea is fully supported
@@ -157,6 +157,9 @@
 					session.setFoldStyle("manual");
 					editor.setShowFoldWidgets(true);
 					editor.renderer.setShowGutter(false);
+
+					scope.readOnly = (element.attr('readonly') === 'true' || element.attr('readonly') === 'readonly');
+					editor.setReadOnly(scope.readOnly);
 
 					// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
 					// so that the binding with the '<label/>' element works as expected.

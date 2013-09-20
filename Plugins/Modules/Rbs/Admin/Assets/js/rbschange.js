@@ -106,28 +106,53 @@
 	}]);
 
 
-	__change.createEditorForModel = function (modelName, linkFn) {
+	//-------------------------------------------------------------------------
+	//
+	// Default Directives for Editors that do not have specialized code.
+	//
+	//-------------------------------------------------------------------------
 
+
+	function baseEditorDirective (modelName, linkFn) {
+		return {
+			restrict : 'C',
+			templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
+			replace : false,
+			require : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl)
+			{
+				if (angular.isFunction(linkFn)) {
+					linkFn.apply(this, [scope, element, attrs, editorCtrl]);
+				}
+				editorCtrl.init(modelName);
+			}
+		};
+	}
+
+	__change.createEditorForModel = function (modelName, linkFn)
+	{
 		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, ''), function ()
 		{
-			return {
-				restrict : 'C',
-				templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
-				replace : false,
-				require : 'rbsDocumentEditor',
-
-				link : function (scope, element, attrs, editorCtrl)
-				{
-					if (angular.isFunction(linkFn)) {
-						linkFn.apply(this, [scope, element, attrs, editorCtrl]);
-					}
-					editorCtrl.init(modelName);
-				}
-			};
+			return baseEditorDirective(modelName, linkFn);
 		});
-
 	};
 
+	__change.createEditorForModelTranslation = function (modelName, linkFn)
+	{
+		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, '') + 'Translate', function ()
+		{
+			var directive = baseEditorDirective(modelName, linkFn);
+			directive.templateUrl = modelName.replace(/_/g, '/') + '/editor-translate.twig';
+			return directive;
+		});
+	};
+
+	__change.createEditorsForLocalizedModel = function (modelName, linkFn)
+	{
+		__change.createEditorForModel(modelName, linkFn);
+		__change.createEditorForModelTranslation(modelName, linkFn);
+	};
 
 
 	//-------------------------------------------------------------------------

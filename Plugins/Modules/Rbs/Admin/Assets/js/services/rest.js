@@ -71,6 +71,10 @@
 					return UrlManager.getUrl(this, name || 'form');
 				};
 
+				ChangeDocument.prototype.translateUrl = function (LCID) {
+					return UrlManager.getTranslateUrl(this, LCID);
+				};
+
 				ChangeDocument.prototype.treeUrl = function () {
 					return UrlManager.getTreeUrl(this);
 				};
@@ -93,6 +97,17 @@
 
 				ChangeDocument.prototype.isLocalized = function () {
 					return angular.isDefined(this.refLCID);
+				};
+
+				ChangeDocument.prototype.isTranslatedIn = function (lcid) {
+					if (! this.META$.locales) {
+						return false;
+					}
+					var i, translated = false;
+					for (i=0 ; i<this.META$.locales.length && ! translated ; i++) {
+						translated = (this.META$.locales[i].id === lcid);
+					}
+					return translated;
 				};
 
 				ChangeDocument.prototype.hasCorrection = function () {
@@ -410,6 +425,18 @@
 					'setLanguage' : function (lang) {
 						language = lang;
 						console.log("REST: Language changed to ", language);
+					},
+
+
+					/**
+					 * @returns {Promise}
+					 */
+					'getAvailableLanguages' : function () {
+						return this.action(
+							'collectionItems',
+							{'code' : 'Rbs_Generic_Collection_Languages'},
+							true // cache
+						);
 					},
 
 
@@ -1117,16 +1144,17 @@
 					 *
 					 * @param actionName
 					 * @param params
+					 * @param cache
 					 *
 					 * @returns Promise
 					 */
-					'action' : function (actionName, params) {
+					'action' : function (actionName, params, cache) {
 						var	q = $q.defer(),
 							url;
 
 						url = Utils.makeUrl(REST_BASE_URL + 'actions/' + actionName + '/', params);
 
-						$http.get(url, getHttpConfig())
+						$http.get(url, cache === true ? getHttpConfigWithCache() : getHttpConfig())
 							.success(function restActionSuccessCallback (data) {
 								resolveQ(q, data);
 							})

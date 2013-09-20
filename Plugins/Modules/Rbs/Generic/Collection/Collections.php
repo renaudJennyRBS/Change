@@ -100,7 +100,7 @@ class Collections
 			$applicationServices = $documentServices->getApplicationServices();
 			foreach ($applicationServices->getI18nManager()->getSupportedLCIDs() as $lcid)
 			{
-				$items[$lcid] = \Locale::getDisplayLanguage($lcid, $applicationServices->getI18nManager()->getLCID()) . ' (' . $lcid . ')';
+				$items[$lcid] = \Locale::getDisplayLanguage($lcid, $applicationServices->getI18nManager()->getLCID());
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_Languages', $items);
 			$event->setParam('collection', $collection);

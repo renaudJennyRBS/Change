@@ -3,9 +3,12 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Brand'|rbsURL:'home' =)">Marques</location>
+			<location href="(= 'Rbs_Brand'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.brand.admin.js.module-name', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div class="rbs-document-editor rbs-document-editor-rbs-brand-brand"></div>
+	<div ng-switch="editMode">
+		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-brand-brand-translate"></div>
+		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-brand-brand"></div>
+	</div>
 </div>

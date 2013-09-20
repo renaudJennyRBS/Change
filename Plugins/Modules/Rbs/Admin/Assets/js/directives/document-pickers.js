@@ -52,7 +52,6 @@
 		scope.allowEdition = attrs.allowEdition;
 
 		attrs.$observe('acceptedModel', function () {
-			console.log("attrs=", attrs.acceptedModel, ", scope=", iElement.attr('accepted-model'));
 			scope.acceptedModel = iElement.attr('accepted-model');
 		});
 
