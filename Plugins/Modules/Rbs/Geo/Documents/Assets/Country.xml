@@ -7,7 +7,7 @@
 			<dboptions length="3" />
 			<constraint name="unique" />
 		</property>
-		<property name="title" type="String" />
+		<property name="title" type="String" localized="true"/>
 		<property name="addressFields" type="Document" document-type="Rbs_Geo_AddressFields" />
 	</properties>
 </document>
