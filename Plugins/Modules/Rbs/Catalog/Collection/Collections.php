@@ -85,12 +85,19 @@ class Collections
 		$documentServices = $event->getParam('documentServices');
 		if ($documentServices instanceof \Change\Documents\DocumentServices)
 		{
+
 			$docQuery = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Attribute');
 			$docQuery->andPredicates($docQuery->eq('valueType', \Rbs\Catalog\Documents\Attribute::TYPE_GROUP));
+			if ($event->getParam('visibility') === 'axes')
+			{
+				$docQuery->andPredicates($docQuery->like('visibility', '"axes"'));
+			}
+
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('id'), 'id'))
-				->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))->query();
+					->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))->query();
+
 			$items = array();
 			foreach ($query->getResults() as $row)
 			{

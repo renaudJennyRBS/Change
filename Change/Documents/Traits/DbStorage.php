@@ -191,6 +191,7 @@ trait DbStorage
 			throw $e;
 		}
 
+		$this->assignId();
 		$this->doCreate();
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_CREATED, $this);
@@ -203,7 +204,6 @@ trait DbStorage
 	 */
 	protected function doCreate()
 	{
-		$this->assignId();
 		$this->insertDocument();
 		if ($this instanceof Localizable)
 		{

@@ -3,9 +3,10 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
 	editable="true">
 	<properties>
-		<property name="label" stateless="true"/>
-		<property name="declinedProduct" type="Document" document-type="Rbs_Catalog_Product"  />
-		<property name="configurationInfo" type="JSON" />
-		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
+		<property name="declinedProduct" type="Document" document-type="Rbs_Catalog_Product" />
+		<property name="axeAttribute" type="Document" document-type="Rbs_Catalog_Attribute" />
+		<property name="axesInfo" type="JSON" />
+		<property name="productMatrixInfo" type="JSON" />
+		<property name="newSkuOnCreation" type="Boolean" default-value="true"/>
 	</properties>
 </document>

@@ -20,4 +20,6 @@
 	<key id="per-page">par page</key>
 	<key id="close-preview">fermer l'aperçu</key>
 	<key id="close-all-previews">fermer tous les aperçus</key>
+
+	<key id="replace-by-this">Remplacer par cet élément</key>
 </i18n>

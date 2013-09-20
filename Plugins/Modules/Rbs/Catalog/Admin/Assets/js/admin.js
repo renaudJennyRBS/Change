@@ -7,7 +7,6 @@
 	__change.createEditorForModel('Rbs_Catalog_ProductCategorization');
 	__change.createEditorForModel('Rbs_Catalog_Category');
 	__change.createEditorForModel('Rbs_Catalog_Attribute');
-	__change.createEditorForModel('Rbs_Catalog_DeclinationGroup');
 
 	/**
 	 * Routes and URL definitions.
@@ -16,8 +15,6 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Catalog_DeclinationGroup');
-
 			$delegate.model('Rbs_Catalog_Product')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Rbs/Catalog/Product/product-prices.twig');
 
@@ -50,6 +47,24 @@
 						},
 						"rexp" : {
 							"value": true
+						}
+					}
+				]
+			}
+		};
+	});
+
+	app.controller('rbsProductEmptyGroupSelector', function ($scope) {
+		$scope.productEmptyGroupQuery= { "model": "Rbs_Catalog_Product",
+			"where": {
+				"and" : [
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "declinationGroup"
+						},
+						"rexp" : {
+							"value": 0
 						}
 					}
 				]

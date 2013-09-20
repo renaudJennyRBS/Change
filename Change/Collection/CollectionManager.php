@@ -15,12 +15,21 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_COLLECTION = 'getCollection';
 	const EVENT_GET_CODES = 'getCodes';
 
-
 	/**
 	 * @var \Change\Documents\DocumentServices
 	 */
 	protected $documentServices;
 
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 */
+	function __construct($documentServices = null)
+	{
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$this->setDocumentServices($documentServices);
+		}
+	}
 
 	/**
 	 * @param \Change\Documents\DocumentServices $documentServices

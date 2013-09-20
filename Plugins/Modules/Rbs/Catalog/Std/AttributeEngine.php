@@ -13,6 +13,11 @@ class AttributeEngine
 	 */
 	protected $documentServices;
 
+	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
+
 	function __construct(\Change\Documents\DocumentServices $documentServices)
 	{
 		$this->documentServices = $documentServices;
@@ -42,6 +47,18 @@ class AttributeEngine
 	protected function getApplicationServices()
 	{
 		return $this->documentServices->getApplicationServices();
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	public function getCollectionManager()
+	{
+		if ($this->collectionManager === null)
+		{
+			$this->collectionManager = new \Change\Collection\CollectionManager($this->getDocumentServices());
+		}
+		return $this->collectionManager;
 	}
 
 	/**
@@ -323,7 +340,7 @@ class AttributeEngine
 	 * @param $ids
 	 * @return array
 	 */
-	protected function buildGroupDefinition($attribute, &$ids)
+	public function buildGroupDefinition($attribute, &$ids)
 	{
 		$definition = array('label' => $attribute->getLabel(), 'attributes' => array());
 		foreach ($attribute->getAttributes() as $childAttribute)
@@ -353,35 +370,21 @@ class AttributeEngine
 	 * @param Attribute $attribute
 	 * @return array|null
 	 */
-	protected function buildAttributeDefinition($attribute)
+	public function buildAttributeDefinition($attribute)
 	{
 		$vt = $attribute->getValueType();
 		$definition = array('id' => $attribute->getId(), 'label' => $attribute->getLabel(),
 			'required' => $attribute->getRequiredValue(), 'valueType' => $vt, 'type' => $vt,
-			'defaultValue' => null, 'collectionCode' => null);
+			'defaultValue' => null, 'collectionCode' => null, 'values' => null);
 
 		if (Attribute::TYPE_PROPERTY == $vt)
 		{
-			if (strpos($attribute->getProductProperty(), '::'))
-			{
-				list($modelName, $propertyName) = explode('::', $attribute->getProductProperty());
-			}
-			else
-			{
-				$modelName = 'Rbs_Catalog_Product';
-				$propertyName = $attribute->getProductProperty();
-			}
-
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
-			if (!$model)
+			$property = $attribute->getModelProperty();
+			if (!$property)
 			{
 				return null;
 			}
-			$property = $model->getProperty($propertyName);
-			if (!$property || !$property->getType())
-			{
-				return null;
-			}
+			$propertyName = $property->getName();
 
 			$definition['propertyName']  = $propertyName;
 			switch ($property->getType())
@@ -448,11 +451,37 @@ class AttributeEngine
 			}
 		}
 
-		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_CODE, Attribute::TYPE_DOCUMENT)))
+		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_CODE, Attribute::TYPE_DOCUMENT)) && $attribute->getCollectionCode())
 		{
-			$definition['collectionCode'] = $attribute->getCollectionCode();
+			$definition['values'] = $this->getCollectionValues($attribute);
+			if (is_array($definition['values']))
+			{
+				$definition['collectionCode'] = $attribute->getCollectionCode();
+			}
 		}
 		return $definition;
+	}
+
+	/**
+	 * @param Attribute $attribute
+	 * @return array|null
+	 */
+	public function getCollectionValues($attribute)
+	{
+		if ($attribute instanceof Attribute && $attribute->getCollectionCode())
+		{
+			$collection = $this->getCollectionManager()->getCollection($attribute->getCollectionCode());
+			if ($collection)
+			{
+				$values = array();
+				foreach($collection->getItems() as $item)
+				{
+					$values[] = array('value' => $item->getValue(), 'label' => $item->getLabel(), 'title' => $item->getTitle());
+				}
+				return $values;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -484,7 +513,7 @@ class AttributeEngine
 						$attribute = $documentManager->getDocumentInstance($id);
 						if ($attribute instanceof Attribute)
 						{
-							$property = $product->getDocumentModel()->getProperty($attribute->getProductProperty());
+							$property = $attribute->getModelProperty();
 							if ($property)
 							{
 								$pc = new \Change\Http\Rest\PropertyConverter($product, $property);
@@ -560,7 +589,7 @@ class AttributeEngine
 						$attribute = $documentManager->getDocumentInstance($id);
 						if ($attribute instanceof Attribute)
 						{
-							$property = $product->getDocumentModel()->getProperty($attribute->getProductProperty());
+							$property = $attribute->getModelProperty();
 							if ($property)
 							{
 								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $urlManager);
@@ -587,5 +616,29 @@ class AttributeEngine
 			}
 		}
 		return count($expandedAttributeValues) ? $expandedAttributeValues : null;
+	}
+
+	/**
+	 * @param Attribute $groupAttribute
+	 * @return Attribute[]
+	 */
+	public function getAxeAttributes($groupAttribute)
+	{
+		$axeAttributes = array();
+		if ($groupAttribute instanceof Attribute && $groupAttribute->getValueType() === Attribute::TYPE_GROUP);
+		{
+			foreach ($groupAttribute->getAttributes() as $axeAttribute)
+			{
+				if ($axeAttribute->getValueType() === Attribute::TYPE_GROUP )
+				{
+					$axeAttributes = array_merge($axeAttributes, $this->getAxeAttributes($axeAttribute));
+				}
+				elseif ($axeAttribute->isVisibleFor('axes'))
+				{
+					$axeAttributes[] = $axeAttribute;
+				}
+			}
+		}
+		return $axeAttributes;
 	}
 }

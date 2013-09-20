@@ -3,24 +3,135 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker required="true" property="declinedProduct" label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct', ['ucf']) }}"
-				accepted-model="Rbs_Catalog_Product"
-				selector-title="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct-picker-title', ['ucf']) }}"
-				allow-creation="true"
-				allow-edition="true">
-		</rbs-field-picker>
+		<div data-ng-if="document.isNew()">
+			<rbs-field-picker required="true" property="declinedProduct"
+					label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct', ['ucf']) }}"
+					accepted-model="Rbs_Catalog_Product"
+					selector-title="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.declinedproduct-picker-title', ['ucf']) }}"
+					allow-creation="true"
+					allow-edition="false"
+					picker-template="picker-empty-group.twig">
+			</rbs-field-picker>
 
-		<rbs-field required="true" property="attribute"  label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.attribute', ['ucf']) }}">
-			<select ng-required="true" ng-model="document.attribute"
-					rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
-				<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
-			</select>
-		</rbs-field>
-	</fieldset>
+			<rbs-field required="true" property="axeAttribute"
+					label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.axeattribute', ['ucf']) }}">
+				<select ng-required="true" ng-model="document.axeAttribute"
+						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
+					<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
+				</select>
+			</rbs-field>
+		</div>
 
-	<fieldset data-ng-show="section=='attributes'"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.section-attributes', ['ucf']) }}"
-			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		<rbs-field-boolean property="newSkuOnCreation"
+				label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.newskuoncreation', ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<div data-ng-if="!document.isNew()">
+			<div class="control-group property" property="axesInfo"
+					label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.axesinfo', ['ucf']) }}">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Axe</th>
+							<th>Visible dans les listes</th>
+							<th>Valeurs</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-ng-repeat="axeInfo in document.axesInfo">
+							<td>
+								(= getAxeTitle(axeInfo.id) =)
+							</td>
+							<td>
+								<switch ng-model="axeInfo.cat"></switch>
+							</td>
+							<td>
+								<div class="input-prepend">
+									<button class="btn" type="button" ng-click="addAxeDefaultValue(axeInfo)"><i class="icon-plus-sign"> </i></button>
+									<input type="text" class="input-small" data-ng-model="axeDefaultValue[axeInfo.id]">
+								</div><br />
+								<span data-ng-repeat="value in axeInfo.dv">
+									<a href ng-click="removeAxeDefaultValue(axeInfo, value)"><i class="icon-minus-sign"> </i>(= value.title =)</a>
+									<span data-ng-hide="$last">, </span>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<button class="btn btn-small btn-warning" ng-click="addAllProduct()" type="button">Générer toutes les fiches produit</button>
+			</div>
+			<hr />
+
+			<div class="control-group property" property="productMatrixInfo"
+					label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.productmatrixinfo', ['ucf']) }}">
+
+				<div data-ng-show="declinationPath.length">
+					<a href ng-click="selectDeclinationId(document.declinedProduct.id)">
+						(= document.label =)</a> -
+						<span data-ng-repeat="declination in declinationPath">
+							<a href ng-click="selectDeclinationId(declination.id)" data-ng-hide="$last">
+								(= getAxeTitle(declination.axeId) =) : (= getAxeValueTitle(declination.axeId, declination.axeValue) =)
+							</a>
+							<span data-ng-hide="$last"> - </span>
+							<span data-ng-show="$last">
+								(= getAxeTitle(declination.axeId) =) : (= getAxeValueTitle(declination.axeId, declination.axeValue) =)
+							</span>
+						</span>
+				</div>
+
+				<div data-ng-hide="declinationPath.length">
+					(= document.label =)
+				</div>
+
+				<table class="table">
+						<thead>
+							<tr>
+								<th>(= getAxeTitle(currentAxe.id) =) </th>
+								<th data-ng-hide="isDeclinationMatrix()">Fiche Produit</th>
+								<th data-ng-show="isDeclinationMatrix()">Déclinaison : (= nextDeclinationAxe().label =)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-ng-repeat="row in matrix">
+								<td>
+									(= row[0].title =)
+								</td>
+								<td data-ng-show="row[1].declination">
+									<div data-ng-switch="row[1].id">
+										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+											<i class="icon-plus-sign"> </i> Ajouter la déclinaison</a>
+										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="selectDeclinationId(row[1].id)">
+											<i class="icon-edit"> </i> Editer</a>
+										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
+											<i class="icon-minus-sign"> </i> Supprimer</a>
+									</div>
+								</td>
+								<td data-ng-hide="row[1].declination">
+										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+											<i class="icon-plus-sign"> </i> Ajouter le produit</a>
+										<a href="javascript:;" data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
+											<i class="icon-edit"> </i> Editer</a>
+										<span data-ng-show="row[1].id < 0" ng-click="editProduct(row[1])">
+											<i class="icon-info-sign"> </i> (A générer)</span>
+										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
+											<i class="icon-minus-sign"> </i> Supprimer</a>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="input-prepend">
+										<button class="btn" type="button" ng-click="addAxeDefaultValue(currentAxe.info)"><i class="icon-plus-sign"> </i></button>
+										<input type="text" class="input-small" data-ng-model="axeDefaultValue[currentAxe.info.id]">
+									</div>
+								</td>
+								<td>
+									Ajouter la nouvelle valeur de l'axe.
+								</td>
+							</tr>
+						</tbody>
+				</table>
+			</div>
+		</div>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

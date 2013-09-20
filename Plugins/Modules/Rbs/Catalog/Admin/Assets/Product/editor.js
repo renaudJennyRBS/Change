@@ -19,11 +19,15 @@
 
 			link: function (scope, elm, attrs, editorCtrl)
 			{
-				scope.onReady = function() {
+				scope.onLoad = function() {
 					if (!angular.isArray(scope.document.attributeValues))
 					{
 						scope.document.attributeValues = [];
 					}
+				}
+
+				scope.onReady = function() {
+
 					loadCategorizations();
 				};
 

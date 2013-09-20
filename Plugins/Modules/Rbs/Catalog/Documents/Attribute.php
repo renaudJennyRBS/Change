@@ -55,7 +55,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		$vt = $this->getValueType();
 		if ($vt === static::TYPE_PROPERTY)
 		{
-			$property = $product->getDocumentModel()->getProperty($this->getProductProperty());
+			$property = $this->getModelProperty();
 			return ($property) ? $property->getValue($product) : null;
 		}
 		elseif ($vt === static::TYPE_GROUP)
@@ -107,5 +107,31 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	public function isVisibleFor($visibility)
 	{
 		return in_array($visibility, $this->getVisibility());
+	}
+
+	/**
+	 * @return \Change\Documents\Property|null
+	 */
+	public function getModelProperty()
+	{
+		if ($this->getValueType() === static::TYPE_PROPERTY)
+		{
+			if (strpos($this->getProductProperty(), '::'))
+			{
+				list($modelName, $propertyName) = explode('::', $this->getProductProperty());
+			}
+			else
+			{
+				$modelName = 'Rbs_Catalog_Product';
+				$propertyName = $this->getProductProperty();
+			}
+
+			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+			if ($model)
+			{
+				return $model->getProperty($propertyName);
+			}
+		}
+		return null;
 	}
 }
