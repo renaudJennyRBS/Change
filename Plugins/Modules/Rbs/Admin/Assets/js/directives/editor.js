@@ -807,7 +807,7 @@
 
 			compile : function (tElement)
 			{
-				tElement.find('form[transform-layout="true"]').each(function ()
+				tElement.find('form').not('[preserve-layout]').each(function ()
 				{
 					var	$form = $(this),
 						$properties = $form.children('[property]'),
