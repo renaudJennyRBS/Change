@@ -28,4 +28,14 @@ interface PageTemplate
 	 * @return \Change\Presentation\Layout\Layout
 	 */
 	public function getContentLayout();
+
+	/**
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetCollection();
+
+	/**
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getJsAssetCollection();
 }

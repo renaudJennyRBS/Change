@@ -1,0 +1,8 @@
+{
+	"*" : {
+		"cssAssets" : [
+			{"href": "Theme/Rbs/Base/css/screen.css", "media": ""}
+		],
+		"jsAssets" : ["Theme/Rbs/Base/js/bootstrap.min.js"]
+	}
+}

@@ -307,4 +307,88 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		$results = $this->getEventManager()->triggerUntil($event, $callback);
 		return ($results->stopped() && ($results->last() instanceof \Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
 	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\PageTemplate $pageTemplate
+	 * @param string[] $blockNames
+	 * @param $workspace \Change\Workspace
+	 */
+	public function configurePageTemplate($pageTemplate, $blockNames, $workspace)
+	{
+		//first get themes configuration
+		//begin by the base, and merge with parent current and finally with current theme
+		$configuration = [];
+		//find base assets configuration file
+		$path = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $this->getDefault()->getName()));
+		$assetsConfigurationPath = $path . DIRECTORY_SEPARATOR . 'assets.json';
+		if (file_exists($assetsConfigurationPath))
+		{
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
+		}
+
+		//TODO test that!
+		$parentTheme = $this->getCurrent()->getParentTheme();
+		if ($parentTheme)
+		{
+			$this->mergeParentThemeConfiguration($parentTheme, $configuration, $workspace);
+		}
+
+		$assetsConfigurationPath = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $this->getCurrent()->getName()), 'assets.json');
+		if (file_exists($assetsConfigurationPath))
+		{
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
+		}
+
+		//Now search in path all assets in *_* folders
+		$glob = new \GlobIterator($path . DIRECTORY_SEPARATOR . '*_*' . DIRECTORY_SEPARATOR . 'assets.json');
+		while ($glob->valid())
+		{
+			$moduleShortName = substr($glob->getPath(), strrpos($glob->getPath(), DIRECTORY_SEPARATOR) + 1);
+			$pluginConfiguration = json_decode(\Change\Stdlib\File::read($glob->getPathname()), true);
+			$formattedPluginConfiguration = [];
+			foreach ($pluginConfiguration as $blockName => $blockConfiguration)
+			{
+				$formattedPluginConfiguration[$moduleShortName . '_' . $blockName] = $blockConfiguration;
+			}
+			$configuration = array_merge($configuration, $formattedPluginConfiguration);
+			$glob->next();
+		}
+
+		$alreadyAddedAssets = [];
+		foreach ($configuration as $key => $assetType)
+		{
+			if ($key === '*' || in_array($key, $blockNames))
+			{
+				foreach ($assetType['jsAssets'] as $jsAsset)
+				{
+					if (!in_array($jsAsset, $alreadyAddedAssets))
+					{
+						$formattedAsset = '<script src="' . $jsAsset . '" type="text/javascript"></script>';
+						$asseticJs = new \Assetic\Asset\StringAsset($formattedAsset);
+						$pageTemplate->getJsAssetCollection()->add($asseticJs);
+						$alreadyAddedAssets[] = $jsAsset;
+					}
+				}
+				//TODO same with CSS
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Theme $parentTheme
+	 * @param array $configuration
+	 * @param $workspace \Change\Workspace
+	 */
+	protected function mergeParentThemeConfiguration($parentTheme, &$configuration, $workspace)
+	{
+		if ($parentTheme->getParentTheme())
+		{
+			$configuration = $this->mergeParentThemeConfiguration($parentTheme->getParentTheme(), $configuration, $workspace);
+		}
+		$assetsConfigurationPath = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $parentTheme->getName()), 'assets.json');
+		if (file_exists($assetsConfigurationPath))
+		{
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
+		}
+	}
 }

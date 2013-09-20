@@ -112,6 +112,21 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
 
 				$pageTemplate = $page->getPageTemplate();
+				$blockNames = array();
+				foreach($templateLayout->getBlocks() as $block)
+				{
+					$blockNames[$block->getName()] = true;
+				}
+				foreach($pageLayout->getBlocks() as $block)
+				{
+					$blockNames[$block->getName()] = true;
+				}
+				$pageEvent->getPresentationServices()->getThemeManager()
+					->configurePageTemplate($pageTemplate, array_keys($blockNames), $this->getApplicationServices()->getApplication()->getWorkspace());
+				//TODO cssHead like Js
+				//$twigLayout['<!-- cssHead -->'] = $pageTemplate->getCssAssetCollection()->dump();
+				$twigLayout['<!-- jsFooter -->'] = $pageTemplate->getJsAssetCollection()->dump();
+
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
 				\Change\Stdlib\File::write($cachePath, $htmlTemplate);

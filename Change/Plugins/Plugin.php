@@ -361,7 +361,14 @@ class Plugin
 	 */
 	public function getThemeAssetsPath()
 	{
-		$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Theme'));
+		if ($this->type === static::TYPE_MODULE)
+		{
+			$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Theme'));
+		}
+		else
+		{
+			$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets'));
+		}
 		return is_dir($path) ? $path : null ;
 	}
 

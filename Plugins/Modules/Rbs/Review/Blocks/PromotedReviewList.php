@@ -66,15 +66,19 @@ class PromotedReviewList extends Block
 			if ($mode === 'promoted')
 			{
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document), $dqb->eq('promoted', true));
+				//TODO order on upvote comment, but a formula between upvote and downvote will be better
+				$dqb->addOrder('upvote', false);
+			}
+			elseif ($mode === 'recent')
+			{
+				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document));
+				$dqb->addOrder('reviewDate', false);
+				$parameters->setParameterValue('mode', 'recent');
 			}
 			else
 			{
-				//most recent is the default mode
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document));
-				$parameters->setParameterValue('mode', 'recent');
 			}
-			//TODO order on upvote comment, but a formula between upvote and downvote will be better
-			$dqb->addOrder('upvote', false);
 			$reviews = $dqb->getDocuments(0, $parameters->getParameter('maxReviews'));
 		}
 

@@ -17,6 +17,7 @@ class Install extends \Change\Plugins\InstallBase
 	{
 		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->getModules();
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 		foreach ($plugins as $plugin)
 		{
 			if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))

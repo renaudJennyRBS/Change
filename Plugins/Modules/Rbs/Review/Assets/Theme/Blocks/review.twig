@@ -20,6 +20,27 @@
 	<!-- modified?
 	<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
 	-->
+	<script type="text/javascript">
+		window.__change.RbsReview{{ blockId }} = {{ review | json_encode() | raw }};
+	</script>
+	<div ng-controller="RbsReviewVoteCtrl" ng-init="blockId = 'RbsReview{{ blockId }}'">
+		<pre>(= blockId =) (= review | json =)</pre>
+		<footer>
+			<p data-ng-if="review.upvote + review.downvote == 0">
+				{{ i18n('m.rbs.review.blocks.review-novote', ['ucf']) }}
+			</p>
+			<div data-ng-if="review.upvote + review.downvote > 0">
+				<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> (= review.upvote =)</span></span>
+				<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> (= review.downvote =)</span></span>
+			</div>
+			<div data-ng-if="review.canVote">
+				<span>{{ i18n('m.rbs.review.blocks.review-vote', ['ucf']) }}</span>
+				<button name="voteup" class="btn btn-xs btn-success" type="button" data-ng-click="vote(true)"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.blocks.review-upvote', ['ucf']) }}</button>
+				<button name="votedown" class="btn btn-xs btn-warning" type="button" data-gn-click="vote(false)"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
+			</div>
+		</footer>
+	</div>
+	<!--
 	<footer class="panel-footer review-votes" data-votes="{{ review.upvote + review.downvote }}">
 		<p id="review-novote-{{ review.id }}" class="review-novote">
 			{{ i18n('m.rbs.review.blocks.review-novote', ['ucf']) }}
@@ -35,55 +56,5 @@
 			<button name="votedown" class="btn btn-xs btn-warning" type="button" onclick="__change.voteReview('down', {{ review.id }})"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
 		</div>
 	</footer>
+	-->
 </article>
-<script type="text/javascript">
-	if (!__change.hasOwnProperty('voteReview'))
-	{
-		__change.voteReview = function (value, reviewId){
-			jQuery.ajax({
-				type: 'POST',
-				url: 'Action/Rbs/Review/VoteReview',
-				data: {
-					reviewId: reviewId,
-					vote: value
-				}
-			}).done(function (data){
-					var votedString = document.cookie.match(/(reviewVotes=([0-9]*,?)*)/);
-					if (data.vote == 'up')
-					{
-						jQuery('#' + reviewId + '-upvote').html('<strong>' + data.upvote + '</strong>');
-					}
-					else if (data.vote == 'down')
-					{
-						jQuery('#' + reviewId + '-downvote').html('<strong>' + data.downvote + '</strong>')
-					}
-					jQuery('#vote-buttons-' + reviewId).hide();
-					jQuery('#review-novote-' + reviewId).hide();
-					jQuery('#review-vote-thumbs-' + reviewId).show();
-					document.cookie = votedString != null ? votedString[1] + ',' + reviewId + ';' : 'reviewVotes=' + reviewId + ';';
-				});
-		};
-	}
-	window.onload = function (){
-		//Hide no vote if review has already votes
-		jQuery('.review-votes').each(function (index, element){
-			if (jQuery(element).data('votes') > 0)
-			{
-				jQuery(element).children('.review-novote').hide();
-			}
-			else
-			{
-				jQuery(element).children('.review-vote-thumbs').hide();
-			}
-		});
-
-		var votedString = document.cookie.match(/reviewVotes=(([0-9]*,?)*)/);
-		if (votedString)
-		{
-			reviewIds = votedString[1].split(',');
-			jQuery.each(reviewIds, function(index, reviewId){
-				jQuery('#vote-buttons-' + reviewId).hide();
-			});
-		}
-	};
-</script>

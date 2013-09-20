@@ -121,8 +121,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function getResource($resourcePath)
 	{
-		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		$path = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
 
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')

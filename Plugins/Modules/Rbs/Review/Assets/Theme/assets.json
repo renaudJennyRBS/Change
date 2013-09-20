@@ -1,0 +1,11 @@
+{
+	"PromotedReviewList" : {
+		"cssAssets" : {},
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	},
+
+	"ReviewList" : {
+		"cssAssets" : {},
+		"jsAssets" : ["Theme/Rbs/Base/js/angular/angular-cookies.js", "Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	}
+}

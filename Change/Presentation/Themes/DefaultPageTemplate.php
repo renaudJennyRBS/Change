@@ -69,4 +69,20 @@ class DefaultPageTemplate implements PageTemplate
 		$config = json_decode($res->getContent(), true);
 		return new Layout($config);
 	}
+
+	/**
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetCollection()
+	{
+		// TODO: Implement getCssAssetCollection() method.
+	}
+
+	/**
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getJsAssetCollection()
+	{
+		// TODO: Implement getJsAssetCollection() method.
+	}
 }

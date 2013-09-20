@@ -141,7 +141,8 @@ class DefaultTheme implements Theme
 	 */
 	public function getResource($resourcePath)
 	{
-		$path = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+
 		return new FileResource($path);
 	}
 }

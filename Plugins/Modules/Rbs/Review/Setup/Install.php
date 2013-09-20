@@ -31,9 +31,10 @@ class Install
 	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 * @throws \Exception
 	 */
-//	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
-//	{
-//	}
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	{
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

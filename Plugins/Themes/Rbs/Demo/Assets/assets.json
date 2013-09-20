@@ -1,0 +1,11 @@
+{
+	"*" : {
+		"cssAssets" : [
+			{ "href": "Theme/Rbs/Base/css/screen.css", "media": ""}
+		],
+		"jsAssets" : ["Theme/Rbs/Base/js/jquery-1.8.2.min.js", "Theme/Rbs/Base/js/bootstrap.min.js",
+			"Theme/Rbs/Base/js/bootstrap-complements.js", "Theme/Rbs/Demo/js/default.js",
+			"Theme/Rbs/Base/js/angular-1.2.0-rc2/angular.min.js", "Theme/Rbs/Base/js/angular-1.2.0-rc2/angular-cookies.min.js",
+			"Theme/Rbs/Base/js/rbschangeapp.js"]
+	}
+}
