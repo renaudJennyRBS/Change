@@ -31,7 +31,10 @@
 	<key id="picker-choose-model-to-select">document types:</key>
 
 	<key id="click-to-select-another-image">click to select another image from your computer</key>
+
 	<key id="activation">activation</key>
 	<key id="validation">validation</key>
-	<key id="localisation">localization</key>
+	<key id="translation">translation</key>
+	<key id="translations">translations</key>
+	<key id="reference-language">reference language</key>
 </i18n>

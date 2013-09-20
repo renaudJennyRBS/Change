@@ -83,6 +83,19 @@
 
 
 	/**
+	 * Label.
+	 */
+	app.filter('lbl', function () {
+
+		return function lblFilterFn (input) {
+			// FIXME Remove space before ':' according to current language.
+			return input + ' :';
+		};
+
+	});
+
+
+	/**
 	 * The following directive should be placed on an input field to validate that its value is a valid locale name.
 	 */
 	app.directive('localeId', ['RbsChange.Utils', function (Utils) {

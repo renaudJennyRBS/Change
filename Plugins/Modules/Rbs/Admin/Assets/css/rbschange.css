@@ -1400,3 +1400,8 @@ th label {
 #mainMenu .active.untranslated a {
 	color: #ffd1d5;
 }
+
+.control-group.property + .btn.copy-reference-value {
+	position: relative;
+	top: -20px;
+}

@@ -126,16 +126,37 @@
 	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
 
 
+
 	/**
 	 * Localized version of the editor.
 	 */
-	function changeEditorWebsiteFunctionalPageLocalized ($location, Dialog, UrlManager) {
-		var directive = changeEditorWebsiteFunctionalPage ($location, Dialog, UrlManager);
-		directive.templateUrl = 'Rbs/Website/FunctionalPage/editor-localized.twig';
-		return directive;
+	function changeEditorWebsitePageTranslate (REST)
+	{
+		return {
+			restrict    : 'C',
+			templateUrl : 'Rbs/Website/FunctionalPage/editor-translate.twig',
+			replace     : false,
+			require     : 'rbsDocumentEditor',
+
+			link : function (scope, element, attrs, editorCtrl) {
+				scope.onLoad = function ()
+				{
+					// Load PageTemplate Document
+					if (scope.document.pageTemplate) {
+						REST.resource(scope.document.pageTemplate).then(function (template) {
+							scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
+						});
+					}
+				};
+				editorCtrl.init('Rbs_Website_FunctionalPage');
+			}
+		};
 	}
 
-	changeEditorWebsiteFunctionalPageLocalized.$inject = changeEditorWebsiteFunctionalPage.$inject;
-	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpageLocalized', changeEditorWebsiteFunctionalPageLocalized);
+	changeEditorWebsitePageTranslate.$inject = [
+		'RbsChange.REST'
+	];
+
+	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpageTranslate', changeEditorWebsitePageTranslate);
 
 })();

@@ -34,5 +34,7 @@
 
 	<key id="activation">activation</key>
 	<key id="validation">validation</key>
-	<key id="localisation">localisation</key>
+	<key id="translation">traduction</key>
+	<key id="translations">traductions</key>
+	<key id="reference-language">langue de référence</key>
 </i18n>

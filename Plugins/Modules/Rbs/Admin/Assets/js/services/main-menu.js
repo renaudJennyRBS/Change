@@ -321,7 +321,7 @@
 					if (lcid === doc.refLCID) {
 						contents.push({
 							'url' : doc.url(),
-							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr-title | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
+							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.reference-language | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
 							'icon' : 'icon-book'
 						});
 					}

@@ -81,6 +81,7 @@
 	<key id="translations">translations</key>
 	<key id="other-actions">other actions</key>
 	<key id="ref-lang-abbr">ref.</key>
-	<key id="ref-lang-abbr-title">reference language</key>
+	<key id="reference-language">reference language</key>
+	<key id="translate-in">translate in</key>
 
 </i18n>

@@ -141,9 +141,13 @@
 					// If `doc` is a Document object, we try to replace the parameters in the `url` with
 					// the corresponding properties of the Document.
 					if (angular.isString(doc)) {
-						if (angular.isObject(params)) {
-							url = replaceParams(url, params);
+						if (! angular.isObject(params)) {
+							params = {};
 						}
+						if (! params.LCID) {
+							params.LCID = doc.refLCID;
+						}
+						url = replaceParams(url, params);
 					} else {
 						url = replaceParams(url, angular.extend({}, doc, params));
 					}

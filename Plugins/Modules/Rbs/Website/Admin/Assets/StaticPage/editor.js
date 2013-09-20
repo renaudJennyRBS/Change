@@ -65,7 +65,7 @@
 	/**
 	 * Localized version of the editor.
 	 */
-	function changeEditorWebsitePageTranslate (Workspace, REST)
+	function changeEditorWebsitePageTranslate (REST)
 	{
 		return {
 			restrict    : 'C',
@@ -89,7 +89,6 @@
 	}
 
 	changeEditorWebsitePageTranslate.$inject = [
-		'RbsChange.Workspace',
 		'RbsChange.REST'
 	];
 

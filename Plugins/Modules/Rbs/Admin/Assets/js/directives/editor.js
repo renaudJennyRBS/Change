@@ -396,6 +396,13 @@
 							$scope.currentLCID = $scope.document.LCID;
 							$scope.refDocument = promisesResults[2];
 							$scope.availableLanguages = promisesResults[3].items;
+
+							$scope.availableTranslations = {};
+							angular.forEach($scope.availableLanguages, function (l, id) {
+								if (id !== $scope.document.refLCID) {
+									$scope.availableTranslations[id] = l;
+								}
+							});
 						}
 
 						// Call `$scope.onLoad()` if present.
@@ -788,7 +795,7 @@
 
 
 
-	function editorDirectiveTranslate () {
+	function editorDirectiveTranslate (i18n) {
 
 		return {
 
@@ -804,18 +811,18 @@
 				{
 					var	$form = $(this),
 						$properties = $form.children('[property]'),
-						$table = $('<table cellpadding="10" width="100%"></table>');
+						$table = $('<table cellpadding="16" width="100%" class="table table-striped"></table>');
 
-					if ($properties.length) {
-
+					if ($properties.length)
+					{
 						$table.append(
 							'<tr>' +
-								'<td width="50%" valign="top">' +
-									'<select ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableLanguages"></select>' +
-								'</td>' +
-								'<td valign="top" style="border-left: 5px solid silver; background: #F5F5F5;">' +
-									'Langue de référence : (= availableLanguages[refDocument.LCID].label =)' +
-								'</td>' +
+								'<th width="50%">' +
+								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="input-medium" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
+								'</th>' +
+								'<th style="border-left: 5px solid #0088CC; background: rgba(0,136,255,0.05);">' +
+									i18n.trans('m.rbs.admin.admin.js.reference-language | ucf | lbl') + ' (= availableLanguages[refDocument.LCID].label =)' +
+								'</th>' +
 							'</tr>'
 						);
 
@@ -823,10 +830,11 @@
 						{
 							var	$prop = $(this),
 								$tr = $('<tr></tr>'),
-								$lcell = $('<td valign="top" width="50%"></td>'),
-								$rcell = $('<td valign="top" width="50%" style="border-left: 5px solid silver; background: #F5F5F5;"></td>'),
+								$lcell = $('<td width="50%" style="vertical-align: top"></td>'),
+								$rcell = $('<td width="50%" style="border-left: 5px solid #0088CC; vertical-align: top; background: rgba(0,136,255,0.05);"></td>'),
 								$refProp,
-								ngModel;
+								ngModel,
+								propertyName = $prop.attr('property');
 
 							$table.append($tr);
 							$tr.append($lcell);
@@ -834,13 +842,14 @@
 							$lcell.append($prop);
 
 							$refProp = $prop.clone();
-							$refProp.attr('property', 'refDocument.' + $prop.attr('property'));
+							$refProp.attr('property', 'refDocument.' + propertyName);
 							$refProp.attr('readonly', 'true');
 							ngModel = $refProp.attr('ng-model');
 							if (ngModel) {
 								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
 							}
 							$rcell.append($refProp);
+							$rcell.append('<button type="button" class="btn btn-small copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= document.LCID =)</button>');
 						});
 
 						$form.prepend($table);
@@ -853,7 +862,7 @@
 
 	}
 
-	editorDirectiveTranslate.$inject = [];
+	editorDirectiveTranslate.$inject = ['RbsChange.i18n'];
 
 	app.directive('rbsDocumentEditorTranslate', editorDirectiveTranslate);
 

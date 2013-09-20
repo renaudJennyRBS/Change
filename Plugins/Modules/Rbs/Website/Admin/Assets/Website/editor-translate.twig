@@ -1,0 +1,16 @@
+<form name="form" ng-submit="submit()" transform-layout="true" novalidate="">
+
+	<rbs-field-text
+		property="title" required="true"
+		rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}"
+		label="{{ i18nAttr('m.rbs.website.document.topic.title', ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field-url
+			property="baseurl" required="true"
+			label="{{ i18nAttr('m.rbs.website.document.website.baseurl', ['ucf']) }}">
+		<span class="help-block">{{ i18n('m.rbs.website.document.website.baseurl-help', ['ucf']) }}</span>
+	</rbs-field-url>
+
+	<form-button-bar></form-button-bar>
+</form>
