@@ -52,7 +52,7 @@ class UpdateReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 			else
 			{
-				$data = [ 'error' => 'Invalid user' ];
+				$data = [ 'error' => 'Invalid review' ];
 			}
 			$result = new \Change\Http\Web\Result\AjaxResult($data);
 			$event->setResult($result);

@@ -21,13 +21,15 @@
 	<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
 	-->
 	<script type="text/javascript">
-		window.__change.RbsReview{{ blockId }} = {{ review | json_encode() | raw }};
+		window.__change.RbsReview{{ review.id }} = {{ review | json_encode() | raw }};
 	</script>
-	<div ng-controller="RbsReviewVoteCtrl" ng-init="blockId = 'RbsReview{{ blockId }}'">
-		<pre>(= blockId =) (= review | json =)</pre>
-		<footer>
+	<div ng-controller="RbsReviewVoteCtrl" ng-init="reviewId = 'RbsReview{{ review.id }}'">
+		<footer class="panel-footer">
 			<p data-ng-if="review.upvote + review.downvote == 0">
 				{{ i18n('m.rbs.review.blocks.review-novote', ['ucf']) }}
+			</p>
+			<p data-ng-if="review.voted">
+				{{ i18n('m.rbs.review.blocks.review-voted', ['ucf']) }}
 			</p>
 			<div data-ng-if="review.upvote + review.downvote > 0">
 				<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> (= review.upvote =)</span></span>
@@ -35,8 +37,8 @@
 			</div>
 			<div data-ng-if="review.canVote">
 				<span>{{ i18n('m.rbs.review.blocks.review-vote', ['ucf']) }}</span>
-				<button name="voteup" class="btn btn-xs btn-success" type="button" data-ng-click="vote(true)"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.blocks.review-upvote', ['ucf']) }}</button>
-				<button name="votedown" class="btn btn-xs btn-warning" type="button" data-gn-click="vote(false)"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
+				<button name="voteup" class="btn btn-xs btn-success" type="button" data-ng-click="vote('up')"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.blocks.review-upvote', ['ucf']) }}</button>
+				<button name="votedown" class="btn btn-xs btn-warning" type="button" data-ng-click="vote('down')"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
 			</div>
 		</footer>
 	</div>

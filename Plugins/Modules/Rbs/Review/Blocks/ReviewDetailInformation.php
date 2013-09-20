@@ -25,6 +25,6 @@ class ReviewDetailInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review', $ucf));
 		$this->addInformationMeta('canEdit', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-detail-can-edit', $ucf));
-		$this->setFunctions(array('Rbs_Review_Review' => $i18nManager->trans('m.rbs.catalog.blocks.review-function', $ucf)));
+		$this->setFunctions(array('Rbs_Review_Review' => $i18nManager->trans('m.rbs.review.blocks.review-function', $ucf)));
 	}
 }
