@@ -27,6 +27,11 @@ class AttributePresentation
 	protected $documentServices;
 
 	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
+
+	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 */
 	public function __construct(\Rbs\Catalog\Documents\Product $product = null)
@@ -64,6 +69,18 @@ class AttributePresentation
 	protected function getApplicationServices()
 	{
 		return $this->documentServices->getApplicationServices();
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	public function getCollectionManager()
+	{
+		if ($this->collectionManager === null)
+		{
+			$this->collectionManager = new \Change\Collection\CollectionManager($this->documentServices);
+		}
+		return $this->collectionManager;
 	}
 
 	/**
@@ -310,7 +327,16 @@ class AttributePresentation
 				break;
 
 			case \Rbs\Catalog\Documents\Attribute::TYPE_INTEGER:
-				$item['template'] = 'Rbs_Catalog/Blocks/Attribute/integer.twig';
+				$value = $this->getCollectionItemTitle($attribute->getCollectionCode(), $value);
+				if ($value !== false)
+				{
+					$item['value'] = $value;
+					$item['template'] = 'Rbs_Catalog/Blocks/Attribute/text.twig';
+				}
+				else
+				{
+					$item['template'] = 'Rbs_Catalog/Blocks/Attribute/integer.twig';
+				}
 				break;
 
 			case \Rbs\Catalog\Documents\Attribute::TYPE_TEXT:
@@ -318,10 +344,37 @@ class AttributePresentation
 				break;
 
 			default:
+				$value = $this->getCollectionItemTitle($attribute->getCollectionCode(), $value);
+				if ($value !== false)
+				{
+					$item['value'] = $value;
+				}
 				$item['template'] = 'Rbs_Catalog/Blocks/Attribute/text.twig';
 				break;
 		}
 		return $item;
+	}
+
+	/**
+	 * @param $collectionCode
+	 * @param $value
+	 * @return string|boolean
+	 */
+	protected function getCollectionItemTitle($collectionCode, $value)
+	{
+		if (is_string($collectionCode))
+		{
+			$c = $this->getCollectionManager()->getCollection($collectionCode);
+			if ($c)
+			{
+				$i = $c->getItemByValue($value);
+				if ($i)
+				{
+					return $i->getTitle();
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
