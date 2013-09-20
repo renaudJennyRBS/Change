@@ -469,7 +469,7 @@
 					initMenu();
 
 					// Add "Translations" menu on the left if the document is localizable.
-					if ($scope.modelInfo.metas.localized) {
+					if ($scope.modelInfo.metas.localized && ! EditorManager.isCascading()) {
 						MainMenu.addTranslations($scope.document, $scope);
 					}
 
