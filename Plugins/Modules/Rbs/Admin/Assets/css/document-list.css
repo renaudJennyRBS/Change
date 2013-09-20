@@ -418,6 +418,9 @@ rbs-document-list div.empty-row {
 	background: #F9F9F9;
 }
 
+.quick-actions a {
+	white-space: nowrap;
+}
 
 #rbs-document-list-tester .quick-actions {
 	font-size: 85%;
