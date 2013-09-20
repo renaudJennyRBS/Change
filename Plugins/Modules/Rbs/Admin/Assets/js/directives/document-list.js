@@ -470,8 +470,8 @@
 			}
 
 			if (Device.isMultiTouch()) {
-				$body.attr('ng-swipe-left', "showQuickActions($event)");
-				$body.attr('ng-swipe-right', "hideQuickActions($event)");
+				$body.attr('ng-swipe-left', "showQuickActions($index)");
+				$body.attr('ng-swipe-right', "hideQuickActions($index)");
 			}
 
 			delete __columns[dlid];
@@ -1484,16 +1484,18 @@
 
 					var lastQuickActionsShown = null;
 					if (Device.isMultiTouch()) {
-						scope.showQuickActions = function ($event) {
+						scope.showQuickActions = function ($index) {
 							if (lastQuickActionsShown) {
 								lastQuickActionsShown.removeClass('shown').css({'width':'0'});
 							}
-							lastQuickActionsShown = $($event.target).closest('tr').find('.quick-actions-touch');
+							var target = elm.find('.document-list tbody tr').get($index);
+							lastQuickActionsShown = $(target).find('.quick-actions-touch');
 							lastQuickActionsShown.addClass('shown').css({'width': lastQuickActionsShown.attr('data-real-width')});
 						};
 
-						scope.hideQuickActions = function ($event) {
-							var el = $($event.target).closest('tr').find('.quick-actions-touch');
+						scope.hideQuickActions = function ($index) {
+							var target = elm.find('.document-list tbody tr').get($index);
+							var el = $(target).find('.quick-actions-touch');
 							if (el.is('.shown')) {
 								el.removeClass('shown').css({'width':'0'});
 								lastQuickActionsShown = null;
