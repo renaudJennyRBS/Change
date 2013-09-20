@@ -4,6 +4,9 @@
 	<key id="description">description</key>
 	<key id="categories">catégories</key>
 	<key id="categories-picker-title">sélectionner les catégories</key>
+
+	<key id="categorizable">catégorisable</key>
+
 	<key id="add-categories">ajouter des catégories</key>
 	<key id="visual">visuel</key>
 	<key id="visuals">visuels</key>
@@ -15,6 +18,7 @@
 	<key id="brand-picker-title">sélectionner la marque</key>
 	<key id="shippedin">délai d'expédition</key>
 	<key id="shippedin-help">Délai d'expédition affiché sur le site.</key>
+	<key id="newskuoncreation">Créer un nouveau SKU</key>
 	<key id="sku">code SKU</key>
 	<key id="minorderquantity">quantité minimum</key>
 	<key id="minorderquantity-help">Quantité minimum de ce produit que l'on peut commander.</key>

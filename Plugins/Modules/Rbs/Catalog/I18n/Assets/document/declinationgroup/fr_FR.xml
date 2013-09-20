@@ -3,7 +3,7 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="declinedproduct">produit décliné</key>
 	<key id="declinedproduct-picker-title">sélectionner le produit à décliner</key>
-
-	<key id="section-attributes">Attributs d'axes</key>
-	<key id="attribute">jeu d'attributs</key>
+	<key id="section-axes">axes</key>
+	<key id="axeattribute">jeu d'attributs</key>
+	<key id="newskuoncreation">Créer un nouveau SKU par fiche produit</key>
 </i18n>

@@ -17,8 +17,7 @@
 		</rbs-field-text>
 
 		<rbs-field-boolean
-			ng-cloak=""
-			ng-hide="document.id > 0"
+			ng-cloak="" ng-hide="document.id > 0"
 			property="newSkuOnCreation"
 			label="{{ i18nAttr('m.rbs.catalog.document.product.newskuoncreation', ['ucf']) }}">
 		</rbs-field-boolean>
@@ -60,18 +59,6 @@
 		</rbs-attribute-editor>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='declination'"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-declination', ['ucf']) }}"
-			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-
-		<rbs-field-picker property="declinationGroup" label="{{ i18nAttr('m.rbs.catalog.document.product.declinationgroup', ['ucf']) }}"
-				accepted-model="Rbs_Stock_DeclinationGroup"
-				selector-title="{{ i18nAttr('m.rbs.catalog.document.product.declinationgroup-picker-title', ['ucf']) }}"
-				allow-creation="true"
-				allow-edition="true">
-		</rbs-field-picker>
-	</fieldset>
-
 	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.publication-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
@@ -87,9 +74,30 @@
 		</rbs-field-date>
 	</fieldset>
 
+	<fieldset data-ng-show="section=='declination'" hide-when-create="true"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-declination', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
+
+		<div class="control-group property" data-ng-hide="document.declinationGroup">
+			Le produit ne fait pas partie d'un produit décliné.
+		</div>
+
+		<div class="control-group property" data-ng-show="document.declinationGroup">
+			<label class="control-label">{{ i18n('m.rbs.catalog.document.product.declinationgroup', ['ucf']) }}</label>
+			<div class="controls">
+				<a href ng-href="(= document.declinationGroup | documentURL =)">(= document.declinationGroup.label =)</a>
+			</div>
+		</div>
+	</fieldset>
+
 	<fieldset data-ng-show="section=='categorization'"
 		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.productcategorization', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
+
+		<rbs-field-boolean property="categorizable"
+				label="{{ i18nAttr('m.rbs.catalog.document.product.categorizable', ['ucf']) }}">
+		</rbs-field-boolean>
+
 		<table data-ng-show="categorizations.length > 0" class="table table-striped">
 			<thead>
 			<tr>
@@ -126,7 +134,10 @@
 				</tr>
 			</tbody>
 		</table>
-		<a href data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
+
+		<a href data-ng-show="document.categorizable"
+				data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

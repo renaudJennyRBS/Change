@@ -212,12 +212,7 @@ class AttributePresentation
 			case \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY:
 				if ($this->product)
 				{
-					$propertyName = $attribute->getProductProperty();
-					if (strpos($propertyName, '::'))
-					{
-						list(, $propertyName) = explode('::', $propertyName);
-					}
-					$property = $this->product->getDocumentModel()->getProperty($propertyName);
+					$property = $attribute->getModelProperty();
 					if ($property)
 					{
 						$valueType = $this->getAttributeTypeFromProperty($property);

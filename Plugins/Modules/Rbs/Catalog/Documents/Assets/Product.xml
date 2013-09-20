@@ -11,8 +11,8 @@
 		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" />
 		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
 		<property name="attributeValues" type="JSON" />
+		<property name="categorizable" type="Boolean" default-value="true" />
 		<property name="declinationGroup" type="Document" document-type="Rbs_Catalog_DeclinationGroup" />
-
 		<property name="newSkuOnCreation" type="Boolean" stateless="true" />
 	</properties>
 </document>

@@ -1,0 +1,18 @@
+<div ng-controller="rbsProductEmptyGroupSelector">
+	<rbs-document-list data-dlid="DLDocumentProductEmptyGroupSelector"
+				   model="{{ query.model }}" load-query="productEmptyGroupQuery"
+				   filter-query="query" extend="picker" actions="">
+		<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
+				label="{{ i18nAttr('m.rbs.catalog.document.product.visual', ['ucf']) }}"></column>
+		<column name="label" primary="true">
+			{% if (query.multiple) %}
+			<span class="pull-right">
+				<button type="button" class="btn btn-mini" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"
+							title="{{ i18nAttr('m.rbs.admin.lists.replace-by-this', ['ucf']) }}"></i></button>
+			</span>
+			{% endif %}
+			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
+		</column>
+		<column name="sku" sort="sku.code">(= doc.sku.code =)</column>
+	</rbs-document-list>
+</div>

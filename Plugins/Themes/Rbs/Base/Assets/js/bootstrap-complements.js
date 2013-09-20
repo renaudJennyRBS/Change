@@ -1,3 +1,4 @@
+//TODO Refactor
 var onDOMLoadedCallbacks = [];
 
 function registerDOMLoadedCallback(callback)

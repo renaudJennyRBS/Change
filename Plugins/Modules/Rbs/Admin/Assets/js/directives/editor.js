@@ -279,6 +279,10 @@
 							if ($scope._isNew) {
 								$location.path(doc.url());
 							}
+
+							if (angular.isFunction($scope.onReload)) {
+								$scope.onReload($scope.document);
+							}
 						}
 					}
 

@@ -10,7 +10,7 @@
 			<constraint name="enum" fromList="Rbs_Catalog_Collection_AttributeValueTypes" />
 		</property>
 		<property name="requiredValue" type="Boolean" default-value="false" />
-		<property name="defaultValue" type="String" default-value="String" />
+		<property name="defaultValue" type="String" />
 		<property name="localizedValue" type="Boolean" default-value="false" />
 		<property name="collectionCode" type="String" >
 			<dboptions length="100" />

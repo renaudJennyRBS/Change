@@ -24,7 +24,9 @@
 
 		<rbs-field required="true" label="{{ i18nAttr('m.rbs.catalog.document.attribute.valuetype', ['ucf']) }}">
 			<select ng-model="document.valueType" required="required"
-				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes"></select>
+				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes">
+				<option value=""></option>
+				</select>
 		</rbs-field>
 
 		<div data-ng-hide="document.valueType == 'Group'">
