@@ -849,7 +849,7 @@
 								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
 							}
 							$rcell.append($refProp);
-							$rcell.append('<button type="button" class="btn btn-small copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= document.LCID =)</button>');
+							$rcell.append('<button type="button" class="btn btn-small copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= availableLanguages[document.LCID].label =)</button>');
 						});
 
 						$form.prepend($table);
