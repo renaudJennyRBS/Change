@@ -4,7 +4,7 @@ namespace Rbs\Commerce\Setup;
 /**
  * @name \Rbs\Commerce\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
@@ -16,13 +16,11 @@ class Install
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $config
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application)
+	public function executeApplication($plugin, $application, $config)
 	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
 		$config->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Rest\Listeners');
 		$config->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Web\Listeners');
 		$config->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Commerce', '\Rbs\Commerce\Events\Admin\Listeners');

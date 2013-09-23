@@ -4,7 +4,7 @@ namespace Theme\Rbs\Base\Setup;
 /**
  * @name \Theme\Rbs\Base\Setup
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

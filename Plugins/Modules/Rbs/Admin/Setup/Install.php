@@ -3,12 +3,34 @@ namespace Rbs\Admin\Setup;
 
 use Change\Http\Rest\OAuth\Consumer;
 use Change\Http\Rest\OAuth\OAuth;
+use Change\Plugins\PluginManager;
 
 /**
- * @name \Change\Generic\Setup\Install
+ * @name \Rbs\Admin\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $events
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function attach($events, $plugin)
+	{
+		parent::attach($events, $plugin);
+		$events->attach(PluginManager::EVENT_SETUP_SUCCESS, array($this, 'onSuccess'));
+
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onSuccess(\Zend\EventManager\Event $event)
+	{
+		$manager = new \Rbs\Admin\Manager( $event->getParam('applicationServices'), $event->getParam('documentServices'));
+		$manager->getResources();
+		$manager->dumpResources();
+	}
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 */
@@ -20,13 +42,11 @@ class Install
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $config
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application)
+	public function executeApplication($plugin, $application, $config)
 	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 

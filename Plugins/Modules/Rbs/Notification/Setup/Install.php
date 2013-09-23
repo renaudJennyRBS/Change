@@ -4,32 +4,14 @@ namespace Rbs\Notification\Setup;
 /**
  * @name \Rbs\Notification\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-//	public function executeApplication($plugin, $application)
-//	{
-//		/* @var $config \Change\Configuration\EditableConfiguration */
-//		$config = $application->getConfiguration();
-//	}
-
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \Exception
+	 * @throws \RuntimeException
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{

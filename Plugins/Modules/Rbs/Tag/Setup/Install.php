@@ -6,7 +6,7 @@ use Change\Db\Schema\KeyDefinition;
 /**
  * @name \Rbs\Tag\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

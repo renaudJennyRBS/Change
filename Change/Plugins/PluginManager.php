@@ -22,6 +22,7 @@ class PluginManager
 	const EVENT_SETUP_APPLICATION = 'setupApplication';
 	const EVENT_SETUP_SERVICES = 'setupServices';
 	const EVENT_SETUP_FINALIZE = 'setupFinalize';
+	const EVENT_SETUP_SUCCESS = 'setupSuccess';
 
 	const EVENT_TYPE_PACKAGE = 'package';
 	const EVENT_TYPE_MODULE = 'module';
@@ -629,7 +630,8 @@ class PluginManager
 			$this->eventManager->setSharedManager($this->application->getSharedEventManager());
 			foreach ($this->getPlugins() as $plugin)
 			{
-				$this->registerPluginEvents($plugin, $this->eventManager);
+				$listenerAggregate = new Register($plugin);
+				$listenerAggregate->attach($this->eventManager);
 			}
 		}
 		return $this->eventManager;
@@ -641,11 +643,7 @@ class PluginManager
 	 */
 	protected function registerPluginEvents($plugin, $eventManager)
 	{
-		$listenerAggregate = new Register($plugin);
-		if ($listenerAggregate instanceof \Zend\EventManager\ListenerAggregateInterface)
-		{
-			$listenerAggregate->attach($eventManager);
-		}
+
 	}
 
 	/**
@@ -730,11 +728,11 @@ class PluginManager
 		$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
 		$installApplication->setConfiguration($editableConfiguration->import($installApplication->getConfiguration()));
 
-		$eventArgs = $eventManager->prepareArgs(array('application' => $installApplication, 'context' => $context));
+		$eventArgs = $eventManager->prepareArgs(array('application' => $installApplication,
+			'context' => $context, 'type' => $eventType, 'vendor' => $vendor, 'name' => $name));
 
-		$event = new \Zend\EventManager\Event(static::composeEventName(static::EVENT_SETUP_INITIALIZE, $eventType, $vendor,
-			$name), $this, $eventArgs);
-		$results = $this->getEventManager()->trigger($event);
+		$event = new \Zend\EventManager\Event(static::EVENT_SETUP_INITIALIZE, $this, $eventArgs);
+		$results = $eventManager->trigger($event);
 		$date = new \DateTime();
 		foreach ($results as $result)
 		{
@@ -749,8 +747,8 @@ class PluginManager
 
 		$applicationServices = new \Change\Application\ApplicationServices($installApplication);
 		$eventArgs['applicationServices'] = $applicationServices;
-		$event->setName(static::composeEventName(static::EVENT_SETUP_APPLICATION, $eventType, $vendor, $name));
-		$this->getEventManager()->trigger($event);
+		$event->setName(static::EVENT_SETUP_APPLICATION);
+		$eventManager->trigger($event);
 
 		if ($eventType !== static::EVENT_TYPE_THEME)
 		{
@@ -766,11 +764,11 @@ class PluginManager
 		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
 		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
 
-		$event->setName(static::composeEventName(static::EVENT_SETUP_SERVICES, $eventType, $vendor, $name));
-		$this->getEventManager()->trigger($event);
+		$event->setName(static::EVENT_SETUP_SERVICES);
+		$eventManager->trigger($event);
 
-		$event->setName(static::composeEventName(static::EVENT_SETUP_FINALIZE, $eventType, $vendor, $name));
-		$this->getEventManager()->trigger($event);
+		$event->setName(static::EVENT_SETUP_FINALIZE);
+		$eventManager->trigger($event);
 
 		$applicationServices->getDbProvider()->closeConnection();
 
@@ -783,6 +781,10 @@ class PluginManager
 		}
 
 		$editableConfiguration->save();
+
+		$event->setName(static::EVENT_SETUP_SUCCESS);
+		$eventManager->trigger($event);
+
 		return $plugins;
 	}
 
