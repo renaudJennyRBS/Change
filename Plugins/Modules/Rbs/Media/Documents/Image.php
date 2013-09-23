@@ -86,11 +86,11 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		$sm = $this->getApplicationServices()->getStorageManager();
 		$query = array();
-		if (intval($maxWidth))
+		if ($maxWidth !== null)
 		{
 			$query['max-width'] = intval($maxWidth);
 		}
-		if (intval($maxHeight))
+		if ($maxHeight !== null)
 		{
 			$query['max-height'] = intval($maxHeight);
 		}

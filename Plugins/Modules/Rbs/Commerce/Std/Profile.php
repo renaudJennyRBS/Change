@@ -4,8 +4,8 @@ namespace Rbs\Commerce\Std;
 use Change\User\AbstractProfile;
 
 /**
-* @name \Rbs\Commerce\Std\Profile
-*/
+ * @name \Rbs\Commerce\Std\Profile
+ */
 class Profile extends AbstractProfile
 {
 
@@ -14,13 +14,12 @@ class Profile extends AbstractProfile
 		return 'Rbs_Commerce';
 	}
 
-
 	/**
 	 * @return string[]
 	 */
 	public function getPropertyNames()
 	{
-		return array('lastCartIdentifier', 'defaultZone', 'defaultBillingAreaId', 'defaultAddressId');
+		return array('lastCartIdentifier', 'defaultWebStoreId', 'defaultZone', 'defaultBillingAreaId', 'defaultAddressId');
 	}
 
 	/**
@@ -57,6 +56,59 @@ class Profile extends AbstractProfile
 	public function getDefaultZone()
 	{
 		return $this->properties['defaultZone'];
+	}
+
+	/**
+	 * @param \Rbs\Store\Documents\WebStore $defaultWebStore
+	 * @return $this
+	 */
+	public function setDefaultWebStore($defaultWebStore)
+	{
+		if ($defaultWebStore instanceof \Rbs\Store\Documents\WebStore)
+		{
+			$this->properties['defaultWebStoreId'] = $defaultWebStore->getId();
+		}
+		else
+		{
+			$this->properties['defaultWebStoreId'] = null;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param integer $defaultWebStoreId
+	 * @return $this
+	 */
+	public function setDefaultWebStoreId($defaultWebStoreId)
+	{
+		$this->properties['defaultWebStoreId'] = $defaultWebStoreId;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getDefaultWebStoreId()
+	{
+		return $this->properties['defaultWebStoreId'];
+	}
+
+	/**
+	 * @param \Rbs\Price\Documents\BillingArea $defaultBillingArea
+	 * @return $this
+	 */
+	public function setDefaultBillingArea($defaultBillingArea)
+	{
+		if ($defaultBillingArea instanceof \Rbs\Price\Documents\BillingArea)
+		{
+			$this->properties['defaultBillingAreaId'] = $defaultBillingArea->getId();
+		}
+		else
+		{
+			$this->properties['defaultBillingAreaId'] = null;
+		}
+		return $this;
 	}
 
 	/**

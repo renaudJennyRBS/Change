@@ -4,6 +4,7 @@
 	<properties>
 		<property name="user" type="Document" document-type="Rbs_User_User"/>
 		<property name="lastCartIdentifier" type="String" />
+		<property name="defaultWebStore" type="Document" document-type="Rbs_Store_WebStore" />
 		<property name="defaultZone" type="String" />
 		<property name="defaultBillingArea" type="Document" document-type="Rbs_Price_BillingArea" />
 		<property name="defaultAddress" type="Document" document-type="Rbs_Geo_Address" />

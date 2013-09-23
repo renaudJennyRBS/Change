@@ -104,7 +104,9 @@ class WebsiteResolver
 					{
 						$urlManager->setScript($stdUrlManager->getScript());
 						$urlManager->setBasePath($stdUrlManager->getBasePath());
-						$event->setResult($event->getController()->notFound($event));
+						$event->setAction(function(Event $event) {
+								$event->setResult($event->getController()->notFound($event));
+							});
 					}
 				}
 			}

@@ -33,7 +33,7 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach(Event::EVENT_REQUEST, $callback, 5);
 
-        $events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
+		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
 	}
 
 	/**
@@ -46,65 +46,76 @@ class Listeners implements ListenerAggregateInterface
 		// TODO: Implement detach() method.
 	}
 
-    /**
-     * @param Event $event
-     */
-    public function registerActions(Event $event)
-    {
-        if (!$event->getAction())
-        {
-            $relativePath =  $event->getParam('pathInfo');
-            if ($relativePath === 'rbs/price/taxInfo')
-            {
-                $event->setAction(function ($event)
-                {
-                    (new \Rbs\Price\Http\Rest\Actions\TaxInfo())->execute($event);
-                });
-            }
-            else if (preg_match('#^resources/Rbs/Catalog/ProductCategorization/([0-9]+)/(highlight|downplay|moveup|movedown|highlighttop|highlightbottom)$#', $relativePath, $matches))
-            {
-                $event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
-                $event->setParam('documentId', intval($matches[1]));
-                $methodName = $matches[2];
-                $event->setAction(function($event) use ($methodName) {
-                    $cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-                    call_user_func(array($cr, $methodName), $event);
-                });
-            }
-            else if (preg_match('#^resources/Rbs/Catalog/(Category|Product)/([0-9]+)/ProductCategorization/?$#', $relativePath, $matches))
-            {
-                $event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
-                $event->setParam('documentId', intval($matches[2]));
-                $event->setAction(function($event){
-                    $cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-                    $cr->productCategorizationCollection($event);
-                });
-            }
-            else if (preg_match('#^resources/Rbs/Catalog/Product/([0-9]+)/Prices/?$#', $relativePath, $matches))
-            {
-                $event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Price_Price');
-                $event->setParam('documentId', intval($matches[1]));
-                $event->setAction(function($event){
-                    $cr = new \Rbs\Catalog\Http\Rest\PriceResult();
-                    $cr->productPriceCollection($event);
-                });
-            }
-            else if ($relativePath === 'rbs/catalog/productcategorization/delete')
-            {
-                $event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
-                $event->setAction(function($event){
-                    $cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-                    $cr->delete($event);
-                });
-            }
-            else if ($relativePath === 'rbs/catalog/productcategorization/addproducts')
-            {
-                $event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
-                $event->setAction(function($event){
-                    $cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-                    $cr->addproducts($event);
-                });
-            }
-        }
-    }
+	/**
+	 * @param Event $event
+	 */
+	public function registerActions(Event $event)
+	{
+		if (!$event->getAction())
+		{
+			$relativePath = $event->getParam('pathInfo');
+			if ($relativePath === 'rbs/price/taxInfo')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Price\Http\Rest\Actions\TaxInfo())->execute($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Catalog/ProductCategorization/([0-9]+)/(highlight|downplay|moveup|movedown|highlighttop|highlightbottom)$#',
+				$relativePath, $matches)
+			)
+			{
+				$event->getController()->getActionResolver()
+					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
+				$event->setParam('documentId', intval($matches[1]));
+				$methodName = $matches[2];
+				$event->setAction(function ($event) use ($methodName)
+				{
+					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					call_user_func(array($cr, $methodName), $event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Catalog/(Category|Product)/([0-9]+)/ProductCategorization/?$#', $relativePath,
+				$matches)
+			)
+			{
+				$event->getController()->getActionResolver()
+					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
+				$event->setParam('documentId', intval($matches[2]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr->productCategorizationCollection($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Catalog/Product/([0-9]+)/Prices/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Price_Price');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Catalog\Http\Rest\PriceResult();
+					$cr->productPriceCollection($event);
+				});
+			}
+			else if ($relativePath === 'rbs/catalog/productcategorization/delete')
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr->delete($event);
+				});
+			}
+			else if ($relativePath === 'rbs/catalog/productcategorization/addproducts')
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr->addproducts($event);
+				});
+			}
+		}
+	}
 }
