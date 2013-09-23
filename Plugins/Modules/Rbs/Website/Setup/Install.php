@@ -4,18 +4,16 @@ namespace Rbs\Website\Setup;
 /**
  * @name \Rbs\Website\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $config
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application)
+	public function executeApplication($plugin, $application, $config)
 	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
 		$projectPath = $application->getWorkspace()->projectPath();
 		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
 
@@ -38,7 +36,7 @@ class Install
 	 * @param \Change\Application\ApplicationServices $applicationServices
 	 * @param \Change\Documents\DocumentServices $documentServices
 	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{

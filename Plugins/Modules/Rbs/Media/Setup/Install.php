@@ -4,19 +4,17 @@ namespace Rbs\Media\Setup;
 /**
  * @name \Rbs\Media\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $config
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application)
+	public function executeApplication($plugin, $application, $config)
 	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
 		$images = $config->getEntry('Change/Storage/images', array());
 		$images = array_merge( array(
 			'class' => '\\Change\\Storage\\Engines\\LocalImageStorage',

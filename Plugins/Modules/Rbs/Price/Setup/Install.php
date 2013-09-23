@@ -4,7 +4,7 @@ namespace Rbs\Price\Setup;
 /**
  * @name \Rbs\Price\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

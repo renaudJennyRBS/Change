@@ -6,7 +6,7 @@ use Zend\Json\Json;
 /**
  * @name \Theme\Rbs\Demo\Setup
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

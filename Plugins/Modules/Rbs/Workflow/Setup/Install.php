@@ -4,18 +4,16 @@ namespace Rbs\Workflow\Setup;
 /**
  * @name \Rbs\Workflow\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $config
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application)
+	public function executeApplication($plugin, $application, $config)
 	{
-		/* @var $config \Change\Configuration\EditableConfiguration */
-		$config = $application->getConfiguration();
-
 		$config->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
 			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\Listeners');
 
