@@ -37,6 +37,15 @@ class GetHome
 		}
 		$renderer = function () use ($templateFileName, $manager, $attributes)
 		{
+			$resourceDirectoryPath = $manager->getApplication()->inDevelopmentMode() ? $manager->getResourceDirectoryPath(): null;
+			$resourceBaseUrl = $manager->getResourceBaseUrl();
+
+			$scripts = $manager->prepareScriptAssets($resourceDirectoryPath, $resourceBaseUrl);
+			$attributes = ['scripts' => $scripts] + $attributes;
+
+			$styles = $manager->prepareCssAssets($resourceDirectoryPath, $resourceBaseUrl);
+			$attributes = ['styles' => $styles] + $attributes;
+
 			return $manager->renderTemplateFile($templateFileName, $attributes);
 		};
 		$result->setRenderer($renderer);

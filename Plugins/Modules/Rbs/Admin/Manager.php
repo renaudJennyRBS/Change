@@ -174,6 +174,36 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return string
 	 */
+	public function getResourceDirectoryPath()
+	{
+		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
+		return $this->getApplication()->getWorkspace()->composePath($root, 'Rbs', 'Admin');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getResourceBaseUrl()
+	{
+		return '/Rbs/Admin';
+	}
+
+	/**
+	 * @param string $resourceDirectoryPath
+	 */
+	public function dumpResources($resourceDirectoryPath = null)
+	{
+		if ($resourceDirectoryPath === null)
+		{
+			$resourceDirectoryPath = $this->getResourceDirectoryPath();
+		}
+		$this->prepareCssAssets($resourceDirectoryPath);
+		$this->prepareScriptAssets($resourceDirectoryPath);
+	}
+
+	/**
+	 * @return string
+	 */
 	protected function getCachePath()
 	{
 		if ($this->cachePath === null)
@@ -186,12 +216,13 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param string $resourceDirectoryPath
+	 * @param string $resourceBaseUrl
 	 * @return array
 	 */
-	protected function prepareScriptAssets()
+	public function prepareScriptAssets($resourceDirectoryPath = null, $resourceBaseUrl = null)
 	{
 		$scripts = array();
-		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
 		$am = $this->getJsAssetManager();
 		foreach ($am->getNames() as $name)
 		{
@@ -203,21 +234,30 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 					continue;
 				}
 			}
-			$relativeTargetPath = 'js' . DIRECTORY_SEPARATOR . $name . '.js';
-			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
-			\Change\Stdlib\File::write($targetPath, $asset->dump());
-			$scripts[] = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativeTargetPath);
+			$targetPath = '/js/' . $name . '.js';
+
+			if ($resourceDirectoryPath !== null)
+			{
+				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR,$targetPath);
+				\Change\Stdlib\File::write($fileTargetPath, $asset->dump());
+			}
+
+			if ($resourceBaseUrl !== null)
+			{
+				$scripts[] = $resourceBaseUrl . $targetPath;
+			}
 		}
 		return $scripts;
 	}
 
 	/**
+	 * @param string $resourceDirectoryPath
+	 * @param string $resourceBaseUrl
 	 * @return array
 	 */
-	protected function prepareCssAssets()
+	public function prepareCssAssets($resourceDirectoryPath = null, $resourceBaseUrl = null)
 	{
 		$scripts = array();
-		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
 		$am = $this->getCssAssetManager();
 		foreach ($am->getNames() as $name)
 		{
@@ -229,10 +269,17 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 					continue;
 				}
 			}
-			$relativeTargetPath = 'css' . DIRECTORY_SEPARATOR . $name . '.css';
-			$targetPath = $root . DIRECTORY_SEPARATOR . $relativeTargetPath;
-			\Change\Stdlib\File::write($targetPath, $asset->dump());
-			$scripts[] = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $relativeTargetPath);
+			$targetPath = '/css/' . $name . '.css';
+			if ($resourceDirectoryPath !== null)
+			{
+				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR,$targetPath);
+				\Change\Stdlib\File::write($fileTargetPath, $asset->dump());
+			}
+
+			if ($resourceBaseUrl !== null)
+			{
+				$scripts[] = $resourceBaseUrl . $targetPath;
+			}
 		}
 		return $scripts;
 	}
@@ -244,12 +291,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function renderTemplateFile($pathName, array $attributes)
 	{
-		$scripts = $this->prepareScriptAssets();
-		$attributes = ['scripts' => $scripts] + $attributes;
-
-		$styles = $this->prepareCssAssets();
-		$attributes = ['styles' => $styles] + $attributes;
-
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
 
 		// Include Twig macros for forms.
