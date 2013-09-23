@@ -19,7 +19,7 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
+		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 10);
 		$callback = function (Event $event)
 		{
 			(new \Rbs\User\Http\Web\Login())->authenticate($event);
@@ -50,31 +50,29 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function registerActions(Event $event)
 	{
-		if (!$event->getAction())
+		$relativePath = $event->getParam('relativePath');
+		if (preg_match('/^Imagestorage\/([A-Za-z0-9]+)\/([0-9]+)\/([0-9]+)(\/.+)$/', $relativePath, $matches))
 		{
-			$relativePath = $event->getParam('relativePath');
-			if (preg_match('/^Imagestorage\/([A-Za-z0-9]+)\/([0-9]+)\/([0-9]+)(\/.+)$/', $relativePath, $matches))
+			$storageName = $matches [1];
+			$maxWidth = intval($matches[2]);
+			$maxHeight = intval($matches[3]);
+			$path = $matches[4];
+
+			$originalURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, $path);
+			$changeURI = $event->getApplicationServices()->getStorageManager()
+				->buildChangeURI($storageName, $path, array('max-width' => $maxWidth, 'max-height' => $maxHeight));
+
+			$event->setParam('originalURI', $originalURI);
+			$event->setParam('changeURI', $changeURI);
+			$event->setParam('maxWidth', $maxWidth);
+			$event->setParam('maxHeight', $maxHeight);
+			$action = function ($event)
 			{
-				$storageName = $matches [1];
-				$maxWidth = intval($matches[2]);
-				$maxHeight = intval($matches[3]);
-				$path = $matches[4];
-
-				$originalURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, $path);
-				$changeURI = $event->getApplicationServices()->getStorageManager()
-					->buildChangeURI($storageName, $path, array('max-width' => $maxWidth, 'max-height' => $maxHeight));
-
-				$event->setParam('originalURI', $originalURI);
-				$event->setParam('changeURI', $changeURI);
-				$event->setParam('maxWidth', $maxWidth);
-				$event->setParam('maxHeight', $maxHeight);
-				$action = function ($event)
-				{
-					(new \Rbs\Media\Http\Web\Actions\GetImagestorageItemContent())->execute($event);
-				};
-				$event->setAction($action);
-				return;
-			}
+				(new \Rbs\Media\Http\Web\Actions\GetImagestorageItemContent())->execute($event);
+			};
+			$event->setAction($action);
+			$event->stopPropagation();
+			return;
 		}
 	}
 }
