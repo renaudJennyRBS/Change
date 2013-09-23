@@ -1,4 +1,4 @@
-angular.module('RbsChangeApp').controller('RbsReviewVoteCtrl', function ($scope, $cookies, $http)
+angular.module('RbsChangeApp').controller('RbsReviewVoteCtrl', function ($scope, $cookieStore, $http)
 {
 	$scope.$watch('blockId', function (reviewId){
 		start();
@@ -6,21 +6,20 @@ angular.module('RbsChangeApp').controller('RbsReviewVoteCtrl', function ($scope,
 
 	function start(){
 		$scope.review = __change[$scope.reviewId];
-		var reviewVotes = $cookies.reviewVotes;
-		if ($scope.review.reviewVotes)
+		var reviewVotes = $cookieStore.get('reviewVotes');
+		$scope.review.canVote = true;
+		if (reviewVotes)
 		{
 			angular.forEach(reviewVotes, function (reviewVote){
-				console.log(reviewVote);
+				if (reviewVote === $scope.review.id)
+				{
+					$scope.review.canVote = false;
+				}
 			});
-		}
-		else
-		{
-			$scope.review.canVote = true;
 		}
 
 		$scope.vote = function (vote)
 		{
-			console.log(vote);
 			$scope.review.canVote = false;
 			$http.post('Action/Rbs/Review/VoteReview', {
 				reviewId: $scope.review.id,
@@ -29,6 +28,16 @@ angular.module('RbsChangeApp').controller('RbsReviewVoteCtrl', function ($scope,
 					$scope.review.upvote = data.upvote;
 					$scope.review.downvote = data.downvote;
 					$scope.review.voted = true;
+					if ($cookieStore.get('reviewVotes'))
+					{
+						var reviewVotes = $cookieStore.get('reviewVotes');
+						reviewVotes.push($scope.review.id);
+						$cookieStore.put('reviewVotes', reviewVotes);
+					}
+					else
+					{
+						$cookieStore.put('reviewVotes', [ $scope.review.id ]);
+					}
 				});
 		}
 	}

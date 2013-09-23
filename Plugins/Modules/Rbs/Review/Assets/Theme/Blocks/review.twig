@@ -33,8 +33,8 @@
 				{{ i18n('m.rbs.review.blocks.review-voted', ['ucf']) }}
 			</p>
 			<div data-ng-if="review.upvote + review.downvote > 0">
-				<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> (= review.upvote =)</span></span>
-				<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> (= review.downvote =)</span></span>
+				<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> (= review.upvote =)</span>
+				<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> (= review.downvote =)</span>
 			</div>
 			<div data-ng-if="review.canVote">
 				<span>{{ i18n('m.rbs.review.blocks.review-vote', ['ucf']) }}</span>
@@ -44,21 +44,4 @@
 		</footer>
 	</div>
 	{% endif %}
-	<!--
-	<footer class="panel-footer review-votes" data-votes="{{ review.upvote + review.downvote }}">
-		<p id="review-novote-{{ review.id }}" class="review-novote">
-			{{ i18n('m.rbs.review.blocks.review-novote', ['ucf']) }}
-		</p>
-		<div id="review-vote-thumbs-{{ review.id }}" class="review-vote-thumbs">
-			<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> <span id="{{ review.id }}-upvote">{{ review.upvote }}</span></span>
-			<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> <span id="{{ review.id }}-downvote">{{ review.downvote }}</span></span>
-		</div>
-		<div id="vote-buttons-{{ review.id }}">
-			<input name="reviewId" value="{{ review.id }}" type="hidden" />
-			<span>{{ i18n('m.rbs.review.blocks.review-vote', ['ucf']) }}</span>
-			<button name="voteup" class="btn btn-xs btn-success" type="button" onclick="__change.voteReview('up', {{ review.id }})"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.blocks.review-upvote', ['ucf']) }}</button>
-			<button name="votedown" class="btn btn-xs btn-warning" type="button" onclick="__change.voteReview('down', {{ review.id }})"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.blocks.review-downvote', ['ucf']) }}</button>
-		</div>
-	</footer>
-	-->
 </article>
