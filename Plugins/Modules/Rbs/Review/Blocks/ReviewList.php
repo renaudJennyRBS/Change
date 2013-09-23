@@ -66,6 +66,7 @@ class ReviewList extends Block
 			$rows[] = $review->getInfoForTemplate($urlManager);
 		}
 		$attributes['rows'] = $rows;
+		$attributes['displayVote'] = true;
 
 		return 'review-list.twig';
 	}

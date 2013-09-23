@@ -70,6 +70,7 @@ class ReviewDetail extends Block
 		{
 			$attributes['review']['content'] = $review->getContent()->getRawText();
 		}
+		$attributes['displayVote'] = true;
 
 		return 'review-detail.twig';
 	}

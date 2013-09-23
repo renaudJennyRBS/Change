@@ -10,4 +10,5 @@
 	<key id="reviewDate">date de l'avis</key>
 	<key id="section">section</key>
 	<key id="select-section">sélectionner une section</key>
+	<key id="star-rating">étoile(s) sur {bestRating}</key>
 </i18n>

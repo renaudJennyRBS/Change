@@ -93,6 +93,7 @@ class PromotedReviewList extends Block
 			}
 			$attributes['rows'] = $rows;
 		}
+		$attributes['displayVote'] = true;
 
 		return 'promoted-review-list.twig';
 	}

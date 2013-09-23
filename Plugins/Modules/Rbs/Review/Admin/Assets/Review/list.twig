@@ -28,6 +28,11 @@
 		<preview style="min-height: 200px">
 			<div>
 				<h4>(= doc.pseudonym =)</h4>
+				<p>{{ i18n('m.rbs.review.document.review.rating', ['ucf', 'lab']) }} (= doc.rating =)/100</p>
+				<div class="pull-right">
+					<span class="text-success"><i class="icon-thumbs-up"></i> (= doc.upvote =)</span></span>
+					<span class="text-warning"><i class="icon-thumbs-down"></i> (= doc.downvote =)</span></span>
+				</div>
 				<p ng-bind-html="doc.content.h"></p>
 			</div>
 		</preview>

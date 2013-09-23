@@ -90,11 +90,9 @@ class PostReview extends Block
 		{
 			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
 			/* @var $review \Rbs\Review\Documents\Review */
-			$attributes['pendingValidation'] = !$review->published();
-			$attributes['reviewDate'] = $review->getReviewDate();
-			$attributes['reviewRating'] = $review->getRating();
-			$attributes['reviewStarRating'] = ceil($review->getRating()*(5/100));
-			$attributes['reviewUrl'] = $event->getUrlManager()->getCanonicalByDocument($review, $event->getParam('website'));
+			$attributes['review'] = $review->getInfoForTemplate($event->getUrlManager());
+			$attributes['validationClass'] = $review->published() ? ' panel-success' : ' panel-warning';
+			$attributes['displayVote'] = false;
 		}
 		else
 		{

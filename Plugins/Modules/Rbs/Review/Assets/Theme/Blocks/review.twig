@@ -1,4 +1,4 @@
-<article id="review-{{ review.id }}" class="panel{% if review.promoted %} panel-success{% endif %}" itemscope="" itemtype="http://schema.org/Review">
+<article id="review-{{ review.id }}" class="panel{{ validationClass }}" itemscope="" itemtype="http://schema.org/Review">
 	<!-- img?
 	<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
 	-->
@@ -23,6 +23,7 @@
 	<script type="text/javascript">
 		window.__change.RbsReview{{ review.id }} = {{ review | json_encode() | raw }};
 	</script>
+	{% if displayVote %}
 	<div ng-controller="RbsReviewVoteCtrl" ng-init="reviewId = 'RbsReview{{ review.id }}'">
 		<footer class="panel-footer">
 			<p data-ng-if="review.upvote + review.downvote == 0">
@@ -42,6 +43,7 @@
 			</div>
 		</footer>
 	</div>
+	{% endif %}
 	<!--
 	<footer class="panel-footer review-votes" data-votes="{{ review.upvote + review.downvote }}">
 		<p id="review-novote-{{ review.id }}" class="review-novote">
