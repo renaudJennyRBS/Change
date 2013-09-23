@@ -26,6 +26,11 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 	protected $documentServices;
 
 	/**
+	 * @var \Rbs\Store\Documents\WebStore
+	 */
+	protected $webStore;
+
+	/**
 	 * @var \Rbs\Commerce\Interfaces\BillingArea
 	 */
 	protected $billingArea;
@@ -200,22 +205,22 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 	}
 
 	/**
-	 * @param string $zone
+	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @return $this
 	 */
-	public function setZone($zone)
+	public function setWebStore($webStore)
 	{
-		$this->zone = $zone;
+		$this->webStore = $webStore;
 		return $this;
 	}
 
 	/**
-	 * @return string
+	 * @return \Rbs\Store\Documents\WebStore
 	 */
-	public function getZone()
+	public function getWebStore()
 	{
 		$this->load();
-		return $this->zone;
+		return $this->webStore;
 	}
 
 	/**
@@ -235,6 +240,25 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 	{
 		$this->load();
 		return $this->billingArea;
+	}
+
+	/**
+	 * @param string $zone
+	 * @return $this
+	 */
+	public function setZone($zone)
+	{
+		$this->zone = $zone;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getZone()
+	{
+		$this->load();
+		return $this->zone;
 	}
 
 	/**

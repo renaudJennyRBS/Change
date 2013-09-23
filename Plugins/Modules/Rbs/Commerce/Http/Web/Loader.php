@@ -16,6 +16,7 @@ class Loader
 	public function onRequest(Event $event)
 	{
 		$documentServices = $event->getDocumentServices();
+
 		$commerceServices = new CommerceServices($event->getApplicationServices(), $documentServices);
 		$event->setParam('commerceServices', $commerceServices);
 		$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
@@ -33,39 +34,62 @@ class Loader
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getParam('commerceServices');
 		$documentServices = $commerceServices->getDocumentServices();
+		$dm = $documentServices->getDocumentManager();
+
 		$session = new \Zend\Session\Container('Rbs_Commerce');
 
-		if (isset($session['billingAreaId']) && $session['billingAreaId'])
+		if (isset($session['webStoreId']) && $session['webStoreId'])
 		{
-			$billingArea = $documentServices->getDocumentManager()->getDocumentInstance($session['billingAreaId']);
-			if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+			$webStore = $dm->getDocumentInstance($session['webStoreId']);
+			if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
 			{
-				$commerceServices->setBillingArea($billingArea);
-			}
-			else
-			{
-				unset($session['billingAreaId']);
+				unset($session['webStoreId']);
 			}
 		}
 
-		if (!isset($session['billingAreaId']))
+		if (!isset($session['webStoreId']))
 		{
+			$session['webStoreId'] = false;
 			$session['zone'] = null;
 			$session['billingAreaId'] = 0;
 
-			$query = new Query($documentServices, 'Rbs_Price_BillingArea');
-			$billingArea = $query->getFirstDocument();
-			if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+			$query = new Query($documentServices, 'Rbs_Store_WebStore');
+			$webStores = $query->getDocuments(0, 2);
+			if ($webStores->count() == 1)
 			{
-				$session['billingAreaId'] = $billingArea->getId();
-				if ($billingArea->getTaxes()->count())
+				/* @var $webStore \Rbs\Store\Documents\WebStore */
+				$webStore = $webStores[0];
+				$session['webStoreId'] = $webStore->getId();
+				if ($webStore->getBillingAreasCount() == 1)
 				{
-					$tax = $billingArea->getTaxes()[0];
-					$session['zone'] = $tax->getDefaultZone();
+					$billingArea = $webStore->getBillingAreas()[0];
+					if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+					{
+						$session['billingAreaId'] = $billingArea->getId();
+						$zones = array();
+						foreach ($billingArea->getTaxes() as $tax)
+						{
+							$zones = array_merge($zones, $tax->getZoneCodes());
+						}
+						$zones = array_unique($zones);
+						if (count($zones) == 1)
+						{
+							$session['zone'] = $zones[0];
+						}
+					}
 				}
 			}
 		}
-		$commerceServices->setZone(isset($session['zone']) ? $session['zone'] : null);
+		if ($session['webStoreId'])
+		{
+			$commerceServices->setWebStore($dm->getDocumentInstance($session['webStoreId']));
+		}
+		if ($session['billingAreaId'])
+		{
+			$commerceServices->setBillingArea($dm->getDocumentInstance($session['billingAreaId']));
+		}
+		$commerceServices->setZone($session['zone']);
+
 		$commerceServices->setCartIdentifier(isset($session['cartIdentifier']) ? $session['cartIdentifier']: null);
 	}
 
@@ -77,10 +101,16 @@ class Loader
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getParam('commerceServices');
 		$session = new \Zend\Session\Container('Rbs_Commerce');
-		$session['cartIdentifier'] = $commerceServices->getCartIdentifier();
+
+		$webStore = $commerceServices->getWebStore();
+		$session['webStoreId'] = ($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore->getId() : false;
+
 		$billingArea = $commerceServices->getBillingArea();
-		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : false;
+		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : 0;
+
 		$session['zone'] = $commerceServices->getZone();
+
+		$session['cartIdentifier'] = $commerceServices->getCartIdentifier();
 	}
 
 	/**
@@ -106,6 +136,7 @@ class Loader
 					{
 						$profile->setLastCartIdentifier($documentProfile->getLastCartIdentifier());
 						$profile->setDefaultAddressId($documentProfile->getDefaultAddressId());
+						$profile->setDefaultWebStoreId($documentProfile->getDefaultWebStoreId());
 						$profile->setDefaultBillingAreaId($documentProfile->getDefaultBillingAreaId());
 						$profile->setDefaultZone($documentProfile->getDefaultZone());
 					}
@@ -151,6 +182,10 @@ class Loader
 
 						$documentProfile->setDefaultZone($profile->getDefaultZone());
 						$documentProfile->setLastCartIdentifier($profile->getLastCartIdentifier());
+
+						$webStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
+						$documentProfile->setDefaultWebStore(($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore : null);
+
 						$billingArea = $documentManager->getDocumentInstance($profile->getDefaultBillingAreaId());
 						$documentProfile->setDefaultBillingArea(($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea : null);
 
