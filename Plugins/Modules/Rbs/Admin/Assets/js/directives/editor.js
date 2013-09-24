@@ -273,6 +273,7 @@
 
 					$scope.original = angular.copy(doc);
 					$scope.reset();
+					EditorManager.removeLocalCopy(doc);
 
 					function terminateSave () {
 						saveOperation("success");
@@ -457,6 +458,18 @@
 					});
 				}
 
+
+				function mergeLocalCopy (doc) {
+					var localCopy = EditorManager.getLocalCopy(doc);
+					console.log("localCopy for ", doc, ": ", localCopy);
+					if (localCopy && window.confirm("Vous avez récemment modifié ce document sans l'enregistrer. Souhaitez-vous retrouver vos modifications maintenant ?"))
+					{
+						console.log("Merging document with local copy");
+						angular.extend(doc, localCopy);
+					}
+				}
+
+
 				/**
 				 * Creates the reference document (original) from the current document.
 				 * Triggers the `Events.EditorReady` event.
@@ -468,6 +481,8 @@
 					initCorrection();
 					initMenu();
 
+					mergeLocalCopy($scope.document);
+
 					// Add "Translations" menu on the left if the document is localizable.
 					if ($scope.modelInfo.metas.localized && ! EditorManager.isCascading()) {
 						MainMenu.addTranslations($scope.document, $scope);
@@ -477,7 +492,7 @@
 
 					Loading.stop();
 
-					// Call `$scope.onReady()` is present.
+					// Call `$scope.onReady()` if present.
 					if (angular.isFunction($scope.onReady)) {
 						$scope.onReady();
 					}
@@ -513,6 +528,17 @@
 							}
 						});
 					}, true);
+
+					$scope.$on('$routeChangeStart', function () {
+						//console.log("Editor: $routeChangeStart: doc=", $scope.document.id);
+						if ($scope.changes.length > 0) {
+							console.log("Document has modifications and user wants to leave the editor...");
+							EditorManager.saveLocalCopy($scope.document);
+						}
+						else {
+							console.log("Document has NO modifications: leaving editor...");
+						}
+					});
 				}
 
 
@@ -662,6 +688,7 @@
 					 */
 					scope.reset = function resetFn () {
 						scope.document = angular.copy(scope.original);
+						EditorManager.removeLocalCopy(scope.document);
 						scope.saveProgress.error = false;
 						CTRL.clearInvalidFields();
 						NotificationCenter.clear();
@@ -830,7 +857,7 @@
 						{
 							var	$prop = $(this),
 								$tr = $('<tr></tr>'),
-								$lcell = $('<td width="50%" style="vertical-align: top"></td>'),
+								$lcell = $('<td width="50%" style="vertical-align: top;"></td>'),
 								$rcell = $('<td width="50%" style="border-left: 5px solid #0088CC; vertical-align: top; background: rgba(0,136,255,0.05);"></td>'),
 								$refProp,
 								ngModel,
@@ -874,13 +901,25 @@
 	//
 
 
-	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager () {
-
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events, Settings) {
-
+	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
+	{
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService)
+		{
 			var	$ws = $('#workspace'),
 				cascadeContextStack = [],
-				idStack = [];
+				idStack = [],
+				localCopyRepo;
+
+			localCopyRepo = localStorageService.get("localCopy");
+
+			if (localCopyRepo) {
+				localCopyRepo = JSON.parse(localCopyRepo);
+			}
+
+			if (! angular.isObject(localCopyRepo)) {
+				localCopyRepo = {};
+				commitLocalCopyRepository();
+			}
 
 			/**
 			 * When the route changes, we need to clean up any cascading process.
@@ -915,6 +954,22 @@
 
 			function isCascadingFn () {
 				return cascadeContextStack.length > 0;
+			}
+
+
+			// Local copy methods.
+
+			function commitLocalCopyRepository () {
+				localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
+				console.log("localCopy: ", localCopyRepo);
+			}
+
+			function makeLocalCopyKey (doc) {
+				var key = doc.model + '-' + (doc.isNew() ? 'NEW' : doc.id);
+				if (doc.LCID) {
+					key += '-' + doc.LCID;
+				}
+				return key;
 			}
 
 
@@ -1035,6 +1090,34 @@
 
 				'stopEditSession' : function () {
 					idStack.pop();
+				},
+
+
+				// Local copy public API
+
+				'saveLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc);
+					doc.META$.localCopySaveDate = new Date();
+					localCopyRepo[key] = doc;
+					commitLocalCopyRepository();
+				},
+
+				'getLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc),
+						rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
+					return rawCopy;
+				},
+
+				'removeLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc);
+					if (localCopyRepo.hasOwnProperty(key)) {
+						delete localCopyRepo[key];
+						commitLocalCopyRepository();
+					}
+				},
+
+				'getLocalCopies' : function () {
+					return localCopyRepo;
 				}
 
 			};
