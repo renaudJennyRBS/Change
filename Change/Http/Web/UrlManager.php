@@ -417,21 +417,50 @@ class UrlManager extends \Change\Http\UrlManager
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Http\Web\PathRule $genericPathRule
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	protected function dispatchPopulatePathRule($document, $genericPathRule)
+	{
+		$newPathRule = clone($genericPathRule);
+		$newPathRule->setRelativePath(null);
+		$newPathRule->setQuery(null);
+		$eventManager = $document->getEventManager();
+		$queryParameters = new \ArrayObject($genericPathRule->getQueryParameters());
+		$e = new \Change\Documents\Events\Event('populatePathRule', $document, array('pathRule' => $newPathRule,
+			'queryParameters' => $queryParameters));
+		$eventManager->trigger($e);
+		return $e->getParam('pathRule');
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Http\Web\PathRule $genericPathRule
+	 * @return null|string
+	 */
+	public function evaluateRelativePath($document, $genericPathRule)
+	{
+		$pathRule = $this->dispatchPopulatePathRule($document, $genericPathRule);
+		if ($pathRule instanceof PathRule && $pathRule->getRelativePath())
+		{
+			return $pathRule->getRelativePath();
+		}
+		else
+		{
+			/* @var $section \Change\Presentation\Interfaces\Section */
+			$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+			return $this->getDefaultDocumentPathInfo($document, $section);
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Http\Web\PathRule $genericPathRule
 	 * @throws \Exception
 	 * @return \Change\Http\Web\PathRule|null
 	 */
 	public function rewritePathRule($document, $genericPathRule)
 	{
-		$newPathRule = clone($genericPathRule);
-		$newPathRule->setRelativePath(null);
-		$newPathRule->setQuery(null);
-
-		$eventManager = $document->getEventManager();
-		$queryParameters = new \ArrayObject($genericPathRule->getQueryParameters());
-		$e = new \Change\Documents\Events\Event('populatePathRule', $document, array('pathRule' => $newPathRule, 'queryParameters' => $queryParameters));
-		$eventManager->trigger($e);
-
-		$newPathRule = $e->getParam('pathRule');
+		$newPathRule = $this->dispatchPopulatePathRule($document, $genericPathRule);
 		if ($newPathRule instanceof PathRule && $newPathRule->getRelativePath())
 		{
 			$applicationServices = $this->getApplicationServices();
