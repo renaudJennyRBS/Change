@@ -25,9 +25,13 @@
 
 			compile : function (tElement, tAttrs)
 			{
+				if (tElement.attr('rows') === 'true') {
+					tElement.addClass('rows');
+				}
+
 				if (tAttrs.itemTemplate) {
 					var tpl, el;
-					if (tAttrs.itemTemplate.substr(0, 8) == 'element:') {
+					if (tAttrs.itemTemplate.substr(0, 8) === 'element:') {
 						tpl = $templateCache.get(tAttrs.itemTemplate.substr(8));
 						if (tpl) {
 							el = tElement.find('li').first();
