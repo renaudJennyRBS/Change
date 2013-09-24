@@ -5,7 +5,7 @@
 	</li>
 </ul>
 -->
-<h2 id="comment-toolbar-title">{{ i18n('m.rbs.review.blocks.review-list-count', ['ucf'], { 'count': rows | length }) }}</h2>
+<h2 id="comment-toolbar-title">{{ i18n('m.rbs.review.blocks.review-list-count', ['ucf'], { 'count': rows | length , 'totalCount': totalReviews}) }}</h2>
 <!-- Sort?
 <dl class="list-inline" id="sort-options">
 	<dt>Trier par</dt>
@@ -138,3 +138,4 @@
 	</li>
 	-->
 </ul>
+{% include 'Rbs_Generic/pagination.twig' %}

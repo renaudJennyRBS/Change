@@ -4,7 +4,7 @@
 	<key id="review">avis</key>
 	<key id="review-target">document</key>
 	<key id="review-list">liste des avis</key>
-	<key id="review-list-count">{count} avis</key>
+	<key id="review-list-count">{count} avis sur {totalCount}</key>
 	<key id="review-list-show-average-rating">afficher la moyenne des notes</key>
 	<key id="review-list-items-per-page">avis par page</key>
 	<key id="average-rating">note moyenne : {averageRating}</key>

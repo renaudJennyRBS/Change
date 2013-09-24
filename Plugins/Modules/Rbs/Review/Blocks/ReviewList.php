@@ -28,6 +28,8 @@ class ReviewList extends Block
 		$parameters->addParameterMeta('targetId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
+		$request = $event->getHttpRequest();
+		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		if ($parameters->getParameter('targetId') === null)
 		{
@@ -60,11 +62,28 @@ class ReviewList extends Block
 
 		$urlManager = $event->getUrlManager();
 		$rows = [];
-		foreach ($dqb->getDocuments() as $review)
+
+		$totalCount = $dqb->getCountDocuments();
+		$attributes['totalReviews'] = $totalCount;
+		if ($totalCount)
 		{
-			/* @var $review \Rbs\Review\Documents\Review */
-			$rows[] = $review->getInfoForTemplate($urlManager);
+			$reviewsPerPage = $parameters->getParameter('reviewsPerPage');
+			$pageCount = ceil($totalCount / $reviewsPerPage);
+			$pageNumber = $parameters->getParameter('pageNumber');
+			$pageNumber = !is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount ? 1 : $pageNumber;
+
+			$attributes['pageNumber'] = $pageNumber;
+			$attributes['totalCount'] = $totalCount;
+			$attributes['pageCount'] = $pageCount;
+
+			/* @var $product \Rbs\Catalog\Documents\Product */
+			foreach ($dqb->getDocuments(($pageNumber-1)*$reviewsPerPage, $reviewsPerPage) as $review)
+			{
+				/* @var $review \Rbs\Review\Documents\Review */
+				$rows[] = $review->getInfoForTemplate($urlManager);
+			}
 		}
+
 		$attributes['rows'] = $rows;
 		$attributes['displayVote'] = true;
 
