@@ -8,7 +8,7 @@
 		<span class="divider"> - </span>
 		<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | date }}</time>
 		<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
-			<meta itemprop="worstRating" content="1" />
+			<meta itemprop="worstRating" content="0" />
 			{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': review.reviewStarRating } %}
 		</span>
 		<small class="text-muted">
@@ -20,10 +20,10 @@
 	<!-- modified?
 	<small class="text-muted">Modifié 3 fois. Dernière modification le <time itemprop="dateModified" datetime="2013-08-13T10:39:42">13/08/2013 10:39</time> par <a href="http://rbs.fr">Mario Bros</a>.</small>
 	-->
+	{% if displayVote %}
 	<script type="text/javascript">
 		window.__change.RbsReview{{ review.id }} = {{ review | json_encode() | raw }};
 	</script>
-	{% if displayVote %}
 	<div ng-controller="RbsReviewVoteCtrl" ng-init="reviewId = 'RbsReview{{ review.id }}'">
 		<footer class="panel-footer">
 			<p data-ng-if="review.upvote + review.downvote == 0">

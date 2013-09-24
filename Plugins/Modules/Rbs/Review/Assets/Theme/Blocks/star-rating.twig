@@ -1,29 +1,15 @@
 {% if editionMode %}
-<ol class="list-inline star-rating">
-	<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}"><input type="radio" name="rating" value="20" class="sr-only" onclick="__change.selectStarRatingValue(this, 1);"/><span class="glyphicon glyphicon-star"></span></label></li>
-	<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}"><input type="radio" name="rating" value="40" class="sr-only" onclick="__change.selectStarRatingValue(this, 2);"/><span class="glyphicon glyphicon-star"></span></label></li>
-	<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-3') }}"><input type="radio" name="rating" value="60" class="sr-only" onclick="__change.selectStarRatingValue(this, 3);"/><span class="glyphicon glyphicon-star"></span></label></li>
-	<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}"><input type="radio" name="rating" value="80" class="sr-only" onclick="__change.selectStarRatingValue(this, 4);"/><span class="glyphicon glyphicon-star"></span></label></li>
-	<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}"><input type="radio" name="rating" value="100" class="sr-only" onclick="__change.selectStarRatingValue(this, 5);"/><span class="glyphicon glyphicon-star"></span></label></li>
-</ol>
-<script type="text/javascript">
-	if (!__change.hasOwnProperty('selectStarRatingValue'))
-	{
-		__change.selectStarRatingValue = function (element, rating){
-			jQuery(element).closest('.star-rating').children('li').each(function (index){
-				if (index < rating)
-				{
-					jQuery(this).addClass('selected');
-
-				}
-				else
-				{
-					jQuery(this).removeClass('selected');
-				}
-			})
-		};
-	}
-</script>
+<div data-ng-init="review.rating = 80">
+	<ol class="list-inline star-rating">
+		<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-0') }}"><input type="radio" name="review" data-ng-model="review.rating" value="0" class="sr-only" /><span class="glyphicon glyphicon-star-empty"></span></label></li> |
+		<li data-ng-class="{'selected': review.rating > 0}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 20}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="40" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 40}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-3') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 60}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 80}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li>(= review.rating * (5/100) =)/5</li>
+	</ol>
+</div>
 {% else %}
 <p class="sr-only">{{ i18n('m.rbs.review.blocks.review-rating', ['ucf'], { 'ratingValue': reviewStarRating, 'bestRating': 5 }) }}</p>
 <ol class="list-inline star-rating-display">

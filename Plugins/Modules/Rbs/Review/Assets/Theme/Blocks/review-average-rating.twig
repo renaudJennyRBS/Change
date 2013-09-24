@@ -1,16 +1,17 @@
 <p>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</p>
 {% if parameters.showChart %}
 	<div class="container">
-		{% for ratePart in rateParts %}
+		{% for stars, ratePart in rateParts %}
 			<div class="row">
-				<div class="col-sm-4" title="{{ i18nAttr('m.rbs.review.blocks.average-rating-stars', ['ucf'], { 'stars': loop.index, 'count': ratePart.count }) }}">{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': loop.index } %}</div>
-				<div class="col-sm-8">
+				<div class="col-sm-3">{{ ratePart.count }} {{ i18nAttr('m.rbs.review.blocks.review') }}</div>
+				<div class="col-sm-4" title="{{ i18nAttr('m.rbs.review.blocks.average-rating-stars', ['ucf'], { 'stars': stars, 'count': ratePart.count }) }}">{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': stars } %}</div>
+				<div class="col-sm-4">
 					<div class="progress">
-						<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ ratePart.percent }}%;">
-							<span>{{ ratePart.count }}</span>
-							<span class="sr-only">{{ ratePart.count }} / {{ rateParts | length }}</span>
-						</div>
+						<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="5" style="width: {{ ratePart.percent }}%;"></div>
 					</div>
+				</div>
+				<div class="col-sm-1">
+					{{ ratePart.percent }}%
 				</div>
 			</div>
 		{% endfor %}

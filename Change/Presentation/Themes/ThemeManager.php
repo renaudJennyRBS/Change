@@ -383,7 +383,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($parentTheme->getParentTheme())
 		{
-			$configuration = $this->mergeParentThemeConfiguration($parentTheme->getParentTheme(), $configuration, $workspace);
+			$this->mergeParentThemeConfiguration($parentTheme->getParentTheme(), $configuration, $workspace);
 		}
 		$assetsConfigurationPath = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $parentTheme->getName()), 'assets.json');
 		if (file_exists($assetsConfigurationPath))

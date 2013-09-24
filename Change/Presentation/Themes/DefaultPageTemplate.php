@@ -71,11 +71,25 @@ class DefaultPageTemplate implements PageTemplate
 	}
 
 	/**
+	 * @var \Assetic\Asset\AssetCollection|null
+	 */
+	protected $cssAssetCollection = null;
+
+	/**
+	 * @var \Assetic\Asset\AssetCollection|null
+	 */
+	protected $jsAssetCollection = null;
+
+	/**
 	 * @return \Assetic\Asset\AssetCollection
 	 */
 	public function getCssAssetCollection()
 	{
-		// TODO: Implement getCssAssetCollection() method.
+		if ($this->cssAssetCollection === null)
+		{
+			$this->cssAssetCollection = new \Assetic\Asset\AssetCollection();
+		}
+		return $this->cssAssetCollection;
 	}
 
 	/**
@@ -83,6 +97,10 @@ class DefaultPageTemplate implements PageTemplate
 	 */
 	public function getJsAssetCollection()
 	{
-		// TODO: Implement getJsAssetCollection() method.
+		if ($this->jsAssetCollection === null)
+		{
+			$this->jsAssetCollection = new \Assetic\Asset\AssetCollection();
+		}
+		return $this->jsAssetCollection;
 	}
 }
