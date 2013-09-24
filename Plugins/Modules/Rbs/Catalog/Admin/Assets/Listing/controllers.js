@@ -23,20 +23,30 @@
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.category-list | ucf'), "Rbs/Catalog/Category"]
+			[i18n.trans('m.rbs.catalog.admin.js.listing-list | ucf'), "Rbs/Catalog/Listing"]
 		]);
-
 
 		$scope.List = {};
 
-
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
-		REST.resource('Rbs_Catalog_Category', $routeParams.id).then(function (category)
+		REST.resource('Rbs_Catalog_Listing', $routeParams.id).then(function (listing)
 		{
-			$scope.productsUrl = category.META$.links['productcategorizations'].href;
-			$scope.category = category;
+			$scope.productsUrl = listing.META$.links['productcategorizations'].href;
+			$scope.listing = listing;
 			Loading.stop();
 		});
+
+		REST.action('collectionItems', { code: 'Rbs_Catalog_Collection_ProductSortOrders' }).then(function (data) {
+			$scope.List.sortOrders = data.items;
+		});
+		REST.action('collectionItems', { code: 'Rbs_Generic_Collection_SortDirections' }).then(function (data) {
+			$scope.List.sortDirections = data.items;
+		});
+
+		$scope.goBack = function ()
+		{
+			Breadcrumb.goParent();
+		}
 
 		$scope.List.toggleHighlight = function (doc) {
 			var url = null;
@@ -80,9 +90,9 @@
 			}
 			var url = REST.getBaseUrl('rbs/catalog/productcategorization/addproducts');
 			Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
-			$http.post(url, {"categoryId": $scope.category.id , "documentIds": docIds}).success(function (data) {
+			$http.post(url, {"listingId": $scope.listing.id , "documentIds": docIds}).success(function (data) {
 				Loading.stop();
-				$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+				$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
 
 			}).error(function errorCallback (data, status) {
 					data.httpStatus = status;
@@ -97,11 +107,11 @@
 			{
 				$http.get(url).success(function (data)
 				{
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+					$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
 				}).error(function errorCallback(data, status)
 					{
 						data.httpStatus = status;
-						$scope.$broadcast('Change:DocumentList:DLRbsCatalogCategoryProducts:call', { 'method' : 'reload' });
+						$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
 					});
 			}
 		}
@@ -109,7 +119,7 @@
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
 		'RbsChange.Workspace', '$routeParams', '$http'];
-	app.controller('Rbs_Catalog_Category_ProductsController', ProductsController);
+	app.controller('Rbs_Catalog_Listing_ProductsController', ProductsController);
 
 	/**
 	 * List actions.
@@ -136,9 +146,9 @@
 			}
 
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveProductsFromCategory',
+				name: 'Rbs_Catalog_RemoveProductsFromListing',
 				models: '*',
-				description: i18n.trans('m.rbs.catalog.admin.js.remove-products-from-category'),
+				description: i18n.trans('m.rbs.catalog.admin.js.remove-products-from-listing'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove|ucf'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
@@ -152,7 +162,7 @@
 			});
 
 			Actions.register({
-				name: 'Rbs_Catalog_HighlightProductsInCategory',
+				name: 'Rbs_Catalog_HighlightProductsInListing',
 				models: '*',
 				description: i18n.trans('m.rbs.catalog.admin.js.highlight-products'),
 				label: i18n.trans('m.rbs.catalog.admin.js.highlight|ucf'),
@@ -172,7 +182,7 @@
 			});
 
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveHighlightProductsInCategory',
+				name: 'Rbs_Catalog_RemoveHighlightProductsInListing',
 				models: '*',
 				description: i18n.trans('m.rbs.catalog.admin.js.remove-highlight-products'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove-highlight|ucf'),

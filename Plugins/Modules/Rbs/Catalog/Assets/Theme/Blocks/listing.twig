@@ -41,7 +41,7 @@
 </div>-->
 
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
-	<input type="hidden" name="options[webStoreId]" value="{{ category.webStoreId }}" />
+	<input type="hidden" name="options[webStoreId]" value="{{ webStoreId }}" />
 	<input type="hidden" name="quantity" value="1" />
 	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
 	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
@@ -51,8 +51,8 @@
 				<ul class="grid-list-cell">
 					<!-- TODO: favorites and comparisons -->
 					<!--<li>
-						<label for="category_product_{{ row.id }}">
-							<input type="checkbox" id="category_product_{{ row.id }}" name="selected_product[]"
+						<label for="listing_product_{{ row.id }}">
+							<input type="checkbox" id="listing_product_{{ row.id }}" name="selected_product[]"
 								value="{{ row.id }}" />
 							{{ i18n('m.rbs.catalog.fo.select', ['ucf']) }}
 						</label>
@@ -60,7 +60,7 @@
 					<li class="product-visual">
 						<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
 							href="{{ row.url }}">
-							<img alt="" src="{{ catalogMacros.categoryThumbnailURL(row.visual) }}" /></a>
+							<img alt="" src="{{ catalogMacros.listingThumbnailURL(row.visual) }}" /></a>
 						<div class="pictograms-container">
 						</div>
 					</li>
@@ -75,36 +75,38 @@
 					<!--<li class="product-rating">
 						5 étoile(s)
 					</li>-->
-					{% block prices %}
-						{% if parameters.displayPrices %}
-							<li class="product-price price">
-								{{ formatPrice(row.productPresentation.priceValue) }}
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-								{% if row.productPresentation.priceValueWithoutDiscount %}
-									<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-										{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
-									</del>
-								{% endif %}
-							</li>
-						{% endif %}
-						{% if parameters.displayPricesWithTax %}
-							<li class="product-price price">
-								{{ formatPrice(row.productPresentation.priceValueWithTax) }}
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-								{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
-									<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-										{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
-									</del>
-								{% endif %}
-							</li>
-						{% endif %}
-					{% endblock %}
-					<li class="product-add">
-						<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
-							<i class="glyphicon glyphicon-shopping-cart"></i>
-							{{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
-						</button>
-					</li>
+					{% if hasWebStore %}
+						{% block prices %}
+							{% if parameters.displayPrices %}
+								<li class="product-price price">
+									{{ formatPrice(row.productPresentation.priceValue) }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+									{% if row.productPresentation.priceValueWithoutDiscount %}
+										<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+											{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
+										</del>
+									{% endif %}
+								</li>
+							{% endif %}
+							{% if parameters.displayPricesWithTax %}
+								<li class="product-price price">
+									{{ formatPrice(row.productPresentation.priceValueWithTax) }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+									{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
+										<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+											{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
+										</del>
+									{% endif %}
+								</li>
+							{% endif %}
+						{% endblock %}
+						<li class="product-add">
+							<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
+								<i class="glyphicon glyphicon-shopping-cart"></i>
+								{{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+							</button>
+						</li>
+					{% endif %}
 				</ul>
 			</li>
 		{% endfor %}

@@ -55,12 +55,11 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 		{
 			$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY ));
 		}
-		$category = $this->getCategory();
-		if ($category instanceof \Rbs\Catalog\Documents\Category)
+		$listing = $this->getListing();
+		if ($listing instanceof \Rbs\Catalog\Documents\Listing)
 		{
-			$documentLink->setProperty('category', new DocumentLink($urlManager, $category, DocumentLink::MODE_PROPERTY ));
+			$documentLink->setProperty('listing', new DocumentLink($urlManager, $listing, DocumentLink::MODE_PROPERTY ));
 		}
-
 
 		$documentLink->setProperty('isHighlighted', $this->isHighlighted());
 		$documentLink->setProperty('canonical', $this->getCanonical());

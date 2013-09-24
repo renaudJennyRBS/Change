@@ -23,27 +23,6 @@ class Install extends \Change\Plugins\InstallBase
 		$applicationServices->getDbProvider()->closeConnection();
 
 		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
-		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Catalog');
-		if (!$rootNode)
-		{
-			$transactionManager = $applicationServices->getTransactionManager();
-			try
-			{
-				$transactionManager->begin();
-
-				/* @var $folder \Rbs\Generic\Documents\Folder */
-				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
-				$folder->setLabel('Rbs_Catalog');
-				$folder->create();
-				$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Catalog');
-
-				$transactionManager->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $transactionManager->rollBack($e);
-			}
-		}
 
 		$this->installGenericAttributes($applicationServices, $documentServices);
 	}

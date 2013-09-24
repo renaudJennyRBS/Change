@@ -37,10 +37,10 @@
 		<ul class="list-unstyled full-visuals">
 			{% for visual in product.visuals %}
 				<li id="full-visual-{{ blockId }}-{{ visual.id }}">
-					{% if activateZoom %}<a href="{{ imageURL(visual) }}"
+					{% if parameters.activateZoom %}<a href="{{ imageURL(visual) }}"
 						onmouseover="script{{ blockId }}.visuals.startZoom(this)">{% endif %}
 						<img itemprop="image" src="{{ catalogMacros.detailVisualURL(visual) }}" alt="" />
-					{% if activateZoom %}</a>{% endif %}
+					{% if parameters.activateZoom %}</a>{% endif %}
 				</li>
 			{% endfor %}
 		</ul>

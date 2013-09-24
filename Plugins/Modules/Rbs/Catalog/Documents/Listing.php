@@ -6,40 +6,10 @@ use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 
 /**
- * @name \Rbs\Catalog\Documents\Category
+ * @name \Rbs\Catalog\Documents\Listing
  */
-class Category extends \Compilation\Rbs\Catalog\Documents\Category
+class Listing extends \Compilation\Rbs\Catalog\Documents\Listing
 {
-	/**
-	 * @return string
-	 */
-	public function getTitle()
-	{
-		return $this->getSection() ? $this->getSection()->getTitle() : null;
-	}
-
-	/**
-	 * @param string $title
-	 * @return $this
-	 */
-	public function setTitle($title)
-	{
-		// Do nothing.
-		return $this;
-	}
-
-	/**
-	 * @return array|\Change\Documents\AbstractDocument
-	 */
-	public function getPublicationSections()
-	{
-		if ($this->getSection())
-		{
-			return array($this->getSection());
-		}
-		return array();
-	}
-
 	/**
 	 * @param DocumentResult $documentResult
 	 */
@@ -51,7 +21,6 @@ class Category extends \Compilation\Rbs\Catalog\Documents\Category
 		if ($selfLink instanceof Link)
 		{
 			$pathParts = explode('/', $selfLink->getPathInfo());
-			array_pop($pathParts);
 			$link = new Link($documentResult->getUrlManager(), implode('/', $pathParts) . '/ProductCategorization/', 'productcategorizations');
 			$documentResult->addLink($link);
 		}

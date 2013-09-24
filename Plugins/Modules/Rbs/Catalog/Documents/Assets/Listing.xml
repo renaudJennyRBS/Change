@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
-	icon="folder" localized="true" editable="true" publishable="true" tree-name="Rbs_Catalog">
+	editable="true" activable="true">
 	<properties>
-		<property name="title" stateless="true" />
-		<property name="webStore" type="Document" document-type="Rbs_Store_WebStore" />
-		<property name="section" type="Document" document-type="Rbs_Website_Section" />
-		<property name="description" type="RichText" localized="true" />
-		<property name="visual" type="Document" document-type="Rbs_Media_Image" />
 		<property name="productSortOrder" type="String" default-value="title" />
 		<property name="productSortDirection" type="String" default-value="asc" />
 	</properties>

@@ -7,9 +7,9 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Rbs\Catalog\Blocks\Category
+ * @name \Rbs\Catalog\Blocks\Listing
  */
-class Category extends Block
+class Listing extends Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -21,8 +21,7 @@ class Category extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('categoryId');
-		$parameters->addParameterMeta('sectionId');
+		$parameters->addParameterMeta('listingId');
 		$parameters->addParameterMeta('conditionId');
 		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('itemsPerLine', 3);
@@ -35,40 +34,22 @@ class Category extends Block
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		if ($parameters->getParameter('categoryId') === null)
+		if ($parameters->getParameter('listingId') !== null)
 		{
-			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Catalog\Documents\Category)
+			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$listing = $documentManager->getDocumentInstance($parameters->getParameter('listingId'));
+			if (!($listing instanceof \Rbs\Catalog\Documents\Listing) || !$listing->activated())
 			{
-				$parameters->setParameterValue('categoryId', $document->getId());
-			}
-			else
-			{
-				/* @var $page \Change\Presentation\Interfaces\Page */
-				$page = $event->getParam('page');
-				$section = $page->getSection();
-				$parameters->setParameterValue('sectionId', $section->getId());
-				$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Category');
-				$query->andPredicates($query->eq('section', $section->getId()));
-				$document = $query->getFirstDocument();
-				if ($document)
-				{
-					$parameters->setParameterValue('categoryId', $document->getId());
-				}
+				$parameters->setParameterValue('listingId', null);
 			}
 		}
 
-		if ($parameters->getParameter('categoryId') !== null)
+		if ($parameters->getParameter('displayPrices') === null)
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
-			$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
-			if (!($category instanceof \Rbs\Catalog\Documents\Category))
+			// TODO use webstore from commerce sevices
+			//$webStore = $listing->getWebStore();
+			if ($webStore)
 			{
-				$parameters->setParameterValue('categoryId', null);
-			}
-			elseif ($parameters->getParameter('displayPrices') === null)
-			{
-				$webStore = $category->getWebStore();
 				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 			}
@@ -86,29 +67,30 @@ class Category extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$categoryId = $parameters->getParameter('categoryId');
-		if ($categoryId)
+		$listingId = $parameters->getParameter('listingId');
+		if ($listingId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
 			$commerceServices = $event->getParam('commerceServices');
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
 
-			/* @var $category \Rbs\Catalog\Documents\Category */
-			$category = $documentManager->getDocumentInstance($categoryId);
-			$attributes['category'] = $category;
-			$attributes['title'] = $category->getTitle();
+			$attributes['hasWebStore'] = false; // TODO use webstore from commerce sevices
+
+			/* @var $listing \Rbs\Catalog\Documents\Listing */
+			$listing = $documentManager->getDocumentInstance($listingId);
+			$attributes['listing'] = $listing;
 
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
 			$query->andPredicates($query->published());
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductCategorization', 'product');
 			$subQuery->andPredicates(
-				$subQuery->eq('category', $categoryId),
+				$subQuery->eq('listing', $listingId),
 				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
 				$subQuery->activated()
 			);
 			$subQuery->addOrder('position', true);
-			$query->addOrder('title', true); // TODO: handle sorting.
+			$query->addOrder($listing->getProductSortOrder(), $listing->getProductSortDirection());
 
 			$rows = array();
 			$totalCount = $query->getCountDocuments();
@@ -122,28 +104,25 @@ class Category extends Block
 				$attributes['totalCount'] = $totalCount;
 				$attributes['pageCount'] = $pageCount;
 
-				$webStore = $category->getWebStore();
+				/* @var $page \Change\Presentation\Interfaces\Page */
+				$page = $event->getParam('page');
+				$section = $page->getSection();
+
+				// TODO use webstore from commerce sevices
+				//$webStore = $listing->getWebStore();
 				$webStoreId = $webStore ? $webStore->getId() : 0;
 				$contextualUrls = $parameters->getParameter('contextualUrls');
-				if ($contextualUrls)
-				{
-					$productQuery = array('categoryId' => $categoryId);
-				}
-				else
-				{
-					$productQuery = array('webStoreId' => $webStoreId);
-				}
 
 				/* @var $product \Rbs\Catalog\Documents\Product */
 				foreach ($query->getDocuments(($pageNumber-1)*$itemsPerPage, $itemsPerPage) as $product)
 				{
 					if ($contextualUrls)
 					{
-						$url = $event->getUrlManager()->getByDocument($product, null, $productQuery)->toString();
+						$url = $event->getUrlManager()->getByDocument($product, $section)->toString();
 					}
 					else
 					{
-						$url = $event->getUrlManager()->getCanonicalByDocument($product, null, $productQuery)->toString();
+						$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 					}
 
 					$row = array('id' => $product->getId(), 'url' => $url);
@@ -162,8 +141,8 @@ class Category extends Block
 			}
 			$attributes['rows'] = $rows;
 
-			$attributes['itemsPerLine'] = $parameters->getItemsPerLine();
-			return 'category.twig';
+			$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
+			return 'listing.twig';
 		}
 		return null;
 	}

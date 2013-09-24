@@ -8,17 +8,17 @@
 			disabled="product">
 		</rbs-field-text>
 
-		<rbs-field-text ng-if="document.category" property="document.category.label"
-			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}"
-			disabled="category">
+		<rbs-field-text ng-if="document.listing" property="document.listing.label"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.listing', ['ucf']) }}"
+			disabled="listing">
 		</rbs-field-text>
 
-		<rbs-field-picker ng-if="!document.category" property="document.category"
-			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}"
+		<rbs-field-picker ng-if="!document.listing" property="document.listing"
+			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.listing', ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"
-			accepted-model="Rbs_Catalog_Category"
-			selector-title="{{ i18nAttr('m.rbs.catalog.document.productcategorization.category-picker-title', ['ucf']) }}">
+			accepted-model="Rbs_Catalog_Listing"
+			selector-title="{{ i18nAttr('m.rbs.catalog.document.productcategorization.listing-picker-title', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-boolean
@@ -41,7 +41,6 @@
 			property="endactivation"
 			label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.endactivation', ['ucf']) }}">
 		</rbs-field-date>
-
 	</fieldset>
 	<form-button-bar></form-button-bar>
 </form>

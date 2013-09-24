@@ -54,13 +54,12 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 
 	/**
 	 * @param DocumentLink $documentLink
-	 * @param $extraColumn
+	 * @param array $extraColumn
 	 */
 	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 		parent::updateRestDocumentLink($documentLink, $extraColumn);
 
-		/* @var $product \Rbs\Catalog\Documents\Product */
 		$image = $this->getFirstVisual();
 		if ($image)
 		{
@@ -74,13 +73,37 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			if ($result instanceof DocumentLink)
-			{
+		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
+	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onPopulatePathRule(\Change\Documents\Events\Event $event)
+	{
+		$pathRule = $event->getParam('pathRule');
+		$product = $event->getDocument();
+		if ($pathRule instanceof \Change\Http\Web\PathRule && $product instanceof Product)
+		{
+			$sectionId = $pathRule->getSectionId();
+			$section = $this->getDocumentManager()->getDocumentInstance($sectionId, 'Rbs_Catalog_Section');
+			if ($section)
+			{
+				/* @var $section \Rbs\Website\Documents\Section */
+				$path = $pathRule->normalizePath(array(
+					$section->getTitle() . ',' . $section->getId(),
+					$product->getCurrentLocalization()->getTitle() . ',' . $product->getId() . '.html'
+				));
+				$pathRule->setRelativePath($path);
 			}
-		}, 5);
+			else
+			{
+				$path = $pathRule->normalizePath(
+					$product->getCurrentLocalization()->getTitle() . ',' . $product->getId() . '.html'
+				);
+				$pathRule->setRelativePath($path);
+			}
+		}
 	}
 
 	protected function onCreate()
@@ -194,77 +217,5 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	public function getPresentation(\Rbs\Commerce\Services\CommerceServices $commerceServices, $webStoreId)
 	{
 		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
-	}
-
-	/**
-	 * @return \Change\Presentation\Interfaces\Section[]
-	 */
-	public function getPublicationSections()
-	{
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Section');
-		$pcb = $dqb->getModelBuilder('Rbs_Catalog_Category', 'section')
-			->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
-		$pb = $pcb->getPredicateBuilder();
-		$pcb->andPredicates($pb->activated(), $pb->eq('product', $this));
-		return $dqb->getDocuments()->toArray();
-	}
-
-	/**
-	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @return \Change\Presentation\Interfaces\Section|null
-	 */
-	public function getCanonicalSection(\Change\Presentation\Interfaces\Website $website = null)
-	{
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Section');
-		$pb = $dqb->getPredicateBuilder();
-		if ($website)
-		{
-			$or = $pb->logicOr($pb->eq('id', $website->getId()), $pb->descendantOf($website->getId()));
-			$dqb->andPredicates($pb->published(), $or);
-		}
-		else
-		{
-			$dqb->andPredicates($pb->published());
-		}
-
-		$cqb = $dqb->getModelBuilder('Rbs_Catalog_Category', 'section');
-		$cqb->andPredicates($cqb->published());
-
-		$pcb = $cqb->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
-		$pb = $pcb->getPredicateBuilder();
-		$pcb->andPredicates($pb->activated(), $pb->eq('product', $this));
-
-		$pcb->addOrder('canonical', false);
-		return $dqb->getFirstDocument();
-	}
-
-	/**
-	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @return \Rbs\Catalog\Documents\Category[]
-	 */
-	public function getPublishedCategories(\Change\Presentation\Interfaces\Website $website = null)
-	{
-		$cqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Catalog_Category');
-		$cqb->andPredicates($cqb->published());
-
-		$sqb = $cqb->getPropertyBuilder('section');
-		$pb = $sqb->getPredicateBuilder();
-		if ($website)
-		{
-			$or = $pb->logicOr($pb->eq('id', $website->getId()), $pb->descendantOf($website->getId()));
-			$sqb->andPredicates($pb->published(), $or);
-		}
-		else
-		{
-			$sqb->andPredicates($pb->published());
-		}
-
-		$pqb = $cqb->getModelBuilder('Rbs_Catalog_ProductCategorization', 'category');
-		$pb = $pqb->getPredicateBuilder();
-		$pqb->andPredicates($pb->activated(), $pb->eq('product', $this));
-
-		$pqb->addOrder('canonical', false);
-		$cqb->addOrder('label', false);
-		return $cqb->getDocuments()->toArray();
 	}
 }

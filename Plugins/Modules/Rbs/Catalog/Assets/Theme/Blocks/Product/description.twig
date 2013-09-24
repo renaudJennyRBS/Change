@@ -8,22 +8,22 @@
 	</div>
 {% endblock %}
 
-{% if attributesDisplayMode and not(attributesConfig is empty) %}
+{% if parameters.attributesDisplayMode and not(attributesConfig is empty) %}
 	{% block attributesTitle %}
 		<h2>{{ i18n('m.rbs.catalog.fo.attributes', ['ucf']) }}</h2>
 	{% endblock %}
 
 	{% block attributes %}
-		{% if attributesDisplayMode == 'accordion' %}
+		{% if parameters.attributesDisplayMode == 'accordion' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-accordion.twig' %}
-		{% elseif attributesDisplayMode == 'flat' %}
+		{% elseif parameters.attributesDisplayMode == 'flat' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-flat.twig' %}
-		{% elseif attributesDisplayMode == 'table' %}
+		{% elseif parameters.attributesDisplayMode == 'table' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-table.twig' %}
-		{% elseif attributesDisplayMode == 'tabs' %}
+		{% elseif parameters.attributesDisplayMode == 'tabs' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-tabs.twig' %}
 		{# For development and tests only... #}
-		{% elseif attributesDisplayMode == 'all' %}
+		{% elseif parameters.attributesDisplayMode == 'all' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-accordion.twig' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-flat.twig' %}
 			{% include 'Rbs_Catalog/Blocks/Product/attributes-table.twig' %}

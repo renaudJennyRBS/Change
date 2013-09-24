@@ -2,12 +2,7 @@
 <i18n baseKey="m.rbs.catalog.document.product" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
 	<key id="description">description</key>
-	<key id="categories">catégories</key>
-	<key id="categories-picker-title">sélectionner les catégories</key>
-
 	<key id="categorizable">catégorisable</key>
-
-	<key id="add-categories">ajouter des catégories</key>
 	<key id="visual">visuel</key>
 	<key id="visuals">visuels</key>
 	<key id="visuals-picker-title">sélectionner les visuels</key>
@@ -35,8 +30,8 @@
 		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>
 	</key>
 
-	<key id="category-section-help" format="html">
-		<![CDATA[<p>Les catégories permettent de publier les produits dans les sections du site.</p>]]>
+	<key id="listing-section-help" format="html">
+		<![CDATA[<p>Les listes permettent de publier les produits dans les sections du site.</p>]]>
 	</key>
 
 	<key id="section-declination">déclinaison</key>

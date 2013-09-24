@@ -44,16 +44,16 @@ class CatalogManager
 	}
 
 	/**
-	 * Add the product in a category for the given condition/priority.
+	 * Add the product in a listing for the given condition/priority.
 	 *
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Category $category
+	 * @param \Rbs\Catalog\Documents\Listing $listing
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @return \Rbs\Catalog\Documents\ProductCategorization
 	 * @throws \Exception
 	 */
-	public function addProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function addProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
 	{
 		$ds = $this->getCommerceServices()->getDocumentServices();
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
@@ -61,18 +61,17 @@ class CatalogManager
 		try
 		{
 			$tm->begin();
-			$categorization = $this->getProductCategorization($product, $category, $condition);
+			$categorization = $this->getProductCategorization($product, $listing, $condition);
 			if (!$categorization)
 			{
 				$categorization = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductCategorization');
 				/* @var $categorization \Rbs\Catalog\Documents\ProductCategorization */
 				$categorization->setProduct($product);
-				$categorization->setCategory($category);
+				$categorization->setListing($listing);
 				$categorization->setCondition($condition);
 			}
 			$categorization->save();
 			$tm->commit();
-
 		}
 		catch (\Exception $e)
 		{
@@ -83,22 +82,22 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Category $category
+	 * @param \Rbs\Catalog\Documents\Listing $listing
 	 * @param $condition
 	 * @throws \Exception
 	 */
-	public function removeProductFromCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function removeProductFromListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
 	{
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$categorization = $this->getProductCategorization($product, $category, $condition);
+			$categorization = $this->getProductCategorization($product, $listing, $condition);
 			if ($categorization instanceof \Rbs\Catalog\Documents\ProductCategorization)
 			{
 				if ($categorization->isHighlighted())
 				{
-					$this->downplayProductInCategory($product, $category, $condition);
+					$this->downplayProductInListing($product, $listing, $condition);
 				}
 				$categorization->delete();
 			}
@@ -112,55 +111,55 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Category $category
+	 * @param \Rbs\Catalog\Documents\Listing $listing
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @return \Rbs\Catalog\Documents\ProductCategorization|null
 	 */
-	public function getProductCategorization(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition)
+	public function getProductCategorization(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
 	{
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		$query->andPredicates($query->eq('product', $product), $query->eq('category', $category), $query->eq('condition', $condition));
+		$query->andPredicates($query->eq('product', $product), $query->eq('listing', $listing), $query->eq('condition', $condition));
 		return $query->getFirstDocument();
 	}
 
 	/**
-	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
+	 * This method performs a bulk update, so you should not be messing with positions at all!
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Category $category
+	 * @param \Rbs\Catalog\Documents\Listing $listing
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @param \Rbs\Catalog\Documents\Product $before
 	 * @throws \RuntimeException
 	 */
-	public function highlightProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null, $before = null)
+	public function highlightProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition = null, $before = null)
 	{
-		$productCategorization = $this->getProductCategorization($product, $category, $condition);
+		$productCategorization = $this->getProductCategorization($product, $listing, $condition);
 		if (!$productCategorization)
 		{
-			throw new \RuntimeException("Product to highlight is not in category", 999999);
+			throw new \RuntimeException("Product to highlight is not in listing", 999999);
 		}
 		$beforeProductCategorization = null;
 		if ($before instanceof \Rbs\Catalog\Documents\Product)
 		{
-			$beforeProductCategorization = $this->getProductCategorization($before, $category, $condition);
+			$beforeProductCategorization = $this->getProductCategorization($before, $listing, $condition);
 		}
 		$this->highlightProductCategorization($productCategorization, $beforeProductCategorization);
 	}
 
 	/**
-	 * This method performs a bulk update, so you shouldn't be messing with positions at all!
+	 * This method performs a bulk update, so you should not be messing with positions at all!
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Category $category
+	 * @param \Rbs\Catalog\Documents\Listing $listing
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @throws \RuntimeException
 	 */
-	public function downplayProductInCategory(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Category $category, $condition = null)
+	public function downplayProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition = null)
 	{
-		$productCategorization = $this->getProductCategorization($product, $category, $condition);
+		$productCategorization = $this->getProductCategorization($product, $listing, $condition);
 		if (!$productCategorization)
 		{
-			throw new \RuntimeException("Product to highlight is not in category", 999999);
+			throw new \RuntimeException("Product to highlight is not in listing", 999999);
 		}
 		$currentPosition = $productCategorization->getPosition();
 		if ($currentPosition === 0)
@@ -186,7 +185,7 @@ class CatalogManager
 		{
 			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
 		}
-		$category = $productCategorization->getCategory();
+		$listing = $productCategorization->getListing();
 		$condition = $productCategorization->getCondition();
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		$updateQuery = $this->getCommerceServices()->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
@@ -195,7 +194,7 @@ class CatalogManager
 		$conditionId = ($condition) ? $condition->getId() : 0;
 		$where = $fb->logicAnd(
 			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-			$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
+			$fb->eq($fb->getDocumentColumn('listing'), $fb->number($listing->getId())),
 			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
 		);
 
@@ -235,7 +234,7 @@ class CatalogManager
 		{
 			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
 		}
-		$category = $productCategorization->getCategory();
+		$listing = $productCategorization->getListing();
 		$condition = $productCategorization->getCondition();
 		$currentPosition = $productCategorization->getPosition();
 		$atPosition = -1;
@@ -265,7 +264,7 @@ class CatalogManager
 		$conditionId = ($condition) ? $condition->getId() : 0;
 		$where = $fb->logicAnd(
 			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-			$fb->eq($fb->getDocumentColumn('category'), $fb->number($category->getId())),
+			$fb->eq($fb->getDocumentColumn('listing'), $fb->number($listing->getId())),
 			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
 		);
 
@@ -344,7 +343,7 @@ class CatalogManager
 		$condition = $productCategorization->getCondition();
 
 		$query->andPredicates(
-			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('listing', $productCategorization->getListing()),
 			$query->eq('condition', $condition),
 			$query->gt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition())),
 			$query->lt('position', $query->getFragmentBuilder()->number(0))
@@ -399,7 +398,7 @@ class CatalogManager
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$condition = $productCategorization->getCondition();
 		$query->andPredicates(
-			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('listing', $productCategorization->getListing()),
 			$query->eq('condition', $condition),
 			$query->lt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition()))
 		);
@@ -446,7 +445,7 @@ class CatalogManager
 		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
 		$condition = $productCategorization->getCondition();
 		$query->andPredicates(
-			$query->eq('category', $productCategorization->getCategory()),
+			$query->eq('listing', $productCategorization->getListing()),
 			$query->eq('condition', $condition),
 			$query->lt('position', $query->getFragmentBuilder()->number(0))
 		);

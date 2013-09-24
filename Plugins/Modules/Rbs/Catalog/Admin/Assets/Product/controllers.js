@@ -127,22 +127,21 @@
 	app.config(['$provide', function ($provide) {
 		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveProductFromCategories',
+				name: 'Rbs_Catalog_RemoveProductFromListings',
 				models: '*',
-				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-categories'),
+				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-listings'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
-					var categoryIds = [];
+					var listingIds = [];
 					for (var i in $docs)
 					{
-						categoryIds.push($docs[i].id);
+						listingIds.push($docs[i].id);
 					}
 					var conditionId = $scope.data.conditionId;
-					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/categories/' + conditionId + '/');
-					$http.put(url, {"removeCategoryIds": categoryIds}, REST.getHttpConfig())
+					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/listings/' + conditionId + '/');
+					$http.put(url, {"removeListingIds": listingIds}, REST.getHttpConfig())
 						.success(function (data) {
-							// TODO use data
 							$scope.refresh();
 						})
 						.error(function errorCallback (data, status) {
