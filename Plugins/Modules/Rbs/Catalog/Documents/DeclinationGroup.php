@@ -106,14 +106,41 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 		}, array());
 
 		$added = array();
-		$removed = array();
+		$pmiCount = count($pmi);
 
-		foreach ($pmi as $entry)
+		//fix removed tree
+		$addRemoved = 1;
+		$removed = array();
+		while ($addRemoved)
 		{
+			--$addRemoved;
+			for ($i = 0; $i < $pmiCount; $i++)
+			{
+				if (isset($pmi[$i]['removed']))
+				{
+					if (!isset($removed[$pmi[$i]['removed']]))
+					{
+						$removed[$pmi[$i]['removed']] = $pmi[$i]['removed'];
+						++$addRemoved;
+					}
+				}
+				elseif (isset($removed[$pmi[$i]['parentId']]))
+				{
+					$pmi[$i]['removed'] = $pmi[$i]['id'];
+					$pmi[$i]['id'] = 0;
+				}
+			}
+		}
+
+		for ($i = 0; $i < count($pmi); $i++)
+		{
+			$entry = $pmi[$i];
+
 			if ($entry['id'] < 0)
 			{
-				/** @var $product Product */
+				/* @var $product Product */
 				$axesValues = $this->buildAxeValues($entry, $pmi);
+
 				$product = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 				$product->setLabel($this->getLabel() . ' - ' . $this->buildProductLabel($entry, $pmi, $axesInfo, 'label'));
 				$product->getCurrentLocalization()->setTitle($product->getLabel());
@@ -127,7 +154,6 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 			}
 			elseif ($entry['id'] == 0 && isset($entry['removed']) && $entry['removed'] > 0)
 			{
-				$removed[$entry['removed']] = $entry['removed'];
 				$product = $this->getDocumentManager()->getDocumentInstance($entry['removed']);
 				if ($product instanceof Product)
 				{
@@ -137,6 +163,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 		}
 
 		$productMatrixInfo = array();
+
 		foreach ($pmi as $entry)
 		{
 			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axeId']]))
@@ -161,6 +188,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 				}
 				$entry['parentId'] = $added[$entry['parentId']];
 			}
+
 			$productMatrixInfo[] = $entry;
 		}
 

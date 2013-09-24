@@ -43,12 +43,14 @@
 								scope.newProductId = c[i].id;
 							}
 						}
+						scope.loadProductList();
 					}
 				};
 
 				scope.onReload = function() {
+					scope.loadProductList();
 					scope.buildMatrix();
-				}
+				};
 
 				scope.newProductId = 0;
 				scope.axeDefaultValue = {};
@@ -58,6 +60,26 @@
 				scope.declinationPath = null;
 				
 				scope.matrix = [];
+				scope.productList = [];
+
+				scope.loadProductList = function() {
+					scope.productList = [];
+
+					REST.call(scope.document.META$.links.self.href + '/Products').then(function(data) {
+						var ct = REST.transformObjectToChangeDocument;
+						for (var i = 0; i < data.resources.length; i++)
+						{
+							var doc = ct(data.resources[i]);
+							if (doc.sku)
+							{
+								doc.sku = ct(doc.sku)
+							}
+							scope.productList.push(doc);
+						}
+					}, function(response) {
+						console.log(response);
+					});
+				};
 
 				scope.selectAxe = function(axeIndex) {
 					var axeInfo = scope.document.axesInfo[axeIndex];
@@ -84,7 +106,7 @@
 							return;
 						}
 					}
-				}
+				};
 
 				scope.addAxeDefaultValue = function(axeInfo) {
 					if (angular.isString(scope.axeDefaultValue[axeInfo.id]))
@@ -106,7 +128,7 @@
 							scope.buildMatrix();
 						}
 					}
-				}
+				};
 
 				scope.getAxeDefinition = function(axeId) {
 					var c = scope.document.axesDefinition;
@@ -188,29 +210,18 @@
 					return null;
 				};
 
-				scope.findChildrenProductInfo = function(productId, axeId) {
-					var r = [];
-					var c = scope.document.productMatrixInfo;
-					for (var i = 0; i < c.length; i++)
-					{
-						if (c[i].parentId == productId && c[i].axeId == axeId)
-						{
-							r.push(c[i]);
-						}
-					}
-					return r;
-				};
-
 				scope.findProductEntry = function(productId, axeId, axeValue) {
 					var c = scope.document.productMatrixInfo;
+					var entry = null;
 					for (var i = 0; i < c.length; i++)
 					{
-						if (c[i].parentId == productId && c[i].axeId == axeId && c[i].axeValue == axeValue)
+						entry = c[i];
+						if (entry.parentId == productId && entry.axeId == axeId && entry.axeValue == axeValue)
 						{
-							return c[i];
+							return entry;
 						}
 					}
-					return null
+					return null;
 				};
 
 				scope.isDeclinationMatrix = function() {
@@ -238,10 +249,11 @@
 					}
 					else
 					{
-						entry.id = --scope.newProductId;
+						scope.newProductId = scope.newProductId -1;
+						entry.id = scope.newProductId;
+						scope.document.productMatrixInfo.push(entry);
 					}
-					scope.document.productMatrixInfo.push(entry);
-				}
+				};
 
 				scope.deleteDeclination = function(entry) {
 					if (entry.id != 0)
@@ -249,12 +261,7 @@
 						entry.removed = entry.id
 					}
 					entry.id = 0;
-				}
-
-				scope.editProduct = function(entry) {
-					entry.id = --scope.newProductId;
-					scope.document.productMatrixInfo.push(entry);
-				}
+				};
 
 				scope.editProduct = function(entry) {
 					if (entry.id > 0)
@@ -267,7 +274,7 @@
 							}
 						)
 					}
-				}
+				};
 
 				scope.addAllProduct = function() {
 					var axesInfo = scope.document.axesInfo;
@@ -285,11 +292,16 @@
 					for (var j = 0; j < ai.dv.length; j++)
 					{
 						var value = ai.dv[j].value;
-						var entry = scope.findProductEntry(parentId, ai.id, value);
+						var entry = scope.findProductEntry(parentId, currentAxeId, value);
 						if (entry == null)
 						{
 							entry = {id: 0, parentId: parentId, axeId:currentAxeId, axeValue: value, declination: declination};
 							scope.addDeclination(entry);
+						}
+						else if (entry.hasOwnProperty('removed'))
+						{
+							entry.id = entry.removed;
+							delete entry.removed;
 						}
 
 						if (declination)
@@ -297,7 +309,7 @@
 							scope.addAllAxeProduct((axeLevel + 1), entry.id, axesInfo);
 						}
 					}
-				}
+				};
 
 				scope.buildMatrix = function() {
 					var m = [];

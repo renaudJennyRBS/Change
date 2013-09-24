@@ -98,6 +98,17 @@ class Listeners implements ListenerAggregateInterface
 					$cr->productPriceCollection($event);
 				});
 			}
+			else if (preg_match('#^resources/Rbs/Catalog/DeclinationGroup/([0-9]+)/Products/?$#', $relativePath,
+				$matches)
+			)
+			{
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Catalog\Http\Rest\DeclinationGroup())->getProducts($event);
+				});
+
+			}
 			else if ($relativePath === 'rbs/catalog/productcategorization/delete')
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');

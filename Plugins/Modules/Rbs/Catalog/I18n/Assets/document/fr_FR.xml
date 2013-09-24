@@ -13,7 +13,7 @@
 	<key id="attribute-list">attributs</key>
 	<key id="attribute-picker-title">selectionner les attributs du groupe</key>
 
-	<key id="declinationgroup">produit décliné</key>
-	<key id="declinationgroup-create">ajouter un produit décliné</key>
-	<key id="declinationgroup-list">produits décliné</key>
+	<key id="declinationgroup">groupe de déclinaisons</key>
+	<key id="declinationgroup-create">ajouter un groupe de déclinaisons</key>
+	<key id="declinationgroup-list">groupes de déclinaisons</key>
 </i18n>

@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.document.declinationgroup" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="declinedproduct">produit décliné</key>
+	<key id="declinedproduct">produit à decliner</key>
 	<key id="declinedproduct-picker-title">sélectionner le produit à décliner</key>
-	<key id="section-axes">axes</key>
+	<key id="products-section">liste des déclinaisons</key>
 	<key id="axeattribute">jeu d'attributs</key>
-	<key id="newskuoncreation">Créer un nouveau SKU par fiche produit</key>
+	<key id="newskuoncreation">Créer un nouveau SKU par déclinaison</key>
+
+	<key id="axe-head">axe</key>
+	<key id="visibility-head">visible dans les listes</key>
+	<key id="values-head">valeurs</key>
+	<key id="generate-all-action">Générer toutes les fiches produit</key>
+	<key id="edit-product-head">Fiche Produit</key>
+	<key id="edit-axe-head">axe de déclinaison</key>
+	<key id="add-axe">ajouter l'axe déclinaison</key>
+	<key id="restore-axe">restaurer l'axe déclinaison</key>
+	<key id="delete-action">supprimer</key>
+	<key id="edit-action">editer</key>
+
+	<key id="add-product">ajouter le produit</key>
+	<key id="restore-product">restaurer le produit</key>
+	<key id="to-generate-product">à créer</key>
+
+	<key id="add-axe-value">Ajouter la nouvelle valeur à l'axe de déclinaison.</key>
 </i18n>
