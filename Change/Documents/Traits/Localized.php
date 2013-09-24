@@ -277,9 +277,13 @@ trait Localized
 		{
 			throw new \RuntimeException('Unable to delete refLCID: ' .  $this->getRefLCID(), 51014);
 		}
+
 		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_LOADED)
 		{
 			$this->deleteLocalizedPart($localizedPart);
+
+			$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_LOCALIZED_DELETED, $this);
+			$this->getEventManager()->trigger($event);
 		}
 	}
 
@@ -292,6 +296,9 @@ trait Localized
 		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			$this->insertLocalizedPart($localizedPart);
+
+			$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_LOCALIZED_CREATED, $this);
+			$this->getEventManager()->trigger($event);
 		}
 		else
 		{

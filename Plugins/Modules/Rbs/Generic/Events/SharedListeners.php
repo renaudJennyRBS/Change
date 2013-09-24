@@ -37,9 +37,14 @@ class SharedListeners implements SharedListenerAggregateInterface
 
 		$callback = function (DocumentEvent $event)
 		{
+			if ($event->getName() == DocumentEvent::EVENT_CREATED &&
+				$event->getDocument() instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				return;
+			}
 			(new \Rbs\Workflow\Tasks\PublicationProcess\Start())->execute($event);
 		};
-		$events->attach('Documents', DocumentEvent::EVENT_CREATED, $callback, 5);
+		$events->attach('Documents', array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_LOCALIZED_CREATED), $callback, 5);
 
 		$callback = function (DocumentEvent $event)
 		{
