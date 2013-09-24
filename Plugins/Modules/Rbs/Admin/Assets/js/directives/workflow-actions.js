@@ -96,8 +96,8 @@
 
 
 				scope.$watch('document', function documentChanged (doc) {
-					if (doc) {
-
+					if (Utils.isDocument(doc))
+					{
 						if (Utils.hasCorrection(doc)) {
 							scope.data.action = 'correction';
 						}

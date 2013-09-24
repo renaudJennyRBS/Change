@@ -20,21 +20,13 @@
 					scope.subTitle = attrs.subTitle;
 				}
 
-				scope.openLocalizationOptions = function () {
-					Dialog.embed(
-						element.find('.embedded-content'),
-						{
-							'contents' : '<div document-localization-options="document" language="language" reference-language="refLCID"></div>',
-							'title'    : "Options de traduction"
-						},
-						scope,
-						{
-							'pointedElement' : $(element).find('[data-role="choose-locale"]')
-						}
-					);
+				scope.showDocumentInfo = false;
+
+				scope.toggleDocumentInfo = function () {
+					scope.showDocumentInfo = ! scope.showDocumentInfo;
 				};
 
-				scope.openCorrectionViewer = function ($event) {
+				scope.openCorrectionViewer = function () {
 					Dialog.embed(
 						element.find('.embedded-content'),
 						{
