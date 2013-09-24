@@ -20,7 +20,6 @@
 				<span ng-if="! document.hasCorrection()">
 					(= document.publicationStatus | statusLabel =)
 				</span>
-				<!--i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showDocumentInfo]"></i-->
 				<i class="icon-circle-arrow-right"></i>
 			</a>
 		</div>
@@ -29,8 +28,6 @@
 			<small>(=subTitle=)</small>
 		</h2>
 	</div>
-
-	<!--div ng-if="showDocumentInfo" class="rbs-document-workflow-actions" document-model="modelInfo" document="document" on-close="toggleDocumentInfo()"></div-->
 
 	<div ng-show="document.META$.localCopy && localCopyMerged" class="alert alert-warning">
 		<button type="button" class="close" ng-click="localCopyMerged=false">&times;</button>
