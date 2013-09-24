@@ -48,13 +48,29 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
+	 * @var string $templateBasePath
+	 */
+	protected $templateBasePath;
+
+	/**
 	 * @return string
 	 */
 	public function getTemplateBasePath()
 	{
-		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		$path = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
-		return $path;
+		if ($this->templateBasePath === null)
+		{
+			list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
+			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
+
+			$as = $this->getApplicationServices();
+			if ($as->getApplication()->inDevelopmentMode())
+			{
+				$pluginManager = $as->getPluginManager();
+				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
+				$this->themeManager->installPluginTemplates($plugin, $this);
+			}
+		}
+		return $this->templateBasePath;
 	}
 
 	/**

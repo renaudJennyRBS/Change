@@ -71,12 +71,33 @@ class DefaultTheme implements Theme
 	}
 
 	/**
+	 * @var string $templateBasePath
+	 */
+	protected $templateBasePath;
+
+	/**
 	 * @return string
 	 */
 	public function getTemplateBasePath()
 	{
-		$path = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
-		return $path;
+		if ($this->templateBasePath === null)
+		{
+			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
+			$as = $this->presentationServices->getApplicationServices();
+			if ($as->getApplication()->inDevelopmentMode())
+			{
+				$pluginManager = $as->getPluginManager();
+				$plugins = $pluginManager->getModules();
+				foreach ($plugins as $plugin)
+				{
+					if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
+					{
+						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
+					}
+				}
+			}
+		}
+		return $this->templateBasePath;
 	}
 
 	/**
