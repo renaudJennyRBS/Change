@@ -238,6 +238,11 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$theme = $this->getDefault();
 		}
+		else
+		{
+			$theme->setThemeManager($this);
+		}
+
 		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
 			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
 		while ($it->valid())

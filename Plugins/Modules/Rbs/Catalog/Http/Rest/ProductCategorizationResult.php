@@ -11,7 +11,6 @@ use Zend\Stdlib\Parameters;
  */
 class ProductCategorizationResult
 {
-
 	/**
 	 * @param \Change\Http\Event $event
 	 */
@@ -108,8 +107,6 @@ class ProductCategorizationResult
 		$docAction->execute($event);
 	}
 
-
-
 	/**
 	 * @param \Change\Http\Event $event
 	 */
@@ -117,9 +114,9 @@ class ProductCategorizationResult
 	{
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$queryData = null;
-		if ($document instanceof \Rbs\Catalog\Documents\Category)
+		if ($document instanceof \Rbs\Catalog\Documents\Listing)
 		{
-			$queryData = $this->buildQueryDataForCategory($document);
+			$queryData = $this->buildQueryDataForListing($document);
 		}
 		else if ($document instanceof \Rbs\Catalog\Documents\Product)
 		{
@@ -128,20 +125,18 @@ class ProductCategorizationResult
 		if ($queryData)
 		{
 			$data = array_merge($event->getRequest()->getQuery()->toArray(), $queryData);
-
 			$fakePostParameters = new Parameters($data);
 			$event->getRequest()->setPost($fakePostParameters);
 			$action = new DocumentQuery();
 			$action->execute($event);
-
 		}
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Category $document
+	 * @param \Rbs\Catalog\Documents\Listing $document
 	 * @return array
 	 */
-	protected function buildQueryDataForCategory($document)
+	protected function buildQueryDataForListing($document)
 	{
 		return array (
 			'model' => 'Rbs_Catalog_ProductCategorization',
@@ -162,7 +157,7 @@ class ProductCategorizationResult
 						'op' => 'eq',
 						'lexp' =>
 						array (
-							'property' => 'category',
+							'property' => 'listing',
 						),
 						'rexp' =>
 						array (
@@ -268,10 +263,10 @@ class ProductCategorizationResult
 		$cs = $event->getParam('commerceServices');
 		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
 		$cm = $cs->getCatalogManager();
-		$category = $dm->getDocumentInstance($event->getRequest()->getPost('categoryId'));
+		$listing = $dm->getDocumentInstance($event->getRequest()->getPost('listingId'));
 		$condition = $dm->getDocumentInstance($event->getRequest()->getPost('conditionId'));
 		$result = array();
-		if ($category instanceof  \Rbs\Catalog\Documents\Category)
+		if ($listing instanceof  \Rbs\Catalog\Documents\Listing)
 		{
 			try
 			{
@@ -281,13 +276,13 @@ class ProductCategorizationResult
 					$product = $dm->getDocumentInstance($id);
 					if ($product instanceof \Rbs\Catalog\Documents\Product)
 					{
-						$cat = $cm->getProductCategorization($product, $category, $condition);
+						$cat = $cm->getProductCategorization($product, $listing, $condition);
 						if (!$cat)
 						{
 							/* @var $cat \Rbs\Catalog\Documents\ProductCategorization */
 							$cat = $dm->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductCategorization');
 							$cat->setProduct($product);
-							$cat->setCategory($category);
+							$cat->setListing($listing);
 							$cat->setCondition($condition);
 							$cat->save();
 							$result[] = $cat->getId();

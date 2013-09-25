@@ -255,15 +255,26 @@ class DocumentManager
 
 	/**
 	 * @param integer $documentId
-	 * @param AbstractModel $model
+	 * @param AbstractModel|String $model
 	 * @return AbstractDocument|null
 	 */
-	public function getDocumentInstance($documentId, AbstractModel $model = null)
+	public function getDocumentInstance($documentId, $model = null)
 	{
 		$id = intval($documentId);
 		if ($id <= 0)
 		{
 			return null;
+		}
+
+		if (is_string($model))
+		{
+			$modelName = $model;
+			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+			if ($model === null)
+			{
+				$this->applicationServices->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $modelName);
+				return null;
+			}
 		}
 
 		$document = $this->getFromCache($id);

@@ -64,7 +64,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			/* @var $pathRule \Change\Http\Web\PathRule */
 			$pathRule = $event->getParam('pathRule');
 
-			$relativePath = $document->getTitle() . '.' . $document->getId() . '.html';
+			$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');
 			$section = $document->getSection();
 			if ($section instanceof Topic && $section->getPathPart())
 			{

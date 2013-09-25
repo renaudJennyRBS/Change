@@ -142,7 +142,7 @@
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 
 		<div class="control-group property" data-ng-hide="document.declinationGroup">
-			Le produit ne fait pas partie d'un produit décliné.
+			Le produit ne fait pas partie d'un produit d�clin�.
 		</div>
 
 		<div class="control-group property" data-ng-show="document.declinationGroup">
@@ -165,10 +165,10 @@
 			<thead>
 			<tr>
 				<th>
-					{{ i18n('m.rbs.catalog.document.productcategorization.category', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.document.productcategorization.listing', ['ucf']) }}
 				</th>
 				<th>
-					{{ i18n('m.rbs.catalog.document.category.highlight', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.document.listing.highlight', ['ucf']) }}
 				</th>
 				<th>
 					{{ i18n('m.rbs.catalog.document.productcategorization.canonical', ['ucf']) }}
@@ -180,7 +180,7 @@
 			<tbody>
 				<tr data-ng-repeat="cat in categorizations">
 					<td>
-						<a class="btn-link" ng-click="cascadeEditCategorization(cat)">(= cat.category.label =)</a>
+						<a class="btn-link" ng-click="cascadeEditCategorization(cat)">(= cat.listing.label =)</a>
 					</td>
 					<td>
 						<switch ng-model="cat.isHighlighted" ng-change="toggleHighlight(cat)"></switch>
@@ -199,7 +199,7 @@
 		</table>
 
 		<a href data-ng-show="document.categorizable"
-				data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.js.add-product-in-category', ['ucf']) }}</a>
+				data-ng-click="cascadeCreateCategorization()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.js.add-product-in-listing', ['ucf']) }}</a>
 
 	</fieldset>
 

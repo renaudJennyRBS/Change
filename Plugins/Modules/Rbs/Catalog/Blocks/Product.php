@@ -23,7 +23,6 @@ class Product extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('productId');
 		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('categoryId');
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
 		$parameters->addParameterMeta('displayPrices');
@@ -39,42 +38,23 @@ class Product extends Block
 			}
 		}
 
-		$request = $event->getHttpRequest();
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
-		if ($parameters->getParameter('categoryId') === null)
+		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		$commerceServices = $event->getParam('commerceServices');
+		$webStore = $commerceServices->getWebStore();
+		if ($webStore)
 		{
-			$categoryId = $request->getQuery('categoryId');
-			if ($categoryId) {$parameters->setParameterValue('categoryId', $categoryId);}
-		}
-		$category = null;
-		if ($parameters->getParameter('categoryId') !== null)
-		{
-			$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
-			if (!($category instanceof \Rbs\Catalog\Documents\Category))
+			$parameters->setParameterValue('webStoreId', $webStore->getId());
+			if ($parameters->getParameter('displayPrices') === null)
 			{
-				$parameters->setParameterValue('categoryId', null);
+				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 			}
 		}
-
-		if ($parameters->getParameter('webStoreId') === null)
+		else
 		{
-			$webStoreId = $request->getQuery('webStoreId', ($category) ? $category->getWebStoreId() : null);
-			if ($webStoreId) {$parameters->setParameterValue('webStoreId', $webStoreId);}
-		}
-		$webStore = null;
-		if ($parameters->getParameter('webStoreId') !== null)
-		{
-			$webStore = $documentManager->getDocumentInstance($parameters->getParameter('webStoreId'));
-			if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
-			{
-				$parameters->setParameterValue('webStoreId', null);
-			}
-		}
-
-		if ($webStore !== null && $parameters->getParameter('displayPrices') === null)
-		{
-			$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+			$parameters->setParameterValue('webStoreId', 0);
+			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
 
 		return $parameters;
@@ -100,19 +80,11 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				//TODO
-				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
-				$attributes['activateZoom'] = $parameters->getParameter('activateZoom');
-				$attributes['attributesDisplayMode'] = $parameters->getParameter('attributesDisplayMode');
-
 				$attributes['product'] = $product;
 				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 
-				// Categories.
-				$attributes['categories'] = $product->getPublishedCategories($event->getParam('website'));
-
 				// Cart line configs.
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getWebStoreId());
+				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'));
 				if ($productPresentation)
 				{
 					$productPresentation->evaluate();

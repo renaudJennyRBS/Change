@@ -820,14 +820,15 @@ class PluginManager
 	}
 
 	/**
-	 * @param $type
-	 * @param $vendor
-	 * @param $name
+	 * @param string $type
+	 * @param string $vendor
+	 * @param string $name
+	 * @param string|null $package
 	 * @return string
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 */
-	public function initializePlugin($type, $vendor, $name)
+	public function initializePlugin($type, $vendor, $name, $package = null)
 	{
 		if ($type != 'module' && $type != 'theme')
 		{
@@ -865,6 +866,10 @@ class PluginManager
 			throw new \RuntimeException('Plugin already exists at path ' . $path, 999999);
 		}
 		$attributes = array('vendor' => $normalizedVendor, 'name' => $normalizedName);
+		if ($package)
+		{
+			$attributes['package'] = $package;
+		}
 		File::write($path, Json::prettyPrint(Json::encode($attributes)));
 
 		$loader = new \Twig_Loader_Filesystem(__DIR__);

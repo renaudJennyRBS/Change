@@ -32,7 +32,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->closeDbConnection();
 	}
 
-	public function testAddProductInCategory()
+	public function testAddProductInListing()
 	{
 		$tm  = $this->getApplicationServices()->getTransactionManager();
 		$tm->begin();
@@ -43,12 +43,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$product->getCurrentLocalization()->setTitle('Test product');
 		$product->save();
 
-		$category = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Category');
-		/* @var $category \Rbs\Catalog\Documents\Category */
-		$category->setRefLCID('fr_FR');
-		$category->setLabel('Test category');
-		$category->setTitle('Test category');
-		$category->save();
+		$listing = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Listing');
+		/* @var $listing \Rbs\Catalog\Documents\Listing */
+		$listing->setLabel('Test listing');
+		$listing->save();
 
 		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
@@ -57,35 +55,33 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$tm->commit();
 
-		$categorization = $this->cm->addProductInCategory($product, $category, null);
+		$categorization = $this->cm->addProductInListing($product, $listing, null);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductCategorization', $categorization);
 		$this->assertEquals($product->getId(), $categorization->getProduct()->getId());
-		$this->assertEquals($category->getId(), $categorization->getCategory()->getId());
+		$this->assertEquals($listing->getId(), $categorization->getListing()->getId());
 
-		$existingCategorization = $this->cm->addProductInCategory($product, $category, null);
+		$existingCategorization = $this->cm->addProductInListing($product, $listing, null);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductCategorization', $categorization);
 		$this->assertEquals($categorization->getId(), $existingCategorization->getId());
 		$this->assertEquals($product->getId(), $existingCategorization->getProduct()->getId());
-		$this->assertEquals($category->getId(), $existingCategorization->getCategory()->getId());
+		$this->assertEquals($listing->getId(), $existingCategorization->getListing()->getId());
 
-		$newCategorization = $this->cm->addProductInCategory($product, $category, $condition);
+		$newCategorization = $this->cm->addProductInListing($product, $listing, $condition);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductCategorization', $categorization);
 		$this->assertNotEquals($categorization->getId(), $newCategorization->getId());
 		$this->assertEquals($product->getId(), $newCategorization->getProduct()->getId());
-		$this->assertEquals($category->getId(), $newCategorization->getCategory()->getId());
+		$this->assertEquals($listing->getId(), $newCategorization->getListing()->getId());
 		$this->assertEquals($condition->getId(), $newCategorization->getCondition()->getId());
 	}
 
 
-	public function testHighlightProductInCategory()
+	public function testHighlightProductInListing()
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
-		$category = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Category');
-		/* @var $category \Rbs\Catalog\Documents\Category */
-		$category->setRefLCID('fr_FR');
-		$category->setLabel('Test category');
-		$category->setTitle('Test category');
-		$category->save();
+		$listing = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Listing');
+		/* @var $listing \Rbs\Catalog\Documents\Listing */
+		$listing->setLabel('Test listing');
+		$listing->save();
 
 		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
@@ -102,21 +98,20 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$product->setLabel($i);
 			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
-			$this->cm->addProductInCategory($product, $category, $condition);
+			$this->cm->addProductInListing($product, $listing, $condition);
 			$products[] = $product;
 		}
 
 
-
 		$this->getApplicationServices()->getTransactionManager()->commit();
 
-		$this->cm->highlightProductInCategory($products[0], $category, $condition);
-		$this->cm->highlightProductInCategory($products[1], $category, $condition);
-		$this->cm->highlightProductInCategory($products[2], $category, $condition);
+		$this->cm->highlightProductInListing($products[0], $listing, $condition);
+		$this->cm->highlightProductInListing($products[1], $listing, $condition);
+		$this->cm->highlightProductInListing($products[2], $listing, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
@@ -136,10 +131,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 		// Put 3rd product in first position
-		$this->cm->highlightProductInCategory($products[2], $category, $condition, $products[0]);
+		$this->cm->highlightProductInListing($products[2], $listing, $condition, $products[0]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-2 ,$cat->getPosition());
@@ -158,10 +153,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInCategory($products[1], $category, $condition, $products[0]);
+		$this->cm->highlightProductInListing($products[1], $listing, $condition, $products[0]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-1 ,$cat->getPosition());
@@ -180,10 +175,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInCategory($products[5], $category, $condition, $products[2]);
+		$this->cm->highlightProductInListing($products[5], $listing, $condition, $products[2]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-1 ,$cat->getPosition());
@@ -206,10 +201,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInCategory($products[5], $category, $condition);
+		$this->cm->highlightProductInListing($products[5], $listing, $condition);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-2 ,$cat->getPosition());
@@ -233,10 +228,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 
-		$this->cm->highlightProductInCategory($products[2], $category, $condition, $products[5]);
+		$this->cm->highlightProductInListing($products[2], $listing, $condition, $products[5]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
@@ -258,19 +253,17 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				$this->assertEquals(0 ,$cat->getPosition());
 			}
 		}
-		$this->cm->removeProductFromCategory($products[2], $category, $condition);
-		return array('cat' => $category, 'con' => $condition, 'pro' => $products);
+		$this->cm->removeProductFromListing($products[2], $listing, $condition);
+		return array('cat' => $listing, 'con' => $condition, 'pro' => $products);
 	}
 
-	public function testDownplayProductInCategory()
+	public function testDownplayProductInListing()
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
-		$category = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Category');
-		/* @var $category \Rbs\Catalog\Documents\Category */
-		$category->setRefLCID('fr_FR');
-		$category->setLabel('Test category');
-		$category->setTitle('Test category');
-		$category->save();
+		$listing = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Listing');
+		/* @var $listing \Rbs\Catalog\Documents\Listing */
+		$listing->setLabel('Test listing');
+		$listing->save();
 
 		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
@@ -287,19 +280,19 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$product->setLabel($i);
 			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
-			$this->cm->addProductInCategory($product, $category, $condition);
+			$this->cm->addProductInListing($product, $listing, $condition);
 			$products[] = $product;
 		}
 		$this->getApplicationServices()->getTransactionManager()->commit();
 
-		$this->cm->highlightProductInCategory($products[9], $category, $condition);
-		$this->cm->highlightProductInCategory($products[8], $category, $condition);
-		$this->cm->highlightProductInCategory($products[7], $category, $condition);
-		$this->cm->highlightProductInCategory($products[6], $category, $condition);
+		$this->cm->highlightProductInListing($products[9], $listing, $condition);
+		$this->cm->highlightProductInListing($products[8], $listing, $condition);
+		$this->cm->highlightProductInListing($products[7], $listing, $condition);
+		$this->cm->highlightProductInListing($products[6], $listing, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 9)
 			{
 				$this->assertEquals(-4 ,$cat->getPosition());
@@ -322,11 +315,11 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->downplayProductInCategory($products[7], $category, $condition);
+		$this->cm->downplayProductInListing($products[7], $listing, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductCategorization($products[$i], $category, $condition);
+			$cat = $this->cm->getProductCategorization($products[$i], $listing, $condition);
 			if ($i == 9)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
@@ -348,6 +341,5 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				$this->assertEquals(0 ,$cat->getPosition());
 			}
 		}
-
 	}
 }

@@ -1,22 +1,12 @@
 {
 	"Change":{
 		"Application":{
-			"development-mode":true
+			"development-mode":false
 		},
 		"I18n":{
 			"supported-lcids":["fr_FR", "en_US"],
 			"langs":{
 				"en_US":"en"
-			}
-		},
-		"Db":{
-			"default":{
-				"host":"127.0.0.1",
-				"user":"root",
-				"password":"root",
-				"database":"rbschangetest",
-				"port":3306,
-				"longTransaction":5
 			}
 		}
 	}

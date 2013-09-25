@@ -68,18 +68,23 @@
 		"description": "Initialize an new empty plugin skeleton",
 		"dev": true,
 		"options":{
-			"type": {
-				"description": "type of plugin",
-				"default": "module",
-				"shortcut": "t"
-			},
-			"vendor": {
-				"description": "vendor of the plugin",
-				"default": "project",
-				"shortcut": "e"
+			"package": {
+				"description": "package of plugin",
+				"default": null,
+				"shortcut": "p"
 			}
 		},
 		"arguments":{
+			"type": {
+				"description": "type of plugin",
+				"required": true,
+				"default": null
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"required": true,
+				"default": null
+			},
 			"name": {
 				"description": "short name of the plugin",
 				"required": true,

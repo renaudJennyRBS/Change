@@ -41,73 +41,75 @@
 	</fieldset>
 </form>-->
 
-<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
-	{% block availability %}
-		{% if productPresentation.stock.thresholdTitle %}
-			<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
-				<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
-			</div>
-			<!-- TODO: handle stock levels and delivery delay -->
-			<!--<div class="alert alert-success availability text-center">
-				<h4 itemprop="availability">En stock</h4>
-				<p itemprop="deliveryLeadTime">Expédié sous 48 heures</p>
-			</div>
-			<div class="alert alert-danger availability text-center">
-				<h4 itemprop="availability">En rupture</h4>
-			</div>-->
-		{% endif %}
-	{% endblock %}
+{% if parameters.webStoreId %}
+	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
+		{% block availability %}
+			{% if productPresentation.stock.thresholdTitle %}
+				<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
+					<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
+				</div>
+				<!-- TODO: handle stock levels and delivery delay -->
+				<!--<div class="alert alert-success availability text-center">
+					<h4 itemprop="availability">En stock</h4>
+					<p itemprop="deliveryLeadTime">Expédié sous 48 heures</p>
+				</div>
+				<div class="alert alert-danger availability text-center">
+					<h4 itemprop="availability">En rupture</h4>
+				</div>-->
+			{% endif %}
+		{% endblock %}
 
-	{% block prices %}
-		{% if productPresentation.priceValue and (parameters.displayPrices or parameters.displayPricesWithTax) %}
-			<ul class="list-unstyled main-price">
-				{% if parameters.displayPrices %}
-					<li class="price">
-						{{ formatPrice(productPresentation.priceValue) }}
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-						{% if productPresentation.priceValueWithoutDiscount %}
-							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-								{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
-							</del>
-						{% endif %}
-					</li>
-				{% endif %}
-				{% if parameters.displayPricesWithTax %}
-					<li class="price">
-						<meta itemprop="priceCurrency" content="EUR" />
-						<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-						{% if productPresentation.priceValueWithoutDiscountWithTax %}
-							<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-								{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
-							</del>
-						{% endif %}
-					</li>
-				{% endif %}
-				{% if productPresentation.ecoTaxValue %}
-					<li class="small">
-						{{ i18n('m.rbs.catalog.fo.including', ['ucf']) }} {{ i18n('m.rbs.catalog.fo.ecotax') }} {{ formatPrice(productPresentation.ecoTaxValue) }}
-					</li>
-				{% endif %}
-			</ul>
-		{% endif %}
-	{% endblock %}
+		{% block prices %}
+			{% if productPresentation.priceValue and (parameters.displayPrices or parameters.displayPricesWithTax) %}
+				<ul class="list-unstyled main-price">
+					{% if parameters.displayPrices %}
+						<li class="price">
+							{{ formatPrice(productPresentation.priceValue) }}
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+							{% if productPresentation.priceValueWithoutDiscount %}
+								<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+									{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
+								</del>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if parameters.displayPricesWithTax %}
+						<li class="price">
+							<meta itemprop="priceCurrency" content="EUR" />
+							<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+							{% if productPresentation.priceValueWithoutDiscountWithTax %}
+								<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+									{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
+								</del>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if productPresentation.ecoTaxValue %}
+						<li class="small">
+							{{ i18n('m.rbs.catalog.fo.including', ['ucf']) }} {{ i18n('m.rbs.catalog.fo.ecotax') }} {{ formatPrice(productPresentation.ecoTaxValue) }}
+						</li>
+					{% endif %}
+				</ul>
+			{% endif %}
+		{% endblock %}
 
-	<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
-		<fieldset>
-			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-			<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
-			<div class="form-group">
-				<label for="product-quantity">Quantité</label>
-				<input class="form-control" name="quantity" value="1" type="number" />
-			</div>
-			<button name="product" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
-				onclick="script{{ blockId }}.offer.addProduct(this)">
-				<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
-			</button>
-		</fieldset>
-	</form>
-</div>
+		<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
+			<fieldset>
+				<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
+				<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
+				<div class="form-group">
+					<label for="product-quantity">Quantité</label>
+					<input class="form-control" name="quantity" value="1" type="number" />
+				</div>
+				<button name="product" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
+					onclick="script{{ blockId }}.offer.addProduct(this)">
+					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+				</button>
+			</fieldset>
+		</form>
+	</div>
+{% endif %}
 
 <!-- TODO: handle favorites and comparisons -->
 <!--<ul class="list-unstyled">
