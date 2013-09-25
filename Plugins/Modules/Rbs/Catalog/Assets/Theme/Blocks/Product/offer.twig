@@ -41,7 +41,7 @@
 	</fieldset>
 </form>-->
 
-{% if hasWebStore %}
+{% if parameters.webStoreId %}
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
 			{% if productPresentation.stock.thresholdTitle %}

@@ -38,15 +38,23 @@ class Product extends Block
 			}
 		}
 
-		if ($parameters->getParameter('displayPrices') === null)
+		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		$commerceServices = $event->getParam('commerceServices');
+		$webStore = $commerceServices->getWebStore();
+		if ($webStore)
 		{
-			// TODO use webstore from commerce sevices
-			//$webStore = $listing->getWebStore();
-			if ($webStore)
+			$parameters->setParameterValue('webStoreId', $webStore->getId());
+			if ($parameters->getParameter('displayPrices') === null)
 			{
 				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 			}
+		}
+		else
+		{
+			$parameters->setParameterValue('webStoreId', 0);
+			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
 
 		return $parameters;
@@ -72,7 +80,6 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$attributes['hasWebStore'] = $parameters->getParameter('webStoreId') > 0;
 				$attributes['product'] = $product;
 				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 

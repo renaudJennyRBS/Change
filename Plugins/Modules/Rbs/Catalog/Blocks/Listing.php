@@ -23,6 +23,7 @@ class Listing extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('listingId');
 		$parameters->addParameterMeta('conditionId');
+		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
@@ -44,15 +45,23 @@ class Listing extends Block
 			}
 		}
 
-		if ($parameters->getParameter('displayPrices') === null)
+		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		$commerceServices = $event->getParam('commerceServices');
+		$webStore = $commerceServices->getWebStore();
+		if ($webStore)
 		{
-			// TODO use webstore from commerce sevices
-			//$webStore = $listing->getWebStore();
-			if ($webStore)
+			$parameters->setParameterValue('webStoreId', $webStore->getId());
+			if ($parameters->getParameter('displayPrices') === null)
 			{
 				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 			}
+		}
+		else
+		{
+			$parameters->setParameterValue('webStoreId', 0);
+			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
 
 		return $parameters;
@@ -73,8 +82,6 @@ class Listing extends Block
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
 			$commerceServices = $event->getParam('commerceServices');
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
-
-			$attributes['hasWebStore'] = false; // TODO use webstore from commerce sevices
 
 			/* @var $listing \Rbs\Catalog\Documents\Listing */
 			$listing = $documentManager->getDocumentInstance($listingId);
@@ -108,9 +115,7 @@ class Listing extends Block
 				$page = $event->getParam('page');
 				$section = $page->getSection();
 
-				// TODO use webstore from commerce sevices
-				//$webStore = $listing->getWebStore();
-				$webStoreId = $webStore ? $webStore->getId() : 0;
+				$webStoreId = $parameters->getParameter('webStoreId');
 				$contextualUrls = $parameters->getParameter('contextualUrls');
 
 				/* @var $product \Rbs\Catalog\Documents\Product */
