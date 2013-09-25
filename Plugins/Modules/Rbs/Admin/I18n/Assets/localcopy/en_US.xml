@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.admin.localcopy" lcid="en_US">
+	<key id="local-copies-message-ng-pluralize">{'0': 'No local copy', 'one': 'You have one local copy of an unsaved document.', 'other': 'You have {} local copies of unsaved documents.'}</key>
+	<key id="remove-all-local-copies">remove local copies</key>
+	<key id="what-are-local-copies">what are local copies?</key>
+</i18n>

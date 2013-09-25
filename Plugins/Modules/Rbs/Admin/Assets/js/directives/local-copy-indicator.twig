@@ -1,0 +1,31 @@
+<li class="dropdown" ng-if="localCopies.length > 0">
+	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="icon-edit"></i>
+		(= localCopies.length =)
+		<b ng-if="localCopies.length > 0" class="caret"></b>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="disabled"><a href="javascript:;">
+			<small class="muted">
+				<i class="icon-info-sign"></i>
+				<span ng-pluralize="" count="localCopies.length" when="{{ i18nAttr('m.rbs.admin.localcopy.local-copies-message-ng-pluralize') }}"></span>
+			</small>
+		</a></li>
+		<li class="divider"></li>
+
+		<li ng-repeat="copy in localCopies"><a href ng-href="(= copy | rbsURL =)">
+			<status class="small" ng-model="copy"></status>
+			<strong>(= copy.label =)</strong>
+			<br/>(= copy.model =) / (= copy.LCID =)
+			<br/><small class="muted"><time display="both" datetime="(= copy.META$.localCopySaveDate =)"></time></small>
+		</a></li>
+
+		<li class="divider"></li>
+		<li><a href="javascript:;" ng-click="clearLocalCopies()">
+			<i class="icon-trash"></i> {{ i18n('m.rbs.admin.localcopy.remove-all-local-copies', ['ucf']) }}
+		</a></li>
+		<li><a href="javascript:;">
+			<i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.localcopy.what-are-local-copies', ['ucf']) }}
+		</a></li>
+	</ul>
+</li>

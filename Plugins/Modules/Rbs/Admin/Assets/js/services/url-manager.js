@@ -218,7 +218,7 @@
 					},
 
 					'getTranslateUrl' : function (doc, LCID) {
-						return getNamedUrl(doc, { 'LCID': LCID }, 'translate');
+						return getNamedUrl(doc, { 'LCID': LCID || doc.LCID }, 'translate');
 					},
 
 					'getUrl'     : function (doc, params, name) {
@@ -241,7 +241,12 @@
 				node = Breadcrumb.getCurrentNode();
 
 			if (Utils.isDocument(doc)) {
-				url = doc.url(urlName);
+				if (doc.refLCID && doc.LCID !== doc.refLCID) {
+					url = UrlManager.getTranslateUrl(doc);
+				}
+				else {
+					url = UrlManager.getFormUrl(doc);
+				}
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
 				url = UrlManager.getUrl(doc, null, urlName);
 			} else {
@@ -267,8 +272,7 @@
 	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName, params) {
-			var	url,
-				node = Breadcrumb.getCurrentNode();
+			var	url;
 
 			if (Utils.isDocument(doc)) {
 				url = doc.url(urlName);

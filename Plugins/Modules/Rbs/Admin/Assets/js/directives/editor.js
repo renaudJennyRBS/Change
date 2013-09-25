@@ -290,6 +290,8 @@
 							if (angular.isFunction($scope.onReload)) {
 								$scope.onReload($scope.document);
 							}
+
+							MainMenu.addTranslations($scope.document, $scope);
 						}
 					}
 
@@ -462,11 +464,13 @@
 				function mergeLocalCopy (doc) {
 					var localCopy = EditorManager.getLocalCopy(doc);
 					console.log("localCopy for ", doc, ": ", localCopy);
-					if (localCopy && window.confirm("Vous avez récemment modifié ce document sans l'enregistrer. Souhaitez-vous retrouver vos modifications maintenant ?"))
+					if (localCopy)
 					{
 						console.log("Merging document with local copy");
 						angular.extend(doc, localCopy);
+						return true;
 					}
+					return false;
 				}
 
 
@@ -481,7 +485,9 @@
 					initCorrection();
 					initMenu();
 
-					mergeLocalCopy($scope.document);
+					if (mergeLocalCopy($scope.document)) {
+						$scope.$emit('Change:Editor:LocalCopyMerged');
+					}
 
 					// Add "Translations" menu on the left if the document is localizable.
 					if ($scope.modelInfo.metas.localized && ! EditorManager.isCascading()) {
@@ -961,7 +967,6 @@
 
 			function commitLocalCopyRepository () {
 				localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
-				console.log("localCopy: ", localCopyRepo);
 			}
 
 			function makeLocalCopyKey (doc) {
@@ -1097,7 +1102,7 @@
 
 				'saveLocalCopy' : function (doc) {
 					var	key = makeLocalCopyKey(doc);
-					doc.META$.localCopySaveDate = new Date();
+					doc.META$.localCopySaveDate = (new Date()).toString();
 					localCopyRepo[key] = doc;
 					commitLocalCopyRepository();
 				},
@@ -1114,6 +1119,14 @@
 						delete localCopyRepo[key];
 						commitLocalCopyRepository();
 					}
+				},
+
+				'removeAllLocalCopies' : function () {
+					// No need to check 'hasOwnProperty()' since 'delete' does not remove properties of the Prototype.
+					for (var key in localCopyRepo) {
+						delete localCopyRepo[key];
+					}
+					commitLocalCopyRepository();
 				},
 
 				'getLocalCopies' : function () {
