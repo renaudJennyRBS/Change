@@ -63,7 +63,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
 
 			$as = $this->getApplicationServices();
-			if ($as->getApplication()->inDevelopmentMode())
+			if ($as->getApplication()->inDevelopmentMode() && $this->themeManager)
 			{
 				$pluginManager = $as->getPluginManager();
 				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
