@@ -289,16 +289,19 @@ trait Localized
 
 	/**
 	 * @api
+	 * @param boolean $newDocument
 	 */
-	public function saveCurrentLocalization()
+	public function saveCurrentLocalization($newDocument = false)
 	{
 		$localizedPart = $this->getCurrentLocalization();
 		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_NEW)
 		{
 			$this->insertLocalizedPart($localizedPart);
-
-			$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_LOCALIZED_CREATED, $this);
-			$this->getEventManager()->trigger($event);
+			if (!$newDocument)
+			{
+				$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_LOCALIZED_CREATED, $this);
+				$this->getEventManager()->trigger($event);
+			}
 		}
 		else
 		{

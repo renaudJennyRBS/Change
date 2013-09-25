@@ -207,7 +207,7 @@ trait DbStorage
 		$this->insertDocument();
 		if ($this instanceof Localizable)
 		{
-			$this->saveCurrentLocalization();
+			$this->saveCurrentLocalization(true);
 		}
 	}
 
@@ -426,7 +426,7 @@ trait DbStorage
 
 			if ($this instanceof Localizable)
 			{
-				$this->saveCurrentLocalization();
+				$this->saveCurrentLocalization(false);
 			}
 		}
 	}

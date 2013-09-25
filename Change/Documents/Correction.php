@@ -556,7 +556,7 @@ class Correction
 
 		if ($document instanceof Localizable)
 		{
-			$document->saveCurrentLocalization();
+			$document->saveCurrentLocalization(false);
 		}
 		$this->save();
 	}
