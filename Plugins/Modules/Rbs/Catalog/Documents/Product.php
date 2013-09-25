@@ -90,16 +90,17 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			if ($section)
 			{
 				/* @var $section \Rbs\Website\Documents\Section */
+				$sectionPath = ($section->getPathPart() ? $section->getPathPart() . '.' : '') . $section->getId();
 				$path = $pathRule->normalizePath(array(
-					$section->getTitle() . ',' . $section->getId(),
-					$product->getCurrentLocalization()->getTitle() . ',' . $product->getId() . '.html'
+					$sectionPath,
+					$product->getCurrentLocalization()->getTitle() . '.' . $product->getId() . '.html'
 				));
 				$pathRule->setRelativePath($path);
 			}
 			else
 			{
 				$path = $pathRule->normalizePath(
-					$product->getCurrentLocalization()->getTitle() . ',' . $product->getId() . '.html'
+					$product->getCurrentLocalization()->getTitle() . '.' . $product->getId() . '.html'
 				);
 				$pathRule->setRelativePath($path);
 			}
