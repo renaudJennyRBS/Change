@@ -1,15 +1,8 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: fredericbonjour
- * Date: 24/05/13
- * Time: 14:59
- * To change this template use File | Settings | File Templates.
- */
 (function ($) {
 
 	"use strict";
 
-	angular.module('RbsChange').directive('imageUploader', ['RbsChange.REST', '$q', function (REST, $q) {
+	angular.module('RbsChange').directive('imageUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
 
 		var	acceptedTypes = /image\/(gif|jpeg|png)/,
 			MAX_PREVIEW_HEIGHT = 100;
@@ -17,7 +10,7 @@
 		function updatePreview (scope, url) {
 			var	img = new Image();
 			img.onload = function () {
-				scope.$apply(function () {
+				$timeout(function () {
 					scope.imageWidth  = img.width;
 					scope.imageHeight = img.height;
 					scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
