@@ -1,8 +1,8 @@
 <?php
 namespace ChangeTests\Change\Documents;
 
-use Change\Documents\DocumentManager;
 use Change\Documents\AbstractDocument;
+use Change\Documents\Events\Event;
 use Change\Documents\Interfaces\Publishable;
 use Change\Documents\Correction;
 
@@ -45,6 +45,12 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc);
 		$this->assertEquals('Project_Tests_Basic', $basicDoc->getDocumentModelName());
+
+		$eventCollection = new \ArrayObject();
+		$callBack = function (Event $event) use ($eventCollection) {
+			$eventCollection[] = $event->getName();
+		};
+		$basicDoc->getEventManager()->attach("*", $callBack);
 		
 		$this->assertEquals(AbstractDocument::STATE_NEW, $basicDoc->getPersistentState());
 		$this->assertLessThan(0 , $basicDoc->getId());
@@ -60,7 +66,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\DateTime', $basicDoc->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $basicDoc->getModificationDate());
 
-		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$event = new Event(Event::EVENT_CREATE, $basicDoc);
 		$validation = new \Change\Documents\Events\ValidateListener();
 		$validation->onValidate($event);
 		$errors = $event->getParam('propertiesErrors');
@@ -82,6 +88,10 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(array('creationDate', 'modificationDate', 'pStr', 'pInt', 'pFloat'), $basicDoc->getModifiedPropertyNames());
 
 		$basicDoc->save();
+		$this->assertEquals(array(Event::EVENT_CREATE, Event::EVENT_CREATED), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
+
 		$this->assertGreaterThan(0 , $basicDoc->getId());
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $basicDoc->getPersistentState());
 		$this->assertFalse($basicDoc->isNew());
@@ -107,6 +117,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string', $basicDoc->getPStrOldValue());
 		
 		$basicDoc->save();
+		$this->assertEquals(array(Event::EVENT_UPDATE, Event::EVENT_UPDATED), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $basicDoc->getPersistentState());
 		$this->assertFalse($basicDoc->hasModifiedProperties());
 		$this->assertEquals('string 2', $basicDoc->getPStr());
@@ -115,8 +128,10 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$documentId = $basicDoc->getId();
 		$this->getDocumentServices()->getDocumentManager()->reset();
 
+
 		/* @var $basicDoc2 \Project\Tests\Documents\Basic */
 		$basicDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$basicDoc2->getEventManager()->attach("*", $callBack);
 
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
 		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $basicDoc2->getPersistentState());
@@ -126,6 +141,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $basicDoc2->getPersistentState());
 		
 		$basicDoc2->delete();
+		$this->assertEquals(array(Event::EVENT_LOADED, Event::EVENT_DELETE, Event::EVENT_DELETED), $eventCollection->getArrayCopy());
 		$this->assertEquals(AbstractDocument::STATE_DELETED, $basicDoc2->getPersistentState());
 		$this->assertTrue($basicDoc2->isDeleted());
 		
@@ -146,6 +162,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
 		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$eventCollection = new \ArrayObject();
+		$callBack = function (Event $event) use ($eventCollection) {
+			$eventCollection[] = $event->getName();
+		};
+		$localizedDoc->getEventManager()->attach("*", $callBack);
 
 		$dm->pushLCID('fr_FR');
 
@@ -175,7 +196,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\DateTime', $cl->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $cl->getModificationDate());
 
-		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $localizedDoc);
+		$event = new Event(Event::EVENT_CREATE, $localizedDoc);
 		$validation = new \Change\Documents\Events\ValidateListener();
 		$validation->onValidate($event);
 		$errors = $event->getParam('propertiesErrors');
@@ -204,6 +225,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(array('refLCID', 'pStr', 'pInt', 'pFloat', 'LCID', 'creationDate', 'modificationDate', 'pLStr'), $localizedDoc->getModifiedPropertyNames());
 
 		$localizedDoc->save();
+		$this->assertEquals(array(Event::EVENT_CREATE, Event::EVENT_CREATED), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
 		$this->assertFalse($localizedDoc->hasModifiedProperties());
 		$this->assertEquals(array(), $localizedDoc->getModifiedPropertyNames());
 
@@ -233,6 +257,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string FR', $localizedDoc->getCurrentLocalization()->getPLStrOldValue());
 
 		$localizedDoc->save();
+		$this->assertEquals(array(Event::EVENT_UPDATE, Event::EVENT_UPDATED), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $localizedDoc->getPersistentState());
 		$this->assertFalse($localizedDoc->hasModifiedProperties());
 		$this->assertEquals('string FR 2', $localizedDoc->getCurrentLocalization()->getPLStr());
@@ -254,6 +281,9 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedDoc->getCurrentLocalization()->setPLStr('string EN');
 		$this->assertTrue($localizedDoc->isPropertyModified('pLStr'));
 		$localizedDoc->save();
+		$this->assertEquals(array(Event::EVENT_UPDATE, Event::EVENT_LOCALIZED_CREATED, Event::EVENT_UPDATED ), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
 		$this->assertFalse($localizedDoc->hasModifiedProperties());
 
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $localizedDoc->getCurrentLocalization()->getPersistentState());
@@ -278,6 +308,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $localizedDoc2 \Project\Tests\Documents\Localized */
 		$localizedDoc2 = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$localizedDoc2->getEventManager()->attach("*", $callBack);
 		$this->assertInstanceOf('\Project\Tests\Documents\Localized', $localizedDoc2);
 		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $localizedDoc2->getPersistentState());
 		$this->assertNotSame($localizedDoc, $localizedDoc2);
@@ -285,8 +316,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('string', $localizedDoc2->getPStr());
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $localizedDoc2->getPersistentState());
 
+		$localizedDoc2->deleteCurrentLocalization();
+		$this->assertEquals(array(Event::EVENT_LOADED, Event::EVENT_LOCALIZED_DELETED), $eventCollection->getArrayCopy());
+		$eventCollection->exchangeArray(array());
+
+		$this->assertEquals(AbstractDocument::STATE_DELETED, $localizedDoc2->getCurrentLocalization()->getPersistentState());
+		$this->assertEquals(AbstractDocument::STATE_LOADED, $localizedDoc2->getPersistentState());
+
 		$localizedDoc2->delete();
-		$this->assertEquals(AbstractDocument::STATE_DELETED, $localizedDoc2->getPersistentState());
+		$this->assertEquals(array(Event::EVENT_DELETE, Event::EVENT_DELETED), $eventCollection->getArrayCopy());
 		$this->assertTrue($localizedDoc2->isDeleted());
 
 		$datas = $this->getDocumentServices()->getDocumentManager()->getBackupData($documentId);
@@ -298,7 +336,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertArrayHasKey('LCID', $datas);
 		$this->assertEquals('string FR 2', $datas['LCID']['fr_FR']['pLStr']);
-		$this->assertEquals('string EN', $datas['LCID']['en_US']['pLStr']);
+		//$this->assertEquals('string EN', $datas['LCID']['en_US']['pLStr']);
 		$dm->popLCID();
 
 

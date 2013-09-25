@@ -22,6 +22,13 @@
 			</rbs-field>
 		</div>
 
+		<div class="control-group" data-ng-hide="document.isNew()">
+			<label class="control-label">{{ i18n('m.rbs.catalog.document.declinationgroup.declinedproduct', ['ucf']) }}</label>
+			<div class="controls">
+				<a href ng-href="(= document.declinedProduct | documentURL =)">(= document.declinedProduct.label =)</a>
+			</div>
+		</div>
+
 		<rbs-field-boolean property="newSkuOnCreation"
 				label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.newskuoncreation', ['ucf']) }}">
 		</rbs-field-boolean>
@@ -32,9 +39,9 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th>Axe</th>
-							<th>Visible dans les listes</th>
-							<th>Valeurs</th>
+							<th>{{ i18n('m.rbs.catalog.document.declinationgroup.axe-head', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.catalog.document.declinationgroup.visibility-head', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.catalog.document.declinationgroup.values-head', ['ucf']) }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -58,7 +65,7 @@
 						</tr>
 					</tbody>
 				</table>
-				<button class="btn btn-small btn-warning" ng-click="addAllProduct()" type="button">Générer toutes les fiches produit</button>
+				<button class="btn btn-small btn-warning" ng-click="addAllProduct()" type="button">{{ i18n('m.rbs.catalog.document.declinationgroup.generate-all-action', ['ucf']) }}</button>
 			</div>
 			<hr />
 
@@ -87,8 +94,8 @@
 						<thead>
 							<tr>
 								<th>(= getAxeTitle(currentAxe.id) =) </th>
-								<th data-ng-hide="isDeclinationMatrix()">Fiche Produit</th>
-								<th data-ng-show="isDeclinationMatrix()">Déclinaison : (= nextDeclinationAxe().label =)</th>
+								<th data-ng-hide="isDeclinationMatrix()">{{ i18n('m.rbs.catalog.document.declinationgroup.edit-product-head', ['ucf']) }}</th>
+								<th data-ng-show="isDeclinationMatrix()">{{ i18n('m.rbs.catalog.document.declinationgroup.edit-axe-head', ['ucf', 'lab']) }} (= nextDeclinationAxe().label =)</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -100,27 +107,27 @@
 									<div data-ng-switch="row[1].id">
 										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-hide="row[1].removed">Ajouter la déclinaison</span>
-											<span data-ng-show="row[1].removed">Restaurer la déclinaison</span>
+											<span data-ng-hide="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.add-axe', ['ucf']) }}</span>
+											<span data-ng-show="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-axe', ['ucf']) }}</span>
 										</a>
 										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="selectDeclinationId(row[1].id)">
-											<i class="icon-edit"> </i> Editer</a>
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}</a>
 										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
-											<i class="icon-minus-sign"> </i> Supprimer</a>
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}</a>
 									</div>
 								</td>
 								<td data-ng-hide="row[1].declination">
 										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-hide="row[1].removed">Ajouter le produit</span>
-											<span data-ng-show="row[1].removed">Restaurer le produit</span>
+											<span data-ng-hide="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.add-product', ['ucf']) }}</span>
+											<span data-ng-show="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-product', ['ucf']) }}</span>
 										</a>
 										<a href="javascript:;" data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
-											<i class="icon-edit"> </i> Editer</a>
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}</a>
 										<span data-ng-show="row[1].id < 0" ng-click="editProduct(row[1])">
-											<i class="icon-info-sign"> </i> (A générer)</span>
+											<i class="icon-info-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.to-generate-product', ['ucf']) }}</span>
 										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
-											<i class="icon-minus-sign"> </i> Supprimer</a>
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}</a>
 								</td>
 							</tr>
 							<tr>
@@ -131,13 +138,41 @@
 									</div>
 								</td>
 								<td>
-									Ajouter la nouvelle valeur de l'axe.
+									{{ i18n('m.rbs.catalog.document.declinationgroup.add-axe-value', ['ucf']) }}
 								</td>
 							</tr>
 						</tbody>
 				</table>
 			</div>
 		</div>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='product'"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.declinationgroup.products-section', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<table class="document-list table table-condensed table-bordered table-striped table-hover token">
+			<thead>
+			<tr>
+				<th>
+					{{ i18n('m.rbs.catalog.document.declinationgroup.label', ['ucf']) }}
+				</th>
+				<th>
+					{{ i18n('m.rbs.catalog.document.product.sku', ['ucf']) }}
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="product in productList" class="normal-row">
+					<td>
+						<a href ng-href="(= product | documentURL =)">(= product.label =)</a>
+					</td>
+					<td>
+						<a href data-ng-show="product.sku" ng-href="(= product.sku | documentURL =)">(= product.sku.label =)</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

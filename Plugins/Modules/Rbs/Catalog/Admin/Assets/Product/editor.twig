@@ -54,9 +54,72 @@
 			</select>
 		</rbs-field>
 
-		<rbs-attribute-editor attribute-values="document.attributeValues" attribute-editor="attributeGroupId"
-				attribute-product-properties="document">
-		</rbs-attribute-editor>
+		<div data-ng-repeat="attributeDef in attributesDef">
+			<div ng-if="attributeDef.attributes">
+				<h4>(= attributeDef.label =)</h4>
+				<div data-ng-repeat="attributeItemDef in attributeDef.attributes">
+
+					<rbs-field label="(= attributeItemDef.label =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
+						<div ng-if="attributeItemDef.collectionCode">
+							<select ng-model="attributeItemDef.value.value" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
+								<option value=""></option>
+							</select>
+						</div>
+						<div ng-if="!attributeItemDef.collectionCode">
+							<div data-ng-switch="attributeItemDef.type">
+								<input type="text" data-ng-switch-when="Code" class="input-block-level" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></switch>
+								<date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></date-selector>
+								<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<div class="document-picker-single" data-ng-switch-when="Document"
+										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+										property-label="" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										allow-edition="false" allow-creation="false" picker="model">
+								</div>
+								<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
+										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+										property-label="" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										allow-edition="false" allow-creation="false" picker="model">
+								</div>
+								<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
+							</div>
+						</div>
+					</rbs-field>
+				</div>
+			</div>
+
+			<div ng-if="!attributeDef.attributes">
+				<rbs-field label="(= attributeDef.label =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
+					<div ng-if="attributeDef.collectionCode">
+						<select ng-model="attributeDef.value.value" rbs-items-from-collection="(= attributeDef.collectionCode =)">
+							<option value=""></option>
+						</select>
+					</div>
+					<div ng-if="!attributeDef.collectionCode">
+						<div data-ng-switch="attributeDef.type">
+							<input type="text" data-ng-switch-when="Code" class="input-block-level" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></switch>
+							<date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></date-selector>
+							<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<div class="document-picker-single" data-ng-switch-when="Document"
+									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+									property-label="" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									allow-edition="false" allow-creation="false" picker="model">
+							</div>
+							<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
+									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+									property-label="" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									allow-edition="false" allow-creation="false" picker="model">
+							</div>
+							<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
+						</div>
+					</div>
+				</rbs-field>
+			</div>
+		</div>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='publication'"

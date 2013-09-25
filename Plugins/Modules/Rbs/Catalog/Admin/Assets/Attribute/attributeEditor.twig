@@ -1,9 +1,0 @@
-<div data-ng-repeat="attribute in attributes">
-	<div ng-if="attribute.attributes">
-		<h4>(= attribute.label =)</h4>
-		<div data-ng-repeat="item in attribute.attributes">
-			<rbs-attribute-item  attribute="item" ></rbs-attribute-item>
-		</div>
-	</div>
-	<rbs-attribute-item ng-if="!attribute.attributes" attribute="attribute"></rbs-attribute-item>
-</div>

@@ -54,6 +54,7 @@ interface Localizable
 
 	/**
 	 * @api
+	 * @param boolean $newDocument
 	 */
-	public function saveCurrentLocalization();
+	public function saveCurrentLocalization($newDocument = false);
 }
