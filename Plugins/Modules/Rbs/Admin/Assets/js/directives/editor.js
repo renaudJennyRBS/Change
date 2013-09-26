@@ -473,10 +473,8 @@
 
 				function mergeLocalCopy (doc) {
 					var localCopy = EditorManager.getLocalCopy(doc);
-					console.log("localCopy for ", doc, ": ", localCopy);
 					if (localCopy)
 					{
-						console.log("Merging document with local copy");
 						angular.extend(doc, localCopy);
 						return true;
 					}
@@ -524,8 +522,6 @@
 							initSectionOnce(section);
 						}
 						focus();
-						//$scope.formSectionLabel = MainMenu.getCurrentSectionLabel();
-						//Breadcrumb.setResourceModifier($scope.formSectionLabel);
 					});
 
 					$scope.routeParams = $routeParams;
@@ -546,13 +542,8 @@
 					}, true);
 
 					$scope.$on('$routeChangeStart', function () {
-						//console.log("Editor: $routeChangeStart: doc=", $scope.document.id);
 						if ($scope.changes.length > 0) {
-							console.log("Document has modifications and user wants to leave the editor...");
 							EditorManager.saveLocalCopy($scope.document);
-						}
-						else {
-							console.log("Document has NO modifications: leaving editor...");
 						}
 					});
 				}
@@ -680,7 +671,6 @@
 
 			compile : function (tElement)
 			{
-				console.log("editorDirective: compile: tElement=", tElement);
 				tElement.css('display', 'none');
 
 				/**
