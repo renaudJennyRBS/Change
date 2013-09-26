@@ -21,7 +21,18 @@
 			controller : ['$scope', '$element', function ($scope, $element)
 			{
 				var	initializedSections = {},
-					translation = false;
+					translation = false,
+					wrappingFormScope;
+
+				// Special trick for localized Documents.
+				// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
+				// - the classic Editor (editor.twig)
+				// - or the one used for translation (editor-translate.twig).
+				// Since `ng-switch` creates an *isolated Scope* for the different cases, the Document loaded
+				// in this Directive (`$scope.document`) does not exist in the Scope of `form.twig`.
+				// The following bits copy the reference of `$scope.document` in this parent Scope.
+				wrappingFormScope = angular.element($element.closest('.document-form')).scope();
+
 
 				/**
 				 * Initialize current Editor.
@@ -273,6 +284,7 @@
 
 					$scope.original = angular.copy(doc);
 					$scope.reset();
+					EditorManager.removeLocalCopy(doc);
 
 					function terminateSave () {
 						saveOperation("success");
@@ -289,6 +301,14 @@
 							if (angular.isFunction($scope.onReload)) {
 								$scope.onReload($scope.document);
 							}
+
+							// Updates Document instance in the parent '.document-form' that wraps the Editor.
+							// (see 'form.twig' files).
+							if (wrappingFormScope.$id !== $scope.$id) {
+								wrappingFormScope.document = $scope.document;
+							}
+
+							MainMenu.addTranslations($scope.document, $scope);
 						}
 					}
 
@@ -344,18 +364,6 @@
 						initMenu();
 					});
 
-					// Special trick for localized Documents.
-					// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
-					// - the classic Editor (editor.twig)
-					// - or the one used for translation (editor-translate.twig).
-					// Since `ng-switch` creates an *isolated Scope* for the different cases, the Document loaded
-					// in this Directive (`$scope.document`) does not exist in the Scope of `form.twig`.
-					// The following bits copy the reference of `$scope.document` in this parent Scope.
-					var wrappingFormScope = angular.element($element.closest('.document-form')).scope();
-					if (wrappingFormScope.$id !== $scope.$id) {
-						wrappingFormScope.document = $scope.document;
-					}
-
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
@@ -391,6 +399,11 @@
 					{
 						$scope.modelInfo = promisesResults[1];
 						delete $scope.modelInfo.links;
+
+						if (wrappingFormScope.$id !== $scope.$id) {
+							wrappingFormScope.modelInfo = $scope.modelInfo;
+							wrappingFormScope.document = $scope.document;
+						}
 
 						if (translation) {
 							$scope.currentLCID = $scope.document.LCID;
@@ -457,6 +470,20 @@
 					});
 				}
 
+
+				function mergeLocalCopy (doc) {
+					var localCopy = EditorManager.getLocalCopy(doc);
+					console.log("localCopy for ", doc, ": ", localCopy);
+					if (localCopy)
+					{
+						console.log("Merging document with local copy");
+						angular.extend(doc, localCopy);
+						return true;
+					}
+					return false;
+				}
+
+
 				/**
 				 * Creates the reference document (original) from the current document.
 				 * Triggers the `Events.EditorReady` event.
@@ -468,6 +495,10 @@
 					initCorrection();
 					initMenu();
 
+					if (mergeLocalCopy($scope.document)) {
+						$scope.$emit('Change:Editor:LocalCopyMerged');
+					}
+
 					// Add "Translations" menu on the left if the document is localizable.
 					if ($scope.modelInfo.metas.localized && ! EditorManager.isCascading()) {
 						MainMenu.addTranslations($scope.document, $scope);
@@ -477,7 +508,7 @@
 
 					Loading.stop();
 
-					// Call `$scope.onReady()` is present.
+					// Call `$scope.onReady()` if present.
 					if (angular.isFunction($scope.onReady)) {
 						$scope.onReady();
 					}
@@ -513,6 +544,17 @@
 							}
 						});
 					}, true);
+
+					$scope.$on('$routeChangeStart', function () {
+						//console.log("Editor: $routeChangeStart: doc=", $scope.document.id);
+						if ($scope.changes.length > 0) {
+							console.log("Document has modifications and user wants to leave the editor...");
+							EditorManager.saveLocalCopy($scope.document);
+						}
+						else {
+							console.log("Document has NO modifications: leaving editor...");
+						}
+					});
 				}
 
 
@@ -662,6 +704,7 @@
 					 */
 					scope.reset = function resetFn () {
 						scope.document = angular.copy(scope.original);
+						EditorManager.removeLocalCopy(scope.document);
 						scope.saveProgress.error = false;
 						CTRL.clearInvalidFields();
 						NotificationCenter.clear();
@@ -830,7 +873,7 @@
 						{
 							var	$prop = $(this),
 								$tr = $('<tr></tr>'),
-								$lcell = $('<td width="50%" style="vertical-align: top"></td>'),
+								$lcell = $('<td width="50%" style="vertical-align: top;"></td>'),
 								$rcell = $('<td width="50%" style="border-left: 5px solid #0088CC; vertical-align: top; background: rgba(0,136,255,0.05);"></td>'),
 								$refProp,
 								ngModel,
@@ -874,13 +917,25 @@
 	//
 
 
-	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager () {
-
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Events', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, i18n, Events, Settings) {
-
+	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
+	{
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService)
+		{
 			var	$ws = $('#workspace'),
 				cascadeContextStack = [],
-				idStack = [];
+				idStack = [],
+				localCopyRepo;
+
+			localCopyRepo = localStorageService.get("localCopy");
+
+			if (localCopyRepo) {
+				localCopyRepo = JSON.parse(localCopyRepo);
+			}
+
+			if (! angular.isObject(localCopyRepo)) {
+				localCopyRepo = {};
+				commitLocalCopyRepository();
+			}
 
 			/**
 			 * When the route changes, we need to clean up any cascading process.
@@ -915,6 +970,21 @@
 
 			function isCascadingFn () {
 				return cascadeContextStack.length > 0;
+			}
+
+
+			// Local copy methods.
+
+			function commitLocalCopyRepository () {
+				localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
+			}
+
+			function makeLocalCopyKey (doc) {
+				var key = doc.model + '-' + (doc.isNew() ? 'NEW' : doc.id);
+				if (doc.LCID) {
+					key += '-' + doc.LCID;
+				}
+				return key;
 			}
 
 
@@ -1035,6 +1105,51 @@
 
 				'stopEditSession' : function () {
 					idStack.pop();
+				},
+
+
+				// Local copy public API
+
+				'saveLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc);
+					doc.META$.localCopy = {
+						saveDate : (new Date()).toString(),
+						documentVersion : doc.documentVersion,
+						modificationDate : doc.modificationDate,
+						publicationStatus : doc.publicationStatus
+					};
+					delete doc.documentVersion;
+					delete doc.modificationDate;
+					delete doc.publicationStatus;
+					localCopyRepo[key] = doc;
+					commitLocalCopyRepository();
+				},
+
+				'getLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc),
+						rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
+					return rawCopy;
+				},
+
+				'removeLocalCopy' : function (doc) {
+					var	key = makeLocalCopyKey(doc);
+					if (localCopyRepo.hasOwnProperty(key)) {
+						delete localCopyRepo[key];
+						delete doc.META$.localCopy;
+						commitLocalCopyRepository();
+					}
+				},
+
+				'removeAllLocalCopies' : function () {
+					// No need to check 'hasOwnProperty()' since 'delete' does not remove properties of the Prototype.
+					for (var key in localCopyRepo) {
+						delete localCopyRepo[key];
+					}
+					commitLocalCopyRepository();
+				},
+
+				'getLocalCopies' : function () {
+					return localCopyRepo;
 				}
 
 			};
@@ -1044,11 +1159,47 @@
 	});
 
 
-	app.controller('RbsChangeTranslateEditorController', ['$scope', function ($scope) {
+	app.controller('RbsChangeTranslateEditorController', ['$scope', 'RbsChange.MainMenu', function ($scope, MainMenu) {
 		$scope.document = {};
 		$scope.editMode = 'translate';
+		MainMenu.clear();
 	}]);
 
+
+	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', 'RbsChange.MainMenu', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils, MainMenu) {
+		$scope.$watch('model', function (model) {
+			if (model) {
+				REST.resource(model, $routeParams.id, $routeParams.LCID).then(function (doc) {
+					$scope.document = doc;
+
+					var	mi = Utils.modelInfo(model),
+						location = [
+						[
+							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.admin.js.module-name | ucf'),
+							$filter('rbsURL')(mi.vendor + '_' + mi.module, 'home')
+						],
+						[
+							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.admin.js.' + mi.document) + '-list | ucf'),
+							$filter('rbsURL')(model, 'list')
+						]
+					];
+
+					Breadcrumb.setLocation(location);
+					Breadcrumb.setResource(doc, 'Workflow');
+
+					MainMenu.load('Rbs/Admin/workflow/menu.twig', $scope);
+					/*
+					MainMenu.clear().add(
+						"workflow",
+						[{url: doc.url(), text: '<i class="icon-circle-arrow-left"></i> Back to editor'}],
+						$scope,
+						"Workflow"
+					);
+					*/
+				});
+			}
+		});
+	}]);
 
 
 

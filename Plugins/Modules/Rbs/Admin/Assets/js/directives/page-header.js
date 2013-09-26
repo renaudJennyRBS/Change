@@ -20,32 +20,10 @@
 					scope.subTitle = attrs.subTitle;
 				}
 
-				scope.openLocalizationOptions = function () {
-					Dialog.embed(
-						element.find('.embedded-content'),
-						{
-							'contents' : '<div document-localization-options="document" language="language" reference-language="refLCID"></div>',
-							'title'    : "Options de traduction"
-						},
-						scope,
-						{
-							'pointedElement' : $(element).find('[data-role="choose-locale"]')
-						}
-					);
-				};
+				scope.showDocumentInfo = false;
 
-				scope.openCorrectionViewer = function ($event) {
-					Dialog.embed(
-						element.find('.embedded-content'),
-						{
-							'contents' : '<div rbs-correction-viewer document="document"></div>',
-							'title'    : "Correction"
-						},
-						scope,
-						{
-							'pointedElement' : $(element).find('[data-role="view-correction"]')
-						}
-					);
+				scope.toggleDocumentInfo = function () {
+					scope.showDocumentInfo = ! scope.showDocumentInfo;
 				};
 
 				Breadcrumb.ready().then(function () {
@@ -53,6 +31,11 @@
 					scope.$on('Change:TreePathChanged', function () {
 						scope.currentFolder = Breadcrumb.getCurrentNode();
 					});
+				});
+
+				scope.$on('Change:Editor:LocalCopyMerged', function () {
+					console.log("Local copy has been merged!");
+					scope.localCopyMerged = true;
 				});
 
 			}

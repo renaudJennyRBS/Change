@@ -1,37 +1,43 @@
 <div class="page-header">
 
-	<form data-ng-show="! document" class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
+	<form ng-show="! document" class="form-search pull-right" ng-submit="textSearch = search || '...'">
 		<div class="input-append">
-			<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
+			<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" ng-model="search"/>
 			<button type="submit" class="btn" title="{{ i18nAttr('m.rbs.admin.search', ['ucf']) }}">
 				<i class="icon-search"></i>
 			</button>
 		</div>
 	</form>
 
-	<h2>
-		<div class="btn-toolbar pull-right">
-			<button type="button" class="btn btn-small btn-success"
-				data-role="view-correction"
-				ng-if="document.hasCorrection()"
-				title="Date de la correction : (=document.meta('correction.creationDate') | date:'medium'=)"
-				ng-click="openCorrectionViewer()">{{ i18n('m.rbs.admin.correction', ['ucf']) }} <span class="badge">(=document.META$.correction.propertiesNames.length=)</span></button>
+	<div class="clearfix">
+		<div class="pull-right">
+			<a href="" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-if="document" ng-class="{'btn-success': document.publicationStatus=='PUBLISHABLE'}">
+				<status class="small" ng-model="document"></status>
+				<span ng-if="document.hasCorrection()">
+					{{ i18n('m.rbs.admin.correction', ['ucf']) }}
+					<span class="badge">(= document.META$.correction.propertiesNames.length =)</span>
+				</span>
+				<span ng-if="! document.hasCorrection()">
+					(= document.publicationStatus | statusLabel =)
+				</span>
+				<!--i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showDocumentInfo]"></i-->
+				<i class="icon-circle-arrow-right"></i>
+			</a>
 		</div>
+		<h2>
+			(= document.label || currentFolder.label || title =)
+			<small>(=subTitle=)</small>
+		</h2>
+	</div>
 
-		<status data-ng-show="document && ! isCascading()" data-ng-model="document"/>
-		(= document.label || currentFolder.label || title =)
-		<small>(=subTitle=)</small>
-	</h2>
+	<!--div ng-if="showDocumentInfo" class="rbs-document-workflow-actions" document-model="modelInfo" document="document" on-close="toggleDocumentInfo()"></div-->
+
+	<div ng-show="document.META$.localCopy && localCopyMerged" class="alert alert-warning">
+		<button type="button" class="close" ng-click="localCopyMerged=false">&times;</button>
+		<h4>Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur.</h4>
+		Vos modifications ont été conservées et elles sont présentes dans l'éditeur ci-dessous.
+	</div>
 
 	<div class="embedded-content"></div>
-
-	<div ng-if="document.hasCorrection()" class="alert icon alert-success">
-		<i class="icon-info-sign"></i>
-		<h4>
-			{{ i18n('m.rbs.admin.this-document-has-a-correction-on', ['ucf']) }}
-			<span ng-pluralize count="document.META$.correction.propertiesNames.length" when="{'one': 'une propriété', 'other': '{} propriétés'}"></span>.
-		</h4>
-		{{ i18n('m.rbs.admin.correction-editor-explanation', ['ucf']) }}
-	</div>
 
 </div>

@@ -63,4 +63,7 @@
 	<key id="help-publishable-explain" format="html"><![CDATA[Ici, toutes les conditions requises pour l'affichage du Document sont validées.<br/>Il est possible d'empêcher son affichage en <strong>gelant</strong> le Document.]]></key>
 	<key id="help-frozen-explain" format="html"><![CDATA[Le Document a été gelé pour empêcher son affichage sur le site web.<br/>Il est possible de réactiver son affichage en <strong>dégelant</strong> le Document.]]></key>
 
+	<key id="back-to-editor">retour à l'édition du document</key>
+	<key id="menu-title">processus de validation</key>
+	<key id="menu-contents" format="html"><![CDATA[Cette interface vous permet de contrôler la validation et la publication du contenu des documents destinés à être affichés sur votre site web.]]></key>
 </i18n>

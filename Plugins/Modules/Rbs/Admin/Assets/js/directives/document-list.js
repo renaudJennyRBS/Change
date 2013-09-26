@@ -954,7 +954,7 @@
 					search = $location.search();
 					scope.pagination = {
 						offset : search.offset || 0,
-						limit  : search.limit || PAGINATION_DEFAULT_LIMIT,
+						limit  : search.limit || Settings.get('pagingSize', PAGINATION_DEFAULT_LIMIT),
 						total  : 0
 					};
 
@@ -1269,7 +1269,7 @@
 						}
 
 						var	offset = parseInt(search.offset || 0, 10),
-							limit  = parseInt(search.limit || PAGINATION_DEFAULT_LIMIT, 10),
+							limit  = search.limit ? parseInt(search.limit, 10) : Settings.get('pagingSize', PAGINATION_DEFAULT_LIMIT),
 							paginationChanged, sortChanged = false,
 							desc = (search.desc === 'true'),
 							filter = search.filter,

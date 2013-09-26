@@ -336,6 +336,9 @@
 
 	app.filter('statusLabel', ['RbsChange.i18n', function (i18n) {
 		return function (input) {
+			if (!input) {
+				return '';
+			}
 			return i18n.trans('m.rbs.admin.admin.js.status-' + angular.lowercase(input) + '|ucf');
 		};
 	}]);

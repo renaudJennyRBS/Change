@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsDocumentWorkflowActions', ['$timeout', '$q', 'RbsChange.REST', 'RbsChange.Utils', function ($timeout, $q, REST, Utils) {
+	app.directive('rbsDocumentWorkflowActions', ['$timeout', '$q', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', function ($timeout, $q, REST, Utils, i18n) {
 
 		return {
 			restrict : 'C',
@@ -13,10 +13,11 @@
 
 			scope : {
 				'document' : '=',
-				'onClose'  : '&'
+				'modelInfo' : '=documentModel',
+				'onClose' : '&'
 			},
 
-			link : function (scope, element, attrs) {
+			link : function (scope, element) {
 
 				var	lastUpdatedDoc = null,
 					oldCssClass = null;
@@ -26,6 +27,8 @@
 					contentAction : 'accept',
 					action : ''
 				};
+
+				scope.closable = element.is('[on-close]');
 
 
 				function freezeUI () {
@@ -51,9 +54,9 @@
 				}
 
 
-				function accept (actionName) {
+				function accept (actionName, params) {
 					freezeUI();
-					REST.executeTaskByCodeOnDocument(actionName, scope.document).then(
+					REST.executeTaskByCodeOnDocument(actionName, scope.document, params).then(
 						// Success
 						function (doc) {
 							lastUpdatedDoc = doc;
@@ -96,10 +99,11 @@
 
 
 				scope.$watch('document', function documentChanged (doc) {
-					if (doc) {
-
+					if (Utils.isDocument(doc))
+					{
 						if (Utils.hasCorrection(doc)) {
 							scope.data.action = 'correction';
+							updateCorrection();
 						}
 						else {
 							angular.forEach(['requestValidation', 'contentValidation', 'publicationValidation', 'freeze', 'unfreeze'], function (action) {
@@ -195,6 +199,94 @@
 				scope.hasProgressInfo = function () {
 					return scope.data.progress !== undefined;
 				};
+
+
+				//
+				// Corrections
+				//
+
+				scope.correctionData = {};
+
+
+				function updateCorrection ()
+				{
+					scope.correctionData.correctionInfo = angular.copy(scope.document.META$.correction);
+					scope.correctionData.diff = [];
+					scope.correctionData.advancedDiffs = true;
+
+					scope.correctionData.params = {
+						'applyCorrectionWhen' : scope.correctionData.correctionInfo.publicationDate ? 'planned' : 'now',
+						'plannedCorrectionDate' : scope.correctionData.correctionInfo.publicationDate
+					};
+
+					scope.correctionData.diff.length = 0;
+					if (scope.correctionData.correctionInfo) {
+						angular.forEach(scope.correctionData.correctionInfo.propertiesNames, function (property) {
+							scope.correctionData.diff.push({
+								'id'       : property,
+								'current'  : scope.document[property],
+								'original' : scope.correctionData.correctionInfo.original[property]
+							});
+						});
+					}
+				}
+
+
+				scope.correctionData.reject = false;
+
+
+				scope.correctionData.deleteCorrection = function () {
+					if (!window.confirm(i18n.trans('m.rbs.admin.admin.js.correction-confirm-delete'))) {
+						return;
+					}
+
+					REST.modelInfo(scope.document.model).then(function (modelInfo)
+					{
+						var copy = angular.copy(scope.document);
+						if (Utils.removeCorrection(copy, null))
+						{
+							angular.forEach(copy, function (value, property) {
+								if (! modelInfo.properties.hasOwnProperty(property) || ! modelInfo.properties[property].localized) {
+									delete copy[property];
+								}
+							});
+							copy.id = scope.document.id;
+							copy.model = scope.document.model;
+							copy.LCID = scope.document.LCID;
+							copy.refLCID = scope.document.refLCID;
+
+							REST.save(copy).then(function (updated) {
+								delete scope.document.META$.correction;
+								angular.extend(scope.document, updated);
+								console.log("saved ", scope.document);
+							});
+						}
+
+					});
+				};
+
+				scope.correctionData.canChooseDate = function () {
+					var cs = scope.correctionData.correctionInfo.status;
+					return scope.correctionData.diff.length > 0 && (cs === 'DRAFT' || cs === 'VALIDATION' || cs === 'VALIDCONTENT');
+				};
+
+
+				scope.correctionData.requestValidation = function () {
+					accept('requestValidation');
+				};
+
+				scope.correctionData.contentValidation = function () {
+					accept('contentValidation');
+				};
+
+				scope.correctionData.rejectContentValidation = function (message) {
+					reject('contentValidation', message);
+				};
+
+				scope.correctionData.publicationValidation = function () {
+					accept('publicationValidation');
+				};
+
 			}
 		};
 

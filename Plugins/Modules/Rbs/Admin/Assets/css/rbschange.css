@@ -189,6 +189,9 @@ body > footer a:visited:hover {
 #workspace .page-header,
 #workspace .page-header h2 {
 	margin-top: 0;
+}
+
+#workspace .page-header h2 {
 	line-height: 30px;
 }
 
@@ -1404,4 +1407,20 @@ th label {
 .control-group.property + .btn.copy-reference-value {
 	position: relative;
 	top: -20px;
+}
+
+
+.navbar-indicators {
+	background: rgba(255,255,255,0.1);
+}
+
+.navbar-indicators li {
+	border-right: 1px dotted rgba(255,255,255,0.3);
+}
+
+.navbar-indicators li:first-child {
+	border-left: 1px solid rgba(255,255,255,0.3);
+}
+.navbar-indicators li:last-child {
+	border-right-style: solid;
 }

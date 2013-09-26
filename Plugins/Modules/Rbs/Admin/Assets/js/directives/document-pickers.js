@@ -205,7 +205,8 @@
 		if (multiple) {
 
 			scope.getFromClipboard = function () {
-				scope.selectDocuments(Clipboard.getItems(true));
+				ngModel.$setViewValue(Clipboard.getItems(true));
+				ngModel.$render();
 			};
 
 			scope.selectDocument = function (doc) {
