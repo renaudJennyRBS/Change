@@ -34,14 +34,14 @@
 
 	});
 
-
+/*
 	app.directive('loadingIndicator', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading) {
 
 		return {
 
-			restrict : 'E',
+			restrict : 'EA',
 			template : '<div class="loading-indicator-icon"></div>',
-			 replace : true,
+			replace : true,
 
 			link : function (scope, elm, attrs) {
 
@@ -61,6 +61,34 @@
 
 		};
 
+	}]);
+*/
+
+	app.directive('rbsLoadingIndicator', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading)
+	{
+		return {
+
+			restrict : 'A',
+			template : '<i class="icon-spinner"></i>',
+			replace : true,
+
+			link : function (scope, iElement)
+			{
+				$rootScope.$on('Change:LoadingStart', function (event, message) {
+					iElement.attr('title', message);
+					iElement.addClass('icon-spin');
+				});
+
+				$rootScope.$on('Change:LoadingStop', function (event, message) {
+					if (Loading.isLoading()) {
+						iElement.attr('title', message);
+					} else {
+						iElement.removeClass('icon-spin');
+					}
+				});
+			}
+
+		};
 	}]);
 
 
