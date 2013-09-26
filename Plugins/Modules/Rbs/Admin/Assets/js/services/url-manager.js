@@ -132,6 +132,18 @@
 						params = {};
 					}
 
+					if (! angular.isObject(params)) {
+						params = {};
+					}
+
+					if (! params.LCID && doc.LCID) {
+						params.LCID = doc.LCID;
+					}
+
+					if ((! name || name === 'form') && doc.refLCID && doc.refLCID !== params.LCID) {
+						name = 'translate';
+					}
+
 					url = getUrl(doc, name || 'form');
 
 					if (url === null) {
@@ -141,21 +153,8 @@
 					// If `doc` is a Document object, we try to replace the parameters in the `url` with
 					// the corresponding properties of the Document.
 					if (angular.isString(doc)) {
-						if (! angular.isObject(params)) {
-							params = {};
-						}
-						if (! params.LCID) {
-							params.LCID = doc.refLCID;
-						}
 						url = replaceParams(url, params);
 					} else {
-						if (! angular.isObject(params)) {
-							params = {};
-						}
-						if (! params.LCID) {
-							params.LCID = doc.refLCID;
-						}
-
 						url = replaceParams(url, angular.extend({}, doc, params));
 					}
 
@@ -186,6 +185,7 @@
 								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
 								.route('form', baseRouteTpl + '/:id', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
 							;
 						});
 						return this;
@@ -200,6 +200,7 @@
 								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
 								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
+								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
 							;
 						});
 						return this;
@@ -241,12 +242,10 @@
 				node = Breadcrumb.getCurrentNode();
 
 			if (Utils.isDocument(doc)) {
-				if (doc.refLCID && doc.LCID !== doc.refLCID) {
-					url = UrlManager.getTranslateUrl(doc);
+				if (! urlName && doc.refLCID && doc.LCID !== doc.refLCID) {
+					urlName = 'translate';
 				}
-				else {
-					url = UrlManager.getFormUrl(doc);
-				}
+				url = UrlManager.getUrl(doc, { 'LCID': doc.LCID }, urlName);
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
 				url = UrlManager.getUrl(doc, null, urlName);
 			} else {

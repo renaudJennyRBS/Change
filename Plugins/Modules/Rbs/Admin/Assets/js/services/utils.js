@@ -212,7 +212,17 @@
 
 
 		/**
-		 * Returns informations about the given model name: vendor, module and document.
+		 * Tells whether a Document has a local copy or not.
+		 * @param doc
+		 * @returns {*}
+		 */
+		hasLocalCopy : function (doc) {
+			return doc.META$ && doc.META$.localCopy;
+		},
+
+
+		/**
+		 * Returns information about the given model name: vendor, module and document.
 		 *
 		 * @param {String} A fully qualified model name, such as `Change_Website_Page`.
 		 * @returns {Object} {'vendor', 'module', 'document', 'change':(true|false)}
@@ -226,7 +236,7 @@
 				'vendor'   : splat[0],
 				'module'   : splat[1],
 				'document' : splat[2],
-				'change'   : splat[0] === 'Change'
+				'change'   : splat[0] === 'Rbs'
 			};
 		},
 

@@ -189,6 +189,9 @@ body > footer a:visited:hover {
 #workspace .page-header,
 #workspace .page-header h2 {
 	margin-top: 0;
+}
+
+#workspace .page-header h2 {
 	line-height: 30px;
 }
 

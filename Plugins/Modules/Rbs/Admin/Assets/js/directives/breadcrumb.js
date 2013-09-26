@@ -31,14 +31,15 @@
 
 				function getEntryHtml (entry, disabled, last, cssClass) {
 
-					var item, html, icon;
+					var item, html, icon, url;
 
 					if (Utils.isDocument(entry)) {
 						item = [ entry.label ];
-						if (entry.treeUrl()) {
+						url = entry.treeUrl();
+						if (url && url !== "javascript:;") {
 							item.push(entry.treeUrl());
 						} else {
-							item.push("javascript:;");
+							item.push(last ? "javascript:;" : (entry.url() || "javascript:;"));
 						}
 						if (modelIcons[entry.model]) {
 							item.push(modelIcons[entry.model]);
@@ -102,7 +103,7 @@
 					}
 
 					if (breadcrumbData.resource) {
-						html += getEntryHtml(breadcrumbData.resource, breadcrumbData.disabled, true);
+						html += getEntryHtml(breadcrumbData.resource, breadcrumbData.disabled, ! breadcrumbData.resourceModifier);
 					}
 
 					if (breadcrumbData.resourceModifier) {

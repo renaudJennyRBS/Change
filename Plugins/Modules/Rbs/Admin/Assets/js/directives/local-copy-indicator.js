@@ -25,6 +25,9 @@
 					EditorManager.removeAllLocalCopies();
 				};
 
+				scope.localizedId = function (doc) {
+					return doc.id + '-' + doc.LCID;
+				};
 			}
 		};
 	}]);

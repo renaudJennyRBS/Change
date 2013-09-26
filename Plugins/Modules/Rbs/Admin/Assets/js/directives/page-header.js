@@ -26,20 +26,6 @@
 					scope.showDocumentInfo = ! scope.showDocumentInfo;
 				};
 
-				scope.openCorrectionViewer = function () {
-					Dialog.embed(
-						element.find('.embedded-content'),
-						{
-							'contents' : '<div rbs-correction-viewer document="document"></div>',
-							'title'    : "Correction"
-						},
-						scope,
-						{
-							'pointedElement' : $(element).find('[data-role="view-correction"]')
-						}
-					);
-				};
-
 				Breadcrumb.ready().then(function () {
 					scope.currentFolder = Breadcrumb.getCurrentNode();
 					scope.$on('Change:TreePathChanged', function () {

@@ -71,6 +71,10 @@
 					return UrlManager.getUrl(this, name || 'form');
 				};
 
+				ChangeDocument.prototype.refUrl = function (name) {
+					return UrlManager.getUrl(this, { LCID: this.refLCID }, name || 'form');
+				};
+
 				ChangeDocument.prototype.translateUrl = function (LCID) {
 					return UrlManager.getTranslateUrl(this, LCID);
 				};
@@ -236,7 +240,7 @@
 						forEach(data.i18n, function (url, lcid) {
 							chgDoc.META$.locales.push({
 								'id': lcid,
-								'label': lcid, // FIXME Localization
+								'label': lcid,
 								'isReference': data.properties.refLCID === lcid
 							});
 						});
@@ -546,7 +550,6 @@
 							})
 							.error(function restResourceErrorCallback (data, status) {
 								if (status === 303 && Utils.isDocument(data)) {
-									console.log("Got HTTP 303 (See Other) for document ", data);
 									resolveQ(q, data);
 								} else {
 									if (data) {
@@ -572,7 +575,6 @@
 					 */
 					'ensureLoaded' : function (model, id, lcid) {
 						if (this.isFullyLoaded(model)) {
-							console.log("Doc ", model, " already loaded");
 							var q = $q.defer();
 							resolveQ(q, model);
 							return q.promise;
@@ -615,7 +617,6 @@
 							}
 						}
 						$http.get(
-								//this.getCollectionUrl(model, params),
 								url,
 								getHttpConfig(transformResponseCollectionFn)
 							).success(function (data) {
@@ -712,39 +713,37 @@
 							// 1) a ChangeDocument instance is created via the response interceptor,
 							// 2) load its Correction (if any),
 							// 3) insert resource in tree (if needed).
-							.success(function successCallback (doc, status) {
-
+							.success(function successCallback (doc, status)
+							{
 								// 1) "doc" is a ChangeDocument instance.
 
-								function maybeInsertResourceInTree (resource, qToResolve) {
-									console.log("REST.save(): maybeInsertResourceInTree()");
-
+								function maybeInsertResourceInTree (resource, qToResolve)
+								{
 									if (status === HTTP_STATUS_CREATED) {
 										lastCreatedDocument = resource;
 									}
 
-									if ( ! Utils.isTreeNode(resource) && (status === HTTP_STATUS_CREATED || resource.treeName === null) && currentTreeNode) {
-
+									if ( ! Utils.isTreeNode(resource) && (status === HTTP_STATUS_CREATED || resource.treeName === null) && currentTreeNode)
+									{
 										// Load model's information to check if the document should be inserted in a tree.
 										REST.modelInfo(resource).then(
 
 											// modelInfo success
 											function (modelInfo) {
 												if (!modelInfo.metas || !modelInfo.metas.treeName) {
-													console.log("REST.save(): Saved. Not inserted in tree because the model has no tree information (treeName=null).", doc);
 													resolveQ(qToResolve, resource);
 												} else {
-													console.log("REST.save(): Saved. Inserting document ", doc, " in tree " + modelInfo.metas.treeName + " at ", currentTreeNode.META$.treeNode.url);
 													$http.post(currentTreeNode.META$.treeNode.url + '/', { "id" : doc.id }, getHttpConfig())
-														.success(function (nodeData) {
-															console.log("REST.save(): Inserted in tree: node=", nodeData);
+														.success(function (nodeData)
+														{
 															doc = buildChangeDocument(doc, resource);
 															if (status === HTTP_STATUS_CREATED) {
 																lastCreatedDocument = doc;
 															}
 															resolveQ(qToResolve, doc);
 														})
-														.error(function errorCallback (data, status) {
+														.error(function errorCallback (data, status)
+														{
 															data.httpStatus = status;
 															rejectQ(qToResolve, data);
 														});
@@ -756,8 +755,8 @@
 												rejectQ(qToResolve, data);
 											}
 										);
-
-									} else {
+									}
+									else {
 										console.log("REST.save(): Saved. Not inserted in tree because no tree node information has been provided or status is not 201 (Created).", doc);
 										resolveQ(qToResolve, resource);
 									}
@@ -767,12 +766,11 @@
 								// After being saved, a Document may have a Correction attached to it, especially
 								// if it was PUBLISHED on the website.
 								if (Utils.hasCorrection(doc)) {
-									console.log("REST.save(): Document has a Correction: let's load it!");
 									REST.loadCorrection(doc).then(function (doc) {
-										console.log("REST.save(): Correction loaded.");
 										maybeInsertResourceInTree(doc, mainQ);
 									});
-								} else {
+								}
+								else {
 									// 3) insert resource in tree (if needed)
 									maybeInsertResourceInTree(doc, mainQ);
 								}

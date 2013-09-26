@@ -13,11 +13,11 @@
 		</a></li>
 		<li class="divider"></li>
 
-		<li ng-repeat="copy in localCopies"><a href ng-href="(= copy | rbsURL =)">
+		<li ng-repeat="copy in localCopies track by localizedId(copy)"><a href ng-href="(= copy | rbsURL =)">
 			<status class="small" ng-model="copy"></status>
 			<strong>(= copy.label =)</strong>
 			<br/>(= copy.model =) / (= copy.LCID =)
-			<br/><small class="muted"><time display="both" datetime="(= copy.META$.localCopySaveDate =)"></time></small>
+			<br/><small class="muted"><time display="both" datetime="(= copy.META$.localCopy.saveDate =)"></time></small>
 		</a></li>
 
 		<li class="divider"></li>

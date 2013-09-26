@@ -111,15 +111,27 @@
 						}
 					},
 
-					setResource : function (res) {
+					setResource : function (res, modifier) {
 						if ( ! angular.equals(resource, res) ) {
 							resource = angular.copy(res);
 							update('Resource');
 						}
+						if (Utils.isDocument(resource) && resource.refLCID && resource.refLCID !== resource.LCID) {
+							if (modifier) {
+								modifier += ' (' + resource.LCID + ')';
+							}
+							else {
+								modifier = resource.LCID;
+							}
+						}
+						this.setResourceModifier(modifier);
 					},
 
 					setResourceModifier : function (string) {
-						resourceModifier = string;
+						if (resourceModifier !== string) {
+							resourceModifier = string;
+							update('ResourceModifier');
+						}
 					},
 
 					ready : function () {

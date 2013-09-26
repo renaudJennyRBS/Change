@@ -27,8 +27,8 @@
 					'</ul>' +
 				'</div>';
 
-		this.init = function () {
-
+		this.init = function ()
+		{
 			$rootScope.$on('$routeUpdate', function () {
 				self.updateLinks();
 			});
@@ -36,7 +36,6 @@
 			$rootScope.$on('$routeChangeSuccess', function () {
 				self.updateLinks();
 			});
-
 		};
 
 
@@ -207,7 +206,7 @@
 				return null;
 			}
 
-			$el.hide();
+			this.hide().clear();
 
 			var self = this,
 			    html;
@@ -300,11 +299,13 @@
 			else {
 				addBoxContents(key, html);
 			}
+
+			return this;
 		};
 
 
 		this.addOtherActions = function (contents, scope) {
-			this.add(
+			return this.add(
 				"other-actions",
 				contents,
 				scope,
@@ -320,7 +321,7 @@
 				angular.forEach(langs.items, function (item, lcid) {
 					if (lcid === doc.refLCID) {
 						contents.push({
-							'url' : doc.url(),
+							'url' : doc.refUrl(),
 							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.reference-language | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
 							'icon' : 'icon-book'
 						});
@@ -342,6 +343,13 @@
 					i18n.trans('m.rbs.admin.admin.js.translations | ucf')
 				);
 			});
+			return this;
+		};
+
+
+		this.clear = function () {
+			$el.empty();
+			return this;
 		};
 
 
@@ -363,6 +371,7 @@
 		 */
 		this.hide = function () {
 			$el.hide();
+			return this;
 		};
 
 
@@ -374,6 +383,7 @@
 			$('#propertiesContainer').hide();
 			$('#page-editor-block-properties-link').hide();
 			$('#page-editor-block-properties-link-border').hide();
+			return this;
 		};
 
 	}]);

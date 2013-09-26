@@ -1,5 +1,5 @@
 <div>
-	<rbs-button-close ng-click="closeWorkflow()"></rbs-button-close>
+	<rbs-button-close ng-show="closable" ng-click="closeWorkflow()"></rbs-button-close>
 
 	<i class="icon-time icon-4x"></i>
 	<h3>{{ i18n('m.rbs.admin.workflow.title', ['ucf']) }}</h3>
@@ -168,11 +168,124 @@
 					<span class="label label-important">{{ i18n('m.rbs.admin.workflow.caution', ['ucf']) }}</span>
 					{{ i18n('m.rbs.admin.workflow.document-has-been-modified-since-its-publication') }}
 				</p>
-				<p>
-					{{ i18n('m.rbs.admin.workflow.to-validate-correction-please-go-to', ['ucf']) }}
-					<a href ng-href="(= document|rbsURL =)">{{ i18n('m.rbs.admin.workflow.document-editor') }}</a>
-					{{ i18n('m.rbs.admin.workflow.to-check-modified-properties') }}.
-				</p>
+
+				<!-- -->
+
+				<div>
+					<strong>(= correctionData.correctionInfo.status | statusLabel =)</strong>
+					| <i class="icon-time"></i> {{ i18n('m.rbs.admin.correction.correction-created-on', ['ucf']) }}
+					<time datetime="(= correctionData.correctionInfo.creationDate =)" display="both"></time>
+				</div>
+
+				<div class="alert alert-info" ng-if="correctionData.correctionInfo.status == 'VALIDATION'">
+					{{ i18n('m.rbs.admin.correction.being-validated') }}
+				</div>
+
+				<div ng-if="correctionData.correctionInfo.status == 'DRAFT' || correctionData.correctionInfo.status == 'VALIDATION'">
+					<table class="table table-bordered">
+						<thead>
+						<tr>
+							<th scope="col">
+								{{ i18n('m.rbs.admin.correction.original-value', ['ucf']) }}<br/>
+								<small class="muted">{{ i18n('m.rbs.admin.correction.in-use', ['ucf']) }}</small>
+							</th>
+							<th scope="col">
+								<button type="button" class="btn btn-mini btn-info pull-right"
+								        title="Afficher les changements"
+								        ng-click="correctionData.advancedDiffs = ! correctionData.advancedDiffs"
+								        ng-class="{'active': correctionData.advancedDiffs}"><i class="icon-lightbulb"></i> {{ i18n('m.rbs.admin.correction.diff', ['ucf']) }}</button>
+								{{ i18n('m.rbs.admin.correction.fixed-value', ['ucf']) }}<br/>
+								<small class="muted">{{ i18n('m.rbs.admin.correction.displayed-in-editor', ['ucf']) }}</small>
+							</th>
+						</tr>
+						</thead>
+						<tbody ng-repeat="line in correctionData.diff">
+							<tr>
+								<th colspan="2" scope="row">(= modelInfo.properties[line.id].label =) (<code>(=line.id=)</code>)</th>
+							</tr>
+							<tr>
+								<td style="vertical-align: top">(= line.original =)</td>
+								<td style="vertical-align: top" ng-switch="correctionData.advancedDiffs">
+									<div ng-switch-when="true" class="diffs" ng-bind-html="line.current | diff:line.original"></div>
+									<div ng-switch-when="false">(= line.current =)</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+
+				<div ng-show="correctionData.canChooseDate()">
+					<label class="radio">
+						<input type="radio" name="applyCorrectionWhenOption" ng-model="correctionData.params.applyCorrectionWhen" value="now" checked/>
+						{{ i18n('m.rbs.admin.correction.publish-correction-after-validation', ['ucf']) }}
+					</label>
+					<label class="radio">
+						<input type="radio" name="applyCorrectionWhenOption" ng-model="correctionData.params.applyCorrectionWhen" value="planned"/>
+						{{ i18n('m.rbs.admin.correction.choose-plublication-date', ['ucf']) }}
+					</label>
+					<date-selector ng-show="correctionData.params.applyCorrectionWhen == 'planned'" ng-model="correctionData.params.plannedCorrectionDate" name="plannedCorrectionDate"></date-selector>
+				</div>
+
+				<div ng-if="correctionData.correctionInfo.status == 'VALIDCONTENT'">
+					<div class="alert alert-success">
+						{{ i18n('m.rbs.admin.correction.content-has-been-validated', ['ucf']) }}
+					</div>
+				</div>
+
+				<div ng-if="correctionData.correctionInfo.status == 'VALID'">
+					<div class="alert alert-success">
+						{{ i18n('m.rbs.admin.correction.correction-will-be-published-on', ['ucf']) }}
+						<strong>(= correctionData.correctionInfo.publicationDate | rbsDateTime =)</strong> <time class="muted" datetime="(= correctionData.correctionInfo.publicationDate =)" display="relative">({time})</time>
+					</div>
+				</div>
+
+				<div ng-if="correctionData.correctionInfo.status == 'PUBLISHABLE'">
+					<div class="alert alert-info">
+						{{ i18n('m.rbs.admin.correction.correction-is-about-to-be-published', ['ucf']) }}
+					</div>
+				</div>
+
+				<div ng-if="correctionData.correctionInfo.status == 'FILED'">
+					<div class="alert alert-success">
+						{{ i18n('m.rbs.admin.correction.correction-has-been-published', ['ucf']) }}
+					</div>
+				</div>
+
+				<div>
+					<a class="pull-right" href="Rbs/Admin/help/correction" help="#correctionHelpContainer"><i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.correction.need-help', ['ucf']) }}</a>
+					<div class="clearfix"></div>
+					<div id="correctionHelpContainer" class="hide"></div>
+				</div>
+
+				<div ng-switch="correctionData.correctionInfo.status">
+
+					<div ng-switch-when="DRAFT">
+						<button type="button" ng-disabled="correctionData.diff.length == 0" class="btn btn-success btn-headline" ng-click="correctionData.requestValidation()"><i class="icon-bullhorn"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
+						<button type="button" class="btn btn-danger btn-headline" ng-click="correctionData.deleteCorrection()"><i class="icon-trash"></i>{{ i18n('m.rbs.admin.correction.button-delete') }}</button>
+					</div>
+
+					<div ng-switch-when="VALIDATION">
+						<button type="button" class="btn btn-primary btn-headline" ng-disabled="correctionData.reject" ng-click="correctionData.contentValidation()"><i class="icon-ok"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
+						<button type="button" class="btn btn-danger btn-headline" ng-class="{'active': correctionData.reject}" ng-click="correctionData.reject = ! correctionData.reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.correction.button-reject') }}</button>
+						<div ng-if="correctionData.reject" ng-form="" name="rejectForm" class="margin-top">
+							{{ i18n('m.rbs.admin.correction.please-provide-reason', ['ucf']) }}
+							<input type="text" auto-focus="true" class="input-block-level" ng-required="true" ng-model="correctionData.rejectMessage"/>
+							<button type="button" class="btn btn-danger" ng-disabled="rejectForm.$invalid" ng-click="correctionData.rejectContentValidation(correctionData.rejectMessage)"><i class="icon-ban-circle"></i> {{ i18n('m.rbs.admin.correction.reject-correction', ['ucf']) }}</button>
+							<button type="button" class="btn" ng-click="correctionData.reject = false">{{ i18n('m.rbs.admin.correction.cancel-reject', ['ucf']) }}</button>
+						</div>
+					</div>
+
+					<div ng-switch-when="VALIDCONTENT">
+						<button type="button" class="btn btn-success btn-headline" ng-click="correctionData.publicationValidation()"><i class="icon-download-alt"></i>{{ i18n('m.rbs.admin.correction.button-publish') }}</button>
+					</div>
+
+				</div>
+
+				<!-- -->
+
+
 			</div>
 		</div>
 
@@ -200,7 +313,7 @@
 			</div>
 		</div>
 		<div class="arrow">
-			<i class="icon-arrow-down"></i>
+			<i class="icon-arrow-down"></i><i class="icon-arrow-up"></i>
 		</div>
 		<div class="step" ng-class="{'current': data.action=='contentValidation'}">
 			<div class="block">
@@ -237,7 +350,7 @@
 			</div>
 		</div>
 		<div class="arrow">
-			<i class="icon-arrow-down"></i>
+			<i class="icon-arrow-down"></i><i class="icon-arrow-up"></i>
 		</div>
 		<div class="step" ng-class="{'current': data.action=='unfreeze'}">
 			<div class="block">

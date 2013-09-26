@@ -21,7 +21,18 @@
 			controller : ['$scope', '$element', function ($scope, $element)
 			{
 				var	initializedSections = {},
-					translation = false;
+					translation = false,
+					wrappingFormScope;
+
+				// Special trick for localized Documents.
+				// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
+				// - the classic Editor (editor.twig)
+				// - or the one used for translation (editor-translate.twig).
+				// Since `ng-switch` creates an *isolated Scope* for the different cases, the Document loaded
+				// in this Directive (`$scope.document`) does not exist in the Scope of `form.twig`.
+				// The following bits copy the reference of `$scope.document` in this parent Scope.
+				wrappingFormScope = angular.element($element.closest('.document-form')).scope();
+
 
 				/**
 				 * Initialize current Editor.
@@ -291,6 +302,12 @@
 								$scope.onReload($scope.document);
 							}
 
+							// Updates Document instance in the parent '.document-form' that wraps the Editor.
+							// (see 'form.twig' files).
+							if (wrappingFormScope.$id !== $scope.$id) {
+								wrappingFormScope.document = $scope.document;
+							}
+
 							MainMenu.addTranslations($scope.document, $scope);
 						}
 					}
@@ -347,18 +364,6 @@
 						initMenu();
 					});
 
-					// Special trick for localized Documents.
-					// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
-					// - the classic Editor (editor.twig)
-					// - or the one used for translation (editor-translate.twig).
-					// Since `ng-switch` creates an *isolated Scope* for the different cases, the Document loaded
-					// in this Directive (`$scope.document`) does not exist in the Scope of `form.twig`.
-					// The following bits copy the reference of `$scope.document` in this parent Scope.
-					var wrappingFormScope = angular.element($element.closest('.document-form')).scope();
-					if (wrappingFormScope.$id !== $scope.$id) {
-						wrappingFormScope.document = $scope.document;
-					}
-
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
@@ -394,6 +399,11 @@
 					{
 						$scope.modelInfo = promisesResults[1];
 						delete $scope.modelInfo.links;
+
+						if (wrappingFormScope.$id !== $scope.$id) {
+							wrappingFormScope.modelInfo = $scope.modelInfo;
+							wrappingFormScope.document = $scope.document;
+						}
 
 						if (translation) {
 							$scope.currentLCID = $scope.document.LCID;
@@ -1102,7 +1112,15 @@
 
 				'saveLocalCopy' : function (doc) {
 					var	key = makeLocalCopyKey(doc);
-					doc.META$.localCopySaveDate = (new Date()).toString();
+					doc.META$.localCopy = {
+						saveDate : (new Date()).toString(),
+						documentVersion : doc.documentVersion,
+						modificationDate : doc.modificationDate,
+						publicationStatus : doc.publicationStatus
+					};
+					delete doc.documentVersion;
+					delete doc.modificationDate;
+					delete doc.publicationStatus;
 					localCopyRepo[key] = doc;
 					commitLocalCopyRepository();
 				},
@@ -1117,6 +1135,7 @@
 					var	key = makeLocalCopyKey(doc);
 					if (localCopyRepo.hasOwnProperty(key)) {
 						delete localCopyRepo[key];
+						delete doc.META$.localCopy;
 						commitLocalCopyRepository();
 					}
 				},
@@ -1140,11 +1159,47 @@
 	});
 
 
-	app.controller('RbsChangeTranslateEditorController', ['$scope', function ($scope) {
+	app.controller('RbsChangeTranslateEditorController', ['$scope', 'RbsChange.MainMenu', function ($scope, MainMenu) {
 		$scope.document = {};
 		$scope.editMode = 'translate';
+		MainMenu.clear();
 	}]);
 
+
+	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', 'RbsChange.MainMenu', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils, MainMenu) {
+		$scope.$watch('model', function (model) {
+			if (model) {
+				REST.resource(model, $routeParams.id, $routeParams.LCID).then(function (doc) {
+					$scope.document = doc;
+
+					var	mi = Utils.modelInfo(model),
+						location = [
+						[
+							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.admin.js.module-name | ucf'),
+							$filter('rbsURL')(mi.vendor + '_' + mi.module, 'home')
+						],
+						[
+							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.admin.js.' + mi.document) + '-list | ucf'),
+							$filter('rbsURL')(model, 'list')
+						]
+					];
+
+					Breadcrumb.setLocation(location);
+					Breadcrumb.setResource(doc, 'Workflow');
+
+					MainMenu.load('Rbs/Admin/workflow/menu.twig', $scope);
+					/*
+					MainMenu.clear().add(
+						"workflow",
+						[{url: doc.url(), text: '<i class="icon-circle-arrow-left"></i> Back to editor'}],
+						$scope,
+						"Workflow"
+					);
+					*/
+				});
+			}
+		});
+	}]);
 
 
 
