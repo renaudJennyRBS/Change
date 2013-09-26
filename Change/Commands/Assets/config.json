@@ -37,7 +37,12 @@
 		"description": "Initialize documents root files",
 		"arguments":{
 			"path": {
-				"description": "Path of document root  (e.g. \".\")",
+				"description": "Path of document root (e.g. \".\")",
+				"required": true,
+				"default": null
+			},
+			"resourcePath": {
+				"description": "static resource base url  (e.g. \"/Assets\")",
 				"required": true,
 				"default": null
 			}

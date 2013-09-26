@@ -20,9 +20,10 @@ class InitHttpFiles
 	}
 
 	/**
-	 * @param $documentRootPath
+	 * @param string $documentRootPath
+	 * @param string $resourcePath
 	 */
-	public function initializeControllers($documentRootPath)
+	public function initializeControllers($documentRootPath, $resourcePath)
 	{
 		$editConfig = new \Change\Configuration\EditableConfiguration(array());
 		$editConfig->import($this->application->getConfiguration());
@@ -32,9 +33,14 @@ class InitHttpFiles
 		$content = str_replace('__DIR__', var_export(PROJECT_HOME, true), $content);
 		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 
-		$editConfig->addPersistentEntry('Change/Install/documentRootPath', $documentRootPath,
-			\Change\Configuration\EditableConfiguration::INSTANCE);
-
+		$editConfig->addPersistentEntry('Change/Install/documentRootPath', $documentRootPath, \Change\Configuration\EditableConfiguration::INSTANCE);
+		$editConfig->addPersistentEntry('Change/Install/resourceBaseUrl', $resourcePath, \Change\Configuration\EditableConfiguration::INSTANCE);
 		$editConfig->save();
+
+		if (strpos($resourcePath, '/') === 0)
+		{
+			$webResourcePath = $this->application->getWorkspace()->composePath($documentRootPath, $resourcePath);
+			\Change\Stdlib\File::mkdir($webResourcePath);
+		}
 	}
 }

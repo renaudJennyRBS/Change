@@ -177,7 +177,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	public function getResourceDirectoryPath()
 	{
 		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
-		return $this->getApplication()->getWorkspace()->composePath($root, 'Rbs', 'Admin');
+		return $this->getApplication()->getWorkspace()->composePath($root, $this->getResourceBaseUrl());
 	}
 
 	/**
@@ -185,7 +185,12 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getResourceBaseUrl()
 	{
-		return '/Rbs/Admin';
+		$basePath = $this->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
+		if ($basePath && $basePath[strlen($basePath) - 1] !== '/')
+		{
+			$basePath .= '/';
+		}
+		return $basePath . 'Rbs/Admin';
 	}
 
 	/**
