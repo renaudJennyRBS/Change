@@ -30,12 +30,12 @@ interface PageTemplate
 	public function getContentLayout();
 
 	/**
-	 * @return \Assetic\Asset\AssetCollection
+	 * @return \Assetic\AssetManager
 	 */
-	public function getCssAssetCollection();
+	public function getCssAssetManager();
 
 	/**
-	 * @return \Assetic\Asset\AssetCollection
+	 * @return \Assetic\AssetManager
 	 */
-	public function getJsAssetCollection();
+	public function getJsAssetManager();
 }

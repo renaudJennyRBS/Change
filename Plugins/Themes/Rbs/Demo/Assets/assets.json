@@ -1,7 +1,11 @@
 {
 	"*" : {
 		"cssAssets" : [
-			{ "href": "Theme/Rbs/Base/css/screen.css", "media": ""}
+			{"href": "Theme/Rbs/Base/css/bootstrap.min.css", "media": ""},
+			{"href": "Theme/Rbs/Base/css/bootstrap-complements.css", "media": ""},
+			{ "href": "Theme/Rbs/Demo/css/bootstrap-overrides.css", "media": "" },
+			{ "href": "Theme/Rbs/Demo/css/styles.css", "media": "" },
+			{ "href": "Theme/Rbs/Demo/css/screen.css", "media": "" }
 		],
 		"jsAssets" : ["Theme/Rbs/Base/js/jquery-1.8.2.min.js", "Theme/Rbs/Base/js/bootstrap.min.js",
 			"Theme/Rbs/Base/js/bootstrap-complements.js", "Theme/Rbs/Demo/js/default.js",

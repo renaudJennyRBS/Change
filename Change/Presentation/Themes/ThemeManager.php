@@ -309,86 +309,180 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Presentation\Interfaces\PageTemplate $pageTemplate
-	 * @param string[] $blockNames
-	 * @param $workspace \Change\Workspace
+	 * @param array $configuration
+	 * @return \Assetic\AssetManager
 	 */
-	public function configurePageTemplate($pageTemplate, $blockNames, $workspace)
+	public function prepareAssetic($configuration)
 	{
-		//first get themes configuration
-		//begin by the base, and merge with parent current and finally with current theme
-		$configuration = [];
-		//find base assets configuration file
-		$path = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $this->getDefault()->getName()));
-		$assetsConfigurationPath = $path . DIRECTORY_SEPARATOR . 'assets.json';
-		if (file_exists($assetsConfigurationPath))
-		{
-			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
-		}
-
-		//TODO test that!
-		$parentTheme = $this->getCurrent()->getParentTheme();
-		if ($parentTheme)
-		{
-			$this->mergeParentThemeConfiguration($parentTheme, $configuration, $workspace);
-		}
-
-		$assetsConfigurationPath = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $this->getCurrent()->getName()), 'assets.json');
-		if (file_exists($assetsConfigurationPath))
-		{
-			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
-		}
-
-		//Now search in path all assets in *_* folders
-		$glob = new \GlobIterator($path . DIRECTORY_SEPARATOR . '*_*' . DIRECTORY_SEPARATOR . 'assets.json');
-		while ($glob->valid())
-		{
-			$moduleShortName = substr($glob->getPath(), strrpos($glob->getPath(), DIRECTORY_SEPARATOR) + 1);
-			$pluginConfiguration = json_decode(\Change\Stdlib\File::read($glob->getPathname()), true);
-			$formattedPluginConfiguration = [];
-			foreach ($pluginConfiguration as $blockName => $blockConfiguration)
-			{
-				$formattedPluginConfiguration[$moduleShortName . '_' . $blockName] = $blockConfiguration;
-			}
-			$configuration = array_merge($configuration, $formattedPluginConfiguration);
-			$glob->next();
-		}
-
-		$alreadyAddedAssets = [];
+		$am = new \Assetic\AssetManager();
 		foreach ($configuration as $key => $assetType)
 		{
-			if ($key === '*' || in_array($key, $blockNames))
+			if ($key === '*')
 			{
-				foreach ($assetType['jsAssets'] as $jsAsset)
+				if (count($assetType['jsAssets']) > 0)
 				{
-					if (!in_array($jsAsset, $alreadyAddedAssets))
+					foreach ($assetType['jsAssets'] as $jsAsset)
 					{
-						$formattedAsset = '<script src="' . $jsAsset . '" type="text/javascript"></script>';
-						$asseticJs = new \Assetic\Asset\StringAsset($formattedAsset);
-						$pageTemplate->getJsAssetCollection()->add($asseticJs);
-						$alreadyAddedAssets[] = $jsAsset;
+						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $jsAsset, $matches);
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
+						$resource = $theme->getResource($path);
+						if ($resource->isValid())
+						{
+							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
+							$asset->setTargetPath($jsAsset);
+							$name = str_replace(['/', '.', '-'], '', $jsAsset);
+							$am->set($name, $asset);
+						}
 					}
 				}
-				//TODO same with CSS
+				if (count($assetType['cssAssets']) > 0)
+				{
+					foreach ($assetType['cssAssets'] as $cssAsset)
+					{
+						$cssHref = $cssAsset['href'];
+						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $cssHref, $matches);
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
+						$resource = $theme->getResource($path);
+						if ($resource->isValid())
+						{
+							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
+							$asset->setTargetPath($cssHref);
+							$name = str_replace(['/', '.', '-'], '', $cssHref);
+							$am->set($name, $asset);
+						}
+					}
+				}
+			}
+			else
+			{
+				if (count($assetType['jsAssets']) > 0)
+				{
+					foreach ($assetType['jsAssets'] as $jsAsset)
+					{
+						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $jsAsset, $matches);
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+
+						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
+						$resource = $theme->getResource($path);
+						if ($resource->isValid())
+						{
+							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
+							$asset->setTargetPath($jsAsset);
+							$name = str_replace(['/', '.', '-'], '', $jsAsset);
+							$am->set($name, $asset);
+						}
+					}
+				}
+				if (count($assetType['cssAssets']) > 0)
+				{
+					foreach ($assetType['cssAssets'] as $cssAsset)
+					{
+						$cssHref = $cssAsset['href'];
+						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $cssHref, $matches);
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
+						$resource = $theme->getResource($path);
+						if ($resource->isValid())
+						{
+							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
+							$asset->setTargetPath($cssHref);
+							$name = str_replace(['/', '.', '-'], '', $cssHref);
+							$am->set($name, $asset);
+						}
+					}
+				}
 			}
 		}
+		return $am;
 	}
 
 	/**
-	 * @param \Change\Presentation\Interfaces\Theme $parentTheme
 	 * @param array $configuration
-	 * @param $workspace \Change\Workspace
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
 	 */
-	protected function mergeParentThemeConfiguration($parentTheme, &$configuration, $workspace)
+	public function getJsAssetCollection($configuration, $blockNames)
 	{
-		if ($parentTheme->getParentTheme())
+		$am = $this->prepareAssetic($configuration);
+		$collection = new \Assetic\Asset\AssetCollection();
+		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
+		foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
 		{
-			$this->mergeParentThemeConfiguration($parentTheme->getParentTheme(), $configuration, $workspace);
+			$name = str_replace(['/', '.', '-'], '', $themeJsAsset);
+			$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+			$collection->add(new \Assetic\Asset\StringAsset('<script type="text/javascript" src="' . $src . '"></script>'));
 		}
-		$assetsConfigurationPath = $workspace->appPath('Themes', str_replace('_', DIRECTORY_SEPARATOR, $parentTheme->getName()), 'assets.json');
-		if (file_exists($assetsConfigurationPath))
+
+		$alreadyAddedBlockAssets = [];
+		foreach (array_keys($blockNames) as $blockName)
 		{
-			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($assetsConfigurationPath), true));
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+				{
+					if (!in_array($blockJsAsset, $alreadyAddedBlockAssets))
+					{
+						$name = str_replace(['/', '.', '-'], '', $blockJsAsset);
+						$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+						$collection->add(new \Assetic\Asset\StringAsset('<script type="text/javascript" src="' . $src . '"></script>'));
+						$alreadyAddedBlockAssets[] = $blockJsAsset;
+					}
+				}
+			}
 		}
+		return $collection;
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetCollection($configuration, $blockNames)
+	{
+		$am = $this->prepareAssetic($configuration);
+		$collection = new \Assetic\Asset\AssetCollection();
+		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
+		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+		{
+			$name = str_replace(['/', '.', '-'], '', $themeCssAsset['href']);
+			$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+			$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
+			$collection->add(
+				new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
+			);
+		}
+
+		$alreadyAddedBlockAssets = [];
+		foreach (array_keys($blockNames) as $blockName)
+		{
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+				{
+					if (!in_array($blockJsAsset, $alreadyAddedBlockAssets))
+					{
+						$name = str_replace(['/', '.', '-'], '', $blockJsAsset);
+						$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+						$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
+						$collection->add(
+							new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
+						);
+						$alreadyAddedBlockAssets[] = $blockJsAsset;
+					}
+				}
+			}
+		}
+		return $collection;
 	}
 }

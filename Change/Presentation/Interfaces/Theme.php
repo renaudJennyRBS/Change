@@ -53,4 +53,10 @@ interface Theme
 	 * @return string
 	 */
 	public function getTemplateBasePath();
+
+	/**
+	 * @param array $baseConfiguration
+	 * @return array
+	 */
+	public function getAssetConfiguration(array $baseConfiguration = null);
 }

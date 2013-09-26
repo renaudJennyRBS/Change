@@ -71,36 +71,36 @@ class DefaultPageTemplate implements PageTemplate
 	}
 
 	/**
-	 * @var \Assetic\Asset\AssetCollection|null
+	 * @var \Assetic\AssetManager
 	 */
-	protected $cssAssetCollection = null;
+	protected $cssAssetManager = null;
 
 	/**
-	 * @var \Assetic\Asset\AssetCollection|null
+	 * @var \Assetic\AssetManager
 	 */
-	protected $jsAssetCollection = null;
+	protected $jsAssetManager = null;
 
 	/**
-	 * @return \Assetic\Asset\AssetCollection
+	 * @return \Assetic\AssetManager
 	 */
-	public function getCssAssetCollection()
+	public function getCssAssetManager()
 	{
-		if ($this->cssAssetCollection === null)
+		if ($this->cssAssetManager === null)
 		{
-			$this->cssAssetCollection = new \Assetic\Asset\AssetCollection();
+			$this->cssAssetManager = new \Assetic\AssetManager();
 		}
-		return $this->cssAssetCollection;
+		return $this->cssAssetManager;
 	}
 
 	/**
-	 * @return \Assetic\Asset\AssetCollection
+	 * @return \Assetic\AssetManager
 	 */
-	public function getJsAssetCollection()
+	public function getJsAssetManager()
 	{
-		if ($this->jsAssetCollection === null)
+		if ($this->jsAssetManager === null)
 		{
-			$this->jsAssetCollection = new \Assetic\Asset\AssetCollection();
+			$this->jsAssetManager = new \Assetic\AssetManager();
 		}
-		return $this->jsAssetCollection;
+		return $this->jsAssetManager;
 	}
 }

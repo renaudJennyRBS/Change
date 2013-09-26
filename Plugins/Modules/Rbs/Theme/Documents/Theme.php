@@ -165,4 +165,28 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 		}
 		return $this->cssVariables;
 	}
+
+	/**
+	 * @param array $baseConfiguration
+	 * @return array
+	 */
+	public function getAssetConfiguration(array $baseConfiguration = null)
+	{
+		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+
+		//TODO test with parent theme
+		if ($this->getParentTheme())
+		{
+			$configuration = array_merge($configuration, $this->getParentTheme()->getAssetConfiguration($configuration));
+		}
+		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+		$resource = $this->getResource('assets.json');
+		if ($resource->isValid())
+		{
+			$configuration = array_merge($configuration, json_decode($resource->getContent(), true));
+		}
+
+		return $configuration;
+
+	}
 }

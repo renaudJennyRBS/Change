@@ -145,4 +145,47 @@ class DefaultTheme implements Theme
 
 		return new FileResource($path);
 	}
+
+	/**
+	 * @param array $baseConfiguration
+	 * @return array
+	 * @throws \RuntimeException
+	 */
+	public function getAssetConfiguration(array $baseConfiguration = null)
+	{
+		//first get themes configuration
+		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+		$resource = $this->getResource('assets.json');
+		if ($resource->isValid())
+		{
+			$configuration = array_merge($configuration, json_decode($resource->getContent(), true));
+		}
+		else
+		{
+			//TODO set correctly the exception
+			throw new \RuntimeException('invalid resource assets.json configuration file of default theme');
+		}
+
+		//Now find all modules configuration file
+		$pluginManager = $this->presentationServices->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->getInstalledPlugins();
+		foreach ($plugins as $plugin)
+		{
+			if ($plugin->isModule())
+			{
+				$configurationPath = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'Theme' .
+					DIRECTORY_SEPARATOR . 'assets.json';
+				if (file_exists($configurationPath))
+				{
+					$blockConfigurations = [];
+					foreach (json_decode(\Change\Stdlib\File::read($configurationPath), true) as $blockName => $blockConfiguration)
+					{
+						$blockConfigurations[$plugin->getName() . '_' . $blockName] = $blockConfiguration;
+					}
+					$configuration = array_merge($configuration, $blockConfigurations);
+				}
+			}
+		}
+		return $configuration;
+	}
 }

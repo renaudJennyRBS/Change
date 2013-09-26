@@ -2,7 +2,7 @@
 {% if parameters.showChart %}
 	<div class="container">
 		{% for stars, ratePart in rateParts %}
-			<div class="row">
+			<div class="row row-review-rating-average">
 				<div class="col-sm-3">{{ ratePart.count }} {{ i18nAttr('m.rbs.review.blocks.review') }}</div>
 				<div class="col-sm-4" title="{{ i18nAttr('m.rbs.review.blocks.average-rating-stars', ['ucf'], { 'stars': stars, 'count': ratePart.count }) }}">{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': stars } %}</div>
 				<div class="col-sm-4">

@@ -17,3 +17,7 @@
 .star-rating-display .full {
 	color: var(main-text-color);
 }
+
+.row-review-rating-average {
+	margin-bottom: 0;
+}

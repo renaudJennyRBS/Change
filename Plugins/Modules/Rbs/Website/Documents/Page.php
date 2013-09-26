@@ -121,11 +121,15 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				{
 					$blockNames[$block->getName()] = true;
 				}
-				$pageEvent->getPresentationServices()->getThemeManager()
-					->configurePageTemplate($pageTemplate, array_keys($blockNames), $this->getApplicationServices()->getApplication()->getWorkspace());
-				//TODO cssHead like Js
-				//$twigLayout['<!-- cssHead -->'] = $pageTemplate->getCssAssetCollection()->dump();
-				$twigLayout['<!-- jsFooter -->'] = $pageTemplate->getJsAssetCollection()->dump();
+
+				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
+				$configuration = $themeManager->getDefault()->getAssetConfiguration();
+				$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+				$jsCollection = $themeManager->getJsAssetCollection($configuration, $blockNames);
+				$cssCollection = $themeManager->getCssAssetCollection($configuration, $blockNames);
+
+				$twigLayout['<!-- cssHead -->'] = $cssCollection->dump();
+				$twigLayout['<!-- jsFooter -->'] = $jsCollection->dump();
 
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
