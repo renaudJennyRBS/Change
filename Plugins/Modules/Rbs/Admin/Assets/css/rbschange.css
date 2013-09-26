@@ -68,17 +68,6 @@
 	top: 3px;
 }
 
-
-#mainToolbar .btn-toolbar {
-	padding: 0;
-	margin: 0;
-	float: right;
-}
-
-#mainToolbar .btn-toolbar button {
-	padding: 9px 19px;
-}
-
 .clipboard-main-widget button.dropdown-toggle {
 	width: 70px;
 }
@@ -137,7 +126,6 @@ body > footer a:visited:hover {
 
 .breadcrumb {
 	padding: 0;
-	margin-right: 192px;
 	background: #F5F5F5;
 	box-shadow: 0 0 0 1px rgb(230, 230, 230) inset;
 	border-radius: 4px;

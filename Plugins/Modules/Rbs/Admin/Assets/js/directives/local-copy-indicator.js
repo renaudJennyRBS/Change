@@ -5,7 +5,7 @@
 	angular.module('RbsChange').directive('rbsLocalCopyIndicator', ['RbsChange.EditorManager', function (EditorManager)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Rbs/Admin/js/directives/local-copy-indicator.twig',
 			replace : true,
 			scope : true,

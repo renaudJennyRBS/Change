@@ -428,7 +428,6 @@
 					 */
 					'setLanguage' : function (lang) {
 						language = lang;
-						console.log("REST: Language changed to ", language);
 					},
 
 

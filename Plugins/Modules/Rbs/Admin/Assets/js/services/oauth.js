@@ -243,7 +243,6 @@
 			} else {
 				oauthData = {};
 			}
-			$log.log("oauthData (from LocalStorage)=", oauthData);
 
 
 			// Public API of OAuth service.

@@ -34,12 +34,19 @@
 							scope.publicationStatus = doc.publicationStatus;
 						}
 
-						scope.tooltip = i18n.trans('m.rbs.admin.admin.js.status-' + angular.lowercase(scope.publicationStatus));
-						scope.correction = Utils.hasCorrection(doc);
-						if (scope.correction) {
-							scope.tooltip += ' (avec correction)';
+						if (scope.publicationStatus)
+						{
+							scope.tooltip = i18n.trans('m.rbs.admin.admin.js.status-' + angular.lowercase(scope.publicationStatus));
+							scope.correction = Utils.hasCorrection(doc);
+							if (scope.correction) {
+								scope.tooltip += ' (avec correction)';
+							}
 						}
-					} else {
+						else {
+							iElement.hide();
+						}
+					}
+					else {
 						iElement.hide();
 					}
 				});

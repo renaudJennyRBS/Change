@@ -149,9 +149,6 @@
 				$dockables.append(el);
 				$rootScope.$broadcast('Change:Workspace:Pinned', el);
 			}
-			else {
-				console.warn("Already pinned.");
-			}
 		};
 
 		this.unpin = function (el) {
