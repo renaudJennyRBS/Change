@@ -50,6 +50,14 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 						{
 							$webStoreId = intval($arguments['options']['webStoreId']);
 						}
+						else
+						{
+							$webStore = $commerceServices->getWebStore();
+							if ($webStore)
+							{
+								$webStoreId = $webStore->getId();
+							}
+						}
 
 						if (!$webStoreId)
 						{

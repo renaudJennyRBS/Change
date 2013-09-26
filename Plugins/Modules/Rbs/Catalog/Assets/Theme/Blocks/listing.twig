@@ -41,7 +41,7 @@
 </div>-->
 
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
-	<input type="hidden" name="options[webStoreId]" value="{{ webStoreId }}" />
+	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}" />
 	<input type="hidden" name="quantity" value="1" />
 	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
 	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />

@@ -58,7 +58,7 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testSetDocumentRoot()
 	{
 		$cmd = 'change:set-document-root';
-		$arguments = array('path' => '.');
+		$arguments = array('path' => '.', 'resourcePath' => '/Assets');
 		$application = $this->getApplication();
 		$eventManager = $this->getCommandsEventManager($application);
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);

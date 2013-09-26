@@ -16,6 +16,7 @@ class SetDocumentRoot
 		$application = $event->getApplication();
 
 		$path = realpath($event->getParam('path'));
+		$resourcePath = $event->getParam('resourcePath');
 		if (!$path)
 		{
 			$event->addErrorMessage('Path: "' . $event->getParam('path') . '" not found');
@@ -27,8 +28,8 @@ class SetDocumentRoot
 			return;
 		}
 
-		$cmd = new \Change\Http\InitHttpFiles($application);
-		$cmd->initializeControllers($path);
+		$cmd = new \Change\Http\InitHttpFiles($application, $resourcePath);
+		$cmd->initializeControllers($path, $resourcePath);
 		$event->addInfoMessage('Document root path: "' . $path . '" is now set.');
 
 	}
