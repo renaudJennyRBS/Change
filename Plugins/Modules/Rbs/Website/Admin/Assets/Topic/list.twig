@@ -61,10 +61,10 @@
 		</column>
 
 		<column name="functions" width="32px" label="Index">
-			<button type="button" class="btn" ng-disabled="busy" ng-if="doc.is('Rbs_Website_StaticPage')" ng-class="{'btn-success':extend.isIndexPage(doc)}" ng-click="extend.setIndexPage(doc)">
-				<i ng-class="{true: 'icon-circle', false: 'icon-circle-blank'}[extend.isIndexPage(doc)]"></i>
+			<button type="button" class="discrete-button" ng-disabled="busy" ng-if="doc.is('Rbs_Website_StaticPage')" ng-click="extend.setIndexPage(doc); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
+				<i ng-switch-default="" ng-class="{true: 'icon-circle icon-large', false: 'icon-circle-blank half-opacity'}[extend.isIndexPage(doc)]"></i>
+				<i ng-switch-when="true" class="icon-spin icon-spinner icon-large"></i>
 			</button>
-
 		</column>
 
 	</rbs-document-list>

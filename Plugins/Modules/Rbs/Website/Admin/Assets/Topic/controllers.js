@@ -101,7 +101,7 @@
 
 		$scope.listExtend =
 		{
-			setIndexPage : function (page)
+			setIndexPage : function (page, rowIndex)
 			{
 				if (this.isIndexPage(page)) {
 					return;
@@ -121,7 +121,7 @@
 						if (spf.resources.length === 1) {
 							spf = spf.resources[0];
 							// Nothing to do it the index page is the same.
-							if (spf.page.id === page.id) {
+							if (spf.page && spf.page.id === page.id) {
 								Loading.stop();
 								return;
 							}

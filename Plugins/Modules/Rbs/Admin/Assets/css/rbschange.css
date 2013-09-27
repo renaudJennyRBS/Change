@@ -1412,3 +1412,14 @@ th label {
 .navbar-indicators li:last-child {
 	border-right-style: solid;
 }
+
+
+.discrete-button {
+	background: none;
+	border: none;
+	width: 100%;
+}
+
+.half-opacity {
+	opacity: 0.5;
+}
