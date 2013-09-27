@@ -46,6 +46,8 @@ class GetHome
 			$styles = $manager->prepareCssAssets($resourceDirectoryPath, $resourceBaseUrl);
 			$attributes = ['styles' => $styles] + $attributes;
 
+			$manager->prepareImageAssets($resourceDirectoryPath);
+
 			return $manager->renderTemplateFile($templateFileName, $attributes);
 		};
 		$result->setRenderer($renderer);

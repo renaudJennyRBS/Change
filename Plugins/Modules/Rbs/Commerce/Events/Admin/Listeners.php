@@ -32,6 +32,7 @@ class Listeners implements ListenerAggregateInterface
 			if ($plugin->getPackage() == "ECom")
 			{
 				$jsAssets = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/*/*.js');
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
 				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
 				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');

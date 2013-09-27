@@ -202,8 +202,10 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$resourceDirectoryPath = $this->getResourceDirectoryPath();
 		}
+
 		$this->prepareCssAssets($resourceDirectoryPath);
 		$this->prepareScriptAssets($resourceDirectoryPath);
+		$this->prepareImageAssets($resourceDirectoryPath);
 	}
 
 	/**
@@ -287,6 +289,34 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $scripts;
+	}
+
+	/**
+	 * @param string $resourceDirectoryPath
+	 */
+	public function prepareImageAssets($resourceDirectoryPath)
+	{
+		$plugin = $this->getApplicationServices()->getPluginManager()->getModule('Rbs', 'Admin');
+		$srcPath = $plugin->getBasePath() . '/Assets/img';
+		$targetPath = $resourceDirectoryPath . '/img';
+		\Change\Stdlib\File::mkdir($targetPath);
+
+		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($srcPath, \FilesystemIterator::SKIP_DOTS),
+			\RecursiveIteratorIterator::SELF_FIRST);
+
+		foreach ($iterator as $fileInfo)
+		{
+			/* @var $fileInfo \SplFileInfo */
+			$targetPathName = str_replace($srcPath, $targetPath , $fileInfo->getPathname());
+			if ($fileInfo->isFile())
+			{
+				copy($fileInfo->getPathname(), $targetPathName);
+			}
+			elseif ($fileInfo->isDir())
+			{
+				\Change\Stdlib\File::mkdir($targetPathName);
+			}
+		}
 	}
 
 	/**
