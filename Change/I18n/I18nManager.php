@@ -149,6 +149,16 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
+	 * @param string $LCID
+	 * @return boolean
+	 */
+	public function isValidLCID($LCID)
+	{
+		return is_string($LCID) && preg_match('/^[a-z]{2}_[A-Z]{2}$/', $LCID);
+	}
+
+	/**
 	 * Get all supported LCIDs.
 	 * @api
 	 * @return string[] , ex: "fr_FR"
@@ -165,7 +175,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function isSupportedLCID($LCID)
 	{
-		return ($LCID && in_array($LCID, $this->getSupportedLCIDs()));
+		return ($this->isValidLCID($LCID) && in_array($LCID, $this->getSupportedLCIDs()));
 	}
 
 	/**

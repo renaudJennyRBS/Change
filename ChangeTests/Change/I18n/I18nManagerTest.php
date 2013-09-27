@@ -41,6 +41,28 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @depends testConstruct
 	 */
+	public function testIsValidLCID()
+	{
+		$manager = new I18nManager();
+		$this->assertTrue($manager->isValidLCID('fr_FR'));
+		$this->assertTrue($manager->isValidLCID('en_GB'));
+		$this->assertTrue($manager->isValidLCID('to_TO'));
+		$this->assertTrue($manager->isValidLCID('ab_CD'));
+		$this->assertFalse($manager->isValidLCID('toto'));
+		$this->assertFalse($manager->isValidLCID('FR_FR'));
+		$this->assertFalse($manager->isValidLCID('fr_fr'));
+		$this->assertFalse($manager->isValidLCID('FR_fr'));
+		$this->assertFalse($manager->isValidLCID('a8_A9'));
+		$this->assertFalse($manager->isValidLCID('fr-FR'));
+		$this->assertFalse($manager->isValidLCID('fr_FR '));
+		$this->assertFalse($manager->isValidLCID(' fr_FR'));
+		$this->assertFalse($manager->isValidLCID('fr__FR'));
+		return $manager;
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
 	public function testGetSupportedLCIDs()
 	{
 		$application = $this->getApplication();
