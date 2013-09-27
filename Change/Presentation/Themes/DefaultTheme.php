@@ -183,8 +183,7 @@ class DefaultTheme implements Theme
 		}
 		else
 		{
-			//TODO set correctly the exception
-			throw new \RuntimeException('invalid resource assets.json configuration file of default theme');
+			throw new \RuntimeException('invalid resource assets.json configuration file of default theme', 999999);
 		}
 
 		//Now find all modules configuration file

@@ -23,38 +23,4 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 	{
 		return $this->getId();
 	}
-
-	/**
-	 * @var \Assetic\AssetManager
-	 */
-	protected $cssAssetManager = null;
-
-	/**
-	 * @var \Assetic\AssetManager
-	 */
-	protected $jsAssetManager = null;
-
-	/**
-	 * @return \Assetic\AssetManager
-	 */
-	public function getCssAssetManager()
-	{
-		if ($this->cssAssetManager === null)
-		{
-			$this->cssAssetManager = new \Assetic\AssetManager();
-		}
-		return $this->cssAssetManager;
-	}
-
-	/**
-	 * @return \Assetic\AssetManager
-	 */
-	public function getJsAssetManager()
-	{
-		if ($this->jsAssetManager === null)
-		{
-			$this->jsAssetManager = new \Assetic\AssetManager();
-		}
-		return $this->jsAssetManager;
-	}
 }
