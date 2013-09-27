@@ -33,35 +33,59 @@ class Listeners implements ListenerAggregateInterface
 		$manager = $event->getManager();
 		$i18nManager = $manager->getApplicationServices()->getI18nManager();
 		$pm = $manager->getApplicationServices()->getPluginManager();
+
+		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
+		if ($plugin)
+		{
+			$pluginPath = $plugin->getBasePath();
+			$jsAssets = new AssetCollection();
+			$path = $pluginPath . '/Assets/lib/moment/i18n/' . $lcid . '.js';
+			if (file_exists($path))
+			{
+				$jsAssets->add(new FileAsset($path));
+			}
+			$path = $pluginPath . '/Assets/lib/angular/i18n/angular-locale_' . $lcid . '.js';
+			if (file_exists($path))
+			{
+				$jsAssets->add(new FileAsset($path));
+			}
+
+			if (count($jsAssets->all()))
+			{
+				$manager->getJsAssetManager()->set('i18n_' . $i18nManager->getLCID(), $jsAssets);
+			}
+
+			$jsAssets = new AssetCollection();
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/js/rbschange.js'));
+
+			$jsAssets->add(new GlobAsset($pluginPath . '/Assets/js/*/*.js'));
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/menu/menu.js'));
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/clipboard/controllers.js'));
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/dashboard/controllers.js'));
+
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/js/help.js'));
+			$jsAssets->add(new FileAsset($pluginPath . '/Assets/js/routes.js'));
+			$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+
+			$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
+
+			$cssAsset = new AssetCollection();
+			$cssAsset->add(new GlobAsset($pluginPath . '/Assets/css/*.css'));
+			$cssAsset->add(new FileAsset($pluginPath . '/Assets/menu/menu.css'));
+			$cssAsset->add(new FileAsset($pluginPath . '/Assets/dashboard/dashboard.css'));
+			$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+		}
+
 		foreach ($pm->getInstalledPlugins() as $plugin)
 		{
 			if ($plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
 			{
 				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
 				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
 				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
 				$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
-			}
-		}
-
-		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
-		if ($plugin)
-		{
-			$jsAssets = new AssetCollection();
-			$path = $plugin->getBasePath() . '/Assets/lib/moment/i18n/' . $lcid . '.js';
-			if (file_exists($path))
-			{
-				$jsAssets->add(new FileAsset($path));
-			}
-			$path = $plugin->getBasePath() . '/Assets/lib/angular/i18n/angular-locale_' . $lcid . '.js';
-			if (file_exists($path))
-			{
-				$jsAssets->add(new FileAsset($path));
-			}
-			if (count($jsAssets->all()))
-			{
-				$manager->getJsAssetManager()->set('i18n', $jsAssets);
 			}
 		}
 
