@@ -22,7 +22,7 @@ class PluginManagerTest extends TestCase
 	protected function tearDown()
 	{
 		parent::tearDown();
-		$this->closeDbConnection();
+		//$this->closeDbConnection();
 	}
 
 	public function testService()
@@ -83,6 +83,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testCompile($plugin)
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$this->assertEmpty($plugins);
@@ -98,6 +101,8 @@ class PluginManagerTest extends TestCase
 
 		$p2 = $pluginManager->getModule('Project', 'Tests');
 		$this->assertSame($p, $p2);
+
+		$tm->commit();
 	}
 
 	/**
@@ -105,6 +110,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testModule()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$p = $pluginManager->getModule('Project', 'Tests');
 		$this->assertInstanceOf('Change\Plugins\Plugin', $p);
@@ -115,6 +123,8 @@ class PluginManagerTest extends TestCase
 		$pluginManager->compile();
 		$p3 = $pluginManager->getModule('Project', 'Tests');
 		$this->assertNull($p3);
+
+		$tm->commit();
 	}
 
 	/**
@@ -122,6 +132,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testGetUnregisteredPlugins()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$this->assertNull($pluginManager->getModule('Project', 'Tests'));
 		$this->assertNull($pluginManager->getTheme('Project', 'Tests'));
@@ -139,6 +152,8 @@ class PluginManagerTest extends TestCase
 		$pluginManager->register($plugin);
 		$p2 = $pluginManager->getTheme('Project', 'Tests');
 		$this->assertSame($plugin, $p2);
+
+		$tm->commit();
 	}
 
 	/**
@@ -146,6 +161,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testDeregister()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$this->assertNull($pluginManager->getModule('Project', 'Tests'));
 		$this->assertNull($pluginManager->getTheme('Project', 'Tests'));
@@ -169,6 +187,8 @@ class PluginManagerTest extends TestCase
 		$pluginManager->compile();
 		$this->assertNull($pluginManager->getModule('Project', 'Tests'));
 		$this->assertNull($pluginManager->getTheme('Project', 'Tests'));
+
+		$tm->commit();
 	}
 
 	/**
@@ -176,6 +196,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testLoad()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$plugins = $pluginManager->getUnregisteredPlugins();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
@@ -203,10 +226,15 @@ class PluginManagerTest extends TestCase
 		$theme = new Plugin(__DIR__, Plugin::TYPE_THEME, 'Project', 'Tests');
 		$theme2 = $pluginManager->load($theme);
 		$this->assertNull($theme2);
+
+		$tm->commit();
 	}
 
 	public function testGetPlugin()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
@@ -232,10 +260,15 @@ class PluginManagerTest extends TestCase
 		$pluginManager->compile();
 		$p3 = $pluginManager->getPlugin(Plugin::TYPE_THEME, 'Project', 'Tests');
 		$this->assertNull($p3);
+
+		$tm->commit();
 	}
 
 	public function testGetRegisteredPlugins()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$registeredPlugins = $pluginManager->getRegisteredPlugins();
 		$this->assertEmpty($registeredPlugins);
@@ -258,6 +291,8 @@ class PluginManagerTest extends TestCase
 		$this->assertNotNull($theme);
 		$registeredPlugins = $pluginManager->getRegisteredPlugins();
 		$this->assertCount(2, $registeredPlugins);
+
+		$tm->commit();
 	}
 
 	/**
@@ -265,6 +300,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testGetInstalledPlugins()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$installedPlugins = $pluginManager->getInstalledPlugins();
 		$this->assertEmpty($installedPlugins);
@@ -286,6 +324,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testDeinstall()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		//TODO improve this test when Setup/Deinstall will be done.
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$pluginManager->compile();
@@ -306,6 +347,8 @@ class PluginManagerTest extends TestCase
 		$pluginManager->compile();
 		$installedPlugins = $pluginManager->getInstalledPlugins();
 		$this->assertEmpty($installedPlugins);
+
+		$tm->commit();
 	}
 
 	/**
@@ -313,9 +356,13 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testDeinstallLockedModule()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$this->assertInstanceOf('\Change\Plugins\Plugin', $module);
 		$configuration = $module->getConfiguration();
 		$configuration['locked'] = true;
 		$module->setConfiguration($configuration);
@@ -331,6 +378,9 @@ class PluginManagerTest extends TestCase
 	 */
 	public function testDeinstallLockedTheme()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');

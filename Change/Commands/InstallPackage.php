@@ -24,6 +24,7 @@ class InstallPackage
 		$pluginManager->compile();
 
 		$plugins = $pluginManager->installPackage($vendor, $shortName, array());
+
 		if (count($plugins))
 		{
 			foreach ($plugins as $plugin)

@@ -26,6 +26,7 @@ class InstallPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getDbProvider()->setCheckTransactionBeforeWriting(false);
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -93,6 +94,8 @@ class InstallPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$installedPlugins = $pm->getInstalledPlugins();
 		//Now plugin is installed
 		$this->assertTrue($this->isPluginPresent($theme, $installedPlugins));
+
+		$this->getApplicationServices()->getDbProvider()->setCheckTransactionBeforeWriting(true);
 	}
 
 	/**

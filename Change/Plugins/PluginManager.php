@@ -712,6 +712,7 @@ class PluginManager
 	 * @param string $vendor
 	 * @param string $name
 	 * @param array $context
+	 * @throws \Exception
 	 * @return Plugin[]
 	 */
 	protected function doInstall($eventType, $vendor, $name, $context)
@@ -746,6 +747,7 @@ class PluginManager
 		$eventArgs['plugins'] = $plugins;
 
 		$applicationServices = new \Change\Application\ApplicationServices($installApplication);
+		$applicationServices->getDbProvider()->setCheckTransactionBeforeWriting(false);
 		$eventArgs['applicationServices'] = $applicationServices;
 		$event->setName(static::EVENT_SETUP_APPLICATION);
 		$eventManager->trigger($event);
@@ -772,15 +774,26 @@ class PluginManager
 
 		$applicationServices->getDbProvider()->closeConnection();
 
-		foreach ($plugins as $plugin)
+		try
 		{
-			$date = new \DateTime();
-			$plugin->setConfigured(true);
-			$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
-			$this->update($plugin);
-		}
+			$this->getDbProvider()->getTransactionManager()->begin();
 
-		$editableConfiguration->save();
+			foreach ($plugins as $plugin)
+			{
+				$date = new \DateTime();
+				$plugin->setConfigured(true);
+				$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
+				$this->update($plugin);
+			}
+
+			$editableConfiguration->save();
+
+			$this->getDbProvider()->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $this->getDbProvider()->getTransactionManager()->rollBack($e);
+		}
 
 		$event->setName(static::EVENT_SETUP_SUCCESS);
 		$eventManager->trigger($event);

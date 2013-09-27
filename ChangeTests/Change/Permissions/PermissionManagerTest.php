@@ -63,12 +63,15 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function createSectionWithPermissionRules()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		//TODO draft, improve this test
 		$website = $this->getNewReadonlyDocument('Rbs_Website_Website', 90);
 		$topic1 = $this->getNewReadonlyDocument('Rbs_Website_Topic', 100);
-		$topic2 = $this->getNewReadonlyDocument('Rbs_Website_Topic', 101);
-		$topic3 = $this->getNewReadonlyDocument('Rbs_Website_Topic', 102);
-		$documentManager = $this->getDocumentServices()->getDocumentManager();
+		$this->getNewReadonlyDocument('Rbs_Website_Topic', 101);
+		$this->getNewReadonlyDocument('Rbs_Website_Topic', 102);
+		$this->getDocumentServices()->getDocumentManager();
 		$users = $this->createUsers(3);
 		$groups = $this->createGroups(3);
 
@@ -76,6 +79,8 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$permissionManager->addWebRule($topic1->getId(), $website->getId(), $users[0]->getId());
 		$permissionManager->addWebRule($topic1->getId(), $website->getId(), $users[1]->getId());
 		$permissionManager->addWebRule($topic1->getId(), $website->getId(), $groups[0]->getId());
+
+		$tm->commit();
 	}
 
 	/**

@@ -26,6 +26,8 @@ class DeinstallPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getDbProvider()->setCheckTransactionBeforeWriting(false);
+
 		//TODO refactor the test when the function deinstall do a real deinstall
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
@@ -120,6 +122,8 @@ class DeinstallPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$installedPlugins = $pm->getInstalledPlugins();
 		//Now plugin is deinstalled
 		$this->assertFalse($this->isPluginPresent($theme, $installedPlugins));
+
+		$this->getApplicationServices()->getDbProvider()->setCheckTransactionBeforeWriting(true);
 	}
 
 	/**

@@ -197,7 +197,11 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function insertPathRule($applicationServices, $pathRule)
 	{
-		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+		$provider = $applicationServices->getDbProvider();
+
+		$sb = $provider->getNewStatementBuilder();
 		$table = $sb->getSqlMapping()->getPathRuleTable();
 
 		$fb = $sb->getFragmentBuilder();
@@ -232,6 +236,8 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$iq->bindParameter('query', $pathRule->getQuery());
 		$iq->execute();
 		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
+
+		$tm->commit();
 	}
 }
 

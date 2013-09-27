@@ -20,11 +20,14 @@ class RegisterPlugins
 		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->getUnregisteredPlugins();
 
+		$applicationServices->getTransactionManager()->begin();
 		foreach ($plugins as $plugin)
 		{
 			$pluginManager->register($plugin);
 			$event->addInfoMessage($plugin . ' registered');
 		}
+		$applicationServices->getTransactionManager()->commit();
+
 		$nbPlugins = count($plugins);
 		$event->addInfoMessage($nbPlugins. ' new plugins registered');
 

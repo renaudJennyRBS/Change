@@ -318,6 +318,9 @@ class StorageManager
 	 */
 	protected function insertItemDbInfo($name, $path, $infos)
 	{
+		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm->begin();
+
 		$iqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::insertItemDbInfo');
 		if (!$iqb->isCached())
 		{
@@ -331,7 +334,11 @@ class StorageManager
 		$iq->bindParameter('infos', json_encode($infos));
 
 		$iq->execute();
-		return $iq->getDbProvider()->getLastInsertId('change_storage');
+		$result = $iq->getDbProvider()->getLastInsertId('change_storage');
+
+		$tm->commit();
+
+		return $result;
 	}
 
 	/**
@@ -341,6 +348,9 @@ class StorageManager
 	 */
 	protected function updateItemDbInfo($name, $path, $infos)
 	{
+		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm->begin();
+
 		$uqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::updateItemDbInfo');
 		if (!$uqb->isCached())
 		{
@@ -356,6 +366,8 @@ class StorageManager
 		$uq->bindParameter('name', $name);
 		$uq->bindParameter('path', $path);
 		$uq->execute();
+
+		$tm->commit();
 	}
 
 	/**
@@ -364,6 +376,9 @@ class StorageManager
 	 */
 	protected function deleteItemDbInfo($name, $path)
 	{
+		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm->begin();
+
 		$dqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::deleteItemDbInfo');
 		if (!$dqb->isCached())
 		{
@@ -377,5 +392,7 @@ class StorageManager
 		$dq->bindParameter('name', $name);
 		$dq->bindParameter('path', $path);
 		$dq->execute();
+
+		$tm->commit();
 	}
 }
