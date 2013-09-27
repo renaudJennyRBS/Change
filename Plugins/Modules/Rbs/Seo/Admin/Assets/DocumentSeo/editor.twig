@@ -1,0 +1,177 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker property="target" label="{{ i18nAttr('m.rbs.seo.documents.documentseo.target', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.seo.documents.documentseo.target-picker-title', ['ucf']) }}"
+			required="true" allow-creation="false" allow-edition="true" ng-disabled="document.id > 0">
+		</rbs-field-picker>
+
+		<hr />
+
+		<rbs-field-text property="metaTitle"
+			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-title', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="metaDescription"
+			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-description', ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="metaKeywords"
+			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-keywords', ['ucf']) }}">
+		</rbs-field-text>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='urlinfo'" hide-when-create="true"
+		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.urls', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		<p>Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit : <em>fr_FR</em> et <em>en_US</em>.</p>
+		<p>Les lignes marquées d'une <i class="icon-star text-info"></i> représentent les implantations canoniques de document dans un site et une langue donnés.</p>
+		<table data-ng-show="document.locations.length > 0" class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.seo.admin.website', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.seo.admin.lcid', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.seo.admin.section', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody data-ng-repeat="(locationIndex, location) in document.locations">
+				<tr>
+					<td>(= location.websiteLabel =)</td>
+					<td>(= location.LCID =)</td>
+					<td>(= location.sectionLabel =) <i ng-show="location.canonical" class="icon-star text-info" title="{{ i18n('m.rbs.seo.admin.canonical-location', ['ucf']) }}"></i></td>
+					<td style="width: 25px;" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
+						<span ng-show="location.published">
+							<i class="icon-ok text-success"></i> {{ i18n('m.rbs.seo.admin.published', ['ucf']) }}
+						</span>
+						<span ng-hide="location.published">
+							<i class="icon-remove text-error"></i> {{ i18n('m.rbs.seo.admin.not-published', ['ucf']) }}
+						</span>
+					</td>
+					<td style="width: 25px;">
+						<button type="button" class="btn" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
+							<i ng-hide="displayConfig[locationIndex].showDetails" class="icon-chevron-down"></i>
+							<i ng-show="displayConfig[locationIndex].showDetails" class="icon-chevron-up"></i>
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td ng-if="displayConfig[locationIndex].showDetails === true" class="preview" colspan="5">
+						<div class="inner">
+							<h3>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</h3>
+							<ul class="unstyled">
+								<li ng-repeat="condition in location.publication" class=""><i ng-show="condition.ok" class="icon-ok text-success"></i><i ng-show="!condition.ok" class="icon-remove"></i> (= condition.message =)</li>
+							</ul>
+							<h3>{{ i18n('m.rbs.seo.admin.urls', ['ucf']) }}</h3>
+							<table data-ng-show="location.urls.length > 0" class="table table-striped table-bordered table-condensed">
+								<thead>
+									<tr>
+										<th>{{ i18n('m.rbs.seo.admin.url', ['ucf']) }}</th>
+										<th style="width: 220px;">{{ i18n('m.rbs.seo.admin.query', ['ucf']) }}</th>
+										<th style="width: 50px;"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr data-ng-repeat="(index, url) in location.urls">
+										<td>
+											<a ng-hide="displayConfig[locationIndex].urls[index].edit" href="(= location.baseUrl =)(= url.defaultRelativePath||url.relativePath =)" target="_blank">(= url.relativePath =)</a>
+											<input ng-show="displayConfig[locationIndex].urls[index].edit" ng-model="url.relativePath" type="text" style="width: 90%;" />
+										</td>
+										<td>
+											(= url.query =)
+										</td>
+										<td style="white-space: nowrap;">
+											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn"
+												title="{{ i18nAttr('m.rbs.seo.admin.edit-url', ['ucf']) }}"
+												ng-click="startEditUrl(locationIndex, index)"><i class="icon-pencil"></i></button>
+											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-danger"
+												title="{{ i18nAttr('m.rbs.seo.admin.remove-url', ['ucf']) }}"
+												ng-click="deleteUrl(locationIndex, index)" ng-disabled="url.id == 'auto'"><i class="icon-remove"></i></button>
+											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-info"
+												title="{{ i18nAttr('m.rbs.seo.admin.validate-url', ['ucf']) }}"
+												ng-click="updateUrl(locationIndex, index)"><i class="icon-check"></i></button>
+											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-warning"
+												title="{{ i18nAttr('m.rbs.seo.admin.undo-edit-url', ['ucf']) }}"
+												ng-click="undoEditUrl(locationIndex, index)"><i class="icon-undo"></i></button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<h3>
+								{{ i18n('m.rbs.seo.admin.redirects', ['ucf']) }}
+								<span ng-click="displayConfig[locationIndex].showRedirects = !displayConfig[locationIndex].showRedirects" class="badge badge-info">
+									(= location.redirects.length =)
+								</span>
+								<button type="button" class="btn" ng-click="displayConfig[locationIndex].showRedirects = !displayConfig[locationIndex].showRedirects">
+									<i ng-show="!displayConfig[locationIndex].showRedirects" class="icon-chevron-down"></i>
+									<i ng-show="displayConfig[locationIndex].showRedirects" class="icon-chevron-up"></i>
+								</button>
+							</h3>
+							<table data-ng-show="displayConfig[locationIndex].showRedirects === true" class="table table-striped table-bordered table-condensed">
+								<thead>
+									<tr>
+										<th>{{ i18n('m.rbs.seo.admin.url', ['ucf']) }}</th>
+										<th>{{ i18n('m.rbs.seo.admin.permanent', ['ucf']) }}</th>
+										<th style="width: 220px;">{{ i18n('m.rbs.seo.admin.query', ['ucf']) }}</th>
+										<th style="width: 50px;"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr data-ng-repeat="(index, redirect) in location.redirects">
+										<td>
+											<span ng-hide="displayConfig[locationIndex].redirects[index].edit">(= redirect.relativePath =)</span>
+											<input ng-show="displayConfig[locationIndex].redirects[index].edit" ng-model="redirect.relativePath" type="text" style="width: 90%;" />
+										</td>
+										<td><switch ng-model="redirect.permanent" ng-disabled="!displayConfig[locationIndex].redirects[index].edit"></switch></td>
+										<td>(= redirect.query =)</td>
+										<td style="white-space: nowrap;">
+											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn"
+												title="{{ i18nAttr('m.rbs.seo.admin.edit-redirect', ['ucf']) }}"
+												ng-click="startEditRedirect(locationIndex, index)"><i class="icon-pencil"></i></button>
+											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-danger"
+												title="{{ i18nAttr('m.rbs.seo.admin.remove-redirect', ['ucf']) }}"
+												ng-click="deleteRedirect(locationIndex, index)"><i class="icon-remove"></i></button>
+											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-info"
+												title="{{ i18nAttr('m.rbs.seo.admin.validate-redirect', ['ucf']) }}"
+												ng-click="updateRedirect(locationIndex, index)"><i class="icon-check"></i></button>
+											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-warning"
+												title="{{ i18nAttr('m.rbs.seo.admin.undo-edit-redirect', ['ucf']) }}"
+												ng-click="undoEditRedirect(locationIndex, index)"><i class="icon-undo"></i></button>
+										</td>
+									</tr>
+									<tr>
+										<td><input ng-model="newRedirect[locationIndex].relativePath" type="text" style="width: 90%;" /></td>
+										<td><switch ng-model="newRedirect[locationIndex].permanent"></switch></td>
+										<td><input ng-model="newRedirect[locationIndex].query" type="text" /></td>
+										<td style="white-space: nowrap;">
+											<button type="button" class="btn btn-info" ng-disabled="!newRedirect[locationIndex].relativePath"
+												title="{{ i18nAttr('m.rbs.seo.admin.add-new-redirect', ['ucf']) }}"
+												ng-click="addNewRedirect(locationIndex)"><i class="icon-check"></i></button>
+											<button type="button" class="btn btn-danger" ng-disabled="!newRedirect[locationIndex].relativePath && !newRedirect[locationIndex].query && newRedirect[locationIndex].permanent"
+												title="{{ i18nAttr('m.rbs.seo.admin.clear-new-redirect', ['ucf']) }}"
+												ng-click="clearNewRedirect(locationIndex)"><i class="icon-remove"></i></button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<!--<p>(= document.rules|json =)</p>
+		<p>(= document.locations|json =)</p>-->
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>
