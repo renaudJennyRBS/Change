@@ -19,6 +19,11 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $documentServices;
 
 	/**
+	 * @var \Change\Http\Web\PathRuleManager
+	 */
+	protected $pathRuleManager;
+
+	/**
 	 * @var bool
 	 */
 	protected $absoluteUrl = false;
@@ -81,6 +86,28 @@ class UrlManager extends \Change\Http\UrlManager
 	public function getDocumentServices()
 	{
 		return $this->documentServices;
+	}
+
+	/**
+	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
+	 * @return $this
+	 */
+	public function setPathRuleManager($pathRuleManager)
+	{
+		$this->pathRuleManager = $pathRuleManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Http\Web\PathRuleManager
+	 */
+	public function getPathRuleManager()
+	{
+		if ($this->pathRuleManager === null)
+		{
+			$this->pathRuleManager = new \Change\Http\Web\PathRuleManager($this->applicationServices);
+		}
+		return $this->pathRuleManager;
 	}
 
 	/**
@@ -345,10 +372,9 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	protected function getPathInfo($document, $website, $LCID, $section = null, $queryParameters)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
 		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		$sectionId = $section ? $section->getId() : null;
-		$pathRules = $this->findPathRules($dbProvider, $website->getId(), $LCID, $documentId, $sectionId);
+		$pathRules = $this->getPathRuleManager()->findPathRules($website->getId(), $LCID, $documentId, $sectionId);
 		if (count($pathRules))
 		{
 			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
@@ -365,7 +391,7 @@ class UrlManager extends \Change\Http\UrlManager
 	 * @param \Change\Presentation\Interfaces\Section $section
 	 * @return string
 	 */
-	protected function getDefaultDocumentPathInfo($document, $section)
+	public function getDefaultDocumentPathInfo($document, $section)
 	{
 		if ($document instanceof \Change\Presentation\Interfaces\Website)
 		{
@@ -400,8 +426,7 @@ class UrlManager extends \Change\Http\UrlManager
 		$LCID = $pathRule->getLCID();
 		$sectionId = $pathRule->getSectionId();
 
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
-		$pathRules = $this->findPathRules($dbProvider, $websiteId, $LCID, $document->getId(), $sectionId);
+		$pathRules = $this->getPathRuleManager()->findPathRules($websiteId, $LCID, $document->getId(), $sectionId);
 		if (count($pathRules))
 		{
 			$queryParameters = new \ArrayObject($pathRule->getQueryParameters());
@@ -469,7 +494,8 @@ class UrlManager extends \Change\Http\UrlManager
 			{
 				$transactionManager->begin();
 
-				$redirectRules = $this->findRedirectedRules($applicationServices->getDbProvider(),
+				$pathRuleManager = $this->getPathRuleManager();
+				$redirectRules = $pathRuleManager->findRedirectedRules(
 					$newPathRule->getWebsiteId(), $newPathRule->getLCID(),
 					$newPathRule->getDocumentId(), $newPathRule->getSectionId());
 
@@ -480,7 +506,7 @@ class UrlManager extends \Change\Http\UrlManager
 					{
 						$rule->setQuery($newPathRule->getQuery());
 						$rule->setHttpStatus(200);
-						$this->updatePathRule($applicationServices, $rule);
+						$pathRuleManager->updatePathRule($rule);
 						$redirectRule = $rule;
 						break;
 					}
@@ -490,12 +516,12 @@ class UrlManager extends \Change\Http\UrlManager
 				{
 					try
 					{
-						$this->insertPathRule($applicationServices, $newPathRule);
+						$pathRuleManager->insertPathRule($newPathRule);
 					}
 					catch (\Exception $pke)
 					{
 						$newPathRule->setRelativePath($document->getId() . '/' . $newPathRule->getRelativePath());
-						$this->insertPathRule($applicationServices, $newPathRule);
+						$pathRuleManager->insertPathRule($newPathRule);
 					}
 				}
 				else
@@ -552,165 +578,6 @@ class UrlManager extends \Change\Http\UrlManager
 		//TODO Detect valid rule by queryParameters analysis
 		return null;
 	}
-
-	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 * @param integer $websiteId
-	 * @param string $LCID
-	 * @param integer $documentId
-	 * @param integer $sectionId
-	 * @return PathRule[]
-	 */
-	protected function findPathRules($dbProvider, $websiteId, $LCID, $documentId, $sectionId)
-	{
-		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findPathRules');
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'));
-			$qb->from($qb->getSqlMapping()->getPathRuleTable());
-			$qb->where($fb->logicAnd(
-				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
-				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
-				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
-				$fb->eq($fb->column('http_status'), $fb->number(200))
-			));
-			$qb->orderAsc($fb->column('rule_id'));
-		}
-
-		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
-
-		$pathRules = array();
-		foreach ($sq->getResults() as $row)
-		{
-			$pathRule = new PathRule();
-			$pathRule->setRuleId(intval($row['rule_id']))
-				->setRelativePath($row['relative_path'])
-				->setQuery($row['query'])
-				->setWebsiteId($websiteId)
-				->setLCID($LCID)
-				->setDocumentId($documentId)
-				->setSectionId($sectionId)
-				->setHttpStatus(200);
-			$pathRules[] = $pathRule;
-		}
-		return $pathRules;
-	}
-
-	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 * @param integer $websiteId
-	 * @param string $LCID
-	 * @param integer $documentId
-	 * @param integer $sectionId
-	 * @return PathRule[]
-	 */
-	protected function findRedirectedRules($dbProvider, $websiteId, $LCID, $documentId, $sectionId)
-	{
-		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findRedirectedRules');
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'), $fb->column('http_status'));
-			$qb->from($qb->getSqlMapping()->getPathRuleTable());
-			$qb->where($fb->logicAnd(
-				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
-				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
-				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
-				$fb->neq($fb->column('http_status'), $fb->number(200))
-			));
-			$qb->orderAsc($fb->column('rule_id'));
-		}
-		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
-
-		$pathRules = array();
-		foreach ($sq->getResults($sq->getRowsConverter()->addIntCol('rule_id', 'http_status')
-			->addTxtCol('relative_path', 'query')) as $row)
-		{
-			$pathRule = new PathRule();
-			$pathRule->setRuleId($row['rule_id'])
-				->setRelativePath($row['relative_path'])
-				->setQuery($row['query'])
-				->setWebsiteId($websiteId)
-				->setLCID($LCID)
-				->setDocumentId($documentId)
-				->setSectionId($sectionId)
-				->setHttpStatus($row['http_status']);
-			$pathRules[] = $pathRule;
-		}
-		return $pathRules;
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param PathRule $pathRule
-	 */
-	protected function updatePathRule($applicationServices, $pathRule)
-	{
-		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
-		$table = $sb->getSqlMapping()->getPathRuleTable();
-		$fb = $sb->getFragmentBuilder();
-		$sb->update($table)
-			->assign($fb->column('http_status'), $fb->integerParameter('httpStatus'))
-			->assign($fb->column('query'), $fb->lobParameter('query'))
-			->where($fb->eq($fb->column('rule_id'), $fb->integerParameter('ruleId')));
-		$uq = $sb->updateQuery();
-		$uq->bindParameter('httpStatus', $pathRule->getHttpStatus());
-		$uq->bindParameter('query', $pathRule->getQuery());
-		$uq->bindParameter('ruleId', $pathRule->getRuleId());
-		$uq->execute();
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param PathRule $pathRule
-	 */
-	protected function insertPathRule($applicationServices, $pathRule)
-	{
-		$sb = $applicationServices->getDbProvider()->getNewStatementBuilder();
-		$table = $sb->getSqlMapping()->getPathRuleTable();
-
-		$fb = $sb->getFragmentBuilder();
-		$sb->insert($table);
-		$sb->addColumns($fb->column('website_id'),
-			$fb->column('lcid'),
-			$fb->column('hash'),
-			$fb->column('relative_path'),
-			$fb->column('document_id'),
-			$fb->column('section_id'),
-			$fb->column('http_status'),
-			$fb->column('query')
-		);
-		$sb->addValues($fb->integerParameter('websiteId'),
-			$fb->parameter('LCID'),
-			$fb->parameter('hash'),
-			$fb->lobParameter('relativePath'),
-			$fb->integerParameter('documentId'),
-			$fb->integerParameter('sectionId'),
-			$fb->integerParameter('httpStatus'),
-			$fb->lobParameter('query')
-		);
-
-		$iq = $sb->insertQuery();
-		$iq->bindParameter('websiteId', $pathRule->getWebsiteId());
-		$iq->bindParameter('LCID', $pathRule->getLCID());
-		$iq->bindParameter('hash', $pathRule->getHash());
-		$iq->bindParameter('relativePath', $pathRule->getRelativePath());
-		$iq->bindParameter('documentId', intval($pathRule->getDocumentId()));
-		$iq->bindParameter('sectionId', intval($pathRule->getSectionId()));
-		$iq->bindParameter('httpStatus', $pathRule->getHttpStatus());
-		$iq->bindParameter('query', $pathRule->getQuery());
-		$iq->execute();
-		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
-	}
-
-
 
 	/**
 	 * @param bool $absoluteUrl

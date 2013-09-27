@@ -2,6 +2,7 @@
 namespace ChangeTests\Change\Http\Web;
 
 use Change\Http\Web\PathRule;
+use Change\Http\Web\PathRuleManager;
 
 class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -190,6 +191,36 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('testA2.html?b=12&count=2&a=2&c=8', $uri->toString());
 	}
 
+	public function testRewritePathRule()
+	{
+		$prm = new PathRuleManager($this->getApplicationServices());
+		$rule = $prm->getNewRule(1000, 'fr_FR', 'test.html', 4000, 200);
+
+		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 4000);
+		$callback = function ($event) {
+			$pathRule = $event->getParam('pathRule');
+			$pathRule->setRelativePath('toto.html');
+		};
+
+		$document->getEventManager()->attach('populatePathRule', $callback);
+		$urlManager = $this->getObject();
+		$pathRule = $urlManager->rewritePathRule($document, $rule);
+		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
+		$this->assertEquals('toto.html', $pathRule->getRelativePath());
+
+		$document->getEventManager()->attach('populatePathRule', $callback);
+		$pathRule = $urlManager->rewritePathRule($document, $rule);
+		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
+		$this->assertEquals('4000/toto.html', $pathRule->getRelativePath());
+
+		try
+		{
+			$pathRule = $urlManager->rewritePathRule($document, $rule);
+			$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
+			$this->fail('Exception expected!');
+		}
+		catch (\Exception $e) { }
+	}
 
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
@@ -197,47 +228,10 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function insertPathRule($applicationServices, $pathRule)
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
-		$provider = $applicationServices->getDbProvider();
-
-		$sb = $provider->getNewStatementBuilder();
-		$table = $sb->getSqlMapping()->getPathRuleTable();
-
-		$fb = $sb->getFragmentBuilder();
-		$sb->insert($table);
-		$sb->addColumns($fb->column('website_id'),
-			$fb->column('lcid'),
-			$fb->column('hash'),
-			$fb->column('relative_path'),
-			$fb->column('document_id'),
-			$fb->column('section_id'),
-			$fb->column('http_status'),
-			$fb->column('query')
-		);
-		$sb->addValues($fb->integerParameter('websiteId'),
-			$fb->parameter('LCID'),
-			$fb->parameter('hash'),
-			$fb->lobParameter('relativePath'),
-			$fb->integerParameter('documentId'),
-			$fb->integerParameter('sectionId'),
-			$fb->integerParameter('httpStatus'),
-			$fb->lobParameter('query')
-		);
-
-		$iq = $sb->insertQuery();
-		$iq->bindParameter('websiteId', $pathRule->getWebsiteId());
-		$iq->bindParameter('LCID', $pathRule->getLCID());
-		$iq->bindParameter('hash', $pathRule->getHash());
-		$iq->bindParameter('relativePath', $pathRule->getRelativePath());
-		$iq->bindParameter('documentId', intval($pathRule->getDocumentId()));
-		$iq->bindParameter('sectionId', intval($pathRule->getSectionId()));
-		$iq->bindParameter('httpStatus', $pathRule->getHttpStatus());
-		$iq->bindParameter('query', $pathRule->getQuery());
-		$iq->execute();
-		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
-
-		$tm->commit();
+		$applicationServices->getTransactionManager()->begin();
+		$prm = new PathRuleManager($applicationServices);
+		$prm->insertPathRule($pathRule);
+		$applicationServices->getTransactionManager()->commit();
 	}
 }
 
