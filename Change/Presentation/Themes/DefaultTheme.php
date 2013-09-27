@@ -147,6 +147,27 @@ class DefaultTheme implements Theme
 	}
 
 	/**
+	 * @param string $resourcePath
+	 * @return string
+	 */
+	public function getResourceFilePath($resourcePath)
+	{
+		if (preg_match('/^([A-Z][A-Aa-z0-9]+)_([A-Z][A-Aa-z0-9]+)\/(.+)$/', $resourcePath, $matches))
+		{
+			$vendor = $matches[1];
+			$moduleShortName = $matches[2];
+			$resourceModulePath = $matches[3];
+			$pm = $this->presentationServices->getApplicationServices()->getPluginManager();
+			$module = $pm->getModule($vendor, $moduleShortName);
+			if ($module && $module->isAvailable())
+			{
+				return $this->getWorkspace()->composePath($module->getBasePath(), 'Assets', 'Theme', $resourceModulePath);
+			}
+		}
+		return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', $resourcePath);
+	}
+
+	/**
 	 * @param array $baseConfiguration
 	 * @return array
 	 * @throws \RuntimeException
@@ -155,10 +176,10 @@ class DefaultTheme implements Theme
 	{
 		//first get themes configuration
 		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
-		$resource = $this->getResource('assets.json');
-		if ($resource->isValid())
+		$resource = $this->getResourceFilePath('assets.json');
+		if (file_exists($resource))
 		{
-			$configuration = array_merge($configuration, json_decode($resource->getContent(), true));
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
 		}
 		else
 		{
@@ -171,10 +192,9 @@ class DefaultTheme implements Theme
 		$plugins = $pluginManager->getInstalledPlugins();
 		foreach ($plugins as $plugin)
 		{
-			if ($plugin->isModule())
+			if ($plugin->isModule() && $plugin->isAvailable())
 			{
-				$configurationPath = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'Theme' .
-					DIRECTORY_SEPARATOR . 'assets.json';
+				$configurationPath = $this->getWorkspace()->composePath($plugin->getBasePath(), 'Assets', 'Theme', 'assets.json');
 				if (file_exists($configurationPath))
 				{
 					$blockConfigurations = [];
@@ -187,5 +207,13 @@ class DefaultTheme implements Theme
 			}
 		}
 		return $configuration;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCssVariables()
+	{
+		return [];
 	}
 }

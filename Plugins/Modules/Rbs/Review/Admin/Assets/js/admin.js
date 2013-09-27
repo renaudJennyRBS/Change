@@ -4,6 +4,8 @@
 
 	var app = angular.module('RbsChange');
 
+	__change.createEditorForModel('Rbs_Review_Review');
+
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
@@ -17,7 +19,5 @@
 			return $delegate;
 		}]);
 	}]);
-
-	__change.createEditorForModel('Rbs_Review_Review');
 
 })();

@@ -1,36 +1,26 @@
 {
 	"PromotedReviewList" : {
-		"cssAssets" : [
-			{ "href": "Theme/Rbs/Base/Rbs_Review/css/review.css", "media": "" }
-		],
+		"cssAssets" : ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
 		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
 	},
 
 	"ReviewList" : {
-		"cssAssets" : [
-			{ "href": "Theme/Rbs/Base/Rbs_Review/css/review.css", "media": "" }
-		],
+		"cssAssets" : ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
 		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
 	},
 
 	"ReviewAverageRating": {
-		"cssAssets": [
-			{ "href": "Theme/Rbs/Base/Rbs_Review/css/review.css", "media": "" }
-		],
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
 		"jsAssets" : []
 	},
 
 	"PostReview": {
-		"cssAssets": [
-			{ "href": "Theme/Rbs/Base/Rbs_Review/css/review.css", "media": "" }
-		],
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
 		"jsAssets" : []
 	},
 
 	"ReviewDetail": {
-		"cssAssets": [
-			{ "href": "Theme/Rbs/Base/Rbs_Review/css/review.css", "media": "" }
-		],
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
 		"jsAssets" : []
 	}
 }

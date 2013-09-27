@@ -125,11 +125,41 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
 				$configuration = $themeManager->getDefault()->getAssetConfiguration();
 				$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
-				$jsCollection = $themeManager->getJsAssetCollection($configuration, $blockNames);
-				$cssCollection = $themeManager->getCssAssetCollection($configuration, $blockNames);
+				$am = $themeManager->getAsseticManager($configuration);
 
-				$twigLayout['<!-- cssHead -->'] = $cssCollection->dump();
-				$twigLayout['<!-- jsFooter -->'] = $jsCollection->dump();
+				$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+				$jsFooter = array();
+				$assetBaseUrl = ($application->inDevelopmentMode()) ? '' : $themeManager->getAssetBaseUrl();
+				foreach($jsNames as $jsName)
+				{
+					try
+					{
+						$a = $am->get($jsName);
+						$jsFooter[] = '<script type="text/javascript" src="' .$assetBaseUrl . $a->getTargetPath() . '"></script>';
+					}
+					catch (\Exception $e)
+					{
+						$this->getApplicationServices()->getLogging()->warn('asset resource name not found: ' . $jsName);
+					}
+				}
+
+				$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+				$cssHead = [];
+				foreach($cssNames as $cssName)
+				{
+					try
+					{
+						$a = $am->get($cssName);
+						$cssHead[] = '<link rel="stylesheet" type="text/css" href="' . $assetBaseUrl . $a->getTargetPath() . '">';
+					}
+					catch (\Exception $e)
+					{
+						$this->getApplicationServices()->getLogging()->warn('asset resource name not found: ' . $cssName);
+					}
+				}
+
+				$twigLayout['<!-- cssHead -->'] = implode(PHP_EOL, $cssHead);
+				$twigLayout['<!-- jsFooter -->'] = implode(PHP_EOL, $jsFooter);
 
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 

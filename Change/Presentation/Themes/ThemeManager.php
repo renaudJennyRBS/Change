@@ -309,94 +309,44 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param string $name
+	 * @return string
+	 */
+	protected function normalizeAssetName($name)
+	{
+		return str_replace(['/', '.', '-'], '', $name);
+	}
+
+	/**
 	 * @param array $configuration
 	 * @return \Assetic\AssetManager
 	 */
-	public function prepareAssetic($configuration)
+	public function getAsseticManager($configuration)
 	{
 		$am = new \Assetic\AssetManager();
-		foreach ($configuration as $key => $assetType)
+		foreach ($configuration as $block)
 		{
-			if ($key === '*')
+			foreach ($block as $assetType)
 			{
-				if (count($assetType['jsAssets']) > 0)
+				foreach ($assetType as $assetUrl)
 				{
-					foreach ($assetType['jsAssets'] as $jsAsset)
+					if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $assetUrl, $matches))
 					{
-						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $jsAsset, $matches);
 						$themeVendor = $matches[1];
 						$themeShortName = $matches[2];
 						$path = $matches[3];
 						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						$resource = $theme->getResource($path);
-						if ($resource->isValid())
+						$resourceFilePath = $theme->getResourceFilePath($path);
+						if (file_exists($resourceFilePath))
 						{
-							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
-							$asset->setTargetPath($jsAsset);
-							$name = str_replace(['/', '.', '-'], '', $jsAsset);
-							$am->set($name, $asset);
-						}
-					}
-				}
-				if (count($assetType['cssAssets']) > 0)
-				{
-					foreach ($assetType['cssAssets'] as $cssAsset)
-					{
-						$cssHref = $cssAsset['href'];
-						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $cssHref, $matches);
-						$themeVendor = $matches[1];
-						$themeShortName = $matches[2];
-						$path = $matches[3];
-						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						$resource = $theme->getResource($path);
-						if ($resource->isValid())
-						{
-							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
-							$asset->setTargetPath($cssHref);
-							$name = str_replace(['/', '.', '-'], '', $cssHref);
-							$am->set($name, $asset);
-						}
-					}
-				}
-			}
-			else
-			{
-				if (count($assetType['jsAssets']) > 0)
-				{
-					foreach ($assetType['jsAssets'] as $jsAsset)
-					{
-						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $jsAsset, $matches);
-						$themeVendor = $matches[1];
-						$themeShortName = $matches[2];
-						$path = $matches[3];
-
-						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						$resource = $theme->getResource($path);
-						if ($resource->isValid())
-						{
-							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
-							$asset->setTargetPath($jsAsset);
-							$name = str_replace(['/', '.', '-'], '', $jsAsset);
-							$am->set($name, $asset);
-						}
-					}
-				}
-				if (count($assetType['cssAssets']) > 0)
-				{
-					foreach ($assetType['cssAssets'] as $cssAsset)
-					{
-						$cssHref = $cssAsset['href'];
-						preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $cssHref, $matches);
-						$themeVendor = $matches[1];
-						$themeShortName = $matches[2];
-						$path = $matches[3];
-						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						$resource = $theme->getResource($path);
-						if ($resource->isValid())
-						{
-							$asset = new \Assetic\Asset\StringAsset($resource->getContent());
-							$asset->setTargetPath($cssHref);
-							$name = str_replace(['/', '.', '-'], '', $cssHref);
+							$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
+							$asset->setTargetPath($assetUrl);
+							if (substr($assetUrl, -4) === '.css')
+							{
+								$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
+								$asset->ensureFilter($filter);
+							}
+							$name = $this->normalizeAssetName($assetUrl);
 							$am->set($name, $asset);
 						}
 					}
@@ -411,36 +361,74 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string[] $blockNames
 	 * @return \Assetic\Asset\AssetCollection
 	 */
-	public function getJsAssetCollection($configuration, $blockNames)
+	public function getJsAssetNames($configuration, $blockNames)
 	{
-		$am = $this->prepareAssetic($configuration);
-		$collection = new \Assetic\Asset\AssetCollection();
-		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
+		$names = [];
 		foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
 		{
-			$name = str_replace(['/', '.', '-'], '', $themeJsAsset);
-			$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
-			$collection->add(new \Assetic\Asset\StringAsset('<script type="text/javascript" src="' . $src . '"></script>'));
+			$names[] = $this->normalizeAssetName($themeJsAsset);
 		}
 
-		$alreadyAddedBlockAssets = [];
 		foreach (array_keys($blockNames) as $blockName)
 		{
 			if (isset($configuration[$blockName]))
 			{
 				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
 				{
-					if (!in_array($blockJsAsset, $alreadyAddedBlockAssets))
-					{
-						$name = str_replace(['/', '.', '-'], '', $blockJsAsset);
-						$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
-						$collection->add(new \Assetic\Asset\StringAsset('<script type="text/javascript" src="' . $src . '"></script>'));
-						$alreadyAddedBlockAssets[] = $blockJsAsset;
-					}
+					$names[] = $this->normalizeAssetName($blockJsAsset);
 				}
 			}
 		}
-		return $collection;
+		return array_unique($names);
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetNames($configuration, $blockNames)
+	{
+		$names = [];
+		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+		{
+			$names[] = $this->normalizeAssetName($themeCssAsset);
+		}
+
+		foreach (array_keys($blockNames) as $blockName)
+		{
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+				{
+					$names[] = $this->normalizeAssetName($blockCssAsset);
+				}
+			}
+		}
+		return array_unique($names);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetRootPath()
+	{
+		$app = $this->presentationServices->getApplicationServices()->getApplication();
+		$root = $app->getConfiguration()->getEntry('Change/Install/documentRootPath');
+		return $app->getWorkspace()->composePath($root, $this->getAssetBaseUrl());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetBaseUrl()
+	{
+		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
+		if (is_string($resourceBaseUrl) && $resourceBaseUrl[strlen($resourceBaseUrl) - 1] != '/')
+		{
+			$resourceBaseUrl .= '/';
+		}
+		return $resourceBaseUrl;
 	}
 
 	/**
@@ -450,7 +438,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getCssAssetCollection($configuration, $blockNames)
 	{
-		$am = $this->prepareAssetic($configuration);
+		$am = $this->getAsseticManager($configuration);
 		$collection = new \Assetic\Asset\AssetCollection();
 		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
 		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)

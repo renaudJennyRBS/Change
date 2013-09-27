@@ -26,14 +26,8 @@ class Install extends \Change\Plugins\InstallBase
 			}
 		}
 		$configuration = $presentationServices->getThemeManager()->getDefault()->getAssetConfiguration();
-		$am = $presentationServices->getThemeManager()->prepareAssetic($configuration);
-		$documentRootPath = $applicationServices->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath', PROJECT_HOME);
-		$resourceBaseUrl = $applicationServices->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
-		$realPath = $applicationServices->getApplication()->getWorkspace()->composePath(
-			$documentRootPath,
-			$resourceBaseUrl
-		);
-		$writer = new \Assetic\AssetWriter($realPath);
+		$am = $presentationServices->getThemeManager()->getAsseticManager($configuration);
+		$writer = new \Assetic\AssetWriter($presentationServices->getThemeManager()->getAssetRootPath());
 		$writer->writeManagerAssets($am);
 	}
 

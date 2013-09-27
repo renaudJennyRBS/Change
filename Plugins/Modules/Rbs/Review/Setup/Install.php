@@ -4,25 +4,8 @@ namespace Rbs\Review\Setup;
 /**
  * @name \Rbs\Review\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-//	public function executeApplication($plugin, $application)
-//	{
-//		/* @var $config \Change\Configuration\EditableConfiguration */
-//		$config = $application->getConfiguration();
-//	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

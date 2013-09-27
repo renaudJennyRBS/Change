@@ -57,7 +57,7 @@ class ReviewAverageRating extends Block
 		$qb->addColumn($qb->getFragmentBuilder()->alias($dqb->getColumn('rating'), 'rating'));
 		$query = $qb->query();
 		$ratings = $qb->query()->getResults($query->getRowsConverter()->addIntCol('rating'));
-		$attributes['averageRating'] = $this->averageRoundHalfUp($ratings);
+		$attributes['averageRating'] = count($ratings) > 0 ? $this->averageRoundHalfUp($ratings) : 0;
 		if ($parameters->getParameter('showChart'))
 		{
 			$rateParts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0, 0 => 0];
@@ -93,7 +93,7 @@ class ReviewAverageRating extends Block
 			{
 				$attributes['rateParts'][$key] = [
 					'count' => $ratePart,
-					'percent' => round(($ratePart / count($rateParts)) * 100)
+					'percent' => round(($ratePart / count($ratings)) * 100)
 				];
 			}
 		}

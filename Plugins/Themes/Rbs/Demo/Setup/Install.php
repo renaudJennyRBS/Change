@@ -133,7 +133,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration = $theme->getAssetConfiguration();
 		$themeManager = $presentationServices->getThemeManager();
 		$themeManager->setDocumentServices($documentServices);
-		$am = $themeManager->prepareAssetic($configuration);
+		$am = $themeManager->getAsseticManager($configuration);
 		$documentRootPath = $applicationServices->getApplication()->getConfiguration()
 			->getEntry('Change/Install/documentRootPath', PROJECT_HOME);
 		$resourceBaseUrl = $applicationServices->getApplication()->getConfiguration()

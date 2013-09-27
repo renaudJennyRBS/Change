@@ -59,4 +59,15 @@ interface Theme
 	 * @return array
 	 */
 	public function getAssetConfiguration(array $baseConfiguration = null);
+
+	/**
+	 * @param string $resourcePath
+	 * @return string
+	 */
+	public function getResourceFilePath($resourcePath);
+
+	/**
+	 * @return array
+	 */
+	public function getCssVariables();
 }
