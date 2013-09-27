@@ -1399,18 +1399,27 @@ th label {
 
 
 .navbar-indicators {
+
+}
+
+.navbar-indicators > li {
+	border-left: 1px solid black;
 	background: rgba(255,255,255,0.1);
 }
 
-.navbar-indicators li {
-	border-right: 1px dotted rgba(255,255,255,0.3);
+.navbar-indicators > li.on > a {
+	background: rgba(255,255,255,0.25);
+	color: white;
 }
 
-.navbar-indicators li:first-child {
-	border-left: 1px solid rgba(255,255,255,0.3);
+.navbar-indicators > li > a {
+	font-size: 1.33333em;
+	min-width: 40px;
+	text-align: center;
 }
-.navbar-indicators li:last-child {
-	border-right-style: solid;
+
+.navbar-indicators > li:last-child {
+	border-right: 1px solid black;
 }
 
 

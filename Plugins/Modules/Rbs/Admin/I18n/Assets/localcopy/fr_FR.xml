@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.admin.localcopy" lcid="fr_FR">
-	<key id="local-copies-message-ng-pluralize">{'0': 'Aucune copie locale', 'one': 'Vous avez une copie locale d\'un document qui n\'est pas enregistrée sur le serveur.', 'other': 'Vous avez {} copies locales de documents qui ne sont pas enregistrées sur le serveur.'}</key>
+	<key id="local-copies-message-ng-pluralize">{'0': 'Aucune copie locale', 'one': 'Une copie locale', 'other': '{} copies locales'}</key>
 	<key id="remove-all-local-copies">effacer les copies locales</key>
 	<key id="what-are-local-copies">qu'est-ce que les copies locales ?</key>
 </i18n>
