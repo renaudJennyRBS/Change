@@ -2,8 +2,7 @@
 	"*" : {
 		"cssAssets" : [
 			"Theme/Rbs/Base/css/bootstrap.min.css",
-			"Theme/Rbs/Base/css/bootstrap-complements.css",
-			"Theme/Rbs/Base/css/screen.css"
+			"Theme/Rbs/Base/css/bootstrap-complements.css"
 		],
 		"jsAssets" : ["Theme/Rbs/Base/js/bootstrap.min.js"]
 	}

@@ -68,6 +68,7 @@ class ReviewDetail extends Block
 		$attributes['review'] = $review->getInfoForTemplate($urlManager);
 		if ($parameters->getParameter('editionMode'))
 		{
+			$attributes['editionMode'] = true;
 			$attributes['review']['content'] = $review->getContent()->getRawText();
 		}
 		$attributes['displayVote'] = true;

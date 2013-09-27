@@ -260,6 +260,44 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param Theme|null $theme
+	 */
+	public function installPluginAssets($plugin, $theme = null)
+	{
+		$path = $plugin->getThemeAssetsPath();
+		if (!is_dir($path))
+		{
+			return;
+		}
+		if ($theme === null)
+		{
+			$theme = $this->getDefault();
+		}
+		else
+		{
+			$theme->setThemeManager($this);
+		}
+		$excludedExtensions = ['js', 'json', 'map', 'css', 'twig', 'less'];
+		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
+			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
+		while ($it->valid())
+		{
+			/* @var $current \RecursiveDirectoryIterator */
+			$current = $it->current();
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && !in_array($current->getExtension(), $excludedExtensions))
+			{
+				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
+				$path = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace()
+					->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()), $moduleName, $current->getSubPathname());
+				\Change\Stdlib\File::mkdir(dirname($path));
+				file_put_contents($path, file_get_contents($current->getPathname()));
+			}
+			$it->next();
+		}
+	}
+
+	/**
 	 * @api
 	 * @return string[]
 	 */
@@ -340,11 +378,20 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 						if (file_exists($resourceFilePath))
 						{
 							$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
-							$asset->setTargetPath($assetUrl);
-							if (substr($assetUrl, -4) === '.css')
+							if (substr($resourceFilePath, -4) === '.css')
 							{
 								$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
 								$asset->ensureFilter($filter);
+							}
+							elseif (substr($resourceFilePath, -5) === '.less')
+							{
+								$filter = new \Assetic\Filter\LessphpFilter();
+								$asset->ensureFilter($filter);
+								$asset->setTargetPath($assetUrl . '.css');
+							}
+							if (!$asset->getTargetPath())
+							{
+								$asset->setTargetPath($assetUrl);
 							}
 							$name = $this->normalizeAssetName($assetUrl);
 							$am->set($name, $asset);

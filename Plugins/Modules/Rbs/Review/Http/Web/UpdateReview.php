@@ -55,6 +55,11 @@ class UpdateReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$data = [ 'error' => 'Invalid review' ];
 			}
 			$result = new \Change\Http\Web\Result\AjaxResult($data);
+			if ($data['redirectLocation'])
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_302);
+				$result->setHeaderLocation($data['redirectLocation']);
+			}
 			$event->setResult($result);
 		}
 	}

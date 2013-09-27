@@ -22,11 +22,13 @@ class Install extends \Change\Plugins\InstallBase
 		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
+		$themeManager = $presentationServices->getThemeManager();
+		$themeManager->setDocumentServices($documentServices);
 		if ($theme instanceof \Rbs\Theme\Documents\Theme)
 		{
-			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
-
-			$this->writeAssetic($theme, $applicationServices, $documentServices, $presentationServices);
+			$themeManager->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginAssets($plugin, $theme);
+			$this->writeAssetic($theme, $themeManager);
 			return;
 		}
 
@@ -41,8 +43,9 @@ class Install extends \Change\Plugins\InstallBase
 			$theme->setActive(true);
 			$theme->save();
 
-			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
-			$this->writeAssetic($theme, $applicationServices, $documentServices, $presentationServices);
+			$themeManager->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginAssets($plugin, $theme);
+			$this->writeAssetic($theme, $themeManager);
 
 			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 
@@ -124,25 +127,13 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Rbs\Theme\Documents\Theme $theme
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
 	 */
-	protected function writeAssetic($theme, $applicationServices, $documentServices, $presentationServices)
+	protected function writeAssetic($theme, $themeManager)
 	{
 		$configuration = $theme->getAssetConfiguration();
-		$themeManager = $presentationServices->getThemeManager();
-		$themeManager->setDocumentServices($documentServices);
 		$am = $themeManager->getAsseticManager($configuration);
-		$documentRootPath = $applicationServices->getApplication()->getConfiguration()
-			->getEntry('Change/Install/documentRootPath', PROJECT_HOME);
-		$resourceBaseUrl = $applicationServices->getApplication()->getConfiguration()
-			->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
-		$realPath = $applicationServices->getApplication()->getWorkspace()->composePath(
-			$documentRootPath,
-			$resourceBaseUrl
-		);
-		$writer = new \Assetic\AssetWriter($realPath);
+		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
 		$writer->writeManagerAssets($am);
 	}
 }

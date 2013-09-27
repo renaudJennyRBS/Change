@@ -91,6 +91,7 @@ class PostReview extends Block
 			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
 			/* @var $review \Rbs\Review\Documents\Review */
 			$attributes['review'] = $review->getInfoForTemplate($event->getUrlManager());
+			$attributes['pendingValidation'] = !$review->published();
 			$attributes['validationClass'] = $review->published() ? ' panel-success' : ' panel-warning';
 			$attributes['displayVote'] = false;
 		}

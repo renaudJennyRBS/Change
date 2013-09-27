@@ -6,15 +6,15 @@
 	</p>
 {% else %}
 	{% if parameters.alreadyReviewed %}
-		<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }}</p>
-		<div>
-			<p>{{ i18n('m.rbs.review.blocks.your-review', ['ucf']) }}
-				<a href="{{ reviewUrl }}">{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review, 'class': validationClass } %}</a>
-			</p>
-		</div>
 		{% if pendingValidation %}
 			<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
+		{% else %}
+			<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }}</p>
 		{% endif %}
+		<div>
+			<a href="{{ review.url }}">{{ i18n('m.rbs.review.blocks.review-edit', ['ucf']) }}</a>
+			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review, 'class': validationClass } %}
+		</div>
 	{% else %}
 		<form method="post" id="Review" action="Action/Rbs/Review/PostReview" class="well well-small">
 			<input type="hidden" name="userId" value="{{ parameters.userId }}">

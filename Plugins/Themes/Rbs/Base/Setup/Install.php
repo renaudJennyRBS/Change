@@ -17,17 +17,21 @@ class Install extends \Change\Plugins\InstallBase
 	{
 		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->getModules();
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+		$themeManager = $presentationServices->getThemeManager();
+		$themeManager->setDocumentServices($documentServices);
+		$themeManager->installPluginTemplates($plugin);
+		$themeManager->installPluginAssets($plugin);
 		foreach ($plugins as $plugin)
 		{
 			if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
 			{
-				$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+				$themeManager->installPluginTemplates($plugin);
+				$themeManager->installPluginAssets($plugin);
 			}
 		}
-		$configuration = $presentationServices->getThemeManager()->getDefault()->getAssetConfiguration();
-		$am = $presentationServices->getThemeManager()->getAsseticManager($configuration);
-		$writer = new \Assetic\AssetWriter($presentationServices->getThemeManager()->getAssetRootPath());
+		$configuration = $themeManager->getDefault()->getAssetConfiguration();
+		$am = $themeManager->getAsseticManager($configuration);
+		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
 		$writer->writeManagerAssets($am);
 	}
 

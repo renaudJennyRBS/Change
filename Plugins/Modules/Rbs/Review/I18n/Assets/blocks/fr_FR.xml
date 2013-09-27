@@ -15,6 +15,7 @@
 	<key id="review-about" format="html"><![CDATA[À propos de <a itemprop="about" href="{targetUrl}">{targetTitle}</a></small>]]></key>
 	<key id="review-post">donnez votre avis</key>
 	<key id="review-post-review">formulaire de soumission d'avis</key>
+	<key id="review-edit">éditez votre avis</key>
 	<key id="review-post-pseudonym">pseudonyme</key>
 	<key id="review-post-rating">note</key>
 	<key id="review-post-content">avis</key>
