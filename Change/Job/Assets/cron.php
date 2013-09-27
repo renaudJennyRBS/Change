@@ -1,6 +1,5 @@
 <?php
-define('PROJECT_HOME',  dirname(dirname(dirname(__DIR__))));
-require_once(PROJECT_HOME . '/Change/Application.php');
+require_once(dirname(dirname(dirname(__DIR__))) . '/Change/Application.php');
 
 $application = new \Change\Application();
 $application->start();
