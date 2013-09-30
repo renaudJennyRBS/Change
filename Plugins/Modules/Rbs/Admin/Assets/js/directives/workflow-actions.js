@@ -103,7 +103,6 @@
 					{
 						if (Utils.hasCorrection(doc)) {
 							scope.data.action = 'correction';
-							updateCorrection();
 						}
 						else {
 							angular.forEach(['requestValidation', 'contentValidation', 'publicationValidation', 'freeze', 'unfreeze'], function (action) {
@@ -112,15 +111,21 @@
 								}
 							});
 						}
+						REST.ensureLoaded(doc).then(function (doc)
+						{
+							if (Utils.hasCorrection(doc)) {
+								updateCorrection(doc);
+							}
 
-						scope.data.startPublication = doc.startPublication;
-						scope.data.endPublication = doc.endPublication;
+							scope.data.startPublication = doc.startPublication;
+							scope.data.endPublication = doc.endPublication;
 
-						if (oldCssClass) {
-							element.prev('.workflow-indicator').addBack().removeClass(oldCssClass);
-						}
-						element.prev('.workflow-indicator').addBack().addClass(doc.publicationStatus);
-						oldCssClass = doc.publicationStatus;
+							if (oldCssClass) {
+								element.prev('.workflow-indicator').addBack().removeClass(oldCssClass);
+							}
+							element.prev('.workflow-indicator').addBack().addClass(doc.publicationStatus);
+							oldCssClass = doc.publicationStatus;
+						});
 					}
 				}, true);
 
@@ -208,11 +213,13 @@
 				scope.correctionData = {};
 
 
-				function updateCorrection ()
+				function updateCorrection (doc)
 				{
-					scope.correctionData.correctionInfo = angular.copy(scope.document.META$.correction);
+					scope.correctionData.correctionInfo = angular.copy(doc.META$.correction);
 					scope.correctionData.diff = [];
 					scope.correctionData.advancedDiffs = true;
+
+					console.log("scope.correctionData=", scope.correctionData);
 
 					scope.correctionData.params = {
 						'applyCorrectionWhen' : scope.correctionData.correctionInfo.publicationDate ? 'planned' : 'now',
@@ -224,7 +231,7 @@
 						angular.forEach(scope.correctionData.correctionInfo.propertiesNames, function (property) {
 							scope.correctionData.diff.push({
 								'id'       : property,
-								'current'  : scope.document[property],
+								'current'  : doc[property],
 								'original' : scope.correctionData.correctionInfo.original[property]
 							});
 						});
@@ -266,6 +273,9 @@
 				};
 
 				scope.correctionData.canChooseDate = function () {
+					if (! scope.correctionData.correctionInfo) {
+						return false;
+					}
 					var cs = scope.correctionData.correctionInfo.status;
 					return scope.correctionData.diff.length > 0 && (cs === 'DRAFT' || cs === 'VALIDATION' || cs === 'VALIDCONTENT');
 				};
