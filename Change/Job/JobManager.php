@@ -149,6 +149,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$startDate = new \DateTime();
 		}
+
 		$transactionManager = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
@@ -166,6 +167,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 				$argument = null;
 			}
 
+			$argumentJSON = ($argument !== null) ? \Zend\Json\Json::encode($argument) : null;
 			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert('change_job', $fb->column('name'),
@@ -181,10 +183,11 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 
 			$iq->bindParameter('name', $job->getName());
 			$iq->bindParameter('startDate', $job->getStartDate());
-			$iq->bindParameter('arguments', ($argument !== null) ? \Zend\Json\Json::encode($argument) : null);
+			$iq->bindParameter('arguments', $argumentJSON);
 			$iq->bindParameter('status', $job->getStatus());
 			$iq->execute();
 			$job->setId(intval($iq->getDbProvider()->getLastInsertId('change_job')));
+			$this->applicationServices->getLogging()->info('New Job: ' . $job->getName(). ', ' . $job->getId() . ', '. $argumentJSON);
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)

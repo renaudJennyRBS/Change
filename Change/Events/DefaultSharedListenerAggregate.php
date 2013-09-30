@@ -24,32 +24,34 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
-			$l = new \Change\Documents\Events\ValidateListener();
-			$l->onValidate($event);
+			(new \Change\Documents\Events\ValidateListener())->onValidate($event);
 		};
 		$events->attach($identifiers, array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), $callBack, 5);
 
 		$callBack = function ($event)
 		{
-			$l = new \Change\Documents\Events\DeleteListener();
-			$l->onDelete($event);
+			(new \Change\Documents\Events\DeleteListener())->onDelete($event);
 		};
 		$events->attach($identifiers, DocumentEvent::EVENT_DELETE, $callBack, 5);
 
-
 		$callBack = function ($event)
 		{
-			$l = new \Change\Documents\Events\DeleteListener();
-			$l->onDeleted($event);
+			(new \Change\Documents\Events\DeleteListener())->onDeleted($event);
 		};
 		$events->attach($identifiers, DocumentEvent::EVENT_DELETED, $callBack, 5);
 
 		$callBack = function ($event)
 		{
-			$l = new \Change\Documents\Events\DeleteListener();
-			$l->onCleanUp($event);
+			(new \Change\Documents\Events\DeleteListener())->onLocalizedDeleted($event);
+		};
+		$events->attach($identifiers, DocumentEvent::EVENT_LOCALIZED_DELETED, $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Change\Documents\Events\DeleteListener())->onCleanUp($event);
 		};
 		$events->attach('JobManager', 'process_Change_Document_CleanUp', $callBack, 5);
+
 	}
 
 	/**
