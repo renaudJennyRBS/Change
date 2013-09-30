@@ -98,14 +98,14 @@ class Listeners implements ListenerAggregateInterface
 					$cr->productPriceCollection($event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/DeclinationGroup/([0-9]+)/Products/?$#', $relativePath,
+			else if (preg_match('#^resources/Rbs/Catalog/VariantGroup/([0-9]+)/Products/?$#', $relativePath,
 				$matches)
 			)
 			{
 				$event->setParam('documentId', intval($matches[1]));
 				$event->setAction(function ($event)
 				{
-					(new \Rbs\Catalog\Http\Rest\DeclinationGroup())->getProducts($event);
+					(new \Rbs\Catalog\Http\Rest\VariantGroup())->getProducts($event);
 				});
 
 			}

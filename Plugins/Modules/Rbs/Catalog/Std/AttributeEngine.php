@@ -622,7 +622,7 @@ class AttributeEngine
 	 * @param Attribute $groupAttribute
 	 * @return Attribute[]
 	 */
-	public function getAxeAttributes($groupAttribute)
+	public function getAxisAttributes($groupAttribute)
 	{
 		$axeAttributes = array();
 		if ($groupAttribute instanceof Attribute && $groupAttribute->getValueType() === Attribute::TYPE_GROUP);
@@ -631,7 +631,7 @@ class AttributeEngine
 			{
 				if ($axeAttribute->getValueType() === Attribute::TYPE_GROUP )
 				{
-					$axeAttributes = array_merge($axeAttributes, $this->getAxeAttributes($axeAttribute));
+					$axeAttributes = array_merge($axeAttributes, $this->getAxisAttributes($axeAttribute));
 				}
 				elseif ($axeAttribute->isVisibleFor('axes'))
 				{

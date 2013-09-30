@@ -137,18 +137,18 @@
 		</rbs-field-date>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='declination'" hide-when-create="true"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-declination', ['ucf']) }}"
+	<fieldset data-ng-show="section=='v'" hide-when-create="true"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-variant', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 
-		<div class="control-group property" data-ng-hide="document.declinationGroup">
-			Le produit ne fait pas partie d'un produit d�clin�.
+		<div class="control-group property" data-ng-hide="document.variantGroup">
+
 		</div>
 
-		<div class="control-group property" data-ng-show="document.declinationGroup">
-			<label class="control-label">{{ i18n('m.rbs.catalog.document.product.declinationgroup', ['ucf']) }}</label>
+		<div class="control-group property" data-ng-show="document.variantGroup">
+			<label class="control-label">{{ i18n('m.rbs.catalog.document.product.variantgroup', ['ucf']) }}</label>
 			<div class="controls">
-				<a href ng-href="(= document.declinationGroup | documentURL =)">(= document.declinationGroup.label =)</a>
+				<a href ng-href="(= document.variantGroup | documentURL =)">(= document.variantGroup.label =)</a>
 			</div>
 		</div>
 	</fieldset>

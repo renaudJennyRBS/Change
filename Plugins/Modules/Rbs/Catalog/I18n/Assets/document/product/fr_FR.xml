@@ -34,9 +34,7 @@
 		<![CDATA[<p>Les listes permettent de publier les produits dans les sections du site.</p>]]>
 	</key>
 
-	<key id="section-declination">déclinaison</key>
-	<key id="declinationgroup">spécifications de déclinaison</key>
-	<key id="declinationgroup-picker-title">sélectionner les spécifications de déclinaison</key>
-
+	<key id="section-variant">variantes</key>
+	<key id="variantgroup">groupe de variantes</key>
 	<key id="variant">variante</key>
 </i18n>

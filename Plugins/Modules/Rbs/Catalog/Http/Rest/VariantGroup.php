@@ -8,9 +8,9 @@ use Change\Http\Rest\Result\Link;
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Catalog\Http\Rest\DeclinationGroup
+* @name \Rbs\Catalog\Http\Rest\VariantGroup
 */
-class DeclinationGroup
+class VariantGroup
 {
 	/**
 	 * @param Event $event
@@ -19,7 +19,7 @@ class DeclinationGroup
 	{
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$queryData = null;
-		if ($document instanceof \Rbs\Catalog\Documents\DeclinationGroup)
+		if ($document instanceof \Rbs\Catalog\Documents\VariantGroup)
 		{
 			$urlManager = $event->getUrlManager();
 			$result = new CollectionResult();
@@ -32,7 +32,7 @@ class DeclinationGroup
 
 			foreach ($document->getProductMatrixInfo() as $pmi)
 			{
-				if (!$pmi['declination'])
+				if (!$pmi['variant'])
 				{
 					$ids[] = $pmi['id'];
 				}
@@ -41,7 +41,7 @@ class DeclinationGroup
 			if (count($ids))
 			{
 				$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
-				$query->andPredicates($query->eq('declinationGroup', $document), $query->in('id', $ids));
+				$query->andPredicates($query->eq('variantGroup', $document), $query->in('id', $ids));
 				$collection = $query->getDocuments();
 				foreach ($collection as $document)
 				{

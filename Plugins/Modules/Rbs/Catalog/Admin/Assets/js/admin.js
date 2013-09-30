@@ -29,7 +29,7 @@
 				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
-			$delegate.routesForModels(['Rbs_Catalog_Listing', 'Rbs_Catalog_DeclinationGroup']);
+			$delegate.routesForModels(['Rbs_Catalog_Listing', 'Rbs_Catalog_VariantGroup']);
 			return $delegate;
 		}]);
 	}]);
@@ -59,7 +59,7 @@
 					{
 						"op" : "eq",
 						"lexp" : {
-							"property" : "declinationGroup"
+							"property" : "variantGroup"
 						},
 						"rexp" : {
 							"value": 0

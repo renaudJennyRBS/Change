@@ -13,7 +13,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Catalog/DeclinationGroup/editor.twig',
+			templateUrl : 'Rbs/Catalog/VariantGroup/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
@@ -34,7 +34,7 @@
 				scope.onReady = function() {
 					if (!scope.document.isNew())
 					{
-						scope.selectDeclinationId(scope.document.declinedProduct.id);
+						scope.selectVariantId(scope.document.rootProduct.id);
 						var c = scope.document.productMatrixInfo;
 						for (var i = 0; i < c.length; i++)
 						{
@@ -53,11 +53,11 @@
 				};
 
 				scope.newProductId = 0;
-				scope.axeDefaultValue = {};
+				scope.axisDefaultValue = {};
 				
-				scope.currentAxeIndex = null;
-				scope.currentAxe = null;
-				scope.declinationPath = null;
+				scope.currentAxisIndex = null;
+				scope.currentAxis = null;
+				scope.variantPath = null;
 				
 				scope.matrix = [];
 				scope.productList = [];
@@ -81,22 +81,22 @@
 					});
 				};
 
-				scope.selectAxe = function(axeIndex) {
-					var axeInfo = scope.document.axesInfo[axeIndex];
+				scope.selectAxis = function(axisIndex) {
+					var axesInfo = scope.document.axesInfo[axisIndex];
 					var c = scope.document.axesDefinition;
 					for (var i = 0; i < c.length; i++)
 					{
-						if (c[i].id == axeInfo.id)
+						if (c[i].id == axesInfo.id)
 						{
-							scope.currentAxeIndex = axeIndex;
-							scope.currentAxe = {"id": axeInfo.id, "info" : axeInfo, "def" :c[i]};
+							scope.currentAxisIndex = axisIndex;
+							scope.currentAxis = {"id": axesInfo.id, "info" : axesInfo, "def" :c[i]};
 							return;
 						}
 					}
 				};
 
-				scope.removeAxeDefaultValue = function(axeInfo, value) {
-					var dv = axeInfo.dv;
+				scope.removeAxisDefaultValue = function(axesInfo, value) {
+					var dv = axesInfo.dv;
 					for (var i = 0; i < dv.length; i++)
 					{
 						if (dv[i] === value)
@@ -108,13 +108,13 @@
 					}
 				};
 
-				scope.addAxeDefaultValue = function(axeInfo) {
-					if (angular.isString(scope.axeDefaultValue[axeInfo.id]))
+				scope.addAxisDefaultValue = function(axesInfo) {
+					if (angular.isString(scope.axisDefaultValue[axesInfo.id]))
 					{
-						var value = scope.axeDefaultValue[axeInfo.id];
+						var value = scope.axisDefaultValue[axesInfo.id];
 						if (value != "")
 						{
-							var dv = axeInfo.dv;
+							var dv = axesInfo.dv;
 							for (var i = 0; i < dv.length; i++)
 							{
 								if (dv[i].value == value)
@@ -122,19 +122,19 @@
 									return;
 								}
 							}
-							var title = scope.getAxeValueTitle(axeInfo.id, value);
-							axeInfo.dv.push({value:value, label: title, title: title});
-							scope.axeDefaultValue[axeInfo.id] = "";
+							var title = scope.getAxisValueTitle(axesInfo.id, value);
+							axesInfo.dv.push({value:value, label: title, title: title});
+							scope.axisDefaultValue[axesInfo.id] = "";
 							scope.buildMatrix();
 						}
 					}
 				};
 
-				scope.getAxeDefinition = function(axeId) {
+				scope.getAxisDefinition = function(axisId) {
 					var c = scope.document.axesDefinition;
 					for (var i = 0; i < c.length; i++)
 					{
-						if (c[i].id == axeId)
+						if (c[i].id == axisId)
 						{
 							return c[i];
 						}
@@ -142,13 +142,13 @@
 					return null;
 				};
 
-				scope.getAxeTitle = function(axeId) {
+				scope.getAxisTitle = function(axisId) {
 					if (scope.document)
 					{
 						var c = scope.document.axesDefinition;
 						for (var i = 0; i < c.length; i++)
 						{
-							if (c[i].id == axeId)
+							if (c[i].id == axisId)
 							{
 								return c[i].label;
 							}
@@ -157,13 +157,13 @@
 					return null;
 				};
 
-				scope.getAxeValueTitle = function(axeId, value) {
+				scope.getAxisValueTitle = function(axisId, value) {
 					if (scope.document)
 					{
 						var c = scope.document.axesDefinition;
 						for (var i = 0; i < c.length; i++)
 						{
-							if (c[i].id == axeId)
+							if (c[i].id == axisId)
 							{
 								if (angular.isArray(c[i].values))
 								{
@@ -183,19 +183,19 @@
 					return value;
 				};
 
-				scope.selectDeclinationId = function(declinationId) {
-					var productMatrix = scope.findProductInfo(declinationId);
-					var declinationPath = [];
+				scope.selectVariantId = function(variantId) {
+					var productMatrix = scope.findProductInfo(variantId);
+					var variantPath = [];
 					if (productMatrix != null)
 					{
 						do {
-							declinationPath.push(productMatrix);
+							variantPath.push(productMatrix);
 							productMatrix = scope.findProductInfo(productMatrix.parentId)
 						}	while (productMatrix != null);
-						declinationPath.reverse();
+						variantPath.reverse();
 					}
-					scope.declinationPath = declinationPath;
-					scope.selectAxe(declinationPath.length);
+					scope.variantPath = variantPath;
+					scope.selectAxis(variantPath.length);
 					scope.buildMatrix();
 				};
 
@@ -211,13 +211,13 @@
 					return null;
 				};
 
-				scope.findProductEntry = function(productId, axeId, axeValue) {
+				scope.findProductEntry = function(productId, axisId, axisValue) {
 					var c = scope.document.productMatrixInfo;
 					var entry = null;
 					for (var i = 0; i < c.length; i++)
 					{
 						entry = c[i];
-						if (entry.parentId == productId && entry.axeId == axeId && entry.axeValue == axeValue)
+						if (entry.parentId == productId && entry.axisId == axisId && entry.axisValue == axisValue)
 						{
 							return entry;
 						}
@@ -225,24 +225,24 @@
 					return null;
 				};
 
-				scope.isDeclinationMatrix = function() {
+				scope.isVariantMatrix = function() {
 					if (scope.document)
 					{
-						return (scope.currentAxeIndex + 1) < scope.document.axesInfo.length;
+						return (scope.currentAxisIndex + 1) < scope.document.axesInfo.length;
 					}
 					return false;
 				};
 
-				scope.nextDeclinationAxe = function() {
-					if (scope.isDeclinationMatrix())
+				scope.nextVariantAxis = function() {
+					if (scope.isVariantMatrix())
 					{
-						var axeInfo = scope.document.axesInfo[scope.currentAxeIndex + 1];
-						return scope.getAxeDefinition(axeInfo.id);
+						var axesInfo = scope.document.axesInfo[scope.currentAxisIndex + 1];
+						return scope.getAxisDefinition(axesInfo.id);
 					}
 					return null;
 				};
 
-				scope.addDeclination = function(entry) {
+				scope.addVariant = function(entry) {
 					if (entry.hasOwnProperty('removed'))
 					{
 						delete entry.removed;
@@ -255,7 +255,7 @@
 					}
 				};
 
-				scope.deleteDeclination = function(entry) {
+				scope.deleteVariant = function(entry) {
 					if (entry.id != 0)
 					{
 						entry.removed = true;
@@ -277,34 +277,34 @@
 
 				scope.addAllProduct = function() {
 					var axesInfo = scope.document.axesInfo;
-					var parentId = scope.document.declinedProduct.id;
-					scope.addAllAxeProduct(0, parentId, axesInfo);
+					var parentId = scope.document.rootProduct.id;
+					scope.addAllAxisProduct(0, parentId, axesInfo);
 					scope.buildMatrix();
 				};
 
-				scope.addAllAxeProduct = function(axeLevel, parentId, axesInfo)
+				scope.addAllAxisProduct = function(axisLevel, parentId, axesInfo)
 				{
-					var ai = axesInfo[axeLevel];
-					var currentAxeId = ai.id;
-					var declination = (axeLevel + 1) < axesInfo.length;
+					var ai = axesInfo[axisLevel];
+					var currentAxisId = ai.id;
+					var variant = (axisLevel + 1) < axesInfo.length;
 
 					for (var j = 0; j < ai.dv.length; j++)
 					{
 						var value = ai.dv[j].value;
-						var entry = scope.findProductEntry(parentId, currentAxeId, value);
+						var entry = scope.findProductEntry(parentId, currentAxisId, value);
 						if (entry == null)
 						{
-							entry = {id: 0, parentId: parentId, axeId:currentAxeId, axeValue: value, declination: declination};
-							scope.addDeclination(entry);
+							entry = {id: 0, parentId: parentId, axisId:currentAxisId, axisValue: value, variant: variant};
+							scope.addVariant(entry);
 						}
 						else if (entry.hasOwnProperty('removed'))
 						{
 							delete entry.removed;
 						}
 
-						if (declination)
+						if (variant)
 						{
-							scope.addAllAxeProduct((axeLevel + 1), entry.id, axesInfo);
+							scope.addAllAxisProduct((axisLevel + 1), entry.id, axesInfo);
 						}
 					}
 				};
@@ -312,21 +312,21 @@
 				scope.buildMatrix = function() {
 					var m = [];
 					var r, dv ;
-					var axeDefaultValues =  scope.currentAxe.info.dv;
-					var currentAxeId =  scope.currentAxe.id;
+					var axisDefaultValues =  scope.currentAxis.info.dv;
+					var currentAxisId =  scope.currentAxis.id;
 
-					var parentId = scope.declinationPath.length ?
-						scope.declinationPath[scope.declinationPath.length - 1].id : scope.document.declinedProduct.id;
-					var declination = scope.isDeclinationMatrix();
+					var parentId = scope.variantPath.length ?
+						scope.variantPath[scope.variantPath.length - 1].id : scope.document.rootProduct.id;
+					var variant = scope.isVariantMatrix();
 
-					for (var i = 0; i < axeDefaultValues.length; i++)
+					for (var i = 0; i < axisDefaultValues.length; i++)
 					{
-						dv = axeDefaultValues[i];
+						dv = axisDefaultValues[i];
 						r = [dv];
-						var entry = scope.findProductEntry(parentId, currentAxeId, dv.value);
+						var entry = scope.findProductEntry(parentId, currentAxisId, dv.value);
 						if (entry == null)
 						{
-							entry = {id: 0, parentId: parentId, axeId:currentAxeId, axeValue: dv.value, declination: declination}
+							entry = {id: 0, parentId: parentId, axisId:currentAxisId, axisValue: dv.value, variant: variant}
 						}
 						r.push(entry);
 						m.push(r);
@@ -335,11 +335,11 @@
 					scope.matrix = m;
 				};
 
-				editorCtrl.init('Rbs_Catalog_DeclinationGroup');
+				editorCtrl.init('Rbs_Catalog_VariantGroup');
 			}
 		};
 	}
 
 	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogDeclinationGroup', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', Editor);
 })();
