@@ -42,9 +42,9 @@
 				"default": null
 			},
 			"resourcePath": {
-				"description": "static resource base url  (e.g. \"/Assets\")",
-				"required": true,
-				"default": null
+				"description": "static resource base url",
+				"required": false,
+				"default": "/Assets"
 			}
 		}
 	},

@@ -27,11 +27,12 @@ class Listeners implements ListenerAggregateInterface
 
 	public function registerResources(Event $event)
 	{
-		$i18nManager = $event->getManager()->getApplicationServices()->getI18nManager();
-		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
 
 		$manager = $event->getManager();
 		$i18nManager = $manager->getApplicationServices()->getI18nManager();
+		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
+		$devMode = $manager->getApplicationServices()->getApplication()->inDevelopmentMode();
+
 		$pm = $manager->getApplicationServices()->getPluginManager();
 
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
@@ -65,7 +66,10 @@ class Listeners implements ListenerAggregateInterface
 
 			$jsAssets->add(new FileAsset($pluginPath . '/Assets/js/help.js'));
 			$jsAssets->add(new FileAsset($pluginPath . '/Assets/js/routes.js'));
-			$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+			if (!$devMode)
+			{
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+			}
 
 			$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
@@ -81,7 +85,10 @@ class Listeners implements ListenerAggregateInterface
 			if ($plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
 			{
 				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
-				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+				if (!$devMode)
+				{
+					$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+				}
 				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
 				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
