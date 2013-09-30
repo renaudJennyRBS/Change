@@ -118,24 +118,32 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 			{
 				if (isset($pmi[$i]['removed']))
 				{
-					if (!isset($removed[$pmi[$i]['removed']]))
+					if (!isset($removed[$pmi[$i]['id']]))
 					{
-						$removed[$pmi[$i]['removed']] = $pmi[$i]['removed'];
+						$removed[$pmi[$i]['id']] = $pmi[$i]['id'];
 						++$addRemoved;
 					}
 				}
 				elseif (isset($removed[$pmi[$i]['parentId']]))
 				{
-					$pmi[$i]['removed'] = $pmi[$i]['id'];
-					$pmi[$i]['id'] = 0;
+					$pmi[$i]['removed'] = true;
+					++$addRemoved;
+				}
+				elseif (!isset($axesInfo[$pmi[$i]['axeId']]))
+				{
+					$pmi[$i]['removed'] = true;
+					++$addRemoved;
 				}
 			}
 		}
 
+		$parentIds = array_reduce($pmi, function($r, $i) {
+			if (!isset($i['removed']) && $i['id'] > 0) {$r[] = $i['id'];} return $r;
+		}, array($this->getDeclinedProductId()));
+
 		for ($i = 0; $i < count($pmi); $i++)
 		{
 			$entry = $pmi[$i];
-
 			if ($entry['id'] < 0)
 			{
 				/* @var $product Product */
@@ -149,15 +157,17 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 				$product->setCategorizable(($axesInfo[$entry['axeId']]['cat'] == true));
 				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['declination']);
 				$product->create();
-
 				$added[$entry['id']] = $product->getId();
 			}
-			elseif ($entry['id'] == 0 && isset($entry['removed']) && $entry['removed'] > 0)
+			elseif ($entry['id'] > 0)
 			{
-				$product = $this->getDocumentManager()->getDocumentInstance($entry['removed']);
-				if ($product instanceof Product)
+				if (isset($entry['removed']) || !in_array($entry['id'], $parentIds))
 				{
-					$product->delete();
+					$product = $this->getDocumentManager()->getDocumentInstance($entry['id']);
+					if ($product instanceof Product)
+					{
+						$product->delete();
+					}
 				}
 			}
 		}
@@ -166,7 +176,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 
 		foreach ($pmi as $entry)
 		{
-			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axeId']]))
+			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axeId']]) || isset($entry['removed']))
 			{
 				continue;
 			}
@@ -188,7 +198,10 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 				}
 				$entry['parentId'] = $added[$entry['parentId']];
 			}
-
+			else if (!in_array($entry['parentId'], $parentIds))
+			{
+				continue;
+			}
 			$productMatrixInfo[] = $entry;
 		}
 

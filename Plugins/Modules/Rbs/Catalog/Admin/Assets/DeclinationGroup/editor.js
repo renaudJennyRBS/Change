@@ -139,6 +139,7 @@
 							return c[i];
 						}
 					}
+					return null;
 				};
 
 				scope.getAxeTitle = function(axeId) {
@@ -244,7 +245,6 @@
 				scope.addDeclination = function(entry) {
 					if (entry.hasOwnProperty('removed'))
 					{
-						entry.id = entry.removed;
 						delete entry.removed;
 					}
 					else
@@ -258,9 +258,8 @@
 				scope.deleteDeclination = function(entry) {
 					if (entry.id != 0)
 					{
-						entry.removed = entry.id
+						entry.removed = true;
 					}
-					entry.id = 0;
 				};
 
 				scope.editProduct = function(entry) {
@@ -300,7 +299,6 @@
 						}
 						else if (entry.hasOwnProperty('removed'))
 						{
-							entry.id = entry.removed;
 							delete entry.removed;
 						}
 
