@@ -141,7 +141,78 @@ class DefaultTheme implements Theme
 	 */
 	public function getResource($resourcePath)
 	{
-		$path = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+
 		return new FileResource($path);
+	}
+
+	/**
+	 * @param string $resourcePath
+	 * @return string
+	 */
+	public function getResourceFilePath($resourcePath)
+	{
+		if (preg_match('/^([A-Z][A-Aa-z0-9]+)_([A-Z][A-Aa-z0-9]+)\/(.+)$/', $resourcePath, $matches))
+		{
+			$vendor = $matches[1];
+			$moduleShortName = $matches[2];
+			$resourceModulePath = $matches[3];
+			$pm = $this->presentationServices->getApplicationServices()->getPluginManager();
+			$module = $pm->getModule($vendor, $moduleShortName);
+			if ($module && $module->isAvailable())
+			{
+				return $this->getWorkspace()->composePath($module->getBasePath(), 'Assets', 'Theme', $resourceModulePath);
+			}
+		}
+		return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', $resourcePath);
+	}
+
+	/**
+	 * @param array $baseConfiguration
+	 * @return array
+	 * @throws \RuntimeException
+	 */
+	public function getAssetConfiguration(array $baseConfiguration = null)
+	{
+		//first get themes configuration
+		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+		$resource = $this->getResourceFilePath('assets.json');
+		if (file_exists($resource))
+		{
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
+		}
+		else
+		{
+			throw new \RuntimeException('invalid resource assets.json configuration file of default theme', 999999);
+		}
+
+		//Now find all modules configuration file
+		$pluginManager = $this->presentationServices->getApplicationServices()->getPluginManager();
+		$plugins = $pluginManager->getInstalledPlugins();
+		foreach ($plugins as $plugin)
+		{
+			if ($plugin->isModule() && $plugin->isAvailable())
+			{
+				$configurationPath = $this->getWorkspace()->composePath($plugin->getBasePath(), 'Assets', 'Theme', 'assets.json');
+				if (file_exists($configurationPath))
+				{
+					$blockConfigurations = [];
+					foreach (json_decode(\Change\Stdlib\File::read($configurationPath), true) as $blockName => $blockConfiguration)
+					{
+						$blockConfigurations[$plugin->getName() . '_' . $blockName] = $blockConfiguration;
+					}
+					$configuration = array_merge($configuration, $blockConfigurations);
+				}
+			}
+		}
+		return $configuration;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCssVariables()
+	{
+		return [];
 	}
 }

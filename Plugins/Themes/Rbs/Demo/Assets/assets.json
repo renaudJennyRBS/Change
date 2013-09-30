@@ -1,0 +1,41 @@
+{
+	"*" : {
+		"cssAssets" : [
+			"Theme/Rbs/Base/css/bootstrap.min.css",
+			"Theme/Rbs/Base/css/bootstrap-complements.css",
+			"Theme/Rbs/Demo/css/bootstrap-overrides.css",
+			"Theme/Rbs/Demo/css/styles.css"
+		],
+		"jsAssets" : [
+			"Theme/Rbs/Base/js/jquery-1.8.2.min.js", "Theme/Rbs/Base/js/bootstrap.min.js",
+			"Theme/Rbs/Base/js/bootstrap-complements.js", "Theme/Rbs/Demo/js/default.js",
+			"Theme/Rbs/Base/js/angular-1.2.0-rc2/angular.min.js", "Theme/Rbs/Base/js/angular-1.2.0-rc2/angular-cookies.min.js",
+			"Theme/Rbs/Base/js/rbschangeapp.js"
+		]
+	},
+
+	"Rbs_Review_PromotedReviewList" : {
+		"cssAssets" : ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	},
+
+	"Rbs_Review_ReviewList" : {
+		"cssAssets" : ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	},
+
+	"Rbs_Review_ReviewAverageRating": {
+		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"jsAssets" : []
+	},
+
+	"Rbs_Review_PostReview": {
+		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"jsAssets" : []
+	},
+
+	"Rbs_Review_ReviewDetail": {
+		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	}
+}

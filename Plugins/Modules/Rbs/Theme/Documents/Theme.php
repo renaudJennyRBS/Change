@@ -121,8 +121,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function getResource($resourcePath)
 	{
-		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		$path = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
 
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')
@@ -146,15 +145,15 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	/**
 	 * @return array
 	 */
-	protected function getCssVariables()
+	public function getCssVariables()
 	{
 		if ($this->cssVariables === null)
 		{
 			$this->cssVariables = array();
-			$variablesRes = $this->getResource('variables.json');
-			if ($variablesRes->isValid())
+			$variablesRes = $this->getResourceFilePath('variables.json');
+			if (file_exists($variablesRes))
 			{
-				$variables = json_decode($variablesRes->getContent(), true);
+				$variables = json_decode(\Change\Stdlib\File::read($variablesRes), true);
 				if (is_array($variables))
 				{
 					foreach ($variables as $name => $value)
@@ -165,5 +164,39 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			}
 		}
 		return $this->cssVariables;
+	}
+
+	/**
+	 * @param array $baseConfiguration
+	 * @return array
+	 */
+	public function getAssetConfiguration(array $baseConfiguration = null)
+	{
+		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+
+		//TODO test with parent theme
+		if ($this->getParentTheme())
+		{
+			$parentTheme = $this->getParentTheme();
+			$parentTheme->setThemeManager($this->getThemeManager());
+			$configuration = array_merge($configuration, $parentTheme->getAssetConfiguration($configuration));
+		}
+		$resource = $this->getResourceFilePath('assets.json');
+		if (file_exists($resource))
+		{
+			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
+		}
+
+		return $configuration;
+	}
+
+	/**
+	 * @param string $resourcePath
+	 * @return string
+	 */
+	public function getResourceFilePath($resourcePath)
+	{
+		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
+		return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', $resourcePath);
 	}
 }

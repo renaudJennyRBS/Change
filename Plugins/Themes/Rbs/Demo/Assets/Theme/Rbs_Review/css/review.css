@@ -1,0 +1,23 @@
+.star-rating{
+	font-size: 1em;
+}
+.star-rating label{
+	color: var(main-light-text-color);
+}
+.star-rating label:hover{
+	color: var(main-link-color);
+}
+.star-rating .selected label{
+	color: var(main-text-color);
+}
+.star-rating-display{
+	color: var(main-light-text-color);
+	letter-spacing: -0.4em;
+}
+.star-rating-display .full {
+	color: var(main-text-color);
+}
+
+.row-review-rating-average {
+	margin-bottom: 0px;
+}

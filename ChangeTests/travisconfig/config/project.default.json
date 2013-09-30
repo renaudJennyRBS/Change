@@ -12,6 +12,10 @@
 				"port":3306,
 				"longTransaction":5
 			}
+		},
+		"Install":{
+			"documentRootPath":"<current_dir>/ChangeTests/UnitTestWorkspace",
+			"resourceBaseUrl":"\/Assets"
 		}
 	}
 }

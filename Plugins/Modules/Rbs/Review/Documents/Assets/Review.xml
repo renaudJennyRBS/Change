@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		  editable="true" publishable="true">
+	<properties>
+		<property name="rating" type="Integer" required="true">
+			<constraint name="range" min="0" max="100"/>
+		</property>
+		<property name="content" type="RichText" required="true"/>
+		<property name="target" type="Document" required="true"/>
+		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true"/>
+		<property name="pseudonym" type="String" />
+		<property name="reviewDate" type="DateTime" />
+		<property name="promoted" type="Boolean" />
+		<property name="upvote" type="Integer" default-value="0"/>
+		<property name="downvote" type="Integer" default-value="0"/>
+	</properties>
+</document>

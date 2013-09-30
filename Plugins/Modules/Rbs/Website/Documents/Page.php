@@ -112,6 +112,55 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
 
 				$pageTemplate = $page->getPageTemplate();
+				$blockNames = array();
+				foreach($templateLayout->getBlocks() as $block)
+				{
+					$blockNames[$block->getName()] = true;
+				}
+				foreach($pageLayout->getBlocks() as $block)
+				{
+					$blockNames[$block->getName()] = true;
+				}
+
+				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
+				$configuration = $themeManager->getDefault()->getAssetConfiguration();
+				$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+				$am = $themeManager->getAsseticManager($configuration);
+
+				$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+				$jsFooter = array();
+				$assetBaseUrl = ($application->inDevelopmentMode()) ? '' : $themeManager->getAssetBaseUrl();
+				foreach($jsNames as $jsName)
+				{
+					try
+					{
+						$a = $am->get($jsName);
+						$jsFooter[] = '<script type="text/javascript" src="' .$assetBaseUrl . $a->getTargetPath() . '"></script>';
+					}
+					catch (\Exception $e)
+					{
+						$this->getApplicationServices()->getLogging()->warn('asset resource name not found: ' . $jsName);
+					}
+				}
+
+				$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+				$cssHead = [];
+				foreach($cssNames as $cssName)
+				{
+					try
+					{
+						$a = $am->get($cssName);
+						$cssHead[] = '<link rel="stylesheet" type="text/css" href="' . $assetBaseUrl . $a->getTargetPath() . '">';
+					}
+					catch (\Exception $e)
+					{
+						$this->getApplicationServices()->getLogging()->warn('asset resource name not found: ' . $cssName);
+					}
+				}
+
+				$twigLayout['<!-- cssHead -->'] = implode(PHP_EOL, $cssHead);
+				$twigLayout['<!-- jsFooter -->'] = implode(PHP_EOL, $jsFooter);
+
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
 				\Change\Stdlib\File::write($cachePath, $htmlTemplate);

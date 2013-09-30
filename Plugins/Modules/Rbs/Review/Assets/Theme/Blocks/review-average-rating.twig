@@ -1,0 +1,23 @@
+{% if averageRating %}
+	<p>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</p>
+	{% if parameters.showChart %}
+		<div class="container">
+			{% for stars, ratePart in rateParts %}
+				<div class="row row-review-rating-average">
+					<div class="col-sm-3">{{ ratePart.count }} {{ i18nAttr('m.rbs.review.blocks.review') }}</div>
+					<div class="col-sm-4" title="{{ i18nAttr('m.rbs.review.blocks.average-rating-stars', ['ucf'], { 'stars': stars, 'count': ratePart.count }) }}">{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': stars } %}</div>
+					<div class="col-sm-4">
+						<div class="progress">
+							<div class="progress-bar" role="progressbar" aria-valuenow="{{ ratePart.count }}" aria-valuemin="0" aria-valuemax="5" style="width: {{ ratePart.percent }}%;"></div>
+						</div>
+					</div>
+					<div class="col-sm-1">
+						{{ ratePart.percent }}%
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+{% else %}
+	<p>{{ i18n('m.rbs.review.blocks.average-no-rating', ['ucf']) }}</p>
+{% endif %}

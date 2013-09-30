@@ -22,9 +22,13 @@ class Install extends \Change\Plugins\InstallBase
 		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
+		$themeManager = $presentationServices->getThemeManager();
+		$themeManager->setDocumentServices($documentServices);
 		if ($theme instanceof \Rbs\Theme\Documents\Theme)
 		{
-			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginAssets($plugin, $theme);
+			$this->writeAssetic($theme, $themeManager);
 			return;
 		}
 
@@ -39,7 +43,9 @@ class Install extends \Change\Plugins\InstallBase
 			$theme->setActive(true);
 			$theme->save();
 
-			$presentationServices->getThemeManager()->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginTemplates($plugin, $theme);
+			$themeManager->installPluginAssets($plugin, $theme);
+			$this->writeAssetic($theme, $themeManager);
 
 			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 
@@ -117,5 +123,17 @@ class Install extends \Change\Plugins\InstallBase
 		{
 			throw $transactionManager->rollBack($e);
 		}
+	}
+
+	/**
+	 * @param \Rbs\Theme\Documents\Theme $theme
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 */
+	protected function writeAssetic($theme, $themeManager)
+	{
+		$configuration = $theme->getAssetConfiguration();
+		$am = $themeManager->getAsseticManager($configuration);
+		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
+		$writer->writeManagerAssets($am);
 	}
 }

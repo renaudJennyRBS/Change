@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Web\Actions;
 
+use Zend\Stdlib\Parameters;
+
 /**
 * @name \Change\Http\Web\Actions\AbstractAjaxAction
 */
@@ -13,6 +15,7 @@ abstract class AbstractAjaxAction
 			$event = func_get_arg(0);
 			if ($event instanceof \Change\Http\Web\Event)
 			{
+				$this->decodePostJSON($event);
 				$this->execute($event);
 			}
 		}
@@ -32,4 +35,39 @@ abstract class AbstractAjaxAction
 	{
 		return new \Change\Http\Web\Result\AjaxResult($data);
 	}
+
+	protected function decodePostJSON(\Change\Http\Web\Event $event)
+	{
+		$request = $event->getRequest();
+		if ($request->isPost())
+		{
+			try
+			{
+				$h = $request->getHeaders('Content-Type');
+			}
+			catch (\Exception $e)
+			{
+				//Header not found
+				return;
+			}
+
+			if ($h && ($h instanceof \Zend\Http\Header\ContentType))
+			{
+				if (strpos($h->getFieldValue(), 'application/json') === 0)
+				{
+					$string = file_get_contents('php://input');
+
+					$data = json_decode($string, true);
+					if (JSON_ERROR_NONE === json_last_error())
+					{
+						if (is_array($data))
+						{
+							$request->setPost(new Parameters($data));
+						}
+					}
+				}
+			}
+		}
+	}
+
 }

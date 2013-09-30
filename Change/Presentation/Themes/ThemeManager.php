@@ -260,6 +260,44 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param Theme|null $theme
+	 */
+	public function installPluginAssets($plugin, $theme = null)
+	{
+		$path = $plugin->getThemeAssetsPath();
+		if (!is_dir($path))
+		{
+			return;
+		}
+		if ($theme === null)
+		{
+			$theme = $this->getDefault();
+		}
+		else
+		{
+			$theme->setThemeManager($this);
+		}
+		$excludedExtensions = ['js', 'json', 'map', 'css', 'twig', 'less'];
+		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
+			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
+		while ($it->valid())
+		{
+			/* @var $current \RecursiveDirectoryIterator */
+			$current = $it->current();
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && !in_array($current->getExtension(), $excludedExtensions))
+			{
+				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
+				$path = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace()
+					->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()), $moduleName, $current->getSubPathname());
+				\Change\Stdlib\File::mkdir(dirname($path));
+				file_put_contents($path, file_get_contents($current->getPathname()));
+			}
+			$it->next();
+		}
+	}
+
+	/**
 	 * @api
 	 * @return string[]
 	 */
@@ -306,5 +344,189 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		};
 		$results = $this->getEventManager()->triggerUntil($event, $callback);
 		return ($results->stopped() && ($results->last() instanceof \Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
+	}
+
+	/**
+	 * @param string $name
+	 * @return string
+	 */
+	protected function normalizeAssetName($name)
+	{
+		return str_replace(['/', '.', '-'], '', $name);
+	}
+
+	/**
+	 * @param array $configuration
+	 * @return \Assetic\AssetManager
+	 */
+	public function getAsseticManager($configuration)
+	{
+		$am = new \Assetic\AssetManager();
+		foreach ($configuration as $block)
+		{
+			foreach ($block as $assetType)
+			{
+				foreach ($assetType as $assetUrl)
+				{
+					if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $assetUrl, $matches))
+					{
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
+						if ($theme)
+						{
+							$resourceFilePath = $theme->getResourceFilePath($path);
+							if (file_exists($resourceFilePath))
+							{
+								$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
+								if (substr($resourceFilePath, -4) === '.css')
+								{
+									$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
+									$asset->ensureFilter($filter);
+								}
+								elseif (substr($resourceFilePath, -5) === '.less')
+								{
+									$filter = new \Assetic\Filter\LessphpFilter();
+									$asset->ensureFilter($filter);
+									$asset->setTargetPath($assetUrl . '.css');
+								}
+								if (!$asset->getTargetPath())
+								{
+									$asset->setTargetPath($assetUrl);
+								}
+								$name = $this->normalizeAssetName($assetUrl);
+								$am->set($name, $asset);
+							}
+						}
+						else
+						{
+							$this->getPresentationServices()->getApplicationServices()->getLogging()->warn(
+								'Assetic Manager is not complete, couldn\'t find the the theme: ' . $themeVendor . '_' . $themeShortName . '. Is it actually installed?'
+							);
+						}
+					}
+				}
+			}
+		}
+		return $am;
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getJsAssetNames($configuration, $blockNames)
+	{
+		$names = [];
+		foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
+		{
+			$names[] = $this->normalizeAssetName($themeJsAsset);
+		}
+
+		foreach (array_keys($blockNames) as $blockName)
+		{
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+				{
+					$names[] = $this->normalizeAssetName($blockJsAsset);
+				}
+			}
+		}
+		return array_unique($names);
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetNames($configuration, $blockNames)
+	{
+		$names = [];
+		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+		{
+			$names[] = $this->normalizeAssetName($themeCssAsset);
+		}
+
+		foreach (array_keys($blockNames) as $blockName)
+		{
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+				{
+					$names[] = $this->normalizeAssetName($blockCssAsset);
+				}
+			}
+		}
+		return array_unique($names);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetRootPath()
+	{
+		$app = $this->presentationServices->getApplicationServices()->getApplication();
+		$root = $app->getConfiguration()->getEntry('Change/Install/documentRootPath');
+		return $app->getWorkspace()->composePath($root, $this->getAssetBaseUrl());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetBaseUrl()
+	{
+		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
+		if (is_string($resourceBaseUrl) && $resourceBaseUrl[strlen($resourceBaseUrl) - 1] != '/')
+		{
+			$resourceBaseUrl .= '/';
+		}
+		return $resourceBaseUrl;
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param string[] $blockNames
+	 * @return \Assetic\Asset\AssetCollection
+	 */
+	public function getCssAssetCollection($configuration, $blockNames)
+	{
+		$am = $this->getAsseticManager($configuration);
+		$collection = new \Assetic\Asset\AssetCollection();
+		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
+		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+		{
+			$name = str_replace(['/', '.', '-'], '', $themeCssAsset['href']);
+			$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+			$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
+			$collection->add(
+				new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
+			);
+		}
+
+		$alreadyAddedBlockAssets = [];
+		foreach (array_keys($blockNames) as $blockName)
+		{
+			if (isset($configuration[$blockName]))
+			{
+				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+				{
+					if (!in_array($blockJsAsset, $alreadyAddedBlockAssets))
+					{
+						$name = str_replace(['/', '.', '-'], '', $blockJsAsset);
+						$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
+						$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
+						$collection->add(
+							new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
+						);
+						$alreadyAddedBlockAssets[] = $blockJsAsset;
+					}
+				}
+			}
+		}
+		return $collection;
 	}
 }

@@ -1,0 +1,41 @@
+<h2>{{ i18n('m.rbs.review.blocks.review-post', ['ucf']) }}</h2>
+{% if notConnected %}
+	<p class="muted">
+		{{ i18n('m.rbs.review.blocks.review-post-not-connected', ['ucf']) }}
+		<!-- TODO add a button or a link to connect user -->
+	</p>
+{% else %}
+	{% if parameters.alreadyReviewed %}
+		{% if pendingValidation %}
+			<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
+		{% else %}
+			<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }}</p>
+		{% endif %}
+		<div>
+			<a href="{{ review.url }}">{{ i18n('m.rbs.review.blocks.review-edit', ['ucf']) }}</a>
+			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review, 'class': validationClass } %}
+		</div>
+	{% else %}
+		<form method="post" id="Review" action="Action/Rbs/Review/PostReview" class="well well-small">
+			<input type="hidden" name="userId" value="{{ parameters.userId }}">
+			<input type="hidden" name="targetId" value="{{ parameters.targetId }}">
+			<input type="hidden" name="sectionId" value="{{ parameters.sectionId }}">
+			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
+			<fieldset>
+				<div class="form-group">
+					<label for="rbs-review-review-pseudonym">{{ i18n('m.rbs.review.blocks.review-post-pseudonym', ['ucf']) }}</label>
+					<p id="rbs-review-review-pseudonym" class="form-control-static">{{ parameters.pseudonym }}</p>
+				</div>
+				<div class="form-group">
+					<label for="rbs-review-review-rating-value">{{ i18n('m.rbs.review.blocks.review-post-rating', ['ucf']) }}</label>
+					{% include 'Rbs_Review/Blocks/star-rating.twig' %}
+				</div>
+				<div class="form-group">
+					<label for="rbs-review-review-content">{{ i18n('m.rbs.review.blocks.review-post-content', ['ucf']) }}</label>
+					<textarea id="rbs-review-review-content" name="content" class="form-control"></textarea>
+				</div>
+				<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.review.blocks.review-post-submit', ['ucf']) }}</button>
+			</fieldset>
+		</form>
+	{% endif %}
+{% endif %}
