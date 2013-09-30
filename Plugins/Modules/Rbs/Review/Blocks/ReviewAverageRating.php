@@ -57,44 +57,47 @@ class ReviewAverageRating extends Block
 		$qb->addColumn($qb->getFragmentBuilder()->alias($dqb->getColumn('rating'), 'rating'));
 		$query = $qb->query();
 		$ratings = $qb->query()->getResults($query->getRowsConverter()->addIntCol('rating'));
-		$attributes['averageRating'] = count($ratings) > 0 ? $this->averageRoundHalfUp($ratings) : 0;
-		if ($parameters->getParameter('showChart'))
+		if (count($ratings))
 		{
-			$rateParts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0, 0 => 0];
-			foreach ($ratings as $rating)
+			$attributes['averageRating'] = $this->averageRoundHalfUp($ratings);
+			if ($parameters->getParameter('showChart'))
 			{
-				if ($rating >= 0 && $rating < 20)
+				$rateParts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0, 0 => 0];
+				foreach ($ratings as $rating)
 				{
-					$rateParts[0]++;
+					if ($rating >= 0 && $rating < 20)
+					{
+						$rateParts[0]++;
+					}
+					elseif ($rating >= 20 && $rating < 40)
+					{
+						$rateParts[1]++;
+					}
+					elseif ($rating >= 40 && $rating < 60)
+					{
+						$rateParts[2]++;
+					}
+					elseif ($rating >= 60 && $rating < 80)
+					{
+						$rateParts[3]++;
+					}
+					elseif ($rating >= 80 && $rating < 99)
+					{
+						$rateParts[4]++;
+					}
+					else
+					{
+						$rateParts[5]++;
+					}
 				}
-				elseif ($rating >= 20 && $rating < 40)
+				$attributes['rateParts'] = [];
+				foreach ($rateParts as $key => $ratePart)
 				{
-					$rateParts[1]++;
+					$attributes['rateParts'][$key] = [
+						'count' => $ratePart,
+						'percent' => round(($ratePart / count($ratings)) * 100)
+					];
 				}
-				elseif ($rating >= 40 && $rating < 60)
-				{
-					$rateParts[2]++;
-				}
-				elseif ($rating >= 60 && $rating < 80)
-				{
-					$rateParts[3]++;
-				}
-				elseif ($rating >= 80 && $rating < 99)
-				{
-					$rateParts[4]++;
-				}
-				else
-				{
-					$rateParts[5]++;
-				}
-			}
-			$attributes['rateParts'] = [];
-			foreach ($rateParts as $key => $ratePart)
-			{
-				$attributes['rateParts'][$key] = [
-					'count' => $ratePart,
-					'percent' => round(($ratePart / count($ratings)) * 100)
-				];
 			}
 		}
 

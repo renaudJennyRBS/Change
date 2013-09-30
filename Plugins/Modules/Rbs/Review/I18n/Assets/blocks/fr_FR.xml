@@ -10,6 +10,7 @@
 	<key id="average-rating">note moyenne : {averageRating}</key>
 	<key id="average-rating-stars">{stars} étoiles : {count}</key>
 	<key id="review-average-rating">moyenne des notes</key>
+	<key id="average-no-rating">la moyenne des notes est indisponible</key>
 	<key id="review-write-by" format="html"><![CDATA[écrit par <a itemprop="author" href="{url}">{author}</a>]]></key>
 	<key id="review-rating" format="html"><![CDATA[note : <span itemprop="ratingValue">{ratingValue}</span> sur <span itemprop="bestRating">{bestRating}</span>]]></key>
 	<key id="review-about" format="html"><![CDATA[À propos de <a itemprop="about" href="{targetUrl}">{targetTitle}</a></small>]]></key>
