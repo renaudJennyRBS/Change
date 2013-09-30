@@ -25,10 +25,11 @@ class Listeners implements ListenerAggregateInterface
 			$cs = $event->getParam('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 			{
+				$webStore = $event->getParam('webStore', null);
 				$billingArea = $event->getParam('billingArea', null);
 				$zone =  $event->getParam('zone', null);
 				$context =  $event->getParam('context', array());
-				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->getNewCart($cs, $billingArea, $zone, $context));
+				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->getNewCart($cs, $webStore, $billingArea, $zone, $context));
 			}
 		};
 		$events->attach('getNewCart', $callback, 5);

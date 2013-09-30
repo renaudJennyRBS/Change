@@ -11,15 +11,36 @@ use Rbs\Commerce\Services\CommerceServices;
  */
 class CartStorage
 {
+	protected $cachedCarts = array();
+
+	/**
+	 * @param array $cachedCarts
+	 * @return $this
+	 */
+	public function setCachedCarts(array $cachedCarts)
+	{
+		$this->cachedCarts = $cachedCarts;
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getCachedCarts()
+	{
+		return $this->cachedCarts;
+	}
+
 	/**
 	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param BillingArea $billingArea
 	 * @param string $zone
 	 * @param array $context
 	 * @throws \Exception
 	 * @return Cart
 	 */
-	public function getNewCart(CommerceServices $commerceServices, $billingArea = null, $zone = null, array $context = array())
+	public function getNewCart(CommerceServices $commerceServices, $webStore = null, $billingArea = null, $zone = null, array $context = array())
 	{
 		$tm = $commerceServices->getApplicationServices()->getTransactionManager();
 		$cart = null;
@@ -41,10 +62,13 @@ class CartStorage
 				$ownerId = 0;
 			}
 
-			if (isset($context['webStoreId']))
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 			{
-				$webStoreId = intval($context['webStoreId']);
-				unset($context['webStoreId']);
+				$webStoreId = $webStore->getId();
+			}
+			elseif ($commerceServices->getWebStore())
+			{
+				$webStoreId = $commerceServices->getWebStore()->getId();
 			}
 			else
 			{
@@ -100,13 +124,17 @@ class CartStorage
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
 			$qb->assign($fb->column('identifier'), $fb->parameter('identifier'));
 			$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
+			$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
 			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
 			$uq = $qb->updateQuery();
 
 			$uq->bindParameter('identifier', $cart->getIdentifier());
 			$uq->bindParameter('cartData', serialize($cart));
+			$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
 			$uq->bindParameter('id', $id);
 			$uq->execute();
+
+			$this->cachedCarts = array();
 
 			$tm->commit();
 		}
@@ -124,21 +152,32 @@ class CartStorage
 	 */
 	public function loadCart($identifier, CommerceServices $commerceServices)
 	{
-		$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewQueryBuilder('loadCart');
-		if (!$qb->isCached())
+		if (!array_key_exists($identifier, $this->cachedCarts))
 		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id'),
-				$fb->column('locked'), $fb->column('last_update'));
-			$qb->from($fb->table('rbs_commerce_dat_cart'));
-			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
-		}
-		$sq = $qb->query();
-		$sq->bindParameter('identifier', $identifier);
+			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewQueryBuilder('loadCart');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id'),
+					$fb->column('locked'), $fb->column('last_update'));
+				$qb->from($fb->table('rbs_commerce_dat_cart'));
+				$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+			}
+			$sq = $qb->query();
+			$sq->bindParameter('identifier', $identifier);
 
-		$cartInfo = $sq->getFirstResult($sq->getRowsConverter()->addLobCol('cart_data')
-			->addIntCol('owner_id', 'store_id')
-			->addBoolCol('locked')->addDtCol('last_update'));
+			$cartInfo = $sq->getFirstResult($sq->getRowsConverter()
+				->addLobCol('cart_data')
+				->addIntCol('owner_id', 'store_id')
+				->addBoolCol('locked')->addDtCol('last_update'));
+
+			//$commerceServices->getApplicationServices()->getLogging()->fatal(var_export($cartInfo, true));
+			$this->cachedCarts[$identifier] = $cartInfo;
+		}
+		else
+		{
+			$cartInfo = $this->cachedCarts[$identifier];
+		}
 
 		if ($cartInfo)
 		{
@@ -172,6 +211,7 @@ class CartStorage
 			$tm->begin();
 			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
+
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
 			$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
 			$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
@@ -180,6 +220,7 @@ class CartStorage
 			$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
 			$qb->assign($fb->column('price_value'), $fb->decimalParameter('priceValue'));
 			$qb->assign($fb->column('price_value_with_tax'), $fb->decimalParameter('priceValueWithTax'));
+			$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
 			$qb->where(
 				$fb->logicAnd(
 					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
@@ -195,10 +236,12 @@ class CartStorage
 			$uq->bindParameter('lineCount', count($cart->getLines()));
 			$uq->bindParameter('priceValue', $cart->getPriceValue());
 			$uq->bindParameter('priceValueWithTax', $cart->getPriceValueWithTax());
+			$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
 			$uq->bindParameter('identifier', $cart->getIdentifier());
 			$uq->bindParameter('locked', false);
 			$uq->execute();
 
+			$this->cachedCarts = array();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -246,6 +289,8 @@ class CartStorage
 			$uq->bindParameter('whereLocked', false);
 			$uq->execute();
 
+			$this->cachedCarts = array();
+
 			$tm->commit();
 			$cart->setLocked(true);
 		}
@@ -279,6 +324,8 @@ class CartStorage
 			$uq->bindParameter('identifier', $cart->getIdentifier());
 			$uq->bindParameter('whereLocked', false);
 			$uq->execute();
+
+			$this->cachedCarts = array();
 			$tm->commit();
 			$cart->setLocked(true);
 		}
@@ -335,6 +382,9 @@ class CartStorage
 			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
 			$uq = $qb->deleteQuery();
 			$uq->bindParameter('identifier', $identifier);
+
+			$this->cachedCarts = array();
+
 			$uq->execute();
 			$tm->commit();
 		}
