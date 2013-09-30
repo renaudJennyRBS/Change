@@ -50,11 +50,12 @@
 		'RbsChange.EditorManager',
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
+		'RbsChange.SelectSession',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes, SelectSession) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -555,7 +556,7 @@
 				 * Directive's link function.
 				 */
 				return function linkFn (scope, elm, attrs) {
-					var queryObject, search, columnNames, currentPath, previewCache;
+					var queryObject, search, columnNames, currentPath, previewCache, self = this;
 
 					scope.collection = [];
 
@@ -571,6 +572,20 @@
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
+
+
+					// Select session
+					scope.selectSession = {
+						info : SelectSession.info(),
+						end : SelectSession.end,
+						cancel : SelectSession.rollback,
+						clear : SelectSession.clear,
+						append : function () {
+							SelectSession.append(scope.selectedDocuments);
+							scope.allSelected = false;
+						}
+					};
+
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
 					scope.data = {};
@@ -596,7 +611,6 @@
 					}
 
 					// The list listens to this event: 'Change:DocumentList:<dlid>:call'
-					var self = this;
 					scope.$on('Change:DocumentList:' + dlid + ':call', function (event, args) {
 						if (angular.isFunction(scope[args.method])) {
 							var q, result;

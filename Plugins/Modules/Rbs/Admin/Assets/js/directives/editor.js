@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu) {
+	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession) {
 
 		var CORRECTION_CSS_CLASS = 'success';
 
@@ -254,6 +254,16 @@
 				this.clearInvalidFields = clearInvalidFields;
 
 
+				// Updates Document instance in the parent '.document-form' that wraps the Editor.
+				// (see 'form.twig' files).
+				function updateWrappingForm () {
+					if (wrappingFormScope.$id !== $scope.$id) {
+						wrappingFormScope.document = $scope.document;
+					}
+				}
+				this.updateWrappingForm = updateWrappingForm;
+
+
 				function saveSuccessHandler (doc)
 				{
 					var	postSavePromises = [], result;
@@ -302,11 +312,7 @@
 								$scope.onReload($scope.document);
 							}
 
-							// Updates Document instance in the parent '.document-form' that wraps the Editor.
-							// (see 'form.twig' files).
-							if (wrappingFormScope.$id !== $scope.$id) {
-								wrappingFormScope.document = $scope.document;
-							}
+							updateWrappingForm();
 
 							if ($scope.modelInfo.metas.localized) {
 								MainMenu.addTranslations($scope.document, $scope);
@@ -497,6 +503,10 @@
 
 					if (mergeLocalCopy($scope.document)) {
 						$scope.$emit('Change:Editor:LocalCopyMerged');
+					}
+
+					if (SelectSession.hasSelectSession($scope.document)) {
+						SelectSession.commit($scope.document);
 					}
 
 					// Add "Translations" menu on the left if the document is localizable.
@@ -699,6 +709,7 @@
 						EditorManager.removeLocalCopy(scope.document);
 						scope.saveProgress.error = false;
 						CTRL.clearInvalidFields();
+						CTRL.updateWrappingForm();
 						NotificationCenter.clear();
 					};
 
@@ -822,7 +833,8 @@
 		'RbsChange.Events',
 		'RbsChange.Settings',
 		'RbsChange.NotificationCenter',
-		'RbsChange.MainMenu'
+		'RbsChange.MainMenu',
+		'RbsChange.SelectSession'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);

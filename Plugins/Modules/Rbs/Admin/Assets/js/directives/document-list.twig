@@ -3,6 +3,17 @@
 	Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu</strong> tout en laissant la touche <strong>[Shift]</strong> appuyée.
 </div>
 
+<div ng-show="selectSession.info != null" class="alert alert-warning">
+	<h4>Sélection d'éléments pour <em ng-bind="selectSession.info.document.label"></em></h4>
+	Sélection : <span ng-bind="selectSession.info.selection.length"></span>
+	<div class="btn-toolbar">
+		<button type="button" class="btn" ng-click="selectSession.cancel()">Annuler</button>
+		<button type="button" class="btn" ng-click="selectSession.clear()">Vider</button>
+		<button type="button" class="btn" ng-click="selectSession.append()">Ajouter les éléments sélectionnés</button>
+		<button type="button" class="btn btn-primary" ng-click="selectSession.end()">Valider</button>
+	</div>
+</div>
+
 <div class="btn-toolbar" ng-show="useToolBar">
 	<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
 		<a class="btn" href go-up-in-tree></a>

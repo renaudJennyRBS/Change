@@ -1398,10 +1398,6 @@ th label {
 }
 
 
-.navbar-indicators {
-
-}
-
 .navbar-indicators > li {
 	border-left: 1px solid black;
 	background: rgba(255,255,255,0.1);
