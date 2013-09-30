@@ -25,6 +25,18 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach('process_Rbs_Workflow_ExecuteDeadLineTask', $callback, 5);
 
+		$callback = function (Event $event)
+		{
+			(new \Rbs\Workflow\Job\DocumentCleanUp())->cleanUp($event);
+		};
+		$events->attach('process_Change_Document_CleanUp', $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			(new \Rbs\Workflow\Job\DocumentCleanUp())->localizedCleanUp($event);
+		};
+		$events->attach('process_Change_Document_LocalizedCleanUp', $callback, 5);
+
 		$callBack = function ($event)
 		{
 			(new \Rbs\Timeline\Job\SendTemplateMail())->execute($event);
