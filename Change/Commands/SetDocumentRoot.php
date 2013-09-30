@@ -31,6 +31,6 @@ class SetDocumentRoot
 		$cmd = new \Change\Http\InitHttpFiles($application, $resourcePath);
 		$cmd->initializeControllers($path, $resourcePath);
 		$event->addInfoMessage('Document root path: "' . $path . '" is now set.');
-
+		$event->addInfoMessage('Resource path: "' . $resourcePath . '" is now set.');
 	}
 }
