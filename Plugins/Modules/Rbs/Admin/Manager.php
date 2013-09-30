@@ -296,6 +296,11 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function prepareImageAssets($resourceDirectoryPath)
 	{
+		if (!$resourceDirectoryPath)
+		{
+			return;
+		}
+
 		$plugin = $this->getApplicationServices()->getPluginManager()->getModule('Rbs', 'Admin');
 		$srcPath = $plugin->getBasePath() . '/Assets/img';
 		$targetPath = $resourceDirectoryPath . '/img';
