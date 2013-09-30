@@ -393,25 +393,7 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	public function getDefaultDocumentPathInfo($document, $section)
 	{
-		if ($document instanceof \Change\Presentation\Interfaces\Website)
-		{
-			return '';
-		}
-		$path = 'document/';
-
-		$documentId = is_numeric($document) ? intval($document) : $document->getId();
-		if ($document instanceof \Change\Presentation\Interfaces\Section)
-		{
-			return $path . $documentId . '/';
-		}
-
-		if ($section instanceof \Change\Presentation\Interfaces\Section)
-		{
-			$path .= $section->getId(). '/';
-		}
-
-		$path .= $documentId . '.html';
-		return $path;
+		return $this->getPathRuleManager()->getDefaultRelativePath($document, $section);
 	}
 
 	/**

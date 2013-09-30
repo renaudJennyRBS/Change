@@ -295,4 +295,45 @@ class PathRuleManager
 		$iq->execute();
 		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
 	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument|integer $document
+	 * @param \Change\Presentation\Interfaces\Section|integer $section
+	 * @throws \InvalidArgumentException
+	 * @return string
+	 */
+	public function getDefaultRelativePath($document, $section)
+	{
+		if ($document instanceof \Change\Presentation\Interfaces\Website)
+		{
+			return '';
+		}
+		elseif ($document instanceof \Change\Presentation\Interfaces\Section)
+		{
+			return 'document/' . $document->getId() . '/';
+		}
+		elseif ($document instanceof \Change\Documents\AbstractDocument)
+		{
+			$documentId = $document->getId();
+		}
+		elseif (is_numeric($document))
+		{
+			$documentId = intval($document);
+		}
+		else
+		{
+			throw new \InvalidArgumentException('Invalid document', 999999);
+		}
+
+		$path = 'document/';
+		if (is_numeric($section) && $section > 0)
+		{
+			$path .= intval($section) . '/';
+		}
+		elseif ($section instanceof \Change\Presentation\Interfaces\Section)
+		{
+			$path .= $section->getId() . '/';
+		}
+		return $path . $documentId . '.html';
+	}
 }

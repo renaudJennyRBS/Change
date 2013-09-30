@@ -63,11 +63,17 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 
 	protected function updateDBRules()
 	{
+		$pathRuleManager = new \Change\Http\Web\PathRuleManager($this->getApplicationServices());
 		$toAdd = array();
 		$toUpdate = array();
 		foreach ($this->rules as $rule)
 		{
-			if ($rule['rule_id'] < 0)
+			// Never save a rule with the default relative path.
+			if ($pathRuleManager->getDefaultRelativePath($this->getTarget(), $rule['section_id']) == $rule['relative_path'])
+			{
+				continue;
+			}
+			elseif ($rule['rule_id'] < 0)
 			{
 				$toAdd[] = $rule;
 			}
@@ -77,7 +83,6 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			}
 		}
 
-		$pathRuleManager = new \Change\Http\Web\PathRuleManager($this->getApplicationServices());
 		foreach ($toUpdate as $rule)
 		{
 			$pathRuleManager->updateRuleStatus($rule['rule_id'], $rule['http_status']);
@@ -141,7 +146,7 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			$ruleInfos = array(
 				'id' => $rule['rule_id'],
 				'relativePath' => $rule['relative_path'],
-				'query' => $rule['query']
+				'query' => strval($rule['query'])
 			);
 			switch ($rule['http_status'])
 			{
@@ -198,6 +203,22 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 						'redirects' => array()
 					);
 
+					/* @var $target \Change\Documents\AbstractDocument */
+					$um->setAbsoluteUrl(true);
+					$pathRule = new \Change\Http\Web\PathRule();
+					$pathRule->setWebsiteId($website->getId())
+						->setLCID($LCID)
+						->setDocumentId($target->getId())
+						->setSectionId($canonical ? 0 : $section->getId())
+						->setHttpStatus(200);
+					$defaultUrl = array(
+						'id' => 'auto',
+						'relativePath' => $um->evaluateRelativePath($target, $pathRule),
+						'query' => '',
+						'defaultRelativePath' => $um->getDefaultDocumentPathInfo($target, ($canonical ? null : $section))
+					);
+					$location['defaultUrl'] = $defaultUrl;
+
 					$key = $sectionId . '-' . $website->getId() . '-' . $LCID;
 					if (isset($rules[$key]['urls']))
 					{
@@ -205,20 +226,7 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 					}
 					else
 					{
-						/* @var $target \Change\Documents\AbstractDocument */
-						$um->setAbsoluteUrl(true);
-						$pathRule = new \Change\Http\Web\PathRule();
-						$pathRule->setWebsiteId($website->getId())
-							->setLCID($LCID)
-							->setDocumentId($target->getId())
-							->setSectionId($canonical ? 0 : $section->getId())
-							->setHttpStatus(200);
-						$location['urls'][] = $ruleInfos = array(
-							'id' => 'auto',
-							'relativePath' => $um->evaluateRelativePath($target, $pathRule),
-							'query' => '',
-							'defaultRelativePath' => $um->getDefaultDocumentPathInfo($target, ($canonical ? null : $section))
-						);
+						$location['urls'][] = $defaultUrl;
 					}
 
 					if (isset($rules[$key]['redirects']))

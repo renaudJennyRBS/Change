@@ -161,6 +161,18 @@ class Listeners implements ListenerAggregateInterface
 				}
 				return;
 			}
+			else if (preg_match('#^resources/Rbs/Seo/DocumentSeo/([0-9]+)/CheckRelativePath$#', $relativePath, $matches))
+			{
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setParam('websiteId', $event->getRequest()->getPost()->get("websiteId"));
+				$event->setParam('LCID', $event->getRequest()->getPost()->get("LCID"));
+				$event->setParam('relativePath', $event->getRequest()->getPost()->get("relativePath"));
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Seo\Http\Rest\Actions\CheckRelativePath())->execute($event);
+				});
+				return;
+			}
 
 			switch ($relativePath)
 			{

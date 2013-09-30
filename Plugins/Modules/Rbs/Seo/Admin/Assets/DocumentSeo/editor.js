@@ -9,7 +9,7 @@
 	 * @param REST
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST)
+	function Editor($timeout, $http, Loading, REST, NotificationCenter)
 	{
 		return {
 			restrict : 'C',
@@ -90,11 +90,42 @@
 					scope.oldValues[key] = null;
 				};
 
+				var pushItem = function(locationIndex, type, item)
+				{
+					scope.document.locations[locationIndex][type].push(item);
+					scope.displayConfig[locationIndex][type].push({ 'edit': false });
+				};
+
 				var deleteItem = function(locationIndex, type, index)
 				{
-					deleteRule(locationIndex, type, index);
 					scope.document.locations[locationIndex][type].splice(index, 1);
 					scope.displayConfig[locationIndex][type].splice(index, 1);
+				};
+
+				var removeRedirectByRelativePath = function(locationIndex, relativePath)
+				{
+					var length = scope.document.locations[locationIndex].redirects.length;
+					for (var i = 0; i < length; i++)
+					{
+						if (scope.document.locations[locationIndex].redirects[i].relativePath == relativePath)
+						{
+							showRedirects(locationIndex);
+							scope.deleteRedirect(locationIndex, i);
+						}
+					}
+				};
+
+				var addRedirectFromOldValues = function(locationIndex, index)
+				{
+					showRedirects(locationIndex);
+					scope.document.locations[locationIndex].redirects.push({
+						'id': scope.oldValues[locationIndex + 'urls' + index].id,
+						'relativePath': scope.oldValues[locationIndex + 'urls' + index].relativePath,
+						'query': scope.oldValues[locationIndex + 'urls' + index].query,
+						'permanent': true
+					});
+					scope.displayConfig[locationIndex].redirects.push({ 'edit': false });
+					addRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
 				};
 
 				var deleteRule = function(locationIndex, type, index)
@@ -118,7 +149,18 @@
 							}
 						}
 					}
-				}
+				};
+
+				var isDeletedRule = function(ruleId)
+				{
+					for (var i = 0; i < scope.document.rules.length; i++)
+					{
+						if (scope.document.rules[i].rule_id == ruleId && scope.document.rules[i].http_status == 404)
+						{
+							return true;
+						}
+					}
+				};
 
 				var addRule = function(locationIndex, type, index)
 				{
@@ -132,7 +174,7 @@
 						'relative_path': item.relativePath,
 						'query': item.query
 					});
-				}
+				};
 
 				var updateRule = function(locationIndex, type, index)
 				{
@@ -148,9 +190,14 @@
 							break;
 						}
 					}
-				}
+				};
 
 				// URLs handling.
+				scope.getHref = function (location, url)
+				{
+					return location.baseUrl + location.defaultUrl.defaultRelativePath + (url.query ? ('?' + url.query) : '');
+				};
+
 				scope.startEditUrl = function (locationIndex, index)
 				{
 					saveOldValue(locationIndex, 'urls', index);
@@ -159,57 +206,61 @@
 
 				scope.undoEditUrl = function (locationIndex, index)
 				{
+					NotificationCenter.clear();
 					restoreOldValue(locationIndex, 'urls', index);
 					scope.displayConfig[locationIndex].urls[index].edit = false;
 				};
 
 				scope.updateUrl = function (locationIndex, index)
 				{
-					if (isModified(locationIndex, 'urls', index))
-					{
-						// Remove potential redirect with the same relative path.
-						var newRelativePath = scope.document.locations[locationIndex].urls[index].relativePath;
-						var length = scope.document.locations[locationIndex].redirects.length;
-						for (var i = 0; i < length; i++)
+					NotificationCenter.clear();
+					var url = REST.getBaseUrl('resources/Rbs/Seo/DocumentSeo/' + scope.document.id + '/CheckRelativePath');
+					$http.get(url).success(function (data){
+						var ruleId = scope.document.locations[locationIndex].urls[index].id;
+						if (data === null || ruleId == data.rule_id || isDeletedRule(data.rule_id))
 						{
-							if (scope.document.locations[locationIndex].redirects[i].relativePath == newRelativePath)
+							if (isModified(locationIndex, 'urls', index))
 							{
-								showRedirects(locationIndex);
-								scope.deleteRedirect(locationIndex, i);
+								// Remove potential redirect with the same relative path.
+								var newRelativePath = scope.document.locations[locationIndex].urls[index].relativePath;
+								removeRedirectByRelativePath(locationIndex, newRelativePath);
+
+								// Add the redirect to the old URL.
+								if (ruleId !== 'auto')
+								{
+									addRedirectFromOldValues(locationIndex, index);
+								}
+								scope.document.locations[locationIndex].urls[index].id = scope.newRuleLastId--;
+								addRule(locationIndex, 'urls', index);
 							}
-						}
 
-						// Add the redirect to the old URL.
-						if (scope.document.locations[locationIndex].urls[index].id !== 'auto')
-						{
-							showRedirects(locationIndex);
-							scope.document.locations[locationIndex].redirects.push({
-								'id': scope.document.locations[locationIndex].urls[index].id,
-								'relativePath': scope.oldValues[locationIndex + 'urls' + index].relativePath,
-								'query': scope.oldValues[locationIndex + 'urls' + index].query,
-								'permanent': true
-							});
-							scope.displayConfig[locationIndex].redirects.push({ 'edit': false });
-
-							scope.document.locations[locationIndex].urls[index].id = scope.newRuleLastId--;
-							addRule(locationIndex, 'urls', index);
-
-							updateRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
+							scope.oldValues[locationIndex + 'urls' + index] = null;
+							scope.displayConfig[locationIndex].urls[index].edit = false;
 						}
 						else
 						{
-							scope.document.locations[locationIndex].urls[index].id = scope.newRuleLastId--;
-							addRule(locationIndex, 'urls', index);
+							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
 						}
-					}
-
-					scope.oldValues[locationIndex + 'urls' + index] = null;
-					scope.displayConfig[locationIndex].urls[index].edit = false;
+					});
 				};
 
-				scope.deleteUrl = function (locationIndex, index)
+				scope.restoreDefaultUrl = function (locationIndex, index)
 				{
-					deleteItem(locationIndex, 'urls', index);
+					// Set the default URL.
+					saveOldValue(locationIndex, 'urls', index);
+					deleteRule(locationIndex, 'urls', index);
+					var defaultUrl = scope.document.locations[locationIndex].defaultUrl;
+					scope.document.locations[locationIndex].urls[index].id = defaultUrl.id;
+					scope.document.locations[locationIndex].urls[index].relativePath = defaultUrl.relativePath;
+
+					// Remove potential redirect with the same relative path.
+					removeRedirectByRelativePath(locationIndex, defaultUrl.relativePath);
+
+					// Add the redirect to the old URL.
+					addRedirectFromOldValues(locationIndex, index);
+					showRedirects(locationIndex);
+
+					scope.oldValues[locationIndex + 'urls' + index] = null;
 				};
 
 				// Redirects handling.
@@ -221,47 +272,97 @@
 
 				scope.undoEditRedirect = function (locationIndex, index)
 				{
+					NotificationCenter.clear();
 					restoreOldValue(locationIndex, 'redirects', index);
 					scope.displayConfig[locationIndex].redirects[index].edit = false;
 				};
 
 				scope.updateRedirect = function (locationIndex, index)
 				{
-					if (scope.document.locations[locationIndex].redirects[index].id > 0)
-					{
-						deleteRule(locationIndex, 'redirects', index);
-						scope.document.locations[locationIndex].redirects[index].id = scope.newRuleLastId--;
-						addRule(locationIndex, 'redirects', index);
-					}
-					else
-					{
-						updateRule(locationIndex, 'redirects', index);
-					}
-					scope.oldValues[locationIndex + 'redirects' + index] = null;
-					scope.displayConfig[locationIndex].redirects[index].edit = false;
+					NotificationCenter.clear();
+					var url = REST.getBaseUrl('resources/Rbs/Seo/DocumentSeo/' + scope.document.id + '/CheckRelativePath');
+					$http.get(url).success(function (data){
+						var ruleId = scope.document.locations[locationIndex].redirects[index].id;
+						if (data === null || ruleId == data.rule_id || isDeletedRule(data.rule_id))
+						{
+							if (ruleId > 0)
+							{
+								deleteRule(locationIndex, 'redirects', index);
+								scope.document.locations[locationIndex].redirects[index].id = scope.newRuleLastId--;
+								addRule(locationIndex, 'redirects', index);
+							}
+							else
+							{
+								updateRule(locationIndex, 'redirects', index);
+							}
+							scope.oldValues[locationIndex + 'redirects' + index] = null;
+							scope.displayConfig[locationIndex].redirects[index].edit = false;
+						}
+						else
+						{
+							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+						}
+					});
 				};
 
 				scope.deleteRedirect = function (locationIndex, index)
 				{
+					deleteRule(locationIndex, 'redirects', index);
 					deleteItem(locationIndex, 'redirects', index);
+				};
+
+				scope.makeCurrentUrl = function (locationIndex, index)
+				{
+					var redirect = scope.document.locations[locationIndex].redirects[index];
+					deleteItem(locationIndex, 'redirects', index);
+
+					var length = scope.document.locations[locationIndex].urls.length;
+					for (var i = 0; i < length; i++)
+					{
+						var url = scope.document.locations[locationIndex].urls[i];
+						if (url.query == redirect.query)
+						{
+							deleteItem(locationIndex, 'urls', i);
+							url.http_status = 301;
+							pushItem(locationIndex, 'redirects', url);
+							updateRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
+							break;
+						}
+					}
+
+					redirect.http_status = 200;
+					pushItem(locationIndex, 'urls', redirect);
+					updateRule(locationIndex, 'urls', scope.document.locations[locationIndex].urls.length-1);
 				};
 
 				scope.addNewRedirect = function (locationIndex)
 				{
-					scope.document.locations[locationIndex].redirects.push({
-						'id': scope.newRuleLastId--,
-						'relativePath': scope.newRedirect[locationIndex].relativePath,
-						'query': scope.newRedirect[locationIndex].query,
-						'permanent': scope.newRedirect[locationIndex].permanent
-					});
+					NotificationCenter.clear();
+					var url = REST.getBaseUrl('resources/Rbs/Seo/DocumentSeo/' + scope.document.id + '/CheckRelativePath');
+					$http.get(url).success(function (data){
+						if (data === null || isDeletedRule(data.rule_id))
+						{
+							scope.document.locations[locationIndex].redirects.push({
+								'id': scope.newRuleLastId--,
+								'relativePath': scope.newRedirect[locationIndex].relativePath,
+								'query': scope.newRedirect[locationIndex].query,
+								'permanent': scope.newRedirect[locationIndex].permanent
+							});
 
-					addRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
-					scope.displayConfig[locationIndex].redirects.push({ 'edit': false });
-					scope.clearNewRedirect(locationIndex);
+							addRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
+							scope.displayConfig[locationIndex].redirects.push({ 'edit': false });
+							scope.clearNewRedirect(locationIndex);
+						}
+						else
+						{
+							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+						}
+					});
 				};
 
 				scope.clearNewRedirect = function (locationIndex)
 				{
+					NotificationCenter.clear();
 					scope.newRedirect[locationIndex] = {'relativePath': '', 'permanent': true, 'query': ''};
 				};
 
@@ -270,6 +371,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.NotificationCenter'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
 })();

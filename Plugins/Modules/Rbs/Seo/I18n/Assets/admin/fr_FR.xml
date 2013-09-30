@@ -20,7 +20,7 @@
 	<key id="detail-function-not-provided-in-lang">La fonction détail n'est pas assurée dans cette section pour cette langue.</key>
 
 	<key id="edit-url">modifier cette URL</key>
-	<key id="remove-url">supprimer cette URL</key>
+	<key id="restore-default-url">revenir à l'URL par défaut</key>
 	<key id="validate-url">valider les modifications</key>
 	<key id="undo-edit-url">annuler les modifications</key>
 	<key id="edit-redirect">modifier cette redirection</key>
@@ -29,4 +29,5 @@
 	<key id="undo-edit-redirect">annuler les modifications</key>
 	<key id="add-new-redirect">ajouter cette redirection</key>
 	<key id="clear-new-redirect">réinitialiser cette redirection</key>
+	<key id="make-current-url">utiliser comme URL courante</key>
 </i18n>
