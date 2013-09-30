@@ -374,27 +374,36 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 						$themeShortName = $matches[2];
 						$path = $matches[3];
 						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						$resourceFilePath = $theme->getResourceFilePath($path);
-						if (file_exists($resourceFilePath))
+						if ($theme)
 						{
-							$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
-							if (substr($resourceFilePath, -4) === '.css')
+							$resourceFilePath = $theme->getResourceFilePath($path);
+							if (file_exists($resourceFilePath))
 							{
-								$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
-								$asset->ensureFilter($filter);
+								$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
+								if (substr($resourceFilePath, -4) === '.css')
+								{
+									$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
+									$asset->ensureFilter($filter);
+								}
+								elseif (substr($resourceFilePath, -5) === '.less')
+								{
+									$filter = new \Assetic\Filter\LessphpFilter();
+									$asset->ensureFilter($filter);
+									$asset->setTargetPath($assetUrl . '.css');
+								}
+								if (!$asset->getTargetPath())
+								{
+									$asset->setTargetPath($assetUrl);
+								}
+								$name = $this->normalizeAssetName($assetUrl);
+								$am->set($name, $asset);
 							}
-							elseif (substr($resourceFilePath, -5) === '.less')
-							{
-								$filter = new \Assetic\Filter\LessphpFilter();
-								$asset->ensureFilter($filter);
-								$asset->setTargetPath($assetUrl . '.css');
-							}
-							if (!$asset->getTargetPath())
-							{
-								$asset->setTargetPath($assetUrl);
-							}
-							$name = $this->normalizeAssetName($assetUrl);
-							$am->set($name, $asset);
+						}
+						else
+						{
+							$this->getPresentationServices()->getApplicationServices()->getLogging()->warn(
+								'Assetic Manager is not complete, couldn\'t find the the theme: ' . $themeVendor . '_' . $themeShortName . '. Is it actually installed?'
+							);
 						}
 					}
 				}
