@@ -103,31 +103,55 @@
 								<td>
 									(= row[0].title =)
 								</td>
+
 								<td data-ng-show="row[1].declination">
-									<div data-ng-switch="row[1].id">
-										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+									<div data-ng-show="row[1].removed">
+										<a href ng-click="addDeclination(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-hide="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.add-axe', ['ucf']) }}</span>
-											<span data-ng-show="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-axe', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.document.declinationgroup.add-axe', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-axe', ['ucf']) }}</span>
 										</a>
-										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="selectDeclinationId(row[1].id)">
-											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}</a>
-										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
-											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}</a>
+									</div>
+									<div data-ng-hide="row[1].removed">
+										<a href data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.document.declinationgroup.add-axe', ['ucf']) }}
+										</a>
+
+										<a href data-ng-show="row[1].id != 0" ng-click="selectDeclinationId(row[1].id)">
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}
+										</a>
+
+										<a href data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}
+										</a>
 									</div>
 								</td>
+
 								<td data-ng-hide="row[1].declination">
-										<a href="javascript:;" data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+									<div data-ng-show="row[1].removed">
+										<a href ng-click="addDeclination(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-hide="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.add-product', ['ucf']) }}</span>
-											<span data-ng-show="row[1].removed">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-product', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.document.declinationgroup.add-product', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.document.declinationgroup.restore-product', ['ucf']) }}</span>
 										</a>
-										<a href="javascript:;" data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
-											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}</a>
+									</div>
+									<div data-ng-hide="row[1].removed">
+
+										<a href data-ng-show="row[1].id == 0" ng-click="addDeclination(row[1])">
+											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.document.declinationgroup.add-product', ['ucf']) }}
+										</a>
+
+										<a href data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.edit-action', ['ucf']) }}
+										</a>
+
 										<span data-ng-show="row[1].id < 0" ng-click="editProduct(row[1])">
 											<i class="icon-info-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.to-generate-product', ['ucf']) }}</span>
-										<a href="javascript:;" data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
-											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}</a>
+
+										<a href data-ng-show="row[1].id != 0" ng-click="deleteDeclination(row[1])">
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.declinationgroup.delete-action', ['ucf']) }}
+										</a>
+									</div>
 								</td>
 							</tr>
 							<tr>
