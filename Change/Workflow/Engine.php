@@ -155,7 +155,7 @@ class Engine
 		else
 		{
 			$workItem->cancel($this->dateTime);
-			$this->workflowInstance->cancel($this->dateTime);
+			$this->cancel();
 		}
 	}
 
@@ -260,7 +260,7 @@ class Engine
 				else
 				{
 					//TODO WORKFLOW DESIGN ERROR
-					$this->workflowInstance->cancel($this->dateTime);
+					$this->cancel();
 				}
 			}
 			else
@@ -282,7 +282,7 @@ class Engine
 		else
 		{
 			//TODO WORKFLOW DESIGN ERROR
-			$this->workflowInstance->cancel($this->dateTime);
+			$this->cancel();
 		}
 	}
 
@@ -346,5 +346,13 @@ class Engine
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @api
+	 */
+	public function cancel()
+	{
+		$this->workflowInstance->cancel($this->dateTime);
 	}
 }

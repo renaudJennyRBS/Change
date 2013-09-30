@@ -37,4 +37,6 @@
 	<key id="section-declination">déclinaison</key>
 	<key id="declinationgroup">spécifications de déclinaison</key>
 	<key id="declinationgroup-picker-title">sélectionner les spécifications de déclinaison</key>
+
+	<key id="variant">variante</key>
 </i18n>

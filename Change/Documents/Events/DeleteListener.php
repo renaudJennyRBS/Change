@@ -146,6 +146,33 @@ class DeleteListener
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName()));
 	}
 
+	/**
+	 * @param DocumentEvent $event
+	 */
+	public function onLocalizedDeleted($event)
+	{
+		if (!($event instanceof DocumentEvent))
+		{
+			return;
+		}
+
+		$document = $event->getDocument();
+		if ($document === null || ($model = $document->getDocumentModel()) === null || $model->isStateless())
+		{
+			return;
+		}
+
+		$documentServices = $document->getDocumentServices();
+		$jobManager = new \Change\Job\JobManager();
+		$jobManager->setApplicationServices($documentServices->getApplicationServices());
+		$jobManager->setDocumentServices($documentServices);
+
+		$jobManager->createNewJob('Change_Document_LocalizedCleanUp',
+			array('id' => $document->getId(), 'model' => $document->getDocumentModelName(),
+				'LCID' => $documentServices->getDocumentManager()->getLCID()));
+
+	}
+
 	public function onCleanUp(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
@@ -164,7 +191,6 @@ class DeleteListener
 			$event->failed('Document Model ' . $modelName . ' not found');
 			return;
 		}
-
 
 		$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
 		try

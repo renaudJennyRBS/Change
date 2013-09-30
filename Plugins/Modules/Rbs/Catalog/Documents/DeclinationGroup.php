@@ -92,6 +92,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 		if ($product instanceof Product)
 		{
 			$product->setCategorizable(true);
+			$product->setVariant(false);
 			$product->setDeclinationGroup($declinationGroup);
 			$product->update();
 		}
@@ -153,8 +154,10 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 				$product->setLabel($this->getLabel() . ' - ' . $this->buildProductLabel($entry, $pmi, $axesInfo, 'label'));
 				$product->getCurrentLocalization()->setTitle($product->getLabel());
 				$product->setDeclinationGroup($this);
+				$product->setAttribute($this->getAxeAttribute());
 				$product->setAttributeValues($axesValues);
 				$product->setCategorizable(($axesInfo[$entry['axeId']]['cat'] == true));
+				$product->setVariant(true);
 				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['declination']);
 				$product->create();
 				$added[$entry['id']] = $product->getId();

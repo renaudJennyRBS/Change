@@ -109,17 +109,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
 	 * @param array $context
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Interfaces\Cart
 	 */
-	public function getNewCart($billingArea = null, $zone = null, array $context = array())
+	public function getNewCart($webStore = null, $billingArea = null, $zone = null, array $context = array())
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(
-			array('commerceServices' => $this->getCommerceServices(),
+			array('commerceServices' => $this->getCommerceServices(), 'webStore' => $webStore,
 				'billingArea' => $billingArea, 'zone' => $zone, 'context' => $context));
 		$this->getEventManager()->trigger('getNewCart', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)

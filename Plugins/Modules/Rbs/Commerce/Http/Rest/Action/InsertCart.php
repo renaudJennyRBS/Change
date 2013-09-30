@@ -27,12 +27,18 @@ class InsertCart
 				$billingArea = null;
 			}
 
+			$webStore = $commerceServices->getWebStore();
+			if (isset($args['webStoreId']))
+			{
+				$webStore = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($args['webStoreId'], 'Rbs_Store_WebStore');
+			}
+
 			$zone = (isset($args['zone'])) ? strval($args['zone']) : null;
 			$context = isset($args['context']) && is_array($args['context']) ? $args['context'] : array();
-			$cart = $commerceServices->getCartManager()->getNewCart($billingArea, $zone, $context);
+			$cart = $commerceServices->getCartManager()->getNewCart($webStore, $billingArea, $zone, $context);
 			$event->setParam('cartIdentifier', $cart->getIdentifier());
 
-			if (isset($args['webStoreId']) || isset($args['ownerId']) || isset($args['lines']))
+			if (isset($args['ownerId']) || isset($args['lines']))
 			{
 				$this->populateCart($commerceServices, $cart, $args);
 				$commerceServices->getCartManager()->saveCart($cart);
@@ -56,15 +62,6 @@ class InsertCart
 	 */
 	protected function populateCart($commerceServices, $cart, $cartData)
 	{
-		if (isset($cartData['webStoreId']))
-		{
-			$cart->setWebStoreId($cartData['webStoreId']);
-		}
-		elseif (array_key_exists('webStoreId', $cartData))
-		{
-			$cart->setWebStoreId(null);
-		}
-
 		if (isset($cartData['ownerId']))
 		{
 			$cart->setOwnerId($cartData['ownerId']);

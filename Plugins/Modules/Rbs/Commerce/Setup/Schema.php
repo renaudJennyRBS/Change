@@ -30,6 +30,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newNumericFieldDefinition('price_value')->setNullable(true))
 				->addField($schemaManager->newNumericFieldDefinition('price_value_with_tax')->setNullable(true))
+				->addField($schemaManager->newVarCharFieldDefinition('currency_code', array('length' => 3))->setNullable(true))
 				->addField($schemaManager->newIntegerFieldDefinition('line_count')->setNullable(true)->setDefaultValue('0'))
 				->addField($schemaManager->newLobFieldDefinition('cart_data')->setNullable(true))
 				->addField($schemaManager->newBooleanFieldDefinition('locked')->setNullable(false)->setDefaultValue('0'))

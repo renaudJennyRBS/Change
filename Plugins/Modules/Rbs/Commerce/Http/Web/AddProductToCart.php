@@ -30,7 +30,8 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
 		if (isset($arguments['product']))
 		{
-			$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($arguments['product']);
+			$dm = $event->getDocumentServices()->getDocumentManager();
+			$product = $dm->getDocumentInstance($arguments['product']);
 			if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
 			{
 				$cartLineConfig = $product->getCartLineConfig($commerceServices, $arguments);
@@ -41,36 +42,31 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
 					if (!($cart instanceof \Rbs\Commerce\Interfaces\Cart))
 					{
-						$webStoreId = 0;
 						if (isset($arguments['webStoreId']))
 						{
-							$webStoreId = intval($arguments['webStoreId']);
+							$webStore = $dm->getDocumentInstance(intval($arguments['webStoreId']), 'Rbs_Store_WebStore');
+							unset($arguments['webStoreId']);
 						}
 						elseif (isset($arguments['options']['webStoreId']))
 						{
-							$webStoreId = intval($arguments['options']['webStoreId']);
+							$webStore = $dm->getDocumentInstance(intval($arguments['options']['webStoreId']), 'Rbs_Store_WebStore');
+							unset($arguments['options']['webStoreId']);
 						}
 						else
 						{
 							$webStore = $commerceServices->getWebStore();
-							if ($webStore)
-							{
-								$webStoreId = $webStore->getId();
-							}
 						}
 
-						if (!$webStoreId)
+						if (!$webStore)
 						{
 							$e = new \RuntimeException('Web Store is not defined.', 999999);
 							$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
 							throw $e;
 						}
 
-						$context = array('webStoreId' => $webStoreId);
 						$context['ownerId'] = $event->getAuthenticationManager()->getCurrentUser()->getId();
 
-						$cart = $commerceServices->getCartManager()->getNewCart(null, null, $context);
-
+						$cart = $commerceServices->getCartManager()->getNewCart($webStore, null, null, $context);
 						$commerceServices->setCartIdentifier($cart->getIdentifier());
 						$commerceServices->save();
 					}

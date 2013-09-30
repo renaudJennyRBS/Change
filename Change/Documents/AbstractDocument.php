@@ -178,6 +178,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Documents\DocumentManager
 	 */
 	public function getDocumentManager()
@@ -186,9 +187,10 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Application\ApplicationServices
 	 */
-	protected function getApplicationServices()
+	public function getApplicationServices()
 	{
 		return $this->documentServices->getApplicationServices();
 	}

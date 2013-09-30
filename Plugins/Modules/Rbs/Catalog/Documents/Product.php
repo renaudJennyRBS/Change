@@ -67,6 +67,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		}
 	}
 
+	protected $ignoredPropertiesForRestEvents = array('model', 'declinationGroup', 'declination');
+
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
