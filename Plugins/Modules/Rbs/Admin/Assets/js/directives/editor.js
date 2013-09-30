@@ -308,7 +308,9 @@
 								wrappingFormScope.document = $scope.document;
 							}
 
-							MainMenu.addTranslations($scope.document, $scope);
+							if ($scope.modelInfo.metas.localized) {
+								MainMenu.addTranslations($scope.document, $scope);
+							}
 						}
 					}
 
