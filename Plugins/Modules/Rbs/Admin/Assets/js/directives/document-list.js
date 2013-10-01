@@ -118,7 +118,25 @@
 				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i ng-class="{\'icon-chevron-up\':hasWorkflow($index), \'icon-chevron-down\':!hasWorkflow($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
 			}
 
-			if (__quickActions[dlid]) {
+			function buildForSelectSession (multiple) {
+				var html = '<a href="javascript:;" ng-click="selectSession.use(doc)">' +
+					i18n.trans('m.rbs.admin.admin.js.select') +
+					'</a>';
+
+				if (multiple) {
+					html += actionDivider +
+						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
+						i18n.trans('m.rbs.admin.admin.js.select-add') +
+						'</a>';
+				}
+
+				return html;
+			}
+
+			if (SelectSession.started()) {
+				html += buildPreviewAction() + actionDivider + buildForSelectSession(SelectSession.info().multiple);
+			}
+			else if (__quickActions[dlid]) {
 				if (__quickActions[dlid].divider) {
 					actionDivider = __quickActions[dlid].divider;
 				}
@@ -580,9 +598,14 @@
 						end : SelectSession.end,
 						cancel : SelectSession.rollback,
 						clear : SelectSession.clear,
-						append : function () {
+						append : SelectSession.append,
+						appendSelected : function () {
 							SelectSession.append(scope.selectedDocuments);
-							scope.allSelected = false;
+							deselectAll();
+							return this;
+						},
+						use : function (doc) {
+							SelectSession.append(doc).end();
 						}
 					};
 
@@ -682,7 +705,7 @@
 						scope.allSelected = {
 							'cb' : false
 						};
-						scope.$watch('allSelected', function (value) {
+						scope.$watch('allSelected', function () {
 							angular.forEach(scope.collection, function (doc) {
 								doc.selected = scope.allSelected.cb;
 							});
@@ -692,6 +715,15 @@
 						updateSelectedDocuments();
 					}
 
+
+					function deselectAll () {
+						scope.allSelected.cb = false;
+						angular.forEach(scope.collection, function (doc) {
+							if (doc.selected) {
+								doc.selected = false;
+							}
+						});
+					}
 
 					//
 					// Actions.

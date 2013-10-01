@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsiteMenu(Breadcrumb, REST, $routeParams, $q) {
+	function changeEditorWebsiteMenu(Breadcrumb, REST, $routeParams, $q, UrlManager) {
 
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
 			ALL_REGEXP = /^.+$/;
@@ -21,12 +21,13 @@
 				scope.onReady = function () {
 					var website = scope.document.website;
 					if (website) {
-						Breadcrumb.setPath([[website.label, website.url('menus')]]);
+						console.log("website=", website);
+						Breadcrumb.setPath([[website.label, UrlManager.getUrl(website, null, 'menus')]]);
 					}
 					else {
 						scope.$watch('document.website', function (website, old) {
 							if (website && website !== old) {
-								Breadcrumb.setPath([[website.label, website.url('menus')]]);
+								Breadcrumb.setPath([[website.label, UrlManager.getUrl(website, null, 'menus')]]);
 							}
 						}, true);
 					}
@@ -95,7 +96,7 @@
 		};
 	}
 
-	changeEditorWebsiteMenu.$inject = ['RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams', '$q'];
+	changeEditorWebsiteMenu.$inject = ['RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams', '$q', 'RbsChange.UrlManager'];
 
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteMenu', changeEditorWebsiteMenu);
 })();

@@ -25,7 +25,7 @@
 
 
 	app.run(['$templateCache', function($templateCache) {
-		$templateCache.put('picker-item-Rbs_Media_Image.html', '<img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =))');
+		$templateCache.put('picker-item-Rbs_Media_Image.html', '<span style="line-height: 30px"><img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =))</span>');
 	}]);
 
 

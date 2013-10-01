@@ -22,4 +22,16 @@
 	<key id="close-all-previews">fermer tous les aperçus</key>
 
 	<key id="replace-by-this">Remplacer par cet élément</key>
+
+	<key id="elements-selection">sélection d'éléments</key>
+	<key id="for-property">pour la propriété</key>
+	<key id="of">de</key>
+	<key id="compose-selection-message">Composez votre sélection à l'aide de la liste ci-dessous. Vous pouvez même changer de module et revenir ici pour finaliser votre sélection.</key>
+	<key id="selection-is-empty-now">Votre sélection est vide pour l'instant.</key>
+	<key id="validate-selection">Valider la sélection</key>
+	<key id="cancel-selection">Annuler</key>
+	<key id="add-selected-elements">Ajouter les éléments sélectionnés</key>
+	<key id="clear-selection">Vider</key>
+
+	<key id="preview-tip" format="html"><![CDATA[Survolez les lignes dans la liste ci-dessous pour afficher des options et prévisualiser les documents.<br/>Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu</strong> tout en laissant la touche <strong>[Shift]</strong> appuyée.]]></key>
 </i18n>

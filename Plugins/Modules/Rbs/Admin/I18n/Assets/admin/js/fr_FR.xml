@@ -84,4 +84,7 @@
 	<key id="reference-language">langue de référence</key>
 	<key id="translate-in">traduire en</key>
 
+	<key id="select">sélectionner</key>
+	<key id="select-add">ajouter à la sélection</key>
+
 </i18n>

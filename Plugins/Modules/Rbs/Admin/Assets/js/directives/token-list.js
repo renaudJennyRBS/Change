@@ -4,17 +4,28 @@
 
 	var	app = angular.module('RbsChange');
 
-	app.directive('tokenList', ['RbsChange.ArrayUtils', '$filter', '$templateCache', function (ArrayUtils, $filter, $templateCache) {
 
+	app.run(['$templateCache', function ($templateCache)
+	{
+		if (! $templateCache.get('picker-item-default.html')) {
+			$templateCache.put('picker-item-default.html', '(= item.label =)');
+		}
+	}]);
+
+
+	app.directive('tokenList', ['RbsChange.ArrayUtils', '$filter', '$templateCache', function (ArrayUtils, $filter, $templateCache)
+	{
 		return {
 			restrict : 'E',
 			replace  : true,
 			template :
 				'<ul class="token-list">' +
 					'<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
-						'<a ng-hide="readonly" href="javascript:;" class="delete" ng-click="remove($index)"><i class="icon-remove"></i></a>' +
-						'<span data-role="item-display">(= getItemLabel(item) =)</span>' +
-						'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="Glisser pour réorganiser"></i>' +
+						'<span class="pull-right actions">' +
+							'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="Glisser pour réorganiser"></i>' +
+							'<a ng-hide="readonly" href="javascript:;" ng-click="remove($index)"><i class="icon-remove icon-large"></i></a>' +
+						'</span>' +
+						'<span ng-include="getItemTemplateName(item)"></span>' +
 					'</li>' +
 				'</ul>',
 
@@ -25,64 +36,27 @@
 
 			compile : function (tElement, tAttrs)
 			{
-				if (tElement.attr('rows') === 'true') {
+				if (tAttrs.rows === 'true') {
 					tElement.addClass('rows');
-				}
-
-				if (tAttrs.itemTemplate) {
-					var tpl, el;
-					if (tAttrs.itemTemplate.substr(0, 8) === 'element:') {
-						tpl = $templateCache.get(tAttrs.itemTemplate.substr(8));
-						if (tpl) {
-							el = tElement.find('li').first();
-						}
-					}
-					else {
-						tpl = $templateCache.get(tAttrs.itemTemplate);
-						if (tpl) {
-							el = tElement.find('[data-role="item-display"]').first();
-						}
-					}
-					if (tpl) {
-						el.html(tpl);
-					}
 				}
 
 				return function linkFn (scope, elm, attrs)
 				{
 					var $el = $(elm),
 						lastSelectedItemIndex = -1,
-						labelProperty = attrs.labelProperty || 'label',
 						dragging, isHandle, startIndex, stopIndex,
-						placeholder = $('<li class="sortable-placeholder"/>');
-
-					var labelProperties = labelProperty.split(',');
+						placeholder = $('<li class="sortable-placeholder"></li>');
 
 					scope.readonly = attrs.readonly ? true : false;
 					scope.disableReordering = attrs.disableReordering ? true : false;
 
-					scope.getItemLabel = function (item) {
-						for (var i = 0; i < labelProperties.length; i++) {
-							if (labelProperties[i] in item) {
-								var val = item[labelProperties[i]];
-								break;
-							}
-						}
 
-						if (attrs.labelExpr) {
-							val = attrs.labelExpr.replace(/\{(\w+)\}/g, function (match, property) {
-								if (attrs.labelFilter) {
-									return $filter(attrs.labelFilter)(item[property]);
-								} else {
-									return item[property] || '';
-								}
-							});
-							val = val.replace(/(icon-[a-z\-]+)/g, '<i class="$1"></i>');
-						} else if (attrs.labelFilter) {
-							val = $filter(attrs.labelFilter)(val);
+					scope.getItemTemplateName = function (item) {
+						if (! item || ! item.model) {
+							return attrs.itemTemplate || null;
 						}
-
-						return val;
+						var tplName = 'picker-item-' + item.model + '.html';
+						return $templateCache.get(tplName) ? tplName : 'picker-item-default.html';
 					};
 
 

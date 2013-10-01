@@ -10,10 +10,9 @@
 		counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession) {
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache) {
 
 		var	$el = $(iElement),
-			inputEl = $el.find('input[name=label]'),
 			documentList,
 			$picker = $el.find('.document-picker-embedded'),
 			$pickerContents = $picker.find('[data-role="picker-contents"]'),
@@ -30,7 +29,8 @@
 		}
 
 		scope.allowSearchFilters = $el.closest('form.search-filters').length === 0;
-
+		scope.allowInPlaceSelection = attrs.allowInPlaceSelection !== 'false';
+		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0;
 		scope.inputCssClass = attrs.inputCssClass;
 
 		scope.$on('$routeChangeStart', function () {
@@ -47,10 +47,25 @@
 		}
 		else {
 			ngModel.$render = function() {
-				inputEl.val(ngModel.$viewValue ? ngModel.$viewValue.label : '');
+				scope.item = ngModel.$viewValue;
 			};
 		}
 		ngModel.$render();
+
+
+		scope.getItemTemplateName = function (item) {
+			var tplName = null;
+
+			if (item && item.model) {
+				tplName = 'picker-item-' + item.model + '.html';
+			}
+
+			if (tplName && $templateCache.get(tplName)) {
+				return tplName;
+			}
+
+			return 'picker-item-default.html';
+		};
 
 
 		scope.allowCreation = attrs.allowCreation !== 'false';
@@ -201,18 +216,27 @@
 		};
 
 		scope.isEmpty = function () {
-			return ! ngModel.$viewValue;
+			return ! ngModel.$viewValue || (angular.isArray(ngModel.$viewValue) && ngModel.$viewValue.length === 0);
 		};
 
 		scope.beginSelectSession = function () {
 			var	p = attrs.ngModel.indexOf('.'),
-				doc, property;
+				doc, property, propertyLabel, selectModel;
 			if (p === -1) {
 				throw new Error("Invalid 'ng-model' attribute on DocumentPicker Directive.");
 			}
 			doc = scope[attrs.ngModel.substr(0, p)];
 			property = attrs.ngModel.substr(p+1);
-			SelectSession.start(doc, property, getFormModel());
+			if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property]) {
+				propertyLabel = scope.modelInfo.properties[property].label;
+			}
+			else {
+				propertyLabel = property;
+			}
+			selectModel = getFormModel();
+			if (selectModel) {
+				SelectSession.start(doc, { name : property, label : propertyLabel }, selectModel, multiple);
+			}
 		};
 
 
@@ -303,23 +327,21 @@
 				}
 			};
 
-			scope.selectDocument = function (document) {
-				ngModel.$setViewValue(document);
+			scope.selectDocument = function (doc) {
+				ngModel.$setViewValue(doc);
 				ngModel.$render();
 				scope.closeSelector();
 			};
 
 			scope.picker = {
-				"selectDocument" : function (d) {
-					scope.selectDocument(d);
-				}
+				"selectDocument" : scope.selectDocument
 			};
 
 		}
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession)
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache)
 	{
 		return {
 
@@ -329,14 +351,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession)
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache)
 	{
 		return {
 
@@ -345,15 +367,8 @@
 			require     : 'ngModel',
 			scope       : true,
 
-			compile : function (tElement, tAttrs)
-			{
-				if (tAttrs.acceptedModel && Utils.isModelName(tAttrs.acceptedModel)) {
-					tElement.find('token-list').first().attr('item-template', 'picker-item-' + tAttrs.acceptedModel + '.html');
-				}
-
-				return function (scope, iElement, attrs, ngModel) {
-					documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession);
-				};
+			link : function (scope, iElement, attrs, ngModel) {
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache);
 			}
 
 		};
@@ -363,20 +378,23 @@
 	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', function ($location, UrlManager)
 	{
 		var	selection = [],
-			attachedDoc, attachedDocPropertyName, attachedDocUrl, attachedDocumentModel;
+			selectDoc, selectDocPropertyName, selectDocPropertyLabel, selectDocUrl, selectDocumentModel, selectMultiple;
 
 		function reset () {
 			selection.length = 0;
-			attachedDoc = null;
-			attachedDocUrl = null;
-			attachedDocumentModel = null;
+			selectDoc = null;
+			selectDocUrl = null;
+			selectDocumentModel = null;
+			selectMultiple = false;
+			selectDocPropertyName = null;
+			selectDocPropertyLabel = null;
 		}
 		reset();
 
 		return {
 
 			started : function () {
-				return angular.isObject(attachedDoc);
+				return angular.isObject(selectDoc);
 			},
 
 			info : function () {
@@ -384,54 +402,71 @@
 					return null;
 				}
 				return {
-					document : attachedDoc,
+					document : selectDoc,
 					selection : selection,
-					property : attachedDocPropertyName
+					propertyName : selectDocPropertyName,
+					propertyLabel : selectDocPropertyLabel,
+					multiple : selectMultiple
 				};
 			},
 
 			hasSelectSession : function (doc) {
-				return attachedDoc && doc && attachedDoc.id === doc.id && (! doc.hasOwnProperty('LCID') || doc.LCID === attachedDoc.LCID);
+				return selectDoc && doc && selectDoc.id === doc.id && (! doc.hasOwnProperty('LCID') || doc.LCID === selectDoc.LCID);
 			},
 
-			start : function (doc, propertyName, selectionDocumentModel) {
+			start : function (doc, property, selectionDocumentModel, multiple) {
 				if (this.started()) {
 					return;
 				}
 				selection.length = 0;
-				attachedDoc = doc;
-				attachedDocPropertyName = propertyName;
-				attachedDocUrl = $location.url();
-				attachedDocumentModel = selectionDocumentModel;
+				selectDoc = doc;
+				if (angular.isObject(property)) {
+					selectDocPropertyName = property.name;
+					selectDocPropertyLabel = property.label;
+				}
+				else {
+					selectDocPropertyLabel = selectDocPropertyName = property;
+				}
+				selectDocUrl = $location.url();
+				selectDocumentModel = selectionDocumentModel;
+				selectMultiple = multiple;
 				$location.url(UrlManager.getListUrl(selectionDocumentModel));
 			},
 
 			append : function (docs) {
-				angular.forEach(docs, function (d) {
-					selection.push(d);
-				});
+				if (angular.isArray(docs)) {
+					angular.forEach(docs, function (d) {
+						selection.push(d);
+					});
+				}
+				else {
+					selection.push(docs);
+				}
+				return this;
 			},
 
 			commit : function (doc) {
 				if (angular.isObject(doc)) {
-					doc[attachedDocPropertyName] = angular.copy(selection);
+					doc[selectDocPropertyName] = angular.copy(selectMultiple ? selection : selection[0]);
 					reset();
 				}
+				return this;
 			},
 
 			clear : function () {
 				selection.length = 0;
+				return this;
 			},
 
 			end : function () {
-				if (! attachedDocUrl) {
+				if (! selectDocUrl) {
 					console.warn("SelectSession: could not go back to the editor: URL is empty.");
 				}
-				$location.url(attachedDocUrl);
+				$location.url(selectDocUrl);
 			},
 
 			rollback : function () {
-				var redirect = attachedDocUrl;
+				var redirect = selectDocUrl;
 				reset();
 				$location.url(redirect);
 			}

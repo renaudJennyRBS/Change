@@ -493,6 +493,7 @@
 			 */
 			"controller" : function seControllerFn ($scope, $element, $attrs) {
 				var	selectedBlock = null,
+					selectedBlockId = -1,
 					self = this,
 					draggedEl, containerOfDraggedEl,
 					dropTarget, dropPosition = -1,
@@ -528,7 +529,16 @@
 						this.showBlockSettingsEditor(selectedBlock, params);
 					}
 
+					selectedBlockId = blockEl.data('id');
 					return blockEl;
+				};
+
+
+				this.reselectBlock = function () {
+					selectedBlock = null;
+					if (selectedBlockId !== -1) {
+						this.selectBlock(this.getBlockByItem(selectedBlockId));
+					}
 				};
 
 
@@ -651,8 +661,6 @@
 						atIndex,
 						this.isReadOnly()
 					);
-
-					console.log("create block: ", $element.attr('readonly') === 'true');
 
 					if (angular.isFunction(block.scope().initItem)) {
 						block.scope().initItem(item);
@@ -894,7 +902,7 @@
 					'visibility': 'icon-eye-open'
 				};
 
-				this.notifyChange = function (operation, elementName, element, data) {
+				this.notifyChange = function (operation, elementName, element) {
 					var self = this;
 					$timeout(function () {
 						var	output = $scope.generateJSON(),
@@ -1222,6 +1230,8 @@
 
 							});
 
+							ctrl.reselectBlock();
+
 							resizeHandler();
 							Workspace.pin(blockPropertiesPopup);
 						}
@@ -1231,7 +1241,7 @@
 					scope.contentChanged = function (newContent, isValid) {
 						ngModel.$setViewValue(newContent);
 						ngModel.$setValidity("content", isValid);
- 					};
+					};
 
 				}
 
@@ -1756,24 +1766,22 @@
 					'<button class="btn btn-small pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
 					'<h6>Colonnes</h6>' +
 				'</div>' +
-				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-{{formDirection}}">' +
+				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +
 					'<div class="control-group" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_{{item.id}}_label">Libellé du bloc</label>' +
+						'<label class="control-label" for="block_(=item.id=)_label">Libellé du bloc</label>' +
 						'<div class="controls">' +
-							'<input class="input-block-level" id="block_{{item.id}}_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
+							'<input class="input-block-level" id="block_(=item.id=)_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
 						'</div>' +
 					'</div>' +
 					'<div class="control-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_{{item.id}}_param_{{param.name}}">{{param.label}}</label>' +
+						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
 						'<div ng-switch="param.type" class="controls">' +
-							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Integer" type="number" required="{{param.required}}" class="input-small" ng-model="item.parameters[param.name]"/>' +
-
+							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="input-small" ng-model="formValues[param.name]"/>' +
 							// FIXME allowedModelNames
-							'<div ng-switch-when="DocumentId" class="document-picker-single" input-css-class="input-small" ng-model="item.parameters[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-
-							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
-							'<switch id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
-							'<select id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Collection" ng-model="item.parameters[param.name]" class="input-block-level" rbs-items-from-collection="{{param.collectionCode}}"></select>' +
+							'<div ng-switch-when="DocumentId" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="input-block-level" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
+							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="input-block-level" ng-model="formValues[param.name]"/>' +
+							'<switch id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Boolean" ng-model="formValues[param.name]"/>' +
 						'</div>' +
 					'</div>' +
 					'<div ng-transclude=""></div>' +
@@ -1782,6 +1790,7 @@
 						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged() || block_properties_form.$invalid" ng-click="submit()">Valider</button>' +
 					'</div>' +
 				'</form>',
+			"scope" : true,
 
 			/**
 			 * The Scope here is the same Scope as the one of the current (selected) Block.
@@ -1794,13 +1803,15 @@
 
 				structureEditorService.highlightBlock(null);
 
+				scope.formValues = {};
 				scope.formDirection = blockPropertiesPopup.is('.pinned') ? 'vertical' : 'horizontal';
 
 				scope.originalItem = scope.controller.getItemById(element.data('id'));
 				if ( ! scope.originalItem.parameters ) {
 					scope.originalItem.parameters = {};
 				}
-				scope.item = angular.copy(scope.originalItem);
+
+				var itemName = scope.originalItem.name;
 
 
 				// Put default values in the block's parameters
@@ -1808,24 +1819,27 @@
 					scope.blockParameters = angular.copy(parameters);
 					forEach(parameters, function (param) {
 						if (angular.isUndefined(scope.originalItem.parameters[param.name])) {
-							scope.originalItem.parameters[param.name] = param.defaultValue;
+							if (angular.isDefined(param.defaultValue) && param.defaultValue !== null) {
+								scope.originalItem.parameters[param.name] = param.defaultValue;
+							}
 						}
 					});
 					scope.item = angular.copy(scope.originalItem);
+					scope.formValues = scope.item.parameters;
 				}
 
-				if (scope.item.name && scope.item.name !== 'row' && scope.item.name !== 'cell') {
+				if (itemName && itemName !== 'row' && itemName !== 'cell') {
 					// Load block's parameters and store them
-					if (scope.item.name in blockPropertiesCache) {
-						fillDefaultValues(blockPropertiesCache[scope.item.name]);
+					if (itemName in blockPropertiesCache) {
+						fillDefaultValues(blockPropertiesCache[itemName]);
 					} else {
 						// Load block properties.
-						REST.blockInfo(scope.item.name).then(function (blockInfo) {
+						REST.blockInfo(itemName).then(function (blockInfo) {
 							forEach(blockInfo.parameters, function (param) {
 								param.label = param.label || param.name;
 							});
-							blockPropertiesCache[scope.item.name] = blockInfo.parameters;
-							fillDefaultValues(blockPropertiesCache[scope.item.name]);
+							blockPropertiesCache[itemName] = blockInfo.parameters;
+							fillDefaultValues(blockPropertiesCache[itemName]);
 						});
 					}
 				}
@@ -1835,7 +1849,7 @@
 
 
 				scope.isVisibleFor = function (device) {
-					return ! scope.item.visibility || scope.item.visibility.indexOf(device) !== -1;
+					return scope.item && (! scope.item.visibility || scope.item.visibility.indexOf(device) !== -1);
 				};
 
 				scope.toggleVisibility = function (device) {
@@ -1929,25 +1943,35 @@
 					});
 				};
 
+				scope.$watch('formValues', function (values) {
+					if (values) {
+						dumpFormValues();
+					}
+				}, true);
+
 				scope.hasChanged = function () {
+					dumpFormValues();
 					return ! angular.equals(scope.item, scope.originalItem);
 				};
 
+
+				function dumpFormValues () {
+					if (scope.item) {
+						angular.extend(scope.item.parameters, scope.formValues);
+					}
+				}
+
+
 				scope.revert = function () {
+					dumpFormValues();
 					scope.item = angular.copy(scope.originalItem);
+					scope.formValues = scope.item.parameters;
 					var block = scope.controller.getSelectedBlock();
 					block.attr('data-visibility', scope.item.visibility);
 				};
 
 				scope.submit = function () {
-
-					// Transform Documents into a lightweight representation (id, model, label, LCID).
-					angular.forEach(scope.item.parameters, function (value, name) {
-						if (Utils.isDocument(value)) {
-							scope.item.parameters[name] = Utils.simpleRepresentation(value);
-						}
-					});
-
+					dumpFormValues();
 					angular.extend(scope.originalItem, scope.item);
 
 					// Remove empty values.

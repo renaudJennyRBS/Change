@@ -1,16 +1,27 @@
 <div ng-show="previewAvailable" rbs-tip="RbsDocumentListGeneralWithPreview">
-	Survolez les lignes dans la liste ci-dessous pour afficher des options et prévisualiser les documents.<br/>
-	Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu</strong> tout en laissant la touche <strong>[Shift]</strong> appuyée.
+	{{ i18n('m.rbs.admin.lists.preview-tip') }}
 </div>
 
-<div ng-show="selectSession.info != null" class="alert alert-warning">
-	<h4>Sélection d'éléments pour <em ng-bind="selectSession.info.document.label"></em></h4>
-	Sélection : <span ng-bind="selectSession.info.selection.length"></span>
+<div ng-show="selectSession.info != null" class="select-session">
+	<h4>{{ i18n('m.rbs.admin.lists.elements-selection', ['ucf']) }}</h4>
+	<dl class="dl-horizontal">
+		<dt>{{ i18n('m.rbs.admin.lists.for-property', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.propertyLabel"></strong><span ng-if="selectSession.info.multiple"> (multiple)</span></dd>
+		<dt>{{ i18n('m.rbs.admin.lists.of', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.document.label"></strong><span> ((=selectSession.info.document.model=))</span></dd>
+	</dl>
+	<p>
+		{{ i18n('m.rbs.admin.lists.compose-selection-message') }}
+	</p>
+	<p ng-if="selectSession.info.selection.length == 0">
+		<strong>{{ i18n('m.rbs.admin.lists.selection-is-empty-now') }}</strong>
+	</p>
+	<token-list rows="true" items="selectSession.info.selection"></token-list>
 	<div class="btn-toolbar">
-		<button type="button" class="btn" ng-click="selectSession.cancel()">Annuler</button>
-		<button type="button" class="btn" ng-click="selectSession.clear()">Vider</button>
-		<button type="button" class="btn" ng-click="selectSession.append()">Ajouter les éléments sélectionnés</button>
-		<button type="button" class="btn btn-primary" ng-click="selectSession.end()">Valider</button>
+		<span class="pull-right">
+			<button type="button" class="btn" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.lists.cancel-selection', ['ucf']) }}</button>
+			<button type="button" class="btn btn-success" ng-click="selectSession.end()">{{ i18n('m.rbs.admin.lists.validate-selection', ['ucf']) }} <i class="icon-circle-arrow-right"></i></button>
+		</span>
+		<button type="button" class="btn" ng-click="selectSession.appendSelected()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.lists.add-selected-elements', ['ucf']) }}</button>
+		<button type="button" class="btn" ng-click="selectSession.clear()" ng-disabled="selectSession.info.selection.length == 0"><i class="icon-eraser"></i> {{ i18n('m.rbs.admin.lists.clear-selection', ['ucf']) }}</button>
 	</div>
 </div>
 

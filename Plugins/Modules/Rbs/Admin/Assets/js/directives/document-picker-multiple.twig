@@ -1,36 +1,41 @@
-<div data-ng-show="documents.length > 0">
+<div ng-show="documents.length > 0">
 	<token-list items="documents" rows="true"></token-list>
 </div>
 
-<div class="muted" data-ng-show="! documents || documents.length == 0">{{ i18n('m.rbs.admin.forms.picker-no-element', ['ucf']) }}</div>
+<div class="uneditable-input input-block-level empty" style="margin-bottom: 0;" ng-show="! documents || documents.length == 0">{{ i18n('m.rbs.admin.forms.picker-no-element', ['ucf']) }}</div>
 
 <div class="btn-toolbar">
-	<button
-		ng-show="allowCreation"
-		type="button"
-		class="btn"
-		data-ng-click="createDocument()"
-		title="{{ i18nAttr('m.rbs.admin.forms.picker-create-tooltip', ['ucf']) }}"><i class="icon-plus"></i></button>
-	<button
-		type="button"
-		class="btn"
-		data-ng-click="clear()"
-		data-ng-disabled="isEmpty()"
-		title="{{ i18nAttr('m.rbs.admin.forms.picker-delete-selection-tooltip', ['ucf']) }}"><i class="icon-remove"></i></button>
-
 	<div class="btn-group">
 		<button
 			type="button"
-			class="btn"
-			data-ng-click="openSelector()"
-			title="{{ i18nAttr('m.rbs.admin.forms.picker-choose-tooltip', ['ucf', 'etc']) }}">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf', 'etc']) }}</button>
+			class="btn btn-small"
+			ng-click="openSelector()"
+			title="{{ i18nAttr('m.rbs.admin.forms.picker-choose-tooltip', ['ucf', 'etc']) }}"><i class="icon-arrow-down"></i> sélecteur</button>
 		<button
 			type="button"
-			class="btn"
-			data-ng-click="getFromClipboard()"
-			data-ng-disabled="clipboardValues.length == 0"
-			title="{{ i18nAttr('m.rbs.admin.forms.picker-take-from-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i></button>
+			class="btn btn-small"
+			ng-click="beginSelectSession()"
+			ng-show="acceptedModel && allowInPlaceSelection"
+			title="{{ i18nAttr('m.rbs.admin.forms.picker-choose-tooltip', ['ucf', 'etc']) }}"><i class="icon-external-link"></i> module...</button>
+		<button
+			type="button"
+			class="btn btn-small"
+			ng-click="getFromClipboard()"
+			ng-disabled="clipboardValues.length == 0"
+			title="{{ i18nAttr('m.rbs.admin.forms.picker-take-from-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i> presse-papier</button>
 	</div>
+	<button
+		type="button"
+		class="btn btn-small pull-right"
+		ng-click="clear()"
+		ng-disabled="isEmpty()"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-delete-selection-tooltip', ['ucf']) }}"><i class="icon-eraser"></i> effacer</button>
+	<button
+		ng-show="allowCreation"
+		type="button"
+		class="btn btn-small"
+		ng-click="createDocument()"
+		title="{{ i18nAttr('m.rbs.admin.forms.picker-create-tooltip', ['ucf']) }}"><i class="icon-plus"></i> créer</button>
 </div>
 
 <div class="document-picker-embedded" style="display: none;">
