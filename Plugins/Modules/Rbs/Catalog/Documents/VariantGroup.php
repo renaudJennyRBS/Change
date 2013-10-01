@@ -1,15 +1,14 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
-use Change\Collection\CollectionManager;
 use Change\Documents\AbstractModel;
 use Change\Documents\Events\Event;
 use Rbs\Catalog\Std\AttributeEngine;
 
 /**
- * @name \Rbs\Catalog\Documents\DeclinationGroup
+ * @name \Rbs\Catalog\Documents\VariantGroup
  */
-class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGroup
+class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 {
 	/**
 	 * @param AbstractModel $documentModel
@@ -23,24 +22,25 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'));
 	}
 
 	protected function onCreate()
 	{
-		if (!$this->getLabel() && $this->getDeclinedProduct())
+		if (!$this->getLabel() && $this->getRootProduct())
 		{
-			$this->setLabel($this->getDeclinedProduct()->getLabel());
+			$this->setLabel($this->getRootProduct()->getLabel());
 		}
 
-		$this->initAxeInfo();
+		$this->initAxisInfo();
 	}
 
 	protected function onUpdate()
 	{
-		if ($this->isPropertyModified('axeAttribute'))
+		if ($this->isPropertyModified('axisAttribute'))
 		{
-			$this->initAxeInfo();
+			$this->initAxisInfo();
 		}
 
 		if ($this->isPropertyModified('productMatrixInfo'))
@@ -59,23 +59,23 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 		}
 	}
 
-	protected function initAxeInfo()
+	protected function initAxisInfo()
 	{
 		$axesInfo = $this->getAxesInfo();
 		if (count($axesInfo) === 0)
 		{
 			$axesInfo = array();
 			$attrEngine = new AttributeEngine($this->getDocumentServices());
-			$axeAttributes = $attrEngine->getAxeAttributes($this->getAxeAttribute());
-			foreach ($axeAttributes as $axeAttribute)
+			$axisAttributes = $attrEngine->getAxisAttributes($this->getAxisAttribute());
+			foreach ($axisAttributes as $axisAttribute)
 			{
-				$axe = array('id' => $axeAttribute->getId(), 'dv' => $attrEngine->getCollectionValues($axeAttribute));
-				if (!is_array($axe['dv']))
+				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attrEngine->getCollectionValues($axisAttribute));
+				if (!is_array($axis['dv']))
 				{
-					$axe['dv'] = array();
+					$axis['dv'] = array();
 				}
-				$axe['cat'] = $axeAttribute->isVisibleFor('categorization');
-				$axesInfo[] = $axe;
+				$axis['cat'] = $axisAttribute->isVisibleFor('categorization');
+				$axesInfo[] = $axis;
 			}
 			$this->setAxesInfo($axesInfo);
 		}
@@ -86,14 +86,14 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 	 */
 	public function onCreated(Event $event)
 	{
-		/** @var $declinationGroup DeclinationGroup */
-		$declinationGroup = $event->getDocument();
-		$product = $declinationGroup->getDeclinedProduct();
+		/** @var $variantGroup VariantGroup */
+		$variantGroup = $event->getDocument();
+		$product = $variantGroup->getRootProduct();
 		if ($product instanceof Product)
 		{
 			$product->setCategorizable(true);
 			$product->setVariant(false);
-			$product->setDeclinationGroup($declinationGroup);
+			$product->setVariantGroup($variantGroup);
 			$product->update();
 		}
 	}
@@ -130,7 +130,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 					$pmi[$i]['removed'] = true;
 					++$addRemoved;
 				}
-				elseif (!isset($axesInfo[$pmi[$i]['axeId']]))
+				elseif (!isset($axesInfo[$pmi[$i]['axisId']]))
 				{
 					$pmi[$i]['removed'] = true;
 					++$addRemoved;
@@ -140,7 +140,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 
 		$parentIds = array_reduce($pmi, function($r, $i) {
 			if (!isset($i['removed']) && $i['id'] > 0) {$r[] = $i['id'];} return $r;
-		}, array($this->getDeclinedProductId()));
+		}, array($this->getRootProductId()));
 
 		for ($i = 0; $i < count($pmi); $i++)
 		{
@@ -148,17 +148,16 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 			if ($entry['id'] < 0)
 			{
 				/* @var $product Product */
-				$axesValues = $this->buildAxeValues($entry, $pmi);
+				$axesValues = $this->buildAxesValues($entry, $pmi);
 
 				$product = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 				$product->setLabel($this->getLabel() . ' - ' . $this->buildProductLabel($entry, $pmi, $axesInfo, 'label'));
 				$product->getCurrentLocalization()->setTitle($product->getLabel());
-				$product->setDeclinationGroup($this);
-				$product->setAttribute($this->getAxeAttribute());
+				$product->setVariantGroup($this);
+				$product->setAttribute($this->getAxisAttribute());
 				$product->setAttributeValues($axesValues);
-				$product->setCategorizable(($axesInfo[$entry['axeId']]['cat'] == true));
-				$product->setVariant(true);
-				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['declination']);
+				$product->setCategorizable(($axesInfo[$entry['axisId']]['cat'] == true));
+				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['variant']);
 				$product->create();
 				$added[$entry['id']] = $product->getId();
 			}
@@ -179,7 +178,7 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 
 		foreach ($pmi as $entry)
 		{
-			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axeId']]) || isset($entry['removed']))
+			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axisId']]) || isset($entry['removed']))
 			{
 				continue;
 			}
@@ -230,10 +229,10 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 			$label = '';
 		}
 
-		$av = $entry['axeValue'];
-		if ($type != 'value' && isset($axesInfo[$entry['axeId']]))
+		$av = $entry['axisValue'];
+		if ($type != 'value' && isset($axesInfo[$entry['axisId']]))
 		{
-			$ai = $axesInfo[$entry['axeId']];
+			$ai = $axesInfo[$entry['axisId']];
 			foreach ($ai['dv'] as $dv)
 			{
 				if ($dv['value'] == $av)
@@ -268,16 +267,16 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 	 * @param array $productMatrixInfo
 	 * @return array
 	 */
-	protected function buildAxeValues($entry, $productMatrixInfo)
+	protected function buildAxesValues($entry, $productMatrixInfo)
 	{
-		$axeValues = array();
-		$axeValues[] = array('id' => $entry['axeId'], 'value' => $entry['axeValue']);
+		$axesValue = array();
+		$axesValue[] = array('id' => $entry['axisId'], 'value' => $entry['axisValue']);
 		$parentEntry = $this->getProductMatrixEntryById($entry['parentId'], $productMatrixInfo);
 		if ($parentEntry)
 		{
-			$axeValues = array_merge($this->buildAxeValues($parentEntry, $productMatrixInfo), $axeValues);
+			$axesValue = array_merge($this->buildAxesValues($parentEntry, $productMatrixInfo), $axesValue);
 		}
-		return $axeValues;
+		return $axesValue;
 	}
 
 	protected function updateRestDocumentResult($documentResult)
@@ -295,17 +294,17 @@ class DeclinationGroup extends \Compilation\Rbs\Catalog\Documents\DeclinationGro
 		$axesDefinition = array();
 
 		$attrEngine = new AttributeEngine($this->getDocumentServices());
-		foreach ($this->getAxesInfo() as $axeInfo)
+		foreach ($this->getAxesInfo() as $axisInfo)
 		{
-			$axeAttribute = $this->getDocumentManager()->getDocumentInstance($axeInfo['id']);
-			if (!($axeAttribute instanceof Attribute))
+			$axisAttribute = $this->getDocumentManager()->getDocumentInstance($axisInfo['id']);
+			if (!($axisAttribute instanceof Attribute))
 			{
 				continue;
 			}
-			$def = $attrEngine->buildAttributeDefinition($axeAttribute);
+			$def = $attrEngine->buildAttributeDefinition($axisAttribute);
 			if ($def)
 			{
-				$axesDefinition[$axeInfo['id']] = $def;
+				$axesDefinition[$axisInfo['id']] = $def;
 			}
 		}
 		return $axesDefinition;
