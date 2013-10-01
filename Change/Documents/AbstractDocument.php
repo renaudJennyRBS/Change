@@ -558,6 +558,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
 	 * @param Array
+	 * @return $this
 	 */
 	public function populateRestDocumentLink($documentLink, $extraColumn)
 	{
