@@ -57,10 +57,10 @@ class Thread extends Block
 
 		$thread = array();
 		$currentSection = $dm->getDocumentInstance($parameters->getSectionId());
-
 		if ($currentSection instanceof \Rbs\Website\Documents\Section)
 		{
 			$website = $currentSection->getWebsite();
+			$attributes['website'] = $website;
 			foreach ($currentSection->getSectionThread() as $section)
 			{
 				$lastSection = $section;

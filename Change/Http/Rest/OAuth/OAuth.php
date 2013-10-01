@@ -237,90 +237,114 @@ class OAuth
 
 	/**
 	 * @param StoredOAuth $storedOAuth
+	 * @throws \Exception
 	 */
 	public function insertToken($storedOAuth)
 	{
 		$dbProvider = $this->applicationServices->getDbProvider();
 
-		if (null === $storedOAuth->getCreationDate())
+		try
 		{
-			$storedOAuth->setCreationDate(new \DateTime());
-		}
+			$dbProvider->getTransactionManager()->begin();
 
-		if (null === $storedOAuth->getAuthorized())
+			if (null === $storedOAuth->getCreationDate())
+			{
+				$storedOAuth->setCreationDate(new \DateTime());
+			}
+
+			if (null === $storedOAuth->getAuthorized())
+			{
+				$storedOAuth->setAuthorized(false);
+			}
+
+			if (null === $storedOAuth->getCallback() && StoredOAuth::TYPE_REQUEST === $storedOAuth->getType())
+			{
+				$storedOAuth->setCallback('oob');
+			}
+
+			$qb = $dbProvider->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+
+			$sq = $qb->select($fb->column('application_id'))
+				->from($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()))
+				->where($fb->eq('consumer_key', $fb->parameter('consumer_key')))
+				->query();
+			$sq->bindParameter('consumer_key', $storedOAuth->getConsumerKey());
+
+			$applicationId = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('application_id'));
+
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+
+			$iq = $qb->insert($qb->getSqlMapping()->getOAuthTable())->addColumns($fb->column('token'), $fb->column('token_secret'),
+				$fb->column('application_id'), $fb->column('realm'),
+				$fb->column('token_type'), $fb->column('creation_date'), $fb->column('validity_date'),
+				$fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'), $fb->column('accessor_id'))
+				->addValues($fb->parameter('token'), $fb->parameter('token_secret'),
+					$fb->integerParameter('application_id'), $fb->parameter('realm'),
+					$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'), $fb->dateTimeParameter('validity_date'),
+					$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'), $fb->integerParameter('accessor_id'))
+				->insertQuery();
+
+			$iq->bindParameter('token', $storedOAuth->getToken());
+			$iq->bindParameter('token_secret', $storedOAuth->getTokenSecret());
+			$iq->bindParameter('application_id', $applicationId);
+			$iq->bindParameter('realm', $storedOAuth->getRealm());
+			$iq->bindParameter('token_type', $storedOAuth->getType());
+			$iq->bindParameter('creation_date', $storedOAuth->getCreationDate());
+			$iq->bindParameter('validity_date', $storedOAuth->getValidityDate());
+			$iq->bindParameter('callback', $storedOAuth->getCallback());
+			$iq->bindParameter('verifier', $storedOAuth->getVerifier());
+			$iq->bindParameter('authorized', $storedOAuth->getAuthorized());
+			$iq->bindParameter('accessor_id', $storedOAuth->getAccessorId());
+			$iq->execute();
+
+			$storedOAuth->setId(intval($dbProvider->getLastInsertId('change_oauth')));
+
+			$dbProvider->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
 		{
-			$storedOAuth->setAuthorized(false);
+			throw $dbProvider->getTransactionManager()->rollBack($e);
 		}
-
-		if (null === $storedOAuth->getCallback() && StoredOAuth::TYPE_REQUEST === $storedOAuth->getType())
-		{
-			$storedOAuth->setCallback('oob');
-		}
-
-		$qb = $dbProvider->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-
-		$sq = $qb->select($fb->column('application_id'))
-			->from($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()))
-			->where($fb->eq('consumer_key', $fb->parameter('consumer_key')))
-			->query();
-		$sq->bindParameter('consumer_key', $storedOAuth->getConsumerKey());
-
-		$applicationId = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('application_id'));
-
-		$qb = $dbProvider->getNewStatementBuilder();
-		$fb = $qb->getFragmentBuilder();
-
-		$iq = $qb->insert($qb->getSqlMapping()->getOAuthTable())->addColumns($fb->column('token'), $fb->column('token_secret'),
-			$fb->column('application_id'), $fb->column('realm'),
-			$fb->column('token_type'), $fb->column('creation_date'), $fb->column('validity_date'),
-			$fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'), $fb->column('accessor_id'))
-			->addValues($fb->parameter('token'), $fb->parameter('token_secret'),
-				$fb->integerParameter('application_id'), $fb->parameter('realm'),
-				$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'), $fb->dateTimeParameter('validity_date'),
-				$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'), $fb->integerParameter('accessor_id'))
-			->insertQuery();
-
-		$iq->bindParameter('token', $storedOAuth->getToken());
-		$iq->bindParameter('token_secret', $storedOAuth->getTokenSecret());
-		$iq->bindParameter('application_id', $applicationId);
-		$iq->bindParameter('realm', $storedOAuth->getRealm());
-		$iq->bindParameter('token_type', $storedOAuth->getType());
-		$iq->bindParameter('creation_date', $storedOAuth->getCreationDate());
-		$iq->bindParameter('validity_date', $storedOAuth->getValidityDate());
-		$iq->bindParameter('callback', $storedOAuth->getCallback());
-		$iq->bindParameter('verifier', $storedOAuth->getVerifier());
-		$iq->bindParameter('authorized', $storedOAuth->getAuthorized());
-		$iq->bindParameter('accessor_id', $storedOAuth->getAccessorId());
-		$iq->execute();
-
-		$storedOAuth->setId(intval($dbProvider->getLastInsertId('change_oauth')));
 	}
 
 	/**
 	 * @param StoredOAuth $storedOAuth
+	 * @throws \Exception
 	 */
 	public function updateToken($storedOAuth)
 	{
 		$dbProvider = $this->applicationServices->getDbProvider();
 
-		$qb = $dbProvider->getNewStatementBuilder();
-		$fb = $qb->getFragmentBuilder();
+		try
+		{
+			$dbProvider->getTransactionManager()->begin();
 
-		$qb->update($fb->table($qb->getSqlMapping()->getOAuthTable()))
-			->assign($fb->column('validity_date'), $fb->dateTimeParameter('validity_date'))
-			->assign($fb->column('verifier'), $fb->parameter('verifier'))
-			->assign($fb->column('authorized'), $fb->booleanParameter('authorized'))
-			->assign($fb->column('accessor_id'), $fb->integerParameter('accessor_id'))
-			->where($fb->eq($fb->column('token_id'), $fb->integerParameter('id')));
-		$uq = $qb->updateQuery();
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
 
-		$uq->bindParameter('validity_date', $storedOAuth->getValidityDate());
-		$uq->bindParameter('verifier', $storedOAuth->getVerifier());
-		$uq->bindParameter('authorized', $storedOAuth->getAuthorized());
-		$uq->bindParameter('accessor_id', $storedOAuth->getAccessorId());
-		$uq->bindParameter('id', $storedOAuth->getId());
-		$uq->execute();
+			$qb->update($fb->table($qb->getSqlMapping()->getOAuthTable()))
+				->assign($fb->column('validity_date'), $fb->dateTimeParameter('validity_date'))
+				->assign($fb->column('verifier'), $fb->parameter('verifier'))
+				->assign($fb->column('authorized'), $fb->booleanParameter('authorized'))
+				->assign($fb->column('accessor_id'), $fb->integerParameter('accessor_id'))
+				->where($fb->eq($fb->column('token_id'), $fb->integerParameter('id')));
+			$uq = $qb->updateQuery();
+
+			$uq->bindParameter('validity_date', $storedOAuth->getValidityDate());
+			$uq->bindParameter('verifier', $storedOAuth->getVerifier());
+			$uq->bindParameter('authorized', $storedOAuth->getAuthorized());
+			$uq->bindParameter('accessor_id', $storedOAuth->getAccessorId());
+			$uq->bindParameter('id', $storedOAuth->getId());
+			$uq->execute();
+
+			$dbProvider->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $dbProvider->getTransactionManager()->rollBack($e);
+		}
 	}
 
 	/**
