@@ -30,7 +30,7 @@
 		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>
 	</key>
 
-	<key id="listing-section-help" format="html">
+	<key id="product-list-section-help" format="html">
 		<![CDATA[<p>Les listes permettent de publier les produits dans les sections du site.</p>]]>
 	</key>
 

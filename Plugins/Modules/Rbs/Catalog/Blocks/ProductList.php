@@ -7,9 +7,9 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Rbs\Catalog\Blocks\Listing
+ * @name \Rbs\Catalog\Blocks\ProductList
  */
-class Listing extends Block
+class ProductList extends Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -21,7 +21,7 @@ class Listing extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('listingId');
+		$parameters->addParameterMeta('productListId');
 		$parameters->addParameterMeta('conditionId');
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('contextualUrls', true);
@@ -35,13 +35,13 @@ class Listing extends Block
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		if ($parameters->getParameter('listingId') !== null)
+		if ($parameters->getParameter('productListId') !== null)
 		{
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
-			$listing = $documentManager->getDocumentInstance($parameters->getParameter('listingId'));
-			if (!($listing instanceof \Rbs\Catalog\Documents\Listing) || !$listing->activated())
+			$productList = $documentManager->getDocumentInstance($parameters->getParameter('productListId'));
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
-				$parameters->setParameterValue('listingId', null);
+				$parameters->setParameterValue('productListId', null);
 			}
 		}
 
@@ -76,28 +76,28 @@ class Listing extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$listingId = $parameters->getParameter('listingId');
-		if ($listingId)
+		$productListId = $parameters->getParameter('productListId');
+		if ($productListId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
 			$commerceServices = $event->getParam('commerceServices');
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
 
-			/* @var $listing \Rbs\Catalog\Documents\Listing */
-			$listing = $documentManager->getDocumentInstance($listingId);
-			$attributes['listing'] = $listing;
+			/* @var $productList \Rbs\Catalog\Documents\ProductList */
+			$productList = $documentManager->getDocumentInstance($productListId);
+			$attributes['productList'] = $productList;
 
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
 			$query->andPredicates($query->published());
-			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductCategorization', 'product');
+			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
 			$subQuery->andPredicates(
-				$subQuery->eq('listing', $listingId),
+				$subQuery->eq('productList', $productListId),
 				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
 				$subQuery->activated()
 			);
 			$subQuery->addOrder('position', true);
-			$query->addOrder($listing->getProductSortOrder(), $listing->getProductSortDirection());
+			$query->addOrder($productList->getProductSortOrder(), $productList->getProductSortDirection());
 
 			$rows = array();
 			$totalCount = $query->getCountDocuments();
@@ -147,7 +147,7 @@ class Listing extends Block
 			$attributes['rows'] = $rows;
 
 			$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
-			return 'listing.twig';
+			return 'product-list.twig';
 		}
 		return null;
 	}

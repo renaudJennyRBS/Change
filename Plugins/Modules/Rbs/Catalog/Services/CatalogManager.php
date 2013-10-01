@@ -44,62 +44,62 @@ class CatalogManager
 	}
 
 	/**
-	 * Add the product in a listing for the given condition/priority.
+	 * Add the product in a product list for the given condition/priority.
 	 *
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Listing $listing
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param \Rbs\Catalog\Documents\Condition $condition
-	 * @return \Rbs\Catalog\Documents\ProductCategorization
+	 * @return \Rbs\Catalog\Documents\ProductListItem
 	 * @throws \Exception
 	 */
-	public function addProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
+	public function addProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
 		$ds = $this->getCommerceServices()->getDocumentServices();
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
-		$categorization = null;
+		$productListItem = null;
 		try
 		{
 			$tm->begin();
-			$categorization = $this->getProductCategorization($product, $listing, $condition);
-			if (!$categorization)
+			$productListItem = $this->getProductListItem($product, $productList, $condition);
+			if (!$productListItem)
 			{
-				$categorization = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductCategorization');
-				/* @var $categorization \Rbs\Catalog\Documents\ProductCategorization */
-				$categorization->setProduct($product);
-				$categorization->setListing($listing);
-				$categorization->setCondition($condition);
+				$productListItem = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductListItem');
+				/* @var $productListItem \Rbs\Catalog\Documents\ProductListItem */
+				$productListItem->setProduct($product);
+				$productListItem->setProductList($productList);
+				$productListItem->setCondition($condition);
 			}
-			$categorization->save();
+			$productListItem->save();
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
 			throw $tm->rollBack($e);
 		}
-		return $categorization;
+		return $productListItem;
 	}
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Listing $listing
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param $condition
 	 * @throws \Exception
 	 */
-	public function removeProductFromListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
+	public function removeProductFromProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$categorization = $this->getProductCategorization($product, $listing, $condition);
-			if ($categorization instanceof \Rbs\Catalog\Documents\ProductCategorization)
+			$productListItem = $this->getProductListItem($product, $productList, $condition);
+			if ($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem)
 			{
-				if ($categorization->isHighlighted())
+				if ($productListItem->isHighlighted())
 				{
-					$this->downplayProductInListing($product, $listing, $condition);
+					$this->downplayProductInProductList($product, $productList, $condition);
 				}
-				$categorization->delete();
+				$productListItem->delete();
 			}
 			$tm->commit();
 		}
@@ -111,14 +111,14 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Listing $listing
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param \Rbs\Catalog\Documents\Condition $condition
-	 * @return \Rbs\Catalog\Documents\ProductCategorization|null
+	 * @return \Rbs\Catalog\Documents\ProductListItem|null
 	 */
-	public function getProductCategorization(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition)
+	public function getProductListItem(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
-		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		$query->andPredicates($query->eq('product', $product), $query->eq('listing', $listing), $query->eq('condition', $condition));
+		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductListItem');
+		$query->andPredicates($query->eq('product', $product), $query->eq('productList', $productList), $query->eq('condition', $condition));
 		return $query->getFirstDocument();
 	}
 
@@ -126,67 +126,67 @@ class CatalogManager
 	 * This method performs a bulk update, so you should not be messing with positions at all!
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Listing $listing
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @param \Rbs\Catalog\Documents\Product $before
 	 * @throws \RuntimeException
 	 */
-	public function highlightProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition = null, $before = null)
+	public function highlightProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition = null, $before = null)
 	{
-		$productCategorization = $this->getProductCategorization($product, $listing, $condition);
-		if (!$productCategorization)
+		$productListItem = $this->getProductListItem($product, $productList, $condition);
+		if (!$productListItem)
 		{
-			throw new \RuntimeException("Product to highlight is not in listing", 999999);
+			throw new \RuntimeException("Product to highlight is not in list", 999999);
 		}
-		$beforeProductCategorization = null;
+		$beforeProductListItem = null;
 		if ($before instanceof \Rbs\Catalog\Documents\Product)
 		{
-			$beforeProductCategorization = $this->getProductCategorization($before, $listing, $condition);
+			$beforeProductListItem = $this->getProductListItem($before, $productList, $condition);
 		}
-		$this->highlightProductCategorization($productCategorization, $beforeProductCategorization);
+		$this->highlightProductListItem($productListItem, $beforeProductListItem);
 	}
 
 	/**
 	 * This method performs a bulk update, so you should not be messing with positions at all!
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\Documents\Listing $listing
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @throws \RuntimeException
 	 */
-	public function downplayProductInListing(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\Listing $listing, $condition = null)
+	public function downplayProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition = null)
 	{
-		$productCategorization = $this->getProductCategorization($product, $listing, $condition);
-		if (!$productCategorization)
+		$productListItem = $this->getProductListItem($product, $productList, $condition);
+		if (!$productListItem)
 		{
-			throw new \RuntimeException("Product to highlight is not in listing", 999999);
+			throw new \RuntimeException("Product to highlight is not in list", 999999);
 		}
-		$currentPosition = $productCategorization->getPosition();
+		$currentPosition = $productListItem->getPosition();
 		if ($currentPosition === 0)
 		{
 			// Nothing to do
 			return;
 		}
-		$this->downplayProductCategorization($productCategorization);
+		$this->downplayProductListItem($productListItem);
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \Exception
 	 */
-	public function downplayProductCategorization($productCategorization)
+	public function downplayProductListItem($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		$listing = $productCategorization->getListing();
-		$condition = $productCategorization->getCondition();
+		$productList = $productListItem->getProductList();
+		$condition = $productListItem->getCondition();
 		$tm = $this->getCommerceServices()->getApplicationServices()->getTransactionManager();
 		$updateQuery = $this->getCommerceServices()->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
@@ -194,20 +194,20 @@ class CatalogManager
 		$conditionId = ($condition) ? $condition->getId() : 0;
 		$where = $fb->logicAnd(
 			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-			$fb->eq($fb->getDocumentColumn('listing'), $fb->number($listing->getId())),
+			$fb->eq($fb->getDocumentColumn('productList'), $fb->number($productList->getId())),
 			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
 		);
 
 		try
 		{
 			$tm->begin();
-			$updateQuery->update($fb->getDocumentTable($productCategorization->getDocumentModel()->getRootName()));
+			$updateQuery->update($fb->getDocumentTable($productListItem->getDocumentModel()->getRootName()));
 			$updateQuery->assign($positionColumn, $fb->addition($positionColumn, $fb->number(1)));
 			$updateQuery->where($fb->logicAnd($where,
-				$fb->lte($positionColumn, $fb->number($productCategorization->getPosition()))));
+				$fb->lte($positionColumn, $fb->number($productListItem->getPosition()))));
 			$updateQuery->updateQuery()->execute();
-			$productCategorization->setPosition(0);
-			$productCategorization->save();
+			$productListItem->setPosition(0);
+			$productListItem->save();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -217,30 +217,30 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|null $beforeProductCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
+	 * @param \Rbs\Catalog\Documents\ProductListItem|null $beforeProductListItem
 	 * @throws \RuntimeException
 	 * @throws \Exception
 	 * @internal param $before
 	 */
-	public function highlightProductCategorization($productCategorization, $beforeProductCategorization = null)
+	public function highlightProductListItem($productListItem, $beforeProductListItem = null)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		$listing = $productCategorization->getListing();
-		$condition = $productCategorization->getCondition();
-		$currentPosition = $productCategorization->getPosition();
+		$productList = $productListItem->getProductList();
+		$condition = $productListItem->getCondition();
+		$currentPosition = $productListItem->getPosition();
 		$atPosition = -1;
-		if ($beforeProductCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization)
+		if ($beforeProductListItem instanceof \Rbs\Catalog\Documents\ProductListItem)
 		{
-			$beforePosition = $beforeProductCategorization->getPosition();
+			$beforePosition = $beforeProductListItem->getPosition();
 			if ($currentPosition < 0)
 			{
 				// We are re-ordering
@@ -264,7 +264,7 @@ class CatalogManager
 		$conditionId = ($condition) ? $condition->getId() : 0;
 		$where = $fb->logicAnd(
 			$fb->lt($fb->getDocumentColumn('position'), $fb->number(0)),
-			$fb->eq($fb->getDocumentColumn('listing'), $fb->number($listing->getId())),
+			$fb->eq($fb->getDocumentColumn('productList'), $fb->number($productList->getId())),
 			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
 		);
 
@@ -274,12 +274,12 @@ class CatalogManager
 			try
 			{
 				$tm->begin();
-				$updateQuery->update($fb->getDocumentTable($productCategorization->getDocumentModel()->getRootName()));
+				$updateQuery->update($fb->getDocumentTable($productListItem->getDocumentModel()->getRootName()));
 				$updateQuery->assign($positionColumn, $fb->subtraction($positionColumn, $fb->number(1)));
 				$updateQuery->where($fb->logicAnd($where, $fb->lte($positionColumn, $fb->number($atPosition))));
 				$updateQuery->updateQuery()->execute();
-				$productCategorization->setPosition($atPosition);
-				$productCategorization->save();
+				$productListItem->setPosition($atPosition);
+				$productListItem->save();
 				$tm->commit();
 			}
 			catch (\Exception $e)
@@ -292,7 +292,7 @@ class CatalogManager
 			try
 			{
 				$tm->begin();
-				$updateQuery->update($fb->getDocumentTable($productCategorization->getDocumentModel()->getRootName()));
+				$updateQuery->update($fb->getDocumentTable($productListItem->getDocumentModel()->getRootName()));
 				if ($currentPosition > $atPosition)
 				{
 					$updateQuery->assign($positionColumn, $fb->addition($positionColumn, $fb->number(1)));
@@ -306,8 +306,8 @@ class CatalogManager
 						$fb->gt($positionColumn, $fb->number($currentPosition)))));
 				}
 				$updateQuery->updateQuery()->execute();
-				$productCategorization->setPosition($atPosition);
-				$productCategorization->save();
+				$productListItem->setPosition($atPosition);
+				$productListItem->save();
 				$tm->commit();
 			}
 			catch (\Exception $e)
@@ -319,38 +319,38 @@ class CatalogManager
 
 	/**
 	 * @api
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \RuntimeException
 	 * @throws \Exception
 	 */
-	public function moveProductCategorizationDown($productCategorization)
+	public function moveProductListItemDown($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-						->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+						->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		if ($productCategorization->getPosition() == 0)
+		if ($productListItem->getPosition() == 0)
 		{
 			// Nothing to do
 			return;
 		}
-		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		$condition = $productCategorization->getCondition();
+		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductListItem');
+		$condition = $productListItem->getCondition();
 
 		$query->andPredicates(
-			$query->eq('listing', $productCategorization->getListing()),
+			$query->eq('productList', $productListItem->getProductList()),
 			$query->eq('condition', $condition),
-			$query->gt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition())),
+			$query->gt('position', $query->getFragmentBuilder()->number($productListItem->getPosition())),
 			$query->lt('position', $query->getFragmentBuilder()->number(0))
 		);
 
 		$query->addOrder('position', true);
-		/* @var $downCat \Rbs\Catalog\Documents\ProductCategorization */
+		/* @var $downCat \Rbs\Catalog\Documents\ProductListItem */
 		$downCat = $query->getFirstDocument();
 		if ($downCat)
 		{
@@ -359,10 +359,10 @@ class CatalogManager
 			{
 				$tm->begin();
 				$toPosition = $downCat->getPosition();
-				$fromPosition = $productCategorization->getPosition();
-				$productCategorization->setPosition($toPosition);
+				$fromPosition = $productListItem->getPosition();
+				$productListItem->setPosition($toPosition);
 				$downCat->setPosition($fromPosition);
-				$productCategorization->save();
+				$productListItem->save();
 				$downCat->save();
 				$tm->commit();
 			}
@@ -375,36 +375,36 @@ class CatalogManager
 
 	/**
 	 * @api
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \RuntimeException
 	 * @throws \Exception
 	 */
-	public function moveProductCategorizationUp($productCategorization)
+	public function moveProductListItemUp($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		if ($productCategorization->getPosition() == 0)
+		if ($productListItem->getPosition() == 0)
 		{
 			// Nothing to do
 			return;
 		}
-		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		$condition = $productCategorization->getCondition();
+		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductListItem');
+		$condition = $productListItem->getCondition();
 		$query->andPredicates(
-			$query->eq('listing', $productCategorization->getListing()),
+			$query->eq('productList', $productListItem->getProductList()),
 			$query->eq('condition', $condition),
-			$query->lt('position', $query->getFragmentBuilder()->number($productCategorization->getPosition()))
+			$query->lt('position', $query->getFragmentBuilder()->number($productListItem->getPosition()))
 		);
 
 		$query->addOrder('position', false);
-		/* @var $upCat \Rbs\Catalog\Documents\ProductCategorization */
+		/* @var $upCat \Rbs\Catalog\Documents\ProductListItem */
 		$upCat = $query->getFirstDocument();
 		if ($upCat)
 		{
@@ -413,10 +413,10 @@ class CatalogManager
 			{
 				$tm->begin();
 				$toPosition = $upCat->getPosition();
-				$fromPosition = $productCategorization->getPosition();
-				$productCategorization->setPosition($toPosition);
+				$fromPosition = $productListItem->getPosition();
+				$productListItem->setPosition($toPosition);
 				$upCat->setPosition($fromPosition);
-				$productCategorization->save();
+				$productListItem->save();
 				$upCat->save();
 				$tm->commit();
 			}
@@ -428,78 +428,78 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \RuntimeException
 	 */
-	public function highlightProductCategorizationTop($productCategorization)
+	public function highlightProductListItemTop($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductCategorization');
-		$condition = $productCategorization->getCondition();
+		$query = new \Change\Documents\Query\Query($this->getCommerceServices()->getDocumentServices(), 'Rbs_Catalog_ProductListItem');
+		$condition = $productListItem->getCondition();
 		$query->andPredicates(
-			$query->eq('listing', $productCategorization->getListing()),
+			$query->eq('productList', $productListItem->getProductList()),
 			$query->eq('condition', $condition),
 			$query->lt('position', $query->getFragmentBuilder()->number(0))
 		);
 		$query->addOrder('position', true);
-		$topProductCategorization = $query->getFirstDocument();
-		if ($topProductCategorization == null)
+		$topProductListItem = $query->getFirstDocument();
+		if ($topProductListItem == null)
 		{
 			return;
 		}
-		/* @var $topProductCategorization \Rbs\Catalog\Documents\ProductCategorization */
-		if ($topProductCategorization->getId() == $productCategorization->getId())
+		/* @var $topProductListItem \Rbs\Catalog\Documents\ProductListItem */
+		if ($topProductListItem->getId() == $productListItem->getId())
 		{
 			return;
 		}
-		$this->highlightProductCategorization($productCategorization, $topProductCategorization);
+		$this->highlightProductListItem($productListItem, $topProductListItem);
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \RuntimeException
 	 */
-	public function highlightProductCategorizationBottom($productCategorization)
+	public function highlightProductListItemBottom($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		$this->highlightProductCategorization($productCategorization);
+		$this->highlightProductListItem($productListItem);
 	}
 
 	/**
-	 * @param  \Rbs\Catalog\Documents\ProductCategorization|integer $productCategorization
+	 * @param  \Rbs\Catalog\Documents\ProductListItem|integer $productListItem
 	 * @throws \RuntimeException
 	 */
-	public function deleteProductCategorization($productCategorization)
+	public function deleteProductListItem($productListItem)
 	{
-		if (is_numeric($productCategorization))
+		if (is_numeric($productListItem))
 		{
-			$productCategorization = $this->getCommerceServices()
-				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productCategorization);
+			$productListItem = $this->getCommerceServices()
+				->getDocumentServices()->getDocumentManager()->getDocumentInstance($productListItem);
 		}
-		if (!($productCategorization instanceof \Rbs\Catalog\Documents\ProductCategorization))
+		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
-			throw new \RuntimeException("Invalid Product Categorization Identifier", 999999);
+			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		if ($productCategorization->isHighlighted())
+		if ($productListItem->isHighlighted())
 		{
-			$this->downplayProductCategorization($productCategorization);
+			$this->downplayProductListItem($productListItem);
 		}
-		$productCategorization->delete();
+		$productListItem->delete();
 	}
 }

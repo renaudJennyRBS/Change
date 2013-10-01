@@ -34,7 +34,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			$pathParts = explode('/', $selfLink->getPathInfo());
 			array_pop($pathParts);
 			$baseUrl = implode('/', $pathParts);
-			$documentResult->addLink(new Link($um, $baseUrl . '/ProductCategorization/', 'productcategorizations'));
+			$documentResult->addLink(new Link($um, $baseUrl . '/ProductListItems/', 'productListItems'));
 			$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
 			$image = $this->getFirstVisual();
 			if ($image)

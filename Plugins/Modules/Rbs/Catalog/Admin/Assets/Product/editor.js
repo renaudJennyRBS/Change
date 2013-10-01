@@ -27,35 +27,35 @@
 				};
 
 				scope.onReady = function() {
-					scope.loadCategorizations();
+					scope.loadItems();
 				};
 
 				scope.attributeGroupId = null;
 
 				scope.attributesDef = [];
 
-				scope.loadCategorizations = function() {
-					if (scope.document.META$.links.hasOwnProperty('productcategorizations')) {
-						REST.collection(scope.document.META$.links['productcategorizations'].href).then(function(result){
+				scope.loadItems = function() {
+					if (scope.document.META$.links.hasOwnProperty('productListItems')) {
+						REST.collection(scope.document.META$.links['productListItems'].href).then(function(result){
 							if (angular.isObject(result) && result.hasOwnProperty('resources'))
 							{
-								scope.categorizations = result.resources;
+								scope.productListItems = result.resources;
 							}
 						});
 					}
 					else {
-						scope.categorizations = [];
+						scope.productListItems = [];
 					}
 				};
 
-				scope.cascadeEditCategorization = function(cat){
-					scope.cascade(cat, scope.document.label, function(doc){scope.loadCategorizations();});
+				scope.cascadeEditProductListItem = function(cat){
+					scope.cascade(cat, scope.document.label, function(doc){scope.loadItems();});
 				};
 
-				scope.cascadeCreateCategorization = function(doc){
-					var newCat = REST.newResource('Rbs_Catalog_ProductCategorization');
+				scope.cascadeCreateProductListItem = function(doc){
+					var newCat = REST.newResource('Rbs_Catalog_ProductListItem');
 					newCat.product = scope.document;
-					scope.cascade(newCat, scope.document.label, function(doc){scope.loadCategorizations()});
+					scope.cascade(newCat, scope.document.label, function(doc){scope.loadItems()});
 				};
 
 				scope.toggleHighlight = function(doc){
@@ -73,7 +73,7 @@
 						Loading.start();
 						$http.get(url)
 							.success(function (data) {
-								scope.loadCategorizations();
+								scope.loadItems();
 								Loading.stop();
 							})
 							.error(function errorCallback(data, status) {
@@ -83,9 +83,9 @@
 					}
 				};
 
-				scope.deleteCategorization = function(doc){
+				scope.deleteProductListItem = function(doc){
 					REST['delete'](doc).then(function(){
-						scope.loadCategorizations();
+						scope.loadItems();
 					});
 				};
 

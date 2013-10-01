@@ -4,33 +4,33 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.label', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.productlist.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<hr />
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.listing.productsortorder', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.productlist.productsortorder', ['ucf']) }}">
 			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
 				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
 			</select>
-			<span class="help-block">{{ i18n('m.rbs.catalog.document.listing.productsortorder-help') }} </span>
+			<span class="help-block">{{ i18n('m.rbs.catalog.document.productlist.productsortorder-help') }} </span>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.listing.productsortdirection', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.productlist.productsortdirection', ['ucf']) }}">
 			<rbs-collection-item-selector ng-model="document.productSortDirection"
 				collection-code="Rbs_Generic_Collection_SortDirections">
 			</rbs-collection-item-selector>
-			<span class="help-block">{{ i18n('m.rbs.catalog.document.listing.productsortdirection-help') }}</span>
+			<span class="help-block">{{ i18n('m.rbs.catalog.document.productlist.productsortdirection-help') }}</span>
 		</rbs-field>
 
 		<hr />
 
 		<rbs-field-date property="startActivation"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.startactivation', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.productlist.startactivation', ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endActivation"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.endactivation', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.productlist.endactivation', ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

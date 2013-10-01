@@ -122,7 +122,7 @@ class Collections
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-specifications', array('ucf')),
 				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-comparisons', array('ucf')),
 				'axes' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-axes', array('ucf')),
-				'categorization' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-categorization', array('ucf'))
+				'productListItem' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-list-items', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);

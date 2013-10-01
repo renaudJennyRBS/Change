@@ -17,7 +17,7 @@
 	<key id="visibility-comparisons">comparaisons</key>
 	<key id="visibility-specifications">caractéristiques</key>
 	<key id="visibility-axes">axes de déclinaison</key>
-	<key id="visibility-categorization">catégorisable</key>
+	<key id="visibility-list-item">utilisable dans le listes</key>
 
 	<key id="type-boolean">oui / non</key>
 	<key id="type-integer">nombre entier</key>

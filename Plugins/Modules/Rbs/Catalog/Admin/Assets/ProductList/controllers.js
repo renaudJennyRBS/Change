@@ -23,16 +23,16 @@
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.listing-list | ucf'), "Rbs/Catalog/Listing"]
+			[i18n.trans('m.rbs.catalog.admin.js.productlist-list | ucf'), "Rbs/Catalog/ProductList"]
 		]);
 
 		$scope.List = {};
 
 		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
-		REST.resource('Rbs_Catalog_Listing', $routeParams.id).then(function (listing)
+		REST.resource('Rbs_Catalog_ProductList', $routeParams.id).then(function (productList)
 		{
-			$scope.productsUrl = listing.META$.links['productcategorizations'].href;
-			$scope.listing = listing;
+			$scope.productsUrl = productList.META$.links['productListItems'].href;
+			$scope.productList = productList;
 			Loading.stop();
 		});
 
@@ -88,11 +88,11 @@
 			{
 				docIds.push($scope.List.productsToAdd[i].id);
 			}
-			var url = REST.getBaseUrl('rbs/catalog/productcategorization/addproducts');
+			var url = REST.getBaseUrl('rbs/catalog/productlistitem/addproducts');
 			Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
-			$http.post(url, {"listingId": $scope.listing.id , "documentIds": docIds}).success(function (data) {
+			$http.post(url, {"productListId": $scope.productList.id , "documentIds": docIds}).success(function (data) {
 				Loading.stop();
-				$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
+				$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductListProducts:call', { 'method' : 'reload' });
 
 			}).error(function errorCallback (data, status) {
 					data.httpStatus = status;
@@ -107,11 +107,11 @@
 			{
 				$http.get(url).success(function (data)
 				{
-					$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
+					$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductListProducts:call', { 'method' : 'reload' });
 				}).error(function errorCallback(data, status)
 					{
 						data.httpStatus = status;
-						$scope.$broadcast('Change:DocumentList:DLRbsCatalogListingProducts:call', { 'method' : 'reload' });
+						$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductListProducts:call', { 'method' : 'reload' });
 					});
 			}
 		}
@@ -119,7 +119,7 @@
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
 		'RbsChange.Workspace', '$routeParams', '$http'];
-	app.controller('Rbs_Catalog_Listing_ProductsController', ProductsController);
+	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
 	/**
 	 * List actions.
@@ -130,7 +130,7 @@
 			{
 				if ((operation == 'remove'))
 				{
-					var url = REST.getBaseUrl('rbs/catalog/productcategorization/delete');
+					var url = REST.getBaseUrl('rbs/catalog/productlistitem/delete');
 					Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
 					$http.post(url, {"documentIds": ids}).success(function (data) {
 						Loading.stop();
@@ -146,9 +146,9 @@
 			}
 
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveProductsFromListing',
+				name: 'Rbs_Catalog_RemoveProductsFromProductList',
 				models: '*',
-				description: i18n.trans('m.rbs.catalog.admin.js.remove-products-from-listing'),
+				description: i18n.trans('m.rbs.catalog.admin.js.remove-products-from-list'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove|ucf'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
@@ -162,7 +162,7 @@
 			});
 
 			Actions.register({
-				name: 'Rbs_Catalog_HighlightProductsInListing',
+				name: 'Rbs_Catalog_HighlightProductsInProductList',
 				models: '*',
 				description: i18n.trans('m.rbs.catalog.admin.js.highlight-products'),
 				label: i18n.trans('m.rbs.catalog.admin.js.highlight|ucf'),
@@ -176,13 +176,13 @@
 							ids.push($docs[i].id);
 						}
 					}
-					$scope.deleteProductCategorizations($docs);
+					$scope.deleteProductListItems($docs);
 					//action(ids, $scope, 'add', 1);
 				}]
 			});
 
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveHighlightProductsInListing',
+				name: 'Rbs_Catalog_RemoveHighlightProductsInProductList',
 				models: '*',
 				description: i18n.trans('m.rbs.catalog.admin.js.remove-highlight-products'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove-highlight|ucf'),

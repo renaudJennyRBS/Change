@@ -61,31 +61,31 @@ class Listeners implements ListenerAggregateInterface
 					(new \Rbs\Price\Http\Rest\Actions\TaxInfo())->execute($event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/ProductCategorization/([0-9]+)/(highlight|downplay|moveup|movedown|highlighttop|highlightbottom)$#',
+			else if (preg_match('#^resources/Rbs/Catalog/ProductListItem/([0-9]+)/(highlight|downplay|moveup|movedown|highlighttop|highlightbottom)$#',
 				$relativePath, $matches)
 			)
 			{
 				$event->getController()->getActionResolver()
-					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
+					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductListItem');
 				$event->setParam('documentId', intval($matches[1]));
 				$methodName = $matches[2];
 				$event->setAction(function ($event) use ($methodName)
 				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr = new \Rbs\Catalog\Http\Rest\ProductListItemResult();
 					call_user_func(array($cr, $methodName), $event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/(Category|Product)/([0-9]+)/ProductCategorization/?$#', $relativePath,
+			else if (preg_match('#^resources/Rbs/Catalog/(ProductList|Product)/([0-9]+)/ProductListItems/?$#', $relativePath,
 				$matches)
 			)
 			{
 				$event->getController()->getActionResolver()
-					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductCategorization');
+					->setAuthorization($event, 'Consumer', null, 'Rbs_Catalog_ProductListItem');
 				$event->setParam('documentId', intval($matches[2]));
 				$event->setAction(function ($event)
 				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
-					$cr->productCategorizationCollection($event);
+					$cr = new \Rbs\Catalog\Http\Rest\ProductListItemResult();
+					$cr->productListItemCollection($event);
 				});
 			}
 			else if (preg_match('#^resources/Rbs/Catalog/Product/([0-9]+)/Prices/?$#', $relativePath, $matches))
@@ -109,21 +109,21 @@ class Listeners implements ListenerAggregateInterface
 				});
 
 			}
-			else if ($relativePath === 'rbs/catalog/productcategorization/delete')
+			else if ($relativePath === 'rbs/catalog/productlistitem/delete')
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
 				$event->setAction(function ($event)
 				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr = new \Rbs\Catalog\Http\Rest\ProductListItemResult();
 					$cr->delete($event);
 				});
 			}
-			else if ($relativePath === 'rbs/catalog/productcategorization/addproducts')
+			else if ($relativePath === 'rbs/catalog/productlistitem/addproducts')
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');
 				$event->setAction(function ($event)
 				{
-					$cr = new \Rbs\Catalog\Http\Rest\ProductCategorizationResult();
+					$cr = new \Rbs\Catalog\Http\Rest\ProductListItemResult();
 					$cr->addproducts($event);
 				});
 			}

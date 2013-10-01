@@ -1,7 +1,7 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 <h1 id="product-list-title">{{ title }}</h1>
 <!-- TODO: product filters -->
-<!--<div class="normal productlist-options">
+<!--<div class="normal product-list-options">
 	<form class="form-horizontal" action="TODO:search">
 		<div class="form-group">
 			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_terms">Votre recherche</label>
@@ -51,8 +51,8 @@
 				<ul class="grid-list-cell">
 					<!-- TODO: favorites and comparisons -->
 					<!--<li>
-						<label for="listing_product_{{ row.id }}">
-							<input type="checkbox" id="listing_product_{{ row.id }}" name="selected_product[]"
+						<label for="list_product_{{ row.id }}">
+							<input type="checkbox" id="list_product_{{ row.id }}" name="selected_product[]"
 								value="{{ row.id }}" />
 							{{ i18n('m.rbs.catalog.fo.select', ['ucf']) }}
 						</label>
@@ -60,7 +60,7 @@
 					<li class="product-visual">
 						<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
 							href="{{ row.url }}">
-							<img alt="" src="{{ catalogMacros.listingThumbnailURL(row.visual) }}" /></a>
+							<img alt="" src="{{ catalogMacros.listThumbnailURL(row.visual) }}" /></a>
 						<div class="pictograms-container">
 						</div>
 					</li>

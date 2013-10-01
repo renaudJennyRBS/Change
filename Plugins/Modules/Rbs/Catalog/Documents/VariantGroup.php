@@ -74,7 +74,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 				{
 					$axis['dv'] = array();
 				}
-				$axis['cat'] = $axisAttribute->isVisibleFor('categorization');
+				$axis['cat'] = $axisAttribute->isVisibleFor('productListItem');
 				$axesInfo[] = $axis;
 			}
 			$this->setAxesInfo($axesInfo);
