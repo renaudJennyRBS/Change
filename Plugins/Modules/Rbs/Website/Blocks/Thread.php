@@ -33,10 +33,15 @@ class Thread extends Block
 		{
 			$parameters->setParameterValue('sectionId', $page->getSection()->getId());
 		}
+
 		$document = $event->getParam('document');
 		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
 			$parameters->setParameterValue('documentId', $document->getId());
+		}
+		elseif ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('documentId', $page->getId());
 		}
 		return $parameters;
 	}
@@ -94,14 +99,13 @@ class Thread extends Block
 				$thread[] = $this->getCurrentMenuEntry($document->getTitle());
 			}
 		}
-		elseif ($document instanceof \Change\Documents\Interfaces\Localizable &&
-			is_callable(array($document->getCurrentLocalization(), 'getTitle')))
+		elseif ($document instanceof \Change\Documents\AbstractDocument)
 		{
-			$thread[] = $this->getCurrentMenuEntry($document->getCurrentLocalization()->getTitle());
-		}
-		elseif ($document && is_callable(array($document, 'getTitle')))
-		{
-			$thread[] = $this->getCurrentMenuEntry($document->getTitle());
+			$title = $document->getDocumentModel()->getPropertyValue($document, 'title');
+			if ($title)
+			{
+				$thread[] = $this->getCurrentMenuEntry($title);
+			}
 		}
 
 		$attributes['thread'] = $thread;

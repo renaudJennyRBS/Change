@@ -24,10 +24,15 @@ class HeadMetas extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('documentId');
 
+		$page = $event->getParam('page');
 		$document = $event->getParam('document');
 		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
 			$parameters->setParameterValue('documentId', $document->getId());
+		}
+		elseif ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('documentId', $page->getId());
 		}
 
 		return $parameters;
@@ -60,15 +65,7 @@ class HeadMetas extends Block
 
 			if (!isset($attributes['title']))
 			{
-				if ($document instanceof \Change\Documents\Interfaces\Localizable &&
-					is_callable(array($document->getCurrentLocalization(), 'getTitle')))
-				{
-					$attributes['title'] = $document->getCurrentLocalization()->getTitle();
-				}
-				elseif (is_callable(array($document, 'getTitle')))
-				{
-					$attributes['title'] = $document->getTitle();
-				}
+				$attributes['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
 			}
 		}
 		return 'head-metas.twig';
