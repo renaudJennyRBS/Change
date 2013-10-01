@@ -353,4 +353,28 @@ class PermissionsManager
 			throw $tm->rollBack($e);
 		}
 	}
+
+	/**
+	 * @param integer $sectionId
+	 * @return boolean
+	 */
+	public function isWebAllowed($sectionId)
+	{
+		$this->getApplicationServices()->getLogging()->fatal(__METHOD__. ' ' . $sectionId);
+		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('rule_id'));
+		$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
+		$accessorIds = array($fb->number(0));
+		foreach ($this->accessorIds as $accessorId)
+		{
+			$accessorIds[] = $fb->number($accessorId);
+		}
+
+		$qb->where($fb->logicAnd(
+			$fb->eq($fb->column('section_id'), $fb->number($sectionId)),
+			$fb->in($fb->column('accessor_id'), $accessorIds)));
+
+		return is_array($qb->query()->getFirstResult());
+	}
 }

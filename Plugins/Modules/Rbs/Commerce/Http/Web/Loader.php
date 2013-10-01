@@ -239,6 +239,12 @@ class Loader
 
 				/* @var $commerceServices CommerceServices */
 				$commerceServices = $event->getParam('commerceServices');
+				if ($commerceServices->getWebStore() && !$profile->getDefaultWebStoreId())
+				{
+					$profile->setDefaultWebStoreId($commerceServices->getWebStore()->getId());
+					$saveProfile = true;
+				}
+
 				if ($commerceServices->getBillingArea() && !$profile->getDefaultBillingAreaId())
 				{
 					$profile->setDefaultBillingAreaId($commerceServices->getBillingArea()->getId());

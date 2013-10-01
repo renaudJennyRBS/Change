@@ -70,7 +70,6 @@ class Controller extends \Change\Http\Controller
 		$event->setAuthenticationManager($authenticationManager);
 
 		$permissionsManager = new \Change\Permissions\PermissionsManager();
-		$permissionsManager->allow(true);
 		$permissionsManager->setApplicationServices($applicationServices);
 
 		$event->setPermissionsManager($permissionsManager);

@@ -37,7 +37,7 @@ class Profile extends AbstractProfile
 	 */
 	public function getLastCartIdentifier()
 	{
-		return $this->properties['lastCartIdentifier'];
+		return isset($this->properties['lastCartIdentifier']) ? $this->properties['lastCartIdentifier'] : null;
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Profile extends AbstractProfile
 	 */
 	public function getDefaultZone()
 	{
-		return $this->properties['defaultZone'];
+		return isset($this->properties['defaultZone'])? $this->properties['defaultZone'] : null;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Profile extends AbstractProfile
 	 */
 	public function getDefaultWebStoreId()
 	{
-		return $this->properties['defaultWebStoreId'];
+		return isset($this->properties['defaultWebStoreId']) ? $this->properties['defaultWebStoreId'] : null;
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Profile extends AbstractProfile
 	 */
 	public function getDefaultBillingAreaId()
 	{
-		return $this->properties['defaultBillingAreaId'];
+		return isset($this->properties['defaultBillingAreaId']) ? $this->properties['defaultBillingAreaId'] : null;
 	}
 
 	/**
@@ -144,6 +144,6 @@ class Profile extends AbstractProfile
 	 */
 	public function getDefaultAddressId()
 	{
-		return $this->properties['defaultAddressId'];
+		return isset($this->properties['defaultAddressId']) ? $this->properties['defaultAddressId'] : null;
 	}
 }
