@@ -52,9 +52,12 @@
 			</div>
 
 			<div data-ng-show="document.valueType == 'Property'">
-				<rbs-field-text property="productProperty" input-class="input-block-level"
-					label="{{ i18nAttr('m.rbs.catalog.document.attribute.productproperty', ['ucf']) }}">
-				</rbs-field-text>
+				<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.attribute.productproperty', ['ucf']) }}">
+					<select ng-model="document.productProperty"
+							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeProductProperties">
+						<option value=""></option>
+					</select>
+				</rbs-field>
 			</div>
 
 			<div data-ng-show="document.valueType == 'Text'">
