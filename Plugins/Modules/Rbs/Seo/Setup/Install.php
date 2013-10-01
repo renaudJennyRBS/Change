@@ -4,26 +4,8 @@ namespace Rbs\Seo\Setup;
 /**
  * @name \Rbs\Seo\Setup\Install
  */
-class Install
+class Install extends \Change\Plugins\InstallBase
 {
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-//	public function initialize($plugin)
-//	{
-//	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @throws \RuntimeException
-	 */
-//	public function executeApplication($plugin, $application)
-//	{
-//		/* @var $config \Change\Configuration\EditableConfiguration */
-//		$config = $application->getConfiguration();
-//	}
-
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application\ApplicationServices $applicationServices
@@ -31,9 +13,10 @@ class Install
 	 * @param \Change\Presentation\PresentationServices $presentationServices
 	 * @throws \Exception
 	 */
-//	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
-//	{
-//	}
+	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	{
+		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

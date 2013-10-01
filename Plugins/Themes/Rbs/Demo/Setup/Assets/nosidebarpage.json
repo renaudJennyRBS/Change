@@ -1,4 +1,13 @@
 {
+	"headSeo" : {
+		"id" : "headSeo",
+		"type" : "block",
+		"name" : "Rbs_Seo_HeadMetas",
+		"visibility" : "raw",
+		"parameters" : {
+		}
+	},
+
 	"headerTop1" : {
 		"id" : "headerTop1",
 		"type" : "block",
