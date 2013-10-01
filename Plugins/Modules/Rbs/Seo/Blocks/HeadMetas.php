@@ -60,7 +60,7 @@ class HeadMetas extends Block
 
 			if (!isset($attributes['title']))
 			{
-				if ($document instanceof \Change\Documents\Traits\Localized &&
+				if ($document instanceof \Change\Documents\Interfaces\Localizable &&
 					is_callable(array($document->getCurrentLocalization(), 'getTitle')))
 				{
 					$attributes['title'] = $document->getCurrentLocalization()->getTitle();
