@@ -11,4 +11,6 @@
 	<key id="leave-a-message-submit">poster le message</key>
 	<key id="leave-a-message-update">mettre à jour</key>
 	<key id="edited-message">message modifié le : </key>
+	<key id="edit-message">éditer</key>
+	<key id="remove-message">supprimer</key>
 </i18n>
