@@ -26,6 +26,8 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -123,6 +125,8 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$theme = $pm->getTheme('Project', 'Tests');
 		$this->assertTrue($theme->getActivated());
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	/**
@@ -130,6 +134,7 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testDeactivateLockedModule()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -158,6 +163,7 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$paramArray = array('plugin' => $module->toArray());
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$changePluginActivation = new \Rbs\Plugins\Http\Rest\Actions\ChangePluginActivation();
+		$this->getApplicationServices()->getTransactionManager()->commit();
 		//Try to deactivate a locked plugin raise an InvalidArgumentException
 		$changePluginActivation->execute($event);
 	}
@@ -167,6 +173,7 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testDeactivateLockedTheme()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -191,8 +198,8 @@ class ChangePluginActivationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$paramArray = array('plugin' => $theme->toArray());
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$changePluginActivation = new \Rbs\Plugins\Http\Rest\Actions\ChangePluginActivation();
+		$this->getApplicationServices()->getTransactionManager()->commit();
 		//Try to deactivate a locked plugin raise an InvalidArgumentException
-		$this->setExpectedException('\InvalidArgumentException');
 		$changePluginActivation->execute($event);
 	}
 }

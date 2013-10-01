@@ -22,21 +22,22 @@ interface InterfaceSchemaManager
 	public function closeConnection();
 
 	/**
+	 * TODO: check provider transaction
 	 * @param string $sql
 	 * @return integer the number of affected rows
-	 * @throws Exception on error
+	 * @throws \Exception on error
 	 */
 	function execute($sql);
 	
 	/**
 	 * @param string $script
 	 * @param boolean $throwOnError
-	 * @throws Exception on error
+	 * @throws \Exception on error
 	 */
 	function executeBatch($script, $throwOnError = false);
 	
 	/**
-	 * @throws Exception on error
+	 * @throws \Exception on error
 	 */
 	function clearDB();
 	

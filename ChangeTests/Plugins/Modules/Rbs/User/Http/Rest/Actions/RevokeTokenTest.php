@@ -22,6 +22,8 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function setUp()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		//add a fake application
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -51,10 +53,14 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$oauth = new \Change\Http\Rest\OAuth\OAuth();
 		$oauth->setApplicationServices($this->getApplicationServices());
 		$oauth->insertToken($this->storedOAuth);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		//first check if token exist, use GetUserTokens to get it.
 		$event = new Event();
 		$event->setApplicationServices($this->getApplicationServices());
@@ -89,5 +95,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $result \Change\Http\Rest\Result\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertEmpty($arrayResult);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 }

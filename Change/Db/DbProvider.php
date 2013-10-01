@@ -70,6 +70,16 @@ abstract class DbProvider
 	protected $listenerAggregateClassNames;
 
 	/**
+	 * @var boolean
+	 */
+	protected $readOnly = false;
+
+	/**
+	 * @var boolean
+	 */
+	protected $checkTransactionBeforeWriting = true;
+
+	/**
 	 * @return integer
 	 */
 	public function getId()
@@ -145,6 +155,42 @@ abstract class DbProvider
 	}
 
 	/**
+	 * @param boolean $readOnly
+	 * @return $this
+	 */
+	public function setReadOnly($readOnly)
+	{
+		$this->readOnly = $readOnly;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getReadOnly()
+	{
+		return $this->readOnly;
+	}
+
+	/**
+	 * @param boolean $checkTransactionBeforeWriting
+	 * @return $this
+	 */
+	public function setCheckTransactionBeforeWriting($checkTransactionBeforeWriting)
+	{
+		$this->checkTransactionBeforeWriting = $checkTransactionBeforeWriting;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getCheckTransactionBeforeWriting()
+	{
+		return $this->checkTransactionBeforeWriting;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getConnectionInfos()
@@ -194,6 +240,7 @@ abstract class DbProvider
 
 	/**
 	 * @param string $cacheKey
+	 * @throws \RuntimeException
 	 * @return StatementBuilder
 	 */
 	public function getNewStatementBuilder($cacheKey = null)

@@ -246,13 +246,23 @@ class DbProvider extends \Change\Db\DbProvider
 		$statement->execute();
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);
 	}
-	
+
 	/**
 	 * @param AbstractQuery $query
+	 * @throws \RuntimeException
 	 * @return integer
 	 */
 	public function executeQuery(AbstractQuery $query)
 	{
+		if ($this->getReadOnly())
+		{
+			throw new \RuntimeException('This DB provider is read only!', 999999);
+		}
+		elseif ($this->getCheckTransactionBeforeWriting() && !$this->inTransaction)
+		{
+			throw new \RuntimeException('No transaction started!', 999999);
+		}
+
 		if ($query->getCachedSql() === null)
 		{
 			$query->setCachedSql($this->buildQuery($query));

@@ -1,6 +1,6 @@
 <nav>
 	<ul class="breadcrumb">
-		<li><a href="">{{ i18n('m.rbs.website.fo.home',['ucf']) }}</a></li>
+		<li><a href="#">{{ i18n('m.rbs.website.fo.home',['ucf']) }}</a></li>
 	{% for item in thread %}
 		<li{% if loop.last %} class="active"{% endif %}>
 			{% if item.hasUrl %}<a href="{{ item.url }}">{% endif %}

@@ -54,6 +54,8 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testSetInventory()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$sku = $this->getTestSku();
 		$entry = $this->sm->setInventory(10, $sku);
 		$this->assertInstanceOf('\\Rbs\\Stock\\Documents\\InventoryEntry', $entry);
@@ -79,12 +81,16 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
 		$query->eq('sku', $sku);
 		$this->assertEquals(1, $query->getCountDocuments());
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	public function testInventoryMovement()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$sku = $this->getTestSku();
-		$entry = $this->sm->setInventory(10, $sku);
+		$this->sm->setInventory(10, $sku);
 
 		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
 		$this->assertGreaterThan(0, $mvtId);
@@ -94,12 +100,16 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$level = $this->sm->getInventoryLevel($sku, null);
 		$this->assertEquals(3, $level);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	public function testReservation()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$sku = $this->getTestSku();
-		$entry = $this->sm->setInventory(100, $sku);
+		$this->sm->setInventory(100, $sku);
 
 		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
 		$this->assertGreaterThan(0, $mvtId);
@@ -147,5 +157,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->sm->unsetReservations($targetIdentifier);
 		$level = $this->sm->getInventoryLevel($sku, 999);
 		$this->assertEquals(80, $level);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 }

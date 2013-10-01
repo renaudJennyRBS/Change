@@ -25,6 +25,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$pm = $this->getApplicationServices()->getPluginManager();
 
 		$event = new Event();
@@ -60,5 +61,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotEmpty($arrayResult);
 		//And the the count is the same
 		$this->assertCount(count($newPlugins), $arrayResult);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 }

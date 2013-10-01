@@ -27,6 +27,8 @@ class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function setUp()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		//add a fake application
 		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -70,6 +72,8 @@ class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 		$oauth->setApplicationServices($this->getApplicationServices());
 		$oauth->insertToken($this->validStoredOAuth);
 		$oauth->insertToken($this->invalidStoredOAuth);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	public function testExecute()

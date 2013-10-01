@@ -40,17 +40,17 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$testSchema = new \ChangeTests\Change\Db\SQLite\TestAssets\Schema($schemaManager);
 		$testSchema->generate();
-
-		return $provider;
 	}
 
 	/**
 	 * @depends testGetInstance
-	 * @param \Change\Db\SQLite\DbProvider $provider
-	 * @return \Change\Db\SQLite\DbProvider
 	 */
-	public function testInsert(DbProvider $provider)
+	public function testInsert()
 	{
+		$provider = $this->getApplicationServices()->getDbProvider();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$sb = $provider->getNewStatementBuilder();
 		$fb = $sb->getFragmentBuilder();
 		$iq = $sb->insert('test_t1', 'id', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6')
@@ -147,16 +147,19 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 		$iq->bindParameter('f6', new \DateTime('2013-06-05 01:00:00', new \DateTimeZone('GMT')));
 		$iq->execute();
 
-		return $provider;
+		$tm->commit();
 	}
 
 	/**
 	 * @depends testInsert
-	 * @param \Change\Db\SQLite\DbProvider $provider
 	 * @return \Change\Db\SQLite\DbProvider
 	 */
-	public function testSelect(DbProvider $provider)
+	public function testSelect()
 	{
+		$provider = $this->getApplicationServices()->getDbProvider();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$qb = $provider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
@@ -183,6 +186,6 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(101, $rows[0]['id']);
 		$this->assertEquals(100, $rows[1]['id']);
 
-		return $provider;
+		$tm->commit();
 	}
 }

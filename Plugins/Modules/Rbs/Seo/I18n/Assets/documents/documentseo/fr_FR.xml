@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.seo.documents.documentseo" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="target">document cible</key>
+	<key id="target-model">type de la cible</key>
+	<key id="target-picker-title">sélectionnez le document dont vous souhaitez optimiser le référencement</key>
+	<key id="meta-title">méta titre de la page</key>
+	<key id="meta-description">méta description</key>
+	<key id="meta-keywords">méta mots-clés</key>
+</i18n>

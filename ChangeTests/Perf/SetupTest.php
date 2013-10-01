@@ -98,6 +98,7 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals(0 , $msg[1]);
 		}
+
 		return array($application, $eventManager);
 	}
 

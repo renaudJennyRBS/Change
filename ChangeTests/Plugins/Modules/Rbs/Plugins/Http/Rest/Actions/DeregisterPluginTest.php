@@ -26,6 +26,8 @@ class DeregisterPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
+
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -147,6 +149,8 @@ class DeregisterPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$registeredPlugins = $pm->getRegisteredPlugins();
 		//Now plugin is deregistered
 		$this->assertFalse($this->isPluginPresent($theme, $registeredPlugins));
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	/**

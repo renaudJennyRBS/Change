@@ -25,6 +25,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$pm = $this->getApplicationServices()->getPluginManager();
 
 		$event = new Event();
@@ -67,5 +68,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $plugin \Change\Plugins\Plugin */
 		$formatedDate = $plugin->getRegistrationDate()->format(\DateTime::ISO8601);
 		$this->assertEquals($formatedDate, $testPlugin['registrationDate']);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 }

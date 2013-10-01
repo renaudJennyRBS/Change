@@ -26,6 +26,7 @@ class RegisterPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$pm = $this->getApplicationServices()->getPluginManager();
 		//compile function create or replace a serialized file by plugins in database. By default, the compiled file is a fake
 		//because there is nothing in plugins table
@@ -85,6 +86,8 @@ class RegisterPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		//Now plugin is installed
 		$this->assertTrue($this->isPluginPresent($theme, $registeredPlugins));
 		$this->assertEquals('Testkit', $theme->getPackage());
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
 	/**
