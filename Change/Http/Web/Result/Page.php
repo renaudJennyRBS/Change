@@ -209,7 +209,11 @@ class Page extends Result
 			$name = "unknown";
 		}
 
-		if ($innerHTML)
+		if ($class == 'raw')
+		{
+			return $innerHTML;
+		}
+		elseif ($innerHTML)
 		{
 			if ($class)
 			{
@@ -221,7 +225,6 @@ class Page extends Result
 			}
 			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '"'. $class.'>' . $innerHTML . '</div>';
 		}
-
 		return '<div data-type="block" class="empty" data-id="' . $id . '" data-name="' . $name . '"></div>';
 	}
 
