@@ -77,6 +77,9 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 
 		$pageLayout->setItems($containers);
 		$result->setContentLayout($pageLayout);
+
+
+
 		return $result;
 	}
 
@@ -91,13 +94,17 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 		if ($result instanceof PageResult)
 		{
 			$page = $pageEvent->getPage();
-
+			$pageTemplate = $page->getPageTemplate();
 			$application = $pageEvent->getApplicationServices()->getApplication();
+			$developmentMode = $application->inDevelopmentMode();
 			$cachePath = $application->getWorkspace()->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
-			if (!file_exists($cachePath) || filemtime($cachePath) < $page->getModificationDate()->getTimestamp())
+			$cacheTime = max($page->getModificationDate()->getTimestamp(), $pageTemplate->getModificationDate()->getTimestamp());
+
+			if (!file_exists($cachePath) || filemtime($cachePath) < $cacheTime)
 			{
 				$templateLayout = $result->getTemplateLayout();
 				$pageLayout = $result->getContentLayout();
+				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
 
 				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
 				$callableTwigBlock = function (\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
@@ -107,7 +114,7 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 				};
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
 
-				$pageTemplate = $page->getPageTemplate();
+
 				$blockNames = array();
 				foreach($templateLayout->getBlocks() as $block)
 				{
@@ -118,14 +125,13 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 					$blockNames[$block->getName()] = true;
 				}
 
-				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
 				$configuration = $themeManager->getDefault()->getAssetConfiguration();
 				$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
 				$am = $themeManager->getAsseticManager($configuration);
 
 				$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
 				$jsFooter = array();
-				$assetBaseUrl = ($application->inDevelopmentMode()) ? '' : $themeManager->getAssetBaseUrl();
+				$assetBaseUrl = ($developmentMode) ? '' : $themeManager->getAssetBaseUrl();
 				foreach($jsNames as $jsName)
 				{
 					try
@@ -170,6 +176,8 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 			$result->setRenderer($renderer);
 		}
 	}
+
+
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager

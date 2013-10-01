@@ -28,4 +28,9 @@ interface PageTemplate
 	 * @return \Change\Presentation\Layout\Layout
 	 */
 	public function getContentLayout();
+
+	/**
+	 * @return \Datetime
+	 */
+	public function getModificationDate();
 }

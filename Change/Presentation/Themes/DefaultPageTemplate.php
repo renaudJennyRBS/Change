@@ -17,6 +17,11 @@ class DefaultPageTemplate implements PageTemplate
 	protected $name;
 
 	/**
+	 * @var \Change\Presentation\Interfaces\ThemeResource
+	 */
+	protected $htmlResource;
+
+	/**
 	 * @param DefaultTheme $theme
 	 * @param string $name
 	 */
@@ -42,12 +47,25 @@ class DefaultPageTemplate implements PageTemplate
 	}
 
 	/**
+	 * @return \Change\Presentation\Interfaces\ThemeResource
+	 */
+	public function getHtmlResource()
+	{
+		if ($this->htmlResource === null)
+		{
+			$path = 'Layout/PageTemplate/' . $this->getName() . '.twig';
+			$this->htmlResource = $this->getTheme()->getResource($path);
+		}
+		return $this->htmlResource;
+	}
+
+	/**
 	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function getHtml()
 	{
-		$res = $this->getTheme()->getResource('Layout/PageTemplate/' . $this->getName() . '.twig');
+		$res = $this->getHtmlResource();
 		if (!$res->isValid())
 		{
 			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.twig resource not found', 999999);
@@ -68,5 +86,18 @@ class DefaultPageTemplate implements PageTemplate
 		}
 		$config = json_decode($res->getContent(), true);
 		return new Layout($config);
+	}
+
+	/**
+	 * @return \Datetime
+	 */
+	public function getModificationDate()
+	{
+		$res = $this->getHtmlResource();
+		if ($res->isValid())
+		{
+			return $res->getModificationDate();
+		}
+		return new \DateTime();
 	}
 }
