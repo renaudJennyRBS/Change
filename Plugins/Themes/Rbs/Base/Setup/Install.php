@@ -25,6 +25,7 @@ class Install extends \Change\Plugins\InstallBase
 		{
 			if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
 			{
+				echo $plugin, PHP_EOL;
 				$themeManager->installPluginTemplates($plugin);
 				$themeManager->installPluginAssets($plugin);
 			}

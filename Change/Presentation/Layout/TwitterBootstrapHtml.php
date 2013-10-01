@@ -47,7 +47,12 @@ class TwitterBootstrapHtml
 	 */
 	public function getBlockClass(\Change\Presentation\Layout\Block $item)
 	{
-		if ($item->getVisibility())
+		$vi = $item->getVisibility();
+		if ($vi == 'raw')
+		{
+			return 'raw';
+		}
+		elseif ($vi)
 		{
 			$classes = array();
 			$vi = $item->getVisibility();
@@ -55,6 +60,7 @@ class TwitterBootstrapHtml
 			{
 				switch ($vi[$i])
 				{
+					// TODO handle Bootstrap 3 classes...
 					case 'D' : $classes[] = 'visible-lg'; break;
 					case 'P' : $classes[] = 'visible-sm'; break;
 					case 'T' : $classes[] = 'visible-md'; break;

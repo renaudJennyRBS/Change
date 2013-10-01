@@ -7,7 +7,6 @@ namespace Change\Presentation\Layout;
  */
 class Block extends Item
 {
-
 	/**
 	 * @var string
 	 */

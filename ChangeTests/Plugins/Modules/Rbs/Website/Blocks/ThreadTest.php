@@ -63,24 +63,22 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 		$meta = $parameters->getParameterMeta('separator');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
 		$this->assertEquals('/', $meta->getDefaultValue());
-		$this->assertEquals('>', $parameters->separator);
+		$this->assertEquals('>', $parameters->getParameter('separator'));
 
 		$meta = $parameters->getParameterMeta('templateName');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
 		$this->assertEquals('thread.twig', $meta->getDefaultValue());
-		$this->assertEquals('thread.twig', $parameters->templateName);
+		$this->assertEquals('thread.twig', $parameters->getParameter('templateName'));
 
-		$meta = $parameters->getParameterMeta('pageId');
+		$meta = $parameters->getParameterMeta('documentId');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
 		$this->assertNull($meta->getDefaultValue());
-		$this->assertEquals(123, $parameters->pageId);
-		$this->assertEquals(123, $parameters->getPageId());
-		$this->assertEquals(123, $parameters->getParameterValue('pageId'));
+		$this->assertEquals(123, $parameters->getParameter('documentId'));
 
 		$meta = $parameters->getParameterMeta('sectionId');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
 		$this->assertNull($meta->getDefaultValue());
-		$this->assertEquals(789, $parameters->sectionId);
+		$this->assertEquals(789, $parameters->getParameter('sectionId'));
 		return $event;
 	}
 }
