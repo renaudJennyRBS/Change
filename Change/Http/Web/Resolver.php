@@ -2,7 +2,6 @@
 namespace Change\Http\Web;
 
 use Change\Http\BaseResolver;
-use Change\Http\Web\Actions\GetImagestorageItemContent;
 use Change\Http\Web\Event;
 use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\GetStorageItemContent;
@@ -25,14 +24,32 @@ class Resolver extends BaseResolver
 	public function resolve($event)
 	{
 		$website = $event->getWebsite();
-
 		$pathRule = $this->findRule($event, $website);
 		if ($pathRule)
 		{
 			$event->setParam('pathRule', $pathRule);
+			$authorizedSectionId = $pathRule->getSectionId();
+
 			$dm = $event->getDocumentServices()->getDocumentManager();
 			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 			$event->setParam('document', $document);
+			if ($document instanceof \Change\Documents\Interfaces\Publishable)
+			{
+				if (!$document->published())
+				{
+					return;
+				}
+
+				if (!$authorizedSectionId)
+				{
+					$section = $document->getCanonicalSection($website);
+					$authorizedSectionId = ($section) ? $section->getId() : $pathRule->getWebsiteId();
+				}
+			}
+			elseif (!$authorizedSectionId)
+			{
+				$authorizedSectionId = $pathRule->getWebsiteId();
+			}
 
 			$urlManager = $event->getUrlManager();
 			if ($pathRule->getHttpStatus() !== HttpResponse::STATUS_CODE_200 && $pathRule->getLocation() === null)
@@ -60,7 +77,7 @@ class Resolver extends BaseResolver
 						$action = new GeneratePathRule();
 						$action->execute($event);
 					};
-					$this->setAuthorization($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+					$this->setPathRuleAuthorization($event, $authorizedSectionId);
 					$event->setAction($action);
 					return;
 				}
@@ -82,7 +99,7 @@ class Resolver extends BaseResolver
 					$action->execute($event);
 				};
 				$event->setAction($action);
-				$this->setAuthorization($event, 'Consumer', $document->getId(), $document->getDocumentModelName());
+				$this->setPathRuleAuthorization($event, $authorizedSectionId);
 				return;
 			}
 		}
@@ -311,5 +328,21 @@ class Resolver extends BaseResolver
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param Event $event
+	 * @param integer $sectionId
+	 */
+	protected function setPathRuleAuthorization($event, $sectionId)
+	{
+		if ($sectionId)
+		{
+			$authorisation = function(Event $event) use ($sectionId)
+			{
+				return $event->getPermissionsManager()->isWebAllowed($sectionId);
+			};
+			$event->setAuthorization($authorisation);
+		}
 	}
 }

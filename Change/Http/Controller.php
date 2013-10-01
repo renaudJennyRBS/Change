@@ -178,20 +178,20 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 			if (!$permissionsManager->allow())
 			{
 				$user = $event->getAuthenticationManager()->getCurrentUser();
-				if ($user->authenticated())
+				$permissionsManager->setUser($user);
+				$authorized = call_user_func($authorization, $event);
+				if (!$authorized)
 				{
-					$permissionsManager->setUser($user);
-					$authorized = call_user_func($authorization, $event);
-					if (!$authorized)
+					if ($user->authenticated())
 					{
 						$this->forbidden($event);
 						return false;
 					}
-				}
-				else
-				{
-					$this->unauthorized($event);
-					return false;
+					else
+					{
+						$this->unauthorized($event);
+						return false;
+					}
 				}
 			}
 		}
