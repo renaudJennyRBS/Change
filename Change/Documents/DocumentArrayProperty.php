@@ -235,7 +235,7 @@ class DocumentArrayProperty implements \Iterator, \Countable, \ArrayAccess
 			if ($this->modelName)
 			{
 				return ($document->getDocumentModelName() === $this->modelName
-					|| in_array($this->modelName, $document->getDocumentModel()->getDescendantsNames()));
+					|| in_array($this->modelName, $document->getDocumentModel()->getAncestorsNames()));
 			}
 			return true;
 		}
