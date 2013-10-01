@@ -3,21 +3,18 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text
-			property="label" required="true"
+		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr('m.rbs.catalog.document.product.label', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
-		<rbs-field-text
-			property="title" required="true"
-			rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.catalog.document.product.synchronize-title-label', ['ucf']) }}"
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.catalog.document.product.synchronize-title-label', ['ucf']) }}"
 			label="{{ i18nAttr('m.rbs.catalog.document.product.title', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
-		<rbs-field-boolean
-			ng-cloak="" ng-hide="document.id > 0"
+		<rbs-field-boolean ng-cloak="" ng-hide="document.id > 0"
 			property="newSkuOnCreation"
 			label="{{ i18nAttr('m.rbs.catalog.document.product.newskuoncreation', ['ucf']) }}">
 		</rbs-field-boolean>
@@ -30,6 +27,13 @@
 			ng-hide="document.newSkuOnCreation && document.id <= 0">
 		</rbs-field-picker>
 
+		<rbs-field-picker-multiple property="publicationSections"
+			label="{{ i18nAttr('m.rbs.catalog.document.product.publicationsections', ['ucf']) }}"
+			accepted-model="Rbs_Website_Section"
+			selector-title="{{ i18nAttr('m.rbs.catalog.document.product.publicationsections-picker-title', ['ucf']) }}"
+			allow-creation="true">
+		</rbs-field-picker-multiple>
+
 		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr('m.rbs.catalog.document.product.visuals', ['ucf']) }}"
 			accepted-model="Rbs_Media_Image"
 			selector-title="{{ i18nAttr('m.rbs.catalog.document.product.visuals-picker-title', ['ucf']) }}"
@@ -41,12 +45,11 @@
 			selector-title="{{ i18nAttr('m.rbs.catalog.document.product.pictograms-picker-title', ['ucf']) }}"
 			allow-creation="true">
 		</rbs-field-picker-multiple>
-
 	</fieldset>
 
 	<fieldset data-ng-show="section=='attributes'"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-attributes', ['ucf']) }}"
-			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.product.section-attributes', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.product.attribute', ['ucf']) }}">
 			<select ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
