@@ -248,7 +248,7 @@
 					};
 
 					$textarea.on('change', function () {
-						$timeout(function () {
+						scope.$apply(function () {
 							if (angular.isObject(ngModel.$viewValue))
 							{
 								ngModel.$viewValue.t = $textarea.val();
