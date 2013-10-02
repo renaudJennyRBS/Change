@@ -129,4 +129,36 @@ class Collections
 			$event->stopPropagation();
 		}
 	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addAttributeProductProperties(\Zend\EventManager\Event $event)
+	{
+		$excludedProperties = array('id', 'model', 'refLCID', 'LCID', 'publicationSections', 'attribute', 'attributeValues',
+			'newSkuOnCreation', 'authorId', 'documentVersion', 'publicationStatus');
+		$excludedTypes = array(\Change\Documents\Property::TYPE_XML, \Change\Documents\Property::TYPE_STORAGEURI,
+			\Change\Documents\Property::TYPE_JSON, \Change\Documents\Property::TYPE_LOB, \Change\Documents\Property::TYPE_OBJECT);
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$items = array();
+			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$productModel = $documentServices->getModelManager()->getModelByName('Rbs_Catalog_Product');
+			foreach ($productModel->getProperties() as $property)
+			{
+				$propertyName = $property->getName();
+				if (in_array($propertyName, $excludedProperties) || in_array($property->getType(), $excludedTypes))
+				{
+					continue;
+				}
+				$key = 'm.rbs.catalog.document.product.' . strtolower($propertyName);
+				$label = $i18n->trans($key);
+				$items[$propertyName] = (!$label || $key == $label) ? $propertyName : $label;
+			}
+			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeProductProperties', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
 }
