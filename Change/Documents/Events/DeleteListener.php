@@ -302,7 +302,7 @@ class DeleteListener
 							$fb = $qb->getFragmentBuilder();
 							$qb->update($fb->getDocumentTable($relModel->getRootName()));
 							$column = $fb->getDocumentColumn($relProp->getName());
-							$qb->assign($column, $fb->number(null));
+							$qb->assign($column, $fb->number(0));
 							if (!$relModel->isLocalized())
 							{
 								$qb->assign($fb->getDocumentColumn('modificationDate'),
