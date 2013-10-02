@@ -1,7 +1,5 @@
 <article id="review-{{ review.id }}" class="panel{{ validationClass }}" itemscope="" itemtype="http://schema.org/Review">
-	<!-- img?
-	<img alt="" src="http://www.gravatar.com/avatar/c1dbcc9a17dbc6a109026def9535467b?s=48&amp;r=g" class="avatar img-thumbnail pull-right" />
-	-->
+	<img alt="" src="{{ review.gravatarUrl }}" class="avatar img-thumbnail pull-right" />
 	<header class="panel-heading">
 		<a itemprop="url" rel="nofollow" href="{{ review.url }}">{{ loop.index }}.</a>
 		{{ i18n('m.rbs.review.blocks.review-write-by', ['ucf'], { 'author': review.pseudonym, 'url': review.authorUrl }) }}
