@@ -12,8 +12,9 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 	{
 		if (!parent::getLabel())
 		{
-			//TODO: do something right
-			return ' ';
+			$target = $this->getTarget();
+			/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
+			$this->setLabel($this->getPseudonym() . '-' . $target->getLabel() . '-' . $this->getSection()->getTitle());
 		}
 		return parent::getLabel();
 	}

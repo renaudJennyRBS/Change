@@ -26,6 +26,9 @@
 	<key id="already-reviewed">vous avez déjà noté ce produit</key>
 	<key id="your-review">votre avis</key>
 	<key id="pending-publication">votre avis est en cours de validation par notre équipe</key>
+	<key id="review-pending-correction">la correction apportée à votre avis est en cours de validation</key>
+	<key id="review-pending-correction-new-note">nouvelle note</key>
+	<key id="review-pending-correction-new-content">nouveau contenu</key>
 	<key id="promoted-review-list">liste des avis mis en avant</key>
 	<key id="promoted-review-list-mode">mode de mise en avant</key>
 	<key id="promoted-review-list-max-reviews">nombre maximum d'avis affichés</key>
@@ -34,7 +37,7 @@
 	<key id="promoted-review-list-title-most-recent">avis les plus récents</key>
 	<key id="promoted-review-list-title-default-manual">avis sélectionnés</key>
 	<key id="review-detail">détail d'un avis</key>
-	<key id="review-detail-can-edit">permettre de rééditer l'avis</key>
+	<key id="can-edit-review">permettre de rééditer l'avis</key>
 	<key id="current-star-rating">{rating} étoile(s)</key>
 	<key id="star-rating-1">1 étoile</key>
 	<key id="star-rating-2">2 étoiles</key>
@@ -48,4 +51,6 @@
 	<key id="review-novote">soyez le premier à évaluer ce commentaire.</key>
 	<key id="review-voted">votre vote a été enregistré.</key>
 	<key id="review-function">détail d'un avis</key>
+	<key id="edit-review">édition de l'avis</key>
+	<key id="edit-review-function">édition d'un avis</key>
 </i18n>

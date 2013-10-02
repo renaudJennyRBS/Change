@@ -29,9 +29,6 @@ class UpdateReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 				{
 					$review->setRating($rating);
 					$review->setContent($content);
-					//freeze the document pending validation
-					$review->setPublicationStatus(\Change\Documents\Interfaces\Publishable::STATUS_FROZEN);
-					//TODO change review date or add a new one?
 					$review->setReviewDate(new \DateTime());
 					$tm = $event->getApplicationServices()->getTransactionManager();
 					try
