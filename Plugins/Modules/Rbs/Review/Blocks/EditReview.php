@@ -7,9 +7,9 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Rbs\Review\Blocks\ReviewDetail
+ * @name \Rbs\Review\Blocks\EditReview
  */
-class ReviewDetail extends Block
+class EditReview extends Block
 {
 	/**
 	 * @api
@@ -23,7 +23,6 @@ class ReviewDetail extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('reviewId');
-		$parameters->addParameterMeta('editionMode', false);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -56,8 +55,14 @@ class ReviewDetail extends Block
 			/* @var $review \Rbs\Review\Documents\Review */
 			$urlManager = $event->getUrlManager();
 			$attributes['review'] = $review->getInfoForTemplate($urlManager);
-			$attributes['displayVote'] = true;
-			return 'review.twig';
+			$user = $event->getAuthenticationManager()->getCurrentUser();
+			$attributes['canEdit'] = $user->authenticated() && $user->getId() === $review->getAuthorId();
+			if ($attributes['canEdit'])
+			{
+				$attributes['review']['content'] = $review->getContent()->getRawText();
+			}
+
+			return 'edit-review.twig';
 		}
 		return null;
 	}

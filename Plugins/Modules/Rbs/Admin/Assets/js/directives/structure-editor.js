@@ -1773,6 +1773,7 @@
 
 							'<input id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="String" type="text" required="{{param.required}}" class="input-block-level" ng-model="item.parameters[param.name]"/>' +
 							'<switch id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Boolean" ng-model="item.parameters[param.name]"/>' +
+							'<select id="block_{{item.id}}_param_{{param.name}}" name="{{param.name}}" ng-switch-when="Collection" ng-model="item.parameters[param.name]" class="input-block-level" rbs-items-from-collection="{{param.collectionCode}}"></select>' +
 						'</div>' +
 					'</div>' +
 					'<div ng-transclude=""></div>' +

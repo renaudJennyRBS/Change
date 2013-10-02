@@ -25,5 +25,7 @@ class PostReviewInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
 		$this->addInformationMeta('sectionId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-post-section', $ucf));
+		$this->addInformationMeta('canEdit', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.review.blocks.can-edit-review', $ucf));
 	}
 }

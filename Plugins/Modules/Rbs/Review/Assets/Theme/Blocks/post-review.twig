@@ -6,14 +6,33 @@
 	</p>
 {% else %}
 	{% if parameters.alreadyReviewed %}
-		{% if pendingValidation %}
+		{% if notPublished %}
 			<p>{{ i18n('m.rbs.review.blocks.pending-publication', ['ucf']) }}</p>
+		{% elseif refused %}
+			<p>{{ i18n('m.rbs.review.blocks.review-refused', ['ucf']) }}</p>
 		{% else %}
 			<p>{{ i18n('m.rbs.review.blocks.already-reviewed', ['ucf', 'lab']) }}</p>
 		{% endif %}
 		<div>
-			<a href="{{ review.url }}">{{ i18n('m.rbs.review.blocks.review-edit', ['ucf']) }}</a>
+			{% if parameters.canEdit %}
+				<a href="{{ functionURL('Rbs_Review_EditReview') }}">{{ i18n('m.rbs.review.blocks.edit-review', ['ucf']) }}</a>
+			{% endif %}
 			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review, 'class': validationClass } %}
+			{% if hasCorrection %}
+				<p>{{ i18n('m.rbs.review.blocks.review-pending-correction', ['ucf']) }}</p>
+				<div class="panel panel-info">
+					<dl class="dl-horizontal">
+						{% if correction.reviewStarRating %}
+							<dt>{{ i18n('m.rbs.review.blocks.review-pending-correction-new-note', ['ucf', 'lab']) }}</dt>
+							<dd>{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': correction.reviewStarRating } %} </dd>
+						{% endif %}
+						{% if correction.content %}
+							<dt>{{ i18n('m.rbs.review.blocks.review-pending-correction-new-content', ['ucf', 'lab']) }}</dt>
+							<dd>{{ correction.content | raw }}</dd>
+						{% endif %}
+					</dl>
+				</div>
+			{% endif %}
 		</div>
 	{% else %}
 		<form method="post" id="Review" action="Action/Rbs/Review/PostReview" class="well well-small">

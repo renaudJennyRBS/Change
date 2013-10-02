@@ -25,6 +25,7 @@ class PostReview extends Block
 		$parameters->addParameterMeta('targetId');
 		$parameters->addParameterMeta('sectionId');
 		$parameters->addParameterMeta('alreadyReviewed', false);
+		$parameters->addParameterMeta('canEdit', true);
 		$parameters->addParameterMeta('pseudonym');
 		$parameters->addParameterMeta('content');
 		$parameters->addParameterMeta('rating');
@@ -91,7 +92,16 @@ class PostReview extends Block
 			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
 			/* @var $review \Rbs\Review\Documents\Review */
 			$attributes['review'] = $review->getInfoForTemplate($event->getUrlManager());
-			$attributes['pendingValidation'] = !$review->published();
+			$attributes['notPublished'] = !$review->published();
+			$attributes['hasCorrection'] = $review->hasCorrection();
+			if ($review->hasCorrection())
+			{
+				$attributes['correction'] = [];
+				$attributes['correction']['reviewStarRating'] = ceil($review->getCurrentCorrection()->getPropertyValue('rating')*(5/100));
+				$newContent = $review->getCurrentCorrection()->getPropertyValue('content');
+				/* @var $newContent \Change\Documents\RichtextProperty */
+				$attributes['correction']['content'] = $newContent ? $newContent->getHtml() : null;
+			}
 			$attributes['validationClass'] = $review->published() ? ' panel-success' : ' panel-warning';
 			$attributes['displayVote'] = false;
 		}

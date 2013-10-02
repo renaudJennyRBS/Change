@@ -1,5 +1,5 @@
-<h2>{{ i18n('m.rbs.review.blocks.review-detail', ['ucf']) }}</h2>
-{% if parameters.editionMode %}{# display the edition form if user is authenticated and he is the review author #}
+<h2>{{ i18n('m.rbs.review.blocks.edit-review', ['ucf']) }}</h2>
+{% if canEdit %}{# display the edition form if user is authenticated and he is the review author #}
 	{% if review.promoted %}
 		<p>{{ i18n('m.rbs.review.blocks.review-detail-promoted', ['ucf']) }}</p>
 	{% endif %}
@@ -26,5 +26,7 @@
 		</fieldset>
 	</form>
 {% else %}{# display the review like in the list (with more details) #}
+	<p>{{ i18n('m.rbs.review.blocks.cannot-edit-review', ['ucf']) }}</p>
+	{# TODO: add a button to connect user #}
 	{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review } %}
 {% endif %}

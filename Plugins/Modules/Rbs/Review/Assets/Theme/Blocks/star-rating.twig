@@ -1,5 +1,5 @@
 {% if editionMode %}
-<div data-ng-init="review.rating = 80">
+<div data-ng-init="review.rating = {% if review.rating == null %}80{% else %}{{ review.rating }}{% endif %}">
 	<ol class="list-inline star-rating">
 		<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-0') }}"><input type="radio" name="review" data-ng-model="review.rating" value="0" class="sr-only" /><span class="glyphicon glyphicon-star-empty"></span></label></li> |
 		<li data-ng-class="{'selected': review.rating > 0}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>

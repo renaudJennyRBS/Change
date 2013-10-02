@@ -3,10 +3,10 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 		  editable="true" publishable="true">
 	<properties>
-		<property name="rating" type="Integer" required="true">
+		<property name="rating" type="Integer" required="true" has-correction="true">
 			<constraint name="range" min="0" max="100"/>
 		</property>
-		<property name="content" type="RichText" required="true"/>
+		<property name="content" type="RichText" required="true" has-correction="true"/>
 		<property name="target" type="Document" required="true"/>
 		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true"/>
 		<property name="pseudonym" type="String" />
