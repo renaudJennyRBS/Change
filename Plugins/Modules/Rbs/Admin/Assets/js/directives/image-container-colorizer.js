@@ -444,7 +444,7 @@
 	ColorTunes = (function() {
 		function ColorTunes() {}
 
-		ColorTunes.getColorMap = function(canvas, sx, sy, w, h, nc) {
+		ColorTunes.getColorMap = function(canvas, sx, sy, w, h, nc, thickness) {
 			var index, indexBase, pdata, pixels, x, y, _ref, _ref1;
 			if (nc == null) {
 				nc = 8;
@@ -454,8 +454,10 @@
 			for (y = sy, _ref = sy + h; y < _ref; y++) {
 				indexBase = y * w * 4;
 				for (x = sx, _ref1 = sx + w; x < _ref1; x++) {
-					index = indexBase + (x * 4);
-					pixels.push([pdata[index], pdata[index + 1], pdata[index + 2]]);
+					if (thickness == null || (y < (sy+thickness)) || (y > (_ref-thickness)) || (x < (sx+thickness)) || (x > (_ref1-thickness))) {
+						index = indexBase + (x * 4);
+						pixels.push([pdata[index], pdata[index + 1], pdata[index + 2]]);
+					}
 				}
 			}
 			return (new MMCQ()).quantize(pixels, nc);
@@ -562,7 +564,7 @@
 			canvas.width = image.width;
 			canvas.height = image.height;
 			canvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
-			bgColorMap = ColorTunes.getColorMap(canvas, 0, 0, image.width, image.height, 4);
+			bgColorMap = ColorTunes.getColorMap(canvas, 0, 0, image.width, image.height, 4, 5);
 			bgPalette = bgColorMap.cboxes.map(function(cbox) {
 				return {
 					count: cbox.cbox.count(),
@@ -573,7 +575,7 @@
 				return b.count - a.count;
 			});
 			bgColor = bgPalette[0].rgb;
-			fgColorMap = ColorTunes.getColorMap(canvas, 0, 0, image.width, image.height, 10);
+			fgColorMap = ColorTunes.getColorMap(canvas, 0, 0, image.width, image.height, 10, null);
 			fgPalette = fgColorMap.cboxes.map(function(cbox) {
 				return {
 					count: cbox.cbox.count(),
@@ -604,7 +606,7 @@
 			}
 
 			ColorTunes.fadeout(canvas, image.width, image.height, 0.8, bgColor);
-			ColorTunes.feathering(canvas, image.width, image.height, 60, bgColor);
+			ColorTunes.feathering(canvas, image.width, image.height, 10, bgColor);
 
 			rgbToCssString = function(color) {
 				return "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")";
