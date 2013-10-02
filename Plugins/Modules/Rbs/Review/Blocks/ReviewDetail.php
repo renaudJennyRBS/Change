@@ -31,7 +31,7 @@ class ReviewDetail extends Block
 		if ($parameters->getParameter('reviewId') === null)
 		{
 			$target = $event->getParam('document');
-			if ($target instanceof \Change\Documents\AbstractDocument)
+			if ($target instanceof \Rbs\Review\Documents\Review)
 			{
 				$parameters->setParameterValue('reviewId', $target->getId());
 			}
@@ -63,16 +63,20 @@ class ReviewDetail extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
-		/* @var $review \Rbs\Review\Documents\Review */
-		$urlManager = $event->getUrlManager();
-		$attributes['review'] = $review->getInfoForTemplate($urlManager);
-		if ($parameters->getParameter('editionMode'))
+		if ($review)
 		{
-			$attributes['editionMode'] = true;
-			$attributes['review']['content'] = $review->getContent()->getRawText();
-		}
-		$attributes['displayVote'] = true;
+			/* @var $review \Rbs\Review\Documents\Review */
+			$urlManager = $event->getUrlManager();
+			$attributes['review'] = $review->getInfoForTemplate($urlManager);
+			if ($parameters->getParameter('editionMode'))
+			{
+				$attributes['editionMode'] = true;
+				$attributes['review']['content'] = $review->getContent()->getRawText();
+			}
+			$attributes['displayVote'] = true;
 
-		return 'review-detail.twig';
+			return 'review-detail.twig';
+		}
+		return null;
 	}
 }

@@ -22,7 +22,8 @@ class ReviewDetailInformation extends Information
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-detail'));
 		$this->addInformationMeta('reviewId', Property::TYPE_DOCUMENTID, false, null)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.blocks.review', $ucf))
+			->setAllowedModelsNames('Rbs_Review_Review');
 		$this->addInformationMeta('canEdit', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-detail-can-edit', $ucf));
 		$this->setFunctions(array('Rbs_Review_Review' => $i18nManager->trans('m.rbs.review.blocks.review-function', $ucf)));
