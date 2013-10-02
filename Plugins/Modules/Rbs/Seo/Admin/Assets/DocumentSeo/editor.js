@@ -125,7 +125,7 @@
 						'permanent': true
 					});
 					scope.displayConfig[locationIndex].redirects.push({ 'edit': false });
-					addRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
+					updateRule(locationIndex, 'redirects', scope.document.locations[locationIndex].redirects.length-1);
 				};
 
 				var deleteRule = function(locationIndex, type, index)
@@ -214,12 +214,12 @@
 				scope.updateUrl = function (locationIndex, index)
 				{
 					NotificationCenter.clear();
-					var url = REST.getBaseUrl('resources/Rbs/Seo/DocumentSeo/' + scope.document.id + '/CheckRelativePath');
-					$http.get(url).success(function (data){
-						var ruleId = scope.document.locations[locationIndex].urls[index].id;
-						if (data === null || ruleId == data.rule_id || isDeletedRule(data.rule_id))
-						{
-							if (isModified(locationIndex, 'urls', index))
+					if (isModified(locationIndex, 'urls', index))
+					{
+						var url = REST.getBaseUrl('resources/Rbs/Seo/DocumentSeo/' + scope.document.id + '/CheckRelativePath');
+						$http.get(url).success(function (data){
+							var ruleId = scope.document.locations[locationIndex].urls[index].id;
+							if (!data.hasOwnProperty('rule') || ruleId == data.rule.rule_id || isDeletedRule(data.rule.rule_id))
 							{
 								// Remove potential redirect with the same relative path.
 								var newRelativePath = scope.document.locations[locationIndex].urls[index].relativePath;
@@ -232,16 +232,16 @@
 								}
 								scope.document.locations[locationIndex].urls[index].id = scope.newRuleLastId--;
 								addRule(locationIndex, 'urls', index);
-							}
 
-							scope.oldValues[locationIndex + 'urls' + index] = null;
-							scope.displayConfig[locationIndex].urls[index].edit = false;
-						}
-						else
-						{
-							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
-						}
-					});
+								scope.oldValues[locationIndex + 'urls' + index] = null;
+								scope.displayConfig[locationIndex].urls[index].edit = false;
+							}
+							else
+							{
+								NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+							}
+						});
+					}
 				};
 
 				scope.restoreDefaultUrl = function (locationIndex, index)
