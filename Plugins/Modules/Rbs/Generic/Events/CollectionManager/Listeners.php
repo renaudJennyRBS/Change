@@ -51,6 +51,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Generic_Collection_Languages':
 					(new \Rbs\Generic\Collection\Collections())->addLanguages($event);
 					break;
+				case 'Rbs_Review_Collection_PromotedReviewModes':
+					(new \Rbs\Review\Collection\Collections())->addPromotedReviewModes($event);
+					break;
 				case 'Rbs_Website_AvailablePageFunctions':
 					(new \Rbs\Admin\Collection\Collections())->addAvailablePageFunctions($event);
 					break;
@@ -67,6 +70,7 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Generic_Collection_PermissionPrivileges',
 				'Rbs_Generic_Collection_TimeZones',
 				'Rbs_Generic_Collection_Languages',
+				'Rbs_Review_Collection_PromotedReviewModes',
 				'Rbs_Website_AvailablePageFunctions'
 			));
 			$event->setParam('codes', $codes);

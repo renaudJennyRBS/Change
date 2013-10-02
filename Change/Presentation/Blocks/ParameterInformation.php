@@ -8,6 +8,8 @@ use Change\Documents\Property;
  */
 class ParameterInformation
 {
+	const TYPE_COLLECTION = 'Collection';
+
 	/**
 	 * @var array
 	 */
@@ -97,5 +99,15 @@ class ParameterInformation
 	public function toArray()
 	{
 		return $this->attributes;
+	}
+
+	/**
+	 * @param $collectionCode
+	 * @return $this
+	 */
+	public function setCollectionCode($collectionCode)
+	{
+		$this->attributes['collectionCode'] = $collectionCode;
+		return $this;
 	}
 }

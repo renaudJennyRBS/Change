@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Review\Blocks;
 
+use Change\Collection\CollectionManager;
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
@@ -58,22 +59,21 @@ class PromotedReviewList extends Block
 		if ($parameters->getParameter('reviews'))
 		{
 			$reviews = $parameters->getParameter('reviews');
-			$parameters->setParameterValue('mode', 'manual');
+			$parameters->setParameterValue('mode', \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_MANUAL);
 		}
 		else
 		{
 			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
-			if ($mode === 'promoted')
+			if ($mode === \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_PROMOTED)
 			{
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document), $dqb->eq('promoted', true));
 				//TODO order on upvote comment, but a formula between upvote and downvote will be better
 				$dqb->addOrder('upvote', false);
 			}
-			elseif ($mode === 'recent')
+			elseif ($mode === \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_RECENT)
 			{
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document));
 				$dqb->addOrder('reviewDate', false);
-				$parameters->setParameterValue('mode', 'recent');
 			}
 			else
 			{

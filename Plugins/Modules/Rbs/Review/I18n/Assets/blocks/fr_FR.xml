@@ -29,10 +29,10 @@
 	<key id="promoted-review-list">liste des avis mis en avant</key>
 	<key id="promoted-review-list-mode">mode de mise en avant</key>
 	<key id="promoted-review-list-max-reviews">nombre maximum d'avis affichés</key>
-	<key id="promoted-review-list-reviews">sélection manuel des avis (ignore la stratégie)</key>
+	<key id="promoted-review-list-reviews">sélection manuel des avis (si mode manuel sélectionné)</key>
 	<key id="promoted-review-list-title-promoted">avis promus</key>
 	<key id="promoted-review-list-title-most-recent">avis les plus récents</key>
-	<key id="promoted-review-list-title-manual-default">avis séléctionnés</key>
+	<key id="promoted-review-list-title-default-manual">avis sélectionnés</key>
 	<key id="review-detail">détail d'un avis</key>
 	<key id="review-detail-can-edit">permettre de rééditer l'avis</key>
 	<key id="current-star-rating">{rating} étoile(s)</key>
