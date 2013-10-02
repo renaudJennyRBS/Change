@@ -2,6 +2,7 @@
 <i18n baseKey="m.rbs.stock.admin.js" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
 	<key id="module-name">stocks</key>
+	<key id="module-keywords"></key>
 	<key id="inventoryentry-list">inventaire</key>
 	<key id="inventoryentry-create">définir un stock</key>
 	<key id="sku-list">SKU</key>
@@ -20,5 +21,4 @@
 	<key id="cm-abbr">cm</key>
 	<key id="m-abbr">m</key>
 	<key id="in-abbr">in</key>
-
 </i18n>

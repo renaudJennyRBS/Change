@@ -76,6 +76,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
 	}
 
 	/**
@@ -106,6 +107,18 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 				);
 				$pathRule->setRelativePath($path);
 			}
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onCreated(\Change\Documents\Events\Event $event)
+	{
+		// Section product list synchronization.
+		if ($this->getPublicationSections()->count())
+		{
+			$this->synchronizeSectionDocumentLists();
 		}
 	}
 
@@ -167,6 +180,63 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			$attributeEngine->setAttributeValues($this, $normalizedAttributeValues);
 
 			$this->setAttributeValues($normalizedAttributeValues);
+		}
+
+		// Section product list synchronization.
+		if ($this->isPropertyModified('publicationSections'))
+		{
+			$this->synchronizeSectionDocumentLists();
+		}
+	}
+
+	protected function synchronizeSectionDocumentLists()
+	{
+		$ds = $this->getDocumentServices();
+		$dm = $this->getDocumentManager();
+
+		if ($this->getPublicationSectionsCount())
+		{
+			$dqb1 = new \Change\Documents\Query\Query($ds, 'Rbs_Catalog_SectionProductList');
+			$pb1 = $dqb1->getPredicateBuilder();
+			$dqb1->andPredicates($pb1->in('synchronizedSection', $this->getPublicationSectionsIds()));
+			$requiredListIds = $dqb1->getDocuments()->ids();
+		}
+		else
+		{
+			$requiredListIds = array();
+		}
+
+		$dqb2 = new \Change\Documents\Query\Query($ds, 'Rbs_Catalog_SectionProductList');
+		$d2qb2 = $dqb2->getModelBuilder('Rbs_Catalog_ProductListItem', 'productList');
+		$pb2 = $d2qb2->getPredicateBuilder();
+		$d2qb2->andPredicates($pb2->eq('product', $this));
+		$existingListIds = $dqb2->getDocuments()->ids();
+
+		// Item creation.
+		$listIds = array_diff($requiredListIds, $existingListIds);
+		foreach ($listIds as $listId)
+		{
+			/* @var $list \Rbs\Catalog\Documents\SectionProductList */
+			$list = $dm->getDocumentInstance($listId);
+
+			/* @var $item \Rbs\Catalog\Documents\ProductListItem */
+			$item = $dm->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductListItem');
+			$item->setProductList($list);
+			$item->setProduct($this);
+			$item->save();
+		}
+
+		// Item deletion.
+		$listIds = array_diff($existingListIds, $requiredListIds);
+		if (count($listIds))
+		{
+			$dqb3 = new \Change\Documents\Query\Query($ds, 'Rbs_Catalog_ProductListItem');
+			$pb3 = $dqb3->getPredicateBuilder();
+			$dqb3->andPredicates($pb3->in('productList', $listIds), $pb3->eq('product', $this));
+			foreach ($dqb3->getDocuments() as $item)
+			{
+				$item->delete();
+			}
 		}
 	}
 

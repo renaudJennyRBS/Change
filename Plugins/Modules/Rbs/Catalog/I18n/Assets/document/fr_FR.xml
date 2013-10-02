@@ -6,6 +6,8 @@
 	<key id="productlist">liste de produits</key>
 	<key id="productlist-list">listes de produits</key>
 	<key id="productlist-create">ajouter une liste de produits</key>
+	<key id="sectionproductlist">liste de produits synchronisée avec une section</key>
+	<key id="sectionproductlist-create">ajouter une liste de produits synchronisée avec une section</key>
 	<key id="productlistitem">appartenance à une liste</key>
 	<key id="productlistitem-list">appartenance à des listes</key>
 

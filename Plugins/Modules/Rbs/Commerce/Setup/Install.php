@@ -28,6 +28,7 @@ class Install extends \Change\Plugins\InstallBase
 		$config->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 		$config->addPersistentEntry('Change/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Events\CartManager\Listeners');
 		$config->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
+		$config->addPersistentEntry('Change/Events/JobManager/Rbs_Generic', '\Rbs\Commerce\Events\JobManager\Listeners');
 	}
 
 	/**

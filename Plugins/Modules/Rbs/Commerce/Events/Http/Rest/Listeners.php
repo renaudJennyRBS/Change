@@ -75,8 +75,8 @@ class Listeners implements ListenerAggregateInterface
 					call_user_func(array($cr, $methodName), $event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/(ProductList|Product)/([0-9]+)/ProductListItems/?$#', $relativePath,
-				$matches)
+			else if (preg_match('#^resources/Rbs/Catalog/(ProductList|SectionProductList|Product)/([0-9]+)/ProductListItems/?$#',
+				$relativePath, $matches)
 			)
 			{
 				$event->getController()->getActionResolver()

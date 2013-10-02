@@ -11,6 +11,11 @@
 		</h2>
 	</div>
 
+	<div ng-if="List.isSynchronized">
+		<p>{{ i18n('m.rbs.catalog.document.sectionproductlist.synchronizedsection', ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
+		<p>{{ i18n('m.rbs.catalog.document.sectionproductlist.synchronizedsection-help', ['ucf']) }}</p>
+	</div>
+
 	<div ng-if="List.conditions.length > 1">
 		<p>{{ i18n('m.rbs.catalog.document.productlist.condition-help', ['ucf']) }}</p>
 
@@ -79,7 +84,9 @@
 			</column>
 
 			<quick-actions>
-				[action Rbs_Catalog_RemoveProductsFromProductList]
+				[action edit]
+				|| <a href="(= doc.product | documentURL =)">{{ i18nAttr('m.rbs.catalog.document.productlist.edit-product', ['ucf']) }}</a>
+				|| [action Rbs_Catalog_RemoveProductsFromProductList]
 			</quick-actions>
 
 			<grid-item>
