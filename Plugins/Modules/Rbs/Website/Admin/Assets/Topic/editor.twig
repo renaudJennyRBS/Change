@@ -3,20 +3,17 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text
-				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.website.document.topic.label', ['ucf']) }}">
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr('m.rbs.website.document.topic.label', ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text
-				property="title" required="true"
-				rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}"
-				label="{{ i18nAttr('m.rbs.website.document.topic.title', ['ucf']) }}">
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.website.document.topic.synchronize-title-label', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.document.topic.title', ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text
-				property="pathPart"
-				label="{{ i18nAttr('m.rbs.website.document.topic.pathPart', ['ucf']) }}">
+		<rbs-field-text property="pathPart"
+			label="{{ i18nAttr('m.rbs.website.document.topic.pathPart', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr('m.rbs.website.document.topic.indexpage', ['ucf']) }}">
@@ -25,14 +22,13 @@
 
 		<hr/>
 
-		<rbs-field-picker
-				property="website" required="true" label="{{ i18nAttr('m.rbs.website.document.topic.website', ['ucf']) }}"
-				accepted-model="Rbs_Website_Website"
-				selector-title="{{ i18nAttr('m.rbs.website.document.topic.website-picker-title', ['ucf']) }}"
-				allow-creation="false">
+		<rbs-field-picker property="website" required="true"
+			label="{{ i18nAttr('m.rbs.website.document.topic.website', ['ucf']) }}"
+			accepted-model="Rbs_Website_Website"
+			selector-title="{{ i18nAttr('m.rbs.website.document.topic.website-picker-title', ['ucf']) }}"
+			allow-creation="false">
 			<div class="help-block">{{ i18n('m.rbs.website.document.topic.website-help', ['ucf']) }}</div>
 		</rbs-field-picker>
-
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
@@ -48,15 +44,18 @@
 			<div rbs-tip="RbsWebsiteSectionPermissionRules" class="margin-top">
 				{{ i18n('m.rbs.website.admin.section-permission-rule-helper', ['ucf']) }}
 			</div>
+
 			<h4>{{ i18n('m.rbs.website.document.topic.permission-restrictions', ['ucf']) }}</h4>
-			<rbs-field-picker-multiple
-				property="authorizedUsers" required="false" label="{{ i18nAttr('m.rbs.website.document.topic.authorized-users', ['ucf']) }}"
+
+			<rbs-field-picker-multiple property="authorizedUsers" required="false"
+				label="{{ i18nAttr('m.rbs.website.document.topic.authorized-users', ['ucf']) }}"
 				accepted-model="Rbs_User_User"
 				selector-title="{{ i18nAttr('m.rbs.website.document.topic.users-picker-title', ['ucf']) }}"
 				allow-creation="false">
 			</rbs-field-picker-multiple>
-			<rbs-field-picker-multiple
-				property="authorizedGroups" required="false" label="{{ i18nAttr('m.rbs.website.document.topic.authorized-groups', ['ucf']) }}"
+
+			<rbs-field-picker-multiple property="authorizedGroups" required="false"
+				label="{{ i18nAttr('m.rbs.website.document.topic.authorized-groups', ['ucf']) }}"
 				accepted-model="Rbs_User_Group"
 				selector-title="{{ i18nAttr('m.rbs.website.document.topic.groups-picker-title', ['ucf']) }}"
 				allow-creation="false">

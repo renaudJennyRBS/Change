@@ -6,7 +6,6 @@
 
 	function PricesController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager)
 	{
-
 		Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
@@ -45,7 +44,7 @@
 			});
 		}
 
-		var updateLocation = function (newDocId, oldDocId){
+		/*var updateLocation = function (newDocId, oldDocId){
 			var regexp = new RegExp('/' + oldDocId + '/');
 			var path = $location.path();
 			if (regexp.test(path))
@@ -60,7 +59,7 @@
 					$location.path(path +  newDocId + '/');
 				}
 			}
-		};
+		};*/
 
 		var updatePricesURL = function(){
 			var params = { 	'areaId': $scope.params.areaId == '' ? null :  $scope.params.areaId ,
@@ -103,7 +102,6 @@
 			updatePricesURL();
 		};
 
-
 		$scope.changeEndActivation = function(date){
 			if (date)
 			{
@@ -127,20 +125,20 @@
 	app.config(['$provide', function ($provide) {
 		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
 			Actions.register({
-				name: 'Rbs_Catalog_RemoveProductFromListings',
+				name: 'Rbs_Catalog_RemoveProductFromProductLists',
 				models: '*',
-				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-listings'),
+				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-lists'),
 				label: i18n.trans('m.rbs.catalog.admin.js.remove'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
-					var listingIds = [];
+					var productListIds = [];
 					for (var i in $docs)
 					{
-						listingIds.push($docs[i].id);
+						productListIds.push($docs[i].id);
 					}
 					var conditionId = $scope.data.conditionId;
-					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/listings/' + conditionId + '/');
-					$http.put(url, {"removeListingIds": listingIds}, REST.getHttpConfig())
+					var url = REST.getBaseUrl('catalog/product/' + $scope.data.containerId + '/productLists/' + conditionId + '/');
+					$http.put(url, {"removeProductListIds": productListIds}, REST.getHttpConfig())
 						.success(function (data) {
 							$scope.refresh();
 						})

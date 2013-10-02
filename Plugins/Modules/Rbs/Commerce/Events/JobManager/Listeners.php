@@ -1,16 +1,15 @@
 <?php
-namespace Rbs\Commerce\Events\BlockManager;
+namespace Rbs\Commerce\Events\JobManager;
 
-use Change\Presentation\Blocks\Standard\RegisterByBlockName;
+use Change\Job\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Commerce\Events\BlockManager\Listeners
+ * @name \Rbs\Commerce\Events\JobManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -20,10 +19,16 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		new RegisterByBlockName('Rbs_Catalog_ProductList', true, $events);
-		new RegisterByBlockName('Rbs_Catalog_Product', true, $events);
-		new RegisterByBlockName('Rbs_Commerce_Cart', true, $events);
-		new RegisterByBlockName('Rbs_Commerce_ShortCart', true, $events);
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Job\InitializeItemsForSectionList())->execute($event);
+		};
+		$events->attach('process_Rbs_Catalog_InitializeItemsForSectionList', $callBack, 5);
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Job\CleanUpListItems())->execute($event);
+		};
+		$events->attach('process_Change_Document_CleanUp', $callBack, 10);
 	}
 
 	/**

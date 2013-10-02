@@ -4,33 +4,40 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.label', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.label', ['ucf']) }}">
 		</rbs-field-text>
+
+		<rbs-field-picker property="synchronizedSection"
+			label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.synchronizedsection', ['ucf']) }}"
+			accepted-model="Rbs_Website_Section"
+			selector-title="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.synchronizedsection-picker-title', ['ucf']) }}"
+			allow-creation="true">
+		</rbs-field-picker>
 
 		<hr />
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.listing.productsortorder', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.productsortorder', ['ucf']) }}">
 			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
 				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
 			</select>
-			<span class="help-block">{{ i18n('m.rbs.catalog.document.listing.productsortorder-help') }} </span>
+			<span class="help-block">{{ i18n('m.rbs.catalog.document.sectionproductlist.productsortorder-help') }} </span>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.listing.productsortdirection', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.productsortdirection', ['ucf']) }}">
 			<rbs-collection-item-selector ng-model="document.productSortDirection"
 				collection-code="Rbs_Generic_Collection_SortDirections">
 			</rbs-collection-item-selector>
-			<span class="help-block">{{ i18n('m.rbs.catalog.document.listing.productsortdirection-help') }}</span>
+			<span class="help-block">{{ i18n('m.rbs.catalog.document.sectionproductlist.productsortdirection-help') }}</span>
 		</rbs-field>
 
 		<hr />
 
 		<rbs-field-date property="startActivation"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.startactivation', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.startactivation', ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endActivation"
-			label="{{ i18nAttr('m.rbs.catalog.document.listing.endactivation', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.document.sectionproductlist.endactivation', ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

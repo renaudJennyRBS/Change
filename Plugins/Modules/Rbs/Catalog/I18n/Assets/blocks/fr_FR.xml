@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.blocks" lcid="fr_FR">
-	<key id="listing-label">produits d'une liste</key>
-	<key id="listing-listing">liste de produits</key>
-	<key id="listing-contextual-urls">détail des produits dans la section courante</key>
-	<key id="listing-items-per-line">produits par ligne</key>
-	<key id="listing-items-per-page">produits par page</key>
+	<key id="product-list-label">produits d'une liste</key>
+	<key id="product-list-list">liste de produits</key>
+	<key id="product-list-contextual-urls">détail des produits dans la section courante</key>
+	<key id="product-list-items-per-line">produits par ligne</key>
+	<key id="product-list-items-per-page">produits par page</key>
 
 	<key id="product-label">détail du produit</key>
 	<key id="product-product">produit</key>

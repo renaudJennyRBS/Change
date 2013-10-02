@@ -1,22 +1,27 @@
-<form novalidate="" ng-controller="Rbs_Catalog_Listing_ProductsController" class="form-horizontal">
+<form novalidate="" ng-controller="Rbs_Catalog_ProductList_ProductsController" class="form-horizontal">
 	<div class="page-header">
 		<h2 class="ng-binding">
-			(= listing.label =)
+			(= productList.label =)
 			<small>
-				{{ i18n('m.rbs.catalog.document.listing.productsortorder', ['ucf', 'lab']) }}
-				(= List.sortOrders[listing.productSortOrder].label =)
-				(= List.sortDirections[listing.productSortDirection].label =)
-				(<a ng-href="(= listing | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
+				{{ i18n('m.rbs.catalog.document.productlist.productsortorder', ['ucf', 'lab']) }}
+				(= List.sortOrders[productList.productSortOrder].label =)
+				(= List.sortDirections[productList.productSortDirection].label =)
+				(<a ng-href="(= productList | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
 			</small>
 		</h2>
 	</div>
 
+	<div ng-if="List.isSynchronized">
+		<p>{{ i18n('m.rbs.catalog.document.sectionproductlist.synchronizedsection', ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
+		<p>{{ i18n('m.rbs.catalog.document.sectionproductlist.synchronizedsection-help', ['ucf']) }}</p>
+	</div>
+
 	<div ng-if="List.conditions.length > 1">
-		<p>{{ i18n('m.rbs.catalog.document.listing.condition-help', ['ucf']) }}</p>
+		<p>{{ i18n('m.rbs.catalog.document.productlist.condition-help', ['ucf']) }}</p>
 
 		<div class="control-group" >
 			<label class="control-label" data-not-a-property="" for="selectCondition">
-				{{ i18n('m.rbs.catalog.document.listing.condition', ['ucf']) }}
+				{{ i18n('m.rbs.catalog.document.productlist.condition', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -46,15 +51,15 @@
 	</div>
 
 	<div class="control-group" >
-		<rbs-document-list data-dlid="DLRbsCatalogListingProducts" model="Rbs_Catalog_ProductCategorization" activable="true"
+		<rbs-document-list data-dlid="DLRbsCatalogProductListProducts" model="Rbs_Catalog_ProductListItem" activable="true"
 			collection-url="(=productsUrl=)"
-			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromListing Rbs_Catalog_HighlightProductsInListing Rbs_Catalog_RemoveHighlightProductsInListing"
+			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromProductList Rbs_Catalog_HighlightProductsInProductList Rbs_Catalog_RemoveHighlightProductsInProductList"
 			use-properties="title">
-			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.document.productcategorization.productvisual', ['ucf']) }}"></column>
+			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.document.productlistitem.productvisual', ['ucf']) }}"></column>
 			<column name="productLabel" primary="true">
 				<strong><a href ng-href="(= doc | documentURL =)">(= doc.product.label =)</a></strong>
 			</column>
-			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.listing.sort-order', ['ucf']) }}" align="center" width="110px">
+			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.document.productlist.sort-order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">
 					<rbs-kb-switch>
 						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
@@ -74,12 +79,14 @@
 					</rbs-kb-switch>
 				</span>
 			</column>
-			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.listing.highlight', ['ucf']) }}" align="center" width="90px">
+			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.document.productlist.highlight', ['ucf']) }}" align="center" width="90px">
 				<switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></switch>
 			</column>
 
 			<quick-actions>
-				[action Rbs_Catalog_RemoveProductsFromListing]
+				[action edit]
+				|| <a href="(= doc.product | documentURL =)">{{ i18nAttr('m.rbs.catalog.document.productlist.edit-product', ['ucf']) }}</a>
+				|| [action Rbs_Catalog_RemoveProductsFromProductList]
 			</quick-actions>
 
 			<grid-item>
@@ -90,15 +97,15 @@
 			</grid-item>
 		</rbs-document-list>
 
-		<h4>{{ i18n('m.rbs.catalog.document.listing.add-products', ['ucf']) }}</h4>
+		<h4>{{ i18n('m.rbs.catalog.document.productlist.add-products', ['ucf']) }}</h4>
 
 		<div class="control-group property">
-			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.document.listing.products', ['ucf']) }}</label>
+			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.document.productlist.products', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="document-picker-multiple" ng-model="List.productsToAdd"
 					accepted-model="Rbs_Catalog_Product"
-					property-label="{{ i18nAttr('m.rbs.catalog.document.listing.products', ['ucf']) }}"
-					selector-title="{{ i18nAttr('m.rbs.catalog.document.listing.products-picker-title', ['ucf']) }}"
+					property-label="{{ i18nAttr('m.rbs.catalog.document.productlist.products', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.document.productlist.products-picker-title', ['ucf']) }}"
 					master-label="(= document.label =)"
 					allow-edition="false"
 					allow-creation="false"

@@ -5,8 +5,9 @@
 
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
-	__change.createEditorForModel('Rbs_Catalog_Listing');
-	__change.createEditorForModel('Rbs_Catalog_ProductCategorization');
+	__change.createEditorForModel('Rbs_Catalog_ProductList');
+	__change.createEditorForModel('Rbs_Catalog_SectionProductList');
+	__change.createEditorForModel('Rbs_Catalog_ProductListItem');
 
 	__change.createEditorsForLocalizedModel('Rbs_Catalog_Attribute');
 
@@ -22,14 +23,17 @@
 			$delegate.model('Rbs_Catalog_Product')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Rbs/Catalog/Product/product-prices.twig');
 
-			$delegate.model('Rbs_Catalog_Listing')
-				.route('productcategorizations', 'Rbs/Catalog/Listing/:id/ProductCategorization/', 'Rbs/Catalog/Listing/products.twig');
+			$delegate.model('Rbs_Catalog_ProductList')
+				.route('productListItems', 'Rbs/Catalog/ProductList/:id/ProductListItem/', 'Rbs/Catalog/ProductList/products.twig');
+			$delegate.model('Rbs_Catalog_SectionProductList')
+				.route('productListItems', 'Rbs/Catalog/SectionProductList/:id/ProductListItem/', 'Rbs/Catalog/ProductList/products.twig');
 
 			$delegate.model('Rbs_Catalog')
 				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
-			$delegate.routesForModels(['Rbs_Catalog_Listing', 'Rbs_Catalog_VariantGroup']);
+			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_ProductListItem',
+				'Rbs_Catalog_VariantGroup']);
 			return $delegate;
 		}]);
 	}]);

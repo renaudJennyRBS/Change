@@ -6,9 +6,9 @@ use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 
 /**
- * @name \Rbs\Catalog\Documents\ProductCategorization
+ * @name \Rbs\Catalog\Documents\ProductListItem
  */
-class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCategorization
+class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 {
 	/**
 	 * @return bool
@@ -55,14 +55,13 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 		{
 			$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY ));
 		}
-		$listing = $this->getListing();
-		if ($listing instanceof \Rbs\Catalog\Documents\Listing)
+		$productList = $this->getProductList();
+		if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
 		{
-			$documentLink->setProperty('listing', new DocumentLink($urlManager, $listing, DocumentLink::MODE_PROPERTY ));
+			$documentLink->setProperty('productList', new DocumentLink($urlManager, $productList, DocumentLink::MODE_PROPERTY ));
 		}
 
 		$documentLink->setProperty('isHighlighted', $this->isHighlighted());
-		$documentLink->setProperty('canonical', $this->getCanonical());
 		$documentLink->setProperty('position', $this->getPosition());
 
 		$pathInfo = $documentLink->getPathInfo();
@@ -80,5 +79,55 @@ class ProductCategorization extends \Compilation\Rbs\Catalog\Documents\ProductCa
 		$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
 		$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
 		$documentLink->setProperty('actions', $actions);
+	}
+
+
+
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_DELETED, array($this, 'onDeleted'), 5);
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onCreated(\Change\Documents\Events\Event $event)
+	{
+		// Section product list synchronization.
+		$list = $this->getProductList();
+		$product = $this->getProduct();
+		if ($list instanceof \Rbs\Catalog\Documents\SectionProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			$section = $list->getSynchronizedSection();
+			if ($section && !in_array($section->getId(), $product->getPublicationSectionsIds()))
+			{
+				$product->getPublicationSections()->add($section);
+				$product->save();
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDeleted(\Change\Documents\Events\Event $event)
+	{
+		// Section product list synchronization.
+		$product = $this->getProduct();
+		$list = $this->getProductList();
+		if ($list instanceof \Rbs\Catalog\Documents\SectionProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			$section = $list->getSynchronizedSection();
+			if ($section && in_array($section->getId(), $product->getPublicationSectionsIds()))
+			{
+				$product->getPublicationSections()->remove($section);
+				$product->save();
+			}
+		}
 	}
 }

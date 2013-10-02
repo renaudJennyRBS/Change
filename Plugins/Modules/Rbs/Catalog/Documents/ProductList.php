@@ -6,9 +6,9 @@ use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 
 /**
- * @name \Rbs\Catalog\Documents\Listing
+ * @name \Rbs\Catalog\Documents\ProductList
  */
-class Listing extends \Compilation\Rbs\Catalog\Documents\Listing
+class ProductList extends \Compilation\Rbs\Catalog\Documents\ProductList
 {
 	/**
 	 * @param DocumentResult $documentResult
@@ -21,7 +21,7 @@ class Listing extends \Compilation\Rbs\Catalog\Documents\Listing
 		if ($selfLink instanceof Link)
 		{
 			$pathParts = explode('/', $selfLink->getPathInfo());
-			$link = new Link($documentResult->getUrlManager(), implode('/', $pathParts) . '/ProductCategorization/', 'productcategorizations');
+			$link = new Link($documentResult->getUrlManager(), implode('/', $pathParts) . '/ProductListItems/', 'productListItems');
 			$documentResult->addLink($link);
 		}
 	}

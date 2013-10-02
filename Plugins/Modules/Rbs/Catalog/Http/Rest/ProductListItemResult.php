@@ -7,9 +7,9 @@ use Change\Http\Rest\Result\DocumentLink;
 use Zend\Stdlib\Parameters;
 
 /**
- * @name \Rbs\Catalog\Http\Rest\ProductCategorizationResult
+ * @name \Rbs\Catalog\Http\Rest\ProductListItemResult
  */
-class ProductCategorizationResult
+class ProductListItemResult
 {
 	/**
 	 * @param \Change\Http\Event $event
@@ -20,9 +20,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->moveProductCategorizationUp($event->getParam('documentId'));
+			$cm->moveProductListItemUp($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -36,9 +36,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->moveProductCategorizationDown($event->getParam('documentId'));
+			$cm->moveProductListItemDown($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -52,9 +52,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->highlightProductCategorizationTop($event->getParam('documentId'));
+			$cm->highlightProductListItemTop($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -68,9 +68,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->highlightProductCategorizationBottom($event->getParam('documentId'));
+			$cm->highlightProductListItemBottom($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -84,9 +84,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->highlightProductCategorization($event->getParam('documentId'));
+			$cm->highlightProductListItem($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -100,9 +100,9 @@ class ProductCategorizationResult
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
-			$cm->downplayProductCategorization($event->getParam('documentId'));
+			$cm->downplayProductListItem($event->getParam('documentId'));
 		}
-		$event->setParam('modelName', 'Rbs_Catalog_ProductCategorization');
+		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
 		$docAction = new \Change\Http\Rest\Actions\GetDocument();
 		$docAction->execute($event);
 	}
@@ -110,13 +110,13 @@ class ProductCategorizationResult
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function productCategorizationCollection(\Change\Http\Event $event)
+	public function productListItemCollection(\Change\Http\Event $event)
 	{
 		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$queryData = null;
-		if ($document instanceof \Rbs\Catalog\Documents\Listing)
+		if ($document instanceof \Rbs\Catalog\Documents\ProductList)
 		{
-			$queryData = $this->buildQueryDataForListing($document);
+			$queryData = $this->buildQueryDataForProductList($document);
 		}
 		else if ($document instanceof \Rbs\Catalog\Documents\Product)
 		{
@@ -133,13 +133,13 @@ class ProductCategorizationResult
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Listing $document
+	 * @param \Rbs\Catalog\Documents\ProductList $document
 	 * @return array
 	 */
-	protected function buildQueryDataForListing($document)
+	protected function buildQueryDataForProductList($document)
 	{
 		return array (
-			'model' => 'Rbs_Catalog_ProductCategorization',
+			'model' => 'Rbs_Catalog_ProductListItem',
 			'join' =>
 			array (
 				array (
@@ -157,7 +157,7 @@ class ProductCategorizationResult
 						'op' => 'eq',
 						'lexp' =>
 						array (
-							'property' => 'listing',
+							'property' => 'productList',
 						),
 						'rexp' =>
 						array (
@@ -188,7 +188,7 @@ class ProductCategorizationResult
 	protected function buildQueryDataForProduct($document)
 	{
 		return array (
-			'model' => 'Rbs_Catalog_ProductCategorization',
+			'model' => 'Rbs_Catalog_ProductListItem',
 
 			'where' =>
 			array (
@@ -235,9 +235,9 @@ class ProductCategorizationResult
 			foreach ($event->getRequest()->getPost('documentIds') as $id)
 			{
 				$cat = $dm->getDocumentInstance($id);
-				if ($cat instanceof \Rbs\Catalog\Documents\ProductCategorization)
+				if ($cat instanceof \Rbs\Catalog\Documents\ProductListItem)
 				{
-					$cm->deleteProductCategorization($cat);
+					$cm->deleteProductListItem($cat);
 					$result[] = $cat->getId();
 				}
 			}
@@ -263,10 +263,10 @@ class ProductCategorizationResult
 		$cs = $event->getParam('commerceServices');
 		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
 		$cm = $cs->getCatalogManager();
-		$listing = $dm->getDocumentInstance($event->getRequest()->getPost('listingId'));
+		$productList = $dm->getDocumentInstance($event->getRequest()->getPost('productListId'));
 		$condition = $dm->getDocumentInstance($event->getRequest()->getPost('conditionId'));
 		$result = array();
-		if ($listing instanceof  \Rbs\Catalog\Documents\Listing)
+		if ($productList instanceof  \Rbs\Catalog\Documents\ProductList)
 		{
 			try
 			{
@@ -276,13 +276,13 @@ class ProductCategorizationResult
 					$product = $dm->getDocumentInstance($id);
 					if ($product instanceof \Rbs\Catalog\Documents\Product)
 					{
-						$cat = $cm->getProductCategorization($product, $listing, $condition);
+						$cat = $cm->getProductListItem($product, $productList, $condition);
 						if (!$cat)
 						{
-							/* @var $cat \Rbs\Catalog\Documents\ProductCategorization */
-							$cat = $dm->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductCategorization');
+							/* @var $cat \Rbs\Catalog\Documents\ProductListItem */
+							$cat = $dm->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductListItem');
 							$cat->setProduct($product);
-							$cat->setListing($listing);
+							$cat->setProductList($productList);
 							$cat->setCondition($condition);
 							$cat->save();
 							$result[] = $cat->getId();
