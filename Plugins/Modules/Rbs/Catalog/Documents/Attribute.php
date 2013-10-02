@@ -134,4 +134,57 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		}
 		return null;
 	}
+
+
+	protected function onCreate()
+	{
+		if ($this->getValueType() === static::TYPE_GROUP)
+		{
+			$this->setAxisGroupVisibility();
+		}
+	}
+
+	protected function onUpdate()
+	{
+		if ($this->getValueType() === static::TYPE_GROUP && $this->isPropertyModified('attributes'))
+		{
+			$this->setAxisGroupVisibility();
+		}
+	}
+
+	protected function setAxisGroupVisibility()
+	{
+		$axisVisibility = false;
+		foreach ($this->getAttributes() as $attribute)
+		{
+			if ($attribute->isVisibleFor('axes'))
+			{
+				$axisVisibility = true;
+				break;
+			}
+		}
+
+		$visibility = $this->getVisibility();
+		if (!is_array($visibility))
+		{
+			$visibility = array();
+		}
+
+		if ($axisVisibility)
+		{
+			if (!in_array('axes', $visibility))
+			{
+				$visibility[] = 'axes';
+			}
+		}
+		else
+		{
+			$index = array_search('axes', $visibility, true);
+			if ($index !== false)
+			{
+				unset($visibility[$index]);
+			}
+		}
+		$this->setVisibility(count($visibility) ? $visibility : null);
+	}
 }

@@ -13,7 +13,7 @@
 					picker-template="picker-empty-group.twig">
 			</rbs-field-picker>
 
-			<rbs-field required="true" property="axeAttribute"
+			<rbs-field required="true" property="axisAttribute"
 					label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.axisattribute', ['ucf']) }}">
 				<select ng-required="true" ng-model="document.axisAttribute"
 						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
@@ -77,11 +77,11 @@
 						(= document.label =)</a> -
 						<span data-ng-repeat="variant in variantPath">
 							<a href ng-click="selectVariantId(variant.id)" data-ng-hide="$last">
-								(= getAxeTitle(variant.axisId) =) : (= getAxeValueTitle(variant.axisId, variant.axisValue) =)
+								(= getAxisTitle(variant.axisId) =) : (= getAxisValueTitle(variant.axisId, variant.axisValue) =)
 							</a>
 							<span data-ng-hide="$last"> - </span>
 							<span data-ng-show="$last">
-								(= getAxeTitle(variant.axisId) =) : (= getAxeValueTitle(variant.axisId, variant.axisValue) =)
+								(= getAxisTitle(variant.axisId) =) : (= getAxisValueTitle(variant.axisId, variant.axisValue) =)
 							</span>
 						</span>
 				</div>
