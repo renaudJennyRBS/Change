@@ -10,6 +10,7 @@ class InitializePlugin
 {
 	/**
 	 * @param Event $event
+	 * @throws \Exception
 	 */
 	public function execute(Event $event)
 	{
@@ -23,13 +24,18 @@ class InitializePlugin
 
 		try
 		{
+			$applicationServices->getTransactionManager()->begin();
+
 			$path = $applicationServices->getPluginManager()->initializePlugin($type, $vendor, $name, $package);
 			$event->addInfoMessage('Plugin skeleton generated at ' . $path);
+			
+			$applicationServices->getTransactionManager()->commit();
 		}
 		catch (\Exception $e)
 		{
 			$applicationServices->getLogging()->exception($e);
 			$event->addErrorMessage($e->getMessage());
+			throw $applicationServices->getTransactionManager()->rollback($e);
 		}
 	}
 }
