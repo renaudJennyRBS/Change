@@ -23,11 +23,15 @@
 
 	<key id="picker-no-element">aucun élément</key>
 	<key id="picker-edit-tooltip">éditer les propriétés du document sélectionné</key>
+	<key id="picker-create">créer</key>
 	<key id="picker-create-tooltip">créer un nouveau document</key>
-	<key id="picker-choose">choisir</key>
-	<key id="picker-choose-tooltip">choisir parmi les documents existants</key>
-	<key id="picker-delete-selection-tooltip">supprimer la sélection</key>
-	<key id="picker-take-from-clipboard-tooltip">prendre dans le Presse-papier(=clipboardFirstLabel=)</key>
+	<key id="picker-selector">sélecteur</key>
+	<key id="picker-selector-tooltip">ouvrir un sélecteur ci-dessous</key>
+	<key id="picker-in-place">module</key>
+	<key id="picker-in-place-tooltip">aller dans le module pour sélectionner</key>
+	<key id="picker-clear">effacer</key>
+	<key id="picker-clipboard">presse-papier</key>
+	<key id="picker-clipboard-tooltip">prendre dans le Presse-papier</key>
 	<key id="picker-choose-model-to-select">type de documents à sélectionner :</key>
 
 	<key id="click-to-select-another-image">cliquer pour sélectionner une autre image depuis votre ordinateur</key>
