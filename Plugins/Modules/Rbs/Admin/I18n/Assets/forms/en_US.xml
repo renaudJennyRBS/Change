@@ -23,11 +23,15 @@
 
 	<key id="picker-no-element">no element</key>
 	<key id="picker-edit-tooltip">edit selection</key>
+	<key id="picker-create">create</key>
 	<key id="picker-create-tooltip">create a new document</key>
-	<key id="picker-choose">select...</key>
-	<key id="picker-choose-tooltip">select amongst existing documents...</key>
-	<key id="picker-delete-selection-tooltip">clear selection</key>
-	<key id="picker-take-from-clipboard-tooltip">fill using clipboard(=clipboardFirstLabel=)</key>
+	<key id="picker-selector">selector</key>
+	<key id="picker-selector-tooltip">open selector above</key>
+	<key id="picker-in-place">module</key>
+	<key id="picker-in-place-tooltip">go to the module to select documents</key>
+	<key id="picker-clear">clear</key>
+	<key id="picker-clipboard">clipboard</key>
+	<key id="picker-clipboard-tooltip">fill using Clipboard</key>
 	<key id="picker-choose-model-to-select">document types:</key>
 
 	<key id="click-to-select-another-image">click to select another image from your computer</key>

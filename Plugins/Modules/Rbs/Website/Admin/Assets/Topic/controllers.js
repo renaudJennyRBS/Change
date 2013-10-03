@@ -63,7 +63,9 @@
 					$scope.allFunctions = results[0].items;
 					$scope.allFunctions['Rbs_Website_Section'] = {"label": i18n.trans('m.rbs.website.admin.js.index-page | ucf')};
 					angular.forEach($scope.sectionFunctions, function (func) {
-						func.functionLabel = $scope.allFunctions[func.functionCode].label;
+						if ($scope.allFunctions.hasOwnProperty(func.functionCode)) {
+							func.functionLabel = $scope.allFunctions[func.functionCode].label;
+						}
 					});
 					Loading.stop();
 				},
@@ -101,7 +103,7 @@
 
 		$scope.listExtend =
 		{
-			setIndexPage : function (page)
+			setIndexPage : function (page, rowIndex)
 			{
 				if (this.isIndexPage(page)) {
 					return;
@@ -121,7 +123,7 @@
 						if (spf.resources.length === 1) {
 							spf = spf.resources[0];
 							// Nothing to do it the index page is the same.
-							if (spf.page.id === page.id) {
+							if (spf.page && spf.page.id === page.id) {
 								Loading.stop();
 								return;
 							}

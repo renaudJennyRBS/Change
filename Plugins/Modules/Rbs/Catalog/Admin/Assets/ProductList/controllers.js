@@ -15,9 +15,10 @@
 	 * @param Workspace
 	 * @param $routeParams
 	 * @param $http
+	 * @param SelectSession
 	 * @constructor
 	 */
-	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, Workspace, $routeParams, $http)
+	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, Workspace, $routeParams, $http, SelectSession)
 	{
 		Workspace.collapseLeftSidebar();
 
@@ -82,6 +83,10 @@
 			callActionUrlAndReload(doc.META$.actions['highlightbottom'].href);
 		};
 
+		if (SelectSession.started()) {
+			SelectSession.commit($scope.List);
+		}
+
 		$scope.addProductsFromPicker = function ()
 		{
 			var docIds = [];
@@ -119,7 +124,7 @@
 	}
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
-		'RbsChange.Workspace', '$routeParams', '$http'];
+		'RbsChange.Workspace', '$routeParams', '$http', 'RbsChange.SelectSession'];
 	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
 	/**

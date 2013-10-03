@@ -50,11 +50,12 @@
 		'RbsChange.EditorManager',
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
+		'RbsChange.SelectSession',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes) {
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes, SelectSession) {
 
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -117,7 +118,25 @@
 				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i ng-class="{\'icon-chevron-up\':hasWorkflow($index), \'icon-chevron-down\':!hasWorkflow($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
 			}
 
-			if (__quickActions[dlid]) {
+			function buildForSelectSession (multiple) {
+				var html = '<a href="javascript:;" ng-click="selectSession.use(doc)">' +
+					i18n.trans('m.rbs.admin.admin.js.select') +
+					'</a>';
+
+				if (multiple) {
+					html += actionDivider +
+						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
+						i18n.trans('m.rbs.admin.admin.js.select-add') +
+						'</a>';
+				}
+
+				return html;
+			}
+
+			if (SelectSession.started()) {
+				html += buildPreviewAction() + actionDivider + buildForSelectSession(SelectSession.info().multiple);
+			}
+			else if (__quickActions[dlid]) {
 				if (__quickActions[dlid].divider) {
 					actionDivider = __quickActions[dlid].divider;
 				}
@@ -555,7 +574,7 @@
 				 * Directive's link function.
 				 */
 				return function linkFn (scope, elm, attrs) {
-					var queryObject, search, columnNames, currentPath, previewCache;
+					var queryObject, search, columnNames, currentPath, previewCache, self = this;
 
 					scope.collection = [];
 
@@ -571,6 +590,25 @@
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
+
+
+					// Select session
+					scope.selectSession = {
+						info : SelectSession.info(),
+						end : SelectSession.end,
+						cancel : SelectSession.rollback,
+						clear : SelectSession.clear,
+						append : SelectSession.append,
+						appendSelected : function () {
+							SelectSession.append(scope.selectedDocuments);
+							deselectAll();
+							return this;
+						},
+						use : function (doc) {
+							SelectSession.append(doc).end();
+						}
+					};
+
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
 					scope.data = {};
@@ -596,7 +634,6 @@
 					}
 
 					// The list listens to this event: 'Change:DocumentList:<dlid>:call'
-					var self = this;
 					scope.$on('Change:DocumentList:' + dlid + ':call', function (event, args) {
 						if (angular.isFunction(scope[args.method])) {
 							var q, result;
@@ -668,7 +705,7 @@
 						scope.allSelected = {
 							'cb' : false
 						};
-						scope.$watch('allSelected', function (value) {
+						scope.$watch('allSelected', function () {
 							angular.forEach(scope.collection, function (doc) {
 								doc.selected = scope.allSelected.cb;
 							});
@@ -678,6 +715,15 @@
 						updateSelectedDocuments();
 					}
 
+
+					function deselectAll () {
+						scope.allSelected.cb = false;
+						angular.forEach(scope.collection, function (doc) {
+							if (doc.selected) {
+								doc.selected = false;
+							}
+						});
+					}
 
 					//
 					// Actions.

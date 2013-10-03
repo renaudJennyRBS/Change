@@ -34,35 +34,6 @@
 
 	});
 
-/*
-	app.directive('loadingIndicator', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading) {
-
-		return {
-
-			restrict : 'EA',
-			template : '<div class="loading-indicator-icon"></div>',
-			replace : true,
-
-			link : function (scope, elm, attrs) {
-
-				$rootScope.$on('Change:LoadingStart', function (event, message) {
-					elm.attr('title', message);
-					elm.show();
-				});
-
-				$rootScope.$on('Change:LoadingStop', function (event, message) {
-					if (Loading.isLoading()) {
-						elm.attr('title', message);
-					} else {
-						elm.hide();
-					}
-				});
-			}
-
-		};
-
-	}]);
-*/
 
 	app.directive('rbsLoadingIndicator', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading)
 	{
@@ -98,7 +69,7 @@
 
 			restrict : 'EC',
 			template : '<div class="rbsc-loading-indicator" style="display:none"></div>',
-			 replace : true,
+			replace : true,
 
 			link : function (scope, elm, attrs) {
 

@@ -11,6 +11,11 @@
 	__change.createEditorForModelTranslation('Rbs_Website_Topic');
 
 
+	app.run(['$templateCache', function($templateCache) {
+		$templateCache.put('picker-item-Rbs_Menu_Item.html', '(=item.title=)(=item.titleKey=)');
+	}]);
+
+
 	/**
 	 * @name Rbs_Website_MainMenuController
 	 */

@@ -23,7 +23,7 @@
 
 		<rbs-field property="items" label="{{ i18nAttr('m.rbs.website.document.menu.items', ['ucf']) }}">
 			<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
-			<token-list class="rows" items="document.items" label-property="title,titleKey"></token-list>
+			<token-list rows="true" items="document.items" item-template="picker-item-Rbs_Menu_Item.html"></token-list>
 			<a href="javascript:;" ng-click="toggleAddItemUI($event)"><i ng-class="{true:'icon-chevron-up', false:'icon-chevron-down'}[addItemUIShown]"></i>
 				{{ i18n('m.rbs.website.document.menu.add-items', ['ucf']) }}</a>
 		</rbs-field>
@@ -64,7 +64,7 @@
 
 			<div class="control-group">
 				<div class="controls">
-					<button type="button" class="btn" ng-click="addItem()"><i class="icon-plus"></i>
+					<button type="button" class="btn btn-primary" ng-click="addItem()"><i class="icon-plus"></i>
 						{{ i18n('m.rbs.website.document.menu.add-this-element', ['ucf']) }}</button>
 				</div>
 			</div>

@@ -23,9 +23,6 @@
 		</column>
 		<column name="width" width="70px" align="right"><span class="width-column">(= doc.width | number =)</span></column>
 		<column name="height" width="70px"><span class="height-column">(= doc.height | number =)</span></column>
-		<column name="megapixels" width="70px" align="right" label="Mpx">
-			(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.document.image.megapixels', ['ucf']) }}">Mpx</abbr>
-		</column>
 
 		<preview style="min-height: 200px">
 			<img rbs-storage-image="doc" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
