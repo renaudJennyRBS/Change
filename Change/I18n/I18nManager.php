@@ -501,7 +501,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$code = implode('.', $pathParts) . '-' . $LCID;
-		if (!array_key_exists($collectionPath, $this->definitionCollections))
+		if (!array_key_exists($code, $this->definitionCollections))
 		{
 			$this->definitionCollections[$code] = new \Change\I18n\DefinitionCollection($LCID, $collectionPath);
 		}
