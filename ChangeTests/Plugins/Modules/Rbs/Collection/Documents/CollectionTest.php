@@ -85,11 +85,12 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot update collection with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		$collection1 = $dm->getDocumentInstance($collection1->getId());
+		$this->assertNotNull($collection1);
+		/* @var $collection1 \Rbs\Collection\Documents\Collection */
 		$this->assertNotEquals($code, $collection1->getCode());
 		$this->assertNotEquals($itemIds, $collection1->getItemsIds());
 
@@ -112,8 +113,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot update collection with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		/* @var $collection2 \Rbs\Collection\Documents\Collection */
@@ -144,7 +144,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
+			throw $tm->rollBack($e);
 		}
 
 	}
@@ -164,8 +164,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot delete collection with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		$dm = $this->getDocumentServices()->getDocumentManager();
 //		$collection = $dm->getDocumentInstance($collection1->getId());
@@ -188,7 +187,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
-		$items = $this->createItems('test', 5);
+		$items = $this->createItems('test', $numberOfItems);
 
 		$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 		/* @var $collection \Rbs\Collection\Documents\Collection */

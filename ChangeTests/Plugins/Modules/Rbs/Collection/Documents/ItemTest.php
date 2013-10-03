@@ -42,8 +42,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot update item with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		/* @var $item \Rbs\Collection\Documents\Item */
@@ -62,8 +61,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot update item with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		/* @var $item \Rbs\Collection\Documents\Item */
 		$item = $dm->getDocumentInstance($item->getId());
@@ -72,6 +70,9 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('test', $item->getValue());
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testOnDelete()
 	{
 		//first try with a non locked item
@@ -84,8 +85,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot update item with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 
 		//Now try with a locked item
@@ -107,6 +107,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @param boolean $locked
 	 * @return \Rbs\Collection\Documents\Item
+	 * @throws Exception
 	 */
 	protected function createAnItem($locked = false)
 	{
@@ -126,8 +127,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot create item with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 		$this->assertTrue($item->getId() > 0);
 		return $item;
@@ -135,6 +135,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	/**
 	 * @param \Rbs\Collection\Documents\Item $item
+	 * @throws Exception
 	 */
 	protected function deleteAnItem($item)
 	{
@@ -149,8 +150,7 @@ class ItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\Exception $e)
 		{
-			$tm->rollBack($e);
-			$this->fail('cannot delete item with this error: ' . $e->getMessage());
+			throw $tm->rollBack($e);
 		}
 	}
 }
