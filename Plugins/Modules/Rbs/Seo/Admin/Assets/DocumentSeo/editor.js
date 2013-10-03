@@ -23,6 +23,10 @@
 				scope.displayConfig = {};
 				scope.newRedirect = {};
 				scope.onReady = function() {
+					if (scope.document.isNew())
+					{
+						return;
+					}
 					for (var i = 0; i < scope.document.locations.length; i++)
 					{
 						scope.displayConfig[i] = {'showDetails': false, 'showRedirects': false, 'urls': [], 'redirects': []};
@@ -37,6 +41,11 @@
 						scope.newRedirect[i] = {'relativePath': '', 'permanent': true, 'query': ''};
 					}
 				};
+
+				REST.getAvailableLanguages().then(function (langs) {
+					scope.availableLanguages = langs.items;
+				});
+
 				scope.oldValues = {};
 				scope.newRuleLastId = -1;
 

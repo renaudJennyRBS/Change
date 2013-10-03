@@ -26,24 +26,24 @@
 	<fieldset data-ng-show="section=='urlinfo'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.urls', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		<p>Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit : <em>fr_FR</em> et <em>en_US</em>.</p>
-		<p>Les lignes marquées d'une <i class="icon-star text-info"></i> représentent les implantations canoniques de document dans un site et une langue donnés.</p>
+		<p>{{ i18n('m.rbs.seo.admin.available-languages-help') }}</p>
+		<p>{{ i18n('m.rbs.seo.admin.canonical-help') }}</p>
 		<table data-ng-show="document.locations.length > 0" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<th>{{ i18n('m.rbs.seo.admin.website', ['ucf']) }}</th>
 					<th>{{ i18n('m.rbs.seo.admin.lcid', ['ucf']) }}</th>
 					<th>{{ i18n('m.rbs.seo.admin.section', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</th>
-					<th></th>
+					<th style="width: 90px;">{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</th>
+					<th style="width: 25px;"></th>
 				</tr>
 			</thead>
 			<tbody data-ng-repeat="(locationIndex, location) in document.locations">
 				<tr>
 					<td>(= location.websiteLabel =)</td>
-					<td>(= location.LCID =)</td>
+					<td>(= availableLanguages[location.LCID].label|ucf =) [(= location.LCID =)]</td>
 					<td>(= location.sectionLabel =) <i ng-show="location.canonical" class="icon-star text-info" title="{{ i18n('m.rbs.seo.admin.canonical-location', ['ucf']) }}"></i></td>
-					<td style="width: 25px;" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
+					<td style="white-space: nowrap;" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
 						<span ng-show="location.published">
 							<i class="icon-ok text-success"></i> {{ i18n('m.rbs.seo.admin.published', ['ucf']) }}
 						</span>
@@ -51,7 +51,7 @@
 							<i class="icon-remove text-error"></i> {{ i18n('m.rbs.seo.admin.not-published', ['ucf']) }}
 						</span>
 					</td>
-					<td style="width: 25px;">
+					<td>
 						<button type="button" class="btn" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
 							<i ng-hide="displayConfig[locationIndex].showDetails" class="icon-chevron-down"></i>
 							<i ng-show="displayConfig[locationIndex].showDetails" class="icon-chevron-up"></i>
@@ -63,7 +63,7 @@
 						<div class="inner">
 							<h3>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</h3>
 							<ul class="unstyled">
-								<li ng-repeat="condition in location.publication" class=""><i ng-show="condition.ok" class="icon-ok text-success"></i><i ng-show="!condition.ok" class="icon-remove"></i> (= condition.message =)</li>
+								<li ng-repeat="condition in location.publication"><i ng-show="condition.ok" class="icon-ok text-success"></i><i ng-show="!condition.ok" class="icon-remove text-error"></i> (= condition.message =)</li>
 							</ul>
 							<h3>{{ i18n('m.rbs.seo.admin.urls', ['ucf']) }}</h3>
 							<table data-ng-show="location.urls.length > 0" class="table table-striped table-bordered table-condensed">

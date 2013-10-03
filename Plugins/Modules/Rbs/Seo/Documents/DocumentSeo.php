@@ -168,7 +168,14 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 
 		$dm = $this->getDocumentServices()->getDocumentManager();
 		$locations = array();
-		foreach ($target->getPublicationSections() as $section)
+
+		$sections = $target->getPublicationSections();
+		if ($sections instanceof \Change\Documents\DocumentArrayProperty)
+		{
+			$sections = $sections->toArray();
+		}
+
+		foreach ($sections as $section)
 		{
 			$website = $section->getWebsite();
 			if ($target instanceof \Change\Documents\Interfaces\Localizable)
@@ -280,7 +287,6 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 				'ok' => true,
 				'message' => $i18n->trans('m.rbs.seo.admin.document-published-in-lang')
 			);
-
 		}
 		else
 		{
@@ -296,7 +302,6 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 				'ok' => true,
 				'message' => $i18n->trans('m.rbs.seo.admin.section-published-in-lang')
 			);
-
 		}
 		else
 		{
@@ -306,13 +311,16 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			);
 		}
 
-		if (true)
+		$query = new \Change\Documents\Query\Query($target->getDocumentServices(), 'Rbs_Website_Page');
+		$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
+		$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $target->getDocumentModelName()));
+		$page = $query->getFirstDocument();
+		if ($page instanceof \Rbs\Website\Documents\Page && $page->published())
 		{
 			$location['publication'][] = array(
 				'ok' => true,
 				'message' => $i18n->trans('m.rbs.seo.admin.detail-function-provided-in-lang')
 			);
-
 		}
 		else
 		{

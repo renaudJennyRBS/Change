@@ -18,6 +18,8 @@
 	<key id="section-not-published-in-lang">Cette section n'est pas publiée dans cette langue.</key>
 	<key id="detail-function-provided-in-lang">La fonction détail est assurée dans cette section pour cette langue.</key>
 	<key id="detail-function-not-provided-in-lang">La fonction détail n'est pas assurée dans cette section pour cette langue.</key>
+	<key id="available-languages-help">Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit.</key>
+	<key id="canonical-help" format="html"><![CDATA[Les lignes marquées d'une <i class="icon-star text-info"></i> représentent les implantations canoniques de document dans un site et une langue donnés.]]></key>
 
 	<key id="edit-url">modifier cette URL</key>
 	<key id="restore-default-url">revenir à l'URL par défaut</key>
