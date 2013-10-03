@@ -5,7 +5,7 @@
 	<properties>
 		<property name="label" stateless="true" />
 		<property name="target" type="Document" />
-		<property name="metaTitle" type="String" localized="true" />
+		<property name="metaTitle" type="LongString" localized="true" />
 		<property name="metaDescription" type="LongString" localized="true" />
 		<property name="metaKeywords" type="LongString" localized="true" />
 		<property name="rules" type="JSON" stateless="true" />

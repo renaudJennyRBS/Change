@@ -44,19 +44,19 @@ class PathRuleResult extends Result
 	 */
 	public function toArray()
 	{
+		$array = array();
 		if ($this->pathRule instanceof \Change\Http\Web\PathRule)
 		{
-			$array = array();
-			$array['rule_id'] = $this->pathRule->getRuleId();
-			$array['website_id'] = $this->pathRule->getWebsiteId();
-			$array['lcid'] = $this->pathRule->getLCID();
-			$array['relative_path'] = $this->pathRule->getRelativePath();
-			$array['document_id'] = $this->pathRule->getDocumentId();
-			$array['section_id'] = $this->pathRule->getSectionId();
-			$array['http_status'] = $this->pathRule->getHttpStatus();
-			$array['query'] = $this->pathRule->getQuery();
-			return $array;
+			$rule['rule_id'] = $this->pathRule->getRuleId();
+			$rule['website_id'] = $this->pathRule->getWebsiteId();
+			$rule['lcid'] = $this->pathRule->getLCID();
+			$rule['relative_path'] = $this->pathRule->getRelativePath();
+			$rule['document_id'] = $this->pathRule->getDocumentId();
+			$rule['section_id'] = $this->pathRule->getSectionId();
+			$rule['http_status'] = $this->pathRule->getHttpStatus();
+			$rule['query'] = $this->pathRule->getQuery();
+			$array['rule'] = $rule;
 		}
-		return null;
+		return $array;
 	}
 }

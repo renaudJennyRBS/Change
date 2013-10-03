@@ -89,7 +89,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		if ($pathRule instanceof \Change\Http\Web\PathRule && $product instanceof Product)
 		{
 			$sectionId = $pathRule->getSectionId();
-			$section = $this->getDocumentManager()->getDocumentInstance($sectionId, 'Rbs_Catalog_Section');
+			$section = $this->getDocumentManager()->getDocumentInstance($sectionId, 'Rbs_Website_Section');
 			if ($section)
 			{
 				/* @var $section \Rbs\Website\Documents\Section */
