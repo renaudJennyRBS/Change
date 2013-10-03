@@ -9,10 +9,6 @@
 			<constraint name="maxSize" max="80"/>
 		</property>
 
-		<property name="metaTitle" type="LongString" localized="true" has-correction="true"/>
-		<property name="description" type="LongString" localized="true" has-correction="true"/>
-		<property name="keywords" type="LongString" localized="true" has-correction="true"/>
-
 		<property name="robotsMeta" type="String" default-value="index,follow" indexed="none">
 			<dboptions length="20"/>
 		</property>
