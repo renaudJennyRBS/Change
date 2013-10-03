@@ -311,23 +311,26 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			);
 		}
 
-		$query = new \Change\Documents\Query\Query($target->getDocumentServices(), 'Rbs_Website_Page');
-		$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
-		$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $target->getDocumentModelName()));
-		$page = $query->getFirstDocument();
-		if ($page instanceof \Rbs\Website\Documents\Page && $page->published())
+		if (!($target instanceof \Rbs\Website\Documents\Page) && !($target instanceof \Rbs\Website\Documents\Section))
 		{
-			$location['publication'][] = array(
-				'ok' => true,
-				'message' => $i18n->trans('m.rbs.seo.admin.detail-function-provided-in-lang')
-			);
-		}
-		else
-		{
-			$location['publication'][] = array(
-				'ok' => false,
-				'message' => $i18n->trans('m.rbs.seo.admin.detail-function-not-provided-in-lang')
-			);
+			$query = new \Change\Documents\Query\Query($target->getDocumentServices(), 'Rbs_Website_Page');
+			$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
+			$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $target->getDocumentModelName()));
+			$page = $query->getFirstDocument();
+			if ($page instanceof \Rbs\Website\Documents\Page && $page->published())
+			{
+				$location['publication'][] = array(
+					'ok' => true,
+					'message' => $i18n->trans('m.rbs.seo.admin.detail-function-provided-in-lang')
+				);
+			}
+			else
+			{
+				$location['publication'][] = array(
+					'ok' => false,
+					'message' => $i18n->trans('m.rbs.seo.admin.detail-function-not-provided-in-lang')
+				);
+			}
 		}
 	}
 
