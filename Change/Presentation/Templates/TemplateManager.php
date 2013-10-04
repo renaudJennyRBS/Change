@@ -97,7 +97,7 @@ class TemplateManager
 	 */
 	public function renderThemeTemplateFile($relativePath, array $attributes)
 	{
-		$paths = $this->getPresentationServices()->getThemeManager()->getThemeBasePaths();
+		$paths = $this->getPresentationServices()->getThemeManager()->getThemeTwigBasePaths();
 		$loader = new \Twig_Loader_Filesystem($paths);
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
 		$twig->addExtension(new Twig\Extension($this->getPresentationServices()->getApplicationServices()));

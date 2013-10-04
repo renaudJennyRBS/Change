@@ -111,7 +111,8 @@ class Extension implements \Twig_ExtensionInterface
 			new \Twig_SimpleFunction('contextualURL', array($this, 'contextualURL')),
 			new \Twig_SimpleFunction('currentURL', array($this, 'currentURL')),
 			new \Twig_SimpleFunction('ajaxURL', array($this, 'ajaxURL')),
-			new \Twig_SimpleFunction('functionURL', array($this, 'functionURL'))
+			new \Twig_SimpleFunction('functionURL', array($this, 'functionURL')),
+			new \Twig_SimpleFunction('resourceURL', array($this, 'resourceURL'))
 		);
 	}
 
@@ -324,7 +325,7 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param $functionCode
+	 * @param string $functionCode
 	 * @param \Change\Presentation\Interfaces\Section|null $section
 	 * @param array $query
 	 * @return null|string
@@ -346,6 +347,19 @@ class Extension implements \Twig_ExtensionInterface
 			return $uri ? $uri->normalize()->toString() : null;
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $relativePath
+	 * @return string
+	 */
+	public function resourceURL($relativePath)
+	{
+		if ($this->getApplicationServices()->getApplication()->inDevelopmentMode())
+		{
+			return $relativePath;
+		}
+		return $this->presentationServices->getThemeManager()->getAssetBaseUrl() . $relativePath;
 	}
 
 	/**

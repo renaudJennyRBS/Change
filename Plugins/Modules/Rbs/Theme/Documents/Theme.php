@@ -20,6 +20,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 
 	/**
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @return void
 	 */
 	public function setThemeManager(\Change\Presentation\Themes\ThemeManager $themeManager)
 	{
@@ -74,11 +75,51 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
+	 * @var string $templateBasePath
+	 */
+	protected $resourceBasePath;
+
+	/**
+	 * @return string
+	 */
+	public function getResourceBasePath()
+	{
+		if ($this->resourceBasePath === null)
+		{
+			list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
+			$this->resourceBasePath = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets');
+
+			$as = $this->getApplicationServices();
+			if ($as->getApplication()->inDevelopmentMode() && $this->themeManager)
+			{
+				$pluginManager = $as->getPluginManager();
+				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
+				$this->themeManager->installPluginTemplates($plugin, $this);
+			}
+		}
+		return $this->resourceBasePath;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetBasePath()
+	{
+		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
+		if ($themeVendor == 'Project')
+		{
+			return $this->getWorkspace()->projectThemesPath($shortThemeName, 'Assets');
+		}
+		return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets');
+	}
+
+	/**
 	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
+	 * @return void
 	 */
-	public function setModuleContent($moduleName, $pathName, $content)
+	public function installTemplateContent($moduleName, $pathName, $content)
 	{
 		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
 		\Change\Stdlib\File::mkdir(dirname($path));
@@ -90,9 +131,9 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 * @param string $fileName
 	 * @return string
 	 */
-	public function getBlockTemplatePath($moduleName, $fileName)
+	public function getTemplateRelativePath($moduleName, $fileName)
 	{
-		return $this->getWorkspace()->composePath($moduleName, 'Blocks', $fileName);
+		return $this->getWorkspace()->composePath($moduleName, $fileName);
 	}
 
 	/**
@@ -121,7 +162,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function getResource($resourcePath)
 	{
-		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getResourceBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
 
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')

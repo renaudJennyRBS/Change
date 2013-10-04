@@ -111,6 +111,64 @@ class TwitterBootstrapHtml
 	}
 
 	/**
+	 * @param \Change\Presentation\Layout\Layout $templateLayout
+	 * @param \Change\Presentation\Layout\Layout $pageLayout
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @return array
+	 */
+	public function getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices)
+	{
+		$developmentMode = $applicationServices->getApplication()->inDevelopmentMode();
+		$blockNames = array();
+		foreach($templateLayout->getBlocks() as $block)
+		{
+			$blockNames[$block->getName()] = true;
+		}
+		foreach($pageLayout->getBlocks() as $block)
+		{
+			$blockNames[$block->getName()] = true;
+		}
+
+		$configuration = $themeManager->getDefault()->getAssetConfiguration();
+		$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+		$am = $themeManager->getAsseticManager($configuration);
+
+		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+		$jsFooter = array();
+		$assetBaseUrl = ($developmentMode) ? '' : $themeManager->getAssetBaseUrl();
+		foreach($jsNames as $jsName)
+		{
+			try
+			{
+				$a = $am->get($jsName);
+				$jsFooter[] = '<script type="text/javascript" src="' .$assetBaseUrl . $a->getTargetPath() . '"></script>';
+			}
+			catch (\Exception $e)
+			{
+				$applicationServices->getLogging()->warn('asset resource name not found: ' . $jsName);
+			}
+		}
+
+		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+		$cssHead = [];
+		foreach($cssNames as $cssName)
+		{
+			try
+			{
+				$a = $am->get($cssName);
+				$cssHead[] = '<link rel="stylesheet" type="text/css" href="' . $assetBaseUrl . $a->getTargetPath() . '">';
+			}
+			catch (\Exception $e)
+			{
+				$applicationServices->getLogging()->warn('asset resource name not found: ' . $cssName);
+			}
+		}
+
+		return array('<!-- cssHead -->' => implode(PHP_EOL, $cssHead), '<!-- jsFooter -->' => implode(PHP_EOL, $jsFooter));
+	}
+
+	/**
 	 * @param Item $item
 	 * @param Callable $callableTwigBlock
 	 * @return string|null

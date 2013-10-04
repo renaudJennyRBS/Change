@@ -146,7 +146,6 @@ class DefaultPage implements Page
 		$pageLayout = $page->getContentLayout();
 		$result->setContentLayout($pageLayout);
 
-
 		return $result;
 	}
 
@@ -158,7 +157,6 @@ class DefaultPage implements Page
 	 */
 	public function onCompose($pageEvent)
 	{
-
 		$result = $pageEvent->getPageResult();
 		if ($result instanceof PageResult)
 		{
@@ -173,6 +171,7 @@ class DefaultPage implements Page
 			{
 				$templateLayout = $result->getTemplateLayout();
 				$pageLayout = $result->getContentLayout();
+				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
 
 				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
 				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
@@ -180,6 +179,7 @@ class DefaultPage implements Page
 					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
 				};
 				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
+				$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $pageLayout, $themeManager, $pageEvent->getApplicationServices()));
 
 				$pageTemplate = $page->getPageTemplate();
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());

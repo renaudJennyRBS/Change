@@ -46,9 +46,10 @@
 	"headerMiddle1" : {
 		"id" : "headerMiddle1",
 		"type" : "block",
-		"name" : "Rbs_Website_Richtext",
+		"name" : "Rbs_Website_XhtmlTemplate",
 		"parameters" : {
-			"content" : "<div><a class=\"brand logo\" href=\"#\"><img src=\"Theme/Rbs/Demo/img/logo.png\" alt=\"\" /></a></div>"
+			"moduleName" : "Rbs_Demo",
+			"templateName" : "xhtml-logo.twig"
 		}
 	},
 	"headerBottom1" : {
@@ -150,9 +151,10 @@
 	"footerBottom2" : {
 		"id" : "footerBottom2",
 		"type" : "block",
-		"name" : "Rbs_Website_Richtext",
+		"name" : "Rbs_Website_XhtmlTemplate",
 		"parameters" : {
-			"content" : "<div class=\"text-right\">Propulsé par <a class=\"link\" href=\"http://www.rbschange.fr\">RBS Change</a></div>"
+			"moduleName" : "Rbs_Demo",
+			"templateName" : "xhtml-copyright.twig"
 		}
 	}
 }
