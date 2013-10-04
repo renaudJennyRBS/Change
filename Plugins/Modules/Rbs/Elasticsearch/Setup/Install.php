@@ -25,5 +25,8 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Elasticsearch',
 			'\Rbs\Elasticsearch\Events\JobManager\Listeners');
+
+		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Elasticsearch',
+			'\Rbs\Elasticsearch\Events\BlockManager\Listeners');
 	}
 }
