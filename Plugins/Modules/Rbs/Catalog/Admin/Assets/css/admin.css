@@ -1,0 +1,42 @@
+.axes-columns-nav {
+	display: table;
+}
+
+.axes-columns-nav .axis-column {
+	display: table-cell;
+	border-right: 1px solid silver;
+	border-top: 1px solid silver;
+	border-bottom: 1px solid silver;
+	min-width: 150px;
+}
+
+.axes-columns-nav .axis-column:first-child {
+	border-left: 1px solid silver;
+}
+
+.axes-columns-nav .axis-column .axis-value {
+	padding: 5px 10px;
+}
+
+.axes-columns-nav .axis-column .axis-value.odd {
+	background: #F5F5F5;
+}
+
+.axes-columns-nav .axis-column .axis-value.selected,
+.axes-columns-nav .axis-column .axis-value.selected a {
+	background: #0088cc;
+	color: white;
+}
+
+.axes-columns-nav .axis-column h4 {
+	margin: 0;
+	padding: 10px;
+	background: #EEEEEE;
+}
+
+.axes-columns-nav .axis-column .axis-value.between-selection {
+	border-right: 5px solid #0088cc;
+	margin-right: -1px;
+	z-index: 1;
+	position: relative;
+}

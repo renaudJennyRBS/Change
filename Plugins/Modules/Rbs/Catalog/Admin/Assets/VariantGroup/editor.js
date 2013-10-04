@@ -17,8 +17,22 @@
 			replace : false,
 			require : 'rbsDocumentEditor',
 
-			link: function (scope, elm, attrs, editorCtrl)
+			link : function (scope, elm, attrs, editorCtrl)
 			{
+				var axesCount = 0;
+				scope.path = [];
+				scope.navigationEnd = false;
+
+				function compileAxesInfo ()
+				{
+					var axesInfo = [], index = 0;
+					angular.forEach(scope.document.axesDefinition, function (def) {
+						axesInfo.push(angular.extend({index: index++}, def));
+						axesCount++;
+					});
+					scope.axesInfo = axesInfo;
+				}
+
 				scope.onLoad = function() {
 					if (scope.document.isNew())
 					{
@@ -29,8 +43,51 @@
 					{
 						scope.document.productMatrixInfo = [];
 					}
+
+					compileAxesInfo();
 				};
 
+				// TODO
+				scope.addAxisValue = function (axis, value)
+				{
+
+				};
+
+				// TODO
+				scope.removeAxisValue = function (axis, value)
+				{
+
+				};
+
+				scope.navigate = function (axisIndex, value, valueIndex)
+				{
+					// This will remove all the values after 'axisIndex' in 'path' Array.
+					scope.path.length = axisIndex;
+					scope.path[axisIndex] = {
+						value : value,
+						index : valueIndex
+					};
+
+					scope.navigationEnd = (scope.path.length === axesCount);
+				};
+
+				scope.inPath = function (axisIndex, value)
+				{
+					return scope.path[axisIndex] && scope.path[axisIndex].value === value;
+				};
+
+
+				scope.isBetween = function (axisIndex, $index) {
+					if (scope.path.length <= (axisIndex+1)) {
+						return false;
+					}
+					return $index >= Math.min(scope.path[axisIndex+1].index, scope.path[axisIndex].index)
+					    && $index <= Math.max(scope.path[axisIndex+1].index, scope.path[axisIndex].index);
+				};
+
+
+
+/*
 				scope.onReady = function() {
 					if (!scope.document.isNew())
 					{
@@ -54,11 +111,11 @@
 
 				scope.newProductId = 0;
 				scope.axisDefaultValue = {};
-				
+
 				scope.currentAxisIndex = null;
 				scope.currentAxis = null;
 				scope.variantPath = null;
-				
+
 				scope.matrix = [];
 				scope.productList = [];
 
@@ -334,7 +391,7 @@
 
 					scope.matrix = m;
 				};
-
+*/
 				editorCtrl.init('Rbs_Catalog_VariantGroup');
 			}
 		};
