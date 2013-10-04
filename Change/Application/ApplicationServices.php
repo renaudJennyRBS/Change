@@ -38,8 +38,7 @@ class ApplicationServices extends \Zend\Di\Di
 			'config' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace()));
 
-		$im->setParameters('Change\Transaction\TransactionManager',
-			array('sharedEventManager' => $application->getSharedEventManager()));
+		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $application));
 
 		$im->setParameters('Change\Db\DbProvider',
 			array('config' => $application->getConfiguration(), 'sharedEventManager' => $application->getSharedEventManager()));
@@ -108,9 +107,9 @@ class ApplicationServices extends \Zend\Di\Di
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Transaction\TransactionManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('__construct', true)
-			->addMethod('setSharedEventManager')
-			->addMethodParameter('setSharedEventManager', 'sharedEventManager',
-				array('type' => 'Change\Events\SharedEventManager', 'required' => true));
+			->addMethod('setApplication')
+			->addMethodParameter('setApplication', 'application',
+				array('type' => 'Change\Application', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 

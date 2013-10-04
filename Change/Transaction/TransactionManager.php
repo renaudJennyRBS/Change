@@ -13,9 +13,9 @@ class TransactionManager extends \Exception
 	const EVENT_ROLLBACK = 'rollback';
 
 	/**
-	 * @var \Change\Events\SharedEventManager
+	 * @var \Change\Application
 	 */
-	protected $sharedEventManager;
+	protected $application;
 
 	/**
 	 * @var \Zend\EventManager\EventManager
@@ -33,11 +33,19 @@ class TransactionManager extends \Exception
 	protected $dirty = false;
 
 	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
+	 * @param \Change\Application $application
 	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->sharedEventManager = $sharedEventManager;
+		$this->application = $application;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	public function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**
@@ -45,7 +53,7 @@ class TransactionManager extends \Exception
 	 */
 	public function getSharedEventManager()
 	{
-		return $this->sharedEventManager;
+		return $this->application->getSharedEventManager();
 	}
 
 	/**
