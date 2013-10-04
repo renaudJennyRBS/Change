@@ -411,7 +411,9 @@
 			},
 
 			hasSelectSession : function (doc) {
-				return selectDoc && doc && selectDoc.id === doc.id && (! doc.hasOwnProperty('LCID') || doc.LCID === selectDoc.LCID);
+				return selectDoc && doc
+					&& (selectDoc.id === doc.id || (selectDoc.isNew() && doc.isNew() && selectDoc.model === doc.model))
+					&& (! doc.hasOwnProperty('LCID') || doc.LCID === selectDoc.LCID);
 			},
 
 			start : function (doc, property, selectionDocumentModel, multiple) {
