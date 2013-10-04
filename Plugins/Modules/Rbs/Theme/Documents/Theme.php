@@ -75,32 +75,6 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
-	 * @var string $templateBasePath
-	 */
-	protected $resourceBasePath;
-
-	/**
-	 * @return string
-	 */
-	public function getResourceBasePath()
-	{
-		if ($this->resourceBasePath === null)
-		{
-			list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-			$this->resourceBasePath = $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets');
-
-			$as = $this->getApplicationServices();
-			if ($as->getApplication()->inDevelopmentMode() && $this->themeManager)
-			{
-				$pluginManager = $as->getPluginManager();
-				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
-				$this->themeManager->installPluginTemplates($plugin, $this);
-			}
-		}
-		return $this->resourceBasePath;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getAssetBasePath()
@@ -154,6 +128,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
 			return $parentTheme->getPageTemplate($name);
 		}
+		return $pageTemplate;
 	}
 
 	/**
@@ -162,7 +137,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function getResource($resourcePath)
 	{
-		$path =  $this->getWorkspace()->composePath($this->getResourceBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path =  $this->getWorkspace()->composePath($this->getAssetBasePath(),$resourcePath);
 
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')
