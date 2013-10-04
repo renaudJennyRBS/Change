@@ -8,12 +8,13 @@ namespace Change\Presentation\Interfaces;
 interface Theme
 {
 	/**
- * @return string
- */
+	 * @return string
+	 */
 	public function getName();
 
 	/**
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @return void
 	 */
 	public function setThemeManager(\Change\Presentation\Themes\ThemeManager $themeManager);
 
@@ -26,15 +27,9 @@ interface Theme
 	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
+	 * @return void
 	 */
-	public function setModuleContent($moduleName, $pathName, $content);
-
-	/**
-	 * @param string $moduleName
-	 * @param string $fileName
-	 * @return string
-	 */
-	public function getBlockTemplatePath($moduleName, $fileName);
+	public function installTemplateContent($moduleName, $pathName, $content);
 
 	/**
 	 * @param string $name
@@ -42,6 +37,18 @@ interface Theme
 	 */
 	public function getPageTemplate($name);
 
+	/**
+	 * The path used by Twig to find the template.
+	 * @param string $moduleName
+	 * @param string $fileName
+	 * @return string
+	 */
+	public function getTemplateRelativePath($moduleName, $fileName);
+
+	/**
+	 * @return string the base path in App directory.
+	 */
+	public function getTemplateBasePath();
 
 	/**
 	 * @param string $resourcePath
@@ -50,9 +57,14 @@ interface Theme
 	public function getResource($resourcePath);
 
 	/**
-	 * @return string
+	 * @return string the base path to the public static resources.
 	 */
-	public function getTemplateBasePath();
+	public function getResourceBasePath();
+
+	/**
+	 * @return string the asset base path in theme plugin.
+	 */
+	public function getAssetBasePath();
 
 	/**
 	 * @param array $baseConfiguration

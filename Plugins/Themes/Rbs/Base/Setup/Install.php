@@ -16,18 +16,18 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
 		$pluginManager = $applicationServices->getPluginManager();
-		$plugins = $pluginManager->getModules();
+		$modules = $pluginManager->getModules();
 		$themeManager = $presentationServices->getThemeManager();
 		$themeManager->setDocumentServices($documentServices);
 		$themeManager->installPluginTemplates($plugin);
 		$themeManager->installPluginAssets($plugin);
-		foreach ($plugins as $plugin)
+		foreach ($modules as $module)
 		{
-			if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
+			if ($module->isAvailable())
 			{
-				echo $plugin, PHP_EOL;
-				$themeManager->installPluginTemplates($plugin);
-				$themeManager->installPluginAssets($plugin);
+				//echo $module, PHP_EOL;
+				$themeManager->installPluginTemplates($module);
+				$themeManager->installPluginAssets($module);
 			}
 		}
 		$configuration = $themeManager->getDefault()->getAssetConfiguration();

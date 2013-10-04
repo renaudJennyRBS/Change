@@ -229,7 +229,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginTemplates($plugin, $theme = null)
 	{
-		$path = $plugin->getThemeAssetsPath();
+		$path = $plugin->getTwigAssetsPath();
 		if (!is_dir($path))
 		{
 			return;
@@ -243,16 +243,17 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			$theme->setThemeManager($this);
 		}
 
+		$includedExtensions = ['twig'];
 		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
 			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
 		while ($it->valid())
 		{
 			/* @var $current \RecursiveDirectoryIterator */
 			$current = $it->current();
-			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0)
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && in_array($current->getExtension(), $includedExtensions))
 			{
 				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
-				$theme->setModuleContent($moduleName, $current->getSubPathname(),
+				$theme->installTemplateContent($moduleName, $current->getSubPathname(),
 					file_get_contents($current->getPathname()));
 			}
 			$it->next();
@@ -301,7 +302,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @return string[]
 	 */
-	public function getThemeBasePaths()
+	public function getThemeTwigBasePaths()
 	{
 		$paths = array();
 		$theme = $this->getCurrent();

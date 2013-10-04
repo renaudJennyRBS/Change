@@ -45,6 +45,7 @@ class DefaultTheme implements Theme
 
 	/**
 	 * @param ThemeManager $themeManager
+	 * @return void
 	 */
 	public function setThemeManager(ThemeManager $themeManager)
 	{
@@ -83,6 +84,7 @@ class DefaultTheme implements Theme
 		if ($this->templateBasePath === null)
 		{
 			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
+
 			$as = $this->presentationServices->getApplicationServices();
 			if ($as->getApplication()->inDevelopmentMode())
 			{
@@ -101,11 +103,50 @@ class DefaultTheme implements Theme
 	}
 
 	/**
+	 * @var string $resourceBasePath
+	 */
+	protected $resourceBasePath;
+
+	/**
+	 * @return string
+	 */
+	public function getResourceBasePath()
+	{
+		if ($this->resourceBasePath === null)
+		{
+			$this->resourceBasePath = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets');
+			$as = $this->presentationServices->getApplicationServices();
+			if ($as->getApplication()->inDevelopmentMode())
+			{
+				$pluginManager = $as->getPluginManager();
+				$plugins = $pluginManager->getModules();
+				foreach ($plugins as $plugin)
+				{
+					if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
+					{
+						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
+					}
+				}
+			}
+		}
+		return $this->resourceBasePath;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAssetBasePath()
+	{
+		return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets');
+	}
+
+	/**
 	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
+	 * @return void
 	 */
-	public function setModuleContent($moduleName, $pathName, $content)
+	public function installTemplateContent($moduleName, $pathName, $content)
 	{
 		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
 		\Change\Stdlib\File::mkdir(dirname($path));
@@ -117,9 +158,9 @@ class DefaultTheme implements Theme
 	 * @param string $fileName
 	 * @return string
 	 */
-	public function getBlockTemplatePath($moduleName, $fileName)
+	public function getTemplateRelativePath($moduleName, $fileName)
 	{
-		return $this->getWorkspace()->composePath($moduleName, 'Blocks', $fileName);
+		return $this->getWorkspace()->composePath($moduleName, $fileName);
 	}
 
 	/**
@@ -141,8 +182,17 @@ class DefaultTheme implements Theme
 	 */
 	public function getResource($resourcePath)
 	{
-		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path = $this->getWorkspace()->composePath($this->getResourceBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		return new FileResource($path);
+	}
 
+	/**
+	 * @param string $assetPath
+	 * @return \Change\Presentation\Interfaces\ThemeResource
+	 */
+	public function getAssetResource($assetPath)
+	{
+		$path = $this->getWorkspace()->composePath($this->getAssetBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $assetPath));
 		return new FileResource($path);
 	}
 

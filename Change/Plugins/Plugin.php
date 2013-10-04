@@ -357,7 +357,7 @@ class Plugin
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getThemeAssetsPath()
 	{
@@ -369,6 +369,15 @@ class Plugin
 		{
 			$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets'));
 		}
+		return is_dir($path) ? $path : null ;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getTwigAssetsPath()
+	{
+		$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Twig'));
 		return is_dir($path) ? $path : null ;
 	}
 

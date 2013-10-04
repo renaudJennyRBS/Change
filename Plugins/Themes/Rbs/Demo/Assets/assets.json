@@ -15,27 +15,27 @@
 	},
 
 	"Rbs_Review_PromotedReviewList" : {
-		"cssAssets" : ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"cssAssets" : ["Theme/Rbs/Demo/css/review.css"],
 		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
 	},
 
 	"Rbs_Review_ReviewList" : {
-		"cssAssets" : ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"cssAssets" : ["Theme/Rbs/Demo/css/review.css"],
 		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
 	},
 
 	"Rbs_Review_ReviewAverageRating": {
-		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
 		"jsAssets" : []
 	},
 
 	"Rbs_Review_PostReview": {
-		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
 		"jsAssets" : []
 	},
 
 	"Rbs_Review_ReviewDetail": {
-		"cssAssets": ["Theme/Rbs/Demo/Theme/Rbs_Review/css/review.css"],
+		"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
 		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
 	}
 }

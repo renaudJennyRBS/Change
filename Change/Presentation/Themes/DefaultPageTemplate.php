@@ -25,7 +25,7 @@ class DefaultPageTemplate implements PageTemplate
 	 * @param DefaultTheme $theme
 	 * @param string $name
 	 */
-	function __construct($theme, $name)
+	public function __construct($theme, $name)
 	{
 		$this->theme = $theme;
 		$this->name = $name;
@@ -39,7 +39,7 @@ class DefaultPageTemplate implements PageTemplate
 		return $this->name;
 	}
 	/**
-	 * @return \Change\Presentation\Interfaces\Theme
+	 * @return \Change\Presentation\Themes\DefaultTheme
 	 */
 	public function getTheme()
 	{
@@ -49,12 +49,12 @@ class DefaultPageTemplate implements PageTemplate
 	/**
 	 * @return \Change\Presentation\Interfaces\ThemeResource
 	 */
-	public function getHtmlResource()
+	protected function getHtmlResource()
 	{
 		if ($this->htmlResource === null)
 		{
 			$path = 'Layout/PageTemplate/' . $this->getName() . '.twig';
-			$this->htmlResource = $this->getTheme()->getResource($path);
+			$this->htmlResource = $this->getTheme()->getAssetResource($path);
 		}
 		return $this->htmlResource;
 	}
@@ -79,7 +79,7 @@ class DefaultPageTemplate implements PageTemplate
 	 */
 	public function getContentLayout()
 	{
-		$res = $this->getTheme()->getResource('Layout/PageTemplate/' . $this->getName() . '.json');
+		$res = $this->getTheme()->getAssetResource('Layout/PageTemplate/' . $this->getName() . '.json');
 		if (!$res->isValid())
 		{
 			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.json resource not found', 999999);
