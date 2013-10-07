@@ -42,13 +42,13 @@ class Install extends \Change\Plugins\InstallBase
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
-	 * @param \Change\Configuration\EditableConfiguration $config
+	 * @param \Change\Configuration\EditableConfiguration $configuration
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application, $config)
+	public function executeApplication($plugin, $application, $configuration)
 	{
 		$projectPath = $application->getWorkspace()->projectPath();
-		$documentRootPath = $config->getEntry('Change/Install/documentRootPath', $projectPath);
+		$documentRootPath = $configuration->getEntry('Change/Install/documentRootPath', $projectPath);
 
 		if (is_dir($documentRootPath))
 		{
