@@ -77,7 +77,7 @@ class Resolver extends BaseResolver
 						$action = new GeneratePathRule();
 						$action->execute($event);
 					};
-					$this->setPathRuleAuthorization($event, $authorizedSectionId);
+					$this->setPathRuleAuthorization($event, $authorizedSectionId, $pathRule->getWebsiteId());
 					$event->setAction($action);
 					return;
 				}
@@ -99,7 +99,7 @@ class Resolver extends BaseResolver
 					$action->execute($event);
 				};
 				$event->setAction($action);
-				$this->setPathRuleAuthorization($event, $authorizedSectionId);
+				$this->setPathRuleAuthorization($event, $authorizedSectionId, $pathRule->getWebsiteId());
 				return;
 			}
 		}
@@ -333,14 +333,15 @@ class Resolver extends BaseResolver
 	/**
 	 * @param Event $event
 	 * @param integer $sectionId
+	 * @param integer $websiteId
 	 */
-	protected function setPathRuleAuthorization($event, $sectionId)
+	protected function setPathRuleAuthorization($event, $sectionId, $websiteId)
 	{
 		if ($sectionId)
 		{
-			$authorisation = function(Event $event) use ($sectionId)
+			$authorisation = function(Event $event) use ($sectionId, $websiteId)
 			{
-				return $event->getPermissionsManager()->isWebAllowed($sectionId);
+				return $event->getPermissionsManager()->isWebAllowed($sectionId, $websiteId);
 			};
 			$event->setAuthorization($authorisation);
 		}
