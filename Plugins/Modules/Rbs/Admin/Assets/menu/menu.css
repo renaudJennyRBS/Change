@@ -51,12 +51,10 @@
 	font-size: 90%;
 	text-align: center;
 	text-shadow: 0 1px 0 white;
-	bottom: 0;
-	position: absolute;
 	border-top: 1px solid rgba(128, 128, 128, 0.1);
 	padding-top: 5px;
 	padding-bottom: 5px;
-	background: #F0F0F0;
+	margin-top: 10px;
 }
 #change-menu .navbar {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
@@ -91,8 +89,6 @@
 	-moz-transition: 0.2s ease-in-out width;
 	-o-transition: 0.2s ease-in-out width;
 	transition: 0.2s ease-in-out width;
-
-	/*text-shadow: 0 1px 0px rgba(0,0,0,0.5);*/
 }
 
 #change-menu .close-menu:hover {
