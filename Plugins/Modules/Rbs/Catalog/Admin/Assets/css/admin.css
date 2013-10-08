@@ -1,5 +1,6 @@
 .axes-columns-nav {
 	display: table;
+	width: 100%;
 }
 
 .axes-columns-nav .axis-column {
@@ -15,7 +16,20 @@
 }
 
 .axes-columns-nav .axis-column .axis-value {
+	cursor: pointer;
 	padding: 5px 10px;
+}
+
+.axes-columns-nav .axis-column .axis-value.unused {
+	cursor: default;
+	font-style: italic;
+	color: silver;
+}
+
+.axes-columns-nav .axis-column .axis-value button {
+	width: 26px;
+	margin-right: 6px;
+	font-style: normal;
 }
 
 .axes-columns-nav .axis-column .axis-value.odd {
