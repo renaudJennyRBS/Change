@@ -13,7 +13,8 @@
 
 		return {
 			restrict : 'EC',
-			require  : 'ngModel',
+			require : 'ngModel',
+			scope : true,
 			// TODO Localization
 			template :
 				'<div class="tabbable">' +
@@ -110,8 +111,10 @@
 
 				// Init available selectors.
 				scope.availableSelectors = {
-					'media' : true,
-					'links' : true
+					'media': true,
+					'links': true,
+					'users': false,
+					'usergroups': false
 				};
 				if (attrs.profile === 'Admin') {
 					scope.availableSelectors.users = true;
