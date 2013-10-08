@@ -9,5 +9,10 @@
 		<property name="metaDescription" type="LongString" localized="true" />
 		<property name="metaKeywords" type="LongString" localized="true" />
 		<property name="rules" type="JSON" stateless="true" />
+		<property name="sitemapChangeFrequency" type="String" />
+		<property name="sitemapPriority" type="Float">
+			<constraint name="range" min="0.0" max="1.0" />
+		</property>
+		<property name="sitemapGenerateForWebsites" type="JSON" />
 	</properties>
 </document>

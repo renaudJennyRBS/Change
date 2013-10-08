@@ -25,6 +25,15 @@
 				scope.onReady = function() {
 					if (scope.document.isNew())
 					{
+						scope.document.sitemapGenerateForWebsites = {};
+						REST.query({ model: 'Rbs_Website_Website' }).then(function(data){
+							angular.forEach(data.resources, function(website){
+								scope.document.sitemapGenerateForWebsites[website.id] = {
+									label: website.label,
+									generate: true
+								};
+							});
+						});
 						return;
 					}
 					for (var i = 0; i < scope.document.locations.length; i++)

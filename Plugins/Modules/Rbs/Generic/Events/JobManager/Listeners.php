@@ -48,6 +48,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Notification\Job\SendMails())->execute($event);
 		};
 		$events->attach('process_Rbs_Notification_SendMails', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Seo\Job\GenerateSitemap())->execute($event);
+		};
+		$events->attach('process_Rbs_Seo_GenerateSitemap', $callBack, 5);
 	}
 
 	/**

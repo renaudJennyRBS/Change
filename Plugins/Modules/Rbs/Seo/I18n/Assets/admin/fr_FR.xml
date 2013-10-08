@@ -18,7 +18,7 @@
 	<key id="section-not-published-in-lang">Cette section n'est pas publiée dans cette langue.</key>
 	<key id="detail-function-provided-in-lang">La fonction détail est assurée dans cette section pour cette langue.</key>
 	<key id="detail-function-not-provided-in-lang">La fonction détail n'est pas assurée dans cette section pour cette langue.</key>
-	<key id="available-languages-help">Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit.</key>
+	<key id="available-languages-help">Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit et les sections dans lesquelles il est implanté.</key>
 	<key id="canonical-help" format="html"><![CDATA[Les lignes marquées d'une <i class="icon-star text-info"></i> représentent les implantations canoniques de document dans un site et une langue donnés.]]></key>
 
 	<key id="edit-url">modifier cette URL</key>
@@ -32,4 +32,7 @@
 	<key id="add-new-redirect">ajouter cette redirection</key>
 	<key id="clear-new-redirect">réinitialiser cette redirection</key>
 	<key id="make-current-url">utiliser comme URL courante</key>
+
+	<key id="sitemap">sitemap</key>
+	<key id="add-on-website-sitemap">ajouter ce référencement dans le sitemap</key>
 </i18n>
