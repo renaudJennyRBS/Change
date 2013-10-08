@@ -10,7 +10,7 @@
 	registerFieldDirective('Email', '<input type="email"/>', 'input');
 	registerFieldDirective('Url', '<input type="url" class="input-block-level"/>', 'input');
 	registerFieldDirective('Integer', '<input type="number" class="input-mini" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
-	registerFieldDirective('Float', '<input type="number" class="input-mini" smart-float=""/>', 'input');
+	registerFieldDirective('Float', '<input type="text" class="input-mini" smart-float=""/>', 'input');
 	registerFieldDirective('Boolean', '<switch></switch>', 'switch');
 	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
 	registerFieldDirective('Picker', '<div class="document-picker-single"></div>', '.document-picker-single');

@@ -7,4 +7,14 @@
 	<key id="meta-title">méta titre de la page</key>
 	<key id="meta-description">méta description</key>
 	<key id="meta-keywords">méta mots-clés</key>
+	<key id="sitemap-change-frequency">fréquence (changefreq)</key>
+	<key id="sitemap-priority">priorité de l'URL (priority)</key>
+	<key id="sitemap-change-frequency-option">fréquence de changement du document</key>
+	<key id="sitemap-change-frequency-always">toujours (always)</key>
+	<key id="sitemap-change-frequency-hourly">horaire (hourly)</key>
+	<key id="sitemap-change-frequency-daily">quotidien (daily)</key>
+	<key id="sitemap-change-frequency-weekly">hebdomadaire (weekly)</key>
+	<key id="sitemap-change-frequency-monthly">mensuel (monthly)</key>
+	<key id="sitemap-change-frequency-yearly">annuel (yearly)</key>
+	<key id="sitemap-change-frequency-never">jamais (never)</key>
 </i18n>
