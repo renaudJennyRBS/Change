@@ -5,33 +5,33 @@
 
 		<rbs-field-text
 			property="login" required="true"
-			label="{{ i18nAttr('m.rbs.user.document.user.login', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.login', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="email" required="true"
-			label="{{ i18nAttr('m.rbs.user.document.user.email', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.email', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.user.document.user.label', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="identifier" required="true"
-			label="{{ i18nAttr('m.rbs.user.document.user.identifier', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.identifier', ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker-multiple property="groups" required="false" label="{{ i18nAttr('m.rbs.user.document.group-list', ['ucf']) }}"
+		<rbs-field-picker-multiple property="groups" required="false" label="{{ i18nAttr('m.rbs.user.documents.group-list', ['ucf']) }}"
 			accepted-model="Rbs_User_Group"
-			selector-title="{{ i18nAttr('m.rbs.user.document.group.group-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.user.documents.group.group-picker-title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
 	</fieldset>
 
 	<fieldset data-ng-show="section=='security'"
-		data-form-section-label="{{ i18nAttr('m.rbs.user.document.user.security', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.user.documents.user.security', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<div class="clearfix">
@@ -42,11 +42,11 @@
 		</div>
 
 		<rbs-field-text readonly="true" property="hashMethod"
-			label="{{ i18nAttr('m.rbs.user.document.user.hashMethod', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.hashMethod', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="password" required="true" ng-if="document.isNew()"
-			label="{{ i18nAttr('m.rbs.user.document.user.password', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.user.documents.user.password', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="password" ng-if="!document.isNew()"

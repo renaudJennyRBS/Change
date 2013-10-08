@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.theme.document.theme" lcid="en_US">
+<i18n baseKey="m.rbs.theme.documents.theme" lcid="en_US">
 	<include id="m.rbs.generic.document"/>
 	<key id="name">name (code)</key>
 	<key id="name-help" format="html"><![CDATA[<strong>The name can only contain letters and underscores.</strong><br/><span class='label label-important'>Attention !</span> This name refers is used to retrieve files on the server hosting your website - changing its value might break your websites.]]></key>

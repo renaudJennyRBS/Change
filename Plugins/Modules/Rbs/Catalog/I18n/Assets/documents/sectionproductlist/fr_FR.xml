@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.catalog.document.sectionproductlist" lcid="fr_FR">
-	<include id="m.rbs.catalog.document.productlist"/>
+<i18n baseKey="m.rbs.catalog.documents.sectionproductlist" lcid="fr_FR">
+	<include id="m.rbs.catalog.documents.productlist"/>
 	<key id="synchronizedsection">section synchronisée</key>
 	<key id="synchronizedsection-help">Les produits publiés dans cette section seront automatiquement ajoutés à cette liste et inversement.</key>
 	<key id="synchronizedsection-picker-title">sélectionner la section à synchroniser</key>

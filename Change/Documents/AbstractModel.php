@@ -539,7 +539,7 @@ abstract class AbstractModel
 	public function getPropertyLabelKey($name)
 	{
 		return strtolower(
-			'm.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.' . $this->getShortName() . '.'
+			'm.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.documents.' . $this->getShortName() . '.'
 				. strtolower($name));
 	}
 
@@ -558,7 +558,7 @@ abstract class AbstractModel
 	 */
 	public function getLabelKey()
 	{
-		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.' . $this->getShortName());
+		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.documents.' . $this->getShortName());
 	}
 
 	/**

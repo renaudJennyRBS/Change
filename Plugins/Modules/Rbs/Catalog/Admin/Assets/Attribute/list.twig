@@ -3,7 +3,7 @@
 	<rbs-workspace-config menu="Rbs_Catalog">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.document.attribute-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.documents.attribute-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -15,6 +15,6 @@
 
 	<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-query="query">
 		<column name="label" primary="true"></column>
-		<column name="valueTypeFormatted" label="{{ i18nAttr('m.rbs.catalog.document.attribute.valuetype', ['ucf']) }}"></column>
+		<column name="valueTypeFormatted" label="{{ i18nAttr('m.rbs.catalog.documents.attribute.valuetype', ['ucf']) }}"></column>
 	</rbs-document-list>
 </div>

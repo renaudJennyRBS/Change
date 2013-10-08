@@ -80,7 +80,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				/* @var $notification \Rbs\Notification\Documents\Notification */
 				$notification->setUserId($user->getId());
 				$notification->setCode('timeline_mention');
-				$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($lcid, 'm.rbs.timeline.document.message.notification-mention-message', ['ucf'], $params));
+				$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($lcid, 'm.rbs.timeline.documents.message.notification-mention-message', ['ucf'], $params));
 				$notification->setParams($params);
 				$tm = $this->getApplicationServices()->getTransactionManager();
 				try

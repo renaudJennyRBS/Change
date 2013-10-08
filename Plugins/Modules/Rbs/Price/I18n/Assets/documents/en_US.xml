@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.price.document" lcid="en_US">
+<i18n baseKey="m.rbs.price.documents" lcid="en_US">
 	<key id="billingarea">pricing zone</key>
 	<key id="tax">tax</key>
 	<key id="price">price</key>

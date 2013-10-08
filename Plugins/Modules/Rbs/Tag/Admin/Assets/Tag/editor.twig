@@ -10,38 +10,38 @@
 		</div>
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-		                label="{{ i18nAttr('m.rbs.tag.document.tag.label', ['ucf']) }}">
+		                label="{{ i18nAttr('m.rbs.tag.documents.tag.label', ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field property="color" required="true" label="{{ i18nAttr('m.rbs.tag.document.tag.color', ['ucf']) }}">
+		<rbs-field property="color" required="true" label="{{ i18nAttr('m.rbs.tag.documents.tag.color', ['ucf']) }}">
 			<rbs-tag-color-selector ng-model="document.color" icon-size="icon-2x"></rbs-tag-color-selector>
 				<span class="help-block">
-					{{ i18n('m.rbs.tag.document.tag.color-help') }}
+					{{ i18n('m.rbs.tag.documents.tag.color-help') }}
 				</span>
 		</rbs-field>
 
-		<rbs-field property="userTag" required="true" label="{{ i18nAttr('m.rbs.tag.document.tag.usertag', ['ucf']) }}">
+		<rbs-field property="userTag" required="true" label="{{ i18nAttr('m.rbs.tag.documents.tag.usertag', ['ucf']) }}">
 			<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
 			<span class="help-block">
-				{{ i18n('m.rbs.tag.document.tag.usertag-help') }}
+				{{ i18n('m.rbs.tag.documents.tag.usertag-help') }}
 			</span>
 			<span class="help-block" ng-if="! document.isNew()">
-				{{ i18n('m.rbs.tag.document.tag.usertag-cannot-be-modified') }}
+				{{ i18n('m.rbs.tag.documents.tag.usertag-cannot-be-modified') }}
 			</span>
 		</rbs-field>
 
-		<rbs-field property="module" label="{{ i18nAttr('m.rbs.tag.document.tag.module', ['ucf']) }}">
+		<rbs-field property="module" label="{{ i18nAttr('m.rbs.tag.documents.tag.module', ['ucf']) }}">
 			<select ng-model="document.module" rbs-items-from-collection="modules"></select>
 		</rbs-field>
 
 		<rbs-field-picker-multiple
-				property="children" label="{{ i18nAttr('m.rbs.tag.document.tag.children', ['ucf']) }}"
+				property="children" label="{{ i18nAttr('m.rbs.tag.documents.tag.children', ['ucf']) }}"
 				accepted-model="Rbs_Tag_Tag"
-				selector-title="{{ i18nAttr('m.rbs.tag.document.tag.children-selector-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.tag.documents.tag.children-selector-title', ['ucf']) }}"
 				allow-creation="true"
 				picker="model">
 				<span class="help-block">
-					{{ i18n('m.rbs.tag.document.tag.children-help') }}
+					{{ i18n('m.rbs.tag.documents.tag.children-help') }}
 				</span>
 		</rbs-field-picker-multiple>
 

@@ -3,32 +3,32 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.document.addressfield.locked-warning') }}</p>
+		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.documents.addressfield.locked-warning') }}</p>
 
 		<rbs-field-text
 				property="code" required="true" ng-disabled="document.locked"
-				label="{{ i18nAttr('m.rbs.geo.document.addressfield.code', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.code', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text property="title"
-				label="{{ i18nAttr('m.rbs.geo.document.addressfield.title', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.title', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-boolean property="required"
-				label="{{ i18nAttr('m.rbs.geo.document.addressfield.required', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.required', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-boolean>
 
 		<rbs-field-text property="match"
-				label="{{ i18nAttr('m.rbs.geo.document.addressfield.match', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.match', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.geo.document.addressfield.collectioncode', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.geo.documents.addressfield.collectioncode', ['ucf']) }}">
 			<select data-ng-model="document.collectionCode" rbs-items-from-collection="Rbs_Collection_Collection_List">
-				<option value=""> {{ i18n('m.rbs.geo.document.addressfield.select-collectioncode', ['ucf']) }}</option>
+				<option value=""> {{ i18n('m.rbs.geo.documents.addressfield.select-collectioncode', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 

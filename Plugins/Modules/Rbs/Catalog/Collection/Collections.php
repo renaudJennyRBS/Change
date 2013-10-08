@@ -19,8 +19,8 @@ class Collections
 		{
 			$i18n = $documentServices->getApplicationServices()->getI18nManager();
 			$collection = array(
-				'title' => new I18nString($i18n, 'm.rbs.catalog.document.product.title', array('ucf')),
-				'label' => new I18nString($i18n, 'm.rbs.catalog.document.product.label', array('ucf'))
+				'title' => new I18nString($i18n, 'm.rbs.catalog.documents.product.title', array('ucf')),
+				'label' => new I18nString($i18n, 'm.rbs.catalog.documents.product.label', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);
@@ -44,7 +44,7 @@ class Collections
 			$items = array();
 			foreach ($types as $type)
 			{
-				$items[$type] = new I18nString($i18n, 'm.rbs.catalog.document.attribute.type-' . strtolower($type), array('ucf'));
+				$items[$type] = new I18nString($i18n, 'm.rbs.catalog.documents.attribute.type-' . strtolower($type), array('ucf'));
 			}
 
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeValueTypes', $items);
@@ -119,10 +119,10 @@ class Collections
 		{
 			$i18n = $documentServices->getApplicationServices()->getI18nManager();
 			$collection = array(
-				'specifications' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-specifications', array('ucf')),
-				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-comparisons', array('ucf')),
-				'axes' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-axes', array('ucf')),
-				'productListItem' => new I18nString($i18n, 'm.rbs.catalog.document.attribute.visibility-list-items', array('ucf'))
+				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-specifications', array('ucf')),
+				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-comparisons', array('ucf')),
+				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-axes', array('ucf')),
+				'productListItem' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-list-items', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);
@@ -152,7 +152,7 @@ class Collections
 				{
 					continue;
 				}
-				$key = 'm.rbs.catalog.document.product.' . strtolower($propertyName);
+				$key = 'm.rbs.catalog.documents.product.' . strtolower($propertyName);
 				$label = $i18n->trans($key);
 				$items[$propertyName] = (!$label || $key == $label) ? $propertyName : $label;
 			}

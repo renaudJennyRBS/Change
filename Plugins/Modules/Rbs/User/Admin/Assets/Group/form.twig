@@ -1,10 +1,10 @@
 <div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.user.document.group', ['ucf']) }}"></page-header>
+	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.user.documents.group', ['ucf']) }}"></page-header>
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_User'|rbsURL:'home' =)">Utilisateurs</location>
-			<location href="(= 'Rbs_User_Group'|rbsURL:'list' =)">Groupes</location>
+			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.documents.user-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_User_Group'|rbsURL:'list' =)">{{ i18n('m.rbs.user.documents.group-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 

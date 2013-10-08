@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.catalog.admin.js" lcid="en_US">
-	<include id="m.rbs.catalog.document"/>
+	<include id="m.rbs.catalog.documents"/>
 	<key id="module-name">catalog</key>
 	<key id="section-name">E-commerce</key>
 </i18n>

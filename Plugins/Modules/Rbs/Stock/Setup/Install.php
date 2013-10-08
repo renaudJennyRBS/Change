@@ -31,7 +31,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('PC');
 				$item->setLabel('pc.');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.unit-piece', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.documents.sku.unit-piece', array('ucf')));
 				$item->setLocked(true);
 				$item->save();
 
@@ -67,7 +67,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue(\Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE);
 				$item->setLabel('Available');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.threshold-available', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.documents.sku.threshold-available', array('ucf')));
 				$item->setLocked(true);
 				$item->save();
 				$collection->getItems()->add($item);
@@ -76,7 +76,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue(\Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE);
 				$item->setLabel('Unavailable');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.threshold-unavailable', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.documents.sku.threshold-unavailable', array('ucf')));
 				$item->setLocked(true);
 				$item->save();
 				$collection->getItems()->add($item);
@@ -85,7 +85,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('LOW');
 				$item->setLabel('Low');
-				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.document.sku.threshold-low', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.documents.sku.threshold-low', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 

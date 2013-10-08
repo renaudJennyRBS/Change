@@ -3,23 +3,23 @@
 	<rbs-workspace-config menu="Rbs_Catalog">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.document.product-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.documents.product-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.catalog.document.product-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.catalog.documents.product-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_Product" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href ng-href="(= 'Rbs_Catalog_Product' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.document.product-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Catalog_Product' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.product-create', ['ucf']) }}</a>
 	</div>
 	<rbs-document-list data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-query="query">
 		<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
-			label="{{ i18nAttr('m.rbs.catalog.document.product.visual', ['ucf']) }}"></column>
+			label="{{ i18nAttr('m.rbs.catalog.documents.product.visual', ['ucf']) }}"></column>
 		<column name="label" primary="true"></column>
 		<quick-actions>
 			[action preview]
-			|| <a href="(= doc | documentURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.document.product.prices') }}</a>
+			|| <a href="(= doc | documentURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.documents.product.prices') }}</a>
 			|| [action edit]
 			|| [action delete]
 		</quick-actions>

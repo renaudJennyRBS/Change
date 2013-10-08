@@ -7,14 +7,14 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.geo.document.territorialunit-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.geo.documents.territorialunit-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Geo_TerritorialUnit" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href ng-href="(= 'Rbs_Geo_TerritorialUnit' | documentURL:'new' =)">{{ i18n('m.rbs.geo.document.territorialunit-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Geo_TerritorialUnit' | documentURL:'new' =)">{{ i18n('m.rbs.geo.documents.territorialunit-create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLGeoTerritorialUnit" model="Rbs_Geo_TerritorialUnit" filter-query="query">
-		<column name="label" label="{{ i18nAttr('m.rbs.geo.document.territorialunit.label', ['ucf']) }}" primary="true"></column>
+		<column name="label" label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.label', ['ucf']) }}" primary="true"></column>
 	</rbs-document-list>
 </div>

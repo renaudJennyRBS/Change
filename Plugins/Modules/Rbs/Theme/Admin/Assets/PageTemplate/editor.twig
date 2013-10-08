@@ -5,25 +5,25 @@
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.theme.document.pagetemplate.label', ['ucf']) }}">
+				label="{{ i18nAttr('m.rbs.theme.documents.pagetemplate.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-picker ng-show="document.isNew()"
-				property="theme" required="true" label="{{ i18nAttr('m.rbs.theme.document.pagetemplate.theme', ['ucf']) }}"
+				property="theme" required="true" label="{{ i18nAttr('m.rbs.theme.documents.pagetemplate.theme', ['ucf']) }}"
 				accepted-model="Rbs_Theme_Theme"
-				selector-title="{{ i18nAttr('m.rbs.theme.document.pagetemplate.theme-picker-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.theme.documents.pagetemplate.theme-picker-title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
 
 		<ul class="nav nav-tabs" id="contentsTab">
 			<li class="active"><a href="javascript:;" data-target="#html" data-toggle="tab">
-				{{ i18n('m.rbs.theme.document.pagetemplate.html', ['ucf']) }}
+				{{ i18n('m.rbs.theme.documents.pagetemplate.html', ['ucf']) }}
 			</a></li>
 			<li><a href="javascript:;" data-target="#htmlForBackoffice" data-toggle="tab">
-				{{ i18n('m.rbs.theme.document.pagetemplate.htmlforbackoffice', ['ucf']) }}
+				{{ i18n('m.rbs.theme.documents.pagetemplate.htmlforbackoffice', ['ucf']) }}
 			</a></li>
 			<li><a href="javascript:;" data-target="#editableContent" data-toggle="tab">
-				{{ i18n('m.rbs.theme.document.pagetemplate.editablecontent', ['ucf']) }}
+				{{ i18n('m.rbs.theme.documents.pagetemplate.editablecontent', ['ucf']) }}
 			</a></li>
 		</ul>
 

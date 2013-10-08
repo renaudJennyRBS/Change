@@ -5,16 +5,16 @@
 
 		<div data-ng-if="document.isNew()">
 			<rbs-field-picker required="true" property="rootProduct"
-					label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.rootproduct', ['ucf']) }}"
+					label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}"
 					accepted-model="Rbs_Catalog_Product"
-					selector-title="{{ i18nAttr('m.rbs.catalog.document.variantgroup.rootproduct-picker-title', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct-picker-title', ['ucf']) }}"
 					allow-creation="true"
 					allow-edition="false"
 					picker-template="picker-empty-group.twig">
 			</rbs-field-picker>
 
 			<rbs-field required="true" property="axisAttribute"
-					label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.axisattribute', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.axisattribute', ['ucf']) }}">
 				<select ng-required="true" ng-model="document.axisAttribute"
 						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
 					<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
@@ -23,25 +23,25 @@
 		</div>
 
 		<div class="control-group" data-ng-hide="document.isNew()">
-			<label class="control-label">{{ i18n('m.rbs.catalog.document.variantgroup.rootproduct', ['ucf']) }}</label>
+			<label class="control-label">{{ i18n('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}</label>
 			<div class="controls">
 				<a href ng-href="(= document.rootProduct | documentURL =)">(= document.rootProduct.label =)</a>
 			</div>
 		</div>
 
 		<rbs-field-boolean property="newSkuOnCreation"
-				label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.newskuoncreation', ['ucf']) }}">
+				label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.newskuoncreation', ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<div data-ng-if="!document.isNew()">
 			<div class="control-group property" property="axesInfo"
-					label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.axesinfo', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.axesinfo', ['ucf']) }}">
 				<table class="table">
 					<thead>
 						<tr>
-							<th>{{ i18n('m.rbs.catalog.document.variantgroup.axis-head', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.catalog.document.variantgroup.visibility-head', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.catalog.document.variantgroup.values-head', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.catalog.documents.variantgroup.axis-head', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.catalog.documents.variantgroup.visibility-head', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.catalog.documents.variantgroup.values-head', ['ucf']) }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -65,12 +65,12 @@
 						</tr>
 					</tbody>
 				</table>
-				<button class="btn btn-small btn-warning" ng-click="addAllProduct()" type="button">{{ i18n('m.rbs.catalog.document.variantgroup.generate-all-action', ['ucf']) }}</button>
+				<button class="btn btn-small btn-warning" ng-click="addAllProduct()" type="button">{{ i18n('m.rbs.catalog.documents.variantgroup.generate-all-action', ['ucf']) }}</button>
 			</div>
 			<hr />
 
 			<div class="control-group property" property="productMatrixInfo"
-					label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.productmatrixinfo', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.productmatrixinfo', ['ucf']) }}">
 
 				<div data-ng-show="variantPath.length">
 					<a href ng-click="selectVariantId(document.rootProduct.id)">
@@ -94,8 +94,8 @@
 						<thead>
 							<tr>
 								<th>(= getAxisTitle(currentAxis.id) =) </th>
-								<th data-ng-hide="isVariantMatrix()">{{ i18n('m.rbs.catalog.document.variantgroup.edit-product-head', ['ucf']) }}</th>
-								<th data-ng-show="isVariantMatrix()">{{ i18n('m.rbs.catalog.document.variantgroup.edit-axis-head', ['ucf', 'lab']) }} (= nextVariantAxis().label =)</th>
+								<th data-ng-hide="isVariantMatrix()">{{ i18n('m.rbs.catalog.documents.variantgroup.edit-product-head', ['ucf']) }}</th>
+								<th data-ng-show="isVariantMatrix()">{{ i18n('m.rbs.catalog.documents.variantgroup.edit-axis-head', ['ucf', 'lab']) }} (= nextVariantAxis().label =)</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -108,21 +108,21 @@
 									<div data-ng-show="row[1].removed">
 										<a href ng-click="addVariant(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.document.variantgroup.add-axis', ['ucf']) }}</span>
-											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.document.variantgroup.restore-axis', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.documents.variantgroup.restore-axis', ['ucf']) }}</span>
 										</a>
 									</div>
 									<div data-ng-hide="row[1].removed">
 										<a href data-ng-show="row[1].id == 0" ng-click="addVariant(row[1])">
-											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.document.variantgroup.add-axis', ['ucf']) }}
+											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis', ['ucf']) }}
 										</a>
 
 										<a href data-ng-show="row[1].id != 0" ng-click="selectVariantId(row[1].id)">
-											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.variantgroup.edit-action', ['ucf']) }}
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.documents.variantgroup.edit-action', ['ucf']) }}
 										</a>
 
 										<a href data-ng-show="row[1].id != 0" ng-click="deleteVariant(row[1])">
-											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.variantgroup.delete-action', ['ucf']) }}
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.documents.variantgroup.delete-action', ['ucf']) }}
 										</a>
 									</div>
 								</td>
@@ -131,25 +131,25 @@
 									<div data-ng-show="row[1].removed">
 										<a href ng-click="addVariant(row[1])">
 											<i class="icon-plus-sign"> </i>
-											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.document.variantgroup.add-product', ['ucf']) }}</span>
-											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.document.variantgroup.restore-product', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id <= 0">{{ i18n('m.rbs.catalog.documents.variantgroup.add-product', ['ucf']) }}</span>
+											<span data-ng-show="row[1].id > 0">{{ i18n('m.rbs.catalog.documents.variantgroup.restore-product', ['ucf']) }}</span>
 										</a>
 									</div>
 									<div data-ng-hide="row[1].removed">
 
 										<a href data-ng-show="row[1].id == 0" ng-click="addVariant(row[1])">
-											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.document.variantgroup.add-product', ['ucf']) }}
+											<i class="icon-plus-sign"> </i>{{ i18n('m.rbs.catalog.documents.variantgroup.add-product', ['ucf']) }}
 										</a>
 
 										<a href data-ng-show="row[1].id > 0" ng-click="editProduct(row[1])">
-											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.document.variantgroup.edit-action', ['ucf']) }}
+											<i class="icon-edit"> </i> {{ i18n('m.rbs.catalog.documents.variantgroup.edit-action', ['ucf']) }}
 										</a>
 
 										<span data-ng-show="row[1].id < 0" ng-click="editProduct(row[1])">
-											<i class="icon-info-sign"> </i> {{ i18n('m.rbs.catalog.document.variantgroup.to-generate-product', ['ucf']) }}</span>
+											<i class="icon-info-sign"> </i> {{ i18n('m.rbs.catalog.documents.variantgroup.to-generate-product', ['ucf']) }}</span>
 
 										<a href data-ng-show="row[1].id != 0" ng-click="deleteVariant(row[1])">
-											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.document.variantgroup.delete-action', ['ucf']) }}
+											<i class="icon-minus-sign"> </i> {{ i18n('m.rbs.catalog.documents.variantgroup.delete-action', ['ucf']) }}
 										</a>
 									</div>
 								</td>
@@ -162,7 +162,7 @@
 									</div>
 								</td>
 								<td>
-									{{ i18n('m.rbs.catalog.document.variantgroup.add-axis-value', ['ucf']) }}
+									{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis-value', ['ucf']) }}
 								</td>
 							</tr>
 						</tbody>
@@ -172,17 +172,17 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='product'"
-			data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.products-section', ['ucf']) }}"
+			data-form-section-label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.products-section', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<table class="document-list table table-condensed table-bordered table-striped table-hover token">
 			<thead>
 			<tr>
 				<th>
-					{{ i18n('m.rbs.catalog.document.variantgroup.label', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.documents.variantgroup.label', ['ucf']) }}
 				</th>
 				<th>
-					{{ i18n('m.rbs.catalog.document.product.sku', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.documents.product.sku', ['ucf']) }}
 				</th>
 			</tr>
 			</thead>

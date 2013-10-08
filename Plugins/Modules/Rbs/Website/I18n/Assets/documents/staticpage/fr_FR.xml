@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.website.document.staticpage" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
+<i18n baseKey="m.rbs.website.documents.staticpage" lcid="fr_FR">
+	<include id="m.rbs.website.documents.page" />
 	<key id="section">section</key>
 	<key id="section-help">La rubrique ou le site web contenant la page.</key>
 	<key id="section-picker-title">sélectionner la section</key>
-	<key id="pagetemplate">modèle de page</key>
-	<key id="pagetemplate-picker-title">sélectionner le modèle de page</key>
-	<key id="editablecontent">contenu de la page</key>
-	<key id="open-page-editor">ouvrir l'éditeur de page</key>
-	<key id="content-zones">zones de contenu</key>
-	<key id="synchronize-title-label">synchroniser la valeur avec celle du libellé</key>
 </i18n>

@@ -2,7 +2,7 @@
 
 	<rbs-field-text
 			property="title" required="true"
-			label="{{ i18nAttr('m.rbs.website.document.staticpage.title', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.title', ['ucf']) }}"
 			input-class="input-block-level">
 	</rbs-field-text>
 
@@ -10,7 +10,7 @@
 	                  property="editableContent"
 	                  ng-model="document.editableContent"
 	                  template="(=pageTemplate=)">
-		<button type="button" class="btn" rbs-fullscreen-toggle=""><i class="icon-resize-full"></i> Plein écran</button>
+		<button type="button" class="btn" rbs-fullscreen-toggle=""><i class="icon-resize-full"></i>  {{ i18nAttr('m.rbs.website.documents.staticpage.full-screen', ['ucf']) }}</button>
 	</structure-editor>
 
 	<form-button-bar></form-button-bar>

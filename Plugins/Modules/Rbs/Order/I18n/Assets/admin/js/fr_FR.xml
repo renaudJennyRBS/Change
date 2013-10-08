@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.order.admin.js" lcid="fr_FR">
-	<include id="m.rbs.order.document"/>
+	<include id="m.rbs.order.documents"/>
 	<key id="module-name">commandes</key>
 	<key id="module-keywords">commandes,factures</key>
 </i18n>
