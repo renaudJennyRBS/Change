@@ -84,15 +84,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			if ($plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
 			{
-				$jsAssets = new GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
-				if (!$devMode)
-				{
-					$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
-				}
-				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
-
-				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
-				$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+				$manager->registerStandardPluginAssets($plugin);
 			}
 		}
 

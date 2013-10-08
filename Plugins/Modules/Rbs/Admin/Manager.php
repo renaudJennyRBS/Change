@@ -355,4 +355,24 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		return $this->jsAssetManager;
 	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function registerStandardPluginAssets(\Change\Plugins\Plugin $plugin = null)
+	{
+		$devMode = $this->getApplicationServices()->getApplication()->inDevelopmentMode();
+		if ($plugin && $plugin->isAvailable())
+		{
+			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+			if (!$devMode)
+			{
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+			}
+			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
+
+			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
+			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+		}
+	}
 }

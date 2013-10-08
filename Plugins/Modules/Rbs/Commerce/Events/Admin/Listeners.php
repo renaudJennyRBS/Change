@@ -26,21 +26,12 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$manager = $event->getManager();
 		$i18nManager = $manager->getApplicationServices()->getI18nManager();
-		$devMode = $manager->getApplicationServices()->getApplication()->inDevelopmentMode();
 		$pm = $manager->getApplicationServices()->getPluginManager();
 		foreach ($pm->getInstalledPlugins() as $plugin)
 		{
 			if ($plugin->getPackage() == "ECom")
 			{
-				$jsAssets = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/*/*.js');
-				if (!$devMode)
-				{
-					$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
-				}
-				$manager->getJsAssetManager()->set($plugin->getName(), $jsAssets);
-
-				$cssAsset = new GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
-				$manager->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+				$manager->registerStandardPluginAssets($plugin);
 			}
 		}
 
