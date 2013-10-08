@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.documents" lcid="fr_FR">
+	<key id="menu">menu</key>
+	<key id="menu-list">navigation menus</key>
+	<key id="menu-create">add navigation menu</key>
+	<key id="staticpage">page</key>
+	<key id="staticpage-list">pages</key>
+	<key id="staticpage-create">add content page</key>
+	<key id="functionalpage">fonctional page</key>
+	<key id="functionalpage-list">fonctional pages list</key>
+	<key id="functionalpage-create">add functional page</key>
+	<key id="topic">topic</key>
+	<key id="topic-list">topics</key>
+	<key id="topic-create">add topic</key>
+	<key id="website">website</key>
+	<key id="website-list">websites</key>
+	<key id="website-create">add website</key>
+	<key id="sectionpagefunction-list">functions</key>
+	<key id="sectionpagefunction-create">associate a function to a section</key>
+</i18n>

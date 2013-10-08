@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.user.document.group" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="label">nom du groupe</key>
-	<key id="realm">realm</key>
-	<key id="group-picker-title">>sélectionner les groupes</key>
-	<key id="identifier">identifiant de l'interface d'administration</key>
-</i18n>

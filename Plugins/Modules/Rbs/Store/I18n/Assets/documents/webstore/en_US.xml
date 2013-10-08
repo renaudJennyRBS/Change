@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.store.documents.webstore" lcid="en_US">
+	<include id="m.rbs.generic.document"/>
+	<key id="billingareas">pricing zones</key>
+	<key id="billingareas-picker-title">select pricing zones</key>
+
+	<key id="displayprices">display prices excluding taxes</key>
+	<key id="displaypriceswithtax">display prices including taxes</key>
+
+	<key id="orderprocess">checkout process</key>
+	<key id="select-orderprocess">select a checkout process</key>
+
+</i18n>

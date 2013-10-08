@@ -4,25 +4,25 @@
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.document.attribute.label', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.catalog.documents.attribute.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.document.attribute.title', ['ucf']) }}">
-			<div class="help-block">{{ i18n('m.rbs.catalog.document.attribute.title-help', ['ucf']) }}</div>
+			label="{{ i18nAttr('m.rbs.catalog.documents.attributes.title', ['ucf']) }}">
+			<div class="help-block">{{ i18n('m.rbs.catalog.documents.attribute.title-help', ['ucf']) }}</div>
 		</rbs-field-text>
 
 		<rbs-field-rich-text property="description" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.document.attribute.description', ['ucf']) }}">
-			<div class="help-block">{{ i18n('m.rbs.catalog.document.attribute.description-help', ['ucf']) }}</div>
+			label="{{ i18nAttr('m.rbs.catalog.documents.attribute.description', ['ucf']) }}">
+			<div class="help-block">{{ i18n('m.rbs.catalog.documents.attribute.description-help', ['ucf']) }}</div>
 		</rbs-field-rich-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.attribute.visibility', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.attribute.visibility', ['ucf']) }}">
 			<rbs-collection-multiple-item-selector ng-model="document.visibility"
 				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
 		</rbs-field>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.catalog.document.attribute.valuetype', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.catalog.documents.attribute.valuetype', ['ucf']) }}">
 			<select ng-model="document.valueType" required="required"
 				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes">
 				<option value=""></option>
@@ -32,18 +32,18 @@
 		<div data-ng-hide="document.valueType == 'Group'">
 			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Boolean'">
 				<rbs-field-boolean property="requiredValue"
-					label="{{ i18nAttr('m.rbs.catalog.document.attribute.requiredValue', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.attribute.requiredValue', ['ucf']) }}">
 				</rbs-field-boolean>
 			</div>
 
 			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Document' || document.valueType == 'Property'">
 				<rbs-field-text property="defaultValue" input-class="input-block-level"
-					label="{{ i18nAttr('m.rbs.catalog.document.attribute.defaultvalue', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.attribute.defaultvalue', ['ucf']) }}">
 				</rbs-field-text>
 			</div>
 
 			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'Document'">
-				<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.attribute.collectioncode', ['ucf']) }}">
+				<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.attribute.collectioncode', ['ucf']) }}">
 					<select ng-model="document.collectionCode"
 							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
 						<option value=""></option>
@@ -52,7 +52,7 @@
 			</div>
 
 			<div data-ng-show="document.valueType == 'Property'">
-				<rbs-field label="{{ i18nAttr('m.rbs.catalog.document.attribute.productproperty', ['ucf']) }}">
+				<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.attribute.productproperty', ['ucf']) }}">
 					<select ng-model="document.productProperty"
 							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeProductProperties">
 						<option value=""></option>
@@ -62,20 +62,20 @@
 
 			<div data-ng-show="document.valueType == 'Text'">
 				<rbs-field-boolean property="localizedValue"
-					label="{{ i18nAttr('m.rbs.catalog.document.attribute.localizedvalue', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.attribute.localizedvalue', ['ucf']) }}">
 				</rbs-field-boolean>
 			</div>
 
 			<div data-ng-show="document.valueType == 'Document'">
 				<rbs-field-text property="documentType"
-					label="{{ i18nAttr('m.rbs.catalog.document.attribute.documenttype', ['ucf']) }}">
+					label="{{ i18nAttr('m.rbs.catalog.documents.attribute.documenttype', ['ucf']) }}">
 				</rbs-field-text>
 			</div>
 		</div>
 
 		<div data-ng-show="document.valueType == 'Group'">
 			<rbs-field-picker-multiple property="attributes" accepted-model="Rbs_Catalog_Attribute" allow-creation="true"
-				label="{{ i18nAttr('m.rbs.catalog.document.attribute.attributes', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.catalog.documents.attribute.attributes', ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.js.attribute-picker-title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
 		</div>

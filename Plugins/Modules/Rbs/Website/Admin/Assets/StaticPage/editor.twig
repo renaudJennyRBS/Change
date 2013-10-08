@@ -4,35 +4,35 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr('m.rbs.website.document.staticpage.label', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.label', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.website.document.staticpage.synchronize-title-label', ['ucf']) }}"
-			label="{{ i18nAttr('m.rbs.website.document.staticpage.title', ['ucf']) }}"
+			sync-title="{{ i18nAttr('m.rbs.website.documents.staticpage.synchronize-title-label', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.title', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-picker property="pageTemplate" required="true"
-			label="{{ i18nAttr('m.rbs.website.document.staticpage.pageTemplate', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.pageTemplate', ['ucf']) }}"
 			accepted-model="Rbs_Theme_PageTemplate"
-			selector-title="{{ i18nAttr('m.rbs.website.document.staticpage.pagetemplate-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.website.documents.staticpage.pagetemplate-picker-title', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<hr />
 
 		<rbs-field-picker property="section" required="true"
-			label="{{ i18nAttr('m.rbs.website.document.staticpage.section', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.section', ['ucf']) }}"
 			accepted-model="Rbs_Website_Section"
-			selector-title="{{ i18nAttr('m.rbs.website.document.staticpage.section-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.documents.staticpage.section-picker-title', ['ucf']) }}"
 			allow-creation="false">
-			<span class="help-block">{{ i18n('m.rbs.website.document.staticpage.section-help', ['ucf']) }}</span>
+			<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.section-help', ['ucf']) }}</span>
 		</rbs-field-picker>
 	</fieldset>
 
 	<fieldset ng-show="section=='content'"
-		data-form-section-label="{{ i18nAttr('m.rbs.website.document.staticpage.editableContent', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.staticpage.editableContent', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<div rbs-tip="Rbs_PageEditor_Markdown">

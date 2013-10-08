@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.documents.product" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="description">description</key>
+	<key id="categorizable">catégorisable</key>
+	<key id="visual">visuel</key>
+	<key id="visuals">visuels</key>
+	<key id="visuals-picker-title">sélectionner les visuels</key>
+	<key id="no-visual">aucun visuel défini</key>
+	<key id="pictograms">pictogrammes</key>
+	<key id="pictograms-picker-title">sélectionner les pictogrammes</key>
+	<key id="brand">marque</key>
+	<key id="brand-picker-title">sélectionner la marque</key>
+	<key id="shippedin">délai d'expédition</key>
+	<key id="shippedin-help">Délai d'expédition affiché sur le site.</key>
+	<key id="newskuoncreation">Créer un nouveau SKU</key>
+	<key id="sku">code SKU</key>
+	<key id="minorderquantity">quantité minimum</key>
+	<key id="minorderquantity-help">Quantité minimum de ce produit que l'on peut commander.</key>
+	<key id="maxorderquantity">quantité maximum</key>
+	<key id="maxorderquantity-help">Quantité maximum de ce produit que l'on peut commander.</key>
+	<key id="condition-help">Commencez par choisir une condition pour afficher et gérer la liste des catégories.</key>
+	<key id="prices">prix</key>
+	<key id="publicationsections">sections de publication</key>
+	<key id="publicationsections-help">Le produit doit être publié dans au moins une section par site où il est affiché. S'il est publié dans plusieurs sections d'un même site, sa section canonique pour ce site sera la première. Pour pouvoir spécialiser l'URL d'un produit dans une section donnée, vous devez le publier explicitement dans cette section.</key>
+	<key id="publicationsections-picker-title">sélectionnez les sections dans lesquelles publier le produit</key>
+
+	<key id="attribute">jeu d'attributs</key>
+	<key id="section-attributes">Attributs étendus</key>
+
+	<key id="price-section-help" format="html">
+		<![CDATA[<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.</strong> Un même produit qui apparaît dans plusieurs boutiques et/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.</p>
+		<p>Commencez par <strong>choisir une boutique et une zone de tarification</strong> pour afficher et gérer les prix.</p>]]>
+	</key>
+
+	<key id="product-list-section-help" format="html">
+		<![CDATA[<p>Les listes permettent de publier les produits dans les sections du site.</p>]]>
+	</key>
+
+	<key id="section-variant">variantes</key>
+	<key id="variantgroup">groupe de variantes</key>
+	<key id="variant">variante</key>
+</i18n>

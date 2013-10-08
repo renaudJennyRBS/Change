@@ -3,11 +3,11 @@
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.document.attribute-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.documents.attribute-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.catalog.document.attribute', ['ucf']) }}"></page-header>
+	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.catalog.documents.attribute', ['ucf']) }}"></page-header>
 
 	<div ng-switch="editMode">
 		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-catalog-attribute-translate"></div>

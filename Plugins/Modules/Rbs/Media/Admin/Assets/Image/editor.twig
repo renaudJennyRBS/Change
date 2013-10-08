@@ -6,17 +6,17 @@
 		<rbs-field-image
 				property="path"
 				required="true"
-				label="{{ i18nAttr('m.rbs.media.document.image.path', ['ucf']) }}">
+				label="{{ i18nAttr('m.rbs.media.documents.image.path', ['ucf']) }}">
 		</rbs-field-image>
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.media.document.image.label', ['ucf']) }}">
+				label="{{ i18nAttr('m.rbs.media.documents.image.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="alt"
-				label="{{ i18nAttr('m.rbs.media.document.image.alt', ['ucf']) }}">
+				label="{{ i18nAttr('m.rbs.media.documents.image.alt', ['ucf']) }}">
 		</rbs-field-text>
 	</fieldset>
 
@@ -28,16 +28,16 @@
 
 	<fieldset data-ng-show="section=='fileinfo'"
 		hide-when-create="true"
-		data-form-section-label="{{ i18nAttr('m.rbs.media.document.image.file-informations', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.media.documents.image.file-informations', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.width', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.media.documents.image.width', ['ucf']) }}">
 			<span class="uneditable-input">(=document.width | number=)</span>
 		</rbs-field>
-		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.height', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.media.documents.image.height', ['ucf']) }}">
 			<span class="uneditable-input">(=document.height | number=)</span>
 		</rbs-field>
-		<rbs-field label="{{ i18nAttr('m.rbs.media.document.image.mimetype', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.media.documents.image.mimetype', ['ucf']) }}">
 			<span class="uneditable-input">(=document.mimetype=)</span>
 		</rbs-field>
 

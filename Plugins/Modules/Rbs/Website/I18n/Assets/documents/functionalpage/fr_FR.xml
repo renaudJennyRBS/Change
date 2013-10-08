@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.documents.functionalpage" lcid="fr_FR">
+	<include id="m.rbs.website.documents.page" />
+	<key id="website">site web</key>
+	<key id="website-help">Le site web contenant la page.</key>
+	<key id="website-picker-title">sélectionner un site web</key>
+
+	<key id="functions">fonctions</key>
+	<key id="allowedFunctionsCode">fonctions supportées</key>
+
+	<key id="functional-page-editor-help" format="html"><![CDATA[Cette page est une <strong>page fonctionnelle</strong> : elle permet d'afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.<br/>Pour configurer les fonctions de cette page, rendez-vous dans la section <em>Fonctions</em> du menu à gauche.]]></key>
+	<key id="functional-page-list-help" format="html"><![CDATA[Les <strong>pages fonctionnelles</strong> sont des pages destinées à afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.]]></key>
+
+	<key id="all-functions-list" format="html"><![CDATA[<strong>Voici la liste de toutes les fonctions disponibles.</strong><br/>Les fonctions déjà supportées par la page sont sélectionnées. Sélectionnez les fonctions que vous désirez attribuer à cette page.]]></key>
+	<key id="page-contains-blocks-for-following-functions">Pour information, la page dispose actuellement des blocs nécessaires pour remplir les fonctions suivantes :</key>
+	<key id="page-contains-no-function" format="html"><![CDATA[<h4>Cette page ne dispose d'aucune fonction.</h4>Pour corriger cela, vous pouvez <a href ng-href="(= doc | documentURL:'editor' =)">éditer le contenu de la page</a>.]]></key>
+	<key id="page-contains-required-blocks">La page dispose de tous les blocs nécessaires pour supporter correctement les fonctions choisies.</key>
+	<key id="following-functions-cannot-be-supported-correctly">Les fonctions suivantes ne pourront pas être supportées correctement car la page ne dispose pas des blocs nécessaires à ces fonctions :</key>
+	<key id="edit-page-contents-to-fix-this" format="html"><![CDATA[Pour corriger cela, vous pouvez <a href ng-href="(= doc | documentURL:'editor' =)">éditer le contenu de la page</a>.]]></key>
+	<key id="configure-functions">configurer</key>
+</i18n>

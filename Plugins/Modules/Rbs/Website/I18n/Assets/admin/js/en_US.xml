@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.website.admin.js" lcid="fr_FR">
-	<include id="m.rbs.website.document"/>
+	<include id="m.rbs.website.documents"/>
 	<key id="module-name">websites &amp; pages</key>
 	<key id="module-keywords">websites,pages,templates,topics,blocks,menus,text,sitemap</key>
 	<key id="host-name">hostname</key>

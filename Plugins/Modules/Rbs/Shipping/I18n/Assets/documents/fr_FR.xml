@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.shipping.documents" lcid="fr_FR">
+	<key id="mode">mode de livraison</key>
+	<key id="mode-list">modes de livraison</key>
+	<key id="mode-create">ajouter un mode de livraison</key>
+</i18n>

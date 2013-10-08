@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.documents.functionalpage" lcid="en_US">
+	<include id="m.rbs.website.documents.page" />
+	<key id="website">website</key>
+	<key id="website-help">The website this page belongs to.</key>
+	<key id="website-picker-title">select the website for this page</key>
+
+	<key id="functions">functions</key>
+	<key id="allowedFunctionsCode">supported functions</key>
+
+	<key id="functional-page-editor-help" format="html"><![CDATA[This page is a <strong>functional page</strong>: it is used to display other contents in the website.<br/>To configure the functions this page supports, click on <em>Functions</em> in the menu on the left.]]></key>
+	<key id="functional-page-list-help" format="html"><![CDATA[The <strong>functional pages</strong> are used to display contents coming from different modules, such as news or products.]]></key>
+
+	<key id="all-functions-list" format="html"><![CDATA[<strong>Here is the list of all available functions.</strong><br/>Functions already supported by this page are selected in the list below. Select the functions you want to associate to this page.]]></key>
+	<key id="page-contains-blocks-for-following-functions">This page currently holds the required blocks to support the following functions:</key>
+	<key id="page-contains-no-function" format="html"><![CDATA[<h4>This page supports no functions.</h4>To fix this, you can <a href ng-href="(= doc | documentURL:'editor' =)">edit the page contents</a>.]]></key>
+	<key id="page-contains-required-blocks">This page holds all the required blocks to support the selected functions.</key>
+	<key id="following-functions-cannot-be-supported-correctly">The following functions won't work correctly because the page does not hold the required blocks:</key>
+	<key id="edit-page-contents-to-fix-this" format="html"><![CDATA[To fix this, you can <a href ng-href="(= doc | documentURL:'editor' =)">edit the page contents</a>.]]></key>
+</i18n>

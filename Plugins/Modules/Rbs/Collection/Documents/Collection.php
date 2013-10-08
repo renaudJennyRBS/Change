@@ -62,7 +62,7 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 				if ($error)
 				{
 					$errors = $event->getParam('propertiesErrors', array());
-					$errors['items'][] = new PreparedKey('m.rbs.collection.document.collection.error-duplicated-item-value', array('ucf'), $duplicatedItems);
+					$errors['items'][] = new PreparedKey('m.rbs.collection.documents.collection.error-duplicated-item-value', array('ucf'), $duplicatedItems);
 					$event->setParam('propertiesErrors', $errors);
 				}
 			}

@@ -36,7 +36,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('STATE');
 				$item->setLabel('state');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.geo.document.territorialunit.unit-state', array('ucf')));
+					->trans('m.rbs.geo.documents.territorialunit.unit-state', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -45,7 +45,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('DEPARTEMENT');
 				$item->setLabel('département');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.geo.document.territorialunit.unit-departement', array('ucf')));
+					->trans('m.rbs.geo.documents.territorialunit.unit-departement', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -54,7 +54,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('REGION');
 				$item->setLabel('region');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.geo.document.territorialunit.unit-region', array('ucf')));
+					->trans('m.rbs.geo.documents.territorialunit.unit-region', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -63,7 +63,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('COUNTY');
 				$item->setLabel('county');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.geo.document.territorialunit.unit-county', array('ucf')));
+					->trans('m.rbs.geo.documents.territorialunit.unit-county', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -72,7 +72,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('PROVINCE');
 				$item->setLabel('province');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.geo.document.territorialunit.unit-province', array('ucf')));
+					->trans('m.rbs.geo.documents.territorialunit.unit-province', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 

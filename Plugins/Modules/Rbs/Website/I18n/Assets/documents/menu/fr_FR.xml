@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.website.documents.menu" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="website">site web</key>
+	<key id="website-picker-title">sélectionner le site web associé au menu</key>
+	<key id="section-items">Entrées du menu</key>
+	<key id="select-document">Document</key>
+	<key id="title">titre</key>
+	<key id="url">URL</key>
+	<key id="i18nKey">clé de traduction</key>
+	<key id="this-menu-is-empty">Ce menu est vide.</key>
+	<key id="this-menu-is-empty-help" format="html">
+		<![CDATA[Utiliser la liste <em>Ajouter</em> ci-dessous pour ajouter des entrées à ce menu.]]>
+	</key>
+	<key id="function-print-page">imprimer la page</key>
+	<key id="function-go-to-content">aller au contenu</key>
+	<key id="function-bookmark-page">ajouter la page aux favoris</key>
+	<key id="items">entrées de menu</key>
+	<key id="add-items">ajouter des entrées</key>
+	<key id="add-item">ajouter une entrée de menu</key>
+	<key id="add-item-help" format="html"><![CDATA[<strong>Vous pouvez sélectionner un Document publiable ou saisir les informations de l'entrée de menu manuellement.</strong><br/>
+	Après avoir choisi un document, il est possible de modifier certains paramètres comme le titre à afficher
+	dans le menu.]]></key>
+	<key id="select-document-to-add-to-menu">sélectionner un document à ajouter au menu</key>
+	<key id="add-this-element">ajouter cet élément au menu</key>
+	<key id="menus-are-grouped-by-website" format="html"><![CDATA[<strong>Les menus sont classés par site web.</strong><br/>Choisissez un site web pour accéder aux menus qui lui sont rattachés.]]></key>
+</i18n>

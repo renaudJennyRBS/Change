@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.collection.admin.js" lcid="en_US">
-	<include id="m.rbs.collection.document"/>
+	<include id="m.rbs.collection.documents"/>
 	<key id="module-name">prices &amp; taxes</key>
 	<key id="module-keywords">prices,tax,pricing,discounts</key>
 	<key id="price-list">prices</key>

@@ -3,17 +3,17 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.stock.document.inventoryentry.sku', ['ucf']) }}"
+		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.stock.documents.inventoryentry.sku', ['ucf']) }}"
 			data-ng-disabled="document.sku"
 			required="true"
 			accepted-model="Rbs_Stock_Sku"
-			selector-title="{{ i18nAttr('m.rbs.stock.document.inventoryentry.sku-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.stock.documents.inventoryentry.sku-picker-title', ['ucf']) }}"
 			allow-creation="false">
 		</rbs-field-picker>
 
 		<rbs-field-integer
 			property="level"
-			label="{{ i18nAttr('m.rbs.stock.document.inventoryentry.level', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.stock.documents.inventoryentry.level', ['ucf']) }}"
 			max-length="9"
 			input-class="input-mini">
 		</rbs-field-integer>

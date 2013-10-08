@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.user.documents.group" lcid="en_US">
+	<include id="m.rbs.generic.document"/>
+	<key id="label">group name</key>
+	<key id="realm">realm</key>
+	<key id="group-picker-title">>select groups</key>
+</i18n>

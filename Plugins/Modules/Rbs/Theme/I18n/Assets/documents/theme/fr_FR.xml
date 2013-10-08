@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.theme.documents.theme" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="name">nom (code)</key>
+	<key id="name-help" format="html"><![CDATA[<strong>Ce nom est composé de lettres et de _ uniquement.</strong><br/><span class='label label-important'>Attention !</span> Ce nom fait référence à des fichiers sur le serveur : le changer ici peut rendre le site inaccessible.]]></key>
+	<key id="parent-theme">thème parent</key>
+</i18n>

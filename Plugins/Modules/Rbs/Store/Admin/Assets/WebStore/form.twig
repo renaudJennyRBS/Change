@@ -1,11 +1,10 @@
 <div class="document-form">
-
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Store'|rbsURL:'home' =)">Boutiques</location>
+			<location href="(= 'Rbs_Store'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.store.documents.webstore-list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.store.document.webstore', ['ucf']) }}"></page-header>
+	<page-header document="document" sub-title="{{ i18nAttr('m.rbs.store.documents.webstore', ['ucf']) }}"></page-header>
 	<div class="rbs-document-editor rbs-document-editor-rbs-store-web-store"></div>
 </div>

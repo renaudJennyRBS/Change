@@ -3,22 +3,22 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.price.document.price.sku', ['ucf']) }}"
+		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.price.documents.price.sku', ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
-			selector-title="{{ i18nAttr('m.rbs.price.document.price.sku-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.price.documents.price.sku-picker-title', ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"
 			required="true"
 			ng-hide="hideSku">
 		</rbs-field-picker>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.webstore', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.webstore', ['ucf']) }}">
 			<select ng-required="true" data-ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
 				<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.billingarea', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.billingarea', ['ucf']) }}">
 			<select ng-required="true" data-ng-model="document.billingArea" ng-disabled="!webStoreId"
 				rbs-items-collection-params="webStoreId:(=webStoreId=)"
 				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
@@ -26,8 +26,8 @@
 			</select>
 			<table data-ng-show="taxInfo" class="table table-striped">
 				<thead>
-				<th>{{ i18n('m.rbs.price.document.tax', ['ucf']) }}</th>
-				<th>{{ i18n('m.rbs.price.document.tax.category', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.documents.tax', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.documents.tax.category', ['ucf']) }}</th>
 				</thead>
 				<tbody>
 				<tr data-ng-repeat="tax in taxInfo">
@@ -36,7 +36,7 @@
 					</td>
 					<td>
 						<select data-ng-model="document.taxCategories[tax.code]" class="input-medium" data-ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
-							<option value="">{{ i18n('m.rbs.price.document.tax.not-applicable', ['ucf']) }}</option>
+							<option value="">{{ i18n('m.rbs.price.documents.tax.not-applicable', ['ucf']) }}</option>
 						</select>
 					</td>
 				</tr>
@@ -46,39 +46,38 @@
 
 		<hr/>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.document.price.bovalue', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.bovalue', ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
 				data-price-with-tax="(=billingArea.boEditWithTax=)" />
 		</rbs-field>
 
-		<rbs-field
-			label="{{ i18nAttr('m.rbs.price.document.price.ecoTax', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr('m.rbs.price.documents.price.ecoTax', ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
 				data-price-with-tax="(=billingArea.boEditWithTax=)" />
 		</rbs-field>
 
 		<hr/>
 
-		<rbs-field-picker property="basePrice" label="{{ i18nAttr('m.rbs.price.document.price.baseprice', ['ucf']) }}"
+		<rbs-field-picker property="basePrice" label="{{ i18nAttr('m.rbs.price.documents.price.baseprice', ['ucf']) }}"
 				accepted-model="Rbs_Price_Price" picker="model"
-				selector-title="{{ i18nAttr('m.rbs.price.document.price.select-baseprice', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.price.documents.price.select-baseprice', ['ucf']) }}"
 				allow-edition="true" allow-creation="true">
 		</rbs-field-picker>
 
 		<rbs-field-text ng-show="document.basePrice"
 			property="discountDetail"
-			label="{{ i18nAttr('m.rbs.price.document.price.discountdetail', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.price.documents.price.discountdetail', ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
 		<hr/>
 		<span class="help-block">
-			{{ i18n('m.rbs.price.document.price.publication-section-help', ['ucf']) }}
+			{{ i18n('m.rbs.price.documents.price.publication-section-help', ['ucf']) }}
 		</span>
 
 		<div class="control-group property">
 			<label class="control-label"
-				for="startActivation">{{ i18n('m.rbs.price.document.price.startactivation', ['ucf']) }}
+				for="startActivation">{{ i18n('m.rbs.price.documents.price.startactivation', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -96,7 +95,7 @@
 
 		<div class="control-group property">
 			<label class="control-label"
-				for="endActivation">{{ i18n('m.rbs.price.document.price.endactivation', ['ucf']) }}
+				for="endActivation">{{ i18n('m.rbs.price.documents.price.endactivation', ['ucf']) }}
 			</label>
 
 			<div class="controls">

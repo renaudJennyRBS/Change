@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.website.admin.js" lcid="fr_FR">
-	<include id="m.rbs.website.document"/>
+	<include id="m.rbs.website.documents"/>
 	<include id="m.rbs.website.functions"/>
 	<key id="module-name">sites et pages</key>
 	<key id="module-keywords">sites,pages,gabarits,modèles,templates,rubriques,blocs,menus,navigation,texte,arborescence,plan</key>

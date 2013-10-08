@@ -1,21 +1,21 @@
 <div data-ng-controller="Rbs_Website_Menu_ListController">
-	<page-header title="{{ i18nAttr('m.rbs.website.document.menu-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.website.documents.menu-list', ['ucf']) }}"></page-header>
 
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		{{ i18n('m.rbs.website.document.menu.website', ['ucf', 'lab']) }}
+		{{ i18n('m.rbs.website.documents.menu.website', ['ucf', 'lab']) }}
 		<select ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
 	</div>
 
 	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
 		<i class="icon-arrow-up icon-3x pull-left"></i>
-		{{ i18n('m.rbs.website.document.menu.menus-are-grouped-by-website') }}
+		{{ i18n('m.rbs.website.documents.menu.menus-are-grouped-by-website') }}
 	</div>
 
 	<div ng-show="selectedWebsite">
 		<div>
-			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.document.menu-create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.documents.menu-create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsWebsiteMenu"

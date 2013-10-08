@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.geo.document.zone" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="country">country</key>
-	<key id="country-picker-title">select a country</key>
-</i18n>

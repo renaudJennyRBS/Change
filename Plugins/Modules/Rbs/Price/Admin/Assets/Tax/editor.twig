@@ -5,32 +5,32 @@
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.price.document.tax.label', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.price.documents.tax.label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="code" required="false"
-			label="{{ i18nAttr('m.rbs.price.document.tax.code', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.price.documents.tax.code', ['ucf']) }}">
 		</rbs-field-text>
 
 		<div class="control-group property">
 			<label class="control-label" for="rounding">
-				{{ i18n('m.rbs.price.document.tax.rounding', ['ucf']) }}
+				{{ i18n('m.rbs.price.documents.tax.rounding', ['ucf']) }}
 			</label>
 			<div class="controls">
 				<select name="rounding" ng-model="document.rounding" rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
 				</select>
-				<span class="help-block"> {{ i18n('m.rbs.price.document.tax.rounding-help') }}</span>
+				<span class="help-block"> {{ i18n('m.rbs.price.documents.tax.rounding-help') }}</span>
 			</div>
 		</div>
 
 		<rbs-field-boolean
 			property="cascading"
-			label="{{ i18nAttr('m.rbs.price.document.tax.cascading', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.price.document.tax.cascading-help') }}</span>
+			label="{{ i18nAttr('m.rbs.price.documents.tax.cascading', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.price.documents.tax.cascading-help') }}</span>
 		</rbs-field-boolean>
 
-		<h3>{{ i18n('m.rbs.price.document.tax.data', ['ucf']) }}</h3>
+		<h3>{{ i18n('m.rbs.price.documents.tax.data', ['ucf']) }}</h3>
 		<table class="table table-striped">
 			<thead>
 			<th></th>

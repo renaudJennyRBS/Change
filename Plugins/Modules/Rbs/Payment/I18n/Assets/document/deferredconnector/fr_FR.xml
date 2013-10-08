@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.payment.document.deferredconnector" lcid="fr_FR">
-	<include id="m.rbs.payment.document.connector"/>
-	<key id="instructions">instruction de paiement</key>
-</i18n>

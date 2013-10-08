@@ -9,15 +9,15 @@ class Install extends \Change\Plugins\InstallBase
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
-	 * @param \Change\Configuration\EditableConfiguration $config
+	 * @param \Change\Configuration\EditableConfiguration $configuration
 	 * @throws \RuntimeException
 	 */
-	public function executeApplication($plugin, $application, $config)
+	public function executeApplication($plugin, $application, $configuration)
 	{
-		$config->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
+		$configuration->addPersistentEntry('Change/Events/Workflow/publicationProcess/Rbs_Workflow',
 			'\\Rbs\\Workflow\\Tasks\\PublicationProcess\\Listeners');
 
-		$config->addPersistentEntry('Change/Events/Workflow/correctionPublicationProcess/Rbs_Workflow',
+		$configuration->addPersistentEntry('Change/Events/Workflow/correctionPublicationProcess/Rbs_Workflow',
 			'\\Rbs\\Workflow\\Tasks\\CorrectionPublicationProcess\\Listeners');
 	}
 

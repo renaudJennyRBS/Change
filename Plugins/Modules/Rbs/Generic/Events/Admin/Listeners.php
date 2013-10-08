@@ -131,7 +131,6 @@ class Listeners implements ListenerAggregateInterface
 				array('label' => $i18nManager->trans('m.rbs.website.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/Website', 'section' => 'cms',
 					'keywords' => $i18nManager->trans('m.rbs.website.admin.js.module-keywords'))
-
 			)
 		);
 

@@ -4,17 +4,17 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.geo.document.addressfields.label', ['ucf']) }}"
+				label="{{ i18nAttr('m.rbs.geo.documents.addressfields.label', ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<div ng-show="document.id > 0">
-			<h3>{{ i18n('m.rbs.geo.document.addressfields.fields', ['ucf']) }}</h3>
+			<h3>{{ i18n('m.rbs.geo.documents.addressfields.fields', ['ucf']) }}</h3>
 			<table data-ng-show="document.fields.length > 0" class="table table-striped">
 				<thead>
 				<tr>
 					<th>
-						{{ i18n('m.rbs.geo.document.addressfield.code', ['ucf']) }}
+						{{ i18n('m.rbs.geo.documents.addressfield.code', ['ucf']) }}
 					</th>
 					<th>
 					</th>
@@ -48,7 +48,7 @@
 						<button style="width:36px" ng-hide="field.locked" class="btn btn-danger" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
 							<i class="icon-remove"></i>
 						</button>
-						<button style="width:36px" disabled="true" ng-show="field.locked"  title="{{ i18nAttr('m.rbs.geo.document.addressfield.locked', ['ucf']) }}" class="btn btn-info" type="button">
+						<button style="width:36px" disabled="true" ng-show="field.locked"  title="{{ i18nAttr('m.rbs.geo.documents.addressfield.locked', ['ucf']) }}" class="btn btn-info" type="button">
 							<i class="icon-lock"></i>
 						</button>
 					</td>

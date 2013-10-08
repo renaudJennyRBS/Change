@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.tag.documents.tag" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="color">couleur</key>
+	<key id="color-help" format="html"><![CDATA[Les couleurs permettent de mieux différencier visuellement les différentes étiquettes.<br/>Choisissez des couleurs différentes pour vos étiquettes : vous verrez, c'est joli ! <i class="icon-smile"></i>]]></key>
+	<key id="label">libellé</key>
+	<key id="module">module</key>
+	<key id="module-help" format="html"><![CDATA[
+		Il est possible de restreindre l'utilisation d'une étiquette à un module. Mais c'est assez rare.<br/>Si vous ne comprenez pas, laissez ce champ vide ! <i class="icon-smile"></i>
+	]]></key>
+	<key id="children">sous-étiquettes</key>
+	<key id="children-help" format="html"><![CDATA[
+		<strong>Les sous-étiquettes vous permettent d'organiser vos étiquettes de manière hiérarchique
+		et simplifient ainsi la catégorisation de vos documents.</strong><br/>
+		Par exemple, si vous créez une étiquette <strong><em>lac</em></strong> sous une étiquette <strong><em>paysage</em></strong>,
+		tous les documents étiquetés avec <strong><em>lac</em></strong> sont automatiquement et implicitement étiquetés avec <strong><em>paysage</em></strong>.
+		Lors d'une recherche sur l'étiquette <strong><em>paysage</em></strong>, les documents étiquetés <strong><em>lac</em></strong>
+		seront présents dans les résultats.]]></key>
+	<key id="children-selector-title">Sélectionner des sous-étiquettes</key>
+	<key id="usertag">étiquette personnelle</key>
+	<key id="usertag-help" format="html"><![CDATA[
+		<strong>Les étiquettes personnelles ne peuvent être utilisées que par leur créateur.</strong><br/>
+		Vous pouvez créer autant d'étiquettes personnelles que vous voulez afin d'organiser les différents contenus
+		de vos sites. Vos étiquettes personnelles ne seront visibles que par vous.<br/>
+		<span class="label label-important">Attention !</span> Une fois l'étiquette créée, il n'est plus possible de modifier cette propriété.]]>
+	</key>
+	<key id="usertag-cannot-be-modified" format="html"><![CDATA[Cette information ne peut être définie qu'à la création d'une étiquette.]]>
+	</key>
+	<key id="child-tags-count">{'0':'Aucune sous-étiquette.', 'one':'Une sous-étiquette :', 'other':'{} sous-étiquettes :'}</key>
+</i18n>

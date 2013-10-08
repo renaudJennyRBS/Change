@@ -5,16 +5,16 @@
 		<h4 class="media-heading">(= document.pseudonym =) <small ng-if="document.identifier">@(= document.identifier =)</small></h4>
 		<div class="well">
 			<dl class="dl-horizontal">
-				<dt>{{ i18n('m.rbs.user.document.user.pseudonym', ['ucf']) }}</dt>
+				<dt>{{ i18n('m.rbs.user.documents.user.pseudonym', ['ucf']) }}</dt>
 				<dd>(= document.pseudonym =)</dd>
-				<dt>{{ i18n('m.rbs.user.document.user.email', ['ucf']) }}</dt>
+				<dt>{{ i18n('m.rbs.user.documents.user.email', ['ucf']) }}</dt>
 				<dd>(= document.email =)</dd>
-				<dt>{{ i18n('m.rbs.user.document.user.active', ['ucf']) }}</dt>
+				<dt>{{ i18n('m.rbs.user.documents.user.active', ['ucf']) }}</dt>
 				<dd><switch disabled ng-model="document.active"></switch></dd>
 			</dl>
 		</div>
 		<div>
-			<h4>{{ i18n('m.rbs.user.document.group-list', ['ucf']) }}</h4>
+			<h4>{{ i18n('m.rbs.user.documents.group-list', ['ucf']) }}</h4>
 			<rbs-document-list data-dlid="DLGroup1"
 				model="Rbs_User_Group"
 				modification-date="false"

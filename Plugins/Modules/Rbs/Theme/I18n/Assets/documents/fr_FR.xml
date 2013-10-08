@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.theme.documents" lcid="fr_FR">
+	<key id="pagetemplate">modèle de page</key>
+	<key id="pagetemplate-list">modèles de page</key>
+	<key id="pagetemplate-create">ajouter un modèle de page</key>
+	<key id="theme-list-pagetemplates">lister</key>
+	<key id="theme">thème</key>
+	<key id="theme-list">thèmes</key>
+	<key id="theme-create">ajouter un thème</key>
+</i18n>

@@ -1,10 +1,10 @@
 <div data-ng-controller="Rbs_Theme_PageTemplate_ListController">
-	<page-header sub-title="{{ i18nAttr('m.rbs.theme.document.pagetemplate-list', ['ucf']) }}"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.rbs.theme.documents.pagetemplate-list', ['ucf']) }}"></page-header>
 
 	<search-filters model="Rbs_Theme_PageTemplate" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div>
-		<a href ng-href="(= 'Rbs_Theme_PageTemplate' | documentURL:'new' =)">{{ i18n('m.rbs.theme.document.pagetemplate-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Theme_PageTemplate' | documentURL:'new' =)">{{ i18n('m.rbs.theme.documents.pagetemplate-create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLThemePageTemplate1"

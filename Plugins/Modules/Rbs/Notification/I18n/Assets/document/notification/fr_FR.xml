@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.notification.document.notification" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="message">message</key>
-	<key id="status">statut</key>
-	<key id="creationDate">date de création</key>
-</i18n>
