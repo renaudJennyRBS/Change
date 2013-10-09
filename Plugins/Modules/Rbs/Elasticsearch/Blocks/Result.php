@@ -71,6 +71,7 @@ class Result extends Block
 		$fullTextIndex = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
 		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
 		{
+
 			$searchText = trim($parameters->getParameter('searchText'), '');
 			if ($searchText)
 			{
@@ -88,21 +89,25 @@ class Result extends Block
 
 				$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
 				$indexManager->setDocumentServices($event->getDocumentServices());
+
 				$client = $indexManager->getClient($fullTextIndex->getClientName());
-				$index = $client->getIndex($fullTextIndex->getName());
-				if ($index->exists())
+				if ($client)
 				{
-					$searchResult = $index->getType('document')->search($query);
-					$attributes['totalCount'] = $searchResult->getTotalHits();
-					if ($attributes['totalCount'])
+					$index = $client->getIndex($fullTextIndex->getName());
+					if ($index->exists())
 					{
-						$maxScore = $searchResult->getMaxScore();
-						$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
-						/* @var $result \Elastica\Result */
-						foreach ($searchResult->getResults() as $result)
+						$searchResult = $index->getType('document')->search($query);
+						$attributes['totalCount'] = $searchResult->getTotalHits();
+						if ($attributes['totalCount'])
 						{
-							$score = ceil(($result->getScore() / $maxScore) * 100);
-							$attributes['items'][] = array('id' => $result->getId(), 'score' => $score, 'title' => $result->title);
+							$maxScore = $searchResult->getMaxScore();
+							$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
+							/* @var $result \Elastica\Result */
+							foreach ($searchResult->getResults() as $result)
+							{
+								$score = ceil(($result->getScore() / $maxScore) * 100);
+								$attributes['items'][] = array('id' => $result->getId(), 'score' => $score, 'title' => $result->title);
+							}
 						}
 					}
 				}

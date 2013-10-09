@@ -1,5 +1,7 @@
-<form class="form-inline" action="{{ functionURL('Rbs_Elasticsearch_Result', resultSection) }}" method="GET">
-	<input name="sectionPageFunction"  type="hidden" value="Rbs_Elasticsearch_Result" />
+<form class="form-inline" action="{{ parameters.formAction }}" method="GET">
+{% if parameters.sectionPageFunction %}
+	<input name="sectionPageFunction"  type="hidden" value="{{ parameters.sectionPageFunction }}" />
+{% endif %}
 	<div class="input-group">
 		<input name="searchText"  type="text" class="form-control input-small" value="{{ parameters.searchText }}"/>
 		<span class="input-group-btn">

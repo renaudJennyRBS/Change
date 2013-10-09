@@ -23,14 +23,27 @@ class ShortSearch extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('resultSectionId');
 		$parameters->addParameterMeta('searchText');
-		$parameters->addParameterMeta('sectionPageFunction');
+		$parameters->addParameterMeta('formAction');
+		$parameters->addParameterMeta('sectionPageFunction', false);
 		$parameters->setLayoutParameters($event->getBlockLayout());
-
-		$request = $event->getHttpRequest();
-		$searchText = $request->getQuery('searchText');
-		if ($searchText && is_string($searchText))
+		$resultSection = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('resultSectionId'));
+		$uri = $event->getUrlManager()->getByFunction('Rbs_Elasticsearch_Result', $resultSection);
+		if ($uri)
 		{
-			$parameters->setParameterValue('searchText', $searchText);
+			$formAction = $uri->normalize()->toString();
+			$query = $uri->getQueryAsArray();
+			if (isset($query['sectionPageFunction']))
+			{
+				$parameters->setParameterValue('sectionPageFunction', $query['sectionPageFunction']);
+			}
+
+			$parameters->setParameterValue('formAction', $formAction);
+			$request = $event->getHttpRequest();
+			$searchText = $request->getQuery('searchText');
+			if ($searchText && is_string($searchText))
+			{
+				$parameters->setParameterValue('searchText', $searchText);
+			}
 		}
 		return $parameters;
 	}
@@ -44,8 +57,10 @@ class ShortSearch extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$resultSection = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('resultSectionId'));
-		$attributes['resultSection'] = $resultSection;
-		return 'short-search.twig';
+		if ($parameters->getParameter('formAction'))
+		{
+			return 'short-search.twig';
+		}
+		return null;
 	}
 }

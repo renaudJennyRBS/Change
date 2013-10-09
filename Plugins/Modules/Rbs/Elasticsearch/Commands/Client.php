@@ -28,18 +28,24 @@ class Client
 			elseif (is_string($name = $event->getParam('name')))
 			{
 				$client = $im->getClient($name);
-				$status = $client->getStatus();
-				$srvStat = $status->getServerStatus();
-				if ($srvStat['ok'])
+				if ($client)
 				{
-					$event->addInfoMessage('Server: '. $srvStat['name'] .' ('. $srvStat['version']['number'] .') is ok ('. $srvStat['status'] .')');
-					$event->addInfoMessage('  Index names: '. implode(', ', $status->getIndexNames()));
+					$status = $client->getStatus();
+					$srvStat = $status->getServerStatus();
+					if ($srvStat['ok'])
+					{
+						$event->addInfoMessage('Server: '. $srvStat['name'] .' ('. $srvStat['version']['number'] .') is ok ('. $srvStat['status'] .')');
+						$event->addInfoMessage('  Index names: '. implode(', ', $status->getIndexNames()));
+					}
+					else
+					{
+						$event->addErrorMessage('Error: '. print_r($srvStat, true));
+					}
 				}
 				else
 				{
-					$event->addErrorMessage('Error: '. print_r($srvStat, true));
+					$event->addErrorMessage('Invalid client name: '. $name);
 				}
-
 			}
 		}
 		catch (\Exception $e)

@@ -92,11 +92,17 @@ class WebsiteIndexManager
 	{
 		foreach ($this->getFullTextIndexes() as $fullText)
 		{
-			$client = $this->getIndexManager()->getClient($fullText->getClientName());
-			$status = $client->getStatus();
-			if ($status->indexExists($fullText->getName()))
+			if ($fullText->getAnalysisLCID() == $LCID)
 			{
-				$client->deleteIds(array($documentId), $fullText->getName(), static::DOCUMENT_TYPE);
+				$client = $this->getIndexManager()->getClient($fullText->getClientName());
+				if ($client)
+				{
+					$status = $client->getStatus();
+					if ($status->indexExists($fullText->getName()))
+					{
+						$client->deleteIds(array($documentId), $fullText->getName(), static::DOCUMENT_TYPE);
+					}
+				}
 			}
 		}
 	}
@@ -124,22 +130,25 @@ class WebsiteIndexManager
 				if ($fulltext->activated())
 				{
 					$client = $this->getIndexManager()->getClient($fulltext->getClientName());
-					$index = $client->getIndex($fulltext->getName());
-					if (!$index->exists())
+					if ($client)
 					{
-						$this->getIndexManager()->createIndex($fulltext);
+						$index = $client->getIndex($fulltext->getName());
+						if (!$index->exists())
+						{
+							$this->getIndexManager()->createIndex($fulltext);
+						}
+
+						$elasticaDocument = new Document($document->getId(), array(), static::DOCUMENT_TYPE);
+						$this->populateDocument($document, $elasticaDocument, $fulltext);
+
+						$canonicalSection = $document->getCanonicalSection($website);
+						if ($canonicalSection)
+						{
+							$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
+						}
+
+						$index->addDocuments(array($elasticaDocument));
 					}
-
-					$elasticaDocument = new Document($document->getId(), array(), static::DOCUMENT_TYPE);
-					$this->populateDocument($document, $elasticaDocument, $fulltext);
-
-					$canonicalSection = $document->getCanonicalSection($website);
-					if ($canonicalSection)
-					{
-						$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
-					}
-
-					$index->addDocuments(array($elasticaDocument));
 				}
 			}
 		}

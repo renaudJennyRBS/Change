@@ -134,8 +134,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $clientName
-	 * @return \Elastica\Client
-	 * @throws \InvalidArgumentException
+	 * @return \Elastica\Client|null
 	 */
 	public function getClient($clientName)
 	{
@@ -154,41 +153,43 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 					->getEntry('Rbs/Elasticsearch/clients/' . $clientName, []);
 				if (is_array($config) && count($config))
 				{
-					$this->initConnection($clientName, $config);
-				}
-				else
-				{
-					throw new \InvalidArgumentException('Argument 1 should be a valid client configuration', 999999);
+					$client = $this->initConnection($clientName, $config);
 				}
 			}
-			$client = $this->clients[$clientName];
+			else
+			{
+				$client = $this->clients[$clientName];
+			}
 		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 should be a valid client name', 999999);
-		}
+
 		return $client;
 	}
 
 	/**
 	 * @param string $clientName
 	 * @param array $config
+	 * @return \Elastica\Client
 	 */
 	protected function initConnection($clientName, $config)
 	{
 		$this->clients[$clientName] = new \Elastica\Client($config);
+		return $this->clients[$clientName];
 	}
 
 	/**
 	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
-	 * @return \Elastica\Index
+	 * @return \Elastica\Index|null
 	 */
 	public function createIndex($indexDefinition)
 	{
 		$client = $this->getClient($indexDefinition->getClientName());
-		$index = $client->getIndex($indexDefinition->getName());
-		$index->create($indexDefinition->getConfiguration());
-		return $index;
+		if ($client)
+		{
+			$index = $client->getIndex($indexDefinition->getName());
+			$index->create($indexDefinition->getConfiguration());
+			return $index;
+		}
+		return null;
 	}
 
 	/**
@@ -196,9 +197,13 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function dispatchIndexationEvents($toIndex)
 	{
+		if (!count($this->getClientsName()))
+		{
+			return;
+		}
+
 		$mm = $this->getDocumentServices()->getModelManager();
 		$dm = $this->getDocumentServices()->getDocumentManager();
-
 		foreach ($toIndex as $data)
 		{
 			//$data ['LCID' => string, 'id' => integer, 'model' => string , 'deleted' => boolean
