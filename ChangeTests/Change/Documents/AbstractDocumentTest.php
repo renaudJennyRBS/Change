@@ -345,6 +345,13 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testCorrection()
 	{
+		$d1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$d1->setPStr('pStr d1');
+		$d1->save();
+		$d2 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$d2->setPStr('pStr d2');
+		$d2->save();
+
 		/* @var $c1 \Project\Tests\Documents\Correction */
 		$c1 = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Correction');
 
@@ -354,6 +361,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->setStr2('Str2');
 		$c1->getCurrentLocalization()->setStr3('Str3');
 		$c1->getCurrentLocalization()->setStr4('Str4');
+		$c1->getDocs1()->add($d1);
+		$c1->getDocs2()->add($d1);
 		$c1->create();
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
@@ -373,6 +382,8 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->setStr2('Str2 v2');
 		$c1->getCurrentLocalization()->setStr3('Str3 v2');
 		$c1->getCurrentLocalization()->setStr4('Str4 v2');
+		$c1->getDocs1()->add($d2);
+		$c1->getDocs2()->add($d2);
 
 		$this->assertTrue($c1->hasModifiedProperties());
 		$c1->update();
@@ -391,12 +402,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(\Change\Documents\Correction::NULL_LCID_KEY, $correction->getLCID());
 		$this->assertArrayHasKey('str2', $correction->getDatas());
 		$this->assertArrayHasKey('str4', $correction->getDatas());
+		$this->assertArrayHasKey('docs2', $correction->getDatas());
 		$this->assertEquals(array('str2', 'str4', 'docs2'), $correction->getPropertiesNames());
 
 		$this->assertEquals('Str1 v2', $c1->getStr1());
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getCurrentLocalization()->getStr3());
 		$this->assertEquals('Str4 v2', $c1->getCurrentLocalization()->getStr4());
+		$this->assertCount(2, $c1->getDocs1());
+		$this->assertCount(2, $c1->getDocs2());
 
 		$c1->reset();
 		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $c1->getPersistentState());
@@ -404,11 +418,14 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Str2', $c1->getStr2());
 		$this->assertEquals('Str3 v2', $c1->getCurrentLocalization()->getStr3());
 		$this->assertEquals('Str4', $c1->getCurrentLocalization()->getStr4());
+		$this->assertCount(2, $c1->getDocs1());
+		$this->assertCount(1, $c1->getDocs2());
 		$this->assertTrue($c1->hasCorrection());
 
 		$corr = $c1->getCurrentCorrection();
 		$this->assertEquals('Str2 v2', $corr->getPropertyValue('str2'));
 		$this->assertEquals('Str4 v2', $corr->getPropertyValue('str4'));
+		$this->assertCount(2, $corr->getPropertyValue('docs2'));
 		$this->assertEquals(Correction::STATUS_DRAFT, $corr->getStatus());
 
 		$corr->setStatus(Correction::STATUS_PUBLISHABLE);
@@ -419,9 +436,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(Correction::STATUS_FILED, $corr->getStatus());
 		$this->assertEquals('Str2', $corr->getPropertyValue('str2'));
 		$this->assertEquals('Str4', $corr->getPropertyValue('str4'));
+		$this->assertCount(1, $corr->getPropertyValue('docs2'));
 
 		$this->assertEquals('Str2 v2', $c1->getStr2());
 		$this->assertEquals('Str4 v2', $c1->getCurrentLocalization()->getStr4());
+		$this->assertCount(2, $c1->getDocs2());
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
 	}

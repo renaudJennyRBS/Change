@@ -292,6 +292,7 @@ class BaseDocumentClass
 		$resetProperties = array();
 		$modifiedProperties = array();
 		$removeOldPropertiesValue = array();
+		$clearModifiedProperties = array();
 		if ($model->getLocalized())
 		{
 			$resetProperties[] = '$this->resetCurrentLocalized();';
@@ -322,12 +323,14 @@ class BaseDocumentClass
 				$memberValue =  ' = 0;';
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' instanceof \Change\Documents\DocumentArrayProperty && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' instanceof \Change\Documents\DocumentArrayProperty) {$this->'.$propertyName.'->setAsDefault();} return;';
+				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
 			}
 			elseif ($property->getType() === 'RichText')
 			{
 				$memberValue =  ' = null;';
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' !== null && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
+				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
 			}
 			elseif ($property->getType() === 'Document' || $property->getType() === 'DocumentId')
 			{
@@ -388,6 +391,16 @@ class BaseDocumentClass
 			default:
 				parent::removeOldPropertyValue($propertyName);
 		}
+	}' . PHP_EOL;
+		}
+
+		if (count($clearModifiedProperties))
+		{
+			$code .= '
+	protected function clearModifiedProperties()
+	{
+		parent::clearModifiedProperties();
+		' . implode(PHP_EOL . '		', $clearModifiedProperties) . '
 	}' . PHP_EOL;
 		}
 
