@@ -255,22 +255,19 @@ class WebsiteIndexManager
 	public function onFindIndexDefinition(Event $event)
 	{
 		$website = $event->getParam('website');
-		if ($website instanceof \Rbs\Website\Documents\Website || is_numeric($website))
+		$mappingName = $event->getParam('mappingName');
+		$analysisLCID = $event->getParam('analysisLCID');
+		if ($mappingName === 'fulltext' && $analysisLCID && $website instanceof \Rbs\Website\Documents\Website || is_numeric($website))
 		{
-			$mappingName = $event->getParam('mappingName');
-			$analysisLCID = $event->getParam('analysisLCID');
-			if ($mappingName && $analysisLCID)
+			$query = new Query($event->getIndexManager()->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
+			$query->andPredicates(
+				$query->eq('analysisLCID', $analysisLCID),
+				$query->eq('website', $website)
+			);
+
+			if (($indexDefinition = $query->getFirstDocument()) !== null)
 			{
-				$query = new Query($event->getIndexManager()->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
-				$query->andPredicates(
-					$query->eq('mappingName', $mappingName),
-					$query->eq('analysisLCID', $analysisLCID),
-					$query->eq('website', $website)
-				);
-				if (($indexDefinition = $query->getFirstDocument()) !== null)
-				{
-					$event->setParam('indexDefinition', $indexDefinition);
-				}
+				$event->setParam('indexDefinition', $indexDefinition);
 			}
 		}
 	}
@@ -290,7 +287,6 @@ class WebsiteIndexManager
 		try
 		{
 			$tm->begin();
-			$fullText->setActive($clientName && $LCID && $website);
 			$fullText->setWebsite($website);
 			$fullText->setAnalysisLCID($LCID);
 			$fullText->setClientName($clientName);

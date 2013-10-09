@@ -6,7 +6,6 @@
 		<property name="label" stateless="true" />
 		<property name="name" type="String" />
 		<property name="clientName" type="String" default-value="front"/>
-		<property name="mappingName" type="String" default-value="fulltext" />
 		<property name="analysisLCID" type="String" />
 		<property name="configurationData" type="JSON" />
 		<property name="website" type="Document" document-type="Rbs_Website_Website" />

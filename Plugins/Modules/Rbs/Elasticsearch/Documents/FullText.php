@@ -31,6 +31,14 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 		return $this->getConfigurationData();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getMappingName()
+	{
+		return 'fulltext';
+	}
+
 	protected function onCreate()
 	{
 		if (!$this->getName() && $this->getWebsiteId() && $this->getAnalysisLCID())
@@ -47,7 +55,29 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 				$this->setConfigurationData($config);
 			}
 		}
+		$config = $this->getConfigurationData();
+		if (is_array($config) && count($config))
+		{
+			$this->setActive(true);
+		}
+		else
+		{
+			$this->setActive(false);
+		}
 	}
+
+	protected function onUpdate()
+	{
+		if ($this->isPropertyModified('configurationData'))
+		{
+			$config = $this->getConfigurationData();
+			if (!is_array($config) || count($config) == 0)
+			{
+				$this->setActive(false);
+			}
+		}
+	}
+
 
 	/**
 	 * @param integer $websiteId
@@ -56,6 +86,6 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	 */
 	protected function buildIndexNameForWebsiteAndLCID($websiteId, $LCID)
 	{
-		return 'fulltext_'. strtolower($websiteId . '_' . $LCID);
+		return  $this->getMappingName() . '_'. $websiteId  . '_' . strtolower($LCID);
 	}
 }
