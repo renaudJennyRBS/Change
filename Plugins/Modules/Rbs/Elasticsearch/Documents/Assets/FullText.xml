@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	editable="true" activable="true">
+	<properties>
+		<property name="label" stateless="true" />
+		<property name="name" type="String" />
+		<property name="clientName" type="String" default-value="front"/>
+		<property name="analysisLCID" type="String" />
+		<property name="configurationData" type="JSON" />
+		<property name="website" type="Document" document-type="Rbs_Website_Website" />
+	</properties>
+</document>

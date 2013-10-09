@@ -338,7 +338,6 @@ class PermissionsManager
 			$qb->where($logicAnd);
 		}
 		$dq = $qb->deleteQuery();
-//		$dq->bindParameter('accessorId', $accessorIds);
 		$dq->bindParameter('sectionId', intval($sectionId));
 		$dq->bindParameter('websiteId', intval($websiteId));
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -354,27 +353,82 @@ class PermissionsManager
 		}
 	}
 
+	protected $webSectionIds = array();
+
 	/**
-	 * @param integer $sectionId
+	 * @param integer $websiteId
 	 * @return boolean
 	 */
-	public function isWebAllowed($sectionId)
+	public function hasWebPermissions($websiteId)
 	{
-		$this->getApplicationServices()->getLogging()->fatal(__METHOD__. ' ' . $sectionId);
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('rule_id'));
-		$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
-		$accessorIds = array($fb->number(0));
-		foreach ($this->accessorIds as $accessorId)
+		$websiteId = intval($websiteId);
+
+		if (!isset($this->webSectionIds[$websiteId]))
 		{
-			$accessorIds[] = $fb->number($accessorId);
+
+			$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$table =$fb->getSqlMapping()->getWebPermissionRuleTable();
+
+			$qb->select($fb->column('rule_id'));
+			$qb->from($table);
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('website_id'), $fb->number($websiteId)),
+				$fb->neq($fb->column('accessor_id'), $fb->number(0))));
+
+			if (is_array($qb->query()->getFirstResult()))
+			{
+				$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('section_id'))->distinct();
+				$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
+				$accessorIds = array($fb->number(0));
+				foreach ($this->accessorIds as $accessorId)
+				{
+					$accessorIds[] = $fb->number($accessorId);
+				}
+				$qb->where($fb->logicAnd(
+					$fb->eq($fb->column('website_id'), $fb->number($websiteId)),
+					$fb->in($fb->column('accessor_id'), $accessorIds)));
+				$sq = $qb->query();
+
+				$this->webSectionIds[$websiteId] = $sq->getResults($sq->getRowsConverter()->addIntCol('section_id')->singleColumn('section_id'));
+			}
+			else
+			{
+				$this->webSectionIds[$websiteId] = true;
+			}
 		}
 
-		$qb->where($fb->logicAnd(
-			$fb->eq($fb->column('section_id'), $fb->number($sectionId)),
-			$fb->in($fb->column('accessor_id'), $accessorIds)));
+		return is_array($this->webSectionIds[$websiteId]);
+	}
 
-		return is_array($qb->query()->getFirstResult());
+	/**
+	 * @param integer $sectionId
+	 * @param integer $websiteId
+	 * @return boolean
+	 */
+	public function isWebAllowed($sectionId, $websiteId)
+	{
+		$this->getApplicationServices()->getLogging()->info(__METHOD__ . ' section: ' . $sectionId . ', website: ' . $websiteId . ' User: ' . implode(', ', $this->accessorIds));
+		if ($this->hasWebPermissions($websiteId = intval($websiteId)))
+		{
+			return in_array($sectionId, $this->webSectionIds[$websiteId]);
+		}
+		return true;
+	}
+
+	/**
+	 * Return true if all section is allowed for website
+	 * @param integer $websiteId
+	 * @return integer[]|boolean
+	 */
+	public function getAllowedSectionIds($websiteId)
+	{
+		if ($this->hasWebPermissions($websiteId = intval($websiteId)))
+		{
+			return $this->webSectionIds[$websiteId];
+		}
+		return true;
 	}
 }

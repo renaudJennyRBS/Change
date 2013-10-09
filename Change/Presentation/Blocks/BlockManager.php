@@ -179,6 +179,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
+		$event->setUrlManager($httpEvent->getUrlManager());
 		$results = $eventManager->trigger($event, function ($result)
 		{
 			return $result instanceof Parameters;

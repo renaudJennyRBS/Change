@@ -93,7 +93,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			/* @var $pathRule \Change\Http\Web\PathRule */
 			$pathRule = $event->getParam('pathRule');
 			$queryParameters = $event->getParam('queryParameters');
-			$sectionPageFunction = $queryParameters['sectionPageFunction'];
+			$sectionPageFunction = isset($queryParameters['sectionPageFunction']) ? $queryParameters['sectionPageFunction'] : null;
 			if ($sectionPageFunction)
 			{
 				$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');

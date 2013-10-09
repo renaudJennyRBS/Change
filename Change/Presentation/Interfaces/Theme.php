@@ -57,11 +57,6 @@ interface Theme
 	public function getResource($resourcePath);
 
 	/**
-	 * @return string the base path to the public static resources.
-	 */
-	public function getResourceBasePath();
-
-	/**
 	 * @return string the asset base path in theme plugin.
 	 */
 	public function getAssetBasePath();

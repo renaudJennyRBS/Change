@@ -92,7 +92,7 @@ class DefaultTheme implements Theme
 				$plugins = $pluginManager->getModules();
 				foreach ($plugins as $plugin)
 				{
-					if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
+					if ($plugin->isAvailable() && is_dir($plugin->getTwigAssetsPath()))
 					{
 						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
 					}
@@ -100,36 +100,6 @@ class DefaultTheme implements Theme
 			}
 		}
 		return $this->templateBasePath;
-	}
-
-	/**
-	 * @var string $resourceBasePath
-	 */
-	protected $resourceBasePath;
-
-	/**
-	 * @return string
-	 */
-	public function getResourceBasePath()
-	{
-		if ($this->resourceBasePath === null)
-		{
-			$this->resourceBasePath = $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets');
-			$as = $this->presentationServices->getApplicationServices();
-			if ($as->getApplication()->inDevelopmentMode())
-			{
-				$pluginManager = $as->getPluginManager();
-				$plugins = $pluginManager->getModules();
-				foreach ($plugins as $plugin)
-				{
-					if ($plugin->isAvailable() && is_dir($plugin->getThemeAssetsPath()))
-					{
-						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
-					}
-				}
-			}
-		}
-		return $this->resourceBasePath;
 	}
 
 	/**
@@ -182,7 +152,7 @@ class DefaultTheme implements Theme
 	 */
 	public function getResource($resourcePath)
 	{
-		$path = $this->getWorkspace()->composePath($this->getResourceBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $resourcePath));
+		$path = $this->getResourceFilePath($resourcePath);
 		return new FileResource($path);
 	}
 
@@ -192,7 +162,7 @@ class DefaultTheme implements Theme
 	 */
 	public function getAssetResource($assetPath)
 	{
-		$path = $this->getWorkspace()->composePath($this->getAssetBasePath(), str_replace('/', DIRECTORY_SEPARATOR, $assetPath));
+		$path = $this->getWorkspace()->composePath($this->getAssetBasePath(), $assetPath);
 		return new FileResource($path);
 	}
 
@@ -211,10 +181,14 @@ class DefaultTheme implements Theme
 			$module = $pm->getModule($vendor, $moduleShortName);
 			if ($module && $module->isAvailable())
 			{
-				return $this->getWorkspace()->composePath($module->getBasePath(), 'Assets', 'Theme', $resourceModulePath);
+				$path = $this->getWorkspace()->composePath($module->getBasePath(), 'Assets', 'Theme', $resourceModulePath);
+				if (file_exists($path))
+				{
+					return $path;
+				}
 			}
 		}
-		return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName, 'Assets', $resourcePath);
+		return $this->getWorkspace()->composePath($this->getAssetBasePath(), $resourcePath);
 	}
 
 	/**

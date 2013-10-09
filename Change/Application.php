@@ -37,11 +37,36 @@ class Application
 	protected $started = false;
 
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $context;
+
+	/**
 	 * @return string
 	 */
 	public function getVersion()
 	{
 		return self::CHANGE_VERSION;
+	}
+
+	/**
+	 * @param \Zend\Stdlib\Parameters $context
+	 */
+	public function setContext(\Zend\Stdlib\Parameters $context)
+	{
+		$this->context = $context;
+	}
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getContext()
+	{
+		if ($this->context === null)
+		{
+			$this->context = new \Zend\Stdlib\Parameters();
+		}
+		return $this->context;
 	}
 
 	/**

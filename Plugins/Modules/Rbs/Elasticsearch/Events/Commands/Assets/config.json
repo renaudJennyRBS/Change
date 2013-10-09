@@ -1,0 +1,18 @@
+{
+	"rbs_elasticsearch:client": {
+		"description": "Elastic Search Client",
+		"options": {
+			"list": {
+				"description": "list client names",
+				"shortcut": "l"
+			}
+		},
+		"arguments": {
+			"name": {
+				"description": "client name",
+				"required": false,
+				"default": null
+			}
+		}
+	}
+}

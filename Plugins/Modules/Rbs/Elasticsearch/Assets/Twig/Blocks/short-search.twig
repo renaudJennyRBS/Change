@@ -1,0 +1,11 @@
+<form class="form-inline" action="{{ parameters.formAction }}" method="GET">
+{% if parameters.sectionPageFunction %}
+	<input name="sectionPageFunction"  type="hidden" value="{{ parameters.sectionPageFunction }}" />
+{% endif %}
+	<div class="input-group">
+		<input name="searchText"  type="text" class="form-control input-small" value="{{ parameters.searchText }}"/>
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-primary btn-small"><i class="glyphicon glyphicon-search"></i></button>
+		</span>
+	</div>
+</form>
