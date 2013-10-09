@@ -5,14 +5,14 @@
 
 .axes-columns-nav .axis-column {
 	display: table-cell;
-	border-right: 1px solid silver;
-	border-top: 1px solid silver;
-	border-bottom: 1px solid silver;
+	border-right: 1px solid #E6E6E6;
+	border-top: 0;
+	border-bottom: 1px solid #E6E6E6;
 	min-width: 150px;
 }
 
 .axes-columns-nav .axis-column:first-child {
-	border-left: 1px solid silver;
+	border-left: 1px solid #E6E6E6;
 }
 
 .axes-columns-nav .axis-column .axis-value {
@@ -26,7 +26,7 @@
 	color: silver;
 }
 
-.axes-columns-nav .axis-column .axis-value button {
+.axes-columns-nav .axis-column .axis-values button {
 	width: 26px;
 	margin-right: 6px;
 	font-style: normal;
@@ -42,10 +42,15 @@
 	color: white;
 }
 
-.axes-columns-nav .axis-column h4 {
+.axes-columns-nav .axis-column h4.axis-header {
 	margin: 0;
 	padding: 10px;
-	background: #EEEEEE;
+	background: #F5F5F5;
+}
+
+.axes-columns-nav .axis-column .axis-value-add {
+	border-top: 2px dotted #E6E6E6;
+	background: #F5F5F5;
 }
 
 .axes-columns-nav .axis-column .axis-value.between-selection {
@@ -53,4 +58,11 @@
 	margin-right: -1px;
 	z-index: 1;
 	position: relative;
+}
+
+.breadcrumb.variant-group-editor {
+	margin: 0;
+	box-shadow: none;
+	border: 1px solid #E6E6E6;
+	border-radius: 0;
 }

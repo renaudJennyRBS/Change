@@ -3,15 +3,17 @@
 	"use strict";
 
 	/**
-	 * @constructor
+	 * Editor for Rbs_Catalog_VariantGroup Documents.
 	 */
-	function Editor ()
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', function Editor (REST)
 	{
 		return {
 			restrict : 'C',
 			templateUrl : 'Rbs/Catalog/VariantGroup/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
+
+			controller : function () {},
 
 			link : function (scope, elm, attrs, editorCtrl)
 			{
@@ -53,11 +55,7 @@
 
 				scope.getColumnWidthStyle = function ()
 				{
-					var cols = axesCount;
-					if (scope.navigationEnd) {
-						cols++;
-					}
-					return {'width': (100.0 / cols)+'%'};
+					return { 'width': (100.0 / (scope.navigationEnd ? (axesCount+1) : axesCount)) + '%' };
 				};
 
 
@@ -148,6 +146,51 @@
 				{
 					scope.document.axesInfo[axisIndex].dv.splice(valueIndex, 1);
 				};
+
+
+				scope.addAxisValue = function (axisIndex, value)
+				{
+					scope.document.axesInfo[axisIndex].dv.push(makeValueObject(value));
+					selectAxisValue(axisIndex, value, getParentProductInNav(axisIndex));
+				};
+
+
+				scope.finalProductSaved = function ()
+				{
+					return (getFinalProduct().id > 0);
+				};
+
+
+				scope.getFinalProductUrl = function ()
+				{
+					var doc = REST.newResource('Rbs_Catalog_Product');
+					doc.id = getFinalProduct().id;
+					return doc.url();
+				};
+
+
+				// axesInfo should be recompiled when document.axesInfo changes.
+				scope.$watch('document.axesInfo', function (axesInfo, old) {
+					if (axesInfo && axesInfo !== old) {
+						compileAxesInfo();
+					}
+				}, true);
+
+
+				function getFinalProduct ()
+				{
+					return scope.path[scope.path.length-1].product;
+				}
+
+
+				function makeValueObject (value)
+				{
+					return {
+						value : value,
+						title : value,
+						label : value
+					};
+				}
 
 
 				/**
@@ -292,9 +335,13 @@
 				}
 
 
+				/**
+				 * Compiles different pieces of information about axes.
+				 */
 				function compileAxesInfo ()
 				{
 					var axesInfo = [];
+					axesCount = 0;
 					angular.forEach(scope.document.axesInfo, function (def, index) {
 						axesInfo.push(angular.extend({
 							index : index,
@@ -307,14 +354,11 @@
 				}
 
 
-				// axesInfo should be recompiled when document.axesInfo changes.
-				scope.$watch('document.axesInfo', function (axesInfo, old) {
-					if (axesInfo && axesInfo !== old) {
-						compileAxesInfo();
-					}
-				}, true);
-
-
+				/**
+				 * Computes the number of possible variants.
+				 *
+				 * @returns {number}
+				 */
 				function getPossibleVariantsCount ()
 				{
 					if (! scope.axesInfo) {
@@ -342,9 +386,50 @@
 				editorCtrl.init('Rbs_Catalog_VariantGroup');
 			}
 		};
-	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', Editor);
+	}]);
+
+
+	/**
+	 * This Directive validates the input for a new value in an axis: it checks if the value
+	 * already exists in the given axis.
+	 *
+	 * @attribute axis-index="number"
+	 */
+	angular.module('RbsChange').directive('rbsVariantGroupEditorNewAxisValueValidation', ['RbsChange.Utils', function (Utils)
+	{
+		return {
+			require : [ 'ngModel', '^rbsDocumentEditorRbsCatalogVariantGroup' ],
+			scope : false,
+
+			link : function (scope, iElement, iAttr, ctrls)
+			{
+				var	axisIndex = iAttr.axisIndex,
+					ngModel = ctrls[0];
+
+				function validate (value) {
+					var	i,
+						axis = scope.axesInfo[axisIndex],
+						valid = true;
+					for (i=0 ; i<axis.dv.length && valid ; i++) {
+						valid = ! Utils.equalsIgnoreCase(value, axis.dv[i].value);
+					}
+					ngModel.$setValidity('valueExists', valid);
+					return valid ? value : undefined;
+				}
+
+				// For DOM -> model validation
+				ngModel.$parsers.unshift(function(value) {
+					return validate(value);
+				});
+
+				// For model -> DOM validation
+				ngModel.$formatters.unshift(function(value) {
+					validate(value);
+					return value;
+				});
+			}
+		};
+	}]);
 
 })();
