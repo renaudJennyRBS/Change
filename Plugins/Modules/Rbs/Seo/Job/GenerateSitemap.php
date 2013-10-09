@@ -14,13 +14,19 @@ class GenerateSitemap
 		$lcid = $event->getJob()->getArgument('LCID');
 		$application = $event->getApplicationServices()->getApplication();
 
-		$urlManager = $website->getUrlManager('fr_FR');
+		//check if Seo directory already exist, if not, create it.
+		if (!is_dir($this->getRbsSeoAssetFilePath($application)))
+		{
+			\Change\Stdlib\File::mkdir($this->getRbsSeoAssetFilePath($application));
+		}
+
+		$urlManager = $website->getUrlManager($lcid);
 		$urlManager->setAbsoluteUrl(true);
 
 		//TODO: work but find a better way
 		//Create a special UrlManager to manage Assets URL.
 		//Useful for the url path to robots.txt, the sitemap Index and sitemaps.
-		$assetUrlManager = $website->getUrlManager('fr_FR');
+		$assetUrlManager = $website->getUrlManager($lcid);
 		$assetUrlManager->setAbsoluteUrl(true);
 		$assetUrlManager->setScript($application->getConfiguration()->getEntry('Change/Install/resourceBaseUrl') . '/Rbs/Seo');
 
@@ -179,7 +185,7 @@ class GenerateSitemap
 	 * @param string $filename
 	 * @return string
 	 */
-	protected function getRbsSeoAssetFilePath($application, $filename)
+	protected function getRbsSeoAssetFilePath($application, $filename = null)
 	{
 		$rootPath = $application->getConfiguration()
 			->getEntry('Change/Install/documentRootPath');
