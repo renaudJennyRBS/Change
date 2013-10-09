@@ -23,6 +23,7 @@
 				scope.path = [];
 				scope.navigationEnd = false;
 				scope.editMode = {};
+				scope.axisValueToAdd = {};
 
 
 				scope.onLoad = function()
@@ -62,6 +63,7 @@
 				scope.navigate = function (axisIndex, value, valueIndex)
 				{
 					var product = findProduct(axisIndex, value.value, getParentProductInNav(axisIndex));
+
 					// Product must be selected in order to navigate to next axes.
 					if (! product) {
 						return;
@@ -76,6 +78,7 @@
 					};
 
 					scope.navigationEnd = (scope.path.length === axesCount);
+					loadFinalProduct(product);
 				};
 
 
@@ -142,16 +145,50 @@
 				};
 
 
-				scope.removeAxisValue = function (axisIndex, valueIndex)
+				scope.removeAllVariants = function ()
 				{
-					scope.document.axesInfo[axisIndex].dv.splice(valueIndex, 1);
+					scope.document.productMatrixInfo.length = 0;
 				};
 
 
-				scope.addAxisValue = function (axisIndex, value)
+				scope.removeAxisValue = function (axisIndex, valueIndex)
 				{
+					var axis = scope.document.axesInfo[axisIndex];
+					removeProductsInAxis(axis, axis.dv[valueIndex].value);
+					axis.dv.splice(valueIndex, 1);
+				};
+
+
+				scope.addAxisValue = function (axisIndex)
+				{
+					var value = scope.axisValueToAdd[axisIndex];
 					scope.document.axesInfo[axisIndex].dv.push(makeValueObject(value));
 					selectAxisValue(axisIndex, value, getParentProductInNav(axisIndex));
+					scope.axisValueToAdd[axisIndex] = null;
+				};
+
+
+				scope.addValueOnEnter = function (axisIndex, $event)
+				{
+					$event.stopPropagation();
+					var form = angular.element($event.target).controller('form');
+					if ($event.keyCode === 13 && form.$valid) {
+						scope.addAxisValue(axisIndex);
+					}
+				};
+
+
+				scope.valueAlreadyExists = function (index)
+				{
+					var form = angular.element(elm.find('.axis-column:nth-child(' + (index+1) + ') [ng-form]')).controller('form');
+					return form.axisValueToAdd.$error.valueExists;
+				};
+
+
+				scope.isInvalid = function (index)
+				{
+					var form = angular.element(elm.find('.axis-column:nth-child(' + (index+1) + ') [ng-form]')).controller('form');
+					return form.$invalid;
 				};
 
 
@@ -169,12 +206,34 @@
 				};
 
 
-				// axesInfo should be recompiled when document.axesInfo changes.
+				// `axesInfo` should be recompiled when `document.axesInfo` changes.
 				scope.$watch('document.axesInfo', function (axesInfo, old) {
 					if (axesInfo && axesInfo !== old) {
 						compileAxesInfo();
 					}
 				}, true);
+
+
+				function removeProductsInAxis (axis, value)
+				{
+					angular.forEach(scope.document.productMatrixInfo, function (product) {
+						if (product.axisId === axis.id && product.axisValue === value) {
+							product.removed = true;
+							removeChildProducts(product);
+						}
+					});
+				}
+
+
+				function removeChildProducts (parentProduct)
+				{
+					angular.forEach(scope.document.productMatrixInfo, function (product) {
+						if (product.parentId === parentProduct.id) {
+							product.removed = true;
+							removeChildProducts(product);
+						}
+					});
+				}
 
 
 				function getFinalProduct ()
@@ -190,6 +249,21 @@
 						title : value,
 						label : value
 					};
+				}
+
+
+				function loadFinalProduct (product)
+				{
+					if (scope.navigationEnd) {
+						scope.loadingFinalProduct = true;
+						REST.resource('Rbs_Catalog_Product', product.id).then(function (product) {
+							scope.loadingFinalProduct = false;
+							scope.finalProduct = product;
+						});
+					}
+					else {
+						scope.finalProduct = null;
+					}
 				}
 
 
@@ -220,6 +294,10 @@
 				 */
 				function selectAxisValue (axisIndex, value, parentProduct)
 				{
+					if (! parentProduct) {
+						return;
+					}
+
 					var product = findProduct(axisIndex, value, parentProduct);
 
 					if (product) {
@@ -262,17 +340,19 @@
 				function cleanUp ()
 				{
 					var i = 0, item;
-					do {
-						item = scope.document.productMatrixInfo[i];
-						// Temporary items have negative IDs.
-						if (item.id < 0) {
-							console.log("removing temp product: ", item.id, " at ", i);
-							scope.document.productMatrixInfo.splice(i, 1);
-						}
-						else {
-							i++;
-						}
-					} while (i < scope.document.productMatrixInfo);
+					if (scope.document.productMatrixInfo.length) {
+						do {
+							item = scope.document.productMatrixInfo[i];
+							// Temporary items have negative IDs.
+							if (item.id < 0) {
+								console.log("removing temp product: ", item.id, " at ", i);
+								scope.document.productMatrixInfo.splice(i, 1);
+							}
+							else {
+								i++;
+							}
+						} while (i < scope.document.productMatrixInfo);
+					}
 				}
 
 
@@ -390,13 +470,26 @@
 	}]);
 
 
+	angular.module('RbsChange').filter('rbsVariantGroupEditorValidProductsCount', function () {
+		return function (input) {
+			var count = 0;
+			angular.forEach(input, function (product) {
+				if (! product.removed) {
+					count++;
+				}
+			});
+			return count;
+		};
+	});
+
+
 	/**
-	 * This Directive validates the input for a new value in an axis: it checks if the value
-	 * already exists in the given axis.
+	 * This Directive validates the input for a new value in an axis:
+	 * it checks if the value already exists in the given axis.
 	 *
 	 * @attribute axis-index="number"
 	 */
-	angular.module('RbsChange').directive('rbsVariantGroupEditorNewAxisValueValidation', ['RbsChange.Utils', function (Utils)
+	angular.module('RbsChange').directive('rbsVariantGroupEditorNewAxisValueValidator', ['RbsChange.Utils', function (Utils)
 	{
 		return {
 			require : [ 'ngModel', '^rbsDocumentEditorRbsCatalogVariantGroup' ],

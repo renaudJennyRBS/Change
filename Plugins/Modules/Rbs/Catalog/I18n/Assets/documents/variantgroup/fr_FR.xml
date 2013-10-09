@@ -10,7 +10,8 @@
 	<key id="axis-head">axe</key>
 	<key id="visibility-head">visible dans les listes</key>
 	<key id="values-head">valeurs</key>
-	<key id="generate-all-action">Générer toutes les fiches produits</key>
+	<key id="generate-all-action">Générer tout</key>
+	<key id="remove-all-action">Supprimer tout</key>
 	<key id="edit-product-head">Fiche Produit</key>
 	<key id="edit-axis-head">axe de déclinaison</key>
 	<key id="add-axis">ajouter l'axe déclinaison</key>
