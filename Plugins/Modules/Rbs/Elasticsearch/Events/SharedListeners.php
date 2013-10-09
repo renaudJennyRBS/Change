@@ -53,16 +53,27 @@ class SharedListeners implements SharedListenerAggregateInterface
 		{
 			if ($event->getParam('primary'))
 			{
-				/** @var $tm \Change\Transaction\TransactionManager */
-				$tm = $event->getTarget();
+				/** @var $transactionManager \Change\Transaction\TransactionManager */
+				$transactionManager = $event->getTarget();
+				$application = $transactionManager->getApplication();
+
 				/* @var $toIndex \ArrayObject */
-				$toIndex = $tm->getApplication()->getContext()->get('elasticsearch_toIndex');
-				if ($toIndex && count($toIndex))
+				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
+				if ($toIndex)
 				{
-					$as = new \Change\Application\ApplicationServices($tm->getApplication());
-					$jm = new JobManager();
-					$jm->setApplicationServices($as);
-					$jm->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy());
+					if (count($toIndex))
+					{
+						$jobManager = $application->getContext()->get('elasticsearch_JobManager');
+						if ($jobManager === null)
+						{
+							$as = new \Change\Application\ApplicationServices($application);
+							$jobManager = new JobManager();
+							$jobManager->setApplicationServices($as);
+							$application->getContext()->set('elasticsearch_JobManager', $jobManager);
+						}
+						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy());
+					}
+					$transactionManager->getApplication()->getContext()->set('elasticsearch_toIndex', null);
 				}
 			}
 		};

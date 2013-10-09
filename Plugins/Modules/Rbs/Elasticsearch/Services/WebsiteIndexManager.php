@@ -15,9 +15,9 @@ class WebsiteIndexManager
 	const DOCUMENT_TYPE = 'document';
 
 	/**
-	 * @var integer[]
+	 * @var \Change\Documents\DocumentCollection
 	 */
-	protected $websiteIds = null;
+	protected $fullTextIndexes = null;
 
 	/**
 	 * @var \Rbs\Elasticsearch\Services\IndexManager
@@ -74,7 +74,9 @@ class WebsiteIndexManager
 				$this->addDocument($document, $LCID);
 				return;
 			}
-			if (in_array($publicationStatus, array(Publishable::STATUS_UNPUBLISHABLE, Publishable::STATUS_FROZEN, Publishable::STATUS_FILED)))
+			if (in_array($publicationStatus,
+				array(Publishable::STATUS_UNPUBLISHABLE, Publishable::STATUS_FROZEN, Publishable::STATUS_FILED))
+			)
 			{
 				$this->deleteDocument($event->getParam('id'), $LCID);
 				return;
@@ -88,16 +90,56 @@ class WebsiteIndexManager
 	 */
 	protected function deleteDocument($documentId, $LCID)
 	{
-		$client = $this->getIndexManager()->getClient('front');
-		if ($client)
+		foreach ($this->getFullTextIndexes() as $fullText)
 		{
+			$client = $this->getIndexManager()->getClient($fullText->getClientName());
 			$status = $client->getStatus();
-			foreach ($this->getWebsiteIds() as $websiteId)
+			if ($status->indexExists($fullText->getName()))
 			{
-				$indexName = $this->buildIndexNameForWebsiteAndLCID($websiteId, $LCID);
-				if ($status->indexExists($indexName))
+				$client->deleteIds(array($documentId), $fullText->getName(), static::DOCUMENT_TYPE);
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable $document
+	 * @param string $LCID
+	 */
+	protected function addDocument($document, $LCID)
+	{
+		$websiteIds = array();
+		foreach ($document->getPublicationSections() as $section)
+		{
+			$website = $section->getWebsite();
+			if (!in_array($website->getId(), $websiteIds))
+			{
+				$websiteIds[] = $website->getId();
+				$fulltext = $this->getFullTextIndex($website->getId(), $LCID);
+
+				if (!$fulltext)
 				{
-					$client->deleteIds(array($documentId), $indexName, static::DOCUMENT_TYPE);
+					$fulltext = $this->createFullText($website, $LCID, 'front');
+				}
+
+				if ($fulltext->activated())
+				{
+					$client = $this->getIndexManager()->getClient($fulltext->getClientName());
+					$index = $client->getIndex($fulltext->getName());
+					if (!$index->exists())
+					{
+						$this->getIndexManager()->createIndex($fulltext);
+					}
+
+					$elasticaDocument = new Document($document->getId(), array(), static::DOCUMENT_TYPE);
+					$this->populateDocument($document, $elasticaDocument, $fulltext);
+
+					$canonicalSection = $document->getCanonicalSection($website);
+					if ($canonicalSection)
+					{
+						$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
+					}
+
+					$index->addDocuments(array($elasticaDocument));
 				}
 			}
 		}
@@ -106,8 +148,9 @@ class WebsiteIndexManager
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param Document $elasticaDocument
+	 * @param \Rbs\Elasticsearch\Documents\FullText $fulltext
 	 */
-	protected function populateDocument($document, $elasticaDocument)
+	protected function populateDocument($document, $elasticaDocument, $fulltext)
 	{
 		$model = $document->getDocumentModel();
 		$elasticaDocument->set('title', $model->getPropertyValue($document, 'title'));
@@ -128,7 +171,7 @@ class WebsiteIndexManager
 		}
 		$elasticaDocument->set('endPublication', $endPublication->format(\DateTime::ISO8601));
 
-		$this->getIndexManager()->dispatchPopulateDocument($elasticaDocument, $document, 'fulltext');
+		$this->getIndexManager()->dispatchPopulateDocument($elasticaDocument, $document, $fulltext);
 		$event = new \Change\Documents\Events\Event('fullTextContent', $document,
 			array('elasticaDocument' => $elasticaDocument, 'indexManager' => $this->getIndexManager()));
 		$document->getEventManager()->trigger($event);
@@ -141,145 +184,34 @@ class WebsiteIndexManager
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable $document
-	 * @param string $LCID
+	 * @return \Change\Documents\DocumentCollection|\Rbs\Elasticsearch\Documents\FullText[]
 	 */
-	protected function addDocument($document, $LCID)
+	protected function getFullTextIndexes()
 	{
-		$client = $this->getIndexManager()->getClient('front');
-		if ($client)
+		if ($this->fullTextIndexes === null)
 		{
-			$websiteIds = array();
-			$elasticaDocument = new Document($document->getId(), array(), static::DOCUMENT_TYPE);
-			$this->populateDocument($document, $elasticaDocument);
+			$query = new Query($this->getIndexManager()->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
+			$this->fullTextIndexes = $query->getDocuments();
+		}
+		return $this->fullTextIndexes;
+	}
 
-			foreach($document->getPublicationSections() as $section)
+	/**
+	 * @param $websiteId
+	 * @param $LCID
+	 * @return null|\Rbs\Elasticsearch\Documents\FullText
+	 */
+	protected function getFullTextIndex($websiteId, $LCID)
+	{
+		/* @var $fullText \Rbs\Elasticsearch\Documents\FullText */
+		foreach ($this->getFullTextIndexes() as $fullText)
+		{
+			if ($fullText->getWebsiteId() == $websiteId && $fullText->getAnalysisLCID() == $LCID)
 			{
-				$website = $section->getWebsite();
-				if (!in_array($website->getId(), $websiteIds))
-				{
-					$websiteIds[] = $website->getId();
-					$indexName = $this->buildIndexNameForWebsiteAndLCID($website->getId(), $LCID);
-					$index = $client->getIndex($indexName);
-					if (!$index->exists())
-					{
-						$this->getIndexManager()->createIndex($index, 'fulltext', $LCID);
-					}
-					$canonicalSection = $document->getCanonicalSection($website);
-					if ($canonicalSection)
-					{
-						$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
-					}
-					$index->addDocuments(array($elasticaDocument));
-				}
+				return $fullText;
 			}
 		}
-	}
-
-	/**
-	 * @return integer[]
-	 */
-	protected function getWebsiteIds()
-	{
-		if ($this->websiteIds === null)
-		{
-			$query = new Query($this->getIndexManager()->getDocumentServices(), 'Rbs_Website_Website');
-			$fb = $query->getFragmentBuilder();
-			$sq = $query->dbQueryBuilder()->addColumn($fb->alias($query->getColumn('id'), 'id'))->query();
-			$this->websiteIds = $sq->getResults($sq->getRowsConverter()->addIntCol('id')->singleColumn('id'));
-		}
-		return $this->websiteIds;
-	}
-
-	/**
-	 * @param integer $websiteId
-	 * @param string $LCID
-	 * @return string
-	 */
-	protected function buildIndexNameForWebsiteAndLCID($websiteId, $LCID)
-	{
-		return 'fulltext_'. strtolower($websiteId . '_' . $LCID);
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onGetMappingByName(Event $event)
-	{
-		$mappings = array('fulltext' => array(
-			"document" => array(
-				"properties" => array(
-					"title" => array(
-						"type" => "string",
-						"boost" => 4,
-						"analyzer" => "text_analyzer"
-					),
-					"content" => array(
-						"type" => "string",
-						"boost" => 2,
-						"analyzer" => "text_analyzer"
-					),
-					"model" => array(
-						"type" => "string",
-						"index" => "not_analyzed"
-					),
-					"rootModel" => array(
-						"type" => "string",
-						"index" => "not_analyzed"
-					),
-					"canonicalSectionId" => array(
-						"type" => "integer"
-					),
-					"startPublication" => array(
-						"type" => "date"
-					),
-					"endPublication" => array(
-						"type" => "date"
-					)
-				)
-			)
-		));
-
-		$name = $event->getParam('name');
-		if ($name && isset($mappings[$name]))
-		{
-			$event->setParam('mapping', $mappings[$name]);
-		}
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onGetAnalyzer(Event $event)
-	{
-		$analyzers = array(
-			"fr_FR" => array(
-				"analyzer" => array(
-					"text_analyzer" => array(
-						"tokenizer" => "standard",
-						"filter" => array(
-							"standard",
-							"lowercase",
-							"asciifolding",
-							"elision",
-							"text_snowball"
-						)
-					)
-				),
-				"filter" => array(
-					"text_snowball" => array(
-						"type" => "snowball",
-						"name" => "french"
-					)
-				)
-			)
-		);
-
-		$LCID = $event->getParam('LCID');
-		if ($LCID && isset($analyzers[$LCID]))
-		{
-			$event->setParam('analyzer', $analyzers[$LCID]);
-		}
+		return null;
 	}
 
 	/**
@@ -287,11 +219,11 @@ class WebsiteIndexManager
 	 */
 	public function onPopulateDocument(Event $event)
 	{
-		if ($event->getParam('mapping') === 'fulltext')
+		$fulltext = $event->getParam('indexDefinition');
+		if ($fulltext instanceof \Rbs\Elasticsearch\Documents\FullText)
 		{
 			$elasticaDocument = $event->getParam('elasticaDocument');
 			$document = $event->getParam('document');
-
 			if ($elasticaDocument instanceof Document && $document instanceof \Change\Documents\AbstractDocument)
 			{
 				$model = $document->getDocumentModel();
@@ -315,5 +247,63 @@ class WebsiteIndexManager
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onFindIndexDefinition(Event $event)
+	{
+		$website = $event->getParam('website');
+		if ($website instanceof \Rbs\Website\Documents\Website || is_numeric($website))
+		{
+			$mappingName = $event->getParam('mappingName');
+			$analysisLCID = $event->getParam('analysisLCID');
+			if ($mappingName && $analysisLCID)
+			{
+				$query = new Query($event->getIndexManager()->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
+				$query->andPredicates(
+					$query->eq('mappingName', $mappingName),
+					$query->eq('analysisLCID', $analysisLCID),
+					$query->eq('website', $website)
+				);
+				if (($indexDefinition = $query->getFirstDocument()) !== null)
+				{
+					$event->setParam('indexDefinition', $indexDefinition);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param string $LCID
+	 * @param string $clientName
+	 * @throws \Exception
+	 * @return \Rbs\Elasticsearch\Documents\FullText
+	 */
+	public function createFullText($website, $LCID, $clientName)
+	{
+		/* @var $fullText \Rbs\Elasticsearch\Documents\FullText */
+		$fullText = $this->getIndexManager()->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Elasticsearch_FullText');
+		$tm = $this->getIndexManager()->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$fullText->setActive($clientName && $LCID && $website);
+			$fullText->setWebsite($website);
+			$fullText->setAnalysisLCID($LCID);
+			$fullText->setClientName($clientName);
+			$fullText->create();
+
+			$indexes = $this->getFullTextIndexes();
+			$indexes[] = $fullText;
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		return $fullText;
 	}
 }

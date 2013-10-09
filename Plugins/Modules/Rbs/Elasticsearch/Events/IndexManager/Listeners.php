@@ -21,9 +21,8 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$ws = new WebsiteIndexManager();
 		$events->attach(Event::INDEX_DOCUMENT, array($ws, 'onIndexDocument'));
-		$events->attach(Event::ANALYZER_BY_LCID, array($ws, 'onGetAnalyzer'));
-		$events->attach(Event::MAPPING_BY_NAME, array($ws, 'onGetMappingByName'));
 		$events->attach(Event::POPULATE_DOCUMENT, array($ws, 'onPopulateDocument'));
+		$events->attach(Event::FIND_INDEX_DEFINITION, array($ws, 'onFindIndexDefinition'));
 	}
 
 	/**

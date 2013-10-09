@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Services;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\Interfaces\Localizable;
 use Elastica\Document;
 use Rbs\Elasticsearch\Events\Event;
 
@@ -12,9 +11,6 @@ use Rbs\Elasticsearch\Events\Event;
 class IndexManager implements \Zend\EventManager\EventsCapableInterface
 {
 	use \Change\Events\EventsCapableTrait;
-
-	const INDEX_FRONT = 'front';
-	const INDEX_ADMIN = 'admin';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_IndexManager';
 
@@ -116,7 +112,8 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->clientsConfiguration === null)
 		{
-			$config = $this->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Rbs/Elasticsearch/clients');
+			$config = $this->getApplicationServices()->getApplication()->getConfiguration()
+				->getEntry('Rbs/Elasticsearch/clients');
 			if (!is_array($config))
 			{
 				$config = array();
@@ -153,7 +150,8 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if (!isset($this->clients[$clientName]))
 			{
-				$config = $this->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Rbs/Elasticsearch/clients/' . $clientName, []);
+				$config = $this->getApplicationServices()->getApplication()->getConfiguration()
+					->getEntry('Rbs/Elasticsearch/clients/' . $clientName, []);
 				if (is_array($config) && count($config))
 				{
 					$this->initConnection($clientName, $config);
@@ -182,51 +180,15 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param string $name
-	 * @return array|null
+	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @return \Elastica\Index
 	 */
-	public function getMappingByName($name)
+	public function createIndex($indexDefinition)
 	{
-		$em = $this->getEventManager();
-		$event = new Event(Event::MAPPING_BY_NAME, $this, array('name' => $name));
-		$em->trigger($event);
-		$mapping = $event->getParam('mapping');
-		if (is_array($mapping))
-		{
-			return $mapping;
-		}
-		return null;
-	}
-
-	/**
-	 * @param string $LCID
-	 * @return array|null
-	 */
-	public function getAnalyzerByLCID($LCID)
-	{
-		$em = $this->getEventManager();
-		$event = new Event(Event::ANALYZER_BY_LCID, $this, array('LCID' => $LCID));
-		$em->trigger($event);
-		$analyzer = $event->getParam('analyzer');
-		if (is_array($analyzer))
-		{
-			return $analyzer;
-		}
-		return null;
-	}
-
-	/**
-	 * @param \Elastica\Index $index
-	 * @param string $mappingName
-	 * @param string $LCID
-	 */
-	public function createIndex($index, $mappingName, $LCID)
-	{
-		$indexConfig = [
-			'mappings' => $this->getMappingByName($mappingName),
-			'settings' => ['index' => ['analysis' => $this->getAnalyzerByLCID($LCID)]]
-		];
-		$index->create($indexConfig);
+		$client = $this->getClient($indexDefinition->getClientName());
+		$index = $client->getIndex($indexDefinition->getName());
+		$index->create($indexDefinition->getConfiguration());
+		return $index;
 	}
 
 	/**
@@ -269,13 +231,31 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param Document $elasticaDocument
 	 * @param AbstractDocument $document
-	 * @param string $mapping
+	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
 	 */
-	public function dispatchPopulateDocument(Document $elasticaDocument, AbstractDocument $document, $mapping)
+	public function dispatchPopulateDocument(Document $elasticaDocument, AbstractDocument $document, $indexDefinition)
 	{
 		$em = $this->getEventManager();
 		$event = new Event(Event::POPULATE_DOCUMENT, $this,
-			array('elasticaDocument' => $elasticaDocument, 'document' => $document, 'mapping' => $mapping));
+			array('elasticaDocument' => $elasticaDocument, 'document' => $document, 'indexDefinition' => $indexDefinition));
 		$em->trigger($event);
+	}
+
+	/**
+	 * @param string $mappingName
+	 * @param string $analysisLCID
+	 * @param array $options
+	 * @return null|\Rbs\Elasticsearch\Std\IndexDefinitionInterface
+	 */
+	public function findIndexDefinition($mappingName, $analysisLCID, array $options = array())
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs($options);
+		$args['mappingName'] = $mappingName;
+		$args['analysisLCID'] = $analysisLCID;
+		$event = new Event(Event::FIND_INDEX_DEFINITION, $this, $args);
+		$em->trigger($event);
+		$indexDefinition = $event->getParam('indexDefinition');
+		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
 	}
 }

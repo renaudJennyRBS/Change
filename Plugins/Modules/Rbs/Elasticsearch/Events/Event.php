@@ -7,10 +7,8 @@ namespace Rbs\Elasticsearch\Events;
 class Event extends \Zend\EventManager\Event
 {
 	const INDEX_DOCUMENT = 'indexDocument';
-	const MAPPING_BY_NAME = 'mappingByName';
-	const ANALYZER_BY_LCID = 'analyzerByLCID';
-
 	const POPULATE_DOCUMENT = 'populateDocument';
+	const FIND_INDEX_DEFINITION = 'findIndexDefinition';
 
 	/**
 	 * @return \Rbs\Elasticsearch\Services\IndexManager

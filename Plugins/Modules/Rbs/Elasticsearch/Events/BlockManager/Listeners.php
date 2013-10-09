@@ -19,7 +19,8 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		new RegisterByBlockName('Rbs_Elasticsearch_ShortSearch.php', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_ShortSearch', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_Result', true, $events);
 	}
 
 	/**

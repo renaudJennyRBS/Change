@@ -23,6 +23,7 @@ class ShortSearch extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('resultSectionId');
 		$parameters->addParameterMeta('searchText');
+		$parameters->addParameterMeta('sectionPageFunction');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$request = $event->getHttpRequest();
@@ -31,7 +32,6 @@ class ShortSearch extends Block
 		{
 			$parameters->setParameterValue('searchText', $searchText);
 		}
-
 		return $parameters;
 	}
 

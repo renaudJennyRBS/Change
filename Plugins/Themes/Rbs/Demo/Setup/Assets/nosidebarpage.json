@@ -73,10 +73,8 @@
 	"contentTop2" : {
 		"id" : "contentTop2",
 		"type" : "block",
-		"name" : "Rbs_Website_XhtmlTemplate",
+		"name" : "Rbs_Elasticsearch_ShortSearch",
 		"parameters" : {
-			"moduleName" : "Rbs_Demo",
-			"templateName" : "xhtml-search.twig"
 		}
 	},
 	"mainContent" : {

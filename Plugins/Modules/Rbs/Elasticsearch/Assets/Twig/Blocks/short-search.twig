@@ -1,0 +1,9 @@
+<form class="form-inline" action="{{ functionURL('Rbs_Elasticsearch_Result', resultSection) }}" method="GET">
+	<input name="sectionPageFunction"  type="hidden" value="Rbs_Elasticsearch_Result" />
+	<div class="input-group">
+		<input name="searchText"  type="text" class="form-control input-small" value="{{ parameters.searchText }}"/>
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-primary btn-small"><i class="glyphicon glyphicon-search"></i></button>
+		</span>
+	</div>
+</form>
