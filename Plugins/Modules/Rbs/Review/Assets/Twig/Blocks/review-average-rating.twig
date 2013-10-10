@@ -1,5 +1,6 @@
+<h2>{{ i18n('m.rbs.review.blocks.review-note-distribution', ['ucf']) }}</h2>
 {% if averageRating %}
-	<p>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</p>
+	<span>{{ i18n('m.rbs.review.blocks.average-rating', ['ucf'], { 'averageRating': averageRating }) }}</span>
 	{% if parameters.showChart %}
 		<div class="container">
 			{% for stars, ratePart in rateParts %}
