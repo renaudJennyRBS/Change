@@ -1,16 +1,17 @@
+{%  if rows %}
+	{% if parameters.mode == 'promoted' %}
+		<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-promoted', ['ucf']) }}</h2>
+	{% elseif parameters.mode == 'recent' %}
+		<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-most-recent', ['ucf']) }}</h2>
+	{% else %}
+		<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-default-manual', ['ucf']) }}</h2>
+	{% endif %}
 
-{% if parameters.mode == 'promoted' %}
-	<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-promoted', ['ucf']) }}</h2>
-{% elseif parameters.mode == 'recent' %}
-	<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-most-recent', ['ucf']) }}</h2>
-{% else %}
-	<h2>{{ i18n('m.rbs.review.blocks.promoted-review-list-title-default-manual', ['ucf']) }}</h2>
+	<ul class="list-unstyled comment-list">
+		{% for row in rows %}
+			<li>
+				{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
+			</li>
+		{% endfor %}
+	</ul>
 {% endif %}
-
-<ul class="list-unstyled comment-list">
-	{% for row in rows %}
-		<li>
-			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
-		</li>
-	{% endfor %}
-</ul>
