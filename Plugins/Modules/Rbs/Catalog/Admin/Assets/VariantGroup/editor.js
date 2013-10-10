@@ -1,15 +1,11 @@
-(function ()
-{
+(function () {
+
 	"use strict";
 
 	/**
-	 * @param $timeout
-	 * @param $http
-	 * @param Loading
-	 * @param REST
-	 * @constructor
+	 * Editor for Rbs_Catalog_VariantGroup Documents.
 	 */
-	function Editor($timeout, $http, Loading, REST)
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', '$timeout', function Editor (REST, $timeout)
 	{
 		return {
 			restrict : 'C',
@@ -17,329 +13,551 @@
 			replace : false,
 			require : 'rbsDocumentEditor',
 
-			link: function (scope, elm, attrs, editorCtrl)
+			controller : function () {},
+
+			link : function (scope, elm, attrs, editorCtrl)
 			{
-				scope.onLoad = function() {
+				var	axesCount = 0,
+					nextProductId = 0;
+
+				scope.path = [];
+				scope.navigationEnd = false;
+				scope.editMode = {};
+				scope.axisValueToAdd = {};
+
+
+				scope.onLoad = function()
+				{
 					if (scope.document.isNew())
 					{
 						scope.document.newSkuOnCreation = true;
 					}
 
-					if (scope.document.productMatrixInfo == null)
+					if (scope.document.productMatrixInfo === null)
 					{
 						scope.document.productMatrixInfo = [];
 					}
+
+					compileAxesInfo();
 				};
 
-				scope.onReady = function() {
-					if (!scope.document.isNew())
-					{
-						scope.selectVariantId(scope.document.rootProduct.id);
-						var c = scope.document.productMatrixInfo;
-						for (var i = 0; i < c.length; i++)
-						{
-							if (c[i].id < scope.newProductId)
-							{
-								scope.newProductId = c[i].id;
-							}
-						}
-						scope.loadProductList();
-					}
-				};
 
-				scope.onReload = function() {
-					scope.loadProductList();
-					scope.buildMatrix();
-				};
-
-				scope.newProductId = 0;
-				scope.axisDefaultValue = {};
-				
-				scope.currentAxisIndex = null;
-				scope.currentAxis = null;
-				scope.variantPath = null;
-				
-				scope.matrix = [];
-				scope.productList = [];
-
-				scope.loadProductList = function() {
-					scope.productList = [];
-
-					REST.call(scope.document.META$.links.self.href + '/Products').then(function(data) {
-						var ct = REST.transformObjectToChangeDocument;
-						for (var i = 0; i < data.resources.length; i++)
-						{
-							var doc = ct(data.resources[i]);
-							if (doc.sku)
-							{
-								doc.sku = ct(doc.sku)
-							}
-							scope.productList.push(doc);
-						}
-					}, function(response) {
-						console.log(response);
-					});
-				};
-
-				scope.selectAxis = function(axisIndex) {
-					var axesInfo = scope.document.axesInfo[axisIndex];
-					var c = scope.document.axesDefinition;
-					for (var i = 0; i < c.length; i++)
-					{
-						if (c[i].id == axesInfo.id)
-						{
-							scope.currentAxisIndex = axisIndex;
-							scope.currentAxis = {"id": axesInfo.id, "info" : axesInfo, "def" :c[i]};
-							return;
-						}
-					}
-				};
-
-				scope.removeAxisDefaultValue = function(axesInfo, value) {
-					var dv = axesInfo.dv;
-					for (var i = 0; i < dv.length; i++)
-					{
-						if (dv[i] === value)
-						{
-							dv.splice(i, 1);
-							scope.buildMatrix();
-							return;
-						}
-					}
-				};
-
-				scope.addAxisDefaultValue = function(axesInfo) {
-					if (angular.isString(scope.axisDefaultValue[axesInfo.id]))
-					{
-						var value = scope.axisDefaultValue[axesInfo.id];
-						if (value != "")
-						{
-							var dv = axesInfo.dv;
-							for (var i = 0; i < dv.length; i++)
-							{
-								if (dv[i].value == value)
-								{
-									return;
-								}
-							}
-							var title = scope.getAxisValueTitle(axesInfo.id, value);
-							axesInfo.dv.push({value:value, label: title, title: title});
-							scope.axisDefaultValue[axesInfo.id] = "";
-							scope.buildMatrix();
-						}
-					}
-				};
-
-				scope.getAxisDefinition = function(axisId) {
-					var c = scope.document.axesDefinition;
-					for (var i = 0; i < c.length; i++)
-					{
-						if (c[i].id == axisId)
-						{
-							return c[i];
-						}
-					}
-					return null;
-				};
-
-				scope.getAxisTitle = function(axisId) {
-					if (scope.document)
-					{
-						var c = scope.document.axesDefinition;
-						for (var i = 0; i < c.length; i++)
-						{
-							if (c[i].id == axisId)
-							{
-								return c[i].label;
-							}
-						}
-					}
-					return null;
-				};
-
-				scope.getAxisValueTitle = function(axisId, value) {
-					if (scope.document)
-					{
-						var c = scope.document.axesDefinition;
-						for (var i = 0; i < c.length; i++)
-						{
-							if (c[i].id == axisId)
-							{
-								if (angular.isArray(c[i].values))
-								{
-									var values = c[i].values;
-									for (var j = 0; j < values.length; j++)
-									{
-										if (values[j].value == value)
-										{
-											return values[j].title;
-										}
-									}
-								}
-								break;
-							}
-						}
-					}
-					return value;
-				};
-
-				scope.selectVariantId = function(variantId) {
-					var productMatrix = scope.findProductInfo(variantId);
-					var variantPath = [];
-					if (productMatrix != null)
-					{
-						do {
-							variantPath.push(productMatrix);
-							productMatrix = scope.findProductInfo(productMatrix.parentId)
-						}	while (productMatrix != null);
-						variantPath.reverse();
-					}
-					scope.variantPath = variantPath;
-					scope.selectAxis(variantPath.length);
-					scope.buildMatrix();
-				};
-
-				scope.findProductInfo = function(productId) {
-					var c = scope.document.productMatrixInfo;
-					for (var i = 0; i < c.length; i++)
-					{
-						if (c[i].id == productId)
-						{
-							return c[i];
-						}
-					}
-					return null;
-				};
-
-				scope.findProductEntry = function(productId, axisId, axisValue) {
-					var c = scope.document.productMatrixInfo;
-					var entry = null;
-					for (var i = 0; i < c.length; i++)
-					{
-						entry = c[i];
-						if (entry.parentId == productId && entry.axisId == axisId && entry.axisValue == axisValue)
-						{
-							return entry;
-						}
-					}
-					return null;
-				};
-
-				scope.isVariantMatrix = function() {
-					if (scope.document)
-					{
-						return (scope.currentAxisIndex + 1) < scope.document.axesInfo.length;
-					}
-					return false;
-				};
-
-				scope.nextVariantAxis = function() {
-					if (scope.isVariantMatrix())
-					{
-						var axesInfo = scope.document.axesInfo[scope.currentAxisIndex + 1];
-						return scope.getAxisDefinition(axesInfo.id);
-					}
-					return null;
-				};
-
-				scope.addVariant = function(entry) {
-					if (entry.hasOwnProperty('removed'))
-					{
-						delete entry.removed;
-					}
-					else
-					{
-						scope.newProductId = scope.newProductId -1;
-						entry.id = scope.newProductId;
-						scope.document.productMatrixInfo.push(entry);
-					}
-				};
-
-				scope.deleteVariant = function(entry) {
-					if (entry.id != 0)
-					{
-						entry.removed = true;
-					}
-				};
-
-				scope.editProduct = function(entry) {
-					if (entry.id > 0)
-					{
-						REST.resource(entry.id).then(
-							function(doc) {
-								scope.cascadeEdit(doc, scope.document.label, function(doc) {
-									console.log('product edited', entry.id);
-								});
-							}
-						)
-					}
-				};
-
-				scope.addAllProduct = function() {
-					var axesInfo = scope.document.axesInfo;
-					var parentId = scope.document.rootProduct.id;
-					scope.addAllAxisProduct(0, parentId, axesInfo);
-					scope.buildMatrix();
-				};
-
-				scope.addAllAxisProduct = function(axisLevel, parentId, axesInfo)
+				scope.toggleEditMode = function (axisIndex)
 				{
-					var ai = axesInfo[axisLevel];
-					var currentAxisId = ai.id;
-					var variant = (axisLevel + 1) < axesInfo.length;
+					elm.find('.axis-column .axis-values .indicator').hide();
+					scope.editMode[axisIndex] = scope.editMode[axisIndex] ? false : true;
+					$timeout(updateIndicators);
+				};
 
-					for (var j = 0; j < ai.dv.length; j++)
-					{
-						var value = ai.dv[j].value;
-						var entry = scope.findProductEntry(parentId, currentAxisId, value);
-						if (entry == null)
-						{
-							entry = {id: 0, parentId: parentId, axisId:currentAxisId, axisValue: value, variant: variant};
-							scope.addVariant(entry);
-						}
-						else if (entry.hasOwnProperty('removed'))
-						{
-							delete entry.removed;
-						}
 
-						if (variant)
-						{
-							scope.addAllAxisProduct((axisLevel + 1), entry.id, axesInfo);
+				scope.inEditMode = function (axisIndex)
+				{
+					return scope.editMode[axisIndex] === true;
+				};
+
+
+				scope.getColumnWidthStyle = function ()
+				{
+					return { 'width': (100.0 / (scope.navigationEnd ? (axesCount+1) : axesCount)) + '%' };
+				};
+
+
+				scope.navigate = function (axisIndex, value, valueIndex)
+				{
+					var product = findProduct(axisIndex, value.value, getParentProductInNav(axisIndex));
+
+					// Product must be selected in order to navigate to next axes.
+					if (! product) {
+						return;
+					}
+
+					// This will remove all the values after 'axisIndex' in 'path' Array.
+					scope.path.length = axisIndex;
+					scope.path[axisIndex] = {
+						value : value,
+						index : valueIndex,
+						product : product
+					};
+					updateIndicators();
+
+					scope.navigationEnd = (scope.path.length === axesCount);
+					loadFinalProduct(product);
+				};
+
+
+				scope.inNavPath = function (axisIndex, value)
+				{
+					return scope.path[axisIndex] && scope.path[axisIndex].value === value;
+				};
+
+
+				scope.selectVariant = function (axisIndex, value, $event)
+				{
+					$event.stopPropagation();
+					selectAxisValue(axisIndex, value, getParentProductInNav(axisIndex));
+				};
+
+
+				scope.unselectVariant = function (axisIndex, value, $event)
+				{
+					$event.stopPropagation();
+					unselectAxisValue(axisIndex, value, getParentProductInNav(axisIndex));
+				};
+
+
+				scope.isVariantSelected = function (axisIndex, value)
+				{
+					var i, item, parentId, axis;
+
+					if (axisIndex === 0) {
+						parentId = scope.document.rootProduct.id;
+					} else if (scope.path.length >= axisIndex) {
+						parentId = scope.path[axisIndex-1].product.id;
+					} else {
+						return 'U';
+					}
+
+					axis = scope.axesInfo[axisIndex];
+
+					for (i=0 ; i<scope.document.productMatrixInfo.length ; i++) {
+						item = scope.document.productMatrixInfo[i];
+						if (item.axisId === axis.id && item.axisValue === value && item.parentId === parentId && ! item.removed) {
+							return 'Y';
 						}
+					}
+
+					return 'N';
+				};
+
+
+				scope.selectAllVariants = function ()
+				{
+					cleanUp();
+					selectAllValuesInAxis(0, scope.document.rootProduct);
+				};
+
+
+				scope.removeAllVariants = function ()
+				{
+					scope.document.productMatrixInfo.length = 0;
+				};
+
+
+				scope.removeAxisValue = function (axisIndex, valueIndex)
+				{
+					var axis = scope.document.axesInfo[axisIndex];
+					removeProductsInAxis(axis, axis.dv[valueIndex].value);
+					axis.dv.splice(valueIndex, 1);
+				};
+
+
+				scope.addAxisValue = function (axisIndex)
+				{
+					var value = scope.axisValueToAdd[axisIndex];
+					scope.document.axesInfo[axisIndex].dv.push(makeValueObject(value));
+					selectAxisValue(axisIndex, value, getParentProductInNav(axisIndex));
+					scope.axisValueToAdd[axisIndex] = null;
+				};
+
+
+				scope.addValueOnEnter = function (axisIndex, $event)
+				{
+					$event.stopPropagation();
+					var form = angular.element($event.target).controller('form');
+					if ($event.keyCode === 13 && form.$valid) {
+						scope.addAxisValue(axisIndex);
 					}
 				};
 
-				scope.buildMatrix = function() {
-					var m = [];
-					var r, dv ;
-					var axisDefaultValues =  scope.currentAxis.info.dv;
-					var currentAxisId =  scope.currentAxis.id;
 
-					var parentId = scope.variantPath.length ?
-						scope.variantPath[scope.variantPath.length - 1].id : scope.document.rootProduct.id;
-					var variant = scope.isVariantMatrix();
+				scope.valueAlreadyExists = function (index)
+				{
+					var form = angular.element(elm.find('.axis-column:nth-child(' + (index+1) + ') [ng-form]')).controller('form');
+					return form.axisValueToAdd.$error.valueExists;
+				};
 
-					for (var i = 0; i < axisDefaultValues.length; i++)
+
+				scope.isInvalid = function (index)
+				{
+					var form = angular.element(elm.find('.axis-column:nth-child(' + (index+1) + ') [ng-form]')).controller('form');
+					return form.$invalid;
+				};
+
+
+				scope.finalProductSaved = function ()
+				{
+					return (getFinalProduct().id > 0);
+				};
+
+
+				scope.getFinalProductUrl = function ()
+				{
+					var doc = REST.newResource('Rbs_Catalog_Product');
+					doc.id = getFinalProduct().id;
+					return doc.url();
+				};
+
+
+				// `axesInfo` should be recompiled when `document.axesInfo` changes.
+				scope.$watch('document.axesInfo', function (axesInfo, old) {
+					if (axesInfo && axesInfo !== old) {
+						compileAxesInfo();
+					}
+				}, true);
+
+
+				function updateIndicators ()
+				{
+					var i, $lv, $rv, $lCol, $rCol, lTop, rTop, top, height, offset;
+
+					elm.find('.axis-column .axis-values .indicator').hide();
+					for (i=1 ; i < scope.path.length ; i++)
 					{
-						dv = axisDefaultValues[i];
-						r = [dv];
-						var entry = scope.findProductEntry(parentId, currentAxisId, dv.value);
-						if (entry == null)
-						{
-							entry = {id: 0, parentId: parentId, axisId:currentAxisId, axisValue: dv.value, variant: variant}
+						$lCol = elm.find('.axis-column:nth-child(' + (i) + ') .axis-values');
+						$rCol = elm.find('.axis-column:nth-child(' + (i+1) + ') .axis-values');
+
+						$lv = $lCol.find('.axis-value:nth-child(' + (scope.path[i-1].index+1) + ')');
+						$rv = $rCol.find('.axis-value:nth-child(' + (scope.path[i].index+1) + ')');
+
+						lTop = $lv.position().top;
+						rTop = $rv.position().top;
+
+						if (scope.editMode[i]) {
+							offset = $rCol.parent().find('.axis-header').outerHeight() - $lCol.parent().find('.axis-header').outerHeight();
+							lTop -= offset;
 						}
-						r.push(entry);
-						m.push(r);
+
+						if (scope.editMode[i-1]) {
+							offset = $lCol.parent().find('.axis-header').outerHeight() - $rCol.parent().find('.axis-header').outerHeight();
+							lTop += offset;
+						}
+
+						if (lTop < rTop) {
+							top = lTop;
+							height = rTop - lTop + $rv.outerHeight();
+						}
+						else {
+							top = rTop;
+							height = lTop - rTop + $lv.outerHeight();
+						}
+
+						elm.find('.axis-column:nth-child(' + (i+1) + ') .axis-values .indicator')
+							.css({ height : height+'px', top : top+'px' })
+							.show();
+					}
+				}
+
+
+				function removeProductsInAxis (axis, value)
+				{
+					angular.forEach(scope.document.productMatrixInfo, function (product) {
+						if (product.axisId === axis.id && product.axisValue === value) {
+							product.removed = true;
+							removeChildProducts(product);
+						}
+					});
+				}
+
+
+				function removeChildProducts (parentProduct)
+				{
+					angular.forEach(scope.document.productMatrixInfo, function (product) {
+						if (product.parentId === parentProduct.id) {
+							product.removed = true;
+							removeChildProducts(product);
+						}
+					});
+				}
+
+
+				function getFinalProduct ()
+				{
+					return scope.path[scope.path.length-1].product;
+				}
+
+
+				function makeValueObject (value)
+				{
+					return {
+						value : value,
+						title : value,
+						label : value
+					};
+				}
+
+
+				function loadFinalProduct (product)
+				{
+					if (scope.navigationEnd) {
+						scope.loadingFinalProduct = true;
+						REST.resource('Rbs_Catalog_Product', product.id).then(function (product) {
+							scope.loadingFinalProduct = false;
+							scope.finalProduct = product;
+						});
+					}
+					else {
+						scope.finalProduct = null;
+					}
+				}
+
+
+				/**
+				 * Returns the product associated to the current path for the given `axisIndex`.
+				 *
+				 * @param axisIndex
+				 * @returns {*}
+				 */
+				function getParentProductInNav (axisIndex)
+				{
+					if (axisIndex === 0) {
+						return scope.document.rootProduct;
+					}
+					else if (scope.path.length >= axisIndex) {
+						return scope.path[axisIndex-1].product;
+					}
+					return null;
+				}
+
+
+				/**
+				 * Selects the given `value` in the given `axisIndex` for the given `parentProduct`.
+				 *
+				 * @param axisIndex
+				 * @param value
+				 * @param parentProduct
+				 */
+				function selectAxisValue (axisIndex, value, parentProduct)
+				{
+					if (! parentProduct) {
+						return;
 					}
 
-					scope.matrix = m;
-				};
+					var product = findProduct(axisIndex, value, parentProduct);
+
+					if (product) {
+						delete product.removed;
+					}
+					else {
+						product = {
+							id : getNextProductId(),
+							parentId : parentProduct.id,
+							axisId : scope.axesInfo[axisIndex].id,
+							axisValue : value,
+							variant : ((axisIndex + 1) < scope.axesInfo.length)
+						};
+						scope.document.productMatrixInfo.push(product);
+					}
+
+					return product;
+				}
+
+
+				/**
+				 * Unselects the given `value` in the given `axisIndex` for the given `parentProduct`.
+				 *
+				 * @param axisIndex
+				 * @param value
+				 * @param parentProduct
+				 */
+				function unselectAxisValue (axisIndex, value, parentProduct)
+				{
+					var product = findProduct(axisIndex, value, parentProduct);
+					if (product) {
+						product.removed = true;
+					}
+				}
+
+
+				/**
+				 * Removes all the temporary products (ID < 0).
+				 */
+				function cleanUp ()
+				{
+					var i = 0, item;
+					if (scope.document.productMatrixInfo.length) {
+						do {
+							item = scope.document.productMatrixInfo[i];
+							// Temporary items have negative IDs.
+							if (item.id < 0) {
+								console.log("removing temp product: ", item.id, " at ", i);
+								scope.document.productMatrixInfo.splice(i, 1);
+							}
+							else {
+								i++;
+							}
+						} while (i < scope.document.productMatrixInfo);
+					}
+				}
+
+
+				/**
+				 * Selects all the variants of the axis `axisIndex`.
+				 *
+				 * @param axisIndex
+				 * @param parentProduct
+				 */
+				function selectAllValuesInAxis (axisIndex, parentProduct)
+				{
+					var	vi,
+						axis = scope.axesInfo[axisIndex],
+						product;
+
+					for (vi=0 ; vi < axis.dv.length ; vi++)
+					{
+						product = selectAxisValue(axisIndex, axis.dv[vi].value, parentProduct);
+						if (axisIndex < (scope.axesInfo.length - 1))
+						{
+							selectAllValuesInAxis(axisIndex+1, product);
+						}
+					}
+				}
+
+
+				/**
+				 * Finds a product in the `productMatrixInfo` for the given axisIndex, value and parentProduct.
+				 *
+				 * @param axisIndex
+				 * @param value
+				 * @param parentProduct
+				 * @returns {*}
+				 */
+				function findProduct (axisIndex, value, parentProduct)
+				{
+					var	i,
+						product,
+						axis = scope.axesInfo[axisIndex];
+
+					for (i=0 ; i < scope.document.productMatrixInfo.length ; i++) {
+						product = scope.document.productMatrixInfo[i];
+						if (product.axisId === axis.id && product.axisValue === value && product.parentId === parentProduct.id) {
+							return product;
+						}
+					}
+
+					return null;
+				}
+
+
+				/**
+				 * Returns the next temporary product ID (temporary IDs are < 0).
+				 *
+				 * @returns {number}
+				 */
+				function getNextProductId ()
+				{
+					nextProductId--;
+					return nextProductId;
+				}
+
+
+				/**
+				 * Compiles different pieces of information about axes.
+				 */
+				function compileAxesInfo ()
+				{
+					var axesInfo = [];
+					axesCount = 0;
+					angular.forEach(scope.document.axesInfo, function (def, index) {
+						axesInfo.push(angular.extend({
+							index : index,
+							label : scope.document.axesDefinition[index].label
+						}, def));
+						axesCount++;
+					});
+					scope.axesInfo = axesInfo;
+					scope.possibleVariantsCount = getPossibleVariantsCount();
+				}
+
+
+				/**
+				 * Computes the number of possible variants.
+				 *
+				 * @returns {number}
+				 */
+				function getPossibleVariantsCount ()
+				{
+					if (! scope.axesInfo) {
+						return 0;
+					}
+
+					var	i,
+						p = [],
+						count = 0,
+						mul = function (a, b) { return a * b; };
+
+					for (i=0 ; i<scope.axesInfo.length ; i++) {
+						p.push(scope.axesInfo[i].dv.length);
+					}
+					while (p.length > 0)
+					{
+						count += p.reduce(mul);
+						p.length = p.length - 1;
+					}
+
+					return count;
+				}
+
 
 				editorCtrl.init('Rbs_Catalog_VariantGroup');
 			}
 		};
-	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', Editor);
+	}]);
+
+
+	angular.module('RbsChange').filter('rbsVariantGroupEditorValidProductsCount', function () {
+		return function (input) {
+			var count = 0;
+			angular.forEach(input, function (product) {
+				if (! product.removed) {
+					count++;
+				}
+			});
+			return count;
+		};
+	});
+
+
+	/**
+	 * This Directive validates the input for a new value in an axis:
+	 * it checks if the value already exists in the given axis.
+	 *
+	 * @attribute axis-index="number"
+	 */
+	angular.module('RbsChange').directive('rbsVariantGroupEditorNewAxisValueValidator', ['RbsChange.Utils', function (Utils)
+	{
+		return {
+			require : [ 'ngModel', '^rbsDocumentEditorRbsCatalogVariantGroup' ],
+			scope : false,
+
+			link : function (scope, iElement, iAttr, ctrls)
+			{
+				var	axisIndex = iAttr.axisIndex,
+					ngModel = ctrls[0];
+
+				function validate (value) {
+					var	i,
+						axis = scope.axesInfo[axisIndex],
+						valid = true;
+					for (i=0 ; i<axis.dv.length && valid ; i++) {
+						valid = ! Utils.equalsIgnoreCase(value, axis.dv[i].value);
+					}
+					ngModel.$setValidity('valueExists', valid);
+					return valid ? value : undefined;
+				}
+
+				// For DOM -> model validation
+				ngModel.$parsers.unshift(function(value) {
+					return validate(value);
+				});
+
+				// For model -> DOM validation
+				ngModel.$formatters.unshift(function(value) {
+					validate(value);
+					return value;
+				});
+			}
+		};
+	}]);
+
 })();
