@@ -5,16 +5,16 @@
 
 		<div data-ng-if="document.isNew()">
 			<rbs-field-picker required="true" property="rootProduct"
-			                  label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.rootproduct', ['ucf']) }}"
+			                  label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}"
 			                  accepted-model="Rbs_Catalog_Product"
-			                  selector-title="{{ i18nAttr('m.rbs.catalog.document.variantgroup.rootproduct-picker-title', ['ucf']) }}"
+			                  selector-title="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct-picker-title', ['ucf']) }}"
 			                  allow-creation="true"
 			                  allow-edition="false"
 			                  picker-template="picker-empty-group.twig">
 			</rbs-field-picker>
 
 			<rbs-field required="true" property="axisAttribute"
-			           label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.axisattribute', ['ucf']) }}">
+			           label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.axisattribute', ['ucf']) }}">
 				<select ng-required="true" ng-model="document.axisAttribute"
 				        rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
 					<option value="">{{ i18n('m.rbs.admin.forms.picker-choose', ['ucf']) }}</option>
@@ -23,7 +23,7 @@
 		</div>
 
 		<div class="control-group" ng-hide="document.isNew()">
-			<label class="control-label">{{ i18n('m.rbs.catalog.document.variantgroup.rootproduct', ['ucf']) }}</label>
+			<label class="control-label">{{ i18n('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}</label>
 			<div class="controls">
 				<span class="uneditable-input input-xlarge">
 					<a href ng-href="(= document.rootProduct | documentURL =)">(= document.rootProduct.label =)</a>
@@ -32,12 +32,12 @@
 		</div>
 
 		<rbs-field-boolean property="newSkuOnCreation"
-		                   label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.newskuoncreation', ['ucf']) }}">
+		                   label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.newskuoncreation', ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<div data-ng-if="! document.isNew()">
 			<div rbs-tip="rbsVariantGroupEditorHelp">
-				{{ i18n('m.rbs.catalog.document.variantgroup.help-tip', ['ucf']) }}
+				{{ i18n('m.rbs.catalog.documents.variantgroup.help-tip', ['ucf']) }}
 			</div>
 
 			<ul class="breadcrumb variant-group-editor">
@@ -65,21 +65,21 @@
 						<div ng-form="" ng-if="inEditMode(axis.index)">
 							<p>
 								<label class="checkbox">
-
 									<input type="checkbox" ng-model="document.axesInfo[axis.index].cat"/>
+									{{ i18n('m.rbs.catalog.documents.variantgroup.visibility-head', ['ucf']) }}
 								</label>
 							</p>
-							<p>{{ i18n('m.rbs.catalog.document.variantgroup.add-axis-value', ['ucf']) }}</p>
+							<p>{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis-value', ['ucf']) }}</p>
 							<p>
 								<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
 								       auto-focus="" autocapitalize="off" type="text" class="input-block-level" required="required"
 								       name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
+							<p class="text-error" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.value-already-exists', ['ucf']) }}</p>
 							<div class="btn-toolbar">
-								<button class="btn" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.document.variantgroup.cancel', ['ucf']) }}</button>
-								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.document.variantgroup.add', ['ucf']) }}</button>
+								<button class="btn" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.cancel', ['ucf']) }}</button>
+								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.add', ['ucf']) }}</button>
 							</div>
 							</p>
-							<p class="text-error" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.document.variantgroup.value-already-exists', ['ucf']) }}</p>
 						</div>
 					</div>
 
@@ -112,7 +112,7 @@
 						<div class="axis-value" style="cursor: default" ng-switch="finalProductSaved()">
 							<div ng-switch-when="true" ng-switch="loadingFinalProduct">
 								<div ng-switch-when="true">
-									<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.document.variantgroup.loading-product-info', ['ucf']) }}
+									<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.documents.variantgroup.loading-product-info', ['ucf']) }}
 								</div>
 								<div ng-switch-when="false">
 									<h4 ng-bind="finalProduct.label"></h4>
@@ -120,15 +120,15 @@
 										<img ng-repeat="visual in finalProduct.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
 									</p>
 									<p ng-if="! finalProduct.visuals.length">
-										<em class="muted">{{ i18n('m.rbs.catalog.document.variantgroup.no-visuals', ['ucf']) }}</em>
+										<em class="muted">{{ i18n('m.rbs.catalog.documents.variantgroup.no-visuals', ['ucf']) }}</em>
 									</p>
 									<p>
-										<a href="javascript:;" ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.document.variantgroup.go-to-product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+										<a href="javascript:;" ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.documents.variantgroup.go-to-product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 									</p>
 								</div>
 							</div>
 							<div ng-switch-when="false" class="alert alert-warning">
-								{{ i18n('m.rbs.catalog.document.variantgroup.product-does-not-exist-yet') }}
+								{{ i18n('m.rbs.catalog.documents.variantgroup.product-does-not-exist-yet') }}
 							</div>
 						</div>
 					</div>
@@ -138,17 +138,17 @@
 
 			<div class="well" style="margin-top: 20px;">
 				<span class="pull-right">
-					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.document.variantgroup.generate-all-action', ['ucf']) }}</button>
-					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.document.variantgroup.remove-all-action', ['ucf']) }}</button>
+					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.documents.variantgroup.generate-all-action', ['ucf']) }}</button>
+					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.documents.variantgroup.remove-all-action', ['ucf']) }}</button>
 				</span>
 				<h4>
 					<span ng-bind="document.productMatrixInfo | rbsVariantGroupEditorValidProductsCount"></span>
-					{{ i18n('m.rbs.catalog.document.variantgroup.existing-products-of') }}
+					{{ i18n('m.rbs.catalog.documents.variantgroup.existing-products-of') }}
 					<span ng-bind="possibleVariantsCount"></span>
-					{{ i18n('m.rbs.catalog.document.variantgroup.possible-products') }}
+					{{ i18n('m.rbs.catalog.documents.variantgroup.possible-products') }}
 				</h4>
 				<p><span class="label label-info">Info</span>
-					{{ i18n('m.rbs.catalog.document.variantgroup.products-will-be-created-when-this-form-is-submitted', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.documents.variantgroup.products-will-be-created-when-this-form-is-submitted', ['ucf']) }}
 				</p>
 			</div>
 
@@ -157,14 +157,14 @@
 
 
 	<fieldset data-ng-show="section=='product'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.document.variantgroup.products-section', ['ucf']) }}"
+	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.products-section', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<table class="document-list table table-condensed table-bordered table-striped table-hover token">
 			<thead>
 			<tr>
 				<th>
-					{{ i18n('m.rbs.catalog.document.variantgroup.label', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.documents.variantgroup.label', ['ucf']) }}
 				</th>
 				<th>
 					{{ i18n('m.rbs.catalog.document.product.sku', ['ucf']) }}
