@@ -26,6 +26,7 @@
 	<key id="publicationsections-picker-title">sélectionnez les sections dans lesquelles publier le produit</key>
 
 	<key id="attribute">jeu d'attributs</key>
+	<key id="attribute-select">choisissez un jeu d'attributs</key>
 	<key id="section-attributes">Attributs étendus</key>
 
 	<key id="price-section-help" format="html">
