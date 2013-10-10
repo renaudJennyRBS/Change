@@ -64,17 +64,28 @@
 	background: #F5F5F5;
 }
 
-.axes-columns-nav .axis-column .axis-value.between-selection {
-	border-right: 5px solid #0088cc;
-	margin-right: -1px;
-	z-index: 1;
-	position: relative;
-}
-
 .breadcrumb.variant-group-editor {
 	margin: 0;
 	box-shadow: none;
 	border: 1px solid #E6E6E6;
 	border-radius: 0;
 	border-style: solid solid dashed;
+}
+
+/* Visual links between columns */
+
+.axes-columns-nav .axis-column .axis-values {
+	position: relative;
+}
+
+.axes-columns-nav .axis-column .axis-values .indicator {
+	position: absolute;
+	left: -4px;
+	top: 0;
+	width: 8px;
+	height: 0;
+	background: #0088cc;
+	z-index: 10;
+	border-radius: 4px;
+	display: none;
 }

@@ -5,7 +5,7 @@
 	/**
 	 * Editor for Rbs_Catalog_VariantGroup Documents.
 	 */
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', function Editor (REST)
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', '$timeout', function Editor (REST, $timeout)
 	{
 		return {
 			restrict : 'C',
@@ -44,7 +44,9 @@
 
 				scope.toggleEditMode = function (axisIndex)
 				{
+					elm.find('.axis-column .axis-values .indicator').hide();
 					scope.editMode[axisIndex] = scope.editMode[axisIndex] ? false : true;
+					$timeout(updateIndicators);
 				};
 
 
@@ -76,6 +78,7 @@
 						index : valueIndex,
 						product : product
 					};
+					updateIndicators();
 
 					scope.navigationEnd = (scope.path.length === axesCount);
 					loadFinalProduct(product);
@@ -85,17 +88,6 @@
 				scope.inNavPath = function (axisIndex, value)
 				{
 					return scope.path[axisIndex] && scope.path[axisIndex].value === value;
-				};
-
-
-				scope.isBetween = function (axisIndex, $index)
-				{
-					if (scope.path.length <= (axisIndex+1)) {
-						return false;
-					}
-					var	l = scope.path[axisIndex].index,
-						r = scope.path[axisIndex+1].index;
-					return $index >= Math.min(l, r) && $index <= Math.max(l, r);
 				};
 
 
@@ -212,6 +204,48 @@
 						compileAxesInfo();
 					}
 				}, true);
+
+
+				function updateIndicators ()
+				{
+					var i, $lv, $rv, $lCol, $rCol, lTop, rTop, top, height, offset;
+
+					elm.find('.axis-column .axis-values .indicator').hide();
+					for (i=1 ; i < scope.path.length ; i++)
+					{
+						$lCol = elm.find('.axis-column:nth-child(' + (i) + ') .axis-values');
+						$rCol = elm.find('.axis-column:nth-child(' + (i+1) + ') .axis-values');
+
+						$lv = $lCol.find('.axis-value:nth-child(' + (scope.path[i-1].index+1) + ')');
+						$rv = $rCol.find('.axis-value:nth-child(' + (scope.path[i].index+1) + ')');
+
+						lTop = $lv.position().top;
+						rTop = $rv.position().top;
+
+						if (scope.editMode[i]) {
+							offset = $rCol.parent().find('.axis-header').outerHeight() - $lCol.parent().find('.axis-header').outerHeight();
+							lTop -= offset;
+						}
+
+						if (scope.editMode[i-1]) {
+							offset = $lCol.parent().find('.axis-header').outerHeight() - $rCol.parent().find('.axis-header').outerHeight();
+							lTop += offset;
+						}
+
+						if (lTop < rTop) {
+							top = lTop;
+							height = rTop - lTop + $rv.outerHeight();
+						}
+						else {
+							top = rTop;
+							height = lTop - rTop + $lv.outerHeight();
+						}
+
+						elm.find('.axis-column:nth-child(' + (i+1) + ') .axis-values .indicator')
+							.css({ height : height+'px', top : top+'px' })
+							.show();
+					}
+				}
 
 
 				function removeProductsInAxis (axis, value)
@@ -368,7 +402,7 @@
 						axis = scope.axesInfo[axisIndex],
 						product;
 
-					for (vi=0 ; vi<axis.dv.length ; vi++)
+					for (vi=0 ; vi < axis.dv.length ; vi++)
 					{
 						product = selectAxisValue(axisIndex, axis.dv[vi].value, parentProduct);
 						if (axisIndex < (scope.axesInfo.length - 1))
@@ -393,7 +427,7 @@
 						product,
 						axis = scope.axesInfo[axisIndex];
 
-					for (i=0 ; i<scope.document.productMatrixInfo.length ; i++) {
+					for (i=0 ; i < scope.document.productMatrixInfo.length ; i++) {
 						product = scope.document.productMatrixInfo[i];
 						if (product.axisId === axis.id && product.axisValue === value && product.parentId === parentProduct.id) {
 							return product;
@@ -409,7 +443,8 @@
 				 *
 				 * @returns {number}
 				 */
-				function getNextProductId () {
+				function getNextProductId ()
+				{
 					nextProductId--;
 					return nextProductId;
 				}
