@@ -5,8 +5,8 @@
 	<properties>
 		<property name="label" stateless="true" />
 		<property name="name" type="String" />
-		<property name="clientName" type="String" default-value="front"/>
-		<property name="analysisLCID" type="String" />
+		<property name="clientName" type="String" required="true"/>
+		<property name="analysisLCID" type="String" required="true" />
 		<property name="configurationData" type="JSON" />
 		<property name="website" type="Document" document-type="Rbs_Website_Website" />
 	</properties>

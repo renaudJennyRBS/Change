@@ -28,7 +28,8 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	 */
 	public function getConfiguration()
 	{
-		return $this->getConfigurationData();
+		$configuration = $this->getConfigurationData();
+		return is_array($configuration) ? $configuration : array();
 	}
 
 	/**

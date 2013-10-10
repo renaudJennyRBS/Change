@@ -59,7 +59,7 @@
 				"filter": {
 					"text_snowball": {
 						"type": "snowball",
-						"name": "French"
+						"name": "English"
 					},
 					"auto_ngram":{
 						"type":"ngram",

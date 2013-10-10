@@ -30,14 +30,19 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	protected $clients = array();
 
 	/**
-	 * @var \Elastica\Index[]
+	 * @var array
 	 */
-	protected $indexCollection = array();
+	protected $clientsConfiguration = null;
 
 	/**
 	 * @var array
 	 */
-	protected $clientsConfiguration = null;
+	protected $clientBulks = array();
+
+	/**
+	 * @var array
+	 */
+	protected $clientIndexes = array();
 
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
@@ -138,58 +143,152 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getClient($clientName)
 	{
-		$client = null;
+		$clientsNames = $this->getClientsName();
 		if ($clientName === null)
 		{
-			$names = $this->getClientsName();
-			$clientName = count($names) ? $names[0] : null;
+			$clientName = count($clientsNames) ? $clientsNames[0] : null;
+		}
+		elseif (!in_array($clientName, $clientsNames))
+		{
+			$clientName = null;
 		}
 
-		if (is_string($clientName))
+		if ($clientName)
 		{
-			if (!isset($this->clients[$clientName]))
+			if (!array_key_exists($clientName, $this->clients))
 			{
-				$config = $this->getApplicationServices()->getApplication()->getConfiguration()
-					->getEntry('Rbs/Elasticsearch/clients/' . $clientName, []);
-				if (is_array($config) && count($config))
+				$this->clients[$clientName] = null;
+
+				$config = $this->clientsConfiguration[$clientName];
+				try
 				{
-					$client = $this->initConnection($clientName, $config);
+					if (is_array($config) && count($config))
+					{
+						$this->clients[$clientName] = new \Elastica\Client($config);
+					}
+				}
+				catch (\Exception $e)
+				{
+					//Invalid Client configuration
+					$this->getApplicationServices()->getLogging()->exception($e);
 				}
 			}
-			else
-			{
-				$client = $this->clients[$clientName];
-			}
+			return $this->clients[$clientName];
 		}
 
-		return $client;
-	}
-
-	/**
-	 * @param string $clientName
-	 * @param array $config
-	 * @return \Elastica\Client
-	 */
-	protected function initConnection($clientName, $config)
-	{
-		$this->clients[$clientName] = new \Elastica\Client($config);
-		return $this->clients[$clientName];
+		return null;
 	}
 
 	/**
 	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
 	 * @return \Elastica\Index|null
 	 */
-	public function createIndex($indexDefinition)
+	protected function createIndex($indexDefinition)
 	{
 		$client = $this->getClient($indexDefinition->getClientName());
-		if ($client)
+		$index = $client->getIndex($indexDefinition->getName());
+		$index->create($indexDefinition->getConfiguration());
+		return $index;
+	}
+
+	/**
+	 * @param string $clientName
+	 * @param Document $document
+	 */
+	public function documentToAdd($clientName, $document)
+	{
+		if (!array_key_exists($clientName, $this->clientBulks))
 		{
-			$index = $client->getIndex($indexDefinition->getName());
-			$index->create($indexDefinition->getConfiguration());
-			return $index;
+			$client = $this->getClient($clientName);
+			if ($client)
+			{
+				$this->clientBulks[$clientName] = new \Elastica\Bulk($client);
+			}
+			else
+			{
+				$this->clientBulks[$clientName] = false;
+			}
 		}
-		return null;
+		$bulk = $this->clientBulks[$clientName];
+
+		if ($bulk instanceof \Elastica\Bulk)
+		{
+			$indexName = $document->getIndex();
+			if ($this->ensureIndexExist($clientName, $indexName))
+			{
+				$bulk->addDocument($document);
+			}
+		}
+	}
+
+	/**
+	 * @param string $clientName
+	 * @param string$indexName
+	 * @param string $id
+	 */
+	public function documentIdToDelete($clientName, $indexName, $id)
+	{
+		if (!array_key_exists($clientName, $this->clientBulks))
+		{
+			$client = $this->getClient($clientName);
+			if ($client)
+			{
+				$this->clientBulks[$clientName] = new \Elastica\Bulk($client);
+			}
+			else
+			{
+				$this->clientBulks[$clientName] = false;
+			}
+		}
+
+		$bulk = $this->clientBulks[$clientName];
+		if ($bulk instanceof \Elastica\Bulk)
+		{
+			if ($this->ensureIndexExist($clientName, $indexName))
+			{
+				$bulk->addAction((new \Elastica\Bulk\Action(\Elastica\Bulk\Action::OP_TYPE_DELETE))->setId($id)->setIndex($indexName));
+			}
+		}
+	}
+
+	/**
+	 * @param $clientName
+	 * @param $indexName
+	 * @return boolean
+	 */
+	protected function ensureIndexExist($clientName, $indexName)
+	{
+		if (!isset( $this->clientIndexes[$clientName][$indexName]))
+		{
+			$this->clientIndexes[$clientName][$indexName] = false;
+
+			try
+			{
+				$client = $this->getClient($clientName);
+				if (!$client->getStatus()->indexExists($indexName))
+				{
+					$def = $this->findIndexDefinitionByName($clientName, $indexName);
+					if ($def)
+					{
+						$index = $this->createIndex($def);
+						if ($index->exists())
+						{
+							$this->clientIndexes[$clientName][$indexName] = true;
+						}
+					}
+				}
+				else
+				{
+					$this->clientIndexes[$clientName][$indexName] = true;
+				}
+			}
+			catch (\Exception $e)
+			{
+				//Unable to create Index
+				$this->getApplicationServices()->getLogging()->exception($e);
+			}
+		}
+		return $this->clientIndexes[$clientName][$indexName];
 	}
 
 	/**
@@ -201,6 +300,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
+		$this->clientBulks = array();
 
 		$mm = $this->getDocumentServices()->getModelManager();
 		$dm = $this->getDocumentServices()->getDocumentManager();
@@ -231,6 +331,17 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 				$dm->popLCID($e);
 			}
 		}
+
+		/* @var $bulk \Elastica\Bulk */
+		foreach ($this->clientBulks as $bulk)
+		{
+			if ($bulk)
+			{
+				$bulk->send();
+			}
+		}
+
+		$this->clientBulks = array();
 	}
 
 	/**
@@ -252,12 +363,30 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param array $options
 	 * @return null|\Rbs\Elasticsearch\Std\IndexDefinitionInterface
 	 */
-	public function findIndexDefinition($mappingName, $analysisLCID, array $options = array())
+	public function findIndexDefinitionByMapping($mappingName, $analysisLCID, array $options = array())
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($options);
 		$args['mappingName'] = $mappingName;
 		$args['analysisLCID'] = $analysisLCID;
+		$event = new Event(Event::FIND_INDEX_DEFINITION, $this, $args);
+		$em->trigger($event);
+		$indexDefinition = $event->getParam('indexDefinition');
+		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
+	}
+
+	/**
+	 * @param string $clientName
+	 * @param string $indexName
+	 * @param array $options
+	 * @return null|\Rbs\Elasticsearch\Std\IndexDefinitionInterface
+	 */
+	public function findIndexDefinitionByName($clientName, $indexName, array $options = array())
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs($options);
+		$args['clientName'] = $clientName;
+		$args['indexName'] = $indexName;
 		$event = new Event(Event::FIND_INDEX_DEFINITION, $this, $args);
 		$em->trigger($event);
 		$indexDefinition = $event->getParam('indexDefinition');
