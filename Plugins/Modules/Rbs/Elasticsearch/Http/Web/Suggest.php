@@ -20,7 +20,7 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
 		$indexManager->setDocumentServices($event->getDocumentServices());
 
-		$indexDef = $indexManager->findIndexDefinition('fulltext', 'fr_FR', array('website' => $event->getWebsite()));
+		$indexDef = $indexManager->findIndexDefinitionByMapping('fulltext', 'fr_FR', array('website' => $event->getWebsite()));
 		if ($indexDef)
 		{
 			$datas = array('name' => $indexDef->getName());

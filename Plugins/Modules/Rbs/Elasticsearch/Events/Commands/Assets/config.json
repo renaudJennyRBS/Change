@@ -14,5 +14,12 @@
 				"default": null
 			}
 		}
+	},
+	"rbs_elasticsearch:index": {
+		"description": "Documents Indexation",
+		"options": {
+		},
+		"arguments": {
+		}
 	}
 }

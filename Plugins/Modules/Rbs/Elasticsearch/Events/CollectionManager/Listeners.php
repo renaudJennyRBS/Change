@@ -1,17 +1,16 @@
 <?php
-namespace Rbs\Elasticsearch\Events\Commands;
+namespace Rbs\Elasticsearch\Events\CollectionManager;
 
-use Change\Commands\Events\Event;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Json\Json;
+use Change\Collection\CollectionManager;
 
 /**
- * @name \Rbs\Elasticsearch\Events\Commands\Listeners
+ * @name \Rbs\Elasticsearch\Events\CollectionManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -23,27 +22,22 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$commandConfigPath = __DIR__ . '/Assets/config.json';
-			if (is_file($commandConfigPath))
+			switch ($event->getParam('code'))
 			{
-				return Json::decode(file_get_contents($commandConfigPath), Json::TYPE_ARRAY);
+				case 'Rbs_Elasticsearch_Collection_Clients':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addClients($event);
+					break;
 			}
-			return null;
 		};
-		$events->attach('config', $callback);
+		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
 
-		$callback = function ($event)
+		$callback = function (Event $event)
 		{
-			(new \Rbs\Elasticsearch\Commands\Client())->execute($event);
+			$codes = $event->getParam('codes', array());
+			$codes[] = 'Rbs_Elasticsearch_Collection_Clients';
+			$event->setParam('codes', $codes);
 		};
-		$events->attach('rbs_elasticsearch:client', $callback);
-
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Elasticsearch\Commands\Index())->execute($event);
-		};
-		$events->attach('rbs_elasticsearch:index', $callback);
+		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);
 	}
 
 	/**

@@ -18,40 +18,42 @@ class Client
 		$applicationServices = new \Change\Application\ApplicationServices($application);
 		$im = new IndexManager();
 		$im->setApplicationServices($applicationServices);
-		try
+
+		if ($event->getParam('list'))
 		{
-			if ($event->getParam('list'))
+			$clientsName = $im->getClientsName();
+			$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
+		}
+		elseif (is_string($name = $event->getParam('name')))
+		{
+			$client = $im->getClient($name);
+			if ($client)
 			{
-				$clientsName = $im->getClientsName();
-				$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
-			}
-			elseif (is_string($name = $event->getParam('name')))
-			{
-				$client = $im->getClient($name);
-				if ($client)
+				try
 				{
 					$status = $client->getStatus();
 					$srvStat = $status->getServerStatus();
 					if ($srvStat['ok'])
 					{
-						$event->addInfoMessage('Server: '. $srvStat['name'] .' ('. $srvStat['version']['number'] .') is ok ('. $srvStat['status'] .')');
-						$event->addInfoMessage('  Index names: '. implode(', ', $status->getIndexNames()));
+						$event->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
+						. $srvStat['status'] . ')');
+						$event->addInfoMessage('  Index names: ' . implode(', ', $status->getIndexNames()));
 					}
 					else
 					{
-						$event->addErrorMessage('Error: '. print_r($srvStat, true));
+						$event->addErrorMessage('Error: ' . print_r($srvStat, true));
 					}
 				}
-				else
+				catch (\Exception $e)
 				{
-					$event->addErrorMessage('Invalid client name: '. $name);
+					$applicationServices->getLogging()->exception($e);
+					$event->addErrorMessage('Error on client ' . $name . ': ' . $e->getMessage());
 				}
 			}
-		}
-		catch (\Exception $e)
-		{
-			$applicationServices->getLogging()->exception($e);
-			$event->addErrorMessage('Exception: ' . $e->getMessage());
+			else
+			{
+				$event->addErrorMessage('Invalid client name: ' . $name);
+			}
 		}
 	}
 }
