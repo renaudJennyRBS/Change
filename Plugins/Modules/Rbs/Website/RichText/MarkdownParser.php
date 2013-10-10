@@ -35,7 +35,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	{
 		$link_text  = $this->runSpanGamut($matches[2]);
 		$documentId = $matches[3] == '' ? $matches[4] : $matches[3];
-		$title      = $matches[7];
+		$title      = isset($matches[7]) ?  $matches[7] : null;
 
 		$params = explode(',', $documentId);
 		$model = null;

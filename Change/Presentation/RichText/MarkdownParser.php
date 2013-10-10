@@ -57,7 +57,7 @@ class MarkdownParser extends \Michelf\Markdown {
 	{
 		$alt_text = $matches[2];
 		$mediaId  = $matches[3] == '' ? $matches[4] : $matches[3];
-		$title    = $matches[7];
+		$title    = isset($matches[7]) ? $matches[7] : null;
 		$alt_text = $this->encodeAttribute($alt_text);
 
 		$params = explode(',', $mediaId);
