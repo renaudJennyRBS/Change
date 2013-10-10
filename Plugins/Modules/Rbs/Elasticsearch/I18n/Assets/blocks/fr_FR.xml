@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.elasticsearch.blocks" lcid="fr_FR">
 	<key id="shortsearch">Champ de recherche</key>
-	<key id="shortsearch-resultsectionid">Section d'affichage des resultats</key>
-
+	<key id="shortsearch-resultsectionid">Section d'affichage des résultats</key>
 	<key id="result">Résultat d'une recherche</key>
 	<key id="result-function">Résultat de la recherche</key>
-	<key id="result-autocomplete">Auto complétion</key>
-	<key id="result-fulltextindex">Indexe de recherche</key>
+	<key id="result-autocomplete">Auto-complétion</key>
+	<key id="result-fulltextindex">Index de recherche</key>
 </i18n>

@@ -11,7 +11,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	 */
 	public function getLabel()
 	{
-		return $this->getName();
+		return $this->getDocumentServices()->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.documents.fulltext.label-webiste', array('ucf'), array('websiteLabel' => $this->getWebsite()->getLabel())); //$this->getName();
 	}
 
 	/**
