@@ -115,21 +115,8 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 		{
 			throw new \RuntimeException('can not delete locked collection', 999999);
 		}
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			foreach ($this->getItems() as $item)
-			{
-				$item->setLocked(false);
-				$item->delete();
-			}
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+
+
 	}
 
 	/**

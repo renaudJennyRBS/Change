@@ -197,8 +197,23 @@ class DeleteListener
 		{
 			$transactionManager->begin();
 
-			//Remove Relations
 			$dbp = $documentServices->getApplicationServices()->getDbProvider();
+
+			//Remove Relations
+			foreach($model->getProperties() as $property)
+			{
+				if ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+				{
+					$qb = $dbp->getNewStatementBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->delete($fb->getDocumentRelationTable($model->getRootName()));
+					$qb->where($fb->eq($fb->getDocumentColumn('id'), $fb->number($documentId)));
+					$qb->deleteQuery()->execute();
+					break;
+				}
+			}
+
+			//Remove Inverse Relations
 			$modificationDate = new \DateTime();
 			foreach ($model->getInverseProperties() as $property)
 			{
