@@ -60,4 +60,5 @@
 			<button type="button" class="btn btn-mini btn-danger"><i class="icon-trash"></i></button> et en ajouter
 			grâce au champ de saisie en bas de la colonne correspondant à l'axe.
 		</p>]]></key>
+	<key id="axisattribute-select">choisissez un jeu d'attributs</key>
 </i18n>

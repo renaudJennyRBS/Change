@@ -121,8 +121,7 @@ class Collections
 			$collection = array(
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-specifications', array('ucf')),
 				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-comparisons', array('ucf')),
-				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-axes', array('ucf')),
-				'productListItem' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-list-items', array('ucf'))
+				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-axes', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);
