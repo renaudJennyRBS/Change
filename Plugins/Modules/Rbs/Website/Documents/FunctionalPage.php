@@ -2,7 +2,6 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Documents\Query\Query;
 
 /**
  * @name \Rbs\Website\Documents\FunctionalPage
@@ -13,7 +12,6 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	 * @var \Rbs\Website\Documents\Section
 	 */
 	protected $section;
-
 
 	/**
 	 * @return \Change\Presentation\Interfaces\Section
@@ -34,50 +32,27 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	}
 
 	/**
-	 * @return \Change\Presentation\Interfaces\Section[]
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
-	public function getPublicationSections()
-	{
-		$query = new Query($this->getDocumentServices(), 'Rbs_Website_Section');
-		$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'section');
-		$subQuery->andPredicates($subQuery->eq('page', $this));
-		return $query->getDocuments()->toArray();
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $publicationSections
-	 * @return $this
-	 */
-	public function setPublicationSections($publicationSections)
-	{
-		return $this;
-	}
-
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
-		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 10);
-		$eventManager->attach('selectPathRule', array($this, 'onSelectPathRule'), 10);
+		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'), 10);
+		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onUpdated'), 10);
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function onDocumentDisplayPage(Event $event)
+	public function onCreated(Event $event)
 	{
-		$document = $event->getDocument();
-		if ($document instanceof FunctionalPage)
+		$page = $event->getDocument();
+		if ($page instanceof FunctionalPage)
 		{
-			/* @var $pathRule \Change\Http\Web\PathRule */
-			$pathRule = $event->getParam('pathRule');
-			if ($pathRule && $pathRule->getSectionId())
+			$codes = $this->getAllowedFunctionsCode();
+			if (is_array($codes) && count($codes))
 			{
-				/* @var $section Section */
-				$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
-				$document->setSection($section);
-				$event->setParam('page', $document);
-				$event->stopPropagation();
+				$page->checkDefaultSectionPageFunction();
 			}
 		}
 	}
@@ -85,42 +60,51 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	/**
 	 * @param Event $event
 	 */
-	public function onPopulatePathRule(Event $event)
+	public function onUpdated(Event $event)
 	{
-		$document = $event->getDocument();
-		if ($document instanceof FunctionalPage)
+		$page = $event->getDocument();
+		if ($page instanceof FunctionalPage && (in_array('allowedFunctionsCode', $event->getParam('modifiedPropertyNames', array()))))
 		{
-			/* @var $pathRule \Change\Http\Web\PathRule */
-			$pathRule = $event->getParam('pathRule');
-			$queryParameters = $event->getParam('queryParameters');
-			$sectionPageFunction = isset($queryParameters['sectionPageFunction']) ? $queryParameters['sectionPageFunction'] : null;
-			if ($sectionPageFunction)
+			$codes = $this->getAllowedFunctionsCode();
+			if (is_array($codes) && count($codes))
 			{
 				$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');
-				$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
-				if ($section instanceof Topic && $section->getPathPart())
-				{
-					$relativePath = $section->getPathPart() . '/' . $relativePath;
-				}
-				$pathRule->setRelativePath($relativePath);
-				$pathRule->setQueryParameters(array('sectionPageFunction' => $sectionPageFunction));
+				$page->checkDefaultSectionPageFunction();
 			}
 		}
 	}
 
 	/**
-	 * @param Event $event
+	 * For each function this page can handle, check if:
+	 * - it is not handled on the website
+	 * - this page don't handle in any section
+	 * Make this page handle each function on the website that matches these two conditions.
 	 */
-	public function onSelectPathRule(Event $event)
+	protected function checkDefaultSectionPageFunction()
 	{
-		$document = $event->getDocument();
-		if ($document instanceof FunctionalPage)
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+		$query->andPredicates($query->eq('page', $this));
+		$qb = $query->dbQueryBuilder();
+		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));
+		$sq = $qb->query();
+		$codes = array_diff($this->getAllowedFunctionsCode(), $sq->getResults($sq->getRowsConverter()->addStrCol('fc')));
+
+		$website = $this->getWebsite();
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+		$query->andPredicates($query->eq('section', $website));
+		$qb = $query->dbQueryBuilder();
+		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));
+		$sq = $qb->query();
+		$codes = array_diff($codes, $sq->getResults($sq->getRowsConverter()->addStrCol('fc')));
+
+		foreach ($codes as $code)
 		{
-			/* @var $pathRule \Change\Http\Web\PathRule */
-			$pathRules = $event->getParam('pathRules');
-			$queryParameters = $event->getParam('queryParameters');
-			unset($queryParameters['sectionPageFunction']);
-			$event->setParam('pathRule', $pathRules[0]);
+			/* @var $doc \Rbs\Website\Documents\SectionPageFunction */
+			$doc = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_SectionPageFunction');
+			$doc->setSection($website);
+			$doc->setPage($this);
+			$doc->setFunctionCode($code);
+			$doc->create();
 		}
 	}
 }

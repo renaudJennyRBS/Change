@@ -35,7 +35,7 @@ class PageResolver
 				}
 			}
 
-			if ($section instanceof Section)
+			if ($section instanceof \Rbs\Website\Documents\Section)
 			{
 				$sectionPageFunction = $document->getDocumentModelName();
 				$qp = $pathRule->getQueryParameters();
@@ -44,10 +44,11 @@ class PageResolver
 					$sectionPageFunction = $qp['sectionPageFunction'];
 				}
 
-				$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Website_Page');
-				$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
-				$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $sectionPageFunction));
-				$page = $query->getFirstDocument();
+				$em = $section->getEventManager();
+				$args = array('functionCode' => $sectionPageFunction);
+				$event1 = new \Change\Documents\Events\Event('getPageByFunction', $section, $args);
+				$em->trigger($event1);
+				$page = $event1->getParam('page');
 				if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 				{
 					$page->setSection($section);

@@ -272,7 +272,7 @@ class UrlManager extends \Change\Http\UrlManager
 
 	/**
 	 * @param \Change\Documents\AbstractDocument|integer $document
-	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @param \Change\Presentation\Interfaces\Section|null $section
 	 * @param array $query
 	 * @param string $LCID
 	 * @throws \InvalidArgumentException
@@ -355,7 +355,7 @@ class UrlManager extends \Change\Http\UrlManager
 				$query['sectionPageFunction'] = $functionCode;
 				$absoluteUrl = $this->getAbsoluteUrl();
 				$this->setAbsoluteUrl(true);
-				$uri = $this->getByDocument($page, $section, $query);
+				$uri = $this->getCanonicalByDocument($section, null, $query);
 				$this->setAbsoluteUrl($absoluteUrl);
 			}
 		}
