@@ -47,13 +47,11 @@
 				"analyzer": {
 					"text_analyzer": {
 						"tokenizer": "standard",
-						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"
-						]
+						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"]
 					},
 					"autocomplete":{
-						"type":"custom",
 						"tokenizer":"standard",
-						"filter":[ "standard", "lowercase", "stop", "kstem", "auto_ngram" ]
+						"filter":[ "standard", "lowercase", "french_stop", "asciifolding", "auto_ngram"]
 					}
 				},
 				"filter": {
@@ -65,6 +63,10 @@
 						"type":"ngram",
 						"min_gram":3,
 						"max_gram":15
+					},
+					"french_stop":{
+						"type": "stop",
+						"stopwords": ["_french_"]
 					}
 				}
 			}
