@@ -18,5 +18,9 @@
 	<key id="authorid">identifant de l'auteur</key>
 	<key id="documentversion">version</key>
 	<key id="title">titre sur le(s) site(s)</key>
+	<key id="synchronize-title-label">synchroniser la valeur avec celle du libellé</key>
 	<key id="code">code</key>
+	<key id="publicationsections">sections de publication</key>
+	<key id="publicationsections-help">sections dans lesquelles ce document est implanté.</key>
+	<key id="publicationsections-picker-title">sélectionnez les sections dans lesquelles publier ce document</key>
 </i18n>

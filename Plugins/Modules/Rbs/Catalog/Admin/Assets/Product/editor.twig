@@ -27,11 +27,10 @@
 			ng-hide="document.newSkuOnCreation && document.id <= 0">
 		</rbs-field-picker>
 
-		<rbs-field-picker-multiple property="publicationSections"
+		<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
 			label="{{ i18nAttr('m.rbs.catalog.documents.product.publicationsections', ['ucf']) }}"
-			accepted-model="Rbs_Website_Section"
-			selector-title="{{ i18nAttr('m.rbs.catalog.documents.product.publicationsections-picker-title', ['ucf']) }}"
-			allow-creation="true">
+			selector-title="{{ i18nAttr('m.rbs.catalog.documents.product.publicationsections-picker-title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.catalog.documents.product.publicationsections-help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr('m.rbs.catalog.documents.product.visuals', ['ucf']) }}"

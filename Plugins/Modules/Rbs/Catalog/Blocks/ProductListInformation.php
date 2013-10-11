@@ -21,6 +21,7 @@ class ProductListInformation extends Information
 		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-label'));
 		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
+			->setAllowedModelsNames('Rbs_Catalog_ProductList')
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-list', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-contextual-urls', $ucf));

@@ -18,5 +18,6 @@
 	<key id="authorid">author id</key>
 	<key id="documentversion">version</key>
 	<key id="title">title used for navigation items</key>
+	<key id="synchronize-title-label">synchronize title with label</key>
 	<key id="code">code</key>
 </i18n>

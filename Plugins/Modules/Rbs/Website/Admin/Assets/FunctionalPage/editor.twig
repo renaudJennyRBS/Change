@@ -35,7 +35,14 @@
 		</div>
 	</fieldset>
 
-	<fieldset ng-show="section=='functions'"
+	<fieldset ng-show="section=='content'" hide-when-create="true"
+		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.editableContent', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
+		</structure-editor>
+	</fieldset>
+
+	<fieldset ng-show="section=='functions'" hide-when-create="true"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.functions', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
@@ -75,14 +82,6 @@
 				</div>
 			</div>
 		</div>
-
-	</fieldset>
-
-	<fieldset ng-show="section=='content'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.editableContent', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
-		</structure-editor>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
