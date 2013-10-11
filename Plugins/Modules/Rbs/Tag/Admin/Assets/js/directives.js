@@ -183,12 +183,14 @@
 			scope    : true,
 			template :
 				'<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">' +
-					'<button class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="toggleShowAll($event)">' +
-					'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
-					'</button>' +
-					'<a target="_blank" class="btn btn-mini btn-inverse pull-right" title="' + i18n.trans('m.rbs.tag.admin.js.manage-tags | ucf') + '" type="button" href="Rbs/Tag">' +
+					'<span class="btn-toolbar pull-right">' +
+					'<a target="_blank" class="btn btn-xs btn-default" title="' + i18n.trans('m.rbs.tag.admin.js.manage-tags | ucf') + '" type="button" href="Rbs/Tag">' +
 					'<i class="icon-cog"></i>' +
 					'</a>' +
+					'<button class="btn btn-xs btn-default" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="toggleShowAll($event)">' +
+					'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
+					'</button>' +
+					'</span>' +
 					'<span ng-repeat="tag in tags">' +
 					'<span ng-if="! tag.input" rbs-tag="tag" on-remove="removeTag($index)"></span>' +
 					'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +

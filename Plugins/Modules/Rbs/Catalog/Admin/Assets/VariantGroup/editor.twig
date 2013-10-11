@@ -50,7 +50,7 @@
 
 					<div class="axis-header">
 						<span class="pull-right">
-							<button type="button" class="btn btn-small" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
+							<button type="button" class="btn btn-sm" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
 								<i class="icon-cog"></i>
 							</button>
 						</span>
@@ -86,11 +86,11 @@
 					<div class="axis-values">
 						<div ng-repeat="value in axis.dv" class="axis-value" ng-class="{'odd': $odd, 'selected': inNavPath(axis.index, value), 'between-selection': isBetween(axis.index, $index), 'unused': (used = isVariantSelected(axis.index, value.value)) != 'Y'}" ng-click="navigate(axis.index, value, $index)">
 							<span ng-switch="inEditMode(axis.index)">
-								<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-mini btn-danger"><i class="icon-trash"></i></button>
+								<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-xs btn-danger"><i class="icon-trash"></i></button>
 								<span ng-switch-when="false" ng-switch="used">
-									<button ng-switch-when="Y" type="button" class="btn btn-mini btn-success" ng-click="unselectVariant(axis.index, value.value, $event)"><i class="icon-minus"></i></button>
-									<button ng-switch-when="N" type="button" class="btn btn-mini" ng-click="selectVariant(axis.index, value.value, $event)"><i class="icon-plus"></i></button>
-									<button ng-switch-when="U" type="button" class="btn btn-mini" disabled="disabled"><i class="icon-question"></i></button>
+									<button ng-switch-when="Y" type="button" class="btn btn-xs btn-success" ng-click="unselectVariant(axis.index, value.value, $event)"><i class="icon-minus"></i></button>
+									<button ng-switch-when="N" type="button" class="btn btn-xs" ng-click="selectVariant(axis.index, value.value, $event)"><i class="icon-plus"></i></button>
+									<button ng-switch-when="U" type="button" class="btn btn-xs" disabled="disabled"><i class="icon-question"></i></button>
 								</span>
 							</span>
 							<span ng-bind="value.title"></span>

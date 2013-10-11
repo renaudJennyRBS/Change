@@ -3,16 +3,18 @@
 
 	<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+
+	<div class="add-elements-bar">
+		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new'=)">{{ i18n('m.rbs.website.documents.staticpage-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL:'new'=)">{{ i18n('m.rbs.website.documents.topic-create', ['ucf']) }}</a>
+	</div>
+
+	<div class="clearfix">
 		<span class="pull-right">
 			<span ng-if="currentFolder.is('Rbs_Website_Website')"><a href ng-href="(= currentFolder | documentURL:'menus':true =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.topic.menus', ['ucf']) }}</a> |</span>
 			<a href ng-click="toggleFunctions($event)"><i ng-class="{'icon-spinner icon-spin':loadingFunctions, 'icon-chevron-up':showFunctions, 'icon-chevron-down':! showFunctions}"></i> {{ i18n('m.rbs.website.documents.topic.functions', ['ucf']) }}</a> |
 			<a href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> {{ i18n('m.rbs.website.documents.topic.properties', ['ucf']) }}</a>
 		</span>
-
-		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new'=)">{{ i18n('m.rbs.website.documents.staticpage-create', ['ucf']) }}</a>
-		|
-		<a href ng-href="(= 'Rbs_Website_Topic' | documentURL:'new'=)">{{ i18n('m.rbs.website.documents.topic-create', ['ucf']) }}</a>
 	</div>
 
 	<div ng-if="sectionFunctions && showFunctions" class="well well-small">
@@ -52,15 +54,9 @@
 			</span>
 		</column>
 
-		<column name="label" label="Libellé" primary="true">
-			<strong ng-if="doc.is('Rbs_Website_StaticPage')"><a href ng-href="(= doc | documentURL:'form' =)">(=doc.label=)</a></strong>
-			<span ng-if="doc.is('Rbs_Website_Topic')"><strong><a title="Naviguer vers le contenu de la rubrique"
-			   href ng-href="(= doc | documentURL:'tree' =)">(=doc.label=)</a></strong>
-				<i class="icon-rbs-navigate-to"></i>
-			</span>
-		</column>
+		<column name="label" label="Libellé" primary="true"></column>
 
-		<column name="functions" width="32px" label="Index">
+		<column name="functions" width="40px" label="Index" align="center">
 			<button type="button" class="discrete-button" ng-disabled="busy" ng-if="doc.is('Rbs_Website_StaticPage')" ng-click="extend.setIndexPage(doc); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
 				<i ng-switch-default="" ng-class="{true: 'icon-circle icon-large', false: 'icon-circle-blank half-opacity'}[extend.isIndexPage(doc)]"></i>
 				<i ng-switch-when="true" class="icon-spin icon-spinner icon-large"></i>

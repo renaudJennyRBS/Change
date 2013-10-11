@@ -9,8 +9,8 @@
 		<div>
 			<label>{{ i18n('m.rbs.admin.filters.requiredConditions', ['ucf']) }}</label>
 			<div class="btn-group" data-toggle="buttons-radio">
-				<button title="{{ i18nAttr('m.rbs.admin.filters.allTooltip') }}" type="button" class="btn btn-small" ng-class="{active: operator=='and'}" ng-click="operator='and'">{{ i18n('m.rbs.admin.filters.all') }}</button>
-				<button title="{{ i18nAttr('m.rbs.admin.filters.atLeastOneTooltip') }}" type="button" class="btn btn-small" ng-class="{active: operator=='or'}" ng-click="operator='or'">{{ i18n('m.rbs.admin.filters.atLeastOne') }}</button>
+				<button title="{{ i18nAttr('m.rbs.admin.filters.allTooltip') }}" type="button" class="btn btn-sm" ng-class="{active: operator=='and'}" ng-click="operator='and'">{{ i18n('m.rbs.admin.filters.all') }}</button>
+				<button title="{{ i18nAttr('m.rbs.admin.filters.atLeastOneTooltip') }}" type="button" class="btn btn-sm" ng-class="{active: operator=='or'}" ng-click="operator='or'">{{ i18n('m.rbs.admin.filters.atLeastOne') }}</button>
 			</div>
 		</div>
 
@@ -99,7 +99,7 @@
 
 		<footer>
 			<div class="btn-toolbar">
-				<button type="button" class="btn btn-small" ng-click="addFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.filters.addFilter', ['ucf']) }}</button>
+				<button type="button" class="btn btn-sm" ng-click="addFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.filters.addFilter', ['ucf']) }}</button>
 			</div>
 
 			<!--div>

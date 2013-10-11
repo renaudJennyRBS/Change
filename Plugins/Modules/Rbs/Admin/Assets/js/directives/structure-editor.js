@@ -85,7 +85,7 @@
 		this.initEditableZone = function initEditableZone (scope, zoneEl, zoneObj, readonly) {
 			zoneEl.html('');
 
-			zoneEl.addClass(zoneObj.gridMode === 'fixed' ? 'container' : 'container-fluid');
+			zoneEl.addClass('container');
 			zoneEl.addClass('editable-zone');
 
 			zoneEl.attr('data-id', zoneObj.id);
@@ -1292,11 +1292,7 @@
 			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
 				var item = ctrl.getItemById(elm.data('id'));
 
-				if ($(elm).closest('.editable-zone').data('gridMode') === 'fixed') {
-					elm.addClass('row');
-				} else {
-					elm.addClass('row-fluid');
-				}
+				elm.addClass('row');
 
 				elm.click(function (event) {
 					event.stopPropagation();
@@ -1324,29 +1320,29 @@
 			"restrict" : 'C',
 			"scope"    : true,
 			"template" :
-				'<button type="button" ng-click="setEqualColumns()" class="btn btn-small btn-block" ng-disabled="columns.length < 2 || ! equalSize">Répartir équitablement<span ng-show="equalSize"> ({{gridSize/equalSize}} x {{equalSize}})</span></button>' +
+				'<button type="button" ng-click="setEqualColumns()" class="btn btn-sm btn-block" ng-disabled="columns.length < 2 || ! equalSize">Répartir équitablement<span ng-show="equalSize"> ({{gridSize/equalSize}} x {{equalSize}})</span></button>' +
 				'<div ng-repeat="col in columns" style="display:inline-block">' +
 					'<div class="column-info" ng-class="{\'active\': highlightedColIndex == $index}" ng-click="highlightColumn($index)">' +
 						'<div class="btn-group pull-right">' +
-							'<button type="button" class="btn btn-small" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>' +
+							'<button type="button" class="btn btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>' +
 						'</div>' +
 						'<h5>Colonne {{$index+1}}</h5>' +
 						'<div class="btn-group">' +
-							'<button type="button" class="btn btn-mini" disabled="disabled" ng-pluralize count="col.childCount" when="{\'0\':\'Aucun bloc\', \'one\': \'Un bloc\', \'other\': \'{} blocs\'}"></button>' +
-							'<button type="button" class="btn btn-mini" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>' +
+							'<button type="button" class="btn btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{\'0\':\'Aucun bloc\', \'one\': \'Un bloc\', \'other\': \'{} blocs\'}"></button>' +
+							'<button type="button" class="btn btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>' +
 						'</div>' +
 						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-small" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="Réduire"><i class="icon-minus"></i></button>' +
+							'<button type="button" class="btn btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="Réduire"><i class="icon-minus"></i></button>' +
 							'<div class="text">Largeur={{col.span}}</div>' +
-							'<button type="button" class="btn btn-small" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="Agrandir"><i class="icon-plus"></i></button>' +
+							'<button type="button" class="btn btn-sm" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="Agrandir"><i class="icon-plus"></i></button>' +
 						'</div>' +
 						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-small" ng-click="moveColumnLeft($index, $event)" title="Décaler à gauche" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>' +
+							'<button type="button" class="btn btn-sm" ng-click="moveColumnLeft($index, $event)" title="Décaler à gauche" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>' +
 							'<div class="text">Décalage={{col.offset}}</div>' +
-							'<button type="button" class="btn btn-small" ng-click="moveColumnRight($index, $event)" title="Décaler à droite" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>' +
+							'<button type="button" class="btn btn-sm" ng-click="moveColumnRight($index, $event)" title="Décaler à droite" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>' +
 						'</div>' +
 					'</div>' +
-					'<button type="button" class="btn btn-small" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">' +
+					'<button type="button" class="btn btn-sm" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">' +
 						'<i class="icon-plus-sign"></i>' +
 					'</button>' +
 				'</div>',
@@ -1746,24 +1742,24 @@
 			"template"   :
 				'<div class="btn-toolbar">' +
 					'<div class="btn-group">' +
-						'<button class="btn btn-small" disabled="disabled"><i class="icon-plus"></i></button>' +
-						'<button class="btn btn-small" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
-						'<button class="btn btn-small" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
-						'<button class="btn btn-small" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
-						'<button class="btn btn-small" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
+						'<button class="btn btn-sm" disabled="disabled"><i class="icon-plus"></i></button>' +
+						'<button class="btn btn-sm" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
+						'<button class="btn btn-sm" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
+						'<button class="btn btn-sm" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
+						'<button class="btn btn-sm" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
 					'</div>' +
-					'<button class="btn btn-small btn-danger pull-right" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
+					'<button class="btn btn-sm btn-danger pull-right" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
 				'</div>' +
 				'<div class="btn-toolbar">' +
 					'<h6>Visibilité</h6>' +
 					'<div style="text-align: center;">' +
-						'<button class="btn btn-mini" ng-click="toggleVisibility(\'D\')" ng-class="{\'btn-success active\': isVisibleFor(\'D\')}">Ordinateurs</button>' +
-						'<button class="btn btn-mini" ng-click="toggleVisibility(\'T\')" ng-class="{\'btn-success active\': isVisibleFor(\'T\')}">Tablettes</button>' +
-						'<button class="btn btn-mini" ng-click="toggleVisibility(\'P\')" ng-class="{\'btn-success active\': isVisibleFor(\'P\')}">Mobiles</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'D\')" ng-class="{\'btn-success active\': isVisibleFor(\'D\')}">Ordinateurs</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'T\')" ng-class="{\'btn-success active\': isVisibleFor(\'T\')}">Tablettes</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'P\')" ng-class="{\'btn-success active\': isVisibleFor(\'P\')}">Mobiles</button>' +
 					'</div>' +
 				'</div>' +
 				'<div class="btn-toolbar" ng-show="isInColumnLayout()">' +
-					'<button class="btn btn-small pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
+					'<button class="btn btn-sm pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
 					'<h6>Colonnes</h6>' +
 				'</div>' +
 				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +

@@ -36,7 +36,7 @@
 				<div class="controls">
 					<p>
 						<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-						<button type="submit" class="btn"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.admin.workflow.request-validation', ['ucf']) }}</button>
+						<button type="submit" class="btn btn-default"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.admin.workflow.request-validation', ['ucf']) }}</button>
 					</p>
 				</div>
 			</div>
@@ -190,7 +190,7 @@
 								<small class="muted">{{ i18n('m.rbs.admin.correction.in-use', ['ucf']) }}</small>
 							</th>
 							<th scope="col">
-								<button type="button" class="btn btn-mini btn-info pull-right"
+								<button type="button" class="btn btn-xs btn-info pull-right"
 								        title="Afficher les changements"
 								        ng-click="correctionData.advancedDiffs = ! correctionData.advancedDiffs"
 								        ng-class="{'active': correctionData.advancedDiffs}"><i class="icon-lightbulb"></i> {{ i18n('m.rbs.admin.correction.diff', ['ucf']) }}</button>

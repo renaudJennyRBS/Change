@@ -17,8 +17,8 @@
 	<!-- See http://relogo.org/ -->
 	<link rel="logo" type="image/svg" href="Rbs/Admin/img/rbschange-logo.svg" />
 
-	<link href="Rbs/Admin/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
-	<link href="Rbs/Admin/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/bootstrap3/css/bootstrap.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/bootstrap3/css/bootstrap-theme.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/FontAwesome/css/font-awesome.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet" />
@@ -79,18 +79,20 @@
 	{% include 'header.twig' %}
 	{% include 'menu.twig' %}
 
-	<div class="container-fluid" id="mainWrapper">
+	<div id="main-content">
 
-		<div class="row-fluid clearfix" id="mainToolbar">
-			<breadcrumb></breadcrumb>
+		<div class="row clearfix" id="mainToolbar">
+			<div class="col-md-12">
+				<breadcrumb></breadcrumb>
+			</div>
 		</div>
 
-		<div class="row-fluid">
-			<div class="span3" id="leftContainer" ng-swipe-right="menu.open()">
-				<div id="mainMenu"></div>
+		<div class="row">
+			<div class="col-md-3" id="leftContainer" ng-swipe-right="menu.open()">
+				<div id="rbs-left-menu"></div>
 				<div id="dockables"></div>
 			</div>
-			<div class="span9" id="mainContainer">
+			<div class="col-md-9" id="mainContainer">
 				<notification-center></notification-center>
 				<div id="helpListTop"></div>
 				<div id="workspace" class="ng-view"></div>
@@ -99,10 +101,10 @@
 		</div>
 	</div>
 
-	<footer class="container-fluid">
-		<div class="row-fluid">
-			<span class="span3"></span>
-			<span class="span9">
+	<footer>
+		<div class="row">
+			<span class="col-md-3"></span>
+			<span class="col-md-9">
 				<a onclick="window.open(this.href); return false;" href="http://www.rbschange.com">RBS Change</a> est un CMS e-commerce open-source edité par la société <a
 					onclick="window.open(this.href); return false" href="http://www.rbs.fr">Ready Business System</a>.
 			</span>

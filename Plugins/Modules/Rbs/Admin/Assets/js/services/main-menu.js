@@ -8,7 +8,7 @@
 	app.service('RbsChange.MainMenu', ['$rootScope', '$location', '$timeout', '$compile', '$q', '$http', 'RbsChange.REST', 'RbsChange.i18n', function ($rootScope, $location, $timeout, $compile, $q, $http, REST, i18n) {
 
 		var self = this,
-		    $el = $('#mainMenu'),
+		    $el = $('#rbs-left-menu'),
 		    currentUrl = null,
 		    currentScope = null,
 		    contentsStack = [],
@@ -58,17 +58,17 @@
 				currentPath = currentPath.substring(1);
 			}
 
-			$el.find(".box.main .nav a[href]:visible").each(function () {
+			$el.find(".box.main a.list-group-item[href]").each(function () {
 				var href = $(this).attr('href'),
 				    matches = href.match(/section=([a-z0-9\-]+)/i),
 				    section = matches ? matches[1] : undefined;
 
 				// TODO Optimize this... This should be possible ;)
 				if (href === currentUrl || href === currentPath || href === absUrl || (sectionParam && sectionParam === section) || (currentScope && currentScope.section !== null && angular.isDefined($(this).data('menuSection')) && $(this).data('menuSection') === currentScope.section)) {
-					$(this).parent().addClass("active");
+					$(this).addClass("active");
 					currentLabel = $(this).text();
 				} else {
-					$(this).parent().removeClass("active");
+					$(this).removeClass("active");
 				}
 			});
 
@@ -221,7 +221,7 @@
 						scope.section = sec;
 					};
 				}
-				html = buildMenuNgTemplate;
+				html = buildMenuHtml(menuObject); //buildMenuNgTemplate;
 			} else if (angular.isString(menuObject)) {
 				html = menuObject;
 			} else if (angular.isFunction(menuObject)) {
@@ -245,6 +245,57 @@
 			});
 		};
 
+
+		function buildMenuHtml (menu)
+		{
+			var html = '<div class="box main panel panel-default">';
+			html += '<div class="panel-heading"><h3 class="panel-title">Propriétés</h3></div>';
+			html += '<div class="list-group">';
+
+			/*
+			 '<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
+			 '<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
+			 '<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
+			 '<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
+			 '<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +
+			 '</li>' +
+			*/
+
+			angular.forEach(menu, function (entry)
+			{
+				if (entry.type === 'group')
+				{
+					html += '<h4 class="list-group-item" href="javascript:;">' + entry.label + '</h4>';
+				}
+				else if (entry.type === 'section')
+				{
+					if (entry.url) {
+						html += '<a class="list-group-item" href="' + entry.url + '">';
+					}
+					else {
+						html += '<a class="list-group-item" href="javascript:;" data-menu-section="' + entry.id + '" ng-click="__mainMenuSetSection(' + entry.id + ')">';
+					}
+					if (entry.fields && entry.fields.length) {
+						html += '<span class="badge"';
+						if (entry.corrected && entry.corrected.length) {
+							html += ' class="badge-success"';
+						}
+						html += '>';
+						if (entry.required && entry.required.length) {
+							html += '<span class="badge-required-indicator">*</span>';
+						}
+						html += entry.fields.length + '</span>';
+					}
+
+					html += entry.label + '</a>';
+				}
+			});
+
+			html += '</div>';
+			html += '</div>';
+
+			return html;
+		}
 
 		this.add = function (key, contents, scope, title)
 		{

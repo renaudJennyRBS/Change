@@ -1,6 +1,6 @@
 <div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
 
-	<div class="row-fluid indicators">
+	<div class="row indicators">
 		<div ng-repeat="ind in indicators" class="span(= 12/indicators.length =) indicator indicator-(= ind.style =)">
 			<div class="indicator-inner">
 				<div class="value pull-left">(= ind.value | number =)</div>

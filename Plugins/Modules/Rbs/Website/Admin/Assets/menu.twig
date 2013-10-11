@@ -1,19 +1,19 @@
-<div data-ng-controller="Rbs_Website_MainMenuController">
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Website/Website/">
+<div ng-controller="Rbs_Website_MainMenuController">
+	<div class="list-group">
+		<h4 class="list-group-item">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</h4>
+		<a class="list-group-item" href="Rbs/Website/Website/">
 			<i class="icon-home"></i> {{ i18n('m.rbs.website.documents.website-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/StaticPage/">
+		</a>
+		<a class="list-group-item" href="Rbs/Website/StaticPage/">
 			<i class="icon-file-text"></i> {{ i18n('m.rbs.website.documents.staticpage-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/FunctionalPage/">
+		</a>
+		<a class="list-group-item" href="Rbs/Website/FunctionalPage/">
 			<i class="icon-file"></i> {{ i18n('m.rbs.website.documents.functionalpage-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/Menu/">
+		</a>
+		<a class="list-group-item" href="Rbs/Website/Menu/">
 			<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.menu-list', ['ucf']) }}
-		</a></li>
-		<li class="nav-header">{{ i18n('m.rbs.website.admin.websites-trees', ['ucf']) }}</li>
+		</a>
+		<h4 class="list-group-item">{{ i18n('m.rbs.website.admin.websites-trees', ['ucf']) }}</h4>
 	</ul>
 
 	<div class="accordion" id="chgMainMenuTree">

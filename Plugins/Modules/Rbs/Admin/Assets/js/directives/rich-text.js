@@ -348,7 +348,7 @@
 
 				// TODO Load toolbar config from the server?
 				toolbarConfig = {
-					"buttonSize": "btn-small",
+					"buttonSize": "btn-sm",
 					"displayGroupCaptions": true,
 					"items": [
 						{
@@ -382,7 +382,7 @@
 				var buttonSize, hasGroupWithCaption;
 
 				function build () {
-					buttonSize = toolbarConfig.buttonSize || 'btn-small';
+					buttonSize = toolbarConfig.buttonSize || 'btn-sm';
 					element.addClass('btn-toolbar rich-text-toolbar');
 					$compile(buildToolbar())(scope, function (clone) {
 						element.append(clone);

@@ -77,9 +77,9 @@
 
 			function buildDefault () {
 				if (__preview[dlid]) {
-					return buildPreviewAction() + actionDivider + buildEditAction() + actionDivider + buildDeleteAction();
+					return buildPreviewAction() + actionDivider + buildDeleteAction();
 				}
-				var out = buildEditAction() + actionDivider + buildDeleteAction();
+				var out = buildDeleteAction();
 				if (tAttrs.publishable === 'true') {
 					out += actionDivider + buildWorkflowAction();
 				}
@@ -274,6 +274,14 @@
 				});
 			}
 
+			// Tree navigation link
+			if (tAttrs.tree) {
+				columns.push({
+					"name"  : "navigation"
+				});
+			}
+
+/*
 			// Order in tree column
 			if (tAttrs.tree) {
 				columns.push({
@@ -284,7 +292,7 @@
 					"content": '(=doc.META$.treeNode.nodeOrder | number=)'
 				});
 			}
-
+*/
 			// Modification Date column
 			if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
 				columns.push({
@@ -341,27 +349,34 @@
 					column.name = column.name.substring(0, p);
 				}
 
-				if (!column.sort)
+				if (column.name === 'navigation')
+				{
+					column.content = '<a ng-if="doc.hasUrl(\'tree\')" href ng-href="(= doc|documentURL:\'tree\'=)"><i class="icon-circle-arrow-right icon-large"></i></a>';
+					column.width = "40px";
+					column.label = "Nav."; // TODO
+					column.align = 'center';
+				}
+
+				if (! column.sort)
 				{
 					column.sort = column.name;
 				}
 
-				switch (column.format) {
+				switch (column.format)
+				{
+					case 'number' :
+						column.valuePath += '|number';
+						if (!column.align) {
+							column.align = 'right';
+						}
+						break;
 
-				case 'number' :
-					column.valuePath += '|number';
-					if (!column.align) {
-						column.align = 'right';
-					}
-					break;
-
-				case 'date' :
-					if (!column.width) {
-						column.width = "160px";
-					}
-					column.content = '<time data-column="' + column.name + '" display="(= dateDisplay.' + column.name + ' =)" datetime="(=doc.' + column.valuePath + '=)"></time>';
-					break;
-
+					case 'date' :
+						if (!column.width) {
+							column.width = "160px";
+						}
+						column.content = '<time data-column="' + column.name + '" display="(= dateDisplay.' + column.name + ' =)" datetime="(=doc.' + column.valuePath + '=)"></time>';
+						break;
 				}
 
 				result.columns[column.name] = column;
@@ -380,7 +395,7 @@
 					var toggleDateBtn, htmlTh;
 
 					if (column.format === 'date') {
-						toggleDateBtn = '<button type="button" ng-class="{\'active\':dateDisplay.' + column.name + '==\'relative\'}" ng-click="toggleRelativeDates(\'' + column.name + '\')" class="btn btn-mini btn-info pull-right"><i class="icon-time"></i></button>';
+						toggleDateBtn = '<button type="button" ng-class="{\'active\':dateDisplay.' + column.name + '==\'relative\'}" ng-click="toggleRelativeDates(\'' + column.name + '\')" class="btn btn-xs btn-info pull-right"><i class="icon-time"></i></button>';
 					} else {
 						toggleDateBtn = '';
 					}
@@ -447,14 +462,10 @@
 						}
 					}
 					if (column.primary) {
-						if (tAttrs.tree) {
-							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL:\'tree\' =)" title="Naviguer vers..."><strong>' + column.content + '</strong></a> <i class="icon-rbs-navigate-to"></i></div></td>');
+						if (tAttrs.cascadeEdition) {
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							if (tAttrs.cascadeEdition) {
-								$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
-							} else {
-								$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
-							}
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');

@@ -14,8 +14,8 @@
 			template   :
 				'<header ng-mousedown="startDrag($event)" ng-mouseup="stopDrag($event)">' +
 					'<div class="btn-toolbar pull-right">' +
-						//'<button class="btn btn-inverse btn-small" type="button" ng-click="roll()"><i ng-class="{true:\'icon-chevron-down\', false:\'icon-chevron-up\'}[rolled]"></i></button>' +
-						'<button class="btn btn-inverse btn-small" type="button" ng-click="close()"><i class="icon-remove"></i></button>' +
+						//'<button class="btn btn-inverse btn-sm" type="button" ng-click="roll()"><i ng-class="{true:\'icon-chevron-down\', false:\'icon-chevron-up\'}[rolled]"></i></button>' +
+						'<button class="btn btn-inverse btn-sm" type="button" ng-click="close()"><i class="icon-remove"></i></button>' +
 					'</div>' +
 					'<h4 style="white-space:nowrap">{{title}}</h4>' +
 					'</header>' +

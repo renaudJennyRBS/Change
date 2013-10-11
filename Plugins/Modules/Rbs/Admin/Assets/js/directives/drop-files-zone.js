@@ -28,9 +28,9 @@
 					'<span class="badge" ng-repeat="file in files | limitTo:2">{{file.name | ellipsis:30:\'center\'}}</span>' +
 					'<div ng-show="files.length > 2">et {{files.length - 2}} de plus.</div>' +
 					'<div class="btn-toolbar">' +
-					' <button type="button" class="btn btn-mini btn-primary" ng-disabled="files.length == 0 || uploading" ng-click="upload($event)"><i class="icon-upload icon-white"></i> Envoyer</button>' +
-					' <button type="button" class="btn btn-mini" ng-disabled="files.length == 0 || uploading" ng-click="cancel($event)"><i class="icon-remove-circle"></i> Effacer</button>' +
-					' <button type="button" class="btn btn-mini" ng-click="close($event)"><i class="icon-remove"></i> Annuler</button>' +
+					' <button type="button" class="btn btn-xs btn-primary" ng-disabled="files.length == 0 || uploading" ng-click="upload($event)"><i class="icon-upload icon-white"></i> Envoyer</button>' +
+					' <button type="button" class="btn btn-xs" ng-disabled="files.length == 0 || uploading" ng-click="cancel($event)"><i class="icon-remove-circle"></i> Effacer</button>' +
+					' <button type="button" class="btn btn-xs" ng-click="close($event)"><i class="icon-remove"></i> Annuler</button>' +
 					'</div>' +
 					'</div>';
 

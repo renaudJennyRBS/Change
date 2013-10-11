@@ -47,14 +47,14 @@
 
 			isFullScreen = false;
 
-			$mainContainer.addClass('span9');
+			$mainContainer.addClass('col-md-9');
 			if (fullScreenMode !== 'hide-menu') {
 				MainMenu.show();
 			}
 			$leftContainer.show();
 			Breadcrumb.enable();
 
-			$('#mainNavbar').show();
+			$('#rbs-change-navbar').show();
 			$('body>footer').show();
 			$('#fullScreenBar').hide();
 			$('#propertiesContainer').hide();
@@ -71,11 +71,11 @@
 
 			if (fullScreenMode === 'full') {
 				$leftContainer.hide();
-				$mainContainer.removeClass('span9');
+				$mainContainer.removeClass('col-md-9');
 			}
 			MainMenu.hide();
 			Breadcrumb.disable();
-			$('#mainNavbar').hide();
+			$('#rbs-change-navbar').hide();
 			$('body>footer').hide();
 			$('#fullScreenBar').fadeIn();
 
@@ -88,13 +88,13 @@
 
 		this.collapseLeftSidebar = function () {
 			$leftContainer.hide();
-			$mainContainer.removeClass('span9');
+			$mainContainer.removeClass('col-md-9');
 			$rootScope.$broadcast('Change:Workspace:SidebarCollapsed', 'left');
 		};
 
 
 		this.expandLeftSidebar = function () {
-			$mainContainer.addClass('span9');
+			$mainContainer.addClass('col-md-9');
 			$leftContainer.show();
 			$rootScope.$broadcast('Change:Workspace:SidebarExpanded', 'left');
 		};
@@ -173,16 +173,16 @@
 
 		this.hideMenus = function () {
 			$leftContainer.hide();
-			$mainContainer.removeClass('span9');
+			$mainContainer.removeClass('col-md-9');
 			$('#mainToolbar').hide();
-			$('#mainNavbar').hide();
+			$('#rbs-change-navbar').hide();
 		};
 
 		this.restore = function () {
-			$mainContainer.addClass('span9');
+			$mainContainer.addClass('col-md-9');
 			$leftContainer.show();
 			$('#mainToolbar').show();
-			$('#mainNavbar').show();
+			$('#rbs-change-navbar').show();
 		};
 
 
