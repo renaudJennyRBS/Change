@@ -632,6 +632,17 @@ class Correction
 		$uq->execute();
 
 		$this->setModified(false);
+
+		if ($this->getStatus() == static::STATUS_FILED)
+		{
+			$jobManager = new \Change\Job\JobManager();
+			$jobManager->setDocumentServices($this->getDocumentManager()->getDocumentServices());
+			$jobManager->createNewJob('Change_Correction_Filed', array(
+				'correctionId' => $this->getId(),
+				'documentId' => $this->getDocumentId(),
+				'LCID' => $this->getLCID()
+			));
+		}
 	}
 }
 
