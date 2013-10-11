@@ -1,0 +1,31 @@
+<form novalidate="" data-ng-controller="Rbs_Catalog_Product_CrossSellingController" class="form-horizontal">
+	<div class="page-header">
+		<h2 class="ng-binding">
+			<a href="(= product | documentURL:'form' =)">(= product.label =)</a>
+			<small>
+				{{ i18n('m.rbs.catalog.admin.js.product-cross-selling-list', ['ucf']) }}
+			</small>
+		</h2>
+	</div>
+	<fieldset>
+		<div>
+			<a href="Rbs/Catalog/CrossSellingProductList/new?productId=(=product.id=)" ng-click="cascadeCreateCrossSellingProductList()">
+				{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.crosssellingproductlist-create', ['ucf']) }}
+			</a>
+
+			<div>
+				<rbs-document-list data-dlid="DLRbsCatalogCrossSellingProductList" model="Rbs_Catalog_CrossSellingProductList"
+					activable="true" load-query="loadQuery">
+					<column name="label" primary="true"></column>
+					<quick-actions>
+						<a href="(= doc | documentURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.products') }}</a>
+						|| [action edit]
+						|| [action delete]
+					</quick-actions>
+					productListItems
+					<column name="crossSellingType"></column>
+				</rbs-document-list>
+			</div>
+		</div>
+	</fieldset>
+</form>

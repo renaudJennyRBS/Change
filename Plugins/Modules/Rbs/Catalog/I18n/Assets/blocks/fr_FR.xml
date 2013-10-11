@@ -11,4 +11,11 @@
 	<key id="product-function">détail d'un produit</key>
 	<key id="product-activate-zoom">activer le zoom</key>
 	<key id="product-attributes-display-mode">affichage des attributs</key>
+
+	<key id="cross-selling-label">produits associés</key>
+	<key id="cross-selling-title">titre du bloc</key>
+	<key id="cross-selling-type">type de produits</key>
+	<key id="cross-selling-product-choice-strategy">choix du produit dans le panier</key>
+	<key id="cross-selling-items-per-slide">produits par slide</key>
+	<key id="cross-selling-cart-label">produits associés (panier)</key>
 </i18n>

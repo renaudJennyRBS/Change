@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.catalog.documents.crosssellingproductlist" lcid="fr_FR">
+	<include id="m.rbs.catalog.documents.productlist"/>
+	<key id="accessories">accessoires</key>
+	<key id="similar">produits similaires</key>
+	<key id="higher-range">produits de gamme supérieure</key>
+	<key id="product">produit</key>
+	<key id="crossSellingType">type de liaison</key>
+	<key id="symetric">relation symétrique</key>
+	<key id="crosssellingproductlist-create">ajouter une liste de produits associés</key>
+	<key id="title">liste de produits associés</key>
+	<key id="label">nom de la liste</key>
+	<key id="list-already-exists">une liste de type {type} existe déjà pour le produit {product}</key>
+</i18n>

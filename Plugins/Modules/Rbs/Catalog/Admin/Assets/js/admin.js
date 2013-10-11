@@ -22,18 +22,22 @@
 		{
 			$delegate.model('Rbs_Catalog_Product')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Rbs/Catalog/Product/product-prices.twig');
+			$delegate.model('Rbs_Catalog_Product')
+				.route('cross-selling-lists', 'Rbs/Catalog/Product/:id/CrossSellingProductLists/', 'Rbs/Catalog/Product/product-cross-selling.twig');
 
 			$delegate.model('Rbs_Catalog_ProductList')
 				.route('productListItems', 'Rbs/Catalog/ProductList/:id/ProductListItem/', 'Rbs/Catalog/ProductList/products.twig');
 			$delegate.model('Rbs_Catalog_SectionProductList')
 				.route('productListItems', 'Rbs/Catalog/SectionProductList/:id/ProductListItem/', 'Rbs/Catalog/ProductList/products.twig');
+			$delegate.model('Rbs_Catalog_CrossSellingProductList')
+				.route('productListItems', 'Rbs/Catalog/CrossSellingProductList/:id/ProductListItem/', 'Rbs/Catalog/ProductList/products.twig');
 
 			$delegate.model('Rbs_Catalog')
 				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
-			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_ProductListItem',
-				'Rbs_Catalog_VariantGroup']);
+			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
+				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
 			return $delegate;
 		}]);
 	}]);
