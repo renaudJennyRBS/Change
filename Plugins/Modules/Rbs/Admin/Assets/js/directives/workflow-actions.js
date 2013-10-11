@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsDocumentWorkflowActions', ['$timeout', '$q', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', function ($timeout, $q, REST, Utils, i18n) {
+	app.directive('rbsDocumentWorkflowActions', ['$timeout', '$q', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', '$location', function ($timeout, $q, REST, Utils, i18n, $location) {
 
 		return {
 			restrict : 'C',
@@ -105,11 +105,16 @@
 							scope.data.action = 'correction';
 						}
 						else {
+							scope.data.action = null;
 							angular.forEach(['requestValidation', 'contentValidation', 'publicationValidation', 'freeze', 'unfreeze'], function (action) {
 								if (doc.isActionAvailable(action)) {
 									scope.data.action = action;
 								}
 							});
+							if (scope.data.action == null) {
+								$location.path(doc.url());
+								return;
+							}
 						}
 						REST.ensureLoaded(doc).then(function (doc)
 						{
@@ -266,9 +271,9 @@
 								delete scope.document.META$.correction;
 								angular.extend(scope.document, updated);
 								console.log("saved ", scope.document);
+								$location.path(scope.document.url());
 							});
 						}
-
 					});
 				};
 
