@@ -12,14 +12,47 @@
 
 		<rbs-field-text property="metaTitle"
 			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-title', ['ucf']) }}">
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-ng-class="{'disabled': metaVariables.length == 0}" data-toggle="dropdown" href="">
+					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li data-ng-repeat="variable in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaTitle', variable)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
 		</rbs-field-text>
 
 		<rbs-field-text property="metaDescription"
 			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-description', ['ucf']) }}">
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-ng-class="{'disabled': metaVariables.length == 0}" data-toggle="dropdown" href="">
+					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li data-ng-repeat="variable in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaDescription', variable)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
 		</rbs-field-text>
 
 		<rbs-field-text property="metaKeywords"
 			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-keywords', ['ucf']) }}">
+			<div class="btn-group">
+				<a class="btn dropdown-toggle" data-ng-class="{'disabled': metaVariables.length == 0}" data-toggle="dropdown" href="">
+					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li data-ng-repeat="variable in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaKeywords', variable)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
 		</rbs-field-text>
 	</fieldset>
 

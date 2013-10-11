@@ -77,6 +77,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		parent::attachEvents($eventManager);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
+		$eventManager->attach('getMetaVariables', array($this, 'onGetMetaVariables'), 5);
+		$eventManager->attach('getMetaSubstitutions', array($this, 'onGetMetaSubstitutions'), 5);
 	}
 
 	/**
@@ -149,6 +151,35 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			}
 			$this->setSku($sku);
 		}
+	}
+
+	public function onGetMetaVariables(\Change\Documents\Events\Event $event)
+	{
+		$event->setParam('variables', [ 'product.title', 'product.brand', 'product.description' ]);
+	}
+
+	public function onGetMetaSubstitutions(\Change\Documents\Events\Event $event)
+	{
+		$variables = $event->getParam('variables');
+		$substitutions = [];
+		foreach ($variables as $variable)
+		{
+			switch ($variable)
+			{
+				case 'product.title':
+					$substitutions['product.title'] = $this->getCurrentLocalization()->getTitle();
+					break;
+				case 'product.description':
+					//TODO: cleanup the raw text from markdown
+					$description = \Change\Stdlib\String::shorten($this->getCurrentLocalization()->getDescription()->getRawText(), 80);
+					$substitutions['product.description'] = $description;
+					break;
+				case 'product.brand':
+					$substitutions['product.brand'] = $this->getBrand()->getCurrentLocalization()->getTitle();
+					break;
+			}
+		}
+		$event->setParam('substitutions', $substitutions);
 	}
 
 	/**
