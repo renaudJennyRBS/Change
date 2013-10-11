@@ -151,18 +151,4 @@ class ProductList extends Block
 		}
 		return null;
 	}
-
-	/**
-	 * @param integer $pageNumber
-	 * @param integer $pageCount
-	 * @return integer
-	 */
-	protected function fixPageNumber($pageNumber, $pageCount)
-	{
-		if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
-		{
-			return 1;
-		}
-		return $pageNumber;
-	}
 }
