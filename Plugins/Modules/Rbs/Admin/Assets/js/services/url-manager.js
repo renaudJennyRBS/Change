@@ -225,12 +225,10 @@
 					'getUrl'     : function (doc, params, name) {
 						// Special case for 'form' routes that can have a section to go directly to the
 						// corresponding section of the editor.
-						var qs = '';
 						if (name && name.substr(0, 5) === 'form.') {
-							qs = '?section=' + name.substring(5);
-							name = 'form';
+							return getNamedUrl(doc, params, 'form') + '?section=' + name.substring(5);
 						}
-						return getNamedUrl(doc, params, name) + qs;
+						return getNamedUrl(doc, params, name);
 					}
 				};
 			};
