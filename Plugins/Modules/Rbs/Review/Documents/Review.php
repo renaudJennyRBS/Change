@@ -8,15 +8,9 @@ use Change\Presentation\PresentationServices;
  */
 class Review extends \Compilation\Rbs\Review\Documents\Review
 {
-	public function getLabel()
+	protected function updateLabel()
 	{
-		if (!parent::getLabel())
-		{
-			$target = $this->getTarget();
-			/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
-			$this->setLabel($this->getPseudonym() . '-' . $target->getLabel() . '-' . $this->getSection()->getTitle());
-		}
-		return parent::getLabel();
+		$this->setLabel($this->getApplicationServices()->getI18nManager()->trans('m.rbs.review.documents.review.label-content', array('ucf'), array('targetLabel' => $this->getTarget()->getLabel(), 'pseudonym' => $this->getPseudonym())));
 	}
 
 	protected function onCreate()
@@ -25,6 +19,7 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 		{
 			$this->transformMarkdownToHtml();
 		}
+		$this->updateLabel();
 	}
 
 	protected function onUpdate()
@@ -33,6 +28,7 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 		{
 			$this->transformMarkdownToHtml();
 		}
+		$this->updateLabel();
 	}
 
 	/**
