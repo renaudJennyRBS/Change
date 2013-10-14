@@ -15,6 +15,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 	protected function attachEvents($eventManager)
 	{
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'validateUnique'), 1);
+		$eventManager->attach(array(Event::EVENT_CREATED, Event::EVENT_UPDATED), array($this, 'hideLinksOnIndexPage'), 1);
 	}
 
 
@@ -38,4 +39,20 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 		}
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function hideLinksOnIndexPage($event)
+	{
+		$doc = $event->getDocument();
+		if ($doc instanceof SectionPageFunction && $doc->getFunctionCode() == 'Rbs_Website_Section')
+		{
+			$page = $doc->getPage();
+			if ($page instanceof \Rbs\Website\Documents\StaticPage && !$page->getHideLinks())
+			{
+				$page->setHideLinks(true);
+				$page->update();
+			}
+		}
+	}
 }

@@ -4,9 +4,10 @@
 	extends="Rbs_Website_Page" abstract="false" tree-name="Rbs_Website" publishable="true">
 	<properties>
 		<property name="title" required="true">
-			<dboptions length="100"/>
-			<constraint name="maxSize" max="80"/>
+			<dboptions length="100" />
+			<constraint name="maxSize" max="80" />
 		</property>
-		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true"/>
+		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true" />
+		<property name="hideLinks" type="Boolean" />
 	</properties>
 </document>

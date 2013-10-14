@@ -127,7 +127,10 @@ class MenuEntry
 	 */
 	public function addChild($child)
 	{
-		$this->children[] = $child;
+		if ($child instanceof MenuEntry)
+		{
+			$this->children[] = $child;
+		}
 		return $this;
 	}
 

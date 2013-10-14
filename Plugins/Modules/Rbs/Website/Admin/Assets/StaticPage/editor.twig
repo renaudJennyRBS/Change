@@ -14,6 +14,11 @@
 			input-class="input-block-level">
 		</rbs-field-text>
 
+		<rbs-field-boolean property="hideLinks"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.hidelinks', ['ucf']) }}"
+			input-class="input-block-level">
+		</rbs-field-boolean>
+
 		<rbs-field-picker property="pageTemplate" required="true"
 			label="{{ i18nAttr('m.rbs.website.documents.staticpage.pageTemplate', ['ucf']) }}"
 			accepted-model="Rbs_Theme_PageTemplate"
