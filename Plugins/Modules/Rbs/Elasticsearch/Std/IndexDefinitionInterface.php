@@ -30,4 +30,9 @@ interface IndexDefinitionInterface
 	 * @return array
 	 */
 	public function getConfiguration();
+
+	/**
+	 * @return \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
+	 */
+	public function getFacetsDefinition();
 }

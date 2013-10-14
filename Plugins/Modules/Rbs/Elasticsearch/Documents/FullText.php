@@ -7,6 +7,12 @@ namespace Rbs\Elasticsearch\Documents;
 class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText implements \Rbs\Elasticsearch\Std\IndexDefinitionInterface
 {
 	/**
+	 * @var \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
+	 */
+	protected $facetsDefinition;
+
+
+	/**
 	 * @return string
 	 */
 	public function getLabel()
@@ -79,7 +85,6 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 		}
 	}
 
-
 	/**
 	 * @param integer $websiteId
 	 * @param string $LCID
@@ -88,5 +93,19 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	protected function buildIndexNameForWebsiteAndLCID($websiteId, $LCID)
 	{
 		return  $this->getMappingName() . '_'. $websiteId  . '_' . strtolower($LCID);
+	}
+
+	/**
+	 * @return \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
+	 */
+	public function getFacetsDefinition()
+	{
+		if ($this->facetsDefinition === null)
+		{
+			$mf = new \Rbs\Elasticsearch\Std\ModelFacetDefinition('model');
+			$mf->setTitle($this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
+			$this->facetsDefinition = array($mf);
+		}
+		return $this->facetsDefinition;
 	}
 }
