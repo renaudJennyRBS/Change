@@ -238,7 +238,14 @@ class Resolver extends BaseResolver
 				// Home.
 				$pathRule->setRelativePath(null);
 				$pathRule->setDocumentId($website->getId());
-				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
+				if ($event->getRequest()->getQuery()->count() == 0 && $event->getRequest()->isGet())
+				{
+					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
+				}
+				else
+				{
+					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_303);
+				}
 				return $pathRule;
 			}
 			else

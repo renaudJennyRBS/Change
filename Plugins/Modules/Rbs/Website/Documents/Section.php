@@ -69,13 +69,19 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		$document = $event->getDocument();
 		if ($document instanceof Section)
 		{
-			$page = $document->getIndexPage();
-			if ($page instanceof FunctionalPage)
+			/* @var $pathRule \Change\Http\Web\PathRule */
+			$pathRule = $event->getParam("pathRule");
+			$parameters = $pathRule->getQueryParameters();
+			if (!array_key_exists('sectionPageFunction', $parameters) || $parameters['sectionPageFunction'] == 'Rbs_Website_Section')
 			{
-				$page->setSection($document);
+				$page = $document->getIndexPage();
+				if ($page instanceof FunctionalPage)
+				{
+					$page->setSection($document);
+				}
+				$event->setParam('page', $page);
+				$event->stopPropagation();
 			}
-			$event->setParam('page', $page);
-			$event->stopPropagation();
 		}
 	}
 
