@@ -56,10 +56,10 @@ class HeadMetas extends Block
 			$page = $event->getParam('page');
 			$seoManager = new \Rbs\Seo\Services\SeoManager();
 			$seoManager->setDocumentServices($event->getDocumentServices());
-			$metas = $seoManager->getMetas($page, $document);
-			$attributes['title'] = $metas['title'];
-			$attributes['description'] = $metas['description'];
-			$attributes['keywords'] = $metas['keywords'];
+			foreach ($seoManager->getMetas($page, $document) as $key => $meta)
+			{
+				$attributes[$key] = $meta;
+			}
 		}
 		return 'head-metas.twig';
 	}

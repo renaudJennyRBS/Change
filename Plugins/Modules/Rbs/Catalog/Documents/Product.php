@@ -153,11 +153,22 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		}
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onGetMetaVariables(\Change\Documents\Events\Event $event)
 	{
-		$event->setParam('variables', [ 'product.title', 'product.brand', 'product.description' ]);
+		$i18nManager = $event->getDocument()->getApplicationServices()->getI18nManager();
+		$event->setParam('variables', [
+			'document.title' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-title', ['ucf']),
+			'document.brand' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-brand', ['ucf']),
+			'document.description' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-description', ['ucf'])
+		]);
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onGetMetaSubstitutions(\Change\Documents\Events\Event $event)
 	{
 		$variables = $event->getParam('variables');
@@ -166,16 +177,16 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		{
 			switch ($variable)
 			{
-				case 'product.title':
-					$substitutions['product.title'] = $this->getCurrentLocalization()->getTitle();
+				case 'document.title':
+					$substitutions['document.title'] = $this->getCurrentLocalization()->getTitle();
 					break;
-				case 'product.description':
+				case 'document.description':
 					//TODO: cleanup the raw text from markdown
 					$description = \Change\Stdlib\String::shorten($this->getCurrentLocalization()->getDescription()->getRawText(), 80);
-					$substitutions['product.description'] = $description;
+					$substitutions['document.description'] = $description;
 					break;
-				case 'product.brand':
-					$substitutions['product.brand'] = $this->getBrand()->getCurrentLocalization()->getTitle();
+				case 'document.brand':
+					$substitutions['document.brand'] = $this->getBrand()->getCurrentLocalization()->getTitle();
 					break;
 			}
 		}

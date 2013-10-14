@@ -35,6 +35,7 @@
 								};
 							});
 						});
+						scope.variableCount = 0;
 						return;
 					}
 					for (var i = 0; i < scope.document.locations.length; i++)
@@ -54,7 +55,14 @@
 
 				scope.addMetaVariable = function (meta, variable)
 				{
-					scope.document[meta] += '{' + variable + '}';
+					if (scope.document[meta])
+					{
+						scope.document[meta] += '{' + variable + '}';
+					}
+					else
+					{
+						scope.document[meta] = '{' + variable + '}';
+					}
 				};
 
 				scope.$watch('document.target', function (target){
@@ -63,6 +71,7 @@
 						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'targetId': target.id });
 						$http.get(REST.getBaseUrl(url)).success(function (data){
 							scope.metaVariables = data;
+							scope.variableCount = Object.keys(data).length;
 						})
 					}
 				});
