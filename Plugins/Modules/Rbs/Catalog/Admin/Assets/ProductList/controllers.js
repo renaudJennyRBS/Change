@@ -35,6 +35,7 @@
 			$scope.productsUrl = productList.META$.links['productListItems'].href;
 			$scope.productList = productList;
 			$scope.List.isSynchronized = productList.hasOwnProperty('synchronizedSection');
+			$scope.List.isCrossSelling = productList.hasOwnProperty('crossSellingType');
 			Loading.stop();
 		});
 

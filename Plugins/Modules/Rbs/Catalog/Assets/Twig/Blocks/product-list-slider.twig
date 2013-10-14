@@ -12,15 +12,19 @@
 	================================================== -->
 	<div id="myCarousel{{ blockId }}" class="carousel slide">
 		<!-- Indicators -->
+
 		<ol class="carousel-indicators">
+			{#
 			{% for i in range(0,slideCount-1) %}
-				{%  if loop.first %}
-					<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}" class="active"></li>
-				{%  else %}
-					<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}"></li>
-				{% endif %}
-			{%  endfor %}
+					{%  if loop.first %}
+						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}" class="active"></li>
+					{%  else %}
+						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}"></li>
+					{% endif %}
+				{%  endfor %}
+			#}
 		</ol>
+
 		<div class="carousel-inner">
 			{% for i in range(0,slideCount-1) %}
 				{% set slideNumber = loop.index0 %}

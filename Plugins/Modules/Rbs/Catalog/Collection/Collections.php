@@ -160,4 +160,23 @@ class Collections
 			$event->stopPropagation();
 		}
 	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addCartProductChoiceStrategyCollection(\Zend\EventManager\Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$items = array();
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-last-product', array('ucf'));
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-random-product', array('ucf'));
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-most-expensive-product', array('ucf'));
+			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
 }

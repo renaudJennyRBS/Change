@@ -6,6 +6,10 @@ namespace Rbs\Catalog\Std;
  */
 class CrossSellingEngine
 {
+	const LAST_PRODUCT = 'LAST_PRODUCT';
+	const RANDOM_PRODUCT = 'RANDOM_PRODUCT';
+	const MOST_EXPENSIVE_PRODUCT = 'MOST_EXPENSIVE_PRODUCT';
+
 	/**
 	 * @var \Rbs\Commerce\Services\CommerceServices
 	 */
@@ -136,27 +140,24 @@ class CrossSellingEngine
 			/* Let's be optimistic : cartline key = productId */
 			switch($strategy)
 			{
-				case 'LAST_PRODUCT':
+				case self::LAST_PRODUCT:
 					$lineCount = count($cart->getLines());
 					if ($lineCount)
 					{
 						$line = $cart->getLineByNumber($lineCount);
 					}
-					echo $line->getNumber() . " " . $line->getDesignation();
 					break;
-				case 'RANDOM_PRODUCT':
+				case self::RANDOM_PRODUCT:
 					$lineCount = count($cart->getLines());
 					if ($lineCount)
 					{
 						$line = $cart->getLineByNumber(rand(1, $lineCount));
 					}
-					echo $line->getNumber() . " " . $line->getDesignation();
 					break;
-				case 'MOST_EXPENSIVE_PRODUCT':
+				case self::MOST_EXPENSIVE_PRODUCT:
 					$lines = $cart->getLines();
 					usort($lines, array($this, "mostExpensiveUnitPrice"));
 					$line = $lines[0];
-					echo $line->getNumber() . " " . $line->getDesignation();
 					break;
 			}
 			if ($line)
@@ -180,7 +181,6 @@ class CrossSellingEngine
 	{
 		$price1 = $line1->getUnitPriceValueWithTax();
 		$price2 = $line2->getUnitPriceValueWithTax();
-		echo $price1 ." vs. " .$price2;
 		if ($price1 == $price2) {
 			return 0;
 		}

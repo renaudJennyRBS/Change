@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" input-class="input-block-level"
+		<rbs-field-text data-ng-hide="document.isNew()" property="label" input-class="input-block-level"
 			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.label', ['ucf']) }}">
 		</rbs-field-text>
 
@@ -13,15 +13,14 @@
 			allow-creation="false"
 			selector-title="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.productlist-picker-title', ['ucf']) }}"
 			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.product', ['ucf']) }}"
-			required="true"
-			ng-hide="hideProduct">
+			required="true">
 		</rbs-field-picker>
 
 		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.crossSellingType', ['ucf']) }}" required="true">
 			<rbs-collection-item-selector ng-model="document.crossSellingType" collection-code="Rbs_Catalog_Collection_CrossSellingType"></rbs-collection-item-selector>
 		</rbs-field>
 
-		<rbs-field-boolean property="symetric" label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.symetric', ['ucf']) }}">
+		<rbs-field-boolean property="symmetrical" label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.symmetrical', ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<!--

@@ -2,6 +2,9 @@
 	<div class="page-header">
 		<h2 class="ng-binding">
 			(= productList.label =)
+			<span ng-if="List.isCrossSelling">
+				(<a href="(= productList.product | documentURL =)">(= productList.product.label =)</a>)
+			</span>
 			<small>
 				{{ i18n('m.rbs.catalog.documents.productlist.productsortorder', ['ucf', 'lab']) }}
 				(= List.sortOrders[productList.productSortOrder].label =)

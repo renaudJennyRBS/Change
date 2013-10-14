@@ -8,6 +8,6 @@
 			<dboptions length="25" />
 			<constraint name="enum" fromList="Rbs_Catalog_Collection_CrossSellingType" />
 		</property>
-		<property name="symetric" type="Boolean" default-value="false" />
+		<property name="symmetrical" type="Boolean" default-value="false" />
 	</properties>
 </document>

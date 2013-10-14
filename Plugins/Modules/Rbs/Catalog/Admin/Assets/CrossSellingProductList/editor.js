@@ -13,7 +13,7 @@
 			link : function (scope, elm, attrs, editorCtrl)
 			{
 				scope.onReady = function(){
-					if (!scope.document.product && $routeParams.productId)
+					if ($routeParams.productId)
 					{
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
 							scope.document.product = product;

@@ -44,6 +44,38 @@ class CrossSellingProductList extends \Compilation\Rbs\Catalog\Documents\CrossSe
 			}
 		};
 
+		//Unicity check
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), $callback, 3);
+	}
+
+	protected function onCreate()
+	{
+		//Default label = cross selling type
+		if ($this->getCrossSellingType() && !$this->getLabel())
+		{
+			$this->setLabel($this->getLabelFromCrossSellingType());
+		}
+	}
+
+	/**
+	 * @return string|null
+	 */
+	protected function getLabelFromCrossSellingType()
+	{
+		$cm = new \Change\Collection\CollectionManager($this->getDocumentServices());
+		$collectionCode = 'Rbs_Catalog_Collection_CrossSellingType';
+		if (is_string($collectionCode))
+		{
+			$c = $cm->getCollection($collectionCode);
+			if ($c)
+			{
+				$i = $c->getItemByValue($this->getCrossSellingType());
+				if ($i)
+				{
+					return $i->getLabel();
+				}
+			}
+		}
+		return null;
 	}
 }
