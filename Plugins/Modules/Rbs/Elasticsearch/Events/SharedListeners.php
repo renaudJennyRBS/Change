@@ -3,8 +3,6 @@ namespace Rbs\Elasticsearch\Events;
 
 use Change\Documents\Events\Event as DocumentEvent;
 use Change\Job\JobManager;
-use Rbs\Elasticsearch\Services\IndexManager;
-use Rbs\Elasticsearch\Services\WebsiteIndexManager;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
@@ -28,17 +26,18 @@ class SharedListeners implements SharedListenerAggregateInterface
 			$toIndex = $application->getContext()->get('elasticsearch_toIndex');
 			if ($toIndex)
 			{
-				$deleted = ($event->getName() == DocumentEvent::EVENT_DELETED || $event->getName() == DocumentEvent::EVENT_LOCALIZED_DELETED);
+				$deleted = ($event->getName() == DocumentEvent::EVENT_DELETED
+					|| $event->getName() == DocumentEvent::EVENT_LOCALIZED_DELETED);
 				$toIndex[] = ['LCID' => $document->getDocumentManager()->getLCID(), 'id' => $document->getId(),
 					'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
 			}
 		};
+
 		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_LOCALIZED_CREATED,
-			DocumentEvent::EVENT_UPDATED,
-			DocumentEvent::EVENT_DELETED, DocumentEvent::EVENT_LOCALIZED_DELETED);
+			DocumentEvent::EVENT_UPDATED, DocumentEvent::EVENT_DELETED, DocumentEvent::EVENT_LOCALIZED_DELETED);
 		$events->attach('Documents', $eventNames, $callback, 5);
 
-		$callback = function(\Zend\EventManager\Event $event)
+		$callback = function (\Zend\EventManager\Event $event)
 		{
 			if ($event->getParam('primary'))
 			{
@@ -49,7 +48,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 		};
 		$events->attach('TransactionManager', 'begin', $callback);
 
-		$callback = function(\Zend\EventManager\Event $event)
+		$callback = function (\Zend\EventManager\Event $event)
 		{
 			if ($event->getParam('primary'))
 			{
