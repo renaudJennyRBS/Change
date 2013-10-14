@@ -2,6 +2,7 @@
 namespace Rbs\Seo\Documents;
 
 use Zend\Http\Response as HttpResponse;
+use Change\Documents\Events\Event as DocumentEvent;
 
 /**
  * @name \Rbs\Seo\Documents\DocumentSeo
@@ -231,9 +232,18 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 					{
 						$location['urls'] = $rules[$key]['urls'];
 					}
-					else
+
+					$addDefault = true;
+					foreach ($location['urls'] as $url)
 					{
-						$location['urls'][] = $defaultUrl;
+						if ($url['query'] == '')
+						{
+							$addDefault = false;
+						}
+					}
+					if ($addDefault)
+					{
+						array_unshift($location['urls'], $defaultUrl);
 					}
 
 					if (isset($rules[$key]['redirects']))
@@ -311,13 +321,16 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			);
 		}
 
-		if (!($target instanceof \Rbs\Website\Documents\Page) && !($target instanceof \Rbs\Website\Documents\Section))
+		if (!($target instanceof \Rbs\Website\Documents\StaticPage))
 		{
-			$query = new \Change\Documents\Query\Query($target->getDocumentServices(), 'Rbs_Website_Page');
-			$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
-			$subQuery->andPredicates($subQuery->eq('section', $section), $subQuery->eq('functionCode', $target->getDocumentModelName()));
-			$page = $query->getFirstDocument();
-			if ($page instanceof \Rbs\Website\Documents\Page && $page->published())
+			$prm = new \Change\Http\Web\PathRuleManager($this->getApplicationServices());
+			$pathRule = $prm->getNewRule($website->getId(), $LCID, 'NULL', $target->getId(), 200, $section->getId());
+			$params = array('website' => $website, 'pathRule' => $pathRule);
+			$documentEvent = new DocumentEvent(DocumentEvent::EVENT_DISPLAY_PAGE, $target, $params);
+			$target->getEventManager()->trigger($documentEvent);
+			$page = $documentEvent->getParam('page');
+			if ($page instanceof \Rbs\Website\Documents\FunctionalPage ||
+				($page instanceof \Rbs\Website\Documents\StaticPage && $page->published()))
 			{
 				$location['publication'][] = array(
 					'ok' => true,

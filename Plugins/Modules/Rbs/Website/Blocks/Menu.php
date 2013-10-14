@@ -101,10 +101,15 @@ class Menu extends Block
 	 * @param integer $maxLevel
 	 * @param null|\Rbs\Website\Documents\Page $currentPage
 	 * @param \Rbs\Website\Documents\Section[] $path
-	 * @return \Rbs\Website\Menu\MenuEntry
+	 * @return \Rbs\Website\Menu\MenuEntry|null
 	 */
 	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path)
 	{
+		if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
+		{
+			return null;
+		}
+
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
 		{
@@ -115,6 +120,10 @@ class Menu extends Block
 			if ($doc->getIndexPageId())
 			{
 				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
+			}
+			elseif ($maxLevel < 1)
+			{
+				return null; // Hide empty topics.
 			}
 			if (count($path) && in_array($doc, $path))
 			{
@@ -143,6 +152,10 @@ class Menu extends Block
 					{
 						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel-1, $currentPage, $path));
 					}
+					if (!$entry->getUrl() && !count($entry->getChildren()))
+					{
+						return null; // Hide empty topics.
+					}
 				}
 			}
 			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
@@ -155,16 +168,18 @@ class Menu extends Block
 						if ($subDoc)
 						{
 							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel-1, $currentPage, $path);
-							if (isset($item['titleKey']))
+							if ($subEntry !== null)
 							{
-								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+								if (isset($item['titleKey']))
+								{
+									$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+								}
+								elseif (isset($item['title']))
+								{
+									$subEntry->setTitle($item['title']);
+								}
+								$entry->addChild($subEntry);
 							}
-							elseif (isset($item['title']))
-							{
-								$subEntry->setTitle($item['title']);
-							}
-
-							$entry->addChild($subEntry);
 						}
 					}
 					elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))

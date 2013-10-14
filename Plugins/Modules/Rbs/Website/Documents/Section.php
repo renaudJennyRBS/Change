@@ -57,6 +57,8 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 		$eventManager->attach('getPageByFunction', array($this, 'getPageByFunction'), 10);
 		$eventManager->attach(Event::EVENT_NODE_UPDATED, array($this, 'onNodeUpdated'), 10);
+		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 10);
+		$eventManager->attach('selectPathRule', array($this, 'onSelectPathRule'), 10);
 	}
 
 	/**
@@ -67,13 +69,19 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		$document = $event->getDocument();
 		if ($document instanceof Section)
 		{
-			$page = $document->getIndexPage();
-			if ($page instanceof FunctionalPage)
+			/* @var $pathRule \Change\Http\Web\PathRule */
+			$pathRule = $event->getParam("pathRule");
+			$parameters = $pathRule->getQueryParameters();
+			if (!array_key_exists('sectionPageFunction', $parameters) || $parameters['sectionPageFunction'] == 'Rbs_Website_Section')
 			{
-				$page->setSection($document);
+				$page = $document->getIndexPage();
+				if ($page instanceof FunctionalPage)
+				{
+					$page->setSection($document);
+				}
+				$event->setParam('page', $page);
+				$event->stopPropagation();
 			}
-			$event->setParam('page', $page);
-			$event->stopPropagation();
 		}
 	}
 
@@ -146,6 +154,78 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 			else
 			{
 				$permissionManager->addWebRule($section->getId(), $section->getWebsite()->getId());
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onPopulatePathRule(Event $event)
+	{
+		$document = $event->getDocument();
+		if ($document instanceof Section)
+		{
+			/* @var $pathRule \Change\Http\Web\PathRule */
+			$pathRule = $event->getParam('pathRule');
+			$queryParameters = $event->getParam('queryParameters');
+			if (isset($queryParameters['sectionPageFunction']))
+			{
+				$sectionPageFunction = $queryParameters['sectionPageFunction'];
+				$em = $document->getEventManager();
+				$args = array('functionCode' => $sectionPageFunction);
+				$event1 = new \Change\Documents\Events\Event('getPageByFunction', $document, $args);
+				$em->trigger($event1);
+				$page = $event1->getParam('page');
+				if ($page)
+				{
+					$relativePath = $pathRule->normalizePath($page->getTitle() . '.html');
+					if ($document instanceof Topic && $document->getPathPart())
+					{
+						$relativePath = $document->getPathPart() . '/' . $relativePath;
+					}
+					$pathRule->setRelativePath($relativePath);
+					$pathRule->setQueryParameters(array('sectionPageFunction' => $sectionPageFunction));
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onSelectPathRule(Event $event)
+	{
+		$document = $event->getDocument();
+		if ($document instanceof Section)
+		{
+			/* @var $pathRule \Change\Http\Web\PathRule */
+			$pathRules = $event->getParam('pathRules');
+			$queryParameters = $event->getParam('queryParameters');
+			foreach ($pathRules as $pathRule)
+			{
+				if ($pathRule->getQuery())
+				{
+					$params = $pathRule->getQueryParameters();
+					$found = true;
+					foreach ($params as $key => $param)
+					{
+						if (!isset($queryParameters[$key]) || $queryParameters[$key] != $param)
+						{
+							$found = false;
+							break;
+						}
+					}
+					if ($found)
+					{
+						foreach ($params as $key => $param)
+						{
+							unset($queryParameters[$key]);
+						}
+						$event->setParam('pathRule', $pathRules[0]);
+						return;
+					}
+				}
 			}
 		}
 	}

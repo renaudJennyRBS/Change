@@ -390,9 +390,9 @@ class Correction
 	{
 		if ($this->isValidProperty($name))
 		{
-			if (is_array($value))
+			if ($value instanceof DocumentArrayProperty)
 			{
-				$value = array_map(function($val) {return ($val instanceof AbstractDocument) ? new DocumentWeakReference($val) : $val;}, $value);
+				$value = array_map(function($val) {return ($val instanceof AbstractDocument) ? new DocumentWeakReference($val) : $val;}, $value->toArray());
 			}
 			elseif ($value instanceof AbstractDocument)
 			{
@@ -632,6 +632,17 @@ class Correction
 		$uq->execute();
 
 		$this->setModified(false);
+
+		if ($this->getStatus() == static::STATUS_FILED)
+		{
+			$jobManager = new \Change\Job\JobManager();
+			$jobManager->setDocumentServices($this->getDocumentManager()->getDocumentServices());
+			$jobManager->createNewJob('Change_Correction_Filed', array(
+				'correctionId' => $this->getId(),
+				'documentId' => $this->getDocumentId(),
+				'LCID' => $this->getLCID()
+			));
+		}
 	}
 }
 

@@ -94,6 +94,66 @@ class DocumentCleanUp
 	}
 
 	/**
+	 * @param \Change\Job\Event $event
+	 */
+	public function onCorrectionFiled($event)
+	{
+		$job = $event->getJob();
+		$documentServices = $event->getDocumentServices();
+		$documentServices->getApplicationServices()->getLogging()->fatal(__METHOD__);
+		$documentId = $job->getArgument('documentId');
+		$LCID = $job->getArgument('LCID');
+
+		$document = $documentServices->getDocumentManager()->getDocumentInstance($documentId);
+		if (!$document)
+		{
+			$event->success();
+			return;
+		}
+
+		$documentServices->getApplicationServices()->getLogging()->fatal(__METHOD__);
+
+		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Workflow_Task');
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			if ($LCID === \Change\Documents\Correction::NULL_LCID_KEY)
+			{
+				$LCID = $document->getRefLCID();
+			}
+			$query->andPredicates(
+				$query->in('status', array(WorkItem::STATUS_ENABLED, WorkItem::STATUS_IN_PROGRESS)),
+				$query->eq('document', $documentId),
+				$query->eq('documentLCID', $LCID)
+			);
+		}
+		else
+		{
+			$query->andPredicates(
+				$query->in('status', array(WorkItem::STATUS_ENABLED, WorkItem::STATUS_IN_PROGRESS)),
+				$query->eq('document', $documentId)
+			);
+		}
+		$query->addOrder('workflowInstance');
+
+		$tasks = $query->getDocuments();
+		$documentServices->getApplicationServices()->getLogging()->fatal(var_export($tasks->ids(), true));
+		/* @var $task Task */
+		foreach ($tasks as $task)
+		{
+			try
+			{
+				$this->cancelTask($task);
+			}
+			catch (\Exception $e)
+			{
+				$documentServices->getApplicationServices()->getLogging()->exception($e);
+			}
+		}
+
+		$event->success();
+	}
+
+	/**
 	 * @param Task $task
 	 * @throws \Exception
 	 */
@@ -110,6 +170,7 @@ class DocumentCleanUp
 					array(WorkflowInstance::STATUS_OPEN, WorkflowInstance::STATUS_SUSPENDED))
 			)
 			{
+				$applicationServices->getLogging()->fatal('cancel ' . $task->getId());
 				$workflowInstance->cancel(new \DateTime());
 				$workflowInstance->update();
 			}

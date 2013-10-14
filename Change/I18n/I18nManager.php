@@ -861,8 +861,9 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$timeZone = $this->getTimeZone();
 		}
-		$datefmt = new \IntlDateFormatter($LCID, null, null, $timeZone->getName(), \IntlDateFormatter::GREGORIAN, $format);
-		return $datefmt->format($this->toLocalDateTime($gmtDate));
+		$tmpDate = clone $gmtDate; // To not alter $gmtDate.
+		$dateFormatter = new \IntlDateFormatter($LCID, null, null, $timeZone->getName(), \IntlDateFormatter::GREGORIAN, $format);
+		return $dateFormatter->format($this->toLocalDateTime($tmpDate));
 	}
 
 	/**

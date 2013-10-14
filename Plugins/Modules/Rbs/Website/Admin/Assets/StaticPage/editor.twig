@@ -14,6 +14,11 @@
 			input-class="input-block-level">
 		</rbs-field-text>
 
+		<rbs-field-boolean property="hideLinks"
+			label="{{ i18nAttr('m.rbs.website.documents.staticpage.hidelinks', ['ucf']) }}"
+			input-class="input-block-level">
+		</rbs-field-boolean>
+
 		<rbs-field-picker property="pageTemplate" required="true"
 			label="{{ i18nAttr('m.rbs.website.documents.staticpage.pageTemplate', ['ucf']) }}"
 			accepted-model="Rbs_Theme_PageTemplate"
@@ -31,7 +36,7 @@
 		</rbs-field-picker>
 	</fieldset>
 
-	<fieldset ng-show="section=='content'"
+	<fieldset ng-show="section=='content'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.staticpage.editableContent', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
@@ -50,8 +55,7 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<fieldset
-		ng-show="section=='timeline'"
+	<fieldset ng-show="section=='timeline'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.timeline.admin.message-list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
 		rbs-timeline>

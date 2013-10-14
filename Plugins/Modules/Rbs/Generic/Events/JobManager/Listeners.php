@@ -32,6 +32,12 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach('process_Change_Document_CleanUp', $callback, 10);
 
+		$callBack = function ($event)
+		{
+			(new \Rbs\Workflow\Job\DocumentCleanUp())->onCorrectionFiled($event);
+		};
+		$events->attach('process_Change_Correction_Filed', $callBack, 5);
+
 		$callback = function (Event $event)
 		{
 			(new \Rbs\Workflow\Job\DocumentCleanUp())->localizedCleanUp($event);

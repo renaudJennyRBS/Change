@@ -108,7 +108,7 @@ class GetCorrection
 		$properties = array();
 		if ($document instanceof Localizable)
 		{
-			$localizedOnly = $document->getRefLCID() != $correction->getLCID();
+			$localizedOnly = \Change\Documents\Correction::NULL_LCID_KEY != $correction->getLCID();
 		}
 		else
 		{

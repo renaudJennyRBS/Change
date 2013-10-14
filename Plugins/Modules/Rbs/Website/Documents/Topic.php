@@ -16,22 +16,24 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 		return array($this);
 	}
 
-	protected function attachEvents($eventManager)
-	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
-	}
-
 	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
 	public function onPopulatePathRule(\Change\Documents\Events\Event $event)
 	{
+		parent::onPopulatePathRule($event);
 		/* @var $pathRule \Change\Http\Web\PathRule */
 		$pathRule = $event->getParam('pathRule');
-		if ($this->getPathPart())
+		if (!$pathRule->getRelativePath())
 		{
-			$pathRule->setRelativePath($this->getPathPart() . '.' . $this->getId() . '/');
+			if ($this->getPathPart())
+			{
+				$pathRule->setRelativePath($this->getPathPart() . '/');
+			}
+			else
+			{
+				$pathRule->setRelativePath($pathRule->normalizePath($this->getTitle()) . '/');
+			}
 		}
 	}
 }
