@@ -68,7 +68,6 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$codes = $this->getAllowedFunctionsCode();
 			if (is_array($codes) && count($codes))
 			{
-				$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');
 				$page->checkDefaultSectionPageFunction();
 			}
 		}
