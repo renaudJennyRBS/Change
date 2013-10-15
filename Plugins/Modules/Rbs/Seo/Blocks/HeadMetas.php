@@ -53,19 +53,12 @@ class HeadMetas extends Block
 		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
 			$attributes['document'] = $document;
-			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
-			$query->andPredicates($query->eq('target', $document));
-			$documentSeo = $query->getFirstDocument();
-			if ($documentSeo instanceof \Rbs\Seo\Documents\DocumentSeo && !$documentSeo->getCurrentLocalization()->isNew())
+			$page = $event->getParam('page');
+			$seoManager = new \Rbs\Seo\Services\SeoManager();
+			$seoManager->setDocumentServices($event->getDocumentServices());
+			foreach ($seoManager->getMetas($page, $document) as $key => $meta)
 			{
-				$attributes['title'] = $documentSeo->getCurrentLocalization()->getMetaTitle();
-				$attributes['description'] = $documentSeo->getCurrentLocalization()->getMetaDescription();
-				$attributes['keywords'] = $documentSeo->getCurrentLocalization()->getMetaKeywords();
-			}
-
-			if (!isset($attributes['title']))
-			{
-				$attributes['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+				$attributes[$key] = $meta;
 			}
 		}
 		return 'head-metas.twig';

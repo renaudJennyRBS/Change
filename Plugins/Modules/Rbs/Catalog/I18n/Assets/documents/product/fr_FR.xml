@@ -41,4 +41,8 @@
 	<key id="section-variant">variantes</key>
 	<key id="variantgroup">groupe de variantes</key>
 	<key id="variant">variante</key>
+
+	<key id="seo-title">titre du document</key>
+	<key id="seo-description">description du document</key>
+	<key id="seo-brand">marque du document</key>
 </i18n>

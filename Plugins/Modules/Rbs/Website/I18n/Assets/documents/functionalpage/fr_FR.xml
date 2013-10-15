@@ -18,4 +18,11 @@
 	<key id="following-functions-cannot-be-supported-correctly">Les fonctions suivantes ne pourront pas être supportées correctement car la page ne dispose pas des blocs nécessaires à ces fonctions :</key>
 	<key id="edit-page-contents-to-fix-this" format="html"><![CDATA[Pour corriger cela, vous pouvez <a href ng-href="(= doc | documentURL:'editor' =)">éditer le contenu de la page</a>.]]></key>
 	<key id="configure-functions">configurer</key>
+
+	<key id="seo-page-title">titre de la page</key>
+	<key id="seo-website-title">titre du site web</key>
+	<key id="seo-section-title">titre de la section</key>
+	<key id="seo-document-title">titre du document</key>
+	<key id="seo-document-description">description du document</key>
+	<key id="seo-document-keywords">mot-clés du document</key>
 </i18n>

@@ -7,9 +7,10 @@
 	 * @param $http
 	 * @param Loading
 	 * @param REST
+	 * @param Utils
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST, NotificationCenter)
+	function Editor($timeout, $http, Loading, REST, NotificationCenter, Utils)
 	{
 		return {
 			restrict : 'C',
@@ -34,6 +35,7 @@
 								};
 							});
 						});
+						scope.variableCount = 0;
 						return;
 					}
 					for (var i = 0; i < scope.document.locations.length; i++)
@@ -50,6 +52,29 @@
 						scope.newRedirect[i] = {'relativePath': '', 'permanent': true, 'query': ''};
 					}
 				};
+
+				scope.addMetaVariable = function (meta, variable)
+				{
+					if (scope.document[meta])
+					{
+						scope.document[meta] += '{' + variable + '}';
+					}
+					else
+					{
+						scope.document[meta] = '{' + variable + '}';
+					}
+				};
+
+				scope.$watch('document.target', function (target){
+					if (target)
+					{
+						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'targetId': target.id });
+						$http.get(REST.getBaseUrl(url)).success(function (data){
+							scope.metaVariables = data;
+							scope.variableCount = Object.keys(data).length;
+						})
+					}
+				});
 
 				REST.getAvailableLanguages().then(function (langs) {
 					scope.availableLanguages = langs.items;
@@ -389,6 +414,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.NotificationCenter'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
 })();
