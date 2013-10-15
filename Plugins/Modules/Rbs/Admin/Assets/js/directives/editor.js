@@ -305,6 +305,7 @@
 
 							// If a Document has been created, we redirect to the URL of the new Document.
 							if ($scope._isNew) {
+								EditorManager.removeCreationLocalCopy(doc);
 								$location.path(doc.url());
 							}
 
@@ -923,7 +924,7 @@
 
 	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
 	{
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService)
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings)
 		{
 			var	$ws = $('#workspace'),
 				cascadeContextStack = [],
@@ -987,6 +988,14 @@
 				var key = doc.model + '-' + (doc.isNew() ? 'NEW' : doc.id);
 				if (doc.LCID) {
 					key += '-' + doc.LCID;
+				}
+				return key;
+			}
+
+			function makeCreationLocalCopyKey (model, LCID) {
+				var key = model + '-' + 'NEW';
+				if (LCID) {
+					key += '-' + LCID;
 				}
 				return key;
 			}
@@ -1137,6 +1146,15 @@
 
 				'removeLocalCopy' : function (doc) {
 					var	key = makeLocalCopyKey(doc);
+					if (localCopyRepo.hasOwnProperty(key)) {
+						delete localCopyRepo[key];
+						delete doc.META$.localCopy;
+						commitLocalCopyRepository();
+					}
+				},
+
+				'removeCreationLocalCopy' : function (doc) {
+					var	key = makeCreationLocalCopyKey(doc.model, doc.LCID || Settings.get('LCID'));
 					if (localCopyRepo.hasOwnProperty(key)) {
 						delete localCopyRepo[key];
 						delete doc.META$.localCopy;
