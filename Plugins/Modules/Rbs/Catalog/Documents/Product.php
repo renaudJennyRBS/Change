@@ -77,7 +77,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		parent::attachEvents($eventManager);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
-		$eventManager->attach('getMetaVariables', array($this, 'onGetMetaVariables'), 5);
 		$eventManager->attach('getMetaSubstitutions', array($this, 'onGetMetaSubstitutions'), 5);
 	}
 
@@ -151,19 +150,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			}
 			$this->setSku($sku);
 		}
-	}
-
-	/**
-	 * @param \Change\Documents\Events\Event $event
-	 */
-	public function onGetMetaVariables(\Change\Documents\Events\Event $event)
-	{
-		$i18nManager = $event->getDocument()->getApplicationServices()->getI18nManager();
-		$event->setParam('variables', [
-			'document.title' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-title', ['ucf']),
-			'document.brand' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-brand', ['ucf']),
-			'document.description' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-description', ['ucf'])
-		]);
 	}
 
 	/**

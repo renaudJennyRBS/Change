@@ -6,6 +6,9 @@ namespace Rbs\Seo\Std;
  */
 class MetaComposer
 {
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
 	public function onGetMetas(\Zend\EventManager\Event $event)
 	{
 		$page = $event->getParam('page');
@@ -118,11 +121,7 @@ class MetaComposer
 			{
 				return $substitutions[$matches[1]];
 			}
-			else
-			{
-				//TODO: no substitution was found, should we log a warning?
-				return '';
-			}
+			return '';
 		}, $meta);
 	}
 

@@ -110,15 +110,19 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable $document
+	 * @param string[] $functions
 	 * @return array
 	 */
-	public function getMetaVariables($document)
+	public function getMetaVariables($functions)
 	{
-		$eventManager = $document->getEventManager();
-		$event = new \Change\Documents\Events\Event('getMetaVariables', $document);
-		$eventManager->trigger($event);
-		return ($event->getParam('variables')) ? $event->getParam('variables') : [];
+		$this->getApplicationServices()->getLogging()->fatal(var_export($functions, true));
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(array(
+			'functions' => $functions,
+			'documentServices' => $this->getDocumentServices()
+		));
+		$eventManager->trigger('getMetaVariables', null, $args);
+		return isset($args['variables']) ? $args['variables'] : [];
 	}
 
 }

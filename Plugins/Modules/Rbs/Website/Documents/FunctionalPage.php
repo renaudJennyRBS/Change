@@ -39,7 +39,6 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'), 10);
 		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onUpdated'), 10);
-		$eventManager->attach('getMetaVariables', array($this, 'onGetMetaVariables'), 5);
 		$eventManager->attach('getMetaSubstitutions', array($this, 'onGetMetaSubstitutions'), 5);
 	}
 
@@ -132,49 +131,5 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			}
 		}
 		$event->setParam('substitutions', $substitutions);
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onGetMetaVariables(Event $event)
-	{
-		$document = $event->getDocument();
-		if ($document instanceof FunctionalPage)
-		{
-			$seoManager = new \Rbs\Seo\Services\SeoManager();
-			$seoManager->setApplicationServices($document->getApplicationServices());
-			$seoManager->setDocumentServices($document->getDocumentServices());
-
-			$i18nManager = $document->getApplicationServices()->getI18nManager();
-			$variables = [
-				'page.title' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-page-title', ['ucf']),
-				'page.website.title' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-website-title', ['ucf']),
-				'page.section.title' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-section-title', ['ucf'])
-			];
-			//TODO add variables from website, section etc.
-
-			//Add document meta if this functional page allow a function code of a document detail
-			foreach ($document->getAllowedFunctionsCode() as $functionCode)
-			{
-				//check if this code is a valid model
-				$modelManager = $document->getDocumentManager();
-				try
-				{
-					$detailDocument = $modelManager->getNewDocumentInstanceByModelName($functionCode);
-					$variables = array_merge($variables, $seoManager->getMetaVariables($detailDocument), [
-						'document.title' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-document-title', ['ucf']),
-						'document.description' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-document-description', ['ucf']),
-						'document.keywords' => $i18nManager->trans('m.rbs.website.documents.functionalpage.seo-document-keywords', ['ucf'])
-					]);
-				}
-				catch (\InvalidArgumentException $e)
-				{
-					//model doesn't exist
-					//FIXME do something?
-				}
-			}
-			$event->setParam('variables', $variables);
-		}
 	}
 }

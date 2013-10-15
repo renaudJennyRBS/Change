@@ -20,7 +20,12 @@ class GetMetaVariables
 				$seoManager = new \Rbs\Seo\Services\SeoManager();
 				$seoManager->setApplicationServices($event->getApplicationServices());
 				$seoManager->setDocumentServices($event->getDocumentServices());
-				$result->setArray($seoManager->getMetaVariables($target));
+				$functions = [ $target->getDocumentModelName() ];
+				if ($target instanceof \Rbs\Website\Documents\FunctionalPage)
+				{
+					$functions = array_merge($functions, $target->getAllowedFunctionsCode());
+				}
+				$result->setArray($seoManager->getMetaVariables($functions));
 			}
 			else
 			{

@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Generic\Events\SeoManager;
+namespace Rbs\Commerce\Events\SeoManager;
 
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
@@ -7,7 +7,7 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Json\Json;
 
 /**
- * @name \Rbs\Generic\Events\Commands\Listeners
+ * @name \Rbs\Commerce\Events\Commands\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -23,13 +23,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			(new \Rbs\Seo\Std\MetaComposer())->onGetMetas($event);
-		};
-		$events->attach('getMetas', $callback, 5);
-
-		$callback = function (Event $event)
-		{
-			(new \Rbs\Website\Seo\GetFunctionalPageVariables())->execute($event);
+			(new \Rbs\Catalog\Seo\GetProductVariables())->execute($event);
 		};
 		$events->attach('getMetaVariables', $callback, 5);
 	}
