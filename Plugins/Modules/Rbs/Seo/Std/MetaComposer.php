@@ -21,11 +21,11 @@ class MetaComposer
 			$dqb = new \Change\Documents\Query\Query($documentServices, $documentSeoModel);
 			$dqb->andPredicates($dqb->eq('target', $page));
 			$pageSeo = $dqb->getFirstDocument();
+			$documentRegExp = '/\{(document\.[a-z][A-Za-z0-9.]*)\}/';
 			if ($pageSeo)
 			{
 				/* @var $pageSeo \Rbs\Seo\Documents\DocumentSeo */
 				$pageRegExp = '/\{(page\.[a-z][A-Za-z0-9.]*)\}/';
-				$documentRegExp = '/\{(document\.[a-z][A-Za-z0-9.]*)\}/';
 				$pageVariables = $this->getAllVariables($pageRegExp, $pageSeo);
 				$pageSubstitutions = (count($pageVariables)) ? $seoManager->getMetaSubstitutions($page, $pageVariables) : [];
 				$documentVariables = $this->getAllVariables($documentRegExp, $pageSeo);
@@ -34,34 +34,67 @@ class MetaComposer
 				$metaTitle = $pageSeo->getCurrentLocalization()->getMetaTitle();
 				if ($metaTitle)
 				{
-					if (count($pageSubstitutions))
-					{
-						$metaTitle = $this->getSubstituedString($metaTitle, $pageRegExp, $pageSubstitutions);
-					}
-					if (count($documentSubstitutions))
-					{
-						$metaTitle = $this->getSubstituedString($metaTitle, $documentRegExp, $documentSubstitutions);
-					}
+					$metaTitle = count($pageSubstitutions) ? $this->getSubstituedString($metaTitle, $pageRegExp, $pageSubstitutions) : $metaTitle;
+					$metaTitle = count($documentSubstitutions) ? $this->getSubstituedString($metaTitle, $documentRegExp, $documentSubstitutions) : $metaTitle;
 					$metas['title'] = $metaTitle;
+				}
+				else
+				{
+					$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
 				}
 				$metaDescription = $pageSeo->getCurrentLocalization()->getMetaDescription();
 				if ($metaDescription)
 				{
-					$metaDescription = $this->getSubstituedString($metaDescription, $pageRegExp, $pageSubstitutions);
-					$metaDescription = $this->getSubstituedString($metaDescription, $documentRegExp, $documentSubstitutions);
+					$metaDescription = count($pageSubstitutions) ? $this->getSubstituedString($metaDescription, $pageRegExp, $pageSubstitutions) : $metaDescription;
+					$metaDescription = count($documentSubstitutions) ? $this->getSubstituedString($metaDescription, $documentRegExp, $documentSubstitutions) : $metaDescription;
 					$metas['description'] = $metaDescription;
 				}
 				$metaKeywords = $pageSeo->getCurrentLocalization()->getMetaKeywords();
 				if ($metaKeywords)
 				{
-					$metaKeywords = $this->getSubstituedString($metaKeywords, $pageRegExp, $pageSubstitutions);
-					$metaKeywords = $this->getSubstituedString($metaKeywords, $documentRegExp, $documentSubstitutions);
+					$metaKeywords = count($pageSubstitutions) ? $this->getSubstituedString($metaKeywords, $pageRegExp, $pageSubstitutions) : $metaKeywords;
+					$metaKeywords = count($documentSubstitutions) ? $this->getSubstituedString($metaKeywords, $documentRegExp, $documentSubstitutions) : $metaKeywords;
 					$metas['keywords'] = $metaKeywords;
 				}
 			}
 			else
 			{
-				$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+				$dqb = new \Change\Documents\Query\Query($documentServices, $documentSeoModel);
+				$dqb->andPredicates($dqb->eq('target', $document));
+				$documentSeo = $dqb->getFirstDocument();
+				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
+				if ($documentSeo)
+				{
+					$documentVariables = $this->getAllVariables($documentRegExp, $documentSeo);
+					$documentSubstitutions = (count($documentVariables)) ? $seoManager->getMetaSubstitutions($document, $documentVariables) : [];
+
+					$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
+					if ($metaTitle)
+					{
+						$metaTitle = $this->getSubstituedString($documentSeo->getCurrentLocalization()->getMetaTitle(), $documentRegExp, $documentSubstitutions);
+					}
+					else
+					{
+						$metaTitle = $document->getDocumentModel()->getPropertyValue($document, 'title');
+					}
+					$metas['title'] = $metaTitle;
+
+					$metaDescription = $documentSeo->getCurrentLocalization()->getMetaDescription();
+					if ($metaDescription)
+					{
+						$metas['description'] = $this->getSubstituedString($metaDescription, $documentRegExp, $documentSubstitutions);
+					}
+
+					$metaKeywords = $documentSeo->getCurrentLocalization()->getMetaKeywords();
+					if ($metaKeywords)
+					{
+						$metas['keywords'] = $this->getSubstituedString($metaKeywords, $documentRegExp, $documentSubstitutions);
+					}
+				}
+				else
+				{
+					$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+				}
 			}
 			$event->setParam('metas', $metas);
 		}
