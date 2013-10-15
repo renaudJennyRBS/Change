@@ -11,9 +11,9 @@ use Zend\Form\Annotation\AbstractArrayAnnotation;
 class TreeManager
 {
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Documents\DocumentManager
 	 */
-	protected $documentServices;
+	protected $documentManager;
 
 	/**
 	 * @var \Change\Application\ApplicationServices
@@ -27,10 +27,12 @@ class TreeManager
 
 	/**
 	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @return $this
 	 */
 	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+		return $this;
 	}
 
 	/**
@@ -42,27 +44,22 @@ class TreeManager
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
 	{
-		$this->documentServices = $documentServices;
+		$this->documentManager = $documentManager;
+		return $this;
 	}
 
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
 
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
 	public function getDocumentManager()
 	{
-		return $this->documentServices->getDocumentManager();
+		return $this->documentManager;
 	}
 
 	/**
@@ -859,9 +856,9 @@ class TreeManager
 		$q2->bindParameter('id', $id);
 		$q2->execute();
 
-		if ($this->getDocumentServices()->getDocumentManager()->isInCache($id))
+		if ($this->getDocumentManager()->isInCache($id))
 		{
-			$subDoc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($id, $model);
+			$subDoc = $this->getDocumentManager()->getDocumentInstance($id, $model);
 			if ($subDoc->getPersistentState() == AbstractDocument::STATE_LOADED)
 			{
 				$subDoc->setTreeName(null);
