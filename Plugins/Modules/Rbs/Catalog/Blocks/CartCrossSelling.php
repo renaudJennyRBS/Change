@@ -81,7 +81,6 @@ class CartCrossSelling extends Block
 		$productChoiceStrategy = $parameters->getParameter('productChoiceStrategy');
 		$crossSellingType = $parameters->getParameter('crossSellingType');
 		$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
-
 		if ($cart && $productChoiceStrategy && $crossSellingType)
 		{
 			$crossSellingManager = $commerceServices->getCrossSellingManager();
