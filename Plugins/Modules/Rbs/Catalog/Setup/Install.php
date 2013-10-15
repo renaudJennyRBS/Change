@@ -25,6 +25,57 @@ class Install extends \Change\Plugins\InstallBase
 		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 
 		$this->installGenericAttributes($applicationServices, $documentServices);
+
+		//Add CrossSelling Type collection
+		$cm = new \Change\Collection\CollectionManager();
+		$cm->setDocumentServices($documentServices);
+		if ($cm->getCollection('Rbs_Catalog_Collection_CrossSellingType') === null)
+		{
+			$tm = $applicationServices->getTransactionManager();
+			try
+			{
+				$tm->begin();
+
+				$i18n = $applicationServices->getI18nManager();
+
+				/* @var $collection \Rbs\Collection\Documents\Collection */
+				$collection = $documentServices->getDocumentManager()
+					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$collection->setLabel('Cross Selling Types');
+				$collection->setCode('Rbs_Catalog_Collection_CrossSellingType');
+
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item->setValue('ACCESSORIES');
+				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-accessories', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-accessories', array('ucf')));
+				$item->save();
+				$collection->getItems()->add($item);
+
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item->setValue('SIMILAR');
+				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-similar', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-similar', array('ucf')));
+				$item->save();
+				$collection->getItems()->add($item);
+
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item->setValue('HIGHERRANGE');
+				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range', array('ucf')));
+				$item->save();
+				$collection->getItems()->add($item);
+
+				$collection->save();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
 	}
 
 	/**

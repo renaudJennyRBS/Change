@@ -69,6 +69,7 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 		$this->registerTaxManager($dl);
 		$this->registerPriceManager($dl);
 		$this->registerCatalogManager($dl);
+		$this->registerCrossSellingManager($dl);
 		$this->registerStockManager($dl);
 		$this->registerCartManager($dl);
 		parent::__construct($dl);
@@ -77,6 +78,7 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 		$im->setParameters('Rbs\Price\Services\TaxManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Price\Services\PriceManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Catalog\Services\CatalogManager', array('commerceServices' => $this));
+		$im->setParameters('Rbs\Catalog\Services\CrossSellingManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Stock\Services\StockManager', array('commerceServices' => $this));
 		$im->setParameters('Rbs\Commerce\Cart\CartManager', array('commerceServices' => $this));
 	}
@@ -100,6 +102,19 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 	protected function registerCatalogManager($dl)
 	{
 		$cl = new ClassDefinition('Rbs\Catalog\Services\CatalogManager');
+		$cl->setInstantiator('__construct')
+			->addMethod('setCommerceServices', true)
+			->addMethodParameter('setCommerceServices', 'commerceServices',
+				array('type' => 'Rbs\Commerce\Services\CommerceServices', 'required' => true));
+		$dl->addDefinition($cl);
+	}
+
+	/**
+	 * @param DefinitionList $dl
+	 */
+	protected function registerCrossSellingManager($dl)
+	{
+		$cl = new ClassDefinition('Rbs\Catalog\Services\CrossSellingManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('setCommerceServices', true)
 			->addMethodParameter('setCommerceServices', 'commerceServices',
@@ -302,6 +317,14 @@ class CommerceServices extends Di implements \Zend\EventManager\EventsCapableInt
 	public function getCatalogManager()
 	{
 		return $this->get('Rbs\Catalog\Services\CatalogManager');
+	}
+
+	/**
+	 * @return \Rbs\Catalog\Services\CrossSellingManager
+	 */
+	public function getCrossSellingManager()
+	{
+		return $this->get('Rbs\Catalog\Services\CrossSellingManager');
 	}
 
 	/**

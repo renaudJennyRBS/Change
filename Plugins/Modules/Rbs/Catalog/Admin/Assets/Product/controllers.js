@@ -119,6 +119,41 @@
 	app.controller('Rbs_Catalog_Product_PricesController', PricesController);
 
 
+	function CrossSellingController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
+	{
+		Workspace.collapseLeftSidebar();
+
+		Breadcrumb.setLocation([
+			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
+		]);
+
+		$scope.$on('$destroy', function () {
+			Workspace.restore();
+		});
+		$scope.params = {};
+		$scope.List = {};
+
+		if (!$scope.product)
+		{
+			Loading.start();
+			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
+				Loading.stop();
+				Breadcrumb.setLocation([
+					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+					[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(product, 'list')],
+					[product.label, UrlManager.getUrl(product, 'form') ],
+					[i18n.trans('m.rbs.catalog.admin.js.cross-selling-list | ucf'), "Rbs/Catalog/Product"]]
+				);
+				$scope.product = product;
+				$scope.loadQuery = Query.simpleQuery('Rbs_Catalog_CrossSellingProductList', 'product', product.id);
+			});
+		}
+	}
+
+	CrossSellingController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
+	app.controller('Rbs_Catalog_Product_CrossSellingController', CrossSellingController);
+
 	/**
 	 * List actions.
 	 */

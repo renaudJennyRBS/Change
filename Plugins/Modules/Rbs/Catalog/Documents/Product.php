@@ -291,4 +291,15 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
 	}
+
+	/**
+	 * @param string $crossSellingType
+	 * @return \Rbs\Catalog\Documents\CrossSellingProductList|null
+	 */
+	public function getCrossSellingListByType($crossSellingType)
+	{
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Catalog_CrossSellingProductList');
+		$query->andPredicates($query->eq('product', $this->getId()), $query->eq('crossSellingType', $crossSellingType));
+		return $query->getFirstDocument();
+	}
 }

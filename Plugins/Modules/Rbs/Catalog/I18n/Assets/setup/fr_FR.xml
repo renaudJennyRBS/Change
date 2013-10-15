@@ -6,4 +6,8 @@
 	<key id="attr-brand">marque</key>
 	<key id="attr-code">code</key>
 	<key id="attr-genericattributes">Attributs généraux</key>
+	<key id="attr-cross-selling-similar">produits similaires</key>
+	<key id="attr-cross-selling-accessories">accessoires</key>
+	<key id="attr-cross-selling-higher-range">produits de gamme supérieure</key>
+	<key id="attr-cross-selling-types">types de produits associés</key>
 </i18n>
