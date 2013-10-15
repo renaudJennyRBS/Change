@@ -11,13 +11,12 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	 */
 	protected $facetsDefinition;
 
-
 	/**
 	 * @return string
 	 */
 	public function getLabel()
 	{
-		return $this->getDocumentServices()->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.documents.fulltext.label-webiste', array('ucf'), array('websiteLabel' => $this->getWebsite()->getLabel())); //$this->getName();
+		return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.documents.fulltext.label-website', array('ucf'), array('websiteLabel' => $this->getWebsite()->getLabel())); //$this->getName();
 	}
 
 	/**

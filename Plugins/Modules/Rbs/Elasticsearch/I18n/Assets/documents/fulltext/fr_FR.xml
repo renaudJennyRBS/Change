@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.elasticsearch.documents.fulltext" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="label-webiste">index full-text de {websiteLabel}</key>
+	<key id="label-website">index full-text de {websiteLabel}</key>
 	<key id="name">nom de l'index</key>
 	<key id="name-help">Le nom sera généré automatiquement si ce champ n'est pas rempli.</key>
 	<key id="clientname">configuration client</key>
