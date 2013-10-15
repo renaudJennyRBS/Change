@@ -11,21 +11,7 @@
 		    $el = $('#rbs-left-menu'),
 		    currentUrl = null,
 		    currentScope = null,
-		    contentsStack = [],
-
-		    buildMenuNgTemplate =
-				'<div class="box main">' +
-					'<ul class="nav nav-list">' +
-						'<div ng-repeat="entry in _chgMenu" ng-switch="entry.type">' +
-							'<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
-							'<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
-								'<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
-								'<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
-								'<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +
-							'</li>' +
-						'</div>' +
-					'</ul>' +
-				'</div>';
+		    contentsStack = [];
 
 		this.init = function ()
 		{
@@ -221,7 +207,7 @@
 						scope.section = sec;
 					};
 				}
-				html = buildMenuHtml(menuObject); //buildMenuNgTemplate;
+				html = buildMenuHtml(menuObject);
 			} else if (angular.isString(menuObject)) {
 				html = menuObject;
 			} else if (angular.isFunction(menuObject)) {
@@ -248,24 +234,20 @@
 
 		function buildMenuHtml (menu)
 		{
-			var html = '<div class="box main panel panel-default">';
-			html += '<div class="panel-heading"><h3 class="panel-title">Propriétés</h3></div>';
-			html += '<div class="list-group">';
-
-			/*
-			 '<li ng-switch-when="group" class="nav-header">(=entry.label=)</li>' +
-			 '<li ng-switch-when="section" ng-if="!entry.hideWhenCreate || !document.isNew()" ng-class="{\'invalid\': entry.invalid.length > 0}">' +
-			 '<span ng-show="entry.fields.length > 0" class="pull-right badge" ng-class="{\'badge-success\': entry.corrected.length > 0}"><span class="badge-required-indicator" ng-show="entry.required.length > 0">*</span>(=entry.fields.length=)</span>' +
-			 '<a ng-href="(=entry.url=)" ng-show="entry.url">(=entry.label=)</a>' +
-			 '<a href="javascript:;" ng-hide="entry.url" data-menu-section="(=entry.id=)" ng-click="__mainMenuSetSection(entry.id)">(=entry.label=)</a>' +
-			 '</li>' +
-			*/
+			var	html = '<div class="box main panel panel-default">',
+				firstGroup = true;
 
 			angular.forEach(menu, function (entry)
 			{
 				if (entry.type === 'group')
 				{
-					html += '<h4 class="list-group-item" href="javascript:;">' + entry.label + '</h4>';
+					//html += '<h4 class="list-group-item">' + entry.label + '</h4>';
+					if (! firstGroup) {
+						html += '</div>';
+					}
+					html += '<div class="panel-heading"><h3 class="panel-title">' + entry.label + '</h3></div>';
+					html += '<div class="list-group">';
+					firstGroup = false;
 				}
 				else if (entry.type === 'section')
 				{
@@ -291,11 +273,11 @@
 				}
 			});
 
-			html += '</div>';
-			html += '</div>';
+			html += '</div></div>';
 
 			return html;
 		}
+
 
 		this.add = function (key, contents, scope, title)
 		{
@@ -303,13 +285,13 @@
 			title = title || 'Other actions';
 
 			if (angular.isArray(contents)) {
-				html = '<ul class="nav nav-list">';
+				html = '<div class="list-group">';
 				angular.forEach(contents, function (item) {
 					if (angular.isString(item)) {
-						html += '<li>' + item + '</li>';
+						html += '<li class="list-group-item">' + item + '</li>';
 					}
 					else if (angular.isObject(item) && item.url && item.text) {
-						html += '<li';
+						html += '<a class="list-group-item" url-match-class="" href="' + item.url + '"';
 						if (item.cssClass) {
 							html += ' class="' + item.cssClass + '"';
 						}
@@ -317,17 +299,17 @@
 						if (item.hasOwnProperty('badge')) {
 							html += '<span class="badge pull-right">' + item.badge + '</span>';
 						}
-						html += '<a url-match-class="" href="' + item.url + '">';
+
 						if (item.icon) {
 							html += '<i class="' + item.icon + '"></i> ';
 						}
-						html += item.text + '</a></li>';
+						html += item.text + '</a>';
 					}
 					else {
 						console.warn("MainMenu: don't know what to do with item: ", item);
 					}
 				});
-				html += '</ul>';
+				html += '</div>';
 			}
 			else {
 				html = contents;
@@ -338,8 +320,8 @@
 			}
 
 			html =
-				'<div class="box" data-key="' + key + '">' +
-				'<ul class="nav nav-list"><li class="nav-header">' + title + '</li></ul>' +
+				'<div class="box panel panel-default" data-key="' + key + '">' +
+				'<div class="panel-heading"><h3 class="panel-title">' + title + '</h3></div>' +
 				html +
 				'</div>';
 			if (scope) {
@@ -391,7 +373,7 @@
 					"translations",
 					contents,
 					scope,
-					i18n.trans('m.rbs.admin.admin.js.translations | ucf')
+					'<i class="icon-globe"></i> ' + i18n.trans('m.rbs.admin.admin.js.translations | ucf')
 				);
 			});
 			return this;
@@ -440,9 +422,69 @@
 	}]);
 
 
-	app.run(['RbsChange.MainMenu', function (MainMenu) {
+	app.run(['RbsChange.MainMenu', function (MainMenu)
+	{
 		MainMenu.init();
 	}]);
+
+
+
+	app.directive('rbsPanel', function ()
+	{
+		return {
+			restrict : 'E',
+			transclude : true,
+			replace : true,
+			template :
+				'<div class="panel panel-default">' +
+					'<div class="panel-heading">' +
+						'<h3 class="panel-title"><span ng-if="icon"><i class="(=icon=)"></i> </span><span ng-bind="title"></span></h3>' +
+					'</div>' +
+					'<div class="panel-body" ng-transclude=""></div>' +
+				'</div>',
+			scope : {
+				title : '@',
+				icon : '@'
+			}
+		};
+	});
+
+
+
+	app.directive('rbsLinksPanel', function ()
+	{
+		return {
+			restrict : 'E',
+			transclude : true,
+			replace : true,
+			template :
+				'<div class="panel panel-default">' +
+					'<div class="panel-heading">' +
+						'<h3 class="panel-title"><span ng-if="icon"><i class="(=icon=)"></i> </span><span ng-bind="title"></span></h3>' +
+					'</div>' +
+					'<div class="list-group" ng-transclude=""></div>' +
+				'</div>',
+			scope : {
+				title : '@',
+				icon : '@'
+			}
+		};
+	});
+
+
+	app.directive('rbsPanelLink', function ()
+	{
+		return {
+			restrict : 'C',
+			link : function (scope, iElement, iAttrs)
+			{
+				iElement.addClass('list-group-item');
+				if (iAttrs.icon) {
+					iElement.prepend('<i class="' + iAttrs.icon + '"></i> ');
+				}
+			}
+		};
+	});
 
 
 })( window.jQuery );

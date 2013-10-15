@@ -1,12 +1,14 @@
 <div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
 
 	<div class="row indicators">
-		<div ng-repeat="ind in indicators" class="span(= 12/indicators.length =) indicator indicator-(= ind.style =)">
-			<div class="indicator-inner">
-				<div class="value pull-left">(= ind.value | number =)</div>
-				<div class="title">
-					<div ng-bind-html="ind.label"></div>
-					<div class="message" ng-bind-html="ind.message"></div>
+		<div ng-repeat="ind in indicators" class="col-md-(= 12/indicators.length =)">
+			<div class="indicator indicator-(= ind.style =)">
+				<div class="indicator-inner">
+					<div class="value pull-left">(= ind.value | number =)</div>
+					<div class="title">
+						<div ng-bind-html="ind.label"></div>
+						<div class="message" ng-bind-html="ind.message"></div>
+					</div>
 				</div>
 			</div>
 		</div>

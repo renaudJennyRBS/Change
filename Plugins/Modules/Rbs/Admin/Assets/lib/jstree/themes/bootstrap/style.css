@@ -107,7 +107,7 @@
 .jstree-bootstrap .jstree-locked a { color:silver; cursor:default; }
 
 
-
+/*
 .jstree.jstree-bootstrap .jstree-leaf > a:after {
     background: linear-gradient(to right, rgba(255, 255, 255, 0), #F5F5F5) repeat scroll 0 0 transparent;
     content: "";
@@ -117,7 +117,7 @@
     top: 0;
     width: 16px;
 }
-
+*/
 
 .jstree.jstree-bootstrap .jstree-leaf {
 	position: relative;

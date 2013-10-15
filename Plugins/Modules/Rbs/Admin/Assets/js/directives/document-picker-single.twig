@@ -1,39 +1,39 @@
 <div ng-hide="isEmpty()">
-	<div class="form-control" style="color: #444444; height: auto; margin-bottom: 0;" ng-include="getItemTemplateName(item)"></div>
+	<p class="form-control form-control-static" ng-include="getItemTemplateName(item)"></p>
 </div>
 
-<div class="uneditable-input input-block-level empty" style="margin-bottom: 0;" ng-show="isEmpty()">{{ i18n('m.rbs.admin.forms.picker-no-element', ['ucf']) }}</div>
+<p class="form-control form-control-static text-muted" style="margin-bottom: 0;" ng-show="isEmpty()">{{ i18n('m.rbs.admin.forms.picker-no-element', ['ucf']) }}</p>
 
 <div class="btn-toolbar">
 	<div class="btn-group">
 		<button
 			type="button"
-			class="btn btn-sm"
+			class="btn btn-default btn-xs"
 			ng-click="openSelector()"
 			title="{{ i18nAttr('m.rbs.admin.forms.picker-selector-tooltip', ['ucf', 'etc']) }}"><i class="icon-arrow-down"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.forms.picker-selector') }}</span></button>
 		<button
 			type="button"
-			class="btn btn-sm"
+			class="btn btn-default btn-xs"
 			ng-click="beginSelectSession()"
 			ng-show="acceptedModel && allowInPlaceSelection"
 			title="{{ i18nAttr('m.rbs.admin.forms.picker-in-place-tooltip', ['ucf', 'etc']) }}"><i class="icon-external-link"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.forms.picker-in-place', ['etc']) }}</span></button>
 		<button
 			type="button"
-			class="btn btn-sm"
+			class="btn btn-default btn-xs"
 			ng-click="getFromClipboard()"
 			ng-disabled="clipboardValues.length == 0"
 			title="{{ i18nAttr('m.rbs.admin.forms.picker-clipboard-tooltip', ['ucf']) }}"><i ng-class="{ 'icon-bookmark': clipboardValues.length > 0, 'icon-bookmark-empty': clipboardValues.length == 0 }"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.forms.picker-clipboard') }}</span></button>
 	</div>
 	<button
 		type="button"
-		class="btn btn-sm pull-right"
+		class="btn btn-default btn-xs pull-right"
 		ng-click="clear()"
 		ng-disabled="isEmpty()"
 		title="{{ i18nAttr('m.rbs.admin.forms.picker-delete-selection-tooltip', ['ucf']) }}"><i class="icon-eraser"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.forms.picker-clear') }}</span></button>
 	<button
 		ng-show="allowCreation"
 		type="button"
-		class="btn btn-sm"
+		class="btn btn-default btn-xs"
 		ng-click="createDocument()"
 		title="{{ i18nAttr('m.rbs.admin.forms.picker-create-tooltip', ['ucf']) }}"><i class="icon-plus"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.forms.picker-create') }}</span></button>
 </div>
@@ -44,7 +44,7 @@
 			<div class="input-append">
 				<!--TODO localization-->
 				<input type="text" class="input-medium search-query" placeholder="Rechercher..." data-ng-model="search"/>
-				<button type="submit" class="btn" title="Rechercher">
+				<button type="submit" class="btn btn-default" title="Rechercher">
 					<i class="icon-search"></i>
 				</button>
 			</div>

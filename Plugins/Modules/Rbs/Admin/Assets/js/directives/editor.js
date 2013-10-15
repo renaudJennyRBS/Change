@@ -865,8 +865,8 @@
 					{
 						$table.append(
 							'<tr>' +
-								'<th width="50%">' +
-								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="input-medium" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
+								'<th width="50%" class="form-inline">' +
+								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="form-control" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
 								'</th>' +
 								'<th style="border-left: 5px solid #0088CC; background: rgba(0,136,255,0.05);">' +
 									i18n.trans('m.rbs.admin.admin.js.reference-language | ucf | lbl') + ' (= availableLanguages[refDocument.LCID].label =)' +
@@ -897,7 +897,7 @@
 								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
 							}
 							$rcell.append($refProp);
-							$rcell.append('<button type="button" class="btn btn-sm copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= availableLanguages[document.LCID].label =)</button>');
+							$rcell.append('<button type="button" class="btn btn-default btn-sm copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= availableLanguages[document.LCID].label =)</button>');
 						});
 
 						$form.prepend($table);

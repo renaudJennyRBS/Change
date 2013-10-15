@@ -1,10 +1,9 @@
-<rbs-field label="{{ i18nAttr('m.rbs.generic.document.id',['ucf']) }}">
-	<span class="uneditable-input input-small">(= document.id =)</span>
-	<span class="muted" ng-if="document.id < 0">{{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span>
+<rbs-field label="{{ i18nAttr('m.rbs.generic.documents.id',['ucf']) }}">
+	<p class="form-control-static">(= document.id =)<span class="text-muted" ng-if="document.id < 0"> {{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span></p>
 </rbs-field>
 
 <rbs-field label="{{ i18nAttr('m.rbs.generic.document.model',['ucf']) }}">
-	<span class="uneditable-input input-xxlarge">(= document.model =)</span>
+	<p class="form-control-static">(= document.model =)</p>
 </rbs-field>
 
 <!-- Localizable -->
@@ -14,15 +13,15 @@
 	<h4>{{ i18n('m.rbs.admin.forms.translation',['ucf']) }}</h4>
 
 	<rbs-field label="{{ i18nAttr('m.rbs.admin.forms.reference-language',['ucf']) }}">
-		<span class="uneditable-input input-xxlarge"><i class="icon-book"></i> (= availableLanguages[document.refLCID].label =)</span>
+		<p class="form-control-static"><i class="icon-book"></i> (= availableLanguages[document.refLCID].label =)</p>
 	</rbs-field>
 
 	<rbs-field label="{{ i18nAttr('m.rbs.admin.forms.translations',['ucf']) }}">
-		<span class="uneditable-input input-xxlarge">
+		<p class="form-control-static">
 			<span ng-repeat="l in document.META$.locales" ng-show="l.id != document.refLCID">
 				<a href ng-href="(= document.translateUrl(l.id) =)">(= availableLanguages[l.id].label =)</a>
 			</span>
-		</span>
+		</p>
 	</rbs-field>
 </div>
 
@@ -33,7 +32,7 @@
 	<h4>{{ i18n('m.rbs.admin.forms.validation',['ucf']) }}</h4>
 
 	<rbs-field label="{{ i18nAttr('m.rbs.generic.document.publicationstatus',['ucf']) }}">
-		<span class="uneditable-input"><status ng-model="document" class="small"></status> (= document.publicationStatus =)</span>
+		<p class="form-control-static"><status ng-model="document" class="small"></status> (= document.publicationStatus | statusLabel =)</p>
 	</rbs-field>
 
 	<rbs-field-date

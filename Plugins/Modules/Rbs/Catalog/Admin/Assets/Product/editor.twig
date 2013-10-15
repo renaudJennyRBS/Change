@@ -5,13 +5,13 @@
 
 		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr('m.rbs.catalog.documents.product.label', ['ucf']) }}"
-			input-class="input-block-level">
+			input-class="form-control">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.catalog.documents.product.synchronize-title-label', ['ucf']) }}"
 			label="{{ i18nAttr('m.rbs.catalog.documents.product.title', ['ucf']) }}"
-			input-class="input-block-level">
+			input-class="form-control">
 		</rbs-field-text>
 
 		<rbs-field-boolean ng-cloak="" ng-hide="document.id > 0"
@@ -51,7 +51,7 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.product.attribute', ['ucf']) }}">
-			<select ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
+			<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
 				<option value="">{{ i18n('m.rbs.catalog.documents.product.attribute-select', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
@@ -63,17 +63,17 @@
 
 					<rbs-field label="(= attributeItemDef.label =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
 						<div ng-if="attributeItemDef.collectionCode">
-							<select ng-model="attributeItemDef.value.value" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
+							<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
 								<option value=""></option>
 							</select>
 						</div>
 						<div ng-if="!attributeItemDef.collectionCode">
 							<div data-ng-switch="attributeItemDef.type">
-								<input type="text" data-ng-switch-when="Code" class="input-block-level" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 								<switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></switch>
 								<date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></date-selector>
 								<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
-								<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<input type="text" data-ng-switch-when="Float" smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 								<div class="document-picker-single" data-ng-switch-when="Document"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
@@ -94,17 +94,17 @@
 			<div ng-if="!attributeDef.attributes">
 				<rbs-field label="(= attributeDef.label =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
 					<div ng-if="attributeDef.collectionCode">
-						<select ng-model="attributeDef.value.value" rbs-items-from-collection="(= attributeDef.collectionCode =)">
+						<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)">
 							<option value=""></option>
 						</select>
 					</div>
 					<div ng-if="!attributeDef.collectionCode">
 						<div data-ng-switch="attributeDef.type">
-							<input type="text" data-ng-switch-when="Code" class="input-block-level" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></switch>
 							<date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></date-selector>
 							<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
-							<input type="text" data-ng-switch-when="Float" smart-float="" class="input-block-level" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<input type="text" data-ng-switch-when="Float" smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<div class="document-picker-single" data-ng-switch-when="Document"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="" selector-title="" accepted-model="(= attributeDef.documentType =)"
@@ -143,14 +143,12 @@
 			data-form-section-label="{{ i18nAttr('m.rbs.catalog.documents.product.section-variant', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}">
 
-		<div class="control-group property" data-ng-hide="document.variantGroup">
-
-		</div>
-
-		<div class="control-group property" data-ng-show="document.variantGroup">
-			<label class="control-label">{{ i18n('m.rbs.catalog.documents.product.variantgroup', ['ucf']) }}</label>
-			<div class="controls">
-				<a href ng-href="(= document.variantGroup | documentURL =)">(= document.variantGroup.label =)</a>
+		<div class="form-group property" data-ng-show="document.variantGroup">
+			<label class="col-lg-3 control-label">{{ i18n('m.rbs.catalog.documents.product.variantgroup', ['ucf']) }}</label>
+			<div class="col-lg-9 controls">
+				<p class="form-control-static">
+					<a href ng-href="(= document.variantGroup | documentURL =)">(= document.variantGroup.label =)</a>
+				</p>
 			</div>
 		</div>
 	</fieldset>
@@ -185,7 +183,7 @@
 						<switch ng-model="item.isHighlighted" ng-change="toggleHighlight(item)"></switch>
 					</td>
 					<td style="width:160px; text-align: right">
-						<button style="width:36px" class="btn" ng-click="cascadeEditProductListItem(item)" type="button">
+						<button style="width:36px" class="btn btn-default" ng-click="cascadeEditProductListItem(item)" type="button">
 							<i class="icon-pencil"></i>
 						</button>
 						<button style="width:36px" class="btn btn-danger" type="button" ng-click="deleteProductListItem(item)">

@@ -1,11 +1,11 @@
-<div>
-	<input data-role="input-date" class="input-medium" size="16" type="date" data-date-format="{{ i18nAttr('m.rbs.admin.forms.date-selector-format') }}"
+<div class="form-inline">
+	<input data-role="input-date" class="form-control" size="16" type="date" data-date-format="{{ i18nAttr('m.rbs.admin.forms.date-selector-format') }}"
 		data-date-language="{{ i18nAttr('m.rbs.admin.forms.date-selector-lang') }}"/>
 	<span class="input-unit">{{ i18n('m.rbs.admin.forms.date-selector-at') }}</span>
 
-	<input data-role="input-hour" class="input-mini" type="number" size="2" value="0" />
+	<input data-role="input-hour" class="form-control" type="number" size="2" value="0" />
 	<span class="input-unit">{{ i18n('m.rbs.admin.forms.date-selector-hour-letter') }}</span>
-	<input data-role="input-minute" class="input-mini" type="number" size="2" value="00" />
+	<input data-role="input-minute" class="form-control" type="number" size="2" value="00" />
 
 	<button class="btn btn-info timezone-selector" type="button" style="margin-left:10px;vertical-align:top;" data-ng-click="openTimeZoneSelector($event)">
 		<i class="icon-globe"></i> (=timeZone=)

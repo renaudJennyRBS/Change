@@ -4,9 +4,9 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsThresholdsEditor', ['RbsChange.REST', 'RbsChange.Utils', '$timeout', rbsThresholdsEditorDirective]);
+	app.directive('rbsThresholdsEditor', [ rbsThresholdsEditorDirective ]);
 
-	function rbsThresholdsEditorDirective (REST, Utils, $timeout) {
+	function rbsThresholdsEditorDirective () {
 		return {
 			restrict : 'E',
 			scope : {thresholdsValues: "="},
@@ -20,25 +20,26 @@
 					}
 					else
 					{
-						scope.thresholdsValues  = [{l:0,c:"UNAVAILABLE"}, {l:1000000,c:"AVAILABLE"}]
+						scope.thresholdsValues  = [{l:0,c:"UNAVAILABLE"}, {l:1000000,c:"AVAILABLE"}];
 					}
 				}, true);
 
-				scope.createThreshold = function(index){
-					var old = scope.thresholds;
-					var newThresholds = [];
+				scope.createThreshold = function (index) {
+					var old = scope.thresholds,
+					    newThresholds = [],
+						i, l;
 
-					for (var i = 0; i < old.length; i++)
+					for (i = 0; i < old.length; i++)
 					{
-						if (index == i)
+						if (index === i)
 						{
 							if (i > 0)
 							{
-								var l = old[i].l - Math.round((old[i].l - old[i-1].l) / 2);
+								l = old[i].l - Math.round((old[i].l - old[i-1].l) / 2);
 							}
 							else
 							{
-								var l = old[i].l - 10;
+								l = old[i].l - 10;
 							}
 							newThresholds.push({l:l, c : (l > 0 ? "AVAILABLE" : "UNAVAILABLE")});
 						}
@@ -49,12 +50,13 @@
 				};
 
 				scope.removeThreshold = function(index){
-					var old = scope.thresholds;
-					var newThresholds = [];
+					var old = scope.thresholds,
+					    newThresholds = [],
+						i;
 
-					for (var i = 0; i < old.length; i++)
+					for (i = 0; i < old.length; i++)
 					{
-						if (index != i)
+						if (index !== i)
 						{
 							newThresholds.push(old[i]);
 						}
@@ -63,9 +65,9 @@
 				};
 
 				scope.sortThreshold = function(){
-					var array = scope.thresholdsValues;
+					var array = scope.thresholdsValues, i;
 
-					for (var i = 0; i < array.length; i++)
+					for (i = 0; i < array.length; i++)
 					{
 						if (array[i].l >= 1000000)
 						{
@@ -78,7 +80,7 @@
 					}
 
 					scope.thresholdsValues = array.sort(function(a, b) {
-						return (a.l == b.l ? 0 : (a.l < b.l ? -1 : 1));
+						return (a.l === b.l ? 0 : (a.l < b.l ? -1 : 1));
 					});
 				};
 			}

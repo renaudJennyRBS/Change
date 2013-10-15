@@ -1,10 +1,9 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Catalog/Product/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.catalog.documents.product-list', ['ucf']) }}</a></li>
-		<li><a href="Rbs/Catalog/ProductList/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.catalog.documents.productlist-list', ['ucf']) }}</a></li>
-		<li class="nav-header">{{ i18n('m.rbs.admin.administration', ['ucf']) }}</li>
-		<li><a href="Rbs/Catalog/VariantGroup/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.catalog.documents.variantgroup-list', ['ucf']) }}</a></li>
-		<li><a href="Rbs/Catalog/Attribute/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.catalog.documents.attribute-list', ['ucf']) }}</a></li>
-	</ul>
-</div>
+<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+	<a href="Rbs/Catalog/Product/" class="rbs-panel-link">{{ i18n('m.rbs.catalog.documents.product-list', ['ucf']) }}</a>
+	<a href="Rbs/Catalog/ProductList/" class="rbs-panel-link">{{ i18n('m.rbs.catalog.documents.productlist-list', ['ucf']) }}</a>
+</rbs-links-panel>
+
+<rbs-links-panel title="{{ i18n('m.rbs.admin.administration', ['ucf']) }}" icon="icon-cog">
+	<a href="Rbs/Catalog/VariantGroup/" class="rbs-panel-link">{{ i18n('m.rbs.catalog.documents.variantgroup-list', ['ucf']) }}</a>
+	<a href="Rbs/Catalog/Attribute/" class="rbs-panel-link">{{ i18n('m.rbs.catalog.documents.attribute-list', ['ucf']) }}</a>
+</rbs-links-panel>

@@ -3,6 +3,7 @@
 	<key id="selected-tags">étiquettes sélectionnées</key>
 	<key id="all-tags">toutes les étiquettes</key>
 	<key id="manage-tags">gérer les étiquettes</key>
-	<key id="clear-selection">effacer la sélection</key>
+	<key id="clear-selection">effacer</key>
 	<key id="selected-tags-message">les étiquettes sélectionnées ici servent à filter la liste des éléments présente à droite</key>
+	<key id="find-images">trouver des images</key>
 </i18n>

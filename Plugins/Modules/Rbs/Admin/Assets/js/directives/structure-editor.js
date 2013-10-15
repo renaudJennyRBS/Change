@@ -201,15 +201,15 @@
 			row.children().each(function (index, el) {
 				var i, span = 0, offset = 0;
 				for (i=0 ; i<=gridSize ; i++) {
-					if ($(el).is('.offset'+i)) {
+					if ($(el).is('.col-md-offset-'+i)) {
 						offset = i;
 					}
-					if ($(el).is('.span'+i)) {
+					if ($(el).is('.col-md-'+i)) {
 						span = i;
 					}
 				}
 				if (!span) {
-					throw new Error("Bad column layout: column '" + index + "' should have a 'span[1-" + gridSize + "]' class.");
+					throw new Error("Bad column layout: column '" + index + "' should have a 'col-md-[1-" + gridSize + "]' class.");
 				}
 				cols.push({
 					'id'         : $(el).data('id'),
@@ -231,12 +231,12 @@
 			}
 
 			for (i=1 ; i<=gridSize ; i++) {
-				if (seCell.is('.span'+i)) {
+				if (seCell.is('.col-md-'+i)) {
 					return i;
 				}
 			}
 
-			throw new Error("Could not determine column size (missing 'span*' class?) in grid of size " + gridSize);
+			throw new Error("Could not determine column size (missing 'col-md-*' class?) in grid of size " + gridSize);
 		};
 
 
@@ -256,21 +256,21 @@
 				// So we loop from 0 to `gridSize`, both included.
 				var i, span = 0, offset = 0;
 				for (i=0 ; i <= gridSize ; i++) {
-					if ($(el).is('.offset'+i)) {
+					if ($(el).is('.col-md-offset-'+i)) {
 						offset = i;
 					}
-					if ($(el).is('.span'+i)) {
+					if ($(el).is('.col-md-'+i)) {
 						span = i;
 					}
 				}
-				$(el).removeClass('span' + span);
-				$(el).removeClass('offset' + offset);
+				$(el).removeClass('col-md-' + span);
+				$(el).removeClass('col-md-offset-' + offset);
 
 				// Add new 'span*' and 'offset*' classes.
-				$(el).addClass('span' + columns[index].span);
+				$(el).addClass('col-md-' + columns[index].span);
 				$(el).attr('data-size', columns[index].span);
 				if (columns[index].offset) {
-					$(el).addClass('offset' + columns[index].offset);
+					$(el).addClass('col-md-offset-' + columns[index].offset);
 					$(el).attr('data-offset', columns[index].offset);
 				} else {
 					$(el).removeAttr('data-offset');
@@ -463,17 +463,17 @@
 			"template"   :
 				'<div class="btn-toolbar">' +
 					'<div class="btn-group" ng-if="! readOnly">' +
-						'<button type="button" ng-disabled="!undoData.length" class="btn" ng-click="undo(0)"><i class="icon-undo"></i> Défaire</button>' +
-						'<button type="button" ng-disabled="!undoData.length" class="btn dropdown-toggle" data-toggle="dropdown">' +
+						'<button type="button" ng-disabled="!undoData.length" class="btn btn-default" ng-click="undo(0)"><i class="icon-undo"></i> Défaire</button>' +
+						'<button type="button" ng-disabled="!undoData.length" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
 							'<span class="caret"></span>' +
 						'</button>' +
 						'<ul class="dropdown-menu" data-role="undo-menu">' +
-							'<li data-ng-repeat="entry in undoData"><a href="javascript:;" ng-click="undo($index)"><span class="muted">{{entry.date | date:\'mediumTime\'}}</span> <i class="{{entry.icon}}"></i> {{entry.label}} {{entry.item.label}}</a></li>' +
+							'<li data-ng-repeat="entry in undoData"><a href="javascript:;" ng-click="undo($index)"><span class="text-muted">{{entry.date | date:\'mediumTime\'}}</span> <i class="{{entry.icon}}"></i> {{entry.label}} {{entry.item.label}}</a></li>' +
 						'</ul>' +
 					'</div>' +
-					'<button ng-if="readOnly" type="button" disabled="disabled" class="btn">Lecture seule</button>' +
+					'<button ng-if="readOnly" type="button" disabled="disabled" class="btn btn-default">Lecture seule</button>' +
 					'<div class="btn-group" ng-transclude></div>' +
-					'<button type="button" class="btn pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
+					'<button type="button" class="btn btn-default pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
 				'</div>' +
 				'<div class="rich-text-input-selectors-container"></div>' +
 				'<div id="se-picker-container"></div>' +
@@ -1320,29 +1320,29 @@
 			"restrict" : 'C',
 			"scope"    : true,
 			"template" :
-				'<button type="button" ng-click="setEqualColumns()" class="btn btn-sm btn-block" ng-disabled="columns.length < 2 || ! equalSize">Répartir équitablement<span ng-show="equalSize"> ({{gridSize/equalSize}} x {{equalSize}})</span></button>' +
+				'<button type="button" ng-click="setEqualColumns()" class="btn btn-default btn-sm btn-block" ng-disabled="columns.length < 2 || ! equalSize">Répartir équitablement<span ng-show="equalSize"> ({{gridSize/equalSize}} x {{equalSize}})</span></button>' +
 				'<div ng-repeat="col in columns" style="display:inline-block">' +
 					'<div class="column-info" ng-class="{\'active\': highlightedColIndex == $index}" ng-click="highlightColumn($index)">' +
 						'<div class="btn-group pull-right">' +
-							'<button type="button" class="btn btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>' +
+							'<button type="button" class="btn btn-default btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>' +
 						'</div>' +
 						'<h5>Colonne {{$index+1}}</h5>' +
 						'<div class="btn-group">' +
-							'<button type="button" class="btn btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{\'0\':\'Aucun bloc\', \'one\': \'Un bloc\', \'other\': \'{} blocs\'}"></button>' +
-							'<button type="button" class="btn btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>' +
+							'<button type="button" class="btn btn-default btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{\'0\':\'Aucun bloc\', \'one\': \'Un bloc\', \'other\': \'{} blocs\'}"></button>' +
+							'<button type="button" class="btn btn-default btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>' +
 						'</div>' +
 						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="Réduire"><i class="icon-minus"></i></button>' +
+							'<button type="button" class="btn btn-default btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="Réduire"><i class="icon-minus"></i></button>' +
 							'<div class="text">Largeur={{col.span}}</div>' +
-							'<button type="button" class="btn btn-sm" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="Agrandir"><i class="icon-plus"></i></button>' +
+							'<button type="button" class="btn btn-default btn-sm" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="Agrandir"><i class="icon-plus"></i></button>' +
 						'</div>' +
 						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-sm" ng-click="moveColumnLeft($index, $event)" title="Décaler à gauche" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>' +
+							'<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnLeft($index, $event)" title="Décaler à gauche" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>' +
 							'<div class="text">Décalage={{col.offset}}</div>' +
-							'<button type="button" class="btn btn-sm" ng-click="moveColumnRight($index, $event)" title="Décaler à droite" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>' +
+							'<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnRight($index, $event)" title="Décaler à droite" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>' +
 						'</div>' +
 					'</div>' +
-					'<button type="button" class="btn btn-sm" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">' +
+					'<button type="button" class="btn btn-default btn-sm" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">' +
 						'<i class="icon-plus-sign"></i>' +
 					'</button>' +
 				'</div>',
@@ -1681,9 +1681,9 @@
 			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
 				var item = ctrl.getItemById(elm.data('id'));
 
-				scope.span = 'span' + item.size;
+				scope.span = 'col-md-' + item.size;
 				if (item.offset) {
-					scope.offset = 'offset' + item.offset;
+					scope.offset = 'col-md-offset-' + item.offset;
 				}
 
 				scope.saveItem = function (item) {
@@ -1742,20 +1742,20 @@
 			"template"   :
 				'<div class="btn-toolbar">' +
 					'<div class="btn-group">' +
-						'<button class="btn btn-sm" disabled="disabled"><i class="icon-plus"></i></button>' +
-						'<button class="btn btn-sm" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
-						'<button class="btn btn-sm" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
-						'<button class="btn btn-sm" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
-						'<button class="btn btn-sm" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
+						'<button class="btn btn-default btn-sm" disabled="disabled"><i class="icon-plus"></i></button>' +
+						'<button class="btn btn-default btn-sm" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
+						'<button class="btn btn-default btn-sm" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
+						'<button class="btn btn-default btn-sm" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
+						'<button class="btn btn-default btn-sm" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
 					'</div>' +
 					'<button class="btn btn-sm btn-danger pull-right" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
 				'</div>' +
 				'<div class="btn-toolbar">' +
 					'<h6>Visibilité</h6>' +
 					'<div style="text-align: center;">' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'D\')" ng-class="{\'btn-success active\': isVisibleFor(\'D\')}">Ordinateurs</button>' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'T\')" ng-class="{\'btn-success active\': isVisibleFor(\'T\')}">Tablettes</button>' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'P\')" ng-class="{\'btn-success active\': isVisibleFor(\'P\')}">Mobiles</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'D\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'D\')]">Ordinateurs</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'T\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'T\')]">Tablettes</button>' +
+						'<button class="btn btn-xs" ng-click="toggleVisibility(\'P\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'P\')]">Mobiles</button>' +
 					'</div>' +
 				'</div>' +
 				'<div class="btn-toolbar" ng-show="isInColumnLayout()">' +
@@ -1763,26 +1763,26 @@
 					'<h6>Colonnes</h6>' +
 				'</div>' +
 				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +
-					'<div class="control-group" ng-hide="isRichText()">' +
+					'<div class="input-group" ng-hide="isRichText()">' +
 						'<label class="control-label" for="block_(=item.id=)_label">Libellé du bloc</label>' +
 						'<div class="controls">' +
-							'<input class="input-block-level" id="block_(=item.id=)_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
+							'<input class="form-control" id="block_(=item.id=)_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
 						'</div>' +
 					'</div>' +
-					'<div class="control-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
+					'<div class="input-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
 						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
 						'<div ng-switch="param.type" class="controls">' +
-							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="input-small" ng-model="formValues[param.name]"/>' +
+							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
 							// FIXME allowedModelNames
 							'<div ng-switch-when="DocumentId" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="input-block-level" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
-							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="input-block-level" ng-model="formValues[param.name]"/>' +
+							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="form-control" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
+							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
 							'<switch id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Boolean" ng-model="formValues[param.name]"/>' +
 						'</div>' +
 					'</div>' +
 					'<div ng-transclude=""></div>' +
 					'<div class="form-actions">' +
-						'<button type="button" class="btn" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
+						'<button type="button" class="btn btn-default" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
 						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged() || block_properties_form.$invalid" ng-click="submit()">Valider</button>' +
 					'</div>' +
 				'</form>',
@@ -2206,7 +2206,7 @@
 					'<input class="input-block-level" id="block_{{block}}_label" type="text" ng-model="block.label" placeholder="Nom du bloc"/>' +
 					'<div class="parameters"></div>'+
 					'<div class="form-actions">' +
-						'<button type="button" class="btn" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
+						'<button type="button" class="btn btn-default"btn-xs ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
 						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged()" ng-click="submit()">Valider</button>' +
 					'</div>' +
 				'</form>',

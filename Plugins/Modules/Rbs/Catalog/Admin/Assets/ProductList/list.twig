@@ -9,9 +9,8 @@
 	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.documents.productlist-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_ProductList" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+	<div class="add-elements-bar">
 		<a href ng-href="(= 'Rbs_Catalog_ProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.productlist-create', ['ucf']) }}</a>
-		|
 		<a href ng-href="(= 'Rbs_Catalog_SectionProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.sectionproductlist-create', ['ucf']) }}</a>
 	</div>
 

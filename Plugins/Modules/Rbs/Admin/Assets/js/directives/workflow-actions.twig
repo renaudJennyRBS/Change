@@ -273,7 +273,7 @@
 							{{ i18n('m.rbs.admin.correction.please-provide-reason', ['ucf']) }}
 							<input type="text" auto-focus="true" class="input-block-level" ng-required="true" ng-model="correctionData.rejectMessage"/>
 							<button type="button" class="btn btn-danger" ng-disabled="rejectForm.$invalid" ng-click="correctionData.rejectContentValidation(correctionData.rejectMessage)"><i class="icon-ban-circle"></i> {{ i18n('m.rbs.admin.correction.reject-correction', ['ucf']) }}</button>
-							<button type="button" class="btn" ng-click="correctionData.reject = false">{{ i18n('m.rbs.admin.correction.cancel-reject', ['ucf']) }}</button>
+							<button type="button" class="btn btn-default" ng-click="correctionData.reject = false">{{ i18n('m.rbs.admin.correction.cancel-reject', ['ucf']) }}</button>
 						</div>
 					</div>
 

@@ -47,8 +47,15 @@
 */
 
 #rbs-change-menu h3 {
-	font-size: 14pt;
-	margin: 20px 15px 5px 15px;
+	background: #E5E5E5;
+	background-image: linear-gradient(to top, #F5F5F5 0%, #E8E8E8 100%);
+	color: #888888;
+	font-size: 12pt;
+	font-variant: small-caps;
+	font-weight: bold;
+	margin: 20px 0 5px;
+	padding: 5px 15px;
+	text-shadow: 0 1px 0 white;
 }
 
 #rbs-change-menu div.nav.menu-help {

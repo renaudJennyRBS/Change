@@ -12,7 +12,7 @@
 		</rbs-field-text>
 
 		<rbs-field label="{{ i18nAttr('m.rbs.price.documents.billingarea.currencyCode', ['ucf']) }}">
-			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
+			<select class="form-control" ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
 		</rbs-field>
 
 		<rbs-field-picker-multiple property="taxes" required="false" label="{{ i18nAttr('m.rbs.price.documents.billingarea.taxes', ['ucf']) }}"

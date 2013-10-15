@@ -29,13 +29,13 @@
 
 			<div class="controls">
 				<div class="btn-group" ng-if="List.conditions.length <= 5">
-					<button class="btn" ng-class="{active: List.selectedCondition == condition}" type="button"
+					<button class="btn btn-default" ng-class="{active: List.selectedCondition == condition}" type="button"
 						data-ng-repeat="condition in List.conditions" ng-click="List.selectedCondition = condition">
 						<i class="icon-ok" ng-show="List.selectedCondition == condition"></i> (= condition.label =)
 					</button>
 				</div>
 				<div class="btn-group" ng-if="List.conditions.length > 5">
-					<button class="btn" data-toggle="dropdown" type="button"
+					<button class="btn btn-default" data-toggle="dropdown" type="button"
 						data-ng-class="{active: List.selectedCondition}">
 						<span ng-show="List.selectedCondition"><i class="icon-ok"></i> (= List.selectedCondition.label =)</span>
 						<em ng-show="!List.selectedCondition">...</em>
@@ -65,18 +65,18 @@
 			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.documents.productlist.sort-order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">
 					<rbs-kb-switch>
-						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
+						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
 							<i class="icon-step-forward icon-rotate-270"></i>
 						</button>
-						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
+						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
 							<i class="icon-play icon-rotate-270"></i>
 						</button>
 					</rbs-kb-switch>
 					<rbs-kb-switch>
-						<button rbs-kb-alt="" ng-disabled="doc.position ==  -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
+						<button rbs-kb-alt="" ng-disabled="doc.position ==  -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
 							<i class="icon-step-forward icon-rotate-90"></i>
 						</button>
-						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
 							<i class="icon-play icon-rotate-90"></i>
 						</button>
 					</rbs-kb-switch>

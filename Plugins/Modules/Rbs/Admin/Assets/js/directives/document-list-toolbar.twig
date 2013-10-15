@@ -1,73 +1,73 @@
 <header class="row">
 
-	<!--ul class="nav nav-pills clearfix" data-ng-if="createActions.length > 0">
-		<li data-ng-repeat="action in createActions"><a href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a></li>
+	<!--ul class="nav nav-pills clearfix" ng-if="createActions.length > 0">
+		<li ng-repeat="action in createActions"><a href ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a></li>
 	</ul-->
 	<div class="btn-toolbar">
-		<a data-ng-repeat="action in createActions" class="btn btn-info" href data-ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a>
+		<a ng-repeat="action in createActions" class="btn btn-info" href ng-href="(=action.url=)?tn=(=currentFolder.id=)" title="(=action.tooltip=)">(=action.label=)</a>
 	</div>
 
 	<div>
 
 		<div class="pull-right">
-			<div class="btn-toolbar has-captions-top pull-right" data-ng-switch="DL.enabledViewModes.length > 1">
+			<div class="btn-toolbar has-captions-top pull-right" ng-switch="DL.enabledViewModes.length > 1">
 
-				<div data-ng-switch-when="true" class="btn-virtual-group">
+				<div ng-switch-when="true" class="btn-virtual-group">
 					<label class="caption">Options d'affichage</label>
 					<div class="btn-group">
-						<button type="button" data-ng-repeat="vm in DL.enabledViewModes" data-ng-class="{active: DL.isViewMode(vm)}" class="btn" title="(=DL.availableViewModes[vm].label=)" data-ng-click="DL.setViewMode(vm)"><i class="(=DL.availableViewModes[vm].icon=)"></i></button>
+						<button type="button" ng-repeat="vm in DL.enabledViewModes" ng-class="{active: DL.isViewMode(vm)}" class="btn btn-default" title="(=DL.availableViewModes[vm].label=)" ng-click="DL.setViewMode(vm)"><i class="(=DL.availableViewModes[vm].icon=)"></i></button>
 					</div>
-					<button class="btn" title="Afficher les informations sur les vignettes"
-						data-ng-show="DL.isViewModeEnabled('thumbnails')"
-						data-ng-disabled="! DL.isThumbnailsView()"
-						data-ng-class="{active: DL.thumbnailsInfo}"
-						data-ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-info-sign"></i></button>
+					<button class="btn btn-default" title="Afficher les informations sur les vignettes"
+						ng-show="DL.isViewModeEnabled('thumbnails')"
+						ng-disabled="! DL.isThumbnailsView()"
+						ng-class="{active: DL.thumbnailsInfo}"
+						ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-info-sign"></i></button>
 					<div class="btn-group" title="Options d'affichage">
 						<button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-th-list"></i>
-						<status class="small" value="PUBLISHED" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
-						<status class="small" value="DEACTIVATED" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
+						<status class="small" value="PUBLISHED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
+						<status class="small" value="DEACTIVATED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
 						<span class="caret"></span></button>
 						<ul class="dropdown-menu pull-right" role="menu">
 							<li class="nav-header">Afficher</li>
-							<li><a href="javascript:;" data-ng-click="DL.clearFilters()"><i class="icon-circle" data-ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
-							<li><a href="javascript:;" data-ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
-							<li><a href="javascript:;" data-ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
-							<li class="divider" data-ng-show="DL.isViewModeEnabled('thumbnails')"></li>
-							<li class="nav-header" data-ng-show="DL.isViewModeEnabled('thumbnails')">Vignettes</li>
-							<li data-ng-show="DL.isViewModeEnabled('thumbnails')" data-ng-class="{disabled: DL.isListView()}">
-								<a href="javascript:;" data-ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" data-ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
+							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
+							<li class="divider" ng-show="DL.isViewModeEnabled('thumbnails')"></li>
+							<li class="nav-header" ng-show="DL.isViewModeEnabled('thumbnails')">Vignettes</li>
+							<li ng-show="DL.isViewModeEnabled('thumbnails')" ng-class="{disabled: DL.isListView()}">
+								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
 							</li>
 							<li class="divider"></li>
 							<li class="nav-header">Trier par</li>
-							<li data-ng-repeat="column in DL.columns" data-ng-show="column.sortable"><a data-ng-href="(=DL.headerUrl(column.id)=)"><i data-ng-class="{true:'icon-chevron-down', false:'icon-chevron-up'}[DL.sort.descending]" data-ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
+							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-chevron-down', false:'icon-chevron-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 							<li class="divider"></li>
 							<li class="nav-header">Sélectionner</li>
-							<li><a href="javascript:;" data-ng-click="DL.selectAll()">Tous</a></li>
-							<li><a href="javascript:;" data-ng-click="DL.selectNone()">Aucun</a></li>
+							<li><a href="javascript:;" ng-click="DL.selectAll()">Tous</a></li>
+							<li><a href="javascript:;" ng-click="DL.selectNone()">Aucun</a></li>
 						</ul>
 					</div>
 				</div>
 
-				<div data-ng-switch-when="false" class="btn-virtual-group">
+				<div ng-switch-when="false" class="btn-virtual-group">
 					<label class="caption">Options</label>
 					<div class="btn-group" title="Options d'affichage">
 						<button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-th-list"></i>
-						<status class="small" value="PUBLISHED" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
-						<status class="small" value="DEACTIVATED" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
+						<status class="small" value="PUBLISHED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
+						<status class="small" value="DEACTIVATED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
 						<span class="caret"></span></button>
 						<ul class="dropdown-menu pull-right" role="menu">
 							<li class="nav-header">Afficher</li>
-							<li><a href="javascript:;" data-ng-click="DL.clearFilters()"><i class="icon-circle" data-ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
-							<li><a href="javascript:;" data-ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
-							<li><a href="javascript:;" data-ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" data-ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
-							<li class="divider" data-ng-show="DL.thumbnailsViewEnabled"></li>
-							<li class="nav-header" data-ng-show="DL.thumbnailsViewEnabled">Vignettes</li>
-							<li data-ng-show="DL.thumbnailsViewEnabled" data-ng-class="{disabled: DL.isListView()}">
-								<a href="javascript:;" data-ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" data-ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
+							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
+							<li class="divider" ng-show="DL.thumbnailsViewEnabled"></li>
+							<li class="nav-header" ng-show="DL.thumbnailsViewEnabled">Vignettes</li>
+							<li ng-show="DL.thumbnailsViewEnabled" ng-class="{disabled: DL.isListView()}">
+								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
 							</li>
 							<li class="divider"></li>
 							<li class="nav-header">Trier par</li>
-							<li data-ng-repeat="column in DL.columns" data-ng-show="column.sortable"><a data-ng-href="(=DL.headerUrl(column.id)=)"><i data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" data-ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
+							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 						</ul>
 					</div>
 				</div>
@@ -78,19 +78,19 @@
 		<div class="btn-toolbar has-captions-top" data-role="actions">
 
 			<div ng-if="DL.hasColumn('nodeOrder')" class="btn-virtual-group">
-				<a class="btn" href go-up-in-tree></a>
+				<a class="btn btn-default" href go-up-in-tree></a>
 			</div>
 
-			<div class="btn-virtual-group" data-ng-repeat="item in DL.toolbar.actions" data-ng-switch="item.type">
-				<div data-ng-switch-when="single" class="btn-group">
-					<button data-bind-action="(=item.name=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn" type="button"></button>
+			<div class="btn-virtual-group" ng-repeat="item in DL.toolbar.actions" ng-switch="item.type">
+				<div ng-switch-when="single" class="btn-group">
+					<button data-bind-action="(=item.name=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn btn-default" type="button"></button>
 				</div>
-				<div data-ng-switch-when="group" class="btn-group">
-					<button data-ng-repeat="action in item.actions" data-bind-action="(=action=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn" type="button"></button>
+				<div ng-switch-when="group" class="btn-group">
+					<button ng-repeat="action in item.actions" data-bind-action="(=action=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn btn-default" type="button"></button>
 				</div>
-				<div data-ng-switch-when="group-with-label" class="btn-group">
+				<div ng-switch-when="group-with-label" class="btn-group">
 					<label class="caption">(=item.label=)</label>
-					<button data-ng-repeat="action in item.actions" data-bind-action="(=action=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn" type="button"></button>
+					<button ng-repeat="action in item.actions" data-bind-action="(=action=)" data-bind-action-embed-dialog="(=embeddedActionsOptionsContainerId=)" class="btn btn-default" type="button"></button>
 				</div>
 			</div>
 		</div>

@@ -5,7 +5,7 @@
 	<key id="cascading">application en cascade</key>
 	<key id="cascading-help">Lorsque cette option est activée, le calcul de la taxe se fait sur la valeur hors-taxe plus les taxes calculées précédemment.</key>
 	<key id="rounding">arrondi</key>
-	<key id="rounding-help">Détermine quand le montant des taxes doit être arrondi (sur les paniers, commandes, factures...)/</key>
+	<key id="rounding-help">Détermine quand le montant des taxes doit être arrondi (sur les paniers, commandes, factures...)</key>
 	<key id="data">taux de taxes (catégories et zones)</key>
 	<key id="category">catégorie</key>
 	<key id="not-applicable">Non Applicable</key>

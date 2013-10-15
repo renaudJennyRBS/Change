@@ -20,7 +20,7 @@
 	</key>
 	<key id="publication-section-help" format="html">
 		<![CDATA[Vous pouvez indiquer une <strong>période de validité</strong> pour ce prix.<br />
-			<span class="label label-important">Important</span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class="in-text" for="endPublication">date de fin</label>.]]>
+			<span class="label label-danger">Important</span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class="in-text" for="endPublication">date de fin</label>.]]>
 	</key>
 	<key id="value">prix</key>
 	<key id="discount">prix promotion</key>

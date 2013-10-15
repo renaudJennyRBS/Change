@@ -17,17 +17,17 @@
 	<token-list rows="true" items="selectSession.info.selection"></token-list>
 	<div class="btn-toolbar">
 		<span class="pull-right">
-			<button type="button" class="btn" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.lists.cancel-selection', ['ucf']) }}</button>
+			<button type="button" class="btn btn-default" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.lists.cancel-selection', ['ucf']) }}</button>
 			<button type="button" class="btn btn-success" ng-click="selectSession.end()">{{ i18n('m.rbs.admin.lists.validate-selection', ['ucf']) }} <i class="icon-circle-arrow-right"></i></button>
 		</span>
-		<button type="button" class="btn" ng-click="selectSession.appendSelected()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.lists.add-selected-elements', ['ucf']) }}</button>
-		<button type="button" class="btn" ng-click="selectSession.clear()" ng-disabled="selectSession.info.selection.length == 0"><i class="icon-eraser"></i> {{ i18n('m.rbs.admin.lists.clear-selection', ['ucf']) }}</button>
+		<button type="button" class="btn btn-default" ng-click="selectSession.appendSelected()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.lists.add-selected-elements', ['ucf']) }}</button>
+		<button type="button" class="btn btn-default" ng-click="selectSession.clear()" ng-disabled="selectSession.info.selection.length == 0"><i class="icon-eraser"></i> {{ i18n('m.rbs.admin.lists.clear-selection', ['ucf']) }}</button>
 	</div>
 </div>
 
 <div class="btn-toolbar" ng-show="useToolBar">
 	<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
-		<a class="btn" href go-up-in-tree></a>
+		<a class="btn btn-default" href go-up-in-tree></a>
 	</div>
 
 	<clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></clipboard-add-widget>
@@ -54,8 +54,8 @@
 	</div>
 
 	<div ng-if="viewMode == 'grid'" class="btn-group pull-right" title="{{ i18nAttr('m.rbs.admin.lists.sort', ['ucf']) }}">
-		<a class="btn" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
-		<button class="btn dropdown-toggle" data-toggle="dropdown">
+		<a class="btn btn-default" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
+		<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu">
@@ -82,8 +82,8 @@
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)">
 					<div class="inner">
 						<div class="rbs-kb-switch pull-right">
-							<button rbs-kb-default="" type="button" class="btn btn-xs" ng-click="preview(doc, $event)">{{ i18n('m.rbs.admin.lists.close-preview') }}</button>
-							<button rbs-kb-when="alt" type="button" class="btn btn-xs" ng-click="closeAllPreviews()">{{ i18n('m.rbs.admin.lists.close-all-previews') }}</button>
+							<button rbs-kb-default="" type="button" class="btn btn-default btn-xs" ng-click="preview(doc, $event)">{{ i18n('m.rbs.admin.lists.close-preview') }}</button>
+							<button rbs-kb-when="alt" type="button" class="btn btn-default btn-xs" ng-click="closeAllPreviews()">{{ i18n('m.rbs.admin.lists.close-all-previews') }}</button>
 						</div>
 						<div class="preview-indicator"></div>
 						<div data-role="preview-contents"></div>
@@ -111,7 +111,7 @@
 
 	<div ng-switch-when="grid">
 		<div ng-if="collection.length == 0 && !busy" class="empty-row">{{ i18n('m.rbs.admin.lists.this-list-is-empty', ['ucf']) }}</div>
-		<ul class="thumbnail-grid clearfix">
+		<ul class="thumbnail-grid clearfix list-unstyled">
 			<li ng-repeat="doc in collection"
 			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
 				<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
@@ -156,12 +156,12 @@
 		<div class="pagination-info">
 			<strong ng-pluralize data-count="pagination.total"
 			        data-when="{{ i18nAttr('m.rbs.admin.lists.pagination-total') }}"></strong>
-				<span class="muted" ng-show="pages.length > 0">
+				<span class="text-muted" ng-show="pages.length > 0">
 					{{ i18n('m.rbs.admin.lists.on') }}
 					<span ng-pluralize data-count="pages.length" data-when="{{ i18nAttr('m.rbs.admin.lists.pagination-pages') }}"></span>
 				</span>
 			<div class="btn-group dropup">
-				<button class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
+				<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 					(= pagination.limit =) {{ i18n('m.rbs.admin.lists.per-page') }} <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu pull-right" style="text-align: left">

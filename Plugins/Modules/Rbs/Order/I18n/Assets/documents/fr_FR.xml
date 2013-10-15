@@ -8,7 +8,7 @@
 	<key id="invoice-list">factures</key>
 	<key id="invoice-create">ajouter une facture</key>
 
-	<key id="process">processus de de commande</key>
-	<key id="process-list">processus de de commande</key>
-	<key id="process-create">ajouter un processus de de commande</key>
+	<key id="process">processus de commande</key>
+	<key id="process-list">processus de commande</key>
+	<key id="process-create">ajouter un processus de commande</key>
 </i18n>

@@ -1,12 +1,12 @@
 <div class="confirmation-area"></div>
 <div class="form-actions">
-	<div style="margin-bottom: 10px; margin-top: -10px;"
-		data-ng-class="{true: 'muted'}[changes.length == 0]">
+	<div style="margin-bottom: 10px;"
+		data-ng-class="{true: 'text-muted'}[changes.length == 0]">
 		<span data-ng-pluralize
 		data-count="changes.length"
 		data-when="{{ i18nAttr('m.rbs.admin.forms.propertiesModifiedPluralize') }}"></span>
 		<i ng-show="changes.length" ng-class="{'icon-chevron-sign-left': showChanges, 'icon-chevron-sign-right': !showChanges}" ng-click="showChanges = !showChanges"></i>
-		<span ng-show="showChanges"><span class="label" ng-repeat="change in changes">(= change =)</span></span>
+		<span ng-show="showChanges"><span class="label label-default" ng-repeat="change in changes">(= change =)</span></span>
 	</div>
 
 	<!--button data-ng-show="hasStatus('DRAFT', 'VALIDATION')" type="button" data-ng-click="publish($event)" class="btn btn-success btn-headline pull-right" data-ng-disabled="! isUnchanged()"><i class="icon-play"></i>Publier<small>sur le site web</small></button-->
@@ -22,13 +22,17 @@
 
 	<div style="margin-top: 1em;" data-ng-hide="isCascading()">
 		<strong style="margin-bottom: 10px; display: block;">{{ i18n('m.rbs.admin.forms.afterSave', ['ucf']) }}</strong>
-		<label class="radio">
-			<input type="radio" data-ng-model="actionAfterSave" value="stay"/>
-			{{ i18n('m.rbs.admin.forms.afterSaveStay', ['ucf']) }}
-		</label>
-		<label class="radio">
-			<input type="radio" data-ng-model="actionAfterSave" value="list"/>
-            {{ i18n('m.rbs.admin.forms.afterSaveGoList', ['ucf']) }}
-		</label>
+		<div class="radio">
+			<label>
+				<input type="radio" data-ng-model="actionAfterSave" value="stay"/>
+				{{ i18n('m.rbs.admin.forms.afterSaveStay', ['ucf']) }}
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" data-ng-model="actionAfterSave" value="list"/>
+	            {{ i18n('m.rbs.admin.forms.afterSaveGoList', ['ucf']) }}
+			</label>
+		</div>
 	</div>
 </div>

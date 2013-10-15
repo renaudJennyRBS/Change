@@ -13,88 +13,9 @@
 
 		return {
 			restrict : 'EC',
-			require : 'ngModel',
+			require  : '?ngModel',
 			scope : true,
-			// TODO Localization
-			template :
-				'<div class="tabbable">' +
-					'<ul ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">' +
-						'<li class="active"><a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">Éditeur</a></li>' +
-						'<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">Aperçu <i ng-show="previewing" class="icon-spinner icon-spin"></i></a></li>' +
-					'</ul>' +
-					'<div class="tab-content">' +
-						'<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">' +
-							'<div class="btn-toolbar" ng-if="! readOnly">' +
-
-								'<span class="pull-right">' +
-									'<button type="button" class="btn btn-sm btn-info" ng-click="openHelp()"><i class="icon-info-sign"></i></button>' +
-									'<button ng-if="!useTabs" type="button" class="btn btn-sm" ng-click="preview()"><i class="icon-eye-open"></i></button>' +
-								'</span>' +
-
-								// TODO Remove 'ng-disabled="useTextarea"' when Textarea is fully supported
-
-								// Headings
-								'<div class="btn-group">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" href="#">Titre <span class="caret"></span></button>' +
-									'<ul class="dropdown-menu">' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(0)">Supprimer</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(1)">Niveau 1</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(2)">Niveau 2</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(3)">Niveau 3</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(4)">Niveau 4</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(5)">Niveau 5</a></li>' +
-										'<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(6)">Niveau 6</a></li>' +
-									'</ul>' +
-								'</div>' +
-
-								// Bold, italic, ...
-								'<div class="btn-group">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-click="mdBold()"><i class="icon-bold"></i></button>' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-click="mdItalic()"><i class="icon-italic"></i></button>' +
-								'</div>' +
-
-								// Undo/redo
-								'<div class="btn-group">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-click="mdUndo()"><i class="icon-undo"></i></button>' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-click="mdRedo()"><i class="icon-repeat"></i></button>' +
-								'</div>' +
-
-								// Media
-								'<div class="btn-group" ng-if="availableSelectors.media">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-class="{active:currentSelector==\'media\'}" ng-click="toggleSelector(\'media\')"><i class="icon-picture"></i></button>' +
-								'</div>' +
-
-								// Links
-								'<div class="btn-group" ng-if="availableSelectors.links">' +
-									'<button type="button" title="Insérer un lien interne" ng-disabled="useTextarea" class="btn btn-sm" ng-class="{active:currentSelector==\'link\'}" ng-click="toggleSelector(\'link\')"><i class="icon-link"></i></button>' +
-									'<button type="button" title="Insérer un lien externe" ng-disabled="useTextarea" class="btn btn-sm" ng-click="insertExternalLink()"><i class="icon-external-link"></i></button>' +
-								'</div>' +
-
-								// Users
-								'<div class="btn-group" ng-if="availableSelectors.users">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-class="{active:currentSelector==\'user\'}" ng-click="toggleSelector(\'user\')"><i class="icon-user"></i></button>' +
-								'</div>' +
-
-								// Groups
-								'<div class="btn-group" ng-if="availableSelectors.usergroups">' +
-									'<button type="button" ng-disabled="useTextarea" class="btn btn-sm" ng-class="{active:currentSelector==\'usergroup\'}" ng-click="toggleSelector(\'usergroup\')"><i class="icon-group"></i></button>' +
-								'</div>' +
-
-							'</div>' +
-
-							'<div class="media-picker"></div>' +
-							'<div class="link-picker"></div>' +
-							'<div class="user-picker"></div>' +
-							'<div class="usergroup-picker"></div>' +
-
-							'<div data-role="ace-editor"></div>' +
-						'</div>' +
-						'<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">' +
-							'<button ng-if="!useTabs" type="button" class="btn btn-sm pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>' +
-							'<div class="preview-content"></div>' +
-						'</div>' +
-					'</div>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/rich-text-input.twig',
 
 			link : function (scope, element, attrs, ngModel) {
 

@@ -1,127 +1,133 @@
-<form class="form-inline search-filters well well-small" ng-submit="applyFilters()">
-
-	<header>
-		<button type="button" class="close" ng-click="cancelFiltersAndClose()" title="{{ i18nAttr('m.rbs.admin.filters.cancelAllFilters', ['ucf']) }}">×</button>
-		<h4><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.filters.title', ['ucf']) }}</span></h4>
-	</header>
-
-	<div class="content">
-		<div>
-			<label>{{ i18n('m.rbs.admin.filters.requiredConditions', ['ucf']) }}</label>
-			<div class="btn-group" data-toggle="buttons-radio">
-				<button title="{{ i18nAttr('m.rbs.admin.filters.allTooltip') }}" type="button" class="btn btn-sm" ng-class="{active: operator=='and'}" ng-click="operator='and'">{{ i18n('m.rbs.admin.filters.all') }}</button>
-				<button title="{{ i18nAttr('m.rbs.admin.filters.atLeastOneTooltip') }}" type="button" class="btn btn-sm" ng-class="{active: operator=='or'}" ng-click="operator='or'">{{ i18n('m.rbs.admin.filters.atLeastOne') }}</button>
-			</div>
-		</div>
-
-		<div class="filters">
-
-			<div class="filter" ng-repeat="applied in appliedFilters">
-				<button class="btn rounded-icon" type="button" ng-click="removeFilter($index)" title="{{ i18nAttr('m.rbs.admin.filters.deleteThisFilter', ['ucf']) }}"><i class="icon-minus"></i></button>
-				<select ng-model="applied.filter" ng-options="f.label for (name,f) in availableFilters"></select>
-
-				<div ng-switch="applied.filter.type" style="display: inline-block; vertical-align: top;">
-
-					<!-- String -->
-
-					<div ng-switch-when="String" style="display:inline-block">
-
-						<select ng-hide="applied.filter.possibleValues" ng-model="applied.op" class="input-medium">
-							<option value="contains">{{ i18n('m.rbs.admin.filters.contains') }}</option>
-							<option value="beginsWith">{{ i18n('m.rbs.admin.filters.startsWith') }}</option>
-							<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
-							<option value="endsWith">{{ i18n('m.rbs.admin.filters.endsWith') }}</option>
-						</select>
-						<input ng-hide="applied.filter.possibleValues" type="text" data-role="filter-value" class="inline input-large" ng-model="applied.value"/>
-
-						<select ng-show="applied.filter.possibleValues" ng-model="applied.op" class="input-large">
-							<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
-							<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
-						</select>
-						<select ng-show="applied.filter.possibleValues" ng-model="applied.value" data-role="filter-value" ng-options="o.label for o in applied.filter.possibleValues"></select>
-
-					</div>
-
-					<!-- Integer -->
-
-					<div ng-switch-when="Integer" style="display:inline-block">
-
-						<select ng-hide="applied.filter.possibleValues" ng-model="applied.op" class="input-medium">
-							<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
-							<option value="gte">{{ i18n('m.rbs.admin.filters.isGreaterThanOrEquals') }}</option>
-							<option value="lte">{{ i18n('m.rbs.admin.filters.isLessThanOrEquals') }}</option>
-							<option value="neq">{{ i18n('m.rbs.admin.filters.isDifferentOf') }}</option>
-						</select>
-						<input ng-hide="applied.filter.possibleValues" type="number" data-role="filter-value" class="inline input-mini" ng-model="applied.value"/>
-
-						<select ng-show="applied.filter.possibleValues" ng-model="applied.op" class="input-large">
-							<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
-							<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
-						</select>
-						<select ng-show="applied.filter.possibleValues" ng-model="applied.value" data-role="filter-value" ng-options="o.label for o in applied.filter.possibleValues"></select>
-
-					</div>
-
-					<!-- DateTime -->
-
-					<div ng-switch-when="DateTime" style="display:inline-block">
-						<select ng-model="applied.op" class="input-medium">
-							<option value="lte">{{ i18n('m.rbs.admin.filters.isBefore') }}</option>
-							<option value="eq">{{ i18n('m.rbs.admin.filters.isOn') }}</option>
-							<option value="gte">{{ i18n('m.rbs.admin.filters.isAfter') }}</option>
-						</select>
-						<date-selector ng-model="applied.value" data-role="filter-value" style="display:inline-block"/>
-					</div>
-
-					<!-- Boolean -->
-
-					<div ng-switch-when="Boolean">
-						<switch data-role="filter-value" ng-model="applied.value"/>
-					</div>
-
-					<!-- Document  -->
-
-					<div ng-switch-when="Document" style="display: inline-block;">
-						<div class="document-picker-single"
-						     ng-model="applied.value"
-						     accepted-model="(= applied.filter.documentType =)"
-						     embed-in="#searchFiltersDocumentPickerEmbedContainer(=$index=)"
-						     input-css-class="input-small"
-						     allow-creation="false" allow-edition="false"></div>
-					</div>
-
-				</div>
-
-				<div id="searchFiltersDocumentPickerEmbedContainer(=$index=)"></div>
-			</div>
-
-		</div>
-
-		<footer>
-			<div class="btn-toolbar">
-				<button type="button" class="btn btn-sm" ng-click="addFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.filters.addFilter', ['ucf']) }}</button>
-			</div>
-
-			<!--div>
-				<label class="radio">
-					<input type="radio" value="all" ng-model="treePolicy" />
-					Tous
-				</label>
-				<label class="radio">
-					<input type="radio" value="childOf" ng-model="treePolicy" />
-					Enfants directs
-				</label>
-				<label class="radio">
-					<input type="radio" value="descendantOf" ng-model="treePolicy" />
-					Descendants
-				</label>
-			</div-->
-
-			<div class="btn-toolbar">
-				<button type="submit" class="btn btn-primary" ng-disabled="isUnchanged()" ng-class="{pulse: !isUnchanged()}"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.filters.filter', ['ucf']) }}</button>
-				<button type="button" class="btn" ng-click="addToFavorites($event)" ng-disabled="! isUnchanged()">{{ i18n('m.rbs.admin.filters.saveSearch', ['ucf']) }}</button>
-			</div>
-		</footer>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<button type="button" class="close pull-right" ng-click="cancelFiltersAndClose()" title="{{ i18nAttr('m.rbs.admin.filters.cancelAllFilters', ['ucf']) }}">&times;</button>
+		<h3 class="panel-title"><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.filters.title', ['ucf']) }}</span></h3>
 	</div>
 
-</form>
+	<div class="panel-body">
+
+		<form class="search-filters" ng-submit="applyFilters()">
+
+			<div>
+				<label>{{ i18n('m.rbs.admin.filters.requiredConditions', ['ucf']) }}</label>
+				<div class="btn-group">
+					<button title="{{ i18nAttr('m.rbs.admin.filters.allTooltip') }}" type="button" class="btn btn-default btn-sm" ng-class="{active: operator=='and'}" ng-click="operator='and'">{{ i18n('m.rbs.admin.filters.all') }}</button>
+					<button title="{{ i18nAttr('m.rbs.admin.filters.atLeastOneTooltip') }}" type="button" class="btn btn-default btn-sm" ng-class="{active: operator=='or'}" ng-click="operator='or'">{{ i18n('m.rbs.admin.filters.atLeastOne') }}</button>
+				</div>
+			</div>
+
+			<table class="table filters">
+
+				<tr class="filter row" ng-repeat="applied in appliedFilters">
+
+					<td width="60">
+						<button class="btn btn-default rounded-icon" type="button" ng-click="removeFilter($index)" title="{{ i18nAttr('m.rbs.admin.filters.deleteThisFilter', ['ucf']) }}"><i class="icon-minus"></i></button>
+					</td>
+
+					<td width="300">
+						<select ng-model="applied.filter" class="form-control" ng-options="f.label for (name,f) in availableFilters"></select>
+					</td>
+
+					<td ng-switch="applied.filter.type">
+
+						<!-- String -->
+
+						<div ng-switch-when="String" ng-switch="applied.filter.possibleValues.length > 0">
+
+							<div class="row" ng-switch-when="true">
+								<div class="col-md-6">
+									<select ng-model="applied.op" class="form-control">
+										<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
+										<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<select ng-model="applied.value" class="form-control" data-role="filter-value" ng-options="o.label for o in applied.filter.possibleValues"></select>
+								</div>
+							</div>
+
+							<div class="row" ng-switch-when="false">
+								<div class="col-md-6">
+									<select ng-model="applied.op" class="form-control">
+										<option value="contains">{{ i18n('m.rbs.admin.filters.contains') }}</option>
+										<option value="beginsWith">{{ i18n('m.rbs.admin.filters.startsWith') }}</option>
+										<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
+										<option value="endsWith">{{ i18n('m.rbs.admin.filters.endsWith') }}</option>
+									</select>
+								</div>
+								<div class="col-md-6">
+									<input type="text" data-role="filter-value" class="form-control" ng-model="applied.value"/>
+								</div>
+							</div>
+
+						</div>
+
+						<!-- Integer -->
+
+						<div ng-switch-when="Integer">
+
+							<select ng-hide="applied.filter.possibleValues" ng-model="applied.op" class="form-control">
+								<option value="eq">{{ i18n('m.rbs.admin.filters.equals') }}</option>
+								<option value="gte">{{ i18n('m.rbs.admin.filters.isGreaterThanOrEquals') }}</option>
+								<option value="lte">{{ i18n('m.rbs.admin.filters.isLessThanOrEquals') }}</option>
+								<option value="neq">{{ i18n('m.rbs.admin.filters.isDifferentOf') }}</option>
+							</select>
+							<input ng-hide="applied.filter.possibleValues" type="number" data-role="filter-value" class="form-control" ng-model="applied.value"/>
+
+							<select ng-show="applied.filter.possibleValues" ng-model="applied.op" class="form-control">
+								<option value="eq">{{ i18n('m.rbs.admin.filters.is') }}</option>
+								<option value="neq">{{ i18n('m.rbs.admin.filters.isNot') }}</option>
+							</select>
+							<select ng-show="applied.filter.possibleValues" class="form-control" ng-model="applied.value" data-role="filter-value" ng-options="o.label for o in applied.filter.possibleValues"></select>
+
+						</div>
+
+						<!-- DateTime -->
+
+						<div ng-switch-when="DateTime">
+							<select ng-model="applied.op" class="input-medium">
+								<option value="lte">{{ i18n('m.rbs.admin.filters.isBefore') }}</option>
+								<option value="eq">{{ i18n('m.rbs.admin.filters.isOn') }}</option>
+								<option value="gte">{{ i18n('m.rbs.admin.filters.isAfter') }}</option>
+							</select>
+							<date-selector ng-model="applied.value" data-role="filter-value" style="display:inline-block"/>
+						</div>
+
+						<!-- Boolean -->
+
+						<div ng-switch-when="Boolean">
+							<switch data-role="filter-value" ng-model="applied.value"/>
+						</div>
+
+						<!-- Document  -->
+
+						<div ng-switch-when="Document">
+							<div class="document-picker-single"
+							     ng-model="applied.value"
+							     accepted-model="(= applied.filter.documentType =)"
+							     embed-in="#searchFiltersDocumentPickerEmbedContainer(=$index=)"
+							     input-css-class="input-small"
+							     allow-creation="false" allow-edition="false"></div>
+						</div>
+
+						<div id="searchFiltersDocumentPickerEmbedContainer(=$index=)"></div>
+					</td>
+
+				</tr>
+
+			</table>
+
+			<footer>
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-default btn-sm" ng-click="addFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.filters.addFilter', ['ucf']) }}</button>
+				</div>
+
+				<div class="btn-toolbar">
+					<button type="submit" class="btn btn-primary" ng-disabled="isUnchanged()" ng-class="{pulse: !isUnchanged()}"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.filters.filter', ['ucf']) }}</button>
+					<button type="button" class="btn btn-default" ng-click="addToFavorites($event)" ng-disabled="! isUnchanged()">{{ i18n('m.rbs.admin.filters.saveSearch', ['ucf']) }}</button>
+				</div>
+			</footer>
+
+		</form>
+	</div>
+</div>

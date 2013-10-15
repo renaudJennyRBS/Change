@@ -47,7 +47,7 @@
 
 			isFullScreen = false;
 
-			$mainContainer.addClass('col-md-9');
+			$mainContainer.removeClass('col-md-12').addClass('col-md-9');
 			if (fullScreenMode !== 'hide-menu') {
 				MainMenu.show();
 			}
@@ -71,7 +71,7 @@
 
 			if (fullScreenMode === 'full') {
 				$leftContainer.hide();
-				$mainContainer.removeClass('col-md-9');
+				$mainContainer.removeClass('col-md-9').addClass('col-md-12');
 			}
 			MainMenu.hide();
 			Breadcrumb.disable();
@@ -88,13 +88,13 @@
 
 		this.collapseLeftSidebar = function () {
 			$leftContainer.hide();
-			$mainContainer.removeClass('col-md-9');
+			$mainContainer.removeClass('col-md-9').addClass('col-md-12');
 			$rootScope.$broadcast('Change:Workspace:SidebarCollapsed', 'left');
 		};
 
 
 		this.expandLeftSidebar = function () {
-			$mainContainer.addClass('col-md-9');
+			$mainContainer.removeClass('col-md-12').addClass('col-md-9');
 			$leftContainer.show();
 			$rootScope.$broadcast('Change:Workspace:SidebarExpanded', 'left');
 		};
@@ -173,13 +173,13 @@
 
 		this.hideMenus = function () {
 			$leftContainer.hide();
-			$mainContainer.removeClass('col-md-9');
+			$mainContainer.removeClass('col-md-9').addClass('col-md-12');
 			$('#mainToolbar').hide();
 			$('#rbs-change-navbar').hide();
 		};
 
 		this.restore = function () {
-			$mainContainer.addClass('col-md-9');
+			$mainContainer.removeClass('col-md-12').addClass('col-md-9');
 			$leftContainer.show();
 			$('#mainToolbar').show();
 			$('#rbs-change-navbar').show();

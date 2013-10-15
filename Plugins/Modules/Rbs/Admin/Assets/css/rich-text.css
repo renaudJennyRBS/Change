@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+
+rbs-rich-text-input .ace_editor {
+	border: 1px solid #DDDDDD;
+	border-radius: 0;
+}
+
+rbs-rich-text-input.focused .ace_editor {
+	border-color: rgba(82, 168, 236, 0.8);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+	outline: 0 none;
+}
+
+rbs-rich-text-input .btn-toolbar {
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#dddddd));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#dddddd 100%);
+	background: linear-gradient(to bottom, #ffffff 0%,#dddddd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 );
+	margin: 0;
+	padding: 5px;
+}
+
+.rbs-rich-text-input-inner-selector .pagination ul > .disabled > a {
+	background: white;
+}
+
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h1,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h2,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h3,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h4,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h5,
+rbs-rich-text-input .tab-pane[data-role="preview-container"] h6 {
+	margin-top: 0;
+}
+
+rbs-rich-text-input .tab-content {
+	background: white;
+}
+
+.rbs-rich-text-input-inner-selector {
+	padding: 10px 15px;
+	background: #444;
+	color: white;
+}
+
+.rbs-rich-text-input-inner-selector .table {
+	color: #333333;
+}
+
+.rbs-rich-text-input-inner-selector h4 {
+	margin: 0;
+}
+
+.rbs-rich-text-input-inner-selector button.close {
+	color: white;
+	opacity: 0.4;
+}
+
+.rbs-rich-text-input-inner-selector button.close:hover {
+	opacity: 0.8;
+}
+
+rbs-rich-text-input th,
+rbs-rich-text-input td,
+.rbs-rich-text-input-inner-selector th,
+.rbs-rich-text-input-inner-selector td {
+	background: white;
+}
+
+
+rbs-rich-text-input textarea {
+	display: block;
+	min-height: 150px;
+	font-family: "Courier New";
+	width: 100%;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
