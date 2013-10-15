@@ -12,11 +12,9 @@ class GetProductVariables
 	public function execute(\Zend\EventManager\Event $event)
 	{
 		$functions = $event->getParam('functions');
-		$documentServices = $event->getParam('documentServices');
 		if (in_array('Rbs_Catalog_Product', $functions))
 		{
 			$documentServices = $event->getParam('documentServices');
-			$documentServices->getApplicationServices()->getLogging()->fatal(var_export($functions, true));
 			if ($documentServices instanceof \Change\Documents\DocumentServices)
 			{
 				$variables = ($event->getParam('variables')) ? $event->getParam('variables') : [];
