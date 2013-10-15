@@ -223,4 +223,18 @@ class WebsiteIndexManager
 			}
 		}
 	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onGetFacetsDefinition(Event $event)
+	{
+		$fulltext = $event->getParam('indexDefinition');
+		if ($fulltext instanceof \Rbs\Elasticsearch\Documents\FullText)
+		{
+			$mf = new \Rbs\Elasticsearch\Std\ModelFacetDefinition('model');
+			$mf->setTitle($fulltext->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
+			$event->setParam('facetsDefinition',  array($mf));
+		}
+	}
 }
