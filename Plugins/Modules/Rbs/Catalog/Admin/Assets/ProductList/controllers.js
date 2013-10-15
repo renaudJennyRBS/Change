@@ -128,6 +128,45 @@
 		'RbsChange.Workspace', '$routeParams', '$http', 'RbsChange.SelectSession'];
 	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
+
+
+	function ProductListController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
+	{
+		$scope.params = {};
+		$scope.List = {};
+
+		$scope.loadQuery = {
+			"model": "Rbs_Catalog_ProductList",
+
+			"where": {
+				"or" : [
+					{
+						"op" : "eq", // neq, gt, lt, gte, lte
+						"lexp" : {
+							"property" : "model" //, "join" : "j0"
+						},
+						"rexp" : {
+							"value": "Rbs_Catalog_ProductList"
+						}
+					},
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "model" //, "join" : "j0"
+						},
+						"rexp" : {
+							"value": "Rbs_Catalog_SectionProductList"
+						}
+					}
+				]
+			}
+		}
+	}
+
+	ProductListController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
+	app.controller('Rbs_Catalog_ProductList_ProductListController', ProductListController);
+
+
 	/**
 	 * List actions.
 	 */

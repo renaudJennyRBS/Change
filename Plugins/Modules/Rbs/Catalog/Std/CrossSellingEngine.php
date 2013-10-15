@@ -11,36 +11,6 @@ class CrossSellingEngine
 	const MOST_EXPENSIVE_PRODUCT = 'MOST_EXPENSIVE_PRODUCT';
 
 	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
-	 */
-	protected $commerceServices;
-
-	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 * @return \Rbs\Catalog\Std\CrossSellingEngine
-	 */
-	public function __construct(\Rbs\Commerce\Services\CommerceServices $commerceServices)
-	{
-		$this->commerceServices = $commerceServices;
-	}
-
-	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
-	 */
-	public function getCommerceServices()
-	{
-		return $this->commerceServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->getCommerceServices()->getDocumentServices();
-	}
-
-	/**
 	 * Gets Cross Selling products for a product using parameters array
 	 * $event requires two parameters : product and csParameters
 	 * @api
@@ -49,8 +19,8 @@ class CrossSellingEngine
 	 */
 	public function getCrossSellingProductsByProduct(\Zend\EventManager\Event $event)
 	{
-		$documentServices = $this->getDocumentServices();
-		$commerceServices = $this->getCommerceServices();
+		$documentServices = $event->getTarget()->getDocumentServices();
+		$commerceServices = $event->getTarget()->getCommerceServices();
 		$products = array();
 		$product = $event->getParam('product');
 		$parameters = $event->getParam('csParameters');
@@ -111,9 +81,8 @@ class CrossSellingEngine
 	public function getCrossSellingProductsByCart(\Zend\EventManager\Event $event)
 	{
 		$products = array();
-		$cart = $event->getParam('cart');
 		$parameters = $event->getParam('csParameters');
-		$product = $this->getProductFromCart($cart, $parameters['productChoiceStrategy']);
+		$product = $this->getProductFromCart($event);
 
 		if ($product && isset($parameters['crossSellingType']))
 		{
@@ -127,16 +96,19 @@ class CrossSellingEngine
 	/**
 	 * Choose a product form cart according to strategy
 	 * @api
-	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param string $strategy
+	 * @param \Zend\EventManager\Event $event
 	 * @return \Rbs\Catalog\Documents\Product|null
 	 */
-	protected function getProductFromCart(\Rbs\Commerce\Cart\Cart $cart, $strategy)
+	protected function getProductFromCart(\Zend\EventManager\Event $event)
 	{
+		$cart = $event->getParam('cart');
+		$csManager = $event->getTarget();
+		$parameters = $event->getParam('csParameters');
+		$strategy = $parameters['productChoiceStrategy'];
 		if ($cart instanceof \Rbs\Commerce\Cart\Cart && isset($strategy))
 		{
 			$line = null;
-			$documentManager = $this->getDocumentServices()->getDocumentManager();
+			$documentManager = $csManager->getDocumentServices()->getDocumentManager();
 			/* Let's be optimistic : cartline key = productId */
 			switch($strategy)
 			{

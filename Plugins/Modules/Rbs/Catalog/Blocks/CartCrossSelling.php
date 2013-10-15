@@ -22,14 +22,15 @@ class CartCrossSelling extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('title');
-		$parameters->addParameterMeta('productChoiceStrategy', 'MOST_EXPENSIVE_PRODUCT');
-		$parameters->addParameterMeta('crossSellingType', 'ACCESSORIES');
-
+		$parameters->addParameterMeta('productChoiceStrategy');
+		$parameters->addParameterMeta('crossSellingType');
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('itemsPerSlide', 3);
 		$parameters->addParameterMeta('slideCount');
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
+
+		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
 		$commerceServices = $event->getParam('commerceServices');

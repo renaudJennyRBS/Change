@@ -25,7 +25,8 @@ class CrossSellingProductList extends \Compilation\Rbs\Catalog\Documents\CrossSe
 			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_CrossSellingProductList');
 			$pb = $query->getPredicateBuilder();
 			$p1 = $pb->eq('product', $document->getProductId());
-			$query->andPredicates($p1);
+			$p2 = $pb->neq('id', $document->getId());
+			$query->andPredicates($p1, $p2);
 			$dbq = $query->dbQueryBuilder();
 			$fb = $dbq->getFragmentBuilder();
 			$dbq->addColumn($fb->alias($query->getColumn('crossSellingType'), 'type'));

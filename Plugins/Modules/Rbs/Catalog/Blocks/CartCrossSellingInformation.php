@@ -26,9 +26,9 @@ class CartCrossSellingInformation extends Information
 		$this->addInformationMeta('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'ACCESSORIES')
 			->setCollectionCode('Rbs_Catalog_Collection_CrossSellingType')
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-type', $ucf));
-		$this->addInformationMeta('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'LAST_PRODUCT')
+		$this->addInformationMeta('productChoiceStrategy', ParameterInformation::TYPE_COLLECTION, true, 'LAST_PRODUCT')
 			->setCollectionCode('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy')
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-type', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-product-choice-strategy', $ucf));
 		$this->addInformationMeta('itemsPerSlide', Property::TYPE_INTEGER, true, 3)
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-items-per-slide', $ucf));
 	}
