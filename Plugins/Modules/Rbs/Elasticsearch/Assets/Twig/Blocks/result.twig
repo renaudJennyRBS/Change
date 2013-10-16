@@ -5,6 +5,15 @@
 			<button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button>
 		</span>
 	</div>
+	<div class="input-group">
+		{% for fv in facet %}
+			<label>
+				<input type="checkbox" name="facetFilters[]" value="{{ fv.value }}" {% if fv.filtered %} checked="checked" {% endif %} />
+				{{ fv.title }}
+			</label>
+			{% if not(loop.last) %} | {% endif %}
+		{% endfor %}
+	<div>
 </form>
 <h4>{{ i18n('m.rbs.elasticsearch.fo.total-result-count', ['ucf', 'lab']) }} {{ totalCount }}</h4>
 <ul>
