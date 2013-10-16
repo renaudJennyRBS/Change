@@ -1,10 +1,10 @@
 <?php
-namespace Change\Commands;
+namespace Rbs\Dev\Commands;
 
 use Change\Commands\Events\Event;
 
 /**
- * @name \Change\Commands\InitializePlugin
+ * @name \Rbs\Dev\Commands\InitializePlugin
  */
 class InitializePlugin
 {

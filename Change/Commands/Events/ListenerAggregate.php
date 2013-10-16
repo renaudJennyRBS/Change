@@ -47,13 +47,6 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\CreateCommand();
-			$cmd->execute($event);
-		};
-		$events->attach('change:create-command', $callback);
-
-		$callback = function ($event)
-		{
 			$cmd = new \Change\Commands\GenerateDbSchema();
 			$cmd->execute($event);
 		};
@@ -65,20 +58,6 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 			$cmd->execute($event);
 		};
 		$events->attach('change:set-document-root', $callback);
-
-		$callback = function ($event)
-		{
-			$cmd = new \Change\Commands\InitializeModel();
-			$cmd->execute($event);
-		};
-		$events->attach('change:initialize-model', $callback);
-
-		$callback = function ($event)
-		{
-			$cmd = new \Change\Commands\InitializePlugin();
-			$cmd->execute($event);
-		};
-		$events->attach('change:initialize-plugin', $callback);
 
 		$callback = function ($event)
 		{
