@@ -3,6 +3,7 @@ namespace Change\Job;
 
 use Change\Documents\DocumentServices;
 use Change\Application\ApplicationServices;
+use Change\Services\CommonServices;
 
 /**
  * @name \Change\Job\JobManager
@@ -24,6 +25,11 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var DocumentServices
 	 */
 	protected $documentServices;
+
+	/**
+	 * @var CommonServices
+	 */
+	protected $commonServices;
 
 	/**
 	 * @param ApplicationServices $applicationServices
@@ -75,6 +81,28 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Services\CommonServices $commonServices
+	 * @return $this
+	 */
+	public function setCommonServices(CommonServices $commonServices = null)
+	{
+		$this->commonServices = $commonServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Services\CommonServices
+	 */
+	public function getCommonServices()
+	{
+		if ($this->commonServices === null)
+		{
+			$this->commonServices = new  CommonServices($this->getApplicationServices(), $this->getDocumentServices());
+		}
+		return $this->commonServices;
+	}
+
+	/**
 	 * @return string
 	 */
 	protected function getEventManagerIdentifier()
@@ -120,7 +148,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		try
 		{
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('job' => $job, 'documentServices' => $this->getDocumentServices()));
+			$args = $em->prepareArgs(array('job' => $job, 'documentServices' => $this->getDocumentServices(), 'commonServices' => $this->getCommonServices()));
 			$event = new Event(static::composeEventName(static::EVENT_PROCESS, $job->getName()), $this, $args);
 			$this->getEventManager()->trigger($event);
 			$status = $event->getParam('executionStatus', JobInterface::STATUS_SUCCESS);

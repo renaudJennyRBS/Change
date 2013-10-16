@@ -4,6 +4,5 @@
 	<key id="shortsearch-resultsectionid">Section d'affichage des résultats</key>
 	<key id="result">Résultat d'une recherche</key>
 	<key id="result-function">Résultat de la recherche</key>
-	<key id="result-autocomplete">Auto-complétion</key>
 	<key id="result-fulltextindex">Index de recherche</key>
 </i18n>

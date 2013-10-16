@@ -23,6 +23,7 @@ class Listeners implements ListenerAggregateInterface
 		$events->attach(Event::INDEX_DOCUMENT, array($ws, 'onIndexDocument'));
 		$events->attach(Event::POPULATE_DOCUMENT, array($ws, 'onPopulateDocument'));
 		$events->attach(Event::FIND_INDEX_DEFINITION, array($ws, 'onFindIndexDefinition'));
+		$events->attach(Event::GET_FACETS_DEFINITION, array($ws, 'onGetFacetsDefinition'));
 	}
 
 	/**

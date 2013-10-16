@@ -1,9 +1,6 @@
 <?php
 namespace Change\Collection;
 
-use Zend\EventManager\EventManagerInterface;
-use string;
-
 /**
  * @name \Change\Collection\CollectionManager
  */
@@ -117,6 +114,4 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		return array();
 	}
-
-
 }

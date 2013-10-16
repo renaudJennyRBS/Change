@@ -27,6 +27,7 @@ class Result extends Block
 		$parameters->addParameterMeta('allowedSectionIds');
 		$parameters->addParameterMeta('itemsPerPage', 10);
 		$parameters->addParameterMeta('pageNumber', 1);
+		$parameters->addParameterMeta('facetFilters', null);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$fulltextIndexId = $parameters->getParameter('fulltextIndex');
@@ -50,6 +51,15 @@ class Result extends Block
 		$parameters->setParameterValue('fulltextIndex', $fulltextIndexId);
 
 		$request = $event->getHttpRequest();
+		$facetFilters = $request->getQuery('facetFilters', null);
+		if (is_array($facetFilters)) {
+			$facetFilters = array_filter($facetFilters, function($filter) {return is_string($filter) && !empty($filter);});
+			if (count($facetFilters))
+			{
+				$parameters->setParameterValue('facetFilters', $facetFilters);
+			}
+		}
+
 		$searchText = $request->getQuery('searchText');
 		if ($searchText && is_string($searchText))
 		{
@@ -67,35 +77,36 @@ class Result extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$documentServices = $event->getDocumentServices();
 		$parameters = $event->getBlockParameters();
-		$fullTextIndex = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
+		$fullTextIndex = $documentServices->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
 		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
 		{
 
 			$searchText = trim($parameters->getParameter('searchText'), '');
-			if ($searchText)
+			$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
+			$facetFilters = $parameters->getParameter('facetFilters');
+
+			$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
+			$indexManager->setDocumentServices($event->getDocumentServices());
+			$client = $indexManager->getClient($fullTextIndex->getClientName());
+			if ($client)
 			{
-				$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
-				$attributes['items'] = array();
-
-				$query = $this->buildQuery($searchText, $allowedSectionIds);
-
-				$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
-				$size = $parameters->getParameter('itemsPerPage');
-				$from = ($pageNumber - 1) * $size;
-
-				$query->setFrom($from);
-				$query->setSize($size);
-
-				$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
-				$indexManager->setDocumentServices($event->getDocumentServices());
-
-				$client = $indexManager->getClient($fullTextIndex->getClientName());
-				if ($client)
+				$index = $client->getIndex($fullTextIndex->getName());
+				if ($index->exists())
 				{
-					$index = $client->getIndex($fullTextIndex->getName());
-					if ($index->exists())
+					if ($searchText || is_array($facetFilters))
 					{
+						$attributes['items'] = array();
+						$query = $this->buildQuery($searchText, $allowedSectionIds);
+						$this->addFacets($query, $facetFilters);
+
+						$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
+						$size = $parameters->getParameter('itemsPerPage');
+						$from = ($pageNumber - 1) * $size;
+						$query->setFrom($from);
+						$query->setSize($size);
+
 						$searchResult = $index->getType('document')->search($query);
 						$attributes['totalCount'] = $searchResult->getTotalHits();
 						if ($attributes['totalCount'])
@@ -109,16 +120,87 @@ class Result extends Block
 								$attributes['items'][] = array('id' => $result->getId(), 'score' => $score, 'title' => $result->title);
 							}
 						}
+						$attributes['facet'] = $this->getFacetAttribute($searchResult->getFacets(), $facetFilters, $documentServices);
+					}
+					else
+					{
+						$attributes['items'] = false;
+						$query = $this->buildQuery(null, $allowedSectionIds);
+						$this->addFacets($query, $facetFilters);
+						$query->setFrom(0);
+						$query->setSize(0);
+						$searchResult = $index->getType('document')->search($query);
+						$attributes['facet'] = $this->getFacetAttribute($searchResult->getFacets(), $facetFilters, $documentServices);
 					}
 				}
-			}
-			else
-			{
-				$attributes['items'] = false;
 			}
 			return 'result.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param array $facets
+	 * @param array $facetFilters
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return \Rbs\Elasticsearch\Std\FacetTermValue[]
+	 */
+	protected function getFacetAttribute($facets, $facetFilters, $documentServices)
+	{
+		$facetValues = array();
+		if (is_array($facets) && isset($facets['model']))
+		{
+			foreach ($facets['model']['terms'] as $term)
+			{
+				$modelName = $term['term'];
+				$v = new \Rbs\Elasticsearch\Std\FacetTermValue($modelName);
+				$v->setCount(intval($term['count']));
+				if (is_array($facetFilters) && in_array($modelName, $facetFilters))
+				{
+					$v->setFiltered(true);
+				}
+				$model = $documentServices->getModelManager()->getModelByName($modelName);
+				if ($model)
+				{
+					$v->setValueTitle($documentServices->getApplicationServices()->getI18nManager()->trans($model->getLabelKey()));
+				}
+				$facetValues[] = $v;
+			}
+		}
+		return $facetValues;
+	}
+
+	/**
+	 * @param \Elastica\Query $query
+	 * @param $facetFilters
+	 */
+	protected function addFacets($query, $facetFilters)
+	{
+		$facet = new \Elastica\Facet\Terms('model');
+		$facet->setField('model');
+		$query->addFacet($facet);
+
+		if (is_array($facetFilters))
+		{
+			$terms = array();
+			foreach ($facetFilters as $facetFilter)
+			{
+				$terms[] = $facetFilter;
+			}
+
+			if (count($terms))
+			{
+				$bool = new \Elastica\Filter\Bool();
+				$bool->addMust(new \Elastica\Filter\Terms('model', $terms));
+				$query->setFilter($bool);
+			}
+		}
+	}
+
+
+	protected function getFacetFilter()
+	{
+
 	}
 
 	/**
@@ -143,9 +225,16 @@ class Result extends Block
 	protected function buildQuery($searchText, $allowedSectionIds)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
-		$multiMatch = new \Elastica\Query\MultiMatch();
-		$multiMatch->setQuery($searchText);
-		$multiMatch->setFields(array('title', 'content'));
+		if ($searchText)
+		{
+			$multiMatch = new \Elastica\Query\MultiMatch();
+			$multiMatch->setQuery($searchText);
+			$multiMatch->setFields(array('title', 'content'));
+		}
+		else
+		{
+			$multiMatch = new \Elastica\Query\MatchAll();
+		}
 
 		$bool = new \Elastica\Filter\Bool();
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
@@ -162,4 +251,11 @@ class Result extends Block
 
 		return $query;
 	}
+
+
+	/*
+{"query":{"filtered":{"query":{"match_all":{}},"filter":{"bool":{"must":[{"range":{"startPublication":{"lte":"2013-10-16T08:07:05+0200"}}},{"range":{"endPublication":{"gt":"2013-10-16T08:07:05+0200"}}}]}}}},"fields":["model","title"],
+"filter":{"bool":{"must":[{"terms":{"model":["Rbs_Website_Topic", "Rbs_Website_Website"]}}]}},
+"facets":{"model":{"terms":{"field":"model"}}},"from":0,"size":50}
+	 */
 }

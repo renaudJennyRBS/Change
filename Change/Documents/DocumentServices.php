@@ -33,9 +33,12 @@ class DocumentServices extends \Zend\Di\Di
 
 		$im = $this->instanceManager();
 		$im->setParameters('Change\Documents\ModelManager', array('applicationServices'=> $applicationServices));
+
 		$im->setParameters('Change\Documents\DocumentManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
-		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
-		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $applicationServices, 'documentServices' => $this));
+
+		$im->setInjections('Change\Documents\TreeManager', array('Change\Documents\DocumentManager'));
+		$im->setParameters('Change\Documents\TreeManager', array('applicationServices'=> $applicationServices));
+		$im->setParameters('Change\Documents\Constraints\ConstraintsManager', array('applicationServices'=> $applicationServices));
 	}
 
 	/**
@@ -74,7 +77,7 @@ class DocumentServices extends \Zend\Di\Di
 			->addMethod('setApplicationServices', true)
 				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
 			->addMethod('setDocumentServices', true)
-				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
+				->addMethodParameter('setDocumentManager', 'documentManager', array('type' => 'Change\Documents\DocumentManager', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
@@ -86,9 +89,7 @@ class DocumentServices extends \Zend\Di\Di
 		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Documents\Constraints\ConstraintsManager');
 		$cl->setInstantiator('__construct')
 			->addMethod('setApplicationServices', true)
-				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true))
-			->addMethod('setDocumentServices', true)
-				->addMethodParameter('setDocumentServices', 'documentServices', array('type' => '\Change\Documents\DocumentServices', 'required' => true));
+				->addMethodParameter('setApplicationServices', 'applicationServices', array('type' => 'Change\Application\ApplicationServices', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
