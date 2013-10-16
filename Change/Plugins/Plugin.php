@@ -6,9 +6,9 @@ namespace Change\Plugins;
 */
 class Plugin
 {
-	const TYPE_MODULE = 'Modules';
+	const TYPE_MODULE = 'module';
 
-	const TYPE_THEME = 'Themes';
+	const TYPE_THEME = 'theme';
 
 	/**
 	 * @var string

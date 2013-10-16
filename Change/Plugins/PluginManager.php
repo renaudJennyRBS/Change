@@ -241,7 +241,7 @@ class PluginManager
 		$folderName = $parts[$partsCount - 3];
 		if ($vendor === 'Project')
 		{
-			if ($folderName !== $type)
+			if ($folderName !== ($type == Plugin::TYPE_MODULE ? 'Modules' : 'Themes'))
 			{
 				return null;
 			}

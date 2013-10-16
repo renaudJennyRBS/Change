@@ -22,21 +22,32 @@ class InstallPlugin
 		$shortName = $event->getParam('name');
 
 		$pluginManager = $applicationServices->getPluginManager();
-		$pluginManager->compile();
 
-		$plugins = $pluginManager->installPlugin($type, $vendor, $shortName, array());
+		$toInstall = $pluginManager->getPlugin($type, $vendor, $shortName);
 
-		if (count($plugins))
+		if ($toInstall && $toInstall->getRegistrationDate())
 		{
-			foreach ($plugins as $plugin)
+			$plugins = $pluginManager->installPlugin($type, $vendor, $shortName, array());
+			$pluginManager->compile();
+
+			if (count($plugins))
 			{
-				$event->addInfoMessage($plugin . ' installed');
+				foreach ($plugins as $plugin)
+				{
+					$event->addInfoMessage($plugin . ' installed');
+				}
+				$event->addInfoMessage(count($plugins) . ' plugin(s) installed.');
 			}
-			$event->addInfoMessage(count($plugins) . ' plugin(s) installed.');
+			else
+			{
+				$event->addInfoMessage('Nothing installed');
+			}
 		}
 		else
 		{
-			$event->addInfoMessage('Plugin not installed.');
+			$event->addErrorMessage("Plugin does not exist");
 		}
+
+
 	}
 }

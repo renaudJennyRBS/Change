@@ -110,7 +110,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$plugin = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Change', 'Tests');
 		$expected = array (
 			'basePath' => __DIR__,
-			'type' => 'Modules',
+			'type' => 'module',
 			'vendor' => 'Change',
 			'shortName' => 'Tests',
 			'package' => NULL,
