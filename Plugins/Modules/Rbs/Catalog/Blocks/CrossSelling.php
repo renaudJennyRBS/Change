@@ -24,7 +24,6 @@ class CrossSelling extends Block
 		$parameters->addParameterMeta('title');
 		$parameters->addParameterMeta('productId');
 		$parameters->addParameterMeta('crossSellingType', 'ACCESSORIES');
-
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('itemsPerSlide', 3);
 		$parameters->addParameterMeta('slideCount');

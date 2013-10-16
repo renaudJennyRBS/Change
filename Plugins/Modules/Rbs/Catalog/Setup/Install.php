@@ -67,7 +67,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
-
+				$collection->setLocked(true);
 				$collection->save();
 				$tm->commit();
 			}

@@ -38,7 +38,7 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
-	protected function getDocumentServices()
+	public function getDocumentServices()
 	{
 		return $this->commerceServices->getDocumentServices();
 	}
@@ -46,7 +46,7 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return \Change\Application\ApplicationServices
 	 */
-	protected function getApplicationServices()
+	public function getApplicationServices()
 	{
 		return $this->commerceServices->getApplicationServices();
 	}

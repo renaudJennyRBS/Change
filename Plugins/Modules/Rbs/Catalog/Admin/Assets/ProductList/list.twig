@@ -1,4 +1,4 @@
-<div>
+<div ng-controller="Rbs_Catalog_ProductList_ProductListController">
 	<rbs-workspace-config menu="Rbs_Catalog">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
@@ -16,7 +16,7 @@
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsCatalogProductList" model="Rbs_Catalog_ProductList" activable="true"
-		filter-query="query" modification-date="false">
+		filter-query="query" modification-date="false" load-query="loadQuery">
 		<quick-actions>
 			<a href="(= doc | documentURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.productlist.products') }}</a>
 			|| [action default]
