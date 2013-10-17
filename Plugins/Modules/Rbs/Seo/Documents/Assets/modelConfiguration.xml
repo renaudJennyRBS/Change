@@ -5,8 +5,8 @@
 		<property name="label" type="String" />
 		<property name="modelName" type="String" />
 		<property name="documentSeoAutoGenerate" type="Boolean" />
-		<property name="defaultChangeFrequency" type="String" />
-		<property name="defaultPriority" type="Float" >
+		<property name="sitemapDefaultChangeFrequency" type="String" />
+		<property name="sitemapDefaultPriority" type="Float" >
 			<constraint name="range" min="0.0" max="1.0" />
 		</property>
 	</properties>

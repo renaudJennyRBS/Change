@@ -55,9 +55,15 @@ class SharedListeners implements SharedListenerAggregateInterface
 
 		$callback = function (\Zend\EventManager\Event $event)
 		{
-			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onPluginSetupSuccess($event);
+			(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
 		};
 		$events->attach('Plugin', 'setupSuccess', $callback, 5);
+
+		$callback = function (DocumentEvent $event)
+		{
+			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
+		};
+		$events->attach('Documents', array(DocumentEvent::EVENT_CREATED), $callback, 5);
 	}
 
 	/**

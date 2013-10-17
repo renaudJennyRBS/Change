@@ -7,62 +7,54 @@ namespace Rbs\Seo\Std;
 class DocumentSeoGenerator
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Documents\Events\Event $event
 	 * @throws \Exception
 	 */
-	public function onPluginSetupSuccess(\Zend\EventManager\Event $event)
+	public function onDocumentCreated(\Change\Documents\Events\Event $event)
 	{
-		$application = $event->getParam('application');
-		/* @var $application \Change\Application */
-		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$modelManager = new \Change\Documents\ModelManager();
-		$modelManager->setApplicationServices($applicationServices);
-
-		$publishableModels = [];
-		$publishableModelNames = [];
-		foreach ($modelManager->getModelsNames() as $modelName)
+		$document = $event->getDocument();
+		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$model = $modelManager->getModelByName($modelName);
-			if ($model->isPublishable())
+			/* @var $document \Change\Documents\AbstractDocument */
+			$dqb = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Seo_ModelConfiguration');
+			$dqb->andPredicates(
+				$dqb->eq('modelName', $document->getDocumentModel()->getName()),
+				$dqb->eq('documentSeoAutoGenerate', true)
+			);
+			$modelConfiguration = $dqb->getFirstDocument();
+			if ($modelConfiguration)
 			{
-				$publishableModels[] = $model;
-				$publishableModelNames[] = $model->getName();
-			}
-		}
+				/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
+				$documentSeo = $document->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
+				$documentSeo->setTarget($document);
+				$documentSeo->setSitemapChangeFrequency($modelConfiguration->getSitemapDefaultChangeFrequency());
+				$documentSeo->setSitemapPriority($modelConfiguration->getSitemapDefaultPriority());
 
-		if (count($publishableModels))
-		{
-			$documentServices = new \Change\Documents\DocumentServices($applicationServices);
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_SitemapModel');
-			$qb = $dqb->dbQueryBuilder();
-			$qb->addColumn($qb->getFragmentBuilder()->getDocumentColumn('modelName'));
-			$query = $qb->query();
-			$sitemapModelCodes = $query->getResults($query->getRowsConverter()->addStrCol('modelname'));
-
-			$i18n = $applicationServices->getI18nManager();
-			$tm = $applicationServices->getTransactionManager();
-			foreach ($publishableModels as $model)
-			{
-				/* @var $model \Change\Documents\AbstractModel */
-				if (!in_array($model->getName(), $sitemapModelCodes))
+				$dqb = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Website_Website');
+				$websites = $dqb->getDocuments();
+				$sitemapGenerateForWebsites = [];
+				foreach ($websites as $website)
 				{
-					$sitemapModel = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_SitemapModel');
-					/* @var $sitemapModel \Rbs\Seo\Documents\SitemapModel */
-					$sitemapModel->setLabel($i18n->trans($model->getLabelKey(), array('ucf')));
-					$sitemapModel->setModelName($model->getName());
-					$sitemapModel->setDocumentSeoAutoGenerate(false);
-					$sitemapModel->setDefaultChangeFrequency('daily');
-					$sitemapModel->setDefaultPriority(0.5);
-					try
-					{
-						$tm->begin();
-						$sitemapModel->save();
-						$tm->commit();
-					}
-					catch (\Exception $e)
-					{
-						throw $tm->rollBack($e);
-					}
+					/* @var $website \Rbs\Website\Documents\Website */
+					$sitemapGenerateForWebsites[$website->getId()] = [
+						'label' => $website->getLabel(),
+						'generate' => true
+					];
+					//TODO: should we se generate to false by default?
+				}
+				$documentSeo->setSitemapGenerateForWebsites($sitemapGenerateForWebsites);
+
+				$tm = $document->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$tm->begin();
+					$documentSeo->save();
+					$tm->commit();
+				}
+				catch (\Exception $e)
+				{
+					throw $tm->rollBack($e);
 				}
 			}
 		}

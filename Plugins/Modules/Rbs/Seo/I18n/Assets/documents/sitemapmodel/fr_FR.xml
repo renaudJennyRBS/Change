@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.seo.documents.sitemapmodel" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="default-change-frequency">fréquence (changefreq)</key>
-	<key id="default-priority">priorité de l'URL (priority)</key>
-	<key id="document-seo-auto-generate">génération automatique du document SEO</key>
-</i18n>

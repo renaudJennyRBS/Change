@@ -2,6 +2,5 @@
 <i18n baseKey="m.rbs.seo.documents" lcid="fr_FR">
 	<key id="documentseo">référencement d'un document</key>
 	<key id="documentseo-list">référencement des documents</key>
-	<key id="sitemapmodel">configuration des modèles pour les sitemaps</key>
-	<key id="sitemapmodel-list">modèles de document</key>
+	<key id="modelconfiguration-list">configuration des modèles</key>
 </i18n>
