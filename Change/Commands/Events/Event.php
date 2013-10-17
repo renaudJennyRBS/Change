@@ -6,6 +6,17 @@ namespace Change\Commands\Events;
 */
 class Event extends \Zend\EventManager\Event
 {
+
+	/**
+	 * @var bool
+	 */
+	protected $success = true;
+
+	public function success()
+	{
+		return $this->success;
+	}
+
 	/**
 	 * @return \Change\Application
 	 */
@@ -59,6 +70,7 @@ class Event extends \Zend\EventManager\Event
 	 */
 	public function addErrorMessage($message)
 	{
+		$this->success = false;
 		$this->addMessage($message, 2);
 	}
 }

@@ -136,7 +136,117 @@
 			}
 		}
 	},
-	"change:register-plugins": {
-		"description": "Register All Plugins"
+	"change:register-plugin": {
+		"description": "Register a plugin or all plugins",
+		"options":{
+			"all": {
+				"description": "register all available plugins",
+				"shortcut": "a"
+			},
+			"type": {
+				"description": "type of plugin",
+				"default": "module",
+				"shortcut": "t"
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"default": "Project",
+				"shortcut": "e"
+			}
+		},
+		"arguments":{
+			"name": {
+				"description": "short name of the plugin",
+				"required": false
+			}
+		}
+	},
+	"change:disable-plugin": {
+		"description": "Disable a plugin",
+		"options":{
+			"type": {
+				"description": "type of plugin",
+				"default": "module",
+				"shortcut": "t"
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"default": "Project",
+				"shortcut": "e"
+			}
+		},
+		"arguments":{
+			"name": {
+				"description": "short name of the plugin",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"change:enable-plugin": {
+		"description": "Enable a plugin",
+		"options":{
+			"type": {
+				"description": "type of plugin",
+				"default": "module",
+				"shortcut": "t"
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"default": "Project",
+				"shortcut": "e"
+			}
+		},
+		"arguments":{
+			"name": {
+				"description": "short name of the plugin",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"change:deregister-plugin": {
+		"description": "Deregisters a registered plugin",
+		"options":{
+			"type": {
+				"description": "type of plugin",
+				"default": "module",
+				"shortcut": "t"
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"default": "Project",
+				"shortcut": "e"
+			}
+		},
+		"arguments":{
+			"name": {
+				"description": "short name of the plugin",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"change:deinstall-plugin": {
+		"description": "Deinstall a plugin",
+		"options":{
+			"type": {
+				"description": "type of plugin",
+				"default": "module",
+				"shortcut": "t"
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"default": "Project",
+				"shortcut": "e"
+			}
+		},
+		"arguments":{
+			"name": {
+				"description": "short name of the plugin",
+				"required": true,
+				"default": null
+			}
+		}
 	}
 }
