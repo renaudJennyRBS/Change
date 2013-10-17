@@ -9,8 +9,8 @@ use Zend\Json\Json;
  */
 class Configuration
 {
+	const AUTOGEN = 'project.autogen.json';
 	const PROJECT = 'project.json';
-	const INSTANCE = 'project.default.json';
 
 	/**
 	 * @var string[]

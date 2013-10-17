@@ -16,6 +16,15 @@
 		"Install":{
 			"documentRootPath":"<current_dir>/ChangeTests/UnitTestWorkspace",
 			"resourceBaseUrl":"\/Assets"
+		},
+		"Application":{
+			"development-mode":false
+		},
+		"I18n":{
+			"supported-lcids":["fr_FR", "en_US"],
+			"langs":{
+				"en_US":"en"
+			}
 		}
 	}
 }

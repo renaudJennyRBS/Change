@@ -33,8 +33,8 @@ class InitHttpFiles
 		$content = str_replace('__DIR__', var_export($this->application->getWorkspace()->projectPath(), true), $content);
 		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 
-		$editConfig->addPersistentEntry('Change/Install/documentRootPath', $documentRootPath, \Change\Configuration\EditableConfiguration::INSTANCE);
-		$editConfig->addPersistentEntry('Change/Install/resourceBaseUrl', $resourcePath, \Change\Configuration\EditableConfiguration::INSTANCE);
+		$editConfig->addPersistentEntry('Change/Install/documentRootPath', $documentRootPath, \Change\Configuration\EditableConfiguration::PROJECT);
+		$editConfig->addPersistentEntry('Change/Install/resourceBaseUrl', $resourcePath, \Change\Configuration\EditableConfiguration::PROJECT);
 		$editConfig->save();
 
 		if (strpos($resourcePath, '/') === 0)
