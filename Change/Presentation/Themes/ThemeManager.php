@@ -231,7 +231,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$workspace = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
 		$path = $plugin->getTwigAssetsPath($workspace);
-		if (!is_dir($path))
+		if (!$path)
 		{
 			return;
 		}

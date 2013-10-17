@@ -1,7 +1,6 @@
 <?php
 namespace Change\Db;
 
-use Change\Configuration\Configuration;
 use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
@@ -103,7 +102,7 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$entry = $this->configuration->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
+			$entry = $this->getApplication()->getConfiguration()->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
 			if (is_array($entry))
 			{
 				foreach($entry as $className)

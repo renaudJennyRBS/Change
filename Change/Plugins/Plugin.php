@@ -352,7 +352,7 @@ class Plugin
 			{
 				return $workspace->pluginsModulesPath($this->vendor, $this->shortName);
 			}
-			return $workspace->pluginsThemesPath($this->shortName);
+			return $workspace->pluginsThemesPath($this->vendor, $this->shortName);
 		}
 		if ($this->isModule())
 		{

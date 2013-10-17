@@ -50,7 +50,7 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThanOrEqual(1, $output->count());
-		$this->assertStringStartsWith('Document root path', $output[0][0]);
+		$this->assertStringStartsWith('Web base Directory', $output[0][0]);
 		return array($application, $eventManager);
 	}
 

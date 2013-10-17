@@ -81,7 +81,7 @@ class Autoloader extends StandardAutoloader
 			{
 				return $workspace->pluginsModulesPath($pluginDatas['vendor'], $pluginDatas['shortName']);
 			}
-			return $workspace->pluginsThemesPath($pluginDatas['shortName']);
+			return $workspace->pluginsThemesPath($pluginDatas['vendor'], $pluginDatas['shortName']);
 		}
 		if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
 		{
