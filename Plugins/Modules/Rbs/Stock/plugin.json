@@ -1,4 +1,5 @@
 {
+	"type":"module",
 	"vendor":"Rbs",
 	"name":"Stock",
 	"package": "ECom"
