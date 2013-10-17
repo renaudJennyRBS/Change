@@ -110,6 +110,16 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 				$product->save();
 			}
 		}
+		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			//CrossSellingList Symmetry
+			if($list->getSymmetrical())
+			{
+				$jm = new \Change\Job\JobManager();
+				$jm->setApplicationServices($this->getApplicationServices());
+				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem', array('listId' =>$list->getId(), 'productId' => $product->getId(), 'action' => 'add'));
+			}
+		}
 	}
 
 	/**
@@ -127,6 +137,16 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 			{
 				$product->getPublicationSections()->remove($section);
 				$product->save();
+			}
+		}
+		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			//CrossSellingList Symmetry
+			if($list->getSymmetrical())
+			{
+				$jm = new \Change\Job\JobManager();
+				$jm->setApplicationServices($this->getApplicationServices());
+				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem', array('listId' =>$list->getId(), 'productId' => $product->getId(), 'action' => 'remove'));
 			}
 		}
 	}

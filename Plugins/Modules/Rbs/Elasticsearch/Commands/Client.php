@@ -19,12 +19,7 @@ class Client
 		$im = new IndexManager();
 		$im->setApplicationServices($applicationServices);
 
-		if ($event->getParam('list'))
-		{
-			$clientsName = $im->getClientsName();
-			$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
-		}
-		elseif (is_string($name = $event->getParam('name')))
+		if (is_string($name = $event->getParam('name')))
 		{
 			$client = $im->getClient($name);
 			if ($client)
@@ -37,7 +32,23 @@ class Client
 					{
 						$event->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
 						. $srvStat['status'] . ')');
-						$event->addInfoMessage('  Index names: ' . implode(', ', $status->getIndexNames()));
+						if ($event->getParam('list'))
+						{
+							$im->setDocumentServices(new \Change\Documents\DocumentServices($applicationServices));
+							foreach ($status->getIndexNames() as $indexName)
+							{
+								$indexDef = $im->findIndexDefinitionByName($name, $indexName);
+								if ($indexDef)
+								{
+									$event->addInfoMessage('Declared index: ' . $name . '/'. $indexName . ', mapping: ' . $indexDef->getMappingName()
+									.', language: ' . $indexDef->getAnalysisLCID());
+								}
+								else
+								{
+									$event->addInfoMessage('Ignored index: ' . $indexName);
+								}
+							}
+						}
 					}
 					else
 					{
@@ -53,6 +64,19 @@ class Client
 			else
 			{
 				$event->addErrorMessage('Invalid client name: ' . $name);
+			}
+		}
+		else
+		{
+
+			$clientsName = $im->getClientsName();
+			if (count($clientsName))
+			{
+				$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
+			}
+			else
+			{
+				$event->addCommentMessage('No declared client.');
 			}
 		}
 	}

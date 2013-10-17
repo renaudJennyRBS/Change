@@ -1,0 +1,116 @@
+{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+{% if rows %}
+<h1 id="product-list-title">{{ parameters.title }}</h1>
+
+<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
+	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}" />
+	<input type="hidden" name="quantity" value="1" />
+	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
+
+	<!-- Slider
+	================================================== -->
+	<div id="myCarousel{{ blockId }}" class="carousel slide">
+		<!-- Indicators -->
+
+		<ol class="carousel-indicators">
+			{#
+			{% for i in range(0,slideCount-1) %}
+					{%  if loop.first %}
+						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}" class="active"></li>
+					{%  else %}
+						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}"></li>
+					{% endif %}
+				{%  endfor %}
+			#}
+		</ol>
+
+		<div class="carousel-inner">
+			{% for i in range(0,slideCount-1) %}
+				{% set slideNumber = loop.index0 %}
+				{% if loop.first %}
+				<div class="item active">
+				{%  else %}
+				<div class="item">
+				{%  endif %}
+					<ul class="grid-list grid-list-{{ itemsPerSlide }} grid-list-bordered product-list">
+					{% spaceless %}
+					{%  for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
+						<li>
+							<ul class="grid-list-cell">
+								<!-- TODO: favorites and comparisons -->
+								<!--<li>
+									<label for="list_product_{{ row.id }}">
+										<input type="checkbox" id="list_product_{{ row.id }}" name="selected_product[]"
+											value="{{ row.id }}" />
+										{{ i18n('m.rbs.catalog.fo.select', ['ucf']) }}
+									</label>
+								</li>-->
+								<li class="product-visual">
+									<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+										href="{{ row.url }}">
+										<img alt="" src="{{ catalogMacros.listThumbnailURL(row.visual) }}" /></a>
+									<div class="pictograms-container">
+									</div>
+								</li>
+								<li class="product-label">
+									<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
+										href="{{ row.url }}">{{ row.title }}</a>
+								</li>
+								<li class="product-availability">
+									{{ row.productPresentation.stock.thresholdTitle }}
+								</li>
+								<!-- TODO: handle rating -->
+								<!--<li class="product-rating">
+									5 étoile(s)
+								</li>-->
+								{% if parameters.webStoreId %}
+									{% block prices %}
+										{% if parameters.displayPrices %}
+											<li class="product-price price">
+												{{ formatPrice(row.productPresentation.priceValue) }}
+												<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+												{% if row.productPresentation.priceValueWithoutDiscount %}
+													<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+														{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
+													</del>
+												{% endif %}
+											</li>
+										{% endif %}
+										{% if parameters.displayPricesWithTax %}
+											<li class="product-price price">
+												{{ formatPrice(row.productPresentation.priceValueWithTax) }}
+												<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+												{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
+													<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
+														{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
+													</del>
+												{% endif %}
+											</li>
+										{% endif %}
+									{% endblock %}
+									<li class="product-add">
+										<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
+											<i class="glyphicon glyphicon-shopping-cart"></i>
+											{{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+										</button>
+									</li>
+								{% endif %}
+							</ul>
+						</li>
+					{% endfor %}
+					{% endspaceless %}</ul>
+				</div>
+			{% endfor %}
+		</div>
+		<!-- Controls -->
+		<a class="left carousel-control" href="#myCarousel{{ blockId }}" data-slide="prev">
+			<span class="icon-prev"></span>
+		</a>
+		<a class="right carousel-control" href="#myCarousel{{ blockId }}" data-slide="next">
+			<span class="icon-next"></span>
+		</a>
+	</div>
+	<!-- /.carousel -->
+</form>
+{% endif %}

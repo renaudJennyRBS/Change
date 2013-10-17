@@ -11,4 +11,14 @@
 	<key id="product-function">détail d'un produit</key>
 	<key id="product-activate-zoom">activer le zoom</key>
 	<key id="product-attributes-display-mode">affichage des attributs</key>
+
+	<key id="cross-selling-label">produits associés</key>
+	<key id="cross-selling-title">titre du bloc</key>
+	<key id="cross-selling-type">type de produits</key>
+	<key id="cross-selling-product-choice-strategy">choix du produit dans le panier</key>
+	<key id="cross-selling-items-per-slide">produits par slide</key>
+	<key id="cross-selling-cart-label">produits associés (panier)</key>
+	<key id="cross-selling-product-choice-last-product">dernier produit ajouté au panier</key>
+	<key id="cross-selling-product-choice-random-product">produit aléatoire du panier</key>
+	<key id="cross-selling-product-choice-most-expensive-product">produit le plus cher du panier</key>
 </i18n>

@@ -200,6 +200,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Seo\Http\Rest\Actions\GenerateSitemap())->execute($event);
 					});
 					break;
+				case 'Rbs/Seo/GetMetaVariables' :
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Seo\Http\Rest\Actions\GetMetaVariables())->execute($event);
+					});
+					break;
 			}
 		}
 	}

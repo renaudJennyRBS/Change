@@ -18,4 +18,7 @@
 	<key id="remove-highlight-products">Ne plus mettre en avant les produits sélectionnés.</key>
 	<key id="product-price-list">liste des prix du produit</key>
 	<key id="filter-product-prices">Filtrer la liste des prix</key>
+	<key id="cross-selling-list-loading">Chargement des listes de Cross Selling...</key>
+	<key id="product-cross-selling-list">Listes de produits associés à ce produit</key>
+	<key id="cross-selling-list">Listes de produits associés</key>
 </i18n>

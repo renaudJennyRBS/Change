@@ -392,4 +392,36 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		$indexDefinition = $event->getParam('indexDefinition');
 		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
 	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @return \Elastica\Index|null
+	 */
+	public function deleteIndex($indexDefinition)
+	{
+		$client = $this->getClient($indexDefinition->getClientName());
+		if ($client)
+		{
+			$index = $client->getIndex($indexDefinition->getName());
+			$index->delete();
+			return $index;
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @return \Elastica\Index|null
+	 */
+	public function setIndexConfiguration($indexDefinition)
+	{
+		$client = $this->getClient($indexDefinition->getClientName());
+		if ($client)
+		{
+			$index = $client->getIndex($indexDefinition->getName());
+			$index->create($indexDefinition->getConfiguration(), true);
+			return $index;
+		}
+		return null;
+	}
 }

@@ -29,6 +29,8 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Events\CartManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Commerce', '\Rbs\Commerce\Events\JobManager\Listeners');
+		$configuration->addPersistentEntry('Change/Events/CrossSellingManager/Rbs_Commerce', '\Rbs\Commerce\Events\CrossSellingManager\Listeners');
+		$configuration->addPersistentEntry('Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 	}
 
 	/**

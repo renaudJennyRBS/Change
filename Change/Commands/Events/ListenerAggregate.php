@@ -75,10 +75,38 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\RegisterPlugins();
+			$cmd = new \Change\Commands\DisablePlugin();
 			$cmd->execute($event);
 		};
-		$events->attach('change:register-plugins', $callback);
+		$events->attach('change:disable-plugin', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Change\Commands\EnablePlugin();
+			$cmd->execute($event);
+		};
+		$events->attach('change:enable-plugin', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Change\Commands\DeinstallPlugin();
+			$cmd->execute($event);
+		};
+		$events->attach('change:deinstall-plugin', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Change\Commands\DeregisterPlugin();
+			$cmd->execute($event);
+		};
+		$events->attach('change:deregister-plugin', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Change\Commands\RegisterPlugin();
+			$cmd->execute($event);
+		};
+		$events->attach('change:register-plugin', $callback);
 	}
 
 	/**

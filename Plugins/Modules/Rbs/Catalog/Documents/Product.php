@@ -77,6 +77,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		parent::attachEvents($eventManager);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
+		$eventManager->attach('getMetaSubstitutions', array($this, 'onGetMetaSubstitutions'), 5);
 	}
 
 	/**
@@ -149,6 +150,33 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 			}
 			$this->setSku($sku);
 		}
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onGetMetaSubstitutions(\Change\Documents\Events\Event $event)
+	{
+		$variables = $event->getParam('variables');
+		$substitutions = [];
+		foreach ($variables as $variable)
+		{
+			switch ($variable)
+			{
+				case 'document.title':
+					$substitutions['document.title'] = $this->getCurrentLocalization()->getTitle();
+					break;
+				case 'document.description':
+					//TODO: cleanup the raw text from markdown
+					$description = \Change\Stdlib\String::shorten($this->getCurrentLocalization()->getDescription()->getRawText(), 80);
+					$substitutions['document.description'] = $description;
+					break;
+				case 'document.brand':
+					$substitutions['document.brand'] = $this->getBrand()->getCurrentLocalization()->getTitle();
+					break;
+			}
+		}
+		$event->setParam('substitutions', $substitutions);
 	}
 
 	/**
@@ -290,5 +318,16 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	public function getPresentation(\Rbs\Commerce\Services\CommerceServices $commerceServices, $webStoreId)
 	{
 		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
+	}
+
+	/**
+	 * @param string $crossSellingType
+	 * @return \Rbs\Catalog\Documents\CrossSellingProductList|null
+	 */
+	public function getCrossSellingListByType($crossSellingType)
+	{
+		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Catalog_CrossSellingProductList');
+		$query->andPredicates($query->eq('product', $this->getId()), $query->eq('crossSellingType', $crossSellingType));
+		return $query->getFirstDocument();
 	}
 }

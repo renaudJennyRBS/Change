@@ -5,6 +5,7 @@ use Change\Application\ApplicationServices;
 use Change\Documents\DocumentServices;
 use Change\Permissions\PermissionsManager;
 use Change\Presentation\PresentationServices;
+use Change\Services\CommonServices;
 use Change\User\AuthenticationManager;
 
 /**
@@ -28,6 +29,11 @@ class Event extends \Zend\EventManager\Event
 	 * @var DocumentServices
 	 */
 	protected $documentServices;
+
+	/**
+	 * @var CommonServices
+	 */
+	protected $commonServices;
 
 	/**
 	 * @var Request
@@ -69,7 +75,6 @@ class Event extends \Zend\EventManager\Event
 	 */
 	protected $permissionsManager;
 
-
 	/**
 	 * @api
 	 * @return Controller|null
@@ -106,6 +111,7 @@ class Event extends \Zend\EventManager\Event
 	public function setDocumentServices(DocumentServices $documentServices = null)
 	{
 		$this->documentServices = $documentServices;
+		$this->setParam('documentServices', $documentServices);
 	}
 
 	/**
@@ -119,10 +125,12 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @return $this
 	 */
 	public function setPresentationServices(PresentationServices $presentationServices = null)
 	{
 		$this->setParam('presentationServices', $presentationServices);
+		return $this;
 	}
 
 	/**
@@ -132,6 +140,29 @@ class Event extends \Zend\EventManager\Event
 	public function getPresentationServices()
 	{
 		return $this->getParam('presentationServices');
+	}
+
+	/**
+	 * @param \Change\Services\CommonServices $commonServices
+	 * @return $this
+	 */
+	public function setCommonServices(CommonServices $commonServices)
+	{
+		$this->commonServices = $commonServices;
+		$this->setParam('commonServices', $commonServices);
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Services\CommonServices
+	 */
+	public function getCommonServices()
+	{
+		if ($this->commonServices == null)
+		{
+			$this->setCommonServices(new CommonServices($this->applicationServices, $this->documentServices));
+		}
+		return $this->commonServices;
 	}
 
 	/**

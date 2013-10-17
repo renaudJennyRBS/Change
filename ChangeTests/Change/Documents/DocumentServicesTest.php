@@ -14,6 +14,7 @@ class DocumentServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testInitialize()
 	{
 		$documentsServices = $this->getDocumentServices();
+
 		$this->assertInstanceOf('\Change\Documents\DocumentServices', $documentsServices);
 		$this->assertSame($this->getApplicationServices(), $documentsServices->getApplicationServices());
 

@@ -26,8 +26,6 @@ class ResultInformation extends Information
 		$this->setFunctions(array(
 			'Rbs_Elasticsearch_Result' => $i18nManager->trans('m.rbs.elasticsearch.blocks.result-function'))
 		);
-		$this->addInformationMeta('autoComplete', Property::TYPE_BOOLEAN, false, false)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.result-autocomplete', $ucf));
 
 		$this->addInformationMeta('fulltextIndex', Property::TYPE_DOCUMENTID, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.result-fulltextindex', $ucf))

@@ -36,7 +36,7 @@ class CommandsResolver
 			$event->setAction(array($this, 'commandsList'));
 			return;
 		}
-		elseif ($nbParts == 2 && $method === Request::METHOD_GET)
+		elseif ($nbParts == 2)
 		{
 			$event->setParam('command', implode(':', $resourceParts));
 			$event->setAction(array($this, 'executeCommand'));
@@ -129,7 +129,8 @@ class CommandsResolver
 		$commands = $this->getCommandsConfiguration($eventManager, $application);
 		if (isset($commands[$cmd]))
 		{
-			$arguments = $eventManager->prepareArgs($event->getRequest()->getQuery()->toArray());
+			$args = array_merge($event->getRequest()->getQuery()->toArray(), $event->getRequest()->getPost()->toArray());
+			$arguments = $eventManager->prepareArgs($args);
 			$errorParameters = array();
 			foreach ($commands[$cmd] as $name => $conf)
 			{
@@ -177,7 +178,14 @@ class CommandsResolver
 
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setArray(array('command'=> $cmd, 'inputArguments' => $inputArgs, 'result' => $cmdEvent->getOutputMessages()));
-			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+			if ($cmdEvent->success())
+			{
+				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+			}
+			else
+			{
+				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
+			}
 			$event->setResult($result);
 		}
 

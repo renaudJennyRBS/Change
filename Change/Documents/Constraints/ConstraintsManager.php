@@ -8,11 +8,6 @@ namespace Change\Documents\Constraints;
 class ConstraintsManager
 {
 	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
 	protected $applicationServices;
@@ -60,23 +55,6 @@ class ConstraintsManager
 	{
 		return $this->applicationServices;
 	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
 
 	/**
 	 * @param string $name
