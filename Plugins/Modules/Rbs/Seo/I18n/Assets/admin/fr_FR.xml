@@ -37,4 +37,8 @@
 	<key id="add-on-website-sitemap">ajouter ce référencement dans le sitemap</key>
 
 	<key id="meta-variables">variables</key>
+	<key id="configuration">configuration générale</key>
+	<key id="document-model">modèle de document</key>
+	<key id="generate-seo-document-for-model">générer le document SEO pour ce modèle</key>
+	<key id="document-seo-auto-generation">génération automatique des documents SEO</key>
 </i18n>

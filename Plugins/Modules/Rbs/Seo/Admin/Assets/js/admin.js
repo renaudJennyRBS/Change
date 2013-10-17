@@ -10,7 +10,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Seo').route('home', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'});
+			$delegate.model('Rbs_Seo')
+				.route('home', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'})
+				.route('configuration', 'Rbs/Seo/Configuration', 'Rbs/Seo/Configuration/configuration.twig');
 			$delegate.routesForLocalizedModels(['Rbs_Seo_DocumentSeo']);
 			return $delegate;
 		}]);
