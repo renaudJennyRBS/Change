@@ -229,11 +229,10 @@ class Application
 	 */
 	public function getProjectConfigurationPaths()
 	{
-		$workspace = $this->getWorkspace();
-		$result = array();
-		$result[Configuration\Configuration::PROJECT] = $workspace->appPath('Config', 'project.json');
-		$result[Configuration\Configuration::INSTANCE] = $workspace->appPath('Config', 'project.default.json');
-		return $result;
+		return [
+			Configuration\Configuration::AUTOGEN =>  $this->getWorkspace()->appPath('Config', Configuration\Configuration::AUTOGEN),
+			Configuration\Configuration::PROJECT =>  $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
+		];
 	}
 
 	/**

@@ -10,7 +10,7 @@ if (!defined('PROJECT_HOME'))
 }
 require_once PROJECT_HOME . '/Change/Application.php';
 require_once 'Change/TestAssets/Application.php';
-
+@unlink('UnitTestWorkspace/App/Config/project.autogen.json');
 $application = new \ChangeTests\Change\TestAssets\Application();
 $application->registerAutoload();
 $application->clearCache();

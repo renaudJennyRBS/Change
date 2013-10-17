@@ -23,7 +23,7 @@ class Install extends \Change\Plugins\InstallBase
 			'useDBStat' => true,
 			'baseURL' => "/index.php"
 		), $images);
-		$configuration->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::INSTANCE);
+		$configuration->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::PROJECT);
 	}
 
 

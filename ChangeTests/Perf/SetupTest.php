@@ -7,25 +7,11 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 	public static function setUpBeforeClass()
 	{
 		static::clearDB();
-		$app = static::getNewApplication();
-		$path = $app->getWorkspace()->appPath('Config', 'project.json');
-		$conf = file_get_contents($path);
-		$tmpPath = $app->getWorkspace()->appPath('Config', 'project.setup.json');
-		if (!file_exists($tmpPath))
-		{
-			file_put_contents($tmpPath, $conf);
-		}
 	}
 
 	public static function tearDownAfterClass()
 	{
 		static::clearDB();
-		$app = static::getNewApplication();
-		$tmpPath = $app->getWorkspace()->appPath('Config', 'project.setup.json');
-		$conf = file_get_contents($tmpPath);
-		$path = $app->getWorkspace()->appPath('Config', 'project.json');
-		file_put_contents($path, $conf);
-		unlink($tmpPath);
 	}
 
 	/**
@@ -89,10 +75,9 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testRegisterPlugins($env)
 	{
 		list($application, $eventManager) = $env;
-		$cmd = 'change:register-plugins';
-		$arguments = array();
+		$cmd = 'change:register-plugin';
+		$arguments = array("all" => true);
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->markTestIncomplete();
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThan(2, $output->count());
 		foreach ($output as $msg)
@@ -112,7 +97,6 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'Core');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->markTestIncomplete();
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThan(10, $output->count());
 		foreach ($output as $msg)
@@ -131,7 +115,6 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'ECom');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->markTestIncomplete();
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThan(2, $output->count());
 		foreach ($output as $msg)
@@ -150,7 +133,6 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cmd = 'change:install-plugin';
 		$arguments = array('type' => 'theme', 'vendor' => 'Rbs', 'name' => 'Demo');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->markTestIncomplete();
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThan(1, $output->count());
 		foreach ($output as $msg)

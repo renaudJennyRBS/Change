@@ -35,7 +35,7 @@ class EditableConfiguration extends Configuration
 	 * @throws \RuntimeException
 	 * @return boolean
 	 */
-	public function addPersistentEntry($path, $value, $configurationName = self::PROJECT)
+	public function addPersistentEntry($path, $value, $configurationName = self::AUTOGEN)
 	{
 		$update = $this->getAddEntryArrayToMerge($path, $value);
 		if (!count($update))
