@@ -2,7 +2,8 @@
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
 	<properties>
-		<property name="code" type="String" />
+		<property name="label" type="String" />
+		<property name="modelName" type="String" />
 		<property name="documentSeoAutoGenerate" type="Boolean" />
 		<property name="defaultChangeFrequency" type="String" />
 		<property name="defaultPriority" type="Float" >
