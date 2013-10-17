@@ -482,6 +482,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function getAssetBaseUrl()
 	{
 		$webBaseURLPath = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseURLPath');
-		return $webBaseURLPath . '/Assets';
+		return $webBaseURLPath . '/Assets/';
 	}
 }
