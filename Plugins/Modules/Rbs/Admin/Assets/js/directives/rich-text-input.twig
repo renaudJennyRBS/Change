@@ -1,7 +1,7 @@
 <div class="tabbable">
 	<ul ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">
 		<li class="active"><a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">Éditeur</a></li>
-		<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">Aperçu <i ng-show="previewing" class="icon-spinner icon-spin"></i></a></li>
+		<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">Aperçu <span ng-if="previewing"><i class="icon-spinner icon-spin"></i></span></a></li>
 		</ul>
 	<div class="tab-content">
 		<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">
