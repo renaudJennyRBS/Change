@@ -1,8 +1,5 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href ng-href="(= 'Rbs_Price_Price'|rbsURL:'list' =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.price.admin.js.price-list', ['ucf']) }}</a></li>
-		<li><a href ng-href="(= 'Rbs_Price_Tax'|rbsURL:'list' =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.price.admin.js.tax-list', ['ucf']) }}</a></li>
-		<li><a href ng-href="(= 'Rbs_Price_BillingArea'|rbsURL:'list' =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.price.admin.js.billingarea-list', ['ucf']) }}</a></li>
-	</ul>
-</div>
+<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+	<a href ng-href="(= 'Rbs_Price_Price'|rbsURL:'list' =)" class="rbs-panel-link">{{ i18n('m.rbs.price.admin.js.price-list', ['ucf']) }}</a>
+	<a href ng-href="(= 'Rbs_Price_Tax'|rbsURL:'list' =)" class="rbs-panel-link">{{ i18n('m.rbs.price.admin.js.tax-list', ['ucf']) }}</a>
+	<a href ng-href="(= 'Rbs_Price_BillingArea'|rbsURL:'list' =)" class="rbs-panel-link">{{ i18n('m.rbs.price.admin.js.billingarea-list', ['ucf']) }}</a>
+</rbs-links-panel>

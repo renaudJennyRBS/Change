@@ -13,52 +13,70 @@
 		</rbs-field-boolean>
 
 		<rbs-field ng-hide="document.virtual" label="{{ i18nAttr('m.rbs.stock.documents.sku.physicalProperties', ['ucf']) }}">
-			<div class="control-group">
-				<div class="input-prepend">
-					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.mass-abbr') }}</span>
-					<input class="input-mini" data-ng-model="document.physicalProperties.mass.value" smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.mass') }}">
+			<div class="form-inline">
+				<div class="form-group" style="margin:0;">
+					<div class="input-group">
+						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.js.mass-abbr') }}</span>
+						<input class="form-control" size="7" ng-model="document.physicalProperties.mass.value" smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.mass') }}">
+						<span class="input-group-addon contains-input">
+							<select class="form-control" ng-model="document.physicalProperties.mass.unit">
+								<option value="kg">{{ i18n('m.rbs.stock.admin.js.kg-abbr') }}</option>
+								<option value="g">{{ i18n('m.rbs.stock.admin.js.g-abbr') }}</option>
+								<option value="lbs">{{ i18n('m.rbs.stock.admin.js.lbs-abbr') }}</option>
+							</select>
+						</span>
+					</div>
 				</div>
-				<select class="input-mini" ng-model="document.physicalProperties.mass.unit">
-					<option value="kg">{{ i18n('m.rbs.stock.admin.js.kg-abbr') }}</option>
-					<option value="g">{{ i18n('m.rbs.stock.admin.js.g-abbr') }}</option>
-					<option value="lbs">{{ i18n('m.rbs.stock.admin.js.lbs-abbr') }}</option>
-				</select>
 			</div>
-			<div class="control-group">
-				<div class="input-prepend">
-					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.length-abbr') }}</span>
-					<input class="input-mini" smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.length') }}">
+
+			<div class="form-inline" style="margin-top:4px;">
+				<div class="form-group" style="margin:0;">
+					<div class="input-group">
+						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.js.length-abbr') }}</span>
+						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.length') }}"/>
+						<span class="input-group-addon contains-input">
+							<select class="form-control" ng-model="document.physicalProperties.length.unit">
+								<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+								<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+								<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
+							</select>
+						</span>
+					</div>
 				</div>
-				<select class="input-mini" ng-model="document.physicalProperties.length.unit">
-					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
-					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
-					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
-				</select>
 				<span>x</span>
-				<div class="input-prepend">
-					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.width-abbr') }}</span>
-					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.width') }}">
+				<div class="form-group" style="margin:0;">
+					<div class="input-group">
+						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.js.width-abbr') }}</span>
+						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.width') }}"/>
+						<span class="input-group-addon contains-input">
+							<select class="form-control" ng-model="document.physicalProperties.width.unit">
+								<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+								<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+								<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
+							</select>
+						</span>
+					</div>
 				</div>
-				<select class="input-mini" ng-model="document.physicalProperties.width.unit">
-					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
-					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
-					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
-				</select>
 				<span>x</span>
-				<div class="input-prepend">
-					<span class="add-on">{{ i18n('m.rbs.stock.admin.js.height-abbr') }}</span>
-					<input class="input-mini" smart-float="" data-ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.height') }}">
+				<div class="form-group" style="margin:0;">
+					<div class="input-group">
+						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.js.height-abbr') }}</span>
+						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.js.height') }}"/>
+						<span class="input-group-addon contains-input">
+							<select class="form-control" ng-model="document.physicalProperties.height.unit">
+								<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
+								<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
+								<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
+							</select>
+						</span>
+					</div>
 				</div>
-				<select class="input-mini" ng-model="document.physicalProperties.height.unit">
-					<option value="cm">{{ i18n('m.rbs.stock.admin.js.cm-abbr') }}</option>
-					<option value="m">{{ i18n('m.rbs.stock.admin.js.m-abbr') }}</option>
-					<option value="in">{{ i18n('m.rbs.stock.admin.js.in-abbr') }}</option>
-				</select>
 			</div>
+
 		</rbs-field>
 		<rbs-field
 			label="{{ i18nAttr('m.rbs.stock.documents.sku.unit', ['ucf']) }}">
-			<select data-ng-model="unit" rbs-items-from-collection="Rbs_Stock_Collection_Unit">
+			<select ng-model="unit" class="form-control" rbs-items-from-collection="Rbs_Stock_Collection_Unit">
 			</select>
 		</rbs-field>
 

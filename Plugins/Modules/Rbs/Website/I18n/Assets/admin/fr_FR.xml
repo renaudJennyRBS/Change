@@ -3,4 +3,6 @@
 	<key id="websites-trees">arborescences des sites</key>
 	<key id="section-name">CMS</key>
 	<key id="section-permission-rule-helper">choisissez de restreindre l'accès de cette section à des utilisateurs ou des groupes d'utilisateurs. Si il n'y a aucun utilisateur ou groupe sélectionné, l'accès est considéré comme public</key>
+	<key id="edit-website-properties">éditer les propriétés du site web</key>
+	<key id="navigate-in-website">naviguer dans le site web</key>
 </i18n>

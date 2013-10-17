@@ -8,7 +8,8 @@
 
 	<page-header title="{{ i18nAttr('m.rbs.tag.documents.tag-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Tag_Tag" filter-query="query" text-search="textSearch"></search-filters>
-	<div>
+
+	<div class="add-elements-bar">
 		<a href ng-href="(= 'Rbs_Tag_Tag' | documentURL:'new' =)">{{ i18n('m.rbs.tag.documents.tag-create', ['ucf']) }}</a>
 	</div>
 

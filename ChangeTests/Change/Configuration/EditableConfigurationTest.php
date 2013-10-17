@@ -11,7 +11,7 @@ class EditableConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		try
 		{
 			$this->assertTrue($config->addPersistentEntry('mypath/myentry', 'value'));
-			$this->fail('Configuration not found: ' . EditableConfiguration::PROJECT);
+			$this->fail('Configuration not found: ' . EditableConfiguration::AUTOGEN);
 		}
 		catch (\RuntimeException $e)
 		{
@@ -25,7 +25,7 @@ class EditableConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 		copy(__DIR__ . '/TestAssets/project1.json', $sourceConfigFile);
-		$config = new EditableConfiguration(array(EditableConfiguration::PROJECT => $sourceConfigFile));
+		$config = new EditableConfiguration(array(EditableConfiguration::AUTOGEN => $sourceConfigFile));
 		$this->assertNull($config->getEntry('mypath/myentry'));
 		$this->assertTrue($config->addPersistentEntry('mypath/myentry', 'value'));
 		$this->assertEquals('value', $config->getEntry('mypath/myentry'));
@@ -34,7 +34,7 @@ class EditableConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$config->save();
 
-		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::PROJECT =>  $sourceConfigFile));
+		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::AUTOGEN =>  $sourceConfigFile));
 		$this->assertEquals('value', $newConfig->getEntry('mypath/myentry'));
 
 		// Giving an invalid path just returns false.
@@ -43,7 +43,7 @@ class EditableConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $config->getUpdateEntries());
 
 
-		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::PROJECT =>  $sourceConfigFile));
+		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::AUTOGEN =>  $sourceConfigFile));
 		$this->assertNull($newConfig->getEntry('invalidpath'));
 
 		// Boolean and integer types values are correctly preserved.
@@ -54,7 +54,7 @@ class EditableConfigurationTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(2, $config->getUpdateEntries());
 		$config->save();
 
-		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::PROJECT => $sourceConfigFile));
+		$newConfig = new  \Change\Configuration\EditableConfiguration(array(EditableConfiguration::AUTOGEN => $sourceConfigFile));
 		$this->assertTrue(155 === $newConfig->getEntry('mypath/integer'));
 		$this->assertTrue(true === $newConfig->getEntry('mypath/boolean'));
 

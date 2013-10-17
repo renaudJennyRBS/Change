@@ -22,7 +22,7 @@
 		<strong>Les étiquettes personnelles ne peuvent être utilisées que par leur créateur.</strong><br/>
 		Vous pouvez créer autant d'étiquettes personnelles que vous voulez afin d'organiser les différents contenus
 		de vos sites. Vos étiquettes personnelles ne seront visibles que par vous.<br/>
-		<span class="label label-important">Attention !</span> Une fois l'étiquette créée, il n'est plus possible de modifier cette propriété.]]>
+		<span class="label label-danger">Attention !</span> Une fois l'étiquette créée, il n'est plus possible de modifier cette propriété.]]>
 	</key>
 	<key id="usertag-cannot-be-modified" format="html"><![CDATA[Cette information ne peut être définie qu'à la création d'une étiquette.]]>
 	</key>

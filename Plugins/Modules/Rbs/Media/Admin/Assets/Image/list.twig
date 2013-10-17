@@ -10,7 +10,7 @@
 	<page-header title="{{ i18nAttr('m.rbs.media.documents.image-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Media_Image" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+	<div class="add-elements-bar">
 		<a href="(= 'Rbs_Media_Image' | documentURL:'new' =)">{{ i18n('m.rbs.media.documents.image-create', ['ucf']) }}</a>
 	</div>
 
@@ -21,8 +21,8 @@
 			<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
 			<div ng-if="doc.alt"><small>(= doc.alt =)</small></div>
 		</column>
-		<column name="width" width="70px" align="right"><span class="width-column">(= doc.width | number =)</span></column>
-		<column name="height" width="70px"><span class="height-column">(= doc.height | number =)</span></column>
+		<column name="width" width="80px" align="right"><span class="width-column">(= doc.width | number =)</span></column>
+		<column name="height" width="80px"><span class="height-column">(= doc.height | number =)</span></column>
 
 		<preview style="min-height: 200px">
 			<img rbs-storage-image="doc" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>

@@ -1,6 +1,3 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Brand/Brand/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.brand.documents.brand-list', ['ucf']) }}</a></li>
-	</ul>
-</div>
+<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+	<a href="Rbs/Brand/Brand/" class="rbs-panel-link" icon="icon-list-alt">{{ i18n('m.rbs.brand.documents.brand-list', ['ucf']) }}</a>
+</rbs-links-panel>

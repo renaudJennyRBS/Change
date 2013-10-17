@@ -1,0 +1,54 @@
+@CHARSET "UTF-8";
+
+.navbar-indicators > li {
+	border-left: 1px solid black;
+	background: rgba(255,255,255,0.1);
+}
+
+.navbar-indicators > li.on > a {
+	background: rgba(255,255,255,0.25);
+	color: white;
+}
+
+.navbar-indicators > li > a {
+	font-size: 1.33333em;
+	min-width: 40px;
+	text-align: center;
+}
+
+.navbar-indicators > li:last-child {
+	border-right: 1px solid black;
+}
+
+#fullScreenBar {
+	cursor: pointer;
+	display: block;
+	padding: 4px 20px;
+	text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);
+	font-size: 9pt;
+	font-weight: bold;
+	border-bottom: 1px solid #888888;
+	color: white;
+	display: none;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
+
+	background-image: linear-gradient(to top, rgb(107,161,0) 0%, rgb(176,199,4) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(107,161,0) 0%, rgb(176,199,4) 100%);
+
+	margin-bottom: 20px;
+}
+
+#fullScreenBar .icon {
+	background: url(../img/icons/icon-rbschange.png) no-repeat top left;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 5px;
+	position: relative;
+	top: 3px;
+}
+
+body > .navbar {
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
+	border-bottom: 5px solid #B1CA27;
+}

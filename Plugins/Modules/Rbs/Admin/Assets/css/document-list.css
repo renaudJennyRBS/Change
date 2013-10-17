@@ -6,8 +6,16 @@ td .correction {
 	top: 2px;
 }
 
-.table th, .table td {
+rbs-document-list .table thead > tr > th,
+rbs-document-list .table thead > tr > td,
+rbs-document-list .table tbody > tr > th,
+rbs-document-list .table tbody > tr > td {
 	vertical-align: middle;
+}
+
+rbs-document-list .table thead > tr > th {
+	padding-top: 15px;
+	padding-bottom: 15px;
 }
 
 .document-list .column-sort-indicator {
@@ -27,19 +35,160 @@ td .correction {
 	box-shadow: 0 -2px 0 #0088CC;
 }
 
-.document-info-labels {
-	float: right;
+.quick-actions a {
+	white-space: nowrap;
+}
+
+#rbs-document-list-tester .quick-actions {
+	font-size: 85%;
+	text-transform: lowercase;
+}
+#rbs-document-list-tester .handle-open {
+	display: none;
+}
+
+rbs-document-list tr .quick-actions .divider,
+#rbs-document-list-tester .divider {
+	color: #DDDDDD;
+	margin: 0 3px;
+}
+rbs-document-list tr .quick-actions {
+	font-size: 85%;
+	position: absolute;
+	right: -5px;
+	top: -3px;
+	visibility: hidden;
+	padding: 2px 8px 2px 11px;
+	background: rgba(255,255,255,0.9);
+	border: 1px solid #DDDDDD;
+	border-right: none;
+	border-top-left-radius: 15px;
+	border-bottom-left-radius: 15px;
+	box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1) inset;
+	text-transform: lowercase;
+}
+rbs-document-list tr:hover .quick-actions-mouse {
+	visibility: visible;
+}
+
+rbs-document-list tr td .quick-actions-touch {
+	overflow: hidden;
+	white-space: nowrap;
+	visibility: visible;
+	width: 0;
+
+	-webkit-transition: 0.3s ease-in-out all;
+	-moz-transition: 0.3s ease-in-out all;
+	-o-transition: 0.3s ease-in-out all;
+	transition: 0.3s ease-in-out all;
+}
+
+rbs-document-list tr td .quick-actions-touch .handle-open,
+rbs-document-list tr td .quick-actions-touch.shown .handle-close {
+	display: inline-block;
+	color: #DDDDDD;
+	top: 1px;
+	left: -3px;
 	position: relative;
-	margin-right: 5px;
-	top: 2px;
+}
+rbs-document-list tr td .quick-actions-touch.shown .handle-close {
+	left: -1px;
+}
+rbs-document-list tr td .quick-actions-touch.shown .handle-open,
+rbs-document-list tr td .quick-actions-touch .handle-close {
+	display: none;
 }
 
-.empty-folder-drop-zone {
-	margin: 10px 5px;
+
+
+rbs-document-list .table td .primary-cell {
+	position: relative;
+	min-width: 120px;
+}
+
+rbs-document-list > .btn-toolbar {
+	margin-bottom: 10px;
+}
+
+
+
+rbs-document-list th .btn-xs {
+	font-size: 14px;
+	line-height: 16px;
+	position: relative;
+	top: -2px;
+}
+
+.add-elements-bar {
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #EEEEEE;
+}
+
+.add-elements-bar a {
+	font-weight: bold;
+	margin-right: 12px;
+}
+
+.add-elements-bar a:before {
+	content: "\f067";
+	font-family: FontAwesome;
+	margin-right: 4px;
+}
+
+
+
+/* previews */
+
+.table-striped.document-list tbody tr.preview td.preview {
+	padding: 0;
+}
+.table-striped.document-list tbody tr td.preview button.close {
+	margin: 5px;
+}
+
+.table-striped.document-list tbody tr.preview td.preview .inner {
+	position: relative;
 	padding: 5px;
-	font-size: 90%;
 }
 
+rbs-document-list tr.preview td.preview .preview-indicator {
+	display: none;
+	position: absolute;
+	top: -7px;
+	left: 280px;
+	width: 10px;
+	height: 10px;
+	border-top: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}
+
+rbs-document-list tr td.preview .dl-horizontal dt {
+	clear: none;
+}
+
+
+rbs-document-list .empty-row td,
+rbs-document-list div.empty-row {
+	color: silver;
+	font-size: 14pt;
+	padding: 14px;
+	text-align: left;
+	text-shadow: 0 1px 0 white;
+}
+
+rbs-document-list div.empty-row {
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	background: #F9F9F9;
+}
+
+
+/* grid mode (thumbnails) */
 
 .thumbnail-grid {
 	list-style: none;
@@ -213,12 +362,9 @@ td .correction {
 	top: 1px;
 }
 
-
-/************/
-
 .thumbnail-grid li .inner.folder {
-    position: relative;
-    overflow: visible;
+	position: relative;
+	overflow: visible;
 	text-align: center;
 	background: #EEEEEE;
 }
@@ -228,45 +374,45 @@ td .correction {
 }
 
 .thumbnail-grid li .inner.folder, .container:after, .container:before {
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
-    border-radius: 3px;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+	border-radius: 3px;
 }
 .thumbnail-grid li .inner.folder:after,
 .thumbnail-grid li .inner.folder:before {
 	background: none repeat scroll 0 0 #FFFFFF;
-    bottom: 0;
-    content: "";
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transform-origin: 100% 100%;
-    z-index: -10;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+	bottom: 0;
+	content: "";
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	transform-origin: 100% 100%;
+	z-index: -10;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
 }
 .thumbnail-grid li .inner.folder:after {
-    background-color: #EEEEEE;
+	background-color: #EEEEEE;
 	/*
 	transform: rotate(3deg);
     left: 7px;
     right: -1px;
     top: -7px;
     */
-    left: 4px;
-    right: 4px;
-    top: -10px;
+	left: 4px;
+	right: 4px;
+	top: -10px;
 }
 .thumbnail-grid li .inner.folder:before {
-    background-color: #EEEEEE;
+	background-color: #EEEEEE;
 	/*
 	transform: rotate(5deg);
     left: 14px;
     right: 0px;
     top: -10px;
     */
-    left: 13px;
-    right: 13px;
-    top: -14px;
+	left: 13px;
+	right: 13px;
+	top: -14px;
 }
 
 .thumbnail-grid li .inner.folder .dropped-files-info {
@@ -300,216 +446,12 @@ td .correction {
 	height: 140px;
 }
 
-/*
-.document-list-view-mode-thumbnails + footer,
-.document-list-view-mode-small-thumbnails + footer {
-	border-top: 1px solid #EEEEEE;
-	padding-top: 10px;
-	margin-top: 20px;
-}
-*/
-
 .thumbnail-grid + footer.rbsc-list-footer {
-    border-top: 1px solid #EEEEEE;
-    margin-top: 20px;
-    padding-top: 10px;
+	border-top: 1px solid #EEEEEE;
+	margin-top: 20px;
+	padding-top: 10px;
 }
 
 .document-list td .progress {
 	margin-bottom: 0;
-}
-
-.document-list td > select,
-.document-list td > textarea,
-.document-list td > input[type="text"],
-.document-list td > input[type="password"],
-.document-list td > input[type="datetime"],
-.document-list td > input[type="datetime-local"],
-.document-list td > input[type="date"],
-.document-list td > input[type="month"],
-.document-list td > input[type="time"],
-.document-list td > input[type="week"],
-.document-list td > input[type="number"],
-.document-list td > input[type="email"],
-.document-list td > input[type="url"],
-.document-list td > input[type="search"],
-.document-list td > input[type="tel"],
-.document-list td > input[type="color"],
-.document-list td > .uneditable-input,
-.document-list td > .input-append,
-.document-list td > .input-prepend {
-	margin-bottom: 0;
-}
-
-
-/***********/
-
-.pagination-info {
-	line-height: 28px;
-/*	font-size: 90%;*/
-	margin-bottom: 10px;
-}
-
-.btn-nav-back {
-	vertical-align: top;
-}
-
-a.action {
-	margin-left: 1em;
-}
-
-a.action:first-child {
-	margin-left: 0;
-}
-
-.table-striped.document-list tbody tr.preview td.preview {
-	padding: 0;
-}
-.table-striped.document-list tbody tr td.preview button.close {
-	margin: 5px;
-}
-
-.table-striped.document-list tbody tr.preview td.preview .inner {
-	position: relative;
-	padding: 5px;
-}
-
-rbs-document-list tr.preview td.preview .preview-indicator {
-	display: none;
-	position: absolute;
-	top: -7px;
-	left: 280px;
-	width: 10px;
-	height: 10px;
-	border-top: 1px solid #dddddd;
-	border-right: 1px solid #dddddd;
-	-webkit-transform: rotate(-45deg);
-	-moz-transform: rotate(-45deg);
-	-o-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-}
-
-
-rbs-document-list tr td.preview .dl-horizontal dt {
-	clear: none;
-}
-
-
-a.danger:hover {
-	color: red;
-}
-
-a.danger:visited:hover {
-	color: red;
-}
-
-rbs-document-list .empty-row td,
-rbs-document-list div.empty-row {
-	color: silver;
-	font-size: 14pt;
-	padding: 14px;
-	text-align: left;
-	text-shadow: 0 1px 0 white;
-}
-
-rbs-document-list div.empty-row {
-	border: 1px solid #DDDDDD;
-	border-radius: 4px;
-	background: #F9F9F9;
-}
-
-.quick-actions a {
-	white-space: nowrap;
-}
-
-#rbs-document-list-tester .quick-actions {
-	font-size: 85%;
-	text-transform: lowercase;
-}
-#rbs-document-list-tester .handle-open {
-	display: none;
-}
-
-rbs-document-list tr .quick-actions .divider,
-#rbs-document-list-tester .divider {
-	color: #DDDDDD;
-	margin: 0 3px;
-}
-rbs-document-list tr .quick-actions {
-	font-size: 85%;
-	position: absolute;
-	right: -5px;
-	top: -3px;
-	visibility: hidden;
-	padding: 2px 8px 2px 11px;
-	background: rgba(255,255,255,0.9);
-	border: 1px solid #DDDDDD;
-	border-right: none;
-	border-top-left-radius: 15px;
-	border-bottom-left-radius: 15px;
-	box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1) inset;
-	text-transform: lowercase;
-}
-rbs-document-list tr:hover .quick-actions-mouse {
-	visibility: visible;
-}
-
-rbs-document-list tr td .quick-actions-touch {
-	overflow: hidden;
-	white-space: nowrap;
-	visibility: visible;
-	width: 0;
-
-	-webkit-transition: 0.3s ease-in-out all;
-	-moz-transition: 0.3s ease-in-out all;
-	-o-transition: 0.3s ease-in-out all;
-	transition: 0.3s ease-in-out all;
-}
-
-rbs-document-list tr td .quick-actions-touch .handle-open,
-rbs-document-list tr td .quick-actions-touch.shown .handle-close {
-	display: inline-block;
-	color: #DDDDDD;
-	top: 1px;
-	left: -3px;
-	position: relative;
-}
-rbs-document-list tr td .quick-actions-touch.shown .handle-close {
-	left: -1px;
-}
-rbs-document-list tr td .quick-actions-touch.shown .handle-open,
-rbs-document-list tr td .quick-actions-touch .handle-close {
-	display: none;
-}
-
-
-
-rbs-document-list .table td .primary-cell {
-	position: relative;
-	min-width: 120px;
-}
-
-rbs-document-list .table thead th {
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-rbs-document-list .tags {
-	display: block;
-}
-
-rbs-document-list th .btn-mini {
-	font-size: 14px;
-	line-height: 16px;
-	position: relative;
-	top: -2px;
-}
-
-rbs-document-list .btn-toolbar {
-	min-height: 29px;
-}
-
-
-rbs-document-list td .label.pull-right {
-	margin-left: 3px;
 }

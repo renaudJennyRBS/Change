@@ -12,7 +12,7 @@
 	<div class="well well-small">
 		<h4>{{ i18n('m.rbs.website.documents.sectionpagefunction.add-functions-to-this-section', ['ucf']) }}</h4>
 
-		<select class="input-block-level" size="10"
+		<select class="form-control" size="10"
 		        ng-model="selectedFunction"
 		        ng-options="func.code as func.label+' ('+func.code+') ('+func.usage+')' for func in allFunctions">
 			<option value="">{{ i18n('m.rbs.website.documents.sectionpagefunction.select-function', ['ucf','etc']) }}</option>
@@ -30,13 +30,13 @@
 
 				<div ng-show="pagesForFunction.length">
 					<h5>{{ i18n('m.rbs.website.documents.sectionpagefunction.pages-for-choosen-function', ['ucf','lbl']) }}</h5>
-					<select class="input-block-level" size="10"
+					<select class="form-control" size="10"
 					        ng-model="selectedPage"
 					        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
 					</select>
 					<div>
 						{{ i18n('m.rbs.website.documents.sectionpagefunction.page-can-also-use-these-functions', ['ucf','lbl']) }}
-						<select class="input-block-level" size="10"
+						<select class="form-control" size="10"
 						        multiple="multiple"
 						        ng-model="extraFunctions"
 						        ng-options="func.code as func.label+' ('+func.code+') ('+func.usage+')' for func in selectedPage.functions">

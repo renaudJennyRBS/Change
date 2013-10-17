@@ -305,6 +305,7 @@
 
 							// If a Document has been created, we redirect to the URL of the new Document.
 							if ($scope._isNew) {
+								EditorManager.removeCreationLocalCopy(doc);
 								$location.path(doc.url());
 							}
 
@@ -864,8 +865,8 @@
 					{
 						$table.append(
 							'<tr>' +
-								'<th width="50%">' +
-								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="input-medium" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
+								'<th width="50%" class="form-inline">' +
+								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="form-control" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
 								'</th>' +
 								'<th style="border-left: 5px solid #0088CC; background: rgba(0,136,255,0.05);">' +
 									i18n.trans('m.rbs.admin.admin.js.reference-language | ucf | lbl') + ' (= availableLanguages[refDocument.LCID].label =)' +
@@ -896,7 +897,7 @@
 								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
 							}
 							$rcell.append($refProp);
-							$rcell.append('<button type="button" class="btn btn-small copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= availableLanguages[document.LCID].label =)</button>');
+							$rcell.append('<button type="button" class="btn btn-default btn-sm copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> utiliser cette valeur en (= availableLanguages[document.LCID].label =)</button>');
 						});
 
 						$form.prepend($table);
@@ -923,7 +924,7 @@
 
 	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
 	{
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService)
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings)
 		{
 			var	$ws = $('#workspace'),
 				cascadeContextStack = [],
@@ -987,6 +988,14 @@
 				var key = doc.model + '-' + (doc.isNew() ? 'NEW' : doc.id);
 				if (doc.LCID) {
 					key += '-' + doc.LCID;
+				}
+				return key;
+			}
+
+			function makeCreationLocalCopyKey (model, LCID) {
+				var key = model + '-' + 'NEW';
+				if (LCID) {
+					key += '-' + LCID;
 				}
 				return key;
 			}
@@ -1137,6 +1146,15 @@
 
 				'removeLocalCopy' : function (doc) {
 					var	key = makeLocalCopyKey(doc);
+					if (localCopyRepo.hasOwnProperty(key)) {
+						delete localCopyRepo[key];
+						delete doc.META$.localCopy;
+						commitLocalCopyRepository();
+					}
+				},
+
+				'removeCreationLocalCopy' : function (doc) {
+					var	key = makeCreationLocalCopyKey(doc.model, doc.LCID || Settings.get('LCID'));
 					if (localCopyRepo.hasOwnProperty(key)) {
 						delete localCopyRepo[key];
 						delete doc.META$.localCopy;

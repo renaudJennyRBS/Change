@@ -10,7 +10,7 @@
 	<page-header title="{{ i18nAttr('m.rbs.stock.admin.js.sku-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Stock_Sku" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+	<div class="add-elements-bar">
 		<a href ng-href="(= 'Rbs_Stock_Sku' | documentURL:'new' =)">{{ i18n('m.rbs.stock.admin.js.sku-create', ['ucf']) }}</a>
 	</div>
 

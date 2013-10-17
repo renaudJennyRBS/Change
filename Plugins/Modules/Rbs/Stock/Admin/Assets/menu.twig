@@ -1,7 +1,4 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Stock/Sku/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.stock.admin.js.sku-list', ['ucf']) }}</a></li>
-		<li><a href="Rbs/Stock/InventoryEntry/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}</a></li>
-	</ul>
-</div>
+<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+	<a href="Rbs/Stock/Sku/" class="rbs-panel-link">{{ i18n('m.rbs.stock.admin.js.sku-list', ['ucf']) }}</a>
+	<a href="Rbs/Stock/InventoryEntry/" class="rbs-panel-link">{{ i18n('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}</a>
+</rbs-links-panel>

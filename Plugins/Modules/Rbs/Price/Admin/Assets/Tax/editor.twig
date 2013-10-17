@@ -13,16 +13,11 @@
 			label="{{ i18nAttr('m.rbs.price.documents.tax.code', ['ucf']) }}">
 		</rbs-field-text>
 
-		<div class="control-group property">
-			<label class="control-label" for="rounding">
-				{{ i18n('m.rbs.price.documents.tax.rounding', ['ucf']) }}
-			</label>
-			<div class="controls">
-				<select name="rounding" ng-model="document.rounding" rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
-				</select>
-				<span class="help-block"> {{ i18n('m.rbs.price.documents.tax.rounding-help') }}</span>
-			</div>
-		</div>
+		<rbs-field label="{{ i18nAttr('m.rbs.price.documents.tax.rounding', ['ucf']) }}">
+			<select name="rounding" class="form-control" ng-model="document.rounding" rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
+			</select>
+			<span class="help-block">{{ i18n('m.rbs.price.documents.tax.rounding-help') }}</span>
+		</rbs-field>
 
 		<rbs-field-boolean
 			property="cascading"
@@ -51,32 +46,32 @@
 
 				</td>
 				<td data-ng-repeat="cat in document.data.c track by $index">
-					<input type="number" smart-float="" data-ng-model="document.data.r[$index][$parent.$index]" style="width: 60px"/>
+					<input type="number" smart-float="" class="form-control" data-ng-model="document.data.r[$index][$parent.$index]" style="width: 60px"/>
 					<span class="add-on">%</span>
 				</td>
 			</tr>
 			</tbody>
 		</table>
-		<div class="control-group">
+		<div class="input-group">
 			<small>
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-zone', ['ucf']) }}
 				<br />
 				<span>
-					<input name="newZoneName" class="input-mini" type="text" ng-model="newZoneName" />
-					<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
-					<p class="text-error" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
+					<input name="newZoneName" class="form-control" size="10" type="text" ng-model="newZoneName" />
+					<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					<p class="text-danger" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
 				</span>
 			</small>
 		</div>
-		<div class="control-group">
+		<div class="input-group">
 			<small>
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-category', ['ucf']) }}
 				<br />
 				<span>
-					<input name="newCategoryName" class="input-mini" type="text" ng-model="newCategoryName" />
-					<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					<input name="newCategoryName" class="form-control" size="10" type="text" ng-model="newCategoryName" />
+					<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					<p class="text-danger" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
 				</span>
-				<p class="text-error" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
 			</small>
 		</div>
 	</fieldset>

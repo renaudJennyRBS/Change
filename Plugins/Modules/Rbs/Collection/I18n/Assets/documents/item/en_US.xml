@@ -4,6 +4,6 @@
 	<key id="value">value</key>
 	<key id="locked">locked</key>
 	<key id="item-locked-warning" format="html">
-		<![CDATA[<span class="label label-important">Warning!</span> This item has been locked by a plugin. You will not be able to change its value or delete it.]]>
+		<![CDATA[<span class="label label-danger">Warning!</span> This item has been locked by a plugin. You will not be able to change its value or delete it.]]>
 	</key>
 </i18n>

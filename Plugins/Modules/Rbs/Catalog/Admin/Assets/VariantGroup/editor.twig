@@ -22,12 +22,13 @@
 			</rbs-field>
 		</div>
 
-		<div class="control-group" ng-hide="document.isNew()">
-			<label class="control-label">{{ i18n('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}</label>
-			<div class="controls">
-				<span class="uneditable-input input-xlarge">
+
+		<div class="form-group property" ng-hide="document.isNew()">
+			<label class="col-lg-3 control-label">{{ i18n('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}</label>
+			<div class="col-lg-9 controls">
+				<p class="form-control-static">
 					<a href ng-href="(= document.rootProduct | documentURL =)">(= document.rootProduct.label =)</a>
-				</span>
+				</p>
 			</div>
 		</div>
 
@@ -50,7 +51,7 @@
 
 					<div class="axis-header">
 						<span class="pull-right">
-							<button type="button" class="btn btn-small" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
+							<button type="button" class="btn btn-default btn-sm" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
 								<i class="icon-cog"></i>
 							</button>
 						</span>
@@ -64,19 +65,21 @@
 
 						<div ng-form="" ng-if="inEditMode(axis.index)">
 							<p>
-								<label class="checkbox">
-									<input type="checkbox" ng-model="document.axesInfo[axis.index].cat"/>
-									{{ i18n('m.rbs.catalog.documents.variantgroup.visibility-head', ['ucf']) }}
-								</label>
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" ng-model="document.axesInfo[axis.index].cat"/>
+										{{ i18n('m.rbs.catalog.documents.variantgroup.visibility-head', ['ucf']) }}
+									</label>
+								</div>
 							</p>
 							<p>{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis-value', ['ucf']) }}</p>
 							<p>
 								<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
-								       auto-focus="" autocapitalize="off" type="text" class="input-block-level" required="required"
+								       auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
 								       name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
-							<p class="text-error" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.value-already-exists', ['ucf']) }}</p>
+							<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.value-already-exists', ['ucf']) }}</p>
 							<div class="btn-toolbar">
-								<button class="btn" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.cancel', ['ucf']) }}</button>
+								<button class="btn btn-default" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.cancel', ['ucf']) }}</button>
 								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.add', ['ucf']) }}</button>
 							</div>
 							</p>
@@ -86,11 +89,11 @@
 					<div class="axis-values">
 						<div ng-repeat="value in axis.dv" class="axis-value" ng-class="{'odd': $odd, 'selected': inNavPath(axis.index, value), 'between-selection': isBetween(axis.index, $index), 'unused': (used = isVariantSelected(axis.index, value.value)) != 'Y'}" ng-click="navigate(axis.index, value, $index)">
 							<span ng-switch="inEditMode(axis.index)">
-								<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-mini btn-danger"><i class="icon-trash"></i></button>
+								<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-xs btn-danger"><i class="icon-trash"></i></button>
 								<span ng-switch-when="false" ng-switch="used">
-									<button ng-switch-when="Y" type="button" class="btn btn-mini btn-success" ng-click="unselectVariant(axis.index, value.value, $event)"><i class="icon-minus"></i></button>
-									<button ng-switch-when="N" type="button" class="btn btn-mini" ng-click="selectVariant(axis.index, value.value, $event)"><i class="icon-plus"></i></button>
-									<button ng-switch-when="U" type="button" class="btn btn-mini" disabled="disabled"><i class="icon-question"></i></button>
+									<button ng-switch-when="Y" type="button" class="btn btn-xs btn-success" ng-click="unselectVariant(axis.index, value.value, $event)"><i class="icon-minus"></i></button>
+									<button ng-switch-when="N" type="button" class="btn btn-xs btn-default" ng-click="selectVariant(axis.index, value.value, $event)"><i class="icon-plus"></i></button>
+									<button ng-switch-when="U" type="button" class="btn btn-xs btn-default" disabled="disabled"><i class="icon-question"></i></button>
 								</span>
 							</span>
 							<span ng-bind="value.title"></span>

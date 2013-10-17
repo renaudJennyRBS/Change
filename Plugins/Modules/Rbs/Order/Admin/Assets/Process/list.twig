@@ -9,7 +9,7 @@
 	<page-header title="{{ i18nAttr('m.rbs.order.admin.js.process-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Order_Process" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+	<div class="add-elements-bar">
 		<a href ng-href="(= 'Rbs_Order_Process' | documentURL:'new' =)">{{ i18n('m.rbs.order.admin.js.process-create', ['ucf']) }}</a>
 	</div>
 
