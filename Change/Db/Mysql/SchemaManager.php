@@ -101,7 +101,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	public function getName()
 	{
 		$ci = $this->dbProvider->getConnectionInfos();
-		return is_array($ci) && isset($ci['database']) ? $ci['database'] : null;
+		return isset($ci['database']) ? $ci['database'] : null;
 	}
 	
 	/**

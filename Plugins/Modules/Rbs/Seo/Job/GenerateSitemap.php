@@ -28,7 +28,9 @@ class GenerateSitemap
 		//Useful for the url path to robots.txt, the sitemap Index and sitemaps.
 		$assetUrlManager = $website->getUrlManager($lcid);
 		$assetUrlManager->setAbsoluteUrl(true);
-		$assetUrlManager->setScript($application->getConfiguration()->getEntry('Change/Install/resourceBaseUrl') . '/Rbs/Seo');
+
+		$resourceBaseUrl = $application->getConfiguration()->getEntry('Change/Install/webBaseURLPath') . '/Assets';
+		$assetUrlManager->setScript($resourceBaseUrl . '/Rbs/Seo');
 
 		$sitemapIndex = [];
 
@@ -187,12 +189,9 @@ class GenerateSitemap
 	 */
 	protected function getRbsSeoAssetFilePath($application, $filename = null)
 	{
-		$rootPath = $application->getConfiguration()
-			->getEntry('Change/Install/documentRootPath');
-		$assetsPath = $application->getConfiguration()
-			->getEntry('Change/Install/resourceBaseUrl');
-		$filePath = $application->getWorkspace()
-			->composePath($rootPath, $assetsPath, 'Rbs', 'Seo', $filename);
+		$workspace =  $application->getWorkspace();
+		$webBaseDirectory = $application->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
+		$filePath = $workspace->composeAbsolutePath($webBaseDirectory, 'Assets', 'Rbs', 'Seo', $filename);
 		return $filePath;
 	}
 }

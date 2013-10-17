@@ -20,27 +20,29 @@ class InitHttpFiles
 	}
 
 	/**
-	 * @param string $documentRootPath
-	 * @param string $resourcePath
+	 * @param string $webBaseDirectory
+	 * @param string $webBaseURLPath
 	 */
-	public function initializeControllers($documentRootPath, $resourcePath)
+	public function initializeControllers($webBaseDirectory, $webBaseURLPath)
 	{
 		$editConfig = new \Change\Configuration\EditableConfiguration(array());
 		$editConfig->import($this->application->getConfiguration());
+		$workspace = $this->application->getWorkspace();
 
-		$srcPath = $this->application->getWorkspace()->changePath('Http', 'Assets', 'rest.php');
+		$srcPath = $workspace->changePath('Http', 'Assets', 'rest.php');
 		$content = \Change\Stdlib\File::read($srcPath);
 		$content = str_replace('__DIR__', var_export($this->application->getWorkspace()->projectPath(), true), $content);
-		\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 
-		$editConfig->addPersistentEntry('Change/Install/documentRootPath', $documentRootPath, \Change\Configuration\EditableConfiguration::PROJECT);
-		$editConfig->addPersistentEntry('Change/Install/resourceBaseUrl', $resourcePath, \Change\Configuration\EditableConfiguration::PROJECT);
+
+		$rootPath = $workspace->composeAbsolutePath($webBaseDirectory);
+		\Change\Stdlib\File::write($rootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+
+		$editConfig->addPersistentEntry('Change/Install/webBaseDirectory', $webBaseDirectory);
+		$editConfig->addPersistentEntry('Change/Install/webBaseURLPath', $webBaseURLPath);
+
 		$editConfig->save();
 
-		if (strpos($resourcePath, '/') === 0)
-		{
-			$webResourcePath = $this->application->getWorkspace()->composePath($documentRootPath, $resourcePath);
-			\Change\Stdlib\File::mkdir($webResourcePath);
-		}
+		$assetsRootPath = $rootPath . DIRECTORY_SEPARATOR . 'Assets';
+		\Change\Stdlib\File::mkdir($assetsRootPath);
 	}
 }

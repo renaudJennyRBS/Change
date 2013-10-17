@@ -24,7 +24,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		//save the plugin config, it will be altered in the test, and replace again in tearDown
 		$plugin = $this->getApplicationServices()->getPluginManager()->getModule('Project', 'Tests');
-		$path = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'plugin.json';
+		$path = $plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'plugin.json';
 		$this->pluginConfig = Change\Stdlib\File::read($path);
 	}
 
@@ -37,20 +37,20 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//Delete the signature file if exist
 		$module = $this->getApplicationServices()->getPluginManager()->getModule('Project', 'Tests');
-		$path = $module->getBasePath() . DIRECTORY_SEPARATOR . '.signature.smime';
+		$path = $module->getAbsolutePath($this->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . '.signature.smime';
 		if (is_file($path))
 		{
 			unlink($path);
 		}
 		//Delete the fake annoying file to test invalidating signature if exist
-		$path = $module->getBasePath() . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
+		$path = $module->getAbsolutePath($this->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
 		if (is_file($path))
 		{
 			unlink($path);
 		}
 		//replace the plugin config saved before the test
 		$plugin = $this->getApplicationServices()->getPluginManager()->getModule('Project', 'Tests');
-		$path = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'plugin.json';
+		$path = $plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'plugin.json';
 		Change\Stdlib\File::write($path, $this->pluginConfig);
 		parent::tearDown();
 	}
@@ -120,7 +120,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('validTo_time_t', $arrayResult['parsing']['certificate']);
 
 		//Now we just add a fake file in the module folder to invalidate its signature
-		$path = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
+		$path = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
 		Change\Stdlib\File::write($path, 'Wait and see!');
 
 		$event = new Event();
@@ -149,7 +149,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $arrayResult['errors']);
 
 		//We are going to alter an existing file, just put an new end of line to the plugin config file
-		$path = $plugin->getBasePath() . DIRECTORY_SEPARATOR . 'plugin.json';
+		$path = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'plugin.json';
 		$pluginConfig = Change\Stdlib\File::read($path);
 		$modifiedPluginConfig = $pluginConfig . PHP_EOL;
 		Change\Stdlib\File::write($path, $modifiedPluginConfig);

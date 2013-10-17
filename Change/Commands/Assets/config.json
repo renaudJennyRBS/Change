@@ -20,15 +20,14 @@
 	"change:set-document-root": {
 		"description": "Initialize documents root files",
 		"arguments":{
-			"path": {
-				"description": "Path of document root (e.g. \".\")",
-				"required": true,
-				"default": null
+			"webBaseDirectory": {
+				"description": "Directory of web scripts (e.g. \".\")",
+				"required": true
 			},
-			"resourcePath": {
-				"description": "static resource base url",
+			"webBaseURLPath": {
+				"description": "URL base path of web script",
 				"required": false,
-				"default": "/Assets"
+				"default": ""
 			}
 		}
 	},

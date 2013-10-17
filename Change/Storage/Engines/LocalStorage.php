@@ -36,6 +36,15 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
+	 * @param \Change\Storage\StorageManager $storageManager
+	 */
+	public function setStorageManager(\Change\Storage\StorageManager $storageManager)
+	{
+		parent::setStorageManager($storageManager);
+		$this->basePath = $storageManager->getWorkspace()->composeAbsolutePath($this->basePath);
+	}
+
+	/**
 	 * @param string $basePath
 	 */
 	public function setBaseURL($baseURL)

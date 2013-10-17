@@ -19,12 +19,6 @@ class PluginManagerTest extends TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		//$this->closeDbConnection();
-	}
-
 	public function testService()
 	{
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
@@ -40,7 +34,7 @@ class PluginManagerTest extends TestCase
 	 */
 	protected function findPlugin($plugins, $type, $vendor, $shortName)
 	{
-		$tmpPlugin = new Plugin(__DIR__, $type, $vendor, $shortName);
+		$tmpPlugin = new Plugin($type, $vendor, $shortName);
 		foreach ($plugins as $plugin)
 		{
 			if ($tmpPlugin->eq($plugin))
@@ -211,7 +205,7 @@ class PluginManagerTest extends TestCase
 
 		$pluginManager->update($module);
 
-		$module2 = new Plugin(__DIR__, Plugin::TYPE_MODULE, 'Project', 'Tests');
+		$module2 = new Plugin(Plugin::TYPE_MODULE, 'Project', 'Tests');
 		$this->assertTrue($module2->eq($module));
 		$this->assertFalse($module2->getActivated());
 		$this->assertNull($module2->getPackage());
@@ -223,7 +217,7 @@ class PluginManagerTest extends TestCase
 		$this->assertEquals('test', $module2->getPackage());
 		$this->assertEquals(array('locked' => true), $module2->getConfiguration());
 
-		$theme = new Plugin(__DIR__, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$theme = new Plugin(Plugin::TYPE_THEME, 'Project', 'Tests');
 		$theme2 = $pluginManager->load($theme);
 		$this->assertNull($theme2);
 
@@ -295,9 +289,6 @@ class PluginManagerTest extends TestCase
 		$tm->commit();
 	}
 
-	/**
-	 * @depends testGetRegisteredPlugins
-	 */
 	public function testGetInstalledPlugins()
 	{
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -319,9 +310,6 @@ class PluginManagerTest extends TestCase
 		$this->assertCount(2, $installedPlugins);
 	}
 
-	/**
-	 * @depends testGetInstalledPlugins
-	 */
 	public function testDeinstall()
 	{
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -351,9 +339,7 @@ class PluginManagerTest extends TestCase
 		$tm->commit();
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
+
 	public function testDeinstallLockedModule()
 	{
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -369,13 +355,18 @@ class PluginManagerTest extends TestCase
 		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_MODULE, $module->getVendor(), $module->getShortName());
 		$pluginManager->compile();
 		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
-		$pluginManager->deinstall($module);
+		try
+		{
+			$pluginManager->deinstall($module);
+			$this->fail('Exception: InvalidArgumentException expected');
+		}
+		catch (\InvalidArgumentException $e)
+		{
+			$this->assertNotEmpty($e->getMessage());
+		}
 	}
 
-	/**
-	 * @depends testDeinstallLockedModule
-	 * @expectedException \InvalidArgumentException
-	 */
+
 	public function testDeinstallLockedTheme()
 	{
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -389,9 +380,17 @@ class PluginManagerTest extends TestCase
 		$theme->setConfiguration($configuration);
 		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_THEME, $theme->getVendor(), $theme->getShortName());
 		$pluginManager->compile();
+
+
 		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
-		$pluginManager->deinstall($theme);
+		try
+		{
+			$pluginManager->deinstall($theme);
+			$this->fail('Exception: InvalidArgumentException expected');
+		}
+		catch (\InvalidArgumentException $e)
+		{
+			$this->assertNotEmpty($e->getMessage());
+		}
 	}
-
-
 }
