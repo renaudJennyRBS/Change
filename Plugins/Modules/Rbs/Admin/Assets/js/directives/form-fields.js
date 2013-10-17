@@ -6,11 +6,11 @@
 		fieldIdCounter = 0;
 
 
-	registerFieldDirective('Text', '<input type="text" class="input-block-level"/>', 'input');
-	registerFieldDirective('Email', '<input type="email"/>', 'input');
-	registerFieldDirective('Url', '<input type="url" class="input-block-level"/>', 'input');
-	registerFieldDirective('Integer', '<input type="number" class="input-mini" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
-	registerFieldDirective('Float', '<input type="text" class="input-mini" smart-float=""/>', 'input');
+	registerFieldDirective('Text', '<input type="text" class="form-control"/>', 'input');
+	registerFieldDirective('Email', '<input type="email" class="form-control"/>', 'input');
+	registerFieldDirective('Url', '<input type="url" class="form-control"/>', 'input');
+	registerFieldDirective('Integer', '<input type="number" class="form-control" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
+	registerFieldDirective('Float', '<input type="text" class="form-control" smart-float=""/>', 'input');
 	registerFieldDirective('Boolean', '<switch></switch>', 'switch');
 	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
 	registerFieldDirective('Picker', '<div class="document-picker-single"></div>', '.document-picker-single');
@@ -27,8 +27,8 @@
 	 *     <rbs-field required="true" label="Property label">...</rbs-field>
 	 * </code>
 	 */
-	app.directive('rbsField', function () {
-
+	app.directive('rbsField', function ()
+	{
 		return {
 			restrict   : 'E',
 			replace    : true,
@@ -53,19 +53,20 @@
 				};
 			}
 		};
-
 	});
 
 
-	function fieldTemplate (contents) {
-		return '<div class="control-group property">' +
-			'<label class="control-label"></label>' +
-			'<div class="controls">' + contents + '</div>' +
+	function fieldTemplate (contents)
+	{
+		return '<div class="form-group property">' +
+				'<label class="col-lg-3 control-label"></label>' +
+				'<div class="col-lg-9 controls">' + contents + '</div>' +
 			'</div>';
 	}
 
 
-	function registerFieldDirective (name, tpl, selector) {
+	function registerFieldDirective (name, tpl, selector)
+	{
 		app.directive('rbsField' + name, ['RbsChange.Utils', function (Utils) {
 			return {
 
@@ -92,7 +93,8 @@
 	 * @param Utils
 	 * @param inputIdSelector
 	 */
-	function rbsFieldCompile (tElement, tAttrs, inputSelector, Utils) {
+	function rbsFieldCompile (tElement, tAttrs, inputSelector, Utils)
+	{
 		if (! tAttrs.property) {
 			throw new Error("Missing 'property' attribute on <rbs-field-*/> directive");
 		}
@@ -143,7 +145,8 @@
 	}
 
 
-	function shouldTransferAttribute (name) {
+	function shouldTransferAttribute (name)
+	{
 		return name !== 'id'
 			&& name !== 'class'
 			&& name !== 'property'

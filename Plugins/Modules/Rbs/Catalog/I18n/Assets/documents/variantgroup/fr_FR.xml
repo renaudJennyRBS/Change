@@ -43,21 +43,21 @@
 
 		<h5>Ajouter des déclinaisons pour le produit</h5>
 		<p>
-			Cliquez sur <button type="button" class="btn btn-mini"><i class="icon-plus"></i></button> pour sélectionner
+			Cliquez sur <button type="button" class="btn btn-default btn-xs"><i class="icon-plus"></i></button> pour sélectionner
 			cette valeur et ainsi créer les fiches produits correspondantes.
 		</p>
 
 		<h5>Supprimer des déclinaisons pour le produit</h5>
 		<p>
-			Cliquez sur <button type="button" class="btn btn-mini btn-success"><i class="icon-minus"></i></button> pour
+			Cliquez sur <button type="button" class="btn btn-xs btn-success"><i class="icon-minus"></i></button> pour
 			supprimer cette valeur et ainsi supprimer les fiches produits correspondantes.
 		</p>
 
 		<h5>Ajouter/supprimer des valeurs possibles dans les axes</h5>
 		<p>
-			Cliquez sur <button type="button" class="btn btn-mini"><i class="icon-cog"></i></button> dans l'entête
+			Cliquez sur <button type="button" class="btn btn-default btn-xs"><i class="icon-cog"></i></button> dans l'entête
 			de chaque axe pour le configurer : vous pourrez alors supprimer des valeurs grâce au bouton
-			<button type="button" class="btn btn-mini btn-danger"><i class="icon-trash"></i></button> et en ajouter
+			<button type="button" class="btn btn-xs btn-danger"><i class="icon-trash"></i></button> et en ajouter
 			grâce au champ de saisie en bas de la colonne correspondant à l'axe.
 		</p>]]></key>
 	<key id="axisattribute-select">choisissez un jeu d'attributs</key>

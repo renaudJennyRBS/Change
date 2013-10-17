@@ -1,8 +1,5 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Order/Order/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.order.admin.js.order-list', ['ucf']) }}</a></li>
-		<li><a href="Rbs/Order/Invoice/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.order.admin.js.invoice-list', ['ucf']) }}</a></li>
-		<li><a href="Rbs/Order/Process/"><i class="icon-list-alt"></i> {{ i18n('m.rbs.order.admin.js.process-list', ['ucf']) }}</a></li>
-	</ul>
-</div>
+<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+	<a href="Rbs/Order/Order/" class="rbs-panel-link">{{ i18n('m.rbs.order.admin.js.order-list', ['ucf']) }}</a>
+	<a href="Rbs/Order/Invoice/" class="rbs-panel-link">{{ i18n('m.rbs.order.admin.js.invoice-list', ['ucf']) }}</a>
+	<a href="Rbs/Order/Process/" class="rbs-panel-link">{{ i18n('m.rbs.order.admin.js.process-list', ['ucf']) }}</a>
+</rbs-links-panel>

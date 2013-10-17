@@ -2,15 +2,15 @@
 <i18n baseKey="m.rbs.payment.documents.transaction" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
 
-	<key id="connector">connecteur banquaire</key>
-	<key id="select-connector">selectionner un connecteur banquaire</key>
+	<key id="connector">connecteur bancaire</key>
+	<key id="select-connector">selectionner un connecteur bancaire</key>
 	<key id="targetidentifier">origine de la transaction</key>
 	<key id="contextdata">Information supplémentaire</key>
 	<key id="amount">montant</key>
 	<key id="currencycode">devise</key>
 
 	<key id="processingstatus">état</key>
-	<key id="processingidentifier">identifiant banquaire</key>
+	<key id="processingidentifier">identifiant bancaire</key>
 	<key id="processingdate">date de réalisation</key>
-	<key id="processingdata">données technique de la transaction</key>
+	<key id="processingdata">données techniques de la transaction</key>
 </i18n>

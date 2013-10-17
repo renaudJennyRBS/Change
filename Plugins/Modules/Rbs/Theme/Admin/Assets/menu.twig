@@ -1,9 +1,11 @@
 <div ng-controller="Rbs_Theme_MenuController">
-
-	<ul class="nav nav-list">
-		<li><a href="Rbs/Theme/Theme/">{{ i18n('m.rbs.theme.admin.js.theme-list', ['ucf']) }}</a></li>
-		<li class="divider"></li>
-		<li ng-repeat="theme in themes"><a href="Rbs/Theme/Theme/(=theme.id=)/Templates/">(=theme.label=)</a></li>
-	</ul>
-
+	<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.contents', ['ucf']) }}" icon="icon-list-alt">
+		<a href="Rbs/Theme/Theme/" class="rbs-panel-link">{{ i18n('m.rbs.theme.admin.js.theme-list', ['ucf']) }}</a>
+	</rbs-links-panel>
+	<rbs-links-panel title="{{ i18nAttr('m.rbs.theme.admin.js.theme-list', ['ucf']) }}">
+		<a ng-repeat="theme in themes" href ng-href="Rbs/Theme/Theme/(=theme.id=)/Templates/" class="rbs-panel-link">(=theme.label=)</a>
+	</rbs-links-panel>
 </div>
+
+
+

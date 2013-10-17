@@ -19,7 +19,7 @@
 	<key id="usertag-help" format="html"><![CDATA[
 		<strong>Personnal tags can only be used by their creator.</strong><br/>
 		You can create as many personnal tags as you want to organize the contents of your websites.<br/>
-		<span class="label label-important">Warning!</span> Once the tag created, this proprerty cannot be changed.]]>
+		<span class="label label-danger">Warning!</span> Once the tag created, this proprerty cannot be changed.]]>
 	</key>
 	<key id="usertag-cannot-be-modified" format="html"><![CDATA[This property can only be defined when creating the tag.]]>
 	</key>

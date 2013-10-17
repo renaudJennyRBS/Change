@@ -5,11 +5,11 @@
 	<div class="media-body well well-small">
 		<span class="pull-right">(= message.creationDate | date:'medium' =)</span><h4 class="media-heading">(= message.authorName =) <small ng-if="message.authorIdentifier"><a rbs-document-popover rbs-document-href="Rbs_User_User,(= message.authorId =),public-profile">@(= message.authorIdentifier =)</a></small></h4>
 		<div ng-if="message.authorId === user.id" class="message-tools">
-			<button class="btn btn-small btn-success" type="button" data-ng-click="editMessage(message)">
+			<button class="btn btn-sm btn-success" type="button" data-ng-click="editMessage(message)">
 				<i class="icon-edit"></i>
 				{{ i18n('m.rbs.timeline.admin.edit-message', ['ucf']) }}
 			</button>
-			<button class="btn btn-small btn-danger" type="button" data-ng-click="removeMessage(message)">
+			<button class="btn btn-sm btn-danger" type="button" data-ng-click="removeMessage(message)">
 				<i class="icon-remove-circle"></i>
 				{{ i18n('m.rbs.timeline.admin.remove-message', ['ucf']) }}
 			</button>

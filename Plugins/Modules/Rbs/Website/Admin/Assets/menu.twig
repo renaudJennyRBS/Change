@@ -1,41 +1,44 @@
-<div data-ng-controller="Rbs_Website_MainMenuController">
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</li>
-		<li><a href="Rbs/Website/Website/">
-			<i class="icon-home"></i> {{ i18n('m.rbs.website.documents.website-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/StaticPage/">
-			<i class="icon-file-text"></i> {{ i18n('m.rbs.website.documents.staticpage-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/FunctionalPage/">
-			<i class="icon-file"></i> {{ i18n('m.rbs.website.documents.functionalpage-list', ['ucf']) }}
-		</a></li>
-		<li><a href="Rbs/Website/Menu/">
-			<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.menu-list', ['ucf']) }}
-		</a></li>
-		<li class="nav-header">{{ i18n('m.rbs.website.admin.websites-trees', ['ucf']) }}</li>
-	</ul>
+<div ng-controller="Rbs_Website_MainMenuController">
 
-	<div class="accordion" id="chgMainMenuTree">
-		<div class="accordion-group" data-ng-repeat="website in websites" data-ng-class="{'selected': currentWebsiteId == website.id}">
-			<div class="accordion-heading">
-				<a class="accordion-toggle pull-right" data-toggle="collapse" data-parent="#chgMainMenuTree" data-target="#chgChangeWebsite(=website.id=)">
-					<i class="icon-collapse collapsible"></i>
-				</a>
-				<a class="accordion-toggle" href="Rbs/Website/nav/?tn=(=website.id=)">
-					<i class="icon-home icon-large pull-left"></i>
-					<strong>(=website.label=)</strong>
-				</a>
-			</div>
-			<div id="chgChangeWebsite(=website.id=)" class="accordion-body collapse" data-ng-class="{'in': currentWebsiteId == website.id}">
-				<div class="accordion-inner">
-					<div tree-view="Rbs/Website"
-						root-node-url="(=website.META$.treeNode.url=)"
-						allowed-models="Rbs_Website_Website Rbs_Website_Topic"
-						url-template="Rbs/Website/nav/?tn=:id">
-					</div>
-				</div>
-			</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</h3>
+		</div>
+		<div class="list-group">
+			<a class="list-group-item" href="Rbs/Website/Website/">
+				<i class="icon-home"></i> {{ i18n('m.rbs.website.documents.website-list', ['ucf']) }}
+			</a>
+			<a class="list-group-item" href="Rbs/Website/StaticPage/">
+				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.documents.staticpage-list', ['ucf']) }}
+			</a>
+			<a class="list-group-item" href="Rbs/Website/FunctionalPage/">
+				<i class="icon-file"></i> {{ i18n('m.rbs.website.documents.functionalpage-list', ['ucf']) }}
+			</a>
+			<a class="list-group-item" href="Rbs/Website/Menu/">
+				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.menu-list', ['ucf']) }}
+			</a>
 		</div>
 	</div>
+
+	<div class="panel" ng-repeat="website in websites" ng-class="{true: 'panel-primary', false: 'panel-default'}[currentWebsiteId == website.id]">
+
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<span class="pull-right">
+					<a title="{{ i18nAttr('m.rbs.website.admin.edit-website-properties', ['ucf']) }}" class="btn btn-xs" ng-class="{true: 'btn-primary', false: 'btn-default'}[currentWebsiteId == website.id]" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
+				</span>
+				<a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate-in-website', ['ucf']) }}"><i class="icon-home"></i> (=website.label=)</a>
+			</h3>
+		</div>
+
+		<div class="panel-body">
+			<div tree-view="Rbs/Website"
+			     root-node-url="(=website.META$.treeNode.url=)"
+			     allowed-models="Rbs_Website_Website Rbs_Website_Topic"
+			     url-template="Rbs/Website/nav/?tn=:id">
+			</div>
+		</div>
+
+	</div>
+
 </div>

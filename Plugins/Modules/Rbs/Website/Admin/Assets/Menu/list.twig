@@ -3,10 +3,10 @@
 
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
-	<div>
+	<p class="form-inline">
 		{{ i18n('m.rbs.website.documents.menu.website', ['ucf', 'lab']) }}
-		<select ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
-	</div>
+		<select class="form-control" ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
+	</p>
 
 	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
 		<i class="icon-arrow-up icon-3x pull-left"></i>
@@ -14,7 +14,7 @@
 	</div>
 
 	<div ng-show="selectedWebsite">
-		<div>
+		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.documents.menu-create', ['ucf']) }}</a>
 		</div>
 

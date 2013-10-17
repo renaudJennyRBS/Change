@@ -83,6 +83,10 @@
 					return UrlManager.getTreeUrl(this);
 				};
 
+				ChangeDocument.prototype.hasUrl = function (name) {
+					return this.url(name) !== 'javascript:;';
+				};
+
 				ChangeDocument.prototype.nodeChildrenCount = function () {
 					return this.META$.treeNode ? this.META$.treeNode.childrenCount : 0;
 				};
