@@ -1,10 +1,10 @@
 <?php
-namespace Change\Commands;
+namespace Rbs\Dev\Commands;
 
 use Change\Commands\Events\Event;
 
 /**
- * @name \Change\Commands\CreateCommand
+ * @name \Rbs\Dev\Commands\CreateCommand
  */
 class CreateCommand
 {
