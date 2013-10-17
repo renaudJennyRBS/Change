@@ -16,7 +16,7 @@
 	<button data-ng-hide="isCascading()" disabled="disabled" class="btn btn-default btn-headline" type="button" data-ng-click="goBack($event)" data-ng-disabled="! canGoBack()"><i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}</button>
 	<button data-ng-show="isCascading()" disabled="disabled" class="btn btn-default btn-headline" type="button" data-ng-click="cancelCascade($event)" data-ng-disabled="! canCancelCascade()"><i class="icon-arrow-up"></i>{{ i18n('m.rbs.admin.forms.btnCancelCascade', ['ucf']) }}</button>
 
-	<button disabled="disabled" class="btn btn-default btn-headline" type="button" data-ng-click="confirmReset($event)" data-ng-disabled="isUnchanged()" title="Rétablir les dernières données enregistrées"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.forms.btnRevert', ['ucf']) }}</button>
+	<button disabled="disabled" class="btn btn-default btn-headline" type="button" data-ng-click="confirmReset($event)" data-ng-disabled="isUnchanged()" title="{{ i18nAttr('m.rbs.admin.forms.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.forms.btnRevert', ['ucf']) }}</button>
 	<button disabled="disabled" class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" data-role="save" type="submit"
 	        data-ng-disabled="form.$invalid || isUnchanged() || saveProgress.running"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.forms.btnSave', ['ucf']) }}</button>
 

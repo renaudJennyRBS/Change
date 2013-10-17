@@ -7,6 +7,7 @@
 	<key id="btnGoBack" format="html"><![CDATA[go back <small>to list</small>]]></key>
 	<key id="btnSave" format="html"><![CDATA[save<small>changes <span ng-if="changes.length">((=changes.length=))</span></small>]]></key>
 	<key id="btnRevert" format="html"><![CDATA[Revert<small>changes <span ng-if="changes.length">((=changes.length=))</span></small>]]></key>
+	<key id="titleRevert">Revert to the last saved data</key>
 	<key id="btnCancelCascade" format="html"><![CDATA[cancel <small>and go back to previous form</small>]]></key>
 	<key id="propertiesModifiedPluralize">{'0': 'No property was changed.', 'one': 'One property was changed.', 'other': '{} properties were changed.'}</key>
 
