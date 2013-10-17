@@ -55,17 +55,39 @@ class Autoloader extends StandardAutoloader
 		$compiledPluginsPath = $this->getCompiledPluginsPath();
 		if (is_readable($compiledPluginsPath))
 		{
+			$workspace = $this->workspace;
 			$namespaces = array();
 			$pluginsDatas = unserialize(file_get_contents($compiledPluginsPath));
-			foreach($pluginsDatas as $pluginDatas)
+			foreach ($pluginsDatas as $pluginDatas)
 			{
-				/* @var $plugin Plugin */
-				$namespaces = array_merge($namespaces, $pluginDatas['namespaces']);
+				$namespaces[$pluginDatas['namespace']] = $this->buildNamespacePath($pluginDatas, $workspace);
 			}
 			$content = serialize($namespaces);
 			\Change\Stdlib\File::write($cachePath, $content);
 			$this->registerNamespaces($namespaces);
 		}
+	}
+
+	/**
+	 * @param $pluginDatas
+	 * @param \Change\Workspace $workspace
+	 * @return string
+	 */
+	protected function buildNamespacePath($pluginDatas, $workspace)
+	{
+		if ($pluginDatas['vendor'] !== 'Project')
+		{
+			if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
+			{
+				return $workspace->pluginsModulesPath($pluginDatas['vendor'], $pluginDatas['shortName']);
+			}
+			return $workspace->pluginsThemesPath($pluginDatas['shortName']);
+		}
+		if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
+		{
+			return $workspace->projectModulesPath($pluginDatas['shortName']);
+		}
+		return $workspace->projectThemesPath($pluginDatas['shortName']);
 	}
 
 	protected function loadClass($class, $type)

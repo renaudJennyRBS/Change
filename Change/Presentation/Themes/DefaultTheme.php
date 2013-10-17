@@ -27,6 +27,16 @@ class DefaultTheme implements Theme
 	protected $shortName;
 
 	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
+	 * @var string $templateBasePath
+	 */
+	protected $templateBasePath;
+
+	/**
 	 * @param PresentationServices $presentationServices
 	 */
 	function __construct($presentationServices)
@@ -68,13 +78,12 @@ class DefaultTheme implements Theme
 	 */
 	protected function getWorkspace()
 	{
-		return $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace();
+		if ($this->workspace === null)
+		{
+			$this->workspace = $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace();
+		}
+		return $this->workspace;
 	}
-
-	/**
-	 * @var string $templateBasePath
-	 */
-	protected $templateBasePath;
 
 	/**
 	 * @return string
@@ -92,7 +101,7 @@ class DefaultTheme implements Theme
 				$plugins = $pluginManager->getModules();
 				foreach ($plugins as $plugin)
 				{
-					if ($plugin->isAvailable() && is_dir($plugin->getTwigAssetsPath()))
+					if ($plugin->isAvailable() && is_dir($plugin->getTwigAssetsPath($this->getWorkspace())))
 					{
 						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
 					}
@@ -181,7 +190,7 @@ class DefaultTheme implements Theme
 			$module = $pm->getModule($vendor, $moduleShortName);
 			if ($module && $module->isAvailable())
 			{
-				$path = $this->getWorkspace()->composePath($module->getBasePath(), 'Assets', 'Theme', $resourceModulePath);
+				$path =  $this->getWorkspace()->composePath($module->getThemeAssetsPath($this->getWorkspace()), $resourceModulePath);
 				if (file_exists($path))
 				{
 					return $path;
@@ -217,7 +226,7 @@ class DefaultTheme implements Theme
 		{
 			if ($plugin->isModule() && $plugin->isAvailable())
 			{
-				$configurationPath = $this->getWorkspace()->composePath($plugin->getBasePath(), 'Assets', 'Theme', 'assets.json');
+				$configurationPath = $this->getWorkspace()->composePath($plugin->getThemeAssetsPath($this->getWorkspace()), 'assets.json');
 				if (file_exists($configurationPath))
 				{
 					$blockConfigurations = [];

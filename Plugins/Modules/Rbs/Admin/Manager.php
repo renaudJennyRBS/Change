@@ -176,8 +176,8 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getResourceDirectoryPath()
 	{
-		$root = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
-		return $this->getApplication()->getWorkspace()->composePath($root, $this->getResourceBaseUrl());
+		$webBaseDirectory = $this->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
+		return $this->getApplication()->getWorkspace()->composeAbsolutePath($webBaseDirectory, 'Assets', 'Rbs', 'Admin');
 	}
 
 	/**
@@ -185,12 +185,8 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getResourceBaseUrl()
 	{
-		$basePath = $this->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
-		if ($basePath && $basePath[strlen($basePath) - 1] !== '/')
-		{
-			$basePath .= '/';
-		}
-		return $basePath . 'Rbs/Admin';
+		$webBaseURLPath = $this->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseURLPath');
+		return $webBaseURLPath . '/Assets/Rbs/Admin';
 	}
 
 	/**
@@ -300,9 +296,9 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
-
-		$plugin = $this->getApplicationServices()->getPluginManager()->getModule('Rbs', 'Admin');
-		$srcPath = $plugin->getBasePath() . '/Assets/img';
+		$pm = $this->getApplicationServices()->getPluginManager();
+		$plugin = $pm->getModule('Rbs', 'Admin');
+		$srcPath = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . '/Assets/img';
 		$targetPath = $resourceDirectoryPath . '/img';
 		\Change\Stdlib\File::mkdir($targetPath);
 
@@ -364,14 +360,14 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$devMode = $this->getApplicationServices()->getApplication()->inDevelopmentMode();
 		if ($plugin && $plugin->isAvailable())
 		{
-			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getBasePath(). '/Admin/Assets/*/*.js');
+			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace()). '/Admin/Assets/*/*.js');
 			if (!$devMode)
 			{
 				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
 			}
 			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getBasePath() . '/Admin/Assets/css/*.css');
+			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . '/Admin/Assets/css/*.css');
 			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
 		}
 	}

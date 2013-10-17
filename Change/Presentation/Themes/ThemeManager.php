@@ -229,7 +229,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginTemplates($plugin, $theme = null)
 	{
-		$path = $plugin->getTwigAssetsPath();
+		$workspace = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
+		$path = $plugin->getTwigAssetsPath($workspace);
 		if (!is_dir($path))
 		{
 			return;
@@ -266,7 +267,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginAssets($plugin, $theme = null)
 	{
-		$path = $plugin->getThemeAssetsPath();
+		$workspace = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
+		$path = $plugin->getThemeAssetsPath($workspace);
 		if (!is_dir($path))
 		{
 			return;
@@ -289,8 +291,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && !in_array($current->getExtension(), $excludedExtensions))
 			{
 				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
-				$path = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace()
-					->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()), $moduleName, $current->getSubPathname());
+				$path = $workspace->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()), $moduleName, $current->getSubPathname());
 				\Change\Stdlib\File::mkdir(dirname($path));
 				file_put_contents($path, file_get_contents($current->getPathname()));
 			}
@@ -471,8 +472,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function getAssetRootPath()
 	{
 		$app = $this->presentationServices->getApplicationServices()->getApplication();
-		$root = $app->getConfiguration()->getEntry('Change/Install/documentRootPath');
-		return $app->getWorkspace()->composePath($root, $this->getAssetBaseUrl());
+		$root = $app->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
+		return $app->getWorkspace()->composeAbsolutePath($root, 'Assets');
 	}
 
 	/**
@@ -480,54 +481,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getAssetBaseUrl()
 	{
-		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
-		if (is_string($resourceBaseUrl) && $resourceBaseUrl[strlen($resourceBaseUrl) - 1] != '/')
-		{
-			$resourceBaseUrl .= '/';
-		}
-		return $resourceBaseUrl;
-	}
-
-	/**
-	 * @param array $configuration
-	 * @param string[] $blockNames
-	 * @return \Assetic\Asset\AssetCollection
-	 */
-	public function getCssAssetCollection($configuration, $blockNames)
-	{
-		$am = $this->getAsseticManager($configuration);
-		$collection = new \Assetic\Asset\AssetCollection();
-		$resourceBaseUrl = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl', '/Assets/');
-		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
-		{
-			$name = str_replace(['/', '.', '-'], '', $themeCssAsset['href']);
-			$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
-			$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
-			$collection->add(
-				new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
-			);
-		}
-
-		$alreadyAddedBlockAssets = [];
-		foreach (array_keys($blockNames) as $blockName)
-		{
-			if (isset($configuration[$blockName]))
-			{
-				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
-				{
-					if (!in_array($blockJsAsset, $alreadyAddedBlockAssets))
-					{
-						$name = str_replace(['/', '.', '-'], '', $blockJsAsset);
-						$src = $resourceBaseUrl . $am->get($name)->getTargetPath();
-						$media = isset($themeCssAsset['media']) && $themeCssAsset['media'] ? ' media="' . $themeCssAsset['media'] . '"' : '';
-						$collection->add(
-							new \Assetic\Asset\StringAsset('<link rel="stylesheet" type="text/css" href="' . $src . '"' . $media . '>')
-						);
-						$alreadyAddedBlockAssets[] = $blockJsAsset;
-					}
-				}
-			}
-		}
-		return $collection;
+		$webBaseURLPath = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseURLPath');
+		return $webBaseURLPath . '/Assets';
 	}
 }

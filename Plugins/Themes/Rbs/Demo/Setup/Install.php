@@ -17,7 +17,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
-
 		$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
 		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));

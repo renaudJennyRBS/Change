@@ -13,11 +13,6 @@ class Plugin
 	/**
 	 * @var string
 	 */
-	protected $basePath;
-
-	/**
-	 * @var string
-	 */
 	protected $type;
 
 	/**
@@ -56,14 +51,18 @@ class Plugin
 	protected $configuration = array();
 
 	/**
-	 * @param string $basePath
 	 * @param string $type
 	 * @param string $vendor
 	 * @param string $shortName
+	 * @throws \RuntimeException
 	 */
-	function __construct($basePath, $type, $vendor, $shortName)
+	function __construct($type, $vendor, $shortName)
 	{
-		$this->basePath = $basePath;
+		if ($type !== static::TYPE_MODULE && $type !== static::TYPE_THEME)
+		{
+			throw new \RuntimeException('Argument 1 should be a valid type', 999999);
+		}
+
 		$this->type = $type;
 		$this->vendor = $vendor;
 		$this->shortName = $shortName;
@@ -125,24 +124,7 @@ class Plugin
 	}
 
 	/**
-	 * @param string $basePath
-	 * @return $this
-	 */
-	public function setBasePath($basePath)
-	{
-		$this->basePath = $basePath;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getBasePath()
-	{
-		return $this->basePath;
-	}
-
-	/**
+	 * @api
 	 * @param string $type
 	 * @return $this
 	 */
@@ -153,6 +135,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getType()
@@ -161,6 +144,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param string $vendor
 	 * @return $this
 	 */
@@ -171,6 +155,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getVendor()
@@ -179,6 +164,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param string $shortName
 	 * @return $this
 	 */
@@ -189,6 +175,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getShortName()
@@ -198,6 +185,7 @@ class Plugin
 
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getName()
@@ -206,6 +194,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param \DateTime|null $registrationDate
 	 * @return $this
 	 */
@@ -216,6 +205,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return \DateTime|null
 	 */
 	public function getRegistrationDate()
@@ -224,6 +214,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param string $package
 	 * @return $this
 	 */
@@ -234,6 +225,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getPackage()
@@ -242,6 +234,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param boolean $activated
 	 * @return $this
 	 */
@@ -252,6 +245,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function getActivated()
@@ -260,6 +254,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @param boolean $configured
 	 * @return $this
 	 */
@@ -270,6 +265,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function getConfigured()
@@ -278,6 +274,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isAvailable()
@@ -286,6 +283,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isTheme()
@@ -294,6 +292,7 @@ class Plugin
 	}
 
 	/**
+	 * @api
 	 * @return boolean
 	 */
 	public function isModule()
@@ -302,19 +301,21 @@ class Plugin
 	}
 
 	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isProjectPath()
+	{
+		return $this->vendor === 'Project';
+	}
+
+	/**
+	 * @api
 	 * @return string
 	 */
 	public function getNamespace()
 	{
-		return ($this->type === Plugin::TYPE_THEME ? 'Theme\\' : '' )  . $this->getVendor() . '\\' . $this->getShortName();
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function getAutoloadNamespaces()
-	{
-		return array($this->getNamespace() . '\\' => $this->basePath);
+		return ($this->isTheme() ? 'Theme\\' : '' )  . $this->getVendor() . '\\' . $this->getShortName();
 	}
 
 	/**
@@ -324,11 +325,12 @@ class Plugin
 	{
 		$array = get_object_vars($this);
 		$array['className'] = get_class($this);
-		$array['namespaces'] = $this->getAutoloadNamespaces();
+		$array['namespace'] = $this->getNamespace() .'\\';
 		return $array;
 	}
 
 	/**
+	 * @api
 	 * @param Plugin $plugin
 	 * @return boolean
 	 */
@@ -338,14 +340,38 @@ class Plugin
 	}
 
 	/**
+	 * @api
+	 * @param \Change\Workspace $workspace
+	 * @return string
+	 */
+	public function getAbsolutePath(\Change\Workspace $workspace)
+	{
+		if (!$this->isProjectPath())
+		{
+			if ($this->isModule())
+			{
+				return $workspace->pluginsModulesPath($this->vendor, $this->shortName);
+			}
+			return $workspace->pluginsThemesPath($this->shortName);
+		}
+		if ($this->isModule())
+		{
+			return $workspace->projectModulesPath($this->shortName);
+		}
+		return $workspace->projectThemesPath($this->shortName);
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Workspace $workspace
 	 * @return array
 	 */
-	public function getDocumentDefinitionPaths()
+	public function getDocumentDefinitionPaths($workspace)
 	{
 		$paths = array();
-		if ($this->type === static::TYPE_MODULE)
+		if ($this->isModule())
 		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Documents', 'Assets', '*.xml'));
+			$pattern = $workspace->composePath($this->getAbsolutePath($workspace), 'Documents', 'Assets', '*.xml');
 			$result = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
 			foreach ($result as $definitionPath)
 			{
@@ -357,27 +383,31 @@ class Plugin
 	}
 
 	/**
+	 * @api
+	 * @param \Change\Workspace $workspace
 	 * @return string|null
 	 */
-	public function getThemeAssetsPath()
+	public function getThemeAssetsPath($workspace)
 	{
-		if ($this->type === static::TYPE_MODULE)
+		if ($this->isModule())
 		{
-			$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Theme'));
+			$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets', 'Theme');
 		}
 		else
 		{
-			$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets'));
+			$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets');
 		}
 		return is_dir($path) ? $path : null ;
 	}
 
 	/**
+	 * @api
+	 * @param \Change\Workspace $workspace
 	 * @return string|null
 	 */
-	public function getTwigAssetsPath()
+	public function getTwigAssetsPath($workspace)
 	{
-		$path = implode(DIRECTORY_SEPARATOR, array($this->basePath, 'Assets', 'Twig'));
+		$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets', 'Twig');
 		return is_dir($path) ? $path : null ;
 	}
 
