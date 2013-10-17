@@ -41,6 +41,12 @@ body > footer > .row {
 	z-index: 10;
 	text-shadow: 0 0 1px black;
 }
+
+[class^="icon-"],
+[class*=" icon-"] {
+	font-variant: normal;
+}
+
 /*
 table.document-list td .icon-2x {
 	opacity: 0.65;
