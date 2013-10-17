@@ -24,7 +24,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->registerLogging($dl);
 
 		$this->registerTransactionManager($dl);
-		$this->registerDbProvider($dl);
+		$connectionInfos = $this->registerDbProvider($dl, $application->getConfiguration());
 		$this->registerI18nManager($dl);
 		$this->registerPluginManager($dl);
 		$this->registerStorageManager($dl);
@@ -34,14 +34,13 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$im = $this->instanceManager();
 
+		$im->addAlias('DbProvider', $connectionInfos['dbprovider'], array('application' => $application, 'connectionInfos' => $connectionInfos));
+
 		$im->setParameters('Change\Logging\Logging', array(
 			'config' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace()));
 
 		$im->setParameters('Change\Transaction\TransactionManager', array('application' => $application));
-
-		$im->setParameters('Change\Db\DbProvider',
-			array('config' => $application->getConfiguration(), 'sharedEventManager' => $application->getSharedEventManager()));
 
 		$im->setParameters('Change\I18n\I18nManager', array(
 			'configuration' => $application->getConfiguration(),
@@ -50,7 +49,6 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$im->setParameters('Change\Plugins\PluginManager', array('application' => $application));
 
-		$im->setInjections('Change\Storage\StorageManager', array('Change\Db\DbProvider'));
 		$im->setParameters('Change\Storage\StorageManager', array(
 			'configuration' => $application->getConfiguration(),
 			'workspace' => $application->getWorkspace()));
@@ -75,14 +73,29 @@ class ApplicationServices extends \Zend\Di\Di
 
 	/**
 	 * @param \Zend\Di\DefinitionList $dl
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @throws \RuntimeException
+	 * @return \ArrayObject
 	 */
-	protected function registerDbProvider($dl)
+	protected function registerDbProvider($dl, $configuration)
 	{
-		$cl = new \Zend\Di\Definition\ClassDefinition('Change\Db\DbProvider');
-		$cl->setInstantiator(array('Change\Db\DbProvider', 'newInstance'))
-			->addMethod('newInstance')
-			->addMethodParameter('newInstance',
-				'config', array('type' => 'Change\Configuration\Configuration', 'required' => true))
+		$section = $configuration->getEntry('Change/Db/use', 'default');
+		$connectionInfos = $configuration->getEntry('Change/Db/' . $section, array());
+		if (!isset($connectionInfos['dbprovider']))
+		{
+			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
+		}
+
+		$className = $connectionInfos['dbprovider'];
+
+		$cl = new \Zend\Di\Definition\ClassDefinition($className);
+		$cl->setInstantiator('__construct')
+			->addMethod('__construct', true)
+			->addMethod('setApplication')
+				->addMethodParameter('setApplication', 'application', array('type' => 'Change\Application', 'required' => true))
+
+			->addMethod('setConnectionInfos')
+				->addMethodParameter('setConnectionInfos', 'connectionInfos', array('type' => 'ArrayObject', 'required' => true))
 
 			->addMethod('setLogging', true)
 			->addMethodParameter('setLogging',
@@ -90,13 +103,10 @@ class ApplicationServices extends \Zend\Di\Di
 
 			->addMethod('setTransactionManager', true)
 			->addMethodParameter('setTransactionManager',
-				'transactionManager', array('type' => 'Change\Transaction\TransactionManager', 'required' => true))
-
-			->addMethod('setSharedEventManager', true)
-			->addMethodParameter('setSharedEventManager',
-				'sharedEventManager', array('type' => 'Change\Events\SharedEventManager', 'required' => true));
-
+				'transactionManager', array('type' => 'Change\Transaction\TransactionManager', 'required' => true));
 		$dl->addDefinition($cl);
+
+		return new \ArrayObject($connectionInfos);
 	}
 
 	/**
@@ -152,7 +162,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 			->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider',
-				array('type' => 'Change\Db\DbProvider', 'required' => true));
+				array('type' => 'DbProvider', 'required' => true));
 		$dl->addDefinition($cl);
 	}
 
@@ -175,7 +185,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 			->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider',
-				array('type' => 'Change\Db\DbProvider', 'required' => true))
+				array('type' => 'DbProvider', 'required' => true))
 
 			->addMethod('register', true);
 		$dl->addDefinition($cl);
@@ -214,7 +224,7 @@ class ApplicationServices extends \Zend\Di\Di
 	 */
 	public function getDbProvider()
 	{
-		return $this->get('Change\Db\DbProvider');
+		return $this->get('DbProvider');
 	}
 
 	/**

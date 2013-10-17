@@ -70,7 +70,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 
 	/**
-	 * @param array $connectionInfos
+	 * @param \ArrayObject $connectionInfos
 	 * @throws \RuntimeException
 	 * @return \PDO
 	 */
@@ -81,7 +81,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			throw new \RuntimeException('Database not defined', 31001);
 		}
-		$dsn = $protocol . ':' .$connectionInfos['database'];
+		$dsn = $protocol . ':' . $this->getApplication()->getWorkspace()->composeAbsolutePath($connectionInfos['database']);
 		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		return $pdo;

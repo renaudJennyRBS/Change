@@ -95,7 +95,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 
 	/**
-	 * @param array $connectionInfos
+	 * @param \ArrayObject $connectionInfos
 	 * @throws \RuntimeException
 	 * @return \PDO
 	 */
