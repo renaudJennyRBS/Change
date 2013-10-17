@@ -84,6 +84,7 @@ class Extension implements \Twig_ExtensionInterface
 			new \Twig_SimpleFilter('richText', array($this, 'richText'), array('is_safe' => array('all'))),
 			new \Twig_SimpleFilter('transDate', array($this, 'transDate')),
 			new \Twig_SimpleFilter('transDateTime', array($this, 'transDateTime')),
+			new \Twig_SimpleFilter('formatDate', array($this, 'formatDate')),
 			new \Twig_SimpleFilter('boolean', array($this, 'boolean')),
 			new \Twig_SimpleFilter('float', array($this, 'float')),
 			new \Twig_SimpleFilter('integer', array($this, 'integer'))
@@ -380,11 +381,15 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param \DateTime $dateTime
+	 * @param \DateTime|string $dateTime
 	 * @return string
 	 */
 	public function transDate($dateTime)
 	{
+		if (is_string($dateTime))
+		{
+			$dateTime = new \DateTime($dateTime);
+		}
 		if ($dateTime instanceof \DateTime)
 		{
 			return $this->getApplicationServices()->getI18nManager()->transDate($dateTime);
@@ -393,14 +398,37 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param \DateTime $dateTime
+	 * @param \DateTime|string $dateTime
 	 * @return string
 	 */
 	public function transDateTime($dateTime)
 	{
+		if (is_string($dateTime))
+		{
+			$dateTime = new \DateTime($dateTime);
+		}
 		if ($dateTime instanceof \DateTime)
 		{
 			return $this->getApplicationServices()->getI18nManager()->transDateTime($dateTime);
+		}
+		return htmlspecialchars(strval($dateTime));
+	}
+
+	/**
+	 * @param \DateTime|string $dateTime
+	 * @param string $format using this syntax: http://userguide.icu-project.org/formatparse/datetime
+	 * @return string
+	 */
+	public function formatDate($dateTime, $format)
+	{
+		if (is_string($dateTime))
+		{
+			$dateTime = new \DateTime($dateTime);
+		}
+		if ($dateTime instanceof \DateTime)
+		{
+			$i18n = $this->getApplicationServices()->getI18nManager();
+			return $i18n->formatDate($i18n->getLCID(), $dateTime, $format);
 		}
 		return htmlspecialchars(strval($dateTime));
 	}
