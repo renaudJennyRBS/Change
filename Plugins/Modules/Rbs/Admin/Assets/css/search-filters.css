@@ -3,19 +3,22 @@
 .search-filters {
 }
 
-.search-filters .filter {
+.search-filters .filter-row {
 	border-top: 1px solid white;
-	padding: 10px 0;
+	display: table;
+	width: 100%;
+	border-spacing: 4px 8px;
 }
-.search-filters .filter:first-child {
+.search-filters .filter-row:first-child {
 	border-top: 0;
 }
 
-.search-filters .filter select,
-.search-filters .filter input,
-.search-filters .filter button {
-	margin-right: 4px;
+.search-filters .filter-row .filter-cell {
+	display: table-cell;
+	vertical-align: top;
 }
+
+
 
 .search-filters .properties {
 	display: none;

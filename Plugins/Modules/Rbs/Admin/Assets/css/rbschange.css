@@ -47,11 +47,10 @@ body > footer > .row {
 	font-variant: normal;
 }
 
-/*
 table.document-list td .icon-2x {
 	opacity: 0.65;
 }
-*/
+
 
 /* Bootstrap overrides */
 
@@ -125,6 +124,18 @@ h3.panel-title {
 	border-top-right-radius: 1px;
 }
 
+.panel-heading .close {
+	position: relative;
+	top: -5px;
+}
+
+.panel-primary .panel-heading .close {
+	color: white;
+	opacity: 0.75;
+}
+.panel-primary .panel-heading .close:hover {
+	opacity: 1;
+}
 
 
 /* Bootstrap addons */
@@ -137,6 +148,7 @@ h3.panel-title {
 	padding: 0;
 	height: 24px;
 }
+
 
 /* rbs-form-simple */
 
@@ -166,7 +178,6 @@ h3.panel-title {
 	background: none;
 	color: #CCCCCC;
 }
-
 
 
 /* left-menu */
@@ -211,7 +222,6 @@ h4.list-group-item:first-child {
 #workspace .page-header h2 {
 	margin-top: 0;
 }
-
 
 
 /* editors */
@@ -261,7 +271,6 @@ h4.list-group-item:first-child {
 	border-right: 1px solid rgba(0,0,0,0.1);
 	line-height: 1.1em;
 }
-
 
 
 /* advanced mode */
