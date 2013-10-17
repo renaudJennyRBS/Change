@@ -14,7 +14,7 @@ class #className#
 	public function execute(Event $event)
 	{
 		$application = $event->getApplication();
-		//Code of you command here
+		//Code of your command here
 
 //		$applicationServices = new \Change\Application\ApplicationServices($application);
 
