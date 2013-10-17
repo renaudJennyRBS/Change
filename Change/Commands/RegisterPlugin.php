@@ -23,7 +23,6 @@ class RegisterPlugin
 		{
 			$plugins = $pluginManager->getUnregisteredPlugins();
 
-			$applicationServices->getTransactionManager()->begin();
 			$tm = $applicationServices->getTransactionManager();
 			try
 			{
