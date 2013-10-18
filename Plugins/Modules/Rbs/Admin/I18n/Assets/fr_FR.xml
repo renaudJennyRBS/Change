@@ -25,6 +25,15 @@
 	<key id="search">rechercher</key>
 	<key id="this-document-exists-in-multiple-languages">ce document existe en plusieurs langues</key>
 
+	<key id="fullscreen-toolbar">Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran.</key>
+
+	<key id="copyright" format="html"><![CDATA[<a onclick="window.open(this.href); return false;" href="http://www.rbschange.com">RBS Change</a> est un CMS e-commerce open-source edité par la société <a onclick="window.open(this.href); return false" href="http://www.rbs.fr">Ready Business System</a>.]]></key>
+
+	<key id="please-wait" format="html"><![CDATA[Merci de bien vouloir patienter<br />quelques secondes :)]]></key>
+
+	<key id="close">fermer</key>
+	<key id="replace">remplacer</key>
+
 	<!-- Corrections -->
 	<key id="correction">correction</key>
 	<key id="this-document-has-a-correction-on">ce Document dispose d'une Correction portant sur</key>

@@ -35,6 +35,10 @@
 	<key id="picker-clipboard-tooltip">prendre dans le Presse-papier</key>
 	<key id="picker-choose-model-to-select">type de documents à sélectionner :</key>
 
+	<key id="picker-add-to-end">ajouter à la fin</key>
+	<key id="picker-add-to-begin">ajouter au début</key>
+	<key id="picker-help-filter" format="html">Pour bénéficier de filtres de recherches plus avancés, vous pouvez vous rendre directement dans {htmlOpen}le module concerné{htmlClose}.</key>
+
 	<key id="click-to-select-another-image">cliquer pour sélectionner une autre image depuis votre ordinateur</key>
 
 	<key id="activation">activation</key>

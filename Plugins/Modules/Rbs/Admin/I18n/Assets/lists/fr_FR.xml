@@ -34,4 +34,21 @@
 	<key id="clear-selection">Vider</key>
 
 	<key id="preview-tip" format="html"><![CDATA[Survolez les lignes dans la liste ci-dessous pour afficher des options et prévisualiser les documents.<br/>Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu</strong> tout en laissant la touche <strong>[Shift]</strong> appuyée.]]></key>
+
+	<key id="display-options">options d'affichage</key>
+	<key id="display">afficher</key>
+	<key id="display-thumbnail-informations">afficher les informations sur les vignettes</key>
+	<key id="display-informations">afficher les informations</key>
+
+	<key id="options">options</key>
+	<key id="all">tout</key>
+	<key id="published">publiés</key>
+	<key id="not-published">non publiés</key>
+	<key id="thumbnail">vignettes</key>
+
+	<key id="sort-by">trier par</key>
+
+	<key id="select">sélectionner</key>
+	<key id="select-all">tous</key>
+	<key id="select-neither">aucun</key>
 </i18n>

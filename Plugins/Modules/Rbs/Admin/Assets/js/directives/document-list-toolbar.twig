@@ -13,60 +13,60 @@
 			<div class="btn-toolbar has-captions-top pull-right" ng-switch="DL.enabledViewModes.length > 1">
 
 				<div ng-switch-when="true" class="btn-virtual-group">
-					<label class="caption">Options d'affichage</label>
+					<label class="caption">{{ i18n('m.rbs.admin.lists.display-options', ['ucf']) }}</label>
 					<div class="btn-group">
 						<button type="button" ng-repeat="vm in DL.enabledViewModes" ng-class="{active: DL.isViewMode(vm)}" class="btn btn-default" title="(=DL.availableViewModes[vm].label=)" ng-click="DL.setViewMode(vm)"><i class="(=DL.availableViewModes[vm].icon=)"></i></button>
 					</div>
-					<button class="btn btn-default" title="Afficher les informations sur les vignettes"
+					<button class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.lists.display-thumbnail-informations', ['ucf']) }}"
 						ng-show="DL.isViewModeEnabled('thumbnails')"
 						ng-disabled="! DL.isThumbnailsView()"
 						ng-class="{active: DL.thumbnailsInfo}"
 						ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-info-sign"></i></button>
-					<div class="btn-group" title="Options d'affichage">
+					<div class="btn-group" title="{{ i18nAttr('m.rbs.admin.lists.display-options', ['ucf']) }}">
 						<button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-th-list"></i>
 						<status class="small" value="PUBLISHED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
 						<status class="small" value="DEACTIVATED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
 						<span class="caret"></span></button>
 						<ul class="dropdown-menu pull-right" role="menu">
-							<li class="nav-header">Afficher</li>
-							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
-							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
-							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.lists.display', ['ucf']) }}</li>
+							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> {{ i18n('m.rbs.admin.lists.all', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> {{ i18n('m.rbs.admin.lists.published', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> {{ i18n('m.rbs.admin.lists.not-published', ['ucf']) }}</a></li>
 							<li class="divider" ng-show="DL.isViewModeEnabled('thumbnails')"></li>
-							<li class="nav-header" ng-show="DL.isViewModeEnabled('thumbnails')">Vignettes</li>
+							<li class="nav-header" ng-show="DL.isViewModeEnabled('thumbnails')">{{ i18n('m.rbs.admin.lists.thumbnail', ['ucf']) }}</li>
 							<li ng-show="DL.isViewModeEnabled('thumbnails')" ng-class="{disabled: DL.isListView()}">
-								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
+								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> {{ i18n('m.rbs.admin.lists.display-informations', ['ucf']) }}</a>
 							</li>
 							<li class="divider"></li>
-							<li class="nav-header">Trier par</li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.lists.sort-by', ['ucf']) }}</li>
 							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-chevron-down', false:'icon-chevron-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 							<li class="divider"></li>
-							<li class="nav-header">Sélectionner</li>
-							<li><a href="javascript:;" ng-click="DL.selectAll()">Tous</a></li>
-							<li><a href="javascript:;" ng-click="DL.selectNone()">Aucun</a></li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.lists.select', ['ucf']) }}</li>
+							<li><a href="javascript:;" ng-click="DL.selectAll()">{{ i18n('m.rbs.admin.lists.select-all', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.selectNone()">{{ i18n('m.rbs.admin.lists.select-neither', ['ucf']) }}</a></li>
 						</ul>
 					</div>
 				</div>
 
 				<div ng-switch-when="false" class="btn-virtual-group">
-					<label class="caption">Options</label>
-					<div class="btn-group" title="Options d'affichage">
+					<label class="caption">{{ i18n('m.rbs.admin.lists.options', ['ucf']) }}</label>
+					<div class="btn-group" title="{{ i18nAttr('m.rbs.admin.lists.display-options', ['ucf']) }}">
 						<button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-th-list"></i>
 						<status class="small" value="PUBLISHED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"/>
 						<status class="small" value="DEACTIVATED" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"/>
 						<span class="caret"></span></button>
 						<ul class="dropdown-menu pull-right" role="menu">
-							<li class="nav-header">Afficher</li>
-							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> Tout</a></li>
-							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> Publiés</a></li>
-							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> Non publiés</a></li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.lists.display', ['ucf']) }}</li>
+							<li><a href="javascript:;" ng-click="DL.clearFilters()"><i class="icon-circle" ng-hide="DL.hasFilter('status')"></i> {{ i18n('m.rbs.admin.lists.all', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'equals')"></i> {{ i18n('m.rbs.admin.lists.published', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.filterNotProperty('status', 'PUBLISHED')"><i class="icon-circle" ng-show="DL.hasFilter('status', 'PUBLISHED', 'notEquals')"></i> {{ i18n('m.rbs.admin.lists.not-published', ['ucf']) }}</a></li>
 							<li class="divider" ng-show="DL.thumbnailsViewEnabled"></li>
-							<li class="nav-header" ng-show="DL.thumbnailsViewEnabled">Vignettes</li>
+							<li class="nav-header" ng-show="DL.thumbnailsViewEnabled">{{ i18n('m.rbs.admin.lists.thumbnail', ['ucf']) }}</li>
 							<li ng-show="DL.thumbnailsViewEnabled" ng-class="{disabled: DL.isListView()}">
-								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> Afficher les informations</a>
+								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> {{ i18n('m.rbs.admin.lists.display-informations', ['ucf']) }}</a>
 							</li>
 							<li class="divider"></li>
-							<li class="nav-header">Trier par</li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.lists.sort-by', ['ucf']) }}</li>
 							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 						</ul>
 					</div>
