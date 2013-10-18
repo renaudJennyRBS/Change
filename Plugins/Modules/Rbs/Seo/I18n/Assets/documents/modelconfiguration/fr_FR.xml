@@ -4,5 +4,5 @@
 	<key id="model-name">nom du modèle</key>
 	<key id="sitemap-default-change-frequency">fréquence (changefreq)</key>
 	<key id="sitemap-default-priority">priorité de l'URL (priority)</key>
-	<key id="document-seo-auto-generate">génération automatique du document SEO</key>
+	<key id="document-seo-auto-generate">création automatique du document SEO</key>
 </i18n>

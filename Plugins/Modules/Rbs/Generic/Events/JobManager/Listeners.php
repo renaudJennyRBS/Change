@@ -61,6 +61,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Seo\Job\GenerateSitemap())->execute($event);
 		};
 		$events->attach('process_Rbs_Seo_GenerateSitemap', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Seo\Job\DocumentSeoGenerator())->execute($event);
+		};
+		$events->attach('process_Rbs_Seo_DocumentSeoGenerator', $callBack, 5);
 	}
 
 	/**
