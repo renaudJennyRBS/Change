@@ -18,18 +18,19 @@ class DocumentSeoGenerator
 		if ($modelName && $sitemapDefaultChangeFrequency && $sitemapDefaultPriority)
 		{
 			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
-			//TODO improve the query to filter by model
-			$documentSeos = $dqb->getDocuments();
-			$excludedTargetIds = [];
-			foreach ($documentSeos as $documentSeo)
-			{
-				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-				$target = $documentSeo->getTarget();
-				if ($target->getDocumentModelName() === $modelName)
-				{
-					$excludedTargetIds[] = $target->getId();
-				}
-			}
+			$qb = $dqb->dbQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->innerJoin($fb->getDocumentIndexTable(),
+					$fb->eq($fb->column('document_id', $fb->getDocumentIndexTable()), $fb->column('target', $dqb->getTableAliasName())));
+			$qb->where($fb->logicAnd(
+					$fb->eq($fb->column('document_model', $fb->getDocumentIndexTable()), $fb->parameter('modelName'))
+				));
+			$sq = $qb->query();
+
+			$sq->bindParameter('modelName', $modelName);
+
+			$excludedTargetIds = $sq->getResults($sq->getRowsConverter()->addIntCol('document_id'));
+
 			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), $modelName);
 			if (count($excludedTargetIds))
 			{
