@@ -19,6 +19,6 @@
 	z-index: 0;
 }
 
-.dockable.pinned header {
+.dockable.pinned .panel-heading {
 	cursor: default;
 }

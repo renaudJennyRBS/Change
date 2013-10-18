@@ -85,12 +85,10 @@
 		this.initEditableZone = function initEditableZone (scope, zoneEl, zoneObj, readonly) {
 			zoneEl.html('');
 
-			zoneEl.addClass('container');
 			zoneEl.addClass('editable-zone');
 
 			zoneEl.attr('data-id', zoneObj.id);
 			zoneEl.attr('data-grid', zoneObj.grid);
-			zoneEl.attr('data-grid-mode', zoneObj.gridMode);
 
 			forEach(zoneObj.items, function (item) {
 				self.initItem(scope, zoneEl, item, -1, readonly);
@@ -477,7 +475,6 @@
 				'</div>' +
 				'<div class="rich-text-input-selectors-container"></div>' +
 				'<div id="se-picker-container"></div>' +
-				//'<pre>(= items | json =)</pre>' +
 				'<div class="structure-editor"></div>',
 
 
@@ -840,7 +837,6 @@
 					zoneItem = {
 						'id'      : id,
 						'grid'    : zoneEl.data('grid'),
-						'gridMode': zoneEl.data('gridMode'),
 						'type'    : 'container',
 						'items'   : []
 					};
@@ -1100,7 +1096,6 @@
 						content[zoneId] = {
 							"id"   : zoneId,
 							"grid" : DEFAULT_GRID_SIZE,
-							"gridMode" : "fluid",
 							"type" : "container",
 							"items" : [
 								{
