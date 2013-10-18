@@ -2,7 +2,6 @@
 namespace Change\Http\Web\Result;
 
 use Change\Http\Result;
-use Change\Presentation\Layout\Layout;
 
 /**
  * @name \Change\Http\Web\Result\Page
@@ -20,19 +19,9 @@ class Page extends Result
 	protected $htmlHead = array();
 
 	/**
-	 * @var Layout
+	 * @var string
 	 */
-	protected $templateLayout = array();
-
-	/**
-	 * @var Layout
-	 */
-	protected $contentLayout = array();
-
-	/**
-	 * @var Callable
-	 */
-	protected $renderer;
+	protected $html;
 
 	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]
@@ -94,38 +83,6 @@ class Page extends Result
 	}
 
 	/**
-	 * @param Layout $templateLayout
-	 */
-	public function setTemplateLayout(Layout $templateLayout)
-	{
-		$this->templateLayout = $templateLayout;
-	}
-
-	/**
-	 * @return Layout
-	 */
-	public function getTemplateLayout()
-	{
-		return $this->templateLayout;
-	}
-
-	/**
-	 * @param Layout $contentLayout
-	 */
-	public function setContentLayout(Layout $contentLayout)
-	{
-		$this->contentLayout = $contentLayout;
-	}
-
-	/**
-	 * @return Layout
-	 */
-	public function getContentLayout()
-	{
-		return $this->contentLayout;
-	}
-
-	/**
 	 * @param \Change\Http\Web\Result\BlockResult[] $blockResults
 	 */
 	public function setBlockResults(array $blockResults = null)
@@ -133,7 +90,7 @@ class Page extends Result
 		$this->blockResults = array();
 		if (is_array($blockResults))
 		{
-			foreach($blockResults as $blockResult)
+			foreach ($blockResults as $blockResult)
 			{
 				$this->addBlockResult($blockResult);
 			}
@@ -154,30 +111,6 @@ class Page extends Result
 	public function getBlockResults()
 	{
 		return $this->blockResults === null ? array() : $this->blockResults;
-	}
-
-	/**
-	 * @param Callable $renderer
-	 */
-	public function setRenderer($renderer)
-	{
-		$this->renderer = $renderer;
-	}
-
-	/**
-	 * @return Callable
-	 */
-	public function getRenderer()
-	{
-		return $this->renderer;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasRenderer()
-	{
-		return ($this->renderer && is_callable($this->renderer));
 	}
 
 	/**
@@ -223,25 +156,35 @@ class Page extends Result
 			{
 				$class = '';
 			}
-			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '"'. $class.'>' . $innerHTML . '</div>';
+			return
+				'<div data-type="block" data-id="' . $id . '" data-name="' . $name . '"' . $class . '>' . $innerHTML . '</div>';
 		}
 		return '<div data-type="block" class="empty" data-id="' . $id . '" data-name="' . $name . '"></div>';
 	}
 
 	/**
-	 * Used for generate response
+	 * @param string $html
+	 * @return $this
+	 */
+	public function setHtml($html)
+	{
+		$this->html = $html;
+		return $this;
+	}
+
+	/**
 	 * @return string
-	 * @throws \RuntimeException
+	 */
+	public function getHtml()
+	{
+		return $this->html;
+	}
+
+	/**
+	 * @return string
 	 */
 	public function toHtml()
 	{
-		if ($this->hasRenderer())
-		{
-			return call_user_func($this->renderer);
-		}
-		else
-		{
-			throw new \RuntimeException('Renderer not set', 999999);
-		}
+		return $this->html;
 	}
 }

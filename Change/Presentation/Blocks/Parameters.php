@@ -39,6 +39,42 @@ class Parameters
 	}
 
 	/**
+	 * @return integer
+	 */
+	public function getTTL()
+	{
+		$TTL = $this->getParameter('TTL');
+		return $TTL === null ? 60 : $TTL;
+	}
+
+	/**
+	 * Set to 0 for no cache
+	 * @param int $TTL
+	 * @return $this
+	 */
+	public function setTTL($TTL = 60)
+	{
+		$TTL = max(0, $TTL);
+		if (!$this->hasParameterMeta('TTL'))
+		{
+			$this->addParameterMeta('TTL', $TTL);
+		}
+		else
+		{
+			$this->getParameterMeta('TTL')->setDefaultValue($TTL);
+		}
+		return $this;
+	}
+
+	/**
+	 * @return $this
+	 */
+	public function setNoCache()
+	{
+		return $this->setTTL(0);
+	}
+
+	/**
 	 * @param string $name
 	 * @param mixed $defaultValue
 	 * @return ParameterMeta

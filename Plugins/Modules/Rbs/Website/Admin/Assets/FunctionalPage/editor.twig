@@ -24,8 +24,8 @@
 			required="true">
 		</rbs-field-text>
 
-		<rbs-field-picker property="pageTemplate" required="true" label="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate', ['ucf']) }}"
-			accepted-model="Rbs_Theme_PageTemplate"
+		<rbs-field-picker property="pageTemplate" required="true" accepted-model="Rbs_Theme_PageTemplate"
+				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate', ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate-picker-title', ['ucf']) }}"
 			allow-edition="true">
 		</rbs-field-picker>
@@ -33,6 +33,21 @@
 		<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
 			{{ i18n('m.rbs.website.documents.functionalpage.functional-page-editor-help') }}
 		</div>
+
+		<hr />
+		<rbs-field-boolean property="useCache"
+				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.usecache', ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<div data-ng-show="document.useCache">
+			<rbs-field-integer property="TTL" label="{{ i18nAttr('m.rbs.website.documents.functionalpage.ttl', ['ucf']) }}">
+				<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage.ttl-help') }}</span>
+			</rbs-field-integer>
+		</div>
+
+		<rbs-field-boolean property="https"
+				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.https', ['ucf']) }}">
+		</rbs-field-boolean>
 	</fieldset>
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"

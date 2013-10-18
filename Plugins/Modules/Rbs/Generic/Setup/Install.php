@@ -31,6 +31,9 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Generic',
 			'\Rbs\Generic\Events\BlockManager\Listeners');
 
+		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Generic',
+			'\Rbs\Generic\Events\PageManager\Listeners');
+
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Generic',
 			'\Rbs\Generic\Events\ProfileManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_Generic',

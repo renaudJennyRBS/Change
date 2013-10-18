@@ -34,6 +34,22 @@
 			allow-creation="false">
 			<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.section-help', ['ucf']) }}</span>
 		</rbs-field-picker>
+
+		<hr />
+		
+		<rbs-field-boolean property="useCache"
+				label="{{ i18nAttr('m.rbs.website.documents.staticpage.usecache', ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<div data-ng-show="document.useCache">
+			<rbs-field-integer property="TTL" label="{{ i18nAttr('m.rbs.website.documents.staticpage.ttl', ['ucf']) }}">
+				<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.ttl-help') }}</span>
+			</rbs-field-integer>
+		</div>
+
+		<rbs-field-boolean property="https"
+				label="{{ i18nAttr('m.rbs.website.documents.staticpage.https', ['ucf']) }}">
+		</rbs-field-boolean>
 	</fieldset>
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"

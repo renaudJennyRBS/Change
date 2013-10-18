@@ -7,6 +7,9 @@
 		<property name="title" localized="true" has-correction="true" />
 		<property name="pageTemplate" type="Document" document-type="Rbs_Theme_PageTemplate" has-correction="true" />
 		<property name="editableContent" type="JSON" localized="true" has-correction="true" />
+		<property name="useCache" type="Boolean" default-value="false" />
+		<property name="TTL" type="Integer" default-value="0" />
+		<property name="https" type="Boolean" default-value="false" />
 		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
 		<property name="skin" type="Document" document-type="Rbs_Skin_Skin" />
 		-->

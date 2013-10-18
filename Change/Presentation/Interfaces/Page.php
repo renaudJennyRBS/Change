@@ -8,17 +8,6 @@ use Change\Presentation\Layout\Layout;
  */
 interface Page
 {
-	const EVENT_PAGE_PREPARE = 'page.prepare';
-
-	const EVENT_PAGE_COMPOSE = 'page.compose';
-
-	/**
-	 * Retrieve the event manager
-	 * @api
-	 * @return \Zend\EventManager\EventManagerInterface
-	 */
-	public function getEventManager();
-
 	/**
 	 * @api
 	 * @return string
@@ -50,5 +39,10 @@ interface Page
 	 * @return \Change\Presentation\Interfaces\Section
 	 */
 	public function getSection();
+
+	/**
+	 * @return integer
+	 */
+	public function getTTL();
 
 }
