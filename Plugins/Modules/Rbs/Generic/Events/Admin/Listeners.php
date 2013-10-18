@@ -25,9 +25,12 @@ class Listeners implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_RESOURCES, array($this, 'registerResources'));
 	}
 
+
+	/**
+	 * @param \Rbs\Admin\Event $event
+	 */
 	public function registerResources(Event $event)
 	{
-
 		$manager = $event->getManager();
 		$i18nManager = $manager->getApplicationServices()->getI18nManager();
 		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));

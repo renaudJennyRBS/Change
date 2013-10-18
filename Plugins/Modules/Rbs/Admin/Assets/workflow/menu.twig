@@ -1,13 +1,15 @@
-<div>
-	<ul class="nav nav-list">
-		<li class="nav-header">{{ i18n('m.rbs.admin.workflow.menu-title', ['ucf']) }}</li>
-	</ul>
+<div class="panel panel-default" ng-controller="Rbs_Media_Menu_Controller">
 
-	<div class="nav-list">{{ i18n('m.rbs.admin.workflow.menu-contents') }}</div>
+	<div class="panel-heading">
+		<h3 class="panel-title">{{ i18n('m.rbs.admin.workflow.menu-title', ['ucf']) }}</h3>
+	</div>
 
-	<ul class="nav nav-list">
-		<li><a href="" ng-href="(=document.url()=)">
-			<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.workflow.back-to-editor', ['ucf']) }}
-		</a></li>
-	</ul>
+	<div class="panel-body">
+		{{ i18n('m.rbs.admin.workflow.menu-contents') }}
+	</div>
+
+	<div class="panel-footer">
+		<a href="" ng-href="(=document.url()=)"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.workflow.back-to-editor', ['ucf']) }}</a>
+	</div>
+
 </div>

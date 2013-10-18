@@ -12,14 +12,13 @@
 			transclude : true,
 
 			template   :
-				'<header ng-mousedown="startDrag($event)" ng-mouseup="stopDrag($event)">' +
-					'<div class="btn-toolbar pull-right">' +
-						//'<button class="btn btn-inverse btn-sm" type="button" ng-click="roll()"><i ng-class="{true:\'icon-chevron-down\', false:\'icon-chevron-up\'}[rolled]"></i></button>' +
-						'<button class="btn btn-inverse btn-sm" type="button" ng-click="close()"><i class="icon-remove"></i></button>' +
+				'<div class="panel panel-default">' +
+					'<div class="panel-heading" ng-mousedown="startDrag($event)" ng-mouseup="stopDrag($event)">' +
+						'<h3 class="panel-title"><button class="close" type="button" ng-click="close()">&times;</button>(= title =)</h3>' +
 					'</div>' +
-					'<h4 style="white-space:nowrap">{{title}}</h4>' +
-					'</header>' +
-				'<div class="clearfix well well-small" ng-transclude></div>',
+					'<div class="panel-body" ng-transclude>' +
+					'</div>' +
+				'</div>',
 
 			scope : {
 				title : '@'

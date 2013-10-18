@@ -249,7 +249,7 @@
 				};
 
 				// Tabs and preview.
-				element.find('a[data-toggle="tab"]').on('show', function (e) {
+				element.find('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 					if ($(e.target).data('role') === 'preview') {
 						$previewEl.empty();
 						scope.previewing = true;

@@ -1,2 +1,24 @@
 @CHARSET "UTF-8";
 
+.dockable {
+	position: fixed;
+	left: 100px;
+	top: 100px;
+	z-index: 100;
+}
+
+.dockable .panel-heading {
+	cursor: move;
+}
+
+.dockable.pinned {
+	position: relative;
+	box-shadow: none;
+	left: 0;
+	top: 0;
+	z-index: 0;
+}
+
+.dockable.pinned .panel-heading {
+	cursor: default;
+}
