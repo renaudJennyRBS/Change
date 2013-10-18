@@ -1,0 +1,32 @@
+/** Inspired by http://www.duoh.com/csstutorials/calendar/index2.html */
+.calendar caption ul {
+	margin: 0 0 5px 0;
+	font-size: 1.2em;
+}
+
+.calendar th,
+.calendar td {
+	text-align: center;
+}
+
+.calendar td a {
+	display: block;
+}
+
+.calendar .current,
+.calendar td.current a,
+.calendar td.current a:link,
+.calendar td.current a:visited {
+	color: #F6F4DA;
+	font-weight: bold;
+	background: #94DF96;
+}
+
+.calendar .today,
+.calendar td.today a,
+.calendar td.today a:link,
+.calendar td.today a:visited {
+	color: #F6F4DA;
+	font-weight: bold;
+	background: #DF9496;
+}
