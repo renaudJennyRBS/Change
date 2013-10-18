@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.admin.menu" lcid="fr_FR">
+	<key id="chuck" format="html"><![CDATA[On ne cherche pas Chuck Norris.<br/>C'est Chuck Norris qui vous trouve.]]></key>
 	<key id="open">ouvrir le menu principal (Ctrl+Alt+M)</key>
 	<key id="about">à propos de RBS Change</key>
 	<key id="profile">profil</key>
 	<key id="logout">déconnexion</key>
-	<key id="close">fermer</key>
 	<key id="search">rechercher</key>
 	<key id="clear-search">effacer la recherche</key>
 	<key id="other-modules">autres modules</key>
@@ -13,4 +13,6 @@
 	<key id="website">Site web</key>
 	<key id="twitter">Twitter</key>
 	<key id="github">GitHub</key>
+	<key id="go-to-fullscreen">basculer en mode plein écran</key>
+	<key id="type-enter-to-go-to" format="html"><![CDATA[Appuyez sur <strong class="kb">Entrée</strong> pour vous rendre à<br/><strong>{param}</strong>.]]></key>
 </i18n>

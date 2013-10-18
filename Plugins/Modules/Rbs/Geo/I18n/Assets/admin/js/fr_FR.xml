@@ -3,4 +3,6 @@
 	<include id="m.rbs.geo.documents"/>
 	<key id="module-name">zones géographiques</key>
 	<key id="module-keywords">zones,pays,adresses,départements,régions</key>
+
+	<key id="select-unittype">sélectionner un type d'unité territoriale</key>
 </i18n>

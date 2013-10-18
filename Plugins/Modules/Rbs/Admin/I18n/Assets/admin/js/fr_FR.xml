@@ -29,6 +29,8 @@
 
 	<key id="search">rechercher</key>
 
+	<key id="use-this-value-in">utiliser cette valeur en {lang}</key>
+
 	<!-- actions -->
 
 	<key id="action-validate">valider</key>

@@ -8,11 +8,10 @@
 	                   model="{{ query.model }}"
 	                   filter-query="query" extend="picker" actions="">
 	{% endif %}
-		<column name="label" label="Libellé"><!--TODO localization-->
+		<column name="label" label="{{ i18n('m.rbs.generic.document.label', ['ucf']) }}">
 			{% if (query.multiple) %}
 			<span class="pull-right">
-				<!--TODO localization-->
-				<button type="button" class="btn btn-xs" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="Remplacer par cet élément"></i></button>
+				<button type="button" class="btn btn-xs" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right" title="{{ i18nAttr('m.rbs.admin.lists.replace-by-this', ['ucf']) }}"></i></button>
 			</span>
 			{% endif %}
 			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>

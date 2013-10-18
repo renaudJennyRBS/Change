@@ -11,13 +11,12 @@
 	</ul>
 
 	<div class="nav">
-		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18nAttr('m.rbs.admin.menu.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.menu.close', ['ucf']) }}</a>
+		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18nAttr('m.rbs.admin.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.close', ['ucf']) }}</a>
 		<form class="rbs-form-simple-filter" on-escape="close()" filter="filterModules" on-enter="go()"></form>
 	</div>
 
 	<div class="nav text-muted fade-animation" ng-if="filterResults.length == 1">
-		<small>Appuyez sur <strong class="kb">Entrée</strong> pour vous rendre à<br/>
-			<strong>(= filterResults[0].label =)</strong>.</small>
+		<small>{{ i18n('m.rbs.admin.menu.type-enter-to-go-to', [], {'param' : '(= filterResults[0].label =)'}) }}</small>
 	</div>
 
 	<div ng-switch="chuckUrl">
@@ -41,7 +40,7 @@
 
 		<div class="nav" ng-switch-default="" style="text-align: center">
 			<a target="_blank" href="http://chucknorrisfacts.fr/"><img class="img-thumbnail" ng-src="(=chuckUrl=)"/></a>
-			<br/><small class="muted">On ne cherche pas Chuck Norris.<br/>C'est Chuck Norris qui vous trouve.</small>
+			<br/><small class="muted">{{ i18n('m.rbs.admin.menu.chuck') }}</small>
 		</div>
 	</div>
 

@@ -1027,21 +1027,39 @@
 								i;
 
 							scope.pages.length = 0;
+
+							scope.currentPage = scope.pagination.offset / scope.pagination.limit;
 							nbPages = Math.ceil(scope.pagination.total / scope.pagination.limit);
+
 							if (nbPages > 11) {
-								for (i=0 ; i<5 ; i++) {
-									scope.pages.push(i);
-								}
-								scope.pages.push('...');
-								for (i=nbPages-5 ; i<nbPages ; i++) {
-									scope.pages.push(i);
+
+								if (scope.currentPage < 4 || scope.currentPage >= nbPages-4) {
+									for (i=0 ; i<6 ; i++) {
+										scope.pages.push(i);
+									}
+									scope.pages.push('...');
+									for (i=nbPages-6 ; i<nbPages ; i++) {
+										scope.pages.push(i);
+									}
+								} else {
+									for (i=0 ; i<2 ; i++) {
+										scope.pages.push(i);
+									}
+									scope.pages.push('...');
+									for (i=scope.currentPage-2 ; i<scope.currentPage+3 ; i++) {
+										scope.pages.push(i);
+									}
+									scope.pages.push('...' + (nbPages-2));
+									for (i=nbPages-2 ; i<nbPages ; i++) {
+										scope.pages.push(i);
+									}
 								}
 							} else {
 								for (i=0 ; i<nbPages ; i++) {
 									scope.pages.push(i);
 								}
 							}
-							scope.currentPage = scope.pagination.offset / scope.pagination.limit;
+
 						},
 						true
 					);
@@ -1061,6 +1079,26 @@
 					scope.isLastPage = function () {
 						return scope.pages.length === 0 || scope.currentPage === (scope.pages.length-1);
 					};
+
+					/**
+					 * Is disabled page?
+					 * @returns {boolean}
+					 */
+					scope.isDisabled = function (page) {
+						return !angular.isNumber(page);
+					};
+
+					/**
+					 * Return the displayed value for the page number
+					 * @returns {string}
+					 */
+					scope.displayPageNumber = function (page) {
+						if (angular.isNumber(page)) {
+							return page + 1;
+						} else {
+							return '...';
+						}
+					}
 
 					/**
 					 * Returns URL for a page (pagination)
