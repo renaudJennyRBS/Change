@@ -1759,7 +1759,7 @@
 					'</div>' +
 				'</div>' +
 				'<div class="btn-toolbar" ng-show="isInColumnLayout()">' +
-					'<button class="btn btn-sm pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
+					'<button class="btn btn-default btn-sm pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
 					'<h6>Colonnes</h6>' +
 				'</div>' +
 				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +
@@ -2090,8 +2090,8 @@
 			"template" :
 				'<header>Choisissez le type de bloc à ajouter :</header>' +
 
-				'<select ng-options="mod for mod in modules" ng-model="selectedModule" class="input-block-level"></select>' +
-				'<button class="btn btn-block" type="button" ng-click="makeBlock($event, block)" ng-repeat="block in blocks[selectedModule]">' +
+				'<select ng-options="mod for mod in modules" ng-model="selectedModule" class="form-control"></select>' +
+				'<button class="btn btn-default btn-sm btn-block" type="button" ng-click="makeBlock($event, block)" ng-repeat="block in blocks[selectedModule]">' +
 					'<i class="{{block.name}} icon-large"></i> {{block.label}}' +
 				'</button>',
 
@@ -2203,10 +2203,10 @@
 			"template" :
 				'<form ng-submit="submit()">' +
 					'<label for ="block_{{block}}_label">Libellé du bloc</label>' +
-					'<input class="input-block-level" id="block_{{block}}_label" type="text" ng-model="block.label" placeholder="Nom du bloc"/>' +
+					'<input class="form-control" id="block_{{block}}_label" type="text" ng-model="block.label" placeholder="Nom du bloc"/>' +
 					'<div class="parameters"></div>'+
 					'<div class="form-actions">' +
-						'<button type="button" class="btn btn-default"btn-xs ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
+						'<button type="button" class="btn btn-default" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
 						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged()" ng-click="submit()">Valider</button>' +
 					'</div>' +
 				'</form>',

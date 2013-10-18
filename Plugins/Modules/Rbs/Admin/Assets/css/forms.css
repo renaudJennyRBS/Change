@@ -12,7 +12,7 @@
 
 .form-actions {
 	background-image: linear-gradient(to top, white 0%, #F5F5F5 100%);
-	border-top: 5px solid rgba(0, 0, 0, 0.2);
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .form-horizontal .form-actions {
