@@ -29,55 +29,59 @@ class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testOnOneMinute()
 	{
 		$dm = $this->getDocumentServices()->getDocumentManager();
-		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');
+		$timeZone = $dm->getApplicationServices()->getI18nManager()->getTimeZone();
+
 		/* @var $event \Rbs\Event\Documents\Event */
-		$event->setDate(new \DateTime('2000-01-01 12:12:00'));
-		$event->setEndDate(new \DateTime('2000-01-01 12:12:00'));
+		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');
+		$event->setDate(new \DateTime('2000-01-01 12:12:00', $timeZone));
+		$event->setEndDate(new \DateTime('2000-01-01 12:12:00', $timeZone));
 		$this->assertTrue($event->onOneMinute());
-		$event->setEndDate(new \DateTime('2000-01-01 12:12:35'));
+		$event->setEndDate(new \DateTime('2000-01-01 12:12:35', $timeZone));
 		$this->assertTrue($event->onOneMinute());
 
-		$event->setEndDate(new \DateTime('2000-01-01 12:11:59'));
+		$event->setEndDate(new \DateTime('2000-01-01 12:11:59', $timeZone));
 		$this->assertFalse($event->onOneMinute());
-		$event->setEndDate(new \DateTime('2000-01-01 12:13:00'));
+		$event->setEndDate(new \DateTime('2000-01-01 12:13:00', $timeZone));
 		$this->assertFalse($event->onOneMinute());
 
-		$event->setEndDate(new \DateTime('2000-01-01 13:12:00'));
+		$event->setEndDate(new \DateTime('2000-01-01 13:12:00', $timeZone));
 		$this->assertFalse($event->onOneMinute());
-		$event->setEndDate(new \DateTime('2000-01-03 12:12:00'));
+		$event->setEndDate(new \DateTime('2000-01-03 12:12:00', $timeZone));
 		$this->assertFalse($event->onOneMinute());
-		$event->setEndDate(new \DateTime('2000-05-01 12:12:00'));
+		$event->setEndDate(new \DateTime('2000-05-01 12:12:00', $timeZone));
 		$this->assertFalse($event->onOneMinute());
-		$event->setEndDate(new \DateTime('2010-01-01 12:12:00'));
+		$event->setEndDate(new \DateTime('2010-01-01 12:12:00', $timeZone));
 		$this->assertFalse($event->onOneMinute());
 	}
 
 	public function testOnOneDay()
 	{
 		$dm = $this->getDocumentServices()->getDocumentManager();
-		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');
+		$timeZone = $dm->getApplicationServices()->getI18nManager()->getTimeZone();
+
 		/* @var $event \Rbs\Event\Documents\Event */
-		$event->setDate(new \DateTime('2000-01-02 12:12:00'));
-		$event->setEndDate(new \DateTime('2000-01-02 12:12:00'));
+		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');
+		$event->setDate(new \DateTime('2000-01-02 12:12:00', $timeZone));
+		$event->setEndDate(new \DateTime('2000-01-02 12:12:00', $timeZone));
 		$this->assertTrue($event->onOneDay());
-		$event->setEndDate(new \DateTime('2000-01-02 12:13:00'));
+		$event->setEndDate(new \DateTime('2000-01-02 12:13:00', $timeZone));
 		$this->assertTrue($event->onOneDay());
-		$event->setEndDate(new \DateTime('2000-01-02 13:12:00'));
-		$this->assertTrue($event->onOneDay());
-
-		$event->setEndDate(new \DateTime('2000-01-01 23:59:59'));
-		$this->assertFalse($event->onOneDay());
-		$event->setEndDate(new \DateTime('2000-01-02 00:00:00'));
+		$event->setEndDate(new \DateTime('2000-01-02 13:12:00', $timeZone));
 		$this->assertTrue($event->onOneDay());
 
-		$event->setEndDate(new \DateTime('2000-01-02 23:59:59'));
+		$event->setEndDate(new \DateTime('2000-01-01 23:59:59', $timeZone));
+		$this->assertFalse($event->onOneDay());
+		$event->setEndDate(new \DateTime('2000-01-02 00:00:00', $timeZone));
 		$this->assertTrue($event->onOneDay());
-		$event->setEndDate(new \DateTime('2000-01-03 00:00:00'));
+
+		$event->setEndDate(new \DateTime('2000-01-02 23:59:59', $timeZone));
+		$this->assertTrue($event->onOneDay());
+		$event->setEndDate(new \DateTime('2000-01-03 00:00:00', $timeZone));
 		$this->assertFalse($event->onOneDay());
 
-		$event->setEndDate(new \DateTime('2000-05-02 12:12:00'));
+		$event->setEndDate(new \DateTime('2000-05-02 12:12:00', $timeZone));
 		$this->assertFalse($event->onOneDay());
-		$event->setEndDate(new \DateTime('2010-01-02 12:12:00'));
+		$event->setEndDate(new \DateTime('2010-01-02 12:12:00', $timeZone));
 		$this->assertFalse($event->onOneDay());
 	}
 }
