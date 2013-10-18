@@ -4,14 +4,9 @@ namespace Change\Presentation\Themes;
 use Change\Presentation\Interfaces\Page;
 use Change\Presentation\Interfaces\PageTemplate;
 use Change\Presentation\Layout\Layout;
-use Change\Http\Web\Events\PageEvent;
-use Zend\EventManager\EventManager;
-use Change\Http\Web\Result\Page as PageResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * Class DefaultPage
- * @package Change\Presentation\Themes
  * @name \Change\Presentation\Themes\DefaultPage
  */
 class DefaultPage implements Page
@@ -27,14 +22,24 @@ class DefaultPage implements Page
 	protected $identifier;
 
 	/**
-	 * @var \Zend\EventManager\EventManagerInterface
-	 */
-	protected $eventManager;
-
-	/**
 	 * @var \Change\Presentation\Interfaces\ThemeResource
 	 */
 	protected $layoutResource;
+
+	/**
+	 * @var \Change\Presentation\Interfaces\Section
+	 */
+	protected $section;
+
+	/**
+	 * @var string
+	 */
+	protected $title;
+
+	/**
+	 * @var integer
+	 */
+	protected $TTL = 0;
 
 	/**
 	 * @param ThemeManager $themeManager
@@ -44,24 +49,6 @@ class DefaultPage implements Page
 	{
 		$this->themeManager = $themeManager;
 		$this->identifier = $identifier;
-	}
-
-	/**
-	 * Retrieve the event manager
-	 * @api
-	 * @return \Zend\EventManager\EventManagerInterface
-	 */
-	public function getEventManager()
-	{
-		if ($this->eventManager === null)
-		{
-			$this->eventManager = new EventManager('default.theme');
-			$this->eventManager->setSharedManager($this->themeManager->getPresentationServices()->getApplicationServices()
-				->getApplication()->getSharedEventManager());
-			$this->eventManager->attach(Page::EVENT_PAGE_PREPARE, array($this, 'onPrepare'), 5);
-			$this->eventManager->attach(Page::EVENT_PAGE_COMPOSE, array($this, 'onCompose'), 5);
-		}
-		return $this->eventManager;
 	}
 
 	/**
@@ -81,7 +68,8 @@ class DefaultPage implements Page
 	{
 		if ($this->layoutResource === null)
 		{
-			$this->layoutResource = $this->themeManager->getDefault()->getResource('Layout/Page/' . $this->getIdentifier() . '.json');
+			$this->layoutResource = $this->themeManager->getDefault()->getResource('Layout/Page/' . $this->getIdentifier()
+			. '.json');
 			if (!$this->layoutResource->isValid())
 			{
 				throw new \RuntimeException($this->getIdentifier() . '.json resource not found', 999999);
@@ -97,7 +85,6 @@ class DefaultPage implements Page
 	{
 		return $this->getLayoutResource()->getModificationDate();
 	}
-
 
 	/**
 	 * @api
@@ -118,83 +105,13 @@ class DefaultPage implements Page
 	}
 
 	/**
-	 * Required Event params : getPage
-	 * Return A result initialized with : TemplateLayout, ContentLayout
-	 * @param PageEvent $pageEvent
-	 * @return \Change\Http\Web\Result\Page|null
-	 * @throws \RuntimeException
+	 * @param string $title
+	 * @return $this
 	 */
-	public function onPrepare($pageEvent)
+	public function setTitle($title)
 	{
-		if (!$pageEvent instanceof PageEvent || $pageEvent->getPage() !== $this | $pageEvent->getPageResult() !== null)
-		{
-			return null;
-		}
-
-		/* @var $page DefaultPage */
-		$page = $pageEvent->getPage();
-
-		$pageTemplate = $page->getPageTemplate();
-		$result = new PageResult($page->getIdentifier());
-		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-		$this->themeManager->setCurrent($pageTemplate->getTheme());
-
-		$pageTemplate = $page->getPageTemplate();
-
-		$templateLayout = $pageTemplate->getContentLayout();
-		$result->setTemplateLayout($templateLayout);
-		$pageLayout = $page->getContentLayout();
-		$result->setContentLayout($pageLayout);
-
-		return $result;
-	}
-
-
-	/**
-	 * Required Event params : getPage, getTemplateLayout, getContentLayout
-	 * Add Renderer to result
-	 * @param PageEvent $pageEvent
-	 */
-	public function onCompose($pageEvent)
-	{
-		$result = $pageEvent->getPageResult();
-		if ($result instanceof PageResult)
-		{
-			/* @var $page DefaultPage */
-			$page = $pageEvent->getPage();
-
-			$application = $pageEvent->getApplicationServices()->getApplication();
-			$cachePath = $application->getWorkspace()->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
-			$cacheTime = $page->getModificationDate()->getTimestamp();
-
-			if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
-			{
-				$templateLayout = $result->getTemplateLayout();
-				$pageLayout = $result->getContentLayout();
-				$themeManager = $pageEvent->getPresentationServices()->getThemeManager();
-
-				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
-				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
-				{
-					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
-				};
-				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
-				$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $pageLayout, $themeManager, $pageEvent->getApplicationServices()));
-
-				$pageTemplate = $page->getPageTemplate();
-				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
-
-				\Change\Stdlib\File::write($cachePath, $htmlTemplate);
-				touch($cachePath, $cacheTime);
-			}
-
-			$templateManager = $pageEvent->getPresentationServices()->getTemplateManager();
-			$renderer = function () use ($result, $cachePath, $templateManager)
-			{
-				return $templateManager->renderTemplateFile($cachePath, array('pageResult' => $result));
-			};
-			$result->setRenderer($renderer);
-		}
+		$this->title = $title;
+		return $this;
 	}
 
 	/**
@@ -202,7 +119,17 @@ class DefaultPage implements Page
 	 */
 	public function getTitle()
 	{
-		// TODO: Implement getTitle() method.
+		return $this->title;
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @return $this
+	 */
+	public function setSection($section)
+	{
+		$this->section = $section;
+		return $this;
 	}
 
 	/**
@@ -210,6 +137,24 @@ class DefaultPage implements Page
 	 */
 	public function getSection()
 	{
-		// TODO: Implement getSection() method.
+		return $this->section;
+	}
+
+	/**
+	 * @param integer $TTL
+	 * @return $this
+	 */
+	public function setTTL($TTL)
+	{
+		$this->TTL = $TTL;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getTTL()
+	{
+		return $this->TTL;
 	}
 }

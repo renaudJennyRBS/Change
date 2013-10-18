@@ -31,12 +31,7 @@ class Controller extends \Change\Http\Controller
 	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$callback = function ($event)
-		{
-			$composer = new \Change\Http\Web\Events\ComposePage();
-			$composer->execute($event);
-		};
-		$eventManager->attach(Event::EVENT_RESULT, $callback, 5);
+		$eventManager->attach(Event::EVENT_RESULT, array($this, 'onDefaultResult'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
@@ -74,6 +69,22 @@ class Controller extends \Change\Http\Controller
 
 		$event->setPermissionsManager($permissionsManager);
 		return $event;
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultResult(Event $event)
+	{
+		$page = $event->getParam('page');
+		if ($page instanceof Page)
+		{
+			$result = (new \Change\Presentation\Pages\PageManager())->setHttpWebEvent($event)->getPageResult($page);
+			if ($result)
+			{
+				$event->setResult($result);
+			}
+		}
 	}
 
 	/**

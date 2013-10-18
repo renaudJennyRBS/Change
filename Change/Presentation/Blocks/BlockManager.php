@@ -20,6 +20,8 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_INFORMATION = 'block.information';
 
+	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
+
 	/**
 	 * @var PresentationServices
 	 */
@@ -34,6 +36,11 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var array
 	 */
 	protected $blocks;
+
+	/**
+	 * @var \Zend\Cache\Storage\Adapter\AbstractAdapter
+	 */
+	protected $cacheAdapter = false;
 
 	/**
 	 * @param PresentationServices $presentationServices
@@ -77,6 +84,30 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return \Change\Application\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->getPresentationServices()->getApplicationServices();
+	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	protected function getLogging()
+	{
+		return $this->getApplicationServices()->getLogging();
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->getApplicationServices()->getApplication();
+	}
+
+	/**
 	 * @param $name
 	 * @param Callable|null $informationCallback
 	 */
@@ -100,7 +131,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->presentationServices)
 		{
-			$config = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration();
+			$config = $this->getApplication()->getConfiguration();
 			return $config->getEntry('Change/Events/BlockManager', array());
 		}
 		return array();
@@ -206,18 +237,80 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getResult($blockLayout, $parameters, $httpEvent)
 	{
+		$cacheAdapter = $this->getCacheAdapter();
+		if ($cacheAdapter && ($ttl = $parameters->getTTL()) > 0)
+		{
+			$cacheAdapter->getOptions()->setTtl($ttl);
+			$key = md5(serialize($parameters));
+			if ($cacheAdapter->hasItem($key))
+			{
+				$result = $cacheAdapter->getItem($key);
+				$logging = $this->getLogging();
+				$logging->info(__METHOD__ . '(' . $blockLayout->getName() . ', ' . $blockLayout->getId() . ', ' . $key . ')');
+			}
+			else
+			{
+				$result = $this->dispatchExecute($blockLayout, $parameters, $httpEvent);
+				$cacheAdapter->addItem($key, $result);
+			}
+			return $result;
+		}
+		return $this->dispatchExecute($blockLayout, $parameters, $httpEvent);
+	}
+
+	/**
+	 * @param \Change\Presentation\Layout\Block $blockLayout
+	 * @param Parameters $parameters
+	 * @param \Change\Http\Web\Event $httpEvent
+	 * @return BlockResult|null
+	 */
+	protected function dispatchExecute($blockLayout, $parameters, $httpEvent)
+	{
 		$eventManager = $this->getEventManager();
-		$event = new Event(static::composeEventName(static::EVENT_EXECUTE, $blockLayout->getName()), $this, $httpEvent->getParams());
+		$event = new Event(static::composeEventName(static::EVENT_EXECUTE,
+			$blockLayout->getName()), $this, $httpEvent->getParams());
 		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
 		$event->setUrlManager($httpEvent->getUrlManager());
-		$results = $eventManager->trigger($event, function ($result)
-		{
-			return $result instanceof BlockResult;
-		});
-		$result = ($results->stopped()) ? $results->last() : $event->getBlockResult();
+		$eventManager->trigger($event);
+
+		$result = $event->getBlockResult();
 		return ($result instanceof BlockResult) ? $result : null;
+	}
+
+	/**
+	 * @return \Zend\Cache\Storage\Adapter\AbstractAdapter|null
+	 */
+	public function getCacheAdapter()
+	{
+		if (false === $this->cacheAdapter)
+		{
+			$this->cacheAdapter = null;
+			$configuration = $this->getApplication()->getConfiguration();
+			if ($configuration->getEntry('Change/Cache/block'))
+			{
+				$eventManager = $this->getEventManager();
+				$event = new \Zend\EventManager\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
+				$eventManager->trigger($event);
+				$cache = $event->getParam('cacheAdapter');
+				if ($cache instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter)
+				{
+					$this->cacheAdapter =  $cache;
+				}
+			}
+		}
+		return $this->cacheAdapter;
+	}
+
+	/**
+	 * @param \Zend\Cache\Storage\Adapter\AbstractAdapter $cacheAdapter
+	 * @return $this
+	 */
+	public function setCacheAdapter(\Zend\Cache\Storage\Adapter\AbstractAdapter $cacheAdapter = null)
+	{
+		$this->cacheAdapter = $cacheAdapter;
+		return $this;
 	}
 }

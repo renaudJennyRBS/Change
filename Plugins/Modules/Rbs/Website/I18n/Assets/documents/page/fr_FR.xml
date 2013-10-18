@@ -7,4 +7,10 @@
 	<key id="open-page-editor">ouvrir l'éditeur de page</key>
 	<key id="content-zones">zones de contenu</key>
 	<key id="full-screen">plein écran</key>
+
+	<key id="usecache">cache de page complete</key>
+	<key id="ttl">durée du cache</key>
+	<key id="ttl-help">Indiquer une durée en secondes, ou 0 pour désactiver le cache</key>
+
+	<key id="https">activer https</key>
 </i18n>

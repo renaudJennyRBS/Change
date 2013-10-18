@@ -78,7 +78,7 @@ class Block
 		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters(), 'blockId' => $blockLayout->getId()));
 		$templateName = $this->execute($event, $attributes);
 
-		if (is_string($templateName) && !$result->getHtmlCallback())
+		if (is_string($templateName) && !$result->hasHtml())
 		{
 			$presentationServices = $event->getPresentationServices();
 			$templateModuleName = $this->getTemplateModuleName();
@@ -90,9 +90,10 @@ class Block
 			$this->setTemplateRenderer($presentationServices, $result, $attributes->getArrayCopy(), $templateModuleName,
 				$templateName);
 		}
-		if (!$result->getHtmlCallback())
+
+		if (!$result->hasHtml())
 		{
-			$result->setHtmlCallback(function () { return ''; });
+			$result->setHtml('');
 		}
 	}
 
@@ -123,11 +124,7 @@ class Block
 			->getTemplateRelativePath($templateModuleName, 'Blocks/' . $templateName);
 
 		$templateManager = $presentationServices->getTemplateManager();
-		$callback = function () use ($templateManager, $relativePath, $attributes)
-		{
-			return $templateManager->renderThemeTemplateFile($relativePath, $attributes);
-		};
-		$result->setHtmlCallback($callback);
+		$result->setHtml($templateManager->renderThemeTemplateFile($relativePath, $attributes));
 	}
 
 	/**

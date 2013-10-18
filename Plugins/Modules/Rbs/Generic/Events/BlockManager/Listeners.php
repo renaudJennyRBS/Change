@@ -20,6 +20,7 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
+
 		new RegisterByBlockName('Rbs_Review_ReviewList', true, $events);
 		new RegisterByBlockName('Rbs_Review_PostReview', true, $events);
 		new RegisterByBlockName('Rbs_Review_PromotedReviewList', true, $events);
@@ -38,6 +39,12 @@ class Listeners implements ListenerAggregateInterface
 		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
 		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
+
+		$callback = function($event)
+		{
+			(new \Change\Presentation\Blocks\FileCacheAdapter())->onGetCacheAdapter($event);
+		};
+		$events->attach(\Change\Presentation\Blocks\BlockManager::EVENT_GET_CACHE_ADAPTER, $callback, 5);
 	}
 
 	/**

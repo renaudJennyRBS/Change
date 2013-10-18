@@ -16,9 +16,6 @@
 			"default-timezone": "Europe\/Paris",
 			"synchro": {}
 		},
-		"Injection": {
-			"class": {}
-		},
 		"Db": {
 			"use": "default",
 			"default": {
@@ -56,6 +53,10 @@
 		},
 		"User": {
 			"salt": "a6CHo80Qzg5DOe"
+		},
+		"Cache": {
+			"block": true,
+			"page": true
 		}
 	}
 }
