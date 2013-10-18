@@ -26,7 +26,7 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function onSuccess(\Zend\EventManager\Event $event)
 	{
-		$manager = new \Rbs\Admin\Manager( $event->getParam('applicationServices'), $event->getParam('documentServices'));
+		$manager = new \Rbs\Admin\Manager($event->getParam('applicationServices'), $event->getParam('documentServices'));
 		$manager->getResources();
 		$manager->dumpResources();
 	}
@@ -47,20 +47,18 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
-		$projectPath = $application->getWorkspace()->projectPath();
-		$documentRootPath = $configuration->getEntry('Change/Install/documentRootPath', $projectPath);
-
-		if (is_dir($documentRootPath))
+		$webBaseDirectory = $application->getWorkspace()->composeAbsolutePath($configuration->getEntry('Change/Install/webBaseDirectory'));
+		if (is_dir($webBaseDirectory))
 		{
 			$srcPath = __DIR__ . '/Assets/admin.php';
 			$content = \Change\Stdlib\File::read($srcPath);
-			$content = str_replace('__DIR__', var_export($projectPath, true), $content);
-			\Change\Stdlib\File::write($documentRootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+			$content = str_replace('__DIR__', var_export($application->getWorkspace()->projectPath(), true), $content);
+			\Change\Stdlib\File::write($webBaseDirectory . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 		}
 		else
 		{
-			throw new \RuntimeException('Invalid document root path: ' . $documentRootPath .
-			'. Check "Change/Install/documentRootPath" configuration entry.', 999999);
+			throw new \RuntimeException('Invalid document root path: ' . $webBaseDirectory .
+			'. Check "Change/Install/webBaseDirectory" configuration entry.', 999999);
 		}
 	}
 

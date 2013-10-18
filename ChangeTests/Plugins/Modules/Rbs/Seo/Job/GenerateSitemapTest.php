@@ -91,14 +91,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(1, $sitemapIndexXml->getElementsByTagName('loc')->length);
 		$locUrl = $sitemapIndexXml->getElementsByTagName('loc')->item(0)->textContent;
 		$this->assertNotEmpty($locUrl);
-		//TODO: this test works, but should we actually use it?
-		/*
-		$http = $website->getUrlManager($lcid)->getSelf();
-		$expectedUrl = $http->getScheme() . '://' . $http->getHost() . ':' . $http->getPort() .
-			$this->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl') .
-			'/Rbs/Seo/sitemap.' . $websiteId . '.' . $lcid . '.1.xml';
-		$this->assertEquals($expectedUrl, $locUrl);
-		*/
+
 		$this->assertEquals(1, $sitemapIndexXml->getElementsByTagName('lastmod')->length);
 		$lastmod = $sitemapIndexXml->getElementsByTagName('lastmod')->item(0)->textContent;
 		$lastmodDate = \Datetime::createFromFormat(\DateTime::W3C, $lastmod);
@@ -220,10 +213,9 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getAssetSeoPath($filename = null)
 	{
-		$rootPath = $this->getApplication()->getConfiguration()->getEntry('Change/Install/documentRootPath');
-		$assetPath = $this->getApplication()->getConfiguration()->getEntry('Change/Install/resourceBaseUrl');
-		$robotsTxtFilePath = $this->getApplication()->getWorkspace()
-			->composePath($rootPath, $assetPath, 'Rbs', 'Seo', $filename);
+		$workspace =  $this->getApplication()->getWorkspace();
+		$webBaseDirectory = $this->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
+		$robotsTxtFilePath = $workspace->composeAbsolutePath($webBaseDirectory, 'Assets', 'Rbs', 'Seo', $filename);
 		return $robotsTxtFilePath;
 	}
 }

@@ -6,7 +6,6 @@ namespace Rbs\Media\Setup;
  */
 class Install extends \Change\Plugins\InstallBase
 {
-
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
@@ -15,15 +14,24 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
+		$webBaseDirectory = $configuration->getEntry('Change/Install/webBaseDirectory', '');
+		if (!empty($webBaseDirectory))
+		{
+			$formattedPath = $application->getWorkspace()->composePath($webBaseDirectory, 'Imagestorage', 'images');
+		}
+		else
+		{
+			$formattedPath = $application->getWorkspace()->composePath('Imagestorage', 'images');
+		}
 		$images = $configuration->getEntry('Change/Storage/images', array());
 		$images = array_merge( array(
 			'class' => '\\Change\\Storage\\Engines\\LocalImageStorage',
-			'basePath' => $application->getWorkspace()->appPath('Storage', 'images'),
-			'formattedPath' => $application->getWorkspace()->cachePath('Imagestorage', 'images'),
+			'basePath' => 'App/Storage/images',
+			'formattedPath' => $formattedPath,
 			'useDBStat' => true,
 			'baseURL' => "/index.php"
 		), $images);
-		$configuration->addPersistentEntry('Change/Storage/images', $images, \Change\Configuration\Configuration::PROJECT);
+		$configuration->addPersistentEntry('Change/Storage/images', $images);
 	}
 
 

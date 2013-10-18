@@ -168,4 +168,10 @@ class LocalImageStorage extends LocalStorage
 	{
 		return $this->formattedPath;
 	}
+
+	public function setStorageManager(\Change\Storage\StorageManager $storageManager)
+	{
+		parent::setStorageManager($storageManager);
+		$this->formattedPath = $storageManager->getWorkspace()->composeAbsolutePath($this->formattedPath);
+	}
 }

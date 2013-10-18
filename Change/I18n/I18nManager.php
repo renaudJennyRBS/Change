@@ -847,11 +847,11 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * Format a date. The format parameter
+	 * Format a date.
 	 * @api
 	 * @param string $LCID
 	 * @param \DateTime $gmtDate
-	 * @param string $format
+	 * @param string $format using this syntax: http://userguide.icu-project.org/formatparse/datetime
 	 * @param \DateTimeZone $timeZone
 	 * @return string
 	 */

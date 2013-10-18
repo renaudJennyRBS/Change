@@ -1,6 +1,7 @@
 {
 	"Change":{
 		"Application":{
+			"development-mode":false,
 			"php-cli-path":"/usr/bin/php"
 		},
 		"Db":{
@@ -14,11 +15,8 @@
 			}
 		},
 		"Install":{
-			"documentRootPath":"<current_dir>/ChangeTests/UnitTestWorkspace",
-			"resourceBaseUrl":"\/Assets"
-		},
-		"Application":{
-			"development-mode":false
+			"webBaseDirectory":"ChangeTests/UnitTestWorkspace/www",
+			"webBaseURLPath":""
 		},
 		"I18n":{
 			"supported-lcids":["fr_FR", "en_US"],

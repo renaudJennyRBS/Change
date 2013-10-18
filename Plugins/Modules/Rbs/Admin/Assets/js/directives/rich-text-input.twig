@@ -1,8 +1,8 @@
 <div class="tabbable">
 	<ul ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">
 		<li class="active"><a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">{{ i18n('m.rbs.admin.richtext.editor', ['ucf']) }}</a></li>
-		<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">{{ i18n('m.rbs.admin.richtext.preview', ['ucf']) }} <i ng-show="previewing" class="icon-spinner icon-spin"></i></a></li>
-		</ul>
+		<li><a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">{{ i18n('m.rbs.admin.richtext.preview', ['ucf']) }} <span ng-if="previewing"><i class="icon-spinner icon-spin"></i></span></a></li>
+	</ul>
 	<div class="tab-content">
 		<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">
 			<div class="btn-toolbar" ng-if="! readOnly">
@@ -13,7 +13,7 @@
 								</span>
 
 				<div class="btn-group">
-					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" href="#">{{ i18n('m.rbs.admin.richtext.title', ['ucf']) }} <span class="caret"></span></button>
+					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.richtext.title', ['ucf']) }} <span class="caret"></span></button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(0)">{{ i18n('m.rbs.admin.richtext.heading-level-0', ['ucf']) }}</a></li>
 						<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(1)">{{ i18n('m.rbs.admin.richtext.heading-level-1', ['ucf']) }}</a></li>
@@ -22,9 +22,8 @@
 						<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(4)">{{ i18n('m.rbs.admin.richtext.heading-level-4', ['ucf']) }}</a></li>
 						<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(5)">{{ i18n('m.rbs.admin.richtext.heading-level-5', ['ucf']) }}</a></li>
 						<li><a tabindex="-1" href="javascript:;" ng-click="mdHeading(6)">{{ i18n('m.rbs.admin.richtext.heading-level-6', ['ucf']) }}</a></li>
-						</ul>
-					</div>
-
+					</ul>
+				</div>
 				<div class="btn-group">
 					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.richtext.bold', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdBold()"><i class="icon-bold"></i></button>
 					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.richtext.italic', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdItalic()"><i class="icon-italic"></i></button>
@@ -50,20 +49,20 @@
 
 				<div class="btn-group" ng-if="availableSelectors.usergroups">
 					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" ng-class="{active:currentSelector=='usergroup'}" ng-click="toggleSelector('usergroup')"><i class="icon-group"></i></button>
-					</div>
-
 				</div>
 
-			<div class="media-picker"></div>
-			<div class="link-picker"></div>
-			<div class="user-picker"></div>
-			<div class="usergroup-picker"></div>
+			</div>
 
-			<div data-role="ace-editor"></div>
-			</div>
-		<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">
-			<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>
-			<div class="preview-content"></div>
-			</div>
+		<div class="media-picker"></div>
+		<div class="link-picker"></div>
+		<div class="user-picker"></div>
+		<div class="usergroup-picker"></div>
+
+		<div data-role="ace-editor"></div>
+	</div>
+	<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">
+		<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>
+		<div class="preview-content"></div>
 		</div>
 	</div>
+</div>

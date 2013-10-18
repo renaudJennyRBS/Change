@@ -1,4 +1,5 @@
 {
+	"type":"module",
 	"vendor": "Rbs",
 	"name": "User",
 	"package": "Core"

@@ -16,20 +16,24 @@ class GetI18nPackage
 	{
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$modules = $event->getApplicationServices()->getPluginManager()->getModules();
-		$LCID = $i18nManager->getLCID();
+		$LCID = $event->getRequest()->getQuery('LCID');
 		$packages = array();
-		foreach ($modules as $module)
+
+		if ($i18nManager->isSupportedLCID($LCID))
 		{
-			$pathParts = array('m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'admin', 'js');
-			$keys = $i18nManager->getDefinitionKeys($LCID, $pathParts);
-			if (count($keys))
+			foreach ($modules as $module)
 			{
-				$package = array();
-				foreach ($keys as $key)
+				$pathParts = array('m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'admin', 'js');
+				$keys = $i18nManager->getDefinitionKeys($LCID, $pathParts);
+				if (count($keys))
 				{
-					$package[$key->getId()] = $key->getText();
+					$package = array();
+					foreach ($keys as $key)
+					{
+						$package[$key->getId()] = $key->getText();
+					}
+					$packages[implode('.', $pathParts)] = $package;
 				}
-				$packages[implode('.', $pathParts)] = $package;
 			}
 		}
 

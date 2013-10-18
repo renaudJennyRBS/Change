@@ -266,7 +266,7 @@ class PluginManager
 			require_once $basePath . DIRECTORY_SEPARATOR . 'Plugin.php';
 			if (class_exists($className, false))
 			{
-				$plugin = new $className($basePath, $type, $vendor, $shortName);
+				$plugin = new $className($type, $vendor, $shortName);
 				if (!($plugin instanceof Plugin))
 				{
 					$plugin = null;
@@ -275,12 +275,14 @@ class PluginManager
 		}
 		else
 		{
-			$plugin = new Plugin($basePath, $type, $vendor, $shortName);
+			$plugin = new Plugin($type, $vendor, $shortName);
 		}
+
 		if ($plugin && isset($config['package']))
 		{
 			$plugin->setPackage($config['package']);
 		}
+
 		return $plugin;
 	}
 
@@ -298,14 +300,13 @@ class PluginManager
 				$pluginsDatas = unserialize(file_get_contents($compiledPluginsPath));
 				foreach($pluginsDatas as $pluginData)
 				{
-					$basePath = $pluginData['basePath'];
 					$type = $pluginData['type'];
 					$vendor = $pluginData['vendor'];
 					$shortName = $pluginData['shortName'];
 					$className = $pluginData['className'];
 
 					/* @var $plugin Plugin */
-					$plugin = new $className($basePath, $type, $vendor, $shortName);
+					$plugin = new $className($type, $vendor, $shortName);
 					if (array_key_exists('registrationDate', $pluginData))
 					{
 						$plugin->setRegistrationDate($pluginData['registrationDate']);

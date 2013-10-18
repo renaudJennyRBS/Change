@@ -1,0 +1,22 @@
+<div>
+	<rbs-workspace-config menu="Rbs_Event">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Event'|rbsURL:'home' =)">{{ i18n('m.rbs.event.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Event_News'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.event.documents.news-list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<page-header title="{{ i18nAttr('m.rbs.event.documents.news-list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Event_News" filter-query="query" text-search="textSearch"></search-filters>
+
+	<div class="add-elements-bar">
+		<a href ng-href="(= 'Rbs_Event_News' | documentURL:'new' =)">
+			{{ i18n('m.rbs.event.documents.news-create', ['ucf']) }}
+		</a>
+	</div>
+
+	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Event_News" filter-query="query" publishable="true">
+		<column name="label" primary="true"></column>
+		<column name="date">(= doc.date|rbsDateTime =)</column>
+	</rbs-document-list>
+</div>

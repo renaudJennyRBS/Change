@@ -25,9 +25,12 @@ class Listeners implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_RESOURCES, array($this, 'registerResources'));
 	}
 
+
+	/**
+	 * @param \Rbs\Admin\Event $event
+	 */
 	public function registerResources(Event $event)
 	{
-
 		$manager = $event->getManager();
 		$i18nManager = $manager->getApplicationServices()->getI18nManager();
 		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
@@ -38,7 +41,7 @@ class Listeners implements ListenerAggregateInterface
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
 		if ($plugin)
 		{
-			$pluginPath = $plugin->getBasePath();
+			$pluginPath = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace());
 			$jsAssets = new AssetCollection();
 			$path = $pluginPath . '/Assets/lib/moment/i18n/' . $lcid . '.js';
 			if (file_exists($path))

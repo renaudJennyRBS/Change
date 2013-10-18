@@ -1,7 +1,6 @@
 <?php
 namespace Change\Db;
 
-use Change\Configuration\Configuration;
 use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
@@ -30,9 +29,9 @@ abstract class DbProvider
 	protected $connectionInfos;
 
 	/**
-	 * @var \Change\Configuration\Configuration
+	 * @var \Change\Application
 	 */
-	protected $configuration;
+	protected $application;
 
 	/**
 	 * @var TransactionManager
@@ -103,7 +102,7 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$entry = $this->configuration->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
+			$entry = $this->getApplication()->getConfiguration()->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
 			if (is_array($entry))
 			{
 				foreach($entry as $className)
@@ -124,34 +123,29 @@ abstract class DbProvider
 	public abstract function getType();
 
 	/**
-	 * @param Configuration $config
-	 * @throws \RuntimeException
-	 * @return \Change\Db\DbProvider
+	 * @param \Change\Application $application
+	 * @return $this
 	 */
-	public static function newInstance(Configuration $config)
+	public function setApplication(\Change\Application $application)
 	{
-		$section = $config->getEntry('Change/Db/use', 'default');
-		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
-		if (!isset($connectionInfos['dbprovider']))
-		{
-			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
-		}
-		$className = $connectionInfos['dbprovider'];
-		$class = new $className($connectionInfos, $config);
-		return $class;
+		$this->application = $application;
+		$this->setSharedEventManager($application->getSharedEventManager());
+		return $this;
 	}
 
 	/**
-	 * @param array $connectionInfos
-	 * @param Configuration $configuration
+	 * @return \Change\Application
 	 */
-	public function __construct(array $connectionInfos, Configuration $configuration = null)
+	public function getApplication()
 	{
-		$this->configuration = $configuration;
-		$this->connectionInfos = $connectionInfos;
+		return $this->application;
+	}
+
+
+	public function __construct()
+	{
 		$this->timers = array('init' => microtime(true),
-			'select' => 0, 'exec' => 0,
-			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
+			'select' => 0, 'exec' => 0, 'longTransaction' => 0.2);
 	}
 
 	/**
@@ -191,7 +185,7 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @return array
+	 * @return \ArrayObject
 	 */
 	public function getConnectionInfos()
 	{
@@ -199,11 +193,15 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @param array $connectionInfos
+	 * @param \ArrayObject $connectionInfos
 	 */
 	public function setConnectionInfos($connectionInfos)
 	{
 		$this->connectionInfos = $connectionInfos;
+		if (isset($connectionInfos['longTransaction']))
+		{
+			$this->timers['longTransaction'] = floatval($connectionInfos['longTransaction']);
+		}
 	}
 
 	/**

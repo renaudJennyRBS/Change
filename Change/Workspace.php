@@ -148,6 +148,29 @@ class Workspace
 
 	/**
 	 * @api
+	 * @return string
+	 */
+	public function composeAbsolutePath()
+	{
+		$path = $this->composePath(func_get_args());
+		if (empty($path))
+		{
+			return $this->projectBase();
+		}
+
+		if ($path[0] !== DIRECTORY_SEPARATOR)
+		{
+			if (preg_match('/^[a-zA-Z]:/', $path))
+			{
+				return $path;
+			}
+			return $this->projectPath($path);
+		}
+		return $path;
+	}
+
+	/**
+	 * @api
 	 * @param string|string[] $part1
 	 * @param string|string[] $_ [optional]
 	 * return string
@@ -159,7 +182,14 @@ class Workspace
 		{
 			if (is_array($pathPartArg))
 			{
-				$pathPart = call_user_func_array(array($this, 'composePath'), $pathPartArg);
+				if (count($pathPartArg))
+				{
+					$pathPart = call_user_func_array(array($this, 'composePath'), $pathPartArg);
+				}
+				else
+				{
+					$pathPart = '';
+				}
 			}
 			else
 			{
