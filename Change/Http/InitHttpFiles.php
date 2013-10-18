@@ -37,8 +37,8 @@ class InitHttpFiles
 		$rootPath = $workspace->composeAbsolutePath($webBaseDirectory);
 		\Change\Stdlib\File::write($rootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
 
-		$editConfig->addPersistentEntry('Change/Install/webBaseDirectory', $webBaseDirectory);
-		$editConfig->addPersistentEntry('Change/Install/webBaseURLPath', $webBaseURLPath);
+		$editConfig->addPersistentEntry('Change/Install/webBaseDirectory', $webBaseDirectory, \Change\Configuration\Configuration::PROJECT);
+		$editConfig->addPersistentEntry('Change/Install/webBaseURLPath', $webBaseURLPath, \Change\Configuration\Configuration::PROJECT);
 
 		$editConfig->save();
 

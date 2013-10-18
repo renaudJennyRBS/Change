@@ -1,20 +1,19 @@
 <?php
 namespace Rbs\Dev\Events;
 
-use Zend\Form\Annotation\Object;
-
 /**
  * @name \Rbs\Dev\Events\DevLogging
  */
 class DevLogging
 {
-
+	/**
+	 * @var \Change\Logging\Logging
+	 */
 	protected $logging = null;
 
-	public function __construct()
-	{
-	}
-
+	/**
+	 * @return \Change\Logging\Logging
+	 */
 	protected function getLogging()
 	{
 		if ($this->logging === null)
@@ -28,13 +27,23 @@ class DevLogging
 		return $this->logging;
 	}
 
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 * @return bool
+	 */
 	public function logBeginEvent(\Zend\EventManager\Event $event)
 	{
 		$this->getLogging()->debug('START of event ' . $event->getName() . ' thrown by ' . get_class($event->getTarget()));
+		return true;
 	}
 
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 * @return bool
+	 */
 	public function logEndEvent(\Zend\EventManager\Event $event)
 	{
 		$this->getLogging()->debug('END of event ' . $event->getName() . ' thrown by ' . get_class($event->getTarget()));
+		return true;
 	}
 }

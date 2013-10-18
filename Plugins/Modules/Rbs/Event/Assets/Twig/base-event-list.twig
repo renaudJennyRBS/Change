@@ -1,0 +1,16 @@
+<ul class="list-unstyled">
+	{% for item in items %}
+		{% set doc = item.doc %}
+		{% set docUrl = item.url %}
+		{% set categories = item.categories %}
+		<li>
+			{% if item.type == 'news'  %}
+				{% include 'Rbs_Event/Items/news-small.twig' %}
+			{% elseif item.type == 'event' %}
+				{% include 'Rbs_Event/Items/event-small.twig' %}
+			{% endif %}
+		</li>
+	{% endfor %}
+</ul>
+
+{% include 'Rbs_Generic/pagination.twig' %}

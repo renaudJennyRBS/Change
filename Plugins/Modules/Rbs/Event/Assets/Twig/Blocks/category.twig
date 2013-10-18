@@ -1,0 +1,3 @@
+<h1>{{ category.currentLocalization.title }}</h1>
+{% if category.currentLocalization.description %}{{ category.currentLocalization.description|richText }}{% endif %}
+{% include 'Rbs_Event/base-event-list.twig' %}

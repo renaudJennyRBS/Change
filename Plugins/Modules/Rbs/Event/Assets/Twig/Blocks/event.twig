@@ -1,0 +1,30 @@
+{% import 'Rbs_Event/macros.twig' as eventMacros %}
+<article itemscope="" itemtype="http://schema.org/Event" class="news-details">
+	<header>
+		<h1 itemprop="name">
+			{% if isOnDetailPage %}<a href="{{ canonicalURL(doc) }}">{% endif %}
+				{{ doc.currentLocalization.title }}
+			{% if isOnDetailPage %}</a>{% endif %}
+		</h1>
+		<p class="event-date">
+			{% set showTime = parameters.showTime %}
+			{% include 'Rbs_Event/event-dates.twig' %}
+		</p>
+	</header>
+
+	{% if doc.detailVisual %}<img itemprop="image" class="news-visual" src="{{ eventMacros.detailVisualURL(doc.detailVisual) }}" alt="" />{% endif %}
+
+	{% if doc.currentLocalization.summary %}<div itemprop="description" class="news-summary">{{ doc.currentLocalization.summary|richText }}</div>{% endif %}
+	{% if doc.currentLocalization.text %}<div itemprop="description" class="news-text">{{ doc.currentLocalization.text|richText }}</div>{% endif %}
+
+	{% if categories|length %}
+		<footer>
+			<dl class="list-inline list-divided">
+				<dt>{{ i18n('m.rbs.event.fo.categories', ['ucf']) }}</dt>
+				{% for category in categories %}
+					<dd><a href="{{ category.url }}">{{ category.doc.currentLocalization.title }}</a></dd>
+				{% endfor %}
+			</dl>
+		</footer>
+	{% endif %}
+</article>
