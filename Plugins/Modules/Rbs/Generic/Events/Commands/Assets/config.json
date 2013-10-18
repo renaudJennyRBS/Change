@@ -68,5 +68,38 @@
 				"default": "http://localhost/index.php/"
 			}
 		}
+	},
+	"rbs_user:add-user":{
+		"description": "Add a new user",
+		"dev": true,
+		"options":{
+			"realms": {
+				"description": "authentication realm",
+				"default": null,
+				"shortcut": null
+			},
+			"is-root": {
+				"description": "adds all priviledges to the user",
+				"default": false,
+				"shortcut": null
+			},
+			"password": {
+				"description": "password",
+				"default": null,
+				"shortcut": "p"
+			}
+		},
+		"arguments":{
+			"login": {
+				"description": "user login",
+				"required": true,
+				"default": null
+			},
+			"email": {
+				"description": "user e-mail",
+				"required": true,
+				"default": null
+			}
+		}
 	}
 }

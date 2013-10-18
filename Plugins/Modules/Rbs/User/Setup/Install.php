@@ -17,55 +17,40 @@ class Install extends \Change\Plugins\InstallBase
 	{
 		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
 
-		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_User');
-		$user = $query->andPredicates($query->eq('login', 'admin'))->getFirstDocument();
-		if (!$user)
+		$transactionManager = $applicationServices->getTransactionManager();
+		try
 		{
-			$transactionManager = $applicationServices->getTransactionManager();
-			try
+			$transactionManager->begin();
+
+			$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
+
+			$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
+			if ($query->andPredicates($query->eq('realm', 'Rbs_Admin'))->getCountDocuments() === 0)
 			{
-				$transactionManager->begin();
-
-				$groupModel = $documentServices->getModelManager()->getModelByName('Rbs_User_Group');
-
 				/* @var $group \Rbs\User\Documents\Group */
 				$group = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group->setLabel('Backoffice');
 				$group->setRealm('Rbs_Admin');
 				$group->setIdentifier('backoffice');
 				$group->create();
+			}
 
+			$query = new \Change\Documents\Query\Query($documentServices, $groupModel);
+			if ($query->andPredicates($query->eq('realm', 'web'))->getCountDocuments() === 0)
+			{
 				/* @var $group2 \Rbs\User\Documents\Group */
 				$group2 = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($groupModel);
 				$group2->setLabel('Site Web');
 				$group2->setRealm('web');
 				$group2->setIdentifier('web');
 				$group2->create();
-
-				/* @var $user \Rbs\User\Documents\User */
-				$user = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
-				$user->setLabel('Administrator');
-				$user->setEmail('admin@temporary.fr');
-				$user->setLogin('admin');
-				$user->setPassword('admin');
-				$user->setIdentifier('admin');
-				$user->setActive(true);
-				$user->setGroups(array($group, $group2));
-				$user->create();
-
-				$transactionManager->commit();
 			}
-			catch (\Exception $e)
-			{
-				throw $transactionManager->rollBack($e);
-			}
+
+			$transactionManager->commit();
 		}
-
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($applicationServices);
-		if (!$pm->hasRule($user->getId()))
+		catch (\Exception $e)
 		{
-			$pm->addRule($user->getId());
+			throw $transactionManager->rollBack($e);
 		}
 	}
 

@@ -51,6 +51,13 @@ class Listeners implements ListenerAggregateInterface
 			$cmd->execute($event);
 		};
 		$events->attach('rbs_website:add-default-website', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Rbs\User\Commands\AddUser();
+			$cmd->execute($event);
+		};
+		$events->attach('rbs_user:add-user', $callback);
 	}
 
 	/**
