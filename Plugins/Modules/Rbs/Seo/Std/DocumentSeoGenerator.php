@@ -41,7 +41,6 @@ class DocumentSeoGenerator
 						'label' => $website->getLabel(),
 						'generate' => true
 					];
-					//TODO: should we se generate to false by default?
 				}
 				$documentSeo->setSitemapGenerateForWebsites($sitemapGenerateForWebsites);
 

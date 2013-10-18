@@ -95,7 +95,8 @@
 
 
 	app.config(['OAuthServiceProvider', function (OAuth) {
-		var oauthUrl = '/rest.php/OAuth/';
+		var absoluteUrl = window.location.href;
+		var oauthUrl =  absoluteUrl.replace(/admin\.php.*/, 'rest.php/OAuth/');
 		OAuth.setBaseUrl(oauthUrl);
 		OAuth.setRealm(__change.OAuth.realm);
 
