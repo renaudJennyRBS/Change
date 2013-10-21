@@ -1,0 +1,27 @@
+<form name="form" ng-submit="submit()" novalidate="">
+	<rbs-field-text property="title" required="true"
+		label="{{ i18nAttr('m.rbs.event.documents.event.title', ['ucf']) }}">
+	</rbs-field-text>
+
+	<hr />
+
+	<rbs-field-rich-text property="summary" required="false" profile="Website"
+		label="{{ i18nAttr('m.rbs.event.documents.event.summary', ['ucf']) }}">
+	</rbs-field-rich-text>
+
+	<rbs-field-rich-text property="text" required="false" profile="Website"
+		label="{{ i18nAttr('m.rbs.event.documents.event.text', ['ucf']) }}">
+	</rbs-field-rich-text>
+
+	<hr />
+
+	<rbs-field-date property="startPublication"
+		label="{{ i18nAttr('m.rbs.event.documents.event.startPublication', ['ucf']) }}">
+	</rbs-field-date>
+
+	<rbs-field-date property="endPublication"
+		label="{{ i18nAttr('m.rbs.event.documents.event.endPublication', ['ucf']) }}">
+	</rbs-field-date>
+
+	<form-button-bar></form-button-bar>
+</form>
