@@ -71,7 +71,6 @@
 	},
 	"rbs_user:add-user":{
 		"description": "Add a new user",
-		"dev": true,
 		"options":{
 			"realms": {
 				"description": "authentication realm",
