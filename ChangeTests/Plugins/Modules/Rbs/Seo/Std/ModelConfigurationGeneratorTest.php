@@ -29,7 +29,7 @@ class ModelConfigurationGeneratorTest extends \ChangeTests\Change\TestAssets\Tes
 		foreach ($modelManager->getModelsNames() as $modelName)
 		{
 			$model = $modelManager->getModelByName($modelName);
-			if ($model->isPublishable())
+			if ($model->isPublishable() && !$model->isAbstract())
 			{
 				$publishableModelCount++;
 			}
