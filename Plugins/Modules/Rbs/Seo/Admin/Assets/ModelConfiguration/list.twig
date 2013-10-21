@@ -1,0 +1,22 @@
+<div>
+	<rbs-workspace-config menu="Rbs_Seo">
+		<rbs-breadcrumb-config>
+			<location
+				href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18n('m.rbs.seo.admin.js.module-name', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<page-header sub-title="{{ i18nAttr('m.rbs.seo.admin.modelconfiguration', ['ucf']) }}"></page-header><br />
+	<h3>{{ i18nAttr('m.rbs.seo.admin.document-seo-auto-generation', ['ucf']) }}</h3>
+	<search-filters model="Rbs_Seo_ModelConfiguration" filter-query="query" text-search="textSearch"></search-filters>
+
+	<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false">
+		<quick-actions></quick-actions>
+		<column name="label" primary="true" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.label', ['ucf']) }}"></column>
+		<column name="documentSeoAutoGenerate" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.document-seo-auto-generate', ['ucf']) }}">
+			<switch data-ng-model="doc.documentSeoAutoGenerate" disabled></switch>
+		</column>
+		<column name="sitemapDefaultChangeFrequency" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.sitemap-default-change-frequency', ['ucf']) }}"></column>
+		<column name="sitemapDefaultPriority" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.sitemap-default-priority', ['ucf']) }}"></column>
+	</rbs-document-list>
+</div>

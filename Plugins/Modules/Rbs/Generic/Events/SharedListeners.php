@@ -52,6 +52,24 @@ class SharedListeners implements SharedListenerAggregateInterface
 			(new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->addTasks($event);
 		};
 		$events->attach('Documents', 'updateRestResult', $callback, 5);
+
+		$callback = function (\Zend\EventManager\Event $event)
+		{
+			(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
+		};
+		$events->attach('Plugin', 'setupSuccess', $callback, 5);
+
+		$callback = function (DocumentEvent $event)
+		{
+			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
+		};
+		$events->attach('Documents', array(DocumentEvent::EVENT_CREATED), $callback, 5);
+
+		$callback = function (DocumentEvent $event)
+		{
+			(new \Rbs\Seo\Http\Rest\UpdateDocumentLinks())->addLinks($event);
+		};
+		$events->attach('Documents', 'updateRestResult', $callback, 5);
 	}
 
 	/**

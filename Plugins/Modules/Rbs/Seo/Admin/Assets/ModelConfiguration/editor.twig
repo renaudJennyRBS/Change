@@ -1,0 +1,32 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" disabled label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.label', ['ucf']) }}"></rbs-field-text>
+		<rbs-field-text property="modelName" disabled label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.model-name', ['ucf']) }}"></rbs-field-text>
+		<hr />
+
+		<rbs-field-boolean property="documentSeoAutoGenerate" label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.document-seo-auto-generate', ['ucf']) }}"></rbs-field-boolean>
+
+		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.sitemap-default-change-frequency', ['ucf']) }}">
+			<select data-ng-model="document.sitemapDefaultChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
+				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo.sitemap-change-frequency-option', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-float property="sitemapDefaultPriority"
+			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-priority', ['ucf']) }}">
+		</rbs-field-float>
+
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

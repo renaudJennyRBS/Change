@@ -28,11 +28,9 @@
 			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, i18n) {
 
 				if ( ! REST_BASE_URL ) {
-					REST_BASE_URL = $location.protocol() + '://' + $location.host();
-					if ($location.port() !== 80) {
-						REST_BASE_URL += ':' + $location.port();
-					}
-					REST_BASE_URL += '/rest.php/';
+					var absoluteUrl = $location.absUrl();
+					absoluteUrl = absoluteUrl.replace(/admin\.php.*/, 'rest.php/');
+					REST_BASE_URL = absoluteUrl;
 				}
 
 				var language = 'fr_FR';
