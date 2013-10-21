@@ -316,13 +316,13 @@
 			}
 
 			if (! angular.isString(html)) {
-				console.error("MainManu: contents should be an Array or a String.");
+				console.error("MainMenu: contents should be an Array or a String.");
 			}
 
 			html =
 				'<div class="box panel panel-default" data-key="' + key + '">' +
-				'<div class="panel-heading"><h3 class="panel-title">' + title + '</h3></div>' +
-				html +
+					'<div class="panel-heading"><h3 class="panel-title">' + title + '</h3></div>' +
+					html +
 				'</div>';
 			if (scope) {
 				$compile(html)(scope, function (clone) {
