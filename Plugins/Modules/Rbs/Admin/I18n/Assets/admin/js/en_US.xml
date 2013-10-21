@@ -5,6 +5,7 @@
 	<key id="cancel">cancel</key>
 	<key id="confirm">confirm</key>
 	<key id="home">home</key>
+	<key id="loading">loading...</key>
 	<key id="loading-document">loading document...</key>
 	<key id="document-is-already-being-edited">this document is already being edited.</key>
 	<key id="new-element">new item</key>

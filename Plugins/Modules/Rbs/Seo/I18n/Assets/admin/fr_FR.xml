@@ -40,4 +40,10 @@
 	<key id="document-model">modèle de document</key>
 	<key id="generate-seo-document-for-model">générer le document SEO pour ce modèle</key>
 	<key id="document-seo-auto-generation">génération automatique des documents SEO</key>
+
+	<key id="aside-title">Référencement</key>
+	<key id="aside-document-has-seo-info">Ce document dispose d'informations pour le référencement.</key>
+	<key id="aside-document-has-no-seo-info">Ce document ne dispose pas d'information pour le référencement.</key>
+	<key id="aside-create-seo-info">Créer les informations de référencement du document</key>
+	<key id="aside-edit-seo-info">Éditer les informations de référencement du document</key>
 </i18n>

@@ -124,6 +124,23 @@
 					return angular.isObject(this.META$.actions) && this.META$.actions.hasOwnProperty(actionName);
 				};
 
+				ChangeDocument.prototype.getActionUrl = function (actionName) {
+					if (angular.isObject(this.META$.actions) && this.META$.actions.hasOwnProperty(actionName)) {
+						return this.META$.actions[actionName].href;
+					}
+					return null;
+				};
+
+				ChangeDocument.prototype.getLink = function (rel) {
+					if (! rel) {
+						throw new Error("Argument 'rel' should not be empty.");
+					}
+					if (angular.isObject(this.META$.links) && this.META$.links.hasOwnProperty(rel)) {
+						return this.META$.links[rel].href;
+					}
+					return null;
+				};
+
 				ChangeDocument.prototype.getTagsUrl = function () {
 					return this.META$.links['self'] ? this.META$.links['self'].href + '/tags/' : null;
 				};

@@ -44,7 +44,7 @@
 				currentPath = currentPath.substring(1);
 			}
 
-			$el.find(".box.main a.list-group-item[href]").each(function () {
+			$el.find(".aside.main a.list-group-item[href]").each(function () {
 				var href = $(this).attr('href'),
 				    matches = href.match(/section=([a-z0-9\-]+)/i),
 				    section = matches ? matches[1] : undefined;
@@ -84,7 +84,7 @@
 				currentPath = currentPath.substring(1);
 			}
 
-			$el.find(".box.main a[href]").each(function () {
+			$el.find(".aside.main a[href]").each(function () {
 				var href = $(this).attr('href');
 				if (href === currentUrl || href === currentPath || href === absUrl) {
 					$(this).parent().addClass("active");
@@ -161,7 +161,7 @@
 
 				$http.get(url).success(function(data) {
 					if (angular.isString(data)) {
-						data = '<div class="box main">' + data + '</div>';
+						data = '<div class="aside main">' + data + '</div>';
 					}
 					$compile(data)(currentScope, function (clone) {
 						$timeout(function() {
@@ -217,7 +217,7 @@
 			}
 
 			$compile(html)(currentScope, function attachFn(clone) {
-				$el.find('.box.main').first().remove();
+				$el.find('.aside.main').first().remove();
 				$el.prepend(clone);
 
 				$timeout(function () {
@@ -234,7 +234,7 @@
 
 		function buildMenuHtml (menu)
 		{
-			var	html = '<div class="box main panel panel-default">',
+			var	html = '<div class="aside main panel panel-default">',
 				firstGroup = true;
 
 			angular.forEach(menu, function (entry)
@@ -279,75 +279,50 @@
 		}
 
 
-		this.add = function (key, contents, scope, title)
+		/**
+		 * Adds an aside box identified by `key` with the given `content`.
+		 * Content is compiled in the given `scope`.
+		 *
+		 * @param key
+		 * @param tpl
+		 * @param scope
+		 */
+		this.addAside = function (key, content, scope)
 		{
-			var html;
-			title = title || 'Other actions';
-
-			if (angular.isArray(contents)) {
-				html = '<div class="list-group">';
-				angular.forEach(contents, function (item) {
-					if (angular.isString(item)) {
-						html += '<li class="list-group-item">' + item + '</li>';
-					}
-					else if (angular.isObject(item) && item.url && item.text) {
-						html += '<a class="list-group-item" url-match-class="" href="' + item.url + '"';
-						if (item.cssClass) {
-							html += ' class="' + item.cssClass + '"';
-						}
-						html += '>';
-						if (item.hasOwnProperty('badge')) {
-							html += '<span class="badge pull-right">' + item.badge + '</span>';
-						}
-
-						if (item.icon) {
-							html += '<i class="' + item.icon + '"></i> ';
-						}
-						html += item.text + '</a>';
-					}
-					else {
-						console.warn("MainMenu: don't know what to do with item: ", item);
-					}
-				});
-				html += '</div>';
-			}
-			else {
-				html = contents;
-			}
-
-			if (! angular.isString(html)) {
-				console.error("MainMenu: contents should be an Array or a String.");
-			}
-
-			html =
-				'<div class="box panel panel-default" data-key="' + key + '">' +
-					'<div class="panel-heading"><h3 class="panel-title">' + title + '</h3></div>' +
-					html +
-				'</div>';
 			if (scope) {
-				$compile(html)(scope, function (clone) {
-					addBoxContents(key, clone);
+				$compile(content)(scope, function (clone) {
+					clone.attr('data-aside-key', key);
+					addAsideContents(key, clone);
 				});
 			}
 			else {
-				addBoxContents(key, html);
+				content = $(content);
+				content.attr('data-aside-key', key);
+				addAsideContents(key, content);
 			}
 
 			return this;
 		};
 
 
-		this.addOtherActions = function (contents, scope) {
-			return this.add(
-				"other-actions",
-				contents,
-				scope,
-				i18n.trans('m.rbs.admin.admin.js.other-actions | ucf')
-			);
+		/**
+		 * Adds an aside box identified by `key` with the given template `tpl` as content.
+		 * Template content is compiled in the given `scope`.
+		 *
+		 * @param key
+		 * @param tpl
+		 * @param scope
+		 */
+		this.addAsideTpl = function (key, tpl, scope)
+		{
+			var self = this;
+			$http.get(tpl).success(function (html) {
+				self.addAside(key, html, scope);
+			});
 		};
 
 
-		this.addTranslations = function (doc, scope) {
+		this.addTranslationsAside = function (doc, scope) {
 			var self = this;
 			REST.getAvailableLanguages().then(function (langs) {
 				var contents = [];
@@ -369,34 +344,21 @@
 						});
 					}
 				});
-				self.add(
-					"translations",
-					contents,
-					scope,
-					'<i class="icon-globe"></i> ' + i18n.trans('m.rbs.admin.admin.js.translations | ucf')
-				);
+
+				scope._i18nItems = contents;
+				self.addAsideTpl('i18n', 'Rbs/Admin/tpl/i18n-aside.twig', scope);
 			});
 			return this;
 		};
 
 
+		/**
+		 * Clears the menu.
+		 */
 		this.clear = function () {
 			$el.empty();
 			return this;
 		};
-
-
-		function addBoxContents (key, contents) {
-			var	box = $el.find('[data-key="' + key + '"]'),
-				index = box.index();
-			if (index !== -1) {
-				box.after(contents);
-				box.remove();
-			}
-			else {
-				$el.append(contents);
-			}
-		}
 
 
 		/**
@@ -419,6 +381,19 @@
 			return this;
 		};
 
+
+		function addAsideContents (key, contents) {
+			var	box = $el.find('[data-aside-key="' + key + '"]'),
+				index = box.index();
+			if (index !== -1) {
+				box.after(contents);
+				box.remove();
+			}
+			else {
+				$el.append(contents);
+			}
+		}
+
 	}]);
 
 
@@ -438,13 +413,17 @@
 			template :
 				'<div class="panel panel-default">' +
 					'<div class="panel-heading">' +
-						'<h3 class="panel-title"><span ng-if="icon"><i class="(=icon=)"></i> </span><span ng-bind="title"></span></h3>' +
+						'<h3 class="panel-title"><span ng-if="_panel.icon"><i class="(=_panel.icon=)"></i> </span><span ng-bind="_panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="panel-body" ng-transclude=""></div>' +
 				'</div>',
-			scope : {
-				title : '@',
-				icon : '@'
+			scope : true,
+			link : function (scope, iElement, iAttrs)
+			{
+				scope._panel = {
+					title : iAttrs.title,
+					icon : iAttrs.icon
+				};
 			}
 		};
 	});
@@ -460,13 +439,17 @@
 			template :
 				'<div class="panel panel-default">' +
 					'<div class="panel-heading">' +
-						'<h3 class="panel-title"><span ng-if="icon"><i class="(=icon=)"></i> </span><span ng-bind="title"></span></h3>' +
+						'<h3 class="panel-title"><span ng-if="_panel.icon"><i class="(=_panel.icon=)"></i> </span><span ng-bind="_panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="list-group" ng-transclude=""></div>' +
 				'</div>',
-			scope : {
-				title : '@',
-				icon : '@'
+			scope : true,
+			link : function (scope, iElement, iAttrs)
+			{
+				scope._panel = {
+					title : iAttrs.title,
+					icon : iAttrs.icon
+				};
 			}
 		};
 	});

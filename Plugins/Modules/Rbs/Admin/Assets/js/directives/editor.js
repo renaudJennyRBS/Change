@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession) {
+	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, UrlManager) {
 
 		var CORRECTION_CSS_CLASS = 'success';
 
@@ -316,7 +316,7 @@
 							updateWrappingForm();
 
 							if ($scope.modelInfo.metas.localized) {
-								MainMenu.addTranslations($scope.document, $scope);
+								MainMenu.addTranslationsAside($scope.document, $scope);
 							}
 						}
 					}
@@ -370,6 +370,7 @@
 					$scope.parentId = $routeParams.parentId || null;
 
 					$scope.$on('Change:Editor:UpdateMenu', function () {
+						console.log('Change:Editor:UpdateMenu');
 						initMenu();
 					});
 
@@ -497,6 +498,8 @@
 				 */
 				function initReferenceDocument ()
 				{
+					var seoLink;
+
 					$scope.original = angular.copy($scope.document);
 
 					initCorrection();
@@ -510,10 +513,28 @@
 						SelectSession.commit($scope.document);
 					}
 
-					// Add "Translations" menu on the left if the document is localizable.
-					if ($scope.modelInfo.metas.localized && ! EditorManager.isCascading()) {
-						MainMenu.addTranslations($scope.document, $scope);
+					if (! EditorManager.isCascading())
+					{
+						// Add "Translations" menu on the left if the document is localizable.
+						if ($scope.modelInfo.metas.localized) {
+							MainMenu.addTranslationsAside($scope.document, $scope);
+						}
+
+						seoLink = $scope.document.getLink('seo');
+						if (seoLink)
+						{
+							REST.call(seoLink, null, REST.resourceTransformer()).then(function (seoDocument)
+							{
+								$scope.seoDocument = seoDocument;
+								MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
+							});
+						}
+						else if ($scope.document.isActionAvailable('addSeo'))
+						{
+							MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
+						}
 					}
+
 
 					$element.css('display', 'block');
 
@@ -835,7 +856,8 @@
 		'RbsChange.Settings',
 		'RbsChange.NotificationCenter',
 		'RbsChange.MainMenu',
-		'RbsChange.SelectSession'
+		'RbsChange.SelectSession',
+		'RbsChange.UrlManager'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
@@ -1208,16 +1230,7 @@
 
 					Breadcrumb.setLocation(location);
 					Breadcrumb.setResource(doc, 'Workflow');
-
 					MainMenu.load('Rbs/Admin/workflow/menu.twig', $scope);
-					/*
-					MainMenu.clear().add(
-						"workflow",
-						[{url: doc.url(), text: '<i class="icon-circle-arrow-left"></i> Back to editor'}],
-						$scope,
-						"Workflow"
-					);
-					*/
 				});
 			}
 		});

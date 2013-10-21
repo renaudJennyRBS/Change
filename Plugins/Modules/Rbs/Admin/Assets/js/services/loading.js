@@ -63,6 +63,15 @@
 	}]);
 
 
+	app.directive('rbsLoadingMessage', ['RbsChange.i18n', function (i18n)
+	{
+		return {
+			restrict: 'EAC',
+			template: '<i class="icon-spinner icon-spin"></i> ' + i18n.trans('m.rbs.admin.admin.js.loading | ucf')
+		};
+	}]);
+
+
 	app.directive('loadingIndicatorText', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading) {
 
 		return {
