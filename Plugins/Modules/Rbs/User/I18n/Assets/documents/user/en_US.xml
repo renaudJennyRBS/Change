@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.user.documents.user" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
-	<key id="login">user name</key>
+	<key id="login">login</key>
 	<key id="email">e-mail address</key>
 	<key id="pseudonym">pseudonym</key>
 	<key id="label">full name</key>

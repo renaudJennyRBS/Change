@@ -14,11 +14,12 @@ class User extends \Compilation\Rbs\User\Documents\User
 	 */
 	public function getLabel()
 	{
-		if ($this->getPseudonym())
+		$login = $this->getLogin();
+		if (!\Change\Stdlib\String::isEmpty($login))
 		{
-			return $this->getPseudonym();
+			return $login;
 		}
-		return $this->getLogin();
+		return $this->getEmail();
 	}
 
 	/**
@@ -27,7 +28,6 @@ class User extends \Compilation\Rbs\User\Documents\User
 	 */
 	public function setLabel($label)
 	{
-		$this->setPseudonym($label);
 		return $this;
 	}
 

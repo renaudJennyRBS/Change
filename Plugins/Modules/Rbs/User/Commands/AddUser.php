@@ -39,11 +39,10 @@ class AddUser
 
 				/* @var $user \Rbs\User\Documents\User */
 				$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
-				$user->setLabel($login);
+				$user->setLabel($email);
 				$user->setEmail($email);
 				$user->setLogin($login);
 				$user->setPassword($password);
-				$user->setIdentifier($login);
 				$user->setActive(true);
 				$user->setGroups($groups->toArray());
 				$user->create();

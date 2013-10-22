@@ -182,9 +182,9 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 			{
 				$avatar = $profile->getPropertyValue('avatar');
 			}
-			if($user->getIdentifier())
+			if($user->getLogin())
 			{
-				$documentLink->setProperty('authorIdentifier', $user->getIdentifier());
+				$documentLink->setProperty('authorIdentifier', $user->getLogin());
 			}
 		}
 		$documentLink->setProperty('avatar', $avatar);

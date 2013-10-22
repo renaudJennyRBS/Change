@@ -4,22 +4,17 @@
 	icon="user-frontoffice" editable="true" activable="true" >
 	<properties>
         <property name="email" type="String" required="true">
-            <dboptions length="128" />
-            <constraint name="maxSize" max="128" />
             <constraint name="email" />
         </property>
 
-        <property name="login" type="String" required="true">
+        <property name="login" type="String">
             <dboptions length="50" />
             <constraint name="maxSize" max="50" />
-        </property>
+			<constraint name="unique" />
+			<constraint name="matches" pattern="/^[a-z0-9][a-z0-9_\-]{1,49}$/i" />
+		</property>
 
-        <property name="pseudonym" type="String">
-            <dboptions length="50" />
-            <constraint name="maxSize" max="50" />
-        </property>
-
-		<property name="label" required="true" stateless="true" />
+		<property name="label" stateless="true" />
 
 		<property name="passwordHash" type="String" indexed="none" />
 
@@ -33,11 +28,5 @@
 			<constraint name="maxSize" max="50" />
 		</property>
 
-		<property name="identifier" type="String">
-			<dboptions length="50" />
-			<constraint name="maxSize" max="50" />
-			<constraint name="unique" />
-			<constraint name="matches" pattern="/^[a-z][a-z0-9_\-]{1,49}$/" />
-		</property>
 	</properties>
 </document>

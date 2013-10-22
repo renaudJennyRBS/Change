@@ -21,52 +21,6 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 		parent::tearDown();
 	}
 
-	public function testGetAndSetLabel()
-	{
-		$user = $this->getNewUser();
-		$label = $user->getLabel();
-		$this->assertNotNull($label);
-		$this->assertEquals('Mario Bros', $label);
-		$pseudonym = $user->getPseudonym();
-		$this->assertNotNull($pseudonym);
-		$this->assertEquals('Mario Bros', $pseudonym);
-		$user->setPseudonym('Super Mario');
-		$this->assertEquals('Super Mario', $user->getPseudonym());
-		$this->assertEquals($user->getLabel(), $user->getPseudonym());
-		$user->setLabel('Dr Mario');
-		$this->assertEquals($user->getPseudonym(), $user->getLabel());
-		$user->setPseudonym('');
-		$this->assertEquals('', $user->getPseudonym());
-		$this->assertNotEquals('', $user->getLabel());
-		$this->assertEquals($user->getLogin(), $user->getLabel());
-	}
-
-	public function testGetAndSetPassword()
-	{
-		$user = $this->getNewUser(false);
-		//The user is not saved, so his password is still set
-		$this->assertEquals('abcd123', $user->getPassword());
-		$this->assertEquals($user, $user->setPassword('abcd123'));
-		//save the user, password no longer exist until setPassword will be called
-		$dm = $this->getDocumentServices()->getDocumentManager();
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$user->save();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			$tm->rollBack($e);
-		}
-		$this->assertTrue($user->getId() > 0);
-		$user = $dm->getDocumentInstance($user->getId());
-		$this->assertInstanceOf('Rbs\\User\\Documents\\User', $user);
-		$this->assertNotEquals('abcd123', $user->getPassword());
-		$this->assertNull($user->getPassword());
-	}
-
 	public function testOnCreate()
 	{
 		$user = $this->getNewUser(false);
@@ -147,9 +101,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$newUser = $dm->getNewDocumentInstanceByModelName('Rbs_User_User');
 		/* @var $newUser \Rbs\User\Documents\User */
-		$newUser->setLogin('mario');
-		$newUser->setLabel('Mario Bros');
-		$newUser->setIdentifier('super_mario');
+		$newUser->setLogin(\Change\Stdlib\String::random(16));
 		$newUser->setEmail('mario.bros@nintendo.com');
 		$newUser->setPassword('abcd123');
 		if ($hashMethod)
@@ -179,7 +131,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function deleteNewUserIfExist()
 	{
 		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_User_User');
-		$user = $dqb->andPredicates($dqb->eq('identifier', 'super_mario'))->getFirstDocument();
+		$user = $dqb->andPredicates($dqb->eq('login', 'super_mario'))->getFirstDocument();
 		if ($user)
 		{
 			$tm = $this->getApplicationServices()->getTransactionManager();

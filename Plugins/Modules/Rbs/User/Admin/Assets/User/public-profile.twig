@@ -2,11 +2,11 @@
 	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public-profile-sub-title', ['ucf']) }}"></page-header>
 	<div class="media-body well well-small">
 		<img style="width: 128px; height: 128px;" class="media-object" data-ng-src="(= profile.avatar =)" />
-		<h4 class="media-heading">(= document.pseudonym =) <small ng-if="document.identifier">@(= document.identifier =)</small></h4>
+		<h4 class="media-heading">(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
 		<div class="well">
 			<dl class="dl-horizontal">
-				<dt>{{ i18n('m.rbs.user.documents.user.pseudonym', ['ucf']) }}</dt>
-				<dd>(= document.pseudonym =)</dd>
+				<dt>{{ i18n('m.rbs.user.documents.user.label', ['ucf']) }}</dt>
+				<dd>(= document.label =)</dd>
 				<dt>{{ i18n('m.rbs.user.documents.user.email', ['ucf']) }}</dt>
 				<dd>(= document.email =)</dd>
 				<dt>{{ i18n('m.rbs.user.documents.user.active', ['ucf']) }}</dt>

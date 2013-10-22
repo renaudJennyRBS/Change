@@ -40,7 +40,7 @@ class AuthenticatedUser implements UserInterface
 	 */
 	public function getName()
 	{
-		return $this->user->getPseudonym();
+		return $this->user->getLabel();
 	}
 
 	/**
