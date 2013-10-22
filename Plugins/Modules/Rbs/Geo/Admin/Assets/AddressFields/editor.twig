@@ -25,7 +25,7 @@
 					<td>
 						<a class="btn-link" ng-click="cascadeEditField($index)">(= field.code =)</a>
 					</td>
-					<td style="width:160px">
+					<td style="width:180px" class="text-right">
 						<rbs-kb-switch>
 							<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.js.move-top', ['ucf']) }}" ng-click="moveTop($index)">
 								<i class="icon-step-forward icon-rotate-270"></i>
