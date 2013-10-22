@@ -45,7 +45,8 @@ class Login
 
 		$query = new Query($documentServices, 'Rbs_User_User');
 		$groupBuilder = $query->getPropertyBuilder('groups');
-		$query->andPredicates($query->activated(), $query->eq('login', $login), $groupBuilder->eq('realm', $realm));
+		$or = $query->getFragmentBuilder()->logicOr($query->eq('login', $login), $query->eq('email', $login));
+		$query->andPredicates($query->activated(), $or, $groupBuilder->eq('realm', $realm));
 
 		$collection = $query->getDocuments();
 		foreach ($collection as $document)

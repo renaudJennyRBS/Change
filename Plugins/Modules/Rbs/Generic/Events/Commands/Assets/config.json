@@ -89,14 +89,14 @@
 			}
 		},
 		"arguments":{
-			"login": {
-				"description": "user login",
-				"required": true,
-				"default": null
-			},
 			"email": {
 				"description": "user e-mail",
 				"required": true,
+				"default": null
+			},
+			"login": {
+				"description": "user login",
+				"required": false,
 				"default": null
 			}
 		}

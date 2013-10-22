@@ -493,11 +493,11 @@
 
 				scope.mdInsertIdentifier = function (doc, profile) {
 					REST.resource(doc.id).then(function (userOrGroup){
-						if(profile === 'user')
+						if(profile === 'user' &&  userOrGroup.login)
 						{
-							scope.mdInsertText('@' + userOrGroup.identifier);
+							scope.mdInsertText('@' + userOrGroup.login);
 						}
-						else if(profile === 'usergroup')
+						else if(profile === 'usergroup' && userOrGroup.identifier)
 						{
 							scope.mdInsertText('@+' + userOrGroup.identifier);
 						}
@@ -591,11 +591,11 @@
 					'<button type="button" class="close pull-right" ng-click="closeSelector(\'user\')">&times;</button>' +
 					'<h4>Sélectionner un utilisateur à insérer dans l\'éditeur ci-dessous</h4>' +
 					'<rbs-document-list model="Rbs_User_User" query="userListQuery" toolbar="false" extend="picker">' +
-					'<column name="identifier">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">@(= doc.identifier =)</a>' +
+					'<column name="login">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">@(= doc.login =)</a>' +
 					'</column>' +
-					'<column name="pseudonym">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">(= doc.pseudonym =)</a>' +
+					'<column name="label">' +
+					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">(= doc.label =)</a>' +
 					'</column>' +
 					'</rbs-document-list>' +
 				'</div>',

@@ -43,15 +43,14 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $user \Rbs\User\Documents\User */
 		$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
-		$user->setLabel('user 1');
-		$user->setLogin('login de test');
+		$user->setLogin('login');
 		$user->setEmail('fake@temporary.fr');
 		$user->setPassword('Un password');
 		$user->setGroups(array($grp));
 		$user->setActive(true);
 		$user->save();
 
-		$args = array('login' => 'login de test', 'password' => 'Un password', 'realm' => 'test');
+		$args = array('login' => 'login', 'password' => 'Un password', 'realm' => 'test');
 		$args['documentServices'] = $this->getDocumentServices();
 		$event = new Event('login', $this, $args);
 
@@ -64,7 +63,7 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($user->getId(), $u->getId());
 
 
-		$args = array('login' => 'not found', 'password' => 'Un password', 'realm' => 'test');
+		$args = array('login' => 'notfound', 'password' => 'Un password', 'realm' => 'test');
 		$args['documentServices'] = $this->getDocumentServices();
 		$event = new Event(\Change\User\AuthenticationManager::EVENT_LOGIN, $this, $args);
 

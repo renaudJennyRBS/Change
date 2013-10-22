@@ -32,7 +32,7 @@ class PostReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$review = $documentManager->getNewDocumentInstanceByModelName('Rbs_Review_Review');
 					/* @var $review \Rbs\Review\Documents\Review */
 					$review->setAuthorId($user->getId());
-					$review->setPseudonym($user->getPseudonym());
+					$review->setPseudonym($user->getLabel());
 					$review->setRating($rating);
 					$review->setTarget($target);
 					$review->setSection($section);

@@ -95,7 +95,6 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $user \Rbs\User\Documents\User */
 		$user->setLabel('Mario Bros');
 		$user->setLogin('mario');
-		$user->setPseudonym('Mario BROS');
 		$user->setEmail('mario.bros@nintendo.com');
 		$user->setPassword('abcd123');
 		$tm = $this->getApplicationServices()->getTransactionManager();

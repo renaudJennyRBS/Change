@@ -115,7 +115,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		$newMessage->setMessage('Message in a bottle');
 		$newMessage->setContextId(0);
 		$newMessage->setAuthorId($user->getId());
-		$newMessage->setAuthorName($user->getPseudonym());
+		$newMessage->setAuthorName($user->getLabel());
 		try
 		{
 			$tm->begin();
@@ -171,7 +171,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		//this time, we set a context id, the context is the author user document
 		$newMessage->setContextId($user->getId());
 		$newMessage->setAuthorId($user->getId());
-		$newMessage->setAuthorName($user->getPseudonym());
+		$newMessage->setAuthorName($user->getLabel());
 		try
 		{
 			$tm->begin();
@@ -207,11 +207,9 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$user = $dm->getNewDocumentInstanceByModelName('Rbs_User_User');
 		/* @var $user \Rbs\User\Documents\User */
-		$user->setPseudonym('Writer');
 		$user->setEmail('writer@rbs.fr');
-		$user->setLogin('writer');
 		//Identifier must be unique, that's why we put a rand number after it
-		$user->setIdentifier('writer' . rand(0, 9999999));
+		$user->setLogin('writer' . rand(0, 9999999));
 		try
 		{
 			$tm->begin();

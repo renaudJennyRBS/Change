@@ -56,7 +56,7 @@ class PostReview extends Block
 				$review = $dqb->getFirstDocument();
 				if (!$review)
 				{
-					$parameters->setParameterValue('pseudonym', $userDoc->getPseudonym());
+					$parameters->setParameterValue('pseudonym', $userDoc->getLabel());
 					$parameters->setParameterValue('targetId', $target->getId());
 					$parameters->setParameterValue('sectionId', $section->getId());
 				}
