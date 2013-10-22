@@ -126,14 +126,21 @@ class Application
 	}
 
 	/**
+	 * Return the entire configuration or a specific entry if $entryName is not null
+	 *
 	 * @api
-	 * @return Configuration\Configuration
+	 * @param string $entryName
+	 * @return Configuration\Configuration|mixed|null
 	 */
-	public function getConfiguration()
+	public function getConfiguration($entryName = null)
 	{
 		if ($this->configuration === null)
 		{
 			$this->configuration = new Configuration\Configuration($this->getProjectConfigurationPaths());
+		}
+		if ($entryName)
+		{
+			return $this->configuration->getEntry($entryName);
 		}
 		return $this->configuration;
 	}

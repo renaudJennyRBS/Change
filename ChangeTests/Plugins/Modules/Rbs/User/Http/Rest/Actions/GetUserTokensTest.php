@@ -6,12 +6,12 @@ use Change\Http\Request;
 class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @var \Change\Http\Rest\OAuth\StoredOAuth
+	 * @var \Change\Http\OAuth\OAuthDbEntry
 	 */
 	protected $validStoredOAuth;
 
 	/**
-	 * @var \Change\Http\Rest\OAuth\StoredOAuth
+	 * @var \Change\Http\OAuth\OAuthDbEntry
 	 */
 	protected $invalidStoredOAuth;
 
@@ -45,30 +45,30 @@ class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//insert fake tokens in database (AccessorId need to be the same for both)
 		//a valid
-		$this->validStoredOAuth = new \Change\Http\Rest\OAuth\StoredOAuth();
+		$this->validStoredOAuth = new \Change\Http\OAuth\OAuthDbEntry();
 		$this->validStoredOAuth->setAccessorId(123456);
 		$this->validStoredOAuth->setAuthorized(1);
 		$this->validStoredOAuth->setRealm('Change_Tests');
 		$this->validStoredOAuth->setToken('abcd123456789');
 		$this->validStoredOAuth->setTokenSecret('TestTokenSecret');
-		$this->validStoredOAuth->setType(\Change\Http\Rest\OAuth\StoredOAuth::TYPE_ACCESS);
+		$this->validStoredOAuth->setType(\Change\Http\OAuth\OAuthDbEntry::TYPE_ACCESS);
 		$this->validStoredOAuth->setCallback('oob');
 		$this->validStoredOAuth->setCreationDate((new \DateTime())->sub(new \DateInterval('P5D')));
 		$this->validStoredOAuth->setValidityDate((new \DateTime())->add(new \DateInterval('P10Y')));
 		$this->validStoredOAuth->setConsumerKey('consumerKeyForTests');
 		//an invalid
-		$this->invalidStoredOAuth = new \Change\Http\Rest\OAuth\StoredOAuth();
+		$this->invalidStoredOAuth = new \Change\Http\OAuth\OAuthDbEntry();
 		$this->invalidStoredOAuth->setAccessorId(123456);
 		$this->invalidStoredOAuth->setAuthorized(1);
 		$this->invalidStoredOAuth->setRealm('Change_Tests');
 		$this->invalidStoredOAuth->setToken('dcba987654321');
 		$this->invalidStoredOAuth->setTokenSecret('TestTokenSecret');
-		$this->invalidStoredOAuth->setType(\Change\Http\Rest\OAuth\StoredOAuth::TYPE_ACCESS);
+		$this->invalidStoredOAuth->setType(\Change\Http\OAuth\OAuthDbEntry::TYPE_ACCESS);
 		$this->invalidStoredOAuth->setCallback('oob');
 		$this->invalidStoredOAuth->setCreationDate((new \DateTime())->sub(new \DateInterval('P5D')));
 		$this->invalidStoredOAuth->setValidityDate(new \DateTime());
 		$this->invalidStoredOAuth->setConsumerKey('consumerKeyForTests');
-		$oauth = new \Change\Http\Rest\OAuth\OAuth();
+		$oauth = new \Change\Http\OAuth\OAuthManager();
 		$oauth->setApplicationServices($this->getApplicationServices());
 		$oauth->insertToken($this->validStoredOAuth);
 		$oauth->insertToken($this->invalidStoredOAuth);

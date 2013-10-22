@@ -1,11 +1,19 @@
 <?php
-namespace Change\Http\Rest\OAuth;
+namespace Change\Http\OAuth;
+
+use Change\Http\OAuth\Consumer;
+use Change\Http\OAuth\OAuthDbEntry;
+use Zend\EventManager\Event;
 
 /**
  * @name \Change\Http\Rest\OAuth\OAuth
  */
-class OAuth
+class OAuthManager
 {
+	const EVENT_MANAGER_IDENTIFIER = 'OAuthManager';
+
+	use \Change\Events\EventsCapableTrait;
+
 	/**
 	 * @var \Change\Application\ApplicationServices
 	 */
@@ -17,6 +25,10 @@ class OAuth
 	public function setApplicationServices($applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
+		if ($this->sharedEventManager === null)
+		{
+			$this->setSharedEventManager($this->applicationServices->getApplication()->getSharedEventManager());
+		}
 	}
 
 	/**
@@ -32,10 +44,29 @@ class OAuth
 		return $this->applicationServices;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
+		$classNames = $config->getEntry('Change/Events/OAuthManager');
+		return is_array($classNames) ? $classNames : array();
+	}
+
 	/**
 	 * @api
 	 * @param string $application
-	 * @return \Change\Http\Rest\OAuth\Consumer|null
+	 * @return \Change\Http\OAuth\Consumer|null
 	 */
 	public function getConsumerByApplication($application)
 	{
@@ -67,7 +98,7 @@ class OAuth
 	/**
 	 * @api
 	 * @param integer $applicationId
-	 * @return \Change\Http\Rest\OAuth\Consumer|null
+	 * @return \Change\Http\OAuth\Consumer|null
 	 */
 	public function getConsumerByApplicationId($applicationId)
 	{
@@ -97,7 +128,7 @@ class OAuth
 
 	/**
 	 * @param string $consumerKey
-	 * @return \Change\Http\Rest\OAuth\Consumer|null
+	 * @return \Change\Http\OAuth\Consumer|null
 	 */
 	public function getConsumerByKey($consumerKey)
 	{
@@ -127,7 +158,7 @@ class OAuth
 
 	/**
 	 * @param string $token
-	 * @return StoredOAuth|null
+	 * @return OAuthDbEntry|null
 	 */
 	public function getRequestToken($token)
 	{
@@ -141,7 +172,7 @@ class OAuth
 			->from($fb->table($qb->getSqlMapping()->getOAuthTable()))
 			->where($fb->logicAnd(
 				$fb->eq($fb->column('token'), $fb->parameter('token')),
-				$fb->eq($fb->column('token_type'), $fb->string(StoredOAuth::TYPE_REQUEST))
+				$fb->eq($fb->column('token_type'), $fb->string(OAuthDbEntry::TYPE_REQUEST))
 			));
 		$qs = $qb->query();
 		$qs->bindParameter('token', $token);
@@ -153,8 +184,8 @@ class OAuth
 		if ($storedOAuthInfo)
 		{
 			$storedOAuthInfo['token'] = $token;
-			$storedOAuthInfo['token_type'] = StoredOAuth::TYPE_REQUEST;
-			$storedOAuth = new StoredOAuth();
+			$storedOAuthInfo['token_type'] = OAuthDbEntry::TYPE_REQUEST;
+			$storedOAuth = new OAuthDbEntry();
 			$storedOAuth->importFromArray($storedOAuthInfo);
 			$storedOAuth->setConsumer($this->getConsumerByApplicationId($storedOAuthInfo['application_id']));
 			return $storedOAuth;
@@ -165,7 +196,7 @@ class OAuth
 	/**
 	 * @param string $token
 	 * @param string $consumerKey
-	 * @return StoredOAuth|null
+	 * @return OAuthDbEntry|null
 	 */
 	public function getStoredOAuth($token, $consumerKey)
 	{
@@ -210,7 +241,7 @@ class OAuth
 			if ($storedOAuthInfo)
 			{
 				$storedOAuthInfo['token'] = $token;
-				$storedOAuth = new StoredOAuth();
+				$storedOAuth = new OAuthDbEntry();
 				$storedOAuth->importFromArray($storedOAuthInfo);
 				$storedOAuth->setConsumer($this->getConsumerByApplicationId($storedOAuthInfo['application_id']));
 				return $storedOAuth;
@@ -222,7 +253,7 @@ class OAuth
 
 	/**
 	 * @param string $timestamp
-	 * @param \Change\Http\Rest\OAuth\Consumer $consumer
+	 * @param \Change\Http\OAuth\Consumer $consumer
 	 * @throws \RuntimeException
 	 */
 	public function checkTimestamp($timestamp, $consumer)
@@ -236,7 +267,7 @@ class OAuth
 	}
 
 	/**
-	 * @param StoredOAuth $storedOAuth
+	 * @param OAuthDbEntry $storedOAuth
 	 * @throws \Exception
 	 */
 	public function insertToken($storedOAuth)
@@ -257,7 +288,7 @@ class OAuth
 				$storedOAuth->setAuthorized(false);
 			}
 
-			if (null === $storedOAuth->getCallback() && StoredOAuth::TYPE_REQUEST === $storedOAuth->getType())
+			if (null === $storedOAuth->getCallback() && OAuthDbEntry::TYPE_REQUEST === $storedOAuth->getType())
 			{
 				$storedOAuth->setCallback('oob');
 			}
@@ -310,7 +341,7 @@ class OAuth
 	}
 
 	/**
-	 * @param StoredOAuth $storedOAuth
+	 * @param OAuthDbEntry $storedOAuth
 	 * @throws \Exception
 	 */
 	public function updateToken($storedOAuth)
@@ -412,5 +443,25 @@ class OAuth
 	public function generateTokenSecret()
 	{
 		return \Change\Stdlib\String::random(64);
+	}
+
+	/**
+	 * @param $event
+	 * @param $data
+	 * @return mixed
+	 * @throws \RuntimeException
+	 */
+	public function getLoginFormHtml($event, $data)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['httpEvent' => $event, 'data' => $data]);
+		$event = new Event('loginFormHtml', $this, $args);
+		$this->getEventManager()->trigger($event);
+		$html = $event->getParam('html');
+		if (\Change\Stdlib\String::isEmpty($html))
+		{
+			throw new \RuntimeException('Can not display OAuth login form');
+		}
+		return $html;
 	}
 }

@@ -1,8 +1,8 @@
 <?php
 namespace Rbs\Admin\Setup;
 
-use Change\Http\Rest\OAuth\Consumer;
-use Change\Http\Rest\OAuth\OAuth;
+use Change\Http\OAuth\Consumer;
+use Change\Http\OAuth\OAuthManager;
 use Change\Plugins\PluginManager;
 
 /**
@@ -71,7 +71,7 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
 	{
-		$OAuth = new OAuth();
+		$OAuth = new OAuthManager();
 		$OAuth->setApplicationServices($documentServices->getApplicationServices());
 		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
 		if ($consumer)

@@ -6,7 +6,7 @@ use Change\Http\Request;
 class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @var \Change\Http\Rest\OAuth\StoredOAuth
+	 * @var \Change\Http\OAuth\OAuthDbEntry
 	 */
 	protected $storedOAuth;
 
@@ -39,18 +39,18 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$iq->execute();
 
 		//insert a fake token in database
-		$this->storedOAuth = new \Change\Http\Rest\OAuth\StoredOAuth();
+		$this->storedOAuth = new \Change\Http\OAuth\OAuthDbEntry();
 		$this->storedOAuth->setAccessorId(123456);
 		$this->storedOAuth->setAuthorized(1);
 		$this->storedOAuth->setRealm('Change_Tests');
 		$this->storedOAuth->setToken('abcd123456789');
 		$this->storedOAuth->setTokenSecret('TestTokenSecret');
-		$this->storedOAuth->setType(\Change\Http\Rest\OAuth\StoredOAuth::TYPE_ACCESS);
+		$this->storedOAuth->setType(\Change\Http\OAuth\OAuthDbEntry::TYPE_ACCESS);
 		$this->storedOAuth->setCallback('oob');
 		$this->storedOAuth->setCreationDate((new \DateTime())->sub(new \DateInterval('P5D')));
 		$this->storedOAuth->setValidityDate((new \DateTime())->add(new \DateInterval('P10Y')));
 		$this->storedOAuth->setConsumerKey('consumerKeyForTests');
-		$oauth = new \Change\Http\Rest\OAuth\OAuth();
+		$oauth = new \Change\Http\OAuth\OAuthManager();
 		$oauth->setApplicationServices($this->getApplicationServices());
 		$oauth->insertToken($this->storedOAuth);
 

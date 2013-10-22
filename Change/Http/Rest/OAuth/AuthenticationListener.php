@@ -2,6 +2,8 @@
 namespace Change\Http\Rest\OAuth;
 
 use Change\Http\Event as HttpEvent;
+use Change\Http\OAuth\OAuthDbEntry;
+use Change\Http\OAuth\OAuthManager;
 use Change\Http\Rest\Result\ArrayResult;
 use Change\Http\Rest\Result\ErrorResult;
 
@@ -136,7 +138,7 @@ class AuthenticationListener
 
 		if (count($authorization) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_consumer_key']))
 		{
-			$OAuth = new OAuth();
+			$OAuth = new OAuthManager();
 			$OAuth->setApplicationServices($event->getApplicationServices());
 			$consumer = $OAuth->getConsumerByKey($authorization['oauth_consumer_key']);
 			if (null === $consumer)
@@ -145,10 +147,10 @@ class AuthenticationListener
 			}
 			$OAuth->checkTimestamp($authorization['oauth_timestamp'], $consumer);
 
-			$storedOAuth = new StoredOAuth();
+			$storedOAuth = new OAuthDbEntry();
 			$storedOAuth->importFromArray($authorization);
 			$storedOAuth->setConsumerSecret($consumer->getSecret());
-			$storedOAuth->setType(StoredOAuth::TYPE_REQUEST);
+			$storedOAuth->setType(OAuthDbEntry::TYPE_REQUEST);
 			list($method, $url, $params) = $this->buildSignParams($authorization, $request);
 
 			$utils = new Utility();
@@ -195,7 +197,7 @@ class AuthenticationListener
 			throw new \RuntimeException('Invalid Parameter: oauth_token', 71000);
 		}
 
-		$OAuth = new OAuth();
+		$OAuth = new OAuthManager();
 		$OAuth->setApplicationServices($event->getApplicationServices());
 		$storeOAuth = $OAuth->getRequestToken($token);
 		if (null === $storeOAuth || $storeOAuth->getAuthorized())
@@ -265,7 +267,7 @@ class AuthenticationListener
 
 		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_verifier']))
 		{
-			$OAuth = new OAuth();
+			$OAuth = new OAuthManager();
 			$OAuth->setApplicationServices($event->getApplicationServices());
 			$consumer = $OAuth->getConsumerByKey($authorization['oauth_consumer_key']);
 			if (!$consumer)
@@ -276,7 +278,7 @@ class AuthenticationListener
 			$storeOAuth = $OAuth->getStoredOAuth($authorization['oauth_token'], $authorization['oauth_consumer_key']);
 
 			$now = new \DateTime();
-			if (null !== $storeOAuth && StoredOAuth::TYPE_REQUEST === $storeOAuth->getType()
+			if (null !== $storeOAuth && OAuthDbEntry::TYPE_REQUEST === $storeOAuth->getType()
 				&& $storeOAuth->getAuthorized() && $storeOAuth->getValidityDate() > $now &&
 				$storeOAuth->getVerifier() === $authorization['oauth_verifier'])
 			{
@@ -288,7 +290,7 @@ class AuthenticationListener
 				{
 					$finalStoreOAuth = clone($storeOAuth);
 
-					$finalStoreOAuth->setType(StoredOAuth::TYPE_ACCESS);
+					$finalStoreOAuth->setType(OAuthDbEntry::TYPE_ACCESS);
 					$finalStoreOAuth->setId(null);
 					$finalStoreOAuth->setVerifier(null);
 					$finalStoreOAuth->setCallback('oob');
@@ -341,14 +343,14 @@ class AuthenticationListener
 		$authorization = $this->parseAuthorizationHeader($request->getHeader('Authorization'));
 		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']))
 		{
-			$storeOAuth = new StoredOAuth();
+			$storeOAuth = new OAuthDbEntry();
 			$storeOAuth->importFromArray($authorization);
 			if (!$storeOAuth->getToken())
 			{
 				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
 
-			$oauth = new OAuth();
+			$oauth = new OAuthManager();
 			$oauth->setApplicationServices($event->getApplicationServices());
 			$consumer = $oauth->getConsumerByKey($authorization['oauth_consumer_key']);
 			if(!$consumer)
@@ -359,7 +361,7 @@ class AuthenticationListener
 			$storeOAuth = $oauth->getStoredOAuth($authorization['oauth_token'], $authorization['oauth_consumer_key']);
 			$now = new \DateTime();
 
-			if (null !== $storeOAuth && StoredOAuth::TYPE_ACCESS === $storeOAuth->getType() && $storeOAuth->getValidityDate() > $now)
+			if (null !== $storeOAuth && OAuthDbEntry::TYPE_ACCESS === $storeOAuth->getType() && $storeOAuth->getValidityDate() > $now)
 			{
 				list($method, $url, $params) = $this->buildSignParams($authorization, $request);
 				$utils = new Utility();
@@ -530,10 +532,10 @@ class AuthenticationListener
 				}
 				else
 				{
+					$manager = new OAuthManager();
+					$manager->setApplicationServices($event->getApplicationServices());
+					$html = $manager->getLoginFormHtml($event, $array);
 					$response->getHeaders()->addHeaderLine('Content-Type', 'text/html');
-					$presentationServices = new \Change\Presentation\PresentationServices($event->getApplicationServices());
-					$html = $presentationServices->getTemplateManager()->renderTemplateFile(__DIR__ . '/Assets/login.twig', $array);
-					//TODO custom login form by realm/application
 					$response->setContent($html);
 					$event->setResponse($response);
 					$event->stopPropagation();
