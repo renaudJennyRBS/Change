@@ -1,0 +1,46 @@
+<form name="form" ng-submit="submit()" novalidate="">
+
+	<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-title', ['ucf']) }}" property="metaTitle">
+		<div class="input-group">
+			<input type="text" class="form-control" data-ng-model="document.metaTitle" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+				<ul class="dropdown-menu pull-right">
+					<li data-ng-repeat="(key, variable) in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</rbs-field>
+
+	<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-description', ['ucf']) }}" property="metaDescription">
+		<div class="input-group">
+			<input type="text" class="form-control" data-ng-model="document.metaDescription" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+				<ul class="dropdown-menu pull-right">
+					<li data-ng-repeat="(key, variable) in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</rbs-field>
+
+	<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-keywords', ['ucf']) }}" property="metaKeywords">
+		<div class="input-group">
+			<input type="text" class="form-control" data-ng-model="document.metaKeywords" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+				<ul class="dropdown-menu pull-right">
+					<li data-ng-repeat="(key, variable) in metaVariables">
+						<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</rbs-field>
+
+	<form-button-bar></form-button-bar>
+</form>

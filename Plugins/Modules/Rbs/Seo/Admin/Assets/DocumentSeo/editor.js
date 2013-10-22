@@ -68,7 +68,7 @@
 				scope.$watch('document.target', function (target){
 					if (target)
 					{
-						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'targetId': target.id });
+						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': target.model });
 						$http.get(REST.getBaseUrl(url)).success(function (data){
 							scope.metaVariables = data;
 							scope.variableCount = Object.keys(data).length;

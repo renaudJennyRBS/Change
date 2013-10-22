@@ -17,6 +17,14 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testOnGetMetas()
 	{
+		//add listeners for the event "getMetaVariables"
+		$this->getApplication()->getConfiguration()->addVolatileEntry(
+			'Change/Events/SeoManager/Rbs_Generic', '\Rbs\Generic\Events\SeoManager\Listeners'
+		);
+		$this->getApplication()->getConfiguration()->addVolatileEntry(
+			'Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
+		);
+
 		$seoManager = new \Rbs\Seo\Services\SeoManager();
 		$seoManager->setApplicationServices($this->getApplicationServices());
 		$seoManager->setDocumentServices($this->getDocumentServices());
@@ -34,22 +42,70 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($metas);
 		$this->assertArrayHasKey('title', $metas);
 		$this->assertEquals('product', $metas['title']);
+		$this->assertArrayHasKey('description', $metas);
+		$this->assertNull($metas['description']);
+		$this->assertArrayHasKey('keywords', $metas);
+		$this->assertNull($metas['keywords']);
 
-		//test with a document SEO on Page
-		$pageDocumentSeo = $this->getNewDocumentSeoForFunctionalPage($page);
+		//test with a document SEO on product
+		$documentSeo = $this->getNewDocumentSeoForProduct($document);
+		$metaComposer->onGetMetas($event);
+		$metas = $event->getParam('metas');
+		$this->assertNotNull($metas);
+		$this->assertEquals('Product of the year: product', $metas['title']);
+		$this->assertArrayHasKey('description', $metas);
+		$this->assertNull($metas['description']);
+		$this->assertArrayHasKey('keywords', $metas);
+		$this->assertEquals('tea,dry fruits,banana,apple', $metas['keywords']);
+
+		//test with an empty title field in document SEO
+		$documentSeo->getCurrentLocalization()->setMetaTitle('');
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$documentSeo->update();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$metaComposer->onGetMetas($event);
+		$metas = $event->getParam('metas');
+		$this->assertNotNull($metas);
+		$this->assertEquals('product', $metas['title']);
+		$this->assertArrayHasKey('description', $metas);
+		$this->assertNull($metas['description']);
+		$this->assertArrayHasKey('keywords', $metas);
+		$this->assertEquals('tea,dry fruits,banana,apple', $metas['keywords']);
+
+		//delete document SEO for next test
+		try
+		{
+			$tm->begin();
+			$documentSeo->delete();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		//test with a default meta on model configuration of product
+		$modelConfiguration = $this->getNewModelConfiguration();
 		$metaComposer->onGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('hello Product detail', $metas['title']);
 
 		//test with a title from product
-		$pageDocumentSeo->getCurrentLocalization()->setMetaTitle('hello {page.title} - {document.title}');
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('hello {page.title} - {document.title}');
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$pageDocumentSeo->update();
+			$modelConfiguration->update();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -61,20 +117,13 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($metas);
 		$this->assertEquals('hello Product detail - product', $metas['title']);
 
-		//test with a document SEO on product
-		$this->getNewDocumentSeoForProduct($document);
-		$metaComposer->onGetMetas($event);
-		$metas = $event->getParam('metas');
-		$this->assertNotNull($metas);
-		$this->assertEquals('hello Product detail - Product of year: product', $metas['title']);
+		//test with an empty title field on model configuration
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('');
 
-		//test with all metas
-		$pageDocumentSeo->getCurrentLocalization()->setMetaDescription('a description: {document.description}');
-		$pageDocumentSeo->getCurrentLocalization()->setMetaKeywords('keywords: {document.keywords}');
 		try
 		{
 			$tm->begin();
-			$pageDocumentSeo->update();
+			$modelConfiguration->update();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -84,17 +133,90 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$metaComposer->onGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
-		$this->assertEquals('hello Product detail - Product of year: product', $metas['title']);
+		$this->assertEquals('product', $metas['title']);
+
+		//test with a document SEO on product again, but this time we have the default meta with model configuration
+		//Document SEO win against the default meta of model configuration
+		$documentSeo = $this->getNewDocumentSeoForProduct($document);
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('hello {page.title} - {document.title}');
+		try
+		{
+			$tm->begin();
+			$modelConfiguration->update();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$metaComposer->onGetMetas($event);
+		$metas = $event->getParam('metas');
+		$this->assertNotNull($metas);
+		$this->assertEquals('Product of the year: product', $metas['title']);
+		$this->assertNull($metas['description']);
+		$this->assertEquals('tea,dry fruits,banana,apple', $metas['keywords']);
+
+		//if a field is empty on Document SEO, it's the default meta from model configuration who will be taken
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('a description from model configuration: {document.description}');
+		try
+		{
+			$tm->begin();
+			$modelConfiguration->update();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$metaComposer->onGetMetas($event);
+		$metas = $event->getParam('metas');
+		$this->assertNotNull($metas);
+		$this->assertEquals('Product of the year: product', $metas['title']);
+		$this->assertEquals('a description from model configuration: the product description', $metas['description']);
+
+		//add some things on product
+		$document->setBrand($this->getNewBrand());
+
+		//test with all meta set on document SEO
+		$documentSeo->getCurrentLocalization()->setMetaDescription('a description: {document.description}');
+		$documentSeo->getCurrentLocalization()->setMetaKeywords('keywords: {document.title},{document.brand},{page.title}');
+		try
+		{
+			$tm->begin();
+			$documentSeo->update();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$metaComposer->onGetMetas($event);
+		$metas = $event->getParam('metas');
+		$this->assertNotNull($metas);
+		$this->assertEquals('Product of the year: product', $metas['title']);
 		$this->assertArrayHasKey('description', $metas);
 		$this->assertEquals('a description: the product description', $metas['description']);
 		$this->assertArrayHasKey('keywords', $metas);
-		$this->assertEquals('keywords: tea,dry fruits,banana,apple', $metas['keywords']);
+		$this->assertEquals('keywords: product,brand,Product detail', $metas['keywords']);
 
-		//test without page document SEO
+		//and now without document SEO but with complete model configuration
 		try
 		{
 			$tm->begin();
-			$pageDocumentSeo->delete();
+			$documentSeo->delete();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('product: {document.title} of {document.brand}');
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('description: {document.description}');
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaKeywords('{document.title},{document.brand},{page.title}');
+		try
+		{
+			$tm->begin();
+			$modelConfiguration->update();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -104,11 +226,11 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$metaComposer->onGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
-		$this->assertEquals('Product of year: product', $metas['title']);
+		$this->assertEquals('product: product of brand', $metas['title']);
 		$this->assertArrayHasKey('description', $metas);
-		$this->assertNull($metas['description']);
+		$this->assertEquals('description: the product description', $metas['description']);
 		$this->assertArrayHasKey('keywords', $metas);
-		$this->assertEquals('tea,dry fruits,banana,apple', $metas['keywords']);
+		$this->assertEquals('product,brand,Product detail', $metas['keywords']);
 	}
 
 	/**
@@ -240,18 +362,18 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		return $product;
 	}
 
-
 	/**
-	 * @param \Rbs\Website\Documents\FunctionalPage $functionalPage
+	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @throws \Exception
 	 * @return \Rbs\Seo\Documents\DocumentSeo
 	 */
-	protected function getNewDocumentSeoForFunctionalPage($functionalPage)
+	protected function getNewDocumentSeoForProduct($product)
 	{
 		$documentSeo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-		$documentSeo->setTarget($functionalPage);
-		$documentSeo->getCurrentLocalization()->setMetaTitle('hello {page.title}');
+		$documentSeo->setTarget($product);
+		$documentSeo->getCurrentLocalization()->setMetaTitle('Product of the year: {document.title}');
+		$documentSeo->getCurrentLocalization()->setMetaKeywords('tea,dry fruits,banana,apple');
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
@@ -268,29 +390,56 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return \Rbs\Seo\Documents\ModelConfiguration
 	 * @throws \Exception
-	 * @return \Rbs\Seo\Documents\DocumentSeo
 	 */
-	protected function getNewDocumentSeoForProduct($product)
+	protected function getNewModelConfiguration()
 	{
-		$documentSeo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
-		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-		$documentSeo->setTarget($product);
-		$documentSeo->getCurrentLocalization()->setMetaTitle('Product of year: {document.title}');
-		$documentSeo->getCurrentLocalization()->setMetaKeywords('tea,dry fruits,banana,apple');
+		$modelConfiguration = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+		/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
+		$modelConfiguration->setModelName('Rbs_Catalog_Product');
+		$modelConfiguration->setLabel('Product');
+		$modelConfiguration->setDocumentSeoAutoGenerate(true);
+		$modelConfiguration->setSitemapDefaultChangeFrequency('daily');
+		$modelConfiguration->setSitemapDefaultPriority(0.5);
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('hello {page.title}');
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$documentSeo->save();
+			$modelConfiguration->save();
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
 			throw $tm->rollBack($e);
 		}
-		return $documentSeo;
+		return $modelConfiguration;
+	}
+
+	/**
+	 * @return \Rbs\Brand\Documents\Brand
+	 * @throws \Exception
+	 */
+	protected function getNewBrand()
+	{
+		$brand = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Brand_Brand');
+		/* @var $brand \Rbs\Brand\Documents\Brand */
+		$brand->setLabel('brand');
+		$brand->getCurrentLocalization()->setTitle('brand');
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$brand->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		return $brand;
 	}
 }

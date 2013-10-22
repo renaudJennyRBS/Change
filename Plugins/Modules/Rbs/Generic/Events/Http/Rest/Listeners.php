@@ -206,6 +206,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Seo\Http\Rest\Actions\GetMetaVariables())->execute($event);
 					});
 					break;
+				case 'Rbs/Seo/CreateSeoForDocument' :
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Seo\Http\Rest\Actions\CreateSeoForDocument())->execute($event);
+					});
+					break;
 			}
 		}
 	}

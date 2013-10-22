@@ -172,7 +172,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 					$substitutions['document.description'] = $description;
 					break;
 				case 'document.brand':
-					$substitutions['document.brand'] = $this->getBrand()->getCurrentLocalization()->getTitle();
+					$substitutions['document.brand'] = ($this->getBrand()) ? $this->getBrand()->getCurrentLocalization()->getTitle() : '';
 					break;
 			}
 		}

@@ -106,7 +106,12 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager = $document->getEventManager();
 		$event = new \Change\Documents\Events\Event('getMetaSubstitutions', $document, [ 'variables' => $variables ]);
 		$eventManager->trigger($event);
-		return ($event->getParam('substitutions')) ? $event->getParam('substitutions') : [];
+		$substitutions = ($event->getParam('substitutions')) ? $event->getParam('substitutions') : [];
+		if ($document instanceof \Change\Presentation\Interfaces\Page)
+		{
+			$substitutions = array_merge($substitutions, $this->getPageMetaSubstitutions($document, $variables));
+		}
+		return $substitutions;
 	}
 
 	/**
@@ -121,7 +126,48 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			'documentServices' => $this->getDocumentServices()
 		));
 		$eventManager->trigger('getMetaVariables', $this, $args);
-		return isset($args['variables']) ? $args['variables'] : [];
+		$variables = isset($args['variables']) ? $args['variables'] : [];
+		$variables = array_merge($variables, $this->getDefaultVariables($this->getApplicationServices()->getI18nManager()));
+		return $variables;
 	}
 
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return array
+	 */
+	protected function getDefaultVariables($i18nManager)
+	{
+		return [
+			'page.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-page-title', ['ucf']),
+			'page.website.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-website-title', ['ucf']),
+			'page.section.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-section-title', ['ucf'])
+		];
+	}
+
+	/**
+	 * TODO: check this function (because all methods are not allowed with Page interface)
+	 * @param \Change\Presentation\Interfaces\Page $page
+	 * @param array $pageVariables
+	 * @return array
+	 */
+	protected function getPageMetaSubstitutions($page, $pageVariables)
+	{
+		$substitutions = [];
+		foreach ($pageVariables as $variable)
+		{
+			switch ($variable)
+			{
+				case 'page.title':
+					$substitutions['page.title'] = $page->getCurrentLocalization()->getTitle();
+					break;
+				case 'page.website.title':
+					$substitutions['page.website.title'] = $page->getWebsite()->getCurrentLocalization()->getTitle();
+					break;
+				case 'page.section.title':
+					$substitutions['page.section.title'] = $page->getSection()->getTitle();
+					break;
+			}
+		}
+		return $substitutions;
+	}
 }

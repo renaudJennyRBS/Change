@@ -11,31 +11,28 @@ class GetMetaVariables
 	public function execute(\Change\Http\Event $event)
 	{
 		$result = new ArrayResult();
-		$targetId = $event->getRequest()->getQuery('targetId');
-		if ($targetId)
+		$modelName = $event->getRequest()->getQuery('modelName');
+		if ($modelName)
 		{
-			$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($targetId);
-			if ($target instanceof \Change\Documents\AbstractDocument)
+			$modelManager = $event->getDocumentServices()->getDocumentManager()->getModelManager();
+			$model = $modelManager->getModelByName($modelName);
+			if ($model instanceof \Change\Documents\AbstractModel)
 			{
 				$seoManager = new \Rbs\Seo\Services\SeoManager();
 				$seoManager->setApplicationServices($event->getApplicationServices());
 				$seoManager->setDocumentServices($event->getDocumentServices());
-				$functions = [ $target->getDocumentModelName() ];
-				if ($target instanceof \Rbs\Website\Documents\FunctionalPage)
-				{
-					$functions = array_merge($functions, $target->getAllowedFunctionsCode());
-				}
+				$functions = array_merge($model->getAncestorsNames(), [$model->getName()]);
 				$result->setArray($seoManager->getMetaVariables($functions));
 			}
 			else
 			{
-				$result->setArray([ 'error' => 'invalid target' ]);
+				$result->setArray([ 'error' => 'model: ' . $modelName . ' not found' ]);
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
 			}
 		}
 		else
 		{
-			$result->setArray([ 'error' => 'invalid target id' ]);
+			$result->setArray([ 'error' => 'invalid model name' ]);
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
 		}
 

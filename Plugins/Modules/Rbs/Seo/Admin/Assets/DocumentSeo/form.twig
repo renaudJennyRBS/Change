@@ -1,4 +1,6 @@
 <div class="document-form">
+	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Seo_DocumentSeo'), ['ucf']) }}"></page-header>
+
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.seo.admin.js.module-name', ['ucf']) }}</location>
@@ -6,6 +8,8 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Seo_DocumentSeo'), ['ucf']) }}"></page-header>
-	<div class="rbs-document-editor rbs-document-editor-rbs-seo-document-seo"></div>
+	<div ng-switch="editMode">
+		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-seo-document-seo-translate"></div>
+		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-seo-document-seo"></div>
+	</div>
 </div>

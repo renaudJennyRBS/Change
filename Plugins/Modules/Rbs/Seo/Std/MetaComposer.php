@@ -17,112 +17,126 @@ class MetaComposer
 		$seoManager = $event->getTarget();
 		if ($page instanceof \Change\Presentation\Interfaces\Page && $document instanceof \Change\Documents\Interfaces\Publishable)
 		{
+			/* @var $document \Change\Documents\Interfaces\Publishable|\Change\Documents\AbstractDocument */
 			$metas = [ 'title' => null, 'description' => null, 'keywords' => null ];
 
 			$documentServices = $document->getDocumentServices();
-			$documentSeoModel = $documentServices->getModelManager()->getModelByName('Rbs_Seo_DocumentSeo');
-			$dqb = new \Change\Documents\Query\Query($documentServices, $documentSeoModel);
-			$dqb->andPredicates($dqb->eq('target', $page));
-			$pageSeo = $dqb->getFirstDocument();
-			$documentRegExp = '/\{(document\.[a-z][A-Za-z0-9.]*)\}/';
-			if ($pageSeo)
-			{
-				/* @var $pageSeo \Rbs\Seo\Documents\DocumentSeo */
-				$pageRegExp = '/\{(page\.[a-z][A-Za-z0-9.]*)\}/';
-				$pageVariables = $this->getAllVariables($pageRegExp, $pageSeo);
-				$pageSubstitutions = (count($pageVariables)) ? $seoManager->getMetaSubstitutions($page, $pageVariables) : [];
-				$documentVariables = $this->getAllVariables($documentRegExp, $pageSeo);
-				$documentSubstitutions = (count($documentVariables)) ? $this->getDocumentMetaSubstitution($document, $documentRegExp, $documentVariables, $seoManager) : [];
+			$regExp = '/\{([a-z][A-Za-z0-9.]*\.[a-z][A-Za-z0-9.]*)\}/';
+			$availableVariables = $seoManager->getMetaVariables(array_merge($document->getDocumentModel()->getAncestorsNames(), [$document->getDocumentModelName()]));
 
-				$metaTitle = $pageSeo->getCurrentLocalization()->getMetaTitle();
+			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_DocumentSeo');
+			$dqb->andPredicates($dqb->eq('target', $document));
+			$documentSeo = $dqb->getFirstDocument();
+			/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
+
+			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_ModelConfiguration');
+			$dqb->andPredicates($dqb->eq('modelName', $document->getDocumentModelName()));
+			$modelConfiguration = $dqb->getFirstDocument();
+			/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
+
+			if ($documentSeo)
+			{
+				$foundVariables = $this->getAllVariablesFromDocumentSeo($regExp, $documentSeo);
+				if ($modelConfiguration)
+				{
+					$foundVariables = array_merge($foundVariables, $this->getAllVariablesFromModelConfiguration($regExp, $modelConfiguration));
+				}
+				$variables = array_filter($foundVariables, function ($foundVariable) use ($availableVariables){
+					return array_key_exists($foundVariable, $availableVariables);
+				});
+				$substitutions = $this->getSubstitutions($variables, $seoManager, $document, $page);
+
+				$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
 				if ($metaTitle)
 				{
-					$metaTitle = count($pageSubstitutions) ? $this->getSubstituedString($metaTitle, $pageRegExp, $pageSubstitutions) : $metaTitle;
-					$metaTitle = count($documentSubstitutions) ? $this->getSubstituedString($metaTitle, $documentRegExp, $documentSubstitutions) : $metaTitle;
-					$metas['title'] = $metaTitle;
+					$metas['title'] = $this->getSubstituedString($documentSeo->getCurrentLocalization()->getMetaTitle(), $substitutions, $regExp);
 				}
-				else
+				else if ($modelConfiguration)
 				{
-					$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+					$metas['title'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
 				}
-				$metaDescription = $pageSeo->getCurrentLocalization()->getMetaDescription();
+
+				$metaDescription = $documentSeo->getCurrentLocalization()->getMetaDescription();
 				if ($metaDescription)
 				{
-					$metaDescription = count($pageSubstitutions) ? $this->getSubstituedString($metaDescription, $pageRegExp, $pageSubstitutions) : $metaDescription;
-					$metaDescription = count($documentSubstitutions) ? $this->getSubstituedString($metaDescription, $documentRegExp, $documentSubstitutions) : $metaDescription;
-					$metas['description'] = $metaDescription;
+					$metas['description'] = $this->getSubstituedString($metaDescription, $substitutions, $regExp);
 				}
-				$metaKeywords = $pageSeo->getCurrentLocalization()->getMetaKeywords();
+				elseif ($modelConfiguration)
+				{
+					$metas['description'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
+				}
+
+				$metaKeywords = $documentSeo->getCurrentLocalization()->getMetaKeywords();
 				if ($metaKeywords)
 				{
-					$metaKeywords = count($pageSubstitutions) ? $this->getSubstituedString($metaKeywords, $pageRegExp, $pageSubstitutions) : $metaKeywords;
-					$metaKeywords = count($documentSubstitutions) ? $this->getSubstituedString($metaKeywords, $documentRegExp, $documentSubstitutions) : $metaKeywords;
-					$metas['keywords'] = $metaKeywords;
+					$metas['keywords'] = $this->getSubstituedString($metaKeywords, $substitutions, $regExp);
+				}
+				elseif ($modelConfiguration)
+				{
+					$metas['keywords'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
 				}
 			}
 			else
 			{
-				$dqb = new \Change\Documents\Query\Query($documentServices, $documentSeoModel);
-				$dqb->andPredicates($dqb->eq('target', $document));
-				$documentSeo = $dqb->getFirstDocument();
-				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-				if ($documentSeo)
+				if ($modelConfiguration)
 				{
-					$documentVariables = $this->getAllVariables($documentRegExp, $documentSeo);
-					$documentSubstitutions = (count($documentVariables)) ? $seoManager->getMetaSubstitutions($document, $documentVariables) : [];
+					$foundVariables = $this->getAllVariablesFromModelConfiguration($regExp, $modelConfiguration);
+					$variables = array_filter($foundVariables, function ($foundVariable) use ($availableVariables){
+						return array_key_exists($foundVariable, $availableVariables);
+					});
+					$substitutions = $this->getSubstitutions($variables, $seoManager, $document, $page);
 
-					$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
-					if ($metaTitle)
+					$defaultMetaTitle = $modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle();
+					if ($defaultMetaTitle)
 					{
-						$metaTitle = $this->getSubstituedString($documentSeo->getCurrentLocalization()->getMetaTitle(), $documentRegExp, $documentSubstitutions);
-					}
-					else
-					{
-						$metaTitle = $document->getDocumentModel()->getPropertyValue($document, 'title');
-					}
-					$metas['title'] = $metaTitle;
-
-					$metaDescription = $documentSeo->getCurrentLocalization()->getMetaDescription();
-					if ($metaDescription)
-					{
-						$metas['description'] = $this->getSubstituedString($metaDescription, $documentRegExp, $documentSubstitutions);
+						$metas['title'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
 					}
 
-					$metaKeywords = $documentSeo->getCurrentLocalization()->getMetaKeywords();
-					if ($metaKeywords)
+					$defaultMetaDescription = $modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription();
+					if ($defaultMetaDescription)
 					{
-						$metas['keywords'] = $this->getSubstituedString($metaKeywords, $documentRegExp, $documentSubstitutions);
+						$metas['description'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
 					}
-				}
-				else
-				{
-					$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+
+					$defaultMetaKeywords = $modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords();
+					if ($defaultMetaKeywords)
+					{
+						$metas['keywords'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
+					}
 				}
 			}
+			if (!$metas['title'])
+			{
+				$metas['title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+			}
+
 			$event->setParam('metas', $metas);
 		}
 	}
 
 	/**
 	 * @param string $meta
-	 * @param string $regExp
 	 * @param array $substitutions
-	 * @return mixed
+	 * @param string $regExp
+	 * @return string|null
 	 */
-	protected function getSubstituedString($meta, $regExp, $substitutions)
+	protected function getSubstituedString($meta, $substitutions, $regExp)
 	{
-		if (!$meta)
+		if ($meta)
 		{
-			return $meta;
-		}
-		return preg_replace_callback($regExp, function ($matches) use ($substitutions)
-		{
-			if (array_key_exists($matches[1], $substitutions))
+			if (count($substitutions))
 			{
-				return $substitutions[$matches[1]];
+				$meta = preg_replace_callback($regExp, function ($matches) use ($substitutions)
+				{
+					if (array_key_exists($matches[1], $substitutions))
+					{
+						return $substitutions[$matches[1]];
+					}
+					return '';
+				}, $meta);
 			}
-			return '';
-		}, $meta);
+		}
+		return ($meta) ? $meta : null;
 	}
 
 	/**
@@ -130,7 +144,7 @@ class MetaComposer
 	 * @param \Rbs\Seo\Documents\DocumentSeo $documentSeo
 	 * @return array
 	 */
-	protected function getAllVariables($regExp, $documentSeo)
+	protected function getAllVariablesFromDocumentSeo($regExp, $documentSeo)
 	{
 		$matches = [];
 		preg_match_all($regExp, $documentSeo->getCurrentLocalization()->getMetaTitle(), $matches);
@@ -143,52 +157,38 @@ class MetaComposer
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $regExp
-	 * @param string[] $variables
-	 * @param \Rbs\Seo\Services\SeoManager $seoManager
+	 * @param \Rbs\Seo\Documents\ModelConfiguration $modelConfiguration
 	 * @return array
 	 */
-	protected function getDocumentMetaSubstitution($document, $regExp, $variables, $seoManager)
+	protected function getAllVariablesFromModelConfiguration($regExp, $modelConfiguration)
 	{
-		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-		$documentSeo = null;
-		if (in_array('document.title', $variables) || in_array('document.description', $variables) || in_array('document.keywords', $variables))
-		{
-			$dqb = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
-			$dqb->andPredicates($dqb->eq('target', $document));
-			$documentSeo = $dqb->getFirstDocument();
-			if ($documentSeo)
-			{
-				$variables = array_merge($variables, $this->getAllVariables($regExp, $documentSeo));
-			}
-		}
+		$matches = [];
+		preg_match_all($regExp, $modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $matches);
+		$variables = $matches[1];
+		preg_match_all($regExp, $modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $matches);
+		$variables = array_merge($variables, $matches[1]);
+		preg_match_all($regExp, $modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $matches);
+		$variables = array_merge($variables, $matches[1]);
+		return $variables;
+	}
 
+	/**
+	 * @param array $variables
+	 * @param \Rbs\Seo\Services\SeoManager $seoManager
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Presentation\Interfaces\Page $page
+	 * @return array
+	 */
+	protected function getSubstitutions($variables, $seoManager, $document, $page)
+	{
 		$substitutions = [];
-		if (count($variables))
+		if(count($variables))
 		{
-			$substitutions = $seoManager->getMetaSubstitutions($document, $variables);
-		}
-
-		if ($documentSeo)
-		{
-			$seoSubstitutions = [];
-			$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
-			if ($metaTitle)
-			{
-				$seoSubstitutions['document.title'] = $this->getSubstituedString($metaTitle, $regExp, $substitutions);
-			}
-			$metaDescription = $documentSeo->getCurrentLocalization()->getMetaDescription();
-			if ($metaDescription)
-			{
-				$seoSubstitutions['document.description'] = $this->getSubstituedString($metaDescription, $regExp, $substitutions);
-			}
-			$metaKeywords = $documentSeo->getCurrentLocalization()->getMetaKeywords();
-			if ($metaKeywords)
-			{
-				$seoSubstitutions['document.keywords'] = $this->getSubstituedString($metaKeywords, $regExp, $substitutions);
-			}
-			$substitutions = array_merge($substitutions, $seoSubstitutions);
+			$substitutions = array_merge(
+				$seoManager->getMetaSubstitutions($document, $variables),
+				$seoManager->getMetaSubstitutions($page, $variables)
+			);
 		}
 		return $substitutions;
 	}
