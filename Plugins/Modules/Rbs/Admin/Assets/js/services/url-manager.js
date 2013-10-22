@@ -186,6 +186,8 @@
 								.route('form', baseRouteTpl + '/:id', baseRouteTpl + '/form.twig')
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
 								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
+								// TODO move this into Rbs_Timeline plugin
+								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/tpl/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
 							;
 						});
 						return this;
@@ -201,6 +203,8 @@
 								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
 								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
 								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
+								// TODO move this into Rbs_Timeline plugin
+								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/tpl/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
 							;
 						});
 						return this;

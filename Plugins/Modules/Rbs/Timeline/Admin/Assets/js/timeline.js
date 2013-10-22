@@ -4,14 +4,15 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsTimeline', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', 'RbsChange.User', '$timeout', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http, User, $timeout) {
-
+	app.directive('rbsTimeline', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http)
+	{
 		return {
-			restrict: 'A',
+			restrict : 'A',
+			templateUrl : 'Rbs/Timeline/js/timeline.twig',
+			require : 'rbsTimeline',
 
-			templateUrl: 'Rbs/Timeline/js/timeline.twig',
-			require: 'rbsTimeline',
-			controller: ['$scope', function ($scope){
+			controller : ['$scope', function ($scope)
+			{
 				this.reload = function (){
 					$scope.timelineMessages = [];
 					REST.query({
@@ -38,38 +39,36 @@
 					}).then(function (result){
 							$scope.timelineMessages = result.resources;
 						});
-				}
+				};
 			}],
 
-			link : function (scope, elm, attrs, rbsTimeline) {
-
+			link : function (scope, elm, attrs, rbsTimeline)
+			{
 				scope.$watch('document', function (doc, oldDoc){
 					if (doc){
 						rbsTimeline.reload();
 					}
 				});
 
-				//new message
-				scope.newMessage = "";
+				scope.data = {};
+				scope.data.newMessage = "";
 				scope.sendMessage = function (){
 					var url = REST.getBaseUrl('resources/Rbs/Timeline/Message/');
 					$http.post(url, {
 						'contextId': scope.document.id,
-						'message': scope.newMessage,
+						'message': scope.data.newMessage,
 						'label': ' '
 					}).success(function (){
-							scope.newMessage = "";
+							scope.data.newMessage = "";
 							rbsTimeline.reload();
 						});
 				};
-
 			}
-
 		};
 	}]);
 
-	app.directive('rbsTimelineMessage', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', 'RbsChange.User', '$timeout', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http, User, $timeout) {
-
+	app.directive('rbsTimelineMessage', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.REST', '$http', 'RbsChange.User', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, REST, $http, User)
+	{
 		return {
 			restrict: 'E',
 
@@ -78,6 +77,7 @@
 				message: '='
 			},
 			require: '^rbsTimeline',
+			replace : true,
 
 			link : function (scope, elm, attrs, rbsTimeline) {
 				var contentEl = elm.find('.message-content').first();
@@ -85,7 +85,7 @@
 					if (message && contentEl.children().length === 0){
 						$compile(message.message.h)(scope, function (cloneElm){
 							contentEl.append(cloneElm);
-						})
+						});
 					}
 				});
 
@@ -104,12 +104,25 @@
 				};
 
 				scope.removeMessage = function(message){
-					REST.delete(message).then(function(){
+					REST['delete'](message).then(function(){
 						rbsTimeline.reload();
 					});
 				};
 			}
-		}
+		};
+	}]);
+
+
+
+	app.controller('RbsChangeTimelineController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', 'RbsChange.MainMenu', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils, MainMenu)
+	{
+		$scope.$watch('model', function (model) {
+			if (model) {
+				REST.resource(model, $routeParams.id, $routeParams.LCID).then(function (doc) {
+					$scope.document = doc;
+				});
+			}
+		});
 	}]);
 
 })(window.jQuery);

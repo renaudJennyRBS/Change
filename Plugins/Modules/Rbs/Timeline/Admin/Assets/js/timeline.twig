@@ -1,17 +1,17 @@
 <div>
 	<div class="leave-message">
-		<legend>{{ i18n('m.rbs.timeline.admin.leave-a-message-for-document-legend', ['ucf']) }}</legend>
 		<div rbs-tip="RbsTimelineMentionUsers" class="margin-top">
 			{{ i18n('m.rbs.timeline.admin.leave-a-message-helper', ['ucf']) }}
 		</div>
-		<rbs-rich-text-input ng-model="newMessage" class="input-block-level" profile="Admin"></rbs-rich-text-input>
-		<div class="btn-toolbar">
-			<button type="button" ng-click="sendMessage()" class="btn btn-success message-send-button">{{ i18n('m.rbs.timeline.admin.leave-a-message-submit', ['ucf']) }}</button>
-		</div>
+		<rbs-rich-text-input ng-model="data.newMessage" class="input-block-level" profile="Admin"></rbs-rich-text-input>
+		<p class="btn-toolbar margin-top">
+			<button type="button" ng-click="sendMessage()" class="btn btn-primary"><i class="icon-ok"></i> {{ i18n('m.rbs.timeline.admin.leave-a-message-submit', ['ucf']) }}</button>
+		</p>
 	</div>
+	<hr/>
 	<div>
-		<div data-role="message-list" data-ng-repeat="message in timelineMessages">
-			<rbs-timeline-message message="message"></rbs-timeline-message>
+		<div data-role="message-list">
+			<rbs-timeline-message ng-repeat="message in timelineMessages" message="message"></rbs-timeline-message>
 		</div>
 	</div>
 </div>

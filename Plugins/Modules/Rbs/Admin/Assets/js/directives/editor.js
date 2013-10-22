@@ -533,6 +533,8 @@
 						{
 							MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
 						}
+
+						MainMenu.addAsideTpl('timeline', 'Rbs/Timeline/tpl/aside.twig', $scope);
 					}
 
 
