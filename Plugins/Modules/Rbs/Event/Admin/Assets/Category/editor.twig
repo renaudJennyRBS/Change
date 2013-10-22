@@ -3,11 +3,11 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" input-class="input-block-level"
+		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr('m.rbs.event.documents.category.label', ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="title" required="true" input-class="input-block-level"
+		<rbs-field-text property="title" required="true"
 			label="{{ i18nAttr('m.rbs.event.documents.category.title', ['ucf']) }}"
 			rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.event.documents.category.synchronize-title-label', ['ucf']) }}">
@@ -15,7 +15,7 @@
 
 		<hr />
 
-		<rbs-field-rich-text property="description" required="false" input-class="input-block-level" profile="Website"
+		<rbs-field-rich-text property="description" required="false" profile="Website"
 			label="{{ i18nAttr('m.rbs.event.documents.category.description', ['ucf']) }}">
 		</rbs-field-rich-text>
 	</fieldset>
@@ -32,11 +32,11 @@
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr('m.rbs.catalog.documents.product.startPublication', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.event.documents.category.startPublication', ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endPublication"
-			label="{{ i18nAttr('m.rbs.catalog.documents.product.endPublication', ['ucf']) }}">
+			label="{{ i18nAttr('m.rbs.event.documents.category.endPublication', ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

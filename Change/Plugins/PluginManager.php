@@ -879,7 +879,7 @@ class PluginManager
 		{
 			throw new \RuntimeException('Plugin already exists at path ' . $path, 999999);
 		}
-		$attributes = array('vendor' => $normalizedVendor, 'name' => $normalizedName);
+		$attributes = array('type' => $type, 'vendor' => $normalizedVendor, 'name' => $normalizedName);
 		if ($package)
 		{
 			$attributes['package'] = $package;
