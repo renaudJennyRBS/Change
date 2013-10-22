@@ -44,11 +44,11 @@
 				</div>
 
 				<div class="btn-group" ng-if="availableSelectors.users">
-					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" ng-class="{active:currentSelector=='user'}" ng-click="toggleSelector('user')"><i class="icon-user"></i></button>
+					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" title="{{ i18nAttr('m.rbs.admin.richtext.insert-user', ['ucf']) }}" ng-class="{active:currentSelector=='user'}" ng-click="toggleSelector('user')"><i class="icon-user"></i></button>
 				</div>
 
-				<div class="btn-group" ng-if="availableSelectors.usergroups">
-					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" ng-class="{active:currentSelector=='usergroup'}" ng-click="toggleSelector('usergroup')"><i class="icon-group"></i></button>
+				<div class="btn-group" ng-if="availableSelectors.usergroups" >
+					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" title="{{ i18nAttr('m.rbs.admin.richtext.insert-usergroup', ['ucf']) }}" ng-class="{active:currentSelector=='usergroup'}" ng-click="toggleSelector('usergroup')"><i class="icon-group"></i></button>
 				</div>
 
 			</div>

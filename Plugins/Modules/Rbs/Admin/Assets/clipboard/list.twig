@@ -1,7 +1,7 @@
 <div data-ng-controller="Rbs_Admin_ClipboardController">
 
 	<div class="page-header">
-		<h2>Presse-papier Change</h2>
+		<h2>{{ i18n('m.rbs.admin.clipboard.clipboard-change', ['ucf']) }}</h2>
 	</div>
 
 	<rbs-document-list data-dlid="RbsAdminClipboardList"
@@ -11,8 +11,8 @@
 		<column name="path" thumbnail="XS" thumbnail-path="doc" label="<i class='icon-picture'></i>"></column>
 		<column name="label" label="Document" primary="true"></column>
 
-		<action name="removeFromClipboard" label="Retirer du Presse-papier" selection="+"></action>
-		<action name="clearClipboard" label="Effacer le Presse-papier"></action>
+		<action name="removeFromClipboard" label="{{ i18nAttr('m.rbs.admin.clipboard.remove-from-clipboard', ['ucf']) }}" selection="+"></action>
+		<action name="clearClipboard" label="{{ i18nAttr('m.rbs.admin.clipboard.clean-clipboard', ['ucf']) }}"></action>
 
 		<quick-actions>
 			[action delete] || [action removeFromClipboard]

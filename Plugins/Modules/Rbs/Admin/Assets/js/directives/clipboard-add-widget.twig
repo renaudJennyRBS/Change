@@ -1,0 +1,13 @@
+<div class="btn-group dropup">
+	<button ng-disabled="selected.length==0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.clipboard.add-selected-elements-to-clipboard') }}" ng-click="append()"><i
+		ng-class="{ 'icon-bookmark': selection.length > 0, 'icon-bookmark-empty': selection.length == 0 }"></i></button>
+	<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+	<ul class="dropdown-menu drop" role="menu">
+		<li class="dropdown-header">{{ i18n('m.rbs.admin.clipboard.clipboard' , ['ucf']) }}</li>
+		<li data-ng-hide="selected.length==0"><a href="javascript:;" data-ng-click="append()" title="{{ i18nAttr('m.rbs.admin.clipboard.add-selected-elements-to-clipboard') }}"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.clipboard.add' , ['ucf']) }} <span data-ng-pluralize count="selected.length" when="{'one': '{{ i18nAttr('m.rbs.admin.clipboard.selected-element') }}', 'other': '{{ i18nAttr('m.rbs.admin.clipboard.selected-elements') }}'}"></span></a></li>
+		<li data-ng-hide="selected.length==0"><a href="javascript:;" data-ng-click="replace()" title="{{ i18nAttr('m.rbs.admin.clipboard.replace-by-selected-elements') }}"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.admin.clipboard.replace-by' , ['ucf']) }} <span data-ng-pluralize count="selected.length" when="{'one': '{{ i18nAttr('m.rbs.admin.clipboard.selected-element') }}', 'other': '{{ i18nAttr('m.rbs.admin.clipboard.selected-elements') }}'}"	></span></a></li>
+		<li data-ng-show="selected.length==0" class="disabled"><a href="javascript:;">{{ i18nAttr('m.rbs.admin.clipboard.select-elements-to-add') }}</a></li>
+		<li class="divider"></li>
+		<li><a href="modules/clipboard/help.html" help="#helpListTop"><i class="icon-question-sign"></i> {{ i18n('m.rbs.admin.admin.js.help' , ['ucf']) }}</a></li>
+	</ul>
+</div>

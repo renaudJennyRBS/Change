@@ -8,7 +8,7 @@
 		return {
 			restrict : 'E',
 
-			templateUrl: 'Rbs/Admin/js/directives/clipboard-add-widget.html',
+			templateUrl: 'Rbs/Admin/js/directives/clipboard-add-widget.twig',
 
 			replace: true,
 

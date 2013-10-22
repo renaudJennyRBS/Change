@@ -32,6 +32,8 @@
 
 	<key id="use-this-value-in">utiliser cette valeur en {lang}</key>
 
+	<key id="clipboard">presse-papier</key>
+
 	<!-- actions -->
 
 	<key id="action-validate">valider</key>
@@ -89,5 +91,10 @@
 
 	<key id="select">sélectionner</key>
 	<key id="select-add">ajouter à la sélection</key>
+
+	<key id="select-add">ajouter à la sélection</key>
+
+	<key id="richtext-enter-external-link">Veuillez saisir l'adresse de la page à lier</key>
+	<key id="richtext-enter-external-link-title">Veuillez saisir le titre du lien (optionnel)</key>
 
 </i18n>

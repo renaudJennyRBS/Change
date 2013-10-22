@@ -16,6 +16,12 @@
 	<key id="undo">annuler</key>
 	<key id="redo">rétablir</key>
 	<key id="insert-picture">insérer une image</key>
+	<key id="select-picture">Sélectionner une image à insérer dans l'éditeur ci-dessous</key>
 	<key id="insert-internal-link">insérer un lien interne</key>
 	<key id="insert-external-link">insérer un lien externe</key>
+	<key id="select-document-to-link">Sélectionner un document à lier dans l'éditeur ci-dessous</key>
+	<key id="insert-user">insérer un utilisateur</key>
+	<key id="select-user">Sélectionner un utilisateur à insérer dans l'éditeur ci-dessous</key>
+	<key id="insert-usergroup">insérer un groupe d'utilisateurs</key>
+	<key id="select-usergroup">Sélectionner un groupe d'utilisateurs à insérer dans l'éditeur ci-dessous</key>
 </i18n>
