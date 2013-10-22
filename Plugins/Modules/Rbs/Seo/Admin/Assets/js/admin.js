@@ -20,4 +20,18 @@
 			return $delegate;
 		}]);
 	}]);
+
+
+	app.controller('Rbs_Seo_DocumentSeoAsideController', ['$scope', 'RbsChange.REST', function ($scope, REST)
+	{
+		$scope.seoCreate = function ()
+		{
+			$scope.seoCreating = true;
+			REST.call($scope.document.getActionUrl('addSeo'), null, REST.resourceTransformer()).then(function (seoDocument)
+			{
+				$scope.seoCreating = false;
+				$scope.seoDocument = seoDocument;
+			});
+		};
+	}]);
 })();

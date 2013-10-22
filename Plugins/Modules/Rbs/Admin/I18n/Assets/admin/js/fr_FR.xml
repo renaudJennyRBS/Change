@@ -5,6 +5,7 @@
 	<key id="cancel">annuler</key>
 	<key id="confirm">confirmation</key>
 	<key id="home">accueil</key>
+	<key id="loading">chargement...</key>
 	<key id="loading-document">chargement du document...</key>
 	<key id="document-is-already-being-edited">ce document est déjà en cours d'édition.</key>
 	<key id="new-element">nouvel élément</key>

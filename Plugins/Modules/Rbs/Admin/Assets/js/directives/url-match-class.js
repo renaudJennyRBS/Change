@@ -22,14 +22,14 @@
 		return {
 			restrict : 'A',
 
-			link : function (scope, iElement, tAttrs)
+			link : function (scope, iElement, iAttrs)
 			{
 				if (! iElement.is('a')) {
 					throw new Error("Directive 'urlMatchClass' must be applied on <a/> elements.");
 				}
 
 				var	target,
-					cssClass = tAttrs.urlMatchClass || 'active';
+					cssClass = iAttrs.urlMatchClass || 'active';
 
 				if (iElement.parent().is('li') && iElement.closest('li').length) {
 					target = iElement.parent();
@@ -47,6 +47,8 @@
 
 				$rootScope.$on('$routeChangeSuccess', update);
 				$rootScope.$on('$routeUpdate', update);
+				iAttrs.$observe('href', update);
+
 				update();
 			}
 		};
