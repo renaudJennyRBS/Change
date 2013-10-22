@@ -36,8 +36,8 @@
 
 	<div ng-show="document.META$.localCopy && localCopyMerged" class="alert alert-warning">
 		<button type="button" class="close" ng-click="localCopyMerged=false">&times;</button>
-		<h4>Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur.</h4>
-		Vos modifications ont été conservées et elles sont présentes dans l'éditeur ci-dessous.
+		<h4>{{ i18n('m.rbs.admin.localcopy.document-modify-without-save-title') }}</h4>
+		{{ i18n('m.rbs.admin.localcopy.document-modify-without-save-content') }}
 	</div>
 
 	<div class="embedded-content"></div>

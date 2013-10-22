@@ -5,7 +5,7 @@
 		return {
 
 			restrict    : 'C',
-			templateUrl: 'Rbs/Admin/js/directives/apply-correction-options.html',
+			templateUrl: 'Rbs/Admin/js/directives/apply-correction-options.twig',
 
 			link : function (scope, element, attrs) {
 

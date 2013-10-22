@@ -9,7 +9,7 @@
 	/**
 	 * RichText input field.
 	 */
-	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', function ($timeout, REST, Utils, Device, $compile) {
+	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', 'RbsChange.i18n', function ($timeout, REST, Utils, Device, $compile, i18n) {
 
 		return {
 			restrict : 'EC',
@@ -505,9 +505,13 @@
 				};
 
 				scope.insertExternalLink = function () {
-					var	href = prompt("Veuillez saisir l'adresse de la page à lier"),
-						title = prompt("Veuillez saisir le titre du lien (optionnel)");
-					scope.mdInsertText(buildMdLinkTag(href, title || href));
+					var	href = prompt(i18n.trans('m.rbs.admin.admin.js.richtext-enter-external-link'));
+
+					if (href != null && href != '') {
+						var title = prompt(i18n.trans('m.rbs.admin.admin.js.richtext-enter-external-link-title'));
+
+						scope.mdInsertText(buildMdLinkTag(href, title || href));
+					}
 				};
 
 
@@ -531,22 +535,10 @@
 		return {
 			restrict : 'E',
 			scope    : false,
-			// TODO Localization
-			template :
-				'<div class="rbs-rich-text-input-inner-selector">' +
-					'<button type="button" class="close pull-right" ng-click="closeSelector(\'media\')">&times;</button>' +
-					'<h4>Sélectionner une image à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list class="grid-small" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">' +
-						'<column name="path" thumbnail="XS"></column>' +
-						'<grid-item>' +
-							'<img rbs-storage-image="doc" thumbnail="XS"/>' +
-							'<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>' +
-						'</grid-item>' +
-					'</rbs-document-list>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-media-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -559,21 +551,10 @@
 		return {
 			restrict : 'E',
 			scope    : true,
-			// TODO Localization
-			template :
-				'<div class="rbs-rich-text-input-inner-selector">' +
-					'<button type="button" class="close pull-right" ng-click="closeSelector(\'link\')">&times;</button>' +
-					'<h4>Sélectionner un document à lier dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-model-selector filter="{publishable:true}" model="selectedModel"></rbs-model-selector>' +
-					'<rbs-document-list display="list" model="(= selectedModel.name =)" toolbar="false" extend="picker">' +
-						'<column name="label" label="Label">' +
-							'<a href="javascript:;" ng-click="extend.insertDocumentLink(doc, $event)">(= doc.label =)</a>' +
-						'</column>' +
-					'</rbs-document-list>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-link-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -585,24 +566,11 @@
 		return {
 			restrict : 'E',
 			scope    : true,
-			// TODO Localization
-			template :
-				'<div class="rbs-rich-text-input-inner-selector">' +
-					'<button type="button" class="close pull-right" ng-click="closeSelector(\'user\')">&times;</button>' +
-					'<h4>Sélectionner un utilisateur à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list model="Rbs_User_User" query="userListQuery" toolbar="false" extend="picker">' +
-					'<column name="login">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">@(= doc.login =)</a>' +
-					'</column>' +
-					'<column name="label">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'user\')">(= doc.label =)</a>' +
-					'</column>' +
-					'</rbs-document-list>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-user-selector.twig',
 
 			//TODO filter the user, include only activated user.
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -614,23 +582,10 @@
 		return {
 			restrict : 'E',
 			scope    : true,
-			// TODO Localization
-			template :
-				'<div class="rbs-rich-text-input-inner-selector">' +
-					'<button type="button" class="close pull-right" ng-click="closeSelector(\'usergroup\')">&times;</button>' +
-					'<h4>Sélectionner un groupe d\'utilisateurs à insérer dans l\'éditeur ci-dessous</h4>' +
-					'<rbs-document-list model="Rbs_User_Group" toolbar="false" extend="picker">' +
-					'<column name="identifier">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'usergroup\')">@+(= doc.identifier =)</a>' +
-					'</column>' +
-					'<column name="label">' +
-					'<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, \'usergroup\')">(= doc.label =)</a>' +
-					'</column>' +
-					'</rbs-document-list>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-usergroup-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupPicker" + ++editorIdCounter);
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
 			}
 		};
 	}]);

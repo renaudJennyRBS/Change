@@ -4,27 +4,6 @@
 
 	var app = angular.module('RbsChange');
 
-	app.run(['RbsChange.Actions', 'RbsChange.Clipboard', function (Actions, Clipboard) {
-
-		Actions.register({
-			name        : 'clipboard.clear',
-			models      : '*',
-			label       : "Effacer",
-			description : "Effacer",
-			icon        : "icon-remove-circle",
-			display     : "icon+label",
-
-			execute : [function () {
-				Clipboard.clear();
-			}],
-
-			isEnabled : function () {
-				return ! Clipboard.isEmpty();
-			}
-		});
-
-	}]);
-
 	app.config(['$routeProvider', function ($routeProvider)
 	{
 		$routeProvider
@@ -41,8 +20,8 @@
 	/**
 	 * @name Rbs_Admin_ClipboardController
 	 */
-	function ChangeAdminClipboardController ($scope, Breadcrumb, Clipboard, MainMenu) {
-		Breadcrumb.resetLocation([["Presse-papier", "clipboard"]]);
+	function ChangeAdminClipboardController ($scope, Breadcrumb, Clipboard, MainMenu, i18n) {
+		Breadcrumb.resetLocation([[i18n.trans('m.rbs.admin.admin.js.clipboard', ['ucf']), "clipboard"]]);
 
 		$scope.clipboardItems = Clipboard.values;
 
@@ -68,7 +47,8 @@
 		'$scope',
 		'RbsChange.Breadcrumb',
 		'RbsChange.Clipboard',
-		'RbsChange.MainMenu'
+		'RbsChange.MainMenu',
+		'RbsChange.i18n'
 	];
 	app.controller('Rbs_Admin_ClipboardController', ChangeAdminClipboardController);
 

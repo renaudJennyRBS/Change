@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict : 'A',
-			templateUrl: 'Rbs/Admin/js/directives/clipboard-indicator.html',
+			templateUrl: 'Rbs/Admin/js/directives/clipboard-indicator.twig',
 			replace : true,
 			scope : true,
 

@@ -3,4 +3,8 @@
 	<key id="local-copies-message-ng-pluralize">{'0': 'Aucune copie locale', 'one': 'Une copie locale', 'other': '{} copies locales'}</key>
 	<key id="remove-all-local-copies">effacer les copies locales</key>
 	<key id="what-are-local-copies">qu'est-ce que les copies locales ?</key>
+	<key id="local-copy-indicator-title">gestion des copies locales</key>
+
+	<key id="document-modify-without-save-title">Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur.</key>
+	<key id="document-modify-without-save-content">Vos modifications ont été conservées et elles sont présentes dans l'éditeur ci-dessous.</key>
 </i18n>

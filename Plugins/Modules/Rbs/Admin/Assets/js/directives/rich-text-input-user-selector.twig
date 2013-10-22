@@ -1,0 +1,12 @@
+<div class="rbs-rich-text-input-inner-selector">
+	<button type="button" class="close pull-right" ng-click="closeSelector('user')">&times;</button>
+	<h4>{{ i18n("m.rbs.admin.richtext.select-user") }}</h4>
+	<rbs-document-list model="Rbs_User_User" query="userListQuery" toolbar="false" extend="picker">
+		<column name="login">
+			<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, 'user')">@(= doc.login =)</a>
+		</column>
+		<column name="label">
+			<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, 'user')">(= doc.label =)</a>
+		</column>
+	</rbs-document-list>
+</div>
