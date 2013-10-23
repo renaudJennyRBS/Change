@@ -8,6 +8,7 @@ use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
 use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
+use Rbs\Admin\Http\Rest\Actions\DocumentList;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
 /**
@@ -35,7 +36,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser', 'currentTasks');
+		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList');
 	}
 
 	/**
@@ -79,26 +80,33 @@ class AdminResolver
 					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 				}
 			}
-			else if ($actionName === 'currentTasks')
+			elseif ($actionName === 'currentTasks')
 			{
 				$event->setAction(function($event) {
 					(new CurrentTasks())->execute($event);
 				});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
-			else if ($actionName === 'tagsInfo')
+			elseif ($actionName === 'tagsInfo')
 			{
 				$event->setAction(function($event) {
 					(new TagsInfo())->execute($event);
 				});
-				//$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
-			else if ($actionName === 'documentPreview')
+			elseif ($actionName === 'documentPreview')
 			{
 				$event->setAction(function($event) {
 					(new DocumentPreview())->execute($event);
 				});
-				//$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			elseif ($actionName === 'documentList')
+			{
+				$event->setAction(function($event) {
+					(new DocumentList())->execute($event);
+				});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}
 	}
