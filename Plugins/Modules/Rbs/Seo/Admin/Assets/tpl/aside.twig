@@ -1,10 +1,12 @@
-<rbs-panel title="{{ i18nAttr('m.rbs.seo.admin.aside-title') }}" ng-controller="Rbs_Seo_DocumentSeoAsideController">
-	<p ng-if="seoDocument">
-		{{ i18n('m.rbs.seo.admin.aside-document-has-seo-info') }}<br/>
-		<a href="javascript:;" ng-href="(= seoDocument | rbsURL =)">{{ i18n('m.rbs.seo.admin.aside-edit-seo-info') }} <i class="icon-circle-arrow-right"></i></a>
-	</p>
-	<p ng-if="! seoDocument">
-		{{ i18n('m.rbs.seo.admin.aside-document-has-no-seo-info') }}<br/>
-		<button type="button" ng-disabled="seoCreating" class="btn btn-default" ng-click="seoCreate()">{{ i18n('m.rbs.seo.admin.aside-create-seo-info') }}</button>
-	</p>
-</rbs-panel>
+<div ng-controller="Rbs_Seo_DocumentSeoAsideController">
+	<rbs-panel title="{{ i18nAttr('m.rbs.seo.admin.aside-title') }}">
+		<p ng-if="seoDocument">
+			{{ i18n('m.rbs.seo.admin.aside-document-has-seo-info') }}<br/>
+			<a href="javascript:;" ng-href="(= seoDocument | rbsURL =)">{{ i18n('m.rbs.seo.admin.aside-edit-seo-info') }} <i class="icon-circle-arrow-right"></i></a>
+		</p>
+		<p ng-if="! seoDocument">
+			{{ i18n('m.rbs.seo.admin.aside-document-has-no-seo-info') }}<br/>
+			<button type="button" ng-disabled="seoCreating" class="btn btn-default" ng-click="seoCreate()">{{ i18n('m.rbs.seo.admin.aside-create-seo-info') }}</button>
+		</p>
+	</rbs-panel>
+</div>

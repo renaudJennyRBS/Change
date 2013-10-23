@@ -22,7 +22,7 @@
 	}]);
 
 
-	app.controller('Rbs_Seo_DocumentSeoAsideController', ['$scope', 'RbsChange.REST', function ($scope, REST)
+	app.controller('Rbs_Seo_DocumentSeoAsideController', ['$scope', 'RbsChange.REST', '$location', function ($scope, REST, $location)
 	{
 		$scope.seoCreate = function ()
 		{
@@ -31,6 +31,7 @@
 			{
 				$scope.seoCreating = false;
 				$scope.seoDocument = seoDocument;
+				$location.path(seoDocument.url());
 			});
 		};
 	}]);
