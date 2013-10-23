@@ -10,8 +10,38 @@
 		counter = 0;
 
 
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache) {
-
+	/**
+	 * @param scope
+	 * @param iElement
+	 * @param attrs
+	 * @param ngModel
+	 * @param multiple
+	 * @param EditorManager
+	 * @param ArrayUtils
+	 * @param MainMenu
+	 * @param Breadcrumb
+	 * @param Clipboard
+	 * @param $http
+	 * @param $compile
+	 * @param REST
+	 * @param SelectSession
+	 * @param $templateCache
+	 * @param Utils
+	 *
+	 * @attribute value-ids
+	 * @attribute allow-in-place-selection
+	 * @attribute input-css-class
+	 * @attribute picker-template
+	 * @attribute allow-creation
+	 * @attribute allow-edition
+	 * @attribute accepted-model
+	 * @attribute property-label
+	 * @attribute selector-title
+	 * @attribute select-model
+	 * @attribute embed-in
+	 */
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils)
+	{
 		var	$el = $(iElement),
 			documentList,
 			$picker = $el.find('.document-picker-embedded'),
@@ -40,6 +70,38 @@
 
 		// Initialize ngModel
 
+
+		// If attribute "value-ids" is set to true, the value (ng-model) of the picker will be an ID
+		// or an array of IDs for a multiple picker.
+		if (attrs.valueIds === 'true') {
+			ngModel.$parsers.unshift(function (value) {
+				return Utils.toIds(value);
+			});
+		}
+
+		// Pickers allow ID (or Array of IDs) as value.
+		// In that case, the following formatter will load the identified documents so that ngModel.$render()
+		// alwayds deals with objects (documents).
+		ngModel.$formatters.unshift(function (value) {
+			if (angular.isArray(value)) {
+				var arrayOfIds = false;
+				angular.forEach(value, function (value) {
+					if (/\d+/.test(''+value)) {
+						arrayOfIds = true;
+					}
+				});
+				if (arrayOfIds) {
+					return REST.getResources(value);
+				}
+			}
+			else if (/\d+/.test(''+value)) {
+				return REST.getResources([value])[0];
+			}
+
+			return value;
+		});
+
+
 		if (multiple) {
 			ngModel.$render = function() {
 				scope.documents = ngModel.$viewValue;
@@ -50,7 +112,16 @@
 				scope.item = ngModel.$viewValue;
 			};
 		}
+
 		ngModel.$render();
+
+
+		// Watch from changes coming from the <token-list/> which is bound to `scope.documents`.
+		scope.$watchCollection('documents', function (documents, old) {
+			if (documents !== old) {
+				ngModel.$setViewValue(documents);
+			}
+		});
 
 
 		scope.getItemTemplateName = function (item) {
@@ -150,7 +221,6 @@
 
 			if (attrs.embedIn) {
 				embedSelector = iElement.attr('embed-in');
-				console.log("embedSelector=", embedSelector);
 			}
 
 			if (embedSelector && ! embedded) {
@@ -351,7 +421,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils);
 			}
 
 		};
@@ -368,7 +438,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils);
 			}
 
 		};

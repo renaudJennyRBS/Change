@@ -1,7 +1,16 @@
-.message-send-button {
-	margin-bottom: 20px;
+.rbs-media-timeline .media-body {
+	min-height: 64px;
 }
 
-.message-tools {
-	float: right;
+.rbs-media-timeline.media {
+	padding: 6px;
+}
+
+.rbs-media-timeline.media:nth-child(2n) {
+	background: #F5F5F5;
+}
+
+.rbs-media-timeline img.media-object {
+	max-height: 64px;
+	max-width: 64px;
 }

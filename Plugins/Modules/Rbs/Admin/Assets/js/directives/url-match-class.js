@@ -13,6 +13,11 @@
 				href = '/' + href;
 			}
 			var currentUrl = $location.url(), p;
+
+			if (currentUrl === href) {
+				return true;
+			}
+
 			if ((p = currentUrl.indexOf('?')) !== -1) {
 				currentUrl = currentUrl.substr(0, p);
 			}

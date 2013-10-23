@@ -1758,18 +1758,19 @@
 					'<h6>Colonnes</h6>' +
 				'</div>' +
 				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +
-					'<div class="input-group" ng-hide="isRichText()">' +
+					'<div class="form-group" ng-hide="isRichText()">' +
 						'<label class="control-label" for="block_(=item.id=)_label">Libellé du bloc</label>' +
 						'<div class="controls">' +
 							'<input class="form-control" id="block_(=item.id=)_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
 						'</div>' +
 					'</div>' +
-					'<div class="input-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
+					'<div class="form-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
 						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
 						'<div ng-switch="param.type" class="controls">' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
 							// FIXME allowedModelNames
-							'<div ng-switch-when="DocumentId" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentId" value-ids="true" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentIdArray" value-ids="true" class="document-picker-multiple" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="form-control" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
 							'<switch id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Boolean" ng-model="formValues[param.name]"/>' +

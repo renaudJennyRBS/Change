@@ -513,7 +513,7 @@
 						SelectSession.commit($scope.document);
 					}
 
-					if (! EditorManager.isCascading())
+					if (! EditorManager.isCascading() && ! $scope.document.isNew())
 					{
 						// Add "Translations" menu on the left if the document is localizable.
 						if ($scope.modelInfo.metas.localized) {
@@ -533,6 +533,8 @@
 						{
 							MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
 						}
+
+						MainMenu.addAsideTpl('timeline', 'Rbs/Timeline/tpl/aside.twig', $scope);
 					}
 
 

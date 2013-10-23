@@ -345,8 +345,10 @@
 					}
 				});
 
-				scope._i18nItems = contents;
-				self.addAsideTpl('i18n', 'Rbs/Admin/tpl/i18n-aside.twig', scope);
+				if (contents.length > 1) {
+					scope._i18nItems = contents;
+					self.addAsideTpl('i18n', 'Rbs/Admin/tpl/i18n-aside.twig', scope);
+				}
 			});
 			return this;
 		};

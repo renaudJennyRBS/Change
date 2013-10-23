@@ -242,6 +242,30 @@
 
 
 		/**
+		 * Returns the ID of the given Document or an Array of IDs of the given Array of Documents.
+		 * @param value
+		 * @returns {*}
+		 */
+		toIds : function (value)
+		{
+			var i, newVal;
+			if (angular.isObject(value) && angular.isDefined(value.id)) {
+				newVal = value.id;
+			}
+			else if (angular.isArray(value)) {
+				newVal = [];
+				for (i=0 ; i<value.length ; i++) {
+					newVal[i] = this.toIds(value[i]);
+				}
+			}
+			else {
+				newVal = value;
+			}
+			return newVal;
+		},
+
+
+		/**
 		 * Makes a URL from the given one (`url`) and a parameters object (`params`).
 		 * If `params` contains parameters that are present in `url`, they will be replaced.
 		 * All parameters of `params` that are not in `url` are, of course, appended.

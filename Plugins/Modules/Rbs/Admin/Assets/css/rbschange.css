@@ -15,6 +15,10 @@ body > footer > .row {
 	margin-right: 15px;
 }
 
+.margin-top {
+	margin-top: 15px;
+}
+
 .discrete-button {
 	background: none;
 	border: none;
@@ -106,22 +110,24 @@ h3.panel-title {
 }
 
 .panel {
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-	border-width: 5px;
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+	border-width: 1px;
+	border-radius: 3px;
 }
 
 .panel.panel-default {
 	border-color: rgba(0,0,0,0.2);
 }
 
-.panel .list-group-item:last-child {
-	border-bottom-left-radius: 1px;
-	border-bottom-right-radius: 1px;
+.panel .list-group-item:last-child,
+.panel .form-actions {
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
 
 .panel .panel-heading {
-	border-top-left-radius: 1px;
-	border-top-right-radius: 1px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 .panel-heading .close {
@@ -136,6 +142,8 @@ h3.panel-title {
 .panel-primary .panel-heading .close:hover {
 	opacity: 1;
 }
+
+
 
 
 /* Bootstrap addons */

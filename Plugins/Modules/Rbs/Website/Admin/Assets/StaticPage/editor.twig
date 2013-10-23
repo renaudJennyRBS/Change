@@ -36,7 +36,7 @@
 		</rbs-field-picker>
 
 		<hr />
-		
+
 		<rbs-field-boolean property="useCache"
 				label="{{ i18nAttr('m.rbs.website.documents.staticpage.usecache', ['ucf']) }}">
 		</rbs-field-boolean>
@@ -69,12 +69,6 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
 		data-document-system-info-section>
-	</fieldset>
-
-	<fieldset ng-show="section=='timeline'" hide-when-create="true"
-		data-form-section-label="{{ i18nAttr('m.rbs.timeline.admin.message-list', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
-		rbs-timeline>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
