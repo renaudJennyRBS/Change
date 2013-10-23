@@ -119,7 +119,8 @@ h3.panel-title {
 	border-color: rgba(0,0,0,0.2);
 }
 
-.panel .list-group-item:last-child {
+.panel .list-group-item:last-child,
+.panel .form-actions {
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 }
@@ -141,6 +142,8 @@ h3.panel-title {
 .panel-primary .panel-heading .close:hover {
 	opacity: 1;
 }
+
+
 
 
 /* Bootstrap addons */
