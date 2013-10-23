@@ -583,6 +583,44 @@
 					},
 
 
+
+					'resources' : function (ids) {
+						var q = $q.defer(),
+							url = Utils.makeUrl(this.getBaseUrl('admin/documentList'), {'ids' : ids});
+
+						$http.get(
+								url,
+								getHttpConfig(transformResponseCollectionFn)
+							).success(function (data) {
+								resolveQ(q, data);
+							})
+							.error(function (data) {
+								rejectQ(q, data);
+							});
+
+						return q.promise;
+					},
+
+
+					'getResources' : function (ids)
+					{
+						var docs = [], i;
+						for (i=0 ; i<ids.length ; i++) {
+							docs.push({});
+						}
+
+						this.resources(ids).then(function (collection) {
+							var i;
+							for (i=0 ; i<collection.resources.length ; i++) {
+								angular.extend(docs[i], collection.resources[i]);
+							}
+						});
+						digest();
+
+						return docs;
+					},
+
+
 					/**
 					 * Ensures that the given doc has been fully loaded.
 					 *
