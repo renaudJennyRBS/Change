@@ -4,7 +4,6 @@ namespace Rbs\Generic\Events\SeoManager;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Json\Json;
 
 /**
  * @name \Rbs\Generic\Events\Commands\Listeners
@@ -26,12 +25,6 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Seo\Std\MetaComposer())->onGetMetas($event);
 		};
 		$events->attach('getMetas', $callback, 5);
-
-		$callback = function (Event $event)
-		{
-			(new \Rbs\Website\Seo\GetFunctionalPageVariables())->execute($event);
-		};
-		$events->attach('getMetaVariables', $callback, 5);
 	}
 
 	/**

@@ -39,7 +39,6 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'), 10);
 		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onUpdated'), 10);
-		$eventManager->attach('getMetaSubstitutions', array($this, 'onGetMetaSubstitutions'), 5);
 	}
 
 	/**
@@ -106,30 +105,5 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$doc->setFunctionCode($code);
 			$doc->create();
 		}
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onGetMetaSubstitutions(Event $event)
-	{
-		$variables = $event->getParam('variables');
-		$substitutions = [];
-		foreach ($variables as $variable)
-		{
-			switch ($variable)
-			{
-				case 'page.title':
-					$substitutions['page.title'] = $this->getCurrentLocalization()->getTitle();
-					break;
-				case 'page.website.title':
-					$substitutions['page.website.title'] = $this->getWebsite()->getCurrentLocalization()->getTitle();
-					break;
-				case 'page.section.title':
-					$substitutions['page.section.title'] = $this->getSection()->getTitle();
-					break;
-			}
-		}
-		$event->setParam('substitutions', $substitutions);
 	}
 }
