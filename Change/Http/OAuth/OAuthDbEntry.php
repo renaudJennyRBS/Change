@@ -1,12 +1,14 @@
 <?php
-namespace Change\Http\Rest\OAuth;
+namespace Change\Http\OAuth;
+
+use Change\Http\OAuth\Consumer;
 
 /**
  * Class StoredOAuth
  * @package Change\Http\Rest\OAuth
  * @name \Change\Http\Rest\OAuth\StoredOAuth
  */
-class StoredOAuth
+class OAuthDbEntry
 {
 	const TYPE_REQUEST = 'request';
 	const TYPE_ACCESS = 'access';
@@ -104,7 +106,7 @@ class StoredOAuth
 	}
 
 	/**
-	 * @param \Change\Http\Rest\OAuth\Consumer $consumer
+	 * @param \Change\Http\OAuth\Consumer $consumer
 	 */
 	public function setConsumer($consumer)
 	{
@@ -112,7 +114,7 @@ class StoredOAuth
 	}
 
 	/**
-	 * @return \Change\Http\Rest\OAuth\Consumer
+	 * @return \Change\Http\OAuth\Consumer
 	 */
 	public function getConsumer()
 	{

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<base href="{{ baseUrl }}" />
     <title>RBS Change</title>
-	<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="Rbs/Admin/lib/bootstrap3/css/bootstrap.min.css" rel="stylesheet" />
 	<meta charset="UTF-8" />
 </head>
 <body>
@@ -18,7 +19,7 @@
 				<div class="form-group">
 					<label class="control-label col-md-3" for="login">{{ i18n('c.oauth.login', ['ucf', 'lab']) }}</label>
 					<div class="col-md-9">
-						<input type="text" class="form-control" autocapitalize="off" autocorrect="off" name="login" id="login"/>
+						<input type="text" value="{{ login }}" class="form-control" autocapitalize="off" autocorrect="off" name="login" id="login"/>
 					</div>
 				</div>
 				<div class="form-group">

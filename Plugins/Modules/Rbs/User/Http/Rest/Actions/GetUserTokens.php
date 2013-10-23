@@ -34,7 +34,7 @@ class GetUserTokens
 
 		$now = new \DateTime();
 		$sq->bindParameter('accessor_id', $userId);
-		$sq->bindParameter('token_type', \Change\Http\Rest\OAuth\StoredOAuth::TYPE_ACCESS);
+		$sq->bindParameter('token_type', \Change\Http\OAuth\OAuthDbEntry::TYPE_ACCESS);
 		$sq->bindParameter('validity_date', $now);
 
 		$rowAssoc = $sq->getResults($sq->getRowsConverter()

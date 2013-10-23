@@ -1,5 +1,5 @@
 <?php
-namespace Change\Http\Rest\OAuth;
+namespace Change\Http\OAuth;
 
 /**
  * @name \Change\Http\Rest\OAuth\Consumer
