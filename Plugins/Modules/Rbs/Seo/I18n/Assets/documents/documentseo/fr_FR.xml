@@ -4,11 +4,11 @@
 	<key id="target">document cible</key>
 	<key id="target-model">type de la cible</key>
 	<key id="target-picker-title">sélectionnez le document dont vous souhaitez optimiser le référencement</key>
-	<key id="meta-title">méta titre de la page</key>
-	<key id="meta-description">méta description</key>
-	<key id="meta-keywords">méta mots-clés</key>
-	<key id="sitemap-change-frequency">fréquence (changefreq)</key>
-	<key id="sitemap-priority">priorité de l'URL (priority)</key>
+	<key id="metatitle">méta titre de la page</key>
+	<key id="metadescription">méta description</key>
+	<key id="metakeywords">méta mots-clés</key>
+	<key id="sitemapchangefrequency">fréquence (changefreq)</key>
+	<key id="sitemappriority">priorité de l'URL (priority)</key>
 	<key id="sitemap-change-frequency-option">fréquence de changement du document</key>
 	<key id="sitemap-change-frequency-always">toujours (always)</key>
 	<key id="sitemap-change-frequency-hourly">horaire (hourly)</key>

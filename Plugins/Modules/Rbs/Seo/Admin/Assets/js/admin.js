@@ -5,7 +5,8 @@
 
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
-	__change.createEditorForModel('Rbs_Seo_ModelConfiguration');
+	__change.createEditorForModelTranslation('Rbs_Seo_ModelConfiguration');
+	__change.createEditorForModelTranslation('Rbs_Seo_DocumentSeo');
 
 	/**
 	 * Routes and URL definitions.
@@ -15,14 +16,13 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_Seo').route('home', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'});
-			$delegate.routesForModels(['Rbs_Seo_ModelConfiguration']);
-			$delegate.routesForLocalizedModels(['Rbs_Seo_DocumentSeo']);
+			$delegate.routesForLocalizedModels(['Rbs_Seo_DocumentSeo', 'Rbs_Seo_ModelConfiguration']);
 			return $delegate;
 		}]);
 	}]);
 
 
-	app.controller('Rbs_Seo_DocumentSeoAsideController', ['$scope', 'RbsChange.REST', function ($scope, REST)
+	app.controller('Rbs_Seo_DocumentSeoAsideController', ['$scope', 'RbsChange.REST', '$location', function ($scope, REST, $location)
 	{
 		$scope.seoCreate = function ()
 		{
@@ -31,6 +31,7 @@
 			{
 				$scope.seoCreating = false;
 				$scope.seoDocument = seoDocument;
+				$location.path(seoDocument.url());
 			});
 		};
 	}]);

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Seo\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -48,19 +47,21 @@ class HeadMetas extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$ds = $event->getDocumentServices();
-		$document = $ds->getDocumentManager()->getDocumentInstance($event->getBlockParameters()->getParameter('documentId'));
-		if ($document instanceof \Change\Documents\AbstractDocument)
+		$genericServices = $event->getServices('genericServices');
+		if ($genericServices instanceof \Rbs\Generic\GenericServices)
 		{
-			$attributes['document'] = $document;
-			$page = $event->getParam('page');
-			$seoManager = new \Rbs\Seo\Services\SeoManager();
-			$seoManager->setDocumentServices($event->getDocumentServices());
-			foreach ($seoManager->getMetas($page, $document) as $key => $meta)
+			$document = $genericServices->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getBlockParameters()->getParameter('documentId'));
+			if ($document instanceof \Change\Documents\AbstractDocument)
 			{
-				$attributes[$key] = $meta;
+				$attributes['document'] = $document;
+				$page = $event->getParam('page');
+				$seoManager = $genericServices->getSeoManager();
+				foreach ($seoManager->getMetas($page, $document) as $key => $meta)
+				{
+					$attributes[$key] = $meta;
+				}
 			}
+			return 'head-metas.twig';
 		}
-		return 'head-metas.twig';
 	}
 }

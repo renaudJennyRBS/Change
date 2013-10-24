@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.seo.services.seomanager" lcid="fr_FR">
+	<key id="variable-document-title">titre du document</key>
+	<key id="variable-page-title">titre de la page</key>
+	<key id="variable-website-title">titre du site web</key>
+	<key id="variable-section-title">titre de la section</key>
+</i18n>

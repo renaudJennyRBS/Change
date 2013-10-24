@@ -26,6 +26,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Catalog\Seo\GetProductVariables())->execute($event);
 		};
 		$events->attach('getMetaVariables', $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			(new \Rbs\Catalog\Seo\GetProductSubstitutions())->execute($event);
+		};
+		$events->attach('getMetaSubstitutions', $callback, 5);
 	}
 
 	/**

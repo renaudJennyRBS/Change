@@ -19,6 +19,13 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
+		$callback = function (\Zend\EventManager\Event $event)
+		{
+			$genericServices = new \Rbs\Generic\GenericServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
+			$event->setParam('genericServices', $genericServices);
+		};
+		$events->attach('registerServices', $callback, 1);
+
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 10);
 		$callback = function (Event $event)
 		{

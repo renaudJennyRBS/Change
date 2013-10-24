@@ -3,57 +3,54 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="target" label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.seo.documents.documentseo.target-picker-title', ['ucf']) }}"
-			required="true" allow-creation="false" allow-edition="true" ng-disabled="document.id > 0">
-		</rbs-field-picker>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}">
+			<p class="form-control-static">
+				<a href="javascript:;" ng-href="(= document.target | rbsURL =)">(= document.target.label =) <i class="icon-circle-arrow-right"></i></a>
+			</p>
+		</rbs-field>
 
-		<hr />
-
-		<rbs-field-text property="metaTitle"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-title', ['ucf']) }}">
-			<div class="btn-group">
-				<a class="btn dropdown-toggle" data-ng-class="{'disabled': variableCount == 0}" data-toggle="dropdown" href="">
-					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li data-ng-repeat="(key, variable) in metaVariables">
-						<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
-					</li>
-				</ul>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaTitle'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaTitle" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</rbs-field-text>
+		</rbs-field>
 
-		<rbs-field-text property="metaDescription"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-description', ['ucf']) }}">
-			<div class="btn-group">
-				<a class="btn dropdown-toggle" data-ng-class="{'disabled': variableCount == 0}" data-toggle="dropdown" href="">
-					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li data-ng-repeat="(key, variable) in metaVariables">
-						<a href="" data-ng-click="addMetaVariable('metaDescription', key)">(= variable =)</a>
-					</li>
-				</ul>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaDescription'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaDescription" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaDescription', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</rbs-field-text>
+		</rbs-field>
 
-		<rbs-field-text property="metaKeywords"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-keywords', ['ucf']) }}">
-			<div class="btn-group">
-				<a class="btn dropdown-toggle" data-ng-class="{'disabled': variableCount == 0}" data-toggle="dropdown" href="">
-					{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }}
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu">
-					<li data-ng-repeat="(key, variable) in metaVariables">
-						<a href="" data-ng-click="addMetaVariable('metaKeywords', key)">(= variable =)</a>
-					</li>
-				</ul>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaKeywords'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaKeywords" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaKeywords', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</rbs-field-text>
+		</rbs-field>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='urlinfo'" hide-when-create="true"
@@ -206,14 +203,14 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.sitemap', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-change-frequency', ['ucf']) }}">
-			<select data-ng-model="document.sitemapChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapChangeFrequency'), ['ucf']) }}">
+			<select class="form-control" data-ng-model="document.sitemapChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
 				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo.sitemap-change-frequency-option', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
 		<rbs-field-float property="sitemapPriority"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-priority', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapPriority'), ['ucf']) }}">
 		</rbs-field-float>
 
 		<table class="table table-striped table-bordered">

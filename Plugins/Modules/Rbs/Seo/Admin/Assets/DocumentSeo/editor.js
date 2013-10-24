@@ -3,14 +3,13 @@
 	"use strict";
 
 	/**
-	 * @param $timeout
 	 * @param $http
-	 * @param Loading
 	 * @param REST
+	 * @param NotificationCenter
 	 * @param Utils
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST, NotificationCenter, Utils)
+	function Editor($http, REST, NotificationCenter, Utils)
 	{
 		return {
 			restrict : 'C',
@@ -68,7 +67,7 @@
 				scope.$watch('document.target', function (target){
 					if (target)
 					{
-						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'targetId': target.id });
+						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': target.model });
 						$http.get(REST.getBaseUrl(url)).success(function (data){
 							scope.metaVariables = data;
 							scope.variableCount = Object.keys(data).length;
@@ -414,6 +413,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
+	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
 })();

@@ -44,7 +44,6 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/RichTextManager/Rbs_Generic',
 			'\Rbs\Generic\Events\RichTextManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Generic', '\Rbs\Generic\Events\JobManager\Listeners');
-		$configuration->addPersistentEntry('Change/Events/SeoManager/Rbs_Generic', '\Rbs\Generic\Events\SeoManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/OAuthManager/Rbs_Generic', '\Rbs\Generic\Events\OAuthManager\Listeners');
 	}
 
