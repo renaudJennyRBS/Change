@@ -1,14 +1,14 @@
 <?php
-namespace Rbs\Seo\Services;
+namespace Rbs\Seo;
 
 use Change\Events\EventsCapableTrait;
 
 /**
- * @name \Rbs\Seo\Services\SeoManager
+ * @name \Rbs\Seo\SeoManager
  */
 class SeoManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait {
+	use EventsCapableTrait, \Change\Services\DefaultServicesTrait {
 		EventsCapableTrait::attachEvents as defaultAttachEvents;
 	}
 
@@ -17,50 +17,15 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	const VARIABLE_REGEXP = '/\{([a-z][A-Za-z0-9.]*\.[a-z][A-Za-z0-9.]*)\}/';
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @return \Change\Events\SharedEventManager
 	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function getSharedEventManager()
 	{
-		$this->applicationServices = $applicationServices;
-		$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		if ($this->applicationServices === null)
+		if ($this->sharedEventManager === null)
 		{
-			$this->setApplicationServices($documentServices->getApplicationServices());
+			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
 		}
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
+		return $this->sharedEventManager;
 	}
 
 	/**
@@ -76,12 +41,8 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->applicationServices)
-		{
-			$config = $this->applicationServices->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/SeoManager', array());
-		}
-		return array();
+		$config = $this->getApplication()->getConfiguration('Change/Events/SeoManager');
+		return is_array($config) ? $config : array();
 	}
 
 	/**
@@ -156,6 +117,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			$variables = ($event->getParam('variables')) ? $event->getParam('variables') : [];
 			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
 			$event->setParam('variables', array_merge($variables, [
+				'document.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-document-title', ['ucf']),
 				'page.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-page-title', ['ucf']),
 				'page.website.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-website-title', ['ucf']),
 				'page.section.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-section-title', ['ucf'])
@@ -170,7 +132,8 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetMetaSubstitutions($event)
 	{
 		$page = $event->getParam('page');
-		if ($page instanceof \Rbs\Website\Documents\Page)
+		$document = $event->getParam('document');
+		if ($page instanceof \Rbs\Website\Documents\Page && $document instanceof \Change\Documents\Interfaces\Publishable)
 		{
 			$variables = $event->getParam('variables');
 			$substitutions = ($event->getParam('substitutions')) ? $event->getParam('substitutions') : [];
@@ -178,6 +141,9 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				switch ($variable)
 				{
+					case 'document.title':
+						$substitutions['document.title'] = $document->getDocumentModel()->getPropertyValue($document, 'title');
+						break;
 					case 'page.title':
 						$substitutions['page.title'] = $page->getCurrentLocalization()->getTitle();
 						break;
@@ -204,7 +170,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$page = $event->getParam('page');
 		$document = $event->getParam('document');
-		/* @var $seoManager \Rbs\Seo\Services\SeoManager */
+		/* @var $seoManager \Rbs\Seo\SeoManager */
 		$seoManager = $event->getTarget();
 		if ($page instanceof \Change\Presentation\Interfaces\Page && $document instanceof \Change\Documents\Interfaces\Publishable)
 		{
@@ -365,7 +331,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Documents\Interfaces\Publishable $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable $document
 	 * @return \Rbs\Seo\Documents\DocumentSeo
 	 * @throws \Exception
 	 */

@@ -20,17 +20,24 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (Event $event)
+		$callback = function (\Zend\EventManager\Event $event)
 		{
-			$resolver = $event->getController()->getActionResolver();
-			if ($resolver instanceof \Change\Http\Rest\Resolver)
+			$genericServices = new \Rbs\Generic\GenericServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
+			$event->setParam('genericServices', $genericServices);
+
+			$controller = $event->getTarget();
+			if ($controller instanceof \Change\Http\Rest\Controller)
 			{
-				$resolver->addResolverClasses('admin', '\Rbs\Admin\Http\Rest\AdminResolver');
-				$resolver->addResolverClasses('plugins', '\Rbs\Plugins\Http\Rest\PluginsResolver');
-				$resolver->addResolverClasses('user', '\Rbs\User\Http\Rest\UserResolver');
+				$resolver = $controller->getActionResolver();
+				if ($resolver instanceof \Change\Http\Rest\Resolver)
+				{
+					$resolver->addResolverClasses('admin', '\Rbs\Admin\Http\Rest\AdminResolver');
+					$resolver->addResolverClasses('plugins', '\Rbs\Plugins\Http\Rest\PluginsResolver');
+					$resolver->addResolverClasses('user', '\Rbs\User\Http\Rest\UserResolver');
+				}
 			}
 		};
-		$events->attach(Event::EVENT_REQUEST, $callback, 5);
+		$events->attach('registerServices', $callback, 1);
 
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 5);
 	}

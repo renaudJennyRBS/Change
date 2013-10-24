@@ -14,33 +14,43 @@ class CreateSeoForDocument
 		$documentId = $event->getRequest()->getQuery('documentId');
 		if ($documentId)
 		{
-			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
-			$seoManager = new \Rbs\Seo\Services\SeoManager();
-			$seoManager->setApplicationServices($event->getApplicationServices());
-			$seoManager->setDocumentServices($event->getDocumentServices());
-			$seo = $seoManager->createSeoDocument($document);
-
-			if ($seo)
+			$genericService = $event->getServices('genericServices');
+			if ($genericService instanceof \Rbs\Generic\GenericServices)
 			{
-				$event->setParam('documentId', $seo->getId());
-				$event->setParam('modelName', $seo->getDocumentModelName());
-				$action = new \Change\Http\Rest\Actions\GetDocument();
-				$action->execute($event);
-				return;
+				$document = $genericService->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+				if ($document)
+				{
+					$seoManager = $genericService->getSeoManager();
+					$seo = $seoManager->createSeoDocument($document);
+
+					if ($seo)
+					{
+						$event->setParam('documentId', $seo->getId());
+						$event->setParam('modelName', $seo->getDocumentModelName());
+						$action = new \Change\Http\Rest\Actions\GetDocument();
+						$action->execute($event);
+						return;
+					}
+					else
+					{
+						$result->setArray([ 'error' => 'invalid document and/or document is not publishable' ]);
+						$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+						$event->setResult($result);
+					}
+				}
 			}
 			else
 			{
-				$result->setArray([ 'error' => 'invalid document and/or document is not publishable' ]);
+				$result->setArray([ 'error' => 'invalid generic services' ]);
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+				$event->setResult($result);
 			}
-
-			$event->setResult($result);
 		}
 		else
 		{
 			$result->setArray([ 'error' => 'invalid document id' ]);
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+			$event->setResult($result);
 		}
-		$event->setResult($result);
 	}
 }

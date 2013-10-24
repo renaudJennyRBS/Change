@@ -22,9 +22,9 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 			'Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
 		);
 
-		$seoManager = new \Rbs\Seo\Services\SeoManager();
-		$seoManager->setApplicationServices($this->getApplicationServices());
-		$seoManager->setDocumentServices($this->getDocumentServices());
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplicationServices(), $this->getDocumentServices());
+		$seoManager = $genericServices->getSeoManager();
+		$this->assertInstanceOf('\Rbs\Seo\SeoManager', $seoManager);
 
 		//test without document SEO
 		$event = new \Zend\EventManager\Event();
