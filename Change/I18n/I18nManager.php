@@ -315,7 +315,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * For example: trans('c.boolean.true')
+	 * For example: trans('c.date.default-date-format')
 	 * @api
 	 * @param string | \Change\I18n\PreparedKey $cleanKey
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, html, attr
@@ -328,7 +328,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * For example: transForLCID('fr_FR', 'c.boolean.true')
+	 * For example: transForLCID('fr_FR', 'c.date.default-date-format')
 	 * @api
 	 * @param string $LCID
 	 * @param string | \Change\I18n\PreparedKey $cleanKey
