@@ -3,4 +3,14 @@
 	<key id="fulltext">index de recherche web</key>
 	<key id="fulltext-list">liste des index</key>
 	<key id="fulltext-create">ajouter un index de recherche web</key>
+
+	<key id="storeindex">index de recherche produits</key>
+	<key id="storeindex-create">ajouter un index de recherche produits</key>
+
+	<key id="facetgroup">groupe de facettes</key>
+	<key id="facetgroup-list">liste des groupes de facettes</key>
+	<key id="facetgroup-create">ajouter un groupe de facettes</key>
+
+	<key id="facet">facette</key>
+	<key id="facet-create">ajouter une facette</key>
 </i18n>

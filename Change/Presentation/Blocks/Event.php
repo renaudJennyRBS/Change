@@ -16,11 +16,6 @@ use Change\User\AuthenticationManager;
 class Event extends ZendEvent
 {
 	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
 	 * @var DocumentServices|null
 	 */
 	protected $documentServices;
@@ -45,7 +40,6 @@ class Event extends ZendEvent
 	 */
 	protected $urlManager;
 
-
 	/**
 	 * @var AuthenticationManager
 	 */
@@ -56,13 +50,45 @@ class Event extends ZendEvent
 	 */
 	protected $permissionsManager;
 
+	/**
+	 * @api
+	 * @param string $serviceName
+	 * @return \Zend\Stdlib\Parameters|\Zend\Di\Di|null
+	 */
+	public function getServices($serviceName = null)
+	{
+		$services = $this->getParam('services');
+		if (!($services instanceof \Zend\Stdlib\Parameters))
+		{
+			$services = new \Zend\Stdlib\Parameters();
+			$this->setServices($services);
+		}
+
+		if ($serviceName !== null)
+		{
+			return $services->get($serviceName, null);
+		}
+		return $services;
+	}
+
+	/**
+	 * @param \Zend\Stdlib\Parameters $services
+	 * @return $this
+	 */
+	public function setServices(\Zend\Stdlib\Parameters $services)
+	{
+		$this->setParam('services', $services);
+		return $this;
+	}
 
 	/**
 	 * @param PresentationServices|null $presentationServices
+	 * @return $this
 	 */
 	public function setPresentationServices(PresentationServices $presentationServices)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->getServices()->set('presentationServices', $presentationServices);
+		return $this;
 	}
 
 	/**
@@ -71,7 +97,7 @@ class Event extends ZendEvent
 	 */
 	public function getPresentationServices()
 	{
-		return $this->presentationServices;
+		return $this->getServices('presentationServices');
 	}
 
 	/**

@@ -2,7 +2,8 @@
 namespace Rbs\Elasticsearch\Events\IndexManager;
 
 use Rbs\Elasticsearch\Events\Event;
-use Rbs\Elasticsearch\Services\WebsiteIndexManager;
+use Rbs\Elasticsearch\Services\FullTextManager;
+use Rbs\Elasticsearch\Services\StoreIndexManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -19,11 +20,17 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$ws = new WebsiteIndexManager();
-		$events->attach(Event::INDEX_DOCUMENT, array($ws, 'onIndexDocument'));
-		$events->attach(Event::POPULATE_DOCUMENT, array($ws, 'onPopulateDocument'));
-		$events->attach(Event::FIND_INDEX_DEFINITION, array($ws, 'onFindIndexDefinition'));
-		$events->attach(Event::GET_FACETS_DEFINITION, array($ws, 'onGetFacetsDefinition'));
+		$ws = new FullTextManager();
+		$events->attach(Event::INDEX_DOCUMENT, array($ws, 'onIndexDocument'), 5);
+		$events->attach(Event::POPULATE_DOCUMENT, array($ws, 'onPopulateDocument'), 5);
+		$events->attach(Event::FIND_INDEX_DEFINITION, array($ws, 'onFindIndexDefinition'), 5);
+		$events->attach(Event::GET_INDEXES_DEFINITION, array($ws, 'onGetIndexesDefinition'), 5);
+
+		$si = new StoreIndexManager();
+		$events->attach(Event::INDEX_DOCUMENT, array($si, 'onIndexDocument'), 1);
+		$events->attach(Event::POPULATE_DOCUMENT, array($si, 'onPopulateDocument'), 1);
+		$events->attach(Event::FIND_INDEX_DEFINITION, array($si, 'onFindIndexDefinition'), 1);
+		$events->attach(Event::GET_INDEXES_DEFINITION, array($si, 'onGetIndexesDefinition'), 1);
 	}
 
 	/**

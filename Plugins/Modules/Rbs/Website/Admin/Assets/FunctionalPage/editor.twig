@@ -40,9 +40,10 @@
 		</rbs-field-boolean>
 
 		<div data-ng-show="document.useCache">
-			<rbs-field-integer property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
-				<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage.ttl-help') }}</span>
-			</rbs-field-integer>
+			<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
+				<input class="form-control" size="7" smart-float="" ng-model="document.TTL" min="0" type="number" />
+				<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.ttl-help') }}</span>
+			</rbs-field>
 		</div>
 
 		<rbs-field-boolean property="https"

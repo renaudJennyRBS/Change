@@ -41,7 +41,7 @@ class CrossSelling extends Block
 		}
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		$webStore = $commerceServices->getWebStore();
 		if ($webStore)
 		{
@@ -77,7 +77,7 @@ class CrossSelling extends Block
 		if ($productId && $crossSellingType)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-			$commerceServices = $event->getParam('commerceServices');
+			$commerceServices = $event->getServices('commerceServices');
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
 			$crossSellingManager = $commerceServices->getCrossSellingManager();
 

@@ -2,9 +2,8 @@
 
 namespace ChangeTests\Website\Blocks;
 
-use Change\Documents\Property;
-use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\BlockManager;
+use Change\Presentation\Blocks\Event;
 use Change\Presentation\Layout\Block;
 
 class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase

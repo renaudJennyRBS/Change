@@ -90,7 +90,23 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
 	{
 		$this->defaultAttachEvents($eventManager);
+		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
 	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
+	{
+		$applicationServices = $event->getParam('applicationServices');
+		$documentServices = $event->getParam('documentServices');
+		if ($applicationServices && $documentServices)
+		{
+			$commonServices = new \Change\Services\CommonServices($applicationServices, $documentServices);
+			$event->setParam('commonServices', $commonServices);
+		}
+	}
+
 
 	/**
 	 * @param BaseResolver $actionResolver
@@ -123,6 +139,8 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$event = $this->createEvent($request);
 		try
 		{
+			$this->doSendRegisterServices($eventManager, $event);
+
 			$this->doSendRequest($eventManager, $event);
 
 			if (!($event->getResult() instanceof Result))
@@ -261,6 +279,19 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
 		$result->getHeaders()->addHeader($header);
 		return $result;
+	}
+
+	/**
+	 * @param EventManager $eventManager
+	 * @param Event $httpEvent
+	 */
+	protected function doSendRegisterServices($eventManager, Event $httpEvent)
+	{
+		$services = $eventManager->prepareArgs(array('applicationServices' => $httpEvent->getApplicationServices(),
+			'documentServices' => $httpEvent->getDocumentServices()));
+		$event = new \Zend\EventManager\Event('registerServices', $this, $services);
+		$eventManager->trigger($event);
+		$httpEvent->setParam('services', new \Zend\Stdlib\Parameters($services->getArrayCopy()));
 	}
 
 	/**

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.elasticsearch.documents.facet" lcid="fr_FR">
+	<include id="m.rbs.generic.document"/>
+	<key id="fieldname">nom de la facette</key>
+	<key id="fieldtype">type de donnée</key>
+	<key id="indexid">index</key>
+	<key id="indexid-choose">sélectionner un index</key>
+
+	<key id="isarray">multiple</key>
+	<key id="collectioncode">liste de valeurs</key>
+	<key id="collectioncode-choose">sélectionner une liste</key>
+
+	<key id="attributeid">attribut</key>
+	<key id="attributeid-choose">sélectionner un attribut</key>
+	<key id="valuesextractorname">récuperation de la valeur d'indexation</key>
+</i18n>

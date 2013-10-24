@@ -100,6 +100,16 @@ class Information
 	}
 
 	/**
+	 * @param integer $defaultValue
+	 * @return ParameterInformation
+	 */
+	protected function addTTL($defaultValue)
+	{
+		$parameterInformation = $this->addInformationMeta('TTL', Property::TYPE_INTEGER, true, $defaultValue);
+		return $parameterInformation;
+	}
+
+	/**
 	 * @return ParameterInformation[]
 	 */
 	public function getParametersInformation()

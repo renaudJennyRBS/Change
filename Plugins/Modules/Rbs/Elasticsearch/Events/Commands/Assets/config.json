@@ -5,11 +5,22 @@
 			"list": {
 				"description": "list client names",
 				"shortcut": "l"
+			},
+			"create": {
+				"description": "create index"
+			},
+			"delete": {
+				"description": "delete index"
 			}
 		},
 		"arguments": {
 			"name": {
 				"description": "client name",
+				"required": false,
+				"default": null
+			},
+			"indexName": {
+				"description": "index name",
 				"required": false,
 				"default": null
 			}
@@ -18,6 +29,23 @@
 	"rbs_elasticsearch:index": {
 		"description": "Documents Indexation",
 		"options": {
+			"publishable": {
+				"description": "publishable model",
+				"shortcut": "p"
+			},
+			"model": {
+				"description": "index model",
+				"default":"",
+				"shortcut": "m"
+			},
+			"all": {
+				"description": "index all document",
+				"shortcut": "a"
+			},
+			"job": {
+				"description": "use jobs for indexation",
+				"shortcut": "j"
+			}
 		},
 		"arguments": {
 		}

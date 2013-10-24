@@ -223,7 +223,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $clientName
-	 * @param string$indexName
+	 * @param string $indexName
 	 * @param string $id
 	 */
 	public function documentIdToDelete($clientName, $indexName, $id)
@@ -348,12 +348,16 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param Document $elasticaDocument
 	 * @param AbstractDocument $document
 	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @param array $parameters
 	 */
-	public function dispatchPopulateDocument(Document $elasticaDocument, AbstractDocument $document, $indexDefinition)
+	public function dispatchPopulateDocument(Document $elasticaDocument, AbstractDocument $document, $indexDefinition, array $parameters = null)
 	{
 		$em = $this->getEventManager();
-		$event = new Event(Event::POPULATE_DOCUMENT, $this,
-			array('elasticaDocument' => $elasticaDocument, 'document' => $document, 'indexDefinition' => $indexDefinition));
+		$params = $em->prepareArgs($parameters === null ? array() : $parameters);
+		$params['elasticaDocument'] = $elasticaDocument;
+		$params['document'] = $document;
+		$params['indexDefinition'] = $indexDefinition;
+		$event = new Event(Event::POPULATE_DOCUMENT, $this, $params);
 		$em->trigger($event);
 	}
 
@@ -391,6 +395,20 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		$em->trigger($event);
 		$indexDefinition = $event->getParam('indexDefinition');
 		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
+	}
+
+	/**
+	 * @param string $clientName
+	 * @return \Rbs\Elasticsearch\Std\IndexDefinitionInterface[]
+	 */
+	public function getIndexesDefinition($clientName = null)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('indexesDefinition' => array(), 'clientName' => $clientName));
+		$event = new Event(Event::GET_INDEXES_DEFINITION, $this, $args);
+		$em->trigger($event);
+		$indexesDefinition = $event->getParam('indexesDefinition');
+		return is_array($indexesDefinition) ? $indexesDefinition : array();
 	}
 
 	/**

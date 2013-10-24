@@ -4,19 +4,21 @@ namespace Rbs\Elasticsearch\Documents;
 /**
  * @name \Rbs\Elasticsearch\Documents\FullText
  */
-class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText implements \Rbs\Elasticsearch\Std\IndexDefinitionInterface
+class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
+	implements \Rbs\Elasticsearch\Std\IndexDefinitionInterface
 {
-	/**
-	 * @var \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
-	 */
-	protected $facetsDefinition;
-
 	/**
 	 * @return string
 	 */
 	public function getLabel()
 	{
-		return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.documents.fulltext.label-website', array('ucf'), array('websiteLabel' => $this->getWebsite()->getLabel())); //$this->getName();
+		if ($this->getWebsite())
+		{
+			return $this->getApplicationServices()->getI18nManager()
+				->trans('m.rbs.elasticsearch.documents.fulltext.label-website', array('ucf'),
+					array('websiteLabel' => $this->getWebsite()->getLabel()));
+		}
+		return '';
 	}
 
 	/**
@@ -47,22 +49,19 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 
 	protected function onCreate()
 	{
-		if (!$this->getName() && $this->getWebsiteId() && $this->getAnalysisLCID())
+		if (!$this->getName())
 		{
-			$this->setName($this->buildIndexNameForWebsiteAndLCID($this->getWebsiteId(), $this->getAnalysisLCID()));
+			$this->setName($this->buildDefaultIndexName());
 		}
 
-		if ($this->getName() && $this->getAnalysisLCID())
-		{
-			$configFile = dirname(__DIR__) . '/Assets/Config/fulltext_' . $this->getAnalysisLCID() . '.json';
-			if (file_exists($configFile))
-			{
-				$config = \Zend\Json\Json::decode(file_get_contents($configFile), \Zend\Json\Json::TYPE_ARRAY);
-				$this->setConfigurationData($config);
-			}
-		}
 		$config = $this->getConfigurationData();
-		if (is_array($config) && count($config))
+		if (!is_array($config) || count($config) === 0)
+		{
+			$config = $this->buildDefaultConfiguration();
+			$this->setConfigurationData($config);
+		}
+
+		if (count($config))
 		{
 			$this->setActive(true);
 		}
@@ -72,9 +71,15 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 		}
 	}
 
+	public function resetConfiguration()
+	{
+		$config = $this->buildDefaultConfiguration();
+		$this->setConfigurationData($config);
+	}
+
 	protected function onUpdate()
 	{
-		if ($this->isPropertyModified('configurationData'))
+		if ($this->isPropertyModified('configurationData') && $this->getActive())
 		{
 			$config = $this->getConfigurationData();
 			if (!is_array($config) || count($config) == 0)
@@ -85,13 +90,11 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	}
 
 	/**
-	 * @param integer $websiteId
-	 * @param string $LCID
 	 * @return string
 	 */
-	protected function buildIndexNameForWebsiteAndLCID($websiteId, $LCID)
+	protected function buildDefaultIndexName()
 	{
-		return  $this->getMappingName() . '_'. $websiteId  . '_' . strtolower($LCID);
+		return $this->getMappingName() . '_' . $this->getWebsiteId() . '_' . strtolower($this->getAnalysisLCID());
 	}
 
 	/**
@@ -99,12 +102,39 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText impleme
 	 */
 	public function getFacetsDefinition()
 	{
-		if ($this->facetsDefinition === null)
+		$facetsDefinition = $this->getFacets()->toArray();
+		if (count($facetsDefinition) === 0)
 		{
-			$mf = new \Rbs\Elasticsearch\Std\ModelFacetDefinition('model');
-			$mf->setTitle($this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
-			$this->facetsDefinition = array($mf);
+			$facetsDefinition[] = $this->getDefaultModelFacet();
 		}
-		return $this->facetsDefinition;
+		return $facetsDefinition;
+	}
+
+	/**
+	 * @return \Rbs\Elasticsearch\Std\ModelFacetDefinition
+	 */
+	protected function getDefaultModelFacet()
+	{
+		$mf = new \Rbs\Elasticsearch\Std\ModelFacetDefinition('model');
+		$mf->setTitle($this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
+		return $mf;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function buildDefaultConfiguration()
+	{
+		$config = array();
+		if ($this->getAnalysisLCID())
+		{
+			$configFile =
+				dirname(__DIR__) . '/Assets/Config/' . $this->getMappingName() . '_' . $this->getAnalysisLCID() . '.json';
+			if (file_exists($configFile))
+			{
+				return \Zend\Json\Json::decode(file_get_contents($configFile), \Zend\Json\Json::TYPE_ARRAY);
+			}
+		}
+		return $config;
 	}
 }

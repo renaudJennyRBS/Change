@@ -14,8 +14,6 @@ class PriceResult
 
 	public function productPriceCollection(\Change\Http\Event $event)
 	{
-		/* @var $cs \Rbs\Commerce\Services\CommerceServices */
-		$cs = $event->getParam('commerceServices');
 		$request = $event->getRequest();
 		$startIndex = intval($request->getQuery('offset', 0));
 		$maxResults = intval($request->getQuery('limit', 10));
@@ -38,6 +36,7 @@ class PriceResult
 		$result->setOffset($startIndex);
 		$result->setLimit($maxResults);
 
+		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Price_Price');
 		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), $model);
@@ -93,15 +92,5 @@ class PriceResult
 		$result->setAvailableSorts(array('boValue', 'boDiscountValue', 'thresholdMin', 'priority', 'startActivation', 'endActivation', 'modificationDate', 'webStore', 'billingArea'));
 		$result->setHttpStatusCode(Response::STATUS_CODE_200);
 		$event->setResult($result);
-	}
-
-	/**
-	 * @param float $value
-	 * @param \Rbs\Commerce\Services\CommerceServices $cs
-	 */
-	protected function formatPriceValue($value, $cs)
-	{
-		$nf = new \NumberFormatter($cs->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
-		return $nf->formatCurrency($value, $cs->getBillingArea()->getCurrencyCode());
 	}
 }

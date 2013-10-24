@@ -182,5 +182,16 @@
 				"default": null
 			}
 		}
+	},
+	"change:manage-cache": {
+		"description": "Manage cache",
+		"options":{
+			"activate": {
+				"description": "activate a cache"
+			},
+			"deactivate": {
+				"description": "deactivate a cache"
+			}
+		}
 	}
 }

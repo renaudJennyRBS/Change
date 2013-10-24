@@ -40,8 +40,7 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\CompileDocuments();
-			$cmd->execute($event);
+			(new \Change\Commands\CompileDocuments())->execute($event);
 		};
 		$events->attach('change:compile-documents', $callback);
 
@@ -54,17 +53,15 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\SetDocumentRoot();
-			$cmd->execute($event);
+			(new \Change\Commands\SetDocumentRoot())->execute($event);
 		};
 		$events->attach('change:set-document-root', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\InstallPackage();
-			$cmd->execute($event);
+			(new \Change\Commands\InstallPackage())->execute($event);
 		};
-		$events->attach('change:install-package', $callback);
+		$events->attach('change:install-package', $callback, 5);
 
 		$callback = function ($event)
 		{
@@ -75,38 +72,39 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\DisablePlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\DisablePlugin())->execute($event);
 		};
-		$events->attach('change:disable-plugin', $callback);
+		$events->attach('change:disable-plugin', $callback, 5);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\EnablePlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\EnablePlugin())->execute($event);
 		};
-		$events->attach('change:enable-plugin', $callback);
+		$events->attach('change:enable-plugin', $callback, 5);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\DeinstallPlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\DeinstallPlugin())->execute($event);
 		};
-		$events->attach('change:deinstall-plugin', $callback);
+		$events->attach('change:deinstall-plugin', $callback, 5);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\DeregisterPlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\DeregisterPlugin())->execute($event);
 		};
-		$events->attach('change:deregister-plugin', $callback);
+		$events->attach('change:deregister-plugin', $callback, 5);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\RegisterPlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\RegisterPlugin())->execute($event);
 		};
-		$events->attach('change:register-plugin', $callback);
+		$events->attach('change:register-plugin', $callback, 5);
+
+		$callback = function ($event)
+		{
+			(new \Change\Commands\ManageCache())->execute($event);
+		};
+		$events->attach('change:manage-cache', $callback, 5);
 	}
 
 	/**

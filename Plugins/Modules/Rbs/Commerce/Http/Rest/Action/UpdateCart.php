@@ -13,7 +13,7 @@ class UpdateCart
 	 */
 	public function execute($event)
 	{
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cartIdentifier = $event->getParam('cartIdentifier');

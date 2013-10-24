@@ -9,5 +9,6 @@
 		<property name="analysisLCID" type="String" required="true" />
 		<property name="configurationData" type="JSON" />
 		<property name="website" type="Document" document-type="Rbs_Website_Website" />
+		<property name="facets" type="DocumentArray" max-occurs="50" document-type="Rbs_Elasticsearch_Facet" />
 	</properties>
 </document>

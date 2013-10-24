@@ -14,7 +14,7 @@ class InsertCart
 	 */
 	public function execute($event)
 	{
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$args = $event->getRequest()->getPost()->toArray();

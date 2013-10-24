@@ -27,6 +27,15 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Elasticsearch_Collection_Clients':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addClients($event);
 					break;
+				case 'Rbs_Elasticsearch_Collection_Indexes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addIndexes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_CollectionCodes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addCollectionCodes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_AttributeIds':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addAttributeIds($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -35,6 +44,9 @@ class Listeners implements ListenerAggregateInterface
 		{
 			$codes = $event->getParam('codes', array());
 			$codes[] = 'Rbs_Elasticsearch_Collection_Clients';
+			$codes[] = 'Rbs_Elasticsearch_Collection_Indexes';
+			$codes[] = 'Rbs_Elasticsearch_Collection_CollectionCodes';
+			$codes[] = 'Rbs_Elasticsearch_Collection_AttributeIds';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

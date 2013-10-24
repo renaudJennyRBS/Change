@@ -20,18 +20,22 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (Event $event)
+		$callback = function (\Zend\EventManager\Event $event)
 		{
-			$commerceServices = new CommerceServices($event->getApplicationServices(), $event->getDocumentServices());
+			$commerceServices = new CommerceServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
 			$event->setParam('commerceServices', $commerceServices);
 
-			$resolver = $event->getController()->getActionResolver();
-			if ($resolver instanceof \Change\Http\Rest\Resolver)
+			$controller = $event->getTarget();
+			if ($controller instanceof \Change\Http\Rest\Controller)
 			{
-				$resolver->addResolverClasses('commerce', '\Rbs\Commerce\Http\Rest\CommerceResolver');
+				$resolver = $controller->getActionResolver();
+				if ($resolver instanceof \Change\Http\Rest\Resolver)
+				{
+					$resolver->addResolverClasses('commerce', '\Rbs\Commerce\Http\Rest\CommerceResolver');
+				}
 			}
 		};
-		$events->attach(Event::EVENT_REQUEST, $callback, 5);
+		$events->attach('registerServices', $callback, 1);
 
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
 	}

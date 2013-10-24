@@ -28,7 +28,7 @@ class ShortCart extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
 			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
@@ -69,7 +69,7 @@ class ShortCart extends Block
 		if ($cartIdentifier)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-			$commerceServices = $event->getParam('commerceServices');
+			$commerceServices = $event->getServices('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart && !$cart->isEmpty())
 			{
