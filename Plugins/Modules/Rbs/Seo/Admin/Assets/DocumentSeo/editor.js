@@ -3,14 +3,13 @@
 	"use strict";
 
 	/**
-	 * @param $timeout
 	 * @param $http
-	 * @param Loading
 	 * @param REST
+	 * @param NotificationCenter
 	 * @param Utils
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST, NotificationCenter, Utils)
+	function Editor($http, REST, NotificationCenter, Utils)
 	{
 		return {
 			restrict : 'C',
@@ -414,6 +413,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
+	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
 })();

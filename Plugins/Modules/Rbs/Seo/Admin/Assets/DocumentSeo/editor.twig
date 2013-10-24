@@ -3,6 +3,12 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}">
+			<p class="form-control-static">
+				<a href="javascript:;" ng-href="(= document.target | rbsURL =)">(= document.target.label =) <i class="icon-circle-arrow-right"></i></a>
+			</p>
+		</rbs-field>
+
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaTitle'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.metaTitle" />
