@@ -3,16 +3,16 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="code" label="{{ i18nAttr('m.rbs.stock.documents.sku.code', ['ucf']) }}"
+		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'code'), ['ucf']) }}"
 			max-length="80" input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-boolean
-				property="virtual" label="{{ i18nAttr('m.rbs.stock.documents.sku.virtual', ['ucf']) }}">
+				property="virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'virtual'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.documents.sku.virtual-help') }}</span>
 		</rbs-field-boolean>
 
-		<rbs-field ng-hide="document.virtual" label="{{ i18nAttr('m.rbs.stock.documents.sku.physicalProperties', ['ucf']) }}">
+		<rbs-field ng-hide="document.virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'physicalProperties'), ['ucf']) }}">
 			<div class="form-inline">
 				<div class="form-group" style="margin:0;">
 					<div class="input-group">
@@ -75,7 +75,7 @@
 
 		</rbs-field>
 		<rbs-field
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.unit', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unit'), ['ucf']) }}">
 			<select ng-model="unit" class="form-control" rbs-items-from-collection="Rbs_Stock_Collection_Unit">
 			</select>
 		</rbs-field>
@@ -84,42 +84,42 @@
 			property="quantityIncrement"
 			min="1"
 			max="10000"
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.quantityincrement', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'quantityIncrement'), ['ucf']) }}">
 		</rbs-field-integer>
 
 		<rbs-field-integer
 			property="minQuantity"
 			min="1"
 			max="10000"
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.minquantity', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'minQuantity'), ['ucf']) }}">
 		</rbs-field-integer>
 
 		<rbs-field-integer
 			min="1"
 			max="10000"
 			property="maxQuantity"
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.maxquantity', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'maxQuantity'), ['ucf']) }}">
 		</rbs-field-integer>
 
 		<rbs-field-boolean property="unlimitedInventory"
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.unlimitedinventory', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unlimitedInventory'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.documents.sku.unlimitedinventory-help') }}</span>
 		</rbs-field-boolean>
 
 		<rbs-field-boolean ng-hide="document.unlimitedInventory"
 				property="allowBackorders"
-				label="{{ i18nAttr('m.rbs.stock.documents.sku.allowbackorders', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowBackorders'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.documents.sku.allowbackorders-help') }}</span>
 		</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.stock.documents.sku.thresholds', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'thresholds'), ['ucf']) }}">
 			<rbs-thresholds-editor thresholds-values="document.thresholds">
 			</rbs-thresholds-editor>
 		</rbs-field>
 
 		<rbs-field-boolean
 			property="allowQuantitySplit"
-			label="{{ i18nAttr('m.rbs.stock.documents.sku.allowquantitysplit', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowQuantitySplit'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.documents.sku.allowquantitysplit-help') }}</span>
 		</rbs-field-boolean>
 

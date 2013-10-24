@@ -4,7 +4,7 @@
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
 	<p class="form-inline">
-		{{ i18n('m.rbs.website.documents.menu.website', ['ucf', 'lab']) }}
+		{{ i18n(propertyKey('Rbs_Website_Menu', 'website'), ['ucf', 'lab']) }}
 		<select class="form-control" ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
 	</p>
 

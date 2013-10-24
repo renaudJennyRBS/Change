@@ -11,7 +11,7 @@ use Zend\Http\Response as HttpResponse;
 /**
  * @name \Change\Http\Rest\Actions\GetDocumentModelCollection
  */
-class GetDocumentModelCollection
+class GetDocumentCollection
 {
 	/**
 	 * @var string[]

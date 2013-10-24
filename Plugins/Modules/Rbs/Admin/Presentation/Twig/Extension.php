@@ -83,7 +83,10 @@ class Extension implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('createLinks', array($this, 'createLinks'), array('is_safe' => array('html')))
+			new \Twig_SimpleFunction('createLinks', array($this, 'createLinks'), array('is_safe' => array('html'))),
+			new \Twig_SimpleFunction('propertyKey', array($this, 'propertyKey')),
+			new \Twig_SimpleFunction('modelKey', array($this, 'modelKey'))
+
 		);
 	}
 
@@ -155,5 +158,46 @@ class Extension implements \Twig_ExtensionInterface
 			}
 		}
 		return implode(' ', $links);
+	}
+
+	/**
+	 * Get the property translation key for label
+	 * @param null|string $modelName
+	 * @param null|string $propertyName
+	 * @return null|string
+	 */
+	public function propertyKey($modelName = null, $propertyName = null, $suffix = null)
+	{
+		$mm = $this->adminManager->getDocumentServices()->getModelManager();
+		if ($modelName)
+		{
+			$model = $mm->getModelByName($modelName);
+			if ($model && $model->hasProperty($propertyName))
+			{
+				$key = $model->getPropertyLabelKey($propertyName);
+				return $suffix ? $key . '-' . $suffix : $key;
+			}
+		}
+		return $propertyName;
+	}
+
+	/**
+	 * @param null|string $modelName
+	 * @param null|string $suffix
+	 * @return null|string
+	 */
+	public function modelKey($modelName = null, $suffix = null)
+	{
+		$mm = $this->adminManager->getDocumentServices()->getModelManager();
+		if ($modelName)
+		{
+			$model = $mm->getModelByName($modelName);
+			if ($model)
+			{
+				$key = $model->getLabelKey();
+				return $suffix ? $key . '-' . $suffix : $key;
+			}
+		}
+		return $modelName;
 	}
 }

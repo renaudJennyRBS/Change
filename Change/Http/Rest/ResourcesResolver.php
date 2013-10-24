@@ -11,7 +11,7 @@ use Change\Http\Rest\Actions\DeleteLocalizedDocument;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetCorrection;
 use Change\Http\Rest\Actions\GetDocument;
-use Change\Http\Rest\Actions\GetDocumentModelCollection;
+use Change\Http\Rest\Actions\GetDocumentCollection;
 use Change\Http\Rest\Actions\GetLocalizedDocument;
 use Change\Http\Rest\Actions\UpdateDocument;
 use Change\Http\Rest\Actions\UpdateLocalizedDocument;
@@ -114,7 +114,7 @@ class ResourcesResolver
 
 				$action = function ($event)
 				{
-					$action = new GetDocumentModelCollection();
+					$action = new GetDocumentCollection();
 					$action->execute($event);
 				};
 				$event->setAction($action);

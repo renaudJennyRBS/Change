@@ -5,13 +5,13 @@
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.zone.label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'label'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="code" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.zone.code', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'code'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
@@ -22,7 +22,7 @@
 		</rbs-field-text>
 
 		<rbs-field-picker
-				property="country" required="true" label="{{ i18nAttr('m.rbs.geo.documents.zone.country', ['ucf']) }}"
+				property="country" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_Country"
 				selector-title="{{ i18nAttr('m.rbs.geo.documents.zone.country-picker-title', ['ucf']) }}"
 				allow-creation="false">

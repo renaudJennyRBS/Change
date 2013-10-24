@@ -4,7 +4,7 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text data-ng-hide="document.isNew()" property="label" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-picker property="product"
@@ -12,27 +12,27 @@
 			allow-edition="false"
 			allow-creation="false"
 			selector-title="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.productlist-picker-title', ['ucf']) }}"
-			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.product', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'product'), ['ucf']) }}"
 			required="true">
 		</rbs-field-picker>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.crossSellingType', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'crossSellingType'), ['ucf']) }}" required="true">
 			<rbs-collection-item-selector ng-model="document.crossSellingType" collection-code="Rbs_Catalog_Collection_CrossSellingType"></rbs-collection-item-selector>
 		</rbs-field>
 
-		<rbs-field-boolean property="symmetrical" label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.symmetrical', ['ucf']) }}">
+		<rbs-field-boolean property="symmetrical" label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'symmetrical'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<hr />
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.productsortorder', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'productSortOrder'), ['ucf']) }}">
 			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
 				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
 			</select>
 			<span class="help-block">{{ i18n('m.rbs.catalog.documents.crosssellingproductlist.productsortorder-help') }} </span>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.productsortdirection', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'productSortDirection'), ['ucf']) }}">
 			<rbs-collection-item-selector ng-model="document.productSortDirection"
 				collection-code="Rbs_Generic_Collection_SortDirections">
 			</rbs-collection-item-selector>
@@ -42,11 +42,11 @@
 		<hr />
 
 		<rbs-field-date property="startActivation"
-			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.startactivation', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'startActivation'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endActivation"
-			label="{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.endactivation', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'endActivation'), ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

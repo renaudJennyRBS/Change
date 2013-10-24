@@ -66,7 +66,7 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Documents\Property', $property);
 		$this->assertEquals('pStr', $property->getName());
 
-		$names = $modelBasic->getPropertiesNames();
+		$names = $modelBasic->getPropertyNames();
 		$this->assertCount(22, $names);
 		$this->assertContains('id', $names);
 		$this->assertContains('model', $names);

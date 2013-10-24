@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="sku" label="{{ i18nAttr('m.rbs.price.documents.price.sku', ['ucf']) }}"
+		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
 			selector-title="{{ i18nAttr('m.rbs.price.documents.price.sku-picker-title', ['ucf']) }}"
 			allow-edition="true"
@@ -12,13 +12,13 @@
 			ng-hide="hideSku">
 		</rbs-field-picker>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.webstore', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
 			<select class="form-control" ng-required="true" ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
 				<option value=""> {{ i18n('m.rbs.store.admin.js.select-webstore', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.billingarea', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
 			<select class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStoreId"
 				rbs-items-collection-params="webStoreId:(=webStoreId=)"
 				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
@@ -26,7 +26,7 @@
 			</select>
 			<table ng-show="taxInfo" class="table table-striped">
 				<thead>
-				<th>{{ i18n('m.rbs.price.documents.tax', ['ucf']) }}</th>
+				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
 				<th>{{ i18n('m.rbs.price.documents.tax.category', ['ucf']) }}</th>
 				</thead>
 				<tbody>
@@ -46,19 +46,19 @@
 
 		<hr/>
 
-		<rbs-field required="true" label="{{ i18nAttr('m.rbs.price.documents.price.bovalue', ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'boValue'), ['ucf']) }}">
 			<rbs-price-input ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
 				data-price-with-tax="(=billingArea.boEditWithTax=)" />
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.price.documents.price.ecoTax', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'ecoTax'), ['ucf']) }}">
 			<rbs-price-input ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
 				data-price-with-tax="(=billingArea.boEditWithTax=)" />
 		</rbs-field>
 
 		<hr/>
 
-		<rbs-field-picker property="basePrice" label="{{ i18nAttr('m.rbs.price.documents.price.baseprice', ['ucf']) }}"
+		<rbs-field-picker property="basePrice" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}"
 				accepted-model="Rbs_Price_Price" picker="model"
 				selector-title="{{ i18nAttr('m.rbs.price.documents.price.select-baseprice', ['ucf']) }}"
 				allow-edition="true" allow-creation="true">
@@ -66,7 +66,7 @@
 
 		<rbs-field-text ng-show="document.basePrice"
 			property="discountDetail"
-			label="{{ i18nAttr('m.rbs.price.documents.price.discountdetail', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'discountDetail'), ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
@@ -77,7 +77,7 @@
 
 		<div class="form-group property">
 			<label class="col-md-3 control-label"
-				for="startActivation">{{ i18n('m.rbs.price.documents.price.startactivation', ['ucf']) }}
+				for="startActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'startActivation'), ['ucf']) }}
 			</label>
 
 			<div class="col-md-9 controls">
@@ -95,7 +95,7 @@
 
 		<div class="form-group property">
 			<label class="col-md-3 control-label"
-				for="endActivation">{{ i18n('m.rbs.price.documents.price.endactivation', ['ucf']) }}
+				for="endActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'endActivation'), ['ucf']) }}
 			</label>
 
 			<div class="col-md-9 controls">

@@ -33,7 +33,7 @@
 					<dd>(= doc.width | number =) &times; (= doc.height | number =) <abbr title="Pixels">px</abbr></dd>
 					<dt>{{ i18n('m.rbs.media.documents.image.megapixels', ['ucf']) }}</dt>
 					<dd>(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.documents.image.megapixels', ['ucf']) }}">Mpx</abbr></dd>
-					<dt>{{ i18n('m.rbs.media.documents.image.alt', ['ucf']) }}</dt>
+					<dt>{{ i18n(propertyKey('Rbs_Media_Image', 'alt'), ['ucf']) }}</dt>
 					<dd>(= doc.alt | emptyLabel =)</dd>
 					<dt>{{ i18n('m.rbs.media.documents.image.file', ['ucf']) }}</dt>
 					<dd>(= doc.path.storageURI =)</dd>

@@ -4,15 +4,15 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.brand.documents.brand.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.brand.documents.brand.title', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-rich-text property="description" required="false" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.brand.documents.brand.description', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
 
 		<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.catalog.documents.product.visual', ['ucf']) }}"
@@ -21,14 +21,14 @@
 		</rbs-field-picker>
 
 		<rbs-field-url property="websiteUrl" required="false" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.brand.documents.brand.websiteurl', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 		</rbs-field-url>
 
 		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr('m.rbs.brand.documents.brand.startPublication', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'startPublication'), ['ucf']) }}">
 		</rbs-field-date>
 
-		<rbs-field-date property="endPublication" label="{{ i18nAttr('m.rbs.brand.documents.brand.endPublication', ['ucf']) }}">
+		<rbs-field-date property="endPublication" label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'endPublication'), ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

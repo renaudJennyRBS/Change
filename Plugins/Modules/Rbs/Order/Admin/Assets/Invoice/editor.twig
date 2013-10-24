@@ -3,32 +3,32 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-date property="creationDate" label="{{ i18nAttr('m.rbs.order.documents.invoice.creationDate', ['ucf']) }}">
+		<rbs-field-date property="creationDate" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'creationDate'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-text property="code" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.order.documents.invoice.code', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker property="order" label="{{ i18nAttr('m.rbs.order.documents.invoice.order', ['ucf']) }}"
+		<rbs-field-picker property="order" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'order'), ['ucf']) }}"
 			accepted-model="Rbs_Order_Order" allow-edition="true"
 			selector-title="{{ i18nAttr('m.rbs.order.documents.invoice.select-order', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field-picker property="transaction" label="{{ i18nAttr('m.rbs.order.documents.invoice.transaction', ['ucf']) }}"
+		<rbs-field-picker property="transaction" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'transaction'), ['ucf']) }}"
 				accepted-model="Rbs_Payment_Transaction" allow-edition="true"
 				selector-title="{{ i18nAttr('m.rbs.order.documents.invoice.select-transaction', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.invoice.currencycode', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'currencyCode'), ['ucf']) }}">
 			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.invoice.amount', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amount'), ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.amount" data-currency-code="(=document.currencyCode=)" />
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.invoice.amountwithtax', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amountWithTax'), ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.amountWithTax"
 					data-price-with-tax="true" data-currency-code="(=document.currencyCode=)" />
 		</rbs-field>

@@ -5,24 +5,24 @@
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.country.label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="code" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.country.code', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="title"
-				label="{{ i18nAttr('m.rbs.geo.documents.country.title', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'title'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-picker
-				property="addressFields" label="{{ i18nAttr('m.rbs.geo.documents.country.addressfields', ['ucf']) }}"
+				property="addressFields" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'addressFields'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_AddressFields"
 				selector-title="{{ i18nAttr('m.rbs.geo.documents.country.select-addressfields', ['ucf']) }}"
 				allow-creation="false">
