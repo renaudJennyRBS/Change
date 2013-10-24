@@ -3,53 +3,53 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-date property="creationDate" label="{{ i18nAttr('m.rbs.order.documents.order.creationDate', ['ucf']) }}">
+		<rbs-field-date property="creationDate" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'creationDate'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-text property="code" input-class="input-block-level"
-			label="{{ i18nAttr('m.rbs.order.documents.order.code', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker property="ownerId" label="{{ i18nAttr('m.rbs.order.documents.order.ownerid', ['ucf']) }}"
+		<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
 			accepted-model="Rbs_User_User" allow-edition="true"
 			selector-title="{{ i18nAttr('m.rbs.order.documents.order.select-ownerid', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field-picker property="webStoreId" label="{{ i18nAttr('m.rbs.order.documents.order.webstoreid', ['ucf']) }}"
+		<rbs-field-picker property="webStoreId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'webStoreId'), ['ucf']) }}"
 				accepted-model="Rbs_Store_WebStore" allow-edition="true"
 				selector-title="{{ i18nAttr('m.rbs.order.documents.order.select-webstoreid', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.order.currencycode', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'currencyCode'), ['ucf']) }}">
 			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.order.amount', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'amount'), ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.amount" data-currency-code="(=document.currencyCode=)" />
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.order.documents.order.amountwithtax', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'amountWithTax'), ['ucf']) }}">
 			<rbs-price-input data-ng-model="document.amountWithTax"
 					data-price-with-tax="true" data-currency-code="(=document.currencyCode=)" />
 		</rbs-field>
 
 		<div ng-if="document.id > 0">
 			<div class="control-group">
-				<label class="control-label">{{ i18n('m.rbs.order.documents.order.processingstatus',['ucf']) }}</label>
+				<label class="control-label">{{ i18n(propertyKey('Rbs_Order_Order', 'processingStatus'),['ucf']) }}</label>
 				<div class="controls">
 					<span class="uneditable-input input-xlarge">(=document.processingStatus=)</span>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label">{{ i18n('m.rbs.order.documents.order.paymentstatus',['ucf']) }}</label>
+				<label class="control-label">{{ i18n(propertyKey('Rbs_Order_Order', 'paymentStatus'),['ucf']) }}</label>
 				<div class="controls">
 					<span class="uneditable-input input-xlarge">(=document.paymentStatus=)</span>
 				</div>
 			</div>
 
 			<div class="control-group">
-				<label class="control-label">{{ i18n('m.rbs.order.documents.order.shippingstatus',['ucf']) }}</label>
+				<label class="control-label">{{ i18n(propertyKey('Rbs_Order_Order', 'shippingStatus'),['ucf']) }}</label>
 				<div class="controls">
 					<span class="uneditable-input input-xlarge">(=document.shippingStatus=)</span>
 				</div>

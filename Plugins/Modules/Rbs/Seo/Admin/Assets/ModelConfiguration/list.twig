@@ -12,7 +12,7 @@
 
 	<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false">
 		<quick-actions></quick-actions>
-		<column name="label" primary="true" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.label', ['ucf']) }}"></column>
+		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></column>
 		<column name="documentSeoAutoGenerate" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.document-seo-auto-generate', ['ucf']) }}">
 			<switch data-ng-model="doc.documentSeoAutoGenerate" disabled></switch>
 		</column>

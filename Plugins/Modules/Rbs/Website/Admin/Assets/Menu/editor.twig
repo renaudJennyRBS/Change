@@ -5,11 +5,11 @@
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.website.documents.menu.label', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-picker
-				property="website" required="true" label="{{ i18nAttr('m.rbs.website.documents.menu.website', ['ucf']) }}"
+				property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'website'), ['ucf']) }}"
 				accepted-model="Rbs_Website_Website"
 				selector-title="{{ i18nAttr('m.rbs.website.documents.menu.website-picker-title', ['ucf']) }}"
 				allow-creation="false">
@@ -21,7 +21,7 @@
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.menu.section-items', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field property="items" label="{{ i18nAttr('m.rbs.website.documents.menu.items', ['ucf']) }}">
+		<rbs-field property="items" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'items'), ['ucf']) }}">
 			<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
 			<token-list rows="true" items="document.items" item-template="picker-item-Rbs_Menu_Item.html"></token-list>
 			<a href="javascript:;" ng-click="toggleAddItemUI($event)"><i ng-class="{true:'icon-chevron-up', false:'icon-chevron-down'}[addItemUIShown]"></i>

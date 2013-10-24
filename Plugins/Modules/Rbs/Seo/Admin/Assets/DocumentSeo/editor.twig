@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="target" label="{{ i18nAttr('m.rbs.seo.documents.documentseo.target', ['ucf']) }}"
+		<rbs-field-picker property="target" label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.seo.documents.documentseo.target-picker-title', ['ucf']) }}"
 			required="true" allow-creation="false" allow-edition="true" ng-disabled="document.id > 0">
 		</rbs-field-picker>

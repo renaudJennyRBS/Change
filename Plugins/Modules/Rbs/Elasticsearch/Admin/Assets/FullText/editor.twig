@@ -3,20 +3,20 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.fulltext.clientname', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'clientName'), ['ucf']) }}" required="true">
 			<select ng-model="document.clientName" rbs-items-from-collection="Rbs_Elasticsearch_Collection_Clients" required="true">
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.fulltext.clientname-choose', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.fulltext.analysislcid', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'analysisLCID'), ['ucf']) }}" required="true">
 			<select ng-model="document.analysisLCID" rbs-items-from-collection="Rbs_Generic_Collection_Languages" required="true">
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.fulltext.analysislcid-choose', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
 		<rbs-field-picker required="true" property="website"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.fulltext.website', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'website'), ['ucf']) }}"
 				accepted-model="Rbs_Website_Website" allow-creation="false" allow-edition="true"
 				selector-title="{{ i18nAttr('m.rbs.elasticsearch.documents.fulltext.website-picker-title', ['ucf']) }}">
 		</rbs-field-picker>

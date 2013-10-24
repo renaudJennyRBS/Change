@@ -4,26 +4,26 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.website.documents.topic.synchronize-title-label', ['ucf']) }}"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.title', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="pathPart"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.pathPart', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'pathPart'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr('m.rbs.website.documents.topic.indexpage', ['ucf']) }}">
+		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">
 			<span class="uneditable-input">(=document.indexPage.label=)</span>
 		</rbs-field>
 
 		<hr/>
 
 		<rbs-field-picker property="website" required="true"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.website', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
 			selector-title="{{ i18nAttr('m.rbs.website.documents.topic.website-picker-title', ['ucf']) }}"
 			allow-creation="false">

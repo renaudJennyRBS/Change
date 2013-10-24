@@ -4,18 +4,18 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr('m.rbs.price.documents.billingarea.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="code" required="false"
-			label="{{ i18nAttr('m.rbs.price.documents.billingarea.code', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.price.documents.billingarea.currencyCode', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'currencyCode'), ['ucf']) }}">
 			<select class="form-control" ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
 		</rbs-field>
 
-		<rbs-field-picker-multiple property="taxes" required="false" label="{{ i18nAttr('m.rbs.price.documents.billingarea.taxes', ['ucf']) }}"
+		<rbs-field-picker-multiple property="taxes" required="false" label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'taxes'), ['ucf']) }}"
 			accepted-model="Rbs_Price_Tax"
 			selector-title="{{ i18nAttr('m.rbs.price.documents.billingarea.taxes-picker-title', ['ucf']) }}">
 		</rbs-field-picker-multiple>

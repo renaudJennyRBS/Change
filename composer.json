@@ -27,6 +27,9 @@
 		"leafo/lessphp": "0.4.0",
 		"mrclay/minify": "2.1.7"
 	},
+	"require-dev": {
+		"symfony/finder": "2.*"
+	},
 	"config": {
 		"vendor-dir": "Libraries"
 	}

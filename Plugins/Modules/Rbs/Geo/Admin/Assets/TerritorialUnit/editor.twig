@@ -5,26 +5,26 @@
 
 		<rbs-field-text
 				property="label" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'label'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="code" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.code', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'code'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 				property="title"
-				label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.title', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'title'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 
 		<rbs-field
 				property="unitType" required="true"
-				label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.unittype', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitType'), ['ucf']) }}"
 				input-class="input-block-level">
 			<select ng-required="true" data-ng-model="document.unitType" rbs-items-from-collection="Rbs_Geo_Collection_UnitType">
 				<option value=""> {{ i18n('m.rbs.geo.admin.js.select-unittype', ['ucf']) }}</option>
@@ -33,14 +33,14 @@
 		</rbs-field>
 
 		<rbs-field-picker
-				property="country" required="true" label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.country', ['ucf']) }}"
+				property="country" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'country'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_Country"
 				selector-title="{{ i18nAttr('m.rbs.geo.documents.territorialunit.country-picker-title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
 
 		<rbs-field-picker
-				property="unitParent" label="{{ i18nAttr('m.rbs.geo.documents.territorialunit.unitparent', ['ucf']) }}"
+				property="unitParent" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitParent'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_TerritorialUnit"
 				selector-title="{{ i18nAttr('m.rbs.geo.documents.territorialunit.unitparent-picker-title', ['ucf']) }}"
 				allow-creation="false">

@@ -7,26 +7,26 @@
 
 		<rbs-field-text
 				property="code" required="true" ng-disabled="document.locked"
-				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.code', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text property="title"
-				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.title', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'title'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-boolean property="required"
-				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.required', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'required'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-boolean>
 
 		<rbs-field-text property="match"
-				label="{{ i18nAttr('m.rbs.geo.documents.addressfield.match', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'match'), ['ucf']) }}"
 				input-class="input-block-level">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.geo.documents.addressfield.collectioncode', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
 			<select data-ng-model="document.collectionCode" rbs-items-from-collection="Rbs_Collection_Collection_List">
 				<option value=""> {{ i18n('m.rbs.geo.documents.addressfield.select-collectioncode', ['ucf']) }}</option>
 			</select>

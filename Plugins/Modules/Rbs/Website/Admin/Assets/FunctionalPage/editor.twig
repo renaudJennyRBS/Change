@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="website" required="true" label="{{ i18nAttr('m.rbs.website.documents.functionalpage.website', ['ucf']) }}"
+		<rbs-field-picker property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
 			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.website-picker-title', ['ucf']) }}"
 			allow-edition="true">
@@ -14,10 +14,10 @@
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.website.documents.functionalpage.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text label="{{ i18nAttr('m.rbs.website.documents.functionalpage.title', ['ucf']) }}"
+		<rbs-field-text label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'title'), ['ucf']) }}"
 			property="title"
 			rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.synchronize-title-label', ['ucf']) }}"
@@ -25,7 +25,7 @@
 		</rbs-field-text>
 
 		<rbs-field-picker property="pageTemplate" required="true" accepted-model="Rbs_Theme_PageTemplate"
-				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'pageTemplate'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate-picker-title', ['ucf']) }}"
 			allow-edition="true">
 		</rbs-field-picker>
@@ -36,22 +36,22 @@
 
 		<hr />
 		<rbs-field-boolean property="useCache"
-				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.usecache', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'useCache'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<div data-ng-show="document.useCache">
-			<rbs-field-integer property="TTL" label="{{ i18nAttr('m.rbs.website.documents.functionalpage.ttl', ['ucf']) }}">
+			<rbs-field-integer property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
 				<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage.ttl-help') }}</span>
 			</rbs-field-integer>
 		</div>
 
 		<rbs-field-boolean property="https"
-				label="{{ i18nAttr('m.rbs.website.documents.functionalpage.https', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'https'), ['ucf']) }}">
 		</rbs-field-boolean>
 	</fieldset>
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"
-		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.editableContent', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 		</structure-editor>

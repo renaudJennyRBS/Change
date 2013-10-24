@@ -8,19 +8,19 @@
 		<rbs-field-text
 			property="label"
 			required="true"
-			label="{{ i18nAttr('m.rbs.collection.documents.collection.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 				data-ng-disabled="document.locked"
 				property="code"
 				required="true"
-				label="{{ i18nAttr('m.rbs.collection.documents.collection.code', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<div ng-show="document.id > 0">
 			<h3>
-				{{ i18n('m.rbs.collection.documents.collection.items', ['ucf']) }}
+				{{ i18n(propertyKey('Rbs_Collection_Collection', 'items'), ['ucf']) }}
 			</h3>
 
 			<div class="add-elements-bar">
@@ -31,11 +31,11 @@
 				<thead>
 					<tr>
 						<th>
-							{{ i18n('m.rbs.collection.documents.item.label', ['ucf']) }}
+							{{ i18n(propertyKey('Rbs_Collection_Item', 'label'), ['ucf']) }}
 
 						</th>
 						<th>
-							{{ i18n('m.rbs.collection.documents.item.value', ['ucf']) }}
+							{{ i18n(propertyKey('Rbs_Collection_Item', 'value'), ['ucf']) }}
 						</th>
 						<th>
 						</th>
@@ -72,7 +72,7 @@
 							<button style="width:36px" ng-hide="item.locked" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
 								<i class="icon-remove"></i>
 							</button>
-							<button style="width:36px" disabled="true" ng-show="item.locked"  title="{{ i18nAttr('m.rbs.collection.documents.item.locked', ['ucf']) }}" class="btn btn-info btn-sm" type="button">
+							<button style="width:36px" disabled="true" ng-show="item.locked"  title="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'locked'), ['ucf']) }}" class="btn btn-info btn-sm" type="button">
 								<i class="icon-lock"></i>
 							</button>
 						</td>

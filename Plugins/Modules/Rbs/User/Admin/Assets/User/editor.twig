@@ -12,17 +12,17 @@
 
 		<rbs-field-text
 			property="email" required="true"
-			label="{{ i18nAttr('m.rbs.user.documents.user.email', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'email'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="login"
-			label="{{ i18nAttr('m.rbs.user.documents.user.login', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'login'), ['ucf']) }}">
 		</rbs-field-text>
 
 
 		<rbs-field property="password" required="true" ng-if="document.isNew()"
-			label="{{ i18nAttr('m.rbs.user.documents.user.password', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'password'), ['ucf']) }}">
 			<input class="form-control" type="password" ng-model="document.password" />
 		</rbs-field>
 

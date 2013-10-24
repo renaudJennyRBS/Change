@@ -4,11 +4,11 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr('m.rbs.event.documents.category.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true"
-			label="{{ i18nAttr('m.rbs.event.documents.category.title', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'title'), ['ucf']) }}"
 			rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.event.documents.category.synchronize-title-label', ['ucf']) }}">
 		</rbs-field-text>
@@ -16,7 +16,7 @@
 		<hr />
 
 		<rbs-field-rich-text property="description" required="false" profile="Website"
-			label="{{ i18nAttr('m.rbs.event.documents.category.description', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
 	</fieldset>
 
@@ -25,18 +25,18 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-picker-multiple property="publicationSections"
-			label="{{ i18nAttr('m.rbs.event.documents.category.publicationsections', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'publicationSections'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section" allow-creation="true" allow-edition="true"
 			selector-title="{{ i18nAttr('m.rbs.event.documents.category.publicationsections-picker-title', ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.event.documents.category.publicationsections-help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr('m.rbs.event.documents.category.startPublication', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'startPublication'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endPublication"
-			label="{{ i18nAttr('m.rbs.event.documents.category.endPublication', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'endPublication'), ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 

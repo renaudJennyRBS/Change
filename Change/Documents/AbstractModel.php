@@ -470,7 +470,7 @@ abstract class AbstractModel
 	 * @api
 	 * @return string[]
 	 */
-	public function getPropertiesNames()
+	public function getPropertyNames()
 	{
 		return array_keys($this->properties);
 	}

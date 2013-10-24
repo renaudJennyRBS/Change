@@ -5,7 +5,7 @@
 
 		<div data-ng-if="document.isNew()">
 			<rbs-field-picker required="true" property="rootProduct"
-			                  label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}"
+			                  label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}"
 			                  accepted-model="Rbs_Catalog_Product"
 			                  selector-title="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.rootproduct-picker-title', ['ucf']) }}"
 			                  allow-creation="true"
@@ -14,7 +14,7 @@
 			</rbs-field-picker>
 
 			<rbs-field required="true" property="axisAttribute"
-			           label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.axisattribute', ['ucf']) }}">
+			           label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axisAttribute'), ['ucf']) }}">
 				<select ng-required="true" ng-model="document.axisAttribute"
 				        rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
 					<option value="">{{ i18n('m.rbs.catalog.documents.variantgroup.axisattribute-select', ['ucf']) }}</option>
@@ -24,7 +24,7 @@
 
 
 		<div class="form-group property" ng-hide="document.isNew()">
-			<label class="col-lg-3 control-label">{{ i18n('m.rbs.catalog.documents.variantgroup.rootproduct', ['ucf']) }}</label>
+			<label class="col-lg-3 control-label">{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}</label>
 			<div class="col-lg-9 controls">
 				<p class="form-control-static">
 					<a href ng-href="(= document.rootProduct | documentURL =)">(= document.rootProduct.label =)</a>
@@ -33,7 +33,7 @@
 		</div>
 
 		<rbs-field-boolean property="newSkuOnCreation"
-		                   label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.newskuoncreation', ['ucf']) }}">
+		                   label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'newSkuOnCreation'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<div data-ng-if="! document.isNew()">
@@ -167,7 +167,7 @@
 			<thead>
 			<tr>
 				<th>
-					{{ i18n('m.rbs.catalog.documents.variantgroup.label', ['ucf']) }}
+					{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'label'), ['ucf']) }}
 				</th>
 				<th>
 					{{ i18n('m.rbs.catalog.document.product.sku', ['ucf']) }}

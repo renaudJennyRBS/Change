@@ -6,7 +6,7 @@
 				(<a href="(= productList.product | documentURL =)">(= productList.product.label =)</a>)
 			</span>
 			<small>
-				{{ i18n('m.rbs.catalog.documents.productlist.productsortorder', ['ucf', 'lab']) }}
+				{{ i18n(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf', 'lab']) }}
 				(= List.sortOrders[productList.productSortOrder].label =)
 				(= List.sortDirections[productList.productSortDirection].label =)
 				(<a ng-href="(= productList | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
@@ -15,7 +15,7 @@
 	</div>
 
 	<div ng-if="List.isSynchronized">
-		<p>{{ i18n('m.rbs.catalog.documents.sectionproductlist.synchronizedsection', ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
+		<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
 		<p>{{ i18n('m.rbs.catalog.documents.sectionproductlist.synchronizedsection-help', ['ucf']) }}</p>
 	</div>
 

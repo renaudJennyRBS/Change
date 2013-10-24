@@ -4,17 +4,17 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="document.product.label"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.product', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'product'), ['ucf']) }}"
 			disabled="product">
 		</rbs-field-text>
 
 		<rbs-field-text ng-if="document.productList" property="document.productList.label"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.productlist', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}"
 			disabled="productList">
 		</rbs-field-text>
 
 		<rbs-field-picker ng-if="!document.productList" property="document.productList"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.productlist', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"
 			accepted-model="Rbs_Catalog_ProductList"
@@ -25,16 +25,16 @@
 
 		<rbs-field-boolean
 			property="active"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.active', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'active'), ['ucf']) }}">
 		</rbs-field-boolean>
 		<rbs-field-date
 			property="startActivation"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.startactivation', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'startActivation'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date
 			property="endActivation"
-			label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.endactivation', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'endActivation'), ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 	<form-button-bar></form-button-bar>

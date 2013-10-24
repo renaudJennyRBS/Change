@@ -26,7 +26,7 @@
 			<div style="margin-left: 290px;">
 				<h4>(= doc.label =)</h4>
 				<dl class="dl-horizontal">
-					<dt>{{ i18n('m.rbs.brand.documents.brand.websiteurl', ['ucf','lbl']) }}</dt>
+					<dt>{{ i18n(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf','lbl']) }}</dt>
 					<dd ng-if="doc.websiteUrl"><a href ng-href="(= doc.websiteUrl =)" target="_blank">(= doc.websiteUrl =)</a></dd>
 					<dd ng-if="! doc.websiteUrl">-</dd>
 					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>

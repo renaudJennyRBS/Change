@@ -3,12 +3,12 @@
 	<rbs-field-text
 		property="title" required="true"
 		rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.website.documents.topic.synchronize-title-label', ['ucf']) }}"
-		label="{{ i18nAttr('m.rbs.website.documents.topic.title', ['ucf']) }}">
+		label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
 	<rbs-field-url
 			property="baseurl" required="true"
-			label="{{ i18nAttr('m.rbs.website.documents.website.baseurl', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'baseurl'), ['ucf']) }}">
 		<span class="help-block">{{ i18n('m.rbs.website.documents.website.baseurl-help', ['ucf']) }}</span>
 	</rbs-field-url>
 

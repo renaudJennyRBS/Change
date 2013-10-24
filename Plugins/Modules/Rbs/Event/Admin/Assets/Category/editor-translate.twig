@@ -1,20 +1,20 @@
 <form name="form" ng-submit="submit()" novalidate="">
 	<rbs-field-text property="title" required="true"
-		label="{{ i18nAttr('m.rbs.event.documents.category.title', ['ucf']) }}">
+		label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
 	<rbs-field-rich-text property="description" required="false" profile="Website"
-		label="{{ i18nAttr('m.rbs.event.documents.category.description', ['ucf']) }}">
+		label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'description'), ['ucf']) }}">
 	</rbs-field-rich-text>
 
 	<hr />
 
 	<rbs-field-date property="startPublication"
-		label="{{ i18nAttr('m.rbs.event.documents.category.startPublication', ['ucf']) }}">
+		label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'startPublication'), ['ucf']) }}">
 	</rbs-field-date>
 
 	<rbs-field-date property="endPublication"
-		label="{{ i18nAttr('m.rbs.event.documents.category.endPublication', ['ucf']) }}">
+		label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'endPublication'), ['ucf']) }}">
 	</rbs-field-date>
 
 	<form-button-bar></form-button-bar>

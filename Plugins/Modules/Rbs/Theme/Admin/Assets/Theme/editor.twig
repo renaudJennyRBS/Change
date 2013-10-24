@@ -5,13 +5,13 @@
 
 		<rbs-field-text
 			property="name" required="true"
-			label="{{ i18nAttr('m.rbs.theme.documents.theme.name', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Theme_Theme', 'name'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.theme.documents.theme.name-help') }}</span>
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.theme.documents.theme.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Theme_Theme', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-picker property="parentTheme" required="false" label="{{ i18nAttr('m.rbs.theme.documents.theme.parent-theme', ['ucf']) }}"

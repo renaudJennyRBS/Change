@@ -15,7 +15,7 @@
 	</div>
 
 	<rbs-document-list data-dlid="DLGeoCountry" model="Rbs_Geo_Country" filter-query="query" activable="true">
-		<column name="label" label="{{ i18nAttr('m.rbs.geo.documents.country.label', ['ucf']) }}" primary="true"></column>
-		<column name="code" label="{{ i18nAttr('m.rbs.geo.documents.country.code', ['ucf']) }}"></column>
+		<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}" primary="true"></column>
+		<column name="code" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}"></column>
 	</rbs-document-list>
 </div>

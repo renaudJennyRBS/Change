@@ -7,20 +7,20 @@
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.collection.documents.item.label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'label'), ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="title" required="true"
 			rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.collection.documents.item.synchronize-title-label', ['ucf']) }}"
-			label="{{ i18nAttr('m.rbs.collection.documents.item.title', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'title'), ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 
 		<rbs-field-text
 			property="value" data-ng-disabled="document.locked" required="true"
-			label="{{ i18nAttr('m.rbs.collection.documents.item.value', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'value'), ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>
 

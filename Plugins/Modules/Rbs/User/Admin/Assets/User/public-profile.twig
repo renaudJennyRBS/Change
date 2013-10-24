@@ -5,11 +5,11 @@
 		<h4 class="media-heading">(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
 		<div class="well">
 			<dl class="dl-horizontal">
-				<dt>{{ i18n('m.rbs.user.documents.user.label', ['ucf']) }}</dt>
+				<dt>{{ i18n(propertyKey('Rbs_User_User', 'label'), ['ucf']) }}</dt>
 				<dd>(= document.label =)</dd>
-				<dt>{{ i18n('m.rbs.user.documents.user.email', ['ucf']) }}</dt>
+				<dt>{{ i18n(propertyKey('Rbs_User_User', 'email'), ['ucf']) }}</dt>
 				<dd>(= document.email =)</dd>
-				<dt>{{ i18n('m.rbs.user.documents.user.active', ['ucf']) }}</dt>
+				<dt>{{ i18n(propertyKey('Rbs_User_User', 'active'), ['ucf']) }}</dt>
 				<dd><switch disabled ng-model="document.active"></switch></dd>
 			</dl>
 		</div>

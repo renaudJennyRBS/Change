@@ -5,25 +5,25 @@
 
 		<rbs-field-text
 			property="label" required="true"
-			label="{{ i18nAttr('m.rbs.store.documents.webstore.label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker-multiple property="billingAreas" required="true" label="{{ i18nAttr('m.rbs.store.documents.webstore.billingareas', ['ucf']) }}"
+		<rbs-field-picker-multiple property="billingAreas" required="true" label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'billingAreas'), ['ucf']) }}"
 			accepted-model="Rbs_Price_BillingArea"
 			selector-title="{{ i18nAttr('m.rbs.store.documents.webstore.billingareas-picker-title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
 		<rbs-field-boolean
 				property="displayPrices"
-				label="{{ i18nAttr('m.rbs.store.documents.webstore.displayprices', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPrices'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<rbs-field-boolean
 				property="displayPricesWithTax"
-				label="{{ i18nAttr('m.rbs.store.documents.webstore.displaypriceswithtax', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPricesWithTax'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field-picker property="orderProcess" label="{{ i18nAttr('m.rbs.store.documents.webstore.orderprocess', ['ucf']) }}"
+		<rbs-field-picker property="orderProcess" label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'orderProcess'), ['ucf']) }}"
 				accepted-model="Rbs_Order_Process"
 				selector-title="{{ i18nAttr('m.rbs.store.documents.webstore.select-orderprocess', ['ucf']) }}"
 				allow-edition="true"
