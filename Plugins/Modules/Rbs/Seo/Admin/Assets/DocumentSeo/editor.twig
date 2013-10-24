@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-title', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaTitle'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.metaTitle" />
 				<div class="input-group-btn">
@@ -17,7 +17,7 @@
 			</div>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-description', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaDescription'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.metaDescription" />
 				<div class="input-group-btn">
@@ -31,7 +31,7 @@
 			</div>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.meta-keywords', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaKeywords'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.metaKeywords" />
 				<div class="input-group-btn">
@@ -197,14 +197,14 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.sitemap', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-change-frequency', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapChangeFrequency'), ['ucf']) }}">
 			<select class="form-control" data-ng-model="document.sitemapChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
 				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo.sitemap-change-frequency-option', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
 		<rbs-field-float property="sitemapPriority"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-priority', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapPriority'), ['ucf']) }}">
 		</rbs-field-float>
 
 		<table class="table table-striped table-bordered">

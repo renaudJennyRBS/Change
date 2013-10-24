@@ -3,19 +3,19 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="modelName" disabled label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.model-name', ['ucf']) }}"></rbs-field-text>
+		<rbs-field-text property="modelName" disabled label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'modelName'), ['ucf']) }}"></rbs-field-text>
 		<hr />
 
-		<rbs-field-boolean property="documentSeoAutoGenerate" label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.document-seo-auto-generate', ['ucf']) }}"></rbs-field-boolean>
+		<rbs-field-boolean property="documentSeoAutoGenerate" label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}"></rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.sitemap-default-change-frequency', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}">
 			<select class="form-control" data-ng-model="document.sitemapDefaultChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
 				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo.sitemap-change-frequency-option', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
 		<rbs-field-float property="sitemapDefaultPriority"
-			label="{{ i18nAttr('m.rbs.seo.documents.documentseo.sitemap-priority', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}">
 		</rbs-field-float>
 
 	</fieldset>
@@ -24,7 +24,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.meta', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.default-meta-title', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'defaultMetaTitle'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaTitle" />
 				<div class="input-group-btn">
@@ -38,7 +38,7 @@
 			</div>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.default-meta-description', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'defaultMetaDescription'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaDescription" />
 				<div class="input-group-btn">
@@ -52,7 +52,7 @@
 			</div>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.seo.documents.modelconfiguration.default-meta-keywords', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'defaultMetaKeywords'), ['ucf']) }}">
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaKeywords" />
 				<div class="input-group-btn">
