@@ -467,20 +467,6 @@
 				}
 
 
-				function focus () {
-					$timeout(function () {
-						var focusable = $('#workspace .control-group.error input:visible').first();
-						if (focusable.length === 0) {
-							focusable = $('#workspace input:visible').first();
-						}
-						if (focusable.length === 0) {
-							focusable = $('#workspace textarea:visible').first();
-						}
-						focusable.focus();
-					});
-				}
-
-
 				function mergeLocalCopy (doc) {
 					var localCopy = EditorManager.getLocalCopy(doc);
 					if (localCopy)
@@ -557,7 +543,6 @@
 						if (section !== undefined && section !== null) {
 							initSectionOnce(section);
 						}
-						focus();
 					});
 
 					$scope.routeParams = $routeParams;
