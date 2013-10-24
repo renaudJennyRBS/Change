@@ -12,7 +12,7 @@
 					notifications : [],
 
 					push : function (notification) {
-						notification.style = notification.style || "info";
+						notification.level = notification.level || "info";
 						this.notifications.push(notification);
 					},
 
@@ -20,7 +20,7 @@
 						this.notifications.push({
 							'title': title,
 							'body' : body,
-							'style': 'info'
+							'level': 'info'
 						});
 					},
 
@@ -29,7 +29,7 @@
 						this.notifications.push({
 							'title'  : title,
 							'body'   : body,
-							'style'  : 'error',
+							'level'  : 'error',
 							'context': context
 						});
 					},
