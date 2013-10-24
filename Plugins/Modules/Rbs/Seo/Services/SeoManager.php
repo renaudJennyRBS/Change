@@ -126,7 +126,6 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			'document' => $document
 		));
 		$eventManager->trigger('getMetaSubstitutions', $this, $args);
-		//return ($event->getParam('substitutions')) ? $event->getParam('substitutions') : [];
 		return isset($args['substitutions']) ? $args['substitutions'] : [];
 	}
 
@@ -241,31 +240,31 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 				$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
 				if ($metaTitle)
 				{
-					$metas['title'] = $this->getSubstituedString($documentSeo->getCurrentLocalization()->getMetaTitle(), $substitutions, $regExp);
+					$metas['title'] = $this->getSubstitutedString($documentSeo->getCurrentLocalization()->getMetaTitle(), $substitutions, $regExp);
 				}
 				else if ($modelConfiguration)
 				{
-					$metas['title'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
+					$metas['title'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
 				}
 
 				$metaDescription = $documentSeo->getCurrentLocalization()->getMetaDescription();
 				if ($metaDescription)
 				{
-					$metas['description'] = $this->getSubstituedString($metaDescription, $substitutions, $regExp);
+					$metas['description'] = $this->getSubstitutedString($metaDescription, $substitutions, $regExp);
 				}
 				elseif ($modelConfiguration)
 				{
-					$metas['description'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
+					$metas['description'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
 				}
 
 				$metaKeywords = $documentSeo->getCurrentLocalization()->getMetaKeywords();
 				if ($metaKeywords)
 				{
-					$metas['keywords'] = $this->getSubstituedString($metaKeywords, $substitutions, $regExp);
+					$metas['keywords'] = $this->getSubstitutedString($metaKeywords, $substitutions, $regExp);
 				}
 				elseif ($modelConfiguration)
 				{
-					$metas['keywords'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
+					$metas['keywords'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
 				}
 			}
 			else
@@ -281,19 +280,19 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 					$defaultMetaTitle = $modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle();
 					if ($defaultMetaTitle)
 					{
-						$metas['title'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
+						$metas['title'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaTitle(), $substitutions, $regExp);
 					}
 
 					$defaultMetaDescription = $modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription();
 					if ($defaultMetaDescription)
 					{
-						$metas['description'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
+						$metas['description'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaDescription(), $substitutions, $regExp);
 					}
 
 					$defaultMetaKeywords = $modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords();
 					if ($defaultMetaKeywords)
 					{
-						$metas['keywords'] = $this->getSubstituedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
+						$metas['keywords'] = $this->getSubstitutedString($modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $substitutions, $regExp);
 					}
 				}
 			}
@@ -312,7 +311,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $regExp
 	 * @return string|null
 	 */
-	protected function getSubstituedString($meta, $substitutions, $regExp)
+	protected function getSubstitutedString($meta, $substitutions, $regExp)
 	{
 		if ($meta)
 		{
@@ -363,6 +362,47 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 		preg_match_all($regExp, $modelConfiguration->getCurrentLocalization()->getDefaultMetaKeywords(), $matches);
 		$variables = array_merge($variables, $matches[1]);
 		return $variables;
+	}
+
+	/**
+	 * @param \Change\Documents\Interfaces\Publishable $document
+	 * @return \Rbs\Seo\Documents\DocumentSeo
+	 * @throws \Exception
+	 */
+	public function createSeoDocument($document)
+	{
+		if ($document instanceof \Change\Documents\Interfaces\Publishable)
+		{
+			$seo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+			/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
+			$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Website');
+			$websites = $dqb->getDocuments();
+			$sitemapGenerateForWebsites = [];
+			foreach ($websites as $website)
+			{
+				/* @var $website \Rbs\Website\Documents\Website */
+				$sitemapGenerateForWebsites[$website->getId()] = [
+					'label' => $website->getLabel(),
+					'generate' => true
+				];
+			}
+			$seo->setSitemapGenerateForWebsites($sitemapGenerateForWebsites);
+			$seo->setTarget($document);
+			$tm = $this->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$tm->begin();
+				$seo->save();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+
+			return $seo;
+		}
+		return null;
 	}
 
 }

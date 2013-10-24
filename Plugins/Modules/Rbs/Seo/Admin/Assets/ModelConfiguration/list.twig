@@ -12,10 +12,10 @@
 	<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false">
 		<quick-actions></quick-actions>
 		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></column>
-		<column name="documentSeoAutoGenerate" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.document-seo-auto-generate', ['ucf']) }}">
+		<column name="documentSeoAutoGenerate" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">
 			<switch data-ng-model="doc.documentSeoAutoGenerate" disabled></switch>
 		</column>
-		<column name="sitemapDefaultChangeFrequency" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.sitemap-default-change-frequency', ['ucf']) }}"></column>
-		<column name="sitemapDefaultPriority" label="{{ i18n('m.rbs.seo.documents.modelconfiguration.sitemap-default-priority', ['ucf']) }}"></column>
+		<column name="sitemapDefaultChangeFrequency" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}"></column>
+		<column name="sitemapDefaultPriority" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}"></column>
 	</rbs-document-list>
 </div>
