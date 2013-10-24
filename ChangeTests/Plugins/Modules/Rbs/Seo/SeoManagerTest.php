@@ -15,12 +15,9 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
-	public function testOnGetMetas()
+	public function testOnDefaultGetMetas()
 	{
 		//add listeners for the event "getMetaVariables"
-		$this->getApplication()->getConfiguration()->addVolatileEntry(
-			'Change/Events/SeoManager/Rbs_Generic', '\Rbs\Generic\Events\SeoManager\Listeners'
-		);
 		$this->getApplication()->getConfiguration()->addVolatileEntry(
 			'Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
 		);
@@ -36,8 +33,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$document = $this->getNewProduct();
 		$paramArray = array('page' => $page, 'document' => $document);
 		$event->setParams($paramArray);
-		$metaComposer = new \Rbs\Seo\Std\MetaComposer();
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertArrayHasKey('title', $metas);
@@ -49,7 +45,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//test with a document SEO on product
 		$documentSeo = $this->getNewDocumentSeoForProduct($document);
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
@@ -71,7 +67,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('product', $metas['title']);
@@ -94,7 +90,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//test with a default meta on model configuration of product
 		$modelConfiguration = $this->getNewModelConfiguration();
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('hello Product detail', $metas['title']);
@@ -112,7 +108,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('hello Product detail - product', $metas['title']);
@@ -130,7 +126,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('product', $metas['title']);
@@ -149,7 +145,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
@@ -168,7 +164,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
@@ -190,7 +186,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
@@ -223,7 +219,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
-		$metaComposer->onGetMetas($event);
+		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('product: product of brand', $metas['title']);
