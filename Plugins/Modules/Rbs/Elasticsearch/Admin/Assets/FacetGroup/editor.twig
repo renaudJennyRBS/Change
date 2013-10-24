@@ -4,14 +4,14 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.label', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.title', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.indexid', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'indexId'), ['ucf']) }}" required="true">
 			<select ng-model="document.indexId" class="form-control" required="true"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.facetgroup.indexid-choose', ['ucf']) }}</option>
@@ -19,7 +19,7 @@
 		</rbs-field>
 
 		<rbs-field-picker-multiple required="true" property="facets"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.facets', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'facets'), ['ucf']) }}"
 				accepted-model="Rbs_Elasticsearch_Facet" allow-creation="false" allow-edition="false"
 				selector-title="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.facets-picker-title', ['ucf']) }}">
 		</rbs-field-picker-multiple>

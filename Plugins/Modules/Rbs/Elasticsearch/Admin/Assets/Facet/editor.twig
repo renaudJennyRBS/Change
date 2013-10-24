@@ -4,18 +4,18 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="title" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.title', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="fieldName" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.fieldname', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="fieldType" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.fieldtype', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldType'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.indexid', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'indexId'), ['ucf']) }}" required="true">
 			<select ng-model="document.indexId" required="true" class="form-control"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.facet.indexid-choose', ['ucf']) }}</option>
@@ -23,17 +23,17 @@
 		</rbs-field>
 
 		<rbs-field-boolean property="isArray"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.isarray', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'isArray'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.collectioncode', ['ucf']) }}" required="true">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'collectionCode'), ['ucf']) }}" required="true">
 			<select ng-model="document.collectionCode" required="true" class="form-control"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_CollectionCodes" >
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.facet.collectioncode-choose', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.attributeid', ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'attributeId'), ['ucf']) }}">
 			<select ng-model="document.attributeId" class="form-control"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_AttributeIds" >
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.facet.attributeid-choose', ['ucf']) }}</option>
@@ -41,7 +41,7 @@
 		</rbs-field>
 
 		<rbs-field-text property="valuesExtractorName" required="true" input-class="input-block-level"
-				label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.valuesextractorname', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'valuesExtractorName'), ['ucf']) }}">
 		</rbs-field-text>
 	</fieldset>
 
