@@ -1768,8 +1768,9 @@
 						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
 						'<div ng-switch="param.type" class="controls">' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
-							// FIXME allowedModelNames
+							'<div ng-switch-when="Document" value-ids="true" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 							'<div ng-switch-when="DocumentId" value-ids="true" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentArray" value-ids="true" class="document-picker-multiple" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 							'<div ng-switch-when="DocumentIdArray" value-ids="true" class="document-picker-multiple" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="form-control" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +

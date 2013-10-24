@@ -28,8 +28,7 @@ class PromotedReviewListInformation extends Information
 		$this->addInformationMeta('mode', ParameterInformation::TYPE_COLLECTION, true, \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_RECENT)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.promoted-review-list-mode', $ucf))
 			->setCollectionCode('Rbs_Review_Collection_PromotedReviewModes');
-		//TODO wait to documentArrayIds type... TYPE_DOCUMENTARRAY doesn't work now
-		$this->addInformationMeta('reviews', Property::TYPE_DOCUMENTARRAY, false, null)
+		$this->addInformationMeta('reviews', ParameterInformation::TYPE_DOCUMENTIDARRAY, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.promoted-review-list-reviews', $ucf))
 			->setAllowedModelsNames('Rbs_Review_Review');
 		$this->addInformationMeta('maxReviews', Property::TYPE_INTEGER, false, 5)

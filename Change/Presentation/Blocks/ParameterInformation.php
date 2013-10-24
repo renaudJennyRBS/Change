@@ -9,6 +9,7 @@ use Change\Documents\Property;
 class ParameterInformation
 {
 	const TYPE_COLLECTION = 'Collection';
+	const TYPE_DOCUMENTIDARRAY = 'DocumentIdArray';
 
 	/**
 	 * @var array
