@@ -6,13 +6,18 @@
 
 	app.directive('rbsItemsFromCollection', ['RbsChange.REST', 'RbsChange.Utils', rbsItemsFromCollectionDirective]);
 
-	function rbsItemsFromCollectionDirective (REST, Utils) {
-
+	function rbsItemsFromCollectionDirective (REST, Utils)
+	{
 		return {
 			restrict : 'A',
-			require  : 'ngModel',
+			require  : '?ngModel',
 
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs, ngModel)
+			{
+				if (! ngModel) {
+					return;
+				}
+
 				elm.find('option').attr('data-option-from-template', 'true');
 				var ngModelReady = false;
 				var collectionLoaded = false;
@@ -114,8 +119,8 @@
 	 */
 	app.directive('rbsCollectionItemSelector', ['RbsChange.REST', rbsCollectionItemSelectorDirective]);
 
-	function rbsCollectionItemSelectorDirective (REST) {
-
+	function rbsCollectionItemSelectorDirective (REST)
+	{
 		var counter = 0;
 
 		function tplRadio () {
@@ -131,7 +136,8 @@
 			scope    : true,
 			template : tplRadio(),
 
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs, ngModel)
+			{
 				scope.counter = ++counter;
 				if (!attrs.collectionCode) {
 					throw new Error("Missing required attribute: 'collection-code'.");
@@ -193,8 +199,8 @@
 	 */
 	app.directive('rbsCollectionMultipleItemSelector', ['RbsChange.REST', rbsCollectionMultipleItemSelectorDirective]);
 
-	function rbsCollectionMultipleItemSelectorDirective (REST) {
-
+	function rbsCollectionMultipleItemSelectorDirective (REST)
+	{
 		return {
 			restrict : 'E',
 			require  : 'ngModel',
@@ -204,7 +210,8 @@
 				'	(= item.label =)' +
 				'</label>',
 
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs, ngModel)
+			{
 				if (!attrs.collectionCode) {
 					throw new Error("Missing required attribute: 'collection-code'.");
 				}
