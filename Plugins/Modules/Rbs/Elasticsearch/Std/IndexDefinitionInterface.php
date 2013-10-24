@@ -7,6 +7,11 @@ namespace Rbs\Elasticsearch\Std;
 interface IndexDefinitionInterface
 {
 	/**
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
 	 * @return string
 	 */
 	public function getName();

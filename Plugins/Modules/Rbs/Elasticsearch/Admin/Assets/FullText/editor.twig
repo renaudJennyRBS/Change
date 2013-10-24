@@ -10,7 +10,8 @@
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'analysisLCID'), ['ucf']) }}" required="true">
-			<select ng-model="document.analysisLCID" rbs-items-from-collection="Rbs_Generic_Collection_Languages" required="true">
+			<select ng-model="document.analysisLCID" class="form-control" required="true"
+					rbs-items-from-collection="Rbs_Generic_Collection_Languages">
 				<option value="">{{ i18n('m.rbs.elasticsearch.documents.fulltext.analysislcid-choose', ['ucf']) }}</option>
 			</select>
 		</rbs-field>

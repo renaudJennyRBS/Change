@@ -28,6 +28,7 @@ class Result extends Block
 		$parameters->addParameterMeta('itemsPerPage', 10);
 		$parameters->addParameterMeta('pageNumber', 1);
 		$parameters->addParameterMeta('facetFilters', null);
+		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$fulltextIndexId = $parameters->getParameter('fulltextIndex');
@@ -251,11 +252,4 @@ class Result extends Block
 
 		return $query;
 	}
-
-
-	/*
-{"query":{"filtered":{"query":{"match_all":{}},"filter":{"bool":{"must":[{"range":{"startPublication":{"lte":"2013-10-16T08:07:05+0200"}}},{"range":{"endPublication":{"gt":"2013-10-16T08:07:05+0200"}}}]}}}},"fields":["model","title"],
-"filter":{"bool":{"must":[{"terms":{"model":["Rbs_Website_Topic", "Rbs_Website_Website"]}}]}},
-"facets":{"model":{"terms":{"field":"model"}}},"from":0,"size":50}
-	 */
 }

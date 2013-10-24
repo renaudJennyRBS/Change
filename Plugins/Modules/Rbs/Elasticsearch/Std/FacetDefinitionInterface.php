@@ -2,8 +2,8 @@
 namespace Rbs\Elasticsearch\Std;
 
 /**
-* @name \Rbs\Elasticsearch\Std\FacetDefinitionInterface
-*/
+ * @name \Rbs\Elasticsearch\Std\FacetDefinitionInterface
+ */
 interface FacetDefinitionInterface
 {
 	const TYPE_STRING = 'string';

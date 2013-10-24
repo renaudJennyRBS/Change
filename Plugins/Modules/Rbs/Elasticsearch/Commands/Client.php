@@ -35,18 +35,52 @@ class Client
 						if ($event->getParam('list'))
 						{
 							$im->setDocumentServices(new \Change\Documents\DocumentServices($applicationServices));
-							foreach ($status->getIndexNames() as $indexName)
+
+							foreach ($im->getIndexesDefinition($name) as $indexDef)
 							{
-								$indexDef = $im->findIndexDefinitionByName($name, $indexName);
-								if ($indexDef)
-								{
-									$event->addInfoMessage('Declared index: ' . $name . '/'. $indexName . ', mapping: ' . $indexDef->getMappingName()
+								$event->addInfoMessage('Declared index "' . $indexDef->getClientName() . '/'. $indexDef->getName() . '", mapping: ' . $indexDef->getMappingName()
 									.', language: ' . $indexDef->getAnalysisLCID());
+								$idx =  $client->getIndex($indexDef->getName());
+								if ($idx->exists())
+								{
+									$status = $idx->getStatus();
+									$numDocs = $status->get('docs')['num_docs'];
+									$size = $status->get('index')['size'];
+									$event->addInfoMessage('-- documents: ' . $numDocs . ' , size: ' . $size);
 								}
 								else
 								{
-									$event->addInfoMessage('Ignored index: ' . $indexName);
+									$event->addCommentMessage('-- Not defined on client.');
 								}
+							}
+						}
+						elseif (($indexName = $event->getParam('indexName')) != null)
+						{
+							$im->setDocumentServices(new \Change\Documents\DocumentServices($applicationServices));
+							$indexDef = $im->findIndexDefinitionByName($name, $indexName);
+							if ($indexDef)
+							{
+								if ($event->getParam('delete'))
+								{
+									$im->deleteIndex($indexDef);
+									$event->addInfoMessage('index: "' . $name . '/'. $indexName . '" deleted');
+								}
+								if ($event->getParam('create'))
+								{
+									$index = $im->setIndexConfiguration($indexDef);
+									if ($index)
+									{
+										$event->addInfoMessage('index: "' . $name . '/'. $indexName . '" created');
+									}
+									else
+									{
+										$event->addErrorMessage('index: "' . $name . '/'. $indexName . '" not created');
+									}
+								}
+							}
+							else
+							{
+								$event->addErrorMessage('index "' . $name . '/'. $indexName . '" not found.');
 							}
 						}
 					}
@@ -68,7 +102,6 @@ class Client
 		}
 		else
 		{
-
 			$clientsName = $im->getClientsName();
 			if (count($clientsName))
 			{
