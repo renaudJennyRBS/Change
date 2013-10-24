@@ -86,6 +86,9 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 				$this->registerCommandsConfig($result, $eventManager, $changeApplication);
 			}
 		}
+
+		$event = new \Change\Commands\Events\Event('command', $this, array());
+		$eventManager->trigger($event);
 	}
 
 	/**
