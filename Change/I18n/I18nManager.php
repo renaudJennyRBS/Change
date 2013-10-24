@@ -485,12 +485,16 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $LCID
-	 * @param string[] $pathParts
+	 * @param string| string[] $pathPartsOrPath
 	 * @return \Change\I18n\DefinitionCollection | null
 	 */
-	public function getDefinitionCollection($LCID, $pathParts)
+	public function getDefinitionCollection($LCID, $pathPartsOrPath)
 	{
-		$collectionPath = $this->getCollectionPath($pathParts);
+		if (!is_array($pathPartsOrPath))
+		{
+			$pathPartsOrPath = explode('.', $pathPartsOrPath);
+		}
+		$collectionPath = $this->getCollectionPath($pathPartsOrPath);
 		if ($collectionPath === null)
 		{
 			return null;
@@ -500,7 +504,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			return null;
 		}
 
-		$code = implode('.', $pathParts) . '-' . $LCID;
+		$code = implode('.', $pathPartsOrPath) . '-' . $LCID;
 		if (!array_key_exists($code, $this->definitionCollections))
 		{
 			$this->definitionCollections[$code] = new \Change\I18n\DefinitionCollection($LCID, $collectionPath);
@@ -509,11 +513,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param string[]
+	 * @param string | string[]
 	 * @return string
 	 */
-	protected function getCollectionPath($pathParts)
+	public function getCollectionPath($pathPartsOrPath)
 	{
+		if (!is_array($pathPartsOrPath))
+		{
+			$pathPartsOrPath = explode('.', $pathPartsOrPath);
+		}
 		if ($this->packageList === null)
 		{
 			$workspace = $this->getWorkspace();
@@ -560,19 +568,19 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$collectionPath = null;
-		switch ($pathParts[0])
+		switch ($pathPartsOrPath[0])
 		{
 			case 'c':
 				$collectionPath =
-					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 1));
+					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathPartsOrPath, 1));
 				break;
 			case 'm':
 			case 't':
-				if (isset($this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]]))
+				if (isset($this->packageList[$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]]))
 				{
-					$packagePath = $this->packageList[$pathParts[0] . '.' . $pathParts[1] . '.' . $pathParts[2]];
+					$packagePath = $this->packageList[$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]];
 					$collectionPath =
-						$packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 3));
+						$packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathPartsOrPath, 3));
 				}
 				break;
 			case 'default':
