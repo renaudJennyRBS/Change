@@ -18,6 +18,7 @@
 	registerFieldDirective('Date', '<date-selector></date-selector>', 'date-selector');
 	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
 	registerFieldDirective('Image', '<div class="image-uploader" storage-name="images"></div>', '.image-uploader');
+	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
 
 
 	/**
