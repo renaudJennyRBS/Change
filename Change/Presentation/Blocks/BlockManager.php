@@ -207,7 +207,6 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$this->documentServices = $httpEvent->getDocumentServices();
 		}
-		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setUrlManager($httpEvent->getUrlManager());
@@ -269,7 +268,6 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager = $this->getEventManager();
 		$event = new Event(static::composeEventName(static::EVENT_EXECUTE,
 			$blockLayout->getName()), $this, $httpEvent->getParams());
-		$event->setPresentationServices($this->presentationServices);
 		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);

@@ -39,7 +39,7 @@ class Product extends Block
 		}
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		$webStore = $commerceServices->getWebStore();
 		if ($webStore)
 		{
@@ -73,7 +73,7 @@ class Product extends Block
 		if ($productId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-			$commerceServices = $event->getParam('commerceServices');
+			$commerceServices = $event->getServices('commerceServices');
 			$documentManager = $event->getDocumentServices()->getDocumentManager();
 
 			/* @var $product \Rbs\Catalog\Documents\Product */

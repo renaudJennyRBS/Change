@@ -58,8 +58,6 @@ class Controller extends \Change\Http\Controller
 		$event->setDocumentServices(new DocumentServices($applicationServices));
 		$urlManager->setDocumentServices($event->getDocumentServices());
 
-		$event->setPresentationServices(new PresentationServices($applicationServices));
-
 		$authenticationManager = new \Change\User\AuthenticationManager();
 		$authenticationManager->setDocumentServices($event->getDocumentServices());
 		$event->setAuthenticationManager($authenticationManager);
@@ -85,6 +83,15 @@ class Controller extends \Change\Http\Controller
 				$event->setResult($result);
 			}
 		}
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
+	{
+		parent::onDefaultRegisterServices($event);
+		$event->setParam('presentationServices', new \Change\Presentation\PresentationServices($event->getParam('applicationServices')));
 	}
 
 	/**

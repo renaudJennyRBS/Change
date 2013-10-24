@@ -16,7 +16,7 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function execute(Event $event)
 	{
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof CommerceServices)
 		{
 			$this->add($commerceServices, $event);

@@ -22,8 +22,8 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach(\Change\Http\Event::EVENT_REQUEST,  function (Event $event) {(new Loader)->onRequest($event);}, 10);
-		$events->attach(Event::EVENT_AUTHENTICATE, function (Event $event) {(new Loader)->onAuthenticate($event);}, 1);
+		$events->attach('registerServices',  function ($event) {(new Loader)->onRegisterServices($event);}, 1);
+		$events->attach(Event::EVENT_AUTHENTICATE, function ($event) {(new Loader)->onAuthenticate($event);}, 1);
 	}
 
 	/**

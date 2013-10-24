@@ -124,45 +124,42 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @return $this
-	 */
-	public function setPresentationServices(PresentationServices $presentationServices = null)
-	{
-		$this->setParam('presentationServices', $presentationServices);
-		return $this;
-	}
-
-	/**
 	 * @api
 	 * @return \Change\Presentation\PresentationServices|null
 	 */
 	public function getPresentationServices()
 	{
-		return $this->getParam('presentationServices');
+		return $this->getServices('presentationServices');
 	}
 
 	/**
-	 * @param \Change\Services\CommonServices $commonServices
-	 * @return $this
-	 */
-	public function setCommonServices(CommonServices $commonServices)
-	{
-		$this->commonServices = $commonServices;
-		$this->setParam('commonServices', $commonServices);
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Services\CommonServices
+	 * @api
+	 * @return \Change\Services\CommonServices|null
 	 */
 	public function getCommonServices()
 	{
-		if ($this->commonServices == null)
+		return $this->getServices('commonServices');
+	}
+
+	/**
+	 * @api
+	 * @param string $serviceName
+	 * @return \Zend\Stdlib\Parameters|\Zend\Di\Di|null
+	 */
+	public function getServices($serviceName = null)
+	{
+		$services = $this->getParam('services');
+		if (!$services instanceof \Zend\Stdlib\Parameters)
 		{
-			$this->setCommonServices(new CommonServices($this->applicationServices, $this->documentServices));
+			$services = new \Zend\Stdlib\Parameters();
+			$this->setParam('services', $services);
 		}
-		return $this->commonServices;
+
+		if ($serviceName !== null)
+		{
+			return $services->get($serviceName, null);
+		}
+		return $services;
 	}
 
 	/**

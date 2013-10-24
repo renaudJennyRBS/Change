@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -33,7 +32,7 @@ class CartCrossSelling extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
 			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
@@ -78,7 +77,7 @@ class CartCrossSelling extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		$productChoiceStrategy = $parameters->getParameter('productChoiceStrategy');
 		$crossSellingType = $parameters->getParameter('crossSellingType');
 		$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
@@ -99,12 +98,11 @@ class CartCrossSelling extends Block
 			$attributes['itemsPerSlide'] = $parameters->getParameter('itemsPerSlide');
 			if (count($rows) && isset($attributes['itemsPerSlide']))
 			{
-				$attributes['slideCount'] = ceil(count($rows)/$attributes['itemsPerSlide']);
+				$attributes['slideCount'] = ceil(count($rows) / $attributes['itemsPerSlide']);
 			}
 
 			return 'product-list-slider.twig';
 		}
 		return null;
 	}
-
 }

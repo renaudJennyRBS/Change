@@ -16,7 +16,7 @@ class ProductListItemResult
 	 */
 	public function moveup(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -32,7 +32,7 @@ class ProductListItemResult
 	 */
 	public function movedown(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -48,7 +48,7 @@ class ProductListItemResult
 	 */
 	public function highlighttop(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -64,7 +64,7 @@ class ProductListItemResult
 	 */
 	public function highlightbottom(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -80,7 +80,7 @@ class ProductListItemResult
 	 */
 	public function highlight(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -96,7 +96,7 @@ class ProductListItemResult
 	 */
 	public function downplay(\Change\Http\Event $event)
 	{
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
@@ -225,8 +225,9 @@ class ProductListItemResult
 	{
 		$dm = $event->getDocumentServices()->getDocumentManager();
 		$tm = $event->getApplicationServices()->getTransactionManager();
-		$cs = $event->getParam('commerceServices');
-		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
+
+		/* @var $cs \Rbs\Commerce\Services\CommerceServices */
+		$cs = $event->getServices('commerceServices');
 		$cm = $cs->getCatalogManager();
 		$result = array();
 		try
@@ -260,7 +261,7 @@ class ProductListItemResult
 	{
 		$dm = $event->getDocumentServices()->getDocumentManager();
 		$tm = $event->getApplicationServices()->getTransactionManager();
-		$cs = $event->getParam('commerceServices');
+		$cs = $event->getServices('commerceServices');
 		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
 		$cm = $cs->getCatalogManager();
 		$productList = $dm->getDocumentInstance($event->getRequest()->getPost('productListId'));

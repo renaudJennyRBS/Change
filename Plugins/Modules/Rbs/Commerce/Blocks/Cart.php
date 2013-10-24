@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Commerce\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -28,7 +27,7 @@ class Cart extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
 			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
@@ -69,7 +68,7 @@ class Cart extends Block
 		if ($cartIdentifier)
 		{
 			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-			$commerceServices = $event->getParam('commerceServices');
+			$commerceServices = $event->getServices('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart && !$cart->isEmpty())
 			{

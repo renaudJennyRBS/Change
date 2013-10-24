@@ -71,10 +71,6 @@ class BlocksResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if ($event->getPresentationServices() === null)
-		{
-			$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
-		}
 		if (count($resourceParts) < 2 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'blocks');

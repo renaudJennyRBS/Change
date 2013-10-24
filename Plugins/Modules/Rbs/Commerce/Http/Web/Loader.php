@@ -11,16 +11,21 @@ use Rbs\Commerce\Services\CommerceServices;
 class Loader
 {
 	/**
-	 * @param \Change\Http\Web\Event $event
+	 * @param \Zend\EventManager\Event $event
 	 */
-	public function onRequest(Event $event)
+	public function onRegisterServices(\Zend\EventManager\Event $event)
 	{
-		$documentServices = $event->getDocumentServices();
-
-		$commerceServices = new CommerceServices($event->getApplicationServices(), $documentServices);
+		$commerceServices = new CommerceServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
 		$event->setParam('commerceServices', $commerceServices);
-		$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
-		$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
+
+		/* @var $presentationServices \Change\Presentation\PresentationServices */
+		$presentationServices = $event->getParam('presentationServices');
+
+		if ($presentationServices)
+		{
+			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
+			$presentationServices->getTemplateManager()->addExtension($extension);
+		}
 
 		$commerceServices->getEventManager()->attach('load', array($this, 'onLoadCommerceServices'), 5);
 		$commerceServices->getEventManager()->attach('save',array($this, 'onSaveCommerceServices'), 5);
