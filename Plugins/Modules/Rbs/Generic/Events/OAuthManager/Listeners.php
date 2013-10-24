@@ -20,7 +20,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (\Zend\EventManager\Event $event)
 		{
-			(new \Rbs\Admin\Http\Oauth\LoginForm())->execute($event);
+			(new \Rbs\Admin\Http\OAuth\LoginForm())->execute($event);
 		};
 		$events->attach('loginFormHtml', $callback, 5);
 	}
