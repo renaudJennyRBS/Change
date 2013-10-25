@@ -1,7 +1,6 @@
 <?php
 namespace Change\Commands\Events;
 
-use Change\Commands\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Json\Json;
 
@@ -28,13 +27,13 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 			{
 				return Json::decode(file_get_contents($changeCommandConfigPath), Json::TYPE_ARRAY);
 			}
+			return null;
 		};
 		$events->attach('config', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\ClearCache();
-			$cmd->execute($event);
+			(new \Change\Commands\ClearCache())->execute($event);
 		};
 		$events->attach('change:clear-cache', $callback);
 
@@ -46,8 +45,7 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\GenerateDbSchema();
-			$cmd->execute($event);
+			(new \Change\Commands\GenerateDbSchema())->execute($event);
 		};
 		$events->attach('change:generate-db-schema', $callback);
 
@@ -65,8 +63,7 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Change\Commands\InstallPlugin();
-			$cmd->execute($event);
+			(new \Change\Commands\InstallPlugin())->execute($event);
 		};
 		$events->attach('change:install-plugin', $callback);
 
