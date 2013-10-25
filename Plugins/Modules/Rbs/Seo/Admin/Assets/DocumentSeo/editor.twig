@@ -68,8 +68,8 @@
 					<th style="width: 25px;"></th>
 				</tr>
 			</thead>
-			<tbody data-ng-repeat="(locationIndex, location) in document.locations">
-				<tr>
+			<tbody>
+				<tr data-ng-repeat-start="(locationIndex, location) in document.locations">
 					<td>(= location.websiteLabel =)</td>
 					<td>(= availableLanguages[location.LCID].label|ucf =) [(= location.LCID =)]</td>
 					<td>(= location.sectionLabel =) <i ng-show="location.canonical" class="icon-star text-info" title="{{ i18n('m.rbs.seo.admin.canonical-location', ['ucf']) }}"></i></td>
@@ -82,13 +82,13 @@
 						</span>
 					</td>
 					<td>
-						<button type="button" class="btn btn-default" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
+						<button type="button" class="btn btn-default btn-icon" ng-click="displayConfig[locationIndex].showDetails = !displayConfig[locationIndex].showDetails">
 							<i ng-hide="displayConfig[locationIndex].showDetails" class="icon-chevron-down"></i>
 							<i ng-show="displayConfig[locationIndex].showDetails" class="icon-chevron-up"></i>
 						</button>
 					</td>
 				</tr>
-				<tr>
+				<tr data-ng-repeat-end="">
 					<td ng-if="displayConfig[locationIndex].showDetails === true" class="preview" colspan="5">
 						<div class="inner">
 							<h3>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</h3>
@@ -108,22 +108,22 @@
 									<tr data-ng-repeat="(index, url) in location.urls">
 										<td>
 											<a ng-hide="displayConfig[locationIndex].urls[index].edit" href="(= getHref(location, url) =)" target="_blank">(= url.relativePath =)</a>
-											<input ng-show="displayConfig[locationIndex].urls[index].edit" ng-model="url.relativePath" type="text" style="width: 90%;" />
+											<input ng-show="displayConfig[locationIndex].urls[index].edit" ng-model="url.relativePath" type="text" class="form-control" style="width: 90%;" />
 										</td>
 										<td>
 											(= url.query =)
 										</td>
 										<td style="white-space: nowrap; text-align: right;">
-											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn"
+											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-default btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.edit-url', ['ucf']) }}"
 												ng-click="startEditUrl(locationIndex, index)"><i class="icon-pencil"></i></button>
-											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-danger"
+											<button ng-hide="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-danger btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.restore-default-url', ['ucf']) }}"
 												ng-click="restoreDefaultUrl(locationIndex, index)" ng-disabled="url.relativePath == location.defaultUrl.relativePath"><i class="icon-remove"></i></button>
-											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-info"
+											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-info btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.validate-url', ['ucf']) }}"
 												ng-click="updateUrl(locationIndex, index)"><i class="icon-check"></i></button>
-											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-warning"
+											<button ng-show="displayConfig[locationIndex].urls[index].edit" type="button" class="btn btn-warning btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.undo-edit-url', ['ucf']) }}"
 												ng-click="undoEditUrl(locationIndex, index)"><i class="icon-undo"></i></button>
 										</td>
@@ -135,7 +135,7 @@
 								<span ng-click="displayConfig[locationIndex].showRedirects = !displayConfig[locationIndex].showRedirects" class="badge badge-info">
 									(= location.redirects.length =)
 								</span>
-								<button type="button" class="btn btn-default" ng-click="displayConfig[locationIndex].showRedirects = !displayConfig[locationIndex].showRedirects">
+								<button type="button" class="btn btn-default btn-icon" ng-click="displayConfig[locationIndex].showRedirects = !displayConfig[locationIndex].showRedirects">
 									<i ng-show="!displayConfig[locationIndex].showRedirects" class="icon-chevron-down"></i>
 									<i ng-show="displayConfig[locationIndex].showRedirects" class="icon-chevron-up"></i>
 								</button>
@@ -153,32 +153,32 @@
 									<tr data-ng-repeat="(index, redirect) in location.redirects">
 										<td>
 											<span ng-hide="displayConfig[locationIndex].redirects[index].edit">(= redirect.relativePath =)</span>
-											<input ng-show="displayConfig[locationIndex].redirects[index].edit" ng-model="redirect.relativePath" type="text" style="width: 90%;" />
+											<input ng-show="displayConfig[locationIndex].redirects[index].edit" ng-model="redirect.relativePath" type="text" class="form-control" style="width: 90%;" />
 										</td>
 										<td><switch ng-model="redirect.permanent" ng-disabled="!displayConfig[locationIndex].redirects[index].edit"></switch></td>
 										<td>(= redirect.query =)</td>
 										<td style="white-space: nowrap; text-align: right;">
-											<button ng-disabled="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn"
+											<button ng-disabled="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-default btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.make-current-url', ['ucf']) }}"
 												ng-click="makeCurrentUrl(locationIndex, index)"><i class="icon-thumbs-up"></i></button>
-											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn"
+											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-default btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.edit-redirect', ['ucf']) }}"
 												ng-click="startEditRedirect(locationIndex, index)"><i class="icon-pencil"></i></button>
-											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-danger"
+											<button ng-hide="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-danger btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.remove-redirect', ['ucf']) }}"
 												ng-click="deleteRedirect(locationIndex, index)"><i class="icon-remove"></i></button>
-											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-info"
+											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-info btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.validate-redirect', ['ucf']) }}"
 												ng-click="updateRedirect(locationIndex, index)"><i class="icon-check"></i></button>
-											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-warning"
+											<button ng-show="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-warning btn-icon"
 												title="{{ i18nAttr('m.rbs.seo.admin.undo-edit-redirect', ['ucf']) }}"
 												ng-click="undoEditRedirect(locationIndex, index)"><i class="icon-undo"></i></button>
 										</td>
 									</tr>
 									<tr>
-										<td><input ng-model="newRedirect[locationIndex].relativePath" type="text" style="width: 90%;" /></td>
+										<td><input ng-model="newRedirect[locationIndex].relativePath" type="text" class="form-control" style="width: 90%;" /></td>
 										<td><switch ng-model="newRedirect[locationIndex].permanent"></switch></td>
-										<td><input ng-model="newRedirect[locationIndex].query" type="text" /></td>
+										<td><input ng-model="newRedirect[locationIndex].query" type="text" class="form-control" /></td>
 										<td style="white-space: nowrap; text-align: right;">
 											<button type="button" class="btn btn-info" ng-disabled="!newRedirect[locationIndex].relativePath"
 												title="{{ i18nAttr('m.rbs.seo.admin.add-new-redirect', ['ucf']) }}"
