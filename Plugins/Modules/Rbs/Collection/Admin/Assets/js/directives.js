@@ -69,6 +69,9 @@
 
 				function redraw () {
 					elm.find('option:not([data-option-from-template])').remove();
+					if (attrs.emptyValueLabel) {
+						$('<option></option>').attr('value', '').text(attrs.emptyValueLabel).appendTo(elm);
+					}
 					angular.forEach(items, function (item, value) {
 						if (! itemsFilter || Utils.containsIgnoreCase(item.label, itemsFilter) || Utils.containsIgnoreCase(value, itemsFilter)) {
 							var $opt = $('<option></option>');
