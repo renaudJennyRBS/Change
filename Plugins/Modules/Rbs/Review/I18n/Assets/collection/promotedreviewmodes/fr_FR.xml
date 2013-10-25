@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.review.collection.promotedreviewmodes" lcid="fr_FR">
-	<key id="manual">séléctionnés (manuellement)</key>
+	<key id="manual">sélectionnés (manuellement)</key>
 	<key id="promoted">promus (ordonnés par les mieux notés)</key>
 	<key id="recent">les plus récents</key>
 </i18n>
