@@ -17,8 +17,8 @@
 	               model="Rbs_Theme_Theme"
 	               activable="true"
 	               filter-query="query">
-		<column name="label" label="Nom" primary="true"></column>
-		<column name="themes" label="Modèles">
+		<column name="label" primary="true"></column>
+		<column name="themes" label="{{ i18nAttr('m.rbs.theme.documents.pagetemplate-list', ['ucf']) }}">
 			<a href ng-href="(= doc | documentURL:'tree' =)">{{ i18n('m.rbs.theme.documents.theme-list-pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 		</column>
 	</rbs-document-list>

@@ -27,9 +27,14 @@ class GenericServices extends \Zend\Di\Di
 		$this->setDocumentServices($documentServices);
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
+
 		$seoManagerClassName = $this->getInjectedClassName('SeoManager', 'Rbs\Seo\SeoManager');
-		$classDefinition = $this->getDefaultClassDefinition($seoManagerClassName);
-		$definitionList->addDefinition($classDefinition);
+		$seoClassDefinition = $this->getDefaultClassDefinition($seoManagerClassName);
+		$definitionList->addDefinition($seoClassDefinition);
+
+		$avatarManagerClassName = $this->getInjectedClassName('AvatarManager', 'Rbs\Media\Avatar\AvatarManager');
+		$avatarClassDefinition = $this->getDefaultClassDefinition($avatarManagerClassName);
+		$definitionList->addDefinition($avatarClassDefinition);
 
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
@@ -38,6 +43,8 @@ class GenericServices extends \Zend\Di\Di
 			'documentServices' => $this->getDocumentServices());
 
 		$im->addAlias('SeoManager', $seoManagerClassName, $defaultParameters);
+
+		$im->addAlias('AvatarManager', $avatarManagerClassName, $defaultParameters);
 	}
 
 	/**
@@ -46,5 +53,13 @@ class GenericServices extends \Zend\Di\Di
 	public function getSeoManager()
 	{
 		return $this->get('SeoManager');
+	}
+
+	/**
+	 * @return \Rbs\Media\Avatar\AvatarManager
+	 */
+	public function getAvatarManager()
+	{
+		return $this->get('AvatarManager');
 	}
 }
