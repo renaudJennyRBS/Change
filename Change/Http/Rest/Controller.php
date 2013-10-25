@@ -69,6 +69,15 @@ class Controller extends \Change\Http\Controller
 		return $response;
 	}
 
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
+	{
+		parent::onDefaultRegisterServices($event);
+		$event->setParam('presentationServices', new \Change\Presentation\PresentationServices($event->getParam('applicationServices')));
+	}
+
 
 	/**
 	 * @param Event $event
