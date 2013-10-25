@@ -461,11 +461,28 @@ abstract class AbstractModel
 	{
 		if ($this->hasProperty($propertyName))
 		{
-			return $this->properties[$propertyName]->setValue($document, $value);
+			$this->properties[$propertyName]->setValue($document, $value);
 		}
 		return $this;
 	}
 
+	/**
+	 * @param string|AbstractModel $modelOrModelName
+	 * @return bool
+	 */
+	public function isInstanceOf($modelOrModelName)
+	{
+		$modelName = ($modelOrModelName instanceof AbstractModel) ? $modelOrModelName->getName() : strval($modelOrModelName);
+		if ($this->getName() === $modelName)
+		{
+			return true;
+		}
+		elseif (in_array($modelName, $this->getAncestorsNames()))
+		{
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * @api
 	 * @return string[]
