@@ -8,6 +8,10 @@ body > footer > .row {
 	margin-left: 0;
 }
 
+body {
+	background: #FAFAFA;
+}
+
 
 /* general classes for margins, ... */
 
@@ -143,6 +147,9 @@ h3.panel-title {
 	opacity: 1;
 }
 
+.btn-toolbar .btn-group {
+	float: none;
+}
 
 
 
@@ -274,6 +281,28 @@ h4.list-group-item:first-child {
 	border: none;
 	border-right: 1px solid rgba(0,0,0,0.1);
 	line-height: 1.1em;
+}
+
+
+.form-vertical .form-group [class^="col-"],
+.form-vertical .form-group [class*=" col-"] {
+	display: block;
+	width: 100%;
+	float: none;
+}
+
+.form-vertical .form-group.required .control-label:before {
+	content: "";
+}
+
+.form-vertical .form-group.required .control-label:after {
+	color: #B94A48;
+	content: "*";
+	font-family: Courier New,Courier;
+	font-size: 14pt;
+	margin-left: 3px;
+	position: relative;
+	top: 3px;
 }
 
 

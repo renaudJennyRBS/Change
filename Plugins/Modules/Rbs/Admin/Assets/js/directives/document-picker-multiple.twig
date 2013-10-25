@@ -40,35 +40,28 @@
 
 <div class="document-picker-embedded" style="display: none;">
 	<header class="clearfix">
-		<form ng-if="allowSearchFilters" class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
-			<div class="input-append">
-				<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
-				<button type="submit" class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.search', ['ucf']) }}">
-					<i class="icon-search"></i>
-				</button>
-			</div>
-			<button ng-click="closeSelector()" type="button" class="close" style="margin-left: 10px; margin-top: 4px;">&times;</button>
-		</form>
-		<h4>(=selectorTitle=)</h4>
+		<h4>(= selectorTitle =)</h4>
 	</header>
-
-	<search-filters ng-if="allowSearchFilters" model="(= acceptedModel || dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="well well-small" ng-show="! acceptedModel">
 		<label style="display: inline-block" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
 		<rbs-model-selector filter="{{'{{selectModel}}'}}" class="input-xlarge" id="DpSelectModel" model="dp.selectedModel"></rbs-model-selector>
 	</div>
 
-	<div>
-		{{ i18n('m.rbs.admin.forms.picker-help-filter', [], {'htmlOpen':'<a href="javascript:;" ng-click="beginSelectSession()">', 'htmlClose':'</a>'}) }}
-	</div>
-
 	<div data-role="picker-contents"></div>
 
+	<hr/>
 	<div class="btn-toolbar clearfix">
-		<button ng-click="closeSelector()" type="button" class="btn btn-success pull-right">{{ i18n('m.rbs.admin.close', ['ucf']) }}</button>
-		<button ng-click="appendSelected()" type="button" class="btn btn-default"><i class="icon-arrow-down"></i>{{ i18n('m.rbs.admin.forms.picker-add-to-end', ['ucf']) }}</button>
-		<button ng-click="prependSelected()" type="button" class="btn btn-default"><i class="icon-arrow-up"></i>{{ i18n('m.rbs.admin.forms.picker-add-to-begin', ['ucf']) }}</button>
-		<button ng-click="replaceWithSelected()" type="button" class="btn btn-default"><i class="icon-arrow-right"></i>{{ i18n('m.rbs.admin.replace', ['ucf']) }}</button>
+		<span class="pull-right">
+			<div class="btn-group">
+				<button ng-click="appendSelected()" type="button" class="btn btn-default"><i class="icon-arrow-down"></i> {{ i18n('m.rbs.admin.forms.picker-add-to-end', ['ucf']) }}</button>
+				<button ng-click="prependSelected()" type="button" class="btn btn-default"><i class="icon-arrow-up"></i> {{ i18n('m.rbs.admin.forms.picker-add-to-begin', ['ucf']) }}</button>
+				<button ng-click="replaceWithSelected()" type="button" class="btn btn-default"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.admin.replace', ['ucf']) }}</button>
+			</div>
+			<div class="btn-group">
+				<button ng-click="closeSelector()" type="button" class="btn btn-default">{{ i18n('m.rbs.admin.close', ['ucf']) }}</button>
+			</div>
+		</span>
+		<button ng-click="selectAndClose()" type="button" class="btn btn-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.select-and-close', ['ucf']) }}</button>
 	</div>
 </div>

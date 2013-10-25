@@ -370,6 +370,11 @@
 				ngModel.$render();
 			};
 
+			scope.selectAndClose = function () {
+				scope.appendSelected();
+				scope.closeSelector();
+			};
+
 			scope.picker = {
 				"replaceWithDocument" : function (doc) {
 					ngModel.$setViewValue([doc]);
@@ -445,7 +450,7 @@
 	}]);
 
 
-	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', function ($location, UrlManager)
+	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', '$rootScope', function ($location, UrlManager, $rootScope)
 	{
 		var	selection = [],
 			selectDoc, selectDocPropertyName, selectDocPropertyLabel, selectDocUrl, selectDocumentModel, selectMultiple;
@@ -502,6 +507,7 @@
 				selectDocUrl = $location.url();
 				selectDocumentModel = selectionDocumentModel;
 				selectMultiple = multiple;
+				$rootScope.$broadcast('Change:SelectSessionUpdate');
 				$location.url(UrlManager.getListUrl(selectionDocumentModel));
 			},
 
@@ -522,11 +528,13 @@
 					doc[selectDocPropertyName] = angular.copy(selectMultiple ? selection : selection[0]);
 					reset();
 				}
+				$rootScope.$broadcast('Change:SelectSessionUpdate');
 				return this;
 			},
 
 			clear : function () {
 				selection.length = 0;
+				$rootScope.$broadcast('Change:SelectSessionUpdate');
 				return this;
 			},
 
@@ -538,6 +546,7 @@
 			},
 
 			rollback : function () {
+				$rootScope.$broadcast('Change:SelectSessionUpdate');
 				var redirect = selectDocUrl;
 				reset();
 				$location.url(redirect);

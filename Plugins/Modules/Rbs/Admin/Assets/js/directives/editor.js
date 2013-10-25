@@ -728,6 +728,7 @@
 					 * @return Boolean
 					 */
 					scope.isUnchanged = function isUnchangedFn () {
+						// TODO Only checks for ID (or IDs) for sub-documents.
 						return angular.equals(scope.document, scope.original);
 					};
 
