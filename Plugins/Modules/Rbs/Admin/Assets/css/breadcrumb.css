@@ -1,52 +1,78 @@
 @CHARSET "UTF-8";
 
-.breadcrumb {
-	padding: 0;
-	background: #F5F5F5;
-	box-shadow: 0 0 0 1px rgb(230, 230, 230) inset;
-	border-radius: 4px;
-	overflow: hidden;
-}
-
-.breadcrumb li a,
-.breadcrumb li.active span {
-	padding: 10px 10px 10px 24px;
-	display: inline-block;
-	margin-left: -14px;
-}
-
-.breadcrumb li.location a,
-.breadcrumb li.active.location span {
-	background: #888888;
-	color: white;
-	text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);
-}
-
-.breadcrumb li:after {
-	content: "";
-	background: url(../img/breadcrumb-item.png) right center no-repeat;
-	display: inline-block;
-	width: 14px;
-	height: 40px;
-	padding: 0;
-	margin: 0;
-	vertical-align: top;
-	position: relative;
-	z-index: 10;
-}
-
-.breadcrumb li.location:after {
-	background-image: url(../img/breadcrumb-item-location.png);
-}
-
-.breadcrumb li:last-child:after {
-	display: none;
-}
-
-.breadcrumb li.location:last-child span {
+.rbs-breadcrumb li:last-child {
+	-webkit-border-radius: 0 4px 4px 0;
+	-moz-border-radius: 0 4px 4px 0;
 	border-radius: 0 4px 4px 0;
 }
+.rbs-breadcrumb li {
+	padding: 10px 12px 10px;
+	margin-right: 3px;
+	background: #f5f5f5;
+	position: relative;
+	display: inline-block;
+}
 
-.breadcrumb > li + li:before {
-	content: none;
+.rbs-breadcrumb li * {
+	margin-left: 20px;
+}
+
+.rbs-breadcrumb li:first-child * {
+	margin-left: 0px;
+}
+
+.rbs-breadcrumb li:first-child {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+.rbs-breadcrumb li:last-child {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+
+.rbs-breadcrumb li:before {
+	width: 0;
+	height: 0;
+	border-top: 20px inset transparent;
+	border-bottom: 20px inset transparent;
+	border-left: 20px solid #fff;
+	position: absolute;
+	content: "";
+	top: 0;
+	left: 0;
+}
+
+.rbs-breadcrumb li:first-child:before,
+.rbs-breadcrumb li:last-child:after {
+	border: 0;
+}
+
+.rbs-breadcrumb li:after {
+	width: 0;
+	height: 0;
+	border-top: 20px inset transparent;
+	border-bottom: 20px inset transparent;
+	border-left: 20px solid #f5f5f5;
+	position: absolute;
+	content: "";
+	top: 0;
+	right: -20px;
+	z-index: 2;
+}
+
+.rbs-breadcrumb {
+}
+
+.rbs-breadcrumb li.location {
+	background: #999999;
+	color: #fff;
+}
+
+.rbs-breadcrumb li.location a {
+	color: #fff;
+}
+
+.rbs-breadcrumb li.location:after {
+	border-left-color: #999999;
 }
