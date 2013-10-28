@@ -731,7 +731,6 @@
 
 						// Make a copy of the resource object and remove unwanted properties (META$).
 						resource = angular.copy(resource);
-						delete resource.META$;
 
 						if (Utils.isNew(resource)) {
 							// If resource is new (see isNew()), we must POST on the Collection's URL.
@@ -743,8 +742,13 @@
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
 							method = 'put';
 							url = this.getResourceUrl(resource);
-							// Save only the properties listed here unless we are updating a Correction.
-							if (! Utils.hasCorrection(resource) && angular.isArray(propertiesList)) {
+							// Save only the properties listed here + the properties of the Correction (if any).
+							if (angular.isArray(propertiesList)) {
+								if (Utils.hasCorrection(resource)) {
+									angular.forEach(resource.META$.correction.propertiesNames, function (propName) {
+										propertiesList.push(propName);
+									});
+								}
 								var toSave = {};
 								angular.forEach(propertiesList, function (prop) {
 									if (resource.hasOwnProperty(prop)) {
@@ -754,6 +758,8 @@
 								resource = toSave;
 							}
 						}
+
+						delete resource.META$;
 
 						// For child-documents, only send the ID.
 						angular.forEach(resource, function (value, name) {
