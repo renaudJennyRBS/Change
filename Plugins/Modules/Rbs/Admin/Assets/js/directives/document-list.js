@@ -620,6 +620,12 @@
 					};
 
 
+					// Update SelectSession information everytime it changes.
+					$rootScope.$on('Change:SelectSessionUpdate', function () {
+						scope.selectSession.info = SelectSession.info();
+					});
+
+
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
 					scope.data = {};
 					angular.forEach(elm.data(), function (value, key) {
@@ -743,8 +749,9 @@
 					var	actionList = elm.is('[actions]') ? attrs.actions : 'default';
 					angular.forEach(localActions, function (action) {
 						if (actionList.length) {
-							actionList += ' ' + action.name;
+							actionList += ' ';
 						}
+						actionList +=  action.name;
 					});
 
 
@@ -1218,7 +1225,7 @@
 							setExternalCollection(scope.externalCollection);
 						}
 						scope.$watch('externalCollection', function (collection, oldCollection) {
-							if (collection !== oldCollection) {
+							if (collection !== oldCollection || ! scope.collection || ! scope.collection.length) {
 								if (angular.isObject(collection) && collection.pagination && collection.resources) {
 									documentCollectionLoadedCallback(collection);
 								} else {

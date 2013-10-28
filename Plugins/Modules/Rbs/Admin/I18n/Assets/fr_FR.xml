@@ -32,7 +32,9 @@
 	<key id="please-wait" format="html"><![CDATA[Merci de bien vouloir patienter<br />quelques secondes :)]]></key>
 
 	<key id="close">fermer</key>
+	<key id="select-and-close">sélectionner et fermer</key>
 	<key id="replace">remplacer</key>
+	<key id="options">options</key>
 
 	<!-- Corrections -->
 	<key id="correction">correction</key>

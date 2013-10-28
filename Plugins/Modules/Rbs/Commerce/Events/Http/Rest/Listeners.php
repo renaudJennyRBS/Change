@@ -131,6 +131,13 @@ class Listeners implements ListenerAggregateInterface
 					$cr->addproducts($event);
 				});
 			}
+			if ($relativePath === 'rbs/order/productPriceInfo')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Order\Http\Rest\Actions\ProductPriceInfo())->execute($event);
+				});
+			}
 		}
 	}
 }

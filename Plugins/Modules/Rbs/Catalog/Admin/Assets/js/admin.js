@@ -13,6 +13,15 @@
 
 	__change.createEditorForModelTranslation('Rbs_Catalog_Product');
 
+
+	app.run(['$templateCache', function($templateCache) {
+		$templateCache.put(
+			'picker-item-Rbs_Catalog_Product.html',
+			'<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =)</span>'
+		);
+	}]);
+
+
 	/**
 	 * Routes and URL definitions.
 	 */
