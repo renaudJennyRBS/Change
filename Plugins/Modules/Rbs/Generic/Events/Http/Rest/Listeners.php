@@ -219,6 +219,17 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Seo\Http\Rest\Actions\CreateSeoForDocument())->execute($event);
 					});
 					break;
+				case 'Rbs/Avatar' :
+					$event->setAction(function ($event)
+					{
+						$event->setParam('size', $event->getRequest()->getQuery('size'));
+						$event->setParam('email', $event->getRequest()->getQuery('email'));
+						$event->setParam('userId', $event->getRequest()->getQuery('userId'));
+						$event->setParam('params', $event->getRequest()->getQuery('params'));
+
+						(new \Rbs\Media\Http\Rest\Actions\Avatar())->execute($event);
+					});
+					break;
 			}
 		}
 	}

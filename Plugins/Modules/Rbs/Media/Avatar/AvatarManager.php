@@ -60,7 +60,7 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 * @throws \RuntimeException
 	 * @return null|string
 	 */
-	public function getAvatarUrl($size, $email, $user = null, array $params = array())
+	public function getAvatarUrl($size, $email, $user = null, array $params = null)
 	{
 		if (! $this->urlManager instanceof \Change\Http\UrlManager)
 		{
@@ -124,6 +124,8 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getGravatarUrl(\Zend\EventManager\Event $event)
 	{
+		$url = null;
+
 		/** @var \Rbs\User\Documents\User $user */
 		$user = $event->getParam('user');
 		if ($user !== null)
@@ -141,7 +143,7 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 
 			if (!\Change\Stdlib\String::isEmpty($event->getParam('imageSet')))
 			{
-				$avatar->setImageSet($event->getParam('imageSet'));
+				$avatar->setDefaultImg($event->getParam('imageSet'));
 			}
 
 			if (!\Change\Stdlib\String::isEmpty($event->getParam('rating')))
@@ -158,8 +160,10 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$avatar->setSecure((bool)$event->getParam('secure'));
 			}
+
+			$url = $avatar->getUrl();
 		}
 
-		$event->setParam('url', $avatar->getUrl());
+		$event->setParam('url', $url);
 	}
 }

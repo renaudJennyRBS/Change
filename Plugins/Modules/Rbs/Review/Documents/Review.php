@@ -82,6 +82,11 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 	 */
 	public function getInfoForTemplate($urlManager)
 	{
+		$author = $this->getDocumentManager()->getDocumentInstance($this->getAuthorId());
+		if ($author)
+		{
+			$email = $author->getEmail();
+		}
 		$target = $this->getTarget();
 		/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable|\Change\Documents\Interfaces\Editable */
 		return [
@@ -95,9 +100,10 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 			'url' => $urlManager->getCanonicalByDocument($this, $this->getSection()->getWebsite()),
 			'upvote' => $this->getUpvote(),
 			'downvote' => $this->getDownvote(),
-			'gravatarUrl' => $this->getGravatarUrl(),
 			//TODO: getLabel for target is not a good thing, find another way
-			'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $this->getSection()->getWebsite()) ]
+			'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $this->getSection()->getWebsite()) ],
+			'author' => $author,
+			'email' => $email
 		];
 	}
 }
