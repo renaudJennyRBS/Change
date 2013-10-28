@@ -22,20 +22,26 @@ class Extension implements \Twig_ExtensionInterface
 	protected $presentationServices;
 
 	/**
+	 * @var \Rbs\Generic\GenericServices
+	 */
+	protected $genericServices;
+
+	/**
 	 * @var UrlManager
 	 */
 	protected $urlManager;
 
 	/**
 	 * @param PresentationServices $presentationServices
-	 * @param DocumentServices $documentServices
+	 * @param \Rbs\Generic\GenericServices $genericServices
 	 * @param UrlManager $urlManager
 	 */
-	function __construct(PresentationServices $presentationServices, DocumentServices $documentServices, UrlManager $urlManager)
+	function __construct(PresentationServices $presentationServices, \Rbs\Generic\GenericServices $genericServices, UrlManager $urlManager)
 	{
 		$this->presentationServices = $presentationServices;
 		$this->urlManager = $urlManager;
-		$this->documentServices = $documentServices;
+		$this->genericServices = $genericServices;
+		$this->documentServices = $genericServices->getDocumentServices();
 	}
 
 	/**
@@ -113,7 +119,8 @@ class Extension implements \Twig_ExtensionInterface
 			new \Twig_SimpleFunction('currentURL', array($this, 'currentURL')),
 			new \Twig_SimpleFunction('ajaxURL', array($this, 'ajaxURL')),
 			new \Twig_SimpleFunction('functionURL', array($this, 'functionURL')),
-			new \Twig_SimpleFunction('resourceURL', array($this, 'resourceURL'))
+			new \Twig_SimpleFunction('resourceURL', array($this, 'resourceURL')),
+			new \Twig_SimpleFunction('avatarURL', array($this, 'avatarURL'))
 		);
 	}
 
@@ -174,6 +181,16 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
+	 * @param \Rbs\Generic\GenericServices $genericServices
+	 * @return $this
+	 */
+	public function setGenericServices($genericServices)
+	{
+		$this->genericServices = $genericServices;
+		return $this;
+	}
+
+	/**
 	 * @return \Change\Documents\DocumentServices
 	 */
 	public function getDocumentServices()
@@ -195,6 +212,14 @@ class Extension implements \Twig_ExtensionInterface
 	public function getUrlManager()
 	{
 		return $this->urlManager;
+	}
+
+	/**
+	 * @return \Rbs\Generic\GenericServices
+	 */
+	public function getGenericServices()
+	{
+		return $this->genericServices;
 	}
 
 	/**
@@ -257,7 +282,8 @@ class Extension implements \Twig_ExtensionInterface
 			}
 			if ($website === null || $website instanceof \Change\Presentation\Interfaces\Website)
 			{
-				return $this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()->toString();
+				return $this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()
+					->toString();
 			}
 		}
 		return null;
@@ -301,7 +327,6 @@ class Extension implements \Twig_ExtensionInterface
 		if (is_array($query) && count($query))
 		{
 			$oldQuery = array_merge($oldQuery, $query);
-
 		}
 		$uri->setQuery($oldQuery);
 		if ($fragment)
@@ -344,7 +369,7 @@ class Extension implements \Twig_ExtensionInterface
 
 		if ($section instanceof \Change\Presentation\Interfaces\Section)
 		{
-			$uri = $this->getUrlManager()->getByFunction($functionCode, $section , $query);
+			$uri = $this->getUrlManager()->getByFunction($functionCode, $section, $query);
 			return $uri ? $uri->normalize()->toString() : null;
 		}
 		return null;
@@ -361,6 +386,21 @@ class Extension implements \Twig_ExtensionInterface
 			return $relativePath;
 		}
 		return $this->presentationServices->getThemeManager()->getAssetBaseUrl() . $relativePath;
+	}
+
+	/**
+	 * @param integer $size
+	 * @param string $email
+	 * @param \Rbs\User\Documents\User $user
+	 * @param mixed[] $params
+	 * @return null|string
+	 */
+	public function avatarURL($size, $email, $user = null, array $params = array())
+	{
+		$avatarManager = $this->getGenericServices()->getAvatarManager();
+		$avatarManager->setUrlManager($this->getUrlManager());
+
+		return $avatarManager->getAvatarUrl($size, $email, $user, $params);
 	}
 
 	/**
@@ -472,7 +512,8 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		if (is_numeric($integer))
 		{
-			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::DEFAULT_STYLE);
+			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()
+				->getLCID(), \NumberFormatter::DEFAULT_STYLE);
 			return $nf->format($integer);
 		}
 		return htmlspecialchars(strval($integer));

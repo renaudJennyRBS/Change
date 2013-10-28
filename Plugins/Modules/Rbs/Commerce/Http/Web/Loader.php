@@ -243,7 +243,7 @@ class Loader
 				$saveProfile = false;
 
 				/* @var $commerceServices CommerceServices */
-				$commerceServices = $event->getParam('commerceServices');
+				$commerceServices = $event->getServices('commerceServices');
 				if ($commerceServices->getWebStore() && !$profile->getDefaultWebStoreId())
 				{
 					$profile->setDefaultWebStoreId($commerceServices->getWebStore()->getId());

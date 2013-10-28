@@ -35,7 +35,7 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getPresentationServices(), $event->getDocumentServices(), $event->getUrlManager());
+			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getPresentationServices(), $event->getServices('genericServices'), $event->getUrlManager());
 			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
 			(new \Rbs\Website\Events\WebsiteResolver())->resolve($event);
 		};
