@@ -315,6 +315,18 @@
 							}
 							queryString += key + '[]=' + encodeURIComponent(value[p]);
 						}
+					} else if (angular.isObject(value)) {
+						p=0;
+						angular.forEach(value, function(v, i) {
+							if (p > 0) {
+								queryString += '&';
+							}
+							if (angular.isDate(v)) {
+								v = moment(v).format();
+							}
+							queryString += key + '['+i+']=' + encodeURIComponent(v);
+							p=1;
+						})
 					} else {
 						if (angular.isDate(value)) {
 							value = moment(value).format();
