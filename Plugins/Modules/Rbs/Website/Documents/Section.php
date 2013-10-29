@@ -222,7 +222,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 						{
 							unset($queryParameters[$key]);
 						}
-						$event->setParam('pathRule', $pathRules[0]);
+						$event->setParam('pathRule', $pathRule);
 						return;
 					}
 				}
