@@ -10,7 +10,7 @@
 	<key id="description">description</key>
 	<key id="description-help">Description de l'attribut affiché sur le site web.</key>
 	<key id="documenttype">modèle de document</key>
-	<key id="collectioncode">valeur compise dans la collection</key>
+	<key id="collectioncode">valeur comprise dans la collection</key>
 	<key id="productproperty">propriété du produit</key>
 	<key id="attributes">attributs du groupe</key>
 	<key id="visibility">visibilité</key>
