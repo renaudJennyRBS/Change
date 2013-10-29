@@ -50,6 +50,16 @@ class AttributeEngine
 	}
 
 	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @return $this
+	 */
+	public function setCollectionManager($collectionManager)
+	{
+		$this->collectionManager = $collectionManager;
+		return $this;
+	}
+
+	/**
 	 * @return \Change\Collection\CollectionManager
 	 */
 	public function getCollectionManager()
