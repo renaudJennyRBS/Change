@@ -19,4 +19,5 @@
 	<key id="notification">notification</key>
 	<key id="notification-time-interval">intervalle des emails</key>
 	<key id="notification-time-interval-helper">indiquez ici l'intervalle de temps (fréquence) où vous souhaitez recevoir un email regroupant les notifications qui vous sont destinées. Si vous laissez tous les champs à zéro, un email vous sera potentiellement envoyé à chaque notification (ceci dépendra de la notification)</key>
+	<key id="gravatar-help" format="html"><![CDATA[Pour utiliser un avatar, créer un compte sur le site <a href="http://fr.gravatar.com" target="_blank">http://fr.gravatar.com</a>]]></key>
 </i18n>

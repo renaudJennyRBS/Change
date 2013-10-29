@@ -16,4 +16,5 @@
 	<key id="personnal-info">personnal information</key>
 	<key id="warning">caution!</key>
 	<key id="change-language-warning">after changing the language, you will need to clear your browser's cache and reload the page.</key>
+	<key id="gravatar-help" format="html"><![CDATA[To use an avatar, create an account on <a href="http://en.gravatar.com" target="_blank">http://en.gravatar.com</a>]]></key>
 </i18n>

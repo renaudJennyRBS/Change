@@ -141,9 +141,9 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$avatar = new Gravatar($email);
 
-			if (!\Change\Stdlib\String::isEmpty($event->getParam('imageSet')))
+			if (!\Change\Stdlib\String::isEmpty($event->getParam('defaultImg')))
 			{
-				$avatar->setDefaultImg($event->getParam('imageSet'));
+				$avatar->setDefaultImg($event->getParam('defaultImg'));
 			}
 
 			if (!\Change\Stdlib\String::isEmpty($event->getParam('rating')))
