@@ -53,28 +53,6 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 		$ps->getRichTextManager()->setDocumentServices($this->getDocumentServices())->render($this->getContent(), 'Admin');
 	}
 
-	/**
-	 * @see http://fr.gravatar.com/site/implement/url
-	 * @param integer $size
-	 * @param string $defaultImageUrl
-	 * @param string $rating
-	 * @return string|null
-	 */
-	public function getGravatarUrl($size = '48', $defaultImageUrl = '', $rating = 'g')
-	{
-		$author = $this->getDocumentManager()->getDocumentInstance($this->getAuthorId());
-		if ($author)
-		{
-			/* @var $author \Rbs\User\Documents\User */
-			$url = 'http://www.gravatar.com/avatar/'.md5($author->getEmail()).'?s='.$size.'&amp;r='.$rating;
-			if ($defaultImageUrl)
-			{
-				$url .= '&amp;d='.urlencode($defaultImageUrl);
-			}
-			return $url;
-		}
-		return null;
-	}
 
 	/**
 	 * @param \Change\Http\Web\UrlManager $urlManager
