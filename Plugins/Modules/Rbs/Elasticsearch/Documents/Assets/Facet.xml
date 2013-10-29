@@ -6,11 +6,12 @@
 		<property name="label" stateless="true" />
 		<property name="title" type="String" localized="true" />
 		<property name="fieldName" type="String" />
-		<property name="fieldType" type="String" />
 		<property name="indexId" type="DocumentId" />
 
-		<property name="isArray" type="Boolean" stateless="true" />
+		<property name="multipleChoice" type="Boolean" stateless="true" />
+		<property name="facetType" type="String" stateless="true" />
 		<property name="collectionCode" type="String" stateless="true" />
+		<property name="showEmptyItem" type="Boolean" stateless="true" />
 		<property name="attributeId" type="DocumentId" stateless="true" />
 		<property name="valuesExtractorName" type="String" stateless="true" />
 		<property name="parametersData" type="JSON" />

@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Commands;
 
 use Change\Commands\Events\Event;
-use Rbs\Elasticsearch\Services\IndexManager;
 
 /**
  * @name \Rbs\Elasticsearch\Commands\Client
@@ -16,12 +15,14 @@ class Client
 	{
 		$application = $event->getApplication();
 		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$im = new IndexManager();
-		$im->setApplicationServices($applicationServices);
+		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
+
+		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$indexManager = $elasticsearchServices->getIndexManager();
 
 		if (is_string($name = $event->getParam('name')))
 		{
-			$client = $im->getClient($name);
+			$client = $indexManager->getClient($name);
 			if ($client)
 			{
 				try
@@ -31,16 +32,15 @@ class Client
 					if ($srvStat['ok'])
 					{
 						$event->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
-						. $srvStat['status'] . ')');
+							. $srvStat['status'] . ')');
 						if ($event->getParam('list'))
 						{
-							$im->setDocumentServices(new \Change\Documents\DocumentServices($applicationServices));
-
-							foreach ($im->getIndexesDefinition($name) as $indexDef)
+							foreach ($indexManager->getIndexesDefinition($name) as $indexDef)
 							{
-								$event->addInfoMessage('Declared index "' . $indexDef->getClientName() . '/'. $indexDef->getName() . '", mapping: ' . $indexDef->getMappingName()
-									.', language: ' . $indexDef->getAnalysisLCID());
-								$idx =  $client->getIndex($indexDef->getName());
+								$event->addInfoMessage('Declared index "' . $indexDef->getClientName() . '/'
+									. $indexDef->getName() . '", mapping: ' . $indexDef->getMappingName()
+									. ', language: ' . $indexDef->getAnalysisLCID());
+								$idx = $client->getIndex($indexDef->getName());
 								if ($idx->exists())
 								{
 									$status = $idx->getStatus();
@@ -56,31 +56,30 @@ class Client
 						}
 						elseif (($indexName = $event->getParam('indexName')) != null)
 						{
-							$im->setDocumentServices(new \Change\Documents\DocumentServices($applicationServices));
-							$indexDef = $im->findIndexDefinitionByName($name, $indexName);
+							$indexDef = $indexManager->findIndexDefinitionByName($name, $indexName);
 							if ($indexDef)
 							{
 								if ($event->getParam('delete'))
 								{
-									$im->deleteIndex($indexDef);
-									$event->addInfoMessage('index: "' . $name . '/'. $indexName . '" deleted');
+									$indexManager->deleteIndex($indexDef);
+									$event->addInfoMessage('index: "' . $name . '/' . $indexName . '" deleted');
 								}
 								if ($event->getParam('create'))
 								{
-									$index = $im->setIndexConfiguration($indexDef);
+									$index = $indexManager->setIndexConfiguration($indexDef);
 									if ($index)
 									{
-										$event->addInfoMessage('index: "' . $name . '/'. $indexName . '" created');
+										$event->addInfoMessage('index: "' . $name . '/' . $indexName . '" created');
 									}
 									else
 									{
-										$event->addErrorMessage('index: "' . $name . '/'. $indexName . '" not created');
+										$event->addErrorMessage('index: "' . $name . '/' . $indexName . '" not created');
 									}
 								}
 							}
 							else
 							{
-								$event->addErrorMessage('index "' . $name . '/'. $indexName . '" not found.');
+								$event->addErrorMessage('index "' . $name . '/' . $indexName . '" not found.');
 							}
 						}
 					}
@@ -102,7 +101,7 @@ class Client
 		}
 		else
 		{
-			$clientsName = $im->getClientsName();
+			$clientsName = $indexManager->getClientsName();
 			if (count($clientsName))
 			{
 				$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));

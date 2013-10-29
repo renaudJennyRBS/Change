@@ -1,16 +1,14 @@
 <?php
-namespace Rbs\Elasticsearch\Services;
+namespace Rbs\Elasticsearch\Index;
 
 use Change\Documents\Interfaces\Publishable;
 use Change\Documents\Query\Query;
-use Change\Documents\RichtextProperty;
 use Elastica\Document;
-use Rbs\Elasticsearch\Events\Event;
 
 /**
- * @name \Rbs\Elasticsearch\Services\StoreIndexManager
+ * @name \Rbs\Elasticsearch\Index\StoreIndexer
  */
-class StoreIndexManager extends FullTextManager
+class StoreIndexer extends FullTextIndexer
 {
 	/**
 	 * @var string[]
@@ -28,33 +26,6 @@ class StoreIndexManager extends FullTextManager
 
 			$modelManager = $this->getDocumentServices()->getModelManager();
 			$model = $modelManager->getModelByName('Rbs_Catalog_Product');
-			if ($model)
-			{
-				$indexableModelNames = array_merge(array($model->getName()), $model->getDescendantsNames(), $indexableModelNames);
-			}
-			else
-			{
-				return $this->indexableModelNames;
-			}
-			$model = $modelManager->getModelByName('Rbs_Stock_Sku');
-			if ($model)
-			{
-				$indexableModelNames = array_merge(array($model->getName()), $model->getDescendantsNames(), $indexableModelNames);
-			}
-			else
-			{
-				return $this->indexableModelNames;
-			}
-			$model = $modelManager->getModelByName('Rbs_Price_Price');
-			if ($model)
-			{
-				$indexableModelNames = array_merge(array($model->getName()), $model->getDescendantsNames(), $indexableModelNames);
-			}
-			else
-			{
-				return $this->indexableModelNames;
-			}
-			$model = $modelManager->getModelByName('Rbs_Brand_Brand');
 			if ($model)
 			{
 				$indexableModelNames = array_merge(array($model->getName()), $model->getDescendantsNames(), $indexableModelNames);
@@ -96,22 +67,11 @@ class StoreIndexManager extends FullTextManager
 					return;
 				}
 				elseif (in_array($publicationStatus, array(Publishable::STATUS_UNPUBLISHABLE, Publishable::STATUS_FROZEN,
-					Publishable::STATUS_FILED)))
+					Publishable::STATUS_FILED))
+				)
 				{
 					$this->addDeleteDocumentId($event->getParam('id'), $LCID);
 				}
-			}
-			elseif($document instanceof \Rbs\Stock\Documents\Sku)
-			{
-
-			}
-			elseif($document instanceof \Rbs\Price\Documents\Price)
-			{
-
-			}
-			elseif($document instanceof \Rbs\Brand\Documents\Brand)
-			{
-
 			}
 		}
 	}
@@ -129,10 +89,17 @@ class StoreIndexManager extends FullTextManager
 			if (!in_array($website->getId(), $websiteIds))
 			{
 				$websiteIds[] = $website->getId();
+				$indexManager = $this->getIndexManager();
 				foreach ($this->getIndexesDefinition() as $storeIndex)
 				{
 					if ($storeIndex->getAnalysisLCID() === $LCID && $storeIndex->getWebsiteId() == $website->getId())
 					{
+						if (!$storeIndex->getCommerceServices())
+						{
+							$commerceServices = new \Rbs\Commerce\Services\CommerceServices($indexManager->getApplicationServices(), $indexManager->getDocumentServices());
+							$storeIndex->setCommerceServices($commerceServices);
+						}
+
 						$elasticaDocument = new Document($product->getId(), array(), 'product', $storeIndex->getName());
 						$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
 
@@ -167,31 +134,19 @@ class StoreIndexManager extends FullTextManager
 	 */
 	public function onPopulateDocument(Event $event)
 	{
+		parent::onPopulateDocument($event);
 		$storeIndex = $event->getParam('indexDefinition');
-		if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
+		$indexManager = $event->getIndexManager();
+		if (($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex) && $indexManager)
 		{
 			$elasticaDocument = $event->getParam('elasticaDocument');
 			$document = $event->getParam('document');
 			if ($elasticaDocument instanceof Document && $document instanceof \Change\Documents\AbstractDocument)
 			{
-				$model = $document->getDocumentModel();
-				$content = array();
-
-				foreach ($model->getProperties() as $property)
+				$values = $indexManager->getFacetManager()->getIndexerValues($storeIndex, $document);
+				foreach ($values as $fieldName => $value)
 				{
-					if ($property->getType() === \Change\Documents\Property::TYPE_RICHTEXT)
-					{
-						$pv = $property->getValue($document);
-						if ($pv instanceof RichtextProperty)
-						{
-							$content[] = $pv->getRawText();
-						}
-					}
-				}
-
-				if (count($content))
-				{
-					$elasticaDocument->set('content', implode(PHP_EOL, $content));
+					$elasticaDocument->set($fieldName, $value);
 				}
 			}
 		}
@@ -209,10 +164,11 @@ class StoreIndexManager extends FullTextManager
 		/* @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
 		foreach ($this->getIndexesDefinition() as $storeIndex)
 		{
-			if ($storeIndex->getMappingName() === $mappingName &&
-				$storeIndex->getAnalysisLCID() === $analysisLCID &&
-				$storeIndex->getWebsiteId() == $websiteId &&
-				$storeIndex->getStoreId() == $storeId)
+			if ($storeIndex->getMappingName() === $mappingName
+				&& $storeIndex->getAnalysisLCID() === $analysisLCID
+				&& $storeIndex->getWebsiteId() == $websiteId
+				&& $storeIndex->getStoreId() == $storeId
+			)
 			{
 				return $storeIndex;
 			}
@@ -242,11 +198,11 @@ class StoreIndexManager extends FullTextManager
 		$website = $event->getParam('website');
 		if ($website instanceof \Rbs\Website\Documents\Website)
 		{
-			$websiteId =  $website->getId();
+			$websiteId = $website->getId();
 		}
 		elseif (is_numeric($website))
 		{
-			$websiteId =  intval($website);
+			$websiteId = intval($website);
 		}
 		else
 		{
@@ -256,17 +212,16 @@ class StoreIndexManager extends FullTextManager
 		$store = $event->getParam('store');
 		if ($store instanceof \Rbs\Store\Documents\WebStore)
 		{
-			$storeId =  $store->getId();
+			$storeId = $store->getId();
 		}
 		elseif (is_numeric($store))
 		{
-			$storeId =  intval($store);
+			$storeId = intval($store);
 		}
 		else
 		{
 			$storeId = null;
 		}
-
 
 		$mappingName = $event->getParam('mappingName');
 		$analysisLCID = $event->getParam('analysisLCID');

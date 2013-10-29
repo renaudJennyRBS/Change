@@ -1,10 +1,12 @@
 <?php
 namespace Rbs\Elasticsearch\Documents;
 
+use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
+
 /**
  * @name \Rbs\Elasticsearch\Documents\Facet
  */
-class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \Rbs\Elasticsearch\Std\FacetDefinitionInterface
+class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements FacetDefinitionInterface
 {
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -43,18 +45,18 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \R
 	/**
 	 * @return boolean
 	 */
-	public function getIsArray()
+	public function getMultipleChoice()
 	{
-		return $this->getParameters()->get('isArray', false);
+		return $this->getParameters()->get('multipleChoice', false);
 	}
 
 	/**
-	 * @param boolean $isArray
+	 * @param boolean $multipleChoice
 	 * @return $this
 	 */
-	public function setIsArray($isArray)
+	public function setMultipleChoice($multipleChoice)
 	{
-		$this->getParameters()->set('isArray', $isArray);
+		$this->getParameters()->set('multipleChoice', $multipleChoice);
 		return $this;
 	}
 
@@ -85,6 +87,15 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \R
 	}
 
 	/**
+	 * @return \Rbs\Catalog\Documents\Attribute|null
+	 */
+	public function getAttributeIdInstance()
+	{
+		$attribute = parent::getAttributeIdInstance();
+		return ($attribute instanceof \Rbs\Catalog\Documents\Attribute) ? $attribute : null;
+	}
+
+	/**
 	 * @param integer $attributeId
 	 * @return $this
 	 */
@@ -99,11 +110,52 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \R
 	}
 
 	/**
+	 * @param string $facetType
+	 * @return $this
+	 */
+	public function setFacetType($facetType)
+	{
+		if ($facetType !== FacetDefinitionInterface::TYPE_RANGE)
+		{
+			$facetType = FacetDefinitionInterface::TYPE_TERM;
+		}
+		$this->getParameters()->set('facetType', $facetType);
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFacetType()
+	{
+		return $this->getParameters()->get('facetType', FacetDefinitionInterface::TYPE_TERM);
+	}
+
+
+	/**
+	 * @return boolean
+	 */
+	public function getShowEmptyItem()
+	{
+		return ($this->getParameters()->get('showEmptyItem', false) == true);
+	}
+
+	/**
+	 * @param boolean $showEmptyItem
+	 * @return $this
+	 */
+	public function setShowEmptyItem($showEmptyItem)
+	{
+		$this->getParameters()->set('showEmptyItem', ($showEmptyItem == true));
+		return $this;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getValuesExtractorName()
 	{
-		return $this->getParameters()->get('attributeId', 0);
+		return $this->getParameters()->get('valuesExtractorName');
 	}
 
 	/**
@@ -112,15 +164,8 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \R
 	 */
 	public function setValuesExtractorName($valuesExtractorName)
 	{
-		// TODO: Implement setValuesExtractorName() method.
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isFieldArray()
-	{
-		return $this->getIsArray();
+		$this->getParameters()->set('valuesExtractorName', $valuesExtractorName);
+		return $this;
 	}
 
 	/**
@@ -137,6 +182,22 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements \R
 
 	protected function onCreate()
 	{
+		if ($this->parameters)
+		{
+			$parametersData = $this->parameters->toArray();
+			$this->parameters = null;
+			$this->setParametersData(count($parametersData) ? $parametersData : null);
+		}
 
+	}
+
+	protected function onUpdate()
+	{
+		if ($this->parameters)
+		{
+			$parametersData = $this->parameters->toArray();
+			$this->parameters = null;
+			$this->setParametersData(count($parametersData) ? $parametersData : null);
+		}
 	}
 }

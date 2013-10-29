@@ -1,16 +1,18 @@
 <?php
-namespace Rbs\Elasticsearch\Std;
+namespace Rbs\Elasticsearch\Facet;
 
 /**
- * @name \Rbs\Elasticsearch\Std\FacetDefinitionInterface
+ * @name \Rbs\Elasticsearch\Facet\FacetDefinitionInterface
  */
 interface FacetDefinitionInterface
 {
-	const TYPE_STRING = 'string';
-	const TYPE_INTEGER = 'integer';
-	const TYPE_FLOAT = 'float';
-	const TYPE_BOOLEAN = 'boolean';
-	const TYPE_OBJECT = 'object';
+	const TYPE_TERM = 'term';
+	const TYPE_RANGE = 'range';
+
+	/**
+	 * @return integer
+	 */
+	public function getId();
 
 	/**
 	 * @return string
@@ -25,12 +27,12 @@ interface FacetDefinitionInterface
 	/**
 	 * @return string
 	 */
-	public function getFieldType();
+	public function getFacetType();
 
 	/**
 	 * @return boolean
 	 */
-	public function isFieldArray();
+	public function getShowEmptyItem();
 
 	/**
 	 * @return \Zend\Stdlib\Parameters

@@ -7,7 +7,9 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="title" required="true" input-class="input-block-level"
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+				input-class="input-block-level"
+				sync-title="{{ i18nAttr('m.rbs.elasticsearch.documents.facetgroup.synchronize-title-label', ['ucf']) }}"
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 

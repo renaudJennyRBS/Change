@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Elasticsearch\Events\Admin;
+namespace Rbs\Elasticsearch\Admin;
 
 use Rbs\Admin\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Elasticsearch\Events\Admin\Listeners
+ * @name \Rbs\Elasticsearch\Admin\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {

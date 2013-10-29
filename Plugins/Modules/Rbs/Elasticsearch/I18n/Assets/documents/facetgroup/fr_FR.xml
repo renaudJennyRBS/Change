@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <i18n baseKey="m.rbs.elasticsearch.documents.facetgroup" lcid="fr_FR">
 	<include id="m.rbs.generic.document"/>
+	<key id="synchronize-title-label">synchronisé avec le libellé</key>
 	<key id="indexid">index</key>
 	<key id="indexid-choose">sélectionner un index</key>
 	<key id="facets">facettes</key>

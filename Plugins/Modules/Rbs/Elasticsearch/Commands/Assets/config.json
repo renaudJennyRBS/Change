@@ -42,7 +42,7 @@
 				"description": "index all document",
 				"shortcut": "a"
 			},
-			"job": {
+			"useJob": {
 				"description": "use jobs for indexation",
 				"shortcut": "j"
 			}

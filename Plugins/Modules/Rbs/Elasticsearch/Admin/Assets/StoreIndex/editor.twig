@@ -30,7 +30,7 @@
 		</rbs-field-picker>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='facets'" hide-on-create="true"
+	<fieldset data-ng-show="section=='facets'" hide-when-create="true"
 			data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.documents.storeindex.section-facets', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 		<div class="add-elements-bar">
@@ -40,7 +40,6 @@
 		<table data-ng-show="document.facets.length > 0" class="table table-striped">
 			<thead>
 				<tr>
-					<th>{{ i18n(propertyKey('Rbs_Elasticsearch_Facet', 'label'), ['ucf']) }}</th>
 					<th>{{ i18n(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}</th>
 					<th> </th>
 				</tr>
@@ -48,7 +47,6 @@
 			<tbody>
 				<tr data-ng-repeat="facet in document.facets">
 					<td><a class="btn-link" ng-click="cascadeEditItem($index)">(= facet.label =)</a></td>
-					<td>(= facet.fieldName =) /(= facet.fieldType =) </td>
 					<td style="width:100px;text-align: right">
 						<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem($index)"
 								title="{{ i18nAttr('m.rbs.admin.admin.js.edit', ['ucf']) }}" type="button">

@@ -1,13 +1,13 @@
 <?php
-namespace Rbs\Elasticsearch\Events\CollectionManager;
+namespace Rbs\Elasticsearch\Collection;
 
+use Change\Collection\CollectionManager;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Change\Collection\CollectionManager;
 
 /**
- * @name \Rbs\Elasticsearch\Events\CollectionManager\Listeners
+ * @name \Rbs\Elasticsearch\Collection\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -36,6 +36,12 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Elasticsearch_Collection_AttributeIds':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addAttributeIds($event);
 					break;
+				case 'Rbs_Elasticsearch_Collection_FacetTypes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetTypes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_FacetValueExtractor':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetValueExtractor($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -47,6 +53,8 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Elasticsearch_Collection_Indexes';
 			$codes[] = 'Rbs_Elasticsearch_Collection_CollectionCodes';
 			$codes[] = 'Rbs_Elasticsearch_Collection_AttributeIds';
+			$codes[] = 'Rbs_Elasticsearch_Collection_FacetTypes';
+			$codes[] = 'Rbs_Elasticsearch_Collection_FacetValueExtractor';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

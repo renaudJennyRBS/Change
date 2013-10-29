@@ -1,28 +1,17 @@
 <?php
-namespace Rbs\Elasticsearch\Services;
+namespace Rbs\Elasticsearch\Index;
 
 use Change\Documents\AbstractDocument;
 use Elastica\Document;
-use Rbs\Elasticsearch\Events\Event;
 
 /**
- * @name \Rbs\Elasticsearch\Services\IndexManager
+ * @name \Rbs\Elasticsearch\Index\IndexManager
  */
 class IndexManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait;
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_IndexManager';
-
-	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
 
 	/**
 	 * @var \Elastica\Client[]
@@ -45,40 +34,38 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	protected $clientIndexes = array();
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @var \Rbs\Elasticsearch\Facet\FacetManager
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	protected $facetManager;
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetManager $facetManager
+	 * @return $this
+	 */
+	public function setFacetManager($facetManager)
 	{
-		$this->applicationServices = $applicationServices;
-		$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
+		$this->facetManager = $facetManager;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Rbs\Elasticsearch\Facet\FacetManager
 	 */
-	public function getApplicationServices()
+	public function getFacetManager()
 	{
-		return $this->applicationServices;
+		return $this->facetManager;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return \Change\Events\SharedEventManager
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function getSharedEventManager()
 	{
-		$this->documentServices = $documentServices;
-		if ($this->applicationServices === null)
+		if ($this->sharedEventManager === null)
 		{
-			$this->setApplicationServices($documentServices->getApplicationServices());
+			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
 		}
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
+		return $this->sharedEventManager;
 	}
 
 	/**
@@ -117,8 +104,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->clientsConfiguration === null)
 		{
-			$config = $this->getApplicationServices()->getApplication()->getConfiguration()
-				->getEntry('Rbs/Elasticsearch/clients');
+			$config = $this->getApplication()->getConfiguration('Rbs/Elasticsearch/clients');
 			if (!is_array($config))
 			{
 				$config = array();
@@ -180,7 +166,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @param IndexDefinitionInterface $indexDefinition
 	 * @return \Elastica\Index|null
 	 */
 	protected function createIndex($indexDefinition)
@@ -347,7 +333,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param Document $elasticaDocument
 	 * @param AbstractDocument $document
-	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @param IndexDefinitionInterface $indexDefinition
 	 * @param array $parameters
 	 */
 	public function dispatchPopulateDocument(Document $elasticaDocument, AbstractDocument $document, $indexDefinition, array $parameters = null)
@@ -365,7 +351,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $mappingName
 	 * @param string $analysisLCID
 	 * @param array $options
-	 * @return null|\Rbs\Elasticsearch\Std\IndexDefinitionInterface
+	 * @return null|IndexDefinitionInterface
 	 */
 	public function findIndexDefinitionByMapping($mappingName, $analysisLCID, array $options = array())
 	{
@@ -376,14 +362,14 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		$event = new Event(Event::FIND_INDEX_DEFINITION, $this, $args);
 		$em->trigger($event);
 		$indexDefinition = $event->getParam('indexDefinition');
-		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
+		return $indexDefinition instanceof IndexDefinitionInterface ? $indexDefinition : null;
 	}
 
 	/**
 	 * @param string $clientName
 	 * @param string $indexName
 	 * @param array $options
-	 * @return null|\Rbs\Elasticsearch\Std\IndexDefinitionInterface
+	 * @return null|IndexDefinitionInterface
 	 */
 	public function findIndexDefinitionByName($clientName, $indexName, array $options = array())
 	{
@@ -394,12 +380,12 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		$event = new Event(Event::FIND_INDEX_DEFINITION, $this, $args);
 		$em->trigger($event);
 		$indexDefinition = $event->getParam('indexDefinition');
-		return $indexDefinition instanceof \Rbs\Elasticsearch\Std\IndexDefinitionInterface ? $indexDefinition : null;
+		return $indexDefinition instanceof IndexDefinitionInterface ? $indexDefinition : null;
 	}
 
 	/**
 	 * @param string $clientName
-	 * @return \Rbs\Elasticsearch\Std\IndexDefinitionInterface[]
+	 * @return IndexDefinitionInterface[]
 	 */
 	public function getIndexesDefinition($clientName = null)
 	{
@@ -412,7 +398,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @param IndexDefinitionInterface $indexDefinition
 	 * @return \Elastica\Index|null
 	 */
 	public function deleteIndex($indexDefinition)
@@ -428,7 +414,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Elasticsearch\Std\IndexDefinitionInterface $indexDefinition
+	 * @param IndexDefinitionInterface $indexDefinition
 	 * @return \Elastica\Index|null
 	 */
 	public function setIndexConfiguration($indexDefinition)

@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Elasticsearch\Std;
+namespace Rbs\Elasticsearch\Facet;
 
 /**
-* @name \Rbs\Elasticsearch\Std\FacetTermValue
-*/
-class FacetTermValue
+ * @name \Rbs\Elasticsearch\Facet\FacetValue
+ */
+class FacetValue
 {
 	/**
 	 * @var string

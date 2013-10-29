@@ -5,7 +5,7 @@ namespace Rbs\Elasticsearch\Documents;
  * @name \Rbs\Elasticsearch\Documents\FullText
  */
 class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
-	implements \Rbs\Elasticsearch\Std\IndexDefinitionInterface
+	implements \Rbs\Elasticsearch\Index\IndexDefinitionInterface
 {
 	/**
 	 * @return string
@@ -98,7 +98,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	}
 
 	/**
-	 * @return \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
+	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[]
 	 */
 	public function getFacetsDefinition()
 	{
@@ -111,11 +111,11 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	}
 
 	/**
-	 * @return \Rbs\Elasticsearch\Std\ModelFacetDefinition
+	 * @return \Rbs\Elasticsearch\Facet\ModelFacetDefinition
 	 */
 	protected function getDefaultModelFacet()
 	{
-		$mf = new \Rbs\Elasticsearch\Std\ModelFacetDefinition('model');
+		$mf = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
 		$mf->setTitle($this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
 		return $mf;
 	}

@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Commands;
 
 use Change\Commands\Events\Event;
-use Rbs\Elasticsearch\Services\IndexManager;
 
 /**
  * @name \Rbs\Elasticsearch\Commands\Index
@@ -16,8 +15,10 @@ class Index
 	{
 		$application = $event->getApplication();
 		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$indexManager = new IndexManager();
-		$indexManager->setApplicationServices($applicationServices);
+		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
+		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$indexManager = $elasticsearchServices->getIndexManager();
+
 		$hasClient = false;
 		$all = $event->getParam('all') == true;
 		$publishable = $event->getParam('publishable') == true;
@@ -32,7 +33,7 @@ class Index
 			$event->addCommentMessage('No model specified.');
 			return;
 		}
-		foreach($indexManager->getClientsName() as $clientName)
+		foreach ($indexManager->getClientsName() as $clientName)
 		{
 			try
 			{
@@ -55,8 +56,7 @@ class Index
 
 		if ($hasClient)
 		{
-			$documentServices  = new \Change\Documents\DocumentServices($applicationServices);
-			if ($event->getParam('job'))
+			if ($event->getParam('useJob'))
 			{
 				$jobManager = new \Change\Job\JobManager();
 				$jobManager->setDocumentServices($documentServices);
@@ -64,9 +64,7 @@ class Index
 			else
 			{
 				$jobManager = null;
-				$indexManager->setDocumentServices($documentServices);
 			}
-
 
 			$documentCount = 0;
 			foreach ($documentServices->getModelManager()->getModelsNames() as $modelsName)
@@ -88,7 +86,7 @@ class Index
 						continue;
 					}
 				}
-				$event->addInfoMessage('Schedule indexation of ' .$modelsName . ' model...');
+				$event->addInfoMessage('Schedule indexation of ' . $modelsName . ' model...');
 
 				$LCID = $documentServices->getDocumentManager()->getLCID();
 				$id = 0;
@@ -108,12 +106,14 @@ class Index
 						{
 							foreach ($doc->getLCIDArray() as $LCID)
 							{
-								$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID, 'deleted' => false);
+								$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
+									'deleted' => false);
 							}
 						}
 						elseif ($doc instanceof \Change\Documents\AbstractDocument)
 						{
-							$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID, 'deleted' => false);
+							$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
+								'deleted' => false);
 						}
 					}
 
@@ -141,13 +141,12 @@ class Index
 			}
 			if ($jobManager)
 			{
-				$event->addInfoMessage('Indexation of ' .$documentCount . ' documents are scheduled.');
+				$event->addInfoMessage('Indexation of ' . $documentCount . ' documents are scheduled.');
 			}
 			else
 			{
 				$event->addInfoMessage($documentCount . ' documents are indexed.');
 			}
-
 		}
 		else
 		{

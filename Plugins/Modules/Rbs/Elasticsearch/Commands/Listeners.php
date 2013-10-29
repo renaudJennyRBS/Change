@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Elasticsearch\Events\Commands;
+namespace Rbs\Elasticsearch\Commands;
 
 use Change\Commands\Events\Event;
 use Zend\EventManager\EventManagerInterface;
@@ -7,11 +7,10 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Json\Json;
 
 /**
- * @name \Rbs\Elasticsearch\Events\Commands\Listeners
+ * @name \Rbs\Elasticsearch\Commands\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
