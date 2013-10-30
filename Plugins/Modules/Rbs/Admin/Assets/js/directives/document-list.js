@@ -35,7 +35,6 @@
 		'$filter',
 		'$rootScope',
 		'$location',
-		'$timeout',
 		'$cacheFactory',
 		'RbsChange.i18n',
 		'RbsChange.REST',
@@ -51,12 +50,13 @@
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
 		'RbsChange.SelectSession',
+		'RbsChange.MainMenu',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $timeout, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes, SelectSession) {
-
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu)
+	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
 		 * @param dlid
@@ -623,7 +623,14 @@
 					// Update SelectSession information everytime it changes.
 					$rootScope.$on('Change:SelectSessionUpdate', function () {
 						scope.selectSession.info = SelectSession.info();
+						if (scope.selectSession.info !== null) {
+							MainMenu.addAsideTpl('selectSession', 'Rbs/Admin/tpl/select-session-aside.twig', scope);
+						}
 					});
+
+					if (scope.selectSession.info !== null) {
+						MainMenu.addAsideTpl('selectSession', 'Rbs/Admin/tpl/select-session-aside.twig', scope);
+					}
 
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
