@@ -1,0 +1,27 @@
+<div class="list-group">
+	<div class="list-group-item" ng-show="selectedTags.length > 0">
+		<h5>
+			<small class="pull-right"><a href="javascript:;" ng-click="unselectAll()">{{ i18n('m.rbs.tag.menu.clear-selection', ['ucf']) }}</a></small>
+			{{ i18n('m.rbs.tag.menu.selected-tags', ['ucf']) }}</h5>
+		<p class="text-muted" style="text-align:right;line-height:14px;margin-bottom:4px;"><small>{{ i18n('m.rbs.tag.menu.selected-tags-message', ['ucf']) }} <i class="icon-arrow-right"></i></small></p>
+		<p>
+			<span
+				ng-repeat="tag in selectedTags"
+				on-remove="unselectTag(tag)"
+				rbs-tag="tag"></span>
+		</p>
+	</div>
+
+	<div class="list-group-item">
+		<h5>{{ i18n('m.rbs.tag.menu.all-tags', ['ucf']) }}</h5>
+		<form class="rbs-form-simple-filter"
+			filter="filterTags"
+			on-enter="selectTag(filteredTags[0])"
+			on-tab="selectTag(filteredTags[0])"
+			on-escape="removeLastSelectedTag()"></form>
+		<p>
+			<span ng-repeat="tag in filteredTags"
+				ng-click="selectTag(tag)"><span class="cursor-pointer" rbs-tag="tag"></span></span>
+		</p>
+	</div>
+</div>

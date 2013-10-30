@@ -161,6 +161,12 @@
 
 				$http.get(url).success(function(data) {
 					if (angular.isString(data)) {
+
+						if (data.indexOf('<rbs-tag-filter') === -1 && data.indexOf('<rbs-tag-filter-panel') === -1)
+						{
+							data += '<rbs-tag-filter-panel></rbs-tag-filter-panel>';
+						}
+
 						data = '<div class="aside main">' + data + '</div>';
 					}
 					$compile(data)(currentScope, function (clone) {

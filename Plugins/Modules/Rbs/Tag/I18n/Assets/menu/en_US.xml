@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.tag.menu" lcid="fr_FR">
+<i18n baseKey="m.rbs.tag.menu" lcid="en_US">
 	<key id="all-tags">all tags</key>
+	<key id="find">find by tags</key>
+	<key id="manage-tags">manage tags</key>
+	<key id="clear-selection">clear</key>
+	<key id="selected-tags">selected tags</key>
+	<key id="selected-tags-message">selected tags are used to filter the list of items</key>
 </i18n>
