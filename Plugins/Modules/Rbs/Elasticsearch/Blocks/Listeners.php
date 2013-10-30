@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Elasticsearch\Events\JobManager;
+namespace Rbs\Elasticsearch\Blocks;
 
-use Rbs\Elasticsearch\Services\IndexManager;
+use Change\Presentation\Blocks\Standard\RegisterByBlockName;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Elasticsearch\Events\JobManager\Listeners
+ * @name \Rbs\Elasticsearch\Blocks\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -15,22 +15,21 @@ class Listeners implements ListenerAggregateInterface
 	 * Implementors may add an optional $priority argument; the EventManager
 	 * implementation will pass this to the aggregate.
 	 * @param EventManagerInterface $events
+	 * @return void
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function(\Change\Job\Event $event)
-		{
-			$im = new IndexManager();
-			$im->setApplicationServices($event->getApplicationServices());
-			$im->setDocumentServices($event->getDocumentServices());
-			$im->dispatchIndexationEvents($event->getJob()->getArguments());
-		};
-		$events->attach('process_Elasticsearch_Index', $callback, 5);
+		new RegisterByBlockName('Rbs_Elasticsearch_ShortSearch', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_Result', true, $events);
+
+		new RegisterByBlockName('Rbs_Elasticsearch_StoreResult', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_Facets', true, $events);
 	}
 
 	/**
 	 * Detach all previously attached listeners
 	 * @param EventManagerInterface $events
+	 * @return void
 	 */
 	public function detach(EventManagerInterface $events)
 	{

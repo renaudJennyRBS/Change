@@ -18,21 +18,21 @@ class Install extends \Change\Plugins\InstallBase
 			'\Rbs\Elasticsearch\Events\SharedListeners');
 
 		$configuration->addPersistentEntry('Rbs/Elasticsearch/Events/IndexManager/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\IndexManager\Listeners');
+			'\Rbs\Elasticsearch\Index\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/Commands/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\Commands\Listeners');
+			'\Rbs\Elasticsearch\Commands\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\JobManager\Listeners');
+			'\Rbs\Elasticsearch\Job\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\BlockManager\Listeners');
+			'\Rbs\Elasticsearch\Blocks\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\Admin\Listeners');
+			'\Rbs\Elasticsearch\Admin\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Elasticsearch',
-			'\Rbs\Elasticsearch\Events\CollectionManager\Listeners');
+			'\Rbs\Elasticsearch\Collection\Listeners');
 	}
 }

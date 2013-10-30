@@ -1,9 +1,9 @@
 <?php
-namespace Rbs\Elasticsearch\Events;
+namespace Rbs\Elasticsearch\Index;
 
 /**
-* @name \Rbs\Elasticsearch\Events\Event
-*/
+ * @name \Rbs\Elasticsearch\Index\Event
+ */
 class Event extends \Zend\EventManager\Event
 {
 	const INDEX_DOCUMENT = 'indexDocument';
@@ -12,7 +12,7 @@ class Event extends \Zend\EventManager\Event
 	const GET_INDEXES_DEFINITION = 'getIndexesDefinition';
 
 	/**
-	 * @return \Rbs\Elasticsearch\Services\IndexManager
+	 * @return \Rbs\Elasticsearch\Index\IndexManager
 	 */
 	public function getIndexManager()
 	{

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -71,6 +70,22 @@ class Result extends Block
 	}
 
 	/**
+	 * @param Event $event
+	 * @return \Rbs\Elasticsearch\ElasticsearchServices
+	 */
+	protected function getElasticsearchServices($event)
+	{
+		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		{
+			$applicationServices = $event->getDocumentServices()->getApplicationServices();
+			$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $event->getDocumentServices());
+			$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+		}
+		return $elasticsearchServices;
+	}
+
+	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
@@ -83,13 +98,13 @@ class Result extends Block
 		$fullTextIndex = $documentServices->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
 		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
 		{
-
 			$searchText = trim($parameters->getParameter('searchText'), '');
 			$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
 			$facetFilters = $parameters->getParameter('facetFilters');
 
-			$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
-			$indexManager->setDocumentServices($event->getDocumentServices());
+			$elasticsearchServices = $this->getElasticsearchServices($event);
+			$indexManager = $elasticsearchServices->getIndexManager();
+
 			$client = $indexManager->getClient($fullTextIndex->getClientName());
 			if ($client)
 			{
@@ -144,7 +159,7 @@ class Result extends Block
 	 * @param array $facets
 	 * @param array $facetFilters
 	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return \Rbs\Elasticsearch\Std\FacetTermValue[]
+	 * @return \Rbs\Elasticsearch\Facet\FacetValue[]
 	 */
 	protected function getFacetAttribute($facets, $facetFilters, $documentServices)
 	{
@@ -154,7 +169,7 @@ class Result extends Block
 			foreach ($facets['model']['terms'] as $term)
 			{
 				$modelName = $term['term'];
-				$v = new \Rbs\Elasticsearch\Std\FacetTermValue($modelName);
+				$v = new \Rbs\Elasticsearch\Facet\FacetValue($modelName);
 				$v->setCount(intval($term['count']));
 				if (is_array($facetFilters) && in_array($modelName, $facetFilters))
 				{
@@ -196,12 +211,6 @@ class Result extends Block
 				$query->setFilter($bool);
 			}
 		}
-	}
-
-
-	protected function getFacetFilter()
-	{
-
 	}
 
 	/**
@@ -246,10 +255,8 @@ class Result extends Block
 			$bool->addMust(new \Elastica\Filter\Terms('canonicalSectionId', $allowedSectionIds));
 		}
 		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
-
 		$query = new \Elastica\Query($filtered);
 		$query->setFields(array('model', 'title'));
-
 		return $query;
 	}
 }

@@ -2,8 +2,6 @@
 namespace Rbs\Catalog\Documents;
 
 use Change\Documents\AbstractModel;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
 use Rbs\Catalog\Std\AttributeEngine;
 
 /**
@@ -25,10 +23,11 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
 	 */
-	protected  function updateRestDocumentResult($documentResult)
+	protected function updateRestDocumentResult($documentResult)
 	{
 		parent::updateRestDocumentResult($documentResult);
-		$documentResult->setProperty('editorDefinition', (new AttributeEngine($this->getDocumentServices()))->buildEditorDefinition($this));
+		$documentResult->setProperty('editorDefinition',
+			(new AttributeEngine($this->getDocumentServices()))->buildEditorDefinition($this));
 	}
 
 	/**
@@ -41,7 +40,8 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		if (in_array('valueTypeFormatted', $extraColumn))
 		{
 			/* @var $attribute Attribute */
-			$fv = $this->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute.type-' . strtolower($this->getValueType()), array('ucf'));
+			$fv = $this->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute.type-'
+				. strtolower($this->getValueType()), array('ucf'));
 			$documentLink->setProperty('valueTypeFormatted', $fv);
 		}
 	}
@@ -134,7 +134,6 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		}
 		return null;
 	}
-
 
 	protected function onCreate()
 	{

@@ -1,16 +1,15 @@
 <?php
-namespace Rbs\Elasticsearch\Services;
+namespace Rbs\Elasticsearch\Index;
 
 use Change\Documents\Interfaces\Publishable;
 use Change\Documents\Query\Query;
 use Change\Documents\RichtextProperty;
 use Elastica\Document;
-use Rbs\Elasticsearch\Events\Event;
 
 /**
- * @name \Rbs\Elasticsearch\Services\FullTextManager
+ * @name \Rbs\Elasticsearch\Index\FullTextIndexer
  */
-class FullTextManager
+class FullTextIndexer
 {
 	/**
 	 * @var \Change\Documents\DocumentCollection
@@ -18,22 +17,22 @@ class FullTextManager
 	protected $indexesDefinition = null;
 
 	/**
-	 * @var \Rbs\Elasticsearch\Services\IndexManager
+	 * @var \Rbs\Elasticsearch\Index\IndexManager
 	 */
 	protected $indexManager;
 
 	/**
-	 * @param \Rbs\Elasticsearch\Services\IndexManager $indexManager
+	 * @param \Rbs\Elasticsearch\Index\IndexManager $indexManager
 	 * @return $this
 	 */
-	public function setIndexManager(\Rbs\Elasticsearch\Services\IndexManager $indexManager)
+	public function setIndexManager(\Rbs\Elasticsearch\Index\IndexManager $indexManager)
 	{
 		$this->indexManager = $indexManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Elasticsearch\Services\IndexManager
+	 * @return \Rbs\Elasticsearch\Index\IndexManager
 	 */
 	public function getIndexManager()
 	{
@@ -167,16 +166,6 @@ class FullTextManager
 		$elasticaDocument->set('endPublication', $endPublication->format(\DateTime::ISO8601));
 
 		$this->getIndexManager()->dispatchPopulateDocument($elasticaDocument, $document, $fulltext);
-
-		$event = new \Change\Documents\Events\Event('fullTextContent', $document,
-			array('elasticaDocument' => $elasticaDocument, 'indexManager' => $this->getIndexManager()));
-		$document->getEventManager()->trigger($event);
-		$fullTextContent = $event->getParam('fullTextContent');
-
-		if ($fullTextContent)
-		{
-			$elasticaDocument->set('content', $fullTextContent);
-		}
 	}
 
 	/**
@@ -206,24 +195,33 @@ class FullTextManager
 			$document = $event->getParam('document');
 			if ($elasticaDocument instanceof Document && $document instanceof \Change\Documents\AbstractDocument)
 			{
-				$model = $document->getDocumentModel();
-				$content = array();
-
-				foreach ($model->getProperties() as $property)
+				$parameters = array('elasticaDocument' => $elasticaDocument, 'indexManager' => $event->getIndexManager());
+				$event = new \Change\Documents\Events\Event('fullTextContent', $document, $parameters);
+				$document->getEventManager()->trigger($event);
+				$fullTextContent = $event->getParam('fullTextContent');
+				if ($fullTextContent)
 				{
-					if ($property->getType() === \Change\Documents\Property::TYPE_RICHTEXT)
+					$elasticaDocument->set('content', $fullTextContent);
+				}
+				else
+				{
+					$model = $document->getDocumentModel();
+					$content = array();
+					foreach ($model->getProperties() as $property)
 					{
-						$pv = $property->getValue($document);
-						if ($pv instanceof RichtextProperty)
+						if ($property->getType() === \Change\Documents\Property::TYPE_RICHTEXT)
 						{
-							$content[] = $pv->getRawText();
+							$pv = $property->getValue($document);
+							if ($pv instanceof RichtextProperty)
+							{
+								$content[] = $pv->getRawText();
+							}
 						}
 					}
-				}
-
-				if (count($content))
-				{
-					$elasticaDocument->set('content', implode(PHP_EOL, $content));
+					if (count($content))
+					{
+						$elasticaDocument->set('content', implode(PHP_EOL, $content));
+					}
 				}
 			}
 		}

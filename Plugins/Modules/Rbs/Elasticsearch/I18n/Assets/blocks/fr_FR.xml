@@ -5,4 +5,10 @@
 	<key id="result">Résultat d'une recherche</key>
 	<key id="result-function">Résultat de la recherche</key>
 	<key id="result-fulltextindex">Index de recherche</key>
+	<key id="facets">Facettes</key>
+	<key id="facets-facetgroups">Groupe de facette</key>
+	<key id="storeresult">Résultat d'une recherche magasin</key>
+	<key id="facets-facetgroups">Groupe de facette</key>
+	<key id="storeresult-function">Résultat de recherche magasin</key>
+	<key id="storeresult-storeindex">Index magasin</key>
 </i18n>

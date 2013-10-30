@@ -2,14 +2,25 @@
 namespace Rbs\Elasticsearch\Collection;
 
 use Change\Documents\Query\Query;
-use Change\I18n\I18nString;
-
+use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
 
 /**
  * @name \Rbs\Elasticsearch\Collection\Collections
  */
 class Collections
 {
+
+	/**
+	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return \Rbs\Elasticsearch\ElasticsearchServices
+	 */
+	protected function getElasticsearchServices($documentServices)
+	{
+		$applicationServices = $documentServices->getApplicationServices();
+		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		return $elasticsearchServices;
+	}
+
 	/**
 	 * @param \Zend\EventManager\Event $event
 	 */
@@ -18,9 +29,7 @@ class Collections
 		$documentServices = $event->getParam('documentServices');
 		if ($documentServices instanceof \Change\Documents\DocumentServices)
 		{
-			$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
-			$indexManager->setDocumentServices($documentServices);
-
+			$indexManager = $this->getElasticsearchServices($documentServices)->getIndexManager();
 			$items = array();
 			foreach ($indexManager->getClientsName() as $clientName)
 			{
@@ -104,8 +113,6 @@ class Collections
 		$documentServices = $event->getParam('documentServices');
 		if ($documentServices instanceof \Change\Documents\DocumentServices)
 		{
-			$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
-			$indexManager->setDocumentServices($documentServices);
 			$query = new Query($documentServices, 'Rbs_Elasticsearch_FullText');
 			$query->andPredicates($query->activated());
 			$items = array();
@@ -117,6 +124,42 @@ class Collections
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Indexes', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();
+		}
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addFacetTypes(\Zend\EventManager\Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$items = array();
+			$items[FacetDefinitionInterface::TYPE_TERM] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-term');
+			$items[FacetDefinitionInterface::TYPE_RANGE] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-range');
+			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetTypes', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function addFacetValueExtractor(\Zend\EventManager\Event $event)
+	{
+		$documentServices = $event->getParam('documentServices');
+		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		{
+			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$items = array();
+			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-attribute');
+			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-price');
+			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-sku-threshold');
+			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetValueExtractor', $items);
+			$event->setParam('collection', $collection);
 		}
 	}
 }

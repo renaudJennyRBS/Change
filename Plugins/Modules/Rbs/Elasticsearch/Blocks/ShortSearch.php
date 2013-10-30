@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -26,7 +25,8 @@ class ShortSearch extends Block
 		$parameters->addParameterMeta('formAction');
 		$parameters->addParameterMeta('sectionPageFunction', false);
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$resultSection = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('resultSectionId'));
+		$resultSection = $event->getDocumentServices()->getDocumentManager()
+			->getDocumentInstance($parameters->getParameter('resultSectionId'));
 		$uri = $event->getUrlManager()->getByFunction('Rbs_Elasticsearch_Result', $resultSection);
 		if ($uri)
 		{

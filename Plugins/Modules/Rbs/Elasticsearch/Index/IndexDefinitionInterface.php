@@ -1,9 +1,9 @@
 <?php
-namespace Rbs\Elasticsearch\Std;
+namespace Rbs\Elasticsearch\Index;
 
 /**
-* @name \Rbs\Elasticsearch\Std\IndexDefinitionInterface
-*/
+ * @name \Rbs\Elasticsearch\Index\IndexDefinitionInterface
+ */
 interface IndexDefinitionInterface
 {
 	/**
@@ -37,7 +37,7 @@ interface IndexDefinitionInterface
 	public function getConfiguration();
 
 	/**
-	 * @return \Rbs\Elasticsearch\Std\FacetDefinitionInterface[]
+	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[]
 	 */
 	public function getFacetsDefinition();
 }

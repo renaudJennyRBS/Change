@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Elasticsearch\Std;
+namespace Rbs\Elasticsearch\Facet;
 
 /**
- * @name \Rbs\Elasticsearch\Std\AbstractFacetDefinition
+ * @name \Rbs\Elasticsearch\Facet\AbstractFacetDefinition
  */
 abstract class AbstractFacetDefinition implements FacetDefinitionInterface
 {
@@ -14,12 +14,12 @@ abstract class AbstractFacetDefinition implements FacetDefinitionInterface
 	/**
 	 * @var string
 	 */
-	protected $fieldType;
+	protected $facetType = self::TYPE_TERM;
 
 	/**
 	 * @var boolean
 	 */
-	protected $fieldArray;
+	protected $showEmptyItem = false;
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -28,14 +28,12 @@ abstract class AbstractFacetDefinition implements FacetDefinitionInterface
 
 	/**
 	 * @param string $fieldName
-	 * @param string $fieldType
-	 * @param boolean $fieldArray
+	 * @param string $facetType
 	 */
-	function __construct($fieldName, $fieldType = FacetDefinitionInterface::TYPE_STRING, $fieldArray = false)
+	function __construct($fieldName, $facetType = FacetDefinitionInterface::TYPE_TERM)
 	{
 		$this->fieldName = $fieldName;
-		$this->fieldType = $fieldType;
-		$this->fieldArray = $fieldArray;
+		$this->facetType = $facetType;
 	}
 
 	/**
@@ -57,39 +55,29 @@ abstract class AbstractFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
-	 * @param string $fieldType
+	 * @param string $facetType
 	 * @return $this
 	 */
-	public function setFieldType($fieldType)
+	public function setFacetType($facetType)
 	{
-		$this->fieldType = $fieldType;
+		$this->facetType = $facetType;
 		return $this;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getFieldType()
+	public function getFacetType()
 	{
-		return $this->fieldType;
-	}
-
-	/**
-	 * @param boolean $fieldArray
-	 * @return $this
-	 */
-	public function setFieldArray($fieldArray)
-	{
-		$this->fieldArray = ($fieldArray == true);
-		return $this;
+		return $this->facetType;
 	}
 
 	/**
 	 * @return boolean
 	 */
-	public function isFieldArray()
+	public function getShowEmptyItem()
 	{
-		return $this->fieldArray;
+		return $this->showEmptyItem;
 	}
 
 	/**

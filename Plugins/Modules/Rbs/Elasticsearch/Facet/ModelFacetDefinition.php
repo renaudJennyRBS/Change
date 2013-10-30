@@ -1,16 +1,23 @@
 <?php
-namespace Rbs\Elasticsearch\Std;
-
+namespace Rbs\Elasticsearch\Facet;
 
 /**
-* @name \Rbs\Elasticsearch\Std\ModelFacetDefinition
-*/
+ * @name \Rbs\Elasticsearch\Facet\ModelFacetDefinition
+ */
 class ModelFacetDefinition extends  AbstractFacetDefinition
 {
 	/**
 	 * @var string
 	 */
 	protected $title;
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+		return -1;
+	}
 
 	/**
 	 * @param string $title

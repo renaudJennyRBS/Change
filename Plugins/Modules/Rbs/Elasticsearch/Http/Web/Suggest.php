@@ -35,8 +35,8 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$website = $event->getWebsite();
 				$result['LCID'] = $LCID;
 
-				$indexManager = new \Rbs\Elasticsearch\Services\IndexManager();
-				$indexManager->setDocumentServices($event->getDocumentServices());
+				$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplicationServices(), $event->getDocumentServices());
+				$indexManager = $elasticsearchServices->getIndexManager();
 
 				$indexDef = $indexManager->findIndexDefinitionByMapping('fulltext', $LCID, array('website' => $website));
 				if ($indexDef)
