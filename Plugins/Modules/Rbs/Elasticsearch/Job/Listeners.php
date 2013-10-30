@@ -20,12 +20,21 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function(\Change\Job\Event $event)
 		{
+
 			$im = new IndexManager();
 			$im->setApplicationServices($event->getApplicationServices());
 			$im->setDocumentServices($event->getDocumentServices());
 			$im->dispatchIndexationEvents($event->getJob()->getArguments());
 		};
 		$events->attach('process_Elasticsearch_Index', $callback, 5);
+
+
+		$callback = function(\Change\Job\Event $event)
+		{
+			/* TODO Update Mapping*/
+
+		};
+		$events->attach('process_Elasticsearch_Mapping', $callback, 5);
 	}
 
 	/**

@@ -47,6 +47,14 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		return 'fulltext';
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getDefaultTypeName()
+	{
+		return 'document';
+	}
+
 	protected function onCreate()
 	{
 		if (!$this->getName())

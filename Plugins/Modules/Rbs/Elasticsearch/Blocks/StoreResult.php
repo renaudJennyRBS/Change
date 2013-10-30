@@ -88,9 +88,6 @@ class StoreResult extends Block
 		$documentServices = $event->getDocumentServices();
 		$documentManager = $documentServices->getDocumentManager();
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-
 		$parameters = $event->getBlockParameters();
 		$searchText = trim($parameters->getParameter('searchText'), '');
 		$facetFilters = $parameters->getParameter('facetFilters');
@@ -106,16 +103,20 @@ class StoreResult extends Block
 				$index = $client->getIndex($storeIndex->getName());
 				if ($index->exists())
 				{
-					$query = $this->buildQuery($searchText, null);
-					$this->addFacetFilters($query, $facetFilters, $storeIndex);
+					/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+					$commerceServices = $event->getServices('commerceServices');
+
+					/* @var $commonServices \Change\Services\CommonServices */
+					$commonServices = $event->getServices('commonServices');
+					$elasticsearchServices->getFacetManager()->setCollectionManager($commonServices->getCollectionManager());
+					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $storeIndex);
 
 					$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
 					$size = $parameters->getParameter('itemsPerPage');
 					$from = ($pageNumber - 1) * $size;
-					$query->setFrom($from);
-					$query->setSize($size);
+					$query = $searchQuery->getSearchQuery($searchText, null, $facetFilters, $from, $size, array('title'));
 
-					$searchResult = $index->getType('product')->search($query);
+					$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 					$attributes['totalCount'] = $totalCount =  $searchResult->getTotalHits();
 
 					$rows = array();
@@ -162,107 +163,5 @@ class StoreResult extends Block
 			return 'store-result.twig';
 		}
 		return null;
-	}
-
-	/**
-	 * @param string $searchText
-	 * @param integer[] $allowedSectionIds
-	 * @return \Elastica\Query
-	 */
-	protected function buildQuery($searchText, $allowedSectionIds)
-	{
-		$now = (new \DateTime())->format(\DateTime::ISO8601);
-		if ($searchText)
-		{
-			$multiMatch = new \Elastica\Query\MultiMatch();
-			$multiMatch->setQuery($searchText);
-			$multiMatch->setFields(array('title', 'content'));
-		}
-		else
-		{
-			$multiMatch = new \Elastica\Query\MatchAll();
-		}
-
-		$bool = new \Elastica\Filter\Bool();
-		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
-		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
-
-		if (is_array($allowedSectionIds))
-		{
-			$bool->addMust(new \Elastica\Filter\Terms('canonicalSectionId', $allowedSectionIds));
-		}
-		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
-
-		$query = new \Elastica\Query($filtered);
-		$query->setFields(array('model'));
-		return $query;
-	}
-
-	/**
-	 * @param \Elastica\Query $query
-	 * @param $facetFilters
-	 * @param \Rbs\Elasticsearch\Documents\StoreIndex $storeIndex
-	 */
-	protected function addFacetFilters($query, $facetFilters, $storeIndex)
-	{
-		if (is_array($facetFilters))
-		{
-			$must = array();
-			foreach ($facetFilters as $facetName => $facetFilter)
-			{
-				if (is_string($facetFilter) &&  empty($facetFilter))
-				{
-					continue;
-				}
-				foreach ($storeIndex->getFacets() as $facet)
-				{
-					if ($facet->getFieldName() == $facetName)
-					{
-						if ($facet->getFacetType() === \Rbs\Elasticsearch\Facet\FacetDefinitionInterface::TYPE_TERM)
-						{
-							$must[] = new \Elastica\Filter\Terms($facetName, is_array($facetFilter) ? $facetFilter : array($facetFilter));
-						}
-						elseif (is_string($facetFilter))
-						{
-							$fromTo = explode('::', $facetFilter);
-							if (count($fromTo) === 2)
-							{
-								$args = array();
-								if ($fromTo[0]){
-									$args['from'] = $fromTo[0];
-								}
-								if ($fromTo[1]){
-									$args['to'] = $fromTo[1];
-								}
-								$must[] = new \Elastica\Filter\Range($facetName, $args);
-							}
-						}
-					}
-				}
-			}
-			if (count($must))
-			{
-				$bool = new \Elastica\Filter\Bool();
-				foreach ($must as $m)
-				{
-					$bool->addMust($m);
-				}
-				$query->setFilter($bool);
-			}
-		}
-	}
-
-	/**
-	 * @param integer $pageNumber
-	 * @param integer $pageCount
-	 * @return integer
-	 */
-	protected function fixPageNumber($pageNumber, $pageCount)
-	{
-		if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
-		{
-			return 1;
-		}
-		return $pageNumber;
 	}
 }

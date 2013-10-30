@@ -63,6 +63,8 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach('getIndexerValue', array($this, 'onDefaultGetIndexerValue'), 5);
+		$eventManager->attach('getFacetMapping', array($this, 'onDefaultGetFacetMapping'), 5);
+
 	}
 
 	/**
@@ -131,6 +133,125 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition
+	 */
+	public function getIndexMapping(\Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition)
+	{
+		$indexMapping = array();
+		foreach($indexDefinition->getFacetsDefinition() as $facet)
+		{
+			if ($facet instanceof FacetDefinitionInterface)
+			{
+				$value = $this->getFacetMapping($facet, $indexDefinition, $indexMapping);
+				if (is_array($value))
+				{
+					$indexMapping = array_merge($indexMapping, $value);
+				}
+			}
+		}
+		return $indexMapping;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
+	 * @param \Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition
+	 * @param array $indexMapping
+	 * @return array|null
+	 */
+	public function getFacetMapping(FacetDefinitionInterface $facet, $indexDefinition, $indexMapping)
+	{
+		$parameters = array('facet' => $facet, 'indexDefinition' => $indexDefinition, 'indexMapping' => $indexMapping);
+		$event = new \Zend\EventManager\Event('getFacetMapping', $this, $parameters);
+		$this->getEventManager()->trigger($event);
+		$value = $event->getParam('mapping');
+		return is_array($value) ? $value : null;
+	}
+
+
+	/**
+	 * @param \Zend\EventManager\Event $event
+	 */
+	public function onDefaultGetFacetMapping(\Zend\EventManager\Event $event)
+	{
+		/* @var $facetManager FacetManager */
+		$mapping = null;
+		$facet = $event->getParam('facet');
+		$indexMapping = $event->getParam('indexMapping');
+
+		$indexDefinition = $event->getParam('indexDefinition');
+		if ($indexDefinition instanceof \Rbs\Elasticsearch\Documents\StoreIndex &&
+			$facet instanceof \Rbs\Elasticsearch\Documents\Facet)
+		{
+			$fieldName = $facet->getFieldName();
+			//only one indexation by fieldName
+			if (array_key_exists($fieldName, $indexMapping))
+			{
+				return;
+			}
+
+			switch ($facet->getValuesExtractorName())
+			{
+				case 'Price':
+					$mapping = array($fieldName => array('type' => 'double'),
+						'price_id' => array('type' => 'long'));
+					break;
+				case 'SkuThreshold':
+					$mapping = array($fieldName => array('type' => 'string', 'index' => 'not_analyzed'),
+						$fieldName . '_level' => array('type' => 'long'), 'sku_id' => array('type' => 'long'));
+					break;
+				case 'Attribute':
+					$attribute = $facet->getAttributeIdInstance();
+					if ($attribute)
+					{
+						$type = $attribute->getValueType();
+						if ($type === \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+						{
+							$property = $attribute->getModelProperty();
+							if ($property)
+							{
+								$type = $property->getType();
+							}
+						}
+						switch ($type)
+						{
+							case \Rbs\Catalog\Documents\Attribute::TYPE_BOOLEAN:
+							case \Change\Documents\Property::TYPE_BOOLEAN:
+								$mapping = array($fieldName => array('type' => 'boolean'));
+								break;
+							case \Rbs\Catalog\Documents\Attribute::TYPE_DATETIME:
+							case \Change\Documents\Property::TYPE_DATE:
+							case \Change\Documents\Property::TYPE_DATETIME:
+								$mapping = array($fieldName => array('type' => 'date'));
+								break;
+							case \Rbs\Catalog\Documents\Attribute::TYPE_FLOAT:
+							case \Change\Documents\Property::TYPE_FLOAT:
+							case \Change\Documents\Property::TYPE_DECIMAL:
+								$mapping = array($fieldName => array('type' => 'double'));
+								break;
+							case \Rbs\Catalog\Documents\Attribute::TYPE_INTEGER:
+							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT:
+							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY:
+							case \Change\Documents\Property::TYPE_INTEGER:
+							case \Change\Documents\Property::TYPE_DOCUMENTID:
+							case \Change\Documents\Property::TYPE_DOCUMENT:
+							case \Change\Documents\Property::TYPE_DOCUMENTARRAY:
+								$mapping = array($fieldName => array('type' => 'long'));
+								break;
+							default:
+								$mapping = array($fieldName => array('type' => 'string', 'index' => 'not_analyzed'));
+								break;
+						}
+					}
+			}
+		}
+
+		if (is_array($mapping))
+		{
+			$event->setParam('mapping', $mapping);
+		}
+	}
+
+	/**
 	 * @param FacetDefinitionInterface $facet
 	 * @param \Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition
 	 * @param \Change\Documents\AbstractDocument $document
@@ -181,7 +302,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						if ($price)
 						{
 							$value = array($facet->getFieldName() => $price->getValue(),
-								$facet->getFieldName() .'_id' => $price->getId());
+								'price_id' => $price->getId());
 						}
 					}
 					break;
@@ -194,10 +315,8 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						$stockManager = $indexDefinition->getCommerceServices()->getStockManager();
 						$level = $stockManager->getInventoryLevel($sku, $store);
 						$threshold = $stockManager->getInventoryThreshold($sku, $store, $level);
-						$thresholdTitle = $stockManager->getInventoryThresholdTitle($sku, $store, $threshold);
-						$value = array($fieldName => $threshold,
-							$fieldName . '_level' => $level,
-							$fieldName . '_title' => $thresholdTitle);
+						$value = array($fieldName => $threshold, 'sku_id' => $sku->getId(),
+							$fieldName . '_level' => $level);
 					}
 					break;
 				case 'Attribute':
@@ -232,6 +351,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+
 	/**
 	 * @param \Rbs\Elasticsearch\Facet\FacetValue $facetValue
 	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
@@ -244,14 +364,10 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			$collection = $this->getCollectionByCode($facet->getCollectionCode());
 			if ($collection)
 			{
-				$value = is_string($facetValue->getValue()) ? \Change\Stdlib\String::toLower($facetValue->getValue()) : $facetValue->getValue();
-				foreach ($collection->getItems() as $item)
+				$item = $collection->getItemByValue($facetValue->getValue());
+				if ($item)
 				{
-					$iv = \Change\Stdlib\String::toLower($item->getValue());
-					if ($iv == $value)
-					{
-						$facetValue->setValueTitle($item->getTitle());
-					}
+					$facetValue->setValueTitle($item->getTitle());
 				}
 			}
 			elseif (($attribute = $facet->getAttributeIdInstance()) !== null)

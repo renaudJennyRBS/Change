@@ -129,7 +129,7 @@ class FullTextIndexer
 						$canonicalSection = $document->getCanonicalSection($website);
 						if ($canonicalSection)
 						{
-							$elasticaDocument = new Document($document->getId(), array(), 'document', $fulltext->getName());
+							$elasticaDocument = new Document($document->getId(), array(), $fulltext->getDefaultTypeName(), $fulltext->getName());
 							$this->populatePublishableDocument($document, $elasticaDocument, $fulltext);
 							$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
 							$this->getIndexManager()->documentToAdd($fulltext->getClientName(), $elasticaDocument);

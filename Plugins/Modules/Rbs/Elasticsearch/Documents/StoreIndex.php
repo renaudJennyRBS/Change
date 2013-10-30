@@ -65,6 +65,14 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	/**
 	 * @return string
 	 */
+	public function getDefaultTypeName()
+	{
+		return 'product';
+	}
+
+	/**
+	 * @return string
+	 */
 	protected function buildDefaultIndexName()
 	{
 		return $this->getMappingName() . '_' . $this->getWebsiteId() . '_' . $this->getStoreId() . '_' . strtolower($this->getAnalysisLCID());

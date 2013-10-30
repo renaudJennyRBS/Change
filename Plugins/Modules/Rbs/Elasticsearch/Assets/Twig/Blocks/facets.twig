@@ -15,20 +15,13 @@
 						</label></li>
 					{% endfor %}
 				{% else %}
-					{% set facetFiltered = false %}
 					{% for facetValue in attribute(facetValues, facet.fieldName) %}
-						{% set facetFiltered = facetFiltered or facetValue.filtered %}
 						<li><label>
 							<input type="radio" name="facetFilters[{{ facet.fieldName }}]" value="{{ facetValue.value }}"
 								{% if facetValue.filtered %} checked="checked" {% endif %} />
 							{{ facetValue.title }}
 						</label></li>
 					{% endfor %}
-					<li><label>
-							<input type="radio" name="facetFilters[{{ facet.fieldName }}]" value=""
-								{% if facetFiltered == false %} checked="checked" {% endif %}/>
-							{{ i18n('m.rbs.elasticsearch.fo.ignore-facet') }}
-						</label></li>
 				{% endif %}
 			 </ol>
 		{% endfor %}
