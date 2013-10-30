@@ -284,28 +284,6 @@ h4.list-group-item:first-child {
 }
 
 
-.form-vertical .form-group [class^="col-"],
-.form-vertical .form-group [class*=" col-"] {
-	display: block;
-	width: 100%;
-	float: none;
-}
-
-.form-vertical .form-group.required .control-label:before {
-	content: "";
-}
-
-.form-vertical .form-group.required .control-label:after {
-	color: #B94A48;
-	content: "*";
-	font-family: Courier New,Courier;
-	font-size: 14pt;
-	margin-left: 3px;
-	position: relative;
-	top: 3px;
-}
-
-
 /* advanced mode */
 
 .advanced-mode h4 {
