@@ -36,6 +36,7 @@ class ProductPriceInfo
 				$products[] = $dm->getDocumentInstance($productId);
 			}
 			$commerceServices = new \Rbs\Commerce\Services\CommerceServices($event->getApplicationServices(), $event->getDocumentServices());
+			$commerceServices->setZone($request->getQuery('zone'));
 			$event->setResult($this->generateResult($webstore, $billingArea, $products, $commerceServices, $event->getUrlManager()));
 		}
 	}
