@@ -47,7 +47,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	 */
 	public function getMultipleChoice()
 	{
-		return $this->getParameters()->get('multipleChoice', false);
+		return $this->getParameters()->get(static::PARAM_MULTIPLE_CHOICE, false);
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	 */
 	public function setMultipleChoice($multipleChoice)
 	{
-		$this->getParameters()->set('multipleChoice', $multipleChoice);
+		$this->getParameters()->set(static::PARAM_MULTIPLE_CHOICE, $multipleChoice);
 		return $this;
 	}
 
@@ -65,7 +65,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	 */
 	public function getCollectionCode()
 	{
-		return $this->getParameters()->get('collectionCode', null);
+		return $this->getParameters()->get(static::PARAM_COLLECTION_CODE, null);
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	 */
 	public function setCollectionCode($collectionCode)
 	{
-		$this->getParameters()->set('collectionCode', $collectionCode);
+		$this->getParameters()->set(static::PARAM_COLLECTION_CODE, $collectionCode);
 		return $this;
 	}
 
@@ -130,7 +130,6 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	{
 		return $this->getParameters()->get('facetType', FacetDefinitionInterface::TYPE_TERM);
 	}
-
 
 	/**
 	 * @return boolean

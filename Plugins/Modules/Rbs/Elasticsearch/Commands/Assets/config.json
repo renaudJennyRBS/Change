@@ -11,6 +11,10 @@
 			},
 			"delete": {
 				"description": "delete index"
+			},
+			"facet-mapping": {
+				"description": "set facet mapping",
+				"shortcut": "f"
 			}
 		},
 		"arguments": {

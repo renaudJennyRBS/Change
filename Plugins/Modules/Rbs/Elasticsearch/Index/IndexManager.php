@@ -428,4 +428,23 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		return null;
 	}
+
+	/**
+	 * @param IndexDefinitionInterface $indexDefinition
+	 * @param array $mapping
+	 * @return \Elastica\Index|null
+	 */
+	public function setFacetMapping($indexDefinition, $mapping)
+	{
+		$client = $this->getClient($indexDefinition->getClientName());
+		if ($client)
+		{
+			$index = $client->getIndex($indexDefinition->getName());
+			$typeMapping = \Elastica\Type\Mapping::create($mapping);
+			$typeMapping->setParam('ignore_conflicts', true);
+			$index->getType($indexDefinition->getDefaultTypeName())->setMapping($typeMapping);
+			return $index;
+		}
+		return null;
+	}
 }

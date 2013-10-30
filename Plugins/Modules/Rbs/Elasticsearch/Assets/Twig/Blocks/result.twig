@@ -8,7 +8,7 @@
 	<div class="input-group">
 		{% for fv in facet %}
 			<label>
-				<input type="checkbox" name="facetFilters[]" value="{{ fv.value }}" {% if fv.filtered %} checked="checked" {% endif %} />
+				<input type="checkbox" name="facetFilters[model][]" value="{{ fv.value }}" {% if fv.filtered %} checked="checked" {% endif %} />
 				{{ fv.title }}
 			</label>
 			{% if not(loop.last) %} | {% endif %}

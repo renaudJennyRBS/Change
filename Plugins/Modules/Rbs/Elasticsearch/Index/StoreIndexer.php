@@ -100,7 +100,7 @@ class StoreIndexer extends FullTextIndexer
 							$storeIndex->setCommerceServices($commerceServices);
 						}
 
-						$elasticaDocument = new Document($product->getId(), array(), 'product', $storeIndex->getName());
+						$elasticaDocument = new Document($product->getId(), array(), $storeIndex->getDefaultTypeName(), $storeIndex->getName());
 						$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
 
 						$canonicalSection = $product->getCanonicalSection($website);

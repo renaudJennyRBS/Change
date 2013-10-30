@@ -9,6 +9,9 @@ interface FacetDefinitionInterface
 	const TYPE_TERM = 'term';
 	const TYPE_RANGE = 'range';
 
+	const PARAM_MULTIPLE_CHOICE = 'multipleChoice';
+	const PARAM_COLLECTION_CODE = 'collectionCode';
+
 	/**
 	 * @return integer
 	 */

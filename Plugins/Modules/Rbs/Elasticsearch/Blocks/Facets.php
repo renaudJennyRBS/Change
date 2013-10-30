@@ -97,9 +97,6 @@ class Facets extends Block
 		$documentServices = $event->getDocumentServices();
 		$parameters = $event->getBlockParameters();
 
-		/* @var $commonServices \Change\Services\CommonServices */
-		$commonServices = $event->getServices('commonServices');
-
 		$facetGroupIds = $parameters->getParameter('facetGroups');
 		$facetGroups = array();
 		$storeIndexId = null;
@@ -132,8 +129,6 @@ class Facets extends Block
 		{
 			$attributes['facetGroups'] = $facetGroups;
 			$elasticsearchServices = $this->getElasticsearchServices($event);
-			$facetManager = $elasticsearchServices->getFacetManager();
-			$facetManager->setCollectionManager($commonServices->getCollectionManager());
 
 			$client = $elasticsearchServices->getIndexManager()->getClient($storeIndex->getClientName());
 			if ($client)
@@ -141,165 +136,20 @@ class Facets extends Block
 				$index = $client->getIndex($storeIndex->getName());
 				if ($index->exists())
 				{
-					$query = $this->buildQuery(null, null);
-					$this->addFacets($query, $facets, $commonServices);
-					$result = $index->getType('product')->search($query);
-					$attributes['facetValues'] = $this->buildFacetValues($result->getFacets(),
-						$parameters->getParameter('facetFilters'), $facets, $facetManager);
+					/* @var $commonServices \Change\Services\CommonServices */
+					$commonServices = $event->getServices('commonServices');
+					$elasticsearchServices->getFacetManager()->setCollectionManager($commonServices->getCollectionManager());
+					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $storeIndex);
+					$facetFilters = $parameters->getParameter('facetFilters');
+					$query = $searchQuery->getFacetsQuery(null, null, $facetFilters, $facets);
+					$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
+
+					$attributes['facetValues'] = $searchQuery->buildFacetValues($result->getFacets(),
+						$facetFilters, $facets);
 					return 'facets.twig';
 				}
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @param string $searchText
-	 * @param integer[] $allowedSectionIds
-	 * @return \Elastica\Query
-	 */
-	protected function buildQuery($searchText, $allowedSectionIds)
-	{
-		$now = (new \DateTime())->format(\DateTime::ISO8601);
-		if ($searchText)
-		{
-			$multiMatch = new \Elastica\Query\MultiMatch();
-			$multiMatch->setQuery($searchText);
-			$multiMatch->setFields(array('title', 'content'));
-		}
-		else
-		{
-			$multiMatch = new \Elastica\Query\MatchAll();
-		}
-
-		$bool = new \Elastica\Filter\Bool();
-		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
-		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
-
-		if (is_array($allowedSectionIds))
-		{
-			$bool->addMust(new \Elastica\Filter\Terms('canonicalSectionId', $allowedSectionIds));
-		}
-		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
-		$query = new \Elastica\Query($filtered);
-		$query->setSize(0);
-		return $query;
-	}
-
-	/**
-	 * @param \Elastica\Query $query
-	 * @param \Rbs\Elasticsearch\Documents\Facet[] $facets
-	 * @param \Change\Services\CommonServices $commonServices
-	 */
-	protected function addFacets($query, $facets, $commonServices)
-	{
-		foreach ($facets as $facet)
-		{
-			if ($facet->getFacetType() === \Rbs\Elasticsearch\Facet\FacetDefinitionInterface::TYPE_RANGE)
-			{
-				$collection = $this->getCollectionByCode($facet->getCollectionCode(), $commonServices->getCollectionManager());
-				if (!$collection)
-				{
-					continue;
-				}
-				$ranges = array();
-				foreach ($collection->getItems() as $item)
-				{
-					$fromTo = explode('::', $item->getValue());
-					if (count($fromTo) == 2)
-					{
-						$ranges[] = $fromTo;
-					}
-				}
-				if (count($ranges))
-				{
-					$queryFacet = new \Elastica\Facet\Range($facet->getFieldName());
-					$queryFacet->setField($facet->getFieldName());
-					foreach ($ranges as $fromTo)
-					{
-						$queryFacet->addRange($fromTo[0] == '' ? null : $fromTo[0], $fromTo[1] == '' ? null : $fromTo[1]);
-					}
-					$query->addFacet($queryFacet);
-				}
-			}
-			else
-			{
-				$queryFacet = new \Elastica\Facet\Terms($facet->getFieldName());
-				$queryFacet->setField($facet->getFieldName());
-				$query->addFacet($queryFacet);
-			}
-		}
-	}
-
-	/**
-	 * @param array $facetResults
-	 * @param array $facetFilters
-	 * @param \Rbs\Elasticsearch\Documents\Facet[] $facets
-	 * @param \Rbs\Elasticsearch\Facet\FacetManager $facetManager
-	 * @return \Rbs\Elasticsearch\Facet\FacetValue[]
-	 */
-	protected function buildFacetValues($facetResults, $facetFilters, $facets, $facetManager)
-	{
-		$facetValues = array();
-		if (is_array($facetResults))
-		{
-			foreach ($facetResults as $facetName => $facetData)
-			{
-				$facet = isset($facets[$facetName]) ? $facets[$facetName] : null;
-				if (!$facet)
-				{
-					continue;
-				}
-				if ($facetData['_type'] == 'terms')
-				{
-					foreach ($facetData['terms'] as $term)
-					{
-						if (($count = intval($term['count'])) == 0 && !$facet->getShowEmptyItem())
-						{
-							continue;
-						}
-						$value = $term['term'];
-						$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
-						$facetValue->setCount($count);
-						if (is_array($facetFilters) && isset($facetFilters[$facetName]))
-						{
-							$facetFilter = $facetFilters[$facetName];
-							if ((is_array($facetFilter) && in_array($value, $facetFilter))
-								|| (is_string($facetFilter) && $facetFilter == $value)
-							)
-							{
-								$facetValue->setFiltered(true);
-							}
-						}
-						$facetValues[$facetName][] = $facetManager->updateFacetValueTitle($facetValue, $facet);
-					}
-				}
-				else
-				{
-					foreach ($facetData['ranges'] as $range)
-					{
-						if (($count = intval($range['count'])) == 0 && !$facet->getShowEmptyItem())
-						{
-							continue;
-						}
-						$value = (isset($range['from']) ? $range['from'] : '') . '::' . (isset($range['to']) ? $range['to'] : '');
-						$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
-						$facetValue->setCount(intval($range['count']));
-						if (is_array($facetFilters) && isset($facetFilters[$facetName]))
-						{
-							$facetFilter = $facetFilters[$facetName];
-							if ((is_array($facetFilter) && in_array($value, $facetFilter))
-								|| (is_string($facetFilter) && $facetFilter == $value)
-							)
-							{
-								$facetValue->setFiltered(true);
-							}
-						}
-						$facetValues[$facetName][] = $facetManager->updateFacetValueTitle($facetValue, $facet);
-					}
-				}
-			}
-		}
-		return $facetValues;
 	}
 }

@@ -50,7 +50,7 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 						$q = $this->buildQuery($terms);
 						$result['q'] = $q->toArray();
 
-						$resultSet = $index->getType('document')->search($this->buildQuery($terms));
+						$resultSet = $index->getType($indexDef->getDefaultTypeName())->search($this->buildQuery($terms));
 
 						if ($resultSet->count())
 						{

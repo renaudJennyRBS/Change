@@ -11,6 +11,12 @@ class ModelFacetDefinition extends  AbstractFacetDefinition
 	 */
 	protected $title;
 
+	function __construct()
+	{
+		$this->setFieldName('model');
+		$this->getParameters()->set(static::PARAM_MULTIPLE_CHOICE, true);
+	}
+
 	/**
 	 * @return integer
 	 */

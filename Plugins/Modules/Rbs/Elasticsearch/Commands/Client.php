@@ -37,8 +37,8 @@ class Client
 						{
 							foreach ($indexManager->getIndexesDefinition($name) as $indexDef)
 							{
-								$event->addInfoMessage('Declared index "' . $indexDef->getClientName() . '/'
-									. $indexDef->getName() . '", mapping: ' . $indexDef->getMappingName()
+								$event->addInfoMessage('Declared index "' . $indexDef->getName() . '", mapping: '
+									. $indexDef->getMappingName()
 									. ', language: ' . $indexDef->getAnalysisLCID());
 								$idx = $client->getIndex($indexDef->getName());
 								if ($idx->exists())
@@ -62,24 +62,38 @@ class Client
 								if ($event->getParam('delete'))
 								{
 									$indexManager->deleteIndex($indexDef);
-									$event->addInfoMessage('index: "' . $name . '/' . $indexName . '" deleted');
+									$event->addInfoMessage('index: "' . $indexName . '" deleted');
 								}
 								if ($event->getParam('create'))
 								{
 									$index = $indexManager->setIndexConfiguration($indexDef);
 									if ($index)
 									{
-										$event->addInfoMessage('index: "' . $name . '/' . $indexName . '" created');
+										$event->addInfoMessage('index: "' . $indexName . '" created');
 									}
 									else
 									{
-										$event->addErrorMessage('index: "' . $name . '/' . $indexName . '" not created');
+										$event->addErrorMessage('index: "' . $indexName . '" not created');
+									}
+								}
+
+								if ($event->getParam('facet-mapping') || $event->getParam('create'))
+								{
+									$mapping = $elasticsearchServices->getFacetManager()->getIndexMapping($indexDef);
+									if (count($mapping))
+									{
+										$indexManager->setFacetMapping($indexDef, $mapping);
+										$event->addInfoMessage('index: "' . $indexName . '" facet mapping updated');
+									}
+									elseif ($event->getParam('facet-mapping'))
+									{
+										$event->addCommentMessage('index: "' . $indexName . '" has no facet to update');
 									}
 								}
 							}
 							else
 							{
-								$event->addErrorMessage('index "' . $name . '/' . $indexName . '" not found.');
+								$event->addErrorMessage('index "' . $indexName . '" not found.');
 							}
 						}
 					}

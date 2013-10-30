@@ -29,6 +29,11 @@ interface IndexDefinitionInterface
 	/**
 	 * @return string
 	 */
+	public function getDefaultTypeName();
+
+	/**
+	 * @return string
+	 */
 	public function getAnalysisLCID();
 
 	/**
