@@ -14,7 +14,7 @@
 	<p ng-if="selectSession.info.selection.length == 0">
 		<strong>{{ i18n('m.rbs.admin.lists.selection-is-empty-now') }}</strong>
 	</p>
-	<token-list rows="true" items="selectSession.info.selection"></token-list>
+	<p><token-list rows="true" items="selectSession.info.selection"></token-list></p>
 	<div class="btn-toolbar">
 		<span class="pull-right">
 			<button type="button" class="btn btn-default" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.lists.cancel-selection', ['ucf']) }}</button>
