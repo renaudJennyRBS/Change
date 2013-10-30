@@ -11,12 +11,11 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text
-				data-ng-disabled="document.locked"
-				property="code"
-				required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'code'), ['ucf']) }}">
-		</rbs-field-text>
+		<rbs-field
+			property="code"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'code'), ['ucf']) }}">
+			<div class="form-control-static" ng-bind="document.code"></div>
+		</rbs-field>
 
 		<div ng-show="document.id > 0">
 			<h3>

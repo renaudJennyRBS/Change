@@ -18,11 +18,11 @@
 	               publishable="true"
 	               filter-query="query">
 		<column name="target" primary="true">
-			(= doc.target.label =)
+			<a href ng-href="(=doc|documentURL=)">(= doc.target.label =)</a>
 		</column>
 		<column name="pseudonym"></column>
 		<column name="promoted">
-			<switch ng-model="doc.promoted" disabled></switch>
+			(= doc.promoted | rbsBoolean =)
 		</column>
 		<column name="reviewDate" format="date"></column>
 		<preview style="min-height: 200px">

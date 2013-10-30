@@ -1,15 +1,16 @@
 <form class="form-horizontal" novalidate ng-submit="saveProfile()" name="form" ng-controller="Rbs_User_Profile_Controller">
 
-	{#<fieldset>
+	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.personnal-info', ['ucf']) }}</legend>
 
 		<div class="form-group">
 			<label class="control-label col-md-3" for="avatar">{{ i18n('m.rbs.user.profile.avatar', ['ucf']) }}</label>
 			<div class="col-md-9">
-				<input type="text" id="avatar" class="form-control" name="avatar" ng-model="user.profile.avatar"/>
+				{#<input type="text" id="avatar" class="form-control" name="avatar" ng-model="user.profile.avatar"/>#}
+				<p class="form-control-static" >{{ i18n('m.rbs.user.profile.gravatar-help', ['ucf']) }}</p>
 			</div>
 		</div>
-	</fieldset>#}
+	</fieldset>
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.internationalization', ['ucf']) }}</legend>

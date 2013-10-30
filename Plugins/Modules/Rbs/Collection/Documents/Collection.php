@@ -74,9 +74,21 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 	 * @throws \RuntimeException
 	 * @throws \Exception
 	 */
+	protected function onCreate()
+	{
+		if (\Change\Stdlib\String::isEmpty($this->getCode()))
+		{
+			$this->setCode(uniqid('COLLECTION-'));
+		}
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 */
 	protected function onUpdate()
 	{
-		if ($this->isPropertyModified('code') && $this->getLocked())
+		if ($this->isPropertyModified('code') && ($this->getLocked() || \Change\Stdlib\String::isEmpty($this->getCode())))
 		{
 			$this->setCode($this->getCodeOldValue());
 		}
@@ -115,8 +127,6 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 		{
 			throw new \RuntimeException('can not delete locked collection', 999999);
 		}
-
-
 	}
 
 	/**

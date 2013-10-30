@@ -1,0 +1,25 @@
+@CHARSET "UTF-8";
+
+.form-control-static .star-rating{
+	display: inline-block;
+}
+
+.star-rating{
+	font-size: 1em;
+}
+.star-rating label{
+	color: grey;
+}
+.star-rating label:hover{
+	color: black;
+}
+.star-rating .selected label{
+	color: black;
+}
+.star-rating-display{
+	color: grey;
+	letter-spacing: -0.4em;
+}
+.star-rating-display .full {
+	color: black;
+}

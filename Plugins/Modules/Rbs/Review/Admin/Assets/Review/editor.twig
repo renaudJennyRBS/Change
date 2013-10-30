@@ -3,9 +3,19 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-integer property="rating" required="true" min="0" max="100"
-			label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'rating'), ['ucf']) }}">
-		</rbs-field-integer>
+		<rbs-field property="rating" required="true" label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'rating'), ['ucf']) }}">
+			<div class="form-control-static">
+				<ol class="list-inline star-rating">
+					<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-0') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="0" class="sr-only" /><span class="glyphicon glyphicon-star-empty"></span></label></li> |
+					<li data-ng-class="{'selected': document.rating > 0}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 20}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="40" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 40}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-3') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 60}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 80}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+				</ol>
+				<span>(= document.rating * (5/100) =)/5</span>
+			</div>
+		</rbs-field>
 
 		<rbs-field-rich-text property="content" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'content'), ['ucf']) }}">
