@@ -450,12 +450,13 @@
 	}]);
 
 
-	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', '$rootScope', function ($location, UrlManager, $rootScope)
+	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', '$rootScope', 'RbsChange.MainMenu', function ($location, UrlManager, $rootScope, MainMenu)
 	{
 		var	selection = [],
 			selectDoc, selectDocPropertyName, selectDocPropertyLabel, selectDocUrl, selectDocumentModel, selectMultiple;
 
-		function reset () {
+		function reset ()
+		{
 			selection.length = 0;
 			selectDoc = null;
 			selectDocUrl = null;
@@ -468,11 +469,13 @@
 
 		return {
 
-			started : function () {
+			started : function ()
+			{
 				return angular.isObject(selectDoc);
 			},
 
-			info : function () {
+			info : function ()
+			{
 				if (! this.started()) {
 					return null;
 				}
@@ -485,13 +488,15 @@
 				};
 			},
 
-			hasSelectSession : function (doc) {
+			hasSelectSession : function (doc)
+			{
 				return selectDoc && doc
 					&& (selectDoc.id === doc.id || (selectDoc.isNew() && doc.isNew() && selectDoc.model === doc.model))
 					&& (! doc.hasOwnProperty('LCID') || doc.LCID === selectDoc.LCID);
 			},
 
-			start : function (doc, property, selectionDocumentModel, multiple) {
+			start : function (doc, property, selectionDocumentModel, multiple)
+			{
 				if (this.started()) {
 					return;
 				}
@@ -511,7 +516,8 @@
 				$location.url(UrlManager.getListUrl(selectionDocumentModel));
 			},
 
-			append : function (docs) {
+			append : function (docs)
+			{
 				if (angular.isArray(docs)) {
 					angular.forEach(docs, function (d) {
 						if (selection.indexOf(d) === -1) {
@@ -525,7 +531,8 @@
 				return this;
 			},
 
-			commit : function (doc) {
+			commit : function (doc)
+			{
 				if (angular.isObject(doc)) {
 					doc[selectDocPropertyName] = angular.copy(selectMultiple ? selection : selection[0]);
 					reset();
@@ -540,17 +547,21 @@
 				return this;
 			},
 
-			end : function () {
+			end : function ()
+			{
 				if (! selectDocUrl) {
 					console.warn("SelectSession: could not go back to the editor: URL is empty.");
 				}
+				MainMenu.removeAside('rbsSelectSession');
 				$location.url(selectDocUrl);
 			},
 
-			rollback : function () {
+			rollback : function ()
+			{
 				$rootScope.$broadcast('Change:SelectSessionUpdate');
 				var redirect = selectDocUrl;
 				reset();
+				MainMenu.removeAside('rbsSelectSession');
 				$location.url(redirect);
 			}
 
