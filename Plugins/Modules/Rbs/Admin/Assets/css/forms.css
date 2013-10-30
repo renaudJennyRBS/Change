@@ -52,6 +52,10 @@ form-button-bar > .confirmation-area {
 }
 
 
+.correction label.control-label {
+	color: #449D44;
+	font-style: italic;
+}
 
 
 /* invalid fields */
