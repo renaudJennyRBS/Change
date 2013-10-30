@@ -514,10 +514,12 @@
 			append : function (docs) {
 				if (angular.isArray(docs)) {
 					angular.forEach(docs, function (d) {
-						selection.push(d);
+						if (selection.indexOf(d) === -1) {
+							selection.push(d);
+						}
 					});
 				}
-				else {
+				else if (selection.indexOf(docs) === -1) {
 					selection.push(docs);
 				}
 				return this;
