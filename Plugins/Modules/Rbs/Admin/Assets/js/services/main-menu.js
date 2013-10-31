@@ -165,7 +165,8 @@
 					}
 					$compile(data)(currentScope, function (clone) {
 						$timeout(function() {
-							$el.html(clone);
+							$el.find('.aside.main').first().remove();
+							$el.prepend(clone);
 							deferred.resolve(self.updateLinks());
 							self.request = null;
 						});
@@ -319,6 +320,13 @@
 			$http.get(tpl).success(function (html) {
 				self.addAside(key, html, scope);
 			});
+		};
+
+
+		this.removeAside = function (key)
+		{
+			console.log("remove: ", $el.find('[data-aside-key="' + key + '"]'));
+			$el.find('[data-aside-key="' + key + '"]').remove();
 		};
 
 

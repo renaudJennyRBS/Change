@@ -36,13 +36,15 @@
 			transclude : true,
 			template   : fieldTemplate(''),
 
-			compile : function (tElement, tAttrs, transcludeFn) {
+			compile : function (tElement, tAttrs, transcludeFn)
+			{
 				var $lbl = tElement.find('label').first(),
 					fieldId = 'rbs_field_' + (++fieldIdCounter),
 					required = (tAttrs.required === 'true');
 				$lbl.html(tAttrs.label);
 				$lbl.attr('for', fieldId);
-				return function link (scope, element) {
+				return function link (scope, element)
+				{
 					transcludeFn(scope, function (clone) {
 						element.find('.controls').append(clone);
 						var $input = element.find('.controls [ng-model]').attr('id', fieldId);
@@ -68,9 +70,9 @@
 
 	function registerFieldDirective (name, tpl, selector)
 	{
-		app.directive('rbsField' + name, ['RbsChange.Utils', function (Utils) {
+		app.directive('rbsField' + name, ['RbsChange.Utils', function (Utils)
+		{
 			return {
-
 				restrict   : 'E',
 				replace    : true,
 				transclude : true,
@@ -80,7 +82,6 @@
 					rbsFieldCompile(tElement, tAttrs, selector, Utils);
 					return function () {};
 				}
-
 			};
 		}]);
 	}

@@ -14,7 +14,7 @@
 
 			scope : true,
 
-			template : '<ul class="breadcrumb"></ul>',
+			template : '<ul class="rbs-breadcrumb list-unstyled"></ul>',
 
 			replace : true,
 

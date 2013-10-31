@@ -57,6 +57,15 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy':
 					(new \Rbs\Catalog\Collection\Collections())->addCartProductChoiceStrategyCollection($event);
 					break;
+				case 'Rbs_Order_Collection_ProcessingStatus':
+					(new \Rbs\Order\Collection\Collections())->addProcessingStatuses($event);
+					break;
+				case 'Rbs_Order_Collection_ShippingStatus':
+					(new \Rbs\Order\Collection\Collections())->addShippingStatuses($event);
+					break;
+				case 'Rbs_Order_Collection_PaymentStatus':
+					(new \Rbs\Order\Collection\Collections())->addPaymentStatuses($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -74,6 +83,9 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Price_Collection_Iso4217';
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';
 			$codes[] = 'Rbs_Store_Collection_WebStores';
+			$codes[] = 'Rbs_Order_Collection_ProcessingStatus';
+			$codes[] = 'Rbs_Order_Collection_ShippingStatus';
+			$codes[] = 'Rbs_Order_Collection_PaymentStatus';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

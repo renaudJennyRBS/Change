@@ -7,7 +7,7 @@
 
 	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, UrlManager) {
 
-		var CORRECTION_CSS_CLASS = 'success';
+		var CORRECTION_CSS_CLASS = 'correction';
 
 
 		return {
