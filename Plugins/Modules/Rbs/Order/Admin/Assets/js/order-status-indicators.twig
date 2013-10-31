@@ -1,0 +1,23 @@
+<span class="order-status-item" ng-switch="order.processingStatus">
+	<i ng-switch-when="in_progress" class="text-info icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.collection.processing-status-in-progress') }}"></i>
+	<i ng-switch-when="finalized" class="text-success icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.collection.processing-status-finalized') }}"></i>
+	<i ng-switch-when="canceled" class="text-danger icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.collection.processing-status-canceled') }}"></i>
+	<i ng-switch-when="initiated" class="icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.collection.processing-status-initiated') }}"></i>
+</span>
+
+<span class="order-status-item" ng-switch="order.paymentStatus">
+	<i ng-switch-when="partially_payed" class="text-warning icon-money icon-2x" title="{{ i18nAttr('m.rbs.order.collection.payment-status-partially-payed') }}"></i>
+	<i ng-switch-when="payed" class="text-success icon-money icon-2x" title="{{ i18nAttr('m.rbs.order.collection.payment-status-payed') }}"></i>
+	<i ng-switch-when="canceled" class="text-danger icon-money icon-2x" title="{{ i18nAttr('m.rbs.order.collection.payment-status-canceled') }}"></i>
+	<i ng-switch-when="unconfirmed" class="text-warning icon-money icon-2x" title="{{ i18nAttr('m.rbs.order.collection.payment-status-unconfirmed') }}"></i>
+	<i ng-switch-when="initiated" class="icon-money icon-2x" title="{{ i18nAttr('m.rbs.order.collection.payment-status-initiated') }}"></i>
+</span>
+
+<span class="order-status-item" ng-switch="order.shippingStatus">
+	<i ng-switch-when="prepared" class="text-info icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-prepared') }}"></i>
+	<i ng-switch-when="shipped" class="text-success icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-shipped') }}"></i>
+	<i ng-switch-when="partially_shipped" class="text-warning icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-partially-shipped') }}"></i>
+	<i ng-switch-when="delivered" class="text-success icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-delivered') }}"></i>
+	<i ng-switch-when="partially_delivered" class="text-success opacity-half icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-partially-delivered') }}"></i>
+	<i ng-switch-when="initiated" class="icon-truck icon-2x" title="{{ i18nAttr('m.rbs.order.collection.shipping-status-initiated') }}"></i>
+</span>

@@ -57,4 +57,11 @@
 	<key id="choose-billingarea-and-taxzone-first" format="html"><![CDATA[Vous devez choisir une <strong>Zone de facturation</strong> ainsi qu'un <strong>Code zone pour le calcul des taxes</strong> avant de pouvoir choisir des articles.]]></key>
 	<key id="article-selector-title">Sélectionnez des articles à ajouter à la commande</key>
 	<key id="add-lines">Ajouter des lignes</key>
+
+	<key id="action-mark-as-payed">payée</key>
+	<key id="action-mark-as-shipped">expédiée</key>
+	<key id="action-mark-as-delivered">livrée</key>
+	<key id="action-mark-as-finalized">finalisée</key>
+	<key id="action-mark-as-prepared">préparée</key>
+	<key id="action-cancel">annuler</key>
 </i18n>

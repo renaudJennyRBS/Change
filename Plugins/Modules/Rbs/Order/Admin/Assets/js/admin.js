@@ -25,4 +25,54 @@
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Order_Invoice');
 	__change.createEditorForModel('Rbs_Order_Process');
+
+
+	app.controller('Rbs_Order_Order_ListController', ['$scope', '$q', 'RbsChange.REST', function ($scope, $q, REST)
+	{
+
+		function changeOrdersStatus(orders, property, value)
+		{
+			var promises = [];
+			angular.forEach(orders, function (order) {
+				order[property] = value;
+				promises.push(REST.save(order));
+			});
+			return $q.all(promises);
+
+		}
+
+		$scope.extend =
+		{
+			markAsPayed : function (orders)
+			{
+				return changeOrdersStatus(orders, 'paymentStatus', 'payed');
+			},
+
+			markAsShipped : function (orders)
+			{
+				return changeOrdersStatus(orders, 'shippingStatus', 'shipped');
+			},
+
+			markAsDelivered : function (orders)
+			{
+				return changeOrdersStatus(orders, 'shippingStatus', 'delivered');
+			},
+
+			markAsFinalized : function (orders)
+			{
+				return changeOrdersStatus(orders, 'processingStatus', 'finalized');
+			},
+
+			markAsPrepared : function (orders)
+			{
+				return changeOrdersStatus(orders, 'shippingStatus', 'prepared');
+			},
+
+			cancel : function (orders)
+			{
+				return changeOrdersStatus(orders, 'processingStatus', 'canceled');
+			}
+		};
+	}]);
+
 })();
