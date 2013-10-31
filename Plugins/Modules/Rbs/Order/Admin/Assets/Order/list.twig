@@ -1,4 +1,4 @@
-<div>
+<div ng-controller="Rbs_Order_Order_ListController">
 	<rbs-workspace-config menu="Rbs_Order">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.js.module-name', ['ucf']) }}</location>
@@ -14,20 +14,24 @@
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsOrderOrder"
-			model="Rbs_Order_Order" filter-query="query">
+			model="Rbs_Order_Order" filter-query="query" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
 		<column name="code" primary="true"></column>
+		<column name="status" align="center">
+			<span rbs-order-status-indicators="" order="doc"></span>
+		</column>
 		<column name="amountWithTax"></column>
 		<column name="currencyCode"></column>
 		<column name="creationDate"></column>
 		<preview style="min-height: 200px">
-			<div style="margin-left: 290px;">
-				<h4>(= doc.label =)</h4>
-				<dl class="dl-horizontal">
-					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>
-					<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.no-tags', ['ucf']) }}</dd>
-				</dl>
-			</div>
+			<h4>(= doc.label =)</h4>
+			<div rbs-order-status-indicators-text="" order="doc.__document"></div>
 		</preview>
+
+		<action name="markAsPayed" loading="true" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-payed', ['ucf']) }}" selection="+"></action>
+		<action name="markAsShipped" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-shipped', ['ucf']) }}" selection="+"></action>
+		<action name="markAsDelivered" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-delivered', ['ucf']) }}" selection="+"></action>
+		<action name="markAsPrepared" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-prepared', ['ucf']) }}" selection="+"></action>
+		<action name="markAsFinalized" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-finalized', ['ucf']) }}" selection="+"></action>
+		<action name="cancel" label="{{ i18nAttr('m.rbs.order.documents.order.action-cancel', ['ucf']) }}" selection="+"></action>
 	</rbs-document-list>
 </div>

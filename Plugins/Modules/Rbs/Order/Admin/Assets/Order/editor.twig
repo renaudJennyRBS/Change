@@ -8,7 +8,7 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.documents.order.parameters', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n('m.rbs.order.documents.order.parameters', ['ucf']) }}</h3>
 					</div>
 					<div class="panel-body">
 						<rbs-field-date property="creationDate"
@@ -19,12 +19,6 @@
 						                required="true"
 						                label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'code'), ['ucf']) }}">
 						</rbs-field-text>
-
-						<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
-						                  accepted-model="Rbs_User_User" allow-edition="true"
-						                  value-ids="true"
-						                  selector-title="{{ i18nAttr('m.rbs.order.documents.order.select-ownerid', ['ucf']) }}">
-						</rbs-field-picker>
 
 						<rbs-field-select-from-collection
 								property="webStoreId"
@@ -42,28 +36,56 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">{{ i18n('m.rbs.order.documents.order.status', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.documents.order.customer', ['ucf']) }}</h3>
 					</div>
 					<div class="panel-body">
-						<rbs-field-select-from-collection
-								property="processingStatus"
-								label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'processingStatus'), ['ucf']) }}"
-								rbs-items-from-collection="Rbs_Order_Collection_ProcessingStatus">
-						</rbs-field-select-from-collection>
-						<rbs-field-select-from-collection
-								property="shippingStatus"
-								label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'shippingStatus'), ['ucf']) }}"
-								rbs-items-from-collection="Rbs_Order_Collection_ShippingStatus">
-						</rbs-field-select-from-collection>
-						<rbs-field-select-from-collection
-								property="paymentStatus"
-								label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'paymentStatus'), ['ucf']) }}"
-								rbs-items-from-collection="Rbs_Order_Collection_PaymentStatus">
-						</rbs-field-select-from-collection>
+						<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
+						                  accepted-model="Rbs_User_User" allow-edition="true"
+						                  value-ids="true"
+						                  selector-title="{{ i18nAttr('m.rbs.order.documents.order.select-ownerid', ['ucf']) }}">
+						</rbs-field-picker>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-4 form-vertical">
+				<div class="panel" ng-class="{'in_progress':'panel-info', 'finalized':'panel-success', 'canceled':'panel-danger', 'initiated':'panel-default'}[document.processingStatus]">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'processingStatus'), ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<select class="form-control" ng-model="document.processingStatus" rbs-items-from-collection="Rbs_Order_Collection_ProcessingStatus">
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-4 form-vertical">
+				<div class="panel" ng-class="{'payed':'panel-success', 'partially_payed':'panel-warning', 'canceled':'panel-danger', 'unconfirmed':'panel-warning', 'initiated':'panel-default'}[document.paymentStatus]">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="icon-money"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'paymentStatus'), ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<select class="form-control" ng-model="document.paymentStatus" rbs-items-from-collection="Rbs_Order_Collection_PaymentStatus">
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-4 form-vertical">
+				<div class="panel" ng-class="{'prepared':'panel-info', 'partially_shipped':'panel-warning', 'shipped':'panel-success', 'delivered':'panel-success', 'partially_delivered':'panel-success', 'initiated':'panel-default'}[document.shippingStatus]">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="icon-truck"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'shippingStatus'), ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<select class="form-control" ng-model="document.shippingStatus" rbs-items-from-collection="Rbs_Order_Collection_ShippingStatus">
+						</select>
 					</div>
 				</div>
 			</div>

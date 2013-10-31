@@ -208,10 +208,11 @@
 					label       : action.label,
 					icon        : action.icon,
 					selection   : action.selection,
+					loading     : action.loading === 'true',
 
 					execute : ['$extend', '$docs', function ($extend, $docs) {
 						if (angular.isFunction($extend[action.name])) {
-							$extend[action.name]($docs);
+							return $extend[action.name]($docs);
 						}
 						else {
 							throw new Error("Method '" + this.name + "' is not defined in '$extend'.");
