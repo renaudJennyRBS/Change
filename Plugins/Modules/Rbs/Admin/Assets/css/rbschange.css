@@ -29,6 +29,14 @@ body {
 	width: 100%;
 }
 
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.opacity-half {
+	opacity: 0.5;
+}
+
 
 /* icons overlays */
 
@@ -53,10 +61,6 @@ body {
 [class^="icon-"],
 [class*=" icon-"] {
 	font-variant: normal;
-}
-
-table.document-list td .icon-2x {
-	opacity: 0.65;
 }
 
 
@@ -150,7 +154,18 @@ h3.panel-title {
 .btn-toolbar .btn-group {
 	float: none;
 }
-
+/*
+.panel:after {
+	content: "";
+	position: absolute;
+	top: -3px;
+	left: -3px;
+	right: -3px;
+	bottom: -3px;
+	background: silver;
+	z-index: -1;
+}
+*/
 
 
 /* Bootstrap addons */
@@ -372,3 +387,4 @@ body > footer a:visited:hover {
 	color: #0088CC;
 	text-decoration: underline;
 }
+
