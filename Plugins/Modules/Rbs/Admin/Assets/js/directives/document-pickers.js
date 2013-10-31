@@ -40,7 +40,7 @@
 	 * @attribute select-model
 	 * @attribute embed-in
 	 */
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils)
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n)
 	{
 		var	$el = $(iElement),
 			documentList,
@@ -157,11 +157,11 @@
 		}
 
 		function getCreateLabel () {
-			return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : création d'un nouvel élément";
+			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.admin.js.picker-no-title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-create-title', {'property' : attrs.propertyLabel});
 		}
 
 		function getEditLabel () {
-			return (scope.document.label || '<em>Sans titre</em>') + ' <i class="icon-caret-right margin-h"></i> ' + attrs.propertyLabel + " : édition de " + ngModel.$viewValue.label;
+			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.admin.js.picker-no-title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-edit-title', {'property' : attrs.propertyLabel, 'item' : ngModel.$viewValue.label}) ;
 		}
 
 
@@ -246,8 +246,9 @@
 				} else {
 					if (multiple) {
 						$dl.append(
+							// TODO Localize
 							'<quick-actions>' +
-								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> tout remplacer par cet élément</a>' +
+								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-replace-all-by-item | ucf') + '</a>' +
 							'</quick-actions>'
 						);
 					} else {
@@ -264,7 +265,7 @@
 
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
-				$pickerContents.html('<div class="alert alert-danger">Could not load picker template at <em>' + url + '</em></div>');
+				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.admin.js.picker-template-not-loaded | ucf', {'url' : url}) + '</div>');
 				$picker.show();
 			});
 		};
@@ -416,7 +417,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache)
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n)
 	{
 		return {
 
@@ -426,14 +427,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache)
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n)
 	{
 		return {
 
@@ -443,7 +444,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n);
 			}
 
 		};

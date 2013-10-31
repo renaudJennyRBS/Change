@@ -101,7 +101,118 @@
 		};
 	}]);
 
+	/**
+	 * <rbs-tag-filter/>
+	 */
+	app.directive('rbsTagFilter', ['$q', '$location', '$filter', 'RbsChange.TagService', 'RbsChange.ArrayUtils', rbsTagFilter]);
 
+	function rbsTagFilter ($q, $location, $filter, TagService, ArrayUtils) {
+
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Tag/js/tag-filter.twig',
+			replace: 'true',
+			scope: false,
+			// Create isolated scope
+
+			link : function (scope) {
+
+				var tagsLoadedDefered = $q.defer();
+				scope.tags = TagService.getList(tagsLoadedDefered);
+				scope.selectedTags = [];
+
+				function updateFilter () {
+					scope.filteredTags = $filter('orderBy')($filter('filter')(scope.tags, {'label': scope.filterTags}), 'label');
+				}
+
+				scope.$watch('filterTags', updateFilter, true);
+				scope.$watch('tags', updateFilter, true);
+
+				tagsLoadedDefered.promise.then(function () {
+					var filter = $location.search()['filter'];
+					if (filter && filter.indexOf('hasTag:') === 0) {
+						angular.forEach(filter.substring(7).split(/,/), function (tagId) {
+							var tag = getTagById(parseInt(tagId, 10));
+							if (tag) {
+								scope.selectTag(tag);
+							}
+						});
+					}
+				});
+
+				function getTagById (id) {
+					var i;
+					for (i=0 ; i<scope.tags.length ; i++) {
+						if (scope.tags[i].id === id) {
+							return scope.tags[i];
+						}
+					}
+					return null;
+				}
+
+				function updateUrl () {
+					var ids = [];
+					angular.forEach(scope.selectedTags, function (tag) {
+						ids.push(tag.id);
+					});
+					if (ids.length) {
+						$location.url($location.path()+'?filter=hasTag:' + ids.join(','));
+					} else {
+						$location.url($location.path());
+					}
+				}
+
+				scope.selectTag = function (tag) {
+					if (ArrayUtils.inArray(tag, scope.selectedTags) === -1) {
+						scope.selectedTags.push(tag);
+					}
+					updateUrl();
+				};
+
+				scope.unselectTag = function (tag) {
+					if (ArrayUtils.removeValue(scope.selectedTags, tag) !== -1) {
+						updateUrl();
+					}
+				};
+
+				scope.removeLastSelectedTag = function () {
+					if (scope.selectedTags.length) {
+						scope.selectedTags.pop();
+						updateUrl();
+					}
+				};
+
+				scope.unselectAll = function () {
+					ArrayUtils.clear(scope.selectedTags);
+					updateUrl();
+				};
+
+
+			}
+		};
+
+	}
+
+	/**
+	 * <rbs-tag-filter-panel/>
+	 */
+	app.directive('rbsTagFilterPanel', rbsTagFilterPanel);
+
+	function rbsTagFilterPanel () {
+
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Tag/js/tag-filter-panel.twig',
+			replace: 'true',
+			scope: false,
+			// Create isolated scope
+
+			link : function (scope) {
+
+			}
+		};
+
+	}
 
 	/**
 	 * <input class="rbs-auto-size-input" ... />

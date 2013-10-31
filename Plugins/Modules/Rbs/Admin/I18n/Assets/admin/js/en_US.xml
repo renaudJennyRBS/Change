@@ -86,5 +86,12 @@
 	<key id="translate-in">translate in</key>
 
 	<key id="select">select</key>
+	<key id="select-add">add to the selection</key>
+
+	<key id="picker-create-title">{property}: create a new item</key>
+	<key id="picker-edit-title">{property}: edit {item}</key>
+	<key id="picker-no-title">no title</key>
+	<key id="picker-replace-all-by-item">replace all by the selected item</key>
+	<key id="picker-template-not-loaded">Could not load picker template at {url}</key>
 
 </i18n>
