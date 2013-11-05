@@ -46,8 +46,10 @@
 
 				</td>
 				<td data-ng-repeat="cat in document.data.c track by $index">
-					<input type="number" smart-float="" class="form-control" data-ng-model="document.data.r[$index][$parent.$index]" style="width: 60px"/>
-					<span class="add-on">%</span>
+					<div class="input-group">
+						<input type="number" smart-float="" class="form-control" data-ng-model="document.data.r[$index][$parent.$index]" style="width: 60px"/>
+						<span class="input-group-addon">%</span>
+					<div>
 				</td>
 			</tr>
 			</tbody>
@@ -56,22 +58,26 @@
 			<small>
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-zone', ['ucf']) }}
 				<br />
-				<span>
-					<input name="newZoneName" class="form-control" size="10" type="text" ng-model="newZoneName" />
-					<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
-					<p class="text-danger" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
-				</span>
+				<div class="input-group">
+					<input name="newZoneName" class="form-control" size="20" type="text" ng-model="newZoneName" />
+					<span class="input-group-btn">
+						<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					</span>
+				</div>
+				<p class="text-danger" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
 			</small>
 		</div>
 		<div class="input-group">
 			<small>
 				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-category', ['ucf']) }}
 				<br />
-				<span>
-					<input name="newCategoryName" class="form-control" size="10" type="text" ng-model="newCategoryName" />
-					<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
-					<p class="text-danger" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
-				</span>
+				<div class="input-group">
+					<input name="newCategoryName" class="form-control" size="20" type="text" ng-model="newCategoryName" />
+					<span class="input-group-btn">
+						<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+					</span>
+				</div>
+				<p class="text-danger" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
 			</small>
 		</div>
 	</fieldset>
