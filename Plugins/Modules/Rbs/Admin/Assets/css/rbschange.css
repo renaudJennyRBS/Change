@@ -154,19 +154,10 @@ h3.panel-title {
 .btn-toolbar .btn-group {
 	float: none;
 }
-/*
-.panel:after {
-	content: "";
-	position: absolute;
-	top: -3px;
-	left: -3px;
-	right: -3px;
-	bottom: -3px;
-	background: silver;
-	z-index: -1;
-}
-*/
 
+.input-group-addon {
+	width: auto;
+}
 
 /* Bootstrap addons */
 
