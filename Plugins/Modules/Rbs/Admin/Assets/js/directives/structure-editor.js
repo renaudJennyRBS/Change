@@ -1768,10 +1768,10 @@
 						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
 						'<div ng-switch="param.type" class="controls">' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
-							'<div ng-switch-when="Document" value-ids="true" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentId" value-ids="true" class="document-picker-single" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentArray" value-ids="true" class="document-picker-multiple" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentIdArray" value-ids="true" class="document-picker-multiple" input-css-class="input-small" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="Document" value-ids="true" class="document-picker-single" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentId" value-ids="true" class="document-picker-single" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentArray" value-ids="true" class="document-picker-multiple" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
+							'<div ng-switch-when="DocumentIdArray" value-ids="true" class="document-picker-multiple" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
 							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="form-control" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
 							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
 							'<switch id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Boolean" ng-model="formValues[param.name]"/>' +
@@ -2249,22 +2249,26 @@
 			"require"    : '^structureEditor',
 			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input ng-readonly="readonly" use-tabs="false" ng-model="text" profile="Website"></rbs-rich-text-input></div>',
+			"template"   : '<div class="block" ng-click="selectBlock($event)"><rbs-rich-text-input ng-readonly="readonly" use-tabs="false" ng-model="input.text" profile="Website"></rbs-rich-text-input></div>',
 
 			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");
 				element.attr('block-type', "rich-text");
 
+				scope.initItem = function (item) {
+					item.parameters = {
+						contentType: 'Markdown',
+						content : ''
+					};
+				};
+
 				var item = ctrl.getItemById(element.data('id'));
 				if (! item.parameters) {
-					item.parameters = {
-						'contentType' : 'Markdown',
-						'content' : ''
-					};
+					scope.initItem();
 				}
-				scope.text = item.parameters.content;
+				scope.input = {text: item.parameters.content};
 
-				scope.$watch('text', function (text, old) {
+				scope.$watch('input.text', function (text, old) {
 					if (text !== old) {
 						scope.saveItem(item);
 					}
@@ -2276,15 +2280,9 @@
 				};
 
 
-				scope.initItem = function (item) {
-					item.parameters = {
-						'contentType': 'Markdown'
-					};
-				};
-
 				scope.saveItem = function (item) {
 					if (item) {
-						angular.extend(item.parameters, {'content': scope.text});
+						angular.extend(item.parameters, {content: scope.input.text});
 					}
 				};
 			}
