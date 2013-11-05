@@ -43,8 +43,19 @@
 					}
 
 					if (angular.isString(rule)) {
-						rule = { 'templateUrl' : rule };
+						rule = { templateUrl : rule };
 					}
+
+					if (rule.templateUrl) {
+						rule.resolve = {
+							'rbsPlugin' : ['$rootScope', function($rootScope) {
+								var tokens = rule.templateUrl.split('/');
+								$rootScope.rbsCurrentPluginName = tokens[0] + '_' + tokens[1];
+								return $rootScope.rbsCurrentPluginName;
+							}]
+						};
+					}
+
 					if (! rule.hasOwnProperty('redirectTo')) {
 						rule = angular.extend({}, defaultRule, rule);
 					}
