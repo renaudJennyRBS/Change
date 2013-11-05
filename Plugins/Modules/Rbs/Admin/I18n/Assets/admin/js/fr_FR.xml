@@ -100,4 +100,13 @@
 	<key id="picker-no-title">sans titre</key>
 	<key id="picker-replace-all-by-item">tout remplacer par cet élément</key>
 	<key id="picker-template-not-loaded">impossible de charger le template {url}</key>
+
+	<key id="do-you-want-to-continue">Souhaitez-vous continuer ?</key>
+
+	<key id="confirm-restore">rétablir ?</key>
+	<key id="confirm-restore-message">Vous êtes sur le point de rétablir les dernières données qui ont été enregistrées dans ce formulaire.</key>
+	<key id="restore-data-button">rétablir les données</key>
+	<key id="confirm-update-correction">Mettre à jour la correction ?</key>
+	<key id="confirm-update-correction-message" format="html"><![CDATA[Une <strong>correction</strong> est en cours pour ce document. L'enregistrement mettra à jour la correction et le document ne sera modifié qu'après application de la correction.]]></key>
+
 </i18n>

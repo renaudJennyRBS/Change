@@ -10,7 +10,7 @@
 		var	$embeddedModalBackdrop = $('#embedded-modal-backdrop'),
 			buttonIdCounter = 0;
 
-		this.$get = ['$filter', '$compile', '$timeout', '$rootScope', '$q', 'RbsChange.Utils', function ($filter, $compile, $timeout, $rootScope, $q, Utils) {
+		this.$get = ['$filter', '$compile', '$timeout', '$rootScope', '$q', 'RbsChange.Utils', 'RbsChange.i18n', function ($filter, $compile, $timeout, $rootScope, $q, Utils, i18n) {
 
 			var dialog = {
 
@@ -70,7 +70,7 @@
 					$el = $($el);
 					$el.popover('destroy');
 					options = options || {};
-					options.question = options.question || 'Souhaitez-vous continuer ?';
+					options.question = options.question || i18n.trans('m.rbs.admin.admin.js.do-you-want-to-continue | ucf');
 					options.container = 'body';
 
 					var deferred = $q.defer();
@@ -87,8 +87,8 @@
 					message += '<hr/>' +
 						options.question +
 						'<div class="btn-toolbar confirm-dialogbox">' +
-						'<button class="btn btn-primary btn-warning" type="button" id="' + uidOK + '">Oui <kbd class="visible-desktop">Entrée</kbd></button>' +
-						'<button type="button" class="btn" id="'+uidCancel+'">Non <kbd class="visible-desktop">&Eacute;chap</kbd></button>' +
+						'<button class="btn btn-primary btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '</button>' +
+						'<button type="button" class="btn" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button>' +
 						'</div>';
 					var opt = $.extend({}, { 'title': title, 'content': $filter('BBcode')(message) }, this.confirmPopoverOptions, options);
 					$el.popover(opt).popover('show');
@@ -270,7 +270,7 @@
 
 					var contents =
 						'<p>' + text + '</p>' +
-						'<p><strong>Souhaitez-vous continuer ?</strong></p>' +
+						'<p><strong>' + i18n.trans('m.rbs.admin.admin.js.do-you-want-to-continue | ucf') + '</strong></p>' +
 						'<div class="form-actions">' +
 						'<button class="btn btn-primary ' + options.primaryButtonClass + '" type="button" data-ng-click="__dialog_confirmEmbed_confirm()">';
 
@@ -293,12 +293,12 @@
 					}
 
 					if (options.primaryButtonText) {
-						contents += 'Oui<small>, ' + options.primaryButtonText+'</small>';
+						contents += i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '<small>, ' + options.primaryButtonText+'</small>';
 					} else {
-						contents += 'Oui';
+						contents += i18n.trans('m.rbs.admin.admin.js.yes | ucf');
 					}
 					contents += '</button>';
-					contents += ' <button type="button" class="btn" data-ng-click="__dialog_confirmEmbed_cancel()">Non</button></div>';
+					contents += ' <button type="button" class="btn btn-default" data-ng-click="__dialog_confirmEmbed_cancel()">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button></div>';
 
 					this.embed(
 							$el,
