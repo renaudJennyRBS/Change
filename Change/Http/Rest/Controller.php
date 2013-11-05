@@ -22,40 +22,27 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_REQUEST, array($this, 'onDefaultRequest'), 5);
 		$eventManager->attach(Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
 
-	/**
-	 * @param \Change\Http\Request $request
-	 * @return Event
-	 */
-	protected function createEvent($request)
+	public function onDefaultRegisterServices(Event $event)
 	{
-		$event = parent::createEvent($request);
+		parent::onDefaultRegisterServices($event);
+		$event->getApplicationServices()->getPermissionsManager()->allow(false);
+	}
 
-		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
-
-		$authenticationManager = new \Change\User\AuthenticationManager();
-		$authenticationManager->setDocumentServices($event->getDocumentServices());
-		$event->setAuthenticationManager($authenticationManager);
-
-		$permissionsManager = new \Change\Permissions\PermissionsManager();
-		$permissionsManager->allow(false);
-		$permissionsManager->setApplicationServices($event->getApplicationServices());
-		$event->setPermissionsManager($permissionsManager);
-
+	public function onDefaultRequest(Event $event)
+	{
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$request->populateLCIDByHeader($i18nManager);
-
-		return $event;
 	}
 
 	/**
@@ -68,16 +55,6 @@ class Controller extends \Change\Http\Controller
 		$response->getHeaders()->addHeaderLine('Content-Type: application/json');
 		return $response;
 	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
-	 */
-	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
-	{
-		parent::onDefaultRegisterServices($event);
-		$event->setParam('presentationServices', new \Change\Presentation\PresentationServices($event->getParam('applicationServices')));
-	}
-
 
 	/**
 	 * @param Event $event

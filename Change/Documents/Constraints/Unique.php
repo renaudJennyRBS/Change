@@ -18,6 +18,11 @@ class Unique extends \Zend\Validator\AbstractValidator
 	 */
 	protected $property;
 
+	/**
+	 * @var \Change\Documents\Events\Event
+	 */
+	protected $documentEvent;
+
  	/**
 	 * @param array $params <modelName => modelName, propertyName => propertyName, [documentId => documentId]>
 	 */   
@@ -43,7 +48,7 @@ class Unique extends \Zend\Validator\AbstractValidator
 	{
 		if ($this->document === null)
 		{
-			throw new \RuntimeException('Property not set.', 999999);
+			throw new \RuntimeException('Document not set.', 999999);
 		}
 		return $this->document;
 	}
@@ -70,27 +75,34 @@ class Unique extends \Zend\Validator\AbstractValidator
 	}
 
 	/**
+	 * @param \Change\Documents\Events\Event $documentEvent
+	 * @return $this
+	 */
+	public function setDocumentEvent($documentEvent)
+	{
+		$this->documentEvent = $documentEvent;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\Events\Event
+	 */
+	public function getDocumentEvent()
+	{
+		if ($this->documentEvent === null)
+		{
+			throw new \RuntimeException('DocumentEvent not set.', 999999);
+		}
+		return $this->documentEvent;
+	}
+
+	/**
 	 * @return integer
 	 */
 	protected function getDocumentId()
 	{
 		return $this->getDocument()->getId();
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	protected function getDocumentServices()
-	{
-		return $this->getDocument()->getDocumentServices();
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->getDocumentServices()->getApplicationServices();
 	}
 
 	/**
@@ -111,7 +123,8 @@ class Unique extends \Zend\Validator\AbstractValidator
 			throw new \LogicException('Invalid unique constraint on stateless property:' . $model. '::' .$property, 999999);
 		}
 
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$applicationServices = $this->getDocumentEvent()->getApplicationServices();
+		$qb = $applicationServices->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		
 		$query = $qb->select($fb->getDocumentColumn('id'))

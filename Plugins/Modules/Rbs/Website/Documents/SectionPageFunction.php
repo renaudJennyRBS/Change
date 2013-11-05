@@ -14,6 +14,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 	 */
 	protected function attachEvents($eventManager)
 	{
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'validateUnique'), 1);
 		$eventManager->attach(array(Event::EVENT_CREATED, Event::EVENT_UPDATED), array($this, 'hideLinksOnIndexPage'), 1);
 	}

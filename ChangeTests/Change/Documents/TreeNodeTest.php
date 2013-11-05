@@ -65,7 +65,7 @@ class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals('TreeManager not set.', $e->getMessage());
 		}
-		$tm = $this->getDocumentServices()->getTreeManager();
+		$tm = $this->getApplicationServices()->getTreeManager();
 		$node->setTreeManager($tm);
 		$this->assertSame($tm, $node->getTreeManager());
 	}
@@ -139,10 +139,10 @@ class TreeNodeTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testDocumentProperty()
 	{
 		$node = new \Change\Documents\TreeNode('Project_Tests');
-		$node->setTreeManager($this->getDocumentServices()->getTreeManager());
+		$node->setTreeManager($this->getApplicationServices()->getTreeManager());
 
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
-		$doc = $mi->getInstanceRo5001($this->getDocumentServices());
+		$doc = $mi->getInstanceRo5001($this->getApplicationServices()->getDocumentManager());
 		$node->setDocumentId(5001);
 		$doc2 = $node->getDocument();
 		$this->assertSame($doc, $doc2);

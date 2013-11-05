@@ -29,8 +29,7 @@ class CreateDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function getHttpEvent()
 	{
 		$event = new \Change\Http\Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$event->setDocumentServices($this->getDocumentServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$uri = new \Zend\Uri\Http('http://localhost/rest.php');
 		$event->setRequest(new \Change\Http\Request());
 		$event->setUrlManager(new \Change\Http\UrlManager($uri, '/rest.php'));

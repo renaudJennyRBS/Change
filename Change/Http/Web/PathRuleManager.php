@@ -7,30 +7,30 @@ namespace Change\Http\Web;
 class PathRuleManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	function __construct(\Change\Application\ApplicationServices $applicationServices)
+	function __construct(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Services\ApplicationServices
 	 */
 	public function getApplicationServices()
 	{
@@ -40,7 +40,7 @@ class PathRuleManager
 	/**
 	 * @return \Change\Db\DbProvider
 	 */
-	public function getDbProvider()
+	protected function getDbProvider()
 	{
 		return $this->applicationServices->getDbProvider();
 	}

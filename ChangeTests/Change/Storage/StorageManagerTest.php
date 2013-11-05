@@ -30,6 +30,7 @@ class StorageManagerTest extends TestCase
 	}
 
 
+
 	public function testInstance()
 	{
 		$o = $this->getObject();
@@ -81,7 +82,8 @@ class StorageManagerTest extends TestCase
 	public function testDBStat()
 	{
 		$o = $this->getObject();
-		$o->getConfiguration()->addVolatileEntry('Change/Storage/unit-test',
+
+		$o->addStorageConfiguration('unit-test',
 			array("class" => "\\Change\\Storage\\Engines\\LocalImageStorage",
 				"basePath" => $this->getApplication()->getWorkspace()->tmpPath('Storage', 'UnitTest'),
 				"formattedPath" => $this->getApplication()->getWorkspace()->tmpPath('Storage', 'cache', 'UnitTest'),

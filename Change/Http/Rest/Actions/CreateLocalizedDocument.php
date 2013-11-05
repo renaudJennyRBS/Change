@@ -3,7 +3,6 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
-use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
@@ -22,7 +21,7 @@ class CreateLocalizedDocument
 	public function execute($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
@@ -33,7 +32,7 @@ class CreateLocalizedDocument
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 		$document = $documentManager->getDocumentInstance($documentId, $model);
 		if ($document === null)
@@ -79,8 +78,9 @@ class CreateLocalizedDocument
 		}
 		$event->setParam('LCID', $LCID);
 
-		/* @var $document \Change\Documents\AbstractDocument|Localizable */
+		/* @var $document \Change\Documents\AbstractDocument|Localizable|Editable */
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$pop = false;
 		try
 		{
 			$documentManager->pushLCID($LCID);
@@ -113,7 +113,10 @@ class CreateLocalizedDocument
 		}
 		catch (\Exception $e)
 		{
-			if ($pop) $documentManager->popLCID();
+			if ($pop)
+			{
+				$documentManager->popLCID();
+			}
 			throw $transactionManager->rollBack($e);
 		}
 	}

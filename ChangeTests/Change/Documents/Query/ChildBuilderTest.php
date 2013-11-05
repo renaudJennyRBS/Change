@@ -35,7 +35,7 @@ class ChildBuilderTest extends TestCase
 	public function testConstruct()
 	{
 
-		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Project_Tests_Basic');
 
 
 		$childBuilder = new ChildBuilder($builder, 'Project_Tests_Localized', 'id', 'id');

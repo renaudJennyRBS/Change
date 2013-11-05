@@ -29,6 +29,11 @@ class StorageManager
 	protected $dbProvider;
 
 	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
+
+	/**
 	 * @param Workspace $workspace
 	 */
 	public function setWorkspace(Workspace $workspace)
@@ -56,9 +61,20 @@ class StorageManager
 	/**
 	 * @return Configuration
 	 */
-	public function getConfiguration()
+	protected function getConfiguration()
 	{
 		return $this->configuration;
+	}
+
+	/**
+	 * @param string $storageName
+	 * @param array $configuration
+	 * @return $this
+	 */
+	public function addStorageConfiguration($storageName, $configuration)
+	{
+		$this->configuration->addVolatileEntry('Change/Storage/' . $storageName, $configuration);
+		return $this;
 	}
 
 	/**
@@ -72,9 +88,27 @@ class StorageManager
 	/**
 	 * @return DbProvider
 	 */
-	public function getDbProvider()
+	protected function getDbProvider()
 	{
 		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
 	}
 
 	/**
@@ -318,7 +352,7 @@ class StorageManager
 	 */
 	protected function insertItemDbInfo($name, $path, $infos)
 	{
-		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		$tm->begin();
 
 		$iqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::insertItemDbInfo');
@@ -348,7 +382,7 @@ class StorageManager
 	 */
 	protected function updateItemDbInfo($name, $path, $infos)
 	{
-		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		$tm->begin();
 
 		$uqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::updateItemDbInfo');
@@ -376,7 +410,7 @@ class StorageManager
 	 */
 	protected function deleteItemDbInfo($name, $path)
 	{
-		$tm = $this->getDbProvider()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		$tm->begin();
 
 		$dqb = $this->getDbProvider()->getNewStatementBuilder('StorageManager::deleteItemDbInfo');

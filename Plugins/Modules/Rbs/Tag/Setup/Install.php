@@ -10,19 +10,17 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
 		$this->initializeTables($applicationServices);
-		$this->createDefaultTags($applicationServices, $documentServices);
+		$this->createDefaultTags($applicationServices);
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
 	private function initializeTables($applicationServices)
 	{
@@ -58,16 +56,15 @@ class Install extends \Change\Plugins\InstallBase
 
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws
 	 */
-	private function createDefaultTags($applicationServices, $documentServices)
+	private function createDefaultTags($applicationServices)
 	{
-		$tagModel = $documentServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
-		$documentManager = $documentServices->getDocumentManager();
+		$tagModel = $applicationServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
+		$documentManager = $applicationServices->getDocumentManager();
 
-		$query = new \Change\Documents\Query\Query($documentServices, $tagModel);
+		$query = new \Change\Documents\Query\Query($tagModel, $documentManager, $applicationServices->getModelManager());
 		if ($query->getCountDocuments())
 		{
 			return;

@@ -1,9 +1,6 @@
 <?php
 namespace Rbs\Catalog\Setup;
 
-use Change\Db\Schema\FieldDefinition;
-use Change\Db\Schema\KeyDefinition;
-
 /**
  * @name \Rbs\Generic\Setup\Install
  */
@@ -11,24 +8,21 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
 		$schema = new Schema($applicationServices->getDbProvider()->getSchemaManager());
 		$schema->generate();
 		$applicationServices->getDbProvider()->closeConnection();
 
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 
-		$this->installGenericAttributes($applicationServices, $documentServices);
+		$this->installGenericAttributes($applicationServices);
 
 		//Add CrossSelling Type collection
-		$cm = new \Change\Collection\CollectionManager();
-		$cm->setDocumentServices($documentServices);
+		$cm = $applicationServices->getCollectionManager();
 		if ($cm->getCollection('Rbs_Catalog_Collection_CrossSellingType') === null)
 		{
 			$tm = $applicationServices->getTransactionManager();
@@ -39,32 +33,35 @@ class Install extends \Change\Plugins\InstallBase
 				$i18n = $applicationServices->getI18nManager();
 
 				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $documentServices->getDocumentManager()
+				$collection = $applicationServices->getDocumentManager()
 					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 				$collection->setLabel('Cross Selling Types');
 				$collection->setCode('Rbs_Catalog_Collection_CrossSellingType');
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('ACCESSORIES');
 				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-accessories', array('ucf')));
-				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-accessories', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-accessories',
+					array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('SIMILAR');
 				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-similar', array('ucf')));
-				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-similar', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-similar',
+					array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('HIGHERRANGE');
 				$item->setLabel($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range', array('ucf')));
-				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range', array('ucf')));
+				$item->getCurrentLocalization()->setTitle($i18n->trans('m.rbs.catalog.setup.attr-cross-selling-higher-range',
+					array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 				$collection->setLocked(true);
@@ -79,11 +76,10 @@ class Install extends \Change\Plugins\InstallBase
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function installGenericAttributes($applicationServices, $documentServices)
+	public function installGenericAttributes($applicationServices)
 	{
 		$i18nManager = $applicationServices->getI18nManager();
 		$transactionManager = $applicationServices->getTransactionManager();
@@ -99,12 +95,13 @@ class Install extends \Change\Plugins\InstallBase
 				/** @var $attribute \Rbs\Catalog\Documents\Attribute */
 				$label = $i18nManager->trans($attributeData['title']);
 				$attributeData['title'] = $label;
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Attribute');
+				$query = new \Change\Documents\Query\Query('Rbs_Catalog_Attribute', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 				$query->andPredicates($query->eq('label', $label));
 				$attribute = $query->getFirstDocument();
 				if ($attribute === null)
 				{
-					$attribute = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Attribute');
+					$attribute = $applicationServices->getDocumentManager()
+						->getNewDocumentInstanceByModelName('Rbs_Catalog_Attribute');
 					$attribute->setLabel($label);
 				}
 				foreach ($attributeData as $propertyName => $value)

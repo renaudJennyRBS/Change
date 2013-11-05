@@ -5,7 +5,6 @@ namespace Change\Documents\Interfaces;
  * @name \Change\Documents\Interfaces\Publishable
  * @method integer getId()
  * @method \Change\Documents\AbstractModel getDocumentModel()
- * @method \Change\Documents\DocumentServices getDocumentServices()
  */
 interface Publishable
 {

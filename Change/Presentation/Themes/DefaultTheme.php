@@ -2,19 +2,18 @@
 namespace Change\Presentation\Themes;
 
 use Change\Presentation\Interfaces\Theme;
-use Change\Presentation\PresentationServices;
 
 class DefaultTheme implements Theme
 {
 	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
 	 * @var DefaultPageTemplate
 	 */
 	protected $defaultPageTemplate;
+
+	/**
+	 * @var \Change\Presentation\Themes\ThemeManager
+	 */
+	protected $themeManager;
 
 	/**
 	 * @var string
@@ -27,21 +26,26 @@ class DefaultTheme implements Theme
 	protected $shortName;
 
 	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
 	 * @var string $templateBasePath
 	 */
 	protected $templateBasePath;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @var \Change\Application
 	 */
-	function __construct($presentationServices)
+	protected $application;
+
+	/**
+	 * @var \Change\Plugins\PluginManager
+	 */
+	protected $pluginManager;
+
+	/**
+	 * @param \Change\Application $application
+	 */
+	function __construct($application)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->application = $application;
 		list($this->vendor, $this->shortName) = explode('_', $this->getName());
 	}
 
@@ -54,15 +58,29 @@ class DefaultTheme implements Theme
 	}
 
 	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
+
+	/**
 	 * @param ThemeManager $themeManager
-	 * @return void
+	 * @return $this
 	 */
 	public function setThemeManager(ThemeManager $themeManager)
 	{
-		if ($this->presentationServices === null)
-		{
-			$this->presentationServices = $themeManager->getPresentationServices();
-		}
+		$this->themeManager = $themeManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Presentation\Themes\ThemeManager
+	 */
+	protected function getThemeManager()
+	{
+		return $this->themeManager;
 	}
 
 	/**
@@ -78,11 +96,25 @@ class DefaultTheme implements Theme
 	 */
 	protected function getWorkspace()
 	{
-		if ($this->workspace === null)
-		{
-			$this->workspace = $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace();
-		}
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
+	}
+
+	/**
+	 * @param \Change\Plugins\PluginManager $pluginManager
+	 * @return $this
+	 */
+	public function setPluginManager(\Change\Plugins\PluginManager $pluginManager)
+	{
+		$this->pluginManager = $pluginManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Plugins\PluginManager
+	 */
+	public function getPluginManager()
+	{
+		return $this->pluginManager;
 	}
 
 	/**
@@ -94,16 +126,15 @@ class DefaultTheme implements Theme
 		{
 			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
 
-			$as = $this->presentationServices->getApplicationServices();
-			if ($as->getApplication()->inDevelopmentMode())
+			if ($this->getApplication()->inDevelopmentMode())
 			{
-				$pluginManager = $as->getPluginManager();
+				$pluginManager = $this->getPluginManager();
 				$plugins = $pluginManager->getModules();
 				foreach ($plugins as $plugin)
 				{
 					if ($plugin->isAvailable() && is_dir($plugin->getTwigAssetsPath($this->getWorkspace())))
 					{
-						$this->presentationServices->getThemeManager()->installPluginTemplates($plugin);
+						$this->getThemeManager()->installPluginTemplates($plugin);
 					}
 				}
 			}
@@ -186,7 +217,7 @@ class DefaultTheme implements Theme
 			$vendor = $matches[1];
 			$moduleShortName = $matches[2];
 			$resourceModulePath = $matches[3];
-			$pm = $this->presentationServices->getApplicationServices()->getPluginManager();
+			$pm = $this->getPluginManager();
 			$module = $pm->getModule($vendor, $moduleShortName);
 			if ($module && $module->isAvailable())
 			{
@@ -220,7 +251,7 @@ class DefaultTheme implements Theme
 		}
 
 		//Now find all modules configuration file
-		$pluginManager = $this->presentationServices->getApplicationServices()->getPluginManager();
+		$pluginManager = $this->getPluginManager();
 		$plugins = $pluginManager->getInstalledPlugins();
 		foreach ($plugins as $plugin)
 		{

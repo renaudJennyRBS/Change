@@ -13,41 +13,28 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_CODES = 'getCodes';
 
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Configuration\Configuration;
 	 */
-	protected $documentServices;
+	protected $configuration;
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
 	 */
-	function __construct($documentServices = null)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
-		{
-			$this->setDocumentServices($documentServices);
-		}
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
+	protected function getConfiguration()
 	{
-		$this->documentServices = $documentServices;
-		if ($documentServices && $this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
+		return $this->configuration;
 	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
+	
 	/**
 	 * @return null|string|string[]
 	 */
@@ -61,12 +48,7 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/CollectionManager', array());
-		}
-		return array();
+		return $this->configuration->getEntry('Change/Events/CollectionManager', array());
 	}
 
 	/**
@@ -80,9 +62,8 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 		$args = $em->prepareArgs($params);
 
 		$args['code'] = $code;
-		$args['documentServices'] = $this->getDocumentServices();
 
-		$event = new \Zend\EventManager\Event(static::EVENT_GET_COLLECTION, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_GET_COLLECTION, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$collection = $event->getParam('collection');
@@ -102,9 +83,7 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($params);
 
-		$args['documentServices'] = $this->getDocumentServices();
-
-		$event = new \Zend\EventManager\Event(static::EVENT_GET_CODES, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_GET_CODES, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$codes = $event->getParam('codes');

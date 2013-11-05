@@ -2,7 +2,6 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Editable;
-use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
@@ -20,7 +19,7 @@ class CreateDocument
 	 */
 	public function execute($event)
 	{
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$documentId = $event->getParam('documentId');
 		if ($documentId !== null)
 		{
@@ -42,12 +41,11 @@ class CreateDocument
 		}
 
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
-
 
 		$document = $documentManager->getNewDocumentInstanceByModel($model);
 		if ($documentId)
@@ -56,8 +54,8 @@ class CreateDocument
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
 
-
-		$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : $event->getApplicationServices()->getI18nManager()->getLCID();
+		$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : $event->getApplicationServices()
+			->getI18nManager()->getLCID();
 		if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
 			$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
@@ -69,8 +67,8 @@ class CreateDocument
 		}
 		$event->setParam('LCID', $LCID);
 
-
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$pop = false;
 		try
 		{
 			$documentManager->pushLCID($LCID);
@@ -90,11 +88,13 @@ class CreateDocument
 		}
 		catch (\Exception $e)
 		{
-			if ($pop) $documentManager->popLCID();
+			if ($pop)
+			{
+				$documentManager->popLCID();
+			}
 			throw $transactionManager->rollBack($e);
 		}
 	}
-
 
 	/**
 	 * @param \Change\Http\Event $event

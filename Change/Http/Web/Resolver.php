@@ -2,11 +2,10 @@
 namespace Change\Http\Web;
 
 use Change\Http\BaseResolver;
-use Change\Http\Web\Event;
-use Change\Http\Web\Actions\ExecuteByName;
-use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Actions\DisplayDocument;
+use Change\Http\Web\Actions\ExecuteByName;
 use Change\Http\Web\Actions\GeneratePathRule;
+use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Actions\GetThemeResource;
 use Change\Http\Web\Actions\RedirectPathRule;
 use Change\Presentation\Interfaces\Website;
@@ -30,7 +29,7 @@ class Resolver extends BaseResolver
 			$event->setParam('pathRule', $pathRule);
 			$authorizedSectionId = $pathRule->getSectionId();
 
-			$dm = $event->getDocumentServices()->getDocumentManager();
+			$dm = $event->getApplicationServices()->getDocumentManager();
 			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 			$event->setParam('document', $document);
 			if ($document instanceof \Change\Documents\Interfaces\Publishable)
@@ -73,7 +72,8 @@ class Resolver extends BaseResolver
 				else
 				{
 					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-					$action = function($event) {
+					$action = function ($event)
+					{
 						$action = new GeneratePathRule();
 						$action->execute($event);
 					};
@@ -85,7 +85,8 @@ class Resolver extends BaseResolver
 
 			if ($pathRule->getLocation())
 			{
-				$action = function($event) {
+				$action = function ($event)
+				{
 					$action = new RedirectPathRule();
 					$action->execute($event);
 				};
@@ -94,7 +95,8 @@ class Resolver extends BaseResolver
 			}
 			elseif ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200 && $document)
 			{
-				$action = function($event) {
+				$action = function ($event)
+				{
 					$action = new DisplayDocument();
 					$action->execute($event);
 				};
@@ -105,22 +107,23 @@ class Resolver extends BaseResolver
 		}
 		else
 		{
-			$relativePath = $this->getRelativePath($event->getRequest()->getPath(), $website ? $website->getRelativePath() : null);
+			$relativePath = $this->getRelativePath($event->getRequest()->getPath(),
+				$website ? $website->getRelativePath() : null);
 			$event->setParam('relativePath', $relativePath);
 			if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
 			{
 				$themeName = $matches[1] . '_' . $matches[2];
 				$themeResourcePath = $matches[3];
-				$themeManager = $event->getPresentationServices()->getThemeManager();
-				$themeManager->setDocumentServices($event->getDocumentServices());
+				$themeManager = $event->getApplicationServices()->getThemeManager();
 				$theme = $themeManager->getByName($themeName);
 				if (!$theme)
 				{
-					$theme =  $event->getPresentationServices()->getThemeManager()->getDefault();
+					$theme = $event->getApplicationServices()->getThemeManager()->getDefault();
 				}
 				$event->setParam('theme', $theme);
 				$event->setParam('themeResourcePath', $themeResourcePath);
-				$action = function($event) {
+				$action = function ($event)
+				{
 					$action = new GetThemeResource();
 					$action->execute($event);
 				};
@@ -128,24 +131,32 @@ class Resolver extends BaseResolver
 				return;
 			}
 
-			if (preg_match('/^Action\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9\/]+)$/', $relativePath, $matches))
+			if (preg_match('/^Action\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9\/]+)$/', $relativePath,
+				$matches)
+			)
 			{
 				$event->setParam('action', array($matches[1], $matches[2], $matches[3]));
-				$action = function($event) {
+				$action = function ($event)
+				{
 					$action = new ExecuteByName();
 					$action->execute($event);
 				};
 				$event->setAction($action);
-				$event->setAuthorization(function() {return true;});
+				$event->setAuthorization(function ()
+				{
+					return true;
+				});
 				return;
 			}
 
 			if (preg_match('/^Storage\/([A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
 			{
 				$storageName = $matches[1];
-				$changeURI = $event->getApplicationServices()->getStorageManager()->buildChangeURI($storageName, '/' . $matches[2]);
+				$changeURI = $event->getApplicationServices()->getStorageManager()
+					->buildChangeURI($storageName, '/' . $matches[2]);
 				$event->setParam('changeURI', $changeURI);
-				$action = function($event) {
+				$action = function ($event)
+				{
 					$action = new GetStorageItemContent();
 					$action->execute($event);
 				};
@@ -166,8 +177,11 @@ class Resolver extends BaseResolver
 		{
 			if ($path)
 			{
-				if ($path[0] == '/') {$path = substr($path, 1);}
-				if ($websitePathPart === $path || $websitePathPart .'/' === $path || strpos($path, $websitePathPart . '/') === 0)
+				if ($path[0] == '/')
+				{
+					$path = substr($path, 1);
+				}
+				if ($websitePathPart === $path || $websitePathPart . '/' === $path || strpos($path, $websitePathPart . '/') === 0)
 				{
 					return true;
 				}
@@ -226,7 +240,8 @@ class Resolver extends BaseResolver
 			else
 			{
 				$pathRule->setRelativePath($pathInfo);
-				$uri = $urlManager->getByPathInfo($this->getRelativePath($pathInfo, null), $event->getRequest()->getQuery()->toArray());
+				$uri = $urlManager->getByPathInfo($this->getRelativePath($pathInfo, null),
+					$event->getRequest()->getQuery()->toArray());
 				$location = $uri->normalize()->toString();
 				$pathRule->setLocation($location);
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
@@ -346,7 +361,7 @@ class Resolver extends BaseResolver
 	{
 		if ($sectionId)
 		{
-			$authorisation = function(Event $event) use ($sectionId, $websiteId)
+			$authorisation = function (Event $event) use ($sectionId, $websiteId)
 			{
 				return $event->getPermissionsManager()->isWebAllowed($sectionId, $websiteId);
 			};

@@ -4,7 +4,6 @@ namespace Change\Documents\Query;
 use Change\Db\Query\Expressions\Join;
 use Change\Db\DbProvider;
 use Change\Documents\AbstractModel;
-use Change\Documents\DocumentServices;
 use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Expressions\Parameter;
 use Change\Documents\Property;
@@ -46,7 +45,7 @@ class ChildBuilder extends AbstractBuilder
 		$this->parent = $parent;
 		if (is_string($model))
 		{
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($model);
+			$model = $this->getModelManager()->getModelByName($model);
 		}
 		if (!($model instanceof AbstractModel))
 		{
@@ -227,12 +226,14 @@ class ChildBuilder extends AbstractBuilder
 		$this->getQuery()->setValuedParameter($parameter, $value);
 	}
 
-	/**
-	 * @return DocumentServices
-	 */
-	protected function getDocumentServices()
+	public function getDocumentManager()
 	{
-		return $this->parent->getDocumentServices();
+		return $this->getParent()->getDocumentManager();
+	}
+
+	protected function getModelManager()
+	{
+		return $this->getParent()->getModelManager();
 	}
 
 	/**

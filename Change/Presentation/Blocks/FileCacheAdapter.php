@@ -7,15 +7,14 @@ namespace Change\Presentation\Blocks;
 class FileCacheAdapter
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onGetCacheAdapter(\Zend\EventManager\Event $event)
+	public function onGetCacheAdapter(\Change\Events\Event $event)
 	{
 		$blockManager = $event->getTarget();
-
 		if ($blockManager instanceof BlockManager)
 		{
-			$workspace = $blockManager->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
+			$workspace = $event->getApplication()->getWorkspace();
 			$cache = new \Zend\Cache\Storage\Adapter\Filesystem();
 			$cacheDir = $workspace->cachePath('block');
 			\Change\Stdlib\File::mkdir($cacheDir);

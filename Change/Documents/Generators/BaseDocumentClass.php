@@ -749,12 +749,12 @@ class BaseDocumentClass
 	/**
 	 * @return \Change\Storage\ItemInfo|null
 	 */
-	public function get' . $un . 'ItemInfo()
+	public function get' . $un . 'ItemInfo(\Change\Storage\StorageManager $storageManager)
 	{
 		$uri = $this->get' . $un . '();
 		if ($uri)
 		{
-			return $this->getApplicationServices()->getStorageManager()->getItemInfo($uri);
+			return $storageManager->getItemInfo($uri);
 		}
 		return null;
 	}' . PHP_EOL;

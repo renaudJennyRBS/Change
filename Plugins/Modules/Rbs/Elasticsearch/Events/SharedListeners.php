@@ -22,13 +22,13 @@ class SharedListeners implements SharedListenerAggregateInterface
 		$callback = function (DocumentEvent $event)
 		{
 			$document = $event->getDocument();
-			$application = $document->getApplicationServices()->getApplication();
+			$application = $event->getApplication();
 			$toIndex = $application->getContext()->get('elasticsearch_toIndex');
 			if ($toIndex)
 			{
 				$deleted = ($event->getName() == DocumentEvent::EVENT_DELETED
 					|| $event->getName() == DocumentEvent::EVENT_LOCALIZED_DELETED);
-				$toIndex[] = ['LCID' => $document->getDocumentManager()->getLCID(), 'id' => $document->getId(),
+				$toIndex[] = ['LCID' => $event->getApplicationServices()->getDocumentManager()->getLCID(), 'id' => $document->getId(),
 					'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
 			}
 		};
@@ -37,46 +37,41 @@ class SharedListeners implements SharedListenerAggregateInterface
 			DocumentEvent::EVENT_UPDATED, DocumentEvent::EVENT_DELETED, DocumentEvent::EVENT_LOCALIZED_DELETED);
 		$events->attach('Documents', $eventNames, $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			if ($event->getParam('primary'))
 			{
-				/** @var $tm \Change\Transaction\TransactionManager */
-				$tm = $event->getTarget();
-				$tm->getApplication()->getContext()->set('elasticsearch_toIndex', new \ArrayObject());
+				$event->getApplication()->getContext()->set('elasticsearch_toIndex', new \ArrayObject());
 			}
 		};
 		$events->attach('TransactionManager', 'begin', $callback);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			if ($event->getParam('primary'))
 			{
-				/** @var $transactionManager \Change\Transaction\TransactionManager */
-				$transactionManager = $event->getTarget();
-				$application = $transactionManager->getApplication();
 
+				$application = $event->getApplication();
 				/* @var $toIndex \ArrayObject */
 				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
 				if ($toIndex)
 				{
 					if (count($toIndex))
 					{
-						$jobManager = $application->getContext()->get('elasticsearch_JobManager');
-						if ($jobManager === null)
-						{
-							$as = new \Change\Application\ApplicationServices($application);
-							$jobManager = new JobManager();
-							$jobManager->setApplicationServices($as);
-							$application->getContext()->set('elasticsearch_JobManager', $jobManager);
-						}
+						/* @var $transactionManager \Change\Transaction\TransactionManager */
+						$transactionManager = $event->getTarget();
+						$jobManager = $event->getApplicationServices()->getJobManager();
+
+						//Create New Job in current transaction
+						$jobManager->setTransactionManager(null);
 						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy());
+						$jobManager->setTransactionManager($transactionManager);
 					}
-					$transactionManager->getApplication()->getContext()->set('elasticsearch_toIndex', null);
+					$application->getContext()->set('elasticsearch_toIndex', null);
 				}
 			}
 		};
-		$events->attach('TransactionManager', 'commit', $callback);
+		$events->attach('TransactionManager', 'commit', $callback, 10);
 	}
 
 	/**

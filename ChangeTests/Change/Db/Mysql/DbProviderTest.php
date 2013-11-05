@@ -25,6 +25,7 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 	}
 
+
 	public function testGetInstance()
 	{
 		$provider = $this->getApplicationServices()->getDbProvider();
@@ -47,16 +48,16 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->assertStringStartsWith('SQLSTATE', $e->getMessage());
 			$this->assertEquals('42000', $e->getCode());
 		}
-		
-		return $provider;
+		$provider->closeConnection();
 	}
 	
-	/**
-	 * @depends testGetInstance
-	 */
-	public function testTransaction(DbProvider $provider)
+
+	public function testTransaction()
 	{
-		$event = new \Zend\EventManager\Event('tm', $this, array('primary' => true));
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
+		$event = new \Change\Events\Event('tm', $this, array('primary' => true));
 
 		$this->assertFalse($provider->inTransaction());
 		
@@ -77,40 +78,48 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($provider->inTransaction());
 
 		$event->setParam('primary', false);
+
 		$provider->beginTransaction($event);
 		$this->assertFalse($provider->inTransaction());
 
-		return $provider;
+		$provider->closeConnection();
 	}
 	
-	/**
-	 * @depends testTransaction
-	 */
-	public function testValues(DbProvider $provider)
+
+	public function testValues()
 	{
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
 		$this->assertSame(1, $provider->phpToDB(true, ScalarType::BOOLEAN));
 		$this->assertSame(true, $provider->dbToPhp(1, ScalarType::BOOLEAN));
 		$this->assertSame(0, $provider->phpToDB(false, ScalarType::BOOLEAN));
 		$this->assertSame(false, $provider->dbToPhp(0, ScalarType::BOOLEAN));
 		
 		$dt = new \DateTime('now', new \DateTimeZone('UTC'));
-		$dbval =  $dt->format('Y-m-d H:i:s');
+		$dbVal =  $dt->format('Y-m-d H:i:s');
 		
-		$this->assertSame($dbval, $provider->phpToDB($dt, ScalarType::DATETIME));
-		$this->assertEquals($dt, $provider->dbToPhp($dbval, ScalarType::DATETIME));
-		return $provider;
+		$this->assertSame($dbVal, $provider->phpToDB($dt, ScalarType::DATETIME));
+		$this->assertEquals($dt, $provider->dbToPhp($dbVal, ScalarType::DATETIME));
+
+		$provider->closeConnection();
 	}
 
-	/**
-	 * @depends testValues
-	 */
-	public function testGetLastInsertId(DbProvider $provider)
+	public function testGetLastInsertId()
 	{
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
 		$pdo = $provider->getDriver();
 		$pdo->exec('DROP TABLE IF EXISTS `test_auto_number`');
 		$pdo->exec('CREATE TABLE `test_auto_number` (`auto` int(11) NOT NULL AUTO_INCREMENT, `test` int(11) NOT NULL, PRIMARY KEY (`auto`)) ENGINE=InnoDB AUTO_INCREMENT=5000');
+
+		$pdo->beginTransaction();
 		$pdo->exec('INSERT INTO `test_auto_number` (`auto`, `test`) VALUES (NULL, \'2\')');
 		$auto = $provider->getLastInsertId('test_auto_number');
 		$this->assertEquals(5000, $auto);
+		$pdo->commit();
+
+		$provider->closeConnection();
 	}
 }

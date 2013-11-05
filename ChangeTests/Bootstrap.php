@@ -15,6 +15,7 @@ $application = new \ChangeTests\Change\TestAssets\Application();
 $application->registerAutoload();
 $application->clearCache();
 $pluginManager = new \Change\Plugins\PluginManager();
-$pluginManager->setApplication($application);
+$pluginManager->setConfiguration($application->getConfiguration());
+$pluginManager->setWorkspace($application->getWorkspace());
 $pluginManager->compile(false);
 $application->registerPluginsAutoload();

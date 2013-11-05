@@ -27,8 +27,7 @@ class GetCollectionItems
 		$code = $request->getQuery('code');
 		if (is_string($code) && !empty($code))
 		{
-			$cm = new \Change\Collection\CollectionManager();
-			$cm->setDocumentServices($event->getDocumentServices());
+			$cm = $event->getApplicationServices()->getCollectionManager();
 			$parameters = $request->getQuery()->toArray();
 			unset($parameters['code']);
 			$collection = $cm->getCollection($code, $parameters);

@@ -10,16 +10,16 @@ use  Rbs\Workflow\Std;
 class PublicationProcessWorkflow
 {
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Services\ApplicationServices
 	 */
-	protected $documentServices;
+	protected $applicationServices;
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	public function __construct($documentServices)
+	public function __construct($applicationServices)
 	{
-		$this->documentServices = $documentServices;
+		$this->applicationServices = $applicationServices;
 	}
 
 	/**
@@ -29,7 +29,7 @@ class PublicationProcessWorkflow
 	public function install()
 	{
 		/* @var $workflow Documents\Workflow */
-		$workflow = $this->documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
+		$workflow = $this->applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
 
 		$workflow->setStartTask('publicationProcess')->setActive(true);
 		$workflow->setLabel('Document publication process');

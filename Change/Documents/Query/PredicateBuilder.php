@@ -2,21 +2,18 @@
 namespace Change\Documents\Query;
 
 use Change\Db\Query\Expressions\AbstractExpression;
-use Change\Db\Query\Predicates\HasPermission;
-use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Expressions\ExpressionList;
+use Change\Db\Query\Expressions\Join;
 use Change\Db\Query\Expressions\Subquery;
 use Change\Db\Query\InterfaceSQLFragment;
+use Change\Db\Query\Predicates\HasPermission;
 use Change\Db\Query\Predicates\In;
+use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Predicates\Like;
 use Change\Db\Query\Predicates\UnaryPredicate;
-use Change\Db\Query\SQLFragmentBuilder;
 use Change\Db\Query\SelectQuery;
-use Change\Documents\Property;
 
-use Change\Documents\AbstractDocument;
-use Change\Documents\TreeNode;
-use Change\Db\Query\Expressions\Join;
+use Change\Documents\Property;
 
 /**
  * @name \Change\Documents\Query\PredicateBuilder
@@ -198,14 +195,15 @@ class PredicateBuilder
 			$relTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
 			$relTableIdentifier = '_r' . $this->builder->getQuery()->getNextAliasCounter() . 'R';
 
-			$idPredicate = $fb->eq($abstractBuilder->getColumn('id') , $fb->getDocumentColumn('id', $relTableIdentifier));
+			$idPredicate = $fb->eq($abstractBuilder->getColumn('id'), $fb->getDocumentColumn('id', $relTableIdentifier));
 			$relnamePredicate = $fb->eq($fb->column('relname', $relTableIdentifier), $fb->string($property->getName()));
 
 			$joinCondition = new \Change\Db\Query\Predicates\Conjunction($idPredicate, $relnamePredicate);
 			$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
 			$join = new Join($fb->alias($relTable, $relTableIdentifier), Join::INNER_JOIN, $joinExpr);
 			$this->builder->addJoin($relTableIdentifier, $join);
-			return $fb->eq($fb->column('relatedid', $relTableIdentifier), $this->builder->getValueAsParameter($value, Property::TYPE_INTEGER));
+			return $fb->eq($fb->column('relatedid', $relTableIdentifier),
+				$this->builder->getValueAsParameter($value, Property::TYPE_INTEGER));
 		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
 		return $fb->eq($lhs, $rhs);
@@ -357,7 +355,10 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && in_array($property->getType(), array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
+		if ($property !== null
+			&& in_array($property->getType(),
+				array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID))
+		)
 		{
 			return $this->getFragmentBuilder()->eq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
@@ -374,7 +375,10 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && in_array($property->getType(), array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
+		if ($property !== null
+			&& in_array($property->getType(),
+				array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID))
+		)
 		{
 			return $this->getFragmentBuilder()->neq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
@@ -517,179 +521,6 @@ class PredicateBuilder
 			$this->neq('active', true),
 			$fb->logicAnd($this->isNotNull('startActivation'), $this->gt('startActivation', $at)),
 			$fb->logicAnd($this->isNotNull('endActivation'), $this->lte('endActivation', $to))
-		);
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @return array
-	 * @throws \InvalidArgumentException
-	 */
-	protected function validateNodeArgument($node)
-	{
-		if ($node instanceof AbstractDocument)
-		{
-			$document = $node;
-		}
-		elseif ($node instanceof TreeNode)
-		{
-			$document = $this->builder->getQuery()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
-		}
-		elseif (is_numeric($node))
-		{
-			$document = $this->builder->getQuery()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node);
-		}
-		else
-		{
-			$document = null;
-		}
-
-		if ($document === null || !$document->getDocumentModel()->useTree())
-		{
-			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
-		}
-
-		$node = $this->builder->getQuery()->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
-		if ($node === null)
-		{
-			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
-		}
-		return array($document, $node);
-	}
-
-	/**
-	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
-	 * @param \Change\Db\Query\Expressions\Table $treeTable
-	 * @param string $treeTableIdentifier
-	 * @param string|Property $propertyName
-	 * @return Join
-	 */
-	protected function buildTreeTableJoin($fragmentBuilder, $treeTable, $treeTableIdentifier, $propertyName)
-	{
-		$id = $this->eq($propertyName, $fragmentBuilder->getDocumentColumn('id', $treeTableIdentifier));
-		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($id, 'ON');
-		$join = new Join($fragmentBuilder->alias($treeTable, $treeTableIdentifier), Join::INNER_JOIN, $joinExpr);
-		return $join;
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function childOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($document->getId(), Property::TYPE_INTEGER));
-	}
-
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function descendantOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
-
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->like($fb->column('node_path', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getFullPath(), Property::TYPE_STRING), \Change\Db\Query\Predicates\Like::BEGIN);
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function ancestorOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
-
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-		$this->builder->addJoin($treeTableIdentifier, $join);
-		$ancestorsIds = $node->getAncestorIds();
-		if (count($ancestorsIds) == 0)
-		{
-			$ancestorsIds[] = -1;
-		}
-		return $this->in($fb->getDocumentColumn('id', $treeTableIdentifier), $ancestorsIds);
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function nextSiblingOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->logicAnd(
-			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
-			$fb->gt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
-		);
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function previousSiblingOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getQuery()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->logicAnd(
-			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
-			$fb->lt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
 		);
 	}
 }

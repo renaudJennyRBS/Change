@@ -28,9 +28,10 @@ class DocumentQuery
 		$query = $event->getRequest()->getPost()->toArray();
 		if (is_array($query) && isset($query['model']))
 		{
+			$applicationServices = $event->getApplicationServices();
 			$modelName = $query['model'];
 
-			$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
 			if (!$model)
 			{
 				throw new \RuntimeException('Invalid Parameter: model', 71000);
@@ -47,17 +48,19 @@ class DocumentQuery
 			$result->setLimit($maxResults);
 			$result->setSort(null);
 
-			$this->treeManager = $event->getDocumentServices()->getTreeManager();
+			$this->treeManager = $applicationServices->getTreeManager();
 
 			if ($LCID)
 			{
-				$event->getDocumentServices()->getDocumentManager()->pushLCID($LCID);
+				$applicationServices->getDocumentManager()->pushLCID($LCID);
 			}
 
 			try
 			{
 				$decoder = new JSONDecoder();
-				$decoder->setDocumentServices($event->getDocumentServices());
+				$decoder->setDocumentManager($applicationServices->getDocumentManager())
+				->setModelManager($applicationServices->getModelManager())
+				->setTreeManager($applicationServices->getTreeManager());
 
 				$queryBuilder = $decoder->getQuery($query);
 				$count = $queryBuilder->getCountDocuments();
@@ -77,14 +80,14 @@ class DocumentQuery
 
 				if ($LCID)
 				{
-					$event->getDocumentServices()->getDocumentManager()->popLCID();
+					$applicationServices->getDocumentManager()->popLCID();
 				}
 			}
 			catch (\Exception $e)
 			{
 				if ($LCID)
 				{
-					$event->getDocumentServices()->getDocumentManager()->popLCID();
+					$applicationServices->getDocumentManager()->popLCID();
 				}
 				throw $e;
 			}

@@ -14,11 +14,12 @@ class DeleteTreeNode
 	 * Use Event Params: treeName, pathIds
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -38,7 +39,7 @@ class DeleteTreeNode
 		{
 			return;
 		}
-		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$transactionManager = $applicationServices->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();

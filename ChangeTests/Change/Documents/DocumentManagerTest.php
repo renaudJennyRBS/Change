@@ -27,7 +27,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getObject()
 	{
-		$manager = $this->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplicationServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}
@@ -62,9 +62,9 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$manager = $this->getObject();
 		$this->assertFalse($manager->inTransaction());
 
-		$manager->getApplicationServices()->getTransactionManager()->begin();
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$this->assertTrue($manager->inTransaction());
-		$manager->getApplicationServices()->getTransactionManager()->commit();
+		$this->getApplicationServices()->getTransactionManager()->commit();
 
 		$this->assertFalse($manager->inTransaction());
 	}
@@ -73,7 +73,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$manager = $this->getObject();
 
-		$manager->getApplicationServices()->getTransactionManager()->begin();
+		$this->getApplicationServices()->getTransactionManager()->begin();
 
 		/* @var $document \Project\Tests\Documents\Basic */
 		$document = $manager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
@@ -84,8 +84,15 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertGreaterThan(0, $document->getId());
 		$this->assertTrue($manager->isInCache($document->getId()));
 
-		$manager->getApplicationServices()->getTransactionManager()->commit();
+		$this->getApplicationServices()->getTransactionManager()->commit();
 		$this->assertFalse($manager->isInCache($document->getId()));
+	}
+
+	public function testNewQuery()
+	{
+		$manager = $this->getObject();
+		$query = $manager->getNewQuery('Project_Tests_Basic');
+		$this->assertInstanceOf('Change\Documents\Query\Query', $query);
 	}
 
 	/**
@@ -107,8 +114,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$i18nManger = $this->getApplicationServices()->getI18nManager();
 		$manager = new DocumentManager();
-		$manager->setApplicationServices($this->getApplicationServices());
-		$manager->setDocumentServices($this->getDocumentServices());
+		$manager->setI18nManager($this->getApplicationServices()->getI18nManager());
 
 		// There is no default value.
 		$this->assertEquals(0, $manager->getLCIDStackSize());
@@ -160,7 +166,7 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$config->addVolatileEntry('Change/I18n/supported-lcids' , null);
 		$config->addVolatileEntry('Change/I18n/supported-lcids', array('fr_FR','en_GB','it_IT','es_ES','en_US'));
 
-		$manager = $this->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplicationServices()->getDocumentManager();
 
 		$manager->pushLCID('fr_FR');
 		$manager->pushLCID('en_GB');
@@ -186,4 +192,6 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getApplicationServices()->getTransactionManager()->rollBack();
 		$this->assertEquals('it_IT', $manager->getLCID());
 	}
+
+
 }

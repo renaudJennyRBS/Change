@@ -1,8 +1,6 @@
 <?php
 namespace Change\User;
 
-use Change\Documents\DocumentServices;
-
 /**
 * @name \Change\User\AuthenticationManager
 */
@@ -17,14 +15,32 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_BY_USER_ID = 'byUserId';
 
 	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
 	 * @var UserInterface|null
 	 */
 	protected $currentUser;
+
+	/**
+	 * @var \Change\Configuration\Configuration;
+	 */
+	protected $configuration;
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->configuration;
+	}
 
 	/**
 	 * @param UserInterface $currentUser
@@ -43,26 +59,6 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-		if ($documentServices !== null  && $this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -75,12 +71,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/AuthenticationManager', array());
-		}
-		return array();
+		return $this->getConfiguration()->getEntry('Change/Events/AuthenticationManager', array());
 	}
 
 	/**
@@ -91,8 +82,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('userId' => $userId));
-		$args['documentServices'] = $this->getDocumentServices();
-		$event = new \Zend\EventManager\Event(static::EVENT_BY_USER_ID, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_BY_USER_ID, $this, $args);
 		$this->getEventManager()->trigger($event);
 		$user = $event->getParam('user');
 		if ($user instanceof UserInterface)
@@ -113,9 +103,8 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('login' => $login,
 			'password' => $password, 'realm' => $realm));
-		$args['documentServices'] = $this->getDocumentServices();
 
-		$event = new \Zend\EventManager\Event(static::EVENT_LOGIN, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_LOGIN, $this, $args);
 		$this->getEventManager()->trigger($event);
 		$user = $event->getParam('user');
 		if ($user instanceof UserInterface)

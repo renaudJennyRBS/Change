@@ -107,7 +107,7 @@ class RegisterByBlockName
 		//For backoffice edition
 		$className .= 'Information';
 		$blockName = $this->blockName;
-		$callBack = function (\Zend\EventManager\Event $event) use ($className, $blockName)
+		$callBack = function (\Change\Events\Event $event) use ($className, $blockName)
 		{
 			$blockManager = $event->getTarget();
 			if ($blockManager instanceof BlockManager)

@@ -26,7 +26,7 @@ class GetDocumentCollection
 	public function execute($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName($modelName);
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
@@ -110,7 +110,7 @@ class GetDocumentCollection
 		}
 
 
-		$this->addSortablePropertiesForModel($model, $result,  $event->getDocumentServices()->getModelManager());
+		$this->addSortablePropertiesForModel($model, $result,  $event->getApplicationServices()->getModelManager());
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
@@ -195,7 +195,7 @@ class GetDocumentCollection
 					$orderColumn = null;
 					if (count($sortInfo) && $property->getType() === Property::TYPE_DOCUMENT)
 					{
-						$sortModel = $event->getDocumentServices()->getModelManager()->getModelByName($property->getDocumentType());
+						$sortModel = $event->getApplicationServices()->getModelManager()->getModelByName($property->getDocumentType());
 						$sortPropertyName = array_shift($sortInfo);
 						if ($sortModel && $sortModel->isEditable() && $sortModel->hasProperty($sortPropertyName))
 						{
@@ -258,7 +258,7 @@ class GetDocumentCollection
 			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
-			$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
+			$collection = new DocumentCollection($event->getApplicationServices()->getDocumentManager(), $sc->getResults());
 			foreach ($collection as $document)
 			{
 				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));

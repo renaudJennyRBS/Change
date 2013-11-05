@@ -22,15 +22,15 @@ class Compiler
 	protected $application;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
 	 * @param \Change\Application $application
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	public function __construct(\Change\Application $application, \Change\Application\ApplicationServices $applicationServices)
+	public function __construct(\Change\Application $application, \Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->application = $application;
 		$this->applicationServices = $applicationServices;
@@ -136,7 +136,7 @@ class Compiler
 	 */
 	public function validateInheritance()
 	{
-		foreach ($this->modelNamesByExtendLevel as $lvl => $modelNames)
+		foreach ($this->modelNamesByExtendLevel as $modelNames)
 		{
 			foreach ($modelNames as $modelName)
 			{

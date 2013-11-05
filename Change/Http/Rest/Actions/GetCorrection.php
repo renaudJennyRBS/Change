@@ -2,11 +2,10 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Localizable;
+use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentCorrectionResult;
 use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\GetCorrection
@@ -22,7 +21,7 @@ class GetCorrection
 	protected function getDocument($event)
 	{
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId);
 		if (!$document)
 		{
 			return null;
@@ -49,7 +48,7 @@ class GetCorrection
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 		$LCID = null;
 		if ($document instanceof Localizable)
@@ -104,7 +103,8 @@ class GetCorrection
 		$result->addLink($documentLink);
 
 		$model = $document->getDocumentModel();
-		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(), 'propertiesNames' => array());
+		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(),
+			'propertiesNames' => array());
 		$properties = array();
 		if ($document instanceof Localizable)
 		{
@@ -114,13 +114,12 @@ class GetCorrection
 		{
 			$localizedOnly = false;
 		}
-
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
 			if ($property->getLocalized() || !$localizedOnly)
 			{
-				$c = new PropertyConverter($document, $property, $urlManager);
+				$c = new PropertyConverter($document, $property, null, $urlManager);
 				if ($correction->isModifiedProperty($name))
 				{
 					$correctionInfos['propertiesNames'][] = $name;

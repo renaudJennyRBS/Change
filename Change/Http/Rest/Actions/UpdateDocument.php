@@ -20,14 +20,14 @@ class UpdateDocument
 	{
 
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
 			return null;

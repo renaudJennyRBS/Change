@@ -1,8 +1,6 @@
 <?php
 namespace Change;
 
-use Zend\EventManager\EventManager;
-
 /**
  * @name \Change\Application
  * @api
@@ -22,16 +20,6 @@ class Application
 	protected $workspace;
 
 	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
-	 * @var \Change\Application
-	 */
-	protected static $sharedInstance;
-
-	/**
 	 * @var bool
 	 */
 	protected $started = false;
@@ -42,6 +30,7 @@ class Application
 	protected $context;
 
 	/**
+	 * @api
 	 * @return string
 	 */
 	public function getVersion()
@@ -58,13 +47,14 @@ class Application
 	}
 
 	/**
+	 * @api
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getContext()
 	{
 		if ($this->context === null)
 		{
-			$this->context = new \Zend\Stdlib\Parameters();
+			$this->setContext(new \Zend\Stdlib\Parameters());
 		}
 		return $this->context;
 	}
@@ -88,6 +78,7 @@ class Application
 	}
 
 	/**
+	 * @api
 	 * Namespace-based autoloading
 	 */
 	public function registerAutoload()
@@ -103,7 +94,7 @@ class Application
 	{
 		$this->workspace = $workspace;
 	}
-	
+
 	/**
 	 * @api
 	 * @return \Change\Workspace
@@ -127,7 +118,6 @@ class Application
 
 	/**
 	 * Return the entire configuration or a specific entry if $entryName is not null
-	 *
 	 * @api
 	 * @param string $entryName
 	 * @return Configuration\Configuration|mixed|null
@@ -143,29 +133,6 @@ class Application
 			return $this->configuration->getEntry($entryName);
 		}
 		return $this->configuration;
-	}
-
-
-	/**
-	 * @param \Change\Events\SharedEventManager $eventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $eventManager)
-	{
-		$this->sharedEventManager = $eventManager;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = new \Change\Events\SharedEventManager();
-			$this->sharedEventManager->attachConfiguredListeners($this->getConfiguration());
-		}
-		return $this->sharedEventManager;
 	}
 
 	/**
@@ -199,16 +166,8 @@ class Application
 					}
 				}
 			}
-			$this->dispatchStart();
 			$this->started = true;
 		}
-	}
-
-	protected function dispatchStart()
-	{
-		$eventManager = new EventManager('Application');
-		$eventManager->setSharedManager($this->getSharedEventManager());
-		$eventManager->trigger('start', $this);
 	}
 
 	/**
@@ -237,8 +196,9 @@ class Application
 	public function getProjectConfigurationPaths()
 	{
 		return [
-			Configuration\Configuration::AUTOGEN =>  $this->getWorkspace()->appPath('Config', Configuration\Configuration::AUTOGEN),
-			Configuration\Configuration::PROJECT =>  $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
+			Configuration\Configuration::AUTOGEN => $this->getWorkspace()
+					->appPath('Config', Configuration\Configuration::AUTOGEN),
+			Configuration\Configuration::PROJECT => $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
 		];
 	}
 

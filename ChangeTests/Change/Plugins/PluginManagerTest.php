@@ -25,6 +25,12 @@ class PluginManagerTest extends TestCase
 		$this->assertInstanceOf('Change\Plugins\PluginManager', $pluginManager);
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->getApplicationServices()->getDbProvider()->closeConnection();
+	}
+
 	/**
 	 * @param Plugin[] $plugins
 	 * @param string $type
@@ -56,6 +62,7 @@ class PluginManagerTest extends TestCase
 		$method->setAccessible(true);
 		return $method;
 	}
+
 
 	public function testScanPlugins()
 	{
@@ -295,6 +302,8 @@ class PluginManagerTest extends TestCase
 		$tm->begin();
 
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$pluginManager->setInstallApplication(static::getNewApplication());
+
 		$installedPlugins = $pluginManager->getInstalledPlugins();
 		$this->assertEmpty($installedPlugins);
 		$plugins = $pluginManager->compile();

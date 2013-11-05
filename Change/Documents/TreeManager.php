@@ -2,7 +2,6 @@
 namespace Change\Documents;
 
 use Change\Documents\Events\Event;
-use Zend\Form\Annotation\AbstractArrayAnnotation;
 
 /**
  * @name \Change\Documents\TreeManager
@@ -11,14 +10,19 @@ use Zend\Form\Annotation\AbstractArrayAnnotation;
 class TreeManager
 {
 	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager = null;
+
+	/**
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $applicationServices;
+	protected $dbProvider = null;
 
 	/**
 	 * @var \ArrayObject|null
@@ -26,21 +30,21 @@ class TreeManager
 	protected $treeNames;
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Documents\ModelManager $modelManager
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->modelManager = $modelManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Documents\ModelManager
 	 */
-	public function getApplicationServices()
+	protected function getModelManager()
 	{
-		return $this->applicationServices;
+		return $this->modelManager;
 	}
 
 	/**
@@ -53,13 +57,30 @@ class TreeManager
 		return $this;
 	}
 
-
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
-	public function getDocumentManager()
+	protected function getDocumentManager()
 	{
 		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
 	}
 
 	/**
@@ -68,7 +89,7 @@ class TreeManager
 	 */
 	protected function getNewQueryBuilder($cacheKey = null)
 	{
-		return $this->applicationServices->getDbProvider()->getNewQueryBuilder($cacheKey);
+		return $this->getDbProvider()->getNewQueryBuilder($cacheKey);
 	}
 
 	/**
@@ -77,9 +98,18 @@ class TreeManager
 	 */
 	protected function getNewStatementBuilder($cacheKey = null)
 	{
-		return $this->applicationServices->getDbProvider()->getNewStatementBuilder($cacheKey);
+		return $this->getDbProvider()->getNewStatementBuilder($cacheKey);
 	}
 
+	/**
+	 * @param TreeNode|integer $node
+	 * @return AbstractDocument|null
+	 */
+	public function getDocumentByNode($node)
+	{
+		$nodeId = ($node instanceof TreeNode) ? $node->getDocumentId() : intval($node);
+		return $this->getDocumentManager()->getDocumentInstance($nodeId);
+	}
 	/**
 	 * @api
 	 * @param string $treeName
@@ -564,8 +594,7 @@ class TreeManager
 			$q = $qb->query();
 			$q->bindParameter('path', $node->getFullPath());
 
-			$documentManager = $this->getDocumentManager();
-			$modelManager = $documentManager->getModelManager();
+			$modelManager = $this->getModelManager();
 
 			foreach ($q->getResults() as $row)
 			{

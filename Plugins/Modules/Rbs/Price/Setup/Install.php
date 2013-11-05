@@ -8,14 +8,12 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$this->importDefaultTaxes($documentServices);
+		$this->importDefaultTaxes($applicationServices);
 	}
 
 	/**
@@ -27,20 +25,20 @@ class Install extends \Change\Plugins\InstallBase
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	protected function importDefaultTaxes(\Change\Documents\DocumentServices $documentServices)
+	protected function importDefaultTaxes(\Change\Services\ApplicationServices $applicationServices)
 	{
-		$tm = $documentServices->getApplicationServices()->getTransactionManager();
+		$tm = $applicationServices->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Price_Tax');
+			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 			$query->andPredicates($query->eq('code', 'GST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
 			{
-				$GST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
+				$GST = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
 				/* @var $GST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'GST.json'), \Zend\Json\Json::TYPE_ARRAY);
@@ -51,12 +49,12 @@ class Install extends \Change\Plugins\InstallBase
 				$GST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Price_Tax');
+			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 			$query->andPredicates($query->eq('code', 'PST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
 			{
-				$PST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
+				$PST = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
 				/* @var $PST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'PST.json'), \Zend\Json\Json::TYPE_ARRAY);
@@ -67,12 +65,12 @@ class Install extends \Change\Plugins\InstallBase
 				$PST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Price_Tax');
+			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 			$query->andPredicates($query->eq('code', 'HST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
 			{
-				$HST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
+				$HST = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
 				/* @var $HST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'HST.json'), \Zend\Json\Json::TYPE_ARRAY);
@@ -83,12 +81,12 @@ class Install extends \Change\Plugins\InstallBase
 				$HST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Price_Tax');
+			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 			$query->andPredicates($query->eq('code', 'QST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
 			{
-				$QST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
+				$QST = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
 				/* @var $QST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'QST.json'), \Zend\Json\Json::TYPE_ARRAY);
@@ -99,12 +97,12 @@ class Install extends \Change\Plugins\InstallBase
 				$QST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Price_Tax');
+			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
 			$query->andPredicates($query->eq('code', 'TVAFR'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
 			{
-				$QST = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
+				$QST = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Price_Tax');
 				/* @var $QST \Rbs\Price\Documents\Tax */
 				$data = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
 				. 'FRC.json'), \Zend\Json\Json::TYPE_ARRAY);
@@ -115,22 +113,21 @@ class Install extends \Change\Plugins\InstallBase
 				$QST->save();
 			}
 
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
-			$cm = new \Change\Collection\CollectionManager();
-			$cm->setDocumentServices($documentServices);
+			$i18nManager = $applicationServices->getI18nManager();
+			$cm = $applicationServices->getCollectionManager();
 			$taxTitle = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
 
 			if ($taxTitle === null)
 			{
 				/* @var $taxTitle \Rbs\Collection\Documents\Collection */
-				$taxTitle = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$taxTitle = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 				$taxTitle->setLocked(true);
 				$taxTitle->setLabel('Tax Title');
 				$taxTitle->setCode('Rbs_Price_Collection_TaxTitle');
 
 
 				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$title->setValue('GST');
 				$title->setLabel('Goods and Services Tax');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.gst'));
@@ -138,7 +135,7 @@ class Install extends \Change\Plugins\InstallBase
 				$taxTitle->getItems()->add($title);
 
 				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$title->setValue('PST');
 				$title->setLabel('Provincial Sales Taxes (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.pst'));
@@ -146,7 +143,7 @@ class Install extends \Change\Plugins\InstallBase
 				$taxTitle->getItems()->add($title);
 
 				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$title->setValue('HST');
 				$title->setLabel('Harmonized Sales Tax (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.hst'));
@@ -154,7 +151,7 @@ class Install extends \Change\Plugins\InstallBase
 				$taxTitle->getItems()->add($title);
 
 				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$title->setValue('QST');
 				$title->setLabel('Quebec Sales Tax (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.qst'));
@@ -162,7 +159,7 @@ class Install extends \Change\Plugins\InstallBase
 				$taxTitle->getItems()->add($title);
 
 				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$title->setValue('TVAFR');
 				$title->setLabel('Taxe sur la valeur ajoutée');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.tvafr'));
@@ -176,7 +173,7 @@ class Install extends \Change\Plugins\InstallBase
 		}
 		catch (\Exception $e)
 		{
-			$documentServices->getApplicationServices()->getLogging()->exception($e);
+			$applicationServices->getLogging()->exception($e);
 			$tm->rollBack($e);
 		}
 	}

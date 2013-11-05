@@ -22,7 +22,6 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'));
 	}
 

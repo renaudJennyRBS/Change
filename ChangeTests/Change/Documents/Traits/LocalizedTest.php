@@ -2,11 +2,10 @@
 namespace ChangeTests\Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentManager;
 
 /**
-* @name \ChangeTests\Change\Documents\Traits\LocalizedTest
-*/
+ * @name \ChangeTests\Change\Documents\Traits\LocalizedTest
+ */
 class LocalizedTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
@@ -30,7 +29,7 @@ class LocalizedTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getDocumentManager()
 	{
-		$manager = $this->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplicationServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}

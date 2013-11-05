@@ -2,12 +2,11 @@
 namespace Change\Presentation\Pages;
 
 use Change\Presentation\Interfaces\Page;
-use Zend\EventManager\Event;
 
 /**
  * @name \Change\Presentation\Pages\PageEvent
  */
-class PageEvent extends Event
+class PageEvent extends \Change\Events\Event
 {
 	/**
 	 * @return \Change\Presentation\Interfaces\Page|null

@@ -49,14 +49,12 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 	}
 
 	/**

@@ -7,49 +7,41 @@ namespace Change\Services;
 trait DefaultServicesTrait
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Application
+	 */
+	protected $application;
+
+	/**
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Services\ApplicationServices
 	 */
-	public function getApplicationServices()
+	protected function getApplicationServices()
 	{
 		return $this->applicationServices;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Application $application
 	 * @return $this
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->documentServices = $documentServices;
+		$this->application = $application;
 		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
 	}
 
 	/**
@@ -57,6 +49,6 @@ trait DefaultServicesTrait
 	 */
 	protected function getApplication()
 	{
-		return $this->getApplicationServices()->getApplication();
+		return $this->application;
 	}
 } 

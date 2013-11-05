@@ -54,6 +54,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 */
 	protected function attachEvents($eventManager)
 	{
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 		$eventManager->attach('getPageByFunction', array($this, 'getPageByFunction'), 10);
 		$eventManager->attach(Event::EVENT_NODE_UPDATED, array($this, 'onNodeUpdated'), 10);

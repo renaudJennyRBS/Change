@@ -20,17 +20,18 @@ class DeleteListener
 			$document = $event->getDocument();
 			if (!$document->getDocumentModel()->isStateless())
 			{
-				$backupData = $this->generateBackupData($document);
+				$applicationServices = $event->getApplicationServices();
+				$backupData = $this->generateBackupData($document, $applicationServices);
 				if (count($backupData))
 				{
 					try
 					{
-						$document->getDocumentManager()->insertDocumentBackup($document, $backupData);
+						$applicationServices->getDocumentManager()->insertDocumentBackup($document, $backupData);
 					}
 					catch (\Exception $e)
 					{
 						//Unable to backup document
-						$document->getDocumentServices()->getApplicationServices()->getLogging()->exception($e);
+						$applicationServices->getLogging()->exception($e);
 					}
 				}
 			}
@@ -38,10 +39,11 @@ class DeleteListener
 	}
 
 	/**
-	 * @param AbstractDocument $document
+	 * @param AbstractDocument|\Change\Documents\Traits\DbStorage $document
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return array
 	 */
-	protected function generateBackupData($document)
+	protected function generateBackupData($document, $applicationServices)
 	{
 		$datas = array();
 		$datas['metas'] = $document->getMetas();
@@ -49,7 +51,7 @@ class DeleteListener
 
 		if ($model->useTree() && $document->getTreeName())
 		{
-			$node = $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
+			$node = $applicationServices->getTreeManager()->getNodeByDocument($document);
 			if ($node)
 			{
 				$datas['treeName'] = array($document->getTreeName(), $node->getParentId());
@@ -90,7 +92,7 @@ class DeleteListener
 			}
 		}
 
-		$dm = $document->getDocumentServices()->getDocumentManager();
+		$dm = $applicationServices->getDocumentManager();
 
 		if (count($localized) && $document instanceof Localizable)
 		{
@@ -133,15 +135,13 @@ class DeleteListener
 		{
 			return;
 		}
-		$documentServices = $document->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 
 		//Remove TreeNode
-		$documentServices->getTreeManager()->deleteDocumentNode($document);
+		$applicationServices->getTreeManager()->deleteDocumentNode($document);
 
-		$jobManager = new \Change\Job\JobManager();
-		$jobManager->setApplicationServices($documentServices->getApplicationServices());
-		$jobManager->setDocumentServices($documentServices);
-
+		$jobManager = $applicationServices->getJobManager();
+		$jobManager->setTransactionManager($applicationServices->getTransactionManager());
 		$jobManager->createNewJob('Change_Document_CleanUp',
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName()));
 	}
@@ -162,21 +162,22 @@ class DeleteListener
 			return;
 		}
 
-		$documentServices = $document->getDocumentServices();
-		$jobManager = new \Change\Job\JobManager();
-		$jobManager->setApplicationServices($documentServices->getApplicationServices());
-		$jobManager->setDocumentServices($documentServices);
+		$applicationServices = $event->getApplicationServices();
+
+		$jobManager = $applicationServices->getJobManager();
+		$jobManager->setTransactionManager($applicationServices->getTransactionManager());
 
 		$jobManager->createNewJob('Change_Document_LocalizedCleanUp',
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName(),
-				'LCID' => $documentServices->getDocumentManager()->getLCID()));
+				'LCID' => $applicationServices->getDocumentManager()->getLCID()));
 
 	}
 
 	public function onCleanUp(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
+
 		$documentId = $job->getArgument('id');
 		$modelName = $job->getArgument('model');
 		if (!is_numeric($documentId) || !is_string($modelName))
@@ -185,19 +186,19 @@ class DeleteListener
 			return;
 		}
 
-		$model = $documentServices->getModelManager()->getModelByName($modelName);
+		$model = $applicationServices->getModelManager()->getModelByName($modelName);
 		if (!$model)
 		{
 			$event->failed('Document Model ' . $modelName . ' not found');
 			return;
 		}
 
-		$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+		$transactionManager = $applicationServices->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
-			$dbp = $documentServices->getApplicationServices()->getDbProvider();
+			$dbp = $applicationServices->getDbProvider();
 
 			//Remove Relations
 			foreach($model->getProperties() as $property)
@@ -217,7 +218,7 @@ class DeleteListener
 			$modificationDate = new \DateTime();
 			foreach ($model->getInverseProperties() as $property)
 			{
-				$relModel = $documentServices->getModelManager()->getModelByName($property->getRelatedDocumentType());
+				$relModel = $applicationServices->getModelManager()->getModelByName($property->getRelatedDocumentType());
 				if ($relModel)
 				{
 					$relProp = $relModel->getProperty($property->getRelatedPropertyName());

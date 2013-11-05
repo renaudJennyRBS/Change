@@ -1,9 +1,9 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Http\Rest\Result\Link;
 use Change\Http\Rest\Result\ModelLink;
 use Change\Http\Rest\Result\ModelResult;
-use Change\Http\Rest\Result\Link;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -29,12 +29,11 @@ class GetModelInformation
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param string $modelName
-	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $modelName)
 	{
 		$i18nm = $event->getApplicationServices()->getI18nManager();
-		$mm = $event->getDocumentServices()->getModelManager();
+		$mm = $event->getApplicationServices()->getModelManager();
 		$model = $mm->getModelByName($modelName);
 		if ($model)
 		{
@@ -133,7 +132,6 @@ class GetModelInformation
 
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$event->setResult($result);
-			return $result;
 		}
 	}
 }

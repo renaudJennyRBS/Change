@@ -1,11 +1,8 @@
 <?php
 namespace ChangeTests\Change\Http\Rest\OAuth;
 
-use Change\Http\Request;
-use Change\Http\Rest\OAuth\AuthenticationListener;
 use Change\Http\Event as HttpEvent;
-use Change\Http\Web\Controller;
-use Rbs\User\Documents\User;
+use Change\Http\Rest\OAuth\AuthenticationListener;
 
 /**
  * @name \ChangeTests\Change\Http\Rest\OAuth\AuthenticationListenerTest
@@ -48,7 +45,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function setConsumerForTest()
 	{
-		$isb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('AuthenticationListenerTest::setConsumerForTest');
+		$isb = $this->getApplicationServices()->getDbProvider()
+			->getNewStatementBuilder('AuthenticationListenerTest::setConsumerForTest');
 		$fb = $isb->getFragmentBuilder();
 		$isb->insert($fb->table($isb->getSqlMapping()->getOAuthApplicationTable()), $fb->column('application'),
 			$fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('timestamp_max_offset'),
@@ -94,7 +92,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 			'oauth_version' => '1.0'
 		);
 		$utils = new \ZendOAuth\Http\Utility();
-		$signature = $utils->sign($params, 'HMAC-SHA1', $consumerSecret, null, 'POST', 'http://localhost:80/rest.php/OAuth/RequestToken/');
+		$signature = $utils->sign($params, 'HMAC-SHA1', $consumerSecret, null, 'POST',
+			'http://localhost:80/rest.php/OAuth/RequestToken/');
 		$params['oauth_signature'] = $signature;
 		$params['realm'] = 'Change_Test';
 
@@ -106,7 +105,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$request = new \Change\Http\Rest\Request();
 		$event = new HttpEvent(null, $controller);
 		$event->setRequest($request);
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 
 		$authenticationListener = new AuthenticationListener();
 		$authenticationListener->onRequestToken($event);
@@ -142,7 +141,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$request = new \Change\Http\Rest\Request();
 		$event = new HttpEvent(null, $controller);
 		$event->setRequest($request);
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 
 		$authenticationListener = new AuthenticationListener();
 		$authenticationListener->onAuthorize($event);
@@ -176,27 +175,26 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$_POST['login'] = 'test';
 		$_POST['password'] = 'change';
 
-		$callback = function(\Zend\EventManager\Event $event) {
-			if ($event->getParam('login') === 'test' &&
-				$event->getParam('password') == 'change' &&
-				$event->getParam('realm') == 'Change_Test')
+		$callback = function (\Zend\EventManager\Event $event)
+		{
+			if ($event->getParam('login') === 'test'
+				&& $event->getParam('password') == 'change'
+				&& $event->getParam('realm') == 'Change_Test'
+			)
 			{
 				$event->setParam('user', new  fakeUser_5498723());
 			}
 		};
 
-		$authenticationManager = new \Change\User\AuthenticationManager();
-		$authenticationManager->setSharedEventManager($this->getApplication()->getSharedEventManager());
-		$authenticationManager->setDocumentServices($this->getDocumentServices());
+		$authenticationManager = $this->getApplicationServices()->getAuthenticationManager();
+		$this->assertInstanceOf('Change\User\AuthenticationManager', $authenticationManager);
 		$toDetach = $authenticationManager->getEventManager()->attach(\Change\User\AuthenticationManager::EVENT_LOGIN, $callback);
 
 		$request = new \Change\Http\Rest\Request();
 		$event = new HttpEvent(null, $controller);
 		$event->setRequest($request);
-		$event->setApplicationServices($this->getApplicationServices());
-		$event->setDocumentServices($this->getDocumentServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setAuthenticationManager($authenticationManager);
-
 
 		$authenticationListener = new AuthenticationListener();
 		$authenticationListener->onAuthorize($event);
@@ -242,7 +240,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 			'oauth_version' => '1.0'
 		);
 		$utils = new \ZendOAuth\Http\Utility();
-		$signature = $utils->sign($params, 'HMAC-SHA1', $consumerSecret, $oauthData['tokenSecret'], 'POST', 'http://localhost:80/rest.php/OAuth/AccessToken/');
+		$signature = $utils->sign($params, 'HMAC-SHA1', $consumerSecret, $oauthData['tokenSecret'], 'POST',
+			'http://localhost:80/rest.php/OAuth/AccessToken/');
 		$params['oauth_signature'] = $signature;
 		$params['realm'] = 'Change_Test';
 
@@ -254,7 +253,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$request = new \Change\Http\Rest\Request();
 		$event = new HttpEvent(null, $controller);
 		$event->setRequest($request);
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 
 		$authenticationListener = new AuthenticationListener();
 		$authenticationListener->onAccessToken($event);

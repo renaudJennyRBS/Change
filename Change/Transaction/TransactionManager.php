@@ -4,23 +4,15 @@ namespace Change\Transaction;
 /**
  * @name \Change\Transaction\TransactionManager
  */
-class TransactionManager extends \Exception
+class TransactionManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+	
 	const EVENT_MANAGER_IDENTIFIER = 'TransactionManager';
 
 	const EVENT_BEGIN = 'begin';
 	const EVENT_COMMIT = 'commit';
 	const EVENT_ROLLBACK = 'rollback';
-
-	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
-
-	/**
-	 * @var \Zend\EventManager\EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @var integer
@@ -33,40 +25,53 @@ class TransactionManager extends \Exception
 	protected $dirty = false;
 
 	/**
-	 * @param \Change\Application $application
+	 * @var \Change\Configuration\Configuration;
 	 */
-	public function setApplication(\Change\Application $application)
+	protected $configuration;
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->application = $application;
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Application
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function getApplication()
+	protected function getConfiguration()
 	{
-		return $this->application;
+		return $this->configuration;
 	}
 
 	/**
-	 * @return \Change\Events\SharedEventManager
+	 * @return string
 	 */
-	public function getSharedEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		return $this->application->getSharedEventManager();
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		$classNames = $this->configuration->getEntry('Change/Events/TransactionManager');
+		return is_array($classNames) ? $classNames : array();
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	public function getEventManager()
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		if ($this->eventManager === null)
-		{
-			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->setSharedManager($this->getSharedEventManager());
-		}
-		return $this->eventManager;
+		(new DefaultListeners())->attach($eventManager);
 	}
 
 	/**
@@ -93,7 +98,7 @@ class TransactionManager extends \Exception
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
 
-		$event = new \Zend\EventManager\Event(static::EVENT_BEGIN, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_BEGIN, $this, $args);
 		$em->trigger($event);
 	}
 
@@ -108,7 +113,7 @@ class TransactionManager extends \Exception
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
 
-		$event = new \Zend\EventManager\Event(static::EVENT_COMMIT, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_COMMIT, $this, $args);
 		$em->trigger($event);
 
 		$this->count--;
@@ -131,7 +136,7 @@ class TransactionManager extends \Exception
 
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
-		$event = new \Zend\EventManager\Event(static::EVENT_ROLLBACK, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_ROLLBACK, $this, $args);
 		$em->trigger($event);
 
 		$this->count--;

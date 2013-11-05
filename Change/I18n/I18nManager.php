@@ -2,7 +2,6 @@
 namespace Change\I18n;
 
 use Change\Events\EventsCapableTrait;
-use Zend\EventManager\EventManager;
 
 /**
  * @api
@@ -10,9 +9,7 @@ use Zend\EventManager\EventManager;
  */
 class I18nManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait {
-		EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use EventsCapableTrait;
 
 	const EVENT_KEY_NOT_FOUND = 'key-not-found';
 	const EVENT_FORMATTING = 'formatting';
@@ -675,11 +672,10 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyNotFound'), 5);
 		$eventManager->attach(static::EVENT_FORMATTING, array($this, 'onFormatting'), 5);
 	}
@@ -692,7 +688,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	protected function dispatchKeyNotFound($preparedKey, $LCID)
 	{
 		$args = array('preparedKey' => $preparedKey, 'LCID' => $LCID);
-		$event = new \Zend\EventManager\Event(static::EVENT_KEY_NOT_FOUND, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_KEY_NOT_FOUND, $this, $args);
 		$callback = function ($result)
 		{
 			return is_string($result);
@@ -702,7 +698,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
 	public function onKeyNotFound($event)
 	{
@@ -722,7 +718,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	protected function dispatchFormatting($text, $textFormat, $formatters, $LCID)
 	{
 		$args = array('text' => $text, 'textFormat' => $textFormat, 'formatters' => $formatters, 'LCID' => $LCID);
-		$event = new \Zend\EventManager\Event(static::EVENT_FORMATTING, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_FORMATTING, $this, $args);
 		$callback = function ($result)
 		{
 			return is_string($result);
@@ -732,7 +728,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
 	public function onFormatting($event)
 	{

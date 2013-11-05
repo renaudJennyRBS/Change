@@ -1,9 +1,7 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Change\Documents\DocumentServices;
 use Change\Http\Web\Result\BlockResult;
-use Change\Presentation\PresentationServices;
 
 /**
  * @name \Change\Presentation\Blocks\BlockManager
@@ -23,14 +21,9 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
 
 	/**
-	 * @var PresentationServices
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $presentationServices;
-
-	/**
-	 * @var DocumentServices|null
-	 */
-	protected $documentServices;
+	protected $configuration;
 
 	/**
 	 * @var array
@@ -43,68 +36,21 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	protected $cacheAdapter = false;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
 	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->presentationServices = $presentationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * @return PresentationServices
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function getPresentationServices()
+	public function getConfiguration()
 	{
-		return $this->presentationServices;
-	}
-
-
-	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->getPresentationServices()->getApplicationServices();
-	}
-
-	/**
-	 * @return \Change\Logging\Logging
-	 */
-	protected function getLogging()
-	{
-		return $this->getApplicationServices()->getLogging();
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return $this->getApplicationServices()->getApplication();
+		return $this->configuration;
 	}
 
 	/**
@@ -129,12 +75,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->presentationServices)
-		{
-			$config = $this->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/BlockManager', array());
-		}
-		return array();
+		return $this->getConfiguration()->getEntry('Change/Events/BlockManager', array());
 	}
 
 	/**
@@ -161,7 +102,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$this->getBlockNames();
 		if (isset($this->blocks[$name]))
 		{
-			$infos = $this->blocks[$name] ;
+			$infos = $this->blocks[$name];
 			if ($infos instanceof Information)
 			{
 				return $infos;
@@ -198,16 +139,12 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getParameters($blockLayout, $httpEvent)
 	{
-		$eventManager =  $this->getEventManager();
-		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE, $blockLayout->getName()), $this, $httpEvent->getParams());
+		$eventManager = $this->getEventManager();
+		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE,
+			$blockLayout->getName()), $this, $httpEvent->getParams());
 		$event->setAuthenticationManager($httpEvent->getAuthenticationManager());
 		$event->setPermissionsManager($httpEvent->getPermissionsManager());
 		$event->setParam('httpRequest', $httpEvent->getRequest());
-		if ($this->documentServices === null)
-		{
-			$this->documentServices = $httpEvent->getDocumentServices();
-		}
-		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setUrlManager($httpEvent->getUrlManager());
 		$results = $eventManager->trigger($event, function ($result)
@@ -244,8 +181,6 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 			if ($cacheAdapter->hasItem($key))
 			{
 				$result = $cacheAdapter->getItem($key);
-				$logging = $this->getLogging();
-				$logging->info(__METHOD__ . '(' . $blockLayout->getName() . ', ' . $blockLayout->getId() . ', ' . $key . ')');
 			}
 			else
 			{
@@ -268,7 +203,6 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager = $this->getEventManager();
 		$event = new Event(static::composeEventName(static::EVENT_EXECUTE,
 			$blockLayout->getName()), $this, $httpEvent->getParams());
-		$event->setDocumentServices($this->documentServices);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
 		$event->setUrlManager($httpEvent->getUrlManager());
@@ -286,16 +220,16 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		if (false === $this->cacheAdapter)
 		{
 			$this->cacheAdapter = null;
-			$configuration = $this->getApplication()->getConfiguration();
+			$configuration = $this->getConfiguration();
 			if ($configuration->getEntry('Change/Cache/block'))
 			{
 				$eventManager = $this->getEventManager();
-				$event = new \Zend\EventManager\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
+				$event = new \Change\Events\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
 				$eventManager->trigger($event);
 				$cache = $event->getParam('cacheAdapter');
 				if ($cache instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter)
 				{
-					$this->cacheAdapter =  $cache;
+					$this->cacheAdapter = $cache;
 				}
 			}
 		}

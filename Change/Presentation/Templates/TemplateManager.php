@@ -1,19 +1,19 @@
 <?php
 namespace Change\Presentation\Templates;
 
-use Change\Presentation\PresentationServices;
+use string;
 
 /**
  * @api
  * @name \Change\Presentation\Templates\TemplateManager
  */
-class TemplateManager
+class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 {
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
 
+	use \Change\Events\EventsCapableTrait;
+
+	const DEFAULT_IDENTIFIER = 'TemplateManager';
+	const EVENT_REGISTER_EXTENSIONS = 'registerExtensions';
 	/**
 	 * @var string
 	 */
@@ -22,41 +22,126 @@ class TemplateManager
 	/**
 	 * @var \Twig_ExtensionInterface[]
 	 */
-	protected $extensions = array();
+	protected $extensions;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @var \Change\Configuration\Configuration
 	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
-	{
-		$this->presentationServices = $presentationServices;
-	}
+	protected $configuration;
 
 	/**
-	 * @api
-	 * @param \Twig_ExtensionInterface $extension
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
+	 * @var \Change\Presentation\Themes\ThemeManager
+	 */
+	protected $themeManager;
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
 	 * @return $this
 	 */
-	public function addExtension(\Twig_ExtensionInterface $extension)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->extensions[$extension->getName()] = $extension;
+		$this->configuration = $configuration;
 		return $this;
 	}
 
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
+	/**
+	 * @param \Change\Workspace $workspace
+	 * @return $this
+	 */
+	public function setWorkspace(\Change\Workspace $workspace)
+	{
+		$this->workspace = $workspace;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->workspace;
+	}
+
+	/**
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @return $this
+	 */
+	public function setThemeManager(\Change\Presentation\Themes\ThemeManager $themeManager)
+	{
+		$this->themeManager = $themeManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Presentation\Themes\ThemeManager
+	 */
+	protected function getThemeManager()
+	{
+		return $this->themeManager;
+	}
+
+	protected function getEventManagerIdentifier()
+	{
+		return static::DEFAULT_IDENTIFIER;
+	}
+
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getConfiguration()->getEntry('Change/Events/TemplateManager', array());
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach(static::EVENT_REGISTER_EXTENSIONS, array($this, 'onDefaultRegisterExtensions'), 5);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultRegisterExtensions(\Change\Events\Event $event)
+	{
+		$extensions = $event->getParam('extensions');
+		if ($extensions instanceof \ArrayObject)
+		{
+			$extensions[] = new Twig\Extension($event->getApplicationServices());
+		}
+	}
 	/**
 	 * @return \Twig_ExtensionInterface[]
 	 */
 	public function getExtensions()
 	{
+		if ($this->extensions === null)
+		{
+			$em = $this->getEventManager();
+			$arguments = $em->prepareArgs(array('extensions' => new \ArrayObject()));
+			$this->getEventManager()->trigger('registerExtensions', $this, $arguments);
+			if ($arguments['extensions'] instanceof \ArrayObject)
+			{
+				$this->extensions = $arguments['extensions']->getArrayCopy();
+			}
+			else
+			{
+				$this->extensions = array();
+			}
+		}
 		return $this->extensions;
-	}
-
-	/**
-	 * @return PresentationServices
-	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
 	}
 
 	/**
@@ -66,7 +151,8 @@ class TemplateManager
 	{
 		if ($this->cachePath === null)
 		{
-			$this->cachePath = $this->presentationServices->getApplicationServices()->getApplication()->getWorkspace()->cachePath('Templates', 'Compiled');
+			$this->cachePath = $this->getWorkspace()
+				->cachePath('Templates', 'Compiled');
 			\Change\Stdlib\File::mkdir($this->cachePath);
 		}
 		return $this->cachePath;
@@ -82,7 +168,6 @@ class TemplateManager
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
-		$twig->addExtension(new Twig\Extension($this->getPresentationServices()->getApplicationServices()));
 		foreach ($this->getExtensions() as $extension)
 		{
 			$twig->addExtension($extension);
@@ -97,10 +182,9 @@ class TemplateManager
 	 */
 	public function renderThemeTemplateFile($relativePath, array $attributes)
 	{
-		$paths = $this->getPresentationServices()->getThemeManager()->getThemeTwigBasePaths();
+		$paths = $this->getThemeManager()->getThemeTwigBasePaths();
 		$loader = new \Twig_Loader_Filesystem($paths);
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
-		$twig->addExtension(new Twig\Extension($this->getPresentationServices()->getApplicationServices()));
 		foreach ($this->getExtensions() as $extension)
 		{
 			$twig->addExtension($extension);

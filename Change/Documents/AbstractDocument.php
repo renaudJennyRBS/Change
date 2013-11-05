@@ -11,7 +11,6 @@ use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\ErrorResult;
 use Change\Http\Rest\Result\TreeNodeLink;
-use Zend\EventManager\EventManager;
 use Zend\EventManager\EventsCapableInterface;
 use Zend\Http\Response as HttpResponse;
 
@@ -44,7 +43,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @var integer
 	 */
 	private $id = 0;
-	
+
 	/**
 	 * @var string
 	 */
@@ -59,24 +58,88 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 * @var \Change\Documents\AbstractModel
 	 */
 	protected $documentModel;
-	
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
 
 	/**
-	 * @var \Zend\EventManager\EventManager
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Events\EventManagerFactory
+	 */
+	protected $eventManagerFactory;
+
+	/**
+	 * @var \Change\Events\EventManager
 	 */
 	protected $eventManager;
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
 	 * @param AbstractModel $model
 	 */
-	public function __construct(DocumentServices $documentServices, AbstractModel $model)
+	public function __construct(AbstractModel $model)
 	{
-		$this->setDocumentContext($documentServices, $model);
+		$this->documentModel = $model;
+		$this->documentModelName = $model->getName();
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @return $this
+	 */
+	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
+	{
+		$this->eventManagerFactory = $eventManagerFactory;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Events\EventManagerFactory
+	 */
+	protected function getEventManagerFactory()
+	{
+		return $this->eventManagerFactory;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
 	}
 
 	public function cleanUp()
@@ -91,18 +154,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		}
 	}
 
-	/**
-	 * @param DocumentServices $documentServices
-	 * @param AbstractModel $model
-	 * @return void
-	 */
-	public function setDocumentContext(DocumentServices $documentServices, AbstractModel $model)
-	{
-		$this->documentServices = $documentServices;
-		$this->documentModel = $model;
-		$this->documentModelName = $model->getName();
-	}
-	
 	/**
 	 * This class is not serializable
 	 * @return null
@@ -123,22 +174,13 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @api
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @api
 	 * @return \Change\Documents\AbstractModel
 	 */
 	public function getDocumentModel()
 	{
 		return $this->documentModel;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string
@@ -151,19 +193,24 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	/**
 	 * Retrieve the event manager
 	 * @api
-	 * @return \Zend\EventManager\EventManagerInterface
+	 * @throws \RuntimeException
+	 * @return \Change\Events\EventManager
 	 */
 	public function getEventManager()
 	{
 		if ($this->eventManager === null)
 		{
-			$model = $this->getDocumentModel();
-			$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
-			$eventManager = new EventManager($identifiers);
-			$eventManager->setSharedManager($this->getApplicationServices()->getApplication()->getSharedEventManager());
-			$eventManager->setEventClass('\Change\Documents\Events\Event');
-			$this->eventManager = $eventManager;
-			$this->attachEvents($eventManager);
+			if ($this->eventManagerFactory)
+			{
+				$model = $this->getDocumentModel();
+				$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
+				$this->eventManager = $this->eventManagerFactory->getNewEventManager($identifiers);
+			}
+			else
+			{
+				throw new \RuntimeException('eventManagerFactory not set', 999999);
+			}
+			$this->attachEvents($this->eventManager);
 		}
 		return $this->eventManager;
 	}
@@ -174,25 +221,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	protected function attachEvents($eventManager)
 	{
-
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function getDocumentManager()
-	{
-		return $this->documentServices->getDocumentManager();
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->documentServices->getApplicationServices();
 	}
 
 	/**
@@ -202,7 +230,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	public function initialize($id, $persistentState = null)
 	{
 		$this->id = intval($id);
-		if ($persistentState !==  null)
+		if ($persistentState !== null)
 		{
 			$this->setPersistentState($persistentState);
 		}
@@ -220,10 +248,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			case Property::TYPE_DATE:
 				$inputValue = is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')) : $inputValue;
-				return ($inputValue instanceof \DateTime) ? \DateTime::createFromFormat('Y-m-d', $inputValue->format('Y-m-d'), new \DateTimeZone('UTC'))->setTime(0, 0) : null;
+				return ($inputValue instanceof \DateTime) ? \DateTime::createFromFormat('Y-m-d', $inputValue->format('Y-m-d'),
+					new \DateTimeZone('UTC'))->setTime(0, 0) : null;
 
 			case Property::TYPE_DATETIME:
-				return is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')): (($inputValue instanceof \DateTime) ? $inputValue : null);
+				return is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')) : (($inputValue instanceof
+					\DateTime) ? $inputValue : null);
 
 			case Property::TYPE_BOOLEAN:
 				return ($inputValue === null) ? $inputValue : (bool)$inputValue;
@@ -284,7 +314,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		{
 			$this->persistentState = static::STATE_INITIALIZED;
 		}
-		elseif($this->persistentState === static::STATE_NEW)
+		elseif ($this->persistentState === static::STATE_NEW)
 		{
 			$this->setDefaultValues($this->documentModel);
 		}
@@ -313,7 +343,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			}
 		}
 	}
-	
+
 	/**
 	 * Persistent state list: static::STATE_*
 	 * @api
@@ -333,7 +363,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	public function setPersistentState($newValue)
 	{
 		$oldState = $this->persistentState;
-		switch ($newValue) 
+		switch ($newValue)
 		{
 			case static::STATE_LOADED:
 				$this->clearModifiedProperties();
@@ -350,7 +380,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		}
 		return $oldState;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -359,7 +389,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 		return $this->persistentState === static::STATE_DELETED;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -413,7 +443,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 		return count($this->getModifiedPropertyNames()) !== 0;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $propertyName
@@ -428,7 +458,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 		$this->modifiedProperties = array();
 	}
-		
+
 	/**
 	 * @param string $propertyName
 	 * @param mixed $value
@@ -469,7 +499,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function __toString()
 	{
-		return $this->getDocumentModelName().' '.$this->getId();
+		return $this->getDocumentModelName() . ' ' . $this->getId();
 	}
 
 	// Tree
@@ -505,46 +535,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 	/**
 	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 * @return $this
 	 */
 	public function populateRestDocumentResult($documentResult)
 	{
-		$um = $documentResult->getUrlManager();
-		if ($this->getTreeName())
-		{
-			$tn = $this->getDocumentServices()->getTreeManager()->getNodeByDocument($this);
-			if ($tn)
-			{
-				$l = new TreeNodeLink($um, $tn, TreeNodeLink::MODE_LINK);
-				$l->setRel('node');
-				$documentResult->addLink($l);
-			}
-		}
-
-		$model = $this->getDocumentModel();
-
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			$c = new PropertyConverter($this, $property, $um);
-			$documentResult->setProperty($name, $c->getRestValue());
-		}
-
-		if ($this->getDocumentModel()->useCorrection())
-		{
-			/* @var $this \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
-			$correction = $this->getCurrentCorrection();
-			if ($correction)
-			{
-				$l = new DocumentActionLink($um, $this, 'correction');
-				$documentResult->addAction($l);
-			}
-		}
-
 		$this->updateRestDocumentResult($documentResult);
-
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this, array('restResult' => $documentResult,
-			'urlManager' => $um));
+		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this,
+			array('restResult' => $documentResult, 'urlManager' => $documentResult->getUrlManager()));
 		$this->getEventManager()->trigger($documentEvent);
+		return $this;
 	}
 
 	/**
@@ -552,7 +551,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	protected function updateRestDocumentResult($documentResult)
 	{
-
 	}
 
 	/**
@@ -562,71 +560,10 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function populateRestDocumentLink($documentLink, $extraColumn)
 	{
-		$dm = $this->getDocumentManager();
-		$eventManager = $this->getEventManager();
-		if ($documentLink->getLCID())
-		{
-			$dm->pushLCID($documentLink->getLCID());
-		}
-
-		$model =  $this->getDocumentModel();
-
-		$documentLink->setProperty($model->getProperty('creationDate'));
-		$documentLink->setProperty($model->getProperty('modificationDate'));
-
-		if ($this instanceof Editable)
-		{
-			$documentLink->setProperty($model->getProperty('label'));
-			$documentLink->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($this instanceof Publishable)
-		{
-			$documentLink->setProperty($model->getProperty('publicationStatus'));
-		}
-		elseif ($this instanceof Activable)
-		{
-			$documentLink->setProperty($model->getProperty('active'));
-		}
-
-		if ($this instanceof Localizable)
-		{
-			$documentLink->setProperty($model->getProperty('refLCID'));
-			$documentLink->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($this instanceof Correction)
-		{
-			/* @var $document AbstractDocument|Correction */
-			if ($this->hasCorrection())
-			{
-				$l = new DocumentActionLink($documentLink->getUrlManager(), $this, 'correction');
-				$documentLink->setProperty('actions', array($l));
-			}
-		}
-
-		if (is_array($extraColumn) && count($extraColumn))
-		{
-			foreach ($extraColumn as $propertyName)
-			{
-				$property = $model->getProperty($propertyName);
-				if ($property)
-				{
-					$documentLink->setProperty($property);
-				}
-			}
-		}
-
 		$this->updateRestDocumentLink($documentLink, $extraColumn);
-
 		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this,
 			array('restResult' => $documentLink, 'extraColumn' => $extraColumn, 'urlManager' => $documentLink->getUrlManager()));
-		$eventManager->trigger($documentEvent);
-
-		if ($documentLink->getLCID())
-		{
-			$dm->popLCID();
-		}
+		$this->getEventManager()->trigger($documentEvent);
 		return $this;
 	}
 
@@ -637,6 +574,128 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected function updateRestDocumentLink($documentLink, $extraColumn)
 	{
 
+	}
+
+	public function onDefaultCorrectionFiled(\Change\Documents\Events\Event $event)
+	{
+		$as = $event->getApplicationServices();
+		$correction = $event->getParam('correction');
+		if ($as && ($correction instanceof \Change\Documents\Correction))
+		{
+			$jobManager = $as->getJobManager();
+			$jobManager->setTransactionManager($as->getTransactionManager());
+			$jobManager->createNewJob('Change_Correction_Filed', array(
+				'correctionId' => $correction->getId(), 'documentId' => $correction->getDocumentId(),
+				'LCID' => $correction->getLCID()
+			));
+		}
+	}
+
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		$document = $event->getDocument();
+		if (!$document instanceof AbstractDocument)
+		{
+			return;
+		}
+		$documentResult = $event->getParam('restResult');
+		if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$um = $documentResult->getUrlManager();
+			if ($document->getTreeName())
+			{
+				$tn = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($document);
+				if ($tn)
+				{
+					$l = new TreeNodeLink($um, $tn, TreeNodeLink::MODE_LINK);
+					$l->setRel('node');
+					$documentResult->addLink($l);
+				}
+			}
+			$model = $document->getDocumentModel();
+
+			foreach ($model->getProperties() as $name => $property)
+			{
+				/* @var $property \Change\Documents\Property */
+				$c = new PropertyConverter($document, $property, $document->getDocumentManager(), $um);
+				$documentResult->setProperty($name, $c->getRestValue());
+			}
+
+			if ($document->getDocumentModel()->useCorrection())
+			{
+				/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
+				$correction = $document->getCurrentCorrection();
+				if ($correction)
+				{
+					$l = new DocumentActionLink($um, $document, 'correction');
+					$documentResult->addAction($l);
+				}
+			}
+		}
+		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $documentResult;
+			$extraColumn = $event->getParam('extraColumn');
+			$dm = $event->getApplicationServices()->getDocumentManager();
+
+			if ($documentLink->getLCID())
+			{
+				$dm->pushLCID($documentLink->getLCID());
+			}
+
+			$model = $document->getDocumentModel();
+
+			$documentLink->setProperty($model->getProperty('creationDate'));
+			$documentLink->setProperty($model->getProperty('modificationDate'));
+
+			if ($document instanceof Editable)
+			{
+				$documentLink->setProperty($model->getProperty('label'));
+				$documentLink->setProperty($model->getProperty('documentVersion'));
+			}
+
+			if ($document instanceof Publishable)
+			{
+				$documentLink->setProperty($model->getProperty('publicationStatus'));
+			}
+			elseif ($document instanceof Activable)
+			{
+				$documentLink->setProperty($model->getProperty('active'));
+			}
+
+			if ($document instanceof Localizable)
+			{
+				$documentLink->setProperty($model->getProperty('refLCID'));
+				$documentLink->setProperty($model->getProperty('LCID'));
+			}
+
+			if ($document instanceof Correction)
+			{
+				/* @var $document AbstractDocument|Correction */
+				if ($document->hasCorrection())
+				{
+					$l = new DocumentActionLink($documentLink->getUrlManager(), $document, 'correction');
+					$documentLink->setProperty('actions', array($l));
+				}
+			}
+
+			if (is_array($extraColumn) && count($extraColumn))
+			{
+				foreach ($extraColumn as $propertyName)
+				{
+					$property = $model->getProperty($propertyName);
+					if ($property)
+					{
+						$documentLink->setProperty($property);
+					}
+				}
+			}
+
+			if ($documentLink->getLCID())
+			{
+				$dm->popLCID();
+			}
+		}
 	}
 
 	protected $ignoredPropertiesForRestEvents = array('model');
@@ -666,10 +725,8 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 		return $event->getResult() instanceof ErrorResult ? false : $this;
 	}
-
 	/**
 	 * Process the incoming REST data $name and set it to $value
-	 *
 	 * @param $name
 	 * @param $value
 	 * @param $event
@@ -698,7 +755,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			{
 				try
 				{
-					$c = new PropertyConverter($this, $property);
+					$c = new PropertyConverter($this, $property, $this->getDocumentManager());
 					$c->setPropertyValue($value);
 				}
 				catch (\Exception $e)

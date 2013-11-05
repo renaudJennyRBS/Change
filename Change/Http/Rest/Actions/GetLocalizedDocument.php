@@ -2,16 +2,10 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\Interfaces\Correction;
-use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
-use Change\Http\Rest\Result\ModelLink;
-use Change\Http\Rest\Result\TreeNodeLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -27,14 +21,14 @@ class GetLocalizedDocument
 	protected function getDocument($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
 			return null;
@@ -67,7 +61,7 @@ class GetLocalizedDocument
 			return;
 		}
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		try
 		{
 			$documentManager->pushLCID($LCID);

@@ -1,8 +1,6 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\ErrorResult;
-use Change\Http\Rest\Result\ArrayResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -44,7 +42,7 @@ class UploadFile
 			else
 			{
 				throw new \RuntimeException('Unable to move "' . $file['tmp_name'] . '" in "' . $destinationPath
-				. '"', 999999);
+					. '"', 999999);
 			}
 		}
 	}

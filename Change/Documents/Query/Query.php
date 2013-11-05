@@ -9,7 +9,8 @@ use Change\Db\Query\Expressions\Parameter;
 use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
 use Change\Documents\DocumentCollection;
-use Change\Documents\DocumentServices;
+use Change\Documents\DocumentManager;
+use Change\Documents\ModelManager;
 use Change\Documents\Property;
 
 /**
@@ -17,11 +18,6 @@ use Change\Documents\Property;
  */
 class Query extends AbstractBuilder
 {
-	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
-
 	/**
 	 * @var DbProvider
 	 */
@@ -47,23 +43,26 @@ class Query extends AbstractBuilder
 	 */
 	protected $parameters;
 
-
 	/**
 	 * @var array
 	 */
 	protected $orderArray;
 
 	/**
-	 * @param DocumentServices $documentServices
 	 * @param AbstractModel|string $model
+	 * @param DocumentManager $documentManager
+	 * @param ModelManager $modelManager
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @throws \InvalidArgumentException
 	 */
-	function __construct(DocumentServices $documentServices, $model)
+	function __construct($model, DocumentManager $documentManager, ModelManager $modelManager, DbProvider $dbProvider)
 	{
-		$this->setDocumentServices($documentServices);
+		$this->setDocumentManager($documentManager);
+		$this->setModelManager($modelManager);
+		$this->setDbProvider($dbProvider);
 		if (is_string($model))
 		{
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($model);
+			$model = $modelManager->getModelByName($model);
 		}
 		if (!($model instanceof AbstractModel))
 		{
@@ -110,23 +109,6 @@ class Query extends AbstractBuilder
 	public function getDbProvider()
 	{
 		return $this->dbProvider;
-	}
-
-	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		$this->setDbProvider($this->documentServices->getApplicationServices()->getDbProvider());
-	}
-
-	/**
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
 	}
 
 	/**
@@ -352,10 +334,10 @@ class Query extends AbstractBuilder
 		$row = $sc->getFirstResult();
 		if (is_array($row) && isset($row['model']) && isset($row['id']))
 		{
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($row['model']);
+			$model = $this->getModelManager()->getModelByName($row['model']);
 			if ($model)
 			{
-				return $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($row['id'], $model);
+				return $this->getDocumentManager()->getDocumentInstance($row['id'], $model);
 			}
 		}
 		return null;
@@ -379,7 +361,7 @@ class Query extends AbstractBuilder
 			$sc->setMaxResults($maxResults);
 			$sc->setStartIndex($startIndex);
 		}
-		$collection = new DocumentCollection($this->getDocumentServices()->getDocumentManager(), $sc->getResults());
+		$collection = new DocumentCollection($this->getDocumentManager(), $sc->getResults());
 		return $collection;
 	}
 

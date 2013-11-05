@@ -33,12 +33,7 @@ class DocumentWeakReference implements \Serializable
 	{
 		if ($this->modelName)
 		{
-			$model = $documentManager->getModelManager()->getModelByName($this->modelName);
-			if ($model !== null)
-			{
-				return $documentManager->getDocumentInstance($this->id, $model);
-			}
-			return null;
+			return $documentManager->getDocumentInstance($this->id, $this->modelName);
 		}
 		return $documentManager->getDocumentInstance($this->id);
 	}

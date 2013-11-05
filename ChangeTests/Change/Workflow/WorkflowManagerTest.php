@@ -13,10 +13,12 @@ class WorkflowManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getWorkflowManager()
 	{
-		$workflowManager = new WorkflowManager();
-		$workflowManager->setSharedEventManager($this->getApplication()->getSharedEventManager());
-		$workflowManager->setDocumentServices($this->getDocumentServices());
-		return $workflowManager;
+		return $this->getApplicationServices()->getWorkflowManager();
+	}
+
+	public function testConstruct()
+	{
+		$this->assertInstanceOf('Change\Workflow\WorkflowManager', $this->getWorkflowManager());
 	}
 
 	public function testGetWorkflow()
@@ -25,7 +27,7 @@ class WorkflowManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$dt = new \DateTime('2013-06-07 00:00:00');
 		$this->assertNull($wm->getWorkflow('not_found', $dt));
 
-		$callback = function(\Zend\EventManager\Event $event) use ($dt){
+		$callback = function(\Change\Events\Event $event) use ($dt){
 			if ($event->getParam('startTask') === 'not_found' && $event->getParam('date') == $dt)
 			{
 				$event->setParam('workflow' , new TestAssets\Workflow());
@@ -44,7 +46,7 @@ class WorkflowManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$wm = $this->getWorkflowManager();
 		$dt = new \DateTime('2013-06-07 00:00:00');
-		$callback = function(\Zend\EventManager\Event $event) use ($dt){
+		$callback = function(\Change\Events\Event $event) use ($dt){
 			if ($event->getParam('startTask') === 'GetNewWorkflowInstance' && $event->getParam('date') == $dt)
 			{
 				$workflow = new TestAssets\Workflow();
@@ -68,7 +70,7 @@ class WorkflowManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$wm = $this->getWorkflowManager();
 		$dt = new \DateTime('2013-06-07 00:00:00');
-		$callback = function(\Zend\EventManager\Event $event) use ($dt) {
+		$callback = function(\Change\Events\Event $event) use ($dt) {
 			if ($event->getParam('taskId') === 127)
 			{
 				$workflowInstance = new TestAssets\WorkflowInstance(new TestAssets\Workflow());

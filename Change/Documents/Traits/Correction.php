@@ -2,21 +2,20 @@
 namespace Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\AbstractModel;
 use Change\Documents\Correction as CorrectionInstance;
-use Change\Documents\DocumentManager;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 
 /**
  * @name \Change\Documents\Traits\Correction
  *
- * @see \Change\Documents\AbstractDocument
+ * From \Change\Documents\AbstractDocument
  * @method integer getId()
+ * @method \Change\Db\DbProvider getDbProvider()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method \Change\Documents\DocumentManager getDocumentManager()
  *
- * @see \Change\Documents\Traits\DbStorage
+ * From \Change\Documents\Traits\DbStorage
  * @method updateDocument()
  */
 trait Correction
@@ -189,7 +188,9 @@ trait Correction
 	 */
 	protected function createNewCorrectionInstance($correctionLCID)
 	{
-		return new CorrectionInstance($this->getDocumentManager(), $this->getId(), $correctionLCID);
+		$correction = new CorrectionInstance($this->getDocumentManager(), $this->getId(), $correctionLCID);
+		$correction->setDbProvider($this->getDbProvider());
+		return $correction;
 	}
 
 	/**
@@ -224,7 +225,7 @@ trait Correction
 	 */
 	protected function loadCorrection($correctionLCID)
 	{
-		$qb = $this->getDocumentManager()->getApplicationServices()->getDbProvider()->getNewQueryBuilder('loadCorrection');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('loadCorrection');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();

@@ -38,7 +38,7 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function getNewBasicDoc($label = 'node')
 	{
 		/* @var $doc \Project\Tests\Documents\Basic */
-		$doc = $this->getDocumentServices()->getDocumentManager()
+		$doc = $this->getApplicationServices()->getDocumentManager()
 			->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$doc->setPStr($label);
 		$doc->save();
@@ -53,7 +53,7 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function checkBasicDocLabel($id, $label)
 	{
 		/* @var $doc \Project\Tests\Documents\Basic */
-		$doc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($id);
+		$doc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($id);
 		if ($doc instanceof \Project\Tests\Documents\Basic)
 		{
 			return $doc->getPStr() === $label;
@@ -66,7 +66,7 @@ class TreeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getTreeManager()
 	{
-		return $this->getDocumentServices()->getTreeManager();
+		return $this->getApplicationServices()->getTreeManager();
 	}
 
 

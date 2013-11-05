@@ -22,7 +22,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$event->setAction(null);
 		$event->setResult(null);
-		$event->setParams(array());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->getRequest()->setMethod($method);
 		$event->getRequest()->setPath($path);
 	}
@@ -41,9 +41,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$event->setUrlManager(new \ChangeTests\Change\Http\Rest\TestAssets\UrlManager());
 		$event->setTarget(new \Change\Http\Rest\Controller($application));
-		$event->setApplicationServices($this->getApplicationServices());
-		$event->setDocumentServices($this->getDocumentServices());
-
+		$event->setParams($this->getDefaultEventArguments());
 		return $event;
 	}
 
@@ -174,7 +172,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
-		$document = $mi->getInstanceRo5001($event->getDocumentServices());
+		$document = $mi->getInstanceRo5001($this->getApplicationServices()->getDocumentManager());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/' . $document->getId(), Request::METHOD_GET);
 
@@ -234,7 +232,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse(is_callable($event->getAction()));
 
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
-		$document = $mi->getInstanceRo5002($event->getDocumentServices());
+		$document = $mi->getInstanceRo5002($this->getApplicationServices()->getDocumentManager());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/' . $document->getId(), Request::METHOD_GET);
 		$resolver->resolve($event);

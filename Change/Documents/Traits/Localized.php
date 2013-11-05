@@ -2,7 +2,6 @@
 namespace Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentManager;
 
 /**
  * @name \Change\Documents\Traits\Localized
@@ -12,9 +11,8 @@ use Change\Documents\DocumentManager;
  * @method integer getId()
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method \Change\Documents\AbstractModel getDocumentModel()
- * @method \Zend\EventManager\EventManagerInterface getEventManager()
- * @method \Change\Application\ApplicationServices getApplicationServices()
- *
+ * @method \Change\Db\DbProvider getDbProvider()
+ * @method \Change\Events\EventManager getEventManager()
  * @method string[] getModifiedPropertyNames()
  * @method setOldPropertyValue($propertyName, $value)
  */
@@ -71,7 +69,7 @@ trait Localized
 			else
 			{
 				$model = $this->getDocumentModel();
-				$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('Localized::getLCIDArray' . $model->getRootName());
+				$qb = $this->getDbProvider()->getNewQueryBuilder('Localized::getLCIDArray' . $model->getRootName());
 				if (!$qb->isCached())
 				{
 					$fb = $qb->getFragmentBuilder();
@@ -120,7 +118,7 @@ trait Localized
 
 		$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_LOADING);
 
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('Localized::loadLocalizedPart' . $model->getName());
+		$qb = $this->getDbProvider()->getNewQueryBuilder('Localized::loadLocalizedPart' . $model->getName());
 
 		if (!$qb->isCached())
 		{
@@ -275,7 +273,7 @@ trait Localized
 		$localizedPart = $this->getCurrentLocalization();
 		if ($localizedPart->getLCID() == $this->getRefLCID())
 		{
-			throw new \RuntimeException('Unable to delete refLCID: ' .  $this->getRefLCID(), 51014);
+			throw new \RuntimeException('Unable to delete refLCID: ' . $this->getRefLCID(), 51014);
 		}
 
 		if ($localizedPart->getPersistentState() === AbstractDocument::STATE_LOADED)
@@ -315,7 +313,7 @@ trait Localized
 	public function deleteLocalizedPart(\Change\Documents\AbstractLocalizedDocument $localizedPart)
 	{
 		$model = $this->getDocumentModel();
-		$qb = $this->getDocumentManager()->getApplicationServices()->getDbProvider()
+		$qb = $this->getDbProvider()
 			->getNewStatementBuilder('Localized::deleteLocalizedPart' . $model->getRootName());
 		if (!$qb->isCached())
 		{
@@ -358,7 +356,7 @@ trait Localized
 		}
 		$localizedPart->setPersistentState(AbstractDocument::STATE_SAVING);
 
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		$qb = $this->getDbProvider()->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
 		$fb = $qb->getFragmentBuilder();
 
@@ -372,7 +370,7 @@ trait Localized
 			{
 				continue;
 			}
-			if ( $name === 'id' || $property->getLocalized())
+			if ($name === 'id' || $property->getLocalized())
 			{
 				$dbType = $sqlMapping->getDbScalarType($property->getType());
 				$qb->addColumn($fb->getDocumentColumn($name));
@@ -402,7 +400,7 @@ trait Localized
 
 		$localizedPart->setPersistentState(AbstractDocument::STATE_SAVING);
 
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		$qb = $this->getDbProvider()->getNewStatementBuilder();
 		$sqlMapping = $qb->getSqlMapping();
 		$fb = $qb->getFragmentBuilder();
 		$model = $this->getDocumentModel();
@@ -450,7 +448,7 @@ trait Localized
 	protected function deleteAllLocalizedPart()
 	{
 		$model = $this->getDocumentModel();
-		$qb = $this->getDocumentManager()->getApplicationServices()->getDbProvider()
+		$qb = $this->getDbProvider()
 			->getNewStatementBuilder('Localized::deleteAllLocalizedPart' . $model->getRootName());
 		if (!$qb->isCached())
 		{
@@ -466,7 +464,6 @@ trait Localized
 		$this->unsetLocalizedPart();
 	}
 
-
 	/**
 	 * @param \Change\Documents\AbstractLocalizedDocument|null $localizedPart
 	 */
@@ -474,7 +471,7 @@ trait Localized
 	{
 		if ($localizedPart === null)
 		{
-			foreach ($this->localizedPartArray as $LCID => $localizedPart)
+			foreach ($this->localizedPartArray as $localizedPart)
 			{
 				$localizedPart->setPersistentState(AbstractDocument::STATE_DELETED);
 			}

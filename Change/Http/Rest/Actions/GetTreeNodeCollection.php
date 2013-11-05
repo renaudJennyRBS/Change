@@ -2,10 +2,10 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
-use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\TreeNodeLink;
 use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\Result\TreeNodeLink;
+use Zend\Http\Response as HttpResponse;
+
 /**
  * @name \Change\Http\Rest\Actions\GetTreeNodeCollection
  */
@@ -18,8 +18,8 @@ class GetTreeNodeCollection
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -47,7 +47,7 @@ class GetTreeNodeCollection
 		{
 			$nodeId = end($pathIds);
 			$parentNode = $treeManager->getNodeById($nodeId, $treeName);
-			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
+			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds))))
 			{
 				return;
 			}
@@ -62,7 +62,7 @@ class GetTreeNodeCollection
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\TreeNode|null $parentNode
-	 * @param \Change\Documents\TreeNode[]$nodes
+	 * @param \Change\Documents\TreeNode[] $nodes
 	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $parentNode, $nodes)
@@ -97,7 +97,7 @@ class GetTreeNodeCollection
 		}
 
 		$extraColumn = $event->getRequest()->getQuery('column', array());
-		$treeManager = $event->getDocumentServices()->getTreeManager();
+		$treeManager = $event->getApplicationServices()->getTreeManager();
 		foreach ($nodes as $node)
 		{
 			/* @var $node \Change\Documents\TreeNode */

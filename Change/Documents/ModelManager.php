@@ -5,7 +5,6 @@ use Change\Stdlib\File;
 
 /**
  * @name \Change\Documents\ModelManager
- * @method \Change\Documents\ModelManager getInstance()
  */
 class ModelManager
 {
@@ -20,10 +19,53 @@ class ModelManager
 	protected $modelsNames = null;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Plugins\PluginManager
 	 */
-	protected $applicationServices = null;
-	
+	protected $pluginManager  = null;
+
+	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace  = null;
+
+	/**
+	 * @param \Change\Plugins\PluginManager $pluginManager
+	 * @return $this
+	 */
+	public function setPluginManager(\Change\Plugins\PluginManager $pluginManager)
+	{
+		$this->pluginManager = $pluginManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Plugins\PluginManager
+	 */
+	protected function getPluginManager()
+	{
+		return $this->pluginManager;
+	}
+
+	/**
+	 * @param \Change\Workspace $workspace
+	 * @return $this
+	 */
+	public function setWorkspace(\Change\Workspace $workspace)
+	{
+		$this->workspace = $workspace;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->workspace;
+	}
+
+
+
 	/**
 	 * @param string $modelName
 	 * @return \Change\Documents\AbstractModel|null
@@ -143,22 +185,6 @@ class ModelManager
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
 	 * @param string $vendorName
 	 * @param string $moduleName
 	 * @param string$shortModelName
@@ -168,14 +194,14 @@ class ModelManager
 	 */
 	public function initializeModel($vendorName, $moduleName, $shortModelName)
 	{
-		$pm = $this->getApplicationServices()->getPluginManager();
+		$pm = $this->getPluginManager();
 		$module = $pm->getModule($vendorName, $moduleName);
 		if ($module === null)
 		{
 			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
 		}
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($pm->getApplication()->getWorkspace()), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($this->getWorkspace()), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Model file already exists at path ' . $docPath, 999999);
@@ -194,7 +220,7 @@ class ModelManager
 	 */
 	public function initializeFinalDocumentPhpClass($vendorName, $moduleName, $shortModelName)
 	{
-		$pm = $this->getApplicationServices()->getPluginManager();
+		$pm = $this->getPluginManager();
 		$module = $pm->getModule($vendorName, $moduleName);
 		if ($module === null)
 		{
@@ -203,7 +229,7 @@ class ModelManager
 		$normalizedVendorName = $module->getVendor();
 		$normalizedModuleName = $module->getShortName();
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($pm->getApplication()->getWorkspace()), 'Documents', $normalizedShortModelName . '.php'));
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($this->getWorkspace()), 'Documents', $normalizedShortModelName . '.php'));
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);

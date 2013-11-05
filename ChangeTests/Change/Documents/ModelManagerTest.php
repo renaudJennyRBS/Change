@@ -13,7 +13,7 @@ class ModelManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testInitialize()
 	{
-		$modelManager = $this->getDocumentServices()->getModelManager();
+		$modelManager = $this->getApplicationServices()->getModelManager();
 		$this->assertInstanceOf('\Change\Documents\ModelManager', $modelManager);
 		return $modelManager;
 	}

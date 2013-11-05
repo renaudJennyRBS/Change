@@ -30,11 +30,10 @@ class GetModelCollection
 	 * @param \Change\Http\Event $event
 	 * @param string $vendor
 	 * @param string $shortModuleName
-	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $vendor, $shortModuleName)
 	{
-		$mm = $event->getDocumentServices()->getModelManager();
+		$mm = $event->getApplicationServices()->getModelManager();
 		$shortModelNames = array();
 		foreach ($mm->getModelsNames() as $name)
 		{
@@ -70,6 +69,5 @@ class GetModelCollection
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
-		return $result;
 	}
 }

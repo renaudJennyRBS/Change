@@ -1,7 +1,7 @@
 <?php
 namespace Change\Plugins;
 
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
  * @name \Change\Plugins\InstallBase
@@ -20,13 +20,14 @@ class InstallBase
 				$this->initialize($plugin);
 				return $plugin;
 			}
+			return null;
 		});
 
 		$events->attach(PluginManager::EVENT_SETUP_APPLICATION, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
 				/* @var $app \Change\Application */
-				$app = $event->getParam('application');
+				$app = $event->getApplication();
 				$this->executeApplication($plugin, $app, $app->getConfiguration());
 			}
 		});
@@ -34,8 +35,7 @@ class InstallBase
 		$events->attach(PluginManager::EVENT_SETUP_SERVICES, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
-				$this->executeServices($plugin, $event->getParam('applicationServices'),
-					$event->getParam('documentServices'), $event->getParam('presentationServices'));
+				$this->executeServices($plugin, $event->getApplicationServices());
 			}
 		});
 
@@ -83,17 +83,14 @@ class InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
-
 	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \RuntimeException
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
 	}
 

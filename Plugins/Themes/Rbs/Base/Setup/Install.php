@@ -8,17 +8,14 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
 		$pluginManager = $applicationServices->getPluginManager();
 		$modules = $pluginManager->getModules();
-		$themeManager = $presentationServices->getThemeManager();
-		$themeManager->setDocumentServices($documentServices);
+		$themeManager = $applicationServices->getThemeManager();
 		$themeManager->installPluginTemplates($plugin);
 		$themeManager->installPluginAssets($plugin);
 		foreach ($modules as $module)

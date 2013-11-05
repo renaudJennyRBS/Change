@@ -1,11 +1,10 @@
 <?php
 namespace Change\Events;
 
-use Zend\EventManager\SharedListenerAggregateInterface;
+use Change\Documents\Events\Event as DocumentEvent;
 use Zend\EventManager\SharedEventManagerInterface;
 
-use Change\Documents\Events\Event as DocumentEvent;
-use Change\Http\Event as HttpEvent;
+use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
  * @name \Change\Events\DefaultSharedListenerAggregate
@@ -48,10 +47,28 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				$event->getDocument()->onDefaultUpdateRestResult($event);
+			}
+		};
+		$events->attach($identifiers, 'updateRestResult', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				$event->getDocument()->onDefaultCorrectionFiled($event);
+			}
+		};
+		$events->attach($identifiers, 'correctionFiled', $callBack, 5);
+
+
+		$callBack = function ($event)
+		{
 			(new \Change\Documents\Events\DeleteListener())->onCleanUp($event);
 		};
 		$events->attach('JobManager', 'process_Change_Document_CleanUp', $callBack, 5);
-
 	}
 
 	/**

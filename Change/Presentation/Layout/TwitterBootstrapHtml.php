@@ -114,12 +114,12 @@ class TwitterBootstrapHtml
 	 * @param \Change\Presentation\Layout\Layout $templateLayout
 	 * @param \Change\Presentation\Layout\Layout $pageLayout
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param boolean $developmentMode
 	 * @return array
 	 */
-	public function getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices)
+	public function getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices, $developmentMode)
 	{
-		$developmentMode = $applicationServices->getApplication()->inDevelopmentMode();
 		$blockNames = array();
 		foreach($templateLayout->getBlocks() as $block)
 		{

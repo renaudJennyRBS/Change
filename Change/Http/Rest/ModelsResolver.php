@@ -33,16 +33,16 @@ class ModelsResolver
 	{
 		if (!isset($namespaceParts[1]))
 		{
-			return $event->getDocumentServices()->getModelManager()->getVendors();
+			return $event->getApplicationServices()->getModelManager()->getVendors();
 		}
 		elseif (!isset($namespaceParts[2]))
 		{
 			$vendor = $namespaceParts[1];
-			return $event->getDocumentServices()->getModelManager()->getShortModulesNames($vendor);
+			return $event->getApplicationServices()->getModelManager()->getShortModulesNames($vendor);
 		}
 		elseif (!isset($namespaceParts[3]))
 		{
-			return $event->getDocumentServices()->getModelManager()
+			return $event->getApplicationServices()->getModelManager()
 				->getShortDocumentsNames($namespaceParts[1], $namespaceParts[2]);
 		}
 		return array();

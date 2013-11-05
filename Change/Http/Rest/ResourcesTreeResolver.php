@@ -36,7 +36,7 @@ class ResourcesTreeResolver
 	{
 		if (!isset($namespaceParts[1]))
 		{
-			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$treeNames = $event->getApplicationServices()->getTreeManager()->getTreeNames();
 			$vendors = array();
 			foreach ($treeNames as $treeName)
 			{
@@ -48,7 +48,7 @@ class ResourcesTreeResolver
 		elseif (!isset($namespaceParts[2]))
 		{
 			$vendor = $namespaceParts[1];
-			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$treeNames = $event->getApplicationServices()->getTreeManager()->getTreeNames();
 			$shortModulesNames = array();
 			foreach ($treeNames as $treeName)
 			{
@@ -89,8 +89,8 @@ class ResourcesTreeResolver
 			$vendor = array_shift($resourceParts);
 			$shortModuleName = array_shift($resourceParts);
 			$treeName = $vendor . '_' . $shortModuleName;
-			$documentServices = $event->getDocumentServices();
-			if ($documentServices->getTreeManager()->hasTreeName($treeName))
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices->getTreeManager()->hasTreeName($treeName))
 			{
 				$event->setParam('treeName', $treeName);
 				$pathIds = array();

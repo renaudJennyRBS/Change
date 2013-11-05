@@ -9,14 +9,9 @@ use Change\Documents\AbstractDocument;
 class UrlManager extends \Change\Http\UrlManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
 
 	/**
 	 * @var \Change\Http\Web\PathRuleManager
@@ -49,43 +44,26 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $webUrlManagers = array();
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @throws \RuntimeException
+	 * @return \Change\Services\ApplicationServices
 	 */
 	public function getApplicationServices()
 	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
 		if ($this->applicationServices === null)
 		{
-			$this->setApplicationServices($documentServices->getApplicationServices());
+			throw new \RuntimeException('ApplicationServices not set', 999999);
 		}
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
+		return $this->applicationServices;
 	}
 
 	/**
@@ -454,7 +432,7 @@ class UrlManager extends \Change\Http\UrlManager
 		else
 		{
 			/* @var $section \Change\Presentation\Interfaces\Section */
-			$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+			$section = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 			return $this->getDefaultDocumentPathInfo($document, $section);
 		}
 	}
@@ -539,9 +517,9 @@ class UrlManager extends \Change\Http\UrlManager
 			}
 		}
 
-		if (is_numeric($document) && $this->getDocumentServices())
+		if (is_numeric($document))
 		{
-			$document = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($document);
+			$document = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($document);
 		}
 
 		if ($document instanceof \Change\Documents\AbstractDocument)

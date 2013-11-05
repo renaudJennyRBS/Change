@@ -72,12 +72,12 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	public function registerCommands()
 	{
 		$changeApplication = $this->getChangeApplication();
-		$eventManager = new \Zend\EventManager\EventManager('Commands');
-		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$changeApplication->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $classNames);
-		$eventManager->setSharedManager($changeApplication->getSharedEventManager());
+		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
 
-		$event = new \Change\Commands\Events\Event('config', $changeApplication, array());
+		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
+		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
+		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
+		$event = new \Change\Commands\Events\Event('config', $changeApplication, array('eventManagerFactory' => $eventManagerFactory));
 		$results = $eventManager->trigger($event);
 		foreach ($results as $result)
 		{
@@ -93,7 +93,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 
 	/**
 	 * @param array $commandsConfig
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 * @param \Change\Application $changeApplication
 	 */
 	protected function registerCommandsConfig($commandsConfig, $eventManager, $changeApplication)

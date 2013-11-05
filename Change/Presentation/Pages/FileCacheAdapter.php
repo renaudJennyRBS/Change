@@ -7,15 +7,15 @@ namespace Change\Presentation\Pages;
 class FileCacheAdapter
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onGetCacheAdapter(\Zend\EventManager\Event $event)
+	public function onGetCacheAdapter(\Change\Events\Event $event)
 	{
 		$pageManager = $event->getTarget();
 
 		if ($pageManager instanceof PageManager)
 		{
-			$workspace = $pageManager->getApplicationServices()->getApplication()->getWorkspace();
+			$workspace = $event->getApplication()->getWorkspace();
 			$cache = new \Zend\Cache\Storage\Adapter\Filesystem();
 			$cacheDir = $workspace->cachePath('page');
 			\Change\Stdlib\File::mkdir($cacheDir);

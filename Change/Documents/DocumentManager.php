@@ -1,10 +1,8 @@
 <?php
 namespace Change\Documents;
 
-use Change\Application\ApplicationServices;
 use Change\Db\Query\ResultsConverter;
 use Change\Db\ScalarType;
-use Change\Transaction\TransactionManager;
 
 /**
  * @name \Change\Documents\DocumentManager
@@ -12,15 +10,7 @@ use Change\Transaction\TransactionManager;
  */
 class DocumentManager
 {
-	/**
-	 * @var ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
+	const EVENT_MANAGER_IDENTIFIER = 'Documents';
 
 	/**
 	 * Document instances by id
@@ -55,25 +45,147 @@ class DocumentManager
 	protected $LCIDStackTransaction = array();
 
 	/**
-	 * @param ApplicationServices $applicationServices
+	 * @var \Change\Logging\Logging
 	 */
-	public function setApplicationServices(ApplicationServices $applicationServices)
+	protected $logging;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider = null;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager = null;
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager = null;
+
+	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+
+	/**
+	 * @var \Change\Events\EventManagerFactory
+	 */
+	protected $eventManagerFactory;
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
+	 */
+	public function setLogging(\Change\Logging\Logging $logging)
 	{
-		$this->applicationServices = $applicationServices;
-
-		$tm = $applicationServices->getTransactionManager();
-		$this->inTransaction = $tm->started();
-		$tem = $tm->getEventManager();
-
-		$tem->attach(TransactionManager::EVENT_BEGIN, array($this, 'beginTransaction'));
-		$tem->attach(TransactionManager::EVENT_COMMIT, array($this, 'commit'));
-		$tem->attach(TransactionManager::EVENT_ROLLBACK, array($this, 'rollBack'));
+		$this->logging = $logging;
+		return $this;
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @return \Change\Logging\Logging
 	 */
-	public function beginTransaction(\Zend\EventManager\Event $event)
+	public function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
+	/**
+	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @return $this
+	 */
+	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
+	{
+		$this->eventManagerFactory = $eventManagerFactory;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Events\EventManagerFactory
+	 */
+	protected function getEventManagerFactory()
+	{
+		return $this->eventManagerFactory;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager(\Change\I18n\I18nManager $i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->modelManager;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function beginTransaction(\Change\Events\Event $event)
 	{
 		if ($event->getParam('primary'))
 		{
@@ -84,9 +196,9 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function commit(\Zend\EventManager\Event $event)
+	public function commit(\Change\Events\Event $event)
 	{
 		if ($event->getParam('primary'))
 		{
@@ -98,9 +210,9 @@ class DocumentManager
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function rollBack(\Zend\EventManager\Event $event)
+	public function rollBack(\Change\Events\Event $event)
 	{
 
 		$count = $event->getParam('count');
@@ -124,30 +236,6 @@ class DocumentManager
 		return $this->inTransaction;
 	}
 
-	/**
-	 * @return ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
 	public function __destruct()
 	{
 		$this->reset();
@@ -167,20 +255,12 @@ class DocumentManager
 	}
 
 	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->applicationServices->getDbProvider();
-	}
-
-	/**
 	 * @param string $cacheKey
 	 * @return \Change\Db\Query\Builder
 	 */
 	protected function getNewQueryBuilder($cacheKey = null)
 	{
-		return $this->applicationServices->getDbProvider()->getNewQueryBuilder($cacheKey);
+		return $this->getDbProvider()->getNewQueryBuilder($cacheKey);
 	}
 
 	/**
@@ -189,24 +269,7 @@ class DocumentManager
 	 */
 	protected function getNewStatementBuilder($cacheKey = null)
 	{
-		return $this->applicationServices->getDbProvider()->getNewStatementBuilder($cacheKey);
-	}
-
-	/**
-	 * @return \Change\I18n\I18nManager
-	 */
-	protected function getI18nManager()
-	{
-		return $this->getApplicationServices()->getI18nManager();
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Documents\ModelManager
-	 */
-	public function getModelManager()
-	{
-		return $this->getDocumentServices()->getModelManager();
+		return $this->getDbProvider()->getNewStatementBuilder($cacheKey);
 	}
 
 	/**
@@ -250,7 +313,13 @@ class DocumentManager
 			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
 		}
 		$className = $model->getDocumentClassName();
-		return new $className($this->getDocumentServices(), $model);
+
+		/* @var $document AbstractDocument */
+		$document = new $className($model);
+		$document->setEventManagerFactory($this->eventManagerFactory)
+			->setDocumentManager($this)
+			->setDbProvider($this->dbProvider);
+		return $document;
 	}
 
 	/**
@@ -269,10 +338,10 @@ class DocumentManager
 		if (is_string($model))
 		{
 			$modelName = $model;
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+			$model = $this->getModelManager()->getModelByName($modelName);
 			if ($model === null)
 			{
-				$this->applicationServices->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $modelName);
+				$this->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $modelName);
 				return null;
 			}
 		}
@@ -286,7 +355,7 @@ class DocumentManager
 					&& !in_array($model->getName(), $document->getDocumentModel()->getAncestorsNames())
 				)
 				{
-					$this->applicationServices->getLogging()->warn(
+					$this->getLogging()->warn(
 						__METHOD__ . ' Invalid document model name: ' . $document->getDocumentModelName() . ', '
 						. $model->getName() . ' Expected');
 					return null;
@@ -347,12 +416,12 @@ class DocumentManager
 			}
 			else
 			{
-				$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
+				$this->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
 			}
 		}
 		else
 		{
-			$this->applicationServices->getLogging()->info('Document id ' . $id . ' not found');
+			$this->getLogging()->info('Document id ' . $id . ' not found');
 		}
 
 		return null;
@@ -396,11 +465,22 @@ class DocumentManager
 			$this->cycleCount++;
 			if ($this->cycleCount % 100 === 0)
 			{
-				$this->applicationServices->getLogging()->info(__METHOD__ . ': ' . count($this->documentInstances));
+				$this->getLogging()->info(__METHOD__ . ': ' . count($this->documentInstances));
 				$this->reset();
 			}
 		}
 	}
+
+	/**
+	 * @param string|AbstractModel $modelOrModelName
+	 * @return \Change\Documents\Query\Query
+	 * @throws \InvalidArgumentException
+	 */
+	public function getNewQuery($modelOrModelName)
+	{
+		return new \Change\Documents\Query\Query($modelOrModelName, $this, $this->getModelManager(), $this->getDbProvider());
+	}
+
 	/**
 	 * @param AbstractDocument $document
 	 * @param array $backupData

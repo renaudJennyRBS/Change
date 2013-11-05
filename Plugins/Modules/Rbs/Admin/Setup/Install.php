@@ -64,15 +64,13 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \RuntimeException
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
 		$OAuth = new OAuthManager();
-		$OAuth->setApplicationServices($documentServices->getApplicationServices());
+		$OAuth->setApplicationServices($applicationServices);
 		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
 		if ($consumer)
 		{
@@ -80,8 +78,6 @@ class Install extends \Change\Plugins\InstallBase
 		}
 
 		$consumer = new Consumer($OAuth->generateConsumerKey(), $OAuth->generateConsumerSecret());
-
-		$applicationServices = $documentServices->getApplicationServices();
 		$isb = $applicationServices->getDbProvider()->getNewStatementBuilder('Install::executeApplication');
 		$fb = $isb->getFragmentBuilder();
 		$isb->insert($fb->table($isb->getSqlMapping()->getOAuthApplicationTable()), $fb->column('application'),

@@ -99,9 +99,9 @@ class GetFile
 		}
 	}
 
-
 	/**
 	 * @param \Change\Http\Event $event
+	 * @return \Zend\Http\PhpEnvironment\Response
 	 */
 	public function onResultContent($event)
 	{

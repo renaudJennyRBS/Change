@@ -27,18 +27,16 @@ class GetBlockInformation
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param string $blockName
-	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $blockName)
 	{
-		$bm = $event->getPresentationServices()->getBlockManager();
+		$bm = $event->getApplicationServices()->getBlockManager();
 		$info = $bm->getBlockInformation($blockName);
 		if ($info)
 		{
 			$result = new BlockResult($event->getUrlManager(), $info);
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$event->setResult($result);
-			return $result;
 		}
 	}
 }

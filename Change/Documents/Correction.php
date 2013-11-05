@@ -65,6 +65,11 @@ class Correction
 	protected $documentManager;
 
 	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param integer $documentId
 	 * @param string $LCID
@@ -94,6 +99,23 @@ class Correction
 		return $this->documentManager = $documentManager;
 	}
 
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	public function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
 
 	/**
 	 * @api
@@ -468,6 +490,13 @@ class Correction
 		if (!$this->isNew())
 		{
 			$this->update();
+
+			if ($this->getStatus() == static::STATUS_FILED)
+			{
+				$document = $this->getDocument();
+				$event = new \Change\Documents\Events\Event('correctionFiled', $document, array('correction' => $this));
+				$document->getEventManager()->trigger($event);
+			}
 		}
 		elseif ($this->getStatus() !== static::STATUS_FILED)
 		{
@@ -569,14 +598,6 @@ class Correction
 		return $this->documentManager->getDocumentInstance($this->getDocumentId());
 	}
 
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->documentManager->getApplicationServices()->getDbProvider();
-	}
-
 	protected function insert()
 	{
 		$qb = $this->getDbProvider()->getNewStatementBuilder('insertCorrection');
@@ -632,17 +653,6 @@ class Correction
 		$uq->execute();
 
 		$this->setModified(false);
-
-		if ($this->getStatus() == static::STATUS_FILED)
-		{
-			$jobManager = new \Change\Job\JobManager();
-			$jobManager->setDocumentServices($this->getDocumentManager()->getDocumentServices());
-			$jobManager->createNewJob('Change_Correction_Filed', array(
-				'correctionId' => $this->getId(),
-				'documentId' => $this->getDocumentId(),
-				'LCID' => $this->getLCID()
-			));
-		}
 	}
 }
 
