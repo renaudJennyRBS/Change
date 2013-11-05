@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('formButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events) {
+	app.directive('formButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.i18n', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, i18n) {
 
 		return {
 			restrict: 'E',
@@ -50,12 +50,12 @@
 				scope.confirmReset = function ($event) {
 					Dialog.confirmEmbed(
 						element.find('.confirmation-area'),
-						"Rétablir ?",
-						"Vous êtes sur le point de rétablir les dernières données qui ont été enregistrées dans ce formulaire.",
+						i18n.trans('m.rbs.admin.admin.js.confirm-restore | ucf'),
+						i18n.trans('m.rbs.admin.admin.js.confirm-restore-message | ucf'),
 						scope,
 						{
 							'pointedElement': $($event.target),
-							'primaryButtonText': "rétablir les données"
+							'primaryButtonText': i18n.trans('m.rbs.admin.admin.js.restore-data-button | ucf')
 						}
 					).then(function () {
 							scope.reset();
@@ -67,8 +67,8 @@
 					if (Utils.hasCorrection(doc)) {
 						return Dialog.confirmEmbed(
 							element.find('.confirmation-area'),
-							"Mettre à jour la correction ?",
-							"Une <strong>correction</strong> est en cours pour ce document. L'enregistrement mettra à jour la correction et le document ne sera modifié qu'après application de la correction.",
+							i18n.trans('m.rbs.admin.admin.js.confirm-update-correction | ucf'),
+							i18n.trans('m.rbs.admin.admin.js.confirm-update-correction-message | ucf'),
 							scope,
 							{
 								'pointedElement' : $(element).find('[data-role=save]').first()
