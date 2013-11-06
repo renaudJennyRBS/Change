@@ -122,7 +122,8 @@
 				scope.selectedTags = [];
 
 				function updateFilter () {
-					scope.filteredTags = $filter('orderBy')($filter('filter')(scope.tags, {'label': scope.filterTags}), 'label');
+					scope.filteredTags = $filter('filter')(scope.tags, {'label': scope.filterTags});
+					//scope.filteredTags = $filter('orderBy')($filter('filter')(scope.tags, {'label': scope.filterTags}), 'label');
 				}
 
 				scope.$watch('filterTags', updateFilter, true);
@@ -308,7 +309,7 @@
 					'</span>' +
 					'<div class="all-tags clearfix" ng-show="showAll">' +
 					'<h6 ng-pluralize count="availTags.length" when="' + i18n.trans('m.rbs.tag.admin.js.available-tags-pluralize') + '"></h6>' +
-					'<a href ng-repeat="tag in availTags | orderBy:\'label\'" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>' +
+					'<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>' +
 					'</div>' +
 				'</div>',
 

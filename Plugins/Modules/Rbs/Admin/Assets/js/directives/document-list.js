@@ -585,7 +585,7 @@
 				 * Directive's link function.
 				 */
 				return function linkFn (scope, elm, attrs) {
-					var queryObject, search, columnNames, currentPath, previewCache, self = this;
+					var queryObject, search, columnNames, currentPath, previewCache, filterQuery, self = this;
 
 					scope.collection = [];
 
@@ -1284,7 +1284,6 @@
 						};
 
 						// TODO Reorganize this to use a query for tree and/or tag
-
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							Loading.start();
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
@@ -1306,7 +1305,7 @@
 									Loading.start();
 									if (attrs.collectionUrl) {
 										promise = REST.collection(scope.collectionUrl, params);
-									} else if (attrs.model) {
+									} else if (attrs.model && ! attrs.loadQuery) {
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1327,7 +1326,7 @@
 								} else {
 									if (attrs.collectionUrl) {
 										promise = REST.collection(scope.collectionUrl, params);
-									} else if (attrs.model) {
+									} else if (attrs.model && ! attrs.loadQuery) {
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1556,6 +1555,7 @@
 					// Query
 
 					function prepareQueryObject (query) {
+						query = angular.copy(query);
 						// Sort by "label" instead of "nodeOrder" when sending a query (search).
 						if (scope.sort.column === 'nodeOrder') {
 							scope.sort.column = 'label';
@@ -1575,6 +1575,18 @@
 						if (attrs.model) {
 							query.model = attrs.model;
 						}
+						if (filterQuery && filterQuery.where && query.where.and)
+						{
+							if (filterQuery.where.and)
+							{
+								ArrayUtils.append(query.where.and, filterQuery.where.and);
+							}
+							if (filterQuery.where.or)
+							{
+								query.where.and.push({"or": filterQuery.where.or});
+							}
+						}
+
 						return query;
 					}
 
@@ -1586,7 +1598,19 @@
 						}
 					}
 
-					scope.$watch('filterQuery', watchQueryFn, true);
+					function watchFilterQueryFn (query) {
+						if (!elm.is('[load-query]'))
+						{
+							queryObject = query;
+							reload();
+						}
+						else if (! angular.equals(query, filterQuery)) {
+							filterQuery = angular.copy(query);
+							reload();
+						}
+					}
+
+					scope.$watch('filterQuery', watchFilterQueryFn, true);
 					scope.$watch('loadQuery', watchQueryFn, true);
 
 					var lastQuickActionsShown = null;

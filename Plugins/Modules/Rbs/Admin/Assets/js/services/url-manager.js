@@ -46,22 +46,21 @@
 						rule = { templateUrl : rule };
 					}
 
-					if (rule.templateUrl) {
-						rule.resolve = {
-							'rbsPlugin' : ['$rootScope', function($rootScope) {
-								var tokens = rule.templateUrl.split('/');
-								$rootScope.rbsCurrentPluginName = tokens[0] + '_' + tokens[1];
-								return $rootScope.rbsCurrentPluginName;
-							}]
-						};
-					}
-
 					if (! rule.hasOwnProperty('redirectTo')) {
 						rule = angular.extend({}, defaultRule, rule);
 					}
 					if ((p = route.indexOf('?')) !== -1) {
 						route = route.substring(0, p);
 					}
+
+					if (rule.templateUrl && rule.resolve) {
+						rule.resolve.rbsPlugin = ['$rootScope', function($rootScope) {
+							var tokens = rule.templateUrl.split('/');
+							$rootScope.rbsCurrentPluginName = tokens[0] + '_' + tokens[1];
+							return $rootScope.rbsCurrentPluginName;
+						}];
+					}
+
 					$routeProvider.when(route, rule);
 				};
 

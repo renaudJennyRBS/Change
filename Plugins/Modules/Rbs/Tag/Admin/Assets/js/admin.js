@@ -12,7 +12,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Tag').route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'});
+			$delegate.model('Rbs_Tag')
+				.route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'})
+				.route('myTags', 'Rbs/Tag/MyTags/', { 'templateUrl': 'Rbs/Tag/Tag/myTags-list.twig'});
 			$delegate.routesForModels(['Rbs_Tag_Tag']);
 			return $delegate;
 		}]);
@@ -152,7 +154,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.service('RbsChange.TagService', ['RbsChange.REST', 'RbsChange.Utils', '$q', '$http', function (REST, Utils, $q, $http) {
+	app.service('RbsChange.TagService', ['$rootScope', 'RbsChange.REST', 'RbsChange.Utils', '$q', '$http', function ($rootScope, REST, Utils, $q, $http) {
 
 		function getIdArray (data) {
 			var ids = [];
@@ -166,7 +168,67 @@
 
 			'getList' : function (defered) {
 				var tags = [];
-				REST.collection('Rbs_Tag_Tag', {'column': ['color','userTag'], 'limit': 100}).then(function (result) {
+				var tagQuery = {
+					"model": "Rbs_Tag_Tag",
+					"where": {
+						"and": [
+							{
+								"or" : [
+									{
+										"op" : "eq",
+										"lexp" : {
+											"property" : "authorId"
+										},
+										"rexp" : {
+											"value" : $rootScope.user.id
+										}
+									},
+									{
+										"op" : "eq",
+										"lexp" : {
+											"property" : "userTag"
+										},
+										"rexp" : {
+											"value" : false
+										}
+									}
+								]
+							},
+							{
+								"or" : [
+									{
+										"op" : "eq",
+										"lexp" : {
+											"property" : "module"
+										},
+										"rexp" : {
+											"value" : $rootScope.rbsCurrentPluginName
+										}
+									},
+									{
+										"op" : "isNull",
+										"exp" : {
+											"property" : "module"
+										}
+									}
+								]
+							}
+						]
+					},
+					"order": [
+						{
+							"property": "userTag",
+							"order": "desc"
+						},
+						{
+							"property": "label",
+							"order": "asc"
+						}
+					],
+					"offset": 0
+				};
+
+				REST.query(tagQuery, {'column': ['color','userTag'], 'limit': 1000}).then(function (result) {
 					angular.forEach(result.resources, function (r) {
 						tags.push(r);
 					});
@@ -220,6 +282,53 @@
 
 		};
 
+	}]);
+
+	app.controller('Rbs_Tag_Tag_MyTagsController', ['$rootScope', '$scope', function ($rootScope, $scope) {
+		$scope.myTagsQuery = {
+			"model": "Rbs_Tag_Tag",
+			"where": {
+				"and" : [
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "authorId"
+						},
+						"rexp" : {
+							"value": $rootScope.user.id
+						}
+					},
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "userTag"
+						},
+						"rexp" : {
+							"value": true
+						}
+					}
+				]
+			}
+		};
+	}]);
+
+	app.controller('Rbs_Tag_Tag_TagsController', ['$rootScope', '$scope', function ($rootScope, $scope) {
+		$scope.tagsQuery = {
+			"model": "Rbs_Tag_Tag",
+			"where": {
+				"and" : [
+					{
+						"op" : "eq",
+						"lexp" : {
+							"property" : "userTag"
+						},
+						"rexp" : {
+							"value": false
+						}
+					}
+				]
+			}
+		};
 	}]);
 
 })(window.jQuery);

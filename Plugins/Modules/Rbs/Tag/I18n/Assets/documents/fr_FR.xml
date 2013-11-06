@@ -2,5 +2,6 @@
 <i18n baseKey="m.rbs.tag.documents" lcid="fr_FR">
 	<key id="tag">étiquette</key>
 	<key id="tag-list">liste des étiquettes</key>
+	<key id="mytags-list">liste de mes étiquettes</key>
 	<key id="tag-create">ajouter une étiquette</key>
 </i18n>
