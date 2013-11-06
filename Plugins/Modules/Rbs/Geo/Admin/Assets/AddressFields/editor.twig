@@ -27,28 +27,28 @@
 					</td>
 					<td style="width:180px" class="text-right">
 						<rbs-kb-switch>
-							<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.js.move-top', ['ucf']) }}" ng-click="moveTop($index)">
+							<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-top', ['ucf']) }}">
 								<i class="icon-step-forward icon-rotate-270"></i>
 							</button>
-							<button style="width:36px" ng-disabled="$first" rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.js.move-up', ['ucf']) }}" ng-click="moveUp($index)">
+							<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-up', ['ucf']) }}">
 								<i class="icon-play icon-rotate-270"></i>
 							</button>
 						</rbs-kb-switch>
 						<rbs-kb-switch>
-							<button style="width:36px" ng-disabled="$last" rbs-kb-when="alt" ng-disabled="doc.position ==  -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.js.move-bottom', ['ucf']) }}" ng-click="moveBottom($index)">
+							<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-bottom', ['ucf']) }}">
 								<i class="icon-step-forward icon-rotate-90"></i>
 							</button>
-							<button style="width:36px" ng-disabled="$last" rbs-kb-default="" ng-disabled="doc.position == -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.js.move-down', ['ucf']) }}" ng-click="moveDown($index)">
+							<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-down', ['ucf']) }}">
 								<i class="icon-play icon-rotate-90"></i>
 							</button>
 						</rbs-kb-switch>
-						<button style="width:36px" class="btn btn-default" ng-click="cascadeEditField($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.edit', ['ucf']) }}" type="button">
+						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.edit', ['ucf']) }}">
 							<i class="icon-pencil"></i>
 						</button>
-						<button style="width:36px" ng-hide="field.locked" class="btn btn-danger" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
+						<button ng-hide="field.locked" class="btn btn-danger btn-icon" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
 							<i class="icon-remove"></i>
 						</button>
-						<button style="width:36px" disabled="true" ng-show="field.locked"  title="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'locked'), ['ucf']) }}" class="btn btn-info" type="button">
+						<button ng-show="field.locked" disabled="true" title="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'locked'), ['ucf']) }}" class="btn btn-info btn-icon" type="button">
 							<i class="icon-lock"></i>
 						</button>
 					</td>
