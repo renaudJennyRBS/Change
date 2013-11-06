@@ -57,6 +57,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Website_AvailablePageFunctions':
 					(new \Rbs\Admin\Collection\Collections())->addAvailablePageFunctions($event);
 					break;
+				case 'Rbs_Tag_Collection_TagModules':
+					(new \Rbs\Tag\Collection\Collections())->addTagModules($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -71,7 +74,8 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Generic_Collection_TimeZones',
 				'Rbs_Generic_Collection_Languages',
 				'Rbs_Review_Collection_PromotedReviewModes',
-				'Rbs_Website_AvailablePageFunctions'
+				'Rbs_Website_AvailablePageFunctions',
+				'Rbs_Tag_Collection_TagModules'
 			));
 			$event->setParam('codes', $codes);
 		};

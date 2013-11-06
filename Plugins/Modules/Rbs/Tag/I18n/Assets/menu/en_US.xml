@@ -6,4 +6,5 @@
 	<key id="clear-selection">clear</key>
 	<key id="selected-tags">selected tags</key>
 	<key id="selected-tags-message">selected tags are used to filter the list of items</key>
+	<key id="my-tags">my tags</key>
 </i18n>

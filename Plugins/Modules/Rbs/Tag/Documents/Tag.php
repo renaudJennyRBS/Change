@@ -19,6 +19,16 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'updateSearchTag'));
 	}
 
+	protected function onUpdate()
+	{
+		if ($this->isPropertyModified('module'))
+		{
+			if ($this->getModule() == '')
+			{
+				$this->setModule(NULL);
+			}
+		}
+	}
 
 	/**
 	 * @param \Change\Documents\Events\Event $event
