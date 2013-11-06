@@ -54,7 +54,7 @@
 			<tr>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody ng-if="collection.length">
 			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'error': hasErrors(doc), 'selected': doc.selected}">
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)">
 					<div class="inner">

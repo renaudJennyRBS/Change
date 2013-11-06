@@ -23,15 +23,18 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 	}
 
+	/**
+	 * @param Event $event
+	 */
 	public function login(Event $event)
 	{
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
-			$datas = $event->getRequest()->getPost()->toArray();
-			$realm = $datas['realm'];
-			$login = $datas['login'];
-			$password = $datas['password'];
+			$data = $event->getRequest()->getPost()->toArray();
+			$realm = $data['realm'];
+			$login = $data['login'];
+			$password = $data['password'];
 			if ($realm && $login && $password)
 			{
 				$am = $event->getAuthenticationManager();
@@ -41,24 +44,24 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$am->setCurrentUser($user);
 					$accessorId = $user->getId();
 					$this->save($website, $accessorId);
-					$datas = array('accessorId' => $accessorId, 'name' => $user->getName());
+					$data = array('accessorId' => $accessorId, 'name' => $user->getName());
 				}
 				else
 				{
-					$datas['error'] = 'Unable to Authenticate';
+					$data['error'] = 'Unable to Authenticate';
 				}
 			}
 			else
 			{
-				$datas['error'] = 'Invalid parameters';
+				$data['error'] = 'Invalid parameters';
 			}
 		}
 		else
 		{
-			$datas = array('error' => 'Invalid website');
+			$data = array('error' => 'Invalid website');
 		}
 
-		$result = new \Change\Http\Web\Result\AjaxResult($datas);
+		$result = new \Change\Http\Web\Result\AjaxResult($data);
 		$event->setResult($result);
 	}
 

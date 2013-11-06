@@ -249,6 +249,23 @@ h4.list-group-item:first-child {
 	margin-top: 0;
 }
 
+/* buttons containing only an icon */
+
+.btn-icon.btn-lg {
+	width: 48px;
+}
+
+.btn-icon {
+	width: 36px;
+}
+
+.btn-icon.btn-sm {
+	width: 30px;
+}
+
+.btn-icon.btn-xs {
+	width: 22px;
+}
 
 /* editors */
 

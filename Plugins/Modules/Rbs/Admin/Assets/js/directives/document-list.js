@@ -1235,11 +1235,7 @@
 						}
 						scope.$watch('externalCollection', function (collection, oldCollection) {
 							if (collection !== oldCollection || ! scope.collection || ! scope.collection.length) {
-								if (angular.isObject(collection) && collection.pagination && collection.resources) {
-									documentCollectionLoadedCallback(collection);
-								} else {
-									replaceCollection(collection);
-								}
+								setExternalCollection (collection);
 							}
 						}, true);
 					}

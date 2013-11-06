@@ -18,7 +18,7 @@
 		</rbs-field-rich-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'visibility'), ['ucf']) }}">
-			<rbs-collection-multiple-item-selector ng-model="document.visibility"
+			<rbs-collection-multiple-item-selector ng-model="document.visibility" class="form-control"
 				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
 		</rbs-field>
 
@@ -37,14 +37,14 @@
 			</div>
 
 			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Document' || document.valueType == 'Property'">
-				<rbs-field-text property="defaultValue" input-class="input-block-level"
+				<rbs-field-text property="defaultValue"
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'defaultValue'), ['ucf']) }}">
 				</rbs-field-text>
 			</div>
 
 			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'Document'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'collectionCode'), ['ucf']) }}">
-					<select ng-model="document.collectionCode"
+					<select ng-model="document.collectionCode" class="form-control"
 							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
 						<option value=""></option>
 					</select>
@@ -53,7 +53,7 @@
 
 			<div data-ng-show="document.valueType == 'Property'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'productProperty'), ['ucf']) }}">
-					<select ng-model="document.productProperty"
+					<select ng-model="document.productProperty" class="form-control"
 							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeProductProperties">
 						<option value=""></option>
 					</select>
