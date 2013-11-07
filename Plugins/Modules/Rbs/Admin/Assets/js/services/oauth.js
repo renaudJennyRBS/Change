@@ -274,7 +274,15 @@
 					}
 
 					function temporaryTokenErrorFn (error) {
-						alert(error);
+						if (error && error.text)
+						{
+							var errorObject = JSON.parse(error.text);
+							if (errorObject && errorObject.code == "EXCEPTION-72005")
+							{
+								alert("There was an error processing the request - please make sure your client and server time is setup correctly");
+							}
+						}
+						console.log(error);
 					}
 				},
 
