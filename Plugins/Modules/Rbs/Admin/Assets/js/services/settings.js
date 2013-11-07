@@ -69,6 +69,7 @@
 					angular.extend(user, result.properties);
 					REST.setLanguage(user.profile.LCID);
 					$cookies.LCID = user.profile.LCID;
+					$rootScope.user = user;
 					readyQ.resolve(user);
 				},
 
