@@ -54,9 +54,9 @@
 					}
 
 					if (rule.templateUrl && rule.resolve) {
-						rule.resolve.rbsPlugin = ['$rootScope', function($rootScope) {
-							var tokens = rule.templateUrl.split('/');
-							$rootScope.rbsCurrentPluginName = tokens[0] + '_' + tokens[1];
+						rule.resolve.rbsPlugin = ['$rootScope', '$location', function ($rootScope, $location) {
+							var tokens = $location.path().split('/');
+							$rootScope.rbsCurrentPluginName = tokens[1] + '_' + tokens[2];
 							return $rootScope.rbsCurrentPluginName;
 						}];
 					}
