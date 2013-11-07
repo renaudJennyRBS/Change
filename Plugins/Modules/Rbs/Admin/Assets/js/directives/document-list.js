@@ -1303,8 +1303,10 @@
 									});
 								} else {
 									Loading.start();
-									if (attrs.collectionUrl) {
-										promise = REST.collection(scope.collectionUrl, params);
+									if (elm.is('[collection-url]')) {
+										if (attrs.collectionUrl) {
+											promise = REST.collection(scope.collectionUrl, params);
+										}
 									} else if (attrs.model && ! attrs.loadQuery) {
 										promise = REST.collection(attrs.model, params);
 									}
@@ -1324,8 +1326,10 @@
 									});
 									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
 								} else {
-									if (attrs.collectionUrl) {
-										promise = REST.collection(scope.collectionUrl, params);
+									if (elm.is('[collection-url]')) {
+										if (attrs.collectionUrl) {
+											promise = REST.collection(scope.collectionUrl, params);
+										}
 									} else if (attrs.model && ! attrs.loadQuery) {
 										promise = REST.collection(attrs.model, params);
 									}
